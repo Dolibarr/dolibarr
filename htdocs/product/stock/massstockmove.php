@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2013-2018 Laurent Destaileur	<ely@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2014	   Regis Houssin		<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2014	   Regis Houssin		<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,11 +42,19 @@ $langs->loadLangs(array('products', 'stocks', 'orders', 'productbatch'));
 if ($user->societe_id) {
     $socid = $user->societe_id;
 }
+<<<<<<< HEAD
 $result=restrictedArea($user,'produit|service');
 
 //checks if a product has been ordered
 
 $action = GETPOST('action','alpha');
+=======
+$result=restrictedArea($user, 'produit|service');
+
+//checks if a product has been ordered
+
+$action = GETPOST('action', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $id_product = GETPOST('productid', 'int');
 $id_sw = GETPOST('id_sw', 'int');
 $id_tw = GETPOST('id_tw', 'int');
@@ -50,9 +62,15 @@ $batch = GETPOST('batch');
 $qty = GETPOST('qty');
 $idline = GETPOST('idline');
 
+<<<<<<< HEAD
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
+=======
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 
 if (!$sortfield) {
@@ -62,11 +80,19 @@ if (!$sortfield) {
 if (!$sortorder) {
     $sortorder = 'ASC';
 }
+<<<<<<< HEAD
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page ;
 
 $listofdata=array();
 if (! empty($_SESSION['massstockmove'])) $listofdata=json_decode($_SESSION['massstockmove'],true);
+=======
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$offset = $limit * $page ;
+
+$listofdata=array();
+if (! empty($_SESSION['massstockmove'])) $listofdata=json_decode($_SESSION['massstockmove'], true);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 /*
@@ -161,7 +187,11 @@ if ($action == 'createmovements')
 	if (! GETPOST("label"))
 	{
 		$error++;
+<<<<<<< HEAD
 		setEventMessages($langs->trans("ErrorFieldRequired"),$langs->transnoentitiesnoconv("LabelMovement"), null, 'errors');
+=======
+		setEventMessages($langs->trans("ErrorFieldRequired"), $langs->transnoentitiesnoconv("MovementLabel"), null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	$db->begin();
@@ -197,7 +227,11 @@ if ($action == 'createmovements')
 				if (empty($conf->productbatch->enabled) || ! $product->hasbatch())		// If product does not need lot/serial
 				{
 					// Remove stock
+<<<<<<< HEAD
 					$result1=$product->correct_stock(
+=======
+    $result1=$product->correct_stock(
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		    			$user,
 		    			$id_sw,
 		    			$qty,
@@ -213,7 +247,11 @@ if ($action == 'createmovements')
 					}
 
 					// Add stock
+<<<<<<< HEAD
 					$result2=$product->correct_stock(
+=======
+    $result2=$product->correct_stock(
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		    			$user,
 		    			$id_tw,
 		    			$qty,
@@ -245,7 +283,11 @@ if ($action == 'createmovements')
 					}
 
 					// Remove stock
+<<<<<<< HEAD
 					$result1=$product->correct_stock_batch(
+=======
+    $result1=$product->correct_stock_batch(
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		    			$user,
 		    			$id_sw,
 		    			$qty,
@@ -264,7 +306,11 @@ if ($action == 'createmovements')
 					}
 
 					// Add stock
+<<<<<<< HEAD
 					$result2=$product->correct_stock_batch(
+=======
+    $result2=$product->correct_stock_batch(
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		    			$user,
 		    			$id_tw,
 		    			$qty,
@@ -331,11 +377,17 @@ $titletoadd=$langs->trans("Select");
 $buttonrecord=$langs->trans("RecordMovement");
 $titletoaddnoent=$langs->transnoentitiesnoconv("Select");
 $buttonrecordnoent=$langs->transnoentitiesnoconv("RecordMovement");
+<<<<<<< HEAD
 print '<span class="opacitymedium">'.$langs->trans("SelectProductInAndOutWareHouse",$titletoaddnoent,$buttonrecordnoent).'</span><br>';
 print '<br>'."\n";
 
 $var=true;
 
+=======
+print '<span class="opacitymedium">'.$langs->trans("SelectProductInAndOutWareHouse", $titletoaddnoent, $buttonrecordnoent).'</span><br>';
+print '<br>'."\n";
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 // Form to add a line
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">';
 print '<input type="hidden" name="token" value="' .$_SESSION['newtoken'] . '">';
@@ -349,6 +401,7 @@ print '<table class="liste" width="100%">';
 $param='';
 
 print '<tr class="liste_titre">';
+<<<<<<< HEAD
 print getTitleFieldOfList($langs->trans('ProductRef'),0,$_SERVER["PHP_SELF"],'',$param,'','class="tagtd maxwidthonsmartphone"',$sortfield,$sortorder);
 if ($conf->productbatch->enabled)
 {
@@ -358,6 +411,16 @@ print getTitleFieldOfList($langs->trans('WarehouseSource'),0,$_SERVER["PHP_SELF"
 print getTitleFieldOfList($langs->trans('WarehouseTarget'),0,$_SERVER["PHP_SELF"],'',$param,'','class="tagtd maxwidthonsmartphone"',$sortfield,$sortorder);
 print getTitleFieldOfList($langs->trans('Qty'),0,$_SERVER["PHP_SELF"],'',$param,'','align="center" class="tagtd maxwidthonsmartphone"',$sortfield,$sortorder);
 print getTitleFieldOfList('',0);
+=======
+print getTitleFieldOfList($langs->trans('ProductRef'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
+if ($conf->productbatch->enabled) {
+	print getTitleFieldOfList($langs->trans('Batch'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
+}
+print getTitleFieldOfList($langs->trans('WarehouseSource'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
+print getTitleFieldOfList($langs->trans('WarehouseTarget'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
+print getTitleFieldOfList($langs->trans('Qty'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'center tagtd maxwidthonsmartphone ');
+print getTitleFieldOfList('', 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</tr>';
 
 
@@ -366,8 +429,12 @@ print '<tr class="oddeven">';
 print '<td class="titlefield">';
 $filtertype=0;
 if (! empty($conf->global->STOCK_SUPPORTS_SERVICES)) $filtertype='';
+<<<<<<< HEAD
 if ($conf->global->PRODUIT_LIMIT_SIZE <= 0)
 {
+=======
+if ($conf->global->PRODUIT_LIMIT_SIZE <= 0) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$limit='';
 }
 else
@@ -393,17 +460,26 @@ print '<td>';
 print $formproduct->selectWarehouses($id_tw, 'id_tw', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp maxwidth200');
 print '</td>';
 // Qty
+<<<<<<< HEAD
 print '<td align="center"><input type="text" class="flat maxwidth50" name="qty" value="'.$qty.'"></td>';
 // Button to add line
 print '<td align="right"><input type="submit" class="button" name="addline" value="'.dol_escape_htmltag($titletoadd).'"></td>';
+=======
+print '<td class="center"><input type="text" class="flat maxwidth50" name="qty" value="'.$qty.'"></td>';
+// Button to add line
+print '<td class="right"><input type="submit" class="button" name="addline" value="'.dol_escape_htmltag($titletoadd).'"></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print '</tr>';
 
 
 foreach($listofdata as $key => $val)
 {
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$productstatic->fetch($val['id_product']);
 	$warehousestatics->fetch($val['id_sw']);
 	$warehousestatict->fetch($val['id_tw']);
@@ -424,8 +500,13 @@ foreach($listofdata as $key => $val)
 	print '<td>';
 	print $warehousestatict->getNomUrl(1);
 	print '</td>';
+<<<<<<< HEAD
 	print '<td align="center">'.$val['qty'].'</td>';
 	print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=delline&idline='.$val['id'].'">'.img_delete($langs->trans("Remove")).'</a></td>';
+=======
+	print '<td class="center">'.$val['qty'].'</td>';
+	print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=delline&idline='.$val['id'].'">'.img_delete($langs->trans("Remove")).'</a></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	print '</tr>';
 }
@@ -444,8 +525,13 @@ print '<input type="hidden" name="token" value="' .$_SESSION['newtoken'] . '">';
 print '<input type="hidden" name="action" value="createmovements">';
 
 // Button to record mass movement
+<<<<<<< HEAD
 $codemove=(isset($_POST["codemove"])?GETPOST("codemove",'alpha'):dol_print_date(dol_now(),'%Y%m%d%H%M%S'));
 $labelmovement=GETPOST("label")?GETPOST('label'):$langs->trans("StockTransfer").' '.dol_print_date($now,'%Y-%m-%d %H:%M');
+=======
+$codemove=(isset($_POST["codemove"])?GETPOST("codemove", 'alpha'):dol_print_date(dol_now(), '%Y%m%d%H%M%S'));
+$labelmovement=GETPOST("label")?GETPOST('label'):$langs->trans("StockTransfer").' '.dol_print_date($now, '%Y-%m-%d %H:%M');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print '<table class="noborder" width="100%">';
 	print '<tr>';
@@ -455,7 +541,11 @@ print '<table class="noborder" width="100%">';
 	print '</td>';
 	print '</tr>';
 	print '<tr>';
+<<<<<<< HEAD
 	print '<td>'.$langs->trans("LabelMovement").'</td>';
+=======
+	print '<td>'.$langs->trans("MovementLabel").'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '<td>';
 	print '<input type="text" name="label" class="quatrevingtpercent" value="'.dol_escape_htmltag($labelmovement).'">';
 	print '</td>';
@@ -466,7 +556,12 @@ print '<div class="center"><input class="button" type="submit" name="valid" valu
 
 print '</form>';
 
+<<<<<<< HEAD
 
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

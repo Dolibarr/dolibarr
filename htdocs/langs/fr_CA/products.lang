@@ -6,8 +6,11 @@ ProductDescriptionTranslated=Description du produit traduit
 ProductNoteTranslated=Note du produit traduit
 ProductServiceCard=Carte du produits/services
 ProductId=Identification du produit/service
+<<<<<<< HEAD
 ProductVatMassChange=Changement massif de la TVA
 ProductVatMassChangeDesc=Cette page peut être utilisée pour modifier un taux de TVA défini sur des produits ou services d'une valeur à l'autre. Avertissement, cette modification est effectuée sur toutes les bases de données.
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MassBarcodeInit=Invalidité du code barre
 MassBarcodeInitDesc=Cette page peut être utilisée pour initialiser un code à barres sur des objets qui n'ont pas le code à barres défini. Vérifiez avant que la configuration du code-barres du module soit terminée.
 ProductOrService=Produit et service
@@ -19,11 +22,17 @@ ServicesOnSaleOnly=Services à vendre uniquement
 ServicesOnPurchaseOnly=Services à l'achat uniquement
 ServicesNotOnSell=Services à vendre et non à l'achat
 ServicesOnSellAndOnBuy=Services à vendre et à vendre
+<<<<<<< HEAD
 LastModifiedProductsAndServices=Derniers %s produits / services modifiés
 LastRecordedProducts=Derniers produits enregistrés %s
 LastRecordedServices=Derniers %s services enregistrés
 CardProduct0=Carte du produit
 CardProduct1=Carte du service
+=======
+LastModifiedProductsAndServices=Dernier %s produits/services modifiés
+LastRecordedProducts=Derniers produits enregistrés %s
+LastRecordedServices=Derniers %s services enregistrés
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 OnSell=À vendre
 OnBuy=À acheter
 NotOnSell=Pas à vendre
@@ -38,6 +47,7 @@ ProductStatusNotOnBuyShort=Pas à acheter
 UpdateVAT=Mise à jour de la batterie
 UpdateDefaultPrice=Mettre à jour le prix par défaut
 UpdateLevelPrices=Mettre à jour les prix pour chaque niveau
+<<<<<<< HEAD
 AppliedPricesFrom=Prix ​​appliqués à partir de
 SellingPrice=Prix ​​de vente
 SellingPriceHT=Prix ​​de vente (hors taxes)
@@ -52,12 +62,25 @@ ContractStatusClosed=Fermées
 ErrorProductBadRefOrLabel=Valeur incorrecte pour référence ou étiquette.
 ErrorProductClone=Il y a eu un problème en essayant de cloner le produit ou le service.
 SupplierRef=Produit ref.
+=======
+SellingPrice=Prix ​​de vente
+SellingPriceTTC=Prix ​​de vente (taxes)
+CostPriceUsage=Cette valeur pourrait être utilisée pour le calcul de la marge.
+SoldAmount=Montant vendu
+PurchasedAmount=Montant acheté
+CantBeLessThanMinPrice=Le prix de vente ne peut être inférieur au minimum autorisé pour ce produit (%s sans taxes). Ce message peut également apparaître si vous tapez une remise trop importante.
+ErrorProductBadRefOrLabel=Valeur incorrecte pour référence ou étiquette.
+ErrorProductClone=Il y a eu un problème en essayant de cloner le produit ou le service.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShowProduct=Afficher le produit
 ShowService=Afficher le service
 ProductsAndServicesArea=Domaine de produits et services
 ProductsArea=Zone de produits
 ServicesArea=Zone de services
+<<<<<<< HEAD
 SupplierCard=Carte du fournisseur
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PriceRemoved=Prix ​​retiré
 BarCode=code à barre
 BarcodeType=Type de code à barres
@@ -65,8 +88,11 @@ SetDefaultBarcodeType=Définir le type de code à barres
 BarcodeValue=Valeur du code à barres
 NoteNotVisibleOnBill=Note (non visible sur les factures, propositions ...)
 ServiceLimitedDuration=Si le produit est un service à durée limitée:
+<<<<<<< HEAD
 MultiPricesAbility=Plusieurs segments de prix par produit / service (chaque client est en un seul segment)
 AssociatedProductsAbility=Activez la fonctionnalité pour gérer les produits virtuels
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AssociatedProductsNumber=Nombre de produits composant ce produit virtuel
 ParentProductsNumber=Nombre de produits d'emballage pour les parents
 ParentProducts=Produits parentaux
@@ -76,7 +102,10 @@ CategoryFilter=Filtre de catégorie
 ProductToAddSearch=Rechercher un produit à ajouter
 NoMatchFound=Pas de résultat trouvé
 ListOfProductsServices=Liste des produits / services
+<<<<<<< HEAD
 ProductAssociationList=Liste des produits / services composant ce produit / package virtuel
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProductParentList=Liste des produits / services virtuels avec ce produit en tant que composant
 ErrorAssociationIsFatherOfThis=L'un des produits sélectionnés est le parent avec le produit actuel
 DeleteProduct=Supprimer un produit / service
@@ -85,6 +114,7 @@ ProductDeleted=Produit / Service "%s" supprimé de la base de données.
 DeleteProductLine=Supprimer la ligne de produits
 ConfirmDeleteProductLine=Êtes-vous sûr de vouloir supprimer cette ligne de produits?
 ProductSpecial=Spécial
+<<<<<<< HEAD
 QtyMin=Quantité minimale
 PriceQtyMin=Prix ​​pour cette min. Qté (sans rabais)
 VATRateForSupplierProduct=Taux de TVA (pour ce fournisseur / produit)
@@ -96,22 +126,33 @@ PredefinedServicesToSell=Services prédéfinis à vendre
 PredefinedProductsAndServicesToSell=Produits / services prédéfinis à vendre
 PredefinedProductsToPurchase=Produit prédéfini à acheter
 PredefinedProductsAndServicesToPurchase=Produits / services prédéfinis à puchase
+=======
+PredefinedProductsAndServicesToSell=Produits / services prédéfinis à vendre
+PredefinedProductsToPurchase=Produit prédéfini à acheter
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NotPredefinedProducts=Produits / services non prédéfinis
 GenerateThumb=Générer le pouce
 ServiceNb=Service # %s
 ListProductServiceByPopularity=Liste des produits / services par popularité
 Finished=Produit fabriqué
+<<<<<<< HEAD
 CloneProduct=Clone produit ou service
 ConfirmCloneProduct=Êtes-vous sûr de vouloir cloner un produit ou un service <b>%s</b>?
 CloneContentProduct=Cloner toutes les informations principales du produit / service
 CloneCompositionProduct=Produit / service emballé par clone
+=======
+ConfirmCloneProduct=Êtes-vous sûr de vouloir cloner un produit ou un service <b>%s</b>?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CloneCombinationsProduct=Variantes de produit de clonage
 NewRefForClone=Réf. De nouveau produit / service
 SellingPrices=Prix ​​de vente
 BuyingPrices=Prix ​​d'achat
 CustomerPrices=Prix ​​client
+<<<<<<< HEAD
 SuppliersPrices=Prix ​​des fournisseurs
 SuppliersPricesOfProductsOrServices=Prix ​​des fournisseurs (des produits ou des services)
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShortLabel=Étiquette courte
 p=U.
 s=S
@@ -130,7 +171,10 @@ AlwaysUseFixedPrice=Utilisez le prix fixe
 PriceByQuantity=Différents prix par quantité
 PriceByQuantityRange=Gamme de quantité
 MultipriceRules=Règles du segment des prix
+<<<<<<< HEAD
 UseMultipriceRules=Utiliser les règles de segment de prix (définies dans la configuration du module de produit) pour calculer automatiquement les prix de tous les autres segments selon le premier segment
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PercentVariationOver=%% variation par rapport à %s
 PercentDiscountOver=%% discount sur %s
 KeepEmptyForAutoCalculation=Restez vide pour que ceci soit calculé automatiquement à partir du poids ou du volume de produits
@@ -143,14 +187,18 @@ Quarter1=1er. Trimestre
 Quarter2=2ème. Trimestre
 Quarter3=3ème. Trimestre
 Quarter4=4ème. Trimestre
+<<<<<<< HEAD
 BarCodePrintsheet=Imprimer le code à barres
 PageToGenerateBarCodeSheets=Avec cet outil, vous pouvez imprimer des feuilles d'autocollants de codes à barres. Choisissez le format de votre page d'autocollant, le type de code à barres et la valeur du code à barres, puis cliquez sur le bouton <b>%s</b>.
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NumberOfStickers=Nombre d'autocollants à imprimer sur la page
 PrintsheetForOneBarCode=Imprimez plusieurs autocollants pour un code à barres
 BuildPageToPrint=Générer une page pour imprimer
 FillBarCodeTypeAndValueManually=Remplissez le type de code à barres et la valeur manuellement.
 FillBarCodeTypeAndValueFromProduct=Remplissez le type de code à barres et la valeur du code à barres d'un produit.
 FillBarCodeTypeAndValueFromThirdParty=Remplissez le type de code à barres et la valeur du code à barres d'un tiers.
+<<<<<<< HEAD
 DefinitionOfBarCodeForProductNotComplete=La définition du type ou de la valeur du code à barres n'est pas complète pour le produit %s.
 DefinitionOfBarCodeForThirdpartyNotComplete=Définition du type ou de la valeur du code à barres non complet pour le tiers %s.
 BarCodeDataForProduct=Informations sur le code à barres du produit %s:
@@ -159,26 +207,43 @@ ResetBarcodeForAllRecords=Définissez la valeur du code-barres pour tous les enr
 PriceByCustomer=Différents prix pour chaque client
 PriceCatalogue=Un prix de vente unique par produit / service
 PricingRule=Règles pour les prix de vente
+=======
+ResetBarcodeForAllRecords=Définissez la valeur du code-barres pour tous les enregistrements (cela rétablira également la valeur du code-barres déjà définie avec de nouvelles valeurs)
+PriceByCustomer=Différents prix pour chaque client
+PriceCatalogue=Un prix de vente unique par produit / service
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddCustomerPrice=Ajouter un prix par client
 ForceUpdateChildPriceSoc=Définir le même prix sur les filiales clientes
 PriceByCustomerLog=Enregistrement des prix clients précédents
 MinimumPriceLimit=Le prix minimum ne peut pas être inférieur à %s
+<<<<<<< HEAD
 MinimumRecommendedPrice=Le prix minimum recommandé est: %s
 PriceExpressionSelected=Expression de prix choisie
 PriceExpressionEditorHelp1="Prix = 2 + 2" ou "2 + 2" pour régler le prix. Utilisation ; Séparer les expressions
 PriceExpressionEditorHelp2=Vous pouvez accéder à ExtraFields avec des variables comme <b> #extrafield_myextrafieldkey # </ b> et les variables globales avec <b> #global_mycode # </ b>
 PriceExpressionEditorHelp3=Dans les prix des produits / services et des fournisseurs, ces variables sont disponibles: <b> # tva_tx # # localtax1_tx # # localtax2_tx # # poids # # longueur # # surface # #price_min # </ b>
 PriceExpressionEditorHelp4=En prix produit / service seulement: <b> #supplier_min_price # </ b> <br> Sur les prix des fournisseurs uniquement: <b> # supplier_quantity # et #supplier_tva_tx # </ b>
+=======
+PriceExpressionSelected=Expression de prix choisie
+PriceExpressionEditorHelp1="Prix = 2 + 2" ou "2 + 2" pour régler le prix. Utilisation ; Séparer les expressions
+PriceExpressionEditorHelp2=Vous pouvez accéder à ExtraFields avec des variables comme <b> #extrafield_myextrafieldkey # </ b> et les variables globales avec <b> #global_mycode # </ b>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PriceMode=Mode prix
 PriceNumeric=Numéro
 DefaultPrice=Prix ​​par défaut
 ComposedProductIncDecStock=Augmenter / diminuer le stock sur le changement de parent
+<<<<<<< HEAD
 ComposedProduct=Sous-produit
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MinSupplierPrice=Prix minimum d'achat
 DynamicPriceConfiguration=Configuration de prix dynamique
 AddVariable=Ajouter une variable
 AddUpdater=Ajouter une mise à jour
+<<<<<<< HEAD
 GlobalVariableUpdaters=Mises à jour variables globales
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 UpdateInterval=Intervalle de mise à jour (minutes)
 CorrectlyUpdated=Correctement mis à jour
 PropalMergePdfProductActualFile=Les fichiers utilisés pour ajouter au PDF Azur sont / sont
@@ -211,7 +276,10 @@ DoNotRemovePreviousCombinations=Ne supprimez pas les variantes précédentes
 UsePercentageVariations=Variations en pourcentage d'utilisation
 PercentageVariation=Variation en pourcentage
 ErrorDeletingGeneratedProducts=Une erreur s'est produite en essayant de supprimer les variantes de produits existantes
+<<<<<<< HEAD
 NbProducts=Nb. De produits
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ParentProduct=Produit principal
 HideChildProducts=Masquer les variantes
 ConfirmCloneProductCombinations=Voulez-vous copier toutes les variantes du produit vers l'autre produit parent avec la référence donnée?

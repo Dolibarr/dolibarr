@@ -52,6 +52,10 @@ ActionAC_TEL=โทรศัพท์
 ActionAC_FAX=ส่งแฟ็กซ์
 ActionAC_PROP=ส่งข้อเสนอทางไปรษณีย์
 ActionAC_EMAIL=ส่งอีเมล์
+<<<<<<< HEAD
+=======
+ActionAC_EMAIL_IN=Reception of Email
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActionAC_RDV=การประชุม
 ActionAC_INT=การแทรกแซงในเว็บไซต์
 ActionAC_FAC=ส่งใบแจ้งหนี้ลูกค้าทางไปรษณีย์
@@ -72,8 +76,15 @@ StatusProsp=สถานะ Prospect
 DraftPropals=ข้อเสนอในเชิงพาณิชย์ร่าง
 NoLimit=No limit
 ToOfferALinkForOnlineSignature=Link for online signature
+<<<<<<< HEAD
 WelcomeOnOnlineSignaturePage=Welcome on the page to accept commerical proposals from %s
 ThisScreenAllowsYouToSignDocFrom=This screen allow you to accept and sign, or refuse, a quote/commercial proposal
 ThisIsInformationOnDocumentToSign=This is information on document to accept or refuse
 SignatureProposalRef=Signature of quote/commerical proposal %s
+=======
+WelcomeOnOnlineSignaturePage=Welcome to the page to accept commercial proposals from %s
+ThisScreenAllowsYouToSignDocFrom=This screen allow you to accept and sign, or refuse, a quote/commercial proposal
+ThisIsInformationOnDocumentToSign=This is information on document to accept or refuse
+SignatureProposalRef=Signature of quote/commercial proposal %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 FeatureOnlineSignDisabled=Feature for online signing disabled or document generated before the feature was enabled

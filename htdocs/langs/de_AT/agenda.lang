@@ -1,7 +1,10 @@
 # Dolibarr language file - Source file is en_US - agenda
 Actions=Termine
 LocalAgenda=interner Kalender
+<<<<<<< HEAD
 Events=Termine
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 EventsNb=Anzahl der Termine
 ListOfActions=Terminliste
 EventOnFullDay=Terminliste
@@ -19,12 +22,15 @@ OrderValidatedInDolibarr=Bestellung freigegeben
 OrderCanceledInDolibarr=Bestellung %s storiniert
 OrderApprovedInDolibarr=Bestellung %s wurde validiert
 OrderBackToDraftInDolibarr=Bestellung %s zurück zum provisorischen Status
+<<<<<<< HEAD
 ProposalSentByEMail=Angebot %s per Email versandt
 OrderSentByEMail=Bestellung %s per Email versandt
 InvoiceSentByEMail=Rechnung %s per Email versandt
 SupplierOrderSentByEMail=Lieferantenbestellung %s per Email versandt
 SupplierInvoiceSentByEMail=Lieferanterrechnung %s per Email versandt
 ShippingSentByEMail=Sendung %s per Email versandt
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShippingValidated=Sendung %s validiert
 DateActionStart=Start-Datum
 DateActionEnd=End-Datum
@@ -34,13 +40,19 @@ DefaultWorkingDays=Arbeitstage (Mo-Fr ,  Mo-Sa)
 DefaultWorkingHours=Arbeitszeit (Bsp.: 09-18)
 ExportCal=exportiere Kalender
 ExtSites=importiere externe Kalender
+<<<<<<< HEAD
 ExtSitesEnableThisTool=zeige externe Kalender (in generellen Einsteillungen) in Agenda. Betrifft nicht die die externen Kalender, welche von Benutzern definiert wurden.
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ExtSiteUrlAgenda=URL für .lcal
 ExtSiteNoLabel=keine Beschreibung
 VisibleTimeRange=sichtbare Zeitspanne
 VisibleDaysRange=sichtbare Tagesspanne
 AddEvent=erstelle Termin
+<<<<<<< HEAD
 CloneAction=Termin dublizieren
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 RepeatEvent=Termin wiederholen
 EveryWeek=jede Woche
 EveryMonth=jedes Monat

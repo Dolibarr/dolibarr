@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2010 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2010 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +46,11 @@ accessforbidden();
  * View
  */
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("Mailing"),'EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing');
+=======
+llxHeader('', $langs->trans("Mailing"), 'EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $form = new Form($db);
 
@@ -75,5 +83,9 @@ if ($object->fetch($id) >= 0)
 	dol_fiche_end();
 }
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

@@ -19,7 +19,11 @@
 /**
  *     \file        admin/ticket.php
  *     \ingroup     ticket
+<<<<<<< HEAD
  *     \brief       This file is a module setup page
+=======
+ *     \brief       Page to setup module ticket
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  */
 
 require '../main.inc.php';
@@ -28,7 +32,11 @@ require_once DOL_DOCUMENT_ROOT."/ticket/class/ticket.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/ticket.lib.php";
 
 // Load translation files required by the page
+<<<<<<< HEAD
 $langs->load("ticket");
+=======
+$langs->loadLangs(array("admin", "ticket"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Access control
 if (!$user->admin) {
@@ -54,16 +62,30 @@ if ($action == 'updateMask') {
         $error++;
     }
 
+<<<<<<< HEAD
     if (!$error) {
         setEventMessage($langs->trans("SetupSaved"));
     } else {
         setEventMessage($langs->trans("Error"), 'errors');
+=======
+    if (!$error)
+    {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    }
+    else
+    {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 } elseif ($action == 'setmod') {
     // TODO Verifier si module numerotation choisi peut etre active
     // par appel methode canBeActivated
 
+<<<<<<< HEAD
     dolibarr_set_const($db, "TICKETSUP_ADDON", $value, 'chaine', 0, '', $conf->entity);
+=======
+    dolibarr_set_const($db, "TICKET_ADDON", $value, 'chaine', 0, '', $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 } elseif ($action == 'setvar') {
     include_once DOL_DOCUMENT_ROOT . "/core/lib/files.lib.php";
 
@@ -88,6 +110,7 @@ if ($action == 'updateMask') {
         $error++;
     }
 
+<<<<<<< HEAD
     $mail_new_ticket = GETPOST('TICKET_MESSAGE_MAIL_NEW', 'alpha');
     if (!empty($mail_new_ticket)) {
         $res = dolibarr_set_const($db, 'TICKET_MESSAGE_MAIL_NEW', $mail_new_ticket, 'chaine', 0, '', $conf->entity);
@@ -98,6 +121,8 @@ if ($action == 'updateMask') {
         $error++;
     }
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $mail_intro = GETPOST('TICKET_MESSAGE_MAIL_INTRO', 'alpha');
     if (!empty($mail_intro)) {
         $res = dolibarr_set_const($db, 'TICKET_MESSAGE_MAIL_INTRO', $mail_intro, 'chaine', 0, '', $conf->entity);
@@ -118,6 +143,7 @@ if ($action == 'updateMask') {
         $error++;
     }
 
+<<<<<<< HEAD
     $url_interface = GETPOST('TICKET_URL_PUBLIC_INTERFACE', 'alpha');
     if (!empty($mail_signature)) {
         $res = dolibarr_set_const($db, 'TICKET_URL_PUBLIC_INTERFACE', $url_interface, 'chaine', 0, '', $conf->entity);
@@ -148,6 +174,8 @@ if ($action == 'updateMask') {
         $error++;
     }
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $text_help = GETPOST('TICKET_PUBLIC_TEXT_HELP_MESSAGE', 'alpha');
     if (!empty($text_help)) {
         $res = dolibarr_set_const($db, 'TICKET_PUBLIC_TEXT_HELP_MESSAGE', $text_help, 'chaine', 0, '', $conf->entity);
@@ -160,18 +188,22 @@ if ($action == 'updateMask') {
 }
 
 if ($action == 'setvarother') {
+<<<<<<< HEAD
     $param_enable_public_interface = GETPOST('TICKET_ENABLE_PUBLIC_INTERFACE', 'alpha');
     $res = dolibarr_set_const($db, 'TICKET_ENABLE_PUBLIC_INTERFACE', $param_enable_public_interface, 'chaine', 0, '', $conf->entity);
     if (!$res > 0) {
         $error++;
     }
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $param_must_exists = GETPOST('TICKET_EMAIL_MUST_EXISTS', 'alpha');
     $res = dolibarr_set_const($db, 'TICKET_EMAIL_MUST_EXISTS', $param_must_exists, 'chaine', 0, '', $conf->entity);
     if (!$res > 0) {
         $error++;
     }
 
+<<<<<<< HEAD
     $param_disable_email = GETPOST('TICKET_DISABLE_ALL_MAILS', 'alpha');
     $res = dolibarr_set_const($db, 'TICKET_DISABLE_ALL_MAILS', $param_disable_email, 'chaine', 0, '', $conf->entity);
     if (!$res > 0) {
@@ -180,6 +212,10 @@ if ($action == 'setvarother') {
 
     $param_activate_log_by_email = GETPOST('TICKET_ACTIVATE_LOG_BY_EMAIL', 'alpha');
     $res = dolibarr_set_const($db, 'TICKET_ACTIVATE_LOG_BY_EMAIL', $param_activate_log_by_email, 'chaine', 0, '', $conf->entity);
+=======
+    $param_disable_email = GETPOST('TICKET_DISABLE_NOTIFICATION_MAILS', 'alpha');
+    $res = dolibarr_set_const($db, 'TICKET_DISABLE_NOTIFICATION_MAILS', $param_disable_email, 'chaine', 0, '', $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     if (!$res > 0) {
         $error++;
     }
@@ -230,7 +266,11 @@ $page_name = "TicketSetup";
 llxHeader('', $langs->trans($page_name), $help_url);
 
 // Subheader
+<<<<<<< HEAD
 $linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">' . $langs->trans("BackToModuleList") . '</a>';
+=======
+$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1">' . $langs->trans("BackToModuleList") . '</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
@@ -239,9 +279,13 @@ $head = ticketAdminPrepareHead();
 
 dol_fiche_head($head, 'settings', $langs->trans("Module56000Name"), -1, "ticket");
 
+<<<<<<< HEAD
 print $langs->trans("TicketSetupDictionaries") . ' : <a href="' . dol_buildpath('/admin/dict.php', 1) . '" >' . dol_buildpath('/admin/dict.php', 2) . '</a><br>';
 
 print $langs->trans("TicketPublicAccess") . ' : <a href="' . dol_buildpath('/public/ticket/index.php', 1) . '" target="_blank" >' . dol_buildpath('/public/ticket/index.php', 2) . '</a>';
+=======
+print '<span class="opacitymedium">'.$langs->trans("TicketSetupDictionaries") . '</span> : <a href="'.DOL_URL_ROOT.'/admin/dict.php">'.$langs->trans("ClickHereToGoTo", $langs->transnoentitiesnoconv("DictionarySetup")).'</a><br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 dol_fiche_end();
 
@@ -250,7 +294,11 @@ dol_fiche_end();
  * Projects Numbering model
  */
 
+<<<<<<< HEAD
 print_titre($langs->trans("TicketNumberingModules"));
+=======
+print load_fiche_titre($langs->trans("TicketNumberingModules"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -307,10 +355,17 @@ foreach ($dirmodels as $reldir) {
                         print '</td>' . "\n";
 
                         print '<td align="center">';
+<<<<<<< HEAD
                         if ($conf->global->TICKETSUP_ADDON == 'mod_' . $classname) {
                             print img_picto($langs->trans("Activated"), 'switch_on');
                         } else {
                             print '<a href="' . $_SERVER["PHP_SELF"] . '?action=setmod&amp;value=mod_' . $classname . '" alt="' . $langs->trans("Default") . '">' . img_picto($langs->trans("Disabled"), 'switch_off') . '</a>';
+=======
+                        if ($conf->global->TICKET_ADDON == 'mod_' . $classname) {
+                            print img_picto($langs->trans("Activated"), 'switch_on');
+                        } else {
+                            print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?action=setmod&amp;value=mod_' . $classname . '" alt="' . $langs->trans("Default") . '">' . img_picto($langs->trans("Disabled"), 'switch_off') . '</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                         }
                         print '</td>';
 
@@ -350,6 +405,7 @@ if (!$conf->use_javascript_ajax) {
     print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
     print '<input type="hidden" name="action" value="setvarother">';
 }
+<<<<<<< HEAD
 print_titre($langs->trans("TicketParamPublicInterface"));
 
 print '<table class="noborder" width="100%">';
@@ -425,6 +481,22 @@ print '<table class="noborder" width="100%">';
 // Activate email notifications
 print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsDisableEmail") . '</td>';
 print '<td align="left">';
+=======
+
+print load_fiche_titre($langs->trans("TicketParams"));
+print '<table class="noborder" width="100%">';
+
+print '<tr class="liste_titre">';
+print '<td>' . $langs->trans("Parameter") . '</td>';
+print '<td></td>';
+print '<td></td>';
+print "</tr>\n";
+
+// Activate email notifications
+/*
+print '<tr class="pair"><td>' . $langs->trans("TicketsDisableEmail") . '</td>';
+print '<td class="left">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('TICKET_DISABLE_ALL_MAILS');
 } else {
@@ -438,8 +510,13 @@ print '</td>';
 print '</tr>';
 
 // Activate log by email
+<<<<<<< HEAD
 print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsLogEnableEmail") . '</td>';
 print '<td align="left">';
+=======
+print '<tr class="pair"><td>' . $langs->trans("TicketsLogEnableEmail") . '</td>';
+print '<td class="left">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('TICKET_ACTIVATE_LOG_BY_EMAIL');
 } else {
@@ -451,12 +528,21 @@ print '<td align="center">';
 print $form->textwithpicto('', $langs->trans("TicketsLogEnableEmailHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
+<<<<<<< HEAD
+=======
+*/
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Also send to main email address
 if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 {
+<<<<<<< HEAD
 	print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsEmailAlsoSendToMainAddress") . '</td>';
 	print '<td align="left">';
+=======
+	print '<tr class="oddeven"><td>' . $langs->trans("TicketsEmailAlsoSendToMainAddress") . '</td>';
+	print '<td class="left">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if ($conf->use_javascript_ajax) {
 	    print ajax_constantonoff('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS');
 	} else {
@@ -471,8 +557,14 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 }
 
 // Limiter la vue des tickets à ceux assignés à l'utilisateur
+<<<<<<< HEAD
 print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsLimitViewAssignedOnly") . '</td>';
 print '<td align="left">';
+=======
+/*
+print '<tr class="pair"><td>' . $langs->trans("TicketsLimitViewAssignedOnly") . '</td>';
+print '<td class="left">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('TICKET_LIMIT_VIEW_ASSIGNED_ONLY');
 } else {
@@ -484,6 +576,7 @@ print '<td align="center">';
 print $form->textwithpicto('', $langs->trans("TicketsLimitViewAssignedOnlyHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
+<<<<<<< HEAD
 
 if (!$conf->use_javascript_ajax) {
     print '<tr class="impair"><td colspan="3" align="center"><input type="submit" class="button" value="' . $langs->trans("Save") . '"></td>';
@@ -493,6 +586,18 @@ if (!$conf->use_javascript_ajax) {
 // Auto assign ticket at user who created it
 print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsAutoAssignTicket") . '</td>';
 print '<td align="left">';
+=======
+*/
+
+/*if (!$conf->use_javascript_ajax) {
+    print '<tr class="impair"><td colspan="3" align="center"><input type="submit" class="button" value="' . $langs->trans("Save") . '"></td>';
+    print '</tr>';
+}*/
+
+// Auto assign ticket at user who created it
+print '<tr class="oddeven"><td>' . $langs->trans("TicketsAutoAssignTicket") . '</td>';
+print '<td class="left">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('TICKET_AUTO_ASSIGN_USER_CREATE');
 } else {
@@ -512,7 +617,11 @@ if (!$conf->use_javascript_ajax) {
 }
 
 // Admin var of module
+<<<<<<< HEAD
 print_titre($langs->trans("TicketParamMail"));
+=======
+print load_fiche_titre($langs->trans("Notification"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print '<table class="noborder" width="100%">';
 
@@ -530,6 +639,7 @@ if (empty($conf->global->FCKEDITOR_ENABLE_MAIL)) {
     print "</tr>\n";
 }
 
+<<<<<<< HEAD
 // Email d'envoi des notifications
 print '<tr class="pair"><td>' . $langs->trans("TicketEmailNotificationFrom") . '</td>';
 print '<td align="left">';
@@ -542,12 +652,36 @@ print '</tr>';
 // Email de réception des notifications
 print '<tr class="pair"><td>' . $langs->trans("TicketEmailNotificationTo") . '</td>';
 print '<td align="left">';
+=======
+// Activate log by email
+/*print '<tr class="pair"><td>' . $langs->trans("TicketsLogEnableEmail") . '</td>';
+print '<td class="left">';
+if ($conf->use_javascript_ajax) {
+    print ajax_constantonoff('TICKET_ACTIVATE_LOG_BY_EMAIL');
+} else {
+    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+    print $form->selectarray("TICKET_ACTIVATE_LOG_BY_EMAIL", $arrval, $conf->global->TICKET_ACTIVATE_LOG_BY_EMAIL);
+}
+print '</td>';
+print '<td align="center">';
+print $form->textwithpicto('', $langs->trans("TicketsLogEnableEmailHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+*/
+
+// @TODO Use module notification instead...
+
+// Email de réception des notifications
+print '<tr class="oddeven"><td>' . $langs->trans("TicketEmailNotificationTo") . '</td>';
+print '<td class="left">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '<input type="text"   name="TICKET_NOTIFICATION_EMAIL_TO" value="' . (!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) ? $conf->global->TICKET_NOTIFICATION_EMAIL_TO : $conf->global->TICKET_NOTIFICATION_EMAIL_FROM) . '" size="20" ></td>';
 print '<td align="center">';
 print $form->textwithpicto('', $langs->trans("TicketEmailNotificationToHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
 
+<<<<<<< HEAD
 // Texte de création d'un ticket
 $mail_mesg_new = $conf->global->TICKET_MESSAGE_MAIL_NEW ? $conf->global->TICKET_MESSAGE_MAIL_NEW : $langs->trans('TicketNewEmailBody');
 print '<tr><td>' . $langs->trans("TicketNewEmailBodyLabel") . '</label>';
@@ -563,6 +697,20 @@ print '</td></tr>';
 // Texte d'introduction
 $mail_intro = $conf->global->TICKET_MESSAGE_MAIL_INTRO ? $conf->global->TICKET_MESSAGE_MAIL_INTRO : $langs->trans('TicketMessageMailIntroText');
 print '<tr><td>' . $langs->trans("TicketMessageMailIntroLabelAdmin") . '</label>';
+=======
+// Email d'envoi des notifications
+print '<tr class="oddeven"><td>' . $langs->trans("TicketEmailNotificationFrom") . '</td>';
+print '<td class="left">';
+print '<input type="text" name="TICKET_NOTIFICATION_EMAIL_FROM" value="' . $conf->global->TICKET_NOTIFICATION_EMAIL_FROM . '" size="20" ></td>';
+print '<td align="center">';
+print $form->textwithpicto('', $langs->trans("TicketEmailNotificationFromHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+// Texte d'introduction
+$mail_intro = $conf->global->TICKET_MESSAGE_MAIL_INTRO ? $conf->global->TICKET_MESSAGE_MAIL_INTRO : $langs->trans('TicketMessageMailIntroText');
+print '<tr class="oddeven"><td>' . $langs->trans("TicketMessageMailIntroLabelAdmin") . '</label>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</td><td>';
 require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 $doleditor = new DolEditor('TICKET_MESSAGE_MAIL_INTRO', $mail_intro, '100%', 120, 'dolibarr_mailings', '', false, true, $conf->global->FCKEDITOR_ENABLE_MAIL, ROWS_2, 70);
@@ -574,7 +722,11 @@ print '</td></tr>';
 
 // Texte de signature
 $mail_signature = $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE ? $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE : $langs->trans('TicketMessageMailSignatureText');
+<<<<<<< HEAD
 print '<tr><td>' . $langs->trans("TicketMessageMailSignatureLabelAdmin") . '</label>';
+=======
+print '<tr class="oddeven"><td>' . $langs->trans("TicketMessageMailSignatureLabelAdmin") . '</label>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</td><td>';
 require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 $doleditor = new DolEditor('TICKET_MESSAGE_MAIL_SIGNATURE', $mail_signature, '100%', 120, 'dolibarr_mailings', '', false, true, $conf->global->FCKEDITOR_ENABLE_MAIL, ROWS_2, 70);
@@ -584,6 +736,7 @@ print '<td align="center">';
 print $form->textwithpicto('', $langs->trans("TicketMessageMailSignatureHelpAdmin"), 1, 'help');
 print '</td></tr>';
 
+<<<<<<< HEAD
 print '<tr class="liste_titre">';
 print '<td colspan="3">' . $langs->trans("PublicInterface") . '</td>';
 print "</tr>\n";
@@ -640,4 +793,16 @@ print '</form>';
 
 llxFooter();
 
+=======
+print '</table>';
+
+print '<div class="center">';
+print '<input type="submit" class="button" value="' . $langs->trans("Save") . '">';
+print '</div>';
+
+print '</form>';
+
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

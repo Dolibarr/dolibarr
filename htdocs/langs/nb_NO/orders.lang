@@ -16,6 +16,7 @@ MakeOrder=Opprett ordre
 SupplierOrder=Innkjøpsordre
 SuppliersOrders=Innkjøpsordre
 SuppliersOrdersRunning=Nåværende innkjøpsordre
+<<<<<<< HEAD
 CustomerOrder=Kundeordre
 CustomersOrders=Kundeordre
 CustomersOrdersRunning=Gjeldende kundeordre
@@ -24,6 +25,16 @@ OrdersDeliveredToBill=Fakturerbare leverte kundeordre
 OrdersToBill=Kundeordre levert
 OrdersInProcess=Kundeordre til behandling
 OrdersToProcess=Kundeordre til behandling
+=======
+CustomerOrder=Sales Order
+CustomersOrders=Salgsordre
+CustomersOrdersRunning=Aktuelle leverandørordre
+CustomersOrdersAndOrdersLines=Sales orders and order details
+OrdersDeliveredToBill=Sales orders delivered to bill
+OrdersToBill=Sales orders delivered
+OrdersInProcess=Sales orders in process
+OrdersToProcess=Sales orders to process
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SuppliersOrdersToProcess=Innkjøpsordre å behandle
 StatusOrderCanceledShort=Kansellert
 StatusOrderDraftShort=Kladd
@@ -76,8 +87,13 @@ OrdersOpened=Ordre å behandle
 NoDraftOrders=Ingen ordreutkast
 NoOrder=Ingen ordre
 NoSupplierOrder=Ingen innkjøpsordre
+<<<<<<< HEAD
 LastOrders=Siste %s kundeordre
 LastCustomerOrders=Siste %s kundeordre
+=======
+LastOrders=Latest %s sales orders
+LastCustomerOrders=Latest %s sales orders
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LastSupplierOrders=Siste %s innkjøpsordre
 LastModifiedOrders=Siste %s endrede ordre
 AllOrders=Alle ordre
@@ -85,10 +101,17 @@ NbOfOrders=Antall ordre
 OrdersStatistics=Ordrestatistikk
 OrdersStatisticsSuppliers=Innkjøpsordrestatistikk
 NumberOfOrdersByMonth=Antall ordre pr måned
+<<<<<<< HEAD
 AmountOfOrdersByMonthHT=Sum bestillinger etter måned (eks. MVA)
 ListOfOrders=Ordreliste
 CloseOrder=Lukk ordre
 ConfirmCloseOrder=Er du sikker på at du vil sette denne ordren som levert? Når en ordre er levert, kan den settes til "betalt"
+=======
+AmountOfOrdersByMonthHT=Amount of orders by month (excl. tax)
+ListOfOrders=Ordreliste
+CloseOrder=Lukk ordre
+ConfirmCloseOrder=Are you sure you want to set this order to delivered? Once an order is delivered, it can be set to billed.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmDeleteOrder=Er du sikker på at du vil slette denne ordren?
 ConfirmValidateOrder=Er du sikker på at du vil validere ordren <b>%s</b>?
 ConfirmUnvalidateOrder=Er du sikker på at du vil gjenopprette ordren <b>%s</b> til status "utkast"?
@@ -110,6 +133,7 @@ OrderMode=Ordremetode
 AuthorRequest=Finn forfatter
 UserWithApproveOrderGrant=Brukere med rettigheter til å "godkjenne ordre".
 PaymentOrderRef=Betaling av ordre %s
+<<<<<<< HEAD
 CloneOrder=Klon bestilling
 ConfirmCloneOrder=Er du sikker på at du vil klone denne ordren <b>%s</b>?
 DispatchSupplierOrder=Motta leverandørordre %s
@@ -124,6 +148,21 @@ TypeContact_commande_internal_SALESREPFOLL=Representant for oppfølging av kunde
 TypeContact_commande_internal_SHIPPING=Representant for oppfølging av levering
 TypeContact_commande_external_BILLING=Kundens fakturakontakt
 TypeContact_commande_external_SHIPPING=Kundens leveransekontakt
+=======
+ConfirmCloneOrder=Er du sikker på at du vil klone denne ordren <b>%s</b>?
+DispatchSupplierOrder=Receiving purchase order %s
+FirstApprovalAlreadyDone=Første godkjenning allerede utført
+SecondApprovalAlreadyDone=Andre gangs godkjenning allerede utført
+SupplierOrderReceivedInDolibarr=Innkjøpsordre %s mottatt %s
+SupplierOrderSubmitedInDolibarr=Purchase Order %s submitted
+SupplierOrderClassifiedBilled=Innkjøpsordre %s satt til fakturert
+OtherOrders=Andre ordre
+##### Types de contacts #####
+TypeContact_commande_internal_SALESREPFOLL=Representative following-up sales order
+TypeContact_commande_internal_SHIPPING=Representant for oppfølging av levering
+TypeContact_commande_external_BILLING=Kundekontakt faktura
+TypeContact_commande_external_SHIPPING=Kundekontakt leveranser
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TypeContact_commande_external_CUSTOMER=Kundens ordreoppfølger
 TypeContact_order_supplier_internal_SALESREPFOLL=Representant som følger opp innkjøpsordre
 TypeContact_order_supplier_internal_SHIPPING=Representant for oppfølging av levering
@@ -141,6 +180,10 @@ OrderByWWW=Online
 OrderByPhone=Telefon
 # Documents models
 PDFEinsteinDescription=En komplett ordremodell (logo...)
+<<<<<<< HEAD
+=======
+PDFEratostheneDescription=En komplett ordremodell (logo...)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PDFEdisonDescription=En enkel ordremodell
 PDFProformaDescription=En komplett proforma faktura (logo ...)
 CreateInvoiceForThisCustomer=Fakturer ordrer

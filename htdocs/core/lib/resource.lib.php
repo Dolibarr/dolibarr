@@ -35,14 +35,22 @@ function resource_prepare_head($object)
 	$h = 0;
 	$head = array();
 
+<<<<<<< HEAD
 	$head[$h][0] = dol_buildpath('/resource/card.php',1).'?id='.$object->id;
+=======
+	$head[$h][0] = dol_buildpath('/resource/card.php', 1).'?id='.$object->id;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$head[$h][1] = $langs->trans("ResourceCard");
     	$head[$h][2] = 'resource';
 	$h++;
 
 	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && (empty($conf->global->RESOURCE_HIDE_ADD_CONTACT_USER) || empty($conf->global->RESOURCE_HIDE_ADD_CONTACT_THIPARTY)))
 	{
+<<<<<<< HEAD
 	    $nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
+=======
+	    $nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    $head[$h][0] = DOL_URL_ROOT.'/resource/contact.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('ContactsAddresses');
 		if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
@@ -54,7 +62,11 @@ function resource_prepare_head($object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+<<<<<<< HEAD
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'resource');
+=======
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'resource');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
 	{
@@ -70,24 +82,55 @@ function resource_prepare_head($object)
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	$upload_dir = $conf->resource->dir_output . "/" . dol_sanitizeFileName($object->ref);
+<<<<<<< HEAD
 	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
+=======
+	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$head[$h][0] = DOL_URL_ROOT.'/resource/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Documents");
 	if($nbFiles > 0) $head[$h][1].= ' <span class="badge">'.$nbFiles.'</span>';
 	$head[$h][2] = 'documents';
 	$h++;
 
+<<<<<<< HEAD
+=======
+	$head[$h][0] = DOL_URL_ROOT.'/resource/agenda.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("Events");
+	if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
+	{
+		$head[$h][1].= '/';
+		$head[$h][1].= $langs->trans("Agenda");
+	}
+	$head[$h][2] = 'agenda';
+	$h++;
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/*$head[$h][0] = DOL_URL_ROOT.'/resource/info.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Info');
 	$head[$h][2] = 'info';
 	$h++;*/
 
+<<<<<<< HEAD
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'resource', 'remove');
+=======
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'resource', 'remove');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	return $head;
 }
 
+<<<<<<< HEAD
 function resource_admin_prepare_head() {
+=======
+/**
+ * Prepare head for admin tabs
+ *
+ * @return  array               Array of head entries
+ */
+function resource_admin_prepare_head()
+{
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	global $langs, $conf, $user;
 
@@ -103,15 +146,25 @@ function resource_admin_prepare_head() {
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+<<<<<<< HEAD
 	complete_head_from_modules($conf,$langs,null,$head,$h,'resource_admin');
+=======
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'resource_admin');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/resource_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$head[$h][2] = 'attributes';
 	$h++;
 
+<<<<<<< HEAD
 	complete_head_from_modules($conf,$langs,null,$head,$h,'resource_admin','remove');
 
 	return $head;
 
+=======
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'resource_admin', 'remove');
+
+	return $head;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

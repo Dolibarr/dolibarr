@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - help
+<<<<<<< HEAD
 CommunitySupport=Forum/Wiki Unterstützung
 EMailSupport=E-Mail-Unterstützung
 RemoteControlSupport=Fernwartungs-Support
@@ -8,6 +9,17 @@ HelpCenter=Hilfe-Center
 DolibarrHelpCenter=Hilfe- und Supportcenter
 ToGoBackToDolibarr=Andernfalls klicken Sie <a href="%s">hier um zum System</a> zurückzukehren
 TypeOfSupport=Support-Typ
+=======
+CommunitySupport=Forum-/Wiki-Unterstützung
+EMailSupport=E-Mail-Unterstützung
+RemoteControlSupport=Online- / Fernwartungssupport
+OtherSupport=Weitere Unterstützung
+ToSeeListOfAvailableRessources=Verfügbare Ressourcen:
+HelpCenter=Hilfebereich
+DolibarrHelpCenter=Hilfe- und Supportbereich
+ToGoBackToDolibarr=Um zur Startseite von Dolibarr zurückzukehren klicken Sie bitte <a href="%s">hier</a>.
+TypeOfSupport=Art des Supports
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TypeSupportCommunauty=Community (kostenlos)
 TypeSupportCommercial=Kommerzieller Support
 TypeOfHelp=Hilfe-Typ
@@ -15,6 +27,7 @@ NeedHelpCenter=Benötigen Sie Hilfe oder Unterstützung?
 Efficiency=Effizienz
 TypeHelpOnly=Ausschließlich Hilfe
 TypeHelpDev=Hilfe & Entwicklung
+<<<<<<< HEAD
 TypeHelpDevForm=Hilfe&Entwicklung&Ausbildung
 ToGetHelpGoOnSparkAngels1=Einige Unternehmen bieten eine schnelle (manchmal prompte) und effiziente Online-Unterstützung durch Fernwartung. Solche Helfer finden Sie auf dieser Website <b>%s</b>
 ToGetHelpGoOnSparkAngels3=Über einen Klick auf diese Schaltfläche erhalten Sie eine Liste aller verfügbaren Trainer für das System
@@ -24,3 +37,11 @@ LinkToGoldMember=Sie können einen, vom System für Ihre Sprache (%s) automatisc
 PossibleLanguages=Unterstützte Sprachen
 SubscribeToFoundation=Helfen auch Sie dem Dolibarr Projekt und unterstützen uns mit einer Abo-Spende.
 SeeOfficalSupport=Für offizielle Dolibarr Unterstützung in Ihrer Sprache: br><b><a href="%s" target="_blank">%s</a></b>
+=======
+TypeHelpDevForm=Hilfe, Entwicklung & Ausbildung
+BackToHelpCenter=Klicken Sie hier, um zur <a href="%s">Hilfeseite</a> zurückzukehren. 
+LinkToGoldMember=Sie können einen, vom System für Ihre Sprache (%s) automatisch ausgewählten, Trainer über einen Klick auf sein Widget kontaktieren (Status und Maximalpreis aktualisieren sich automatisch):
+PossibleLanguages=Unterstützte Sprachen
+SubscribeToFoundation=Helfen auch Sie dem Dolibarr-Projekt und unterstützen uns mit einer Spende. 
+SeeOfficalSupport=Für offiziellen Dolibarr-Support in Ihrer Sprache: <br><b><a href="%s" target="_blank">%s</a></b>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

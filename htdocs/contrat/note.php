@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,7 +28,11 @@
  *      \brief      Fiche de notes sur un contrat
  */
 
+<<<<<<< HEAD
 require ("../main.inc.php");
+=======
+require '../main.inc.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 if (! empty($conf->projet->enabled)) {
@@ -34,6 +42,7 @@ if (! empty($conf->projet->enabled)) {
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'contracts'));
 
+<<<<<<< HEAD
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $socid=GETPOST('socid','int');
@@ -46,6 +55,20 @@ $result=restrictedArea($user,'contrat',$id);
 
 $object = new Contrat($db);
 $object->fetch($id,$ref);
+=======
+$action=GETPOST('action', 'alpha');
+$confirm=GETPOST('confirm', 'alpha');
+$socid=GETPOST('socid', 'int');
+$id=GETPOST('id', 'int');
+$ref=GETPOST('ref', 'alpha');
+
+// Security check
+if ($user->societe_id) $socid=$user->societe_id;
+$result=restrictedArea($user, 'contrat', $id);
+
+$object = new Contrat($db);
+$object->fetch($id, $ref);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $permissionnote=$user->rights->contrat->creer;	// Used by the include of actions_setnotes.inc.php
 
@@ -66,7 +89,11 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, 
  * View
  */
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("Contract"),"");
+=======
+llxHeader('', $langs->trans("Contract"), "");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $form = new Form($db);
 
@@ -96,11 +123,19 @@ if ($id > 0 || ! empty($ref))
     $morehtmlref.='<div class="refidno">';
     // Ref customer
     $morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_customer', $object->ref_customer, $object, 0, 'string', '', 0, 1);
+<<<<<<< HEAD
     $morehtmlref.=$form->editfieldval("RefCustomer", 'ref_customer', $object->ref_customer, $object, 0, 'string', '', null, null, '', 1);
     // Ref supplier
     $morehtmlref.='<br>';
     $morehtmlref.=$form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', 0, 1);
     $morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1);
+=======
+    $morehtmlref.=$form->editfieldval("RefCustomer", 'ref_customer', $object->ref_customer, $object, 0, 'string', '', null, null, '', 1, 'getFormatedCustomerRef');
+    // Ref supplier
+    $morehtmlref.='<br>';
+    $morehtmlref.=$form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', 0, 1);
+    $morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1, 'getFormatedSupplierRef');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     // Thirdparty
     $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
     // Project
@@ -145,16 +180,28 @@ if ($id > 0 || ! empty($ref))
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
 
+<<<<<<< HEAD
     print '<table class="border" width="100%">';
+=======
+    print '<table class="border centpercent tableforfield">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
     // Ligne info remises tiers
     print '<tr><td class="titlefield">'.$langs->trans('Discount').'</td><td colspan="3">';
+<<<<<<< HEAD
     if ($object->thirdparty->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$object->thirdparty->remise_percent);
     else print $langs->trans("CompanyHasNoRelativeDiscount");
     $absolute_discount=$object->thirdparty->getAvailableDiscounts();
     print '. ';
     if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->trans("Currency".$conf->currency));
+=======
+    if ($object->thirdparty->remise_percent) print $langs->trans("CompanyHasRelativeDiscount", $object->thirdparty->remise_percent);
+    else print $langs->trans("CompanyHasNoRelativeDiscount");
+    $absolute_discount=$object->thirdparty->getAvailableDiscounts();
+    print '. ';
+    if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->trans("Currency".$conf->currency));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     else print $langs->trans("CompanyHasNoAbsoluteDiscount");
     print '.';
     print '</td></tr>';
@@ -162,9 +209,15 @@ if ($id > 0 || ! empty($ref))
     // Date
     print '<tr>';
     print '<td class="titlefield">';
+<<<<<<< HEAD
     print $form->editfieldkey("Date",'date_contrat',$object->date_contrat,$object,0);
     print '</td><td>';
     print $form->editfieldval("Date",'date_contrat',$object->date_contrat,$object,0,'datehourpicker');
+=======
+    print $form->editfieldkey("Date", 'date_contrat', $object->date_contrat, $object, 0);
+    print '</td><td>';
+    print $form->editfieldval("Date", 'date_contrat', $object->date_contrat, $object, 0, 'datehourpicker');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print '</td>';
     print '</tr>';
 
@@ -177,7 +230,10 @@ if ($id > 0 || ! empty($ref))
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 	dol_fiche_end();
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 

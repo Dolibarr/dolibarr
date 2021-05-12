@@ -34,15 +34,22 @@ class Cpaiement
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'cpaiement';
+<<<<<<< HEAD
+=======
+	
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'c_paiement';
 
+<<<<<<< HEAD
 
 	/**
 	 */
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	public $code;
 	public $libelle;
 	public $type;
@@ -50,9 +57,12 @@ class Cpaiement
 	public $accountancy_code;
 	public $module;
 
+<<<<<<< HEAD
 	/**
 	 */
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	/**
 	 * Constructor
@@ -141,6 +151,7 @@ class Cpaiement
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
 
+<<<<<<< HEAD
 			if (!$notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action to call a trigger.
@@ -150,6 +161,17 @@ class Cpaiement
 				//if ($result < 0) $error++;
 				//// End call triggers
 			}
+=======
+			// Uncomment this and change MYOBJECT to your own tag if you
+			// want this action to call a trigger.
+			//if (!$notrigger) {
+
+			//  // Call triggers
+			//  $result=$this->call_trigger('MYOBJECT_CREATE',$user);
+			//  if ($result < 0) $error++;
+			//  // End call triggers
+			//}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		// Commit or rollback
@@ -206,8 +228,11 @@ class Cpaiement
 				$this->active = $obj->active;
 				$this->accountancy_code = $obj->accountancy_code;
 				$this->module = $obj->module;
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 			$this->db->free($resql);
 
@@ -284,6 +309,7 @@ class Cpaiement
 			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 		}
 
+<<<<<<< HEAD
 		if (!$error && !$notrigger) {
 			// Uncomment this and change MYOBJECT to your own tag if you
 			// want this action calls a trigger.
@@ -293,6 +319,17 @@ class Cpaiement
 			//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
 			//// End call triggers
 		}
+=======
+		// Uncomment this and change MYOBJECT to your own tag if you
+		// want this action calls a trigger.
+		//if (!$error && !$notrigger) {
+
+		//  // Call triggers
+		//  $result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+		//  if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+		//  // End call triggers
+		//}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Commit or rollback
 		if ($error) {
@@ -322,6 +359,7 @@ class Cpaiement
 
 		$this->db->begin();
 
+<<<<<<< HEAD
 		if (!$error) {
 			if (!$notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
@@ -333,6 +371,17 @@ class Cpaiement
 				//// End call triggers
 			}
 		}
+=======
+		// Uncomment this and change MYOBJECT to your own tag if you
+		// want this action calls a trigger.
+		//if (!$error && !$notrigger) {
+
+		//  // Call triggers
+		//  $result=$this->call_trigger('MYOBJECT_DELETE',$user);
+		//  if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+		//  // End call triggers
+		//}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		if (!$error) {
 			$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . $this->table_element;
@@ -375,8 +424,12 @@ class Cpaiement
 		$this->active = '';
 		$this->accountancy_code = '';
 		$this->module = '';
+<<<<<<< HEAD
 
 
 	}
 
+=======
+	}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

@@ -3,7 +3,11 @@
  * Copyright (C) 2004-2005	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +35,11 @@ $langs->load("admin");
 if (! $user->admin)
 	accessforbidden();
 
+<<<<<<< HEAD
 $table=GETPOST('table','alpha');
+=======
+$table=GETPOST('table', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 /*
@@ -41,16 +49,28 @@ $table=GETPOST('table','alpha');
 llxHeader();
 
 
+<<<<<<< HEAD
 print load_fiche_titre($langs->trans("Table") . " ".$table,'','title_setup');
 
 // Define request to get table description
 $base=0;
 if (preg_match('/mysql/i',$conf->db->type))
+=======
+print load_fiche_titre($langs->trans("Table") . " ".$table, '', 'title_setup');
+
+// Define request to get table description
+$base=0;
+if (preg_match('/mysql/i', $conf->db->type))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$sql = "SHOW TABLE STATUS LIKE '".$db->escape($table)."'";
 	$base=1;
 }
+<<<<<<< HEAD
 else if ($conf->db->type == 'pgsql')
+=======
+elseif ($conf->db->type == 'pgsql')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$sql = "SELECT conname,contype FROM pg_constraint";
 	$base=2;
@@ -87,7 +107,11 @@ else
 				$cx = preg_replace("/`\)/", "", $cx);
 				$cx = preg_replace("/`\s/", "", $cx);
 
+<<<<<<< HEAD
 				$val = explode("`",$cx);
+=======
+				$val = explode("`", $cx);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				$link[trim($val[0])][0] = (isset($val[1])?$val[1]:'');
 				$link[trim($val[0])][1] = (isset($val[2])?$val[2]:'');
@@ -138,6 +162,11 @@ else
 	}
 }
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

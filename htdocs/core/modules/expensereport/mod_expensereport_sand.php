@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/expensereport/modules_expenserepo
  */
 class mod_expensereport_sand extends ModeleNumRefExpenseReport
 {
+<<<<<<< HEAD
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $error = '';
 	var $nom = 'Sand';
@@ -47,6 +48,44 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 		$langs->load("bills");
 
 		$form = new Form($this->db);
+=======
+	/**
+     * Dolibarr version of the loaded document
+     * @var string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	/**
+	 * @var string Error message
+	 */
+	public $error = '';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see $name
+	 */
+	public $nom='Sand';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Sand';
+
+
+    /**
+     *  Returns the description of the numbering model
+     *
+     *  @return     string      Texte descripif
+     */
+    public function info()
+    {
+    	global $db, $conf, $langs;
+
+		$langs->load("bills");
+
+		$form = new Form($db);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -55,17 +94,30 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 		$texte.= '<input type="hidden" name="maskconst" value="EXPENSEREPORT_SAND_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
+<<<<<<< HEAD
 		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("ExpenseReport"),$langs->transnoentities("ExpenseReport"));
 		//$tooltip.=$langs->trans("GenericMaskCodes2");
 		$tooltip.=$langs->trans("GenericMaskCodes3");
 		$tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("ExpenseReport"),$langs->transnoentities("ExpenseReport"));
+=======
+		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("ExpenseReport"), $langs->transnoentities("ExpenseReport"));
+		//$tooltip.=$langs->trans("GenericMaskCodes2");
+		$tooltip.=$langs->trans("GenericMaskCodes3");
+		$tooltip.=$langs->trans("GenericMaskCodes4a", $langs->transnoentities("ExpenseReport"), $langs->transnoentities("ExpenseReport"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$tooltip.=$langs->trans("GenericMaskCodes5");
 
 		// Parametrage du prefix
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
+<<<<<<< HEAD
 		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskvalue" value="'.$conf->global->EXPENSEREPORT_SAND_MASK.'">',$tooltip,1,1).'</td>';
 
 		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+=======
+		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskvalue" value="'.$conf->global->EXPENSEREPORT_SAND_MASK.'">', $tooltip, 1, 1).'</td>';
+
+		$texte.= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$texte.= '</tr>';
 
@@ -80,11 +132,19 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
      *
      *  @return     string      Example
      */
+<<<<<<< HEAD
     function getExample()
     {
      	global $conf,$langs,$user;
 
      	$exp=new ExpenseReport($this->db);
+=======
+    public function getExample()
+    {
+     	global $db, $conf,$langs,$user;
+
+     	$exp=new ExpenseReport($db);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      	$exp->initAsSpecimen();
      	$exp->fk_user_author = $user->id;
 
@@ -97,6 +157,7 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 		return $numExample;
     }
 
+<<<<<<< HEAD
 	/**
 	 * 	Return next free value
 	 *
@@ -106,6 +167,17 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
     function getNextValue($object)
     {
 		global $db,$conf;
+=======
+    /**
+     *  Return next free value
+     *
+     *  @param  Object      $object     Object we need next value for
+     *  @return string                  Value if KO, <0 if KO
+     */
+    public function getNextValue($object)
+    {
+        global $db,$conf;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
 
@@ -132,9 +204,17 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 			$fuser->fetch($object->fk_user_author);
 		}
 
+<<<<<<< HEAD
 		$numFinal=get_next_value($db,$mask,'expensereport','ref','',null, $date, 'next', true, $fuser);
 
 		return $numFinal;
 	}
 }
 
+=======
+		$numFinal=get_next_value($db, $mask, 'expensereport', 'ref', '', null, $date, 'next', true, $fuser);
+
+		return $numFinal;
+    }
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

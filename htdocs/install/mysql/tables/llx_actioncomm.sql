@@ -1,7 +1,11 @@
 -- ========================================================================
 -- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
 -- Copyright (C) 2011      Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+-- Copyright (C) 2011      Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -29,7 +33,11 @@ create table llx_actioncomm
   datep2			datetime,						-- date end
 
   fk_action			integer,						-- type of action (optional link with id in llx_c_actioncomm or null)
+<<<<<<< HEAD
   code				varchar(32) NULL,				-- code of action for automatic action ('AC_OTH_AUTO' for automatic actions, 'AC_EMAILIN_AUTO' for email input, 'AC_xxx' for manual action...) 
+=======
+  code				varchar(50) NULL,				-- code of action for automatic action ('AC_OTH_AUTO' for automatic actions, 'AC_EMAILIN_AUTO' for email input, 'AC_xxx' for manual action...) 
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
   
   datec				datetime,						-- date creation
   tms				timestamp,						-- date modification
@@ -46,7 +54,12 @@ create table llx_actioncomm
   transparency      integer,						-- transparency (ical standard). used to say if user assigned to event are busy or not by event. This field may be deprecated if we want to store transparency for each assigned user, moved into table llx_actioncomm_resources.
 
   priority			smallint,						-- priority (ical standard)
+<<<<<<< HEAD
   fulldayevent		smallint NOT NULL default 0,    -- priority (ical standard)
+=======
+  visibility		varchar(12) DEFAULT 'default',	-- visibility (ical standard) - 'default', 'public', 'private', 'confidential'
+  fulldayevent		smallint NOT NULL default 0,    -- full day (ical standard)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
   punctual			smallint NOT NULL default 1,    -- deprecated. milestone is event with date start (datep) = date end (datep2)
   percent			smallint NOT NULL default 0,
   location			varchar(128),
@@ -55,6 +68,11 @@ create table llx_actioncomm
   label				varchar(255) NOT NULL,			-- label/title of event or topic of email
   note				text,							-- note of event or content of email
   
+<<<<<<< HEAD
+=======
+  calling_duration  integer,                        -- when event is a phone call, duration of phone call
+  
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
   email_subject		varchar(255),					-- when event was an email, we store here the subject. content is stored into note.
   email_msgid		varchar(255),					-- when event was an email, we store here the msgid
   email_from		varchar(255),					-- when event was an email, we store here the from

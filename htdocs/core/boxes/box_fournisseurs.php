@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2004-2006 Destailleur Laurent  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,6 +35,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_fournisseurs extends ModeleBoxes
 {
+<<<<<<< HEAD
     var $boxcode="lastsuppliers";
     var $boximg="object_company";
     var $boxlabel="BoxLastSuppliers";
@@ -41,6 +46,22 @@ class box_fournisseurs extends ModeleBoxes
 
     var $info_box_head = array();
     var $info_box_contents = array();
+=======
+    public $boxcode="lastsuppliers";
+    public $boximg="object_company";
+    public $boxlabel="BoxLastSuppliers";
+    public $depends = array("fournisseur");
+
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    public $param;
+
+    public $info_box_head = array();
+    public $info_box_contents = array();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
     /**
@@ -49,7 +70,11 @@ class box_fournisseurs extends ModeleBoxes
      *  @param  DoliDB  $db         Database handler
      *  @param  string  $param      More parameters
      */
+<<<<<<< HEAD
     function __construct($db,$param)
+=======
+    public function __construct($db, $param)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $user;
 
@@ -64,7 +89,11 @@ class box_fournisseurs extends ModeleBoxes
 	 *  @param	int		$max        Maximum number of records to load
      *  @return	void
      */
+<<<<<<< HEAD
     function loadBox($max=5)
+=======
+    public function loadBox($max = 5)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $conf, $user, $langs, $db;
         $langs->load("boxes");
@@ -76,7 +105,11 @@ class box_fournisseurs extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 		$thirdpartytmp=new Fournisseur($db);
 
+<<<<<<< HEAD
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedSuppliers",$max));
+=======
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedSuppliers", $max));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         if ($user->rights->societe->lire)
         {
@@ -120,15 +153,24 @@ class box_fournisseurs extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
+<<<<<<< HEAD
                         'td' => 'align="right" width="18"',
                         'text' => $thirdpartystatic->LibStatut($objp->status,3),
+=======
+                        'td' => 'class="right" width="18"',
+                        'text' => $thirdpartystatic->LibStatut($objp->status, 3),
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                     );
 
                     $line++;
                 }
 
                 if ($num==0) $this->info_box_contents[$line][0] = array(
+<<<<<<< HEAD
                     'td' => 'align="center"',
+=======
+                    'td' => 'class="center"',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                     'text'=>$langs->trans("NoRecordedSuppliers"),
                 );
 
@@ -142,11 +184,18 @@ class box_fournisseurs extends ModeleBoxes
             }
         } else {
             $this->info_box_contents[0][0] = array(
+<<<<<<< HEAD
                 'td' => 'align="left" class="nohover opacitymedium"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
         }
 
+=======
+                'td' => 'class="nohover opacitymedium left"',
+                'text' => $langs->trans("ReadPermissionNotAllowed")
+            );
+        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
 	/**
@@ -157,6 +206,7 @@ class box_fournisseurs extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
+<<<<<<< HEAD
     function showBox($head = null, $contents = null, $nooutput=0)
     {
         return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
@@ -164,3 +214,10 @@ class box_fournisseurs extends ModeleBoxes
 
 }
 
+=======
+    public function showBox($head = null, $contents = null, $nooutput = 0)
+    {
+        return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+    }
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -76,7 +76,11 @@ CountryCG=Kongo
 CountryCD=Kongo, demokratska republika
 CountryCK=Cook Islands
 CountryCR=Kostarika
+<<<<<<< HEAD
 CountryHR=Hrvatska!
+=======
+CountryHR=Hrvatska
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryCU=Kuba
 CountryCY=Cipar
 CountryCZ=Češka
@@ -116,7 +120,11 @@ CountryHM=Heard Island and McDonald
 CountryVA=Holy See (Vatican City State)
 CountryHN=Honduras
 CountryHK=Hong Kong
+<<<<<<< HEAD
 CountryIS=Island
+=======
+CountryIS=Iceland
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryIN=Indija
 CountryID=Indonezija
 CountryIR=Iran
@@ -131,7 +139,11 @@ CountryKI=Kiribati
 CountryKP=Sjeverna Korea
 CountryKR=Južna Korea
 CountryKW=Kuvajt
+<<<<<<< HEAD
 CountryKG=Kirgistan
+=======
+CountryKG=Kyrgyzstan
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryLA=Lao
 CountryLV=Latvija
 CountryLB=Libanon
@@ -160,7 +172,11 @@ CountryMD=Moldavija
 CountryMN=Mongolia
 CountryMS=Monserrat
 CountryMZ=Mozambik
+<<<<<<< HEAD
 CountryMM=Birmania (Myanmar)
+=======
+CountryMM=Myanmar (Burma)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryNA=Nambija
 CountryNR=Nauru
 CountryNP=Nepal
@@ -223,7 +239,11 @@ CountryTO=Tonga
 CountryTT=Trinidad i Tobago
 CountryTR=Turska
 CountryTM=Turkmenistan
+<<<<<<< HEAD
 CountryTC=Turks and Cailos Islands
+=======
+CountryTC=Turks and Caicos Islands
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryTV=Tuvalu
 CountryUG=Uganda
 CountryUA=Ukrajina
@@ -255,14 +275,22 @@ CivilityMLE=Gđica.
 CivilityMTRE=Master
 CivilityDR=Doktor
 ##### Currencies #####
+<<<<<<< HEAD
 Currencyeuros=Eura
+=======
+Currencyeuros=Euro [EUR]
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrencyAUD=AU Dolara
 CurrencySingAUD=AU Dolar
 CurrencyCAD=CAN Dolara
 CurrencySingCAD=CAN dolar
 CurrencyCHF=Švic. franaka
 CurrencySingCHF=Švic. Franaka
+<<<<<<< HEAD
 CurrencyEUR=Eura
+=======
+CurrencyEUR=Euro [EUR]
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrencySingEUR=Euro
 CurrencyFRF=Fran. Franaka
 CurrencySingFRF=Fran. Franaka
@@ -277,7 +305,11 @@ CurrencySingMGA=Ariary
 CurrencyMUR=Mauritius rupees
 CurrencySingMUR=Mauritius rupee
 CurrencyNOK=Norveških Kruna
+<<<<<<< HEAD
 CurrencySingNOK=Norveška Kruna
+=======
+CurrencySingNOK=Norwegian kronas
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrencyTND=Tuniških Dinara
 CurrencySingTND=Tuniški Dinar
 CurrencyUSD=SAD Dolara
@@ -290,6 +322,10 @@ CurrencyXOF=CFA Francs BCEAO
 CurrencySingXOF=CFA Franc BCEAO
 CurrencyXPF=CFP Francs
 CurrencySingXPF=CFP Franc
+<<<<<<< HEAD
+=======
+CurrencyCentEUR=cents
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrencyCentSingEUR=Cent
 CurrencyCentINR=paisa
 CurrencyCentSingINR=paise
@@ -306,6 +342,10 @@ DemandReasonTypeSRC_WOM=Usmeno
 DemandReasonTypeSRC_PARTNER=Suradnik
 DemandReasonTypeSRC_EMPLOYEE=Zaposlenik
 DemandReasonTypeSRC_SPONSORING=Sponzorstvo
+<<<<<<< HEAD
+=======
+DemandReasonTypeSRC_SRC_CUSTOMER=Incoming contact of a customer
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 #### Paper formats ####
 PaperFormatEU4A0=4A0 format
 PaperFormatEU2A0=2A0 format

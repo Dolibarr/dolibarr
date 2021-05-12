@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      Juanjo Menent        <jmenent@2byte.es>
  *
@@ -34,16 +38,26 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('interventions', 'sendings', 'companies'));
 
+<<<<<<< HEAD
 $id = GETPOST('id','int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action','alpha');
+=======
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
+$action = GETPOST('action', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 
 $object = new Fichinter($db);
+<<<<<<< HEAD
 $result = $object->fetch($id,$ref);
+=======
+$result = $object->fetch($id, $ref);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (! $result)
 {
     print 'Record not found';
@@ -58,8 +72,13 @@ if ($action == 'addcontact' && $user->rights->ficheinter->creer)
 {
     if ($result > 0 && $id > 0)
     {
+<<<<<<< HEAD
     	$contactid = (GETPOST('userid','int') ? GETPOST('userid','int') : GETPOST('contactid','int'));
   		$result = $object->add_contact($contactid, GETPOST('type','int'), GETPOST('source','alpha'));
+=======
+    	$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
+  		$result = $object->add_contact($contactid, GETPOST('type', 'int'), GETPOST('source', 'alpha'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
 	if ($result >= 0)
@@ -81,6 +100,7 @@ if ($action == 'addcontact' && $user->rights->ficheinter->creer)
 }
 
 // Toggle the status of a contact
+<<<<<<< HEAD
 else if ($action == 'swapstatut' && $user->rights->ficheinter->creer)
 {
     $result=$object->swapContactStatus(GETPOST('ligne','int'));
@@ -90,6 +110,17 @@ else if ($action == 'swapstatut' && $user->rights->ficheinter->creer)
 else if ($action == 'deletecontact' && $user->rights->ficheinter->creer)
 {
 	$result = $object->delete_contact(GETPOST('lineid','int'));
+=======
+elseif ($action == 'swapstatut' && $user->rights->ficheinter->creer)
+{
+    $result=$object->swapContactStatus(GETPOST('ligne', 'int'));
+}
+
+// Deletes a contact
+elseif ($action == 'deletecontact' && $user->rights->ficheinter->creer)
+{
+	$result = $object->delete_contact(GETPOST('lineid', 'int'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	if ($result >= 0)
 	{
@@ -112,7 +143,11 @@ $contactstatic=new Contact($db);
 $userstatic=new User($db);
 $formproject=new FormProjets($db);
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("Intervention"));
+=======
+llxHeader('', $langs->trans("Intervention"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Mode vue et edition
 
@@ -179,13 +214,20 @@ if ($id > 0 || ! empty($ref))
 	if (! empty($conf->global->FICHINTER_HIDE_ADD_CONTACT_THIPARTY)) $hideaddcontactforthirdparty=1;
 
 	// Contacts lines (modules that overwrite templates must declare this into descriptor)
+<<<<<<< HEAD
 	$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
+=======
+	$dirtpls=array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	foreach($dirtpls as $reldir)
 	{
 	    $res=@include dol_buildpath($reldir.'/contacts.tpl.php');
 	    if ($res) break;
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 

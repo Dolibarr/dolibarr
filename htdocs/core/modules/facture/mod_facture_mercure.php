@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2013      Juanjo Menent		<jmenent@2byte.es>
  *
@@ -33,6 +37,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/facture/modules_facture.php';
  */
 class mod_facture_mercure extends ModeleNumRefFactures
 {
+<<<<<<< HEAD
     var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
     var $error = '';
 
@@ -49,6 +54,32 @@ class mod_facture_mercure extends ModeleNumRefFactures
         $langs->load("bills");
 
         $form = new Form($this->db);
+=======
+    /**
+     * Dolibarr version of the loaded document
+     * @var string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+    /**
+	 * @var string Error message
+	 */
+	public $error = '';
+
+
+    /**
+     *  Returns the description of the numbering model
+     *
+     *  @return     string      Texte descripif
+     */
+    public function info()
+    {
+        global $db, $conf, $langs;
+
+        $langs->load("bills");
+
+        $form = new Form($db);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         $texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
         $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -60,33 +91,59 @@ class mod_facture_mercure extends ModeleNumRefFactures
 		$texte.= '<input type="hidden" name="maskconstdeposit" value="FACTURE_MERCURE_MASK_DEPOSIT">';
         $texte.= '<table class="nobordernopadding" width="100%">';
 
+<<<<<<< HEAD
         $tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Invoice"),$langs->transnoentities("Invoice"));
         $tooltip.=$langs->trans("GenericMaskCodes2");
         $tooltip.=$langs->trans("GenericMaskCodes3");
         $tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("Invoice"),$langs->transnoentities("Invoice"));
+=======
+        $tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("Invoice"), $langs->transnoentities("Invoice"));
+        $tooltip.=$langs->trans("GenericMaskCodes2");
+        $tooltip.=$langs->trans("GenericMaskCodes3");
+        $tooltip.=$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Invoice"), $langs->transnoentities("Invoice"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $tooltip.=$langs->trans("GenericMaskCodes5");
 
         // Parametrage du prefix
         $texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceStandard").'):</td>';
+<<<<<<< HEAD
         $texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskinvoice" value="'.$conf->global->FACTURE_MERCURE_MASK_INVOICE.'">',$tooltip,1,1).'</td>';
 
         $texte.= '<td align="left" rowspan="3">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+=======
+        $texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskinvoice" value="'.$conf->global->FACTURE_MERCURE_MASK_INVOICE.'">', $tooltip, 1, 1).'</td>';
+
+        $texte.= '<td class="left" rowspan="3">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         $texte.= '</tr>';
 
         // Parametrage du prefix des replacement
         $texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceReplacement").'):</td>';
+<<<<<<< HEAD
         $texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskreplacement" value="'.$conf->global->FACTURE_MERCURE_MASK_REPLACEMENT.'">',$tooltip,1,1).'</td>';
         $texte.= '</tr>';
         
         // Parametrage du prefix des avoirs
         $texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceAvoir").'):</td>';
         $texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskcredit" value="'.$conf->global->FACTURE_MERCURE_MASK_CREDIT.'">',$tooltip,1,1).'</td>';
+=======
+        $texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskreplacement" value="'.$conf->global->FACTURE_MERCURE_MASK_REPLACEMENT.'">', $tooltip, 1, 1).'</td>';
+        $texte.= '</tr>';
+
+        // Parametrage du prefix des avoirs
+        $texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceAvoir").'):</td>';
+        $texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskcredit" value="'.$conf->global->FACTURE_MERCURE_MASK_CREDIT.'">', $tooltip, 1, 1).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $texte.= '</tr>';
 
         // Parametrage du prefix des acomptes
         $texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceDeposit").'):</td>';
+<<<<<<< HEAD
         $texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskdeposit" value="'.$conf->global->FACTURE_MERCURE_MASK_DEPOSIT.'">',$tooltip,1,1).'</td>';
+=======
+        $texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskdeposit" value="'.$conf->global->FACTURE_MERCURE_MASK_DEPOSIT.'">', $tooltip, 1, 1).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $texte.= '</tr>';
 
         $texte.= '</table>';
@@ -100,7 +157,11 @@ class mod_facture_mercure extends ModeleNumRefFactures
      *
      *  @return     string      Example
      */
+<<<<<<< HEAD
     function getExample()
+=======
+    public function getExample()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $conf,$langs,$mysoc;
 
@@ -108,7 +169,11 @@ class mod_facture_mercure extends ModeleNumRefFactures
         $old_code_type=$mysoc->typent_code;
         $mysoc->code_client='CCCCCCCCCC';
         $mysoc->typent_code='TTTTTTTTTT';
+<<<<<<< HEAD
         $numExample = $this->getNextValue($mysoc,'');
+=======
+        $numExample = $this->getNextValue($mysoc, '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $mysoc->code_client=$old_code_client;
         $mysoc->typent_code=$old_code_type;
 
@@ -123,6 +188,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
      * Return next value
      *
      * @param	Societe		$objsoc     Object third party
+<<<<<<< HEAD
      * @param   Facture		$facture	Object invoice
      * @param   string		$mode       'next' for next value or 'last' for last value
      * @return  string      			Value if OK, 0 if KO
@@ -136,6 +202,21 @@ class mod_facture_mercure extends ModeleNumRefFactures
         // Get Mask value
         $mask = '';
         if (is_object($facture) && $facture->type == 1) 
+=======
+     * @param   Facture		$invoice	Object invoice
+     * @param   string		$mode       'next' for next value or 'last' for last value
+     * @return  string      			Value if OK, 0 if KO
+     */
+    public function getNextValue($objsoc, $invoice, $mode = 'next')
+    {
+    	global $db,$conf;
+
+    	require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
+
+        // Get Mask value
+        $mask = '';
+        if (is_object($invoice) && $invoice->type == 1)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         {
         	$mask=$conf->global->FACTURE_MERCURE_MASK_REPLACEMENT;
         	if (! $mask)
@@ -143,8 +224,13 @@ class mod_facture_mercure extends ModeleNumRefFactures
         		$mask=$conf->global->FACTURE_MERCURE_MASK_INVOICE;
         	}
         }
+<<<<<<< HEAD
         else if (is_object($facture) && $facture->type == 2) $mask=$conf->global->FACTURE_MERCURE_MASK_CREDIT;
 		else if (is_object($facture) && $facture->type == 3) $mask=$conf->global->FACTURE_MERCURE_MASK_DEPOSIT;
+=======
+        elseif (is_object($invoice) && $invoice->type == 2) $mask=$conf->global->FACTURE_MERCURE_MASK_CREDIT;
+        elseif (is_object($invoice) && $invoice->type == 3) $mask=$conf->global->FACTURE_MERCURE_MASK_DEPOSIT;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         else $mask=$conf->global->FACTURE_MERCURE_MASK_INVOICE;
         if (! $mask)
         {
@@ -152,6 +238,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
             return 0;
         }
 
+<<<<<<< HEAD
         $where='';
         //if ($facture->type == 2) $where.= " AND type = 2";
         //else $where.=" AND type != 2";
@@ -160,6 +247,19 @@ class mod_facture_mercure extends ModeleNumRefFactures
         if (! preg_match('/([0-9])+/',$numFinal)) $this->error = $numFinal;
 
         return  $numFinal;
+=======
+    	$where='';
+    	//if ($facture->type == 2) $where.= " AND type = 2";
+    	//else $where.=" AND type != 2";
+
+    	// Get entities
+    	$entity = getEntity('invoicenumber', 1, $invoice);
+
+    	$numFinal=get_next_value($db, $mask, 'facture', 'ref', $where, $objsoc, $invoice->date, $mode, false, null, $entity);
+    	if (! preg_match('/([0-9])+/', $numFinal)) $this->error = $numFinal;
+
+    	return  $numFinal;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
 
@@ -171,9 +271,16 @@ class mod_facture_mercure extends ModeleNumRefFactures
      * @param   string		$mode       	'next' for next value or 'last' for last value
      * @return  string      				Next free value
      */
+<<<<<<< HEAD
     function getNumRef($objsoc,$objforref,$mode='next')
     {
         return $this->getNextValue($objsoc,$objforref,$mode);
     }
 
+=======
+    public function getNumRef($objsoc, $objforref, $mode = 'next')
+    {
+        return $this->getNextValue($objsoc, $objforref, $mode);
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

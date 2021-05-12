@@ -30,8 +30,13 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'companies'));
 
+<<<<<<< HEAD
 $id = GETPOST('id','int');
 $_socid = GETPOST("id",'int');
+=======
+$id = GETPOST('id', 'int');
+$_socid = GETPOST("id", 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 // Security check
 if ($user->societe_id > 0)
 {
@@ -45,9 +50,15 @@ if ($user->societe_id > 0)
 
 if ($_POST["action"] == 'setpricelevel')
 {
+<<<<<<< HEAD
 	$soc = New Societe($db);
 	$soc->fetch($id);
 	$soc->set_price_level($_POST["price_level"],$user);
+=======
+	$soc = new Societe($db);
+	$soc->fetch($id);
+	$soc->set_price_level($_POST["price_level"], $user);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	header("Location: multiprix.php?id=".$id);
 	exit;
@@ -67,7 +78,11 @@ if ($_socid > 0)
 	// On recupere les donnees societes par l'objet
 	$objsoc = new Societe($db);
 	$objsoc->id=$_socid;
+<<<<<<< HEAD
 	$objsoc->fetch($_socid,$to);
+=======
+	$objsoc->fetch($_socid, $to);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	if ($errmesg)
 	{
@@ -149,7 +164,11 @@ if ($_socid > 0)
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Date").'</td>';
 		print '<td>'.$langs->trans("PriceLevel").'</td>';
+<<<<<<< HEAD
 		print '<td align="right">'.$langs->trans("User").'</td>';
+=======
+		print '<td class="right">'.$langs->trans("User").'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</tr>';
 		$i = 0 ;
 		$num = $db->num_rows($resql);
@@ -159,11 +178,19 @@ if ($_socid > 0)
 			$obj = $db->fetch_object($resql);
 			$tag = !$tag;
 			print '<tr '.$bc[$tag].'>';
+<<<<<<< HEAD
 			print '<td>'.dol_print_date($db->jdate($obj->dc),"dayhour").'</td>';
 			print '<td>'.$obj->price_level.' </td>';
 			$userstatic->id=$obj->uid;
 			$userstatic->lastname=$obj->login;
 			print '<td align="right">'.$userstatic->getNomUrl(1).'</td>';
+=======
+			print '<td>'.dol_print_date($db->jdate($obj->dc), "dayhour").'</td>';
+			print '<td>'.$obj->price_level.' </td>';
+			$userstatic->id=$obj->uid;
+			$userstatic->lastname=$obj->login;
+			print '<td class="right">'.$userstatic->getNomUrl(1).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '</tr>';
 			$i++;
 		}
@@ -174,8 +201,14 @@ if ($_socid > 0)
 	{
 		dol_print_error($db);
 	}
+<<<<<<< HEAD
 
 }
 
+=======
+}
+
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

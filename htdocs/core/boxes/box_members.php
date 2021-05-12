@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,6 +36,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_members extends ModeleBoxes
 {
+<<<<<<< HEAD
 	var $boxcode="lastmembers";
 	var $boximg="object_user";
 	var $boxlabel="BoxLastMembers";
@@ -43,6 +48,23 @@ class box_members extends ModeleBoxes
 
 	var $info_box_head = array();
 	var $info_box_contents = array();
+=======
+    public $boxcode="lastmembers";
+    public $boximg="object_user";
+    public $boxlabel="BoxLastMembers";
+    public $depends = array("adherent");
+
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    public $param;
+    public $enabled = 1;
+
+    public $info_box_head = array();
+    public $info_box_contents = array();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	/**
@@ -51,15 +73,24 @@ class box_members extends ModeleBoxes
 	 *  @param  DoliDB	$db      	Database handler
      *  @param	string	$param		More parameters
 	 */
+<<<<<<< HEAD
 	function __construct($db,$param='')
+=======
+	public function __construct($db, $param = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf, $user;
 
 		$this->db = $db;
 
 		// disable module for such cases
+<<<<<<< HEAD
 		$listofmodulesforexternal=explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL);
 		if (! in_array('adherent',$listofmodulesforexternal) && ! empty($user->societe_id)) $this->enabled=0;	// disabled for external users
+=======
+		$listofmodulesforexternal=explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
+		if (! in_array('adherent', $listofmodulesforexternal) && ! empty($user->societe_id)) $this->enabled=0;	// disabled for external users
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$this->hidden=! ($user->rights->adherent->lire);
 	}
@@ -70,7 +101,11 @@ class box_members extends ModeleBoxes
 	 *  @param	int		$max        Maximum number of records to load
      *  @return	void
 	 */
+<<<<<<< HEAD
 	function loadBox($max=5)
+=======
+	public function loadBox($max = 5)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $user, $langs, $db, $conf;
 		$langs->load("boxes");
@@ -80,7 +115,11 @@ class box_members extends ModeleBoxes
         include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
         $memberstatic=new Adherent($db);
 
+<<<<<<< HEAD
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedMembers",$max));
+=======
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedMembers", $max));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		if ($user->rights->adherent->lire)
 		{
@@ -137,8 +176,13 @@ class box_members extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
+<<<<<<< HEAD
                         'td' => 'align="right" width="18"',
                         'text' => $memberstatic->LibStatut($objp->status,$objp->subscription,$db->jdate($objp->date_end_subscription),3),
+=======
+                        'td' => 'class="right" width="18"',
+                        'text' => $memberstatic->LibStatut($objp->status, $objp->subscription, $db->jdate($objp->date_end_subscription), 3),
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                     );
 
                     $line++;
@@ -146,7 +190,11 @@ class box_members extends ModeleBoxes
 
                 if ($num==0)
                     $this->info_box_contents[$line][0] = array(
+<<<<<<< HEAD
                         'td' => 'align="center"',
+=======
+                        'td' => 'class="center"',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                         'text'=>$langs->trans("NoRecordedCustomers"),
                     );
 
@@ -160,11 +208,18 @@ class box_members extends ModeleBoxes
             }
         } else {
             $this->info_box_contents[0][0] = array(
+<<<<<<< HEAD
                 'td' => 'align="left" class="nohover opacitymedium"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
         }
 
+=======
+                'td' => 'class="nohover opacitymedium left"',
+                'text' => $langs->trans("ReadPermissionNotAllowed")
+            );
+        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
 	/**
@@ -175,6 +230,7 @@ class box_members extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
+<<<<<<< HEAD
     function showBox($head = null, $contents = null, $nooutput=0)
     {
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
@@ -182,3 +238,10 @@ class box_members extends ModeleBoxes
 
 }
 
+=======
+    public function showBox($head = null, $contents = null, $nooutput = 0)
+    {
+		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+	}
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

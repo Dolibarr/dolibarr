@@ -4,6 +4,7 @@ Companies=Partner
 UserTitle=Titel
 PhoneMobile=Handy
 Web=Webadresse
+<<<<<<< HEAD
 LocalTax1IsUsedES=RE wird
 LocalTax2IsUsedES=IRPF verwendet wird
 ProfId1AR=Prof Id 1 (CUIL)
@@ -11,5 +12,12 @@ CustomerCode=Kunden-Code
 CustomerCodeShort=Kunden-Code
 CapitalOf=Hauptstadt von %s
 NorProspectNorCustomer=Weder Lead noch Kunde
+=======
+OverAllSupplierProposals=Preisanfrage
+LocalTax1IsUsedES=RE wird
+LocalTax2IsUsedES=IRPF verwendet wird
+ProfId1AR=Prof Id 1 (CUIL)
+CapitalOf=Hauptstadt von %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 OthersNotLinkedToThirdParty=Andere, nicht mit einem Partner verknüpfte
 ActivityCeased=geschlossen

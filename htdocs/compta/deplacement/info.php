@@ -31,7 +31,11 @@ require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php'
 $langs->load("trips");
 
 // Security check
+<<<<<<< HEAD
 $id = GETPOST('id','int');
+=======
+$id = GETPOST('id', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'deplacement', $id, '');
 
@@ -59,5 +63,9 @@ if ($id)
     print '</div>';
 }
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

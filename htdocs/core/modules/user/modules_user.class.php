@@ -2,7 +2,11 @@
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +28,11 @@
  *	    \class      ModeleProductCode
  *		\brief  	Parent class for product code generators
  */
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 /**
  *  \file       htdocs/core/modules/contract/modules_contract.php
  *  \ingroup    contract
@@ -32,15 +40,29 @@
  */
 
  require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 /**
  *	Parent class to manage intervention document templates
  */
 abstract class ModelePDFUser extends CommonDocGenerator
 {
+<<<<<<< HEAD
 	var $error='';
 
 
+=======
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *	Return list of active generation modules
 	 *
@@ -48,15 +70,28 @@ abstract class ModelePDFUser extends CommonDocGenerator
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
+<<<<<<< HEAD
 	static function liste_modeles($db,$maxfilenamelength=0)
 	{
+=======
+	public static function liste_modeles($db, $maxfilenamelength = 0)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf;
 
 		$type='user';
 		$liste=array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+<<<<<<< HEAD
 		$liste=getListOfModels($db,$type,$maxfilenamelength);
 		return $liste;
 	}
 }
+=======
+		$liste=getListOfModels($db, $type, $maxfilenamelength);
+		return $liste;
+	}
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

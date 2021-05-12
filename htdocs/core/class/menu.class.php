@@ -28,6 +28,7 @@
  */
 class Menu
 {
+<<<<<<< HEAD
     var $liste;
 
     /**
@@ -36,6 +37,16 @@ class Menu
     function __construct()
     {
       	$this->liste = array();
+=======
+    public $liste;
+
+    /**
+     *	Constructor
+     */
+    public function __construct()
+    {
+          $this->liste = array();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
     /**
@@ -43,7 +54,11 @@ class Menu
      *
      * @return	void
      */
+<<<<<<< HEAD
     function clear()
+=======
+    public function clear()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $this->liste = array();
     }
@@ -65,15 +80,25 @@ class Menu
      * @param	string	$prefix		Prefix to title (image or picto)
      * @return	void
      */
+<<<<<<< HEAD
     function add($url, $titre, $level=0, $enabled=1, $target='',$mainmenu='',$leftmenu='',$position=0, $id='', $idsel='', $classname='', $prefix='')
     {
     	$this->liste[]=array('url'=>$url,'titre'=>$titre,'level'=>$level,'enabled'=>$enabled,'target'=>$target,'mainmenu'=>$mainmenu,'leftmenu'=>$leftmenu, 'position'=>$position, 'id'=>$id, 'idsel'=>$idsel, 'classname'=>$classname, 'prefix'=>$prefix);
+=======
+    public function add($url, $titre, $level = 0, $enabled = 1, $target = '', $mainmenu = '', $leftmenu = '', $position = 0, $id = '', $idsel = '', $classname = '', $prefix = '')
+    {
+        $this->liste[]=array('url'=>$url,'titre'=>$titre,'level'=>$level,'enabled'=>$enabled,'target'=>$target,'mainmenu'=>$mainmenu,'leftmenu'=>$leftmenu, 'position'=>$position, 'id'=>$id, 'idsel'=>$idsel, 'classname'=>$classname, 'prefix'=>$prefix);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
     /**
      * Insert a menu entry into this->liste
      *
+<<<<<<< HEAD
      * @param	int		$idafter	Array key after which inserting new entry
+=======
+     * @param   int     $idafter    Array key after which inserting new entry
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      * @param	string	$url        Url to follow on click
      * @param   string	$titre      Label of menu to add
      * @param   integer	$level      Level of menu to add
@@ -88,6 +113,7 @@ class Menu
      * @param	string	$prefix		Prefix to title (image or picto)
      * @return	void
      */
+<<<<<<< HEAD
     function insert($idafter, $url, $titre, $level=0, $enabled=1, $target='',$mainmenu='',$leftmenu='',$position=0, $id='', $idsel='', $classname='', $prefix='')
     {
         $array_start = array_slice($this->liste,0,($idafter+1));
@@ -96,14 +122,34 @@ class Menu
         $this->liste=array_merge($array_start,$array_new,$array_end);
     }
 
+=======
+    public function insert($idafter, $url, $titre, $level = 0, $enabled = 1, $target = '', $mainmenu = '', $leftmenu = '', $position = 0, $id = '', $idsel = '', $classname = '', $prefix = '')
+    {
+        $array_start = array_slice($this->liste, 0, ($idafter+1));
+        $array_new   = array(0=>array('url'=>$url,'titre'=>$titre,'level'=>$level,'enabled'=>$enabled,'target'=>$target,'mainmenu'=>$mainmenu,'leftmenu'=>$leftmenu,'position'=>$position, 'id'=>$id, 'idsel'=>$idsel, 'classname'=>$classname, 'prefix'=>$prefix));
+        $array_end   = array_slice($this->liste, ($idafter+1));
+        $this->liste=array_merge($array_start, $array_new, $array_end);
+    }
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     /**
      * Remove a menu entry from this->liste
      *
      * @return	void
      */
+<<<<<<< HEAD
     function remove_last()
     {
     	if (count($this->liste) > 1) array_pop($this->liste);
+=======
+    public function remove_last()
+    {
+        // phpcs:enable
+        if (count($this->liste) > 1) {
+            array_pop($this->liste);
+        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
     /**
@@ -111,7 +157,11 @@ class Menu
      *
      *  @return int     Number of visible (gray or not) menu entries
      */
+<<<<<<< HEAD
     function getNbOfVisibleMenuEntries()
+=======
+    public function getNbOfVisibleMenuEntries()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $nb=0;
         foreach($this->liste as $val)

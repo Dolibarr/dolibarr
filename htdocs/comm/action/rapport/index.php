@@ -2,7 +2,11 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/action/rapport.pdf.php';
 // Load translation files required by the page
 $langs->loadLangs(array("agenda", "commercial"));
 
+<<<<<<< HEAD
 $action=GETPOST('action','alpha');
 $month=GETPOST('month');
 $year=GETPOST('year');
@@ -42,13 +47,27 @@ $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
+=======
+$action=GETPOST('action', 'alpha');
+$month=GETPOST('month');
+$year=GETPOST('year');
+
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($page == -1 || $page == null) { $page = 0 ; }
 $offset = $limit * $page ;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="a.datep";
 
 // Security check
+<<<<<<< HEAD
 $socid = GETPOST('socid','int');
+=======
+$socid = GETPOST('socid', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'agenda', $socid, '', 'myactions');
 
@@ -60,7 +79,11 @@ $result = restrictedArea($user, 'agenda', $socid, '', 'myactions');
 if ($action == 'builddoc')
 {
 	$cat = new CommActionRapport($db, $month, $year);
+<<<<<<< HEAD
 	$result=$cat->write_file(GETPOST('id','int'));
+=======
+	$result=$cat->write_file(GETPOST('id', 'int'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if ($result < 0)
 	{
 		setEventMessages($cat->error, $cat->errors, 'errors');
@@ -100,7 +123,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     }
 }
 
+<<<<<<< HEAD
 $sql.= $db->plimit($limit+1,$offset);
+=======
+$sql.= $db->plimit($limit+1, $offset);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 //print $sql;
 dol_syslog("select", LOG_DEBUG);
@@ -138,7 +165,11 @@ if ($resql)
 	print '<td align="center">'.$langs->trans("Size").'</td>';
 	print "</tr>\n";
 
+<<<<<<< HEAD
 	while ($i < min($num,$limit))
+=======
+	while ($i < min($num, $limit))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$obj=$db->fetch_object($resql);
 
@@ -155,7 +186,11 @@ if ($resql)
 
 			// Button to build doc
 			print '<td align="center">';
+<<<<<<< HEAD
 			print '<a href="'.$_SERVER["PHP_SELF"].'?action=builddoc&amp;page='.$page.'&amp;month='.$obj->month.'&amp;year='.$obj->year.'">'.img_picto($langs->trans('BuildDoc'),'filenew').'</a>';
+=======
+			print '<a href="'.$_SERVER["PHP_SELF"].'?action=builddoc&amp;page='.$page.'&amp;month='.$obj->month.'&amp;year='.$obj->year.'">'.img_picto($langs->trans('BuildDoc'), 'filenew').'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '</td>';
 
 			$name = "actions-".$obj->month."-".$obj->year.".pdf";
@@ -175,6 +210,7 @@ if ($resql)
 
 				// Show file name with link to download
 				$out.= '<a href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).($param?'&'.$param:'').'"';
+<<<<<<< HEAD
 				$mime=dol_mimetype($relativepath,'',0);
 				if (preg_match('/text/',$mime)) $out.= ' target="_blank"';
 				$out.= ' target="_blank">';
@@ -186,6 +222,19 @@ if ($resql)
 
 				print '</td>';
 				print '<td align="center">'.dol_print_date(dol_filemtime($file),'dayhour').'</td>';
+=======
+				$mime=dol_mimetype($relativepath, '', 0);
+				if (preg_match('/text/', $mime)) $out.= ' target="_blank"';
+				$out.= ' target="_blank">';
+				$out.= img_mime($filearray["name"], $langs->trans("File").': '.$filearray["name"]);
+				$out.= $filearray["name"];
+				$out.= '</a>'."\n";
+				$out.= $formfile->showPreview($filearray, $modulepart, $relativepath, 0, $param);
+				print $out;
+
+				print '</td>';
+				print '<td align="center">'.dol_print_date(dol_filemtime($file), 'dayhour').'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				print '<td align="center">'.dol_print_size(dol_filesize($file)).'</td>';
 			}
 			else {
@@ -209,5 +258,9 @@ else
 	dol_print_error($db);
 }
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

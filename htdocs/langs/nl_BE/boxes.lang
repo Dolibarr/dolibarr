@@ -1,10 +1,16 @@
 # Dolibarr language file - Source file is en_US - boxes
+<<<<<<< HEAD
 BoxLoginInformation=Login Informatie
 BoxProductsAlertStock=Alarm producten voorraad
 BoxLastProductsInContract=Laatste %s producten/diensten met contract.
 BoxLastCustomerBills=Laatste klantenfacturen
 BoxOldestUnpaidCustomerBills=Oudste onbetaalde klantenfacturen
 BoxOldestUnpaidSupplierBills=Oudste onbetaalde leveranciersfacturen
+=======
+BoxProductsAlertStock=Alarm producten voorraad
+BoxLastProductsInContract=Laatste %s producten/diensten met contract.
+BoxOldestUnpaidCustomerBills=Oudste onbetaalde klantenfacturen
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BoxLastProposals=Laatste commerciële offerten/voorstellen
 BoxLastProspects=Laatste aangepaste propecten
 BoxLastCustomers=Laatste aangepaste klanten
@@ -12,6 +18,7 @@ BoxLastSuppliers=Laatste aangapaste leveranciers
 BoxLastContacts=Laatste contacten/adressen
 BoxFicheInter=Laatste interventie
 BoxTitleLastRssInfos=Laatste %s nieuws van %s
+<<<<<<< HEAD
 BoxTitleLastProducts=Laatste %s aangepaste producten / services
 BoxTitleLastSuppliers=Laatste %s geregistreerde leveranciers
 BoxTitleLastModifiedCustomers=Laatste %s gewijzigde klanten
@@ -22,11 +29,16 @@ BoxTitleLastModifiedMembers=Laatste %s leden
 BoxTitleLastFicheInter=Laatste %s gemodificeerde interventies
 BoxTitleLastModifiedContacts=Laatste %s gewijzigde contacten / adressen
 BoxMyLastBookmarks=Mijn laatste %s bladwijzers
+=======
+BoxTitleLastSuppliers=Laatste %s geregistreerde leveranciers
+BoxTitleLastFicheInter=Laatste %s gemodificeerde interventies
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BoxLastExpiredServices=Laatste %s oudste contacten met actieve verlopen services
 BoxTitleLastActionsToDo=Laatste %s acties om te doen
 BoxTitleLastContracts=Laatste %s gewijzigde contracten
 BoxTitleLastModifiedDonations=Laatste %s gewijzigde donaties
 BoxTitleLastModifiedExpenses=Laatste gewijzigde %s onkostenmeldingen
+<<<<<<< HEAD
 BoxTitleGoodCustomers=%s Goede klanten
 FailedToRefreshDataInfoNotUpToDate=Vernieuwen van RSS-flux is mislukt. Laatste succesvolle vernieuwingsdatum: %s
 LastRefreshDate=Laatste vernieuwingsdatum
@@ -37,6 +49,12 @@ NoModifiedSupplierBills=Geen opgenomen leveranciersfacturen
 BoxTitleLastModifiedSupplierBills=Laatste %s gewijzigde leveranciersrekeningen
 BoxTitleLatestModifiedSupplierOrders=Laatste %s gewijzigde leveranciersbestellingen
 BoxTitleLastModifiedCustomerBills=Laatste %s gewijzigde klantrekeningen
+=======
+LastRefreshDate=Laatste vernieuwingsdatum
+NoActionsToDo=Geen acties te doen
+NoRecordedInvoices=Geen geregistreerde klantfacturen
+NoUnpaidCustomerBills=Geen onbetaalde klantfacturen
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BoxTitleLastModifiedPropals=Laatste %s gewijzigde offertes
 LastXMonthRolling=De laatste %s maand rollen
 ChooseBoxToAdd=Widget toevoegen aan uw dashbord

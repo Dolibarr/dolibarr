@@ -116,7 +116,11 @@ CountryHM=Heard-eyjar og McDonald
 CountryVA=Páfagarði (Vatican City State)
 CountryHN=Hondúras
 CountryHK=Hong Kong
+<<<<<<< HEAD
 CountryIS=Icelande
+=======
+CountryIS=Iceland
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryIN=Indland
 CountryID=Iceland
 CountryIR=Íran
@@ -131,7 +135,11 @@ CountryKI=Kíribatí
 CountryKP=Norður-Kórea
 CountryKR=Suður-Kórea
 CountryKW=Kúveit
+<<<<<<< HEAD
 CountryKG=Kyrghyztan
+=======
+CountryKG=Kyrgyzstan
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryLA=Lao
 CountryLV=Lettland
 CountryLB=Líbanon
@@ -160,7 +168,11 @@ CountryMD=Moldova
 CountryMN=Mongólía
 CountryMS=Montserrat
 CountryMZ=Mósambík
+<<<<<<< HEAD
 CountryMM=Birmania (Burma)
+=======
+CountryMM=Myanmar (Burma)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryNA=Namibía
 CountryNR=Nauru
 CountryNP=Nepal
@@ -223,7 +235,11 @@ CountryTO=Tonga
 CountryTT=Trínidad og Tóbagó
 CountryTR=Tyrkland
 CountryTM=Turkmenistan
+<<<<<<< HEAD
 CountryTC=Turks og Cailos Islands
+=======
+CountryTC=Turks and Caicos Islands
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryTV=Túvalú
 CountryUG=Úganda
 CountryUA=Úkraína
@@ -277,7 +293,11 @@ CurrencySingMGA=Ariary
 CurrencyMUR=Mauritius rúpíur
 CurrencySingMUR=Mauritius rúpíur
 CurrencyNOK=Norska krones
+<<<<<<< HEAD
 CurrencySingNOK=Norsk króna
+=======
+CurrencySingNOK=Norwegian kronas
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrencyTND=Tunisian dinars
 CurrencySingTND=Tunisian denari
 CurrencyUSD=US dollarar
@@ -290,6 +310,10 @@ CurrencyXOF=CFA Francs BCEAO
 CurrencySingXOF=CFA Franc BCEAO
 CurrencyXPF=CFP Francs
 CurrencySingXPF=CFP Franc
+<<<<<<< HEAD
+=======
+CurrencyCentEUR=cents
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrencyCentSingEUR=cent
 CurrencyCentINR=paisa
 CurrencyCentSingINR=paise
@@ -306,6 +330,10 @@ DemandReasonTypeSRC_WOM=Word of mouth
 DemandReasonTypeSRC_PARTNER=Partner
 DemandReasonTypeSRC_EMPLOYEE=Employee
 DemandReasonTypeSRC_SPONSORING=Sponsorship
+<<<<<<< HEAD
+=======
+DemandReasonTypeSRC_SRC_CUSTOMER=Incoming contact of a customer
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 #### Paper formats ####
 PaperFormatEU4A0=Format 4A0
 PaperFormatEU2A0=Format 2A0

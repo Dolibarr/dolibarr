@@ -16,12 +16,17 @@ a:hover {
 	border: 1px solid #bbb;
 	border-radius: 8px;
 	-moz-border-radius: 8px;
+<<<<<<< HEAD
 	box-shadow: 2px 2px 8px #BBB; 
+=======
+	box-shadow: 2px 2px 8px #BBB;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 .CTable {
 	padding: 6px;
 	font-weight: normal;
 	color: #444444 !important;
+<<<<<<< HEAD
 	
 	margin: 8px 0px 8px 2px;
 	
@@ -29,6 +34,15 @@ a:hover {
 	border-radius: 8px;
 	-moz-border-radius: 8px;*/
 	
+=======
+
+	margin: 8px 0px 8px 2px;
+
+	/*border: 1px solid #bbb;
+	border-radius: 8px;
+	-moz-border-radius: 8px;*/
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	background: -webkit-linear-gradient(bottom, rgb(255,255,255) 85%, rgb(255,255,255) 100%);
 }
 .csscolumns {
@@ -129,4 +143,8 @@ img.demothumb {
         margin-left: 0px;
         margin-right: 0px;
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

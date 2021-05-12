@@ -1,7 +1,11 @@
 -- ============================================================================
 -- Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
 -- Copyright (C) 2009-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+<<<<<<< HEAD
 -- Copyright (C) 2009-2013	Regis Houssin			<regis.houssin@capnetworks.com>
+=======
+-- Copyright (C) 2009-2013	Regis Houssin			<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 -- Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -28,6 +32,10 @@ create table llx_product_fournisseur_price
   fk_product			integer,
   fk_soc				integer,
   ref_fourn				varchar(30),
+<<<<<<< HEAD
+=======
+  desc_fourn            text,
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
   fk_availability		integer,	   
   price					double(24,8) DEFAULT 0,		-- price without tax for quantity
   quantity				double,
@@ -36,6 +44,11 @@ create table llx_product_fournisseur_price
   unitprice				double(24,8) DEFAULT 0,		-- unit price without tax
   charges				double(24,8) DEFAULT 0,		-- to store transport cost. Constant PRODUCT_CHARGES must be set to see it.
   default_vat_code	    varchar(10),
+<<<<<<< HEAD
+=======
+  barcode                       varchar(180) DEFAULT NULL,          -- barcode
+  fk_barcode_type               integer      DEFAULT NULL,          -- barcode type
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
   tva_tx				double(6,3) NOT NULL,
   localtax1_tx		    double(6,3) DEFAULT 0,
   localtax1_type        varchar(10)  NOT NULL DEFAULT '0',

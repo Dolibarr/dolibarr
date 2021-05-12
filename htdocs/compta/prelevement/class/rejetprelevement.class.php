@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+<<<<<<< HEAD
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,8 +34,20 @@
  */
 class RejetPrelevement
 {
+<<<<<<< HEAD
 	var $id;
 	var $db;
+=======
+	/**
+	 * @var int ID
+	 */
+	public $id;
+
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	/**
@@ -40,7 +56,11 @@ class RejetPrelevement
 	 *  @param	DoliDb	$db			Database handler
 	 *  @param 	User	$user       Objet user
 	 */
+<<<<<<< HEAD
 	function __construct($db, $user)
+=======
+	public function __construct($db, $user)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 
@@ -62,7 +82,10 @@ class RejetPrelevement
 
     	$this->facturer[0]=$langs->trans("NoInvoiceRefused");
 		$this->facturer[1]=$langs->trans("InvoiceRefused");
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	/**
@@ -76,7 +99,11 @@ class RejetPrelevement
 	 * @param 	int			$facturation		Facturation
 	 * @return	void
 	 */
+<<<<<<< HEAD
 	function create($user, $id, $motif, $date_rejet, $bonid, $facturation=0)
+=======
+	public function create($user, $id, $motif, $date_rejet, $bonid, $facturation = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs,$conf;
 
@@ -156,7 +183,11 @@ class RejetPrelevement
 			}
 			else
 			{
+<<<<<<< HEAD
 				$result=$pai->addPaymentToBank($user,'payment','(InvoiceRefused)',$bankaccount,'','');
+=======
+				$result=$pai->addPaymentToBank($user, 'payment', '(InvoiceRefused)', $bankaccount, '', '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if ($result < 0)
 				{
 					dol_syslog("RejetPrelevement::Create AddPaymentToBan Error");
@@ -169,7 +200,10 @@ class RejetPrelevement
 					$error++;
 					dol_syslog("RejetPrelevement::Create Error payment validation");
 				}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 			//Tag invoice as unpaid
 			dol_syslog("RejetPrelevement::Create set_unpaid fac ".$fac->ref);
@@ -191,17 +225,29 @@ class RejetPrelevement
 			dol_syslog("RejetPrelevement::Create Rollback");
 			$this->db->rollback();
 		}
+<<<<<<< HEAD
 
 	}
 
+=======
+	}
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *  Send email to all users that has asked the withdraw request
 	 *
 	 * 	@param	Facture		$fac			Invoice object
 	 * 	@return	void
 	 */
+<<<<<<< HEAD
 	function _send_email($fac)
 	{
+=======
+	private function _send_email($fac)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $langs;
 
 		$userid = 0;
@@ -249,9 +295,15 @@ class RejetPrelevement
 			$amount = price($fac->total_ttc);
 			$userinfo = $this->user->getFullName($langs);
 
+<<<<<<< HEAD
 			$message = $langs->trans("InfoRejectMessage",$facref,$socname, $amount, $userinfo);
 
 			$mailfile = new CMailFile($subject,$sendto,$from,$message,$arr_file,$arr_mime,$arr_name,'', '', 0, $msgishtml,$this->user->email);
+=======
+			$message = $langs->trans("InfoRejectMessage", $facref, $socname, $amount, $userinfo);
+
+			$mailfile = new CMailFile($subject, $sendto, $from, $message, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $this->user->email);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			$result=$mailfile->sendfile();
 			if ($result)
@@ -276,7 +328,11 @@ class RejetPrelevement
 	 * @return	array				Array List of invoices related to the withdrawal line
 	 * @TODO	A withdrawal line is today linked to one and only one invoice. So the function should return only one object ?
 	 */
+<<<<<<< HEAD
 	private function getListInvoices($amounts=0)
+=======
+	private function getListInvoices($amounts = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf;
 
@@ -288,7 +344,11 @@ class RejetPrelevement
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON (pf.fk_facture = f.rowid)";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_lignes as pl ON (pf.fk_prelevement_lignes = pl.rowid)";
 		$sql.= " WHERE pf.fk_prelevement_lignes = ".$this->id;
+<<<<<<< HEAD
 		$sql.= " AND f.entity = ".$conf->entity;
+=======
+		$sql.= " AND f.entity IN  (".getEntity('invoice').")";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -320,7 +380,10 @@ class RejetPrelevement
 		}
 
 		return $arr;
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	/**
@@ -329,7 +392,11 @@ class RejetPrelevement
 	 *    @param    int		$rowid       id of invoice to retrieve
 	 *    @return	int
 	 */
+<<<<<<< HEAD
 	function fetch($rowid)
+=======
+	public function fetch($rowid)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 
 		$sql = "SELECT pr.date_rejet as dr, motif, afacturer";
@@ -364,6 +431,10 @@ class RejetPrelevement
 			return -2;
 		}
 	}
+<<<<<<< HEAD
 
 }
 
+=======
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -7,12 +7,21 @@ Download
 --------------------------------
 
 * Dolibarr ERP/CRM can be downloaded at sourceforge:
+<<<<<<< HEAD
 http://sourceforge.net/projects/dolibarr/files
 or from Dolibarr official web site:
 http://www.dolibarr.org
 
 * Most external modules are only available on DoliStore:
 http://www.dolistore.org
+=======
+    https://sourceforge.net/projects/dolibarr/files
+  or from Dolibarr official web site:
+    https://www.dolibarr.org
+
+* Most external modules are only available on DoliStore:
+    https://www.dolistore.com 
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 --------------------------------
@@ -22,4 +31,8 @@ Install
 * For a Quick guide, take a look at README file into root directory.
 
 * More complete documentations are also available on line on the Dolibarr Wiki:
+<<<<<<< HEAD
 http://wiki.dolibarr.org
+=======
+    https://wiki.dolibarr.org
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (c) 2008-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,9 +33,15 @@
  */
 abstract class Stats
 {
+<<<<<<< HEAD
 	protected $db;
 	var $_lastfetchdate=array();	// Dates of cache file read by methods
 	var $cachefilesuffix='';		// Suffix to add to name of cache file (to avoid file name conflicts)
+=======
+    protected $db;
+    protected $lastfetchdate=array();	// Dates of cache file read by methods
+    public $cachefilesuffix='';		// Suffix to add to name of cache file (to avoid file name conflicts)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	/**
 	 * Return nb of elements by month for several years
@@ -42,7 +52,11 @@ abstract class Stats
      *	@param	int		$format			0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 * @return 	array					Array of values
 	 */
+<<<<<<< HEAD
 	function getNbByMonthWithPrevYear($endyear, $startyear, $cachedelay=0, $format=0)
+=======
+	public function getNbByMonthWithPrevYear($endyear, $startyear, $cachedelay = 0, $format = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf,$user,$langs;
 
@@ -70,7 +84,11 @@ abstract class Stats
 			{
 				$foundintocache=1;
 
+<<<<<<< HEAD
 				$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__]=$filedate;
+=======
+				$this->lastfetchdate[get_class($this).'_'.__FUNCTION__]=$filedate;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 			else
 			{
@@ -117,7 +135,11 @@ abstract class Stats
 			if (! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
 			@chmod($newpathofdestfile, octdec($newmask));
 
+<<<<<<< HEAD
 			$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__]=$nowgmt;
+=======
+			$this->lastfetchdate[get_class($this).'_'.__FUNCTION__]=$nowgmt;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		// return array(array('Month',val1,val2,val3),...)
@@ -136,7 +158,11 @@ abstract class Stats
      * @param	int		$format			0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 * @return 	array					Array of values
 	 */
+<<<<<<< HEAD
 	function getAmountByMonthWithPrevYear($endyear, $startyear, $cachedelay=0, $format=0)
+=======
+	public function getAmountByMonthWithPrevYear($endyear, $startyear, $cachedelay = 0, $format = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf,$user,$langs;
 
@@ -164,7 +190,11 @@ abstract class Stats
         	{
         		$foundintocache=1;
 
+<<<<<<< HEAD
         		$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__]=$filedate;
+=======
+        		$this->lastfetchdate[get_class($this).'_'.__FUNCTION__]=$filedate;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         	}
         	else
         	{
@@ -215,7 +245,11 @@ abstract class Stats
 				@chmod($newpathofdestfile, octdec($newmask));
 			}
 			else dol_syslog("Failed to write cache file", LOG_ERR);
+<<<<<<< HEAD
 			$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__]=$nowgmt;
+=======
+			$this->lastfetchdate[get_class($this).'_'.__FUNCTION__]=$nowgmt;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		return $data;
@@ -228,8 +262,13 @@ abstract class Stats
 	 * @param	int		$startyear		End year
 	 * @return 	array					Array of values
 	 */
+<<<<<<< HEAD
 	function getAverageByMonthWithPrevYear($endyear,$startyear)
 	{
+=======
+    public function getAverageByMonthWithPrevYear($endyear, $startyear)
+    {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         if ($startyear > $endyear) return -1;
 
         $datay=array();
@@ -264,9 +303,15 @@ abstract class Stats
 	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
 	 * @return 	array					Array of values
 	 */
+<<<<<<< HEAD
 	function getAllByProductEntry($year,$cachedelay=0)
 	{
 		global $conf,$user,$langs;
+=======
+    public function getAllByProductEntry($year, $cachedelay = 0)
+    {
+        global $conf,$user,$langs;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         $datay=array();
 
@@ -290,7 +335,11 @@ abstract class Stats
         	{
         		$foundintocache=1;
 
+<<<<<<< HEAD
         		$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__]=$filedate;
+=======
+        		$this->lastfetchdate[get_class($this).'_'.__FUNCTION__]=$filedate;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         	}
         	else
         	{
@@ -323,7 +372,11 @@ abstract class Stats
 				if (! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
 				@chmod($newpathofdestfile, octdec($newmask));
 			}
+<<<<<<< HEAD
 			$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__]=$nowgmt;
+=======
+			$this->lastfetchdate[get_class($this).'_'.__FUNCTION__]=$nowgmt;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		return $data;
@@ -333,14 +386,25 @@ abstract class Stats
 	// Here we have low level of shared code called by XxxStats.class.php
 
 
+<<<<<<< HEAD
 	/**
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+    /**
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	 * 	Return nb of elements by year
 	 *
 	 *	@param	string	$sql		SQL request
 	 * 	@return	array
 	 */
+<<<<<<< HEAD
 	function _getNbByYear($sql)
 	{
+=======
+    protected function _getNbByYear($sql)
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$result = array();
 
 		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
@@ -363,14 +427,24 @@ abstract class Stats
 		return $result;
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * 	Return nb of elements, total amount and avg amount each year
 	 *
 	 *	@param	string	$sql	SQL request
 	 * 	@return	array			Array with nb, total amount, average for each year
 	 */
+<<<<<<< HEAD
 	function _getAllByYear($sql)
 	{
+=======
+	protected function _getAllByYear($sql)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$result = array();
 
 		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
@@ -384,16 +458,28 @@ abstract class Stats
 				$row = $this->db->fetch_object($resql);
 				$result[$i]['year'] = $row->year;
 				$result[$i]['nb'] = $row->nb;
+<<<<<<< HEAD
 				if($i>0 && $row->nb) $result[$i-1]['nb_diff'] = ($result[$i-1]['nb'] - $row->nb) / $row->nb * 100;
 				$result[$i]['total'] = $row->total;
 				if($i>0 && $row->total) $result[$i-1]['total_diff'] = ($result[$i-1]['total'] - $row->total) / $row->total * 100;
 				$result[$i]['avg'] = $row->avg;
 				if($i>0 && $row->avg) $result[$i-1]['avg_diff'] = ($result[$i-1]['avg'] - $row->avg) / $row->avg * 100;
+=======
+				if($i>0 && $row->nb>0) $result[$i-1]['nb_diff'] = ($result[$i-1]['nb'] - $row->nb) / $row->nb * 100;
+				$result[$i]['total'] = $row->total;
+				if($i>0 && $row->total>0) $result[$i-1]['total_diff'] = ($result[$i-1]['total'] - $row->total) / $row->total * 100;
+				$result[$i]['avg'] = $row->avg;
+				if($i>0 && $row->avg>0) $result[$i-1]['avg_diff'] = ($result[$i-1]['avg'] - $row->avg) / $row->avg * 100;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				// For some $sql only
 				if (isset($row->weighted))
 				{
 				    $result[$i]['weighted'] = $row->weighted;
+<<<<<<< HEAD
 				    if($i>0 && $row->weighted) $result[$i-1]['avg_weighted'] = ($result[$i-1]['weighted'] - $row->weighted) / $row->weighted * 100;
+=======
+				    if($i>0 && $row->weighted>0) $result[$i-1]['avg_weighted'] = ($result[$i-1]['weighted'] - $row->weighted) / $row->weighted * 100;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 				$i++;
 			}
@@ -405,6 +491,10 @@ abstract class Stats
 		return $result;
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *     Renvoie le nombre de proposition par mois pour une annee donnee
 	 *
@@ -412,9 +502,16 @@ abstract class Stats
      *     @param   string	$sql        SQL
      *     @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
      *     @return	array				Array of nb each month
+<<<<<<< HEAD
 	 */
 	function _getNbByMonth($year, $sql, $format=0)
 	{
+=======
+     */
+    protected function _getNbByMonth($year, $sql, $format = 0)
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $langs;
 
 		$result=array();
@@ -462,6 +559,10 @@ abstract class Stats
 	}
 
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *     Renvoie le nombre d'element par mois pour une annee donnee
 	 *
@@ -470,8 +571,14 @@ abstract class Stats
      *     @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 *     @return	array
 	 */
+<<<<<<< HEAD
 	function _getAmountByMonth($year, $sql, $format=0)
 	{
+=======
+    protected function _getAmountByMonth($year, $sql, $format = 0)
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $langs;
 
 		$result=array();
@@ -514,6 +621,7 @@ abstract class Stats
 		}
 
 		return $data;
+<<<<<<< HEAD
 	}
 
 	/**
@@ -526,6 +634,22 @@ abstract class Stats
 	 */
 	function _getAverageByMonth($year, $sql, $format=0)
 	{
+=======
+    }
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+    /**
+     *  Renvoie le montant moyen par mois pour une annee donnee
+     *
+     *  @param  int     $year       Year
+     *  @param  string  $sql        SQL
+     *  @param  int     $format     0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+     *  @return array
+     */
+    protected function _getAverageByMonth($year, $sql, $format = 0)
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $langs;
 
 		$result=array();
@@ -567,6 +691,7 @@ abstract class Stats
 		}
 
 		return $data;
+<<<<<<< HEAD
 	}
 
 
@@ -579,6 +704,22 @@ abstract class Stats
 	 */
 	function _getAllByProduct($sql, $limit=10)
 	{
+=======
+    }
+
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+    /**
+     *  Return number or total of product refs
+     *
+     *  @param  string  $sql        SQL
+     *  @param  int     $limit      Limit
+     *  @return array
+     */
+    protected function _getAllByProduct($sql, $limit = 10)
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $langs;
 
 		$result=array();
@@ -592,17 +733,30 @@ abstract class Stats
 			$i = 0; $other=0;
 			while ($i < $num)
 			{
+<<<<<<< HEAD
 		  		$row = $this->db->fetch_row($resql);
 		  		if ($i < $limit || $num == $limit) $result[$i] = array($row[0],$row[1]);	// Ref of product, nb
 		  		else $other += $row[1];
 		  		$i++;
 		  	}
+=======
+                $row = $this->db->fetch_row($resql);
+		  		if ($i < $limit || $num == $limit) $result[$i] = array($row[0],$row[1]);	// Ref of product, nb
+		  		else $other += $row[1];
+		  		$i++;
+            }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		  	if ($num > $limit) $result[$i] = array($langs->transnoentitiesnoconv("Other"),$other);
 		  	$this->db->free($resql);
 		}
         else dol_print_error($this->db);
 
 		return $result;
+<<<<<<< HEAD
 	}
 }
 
+=======
+    }
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

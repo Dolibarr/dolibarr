@@ -1,8 +1,14 @@
 <?php
 /* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2016      Alexandre Spangaro   <aspangaro@zendsi.com>
+=======
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2013-2018 Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2016      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +39,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/supplier_invoice/modules_facturef
  */
 class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 {
+<<<<<<< HEAD
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $error = '';
 	var $nom = 'Cactus';
@@ -51,15 +58,65 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
     	global $langs;
 		$langs->load("bills");
       	return $langs->trans("CactusNumRefModelDesc1",$this->prefixinvoice,$this->prefixcreditnote,$this->prefixdeposit);
+=======
+    /**
+     * Dolibarr version of the loaded document
+     * @var string
+     */
+    public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	/**
+     * @var string Error code (or message)
+     */
+    public $error = '';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Cactus';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Cactus';
+
+	public $prefixinvoice='SI';
+
+	public $prefixcreditnote='SA';
+
+	public $prefixdeposit='SD';
+
+
+    /**
+     *  Return description of numbering model
+     *
+     *  @return     string      Text with description
+     */
+    public function info()
+    {
+        global $langs;
+        $langs->load("bills");
+        return $langs->trans("CactusNumRefModelDesc1", $this->prefixinvoice, $this->prefixcreditnote, $this->prefixdeposit);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
 
     /**
+<<<<<<< HEAD
      * 	Returns a numbering example
      *
      *  @return     string      Example
      */
     function getExample()
+=======
+     *  Returns a numbering example
+     *
+     *  @return     string      Example
+     */
+    public function getExample()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         return $this->prefixinvoice."1301-0001";
     }
@@ -70,7 +127,11 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 	 *
 	 *  @return     boolean     false if conflict, true if ok
 	 */
+<<<<<<< HEAD
 	function canBeActivated()
+=======
+	public function canBeActivated()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf,$langs,$db;
 
@@ -88,12 +149,21 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 		if ($resql)
 		{
 			$row = $db->fetch_row($resql);
+<<<<<<< HEAD
 			if ($row) { $siyymm = substr($row[0],0,6); $max=$row[0]; }
 		}
 		if ($siyymm && ! preg_match('/'.$this->prefixinvoice.'[0-9][0-9][0-9][0-9]/i',$siyymm))
 		{
 			$langs->load("errors");
 			$this->error=$langs->trans('ErrorNumRefModel',$max);
+=======
+			if ($row) { $siyymm = substr($row[0], 0, 6); $max=$row[0]; }
+		}
+		if ($siyymm && ! preg_match('/'.$this->prefixinvoice.'[0-9][0-9][0-9][0-9]/i', $siyymm))
+		{
+			$langs->load("errors");
+			$this->error=$langs->trans('ErrorNumRefModel', $max);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			return false;
 		}
 
@@ -110,11 +180,19 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 		if ($resql)
 		{
 			$row = $db->fetch_row($resql);
+<<<<<<< HEAD
 			if ($row) { $siyymm = substr($row[0],0,6); $max=$row[0]; }
 		}
 		if ($siyymm && ! preg_match('/'.$this->prefixcreditnote.'[0-9][0-9][0-9][0-9]/i',$siyymm))
 		{
 			$this->error=$langs->trans('ErrorNumRefModel',$max);
+=======
+			if ($row) { $siyymm = substr($row[0], 0, 6); $max=$row[0]; }
+		}
+		if ($siyymm && ! preg_match('/'.$this->prefixcreditnote.'[0-9][0-9][0-9][0-9]/i', $siyymm))
+		{
+			$this->error=$langs->trans('ErrorNumRefModel', $max);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			return false;
 		}
 
@@ -131,17 +209,26 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 		if ($resql)
 		{
 			$row = $db->fetch_row($resql);
+<<<<<<< HEAD
 			if ($row) { $siyymm = substr($row[0],0,6); $max=$row[0]; }
 		}
 		if ($siyymm && ! preg_match('/'.$this->prefixdeposit.'[0-9][0-9][0-9][0-9]/i',$siyymm))
 		{
 			$this->error=$langs->trans('ErrorNumRefModel',$max);
+=======
+			if ($row) { $siyymm = substr($row[0], 0, 6); $max=$row[0]; }
+		}
+		if ($siyymm && ! preg_match('/'.$this->prefixdeposit.'[0-9][0-9][0-9][0-9]/i', $siyymm))
+		{
+			$this->error=$langs->trans('ErrorNumRefModel', $max);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			return false;
 		}
     }
 
     /**
      * Return next value
+<<<<<<< HEAD
 	 *
 	 * @param	Societe		$objsoc     Object third party
 	 * @param  	Object		$object		Object invoice
@@ -149,11 +236,24 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 	 * @return 	string      			Value if OK, 0 if KO
      */
     function getNextValue($objsoc,$object,$mode='next')
+=======
+     *
+     * @param	Societe		$objsoc     Object third party
+     * @param  	Object		$object		Object invoice
+     * @param   string		$mode       'next' for next value or 'last' for last value
+     * @return 	string      			Value if OK, 0 if KO
+     */
+    public function getNextValue($objsoc, $object, $mode = 'next')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $db,$conf;
 
         if ($object->type == 2) $prefix=$this->prefixcreditnote;
+<<<<<<< HEAD
         else if ($facture->type == 3) $prefix=$this->prefixdeposit;
+=======
+        elseif ($facture->type == 3) $prefix=$this->prefixdeposit;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         else $prefix=$this->prefixinvoice;
 
         // D'abord on recupere la valeur max
@@ -179,7 +279,11 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
         if ($mode == 'last')
         {
     		if ($max >= (pow(10, 4) - 1)) $num=$max;	// If counter > 9999, we do not format on 4 chars, we take number as it is
+<<<<<<< HEAD
     		else $num = sprintf("%04s",$max);
+=======
+    		else $num = sprintf("%04s", $max);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         	$ref='';
         	$sql = "SELECT ref as ref";
@@ -198,6 +302,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 
         	return $ref;
         }
+<<<<<<< HEAD
         else if ($mode == 'next')
         {
         	$date=$object->date;	// This is invoice date (not creation date)
@@ -205,25 +310,51 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 
         	if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
         	else $num = sprintf("%04s",$max+1);
+=======
+        elseif ($mode == 'next')
+        {
+        	$date=$object->date;	// This is invoice date (not creation date)
+        	$yymm = strftime("%y%m", $date);
+
+        	if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
+        	else $num = sprintf("%04s", $max+1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         	dol_syslog(get_class($this)."::getNextValue return ".$prefix.$yymm."-".$num);
         	return $prefix.$yymm."-".$num;
         }
+<<<<<<< HEAD
         else dol_print_error('','Bad parameter for getNextValue');
+=======
+        else dol_print_error('', 'Bad parameter for getNextValue');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
 
     /**
+<<<<<<< HEAD
 	 * Return next free value
 	 *
+=======
+     * Return next free value
+     *
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      * @param	Societe		$objsoc     	Object third party
      * @param	string		$objforref		Object for number to search
      * @param   string		$mode       	'next' for next value or 'last' for last value
      * @return  string      				Next free value
      */
+<<<<<<< HEAD
 	function getNumRef($objsoc,$objforref,$mode='next')
 	{
 		return $this->getNextValue($objsoc,$objforref,$mode);
 	}
 }
 
+=======
+	public function getNumRef($objsoc, $objforref, $mode = 'next')
+	{
+		return $this->getNextValue($objsoc, $objforref, $mode);
+	}
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

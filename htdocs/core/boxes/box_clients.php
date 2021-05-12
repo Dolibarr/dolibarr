@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,6 +36,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_clients extends ModeleBoxes
 {
+<<<<<<< HEAD
 	var $boxcode="lastcustomers";
 	var $boximg="object_company";
 	var $boxlabel="BoxLastCustomers";
@@ -42,6 +47,22 @@ class box_clients extends ModeleBoxes
 
 	var $info_box_head = array();
 	var $info_box_contents = array();
+=======
+    public $boxcode="lastcustomers";
+    public $boximg="object_company";
+    public $boxlabel="BoxLastCustomers";
+    public $depends = array("societe");
+
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    public $enabled = 1;
+
+    public $info_box_head = array();
+    public $info_box_contents = array();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	/**
@@ -50,7 +71,11 @@ class box_clients extends ModeleBoxes
 	 *  @param  DoliDB	$db      	Database handler
      *  @param	string	$param		More parameters
 	 */
+<<<<<<< HEAD
 	function __construct($db,$param='')
+=======
+	public function __construct($db, $param = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf, $user;
 
@@ -68,7 +93,11 @@ class box_clients extends ModeleBoxes
      *  @param	int		$max        Maximum number of records to load
      *  @return	void
 	 */
+<<<<<<< HEAD
 	function loadBox($max=5)
+=======
+	public function loadBox($max = 5)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $user, $langs, $db, $conf;
 		$langs->load("boxes");
@@ -78,7 +107,11 @@ class box_clients extends ModeleBoxes
         include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
         $thirdpartystatic=new Societe($db);
 
+<<<<<<< HEAD
         $this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedCustomers",$max));
+=======
+        $this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedCustomers", $max));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		if ($user->rights->societe->lire)
 		{
@@ -136,30 +169,54 @@ class box_clients extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
+<<<<<<< HEAD
                         'td' => 'align="right" width="18"',
                         'text' => $thirdpartystatic->LibStatut($objp->status,3)
+=======
+                        'td' => 'class="right" width="18"',
+                        'text' => $thirdpartystatic->LibStatut($objp->status, 3)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                     );
 
 					$line++;
 				}
 
+<<<<<<< HEAD
 				if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedCustomers"));
+=======
+				if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'class="center"','text'=>$langs->trans("NoRecordedCustomers"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				$db->free($result);
 			}
 			else {
+<<<<<<< HEAD
 				$this->info_box_contents[0][0] = array(	'td' => '',
     	        										'maxlength'=>500,
 	            										'text' => ($db->error().' sql='.$sql));
+=======
+				$this->info_box_contents[0][0] = array(
+                    'td' => '',
+                    'maxlength'=>500,
+                    'text' => ($db->error().' sql='.$sql)
+                );
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 		}
 		else {
 			$this->info_box_contents[0][0] = array(
+<<<<<<< HEAD
 			    'td' => 'align="left" class="nohover opacitymedium"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
 			);
 		}
 
+=======
+			    'td' => 'class="nohover opacitymedium left"',
+                'text' => $langs->trans("ReadPermissionNotAllowed")
+			);
+		}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	/**
@@ -170,6 +227,7 @@ class box_clients extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
+<<<<<<< HEAD
     function showBox($head = null, $contents = null, $nooutput=0)
     {
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
@@ -177,3 +235,10 @@ class box_clients extends ModeleBoxes
 
 }
 
+=======
+    public function showBox($head = null, $contents = null, $nooutput = 0)
+    {
+		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+	}
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

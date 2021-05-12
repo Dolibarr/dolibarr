@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2012      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013-2015 Philippe Grand	    <philippe.grand@atoo-net.com>
  *
@@ -20,11 +24,18 @@
  */
 
 /**
+<<<<<<< HEAD
  * 		\defgroup   fournisseur     suppliers Module
  *		\brief      Module to manage companies and contacts of supplier type
  *		\file       htdocs/core/modules/modFournisseur.class.php
  *		\ingroup    fournisseur
  *		\brief      Description and activation file for module Fournisseur
+=======
+ * 		\defgroup   fournisseur     Module suppliers
+ *		\file       htdocs/core/modules/modFournisseur.class.php
+ *		\ingroup    fournisseur
+ *		\brief      Description and activation file for module Supplier
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
@@ -40,7 +51,11 @@ class modFournisseur extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
+<<<<<<< HEAD
 	function __construct($db)
+=======
+	public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf, $user;
 
@@ -50,9 +65,15 @@ class modFournisseur extends DolibarrModules
 		// Family can be 'crm','financial','hr','projects','product','ecm','technic','other'
 		// It is used to group modules in module setup page
 		$this->family = "srm";
+<<<<<<< HEAD
 		$this->module_position = 10;
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
+=======
+		$this->module_position = '12';
+		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->description = "Gestion des fournisseurs";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -62,12 +83,22 @@ class modFournisseur extends DolibarrModules
 		$this->picto='company';
 
 		// Data directories to create when module is enabled
+<<<<<<< HEAD
 		$this->dirs = array("/fournisseur/temp",
 							"/fournisseur/commande",
 		                    "/fournisseur/commande/temp",
 		                    "/fournisseur/facture",
 		                    "/fournisseur/facture/temp"
 		                    );
+=======
+		$this->dirs = array(
+            "/fournisseur/temp",
+            "/fournisseur/commande",
+            "/fournisseur/commande/temp",
+            "/fournisseur/facture",
+            "/fournisseur/facture/temp"
+        );
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Dependencies
 		$this->depends = array("modSociete");
@@ -276,7 +307,11 @@ class modFournisseur extends DolibarrModules
 
 		$r++;
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
+<<<<<<< HEAD
 		$this->export_label[$r]='Factures fournisseurs et lignes de facture';
+=======
+		$this->export_label[$r]='Vendor invoices and lines of invoices';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->export_icon[$r]='bill';
 		$this->export_permission[$r]=array(array("fournisseur","facture","export"));
 		$this->export_fields_array[$r]=array(
@@ -484,7 +519,11 @@ class modFournisseur extends DolibarrModules
 		// Order
 		$r++;
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
+<<<<<<< HEAD
 		$this->export_label[$r]='Commandes fournisseurs et lignes de commandes';
+=======
+		$this->export_label[$r]='Purchase Orders and lines of purchase orders';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->export_icon[$r]='order';
 		$this->export_permission[$r]=array(array("fournisseur","commande","export"));
 		$this->export_fields_array[$r]=array(
@@ -623,7 +662,11 @@ class modFournisseur extends DolibarrModules
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
+<<<<<<< HEAD
 	function init($options='')
+=======
+	public function init($options = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf;
 
@@ -634,6 +677,10 @@ class modFournisseur extends DolibarrModules
 			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','order_supplier',".$conf->entity.")",
 		);
 
+<<<<<<< HEAD
 		return $this->_init($sql,$options);
+=======
+		return $this->_init($sql, $options);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 }

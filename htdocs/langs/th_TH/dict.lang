@@ -116,7 +116,11 @@ CountryHM=ได้ยินและเกาะ McDonald
 CountryVA=พระเห็น (นครรัฐวาติกัน)
 CountryHN=ฮอนดูรัส
 CountryHK=ฮ่องกง
+<<<<<<< HEAD
 CountryIS=Icelande
+=======
+CountryIS=Iceland
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryIN=อินเดีย
 CountryID=อินโดนีเซีย
 CountryIR=อิหร่าน
@@ -131,7 +135,11 @@ CountryKI=ประเทศคิริบาส
 CountryKP=เกาหลีเหนือ
 CountryKR=เกาหลีใต้
 CountryKW=คูเวต
+<<<<<<< HEAD
 CountryKG=Kyrghyztan
+=======
+CountryKG=Kyrgyzstan
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryLA=ลาว
 CountryLV=ลัตเวีย
 CountryLB=ประเทศเลบานอน
@@ -160,7 +168,11 @@ CountryMD=มอลโดวา
 CountryMN=ประเทศมองโกเลีย
 CountryMS=Monserrat
 CountryMZ=โมซัมบิก
+<<<<<<< HEAD
 CountryMM=Birmania (พม่า)
+=======
+CountryMM=Myanmar (Burma)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryNA=นามิเบีย
 CountryNR=นาอูรู
 CountryNP=เนปาล
@@ -223,7 +235,11 @@ CountryTO=ตองกา
 CountryTT=ตรินิแดดและโตเบโก
 CountryTR=ตุรกี
 CountryTM=เติร์กเมนิสถาน
+<<<<<<< HEAD
 CountryTC=เติกส์และหมู่เกาะ Cailos
+=======
+CountryTC=Turks and Caicos Islands
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryTV=ตูวาลู
 CountryUG=ยูกันดา
 CountryUA=ยูเครน
@@ -277,7 +293,11 @@ CurrencySingMGA=มาลากาซี
 CurrencyMUR=รูปีมอริเชียส
 CurrencySingMUR=รูปีมอริเชียส
 CurrencyNOK=นอร์เวย์ Krones
+<<<<<<< HEAD
 CurrencySingNOK=โครนนอร์เวย์
+=======
+CurrencySingNOK=Norwegian kronas
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrencyTND=ดินาร์ตูนิเซีย
 CurrencySingTND=ดีนาร์ตูนิเซีย
 CurrencyUSD=สกุลเงินดอลลาร์สหรัฐ
@@ -290,6 +310,10 @@ CurrencyXOF=CFA ฟรังก์ BCEAO
 CurrencySingXOF=ฟรังก์ BCEAO
 CurrencyXPF=ฟรังก์ CFP
 CurrencySingXPF=ฟรังก์ CFP
+<<<<<<< HEAD
+=======
+CurrencyCentEUR=cents
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrencyCentSingEUR=ร้อย
 CurrencyCentINR=paisa
 CurrencyCentSingINR=เซนต์
@@ -306,6 +330,10 @@ DemandReasonTypeSRC_WOM=มุขบาฐ
 DemandReasonTypeSRC_PARTNER=หุ้นส่วน
 DemandReasonTypeSRC_EMPLOYEE=ลูกจ้าง
 DemandReasonTypeSRC_SPONSORING=การประกัน
+<<<<<<< HEAD
+=======
+DemandReasonTypeSRC_SRC_CUSTOMER=Incoming contact of a customer
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 #### Paper formats ####
 PaperFormatEU4A0=รูปแบบ 4A0
 PaperFormatEU2A0=รูปแบบ 2A0

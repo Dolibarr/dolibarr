@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +31,11 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
+<<<<<<< HEAD
 $action=GETPOST('action','aZ09');
+=======
+$action=GETPOST('action', 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Secrutiy check
 if ($user->societe_id > 0)
@@ -44,9 +52,15 @@ $langs->load("companies");
 
 $mode=GETPOST("mode");
 
+<<<<<<< HEAD
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
+=======
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -137,13 +151,18 @@ if ($resql)
 
 	$langs->load('commercial');
 
+<<<<<<< HEAD
 	print_barre_liste($langs->trans("ListOfCustomers"), $page, $_SERVER["PHP_SELF"],"",$sortfield,$sortorder,'',$num);
+=======
+	print_barre_liste($langs->trans("ListOfCustomers"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
 
+<<<<<<< HEAD
 	print_liste_field_titre("Company",$_SERVER["PHP_SELF"],"s.nom","","",'valign="center"',$sortfield,$sortorder);
 	print_liste_field_titre("Town",$_SERVER["PHP_SELF"],"s.town","","",'valign="center"',$sortfield,$sortorder);
 	print_liste_field_titre("CustomerCode",$_SERVER["PHP_SELF"],"s.code_client","","",'align="left"',$sortfield,$sortorder);
@@ -155,10 +174,24 @@ if ($resql)
 	print '<tr class="liste_titre">';
 
 	print '<td align="left" class="liste_titre">';
+=======
+	print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", "", "", 'valign="center"', $sortfield, $sortorder);
+	print_liste_field_titre("Town", $_SERVER["PHP_SELF"], "s.town", "", "", 'valign="center"', $sortfield, $sortorder);
+	print_liste_field_titre("CustomerCode", $_SERVER["PHP_SELF"], "s.code_client", "", "", '', $sortfield, $sortorder, 'left ');
+	print_liste_field_titre("AccountancyCode", $_SERVER["PHP_SELF"], "s.code_compta", "", "", '', $sortfield, $sortorder, 'left ');
+	print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "datec", $addu, "", '', $sortfield, $sortorder, 'right ');
+	print "</tr>\n";
+
+	// Fields title search
+	print '<tr class="liste_titre">';
+
+	print '<td class="liste_titre left">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '<input class="flat" type="text" name="search_nom" value="'.$_GET["search_nom"].'"></td>';
 
 	print '<td class="liste_titre">&nbsp;</td>';
 
+<<<<<<< HEAD
 	print '<td align="left" class="liste_titre">';
 	print '<input class="flat" type="text" size="10" name="search_code_client" value="'.$_GET["search_code_client"].'">';
 	print '</td>';
@@ -173,6 +206,22 @@ if ($resql)
 	print "</tr>\n";
 
 	while ($i < min($num,$conf->liste_limit))
+=======
+	print '<td class="liste_titre left">';
+	print '<input class="flat" type="text" size="10" name="search_code_client" value="'.$_GET["search_code_client"].'">';
+	print '</td>';
+
+	print '<td class="liste_titre left">';
+	print '<input class="flat" type="text" size="10" name="search_compta" value="'.$_GET["search_compta"].'">';
+	print '</td>';
+
+	print '<td colspan="2" class="liste_titre right">';
+	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '</td>';
+	print "</tr>\n";
+
+	while ($i < min($num, $conf->liste_limit))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$obj = $db->fetch_object($resql);
 
@@ -181,12 +230,21 @@ if ($resql)
 		$thirdpartystatic->id=$obj->rowid;
 		$thirdpartystatic->name=$obj->name;
 		$thirdpartystatic->client=$obj->client;
+<<<<<<< HEAD
 		print $thirdpartystatic->getNomUrl(1,'compta');
 		print '</td>';
 		print '<td>'.$obj->town.'&nbsp;</td>';
 		print '<td align="left">'.$obj->code_client.'&nbsp;</td>';
 		print '<td align="left">'.$obj->code_compta.'&nbsp;</td>';
 		print '<td align="right">'.dol_print_date($db->jdate($obj->datec)).'</td>';
+=======
+		print $thirdpartystatic->getNomUrl(1, 'compta');
+		print '</td>';
+		print '<td>'.$obj->town.'&nbsp;</td>';
+		print '<td class="left">'.$obj->code_client.'&nbsp;</td>';
+		print '<td class="left">'.$obj->code_compta.'&nbsp;</td>';
+		print '<td class="right">'.dol_print_date($db->jdate($obj->datec)).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print "</tr>\n";
 		$i++;
 	}

@@ -5,9 +5,15 @@ RemoteControlSupport=Онлайн в реално време / дистанци�
 OtherSupport=Друга поддръжка
 ToSeeListOfAvailableRessources=За да се свържете/вижте наличните ресурси:
 HelpCenter=Помощен център
+<<<<<<< HEAD
 DolibarrHelpCenter=Dolibarr център за помощ и поддръжка
 ToGoBackToDolibarr=В противен случай, щракнете <a href="%s">тук, за да използвате Dolibarr</a>
 TypeOfSupport=Източник на подкрепа
+=======
+DolibarrHelpCenter=Dolibarr Help and Support Center
+ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
+TypeOfSupport=Type of support
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TypeSupportCommunauty=Общност (безплатно)
 TypeSupportCommercial=Търговски
 TypeOfHelp=Тип
@@ -15,6 +21,7 @@ NeedHelpCenter=Need help or support?
 Efficiency=Ефективност
 TypeHelpOnly=Само помощ
 TypeHelpDev=Помощ + развитие
+<<<<<<< HEAD
 TypeHelpDevForm=Помощ + развитие + Формиране
 ToGetHelpGoOnSparkAngels1=Някои компании могат да осигурят бързо (по някое време незабавно) и по-ефективни онлайн поддръжка чрез поемането на контрола на вашия компютър. Такива помощници може да се намери на уеб сайта на <b>%s:</b>
 ToGetHelpGoOnSparkAngels3=Можете също да отидете към списъка на всички налични треньори за Dolibarr за тази цел кликнете върху бутона
@@ -23,4 +30,11 @@ BackToHelpCenter=В противен случай, натиснете тук, з
 LinkToGoldMember=Можете да се обадите на треньора, предварително подбрани от Dolibarr за вашия език (%s), като щракнете върху му Widget (статус и максимална цена се актуализира автоматично):
 PossibleLanguages=Поддържани езици
 SubscribeToFoundation=Помогнете на проекта Dolibarr, като се присъедините към фондацията
+=======
+TypeHelpDevForm=Help+Development+Training
+BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
+LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
+PossibleLanguages=Поддържани езици
+SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SeeOfficalSupport=За официална поддръжка на Dolibarr за Вашият език: <br><b><a href="%s" target="_blank">%s</a></b>

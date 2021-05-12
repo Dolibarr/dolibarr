@@ -27,11 +27,19 @@ $maxsizestring=255;
 $maxsizeint=10;
 $mesg=array();
 
+<<<<<<< HEAD
 $extrasize=GETPOST('size','int');
 $type=GETPOST('type','alpha');
 $param=GETPOST('param','alpha');;
 
 if ($type=='double' && strpos($extrasize,',')===false) $extrasize='24,8';
+=======
+$extrasize=GETPOST('size', 'intcomma');
+$type=GETPOST('type', 'alpha');
+$param=GETPOST('param', 'alpha');
+
+if ($type=='double' && strpos($extrasize, ',')===false) $extrasize='24,8';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($type=='date')     $extrasize='';
 if ($type=='datetime') $extrasize='';
 if ($type=='select')   $extrasize='';
@@ -47,28 +55,44 @@ if ($action == 'add')
 		{
 			$error++;
 			$langs->load("errors");
+<<<<<<< HEAD
 			$mesg[]=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type"));
+=======
+			$mesg[]=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$action = 'create';
 		}
 		if ($type=='varchar' && $extrasize <= 0)
 		{
 		    $error++;
 		    $langs->load("errors");
+<<<<<<< HEAD
 		    $mesg[]=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Size"));
+=======
+		    $mesg[]=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Size"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		    $action = 'edit';
 		}
         if ($type=='varchar' && $extrasize > $maxsizestring)
         {
             $error++;
             $langs->load("errors");
+<<<<<<< HEAD
             $mesg[]=$langs->trans("ErrorSizeTooLongForVarcharType",$maxsizestring);
+=======
+            $mesg[]=$langs->trans("ErrorSizeTooLongForVarcharType", $maxsizestring);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $action = 'create';
         }
         if ($type=='int' && $extrasize > $maxsizeint)
         {
             $error++;
             $langs->load("errors");
+<<<<<<< HEAD
             $mesg[]=$langs->trans("ErrorSizeTooLongForIntType",$maxsizeint);
+=======
+            $mesg[]=$langs->trans("ErrorSizeTooLongForIntType", $maxsizeint);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $action = 'create';
         }
         if ($type=='select' && !$param)
@@ -110,16 +134,28 @@ if ($action == 'add')
         {
         	// Construct array for parameter (value of select list)
     		$parameters = $param;
+<<<<<<< HEAD
     		$parameters_array = explode("\r\n",$parameters);
     		foreach($parameters_array as $param_ligne)
     		{
     			if (!empty($param_ligne)) {
 	    			if (preg_match_all('/,/',$param_ligne,$matches))
+=======
+    		$parameters_array = explode("\r\n", $parameters);
+    		foreach($parameters_array as $param_ligne)
+    		{
+    			if (!empty($param_ligne)) {
+	    			if (preg_match_all('/,/', $param_ligne, $matches))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    			{
 	    				if (count($matches[0])>1) {
 	    					$error++;
 	    					$langs->load("errors");
+<<<<<<< HEAD
 	    					$mesg[]=$langs->trans("ErrorBadFormatValueList",$param_ligne);
+=======
+	    					$mesg[]=$langs->trans("ErrorBadFormatValueList", $param_ligne);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    					$action = 'create';
 	    				}
 	    			}
@@ -127,7 +163,11 @@ if ($action == 'add')
 	    			{
 	    				$error++;
 	    				$langs->load("errors");
+<<<<<<< HEAD
 	    				$mesg[]=$langs->trans("ErrorBadFormatValueList",$param_ligne);
+=======
+	    				$mesg[]=$langs->trans("ErrorBadFormatValueList", $param_ligne);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    				$action = 'create';
 	    			}
     			}
@@ -137,12 +177,21 @@ if ($action == 'add')
 	    if (! $error)
 	    {
     		// attrname must be alphabetical and lower case only
+<<<<<<< HEAD
     		if (isset($_POST["attrname"]) && preg_match("/^[a-z0-9-_]+$/",$_POST['attrname']) && !is_numeric($_POST["attrname"]))
     		{
     			// Construct array for parameter (value of select list)
         		$default_value = GETPOST('default_value','alpha');
     			$parameters = $param;
     			$parameters_array = explode("\r\n",$parameters);
+=======
+    		if (isset($_POST["attrname"]) && preg_match("/^[a-z0-9-_]+$/", $_POST['attrname']) && !is_numeric($_POST["attrname"]))
+    		{
+    			// Construct array for parameter (value of select list)
+        		$default_value = GETPOST('default_value', 'alpha');
+    			$parameters = $param;
+    			$parameters_array = explode("\r\n", $parameters);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     			//In sellist we have only one line and it can have come to do SQL expression
     			if ($type=='sellist') {
     				foreach($parameters_array as $param_ligne)
@@ -155,7 +204,11 @@ if ($action == 'add')
     				//Esle it's separated key/value and coma list
     				foreach($parameters_array as $param_ligne)
     				{
+<<<<<<< HEAD
     					list($key,$value) = explode(',',$param_ligne);
+=======
+    					list($key,$value) = explode(',', $param_ligne);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     					$params['options'][$key] = $value;
     				}
     			}
@@ -178,10 +231,19 @@ if ($action == 'add')
                 	(GETPOST('alwayseditable', 'alpha')?1:0),
                 	(GETPOST('perms', 'alpha')?GETPOST('perms', 'alpha'):''),
                 	$visibility,
+<<<<<<< HEAD
 					0,
                     GETPOST('computed_value','alpha'),
                 	(GETPOST('entitycurrentorall', 'alpha')?0:''),
                 	GETPOST('langfile', 'alpha')
+=======
+					GETPOST('help', 'alpha'),
+                    GETPOST('computed_value', 'alpha'),
+                	(GETPOST('entitycurrentorall', 'alpha')?0:''),
+                    GETPOST('langfile', 'alpha'),
+                    1,
+                    (GETPOST('totalizable', 'alpha')?1:0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 );
     			if ($result > 0)
     			{
@@ -200,7 +262,11 @@ if ($action == 'add')
     		{
                 $error++;
     		    $langs->load("errors");
+<<<<<<< HEAD
     			$mesg=$langs->trans("ErrorFieldCanNotContainSpecialNorUpperCharacters",$langs->transnoentities("AttributeCode"));
+=======
+    			$mesg=$langs->trans("ErrorFieldCanNotContainSpecialNorUpperCharacters", $langs->transnoentities("AttributeCode"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     			setEventMessages($mesg, null, 'errors');
     			$action = 'create';
     		}
@@ -222,28 +288,44 @@ if ($action == 'update')
 		{
 			$error++;
 			$langs->load("errors");
+<<<<<<< HEAD
 			$mesg[]=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type"));
+=======
+			$mesg[]=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$action = 'edit';
 		}
 		if ($type=='varchar' && $extrasize <= 0)
 		{
 		    $error++;
 		    $langs->load("errors");
+<<<<<<< HEAD
 		    $mesg[]=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Size"));
+=======
+		    $mesg[]=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Size"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		    $action = 'edit';
 		}
 		if ($type=='varchar' && $extrasize > $maxsizestring)
         {
             $error++;
             $langs->load("errors");
+<<<<<<< HEAD
             $mesg[]=$langs->trans("ErrorSizeTooLongForVarcharType",$maxsizestring);
+=======
+            $mesg[]=$langs->trans("ErrorSizeTooLongForVarcharType", $maxsizestring);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $action = 'edit';
         }
         if ($type=='int' && $extrasize > $maxsizeint)
         {
             $error++;
             $langs->load("errors");
+<<<<<<< HEAD
             $mesg[]=$langs->trans("ErrorSizeTooLongForIntType",$maxsizeint);
+=======
+            $mesg[]=$langs->trans("ErrorSizeTooLongForIntType", $maxsizeint);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $action = 'edit';
         }
         if ($type=='select' && !$param)
@@ -278,16 +360,28 @@ if ($action == 'update')
         {
         	// Construct array for parameter (value of select list)
         	$parameters = $param;
+<<<<<<< HEAD
         	$parameters_array = explode("\r\n",$parameters);
         	foreach($parameters_array as $param_ligne)
         	{
         		if (!empty($param_ligne)) {
 	        		if (preg_match_all('/,/',$param_ligne,$matches))
+=======
+        	$parameters_array = explode("\r\n", $parameters);
+        	foreach($parameters_array as $param_ligne)
+        	{
+        		if (!empty($param_ligne)) {
+	        		if (preg_match_all('/,/', $param_ligne, $matches))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	        		{
 	        			if (count($matches[0])>1) {
 	        				$error++;
 	        				$langs->load("errors");
+<<<<<<< HEAD
 	        				$mesg[]=$langs->trans("ErrorBadFormatValueList",$param_ligne);
+=======
+	        				$mesg[]=$langs->trans("ErrorBadFormatValueList", $param_ligne);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	        				$action = 'edit';
 	        			}
 	        		}
@@ -295,7 +389,11 @@ if ($action == 'update')
 	        		{
 	        			$error++;
 	        			$langs->load("errors");
+<<<<<<< HEAD
 	        			$mesg[]=$langs->trans("ErrorBadFormatValueList",$param_ligne);
+=======
+	        			$mesg[]=$langs->trans("ErrorBadFormatValueList", $param_ligne);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	        			$action = 'edit';
 	        		}
         		}
@@ -304,12 +402,21 @@ if ($action == 'update')
 
 	    if (! $error)
 	    {
+<<<<<<< HEAD
             if (isset($_POST["attrname"]) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$_POST['attrname']))
     		{
     			$pos = GETPOST('pos','int');
     			// Construct array for parameter (value of select list)
     			$parameters = $param;
     			$parameters_array = explode("\r\n",$parameters);
+=======
+            if (isset($_POST["attrname"]) && preg_match("/^\w[a-zA-Z0-9-_]*$/", $_POST['attrname']))
+    		{
+    			$pos = GETPOST('pos', 'int');
+    			// Construct array for parameter (value of select list)
+    			$parameters = $param;
+    			$parameters_array = explode("\r\n", $parameters);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     			//In sellist we have only one line and it can have come to do SQL expression
     			if ($type=='sellist') {
     				foreach($parameters_array as $param_ligne)
@@ -322,7 +429,11 @@ if ($action == 'update')
     				//Esle it's separated key/value and coma list
     				foreach($parameters_array as $param_ligne)
     				{
+<<<<<<< HEAD
     					list($key,$value) = explode(',',$param_ligne);
+=======
+    					list($key,$value) = explode(',', $param_ligne);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     					$params['options'][$key] = $value;
     				}
     			}
@@ -331,7 +442,11 @@ if ($action == 'update')
     			$visibility = GETPOST('list', 'alpha');
     			if ($type == 'separate') $visibility=3;
 
+<<<<<<< HEAD
     			$result=$extrafields->update(
+=======
+                $result=$extrafields->update(
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     				GETPOST('attrname', 'alpha'),
     				GETPOST('label', 'alpha'),
     				$type,
@@ -344,11 +459,21 @@ if ($action == 'update')
     				(GETPOST('alwayseditable', 'alpha')?1:0),
     				(GETPOST('perms', 'alpha')?GETPOST('perms', 'alpha'):''),
                 	$visibility,
+<<<<<<< HEAD
 					0,
     			    GETPOST('default_value','alpha'),
     				GETPOST('computed_value','alpha'),
     				(GETPOST('entitycurrentorall', 'alpha')?0:''),
     				GETPOST('langfile')
+=======
+					GETPOST('help', 'alpha'),
+    			    GETPOST('default_value', 'alpha'),
+    				GETPOST('computed_value', 'alpha'),
+    				(GETPOST('entitycurrentorall', 'alpha')?0:''),
+                    GETPOST('langfile'),
+                    1,
+                    (GETPOST('totalizable', 'alpha')?1:0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     			);
     			if ($result > 0)
     			{
@@ -367,7 +492,11 @@ if ($action == 'update')
     		{
     		    $error++;
     			$langs->load("errors");
+<<<<<<< HEAD
     			$mesg=$langs->trans("ErrorFieldCanNotContainSpecialCharacters",$langs->transnoentities("AttributeCode"));
+=======
+    			$mesg=$langs->trans("ErrorFieldCanNotContainSpecialCharacters", $langs->transnoentities("AttributeCode"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     			setEventMessages($mesg, null, 'errors');
     		}
 	    }
@@ -381,9 +510,15 @@ if ($action == 'update')
 // Delete attribute
 if ($action == 'delete')
 {
+<<<<<<< HEAD
 	if(isset($_GET["attrname"]) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$_GET["attrname"]))
 	{
         $result=$extrafields->delete($_GET["attrname"],$elementtype);
+=======
+	if(isset($_GET["attrname"]) && preg_match("/^\w[a-zA-Z0-9-_]*$/", $_GET["attrname"]))
+	{
+        $result=$extrafields->delete($_GET["attrname"], $elementtype);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         if ($result >= 0)
         {
             header("Location: ".$_SERVER["PHP_SELF"]);
@@ -395,7 +530,13 @@ if ($action == 'delete')
 	{
 	    $error++;
 		$langs->load("errors");
+<<<<<<< HEAD
 		$mesg=$langs->trans("ErrorFieldCanNotContainSpecialCharacters",$langs->transnoentities("AttributeCode"));
 	}
 }
 
+=======
+		$mesg=$langs->trans("ErrorFieldCanNotContainSpecialCharacters", $langs->transnoentities("AttributeCode"));
+	}
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -26,6 +26,7 @@
 // $object must be defined
 // $permissiondellink must be defined
 
+<<<<<<< HEAD
 $dellinkid = GETPOST('dellinkid','int');
 $addlinkid = GETPOST('idtolinkto','int');
 
@@ -44,3 +45,22 @@ if ($action == 'dellink' && ! empty($permissiondellink) && ! GETPOST('cancel','a
 	if ($result < 0) setEventMessages($object->error,$object->errors,'errors');
 }
 
+=======
+$dellinkid = GETPOST('dellinkid', 'int');
+$addlinkid = GETPOST('idtolinkto', 'int');
+
+// Link invoice to order
+if ($action == 'addlink' && ! empty($permissiondellink) && ! GETPOST('cancel', 'alpha') && $id > 0 && $addlinkid > 0)
+{
+    $object->fetch($id);
+    $object->fetch_thirdparty();
+    $result = $object->add_object_linked(GETPOST('addlink', 'alpha'), $addlinkid);
+}
+
+// Delete link
+if ($action == 'dellink' && ! empty($permissiondellink) && ! GETPOST('cancel', 'alpha') && $dellinkid > 0)
+{
+	$result=$object->deleteObjectLinked(0, '', 0, '', $dellinkid);
+	if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

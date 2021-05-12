@@ -7,6 +7,7 @@ ChequeOrTransferNumber=Cheque/Transfer N°
 ChequeMaker=Cheque/Transfer transmitter
 ChequeBank=Bank of Cheque
 CheckBank=Cheque
+<<<<<<< HEAD
 PaymentByChequeOrderedTo=Cheque payment (including GST) is payable to %s send to
 PaymentByChequeOrderedToShort=Cheque payment (including GST) is payable to
 MenuChequeDeposits=Cheque deposits
@@ -16,5 +17,9 @@ NewChequeDeposit=New Cheque deposit
 ChequesReceipts=Cheque receipts
 ChequesArea=Cheque deposits area
 ChequeDeposits=Cheque deposits
+=======
+MenuCheques=Cheques
+NewChequeDeposit=New Cheque deposit
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Cheques=Cheques
 NbCheque=Number of cheques

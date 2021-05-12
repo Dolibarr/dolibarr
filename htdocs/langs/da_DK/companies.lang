@@ -7,6 +7,7 @@ DeleteContact=Slet en kontakt/adresse
 ConfirmDeleteContact=Er du sikker på, at du vil slette denne kontakt og alle arvede oplysninger?
 MenuNewThirdParty=Ny tredjepart
 MenuNewCustomer=Ny kunde
+<<<<<<< HEAD
 MenuNewProspect=Nyt emne
 MenuNewSupplier=Ny leverandør
 MenuNewPrivateIndividual=Ny privatperson
@@ -16,10 +17,22 @@ CreateDolibarrThirdPartySupplier=Opret en tredjepart (levenrandør)
 CreateThirdPartyOnly=Opret tredjepart
 CreateThirdPartyAndContact=Opret en tredjepart + en børnekontakt
 ProspectionArea=Prospektering område
+=======
+MenuNewProspect=Ny potentiel kunde
+MenuNewSupplier=Ny leverandør
+MenuNewPrivateIndividual=Ny privatperson
+NewCompany=Nyt selskab (potentielle kunder, kunde, leverandør)
+NewThirdParty=Ny tredjepart (potentielle kunder, kunde, leverandør)
+CreateDolibarrThirdPartySupplier=Opret en tredjepart (levenrandør)
+CreateThirdPartyOnly=Opret tredjepart
+CreateThirdPartyAndContact=Opret en tredjepart + en børnekontakt
+ProspectionArea=Prospekteringsområde
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 IdThirdParty=Id tredjepart
 IdCompany=CVR
 IdContact=Kontakt-ID
 Contacts=Kontakter/adresser
+<<<<<<< HEAD
 ThirdPartyContacts=Kontakter for tredjepart 
 ThirdPartyContact=Kontakt for tredjepart 
 Company=Firma
@@ -34,19 +47,46 @@ ThirdParty=Tredjepart
 ThirdParties=Tredjepart
 ThirdPartyProspects=Emner
 ThirdPartyProspectsStats=Emner
+=======
+ThirdPartyContacts=Tredjeparts kontakter
+ThirdPartyContact=Tredjeparts kontakt/adresse
+Company=Firma
+CompanyName=Firmanavn
+AliasNames=Alias ​​navn (kommerciel, varemærke, ...)
+AliasNameShort=Alias ​​Navn
+Companies=Selskaber
+CountryIsInEEC=Landet er inden for Det Europæiske Økonomiske Fællesskab
+PriceFormatInCurrentLanguage=Nuværende sprogs prisformat
+ThirdPartyName=Navn på tredjepart
+ThirdPartyEmail=Tredjeparts email
+ThirdParty=Tredje part
+ThirdParties=Tredjepart
+ThirdPartyProspects=Potentielle kunder
+ThirdPartyProspectsStats=Potentielle kunder
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ThirdPartyCustomers=Kunder
 ThirdPartyCustomersStats=Kunder
 ThirdPartyCustomersWithIdProf12=Kunder med %s eller %s
 ThirdPartySuppliers=Leverandører
+<<<<<<< HEAD
 ThirdPartyType=Tredjepart type
 Individual=Privatperson
 ToCreateContactWithSameName=Vil automatisk oprette en kontakt / adresse med samme oplysninger end tredjepart under tredjepart. I de fleste tilfælde er det nok, selvom din tredjepart er et fysisk menneske, at skabe en tredjepart alene.
+=======
+ThirdPartyType=Tredjeparts type
+Individual=Privatperson
+ToCreateContactWithSameName=Der oprettes automatisk en kontakt/adresse med samme information som tredjepart under aktuel tredjepart. I de fleste tilfælde er det nok, selvom din tredjepart er en fysisk person, at kun skabe en tredjepart.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ParentCompany=Moderselskab
 Subsidiaries=Datterselskaber
 ReportByMonth=Rapport pr. Måned
 ReportByCustomers=Rapport af kunde
 ReportByQuarter=Rapport fra kvartal
+<<<<<<< HEAD
 CivilityCode=Høfligt kode
+=======
+CivilityCode=Landekode
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 RegisteredOffice=Hjemsted
 Lastname=Efternavn
 Firstname=Fornavn
@@ -69,12 +109,17 @@ Chat=Chat
 PhonePro=Firmatelefon
 PhonePerso=Pers. telefon
 PhoneMobile=Mobil
+<<<<<<< HEAD
 No_Email=Afvis massemails
+=======
+No_Email=Afvis masse Emails
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Fax=Fax
 Zip=Zip Code
 Town=By
 Web=Web
 Poste= Position
+<<<<<<< HEAD
 DefaultLang=Sprog som standard
 VATIsUsed=Salgsmoms anvendes
 VATIsUsedWhenSelling=Dette definerer, hvis denne tredjepart indeholder en salgsafgift eller ej, når den foretager en faktura til sine egne kunder
@@ -82,6 +127,15 @@ VATIsNotUsed=Salgsmoms anvendes ikke
 CopyAddressFromSoc=Fyld adresse med tredjepartsadresse
 ThirdpartyNotCustomerNotSupplierSoNoRef=Tredjepart er hverken kunde eller leverandør, ingen tilgængelige henvisningsobjekter
 ThirdpartyIsNeitherCustomerNorClientSoCannotHaveDiscounts=Tredjepart er hverken kunde eller leverandør, rabatter er ikke tilgængelige
+=======
+DefaultLang=Sprogstandard
+VATIsUsed=Anvendt moms
+VATIsUsedWhenSelling=Dette definerer, om denne tredjepart indeholder en salgsafgift eller ej, når den foretager en faktura til sine egne kunder
+VATIsNotUsed=Salgsmoms anvendes ikke
+CopyAddressFromSoc=Kopier adresse fra tredjeparts oplysninger
+ThirdpartyNotCustomerNotSupplierSoNoRef=Tredjepart hverken kunde eller leverandør, ingen tilgængelige henvisende objekter
+ThirdpartyIsNeitherCustomerNorClientSoCannotHaveDiscounts=Tredjepart hverken kunde eller leverandør, rabatter er ikke tilgængelige
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PaymentBankAccount=Betaling bankkonto
 OverAllProposals=Tilbud
 OverAllOrders=Ordrer
@@ -96,8 +150,11 @@ LocalTax2IsUsedES= IRPF bruges
 LocalTax2IsNotUsedES= IRPF ikke bruges
 LocalTax1ES=RE
 LocalTax2ES=IRPF
+<<<<<<< HEAD
 TypeLocaltax1ES=RE Type
 TypeLocaltax2ES=IRPF Type
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 WrongCustomerCode=Kundekode ugyldig
 WrongSupplierCode=Leverandør kode ugyldig
 CustomerCodeModel=Kundekodemodel
@@ -258,12 +315,21 @@ ProfId1DZ=RC
 ProfId2DZ=Kunst.
 ProfId3DZ=NIF
 ProfId4DZ=NIS
+<<<<<<< HEAD
 VATIntra=Salgsmoms ID
 VATIntraShort=Skatte ID
 VATIntraSyntaxIsValid=Syntaks er gyldigt
 VATReturn=Moms returnering
 ProspectCustomer=Emne / kunde
 Prospect=Emne
+=======
+VATIntra=Moms Nr
+VATIntraShort=Moms Nr
+VATIntraSyntaxIsValid=Syntaks er gyldigt
+VATReturn=Moms returnering
+ProspectCustomer=Potentielle kunder/kunde
+Prospect=Potentiel kunde
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CustomerCard=Customer Card
 Customer=Kunde
 CustomerRelativeDiscount=Relativ kunde rabat
@@ -272,6 +338,7 @@ CustomerRelativeDiscountShort=Relativ rabat
 CustomerAbsoluteDiscountShort=Absolut rabat
 CompanyHasRelativeDiscount=Denne kunde har en rabat <b>på %s%%</b>
 CompanyHasNoRelativeDiscount=Denne kunde har ingen relativ discount som standard
+<<<<<<< HEAD
 HasRelativeDiscountFromSupplier=Du har en standardrabat på <b> %s%% </b> fra denne leverandør
 HasNoRelativeDiscountFromSupplier=Du har ingen standard relativ rabat fra denne leverandør
 CompanyHasAbsoluteDiscount=Denne kunde har rabat til rådighed (kredit noter eller nedbetalinger) for <b> %s </b> %s
@@ -281,13 +348,28 @@ HasNoAbsoluteDiscountFromSupplier=Du har ingen rabatkredit tilgængelig hos denn
 HasAbsoluteDiscountFromSupplier=Du har rabatter til rådighed (krediter noter eller forudbetalinger) for <b> %s </b> %s fra denne leverandør
 HasDownPaymentOrCommercialDiscountFromSupplier=Du har rabatter til rådighed (kommercielle, forskudsbetalinger) til <b> %s </b> %s fra denne leverandør
 HasCreditNoteFromSupplier=Du har kreditnotaer til <b> %s </b> %s fra denne leverandør
+=======
+HasRelativeDiscountFromSupplier=Du har en standardrabat på <b> %s%% </b> fra denne sælger
+HasNoRelativeDiscountFromSupplier=Du har ingen standard relativ rabat fra denne sælger
+CompanyHasAbsoluteDiscount=Denne kunde har rabatter til rådighed (kreditnotaer eller nedbetalinger) for <b>%s</b>%s
+CompanyHasDownPaymentOrCommercialDiscount=Denne kunde har rabat til rådighed (kommercielle, nedbetalinger) til <b> %s </ b> %s
+CompanyHasCreditNote=Denne kunde har stadig kreditnotaer <b>for %s %s</b>
+HasNoAbsoluteDiscountFromSupplier=Du har ingen rabat tilgængelig fra denne sælger
+HasAbsoluteDiscountFromSupplier=Du har rabatter til rådighed (kredits noter eller afbetalinger) for <b> %s </b> %s fra denne sælger
+HasDownPaymentOrCommercialDiscountFromSupplier=Du har rabatter til rådighed (kreditnote, afbetalinger) til <b> %s </b> %s fra denne sælger
+HasCreditNoteFromSupplier=Du har kreditnotaer til <b> %s </b> %s fra denne sælger
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CompanyHasNoAbsoluteDiscount=Denne kunde har ingen rabat kreditter til rådighed
 CustomerAbsoluteDiscountAllUsers=Absolutte kunderabatter (ydet af alle brugere)
 CustomerAbsoluteDiscountMy=Absolutte kunderabatter (givet af dig selv)
 SupplierAbsoluteDiscountAllUsers=Absolutte leverandørrabatter (indtastet af alle brugere)
 SupplierAbsoluteDiscountMy=Absolutte leverandørrabatter (indtastet af dig selv)
 DiscountNone=Ingen
+<<<<<<< HEAD
 Supplier=Leverandør
+=======
+Vendor=Sælger
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddContact=Opret kontakt
 AddContactAddress=Opret kontakt/adresse
 EditContact=Rediger kontakt
@@ -304,16 +386,28 @@ DeleteACompany=Slet et selskab
 PersonalInformations=Personoplysninger
 AccountancyCode=Regnskabskonto
 CustomerCode=Kundekode
+<<<<<<< HEAD
 SupplierCode=Leverandør kode
+=======
+SupplierCode=Leverandørkode
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CustomerCodeShort=Kundekode
 SupplierCodeShort=Leverandør kode
 CustomerCodeDesc=Kundekode, unik for alle kunder
 SupplierCodeDesc=Leverandørkode, unik for alle leverandører
+<<<<<<< HEAD
 RequiredIfCustomer=Påkrævet, hvis tredjepart er en kunde eller et emne
 RequiredIfSupplier=Påkrævet, hvis tredjepart er en sælger
 ValidityControledByModule=Gyldighed kontrolleres af modul
 ThisIsModuleRules=Dette er reglerne for dette modul
 ProspectToContact=Emne at kontakte
+=======
+RequiredIfCustomer=Påkrævet, hvis tredjepart er kunde eller kunde
+RequiredIfSupplier=Påkrævet, hvis tredjepart er en sælger
+ValidityControledByModule=Gyldighedsstyret af modulet
+ThisIsModuleRules=Regler for dette modul
+ProspectToContact=Potentiel kunde til kontakt
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CompanyDeleted=Company " %s" slettet fra databasen.
 ListOfContacts=Liste over kontakter/adresser
 ListOfContactsAddresses=Liste over kontakter/adresser
@@ -333,11 +427,16 @@ NoContactForAnyProposal=Denne kontakt er ikke tilknyttet noget tilbud
 NoContactForAnyContract=Denne kontakt er ikke tilknyttet nogen kontrakt
 NoContactForAnyInvoice=Denne kontakt er ikke tilknyttet nogen faktura
 NewContact=Ny kontakt
+<<<<<<< HEAD
 NewContactAddress=Ny kontakt/adresse
+=======
+NewContactAddress=Ny kontakt / adresse
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MyContacts=Mine kontakter
 Capital=Egenkapital
 CapitalOf=Egenkapital på %s
 EditCompany=Rediger virksomhed
+<<<<<<< HEAD
 ThisUserIsNot=Denne bruger er ikke en kunde, kunde eller leverandør
 VATIntraCheck=Kontrollere
 VATIntraCheckDesc=<b>Linket %s</b> tillader at anmode Den Europæiske moms Kontrolprogram service. En ekstern adgang til internettet fra server er påkrævet til denne tjeneste for at arbejde.
@@ -350,12 +449,30 @@ JuridicalStatus=Selskabsform
 Staff=Personale
 ProspectLevelShort=Potentiale
 ProspectLevel=Emne potentiale
+=======
+ThisUserIsNot=Denne bruger er ikke en mulig kunde, kunde eller leverandør
+VATIntraCheck=Kontrollere
+VATIntraCheckDesc=Moms nummer skal indeholde landets præfiks. Linket <b> %s </b> bruger den europæiske momscheckertjeneste (VIES), det kræver internetadgang fra serveren.
+VATIntraCheckURL=http://ec.europa.eu/taxation_customs/vies/vieshome.do
+VATIntraCheckableOnEUSite=Kontroller moms nummer på EU webside
+VATIntraManualCheck=Du kan også tjekke manuelt på Europa-Kommissionens websted <a href="%s" target="_blank"> %s </a>
+ErrorVATCheckMS_UNAVAILABLE=Kontrol er ikke muligt. Denne service leveres ikke af medlemsstaten (%s).
+NorProspectNorCustomer=Ikke mulighedder eller kunde
+JuridicalStatus=Juridisk enhedstype
+Staff=Medarbejdere
+ProspectLevelShort=Potentiale
+ProspectLevel=Kundepotentiale
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ContactPrivate=Privat
 ContactPublic=Delt
 ContactVisibility=Synlighed
 ContactOthers=Andre
 OthersNotLinkedToThirdParty=Andre, som ikke er knyttet til en tredjepart
+<<<<<<< HEAD
 ProspectStatus=Emne status
+=======
+ProspectStatus=Prospect status
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PL_NONE=Ingen
 PL_UNKNOWN=Ukendt
 PL_LOW=Lav
@@ -368,7 +485,11 @@ TE_MEDIUM=Mellemstor virksomhed
 TE_ADMIN=Offentlig
 TE_SMALL=Lille virksomhed
 TE_RETAIL=Detailhandler
+<<<<<<< HEAD
 TE_WHOLE=Grossist
+=======
+TE_WHOLE=Engrossalg
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TE_PRIVATE=Privatperson
 TE_OTHER=Andre
 StatusProspect-1=Kontakt ikke
@@ -381,12 +502,17 @@ ChangeNeverContacted=Ændre status til 'Aldrig kontaktet'
 ChangeToContact=Skift status til 'Skal Kontaktes'
 ChangeContactInProcess=Ændre status til 'Kontakt i gang'
 ChangeContactDone=Ændre status til 'Er kontaktet'
+<<<<<<< HEAD
 ProspectsByStatus=Emne ved status
+=======
+ProspectsByStatus=Potentielle kunder efter status
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoParentCompany=Ingen
 ExportCardToFormat=Eksporter kort til format
 ContactNotLinkedToCompany=Kontakt ikke knyttet til nogen tredjepart
 DolibarrLogin=Dolibarr login
 NoDolibarrAccess=Ingen Dolibarr adgang
+<<<<<<< HEAD
 ExportDataset_company_1=Tredjeparter (Virksomheder / fonde / fysiske personer) og opsætning
 ExportDataset_company_2=Kontakter og egenskaber
 ImportDataset_company_1=Tredjeparter (Virksomheder / fonde / fysiske personer) og opsætning
@@ -394,6 +520,16 @@ ImportDataset_company_2=Kontakter / Adresser (fra tredjeparter eller ej) og attr
 ImportDataset_company_3=Bankregnskaber for tredjeparter
 ImportDataset_company_4=Tredjeparter / Salgspersoner (Tildel salgsrepræsentanters brugere til virksomheder)
 PriceLevel=Prisniveau
+=======
+ExportDataset_company_1=Tredjeparter (virksomheder/fonde/fysiske personer) og deres egenskaber
+ExportDataset_company_2=Kontakter og deres egenskaber
+ImportDataset_company_1=Tredjeparter og deres egenskaber
+ImportDataset_company_2=Tredjeparts ekstra kontakter/adresser og attributter
+ImportDataset_company_3=Tredjeparts bankkonti
+ImportDataset_company_4=Tredjeparts salgs repræsentanter (tildele salgs repræsentanter/brugere til virksomheder)
+PriceLevel=Prisniveau
+PriceLevelLabels=Prisniveau etiketter
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DeliveryAddress=Leveringsadresse
 AddAddress=Tilføj adresse
 SupplierCategory=Leverandør kategori
@@ -402,6 +538,7 @@ DeleteFile=Slet fil
 ConfirmDeleteFile=Er du sikker på du vil slette denne fil?
 AllocateCommercial=Tildelt til en salgsrepræsentant
 Organization=Organisationen
+<<<<<<< HEAD
 FiscalYearInformation=Oplysninger om regnskabssår
 FiscalMonthStart=Første måned i regnskabsåret
 YouMustAssignUserMailFirst=Du skal først oprette e-mail til denne bruger for at kunne tilføje e-mail-meddelelser til ham.
@@ -412,6 +549,18 @@ ListCustomersShort=Liste over kunder
 ThirdPartiesArea=Tredjeparter og kontakter
 LastModifiedThirdParties=Seneste %s ændrede tredjeparter
 UniqueThirdParties=Unikke tredjeparter i alt
+=======
+FiscalYearInformation=Skatteår
+FiscalMonthStart=Første måned i regnskabsåret
+YouMustAssignUserMailFirst=Du skal oprette en email til denne bruger, før du kan tilføje en e-mail-besked.
+YouMustCreateContactFirst=For at kunne tilføje e-mail-meddelelser skal du først definere kontakter med gyldige e-mails til tredjepart
+ListSuppliersShort=Liste over leverandører
+ListProspectsShort=Liste over potentielle kunder
+ListCustomersShort=Liste over kunder
+ThirdPartiesArea=Tredjeparter / Kontakter
+LastModifiedThirdParties=Sidste %s modificerede tredjeparter
+UniqueThirdParties=Samlet antal tredjeparter
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 InActivity=Åben
 ActivityCeased=Lukket
 ThirdPartyIsClosed=Tredjepart er lukket
@@ -420,15 +569,34 @@ CurrentOutstandingBill=Udestående faktura i øjeblikket
 OutstandingBill=Maks. for udstående faktura
 OutstandingBillReached=Maks. for udestående regning nået
 OrderMinAmount=Minimumsbeløb for ordre
+<<<<<<< HEAD
 MonkeyNumRefModelDesc=Returner nummer med format %syymm-nnnn for kundekode og %syymm-nnnn for leverandør kode hvor det er år, mm er måned og nnnn er en sekvens uden pause og ingen tilbagevenden til 0.
+=======
+MonkeyNumRefModelDesc=Ret et nummer med formatet %syymm-nnnn til kundekode og %syymm-nnnn for leverandørkoden, hvor du er år, mm er måned og nnnn er en sekvens uden pause og ingen tilbagevenden til 0.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LeopardNumRefModelDesc=Kunde / leverandør-koden er ledig. Denne kode kan til enhver tid ændres.
 ManagingDirectors=Leder(e) navne (CEO, direktør, chef...)
 MergeOriginThirdparty=Duplicate tredjepart (tredjepart, du vil slette)
 MergeThirdparties=Flet tredjeparter
+<<<<<<< HEAD
 ConfirmMergeThirdparties=Er du sikker på, at du vil fusionere denne tredjepart i den nuværende? Alle linkede objekter (fakturaer, ordrer, ...) vil blive flyttet til den aktuelle tredjepart, og tredjepartet vil blive slettet.
+=======
+ConfirmMergeThirdparties=Er du sikker på, at du vil fusionere denne tredjepart i den nuværende? Alle linkede objekter (fakturaer, ordrer, ...) flyttes til den aktuelle tredjepart, og tredjepart vil blive slettet.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ThirdpartiesMergeSuccess=Tredjeparter er blevet fusioneret
 SaleRepresentativeLogin=Login af salgsrepræsentant
 SaleRepresentativeFirstname=Fornavn på salgsrepræsentant
 SaleRepresentativeLastname=Efternavn på salgsrepræsentant
 ErrorThirdpartiesMerge=Der opstod en fejl ved sletning af tredjeparter. Kontroller loggen. Ændringer er blevet vendt tilbage.
+<<<<<<< HEAD
 NewCustomerSupplierCodeProposed=Ny kunde- eller sælgerkode foreslået på to eksemplarer
+=======
+NewCustomerSupplierCodeProposed=Kunde- eller leverandørkode, der allerede er brugt, foreslås en ny kode
+#Imports
+PaymentTypeCustomer=Betalingstype - Kunde
+PaymentTermsCustomer=Betalingsbetingelser - Kunde
+PaymentTypeSupplier=Betalingstype - Leverandør
+PaymentTermsSupplier=Betalingsperiode - Leverandør
+MulticurrencyUsed=Brug flere valutaer
+MulticurrencyCurrency=Valuta
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

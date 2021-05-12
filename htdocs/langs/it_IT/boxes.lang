@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - boxes
 BoxLoginInformation=Informazioni di login
+<<<<<<< HEAD
 BoxLastRssInfos=Informazioni RSS
 BoxLastProducts=Ultimi %s prodotti/servizi
 BoxProductsAlertStock=Avvisi per le scorte di prodotti
@@ -8,11 +9,25 @@ BoxLastSupplierBills=Ultime fatture passive
 BoxLastCustomerBills=Ultime fatture attive
 BoxOldestUnpaidCustomerBills=Ultime fatture attive non pagate
 BoxOldestUnpaidSupplierBills=Ultime fatture passive non pagate
+=======
+BoxLastRssInfos=RSS Information
+BoxLastProducts=Latest %s Products/Services
+BoxProductsAlertStock=Avvisi per le scorte di prodotti
+BoxLastProductsInContract=Ultimi %s prodotti/servizi contrattualizzati
+BoxLastSupplierBills=Latest Vendor invoices
+BoxLastCustomerBills=Latest Customer invoices
+BoxOldestUnpaidCustomerBills=Ultime fatture attive non pagate
+BoxOldestUnpaidSupplierBills=Oldest unpaid vendor invoices
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BoxLastProposals=Ultime proposte commerciali
 BoxLastProspects=Ultimi clienti potenziali modificati
 BoxLastCustomers=Ultimi clienti modificati
 BoxLastSuppliers=Ultimi fornitori modificati
+<<<<<<< HEAD
 BoxLastCustomerOrders=Ultimi ordini cliente
+=======
+BoxLastCustomerOrders=Latest sales orders
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BoxLastActions=Ultime azioni
 BoxLastContracts=Ultimi contratti
 BoxLastContacts=Ultimi contatti/indirizzi
@@ -20,6 +35,7 @@ BoxLastMembers=Ultimi membri
 BoxFicheInter=Ultimi interventi
 BoxCurrentAccounts=Saldo conti aperti
 BoxTitleLastRssInfos=Ultime %s notizie da %s
+<<<<<<< HEAD
 BoxTitleLastProducts=Ultimi %s prodotti/servizi modificati
 BoxTitleProductsAlertStock=Prodotti in allerta scorte
 BoxTitleLastSuppliers=Ultimi %s ordini fornitore
@@ -36,6 +52,24 @@ BoxTitleOldestUnpaidSupplierBills=Ultime %s fatture fornitori non pagate
 BoxTitleCurrentAccounts=Saldi dei conti aperti
 BoxTitleLastModifiedContacts=Ultimi %s contatti/indirizzi modificati
 BoxMyLastBookmarks=I miei ultimi %s segnalibri
+=======
+BoxTitleLastProducts=Products/Services: last %s modified
+BoxTitleProductsAlertStock=Prodotti: allerta scorte
+BoxTitleLastSuppliers=Ultimi %s ordini fornitore
+BoxTitleLastModifiedSuppliers=Vendors: last %s modified
+BoxTitleLastModifiedCustomers=Customers: last %s modified
+BoxTitleLastCustomersOrProspects=Ultimi %s clienti o potenziali clienti
+BoxTitleLastCustomerBills=Latest %s Customer invoices
+BoxTitleLastSupplierBills=Latest %s Vendor invoices
+BoxTitleLastModifiedProspects=Prospects: last %s modified
+BoxTitleLastModifiedMembers=Ultimi %s membri
+BoxTitleLastFicheInter=Ultimi %s interventi modificati
+BoxTitleOldestUnpaidCustomerBills=Fatture cliente: %s non pagate più vecchie
+BoxTitleOldestUnpaidSupplierBills=Vendor Invoices: oldest %s unpaid
+BoxTitleCurrentAccounts=Conti aperti: bilanci
+BoxTitleLastModifiedContacts=Contacts/Addresses: last %s modified
+BoxMyLastBookmarks=Bookmarks: latest %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BoxOldestExpiredServices=Servizi scaduti da più tempo ancora attivi
 BoxLastExpiredServices=Ultimi %s contatti con servizi scaduti ancora attivi
 BoxTitleLastActionsToDo=Ultime %s azioni da fare
@@ -52,6 +86,7 @@ ClickToAdd=Clicca qui per aggiungere
 NoRecordedCustomers=Nessun cliente registrato
 NoRecordedContacts=Nessun contatto registrato
 NoActionsToDo=Nessuna azione da fare
+<<<<<<< HEAD
 NoRecordedOrders=Nessun ordine cliente registrato
 NoRecordedProposals=Nessuna proposta registrata
 NoRecordedInvoices=Nessuna fattura attiva registrata
@@ -80,7 +115,41 @@ BoxTitleLastModifiedCustomerOrders=ultimi %s ordini cliente modificati
 BoxTitleLastModifiedPropals=Ultime %s proposte modificate
 ForCustomersInvoices=Fatture attive
 ForCustomersOrders=Ordini dei clienti
+=======
+NoRecordedOrders=No recorded sales orders
+NoRecordedProposals=Nessuna proposta registrata
+NoRecordedInvoices=Nessuna fattura attiva registrata
+NoUnpaidCustomerBills=Nessuna fattura attiva non pagata
+NoUnpaidSupplierBills=No unpaid vendor invoices
+NoModifiedSupplierBills=No recorded vendor invoices
+NoRecordedProducts=Nessun prodotto/servizio registrato
+NoRecordedProspects=Nessun potenziale cliente registrato
+NoContractedProducts=Nessun prodotto/servizio contrattualizzato
+NoRecordedContracts=Nessun contratto registrato
+NoRecordedInterventions=Non ci sono interventi registrati
+BoxLatestSupplierOrders=Latest purchase orders
+NoSupplierOrder=No recorded purchase order
+BoxCustomersInvoicesPerMonth=Fatture cliente al mese
+BoxSuppliersInvoicesPerMonth=Vendor Invoices per month
+BoxCustomersOrdersPerMonth=Sales Orders per month
+BoxSuppliersOrdersPerMonth=Vendor Orders per month
+BoxProposalsPerMonth=proposte al mese
+NoTooLowStockProducts=Nessun prodotto sotto la soglia minima di scorte
+BoxProductDistribution=Distribuzione prodotti/servizi
+ForObject=On %s
+BoxTitleLastModifiedSupplierBills=Vendor Invoices: last %s modified
+BoxTitleLatestModifiedSupplierOrders=Vendor Orders: last %s modified
+BoxTitleLastModifiedCustomerBills=Customer Invoices: last %s modified
+BoxTitleLastModifiedCustomerOrders=Sales Orders: last %s modified
+BoxTitleLastModifiedPropals=Ultime %s proposte modificate
+ForCustomersInvoices=Fatture attive
+ForCustomersOrders=Ordini cliente
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ForProposals=Proposte
 LastXMonthRolling=Ultimi %s mesi
 ChooseBoxToAdd=Aggiungi widget alla dashboard
 BoxAdded=Widget aggiunto al pannello principale
+<<<<<<< HEAD
+=======
+BoxTitleUserBirthdaysOfMonth=Birthdays of this month
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

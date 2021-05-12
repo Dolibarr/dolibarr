@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2018      Alexandre Spangaro  <aspangaro@zendsi.com>
+=======
+/* Copyright (C) 2018      Alexandre Spangaro  <aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +20,11 @@
  */
 
 /**
+<<<<<<< HEAD
  * \file    core/lib/assets.lib.php
+=======
+ * \file    htdocs/core/lib/asset.lib.php
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * \ingroup asset
  * \brief   Library files with common functions for Assets
  */
@@ -24,9 +32,15 @@
 /**
  * Prepare admin pages header
  *
+<<<<<<< HEAD
  * @return array
  */
 function AssetsAdminPrepareHead()
+=======
+ * @return array head array with tabs
+ */
+function asset_admin_prepare_head()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	global $langs, $conf;
 
@@ -65,7 +79,16 @@ function AssetsAdminPrepareHead()
 	return $head;
 }
 
+<<<<<<< HEAD
 function AssetsPrepareHead()
+=======
+/**
+ * Prepare admin pages header
+ *
+ * @return array head array with tabs
+ */
+function asset_prepare_head()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	global $langs, $conf;
 
@@ -91,8 +114,13 @@ function AssetsPrepareHead()
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+<<<<<<< HEAD
 	$upload_dir = $conf->assets->dir_output . '/' . get_exdir($filename,2,0,1,$object,'assets'). '/'. dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
+=======
+	$upload_dir = $conf->assets->dir_output . '/' . get_exdir($filename, 2, 0, 1, $object, 'assets'). '/'. dol_sanitizeFileName($object->ref);
+	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/asset/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
@@ -141,9 +169,15 @@ function asset_type_prepare_head(AssetType $object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+<<<<<<< HEAD
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'assettype');
 
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'assettype','remove');
+=======
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'assettype');
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'assettype', 'remove');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	return $head;
 }

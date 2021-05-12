@@ -5,6 +5,7 @@ RemoteControlSupport=Online realtid / fjärrsupport
 OtherSupport=Annat stöd
 ToSeeListOfAvailableRessources=För att kontakta / se tillgängliga resurser:
 HelpCenter=Hjälpcenter
+<<<<<<< HEAD
 DolibarrHelpCenter=Dolibarr Hjälp-och supportcenter
 ToGoBackToDolibarr=Annars klickar du på <a href="%s">att här använda Dolibarr</a>
 TypeOfSupport=Källa till stöd
@@ -23,4 +24,21 @@ BackToHelpCenter=Annars, här klickar du gå <a href="%s">tillbaka för att hjä
 LinkToGoldMember=Du kan ringa en av de tränare förvalda genom Dolibarr för ditt språk (%s) genom att klicka på hans Widget (status och högsta pris uppdateras automatiskt):
 PossibleLanguages=Språk som stöds
 SubscribeToFoundation=Hjälp Dolibarr projektet, prenumerera på stiftelsen
+=======
+DolibarrHelpCenter=Dolibarr Help and Support Center
+ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
+TypeOfSupport=Type of support
+TypeSupportCommunauty=Gemenskapen (gratis)
+TypeSupportCommercial=Kommersiella
+TypeOfHelp=Typ
+NeedHelpCenter=Behöver du hjälp eller stöd?
+Efficiency=Effektivitet
+TypeHelpOnly=Hjälp endast
+TypeHelpDev=Hjälp + Utveckling
+TypeHelpDevForm=Help+Development+Training
+BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
+LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
+PossibleLanguages=Språk som stöds
+SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SeeOfficalSupport=För officiell Dolibarr support på ditt språk: <br><b><a href="%s" target="_blank">%s</a></b>

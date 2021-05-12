@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,14 +32,22 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
+<<<<<<< HEAD
 $langs->load("suppliers");
 $langs->load("orders");
 $langs->load("companies");
+=======
+$langs->loadLangs(array("suppliers", "orders", "companies"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Security check
 $socid = GETPOST("socid", 'int');
 if ($user->societe_id) $socid=$user->societe_id;
+<<<<<<< HEAD
 $result = restrictedArea($user, 'societe',$socid,'');
+=======
+$result = restrictedArea($user, 'societe', $socid, '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 /*
@@ -46,7 +58,11 @@ $commandestatic=new CommandeFournisseur($db);
 $facturestatic=new FactureFournisseur($db);
 $companystatic=new Societe($db);
 
+<<<<<<< HEAD
 llxHeader("",$langs->trans("SuppliersArea"));
+=======
+llxHeader("", $langs->trans("SuppliersArea"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print load_fiche_titre($langs->trans("SuppliersArea"));
 
@@ -73,7 +89,11 @@ if ($resql)
 	$i = 0;
 
 	print '<table class="noborder" width="100%">';
+<<<<<<< HEAD
 	print '<tr class="liste_titre"><td>'.$langs->trans("Orders").'</td><td align="center">'.$langs->trans("Nb").'</td><td>&nbsp;</td>';
+=======
+	print '<tr class="liste_titre"><td>'.$langs->trans("Orders").'</td><td class="center">'.$langs->trans("Nb").'</td><td>&nbsp;</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print "</tr>\n";
 
 	while ($i < $num)
@@ -82,8 +102,13 @@ if ($resql)
 
 		print '<tr class="oddeven">';
 		print '<td>'.$commandestatic->LibStatut($row[1]).'</td>';
+<<<<<<< HEAD
 		print '<td align="center">'.$row[0].'</td>';
 		print '<td align="center"><a href="'.DOL_URL_ROOT.'/fourn/commande/list.php?statut='.$row[1].'">'.$commandestatic->LibStatut($row[1],3).'</a></td>';
+=======
+		print '<td class="center">'.$row[0].'</td>';
+		print '<td class="center"><a href="'.DOL_URL_ROOT.'/fourn/commande/list.php?statut='.$row[1].'">'.$commandestatic->LibStatut($row[1], 3).'</a></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		print "</tr>\n";
 		$i++;
@@ -133,22 +158,36 @@ if (! empty($conf->fournisseur->enabled))
 				print '<tr class="oddeven"><td  class="nowrap">';
 				$commandestatic->id=$obj->rowid;
 				$commandestatic->ref=$obj->ref;
+<<<<<<< HEAD
 				print $commandestatic->getNomUrl(1,'',16);
+=======
+				print $commandestatic->getNomUrl(1, '', 16);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				print '</td>';
 				print '<td  class="nowrap">';
 				$companystatic->id=$obj->socid;
 				$companystatic->name=$obj->name;
 				$companystatic->client=0;
+<<<<<<< HEAD
 				print $companystatic->getNomUrl(1,'',16);
 				print '</td>';
 				print '<td align="right" class="nowrap">'.price($obj->total_ttc).'</td></tr>';
+=======
+				print $companystatic->getNomUrl(1, '', 16);
+				print '</td>';
+				print '<td class="right nowrap">'.price($obj->total_ttc).'</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$i++;
 				$total += $obj->total_ttc;
 			}
 			if ($total>0)
 			{
 
+<<<<<<< HEAD
 				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
+=======
+				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" class="right">'.price($total)."</td></tr>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 			print "</table>";
 			print "<br>\n";
@@ -191,22 +230,37 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 				$facturestatic->ref=$obj->ref;
 				$facturestatic->id=$obj->rowid;
 				$facturestatic->type=$obj->type;
+<<<<<<< HEAD
 				print $facturestatic->getNomUrl(1,'');
+=======
+				print $facturestatic->getNomUrl(1, '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				print '</td>';
 				print '<td class="nowrap">';
 				$companystatic->id=$obj->socid;
 				$companystatic->name=$obj->name;
 				$companystatic->client=0;
+<<<<<<< HEAD
 				print $companystatic->getNomUrl(1,'',16);
 				print '</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
+=======
+				print $companystatic->getNomUrl(1, '', 16);
+				print '</td>';
+				print '<td class="right">'.price($obj->total_ttc).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				print '</tr>';
 				$tot_ttc+=$obj->total_ttc;
 				$i++;
 			}
 
+<<<<<<< HEAD
 			print '<tr class="liste_total"><td align="left">'.$langs->trans("Total").'</td>';
 			print '<td colspan="2" align="right">'.price($tot_ttc).'</td>';
+=======
+			print '<tr class="liste_total"><td class="left">'.$langs->trans("Total").'</td>';
+			print '<td colspan="2" class="right">'.price($tot_ttc).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '</tr>';
 
 			print "</table>";
@@ -251,17 +305,29 @@ if ($resql)
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
+<<<<<<< HEAD
 	print '<td colspan="2">'.$langs->trans("BoxTitleLastSuppliers",min($max,$num))."</td>\n";
 	print '<td align="right">'.$langs->trans("DateModification")."</td>\n";
+=======
+	print '<td colspan="2">'.$langs->trans("BoxTitleLastSuppliers", min($max, $num))."</td>\n";
+	print '<td class="right">'.$langs->trans("DateModification")."</td>\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print "</tr>\n";
 
 	while ($obj = $db->fetch_object($resql) )
 	{
 		print '<tr class="oddeven">';
+<<<<<<< HEAD
 		print '<td><a href="card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").'</a>';
 		print "&nbsp;<a href=\"card.php?socid=".$obj->socid."\">".$obj->name."</a></td>\n";
 		print '<td align="left">'.$obj->code_fournisseur.'&nbsp;</td>';
 		print '<td align="right">'.dol_print_date($db->jdate($obj->tms),'day').'</td>';
+=======
+		print '<td><a href="card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"), "company").'</a>';
+		print "&nbsp;<a href=\"card.php?socid=".$obj->socid."\">".$obj->name."</a></td>\n";
+		print '<td class="left">'.$obj->code_fournisseur.'&nbsp;</td>';
+		print '<td class="right">'.dol_print_date($db->jdate($obj->tms), 'day').'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print "</tr>\n";
 	}
 	print "</table>\n";
@@ -300,7 +366,11 @@ if (count($companystatic->SupplierCategories))
 		print '</td>'."\n";
 		// TODO this page not exist
 		/*
+<<<<<<< HEAD
 		print '<td align="right">';
+=======
+		print '<td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '<a href="stats.php?cat='.$rowid.'">('.$langs->trans("Stats").')</a>';
 		print "</tr>\n";
 		*/
@@ -313,6 +383,11 @@ if (count($companystatic->SupplierCategories))
 //print "</td></tr></table>\n";
 print '</div></div></div>';
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

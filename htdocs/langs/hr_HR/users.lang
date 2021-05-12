@@ -1,5 +1,9 @@
 # Dolibarr language file - Source file is en_US - users
+<<<<<<< HEAD
 HRMArea=HRM sučelje
+=======
+HRMArea=Sučelje djelatnika
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 UserCard=Kartica korisnika
 GroupCard=Kartica grupe
 Permission=Dopuštenje
@@ -12,7 +16,11 @@ PasswordChangedTo=Lozinka promjenjena u: %s
 SubjectNewPassword=Vaša nova zaporka za %s
 GroupRights=Grupna dopuštenja
 UserRights=Korisnička dopuštenja
+<<<<<<< HEAD
 UserGUISetup=Podešavanje korisničkog prikaza
+=======
+UserGUISetup=User Display Setup
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DisableUser=Onemogući
 DisableAUser=Onemogući korisnika
 DeleteUser=Obriši
@@ -34,8 +42,13 @@ ListOfUsers=Lista korisnika
 SuperAdministrator=Super administrator
 SuperAdministratorDesc=Globalni administrator
 AdministratorDesc=Administrator
+<<<<<<< HEAD
 DefaultRights=Zadane dozvole
 DefaultRightsDesc=Definirajte <u>zadana</u> dozvole koje su automatski dodjeljena <u>novo kreiranom</u> korisniku (Idite na karticu korisnika kako biste promjenili dozvole postojećem korisniku)
+=======
+DefaultRights=Default Permissions
+DefaultRightsDesc=Define here the <u>default</u> permissions that are automatically granted to a <u>new</u> user (to modify permissions for existing users, go to the user card).
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DolibarrUsers=Dolibarr korisnik
 LastName=Prezime
 FirstName=Ime
@@ -66,11 +79,19 @@ CreateDolibarrThirdParty=Kreiraj komitenta
 LoginAccountDisableInDolibarr=Račun je onemogučen u Dolibarr-u.
 UsePersonalValue=Koristi osobnu vrijednost
 InternalUser=Interni korisnik
+<<<<<<< HEAD
 ExportDataset_user_1=Korisnici i svojstva
 DomainUser=Korisnik na domeni %s
 Reactivate=Reaktiviraj
 CreateInternalUserDesc=This form allows you to create an user internal to your company/organization. To create an external user (customer, supplier, ...), use the button 'Create Dolibarr user' from third party's contact card.
 InternalExternalDesc=An <b>internal</b> user is a user that is part of your company/organization.<br>An <b>external</b> user is a customer, supplier or other.<br><br>In both cases, permissions defines rights on Dolibarr, also external user can have a different menu manager than internal user (See Home - Setup - Display)
+=======
+ExportDataset_user_1=Users and their properties
+DomainUser=Korisnik na domeni %s
+Reactivate=Reaktiviraj
+CreateInternalUserDesc=This form allows you to create an internal user in your company/organization. To create an external user (customer, vendor etc.  ..), use the button 'Create Dolibarr User' from that third-party's contact card.
+InternalExternalDesc=An <b>internal</b> user is a user that is part of your company/organization.<br>An <b>external</b> user is a customer, vendor or other.<br><br>In both cases, permissions defines rights on Dolibarr, also external user can have a different menu manager than internal user (See Home - Setup - Display)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PermissionInheritedFromAGroup=Dozvola odobrena jer je nasljeđeno od jedne od korisničkih grupa.
 Inherited=Nasljeđeno
 UserWillBeInternalUser=Kreirani korisnik će biti interni korisnik (jer nije vezan za određenog komitenta)
@@ -92,8 +113,13 @@ LoginToCreate=Prijavite se za stvaranje
 NameToCreate=Naziv komitenta za kreiranje
 YourRole=Vaše uloge
 YourQuotaOfUsersIsReached=Vaša kvota aktivnih korisnika je dostignuta !
+<<<<<<< HEAD
 NbOfUsers=Broj korisnika
 NbOfPermissions=Nb of permissions
+=======
+NbOfUsers=No. of users
+NbOfPermissions=No. of permissions
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DontDowngradeSuperAdmin=Samo superadmin može unazaditi superadmina
 HierarchicalResponsible=Nadglednik
 HierarchicView=Hijerarhijski prikaz
@@ -107,4 +133,10 @@ DisabledInMonoUserMode=Onemogućeno u načinu održavanja
 UserAccountancyCode=User accounting code
 UserLogoff=Odjava korisnika
 UserLogged=Korisnik prijavljen
+<<<<<<< HEAD
 DateEmployment=Date of Employment
+=======
+DateEmployment=Employment Start Date
+DateEmploymentEnd=Employment End Date
+CantDisableYourself=You can't disable your own user record
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

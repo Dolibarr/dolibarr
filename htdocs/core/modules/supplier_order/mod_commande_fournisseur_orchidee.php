@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +36,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/supplier_order/modules_commandefo
  */
 class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 {
+<<<<<<< HEAD
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $error = '';
 	var $nom = 'Orchidee';
@@ -50,6 +55,45 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 		$langs->load("admin");
 
 		$form = new Form($this->db);
+=======
+	/**
+     * Dolibarr version of the loaded document
+     * @var string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	/**
+     * @var string Error code (or message)
+     */
+    public $error = '';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Orchidee';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Orchidee';
+
+
+    /**
+     *  Returns the description of the numbering model
+     *
+     * 	@return     string      Texte descripif
+     */
+    public function info()
+    {
+    	global $db, $conf, $langs;
+
+		// Load translation files required by the page
+        $langs->loadLangs(array("bills","admin"));
+
+		$form = new Form($db);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -58,17 +102,30 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 		$texte.= '<input type="hidden" name="maskconstorder" value="COMMANDE_FOURNISSEUR_ORCHIDEE_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
+<<<<<<< HEAD
 		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Order"),$langs->transnoentities("Order"));
 		$tooltip.=$langs->trans("GenericMaskCodes2");
 		$tooltip.=$langs->trans("GenericMaskCodes3");
 		$tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("Order"),$langs->transnoentities("Order"));
+=======
+		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("Order"), $langs->transnoentities("Order"));
+		$tooltip.=$langs->trans("GenericMaskCodes2");
+		$tooltip.=$langs->trans("GenericMaskCodes3");
+		$tooltip.=$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Order"), $langs->transnoentities("Order"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$tooltip.=$langs->trans("GenericMaskCodes5");
 
 		// Parametrage du prefix
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
+<<<<<<< HEAD
 		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskorder" value="'.$conf->global->COMMANDE_FOURNISSEUR_ORCHIDEE_MASK.'">',$tooltip,1,1).'</td>';
 
 		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+=======
+		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskorder" value="'.$conf->global->COMMANDE_FOURNISSEUR_ORCHIDEE_MASK.'">', $tooltip, 1, 1).'</td>';
+
+		$texte.= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$texte.= '</tr>';
 
@@ -83,13 +140,21 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
      *
      *  @return     string      Example
      */
+<<<<<<< HEAD
     function getExample()
+=======
+    public function getExample()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
     	global $conf,$langs,$mysoc;
 
     	$old_code_client=$mysoc->code_client;
     	$mysoc->code_client='CCCCCCCCCC';
+<<<<<<< HEAD
     	$numExample = $this->getNextValue($mysoc,'');
+=======
+    	$numExample = $this->getNextValue($mysoc, '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$mysoc->code_client=$old_code_client;
 
 		if (! $numExample)
@@ -106,7 +171,11 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 	 *  @param  Object	    $object		Object
      *  @return string      			Value if OK, 0 if KO
 	*/
+<<<<<<< HEAD
     function getNextValue($objsoc=0,$object='')
+=======
+    public function getNextValue($objsoc = 0, $object = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
 		global $db,$conf;
 
@@ -121,12 +190,20 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 			return 0;
 		}
 
+<<<<<<< HEAD
 		$numFinal=get_next_value($db,$mask,'commande_fournisseur','ref','',$objsoc,$object->date_commande);
+=======
+		$numFinal=get_next_value($db, $mask, 'commande_fournisseur', 'ref', '', $objsoc, $object->date_commande);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		return  $numFinal;
 	}
 
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     /**
      *  Renvoie la reference de commande suivante non utilisee
      *
@@ -134,9 +211,18 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 	 *  @param  Object	    $object		Object
      *  @return string      			Texte descripif
      */
+<<<<<<< HEAD
     function commande_get_num($objsoc=0,$object='')
     {
         return $this->getNextValue($objsoc,$object);
     }
 }
 
+=======
+    public function commande_get_num($objsoc = 0, $object = '')
+    {
+        // phpcs:enable
+        return $this->getNextValue($objsoc, $object);
+    }
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

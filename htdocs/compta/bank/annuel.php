@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2013      Charles-Fr BENKE     <charles.fr@benke.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,7 +28,11 @@
  *		\brief       Page to report input-output of a bank account
  */
 
+<<<<<<< HEAD
 require('../../main.inc.php');
+=======
+require '../../main.inc.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
@@ -32,20 +40,34 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories'));
 
+<<<<<<< HEAD
 $WIDTH=DolGraph::getDefaultGraphSizeForStats('width',380);      // Large for one graph in a smarpthone.
 $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height',160);
 
 $id=GETPOST('account')?GETPOST('account','alpha'):GETPOST('id');
+=======
+$WIDTH=DolGraph::getDefaultGraphSizeForStats('width', 380);      // Large for one graph in a smarpthone.
+$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height', 160);
+
+$id=GETPOST('account')?GETPOST('account', 'alpha'):GETPOST('id');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $ref=GETPOST('ref');
 
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref :''));
 $fieldtype = (! empty($ref) ? 'ref' :'rowid');
 if ($user->societe_id) $socid=$user->societe_id;
+<<<<<<< HEAD
 $result=restrictedArea($user,'banque',$fieldvalue,'bank_account&bank_account','','',$fieldtype);
 
 $year_start=GETPOST('year_start');
 $year_current = strftime("%Y",time());
+=======
+$result=restrictedArea($user, 'banque', $fieldvalue, 'bank_account&bank_account', '', '', $fieldtype);
+
+$year_start=GETPOST('year_start');
+$year_current = strftime("%Y", time());
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (! $year_start)
 {
 	$year_start = $year_current - 2;
@@ -64,7 +86,11 @@ else
 
 $title = $langs->trans("FinancialAccount").' - '.$langs->trans("IOMonthlyReporting");
 $helpurl = "";
+<<<<<<< HEAD
 llxHeader('',$title,$helpurl);
+=======
+llxHeader('', $title, $helpurl);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $form = new Form($db);
 
@@ -204,12 +230,21 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
 {
 
 	print '<tr class="oddeven">';
+<<<<<<< HEAD
 	print "<td>".dol_print_date(dol_mktime(1,1,1,$mois,1,2000),"%B")."</td>";
 	for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 	{
 		$case = sprintf("%04s-%02s",$annee,$mois);
 
 		print '<td align="right" width="10%">&nbsp;';
+=======
+	print "<td>".dol_print_date(dol_mktime(1, 1, 1, $mois, 1, 2000), "%B")."</td>";
+	for ($annee = $year_start ; $annee <= $year_end ; $annee++)
+	{
+		$case = sprintf("%04s-%02s", $annee, $mois);
+
+		print '<td class="right" width="10%">&nbsp;';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if ($decaiss[$case]>0)
 		{
 			print price($decaiss[$case]);
@@ -217,7 +252,11 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
 		}
 		print "</td>";
 
+<<<<<<< HEAD
 		print '<td align="right" class="borderrightlight" width="10%">&nbsp;';
+=======
+		print '<td class="right borderrightlight" width="10%">&nbsp;';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if ($encaiss[$case]>0)
 		{
 			print price($encaiss[$case]);
@@ -232,7 +271,11 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
 print '<tr class="liste_total"><td><b>'.$langs->trans("Total")."</b></td>";
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
+<<<<<<< HEAD
 	print '<td align="right"><b>'.price($totsorties[$annee]).'</b></td><td align="right"><b>'.price($totentrees[$annee]).'</b></td>';
+=======
+	print '<td class="right nowraponall"><b>'.price($totsorties[$annee]).'</b></td><td class="right nowraponall"><b>'.price($totentrees[$annee]).'</b></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 print "</tr>\n";
 
@@ -266,7 +309,11 @@ else {
 print '<table class="noborder" width="100%">';
 
 print '<tr class="liste_total"><td><b>'.$langs->trans("CurrentBalance")."</b></td>";
+<<<<<<< HEAD
 print '<td colspan="'.($nbcol).'" align="right">'.price($balance).'</td>';
+=======
+print '<td colspan="'.($nbcol).'" class="right">'.price($balance).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print "</tr>\n";
 
 print "</table>";
@@ -339,7 +386,10 @@ else
 				$i++;
 			}
 			$db->free($resql);
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		else
 		{
@@ -354,9 +404,15 @@ else
 
 	for ($i = 0 ; $i < 12 ; $i++)
 	{
+<<<<<<< HEAD
 		$data_year_0[$i] = isset($tblyear[0][substr("0".($i+1),-2)]) ? $tblyear[0][substr("0".($i+1),-2)] : 0;
 		$data_year_1[$i] = isset($tblyear[1][substr("0".($i+1),-2)]) ? $tblyear[1][substr("0".($i+1),-2)] : 0;
 		$data_year_2[$i] = isset($tblyear[2][substr("0".($i+1),-2)]) ? $tblyear[2][substr("0".($i+1),-2)] : 0;
+=======
+		$data_year_0[$i] = isset($tblyear[0][substr("0".($i+1), -2)]) ? $tblyear[0][substr("0".($i+1), -2)] : 0;
+		$data_year_1[$i] = isset($tblyear[1][substr("0".($i+1), -2)]) ? $tblyear[1][substr("0".($i+1), -2)] : 0;
+		$data_year_2[$i] = isset($tblyear[2][substr("0".($i+1), -2)]) ? $tblyear[2][substr("0".($i+1), -2)] : 0;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$labels[$i] = $langs->transnoentitiesnoconv("MonthVeryShort".sprintf("%02d", $i+1));
 		$datamin[$i] = 0;
 	}
@@ -385,8 +441,12 @@ else
 	$px1->setBgColor('onglet');
 	$px1->setBgColorGrid(array(255,255,255));
 	$px1->SetHorizTickIncrement(1);
+<<<<<<< HEAD
 	$px1->SetPrecisionY(0);
 	$px1->draw($file,$fileurl);
+=======
+	$px1->draw($file, $fileurl);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	$show1 = $px1->show();
 
@@ -442,9 +502,15 @@ else
 
 	for ($i = 0 ; $i < 12 ; $i++)
 	{
+<<<<<<< HEAD
 		$data_year_0[$i] = isset($tblyear[0][substr("0".($i+1),-2)]) ? $tblyear[0][substr("0".($i+1),-2)] : 0;
 		$data_year_1[$i] = isset($tblyear[1][substr("0".($i+1),-2)]) ? $tblyear[1][substr("0".($i+1),-2)] : 0;
 		$data_year_2[$i] = isset($tblyear[2][substr("0".($i+1),-2)]) ? $tblyear[2][substr("0".($i+1),-2)] : 0;
+=======
+		$data_year_0[$i] = isset($tblyear[0][substr("0".($i+1), -2)]) ? $tblyear[0][substr("0".($i+1), -2)] : 0;
+		$data_year_1[$i] = isset($tblyear[1][substr("0".($i+1), -2)]) ? $tblyear[1][substr("0".($i+1), -2)] : 0;
+		$data_year_2[$i] = isset($tblyear[2][substr("0".($i+1), -2)]) ? $tblyear[2][substr("0".($i+1), -2)] : 0;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$labels[$i] = $langs->transnoentitiesnoconv("MonthVeryShort".sprintf("%02d", $i+1));
 		$datamin[$i] = 0;
 	}
@@ -472,8 +538,12 @@ else
 	$px2->setBgColor('onglet');
 	$px2->setBgColorGrid(array(255,255,255));
 	$px2->SetHorizTickIncrement(1);
+<<<<<<< HEAD
 	$px2->SetPrecisionY(0);
 	$px2->draw($file,$fileurl);
+=======
+	$px2->draw($file, $fileurl);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	$show2 = $px2->show();
 
@@ -494,5 +564,9 @@ else
 
 print "\n</div><br>\n";
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

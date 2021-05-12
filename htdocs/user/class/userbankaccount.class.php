@@ -1,9 +1,15 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2010-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2013   	Peter Fontaine          <contact@peterfontaine.fr>
  * Copyright (C) 2015	    Alexandre Spangaro	    <aspangaro.dolibarr@gmail.com>
+=======
+ * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2013   	Peter Fontaine          <contact@peterfontaine.fr>
+ * Copyright (C) 2015	    Alexandre Spangaro	    <aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2016       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT .'/compta/bank/class/account.class.php';
  */
 class UserBankAccount extends Account
 {
+<<<<<<< HEAD
     var $socid;
 
     var $datec;
@@ -44,6 +51,29 @@ class UserBankAccount extends Account
 	 *  Constructor
 	 *
 	 *  @param      DoliDB		$db      Database handler
+=======
+    public $socid;
+
+    /**
+     * Date creation record (datec)
+     *
+     * @var integer
+     */
+    public $datec;
+
+    /**
+     * Date modification record (tms)
+     *
+     * @var integer
+     */
+    public $datem;
+
+
+    /**
+     *  Constructor
+     *
+     *  @param      DoliDB		$db      Database handler
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      */
     public function __construct(DoliDB $db)
     {
@@ -62,7 +92,11 @@ class UserBankAccount extends Account
      * @param	int		$notrigger	1=Disable triggers
      * @return	int					<0 if KO, >= 0 if OK
      */
+<<<<<<< HEAD
     function create(User $user=null, $notrigger=0)
+=======
+    public function create(User $user = null, $notrigger = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $now=dol_now();
 
@@ -92,9 +126,15 @@ class UserBankAccount extends Account
      *	@param	int		$notrigger	1=Disable triggers
      *	@return	int					<=0 if KO, >0 if OK
      */
+<<<<<<< HEAD
     function update(User $user=null, $notrigger=0)
     {
     	global $conf;
+=======
+    public function update(User $user = null, $notrigger = 0)
+    {
+        global $conf;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         if (! $this->id)
         {
@@ -113,7 +153,11 @@ class UserBankAccount extends Account
         $sql.= ",proprio = '".$this->db->escape($this->proprio)."'";
         $sql.= ",owner_address = '".$this->db->escape($this->owner_address)."'";
 
+<<<<<<< HEAD
 	    if (trim($this->label) != '')
+=======
+        if (trim($this->label) != '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $sql.= ",label = '".$this->db->escape($this->label)."'";
         else
             $sql.= ",label = NULL";
@@ -139,7 +183,11 @@ class UserBankAccount extends Account
      *  @param  int     $userid     User id
      * 	@return	int					<0 if KO, >0 if OK
      */
+<<<<<<< HEAD
     function fetch($id, $ref='', $userid=0)
+=======
+    public function fetch($id, $ref = '', $userid = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         if (empty($id) && empty($ref) && empty($userid)) return -1;
 
@@ -157,6 +205,7 @@ class UserBankAccount extends Account
             {
                 $obj = $this->db->fetch_object($resql);
 
+<<<<<<< HEAD
                 $this->id			   = $obj->rowid;
                 $this->socid           = $obj->fk_soc;
                 $this->bank            = $obj->bank;
@@ -172,6 +221,23 @@ class UserBankAccount extends Account
                 $this->label           = $obj->label;
                 $this->datec           = $this->db->jdate($obj->datec);
                 $this->datem           = $this->db->jdate($obj->datem);
+=======
+                $this->id = $obj->rowid;
+                $this->socid = $obj->fk_soc;
+                $this->bank = $obj->bank;
+                $this->code_banque = $obj->code_banque;
+                $this->code_guichet = $obj->code_guichet;
+                $this->number = $obj->number;
+                $this->cle_rib = $obj->cle_rib;
+                $this->bic = $obj->bic;
+                $this->iban = $obj->iban;
+                $this->domiciliation = $obj->domiciliation;
+                $this->proprio = $obj->proprio;
+                $this->owner_address = $obj->owner_address;
+                $this->label = $obj->label;
+                $this->datec = $this->db->jdate($obj->datec);
+                $this->datem = $this->db->jdate($obj->datem);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             }
             $this->db->free($resql);
 
@@ -184,6 +250,7 @@ class UserBankAccount extends Account
         }
     }
 
+<<<<<<< HEAD
 	/**
 	 * Return RIB
 	 *
@@ -207,3 +274,27 @@ class UserBankAccount extends Account
 	}
 }
 
+=======
+    /**
+     * Return RIB
+     *
+     * @param   boolean     $displayriblabel     Prepend or Hide Label
+     * @return  string      RIB
+     */
+    public function getRibLabel($displayriblabel = true)
+    {
+        $rib = '';
+
+        if ($this->code_banque || $this->code_guichet || $this->number || $this->cle_rib) {
+
+            if ($this->label && $displayriblabel) {
+                $rib = $this->label." : ";
+            }
+
+            $rib .= (string) $this;
+        }
+
+        return $rib;
+    }
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

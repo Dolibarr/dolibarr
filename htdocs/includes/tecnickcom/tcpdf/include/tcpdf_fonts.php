@@ -70,7 +70,11 @@ class TCPDF_FONTS {
 	 * @public static
 	 */
 	public static function addTTFfont($fontfile, $fonttype='', $enc='', $flags=32, $outpath='', $platid=3, $encid=1, $addcbbox=false, $link=false) {
+<<<<<<< HEAD
 		if (!file_exists($fontfile)) {
+=======
+		if (!TCPDF_STATIC::file_exists($fontfile)) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			// Could not find file
 			return false;
 		}
@@ -95,7 +99,11 @@ class TCPDF_FONTS {
 			$outpath = self::_getfontpath();
 		}
 		// check if this font already exist
+<<<<<<< HEAD
 		if (@file_exists($outpath.$font_name.'.php')) {
+=======
+		if (@TCPDF_STATIC::file_exists($outpath.$font_name.'.php')) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			// this font already exist (delete it from fonts folder to rebuild it)
 			return $font_name;
 		}
@@ -1543,11 +1551,19 @@ class TCPDF_FONTS {
 	public static function getFontFullPath($file, $fontdir=false) {
 		$fontfile = '';
 		// search files on various directories
+<<<<<<< HEAD
 		if (($fontdir !== false) AND @file_exists($fontdir.$file)) {
 			$fontfile = $fontdir.$file;
 		} elseif (@file_exists(self::_getfontpath().$file)) {
 			$fontfile = self::_getfontpath().$file;
 		} elseif (@file_exists($file)) {
+=======
+		if (($fontdir !== false) AND @TCPDF_STATIC::file_exists($fontdir.$file)) {
+			$fontfile = $fontdir.$file;
+		} elseif (@TCPDF_STATIC::file_exists(self::_getfontpath().$file)) {
+			$fontfile = self::_getfontpath().$file;
+		} elseif (@TCPDF_STATIC::file_exists($file)) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$fontfile = $file;
 		}
 		return $fontfile;
@@ -2003,7 +2019,15 @@ class TCPDF_FONTS {
 			$chars = str_split($str);
 			$carr = array_map('ord', $chars);
 		}
+<<<<<<< HEAD
 		$currentfont['subsetchars'] += array_fill_keys($carr, true);
+=======
+		if (is_array($currentfont['subsetchars']) && is_array($carr)) {
+			$currentfont['subsetchars'] += array_fill_keys($carr, true);
+		} else {
+			$currentfont['subsetchars'] = array_merge($currentfont['subsetchars'], $carr);
+		}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		return $carr;
 	}
 

@@ -31,4 +31,8 @@ DONATION_ART200=Afficher article 200 du CGI si vous êtes concernés
 DONATION_ART238=Afficher article 238 du CGI si vous êtes concernés
 DONATION_ART885=Afficher article 885 du CGI si vous êtes concernés
 DonationPayment=Paiement du don
+<<<<<<< HEAD
 DonationValidated=Donation %s validated
+=======
+DonationValidated=Don %s validé
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

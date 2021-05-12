@@ -47,13 +47,24 @@ foreach($linkedObjectBlock as $key => $objectlink)
 		<td><?php echo $langs->trans("Intervention"); ?></td>
 	    <td><?php echo $objectlink->getNomUrl(1); ?></td>
 	    <td></td>
+<<<<<<< HEAD
 		<td align="center"><?php echo dol_print_date($objectlink->datev,'day'); ?></td>
 		<td></td>
 		<td align="right"><?php echo $objectlink->getLibStatut(3); ?></td>
 		<td align="right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
+=======
+		<td class="center"><?php echo dol_print_date($objectlink->datev, 'day'); ?></td>
+		<td></td>
+		<td class="right"><?php echo $objectlink->getLibStatut(3); ?></td>
+		<td class="right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	</tr>
 <?php
 }
 ?>
 
+<<<<<<< HEAD
 <!-- END PHP TEMPLATE -->
+=======
+<!-- END PHP TEMPLATE -->
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -16,8 +16,13 @@ Create=Opprett
 Reference=Referanse
 NewProduct=Ny vare
 NewService=Ny tjeneste
+<<<<<<< HEAD
 ProductVatMassChange=Masse MVA-endring
 ProductVatMassChangeDesc=Denne siden kan brukes til å endre en MVA-sats på varer eller tjenester fra en verdi til en annen. Advarsel, er denne endringen gjort i alle databasene.
+=======
+ProductVatMassChange=Global MVA-oppdatering
+ProductVatMassChangeDesc=Dette verktøyet oppdaterer MVA-verdien som er definert på <b> <u> ALLE </u> </b> varer og tjenester!
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MassBarcodeInit=Masse strekkode-endring
 MassBarcodeInitDesc=Denne siden kan brukes til å lage strekkoder for objekter som ikke har dette. Kontroller at oppsett av modulen Strekkoder er fullført.
 ProductAccountancyBuyCode=Regnskapskode (kjøp)
@@ -39,12 +44,22 @@ ServicesOnSellAndOnBuy=Tjenester for kjøp og salg
 LastModifiedProductsAndServices=Siste %s endrede varer/tjenester
 LastRecordedProducts=Siste %s registrerte varer
 LastRecordedServices=Siste %s registrerte tjenester
+<<<<<<< HEAD
 CardProduct0=Varekort
 CardProduct1=Tjenestekort
 Stock=Beholdning
 Stocks=Beholdninger
 Movements=Bevegelser
 Sell=Salg
+=======
+CardProduct0=Vare
+CardProduct1=Tjenester
+Stock=Beholdning
+MenuStocks=Lagerbeholdning
+Stocks=Lager og plassering (lager) av produkter
+Movements=Bevegelser
+Sell=Selg
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Buy=Kjøp
 OnSell=For salg
 OnBuy=For kjøp
@@ -60,16 +75,28 @@ ProductStatusNotOnBuyShort=Ikke for kjøp
 UpdateVAT=Oppdater MVA
 UpdateDefaultPrice=Oppdater standardpris
 UpdateLevelPrices=Oppdater priser for hvert nivå
+<<<<<<< HEAD
 AppliedPricesFrom=Gjeldende priser fra
 SellingPrice=Salgspris
 SellingPriceHT=Salgspris (eks. MVA)
 SellingPriceTTC=Salgspris (inkl. MVA)
+=======
+AppliedPricesFrom=Anvendt fra
+SellingPrice=Salgspris
+SellingPriceHT=Utsalgspris (ekskl. MVA)
+SellingPriceTTC=Salgspris (inkl. MVA)
+SellingMinPriceTTC=Minimum utsalgspris (inkl. MVA)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CostPriceDescription=Denne prisen (eks. MVA) kan brukes til å lagre det gjennomsnittlige beløpet dette produktet koster din bedrift. Det kan være en hvilken som helst pris du beregner selv, for eksempel fra gjennomsnittlig kjøpskurs pluss gjennomsnittlig produksjon og distribusjonkostnader.
 CostPriceUsage=Denne verdien kan brukes for kalkulering av marginer
 SoldAmount=Mengde solgt
 PurchasedAmount=Mengde kjøpt
 NewPrice=Ny pris
+<<<<<<< HEAD
 MinPrice=Minste utsalgspris
+=======
+MinPrice=Min. salgspris
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 EditSellingPriceLabel=Rediger salgsprisetikett
 CantBeLessThanMinPrice=Salgsprisen kan ikke være lavere enn minste tillatte for denne varen (%s uten avgifter)
 ContractStatusClosed=Lukket
@@ -78,7 +105,11 @@ ErrorProductBadRefOrLabel=Ugyldig verdi for referanse eller etikett.
 ErrorProductClone=Det oppsto et problem ved forsøk på å klone varen eller tjenesten.
 ErrorPriceCantBeLowerThanMinPrice=Feil! Pris kan ikke være lavere enn minstepris
 Suppliers=Leverandører
+<<<<<<< HEAD
 SupplierRef=Leverandørs varereferanse.
+=======
+SupplierRef=Leverandør SKU
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShowProduct=Vis vare
 ShowService=Vis tjeneste
 ProductsAndServicesArea=Område for varer/tjenester
@@ -97,8 +128,13 @@ NoteNotVisibleOnBill=Notat (vises ikke på fakturaer, tilbud...)
 ServiceLimitedDuration=Hvis varen er en tjeneste med begrenset varighet:
 MultiPricesAbility=Flere prissegmenter for hver vare/tjeneste (hver kunde er i et segment)
 MultiPricesNumPrices=Pris antall
+<<<<<<< HEAD
 AssociatedProductsAbility=Aktiver egenskap for å håndtere virtuelle varer
 AssociatedProducts=Tilknyttede varer
+=======
+AssociatedProductsAbility=Aktiver virtuelle varer (sett)
+AssociatedProducts=Virtuelle varer
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AssociatedProductsNumber=Antall tilknyttede varer
 ParentProductsNumber=Antall foreldre-komponentvarer
 ParentProducts=Foreldreprodukter
@@ -109,7 +145,11 @@ CategoryFilter=Kategorifilter
 ProductToAddSearch=Finn vare å legge til
 NoMatchFound=Ingen treff
 ListOfProductsServices=Liste over varer/tjenester
+<<<<<<< HEAD
 ProductAssociationList=Liste over varer/tjenester som er med i denne tenkte komponentvaren
+=======
+ProductAssociationList=Liste over varer/tjenester som er komponent(er) av dette virtuelle varen/settet
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProductParentList=Liste over produkter / tjenester med dette produktet som en komponent
 ErrorAssociationIsFatherOfThis=En av de valgte varene er foreldre til gjeldende vare
 DeleteProduct=Slett vare/tjeneste
@@ -122,6 +162,7 @@ ImportDataset_service_1=Tjenester
 DeleteProductLine=Slett varelinje
 ConfirmDeleteProductLine=Er du sikker på at du vil slette denne varelinjen?
 ProductSpecial=Spesial
+<<<<<<< HEAD
 QtyMin=Minste kvantum
 PriceQtyMin=Pris for minstekvantum (uten rabatt)
 PriceQtyMinCurrency=Pris for denne min. antall (uten rabatt) (valuta)
@@ -135,6 +176,21 @@ PredefinedProductsAndServicesToSell=Salg av forhåndsdefinerte varer/tjenester
 PredefinedProductsToPurchase=Kjøp av forhåndsdefinert vare
 PredefinedServicesToPurchase=Kjøp av forhåndsdefinerte tjenester
 PredefinedProductsAndServicesToPurchase=Kjøp av forhåndsdefinerte varer/tjenester
+=======
+QtyMin=Min. Innkjøpsmengde
+PriceQtyMin=Kvantumsrabatt min.
+PriceQtyMinCurrency=Pris (valuta) for denne kvantiteten. (ingen rabatt)
+VATRateForSupplierProduct=MVA (for denne leverandøren/varen)
+DiscountQtyMin=Rabatt for denne kvantiteten.
+NoPriceDefinedForThisSupplier=Ingen pris/antall definert for denne leverandøren/varen
+NoSupplierPriceDefinedForThisProduct=Ingen leverandørpris/antall definert for denne varen
+PredefinedProductsToSell=Forhåndsdefinert vare
+PredefinedServicesToSell=Forhåndsdefinert tjeneste
+PredefinedProductsAndServicesToSell=Salg av forhåndsdefinerte varer/tjenester
+PredefinedProductsToPurchase=Kjøp av forhåndsdefinert vare
+PredefinedServicesToPurchase=Kjøp av forhåndsdefinerte tjenester
+PredefinedProductsAndServicesToPurchase=Forhåndsdefinerte varer/tjenester til innkjøp
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NotPredefinedProducts=Ikke forhåndsdefinerte varer/tjenester
 GenerateThumb=Lag miniatyrbilde
 ServiceNb=Tjeneste #%s
@@ -143,11 +199,18 @@ ListProductByPopularity=Liste over varer/tjenester etter popularitet
 ListServiceByPopularity=Liste av tjenester etter popularitet
 Finished=Ferdigvare
 RowMaterial=Råvare
+<<<<<<< HEAD
 CloneProduct=Klon vare eller tjeneste
 ConfirmCloneProduct=Er du sikker på at du vil klone vare eller tjeneste <b>%s</b>?
 CloneContentProduct=Klon alle de viktigste informasjoner av vare/tjeneste
 ClonePricesProduct=Klon priser
 CloneCompositionProduct=Klon komponentvare/tjeneste
+=======
+ConfirmCloneProduct=Er du sikker på at du vil klone vare eller tjeneste <b>%s</b>?
+CloneContentProduct=Klon all hovedinformasjon av vare/tjeneste
+ClonePricesProduct=Klon priser
+CloneCompositionProduct=Klon virtuelt vare/tjeneste
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CloneCombinationsProduct=Klon produktvarianter
 ProductIsUsed=Denne varen brukes
 NewRefForClone=Ref. av nye vare/tjeneste
@@ -155,10 +218,17 @@ SellingPrices=Utsalgspris
 BuyingPrices=Innkjøpspris
 CustomerPrices=Kundepriser
 SuppliersPrices=Leverandørpriser
+<<<<<<< HEAD
 SuppliersPricesOfProductsOrServices=Leverandørpriser (varer og tjenester)
 CustomCode=Toll / vare / HS-kode
 CountryOrigin=Opprinnelsesland
 Nature=Natur
+=======
+SuppliersPricesOfProductsOrServices=Leverandørpriser (av varer eller tjenester)
+CustomCode=Toll / vare / HS-kode
+CountryOrigin=Opprinnelsesland
+Nature=Nature of produt (material/finished)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShortLabel=Kort etikett
 Unit=Enhet
 p= stk
@@ -202,7 +272,11 @@ PriceByQuantity=Prisen varierer med mengde
 DisablePriceByQty=Deaktiver mengderabatt
 PriceByQuantityRange=Kvantumssatser
 MultipriceRules=Prissegment-regler
+<<<<<<< HEAD
 UseMultipriceRules=Bruk prissegment-regler (definert i oppsettet i Varemodulen) for automatisk å kalkulere prisene til alle andre segmenter i forhold til første segment
+=======
+UseMultipriceRules=Bruk prissegmentregler (definert i varemoduloppsett) for å automatisk beregne priser på alle andre segmenter i henhold til første segment
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PercentVariationOver=%% variasjon over %s
 PercentDiscountOver=%% rabatt på %s
 KeepEmptyForAutoCalculation=Hold tom for å få dette beregnet automatisk fra vekt eller volum av produkter
@@ -218,27 +292,46 @@ Quarter1=1. kvartal
 Quarter2=2. kvartal
 Quarter3=3. kvartal
 Quarter4=4. kvartal
+<<<<<<< HEAD
 BarCodePrintsheet=Skriv ut strekkode
 PageToGenerateBarCodeSheets=Med dette verktøyet kan du skrive ut ark med strekkode klistremerker. Velg arkformat, type strekkode og strekkodeverdi. Klikk deretter på knappen <b>%s</b>.
+=======
+BarCodePrintsheet=Skriv strekkode
+PageToGenerateBarCodeSheets=Med dette verktøyet kan du skrive ut ark med strekkode-klistremerker. Velg format på din klistremerkeside, type strekkode og verdi på strekkode, og klikk deretter på knappen <b> %s </b>.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NumberOfStickers=Antall klistremerker som skal skrives ut på siden
 PrintsheetForOneBarCode=Skriv ut flere klistremerker for hver strekkode
 BuildPageToPrint=Generer side for utskrift
 FillBarCodeTypeAndValueManually=Fyll inn strekkode type og verdi manuelt
 FillBarCodeTypeAndValueFromProduct=Fyll inn strekkode type og verdi fra strekkoden på en vare.
 FillBarCodeTypeAndValueFromThirdParty=Fyll inn strekkodetype og verdi fra strekkoden til en tredjepart
+<<<<<<< HEAD
 DefinitionOfBarCodeForProductNotComplete=Definisjon av strekkode type eller verdi for varen %s er ikke komplett.
 DefinitionOfBarCodeForThirdpartyNotComplete=Definisjon av strekkodetype eller -verdi er ikke komplett for tredjepart %s.
 BarCodeDataForProduct=Strekkodeinformasjon for vare %s:
+=======
+DefinitionOfBarCodeForProductNotComplete=Definisjon av type eller verdi på strekkode er ikke komplett for produkt %s.
+DefinitionOfBarCodeForThirdpartyNotComplete=Definisjon av type eller verdi på strekkode ikke komplett for tredjepart %s.
+BarCodeDataForProduct=Strekkodeinformasjon om vare %s:
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BarCodeDataForThirdparty=Strekkodeinformasjon om tredjepart %s:
 ResetBarcodeForAllRecords=Definer strekkode for alle poster (dette vil tilbakestille alle strekkoder som allerede er opprettet)
 PriceByCustomer=Ulike priser for hver kunde
 PriceCatalogue=En enkelt salgspris for hver vare/tjeneste
+<<<<<<< HEAD
 PricingRule=Regler for salgspris
+=======
+PricingRule=Regler for utsalgspriser
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddCustomerPrice=Legg til pris for kunde
 ForceUpdateChildPriceSoc=Sett samme pris for kundens datterselskaper
 PriceByCustomerLog=Logg over tidligere kundepriser
 MinimumPriceLimit=Minstepris kan ikke være lavere enn %s
+<<<<<<< HEAD
 MinimumRecommendedPrice=Anbefalt minstepris er %s
+=======
+MinimumRecommendedPrice=Minimum anbefalt pris er: %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PriceExpressionEditor=Pris-formel editor
 PriceExpressionSelected=Valgt formel for pris
 PriceExpressionEditorHelp1="pris = 2 + 2" eller "2 + 2" for å sette prisen. Bruk semikolon for å skille uttrykk
@@ -250,16 +343,28 @@ PriceMode=Prismodus
 PriceNumeric=Nummer
 DefaultPrice=Standardpris
 ComposedProductIncDecStock=Øk/minsk beholdning ved overordnet endring
+<<<<<<< HEAD
 ComposedProduct=Sub-vare
 MinSupplierPrice=Laveste innkjøpspris
 MinCustomerPrice=Minste salgspris
 DynamicPriceConfiguration=Dynamisk pris-konfigurering
 DynamicPriceDesc=På varekortet, med denne modulen aktivert, kan du sette matematiske funksjoner for å beregne kunde- eller leverandørpriser. En slik funksjon kan bruke alle matematiske operatører, noen konstanter og variabler. Du kan angi variablene du vil kunne bruke, og hvis variabelen trenger en automatisk oppdatering, må du sette den eksterne nettadressen som brukes til å spørre Dolibarr for å oppdatere verdien automatisk.
+=======
+ComposedProduct=Sub-varer
+MinSupplierPrice=Laveste innkjøpspris
+MinCustomerPrice=Minste salgspris
+DynamicPriceConfiguration=Dynamisk pris-konfigurering
+DynamicPriceDesc=Du kan definere matematiske formler for å beregne kunde- eller leverandørpriser. Slike formler kan bruke alle matematiske operatører, noen konstanter og variabler. Du kan definere variablene du vil bruke. Hvis variabelen trenger en automatisk oppdatering, kan du definere den eksterne nettadressen for å tillate Dolibarr å oppdatere verdien automatisk.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddVariable=Legg til variabel
 AddUpdater=Velg oppdaterer
 GlobalVariables=Globale variabler
 VariableToUpdate=Variabel å oppdatere
+<<<<<<< HEAD
 GlobalVariableUpdaters=Oppdatering av globale variabler
+=======
+GlobalVariableUpdaters=Eksterne oppdaterere for variabler
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 GlobalVariableUpdaterType0=JSON data
 GlobalVariableUpdaterHelp0=Parser JSON data fra angitt URL, VALUE spesifiserer lokasjonen til relevant verdi.
 GlobalVariableUpdaterHelpFormat0=Format for forespørsel {"URL": "http://example.com/urlofjson", "VALUE": "array1,array2,targetvalue"}
@@ -277,7 +382,11 @@ WarningSelectOneDocument=Velg minst ett dokument
 DefaultUnitToShow=Enhet
 NbOfQtyInProposals=Antall i tilbud
 ClinkOnALinkOfColumn=Klikk på en link i kolonnen %s for detaljert visning...
+<<<<<<< HEAD
 ProductsOrServicesTranslations=Varer eller tjenester oversettelse
+=======
+ProductsOrServicesTranslations=Oversettelser for Varer/Tjenester 
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TranslatedLabel=Oversatt etikett
 TranslatedDescription=Oversatt beskrivelse
 TranslatedNote=Oversatte notater
@@ -293,7 +402,12 @@ ProductSheet=Produktark
 ServiceSheet=Serviceark
 PossibleValues=Mulige verdier
 GoOnMenuToCreateVairants=Gå tilmenyen %s - %s for å forberede attributtvarianter (som farger, størrelse, ...)
+<<<<<<< HEAD
 
+=======
+UseProductFournDesc=Legg til en funksjon for å definere beskrivelser av varer som er definert av leverandørene, i tillegg til beskrivelser for kunder
+ProductSupplierDescription=Leverandørs beskrivelse av produktet
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 #Attributes
 VariantAttributes=Variantattributter
 ProductAttributes=Variantattributter for varer
@@ -325,12 +439,26 @@ DoNotRemovePreviousCombinations=Ikke fjern tidligere varevarianter
 UsePercentageVariations=Brok prosentvise variasjoner
 PercentageVariation=Variasjonsprosent
 ErrorDeletingGeneratedProducts=Det oppsto en feil under sletting av eksisterende varevarianter
+<<<<<<< HEAD
 NbOfDifferentValues=Antall ulike verdier
 NbProducts=Antall varer
 ParentProduct=Komponent-vare
 HideChildProducts=Skjul variantprodukter
+=======
+NbOfDifferentValues=Antall forskjellige verdier
+NbProducts=Antall varer
+ParentProduct=Komponent-vare
+HideChildProducts=Skjul variantprodukter
+ShowChildProducts=Vis varevarianter
+NoEditVariants=Gå til foreldre-varekort og rediger varianters prispåvirkning i varianter-fanen
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmCloneProductCombinations=Vil du kopiere alle produktvarianter til det andre overordnede produktet med den oppgitte referansen?
 CloneDestinationReference=Varereferanse-destinasjon
 ErrorCopyProductCombinations=Det oppstod en feil under kopiering av produktvarianter
 ErrorDestinationProductNotFound=Varereferanse-destinasjon ikke funnet
 ErrorProductCombinationNotFound=Varevariant ikke funnet
+<<<<<<< HEAD
+=======
+ActionAvailableOnVariantProductOnly=Handling kun tilgjengelig på varianter av varen
+ProductsPricePerCustomer=Varepriser per kunde
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

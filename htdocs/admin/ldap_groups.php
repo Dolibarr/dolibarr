@@ -2,7 +2,11 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+<<<<<<< HEAD
  * Copyright (C) 2005      Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005      Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011-2013 Juanjo Menent		<jmenent@2byte.es>
  *
@@ -39,7 +43,11 @@ $langs->loadLangs(array("admin","errors"));
 if (!$user->admin)
   accessforbidden();
 
+<<<<<<< HEAD
 $action = GETPOST('action','aZ09');
+=======
+$action = GETPOST('action', 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 /*
@@ -51,6 +59,7 @@ if ($action == 'setvalue' && $user->admin)
 	$error=0;
 	$db->begin();
 
+<<<<<<< HEAD
 	if (! dolibarr_set_const($db, 'LDAP_GROUP_DN',GETPOST("group"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_GROUP_OBJECT_CLASS',GETPOST("objectclass"),'chaine',0,'',$conf->entity)) $error++;
 
@@ -58,12 +67,25 @@ if ($action == 'setvalue' && $user->admin)
 	//if (! dolibarr_set_const($db, 'LDAP_GROUP_FIELD_NAME',$_POST["fieldname"],'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_GROUP_FIELD_DESCRIPTION',GETPOST("fielddescription"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_GROUP_FIELD_GROUPMEMBERS',GETPOST("fieldgroupmembers"),'chaine',0,'',$conf->entity)) $error++;
+=======
+	if (! dolibarr_set_const($db, 'LDAP_GROUP_DN', GETPOST("group"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_GROUP_OBJECT_CLASS', GETPOST("objectclass"), 'chaine', 0, '', $conf->entity)) $error++;
+
+	if (! dolibarr_set_const($db, 'LDAP_GROUP_FIELD_FULLNAME', GETPOST("fieldfullname"), 'chaine', 0, '', $conf->entity)) $error++;
+	//if (! dolibarr_set_const($db, 'LDAP_GROUP_FIELD_NAME',$_POST["fieldname"],'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_GROUP_FIELD_DESCRIPTION', GETPOST("fielddescription"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_GROUP_FIELD_GROUPMEMBERS', GETPOST("fieldgroupmembers"), 'chaine', 0, '', $conf->entity)) $error++;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	// This one must be after the others
     $valkey='';
     $key=GETPOST("key");
     if ($key) $valkey=$conf->global->$key;
+<<<<<<< HEAD
     if (! dolibarr_set_const($db, 'LDAP_KEY_GROUPS',$valkey,'chaine',0,'',$conf->entity)) $error++;
+=======
+    if (! dolibarr_set_const($db, 'LDAP_KEY_GROUPS', $valkey, 'chaine', 0, '', $conf->entity)) $error++;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     if (! $error)
     {
@@ -83,10 +105,17 @@ if ($action == 'setvalue' && $user->admin)
  * View
  */
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("LDAPSetup"),'EN:Module_LDAP_En|FR:Module_LDAP|ES:M&oacute;dulo_LDAP');
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 
 print load_fiche_titre($langs->trans("LDAPSetup"),$linkback,'title_setup');
+=======
+llxHeader('', $langs->trans("LDAPSetup"), 'EN:Module_LDAP_En|FR:Module_LDAP|ES:M&oacute;dulo_LDAP');
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+
+print load_fiche_titre($langs->trans("LDAPSetup"), $linkback, 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $head = ldap_prepare_head();
 
@@ -135,7 +164,11 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="25%">'.$langs->trans("LDAPDolibarrMapping").'</td>';
 print '<td colspan="2">'.$langs->trans("LDAPLdapMapping").'</td>';
+<<<<<<< HEAD
 print '<td align="right">'.$langs->trans("LDAPNamingAttribute").'</td>';
+=======
+print '<td class="right">'.$langs->trans("LDAPNamingAttribute").'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print "</tr>\n";
 
 // Filtre
@@ -144,7 +177,11 @@ print "</tr>\n";
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldName").'</td><td>';
 print '<input size="25" type="text" name="fieldfullname" value="'.$conf->global->LDAP_GROUP_FIELD_FULLNAME.'">';
 print '</td><td>'.$langs->trans("LDAPFieldCommonNameExample").'</td>';
+<<<<<<< HEAD
 print '<td align="right"><input type="radio" name="key" value="LDAP_GROUP_FIELD_FULLNAME"'.(($conf->global->LDAP_KEY_GROUPS && $conf->global->LDAP_KEY_GROUPS==$conf->global->LDAP_GROUP_FIELD_FULLNAME)?' checked':'')."></td>";
+=======
+print '<td class="right"><input type="radio" name="key" value="LDAP_GROUP_FIELD_FULLNAME"'.(($conf->global->LDAP_KEY_GROUPS && $conf->global->LDAP_KEY_GROUPS==$conf->global->LDAP_GROUP_FIELD_FULLNAME)?' checked':'')."></td>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</tr>';
 
 // Name
@@ -152,7 +189,11 @@ print '</tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldName").'</td><td>';
 print '<input size="25" type="text" name="fieldname" value="'.$conf->global->LDAP_GROUP_FIELD_NAME.'">';
 print '</td><td>'.$langs->trans("LDAPFieldNameExample").'</td>';
+<<<<<<< HEAD
 print '<td align="right"><input type="radio" name="key" value="'.$conf->global->LDAP_GROUP_FIELD_NAME.'"'.($conf->global->LDAP_KEY_GROUPS==$conf->global->LDAP_GROUP_FIELD_NAME?' checked':'')."></td>";
+=======
+print '<td class="right"><input type="radio" name="key" value="'.$conf->global->LDAP_GROUP_FIELD_NAME.'"'.($conf->global->LDAP_KEY_GROUPS==$conf->global->LDAP_GROUP_FIELD_NAME?' checked':'')."></td>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</tr>';
 */
 
@@ -160,14 +201,22 @@ print '</tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldDescription").'</td><td>';
 print '<input size="25" type="text" name="fielddescription" value="'.$conf->global->LDAP_GROUP_FIELD_DESCRIPTION.'">';
 print '</td><td>'.$langs->trans("LDAPFieldDescriptionExample").'</td>';
+<<<<<<< HEAD
 print '<td align="right"><input type="radio" name="key" value="LDAP_GROUP_FIELD_DESCRIPTION"'.(($conf->global->LDAP_KEY_GROUPS && $conf->global->LDAP_KEY_GROUPS==$conf->global->LDAP_GROUP_FIELD_DESCRIPTION)?' checked':'')."></td>";
+=======
+print '<td class="right"><input type="radio" name="key" value="LDAP_GROUP_FIELD_DESCRIPTION"'.(($conf->global->LDAP_KEY_GROUPS && $conf->global->LDAP_KEY_GROUPS==$conf->global->LDAP_GROUP_FIELD_DESCRIPTION)?' checked':'')."></td>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</tr>';
 
 // User group
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldGroupMembers").'</td><td>';
 print '<input size="25" type="text" name="fieldgroupmembers" value="'.$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS.'">';
 print '</td><td>'.$langs->trans("LDAPFieldGroupMembersExample").'</td>';
+<<<<<<< HEAD
 print '<td align="right"><input type="radio" name="key" value="LDAP_GROUP_FIELD_GROUPMEMBERS"'.(($conf->global->LDAP_KEY_GROUPS && $conf->global->LDAP_KEY_GROUPS==$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS)?' checked':'')."></td>";
+=======
+print '<td class="right"><input type="radio" name="key" value="LDAP_GROUP_FIELD_GROUPMEMBERS"'.(($conf->global->LDAP_KEY_GROUPS && $conf->global->LDAP_KEY_GROUPS==$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS)?' checked':'')."></td>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</tr>';
 
 print '</table>';
@@ -192,7 +241,11 @@ if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
 	$dn=$conf->global->LDAP_GROUP_DN;
 	$objectclass=$conf->global->LDAP_GROUP_OBJECT_CLASS;
 
+<<<<<<< HEAD
 	show_ldap_test_button($butlabel,$testlabel,$key,$dn,$objectclass);
+=======
+	show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 if (function_exists("ldap_connect"))
@@ -213,43 +266,79 @@ if (function_exists("ldap_connect"))
 			$dn=$object->_load_ldap_dn($info);
 
 			// Get a gid number for objectclass PosixGroup
+<<<<<<< HEAD
 			if (in_array('posixGroup',$info['objectclass'])) {
+=======
+			if (in_array('posixGroup', $info['objectclass'])) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$info['gidNumber'] = $ldap->getNextGroupGid('LDAP_KEY_GROUPS');
 			}
 
 			$result1=$ldap->delete($dn);			// To be sure to delete existing records
+<<<<<<< HEAD
 			$result2=$ldap->add($dn,$info,$user);	// Now the test
+=======
+			$result2=$ldap->add($dn, $info, $user);	// Now the test
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$result3=$ldap->delete($dn);			// Clean what we did
 
 			if ($result2 > 0)
 			{
+<<<<<<< HEAD
 				print img_picto('','info').' ';
+=======
+				print img_picto('', 'info').' ';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				print '<font class="ok">'.$langs->trans("LDAPSynchroOK").'</font><br>';
 			}
 			else
 			{
+<<<<<<< HEAD
 				print img_picto('','error').' ';
 				print '<font class="error">'.$langs->trans("LDAPSynchroKOMayBePermissions");
 				print ': '.$ldap->error;
 				print '</font><br>';
 				print $langs->trans("ErrorLDAPMakeManualTest",$conf->ldap->dir_temp).'<br>';
+=======
+				print img_picto('', 'error').' ';
+				print '<font class="error">'.$langs->trans("LDAPSynchroKOMayBePermissions");
+				print ': '.$ldap->error;
+				print '</font><br>';
+				print $langs->trans("ErrorLDAPMakeManualTest", $conf->ldap->dir_temp).'<br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 
 			print "<br>\n";
 			print "LDAP input file used for test:<br><br>\n";
+<<<<<<< HEAD
 			print nl2br($ldap->dump_content($dn,$info));
+=======
+			print nl2br($ldap->dump_content($dn, $info));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print "\n<br>";
 		}
 		else
 		{
+<<<<<<< HEAD
 			print img_picto('','error').' ';
 			print '<font class="error">'.$langs->trans("LDAPSynchroKO");
 			print ': '.$ldap->error;
 			print '</font><br>';
 			print $langs->trans("ErrorLDAPMakeManualTest",$conf->ldap->dir_temp).'<br>';
+=======
+			print img_picto('', 'error').' ';
+			print '<font class="error">'.$langs->trans("LDAPSynchroKO");
+			print ': '.$ldap->error;
+			print '</font><br>';
+			print $langs->trans("ErrorLDAPMakeManualTest", $conf->ldap->dir_temp).'<br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 	}
 }
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

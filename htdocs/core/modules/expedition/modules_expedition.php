@@ -2,10 +2,17 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
+<<<<<<< HEAD
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2011-2013 Philippe Grand       <philippe.grand@atoo-net.com>
+=======
+ * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
+ * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
+ * Copyright (C) 2011-2019 Philippe Grand       <philippe.grand@atoo-net.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -36,16 +43,29 @@
  */
 abstract class ModelePdfExpedition extends CommonDocGenerator
 {
+<<<<<<< HEAD
     var $error='';
 
 
 	/**
 	 *  Return list of active generation modules
+=======
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Return list of active generation models
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	 *
      *  @param	DoliDB	$db     			Database handler
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
+<<<<<<< HEAD
 	static function liste_modeles($db,$maxfilenamelength=0)
 	{
 		global $conf;
@@ -57,6 +77,20 @@ abstract class ModelePdfExpedition extends CommonDocGenerator
 		$liste=getListOfModels($db,$type,$maxfilenamelength);
 
 		return $liste;
+=======
+	public static function liste_modeles($db, $maxfilenamelength = 0)
+	{
+        // phpcs:enable
+		global $conf;
+
+		$type='shipping';
+		$list=array();
+
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+		$list = getListOfModels($db, $type, $maxfilenamelength);
+
+		return $list;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 }
 
@@ -66,13 +100,24 @@ abstract class ModelePdfExpedition extends CommonDocGenerator
  */
 abstract class ModelNumRefExpedition
 {
+<<<<<<< HEAD
 	var $error='';
+=======
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	/** Return if a model can be used or not
 	 *
 	 *  @return		boolean     true if model can be used
 	 */
+<<<<<<< HEAD
 	function isEnabled()
+=======
+    public function isEnabled()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return true;
 	}
@@ -82,7 +127,11 @@ abstract class ModelNumRefExpedition
 	 *
 	 *	@return     string      text description
 	 */
+<<<<<<< HEAD
 	function info()
+=======
+    public function info()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 		$langs->load("sendings");
@@ -94,7 +143,11 @@ abstract class ModelNumRefExpedition
 	 *
 	 *	@return     string      Example
 	 */
+<<<<<<< HEAD
 	function getExample()
+=======
+    public function getExample()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 		$langs->load("sendings");
@@ -104,9 +157,15 @@ abstract class ModelNumRefExpedition
 	/**
 	 *	Test if existing numbers make problems with numbering
 	 *
+<<<<<<< HEAD
 	 *	@return     boolean     false if conflit, true if ok
 	 */
 	function canBeActivated()
+=======
+	 *	@return     boolean     false if conflict, true if ok
+	 */
+    public function canBeActivated()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return true;
 	}
@@ -118,7 +177,11 @@ abstract class ModelNumRefExpedition
 	 *	@param	Object		$shipment	Shipment object
 	 *	@return	string					Value
 	 */
+<<<<<<< HEAD
 	function getNextValue($objsoc, $shipment)
+=======
+    public function getNextValue($objsoc, $shipment)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
@@ -129,7 +192,11 @@ abstract class ModelNumRefExpedition
 	 *
 	 *	@return     string      Value
 	 */
+<<<<<<< HEAD
 	function getVersion()
+=======
+    public function getVersion()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 		$langs->load("admin");

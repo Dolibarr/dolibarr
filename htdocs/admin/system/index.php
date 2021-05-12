@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +29,14 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
+<<<<<<< HEAD
 $langs->load("admin");
 $langs->load("user");
 $langs->load("install");
+=======
+// Load translation files required by the page
+$langs->loadLangs(array("admin", "user", "install"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if (! $user->admin) accessforbidden();
 
@@ -45,7 +54,11 @@ if (! $user->admin) accessforbidden();
 
 llxHeader();
 
+<<<<<<< HEAD
 print load_fiche_titre($langs->trans("SummarySystem"),'','title_setup');
+=======
+print load_fiche_titre($langs->trans("SummarySystem"), '', 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 print '<table class="noborder" width="100%">';
@@ -106,7 +119,11 @@ print '<br>';
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("Browser")."</td></tr>\n";
 print "<tr $bc[0]><td width=\"280\">".$langs->trans("UserAgent")."</td><td>" .$_SERVER["HTTP_USER_AGENT"]."</td></tr>\n";
+<<<<<<< HEAD
 print "<tr $bc[1]><td width=\"280\">".$langs->trans("Smartphone")."</td><td>".(empty($conf->browser->phone)?$langs->trans("No"):$conf->browser->phone)."</td></tr>\n";
+=======
+print "<tr $bc[1]><td width=\"280\">".$langs->trans("Smartphone")."</td><td>".(($conf->browser->layout != 'phone')?$langs->trans("No"):$langs->trans("Yes"))."</td></tr>\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</table>';
 print '<br>';
 
@@ -114,6 +131,11 @@ print '<br>';
 //print "<br>\n";
 print info_admin($langs->trans("SystemInfoDesc")).'<br>';
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

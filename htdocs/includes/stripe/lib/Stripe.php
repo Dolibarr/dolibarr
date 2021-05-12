@@ -22,7 +22,11 @@ class Stripe
     public static $connectBase = 'https://connect.stripe.com';
 
     // @var string The base URL for the Stripe API uploads endpoint.
+<<<<<<< HEAD
     public static $apiUploadBase = 'https://uploads.stripe.com';
+=======
+    public static $apiUploadBase = 'https://files.stripe.com';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     // @var string|null The version of the Stripe API to use for requests.
     public static $apiVersion = null;
@@ -46,13 +50,23 @@ class Stripe
     // @var int Maximum number of request retries
     public static $maxNetworkRetries = 0;
 
+<<<<<<< HEAD
+=======
+    // @var boolean Whether client telemetry is enabled. Defaults to false.
+    public static $enableTelemetry = false;
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     // @var float Maximum delay between retries, in seconds
     private static $maxNetworkRetryDelay = 2.0;
 
     // @var float Initial delay between retries, in seconds
     private static $initialNetworkRetryDelay = 0.5;
 
+<<<<<<< HEAD
     const VERSION = '6.4.1';
+=======
+    const VERSION = '6.35.0';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     /**
      * @return string The API key used for requests.
@@ -199,12 +213,22 @@ class Stripe
      * @param string $appVersion The application's version
      * @param string $appUrl The application's URL
      */
+<<<<<<< HEAD
     public static function setAppInfo($appName, $appVersion = null, $appUrl = null)
     {
         self::$appInfo = self::$appInfo ?: [];
         self::$appInfo['name'] = $appName;
         self::$appInfo['version'] = $appVersion;
         self::$appInfo['url'] = $appUrl;
+=======
+    public static function setAppInfo($appName, $appVersion = null, $appUrl = null, $appPartnerId = null)
+    {
+        self::$appInfo = self::$appInfo ?: [];
+        self::$appInfo['name'] = $appName;
+        self::$appInfo['partner_id'] = $appPartnerId;
+        self::$appInfo['url'] = $appUrl;
+        self::$appInfo['version'] = $appVersion;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
     /**
@@ -238,4 +262,27 @@ class Stripe
     {
         return self::$initialNetworkRetryDelay;
     }
+<<<<<<< HEAD
+=======
+
+    /**
+     * @return bool Whether client telemetry is enabled
+     */
+    public static function getEnableTelemetry()
+    {
+        return self::$enableTelemetry;
+    }
+
+    /**
+     * @param bool $enableTelemetry Enables client telemetry.
+     *
+     * Client telemetry enables timing and request metrics to be sent back to Stripe as an HTTP Header
+     * with the current request. This enables Stripe to do latency and metrics analysis without adding extra
+     * overhead (such as extra network calls) on the client.
+     */
+    public static function setEnableTelemetry($enableTelemetry)
+    {
+        self::$enableTelemetry = $enableTelemetry;
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

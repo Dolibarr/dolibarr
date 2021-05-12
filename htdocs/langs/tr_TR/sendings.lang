@@ -18,7 +18,11 @@ SendingCard=Sevkiyat kartı
 NewSending=Yeni sevkiyat
 CreateShipment=Sevkiyat oluştur
 QtyShipped=Sevkedilen mikt.
+<<<<<<< HEAD
 QtyShippedShort=Qty ship.
+=======
+QtyShippedShort=Sevk edilen miktar
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 QtyPreparedOrShipped=Hazırlanan veya gönderilen miktar
 QtyToShip=Sevk edilecek mikt.
 QtyReceived=Alınan mikt.
@@ -46,6 +50,7 @@ DateDeliveryPlanned=Teslimat için planlanan tarih
 RefDeliveryReceipt=Teslimat makbuzu referansı
 StatusReceipt=Status delivery receipt
 DateReceived=Teslim alınan tarih
+<<<<<<< HEAD
 SendShippingByEMail=Sevkiyatı EPostayla gönder
 SendShippingRef=% Nakliyatının yapılması
 ActionsOnShipping=Sevkiyat etkinlikleri
@@ -57,6 +62,19 @@ ProductQtyInSuppliersOrdersRunning=Product quantity into open purchase orders
 ProductQtyInShipmentAlreadySent=Product quantity from open customer order already sent
 ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open supplier order already received
 NoProductToShipFoundIntoStock=Bu <b>%s</b> deposunda sevk edilecek hiç mal bulunamadı. Stoğu düzeltin ya da bir başka depo seçmek için geri gidin.
+=======
+SendShippingByEMail=Sevkiyatı  e-posta ile gönder
+SendShippingRef=% Nakliyatının yapılması
+ActionsOnShipping=Sevkiyattaki etkinlikler
+LinkToTrackYourPackage=Paketinizi izleyeceğiniz bağlantı
+ShipmentCreationIsDoneFromOrder=Şu an için, yeni bir sevkiyatın oluşturulması sipariş kartından yapılmıştır.
+ShipmentLine=Sevkiyat kalemi
+ProductQtyInCustomersOrdersRunning=Açık müşteri siparişlerindeki ürün miktarı
+ProductQtyInSuppliersOrdersRunning=Açık tedarikçi siparişlerindeki ürün miktarı
+ProductQtyInShipmentAlreadySent=Product quantity from open sales order already sent
+ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open purchase order already received
+NoProductToShipFoundIntoStock=No product to ship found in warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 WeightVolShort=Ağırlık/Hac.
 ValidateOrderFirstBeforeShipment=Sevkiyatları yapabilmek için önce siparişi doğrulamlısınız.
 
@@ -69,4 +87,8 @@ SumOfProductWeights=Ürün ağırlıkları toplamı
 
 # warehouse details
 DetailWarehouseNumber= Depo ayrıntıları
+<<<<<<< HEAD
 DetailWarehouseFormat= Ağ:%s (Mik : %d)
+=======
+DetailWarehouseFormat= W:%s (Qty: %d)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

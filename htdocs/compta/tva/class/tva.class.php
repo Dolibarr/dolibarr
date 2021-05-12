@@ -1,8 +1,16 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2018      Philippe Grand       <philippe.grand@atoo-net.com>
+=======
+/* Copyright (C) 2002-2003  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2008  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2011-2017  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2018       Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +41,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class Tva extends CommonObject
 {
+<<<<<<< HEAD
 	public $element='tva';			//!< Id that identify managed objects
 	public $table_element='tva';	//!< Name of table without prefix where object is stored
 	public $picto='payment';
@@ -47,13 +56,60 @@ class Tva extends CommonObject
 	var $fk_bank;
 	var $fk_user_creat;
 	var $fk_user_modif;
+=======
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='tva';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='tva';
+
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto='payment';
+
+	public $tms;
+	public $datep;
+	public $datev;
+	public $amount;
+	public $type_payment;
+	public $num_payment;
+
+	/**
+     * @var string label
+     */
+    public $label;
+
+    /**
+     * @var int ID
+     */
+	public $fk_bank;
+
+	/**
+     * @var int ID
+     */
+	public $fk_user_creat;
+
+	/**
+     * @var int ID
+     */
+	public $fk_user_modif;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     /**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler
      */
+<<<<<<< HEAD
     function __construct($db)
+=======
+    public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $this->db = $db;
     }
@@ -65,7 +121,11 @@ class Tva extends CommonObject
      *  @param      User	$user       User that create
      *  @return     int      			<0 if KO, >0 if OK
      */
+<<<<<<< HEAD
     function create($user)
+=======
+    public function create($user)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
     	global $conf, $langs;
 
@@ -76,9 +136,15 @@ class Tva extends CommonObject
 		$this->amount=trim($this->amount);
 		$this->label=trim($this->label);
 		$this->note=trim($this->note);
+<<<<<<< HEAD
 		$this->fk_bank=trim($this->fk_bank);
 		$this->fk_user_creat=trim($this->fk_user_creat);
 		$this->fk_user_modif=trim($this->fk_user_modif);
+=======
+		$this->fk_bank = (int) $this->fk_bank;
+		$this->fk_user_creat = (int) $this->fk_user_creat;
+		$this->fk_user_modif = (int) $this->fk_user_modif;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -115,7 +181,11 @@ class Tva extends CommonObject
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."tva");
 
             // Call trigger
+<<<<<<< HEAD
             $result=$this->call_trigger('TVA_CREATE',$user);
+=======
+            $result=$this->call_trigger('TVA_CREATE', $user);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             if ($result < 0) $error++;
             // End call triggers
 
@@ -145,7 +215,11 @@ class Tva extends CommonObject
      * @param	int		$notrigger	    0=no, 1=yes (no update trigger)
      * @return  int         			<0 if KO, >0 if OK
      */
+<<<<<<< HEAD
     function update($user, $notrigger=0)
+=======
+    public function update($user, $notrigger = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
     	global $conf, $langs;
 
@@ -155,9 +229,15 @@ class Tva extends CommonObject
 		$this->amount=trim($this->amount);
 		$this->label=trim($this->label);
 		$this->note=trim($this->note);
+<<<<<<< HEAD
 		$this->fk_bank=trim($this->fk_bank);
 		$this->fk_user_creat=trim($this->fk_user_creat);
 		$this->fk_user_modif=trim($this->fk_user_modif);
+=======
+		$this->fk_bank = (int) $this->fk_bank;
+		$this->fk_user_creat = (int) $this->fk_user_creat;
+		$this->fk_user_modif = (int) $this->fk_user_modif;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -188,7 +268,11 @@ class Tva extends CommonObject
 		if (! $error && ! $notrigger)
 		{
             // Call trigger
+<<<<<<< HEAD
             $result=$this->call_trigger('TVA_MODIFY',$user);
+=======
+            $result=$this->call_trigger('TVA_MODIFY', $user);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             if ($result < 0) $error++;
             // End call triggers
     	}
@@ -213,7 +297,11 @@ class Tva extends CommonObject
      *  @param  User	$user       User that load
      *  @return int         		<0 if KO, >0 if OK
      */
+<<<<<<< HEAD
     function fetch($id, $user=null)
+=======
+    public function fetch($id, $user = null)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
     	global $langs;
         $sql = "SELECT";
@@ -281,14 +369,22 @@ class Tva extends CommonObject
      *	@param	User	$user       User that delete
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
+<<<<<<< HEAD
 	function delete($user)
+=======
+	public function delete($user)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf, $langs;
 
 		$error=0;
 
 		// Call trigger
+<<<<<<< HEAD
 		$result=$this->call_trigger('TVA_DELETE',$user);
+=======
+		$result=$this->call_trigger('TVA_DELETE', $user);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if ($result < 0) return -1;
 		// End call triggers
 
@@ -315,7 +411,11 @@ class Tva extends CommonObject
      *
      *  @return	void
 	 */
+<<<<<<< HEAD
 	function initAsSpecimen()
+=======
+	public function initAsSpecimen()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$this->id=0;
 
@@ -337,7 +437,11 @@ class Tva extends CommonObject
      *	@param	int		$year		Year
      *	@return	double				Amount
      */
+<<<<<<< HEAD
     function solde($year = 0)
+=======
+    public function solde($year = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
 
         $reglee = $this->tva_sum_reglee($year);
@@ -350,14 +454,26 @@ class Tva extends CommonObject
         return $solde;
     }
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     /**
      * 	Total of the VAT from invoices emitted by the thirdparty.
      *
      *	@param	int		$year		Year
+<<<<<<< HEAD
      *	@return	double				Amount
      */
     function tva_sum_collectee($year = 0)
     {
+=======
+     *  @return	double				Amount
+     */
+    public function tva_sum_collectee($year = 0)
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         $sql = "SELECT sum(f.tva) as amount";
         $sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE f.paye = 1";
@@ -389,14 +505,24 @@ class Tva extends CommonObject
         }
     }
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     /**
      * 	VAT payed
      *
      *	@param	int		$year		Year
      *	@return	double				Amount
      */
+<<<<<<< HEAD
     function tva_sum_payee($year = 0)
     {
+=======
+    public function tva_sum_payee($year = 0)
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         $sql = "SELECT sum(f.total_tva) as total_tva";
         $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
@@ -429,14 +555,24 @@ class Tva extends CommonObject
     }
 
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     /**
      * 	Total of the VAT payed
      *
      *	@param	int		$year		Year
      *	@return	double				Amount
      */
+<<<<<<< HEAD
     function tva_sum_reglee($year = 0)
     {
+=======
+    public function tva_sum_reglee($year = 0)
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         $sql = "SELECT sum(f.amount) as amount";
         $sql .= " FROM ".MAIN_DB_PREFIX."tva as f";
@@ -476,7 +612,11 @@ class Tva extends CommonObject
 	 *	@param	User	$user		Object user that insert
 	 *	@return	int					<0 if KO, rowid in tva table if OK
      */
+<<<<<<< HEAD
     function addPayment($user)
+=======
+    public function addPayment($user)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $conf,$langs;
 
@@ -486,30 +626,52 @@ class Tva extends CommonObject
         $this->amount=price2num(trim($this->amount));
         $this->label=trim($this->label);
 		$this->note=trim($this->note);
+<<<<<<< HEAD
 		$this->fk_bank=trim($this->fk_bank);
 		$this->fk_user_creat=trim($this->fk_user_creat);
 		$this->fk_user_modif=trim($this->fk_user_modif);
+=======
+		$this->fk_bank = (int) $this->fk_bank;
+		$this->fk_user_creat = (int) $this->fk_user_creat;
+		$this->fk_user_modif = (int) $this->fk_user_modif;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if (empty($this->datec)) $this->datec = dol_now();
 
         // Check parameters
 		if (! $this->label)
 		{
+<<<<<<< HEAD
 			$this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"));
+=======
+			$this->error=$langs->trans("ErrorFieldRequired", $langs->transnoentities("Label"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			return -3;
 		}
         if ($this->amount == '')
         {
+<<<<<<< HEAD
             $this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount"));
+=======
+            $this->error=$langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             return -4;
         }
         if (! empty($conf->banque->enabled) && (empty($this->accountid) || $this->accountid <= 0))
         {
+<<<<<<< HEAD
             $this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Account"));
+=======
+            $this->error=$langs->trans("ErrorFieldRequired", $langs->transnoentities("Account"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             return -5;
         }
         if (! empty($conf->banque->enabled) && (empty($this->type_payment) || $this->type_payment <= 0))
         {
+<<<<<<< HEAD
             $this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode"));
+=======
+            $this->error=$langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             return -5;
         }
 
@@ -549,7 +711,11 @@ class Tva extends CommonObject
 
             // Call trigger
             //XXX: Should be done just befor commit no ?
+<<<<<<< HEAD
             $result=$this->call_trigger('TVA_ADDPAYMENT',$user);
+=======
+            $result=$this->call_trigger('TVA_ADDPAYMENT', $user);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             if ($result < 0)
             {
             	$this->id = 0;
@@ -620,16 +786,28 @@ class Tva extends CommonObject
         }
     }
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     /**
 	 *  Update link between payment tva and line generate into llx_bank
      *
      *  @param	int		$id_bank    Id bank account
 	 *	@return	int					<0 if KO, >0 if OK
      */
+<<<<<<< HEAD
 	function update_fk_bank($id_bank)
 	{
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'tva SET fk_bank = '.$id_bank;
 		$sql.= ' WHERE rowid = '.$this->id;
+=======
+	public function update_fk_bank($id_bank)
+	{
+        // phpcs:enable
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'tva SET fk_bank = '.(int) $id_bank;
+		$sql.= ' WHERE rowid = '.(int) $this->id;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -651,23 +829,37 @@ class Tva extends CommonObject
      *  @param	string	$morecss			More CSS
 	 *	@return	string					Chaine with URL
 	 */
+<<<<<<< HEAD
 	function getNomUrl($withpicto=0, $option='', $notooltip=0, $morecss='')
+=======
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs, $conf;
 
 		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
 		$result='';
+<<<<<<< HEAD
         $label=$langs->trans("ShowVatPayment").': '.$this->ref;
+=======
+
+		$label = '<u>' . $langs->trans("ShowVatPayment") . '</u>';
+		$label.= '<br>';
+		$label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         $url = DOL_URL_ROOT.'/compta/tva/card.php?id='.$this->id;
 
         $linkclose='';
         if (empty($notooltip))
         {
+<<<<<<< HEAD
 
 
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
         	{
         		$label=$langs->trans("ShowMyObject");
@@ -697,7 +889,11 @@ class Tva extends CommonObject
      *
      *	@return		int		Amount of payment already done, <0 if KO
      */
+<<<<<<< HEAD
     function getSommePaiement()
+=======
+    public function getSommePaiement()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $table='paiementcharge';
         $field='fk_charge';
@@ -730,11 +926,19 @@ class Tva extends CommonObject
 	 *	@param	int		$id     Id of vat payment
 	 *	@return	int				<0 if KO, >0 if OK
 	 */
+<<<<<<< HEAD
 	function info($id)
 	{
 		$sql = "SELECT t.rowid, t.tms, t.fk_user_modif, t.datec, t.fk_user_creat";
 		$sql.= " FROM ".MAIN_DB_PREFIX."tva as t";
 		$sql.= " WHERE t.rowid = ".$id;
+=======
+	public function info($id)
+	{
+		$sql = "SELECT t.rowid, t.tms, t.fk_user_modif, t.datec, t.fk_user_creat";
+		$sql.= " FROM ".MAIN_DB_PREFIX."tva as t";
+		$sql.= " WHERE t.rowid = ".(int) $id;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		dol_syslog(get_class($this)."::info", LOG_DEBUG);
 		$result=$this->db->query($sql);
@@ -764,7 +968,10 @@ class Tva extends CommonObject
 			}
 
 			$this->db->free($result);
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		else
 		{
@@ -778,11 +985,20 @@ class Tva extends CommonObject
 	 * @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 * @return  string				Libelle
 	 */
+<<<<<<< HEAD
 	function getLibStatut($mode=0)
 	{
 	    return $this->LibStatut($this->statut,$mode);
 	}
 
+=======
+	public function getLibStatut($mode = 0)
+	{
+	    return $this->LibStatut($this->statut, $mode);
+	}
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * Renvoi le libelle d'un statut donne
 	 *
@@ -790,10 +1006,20 @@ class Tva extends CommonObject
 	 * @param   int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 * @return	string  		    Libelle du statut
 	 */
+<<<<<<< HEAD
 	function LibStatut($status,$mode=0)
 	{
 	    global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage
 
 	    return '';
 	}
+=======
+    public function LibStatut($status, $mode = 0)
+    {
+        // phpcs:enable
+        global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage
+
+        return '';
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

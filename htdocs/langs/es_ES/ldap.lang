@@ -24,4 +24,8 @@ MemberTypeSynchronized=Tipo de miembro sincronizado
 ContactSynchronized=Contacto sincronizado
 ForceSynchronize=Forzar sincronización Dolibarr -> LDAP
 ErrorFailedToReadLDAP=Error de la lectura del directorio LDAP. Comprobar la configuración del módulo LDAP y la accesibilidad del anuario.
+<<<<<<< HEAD
 PasswordOfUserInLDAP=Password of user in LDAP
+=======
+PasswordOfUserInLDAP=Contraseña del usuario en LDAP
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

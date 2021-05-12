@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2015 	   Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+=======
+/* Copyright (C) 2015 	   Alexandre Spangaro	<aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +47,11 @@ function donation_admin_prepare_head()
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'); to add new tab
 	// $this->tabs = array('entity:-tabname); to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'donation_admin');
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$head[$h][0] = DOL_URL_ROOT . '/don/admin/donation_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
     $head[$h][2] = 'attributes';
@@ -57,7 +65,11 @@ function donation_admin_prepare_head()
 /**
  *	Prepare array with list of tabs
  *
+<<<<<<< HEAD
  *	@param	Donation	$object		Donation
+=======
+ *	@param	Don       	$object		Donation
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *	@return	array					Array of tabs to show
  */
 function donation_prepare_head($object)
@@ -80,8 +92,13 @@ function donation_prepare_head($object)
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+<<<<<<< HEAD
 	$upload_dir = $conf->don->dir_output . '/' . get_exdir($filename,2,0,1,$object,'donation'). '/'. dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
+=======
+	$upload_dir = $conf->don->dir_output . '/' . get_exdir($filename, 2, 0, 1, $object, 'donation'). '/'. dol_sanitizeFileName($object->ref);
+	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/don/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
@@ -97,7 +114,11 @@ function donation_prepare_head($object)
 	if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
 	$head[$h][2] = 'note';
 	$h++;
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$head[$h][0] = DOL_URL_ROOT . '/don/info.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';

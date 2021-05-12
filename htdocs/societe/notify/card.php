@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Notification.class.php';
 
+<<<<<<< HEAD
 $langs->load("companies");
 $langs->load("mails");
 $langs->load("admin");
@@ -37,17 +38,32 @@ $langs->load("other");
 
 $socid = GETPOST("socid",'int');
 $action = GETPOST('action','aZ09');
+=======
+$langs->loadLangs(array("companies", "mails", "admin", "other"));
+
+$socid = GETPOST("socid", 'int');
+$action = GETPOST('action', 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $contactid=GETPOST('contactid');    // May be an int or 'thirdparty'
 $actionid=GETPOST('actionid');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
+<<<<<<< HEAD
 $result = restrictedArea($user, 'societe','','');
 
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield=GETPOST("sortfield",'alpha');
 $sortorder=GETPOST("sortorder",'alpha');
 $page=GETPOST("page",'int');
+=======
+$result = restrictedArea($user, 'societe', '', '');
+
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield=GETPOST("sortfield", 'alpha');
+$sortorder=GETPOST("sortorder", 'alpha');
+$page=GETPOST("page", 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="n.daten";
 if (empty($page) || $page == -1) { $page = 0; }
@@ -69,7 +85,11 @@ $hookmanager->initHooks(array('thirdpartynotification','globalcard'));
  */
 
 $parameters=array('id'=>$socid);
+<<<<<<< HEAD
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+=======
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -81,12 +101,20 @@ if (empty($reshook))
     {
         if (empty($contactid))
         {
+<<<<<<< HEAD
     	    setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Contact")), null, 'errors');
+=======
+    	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Contact")), null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $error++;
         }
         if ($actionid <= 0)
         {
+<<<<<<< HEAD
     	    setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Action")), null, 'errors');
+=======
+    	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Action")), null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $error++;
         }
 
@@ -143,9 +171,15 @@ $object = new Societe($db);
 $result=$object->fetch($socid);
 
 $title=$langs->trans("ThirdParty").' - '.$langs->trans("Notification");
+<<<<<<< HEAD
 if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name.' - '.$langs->trans("Notification");
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$title,$help_url);
+=======
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name.' - '.$langs->trans("Notification");
+$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+llxHeader('', $title, $help_url);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 if ($result > 0)
@@ -221,7 +255,11 @@ if ($result > 0)
 
 
     // Add notification form
+<<<<<<< HEAD
     print load_fiche_titre($langs->trans("AddNewNotification"),'','');
+=======
+    print load_fiche_titre($langs->trans("AddNewNotification"), '', '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$socid.'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -232,9 +270,15 @@ if ($result > 0)
     // Line with titles
     print '<table width="100%" class="noborder">';
     print '<tr class="liste_titre">';
+<<<<<<< HEAD
     print_liste_field_titre("Target",$_SERVER["PHP_SELF"],"c.lastname,c.firstname",'',$param,'"width="45%"',$sortfield,$sortorder);
     print_liste_field_titre("Action",$_SERVER["PHP_SELF"],"",'',$param,'"width="35%"',$sortfield,$sortorder);
     print_liste_field_titre("Type",$_SERVER["PHP_SELF"],"n.type",'',$param,'"width="10%"',$sortfield,$sortorder);
+=======
+    print_liste_field_titre("Target", $_SERVER["PHP_SELF"], "c.lastname,c.firstname", '', $param, '"width="45%"', $sortfield, $sortorder);
+    print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", '', $param, '"width="35%"', $sortfield, $sortorder);
+    print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "n.type", '', $param, '"width="10%"', $sortfield, $sortorder);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print_liste_field_titre('');
 	print "</tr>\n";
 
@@ -261,9 +305,15 @@ if ($result > 0)
         print '</td>';
         print '<td>';
         $type=array('email'=>$langs->trans("EMail"));
+<<<<<<< HEAD
         print $form->selectarray("typeid",$type);
         print '</td>';
         print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+=======
+        print $form->selectarray("typeid", $type);
+        print '</td>';
+        print '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         print '</tr>';
     }
     else
@@ -302,15 +352,26 @@ if ($result > 0)
     }
 
     // List of active notifications
+<<<<<<< HEAD
     print load_fiche_titre($langs->trans("ListOfActiveNotifications").' ('.$num.')','','');
+=======
+    print load_fiche_titre($langs->trans("ListOfActiveNotifications").' ('.$num.')', '', '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     // Line with titles
     print '<table width="100%" class="noborder">';
     print '<tr class="liste_titre">';
+<<<<<<< HEAD
     print_liste_field_titre("Target",$_SERVER["PHP_SELF"],"c.lastname,c.firstname",'',$param,'"width="45%"',$sortfield,$sortorder);
     print_liste_field_titre("Action",$_SERVER["PHP_SELF"],"",'',$param,'"width="35%"',$sortfield,$sortorder);
     print_liste_field_titre("Type",$_SERVER["PHP_SELF"],"n.type",'',$param,'"width="10%"',$sortfield,$sortorder);
     print_liste_field_titre('','','');
+=======
+    print_liste_field_titre("Target", $_SERVER["PHP_SELF"], "c.lastname,c.firstname", '', $param, '"width="45%"', $sortfield, $sortorder);
+    print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", '', $param, '"width="35%"', $sortfield, $sortorder);
+    print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "n.type", '', $param, '"width="10%"', $sortfield, $sortorder);
+    print_liste_field_titre('', '', '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print '</tr>';
 
 	$langs->load("errors");
@@ -339,7 +400,11 @@ if ($result > 0)
                 else
                 {
                     $langs->load("errors");
+<<<<<<< HEAD
                     print ' &nbsp; '.img_warning().' '.$langs->trans("ErrorBadEMail",$obj->email);
+=======
+                    print ' &nbsp; '.img_warning().' '.$langs->trans("ErrorBadEMail", $obj->email);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 }
             }
             print '</td>';
@@ -351,7 +416,11 @@ if ($result > 0)
             if ($obj->type == 'email') print $langs->trans("Email");
             if ($obj->type == 'sms') print $langs->trans("SMS");
             print '</td>';
+<<<<<<< HEAD
             print '<td align="right"><a href="card.php?socid='.$socid.'&action=delete&actid='.$obj->rowid.'">'.img_delete().'</a></td>';
+=======
+            print '<td class="right"><a href="card.php?socid='.$socid.'&action=delete&actid='.$obj->rowid.'">'.img_delete().'</a></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             print '</tr>';
             $i++;
         }
@@ -397,7 +466,11 @@ if ($result > 0)
 		print '<td>';
 		print $langs->trans("Email");
 		print '</td>';
+<<<<<<< HEAD
 		print '<td align="right">'.$langs->trans("SeeModuleSetup", $langs->transnoentitiesnoconv("Module600Name")).'</td>';
+=======
+		print '<td class="right">'.$langs->trans("SeeModuleSetup", $langs->transnoentitiesnoconv("Module600Name")).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</tr>';
     }*/
 
@@ -470,11 +543,19 @@ if ($result > 0)
     // Line with titles
     print '<table width="100%" class="noborder">';
     print '<tr class="liste_titre">';
+<<<<<<< HEAD
     print_liste_field_titre("Target",$_SERVER["PHP_SELF"],"c.lastname,c.firstname",'',$param,'',$sortfield,$sortorder);
     print_liste_field_titre("Action",$_SERVER["PHP_SELF"],"",'',$param,'',$sortfield,$sortorder);
     print_liste_field_titre("Type",$_SERVER["PHP_SELF"],"n.type",'',$param,'',$sortfield,$sortorder);
     //print_liste_field_titre("Object",$_SERVER["PHP_SELF"],"",'',$param,'"',$sortfield,$sortorder);
     print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"n.daten",'',$param,'align="right"',$sortfield,$sortorder);
+=======
+    print_liste_field_titre("Target", $_SERVER["PHP_SELF"], "c.lastname,c.firstname", '', $param, '', $sortfield, $sortorder);
+    print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder);
+    print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "n.type", '', $param, '', $sortfield, $sortorder);
+    //print_liste_field_titre("Object",$_SERVER["PHP_SELF"],"",'',$param,'"',$sortfield,$sortorder);
+    print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "n.daten", '', $param, '', $sortfield, $sortorder, 'right ');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print '</tr>';
 
     if ($num > 0)
@@ -519,7 +600,11 @@ if ($result > 0)
             }
            	print '</td>';*/
             // print
+<<<<<<< HEAD
             print'<td align="right">'.dol_print_date($db->jdate($obj->daten), 'dayhour').'</td>';
+=======
+            print'<td class="right">'.dol_print_date($db->jdate($obj->daten), 'dayhour').'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             print '</tr>';
             $i++;
         }
@@ -530,9 +615,16 @@ if ($result > 0)
 
     print '</form>';
 }
+<<<<<<< HEAD
 else dol_print_error('','RecordNotFound');
 
 
 llxFooter();
 
+=======
+else dol_print_error('', 'RecordNotFound');
+
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

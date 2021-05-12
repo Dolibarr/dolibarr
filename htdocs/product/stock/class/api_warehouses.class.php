@@ -43,10 +43,17 @@ class Warehouses extends DolibarrApi
     /**
      * Constructor
      */
+<<<<<<< HEAD
     function __construct()
     {
 		global $db, $conf;
 		$this->db = $db;
+=======
+    public function __construct()
+    {
+        global $db, $conf;
+        $this->db = $db;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $this->warehouse = new Entrepot($this->db);
     }
 
@@ -57,6 +64,7 @@ class Warehouses extends DolibarrApi
      *
      * @param 	int 	$id ID of warehouse
      * @return 	array|mixed data without useless information
+<<<<<<< HEAD
 	 *
      * @throws 	RestException
      */
@@ -76,6 +84,27 @@ class Warehouses extends DolibarrApi
 		}
 
 		return $this->_cleanObjectDatas($this->warehouse);
+=======
+     *
+     * @throws 	RestException
+     */
+    public function get($id)
+    {
+        if (! DolibarrApiAccess::$user->rights->stock->lire) {
+            throw new RestException(401);
+        }
+
+        $result = $this->warehouse->fetch($id);
+        if ( ! $result ) {
+            throw new RestException(404, 'warehouse not found');
+        }
+
+        if ( ! DolibarrApi::_checkAccessToResource('warehouse', $this->warehouse->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        return $this->_cleanObjectDatas($this->warehouse);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
     /**
@@ -90,16 +119,29 @@ class Warehouses extends DolibarrApi
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'WH-%') and (t.date_creation:<:'20160101')"
      * @return array                Array of warehouse objects
      *
+<<<<<<< HEAD
 	 * @throws RestException
      */
     function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '') {
+=======
+     * @throws RestException
+     */
+    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+    {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         global $db, $conf;
 
         $obj_ret = array();
 
+<<<<<<< HEAD
          if(! DolibarrApiAccess::$user->rights->stock->lire) {
 			throw new RestException(401);
 		}
+=======
+        if(! DolibarrApiAccess::$user->rights->stock->lire) {
+            throw new RestException(401);
+        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         $sql = "SELECT t.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as t";
@@ -111,7 +153,11 @@ class Warehouses extends DolibarrApi
             {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
+<<<<<<< HEAD
 	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+=======
+            $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
@@ -129,7 +175,11 @@ class Warehouses extends DolibarrApi
         $result = $db->query($sql);
         if ($result)
         {
+<<<<<<< HEAD
         	$i=0;
+=======
+            $i=0;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $num = $db->num_rows($result);
             $min = min($num, ($limit <= 0 ? $num : $limit));
             while ($i < $min)
@@ -148,7 +198,11 @@ class Warehouses extends DolibarrApi
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No warehouse found');
         }
+<<<<<<< HEAD
 		return $obj_ret;
+=======
+        return $obj_ret;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
 
@@ -158,11 +212,19 @@ class Warehouses extends DolibarrApi
      * @param array $request_data   Request data
      * @return int  ID of warehouse
      */
+<<<<<<< HEAD
     function post($request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->stock->creer) {
 			throw new RestException(401);
 		}
+=======
+    public function post($request_data = null)
+    {
+        if(! DolibarrApiAccess::$user->rights->stock->creer) {
+            throw new RestException(401);
+        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         // Check mandatory fields
         $result = $this->_validate($request_data);
@@ -183,6 +245,7 @@ class Warehouses extends DolibarrApi
      * @param array $request_data   Datas
      * @return int
      */
+<<<<<<< HEAD
     function put($id, $request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->stock->creer) {
@@ -197,6 +260,22 @@ class Warehouses extends DolibarrApi
 		if( ! DolibarrApi::_checkAccessToResource('stock',$this->warehouse->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+=======
+    public function put($id, $request_data = null)
+    {
+        if(! DolibarrApiAccess::$user->rights->stock->creer) {
+            throw new RestException(401);
+        }
+
+        $result = $this->warehouse->fetch($id);
+        if ( ! $result ) {
+            throw new RestException(404, 'warehouse not found');
+        }
+
+        if ( ! DolibarrApi::_checkAccessToResource('stock', $this->warehouse->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         foreach($request_data as $field => $value) {
             if ($field == 'id') continue;
@@ -204,7 +283,11 @@ class Warehouses extends DolibarrApi
         }
 
         if($this->warehouse->update($id, DolibarrApiAccess::$user))
+<<<<<<< HEAD
             return $this->get ($id);
+=======
+            return $this->get($id);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         return false;
     }
@@ -215,22 +298,39 @@ class Warehouses extends DolibarrApi
      * @param int $id   Warehouse ID
      * @return array
      */
+<<<<<<< HEAD
     function delete($id)
     {
         if(! DolibarrApiAccess::$user->rights->stock->supprimer) {
 			throw new RestException(401);
 		}
+=======
+    public function delete($id)
+    {
+        if(! DolibarrApiAccess::$user->rights->stock->supprimer) {
+            throw new RestException(401);
+        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $result = $this->warehouse->fetch($id);
         if( ! $result ) {
             throw new RestException(404, 'warehouse not found');
         }
 
+<<<<<<< HEAD
 		if( ! DolibarrApi::_checkAccessToResource('stock',$this->warehouse->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
         if (! $this->warehouse->delete(DolibarrApiAccess::$user)) {
             throw new RestException(401,'error when delete warehouse');
+=======
+        if ( ! DolibarrApi::_checkAccessToResource('stock', $this->warehouse->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        if (! $this->warehouse->delete(DolibarrApiAccess::$user)) {
+            throw new RestException(401, 'error when delete warehouse');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
 
         return array(
@@ -242,14 +342,24 @@ class Warehouses extends DolibarrApi
     }
 
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     /**
      * Clean sensible object datas
      *
      * @param   Entrepot  $object    Object to clean
      * @return    array    Array of cleaned object properties
      */
+<<<<<<< HEAD
     function _cleanObjectDatas($object) {
 
+=======
+    protected function _cleanObjectDatas($object)
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $object = parent::_cleanObjectDatas($object);
 
         // Remove the subscriptions because they are handled as a subresource.
@@ -267,7 +377,11 @@ class Warehouses extends DolibarrApi
      *
      * @throws RestException
      */
+<<<<<<< HEAD
     function _validate($data)
+=======
+    private function _validate($data)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $warehouse = array();
         foreach (Warehouses::$FIELDS as $field) {

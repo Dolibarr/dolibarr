@@ -20,9 +20,15 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
+<<<<<<< HEAD
 if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK",'1');
 
 require_once '../master.inc.php';
+=======
+if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK", '1');
+
+require '../master.inc.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 require_once NUSOAP_PATH.'/nusoap.php';        // Include SOAP
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -39,7 +45,11 @@ if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
 {
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
+<<<<<<< HEAD
 	print $langs->trans("WarningModuleNotActive",'WebServices').'.<br><br>';
+=======
+	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print $langs->trans("ToActivateModule");
 	exit;
 }
@@ -49,7 +59,11 @@ $server = new nusoap_server();
 $server->soap_defencoding='UTF-8';
 $server->decode_utf8=false;
 $ns='http://www.dolibarr.org/ns/';
+<<<<<<< HEAD
 $server->configureWSDL('WebServicesDolibarrOther',$ns);
+=======
+$server->configureWSDL('WebServicesDolibarrOther', $ns);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $server->wsdl->schemaTargetNamespace=$ns;
 
 
@@ -150,7 +164,11 @@ function getVersions($authentication)
     $objectresp=array();
     $errorcode='';$errorlabel='';
     $error=0;
+<<<<<<< HEAD
     $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+=======
+    $fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     // Check parameters
 
 
@@ -181,7 +199,11 @@ function getVersions($authentication)
  * @param	string	$refname			Ref of object to check permission for external users (autodetect if not provided)
  * @return	void
  */
+<<<<<<< HEAD
 function getDocument($authentication, $modulepart, $file, $refname='')
+=======
+function getDocument($authentication, $modulepart, $file, $refname = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	global $db,$conf,$langs,$mysoc;
 
@@ -201,7 +223,11 @@ function getDocument($authentication, $modulepart, $file, $refname='')
 
 	$accessallowed=0;
 
+<<<<<<< HEAD
 	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+=======
+	$fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	if ($fuser->societe_id) $socid=$fuser->societe_id;
 
@@ -217,13 +243,21 @@ function getDocument($authentication, $modulepart, $file, $refname='')
 		$fuser->getrights();
 
 		// Suppression de la chaine de caractere ../ dans $original_file
+<<<<<<< HEAD
 		$original_file = str_replace("../","/", $original_file);
+=======
+		$original_file = str_replace("../", "/", $original_file);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// find the subdirectory name as the reference
 		if (empty($refname)) $refname=basename(dirname($original_file)."/");
 
 		// Security check
+<<<<<<< HEAD
 		$check_access = dol_check_secure_access_document($modulepart,$original_file,$conf->entity,$fuser,$refname);
+=======
+		$check_access = dol_check_secure_access_document($modulepart, $original_file, $conf->entity, $fuser, $refname);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$accessallowed              = $check_access['accessallowed'];
 		$sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 		$original_file              = $check_access['original_file'];
@@ -264,7 +298,11 @@ function getDocument($authentication, $modulepart, $file, $refname='')
 		// Security:
 		// On interdit les remontees de repertoire ainsi que les pipe dans
 		// les noms de fichiers.
+<<<<<<< HEAD
 		if (preg_match('/\.\./',$original_file) || preg_match('/[<>|]/',$original_file))
+=======
+		if (preg_match('/\.\./', $original_file) || preg_match('/[<>|]/', $original_file))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			dol_syslog("Refused to deliver file ".$original_file);
 			$errorcode='REFUSED';
@@ -283,8 +321,13 @@ function getDocument($authentication, $modulepart, $file, $refname='')
 				$file=$fileparams['fullname'];
 				$filename = basename($file);
 
+<<<<<<< HEAD
 				$f = fopen($original_file,'r');
 				$content_file = fread($f,filesize($original_file));
+=======
+				$f = fopen($original_file, 'r');
+				$content_file = fread($f, filesize($original_file));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				$objectret = array(
 					'filename' => basename($original_file),

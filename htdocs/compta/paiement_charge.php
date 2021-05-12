@@ -1,6 +1,11 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2016      Frédéric France      <frederic.france@free.fr>
+=======
+/* Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2016-2018  Frédéric France         <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +22,15 @@
  */
 
 /**
+<<<<<<< HEAD
  *	    \file       htdocs/compta/paiement_charge.php
  *		\ingroup    tax
  *		\brief      Page to add payment of a tax
+=======
+ *      \file       htdocs/compta/paiement_charge.php
+ *      \ingroup    tax
+ *      \brief      Page to add payment of a tax
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  */
 
 require '../main.inc.php';
@@ -61,19 +72,31 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm=='yes
 
 	if (! $_POST["paiementtype"] > 0)
 	{
+<<<<<<< HEAD
 		setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode")), null, 'errors');
+=======
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode")), null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$error++;
         $action = 'create';
 	}
 	if ($datepaye == '')
 	{
+<<<<<<< HEAD
 		setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentities("Date")), null, 'errors');
+=======
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Date")), null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$error++;
         $action = 'create';
 	}
     if (! empty($conf->banque->enabled) && ! $_POST["accountid"] > 0)
     {
+<<<<<<< HEAD
         setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentities("AccountToCredit")), null, 'errors');
+=======
+        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToCredit")), null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $error++;
         $action = 'create';
     }
@@ -85,9 +108,15 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm=='yes
 		// Read possible payments
 		foreach ($_POST as $key => $value)
 		{
+<<<<<<< HEAD
 			if (substr($key,0,7) == 'amount_')
 			{
 				$other_chid = substr($key,7);
+=======
+			if (substr($key, 0, 7) == 'amount_')
+			{
+				$other_chid = substr($key, 7);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$amounts[$other_chid] = price2num($_POST[$key]);
 			}
 		}
@@ -125,7 +154,11 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm=='yes
 
             if (! $error)
             {
+<<<<<<< HEAD
                 $result=$paiement->addPaymentToBank($user,'payment_sc','(SocialContributionPayment)', GETPOST('accountid','int'),'','');
+=======
+                $result=$paiement->addPaymentToBank($user, 'payment_sc', '(SocialContributionPayment)', GETPOST('accountid', 'int'), '', '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 if (! ($result > 0))
                 {
                 	$error++;
@@ -147,7 +180,10 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm=='yes
             }
         }
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 
@@ -205,7 +241,11 @@ if ($action == 'create')
 
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td><a href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$chid.'">'.$chid.'</a></td></tr>';
 	print '<tr><td>'.$langs->trans("Type")."</td><td>".$charge->type_libelle."</td></tr>\n";
+<<<<<<< HEAD
 	print '<tr><td>'.$langs->trans("Period")."</td><td>".dol_print_date($charge->periode,'day')."</td></tr>\n";
+=======
+	print '<tr><td>'.$langs->trans("Period")."</td><td>".dol_print_date($charge->periode, 'day')."</td></tr>\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$charge->lib."</td></tr>\n";
 	/*print '<tr><td>'.$langs->trans("DateDue")."</td><td>".dol_print_date($charge->date_ech,'day')."</td></tr>\n";
 	print '<tr><td>'.$langs->trans("Amount")."</td><td>".price($charge->amount,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';*/
@@ -226,7 +266,11 @@ if ($action == 'create')
 	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
 	$datepaye = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 	$datepayment=empty($conf->global->MAIN_AUTOFILL_DATE)?(empty($_POST["remonth"])?-1:$datepaye):0;
+<<<<<<< HEAD
 	$form->select_date($datepayment,'','','','',"add_payment",1,1);
+=======
+	print $form->selectDate($datepayment, '', '', '', '', "add_payment", 1, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print "</td>";
 	print '</tr>';
 
@@ -238,7 +282,11 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 	print '<td>';
+<<<<<<< HEAD
 	$form->select_comptes(isset($_POST["accountid"])?$_POST["accountid"]:$charge->accountid, "accountid", 0, '',1);  // Show opend bank account list
+=======
+	$form->select_comptes(isset($_POST["accountid"])?$_POST["accountid"]:$charge->accountid, "accountid", 0, '', 1);  // Show opend bank account list
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</td></tr>';
 
 	// Number
@@ -265,10 +313,17 @@ if ($action == 'create')
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	//print '<td>'.$langs->trans("SocialContribution").'</td>';
+<<<<<<< HEAD
 	print '<td align="left">'.$langs->trans("DateDue").'</td>';
 	print '<td align="right">'.$langs->trans("Amount").'</td>';
 	print '<td align="right">'.$langs->trans("AlreadyPaid").'</td>';
 	print '<td align="right">'.$langs->trans("RemainderToPay").'</td>';
+=======
+	print '<td class="left">'.$langs->trans("DateDue").'</td>';
+	print '<td class="right">'.$langs->trans("Amount").'</td>';
+	print '<td class="right">'.$langs->trans("AlreadyPaid").'</td>';
+	print '<td class="right">'.$langs->trans("RemainderToPay").'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '<td align="center">'.$langs->trans("Amount").'</td>';
 	print "</tr>\n";
 
@@ -283,18 +338,30 @@ if ($action == 'create')
 
 		if ($objp->date_ech > 0)
 		{
+<<<<<<< HEAD
 			print "<td align=\"left\">".dol_print_date($objp->date_ech,'day')."</td>\n";
+=======
+			print '<td class="left">'.dol_print_date($objp->date_ech, 'day').'</td>'."\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		else
 		{
 			print "<td align=\"center\"><b>!!!</b></td>\n";
 		}
 
+<<<<<<< HEAD
 		print '<td align="right">'.price($objp->amount)."</td>";
 
 		print '<td align="right">'.price($sumpaid)."</td>";
 
 		print '<td align="right">'.price($objp->amount - $sumpaid)."</td>";
+=======
+		print '<td class="right">'.price($objp->amount)."</td>";
+
+		print '<td class="right">'.price($sumpaid)."</td>";
+
+		print '<td class="right">'.price($objp->amount - $sumpaid)."</td>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		print '<td align="center">';
 		if ($sumpaid < $objp->amount)
@@ -302,7 +369,11 @@ if ($action == 'create')
 			$namef = "amount_".$objp->id;
 			$nameRemain = "remain_".$objp->id;
 			if (!empty($conf->use_javascript_ajax))
+<<<<<<< HEAD
 					print img_picto("Auto fill",'rightarrow', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($objp->amount - $sumpaid)."'");
+=======
+					print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($objp->amount - $sumpaid)."'");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$remaintopay=$objp->amount - $sumpaid;
 			print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
 			print '<input type="text" size="8" name="'.$namef.'" id="'.$namef.'">';
@@ -323,10 +394,17 @@ if ($action == 'create')
 	{
 		// Print total
 		print '<tr class="oddeven">';
+<<<<<<< HEAD
 		print '<td colspan="2" align="left">'.$langs->trans("Total").':</td>';
 		print "<td align=\"right\"><b>".price($total_ttc)."</b></td>";
 		print "<td align=\"right\"><b>".price($totalrecu)."</b></td>";
 		print "<td align=\"right\"><b>".price($total_ttc - $totalrecu)."</b></td>";
+=======
+		print '<td colspan="2" class="left">'.$langs->trans("Total").':</td>';
+		print '<td class="right"><b>'.price($total_ttc).'</b></td>';
+		print '<td class="right"><b>'.price($totalrecu).'</b></td>';
+		print '<td class="right"><b>'.price($total_ttc - $totalrecu).'</b></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '<td align="center">&nbsp;</td>';
 		print "</tr>\n";
 	}

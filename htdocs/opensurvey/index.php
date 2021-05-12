@@ -1,5 +1,9 @@
 <?php
 /* Copyright (C) 2013-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
+=======
+ * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,9 +25,15 @@
  *	\brief      Home page of opensurvey area
  */
 
+<<<<<<< HEAD
 require_once('../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+=======
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Security check
 if (!$user->rights->opensurvey->read) accessforbidden();
@@ -32,6 +42,15 @@ if (!$user->rights->opensurvey->read) accessforbidden();
  * View
  */
 
+<<<<<<< HEAD
+=======
+
+$hookmanager = new HookManager($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('opensurveyindex'));
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  // Load translation files required by the page
 $langs->load("opensurvey");
 
@@ -45,7 +64,11 @@ if ($resql)
 	$obj=$db->fetch_object($resql);
 	$nbsondages=$obj->nb;
 }
+<<<<<<< HEAD
 else dol_print_error($db,'');
+=======
+else dol_print_error($db, '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 
@@ -63,14 +86,24 @@ if ($resql)
 	$obj=$db->fetch_object($resql);
 	$nbsondages=$obj->nb;
 }
+<<<<<<< HEAD
 else dol_print_error($db,'');
+=======
+else dol_print_error($db, '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("OpenSurveyArea").'</td></tr>';
 print "<tr ".$bc[0].">";
+<<<<<<< HEAD
 print '<td>'.$langs->trans("NbOfSurveys").'</td><td align="right"><a href="list.php">'.$nbsondages.'</a></td>';
 print "</tr>";
 //print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">';
+=======
+print '<td>'.$langs->trans("NbOfSurveys").'</td><td class="right"><a href="list.php">'.$nbsondages.'</a></td>';
+print "</tr>";
+//print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 //print $total;
 //print '</td></tr>';
 print '</table>';
@@ -78,8 +111,16 @@ print '</table>';
 
 print '</div></div></div>';
 
+<<<<<<< HEAD
 
 
 llxFooter();
 
+=======
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardOpenSurvey', $parameters, $object); // Note that $action and $object may have been modified by hook
+
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

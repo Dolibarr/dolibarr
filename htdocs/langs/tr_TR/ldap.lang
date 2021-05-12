@@ -5,7 +5,11 @@ LDAPInformationsForThisContact=Bu kişi için LDAP veritabanındaki bilgi
 LDAPInformationsForThisUser=Bu kullanıcı için LDAP veritabanındaki bilgi
 LDAPInformationsForThisGroup=Bu grup için LDAP veritabanındaki bilgi
 LDAPInformationsForThisMember=Bu üye için LDAP veritabanındaki bilgi
+<<<<<<< HEAD
 LDAPInformationsForThisMemberType=Information in LDAP database for this member type
+=======
+LDAPInformationsForThisMemberType=Bu üye türü için LDAP veritabanındaki bilgiler
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LDAPAttributes=LDAP öznitelikleri
 LDAPCard=LDAP kartı
 LDAPRecordNotFound=Kayıt LDAP veritabanında bulunamadı
@@ -16,6 +20,7 @@ LDAPFieldFirstSubscriptionAmount=İlk abonelik tutarı
 LDAPFieldLastSubscriptionDate=Son abonelik tarihi
 LDAPFieldLastSubscriptionAmount=Son abonelik miktarı
 LDAPFieldSkype=Skype kimliği
+<<<<<<< HEAD
 LDAPFieldSkypeExample=Örnek: skypeAdı
 UserSynchronized=Kullanıcı senkronize edildi
 GroupSynchronized=Grup senkronize edildi
@@ -25,3 +30,14 @@ ContactSynchronized=Kişi senkronize edildi
 ForceSynchronize=Dolibarr -> LDAP senkronizyona zorla
 ErrorFailedToReadLDAP=LDAP veritabanı okunamadı. LDAP modülü kurulumunu ve veritabanı erişilebilirliğini denetleyin.
 PasswordOfUserInLDAP=Password of user in LDAP
+=======
+LDAPFieldSkypeExample=Örnek: skypeName
+UserSynchronized=Kullanıcı senkronize edildi
+GroupSynchronized=Grup senkronize edildi
+MemberSynchronized=Üye senkronize edildi
+MemberTypeSynchronized=Üye türü senkronize edildi
+ContactSynchronized=Kişi senkronize edildi
+ForceSynchronize=Dolibarr -> LDAP senkronizyona zorla
+ErrorFailedToReadLDAP=LDAP veritabanı okunamadı. LDAP modülü kurulumunu ve veritabanı erişilebilirliğini denetleyin.
+PasswordOfUserInLDAP=LDAP'de kullanıcının şifresi
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

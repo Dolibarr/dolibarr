@@ -5,9 +5,15 @@ RemoteControlSupport=Online real time / remote podrška
 OtherSupport=Ostala podrška
 ToSeeListOfAvailableRessources=Da biste kontaktirali/vidjeli raspoložive resurse:
 HelpCenter=Help centar
+<<<<<<< HEAD
 DolibarrHelpCenter=Dolibarr centar pomoći i podrške
 ToGoBackToDolibarr=U suprotnom, kliknite <a href="%s">ovdje za korištenje Dolibarr-a</a>
 TypeOfSupport=Izvor podrške
+=======
+DolibarrHelpCenter=Dolibarr Help and Support Center
+ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
+TypeOfSupport=Type of support
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TypeSupportCommunauty=Zajednica (besplatno)
 TypeSupportCommercial=Komercijalno
 TypeOfHelp=Tip
@@ -15,6 +21,7 @@ NeedHelpCenter=Need help or support?
 Efficiency=Efikasnost
 TypeHelpOnly=Samo pomoć
 TypeHelpDev=Pomoć + Razvoj
+<<<<<<< HEAD
 TypeHelpDevForm=Pomoć + Razvoj + Osnivanje
 ToGetHelpGoOnSparkAngels1=Neke tvrtke mogu pružiti brzu (ponekad neposrednu) i efikasniju online podršku uzimajući kontrolu nad vašim računalom. Takvi pomoćnici mogu se pronaći na <b>%s</b> web stranicama:
 ToGetHelpGoOnSparkAngels3=Također možete pogledati popis svih dostupnih trenera za Dolibarr, za to kliknite na gumb 
@@ -23,4 +30,11 @@ BackToHelpCenter=U suprotnim, kliknite ovdje za povratak na <a href="%s">naslovn
 LinkToGoldMember=Možete nazvati jednog od trenera predodabrane od Dolibarr-a za vaš jezik (%s) kliknuvši na dodatak(status i maksimalna cijena je automatski ažurirana):
 PossibleLanguages=Podržani jezici
 SubscribeToFoundation=Pomognite Dolibarr projektu, prijavite se u zakladu
+=======
+TypeHelpDevForm=Help+Development+Training
+BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
+LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
+PossibleLanguages=Podržani jezici
+SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SeeOfficalSupport=Za oficijalnu Dolibarr podršku na vašem jeziku: <br><b><a href="%s" target="_blank">%s</a></b>

@@ -29,6 +29,7 @@ ErrorGoToModuleSetup=Vaya a la configuración de Módulo para solucionar esto
 ErrorFailedToSendMail=Falló el envío del correo electrónico (remitente=%s, destinatario=%s)
 ErrorFileNotUploaded=El archivo no fue transferido. Revise que el tamaño no exceda el máximo permitido, que haya espacio disponible suficiente en disco y que no exista algún archivo con el mismo nombre en el mismo directorio.
 ErrorWrongHostParameter=Parámetro de servidor inválido
+<<<<<<< HEAD
 ErrorYourCountryIsNotDefined=Tu país no está definido. Corrígelo en Inicio-Configuración-Empresa/institución-Editar.
 ErrorRecordIsUsedByChild=Falló la eliminación de este registro. Este registro está siendo utilizado por al menos un registro hijo
 ErrorWrongValue=Valor erróneo
@@ -37,6 +38,11 @@ ErrorServiceUnavailableTryLater=El servicio no está disponible por el momento. 
 ErrorDuplicateField=Valor duplicado en un campo único
 ErrorSomeErrorWereFoundRollbackIsDone=Se encontraron algunos errores. Modificaciones revertidas.
 ErrorConfigParameterNotDefined=El parámetro <b>%s</b> no está definido dentro del archivo de configuración de Dolibarr <b>conf.php</b>.
+=======
+ErrorWrongValue=Valor erróneo
+ErrorWrongValueForParameterX=Valor erróneo para el parámetro %s
+ErrorDuplicateField=Valor duplicado en un campo único
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorCantLoadUserFromDolibarrDatabase=Imposible encontrar al usuario <b>%s</b> en la base de datos de Dolibarr
 ErrorNoVATRateDefinedForSellerCountry=Error, no se ha definido tasa para el IVA del país '%s'.
 ErrorNoSocialContributionForSellerCountry=Error, no hay tipos de impuestos sociales/fiscales definidos para el país '%s'.
@@ -45,16 +51,24 @@ SetDate=Ajustar fecha
 SeeHere=Mira aquí
 BackgroundColorByDefault=Color de fondo por defecto
 FileWasNotUploaded=Un archivo fue seleccionado para adjuntar, sin embargo, no ha sido cargado aún. De clic en "Adjuntar archivo" para éllo.
+<<<<<<< HEAD
 NbOfEntries=Número de entradas
 LevelOfFeature=Nivel de características
 NotDefined=No definido
 HomeArea=Área de Inicio
 PreviousConnexion=Conexión Anterior
+=======
+LevelOfFeature=Nivel de características
+NotDefined=No definido
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConnectedOnMultiCompany=Conectado a la entidad
 DatabaseTypeManager=Administrador de tipo de base de datos
 TechnicalID=ID Técnico
 PrecisionUnitIsLimitedToXDecimals=Dolibarr fue instalado para limitar la precisión de los precios unitarios a<b>%s</b> decimales.
+<<<<<<< HEAD
 WarningYouHaveAtLeastOneTaskLate=Advertencia, tiene al menos un elemento que ha superado la fecha de tolerancia.
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Under=debajo
 PeriodEndDate=Fecha final para ell periódo
 Enabled=Habilitado
@@ -69,7 +83,10 @@ Save=Guardar
 SaveAs=Guardar como
 TestConnection=Probar conexión
 ToClone=Clonar
+<<<<<<< HEAD
 ConfirmClone=Elige los datos que deseas clonar:
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoCloneOptionsSpecified=No se definió información a clonar.
 Run=Ejecutar
 ShowCardHere=Ver la ficha
@@ -99,7 +116,10 @@ MulticurrencyPaymentAmount=Monto del pago, moneda original
 AmountLT1=Importe impuestos 2
 AmountLT2=Importe impuestos 3
 AmountAverage=Importe promedio
+<<<<<<< HEAD
 TotalHTforthispage=Total (neto de impuestos) para esta página
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TotalLT1=Total impuesto 2
 TotalLT2=Total impuesto 3
 TTC=IVA Incluido
@@ -120,7 +140,10 @@ ActionDoneShort=Finalizado
 ContactsForCompany=Contactos para ste tercero
 ContactsAddressesForCompany=Contactos/Direcciones para este tercero
 AddressesForCompany=Direcciones para este tercero
+<<<<<<< HEAD
 ActionsOnCompany=Eventos relacionados a este tercero
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActionsOnMember=Eventos relacionados a éste miembro
 NActionsLate=%s tarde
 ToDo=Por hacer
@@ -130,7 +153,10 @@ RemoveFilter=Remover filtro
 ChartGenerated=Gráfico generado
 GeneratedOn=Generado en %s
 NotYetAvailable=No disponible aún
+<<<<<<< HEAD
 Category=Tag/Categoría
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ChangedBy=Cambiado por
 ResultKo=Fallo
 Reporting=Informes
@@ -150,7 +176,10 @@ Login=Inicio de sesión
 CurrentLogin=Inicio de sesión actual
 May=Mayo
 December=diciembre
+<<<<<<< HEAD
 MayMin=Mayo
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Month05=Mayo
 MonthShort01=Ene
 MonthShort04=Abr
@@ -174,7 +203,10 @@ NoExample=Ningún ejemplo
 FindBug=Reportar un bug
 NbOfLines=Número de líneas
 DateFrom=Desde %s
+<<<<<<< HEAD
 Check=Cheque
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Uncheck=Desmarcar
 Internals=Interno
 Externals=Externo
@@ -188,10 +220,15 @@ Currency=Moneda
 Undo=Deshacer
 UndoExpandAll=Deshacer ampliar
 FeatureNotYetSupported=Característica aún no soportada
+<<<<<<< HEAD
 SendByMail=Enviar por correo electrónico
 MailSentBy=Correo electrónico enviado por
 TextUsedInTheMessageBody=Cuerpo del correo electronico
 EMail=Email
+=======
+MailSentBy=Correo electrónico enviado por
+TextUsedInTheMessageBody=Cuerpo del correo electronico
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoEMail=Sin correo electrónico
 FollowingConstantsWillBeSubstituted=Las siguientes constantes serán reemplazadas con el valor correspondiente.
 Refresh=Actualizar
@@ -215,17 +252,24 @@ DisabledModules=Módulos deshabilitados
 ForCustomer=Para el cliente
 HidePassword=Mostrar comando con la contraseña oculta
 UnHidePassword=Mostrar comando real mostrando la contraseña
+<<<<<<< HEAD
 Informations=Informaciones
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddFile=Agregar archivo
 CloneMainAttributes=Clonar objeto con sus principales atributos
 PDFMerge=Unir PDF
 Merge=Unir
 PrintContentArea=Mostrar la página para imprimir el área de contenido principal
 MenuManager=Administrar menú
+<<<<<<< HEAD
 WarningYouAreInMaintenanceMode=Advertencia, usted está en un modo de mantenimiento, solamente se permite el uso de la aplicación con el login <b>%s</b>
 FieldsWithAreMandatory=Los campos con <b>%s</b> son obligatorios
 FieldsWithIsForPublic=Los campos con <b>%s</b> se muestran en la lista pública de miembros. Si usted no desea esto, desmarque la casilla "público".
 AccordingToGeoIPDatabase=(de acuerdo con la conversión GeoIP)
+=======
+FieldsWithAreMandatory=Los campos con <b>%s</b> son obligatorios
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 RequiredField=Campo requerido
 ValidateBefore=La tarjeta debe ser validada antes de usar esta característica
 Hidden=Oculto
@@ -242,7 +286,10 @@ ByTown=Por municipio
 BySalesRepresentative=Por representante de ventas
 LinkedToSpecificUsers=Vinculado a un usuario de contacto determinado
 NoResults=No hay resultados
+<<<<<<< HEAD
 AdminTools=Herramientas de Administración
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SystemTools=Herramientas de sistema
 ModulesSystemTools=Módulos de herramientas
 Test=Probar
@@ -256,7 +303,10 @@ SetBankAccount=Definir Cuenta Bancaria
 XMoreLines=%s línea(s) oculta(s)
 PublicUrl=URL Pública
 AddBox=Añade una caja
+<<<<<<< HEAD
 GoIntoSetupToChangeLogo=Ve a Inicio - Configuración - Empresa para cambiar el logo o ve a Inicio - Configuración - Vista para ocultarlo.
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Denied=Denegado
 ListOfTemplates=Lista de plantillas
 Gender=Género
@@ -291,8 +341,13 @@ ShortThursday=MJ
 Select2NotFound=No se encontró ningún resultado
 Select2Enter=Entrar
 SearchIntoCustomerInvoices=Facturas de clientes
+<<<<<<< HEAD
 SearchIntoCustomerOrders=Pedidos de los clientes
 SearchIntoCustomerProposals=Propuestas de clientes
 SearchIntoExpenseReports=Reporte de gastos
 SearchIntoLeaves=Licencias
+=======
+SearchIntoCustomerProposals=Propuestas de clientes
+SearchIntoExpenseReports=Reporte de gastos
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AssignedTo=Asignado a

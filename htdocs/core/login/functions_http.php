@@ -31,7 +31,11 @@
  * @param   int		$entitytotest   Number of instance (always 1 if module multicompany not enabled)
  * @return	string					Login if OK, '' if KO
 */
+<<<<<<< HEAD
 function check_user_password_http($usertotest,$passwordtotest,$entitytotest)
+=======
+function check_user_password_http($usertotest, $passwordtotest, $entitytotest)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	dol_syslog("functions_http::check_user_password_http _SERVER[REMOTE_USER]=".(empty($_SERVER["REMOTE_USER"])?'':$_SERVER["REMOTE_USER"]));
 

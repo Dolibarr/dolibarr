@@ -1,6 +1,10 @@
 # Dolibarr language file - Source file is en_US - languages
 Language_ar_AR=العربية
+<<<<<<< HEAD
 Language_ar_EG=Arabic (Egypt)
+=======
+Language_ar_EG=العربيه مصر
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Language_ar_SA=العربية
 Language_bn_BD=بنغالي
 Language_bg_BG=البلغارية
@@ -86,3 +90,7 @@ Language_uz_UZ=الأوزبكي
 Language_vi_VN=الفيتنامية
 Language_zh_CN=الصينية
 Language_zh_TW=الصينية (التقليدية)
+<<<<<<< HEAD
+=======
+Language_bh_MY=الماليزية
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

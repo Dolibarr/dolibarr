@@ -17,7 +17,11 @@
  */
 
 /**
+<<<<<<< HEAD
  * \file        htdocs/admin/oauthlogintoken.php
+=======
+ * \file        htdocs/admin/oauthlogintokens.php
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * \ingroup     oauth
  * \brief       Setup page to configure oauth access to login information
  */
@@ -33,9 +37,15 @@ $langs->loadLangs(array('admin', 'printing', 'oauth'));
 
 if (! $user->admin) accessforbidden();
 
+<<<<<<< HEAD
 $action = GETPOST('action','alpha');
 $mode = GETPOST('mode','alpha');
 $value = GETPOST('value','alpha');
+=======
+$action = GETPOST('action', 'alpha');
+$mode = GETPOST('mode', 'alpha');
+$value = GETPOST('value', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $varname = GETPOST('varname', 'alpha');
 $driver = GETPOST('driver', 'alpha');
 
@@ -61,7 +71,11 @@ if ($action == 'setconst' && $user->admin)
     $db->begin();
     foreach ($_POST['setupdriver'] as $setupconst) {
         //print '<pre>'.print_r($setupconst, true).'</pre>';
+<<<<<<< HEAD
         $result=dolibarr_set_const($db, $setupconst['varname'],$setupconst['value'],'chaine',0,'',$conf->entity);
+=======
+        $result=dolibarr_set_const($db, $setupconst['varname'], $setupconst['value'], 'chaine', 0, '', $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         if (! $result > 0) $error++;
     }
 
@@ -82,7 +96,11 @@ if ($action == 'setvalue' && $user->admin)
 {
     $db->begin();
 
+<<<<<<< HEAD
     $result=dolibarr_set_const($db, $varname, $value,'chaine',0,'',$conf->entity);
+=======
+    $result=dolibarr_set_const($db, $varname, $value, 'chaine', 0, '', $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     if (! $result > 0) $error++;
 
     if (! $error)
@@ -104,16 +122,27 @@ if ($action == 'setvalue' && $user->admin)
  */
 
 // Define $urlwithroot
+<<<<<<< HEAD
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+=======
+$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 $form = new Form($db);
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("PrintingSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans('ConfigOAuth'),$linkback,'title_setup');
+=======
+llxHeader('', $langs->trans("PrintingSetup"));
+
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+print load_fiche_titre($langs->trans('ConfigOAuth'), $linkback, 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $head=oauthadmin_prepare_head($mode);
 
@@ -154,6 +183,16 @@ if ($mode == 'setup' && $user->admin)
         	$urltodelete='';
         	$urltocheckperms='';
         }
+<<<<<<< HEAD
+=======
+        elseif ($key[0] == 'OAUTH_STRIPE_LIVE_NAME')
+        {
+        	$OAUTH_SERVICENAME='StripeLive';
+        	$urltorenew=$urlwithroot.'/core/modules/oauth/stripelive_oauthcallback.php?backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
+        	$urltodelete='';
+        	$urltocheckperms='';
+        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         else
 		{
 			$urltorenew='';
@@ -327,7 +366,10 @@ if ($mode == 'setup' && $user->admin)
 
         print '</form>';
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 if ($mode == 'test' && $user->admin)
@@ -342,7 +384,11 @@ if ($mode == 'test' && $user->admin)
         $langs->load($driver);
         $printer = new $classname($db);
         //print '<pre>'.print_r($printer, true).'</pre>';
+<<<<<<< HEAD
         if (count($printer->getlist_available_printers())) {
+=======
+        if (count($printer->getlistAvailablePrinters())) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             if ($printer->listAvailablePrinters()==0) {
                 print $printer->resprint;
             } else {
@@ -352,11 +398,17 @@ if ($mode == 'test' && $user->admin)
         else {
             print $langs->trans('PleaseConfigureDriverfromList');
         }
+<<<<<<< HEAD
 
     }
 
     print '</table>';
 
+=======
+    }
+
+    print '</table>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 if ($mode == 'userconf' && $user->admin)
@@ -394,6 +446,11 @@ if ($mode == 'userconf' && $user->admin)
 
 dol_fiche_end();
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

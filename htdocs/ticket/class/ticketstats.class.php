@@ -29,6 +29,12 @@ require_once 'ticket.class.php';
  */
 class TicketStats extends Stats
 {
+<<<<<<< HEAD
+=======
+    /**
+     * @var string Name of table without prefix where object is stored
+     */
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     public $table_element;
 
     public $socid;
@@ -56,6 +62,7 @@ class TicketStats extends Stats
 
         $object = new Ticket($this->db);
         $this->from = MAIN_DB_PREFIX . $object->table_element;
+<<<<<<< HEAD
         $this->field = 'km';
 
         $this->where = " fk_statut > 0";
@@ -67,6 +74,19 @@ class TicketStats extends Stats
             $this->where .= ' AND fk_user IN (' . join(',', $this->userid) . ')';
         } elseif ($this->userid > 0) {
             $this->where .= ' AND fk_user = ' . $this->userid;
+=======
+        $this->field = 'timing';
+
+        $this->where = " fk_statut > 0";
+        $this->where .= " AND entity = " . $conf->entity;
+        if ($this->socid > 0) {
+            $this->where .= " AND fk_soc = " . $this->socid;
+        }
+        if (is_array($this->userid) && count($this->userid) > 0) {
+            $this->where .= ' AND fk_user_create IN (' . join(',', $this->userid) . ')';
+        } elseif ($this->userid > 0) {
+            $this->where .= ' AND fk_user_create = ' . $this->userid;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
     }
 

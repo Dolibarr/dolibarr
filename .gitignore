@@ -1,0 +1,28 @@
+htdocs/conf/conf.php
+htdocs/conf/conf.php.old
+documents/
+custom2/
+test/report/
+nbproject
+default.properties
+.settings/
+.buildpath
+.gitmodules
+dolibarr_install.log
+upgrade.log
+doxygen_warnings.log
+/.project
+/.vscode
+.DS_Store
+.idea
+*.iml
+Thumbs.db
+# Vagrant generated files
+.vagrant
+# Composer installed repositories
+/htdocs/includes/**/.git
+# Composer autoloader and unwanted files
+htdocs/includes/autoload.php
+htdocs/includes/bin/
+htdocs/includes/composer/
+/.pydevproject

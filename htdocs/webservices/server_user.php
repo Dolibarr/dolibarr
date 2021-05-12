@@ -20,7 +20,11 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
+<<<<<<< HEAD
 if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK",'1');
+=======
+if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK", '1');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 require_once '../master.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php';		// Include SOAP
@@ -40,7 +44,11 @@ if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
 {
     $langs->load("admin");
     dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
+<<<<<<< HEAD
     print $langs->trans("WarningModuleNotActive",'WebServices').'.<br><br>';
+=======
+    print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print $langs->trans("ToActivateModule");
     exit;
 }
@@ -50,7 +58,11 @@ $server = new nusoap_server();
 $server->soap_defencoding='UTF-8';
 $server->decode_utf8=false;
 $ns='http://www.dolibarr.org/ns/';
+<<<<<<< HEAD
 $server->configureWSDL('WebServicesDolibarrUser',$ns);
+=======
+$server->configureWSDL('WebServicesDolibarrUser', $ns);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $server->wsdl->schemaTargetNamespace=$ns;
 
 
@@ -186,7 +198,11 @@ $thirdpartywithuser_fields = array(
 //Retreive all extrafield for contact
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
+<<<<<<< HEAD
 $extralabels=$extrafields->fetch_name_optionals_label('socpeople',true);
+=======
+$extralabels=$extrafields->fetch_name_optionals_label('socpeople', true);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $extrafield_array=null;
 if (is_array($extrafields) && count($extrafields)>0) {
 	$extrafield_array = array();
@@ -200,7 +216,11 @@ foreach($extrafields->attribute_label as $key=>$label)
 	$extrafield_array['contact_options_'.$key]=array('name'=>'contact_options_'.$key,'type'=>$type);
 }
 
+<<<<<<< HEAD
 if (is_array($extrafield_array)) $thirdpartywithuser_fields=array_merge($thirdpartywithuser_fields,$extrafield_array);
+=======
+if (is_array($extrafield_array)) $thirdpartywithuser_fields=array_merge($thirdpartywithuser_fields, $extrafield_array);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 $server->wsdl->addComplexType(
@@ -301,7 +321,11 @@ $server->register(
  * @param	string		$ref_ext			Ref external of object
  * @return	mixed
  */
+<<<<<<< HEAD
 function getUser($authentication,$id,$ref='',$ref_ext='')
+=======
+function getUser($authentication, $id, $ref = '', $ref_ext = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
     global $db,$conf,$langs;
 
@@ -313,7 +337,11 @@ function getUser($authentication,$id,$ref='',$ref_ext='')
     $objectresp=array();
     $errorcode='';$errorlabel='';
     $error=0;
+<<<<<<< HEAD
     $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+=======
+    $fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     // Check parameters
     if (! $error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext)))
     {
@@ -331,7 +359,11 @@ function getUser($authentication,$id,$ref='',$ref_ext='')
         	|| ($fuser->rights->user->self->creer && $ref_ext && $ref_ext==$fuser->ref_ext))
         {
             $user=new User($db);
+<<<<<<< HEAD
             $result=$user->fetch($id,$ref,$ref_ext);
+=======
+            $result=$user->fetch($id, $ref, $ref_ext);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             if ($result > 0)
             {
                 // Create
@@ -352,6 +384,7 @@ function getUser($authentication,$id,$ref='',$ref_ext='')
 						'entity' => $user->entity,
 						'pass_indatabase' => $user->pass_indatabase,
 						'pass_indatabase_crypted' => $user->pass_indatabase_crypted,
+<<<<<<< HEAD
 						'datec' => dol_print_date($user->datec,'dayhourrfc'),
 						'datem' => dol_print_date($user->datem,'dayhourrfc'),
 						'fk_thirdparty' => $user->societe_id,
@@ -359,6 +392,15 @@ function getUser($authentication,$id,$ref='',$ref_ext='')
 						'fk_member' => $user->fk_member,
 						'datelastlogin' => dol_print_date($user->datelastlogin,'dayhourrfc'),
 						'datepreviouslogin' => dol_print_date($user->datepreviouslogin,'dayhourrfc'),
+=======
+						'datec' => dol_print_date($user->datec, 'dayhourrfc'),
+						'datem' => dol_print_date($user->datem, 'dayhourrfc'),
+						'fk_thirdparty' => $user->societe_id,
+						'fk_contact' => $user->contact_id,
+						'fk_member' => $user->fk_member,
+						'datelastlogin' => dol_print_date($user->datelastlogin, 'dayhourrfc'),
+						'datepreviouslogin' => dol_print_date($user->datepreviouslogin, 'dayhourrfc'),
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						'statut' => $user->statut,
 						'photo' => $user->photo,
 						'lang' => $user->lang,
@@ -409,7 +451,11 @@ function getListOfGroups($authentication)
 	$arraygroups=array();
 	$errorcode='';$errorlabel='';
 	$error=0;
+<<<<<<< HEAD
 	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+=======
+	$fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	// Check parameters
 
 	if (! $error)
@@ -473,7 +519,11 @@ function getListOfGroups($authentication)
  * @param	array		$thirdpartywithuser Datas
  * @return	mixed
  */
+<<<<<<< HEAD
 function createUserFromThirdparty($authentication,$thirdpartywithuser)
+=======
+function createUserFromThirdparty($authentication, $thirdpartywithuser)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	global $db,$conf,$langs;
 
@@ -485,7 +535,11 @@ function createUserFromThirdparty($authentication,$thirdpartywithuser)
 	$errorcode='';$errorlabel='';
 	$error=0;
 
+<<<<<<< HEAD
 	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+=======
+	$fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	if ($fuser->societe_id) $socid=$fuser->societe_id;
 
@@ -597,11 +651,19 @@ function createUserFromThirdparty($authentication,$thirdpartywithuser)
 						//Retreive all extrafield for thirdsparty
 						// fetch optionals attributes and labels
 						$extrafields=new ExtraFields($db);
+<<<<<<< HEAD
 						$extralabels=$extrafields->fetch_name_optionals_label('socpeople',true);
 						foreach($extrafields->attribute_label as $key=>$label)
 						{
 							$key='contact_options_'.$key;
 							$key=substr($key,8);   // Remove 'contact_' prefix
+=======
+						$extralabels=$extrafields->fetch_name_optionals_label('socpeople', true);
+						foreach($extrafields->attribute_label as $key=>$label)
+						{
+							$key='contact_options_'.$key;
+							$key=substr($key, 8);   // Remove 'contact_' prefix
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							$contact->array_options[$key]=$thirdpartywithuser[$key];
 						}
 
@@ -615,6 +677,7 @@ function createUserFromThirdparty($authentication,$thirdpartywithuser)
 							*/
 							$edituser = new User($db);
 
+<<<<<<< HEAD
 							$id = $edituser->create_from_contact($contact,$thirdpartywithuser["login"]);
 							if ($id > 0)
 							{
@@ -622,6 +685,15 @@ function createUserFromThirdparty($authentication,$thirdpartywithuser)
 
 								if($thirdpartywithuser['group_id'] > 0 )
 									$edituser->SetInGroup($thirdpartywithuser['group_id'],$conf->entity);
+=======
+							$id = $edituser->create_from_contact($contact, $thirdpartywithuser["login"]);
+							if ($id > 0)
+							{
+								$edituser->setPassword($fuser, trim($thirdpartywithuser['password']));
+
+								if($thirdpartywithuser['group_id'] > 0 )
+									$edituser->SetInGroup($thirdpartywithuser['group_id'], $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							}
 							else
 							{
@@ -681,7 +753,12 @@ function createUserFromThirdparty($authentication,$thirdpartywithuser)
  * @param	array		$shortuser			Array of login/password info
  * @return	mixed
  */
+<<<<<<< HEAD
 function setUserPassword($authentication,$shortuser) {
+=======
+function setUserPassword($authentication, $shortuser)
+{
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	global $db,$conf,$langs;
 
@@ -693,7 +770,11 @@ function setUserPassword($authentication,$shortuser) {
 	$errorcode='';$errorlabel='';
 	$error=0;
 
+<<<<<<< HEAD
 	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+=======
+	$fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	if ($fuser->societe_id) $socid=$fuser->societe_id;
 
@@ -710,10 +791,17 @@ function setUserPassword($authentication,$shortuser) {
 		if ($fuser->rights->user->user->password || $fuser->rights->user->self->password)
 		{
 			$userstat=new User($db);
+<<<<<<< HEAD
 			$res = $userstat->fetch('',$shortuser['login']);
 			if($res)
 			{
 				$res = $userstat->setPassword($userstat,$shortuser['password']);
+=======
+			$res = $userstat->fetch('', $shortuser['login']);
+			if($res)
+			{
+				$res = $userstat->setPassword($userstat, $shortuser['password']);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if($res)
 				{
 					$objectresp = array(
@@ -732,7 +820,10 @@ function setUserPassword($authentication,$shortuser) {
 				$error++;
 				$errorcode='NOT_FOUND'; $errorlabel='User not found';
 			}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		else
 		{

@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2011-2013 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2013-2017 Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
@@ -35,7 +39,11 @@ $langs->loadLangs(array('admin', 'compta', 'accountancy'));
 if (!$user->admin)
 accessforbidden();
 
+<<<<<<< HEAD
 $action = GETPOST('action','alpha');
+=======
+$action = GETPOST('action', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Other parameters ACCOUNTING_*
 $list = array(
@@ -64,10 +72,17 @@ if ($action == 'update')
         'CREANCES-DETTES'
     );
 
+<<<<<<< HEAD
     $accounting_mode = GETPOST('accounting_mode','alpha');
 
 
     if (in_array($accounting_mode,$accounting_modes)) {
+=======
+    $accounting_mode = GETPOST('accounting_mode', 'alpha');
+
+
+    if (in_array($accounting_mode, $accounting_modes)) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         if (!dolibarr_set_const($db, 'ACCOUNTING_MODE', $accounting_mode, 'chaine', 0, '', $conf->entity)) {
             $error++;
@@ -103,7 +118,11 @@ llxHeader();
 $form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+<<<<<<< HEAD
 print load_fiche_titre($langs->trans('ComptaSetup'),$linkback,'title_setup');
+=======
+print load_fiche_titre($langs->trans('ComptaSetup'), $linkback, 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print '<br>';
 
@@ -164,5 +183,9 @@ print "</table>\n";
 print '<br><br><div style="text-align:center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
 print '</form>';
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

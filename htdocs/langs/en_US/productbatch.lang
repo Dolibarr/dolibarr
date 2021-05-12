@@ -21,4 +21,8 @@ ProductDoesNotUseBatchSerial=This product does not use lot/serial number
 ProductLotSetup=Setup of module lot/serial
 ShowCurrentStockOfLot=Show current stock for couple product/lot
 ShowLogOfMovementIfLot=Show log of movements for couple product/lot
+<<<<<<< HEAD
 StockDetailPerBatch=Stock detail per lot
+=======
+StockDetailPerBatch=Stock detail per lot
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

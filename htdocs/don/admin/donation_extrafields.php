@@ -1,6 +1,11 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2015		Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015		Juanjo Menent		<jmenent@2byte.es>
+=======
+/* Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2015       Juanjo Menent           <jmenent@2byte.es>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +22,15 @@
  */
 
 /**
+<<<<<<< HEAD
  *      \file       htdocs/don/admin/donation_extrafields.php
  *		\ingroup    donations
  *		\brief      Page to setup extra fields of donations
+=======
+ *  \file       htdocs/don/admin/donation_extrafields.php
+ *  \ingroup    donations
+ *  \brief      Page to setup extra fields of donations
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  */
 
 require '../../main.inc.php';
@@ -58,10 +69,17 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
 
 $textobject=$langs->transnoentitiesnoconv("Donations");
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("DonationsSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("DonationsSetup"),$linkback,'title_setup');
+=======
+llxHeader('', $langs->trans("DonationsSetup"));
+
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+print load_fiche_titre($langs->trans("DonationsSetup"), $linkback, 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 $head = donation_admin_prepare_head();

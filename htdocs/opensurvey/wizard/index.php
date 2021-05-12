@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2013	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2014	Marcos García		<marcosgdf@gmail.com>
+<<<<<<< HEAD
  * Copyright (C) 2016	Regis Houssin		<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2016	Regis Houssin		<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +22,11 @@
  */
 
 
+<<<<<<< HEAD
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');
+=======
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -57,6 +65,11 @@ print '<div style="clear:both;"></div>';
 print '</div>';
 print '</div></form>';
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

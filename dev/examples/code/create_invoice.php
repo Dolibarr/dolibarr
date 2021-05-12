@@ -13,7 +13,11 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
+<<<<<<< HEAD
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+=======
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  */
 
 /**
@@ -40,7 +44,11 @@ $error=0;
 
 // -------------------- START OF YOUR CODE HERE --------------------
 // Include Dolibarr environment
+<<<<<<< HEAD
 require_once($path."../../htdocs/master.inc.php");
+=======
+require_once $path."../../htdocs/master.inc.php";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 // After this $db, $mysoc, $langs and $conf->entity are defined. Opened handler to database will be closed at end of file.
 
 //$langs->setDefaultLang('en_US'); 	// To change default language of $langs
@@ -48,8 +56,13 @@ $langs->load("main");				// To load language file for default language
 @set_time_limit(0);
 
 // Load user and its permissions
+<<<<<<< HEAD
 $result=$user->fetch('','admin');	// Load user for login 'admin'. Comment line to run as anonymous user.
 if (! $result > 0) { dol_print_error('',$user->error); exit; }
+=======
+$result=$user->fetch('', 'admin');	// Load user for login 'admin'. Comment line to run as anonymous user.
+if (! $result > 0) { dol_print_error('', $user->error); exit; }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $user->getrights();
 
 
@@ -58,7 +71,11 @@ print "***** ".$script_file." (".$version.") *****\n";
 // Start of transaction
 $db->begin();
 
+<<<<<<< HEAD
 require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
+=======
+require_once DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Create invoice object
 $obj = new Facture($db);
@@ -89,13 +106,21 @@ if ($idobject > 0)
 	else
 	{
 		$error++;
+<<<<<<< HEAD
 		dol_print_error($db,$obj->error);
+=======
+		dol_print_error($db, $obj->error);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 }
 else
 {
 	$error++;
+<<<<<<< HEAD
 	dol_print_error($db,$obj->error);
+=======
+	dol_print_error($db, $obj->error);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 

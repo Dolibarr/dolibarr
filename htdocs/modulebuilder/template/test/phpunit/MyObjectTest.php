@@ -32,6 +32,10 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 {
 	/**
 	 * Global test setup
+<<<<<<< HEAD
+=======
+     * @return void
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	 */
 	public static function setUpBeforeClass()
 	{
@@ -40,6 +44,10 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * Unit test setup
+<<<<<<< HEAD
+=======
+     * @return void
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	 */
 	protected function setUp()
 	{
@@ -48,6 +56,10 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * Verify pre conditions
+<<<<<<< HEAD
+=======
+     * @return void
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	 */
 	protected function assertPreConditions()
 	{
@@ -56,6 +68,10 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * A sample test
+<<<<<<< HEAD
+=======
+     * @return bool
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	 */
 	public function testSomething()
 	{
@@ -66,6 +82,10 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * Verify post conditions
+<<<<<<< HEAD
+=======
+     * @return void
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	 */
 	protected function assertPostConditions()
 	{
@@ -74,6 +94,10 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * Unit test teardown
+<<<<<<< HEAD
+=======
+     * @return void
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	 */
 	protected function tearDown()
 	{
@@ -82,6 +106,10 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * Global test teardown
+<<<<<<< HEAD
+=======
+     * @return void
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	 */
 	public static function tearDownAfterClass()
 	{
@@ -92,6 +120,10 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 	 * Unsuccessful test
 	 *
 	 * @param  Exception $e    Exception
+<<<<<<< HEAD
+=======
+     * @return void
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	 * @throws Exception
 	 */
 	protected function onNotSuccessfulTest(Exception $e)

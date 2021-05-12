@@ -8,7 +8,11 @@ namespace Stripe;
  * @property string $id
  * @property string $object
  * @property int $amount
+<<<<<<< HEAD
  * @property mixed $balance_transactions
+=======
+ * @property BalanceTransaction[] $balance_transactions
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * @property string $charge
  * @property int $created
  * @property string $currency
@@ -24,6 +28,12 @@ namespace Stripe;
  */
 class Dispute extends ApiResource
 {
+<<<<<<< HEAD
+=======
+
+    const OBJECT_NAME = "dispute";
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     use ApiOperations\All;
     use ApiOperations\Retrieve;
     use ApiOperations\Update;
@@ -33,6 +43,10 @@ class Dispute extends ApiResource
      * @link https://stripe.com/docs/api#dispute_object
      */
     const REASON_BANK_CANNOT_PROCESS       = 'bank_cannot_process';
+<<<<<<< HEAD
+=======
+    const REASON_CHECK_RETURNED            = 'check_returned';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     const REASON_CREDIT_NOT_PROCESSED      = 'credit_not_processed';
     const REASON_CUSTOMER_INITIATED        = 'customer_initiated';
     const REASON_DEBIT_NOT_AUTHORIZED      = 'debit_not_authorized';

@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2004-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2012-20113	Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,14 +35,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'fckeditor'));
 
+<<<<<<< HEAD
 $action = GETPOST('action','alpha');
+=======
+$action = GETPOST('action', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 // Possible modes are:
 // dolibarr_details
 // dolibarr_notes
 // dolibarr_readonly
 // dolibarr_mailings
 // Full (not sure this one is used)
+<<<<<<< HEAD
 $mode=GETPOST('mode')?GETPOST('mode','alpha'):'dolibarr_notes';
+=======
+$mode=GETPOST('mode')?GETPOST('mode', 'alpha'):'dolibarr_notes';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if (!$user->admin) accessforbidden();
 
@@ -80,24 +92,40 @@ foreach($modules as $const => $desc)
 {
     if ($action == 'activate_'.strtolower($const))
     {
+<<<<<<< HEAD
         dolibarr_set_const($db, "FCKEDITOR_ENABLE_".$const, "1",'chaine',0,'',$conf->entity);
         // Si fckeditor est active dans la description produit/service, on l'active dans les formulaires
         if ($const == 'PRODUCTDESC' && ! empty($conf->global->PRODUIT_DESC_IN_FORM))
         {
             dolibarr_set_const($db, "FCKEDITOR_ENABLE_DETAILS", "1",'chaine',0,'',$conf->entity);
+=======
+        dolibarr_set_const($db, "FCKEDITOR_ENABLE_".$const, "1", 'chaine', 0, '', $conf->entity);
+        // Si fckeditor est active dans la description produit/service, on l'active dans les formulaires
+        if ($const == 'PRODUCTDESC' && ! empty($conf->global->PRODUIT_DESC_IN_FORM))
+        {
+            dolibarr_set_const($db, "FCKEDITOR_ENABLE_DETAILS", "1", 'chaine', 0, '', $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
         header("Location: ".$_SERVER["PHP_SELF"]);
         exit;
     }
     if ($action == 'disable_'.strtolower($const))
     {
+<<<<<<< HEAD
         dolibarr_del_const($db, "FCKEDITOR_ENABLE_".$const,$conf->entity);
+=======
+        dolibarr_del_const($db, "FCKEDITOR_ENABLE_".$const, $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         header("Location: ".$_SERVER["PHP_SELF"]);
         exit;
     }
 }
 
+<<<<<<< HEAD
 if (GETPOST('save','alpha'))
+=======
+if (GETPOST('save', 'alpha'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$error = 0;
 
@@ -109,7 +137,11 @@ if (GETPOST('save','alpha'))
 	} else {
 		$error ++;
 	}
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$fckeditor_test = GETPOST('formtestfield');
     if (! empty($fckeditor_test)) {
 		if (! dolibarr_set_const($db, 'FCKEDITOR_TEST', $fckeditor_test, 'chaine', 0, '', $conf->entity)) {
@@ -136,7 +168,11 @@ if (GETPOST('save','alpha'))
 llxHeader();
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+<<<<<<< HEAD
 print load_fiche_titre($langs->trans("AdvancedEditor"),$linkback,'title_setup');
+=======
+print load_fiche_titre($langs->trans("AdvancedEditor"), $linkback, 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '<br>';
 
 if (empty($conf->use_javascript_ajax))
@@ -148,7 +184,11 @@ else
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<td colspan="2">'.$langs->trans("ActivateFCKeditor").'</td>';
+<<<<<<< HEAD
     print '<td align="center" width="100">'.$langs->trans("Action").'</td>';
+=======
+    print '<td class="center" width="100">'.$langs->trans("Action").'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print "</tr>\n";
 
     // Modules
@@ -156,20 +196,36 @@ else
     {
         // Si condition non remplie, on ne propose pas l'option
         if (! $conditions[$const]) continue;
+<<<<<<< HEAD
         
         print '<tr class="oddeven">';
         print '<td width="16">'.img_object("",$picto[$const]).'</td>';
         print '<td>'.$langs->trans($desc).'</td>';
         print '<td align="center" width="100">';
+=======
+
+        print '<tr class="oddeven">';
+        print '<td width="16">'.img_object("", $picto[$const]).'</td>';
+        print '<td>'.$langs->trans($desc).'</td>';
+        print '<td class="center" width="100">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $constante = 'FCKEDITOR_ENABLE_'.$const;
         $value = (isset($conf->global->$constante)?$conf->global->$constante:0);
         if ($value == 0)
         {
+<<<<<<< HEAD
             print '<a href="'.$_SERVER['PHP_SELF'].'?action=activate_'.strtolower($const).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
         }
         else if ($value == 1)
         {
             print '<a href="'.$_SERVER['PHP_SELF'].'?action=disable_'.strtolower($const).'">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
+=======
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=activate_'.strtolower($const).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+        }
+        elseif ($value == 1)
+        {
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=disable_'.strtolower($const).'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
 
         print "</td>";
@@ -181,12 +237,21 @@ else
 	print '<br>'."\n";
 
 	print '<form name="formtest" method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+<<<<<<< HEAD
     
 	// Skins
     show_skin(null,1);
     print '<br>'."\n";
     
     $listofmodes=array('dolibarr_mailings','dolibarr_notes','dolibarr_details','dolibarr_readonly','Full');
+=======
+
+	// Skins
+    show_skin(null, 1);
+    print '<br>'."\n";
+
+    $listofmodes=array('dolibarr_mailings', 'dolibarr_notes', 'dolibarr_details', 'dolibarr_readonly', 'Full', 'Full_inline');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $linkstomode='';
     foreach($listofmodes as $newmode)
     {
@@ -198,12 +263,30 @@ else
         $linkstomode.='</a>';
     }
     $linkstomode.='';
+<<<<<<< HEAD
 	print load_fiche_titre($langs->trans("TestSubmitForm"),$linkstomode,'');
     print '<input type="hidden" name="mode" value="'.dol_escape_htmltag($mode).'">';
     $uselocalbrowser=true;
     $readonly=($mode=='dolibarr_readonly'?1:0);
     $editor=new DolEditor('formtestfield',isset($conf->global->FCKEDITOR_TEST)?$conf->global->FCKEDITOR_TEST:'Test','',200,$mode,'In', true, $uselocalbrowser, 1, 120, 8, $readonly);
     $editor->Create();
+=======
+	print load_fiche_titre($langs->trans("TestSubmitForm"), $linkstomode, '');
+    print '<input type="hidden" name="mode" value="'.dol_escape_htmltag($mode).'">';
+    if ($mode != 'Full_inline')
+    {
+        $uselocalbrowser=true;
+        $readonly=($mode=='dolibarr_readonly'?1:0);
+        $editor=new DolEditor('formtestfield', isset($conf->global->FCKEDITOR_TEST)?$conf->global->FCKEDITOR_TEST:'Test', '', 200, $mode, 'In', true, $uselocalbrowser, 1, 120, 8, $readonly);
+        $editor->Create();
+    }
+    else
+    {
+        print '<div style="border: 1px solid #888;" contenteditable="true">';
+        print $conf->global->FCKEDITOR_TEST;
+        print '</div>';
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print '<br><div class="center"><input class="button" type="submit" name="save" value="'.$langs->trans("Save").'"></div>'."\n";
     print '<div id="divforlog"></div>';
     print '</form>'."\n";
@@ -234,6 +317,10 @@ else
      */
 }
 
+<<<<<<< HEAD
 
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

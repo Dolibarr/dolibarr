@@ -21,7 +21,11 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
 
 /**
+<<<<<<< HEAD
  * Class ot manage invoices for pos module (cashdesk)
+=======
+ * Class to manage invoices for pos module (cashdesk)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  */
 class Facturation
 {
@@ -37,7 +41,16 @@ class Facturation
      * int $prix		=> Prix HT du produit en cours
      * int $tva			=> 'rowid' du taux de tva dans llx_c_tva
      */
+<<<<<<< HEAD
     public $id;
+=======
+
+    /**
+	 * @var int ID
+	 */
+	public $id;
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     protected $ref;
     protected $qte;
     protected $stock;
@@ -79,7 +92,11 @@ class Facturation
     }
 
 
+<<<<<<< HEAD
     // Methodes de traitement des donnees
+=======
+    // Data processing methods
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
     /**
@@ -119,14 +136,22 @@ class Facturation
         // Define part of HT, VAT, TTC
         $resultarray=calcul_price_total($this->qte, $this->prix(), $this->remisePercent(), $txtva, -1, -1, 0, 'HT', $vat_npr, $product->type, $mysoc, $localtaxarray);
 
+<<<<<<< HEAD
         // Calcul du total ht sans remise
+=======
+        // Calculation of total HT without discount
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $total_ht = $resultarray[0];
         $total_vat = $resultarray[1];
         $total_ttc = $resultarray[2];
         $total_localtax1 = $resultarray[9];
         $total_localtax2 = $resultarray[10];
 
+<<<<<<< HEAD
         // Calcul du montant de la remise
+=======
+        // Calculation of the discount amount
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         if ($this->remisePercent())
         {
             $remise_percent = $this->remisePercent();
@@ -137,7 +162,15 @@ class Facturation
         $this->montantRemise($montant_remise_ht);
 
         $newcartarray=$_SESSION['poscart'];
+<<<<<<< HEAD
         $i=count($newcartarray);
+=======
+
+        $i = 0;
+        if (!is_null($newcartarray) && !empty($newcartarray)) {
+            $i=count($newcartarray);
+        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         $newcartarray[$i]['id']=$i;
         $newcartarray[$i]['ref']=$product->ref;
@@ -159,15 +192,23 @@ class Facturation
         $newcartarray[$i]['fk_tva']=$this->tva();   // Vat rowid
         $newcartarray[$i]['remise_percent']=$remise_percent;
         $newcartarray[$i]['remise']=price2num($montant_remise_ht);
+<<<<<<< HEAD
         $newcartarray[$i]['total_ht']=price2num($total_ht,'MT');
         $newcartarray[$i]['total_ttc']=price2num($total_ttc,'MT');
+=======
+        $newcartarray[$i]['total_ht']=price2num($total_ht, 'MT');
+        $newcartarray[$i]['total_ttc']=price2num($total_ttc, 'MT');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $newcartarray[$i]['total_vat']=price2num($total_vat, 'MT');
         $newcartarray[$i]['total_localtax1']=price2num($total_localtax1, 'MT');
         $newcartarray[$i]['total_localtax2']=price2num($total_localtax2, 'MT');
         $_SESSION['poscart']=$newcartarray;
 
         $this->raz();
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
     /**
@@ -197,7 +238,11 @@ class Facturation
     }
 
     /**
+<<<<<<< HEAD
      * Calcul du total HT, total TTC et montants TVA
+=======
+     * Calculation of total HT, total TTC and VAT amounts
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      *
      * @return	int		Total
      */
@@ -211,8 +256,12 @@ class Facturation
         $total_localtax1 = 0;
         $total_localtax2 = 0;
 
+<<<<<<< HEAD
         $tab=array();
         $tab = $_SESSION['poscart'];
+=======
+        $tab = (! empty($_SESSION['poscart'])?$_SESSION['poscart']:array());
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         $tab_size=count($tab);
         for($i=0;$i < $tab_size;$i++)
@@ -237,7 +286,11 @@ class Facturation
     }
 
     /**
+<<<<<<< HEAD
      * Reinitialisation des attributs
+=======
+     * Reset attributes
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      *
      * @return	void
      */
@@ -254,7 +307,11 @@ class Facturation
     }
 
     /**
+<<<<<<< HEAD
      * Reinitialisation des attributs persistants
+=======
+     * Resetting persistent attributes
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      *
      *  @return	void
      */
@@ -269,24 +326,38 @@ class Facturation
         $this->prixTotalHt('RESET');
         $this->montantTva('RESET');
         $this->prixTotalTtc('RESET');
+<<<<<<< HEAD
 
     }
 
 
     // Methodes de modification des attributs proteges
+=======
+    }
+
+
+    // Methods for modifying protected attributes
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     /**
      * Getter for id
      *
      * @param	int		$aId	Id
+<<<<<<< HEAD
      * @return  id
      */
     public function id($aId=null)
+=======
+     * @return  int             Id
+     */
+    public function id($aId = null)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
 
         if ( !$aId )
         {
             return $this->id;
+<<<<<<< HEAD
 
         }
         else if ( $aId == 'RESET' )
@@ -294,12 +365,22 @@ class Facturation
 
             $this->id = null;
 
+=======
+        }
+        elseif ( $aId == 'RESET' )
+        {
+
+            $this->id = null;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
         else
         {
 
             $this->id = $aId;
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
     }
 
@@ -309,14 +390,23 @@ class Facturation
      * @param	string	$aRef	Ref
      * @return	string			Ref
      */
+<<<<<<< HEAD
     public function ref($aRef=null)
      {
+=======
+    public function ref($aRef = null)
+    {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         if (is_null($aRef))
         {
             return $this->ref;
         }
+<<<<<<< HEAD
         else if ( $aRef == 'RESET' )
+=======
+        elseif ( $aRef == 'RESET' )
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         {
             $this->ref = null;
         }
@@ -324,7 +414,10 @@ class Facturation
         {
             $this->ref = $aRef;
         }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
     /**
@@ -333,13 +426,21 @@ class Facturation
      * @param	int		$aQte		Qty
      * @return	int					Qty
      */
+<<<<<<< HEAD
     public function qte($aQte=null)
+=======
+    public function qte($aQte = null)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         if (is_null($aQte))
         {
             return $this->qte;
         }
+<<<<<<< HEAD
         else if ( $aQte == 'RESET' )
+=======
+        elseif ( $aQte == 'RESET' )
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         {
 
             $this->qte = null;
@@ -348,7 +449,10 @@ class Facturation
         {
             $this->qte = $aQte;
         }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
     /**
@@ -357,14 +461,22 @@ class Facturation
      * @param   string	$aStock		Stock
      * @return	string				Stock
      */
+<<<<<<< HEAD
     public function stock($aStock=null)
+=======
+    public function stock($aStock = null)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
 
         if (is_null($aStock))
         {
             return $this->stock;
         }
+<<<<<<< HEAD
         else if ( $aStock == 'RESET' )
+=======
+        elseif ( $aStock == 'RESET' )
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         {
             $this->stock = null;
         }
@@ -372,7 +484,10 @@ class Facturation
         {
             $this->stock = $aStock;
         }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
     /**
@@ -381,14 +496,22 @@ class Facturation
      * @param	string	$aRemisePercent		Discount
      * @return	string						Discount
      */
+<<<<<<< HEAD
     public function remisePercent($aRemisePercent=null)
+=======
+    public function remisePercent($aRemisePercent = null)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
 
         if (is_null($aRemisePercent))
         {
             return $this->remise_percent;
         }
+<<<<<<< HEAD
         else if ($aRemisePercent == 'RESET')
+=======
+        elseif ($aRemisePercent == 'RESET')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         {
             $this->remise_percent = null;
         }
@@ -396,7 +519,10 @@ class Facturation
         {
             $this->remise_percent = $aRemisePercent;
         }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
     /**
@@ -405,12 +531,17 @@ class Facturation
      * @param	int		$aMontantRemise		Amount
      * @return	string						Amount
      */
+<<<<<<< HEAD
     public function montantRemise($aMontantRemise=null)
+=======
+    public function montantRemise($aMontantRemise = null)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
 
         if (is_null($aMontantRemise)) {
 
             return $this->montant_remise;
+<<<<<<< HEAD
 
         } else if ( $aMontantRemise == 'RESET' ) {
 
@@ -422,6 +553,15 @@ class Facturation
 
         }
 
+=======
+        } elseif ( $aMontantRemise == 'RESET' ) {
+
+            $this->montant_remise = null;
+        } else {
+
+            $this->montant_remise = $aMontantRemise;
+        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
     /**
@@ -430,12 +570,17 @@ class Facturation
      * @param	int		$aPrix		Price
      * @return	string				Stock
      */
+<<<<<<< HEAD
     public function prix($aPrix=null)
+=======
+    public function prix($aPrix = null)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
 
         if (is_null($aPrix)) {
 
             return $this->prix;
+<<<<<<< HEAD
 
         } else if ( $aPrix == 'RESET' ) {
 
@@ -447,6 +592,15 @@ class Facturation
 
         }
 
+=======
+        } elseif ( $aPrix == 'RESET' ) {
+
+            $this->prix = null;
+        } else {
+
+            $this->prix = $aPrix;
+        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
     /**
@@ -455,11 +609,16 @@ class Facturation
      * @param	int		$aTva		Vat
      * @return	int					Vat
      */
+<<<<<<< HEAD
     public function tva($aTva=null)
+=======
+    public function tva($aTva = null)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         if (is_null($aTva)) {
 
             return $this->tva;
+<<<<<<< HEAD
 
         } else if ( $aTva == 'RESET' ) {
 
@@ -471,6 +630,15 @@ class Facturation
 
         }
 
+=======
+        } elseif ( $aTva == 'RESET' ) {
+
+            $this->tva = null;
+        } else {
+
+            $this->tva = $aTva;
+        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
     /**
@@ -479,11 +647,16 @@ class Facturation
      * @param string	$aNumFacture		Invoice ref
      * @return	string						Invoice ref
      */
+<<<<<<< HEAD
     public function numInvoice($aNumFacture=null)
+=======
+    public function numInvoice($aNumFacture = null)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         if (is_null($aNumFacture)) {
 
             return $this->num_facture;
+<<<<<<< HEAD
 
         } else if ( $aNumFacture == 'RESET' ) {
 
@@ -493,6 +666,14 @@ class Facturation
 
             $this->num_facture = $aNumFacture;
 
+=======
+        } elseif ( $aNumFacture == 'RESET' ) {
+
+            $this->num_facture = null;
+        } else {
+
+            $this->num_facture = $aNumFacture;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
     }
 
@@ -502,12 +683,17 @@ class Facturation
      * @param	int		$aModeReglement		Payment mode
      * @return	int							Payment mode
      */
+<<<<<<< HEAD
     public function getSetPaymentMode($aModeReglement=null)
+=======
+    public function getSetPaymentMode($aModeReglement = null)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
 
         if (is_null($aModeReglement)) {
 
             return $this->mode_reglement;
+<<<<<<< HEAD
 
         } else if ( $aModeReglement == 'RESET' ) {
 
@@ -519,6 +705,15 @@ class Facturation
 
         }
 
+=======
+        } elseif ( $aModeReglement == 'RESET' ) {
+
+            $this->mode_reglement = null;
+        } else {
+
+            $this->mode_reglement = $aModeReglement;
+        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
     /**
@@ -527,12 +722,17 @@ class Facturation
      * @param	int		$aMontantEncaisse		Amount
      * @return	int								Amount
      */
+<<<<<<< HEAD
     public function montantEncaisse($aMontantEncaisse=null)
+=======
+    public function montantEncaisse($aMontantEncaisse = null)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
 
         if (is_null($aMontantEncaisse)) {
 
             return $this->montant_encaisse;
+<<<<<<< HEAD
 
         } else if ( $aMontantEncaisse == 'RESET' ) {
 
@@ -544,6 +744,15 @@ class Facturation
 
         }
 
+=======
+        } elseif ( $aMontantEncaisse == 'RESET' ) {
+
+            $this->montant_encaisse = null;
+        } else {
+
+            $this->montant_encaisse = $aMontantEncaisse;
+        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
     /**
@@ -552,12 +761,17 @@ class Facturation
      * @param	int			$aMontantRendu		Amount
      * @return	int								Amount
      */
+<<<<<<< HEAD
     public function montantRendu($aMontantRendu=null)
+=======
+    public function montantRendu($aMontantRendu = null)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
 
         if (is_null($aMontantRendu)) {
 
             return $this->montant_rendu;
+<<<<<<< HEAD
         } else if ( $aMontantRendu == 'RESET' ) {
 
             $this->montant_rendu = null;
@@ -568,19 +782,36 @@ class Facturation
 
         }
 
+=======
+        } elseif ( $aMontantRendu == 'RESET' ) {
+
+            $this->montant_rendu = null;
+        } else {
+
+            $this->montant_rendu = $aMontantRendu;
+        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
     /**
      * Get payment date
      *
+<<<<<<< HEAD
      * @param	date		$aPaiementLe		Date
      * @return	date							Date
      */
     public function paiementLe($aPaiementLe=null)
+=======
+     * @param	integer		$aPaiementLe		Date
+     * @return	integer							Date
+     */
+    public function paiementLe($aPaiementLe = null)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         if (is_null($aPaiementLe)) {
 
             return $this->paiement_le;
+<<<<<<< HEAD
 
         } else if ( $aPaiementLe == 'RESET' ) {
 
@@ -590,20 +821,37 @@ class Facturation
 
             $this->paiement_le = $aPaiementLe;
 
+=======
+        } elseif ( $aPaiementLe == 'RESET' ) {
+
+            $this->paiement_le = null;
+        } else {
+
+            $this->paiement_le = $aPaiementLe;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
     }
 
     /**
+<<<<<<< HEAD
      * Get totla HT
+=======
+     * Get total HT
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      *
      * @param	int		$aTotalHt		Total amount
      * @return	int						Total amount
      */
+<<<<<<< HEAD
     public function prixTotalHt($aTotalHt=null)
+=======
+    public function prixTotalHt($aTotalHt = null)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         if (is_null($aTotalHt)) {
 
             return $this->prix_total_ht;
+<<<<<<< HEAD
 
         } else if ( $aTotalHt == 'RESET' ) {
 
@@ -613,6 +861,14 @@ class Facturation
 
             $this->prix_total_ht = $aTotalHt;
 
+=======
+        } elseif ( $aTotalHt == 'RESET' ) {
+
+            $this->prix_total_ht = null;
+        } else {
+
+            $this->prix_total_ht = $aTotalHt;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
     }
 
@@ -622,11 +878,16 @@ class Facturation
      * @param	int		$aMontantTva	Amount vat
      * @return	int						Amount vat
      */
+<<<<<<< HEAD
     public function montantTva($aMontantTva=null)
+=======
+    public function montantTva($aMontantTva = null)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         if (is_null($aMontantTva)) {
 
             return $this->montant_tva;
+<<<<<<< HEAD
 
         } else if ( $aMontantTva == 'RESET' ) {
 
@@ -638,6 +899,15 @@ class Facturation
 
         }
 
+=======
+        } elseif ( $aMontantTva == 'RESET' ) {
+
+            $this->montant_tva = null;
+        } else {
+
+            $this->montant_tva = $aMontantTva;
+        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
     /**
@@ -646,13 +916,21 @@ class Facturation
      * @param	int		$aTotalTtc		Amount ttc
      * @return	int						Amount ttc
      */
+<<<<<<< HEAD
     public function prixTotalTtc($aTotalTtc=null)
+=======
+    public function prixTotalTtc($aTotalTtc = null)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         if (is_null($aTotalTtc))
         {
             return $this->prix_total_ttc;
         }
+<<<<<<< HEAD
         else if ( $aTotalTtc == 'RESET' )
+=======
+        elseif ( $aTotalTtc == 'RESET' )
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         {
             $this->prix_total_ttc = null;
         }
@@ -661,6 +939,10 @@ class Facturation
             $this->prix_total_ttc = $aTotalTtc;
         }
     }
+<<<<<<< HEAD
 
 }
 
+=======
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - sendings
+<<<<<<< HEAD
 RefSending=Реф. пратка
 Sending=Пратка
 Sendings=Превозите
@@ -70,3 +71,76 @@ SumOfProductWeights=Сума на теглото на продукт
 # warehouse details
 DetailWarehouseNumber= Склад детайли
 DetailWarehouseFormat= Тегло:%s (Количество : %d)
+=======
+RefSending=Реф. експедиция
+Sending=Експедиция
+Sendings=Експедиции
+AllSendings=Всички експедиции
+Shipment=Пратка
+Shipments=Пратки
+ShowSending=Показване на експедиции
+Receivings=Разписки за доставка
+SendingsArea=Зона на Експедиции
+ListOfSendings=Списък на експедиции
+SendingMethod=Начин на доставка
+LastSendings=Експедиции: %s последни
+StatisticsOfSendings=Статистика за експедидиите
+NbOfSendings=Брой експедиции
+NumberOfShipmentsByMonth=Брой експедиции на месец
+SendingCard=Карта за експедиция
+NewSending=Нова експедиция
+CreateShipment=Създаване на пратка
+QtyShipped=Изпратено количество
+QtyShippedShort=Изпр. кол.
+QtyPreparedOrShipped=Приготвено или изпратено кол.
+QtyToShip=Количество за изпращане
+QtyReceived=Получено количество
+QtyInOtherShipments=Количество в други пратки
+KeepToShip=Оставащо за изпращане
+KeepToShipShort=Оставащо
+OtherSendingsForSameOrder=Други експедиции за тази поръчка
+SendingsAndReceivingForSameOrder=Експедиции и разписки за тази поръчка
+SendingsToValidate=Експедиции за валидиране
+StatusSendingCanceled=Анулирана
+StatusSendingDraft=Чернова
+StatusSendingValidated=Валидирана (продукти за изпращане или вече изпратени)
+StatusSendingProcessed=Обработена
+StatusSendingDraftShort=Чернова
+StatusSendingValidatedShort=Валидирана
+StatusSendingProcessedShort=Обработена
+SendingSheet=Лист за експедиция
+ConfirmDeleteSending=Сигурни ли сте, че искате да изтриете тази експедиция?
+ConfirmValidateSending=Сигурни ли сте, че искате да валидирате тази експедиция с реф. <b>%s</b>?
+ConfirmCancelSending=Сигурни ли сте, че ли искате да анулирате тази експедиция?
+DocumentModelMerou=Шаблон А5 размер
+WarningNoQtyLeftToSend=Внимание, няма продукти чакащи да бъдат изпратени.
+StatsOnShipmentsOnlyValidated=Статистики водени само от валидирани пратки. Използваната дата е дата на валидиране на пратката (планираната дата на доставка не винаги е известна)
+DateDeliveryPlanned=Планирана дата за доставка
+RefDeliveryReceipt=Реф. разписка за доставка
+StatusReceipt=Статус на разписка за доставка
+DateReceived=Дата на получаване
+SendShippingByEMail=Изпращане на пратка по имейл
+SendShippingRef=Подаване на пратка %s
+ActionsOnShipping=Събития за пратка
+LinkToTrackYourPackage=Връзка за проследяване на вашата пратка
+ShipmentCreationIsDoneFromOrder=За момента създаването на нова пратка се извършва от картата на поръчката.
+ShipmentLine=Линия на пратка
+ProductQtyInCustomersOrdersRunning=Количество продукт в отворени клиентски поръчки
+ProductQtyInSuppliersOrdersRunning=Количество продукт в отворени поръчки за покупка
+ProductQtyInShipmentAlreadySent=Вече изпратено количество продукт от отворена поръчка
+ProductQtyInSuppliersShipmentAlreadyRecevied=Вече получено количество продукт от отворена поръчка за покупка
+NoProductToShipFoundIntoStock=Не е намерен продукт за изпращане в склад <b>%s</b>. Коригирайте наличността или се върнете, за да изберете друг склад.
+WeightVolShort=Тегло/Обем
+ValidateOrderFirstBeforeShipment=Първо трябва да валидирате поръчката, преди да можете да изпращате пратки.
+
+# Sending methods
+# ModelDocument
+DocumentModelTyphon=Завършен шаблон на разписка за доставка  (лого...)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Константата EXPEDITION_ADDON_NUMBER не е дефинирана
+SumOfProductVolumes=Сума от обема на продуктите
+SumOfProductWeights=Сума от теглото на продуктите
+
+# warehouse details
+DetailWarehouseNumber= Подробности за склада
+DetailWarehouseFormat= Тегло: %s (Кол.: %d)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

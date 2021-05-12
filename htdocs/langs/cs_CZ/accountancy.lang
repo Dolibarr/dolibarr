@@ -1,6 +1,10 @@
 # Dolibarr language file - en_US - Accounting Expert
 Accounting=Účetnictví
+<<<<<<< HEAD
 ACCOUNTING_EXPORT_SEPARATORCSV=Oddělovač sloupců pro export souboru
+=======
+ACCOUNTING_EXPORT_SEPARATORCSV=Oddělovač sloupců pro soubor exportu
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ACCOUNTING_EXPORT_DATE=Formát data pro export souboru
 ACCOUNTING_EXPORT_PIECE=Exportovat počet kusů
 ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export s globálním účtem
@@ -9,7 +13,11 @@ ACCOUNTING_EXPORT_AMOUNT=Exportovat částku
 ACCOUNTING_EXPORT_DEVISE=Export měny
 Selectformat=Vyberte formát souboru
 ACCOUNTING_EXPORT_FORMAT=Vyberte formát souboru
+<<<<<<< HEAD
 ACCOUNTING_EXPORT_ENDLINE=Select the carriage return type
+=======
+ACCOUNTING_EXPORT_ENDLINE=Zvolte typ návratu vozíku
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ACCOUNTING_EXPORT_PREFIX_SPEC=Určete předponu pro název souboru
 ThisService=Tato služba
 ThisProduct=Tento výrobek
@@ -18,6 +26,7 @@ DefaultForProduct=Výchozí produkt
 CantSuggest=Nelze navrhnout
 AccountancySetupDoneFromAccountancyMenu=Většina nastavení účetnictví se provádí z nabídky %s
 ConfigAccountingExpert=Konfigurace modulu účetního experta
+<<<<<<< HEAD
 Journalization=Journalization
 Journaux=Deníky
 JournalFinancial=Finanční deníky
@@ -79,12 +88,84 @@ AccountAccounting=Účetní účet
 AccountAccountingShort=Účet
 SubledgerAccount=Subledger Account
 ShowAccountingAccount=Show accounting account
+=======
+Journalization=Jurnálizace
+Journaux=Deníky
+JournalFinancial=Finanční deníky
+BackToChartofaccounts=Vrátit schéma účtů
+Chartofaccounts=Graf účtů
+CurrentDedicatedAccountingAccount=Aktuální vyhrazený účet
+AssignDedicatedAccountingAccount=Nový účet, který chcete přiřadit
+InvoiceLabel=faktura štítek
+OverviewOfAmountOfLinesNotBound=Přehled množství řádků, které nejsou vázány na účet
+OverviewOfAmountOfLinesBound=Přehled objemu řádků, které jsou již vázány na účet
+OtherInfo=Jiná informace
+DeleteCptCategory=Odstraňte účetní účet ze skupiny
+ConfirmDeleteCptCategory=Opravdu chcete tento účtovací účet odstranit ze skupiny účetních účtů?
+JournalizationInLedgerStatus=Stav žurnalizace
+AlreadyInGeneralLedger=Již v deníku do hlavní knihy
+NotYetInGeneralLedger=Zatím nebyl zaznamenán v knihách
+GroupIsEmptyCheckSetup=Skupina je prázdná, zkontrolujte nastavení personalizované účetní skupiny
+DetailByAccount=Zobrazit detail podle účtu
+AccountWithNonZeroValues=Účty s nenulovými hodnotami
+ListOfAccounts=Seznam účtů
+CountriesInEEC=Země v EHS
+CountriesNotInEEC=Země, které nejsou v EHS
+CountriesInEECExceptMe=Země v EHS kromě %s
+CountriesExceptMe=Všechny země kromě %s
+AccountantFiles=Exportní účetní doklady
+
+MainAccountForCustomersNotDefined=Hlavní účetní účetnictví pro zákazníky, které nejsou definovány v nastavení
+MainAccountForSuppliersNotDefined=Hlavní účty účetnictví pro dodavatele, které nejsou definovány v nastavení
+MainAccountForUsersNotDefined=Hlavní účetní účetnictví pro uživatele, které nejsou definovány v nastavení
+MainAccountForVatPaymentNotDefined=Účet hlavního účtu pro platbu DPH není definována v nastavení
+MainAccountForSubscriptionPaymentNotDefined=Účet hlavního účtu je platba předplatného, která není definována v nastavení
+
+AccountancyArea=Účetní oblast
+AccountancyAreaDescIntro=Použití účetního modulu se provádí v několika krocích:
+AccountancyAreaDescActionOnce=Tyto akce jsou obvykle prováděny pouze jednou, nebo jednou za rok ...
+AccountancyAreaDescActionOnceBis=Další kroky by měly být provedeny, abyste ušetřili čas v budoucnu tím, že vám při vytváření žurnálu navrhujete správný výchozí účetní účet (zápis do časopisů a hlavní knihy)
+AccountancyAreaDescActionFreq=Tyto akce jsou proto zpravidla prováděny každý měsíc, týden nebo den pro velmi velké společnosti ...
+
+AccountancyAreaDescJournalSetup=KROK %s: Vytvořte nebo zkontrolujte obsah vašeho seznamu časopisů z nabídky %s
+AccountancyAreaDescChartModel=KROK %s: Vytvoření modelu schématu účtu z nabídky %s
+AccountancyAreaDescChart=KROK %s: Vytvořte nebo zkontrolujte obsah schématu účtu z nabídky %s
+
+AccountancyAreaDescVat=KROK %s: Definujte účetní účty pro každou DPH. K tomu použijte položku nabídky %s.
+AccountancyAreaDescDefault=KROK %s: Definujte výchozí účetní účty. K tomu použijte položku nabídky %s.
+AccountancyAreaDescExpenseReport=KROK %s: Definujte výchozí účetní účty pro každý typ výkazu výdajů. K tomu použijte položku nabídky %s.
+AccountancyAreaDescSal=KROK %s: Definujte výchozí účty pro výplatu mezd. K tomu použijte položku nabídky %s.
+AccountancyAreaDescContrib=KROK %s: Definujte výchozí účetní účty pro zvláštní výdaje (různé daně). K tomu použijte položku nabídky %s.
+AccountancyAreaDescDonation=KROK %s: Definujte výchozí účetní účty pro dárcovství. K tomu použijte položku nabídky %s.
+AccountancyAreaDescSubscription=KROK %s: Definujte výchozí účetní účty pro členské předplatné. K tomu použijte položku nabídky %s.
+AccountancyAreaDescMisc=KROK %s: Definujte povinné výchozí účty a výchozí účetní účty pro různé transakce. K tomu použijte položku nabídky %s.
+AccountancyAreaDescLoan=KROK %s: Definujte výchozí účetní účty pro úvěry. K tomu použijte položku nabídky %s.
+AccountancyAreaDescBank=KROK %s: Definujte účetní účty a kód časopisu pro jednotlivé bankovní a finanční účty. K tomu použijte položku nabídky %s.
+AccountancyAreaDescProd=KROK %s: Definujte účetní účty ve vašich produktech / službách. K tomu použijte položku nabídky %s.
+
+AccountancyAreaDescBind=KROK %s: Zkontrolujte vazbu mezi existujícími řádky %s a účetní účet se provádí, takže aplikace bude schopna provádět evidenci transakcí v Ledgeru jedním klepnutím. Vyplňte chybějící vazby. K tomu použijte položku nabídky %s.
+AccountancyAreaDescWriteRecords=KROK %s: Napište transakce do knihy. K tomu přejděte do menu <strong> %s </strong> a klikněte na tlačítko <strong> %s </strong>.
+AccountancyAreaDescAnalyze=KROK %s: Přidání nebo úprava stávajících transakcí a generování sestav a exportů.
+
+AccountancyAreaDescClosePeriod=KROK %s: Zavřete období, takže nemůžeme v budoucnu provádět změny.
+
+TheJournalCodeIsNotDefinedOnSomeBankAccount=Povinný krok v nastavení nebyl úplný (časopis pro účetní záznamy není definován pro všechny bankovní účty)
+Selectchartofaccounts=Vybrat aktivní účtové osnovy
+ChangeAndLoad=Změna a načtení
+Addanaccount=Přidat účetní účet
+AccountAccounting=Účetní účet
+AccountAccountingShort=Účet
+SubledgerAccount=Podřízený účet
+SubledgerAccountLabel=Označení podřízeného účtu
+ShowAccountingAccount=Zobrazit účetní účet
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShowAccountingJournal=Zobrazit účetní deník
 AccountAccountingSuggest=Účetní účet navrhl
 MenuDefaultAccounts=výchozí účty
 MenuBankAccounts=Bankovní účty
 MenuVatAccounts=Účty DPH
 MenuTaxAccounts=daňové účty
+<<<<<<< HEAD
 MenuExpenseReportAccounts=Náklady zpráva účty
 MenuLoanAccounts=úvěrových účtů
 MenuProductsAccounts=produktové účty
@@ -105,6 +186,31 @@ TotalExpenseReport=Celkové náklady zpráva
 InvoiceLines=Řádky faktury, které mají být prověřeny
 InvoiceLinesDone=Prověřené řádky faktury
 ExpenseReportLines=Linky výkazů výdajů navázat
+=======
+MenuExpenseReportAccounts=Účet výkazů výdajů
+MenuLoanAccounts=Úvěrové účty
+MenuProductsAccounts=produktové účty
+MenuClosureAccounts=Uzavření účtů
+ProductsBinding=Produkty účty
+TransferInAccounting=Transfer v účetnictví
+RegistrationInAccounting=Registrace v účetnictví
+Binding=Vazba na účetní závěrky
+CustomersVentilation=Zákaznické fakturační závazky
+SuppliersVentilation=Závazná faktura dodavatele
+ExpenseReportsVentilation=Záväzná zpráva o výdajích
+CreateMvts=Vytvořit novou transakci
+UpdateMvts=Modifikace transakce
+ValidTransaction=Ověřte transakci
+WriteBookKeeping=Register transactions in Ledger
+Bookkeeping=účetní kniha
+AccountBalance=Zůstatek na účtu
+ObjectsRef=Zdrojový objekt ref
+CAHTF=Celkový prodejce před zdaněním
+TotalExpenseReport=Celková výkaz výdajů
+InvoiceLines=Řádky faktury, které mají být prověřeny
+InvoiceLinesDone=Prověřené řádky faktury
+ExpenseReportLines=Řádky výkazů výdajů navázat
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ExpenseReportLinesDone=Vázané linie vyúčtování výdajů
 IntoAccount=Prověřit řádky v účetním účtu
 
@@ -119,26 +225,43 @@ LineOfExpenseReport=Zpráva o výdajích
 NoAccountSelected=Není vybrán žádný účetní účet
 VentilatedinAccount=Úspěšně prověření v účetním účtu
 NotVentilatedinAccount=Neprověřeno v účetním účtu
+<<<<<<< HEAD
 XLineSuccessfullyBinded=%s products/services successfully bound to an accounting account
 XLineFailedToBeBinded=%s produkty / služby nebyly vázány na kterémkoli účetním účtu
 
 ACCOUNTING_LIMIT_LIST_VENTILATION=Počet prvků pro kontrolu zobrazených na stránce (maximální doporučeno: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Zahájit třídění na stránce „Provést prověření“ nejnovějšími prvky
+=======
+XLineSuccessfullyBinded=%s Produkty / služby úspěšně spojené s účtem účetnictví
+XLineFailedToBeBinded=%s produkty / služby nebyly vázány na žádný účetní účet
+
+ACCOUNTING_LIMIT_LIST_VENTILATION=Počet prvků pro vazbu zobrazených na stránce (maximální doporučeno: 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Začněte třídění stránky "Vazba na pověření" pomocí nejnovějších prvků
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Zahájit třídění na stránce „Prověření hotovo“ od nejnovějších prvků
 
 ACCOUNTING_LENGTH_DESCRIPTION=Zkrátit popis  produktů a služeb v seznamech po x znaků (Nejlepší = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Zkrátit popis výrobků & účtu služeb formu výpisů po x znaků (Nejlepší = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Délka znaků obecných účetních účtů (Nastavíte-li zde hodnotu 6, bude účet ‚706‘ zobrazovat jako ‚706000‘)
+<<<<<<< HEAD
 ACCOUNTING_LENGTH_AACCOUNT=Délka účtů třetích stran (Nastavíte-li zde hodnotu 6, bude účet ‚401‘ zobrazovat jako ‚401000‘)
 ACCOUNTING_MANAGE_ZERO=Umožňují řídit jiný počet nulu na konci účetního účtu. Zapotřebí v některých zemích (jako Švýcarsko). -Li se držet off (výchozí), můžete nastavit 2 následující parametry požádat aplikace přidat virtuální nula.
 BANK_DISABLE_DIRECT_INPUT=Zakázat přímé nahrávání transakce v bankovním účtu
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Enable draft export on journal
+=======
+ACCOUNTING_LENGTH_AACCOUNT=Délka účtů účtů subjektů (Pokud zde nastavíte hodnotu 6, účet '401' se objeví na obrazovce jako '401000')
+ACCOUNTING_MANAGE_ZERO=Umožňuje spravovat různé počty nul na konci účetního účtu. Některé země potřebují (například Švýcarsko). Pokud je vypnuto (výchozí), můžete nastavit následující dva parametry a požádat aplikaci o přidání virtuálních nul.
+BANK_DISABLE_DIRECT_INPUT=Zakázat přímé nahrávání transakce v bankovním účtu
+ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Povolit návrh exportu v žurnálu
+ACCOUNTANCY_COMBO_FOR_AUX=Povolit seznam combo pro pomocný účet (může být pomalý, pokud máte spoustu třetích stran)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 ACCOUNTING_SELL_JOURNAL=Prodejní deník
 ACCOUNTING_PURCHASE_JOURNAL=Nákupní deník
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Ostatní deník
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Rozšířený výpis deníku
 ACCOUNTING_SOCIAL_JOURNAL=Sociální deník
+<<<<<<< HEAD
 ACCOUNTING_HAS_NEW_JOURNAL=Has new Journal
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Účtování v převodním účtu
@@ -147,6 +270,24 @@ DONATION_ACCOUNTINGACCOUNT=Účtování účet registrovaných darů
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Účetní účet ve výchozím nastavení pro zakoupené výrobky (použít, pokud není definován v listu produktu)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Účetní účet ve výchozím nastavení pro prodané produkty (použít, pokud není definován v listu produktu)
+=======
+ACCOUNTING_HAS_NEW_JOURNAL=Má nový věstník
+
+ACCOUNTING_RESULT_PROFIT=Výsledek účetnictví (Zisk)
+ACCOUNTING_RESULT_LOSS=Výsledek účetní účet (ztráta)
+ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Časopis uzavření
+
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Účtovací účet přechodného bankovního převodu
+
+ACCOUNTING_ACCOUNT_SUSPENSE=Čekající účet
+DONATION_ACCOUNTINGACCOUNT=Účtování účet registrovaných darů
+ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Účtovací účet pro registraci předplatného
+
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Účetní účet ve výchozím nastavení pro zakoupené výrobky (použít, pokud není definován v listu produktu)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Účetní účet ve výchozím nastavení pro prodané produkty (použít, pokud není definován v listu produktu)
+ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Účtovací účet standardně pro prodané výrobky v EHS (používá se, pokud není definován v produktovém listu)
+ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Účtovací účet standardně pro export prodaný výrobek z EHS (používá se, pokud není definován v listu výrobku)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Účetní účet ve výchozím nastavení pro zakoupené služby (použít, pokud není definován v servisním listu)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Účetní účet ve výchozím nastavení pro prodané služby (použít, pokud není definován v servisním listu)
 
@@ -154,6 +295,7 @@ Doctype=Typ dokumentu
 Docdate=Datum
 Docref=Reference
 LabelAccount=Štítek účtu
+<<<<<<< HEAD
 LabelOperation=Label operation
 Sens=Sens
 Codejournal=Deník
@@ -199,11 +341,64 @@ PaymentsNotLinkedToProduct=Payment not linked to any product / service
 Pcgtype=Group of account
 Pcgsubtype=Subgroup of account
 PcgtypeDesc=Group and subgroup of account are used as predefined 'filter' and 'grouping' criterias for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
+=======
+LabelOperation=Operace štítků
+Sens=Sens
+LetteringCode=Písmenový kód
+Lettering=Nápis
+Codejournal=Deník
+JournalLabel=Označení časopisu
+NumPiece=počet kusů
+TransactionNumShort=Num. transakce
+AccountingCategory=Personalizované skupiny
+GroupByAccountAccounting=Seskupte účetní účet
+AccountingAccountGroupsDesc=Zde můžete definovat některé skupiny účetních účtů. Budou se používat pro personalizované účetní výkazy.
+ByAccounts=Podle účtů
+ByPredefinedAccountGroups=Podle předdefinovaných skupin
+ByPersonalizedAccountGroups=Individuálními skupinami
+ByYear=Podle roku
+NotMatch=Nenastaveno
+DeleteMvt=Odstraňte řádky knihy
+DelYear=Odstrannění roku
+DelJournal=Journal, který chcete smazat
+ConfirmDeleteMvt=Tímto se odstraní všechny řádky Ledgeru za rok a / nebo z určitého časopisu. Je požadováno alespoň jedno kritérium.
+ConfirmDeleteMvtPartial=Tímto bude smazána transakce z Ledger (všechny řádky související se stejnou transakcí budou smazány)
+FinanceJournal=Finanční deník
+ExpenseReportsJournal=Výdajové zprávy journal
+DescFinanceJournal=Finanční deník včetně všech typů plateb prostřednictvím bankovního účtu
+DescJournalOnlyBindedVisible=Toto je pohled na záznam, který je vázán na účet a může být zaznamenán do knihy.
+VATAccountNotDefined=Účet pro DPH není definován
+ThirdpartyAccountNotDefined=Účet subjektu není definován
+ProductAccountNotDefined=Účet pro výrobek není definován
+FeeAccountNotDefined=Účet pro poplatek není definováno
+BankAccountNotDefined=Účet pro banku není definován
+CustomerInvoicePayment=Platba zákaznické faktury
+ThirdPartyAccount=Účet subjektu
+NewAccountingMvt=Nová transakce
+NumMvts=Číslo transakce
+ListeMvts=Seznam pohybů
+ErrorDebitCredit=Debit a úvěr nemohou mít současně hodnotu
+AddCompteFromBK=Přidat účetní účty do skupiny
+ReportThirdParty=Seznam účtů subjektu
+DescThirdPartyReport=Zde naleznete seznam zákazníků a prodejců subjektů a jejich účty
+ListAccounts=Seznam účetních účtů
+UnknownAccountForThirdparty=Neznámý účet subjektu. Použijeme %s
+UnknownAccountForThirdpartyBlocking=Neznámý účet subjektu. Chyba blokování
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. We will use %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Účet subjektu není definován nebo neznámý subjekt. Chyba blokování.
+UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Neznámý účet subjektu a účet čekání není definován. Chyba blokování
+PaymentsNotLinkedToProduct=Platba není spojena s žádným produktem / službou
+
+Pcgtype=Skupina účtů
+Pcgsubtype=Podskupina účtu
+PcgtypeDesc=Skupina a podskupina účtu jsou používány jako předdefinované kritéria pro filtrování a seskupování pro některé účetní výkazy. Například "INCOME" nebo "EXPENSE" jsou používány jako skupiny účetních účtů produktů pro sestavení výkazu výdajů / výnosů.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 TotalVente=Celkový obrat před zdaněním
 TotalMarge=Celkové tržby marže
 
 DescVentilCustomer=Zde naleznete seznam zákaznických fakturačních řádků vázaných (nebo nikoliv) na účet účetnictví produktu
+<<<<<<< HEAD
 DescVentilMore=Ve většině případů, pokud používáte předdefinované produkty nebo služby a nastavíte číslo účtu na výrobek / služebního průkazu, žádost bude schopen provést všechny vazby mezi svými faktuře řádky a účetní evidence grafu účtů jen v jedno kliknutí na tlačítko <strong> "%s" </ strong>. Je-li účet nebyl nastaven na výrobku / služby karty, nebo pokud má stále některé řádky není vázán na jiný účet, budete muset provést ruční vazby z menu „<strong> %s </ strong>“.
 DescVentilDoneCustomer=Seznamte se zde se seznamem řádků faktur zákazníků a jejich účetních účtů
 DescVentilTodoCustomer=Prověřit fakturační řádky, které již nejsou vázány účtem účetnictví produktu
@@ -233,12 +428,45 @@ NotYetAccounted=Not yet accounted in ledger
 ## Admin
 ApplyMassCategories=Aplikovat hmotnostní kategorie
 AddAccountFromBookKeepingWithNoCategories=Available acccount not yet in a personalized group
+=======
+DescVentilMore=Ve většině případů, pokud používáte předdefinované produkty nebo služby a nastavíte číslo účtu na kartě produktu / služby, aplikace bude schopna provést veškerou vazbu mezi vašimi fakturačními řádky a účtem účtu vašeho účtového osvědčení, a to pouze v jedním kliknutím tlačítkem <strong> "%s" </strong>. Pokud účet nebyl nastaven na kartě produktů / služeb nebo pokud máte ještě nějaké řádky, které nejsou vázány na účet, musíte z nabídky "<strong> %s </strong>" provést ruční vazbu.
+DescVentilDoneCustomer=Seznamte se zde se seznamem řádků faktur zákazníků a jejich účetních účtů
+DescVentilTodoCustomer=Vázat fakturační řádky, které již nejsou vázány účtem účetnictví produktu
+ChangeAccount=Změnit výrobek/službu na účetnm účtu ve vybraných řádcích s následujícím účetním účtem:
+Vide=-
+DescVentilSupplier=Zde naleznete seznam řádků prodejců faktur, které jsou nebo nejsou vázány na účet účetního produktu
+DescVentilDoneSupplier=Zde si přečtěte seznam řádků prodejních faktur a jejich účetní účet
+DescVentilTodoExpenseReport=Vázat řádky výkazu výdajů, které již nejsou vázány účtem účtování poplatků
+DescVentilExpenseReport=Zde si přečtěte seznam výkazů výdajů vázaných (nebo ne) na účty účtování poplatků
+DescVentilExpenseReportMore=Pokud nastavíte účetní účet na řádcích výkazu druhů výdajů, aplikace bude schopna provést veškerou vazbu mezi řádky výkazu výdajů a účetním účtem vašeho účtovacího schématu, a to jedním kliknutím tlačítkem <strong> "%s" </strong>. Pokud účet nebyl nastaven na slovník poplatků nebo máte stále nějaké řádky, které nejsou vázány na žádný účet, budete muset provést ruční vazbu z nabídky "<strong> %s </strong>".
+DescVentilDoneExpenseReport=Poraďte se zde seznam v souladu se zprávami výdajů a jejich poplatků účtování účtu
+
+ValidateHistory=Ověřit automaticky
+AutomaticBindingDone=Automatické vázání provedeno
+
+ErrorAccountancyCodeIsAlreadyUse=Chyba, nelze odstranit tento účetní účet, protože ho zrovna používáte
+MvtNotCorrectlyBalanced=Pohyb není správně vyvážený. Debit = %s | Úvěr = %s
+Balancing=Vyvažování
+FicheVentilation=Ověřovací karta
+GeneralLedgerIsWritten=Transakce jsou zapsány do knihy
+GeneralLedgerSomeRecordWasNotRecorded=Některé transakce nemohly být zveřejněny. Pokud se neobjeví žádná další chybová zpráva, je to pravděpodobně proto, že byly již publikovány.
+NoNewRecordSaved=Žádný další záznam, který by se publikoval
+ListOfProductsWithoutAccountingAccount=Seznam výrobků, které nejsou vázány na kterémkoli účetním účtu
+ChangeBinding=Změnit vazby
+Accounted=Účtováno v knize
+NotYetAccounted=Zatím nebyl zaznamenán v knize
+
+## Admin
+ApplyMassCategories=Aplikovat hmotnostní kategorie
+AddAccountFromBookKeepingWithNoCategories=Dostupný účet ještě není v personalizované skupině
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CategoryDeleted=Kategorie účetního účtu byla odstraněna
 AccountingJournals=účetní deníky
 AccountingJournal=Účetní deník
 NewAccountingJournal=Nový účetní deník
 ShowAccoutingJournal=Zobrazit účetní deník
 Nature=Příroda
+<<<<<<< HEAD
 AccountingJournalType1=Miscellaneous operations
 AccountingJournalType2=Odbyt
 AccountingJournalType3=Nákupy
@@ -280,6 +508,63 @@ PredefinedGroups=Predefined groups
 WithoutValidAccount=Bez platného zvláštním účtu
 WithValidAccount=S platným zvláštním účtu
 ValueNotIntoChartOfAccount=Tato hodnota účetního účtu neexistuje v účtu
+=======
+AccountingJournalType1=Různé operace
+AccountingJournalType2=Odbyt
+AccountingJournalType3=Nákupy
+AccountingJournalType4=Banka
+AccountingJournalType5=Zpráva o nákladech
+AccountingJournalType8=Inventář
+AccountingJournalType9=Má-new
+ErrorAccountingJournalIsAlreadyUse=Tento deník se již používá
+AccountingAccountForSalesTaxAreDefinedInto=Poznámka: Účtovací účet pro daň z prodeje je definován v menu <b> %s </b> - <b> %s </b>
+NumberOfAccountancyEntries=Počet vstupů
+NumberOfAccountancyMovements=Počet pohybů
+
+## Export
+ExportDraftJournal=Exportovat deník návrhu
+Modelcsv=Model exportu
+Selectmodelcsv=Vyberte způsob exportu
+Modelcsv_normal=Klasický export
+Modelcsv_CEGID=Export pro CEGID Expert Comptabilité
+Modelcsv_COALA=Export pro společnost Sage Coala
+Modelcsv_bob50=Export pro Sage BOB 50
+Modelcsv_ciel=Export pro Sage Ciel Compta nebo Compta Evolution
+Modelcsv_quadratus=Export pro Quadratus QuadraCompta
+Modelcsv_ebp=Export pro EBP
+Modelcsv_cogilog=Export pro Cogilog
+Modelcsv_agiris=Export pro Agiris
+Modelcsv_openconcerto=Export for OpenConcerto (Test)
+Modelcsv_configurable=Export CSV konfigurovatelný
+Modelcsv_FEC=Export FEC
+Modelcsv_Sage50_Swiss=Export for Sage 50 Switzerland
+ChartofaccountsId=Schéma Id účtů
+
+## Tools - Init accounting account on product / service
+InitAccountancy=Init účetnictví
+InitAccountancyDesc=Tato stránka může být použita k inicializaci účetnictví u produktů a služeb, které nemají účetní účet definovaný pro prodej a nákup.
+DefaultBindingDesc=Tato stránka může být použita k nastavení výchozího účtu, který bude použit pro propojení záznamů o platbách, darování, daních a DPH, pokud již nebyl stanoven žádný účet.
+DefaultClosureDesc=Tato stránka může být použita pro nastavení parametrů, které se mají použít k uzavření rozvahy.
+Options=možnosti
+OptionModeProductSell=prodejní režim
+OptionModeProductSellIntra=Režim prodeje vyváženého v EHS
+OptionModeProductSellExport=Režim prodeje vyvážené v jiných zemích
+OptionModeProductBuy=Nákupní režim
+OptionModeProductSellDesc=Zobrazit všechny produkty s vyúčtováním pro přímý prodej.
+OptionModeProductSellIntraDesc=Zobrazit všechny produkty s účetním účtem pro prodej v EHS.
+OptionModeProductSellExportDesc=Zobrazit všechny produkty s účetním účtem pro ostatní zahraniční prodeje.
+OptionModeProductBuyDesc=Zobrazit všechny produkty které připadají v úvahu pro nákupy.
+CleanFixHistory=Odstraňte účtovací kód z řádků, které neexistují ve schématech účtu
+CleanHistory=Obnovit všechny vazby pro vybraný rok
+PredefinedGroups=Předdefinované skupiny
+WithoutValidAccount=Bez platného zvláštním účtu
+WithValidAccount=S platným zvláštním účtu
+ValueNotIntoChartOfAccount=Tato hodnota účetního účtu neexistuje v účtu
+AccountRemovedFromGroup=Účet byl odstraněn ze skupiny
+SaleLocal=Local sale
+SaleExport=Export sale
+SaleEEC=Sale in EEC
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 ## Dictionary
 Range=Řada účetních účtu
@@ -287,6 +572,7 @@ Calculated=počítáno
 Formula=Vzorec
 
 ## Error
+<<<<<<< HEAD
 SomeMandatoryStepsOfSetupWereNotDone=Some mandatory steps of setup was not done, please complete them
 ErrorNoAccountingCategoryForThisCountry=Účetnictví skupiny účtů není k dispozici pro země %s (viz Home - instalace - slovníky)
 ErrorInvoiceContainsLinesNotYetBounded=You try to journalize some lines of the invoice <strong>%s</strong>, but some other lines are not yet bounded to accounting account. Journalization of all invoice lines for this invoice are refused.
@@ -304,3 +590,22 @@ ImportAccountingEntries=Accounting entries
 WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manualy in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
 ExpenseReportJournal=Expense Report Journal
 InventoryJournal=Inventory Journal
+=======
+SomeMandatoryStepsOfSetupWereNotDone=Některé povinné kroky nastavení nebyly provedeny, vyplňte je
+ErrorNoAccountingCategoryForThisCountry=Účetnictví skupiny účtů není k dispozici pro země %s (viz Home - instalace - slovníky)
+ErrorInvoiceContainsLinesNotYetBounded=Pokoušíte se publikovat některé řádky faktury <strong> %s </strong>, ale některé další řádky ještě nejsou ohraničeny účetním účtem. Pro tuto fakturu jsou odmítnuty všechny fakturační řádky.
+ErrorInvoiceContainsLinesNotYetBoundedShort=Některé řádky na faktuře nejsou vázány na účetní účet.
+ExportNotSupported=Exportní formát setuped není podporován na této stránce
+BookeppingLineAlreayExists=Linky již existující v účetnictví
+NoJournalDefined=Žádný deník nebyl definován
+Binded=linky vázané
+ToBind=Linky k vazbě
+UseMenuToSetBindindManualy=Řádky, které ještě nejsou vázány, použijte nabídku <a href="%s"> %s </a> k vytvoření vazby ručně
+
+## Import
+ImportAccountingEntries=Účetní zápisy
+DateExport=Date export
+WarningReportNotReliable=Upozornění: Tento přehled není založen na záznamníku, takže neobsahuje transakci upravenou ručně v Knihovně. Je-li vaše deník aktuální, zobrazení účetnictví je přesnější.
+ExpenseReportJournal=Účet výkazů výdajů
+InventoryJournal=Inventářový věstník
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

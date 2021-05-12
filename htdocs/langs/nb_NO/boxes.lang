@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - boxes
 BoxLoginInformation=Innloggingsinformasjon
+<<<<<<< HEAD
 BoxLastRssInfos=Rss informasjon
 BoxLastProducts=Siste %s produkter/tjenester
 BoxProductsAlertStock=Varsling for lavt lagernivå
@@ -8,11 +9,25 @@ BoxLastSupplierBills=Siste leverandørfakturaer
 BoxLastCustomerBills=Siste kundefakturaer
 BoxOldestUnpaidCustomerBills=Eldste ubetalte kundefakturaer
 BoxOldestUnpaidSupplierBills=Eldste ubetalte leverandørfakturaer
+=======
+BoxLastRssInfos=RSS Information
+BoxLastProducts=Latest %s Products/Services
+BoxProductsAlertStock=Varsling for lavt lagernivå
+BoxLastProductsInContract=Siste %s varer/tjenester i kontrakter
+BoxLastSupplierBills=Latest Vendor invoices
+BoxLastCustomerBills=Latest Customer invoices
+BoxOldestUnpaidCustomerBills=Eldste ubetalte kundefakturaer
+BoxOldestUnpaidSupplierBills=Oldest unpaid vendor invoices
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BoxLastProposals=Siste tilbud
 BoxLastProspects=Sist endrede prospekter
 BoxLastCustomers=Siste endrede kunder
 BoxLastSuppliers=Siste endrede leverandører
+<<<<<<< HEAD
 BoxLastCustomerOrders=Siste kundeordre
+=======
+BoxLastCustomerOrders=Latest sales orders
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BoxLastActions=Siste hendelser
 BoxLastContracts=Siste kontrakter
 BoxLastContacts=Siste kontakter/adresser
@@ -20,6 +35,7 @@ BoxLastMembers=Siste medlemmer
 BoxFicheInter=Siste intervensjoner
 BoxCurrentAccounts=Åpne kontobalanse
 BoxTitleLastRssInfos=Siste %s nyheter fra %s
+<<<<<<< HEAD
 BoxTitleLastProducts=Siste %s endrede produkter/tjenester
 BoxTitleProductsAlertStock=Varsel om varer på lager
 BoxTitleLastSuppliers=Siste %s registrerte leverandører
@@ -36,6 +52,24 @@ BoxTitleOldestUnpaidSupplierBills=Eldste %s ubetalte leverandørfakturaer
 BoxTitleCurrentAccounts=Åpne kontobalanser
 BoxTitleLastModifiedContacts=Siste %s endrede kontakter/adresser
 BoxMyLastBookmarks=Mine siste %s bokmerker
+=======
+BoxTitleLastProducts=Products/Services: last %s modified
+BoxTitleProductsAlertStock=Varer: lagervarsel
+BoxTitleLastSuppliers=Siste %s registrerte leverandører
+BoxTitleLastModifiedSuppliers=Vendors: last %s modified
+BoxTitleLastModifiedCustomers=Customers: last %s modified
+BoxTitleLastCustomersOrProspects=Siste %s endrede kunder eller prospekter
+BoxTitleLastCustomerBills=Latest %s Customer invoices
+BoxTitleLastSupplierBills=Latest %s Vendor invoices
+BoxTitleLastModifiedProspects=Prospects: last %s modified
+BoxTitleLastModifiedMembers=Siste %s medlemmer
+BoxTitleLastFicheInter=Siste %s endrede intervensjoner
+BoxTitleOldestUnpaidCustomerBills=Kundefakturaer: eldste %s ubetalt
+BoxTitleOldestUnpaidSupplierBills=Vendor Invoices: oldest %s unpaid
+BoxTitleCurrentAccounts=Åpne kontoer: balanser
+BoxTitleLastModifiedContacts=Contacts/Addresses: last %s modified
+BoxMyLastBookmarks=Bookmarks: latest %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BoxOldestExpiredServices=Eldste aktive utløpte tjenester
 BoxLastExpiredServices=Siste %s eldste kontakter med aktive, utgåtte tjenseter
 BoxTitleLastActionsToDo=Siste %s handlinger å utføre
@@ -45,24 +79,38 @@ BoxTitleLastModifiedExpenses=Siste %s endrede utgiftsrapporter
 BoxGlobalActivity=Global aktivitet (fakturaer, tilbud, ordrer)
 BoxGoodCustomers=Gode kunder
 BoxTitleGoodCustomers=%s gode kunder
+<<<<<<< HEAD
 FailedToRefreshDataInfoNotUpToDate=Klarte ikke å oppfriske RSS-strøm. Siste vellykkede oppfriskningsdato: %s
+=======
+FailedToRefreshDataInfoNotUpToDate=Kunne ikke oppdatere RSS-flux. Siste vellykkede oppdateringsdato: %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LastRefreshDate=Siste oppdateringsdato
 NoRecordedBookmarks=Ingen bokmerker definert. Trykk <a href="%s">her</a> for å legge til bokmerker.
 ClickToAdd=Klikk her for å legge til.
 NoRecordedCustomers=Ingen registrerte kunder
 NoRecordedContacts=Ingen registrerte kontakter
 NoActionsToDo=Ingen åpne handlinger
+<<<<<<< HEAD
 NoRecordedOrders=Ingen registrerte kundeordre
 NoRecordedProposals=Ingen registrerte tilbud
 NoRecordedInvoices=Ingen registrerte kundefakturaer
 NoUnpaidCustomerBills=Ingen ubetalte kundefakturaer
 NoUnpaidSupplierBills=Ingen ubetalte leverandørfakturaer
 NoModifiedSupplierBills=Ingen registrerte leverandørfakturaer
+=======
+NoRecordedOrders=No recorded sales orders
+NoRecordedProposals=Ingen registrerte tilbud
+NoRecordedInvoices=Ingen registrerte kundefakturaer
+NoUnpaidCustomerBills=Ingen ubetalte kundefakturaer
+NoUnpaidSupplierBills=No unpaid vendor invoices
+NoModifiedSupplierBills=No recorded vendor invoices
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoRecordedProducts=Ingen registrerte varer/tjenester
 NoRecordedProspects=Ingen registrerte prospekter
 NoContractedProducts=Ingen innleide varer/tjenester
 NoRecordedContracts=Ingen registrerte kontrakter
 NoRecordedInterventions=Ingen registrerte intervensjoner
+<<<<<<< HEAD
 BoxLatestSupplierOrders=Siste leverandørordrer
 NoSupplierOrder=Ingen registrerte leveradørordrer
 BoxCustomersInvoicesPerMonth=Kundefakturaer pr. mnd.
@@ -79,8 +127,30 @@ BoxTitleLastModifiedCustomerBills=Siste %s endrede kundefakturaer
 BoxTitleLastModifiedCustomerOrders=Siste %s endrede kundeordre
 BoxTitleLastModifiedPropals=Siste %s endrede tilbud
 ForCustomersInvoices=Kundens fakturaer
+=======
+BoxLatestSupplierOrders=Latest purchase orders
+NoSupplierOrder=No recorded purchase order
+BoxCustomersInvoicesPerMonth=Kundefakturaer per måned
+BoxSuppliersInvoicesPerMonth=Vendor Invoices per month
+BoxCustomersOrdersPerMonth=Sales Orders per month
+BoxSuppliersOrdersPerMonth=Vendor Orders per month
+BoxProposalsPerMonth=Tilbud pr. mnd.
+NoTooLowStockProducts=Ingen produkter er under lagergrensen
+BoxProductDistribution=Varer/Tjenester Distribusjon
+ForObject=On %s
+BoxTitleLastModifiedSupplierBills=Vendor Invoices: last %s modified
+BoxTitleLatestModifiedSupplierOrders=Vendor Orders: last %s modified
+BoxTitleLastModifiedCustomerBills=Customer Invoices: last %s modified
+BoxTitleLastModifiedCustomerOrders=Sales Orders: last %s modified
+BoxTitleLastModifiedPropals=Siste %s endrede tilbud
+ForCustomersInvoices=Kundefakturaer
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ForCustomersOrders=Kundeordrer
 ForProposals=Tilbud
 LastXMonthRolling=De siste %s måneders omsetning
 ChooseBoxToAdd=Legg widget til i kontrollpanelet
 BoxAdded=Widget ble lagt til i kontrollpanelet ditt
+<<<<<<< HEAD
+=======
+BoxTitleUserBirthdaysOfMonth=Birthdays of this month
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

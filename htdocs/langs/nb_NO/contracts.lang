@@ -38,7 +38,11 @@ ConfirmValidateContract=Er du sikker på at du vil validere denne kontrakten med
 ConfirmActivateAllOnContract=Dette åpner alle tjenester (ikke aktiv ennå). Er du sikker på at du vil åpne alle tjenestene?
 ConfirmCloseContract=Dette vil lukke alle tjenester (aktive eller ikke). Er du sikker på at du vil lukke denne kontrakten?
 ConfirmCloseService=Er du sikker på at du vil lukke denne tjenesten med dato <b>%s</b>?
+<<<<<<< HEAD
 ValidateAContract=Godkjenn en kontrakt
+=======
+ValidateAContract=Valider en kontrakt
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActivateService=Aktiver tjeneste
 ConfirmActivateService=Er du sikker på at du vil aktivere denne tjenesten med dato <b>%s</b>?
 RefContract=Kontraktsreferanse
@@ -49,8 +53,13 @@ ListOfInactiveServices=Liste over ikke aktive tjenester
 ListOfExpiredServices=Liste over utløpte, aktive tjenester
 ListOfClosedServices=Liste over lukkede tjenester
 ListOfRunningServices=Overikt over løpende tjenster
+<<<<<<< HEAD
 NotActivatedServices=Ikke aktive tjenester (blant godkjente kontrakter)
 BoardNotActivatedServices=Tjenester til aktivering blant godkjente kontrakter
+=======
+NotActivatedServices=Ikke aktive tjenester (blant validerte kontrakter)
+BoardNotActivatedServices=Tjenester til aktivering blant validerte kontrakter
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LastContracts=Siste %s kontrakter
 LastModifiedServices=Siste %s endrede tjenester
 ContractStartDate=Startdato
@@ -64,10 +73,18 @@ DateStartRealShort=Virkelig startdato
 DateEndReal=Virkelig sluttdato
 DateEndRealShort=Virkelig sluttdato
 CloseService=Lukk tjeneste
+<<<<<<< HEAD
 BoardRunningServices=Utgåtte, løpende tjenester
 ServiceStatus=Tjenestestatus
 DraftContracts=Kontraktskladder
 CloseRefusedBecauseOneServiceActive=Kontrakten kan ikke lukkes ettersom det er minst en åpen tjenste på den
+=======
+BoardRunningServices=Tjenester som kjører
+BoardExpiredServices=Tjenester utløpt
+ServiceStatus=Tjenestestatus
+DraftContracts=Kontraktskladder
+CloseRefusedBecauseOneServiceActive=Kontrakten kan ikke lukkes fordi det er minst en åpen tjeneste på den
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActivateAllContracts=Aktiver alle kontraktlinjer
 CloseAllContracts=Lukk alle kontrakter
 DeleteContractLine=Slett en kontraktlinje
@@ -85,6 +102,7 @@ NoteListOfYourExpiredServices=Denne listen inneholder kun tjenester av kontrakte
 StandardContractsTemplate=Standard kontraktskjema
 ContactNameAndSignature=For %s, navn og signatur:
 OnlyLinesWithTypeServiceAreUsed=Kun linjer med type "Service" vi bli klonet.
+<<<<<<< HEAD
 CloneContract=Klon kontrakt
 ConfirmCloneContract=Er du sikker på at du vil klone kontrakten <b>%s</b>?
 LowerDateEndPlannedShort=Nedre planlagt sluttdato for aktive tjenester
@@ -94,4 +112,15 @@ TypeContact_contrat_internal_SALESREPSIGN=Salgsrepresentant som signerer kontrak
 TypeContact_contrat_internal_SALESREPFOLL=Salgsrepresentant som følger opp kontrakten
 TypeContact_contrat_external_BILLING=Kundens fakturakontakt
 TypeContact_contrat_external_CUSTOMER=Kundens oppfølgingskontakt
+=======
+ConfirmCloneContract=Er du sikker på at du vil klone kontrakten <b>%s</b>?
+LowerDateEndPlannedShort=Nedre planlagt sluttdato for aktive tjenester
+SendContractRef=Kontraktsinformasjon __REF__
+OtherContracts=Andre kontrakter
+##### Types de contacts #####
+TypeContact_contrat_internal_SALESREPSIGN=Salgsrepresentant som signerer kontrakten
+TypeContact_contrat_internal_SALESREPFOLL=Salgsrepresentant som følger opp kontrakten
+TypeContact_contrat_external_BILLING=Kundekontakt faktura
+TypeContact_contrat_external_CUSTOMER=Kundekontakt oppfølging
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TypeContact_contrat_external_SALESREPSIGN=Kundens signaturkontakt

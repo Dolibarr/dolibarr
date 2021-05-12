@@ -28,3 +28,7 @@ ErrorStockIsNotEnough=Le stock est insuffisant
 Shippable=Expédiable
 NonShippable=Non expédiable
 ShowReceiving=Afficher le bon de réception
+<<<<<<< HEAD
+=======
+NonExistentOrder=Commande inexistante
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

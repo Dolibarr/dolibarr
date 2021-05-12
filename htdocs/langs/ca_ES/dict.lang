@@ -160,7 +160,11 @@ CountryMD=Moldàvia
 CountryMN=Mongòlia
 CountryMS=Monserrat
 CountryMZ=Moçambic
+<<<<<<< HEAD
 CountryMM=Birmània (Myanmar)
+=======
+CountryMM=Myanmar (Birmània)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryNA=Namíbia
 CountryNR=Nauru
 CountryNP=Nepal
@@ -223,7 +227,11 @@ CountryTO=Tonga
 CountryTT=Trinité-et-Tobago
 CountryTR=Turquia
 CountryTM=Turkmenistan
+<<<<<<< HEAD
 CountryTC=Illes Turks i Caicos
+=======
+CountryTC=Illes turques i caicos
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryTV=Tuvalu
 CountryUG=Uganda
 CountryUA=Ucraïna
@@ -277,7 +285,11 @@ CurrencySingMGA=Ariary
 CurrencyMUR=Rupies mauritanes
 CurrencySingMUR=Rupia mauritana
 CurrencyNOK=Corones noruegues
+<<<<<<< HEAD
 CurrencySingNOK=Corona noruega
+=======
+CurrencySingNOK=Cronas noruegues
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrencyTND=TND
 CurrencySingTND=Dinar tunisià
 CurrencyUSD=Dòlars USA
@@ -290,6 +302,10 @@ CurrencyXOF=Francs CFA BCEAO
 CurrencySingXOF=Franc CFA BCEAO
 CurrencyXPF=Francs CFP
 CurrencySingXPF=Franc CFP
+<<<<<<< HEAD
+=======
+CurrencyCentEUR=cèntims
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrencyCentSingEUR=cèntim
 CurrencyCentINR=paisa
 CurrencyCentSingINR=paise
@@ -306,6 +322,10 @@ DemandReasonTypeSRC_WOM=Boca a boca
 DemandReasonTypeSRC_PARTNER=Soci
 DemandReasonTypeSRC_EMPLOYEE=Empleat
 DemandReasonTypeSRC_SPONSORING=Patrocinador
+<<<<<<< HEAD
+=======
+DemandReasonTypeSRC_SRC_CUSTOMER=Contacte entrant d'un client
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 #### Paper formats ####
 PaperFormatEU4A0=Format 4A0
 PaperFormatEU2A0=Format 2A0

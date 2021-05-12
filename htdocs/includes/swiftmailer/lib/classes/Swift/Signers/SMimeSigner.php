@@ -278,7 +278,11 @@ class Swift_Signers_SMimeSigner implements Swift_Signers_BodySigner
             $args[] = $this->extraCerts;
         }
 
+<<<<<<< HEAD
         if (!openssl_pkcs7_sign(...$args)) {
+=======
+        if (!call_user_func_array('openssl_pkcs7_sign', $args)) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             throw new Swift_IoException(sprintf('Failed to sign S/Mime message. Error: "%s".', openssl_error_string()));
         }
 

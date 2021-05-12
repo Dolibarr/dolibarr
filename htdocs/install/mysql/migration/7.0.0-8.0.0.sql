@@ -560,3 +560,8 @@ UPDATE llx_advtargetemailing SET fk_element = fk_mailing, type_element='mailing'
 ALTER TABLE llx_advtargetemailing DROP COLUMN fk_mailing;
 
 DROP TABLE llx_ticket_logs;
+<<<<<<< HEAD
+=======
+
+ALTER TABLE llx_actioncomm MODIFY COLUMN code varchar(50);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

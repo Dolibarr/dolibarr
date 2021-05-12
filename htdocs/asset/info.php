@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2018      Alexandre Spangaro   <aspangaro@zendsi.com>
+=======
+/* Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +20,11 @@
  */
 
 /**
+<<<<<<< HEAD
  *  \file       info.php
+=======
+ *  \file       htdocs/asset/info.php
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *  \ingroup    asset
  *  \brief      Page to show an asset information
  */
@@ -29,9 +37,15 @@ require_once DOL_DOCUMENT_ROOT.'/asset/class/asset.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("asset"));
 
+<<<<<<< HEAD
 $id = GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
 $action=GETPOST('action','alpha');
+=======
+$id = GETPOST('id', 'int');
+$ref=GETPOST('ref', 'alpha');
+$action=GETPOST('action', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -55,7 +69,11 @@ $form = new Form($db);
 
 $object->info($id);
 
+<<<<<<< HEAD
 $head = AssetsPrepareHead($object);
+=======
+$head = asset_prepare_head($object);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 dol_fiche_head($head, 'info', $langs->trans("Asset"), -1, 'generic');
 
@@ -79,5 +97,9 @@ print '</div>';
 
 dol_fiche_end();
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=إعداد وحدة PayBox
+<<<<<<< HEAD
 PayBoxDesc=This module offer pages to allow payment on <a href="http://www.paybox.com" target=هذا نموذج للسماح بعرض الصفحات على دفع <a href="http://www.paybox.com" target="_blank">Paybox</a> الواحد. هذه يمكن استخدامها لدفع حر أو لدفع مبلغ معين على وجوه Dolibarr (الفاتورة ، والنظام ،...)
 FollowingUrlAreAvailableToMakePayments=فيما يلي عناوين المواقع المتاحة لعرض هذه الصفحة زبون لتسديد دفعة Dolibarr على الأجسام
 PaymentForm=شكل الدفع
@@ -36,3 +37,43 @@ PAYBOX_PAYONLINE_SENDEMAIL=البريد الإلكتروني لتحذير بعد
 PAYBOX_PBX_SITE=قيمة PBX SITE
 PAYBOX_PBX_RANG=قيمة PBX رانج
 PAYBOX_PBX_IDENTIFIANT=قيمة PBX ID
+=======
+PayBoxDesc=تعرض صفحات نموذج الوحدة هذه الدفعات على <a href="http://www.paybox.com" target="_blank"> Paybox</a> من قبل العملاء. هذا يمكن استخدامها للدفع مجانا أو للدفع على عنصر دوليبار معين (الفاتورة، طلب، ...)
+FollowingUrlAreAvailableToMakePayments=تتوفر عناوين URL التالية لتقديم صفحة إلى عميل لإجراء دفعة على عناصر دوليبار
+PaymentForm=نموذج الدفع
+WelcomeOnPaymentPage=Welcome to our online payment service
+ThisScreenAllowsYouToPay=هذه الشاشة تسمح لك بإجراء الدفع عبر الإنترنت إلى %s.
+ThisIsInformationOnPayment=هذه هي معلومات عن الدفع للقيام به
+ToComplete=لإكمال
+YourEMail=البريد الإلكتروني لتلقي تأكيد الدفع
+Creditor=دائن
+PaymentCode=رمز الدفع
+PayBoxDoPayment=Pay with Paybox
+ToPay=القيام بالدفع
+YouWillBeRedirectedOnPayBox=سيتم إعادة توجيهك على صفحة Paybox الأمنة لإدخال معلومات بطاقة الائتمان الخاصة بك
+Continue=التالي
+ToOfferALinkForOnlinePayment=عنوان URL للدفع %s
+ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment user interface for a sales order
+ToOfferALinkForOnlinePaymentOnInvoice=URL لتقديم واجهة مستخدم الدفع عبر الإنترنت %s لفاتورة العميل
+ToOfferALinkForOnlinePaymentOnContractLine=URL لتقديم %s واجهة مستخدم الدفع عبر الإنترنت لخط العقد
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL لتقديم واجهة مستخدم الدفع عبر الإنترنت %s مقابل مبلغ مجاني
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL لتقديم %s واجهة مستخدم الدفع عبر الإنترنت للحصول على اشتراك عضو
+ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment, user interface for payment of donation
+YouCanAddTagOnUrl=يمكنك أيضا إضافة معلمة عنوان url <b>&tag=<i>value</i></b> إلى أي من عنوان urlهذا (مطلوب فقط للدفع المجاني) لإضافة علامة تعليق الدفع الخاصة بك.
+SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
+YourPaymentHasBeenRecorded=تؤكد هذه الصفحة أنه قد تم تسجيل دفعتك. شكرا لكم.
+YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
+AccountParameter=معلمات الحساب
+UsageParameter=معلمات الاستخدام
+InformationToFindParameters=مساعدة للعثور على معلومات الحساب الخاص بك %s
+PAYBOX_CGI_URL_V2=Url من Paybox CGI وحدة للدفع
+VendorName=اسم البائع
+CSSUrlForPaymentForm=CSS style sheet url  لنموذج الدفع
+NewPayboxPaymentReceived=تلقى الدفع Paybox الجديد
+NewPayboxPaymentFailed=دفع Paybox جديد حاول ولكنه فشل
+PAYBOX_PAYONLINE_SENDEMAIL=Email notification after payment attempt (success or fail)
+PAYBOX_PBX_SITE=قيمة PBX SITE
+PAYBOX_PBX_RANG=قيمة PBX رانج
+PAYBOX_PBX_IDENTIFIANT=قيمة PBX ID
+PAYBOX_HMAC_KEY=HMAC key
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

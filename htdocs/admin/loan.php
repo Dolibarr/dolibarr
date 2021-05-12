@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2014-2017  Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+=======
+/* Copyright (C) 2014-2017  Alexandre Spangaro	<aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,7 +84,11 @@ $form = new Form($db);
 if (! empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+<<<<<<< HEAD
 print load_fiche_titre($langs->trans('ConfigLoan'),$linkback,'title_setup');
+=======
+print load_fiche_titre($langs->trans('ConfigLoan'), $linkback, 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -122,5 +130,9 @@ print "</table>\n";
 
 print '<br><div style="text-align:center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

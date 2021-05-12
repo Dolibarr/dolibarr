@@ -21,12 +21,21 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
+<<<<<<< HEAD
 if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK",'1');
 
 require_once("../master.inc.php");
 require_once(NUSOAP_PATH.'/nusoap.php');		// Include SOAP
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
 require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
+=======
+if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK", '1');
+
+require "../master.inc.php";
+require_once NUSOAP_PATH.'/nusoap.php';		// Include SOAP
+require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
+require_once DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 dol_syslog("Call Dolibarr webservices interfaces");
@@ -36,7 +45,11 @@ if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
 {
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
+<<<<<<< HEAD
 	print $langs->trans("WarningModuleNotActive",'WebServices').'.<br><br>';
+=======
+	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print $langs->trans("ToActivateModule");
 	exit;
 }
@@ -46,7 +59,11 @@ $server = new nusoap_server();
 $server->soap_defencoding='UTF-8';
 $server->decode_utf8=false;
 $ns='http://www.dolibarr.org/ns/';
+<<<<<<< HEAD
 $server->configureWSDL('WebServicesDolibarrCategorie',$ns);
+=======
+$server->configureWSDL('WebServicesDolibarrCategorie', $ns);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $server->wsdl->schemaTargetNamespace=$ns;
 
 
@@ -92,7 +109,11 @@ $server->wsdl->addComplexType(
 /*
  * Les catégories filles, sous tableau dez la catégorie
  */
+<<<<<<< HEAD
  $server->wsdl->addComplexType(
+=======
+$server->wsdl->addComplexType(
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     'FillesArray',
     'complexType',
     'array',
@@ -108,6 +129,7 @@ $server->wsdl->addComplexType(
  /*
   * Image of product
  */
+<<<<<<< HEAD
  $server->wsdl->addComplexType(
  		'PhotosArray',
  		'complexType',
@@ -123,10 +145,28 @@ $server->wsdl->addComplexType(
  				)
  		)
  );
+=======
+$server->wsdl->addComplexType(
+		'PhotosArray',
+		'complexType',
+		'array',
+		'sequence',
+		'',
+		array(
+				'image' => array(
+						'name' => 'image',
+						'type' => 'tns:image',
+						'minOccurs' => '0',
+						'maxOccurs' => 'unbounded'
+				)
+		)
+);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
  /*
   * An image
  */
+<<<<<<< HEAD
  $server->wsdl->addComplexType(
  		'image',
  		'complexType',
@@ -140,6 +180,21 @@ $server->wsdl->addComplexType(
  				'imgHeight' => array('name'=>'imgHeight','type'=>'xsd:string')
  		)
  );
+=======
+$server->wsdl->addComplexType(
+		'image',
+		'complexType',
+		'struct',
+		'all',
+		'',
+		array(
+				'photo' => array('name'=>'photo','type'=>'xsd:string'),
+				'photo_vignette' => array('name'=>'photo_vignette','type'=>'xsd:string'),
+				'imgWidth' => array('name'=>'imgWidth','type'=>'xsd:string'),
+				'imgHeight' => array('name'=>'imgHeight','type'=>'xsd:string')
+		)
+);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 /*
  * Retour
@@ -186,10 +241,19 @@ $server->register(
  * @param	int			$id					Id of object
  * @return	mixed
  */
+<<<<<<< HEAD
 function getCategory($authentication,$id)
 {
 	global $db,$conf,$langs;
 
+=======
+function getCategory($authentication, $id)
+{
+	global $db,$conf,$langs;
+
+	$nbmax = 10;
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	dol_syslog("Function: getCategory login=".$authentication['login']." id=".$id);
 
 	if ($authentication['entity']) $conf->entity=$authentication['entity'];
@@ -197,7 +261,11 @@ function getCategory($authentication,$id)
 	$objectresp=array();
 	$errorcode='';$errorlabel='';
 	$error=0;
+<<<<<<< HEAD
 	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+=======
+	$fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	if (! $error && !$id)
 	{
@@ -209,6 +277,10 @@ function getCategory($authentication,$id)
 	{
 		$fuser->getrights();
 
+<<<<<<< HEAD
+=======
+		$nbmax = 10;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if ($fuser->rights->categorie->lire)
 		{
 			$categorie=new Categorie($db);
@@ -216,7 +288,11 @@ function getCategory($authentication,$id)
 			if ($result > 0)
 			{
 					$dir = (!empty($conf->categorie->dir_output)?$conf->categorie->dir_output:$conf->service->dir_output);
+<<<<<<< HEAD
 					$pdir = get_exdir($categorie->id,2,0,0,$categorie,'category') . $categorie->id ."/photos/";
+=======
+					$pdir = get_exdir($categorie->id, 2, 0, 0, $categorie, 'category') . $categorie->id ."/photos/";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					$dir = $dir . '/'. $pdir;
 
 					$cat = array(
@@ -228,7 +304,11 @@ function getCategory($authentication,$id)
 						//'visible'=>$categorie->visible,
 						'type' => $categorie->type,
 						'dir' => $pdir,
+<<<<<<< HEAD
 						'photos' => $categorie->liste_photos($dir,$nbmax=10)
+=======
+						'photos' => $categorie->liste_photos($dir, $nbmax)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			    	);
 
 					$cats = $categorie->get_filles();
@@ -237,7 +317,11 @@ function getCategory($authentication,$id)
 					 	foreach($cats as $fille)
 						{
 							$dir = (!empty($conf->categorie->dir_output)?$conf->categorie->dir_output:$conf->service->dir_output);
+<<<<<<< HEAD
 							$pdir = get_exdir($fille->id,2,0,0,$categorie,'category') . $fille->id ."/photos/";
+=======
+							$pdir = get_exdir($fille->id, 2, 0, 0, $categorie, 'category') . $fille->id ."/photos/";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							$dir = $dir . '/'. $pdir;
 							$cat['filles'][] = array(
 								'id'=>$fille->id,
@@ -248,11 +332,17 @@ function getCategory($authentication,$id)
 								//'visible'=>$fille->visible,
 								'type'=>$fille->type,
 								'dir' => $pdir,
+<<<<<<< HEAD
 								'photos' => $fille->liste_photos($dir,$nbmax=10)
 							);
 
 						}
 
+=======
+								'photos' => $fille->liste_photos($dir, $nbmax)
+							);
+						}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					}
 
 			    // Create

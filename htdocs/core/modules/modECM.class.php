@@ -37,7 +37,11 @@ class modECM extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
     */
+<<<<<<< HEAD
 	function __construct($db)
+=======
+    public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$this->db = $db;
 
@@ -48,9 +52,15 @@ class modECM extends DolibarrModules
 		// Family can be 'crm','financial','hr','projects','product','ecm','technic','other'
 		// It is used to sort modules in module setup page
 		$this->family = "ecm";
+<<<<<<< HEAD
 		$this->module_position = 10;
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
+=======
+		$this->module_position = '10';
+		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// Module description used if translation string 'ModuleXXXDesc' not found (XXX is id value)
 		$this->description = "Electronic Content Management";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -129,7 +139,11 @@ class modECM extends DolibarrModules
 							  'mainmenu'=>'ecm',
 							  'url'=>'/ecm/index.php',
 							  'langs'=>'ecm',
+<<<<<<< HEAD
 							  'position'=>100,
+=======
+							  'position'=>82,
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							  'perms'=>'$user->rights->ecm->read || $user->rights->ecm->upload || $user->rights->ecm->setup',
 							  'enabled'=>'$conf->ecm->enabled',
 							  'target'=>'',
@@ -179,4 +193,7 @@ class modECM extends DolibarrModules
 		$r++;
 	}
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

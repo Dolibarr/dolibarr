@@ -30,15 +30,39 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php'
  */
 class mod_codecompta_panicum extends ModeleAccountancyCode
 {
+<<<<<<< HEAD
 	var $nom='Panicum';
 	var $name='Panicum';
 	var $version='dolibarr';        // 'development', 'experimental', 'dolibarr'
+=======
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Panicum';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Panicum';
+
+	/**
+     * Dolibarr version of the loaded document
+     * @var string
+     */
+	public $version = 'dolibarr';        // 'development', 'experimental', 'dolibarr'
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	/**
 	 * 	Constructor
 	 */
+<<<<<<< HEAD
 	function __construct()
+=======
+	public function __construct()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 	}
 
@@ -49,7 +73,11 @@ class mod_codecompta_panicum extends ModeleAccountancyCode
 	 * @param	Translate	$langs	Object langs
 	 * @return 	string      		Description of module
 	 */
+<<<<<<< HEAD
 	function info($langs)
+=======
+	public function info($langs)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return $langs->trans("ModuleCompanyCode".$this->name);
 	}
@@ -62,11 +90,19 @@ class mod_codecompta_panicum extends ModeleAccountancyCode
 	 *  @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 *  @return	string					Example
 	 */
+<<<<<<< HEAD
 	function getExample($langs,$objsoc=0,$type=-1)
+=======
+	public function getExample($langs, $objsoc = 0, $type = -1)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return '';
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *  Set accountancy account code for a third party into this->code
 	 *
@@ -75,6 +111,7 @@ class mod_codecompta_panicum extends ModeleAccountancyCode
 	 *  @param  int		$type			'customer' or 'supplier'
 	 *  @return	int						>=0 if OK, <0 if KO
 	 */
+<<<<<<< HEAD
 	function get_code($db, $societe, $type='')
 	{
 		$this->code='';
@@ -82,9 +119,22 @@ class mod_codecompta_panicum extends ModeleAccountancyCode
 		if (is_object($societe)) {
 			if ($type == 'supplier') $this->code = (! empty($societe->code_compta_fournisseur)?$societe->code_compta_fournisseur:'');
 			else $this->code = (! empty($societe->code_compta)?$societe->code_compta:'');
+=======
+	public function get_code($db, $societe, $type = '')
+	{
+        // phpcs:enable
+		$this->code='';
+
+		if (is_object($societe)) {
+			if ($type == 'supplier') $this->code = (($societe->code_compta_fournisseur != "")?$societe->code_compta_fournisseur:'');
+			else $this->code = (($societe->code_compta != "")?$societe->code_compta:'');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		return 0; // return ok
 	}
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

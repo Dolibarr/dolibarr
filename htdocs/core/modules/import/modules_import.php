@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2005-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
  */
 class ModeleImports
 {
+<<<<<<< HEAD
     public $db;
     public $datatoimport;
 
@@ -41,21 +46,69 @@ class ModeleImports
 	public $version;      // Version of driver
 
 	public $label_lib;    // Label of external lib used by driver
+=======
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    public $datatoimport;
+
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+    /**
+	 * @var int id of driver
+	 */
+	public $id;
+
+    /**
+     * @var string label
+     */
+    public $label;
+
+	public $extension;    // Extension of files imported by driver
+
+	/**
+     * Dolibarr version of driver
+     * @var string
+     */
+	public $version = 'dolibarr';
+
+	public $label_lib;    // Label of external lib used by driver
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	public $version_lib;  // Version of external lib used by driver
 
 	// Array of all drivers
 	public $driverlabel=array();
+<<<<<<< HEAD
 	public $driverdesc=array();
 	public $driverversion=array();
 
 	public $liblabel=array();
+=======
+
+	public $driverdesc=array();
+
+	public $driverversion=array();
+
+	public $liblabel=array();
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	public $libversion=array();
 
 
 	/**
      *  Constructor
 	 */
+<<<<<<< HEAD
 	function __construct()
+=======
+    public function __construct()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 	}
 
@@ -65,7 +118,11 @@ class ModeleImports
 	 *
 	 * @return string		Id
 	 */
+<<<<<<< HEAD
 	function getDriverId()
+=======
+    public function getDriverId()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 	    return $this->id;
 	}
@@ -75,7 +132,11 @@ class ModeleImports
 	 *
 	 *	@return string	Label
 	 */
+<<<<<<< HEAD
 	function getDriverLabel()
+=======
+    public function getDriverLabel()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 	    return $this->label;
 	}
@@ -85,7 +146,11 @@ class ModeleImports
 	 *
 	 *	@return string	Description
 	 */
+<<<<<<< HEAD
 	function getDriverDesc()
+=======
+    public function getDriverDesc()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 	    return $this->desc;
 	}
@@ -95,7 +160,11 @@ class ModeleImports
 	 *
 	 * @return string	Driver suffix
 	 */
+<<<<<<< HEAD
 	function getDriverExtension()
+=======
+    public function getDriverExtension()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 	    return $this->extension;
 	}
@@ -105,7 +174,11 @@ class ModeleImports
 	 *
 	 *	@return string	Driver version
 	 */
+<<<<<<< HEAD
 	function getDriverVersion()
+=======
+    public function getDriverVersion()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 	    return $this->version;
 	}
@@ -115,7 +188,11 @@ class ModeleImports
 	 *
 	 *	@return string	Label of external lib
 	 */
+<<<<<<< HEAD
 	function getLibLabel()
+=======
+    public function getLibLabel()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 	    return $this->label_lib;
 	}
@@ -125,21 +202,38 @@ class ModeleImports
 	 *
 	 *	@return string	Version of external lib
 	 */
+<<<<<<< HEAD
 	function getLibVersion()
+=======
+    public function getLibVersion()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 	    return $this->version_lib;
 	}
 
 
+<<<<<<< HEAD
 	/**
 	 *  Charge en memoire et renvoie la liste des modeles actifs
 	 *
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
+     *  Charge en memoire et renvoie la liste des modeles actifs
+     *
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      *  @param	DoliDB	$db     			Database handler
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
+<<<<<<< HEAD
 	function liste_modeles($db,$maxfilenamelength=0)
 	{
+=======
+    public function liste_modeles($db, $maxfilenamelength = 0)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		dol_syslog(get_class($this)."::liste_modeles");
 
 		$dir=DOL_DOCUMENT_ROOT."/core/modules/import/";
@@ -151,7 +245,11 @@ class ModeleImports
         {
     		while (($file = readdir($handle))!==false)
     		{
+<<<<<<< HEAD
     			if (preg_match("/^import_(.*)\.modules\.php/i",$file,$reg))
+=======
+    			if (preg_match("/^import_(.*)\.modules\.php/i", $file, $reg))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     			{
     				$moduleid=$reg[1];
 
@@ -160,7 +258,11 @@ class ModeleImports
     				$classname = "Import".ucfirst($moduleid);
 
     				require_once $file;
+<<<<<<< HEAD
     				$module = new $classname($db,'');
+=======
+    				$module = new $classname($db, '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     				// Picto
     				$this->picto[$module->id]=$module->picto;
@@ -187,7 +289,11 @@ class ModeleImports
 	 *	@param	string	$key	Key
 	 *	@return	string
 	 */
+<<<<<<< HEAD
 	function getPictoForKey($key)
+=======
+    public function getPictoForKey($key)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return $this->picto[$key];
 	}
@@ -198,7 +304,11 @@ class ModeleImports
 	 *	@param	string	$key	Key
 	 *	@return	string
 	 */
+<<<<<<< HEAD
 	function getDriverLabelForKey($key)
+=======
+    public function getDriverLabelForKey($key)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return $this->driverlabel[$key];
 	}
@@ -209,7 +319,11 @@ class ModeleImports
 	 *	@param	string	$key	Key
 	 *	@return	string
 	 */
+<<<<<<< HEAD
 	function getDriverDescForKey($key)
+=======
+    public function getDriverDescForKey($key)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return $this->driverdesc[$key];
 	}
@@ -220,7 +334,11 @@ class ModeleImports
 	 *	@param	string	$key	Key
 	 *	@return	string
 	 */
+<<<<<<< HEAD
 	function getDriverVersionForKey($key)
+=======
+    public function getDriverVersionForKey($key)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return $this->driverversion[$key];
 	}
@@ -231,7 +349,11 @@ class ModeleImports
 	 *	@param	string	$key	Key
 	 *	@return	string
 	 */
+<<<<<<< HEAD
 	function getLibLabelForKey($key)
+=======
+    public function getLibLabelForKey($key)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return $this->liblabel[$key];
 	}
@@ -242,6 +364,7 @@ class ModeleImports
 	 *	@param	string	$key	Key
 	 *	@return	string
 	 */
+<<<<<<< HEAD
 	function getLibVersionForKey($key)
 	{
 		return $this->libversion[$key];
@@ -249,3 +372,10 @@ class ModeleImports
 
 }
 
+=======
+    public function getLibVersionForKey($key)
+	{
+		return $this->libversion[$key];
+	}
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

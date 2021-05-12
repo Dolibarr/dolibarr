@@ -493,7 +493,11 @@ class Swift_Mime_SimpleMessage extends Swift_Mime_MimePart
             '%[1-5]'
             );
 
+<<<<<<< HEAD
         return $priority ?? 3;
+=======
+        return isset($priority) ? $priority : 3;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
     /**

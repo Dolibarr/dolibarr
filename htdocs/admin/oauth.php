@@ -29,7 +29,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php';
 
 
 // Define $urlwithroot
+<<<<<<< HEAD
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+=======
+$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
@@ -77,7 +81,11 @@ llxHeader();
 $form = new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+<<<<<<< HEAD
 print load_fiche_titre($langs->trans('ConfigOAuth'),$linkback,'title_setup');
+=======
+print load_fiche_titre($langs->trans('ConfigOAuth'), $linkback, 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -139,7 +147,10 @@ foreach ($list as $key)
     print '<td><label for="'.$key[2].'">'.$langs->trans($key[2]).'</label></td>';
     print '<td><input type="password" size="100" id="'.$key[2].'" name="'.$key[2].'" value="'.$conf->global->{$key[2]}.'">';
     print '</td></tr>';
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 print '</table>'."\n";
@@ -150,6 +161,10 @@ print '<div class="center"><input type="submit" class="button" value="'.$langs->
 
 print '</form>';
 
+<<<<<<< HEAD
 
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

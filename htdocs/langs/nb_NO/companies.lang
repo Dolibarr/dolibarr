@@ -5,6 +5,7 @@ SelectThirdParty=Velg en tredjepart
 ConfirmDeleteCompany=Er du sikker på at du vil slette dette firmaet og all tilhørende informasjon?
 DeleteContact=Slett kontaktperson
 ConfirmDeleteContact=Er du sikker på at du vil slette denne kontakten og all tilhørende informasjon?
+<<<<<<< HEAD
 MenuNewThirdParty=Ny tredjepart
 MenuNewCustomer=Ny kunde
 MenuNewProspect=Nytt prospekt
@@ -13,6 +14,16 @@ MenuNewPrivateIndividual=Ny privatperson
 NewCompany=New company (prospect, customer, vendor)
 NewThirdParty=New third party (prospect, customer, vendor)
 CreateDolibarrThirdPartySupplier=Create a third party (vendor)
+=======
+MenuNewThirdParty=Ny tredje part
+MenuNewCustomer=Ny kunde
+MenuNewProspect=Nytt prospekt
+MenuNewSupplier=Ny leverandør
+MenuNewPrivateIndividual=Ny privatperson
+NewCompany=Nytt selskap (prospekt, kunde, leverandør)
+NewThirdParty=Ny tredjepart (prospekt, kunde, leverandør)
+CreateDolibarrThirdPartySupplier=Opprett en tredjepart (leverandør)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CreateThirdPartyOnly=Opprett tredjepart
 CreateThirdPartyAndContact=Opprett en tredjepart med underkontakt
 ProspectionArea=Prospektområde
@@ -20,6 +31,7 @@ IdThirdParty=Tredjepart-ID
 IdCompany=Firma-ID
 IdContact=Kontaktperson-ID
 Contacts=Kontakter
+<<<<<<< HEAD
 ThirdPartyContacts=Tredjepartskontakter
 ThirdPartyContact=Tredjepartskontakt
 Company=Bedrift
@@ -29,6 +41,18 @@ AliasNameShort=Alias
 Companies=Bedrifter
 CountryIsInEEC=Landet er en del av det europeiske økonomiske fellesskap
 ThirdPartyName=Tredjepart navn
+=======
+ThirdPartyContacts=Tredjeparts kontakter
+ThirdPartyContact=Tredjeparts kontakt/adresse
+Company=Bedrift
+CompanyName=Firmanavn
+AliasNames=Alias (kommersielt, trademark,...)
+AliasNameShort=Alias ​​Navn
+Companies=Bedrifter
+CountryIsInEEC=Landet er innenfor Det europeiske økonomiske fellesskap
+PriceFormatInCurrentLanguage=Prisvisningsformat i gjeldende språk og valuta
+ThirdPartyName=Tredjepartsnavn
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ThirdPartyEmail=Tredjeparts e-post
 ThirdParty=Tredjepart
 ThirdParties=Tredjeparter
@@ -37,6 +61,7 @@ ThirdPartyProspectsStats=Prospekter
 ThirdPartyCustomers=Kunder
 ThirdPartyCustomersStats=Kunder
 ThirdPartyCustomersWithIdProf12=Kunder med %s eller %s
+<<<<<<< HEAD
 ThirdPartySuppliers=Vendors
 ThirdPartyType=Type tredjepart
 Individual=Privatperson
@@ -44,6 +69,15 @@ ToCreateContactWithSameName=Vil opprette en kontakt/adresse med samme informasjo
 ParentCompany=Morselskap
 Subsidiaries=Datterselskaper
 ReportByMonth=Report by month
+=======
+ThirdPartySuppliers=Leverandører
+ThirdPartyType=Tredjepartstype
+Individual=Privatperson
+ToCreateContactWithSameName=Vil automatisk opprette en kontakt/adresse med samme informasjon som tredjeparten, under tredjeparten. I de fleste tilfeller, selv om tredjeparten er en privatperson, vil det være nok å opprette en tredjepart
+ParentCompany=Morselskap
+Subsidiaries=Datterselskaper
+ReportByMonth=Rapporter etter måned
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ReportByCustomers=Rapporter etter kunde
 ReportByQuarter=Rapporter pr sats
 CivilityCode=Civility code (ikke i Norge)
@@ -69,19 +103,32 @@ Chat=Chat
 PhonePro=Tlf. arbeid
 PhonePerso=Tlf. privat
 PhoneMobile=Tlf. mobil
+<<<<<<< HEAD
 No_Email=Hindre masseutsendelser
+=======
+No_Email=Avvis masse-e-post
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Fax=Faks
 Zip=Postnummer
 Town=Poststed
 Web=Web
 Poste= Posisjon
 DefaultLang=Standardspråk
+<<<<<<< HEAD
 VATIsUsed=Salgsavgift er brukt
 VATIsUsedWhenSelling=This define if this third party includes a sale tax or not when it makes an invoice to its own customers
 VATIsNotUsed=Salgsavgift er ikke brukt
 CopyAddressFromSoc=Fyll inn adressen med tredjepartsadressen
 ThirdpartyNotCustomerNotSupplierSoNoRef=Third party neither customer nor vendor, no available refering objects
 ThirdpartyIsNeitherCustomerNorClientSoCannotHaveDiscounts=Third party neither customer nor supplier, discounts are not available
+=======
+VATIsUsed=MVA brukt
+VATIsUsedWhenSelling=Dette definerer om denne tredjepart inkluderer MVA eller ikke når de fakturerer sine egne kunder
+VATIsNotUsed=Salgsavgift er ikke brukt
+CopyAddressFromSoc=Kopier adresse fra tredjepartsdetaljer
+ThirdpartyNotCustomerNotSupplierSoNoRef=Tredjepart verken kunde eller leverandør, ingen tilgjengelige henvisende objekter
+ThirdpartyIsNeitherCustomerNorClientSoCannotHaveDiscounts=Tredjeparts verken kunde eller leverandør, rabatter er ikke tilgjengelige
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PaymentBankAccount=Bankkonto betaling
 OverAllProposals=Tilbud
 OverAllOrders=Ordre
@@ -96,12 +143,19 @@ LocalTax2IsUsedES= IRPF brukes
 LocalTax2IsNotUsedES= IRPF brukes ikke
 LocalTax1ES=RE
 LocalTax2ES=IRPF
+<<<<<<< HEAD
 TypeLocaltax1ES=RE Type
 TypeLocaltax2ES=IRPF Type
 WrongCustomerCode=Ugyldig kundekode
 WrongSupplierCode=Vendor code invalid
 CustomerCodeModel=Mal kundekode
 SupplierCodeModel=Vendor code model
+=======
+WrongCustomerCode=Ugyldig kundekode
+WrongSupplierCode=Leverandørkode ugyldig
+CustomerCodeModel=Mal kundekode
+SupplierCodeModel=Leverandørkode modell
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Gencod=Strekkode
 ##### Professional ID #####
 ProfId1Short=Prof. id 1
@@ -258,20 +312,32 @@ ProfId1DZ=RC
 ProfId2DZ=Art.
 ProfId3DZ=NIF
 ProfId4DZ=NIS
+<<<<<<< HEAD
 VATIntra=Salgsavgift-ID
 VATIntraShort=Avgifts-ID
 VATIntraSyntaxIsValid=Gyldig syntaks
 VATReturn=VAT return
+=======
+VATIntra=MVA-ID
+VATIntraShort=MVA-ID
+VATIntraSyntaxIsValid=Gyldig syntaks
+VATReturn=MVA-retur
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProspectCustomer=Prospekt/Kunde
 Prospect=Prospekt
 CustomerCard=Kundekort
 Customer=Kunde
 CustomerRelativeDiscount=Relativ kunderabatt
+<<<<<<< HEAD
 SupplierRelativeDiscount=Relative vendor discount
+=======
+SupplierRelativeDiscount=Relativ leverandørrabatt
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CustomerRelativeDiscountShort=Relativ rabatt
 CustomerAbsoluteDiscountShort=Absolutt rabatt
 CompanyHasRelativeDiscount=Denne kunden har en rabatt på <b>%s%%</b>
 CompanyHasNoRelativeDiscount=Denne kunden har ingen relative rabatter angitt
+<<<<<<< HEAD
 HasRelativeDiscountFromSupplier=You have a default discount of <b>%s%%</b> from this supplier
 HasNoRelativeDiscountFromSupplier=Du har ingen standard relativ rabatt fra denne leverandøren
 CompanyHasAbsoluteDiscount=Denne kunden har tilgjengelige prisavslag (kreditnotaer eller tidligere innbetalinger) for <b>%s</b>%s
@@ -288,6 +354,24 @@ SupplierAbsoluteDiscountAllUsers=Absolute vendor discounts (entered by all users
 SupplierAbsoluteDiscountMy=Absolute vendor discounts (entered by yourself)
 DiscountNone=Ingen
 Supplier=Leverandør
+=======
+HasRelativeDiscountFromSupplier=Du har en standardrabatt på <b> %s%% </b> fra denne leverandøren
+HasNoRelativeDiscountFromSupplier=Du har ingen standard relativ rabatt fra denne leverandøren
+CompanyHasAbsoluteDiscount=Denne kunden har rabatter tilgjengelig (kreditnotaer eller nedbetalinger) for <b> %s </b> %s
+CompanyHasDownPaymentOrCommercialDiscount=Denne kunden har rabatt tilgjengelig (tilbud, nedbetalinger) for <b>%s</b>%s
+CompanyHasCreditNote=Denne kunden har fortsatt kreditnotaer for <b>%s %s</b>
+HasNoAbsoluteDiscountFromSupplier=Du har ingen rabatt tilgjengelig fra denne leverandøren
+HasAbsoluteDiscountFromSupplier=Du har rabatter tilgjengelig (kreditnotaer eller nedbetalinger) for <b> %s </b> %s fra denne leverandøren
+HasDownPaymentOrCommercialDiscountFromSupplier=Du har rabatter tilgjengelig (kommersielle, nedbetalinger) for <b> %s </b> %s fra denne leverandøren
+HasCreditNoteFromSupplier=Du har kreditnotater for <b> %s </b> %s fra denne leverandøren
+CompanyHasNoAbsoluteDiscount=Denne kunden har ingen rabatt tilgjengelig
+CustomerAbsoluteDiscountAllUsers=Absolutte kunderabatter (gitt av alle brukere)
+CustomerAbsoluteDiscountMy=Absolutte kunderabatter (gitt av deg selv)
+SupplierAbsoluteDiscountAllUsers=Absolutte leverandørrabatter (oppgitt av alle brukere)
+SupplierAbsoluteDiscountMy=Absolutt leverandørrabatter (oppgitt av deg selv)
+DiscountNone=Ingen
+Vendor=Leverandør
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddContact=Opprett kontakt
 AddContactAddress=Opprett kontakt/adresse
 EditContact=Endre kontakt
@@ -304,6 +388,7 @@ DeleteACompany=Slett et firma
 PersonalInformations=Personlig informasjon
 AccountancyCode=Regnskapskonto
 CustomerCode=Kundekode
+<<<<<<< HEAD
 SupplierCode=Vendor code
 CustomerCodeShort=Kundekode
 SupplierCodeShort=Vendor code
@@ -318,6 +403,22 @@ CompanyDeleted=Firma "%s" er slettet fra databasen.
 ListOfContacts=Oversikt over kontaktpersoner
 ListOfContactsAddresses=Liste over kontakter / adresser
 ListOfThirdParties=Oversikt over tredjeparter
+=======
+SupplierCode=Leverandørkode
+CustomerCodeShort=Kundenummer
+SupplierCodeShort=Leverandørkode
+CustomerCodeDesc=Kundekode, unikt for alle kunder
+SupplierCodeDesc=Leverandørkode, unikt for alle leverandører
+RequiredIfCustomer=Påkrevet hvis tredjeparten er kunde eller prospekt
+RequiredIfSupplier=Påkrevd hvis tredjepart er en leverandør
+ValidityControledByModule=Gyldighet kontrollert av modulen
+ThisIsModuleRules=Regler for denne modulen
+ProspectToContact=Prospekt til kontakt
+CompanyDeleted=Firma "%s" er slettet fra databasen.
+ListOfContacts=Oversikt over kontaktpersoner
+ListOfContactsAddresses=Oversikt over kontaktpersoner
+ListOfThirdParties=Liste over tredjeparter
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShowCompany=Vis tredjepart
 ShowContact=Vis kontaktperson
 ContactsAllShort=Alle (ingen filter)
@@ -338,6 +439,7 @@ MyContacts=Mine kontaktpersoner
 Capital=Aksjekapital
 CapitalOf=Aksjekapital på %s
 EditCompany=Rediger firma
+<<<<<<< HEAD
 ThisUserIsNot=This user is not a prospect, customer nor vendor
 VATIntraCheck=Sjekk
 VATIntraCheckDesc=Lenken <b>%s</b> slår opp i den europeiske kontrolltjenesten for MVA (gjelder ikke norske foretak). Serveren må ha ekstern internettilgang for at denne funksjonen skal virke.
@@ -347,6 +449,17 @@ VATIntraManualCheck=Du kan også sjekke manuelt på <a href="%s" target="_blank"
 ErrorVATCheckMS_UNAVAILABLE=Sjekk er ikke tilgjengelig. Tjenesten er ikke tilgjengelig for landet (%s).
 NorProspectNorCustomer=Hverken prospekt eller kunde
 JuridicalStatus=Juridisk status
+=======
+ThisUserIsNot=Denne brukeren er ikke et prospekt, kunde eller leverandør
+VATIntraCheck=Sjekk
+VATIntraCheckDesc=MVA-ID-en må inneholde landets prefiks. Koblingen <b> %s </b> bruker den europeiske MVA-kontrolltjenesten (VIES) som krever internettilgang fra Dolibarr-serveren.
+VATIntraCheckURL=http://ec.europa.eu/taxation_customs/vies/vieshome.do
+VATIntraCheckableOnEUSite=Sjekk internasjonal MVA-ID på EU-kommisjonens nettsted
+VATIntraManualCheck=Du kan også sjekke manuelt på den Europeiske kommisjonens nettside <a href="%s" target="_blank"> %s </a>
+ErrorVATCheckMS_UNAVAILABLE=Sjekk er ikke tilgjengelig. Tjenesten er ikke tilgjengelig for landet (%s).
+NorProspectNorCustomer=Ikke prospekt, eller kunde
+JuridicalStatus=Juridisk enhetstype
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Staff=Ansatte
 ProspectLevelShort=Potensiell
 ProspectLevel=Prospektpotensiale
@@ -387,6 +500,7 @@ ExportCardToFormat=Eksporter kort til format
 ContactNotLinkedToCompany=Kontaktpersonen er ikke lenket til noen tredjepart
 DolibarrLogin=Dolibarr innlogging
 NoDolibarrAccess=Ingen tilgang til Dolibarr
+<<<<<<< HEAD
 ExportDataset_company_1=Tredjeparter (Firmaer, organisasjoner, personer) og egenskaper
 ExportDataset_company_2=Kontaktpersoner og egenskaper
 ImportDataset_company_1=Tredjeparter (Firmaer, organisasjoner, personer) og egenskaper
@@ -397,11 +511,25 @@ PriceLevel=Prisnivå
 DeliveryAddress=Leveringsadresse
 AddAddress=Legg til adresse
 SupplierCategory=Vendor category
+=======
+ExportDataset_company_1=Tredjeparter (Selskaper/organisasjoner/fysiske personer) og deres egenskaper
+ExportDataset_company_2=Kontakter og deres egenskaper
+ImportDataset_company_1=Tredjeparter og deres egenskaper
+ImportDataset_company_2=Tredjeparts tilleggs-kontakter/adresser og attributter
+ImportDataset_company_3=Tredjeparts bankkontoer
+ImportDataset_company_4=Tredjeparts salgsrepresentanter (tilordne salgsrepresentanter/brukere til bedrifter)
+PriceLevel=Prisnivå
+PriceLevelLabels=Prisnivåetiketter
+DeliveryAddress=Leveringsadresse
+AddAddress=Legg til adresse
+SupplierCategory=Leverandør kategori
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 JuridicalStatus200=Uavhengig
 DeleteFile=Slett fil
 ConfirmDeleteFile=Er du sikker på at du vil slette denne filen?
 AllocateCommercial=Tildelt salgsrepresentant
 Organization=Organisasjon
+<<<<<<< HEAD
 FiscalYearInformation=Informasjon om regnskapsåret
 FiscalMonthStart=Første måned i regnskapsåret
 YouMustAssignUserMailFirst=Du må opprette e-postadresse for denne brukeren først for være i stand til å legge til e-postvarslinger for ham.
@@ -412,6 +540,18 @@ ListCustomersShort=Liste over kunder
 ThirdPartiesArea=Tredjepart og kontaktområde
 LastModifiedThirdParties=Siste %s endrede tredjeparter
 UniqueThirdParties=Totalt antall unike tredjeparter
+=======
+FiscalYearInformation=Regnskapsår
+FiscalMonthStart=Første måned i regnskapsåret
+YouMustAssignUserMailFirst=Du må opprette en epost for denne brukeren før du kan legge til et e-postvarsel.
+YouMustCreateContactFirst=For å kunne legge til e-postvarsler, må du først definere kontakter med gyldige e-postadresser hos tredjepart
+ListSuppliersShort=Liste over leverandører
+ListProspectsShort=Liste over prospekter
+ListCustomersShort=Liste over kunder
+ThirdPartiesArea=Tredjeparter / Kontakter
+LastModifiedThirdParties=Siste %s endrede tredjeparter
+UniqueThirdParties=Totalt antall tredjeparter
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 InActivity=Åpent
 ActivityCeased=Stengt
 ThirdPartyIsClosed=Tredjepart er stengt
@@ -420,7 +560,11 @@ CurrentOutstandingBill=Gjeldende utestående regning
 OutstandingBill=Max. utestående beløp
 OutstandingBillReached=Maksimun utestående beløp nådd
 OrderMinAmount=Minimumsbeløp for bestilling
+<<<<<<< HEAD
 MonkeyNumRefModelDesc=Return numero with format %syymm-nnnn for customer code and %syymm-nnnn for vendor code where yy is year, mm is month and nnnn is a sequence with no break and no return to 0.
+=======
+MonkeyNumRefModelDesc=Returner nummer med format %syymm-nnnn for kundekode og %syymm-nnnn for leverandørkode hvor yy er år, mm er måned og nnnn er en sekvens uten pause og ingen retur til 0.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LeopardNumRefModelDesc=Fri kode. Denne koden kan endres når som helst.
 ManagingDirectors=(E) navn (CEO, direktør, president ...)
 MergeOriginThirdparty=Dupliser tredjepart (tredjepart du vil slette)
@@ -431,4 +575,15 @@ SaleRepresentativeLogin=Innlogging for salgsrepresentant
 SaleRepresentativeFirstname=Selgers fornavn
 SaleRepresentativeLastname=Selgers etternavn
 ErrorThirdpartiesMerge=Det oppsto en feil ved sletting av tredjepart. Vennligst sjekk loggen. Endringer er blitt tilbakestilt.
+<<<<<<< HEAD
 NewCustomerSupplierCodeProposed=New customer or vendor code suggested on duplicate code
+=======
+NewCustomerSupplierCodeProposed=Kunde eller leverandørkode er allerede brukt, en ny kode blir foreslått
+#Imports
+PaymentTypeCustomer=Betalingstype - Kunde
+PaymentTermsCustomer=Betalingsbetingelser - Kunde
+PaymentTypeSupplier=Betalingstype - Leverandør
+PaymentTermsSupplier=Betalingsbetingelser - Leverandør
+MulticurrencyUsed=Bruk flere valutaer
+MulticurrencyCurrency=Valuta
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -22,15 +22,27 @@
  *		\brief      Top frame to show external web application
  */
 
+<<<<<<< HEAD
 require ("../main.inc.php");
+=======
+require "../main.inc.php";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Load translation files required by the page
 $langs->load("externalsite");
 
+<<<<<<< HEAD
 top_htmlhead("","");
 
 print '<body id="mainbody">' . "\n";
 
 top_menu("","","_top");
+=======
+top_htmlhead("", "");
+
+print '<body id="mainbody">' . "\n";
+
+top_menu("", "", "_top");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print '</body>';

@@ -1,5 +1,10 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
+=======
+/* Copyright (C) 2016   Marcos García   <marcosgdf@gmail.com>
+ * Copyright (C) 2018   Frédéric France <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +24,7 @@ require '../main.inc.php';
 require 'class/ProductAttribute.class.php';
 require 'class/ProductAttributeValue.class.php';
 
+<<<<<<< HEAD
 $id = GETPOST('id','int');
 $valueid = GETPOST('valueid','alpha');
 $action = GETPOST('action','alpha');
@@ -26,6 +32,15 @@ $label = GETPOST('label','alpha');
 $ref = GETPOST('ref','alpha');
 $confirm = GETPOST('confirm','alpha');
 $cancel = GETPOST('cancel','alpha');
+=======
+$id = GETPOST('id', 'int');
+$valueid = GETPOST('valueid', 'alpha');
+$action = GETPOST('action', 'alpha');
+$label = GETPOST('label', 'alpha');
+$ref = GETPOST('ref', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $object = new ProductAttribute($db);
 $objectval = new ProductAttributeValue($db);
@@ -50,9 +65,15 @@ if ($_POST) {
 		$object->label = $label;
 
 		if ($object->update($user) < 1) {
+<<<<<<< HEAD
 			setEventMessage($langs->trans('CoreErrorMessage'), 'errors');
 		} else {
 			setEventMessage($langs->trans('RecordSaved'));
+=======
+			setEventMessages($langs->trans('CoreErrorMessage'), $object->errors, 'errors');
+		} else {
+			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			header('Location: '.dol_buildpath('/variants/card.php?id='.$id, 2));
 			exit();
 		}
@@ -61,7 +82,11 @@ if ($_POST) {
 		if ($objectval->fetch($valueid) > 0) {
 
 			$objectval->ref = $ref;
+<<<<<<< HEAD
 			$objectval->value = GETPOST('value','alpha');
+=======
+			$objectval->value = GETPOST('value', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			if (empty($objectval->ref))
 			{
@@ -77,9 +102,15 @@ if ($_POST) {
 			if (! $error)
 			{
 				if ($objectval->update($user) > 0) {
+<<<<<<< HEAD
 					setEventMessage($langs->trans('RecordSaved'));
 				} else {
 					setEventMessage($langs->trans('CoreErrorMessage'), 'errors');
+=======
+					setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+				} else {
+					setEventMessage($langs->trans('CoreErrorMessage'), $objectval->errors, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 			}
 		}
@@ -87,7 +118,10 @@ if ($_POST) {
 		header('Location: '.dol_buildpath('/variants/card.php?id='.$object->id, 2));
 		exit();
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 if ($confirm == 'yes') {
@@ -99,11 +133,19 @@ if ($confirm == 'yes') {
 
 		if ($res < 1 || ($object->delete() < 1)) {
 			$db->rollback();
+<<<<<<< HEAD
 			setEventMessage($langs->trans('CoreErrorMessage'), 'errors');
 			header('Location: '.dol_buildpath('/variants/card.php?id='.$object->id, 2));
 		} else {
 			$db->commit();
 			setEventMessage($langs->trans('RecordSaved'));
+=======
+			setEventMessages($langs->trans('CoreErrorMessage'), $object->errors, 'errors');
+			header('Location: '.dol_buildpath('/variants/card.php?id='.$object->id, 2));
+		} else {
+			$db->commit();
+			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			header('Location: '.dol_buildpath('/variants/list.php', 2));
 		}
 		exit();
@@ -113,9 +155,15 @@ if ($confirm == 'yes') {
 		if ($objectval->fetch($valueid) > 0) {
 
 			if ($objectval->delete() < 1) {
+<<<<<<< HEAD
 				setEventMessage($langs->trans('CoreErrorMessage'), 'errors');
 			} else {
 				setEventMessage($langs->trans('RecordSaved'));
+=======
+				setEventMessages($langs->trans('CoreErrorMessage'), $objectval->errors, 'errors');
+			} else {
+				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 
 			header('Location: '.dol_buildpath('/variants/card.php?id='.$object->id, 2));
@@ -132,11 +180,18 @@ if ($confirm == 'yes') {
 $langs->load('products');
 
 $title = $langs->trans('ProductAttributeName', dol_htmlentities($object->label));
+<<<<<<< HEAD
 $var = false;
 
 llxHeader('', $title);
 
 //print_fiche_titre($title);
+=======
+
+llxHeader('', $title);
+
+//print load_fiche_titre($title);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $h=0;
 $head[$h][0] = DOL_URL_ROOT.'/variants/card.php?id='.$object->id;
@@ -203,7 +258,11 @@ if ($action == 'edit') { ?>
 	if ($action == 'delete') {
 		$form = new Form($db);
 
+<<<<<<< HEAD
 		print $form->formconfirm(
+=======
+print $form->formconfirm(
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			"card.php?id=".$object->id,
 			$langs->trans('Delete'),
 			$langs->trans('ProductAttributeDeleteDialog'),
@@ -218,7 +277,11 @@ if ($action == 'edit') { ?>
 
 			$form = new Form($db);
 
+<<<<<<< HEAD
 			print $form->formconfirm(
+=======
+print $form->formconfirm(
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				"card.php?id=".$object->id."&valueid=".$objectval->id,
 				$langs->trans('Delete'),
 				$langs->trans('ProductAttributeValueDeleteDialog', dol_htmlentities($objectval->value), dol_htmlentities($objectval->ref)),
@@ -242,7 +305,11 @@ if ($action == 'edit') { ?>
 
 	<?php
 
+<<<<<<< HEAD
 	print_fiche_titre($langs->trans("PossibleValues"));
+=======
+	print load_fiche_titre($langs->trans("PossibleValues"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	if ($action == 'edit_value') {
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -267,7 +334,11 @@ if ($action == 'edit') { ?>
 			<?php if ($action == 'edit_value' && ($valueid == $attrval->id)): ?>
 				<td><input type="text" name="ref" value="<?php echo $attrval->ref ?>"></td>
 				<td><input type="text" name="value" value="<?php echo $attrval->value ?>"></td>
+<<<<<<< HEAD
 				<td style="text-align: right">
+=======
+				<td class="right">
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					<input type="submit" value="<?php echo $langs->trans('Save') ?>" class="button">
 					&nbsp; &nbsp;
 					<input type="submit" name="cancel" value="<?php echo $langs->trans('Cancel') ?>" class="button">
@@ -275,7 +346,11 @@ if ($action == 'edit') { ?>
 			<?php else: ?>
 				<td><?php echo dol_htmlentities($attrval->ref) ?></td>
 				<td><?php echo dol_htmlentities($attrval->value) ?></td>
+<<<<<<< HEAD
 				<td style="text-align: right">
+=======
+				<td class="right">
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					<a href="card.php?id=<?php echo $object->id ?>&action=edit_value&valueid=<?php echo $attrval->id ?>"><?php echo img_edit() ?></a>
 					<a href="card.php?id=<?php echo $object->id ?>&action=delete_value&valueid=<?php echo $attrval->id ?>"><?php echo img_delete() ?></a>
 				</td>
@@ -299,5 +374,9 @@ if ($action == 'edit') { ?>
 	<?php
 }
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

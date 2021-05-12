@@ -1,5 +1,9 @@
 # Dolibarr language file - Source file is en_US - ecm
+<<<<<<< HEAD
 ECMNbOfDocs=N.º de documentos na diretoria
+=======
+ECMNbOfDocs=No. of documents in directory
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ECMSection=Diretoria
 ECMSectionManual=Diretoria manual
 ECMSectionAuto=Pasta automática
@@ -7,7 +11,11 @@ ECMSectionsManual=Pastas manuais
 ECMSectionsAuto=Pastas automáticas
 ECMSections=Pastas
 ECMRoot=Raiz do GCE
+<<<<<<< HEAD
 ECMNewSection=Nova pasta manual
+=======
+ECMNewSection=Nova diretoria
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ECMAddSection=Adicionar pasta manual
 ECMCreationDate=Data de criação
 ECMNbOfFilesInDir=Número de ficheiros na pasta
@@ -25,7 +33,11 @@ ECMSectionOfDocuments=Pastas de documentos
 ECMTypeAuto=Automático
 ECMDocsBySocialContributions=Documentos associados com os impostos fiscais ou sociais
 ECMDocsByThirdParties=Documentos associados a terceiros
+<<<<<<< HEAD
 ECMDocsByProposals=Documentos associcados a orçamentos
+=======
+ECMDocsByProposals=Documentos associados aos orçamentos
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ECMDocsByOrders=Documentos associados a pedidos
 ECMDocsByContracts=Documentos associados a contratos
 ECMDocsByInvoices=Documentos associados a faturas
@@ -34,6 +46,11 @@ ECMDocsByProjects=Documentos associados a projectos
 ECMDocsByUsers=Documentos associados a utilizadores
 ECMDocsByInterventions=Documentos associados a intervenções
 ECMDocsByExpenseReports=Documentos associados a relatórios de despesas
+<<<<<<< HEAD
+=======
+ECMDocsByHolidays=Documents linked to holidays
+ECMDocsBySupplierProposals=Documents linked to supplier proposals
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ECMNoDirectoryYet=Nenhuma pasta criada
 ShowECMSection=Mostrar Pasta
 DeleteSection=Remover diretório
@@ -46,6 +63,11 @@ ECMSelectASection=Selecione uma pasta na árvore...
 DirNotSynchronizedSyncFirst=Este diretório parece ter sido ser criado ou modificado fora do módulo GCE. Você deve clicar no botão "Voltar a sincronizar" primeiro para sincronizar o disco e a base de dados para obter o conteúdo desse diretório.
 ReSyncListOfDir=Voltar a sincronizar a lista de diretórios
 HashOfFileContent=Hash do conteúdo do ficheiro
+<<<<<<< HEAD
 FileNotYetIndexedInDatabase=Ficheiro ainda não indexado na base de dados (tente voltar a carregá-lo)
 FileSharedViaALink=Ficheiro partilhado via link
 NoDirectoriesFound=Nenhum diretório encontrado
+=======
+NoDirectoriesFound=Nenhum diretório encontrado
+FileNotYetIndexedInDatabase=Ficheiro ainda não indexado na base de dados (tente voltar a carregá-lo)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

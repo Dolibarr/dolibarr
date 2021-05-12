@@ -1,5 +1,9 @@
 <?php
 /* Copyright (C) - 2013-2015 Jean-François FERRY	<jfefe@aternatik.fr>
+<<<<<<< HEAD
+=======
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +25,13 @@
  *       \ingroup    core
  *       \brief      Class file to manage forms into resource module
  */
+<<<<<<< HEAD
 require_once(DOL_DOCUMENT_ROOT ."/core/class/html.form.class.php");
 require_once(DOL_DOCUMENT_ROOT ."/resource/class/dolresource.class.php");
+=======
+require_once DOL_DOCUMENT_ROOT ."/core/class/html.form.class.php";
+require_once DOL_DOCUMENT_ROOT ."/resource/class/dolresource.class.php";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 /**
@@ -33,12 +42,28 @@ require_once(DOL_DOCUMENT_ROOT ."/resource/class/dolresource.class.php");
  */
 class FormResource
 {
+<<<<<<< HEAD
     var $db;
 
     var $substit=array();
     var $param=array();
 
     var $error;
+=======
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    public $substit=array();
+
+    public $param=array();
+
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	/**
@@ -46,6 +71,7 @@ class FormResource
 	*
 	* @param DoliDB $db Database handler
 	*/
+<<<<<<< HEAD
     function __construct($db)
     {
         $this->db = $db;
@@ -54,6 +80,15 @@ class FormResource
     }
 
 
+=======
+    public function __construct($db)
+    {
+        $this->db = $db;
+    }
+
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     /**
      *  Output html form to select a resource
      *
@@ -69,8 +104,14 @@ class FormResource
      *  @param	int		$limit			Limit number of answers
      * 	@return	string					HTML string with
      */
+<<<<<<< HEAD
     function select_resource_list($selected='',$htmlname='fk_resource',$filter='',$showempty=0, $showtype=0, $forcecombo=0, $event=array(), $filterkey='', $outputmode=0, $limit=20)
     {
+=======
+    public function select_resource_list($selected = '', $htmlname = 'fk_resource', $filter = '', $showempty = 0, $showtype = 0, $forcecombo = 0, $event = array(), $filterkey = '', $outputmode = 0, $limit = 20)
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	global $conf,$user,$langs;
 
     	$out='';
@@ -78,15 +119,22 @@ class FormResource
 
     	$resourcestat = new Dolresource($this->db);
 
+<<<<<<< HEAD
     	$resources_used = $resourcestat->fetch_all('ASC', 't.rowid', $limit, $offset, $filter='');
+=======
+    	$resources_used = $resourcestat->fetch_all('ASC', 't.rowid', $limit, 0, $filter);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     	if ($outputmode != 2)
     	{
     	    $out = '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
     	    $out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     	}
+<<<<<<< HEAD
     	//$out.= '<input type="hidden" name="action" value="search">';
     	//$out.= '<input type="hidden" name="id" value="'.$theme->id.'">';
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     	if ($resourcestat)
     	{
@@ -100,13 +148,22 @@ class FormResource
     		$out.= '<select id="'.$htmlname.'" class="flat minwidth200" name="'.$htmlname.'">'."\n";
     		if ($showempty) $out.= '<option value="-1">&nbsp;</option>'."\n";
 
+<<<<<<< HEAD
     		$num = count($resourcestat->lines);
+=======
+    		$num = 0;
+    		if (is_array($resourcestat->lines)) $num = count($resourcestat->lines);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     		//var_dump($resourcestat->lines);
     		$i = 0;
     		if ($num)
     		{
+<<<<<<< HEAD
     			while ( $i < $num)
+=======
+    			while ($i < $num)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     			{
     			    $resourceclass=ucfirst($resourcestat->lines[$i]->element);
 
@@ -148,6 +205,7 @@ class FormResource
     	return $out;
     }
 
+<<<<<<< HEAD
     /**
      *      Return html list of tickets type
      *
@@ -162,15 +220,41 @@ class FormResource
      */
     function select_types_resource($selected='',$htmlname='type_resource',$filtertype='',$format=0, $empty=0, $noadmininfo=0,$maxlength=0)
     {
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
+     *  Return html list of tickets type
+     *
+     *  @param	string	$selected       Id du type pre-selectionne
+     *  @param  string	$htmlname       Nom de la zone select
+     *  @param  string	$filtertype     To filter on field type in llx_c_ticket_type (array('code'=>xx,'label'=>zz))
+     *  @param  int		$format         0=id+libelle, 1=code+code, 2=code+libelle, 3=id+code
+     *  @param  int		$empty			1=peut etre vide, 0 sinon
+     *  @param	int		$noadmininfo	0=Add admin info, 1=Disable admin info
+     *  @param  int		$maxlength      Max length of label
+     * 	@return	void
+     */
+    public function select_types_resource($selected = '', $htmlname = 'type_resource', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0)
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	global $langs,$user;
 
     	$resourcestat = new Dolresource($this->db);
 
+<<<<<<< HEAD
     	dol_syslog(get_class($this)."::select_types_resource ".$selected.", ".$htmlname.", ".$filtertype.", ".$format,LOG_DEBUG);
 
     	$filterarray=array();
 
     	if ($filtertype != '' && $filtertype != '-1') $filterarray=explode(',',$filtertype);
+=======
+    	dol_syslog(get_class($this)."::select_types_resource ".$selected.", ".$htmlname.", ".$filtertype.", ".$format, LOG_DEBUG);
+
+    	$filterarray=array();
+
+    	if ($filtertype != '' && $filtertype != '-1') $filterarray=explode(',', $filtertype);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     	$resourcestat->load_cache_code_type_resource();
     	print '<select id="select'.$htmlname.'" class="flat maxwidthonsmartphone select_'.$htmlname.'" name="'.$htmlname.'">';
@@ -184,22 +268,36 @@ class FormResource
     			if ($empty && empty($arraytypes['code'])) continue;
 
     			if ($format == 0) print '<option value="'.$id.'"';
+<<<<<<< HEAD
     			if ($format == 1) print '<option value="'.$arraytypes['code'].'"';
     			if ($format == 2) print '<option value="'.$arraytypes['code'].'"';
     			if ($format == 3) print '<option value="'.$id.'"';
+=======
+    			elseif ($format == 1) print '<option value="'.$arraytypes['code'].'"';
+    			elseif ($format == 2) print '<option value="'.$arraytypes['code'].'"';
+    			elseif ($format == 3) print '<option value="'.$id.'"';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     			// Si selected est text, on compare avec code, sinon avec id
     			if (preg_match('/[a-z]/i', $selected) && $selected == $arraytypes['code']) print ' selected';
     			elseif ($selected == $id) print ' selected';
     			print '>';
+<<<<<<< HEAD
     			if ($format == 0) $value=($maxlength?dol_trunc($arraytypes['label'],$maxlength):$arraytypes['label']);
     			if ($format == 1) $value=$arraytypes['code'];
     			if ($format == 2) $value=($maxlength?dol_trunc($arraytypes['label'],$maxlength):$arraytypes['label']);
     			if ($format == 3) $value=$arraytypes['code'];
+=======
+    			if ($format == 0) $value=($maxlength?dol_trunc($arraytypes['label'], $maxlength):$arraytypes['label']);
+    			elseif ($format == 1) $value=$arraytypes['code'];
+    			elseif ($format == 2) $value=($maxlength?dol_trunc($arraytypes['label'], $maxlength):$arraytypes['label']);
+    			elseif ($format == 3) $value=$arraytypes['code'];
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     			print $value?$value:'&nbsp;';
     			print '</option>';
     		}
     	}
     	print '</select>';
+<<<<<<< HEAD
     	if ($user->admin && ! $noadmininfo) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
     }
 
@@ -207,3 +305,8 @@ class FormResource
 
 }
 
+=======
+    	if ($user->admin && ! $noadmininfo) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+    }
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

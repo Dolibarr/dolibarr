@@ -38,6 +38,7 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	 * Le fonctionnement de celui-ci doit donc rester le plus ouvert possible
 	 */
 
+<<<<<<< HEAD
 	var $nom='Leopard';					// Nom du modele
 	var $name='Leopard';				// Nom du modele
 	var $code_modifiable;				// Code modifiable
@@ -46,12 +47,45 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	var $code_null;						// Code facultatif
 	var $version='dolibarr';    		// 'development', 'experimental', 'dolibarr'
 	var $code_auto; 	                // Numerotation automatique
+=======
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Leopard';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Leopard';
+
+	public $code_modifiable;				// Code modifiable
+
+	public $code_modifiable_invalide;		// Code modifiable si il est invalide
+
+	public $code_modifiable_null;			// Code modifiables si il est null
+
+	public $code_null;						// Code facultatif
+
+	/**
+     * Dolibarr version of the loaded document
+     * @var string
+     */
+	public $version = 'dolibarr';    		// 'development', 'experimental', 'dolibarr'
+
+	public $code_auto; 	                // Numerotation automatique
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	/**
 	 *	Constructor
 	 */
+<<<<<<< HEAD
 	function __construct()
+=======
+	public function __construct()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$this->code_null = 1;
 		$this->code_modifiable = 1;
@@ -61,12 +95,22 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	}
 
 
+<<<<<<< HEAD
 	/**		Return description of module
 	 *
 	 * 		@param	Translate	$langs	Object langs
 	 * 		@return string      		Description of module
 	 */
 	function info($langs)
+=======
+	/**
+     *  Return description of module
+	 *
+	 *  @param  Translate   $langs  Object langs
+	 *  @return string              Description of module
+	 */
+	public function info($langs)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$langs->load("companies");
 		return $langs->trans("LeopardNumRefModelDesc");
@@ -80,7 +124,11 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string					Return next value
 	 */
+<<<<<<< HEAD
 	function getNextValue($objsoc=0,$type=-1)
+=======
+	public function getNextValue($objsoc = 0, $type = -1)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 		return '';
@@ -100,7 +148,11 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	 * 								-3 ErrorCustomerCodeAlreadyUsed
 	 * 								-4 ErrorPrefixRequired
 	 */
+<<<<<<< HEAD
 	function verif($db, &$code, $soc, $type)
+=======
+	public function verif($db, &$code, $soc, $type)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf;
 
@@ -111,7 +163,11 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 		{
 			$result=0;
 		}
+<<<<<<< HEAD
 		else if (empty($code) && (! $this->code_null || ! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) )
+=======
+		elseif (empty($code) && (! $this->code_null || ! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) )
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			$result=-2;
 		}
@@ -120,4 +176,7 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 		return $result;
 	}
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

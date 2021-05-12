@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - boxes
+<<<<<<< HEAD
 BoxLoginInformation=Podaci o prijavi
 BoxLastRssInfos=Rss informacije
 BoxLastProducts=Posljednjih %s proizvoda/usluga
@@ -8,11 +9,26 @@ BoxLastSupplierBills=Najnovije fakture dobavljača
 BoxLastCustomerBills=Najnovije fakture kupaca
 BoxOldestUnpaidCustomerBills=Najstarije nenaplaćene fakture kupaca
 BoxOldestUnpaidSupplierBills=Najstarije naplaćene fakture dobavljačima
+=======
+BoxLoginInformation=Login Information
+BoxLastRssInfos=RSS Information
+BoxLastProducts=Latest %s Products/Services
+BoxProductsAlertStock=Upozorenja zaliha proizvoda
+BoxLastProductsInContract=Posljednjih %s ugovorenih proizvoda/usluga
+BoxLastSupplierBills=Latest Vendor invoices
+BoxLastCustomerBills=Latest Customer invoices
+BoxOldestUnpaidCustomerBills=Najstarije nenaplaćene fakture kupaca
+BoxOldestUnpaidSupplierBills=Oldest unpaid vendor invoices
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BoxLastProposals=Najnovije ponude
 BoxLastProspects=Posljednji izmijenjeni prospekti
 BoxLastCustomers=Posljednji izmijenjeni kupci
 BoxLastSuppliers=Posljednji izmijenjeni dobavljači
+<<<<<<< HEAD
 BoxLastCustomerOrders=Najnovije narudžbe kupaca
+=======
+BoxLastCustomerOrders=Latest sales orders
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BoxLastActions=Posljednje akcije
 BoxLastContracts=Najnoviji ugovori
 BoxLastContacts=Najnoviji kontakti/adrese
@@ -20,6 +36,7 @@ BoxLastMembers=Najnoviji članovi
 BoxFicheInter=Posljednje intervencije
 BoxCurrentAccounts=Trenutna stanja računa
 BoxTitleLastRssInfos=Posljednjih %s novosti od %s
+<<<<<<< HEAD
 BoxTitleLastProducts=Posljednjih %s izmijenjenih proizvoda/usluga
 BoxTitleProductsAlertStock=Upozorenje za proizvode u zalihama
 BoxTitleLastSuppliers=Posljednjih %s unesenih dobavljača
@@ -36,6 +53,24 @@ BoxTitleOldestUnpaidSupplierBills=Najstarijih %s neplaćenih faktura dobavljači
 BoxTitleCurrentAccounts=Trenutno otvoreni računi
 BoxTitleLastModifiedContacts=Posljednjih %s izmijenjenih kontakata/adresa
 BoxMyLastBookmarks=Mojih posljednjih %s favorita
+=======
+BoxTitleLastProducts=Products/Services: last %s modified
+BoxTitleProductsAlertStock=Products: stock alert
+BoxTitleLastSuppliers=Posljednjih %s unesenih dobavljača
+BoxTitleLastModifiedSuppliers=Vendors: last %s modified
+BoxTitleLastModifiedCustomers=Customers: last %s modified
+BoxTitleLastCustomersOrProspects=Posljednjih %s kupaca ili prospekata
+BoxTitleLastCustomerBills=Latest %s Customer invoices
+BoxTitleLastSupplierBills=Latest %s Vendor invoices
+BoxTitleLastModifiedProspects=Prospects: last %s modified
+BoxTitleLastModifiedMembers=Najnovijih %s članova
+BoxTitleLastFicheInter=Posljednjih %s izmijenjenih intervencija
+BoxTitleOldestUnpaidCustomerBills=Customer Invoices: oldest %s unpaid
+BoxTitleOldestUnpaidSupplierBills=Vendor Invoices: oldest %s unpaid
+BoxTitleCurrentAccounts=Open Accounts: balances
+BoxTitleLastModifiedContacts=Contacts/Addresses: last %s modified
+BoxMyLastBookmarks=Bookmarks: latest %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BoxOldestExpiredServices=Najstarije aktivne zastarjele usluge
 BoxLastExpiredServices=Posljednjih %s najstarijih ugovora sa aktivni zastarjelim uslugama
 BoxTitleLastActionsToDo=Posljednjih %s akcija za uraditi
@@ -45,24 +80,38 @@ BoxTitleLastModifiedExpenses=Posljednjih %s izmijenjenih troškovnika
 BoxGlobalActivity=Globalne aktivnosti (fakture, prijedlozi, narudžbe)
 BoxGoodCustomers=Dobar kupac
 BoxTitleGoodCustomers=%s dobrih kupaca
+<<<<<<< HEAD
 FailedToRefreshDataInfoNotUpToDate=Greška pri osvježavanju RSS toka. Datum posljednjeg uspješnog osvježenja: %s
+=======
+FailedToRefreshDataInfoNotUpToDate=Failed to refresh RSS flux. Latest successful refresh date: %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LastRefreshDate=Posljednji datum ažuriranja
 NoRecordedBookmarks=Nema definisanih bookmark-a.
 ClickToAdd=Klikni ovdje za dodavanje.
 NoRecordedCustomers=Nema zapisanih kupaca
 NoRecordedContacts=Nema zapisanih kontakata
 NoActionsToDo=Nema akcija za uraditi
+<<<<<<< HEAD
 NoRecordedOrders=Nema unesenih narudžbi od kupaca
 NoRecordedProposals=Nema zapisanih prijedloga
 NoRecordedInvoices=Nema unesenih faktura kupcima
 NoUnpaidCustomerBills=Nema nenaplaćenih faktura od kupaca
 NoUnpaidSupplierBills=Nema neplaćenih faktura dobavljačima
 NoModifiedSupplierBills=Nema unesenih faktura dobavljača
+=======
+NoRecordedOrders=No recorded sales orders
+NoRecordedProposals=Nema zapisanih prijedloga
+NoRecordedInvoices=Nema unesenih faktura kupcima
+NoUnpaidCustomerBills=Nema nenaplaćenih faktura od kupaca
+NoUnpaidSupplierBills=No unpaid vendor invoices
+NoModifiedSupplierBills=No recorded vendor invoices
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoRecordedProducts=Nema zapisanih proizvoda/usluga
 NoRecordedProspects=Nema unesenih prospekata
 NoContractedProducts=Nema ugovorenih proizvoda/usluga
 NoRecordedContracts=Nema unesenih ugovora
 NoRecordedInterventions=Nema zapisanih intervencija
+<<<<<<< HEAD
 BoxLatestSupplierOrders=Najnovije narudžbe dobavljaču
 NoSupplierOrder=Nema zapisanih narudžbi dobavljaču
 BoxCustomersInvoicesPerMonth=Fakture kupca po mjesecu
@@ -78,9 +127,30 @@ BoxTitleLatestModifiedSupplierOrders=Posljednjih %s izmijenjenih narudžbi dobav
 BoxTitleLastModifiedCustomerBills=Posljednjih %s izmijenjenih faktura kupcima
 BoxTitleLastModifiedCustomerOrders=Posljednjih %s izmijenjenih narudžbi od kupaca
 BoxTitleLastModifiedPropals=Latest %s modified proposals
+=======
+BoxLatestSupplierOrders=Latest purchase orders
+NoSupplierOrder=No recorded purchase order
+BoxCustomersInvoicesPerMonth=Customer Invoices per month
+BoxSuppliersInvoicesPerMonth=Vendor Invoices per month
+BoxCustomersOrdersPerMonth=Sales Orders per month
+BoxSuppliersOrdersPerMonth=Vendor Orders per month
+BoxProposalsPerMonth=Prijedlozi po mjesecu
+NoTooLowStockProducts=No products are under the low stock limit
+BoxProductDistribution=Products/Services Distribution
+ForObject=On %s
+BoxTitleLastModifiedSupplierBills=Vendor Invoices: last %s modified
+BoxTitleLatestModifiedSupplierOrders=Vendor Orders: last %s modified
+BoxTitleLastModifiedCustomerBills=Customer Invoices: last %s modified
+BoxTitleLastModifiedCustomerOrders=Sales Orders: last %s modified
+BoxTitleLastModifiedPropals=Posljednjih %s izmijenjenih ponuda
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ForCustomersInvoices=Fakture kupaca
 ForCustomersOrders=Narudžbe kupaca
 ForProposals=Prijedlozi
 LastXMonthRolling=Posljednje %s mjesečne plate
 ChooseBoxToAdd=Dodaj kutijicu na vašu nadzornu ploču
 BoxAdded=Kutijica je dodana na vašu nadzornu ploču
+<<<<<<< HEAD
+=======
+BoxTitleUserBirthdaysOfMonth=Birthdays of this month
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -50,6 +50,7 @@ ErrorFailedToSendMail=Nemsikerült elküldeni a levelet (feladó=%s, címzett=%s
 ErrorFileNotUploaded=A Fájl nem lett feltöltve. Ellenőrizd, hogy a méret nem haladja -e meg a maximum méretet, van -e elég szabad hely és hogy a célkönyvtárban nincs -e még egy ugyan ilyen nevü fájl.
 ErrorInternalErrorDetected=Hiba észlelve
 ErrorWrongHostParameter=Rossz hoszt paraméter
+<<<<<<< HEAD
 ErrorYourCountryIsNotDefined=Az ország nincs megadva. Menj a Nyitólapo->Beállítások->Szerkesztés oldalra és add meg újra.
 ErrorRecordIsUsedByChild=Nem sikerült a rekordot törölni. Ezt a rekordot egy leszármazott rekord használja.
 ErrorWrongValue=Rossz érték
@@ -59,12 +60,28 @@ ErrorServiceUnavailableTryLater=A szolgáltatás jelenleg nem elérhető. Prób�
 ErrorDuplicateField=Két példányú érték egyedülálló mezőben
 ErrorSomeErrorWereFoundRollbackIsDone=Nehány hibát találtunk. Visszafordítjuk a változásokat.
 ErrorConfigParameterNotDefined=<b>%s</b> paraméter nincs definiálva a Dolibarr configurációs fájlban (<b>conf.php</b>).
+=======
+ErrorYourCountryIsNotDefined=Your country is not defined. Go to Home-Setup-Edit and post the form again.
+ErrorRecordIsUsedByChild=Failed to delete this record. This record is used by at least one child record.
+ErrorWrongValue=Rossz érték
+ErrorWrongValueForParameterX=%s paraméter rossz értékkel rendelkezik
+ErrorNoRequestInError=Nincs kérés a hibában
+ErrorServiceUnavailableTryLater=Service not available at the moment. Try again later.
+ErrorDuplicateField=Két példányú érték egyedülálló mezőben
+ErrorSomeErrorWereFoundRollbackIsDone=Some errors were found. Changes have been rolled back.
+ErrorConfigParameterNotDefined=Parameter <b>%s</b> is not defined in the Dolibarr config file <b>conf.php</b>.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorCantLoadUserFromDolibarrDatabase=<b>%s</b> felhasználó nem található a Dolibarr adatbázisban.
 ErrorNoVATRateDefinedForSellerCountry=Hiba '%s' számára nincs Áfa meghatározva.
 ErrorNoSocialContributionForSellerCountry=Hiba, nincsenek meghatározva társadalombiztosítási és adóügyi adattípusok a '%s' ország részére.
 ErrorFailedToSaveFile=Hiba, nem sikerült a fájl mentése.
+<<<<<<< HEAD
 ErrorCannotAddThisParentWarehouse=You are trying to add a parent warehouse which is already a child of current one
 MaxNbOfRecordPerPage=Max number of record per page
+=======
+ErrorCannotAddThisParentWarehouse=You are trying to add a parent warehouse which is already a child of a existing warehouse
+MaxNbOfRecordPerPage=Max. number of records per page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NotAuthorized=Nincs jogosultsága ehhez a tevékenységhez
 SetDate=Dátum beállítása
 SelectDate=Válasszon egy dátumot
@@ -78,14 +95,25 @@ FileRenamed=The file was successfully renamed
 FileGenerated=The file was successfully generated
 FileSaved=Állomány mentése sikeres
 FileUploaded=A fájl sikeresen fel lett töltve
+<<<<<<< HEAD
 FileTransferComplete=Állomány(ok) feltöltése sikeres
 FilesDeleted=Az állomány(ok) törlése megtörtént
 FileWasNotUploaded=Egy fájl ki lett választva csatolásra, de még nincs feltöltve. Kattintson a "Fájl Csatolása" gombra.
 NbOfEntries=Bejegyzések száma
+=======
+FileTransferComplete=File(s) uploaded successfully
+FilesDeleted=Az állomány(ok) törlése megtörtént
+FileWasNotUploaded=Egy fájl ki lett választva csatolásra, de még nincs feltöltve. Kattintson a "Fájl Csatolása" gombra.
+NbOfEntries=No. of entries
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 GoToWikiHelpPage=Online súgó olvasása (Internet hozzáférés szükséges)
 GoToHelpPage=Segítség olvasása
 RecordSaved=Rekord elmentve
 RecordDeleted=Rekord törölve
+<<<<<<< HEAD
+=======
+RecordGenerated=Record generated
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LevelOfFeature=Funkciók szintje
 NotDefined=Nem meghatározott
 DolibarrInHttpAuthenticationSoPasswordUseless=Dolibarr hitelesítési mód beélítva ehhez <b>%s</b> a <b>conf.php</b> beállító fájlban.<br>Ez azt jelenti, hogy ez a jelszó adatbázis Dolibarr rendszertől független, így ennek a mezönek a megváltoztatása nem befolyásoló.
@@ -95,8 +123,13 @@ PasswordForgotten=Elfelejtett jelszó ?
 NoAccount=No account?
 SeeAbove=Lásd feljebb
 HomeArea=Nyitólap
+<<<<<<< HEAD
 LastConnexion=Legutóbbi csatlakozás
 PreviousConnexion=Előző kapcsolódás
+=======
+LastConnexion=Last login
+PreviousConnexion=Previous login
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PreviousValue=Előző érték
 ConnectedOnMultiCompany=Entitáson kapcsolódva
 ConnectedSince=Kapcslódás kezdete
@@ -118,7 +151,11 @@ PrecisionUnitIsLimitedToXDecimals=Dolibarr beállított pontossági határral az
 DoTest=Teszt
 ToFilter=Szűrő
 NoFilter=Nincs szűrő
+<<<<<<< HEAD
 WarningYouHaveAtLeastOneTaskLate=Figyelem, legalább egy eleme van ami túllépte a tűrés késleltetést.
+=======
+WarningYouHaveAtLeastOneTaskLate=Warning, you have at least one element that has exceeded the tolerance time.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 yes=igen
 Yes=Igen
 no=nem
@@ -142,6 +179,10 @@ Closed=Zárva
 Closed2=Zárva
 NotClosed=Not closed
 Enabled=Bekapcsolt
+<<<<<<< HEAD
+=======
+Enable=Engedélyez
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Deprecated=Elavult
 Disable=Letilt
 Disabled=Kikapcsolva
@@ -153,7 +194,11 @@ Update=Frissítés
 Close=Zár
 CloseBox=A widget eltávolítása a vezérlőpultról
 Confirm=Megerősít
+<<<<<<< HEAD
 ConfirmSendCardByMail=Valóban el akarja küldeni emailben a kártya tartalmát <b>%s</b> részére ?
+=======
+ConfirmSendCardByMail=Do you really want to send the content of this card by mail to <b>%s</b>?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Delete=Törlés
 Remove=Eltávolitás
 Resiliate=Befejezés
@@ -168,7 +213,11 @@ Save=Mentés
 SaveAs=Mentés másként
 TestConnection=Kapcsolat tesztelése
 ToClone=Klónozás
+<<<<<<< HEAD
 ConfirmClone=Válasszon adatot a klónozáshoz:
+=======
+ConfirmClone=Choose data you want to clone:
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoCloneOptionsSpecified=Nincs klónozandó adat meghatározva.
 Of=birtokában
 Go=Indít
@@ -183,7 +232,11 @@ Valid=Hiteles
 Approve=Jóváhagy
 Disapprove=Elvetés
 ReOpen=Újra megnyit
+<<<<<<< HEAD
 Upload=Fájl küldése
+=======
+Upload=Upload
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ToLink=Link
 Select=Kiválaszt
 Choose=Kiválaszt
@@ -200,6 +253,10 @@ Password=Jelszó
 PasswordRetype=Adja meg újra a jelszavát
 NoteSomeFeaturesAreDisabled=Megjegyzés: rengeteg modul/eszköz ki van kapcsolva ebben a demóban.
 Name=Név
+<<<<<<< HEAD
+=======
+NameSlashCompany=Name / Company
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Person=Személy
 Parameter=Paraméter
 Parameters=Paraméterek
@@ -220,6 +277,12 @@ Info=Napló
 Family=Család
 Description=Leírás
 Designation=Megnevezés
+<<<<<<< HEAD
+=======
+DescriptionOfLine=Leírása vonal
+DateOfLine=Date of line
+DurationOfLine=Duration of line
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Model=Dokumentum sablon
 DefaultModel=Alapértelmezett dokumentum sablon
 Action=Cselekvés
@@ -327,12 +390,21 @@ Copy=Másolás
 Paste=Beillesztés
 Default=Alaptértelmezett
 DefaultValue=Alaptértelmezett érték
+<<<<<<< HEAD
 DefaultValues=Alapértelmezett érték
 Price=Ár
 PriceCurrency=Price (currency)
 UnitPrice=Egység ár
 UnitPriceHT=Egység ár (nettó)
 UnitPriceHTCurrency=Unit price (net) (currency)
+=======
+DefaultValues=Default values/filters/sorting
+Price=Ár
+PriceCurrency=Price (currency)
+UnitPrice=Egység ár
+UnitPriceHT=Unit price (excl.)
+UnitPriceHTCurrency=Unit price (excl.) (currency)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 UnitPriceTTC=Egység ár
 PriceU=E.Á.
 PriceUHT=E.Á. (nettó)
@@ -342,6 +414,7 @@ Amount=Mennyiség
 AmountInvoice=Számla mennyiség
 AmountInvoiced=Amount invoiced
 AmountPayment=Fizetés mennyiség
+<<<<<<< HEAD
 AmountHTShort=Mennyiség (nettó)
 AmountTTCShort=Mennyiség (bruttó)
 AmountHT=Mennyiség (nettó)
@@ -351,6 +424,17 @@ MulticurrencyAlreadyPaid=Already payed, original currency
 MulticurrencyRemainderToPay=Remain to pay, original currency
 MulticurrencyPaymentAmount=Payment amount, original currency
 MulticurrencyAmountHT=Amount (net of tax), original currency
+=======
+AmountHTShort=Amount (excl.)
+AmountTTCShort=Mennyiség (bruttó)
+AmountHT=Amount (excl. tax)
+AmountTTC=Mennyiség (bruttó)
+AmountVAT=ÁFA mennyiség
+MulticurrencyAlreadyPaid=Already paid, original currency
+MulticurrencyRemainderToPay=Remain to pay, original currency
+MulticurrencyPaymentAmount=Payment amount, original currency
+MulticurrencyAmountHT=Amount (excl. tax), original currency
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MulticurrencyAmountTTC=Amount (inc. of tax), original currency
 MulticurrencyAmountVAT=Amount tax, original currency
 AmountLT1=ÁFA mennyiség 2
@@ -359,6 +443,7 @@ AmountLT1ES=RE mennyiség
 AmountLT2ES=IRPF mennyiség
 AmountTotal=Teljes mennyiség
 AmountAverage=Átlag mennyiség
+<<<<<<< HEAD
 PriceQtyMinHT=Minimum mennyiségi ár (nettó)
 PriceQtyMinHTCurrency=Price quantity min. (net of tax) (currency)
 Percentage=Százalék
@@ -369,6 +454,19 @@ TotalHTShortCurrency=Végösszeg (nettó pénznem)
 TotalTTCShort=Végösszeg (bruttó)
 TotalHT=Végösszeg (nettó)
 TotalHTforthispage=Ezen oldal végösszege (nettó)
+=======
+PriceQtyMinHT=Price quantity min. (excl. tax)
+PriceQtyMinHTCurrency=Price quantity min. (excl. tax) (currency)
+Percentage=Százalék
+Total=Végösszeg
+SubTotal=Részösszeg
+TotalHTShort=Total (excl.)
+TotalHT100Short=Total 100%% (excl.)
+TotalHTShortCurrency=Total (excl. in currency)
+TotalTTCShort=Végösszeg (bruttó)
+TotalHT=Total (excl. tax)
+TotalHTforthispage=Total (excl. tax) for this page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Totalforthispage=Végösszeg ezen az oldalon
 TotalTTC=Végösszeg (bruttó)
 TotalTTCToYourCredit=Végösszeg (bruttó) terhelve az ön számláján
@@ -380,7 +478,11 @@ TotalLT1ES=Total RE
 TotalLT2ES=Total IRPF
 TotalLT1IN=Total CGST
 TotalLT2IN=Total SGST
+<<<<<<< HEAD
 HT=Nettó
+=======
+HT=Excl. tax
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TTC=Bruttó
 INCVATONLY=Inc. VAT
 INCT=Minden adót tartalmaz
@@ -396,6 +498,10 @@ LT1ES=RE
 LT2ES=IRPF
 LT1IN=CGST
 LT2IN=SGST
+<<<<<<< HEAD
+=======
+LT1GC=Additionnal cents
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 VATRate=ÁFA érték
 VATCode=Tax Rate code
 VATNPR=Tax Rate NPR
@@ -428,14 +534,23 @@ ActionNotApplicable=Nem alkalmazható
 ActionRunningNotStarted=Nincs elkezdve
 ActionRunningShort=Folyamatban
 ActionDoneShort=Befejezett
+<<<<<<< HEAD
 ActionUncomplete=Befejezetlen
+=======
+ActionUncomplete=Incomplete
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LatestLinkedEvents=Latest %s linked events
 CompanyFoundation=Company/Organization
 Accountant=Accountant
 ContactsForCompany=Kapcsolat/cím ehhez a harmadik félhez
 ContactsAddressesForCompany=Kapcsolat/cím ehhez a harmadik félhez
 AddressesForCompany=Cím ehhez a harmadik félhez
+<<<<<<< HEAD
 ActionsOnCompany=Ezzel a harmadik féllel kapcsolatos események
+=======
+ActionsOnCompany=Events for this third party
+ActionsOnContact=Events for this contact/address
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActionsOnMember=Események ezzel a taggal kapcsolatban
 ActionsOnProduct=Events about this product
 NActionsLate=%s késés
@@ -453,8 +568,13 @@ Generate=Generálás
 Duration=Időtartam
 TotalDuration=Teljes időtartam
 Summary=Összefoglalás
+<<<<<<< HEAD
 DolibarrStateBoard=Adatbázis statisztikák
 DolibarrWorkBoard=Open items dashboard
+=======
+DolibarrStateBoard=Database Statistics
+DolibarrWorkBoard=Open Items
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoOpenedElementToProcess=No opened element to process
 Available=Elérhető
 NotYetAvailable=Még nem elérhető
@@ -468,7 +588,11 @@ and=és
 or=vagy
 Other=Más
 Others=Mások
+<<<<<<< HEAD
 OtherInformations=Egyéb információk
+=======
+OtherInformations=Other information
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Quantity=Mennyiség
 Qty=Menny.
 ChangedBy=Módosította
@@ -482,9 +606,17 @@ Reporting=Jelentés
 Reportings=Jelentés
 Draft=Piszkozat
 Drafts=Piszkozatok
+<<<<<<< HEAD
 StatusInterInvoiced=
 Validated=Hitelesítve
 Opened=Nyitott
+=======
+StatusInterInvoiced=Invoiced
+Validated=Hitelesítve
+Opened=Nyitott
+OpenAll=Open (All)
+ClosedAll=Closed (All)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 New=Új
 Discount=Kedvezmény
 Unknown=Ismeretlen
@@ -506,7 +638,11 @@ None=Nincs
 NoneF=Nincs
 NoneOrSeveral=Egyik sem
 Late=Késő
+<<<<<<< HEAD
 LateDesc=Delay to define if a record is late or not depends on your setup. Ask your admin to change delay from menu Home - Setup - Alerts.
+=======
+LateDesc=An item is defined as Delayed as per the system configuration in menu Home - Setup - Alerts.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoItemLate=No late item
 Photo=Kép
 Photos=Képek
@@ -530,6 +666,7 @@ September=Szeptember
 October=Október
 November=November
 December=December
+<<<<<<< HEAD
 JanuaryMin=Jan
 FebruaryMin=Feb
 MarchMin=Mar
@@ -542,6 +679,8 @@ SeptemberMin=Szept
 OctoberMin=Okt
 NovemberMin=Nov
 DecemberMin=Dec
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Month01=január
 Month02=február
 Month03=március
@@ -638,14 +777,25 @@ FeatureNotYetSupported=Még nem támogatott funkció
 CloseWindow=Ablak bezárása
 Response=Válasz
 Priority=Prioritás
+<<<<<<< HEAD
 SendByMail=Küldés emailben
+=======
+SendByMail=Send by email
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MailSentBy=Email feladója
 TextUsedInTheMessageBody=Email tartalma
 SendAcknowledgementByMail=Megerősítő email küldése
 SendMail=E-mail küldése
+<<<<<<< HEAD
 EMail=E-mail
 NoEMail=Nincs email
 Email=E-mail
+=======
+Email=E-mail
+NoEMail=Nincs email
+AlreadyRead=Already read
+NotRead=Not read
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoMobilePhone=Nincs mobilszám
 Owner=Tulajdonos
 FollowingConstantsWillBeSubstituted=Az alábbi konstansok helyettesítve leszenek a hozzájuk tartozó értékekkel.
@@ -658,8 +808,14 @@ ValueIsValid=Az érték érvényes
 ValueIsNotValid=Hibás érték
 RecordCreatedSuccessfully=Record created successfully
 RecordModifiedSuccessfully=A rekord sikeresen módosítva lett
+<<<<<<< HEAD
 RecordsModified=%s rekord módosítva
 RecordsDeleted=%s állomány törölve
+=======
+RecordsModified=%s record(s) modified
+RecordsDeleted=%s record(s) deleted
+RecordsGenerated=%s record(s) generated
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AutomaticCode=Automatikus kód
 FeatureDisabled=Tiltott funkció
 MoveBox=Mozgassa a widgetet
@@ -670,14 +826,21 @@ Method=Módszer
 Receive=Kap
 CompleteOrNoMoreReceptionExpected=Complete or nothing more expected
 ExpectedValue=Várt érték
+<<<<<<< HEAD
 CurrentValue=Jelenlegi Érték
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PartialWoman=Részleges
 TotalWoman=Összes
 NeverReceived=Soha nem került átvételre
 Canceled=Megszakítva
 YouCanChangeValuesForThisListFromDictionarySetup=You can change values for this list from menu Setup - Dictionaries
 YouCanChangeValuesForThisListFrom=You can change values for this list from menu %s
+<<<<<<< HEAD
 YouCanSetDefaultValueInModuleSetup=You can set the default value used when creating a new record into module setup
+=======
+YouCanSetDefaultValueInModuleSetup=You can set the default value used when creating a new record in module setup
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Color=Szín
 Documents=Kapcsolt fájlok
 Documents2=Dokumentumok
@@ -703,28 +866,47 @@ DateOfSignature=Kelt
 HidePassword=Parancs mutatása rejtett jelszóval
 UnHidePassword=Igazi parancs mutatása üres jelszóval
 Root=Gyökér
+<<<<<<< HEAD
 Informations=Információk
+=======
+Informations=Information
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Page=Oldal
 Notes=Megjegyzés
 AddNewLine=Új sor hozzáadása
 AddFile=Fájl hozzáadása
 FreeZone=Nem előre definiált termék/szolgáltatás
+<<<<<<< HEAD
 FreeLineOfType=Not a predefined entry of type
 CloneMainAttributes=Objektum klónozása a főbb jellemzőivel
+=======
+FreeLineOfType=Free-text item, type:
+CloneMainAttributes=Objektum klónozása a főbb jellemzőivel
+ReGeneratePDF=Re-generate PDF
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PDFMerge=PDF összeolvasztás
 Merge=Összeolvasztás
 DocumentModelStandardPDF=Standard PDF template
 PrintContentArea=Show page to print main content area
 MenuManager=Menü-menedzser
+<<<<<<< HEAD
 WarningYouAreInMaintenanceMode=Figyelem, karbantartási mód, csak <b>%s</b> jelentkezhet be.
+=======
+WarningYouAreInMaintenanceMode=Warning, you are in maintenance mode: only login <b>%s</b> is allowed to use the application in this mode.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CoreErrorTitle=Rendszerhiba
 CoreErrorMessage=Sajnálatos hiba történt. Lépjen kapcsolatba a rendszergazdával a naplófájlok megtekintéséhez vagy állítsa 0-ra a $dolibarr_main_prod=1 paramétert részletesebb információkért !
 CreditCard=Hitelkártya
 ValidatePayment=Jóváhagyott fizetés
 CreditOrDebitCard=Credit or debit card
 FieldsWithAreMandatory=<b>%s</b>-al jelölt mezők kötelezőek
+<<<<<<< HEAD
 FieldsWithIsForPublic=<b>%s</b>-al jelölt mezők publikusak. Ha ezt nem akarja jelölje be a "Publikus" dobozt.
 AccordingToGeoIPDatabase=(GeoIP converzió szerint)
+=======
+FieldsWithIsForPublic=Fields with <b>%s</b> are shown in public list of members. If you don't want this, uncheck the "public" box.
+AccordingToGeoIPDatabase=(according to GeoIP conversion)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Line=Sor
 NotSupported=Nincs támogatva
 RequiredField=Szükséges mező
@@ -732,6 +914,11 @@ Result=Eredmény
 ToTest=Teszt
 ValidateBefore=A kártyát hitelesíteni kell a szolgáltatás használata elött
 Visibility=Láthatóság
+<<<<<<< HEAD
+=======
+Totalizable=Totalizable
+TotalizableDesc=This field is totalizable in list
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Private=Privát
 Hidden=Rejtett
 Resources=Erőforrás
@@ -750,14 +937,25 @@ LinkTo=Hivatkozás erre:
 LinkToProposal=Link to proposal
 LinkToOrder=Link to order
 LinkToInvoice=Link to invoice
+<<<<<<< HEAD
 LinkToSupplierOrder=Link to supplier order
 LinkToSupplierProposal=Link to supplier proposal
 LinkToSupplierInvoice=Link to supplier invoice
+=======
+LinkToTemplateInvoice=Link to template invoice
+LinkToSupplierOrder=Link to purchase order
+LinkToSupplierProposal=Link to vendor proposal
+LinkToSupplierInvoice=Link to vendor invoice
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LinkToContract=Link to contract
 LinkToIntervention=Link to intervention
 CreateDraft=Tervezet készítése
 SetToDraft=Vissza a vázlathoz
 ClickToEdit=Kattintson a szerkesztéshez
+<<<<<<< HEAD
+=======
+ClickToRefresh=Click to refresh
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 EditWithEditor=Szerkesztés CKEditorral
 EditWithTextEditor=Szerkesztés szövegszerkesztővel
 EditHTMLSource=HTML forrás szerkesztése
@@ -772,14 +970,22 @@ ByDay=Nappal
 BySalesRepresentative=Az értékesítési képviselő
 LinkedToSpecificUsers=Hozzárendelve egy adott felhasználói kapcsolathoz
 NoResults=Nincs eredmény
+<<<<<<< HEAD
 AdminTools=Adminisztrátori eszközök
+=======
+AdminTools=Admin Tools
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SystemTools=Rendszereszközök
 ModulesSystemTools=Modul eszközök
 Test=Teszt
 Element=Elem
 NoPhotoYet=Nem érhető el még fénykép
 Dashboard=Vezérlőpult
+<<<<<<< HEAD
 MyDashboard=Munkafelület
+=======
+MyDashboard=My Dashboard
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Deductible=Levonható
 from=tól
 toward=felé
@@ -802,7 +1008,11 @@ PrintFile=%s fájl nyomtatása
 ShowTransaction=Show entry on bank account
 ShowIntervention=Mutasd beavatkozás
 ShowContract=Szerződés mutatása
+<<<<<<< HEAD
 GoIntoSetupToChangeLogo=Go into Home - Setup - Company to change logo or go into Home - Setup - Display to hide.
+=======
+GoIntoSetupToChangeLogo=Go to Home - Setup - Company to change logo or go to Home - Setup - Display to hide.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Deny=Elutasít
 Denied=Elutasítva
 ListOf=A következők listája: %s
@@ -818,16 +1028,29 @@ Sincerely=Tisztelettel
 DeleteLine=Sor törlése
 ConfirmDeleteLine=Biztos, hogy törölni akarja ezt a sort ?
 NoPDFAvailableForDocGenAmongChecked=No PDF were available for the document generation among checked record
+<<<<<<< HEAD
 TooManyRecordForMassAction=Too many record selected for mass action. The action is restricted to a list of %s record.
 NoRecordSelected=No record selected
 MassFilesArea=Area for files built by mass actions
 ShowTempMassFilesArea=Show area of files built by mass actions
 ConfirmMassDeletion=Bulk delete confirmation
 ConfirmMassDeletionQuestion=Are you sure you want to delete the %s selected record ?
+=======
+TooManyRecordForMassAction=Too many records selected for mass action. The action is restricted to a list of %s records.
+NoRecordSelected=No record selected
+MassFilesArea=Area for files built by mass actions
+ShowTempMassFilesArea=Show area of files built by mass actions
+ConfirmMassDeletion=Bulk Delete confirmation
+ConfirmMassDeletionQuestion=Are you sure you want to delete the %s selected record(s)?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 RelatedObjects=Kapcsolódó objektumok
 ClassifyBilled=Minősítse kiszámlázottként
 ClassifyUnbilled=Classify unbilled
 Progress=Előrehaladás
+<<<<<<< HEAD
+=======
+ProgressShort=Progr.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 FrontOffice=Front office
 BackOffice=Támogató iroda
 View=View
@@ -836,18 +1059,31 @@ Exports=Export
 ExportFilteredList=Export filtered list
 ExportList=Export list
 ExportOptions=Export opciók
+<<<<<<< HEAD
+=======
+IncludeDocsAlreadyExported=Include docs already exported
+ExportOfPiecesAlreadyExportedIsEnable=Export of pieces already exported is enable
+ExportOfPiecesAlreadyExportedIsDisable=Export of pieces already exported is disable
+AllExportedMovementsWereRecordedAsExported=All exported movements were recorded as exported
+NotAllExportedMovementsCouldBeRecordedAsExported=Not all exported movements could be recorded as exported
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Miscellaneous=Vegyes
 Calendar=Naptár
 GroupBy=Group by...
 ViewFlatList=View flat list
 RemoveString=Remove string '%s'
+<<<<<<< HEAD
 SomeTranslationAreUncomplete=Some languages may be partially translated or may contains errors. If you detect some, you can fix language files registering to <a href="https://transifex.com/projects/p/dolibarr/" target="_blank">https://transifex.com/projects/p/dolibarr/</a>.
+=======
+SomeTranslationAreUncomplete=Some of the languages offered may be only partially translated or may contain errors. Please help to correct your language by registering at <a href="https://transifex.com/projects/p/dolibarr/" target="_blank">https://transifex.com/projects/p/dolibarr/</a> to add your improvements.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DirectDownloadLink=Direct download link (public/external)
 DirectDownloadInternalLink=Link a közvetlen letöltéshez (belépés és jogosultság szükséges)
 Download=Letöltés
 DownloadDocument=Download document
 ActualizeCurrency=Árfolyam frissítése
 Fiscalyear=Pénzügyi év
+<<<<<<< HEAD
 ModuleBuilder=Module Builder
 SetMultiCurrencyCode=Állítsa be a pénznemet
 BulkActions=Bulk actions
@@ -855,12 +1091,22 @@ ClickToShowHelp=Click to show tooltip help
 WebSite=Web site
 WebSites=Web sites
 WebSiteAccounts=Web site accounts
+=======
+ModuleBuilder=Module and Application Builder
+SetMultiCurrencyCode=Állítsa be a pénznemet
+BulkActions=Bulk actions
+ClickToShowHelp=Click to show tooltip help
+WebSite=Website
+WebSites=Weboldalak
+WebSiteAccounts=Website accounts
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ExpenseReport=Expense report
 ExpenseReports=Költség kimutatások
 HR=Személyügy
 HRAndBank=HR and Bank
 AutomaticallyCalculated=Automatikusan számolva
 TitleSetToDraft=Go back to draft
+<<<<<<< HEAD
 ConfirmSetToDraft=Are you sure you want to go back to Draft status ?
 ImportId=Import azonosító
 Events=Cselekvések
@@ -872,6 +1118,27 @@ Rights=Engedélyek
 LineNb=Line no.
 IncotermLabel=Incoterms
 # Week day
+=======
+ConfirmSetToDraft=Are you sure you want to go back to Draft status?
+ImportId=Import azonosító
+Events=Cselekvések
+EMailTemplates=Email templates
+FileNotShared=File not shared to external public
+Project=Projekt
+Projects=Projektek
+LeadOrProject=Lead | Project
+LeadsOrProjects=Leads | Projects
+Lead=Lead
+Leads=Leads
+ListOpenLeads=List open leads
+ListOpenProjects=List open projects
+NewLeadOrProject=New lead or project
+Rights=Engedélyek
+LineNb=Line no.
+IncotermLabel=Incoterms
+TabLetteringCustomer=Customer lettering
+TabLetteringSupplier=Vendor lettering
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Monday=Hétfő
 Tuesday=Kedd
 Wednesday=Szerda
@@ -919,7 +1186,11 @@ SearchIntoProjects=Projektek
 SearchIntoTasks=Tennivalók
 SearchIntoCustomerInvoices=Ügyfél számlák
 SearchIntoSupplierInvoices=Vendor invoices
+<<<<<<< HEAD
 SearchIntoCustomerOrders=Ügyfél megrendelések
+=======
+SearchIntoCustomerOrders=Sales orders
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SearchIntoSupplierOrders=Purchase orders
 SearchIntoCustomerProposals=Ügyfél ajánlatok
 SearchIntoSupplierProposals=Vendor proposals
@@ -927,15 +1198,25 @@ SearchIntoInterventions=Beavatkozások
 SearchIntoContracts=Szerződések
 SearchIntoCustomerShipments=Vásárlói kiszállítások
 SearchIntoExpenseReports=Költség kimutatások
+<<<<<<< HEAD
 SearchIntoLeaves=Leaves
+=======
+SearchIntoLeaves=Leave
+SearchIntoTickets=Tickets
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CommentLink=Megjegyzéske
 NbComments=Number of comments
 CommentPage=Comments space
 CommentAdded=Comment added
 CommentDeleted=Comment deleted
 Everybody=Mindenki
+<<<<<<< HEAD
 PayedBy=Payed by
 PayedTo=Payed to
+=======
+PayedBy=Paid by
+PayedTo=Paid to
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Monthly=Monthly
 Quarterly=Quarterly
 Annual=Annual
@@ -945,6 +1226,23 @@ LocalAndRemote=Local and Remote
 KeyboardShortcut=Keyboard shortcut
 AssignedTo=Hozzárendelve
 Deletedraft=Delete draft
+<<<<<<< HEAD
 ConfirmMassDraftDeletion=Draft Bulk delete confirmation
 FileSharedViaALink=File shared via a link
 
+=======
+ConfirmMassDraftDeletion=Draft mass delete confirmation
+FileSharedViaALink=File shared via a link
+SelectAThirdPartyFirst=Select a third party first...
+YouAreCurrentlyInSandboxMode=You are currently in the %s "sandbox" mode
+Inventory=Készletnyilvántartás
+AnalyticCode=Analytic code
+TMenuMRP=MRP
+ShowMoreInfos=Show More Infos
+NoFilesUploadedYet=Please upload a document first
+SeePrivateNote=See private note
+PaymentInformation=Payment information
+ValidFrom=Valid from
+ValidUntil=Valid until
+NoRecordedUsers=No users
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

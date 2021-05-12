@@ -7,7 +7,11 @@ ProjectsArea=Περιοχή έργων
 ProjectStatus=Κατάσταση έργου
 SharedProject=Όλοι
 PrivateProject=Αντιπρόσωποι του έργου
+<<<<<<< HEAD
 ProjectsImContactFor=Projects I'm explicitely a contact of
+=======
+ProjectsImContactFor=Projects for I am explicitly a contact
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AllAllowedProjects=All project I can read (mine + public)
 AllProjects=Όλα τα έργα
 MyProjectsDesc=This view is limited to projects you are a contact for
@@ -33,20 +37,36 @@ ConfirmDeleteAProject=Are you sure you want to delete this project?
 ConfirmDeleteATask=Are you sure you want to delete this task?
 OpenedProjects=Ανοιχτά έργα
 OpenedTasks=Open tasks
+<<<<<<< HEAD
 OpportunitiesStatusForOpenedProjects=Opportunities amount of open projects by status
 OpportunitiesStatusForProjects=Opportunities amount of projects by status
+=======
+OpportunitiesStatusForOpenedProjects=Leads amount of open projects by status
+OpportunitiesStatusForProjects=Leads amount of projects by status
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShowProject=Εμφάνιση έργου
 ShowTask=Εμφάνιση Εργασίας
 SetProject=Set project
 NoProject=No project defined or owned
+<<<<<<< HEAD
 NbOfProjects=Αριθμός έργων
 NbOfTasks=Nb of tasks
+=======
+NbOfProjects=No. of projects
+NbOfTasks=No. of tasks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TimeSpent=Χρόνος που δαπανήθηκε
 TimeSpentByYou=Χρόνος που δαπανάται από εσάς
 TimeSpentByUser=Χρόνος που δαπανάται από τον χρήστη
 TimesSpent=Ο χρόνος που δαπανάται
+<<<<<<< HEAD
 RefTask=Αναφ. εργασίας
 LabelTask=Ετικέτα εργασίας
+=======
+TaskId=Task ID
+RefTask=Task ref.
+LabelTask=Task label
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TaskTimeSpent=Ο χρόνος που δαπανάται σε εργασίες
 TaskTimeUser=Χρήστης
 TaskTimeNote=Σημείωση
@@ -56,6 +76,12 @@ WorkloadNotDefined=Ο φόρτος εργασίας δεν ορίζεται
 NewTimeSpent=Ο χρόνος που δαπανάται
 MyTimeSpent=Ο χρόνος μου πέρασε
 BillTime=Bill the time spent
+<<<<<<< HEAD
+=======
+BillTimeShort=Bill time
+TimeToBill=Time not billed
+TimeBilled=Time billed
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Tasks=Εργασίες
 Task=Εργασία
 TaskDateStart=Ημερομηνία έναρξης εργασιών
@@ -79,6 +105,7 @@ GoToListOfTimeConsumed=Go to list of time consumed
 GoToListOfTasks=Go to list of tasks
 GoToGanttView=Go to Gantt view
 GanttView=Gantt View
+<<<<<<< HEAD
 ListProposalsAssociatedProject=Κατάλογος των εμπορικών προτάσεων που σχετίζονται με το έργο
 ListOrdersAssociatedProject=List of customer orders associated with the project
 ListInvoicesAssociatedProject=List of customer invoices associated with the project
@@ -92,6 +119,22 @@ ListExpenseReportsAssociatedProject=Λίστα αναφορών των δαπα�
 ListDonationsAssociatedProject=Λίστα των δωρεών που σχετίζονται με το έργο
 ListVariousPaymentsAssociatedProject=List of miscellaneous payments associated with the project
 ListActionsAssociatedProject=Κατάλογος των εκδηλώσεων που σχετίζονται με το έργο
+=======
+ListProposalsAssociatedProject=List of the commercial proposals related to the project
+ListOrdersAssociatedProject=List of sales orders related to the project
+ListInvoicesAssociatedProject=List of customer invoices related to the project
+ListPredefinedInvoicesAssociatedProject=List of customer template invoices related to the project
+ListSupplierOrdersAssociatedProject=List of purchase orders related to the project
+ListSupplierInvoicesAssociatedProject=List of vendor invoices related to the project
+ListContractAssociatedProject=List of contracts related to the project
+ListShippingAssociatedProject=List of shippings related to the project
+ListFichinterAssociatedProject=List of interventions related to the project
+ListExpenseReportsAssociatedProject=List of expense reports related to the project
+ListDonationsAssociatedProject=List of donations related to the project
+ListVariousPaymentsAssociatedProject=List of miscellaneous payments related to the project
+ListSalariesAssociatedProject=List of payments of salaries related to the project
+ListActionsAssociatedProject=List of events related to the project
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ListTaskTimeUserProject=List of time consumed on tasks of project
 ListTaskTimeForTask=List of time consumed on task
 ActivityOnProjectToday=Activity on project today
@@ -112,7 +155,11 @@ ConfirmCloseAProject=Are you sure you want to close this project?
 AlsoCloseAProject=Also close project (keep it open if you still need to follow production tasks on it)
 ReOpenAProject=Άνοιγμα έργου
 ConfirmReOpenAProject=Are you sure you want to re-open this project?
+<<<<<<< HEAD
 ProjectContact=Επαφές Project
+=======
+ProjectContact=Αντιπρόσωποι του έργου
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TaskContact=Task contacts
 ActionsOnProject=Δράσεις για το έργο
 YouAreNotContactOfProject=Δεν έχετε μια επαφή του ιδιωτικού έργου,
@@ -121,15 +168,23 @@ DeleteATimeSpent=Διαγράψτε το χρόνο που δαπανάται
 ConfirmDeleteATimeSpent=Are you sure you want to delete this time spent?
 DoNotShowMyTasksOnly=Δείτε επίσης τα καθήκοντα που δεν ανατέθηκαν σε μένα
 ShowMyTasksOnly=Δείτε τα καθήκοντα που σας έχουν ανατεθεί
+<<<<<<< HEAD
 TaskRessourceLinks=Contacts task
+=======
+TaskRessourceLinks=Contacts of task
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProjectsDedicatedToThisThirdParty=Έργα που αφορούν αυτό το στοιχείο
 NoTasks=Δεν υπάρχουν εργασίες για αυτό το έργο
 LinkedToAnotherCompany=Συνδέεται με άλλο τρίτο μέρος
 TaskIsNotAssignedToUser=Task not assigned to user. Use button '<strong>%s</strong>' to assign task now.
 ErrorTimeSpentIsEmpty=Χρόνος που δαπανάται είναι άδειο
 ThisWillAlsoRemoveTasks=Αυτή η ενέργεια θα διαγράψει επίσης όλα τα καθήκοντα του έργου <b>(%s</b> καθηκόντων προς το παρόν) και όλες οι είσοδοι του χρόνου.
+<<<<<<< HEAD
 IfNeedToUseOhterObjectKeepEmpty=Εάν ορισμένα αντικείμενα (τιμολόγιο, προκειμένου, ...), που ανήκουν σε άλλο τρίτο μέρος, πρέπει να συνδέεται με το έργο να δημιουργήσει, διατηρήσει αυτό το κενό να έχει το έργο να είναι πολλαπλών τρίτους.
 CloneProject=Clone project
+=======
+IfNeedToUseOtherObjectKeepEmpty=Εάν ορισμένα αντικείμενα (τιμολόγιο, προκειμένου, ...), που ανήκουν σε άλλο τρίτο μέρος, πρέπει να συνδέεται με το έργο να δημιουργήσει, διατηρήσει αυτό το κενό να έχει το έργο να είναι πολλαπλών τρίτους.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CloneTasks=Clone tasks
 CloneContacts=Clone contacts
 CloneNotes=Clone notes
@@ -146,6 +201,7 @@ ProjectModifiedInDolibarr=Project %s modified
 TaskCreatedInDolibarr=Εργασία %s δημιουργήθηκε
 TaskModifiedInDolibarr=Εργασία %s τροποποιήθηκε
 TaskDeletedInDolibarr=Εργασία %s διαγράφηκε
+<<<<<<< HEAD
 OpportunityStatus=Opportunity status
 OpportunityStatusShort=Opp. status
 OpportunityProbability=Opportunity probability
@@ -154,6 +210,16 @@ OpportunityAmount=Opportunity amount
 OpportunityAmountShort=Opp. amount
 OpportunityAmountAverageShort=Average Opp. amount
 OpportunityAmountWeigthedShort=Weighted Opp. amount
+=======
+OpportunityStatus=Lead status
+OpportunityStatusShort=Lead status
+OpportunityProbability=Lead probability
+OpportunityProbabilityShort=Lead probab.
+OpportunityAmount=Lead amount
+OpportunityAmountShort=Lead amount
+OpportunityAmountAverageShort=Average lead amount
+OpportunityAmountWeigthedShort=Weighted lead amount
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 WonLostExcluded=Won/Lost excluded
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Επικεφαλής του σχεδίου
@@ -167,8 +233,14 @@ TypeContact_project_task_external_TASKCONTRIBUTOR=Συνεισφέρων
 SelectElement=Επιλέξτε το στοιχείο
 AddElement=Σύνδεση με το στοιχείο
 # Documents models
+<<<<<<< HEAD
 DocumentModelBeluga=Project template for linked objects overview
 DocumentModelBaleine=Project report template for tasks
+=======
+DocumentModelBeluga=Project document template for linked objects overview
+DocumentModelBaleine=Project document template for tasks
+DocumentModelTimeSpent=Project report template for time spent
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PlannedWorkload=Σχέδιο φόρτου εργασίας
 PlannedWorkloadShort=Φόρτος εργασίας
 ProjectReferers=Σχετικά αντικείμενα
@@ -182,6 +254,10 @@ ProjectsWithThisUserAsContact=Projects with this user as contact
 TasksWithThisUserAsContact=Tasks assigned to this user
 ResourceNotAssignedToProject=Not assigned to project
 ResourceNotAssignedToTheTask=Not assigned to the task
+<<<<<<< HEAD
+=======
+NoUserAssignedToTheProject=No users assigned to this project
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TimeSpentBy=Time spent by
 TasksAssignedTo=Tasks assigned to
 AssignTaskToMe=Ανάθεση εργασίας σε εμένα
@@ -189,6 +265,7 @@ AssignTaskToUser=Assign task to %s
 SelectTaskToAssign=Select task to assign...
 AssignTask=Ανάθεση
 ProjectOverview=Επισκόπηση
+<<<<<<< HEAD
 ManageTasks=Use projects to follow tasks and time
 ManageOpportunitiesStatus=Use projects to follow leads/opportinuties
 ProjectNbProjectByMonth=Nb of created projects by month
@@ -196,10 +273,20 @@ ProjectNbTaskByMonth=Nb of created tasks by month
 ProjectOppAmountOfProjectsByMonth=Amount of opportunities by month
 ProjectWeightedOppAmountOfProjectsByMonth=Weighted amount of opportunities by month
 ProjectOpenedProjectByOppStatus=Open project/lead by opportunity status
+=======
+ManageTasks=Use projects to follow tasks and/or report time spent (timesheets)
+ManageOpportunitiesStatus=Use projects to follow leads/opportinuties
+ProjectNbProjectByMonth=No. of created projects by month
+ProjectNbTaskByMonth=No. of created tasks by month
+ProjectOppAmountOfProjectsByMonth=Amount of leads by month
+ProjectWeightedOppAmountOfProjectsByMonth=Weighted amount of leads by month
+ProjectOpenedProjectByOppStatus=Open project/lead by lead status
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProjectsStatistics=Statistics on projects/leads
 TasksStatistics=Statistics on project/lead tasks
 TaskAssignedToEnterTime=Task assigned. Entering time on this task should be possible.
 IdTaskTime=Id task time
+<<<<<<< HEAD
 YouCanCompleteRef=If you want to complete the ref with some information (to use it as search filters), it is recommanded to add a - character to separate it, so the automatic numbering will still work correctly for next projects. For example %s-ABC. You may also prefer to add search keys into label. But best practice may be to add a dedicated field, also called complementary attributes.
 OpenedProjectsByThirdparties=Open projects by third parties
 OnlyOpportunitiesShort=Μόνο ευκαιρίες
@@ -208,6 +295,17 @@ NotAnOpportunityShort=Not an opportunity
 OpportunityTotalAmount=Opportunities total amount
 OpportunityPonderatedAmount=Opportunities weighted amount
 OpportunityPonderatedAmountDesc=Opportunities amount weighted with probability
+=======
+YouCanCompleteRef=If you want to complete the ref with some suffix, it is recommanded to add a - character to separate it, so the automatic numbering will still work correctly for next projects. For example %s-MYSUFFIX
+OpenedProjectsByThirdparties=Open projects by third parties
+OnlyOpportunitiesShort=Only leads
+OpenedOpportunitiesShort=Open leads
+NotOpenedOpportunitiesShort=Not an open lead
+NotAnOpportunityShort=Not a lead
+OpportunityTotalAmount=Total amount of leads
+OpportunityPonderatedAmount=Weighted amount of leads
+OpportunityPonderatedAmountDesc=Leads amount weighted with probability
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 OppStatusPROSP=Prospection
 OppStatusQUAL=Qualification
 OppStatusPROPO=Πρόταση
@@ -216,11 +314,20 @@ OppStatusPENDING=Εκκρεμεί
 OppStatusWON=Won
 OppStatusLOST=Lost
 Budget=Budget
+<<<<<<< HEAD
 AllowToLinkFromOtherCompany=Allow to link project from other company<br><br><u>Supported values :</u><br>- Keep empty: Can link any project of the company (default)<br>- "all" : Can link any projects, even project of other companies<br>- A list of thirdparty id separated with commas : Can link all projects of these thirdparty defined (Example : 123,4795,53)<br>
 LatestProjects=Latest %s projects
 LatestModifiedProjects=Latest %s modified projects
 OtherFilteredTasks=Other filtered tasks
 NoAssignedTasks=No assigned tasks (assign project/tasks the current user from the top select box to enter time on it)
+=======
+AllowToLinkFromOtherCompany=Allow to link project from other company<br><br><u>Supported values:</u><br>- Keep empty: Can link any project of the company (default)<br>- "all": Can link any projects, even projects of other companies<br>- A list of third-party ids separated by commas: can link all projects of these third partys (Example: 123,4795,53)<br>
+LatestProjects=Latest %s projects
+LatestModifiedProjects=Latest %s modified projects
+OtherFilteredTasks=Other filtered tasks
+NoAssignedTasks=No assigned tasks found (assign project/tasks to the current user from the top select box to enter time on it)
+ThirdPartyRequiredToGenerateInvoice=A third party must be defined on project to be able to invoice it.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 # Comments trans
 AllowCommentOnTask=Allow user comments on tasks
 AllowCommentOnProject=Allow user comments on projects
@@ -228,3 +335,14 @@ DontHavePermissionForCloseProject=You do not have permissions to close the proje
 DontHaveTheValidateStatus=The project %s must be open to be closed
 RecordsClosed=%s project(s) closed
 SendProjectRef=Information project %s
+<<<<<<< HEAD
+=======
+ModuleSalaryToDefineHourlyRateMustBeEnabled=Module 'Salaries' must be enabled to define employee hourly rate to have time spent valorized
+NewTaskRefSuggested=Task ref already used, a new task ref is required
+TimeSpentInvoiced=Time spent billed
+TimeSpentForInvoice=Ο χρόνος που δαπανάται
+OneLinePerUser=One line per user
+ServiceToUseOnLines=Service to use on lines
+InvoiceGeneratedFromTimeSpent=Invoice %s has been generated from time spent on project
+ProjectBillTimeDescription=Check if you enter timesheet on tasks of project AND you plan to generate invoice(s) from the timesheet to bill the customer of the project (do not check if you plan to create invoice that is not based on entered timesheets).
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

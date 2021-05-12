@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2010	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
@@ -39,6 +43,7 @@ $sref = GETPOST('sref');
 $sRefSupplier = GETPOST('srefsupplier');
 $snom = GETPOST('snom');
 $type = GETPOST('type');
+<<<<<<< HEAD
 $optioncss = GETPOST('optioncss','alpha');
 
 // Load variable for pagination
@@ -46,6 +51,15 @@ $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
+=======
+$optioncss = GETPOST('optioncss', 'alpha');
+
+// Load variable for pagination
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -71,11 +85,19 @@ $extrafields = new ExtraFields($db);
  * Put here all code to do according to value of "action" parameter
  */
 
+<<<<<<< HEAD
 if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
 if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+=======
+if (GETPOST('cancel', 'alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -84,7 +106,11 @@ if (empty($reshook))
     include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
     // Purge search criteria
+<<<<<<< HEAD
     if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+=======
+    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') ||GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
     	$sref = '';
     	$sRefSupplier = '';
@@ -117,10 +143,18 @@ if ($fourn_id)
 
 
 $arrayofmassactions =  array(
+<<<<<<< HEAD
     'presend'=>$langs->trans("SendByMail"),
     'builddoc'=>$langs->trans("PDFMerge"),
 );
 if ($user->rights->mymodule->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+=======
+	'generate_doc'=>$langs->trans("ReGeneratePDF"),
+    'builddoc'=>$langs->trans("PDFMerge"),
+    'presend'=>$langs->trans("SendByMail"),
+);
+if ($user->rights->mymodule->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
@@ -139,7 +173,11 @@ if ($sRefSupplier)
 }
 if (GETPOST('type'))
 {
+<<<<<<< HEAD
 	$sql .= " AND p.fk_product_type = " . GETPOST('type','int');
+=======
+	$sql .= " AND p.fk_product_type = " . GETPOST('type', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 if ($sref)
 {
@@ -158,7 +196,11 @@ if ($fourn_id > 0)
 	$sql .= " AND ppf.fk_soc = ".$fourn_id;
 }
 
+<<<<<<< HEAD
 $sql .= $db->order($sortfield,$sortorder);
+=======
+$sql .= $db->order($sortfield, $sortorder);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Count total nb of records without orderby and limit
 $nbtotalofrecords = '';
@@ -190,10 +232,17 @@ if ($resql)
 		exit;
 	}
 
+<<<<<<< HEAD
 	if (! empty($supplier->id)) $texte = $langs->trans("ListOfSupplierProductForSupplier",$supplier->name);
 	else $texte = $langs->trans("List");
 
 	llxHeader("","",$texte);
+=======
+	if (! empty($supplier->id)) $texte = $langs->trans("ListOfSupplierProductForSupplier", $supplier->name);
+	else $texte = $langs->trans("List");
+
+	llxHeader("", "", $texte);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	$param="&tobuy=".$tobuy."&sref=".$sref."&snom=".$snom."&fourn_id=".$fourn_id.(isset($type)?"&amp;type=".$type:"").(empty($sRefSupplier)?"":"&amp;srefsupplier=".$sRefSupplier);
@@ -205,7 +254,11 @@ if ($resql)
 	{
 		print "<div id='ways'>";
 		$c = new Categorie($db);
+<<<<<<< HEAD
 		$ways = $c->print_all_ways(' &gt; ','fourn/product/list.php');
+=======
+		$ways = $c->print_all_ways(' &gt; ', 'fourn/product/list.php');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print " &gt; ".$ways[0]."<br>\n";
 		print "</div><br>";
 	}
@@ -227,7 +280,11 @@ if ($resql)
 
 	print '<table class="liste" width="100%">';
 
+<<<<<<< HEAD
 	// Lignes des champs de filtre
+=======
+	// Fields title search
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">';
 	print '<input class="flat" type="text" name="sref" value="'.$sref.'" size="12">';
@@ -242,12 +299,17 @@ if ($resql)
 	print '<td></td>';
 	print '<td></td>';
 	print '<td></td>';
+<<<<<<< HEAD
 	print '<td class="liste_titre" align="right">';
+=======
+	print '<td class="liste_titre maxwidthsearch">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$searchpicto=$form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
 	print '</tr>';
 
+<<<<<<< HEAD
 	// Lignes des titres
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref",$_SERVER["PHP_SELF"], "p.ref",$param,"","",$sortfield,$sortorder);
@@ -258,11 +320,27 @@ if ($resql)
 	print_liste_field_titre("QtyMin",$_SERVER["PHP_SELF"], "ppf.quantity",$param,"",'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre("UnitPrice",$_SERVER["PHP_SELF"], "ppf.unitprice",$param,"",'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre('',$_SERVER["PHP_SELF"]);
+=======
+	// Line for title
+	print '<tr class="liste_titre">';
+	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.ref", $param, "", "", $sortfield, $sortorder);
+	print_liste_field_titre("RefSupplierShort", $_SERVER["PHP_SELF"], "ppf.ref_fourn", $param, "", "", $sortfield, $sortorder);
+	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "p.label", $param, "", "", $sortfield, $sortorder);
+	print_liste_field_titre("Supplier", $_SERVER["PHP_SELF"], "ppf.fk_soc", $param, "", "", $sortfield, $sortorder);
+	print_liste_field_titre("BuyingPrice", $_SERVER["PHP_SELF"], "ppf.price", $param, "", '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("QtyMin", $_SERVER["PHP_SELF"], "ppf.quantity", $param, "", '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("UnitPrice", $_SERVER["PHP_SELF"], "ppf.unitprice", $param, "", '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre('', $_SERVER["PHP_SELF"]);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print "</tr>\n";
 
 	$oldid = '';
 
+<<<<<<< HEAD
 	while ($i < min($num,$limit))
+=======
+	while ($i < min($num, $limit))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$objp = $db->fetch_object($resql);
 
@@ -273,7 +351,11 @@ if ($resql)
 		$productstatic->ref=$objp->ref;
 		$productstatic->type=$objp->fk_product_type;
 		$productstatic->entity=$objp->entity;
+<<<<<<< HEAD
 		print $productstatic->getNomUrl(1,'supplier');
+=======
+		print $productstatic->getNomUrl(1, 'supplier');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</td>';
 
 		print '<td>'.$objp->ref_fourn.'</td>';
@@ -283,6 +365,7 @@ if ($resql)
 		$companystatic->name=$objp->name;
 		$companystatic->id=$objp->socid;
 		print '<td>';
+<<<<<<< HEAD
 		if ($companystatic->id > 0) print $companystatic->getNomUrl(1,'supplier');
 		print '</td>';
 
@@ -293,6 +376,18 @@ if ($resql)
 		print '<td align="right">'.(isset($objp->unitprice) ? price($objp->unitprice) : '').'</td>';
 
 		print '<td align="right"></td>';
+=======
+		if ($companystatic->id > 0) print $companystatic->getNomUrl(1, 'supplier');
+		print '</td>';
+
+		print '<td class="right">'.(isset($objp->price) ? price($objp->price) : '').'</td>';
+
+		print '<td class="right">'.$objp->qty.'</td>';
+
+		print '<td class="right">'.(isset($objp->unitprice) ? price($objp->unitprice) : '').'</td>';
+
+		print '<td class="right"></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		print "</tr>\n";
 		$i++;
@@ -308,5 +403,9 @@ else
 	dol_print_error($db);
 }
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

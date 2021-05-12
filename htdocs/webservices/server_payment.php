@@ -27,7 +27,11 @@
 // This is to make Dolibarr working with Plesk
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
+<<<<<<< HEAD
 require_once '../master.inc.php';
+=======
+require '../master.inc.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 require_once NUSOAP_PATH.'/nusoap.php';                // Include SOAP
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
@@ -46,7 +50,11 @@ if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
 {
        $langs->load("admin");
        dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
+<<<<<<< HEAD
        print $langs->trans("WarningModuleNotActive",'WebServices').'.<br><br>';
+=======
+       print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
        print $langs->trans("ToActivateModule");
        exit;
 }
@@ -56,7 +64,11 @@ $server                              = new nusoap_server();
 $server->soap_defencoding            = 'UTF-8';
 $server->decode_utf8                 = false;
 $ns                                  = 'http://www.dolibarr.org/ns/';
+<<<<<<< HEAD
 $server->configureWSDL('WebServicesDolibarrPayment',$ns);
+=======
+$server->configureWSDL('WebServicesDolibarrPayment', $ns);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $server->wsdl->schemaTargetNamespace = $ns;
 
 
@@ -153,7 +165,11 @@ function createPayment($authentication, $payment)
     $errorcode  = '';
        $errorlabel = '';
     $error      = 0;
+<<<<<<< HEAD
     $fuser      = check_authentication($authentication,$error,$errorcode,$errorlabel);
+=======
+    $fuser      = check_authentication($authentication, $error, $errorcode, $errorlabel);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     // Check parameters
     if (empty($payment['amount']) && empty($payment['thirdparty_id'])) {

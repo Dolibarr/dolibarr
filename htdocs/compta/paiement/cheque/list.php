@@ -1,8 +1,13 @@
 <?php
 /* Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2014		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+=======
+ * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2014		Alexandre Spangaro		<aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2016		Juanjo Menent   		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,7 +30,11 @@
  *   \brief      Page list of cheque deposits
  */
 
+<<<<<<< HEAD
 require('../../../main.inc.php');
+=======
+require '../../../main.inc.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -36,6 +45,7 @@ $langs->loadLangs(array('banks', 'categories', 'bills'));
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
+<<<<<<< HEAD
 $result = restrictedArea($user, 'banque', '','');
 
 $search_ref = GETPOST('search_ref','alpha');
@@ -46,6 +56,18 @@ $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
+=======
+$result = restrictedArea($user, 'banque', '', '');
+
+$search_ref = GETPOST('search_ref', 'alpha');
+$search_account = GETPOST('search_account', 'int');
+$search_amount = GETPOST('search_amount', 'alpha');
+
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -67,7 +89,11 @@ $accountstatic=new Account($db);
  */
 
 // If click on purge search criteria ?
+<<<<<<< HEAD
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+=======
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
     $search_ref='';
     $search_amount='';
@@ -82,7 +108,11 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
  * View
  */
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("ChequesReceipts"));
+=======
+llxHeader('', $langs->trans("ChequesReceipts"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $sql = "SELECT bc.rowid, bc.ref as ref, bc.date_bordereau as dp,";
 $sql.= " bc.nbcheque, bc.amount, bc.statut,";
@@ -93,23 +123,40 @@ $sql.= " WHERE bc.fk_bank_account = ba.rowid";
 $sql.= " AND bc.entity = ".$conf->entity;
 
 // Search criteria
+<<<<<<< HEAD
 if ($search_ref)			$sql.=natural_search("bc.ref",$search_ref);
+=======
+if ($search_ref)			$sql.=natural_search("bc.ref", $search_ref);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($search_account > 0)	$sql.=" AND bc.fk_bank_account=".$search_account;
 if ($search_amount)			$sql.=natural_search("bc.amount", price2num($search_amount));
 if ($month > 0)
 {
     if ($year > 0 && empty($day))
+<<<<<<< HEAD
     $sql.= " AND bc.date_bordereau BETWEEN '".$db->idate(dol_get_first_day($year,$month,false))."' AND '".$db->idate(dol_get_last_day($year,$month,false))."'";
     else if ($year > 0 && ! empty($day))
+=======
+    $sql.= " AND bc.date_bordereau BETWEEN '".$db->idate(dol_get_first_day($year, $month, false))."' AND '".$db->idate(dol_get_last_day($year, $month, false))."'";
+    elseif ($year > 0 && ! empty($day))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $sql.= " AND bc.date_bordereau BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
     else
     $sql.= " AND date_format(bc.date_bordereau, '%m') = '".$month."'";
 }
+<<<<<<< HEAD
 else if ($year > 0)
 {
 	$sql.= " AND bc.date_bordereau BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
 }
 $sql.= $db->order($sortfield,$sortorder);
+=======
+elseif ($year > 0)
+{
+	$sql.= " AND bc.date_bordereau BETWEEN '".$db->idate(dol_get_first_day($year, 1, false))."' AND '".$db->idate(dol_get_last_day($year, 12, false))."'";
+}
+$sql.= $db->order($sortfield, $sortorder);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -138,9 +185,13 @@ if ($resql)
 	$newcardbutton='';
 	if ($user->rights->banque->cheque)
 	{
+<<<<<<< HEAD
 		$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/paiement/cheque/card.php?action=new"><span class="valignmiddle">'.$langs->trans('NewCheckDeposit').'</span>';
 		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 		$newcardbutton.= '</a>';
+=======
+        $newcardbutton.= dolGetButtonTitle($langs->trans('NewCheckDeposit'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/paiement/cheque/card.php?action=new');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -159,7 +210,11 @@ if ($resql)
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
+<<<<<<< HEAD
 	// Lignes des champs de filtre
+=======
+	// Fields title search
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" size="4" name="search_ref" value="'.$search_ref.'">';
@@ -167,6 +222,7 @@ if ($resql)
 	print '<td class="liste_titre" align="center">';
     if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
     print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
+<<<<<<< HEAD
     $formother->select_year($year?$year:-1,'year',1, 20, 5);
     print '</td>';
     print '<td class="liste_titre">';
@@ -178,24 +234,50 @@ if ($resql)
 	print '</td>';
 	print '<td class="liste_titre"></td>';
     print '<td class="liste_titre" align="right">';
+=======
+    $formother->select_year($year?$year:-1, 'year', 1, 20, 5);
+    print '</td>';
+    print '<td class="liste_titre">';
+    $form->select_comptes($search_account, 'search_account', 0, '', 1);
+    print '</td>';
+	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre right">';
+	print '<input class="flat maxwidth50" type="text" name="search_amount" value="'.$search_amount.'">';
+	print '</td>';
+	print '<td class="liste_titre"></td>';
+    print '<td class="liste_titre maxwidthsearch">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $searchpicto=$form->showFilterAndCheckAddButtons(0);
     print $searchpicto;
     print '</td>';
     print "</tr>\n";
 
     print '<tr class="liste_titre">';
+<<<<<<< HEAD
 	print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"bc.ref","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre("DateCreation",$_SERVER["PHP_SELF"],"dp","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre("Account",$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre("NbOfCheques",$_SERVER["PHP_SELF"],"bc.nbcheque","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre("Amount",$_SERVER["PHP_SELF"],"bc.amount","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"bc.statut","",$param,'align="right"',$sortfield,$sortorder);
+=======
+	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "bc.ref", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "dp", "", $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("NbOfCheques", $_SERVER["PHP_SELF"], "bc.nbcheque", "", $param, 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "bc.amount", "", $param, 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "bc.statut", "", $param, 'class="right"', $sortfield, $sortorder);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print_liste_field_titre('');
 	print "</tr>\n";
 
     if ($num > 0)
     {
+<<<<<<< HEAD
     	while ($i < min($num,$limit))
+=======
+    	while ($i < min($num, $limit))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	{
     		$objp = $db->fetch_object($resql);
 
@@ -210,15 +292,24 @@ if ($resql)
     		print '</td>';
 
     		// Date
+<<<<<<< HEAD
     		print '<td align="center">'.dol_print_date($db->jdate($objp->dp),'day').'</td>';  // TODO Use date hour
 
     		// Bank
     		print '<td>';
     		if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$objp->label.'</a>';
+=======
+    		print '<td align="center">'.dol_print_date($db->jdate($objp->dp), 'day').'</td>';  // TODO Use date hour
+
+    		// Bank
+    		print '<td>';
+    		if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"), 'account').' '.$objp->label.'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     		else print '&nbsp;';
     		print '</td>';
 
     		// Number of cheques
+<<<<<<< HEAD
     		print '<td align="right">'.$objp->nbcheque.'</td>';
 
     		// Amount
@@ -227,6 +318,16 @@ if ($resql)
     		// Statut
     		print '<td align="right">';
     		print $checkdepositstatic->LibStatut($objp->statut,5);
+=======
+    		print '<td class="right">'.$objp->nbcheque.'</td>';
+
+    		// Amount
+    		print '<td class="right">'.price($objp->amount).'</td>';
+
+    		// Statut
+    		print '<td class="right">';
+    		print $checkdepositstatic->LibStatut($objp->statut, 5);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     		print '</td>';
 
     		print '<td></td>';
@@ -250,6 +351,10 @@ else
 	dol_print_error($db);
 }
 
+<<<<<<< HEAD
 
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

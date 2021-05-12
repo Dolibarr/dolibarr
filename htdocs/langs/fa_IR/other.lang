@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - other
+<<<<<<< HEAD
 SecurityCode=کد امنیتی
 NumberingShort=N°
 Tools=ابزار
@@ -11,6 +12,20 @@ BirthdayAlertOn=تولد هشدار فعال
 BirthdayAlertOff=تولد غیر فعال هشدار
 TransKey=Translation of the key TransKey
 MonthOfInvoice=Month (number 1-12) of invoice date
+=======
+SecurityCode=کد حفاظتی
+NumberingShort=N°
+Tools=ابزار
+TMenuTools=ابزارها
+ToolsDesc=همۀ ابزارهائی که در سایر فهرست‌ها نیامده‌اند این‌جا گروه‌بندی شده‌اند. <br> همۀ ابزارها از فهرست سمت راست در دسترس هستند
+Birthday=تولد
+BirthdayDate=تاریخ تولد
+DateToBirth=تاریخ تولد
+BirthdayAlertOn=اعلان تولد فعال است
+BirthdayAlertOff=اعلان تولد غیرفعال است
+TransKey=ترجمۀ کلیدواژۀ TransKey
+MonthOfInvoice=ماه (عدد 1-12) تاریخ صورت‌حساب
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TextMonthOfInvoice=Month (text) of invoice date
 PreviousMonthOfInvoice=Previous month (number 1-12) of invoice date
 TextPreviousMonthOfInvoice=Previous month (text) of invoice date
@@ -20,10 +35,17 @@ ZipFileGeneratedInto=Zip file generated into <b>%s</b>.
 DocFileGeneratedInto=Doc file generated into <b>%s</b>.
 JumpToLogin=Disconnected. Go to login page...
 MessageForm=Message on online payment form
+<<<<<<< HEAD
 MessageOK=پیام در اعتبار صفحه بازگشت پرداخت
 MessageKO=پیام در لغو صفحه بازگشت پرداخت
 ContentOfDirectoryIsNotEmpty=Content of this directory is not empty.
 DeleteAlsoContentRecursively=Check to delete all content recursiveley
+=======
+MessageOK=Message on the return page for a validated payment
+MessageKO=Message on the return page for a canceled payment
+ContentOfDirectoryIsNotEmpty=Content of this directory is not empty.
+DeleteAlsoContentRecursively=Check to delete all content recursively
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 YearOfInvoice=Year of invoice date
 PreviousYearOfInvoice=Previous year of invoice date
@@ -31,6 +53,7 @@ NextYearOfInvoice=Following year of invoice date
 DateNextInvoiceBeforeGen=Date of next invoice (before generation)
 DateNextInvoiceAfterGen=Date of next invoice (after generation)
 
+<<<<<<< HEAD
 Notify_FICHINTER_ADD_CONTACT=Added contact to Intervention
 Notify_FICHINTER_VALIDATE=مداخله اعتبار
 Notify_FICHINTER_SENTBYMAIL=مداخله با پست
@@ -43,6 +66,17 @@ Notify_ORDER_SUPPLIER_REFUSE=منظور تامین کننده خودداری ک�
 Notify_PROPAL_VALIDATE=پیشنهاد به مشتری اعتبار
 Notify_PROPAL_CLOSE_SIGNED=propal با مشتری بسته امضا
 Notify_PROPAL_CLOSE_REFUSED=propal با مشتری بسته خودداری کرد
+=======
+Notify_ORDER_VALIDATE=Sales order validated
+Notify_ORDER_SENTBYMAIL=Sales order sent by mail
+Notify_ORDER_SUPPLIER_SENTBYMAIL=Purchase order sent by email
+Notify_ORDER_SUPPLIER_VALIDATE=Purchase order recorded
+Notify_ORDER_SUPPLIER_APPROVE=Purchase order approved
+Notify_ORDER_SUPPLIER_REFUSE=Purchase order refused
+Notify_PROPAL_VALIDATE=پیشنهاد به مشتری اعتبار
+Notify_PROPAL_CLOSE_SIGNED=Customer proposal closed signed
+Notify_PROPAL_CLOSE_REFUSED=Customer proposal closed refused
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Notify_PROPAL_SENTBYMAIL=پیشنهاد تجاری با پست
 Notify_WITHDRAW_TRANSMIT=خروج خطوط انتقال
 Notify_WITHDRAW_CREDIT=خروج اعتباری
@@ -51,6 +85,7 @@ Notify_COMPANY_CREATE=شخص ثالث ایجاد شده
 Notify_COMPANY_SENTBYMAIL=ایمیل های فرستاده شده از کارت شخص ثالث
 Notify_BILL_VALIDATE=صورت حساب به مشتری اعتبار
 Notify_BILL_UNVALIDATE=صورت حساب به مشتری unvalidated
+<<<<<<< HEAD
 Notify_BILL_PAYED=صورت حساب به مشتری غیر انتفایی
 Notify_BILL_CANCEL=صورت حساب به مشتری لغو
 Notify_BILL_SENTBYMAIL=صورت حساب به مشتری با پست
@@ -60,6 +95,19 @@ Notify_BILL_SUPPLIER_SENTBYMAIL=فاکتور تامین کننده با پست
 Notify_BILL_SUPPLIER_CANCELED=فاکتور تامین کننده لغو
 Notify_CONTRACT_VALIDATE=قرارداد معتبر
 Notify_FICHEINTER_VALIDATE=مداخله اعتبار
+=======
+Notify_BILL_PAYED=صورت‌حساب مشتری پرداخت شد
+Notify_BILL_CANCEL=صورت حساب به مشتری لغو
+Notify_BILL_SENTBYMAIL=صورت حساب به مشتری با پست
+Notify_BILL_SUPPLIER_VALIDATE=Vendor invoice validated
+Notify_BILL_SUPPLIER_PAYED=Vendor invoice paid
+Notify_BILL_SUPPLIER_SENTBYMAIL=Vendor invoice sent by mail
+Notify_BILL_SUPPLIER_CANCELED=Vendor invoice cancelled
+Notify_CONTRACT_VALIDATE=قرارداد معتبر
+Notify_FICHEINTER_VALIDATE=مداخله اعتبار
+Notify_FICHINTER_ADD_CONTACT=Added contact to Intervention
+Notify_FICHINTER_SENTBYMAIL=مداخله با پست
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Notify_SHIPPING_VALIDATE=حمل و نقل معتبر
 Notify_SHIPPING_SENTBYMAIL=حمل و نقل با پست
 Notify_MEMBER_VALIDATE=کاربران معتبر
@@ -71,12 +119,20 @@ Notify_PROJECT_CREATE=ایجاد پروژه
 Notify_TASK_CREATE=وظیفه ایجاد
 Notify_TASK_MODIFY=وظیفه اصلاح شده
 Notify_TASK_DELETE=وظیفه حذف
+<<<<<<< HEAD
+=======
+Notify_EXPENSE_REPORT_VALIDATE=Expense report validated (approval required)
+Notify_EXPENSE_REPORT_APPROVE=Expense report approved
+Notify_HOLIDAY_VALIDATE=Leave request validated (approval required)
+Notify_HOLIDAY_APPROVE=Leave request approved
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SeeModuleSetup=See setup of module %s
 NbOfAttachedFiles=تعداد فایل های پیوست / اسناد
 TotalSizeOfAttachedFiles=اندازه کل فایل های پیوست / اسناد
 MaxSize=حداکثر اندازه
 AttachANewFile=ضمیمه کردن فایل جدید / سند
 LinkedObject=شی مرتبط
+<<<<<<< HEAD
 NbOfActiveNotifications=Number of notifications (nb of recipient emails)
 PredefinedMailTest=__(Hello)__\nThis is a test mail sent to __EMAIL__.\nThe two lines are separated by a carriage return.\n\n__USER_SIGNATURE__
 PredefinedMailTestHtml=__(Hello)__\nThis is a <b>test</b> mail (the word test must be in bold).<br>The two lines are separated by a carriage return.<br><br>__USER_SIGNATURE__
@@ -90,6 +146,23 @@ PredefinedMailContentSendSupplierInvoice=__(Hello)__\n\nYou will find here the i
 PredefinedMailContentSendShipping=__(Hello)__\n\nYou will find here the shipping __REF__\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
 PredefinedMailContentSendFichInter=__(Hello)__\n\nYou will find here the intervention __REF__\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
 PredefinedMailContentThirdparty=__(Hello)__\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
+=======
+NbOfActiveNotifications=Number of notifications (no. of recipient emails)
+PredefinedMailTest=__(Hello)__\nThis is a test mail sent to __EMAIL__.\nThe two lines are separated by a carriage return.\n\n__USER_SIGNATURE__
+PredefinedMailTestHtml=__(Hello)__\nThis is a <b>test</b> mail (the word test must be in bold).<br>The two lines are separated by a carriage return.<br><br>__USER_SIGNATURE__
+PredefinedMailContentContract=__(Hello)__\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
+PredefinedMailContentSendInvoice=__(Hello)__\n\nPlease find invoice __REF__ attached \n\n__ONLINE_PAYMENT_TEXT_AND_URL__\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
+PredefinedMailContentSendInvoiceReminder=__(Hello)__\n\nWe would like to remind you that the invoice  __REF__ seems to have not been paid. A copy of the invoice is attached as a reminder.\n\n__ONLINE_PAYMENT_TEXT_AND_URL__\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
+PredefinedMailContentSendProposal=__(Hello)__\n\nPlease find commercial proposal __REF__ attached \n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
+PredefinedMailContentSendSupplierProposal=__(Hello)__\n\nPlease find price request __REF__ attached\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
+PredefinedMailContentSendOrder=__(Hello)__\n\nPlease find order __REF__ attached\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
+PredefinedMailContentSendSupplierOrder=__(Hello)__\n\nPlease find our order __REF__ attached\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
+PredefinedMailContentSendSupplierInvoice=__(Hello)__\n\nPlease find invoice __REF__ attached\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
+PredefinedMailContentSendShipping=__(Hello)__\n\nPlease find shipping __REF__ attached\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
+PredefinedMailContentSendFichInter=__(Hello)__\n\nPlease find intervention __REF__ attached\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
+PredefinedMailContentThirdparty=__(Hello)__\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
+PredefinedMailContentContact=__(Hello)__\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PredefinedMailContentUser=__(Hello)__\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
 PredefinedMailContentLink=You can click on the link below to make your payment if it is not already done.\n\n%s\n\n
 DemoDesc=Dolibarr is a compact ERP/CRM supporting several business modules. A demo showcasing all modules makes no sense as this scenario never occurs (several hundred available). So, several demo profiles are available.
@@ -141,14 +214,22 @@ LengthUnitdm=دیابت
 LengthUnitcm=سانتی متر
 LengthUnitmm=میلیمتر
 Surface=منطقه
+<<<<<<< HEAD
 SurfaceUnitm2=m²
+=======
+SurfaceUnitm2=متر²
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SurfaceUnitdm2=dm²
 SurfaceUnitcm2=cm²
 SurfaceUnitmm2=mm²
 SurfaceUnitfoot2=ft²
 SurfaceUnitinch2=in²
 Volume=حجم
+<<<<<<< HEAD
 VolumeUnitm3=m³
+=======
+VolumeUnitm3=متر³
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 VolumeUnitdm3=dm³ (L)
 VolumeUnitcm3=cm³ (ml)
 VolumeUnitmm3=mm³ (µl)
@@ -172,6 +253,7 @@ EnableGDLibraryDesc=Install or enable GD library on your PHP installation to use
 ProfIdShortDesc=<b>پروفسور کد از٪ s</b> اطلاعات بسته به کشور های شخص ثالث است. <br> به عنوان مثال، برای <b>کشور٪، این کد٪ بازدید کنندگان</b> است.
 DolibarrDemo=Dolibarr ERP / CRM نسخه ی نمایشی
 StatsByNumberOfUnits=Statistics for sum of qty of products/services
+<<<<<<< HEAD
 StatsByNumberOfEntities=Statistics in number of referring entities (nb of invoice, or order...)
 NumberOfProposals=Number of proposals
 NumberOfCustomerOrders=Number of customer orders
@@ -197,6 +279,38 @@ EMailTextOrderApprovedBy=منظور از٪ s شده توسط٪ s تایید شد
 EMailTextOrderRefused=منظور از٪ s رد شده است.
 EMailTextOrderRefusedBy=منظور از٪ s شده توسط٪ s خودداری کرد.
 EMailTextExpeditionValidated=حمل و نقل از٪ s دارای اعتبار بوده است.
+=======
+StatsByNumberOfEntities=Statistics in number of referring entities (no. of invoice, or order...)
+NumberOfProposals=Number of proposals
+NumberOfCustomerOrders=Number of sales orders
+NumberOfCustomerInvoices=Number of customer invoices
+NumberOfSupplierProposals=Number of vendor proposals
+NumberOfSupplierOrders=Number of purchase orders
+NumberOfSupplierInvoices=Number of vendor invoices
+NumberOfUnitsProposals=Number of units on proposals
+NumberOfUnitsCustomerOrders=Number of units on sales orders
+NumberOfUnitsCustomerInvoices=Number of units on customer invoices
+NumberOfUnitsSupplierProposals=Number of units on vendor proposals
+NumberOfUnitsSupplierOrders=Number of units on purchase orders
+NumberOfUnitsSupplierInvoices=Number of units on vendor invoices
+EMailTextInterventionAddedContact=A new intervention %s has been assigned to you.
+EMailTextInterventionValidated=مداخله٪ s را دارای اعتبار بوده است.
+EMailTextInvoiceValidated=Invoice %s has been validated.
+EMailTextInvoicePayed=Invoice %s has been paid.
+EMailTextProposalValidated=Proposal %s has been validated.
+EMailTextProposalClosedSigned=Proposal %s has been closed signed.
+EMailTextOrderValidated=Order %s has been validated.
+EMailTextOrderApproved=Order %s has been approved.
+EMailTextOrderValidatedBy=Order %s has been recorded by %s.
+EMailTextOrderApprovedBy=Order %s has been approved by %s.
+EMailTextOrderRefused=Order %s has been refused.
+EMailTextOrderRefusedBy=Order %s has been refused by %s.
+EMailTextExpeditionValidated=Shipping %s has been validated.
+EMailTextExpenseReportValidated=Expense report %s has been validated.
+EMailTextExpenseReportApproved=Expense report %s has been approved.
+EMailTextHolidayValidated=Leave request %s has been validated.
+EMailTextHolidayApproved=Leave request %s has been approved.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ImportedWithSet=واردات مجموعه داده
 DolibarrNotification=اطلاع رسانی به صورت خودکار
 ResizeDesc=عرض جدید <b>OR</b> ارتفاع جدید را وارد کنید. نسبت در طول تغییر اندازه نگه داشته ...
@@ -204,7 +318,11 @@ NewLength=عرض جدید
 NewHeight=ارتفاع جدید
 NewSizeAfterCropping=اندازه های جدید پس از برداشت
 DefineNewAreaToPick=تعریف منطقه جدید روی تصویر انتخاب کنید (کلیک چپ بر روی تصویر بکشید تا زمانی که شما رسیدن به گوشه مقابل)
+<<<<<<< HEAD
 CurrentInformationOnImage=این ابزار برای کمک به شما برای تغییر اندازه و یا برش یک تصویر طراحی شده است. این اطلاعات بر روی تصویر ویرایش شده در حال حاضر است
+=======
+CurrentInformationOnImage=This tool was designed to help you to resize or crop an image. This is the information on the current edited image
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ImageEditor=ویرایشگر تصویر
 YouReceiveMailBecauseOfNotification=شما این پیام را دریافت خواهید کرد چرا که ایمیل شما به لیست از اهداف به حوادث خاص به٪ نرم افزار از٪ s را مطلع اضافه شده است.
 YouReceiveMailBecauseOfNotification2=این رویداد به شرح زیر است:
@@ -235,6 +353,14 @@ YourPasswordMustHaveAtLeastXChars=Your password must have at least <strong>%s</s
 YourPasswordHasBeenReset=Your password has been reset successfully
 ApplicantIpAddress=IP address of applicant
 SMSSentTo=SMS sent to %s
+<<<<<<< HEAD
+=======
+MissingIds=Missing ids
+ThirdPartyCreatedByEmailCollector=Third party created by email collector from email MSGID %s
+ContactCreatedByEmailCollector=Contact/address created by email collector from email MSGID %s
+ProjectCreatedByEmailCollector=Project created by email collector from email MSGID %s
+TicketCreatedByEmailCollector=Ticket created by email collector from email MSGID %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 ##### Export #####
 ExportsArea=منطقه صادرات
@@ -248,5 +374,15 @@ WebsiteSetup=Setup of module website
 WEBSITE_PAGEURL=URL of page
 WEBSITE_TITLE=عنوان
 WEBSITE_DESCRIPTION=توصیف
+<<<<<<< HEAD
 WEBSITE_KEYWORDS=Keywords
 LinesToImport=Lines to import
+=======
+WEBSITE_IMAGE=Image
+WEBSITE_IMAGEDesc=Relative path of the image media. You can keep this empty as this is rarely used (it can be used by dynamic content to show a preview of a list of blog posts).
+WEBSITE_KEYWORDS=Keywords
+LinesToImport=Lines to import
+
+MemoryUsage=Memory usage
+RequestDuration=Duration of request
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

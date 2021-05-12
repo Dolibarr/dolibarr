@@ -2,7 +2,11 @@
 /* Copyright (C) 2012		Nicolas Villa aka Boyquotes http://informetic.fr
  * Copyright (C) 2013		Florian Henry		<forian.henry@open-cocnept.pro>
  * Copyright (C) 2013-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2017		Regis Houssin		<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2017		Regis Houssin		<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,17 +27,26 @@
  *  \ingroup    cron
  *  \brief      Execute pendings jobs
  */
+<<<<<<< HEAD
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOLOGIN'))        define('NOLOGIN','1');
+=======
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined('NOLOGIN'))        define('NOLOGIN', '1');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
 $entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) define("DOLENTITY", $entity);
 
+<<<<<<< HEAD
 // librarie core
 // Dolibarr environment
 $res = @include("../../main.inc.php"); // From htdocs directory
@@ -41,6 +54,18 @@ if (! $res) {
 	$res = @include("../../../main.inc.php"); // From "custom" directory
 }
 if (! $res) die("Include of master.inc.php fails");
+=======
+// Error if CLI mode
+if (php_sapi_name() == "cli")
+{
+    echo "Error: This page can't be used as a CLI script. For the CLI version of script, launch cron_run_job.php available into scripts/cron/ directory.\n";
+    exit(-1);
+}
+
+// librarie core
+// Dolibarr environment
+require '../../main.inc.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // librarie jobs
 dol_include_once("/cron/class/cronjob.class.php");
@@ -48,9 +73,13 @@ dol_include_once("/cron/class/cronjob.class.php");
 global $langs, $conf;
 
 // Language Management
+<<<<<<< HEAD
 $langs->load("admin");
 $langs->load("cron");
 
+=======
+$langs->loadLangs(array("admin", "cron", "dict"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 
@@ -59,8 +88,16 @@ $langs->load("cron");
  * View
  */
 
+<<<<<<< HEAD
 // Check the key, avoid that a stranger starts cron
 $key = GETPOST('securitykey','alpha');
+=======
+// current date
+$now=dol_now();
+
+// Check the key, avoid that a stranger starts cron
+$key = GETPOST('securitykey', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($key))
 {
 	echo 'Securitykey is required. Check setup of cron jobs module.';
@@ -72,7 +109,11 @@ if($key != $conf->global->CRON_KEY)
 	exit;
 }
 // Check the key, avoid that a stranger starts cron
+<<<<<<< HEAD
 $userlogin = GETPOST('userlogin','alpha');
+=======
+$userlogin = GETPOST('userlogin', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($userlogin))
 {
 	echo 'Userlogin is required.';
@@ -80,31 +121,52 @@ if (empty($userlogin))
 }
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 $user=new User($db);
+<<<<<<< HEAD
 $result=$user->fetch('',$userlogin);
 if ($result < 0)
 {
 	echo "User Error:".$user->error;
 	dol_syslog("cron_run_jobs.php:: User Error:".$user->error, LOG_WARNING);
+=======
+$result=$user->fetch('', $userlogin);
+if ($result < 0)
+{
+	echo "User Error:".$user->error;
+	dol_syslog("cron_run_jobs.php:: User Error:".$user->error, LOG_ERR);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	exit;
 }
 else
 {
 	if (empty($user->id))
 	{
+<<<<<<< HEAD
 		echo " User user login:".$userlogin." do not exists";
 		dol_syslog(" User user login:".$userlogin." do not exists", LOG_WARNING);
 		exit;
 	}
 }
 $id = GETPOST('id','alpha');	// We accept non numeric id. We will filter later.
+=======
+		echo " User login:".$userlogin." do not exists";
+		dol_syslog(" User login:".$userlogin." do not exists", LOG_ERR);
+		exit;
+	}
+}
+$id = GETPOST('id', 'alpha');	// We accept non numeric id. We will filter later.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 // create a jobs object
 $object = new Cronjob($db);
 
 $filter=array();
+<<<<<<< HEAD
 if (! empty($id))
 {
+=======
+if (! empty($id)) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if (! is_numeric($id))
 	{
 		echo "Error: Bad value for parameter job id";
@@ -114,11 +176,19 @@ if (! empty($id))
 	$filter['t.rowid']=$id;
 }
 
+<<<<<<< HEAD
 $result = $object->fetch_all('ASC,ASC,ASC','t.priority,t.entity,t.rowid', 0, 0, 1, $filter, 0);
 if ($result<0)
 {
 	echo "Error: ".$object->error;
 	dol_syslog("cron_run_jobs.php fetch Error".$object->error, LOG_WARNING);
+=======
+$result = $object->fetch_all('ASC,ASC,ASC', 't.priority,t.entity,t.rowid', 0, 0, 1, $filter, 0);
+if ($result<0)
+{
+	echo "Error: ".$object->error;
+	dol_syslog("cron_run_jobs.php fetch Error".$object->error, LOG_ERR);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	exit;
 }
 
@@ -132,13 +202,17 @@ foreach($object->lines as $val)
 // TODO Duplicate code. This sequence of code must be shared with code into cron_run_jobs.php script.
 
 // current date
+<<<<<<< HEAD
 $now=dol_now();
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $nbofjobs=count($qualifiedjobs);
 $nbofjobslaunchedok=0;
 $nbofjobslaunchedko=0;
 
 if (is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
 {
+<<<<<<< HEAD
 	// Loop over job
 	foreach($qualifiedjobs as $line)
 	{
@@ -148,11 +222,60 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
 		if (($line->datenextrun < $now) && (empty($line->datestart) || $line->datestart <= $now) && (empty($line->dateend) || $line->dateend >= $now))
 		{
 			dol_syslog("cron_run_jobs.php:: torun line->datenextrun:".dol_print_date($line->datenextrun,'dayhourtext')." line->dateend:".dol_print_date($line->dateend,'dayhourtext')." now:".dol_print_date($now,'dayhourtext'));
+=======
+    $savconf = dol_clone($conf);
+
+    // Loop over job
+	foreach($qualifiedjobs as $line)
+	{
+	    dol_syslog("cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label, LOG_DEBUG);
+	    echo "cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label;
+
+		// Force reload of setup for the current entity
+		if ($line->entity != $conf->entity)
+		{
+		    dol_syslog("cron_run_jobs.php we work on another entity so we reload user and conf", LOG_DEBUG);
+		    echo " -> we change entity so we reload user and conf";
+
+		    $conf->entity = (empty($line->entity)?1:$line->entity);
+		    $conf->setValues($db);        // This make also the $mc->setValues($conf); that reload $mc->sharings
+
+		    // Force recheck that user is ok for the entity to process and reload permission for entity
+		    if ($conf->entity != $user->entity && $user->entity != 0)
+		    {
+		        $result=$user->fetch('', $userlogin, '', 0, $conf->entity);
+		        if ($result < 0)
+		        {
+		            echo "\nUser Error: ".$user->error."\n";
+		            dol_syslog("cron_run_jobs.php:: User Error:".$user->error, LOG_ERR);
+		            exit(-1);
+		        }
+		        else
+		        {
+		            if ($result == 0)
+		            {
+		                echo "\nUser login: ".$userlogin." does not exists for entity ".$conf->entity."\n";
+		                dol_syslog("User login:".$userlogin." does not exists", LOG_ERR);
+		                exit(-1);
+		            }
+		        }
+		        $user->getrights();
+		    }
+		}
+
+		//If date_next_jobs is less of current date, execute the program, and store the execution time of the next execution in database
+		if (($line->datenextrun < $now) && (empty($line->datestart) || $line->datestart <= $now) && (empty($line->dateend) || $line->dateend >= $now))
+		{
+		    echo " - qualified";
+
+		    dol_syslog("cron_run_jobs.php line->datenextrun:".dol_print_date($line->datenextrun, 'dayhourrfc')." line->datestart:".dol_print_date($line->datestart, 'dayhourrfc')." line->dateend:".dol_print_date($line->dateend, 'dayhourrfc')." now:".dol_print_date($now, 'dayhourrfc'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			$cronjob=new Cronjob($db);
 			$result=$cronjob->fetch($line->id);
 			if ($result<0)
 			{
+<<<<<<< HEAD
 				echo "Error cronjob->fetch: ".$cronjob->error."<br>\n";
 				dol_syslog("cron_run_jobs.php::fetch Error".$cronjob->error, LOG_ERR);
 				exit;
@@ -163,6 +286,21 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
 			{
 				echo "Error cronjob->run_job: ".$cronjob->error."<br>\n";
 				dol_syslog("cron_run_jobs.php::run_jobs Error".$cronjob->error, LOG_ERR);
+=======
+			    echo "Error cronjobid: ".$line->id." cronjob->fetch: ".$cronjob->error."\n";
+			    echo "Failed to fetch job ".$line->id."\n";
+				dol_syslog("cron_run_jobs.php::fetch Error".$cronjob->error, LOG_ERR);
+				exit;
+			}
+			// Execute job
+			$result=$cronjob->run_jobs($userlogin);
+			if ($result < 0)
+			{
+			    echo "Error cronjobid: ".$line->id." cronjob->run_job: ".$cronjob->error."\n";
+			    echo "At least one job failed. Go on menu Home-Setup-Admin tools to see result for each job.\n";
+			    echo "You can also enable module Log if not yet enabled, run again and take a look into dolibarr.log file\n";
+			    dol_syslog("cron_run_jobs.php::run_jobs Error".$cronjob->error, LOG_ERR);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$nbofjobslaunchedko++;
 			}
 			else
@@ -170,10 +308,16 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
 				$nbofjobslaunchedok++;
 			}
 
+<<<<<<< HEAD
+=======
+			echo " - result of run_jobs = ".$result;
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			// We re-program the next execution and stores the last execution time for this job
 			$result=$cronjob->reprogram_jobs($userlogin, $now);
 			if ($result<0)
 			{
+<<<<<<< HEAD
 				echo "Error cronjob->reprogram_job: ".$cronjob->error."<br>\n";
 				dol_syslog("cron_run_jobs.php::reprogram_jobs Error".$cronjob->error, LOG_ERR);
 				exit;
@@ -181,6 +325,26 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
 
 		}
 	}
+=======
+			    echo "Error cronjobid: ".$line->id." cronjob->reprogram_job: ".$cronjob->error."\n";
+			    echo "Enable module Log if not yet enabled, run again and take a look into dolibarr.log file\n";
+			    dol_syslog("cron_run_jobs.php::reprogram_jobs Error".$cronjob->error, LOG_ERR);
+				exit;
+			}
+
+			echo " - reprogrammed\n";
+		}
+		else
+		{
+		    echo " - not qualified\n";
+
+		    dol_syslog("cron_run_jobs.php job not qualified line->datenextrun:".dol_print_date($line->datenextrun, 'dayhourrfc')." line->datestart:".dol_print_date($line->datestart, 'dayhourrfc')." line->dateend:".dol_print_date($line->dateend, 'dayhourrfc')." now:".dol_print_date($now, 'dayhourrfc'));
+		}
+	}
+
+	$conf = $savconf;
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	echo "Result: ".($nbofjobs)." jobs - ".($nbofjobslaunchedok+$nbofjobslaunchedko)." launched = ".$nbofjobslaunchedok." OK + ".$nbofjobslaunchedko." KO";
 }
 else

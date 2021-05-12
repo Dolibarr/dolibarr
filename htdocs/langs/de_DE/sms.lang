@@ -3,13 +3,18 @@ Sms=SMS
 SmsSetup=SMS Einstellungen
 SmsDesc=Auf dieser Seite haben Sie die Möglichkeit globale Einstellungen der SMS-Funktionen vorzunehmen
 SmsCard=SMS Karte
+<<<<<<< HEAD
 AllSms=Alle SMS Aktionen
+=======
+AllSms=alle SMS Kampagnen
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SmsTargets=Ziele
 SmsRecipients=Empfänger
 SmsRecipient=Empfänger
 SmsTitle=Titel
 SmsFrom=Absender
 SmsTo=Ziel
+<<<<<<< HEAD
 SmsTopic=Thema der SMS
 SmsText=Nachricht
 SmsMessage=SMS Nachricht
@@ -23,12 +28,31 @@ DeleteASms=Entfernen Sie eine SMS Aktion
 PreviewSms=SMS Vorschau
 PrepareSms=SMS vorbeiten
 CreateSms=SMS erstellen
+=======
+SmsTopic=Thema der SMS (Betreff)
+SmsText=Nachricht
+SmsMessage=SMS Nachricht
+ShowSms=SMS anzeigen
+ListOfSms=Liste der SMS Kampagnen
+NewSms=neue SMS Kampagne
+EditSms=SMS bearbeiten
+ResetSms=Erneut senden
+DeleteSms=Lösche SMS Kampagne
+DeleteASms=Entferne eine SMS Kampagne
+PreviewSms=SMS Vorschau
+PrepareSms=SMS vorbereiten
+CreateSms=Erstelle SMS
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SmsResult=Ergebnis des SMS Versands
 TestSms=Test SMS
 ValidSms=SMS bestätigen
 ApproveSms=SMS genehmigen
 SmsStatusDraft=Entwurf
+<<<<<<< HEAD
 SmsStatusValidated=Bestätigen
+=======
+SmsStatusValidated=Bestätigt
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SmsStatusApproved=Genehmigt
 SmsStatusSent=Gesendet
 SmsStatusSentPartialy=Teileweise gesendet
@@ -38,13 +62,21 @@ SmsStatusNotSent=Nicht gesendet
 SmsSuccessfulySent=SMS korrekt gesendet (von %s an %s)
 ErrorSmsRecipientIsEmpty=Anzahl der Empfänger ist leer
 WarningNoSmsAdded=Keine neuen Rufnummern zum hinzufügen an die Empfängerliste gefunden
+<<<<<<< HEAD
 ConfirmValidSms=Bestätigen Sie das aktivieren dieser Kampagne?
+=======
+ConfirmValidSms=Bestätigen Sie die Freigabe dieser Kampagne?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NbOfUniqueSms=Anzahl der eindeutigen Rufnummern
 NbOfSms=Anzahl der Rufnummern
 ThisIsATestMessage=Dies ist eine Testnachricht
 SendSms=SMS senden
 SmsInfoCharRemain=Anzahl der verbleibenden Zeichen
+<<<<<<< HEAD
 SmsInfoNumero= (Format der Rufnummer: ++33899701761)
+=======
+SmsInfoNumero= (internationales Rufnummernformat, Bsp.: +33899701761)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DelayBeforeSending=Warten vor dem Senden (in Minuten)
 SmsNoPossibleSenderFound=Kein Sender verfügbar. Prüfen Sie die Einstellungen Ihres SMS Providers.
 SmsNoPossibleRecipientFound=Keine möglichen Empfänger gefunden. Prüfen Sie die Einstellungen Ihres SMS Anbieters.

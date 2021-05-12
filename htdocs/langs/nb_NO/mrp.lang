@@ -1,0 +1,17 @@
+MRPArea=MRP-område
+MenuBOM=Materialkostnader
+LatestBOMModified=Siste %s endrede materialkostnader 
+BillOfMaterials=Materialkostnader
+BOMsSetup=Oppsett av BOM-modulen 
+ListOfBOMs=Liste over Materialkostnader - BOM
+NewBOM=Ny materialkostnad
+ProductBOMHelp=Produkt som skal lages med denne BOM
+BOMsNumberingModules=BOM nummereringsmaler
+BOMsModelModule=BOM dokumentmaler
+FreeLegalTextOnBOMs=Fritekst på BOM-dokumentet
+WatermarkOnDraftBOMs=Vannmerke på BOM-utkast 
+ConfirmCloneBillOfMaterials=Er du sikker på at du vil klone materialkostnaden?
+ManufacturingEfficiency=Produksjonseffektivitet
+ValueOfMeansLoss=Verdien på 0,95 betyr et gjennomsnitt på 5%% tap under produksjonen
+DeleteBillOfMaterials=Slett BOM
+ConfirmDeleteBillOfMaterials=Er du sikker på at du vil slette denne BOM?

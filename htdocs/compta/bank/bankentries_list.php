@@ -1,13 +1,24 @@
 <?php
 /* Copyright (C) 2001-2002  Rodolphe Quiedeville <rodolphe@quiedeville.org>
+<<<<<<< HEAD
  * Copyright (C) 2004-2018  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010  Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2004-2019  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010  Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2012       Vinícius Nogueira    <viniciusvgn@gmail.com>
  * Copyright (C) 2014       Florian Henry        <florian.henry@open-cooncept.pro>
  * Copyright (C) 2015       Jean-François Ferry  <jfefe@aternatik.fr>
  * Copyright (C) 2016       Juanjo Menent        <jmenent@2byte.es>
+<<<<<<< HEAD
  * Copyright (C) 2017       Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2018       Ferran Marcet        <fmarcet@2byte.es>
+=======
+ * Copyright (C) 2017       Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2018       Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +40,11 @@
  *	\brief      List of bank transactions
  */
 
+<<<<<<< HEAD
 require('../../main.inc.php');
+=======
+require '../../main.inc.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -43,6 +58,11 @@ require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php'
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
+<<<<<<< HEAD
+=======
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
@@ -51,11 +71,19 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("banks","bills","categories","companies","margins","salaries","loan","donations","trips","members","compta","accountancy"));
 
+<<<<<<< HEAD
 $id = GETPOST('id','int');
 $ref = GETPOST('ref','alpha');
 $action=GETPOST('action','alpha');
 $cancel=GETPOST('cancel','alpha');
 $confirm=GETPOST('confirm','alpha');
+=======
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
+$action=GETPOST('action', 'alpha');
+$cancel=GETPOST('cancel', 'alpha');
+$confirm=GETPOST('confirm', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $contextpage='banktransactionlist'.(empty($object->ref)?'':'-'.$object->id);
 
 // Security check
@@ -64,11 +92,16 @@ $fieldtype = (! empty($ref) ? 'ref' :'rowid');
 if ($fielvalue)
 {
 	if ($user->societe_id) $socid=$user->societe_id;
+<<<<<<< HEAD
 	$result=restrictedArea($user,'banque',$fieldvalue,'bank_account&bank_account','','',$fieldtype);
+=======
+	$result=restrictedArea($user, 'banque', $fieldvalue, 'bank_account&bank_account', '', '', $fieldtype);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 else
 {
 	if ($user->societe_id) $socid=$user->societe_id;
+<<<<<<< HEAD
 	$result=restrictedArea($user,'banque');
 }
 
@@ -81,10 +114,25 @@ $search_account=GETPOST("search_account",'int')?GETPOST("search_account",'int'):
 $search_accountancy_code=GETPOST('search_accountancy_code', 'alpha')?GETPOST('search_accountancy_code', 'alpha'):GETPOST('accountancy_code', 'alpha');
 $search_bid=GETPOST("search_bid","int")?GETPOST("search_bid","int"):GETPOST("bid","int");
 $search_ref=GETPOST('search_ref','alpha');
+=======
+	$result=restrictedArea($user, 'banque');
+}
+
+$description=GETPOST("description", 'alpha');
+$dateop = dol_mktime(12, 0, 0, GETPOST("opmonth", 'int'), GETPOST("opday", 'int'), GETPOST("opyear", 'int'));
+$debit=GETPOST("debit", 'alpha');
+$credit=GETPOST("credit", 'alpha');
+$search_type=GETPOST("search_type", 'alpha');
+$search_account=GETPOST("search_account", 'int')?GETPOST("search_account", 'int'):GETPOST("account", 'int');
+$search_accountancy_code=GETPOST('search_accountancy_code', 'alpha')?GETPOST('search_accountancy_code', 'alpha'):GETPOST('accountancy_code', 'alpha');
+$search_bid=GETPOST("search_bid", "int")?GETPOST("search_bid", "int"):GETPOST("bid", "int");
+$search_ref=GETPOST('search_ref', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $search_dt_start = dol_mktime(0, 0, 0, GETPOST('search_start_dtmonth', 'int'), GETPOST('search_start_dtday', 'int'), GETPOST('search_start_dtyear', 'int'));
 $search_dt_end = dol_mktime(0, 0, 0, GETPOST('search_end_dtmonth', 'int'), GETPOST('search_end_dtday', 'int'), GETPOST('search_end_dtyear', 'int'));
 $search_dv_start = dol_mktime(0, 0, 0, GETPOST('search_start_dvmonth', 'int'), GETPOST('search_start_dvday', 'int'), GETPOST('search_start_dvyear', 'int'));
 $search_dv_end = dol_mktime(0, 0, 0, GETPOST('search_end_dvmonth', 'int'), GETPOST('search_end_dvday', 'int'), GETPOST('search_end_dvyear', 'int'));
+<<<<<<< HEAD
 $search_thirdparty=GETPOST("search_thirdparty",'alpha')?GETPOST("search_thirdparty",'alpha'):GETPOST("thirdparty",'alpha');
 $search_req_nb=GETPOST("req_nb",'alpha');
 $search_num_releve=GETPOST("search_num_releve",'alpha');
@@ -98,6 +146,21 @@ $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
 $pageplusone = GETPOST("pageplusone",'int');
+=======
+$search_thirdparty=GETPOST("search_thirdparty", 'alpha')?GETPOST("search_thirdparty", 'alpha'):GETPOST("thirdparty", 'alpha');
+$search_req_nb=GETPOST("req_nb", 'alpha');
+$search_num_releve=GETPOST("search_num_releve", 'alpha');
+$search_conciliated=GETPOST("search_conciliated", 'int');
+$num_releve=GETPOST("num_releve", "alpha");
+$cat=GETPOST("cat");
+if (empty($dateop)) $dateop=-1;
+
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
+$pageplusone = GETPOST("pageplusone", 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($pageplusone) $page = $pageplusone - 1;
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
@@ -119,6 +182,16 @@ if ($id > 0 || ! empty($ref))
 {
     $result=$object->fetch($id, $ref);
     $search_account = $object->id;     // Force the search field on id of account
+<<<<<<< HEAD
+=======
+
+    if (! ($object->id > 0) )
+    {
+    	$langs->load("errors");
+    	print($langs->trans('ErrorRecordNotFound'));
+    	exit;
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 
@@ -128,7 +201,11 @@ $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('banktransaction');
+<<<<<<< HEAD
 $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+=======
+$search_array_options=$extrafields->getOptionalsFromPost('banktransaction', '', 'search_');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $arrayfields=array(
     'b.rowid'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
@@ -161,16 +238,28 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
  * Actions
  */
 
+<<<<<<< HEAD
 if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
 if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+=======
+if (GETPOST('cancel', 'alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
+<<<<<<< HEAD
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+=======
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
     $search_dt_start='';
     $search_dt_end='';
@@ -203,12 +292,20 @@ if (empty($reshook))
 }
 
 // Conciliation
+<<<<<<< HEAD
 if (GETPOST('confirm_reconcile') && $user->rights->banque->consolidate)
+=======
+if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', 'alpha')) && $user->rights->banque->consolidate)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
     $error=0;
 
     // Definition, nettoyage parametres
+<<<<<<< HEAD
     $num_releve=trim(GETPOST("num_releve"));
+=======
+    $num_releve=trim(GETPOST("num_releve", "alpha"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     if ($num_releve)
     {
@@ -221,7 +318,11 @@ if (GETPOST('confirm_reconcile') && $user->rights->banque->consolidate)
                 {
                     $result=$bankline->fetch($row);
                     $bankline->num_releve=$num_releve; //$_POST["num_releve"];
+<<<<<<< HEAD
                     $result=$bankline->update_conciliation($user, GETPOST("cat"));
+=======
+                    $result=$bankline->update_conciliation($user, GETPOST("cat"), GETPOST('confirm_reconcile', 'alpha')?1:0);	// If we confirm_reconcile, we set flag 'rappro' to 1.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                     if ($result < 0)
                     {
                         setEventMessages($bankline->error, $bankline->errors, 'errors');
@@ -247,7 +348,25 @@ if (GETPOST('confirm_reconcile') && $user->rights->banque->consolidate)
 
     if (! $error)
     {
+<<<<<<< HEAD
         header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);	// To avoid to submit twice and allow back
+=======
+    	$param='action=reconcile&contextpage=banktransactionlist&id='.$id.'&search_account='.$id;
+		$param.='&search_conciliated='.urlencode($search_conciliated);
+		if ($page) $param.='&page='.urlencode($page);
+		if ($offset) $param.='&offset='.urlencode($offset);
+		if ($search_thirdparty) $param.='&search_thirdparty='.urlencode($search_thirdparty);
+		if ($search_num_releve) $param.='&search_num_releve='.urlencode($search_num_releve);
+		if ($search_start_dt) $param.='&search_start_dt='.urlencode($search_start_dt);
+		if ($search_end_dt) $param.='&search_end_dt='.urlencode($search_end_dt);
+		if ($search_start_dv) $param.='&search_start_dv='.urlencode($search_start_dv);
+		if ($search_end_dv) $param.='&search_end_dv='.urlencode($search_end_dv);
+		if ($search_type) $param.='&search_type='.urlencode($search_type);
+		if ($search_debit) $param.='&search_debit='.urlencode($search_debit);
+		if ($search_credit) $param.='&search_credit='.urlencode($search_credit);
+		$param.='&sortfield='.urlencode($sortfield).'&sortorder='.urlencode($sortorder);
+		header('Location: '.$_SERVER["PHP_SELF"].'?'.$param);	// To avoid to submit twice and allow the back button
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         exit;
     }
 }
@@ -266,6 +385,7 @@ if (GETPOST('save') && ! $cancel && $user->rights->banque->modifier)
         $amount = - price2num($_POST["adddebit"]);
     }
 
+<<<<<<< HEAD
     $operation = GETPOST("operation",'alpha');
     $num_chq   = GETPOST("num_chq",'alpha');
     $label     = GETPOST("label",'alpha');
@@ -273,6 +393,15 @@ if (GETPOST('save') && ! $cancel && $user->rights->banque->modifier)
 
     $bankaccountid = $id;
     if (GETPOST('add_account','int') > 0) $bankaccountid = GETPOST('add_account','int');
+=======
+    $operation = GETPOST("operation", 'alpha');
+    $num_chq   = GETPOST("num_chq", 'alpha');
+    $label     = GETPOST("label", 'alpha');
+    $cat1      = GETPOST("cat1", 'alpha');
+
+    $bankaccountid = $id;
+    if (GETPOST('add_account', 'int') > 0) $bankaccountid = GETPOST('add_account', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     if (! $dateop) {
         $error++;
@@ -301,7 +430,11 @@ if (GETPOST('save') && ! $cancel && $user->rights->banque->modifier)
     	$error++;
     }*/
 
+<<<<<<< HEAD
     if (! $error)
+=======
+    if (! $error && ! empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
     	$objecttmp = new Account($db);
     	$objecttmp->fetch($bankaccountid);
@@ -343,6 +476,10 @@ $formaccounting = new FormAccounting($db);
 $companystatic=new Societe($db);
 $bankaccountstatic=new Account($db);
 
+<<<<<<< HEAD
+=======
+$banktransferstatic=new BonPrelevement($db);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $societestatic=new Societe($db);
 $userstatic=new User($db);
 $chargestatic=new ChargeSociales($db);
@@ -352,6 +489,10 @@ $paymentstatic=new Paiement($db);
 $paymentsupplierstatic=new PaiementFourn($db);
 $paymentvatstatic=new TVA($db);
 $paymentsalstatic=new PaymentSalary($db);
+<<<<<<< HEAD
+=======
+$paymentvariousstatic=new PaymentVarious($db);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $donstatic=new Don($db);
 $paymentexpensereportstatic=new PaymentExpenseReport($db);
 $bankstatic=new Account($db);
@@ -381,7 +522,11 @@ if (dol_strlen($search_dt_end) > 0)   $param .= '&search_end_dtmonth=' . GETPOST
 if (dol_strlen($search_dv_start) > 0) $param .= '&search_start_dvmonth=' . GETPOST('search_start_dvmonth', 'int') . '&search_start_dvday=' . GETPOST('search_start_dvday', 'int') . '&search_start_dvyear=' . GETPOST('search_start_dvyear', 'int');
 if (dol_strlen($search_dv_end) > 0)   $param .= '&search_end_dvmonth=' . GETPOST('search_end_dvmonth', 'int') . '&search_end_dvday=' . GETPOST('search_end_dvday', 'int') . '&search_end_dvyear=' . GETPOST('search_end_dvyear', 'int');
 if ($search_req_nb) $param.='&req_nb='.urlencode($search_req_nb);
+<<<<<<< HEAD
 if (GETPOST("search_thirdparty",'int')) $param.='&thirdparty='.urlencode(GETPOST("search_thirdparty",'int'));
+=======
+if (GETPOST("search_thirdparty", 'int')) $param.='&thirdparty='.urlencode(GETPOST("search_thirdparty", 'int'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($optioncss != '')       $param.='&optioncss='.urlencode($optioncss);
 if ($action == 'reconcile') $param.='&action=reconcile';
 // Add $param from extra fields
@@ -395,7 +540,11 @@ if ($id > 0 || ! empty($ref))
 {
 	$title = $langs->trans("FinancialAccount").' - '.$langs->trans("Transactions");
 	$helpurl = "";
+<<<<<<< HEAD
 	llxHeader('',$title,$helpurl);
+=======
+	llxHeader('', $title, $helpurl);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     // Load bank groups
     require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
@@ -407,7 +556,11 @@ if ($id > 0 || ! empty($ref))
 
     // Bank card
     $head=bank_prepare_head($object);
+<<<<<<< HEAD
     dol_fiche_head($head,'journal',$langs->trans("FinancialAccount"),0,'account');
+=======
+    dol_fiche_head($head, 'journal', $langs->trans("FinancialAccount"), 0, 'account');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -427,8 +580,13 @@ if ($id > 0 || ! empty($ref))
             // If not cash account and can be reconciliate
             if ($user->rights->banque->consolidate) {
             	$newparam = $param;
+<<<<<<< HEAD
             	$newparam = preg_replace('/search_conciliated=\d+/i','',$newparam);
             	$buttonreconcile = '<a class="butActionNew" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&search_conciliated=0'.$newparam.'">'.$langs->trans("Conciliate").'</a>';
+=======
+            	$newparam = preg_replace('/search_conciliated=\d+/i', '', $newparam);
+            	$buttonreconcile = '<a class="butActionNew" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&amp;sortorder=asc,asc,asc&search_conciliated=0'.$newparam.'">'.$langs->trans("Conciliate").'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             } else {
             	$buttonreconcile = '<a class="butActionNewRefused" style="margin-bottom: 5px !important; margin-top: 5px !important" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Conciliate").'</a>';
             }
@@ -449,7 +607,11 @@ $sql.= " s.nom, s.name_alias, s.client, s.fournisseur, s.email, s.code_client, s
 foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
 // Add fields from hooks
 $parameters=array();
+<<<<<<< HEAD
 $reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
+=======
+$reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $sql.=$hookmanager->resPrint;
 $sql.= " FROM ";
 if ($search_bid>0) $sql.= MAIN_DB_PREFIX."bank_class as l,";
@@ -476,8 +638,13 @@ if ($description) $sql.= natural_search("b.label", $description);       // Warni
 if ($search_bid > 0) $sql.= " AND b.rowid=l.lineid AND l.fk_categ=".$search_bid;
 if (! empty($search_type)) $sql.= " AND b.fk_type = '".$db->escape($search_type)."' ";
 // Search criteria amount
+<<<<<<< HEAD
 $debit = price2num(str_replace('-','',$debit));
 $credit = price2num(str_replace('-','',$credit));
+=======
+$debit = price2num(str_replace('-', '', $debit));
+$credit = price2num(str_replace('-', '', $credit));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($debit) $sql.= natural_search('- b.amount', $debit, 1);
 if ($credit) $sql.= natural_search('b.amount', $credit, 1);
 // Add where from extra fields
@@ -485,10 +652,17 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
 // Add where from hooks
 $parameters=array();
+<<<<<<< HEAD
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 
 $sql.= $db->order($sortfield,$sortorder);
+=======
+$reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
+$sql.=$hookmanager->resPrint;
+
+$sql.= $db->order($sortfield, $sortorder);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $nbtotalofrecords = '';
 $nbtotalofpages = 0;
@@ -540,7 +714,11 @@ if ($resql)
         //'presend'=>$langs->trans("SendByMail"),
         //'builddoc'=>$langs->trans("PDFMerge"),
     );
+<<<<<<< HEAD
     //if ($user->rights->bank->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+=======
+    //if ($user->rights->bank->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
     $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
@@ -577,19 +755,35 @@ if ($resql)
 	        print $langs->trans("EventualyAddCategory").': ';
 	        print Form::selectarray('cat', $options, GETPOST('cat'), 1);
 	    }
+<<<<<<< HEAD
 	    print '<br>'.$langs->trans("ThenCheckLinesAndConciliate").' ';
 	    print '<input class="button" name="confirm_reconcile" type="submit" value="'.$langs->trans("Conciliate").'">';
 	    print ' '.$langs->trans("or").' ';
 	    print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
+=======
+	    print '<br><div style="margin-top: 5px;">'.$langs->trans("ThenCheckLinesAndConciliate").' ';
+	    print '<input class="button" name="confirm_savestatement" type="submit" value="'.$langs->trans("SaveStatementOnly").'">';
+	    print ' '.$langs->trans("or").' ';
+	    print '<input class="button" name="confirm_reconcile" type="submit" value="'.$langs->trans("Conciliate").'">';
+	    print ' '.$langs->trans("or").' ';
+	    print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
+		print '</div>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	    // Show last bank statements
 	    $nbmax=15;      // We accept to show last 15 receipts (so we can have more than one year)
 	    $liste="";
 	    $sql = "SELECT DISTINCT num_releve FROM ".MAIN_DB_PREFIX."bank";
 	    $sql.= " WHERE fk_account=".$object->id." AND num_releve IS NOT NULL";
+<<<<<<< HEAD
 	    $sql.= $db->order("num_releve","DESC");
 	    $sql.= $db->plimit($nbmax+1);
 	    print '<br><br>';
+=======
+	    $sql.= $db->order("num_releve", "DESC");
+	    $sql.= $db->plimit($nbmax+1);
+	    print '<br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    print $langs->trans("LastAccountStatements").' : ';
 	    $resqlr=$db->query($sql);
 	    if ($resqlr)
@@ -617,7 +811,11 @@ if ($resql)
 	    }
 
 		// Using BANK_REPORT_LAST_NUM_RELEVE to automatically report last num (or not)
+<<<<<<< HEAD
 		if ($conf->global->BANK_REPORT_LAST_NUM_RELEVE == 1)
+=======
+		if (! empty($conf->global->BANK_REPORT_LAST_NUM_RELEVE))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			print '
 			    <script type="text/javascript">
@@ -629,9 +827,15 @@ if ($resql)
 	}
 
 	// Form to add a transaction with no invoice
+<<<<<<< HEAD
 	if ($user->rights->banque->modifier && $action == 'addline')
 	{
 		print load_fiche_titre($langs->trans("AddBankRecordLong"),'','');
+=======
+	if ($user->rights->banque->modifier && $action == 'addline' && ! empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT))
+	{
+		print load_fiche_titre($langs->trans("AddBankRecordLong"), '', '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		print '<table class="noborder" width="100%">';
 
@@ -643,10 +847,17 @@ if ($resql)
 		print '<td>'.$langs->trans("Numero").'</td>';
 		//if (! $search_account > 0)
 		//{
+<<<<<<< HEAD
 			print '<td align=right>'.$langs->trans("BankAccount").'</td>';
 		//}
 		print '<td align=right>'.$langs->trans("Debit").'</td>';
 		print '<td align=right>'.$langs->trans("Credit").'</td>';
+=======
+			print '<td class=right>'.$langs->trans("BankAccount").'</td>';
+		//}
+		print '<td class=right>'.$langs->trans("Debit").'</td>';
+		print '<td class=right>'.$langs->trans("Credit").'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		/*if (! empty($conf->accounting->enabled))
 		{
 			print '<td align="center">';
@@ -658,7 +869,11 @@ if ($resql)
 
 		print '<tr>';
 		print '<td>';
+<<<<<<< HEAD
 		print '<input name="label" class="flat minwidth200" type="text" value="'.GETPOST("label","alpha").'">';
+=======
+		print '<input name="label" class="flat minwidth200" type="text" value="'.GETPOST("label", "alpha").'">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if (is_array($options) && count($options))
 		{
 			print '<br>'.$langs->trans("Rubrique").': ';
@@ -666,13 +881,18 @@ if ($resql)
 		}
 		print '</td>';
 		print '<td class="nowrap">';
+<<<<<<< HEAD
 		$form->select_date(empty($dateop)?-1:$dateop,'op',0,0,0,'transaction');
+=======
+		print $form->selectDate(empty($dateop)?-1:$dateop, 'op', 0, 0, 0, 'transaction');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</td>';
 		print '<td>&nbsp;</td>';
 		print '<td class="nowrap">';
 		$form->select_types_paiements((GETPOST('operation')?GETPOST('operation'):($object->courant == Account::TYPE_CASH ? 'LIQ' : '')), 'operation', '1,2', 2, 1);
 		print '</td>';
 		print '<td>';
+<<<<<<< HEAD
 		print '<input name="num_chq" class="flat" type="text" size="4" value="'.GETPOST("num_chq","alpha").'">';
 		print '</td>';
 		//if (! $search_account > 0)
@@ -683,6 +903,18 @@ if ($resql)
 		//}
 		print '<td align="right"><input name="adddebit" class="flat" type="text" size="4" value="'.GETPOST("adddebit","alpha").'"></td>';
 		print '<td align="right"><input name="addcredit" class="flat" type="text" size="4" value="'.GETPOST("addcredit","alpha").'"></td>';
+=======
+		print '<input name="num_chq" class="flat" type="text" size="4" value="'.GETPOST("num_chq", "alpha").'">';
+		print '</td>';
+		//if (! $search_account > 0)
+		//{
+			print '<td class=right>';
+			$form->select_comptes(GETPOST('add_account', 'int')?GETPOST('add_account', 'int'):$search_account, 'add_account', 0, '', 1, ($id > 0 || ! empty($ref)?' disabled="disabled"':''));
+			print '</td>';
+		//}
+		print '<td class="right"><input name="adddebit" class="flat" type="text" size="4" value="'.GETPOST("adddebit", "alpha").'"></td>';
+		print '<td class="right"><input name="addcredit" class="flat" type="text" size="4" value="'.GETPOST("addcredit", "alpha").'"></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		/*if (! empty($conf->accounting->enabled))
 		{
 			print '<td align="center">';
@@ -728,6 +960,7 @@ if ($resql)
 	{
 		if (empty($conf->global->BANK_DISABLE_DIRECT_INPUT))
 		{
+<<<<<<< HEAD
 			if (! empty($conf->global->BANK_USE_VARIOUS_PAYMENT))	// If direct entries is done using miscellaneous payments
 			{
 				if ($user->rights->banque->modifier) {
@@ -751,13 +984,26 @@ if ($resql)
 					$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 					$newcardbutton.= '</a>';
 				}
+=======
+			if (empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT))	// If direct entries is done using miscellaneous payments
+			{
+			    $newcardbutton = dolGetButtonTitle($langs->trans('AddBankRecord'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&accountid='.$search_account.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.urlencode($search_account)), '', $user->rights->banque->modifier);
+			}
+			else												// If direct entries is not done using miscellaneous payments
+			{
+                $newcardbutton = dolGetButtonTitle($langs->trans('AddBankRecord'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=addline&page='.$page.$param, '', $user->rights->banque->modifier);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 		}
 		else
 		{
+<<<<<<< HEAD
 			$newcardbutton = '<a class="butActionNewRefused" title="'.$langs->trans("FeatureDisabled").'" href="#">'.$langs->trans("AddBankRecord");
 			$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 			$newcardbutton.= '</a>';
+=======
+            $newcardbutton = dolGetButtonTitle($langs->trans('AddBankRecord'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=addline&page='.$page.$param, '', -1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 	}
 
@@ -787,17 +1033,29 @@ if ($resql)
 	$moreforfilter.='<div class="divsearchfield">';
 	$moreforfilter .= $langs->trans('DateOperationShort').' : ';
 	$moreforfilter .= '<div class="nowrap'.($conf->browser->layout=='phone'?' centpercent':'').' inline-block">'.$langs->trans('From') . ' ';
+<<<<<<< HEAD
 	$moreforfilter .= $form->select_date($search_dt_start, 'search_start_dt', 0, 0, 1, "search_form", 1, 0, 1).'</div>';
 	//$moreforfilter .= ' - ';
 	$moreforfilter .= '<div class="nowrap'.($conf->browser->layout=='phone'?' centpercent':'').' inline-block">'.$langs->trans('to') . ' ' . $form->select_date($search_dt_end, 'search_end_dt', 0, 0, 1, "search_form", 1, 0, 1).'</div>';
+=======
+	$moreforfilter .= $form->selectDate($search_dt_start, 'search_start_dt', 0, 0, 1, "search_form", 1, 0).'</div>';
+	//$moreforfilter .= ' - ';
+	$moreforfilter .= '<div class="nowrap'.($conf->browser->layout=='phone'?' centpercent':'').' inline-block">'.$langs->trans('to') . ' ' . $form->selectDate($search_dt_end, 'search_end_dt', 0, 0, 1, "search_form", 1, 0).'</div>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$moreforfilter .= '</div>';
 
 	$moreforfilter.='<div class="divsearchfield">';
 	$moreforfilter .= $langs->trans('DateValueShort').' : ';
 	$moreforfilter .= '<div class="nowrap'.($conf->browser->layout=='phone'?' centpercent':'').' inline-block">'.$langs->trans('From') . ' ';
+<<<<<<< HEAD
 	$moreforfilter .= $form->select_date($search_dv_start, 'search_start_dv', 0, 0, 1, "search_form", 1, 0, 1).'</div>';
 	//$moreforfilter .= ' - ';
 	$moreforfilter .= '<div class="nowrap'.($conf->browser->layout=='phone'?' centpercent':'').' inline-block">'.$langs->trans('to') . ' ' . $form->select_date($search_dv_end, 'search_end_dv', 0, 0, 1, "search_form", 1, 0, 1).'</div>';
+=======
+	$moreforfilter .= $form->selectDate($search_dv_start, 'search_start_dv', 0, 0, 1, "search_form", 1, 0).'</div>';
+	//$moreforfilter .= ' - ';
+	$moreforfilter .= '<div class="nowrap'.($conf->browser->layout=='phone'?' centpercent':'').' inline-block">'.$langs->trans('to') . ' ' . $form->selectDate($search_dv_end, 'search_end_dv', 0, 0, 1, "search_form", 1, 0).'</div>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$moreforfilter .= '</div>';
 
 	if (! empty($conf->categorie->enabled))
@@ -817,7 +1075,11 @@ if ($resql)
 	}
 
 	$parameters=array();
+<<<<<<< HEAD
 	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+=======
+	$reshook=$hookmanager->executeHooks('printFieldPreListTitle', $parameters);    // Note that $action and $object may have been modified by hook
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if (empty($reshook)) $moreforfilter .= $hookmanager->resPrint;
 	else $moreforfilter = $hookmanager->resPrint;
 
@@ -869,36 +1131,61 @@ if ($resql)
 	}
 	if (! empty($arrayfields['bu.label']['checked']))
 	{
+<<<<<<< HEAD
 	    print '<td class="liste_titre"><input type="text" class="flat" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'" size="10"></td>';
 	}
 	if (! empty($arrayfields['ba.ref']['checked']))
 	{
     	print '<td class="liste_titre" align="right">';
     	$form->select_comptes($search_account,'search_account',0,'',1, ($id > 0 || ! empty($ref)?' disabled="disabled"':''));
+=======
+	    print '<td class="liste_titre"><input type="text" class="flat maxwidth75" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'"></td>';
+	}
+	if (! empty($arrayfields['ba.ref']['checked']))
+	{
+    	print '<td class="liste_titre">';
+    	$form->select_comptes($search_account, 'search_account', 0, '', 1, ($id > 0 || ! empty($ref)?' disabled="disabled"':''), 0, 'maxwidth100');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	print '</td>';
 	}
 	if (! empty($arrayfields['b.debit']['checked']))
 	{
+<<<<<<< HEAD
     	print '<td class="liste_titre" align="right">';
+=======
+    	print '<td class="liste_titre right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	print '<input type="text" class="flat" name="debit" size="4" value="'.dol_escape_htmltag($debit).'">';
     	print '</td>';
 	}
 	if (! empty($arrayfields['b.credit']['checked']))
 	{
+<<<<<<< HEAD
     	print '<td class="liste_titre" align="right">';
+=======
+    	print '<td class="liste_titre right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	print '<input type="text" class="flat" name="credit" size="4" value="'.dol_escape_htmltag($credit).'">';
     	print '</td>';
 	}
 	if (! empty($arrayfields['balancebefore']['checked']))
 	{
+<<<<<<< HEAD
 		print '<td class="liste_titre" align="right">';
+=======
+		print '<td class="liste_titre right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$htmltext=$langs->trans("BalanceVisibilityDependsOnSortAndFilters", $langs->transnoentitiesnoconv("DateValue"));
 		print $form->textwithpicto('', $htmltext, 1);
 		print '</td>';
 	}
 	if (! empty($arrayfields['balance']['checked']))
 	{
+<<<<<<< HEAD
 		print '<td class="liste_titre" align="right">';
+=======
+		print '<td class="liste_titre maxwidthsearch">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$htmltext=$langs->trans("BalanceVisibilityDependsOnSortAndFilters", $langs->transnoentitiesnoconv("DateValue"));
 		print $form->textwithpicto('', $htmltext, 1);
 		print '</td>';
@@ -925,6 +1212,7 @@ if ($resql)
 
 	// Fields title
 	print '<tr class="liste_titre">';
+<<<<<<< HEAD
 	if (! empty($arrayfields['b.rowid']['checked']))            print_liste_field_titre($arrayfields['b.rowid']['label'],$_SERVER['PHP_SELF'],'b.rowid','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['description']['checked']))        print_liste_field_titre($arrayfields['description']['label'],$_SERVER['PHP_SELF'],'','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['b.dateo']['checked']))            print_liste_field_titre($arrayfields['b.dateo']['label'],$_SERVER['PHP_SELF'],'b.dateo','',$param,'align="center"',$sortfield,$sortorder);
@@ -939,26 +1227,57 @@ if ($resql)
 	if (! empty($arrayfields['balance']['checked']))            print_liste_field_titre($arrayfields['balance']['label'],$_SERVER['PHP_SELF'],'','',$param,'align="right"',$sortfield,$sortorder);
 	if (! empty($arrayfields['b.num_releve']['checked']))       print_liste_field_titre($arrayfields['b.num_releve']['label'],$_SERVER['PHP_SELF'],'b.num_releve','',$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['b.conciliated']['checked']))      print_liste_field_titre($arrayfields['b.conciliated']['label'],$_SERVER['PHP_SELF'],'b.rappro','',$param,'align="center"',$sortfield,$sortorder);
+=======
+	if (! empty($arrayfields['b.rowid']['checked']))            print_liste_field_titre($arrayfields['b.rowid']['label'], $_SERVER['PHP_SELF'], 'b.rowid', '', $param, '', $sortfield, $sortorder);
+	if (! empty($arrayfields['description']['checked']))        print_liste_field_titre($arrayfields['description']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
+	if (! empty($arrayfields['b.dateo']['checked']))            print_liste_field_titre($arrayfields['b.dateo']['label'], $_SERVER['PHP_SELF'], 'b.dateo', '', $param, '', $sortfield, $sortorder, "center ");
+	if (! empty($arrayfields['b.datev']['checked']))            print_liste_field_titre($arrayfields['b.datev']['label'], $_SERVER['PHP_SELF'], 'b.datev,b.dateo,b.rowid', '', $param, 'align="center"', $sortfield, $sortorder);
+	if (! empty($arrayfields['type']['checked']))               print_liste_field_titre($arrayfields['type']['label'], $_SERVER['PHP_SELF'], '', '', $param, 'align="center"', $sortfield, $sortorder);
+	if (! empty($arrayfields['b.num_chq']['checked']))          print_liste_field_titre($arrayfields['b.num_chq']['label'], $_SERVER['PHP_SELF'], 'b.num_chq', '', $param, '', $sortfield, $sortorder, "center ");
+	if (! empty($arrayfields['bu.label']['checked']))           print_liste_field_titre($arrayfields['bu.label']['label'], $_SERVER['PHP_SELF'], 'bu.label', '', $param, '', $sortfield, $sortorder);
+	if (! empty($arrayfields['ba.ref']['checked']))             print_liste_field_titre($arrayfields['ba.ref']['label'], $_SERVER['PHP_SELF'], 'ba.ref', '', $param, '', $sortfield, $sortorder);
+	if (! empty($arrayfields['b.debit']['checked']))            print_liste_field_titre($arrayfields['b.debit']['label'], $_SERVER['PHP_SELF'], 'b.amount', '', $param, '', $sortfield, $sortorder, "right ");
+	if (! empty($arrayfields['b.credit']['checked']))           print_liste_field_titre($arrayfields['b.credit']['label'], $_SERVER['PHP_SELF'], 'b.amount', '', $param, '', $sortfield, $sortorder, "right ");
+	if (! empty($arrayfields['balancebefore']['checked']))      print_liste_field_titre($arrayfields['balancebefore']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, "right ");
+	if (! empty($arrayfields['balance']['checked']))            print_liste_field_titre($arrayfields['balance']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, "right ");
+	if (! empty($arrayfields['b.num_releve']['checked']))       print_liste_field_titre($arrayfields['b.num_releve']['label'], $_SERVER['PHP_SELF'], 'b.num_releve', '', $param, '', $sortfield, $sortorder, "center ");
+	if (! empty($arrayfields['b.conciliated']['checked']))      print_liste_field_titre($arrayfields['b.conciliated']['label'], $_SERVER['PHP_SELF'], 'b.rappro', '', $param, '', $sortfield, $sortorder, "center ");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
 	$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
+<<<<<<< HEAD
 	$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	print_liste_field_titre('', $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'maxwidthsearch ');
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
+=======
+	$reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', 'class="right"', $sortfield, $sortorder, 'maxwidthsearch ');
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print "</tr>\n";
 
 	$balance = 0;    // For balance
 	$balancebefore = 0;    // For balance
 	$balancecalculated = false;
 	$posconciliatecol = 0;
+<<<<<<< HEAD
+=======
+	$cachebankaccount = array();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	// Loop on each record
 	$sign = 1;
 
     $totalarray=array();
+<<<<<<< HEAD
     while ($i < min($num,$limit))
+=======
+    while ($i < min($num, $limit))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $objp = $db->fetch_object($resql);
 
@@ -1049,13 +1368,21 @@ if ($resql)
 
             	if (! empty($arrayfields['balancebefore']['checked']))
             	{
+<<<<<<< HEAD
 	            	print '<td align="right">';
+=======
+	            	print '<td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	            	print price(price2num($balance, 'MT'), 1, $langs);
 	            	print '</td>';
             	}
             	if (! empty($arrayfields['balance']['checked']))
             	{
+<<<<<<< HEAD
             		print '<td align="right">';
+=======
+            		print '<td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					print price(price2num($balance, 'MT'), 1, $langs);
 					print '</td>';
             	}
@@ -1078,12 +1405,20 @@ if ($resql)
         if ($sortfield == 'b.datev,b.dateo,b.rowid' && $sortorder == 'desc,desc,desc')
         {
         	$balance = price2num($balancebefore, 'MT');		// balance = balancebefore of previous line (sort is desc)
+<<<<<<< HEAD
         	$balancebefore = price2num($balancebefore - ($sign * $objp->amount),'MT');
+=======
+        	$balancebefore = price2num($balancebefore - ($sign * $objp->amount), 'MT');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
 		else
 		{
 			$balancebefore = price2num($balance, 'MT');		// balancebefore = balance of previous line (sort is asc)
+<<<<<<< HEAD
 			$balance = price2num($balance + ($sign * $objp->amount),'MT');
+=======
+			$balance = price2num($balance + ($sign * $objp->amount), 'MT');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
         if (empty($cachebankaccount[$objp->bankid]))
@@ -1103,7 +1438,11 @@ if ($resql)
         // Ref
     	if (! empty($arrayfields['b.rowid']['checked']))
     	{
+<<<<<<< HEAD
                 print '<td align="left" class="nowrap">';
+=======
+                print '<td class="nowrap left">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 print "<a href=\"ligne.php?rowid=".$objp->rowid.'&save_lastsearch_values=1">'.img_object($langs->trans("ShowPayment").': '.$objp->rowid, 'account', 'class="classfortooltip"').' '.$objp->rowid."</a> &nbsp; ";
                 print '</td>';
                 if (! $i) $totalarray['nbfield']++;
@@ -1116,9 +1455,15 @@ if ($resql)
 
     	    //print "<a href=\"ligne.php?rowid=".$objp->rowid."&amp;account=".$objp->fk_account."\">";
     	    $reg=array();
+<<<<<<< HEAD
     	    preg_match('/\((.+)\)/i',$objp->label,$reg);	// Si texte entoure de parenthee on tente recherche de traduction
     	    if ($reg[1] && $langs->trans($reg[1])!=$reg[1]) print $langs->trans($reg[1]);
     	    else print dol_trunc($objp->label,40);
+=======
+    	    preg_match('/\((.+)\)/i', $objp->label, $reg);	// Si texte entoure de parenthee on tente recherche de traduction
+    	    if ($reg[1] && $langs->trans($reg[1])!=$reg[1]) print $langs->trans($reg[1]);
+    	    else print dol_trunc($objp->label, 40);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	    //print "</a>&nbsp;";
 
     	    // Add links after description
@@ -1126,22 +1471,43 @@ if ($resql)
     	    $cachebankaccount=array();
     	    foreach($links as $key=>$val)
     	    {
+<<<<<<< HEAD
     	        if ($links[$key]['type']=='payment')
     	        {
     	            $paymentstatic->id=$links[$key]['url_id'];
     	            $paymentstatic->ref=$links[$key]['url_id'];
+=======
+    	    	if ($links[$key]['type']=='withdraw')
+    	    	{
+    	    		$banktransferstatic->id=$links[$key]['url_id'];
+    	    		$banktransferstatic->ref=$links[$key]['label'];
+    	    		print ' '.$banktransferstatic->getNomUrl(0);
+    	    	}
+    	    	elseif ($links[$key]['type']=='payment')
+    	        {
+    	            $paymentstatic->id=$links[$key]['url_id'];
+    	            $paymentstatic->ref=$links[$key]['url_id'];    // FIXME This is id, not ref of payment
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	            print ' '.$paymentstatic->getNomUrl(2);
     	        }
     	        elseif ($links[$key]['type']=='payment_supplier')
     	        {
     	            $paymentsupplierstatic->id=$links[$key]['url_id'];
+<<<<<<< HEAD
     	            $paymentsupplierstatic->ref=$links[$key]['url_id'];
+=======
+    	            $paymentsupplierstatic->ref=$links[$key]['url_id'];    // FIXME This is id, not ref of payment
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	            print ' '.$paymentsupplierstatic->getNomUrl(2);
     	        }
     	        elseif ($links[$key]['type']=='payment_sc')
     	        {
     	            print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$links[$key]['url_id'].'">';
+<<<<<<< HEAD
     	            print ' '.img_object($langs->trans('ShowPayment'),'payment').' ';
+=======
+    	            print ' '.img_object($langs->trans('ShowPayment'), 'payment').' ';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	            //print $langs->trans("SocialContributionPayment");
     	            print '</a>';
     	        }
@@ -1160,13 +1526,21 @@ if ($resql)
     	        elseif ($links[$key]['type']=='payment_loan')
     	        {
     	            print '<a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$links[$key]['url_id'].'">';
+<<<<<<< HEAD
     	            print ' '.img_object($langs->trans('ShowPayment'),'payment').' ';
+=======
+    	            print ' '.img_object($langs->trans('ShowPayment'), 'payment').' ';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	            print '</a>';
     	        }
     	        elseif ($links[$key]['type']=='payment_donation')
     	        {
     	            print '<a href="'.DOL_URL_ROOT.'/don/payment/card.php?id='.$links[$key]['url_id'].'">';
+<<<<<<< HEAD
     	            print ' '.img_object($langs->trans('ShowPayment'),'payment').' ';
+=======
+    	            print ' '.img_object($langs->trans('ShowPayment'), 'payment').' ';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	            print '</a>';
     	        }
     	        elseif ($links[$key]['type']=='payment_expensereport')
@@ -1175,6 +1549,15 @@ if ($resql)
     	            $paymentexpensereportstatic->ref=$links[$key]['url_id'];
     	            print ' '.$paymentexpensereportstatic->getNomUrl(2);
     	        }
+<<<<<<< HEAD
+=======
+    	        elseif ($links[$key]['type']=='payment_various')
+    	        {
+    	            $paymentvariousstatic->id=$links[$key]['url_id'];
+    	            $paymentvariousstatic->ref=$links[$key]['url_id'];
+    	            print ' '.$paymentvariousstatic->getNomUrl(2);
+    	        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	        elseif ($links[$key]['type']=='banktransfert')
     	        {
     	            // Do not show link to transfer since there is no transfer card (avoid confusion). Can already be accessed from transaction detail.
@@ -1184,11 +1567,19 @@ if ($resql)
     	                $bankstatic->id=$banklinestatic->fk_account;
     	                $bankstatic->label=$banklinestatic->bank_account_ref;
     	                print ' ('.$langs->trans("TransferFrom").' ';
+<<<<<<< HEAD
     	                print $bankstatic->getNomUrl(1,'transactions');
     	                print ' '.$langs->trans("toward").' ';
     	                $bankstatic->id=$objp->bankid;
     	                $bankstatic->label=$objp->bankref;
     	                print $bankstatic->getNomUrl(1,'');
+=======
+    	                print $bankstatic->getNomUrl(1, 'transactions');
+    	                print ' '.$langs->trans("toward").' ';
+    	                $bankstatic->id=$objp->bankid;
+    	                $bankstatic->label=$objp->bankref;
+    	                print $bankstatic->getNomUrl(1, '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	                print ')';
     	            }
     	            else
@@ -1196,12 +1587,20 @@ if ($resql)
     	                $bankstatic->id=$objp->bankid;
     	                $bankstatic->label=$objp->bankref;
     	                print ' ('.$langs->trans("TransferFrom").' ';
+<<<<<<< HEAD
     	                print $bankstatic->getNomUrl(1,'');
+=======
+    	                print $bankstatic->getNomUrl(1, '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	                print ' '.$langs->trans("toward").' ';
     	                $banklinestatic->fetch($links[$key]['url_id']);
     	                $bankstatic->id=$banklinestatic->fk_account;
     	                $bankstatic->label=$banklinestatic->bank_account_ref;
+<<<<<<< HEAD
     	                print $bankstatic->getNomUrl(1,'transactions');
+=======
+    	                print $bankstatic->getNomUrl(1, 'transactions');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	                print ')';
     	            }
     	            //var_dump($links);
@@ -1227,7 +1626,11 @@ if ($resql)
     	            // Show link with label $links[$key]['label']
     	            if (! empty($objp->label) && ! empty($links[$key]['label'])) print ' - ';
     	            print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
+<<<<<<< HEAD
     	            if (preg_match('/^\((.*)\)$/i',$links[$key]['label'],$reg))
+=======
+    	            if (preg_match('/^\((.*)\)$/i', $links[$key]['label'], $reg))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	            {
     	                // Label generique car entre parentheses. On l'affiche en le traduisant
     	                if ($reg[1]=='paiement') $reg[1]='Payment';
@@ -1248,7 +1651,11 @@ if ($resql)
     	if (! empty($arrayfields['b.dateo']['checked']))
     	{
     	   print '<td align="center" class="nowrap">';
+<<<<<<< HEAD
     	   print '<span id="dateoperation_'.$objp->rowid.'">'.dol_print_date($db->jdate($objp->do),"day")."</span>";
+=======
+    	   print '<span id="dateoperation_'.$objp->rowid.'">'.dol_print_date($db->jdate($objp->do), "day")."</span>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	   print '&nbsp;';
     	   print '<span class="inline-block">';
     	   print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=doprev&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
@@ -1264,7 +1671,11 @@ if ($resql)
     	if (! empty($arrayfields['b.datev']['checked']))
     	{
     	   print '<td align="center" class="nowrap">';
+<<<<<<< HEAD
     	   print '<span id="datevalue_'.$objp->rowid.'">'.dol_print_date($db->jdate($objp->dv),"day")."</span>";
+=======
+    	   print '<span id="datevalue_'.$objp->rowid.'">'.dol_print_date($db->jdate($objp->dv), "day")."</span>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	   print '&nbsp;';
     	   print '<span class="inline-block">';
     	   print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
@@ -1280,7 +1691,11 @@ if ($resql)
     	if (! empty($arrayfields['type']['checked']))
     	{
         	print '<td align="center" class="nowrap">';
+<<<<<<< HEAD
 	        $labeltype=($langs->trans("PaymentTypeShort".$objp->fk_type)!="PaymentTypeShort".$objp->fk_type)?$langs->trans("PaymentTypeShort".$objp->fk_type):$langs->getLabelFromKey($db,$objp->fk_type,'c_paiement','code','libelle','',1);
+=======
+	        $labeltype=($langs->trans("PaymentTypeShort".$objp->fk_type)!="PaymentTypeShort".$objp->fk_type)?$langs->trans("PaymentTypeShort".$objp->fk_type):$langs->getLabelFromKey($db, $objp->fk_type, 'c_paiement', 'code', 'libelle', '', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	        if ($labeltype == 'SOLD') print '&nbsp;'; //$langs->trans("InitialBankBalance");
 	        else print $labeltype;
 	        print "</td>\n";
@@ -1323,7 +1738,11 @@ if ($resql)
     	// Bank account
     	if (! empty($arrayfields['ba.ref']['checked']))
     	{
+<<<<<<< HEAD
         	print '<td align="right" class="nowrap">';
+=======
+        	print '<td class="nowrap">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print $bankaccount->getNomUrl(1);
 			print "</td>\n";
             if (! $i) $totalarray['nbfield']++;
@@ -1332,7 +1751,11 @@ if ($resql)
     	// Debit
     	if (! empty($arrayfields['b.debit']['checked']))
     	{
+<<<<<<< HEAD
     	    print '<td align="right">';
+=======
+    	    print '<td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	    if ($objp->amount < 0)
     	    {
     	    	print price($objp->amount * -1);
@@ -1346,7 +1769,11 @@ if ($resql)
     	// Credit
     	if (! empty($arrayfields['b.credit']['checked']))
     	{
+<<<<<<< HEAD
     	    print '<td align="right">';
+=======
+    	    print '<td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	    if ($objp->amount > 0)
     	    {
 				print price($objp->amount);
@@ -1364,16 +1791,28 @@ if ($resql)
     		{
     			if ($balancebefore >= 0)
     			{
+<<<<<<< HEAD
     				print '<td align="right" class="nowrap">&nbsp;'.price($balancebefore).'</td>';
     			}
     			else
     			{
     				print '<td align="right" class="error nowrap">&nbsp;'.price($balancebefore).'</td>';
+=======
+    				print '<td class="nowrap right">&nbsp;'.price($balancebefore).'</td>';
+    			}
+    			else
+    			{
+    				print '<td class="error nowrap right">&nbsp;'.price($balancebefore).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     			}
     		}
     		else
     		{
+<<<<<<< HEAD
     			print '<td align="right">-</td>';
+=======
+    			print '<td class="right">-</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     		}
     		if (! $i) $totalarray['nbfield']++;
     	}
@@ -1384,22 +1823,35 @@ if ($resql)
     		{
     			if ($balance >= 0)
     			{
+<<<<<<< HEAD
     				print '<td align="right" class="nowrap">&nbsp;'.price($balance).'</td>';
     			}
     			else
     			{
     				print '<td align="right" class="error nowrap">&nbsp;'.price($balance).'</td>';
+=======
+    				print '<td class="nowrap right">&nbsp;'.price($balance).'</td>';
+    			}
+    			else
+    			{
+    				print '<td class="error nowrap right">&nbsp;'.price($balance).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     			}
     		}
     		else
     		{
+<<<<<<< HEAD
     			print '<td align="right">-</td>';
+=======
+    			print '<td class="right">-</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     		}
     		if (! $i) $totalarray['nbfield']++;
     	}
 
     	if (! empty($arrayfields['b.num_releve']['checked']))
     	{
+<<<<<<< HEAD
             print '<td class="nowrap" align="center">';
         	// Transaction reconciliated or edit link
         	if ($bankaccount->canBeConciliated() > 0)
@@ -1410,6 +1862,19 @@ if ($resql)
             	}
             	else if ($action == 'reconcile')
             	{
+=======
+            print '<td class="nowraponall" align="center">';
+        	// Transaction reconciliated or edit link
+        	if ($bankaccount->canBeConciliated() > 0)
+        	{
+        		if ($objp->num_releve)
+            	{
+            	    print '<a href="releve.php?num='.$objp->num_releve.'&account='.$objp->bankid.'&save_lastsearch_values=1">'.$objp->num_releve.'</a>';
+            	}
+            	if (! $objp->conciliated && $action == 'reconcile')
+            	{
+            		if ($objp->num_releve) print '&nbsp;';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             	    print '<input class="flat" name="rowid['.$objp->rowid.']" type="checkbox" value="'.$objp->rowid.'" size="1"'.(! empty($_POST['rowid'][$objp->rowid])?' checked':'').'>';
             	}
         	}
@@ -1434,7 +1899,11 @@ if ($resql)
     	// Transaction reconciliated or edit link
     	if ($objp->conciliated && $bankaccount->canBeConciliated() > 0)  // If line not conciliated and account can be conciliated
     	{
+<<<<<<< HEAD
     	    print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
+=======
+    	    print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?save_lastsearch_values=1&amp;rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	    print img_edit();
     	    print '</a>';
     	}
@@ -1442,13 +1911,21 @@ if ($resql)
     	{
     	    if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
     	    {
+<<<<<<< HEAD
     	        print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
+=======
+    	        print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?save_lastsearch_values=1&amp;rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	        print img_edit();
     	        print '</a>';
     	    }
     	    else
     	    {
+<<<<<<< HEAD
     	        print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
+=======
+    	        print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?save_lastsearch_values=1&amp;rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	        print img_view();
     	        print '</a>';
     	    }
@@ -1496,11 +1973,19 @@ if ($resql)
 	        $i++;
 	        if ($i == 1)
 	        {
+<<<<<<< HEAD
 	            if ($num < $limit && empty($offset)) print '<td align="left">'.$langs->trans("Total").'</td>';
 	            else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
 	        }
 	        elseif ($totalarray['totaldebfield'] == $i) print '<td align="right">'.price(-1 * $totalarray['totaldeb']).'</td>';
 	        elseif ($totalarray['totalcredfield'] == $i) print '<td align="right">'.price($totalarray['totalcred']).'</td>';
+=======
+	            if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
+	            else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
+	        }
+	        elseif ($totalarray['totaldebfield'] == $i) print '<td class="right">'.price(-1 * $totalarray['totaldeb']).'</td>';
+	        elseif ($totalarray['totalcredfield'] == $i) print '<td class="right">'.price($totalarray['totalcred']).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	        elseif ($i == $posconciliatecol)
 	        {
 	        	print '<td class="center">';
@@ -1529,6 +2014,11 @@ if ($_POST["action"] == "search" && ! $num)
 	print '<div class="opacitymedium">'.$langs->trans("NoRecordFound").'</div>';
 }
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

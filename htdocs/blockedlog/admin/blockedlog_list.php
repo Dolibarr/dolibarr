@@ -1,6 +1,12 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2017      ATM Consulting      <contact@atm-consulting.fr>
  * Copyright (C) 2017-2018 Laurent Destailleur <eldy@destailleur.fr>
+=======
+/* Copyright (C) 2017       ATM Consulting          <contact@atm-consulting.fr>
+ * Copyright (C) 2017-2018  Laurent Destailleur     <eldy@destailleur.fr>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +40,7 @@ $langs->loadLangs(array("admin", "other", "blockedlog", "bills"));
 
 if ((! $user->admin && ! $user->rights->blockedlog->read) || empty($conf->blockedlog->enabled)) accessforbidden();
 
+<<<<<<< HEAD
 $action = GETPOST('action','alpha');
 $contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'blockedloglist';   // To manage different context of search
 $backtopage = GETPOST('backtopage','alpha');											// Go back to a dedicated page
@@ -43,6 +50,17 @@ $search_showonlyerrors = GETPOST('search_showonlyerrors','int');
 if ($search_showonlyerrors < 0) $search_showonlyerrors=0;
 
 $search_fk_user=GETPOST('search_fk_user','intcomma');
+=======
+$action = GETPOST('action', 'alpha');
+$contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'blockedloglist';   // To manage different context of search
+$backtopage = GETPOST('backtopage', 'alpha');											// Go back to a dedicated page
+$optioncss  = GETPOST('optioncss', 'aZ');												// Option for the css output (always '' except when 'print')
+
+$search_showonlyerrors = GETPOST('search_showonlyerrors', 'int');
+if ($search_showonlyerrors < 0) $search_showonlyerrors=0;
+
+$search_fk_user=GETPOST('search_fk_user', 'intcomma');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $search_start = -1;
 if (GETPOST('search_startyear')!='') $search_start = dol_mktime(0, 0, 0, GETPOST('search_startmonth'), GETPOST('search_startday'), GETPOST('search_startyear'));
 $search_end = -1;
@@ -54,10 +72,17 @@ $search_amount = GETPOST('search_amount', 'alpha');
 if (($search_start == -1 || empty($search_start)) && ! GETPOSTISSET('search_startmonth')) $search_start = dol_time_plus_duree(dol_now(), '-1', 'w');
 
 // Load variable for pagination
+<<<<<<< HEAD
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
+=======
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -77,7 +102,11 @@ $result = restrictedArea($user, 'blockedlog', 0, '');
  */
 
 // Purge search criteria
+<<<<<<< HEAD
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+=======
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') ||GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$search_fk_user = '';
 	$search_start = -1;
@@ -103,9 +132,13 @@ if ($action === 'downloadblockchain') {
 	echo $bc;
 
 	exit;
+<<<<<<< HEAD
 }
 else if (GETPOST('downloadcsv','alpha'))
 {
+=======
+} elseif (GETPOST('downloadcsv', 'alpha')) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$error = 0;
 
 	$previoushash='';
@@ -117,10 +150,17 @@ else if (GETPOST('downloadcsv','alpha'))
 		$sql = "SELECT rowid,date_creation,tms,user_fullname,action,amounts,element,fk_object,date_object,ref_object,signature,fk_user,object_data";
 		$sql.= " FROM ".MAIN_DB_PREFIX."blockedlog";
 		$sql.= " WHERE entity = ".$conf->entity;
+<<<<<<< HEAD
 		if (GETPOST('monthtoexport','int') > 0 || GETPOST('yeartoexport','int') > 0)
 		{
 			$dates = dol_get_first_day(GETPOST('yeartoexport','int'), GETPOST('monthtoexport','int')?GETPOST('monthtoexport','int'):1);
 			$datee = dol_get_last_day(GETPOST('yeartoexport','int'), GETPOST('monthtoexport','int')?GETPOST('monthtoexport','int'):12);
+=======
+		if (GETPOST('monthtoexport', 'int') > 0 || GETPOST('yeartoexport', 'int') > 0)
+		{
+			$dates = dol_get_first_day(GETPOST('yeartoexport', 'int'), GETPOST('monthtoexport', 'int')?GETPOST('monthtoexport', 'int'):1);
+			$datee = dol_get_last_day(GETPOST('yeartoexport', 'int'), GETPOST('monthtoexport', 'int')?GETPOST('monthtoexport', 'int'):12);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$sql.= " AND date_creation BETWEEN '".$db->idate($dates)."' AND '".$db->idate($datee)."'";
 		}
 		$sql.= " ORDER BY rowid ASC";					// Required so we get the first one
@@ -131,7 +171,11 @@ else if (GETPOST('downloadcsv','alpha'))
 		{
 			// Make the first fetch to get first line
 			$obj = $db->fetch_object($res);
+<<<<<<< HEAD
 			if ($obj) 
+=======
+			if ($obj)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			{
 				$previoushash = $block_static->getPreviousHash(0, $obj->rowid);
 				$firstid = $obj->rowid;
@@ -145,7 +189,11 @@ else if (GETPOST('downloadcsv','alpha'))
 		else
 		{
 			$error++;
+<<<<<<< HEAD
 			setEventMessage($db->lasterror, 'errors');
+=======
+			setEventMessages($db->lasterror, null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 	}
 
@@ -155,10 +203,17 @@ else if (GETPOST('downloadcsv','alpha'))
 		$sql = "SELECT rowid,date_creation,tms,user_fullname,action,amounts,element,fk_object,date_object,ref_object,signature,fk_user,object_data";
 		$sql.= " FROM ".MAIN_DB_PREFIX."blockedlog";
 		$sql.= " WHERE entity = ".$conf->entity;
+<<<<<<< HEAD
 		if (GETPOST('monthtoexport','int') > 0 || GETPOST('yeartoexport','int') > 0)
 		{
 			$dates = dol_get_first_day(GETPOST('yeartoexport','int'), GETPOST('monthtoexport','int')?GETPOST('monthtoexport','int'):1);
 			$datee = dol_get_last_day(GETPOST('yeartoexport','int'), GETPOST('monthtoexport','int')?GETPOST('monthtoexport','int'):12);
+=======
+		if (GETPOST('monthtoexport', 'int') > 0 || GETPOST('yeartoexport', 'int') > 0)
+		{
+			$dates = dol_get_first_day(GETPOST('yeartoexport', 'int'), GETPOST('monthtoexport', 'int')?GETPOST('monthtoexport', 'int'):1);
+			$datee = dol_get_last_day(GETPOST('yeartoexport', 'int'), GETPOST('monthtoexport', 'int')?GETPOST('monthtoexport', 'int'):12);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$sql.= " AND date_creation BETWEEN '".$db->idate($dates)."' AND '".$db->idate($datee)."'";
 		}
 		$sql.= " ORDER BY rowid ASC";					// Required so later we can use the parameter $previoushash of checkSignature()
@@ -168,7 +223,11 @@ else if (GETPOST('downloadcsv','alpha'))
 		{
 			header('Content-Type: application/octet-stream');
 			header("Content-Transfer-Encoding: Binary");
+<<<<<<< HEAD
 			header("Content-disposition: attachment; filename=\"unalterable-log-archive-" .$dolibarr_main_db_name."-".(GETPOST('yeartoexport','int')>0 ? GETPOST('yeartoexport','int').(GETPOST('monthtoexport','int')>0?sprintf("%02d",GETPOST('monthtoexport','int')):'').'-':'').$previoushash. ".csv\"");
+=======
+			header("Content-disposition: attachment; filename=\"unalterable-log-archive-" .$dolibarr_main_db_name."-".(GETPOST('yeartoexport', 'int')>0 ? GETPOST('yeartoexport', 'int').(GETPOST('monthtoexport', 'int')>0?sprintf("%02d", GETPOST('monthtoexport', 'int')):'').'-':'').$previoushash. ".csv\"");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			print $langs->transnoentities('Id')
 				.';'.$langs->transnoentities('Date')
@@ -237,7 +296,11 @@ else if (GETPOST('downloadcsv','alpha'))
 					.';'.$obj->signature
 					.';'.$statusofrecord
 					.';'.$statusofrecordnote
+<<<<<<< HEAD
 					.';"'.str_replace('"','""',$obj->object_data).'"'
+=======
+					.';"'.str_replace('"', '""', $obj->object_data).'"'
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					."\n";
 
 				// Set new previous hash for next fetch
@@ -250,7 +313,11 @@ else if (GETPOST('downloadcsv','alpha'))
 		}
 		else
 		{
+<<<<<<< HEAD
 			setEventMessage($db->lasterror, 'errors');
+=======
+			setEventMessages($db->lasterror, null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 	}
 }
@@ -262,7 +329,11 @@ else if (GETPOST('downloadcsv','alpha'))
 
 $form=new Form($db);
 
+<<<<<<< HEAD
 if (GETPOST('withtab','alpha'))
+=======
+if (GETPOST('withtab', 'alpha'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$title=$langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog');
 }
@@ -271,7 +342,11 @@ else
 	$title=$langs->trans("BrowseBlockedLog");
 }
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("BrowseBlockedLog"));
+=======
+llxHeader('', $langs->trans("BrowseBlockedLog"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $MAXLINES = 10000;
 
@@ -290,20 +365,32 @@ if (! is_array($blocks))
 }
 
 $linkback='';
+<<<<<<< HEAD
 if (GETPOST('withtab','alpha'))
+=======
+if (GETPOST('withtab', 'alpha'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$linkback='<a href="'.($backtopage?$backtopage:DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';
 }
 
 print load_fiche_titre($title, $linkback);
 
+<<<<<<< HEAD
 if (GETPOST('withtab','alpha'))
+=======
+if (GETPOST('withtab', 'alpha'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$head=blockedlogadmin_prepare_head();
 	dol_fiche_head($head, 'fingerprints', '', -1);
 }
 
+<<<<<<< HEAD
 print '<span class="opacitymedium">'.$langs->trans("FingerprintsDesc")."</span><br>\n";
+=======
+print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("FingerprintsDesc")."<br></span>\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print '<br>';
 
@@ -311,6 +398,7 @@ $param='';
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 if ($search_fk_user > 0)    $param.='&search_fk_user='.urlencode($search_fk_user);
+<<<<<<< HEAD
 if ($search_startyear > 0)  $param.='&search_startyear='.urlencode(GETPOST('search_startyear','int'));
 if ($search_startmonth > 0) $param.='&search_startmonth='.urlencode(GETPOST('search_startmonth','int'));
 if ($search_startday > 0)   $param.='&search_startday='.urlencode(GETPOST('search_startday','int'));
@@ -320,15 +408,32 @@ if ($search_endday > 0)     $param.='&search_endday='.urlencode(GETPOST('search_
 if ($search_showonlyerrors > 0) $param.='&search_showonlyerrors='.urlencode($search_showonlyerrors);
 if ($optioncss != '')       $param.='&optioncss='.urlencode($optioncss);
 if (GETPOST('withtab','alpha')) $param.='&withtab='.urlencode(GETPOST('withtab','alpha'));
+=======
+if ($search_startyear > 0)  $param.='&search_startyear='.urlencode(GETPOST('search_startyear', 'int'));
+if ($search_startmonth > 0) $param.='&search_startmonth='.urlencode(GETPOST('search_startmonth', 'int'));
+if ($search_startday > 0)   $param.='&search_startday='.urlencode(GETPOST('search_startday', 'int'));
+if ($search_endyear > 0)    $param.='&search_endyear='.urlencode(GETPOST('search_endyear', 'int'));
+if ($search_endmonth > 0)   $param.='&search_endmonth='.urlencode(GETPOST('search_endmonth', 'int'));
+if ($search_endday > 0)     $param.='&search_endday='.urlencode(GETPOST('search_endday', 'int'));
+if ($search_showonlyerrors > 0) $param.='&search_showonlyerrors='.urlencode($search_showonlyerrors);
+if ($optioncss != '')       $param.='&optioncss='.urlencode($optioncss);
+if (GETPOST('withtab', 'alpha')) $param.='&withtab='.urlencode(GETPOST('withtab', 'alpha'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Add $param from extra fields
 //include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 
+<<<<<<< HEAD
 print '<div align="right">';
 print $langs->trans("RestrictYearToExport").': ';
 $smonth=GETPOST('monthtoexport','int');
+=======
+print '<div class="right">';
+print $langs->trans("RestrictYearToExport").': ';
+$smonth=GETPOST('monthtoexport', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 // Month
 $retstring='';
 $retstring.='<select class="flat valignmiddle maxwidth75imp marginrightonly" id="monthtoexport" name="monthtoexport">';
@@ -336,15 +441,26 @@ $retstring.='<option value="0" selected>&nbsp;</option>';
 for ($month = 1 ; $month <= 12 ; $month++)
 {
 	$retstring.='<option value="'.$month.'"'.($month == $smonth?' selected':'').'>';
+<<<<<<< HEAD
 	$retstring.=dol_print_date(mktime(12,0,0,$month,1,2000),"%b");
+=======
+	$retstring.=dol_print_date(mktime(12, 0, 0, $month, 1, 2000), "%b");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$retstring.="</option>";
 }
 $retstring.="</select>";
 print $retstring;
+<<<<<<< HEAD
 print '<input type="text" name="yeartoexport" class="valignmiddle maxwidth75" value="'.GETPOST('yeartoexport','int').'">';
 print '<input type="hidden" name="withtab" value="'.GETPOST('withtab','alpha').'">';
 print '<input type="submit" name="downloadcsv" class="button" value="'.$langs->trans('DownloadLogCSV').'">';
 if (!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY)) print ' | <a href="?action=downloadblockchain'.(GETPOST('withtab','alpha')?'&withtab='.GETPOST('withtab','alpha'):'').'">'.$langs->trans('DownloadBlockChain').'</a>';
+=======
+print '<input type="text" name="yeartoexport" class="valignmiddle maxwidth50imp" value="'.GETPOST('yeartoexport', 'int').'">';
+print '<input type="hidden" name="withtab" value="'.GETPOST('withtab', 'alpha').'">';
+print '<input type="submit" name="downloadcsv" class="button" value="'.$langs->trans('DownloadLogCSV').'">';
+if (!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY)) print ' | <a href="?action=downloadblockchain'.(GETPOST('withtab', 'alpha')?'&withtab='.GETPOST('withtab', 'alpha'):'').'">'.$langs->trans('DownloadBlockChain').'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print ' </div><br>';
 
 print '</form>';
@@ -361,7 +477,11 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+<<<<<<< HEAD
 print '<input type="hidden" name="withtab" value="'.GETPOST('withtab','alpha').'">';
+=======
+print '<input type="hidden" name="withtab" value="'.GETPOST('withtab', 'alpha').'">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print '<table class="noborder" width="100%">';
 
@@ -372,10 +492,17 @@ print '<td class="liste_titre">&nbsp;</td>';
 
 print '<td class="liste_titre">';
 //print $langs->trans("from").': ';
+<<<<<<< HEAD
 $form->select_date($search_start,'search_start');
 //print '<br>';
 //print $langs->trans("to").': ';
 $form->select_date($search_end,'search_end');
+=======
+print $form->selectDate($search_start, 'search_start');
+//print '<br>';
+//print $langs->trans("to").': ';
+print $form->selectDate($search_end, 'search_end');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</td>';
 
 // User
@@ -423,6 +550,7 @@ print '</td>';
 print '</tr>';
 
 print '<tr class="liste_titre">';
+<<<<<<< HEAD
 print getTitleFieldOfList($langs->trans('#'), 0, $_SERVER["PHP_SELF"],'rowid','',$param,'',$sortfield,$sortorder,'minwidth50 ')."\n";
 print getTitleFieldOfList($langs->trans('Date'), 0, $_SERVER["PHP_SELF"],'date_creation','',$param,'',$sortfield,$sortorder,'')."\n";
 print getTitleFieldOfList($langs->trans('Author'), 0, $_SERVER["PHP_SELF"],'user_fullname','',$param,'',$sortfield,$sortorder,'')."\n";
@@ -439,11 +567,31 @@ print '</tr>';
 
 if (! empty($conf->global->BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR))
 {
+=======
+print getTitleFieldOfList($langs->trans('#'), 0, $_SERVER["PHP_SELF"], 'rowid', '', $param, '', $sortfield, $sortorder, 'minwidth50 ')."\n";
+print getTitleFieldOfList($langs->trans('Date'), 0, $_SERVER["PHP_SELF"], 'date_creation', '', $param, '', $sortfield, $sortorder, '')."\n";
+print getTitleFieldOfList($langs->trans('Author'), 0, $_SERVER["PHP_SELF"], 'user_fullname', '', $param, '', $sortfield, $sortorder, '')."\n";
+print getTitleFieldOfList($langs->trans('Action'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
+print getTitleFieldOfList($langs->trans('Ref'), 0, $_SERVER["PHP_SELF"], 'ref_object', '', $param, '', $sortfield, $sortorder, '')."\n";
+print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
+print getTitleFieldOfList($langs->trans('Amount'), 0, $_SERVER["PHP_SELF"], '', '', $param, 'class="right"', $sortfield, $sortorder, '')."\n";
+print getTitleFieldOfList($langs->trans('DataOfArchivedEvent'), 0, $_SERVER["PHP_SELF"], '', '', $param, 'align="center"', $sortfield, $sortorder, '')."\n";
+print getTitleFieldOfList($langs->trans('Fingerprint'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
+print getTitleFieldOfList($langs->trans('Status'), 0, $_SERVER["PHP_SELF"], '', '', $param, 'align="center"', $sortfield, $sortorder, '')."\n";
+print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, 'align="center"', $sortfield, $sortorder, '')."\n";
+print getTitleFieldOfList('<span id="blockchainstatus"></span>', 0, $_SERVER["PHP_SELF"], '', '', $param, 'align="center"', $sortfield, $sortorder, '')."\n";
+print '</tr>';
+
+if (! empty($conf->global->BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR)) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	// This is version that is faster but require more memory and report errors that are outside the filter range
 
 	// TODO Make a full scan of table in reverse order of id of $block, so we can use the parameter $previoushash into checkSignature to save requests
 	// to find the $loweridinerror.
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 else
 {
@@ -480,7 +628,11 @@ if (is_array($blocks))
 		   	print '<td>'.$block->id.'</td>';
 
 		   	// Date
+<<<<<<< HEAD
 		   	print '<td>'.dol_print_date($block->date_creation,'dayhour').'</td>';
+=======
+		   	print '<td>'.dol_print_date($block->date_creation, 'dayhour').'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			// User
 		   	print '<td>';
@@ -498,7 +650,11 @@ if (is_array($blocks))
 		   	print '<td'.(preg_match('/<a/', $object_link) ? ' class="nowrap"' : '').'><!-- object_link -->'.$object_link.'</td>';
 
 		   	// Amount
+<<<<<<< HEAD
 		   	print '<td align="right">'.price($block->amounts).'</td>';
+=======
+		   	print '<td class="right">'.price($block->amounts).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		   	// Details link
 		   	print '<td align="center"><a href="#" data-blockid="'.$block->id.'" rel="show-info">'.img_info($langs->trans('ShowDetails')).'</a></td>';
@@ -537,7 +693,10 @@ if (is_array($blocks))
 			print '<td></td>';
 
 			print '</tr>';
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 	}
 }
@@ -583,7 +742,11 @@ if(!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY) && !empty($conf->globa
 		<script type="text/javascript">
 
 			$.ajax({
+<<<<<<< HEAD
 				url : "<?php echo dol_buildpath('/blockedlog/ajax/check_signature.php',1) ?>"
+=======
+				url : "<?php echo dol_buildpath('/blockedlog/ajax/check_signature.php', 1) ?>"
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				,dataType:"html"
 			}).done(function(data) {
 
@@ -600,12 +763,20 @@ if(!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY) && !empty($conf->globa
 <?php
 }
 
+<<<<<<< HEAD
 if (GETPOST('withtab','alpha'))
+=======
+if (GETPOST('withtab', 'alpha'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	dol_fiche_end();
 }
 
 print '<br><br>';
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

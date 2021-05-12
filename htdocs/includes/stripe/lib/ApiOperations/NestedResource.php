@@ -60,6 +60,10 @@ trait NestedResource
     /**
      * @param string $id
      * @param string $nestedPath
+<<<<<<< HEAD
+=======
+     * @param string|null $nestedId
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      * @param array|null $params
      * @param array|string|null $options
      *
@@ -74,6 +78,10 @@ trait NestedResource
     /**
      * @param string $id
      * @param string $nestedPath
+<<<<<<< HEAD
+=======
+     * @param string|null $nestedId
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      * @param array|null $params
      * @param array|string|null $options
      *
@@ -88,6 +96,10 @@ trait NestedResource
     /**
      * @param string $id
      * @param string $nestedPath
+<<<<<<< HEAD
+=======
+     * @param string|null $nestedId
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      * @param array|null $params
      * @param array|string|null $options
      *

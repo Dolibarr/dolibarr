@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2014		Alexandre Spangaro	 <aspangaro.dolibarr@gmail.com>
+=======
+/* Copyright (C) 2014		Alexandre Spangaro	 <aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +41,11 @@ class modLoan extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
+<<<<<<< HEAD
 	function __construct($db)
+=======
+	public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf;
 
@@ -46,7 +54,11 @@ class modLoan extends DolibarrModules
 
 		$this->family = "financial";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+<<<<<<< HEAD
 		$this->name = preg_replace('/^mod/i','',get_class($this));
+=======
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// Module description used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Loans management";
 
@@ -63,9 +75,17 @@ class modLoan extends DolibarrModules
 		$this->config_page_url = array('loan.php');
 
 		// Dependencies
+<<<<<<< HEAD
 		$this->depends = array();
 		$this->requiredby = array();
 		$this->conflictwith = array();
+=======
+		$this->hidden = false;			// A condition to hide module
+		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->langfiles = array("loan");
 
 		// Constants
@@ -143,11 +163,15 @@ class modLoan extends DolibarrModules
 		// Exports
 		//--------
 		$r=0;
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 
 	/**
+<<<<<<< HEAD
 	 *		Function called when module is enabled.
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *		It also creates data directories
@@ -156,6 +180,16 @@ class modLoan extends DolibarrModules
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
 	function init($options='')
+=======
+	 *  Function called when module is enabled.
+	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *  It also creates data directories
+	 *
+     *  @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *  @return     int             	1 if OK, 0 if KO
+	 */
+	public function init($options = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf;
 
@@ -164,6 +198,10 @@ class modLoan extends DolibarrModules
 
 		$sql = array();
 
+<<<<<<< HEAD
 		return $this->_init($sql,$options);
+=======
+		return $this->_init($sql, $options);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 }

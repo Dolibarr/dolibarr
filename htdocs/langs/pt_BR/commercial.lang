@@ -8,6 +8,10 @@ AddActionRendezVous=Criar um evento de reunião
 ConfirmDeleteAction=Tem certeza que quer deleitaar este evento ?
 CardAction=Ficha de evento
 ActionOnContact=Contato relacionado
+<<<<<<< HEAD
+=======
+ShowTask=Mostrar tarefa
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShowAction=Mostrar evento
 ActionsReport=Relatório de eventos
 SaleRepresentativesOfThirdParty=Representantes de vendas de terceiros
@@ -39,18 +43,36 @@ ActionDoneBy=Evento feito por
 ActionAC_TEL=Chamada telefônica
 ActionAC_PROP=Enviar proposta por correio
 ActionAC_EMAIL=Enviar e-mail
+<<<<<<< HEAD
+=======
+ActionAC_EMAIL_IN=Recepção de e-mail
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActionAC_INT=Intervenção no lugar
 ActionAC_FAC=Enviar fatura de cliente por correio
 ActionAC_REL=Enviar fatura de cliente por correio (lembrete)
 ActionAC_EMAILING=Enviar emails massivos
+<<<<<<< HEAD
 ActionAC_COM=Enviar pedido de cliente por correio
 ActionAC_SHIP=Enviar frete por correio
+=======
+ActionAC_COM=Envia pedido de venda por email
+ActionAC_SHIP=Enviar frete por correio
+ActionAC_SUP_ORD=Enviar pedido por correio
+ActionAC_SUP_INV=Enviar fatura do fornecedor por email
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActionAC_OTH=Outros
 Stats=Estatísticas de vendas
 StatusProsp=Status de prospecto de cliente
 DraftPropals=Minutas de orçamentos
 ToOfferALinkForOnlineSignature=Link para assinatura on-line
+<<<<<<< HEAD
 WelcomeOnOnlineSignaturePage=Bem-vindo à página para aceitar orçamentos / propostas comerciais de %s
 ThisScreenAllowsYouToSignDocFrom=Esta tela permite que você aceite e assine ou recuse um orçamento / proposta comercial
 SignatureProposalRef=Assinatura do orçamento / proposta comercial %s
 FeatureOnlineSignDisabled=Recurso para assinatura on-line desabilitado ou documento gerado antes que o recurso fosse ativado
+=======
+WelcomeOnOnlineSignaturePage=Bem-vindo à página para aceitar propostas comerciais de %s
+ThisScreenAllowsYouToSignDocFrom=Esta tela permite que você aceite e assine ou recuse um orçamento / proposta comercial
+SignatureProposalRef=Assinatura da cotação / proposta comercial %s
+FeatureOnlineSignDisabled=Recurso para assinatura online desabilitado ou documento gerado antes que o recurso fosse ativado
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

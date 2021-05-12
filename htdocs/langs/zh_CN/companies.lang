@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - companies
 ErrorCompanyNameAlreadyExists=公司名称%s已经存在。请使用其它名称。
 ErrorSetACountryFirst=请先设置国家
+<<<<<<< HEAD
 SelectThirdParty=选择业务伙伴
 ConfirmDeleteCompany=Are you sure you want to delete this company and all inherited information?
 DeleteContact=删除联络人
@@ -15,28 +16,59 @@ NewThirdParty=New third party (prospect, customer, vendor)
 CreateDolibarrThirdPartySupplier=Create a third party (vendor)
 CreateThirdPartyOnly=创建合伙人
 CreateThirdPartyAndContact=Create a third party + a child contact
+=======
+SelectThirdParty=选择合伙人
+ConfirmDeleteCompany=你确定要删除本公司及所有关联信息？
+DeleteContact=删除联络人
+ConfirmDeleteContact=你确定要删除这个联系人和所有关联信息？
+MenuNewThirdParty=New Third Party
+MenuNewCustomer=New Customer
+MenuNewProspect=New Prospect
+MenuNewSupplier=New Vendor
+MenuNewPrivateIndividual=新私营个体
+NewCompany=新建公司 (准客户,客户,供应商)
+NewThirdParty=New Third Party (prospect, customer, vendor)
+CreateDolibarrThirdPartySupplier=创建合伙人（供应商）
+CreateThirdPartyOnly=创建合伙人
+CreateThirdPartyAndContact=创建合伙人+联系人
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProspectionArea=准客户区
 IdThirdParty=合伙人ID号
 IdCompany=公司ID
 IdContact=联络人ID
 Contacts=联络人/地址
+<<<<<<< HEAD
 ThirdPartyContacts=合伙人联络人
 ThirdPartyContact=合伙人联络人/地址
+=======
+ThirdPartyContacts=Third-party contacts
+ThirdPartyContact=Third-party contact/address
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Company=公司
 CompanyName=公司名称
 AliasNames=别名(商号,商标,...)
 AliasNameShort=别名
 Companies=公司
+<<<<<<< HEAD
 CountryIsInEEC=国家是欧洲共同体一员
 ThirdPartyName=合伙人名称
 ThirdPartyEmail=Third party email
 ThirdParty=合伙人
 ThirdParties=合伙人
+=======
+CountryIsInEEC=Country is inside the European Economic Community
+PriceFormatInCurrentLanguage=Price format in current language
+ThirdPartyName=Third-party name
+ThirdPartyEmail=Third-party email
+ThirdParty=Third-party
+ThirdParties=Third-parties
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ThirdPartyProspects=准客户
 ThirdPartyProspectsStats=准客户
 ThirdPartyCustomers=客户
 ThirdPartyCustomersStats=客户
 ThirdPartyCustomersWithIdProf12=与%s或%客户s
+<<<<<<< HEAD
 ThirdPartySuppliers=Vendors
 ThirdPartyType=合伙人类型
 Individual=私营个体
@@ -45,6 +77,16 @@ ParentCompany=母公司
 Subsidiaries=附属公司
 ReportByMonth=Report by month
 ReportByCustomers=Report by customer
+=======
+ThirdPartySuppliers=供应商
+ThirdPartyType=Third-party type
+Individual=私营个体
+ToCreateContactWithSameName=Will automatically create a contact/address with same information as the third party under the third party. In most cases, even if your third party is a physical person, creating a third party alone is enough.
+ParentCompany=母公司
+Subsidiaries=附属公司
+ReportByMonth=按月报告
+ReportByCustomers=顾客报告
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ReportByQuarter=按报表等级
 CivilityCode=文明守则
 RegisteredOffice=注册给办公室
@@ -52,12 +94,20 @@ Lastname=姓氏
 Firstname=名字
 PostOrFunction=工作岗位
 UserTitle=称谓
+<<<<<<< HEAD
 NatureOfThirdParty=Nature of Third party
+=======
+NatureOfThirdParty=合伙人的性质
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Address=地址
 State=州/省
 StateShort=国家
 Region=地区
+<<<<<<< HEAD
 Region-State=Region - State
+=======
+Region-State=地区 - 州
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Country=国家
 CountryCode=国家代码
 CountryId=国家编号
@@ -69,12 +119,17 @@ Chat=Chat
 PhonePro=工作电话
 PhonePerso=私人电话
 PhoneMobile=手机
+<<<<<<< HEAD
 No_Email=拒绝群发电子邮件
+=======
+No_Email=Refuse bulk emailings
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Fax=传真
 Zip=邮政编码
 Town=城市
 Web=网站
 Poste= 位置
+<<<<<<< HEAD
 DefaultLang=默认语言
 VATIsUsed=Sales tax is used
 VATIsUsedWhenSelling=This define if this third party includes a sale tax or not when it makes an invoice to its own customers
@@ -83,6 +138,16 @@ CopyAddressFromSoc=Fill address with third party address
 ThirdpartyNotCustomerNotSupplierSoNoRef=Third party neither customer nor vendor, no available refering objects
 ThirdpartyIsNeitherCustomerNorClientSoCannotHaveDiscounts=Third party neither customer nor supplier, discounts are not available
 PaymentBankAccount=Payment bank account
+=======
+DefaultLang=Language default
+VATIsUsed=Sales tax used
+VATIsUsedWhenSelling=This defines if this third party includes a sale tax or not when it makes an invoice to its own customers
+VATIsNotUsed=不含增值税
+CopyAddressFromSoc=Copy address from third-party details
+ThirdpartyNotCustomerNotSupplierSoNoRef=Third party neither customer nor vendor, no available referring objects
+ThirdpartyIsNeitherCustomerNorClientSoCannotHaveDiscounts=Third party neither customer nor vendor, discounts are not available
+PaymentBankAccount=付款银行帐户
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 OverAllProposals=报价
 OverAllOrders=订单
 OverAllInvoices=发票
@@ -96,12 +161,19 @@ LocalTax2IsUsedES= 使用 IRPF
 LocalTax2IsNotUsedES= 不使用 IRPF
 LocalTax1ES=稀土
 LocalTax2ES=IRPF
+<<<<<<< HEAD
 TypeLocaltax1ES=RE 类型
 TypeLocaltax2ES=IRPF 类型
 WrongCustomerCode=客户代码无效
 WrongSupplierCode=Vendor code invalid
 CustomerCodeModel=客户代码模板
 SupplierCodeModel=Vendor code model
+=======
+WrongCustomerCode=客户编号无效
+WrongSupplierCode=供应商代码无效
+CustomerCodeModel=客户编号模板
+SupplierCodeModel=供应商代码模型
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Gencod=条码
 ##### Professional ID #####
 ProfId1Short=Prof. id 1
@@ -258,20 +330,32 @@ ProfId1DZ=钢筋混凝土
 ProfId2DZ=Art.
 ProfId3DZ=NIF
 ProfId4DZ=NIS
+<<<<<<< HEAD
 VATIntra=Sales tax ID
 VATIntraShort=Tax ID
 VATIntraSyntaxIsValid=语法是有效的
 VATReturn=VAT return
+=======
+VATIntra=VAT ID
+VATIntraShort=VAT ID
+VATIntraSyntaxIsValid=语法是有效的
+VATReturn=增值税退税
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProspectCustomer=准客户/客户
 Prospect=准客户
 CustomerCard=客户信息
 Customer=客户
 CustomerRelativeDiscount=相对客户折扣
+<<<<<<< HEAD
 SupplierRelativeDiscount=Relative vendor discount
+=======
+SupplierRelativeDiscount=相对供应商折扣
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CustomerRelativeDiscountShort=相对折扣
 CustomerAbsoluteDiscountShort=绝对优惠
 CompanyHasRelativeDiscount=这个客户有一个<b>%s的%%</b>的折扣
 CompanyHasNoRelativeDiscount=此客户没有默认相对折扣
+<<<<<<< HEAD
 HasRelativeDiscountFromSupplier=You have a default discount of <b>%s%%</b> from this supplier
 HasNoRelativeDiscountFromSupplier=You have no default relative discount from this supplier
 CompanyHasAbsoluteDiscount=This customer has discount available (credits notes or down payments) for <b>%s</b> %s
@@ -288,6 +372,24 @@ SupplierAbsoluteDiscountAllUsers=Absolute vendor discounts (entered by all users
 SupplierAbsoluteDiscountMy=Absolute vendor discounts (entered by yourself)
 DiscountNone=无
 Supplier=供应商
+=======
+HasRelativeDiscountFromSupplier=You have a default discount of <b>%s%%</b> from this vendor
+HasNoRelativeDiscountFromSupplier=You have no default relative discount from this vendor
+CompanyHasAbsoluteDiscount=This customer has discounts available (credits notes or down payments) for <b>%s</b> %s
+CompanyHasDownPaymentOrCommercialDiscount=This customer has discounts available (commercial, down payments) for <b>%s</b> %s
+CompanyHasCreditNote=此客户仍然有信用票据<b>或s%%s</b>的前存款
+HasNoAbsoluteDiscountFromSupplier=You have no discount credit available from this vendor
+HasAbsoluteDiscountFromSupplier=You have discounts available (credits notes or down payments) for <b>%s</b> %s from this vendor
+HasDownPaymentOrCommercialDiscountFromSupplier=You have discounts available (commercial, down payments) for <b>%s</b> %s from this vendor
+HasCreditNoteFromSupplier=You have credit notes for <b>%s</b> %s from this vendor
+CompanyHasNoAbsoluteDiscount=此客户没有提供贴息贷款
+CustomerAbsoluteDiscountAllUsers=绝对优惠（所有用户授予）
+CustomerAbsoluteDiscountMy=绝对优惠（由自己授予）
+SupplierAbsoluteDiscountAllUsers=绝对供应商折扣（由所有用户输入）
+SupplierAbsoluteDiscountMy=绝对供应商折扣（由您自己输入）
+DiscountNone=无
+Vendor=Vendor
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddContact=创建联系人
 AddContactAddress=创建联系人/地址
 EditContact=编辑联系人/地址
@@ -295,13 +397,18 @@ EditContactAddress=编辑联系人/地址
 Contact=联系人
 ContactId=联系人id
 ContactsAddresses=联系方式/地址
+<<<<<<< HEAD
 FromContactName=Name:
+=======
+FromContactName=名称：
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoContactDefinedForThirdParty=此合伙人未确定联络人
 NoContactDefined=合伙人未设定联系人
 DefaultContact=默认接触
 AddThirdParty=创建合伙人
 DeleteACompany=删除公司
 PersonalInformations=个人资料
+<<<<<<< HEAD
 AccountancyCode=会计账户
 CustomerCode=客户代码
 SupplierCode=Vendor code
@@ -319,6 +426,25 @@ ListOfContacts=联系人列表
 ListOfContactsAddresses=联系人/地址列表
 ListOfThirdParties=合伙人列表
 ShowCompany=Show third party
+=======
+AccountancyCode=会计科目
+CustomerCode=客户编号
+SupplierCode=Vendor Code
+CustomerCodeShort=客户编号
+SupplierCodeShort=Vendor Code
+CustomerCodeDesc=Customer Code, unique for all customers
+SupplierCodeDesc=Vendor Code, unique for all vendors
+RequiredIfCustomer=要求合伙人为客户或是准客户
+RequiredIfSupplier=如果合伙人是供应商，则必需
+ValidityControledByModule=Validity controlled by module
+ThisIsModuleRules=Rules for this module
+ProspectToContact=准客户到联系人
+CompanyDeleted=公司“%的”从数据库中删除。
+ListOfContacts=联系人列表
+ListOfContactsAddresses=联系人列表
+ListOfThirdParties=List of Third Parties
+ShowCompany=Show Third Party
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShowContact=显示联系人
 ContactsAllShort=全部 (不筛选)
 ContactType=联系人类型
@@ -333,13 +459,18 @@ NoContactForAnyProposal=不是任何报价的联系人
 NoContactForAnyContract=不是任何合同的联系人
 NoContactForAnyInvoice=不是任何发票的联系人
 NewContact=新建联系人
+<<<<<<< HEAD
 NewContactAddress=新建联系人/地址
+=======
+NewContactAddress=New Contact/Address
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MyContacts=我的联系人
 Capital=注册资金
 CapitalOf=注册资金 %s
 EditCompany=编辑公司
 ThisUserIsNot=This user is not a prospect, customer nor vendor
 VATIntraCheck=支票
+<<<<<<< HEAD
 VATIntraCheckDesc=<b>%s的</b>允许该链接要求欧盟增值税检查服务。从服务器的外部网络连接需要这项服务工作。
 VATIntraCheckURL=http://ec.europa.eu/taxation_customs/vies/vieshome.do
 VATIntraCheckableOnEUSite=欧盟委员会现场检查Intracomunnautary增值税
@@ -348,6 +479,16 @@ ErrorVATCheckMS_UNAVAILABLE=检查不可能的。检查服务是没有提供的�
 NorProspectNorCustomer=不是准客户，也不是客户
 JuridicalStatus=法律条款
 Staff=员工人数
+=======
+VATIntraCheckDesc=The VAT ID must include the country prefix. The link <b>%s</b> uses the European VAT checker service (VIES) which requires internet access from the Dolibarr server.
+VATIntraCheckURL=http://ec.europa.eu/taxation_customs/vies/vieshome.do
+VATIntraCheckableOnEUSite=Check the intra-Community VAT ID on the European Commission website
+VATIntraManualCheck=You can also check manually on the European Commission website <a href="%s" target="_blank">%s</a>
+ErrorVATCheckMS_UNAVAILABLE=检查不可能的。检查服务是没有提供的会员国（%s）中。
+NorProspectNorCustomer=Not prospect, nor customer
+JuridicalStatus=Legal Entity Type
+Staff=雇员
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProspectLevelShort=潜力
 ProspectLevel=潜在的准客户
 ContactPrivate=私人
@@ -368,7 +509,11 @@ TE_MEDIUM=中型公司
 TE_ADMIN=政府
 TE_SMALL=小公司
 TE_RETAIL=零售商
+<<<<<<< HEAD
 TE_WHOLE=Wholetailer
+=======
+TE_WHOLE=Wholesaler
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TE_PRIVATE=私营个体
 TE_OTHER=其他
 StatusProspect-1=不要联系
@@ -387,6 +532,7 @@ ExportCardToFormat=导出名片格式
 ContactNotLinkedToCompany=联系人未链接到任何合伙人
 DolibarrLogin=登陆Dolibarr
 NoDolibarrAccess=没有Dolibarr访问
+<<<<<<< HEAD
 ExportDataset_company_1=Third parties (Companies / foundations / physical people) and properties
 ExportDataset_company_2=联系人和特征
 ImportDataset_company_1=Third parties (Companies / foundations / physical people) and properties
@@ -397,11 +543,25 @@ PriceLevel=价格级别
 DeliveryAddress=送货地址
 AddAddress=添加地址
 SupplierCategory=Vendor category
+=======
+ExportDataset_company_1=Third-parties (companies/foundations/physical people) and their properties
+ExportDataset_company_2=Contacts and their properties
+ImportDataset_company_1=Third-parties and their properties
+ImportDataset_company_2=Third-parties additional contacts/addresses and attributes
+ImportDataset_company_3=Third-parties Bank accounts
+ImportDataset_company_4=Third-parties Sales representatives (assign sales representatives/users to companies)
+PriceLevel=Price Level
+PriceLevelLabels=Price Level Labels
+DeliveryAddress=送货地址
+AddAddress=添加地址
+SupplierCategory=供应商类别
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 JuridicalStatus200=独立
 DeleteFile=删除文件
 ConfirmDeleteFile=你确定要删除这个文件？
 AllocateCommercial=分配给销售代表
 Organization=组织
+<<<<<<< HEAD
 FiscalYearInformation=会计年度信息
 FiscalMonthStart=会计年度初始月
 YouMustAssignUserMailFirst=您必须为此账户添加电子邮箱，首先可为他添加电子邮件通知功能。
@@ -415,10 +575,26 @@ UniqueThirdParties=合伙人小计
 InActivity=打开
 ActivityCeased=禁用
 ThirdPartyIsClosed=Third party is closed
+=======
+FiscalYearInformation=Fiscal Year
+FiscalMonthStart=会计年度初始月
+YouMustAssignUserMailFirst=You must create an email for this user prior to being able to add an email notification.
+YouMustCreateContactFirst=能够添加电子邮件通知, 首先你必须填写合伙人的有效Email地址
+ListSuppliersShort=List of Vendors
+ListProspectsShort=List of Prospects
+ListCustomersShort=List of Customers
+ThirdPartiesArea=Third Parties/Contacts
+LastModifiedThirdParties=Last %s modified Third Parties
+UniqueThirdParties=Total of Third Parties
+InActivity=打开
+ActivityCeased=禁用
+ThirdPartyIsClosed=合伙人已关闭
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProductsIntoElements= %s 的中产品/服务列表
 CurrentOutstandingBill=当前优质账单
 OutstandingBill=优质账单最大值
 OutstandingBillReached=已达到最大优质账单值
+<<<<<<< HEAD
 OrderMinAmount=Minimum amount for order
 MonkeyNumRefModelDesc=Return numero with format %syymm-nnnn for customer code and %syymm-nnnn for vendor code where yy is year, mm is month and nnnn is a sequence with no break and no return to 0.
 LeopardNumRefModelDesc=客户/供应商代码是免费的。此代码可以随时修改。
@@ -432,3 +608,25 @@ SaleRepresentativeFirstname=First name of sales representative
 SaleRepresentativeLastname=Last name of sales representative
 ErrorThirdpartiesMerge=There was an error when deleting the third parties. Please check the log. Changes have been reverted.
 NewCustomerSupplierCodeProposed=New customer or vendor code suggested on duplicate code
+=======
+OrderMinAmount=订单的最低金额
+MonkeyNumRefModelDesc=Return a number with the format %syymm-nnnn for the customer code and %syymm-nnnn for the vendor code where yy is year, mm is month and nnnn is a sequence with no break and no return to 0.
+LeopardNumRefModelDesc=客户/供应商代码是免费的。此代码可以随时修改。
+ManagingDirectors=公司高管(s)称呼 (CEO, 董事长, 总裁...)
+MergeOriginThirdparty=重复合伙人(合伙人要删除)
+MergeThirdparties=合并合伙人
+ConfirmMergeThirdparties=Are you sure you want to merge this third party into the current one? All linked objects (invoices, orders, ...) will be moved to current third party, then the third party will be deleted.
+ThirdpartiesMergeSuccess=第三方已合并
+SaleRepresentativeLogin=销售代表登陆
+SaleRepresentativeFirstname=销售代表的名字
+SaleRepresentativeLastname=销售代表的姓氏
+ErrorThirdpartiesMerge=删除第三方时出错。请检查日志。变更已被恢复。
+NewCustomerSupplierCodeProposed=Customer or Vendor code already used, a new code is suggested
+#Imports
+PaymentTypeCustomer=Payment Type - Customer
+PaymentTermsCustomer=Payment Terms - Customer
+PaymentTypeSupplier=Payment Type - Vendor
+PaymentTermsSupplier=Payment Term - Vendor
+MulticurrencyUsed=Use Multicurrency
+MulticurrencyCurrency=货币
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

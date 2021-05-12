@@ -28,10 +28,37 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/expedition/modules_expedition.php
  */
 class mod_expedition_safor extends ModelNumRefExpedition
 {
+<<<<<<< HEAD
 	var $version='dolibarr';
 	var $prefix='SH';
 	var $error='';
 	var $nom='Safor';
+=======
+	/**
+     * Dolibarr version of the loaded document
+     * @var string
+     */
+	public $version = 'dolibarr';
+
+	public $prefix='SH';
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see $name
+	 */
+	public $nom='Safor';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Safor';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	/**
@@ -39,10 +66,17 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	 *
 	 *	@return     string      text description
 	 */
+<<<<<<< HEAD
     function info()
     {
     	global $langs;
       	return $langs->trans("SimpleNumRefModelDesc",$this->prefix);
+=======
+    public function info()
+    {
+    	global $langs;
+      	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
 
@@ -51,7 +85,11 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	 *
 	 *	@return     string      Example
 	 */
+<<<<<<< HEAD
 	function getExample()
+=======
+    public function getExample()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return $this->prefix."0501-0001";
 	}
@@ -62,7 +100,11 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	 *
 	 *	@return     boolean     false if conflit, true if ok
 	 */
+<<<<<<< HEAD
 	function canBeActivated()
+=======
+    public function canBeActivated()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf,$langs,$db;
 
@@ -78,9 +120,15 @@ class mod_expedition_safor extends ModelNumRefExpedition
 		if ($resql)
 		{
 			$row = $db->fetch_row($resql);
+<<<<<<< HEAD
 			if ($row) { $coyymm = substr($row[0],0,6); $max=$row[0]; }
 		}
 		if ($coyymm && ! preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i',$coyymm))
+=======
+			if ($row) { $coyymm = substr($row[0], 0, 6); $max=$row[0]; }
+		}
+		if ($coyymm && ! preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			$langs->load("errors");
 			$this->error=$langs->trans('ErrorNumRefModel', $max);
@@ -97,7 +145,11 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	 *	@param	Object		$shipment	Shipment object
 	 *	@return string      			Value if OK, 0 if KO
 	 */
+<<<<<<< HEAD
 	function getNextValue($objsoc,$shipment)
+=======
+    public function getNextValue($objsoc, $shipment)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $db,$conf;
 
@@ -121,15 +173,26 @@ class mod_expedition_safor extends ModelNumRefExpedition
 		}
 
 		$date=time();
+<<<<<<< HEAD
 		$yymm = strftime("%y%m",$date);
 
 		if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
 		else $num = sprintf("%04s",$max+1);
+=======
+		$yymm = strftime("%y%m", $date);
+
+		if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
+		else $num = sprintf("%04s", $max+1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		dol_syslog("mod_expedition_safor::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *  Return next free value
 	 *
@@ -137,9 +200,17 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	 *	@param	Object		$objforref	Shipment object
 	 *	@return string      			Next free value
 	 */
+<<<<<<< HEAD
 	function expedition_get_num($objsoc,$objforref)
 	{
 		return $this->getNextValue($objsoc,$objforref);
 	}
 
+=======
+    public function expedition_get_num($objsoc, $objforref)
+	{
+        // phpcs:enable
+		return $this->getNextValue($objsoc, $objforref);
+	}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

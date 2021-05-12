@@ -14,6 +14,7 @@ if (! empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_
 {
 	if (is_array($extrafields->attributes[$extrafieldsobjectkey]['label']) && count($extrafields->attributes[$extrafieldsobjectkey]['label']))
 	{
+<<<<<<< HEAD
 		foreach($extrafields->attributes[$extrafieldsobjectkey]['label'] as $key => $val)
 		{
 			if (! empty($arrayfields["ef.".$key]['checked']))
@@ -27,3 +28,20 @@ if (! empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_
 		}
 	}
 }
+=======
+        if (empty($extrafieldsobjectprefix)) $extrafieldsobjectprefix = 'ef.';
+
+		foreach($extrafields->attributes[$extrafieldsobjectkey]['label'] as $key => $val)
+		{
+			if (! empty($arrayfields[$extrafieldsobjectprefix.$key]['checked']))
+			{
+				$align=$extrafields->getAlignFlag($key);
+				$sortonfield = $extrafieldsobjectprefix.$key;
+				if (! empty($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key])) $sortonfield='';
+				if ($extrafields->attributes[$extrafieldsobjectkey]['type'][$key] == 'separate') print '<th class="liste_titre thseparator"></th>';
+				else print getTitleFieldOfList($langs->trans($extralabels[$key]), 0, $_SERVER["PHP_SELF"], $sortonfield, "", $param, ($align?'align="'.$align.'" data-titlekey="'.$key.'"':'data-titlekey="'.$key.'"'), $sortfield, $sortorder)."\n";
+			}
+		}
+	}
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

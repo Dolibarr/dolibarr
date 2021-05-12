@@ -10,14 +10,22 @@ LoanCapital=Kapital
 Insurance=Försäkring
 Interest=Ränta
 Nbterms=Antal termer
+<<<<<<< HEAD
 Term=Term
 LoanAccountancyCapitalCode=Accounting account capital
 LoanAccountancyInsuranceCode=Accounting account insurance
 LoanAccountancyInterestCode=Accounting account interest
+=======
+Term=Termin
+LoanAccountancyCapitalCode=Redovisningskontokapital
+LoanAccountancyInsuranceCode=Redovisningskontoförsäkring
+LoanAccountancyInterestCode=Räkningskonto ränta
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmDeleteLoan=Bekräfta borttagning av lån
 LoanDeleted=Lånet borttaget
 ConfirmPayLoan=Bekräfta klassificeringen av detta lån 
 LoanPaid=Lånet betalt
+<<<<<<< HEAD
 ListLoanAssociatedProject=List of loan associated with the project
 AddLoan=Create loan
 FinancialCommitment=Financial commitment
@@ -29,3 +37,16 @@ LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Accounting account capital by default
 LOAN_ACCOUNTING_ACCOUNT_INTEREST=Accounting account interest by default
 LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Accounting account insurance by default
 CreateCalcSchedule=Edit financial commitment
+=======
+ListLoanAssociatedProject=Förteckning över lån i samband med projektet
+AddLoan=Skapa lån
+FinancialCommitment=Finansiellt engagemang
+InterestAmount=Ränta
+CapitalRemain=Kapital kvarstår
+# Admin
+ConfigLoan=Modullånets konfiguration
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Redovisningskontokapital som standard
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Räkenskapsredovisning är som standard
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Redovisningsbokföringsförsäkring som standard
+CreateCalcSchedule=Redigera ekonomiskt engagemang
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

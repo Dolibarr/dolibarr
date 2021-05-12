@@ -2,7 +2,11 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2011-2016 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
@@ -37,9 +41,19 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';	// requir
  */
 abstract class ModelePDFSuppliersOrders extends CommonDocGenerator
 {
+<<<<<<< HEAD
 	var $error='';
 
 
+=======
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *  Return list of active generation models
 	 *
@@ -47,19 +61,32 @@ abstract class ModelePDFSuppliersOrders extends CommonDocGenerator
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
+<<<<<<< HEAD
 	static function liste_modeles($db,$maxfilenamelength=0)
 	{
+=======
+	public static function liste_modeles($db, $maxfilenamelength = 0)
+	{
+		// phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf;
 
 		$type='order_supplier';
 		$liste=array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+<<<<<<< HEAD
 		$liste=getListOfModels($db,$type,$maxfilenamelength);
 
 		return $liste;
 	}
 
+=======
+		$liste=getListOfModels($db, $type, $maxfilenamelength);
+
+		return $liste;
+	}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 
@@ -69,13 +96,24 @@ abstract class ModelePDFSuppliersOrders extends CommonDocGenerator
  */
 abstract class ModeleNumRefSuppliersOrders
 {
+<<<<<<< HEAD
 	var $error='';
+=======
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	/**  Return if a model can be used or not
 	 *
 	 *   @return	boolean     true if model can be used
 	 */
+<<<<<<< HEAD
 	function isEnabled()
+=======
+    public function isEnabled()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return true;
 	}
@@ -84,7 +122,11 @@ abstract class ModeleNumRefSuppliersOrders
 	 *
 	 *   @return    string      Description Text
 	 */
+<<<<<<< HEAD
 	function info()
+=======
+    public function info()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 		$langs->load("orders");
@@ -95,7 +137,11 @@ abstract class ModeleNumRefSuppliersOrders
 	 *
 	 *    @return   string      Example
 	 */
+<<<<<<< HEAD
 	function getExample()
+=======
+    public function getExample()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 		$langs->load("orders");
@@ -106,7 +152,11 @@ abstract class ModeleNumRefSuppliersOrders
 	 *
 	 *   @return	boolean     false if conflict, true if ok
 	 */
+<<<<<<< HEAD
 	function canBeActivated()
+=======
+    public function canBeActivated()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return true;
 	}
@@ -115,7 +165,11 @@ abstract class ModeleNumRefSuppliersOrders
 	 *
 	 *   @return     string      Valeur
 	 */
+<<<<<<< HEAD
 	function getNextValue()
+=======
+    public function getNextValue()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
@@ -125,7 +179,11 @@ abstract class ModeleNumRefSuppliersOrders
 	 *
 	 *    @return     string      Value
 	 */
+<<<<<<< HEAD
 	function getVersion()
+=======
+    public function getVersion()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 		$langs->load("admin");

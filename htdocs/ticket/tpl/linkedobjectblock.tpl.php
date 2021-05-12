@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2010-2012 Regis Houssin <regis@dolibarr.fr>
+=======
+/* Copyright (C) 2010-2012 Regis Houssin <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2013      Jean-François FERRY <hello@librethic.io>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,14 +36,24 @@ $langs = $GLOBALS['langs'];
 $langs->load('ticket');
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 echo '<br>';
+<<<<<<< HEAD
 print_titre($langs->trans('RelatedTickets'));
+=======
+print load_fiche_titre($langs->trans('RelatedTickets'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ?>
 <table class="noborder" width="100%">
 <tr class="liste_titre">
     <td><?php echo $langs->trans("Subject"); ?></td>
+<<<<<<< HEAD
     <td align="center"><?php echo $langs->trans("DateCreation"); ?></td>
     <td align="center"><?php echo $langs->trans("Customer"); ?></td>
     <td align="center"><?php echo $langs->trans("Status"); ?></td>
+=======
+    <td class="center"><?php echo $langs->trans("DateCreation"); ?></td>
+    <td class="center"><?php echo $langs->trans("Customer"); ?></td>
+    <td class="center"><?php echo $langs->trans("Status"); ?></td>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 </tr>
 <?php
 foreach ($linkedObjectBlock as $object) {
@@ -50,13 +64,22 @@ foreach ($linkedObjectBlock as $object) {
     <?php echo img_object($langs->trans("ShowTicket"), "ticket") . ' ' . (! empty($object->subject) ? ' '.$object->subject : ''); ?>
         </a>
     </td>
+<<<<<<< HEAD
     <td align="center"><?php echo dol_print_date($object->datec, 'day'); ?></td>
+=======
+    <td class="center"><?php echo dol_print_date($object->datec, 'day'); ?></td>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     <?php
     $object->socid = $object->fk_soc;
     $object->fetch_thirdparty();
     ?>
+<<<<<<< HEAD
     <td align="center"><?php echo $object->thirdparty->getNomUrl(1); ?></td>
     <td align="center"><?php echo $object->getLibstatut(2); ?></td>
+=======
+    <td class="center"><?php echo $object->thirdparty->getNomUrl(1); ?></td>
+    <td class="center"><?php echo $object->getLibstatut(2); ?></td>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 </tr>
 <?php } ?>
 </table>

@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2011-2013 Regis Houssin <regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2011-2013 Regis Houssin <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +26,15 @@ if (empty($conf) || ! is_object($conf))
 	exit;
 }
 
+<<<<<<< HEAD
+=======
+$objectUrl = $object->getNomUrl(0, '', 0, 1);
+if($object->element == 'propal')
+{
+    $objectUrl = DOL_URL_ROOT.'/comm/propal/card.php?id='.$object->id;
+}
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ?>
 
 <!-- START TEMPLATE IMPORT OBJECT LINKED LINES -->
@@ -47,7 +60,11 @@ $(document).ready(function(){
 	        });
 
 	        
+<<<<<<< HEAD
 	        var $dialog = $('<form id="' + formId + '" action="<?php print $object->getNomUrl(0,'',0,1); ?>"  method="post" ></form>')
+=======
+	        var $dialog = $('<form id="' + formId + '" action="<?php print $objectUrl ; ?>"  method="post" ></form>')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	        .load( page + " #tablelines", function() {
 
 	        	$("#" + formId + " #tablelines").prop("id", "ajaxloaded_tablelines"); // change id attribute

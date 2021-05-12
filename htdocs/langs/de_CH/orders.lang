@@ -4,4 +4,10 @@ OrderCard=Bestell-Karte
 CancelOrder=Bestellung verwerfen
 NoOrder=Keine Bestellung
 CloseOrder=Bestellung schliessen
+<<<<<<< HEAD
 Error_OrderNotChecked=Keine zu verrechnenden Bestellungen ausgewählt
+=======
+OtherOrders=Bestellungen Anderer
+Error_OrderNotChecked=Keine zu verrechnenden Bestellungen ausgewählt
+OrderByEMail=E-Mail
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

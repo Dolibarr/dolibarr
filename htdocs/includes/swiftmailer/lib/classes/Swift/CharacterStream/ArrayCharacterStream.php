@@ -172,7 +172,11 @@ class Swift_CharacterStream_ArrayCharacterStream implements Swift_CharacterStrea
         }
         $this->offset += ($i - $this->offset); // Limit function calls
 
+<<<<<<< HEAD
         return array_merge(...$arrays);
+=======
+        return call_user_func_array('array_merge', $arrays);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
     /**

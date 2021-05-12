@@ -8,12 +8,17 @@ namespace Stripe;
  * @property string $id
  * @property string $object
  * @property int $account_balance
+<<<<<<< HEAD
  * @property string $business_vat_id
+=======
+ * @property mixed $address
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * @property string $created
  * @property string $currency
  * @property string $default_source
  * @property bool $delinquent
  * @property string $description
+<<<<<<< HEAD
  * @property mixed $discount
  * @property string $email
  * @property bool $livemode
@@ -21,11 +26,32 @@ namespace Stripe;
  * @property mixed $shipping
  * @property Collection $sources
  * @property Collection $subscriptions
+=======
+ * @property Discount $discount
+ * @property string $email
+ * @property string $invoice_prefix
+ * @property mixed $invoice_settings
+ * @property bool $livemode
+ * @property StripeObject $metadata
+ * @property string $name
+ * @property string $phone
+ * @property string[] preferred_locales
+ * @property mixed $shipping
+ * @property Collection $sources
+ * @property Collection $subscriptions
+ * @property Collection $tax_ids
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * @package Stripe
  */
 class Customer extends ApiResource
 {
+<<<<<<< HEAD
+=======
+
+    const OBJECT_NAME = "customer";
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     use ApiOperations\All;
     use ApiOperations\Create;
     use ApiOperations\Delete;
@@ -33,6 +59,17 @@ class Customer extends ApiResource
     use ApiOperations\Retrieve;
     use ApiOperations\Update;
 
+<<<<<<< HEAD
+=======
+    /**
+     * Possible string representations of the customer's type of tax exemption.
+     * @link https://stripe.com/docs/api/customers/object#customer_object-tax_exempt
+     */
+    const TAX_EXEMPT_NONE    = 'none';
+    const TAX_EXEMPT_EXEMPT  = 'exempt';
+    const TAX_EXEMPT_REVERSE = 'reverse';
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     public static function getSavedNestedResources()
     {
         static $savedNestedResources = null;
@@ -45,6 +82,10 @@ class Customer extends ApiResource
     }
 
     const PATH_SOURCES = '/sources';
+<<<<<<< HEAD
+=======
+    const PATH_TAX_IDS = '/tax_ids';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     /**
      * @param array|null $params
@@ -135,7 +176,11 @@ class Customer extends ApiResource
     }
 
     /**
+<<<<<<< HEAD
      * @param array|null $id The ID of the customer on which to create the source.
+=======
+     * @param string|null $id The ID of the customer on which to create the source.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      * @param array|null $params
      * @param array|string|null $opts
      *
@@ -147,8 +192,13 @@ class Customer extends ApiResource
     }
 
     /**
+<<<<<<< HEAD
      * @param array|null $id The ID of the customer to which the source belongs.
      * @param array|null $sourceId The ID of the source to retrieve.
+=======
+     * @param string|null $id The ID of the customer to which the source belongs.
+     * @param string|null $sourceId The ID of the source to retrieve.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      * @param array|null $params
      * @param array|string|null $opts
      *
@@ -160,8 +210,13 @@ class Customer extends ApiResource
     }
 
     /**
+<<<<<<< HEAD
      * @param array|null $id The ID of the customer to which the source belongs.
      * @param array|null $sourceId The ID of the source to update.
+=======
+     * @param string|null $id The ID of the customer to which the source belongs.
+     * @param string|null $sourceId The ID of the source to update.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      * @param array|null $params
      * @param array|string|null $opts
      *
@@ -173,8 +228,13 @@ class Customer extends ApiResource
     }
 
     /**
+<<<<<<< HEAD
      * @param array|null $id The ID of the customer to which the source belongs.
      * @param array|null $sourceId The ID of the source to delete.
+=======
+     * @param string|null $id The ID of the customer to which the source belongs.
+     * @param string|null $sourceId The ID of the source to delete.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      * @param array|null $params
      * @param array|string|null $opts
      *
@@ -186,14 +246,75 @@ class Customer extends ApiResource
     }
 
     /**
+<<<<<<< HEAD
      * @param array|null $id The ID of the customer on which to retrieve the sources.
      * @param array|null $params
      * @param array|string|null $opts
      *
      * @return ApiResource
+=======
+     * @param string|null $id The ID of the customer on which to retrieve the sources.
+     * @param array|null $params
+     * @param array|string|null $opts
+     *
+     * @return Collection The list of sources.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      */
     public static function allSources($id, $params = null, $opts = null)
     {
         return self::_allNestedResources($id, static::PATH_SOURCES, $params, $opts);
     }
+<<<<<<< HEAD
+=======
+
+    /**
+     * @param string|null $id The ID of the customer on which to create the tax id.
+     * @param array|null $params
+     * @param array|string|null $opts
+     *
+     * @return ApiResource
+     */
+    public static function createTaxId($id, $params = null, $opts = null)
+    {
+        return self::_createNestedResource($id, static::PATH_TAX_IDS, $params, $opts);
+    }
+
+    /**
+     * @param string|null $id The ID of the customer to which the tax id belongs.
+     * @param string|null $taxIdId The ID of the tax id to retrieve.
+     * @param array|null $params
+     * @param array|string|null $opts
+     *
+     * @return ApiResource
+     */
+    public static function retrieveTaxId($id, $taxIdId, $params = null, $opts = null)
+    {
+        return self::_retrieveNestedResource($id, static::PATH_TAX_IDS, $taxIdId, $params, $opts);
+    }
+
+    /**
+     * @param string|null $id The ID of the customer to which the tax id belongs.
+     * @param string|null $taxIdId The ID of the tax id to delete.
+     * @param array|null $params
+     * @param array|string|null $opts
+     *
+     * @return ApiResource
+     */
+    public static function deleteTaxId($id, $taxIdId, $params = null, $opts = null)
+    {
+        return self::_deleteNestedResource($id, static::PATH_TAX_IDS, $taxIdId, $params, $opts);
+    }
+
+    /**
+     * @param string|null $id The ID of the customer on which to retrieve the tax ids.
+     * @param array|null $params
+     * @param array|string|null $opts
+     *
+     * @return Collection The list of tax ids.
+     */
+    public static function allTaxIds($id, $params = null, $opts = null)
+    {
+        return self::_allNestedResources($id, static::PATH_TAX_IDS, $params, $opts);
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

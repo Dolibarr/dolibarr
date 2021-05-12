@@ -5,9 +5,15 @@ RemoteControlSupport=Online real time / remote support
 OtherSupport=Other support
 ToSeeListOfAvailableRessources=To contact/see available resources:
 HelpCenter=Help center
+<<<<<<< HEAD
 DolibarrHelpCenter=Dolibarr help and support center
 ToGoBackToDolibarr=Otherwise, click <a href="%s">here to use Dolibarr</a>
 TypeOfSupport=Source of support
+=======
+DolibarrHelpCenter=Dolibarr Help and Support Center
+ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
+TypeOfSupport=Type of support
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TypeSupportCommunauty=Community (free)
 TypeSupportCommercial=Komersil
 TypeOfHelp=Type
@@ -15,6 +21,7 @@ NeedHelpCenter=Need help or support?
 Efficiency=Efficiency
 TypeHelpOnly=Help only
 TypeHelpDev=Help+Development
+<<<<<<< HEAD
 TypeHelpDevForm=Help+Development+Formation
 ToGetHelpGoOnSparkAngels1=Some companies can provide a fast (sometime immediate) and more efficient online support by taking control of your computer. Such helpers can be found on <b>%s</b> web site:
 ToGetHelpGoOnSparkAngels3=You can also go to the list of all available coaches for Dolibarr, for this click on button
@@ -23,4 +30,11 @@ BackToHelpCenter=Otherwise, click here to go <a href="%s">back to help center ho
 LinkToGoldMember=You can call one of the coach preselected by Dolibarr for your language (%s) by clicking his Widget (status and maximum price are automatically updated):
 PossibleLanguages=Supported languages
 SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
+=======
+TypeHelpDevForm=Help+Development+Training
+BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
+LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
+PossibleLanguages=Supported languages
+SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>

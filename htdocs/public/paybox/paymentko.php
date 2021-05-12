@@ -22,8 +22,13 @@
  *		\brief      File to show page after a failed payment
  */
 
+<<<<<<< HEAD
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+=======
+define("NOLOGIN", 1);		// This means this output page does not require to be logged.
+define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
@@ -37,6 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
 // Security check
+<<<<<<< HEAD
 if (empty($conf->paybox->enabled)) accessforbidden('',0,0,1);
 
 $langs->load("main");
@@ -48,6 +54,11 @@ $langs->load("paybox");
 $langs->load("paypal");
 $langs->load("stripe");
 
+=======
+if (empty($conf->paybox->enabled)) accessforbidden('', 0, 0, 1);
+
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paybox", "paypal", "stripe"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $object = new stdClass();   // For triggers
 
@@ -89,7 +100,11 @@ if (! empty($_SESSION['ipaddress']))      // To avoid to make action twice
     // Appel des triggers
     include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
     $interface=new Interfaces($db);
+<<<<<<< HEAD
     $result=$interface->run_triggers('PAYBOX_PAYMENT_OK',$object,$user,$langs,$conf);
+=======
+    $result=$interface->run_triggers('PAYBOX_PAYMENT_OK', $object, $user, $langs, $conf);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     if ($result < 0) { $error++; $errors=$interface->errors; }
     // Fin appel triggers
 
@@ -162,7 +177,11 @@ if (! empty($conf->global->$key)) print $conf->global->$key;
 print "\n</div>\n";
 
 
+<<<<<<< HEAD
 htmlPrintOnlinePaymentFooter($mysoc,$langs,0,$suffix);
+=======
+htmlPrintOnlinePaymentFooter($mysoc, $langs, 0, $suffix);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 llxFooter('', 'public');

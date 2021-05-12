@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2003		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010	Laurent Destailleur			<eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2011		Fabrice CHERRIER
  * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
@@ -31,6 +35,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/fichinter/modules_fichinter.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+<<<<<<< HEAD
+=======
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 /**
@@ -38,6 +46,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class pdf_soleil extends ModelePDFFicheinter
 {
+<<<<<<< HEAD
 	var $db;
 	var $name;
 	var $description;
@@ -53,13 +62,91 @@ class pdf_soleil extends ModelePDFFicheinter
 	var	$marge_droite;
 	var	$marge_haute;
 	var	$marge_basse;
+=======
+	 /**
+     * @var DoliDb Database handler
+     */
+    public $db;
+
+	/**
+     * @var string model name
+     */
+    public $name;
+
+	/**
+     * @var string model description (short text)
+     */
+    public $description;
+
+	/**
+     * @var string document type
+     */
+    public $type;
+
+    /**
+     * @var array Minimum version of PHP required by module.
+     * e.g.: PHP ≥ 5.5 = array(5, 5)
+     */
+	public $phpmin = array(5, 5);
+
+	/**
+     * Dolibarr version of the loaded document
+     * @var string
+     */
+	public $version = 'dolibarr';
+
+	/**
+     * @var int page_largeur
+     */
+    public $page_largeur;
+
+	/**
+     * @var int page_hauteur
+     */
+    public $page_hauteur;
+
+	/**
+     * @var array format
+     */
+    public $format;
+
+	/**
+     * @var int marge_gauche
+     */
+	public $marge_gauche;
+
+	/**
+     * @var int marge_droite
+     */
+	public $marge_droite;
+
+	/**
+     * @var int marge_haute
+     */
+	public $marge_haute;
+
+	/**
+     * @var int marge_basse
+     */
+	public $marge_basse;
+
+	/**
+	 * Issuer
+	 * @var Company object that emits
+	 */
+	public $emetteur;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
+<<<<<<< HEAD
 	function __construct($db)
+=======
+	public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf,$langs,$mysoc;
 
@@ -88,12 +175,20 @@ class pdf_soleil extends ModelePDFFicheinter
 
 		// Get source company
 		$this->emetteur=$mysoc;
+<<<<<<< HEAD
 		if (empty($this->emetteur->country_code)) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default, if not defined
+=======
+		if (empty($this->emetteur->country_code)) $this->emetteur->country_code=substr($langs->defaultlang, -2);    // By default, if not defined
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Define position of columns
 		$this->posxdesc=$this->marge_gauche+1;
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *  Function to build pdf onto disk
 	 *
@@ -105,15 +200,26 @@ class pdf_soleil extends ModelePDFFicheinter
 	 *  @param		int				$hideref			Do not show ref
 	 *  @return		int									1=OK, 0=KO
 	 */
+<<<<<<< HEAD
 	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
+=======
+	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $user,$langs,$conf,$mysoc,$db,$hookmanager;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
+<<<<<<< HEAD
 		
 		// Translations
+=======
+
+		// Load traductions files requiredby by page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$outputlangs->loadLangs(array("main", "interventions", "dict", "companies"));
 
 		if ($conf->ficheinter->dir_output)
@@ -137,7 +243,11 @@ class pdf_soleil extends ModelePDFFicheinter
 			{
 				if (dol_mkdir($dir) < 0)
 				{
+<<<<<<< HEAD
 					$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
+=======
+					$this->error=$langs->transnoentities("ErrorCanNotCreateDir", $dir);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					return 0;
 				}
 			}
@@ -154,9 +264,15 @@ class pdf_soleil extends ModelePDFFicheinter
 				$hookmanager->initHooks(array('pdfgeneration'));
 				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
 				global $action;
+<<<<<<< HEAD
 				$reshook=$hookmanager->executeHooks('beforePDFCreation',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
 				$nblignes = count($object->lines);
+=======
+				$reshook=$hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+
+				$nblines = count($object->lines);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				// Create pdf instance
 				$pdf=pdf_getInstance($this->format);
@@ -165,7 +281,11 @@ class pdf_soleil extends ModelePDFFicheinter
 				$heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8;	// Height reserved to output the footer (value include bottom margin)
 				if ($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS >0) $heightforfooter+= 6;
+<<<<<<< HEAD
 				$pdf->SetAutoPageBreak(1,0);
+=======
+				$pdf->SetAutoPageBreak(1, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				if (class_exists('TCPDF'))
 				{
@@ -182,7 +302,11 @@ class pdf_soleil extends ModelePDFFicheinter
 
 				$pdf->Open();
 				$pagenb=0;
+<<<<<<< HEAD
 				$pdf->SetDrawColor(128,128,128);
+=======
+				$pdf->SetDrawColor(128, 128, 128);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("InterventionCard"));
@@ -198,8 +322,13 @@ class pdf_soleil extends ModelePDFFicheinter
 				if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 				$pagenb++;
 				$this->_pagehead($pdf, $object, 1, $outputlangs);
+<<<<<<< HEAD
 				$pdf->SetFont('','', $default_font_size - 1);
 				$pdf->SetTextColor(0,0,0);
+=======
+				$pdf->SetFont('', '', $default_font_size - 1);
+				$pdf->SetTextColor(0, 0, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				$tab_top = 90;
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?42:10);
@@ -213,16 +342,28 @@ class pdf_soleil extends ModelePDFFicheinter
 					$substitutionarray=pdf_getSubstitutionArray($outputlangs, null, $object);
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
+<<<<<<< HEAD
 
 					$tab_top = 88;
 
 					$pdf->SetFont('','', $default_font_size - 1);
+=======
+					$notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
+
+					$tab_top = 88;
+
+					$pdf->SetFont('', '', $default_font_size - 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 
 					// Rect prend une longueur en 3eme param
+<<<<<<< HEAD
 					$pdf->SetDrawColor(192,192,192);
+=======
+					$pdf->SetDrawColor(192, 192, 192);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
 
 					$tab_height = $tab_height - $height_note;
@@ -238,7 +379,11 @@ class pdf_soleil extends ModelePDFFicheinter
 				$nexY = $tab_top + 7;
 
 				$pdf->SetXY($this->marge_gauche, $tab_top);
+<<<<<<< HEAD
 				$pdf->MultiCell(190,5,$outputlangs->transnoentities("Description"),0,'L',0);
+=======
+				$pdf->MultiCell(190, 5, $outputlangs->transnoentities("Description"), 0, 'L', 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$pdf->line($this->marge_gauche, $tab_top + 5, $this->page_largeur-$this->marge_droite, $tab_top + 5);
 
 				$pdf->SetFont('', '', $default_font_size - 1);
@@ -247,10 +392,17 @@ class pdf_soleil extends ModelePDFFicheinter
 				$text=$object->description;
 				if ($object->duration > 0)
 				{
+<<<<<<< HEAD
 				    $totaltime=convertSecondToTime($object->duration,'all',$conf->global->MAIN_DURATION_OF_WORKDAY);
 				    $text.=($text?' - ':'').$langs->trans("Total").": ".$totaltime;
 				}
 				$desc=dol_htmlentitiesbr($text,1);
+=======
+				    $totaltime=convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
+				    $text.=($text?' - ':'').$langs->trans("Total").": ".$totaltime;
+				}
+				$desc=dol_htmlentitiesbr($text, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				//print $outputlangs->convToOutputCharset($desc); exit;
 
 				$pdf->writeHTMLCell(180, 3, 10, $tab_top + 5, $outputlangs->convToOutputCharset($desc), 0, 1);
@@ -269,8 +421,13 @@ class pdf_soleil extends ModelePDFFicheinter
 					if ($valide > 0 || $object->specimen)
 					{
 						$curY = $nexY;
+<<<<<<< HEAD
 						$pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
 						$pdf->SetTextColor(0,0,0);
+=======
+						$pdf->SetFont('', '', $default_font_size - 1);   // Into loop to work with multipage
+						$pdf->SetTextColor(0, 0, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 						$pdf->setTopMargin($tab_top_newpage);
 						$pdf->setPageOrientation('', 1, $heightforfooter+$heightforfreetext+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
@@ -279,6 +436,7 @@ class pdf_soleil extends ModelePDFFicheinter
 						// Description of product line
 						$curX = $this->posxdesc-1;
 
+<<<<<<< HEAD
 						// Description of product line
                                                 if (empty($conf->global->FICHINTER_DATE_WITHOUT_HOUR))
                                                 {
@@ -288,16 +446,32 @@ class pdf_soleil extends ModelePDFFicheinter
                                                 {
                                                         $txt=$outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei,'day',false,$outputlangs,true);
                                                 }
+=======
+                        // Description of product line
+                        if (empty($conf->global->FICHINTER_DATE_WITHOUT_HOUR)) {
+                            $txt=$outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei, 'dayhour', false, $outputlangs, true);
+                        } else {
+                            $txt=$outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei, 'day', false, $outputlangs, true);
+                        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 						if ($objectligne->duration > 0)
 						{
 							$txt.=" - ".$outputlangs->transnoentities("Duration")." : ".convertSecondToTime($objectligne->duration);
 						}
+<<<<<<< HEAD
 						$txt='<strong>'.dol_htmlentitiesbr($txt,1,$outputlangs->charset_output).'</strong>';
 						$desc=dol_htmlentitiesbr($objectligne->desc,1);
 
 						$pdf->startTransaction();
 						$pdf->writeHTMLCell(0, 0, $curX, $curY + 1, dol_concatdesc($txt,$desc), 0, 1, 0);
+=======
+						$txt='<strong>'.dol_htmlentitiesbr($txt, 1, $outputlangs->charset_output).'</strong>';
+						$desc=dol_htmlentitiesbr($objectligne->desc, 1);
+
+						$pdf->startTransaction();
+						$pdf->writeHTMLCell(0, 0, $curX, $curY + 1, dol_concatdesc($txt, $desc), 0, 1, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						$pageposafter=$pdf->getPage();
 						if ($pageposafter > $pageposbefore)	// There is a pagebreak
 						{
@@ -305,7 +479,11 @@ class pdf_soleil extends ModelePDFFicheinter
 							$pageposafter=$pageposbefore;
 							//print $pageposafter.'-'.$pageposbefore;exit;
 							$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
+<<<<<<< HEAD
 							$pdf->writeHTMLCell(0, 0, $curX, $curY, dol_concatdesc($txt,$desc), 0, 1, 0);
+=======
+							$pdf->writeHTMLCell(0, 0, $curX, $curY, dol_concatdesc($txt, $desc), 0, 1, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							$pageposafter=$pdf->getPage();
 							$posyafter=$pdf->GetY();
 							//var_dump($posyafter); var_dump(($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot))); exit;
@@ -313,7 +491,11 @@ class pdf_soleil extends ModelePDFFicheinter
 							{
 								if ($i == ($nblines-1))	// No more lines, and no space left to show total, so we create a new page
 								{
+<<<<<<< HEAD
 									$pdf->AddPage('','',true);
+=======
+									$pdf->AddPage('', '', true);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 									if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 									if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 									$pdf->setPage($pageposafter+1);
@@ -336,7 +518,11 @@ class pdf_soleil extends ModelePDFFicheinter
 							$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
 						}
 
+<<<<<<< HEAD
 						$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
+=======
+						$pdf->SetFont('', '', $default_font_size - 1);   // On repositionne la police par defaut
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 						// Detect if some page were added automatically and output _tableau for past pages
 						while ($pagenb < $pageposafter)
@@ -350,7 +536,11 @@ class pdf_soleil extends ModelePDFFicheinter
 							{
 								$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
 							}
+<<<<<<< HEAD
 							$this->_pagefoot($pdf,$object,$outputlangs,1);
+=======
+							$this->_pagefoot($pdf, $object, $outputlangs, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							$pagenb++;
 							$pdf->setPage($pagenb);
 							$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
@@ -366,7 +556,11 @@ class pdf_soleil extends ModelePDFFicheinter
 							{
 								$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
 							}
+<<<<<<< HEAD
 							$this->_pagefoot($pdf,$object,$outputlangs,1);
+=======
+							$this->_pagefoot($pdf, $object, $outputlangs, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							// New page
 							$pdf->AddPage();
 							if (! empty($tplidx)) $pdf->useTemplate($tplidx);
@@ -388,17 +582,34 @@ class pdf_soleil extends ModelePDFFicheinter
 					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				}
 
+<<<<<<< HEAD
 				$this->_pagefoot($pdf,$object,$outputlangs);
 				if (method_exists($pdf,'AliasNbPages')) $pdf->AliasNbPages();
 
 				$pdf->Close();
 				$pdf->Output($file,'F');
+=======
+				$this->_pagefoot($pdf, $object, $outputlangs);
+				if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
+
+				$pdf->Close();
+				$pdf->Output($file, 'F');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				// Add pdfgeneration hook
 				$hookmanager->initHooks(array('pdfgeneration'));
 				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
 				global $action;
+<<<<<<< HEAD
 				$reshook=$hookmanager->executeHooks('afterPDFCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+=======
+				$reshook=$hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+				if ($reshook < 0)
+				{
+				    $this->error = $hookmanager->error;
+				    $this->errors = $hookmanager->errors;
+				}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
@@ -409,13 +620,21 @@ class pdf_soleil extends ModelePDFFicheinter
 			}
 			else
 			{
+<<<<<<< HEAD
 				$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+=======
+				$this->error=$langs->trans("ErrorCanNotCreateDir", $dir);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				return 0;
 			}
 		}
 		else
 		{
+<<<<<<< HEAD
 			$this->error=$langs->trans("ErrorConstantNotDefined","FICHEINTER_OUTPUTDIR");
+=======
+			$this->error=$langs->trans("ErrorConstantNotDefined", "FICHEINTER_OUTPUTDIR");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			return 0;
 		}
 	}
@@ -432,7 +651,11 @@ class pdf_soleil extends ModelePDFFicheinter
 	 *   @param		int			$hidebottom		Hide bottom bar of array
 	 *   @return	void
 	 */
+<<<<<<< HEAD
 	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop=0, $hidebottom=0)
+=======
+	private function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf;
 
@@ -469,6 +692,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
 		if (empty($hidebottom))
 		{
+<<<<<<< HEAD
 			$pdf->SetXY(20,230);
 			$pdf->MultiCell(66,5, $outputlangs->transnoentities("NameAndSignatureOfInternalContact"),0,'L',0);
 
@@ -480,6 +704,19 @@ class pdf_soleil extends ModelePDFFicheinter
 
 			$pdf->SetXY(110,235);
 			$pdf->MultiCell(80,25, '', 1);
+=======
+			$pdf->SetXY(20, 230);
+			$pdf->MultiCell(66, 5, $outputlangs->transnoentities("NameAndSignatureOfInternalContact"), 0, 'L', 0);
+
+			$pdf->SetXY(20, 235);
+			$pdf->MultiCell(80, 25, '', 1);
+
+			$pdf->SetXY(110, 230);
+			$pdf->MultiCell(80, 5, $outputlangs->transnoentities("NameAndSignatureOfExternalContact"), 0, 'L', 0);
+
+			$pdf->SetXY(110, 235);
+			$pdf->MultiCell(80, 25, '', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 	}
 
@@ -492,32 +729,56 @@ class pdf_soleil extends ModelePDFFicheinter
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void
 	 */
+<<<<<<< HEAD
 	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
+=======
+	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf,$langs;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
+<<<<<<< HEAD
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
 		$outputlangs->load("companies");
 		$outputlangs->load("interventions");
 
 		pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
+=======
+		// Load traductions files requiredby by page
+		$outputlangs->loadLangs(array("main", "dict", "companies", "interventions"));
+
+		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		//Affiche le filigrane brouillon - Print Draft Watermark
 		if($object->statut==0 && (! empty($conf->global->FICHINTER_DRAFT_WATERMARK)) )
 		{
+<<<<<<< HEAD
 			pdf_watermark($pdf,$outputlangs,$this->page_hauteur,$this->page_largeur,'mm',$conf->global->FICHINTER_DRAFT_WATERMARK);
 		}
 
 		//Prepare la suite
 		$pdf->SetTextColor(0,0,60);
 		$pdf->SetFont('','B', $default_font_size + 3);
+=======
+			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->FICHINTER_DRAFT_WATERMARK);
+		}
+
+		//Prepare la suite
+		$pdf->SetTextColor(0, 0, 60);
+		$pdf->SetFont('', 'B', $default_font_size + 3);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$posx=$this->page_largeur-$this->marge_droite-100;
 		$posy=$this->marge_haute;
 
+<<<<<<< HEAD
 		$pdf->SetXY($this->marge_gauche,$posy);
+=======
+		$pdf->SetXY($this->marge_gauche, $posy);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Logo
 		$logo=$conf->mycompany->dir_output.'/logos/'.$this->emetteur->logo;
@@ -530,9 +791,15 @@ class pdf_soleil extends ModelePDFFicheinter
 			}
 			else
 			{
+<<<<<<< HEAD
 				$pdf->SetTextColor(200,0,0);
 				$pdf->SetFont('','B',$default_font_size - 2);
 				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound",$logo), 0, 'L');
+=======
+				$pdf->SetTextColor(200, 0, 0);
+				$pdf->SetFont('', 'B', $default_font_size - 2);
+				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound", $logo), 0, 'L');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
 			}
 		}
@@ -542,6 +809,7 @@ class pdf_soleil extends ModelePDFFicheinter
 			$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 		}
 
+<<<<<<< HEAD
 		$pdf->SetFont('','B',$default_font_size + 3);
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
@@ -562,12 +830,39 @@ class pdf_soleil extends ModelePDFFicheinter
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->datec,"day",false,$outputlangs,true), '', 'R');
+=======
+		$pdf->SetFont('', 'B', $default_font_size + 3);
+		$pdf->SetXY($posx, $posy);
+		$pdf->SetTextColor(0, 0, 60);
+		$title=$outputlangs->transnoentities("InterventionCard");
+		$pdf->MultiCell(100, 4, $title, '', 'R');
+
+		$pdf->SetFont('', 'B', $default_font_size + 2);
+
+		$posy+=5;
+		$pdf->SetXY($posx, $posy);
+		$pdf->SetTextColor(0, 0, 60);
+		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Ref")." : " . $outputlangs->convToOutputCharset($object->ref), '', 'R');
+
+		$posy+=1;
+		$pdf->SetFont('', '', $default_font_size);
+
+		$posy+=4;
+		$pdf->SetXY($posx, $posy);
+		$pdf->SetTextColor(0, 0, 60);
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->datec, "day", false, $outputlangs, true), '', 'R');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		if ($object->thirdparty->code_client)
 		{
 			$posy+=4;
+<<<<<<< HEAD
 			$pdf->SetXY($posx,$posy);
 			$pdf->SetTextColor(0,0,60);
+=======
+			$pdf->SetXY($posx, $posy);
+			$pdf->SetTextColor(0, 0, 60);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
 		}
 
@@ -576,7 +871,11 @@ class pdf_soleil extends ModelePDFFicheinter
 			// Sender properties
 			$carac_emetteur='';
 			// Add internal contact of proposal if defined
+<<<<<<< HEAD
 			$arrayidcontact=$object->getIdContact('internal','INTERREPFOLL');
+=======
+			$arrayidcontact=$object->getIdContact('internal', 'INTERREPFOLL');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if (count($arrayidcontact) > 0)
 			{
 				$object->fetch_user($arrayidcontact[0]);
@@ -592,6 +891,7 @@ class pdf_soleil extends ModelePDFFicheinter
 			$hautcadre=40;
 
 			// Show sender frame
+<<<<<<< HEAD
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('','', $default_font_size - 2);
 			$pdf->SetXY($posx,$posy-5);
@@ -603,18 +903,40 @@ class pdf_soleil extends ModelePDFFicheinter
 			$pdf->SetXY($posx+2,$posy+3);
 			$pdf->SetTextColor(0,0,60);
 			$pdf->SetFont('','B',$default_font_size);
+=======
+			$pdf->SetTextColor(0, 0, 0);
+			$pdf->SetFont('', '', $default_font_size - 2);
+			$pdf->SetXY($posx, $posy-5);
+			$pdf->SetXY($posx, $posy);
+			$pdf->SetFillColor(230, 230, 230);
+			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
+
+			// Show sender name
+			$pdf->SetXY($posx+2, $posy+3);
+			$pdf->SetTextColor(0, 0, 60);
+			$pdf->SetFont('', 'B', $default_font_size);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
 			$posy=$pdf->getY();
 
 			// Show sender information
+<<<<<<< HEAD
 			$pdf->SetFont('','', $default_font_size - 1);
 			$pdf->SetXY($posx+2,$posy);
+=======
+			$pdf->SetFont('', '', $default_font_size - 1);
+			$pdf->SetXY($posx+2, $posy);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
 
 
 			// If CUSTOMER contact defined, we use it
 			$usecontact=false;
+<<<<<<< HEAD
 			$arrayidcontact=$object->getIdContact('external','CUSTOMER');
+=======
+			$arrayidcontact=$object->getIdContact('external', 'CUSTOMER');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if (count($arrayidcontact) > 0)
 			{
 				$usecontact=true;
@@ -631,7 +953,11 @@ class pdf_soleil extends ModelePDFFicheinter
 
 			$carac_client_name=pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
+<<<<<<< HEAD
 			$carac_client=pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, (isset($object->contact)?$object->contact:''), $usecontact, 'target',$object);
+=======
+			$carac_client=pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, (isset($object->contact)?$object->contact:''), $usecontact, 'target', $object);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			// Show recipient
 			$widthrecbox=100;
@@ -641,6 +967,7 @@ class pdf_soleil extends ModelePDFFicheinter
 			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->marge_gauche;
 
 			// Show recipient frame
+<<<<<<< HEAD
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('','', $default_font_size - 2);
 			$pdf->SetXY($posx+2,$posy-5);
@@ -650,13 +977,29 @@ class pdf_soleil extends ModelePDFFicheinter
 			// Show recipient name
 			$pdf->SetXY($posx+2,$posy+3);
 			$pdf->SetFont('','B', $default_font_size);
+=======
+			$pdf->SetTextColor(0, 0, 0);
+			$pdf->SetFont('', '', $default_font_size - 2);
+			$pdf->SetXY($posx+2, $posy-5);
+			$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
+			$pdf->SetTextColor(0, 0, 0);
+
+			// Show recipient name
+			$pdf->SetXY($posx+2, $posy+3);
+			$pdf->SetFont('', 'B', $default_font_size);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$pdf->MultiCell($widthrecbox, 4, $carac_client_name, 0, 'L');
 
 			$posy = $pdf->getY();
 
 			// Show recipient information
+<<<<<<< HEAD
 			$pdf->SetFont('','', $default_font_size - 1);
 			$pdf->SetXY($posx+2,$posy);
+=======
+			$pdf->SetFont('', '', $default_font_size - 1);
+			$pdf->SetXY($posx+2, $posy);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, 'L');
 		}
 	}
@@ -670,6 +1013,7 @@ class pdf_soleil extends ModelePDFFicheinter
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	integer
 	 */
+<<<<<<< HEAD
 	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
 	{
 		global $conf;
@@ -679,3 +1023,12 @@ class pdf_soleil extends ModelePDFFicheinter
 
 }
 
+=======
+	private function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+	{
+		global $conf;
+		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+		return pdf_pagefoot($pdf, $outputlangs, 'FICHINTER_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
+	}
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

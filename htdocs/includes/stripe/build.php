@@ -13,7 +13,11 @@ if (!$autoload) {
     file_put_contents('composer.json', json_encode($composer, JSON_PRETTY_PRINT));
 }
 
+<<<<<<< HEAD
 passthru('composer install', $returnStatus);
+=======
+passthru('composer update', $returnStatus);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($returnStatus !== 0) {
     exit(1);
 }

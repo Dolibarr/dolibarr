@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2007-2008 Jeremie Ollivier      <jeremie.o@laposte.net>
  * Copyright (C) 2008-2010 Laurent Destailleur   <eldy@uers.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2009      Regis Houssin         <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2009      Regis Houssin         <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2011      Juanjo Menent         <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -36,9 +40,14 @@ if ( $_SESSION['uid'] <= 0 )
 	exit;
 }
 
+<<<<<<< HEAD
 $langs->load("companies");
 $langs->load("compta");
 $langs->load("cashdesk");
+=======
+// Load translation files required by the page
+$langs->loadLangs(array("companies","compta","cashdesk"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 /*
@@ -50,7 +59,11 @@ $form = new Form($db);
 $arrayofjs=array();
 $arrayofcss=array('/cashdesk/css/style.css');
 
+<<<<<<< HEAD
 top_htmlhead($head,$langs->trans("CashDesk"),0,0,$arrayofjs,$arrayofcss);
+=======
+top_htmlhead($head, $langs->trans("CashDesk"), 0, 0, $arrayofjs, $arrayofcss);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print '<body>'."\n";
 

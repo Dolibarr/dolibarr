@@ -1,5 +1,8 @@
 # Dolibarr language file - Source file is en_US - compta
+<<<<<<< HEAD
 RemainingAmountPayment=Resterend bedrag betaling:
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LT1SummaryES=RE Balans
 SocialContribution=Sociale bijdrage/belasting
 SocialContributions=Sociale bijdragen/belastingen
@@ -27,12 +30,17 @@ CalcModeLT1Debt=Modus <b>%sRE op afnemersfacturen%s</b>
 CalcModeLT1Rec=Modus <b>%sRE op leveranciersfacturen%s</b>
 RulesResultDue=- Dit omvat openstaande facturen, uitgaven, BTW, donaties, zowel betaald als niet. Dit omvat eveneens betaalde lonen.<br>- Dit is gebaseerd op de validatiedatum van facturen, BTW en de vervaldatum voor uitgaven. Voor lonen die gedefinieerd zijn in de Salaris-module is de datum van betaling gebruikt.
 RulesResultInOut=- Dit omvat alle betalingen van facturen, uitgaven, BTW en lonen. <br>- Dit is gebaseerd op de betalingsdata van de facturen, uitgaven, BTW en lonen. De donatiedatum voor donaties.
+<<<<<<< HEAD
 RulesCADue=- Dit omvat de verschuldigde afnemersfacturen, betaald of niet. <br>- Dit is gebaseerd op de validatiedata van deze facturen.<br>
 RulesCAIn=- Dit omvat alle effectieve betalingen van afnemersfacturen.<br>- Het is gebaseerd op de betaaldatum van deze facturen<br>
 PurchasesJournal=Inkoopdagboek
 DescPurchasesJournal=Inkoopdagboek
 CloneTax=Kopieer een sociale bijdrage/belasting
 ConfirmCloneTax=Bevestig kopie van betaling sociale bijdrage/belasting
+=======
+PurchasesJournal=Inkoopdagboek
+DescPurchasesJournal=Inkoopdagboek
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SimpleReport=Eenvoudig rapport
 OtherCountriesCustomersReport=Buitenlands klantenrapport
 BasedOnTwoFirstLettersOfVATNumberBeingDifferentFromYourCompanyCountry=Gebaseerd op de eerste 2 letters van het BTW-nummer, anders dan die van uw eigen landcode

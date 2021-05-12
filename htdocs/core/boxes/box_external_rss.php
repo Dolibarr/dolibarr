@@ -2,7 +2,11 @@
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,6 +38,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_external_rss extends ModeleBoxes
 {
+<<<<<<< HEAD
     var $boxcode="lastrssinfos";
     var $boximg="object_rss";
     var $boxlabel="BoxLastRssInfos";
@@ -44,6 +49,22 @@ class box_external_rss extends ModeleBoxes
 
     var $info_box_head = array();
     var $info_box_contents = array();
+=======
+    public $boxcode="lastrssinfos";
+    public $boximg="object_rss";
+    public $boxlabel="BoxLastRssInfos";
+    public $depends = array("externalrss");
+
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    public $paramdef;	// Params of box definition (not user params)
+
+    public $info_box_head = array();
+    public $info_box_contents = array();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
     /**
@@ -52,7 +73,11 @@ class box_external_rss extends ModeleBoxes
      * 	@param	DoliDB	$db			Database handler
      *  @param	string	$param		More parameters
      */
+<<<<<<< HEAD
     function __construct($db,$param)
+=======
+    public function __construct($db, $param)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
 		$this->db=$db;
 		$this->paramdef=$param;
@@ -65,7 +90,11 @@ class box_external_rss extends ModeleBoxes
      *  @param	int		$cachedelay		Delay we accept for cache file
      *  @return	void
      */
+<<<<<<< HEAD
     function loadBox($max=5, $cachedelay=3600)
+=======
+    public function loadBox($max = 5, $cachedelay = 3600)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $user, $langs, $conf;
         $langs->load("boxes");
@@ -73,7 +102,11 @@ class box_external_rss extends ModeleBoxes
 		$this->max=$max;
 
 		// On recupere numero de param de la boite
+<<<<<<< HEAD
 		preg_match('/^([0-9]+) /',$this->paramdef,$reg);
+=======
+		preg_match('/^([0-9]+) /', $this->paramdef, $reg);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$site=$reg[1];
 
 		// Create dir nor required
@@ -97,7 +130,11 @@ class box_external_rss extends ModeleBoxes
         if ($result < 0 || ! empty($rssparser->error))
         {
             // Show warning
+<<<<<<< HEAD
             $title.=" ".img_error($langs->trans("FailedToRefreshDataInfoNotUpToDate",($rssparser->getLastFetchDate()?dol_print_date($rssparser->getLastFetchDate(),"dayhourtext"):$langs->trans("Unknown"))));
+=======
+            $title.=" ".img_error($langs->trans("FailedToRefreshDataInfoNotUpToDate", ($rssparser->getLastFetchDate()?dol_print_date($rssparser->getLastFetchDate(), "dayhourtext"):$langs->trans("Unknown"))));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $this->info_box_head = array('text' => $title,'limit' => 0);
         }
         else
@@ -105,8 +142,14 @@ class box_external_rss extends ModeleBoxes
             $this->info_box_head = array(
                 'text' => $title,
                 'sublink' => $link,
+<<<<<<< HEAD
                 'subtext'=>$langs->trans("LastRefreshDate").': '.($rssparser->getLastFetchDate()?dol_print_date($rssparser->getLastFetchDate(),"dayhourtext"):$langs->trans("Unknown")),
                 'subpicto'=>'help',
+=======
+                'subtext'=>$langs->trans("LastRefreshDate").': '.($rssparser->getLastFetchDate()?dol_print_date($rssparser->getLastFetchDate(), "dayhourtext"):$langs->trans("Unknown")),
+                'subpicto'=>'help',
+                'target'=>'_blank',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             );
 		}
 
@@ -137,14 +180,23 @@ class box_external_rss extends ModeleBoxes
 				//$item['modified']
 				//$item['atom_content']
 			}
+<<<<<<< HEAD
 			if (is_numeric($date)) $date=dol_print_date($date,"dayhour");
+=======
+			if (is_numeric($date)) $date=dol_print_date($date, "dayhour");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			$isutf8 = utf8_check($title);
 	        if (! $isutf8 && $conf->file->character_set_client == 'UTF-8') $title=utf8_encode($title);
 	        elseif ($isutf8 && $conf->file->character_set_client == 'ISO-8859-1') $title=utf8_decode($title);
 
+<<<<<<< HEAD
             $title=preg_replace("/([[:alnum:]])\?([[:alnum:]])/","\\1'\\2",$title);   // Gere probleme des apostrophes mal codee/decodee par utf8
             $title=preg_replace("/^\s+/","",$title);                                  // Supprime espaces de debut
+=======
+            $title=preg_replace("/([[:alnum:]])\?([[:alnum:]])/", "\\1'\\2", $title);   // Gere probleme des apostrophes mal codee/decodee par utf8
+            $title=preg_replace("/^\s+/", "", $title);                                  // Supprime espaces de debut
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $this->info_box_contents["$href"]="$title";
 
             $tooltip = $title;
@@ -152,6 +204,7 @@ class box_external_rss extends ModeleBoxes
             $isutf8 = utf8_check($description);
             if (! $isutf8 && $conf->file->character_set_client == 'UTF-8') $description=utf8_encode($description);
             elseif ($isutf8 && $conf->file->character_set_client == 'ISO-8859-1') $description=utf8_decode($description);
+<<<<<<< HEAD
             $description=preg_replace("/([[:alnum:]])\?([[:alnum:]])/","\\1'\\2",$description);
             $description=preg_replace("/^\s+/","",$description);
             $description=str_replace("\r\n","",$description);
@@ -159,6 +212,15 @@ class box_external_rss extends ModeleBoxes
 
             $this->info_box_contents[$line][0] = array(
                 'td' => 'align="left" width="16"',
+=======
+            $description=preg_replace("/([[:alnum:]])\?([[:alnum:]])/", "\\1'\\2", $description);
+            $description=preg_replace("/^\s+/", "", $description);
+            $description=str_replace("\r\n", "", $description);
+            $tooltip.= '<br>'.$description;
+
+            $this->info_box_contents[$line][0] = array(
+                'td' => 'class="left" width="16"',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 'logo' => $this->boximg,
                 'url' => $href,
                 'tooltip' => $tooltip,
@@ -175,7 +237,11 @@ class box_external_rss extends ModeleBoxes
             );
 
             $this->info_box_contents[$line][2] = array(
+<<<<<<< HEAD
                 'td' => 'align="right" nowrap="1"',
+=======
+                'td' => 'class="right nowrap"',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 'text' => $date,
             );
         }
@@ -190,6 +256,7 @@ class box_external_rss extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
+<<<<<<< HEAD
     function showBox($head = null, $contents = null, $nooutput=0)
     {
         return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
@@ -197,3 +264,10 @@ class box_external_rss extends ModeleBoxes
 
 }
 
+=======
+    public function showBox($head = null, $contents = null, $nooutput = 0)
+    {
+        return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+    }
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

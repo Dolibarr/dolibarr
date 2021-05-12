@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +27,11 @@
  *	\brief      Page of a project task
  */
 
+<<<<<<< HEAD
 require ("../../main.inc.php");
+=======
+require "../../main.inc.php";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
@@ -37,6 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/project/task/modules_task.php';
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies'));
 
+<<<<<<< HEAD
 $id=GETPOST('id','int');
 $idcomment=GETPOST('idcomment','int');
 $ref=GETPOST("ref",'alpha',1);          // task ref
@@ -46,6 +55,17 @@ $confirm=GETPOST('confirm','alpha');
 $withproject=GETPOST('withproject','int');
 $project_ref=GETPOST('project_ref','alpha');
 $planned_workload=((GETPOST('planned_workloadhour','int')!='' || GETPOST('planned_workloadmin','int')!='') ? (GETPOST('planned_workloadhour','int')>0?GETPOST('planned_workloadhour','int')*3600:0) + (GETPOST('planned_workloadmin','int')>0?GETPOST('planned_workloadmin','int')*60:0) : '');
+=======
+$id=GETPOST('id', 'int');
+$idcomment=GETPOST('idcomment', 'int');
+$ref=GETPOST("ref", 'alpha', 1);          // task ref
+$objectref=GETPOST("taskref", 'alpha');    // task ref
+$action=GETPOST('action', 'alpha');
+$confirm=GETPOST('confirm', 'alpha');
+$withproject=GETPOST('withproject', 'int');
+$project_ref=GETPOST('project_ref', 'alpha');
+$planned_workload=((GETPOST('planned_workloadhour', 'int')!='' || GETPOST('planned_workloadmin', 'int')!='') ? (GETPOST('planned_workloadhour', 'int')>0?GETPOST('planned_workloadhour', 'int')*3600:0) + (GETPOST('planned_workloadmin', 'int')>0?GETPOST('planned_workloadmin', 'int')*60:0) : '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Security check
 $socid=0;
@@ -68,7 +88,11 @@ include DOL_DOCUMENT_ROOT . '/core/actions_comments.inc.php';
 // Retreive First Task ID of Project if withprojet is on to allow project prev next to work
 if (! empty($project_ref) && ! empty($withproject))
 {
+<<<<<<< HEAD
 	if ($projectstatic->fetch('',$project_ref) > 0)
+=======
+	if ($projectstatic->fetch('', $project_ref) > 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$objectsarray=$object->getTasksArray(0, 0, $projectstatic->id, $socid, 0);
 		if (count($objectsarray) > 0)
@@ -95,13 +119,21 @@ $formfile = new FormFile($db);
 
 if ($id > 0 || ! empty($ref))
 {
+<<<<<<< HEAD
 	if ($object->fetch($id,$ref) > 0)
+=======
+	if ($object->fetch($id, $ref) > 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$result=$object->fetch_optionals();
 
 		$result=$object->fetchComments();
 		if ($result<0){
+<<<<<<< HEAD
 			setEventMessages($object->error,$object->errors,'errors');
+=======
+			setEventMessages($object->error, $object->errors, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		$result=$projectstatic->fetch($object->fk_project);
@@ -110,7 +142,11 @@ if ($id > 0 || ! empty($ref))
 
 		$object->project = clone $projectstatic;
 
+<<<<<<< HEAD
 		$userWrite  = $projectstatic->restrictedProjectArea($user,'write');
+=======
+		$userWrite  = $projectstatic->restrictedProjectArea($user, 'write');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		if (! empty($withproject))
 		{
@@ -138,8 +174,13 @@ if ($id > 0 || ! empty($ref))
             // Define a complementary filter for search of next/prev ref.
             if (! $user->rights->projet->all->lire)
             {
+<<<<<<< HEAD
                 $objectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,0);
                 $projectstatic->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
+=======
+                $objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
+                $projectstatic->next_prev_filter=" rowid in (".(count($objectsListId)?join(',', array_keys($objectsListId)):'0').")";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             }
 
             dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -158,9 +199,15 @@ if ($id > 0 || ! empty($ref))
 
             // Date start - end
             print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
+<<<<<<< HEAD
             $start = dol_print_date($projectstatic->date_start,'day');
             print ($start?$start:'?');
             $end = dol_print_date($projectstatic->date_end,'day');
+=======
+            $start = dol_print_date($projectstatic->date_start, 'day');
+            print ($start?$start:'?');
+            $end = dol_print_date($projectstatic->date_end, 'day');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             print ' - ';
             print ($end?$end:'?');
             if ($projectstatic->hasDelay()) print img_warning("Late");
@@ -168,7 +215,11 @@ if ($id > 0 || ! empty($ref))
 
             // Budget
             print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+<<<<<<< HEAD
             if (strcmp($projectstatic->budget_amount, '')) print price($projectstatic->budget_amount,'',$langs,1,0,0,$conf->currency);
+=======
+            if (strcmp($projectstatic->budget_amount, '')) print price($projectstatic->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             print '</td></tr>';
 
             // Other attributes
@@ -191,8 +242,13 @@ if ($id > 0 || ! empty($ref))
 
             // Categories
             if($conf->categorie->enabled) {
+<<<<<<< HEAD
                 print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
                 print $form->showCategories($projectstatic->id,'project',1);
+=======
+                print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
+                print $form->showCategories($projectstatic->id, 'project', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 print "</td></tr>";
             }
 
@@ -221,12 +277,20 @@ if ($id > 0 || ! empty($ref))
 
 		if ($action == 'delete')
 		{
+<<<<<<< HEAD
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"].'&withproject='.$withproject,$langs->trans("DeleteATask"),$langs->trans("ConfirmDeleteATask"),"confirm_delete");
+=======
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"].'&withproject='.$withproject, $langs->trans("DeleteATask"), $langs->trans("ConfirmDeleteATask"), "confirm_delete");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		if (! GETPOST('withproject') || empty($projectstatic->id))
 		{
+<<<<<<< HEAD
 		    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);
+=======
+		    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		    $object->next_prev_filter=" fk_projet in (".$projectsListId.")";
 		}
 		else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
@@ -263,7 +327,11 @@ if ($id > 0 || ! empty($ref))
 
 		// Other attributes
 		$cols = 3;
+<<<<<<< HEAD
 		$parameyers=array('socid'=>$socid);
+=======
+		$parameters=array('socid'=>$socid);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 		print '</table>';
@@ -275,10 +343,17 @@ if ($id > 0 || ! empty($ref))
 
 		// Include comment tpl view
 		include DOL_DOCUMENT_ROOT . '/core/tpl/bloc_comment.tpl.php';
+<<<<<<< HEAD
 
 	}
 }
 
 
+=======
+	}
+}
+
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

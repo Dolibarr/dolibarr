@@ -33,18 +33,32 @@ $langs->loadLangs(array('admin', 'members', 'errors'));
 
 // Choice of print year or current year.
 $now = dol_now();
+<<<<<<< HEAD
 $year=dol_print_date($now,'%Y');
 $month=dol_print_date($now,'%m');
 $day=dol_print_date($now,'%d');
+=======
+$year=dol_print_date($now, '%Y');
+$month=dol_print_date($now, '%m');
+$day=dol_print_date($now, '%d');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $forbarcode=GETPOST('forbarcode');
 $fk_barcode_type=GETPOST('fk_barcode_type');
 $mode=GETPOST('mode');
 $modellabel=GETPOST("modellabel");	// Doc template to use
+<<<<<<< HEAD
 $numberofsticker=GETPOST('numberofsticker','int');
 
 $mesg='';
 
 $action=GETPOST('action','aZ09');
+=======
+$numberofsticker=GETPOST('numberofsticker', 'int');
+
+$mesg='';
+
+$action=GETPOST('action', 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $producttmp=new Product($db);
 $thirdpartytmp=new Societe($db);
@@ -67,7 +81,11 @@ if (GETPOST('submitproduct') && GETPOST('submitproduct'))
 
 		if (empty($forbarcode) || empty($fk_barcode_type))
 		{
+<<<<<<< HEAD
 			setEventMessages($langs->trans("DefinitionOfBarCodeForProductNotComplete",$producttmp->getNomUrl()), null, 'warnings');
+=======
+			setEventMessages($langs->trans("DefinitionOfBarCodeForProductNotComplete", $producttmp->getNomUrl()), null, 'warnings');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 	}
 }
@@ -84,7 +102,11 @@ if (GETPOST('submitthirdparty') && GETPOST('submitthirdparty'))
 
 		if (empty($forbarcode) || empty($fk_barcode_type))
 		{
+<<<<<<< HEAD
 			setEventMessages($langs->trans("DefinitionOfBarCodeForThirdpartyNotComplete",$thirdpartytmp->getNomUrl()), null, 'warnings');
+=======
+			setEventMessages($langs->trans("DefinitionOfBarCodeForThirdpartyNotComplete", $thirdpartytmp->getNomUrl()), null, 'warnings');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 	}
 }
@@ -127,11 +149,19 @@ if ($action == 'builddoc')
 		dol_mkdir($diroutput);
 
 		// Generate barcode
+<<<<<<< HEAD
 		$dirbarcode=array_merge(array("/core/modules/barcode/doc/"),$conf->modules_parts['barcode']);
 
 		foreach($dirbarcode as $reldir)
 		{
 			$dir=dol_buildpath($reldir,0);
+=======
+		$dirbarcode=array_merge(array("/core/modules/barcode/doc/"), $conf->modules_parts['barcode']);
+
+		foreach($dirbarcode as $reldir)
+		{
+			$dir=dol_buildpath($reldir, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$newdir=dol_osencode($dir);
 
 			// Check if directory exists (we do not use dol_is_dir to avoid loading files.lib.php)
@@ -154,7 +184,11 @@ if ($action == 'builddoc')
 				$barcodeimage=$conf->barcode->dir_temp.'/barcode_'.$code.'_'.$encoding.'.png';
 				dol_delete_file($barcodeimage);
 				// File is created with full name $barcodeimage = $conf->barcode->dir_temp.'/barcode_'.$code.'_'.$encoding.'.png';
+<<<<<<< HEAD
 				$result=$module->writeBarCode($code,$encoding,'Y',4,1);
+=======
+				$result=$module->writeBarCode($code, $encoding, 'Y', 4, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if ($result <= 0 || ! dol_is_file($barcodeimage))
 				{
 					$error++;
@@ -178,6 +212,7 @@ if ($action == 'builddoc')
 	{
 		// List of values to scan for a replacement
 		$substitutionarray = array (
+<<<<<<< HEAD
 		'%LOGIN%'=>$user->login,
 		'%COMPANY%'=>$mysoc->name,
 		'%ADDRESS%'=>$mysoc->address,
@@ -191,6 +226,21 @@ if ($action == 'builddoc')
 		'%DAY%'=>$day,
 		'%DOL_MAIN_URL_ROOT%'=>DOL_MAIN_URL_ROOT,
 		'%SERVER%'=>"http://".$_SERVER["SERVER_NAME"]."/"
+=======
+		    '%LOGIN%' => $user->login,
+		    '%COMPANY%' => $mysoc->name,
+		    '%ADDRESS%' => $mysoc->address,
+		    '%ZIP%' => $mysoc->zip,
+		    '%TOWN%' => $mysoc->town,
+		    '%COUNTRY%' => $mysoc->country,
+		    '%COUNTRY_CODE%' => $mysoc->country_code,
+		    '%EMAIL%' => $mysoc->email,
+		    '%YEAR%' => $year,
+		    '%MONTH%' => $month,
+		    '%DAY%' => $day,
+		    '%DOL_MAIN_URL_ROOT%' => DOL_MAIN_URL_ROOT,
+		    '%SERVER%' => "http://".$_SERVER["SERVER_NAME"]."/",
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		);
 		complete_substitutions_array($substitutionarray, $langs);
 
@@ -233,17 +283,28 @@ if ($action == 'builddoc')
 			}
 			if (empty($modellabel) || $modellabel == '-1')
 			{
+<<<<<<< HEAD
 				$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DescADHERENT_ETIQUETTE_TYPE"));
 			}
 
 			$outfile = $langs->trans("BarCode").'_sheets_'.dol_print_date(dol_now(),'dayhourlog').'.pdf';
+=======
+				$mesg=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DescADHERENT_ETIQUETTE_TYPE"));
+			}
+
+			$outfile = $langs->trans("BarCode").'_sheets_'.dol_print_date(dol_now(), 'dayhourlog').'.pdf';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			if (! $mesg) $result=doc_label_pdf_create($db, $arrayofrecords, $modellabel, $outputlangs, $diroutput, $template, dol_sanitizeFileName($outfile));
 		}
 
 		if ($result <= 0)
 		{
+<<<<<<< HEAD
 			dol_print_error('',$result);
+=======
+			dol_print_error('', $result);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		if (! $mesg)
@@ -263,12 +324,20 @@ if (empty($conf->barcode->enabled)) accessforbidden();
 
 $form=new Form($db);
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("BarCodePrintsheet"));
+=======
+llxHeader('', $langs->trans("BarCodePrintsheet"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print load_fiche_titre($langs->trans("BarCodePrintsheet"));
 print '<br>';
 
+<<<<<<< HEAD
 print $langs->trans("PageToGenerateBarCodeSheets",$langs->transnoentitiesnoconv("BuildPageToPrint")).'<br>';
+=======
+print $langs->trans("PageToGenerateBarCodeSheets", $langs->transnoentitiesnoconv("BuildPageToPrint")).'<br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '<br>';
 
 dol_htmloutput_errors($mesg);
@@ -304,7 +373,11 @@ print '	<div class="tagtr">';
 print '	<div class="tagtd" style="overflow: hidden; white-space: nowrap; max-width: 300px;">';
 print $langs->trans("NumberOfStickers").' &nbsp; ';
 print '</div><div class="tagtd maxwidthonsmartphone" style="overflow: hidden; white-space: nowrap;">';
+<<<<<<< HEAD
 print '<input size="4" type="text" name="numberofsticker" value="'.(GETPOST('numberofsticker')?GETPOST('numberofsticker','int'):10).'">';
+=======
+print '<input size="4" type="text" name="numberofsticker" value="'.(GETPOST('numberofsticker')?GETPOST('numberofsticker', 'int'):10).'">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</div></div>';
 
 print '</div>';
@@ -400,11 +473,19 @@ print '<br>';
 
 if ($producttmp->id > 0)
 {
+<<<<<<< HEAD
 	print $langs->trans("BarCodeDataForProduct",'').' '.$producttmp->getNomUrl(1).'<br>';
 }
 if ($thirdpartytmp->id > 0)
 {
 	print $langs->trans("BarCodeDataForThirdparty",'').' '.$thirdpartytmp->getNomUrl(1).'<br>';
+=======
+	print $langs->trans("BarCodeDataForProduct", '').' '.$producttmp->getNomUrl(1).'<br>';
+}
+if ($thirdpartytmp->id > 0)
+{
+	print $langs->trans("BarCodeDataForThirdparty", '').' '.$thirdpartytmp->getNomUrl(1).'<br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 print '<div class="tagtable">';
@@ -416,7 +497,11 @@ print $langs->trans("BarcodeType").' &nbsp; ';
 print '</div><div class="tagtd" style="overflow: hidden; white-space: nowrap; max-width: 300px;">';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
 $formbarcode = new FormBarCode($db);
+<<<<<<< HEAD
 $formbarcode->select_barcode_type($fk_barcode_type, 'fk_barcode_type', 1);
+=======
+print $formbarcode->selectBarcodeType($fk_barcode_type, 'fk_barcode_type', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</div></div>';
 
 // Barcode value
@@ -441,6 +526,11 @@ print '<br><input class="button" type="submit" id="submitformbarcodegen" '.((GET
 print '</form>';
 print '<br>';
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

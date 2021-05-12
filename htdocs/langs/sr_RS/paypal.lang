@@ -1,13 +1,20 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=Podešavanja modula PayPal
+<<<<<<< HEAD
 PaypalDesc=Ovaj modul omogućava uplatu preko <a href="http://www.paypal.com" target="_blank">PayPal</a>-a od strane klijenata. Može biti korisna za besplatne uplate ili za uplate vezane za određene Dolibarr objekte (račun, narudžbina, ...)
 PaypalOrCBDoPayment=Pay with Paypal (Credit Card or Paypal)
 PaypalDoPayment=Uplati putem PayPal-a
+=======
+PaypalDesc=This module allows payment by customers via <a href="http://www.paypal.com" target="_blank">PayPal</a>. This can be used for a ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
+PaypalOrCBDoPayment=Pay with PayPal (Card or PayPal)
+PaypalDoPayment=Pay with PayPal
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PAYPAL_API_SANDBOX=Test/sandbox mod
 PAYPAL_API_USER=API username
 PAYPAL_API_PASSWORD=API password
 PAYPAL_API_SIGNATURE=API signature
 PAYPAL_SSLVERSION=Curl SSL verzija
+<<<<<<< HEAD
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Ponudi "integralno" plaćanje (kreditna kartca + PayPal) ili samo "PayPal"
 PaypalModeIntegral=Integralno
 PaypalModeOnlyPaypal=Samo PayPal
@@ -18,6 +25,17 @@ YouAreCurrentlyInSandboxMode=You are currently in the %s "sandbox" mode
 NewOnlinePaymentReceived=New online payment received
 NewOnlinePaymentFailed=New online payment tried but failed
 ONLINE_PAYMENT_SENDEMAIL=Email obaveštenja nakon uplate (uspešne ili ne)
+=======
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Offer "integral" payment (Credit card+PayPal) or "PayPal" only
+PaypalModeIntegral=Integralno
+PaypalModeOnlyPaypal=Samo PayPal
+ONLINE_PAYMENT_CSS_URL=Optional URL of CSS stylesheet on online payment page
+ThisIsTransactionId=Ovo je ID transakcije: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Include the PayPal payment url when you send a document by email
+NewOnlinePaymentReceived=New online payment received
+NewOnlinePaymentFailed=New online payment tried but failed
+ONLINE_PAYMENT_SENDEMAIL=Email address for notifications after each payment attempt (for success and fail)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ReturnURLAfterPayment=Povratni URL posle plaćanja
 ValidationOfOnlinePaymentFailed=Validation of online payment failed
 PaymentSystemConfirmPaymentPageWasCalledButFailed=Payment confirmation page was called by payment system returned an error
@@ -28,7 +46,17 @@ ShortErrorMessage=Kratka poruka greške
 ErrorCode=Kod greške
 ErrorSeverityCode=Kod ozbiljnosti greške
 OnlinePaymentSystem=Online payment system
+<<<<<<< HEAD
 PaypalLiveEnabled=Paypal live enabled (otherwise test/sandbox mode)
 PaypalImportPayment=Import Paypal payments
 PostActionAfterPayment=Post actions after payments
 ARollbackWasPerformedOnPostActions=A rollback was performed on all Post actions. You must complete post actions manually if they are necessary.
+=======
+PaypalLiveEnabled=PayPal "live" mode enabled (otherwise test/sandbox mode)
+PaypalImportPayment=Import PayPal payments
+PostActionAfterPayment=Post actions after payments
+ARollbackWasPerformedOnPostActions=A rollback was performed on all Post actions. You must complete post actions manually if they are necessary.
+ValidationOfPaymentFailed=Validation of payment has failed
+CardOwner=Card holder
+PayPalBalance=Paypal credit
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

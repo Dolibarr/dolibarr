@@ -6,7 +6,11 @@ Permission=Droit
 Permissions=Droits
 EditPassword=Modifier mot de passe
 SendNewPassword=Régénérer et envoyer mot de passe
+<<<<<<< HEAD
 SendNewPasswordLink=Envoyer le lien pour réinitialiser le mot de passe
+=======
+SendNewPasswordLink=Réinitialiser le mot de passe
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ReinitPassword=Régénérer mot de passe
 PasswordChangedTo=Mot de passe modifié en: %s
 SubjectNewPassword=Votre mot de passe pour %s
@@ -66,7 +70,11 @@ CreateDolibarrThirdParty=Créer un tiers
 LoginAccountDisableInDolibarr=Le compte est désactivé sur Dolibarr.
 UsePersonalValue=Utiliser valeur personnalisée
 InternalUser=Utilisateur interne
+<<<<<<< HEAD
 ExportDataset_user_1=Utilisateurs Dolibarr et attributs
+=======
+ExportDataset_user_1=Utilisateurs et attributs
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DomainUser=Utilisateur du domaine %s
 Reactivate=Réactiver
 CreateInternalUserDesc=Ce formulaire permet de créer un utilisateur interne à votre société/institution. Pour créer un utilisateur externe (client, fournisseur, ...), utilisez le bouton 'Créer compte utilisateur' qui se trouve sur la fiche du contact du tiers.
@@ -93,7 +101,11 @@ NameToCreate=Nom du tiers à créer
 YourRole=Vos rôles
 YourQuotaOfUsersIsReached=Votre quota d'utilisateurs actifs est atteint !
 NbOfUsers=Nombre d'utilisateurs
+<<<<<<< HEAD
 NbOfPermissions=Nb d'autorisations
+=======
+NbOfPermissions=Nombre de permissions
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DontDowngradeSuperAdmin=Seul un superadministrateur peut rétrograder un superadministrateur
 HierarchicalResponsible=Responsable hiérarchique
 HierarchicView=Vue hiérarchique
@@ -108,3 +120,8 @@ UserAccountancyCode=Code comptable de l'utilisateur
 UserLogoff=Déconnexion de l'utilisateur
 UserLogged=Utilisateur connecté
 DateEmployment=Date d'embauche
+<<<<<<< HEAD
+=======
+DateEmploymentEnd=Date de fin d'emploi
+CantDisableYourself=Vous ne pouvez pas désactiver votre propre compte utilisateur
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

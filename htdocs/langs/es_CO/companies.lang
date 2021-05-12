@@ -1,13 +1,23 @@
 # Dolibarr language file - Source file is en_US - companies
 ConfirmDeleteContact=Está seguro de borrar este contacto y todas la información relacionada?
+<<<<<<< HEAD
+=======
+NewCompany=Nueva compañía (prospecto, cliente, vendedor)
+CreateDolibarrThirdPartySupplier=Crear un tercero (vendedor)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ParentCompany=Sede principal
 Subsidiaries=Sucursales
 RegisteredOffice=Domicilio principal
 State=Departamento
 PhonePerso=Teléf. personal
+<<<<<<< HEAD
 No_Email=Rechazar correos de cadena
 VATIsUsed=Sujeto a IVA
 VATIsNotUsed=No sujeto a IVA
+=======
+VATIsNotUsed=No sujeto a IVA
+OverAllProposals=Propuestas
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProfId1AT=Id prof. 1 (USt.-IdNr)
 ProfId2AT=Id prof. 2 (USt.-Nr)
 ProfId3AT=Id prof. 3 (Handelsregister-Nr.)
@@ -15,6 +25,7 @@ ProfId2CO=Identificación (CC, NIT, CE)
 ProfId3CO=CIIU
 CompanyHasCreditNote=Este cliente tiene <b>%s %s</b> anticipos disponibles
 NoContactForAnyProposal=Este contacto no es contacto de ningúna cotización
+<<<<<<< HEAD
 VATIntraCheckDesc=El link <b>%s</b> permite consultar al servicio RUES el NIT. Se requiere acceso a internet para que el servicio funcione
 VATIntraCheckURL=http://www.rues.org.co/RUES_Web/Consultas#tabs-3
 VATIntraCheckableOnEUSite=Verificar en la web
@@ -23,3 +34,9 @@ ExportDataset_company_2=Contactos de terceros y atributos
 ConfirmDeleteFile=¿Está seguro que quiere eliminar este archivo?
 ThirdPartiesArea=Área Terceros
 ManagingDirectors=Administrador(es) (CEO, gerente, director, presidente, etc.)
+=======
+VATIntraCheckURL=http://www.rues.org.co/RUES_Web/Consultas#tabs-3
+ConfirmDeleteFile=¿Está seguro que quiere eliminar este archivo?
+ManagingDirectors=Administrador(es) (CEO, gerente, director, presidente, etc.)
+MulticurrencyCurrency=Moneda
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

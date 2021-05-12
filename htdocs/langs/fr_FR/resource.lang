@@ -5,7 +5,11 @@ DeleteResource=Effacer ressource
 ConfirmDeleteResourceElement=Confirmer la suppression de cette ressource ?
 NoResourceInDatabase=Pas de ressource en base
 NoResourceLinked=Aucune ressource liée
+<<<<<<< HEAD
 
+=======
+ActionsOnResource=Événements liés à cette ressource
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ResourcePageIndex=Liste des ressources
 ResourceSingular=Resource
 ResourceCard=Fiche

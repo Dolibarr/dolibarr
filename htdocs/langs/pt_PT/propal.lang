@@ -22,7 +22,11 @@ SearchAProposal=Procurar um orçamento
 NoProposal=Nenhum orçamento
 ProposalsStatistics=Estatísticas de orçamentos
 NumberOfProposalsByMonth=Número por Mês
+<<<<<<< HEAD
 AmountOfProposalsByMonthHT=Montante por Mês (sem IVA)
+=======
+AmountOfProposalsByMonthHT=Amount by month (excl. tax)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NbOfProposals=Número de orçamentos
 ShowPropal=Mostrar orçamento
 PropalsDraft=Rascunho
@@ -33,7 +37,11 @@ PropalStatusSigned=Assinado (por faturar)
 PropalStatusNotSigned=Sem Assinar (Fechado)
 PropalStatusBilled=Faturado
 PropalStatusDraftShort=Rascunho
+<<<<<<< HEAD
 PropalStatusValidatedShort=Validado
+=======
+PropalStatusValidatedShort=Validated (open)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PropalStatusClosedShort=Fechado
 PropalStatusSignedShort=Assinado
 PropalStatusNotSignedShort=Não assinado
@@ -53,10 +61,16 @@ ErrorPropalNotFound=Orçamento %s Inexistente
 AddToDraftProposals=Adicionar ao orçamento rascunho
 NoDraftProposals=Sem orçamentos rascunhos
 CopyPropalFrom=Criar orçamento, copiando um orçamento existente
+<<<<<<< HEAD
 CreateEmptyPropal=Criar orçamentos a partir da lista de produtos/serviços
 DefaultProposalDurationValidity=Prazo de validade predefinido do orçamento (em dias)
 UseCustomerContactAsPropalRecipientIfExist=Utilizar morada de contacto de cliente, se definido em vez da morada de terceiro como morada de destinatário do orçamento
 ClonePropal=Clonar orçamento
+=======
+CreateEmptyPropal=Create empty commercial proposal or from list of products/services
+DefaultProposalDurationValidity=Prazo de validade predefinido do orçamento (em dias)
+UseCustomerContactAsPropalRecipientIfExist=Use contact/address with type 'Contact following-up proposal' if defined instead of third party address as proposal recipient address
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmClonePropal=Tem a certeza que pretende clonar o orçamento <b>%s</b>?
 ConfirmReOpenProp=Tem a certeza que pretende reabrir o orçamento <b>%s</b>?
 ProposalsAndProposalsLines=Orçamento e linhas
@@ -78,8 +92,16 @@ TypeContact_propal_external_CUSTOMER=Contacto do cliente que dá seguimento ao o
 TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
 DocModelAzurDescription=Um modelo de orçamento completo (logótipo...)
+<<<<<<< HEAD
+=======
+DocModelCyanDescription=Um modelo de orçamento completo (logótipo...)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DefaultModelPropalCreate=Criação do modelo padrão
 DefaultModelPropalToBill=Modelo predefinido quando fechar um orçamento (a faturar)
 DefaultModelPropalClosed=Modelo predefinido quando fechar um orçamento (não faturado)
 ProposalCustomerSignature=Aceitação escrita, carimbo da empresa, data e assinatura
+<<<<<<< HEAD
 ProposalsStatisticsSuppliers=Estatísticas dos orçamentos de fornecedor
+=======
+ProposalsStatisticsSuppliers=Vendor proposals statistics
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

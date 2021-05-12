@@ -67,7 +67,11 @@ CloseService=Uždaryti paslaugą
 BoardRunningServices=Pasibaigusios veikiančios paslaugos
 ServiceStatus=Paslaugos būklė
 DraftContracts=Sutarčių projektai
+<<<<<<< HEAD
 CloseRefusedBecauseOneServiceActive=Sutartis negali būti uždaryta, nes joje yra nors viena atvira paslauga
+=======
+CloseRefusedBecauseOneServiceActive=Contract can't be closed as there is at least one open service on it
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActivateAllContracts=Activate all contract lines
 CloseAllContracts=Uždaryti visas sutarties eilutes
 DeleteContractLine=Ištrinti sutarties eilutę
@@ -85,10 +89,17 @@ NoteListOfYourExpiredServices=Šiame sąraše yra tik paslaugos sutarčių treč
 StandardContractsTemplate=Standartinės sutarties forma
 ContactNameAndSignature=%s, vardas ir parašas:
 OnlyLinesWithTypeServiceAreUsed=Padauginamos tik "Service" tipo eilutės
+<<<<<<< HEAD
 CloneContract=Clone contract
 ConfirmCloneContract=Are you sure you want to clone the contract <b>%s</b>?
 LowerDateEndPlannedShort=Lower planned end date of active services
 SendContractRef=Contract information __REF__
+=======
+ConfirmCloneContract=Are you sure you want to clone the contract <b>%s</b>?
+LowerDateEndPlannedShort=Lower planned end date of active services
+SendContractRef=Contract information __REF__
+OtherContracts=Other contracts
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Pardavimų atstovas pasirašantis sutartį
 TypeContact_contrat_internal_SALESREPFOLL=Pardavimų atstovo einamoji sutartis

@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2006-2017	Laurent Destailleur	<eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2006-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2006-2012	Regis Houssin		<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,9 +33,15 @@ $langs->load("admin");
 if (! $user->admin)
 	accessforbidden();
 
+<<<<<<< HEAD
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $choice=GETPOST('choice','aZ09');
+=======
+$action=GETPOST('action', 'alpha');
+$confirm=GETPOST('confirm', 'alpha');
+$choice=GETPOST('choice', 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 // Define filelog to discard it from purge
@@ -39,15 +49,35 @@ $filelog='';
 if (! empty($conf->syslog->enabled))
 {
 	$filelog=$conf->global->SYSLOG_FILE;
+<<<<<<< HEAD
 	$filelog=preg_replace('/DOL_DATA_ROOT/i',DOL_DATA_ROOT,$filelog);
+=======
+	$filelog=preg_replace('/DOL_DATA_ROOT/i', DOL_DATA_ROOT, $filelog);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 
 /*
  *	Actions
  */
+<<<<<<< HEAD
 if ($action=='purge' && ! preg_match('/^confirm/i',$choice) && ($choice != 'allfiles' || $confirm == 'yes') )
 {
+=======
+if ($action=='purge' && ! preg_match('/^confirm/i', $choice) && ($choice != 'allfiles' || $confirm == 'yes') )
+{
+    // Increase limit of time. Works only if we are not in safe mode
+    $ExecTimeLimit=600;
+    if (!empty($ExecTimeLimit))
+    {
+        $err=error_reporting();
+        error_reporting(0);     // Disable all errors
+        //error_reporting(E_ALL);
+        @set_time_limit($ExecTimeLimit);   // Need more than 240 on Windows 7/64
+        error_reporting($err);
+    }
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 	$utils = new Utils($db);
 	$result = $utils->purgeFiles($choice);
@@ -65,9 +95,15 @@ llxHeader();
 
 $form=new Form($db);
 
+<<<<<<< HEAD
 print load_fiche_titre($langs->trans("Purge"),'','title_setup');
 
 print $langs->trans("PurgeAreaDesc",$dolibarr_main_data_root).'<br>';
+=======
+print load_fiche_titre($langs->trans("Purge"), '', 'title_setup');
+
+print $langs->trans("PurgeAreaDesc", $dolibarr_main_data_root).'<br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '<br>';
 
 
@@ -100,7 +136,11 @@ print '> '.$langs->trans("PurgeDeleteTemporaryFiles").'<br><br>';
 
 print '<input type="radio" name="choice" value="confirm_allfiles"';
 print ($choice && $choice=='confirm_allfiles') ? ' checked' : '';
+<<<<<<< HEAD
 print '> '.$langs->trans("PurgeDeleteAllFilesInDocumentsDir",$dolibarr_main_data_root).'<br>';
+=======
+print '> '.$langs->trans("PurgeDeleteAllFilesInDocumentsDir", $dolibarr_main_data_root).'<br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print '</td></tr></table>';
 
@@ -112,14 +152,23 @@ print '</td></tr></table>';
 
 print '</form>';
 
+<<<<<<< HEAD
 if (preg_match('/^confirm/i',$choice))
+=======
+if (preg_match('/^confirm/i', $choice))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	print '<br>';
 	$formquestion=array();
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?choice=allfiles', $langs->trans('Purge'), $langs->trans('ConfirmPurge').img_warning().' ', 'purge', $formquestion, 'no', 2);
 }
 
+<<<<<<< HEAD
 
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

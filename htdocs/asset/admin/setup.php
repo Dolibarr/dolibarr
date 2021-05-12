@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2018      Alexandre Spangaro   <aspangaro@zendsi.com>
+=======
+ * Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,6 +56,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
  * View
  */
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("AssetsSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
@@ -59,6 +64,15 @@ print load_fiche_titre($langs->trans("AssetsSetup"),$linkback,'title_setup');
 
 
 $head = AssetsAdminPrepareHead();
+=======
+llxHeader('', $langs->trans("AssetsSetup"));
+
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+print load_fiche_titre($langs->trans("AssetsSetup"), $linkback, 'title_setup');
+
+
+$head = asset_admin_prepare_head();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 dol_fiche_head($head, 'settings', $langs->trans("Assets"), -1, 'generic');
 
@@ -75,7 +89,11 @@ if ($action == 'edit')
 	foreach($arrayofparameters as $key => $val)
 	{
 		print '<tr class="oddeven"><td>';
+<<<<<<< HEAD
 		print $form->textwithpicto($langs->trans($key),$langs->trans($key.'Tooltip'));
+=======
+		print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</td><td><input name="'.$key.'"  class="flat '.(empty($val['css'])?'minwidth200':$val['css']).'" value="' . $conf->global->$key . '"></td></tr>';
 	}
 
@@ -96,7 +114,11 @@ else
 	foreach($arrayofparameters as $key => $val)
 	{
 		print '<tr class="oddeven"><td>';
+<<<<<<< HEAD
 		print $form->textwithpicto($langs->trans($key),$langs->trans($key.'Tooltip'));
+=======
+		print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</td><td>' . $conf->global->$key . '</td></tr>';
 	}
 
@@ -107,9 +129,15 @@ else
 	print '</div>';
 }
 
+<<<<<<< HEAD
 
 // Page end
 dol_fiche_end();
 
+=======
+dol_fiche_end();
+
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

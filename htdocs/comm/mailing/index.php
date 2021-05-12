@@ -1,7 +1,12 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2010      Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,12 +32,24 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT .'/comm/mailing/class/mailing.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
+<<<<<<< HEAD
+=======
+$hookmanager = new HookManager($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('mailingindex'));
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 // Load translation files required by the page
 $langs->loadLangs(array('commercial', 'orders'));
 
 
 // Security check
+<<<<<<< HEAD
 $result=restrictedArea($user,'mailing');
+=======
+$result=restrictedArea($user, 'mailing');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 /*
@@ -40,7 +57,11 @@ $result=restrictedArea($user,'mailing');
  */
 
 $help_url='EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing';
+<<<<<<< HEAD
 llxHeader('','EMailing',$help_url);
+=======
+llxHeader('', 'EMailing', $help_url);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print load_fiche_titre($langs->trans("MailingArea"));
 
@@ -79,7 +100,11 @@ if (is_resource($handle))
     {
         if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
         {
+<<<<<<< HEAD
             if (preg_match("/(.*)\.(.*)\.(.*)/i",$file,$reg))
+=======
+            if (preg_match("/(.*)\.(.*)\.(.*)/i", $file, $reg))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             {
                 $modulename=$reg[1];
        			if ($modulename == 'example') continue;
@@ -109,6 +134,7 @@ if (is_resource($handle))
                         print '<tr class="oddeven">';
 
                         $result=$db->query($sql);
+<<<<<<< HEAD
                         if ($result)
                         {
                           $num = $db->num_rows($result);
@@ -123,6 +149,21 @@ if (is_resource($handle))
                             }
 
                           $db->free($result);
+=======
+                        if ($result) {
+                            $num = $db->num_rows($result);
+
+                            $i = 0;
+
+                            while ($i < $num )
+                            {
+                                $obj = $db->fetch_object($result);
+                                print '<td>'.img_object('', $mailmodule->picto).' '.$obj->label.'</td><td class="right">'.$obj->nb.'<td>';
+                                $i++;
+                            }
+
+                            $db->free($result);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                         }
                         else
                         {
@@ -154,6 +195,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."mailing as m";
 $sql.= " ORDER BY m.date_creat DESC";
 $sql.= " LIMIT ".$limit;
 $result=$db->query($sql);
+<<<<<<< HEAD
 if ($result)
 {
   print '<table class="noborder" width="100%">';
@@ -194,6 +236,46 @@ if ($result)
 else
 {
   dol_print_error($db);
+=======
+if ($result) {
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td colspan="2">'.$langs->trans("LastMailings", $limit).'</td>';
+    print '<td align="center">'.$langs->trans("DateCreation").'</td>';
+    print '<td align="center">'.$langs->trans("NbOfEMails").'</td>';
+    print '<td class="right"><a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("AllEMailings").'</a></td></tr>';
+
+    $num = $db->num_rows($result);
+    if ($num > 0)
+    {
+        $i = 0;
+
+        while ($i < $num )
+	    {
+	        $obj = $db->fetch_object($result);
+
+	        print '<tr class="oddeven">';
+	        print '<td class="nowrap"><a href="card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowEMail"), "email").' '.$obj->rowid.'</a></td>';
+	        print '<td>'.dol_trunc($obj->titre, 38).'</td>';
+	        print '<td align="center">'.dol_print_date($db->jdate($obj->date_creat), 'day').'</td>';
+	        print '<td align="center">'.($obj->nbemail?$obj->nbemail:"0").'</td>';
+	        $mailstatic=new Mailing($db);
+	        print '<td class="right">'.$mailstatic->LibStatut($obj->statut, 5).'</td>';
+            print '</tr>';
+	        $i++;
+	    }
+    }
+    else
+    {
+        print '<tr><td class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+    }
+    print "</table><br>";
+    $db->free($result);
+}
+else
+{
+    dol_print_error($db);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 
@@ -201,6 +283,7 @@ else
 print '</div></div></div>';
 
 
+<<<<<<< HEAD
 if ($langs->file_exists("html/spam.html",0)) {
     print "<br><br><br><br>".$langs->trans("Note")."<br>";
     print '<div style="padding: 4px; background: #FAFAFA; border: 1px solid #BBBBBB;" >';
@@ -213,4 +296,20 @@ if ($langs->file_exists("html/spam.html",0)) {
 
 llxFooter();
 
+=======
+if ($langs->file_exists("html/spam.html", 0)) {
+    print "<br><br><br><br>".$langs->trans("Note")."<br>";
+    print '<div style="padding: 4px; background: #FAFAFA; border: 1px solid #BBBBBB;" >';
+    dol_print_file($langs, "html/spam.html", 0);
+    print '</div>';
+
+    print '<br>';
+}
+
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardEmailings', $parameters, $object); // Note that $action and $object may have been modified by hook
+
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

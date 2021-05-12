@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,6 +37,7 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
+<<<<<<< HEAD
 $langs->load("orders");
 $langs->load("suppliers");
 $langs->load("companies");
@@ -45,11 +50,27 @@ $action = GETPOST('action','alpha');
 if (GETPOST('actioncode','array'))
 {
     $actioncode=GETPOST('actioncode','array',3);
+=======
+// Load translation files required by the page
+$langs->loadLangs(array("suppliers", "orders", "companies", "stocks"));
+
+$id=GETPOST('id', 'int');
+$ref=GETPOST('ref', 'alpha');
+$action = GETPOST('action', 'alpha');
+
+if (GETPOST('actioncode', 'array'))
+{
+    $actioncode=GETPOST('actioncode', 'array', 3);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     if (! count($actioncode)) $actioncode='0';
 }
 else
 {
+<<<<<<< HEAD
     $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECTS)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECTS));
+=======
+    $actioncode=GETPOST("actioncode", "alpha", 3)?GETPOST("actioncode", "alpha", 3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECTS)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECTS));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 $search_agenda_label=GETPOST('search_agenda_label');
 
@@ -68,11 +89,19 @@ if (!$user->rights->fournisseur->commande->lire)	accessforbidden();
  */
 
 $parameters=array('id'=>$id);
+<<<<<<< HEAD
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 // Purge search criteria
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
+=======
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+// Purge search criteria
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
     $actioncode='';
     $search_agenda_label='';
@@ -95,9 +124,15 @@ if ($id > 0 || ! empty($ref))
 }
 
 $title=$langs->trans("SupplierOrder").' - '.$object->ref.' '.$object->name;
+<<<<<<< HEAD
 if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->ref.' '.$object->name.' - '.$langs->trans("Info");
 $help_url='EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
 llxHeader('',$title,$help_url);
+=======
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->ref.' '.$object->name.' - '.$langs->trans("Info");
+$help_url='EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
+llxHeader('', $title, $help_url);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $now=dol_now();
 
@@ -189,7 +224,11 @@ if (! empty($conf->agenda->enabled))
     }
     else
     {
+<<<<<<< HEAD
         print '<a class="butActionRefused" href="#">'.$langs->trans("AddAction").'</a>';
+=======
+        print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("AddAction").'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 }
 
@@ -202,7 +241,11 @@ if (!empty($object->id))
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
     if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 
+<<<<<<< HEAD
     print load_fiche_titre($langs->trans("ActionsOnOrder"),'','');
+=======
+    print load_fiche_titre($langs->trans("ActionsOnOrder"), '', '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     // List of actions on element
     /*include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
@@ -218,10 +261,17 @@ if (!empty($object->id))
     // List of all actions
     $filters=array();
     $filters['search_agenda_label']=$search_agenda_label;
+<<<<<<< HEAD
     show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters);
 }
 
 
 
+=======
+    show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters);
+}
+
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

@@ -22,7 +22,11 @@ SearchAProposal=Ieškoti pasiūlymo
 NoProposal=No proposal
 ProposalsStatistics=Komercinių pasiūlymų statistika
 NumberOfProposalsByMonth=Skaičius pagal mėnesį
+<<<<<<< HEAD
 AmountOfProposalsByMonthHT=Suma pagal mėnesį (atskaičius mokesčius)
+=======
+AmountOfProposalsByMonthHT=Amount by month (excl. tax)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NbOfProposals=Komercinių pasiūlymų skaičius
 ShowPropal=Rodyti pasiūlymą
 PropalsDraft=Projektai
@@ -33,7 +37,11 @@ PropalStatusSigned=Pasirašyta (reikia pateikti sąskaitą-faktūrą)
 PropalStatusNotSigned=Nepasirašyta (uždarytas)
 PropalStatusBilled=Sąskaita-faktūra pateikta
 PropalStatusDraftShort=Projektas
+<<<<<<< HEAD
 PropalStatusValidatedShort=Galiojantis
+=======
+PropalStatusValidatedShort=Validated (open)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PropalStatusClosedShort=Uždarytas
 PropalStatusSignedShort=Pasirašyta
 PropalStatusNotSignedShort=Nepasirašyta
@@ -53,10 +61,16 @@ ErrorPropalNotFound=Pasiūlymas %s nerastas
 AddToDraftProposals=Pridėti į pasiūlymo projektą
 NoDraftProposals=Nėra pasiūlymų projekto
 CopyPropalFrom=Sukurti komercinį pasiūlymą kopijuojant esamą pasiūlymą
+<<<<<<< HEAD
 CreateEmptyPropal=Sukurti tuščią naują komercinį pasiūlymą arba iš produktų/paslaugų sąrašo
 DefaultProposalDurationValidity=Komercinio pasiūlymo galiojimo trukmė (dienomis) pagal nutylėjimą
 UseCustomerContactAsPropalRecipientIfExist=Naudokite kliento kontaktinį adresą, jei aprašytas, vietoje trečiosios šalies adreso, kaip pasiūlymo gavėjo.
 ClonePropal=Klonuoti komercinį pasiūlymą
+=======
+CreateEmptyPropal=Create empty commercial proposal or from list of products/services
+DefaultProposalDurationValidity=Komercinio pasiūlymo galiojimo trukmė (dienomis) pagal nutylėjimą
+UseCustomerContactAsPropalRecipientIfExist=Use contact/address with type 'Contact following-up proposal' if defined instead of third party address as proposal recipient address
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmClonePropal=Are you sure you want to clone the commercial proposal <b>%s</b>?
 ConfirmReOpenProp=Are you sure you want to open back the commercial proposal <b>%s</b>?
 ProposalsAndProposalsLines=Komercinis pasiūlymas ir eilutės
@@ -78,8 +92,16 @@ TypeContact_propal_external_CUSTOMER=Kliento kontaktas tęstiniame pasiūlyme
 TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
 DocModelAzurDescription=Išsamus užsakymo modelis (logo. ..)
+<<<<<<< HEAD
+=======
+DocModelCyanDescription=Išsamus užsakymo modelis (logo. ..)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DefaultModelPropalCreate=Modelio sukūrimas pagal nutylėjimą
 DefaultModelPropalToBill=Šablonas pagal nutylėjimą, kai uždaromas verslo pasiūlymas (turi būti išrašyta sąskaita-faktūra)
 DefaultModelPropalClosed=Šablonas pagal nutylėjimą, kai uždaromas verslo pasiūlymas (sąskaita-faktūra neišrašoma)
 ProposalCustomerSignature=Written acceptance, company stamp, date and signature
+<<<<<<< HEAD
 ProposalsStatisticsSuppliers=Supplier proposals statistics
+=======
+ProposalsStatisticsSuppliers=Vendor proposals statistics
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

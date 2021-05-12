@@ -64,10 +64,18 @@ DateStartRealShort=Data inici
 DateEndReal=Data real finalització del servei
 DateEndRealShort=Data real finalització
 CloseService=Finalitzar servei
+<<<<<<< HEAD
 BoardRunningServices=Serveis actius expirats
 ServiceStatus=Estat del servei
 DraftContracts=Contractes esborrany
 CloseRefusedBecauseOneServiceActive=El contracte no pot ser tancat ja que conté almenys un servei obert.
+=======
+BoardRunningServices=Serveis en execució
+BoardExpiredServices=Els serveis han caducat
+ServiceStatus=Estat del servei
+DraftContracts=Contractes esborrany
+CloseRefusedBecauseOneServiceActive=El contracte no es pot tancar ja que almenys hi ha un servei obert
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActivateAllContracts=Activar totes les línies de contracte
 CloseAllContracts=Tancar tots els serveis
 DeleteContractLine=Eliminar línia de contracte
@@ -85,10 +93,17 @@ NoteListOfYourExpiredServices=Aquest llistat només conté els serveis de contra
 StandardContractsTemplate=Plantilla de contracte Standard
 ContactNameAndSignature=Per %s, nom i signatura:
 OnlyLinesWithTypeServiceAreUsed=Només les línies amb tipus "Servei" seran clonades.
+<<<<<<< HEAD
 CloneContract=Clona el contracte
 ConfirmCloneContract=Are you sure you want to clone the contract <b>%s</b>?
 LowerDateEndPlannedShort=Baixa data de finalització planificada dels serveis actius 
 SendContractRef=Informació del contracte __REF__
+=======
+ConfirmCloneContract=Are you sure you want to clone the contract <b>%s</b>?
+LowerDateEndPlannedShort=Baixa data de finalització planificada dels serveis actius 
+SendContractRef=Informació del contracte __REF__
+OtherContracts=Altres contractes
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Agent comercial signant del contracte
 TypeContact_contrat_internal_SALESREPFOLL=Agent comercial del seguiment del contracte

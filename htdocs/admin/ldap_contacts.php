@@ -2,7 +2,11 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+<<<<<<< HEAD
  * Copyright (C) 2005      Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005      Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011-2013 Juanjo Menent		<jmenent@2byte.es>
  *
@@ -38,7 +42,11 @@ $langs->loadLangs(array("admin","errors"));
 if (!$user->admin)
   accessforbidden();
 
+<<<<<<< HEAD
 $action = GETPOST('action','aZ09');
+=======
+$action = GETPOST('action', 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 /*
  * Actions
@@ -50,6 +58,7 @@ if ($action == 'setvalue' && $user->admin)
 
 	$db->begin();
 
+<<<<<<< HEAD
 	if (! dolibarr_set_const($db, 'LDAP_CONTACT_DN',GETPOST("contactdn"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_CONTACT_OBJECT_CLASS',GETPOST("objectclass"),'chaine',0,'',$conf->entity)) $error++;
 
@@ -67,12 +76,35 @@ if ($action == 'setvalue' && $user->admin)
 	if (! dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_ZIP',GETPOST("fieldzip"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_TOWN',GETPOST("fieldtown"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_COUNTRY',GETPOST("fieldcountry"),'chaine',0,'',$conf->entity)) $error++;
+=======
+	if (! dolibarr_set_const($db, 'LDAP_CONTACT_DN', GETPOST("contactdn"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_CONTACT_OBJECT_CLASS', GETPOST("objectclass"), 'chaine', 0, '', $conf->entity)) $error++;
+
+	if (! dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_FULLNAME', GETPOST("fieldfullname"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_NAME', GETPOST("fieldname"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_FIRSTNAME', GETPOST("fieldfirstname"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_COMPANY', GETPOST("fieldcompany"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_MAIL', GETPOST("fieldmail"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_PHONE', GETPOST("fieldphone"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_HOMEPHONE', GETPOST("fieldhomephone"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_MOBILE', GETPOST("fieldmobile"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_SKYPE', GETPOST("fieldskype"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_FAX', GETPOST("fieldfax"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_ADDRESS', GETPOST("fieldaddress"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_ZIP', GETPOST("fieldzip"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_TOWN', GETPOST("fieldtown"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_CONTACT_FIELD_COUNTRY', GETPOST("fieldcountry"), 'chaine', 0, '', $conf->entity)) $error++;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     // This one must be after the others
     $valkey='';
     $key=GETPOST("key");
     if ($key) $valkey=$conf->global->$key;
+<<<<<<< HEAD
     if (! dolibarr_set_const($db, 'LDAP_KEY_CONTACTS',$valkey,'chaine',0,'',$conf->entity)) $error++;
+=======
+    if (! dolibarr_set_const($db, 'LDAP_KEY_CONTACTS', $valkey, 'chaine', 0, '', $conf->entity)) $error++;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     if (! $error)
     {
@@ -94,10 +126,17 @@ if ($action == 'setvalue' && $user->admin)
 
 $form=new Form($db);
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("LDAPSetup"),'EN:Module_LDAP_En|FR:Module_LDAP|ES:M&oacute;dulo_LDAP');
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 
 print load_fiche_titre($langs->trans("LDAPSetup"),$linkback,'title_setup');
+=======
+llxHeader('', $langs->trans("LDAPSetup"), 'EN:Module_LDAP_En|FR:Module_LDAP|ES:M&oacute;dulo_LDAP');
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+
+print load_fiche_titre($langs->trans("LDAPSetup"), $linkback, 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $head = ldap_prepare_head();
 
@@ -143,105 +182,165 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="25%">'.$langs->trans("LDAPDolibarrMapping").'</td>';
 print '<td colspan="2">'.$langs->trans("LDAPLdapMapping").'</td>';
+<<<<<<< HEAD
 print '<td align="right">'.$langs->trans("LDAPNamingAttribute").'</td>';
+=======
+print '<td class="right">'.$langs->trans("LDAPNamingAttribute").'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print "</tr>\n";
 
 // Common name
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldFullname").'</td><td>';
 print '<input size="25" type="text" name="fieldfullname" value="'.$conf->global->LDAP_CONTACT_FIELD_FULLNAME.'">';
 print '</td><td>'.$langs->trans("LDAPFieldFullnameExample").'</td>';
+<<<<<<< HEAD
 print '<td align="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_FULLNAME"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_CONTACT_FIELD_FULLNAME?' checked':'')."></td>";
+=======
+print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_FULLNAME"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_CONTACT_FIELD_FULLNAME?' checked':'')."></td>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</tr>';
 
 // Name
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldName").'</td><td>';
 print '<input size="25" type="text" name="fieldname" value="'.$conf->global->LDAP_CONTACT_FIELD_NAME.'">';
 print '</td><td>'.$langs->trans("LDAPFieldNameExample").'</td>';
+<<<<<<< HEAD
 print '<td align="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_NAME"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_CONTACT_FIELD_NAME?' checked':'')."></td>";
+=======
+print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_NAME"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_CONTACT_FIELD_NAME?' checked':'')."></td>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</tr>';
 
 // Firstname
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldFirstName").'</td><td>';
 print '<input size="25" type="text" name="fieldfirstname" value="'.$conf->global->LDAP_CONTACT_FIELD_FIRSTNAME.'">';
 print '</td><td>'.$langs->trans("LDAPFieldFirstNameExample").'</td>';
+<<<<<<< HEAD
 print '<td align="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_FIRSTNAME"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_CONTACT_FIELD_FIRSTNAME?' checked':'')."></td>";
+=======
+print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_FIRSTNAME"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_CONTACT_FIELD_FIRSTNAME?' checked':'')."></td>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</tr>';
 
 // Company
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldCompany").'</td><td>';
 print '<input size="25" type="text" name="fieldcompany" value="'.$conf->global->LDAP_CONTACT_FIELD_COMPANY.'">';
 print '</td><td>'.$langs->trans("LDAPFieldCompanyExample").'</td>';
+<<<<<<< HEAD
 print '<td align="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_COMPANY"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_CONTACT_FIELD_COMPANY?' checked':'')."></td>";
+=======
+print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_COMPANY"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_CONTACT_FIELD_COMPANY?' checked':'')."></td>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</tr>';
 
 // Mail
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldMail").'</td><td>';
 print '<input size="25" type="text" name="fieldmail" value="'.$conf->global->LDAP_CONTACT_FIELD_MAIL.'">';
 print '</td><td>'.$langs->trans("LDAPFieldMailExample").'</td>';
+<<<<<<< HEAD
 print '<td align="right"><input type="radio" name="key" value=">LDAP_CONTACT_FIELD_MAIL"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_CONTACT_FIELD_MAIL?' checked':'')."></td>";
+=======
+print '<td class="right"><input type="radio" name="key" value=">LDAP_CONTACT_FIELD_MAIL"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_CONTACT_FIELD_MAIL?' checked':'')."></td>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</tr>';
 
 // Phone pro
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldPhone").'</td><td>';
 print '<input size="25" type="text" name="fieldphone" value="'.$conf->global->LDAP_CONTACT_FIELD_PHONE.'">';
 print '</td><td>'.$langs->trans("LDAPFieldPhoneExample").'</td>';
+<<<<<<< HEAD
 print '<td align="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_PHONE"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_CONTACT_FIELD_PHONE?' checked':'')."></td>";
+=======
+print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_PHONE"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_CONTACT_FIELD_PHONE?' checked':'')."></td>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</tr>';
 
 // Phone home
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldHomePhone").'</td><td>';
 print '<input size="25" type="text" name="fieldhomephone" value="'.$conf->global->LDAP_CONTACT_FIELD_HOMEPHONE.'">';
 print '</td><td>'.$langs->trans("LDAPFieldHomePhoneExample").'</td>';
+<<<<<<< HEAD
 print '<td align="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_HOMEPHONE"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_CONTACT_FIELD_HOMEPHONE?' checked':'')."></td>";
+=======
+print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_HOMEPHONE"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_CONTACT_FIELD_HOMEPHONE?' checked':'')."></td>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</tr>';
 
 // Mobile
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldMobile").'</td><td>';
 print '<input size="25" type="text" name="fieldmobile" value="'.$conf->global->LDAP_CONTACT_FIELD_MOBILE.'">';
 print '</td><td>'.$langs->trans("LDAPFieldMobileExample").'</td>';
+<<<<<<< HEAD
 print '<td align="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_MOBILE"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_CONTACT_FIELD_MOBILE?' checked':'')."></td>";
+=======
+print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_MOBILE"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_CONTACT_FIELD_MOBILE?' checked':'')."></td>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</tr>';
 
 // Skype
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldSkype").'</td><td>';
 print '<input size="25" type="text" name="fieldskype" value="'.$conf->global->LDAP_CONTACT_FIELD_SKYPE.'">';
 print '</td><td>'.$langs->trans("LDAPFieldSkypeExample").'</td>';
+<<<<<<< HEAD
 print '<td align="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_SKYPE"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_CONTACT_FIELD_SKYPE?' checked':'')."></td>";
+=======
+print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_SKYPE"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_CONTACT_FIELD_SKYPE?' checked':'')."></td>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</tr>';
 
 // Fax
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldFax").'</td><td>';
 print '<input size="25" type="text" name="fieldfax" value="'.$conf->global->LDAP_CONTACT_FIELD_FAX.'">';
 print '</td><td>'.$langs->trans("LDAPFieldFaxExample").'</td>';
+<<<<<<< HEAD
 print '<td align="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_FAX"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_CONTACT_FIELD_FAX?' checked':'')."></td>";
+=======
+print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_FAX"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_CONTACT_FIELD_FAX?' checked':'')."></td>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</tr>';
 
 // Address
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldAddress").'</td><td>';
 print '<input size="25" type="text" name="fieldaddress" value="'.$conf->global->LDAP_CONTACT_FIELD_ADDRESS.'">';
 print '</td><td>'.$langs->trans("LDAPFieldAddressExample").'</td>';
+<<<<<<< HEAD
 print '<td align="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_ADDRESS"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_CONTACT_FIELD_ADDRESS?' checked':'')."></td>";
+=======
+print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_ADDRESS"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_CONTACT_FIELD_ADDRESS?' checked':'')."></td>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</tr>';
 
 // ZIP
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldZip").'</td><td>';
 print '<input size="25" type="text" name="fieldzip" value="'.$conf->global->LDAP_CONTACT_FIELD_ZIP.'">';
 print '</td><td>'.$langs->trans("LDAPFieldZipExample").'</td>';
+<<<<<<< HEAD
 print '<td align="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_ZIP"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_CONTACT_FIELD_ZIP?' checked':'')."></td>";
+=======
+print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_ZIP"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_CONTACT_FIELD_ZIP?' checked':'')."></td>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</tr>';
 
 // TOWN
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldTown").'</td><td>';
 print '<input size="25" type="text" name="fieldtown" value="'.$conf->global->LDAP_CONTACT_FIELD_TOWN.'">';
 print '</td><td>'.$langs->trans("LDAPFieldTownExample").'</td>';
+<<<<<<< HEAD
 print '<td align="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_TOWN"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_CONTACT_FIELD_TOWN?' checked':'')."></td>";
+=======
+print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_TOWN"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_CONTACT_FIELD_TOWN?' checked':'')."></td>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</tr>';
 
 // COUNTRY
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldCountry").'</td><td>';
 print '<input size="25" type="text" name="fieldcountry" value="'.$conf->global->LDAP_CONTACT_FIELD_COUNTRY.'">';
 print '</td><td>&nbsp;</td>';
+<<<<<<< HEAD
 print '<td align="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_COUNTRY"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_CONTACT_FIELD_COUNTRY?' checked':'')."></td>";
+=======
+print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_COUNTRY"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_CONTACT_FIELD_COUNTRY?' checked':'')."></td>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</tr>';
 
 print '</table>';
@@ -264,7 +363,11 @@ $key=$conf->global->LDAP_KEY_CONTACTS;
 $dn=$conf->global->LDAP_CONTACT_DN;
 $objectclass=$conf->global->LDAP_CONTACT_OBJECT_CLASS;
 
+<<<<<<< HEAD
 show_ldap_test_button($butlabel,$testlabel,$key,$dn,$objectclass);
+=======
+show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 if (function_exists("ldap_connect"))
@@ -285,39 +388,73 @@ if (function_exists("ldap_connect"))
 			$dn=$object->_load_ldap_dn($info);
 
 			$result1=$ldap->delete($dn);			// To be sure to delete existing records
+<<<<<<< HEAD
 			$result2=$ldap->add($dn,$info,$user);	// Now the test
+=======
+			$result2=$ldap->add($dn, $info, $user);	// Now the test
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$result3=$ldap->delete($dn);			// Clean what we did
 
 			if ($result2 > 0)
 			{
+<<<<<<< HEAD
 				print img_picto('','info').' ';
+=======
+				print img_picto('', 'info').' ';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				print '<font class="ok">'.$langs->trans("LDAPSynchroOK").'</font><br>';
 			}
 			else
 			{
+<<<<<<< HEAD
 				print img_picto('','error').' ';
 				print '<font class="error">'.$langs->trans("LDAPSynchroKOMayBePermissions");
 				print ': '.$ldap->error;
 				print '</font><br>';
 				print $langs->trans("ErrorLDAPMakeManualTest",$conf->ldap->dir_temp).'<br>';
+=======
+				print img_picto('', 'error').' ';
+				print '<font class="error">'.$langs->trans("LDAPSynchroKOMayBePermissions");
+				print ': '.$ldap->error;
+				print '</font><br>';
+				print $langs->trans("ErrorLDAPMakeManualTest", $conf->ldap->dir_temp).'<br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 
 			print "<br>\n";
 			print "LDAP input file used for test:<br><br>\n";
+<<<<<<< HEAD
 			print nl2br($ldap->dump_content($dn,$info));
+=======
+			print nl2br($ldap->dump_content($dn, $info));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print "\n<br>";
 		}
 		else
 		{
+<<<<<<< HEAD
 			print img_picto('','error').' ';
 			print '<font class="error">'.$langs->trans("LDAPSynchroKO");
 			print ': '.$ldap->error;
 			print '</font><br>';
 			print $langs->trans("ErrorLDAPMakeManualTest",$conf->ldap->dir_temp).'<br>';
+=======
+			print img_picto('', 'error').' ';
+			print '<font class="error">'.$langs->trans("LDAPSynchroKO");
+			print ': '.$ldap->error;
+			print '</font><br>';
+			print $langs->trans("ErrorLDAPMakeManualTest", $conf->ldap->dir_temp).'<br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 	}
 }
 
+<<<<<<< HEAD
 llxFooter();
 $db->close();
 
+=======
+// End of page
+llxFooter();
+$db->close();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

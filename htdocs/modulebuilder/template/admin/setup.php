@@ -25,6 +25,7 @@
 // Load Dolibarr environment
 $res=0;
 // Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
+<<<<<<< HEAD
 if (! $res && ! empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) $res=@include($_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php");
 // Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
 $tmp=empty($_SERVER['SCRIPT_FILENAME'])?'':$_SERVER['SCRIPT_FILENAME'];$tmp2=realpath(__FILE__); $i=strlen($tmp)-1; $j=strlen($tmp2)-1;
@@ -34,6 +35,17 @@ if (! $res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i+1)))."/main.inc.
 // Try main.inc.php using relative path
 if (! $res && file_exists("../../main.inc.php")) $res=@include("../../main.inc.php");
 if (! $res && file_exists("../../../main.inc.php")) $res=@include("../../../main.inc.php");
+=======
+if (! $res && ! empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) $res=@include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
+// Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
+$tmp=empty($_SERVER['SCRIPT_FILENAME'])?'':$_SERVER['SCRIPT_FILENAME'];$tmp2=realpath(__FILE__); $i=strlen($tmp)-1; $j=strlen($tmp2)-1;
+while($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i]==$tmp2[$j]) { $i--; $j--; }
+if (! $res && $i > 0 && file_exists(substr($tmp, 0, ($i+1))."/main.inc.php")) $res=@include substr($tmp, 0, ($i+1))."/main.inc.php";
+if (! $res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i+1)))."/main.inc.php")) $res=@include dirname(substr($tmp, 0, ($i+1)))."/main.inc.php";
+// Try main.inc.php using relative path
+if (! $res && file_exists("../../main.inc.php")) $res=@include "../../main.inc.php";
+if (! $res && file_exists("../../../main.inc.php")) $res=@include "../../../main.inc.php";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (! $res) die("Include of main fails");
 
 global $langs, $user;
@@ -59,15 +71,27 @@ $arrayofparameters=array(
 );
 
 
+<<<<<<< HEAD
 /*
  * Actions
  */
+=======
+
+/*
+ * Actions
+ */
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ((float) DOL_VERSION >= 6)
 {
 	include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 }
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 /*
  * View
  */
@@ -85,7 +109,11 @@ $head = mymoduleAdminPrepareHead();
 dol_fiche_head($head, 'settings', '', -1, "mymodule@mymodule");
 
 // Setup page goes here
+<<<<<<< HEAD
 echo $langs->trans("MyModuleSetupPage");
+=======
+echo '<span class="opacitymedium">'.$langs->trans("MyModuleSetupPage").'</span><br><br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 if ($action == 'edit')
@@ -99,6 +127,7 @@ if ($action == 'edit')
 
 	foreach($arrayofparameters as $key => $val)
 	{
+<<<<<<< HEAD
 		if (isset($val['enabled']) && empty($val['enabled'])) continue;
 
 		print '<tr class="oddeven"><td>';
@@ -106,6 +135,12 @@ if ($action == 'edit')
 		print '</td><td><input name="'.$key.'"  class="flat '.(empty($val['css'])?'minwidth200':$val['css']).'" value="' . $conf->global->$key . '"></td></tr>';
 	}
 
+=======
+		print '<tr class="oddeven"><td>';
+		print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
+		print '</td><td><input name="'.$key.'"  class="flat '.(empty($val['css'])?'minwidth200':$val['css']).'" value="' . $conf->global->$key . '"></td></tr>';
+	}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</table>';
 
 	print '<br><div class="center">';
@@ -117,6 +152,7 @@ if ($action == 'edit')
 }
 else
 {
+<<<<<<< HEAD
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
@@ -132,6 +168,30 @@ else
 	print '<div class="tabsAction">';
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
 	print '</div>';
+=======
+	if (! empty($arrayofparameters))
+	{
+		print '<table class="noborder centpercent">';
+		print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+
+		foreach($arrayofparameters as $key => $val)
+		{
+			print '<tr class="oddeven"><td>';
+			print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
+			print '</td><td>' . $conf->global->$key . '</td></tr>';
+		}
+
+		print '</table>';
+
+		print '<div class="tabsAction">';
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
+		print '</div>';
+	}
+	else
+	{
+		print '<br>'.$langs->trans("NothingToSetup");
+	}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 

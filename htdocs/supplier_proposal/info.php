@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006	Laurent Destailleur		<eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -35,8 +39,13 @@ if (! empty($conf->projet->enabled)) {
 // Load translation files required by the page
 $langs->loadLangs(array('supplier_proposal', 'compta'));
 
+<<<<<<< HEAD
 $id=GETPOST('id','int');
 $socid=GETPOST('socid','int');
+=======
+$id=GETPOST('id', 'int');
+$socid=GETPOST('socid', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Security check
 if (! empty($user->societe_id)) $socid=$user->societe_id;
@@ -49,7 +58,11 @@ $result = restrictedArea($user, 'supplier_proposal', $id);
 
 $form = new Form($db);
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans('CommRequest'),'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur');
+=======
+llxHeader('', $langs->trans('CommRequest'), 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $object = new SupplierProposal($db);
 $object->fetch($id);
@@ -123,5 +136,9 @@ print '</div>';
 
 dol_fiche_end();
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

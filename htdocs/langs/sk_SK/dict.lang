@@ -131,7 +131,11 @@ CountryKI=Kiribati
 CountryKP=Severná Kórea
 CountryKR=Južná Kórea
 CountryKW=Kuvajt
+<<<<<<< HEAD
 CountryKG=Kyrghyztan
+=======
+CountryKG=Kyrgyzstan
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryLA=Lao
 CountryLV=Lotyšsko
 CountryLB=Libanon
@@ -160,7 +164,11 @@ CountryMD=Moldavsko
 CountryMN=Mongolsko
 CountryMS=Monserrat
 CountryMZ=Mozambik
+<<<<<<< HEAD
 CountryMM=Birmania (Mjanmarsko)
+=======
+CountryMM=Myanmar (Burma)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryNA=Namíbia
 CountryNR=Nauru
 CountryNP=Nepál
@@ -223,7 +231,11 @@ CountryTO=Tonga
 CountryTT=Trinidad a Tobago
 CountryTR=Turecko
 CountryTM=Turkménsko
+<<<<<<< HEAD
 CountryTC=Turks a Cailos ostrovy
+=======
+CountryTC=Turks and Caicos Islands
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryTV=Tuvalu
 CountryUG=Uganda
 CountryUA=Ukrajina
@@ -277,7 +289,11 @@ CurrencySingMGA=Ariary
 CurrencyMUR=Maurícius rupia
 CurrencySingMUR=Maurícius rupia
 CurrencyNOK=Nórske Krones
+<<<<<<< HEAD
 CurrencySingNOK=Nórska koruna
+=======
+CurrencySingNOK=Norwegian kronas
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrencyTND=Tuniských dinárov
 CurrencySingTND=Tuniský dinár
 CurrencyUSD=Americké doláre
@@ -290,6 +306,10 @@ CurrencyXOF=CFA frank BCEAO
 CurrencySingXOF=CFA frank BCEAO
 CurrencyXPF=CFP frank
 CurrencySingXPF=Frank CFP
+<<<<<<< HEAD
+=======
+CurrencyCentEUR=cents
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrencyCentSingEUR=cent
 CurrencyCentINR=paisa
 CurrencyCentSingINR=paise
@@ -306,6 +326,10 @@ DemandReasonTypeSRC_WOM=Word of mouth
 DemandReasonTypeSRC_PARTNER=Partner
 DemandReasonTypeSRC_EMPLOYEE=Zamestnanec
 DemandReasonTypeSRC_SPONSORING=Sponzoring
+<<<<<<< HEAD
+=======
+DemandReasonTypeSRC_SRC_CUSTOMER=Incoming contact of a customer
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 #### Paper formats ####
 PaperFormatEU4A0=Formát 4A0
 PaperFormatEU2A0=Formát 2A0

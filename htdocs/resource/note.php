@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2005-2012	Regis Houssin	  <regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2005-2012	Regis Houssin	  <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2011-2012	Juanjo Menent	  <jmenent@2byte.es>
  * Copyright (C) 2016       Laurent Destailleur <aldy@users.sourceforge.net>
  * Copyright (C) 2013       Florian Henry   <florian.henry@open-concept.pro>
@@ -32,16 +36,26 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'interventions'));
 
+<<<<<<< HEAD
 $id = GETPOST('id','int');
 $ref = GETPOST('ref','alpha');
 $action=GETPOST('action','alpha');
+=======
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
+$action=GETPOST('action', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'resource', $id, 'resource');
 
 $object = new DolResource($db);
+<<<<<<< HEAD
 $object->fetch($id,$ref);
+=======
+$object->fetch($id, $ref);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $permissionnote=$user->rights->resource->write;	// Used by the include of actions_setnotes.inc.php
 
@@ -79,7 +93,11 @@ if ($id > 0 || ! empty($ref))
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
+<<<<<<< HEAD
 	print '<table class="border" width="100%">';
+=======
+	print '<table class="border tableforfield centpercent">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	// Resource type
 	print '<tr>';
@@ -100,5 +118,9 @@ if ($id > 0 || ! empty($ref))
 	dol_fiche_end();
 }
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

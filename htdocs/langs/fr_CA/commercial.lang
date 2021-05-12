@@ -9,5 +9,8 @@ SaleRepresentativesOfThirdParty=Représentants commerciaux de tiers
 LastDoneTasks=Dernières %s actions complétées
 LastActionsToDo=Le plus ancien %s actions non complétées
 ActionAC_OTH_AUTO=Événements insérés automatiquement
+<<<<<<< HEAD
 WelcomeOnOnlineSignaturePage=Bienvenue sur la page pour accepter les propositions commerciales de %s
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SignatureProposalRef=Signature de la proposition commerciale %s

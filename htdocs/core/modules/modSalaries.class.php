@@ -3,9 +3,15 @@
  * Copyright (C) 2004-2014	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004		Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier       <benoit.mortier@opensides.be>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012	Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2014		Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014		Alexandre Spangaro	 <aspangaro.dolibarr@gmail.com>
+=======
+ * Copyright (C) 2005-2012	Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2014		Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2014		Alexandre Spangaro	 <aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,11 +29,19 @@
  */
 
 /**
+<<<<<<< HEAD
  * 		\defgroup   salaries		Module salaries
  * 		\brief      Module to include salaries management
  *      \file       htdocs/core/modules/modSalaries.class.php
  *      \ingroup    salaries
  *      \brief      File to activate module salaries
+=======
+ *  \defgroup   salaries		Module salaries
+ *  \brief      Module to include salaries management
+ *  \file       htdocs/core/modules/modSalaries.class.php
+ *  \ingroup    salaries
+ *  \brief      File to activate module salaries
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
@@ -43,7 +57,11 @@ class modSalaries extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
+<<<<<<< HEAD
 	function __construct($db)
+=======
+	public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf;
 
@@ -54,7 +72,11 @@ class modSalaries extends DolibarrModules
 		// It is used to group modules by family in module setup page
 		$this->family = "financial";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+<<<<<<< HEAD
 		$this->name = preg_replace('/^mod/i','',get_class($this));
+=======
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// Module description used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Payment of salaries";
 
@@ -72,9 +94,17 @@ class modSalaries extends DolibarrModules
 		$this->config_page_url = array();
 
 		// Dependencies
+<<<<<<< HEAD
 		$this->depends = array();
 		$this->requiredby = array();
 		$this->conflictwith = array();
+=======
+		$this->hidden = false;			// A condition to hide module
+		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->langfiles = array("salaries","bills");
 
 		// Constants
@@ -142,7 +172,11 @@ class modSalaries extends DolibarrModules
 
 		$r++;
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
+<<<<<<< HEAD
 		$this->export_label[$r]='Salaries and payments';
+=======
+		$this->export_label[$r]='SalariesAndPayments';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->export_permission[$r]=array(array("salaries","export"));
 		$this->export_fields_array[$r]=array('u.firstname'=>"Firstname",'u.lastname'=>"Lastname",'u.login'=>"Login",'u.salary'=>'CurrentSalary','p.datep'=>'DatePayment','p.datesp'=>'DateStartPeriod','p.dateep'=>'DateEndPeriod','p.amount'=>'AmountPayment','p.num_payment'=>'Numero','p.label'=>'Label','p.note'=>'Note');
 		$this->export_TypeFields_array[$r]=array('u.firstname'=>"Text",'u.lastname'=>"Text",'u.login'=>'Text','u.salary'=>"Numeric",'p.datep'=>'Date','p.datesp'=>'Date','p.dateep'=>'Date','p.amount'=>'Numeric','p.num_payment'=>'Numeric','p.label'=>'Text');
@@ -157,6 +191,7 @@ class modSalaries extends DolibarrModules
 
 
 	/**
+<<<<<<< HEAD
 	 *		Function called when module is enabled.
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *		It also creates data directories
@@ -165,6 +200,16 @@ class modSalaries extends DolibarrModules
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
 	function init($options='')
+=======
+	 *  Function called when module is enabled.
+	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *  It also creates data directories
+	 *
+	 *  @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *  @return     int             	1 if OK, 0 if KO
+	 */
+	public function init($options = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf;
 
@@ -173,6 +218,10 @@ class modSalaries extends DolibarrModules
 
 		$sql = array();
 
+<<<<<<< HEAD
 		return $this->_init($sql,$options);
+=======
+		return $this->_init($sql, $options);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 }

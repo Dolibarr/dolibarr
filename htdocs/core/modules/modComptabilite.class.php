@@ -40,7 +40,11 @@ class modComptabilite extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
     */
+<<<<<<< HEAD
 	function __construct($db)
+=======
+	public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf;
 
@@ -48,9 +52,15 @@ class modComptabilite extends DolibarrModules
 		$this->numero = 10;
 
 		$this->family = "financial";
+<<<<<<< HEAD
 		$this->module_position = 600;
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
+=======
+		$this->module_position = '60';
+		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->description = "Gestion sommaire de comptabilite";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -98,6 +108,7 @@ class modComptabilite extends DolibarrModules
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+<<<<<<< HEAD
 
 	}
 
@@ -112,6 +123,21 @@ class modComptabilite extends DolibarrModules
     */
 	function init($options='')
 	{
+=======
+	}
+
+
+    /**
+     *  Function called when module is enabled.
+	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *  It also creates data directories
+	 *
+     *  @param      string	$options    Options when enabling module ('', 'noboxes')
+     *  @return     int             	1 if OK, 0 if KO
+    */
+    public function init($options = '')
+    {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf;
 
 		// Nettoyage avant activation
@@ -119,6 +145,10 @@ class modComptabilite extends DolibarrModules
 
 		$sql = array();
 
+<<<<<<< HEAD
 		return $this->_init($sql,$options);
+=======
+		return $this->_init($sql, $options);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 }

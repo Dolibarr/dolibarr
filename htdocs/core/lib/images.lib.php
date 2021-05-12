@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,14 +37,22 @@ $quality = 80;
  *      Return if a filename is file name of a supported image format
  *
  *      @param	string	$file       Filename
+<<<<<<< HEAD
  *      @return int         		-1=Not image filename, 0=Image filename but format not supported by PHP, 1=Image filename with format supported
+=======
+ *      @return int         		-1=Not image filename, 0=Image filename but format not supported by PHP, 1=Image filename with format supported by this PHP
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  */
 function image_format_supported($file)
 {
     $regeximgext='\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.xpm|\.xbm|\.svg';   // See also into product.class.php
 
     // Case filename is not a format image
+<<<<<<< HEAD
     if (! preg_match('/('.$regeximgext.')$/i',$file,$reg)) return -1;
+=======
+    if (! preg_match('/('.$regeximgext.')$/i', $file, $reg)) return -1;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     // Case filename is a format image but not supported by this PHP
     $imgfonction='';
@@ -104,9 +116,15 @@ function dol_getImageSize($file, $url = false)
  *    	@param  int		$newHeight     	Hauteur maximum que dois faire l'image destination (0=keep ratio)
  * 		@param	int		$src_x			Position of croping image in source image (not use if mode=0)
  * 		@param	int		$src_y			Position of croping image in source image (not use if mode=0)
+<<<<<<< HEAD
  *		@return	int						File name if OK, error message if KO
  */
 function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x=0, $src_y=0)
+=======
+ *		@return	string                  File name if OK, error message if KO
+ */
+function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, $src_y = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
@@ -126,7 +144,11 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x=0, $s
 	elseif (! file_exists($file))
 	{
 		// Si le fichier passe en parametre n'existe pas
+<<<<<<< HEAD
 		return $langs->trans("ErrorFileNotFound",$file);
+=======
+		return $langs->trans("ErrorFileNotFound", $file);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 	elseif(image_format_supported($file) < 0)
 	{
@@ -241,13 +263,21 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x=0, $s
 	{
 		case 1:	// Gif
 			$trans_colour = imagecolorallocate($imgThumb, 255, 255, 255); // On procede autrement pour le format GIF
+<<<<<<< HEAD
 			imagecolortransparent($imgThumb,$trans_colour);
+=======
+			imagecolortransparent($imgThumb, $trans_colour);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			break;
 		case 2:	// Jpg
 			$trans_colour = imagecolorallocatealpha($imgThumb, 255, 255, 255, 0);
 			break;
 		case 3:	// Png
+<<<<<<< HEAD
 			imagealphablending($imgThumb,false); // Pour compatibilite sur certain systeme
+=======
+			imagealphablending($imgThumb, false); // Pour compatibilite sur certain systeme
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$trans_colour = imagecolorallocatealpha($imgThumb, 255, 255, 255, 127);	// Keep transparent channel
 			break;
 		case 4:	// Bmp
@@ -349,7 +379,11 @@ function dolRotateImage($file_path)
  *      @param     int		$targetformat     	New format of target (IMAGETYPE_GIF, IMAGETYPE_JPG, IMAGETYPE_PNG, IMAGETYPE_BMP, IMAGETYPE_WBMP ... or 0 to keep old format)
  *    	@return    string						Full path of thumb or '' if it fails or 'Error...' if it fails
  */
+<<<<<<< HEAD
 function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $quality=50, $outdir='thumbs', $targetformat=0)
+=======
+function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small', $quality = 50, $outdir = 'thumbs', $targetformat = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
@@ -369,22 +403,39 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 	elseif (! file_exists($file))
 	{
 		// Si le fichier passe en parametre n'existe pas
+<<<<<<< HEAD
         dol_syslog($langs->trans("ErrorFileNotFound",$file),LOG_ERR);
 	    return $langs->trans("ErrorFileNotFound",$file);
 	}
 	elseif(image_format_supported($file) < 0)
 	{
         dol_syslog('This file '.$file.' does not seem to be an image format file name.',LOG_WARNING);
+=======
+        dol_syslog($langs->trans("ErrorFileNotFound", $file), LOG_ERR);
+	    return $langs->trans("ErrorFileNotFound", $file);
+	}
+	elseif(image_format_supported($file) < 0)
+	{
+        dol_syslog('This file '.$file.' does not seem to be an image format file name.', LOG_WARNING);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    return 'ErrorBadImageFormat';
 	}
 	elseif(!is_numeric($maxWidth) || empty($maxWidth) || $maxWidth < -1){
 		// Si la largeur max est incorrecte (n'est pas numerique, est vide, ou est inferieure a 0)
+<<<<<<< HEAD
         dol_syslog('Wrong value for parameter maxWidth',LOG_ERR);
+=======
+        dol_syslog('Wrong value for parameter maxWidth', LOG_ERR);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    return 'Error: Wrong value for parameter maxWidth';
 	}
 	elseif(!is_numeric($maxHeight) || empty($maxHeight) || $maxHeight < -1){
 		// Si la hauteur max est incorrecte (n'est pas numerique, est vide, ou est inferieure a 0)
+<<<<<<< HEAD
         dol_syslog('Wrong value for parameter maxHeight',LOG_ERR);
+=======
+        dol_syslog('Wrong value for parameter maxHeight', LOG_ERR);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    return 'Error: Wrong value for parameter maxHeight';
 	}
 
@@ -401,7 +452,11 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 	if ($infoImg[0] < $maxWidth && $infoImg[1] < $maxHeight)
 	{
 		// On cree toujours les vignettes
+<<<<<<< HEAD
 		dol_syslog("File size is smaller than thumb size",LOG_DEBUG);
+=======
+		dol_syslog("File size is smaller than thumb size", LOG_DEBUG);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		//return 'Le fichier '.$file.' ne necessite pas de creation de vignette';
 	}
 
@@ -447,7 +502,11 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 			break;
 		case IMAGETYPE_JPEG:    // 2
 			$img = imagecreatefromjpeg($filetoread);
+<<<<<<< HEAD
 			$extImg = (preg_match('/\.jpeg$/',$file)?'.jpeg':'.jpg'); // Extension de l'image
+=======
+			$extImg = (preg_match('/\.jpeg$/', $file)?'.jpeg':'.jpg'); // Extension de l'image
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			break;
 		case IMAGETYPE_PNG:	    // 3
 			$img = imagecreatefrompng($filetoread);
@@ -523,17 +582,29 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 	{
 		case IMAGETYPE_GIF:	    // 1
 			$trans_colour = imagecolorallocate($imgThumb, 255, 255, 255); // On procede autrement pour le format GIF
+<<<<<<< HEAD
 			imagecolortransparent($imgThumb,$trans_colour);
+=======
+			imagecolortransparent($imgThumb, $trans_colour);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $extImgTarget = '.gif';
             $newquality='NU';
             break;
 		case IMAGETYPE_JPEG:    // 2
             $trans_colour = imagecolorallocatealpha($imgThumb, 255, 255, 255, 0);
+<<<<<<< HEAD
             $extImgTarget = (preg_match('/\.jpeg$/i',$file)?'.jpeg':'.jpg');
             $newquality=$quality;
             break;
 		case IMAGETYPE_PNG:	    // 3
 			imagealphablending($imgThumb,false); // Pour compatibilite sur certain systeme
+=======
+            $extImgTarget = (preg_match('/\.jpeg$/i', $file)?'.jpeg':'.jpg');
+            $newquality=$quality;
+            break;
+		case IMAGETYPE_PNG:	    // 3
+			imagealphablending($imgThumb, false); // Pour compatibilite sur certain systeme
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$trans_colour = imagecolorallocatealpha($imgThumb, 255, 255, 255, 127);	// Keep transparent channel
             $extImgTarget = '.png';
             $newquality=$quality-100;
@@ -556,7 +627,11 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 	//imagecopyresized($imgThumb, $img, 0, 0, 0, 0, $thumbWidth, $thumbHeight, $imgWidth, $imgHeight); // Insere l'image de base redimensionnee
 	imagecopyresampled($imgThumb, $img, 0, 0, 0, 0, $thumbWidth, $thumbHeight, $imgWidth, $imgHeight); // Insere l'image de base redimensionnee
 
+<<<<<<< HEAD
 	$fileName = preg_replace('/(\.gif|\.jpeg|\.jpg|\.png|\.bmp)$/i','',$file);	// On enleve extension quelquesoit la casse
+=======
+	$fileName = preg_replace('/(\.gif|\.jpeg|\.jpg|\.png|\.bmp)$/i', '', $file);	// On enleve extension quelquesoit la casse
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$fileName = basename($fileName);
 	//$imgThumbName = $dirthumb.'/'.getImageFileNameForSize(basename($file), $extName, $extImgTarget);   // Full path of thumb file
 	$imgThumbName = getImageFileNameForSize($file, $extName, $extImgTarget);   // Full path of thumb file

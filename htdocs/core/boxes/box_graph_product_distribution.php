@@ -1,5 +1,9 @@
 <?php
 /* Copyright (C) 2013-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
+=======
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +32,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
  */
 class box_graph_product_distribution extends ModeleBoxes
 {
+<<<<<<< HEAD
 	var $boxcode="productdistribution";
 	var $boximg="object_product";
 	var $boxlabel="BoxProductDistribution";
@@ -38,6 +43,22 @@ class box_graph_product_distribution extends ModeleBoxes
 
 	var $info_box_head = array();
 	var $info_box_contents = array();
+=======
+    public $boxcode="productdistribution";
+    public $boximg="object_product";
+    public $boxlabel="BoxProductDistribution";
+    public $depends = array("product|service","facture|propal|commande");
+
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    public $param;
+
+    public $info_box_head = array();
+    public $info_box_contents = array();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	/**
@@ -46,7 +67,11 @@ class box_graph_product_distribution extends ModeleBoxes
 	 * 	@param	DoliDB	$db			Database handler
 	 *  @param	string	$param		More parameters
 	 */
+<<<<<<< HEAD
 	function __construct($db,$param)
+=======
+	public function __construct($db, $param)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $user, $conf;
 
@@ -65,7 +90,11 @@ class box_graph_product_distribution extends ModeleBoxes
 	 *  @param	int		$max        Maximum number of records to load
      *  @return	void
 	 */
+<<<<<<< HEAD
 	function loadBox($max=5)
+=======
+	public function loadBox($max = 5)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf, $user, $langs, $db;
 
@@ -81,6 +110,7 @@ class box_graph_product_distribution extends ModeleBoxes
 		$param_showinvoicenb='DOLUSERCOOKIE_box_'.$this->boxcode.'_showinvoicenb';
 		$param_showpropalnb='DOLUSERCOOKIE_box_'.$this->boxcode.'_showpropalnb';
 		$param_showordernb='DOLUSERCOOKIE_box_'.$this->boxcode.'_showordernb';
+<<<<<<< HEAD
 		$autosetarray=preg_split("/[,;:]+/",GETPOST('DOL_AUTOSET_COOKIE'));
 		if (in_array('DOLUSERCOOKIE_box_'.$this->boxcode,$autosetarray))
 		{
@@ -92,6 +122,19 @@ class box_graph_product_distribution extends ModeleBoxes
 		else
 		{
 			$tmparray=json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode],true);
+=======
+		$autosetarray=preg_split("/[,;:]+/", GETPOST('DOL_AUTOSET_COOKIE'));
+		if (in_array('DOLUSERCOOKIE_box_'.$this->boxcode, $autosetarray))
+		{
+			$year=GETPOST($param_year, 'int');
+			$showinvoicenb=GETPOST($param_showinvoicenb, 'alpha');
+			$showpropalnb=GETPOST($param_showpropalnb, 'alpha');
+			$showordernb=GETPOST($param_showordernb, 'alpha');
+		}
+		else
+		{
+			$tmparray=json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode], true);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$year=$tmparray['year'];
 			$showinvoicenb=$tmparray['showinvoicenb'];
 			$showpropalnb=$tmparray['showpropalnb'];
@@ -102,7 +145,11 @@ class box_graph_product_distribution extends ModeleBoxes
 		if (empty($conf->propal->enabled) || empty($user->rights->propale->lire)) $showpropalnb=0;
 		if (empty($conf->commande->enabled) || empty($user->rights->commande->lire)) $showordernb=0;
 
+<<<<<<< HEAD
 		$nowarray=dol_getdate(dol_now(),true);
+=======
+		$nowarray=dol_getdate(dol_now(), true);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if (empty($year)) $year=$nowarray['year'];
 
 		$nbofgraph=0;
@@ -110,7 +157,11 @@ class box_graph_product_distribution extends ModeleBoxes
 		if ($showpropalnb)  $nbofgraph++;
 		if ($showordernb)   $nbofgraph++;
 
+<<<<<<< HEAD
 		$text = $langs->trans("BoxProductDistribution",$max).' - '.$langs->trans("Year").': '.$year;
+=======
+		$text = $langs->trans("BoxProductDistribution", $max).' - '.$langs->trans("Year").': '.$year;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->info_box_head = array(
 				'text' => $text,
 				'limit'=> dol_strlen($text),
@@ -123,10 +174,13 @@ class box_graph_product_distribution extends ModeleBoxes
 		);
 
 
+<<<<<<< HEAD
 		$paramtitle=$langs->transnoentitiesnoconv("Products").'/'.$langs->transnoentitiesnoconv("Services");
 		if (empty($conf->produit->enabled)) $paramtitle=$langs->transnoentitiesnoconv("Services");
 		if (empty($conf->service->enabled)) $paramtitle=$langs->transnoentitiesnoconv("Products");
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$socid=empty($user->societe_id)?0:$user->societe_id;
 		$userid=0;	// No filter on user creation
 
@@ -135,16 +189,27 @@ class box_graph_product_distribution extends ModeleBoxes
 
 		if (! empty($conf->facture->enabled) && ! empty($user->rights->facture->lire))
 		{
+<<<<<<< HEAD
 
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showinvoicenb)
 			{
+=======
+			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
+			if ($showinvoicenb)
+			{
+                $langs->load("bills");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
 
 				$showpointvalue = 1; $nocolor = 0;
 				$mode='customer';
 				$stats_invoice = new FactureStats($this->db, $socid, $mode, ($userid>0?$userid:0));
+<<<<<<< HEAD
 				$data1 = $stats_invoice->getAllByProductEntry($year,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)));
+=======
+				$data1 = $stats_invoice->getAllByProductEntry($year, (GETPOST('action', 'aZ09')==$refreshaction?-1:(3600*24)));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if (empty($data1))
 				{
 					$showpointvalue=0;
@@ -161,7 +226,11 @@ class box_graph_product_distribution extends ModeleBoxes
 					$i=0;$tot=count($data1);$legend=array();
 					while ($i <= $tot)
 					{
+<<<<<<< HEAD
 						$data1[$i][0]=dol_trunc($data1[$i][0],5);	// Required to avoid error "Could not draw pie with labels contained inside canvas"
+=======
+						$data1[$i][0]=dol_trunc($data1[$i][0], 5);	// Required to avoid error "Could not draw pie with labels contained inside canvas"
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						$legend[]=$data1[$i][0];
 						$i++;
 					}
@@ -170,7 +239,10 @@ class box_graph_product_distribution extends ModeleBoxes
 					unset($data1);
 
 					if ($nocolor) $px1->SetDataColor(array(array(220,220,220)));
+<<<<<<< HEAD
 					$px1->SetPrecisionY(0);
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					$px1->SetLegend($legend);
 					$px1->setShowLegend(0);
 					$px1->setShowPointValue($showpointvalue);
@@ -181,6 +253,7 @@ class box_graph_product_distribution extends ModeleBoxes
 					//$px1->SetYLabel($langs->trans("NumberOfBills"));
 					$px1->SetShading(3);
 					$px1->SetHorizTickIncrement(1);
+<<<<<<< HEAD
 					$px1->SetPrecisionY(0);
 					$px1->SetCssPrefix("cssboxes");
 					//$px1->mode='depth';
@@ -189,6 +262,15 @@ class box_graph_product_distribution extends ModeleBoxes
 					$px1->combine = 0.05;
 
 					$px1->draw($filenamenb,$fileurlnb);
+=======
+					$px1->SetCssPrefix("cssboxes");
+					//$px1->mode='depth';
+					$px1->SetType(array('pie'));
+					$px1->SetTitle($langs->trans("ForObject", $langs->transnoentitiesnoconv("Invoices")));
+					$px1->combine = 0.05;
+
+					$px1->draw($filenamenb, $fileurlnb);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 			}
 		}
@@ -198,11 +280,19 @@ class box_graph_product_distribution extends ModeleBoxes
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showpropalnb)
 			{
+<<<<<<< HEAD
+=======
+                $langs->load("propal");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propalestats.class.php';
 
 				$showpointvalue = 1; $nocolor = 0;
 				$stats_proposal = new PropaleStats($this->db, $socid, ($userid>0?$userid:0));
+<<<<<<< HEAD
 				$data2 = $stats_proposal->getAllByProductEntry($year,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)));
+=======
+				$data2 = $stats_proposal->getAllByProductEntry($year, (GETPOST('action', 'aZ09')==$refreshaction?-1:(3600*24)));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if (empty($data2))
 				{
 					$showpointvalue = 0;
@@ -220,7 +310,11 @@ class box_graph_product_distribution extends ModeleBoxes
 					$i=0;$tot=count($data2);$legend=array();
 					while ($i <= $tot)
 					{
+<<<<<<< HEAD
 						$data2[$i][0]=dol_trunc($data2[$i][0],5);	// Required to avoid error "Could not draw pie with labels contained inside canvas"
+=======
+						$data2[$i][0]=dol_trunc($data2[$i][0], 5);	// Required to avoid error "Could not draw pie with labels contained inside canvas"
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						$legend[]=$data2[$i][0];
 						$i++;
 					}
@@ -229,7 +323,10 @@ class box_graph_product_distribution extends ModeleBoxes
 					unset($data2);
 
 					if ($nocolor) $px2->SetDataColor(array(array(220,220,220)));
+<<<<<<< HEAD
 					$px2->SetPrecisionY(0);
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					$px2->SetLegend($legend);
 					$px2->setShowLegend(0);
 					$px2->setShowPointValue($showpointvalue);
@@ -240,6 +337,7 @@ class box_graph_product_distribution extends ModeleBoxes
 					//$px2->SetYLabel($langs->trans("AmountOfBillsHT"));
 					$px2->SetShading(3);
 					$px2->SetHorizTickIncrement(1);
+<<<<<<< HEAD
 					$px2->SetPrecisionY(0);
 					$px2->SetCssPrefix("cssboxes");
 					//$px2->mode='depth';
@@ -248,23 +346,43 @@ class box_graph_product_distribution extends ModeleBoxes
 					$px2->combine = 0.05;
 
 					$px2->draw($filenamenb,$fileurlnb);
+=======
+					$px2->SetCssPrefix("cssboxes");
+					//$px2->mode='depth';
+					$px2->SetType(array('pie'));
+					$px2->SetTitle($langs->trans("ForObject", $langs->transnoentitiesnoconv("Proposals")));
+					$px2->combine = 0.05;
+
+					$px2->draw($filenamenb, $fileurlnb);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 			}
 		}
 
 		if (! empty($conf->commande->enabled) && ! empty($user->rights->commande->lire))
 		{
+<<<<<<< HEAD
 			$langs->load("orders");
 
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showordernb)
 			{
+=======
+			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
+			if ($showordernb)
+			{
+			    $langs->load("orders");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				include_once DOL_DOCUMENT_ROOT.'/commande/class/commandestats.class.php';
 
 				$showpointvalue = 1; $nocolor = 0;
 				$mode='customer';
 				$stats_order = new CommandeStats($this->db, $socid, $mode, ($userid>0?$userid:0));
+<<<<<<< HEAD
 				$data3 = $stats_order->getAllByProductEntry($year,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)));
+=======
+				$data3 = $stats_order->getAllByProductEntry($year, (GETPOST('action', 'aZ09')==$refreshaction?-1:(3600*24)));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if (empty($data3))
 				{
 					$showpointvalue = 0;
@@ -282,7 +400,11 @@ class box_graph_product_distribution extends ModeleBoxes
 					$i=0;$tot=count($data3);$legend=array();
 					while ($i <= $tot)
 					{
+<<<<<<< HEAD
 						$data3[$i][0]=dol_trunc($data3[$i][0],5);	// Required to avoid error "Could not draw pie with labels contained inside canvas"
+=======
+						$data3[$i][0]=dol_trunc($data3[$i][0], 5);	// Required to avoid error "Could not draw pie with labels contained inside canvas"
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						$legend[]=$data3[$i][0];
 						$i++;
 					}
@@ -291,7 +413,10 @@ class box_graph_product_distribution extends ModeleBoxes
 					unset($data3);
 
 					if ($nocolor) $px3->SetDataColor(array(array(220,220,220)));
+<<<<<<< HEAD
 					$px3->SetPrecisionY(0);
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					$px3->SetLegend($legend);
 					$px3->setShowLegend(0);
 					$px3->setShowPointValue($showpointvalue);
@@ -302,6 +427,7 @@ class box_graph_product_distribution extends ModeleBoxes
 					//$px3->SetYLabel($langs->trans("AmountOfBillsHT"));
 					$px3->SetShading(3);
 					$px3->SetHorizTickIncrement(1);
+<<<<<<< HEAD
 					$px3->SetPrecisionY(0);
 					$px3->SetCssPrefix("cssboxes");
 					//$px3->mode='depth';
@@ -310,6 +436,15 @@ class box_graph_product_distribution extends ModeleBoxes
 					$px3->combine = 0.05;
 
 					$px3->draw($filenamenb,$fileurlnb);
+=======
+					$px3->SetCssPrefix("cssboxes");
+					//$px3->mode='depth';
+					$px3->SetType(array('pie'));
+					$px3->SetTitle($langs->trans("ForObject", $langs->transnoentitiesnoconv("Orders")));
+					$px3->combine = 0.05;
+
+					$px3->draw($filenamenb, $fileurlnb);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 			}
 		}
@@ -337,6 +472,10 @@ class box_graph_product_distribution extends ModeleBoxes
 			</script>';
 			$stringtoshow.='<div class="center hideobject" id="idfilter'.$this->boxcode.'">';	// hideobject is to start hidden
 			$stringtoshow.='<form class="flat formboxfilter" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+<<<<<<< HEAD
+=======
+			$stringtoshow.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$stringtoshow.='<input type="hidden" name="action" value="'.$refreshaction.'">';
 			$stringtoshow.='<input type="hidden" name="page_y" value="">';
 			$stringtoshow.='<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSERCOOKIE_box_'.$this->boxcode.':year,showinvoicenb,showpropalnb,showordernb">';
@@ -356,24 +495,39 @@ class box_graph_product_distribution extends ModeleBoxes
 			}
 			$stringtoshow.='<br>';
 			$stringtoshow.=$langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$year.'">';
+<<<<<<< HEAD
 			$stringtoshow.='<input type="image" class="reposition inline-block valigntextbottom" alt="'.$langs->trans("Refresh").'" src="'.img_picto('','refresh.png','','',1).'">';
+=======
+			$stringtoshow.='<input type="image" class="reposition inline-block valigntextbottom" alt="'.$langs->trans("Refresh").'" src="'.img_picto('', 'refresh.png', '', '', 1).'">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$stringtoshow.='</form>';
 			$stringtoshow.='</div>';
 
 			if ($nbofgraph == 1)
 			{
 				if ($showinvoicenb) $stringtoshow.=$px1->show();
+<<<<<<< HEAD
 				else if ($showpropalnb) $stringtoshow.=$px2->show();
+=======
+				elseif ($showpropalnb) $stringtoshow.=$px2->show();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				else $stringtoshow.=$px3->show();
 			}
 			if ($nbofgraph == 2)
 			{
 				$stringtoshow.='<div class="fichecenter"><div class="containercenter"><div class="fichehalfleft">';
 				if ($showinvoicenb) $stringtoshow.=$px1->show();
+<<<<<<< HEAD
 				else if ($showpropalnb) $stringtoshow.=$px2->show();
 				$stringtoshow.='</div><div class="fichehalfright">';
 				if ($showordernb) $stringtoshow.=$px3->show();
 				else if ($showpropalnb) $stringtoshow.=$px2->show();
+=======
+				elseif ($showpropalnb) $stringtoshow.=$px2->show();
+				$stringtoshow.='</div><div class="fichehalfright">';
+				if ($showordernb) $stringtoshow.=$px3->show();
+				elseif ($showpropalnb) $stringtoshow.=$px2->show();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$stringtoshow.='</div></div></div>';
 			}
 			if ($nbofgraph == 3)
@@ -387,17 +541,32 @@ class box_graph_product_distribution extends ModeleBoxes
 				$stringtoshow.=$px3->show();
 				$stringtoshow.='</div></div>';
 			}
+<<<<<<< HEAD
 			$this->info_box_contents[0][0] = array('tr'=>'class="oddeven nohover"', 'td' => 'align="center" class="nohover"','textnoformat'=>$stringtoshow);
+=======
+			$this->info_box_contents[0][0] = array(
+                'tr'=>'class="oddeven nohover"',
+                'td' => 'class="nohover center"',
+                'textnoformat'=>$stringtoshow,
+            );
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		else
 		{
 			$this->info_box_contents[0][0] = array(
+<<<<<<< HEAD
 			    'td' => 'align="left" class="nohover opacitymedium"',
+=======
+			    'td' => 'class="nohover opacitymedium left"',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				'maxlength'=>500,
 				'text' => $mesg
 			);
 		}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	/**
@@ -408,6 +577,7 @@ class box_graph_product_distribution extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
+<<<<<<< HEAD
     function showBox($head = null, $contents = null, $nooutput=0)
     {
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
@@ -415,3 +585,10 @@ class box_graph_product_distribution extends ModeleBoxes
 
 }
 
+=======
+    public function showBox($head = null, $contents = null, $nooutput = 0)
+    {
+		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+	}
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2010 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2010 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,9 +33,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 // Load translation files required by the page
 $langs->load('projects');
 
+<<<<<<< HEAD
 $action=GETPOST('action','aZ09');
 $id = GETPOST('id','int');
 $ref= GETPOST('ref','alpha');
+=======
+$action=GETPOST('action', 'aZ09');
+$id = GETPOST('id', 'int');
+$ref= GETPOST('ref', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
@@ -44,7 +54,11 @@ if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($ob
 // Security check
 $socid=0;
 //if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+<<<<<<< HEAD
 $result = restrictedArea($user, 'projet', $id,'projet&project');
+=======
+$result = restrictedArea($user, 'projet', $id, 'projet&project');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $permissionnote=$user->rights->projet->creer;	// Used by the include of actions_setnotes.inc.php
 
@@ -61,9 +75,15 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, 
  */
 
 $title=$langs->trans("Project").' - '.$langs->trans("Note").' - '.$object->ref.' '.$object->name;
+<<<<<<< HEAD
 if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->ref.' '.$object->name.' - '.$langs->trans("Note");
 $help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 llxHeader("",$title,$help_url);
+=======
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->ref.' '.$object->name.' - '.$langs->trans("Note");
+$help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
+llxHeader("", $title, $help_url);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $form = new Form($db);
 $userstatic=new User($db);
@@ -74,7 +94,11 @@ if ($id > 0 || ! empty($ref))
 {
 	// To verify role of users
 	//$userAccess = $object->restrictedProjectArea($user,'read');
+<<<<<<< HEAD
 	$userWrite  = $object->restrictedProjectArea($user,'write');
+=======
+	$userWrite  = $object->restrictedProjectArea($user, 'write');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	//$userDelete = $object->restrictedProjectArea($user,'delete');
 	//print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
@@ -99,8 +123,13 @@ if ($id > 0 || ! empty($ref))
 	// Define a complementary filter for search of next/prev ref.
 	if (! $user->rights->projet->all->lire)
 	{
+<<<<<<< HEAD
 	    $objectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
 	    $object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
+=======
+	    $objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
+	    $object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',', array_keys($objectsListId)):'0').")";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 	
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -119,6 +148,11 @@ if ($id > 0 || ! empty($ref))
 	dol_fiche_end();
 }
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

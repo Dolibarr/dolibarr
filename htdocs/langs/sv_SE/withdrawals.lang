@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - withdrawals
+<<<<<<< HEAD
 CustomersStandingOrdersArea=Direct debit payment orders area
 SuppliersStandingOrdersArea=Direct credit payment orders area
 StandingOrdersPayment=Direct debit payment orders
@@ -29,6 +30,38 @@ ThirdPartyBankCode=Tredje part bankkod
 NoInvoiceCouldBeWithdrawed=No invoice withdrawed with success. Check that invoices are on companies with a valid default BAN and that BAN has a RUM with mode <strong>%s</strong>.
 ClassCredited=Klassificera krediteras
 ClassCreditedConfirm=Är du säker på att du vill klassificera detta tillbakadragande mottagande som krediteras på ditt bankkonto?
+=======
+CustomersStandingOrdersArea=Direktbetalningsorderorder
+SuppliersStandingOrdersArea=Direkt kreditbetalningsorderområde
+StandingOrdersPayment=Direktbetalningsorder
+StandingOrderPayment=Direktbetalningsorder
+NewStandingOrder=Ny direktdebitering
+StandingOrderToProcess=För att kunna behandla
+WithdrawalsReceipts=Direkt debiteringsorder
+WithdrawalReceipt=Direkt debitering
+LastWithdrawalReceipts=Senaste %s direkt debit-filer
+WithdrawalsLines=Direktbetalningsorder
+RequestStandingOrderToTreat=Begäran om betalning för direktbetalning ska behandlas
+RequestStandingOrderTreated=Förfrågan om betalning av direktbetalningsorder behandlas
+NotPossibleForThisStatusOfWithdrawReceiptORLine=Ännu inte möjligt. Uttag status måste vara inställd på "kredit" innan den förklarar förkastar på specifika linjer.
+NbOfInvoiceToWithdraw=Antal kvalificerad faktura med väntande direkt debiteringsorder
+NbOfInvoiceToWithdrawWithInfo=Antal kundfaktura med order för direktbetalning med definierad bankkontoinformation
+InvoiceWaitingWithdraw=Faktura som väntar på direktdebitering
+AmountToWithdraw=Belopp att dra tillbaka
+WithdrawsRefused=Direkt debitering vägrade
+NoInvoiceToWithdraw=Ingen kundfaktura med öppna "Debiteringsförfrågningar" väntar. Gå på fliken '%s' på fakturakortet för att göra en förfrågan.
+ResponsibleUser=Användaransvarig
+WithdrawalsSetup=Inställning för direktbetalning
+WithdrawStatistics=Direktbetalningsstatistik
+WithdrawRejectStatistics=Direktbetalning avvisar statistik
+LastWithdrawalReceipt=Senaste %s direktavköpsintäkterna
+MakeWithdrawRequest=Gör en förskottsbetalningsförfrågan
+WithdrawRequestsDone=%s begärda betalningsförfrågningar
+ThirdPartyBankCode=Tredjeparts bankkod
+NoInvoiceCouldBeWithdrawed=Ingen faktura debiteras framgångsrikt. Kontrollera att fakturor är på företag med en giltig IBAN och att IBAN har en UMR (Unique Mandate Reference) med läget <strong> %s </strong>.
+ClassCredited=Märk krediterad
+ClassCreditedConfirm=Är du säker på att du vill märka detta tillbakadragande mottagande som krediteras på ditt bankkonto?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TransData=Datum Transmission
 TransMetod=Metod Transmission
 Send=Skicka
@@ -41,7 +74,11 @@ RefusedReason=Orsak till avslag
 RefusedInvoicing=Fakturering avslaget
 NoInvoiceRefused=Ladda inte avslaget
 InvoiceRefused=Faktura vägrade (Ladda avslag till kunden)
+<<<<<<< HEAD
 StatusDebitCredit=Status debit/credit
+=======
+StatusDebitCredit=Statusavgift / kredit
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 StatusWaiting=Väntar
 StatusTrans=Överförs
 StatusCredited=Krediteras
@@ -49,15 +86,25 @@ StatusRefused=Refused
 StatusMotif0=Ospecificerat
 StatusMotif1=Bestämmelse insuffisante
 StatusMotif2=Tirage conteste
+<<<<<<< HEAD
 StatusMotif3=No direct debit payment order
+=======
+StatusMotif3=Ingen direktbetalningsorder
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 StatusMotif4=Kundorder
 StatusMotif5=RIB inexploitable
 StatusMotif6=Konto utan balans
 StatusMotif7=Rättsligt beslut
 StatusMotif8=Annan orsak
+<<<<<<< HEAD
 CreateForSepaFRST=Create direct debit file (SEPA FRST)
 CreateForSepaRCUR=Create direct debit file (SEPA RCUR)
 CreateAll=Create direct debit file (all)
+=======
+CreateForSepaFRST=Skapa direkt debitfil (SEPA FRST)
+CreateForSepaRCUR=Skapa direkt debitfil (SEPA RCUR)
+CreateAll=Skapa direkt debitfil (alla)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CreateGuichet=Endast kontor
 CreateBanque=Endast bank
 OrderWaiting=Plats för en ny behandling
@@ -66,6 +113,7 @@ NotifyCredit=Återkallelse Credit
 NumeroNationalEmetter=Nationella sändare Antal
 WithBankUsingRIB=För bankkonton med hjälp av RIB
 WithBankUsingBANBIC=För bankkonton som använder IBAN / BIC / SWIFT
+<<<<<<< HEAD
 BankToReceiveWithdraw=Bank account to receive direct debit
 CreditDate=Krediter på
 WithdrawalFileNotCapable=Det går inte att skapa uttags kvitto fil för ditt land %s (ditt land stöds inte)
@@ -111,4 +159,55 @@ InfoTransMessage=The direct debit payment order %s has been sent to bank by %s %
 InfoTransData=Belopp: %s <br> Metode: %s <br> Datum: %s
 InfoRejectSubject=Direct debit payment order refused
 InfoRejectMessage=Hello,<br><br>the direct debit payment order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%s
+=======
+BankToReceiveWithdraw=Mottagande bankkonto
+CreditDate=Krediter på
+WithdrawalFileNotCapable=Det går inte att skapa uttags kvitto fil för ditt land %s (ditt land stöds inte)
+ShowWithdraw=Show Direct Debit Order
+IfInvoiceNeedOnWithdrawPaymentWontBeClosed=However, if invoice has at least one direct debit payment order not yet processed, it won't be set as paid to allow prior withdrawal management.
+DoStandingOrdersBeforePayments=Med den här fliken kan du begära en order för direktbetalning. När du är klar, gå till menyn Bank-> Direktbetalningsorder för att hantera betalningsordern. När betalningsordern är stängd registreras betalning på faktura automatiskt och fakturan stängs om återstoden betalas är null.
+WithdrawalFile=Utträde fil
+SetToStatusSent=Ställ in på status "File Skickat"
+ThisWillAlsoAddPaymentOnInvoice=Detta kommer också att registrera betalningar till fakturor och märka dem som "Betalda" om det kvarstår att betala är noll
+StatisticsByLineStatus=Statistik efter status linjer
+RUM=UMR
+RUMLong=Unik Mandatreferens
+RUMWillBeGenerated=Om tomt kommer en UMR (Unique Mandate Reference) att genereras när bankkontoinformationen är sparad.
+WithdrawMode=Direkt debiteringsläge (FRST eller RECUR)
+WithdrawRequestAmount=Belopp för direkt debitering:
+WithdrawRequestErrorNilAmount=Det gick inte att skapa en direkt debitering för tom belopp.
+SepaMandate=SEPA-direkt debiteringsmandat
+SepaMandateShort=SEPA-mandat
+PleaseReturnMandate=Vänligen returnera detta mandatformulär via e-post till %s eller via mail till
+SEPALegalText=Genom att underteckna det här mandatet godkänner du (A) %s att skicka instruktioner till din bank för att debitera ditt konto och (B) din bank att debitera ditt konto i enlighet med instruktionerna från %s. Som en del av dina rättigheter har du rätt till återbetalning från din bank enligt villkoren för ditt avtal med din bank. Återbetalning måste krävas inom 8 veckor från och med det datum då ditt konto debiterades. Dina rättigheter avseende ovanstående mandat förklaras i ett uttalande som du kan få från din bank.
+CreditorIdentifier=Creditor Identifier
+CreditorName=Kreditgivarens namn
+SEPAFillForm=(B) Vänligen fyll i alla fält markerade *
+SEPAFormYourName=Ditt namn
+SEPAFormYourBAN=Ditt bankkontonamn (IBAN)
+SEPAFormYourBIC=Din Bank Identifier Code (BIC)
+SEPAFrstOrRecur=Typ av betalning
+ModeRECUR=Återkommande betalning
+ModeFRST=Engångsbetalning
+PleaseCheckOne=Vänligen kolla en enda
+DirectDebitOrderCreated=Direkt debitering %s skapad
+AmountRequested=Belopp som begärs
+SEPARCUR=SEPA CUR
+SEPAFRST=SEPA FRST
+ExecutionDate=Exekveringsdatum
+CreateForSepa=Skapa direkt debitfil
+ICS=Krediteridentifierare CI
+END_TO_END="EndToEndId" SEPA XML-tagg - Unikt ID tilldelat per transaktion
+USTRD="Ostrukturerad" SEPA XML-tagg
+ADDDAYS=Lägg till dagar till Exekveringsdatum
+
+### Notifications
+InfoCreditSubject=Betalning av direktbetalningsorder %s av banken
+InfoCreditMessage=Betalningsordern %s har betalats av banken <br> Betalningsuppgifter: %s
+InfoTransSubject=Överföring av direktbetalningsorder %s till bank
+InfoTransMessage=Betalningsordern %s har skickats till bank av %s %s. <br> <br>
+InfoTransData=Belopp: %s <br> Metode: %s <br> Datum: %s
+InfoRejectSubject=Betalningsordern vägrade
+InfoRejectMessage=Hej, <br> <br> Betalningsordern för fakturan %s relaterad till företaget %s, med ett belopp på %s, har vägrats av banken. <br> <br> - <br> %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ModeWarning=Alternativ på riktigt läget inte var satt, sluta vi efter denna simulering

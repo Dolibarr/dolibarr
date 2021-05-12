@@ -37,7 +37,11 @@ class modSyslog extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
+<<<<<<< HEAD
 	function __construct($db)
+=======
+	public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$this->db = $db;
 		$this->numero = 42;
@@ -46,9 +50,15 @@ class modSyslog extends DolibarrModules
 		// It is used to group modules in module setup page
 		$this->family = "base";
 		// Module position in the family on 2 digits ('01', '10', '20', ...)
+<<<<<<< HEAD
 		$this->module_position = '50';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
+=======
+		$this->module_position = '75';
+		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Activate debug logs (syslog)";
 		// Can be enabled / disabled only in the main company
@@ -67,8 +77,16 @@ class modSyslog extends DolibarrModules
 		$this->config_page_url = array("syslog.php");
 
 		// Dependencies
+<<<<<<< HEAD
 		$this->depends = array();
 		$this->requiredby = array();
+=======
+		$this->hidden = false;			// A condition to hide module
+		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Constants
 		$this->const = array();
@@ -82,6 +100,7 @@ class modSyslog extends DolibarrModules
 
 		// Cronjobs
 		$this->cronjobs = array(
+<<<<<<< HEAD
 		    0=>array(
 		    	'label'=>'CompressSyslogs',
 		    	'jobtype'=>'method',
@@ -96,6 +115,22 @@ class modSyslog extends DolibarrModules
 		    	'status'=>0,
 		    	'test'=>true
 		    )
+=======
+			0 => array(
+				'label' => 'CompressSyslogs',
+				'jobtype' => 'method',
+				'class' => 'core/class/utils.class.php',
+				'objectname' => 'Utils',
+				'method' => 'compressSyslogs',
+				'parameters' => '',
+				'comment' => 'Compress and archive log files. Warning: batch must be run with same account than your web server to avoid to get log files with different owner than required by web server. Another solution is to set web server Operating System group as the group of directory documents and set GROUP permission "rws" on this directory so log files will always have the group and permissions of the web server Operating System group',
+				'frequency' => 1,
+				'unitfrequency' => 3600 * 24,
+				'priority' => 50,
+				'status' => 0,
+				'test' => true
+			)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		);
 	}
 }

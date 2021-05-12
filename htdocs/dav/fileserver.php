@@ -1,5 +1,9 @@
 <?php
 /* Copyright (C) 2018	Destailleur Laurent	<eldy@users.sourceforge.net>
+<<<<<<< HEAD
+=======
+ * Copyright (C) 2019	Regis Houssin		<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,6 +17,12 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+<<<<<<< HEAD
+=======
+ *
+ * You can test with the WebDav client cadaver:
+ * cadaver http://myurl/dav/fileserver.php
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  */
 
 /**
@@ -21,6 +31,7 @@
  *      \brief      Server DAV
  */
 
+<<<<<<< HEAD
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1'); // If there is no menu to show
 if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1'); // If we don't need to load the html.form.class.php
@@ -29,6 +40,16 @@ if (! defined('NOLOGIN'))  		 define("NOLOGIN",1);		// This means this output pa
 if (! defined('NOCSRFCHECK'))  	 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
 require ("../main.inc.php");
+=======
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no menu to show
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined('NOLOGIN'))  		 define("NOLOGIN", 1);		// This means this output page does not require to be logged.
+if (! defined('NOCSRFCHECK'))  	 define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
+
+require "../main.inc.php";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/dav/dav.class.php';
@@ -37,9 +58,15 @@ require_once DOL_DOCUMENT_ROOT.'/includes/sabre/autoload.php';
 
 
 $user = new User($db);
+<<<<<<< HEAD
 if(isset($_SERVER['PHP_AUTH_USER']) && $_SERVER['PHP_AUTH_USER']!='')
 {
 	$user->fetch('',$_SERVER['PHP_AUTH_USER']);
+=======
+if (isset($_SERVER['PHP_AUTH_USER']) && $_SERVER['PHP_AUTH_USER']!='')
+{
+	$user->fetch('', $_SERVER['PHP_AUTH_USER']);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$user->getrights();
 }
 
@@ -47,6 +74,7 @@ if(isset($_SERVER['PHP_AUTH_USER']) && $_SERVER['PHP_AUTH_USER']!='')
 $langs->loadLangs(array("main","other"));
 
 
+<<<<<<< HEAD
 if(empty($conf->dav->enabled))
 	accessforbidden();
 
@@ -60,6 +88,24 @@ $tmpDir = $conf->dav->dir_temp;
 // Authentication callback function
 $authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(function ($username, $password)
 {
+=======
+if (empty($conf->dav->enabled))
+	accessforbidden();
+
+
+$entity = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : (!empty($conf->entity) ? $conf->entity : 1));
+
+// settings
+$publicDir = $conf->dav->multidir_output[$entity].'/public';
+$privateDir = $conf->dav->multidir_output[$entity].'/private';
+$ecmDir = $conf->ecm->multidir_output[$entity];
+$tmpDir = $conf->dav->multidir_output[$entity];     // We need root dir, not a dir that can be deleted
+//var_dump($tmpDir);mkdir($tmpDir);exit;
+
+
+// Authentication callback function
+$authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(function ($username, $password) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	global $user;
 	global $conf;
 	global $dolibarr_main_authentication;
@@ -74,10 +120,17 @@ $authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(function ($username, $p
 	// Authentication mode
 	if (empty($dolibarr_main_authentication))
 		$dolibarr_main_authentication='http,dolibarr';
+<<<<<<< HEAD
 	$authmode = explode(',',$dolibarr_main_authentication);
 	$entity = (GETPOST('entity','int') ? GETPOST('entity','int') : (!empty($conf->entity) ? $conf->entity : 1));
 
 	if (checkLoginPassEntity($username,$password,$entity,$authmode) != $username)
+=======
+	$authmode = explode(',', $dolibarr_main_authentication);
+	$entity = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : (!empty($conf->entity) ? $conf->entity : 1));
+
+	if (checkLoginPassEntity($username, $password, $entity, $authmode) != $username)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		return false;
 
 	return true;
@@ -101,6 +154,7 @@ $nodes = array();
 // Public dir
 if (!empty($conf->global->DAV_ALLOW_PUBLIC_DIR))
 {
+<<<<<<< HEAD
 	$nodes[] = new \Sabre\DAV\FS\Directory($dolibarr_main_data_root. '/dav/public');
 }
 // Private dir
@@ -109,6 +163,16 @@ $nodes[] = new \Sabre\DAV\FS\Directory($dolibarr_main_data_root. '/dav/private')
 if (! empty($conf->ecm->enabled) && ! empty($conf->global->DAV_ALLOW_ECM_DIR))
 {
 	$nodes[] = new \Sabre\DAV\FS\Directory($dolibarr_main_data_root. '/ecm');
+=======
+	$nodes[] = new \Sabre\DAV\FS\Directory($publicDir);
+}
+// Private dir
+$nodes[] = new \Sabre\DAV\FS\Directory($privateDir);
+// ECM dir
+if (! empty($conf->ecm->enabled) && ! empty($conf->global->DAV_ALLOW_ECM_DIR))
+{
+	$nodes[] = new \Sabre\DAV\FS\Directory($ecmDir);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 
@@ -136,7 +200,11 @@ if (isset($baseUri)) $server->setBaseUri($baseUri);
 
 // Add authentication function
 if ((empty($conf->global->DAV_ALLOW_PUBLIC_DIR)
+<<<<<<< HEAD
 	|| ! preg_match('/'.preg_quote(DOL_URL_ROOT.'/dav/fileserver.php/public','/').'/', $_SERVER["PHP_SELF"]))
+=======
+	|| ! preg_match('/'.preg_quote(DOL_URL_ROOT.'/dav/fileserver.php/public', '/').'/', $_SERVER["PHP_SELF"]))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	&& ! preg_match('/^sabreAction=asset&assetName=[a-zA-Z0-9%\-\/]+\.(png|css|woff|ico|ttf)$/', $_SERVER["QUERY_STRING"])	// URL for Sabre browser resources
 	)
 {
@@ -149,8 +217,16 @@ $lockPlugin = new \Sabre\DAV\Locks\Plugin($lockBackend);
 $server->addPlugin($lockPlugin);
 
 // Support for html frontend
+<<<<<<< HEAD
 $browser = new \Sabre\DAV\Browser\Plugin();
 $server->addPlugin($browser);
+=======
+if (empty($conf->global->DAV_DISABLE_BROWSER))
+{
+    $browser = new \Sabre\DAV\Browser\Plugin();
+    $server->addPlugin($browser);
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Automatically guess (some) contenttypes, based on extension
 //$server->addPlugin(new \Sabre\DAV\Browser\GuessContentType());

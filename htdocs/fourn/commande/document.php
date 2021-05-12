@@ -2,7 +2,11 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2012      Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
@@ -38,6 +42,7 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
+<<<<<<< HEAD
 $langs->load('orders');
 $langs->load('other');
 $langs->load('sendings');
@@ -51,15 +56,30 @@ $id = GETPOST('id','int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action','alpha');
 $confirm = GETPOST('confirm','alpha');
+=======
+// Load translation files required by the page
+$langs->loadLangs(array("bills", "orders", "sendings", "companies", "deliveries", "products", "stocks","other"));
+
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
+$action = GETPOST('action', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
 
 // Get parameters
+<<<<<<< HEAD
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
+=======
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -69,7 +89,11 @@ if (! $sortfield) $sortfield="name";
 
 
 $object = new CommandeFournisseur($db);
+<<<<<<< HEAD
 if ($object->fetch($id,$ref) < 0)
+=======
+if ($object->fetch($id, $ref) < 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	dol_print_error($db);
 	exit;
@@ -95,7 +119,11 @@ $form =	new	Form($db);
 if ($object->id > 0)
 {
 	$help_url='EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
+<<<<<<< HEAD
 	llxHeader('',$langs->trans("Order"),$help_url);
+=======
+	llxHeader('', $langs->trans("Order"), $help_url);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	$object->fetch_thirdparty();
 
@@ -107,8 +135,13 @@ if ($object->id > 0)
 	dol_fiche_head($head, 'documents', $langs->trans('SupplierOrder'), -1, 'order');
 
 
+<<<<<<< HEAD
 	// Construit liste des fichiers
 	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+=======
+	// Build file list
+	$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$totalsize=0;
 	foreach($filearray as $key => $file)
 	{
@@ -166,9 +199,15 @@ if ($object->id > 0)
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
+<<<<<<< HEAD
 	print '<table class="border" width="100%">';
 	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
 	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize,1,1).'</td></tr>';
+=======
+	print '<table class="border tableforfield centpercent">';
+	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
+	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print "</table>\n";
 
 	print "</div>\n";
@@ -181,7 +220,10 @@ if ($object->id > 0)
 	$permtoedit = $user->rights->fournisseur->commande->creer;
 	$param = '&id=' . $object->id;
 	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 else
 {
@@ -189,6 +231,10 @@ else
 	exit;
 }
 
+<<<<<<< HEAD
 
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

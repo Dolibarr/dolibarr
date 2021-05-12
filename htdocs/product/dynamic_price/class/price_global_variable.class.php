@@ -29,6 +29,7 @@
  */
 class PriceGlobalVariable
 {
+<<<<<<< HEAD
     var $db;							//!< To store db handler
     var $error;							//!< To return error code (or message)
     var $errors=array();				//!< To return several error codes (or messages)
@@ -36,6 +37,40 @@ class PriceGlobalVariable
     var $code;
     var $description;
     var $value;
+=======
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
+
+    /**
+     * @var string[] Error codes (or messages)
+     */
+    public $errors = array();
+
+    /**
+     * @var int ID
+     */
+    public $id;
+
+    public $code;
+
+    /**
+     * @var string description
+     */
+    public $description;
+
+    public $value;
+
+    /**
+     * @var string Name of table without prefix where object is stored
+     */
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     public $table_element = "c_price_global_variable";
 
     /**
@@ -43,10 +78,16 @@ class PriceGlobalVariable
      *
      *  @param	DoliDb		$db      Database handler
      */
+<<<<<<< HEAD
     function __construct($db)
     {
         $this->db = $db;
         return 1;
+=======
+    public function __construct($db)
+    {
+        $this->db = $db;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
 
@@ -57,7 +98,11 @@ class PriceGlobalVariable
      *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
      *  @return int      		   	 <0 if KO, Id of created object if OK
      */
+<<<<<<< HEAD
     function create($user, $notrigger=0)
+=======
+    public function create($user, $notrigger = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $error=0;
 
@@ -119,7 +164,11 @@ class PriceGlobalVariable
      *  @param		int		$id    	Id object
      *  @return		int			    < 0 if KO, 0 if OK but not found, > 0 if OK
      */
+<<<<<<< HEAD
     function fetch($id)
+=======
+    public function fetch($id)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $sql = "SELECT code, description, value";
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
@@ -158,7 +207,11 @@ class PriceGlobalVariable
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
+<<<<<<< HEAD
     function update($user=0, $notrigger=0)
+=======
+    public function update($user = 0, $notrigger = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $error=0;
 
@@ -177,6 +230,7 @@ class PriceGlobalVariable
         $resql = $this->db->query($sql);
         if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
+<<<<<<< HEAD
         if (! $error)
         {
             if (! $notrigger)
@@ -190,6 +244,21 @@ class PriceGlobalVariable
                 //// End call triggers
              }
         }
+=======
+        // if (! $error)
+        // {
+        //     if (! $notrigger)
+        //     {
+        //         // Uncomment this and change MYOBJECT to your own tag if you
+        //         // want this action calls a trigger.
+
+        //         //// Call triggers
+        //         //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+        //         //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+        //         //// End call triggers
+        //     }
+        // }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         // Commit or rollback
         if ($error)
@@ -218,7 +287,11 @@ class PriceGlobalVariable
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return	int					 <0 if KO, >0 if OK
      */
+<<<<<<< HEAD
     function delete($rowid, $user, $notrigger=0)
+=======
+    public function delete($rowid, $user, $notrigger = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $error=0;
 
@@ -272,7 +345,11 @@ class PriceGlobalVariable
      *
      *	@return	void
      */
+<<<<<<< HEAD
     function initAsSpecimen()
+=======
+    public function initAsSpecimen()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $this->id=0;
         $this->code='';
@@ -285,7 +362,11 @@ class PriceGlobalVariable
      *
      *	@return	void
      */
+<<<<<<< HEAD
     function checkParameters()
+=======
+    public function checkParameters()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         // Clean parameters
         if (isset($this->code)) $this->code=trim($this->code);
@@ -300,7 +381,11 @@ class PriceGlobalVariable
      *
      *    @return	array				Array of price global variables
      */
+<<<<<<< HEAD
     function listGlobalVariables()
+=======
+    public function listGlobalVariables()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $sql = "SELECT rowid, code, description, value";
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;

@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2018      Alexandre Spangaro   <aspangaro@zendsi.com>
+=======
+/* Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +37,7 @@ if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accoun
 // Load translation files required by the page
 $langs->load("assets");
 
+<<<<<<< HEAD
 $rowid  = GETPOST('rowid','int');
 $action = GETPOST('action','alpha');
 $cancel = GETPOST('cancel','alpha');
@@ -44,11 +49,25 @@ $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
+=======
+$rowid  = GETPOST('rowid', 'int');
+$action = GETPOST('action', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
+
+$type = GETPOST('type', 'alpha');
+
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) {  $sortorder="DESC"; }
+<<<<<<< HEAD
 if (! $sortfield) {  $sortfield="d.lastname"; }
 
 $label=GETPOST("label","alpha");
@@ -56,6 +75,18 @@ $comment=GETPOST("comment");
 
 // Security check
 $result=restrictedArea($user,'asset',$rowid,'asset_type');
+=======
+if (! $sortfield) {  $sortfield="a.label"; }
+
+$label=GETPOST("label", "alpha");
+$accountancy_code_asset=GETPOST('accountancy_code_asset', 'string');
+$accountancy_code_depreciation_asset=GETPOST('accountancy_code_depreciation_asset', 'string');
+$accountancy_code_depreciation_expense=GETPOST('accountancy_code_depreciation_expense', 'string');
+$comment=GETPOST('comment', 'string');
+
+// Security check
+$result=restrictedArea($user, 'asset', $rowid, 'asset_type');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $object = new AssetType($db);
 
@@ -64,7 +95,11 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label('asset_type');
 
+<<<<<<< HEAD
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+=======
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$type="";
 	$sall="";
@@ -99,12 +134,20 @@ if ($action == 'add' && $user->rights->asset->write)
 	$object->note									= trim($comment);
 
 	// Fill array 'array_options' with data from add form
+<<<<<<< HEAD
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+=======
+	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if ($ret < 0) $error++;
 
 	if (empty($object->label)) {
 		$error++;
+<<<<<<< HEAD
 		setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), null, 'errors');
+=======
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 	else {
 		$sql = "SELECT label FROM ".MAIN_DB_PREFIX."asset_type WHERE label='".$db->escape($object->label)."'";
@@ -115,7 +158,11 @@ if ($action == 'add' && $user->rights->asset->write)
 		if ($num) {
 			$error++;
 			$langs->load("errors");
+<<<<<<< HEAD
 			setEventMessages($langs->trans("ErrorLabelAlreadyExists",$login), null, 'errors');
+=======
+			setEventMessages($langs->trans("ErrorLabelAlreadyExists", $login), null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 	}
 
@@ -152,7 +199,11 @@ if ($action == 'update' && $user->rights->asset->write)
 	$object->note									= trim($comment);
 
 	// Fill array 'array_options' with data from add form
+<<<<<<< HEAD
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+=======
+	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if ($ret < 0) $error++;
 
 	$ret=$object->update($user);
@@ -195,7 +246,11 @@ if ($action == 'confirm_delete' && $user->rights->asset->write)
 
 $form=new Form($db);
 $helpurl='';
+<<<<<<< HEAD
 llxHeader('',$langs->trans("AssetsTypeSetup"),$helpurl);
+=======
+llxHeader('', $langs->trans("AssetsTypeSetup"), $helpurl);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 // List of asset type
@@ -217,6 +272,17 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 
 		$param = '';
 
+<<<<<<< HEAD
+=======
+        $newcardbutton='';
+        if ($user->rights->asset->configurer)
+        {
+            $newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/asset/type.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewAssetType').'</span>';
+            $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+            $newcardbutton.= '</a>';
+        }
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -226,7 +292,11 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 		print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
+<<<<<<< HEAD
 		print_barre_liste($langs->trans("AssetsTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit);
+=======
+		print_barre_liste($langs->trans("AssetsTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic.png', 0, $newcardbutton, '', $limit);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$moreforfilter = '';
 
@@ -259,6 +329,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 			print '</td>';
 			print '<td>'.dol_escape_htmltag($objp->label).'</td>';
 
+<<<<<<< HEAD
 			print '<td>';
 			if (! empty($conf->accounting->enabled))
 			{
@@ -292,13 +363,54 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 				print $accountingaccount3->getNomUrl(0,1,1,'',1);
 			} else {
 				print $object->accountancy_code_depreciation_expense;
+=======
+			print '<td class="center">';
+			if (! empty($conf->accounting->enabled))
+			{
+				$accountingaccount = new AccountingAccount($db);
+				$accountingaccount->fetch('', $objp->accountancy_code_asset, 1);
+
+				print $accountingaccount->getNomUrl(0, 0, 0, '', 0);
+			} else {
+				print $objp->accountancy_code_asset;
+			}
+			print '</td>';
+
+			print '<td class="center">';
+			if (! empty($conf->accounting->enabled))
+			{
+				$accountingaccount2 = new AccountingAccount($db);
+				$accountingaccount2->fetch('', $objp->accountancy_code_depreciation_asset, 1);
+
+				print $accountingaccount2->getNomUrl(0, 0, 0, '', 0);
+			} else {
+				print $objp->accountancy_code_depreciation_asset;
+			}
+			print '</td>';
+
+			print '<td class="center">';
+			if (! empty($conf->accounting->enabled))
+			{
+				$accountingaccount3 = new AccountingAccount($db);
+				$accountingaccount3->fetch('', $objp->accountancy_code_depreciation_expense, 1);
+
+				print $accountingaccount3->getNomUrl(0, 0, 0, '', 0);
+			} else {
+				print $objp->accountancy_code_depreciation_expense;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 			print '</td>';
 
 			if ($user->rights->asset->write)
+<<<<<<< HEAD
 				print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
 			else
 				print '<td align="right">&nbsp;</td>';
+=======
+				print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
+			else
+				print '<td class="right">&nbsp;</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print "</tr>";
 			$i++;
 		}
@@ -356,7 +468,10 @@ if ($action == 'create')
 		print '<td>';
 		print $formaccounting->select_account($object->accountancy_code_depreciation_expense, 'accountancy_code_depreciation_expense', 1, '', 1, 1);
 		print '</td></tr>';
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 	else // For external software
 	{
@@ -381,11 +496,19 @@ if ($action == 'create')
 
 	// Other attributes
 	$parameters=array();
+<<<<<<< HEAD
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	if (empty($reshook))
 	{
 		print $object->showOptionals($extrafields,'edit');
+=======
+	$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $act, $action);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+	if (empty($reshook))
+	{
+		print $object->showOptionals($extrafields, 'edit');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 	print '<tbody>';
 	print "</table>\n";
@@ -419,7 +542,11 @@ if ($rowid > 0)
 		 */
 		if ($action == 'delete')
 		{
+<<<<<<< HEAD
 			print $form->formconfirm($_SERVER['PHP_SELF']."?rowid=".$object->id,$langs->trans("DeleteAMemberType"),$langs->trans("ConfirmDeleteMemberType",$object->label),"confirm_delete", '',0,1);
+=======
+			print $form->formconfirm($_SERVER['PHP_SELF']."?rowid=".$object->id, $langs->trans("DeleteAnAssetType"), $langs->trans("ConfirmDeleteAssetType", $object->label), "confirm_delete", '', 0, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		$head = asset_type_prepare_head($object);
@@ -428,13 +555,24 @@ if ($rowid > 0)
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/asset/type.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
+<<<<<<< HEAD
 		dol_banner_tab($object, 'rowid', $linkback);
+=======
+		$morehtmlref='<div class="refidno">';
+		// Ref asset type
+		$morehtmlref.=$form->editfieldkey("Label", 'label', $object->label, $object, $user->rights->asset->write, 'string', '', 0, 1);
+		$morehtmlref.=$form->editfieldval("Label", 'label', $object->label, $object, $user->rights->asset->write, 'string', '', null, null, '', 1);
+		$morehtmlref.='</div>';
+
+		dol_banner_tab($object, 'rowid', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';
 
 		print '<table class="border" width="100%">';
 
+<<<<<<< HEAD
 		print '</tr>';
 		if (! empty($conf->accounting->enabled))
 		{
@@ -442,10 +580,23 @@ if ($rowid > 0)
 			$accountingaccount->fetch('',$object->accountancy_code_asset,1);
 
 			print $accountingaccount->getNomUrl(0,1,1,'',1);
+=======
+		print '<tr>';
+		print '<td class="nowrap">';
+		print $langs->trans("AccountancyCodeAsset");
+		print '</td><td>';
+		if (! empty($conf->accounting->enabled))
+		{
+			$accountingaccount = new AccountingAccount($db);
+			$accountingaccount->fetch('', $object->accountancy_code_asset, 1);
+
+			print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		} else {
 			print $object->accountancy_code_asset;
 		}
 		print '</td>';
+<<<<<<< HEAD
 
 		print '<td>';
 		if (! empty($conf->accounting->enabled))
@@ -454,10 +605,25 @@ if ($rowid > 0)
 			$accountingaccount2->fetch('',$object->accountancy_code_depreciation_asset,1);
 
 			print $accountingaccount2->getNomUrl(0,1,1,'',1);
+=======
+		print '</tr>';
+
+		print '<tr>';
+		print '<td class="nowrap">';
+		print $langs->trans("AccountancyCodeDepreciationAsset");
+		print '</td><td>';
+		if (! empty($conf->accounting->enabled))
+		{
+			$accountingaccount2 = new AccountingAccount($db);
+			$accountingaccount2->fetch('', $object->accountancy_code_depreciation_asset, 1);
+
+			print $accountingaccount2->getNomUrl(0, 1, 1, '', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		} else {
 			print $object->accountancy_code_depreciation_asset;
 		}
 		print '</td>';
+<<<<<<< HEAD
 
 		print '<td>';
 		if (! empty($conf->accounting->enabled))
@@ -469,6 +635,24 @@ if ($rowid > 0)
 		} else {
 			print $object->accountancy_code_depreciation_expense;
 		}
+=======
+		print '</tr>';
+
+		print '<tr>';
+		print '<td class="nowrap">';
+		print $langs->trans("AccountancyCodeDepreciationExpense");
+		print '</td><td>';
+		if (! empty($conf->accounting->enabled))
+		{
+			$accountingaccount3 = new AccountingAccount($db);
+			$accountingaccount3->fetch('', $object->accountancy_code_depreciation_expense, 1);
+
+			print $accountingaccount3->getNomUrl(0, 1, 1, '', 1);
+		} else {
+			print $object->accountancy_code_depreciation_expense;
+		}
+		print '</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</tr>';
 
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
@@ -494,9 +678,12 @@ if ($rowid > 0)
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&amp;rowid='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
 		}
 
+<<<<<<< HEAD
 		// Add
 		print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=create&typeid='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.$langs->trans("AddMember").'</a></div>';
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// Delete
 		if ($user->rights->asset->write)
 		{
@@ -504,6 +691,7 @@ if ($rowid > 0)
 		}
 
 		print "</div>";
+<<<<<<< HEAD
 
 
 		// Show list of assets (nearly same code than in page list.php)
@@ -733,6 +921,8 @@ if ($rowid > 0)
 			dol_print_error($db);
 		}
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	/* ************************************************************************** */
@@ -782,7 +972,10 @@ if ($rowid > 0)
 			print '<td>';
 			print $formaccounting->select_account($object->accountancy_code_depreciation_expense, 'accountancy_code_depreciation_expense', 1, '', 1, 1);
 			print '</td></tr>';
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		else // For external software
 		{
@@ -807,11 +1000,19 @@ if ($rowid > 0)
 
 		// Other attributes
 		$parameters=array();
+<<<<<<< HEAD
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		if (empty($reshook))
 		{
 			print $object->showOptionals($extrafields,'edit');
+=======
+		$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $act, $action);    // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
+		if (empty($reshook))
+		{
+			print $object->showOptionals($extrafields, 'edit');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		print '</table>';
@@ -833,7 +1034,11 @@ if ($rowid > 0)
 					$value = $adht->array_options["options_" . $key];
 				}
 				print '<tr><td width="30%">'.$label.'</td><td>';
+<<<<<<< HEAD
 				print $extrafields->showInputField($key,$value);
+=======
+				print $extrafields->showInputField($key, $value);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				print "</td></tr>\n";
 			}
 			print '</table><br><br>';
@@ -851,7 +1056,12 @@ if ($rowid > 0)
 	}
 }
 
+<<<<<<< HEAD
 
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

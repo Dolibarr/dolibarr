@@ -29,10 +29,37 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/supplier_payment/modules_supplier
  */
 class mod_supplier_payment_bronan extends ModeleNumRefSupplierPayments
 {
+<<<<<<< HEAD
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $prefix='SPAY';
 	var $error='';
 	var $nom='Bronan';
+=======
+	/**
+     * Dolibarr version of the loaded document
+     * @var string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	public $prefix='SPAY';
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Bronan';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Bronan';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
     /**
@@ -40,10 +67,17 @@ class mod_supplier_payment_bronan extends ModeleNumRefSupplierPayments
      *
      *  @return     string      Text with description
      */
+<<<<<<< HEAD
     function info()
     {
     	global $langs;
       	return $langs->trans("SimpleNumRefModelDesc",$this->prefix);
+=======
+    public function info()
+    {
+    	global $langs;
+      	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
 
@@ -52,7 +86,11 @@ class mod_supplier_payment_bronan extends ModeleNumRefSupplierPayments
 	 *
 	 *  @return     string      Example
 	 */
+<<<<<<< HEAD
 	function getExample()
+=======
+	public function getExample()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return $this->prefix."0501-0001";
 	}
@@ -64,7 +102,11 @@ class mod_supplier_payment_bronan extends ModeleNumRefSupplierPayments
 	 *
 	 *  @return     boolean     false si conflit, true si ok
 	 */
+<<<<<<< HEAD
 	function canBeActivated()
+=======
+	public function canBeActivated()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf,$langs,$db;
 
@@ -80,9 +122,15 @@ class mod_supplier_payment_bronan extends ModeleNumRefSupplierPayments
 		if ($resql)
 		{
 			$row = $db->fetch_row($resql);
+<<<<<<< HEAD
 			if ($row) { $payyymm = substr($row[0],0,6); $max=$row[0]; }
 		}
 		if ($payyymm && ! preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i',$payyymm))
+=======
+			if ($row) { $payyymm = substr($row[0], 0, 6); $max=$row[0]; }
+		}
+		if ($payyymm && ! preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $payyymm))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			$langs->load("errors");
 			$this->error=$langs->trans('ErrorNumRefModel', $max);
@@ -99,7 +147,11 @@ class mod_supplier_payment_bronan extends ModeleNumRefSupplierPayments
 	 *  @param  Object		$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
+<<<<<<< HEAD
 	function getNextValue($objsoc,$object)
+=======
+	public function getNextValue($objsoc, $object)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $db,$conf;
 
@@ -125,16 +177,27 @@ class mod_supplier_payment_bronan extends ModeleNumRefSupplierPayments
 
 		//$date=time();
 		$date=$object->datepaye;
+<<<<<<< HEAD
 		$yymm = strftime("%y%m",$date);
 
     	if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
     	else $num = sprintf("%04s",$max+1);
+=======
+		$yymm = strftime("%y%m", $date);
+
+    	if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
+    	else $num = sprintf("%04s", $max+1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		dol_syslog(__METHOD__." return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;
 	}
 
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *  Return next free value
 	 *
@@ -142,9 +205,17 @@ class mod_supplier_payment_bronan extends ModeleNumRefSupplierPayments
 	 * 	@param	string		$objforref	Object for number to search
 	 *  @return string      			Next free value
 	 */
+<<<<<<< HEAD
 	function payment_get_num($objsoc,$objforref)
 	{
 		return $this->getNextValue($objsoc,$objforref);
 	}
 
+=======
+	public function payment_get_num($objsoc, $objforref)
+	{
+        // phpcs:enable
+		return $this->getNextValue($objsoc, $objforref);
+	}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

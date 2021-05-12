@@ -1,13 +1,21 @@
 # Dolibarr language file - Source file is en_US - banks
 Bank=Banco
+<<<<<<< HEAD
 MenuBankCash=Bank | Cash
+=======
+MenuBankCash=Banks | Cash
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MenuVariousPayment=Pagamentos diversos
 MenuNewVariousPayment=Novo pagamento diverso
 BankName=Nome do banco
 FinancialAccount=Conta
 BankAccount=Conta bancária
 BankAccounts=Contas Bancárias
+<<<<<<< HEAD
 BankAccountsAndGateways=Bank accounts | Gateways
+=======
+BankAccountsAndGateways=Contas bancárias | Entradas
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShowAccount=Mostrar Conta
 AccountRef=Ref. Conta financeira
 AccountLabel=Etiqueta Conta financeira
@@ -30,7 +38,11 @@ AllTime=Do início
 Reconciliation=Conciliação
 RIB=Conta bancária
 IBAN=Número IBAN
+<<<<<<< HEAD
 BIC=Número BIC/SWIFT
+=======
+BIC=BIC/SWIFT code
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SwiftValid=BIC / SWIFT válido
 SwiftVNotalid=BIC/SWIFT inválido
 IbanValid=BAN válido
@@ -42,6 +54,7 @@ AccountStatementShort=Extracto
 AccountStatements=Extractos
 LastAccountStatements=Últimos extractos bancários
 IOMonthlyReporting=Relatório mensal E/S
+<<<<<<< HEAD
 BankAccountDomiciliation=Domiciliação de Conta
 BankAccountCountry=Conta do país
 BankAccountOwner=Nome do proprietário da Conta
@@ -51,6 +64,17 @@ CreateAccount=Criar Conta
 NewBankAccount=Nova conta
 NewFinancialAccount=Nova Conta financeira
 MenuNewFinancialAccount=Nova Conta
+=======
+BankAccountDomiciliation=Bank address
+BankAccountCountry=Conta do país
+BankAccountOwner=Nome do proprietário da Conta
+BankAccountOwnerAddress=Direcção do proprietário da Conta
+RIBControlError=Integrity check of values failed. This means the information for this account number is not complete or is incorrect (check country, numbers and IBAN).
+CreateAccount=Criar Conta
+NewBankAccount=Nova conta
+NewFinancialAccount=Nova conta financeira
+MenuNewFinancialAccount=Nova conta financeira
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 EditFinancialAccount=Edição Conta
 LabelBankCashAccount=Etiqueta da Conta de Caixa
 AccountType=Tipo de Conta
@@ -76,20 +100,30 @@ TransactionsToConciliate=Entradas para reconciliar
 Conciliable=Conciliável
 Conciliate=Conciliar
 Conciliation=Conciliação
+<<<<<<< HEAD
 ReconciliationLate=Reconciliation late
+=======
+SaveStatementOnly=Salvar apenas a instrução
+ReconciliationLate=Reconciliação atrasada
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 IncludeClosedAccount=Incluir Contas fechadas
 OnlyOpenedAccount=Apenas contas abertas
 AccountToCredit=Conta de crédito
 AccountToDebit=Conta de débito
 DisableConciliation=Desactivar a função de Conciliação para esta Conta
 ConciliationDisabled=Função de Conciliação desactivada
+<<<<<<< HEAD
 LinkedToAConciliatedTransaction=Linked to a conciliated entry
+=======
+LinkedToAConciliatedTransaction=Vinculado a uma entrada conciliada
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 StatusAccountOpened=Ativo
 StatusAccountClosed=Inativo
 AccountIdShort=Número
 LineRecord=Registo
 AddBankRecord=Adicionar entrada
 AddBankRecordLong=Adicionar entrada manualmente
+<<<<<<< HEAD
 Conciliated=Reconciled
 ConciliatedBy=Conciliado por
 DateConciliating=Data Conciliação
@@ -105,6 +139,23 @@ BankTransfer=Transferência bancária
 BankTransfers=Transferencias bancarias
 MenuBankInternalTransfer=Internal transfer
 TransferDesc=Transfer from one account to another one, Dolibarr will write two record (a debit in source account and a credit in target account. The same amount (except sign), label and date will be used for this transaction)
+=======
+Conciliated=Reconciliado
+ConciliatedBy=Conciliado por
+DateConciliating=Data Conciliação
+BankLineConciliated=Entrada reconciliada
+Reconciled=Reconciliado
+NotReconciled=Não reconciliado
+CustomerInvoicePayment=Pagamento de cliente
+SupplierInvoicePayment=Pagamento de fornecedor
+SubscriptionPayment=Pagamento Assinatura
+WithdrawalPayment=Débito direto
+SocialContributionPayment=Pagamento da taxa social/fiscal
+BankTransfer=Transferência bancária
+BankTransfers=Transferencias bancarias
+MenuBankInternalTransfer=Transferência interna
+TransferDesc=Transfer from one account to another, Dolibarr will write two records (a debit in source account and a credit in target account). The same amount (except sign), label and date will be used for this transaction)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TransferFrom=De
 TransferTo=Para
 TransferFromToDone=A transferência de <b>%s</b> para <b>%s</b> de <b>%s</b> %s foi criado.
@@ -116,6 +167,7 @@ ConfirmDeleteCheckReceipt=Tem a certeza que deseja eliminar este recibo do chequ
 BankChecks=Cheques
 BankChecksToReceipt=Cheques a aguardar depósito
 ShowCheckReceipt=Mostrar recibo de depósito
+<<<<<<< HEAD
 NumberOfCheques=Nº de cheques
 DeleteTransaction=Eliminar entrada
 ConfirmDeleteTransaction=Tem a certeza que deseja eliminar esta entrada?
@@ -138,6 +190,30 @@ ShowAllAccounts=Mostrar para todas as Contas
 FutureTransaction=Transacção futura. Não há forma de conciliar.
 SelectChequeTransactionAndGenerate=Selecione o que pretende incluir no recibo de depósito e clique em &quot;Criar&quot;.
 InputReceiptNumber=Choose the bank statement related with the conciliation. Use a sortable numeric value: YYYYMM or YYYYMMDD
+=======
+NumberOfCheques=Não de cheque
+DeleteTransaction=Eliminar entrada
+ConfirmDeleteTransaction=Tem a certeza que deseja eliminar esta entrada?
+ThisWillAlsoDeleteBankRecord=Isto também eliminará a entrada bancária gerada
+BankMovements=Movimentos
+PlannedTransactions=Entradas previstas
+Graph=Gráficos
+ExportDataset_banque_1=Entradas bancárias e extrato de conta
+ExportDataset_banque_2=Comprovativo de depósito
+TransactionOnTheOtherAccount=Transacção sobre outra Conta
+PaymentNumberUpdateSucceeded=Número de pagamento atualizado com sucesso
+PaymentNumberUpdateFailed=Não foi possivel modificar o número de pagamento
+PaymentDateUpdateSucceeded=Data de pagamento atualizada com sucesso
+PaymentDateUpdateFailed=Não foi possível modificar a data de pagamento
+Transactions=Transacção
+BankTransactionLine=Entrada bancária
+AllAccounts=Todas as contas bancárias e de caixa
+BackToAccount=Voltar à Conta
+ShowAllAccounts=Mostrar para todas as Contas
+FutureTransaction=Future transaction. Unable to reconcile.
+SelectChequeTransactionAndGenerate=Selecione / filtrar cheques para incluir no recibo do cheque e clique em "Criar".
+InputReceiptNumber=Escolha o extrato bancário relacionado com a conciliação. Use um valor numérico classificável: YYYYMM ou YYYYMMDD
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 EventualyAddCategory=Eventualmente, especifique uma categoria que deseja classificar os movimentos
 ToConciliate=Para reconciliar?
 ThenCheckLinesAndConciliate=Em seguida, verifique as linhas presentes no extrato bancário e clique
@@ -146,6 +222,7 @@ AllRIB=Todos os BAN
 LabelRIB=Etiqueta BAN 
 NoBANRecord=Nenhum registro de BAN
 DeleteARib=Excluir registro BAN
+<<<<<<< HEAD
 ConfirmDeleteRib=Are you sure you want to delete this BAN record?
 RejectCheck=Check returned
 ConfirmRejectCheck=Are you sure you want to mark this check as rejected?
@@ -163,3 +240,25 @@ AddVariousPayment=Add miscellaneous payments
 SEPAMandate=SEPA mandate
 YourSEPAMandate=Your SEPA mandate
 FindYourSEPAMandate=This is your SEPA mandate to authorize our company to make direct debit order to your bank. Thanks to return it signed (scan of the signed document) or sent it by mail to
+=======
+ConfirmDeleteRib=Tem certeza de que deseja excluir este registro BAN?
+RejectCheck=Cheque devolvido
+ConfirmRejectCheck=Tem certeza de que deseja marcar esta verificação como rejeitada?
+RejectCheckDate=Data em que o cheque foi devolvido
+CheckRejected=Cheque devolvido
+CheckRejectedAndInvoicesReopened=Cheque devolvido e faturas reabertas
+BankAccountModelModule=Modelos de documentos para contas bancárias
+DocumentModelSepaMandate=Modelo do mandato da SEPA. Útil para países europeus apenas no EEC.
+DocumentModelBan=Modelo para imprimir uma página com informações de BAN.
+NewVariousPayment=New miscellaneous payment
+VariousPayment=Miscellaneous payment
+VariousPayments=Pagamentos diversos
+ShowVariousPayment=Show miscellaneous payment
+AddVariousPayment=Add miscellaneous payment
+SEPAMandate=Mandato SEPA
+YourSEPAMandate=Seu mandato SEPA
+FindYourSEPAMandate=Este é o seu mandato da SEPA para autorizar a nossa empresa a efetuar um pedido de débito direto ao seu banco. Devolva-o assinado (digitalização do documento assinado) ou envie-o por correio para
+AutoReportLastAccountStatement=Automatically fill the field 'number of bank statement' with last statement number when making reconciliation
+CashControl=POS cash fence
+NewCashFence=New cash fence
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

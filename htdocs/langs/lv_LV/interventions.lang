@@ -3,6 +3,7 @@ Intervention=Iejaukšanās
 Interventions=Iejaukšanās
 InterventionCard=Iejaukšanās kartiņa
 NewIntervention=Jauna iejaukšanās
+<<<<<<< HEAD
 AddIntervention=Create intervention
 ListOfInterventions=Iejaukšanās saraksts
 ActionsOnFicheInter=Pasākumi attiecībā uz intervenci
@@ -30,16 +31,50 @@ InterventionClassifyDone=Klasificēt "Pabeigts"
 StatusInterInvoiced=Jāmaksā
 SendInterventionRef=Submission of intervention %s
 SendInterventionByMail=Send intervention by Email
+=======
+AddIntervention=Izveidojiet iejaukšanos
+ChangeIntoRepeatableIntervention=Mainīt uz atkārtotu iejaukšanos
+ListOfInterventions=Iejaukšanās saraksts
+ActionsOnFicheInter=Pasākumi attiecībā uz intervenci
+LastInterventions=Jaunākās %s iejaukšanās
+AllInterventions=Visas iejaukšanās
+CreateDraftIntervention=Izveidot projektu
+InterventionContact=Intervences kontakts
+DeleteIntervention=Dzēst iejaukšanos
+ValidateIntervention=Apstiprināt iejaukšanās
+ModifyIntervention=Modificēt iejaukšanās
+DeleteInterventionLine=Dzēst intervences līnija
+ConfirmDeleteIntervention=Vai tiešām vēlaties izdzēst šo iejaukšanos?
+ConfirmValidateIntervention=Vai tiešām vēlaties apstiprināt šo iejaukšanos ar nosaukumu <b> %s </b>?
+ConfirmModifyIntervention=Vai tiešām vēlaties mainīt šo notikumu?
+ConfirmDeleteInterventionLine=Vai tiešām vēlaties dzēst šo intervences līniju?
+ConfirmCloneIntervention=Vai tiešām vēlaties klonēt šo iejaukšanos?
+NameAndSignatureOfInternalContact=Intervences nosaukums un paraksts:
+NameAndSignatureOfExternalContact=Klienta vārds un paraksts:
+DocumentModelStandard=Standarta dokumenta paraugs intervencēm
+InterventionCardsAndInterventionLines=Iejaukšanās un līnijas intervenču
+InterventionClassifyBilled=Classify "Billed"
+InterventionClassifyUnBilled=Klasificēt "neapmaksātas"
+InterventionClassifyDone=Klasificēt "Pabeigts"
+StatusInterInvoiced=Jāmaksā
+SendInterventionRef=Submission of intervention %s
+SendInterventionByMail=Sūtīt interviju pa e-pastu
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 InterventionCreatedInDolibarr=Intervention %s created
 InterventionValidatedInDolibarr=Intervention %s validated
 InterventionModifiedInDolibarr=Intervention %s modified
 InterventionClassifiedBilledInDolibarr=Intervention %s set as billed
 InterventionClassifiedUnbilledInDolibarr=Intervention %s set as unbilled
+<<<<<<< HEAD
 InterventionSentByEMail=Intervention %s sent by EMail
+=======
+InterventionSentByEMail=Intervence %s nosūtīta pa e-pastu
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 InterventionDeletedInDolibarr=Intervention %s deleted
 InterventionsArea=Interventions area
 DraftFichinter=Draft interventions
 LastModifiedInterventions=Latest %s modified interventions
+<<<<<<< HEAD
 FichinterToProcess=Interventions to process
 ##### Types de contacts #####
 TypeContact_fichinter_external_CUSTOMER=Šādi-up klientu kontaktu
@@ -53,6 +88,21 @@ InterventionStatistics=Statistics of interventions
 NbOfinterventions=Nb of intervention cards
 NumberOfInterventionsByMonth=Nb of intervention cards by month (date of validation)
 AmountOfInteventionNotIncludedByDefault=Amount of intervention is not included by default into profit (in most cases, timesheets are used to count time spent). Add option PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT to 1 into home-setup-other to include them.
+=======
+FichinterToProcess=Intervences process
+##### Types de contacts #####
+TypeContact_fichinter_external_CUSTOMER=Šādi-up klientu kontaktu
+# Modele numérotation
+PrintProductsOnFichinter=Drukājiet arī intervences kartē norādītās "produkta" (ne tikai pakalpojumu) līnijas
+PrintProductsOnFichinterDetails=interventions generated from orders
+UseServicesDurationOnFichinter=Izmantojiet pasūtījumu veikšanai paredzēto iejaukšanās pakalpojumu ilgumu
+UseDurationOnFichinter=Paslēpj intervences ierakstu ilguma lauku
+UseDateWithoutHourOnFichinter=Noslēpt stundas un minūtes no datuma lauka iejaukšanās ierakstos
+InterventionStatistics=Intervences statistika
+NbOfinterventions=Intervences karšu skaits
+NumberOfInterventionsByMonth=Intervences karšu skaits pēc mēneša (validācijas datums)
+AmountOfInteventionNotIncludedByDefault=Ienākuma summa pēc noklusējuma netiek iekļauta peļņā (vairumā gadījumu laika kontrolsaraksts tiek izmantots, lai uzskaitītu pavadīto laiku). Lai tos iekļautu, pievienojiet opciju PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT uz 1 sākuma iestatīšanas pogu.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ##### Exports #####
 InterId=Intervention id
 InterRef=Intervention ref.

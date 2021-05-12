@@ -1,4 +1,5 @@
 # Dolibarr language file - en_US - Accounting Expert
+<<<<<<< HEAD
 Accounting=Accounting
 ACCOUNTING_EXPORT_SEPARATORCSV=匯出檔案的欄位分隔字元
 ACCOUNTING_EXPORT_DATE=匯出檔案日期格式
@@ -11,10 +12,25 @@ Selectformat=選擇檔案格式
 ACCOUNTING_EXPORT_FORMAT=選擇檔案格式
 ACCOUNTING_EXPORT_ENDLINE=選擇退回類型
 ACCOUNTING_EXPORT_PREFIX_SPEC=指定檔案的前面固定字元
+=======
+Accounting=會計
+ACCOUNTING_EXPORT_SEPARATORCSV=匯出檔案用的欄位分隔符號
+ACCOUNTING_EXPORT_DATE=匯出檔案用的日期格式
+ACCOUNTING_EXPORT_PIECE=匯出的數量
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=與全域帳號一起匯出
+ACCOUNTING_EXPORT_LABEL=匯出標籤
+ACCOUNTING_EXPORT_AMOUNT=匯出金額
+ACCOUNTING_EXPORT_DEVISE=匯出幣別
+Selectformat=選擇檔案的格式
+ACCOUNTING_EXPORT_FORMAT=選擇檔案的格式
+ACCOUNTING_EXPORT_ENDLINE=選擇換行類型
+ACCOUNTING_EXPORT_PREFIX_SPEC=指定檔案名稱的前綴字元
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ThisService=此服務
 ThisProduct=此產品
 DefaultForService=服務的預設
 DefaultForProduct=產品的預設
+<<<<<<< HEAD
 CantSuggest=不能建議
 AccountancySetupDoneFromAccountancyMenu=從%s選單的多數會計設定已完成
 ConfigAccountingExpert=會計專業模組的偏好設定
@@ -52,14 +68,65 @@ AccountancyAreaDescActionFreq=接下來的動作在大公司一般是每月、�
 
 AccountancyAreaDescJournalSetup=步驟%s: 從選單中建立或檢查您日記簿內容清單%s
 AccountancyAreaDescChartModel=步驟%s:從%s選單建立會計項目表模組
+=======
+CantSuggest=無法建議
+AccountancySetupDoneFromAccountancyMenu=從%s選單的大部分會計設定已完成
+ConfigAccountingExpert=會計專家模組的組態
+Journalization=日誌
+Journaux=日記帳
+JournalFinancial=財務日記帳
+BackToChartofaccounts=回到會計科目表
+Chartofaccounts=會計科目表
+CurrentDedicatedAccountingAccount=目前的專用帳戶
+AssignDedicatedAccountingAccount=新帳戶指派給
+InvoiceLabel=帳單標籤
+OverviewOfAmountOfLinesNotBound=行數金額的概述未綁定到會計帳戶
+OverviewOfAmountOfLinesBound=行數金額的概述已綁定到會計帳戶
+OtherInfo=其他資訊
+DeleteCptCategory=從群組移除會計帳戶
+ConfirmDeleteCptCategory=Are you sure you want to remove this accounting account from the accounting account group?
+JournalizationInLedgerStatus=日誌狀態
+AlreadyInGeneralLedger=已經記錄在分類帳了
+NotYetInGeneralLedger=尚未記錄至分類帳
+GroupIsEmptyCheckSetup=群組是空的，檢查個人化會計群組的設定
+DetailByAccount=依帳戶顯示細節
+AccountWithNonZeroValues=Accounts with non-zero values
+ListOfAccounts=帳戶清單
+CountriesInEEC=Countries in EEC
+CountriesNotInEEC=Countries not in EEC
+CountriesInEECExceptMe=Countries in EEC except %s
+CountriesExceptMe=All countries except %s
+AccountantFiles=Export accounting documents
+
+MainAccountForCustomersNotDefined=在設定中客戶的主要會計帳戶尚未定義
+MainAccountForSuppliersNotDefined=在設定中供應商的主要會計帳戶尚未定義
+MainAccountForUsersNotDefined=在設定中使用者的主要會計帳戶尚未定義
+MainAccountForVatPaymentNotDefined=在設定中增值稅付款的主要會計帳戶尚未定義
+MainAccountForSubscriptionPaymentNotDefined=Main accounting account for subscription payment not defined in setup
+
+AccountancyArea=會計區
+AccountancyAreaDescIntro=會計模組的使用要數個步驟才能完成：
+AccountancyAreaDescActionOnce=接下來的動作通常只執行一次，或一年一次…
+AccountancyAreaDescActionOnceBis=下一步驟可在未來節省您的時間當製作日誌時(寫入記錄至日記帳及總分類帳)建議您正確的預設會計帳戶
+AccountancyAreaDescActionFreq=接下來的動作在大型公司一般是每個月、每週或每天執行…
+
+AccountancyAreaDescJournalSetup=步驟%s: 從選單%s您的日記帳清單中建立或檢查內容 
+AccountancyAreaDescChartModel=步驟%s:從選單%s建立一個會計科目表模組
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AccountancyAreaDescChart=步驟%s: 從選單中建立或檢查會計項目表的內容%s。
 
 AccountancyAreaDescVat=步驟%s: 定義每一項營業稅率的預設會計項目。可使用選單輸入%s。
 AccountancyAreaDescDefault=STEP %s: Define default accounting accounts. For this, use the menu entry %s.
 AccountancyAreaDescExpenseReport=步驟%s: 定義每一費用報表類型的預設會計項目。可使用選單輸入%s。
 AccountancyAreaDescSal=步驟%s: 定義薪資付款的預設會計項目。可使用選單輸入%s。
+<<<<<<< HEAD
 AccountancyAreaDescContrib=步驟%s: 定義特定費用(雜項稅捐)的預設會計項目。可使用選單輸入%s。
 AccountancyAreaDescDonation=步驟%s: 定義捐款的預設會計項目。可使用選單輸入%s。
+=======
+AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for special expenses (miscellaneous taxes). For this, use the menu entry %s.
+AccountancyAreaDescDonation=步驟%s: 定義捐款的預設會計項目。可使用選單輸入%s。
+AccountancyAreaDescSubscription=STEP %s: Define default accounting accounts for member subscription. For this, use the menu entry %s.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AccountancyAreaDescMisc=步驟%s:針對雜項交易定義必要的預設帳戶及預設會計項目。可使用選單輸入%s。
 AccountancyAreaDescLoan=步驟%s:定義借款的預設會計項目。可使用選單輸入%s。
 AccountancyAreaDescBank=步驟%s: 定義每家銀行及財務帳戶的預設會計項目及日記簿代號。可使用選單輸入%s。
@@ -77,7 +144,12 @@ ChangeAndLoad=修改及載入
 Addanaccount=新增會計項目
 AccountAccounting=會計項目
 AccountAccountingShort=會計
+<<<<<<< HEAD
 SubledgerAccount=明細分類帳會計項目
+=======
+SubledgerAccount=Subledger account
+SubledgerAccountLabel=Subledger account label
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShowAccountingAccount=顯示會計項目
 ShowAccountingJournal=顯示會計日記簿
 AccountAccountingSuggest=建議的會計項目
@@ -88,19 +160,35 @@ MenuTaxAccounts=稅捐會計項目
 MenuExpenseReportAccounts=費用報表會計項目
 MenuLoanAccounts=借款會計項目
 MenuProductsAccounts=產品會計項目
+<<<<<<< HEAD
 ProductsBinding=產品會計項目
 Ventilation=關聯到各式會計項目
+=======
+MenuClosureAccounts=Closure accounts
+ProductsBinding=產品會計項目
+TransferInAccounting=Transfer in accounting
+RegistrationInAccounting=Registration in accounting
+Binding=關聯到各式會計項目
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CustomersVentilation=客戶發票的關聯
 SuppliersVentilation=Vendor invoice binding
 ExpenseReportsVentilation=費用報表的關聯
 CreateMvts=建立新的交易
 UpdateMvts=交易的修改
 ValidTransaction=驗證交易
+<<<<<<< HEAD
 WriteBookKeeping=在總帳中記錄交易
 Bookkeeping=總帳
 AccountBalance=項目餘額
 ObjectsRef=參考的來源物件
 CAHTF=稅前總採購供應商
+=======
+WriteBookKeeping=Register transactions in Ledger
+Bookkeeping=總帳
+AccountBalance=項目餘額
+ObjectsRef=參考的來源物件
+CAHTF=Total purchase vendor before tax
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TotalExpenseReport=總費用報表
 InvoiceLines=關聯的各式發票
 InvoiceLinesDone=已關聯的各式發票
@@ -122,17 +210,29 @@ NotVentilatedinAccount=不受會計項目約束
 XLineSuccessfullyBinded=%s 產品/服務成功地指定會計項目
 XLineFailedToBeBinded=%s 產品/服務沒指定任何會計項目
 
+<<<<<<< HEAD
 ACCOUNTING_LIMIT_LIST_VENTILATION=每頁顯示筆數(建議最大: 50)
+=======
+ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to bind shown by page (maximum recommended: 50)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=待綁定，依最新的排序
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=完成綁定，依最新的排序
 
 ACCOUNTING_LENGTH_DESCRIPTION=在產品及服務清單中描述在第 x 字元 ( 最佳為 50 ) 後會被截掉
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=產品及服務會計項目清單中描述表單中第 x 字元 ( 最佳為 50 )後會被截掉
 ACCOUNTING_LENGTH_GACCOUNT=會計項目的長度(如果設定為 6，會計項目為706，則會變成 706000)
+<<<<<<< HEAD
 ACCOUNTING_LENGTH_AACCOUNT=合作方會計項目長度(如果設定為 6，會計項目為 401，則會變成 401000)
 ACCOUNTING_MANAGE_ZERO=允許管理會計項目尾數的不同零值。某些國家有此需求(如瑞士)。若為off(預設)，則您可設定2個接下來的參數，要求程式增加虛擬零值。
 BANK_DISABLE_DIRECT_INPUT=不啟用在銀行帳戶中直接記錄交易
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Enable draft export on journal
+=======
+ACCOUNTING_LENGTH_AACCOUNT=Length of the third-party accounting accounts (If you set value to 6 here, the account '401' will appear like '401000' on screen)
+ACCOUNTING_MANAGE_ZERO=Allow to manage different number of zeros at the end of an accounting account. Needed by some countries (like Switzerland). If set to off (default), you can set the following two parameters to ask the application to add virtual zeros.
+BANK_DISABLE_DIRECT_INPUT=停用在銀行帳戶中直接記錄交易
+ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Enable draft export on journal
+ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 ACCOUNTING_SELL_JOURNAL=銷貨簿
 ACCOUNTING_PURCHASE_JOURNAL=進貨簿
@@ -141,12 +241,29 @@ ACCOUNTING_EXPENSEREPORT_JOURNAL=費用日記簿
 ACCOUNTING_SOCIAL_JOURNAL=交際/社交會計項目
 ACCOUNTING_HAS_NEW_JOURNAL=Has new Journal
 
+<<<<<<< HEAD
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=過帳的會計項目
 ACCOUNTING_ACCOUNT_SUSPENSE=等待的會計項目
 DONATION_ACCOUNTINGACCOUNT=註冊捐款的會計項目
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=預設已購產品的會計項目(如果在產品頁沒有定義時使用)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=預設已售產品的會計項目(如果在產品頁沒有定義時使用)
+=======
+ACCOUNTING_RESULT_PROFIT=Result accounting account (Profit)
+ACCOUNTING_RESULT_LOSS=Result accounting account (Loss)
+ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Journal of closure
+
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Accounting account of transitional bank transfer
+
+ACCOUNTING_ACCOUNT_SUSPENSE=等待的會計項目
+DONATION_ACCOUNTINGACCOUNT=註冊捐款的會計項目
+ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Accounting account to register subscriptions
+
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=預設已購產品的會計項目(如果在產品頁沒有定義時使用)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=預設已售產品的會計項目(如果在產品頁沒有定義時使用)
+ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Accounting account by default for the sold products in EEC (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Accounting account by default for the sold products export out of EEC (used if not defined in the product sheet)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ACCOUNTING_SERVICE_BUY_ACCOUNT=委外服務預設會計項目(若沒在服務頁中定義時使用)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=服務收入預設會計項目(若沒在服務頁中定義時使用)
 
@@ -156,7 +273,14 @@ Docref=Reference
 LabelAccount=標籤會計項目
 LabelOperation=標籤操作
 Sens=Sens
+<<<<<<< HEAD
 Codejournal=日記簿
+=======
+LetteringCode=Lettering code
+Lettering=Lettering
+Codejournal=日記簿
+JournalLabel=Journal label
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NumPiece=件數
 TransactionNumShort=交易編號
 AccountingCategory=個人化群組
@@ -170,7 +294,11 @@ NotMatch=未設定
 DeleteMvt=刪除總帳行
 DelYear=刪除年度
 DelJournal=刪除日記簿
+<<<<<<< HEAD
 ConfirmDeleteMvt=將會刪除此年度總帳且/或從指定日記簿中的全部行數。至少需要一項標準。
+=======
+ConfirmDeleteMvt=This will delete all lines of the Ledger for year and/or from a specific journal. At least one criterion is required.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmDeleteMvtPartial=將會從總帳中刪除交易(與相同交易的行數會被刪除)
 FinanceJournal=財務日記簿
 ExpenseReportsJournal=費用報表日記簿
@@ -182,38 +310,68 @@ ProductAccountNotDefined=產品會計項目未定義
 FeeAccountNotDefined=費用的會計項目未定義
 BankAccountNotDefined=銀行帳戶沒有定義
 CustomerInvoicePayment=客戶發票的付款
+<<<<<<< HEAD
 ThirdPartyAccount=合作方會計項目
+=======
+ThirdPartyAccount=Third-party account
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NewAccountingMvt=新交易
 NumMvts=交易筆數
 ListeMvts=移動清單
 ErrorDebitCredit=借方金額不等貸方金額
 AddCompteFromBK=新增各式會計項目到大類
+<<<<<<< HEAD
 ReportThirdParty=合作方會計項目清單
 DescThirdPartyReport=Consult here the list of the third party customers and vendors and their accounting accounts
 ListAccounts=各式會計項目清單
 UnknownAccountForThirdparty=未知合作方會計項目。我們將使用%s
 UnknownAccountForThirdpartyBlocking=未知合作方會計項目。阻止錯誤
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=未知合作方會計項目及等待會計項目未定義。阻止錯誤
+=======
+ReportThirdParty=List third-party account
+DescThirdPartyReport=Consult here the list of third-party customers and vendors and their accounting accounts
+ListAccounts=各式會計項目清單
+UnknownAccountForThirdparty=Unknown third-party account. We will use %s
+UnknownAccountForThirdpartyBlocking=Unknown third-party account. Blocking error
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. We will use %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Third-party account not defined or third party unknown. Blocking error.
+UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unknown third-party account and waiting account not defined. Blocking error
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PaymentsNotLinkedToProduct=Payment not linked to any product / service
 
 Pcgtype=會計項目大類
 Pcgsubtype=會計項目中類
+<<<<<<< HEAD
 PcgtypeDesc=某些會計報表在使用會計的大類及中類時，是使用預先定的"篩選"及"分類"準則。例如，針對產品建立費用/收入報表的會計項目中的"收入"或"費用"，其使用大類。
+=======
+PcgtypeDesc=Group and subgroup of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 TotalVente=稅前總周轉
 TotalMarge=總銷貨淨利
 
 DescVentilCustomer=在此查閱客戶發票清單是否關聯到產品會計項目
+<<<<<<< HEAD
 DescVentilMore=在多數案例中，若你預先設定產品或服務，且在產品/服務卡片中您設定會計項目，只要一按一鍵<strong>"%s"</strong>，程式會關聯到您的發票及會計項目表的會計項目。若在產品/服務卡片中沒有設定會計項目，或若你仍有些行數未關聯到任何會計項目，您必須從選單 "<strong>%s</strong>"中進行人工關聯。
+=======
+DescVentilMore=In most cases, if you use predefined products or services and you set the account number on the product/service card, the application will be able to make all the binding between your invoice lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on product/service cards or if you still have some lines not bound to an account, you will have to make a manual binding from the menu "<strong>%s</strong>".
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DescVentilDoneCustomer=在此查閱已開立各式發票客戶的清單及其產品會計項目
 DescVentilTodoCustomer=關聯發票沒有關聯到產品會計項目
 ChangeAccount=用以下會計項目變更產品/服務的會計項目：
 Vide=-
 DescVentilSupplier=Consult here the list of vendor invoice lines bound or not yet bound to a product accounting account
+<<<<<<< HEAD
 DescVentilDoneSupplier=Consult here the list of the lines of invoices vendors and their accounting account
 DescVentilTodoExpenseReport=關聯費用報表行數還沒準備好要關聯費用會計項目
 DescVentilExpenseReport=在此查閱費用報表行數是否關聯到費用會計項目的清單
 DescVentilExpenseReportMore=若您在費用報表行數的類別設定會計項目，只要按一鍵<strong>"%s"</strong>，程式將會在您費用報表行及會計項目表的會計項目中進行關聯。若在費用目錄中會計項目未設定，或您仍有某些行數沒有關聯到任何會計項目，您要在選單 "<strong>%s</strong>" 中人工進行關聯。
+=======
+DescVentilDoneSupplier=Consult here the list of the lines of vendor invoices and their accounting account
+DescVentilTodoExpenseReport=關聯費用報表行數還沒準備好要關聯費用會計項目
+DescVentilExpenseReport=在此查閱費用報表行數是否關聯到費用會計項目的清單
+DescVentilExpenseReportMore=If you setup accounting account on type of expense report lines, the application will be able to make all the binding between your expense report lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on fees dictionary or if you still have some lines not bound to any account, you will have to make a manual binding from the menu "<strong>%s</strong>".
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DescVentilDoneExpenseReport=在此查閱費用報表的清單及其費用會計項目。
 
 ValidateHistory=自動地關聯
@@ -221,6 +379,10 @@ AutomaticBindingDone=自動關聯已完成
 
 ErrorAccountancyCodeIsAlreadyUse=錯誤，您不能刪除此會計項目，因為已使用
 MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s | Credit = %s
+<<<<<<< HEAD
+=======
+Balancing=Balancing
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 FicheVentilation=關聯中卡片
 GeneralLedgerIsWritten=交易已紀錄到總帳中
 GeneralLedgerSomeRecordWasNotRecorded=某些交易未記錄。若沒有其他錯誤，這可能是因為已被記錄。
@@ -232,7 +394,11 @@ NotYetAccounted=尚未記入總帳
 
 ## Admin
 ApplyMassCategories=套用大量分類
+<<<<<<< HEAD
 AddAccountFromBookKeepingWithNoCategories=個人化群組中可用會計項目尚未完成
+=======
+AddAccountFromBookKeepingWithNoCategories=Available account not yet in the personalized group
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CategoryDeleted=會計項目的類別已移除
 AccountingJournals=各式會計日記簿
 AccountingJournal=會計日記簿
@@ -248,12 +414,18 @@ AccountingJournalType8=庫存
 AccountingJournalType9=擁有-全新
 ErrorAccountingJournalIsAlreadyUse=此日記簿已使用
 AccountingAccountForSalesTaxAreDefinedInto=注意：銷項稅額的會計項目定義到選單 <b>%s</b> - <b>%s</b>
+<<<<<<< HEAD
+=======
+NumberOfAccountancyEntries=Number of entries
+NumberOfAccountancyMovements=Number of movements
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 ## Export
 ExportDraftJournal=匯出日記簿草稿
 Modelcsv=專家模式
 Selectmodelcsv=選擇專家模式
 Modelcsv_normal=典型匯出
+<<<<<<< HEAD
 Modelcsv_CEGID=匯出成相容的 CEGID 專家模式
 Modelcsv_COALA=匯出成 Sage Coals 格式
 Modelcsv_bob50=匯出成 Sage BOB 50 格式
@@ -263,16 +435,42 @@ Modelcsv_ebp=匯出成 EBP
 Modelcsv_cogilog=匯出成 Cogilog 格式
 Modelcsv_agiris=匯出到 Agiris
 Modelcsv_configurable=匯出偏好設定
+=======
+Modelcsv_CEGID=Export for CEGID Expert Comptabilité
+Modelcsv_COALA=Export for Sage Coala
+Modelcsv_bob50=Export for Sage BOB 50
+Modelcsv_ciel=Export for Sage Ciel Compta or Compta Evolution
+Modelcsv_quadratus=Export for Quadratus QuadraCompta
+Modelcsv_ebp=Export for EBP
+Modelcsv_cogilog=Export for Cogilog
+Modelcsv_agiris=Export for Agiris
+Modelcsv_openconcerto=Export for OpenConcerto (Test)
+Modelcsv_configurable=Export CSV Configurable
+Modelcsv_FEC=Export FEC
+Modelcsv_Sage50_Swiss=Export for Sage 50 Switzerland
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ChartofaccountsId=會計項目表ID
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=初始會計
 InitAccountancyDesc=此頁可在沒有定義產品及服務的銷售及採購會計項目下使用產品及服務的會計項目。
 DefaultBindingDesc=當沒有設定特定會計項目時，此頁面可設定預設會計項目連結到薪資、捐贈、稅捐及營業稅的交易紀錄。
+<<<<<<< HEAD
 Options=選項
 OptionModeProductSell=銷售模式
 OptionModeProductBuy=採購模式
 OptionModeProductSellDesc=顯示銷售產品的會計項目
+=======
+DefaultClosureDesc=This page can be used to set parameters to use to enclose a balance sheet.
+Options=選項
+OptionModeProductSell=銷售模式
+OptionModeProductSellIntra=Mode sales exported in EEC
+OptionModeProductSellExport=Mode sales exported in other countries
+OptionModeProductBuy=採購模式
+OptionModeProductSellDesc=顯示銷售產品的會計項目
+OptionModeProductSellIntraDesc=Show all products with accounting account for sales in EEC.
+OptionModeProductSellExportDesc=Show all products with accounting account for other foreign sales.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 OptionModeProductBuyDesc=顯示採購所有產品的會計項目
 CleanFixHistory=移除會計代號將不再出現在會計項目表中。
 CleanHistory=針對選定年度重設全部關聯性
@@ -280,6 +478,13 @@ PredefinedGroups=預定大類
 WithoutValidAccount=沒有驗證的指定會計項目
 WithValidAccount=驗證的指定會計項目
 ValueNotIntoChartOfAccount=在會計項目表中沒有會計項目的值
+<<<<<<< HEAD
+=======
+AccountRemovedFromGroup=Account removed from group
+SaleLocal=Local sale
+SaleExport=Export sale
+SaleEEC=Sale in EEC
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 ## Dictionary
 Range=會計項目範圍
@@ -292,6 +497,7 @@ ErrorNoAccountingCategoryForThisCountry=此國家 %s 沒有會計項目大類可
 ErrorInvoiceContainsLinesNotYetBounded=您試著記錄發票某行<strong>%s</strong>，但其他行數尚未完成關聯到會計項目。拒絕本張發票全部行數的記錄。
 ErrorInvoiceContainsLinesNotYetBoundedShort=發票中某些行數未關聯到會計項目。
 ExportNotSupported=已設定匯出格式不支援匯出到此頁
+<<<<<<< HEAD
 BookeppingLineAlreayExists=在簿記中此行已存在
 NoJournalDefined=沒有定義的日記簿
 Binded=關聯行數
@@ -302,5 +508,17 @@ UseMenuToSetBindindManualy=不能自動檢測，使用選單 <a href="%s">%s</a>
 ImportAccountingEntries=Accounting entries
 
 WarningReportNotReliable=警告，此報表非依總帳製作的，所以不含總帳中人工修改的交易。若您日記簿是最新的日期，則記帳檢視會比較準確。
+=======
+BookeppingLineAlreayExists=Lines already existing into bookkeeping
+NoJournalDefined=沒有定義的日記簿
+Binded=關聯行數
+ToBind=關聯行
+UseMenuToSetBindindManualy=Lines not yet bound, use menu <a href="%s">%s</a> to make the binding manually
+
+## Import
+ImportAccountingEntries=Accounting entries
+DateExport=Date export
+WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ExpenseReportJournal=Expense Report Journal
 InventoryJournal=Inventory Journal

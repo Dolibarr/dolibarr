@@ -19,6 +19,7 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 
 /**
+<<<<<<< HEAD
  *	Parent class for stock models of doc generators
  */
 abstract class ModelePDFStock extends CommonDocGenerator
@@ -35,13 +36,40 @@ abstract class ModelePDFStock extends CommonDocGenerator
      */
     static function liste_modeles($db,$maxfilenamelength=0)
     {
+=======
+ *  Parent class for stock models of doc generators
+ */
+abstract class ModelePDFStock extends CommonDocGenerator
+{
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
+
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
+     *  Return list of active generation modules
+     *
+     *  @param  DoliDB      $db                 Database handler
+     *  @param  integer     $maxfilenamelength  Max length of value to show
+     *  @return array                           List of templates
+     */
+    public static function liste_modeles($db, $maxfilenamelength = 0)
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         global $conf;
 
         $type='stock';
         $liste=array();
 
         include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+<<<<<<< HEAD
         $liste=getListOfModels($db,$type,$maxfilenamelength);
+=======
+        $liste=getListOfModels($db, $type, $maxfilenamelength);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         return $liste;
     }

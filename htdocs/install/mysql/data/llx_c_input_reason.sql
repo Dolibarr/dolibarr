@@ -32,3 +32,7 @@ INSERT INTO llx_c_input_reason (rowid,code,label,active) VALUES ( 8, 'SRC_WOM', 
 INSERT INTO llx_c_input_reason (rowid,code,label,active) VALUES ( 9, 'SRC_PARTNER',    'Partner', 1);
 INSERT INTO llx_c_input_reason (rowid,code,label,active) VALUES (10, 'SRC_EMPLOYEE',   'Employee', 1);
 INSERT INTO llx_c_input_reason (rowid,code,label,active) VALUES (11, 'SRC_SPONSORING', 'Sponsorship', 1);
+<<<<<<< HEAD
+=======
+INSERT INTO llx_c_input_reason (rowid,code,label,active) VALUES (12, 'SRC_CUSTOMER',   'Incoming contact of a customer', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

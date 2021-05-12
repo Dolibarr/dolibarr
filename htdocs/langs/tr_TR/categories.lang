@@ -16,7 +16,12 @@ MembersCategoriesArea=Üyeler etiketleri/kategorileri alanı
 ContactsCategoriesArea=Kişi etiketleri/kategorileri alanı
 AccountsCategoriesArea=Hesap etiketleri/kategorileri alanı
 ProjectsCategoriesArea=Proje etiket/kategori alanı
+<<<<<<< HEAD
 SubCats=Sub-categories
+=======
+UsersCategoriesArea=Kullanıcı etiketleri/kategorileri alanı
+SubCats=Alt kategoriler
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CatList= Etiketler/kategoriler listesi
 NewCategory=Yeni etiket/kategori
 ModifCat=Etiket/kategori değiştir
@@ -54,14 +59,24 @@ MembersCategoryShort=Üye etiketi/kategorisi
 SuppliersCategoriesShort=Tedarikçi etiketleri/kategorileri
 CustomersCategoriesShort=Müşteri etiketleri/kategorileri
 ProspectsCategoriesShort=Beklenti etiketleri/kategorileri
+<<<<<<< HEAD
 CustomersProspectsCategoriesShort=Müşt./aday kategorileri
+=======
+CustomersProspectsCategoriesShort=Müşteri/Aday etiketleri/kategorileri
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProductsCategoriesShort=ürün etiketleri/kategorileri
 MembersCategoriesShort=Üye etiketleri/kategorileri
 ContactCategoriesShort=Kişi etiketleri/kategorileri
 AccountsCategoriesShort=Hesap etiketleri/kategorileri
 ProjectsCategoriesShort=Proje etiketi/kategorisi
+<<<<<<< HEAD
 ThisCategoryHasNoProduct=Bu kategori herhangi bir ürün içermiyor.
 ThisCategoryHasNoSupplier=Bu kategori herhangi bir tedarikçi içermiyor.
+=======
+UsersCategoriesShort=Kullanıcı etiketleri/kategorileri
+ThisCategoryHasNoProduct=Bu kategori herhangi bir ürün içermiyor.
+ThisCategoryHasNoSupplier=Bu kategori hiçbir tedarikçi içermiyor.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ThisCategoryHasNoCustomer=Bu kategori herhangi bir müşteri içermiyor.
 ThisCategoryHasNoMember=Bu kategori herhangi bir üye içermiyor.
 ThisCategoryHasNoContact=Bu kategori herhangi bir kişi içermiyor.
@@ -81,8 +96,16 @@ DeleteFromCat=Etiketlerden/kategorilerden kaldır
 ExtraFieldsCategories=Tamamlayıcı öznitelikler
 CategoriesSetup=Etiket/kategori ayarları
 CategorieRecursiv=Otomatik ana etiketli/kategorili bağlantı
+<<<<<<< HEAD
 CategorieRecursivHelp=Etkinse, ürün bir alt kategoriye eklenirken aynı zamanda ana kategoriye de eklenecektir
 AddProductServiceIntoCategory=Aşağıdaki ürünü/hizmeti ekle
 ShowCategory=Etiketi/kategoriyi göster
 ByDefaultInList=B listede varsayılana göre
 ChooseCategory=Choose category
+=======
+CategorieRecursivHelp=Bu seçenek aktifse, alt bir kategoriye ürün eklediğinizde bu ürün aynı zamanda üst kategoriye de eklenecektir.
+AddProductServiceIntoCategory=Aşağıdaki ürünü/hizmeti ekle
+ShowCategory=Etiketi/kategoriyi göster
+ByDefaultInList=B listede varsayılana göre
+ChooseCategory=Kategori seç
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

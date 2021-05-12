@@ -22,8 +22,14 @@
   },
   "require-dev": {
     "phpunit/phpunit": "~4.0",
+<<<<<<< HEAD
     "satooshi/php-coveralls": "~0.6.1",
     "squizlabs/php_codesniffer": "~2.0"
+=======
+    "php-coveralls/php-coveralls": "1.*",
+    "squizlabs/php_codesniffer": "~2.0",
+    "symfony/process": "~2.8"
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
   },
   "autoload": {
     "psr-4": { "Stripe\\" : "lib/" }

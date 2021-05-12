@@ -2,6 +2,7 @@
 EventReports=Gebeurtenisrapporten
 ToUserOfGroup=Aan elke gebruiker in groep
 ViewPerType=Overzicht per type
+<<<<<<< HEAD
 AgendaAutoActionDesc=Stel hier de gebeurtenissen in waarvoor u wilt dat Dolibarr automatische een afspraak in de agenda creëert. Als er niets is aangevinkt (standaard), zullen alleen handmatige acties worden opgenomen in de agenda. Automatische tracking van acties zullen niet bewaard worden.
 EventRemindersByEmailNotEnabled=Herinneringen via email voor gebeurtenissen is niet ingeschakeld in de module setup van de Agenda
 NewCompanyToDolibarr=Derde %s aangemaakt
@@ -11,11 +12,23 @@ MemberResiliatedInDolibarr=Lid %s verwijderd
 MemberSubscriptionAddedInDolibarr=Abonnement %s voor lid %s toegevoegd
 MemberSubscriptionModifiedInDolibarr=Abonnement %s voor lid %s aangepast
 MemberSubscriptionDeletedInDolibarr=Abonnement %s voor lid %s verwijderd
+=======
+EventRemindersByEmailNotEnabled=Herinneringen via email was niet ingeschakeld in %s van module setup.
+NewCompanyToDolibarr=Derde %s aangemaakt
+ContractValidatedInDolibarr=Contract %s goedgekeurd
+CONTRACT_DELETEInDolibarr=Contract %s geannuleerd
+MemberModifiedInDolibarr=Lid %s werd aangepast
+MemberResiliatedInDolibarr=Lid %s verwijderd
+MemberSubscriptionModifiedInDolibarr=Abonnement %s voor lid %s aangepast
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShipmentValidatedInDolibarr=Shipment %s goedgekeurd
 ShipmentClassifyClosedInDolibarr=Verzending %s werd geclassificeerd als gefactureerd
 ShipmentUnClassifyCloseddInDolibarr=Verzending %s werd geclassificieerd als opnieuw geopend
 ShipmentDeletedInDolibarr=Shipment %s gewist
+<<<<<<< HEAD
 ContractSentByEMail=Contract %s verstuurd via Email
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProposalDeleted=Offerte verwijderd
 EXPENSE_REPORT_CREATEInDolibarr=Onkostenrapport %s aangemaakt
 EXPENSE_REPORT_VALIDATEInDolibarr=Onkostenrapport %s gevalideerd
@@ -30,5 +43,8 @@ AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> om de uitvoer te beperken 
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> om automatische gebeurtenis uit te sluiten.
 AgendaShowBirthdayEvents=Toon verjaardagen van contacten
 AgendaHideBirthdayEvents=Verberg verjaardagen van contacten
+<<<<<<< HEAD
 AgendaExtNb=Kalender nr. %s
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmCloneEvent=Weet u zeker als u event <b>%s</b> wilt klonen?

@@ -1,6 +1,11 @@
 ﻿/*
+<<<<<<< HEAD
  Copyright (c) 2003-2017, CKSource - Frederico Knabben. All rights reserved.
  For licensing, see LICENSE.md or http://ckeditor.com/license
+=======
+ Copyright (c) 2003-2019, CKSource - Frederico Knabben. All rights reserved.
+ For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 */
 CKEDITOR.plugins.setLang("specialchar","af",{euro:"Euroteken",lsquo:"Linker enkelkwotasie",rsquo:"Regter enkelkwotasie",ldquo:"Linker dubbelkwotasie",rdquo:"Regter dubbelkwotasie",ndash:"Kortkoppelteken",mdash:"Langkoppelteken",iexcl:"Omgekeerdeuitroepteken",cent:"Centteken",pound:"Pondteken",curren:"Geldeenheidteken",yen:"Yenteken",brvbar:"Gebreekte balk",sect:"Afdeelingsteken",uml:"Deelteken",copy:"Kopieregteken",ordf:"Vroulikekenteken",laquo:"Linkgeoorienteerde aanhaalingsteken",not:"Verbodeteken",
 reg:"Regestrasieteken",macr:"Lengteteken",deg:"Gradeteken",sup2:"Kwadraatteken",sup3:"Kubiekteken",acute:"Akuutaksentteken",micro:"Mikroteken",para:"Pilcrow sign",middot:"Middle dot",cedil:"Cedilla",sup1:"Superscript one",ordm:"Masculine ordinal indicator",raquo:"Right-pointing double angle quotation mark",frac14:"Vulgar fraction one quarter",frac12:"Vulgar fraction one half",frac34:"Vulgar fraction three quarters",iquest:"Inverted question mark",Agrave:"Latin capital letter A with grave accent",

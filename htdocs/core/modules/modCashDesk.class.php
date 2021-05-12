@@ -35,7 +35,11 @@ class modCashDesk extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
+<<<<<<< HEAD
 	function __construct($db)
+=======
+	public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$this->db = $db;
 
@@ -46,9 +50,15 @@ class modCashDesk extends DolibarrModules
 		$this->rights_class = 'cashdesk';
 
 		$this->family = "portal";
+<<<<<<< HEAD
 		$this->module_position = 10;
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
+=======
+		$this->module_position = '55';
+		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->description = "CashDesk module";
 
 		$this->revision = '1.27';
@@ -64,9 +74,16 @@ class modCashDesk extends DolibarrModules
 		$this->config_page_url = array("cashdesk.php@cashdesk");
 
 		// Dependencies
+<<<<<<< HEAD
 		$this->depends = array('always'=>"modBanque", 'always'=>"modFacture", 'always'=>"modProduct", 'FR'=>'modBlockedLog');	// List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array();			    // List of modules id to disable if this one is disabled
 		$this->phpmin = array(4,1);					// Minimum version of PHP required by module
+=======
+		$this->hidden = false;			            // A condition to hide module
+		$this->depends = array('always'=>"modBanque", 'always'=>"modFacture", 'always'=>"modProduct", 'FR'=>'modBlockedLog');	// List of modules id that must be enabled if this module is enabled
+		$this->requiredby = array();			    // List of modules id to disable if this one is disabled
+		$this->phpmin = array(5,4);					// Minimum version of PHP required by module
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->need_dolibarr_version = array(2,4);	// Minimum version of Dolibarr required by module
 		$this->langfiles = array("cashdesk");
 		$this->warnings_activation = array('FR'=>'WarningNoteModulePOSForFrenchLaw');                     // Warning to show when we activate module. array('always'='text') or array('FR'='text')
@@ -80,7 +97,10 @@ class modCashDesk extends DolibarrModules
 
 		// Permissions
 		$this->rights = array();
+<<<<<<< HEAD
 		$this->rights_class = 'cashdesk';
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$r=0;
 
 		$r++;
@@ -97,7 +117,11 @@ class modCashDesk extends DolibarrModules
 		// This is to declare the Top Menu entry:
 		$this->menu[$r]=array(	    'fk_menu'=>0,			// Put 0 if this is a top menu
 									'type'=>'top',			// This is a Top menu entry
+<<<<<<< HEAD
 									'titre'=>'CashDeskMenu',
+=======
+									'titre'=>'PointOfSaleShort',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 									'mainmenu'=>'cashdesk',
 									'url'=>'/cashdesk/index.php?user=__LOGIN__',
 									'langs'=>'cashdesk',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
@@ -121,6 +145,7 @@ class modCashDesk extends DolibarrModules
 		//							'target'=>'',
 		//							'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
 		// $r++;
+<<<<<<< HEAD
 	}
 
 
@@ -141,4 +166,26 @@ class modCashDesk extends DolibarrModules
 
     	return $this->_init($sql,$options);
   	}
+=======
+    }
+
+
+    /**
+     *  Function called when module is enabled.
+     *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+     *  It also creates data directories
+     *
+     *  @param      string	$options    Options when enabling module ('', 'noboxes')
+     *  @return     int             	1 if OK, 0 if KO
+     */
+    public function init($options = '')
+    {
+        $sql = array();
+
+        // Remove permissions and default values
+        $this->remove($options);
+
+        return $this->_init($sql, $options);
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

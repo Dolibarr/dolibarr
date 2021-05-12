@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2007	Laurent Destailleur		<eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2006-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2006-2012	Regis Houssin			<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php'
  */
 class mod_codeclient_monkey extends ModeleThirdPartyCode
 {
+<<<<<<< HEAD
 	var $nom='Monkey';					// Nom du modele
 	var $name='Monkey';					// Nom du modele
 	var $code_modifiable;				// Code modifiable
@@ -44,12 +49,51 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	var $prefixcustomer='CU';
 	var $prefixsupplier='SU';
 	var $prefixIsRequired; // Le champ prefix du tiers doit etre renseigne quand on utilise {pre}
+=======
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Monkey';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Monkey';
+
+	public $code_modifiable;				// Code modifiable
+
+	public $code_modifiable_invalide;		// Code modifiable si il est invalide
+
+	public $code_modifiable_null;			// Code modifiables si il est null
+
+	public $code_null;						// Code facultatif
+
+	/**
+     * Dolibarr version of the loaded document
+     * @var string
+     */
+	public $version = 'dolibarr';	    	// 'development', 'experimental', 'dolibarr'
+
+	public $code_auto;                     // Numerotation automatique
+
+	public $prefixcustomer='CU';
+
+	public $prefixsupplier='SU';
+
+	public $prefixIsRequired; // Le champ prefix du tiers doit etre renseigne quand on utilise {pre}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	/**
 	 * 	Constructor
 	 */
+<<<<<<< HEAD
 	function __construct()
+=======
+	public function __construct()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$this->nom = "Monkey";
 		$this->name = "Monkey";
@@ -63,6 +107,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	}
 
 
+<<<<<<< HEAD
 	/**		Return description of module
 	 *
 	 * 		@param	Translate	$langs	Object langs
@@ -71,6 +116,17 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	function info($langs)
 	{
 		return $langs->trans("MonkeyNumRefModelDesc",$this->prefixcustomer,$this->prefixsupplier);
+=======
+	/**
+     *  Return description of module
+	 *
+	 *  @param	Translate	$langs	Object langs
+	 *  @return string      		Description of module
+	 */
+	public function info($langs)
+	{
+		return $langs->trans("MonkeyNumRefModelDesc", $this->prefixcustomer, $this->prefixsupplier);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 
@@ -82,15 +138,22 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string					Return string example
 	 */
+<<<<<<< HEAD
 	function getExample($langs,$objsoc=0,$type=-1)
 	{
 		return $this->prefixcustomer.'0901-0001<br>'.$this->prefixsupplier.'0901-0001';
+=======
+	public function getExample($langs, $objsoc = 0, $type = -1)
+	{
+		return $this->prefixcustomer.'0901-00001<br>'.$this->prefixsupplier.'0901-00001';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 
 	/**
 	 *  Return next value
 	 *
+<<<<<<< HEAD
 	 * 	@param	Societe		$objsoc     Object third party
 	 *	@param  int			$type       Client ou fournisseur (1:client, 2:fournisseur)
 	 *  @return string      			Value if OK, '' if module not configured, <0 if KO
@@ -119,6 +182,29 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		if ($type == 1) $prefix=$this->prefixsupplier;
 
 		// D'abord on recupere la valeur max (reponse immediate car champ indexe)
+=======
+	 *  @param	Societe		$objsoc     Object third party
+	 *  @param  int			$type       Client ou fournisseur (1:client, 2:fournisseur)
+	 *  @return string      			Value if OK, '' if module not configured, <0 if KO
+	 */
+	public function getNextValue($objsoc = 0, $type = -1)
+	{
+		global $db, $conf, $mc;
+
+		$field='';
+        $prefix = '';
+		if ($type == 0) {
+			$field = 'code_client';
+            $prefix = $this->prefixcustomer;
+		} elseif ($type == 1) {
+			$field = 'code_fournisseur';
+            $prefix = $this->prefixsupplier;
+		} else {
+            return -1;
+        }
+
+        // D'abord on recupere la valeur max (reponse immediate car champ indexe)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$posindice=8;
         $sql = "SELECT MAX(CAST(SUBSTRING(".$field." FROM ".$posindice.") AS SIGNED)) as max";   // This is standard SQL
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
@@ -140,10 +226,17 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		}
 
 		$date	= dol_now();
+<<<<<<< HEAD
 		$yymm	= strftime("%y%m",$date);
 
 		if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
 		else $num = sprintf("%04s",$max+1);
+=======
+		$yymm	= strftime("%y%m", $date);
+
+		if ($max >= (pow(10, 5) - 1)) $num=$max+1;	// If counter > 99999, we do not format on 5 chars, we take number as it is
+		else $num = sprintf("%05s", $max+1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		dol_syslog(get_class($this)."::getNextValue return ".$prefix.$yymm."-".$num);
 		return $prefix.$yymm."-".$num;
@@ -163,7 +256,11 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 * 								-3 ErrorCustomerCodeAlreadyUsed
 	 * 								-4 ErrorPrefixRequired
 	 */
+<<<<<<< HEAD
 	function verif($db, &$code, $soc, $type)
+=======
+	public function verif($db, &$code, $soc, $type)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf;
 
@@ -174,7 +271,11 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		{
 			$result=0;
 		}
+<<<<<<< HEAD
 		else if (empty($code) && (! $this->code_null || ! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) )
+=======
+		elseif (empty($code) && (! $this->code_null || ! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) )
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			$result=-2;
 		}
@@ -210,6 +311,10 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	}
 
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *		Renvoi si un code est pris ou non (par autre tiers)
 	 *
@@ -219,8 +324,14 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 *		@param  int		  	$type   	0 = customer/prospect , 1 = supplier
 	 *		@return	int						0 if available, <0 if KO
 	 */
+<<<<<<< HEAD
 	function verif_dispo($db, $code, $soc, $type=0)
 	{
+=======
+	public function verif_dispo($db, $code, $soc, $type = 0)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf, $mc;
 
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe";
@@ -249,6 +360,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	}
 
 
+<<<<<<< HEAD
 	/**
 	 *	Renvoi si un code respecte la syntaxe
 	 *
@@ -257,6 +369,18 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 */
 	function verif_syntax($code)
 	{
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Renvoi si un code respecte la syntaxe
+	 *
+	 *  @param  string      $code       Code a verifier
+	 *  @return int                     0 si OK, <0 si KO
+	 */
+	public function verif_syntax($code)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$res = 0;
 
 		if (dol_strlen($code) < 11)
@@ -269,6 +393,10 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		}
 		return $res;
 	}
+<<<<<<< HEAD
 
 }
 
+=======
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

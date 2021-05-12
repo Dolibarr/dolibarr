@@ -52,6 +52,10 @@ ActionAC_TEL=Telefonsamtale
 ActionAC_FAX=Send fax
 ActionAC_PROP=Send tilbud
 ActionAC_EMAIL=Send epost
+<<<<<<< HEAD
+=======
+ActionAC_EMAIL_IN=Reception of Email
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActionAC_RDV=Møter
 ActionAC_INT=Intervensjon på sted
 ActionAC_FAC=Send faktura med post
@@ -60,8 +64,13 @@ ActionAC_CLO=Lukk
 ActionAC_EMAILING=Send e-postutsendelse (masse-epost)
 ActionAC_COM=Send ordre i posten
 ActionAC_SHIP=Send levering i posten
+<<<<<<< HEAD
 ActionAC_SUP_ORD=Send purchase order by mail
 ActionAC_SUP_INV=Send vendor invoice by mail
+=======
+ActionAC_SUP_ORD=Send bestillingsordre via epost
+ActionAC_SUP_INV=Send leverandørfaktura via epost
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActionAC_OTH=Andre
 ActionAC_OTH_AUTO=Automatisk satte hendelser
 ActionAC_MANUAL=Manuelt satte hendelser
@@ -72,8 +81,15 @@ StatusProsp=Prospect status
 DraftPropals=Utkast kommersielle tilbud
 NoLimit=Ingen grense
 ToOfferALinkForOnlineSignature=Link for online signatur
+<<<<<<< HEAD
 WelcomeOnOnlineSignaturePage=Velkommen til siden for å godta tilbud %s
 ThisScreenAllowsYouToSignDocFrom=Denne siden lar deg godta og signere eller avvise et tilbud
 ThisIsInformationOnDocumentToSign=Dette er informasjon på dokumentet for å godta eller avvise
 SignatureProposalRef=Underskrift av tilbud %s
+=======
+WelcomeOnOnlineSignaturePage=Welcome to the page to accept commercial proposals from %s
+ThisScreenAllowsYouToSignDocFrom=Denne siden lar deg godta og signere eller avvise et tilbud
+ThisIsInformationOnDocumentToSign=Dette er informasjon på dokumentet for å godta eller avvise
+SignatureProposalRef=Signature of quote/commercial proposal %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 FeatureOnlineSignDisabled=Funksjon for online signering deaktivert eller dokument generert før funksjonen ble aktivert

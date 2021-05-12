@@ -1,7 +1,11 @@
 #----------------------------------------------------------------------------
 # \file         dolibarr.pl
 # \brief        Dolibarr script install for Virtualmin Pro
+<<<<<<< HEAD
 # \author       (c)2009-2018 Regis Houssin  <regis.houssin@inodbox.com>
+=======
+# \author       (c)2009-2019 Regis Houssin  <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 #----------------------------------------------------------------------------
 
 
@@ -30,7 +34,11 @@ return "Regis Houssin";
 # script_dolibarr_versions()
 sub script_dolibarr_versions
 {
+<<<<<<< HEAD
 return ( "7.0.0", "6.0.5", "5.0.7" );
+=======
+return ( "10.0.0", "9.0.3", "8.0.5", "7.0.5", "6.0.8" );
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 sub script_dolibarr_release
@@ -263,15 +271,26 @@ if ($upgrade) {
 	local @params = ( [ "action", "upgrade" ],
 			  [ "versionfrom", $upgrade->{'version'} ],
 			  [ "versionto", $ver ],
+<<<<<<< HEAD
+=======
+			  [ "installlock", "444" ],
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			 );
 	local $p = $ver >= 3.8 ? "step5" : "etape5";
 	local $err = &call_dolibarr_wizard_page(\@params, $p, $d, $opts);
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
 	
+<<<<<<< HEAD
 	# Remove the installation directory.
 	local $dinstall = "$opts->{'dir'}/install";
 	$dinstall  =~ s/\/$//;
 	$out = &run_as_domain_user($d, "rm -rf ".quotemeta($dinstall));
+=======
+	# Remove the installation directory. (deprecated)
+	# local $dinstall = "$opts->{'dir'}/install";
+	# $dinstall  =~ s/\/$//;
+	# $out = &run_as_domain_user($d, "rm -rf ".quotemeta($dinstall));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	
 	}
 else {
@@ -306,15 +325,28 @@ else {
 			  [ "login", "admin" ],
 			  [ "pass", $dompass ],
 			  [ "pass_verif", $dompass ],
+<<<<<<< HEAD
+=======
+			  [ "installlock", "444" ],
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	 		 );
 	local $p = $ver >= 3.8 ? "step5" : "etape5";
 	local $err = &call_dolibarr_wizard_page(\@params, $p, $d, $opts);
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
 	
+<<<<<<< HEAD
 	# Remove the installation directory and protect config file.
 	local $dinstall = "$opts->{'dir'}/install";
 	$dinstall  =~ s/\/$//;
 	$out = &run_as_domain_user($d, "rm -rf ".quotemeta($dinstall));
+=======
+	# Remove the installation directory (deprecated)
+	# local $dinstall = "$opts->{'dir'}/install";
+	# $dinstall  =~ s/\/$//;
+	# $out = &run_as_domain_user($d, "rm -rf ".quotemeta($dinstall));
+	
+	# Protect config file
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	&set_permissions_as_domain_user($d, 0644, $cfile);
 	&set_permissions_as_domain_user($d, 0755, $cfiledir);
 	}
@@ -386,6 +418,12 @@ sub script_dolibarr_check_latest
 {
 local ($ver) = @_;
 local @vers = &osdn_package_versions("dolibarr",
+<<<<<<< HEAD
+=======
+				$ver >= 10.0 ? "dolibarr\\-(10\\.0\\.[0-9\\.]+)\\.tgz" :
+				$ver >= 9.0 ? "dolibarr\\-(9\\.0\\.[0-9\\.]+)\\.tgz" :
+				$ver >= 8.0 ? "dolibarr\\-(8\\.0\\.[0-9\\.]+)\\.tgz" :
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$ver >= 7.0 ? "dolibarr\\-(7\\.0\\.[0-9\\.]+)\\.tgz" :
 				$ver >= 6.0 ? "dolibarr\\-(6\\.0\\.[0-9\\.]+)\\.tgz" :
 				$ver >= 5.0 ? "dolibarr\\-(5\\.0\\.[0-9\\.]+)\\.tgz" :

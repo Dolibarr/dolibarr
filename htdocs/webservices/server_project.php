@@ -21,9 +21,15 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
+<<<<<<< HEAD
 if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK",'1');
 
 require_once '../master.inc.php';
+=======
+if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK", '1');
+
+require '../master.inc.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 require_once NUSOAP_PATH.'/nusoap.php';        // Include SOAP
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -41,7 +47,11 @@ if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
 {
     $langs->load("admin");
     dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
+<<<<<<< HEAD
     print $langs->trans("WarningModuleNotActive",'WebServices').'.<br><br>';
+=======
+    print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print $langs->trans("ToActivateModule");
     exit;
 }
@@ -69,7 +79,11 @@ $server = new nusoap_server();
 $server->soap_defencoding='UTF-8';
 $server->decode_utf8=false;
 $ns='http://www.dolibarr.org/ns/';
+<<<<<<< HEAD
 $server->configureWSDL('WebServicesDolibarrOther',$ns);
+=======
+$server->configureWSDL('WebServicesDolibarrOther', $ns);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $server->wsdl->schemaTargetNamespace=$ns;
 
 // Define WSDL Authentication object
@@ -162,7 +176,11 @@ $project_fields = array(
 //Retreive all extrafield for thirdsparty
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
+<<<<<<< HEAD
 $extralabels=$extrafields->fetch_name_optionals_label('project',true);
+=======
+$extralabels=$extrafields->fetch_name_optionals_label('project', true);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $extrafield_array=null;
 if (is_array($extrafields) && count($extrafields)>0) {
     $extrafield_array = array();
@@ -175,7 +193,11 @@ foreach($extrafields->attribute_label as $key=>$label)
     else {$type='xsd:string';}
     $extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
 }
+<<<<<<< HEAD
 if (is_array($extrafield_array)) $project_fields=array_merge($project_fields,$extrafield_array);
+=======
+if (is_array($extrafield_array)) $project_fields=array_merge($project_fields, $extrafield_array);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $server->wsdl->addComplexType(
     'project',
@@ -241,7 +263,11 @@ function createProject($authentication, $project)
     $objectresp=array();
     $errorcode='';$errorlabel='';
     $error=0;
+<<<<<<< HEAD
     $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+=======
+    $fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     // Check parameters
     if (empty($project['ref']))
     {
@@ -261,15 +287,24 @@ function createProject($authentication, $project)
             $newobject->socid=$project['thirdparty_id'];
             $newobject->public=$project['public'];
             $newobject->statut=$project['status'];
+<<<<<<< HEAD
             $newobject->date_start=dol_stringtotime($project['date_start'],'dayrfc');
             $newobject->date_end=dol_stringtotime($project['date_end'],'dayrfc');
+=======
+            $newobject->date_start=dol_stringtotime($project['date_start'], 'dayrfc');
+            $newobject->date_end=dol_stringtotime($project['date_end'], 'dayrfc');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $newobject->budget_amount=$project['budget'];
             $newobject->description=$project['description'];
 
             // Retrieve all extrafields for project
             // fetch optionals attributes and labels
             $extrafields=new ExtraFields($db);
+<<<<<<< HEAD
             $extralabels=$extrafields->fetch_name_optionals_label('project',true);
+=======
+            $extralabels=$extrafields->fetch_name_optionals_label('project', true);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             foreach($extrafields->attribute_label as $key=>$label)
             {
                 $key='options_'.$key;
@@ -329,7 +364,11 @@ function createProject($authentication, $project)
  * @param	string		$ref		    	internal reference
  * @return	array							Array result
  */
+<<<<<<< HEAD
 function getProject($authentication,$id='',$ref='')
+=======
+function getProject($authentication, $id = '', $ref = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
     global $db,$conf,$langs;
 
@@ -341,7 +380,11 @@ function getProject($authentication,$id='',$ref='')
     $objectresp=array();
     $errorcode='';$errorlabel='';
     $error=0;
+<<<<<<< HEAD
     $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+=======
+    $fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     // Check parameters
     if (! $error && (($id && $ref)))
     {
@@ -356,7 +399,11 @@ function getProject($authentication,$id='',$ref='')
         if ($fuser->rights->projet->lire)
         {
             $project=new Project($db);
+<<<<<<< HEAD
             $result=$project->fetch($id,$ref);
+=======
+            $result=$project->fetch($id, $ref);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             if ($result > 0)
             {
                 $project_result_fields=array(
@@ -374,13 +421,21 @@ function getProject($authentication,$id='',$ref='')
 
                 //Retrieve all extrafields for project
                 $extrafields=new ExtraFields($db);
+<<<<<<< HEAD
                 $extralabels=$extrafields->fetch_name_optionals_label('societe',true);
+=======
+                $extralabels=$extrafields->fetch_name_optionals_label('societe', true);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
                 //Get extrafield values
                 $project->fetch_optionals();
                 foreach($extrafields->attribute_label as $key=>$label)
                 {
+<<<<<<< HEAD
                     $project_result_fields=array_merge($project_result_fields,array('options_'.$key => $project->array_options['options_'.$key]));
+=======
+                    $project_result_fields=array_merge($project_result_fields, array('options_'.$key => $project->array_options['options_'.$key]));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 }
 
                 //Get linked elements

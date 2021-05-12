@@ -50,6 +50,7 @@ ErrorFailedToSendMail=Neuspjeh pri slanju maila (pošiljalac=%s, primalac=%s)
 ErrorFileNotUploaded=Datoteka nije postavljena. Provjerite da li joj je veličina iznad dozvoljene, da li ima dovoljno slobodnog mjesta na disku i da li već postoji datoteka istog imena u ovom direktoriju.
 ErrorInternalErrorDetected=Pronađena greška
 ErrorWrongHostParameter=Pogrešan parametar hosta
+<<<<<<< HEAD
 ErrorYourCountryIsNotDefined=Vaša država nije definirana. Idite u postavke Početna-Postavke-Uredi i pošaljite ponovno obrazac.
 ErrorRecordIsUsedByChild=Neuspjelo brisanje ovog unosa. Ovaj unos je korišten najmanje jednom u drugom podunosu.
 ErrorWrongValue=Pogrešna vrijednost
@@ -59,12 +60,28 @@ ErrorServiceUnavailableTryLater=Usluga trenutno nije dostupna. Pokušajte kasnij
 ErrorDuplicateField=Duplicirana vrijednost u unikatnom polju
 ErrorSomeErrorWereFoundRollbackIsDone=Pronađene određene greške. Vraćam promjene.
 ErrorConfigParameterNotDefined=Parametar <b>%s</b> nije definiran unutar Dolibarr konfiguracijske datoteke <b>conf.php</b>.
+=======
+ErrorYourCountryIsNotDefined=Your country is not defined. Go to Home-Setup-Edit and post the form again.
+ErrorRecordIsUsedByChild=Failed to delete this record. This record is used by at least one child record.
+ErrorWrongValue=Pogrešna vrijednost
+ErrorWrongValueForParameterX=Pogrešna vrijednost za parametar %s
+ErrorNoRequestInError=Nema greške u zahtjevu
+ErrorServiceUnavailableTryLater=Service not available at the moment. Try again later.
+ErrorDuplicateField=Duplicirana vrijednost u unikatnom polju
+ErrorSomeErrorWereFoundRollbackIsDone=Some errors were found. Changes have been rolled back.
+ErrorConfigParameterNotDefined=Parameter <b>%s</b> is not defined in the Dolibarr config file <b>conf.php</b>.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorCantLoadUserFromDolibarrDatabase=Neuspjelo traženje korisnika <b>%s</b> u Dolibarr bazi podataka.
 ErrorNoVATRateDefinedForSellerCountry=Greška, nije definirana PDV stopa za državu '%s'.
 ErrorNoSocialContributionForSellerCountry=Greška, nisu definirane vrste doprinosa i poreza za državu '%s'.
 ErrorFailedToSaveFile=Greška, neuspjelo spremanje datoteke.
+<<<<<<< HEAD
 ErrorCannotAddThisParentWarehouse=Pokušavate dodati nadređeno skladište koje je već podređeno skladište ovom trenutnom
 MaxNbOfRecordPerPage=Maks broj unosa po stranici
+=======
+ErrorCannotAddThisParentWarehouse=You are trying to add a parent warehouse which is already a child of a existing warehouse
+MaxNbOfRecordPerPage=Max. number of records per page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NotAuthorized=Niste ovlašteni da to uradite.
 SetDate=Postavi datum
 SelectDate=Odaberi datum
@@ -78,25 +95,44 @@ FileRenamed=Datoteka je uspješno preimenovana
 FileGenerated=Datoteka je uspješno generirana
 FileSaved=Datoteka je uspješno spremljena
 FileUploaded=Datoteka je uspješno postavljena
+<<<<<<< HEAD
 FileTransferComplete=Datoteka(e) su uspješno učitane
 FilesDeleted=Datoteka(e) uspješno obrisana
 FileWasNotUploaded=Datoteka je odabrana za prilog ali nije još postavljena. Kliknite na "Dodaj datoteku" da bi ste to uradili.
 NbOfEntries=Broj unosa
+=======
+FileTransferComplete=File(s) uploaded successfully
+FilesDeleted=Datoteka(e) uspješno obrisana
+FileWasNotUploaded=Datoteka je odabrana za prilog ali nije još postavljena. Kliknite na "Dodaj datoteku" da bi ste to uradili.
+NbOfEntries=No. of entries
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 GoToWikiHelpPage=Pročitajte online pomoć (neophodan pristup internetu)
 GoToHelpPage=Pročitaj pomoć
 RecordSaved=Unos spremljen
 RecordDeleted=Unos obrisan
+<<<<<<< HEAD
+=======
+RecordGenerated=Record generated
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LevelOfFeature=Nivo osobina
 NotDefined=Nije definirano
 DolibarrInHttpAuthenticationSoPasswordUseless=Dolibarr način odobrenja je postavljen na <b>%s</b> u datoteci postavki <b>conf.php</b>.<br>To znači da je baza podataka šifri izvan Dolibarra, pa mjenjanje ovog polja nema efekta.
 Administrator=Administrator
 Undefined=Nedefinirano
 PasswordForgotten=Zaboravljena šifra?
+<<<<<<< HEAD
 NoAccount=No account?
 SeeAbove=Vidi iznad
 HomeArea=Početno područje
 LastConnexion=Posljednje veze
 PreviousConnexion=Prethodna veza
+=======
+NoAccount=Nema računa?
+SeeAbove=Vidi iznad
+HomeArea=Početna
+LastConnexion=Last login
+PreviousConnexion=Previous login
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PreviousValue=Prethodna vrijednost
 ConnectedOnMultiCompany=Spojeno na okruženje
 ConnectedSince=Spojen od
@@ -118,7 +154,11 @@ PrecisionUnitIsLimitedToXDecimals=Dolibarr je podešen za ograniči preciznost c
 DoTest=Test
 ToFilter=Filter
 NoFilter=Nema filtera
+<<<<<<< HEAD
 WarningYouHaveAtLeastOneTaskLate=Upozorenje, imate najmanje jedan element koji je prekoračio rok za rješavanje.
+=======
+WarningYouHaveAtLeastOneTaskLate=Warning, you have at least one element that has exceeded the tolerance time.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 yes=da
 Yes=Da
 no=ne
@@ -142,6 +182,10 @@ Closed=Zatvoreno
 Closed2=Zatvoreno
 NotClosed=Nije zatvoreno
 Enabled=Omogućeno
+<<<<<<< HEAD
+=======
+Enable=Enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Deprecated=Prevaziđeno
 Disable=Isključi
 Disabled=Isključeno
@@ -153,7 +197,11 @@ Update=Ažuriraj
 Close=Zatvori
 CloseBox=Ukloni kutijicu sa svoje nadzorne ploče
 Confirm=Potvrdi
+<<<<<<< HEAD
 ConfirmSendCardByMail=Da li zaista želiš poslati sadržaj ove kartice mailom za <b>%s</b>?
+=======
+ConfirmSendCardByMail=Do you really want to send the content of this card by mail to <b>%s</b>?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Delete=Obriši
 Remove=Ukloni
 Resiliate=Deaktiviraj
@@ -168,7 +216,11 @@ Save=Sačuvaj
 SaveAs=Sačuvaj kao
 TestConnection=Test konekcije
 ToClone=Kloniraj
+<<<<<<< HEAD
 ConfirmClone=Izaberi podatke koje želite klonirati:
+=======
+ConfirmClone=Choose data you want to clone:
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoCloneOptionsSpecified=Nije definiran podatak za kloniranje.
 Of=od
 Go=Idi
@@ -183,7 +235,11 @@ Valid=Valjan
 Approve=Odobriti
 Disapprove=Odbij
 ReOpen=Opet otvori
+<<<<<<< HEAD
 Upload=Postavi datoteku
+=======
+Upload=Upload
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ToLink=Link
 Select=Odaberi
 Choose=Izaberi
@@ -200,6 +256,10 @@ Password=Šifra
 PasswordRetype=Ponovno upišite šifru
 NoteSomeFeaturesAreDisabled=Mnoge osobine/moduli su onemogućeni pri ovoj demostraciji.
 Name=Naziv
+<<<<<<< HEAD
+=======
+NameSlashCompany=Name / Company
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Person=Osoba
 Parameter=Parametar
 Parameters=Parametri
@@ -220,6 +280,12 @@ Info=Zapisnik
 Family=Porodica
 Description=Opis
 Designation=Opis
+<<<<<<< HEAD
+=======
+DescriptionOfLine=Description of line
+DateOfLine=Date of line
+DurationOfLine=Duration of line
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Model=Šablon dokumenta
 DefaultModel=Defaultni šablon dokumenta
 Action=Događaj
@@ -327,12 +393,21 @@ Copy=Kopiraj
 Paste=Zalijepi
 Default=Uobičajeni
 DefaultValue=Uobičajena vrijednost
+<<<<<<< HEAD
 DefaultValues=Podrazumijevane vrijednosti
 Price=Cijena
 PriceCurrency=Cijena (valuta)
 UnitPrice=Jedinična cijena
 UnitPriceHT=Jedinična cijena (neto)
 UnitPriceHTCurrency=Jedinična cijena (neto) (valuta)
+=======
+DefaultValues=Default values/filters/sorting
+Price=Cijena
+PriceCurrency=Cijena (valuta)
+UnitPrice=Jedinična cijena
+UnitPriceHT=Unit price (excl.)
+UnitPriceHTCurrency=Unit price (excl.) (currency)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 UnitPriceTTC=Jedinična cijena
 PriceU=J.C.
 PriceUHT=J.C. (neto)
@@ -342,6 +417,7 @@ Amount=Iznos
 AmountInvoice=Iznos fakture
 AmountInvoiced=Fakturisani iznos
 AmountPayment=Iznos plaćanja
+<<<<<<< HEAD
 AmountHTShort=Iznos (neto)
 AmountTTCShort=Iznos (uklj. PDV)
 AmountHT=Iznos (neto bez PDV)
@@ -351,6 +427,17 @@ MulticurrencyAlreadyPaid=Već plaćeno, orig. valuta
 MulticurrencyRemainderToPay=Ostatak za plaćanje, orig. valuta
 MulticurrencyPaymentAmount=Iznos za plaćanje, orig. valuta
 MulticurrencyAmountHT=Iznos (bez poreza), orig. valuta
+=======
+AmountHTShort=Amount (excl.)
+AmountTTCShort=Iznos (uklj. PDV)
+AmountHT=Amount (excl. tax)
+AmountTTC=Iznos (uklj. PDV)
+AmountVAT=Iznos poreza
+MulticurrencyAlreadyPaid=Already paid, original currency
+MulticurrencyRemainderToPay=Ostatak za plaćanje, orig. valuta
+MulticurrencyPaymentAmount=Iznos za plaćanje, orig. valuta
+MulticurrencyAmountHT=Amount (excl. tax), original currency
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MulticurrencyAmountTTC=Iznos (uklj. porez), origin. valuta
 MulticurrencyAmountVAT=Iznos poreza, orig. valuta
 AmountLT1=Iznos poreza 2
@@ -359,6 +446,7 @@ AmountLT1ES=Iznos RE
 AmountLT2ES=Iznos IRPF
 AmountTotal=Ukupni iznos
 AmountAverage=Prosječni iznos
+<<<<<<< HEAD
 PriceQtyMinHT=Min. cijena jedinice (neto porez)
 PriceQtyMinHTCurrency=Min. cijena jedinice (neto porez) (valuta)
 Percentage=Postotak
@@ -369,6 +457,19 @@ TotalHTShortCurrency=Ukupno (neto u valuti)
 TotalTTCShort=Ukupno (uklj. PDV)
 TotalHT=Ukupno (neto PDV)
 TotalHTforthispage=Ukupno (neto poreza) za ovu stranicu
+=======
+PriceQtyMinHT=Price quantity min. (excl. tax)
+PriceQtyMinHTCurrency=Price quantity min. (excl. tax) (currency)
+Percentage=Postotak
+Total=Ukupno
+SubTotal=Međuzbir
+TotalHTShort=Total (excl.)
+TotalHT100Short=Total 100%% (excl.)
+TotalHTShortCurrency=Total (excl. in currency)
+TotalTTCShort=Ukupno (uklj. PDV)
+TotalHT=Total (excl. tax)
+TotalHTforthispage=Total (excl. tax) for this page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Totalforthispage=Ukupno za ovu stranicu
 TotalTTC=Ukupno (uklj. PDV)
 TotalTTCToYourCredit=Ukupno (uklj. PDV) u vašu korist
@@ -380,7 +481,11 @@ TotalLT1ES=Ukupno RE
 TotalLT2ES=Ukupno IRPF
 TotalLT1IN=Ukupno CGST
 TotalLT2IN=Ukupno SGST
+<<<<<<< HEAD
 HT=Neto porez
+=======
+HT=Excl. tax
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TTC=Uklj. porez
 INCVATONLY=Uklj. PDV
 INCT=Uklj. sve poreze
@@ -396,6 +501,10 @@ LT1ES=RE
 LT2ES=IRPF
 LT1IN=CGST
 LT2IN=SGST
+<<<<<<< HEAD
+=======
+LT1GC=Additionnal cents
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 VATRate=Stopa poreza
 VATCode=Šifra stope poreza
 VATNPR=NPR stopa poreza
@@ -403,7 +512,11 @@ DefaultTaxRate=Pretpostavljena stopa poreza
 Average=Prosjek
 Sum=Zbir
 Delta=Delta
+<<<<<<< HEAD
 RemainToPay=Remain to pay
+=======
+RemainToPay=Preostalo za platiti
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Module=Modul/aplikacija
 Modules=Moduli/aplikacije
 Option=Opcija
@@ -416,7 +529,11 @@ Favorite=Omiljeni
 ShortInfo=Info.
 Ref=Ref.
 ExternalRef=Ref. vanjski
+<<<<<<< HEAD
 RefSupplier=Ref. vendor
+=======
+RefSupplier=Ref. prodavača
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 RefPayment=Ref. plaćanje
 CommercialProposalsShort=Poslovni prijedlozi
 Comment=Komentar
@@ -428,14 +545,23 @@ ActionNotApplicable=Nije primjenjivo
 ActionRunningNotStarted=Treba započeti
 ActionRunningShort=U toku
 ActionDoneShort=Završeno
+<<<<<<< HEAD
 ActionUncomplete=Nedovršeno
+=======
+ActionUncomplete=Incomplete
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LatestLinkedEvents=Posljednjih %s povezanih događaja
 CompanyFoundation=Kompanija/organizacija
 Accountant=Računovođa
 ContactsForCompany=Kontakti za ovaj subjekt
 ContactsAddressesForCompany=Kontakti/adrese za ovaj subjekt
 AddressesForCompany=Adrese za ovaj subjekt
+<<<<<<< HEAD
 ActionsOnCompany=Događaji o ovom subjektu
+=======
+ActionsOnCompany=Events for this third party
+ActionsOnContact=Events for this contact/address
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActionsOnMember=Događaji o ovom članu
 ActionsOnProduct=Događaji o ovom proizvodu
 NActionsLate=%s kasne
@@ -453,8 +579,13 @@ Generate=Napravi
 Duration=Trajanje
 TotalDuration=Ukupno trajanje
 Summary=Sažetak
+<<<<<<< HEAD
 DolibarrStateBoard=Statistike baze podataka
 DolibarrWorkBoard=Pregled otvorenih predmeta
+=======
+DolibarrStateBoard=Database Statistics
+DolibarrWorkBoard=Open Items
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoOpenedElementToProcess=Nema otvorenih elemenata za obradu
 Available=Dostupno
 NotYetAvailable=Još uvijek nedostupno
@@ -468,7 +599,11 @@ and=i
 or=ili
 Other=Ostalo
 Others=Drugi
+<<<<<<< HEAD
 OtherInformations=Ostale informacije
+=======
+OtherInformations=Other information
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Quantity=Količina
 Qty=Kol
 ChangedBy=Izmijenio
@@ -482,9 +617,17 @@ Reporting=Izvještavanje
 Reportings=Izvještavanja
 Draft=Nacrt
 Drafts=Uzorak
+<<<<<<< HEAD
 StatusInterInvoiced=
 Validated=Potvrđeno
 Opened=Otvori
+=======
+StatusInterInvoiced=Invoiced
+Validated=Potvrđeno
+Opened=Otvori
+OpenAll=Open (All)
+ClosedAll=Closed (All)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 New=Novo
 Discount=Popust
 Unknown=Nepoznat
@@ -495,7 +638,11 @@ Received=Primljeno
 Paid=Plaćeno
 Topic=Tema
 ByCompanies=Po subjektu
+<<<<<<< HEAD
 ByUsers=By user
+=======
+ByUsers=Po korisniku
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Links=Veze
 Link=Veza
 Rejects=Odbijeno
@@ -506,8 +653,13 @@ None=Ništa
 NoneF=Ništa
 NoneOrSeveral=Nijedan ili više
 Late=Kasno
+<<<<<<< HEAD
 LateDesc=Kašnjenje za definiranje ako je zapis zakasnio ili nije zavisan u vašem podešenju. Pitajte administratora za promjenu kašnjenja u meniju Početan - Postavke - Upozorenja.
 NoItemLate=No late item
+=======
+LateDesc=An item is defined as Delayed as per the system configuration in menu Home - Setup - Alerts.
+NoItemLate=Nema zakašnjelih stavki
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Photo=Slika
 Photos=Slike
 AddPhoto=Dodaj sliku
@@ -530,6 +682,7 @@ September=septembar
 October=oktobar
 November=novembar
 December=decembar
+<<<<<<< HEAD
 JanuaryMin=jan
 FebruaryMin=feb
 MarchMin=mar
@@ -542,6 +695,8 @@ SeptemberMin=sep
 OctoberMin=okt
 NovemberMin=nov
 DecemberMin=dec
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Month01=Januar
 Month02=februar
 Month03=mart
@@ -622,9 +777,15 @@ BuildDoc=Napravi dok.
 Entity=Okruženje
 Entities=entiteti
 CustomerPreview=Pregled kupca
+<<<<<<< HEAD
 SupplierPreview=Vendor preview
 ShowCustomerPreview=Pokaži sažetak kupca
 ShowSupplierPreview=Show vendor preview
+=======
+SupplierPreview=Pregled prodavača
+ShowCustomerPreview=Pokaži sažetak kupca
+ShowSupplierPreview=Pokaži pregled prodavača
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 RefCustomer=Ref. kupca
 Currency=valuta
 InfoAdmin=Informacije za administratore
@@ -638,14 +799,25 @@ FeatureNotYetSupported=Osobina još nije podržana
 CloseWindow=Zatvori prozor
 Response=Odgovor
 Priority=Prioritet
+<<<<<<< HEAD
 SendByMail=Pošalji emailom
+=======
+SendByMail=Send by email
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MailSentBy=Email je poslao
 TextUsedInTheMessageBody=Tekst emaila
 SendAcknowledgementByMail=Pošalji konfirmacijski email
 SendMail=Pošalji e-mail
+<<<<<<< HEAD
 EMail=Email
 NoEMail=nema emaila
 Email=email
+=======
+Email=email
+NoEMail=nema emaila
+AlreadyRead=Already read
+NotRead=Not read
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoMobilePhone=Nema broj mobitela
 Owner=Vlasnik
 FollowingConstantsWillBeSubstituted=Sljedeće konstante će se zamijeniti sa odgovarajućim vrijednostima.
@@ -658,8 +830,14 @@ ValueIsValid=Vrijednost je važeća
 ValueIsNotValid=Vrijednost nije valjana
 RecordCreatedSuccessfully=Zapis je uspješno napravljen
 RecordModifiedSuccessfully=Zapis uspješno promijenjen
+<<<<<<< HEAD
 RecordsModified=%s zapis promijenjen
 RecordsDeleted=%s zapis obrisan
+=======
+RecordsModified=%s record(s) modified
+RecordsDeleted=%s record(s) deleted
+RecordsGenerated=%s record(s) generated
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AutomaticCode=Automatski kod
 FeatureDisabled=Osobina onemogućena
 MoveBox=Pomjeri prikaz
@@ -670,14 +848,21 @@ Method=Metoda
 Receive=Primiti
 CompleteOrNoMoreReceptionExpected=Završeno ili se ne očekuje više
 ExpectedValue=Očekivana vrijednost
+<<<<<<< HEAD
 CurrentValue=Trenutna vrijednost
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PartialWoman=Djelimično
 TotalWoman=Ukupno
 NeverReceived=Nikad primljeno
 Canceled=Otkazan
 YouCanChangeValuesForThisListFromDictionarySetup=Možete promijeniti vrijednosti na ovom spisku u meniju Postavke-Rječnici
 YouCanChangeValuesForThisListFrom=Možete promijeniti vrijednosti za ovaj spisak u meniju %s
+<<<<<<< HEAD
 YouCanSetDefaultValueInModuleSetup=Možete postaviti podrazumijevane vrijednosti koje će se koristiti pri pravljenju novog zapisa u postavkama modula
+=======
+YouCanSetDefaultValueInModuleSetup=You can set the default value used when creating a new record in module setup
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Color=Boja
 Documents=Povezane datoteke
 Documents2=Dokumenti
@@ -703,28 +888,47 @@ DateOfSignature=Datum potpisa
 HidePassword=Pokaži komandu sa skrivenom šifrom
 UnHidePassword=Pokaži stvarnu komandu sa pokazanom šifrom
 Root=Root
+<<<<<<< HEAD
 Informations=Informacije
+=======
+Informations=Inromacije
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Page=Stranica
 Notes=Napomene
 AddNewLine=Dodaj novi red
 AddFile=Dodaj datoteku
 FreeZone=Nije predefinisan proizvod/usluga
+<<<<<<< HEAD
 FreeLineOfType=Nije predefinisana vrsta stavke
 CloneMainAttributes=Kloniraj objekt sa njegovim osnovnim osobinama
+=======
+FreeLineOfType=Free-text item, type:
+CloneMainAttributes=Kloniraj objekt sa njegovim osnovnim osobinama
+ReGeneratePDF=Re-generate PDF
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PDFMerge=PDF spajanje
 Merge=Spajanje
 DocumentModelStandardPDF=Standardni šablon PDFa
 PrintContentArea=Pokaži stranicu za štampu glavnog područja
 MenuManager=Upravljanje menijima
+<<<<<<< HEAD
 WarningYouAreInMaintenanceMode=Upozorenje, sada ste u modu za održavanje, tako da samo korisniku <b>%s</b> je dopušteno korištenje aplikacije u ovom trenutku.
+=======
+WarningYouAreInMaintenanceMode=Warning, you are in maintenance mode: only login <b>%s</b> is allowed to use the application in this mode.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CoreErrorTitle=Sistemska greška
 CoreErrorMessage=Žao nam je, desila se greška. Kontaktirajte sistemskog administratora da provjeri zapisnik ili onemogući $dolibarr_main_prod=1 za dobijanje više informacija.
 CreditCard=Kreditna kartica
 ValidatePayment=Potvrditi uplatu
 CreditOrDebitCard=Kreditna kartica
 FieldsWithAreMandatory=Polja sa <b>%s</b> su obavezna
+<<<<<<< HEAD
 FieldsWithIsForPublic=Polja sa <b>%s</b> su prikazana na javnom spisku članova. Ako ovo ne želite, deaktivirajte kućicu "javno".
 AccordingToGeoIPDatabase=(prema GeoIP konverziji)
+=======
+FieldsWithIsForPublic=Fields with <b>%s</b> are shown in public list of members. If you don't want this, uncheck the "public" box.
+AccordingToGeoIPDatabase=(according to GeoIP conversion)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Line=Red
 NotSupported=Nije podržano
 RequiredField=Obavezno polje
@@ -732,6 +936,11 @@ Result=Rezultat
 ToTest=Test
 ValidateBefore=Kartica se mora odobriti prije korištenja ove osobine
 Visibility=Vidljivost
+<<<<<<< HEAD
+=======
+Totalizable=Totalizable
+TotalizableDesc=This field is totalizable in list
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Private=Privatno
 Hidden=Sakriveno
 Resources=Resursi
@@ -750,14 +959,25 @@ LinkTo=Link ka
 LinkToProposal=Link ka prijedlogu
 LinkToOrder=Link ka narudžbi
 LinkToInvoice=Link na fakturu
+<<<<<<< HEAD
 LinkToSupplierOrder=Link ka narudžbi kupcu
 LinkToSupplierProposal=Link ka ponudi dobavljača
 LinkToSupplierInvoice=Link na fakturu dobavljača
+=======
+LinkToTemplateInvoice=Link to template invoice
+LinkToSupplierOrder=Link to purchase order
+LinkToSupplierProposal=Link to vendor proposal
+LinkToSupplierInvoice=Link to vendor invoice
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LinkToContract=Link ka kontaktima
 LinkToIntervention=Link ka intervencijama
 CreateDraft=Kreiraj nacrt
 SetToDraft=Nazad na nacrt
 ClickToEdit=Klikni za uređivanje
+<<<<<<< HEAD
+=======
+ClickToRefresh=Click to refresh
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 EditWithEditor=Uredi sa CKUređivačem
 EditWithTextEditor=Uredi sa tekstualnim uređivačem
 EditHTMLSource=Uredi HTML izvor
@@ -772,14 +992,22 @@ ByDay=Po danu
 BySalesRepresentative=Po predstavniku prodaje
 LinkedToSpecificUsers=Spojeno sa određenim kontaktom korisnika
 NoResults=Nema rezultata
+<<<<<<< HEAD
 AdminTools=Adminski alati
+=======
+AdminTools=Admin Tools
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SystemTools=Sistemski alati
 ModulesSystemTools=Alati modula
 Test=Test
 Element=Element
 NoPhotoYet=Još nema dostupne slike
 Dashboard=Komandna tabla
+<<<<<<< HEAD
 MyDashboard=Moja nadzorna ploča
+=======
+MyDashboard=My Dashboard
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Deductible=Može se odbiti
 from=od
 toward=prema
@@ -802,7 +1030,11 @@ PrintFile=Štampa datoteke %s
 ShowTransaction=Pokaži unos u bankovni račun
 ShowIntervention=Prikaži intervenciju
 ShowContract=Prikaži ugovor
+<<<<<<< HEAD
 GoIntoSetupToChangeLogo=Idite u  Početna - Postavke - Kompanija za promjenu logotipa ili Početna - Postavke - Prikaz za sakrivanje.
+=======
+GoIntoSetupToChangeLogo=Go to Home - Setup - Company to change logo or go to Home - Setup - Display to hide.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Deny=Zabrani
 Denied=Zabranjeno
 ListOf=Spisak %s
@@ -818,16 +1050,29 @@ Sincerely=S poštovanjem
 DeleteLine=Obriši red
 ConfirmDeleteLine=Da li ste sigurni da želite obrisati ovaj red?
 NoPDFAvailableForDocGenAmongChecked=Nijedan PDF nije dostupan za kreiranje dokumenata među provjerenim zapisima
+<<<<<<< HEAD
 TooManyRecordForMassAction=Previše zapisa odabrano za masovnu akciju. Akcija je ograničena na spisak od %s zapisa.
 NoRecordSelected=Nijedan zapis nije odabran
 MassFilesArea=Područje za datoteke napravljeno masovnim akcijama
 ShowTempMassFilesArea=Pokaži područje datoteka napravljeno masovnim akcijama
 ConfirmMassDeletion=Potvrda masovnog brisanja
 ConfirmMassDeletionQuestion=Da li ste sigurni da želite obrisati %s odabranih zapisa ?
+=======
+TooManyRecordForMassAction=Too many records selected for mass action. The action is restricted to a list of %s records.
+NoRecordSelected=Nijedan zapis nije odabran
+MassFilesArea=Područje za datoteke napravljeno masovnim akcijama
+ShowTempMassFilesArea=Pokaži područje datoteka napravljeno masovnim akcijama
+ConfirmMassDeletion=Bulk Delete confirmation
+ConfirmMassDeletionQuestion=Are you sure you want to delete the %s selected record(s)?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 RelatedObjects=Povezani objekti
 ClassifyBilled=Klasificiraj kao fakturisano
 ClassifyUnbilled=Klasificiraj kao nefakturisano
 Progress=Napredak
+<<<<<<< HEAD
+=======
+ProgressShort=Progr.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 FrontOffice=Izlog
 BackOffice=Administracija
 View=Pogled
@@ -836,18 +1081,31 @@ Exports=Exports
 ExportFilteredList=Izvezi filtrirani spisak
 ExportList=Spisak za izvoz
 ExportOptions=Opcije izvoza
+<<<<<<< HEAD
+=======
+IncludeDocsAlreadyExported=Include docs already exported
+ExportOfPiecesAlreadyExportedIsEnable=Export of pieces already exported is enable
+ExportOfPiecesAlreadyExportedIsDisable=Export of pieces already exported is disable
+AllExportedMovementsWereRecordedAsExported=All exported movements were recorded as exported
+NotAllExportedMovementsCouldBeRecordedAsExported=Not all exported movements could be recorded as exported
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Miscellaneous=Razno
 Calendar=Kalendar
 GroupBy=Grupiranje po...
 ViewFlatList=Vidi čisti spisak
 RemoveString=Ukloni pojam '%s'
+<<<<<<< HEAD
 SomeTranslationAreUncomplete=Neki jezici su možda djelimično prevedeni ili mogu sadržavati greške. Ako nađete neke, možete popraviti jezičke datoteke tako što ćete ih postaviti na <a href="https://transifex.com/projects/p/dolibarr/" target="_blank">https://transifex.com/projects/p/dolibarr/</a>.
+=======
+SomeTranslationAreUncomplete=Some of the languages offered may be only partially translated or may contain errors. Please help to correct your language by registering at <a href="https://transifex.com/projects/p/dolibarr/" target="_blank">https://transifex.com/projects/p/dolibarr/</a> to add your improvements.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DirectDownloadLink=Direktni link preuzimanja (javni/vanjski)
 DirectDownloadInternalLink=Link direktnog skidanja (morate biti prijavljeni i imati potrebna dopuštenja)
 Download=Skidanje
 DownloadDocument=Skidanje dokumenta
 ActualizeCurrency=Ažuriraj kurs valute
 Fiscalyear=Fiskalna godina
+<<<<<<< HEAD
 ModuleBuilder=Kreator modula
 SetMultiCurrencyCode=Postavi valutu
 BulkActions=Masovne akcije
@@ -855,12 +1113,22 @@ ClickToShowHelp=Klikni za prikaz pomoći
 WebSite=Veb sajt
 WebSites=Veb sajtovi
 WebSiteAccounts=Računi veb sajta
+=======
+ModuleBuilder=Module and Application Builder
+SetMultiCurrencyCode=Postavi valutu
+BulkActions=Masovne akcije
+ClickToShowHelp=Klikni za prikaz pomoći
+WebSite=Website
+WebSites=Websites
+WebSiteAccounts=Website accounts
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ExpenseReport=Izvještaj troškova
 ExpenseReports=Izvještaj o troškovima
 HR=LJR
 HRAndBank=LJR i banka
 AutomaticallyCalculated=Automatski izračunato
 TitleSetToDraft=Nazad na nacrt
+<<<<<<< HEAD
 ConfirmSetToDraft=Da li ste sigurni da želite se vratiti u stanje nacrta?
 ImportId=Uvoz id
 Events=Događaji
@@ -872,6 +1140,27 @@ Rights=Dozvole
 LineNb=Red br.
 IncotermLabel=Incoterms
 # Week day
+=======
+ConfirmSetToDraft=Are you sure you want to go back to Draft status?
+ImportId=Uvoz id
+Events=Događaji
+EMailTemplates=Email templates
+FileNotShared=File not shared to external public
+Project=Projekt
+Projects=Projekti
+LeadOrProject=Lead | Project
+LeadsOrProjects=Leads | Projects
+Lead=Lead
+Leads=Leads
+ListOpenLeads=List open leads
+ListOpenProjects=List open projects
+NewLeadOrProject=New lead or project
+Rights=Dozvole
+LineNb=Red br.
+IncotermLabel=Incoterms
+TabLetteringCustomer=Customer lettering
+TabLetteringSupplier=Vendor lettering
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Monday=Ponedjeljak
 Tuesday=Utorak
 Wednesday=Srijeda
@@ -918,24 +1207,42 @@ SearchIntoProductsOrServices=Proizvodi ili usluge
 SearchIntoProjects=Projekti
 SearchIntoTasks=Zadaci
 SearchIntoCustomerInvoices=Fakture kupaca
+<<<<<<< HEAD
 SearchIntoSupplierInvoices=Vendor invoices
 SearchIntoCustomerOrders=Narudžbe kupaca
 SearchIntoSupplierOrders=Purchase orders
 SearchIntoCustomerProposals=Ponude kupcima
 SearchIntoSupplierProposals=Vendor proposals
+=======
+SearchIntoSupplierInvoices=Fakture prodavača
+SearchIntoCustomerOrders=Sales orders
+SearchIntoSupplierOrders=Narudžbe za nabavku
+SearchIntoCustomerProposals=Ponude kupcima
+SearchIntoSupplierProposals=Prijedlozi prodavača
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SearchIntoInterventions=Intervencije
 SearchIntoContracts=Ugovori
 SearchIntoCustomerShipments=Slanje kupcu
 SearchIntoExpenseReports=Izvještaj o troškovima
+<<<<<<< HEAD
 SearchIntoLeaves=Odlasci
+=======
+SearchIntoLeaves=Leave
+SearchIntoTickets=Tickets
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CommentLink=Komentari
 NbComments=Broj komentara
 CommentPage=Prostor komentara
 CommentAdded=Dodan komentar
 CommentDeleted=Obrisan komentar
 Everybody=Zajednički projekti
+<<<<<<< HEAD
 PayedBy=Platio
 PayedTo=Plaćeno
+=======
+PayedBy=Paid by
+PayedTo=Paid to
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Monthly=Mjesečno
 Quarterly=Tromjesečno
 Annual=Godišnje
@@ -944,7 +1251,25 @@ Remote=Udaljeni
 LocalAndRemote=Lokalni i udaljeni
 KeyboardShortcut=Prečica na tastaturi
 AssignedTo=Dodijeljeno korisniku
+<<<<<<< HEAD
 Deletedraft=Delete draft
 ConfirmMassDraftDeletion=Draft Bulk delete confirmation
 FileSharedViaALink=File shared via a link
 
+=======
+Deletedraft=Obriši nacrt
+ConfirmMassDraftDeletion=Draft mass delete confirmation
+FileSharedViaALink=Datoteka dijeljena preko linka
+SelectAThirdPartyFirst=Select a third party first...
+YouAreCurrentlyInSandboxMode=You are currently in the %s "sandbox" mode
+Inventory=Inventar
+AnalyticCode=Analytic code
+TMenuMRP=MRP
+ShowMoreInfos=Show More Infos
+NoFilesUploadedYet=Please upload a document first
+SeePrivateNote=See private note
+PaymentInformation=Payment information
+ValidFrom=Valid from
+ValidUntil=Valid until
+NoRecordedUsers=No users
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

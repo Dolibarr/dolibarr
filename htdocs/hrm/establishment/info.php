@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2015      Alexandre Spangaro <aspangaro.dolibarr@gmail.com>
+=======
+/* Copyright (C) 2015      Alexandre Spangaro <aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +24,11 @@
  *  \brief      	Page to show info of an establishment
  */
 
+<<<<<<< HEAD
 require('../../main.inc.php');
+=======
+require '../../main.inc.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 require_once DOL_DOCUMENT_ROOT.'/core/lib/hrm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
@@ -31,7 +39,11 @@ $langs->loadLangs(array('admin', 'hrm'));
 // Security check
 if (! $user->admin) accessforbidden();
 
+<<<<<<< HEAD
 $id = GETPOST('id','int');
+=======
+$id = GETPOST('id', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // View
 llxHeader();
@@ -53,5 +65,9 @@ if ($id)
     print '</div>';
 }
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

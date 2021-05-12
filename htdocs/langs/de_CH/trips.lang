@@ -13,6 +13,10 @@ AnyOtherInThisListCanValidate=Zu informierende Person für die Bestätigung
 TripSociete=Information Firma
 TF_TRIP=Spedition
 ErrorDoubleDeclaration=Sie haben bereits eine andere Spesenabrechnung in einem ähnliche Datumsbereich erstellt.
+<<<<<<< HEAD
+=======
+AUTHOR=gespeichert von
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BrouillonnerTrip=Spesenabrechnung rückgängig, auf den Status "Entwurf"
 ExpenseReportsToPay=Spesenabrechnungen zu entrichten
 ExpenseReportDateStart=Beginndatum

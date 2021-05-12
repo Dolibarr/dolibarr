@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2011-2015 Regis Houssin  <regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2011-2015 Regis Houssin  <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,18 +24,32 @@
  *       \brief      File to set or del an on/off constant
  */
 
+<<<<<<< HEAD
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
+=======
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
+<<<<<<< HEAD
 $action=GETPOST('action','alpha');
 $name=GETPOST('name','alpha');
+=======
+$action=GETPOST('action', 'alpha');
+$name=GETPOST('name', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 /*
  * View
@@ -49,7 +67,11 @@ top_httphead();
 // Registering the location of boxes
 if (! empty($action) && ! empty($name))
 {
+<<<<<<< HEAD
 	$entity = GETPOST('entity','int');
+=======
+	$entity = GETPOST('entity', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$value = (GETPOST('value')?GETPOST('value'):1);
 
 	if ($user->admin)
@@ -58,10 +80,17 @@ if (! empty($action) && ! empty($name))
 		{
 			dolibarr_set_const($db, $name, $value, 'chaine', 0, '', $entity);
 		}
+<<<<<<< HEAD
 		else if ($action == 'del')
+=======
+		elseif ($action == 'del')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			dolibarr_del_const($db, $name, $entity);
 		}
 	}
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

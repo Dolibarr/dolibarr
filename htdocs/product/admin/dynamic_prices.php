@@ -148,17 +148,32 @@ if (!empty($action) && empty($cancel)) {
 
 $form = new Form($db);
 
+<<<<<<< HEAD
 llxHeader("","",$langs->trans("CardProduct".$product->type));
+=======
+llxHeader("", "", $langs->trans("CardProduct".$product->type));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("DynamicPriceConfiguration"), $linkback, 'title_setup');
 
+<<<<<<< HEAD
 print $langs->trans("DynamicPriceDesc").'<br>';
 print '<br>';
 
 //Global variables table
 if ($action != 'create_updater' && $action != 'edit_updater') {
     print $langs->trans("GlobalVariables");
+=======
+print '<span class="opacitymedium">'.$langs->trans("DynamicPriceDesc").'</span><br>';
+print '<br>';
+
+//Global variables table
+if ($action != 'create_updater' && $action != 'edit_updater')
+{
+    print load_fiche_titre($langs->trans("GlobalVariables"), '', '');
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print '<table summary="listofattributes" class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("Variable").'</td>';
@@ -176,7 +191,11 @@ if ($action != 'create_updater' && $action != 'edit_updater') {
 	        print '<td>'.$entry->code.'</td>';
 	        print '<td>'.$entry->description.'</td>';
 	        print '<td>'.price($entry->value).'</td>';
+<<<<<<< HEAD
 	        print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit_variable&selection='.$entry->id.'">'.img_edit().'</a> &nbsp;';
+=======
+	        print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit_variable&selection='.$entry->id.'">'.img_edit().'</a> &nbsp;';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	        print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete_variable&selection='.$entry->id.'">'.img_delete().'</a></td>';
 	        print '</tr>';
 	    }
@@ -228,7 +247,11 @@ if ($action == 'create_variable' || $action == 'edit_variable') {
     print '</table>';
 
     //Form Buttons
+<<<<<<< HEAD
     print '<br><div align="center">';
+=======
+    print '<br><div class="center">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'"> &nbsp;';
     print '<input type="submit" class="button" name="cancel" id="cancel" value="'.$langs->trans("Cancel").'">';
     print '</div>';
@@ -236,8 +259,15 @@ if ($action == 'create_variable' || $action == 'edit_variable') {
 }
 
 // Updaters table
+<<<<<<< HEAD
 if ($action != 'create_variable' && $action != 'edit_variable') {
     print $langs->trans("GlobalVariableUpdaters");
+=======
+if ($action != 'create_variable' && $action != 'edit_variable')
+{
+    print load_fiche_titre($langs->trans("GlobalVariableUpdaters"), '', '');
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print '<table summary="listofattributes" class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("VariableToUpdate").'</td>';
@@ -267,14 +297,22 @@ if ($action != 'create_variable' && $action != 'edit_variable') {
 	        print '<td style="max-width: 250px; word-wrap: break-word; white-space: pre-wrap;">'.$entry->parameters.'</td>';
 	        print '<td>'.$entry->update_interval.'</td>';
 	        print '<td>'.$entry->getLastUpdated().'</td>';
+<<<<<<< HEAD
 	        print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit_updater&selection='.$entry->id.'">'.img_edit().'</a> &nbsp;';
+=======
+	        print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit_updater&selection='.$entry->id.'">'.img_edit().'</a> &nbsp;';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	        print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete_updater&selection='.$entry->id.'">'.img_delete().'</a></td>';
 	        print '</tr>';
 	    }
     }
     else
     {
+<<<<<<< HEAD
     	print '<tr colspan="7"><td class="opacitymedium">';
+=======
+    	print '<tr><td colspan="7" class="opacitymedium">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	print $langs->trans("None");
     	print '</td></tr>';
     }
@@ -336,9 +374,15 @@ if ($action == 'create_updater' || $action == 'edit_updater') {
     //Parameters
     print '<tr>';
     $help = $langs->trans("GlobalVariableUpdaterHelp".$type).'<br><b>'.$langs->trans("GlobalVariableUpdaterHelpFormat".$type).'</b>';
+<<<<<<< HEAD
     print '<td class="fieldrequired">'.$form->textwithpicto($langs->trans("Parameters"),$help,1).'</td><td>';
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
     $doleditor=new DolEditor('parameters',empty($price_updaters->parameters)?'':$price_updaters->parameters,'',300,'','',false,false,false,ROWS_8,'90%');
+=======
+    print '<td class="fieldrequired">'.$form->textwithpicto($langs->trans("Parameters"), $help, 1).'</td><td>';
+    require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+    $doleditor=new DolEditor('parameters', empty($price_updaters->parameters)?'':$price_updaters->parameters, '', 300, '', '', false, false, false, ROWS_8, '90%');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $doleditor->Create();
     print '</td></tr>';
     print '</tr>';
@@ -350,12 +394,20 @@ if ($action == 'create_updater' || $action == 'edit_updater') {
     print '</table>';
 
     //Form Buttons
+<<<<<<< HEAD
     print '<br><div align="center">';
+=======
+    print '<br><div class="center">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'"> &nbsp;';
     print '<input type="submit" class="button" name="cancel" id="cancel" value="'.$langs->trans("Cancel").'">';
     print '</div>';
     print '</form>';
 }
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2001-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006	Laurent Destailleur		<eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,8 +28,13 @@
 
 require '../../main.inc.php';
 
+<<<<<<< HEAD
 $langs->load("admin");
 $langs->load("companies");
+=======
+// Load translation files required by the page
+$langs->loadLangs(array("companies","admin"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if (! $user->admin)
 	accessforbidden();
@@ -42,7 +51,11 @@ $title=$langs->trans("AdminTools");
 
 llxHeader('', $title);
 
+<<<<<<< HEAD
 print load_fiche_titre($title,'','title_setup');
+=======
+print load_fiche_titre($title, '', 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print $langs->trans("SystemToolsAreaDesc").'<br>';
 print "<br>";
@@ -56,6 +69,10 @@ print '<br><br>';
 //print '<div class="center"><div class="logo_setup"></div></div>';
 print '<center><div class="logo_setup"></div></center>';				// For a reason I don't know, the div class="center does not works, we must keep the <center>
 
+<<<<<<< HEAD
 
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

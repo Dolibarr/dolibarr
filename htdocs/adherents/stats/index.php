@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +35,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 $WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
 
+<<<<<<< HEAD
 $userid=GETPOST('userid','int'); if ($userid < 0) $userid=0;
 $socid=GETPOST('socid','int'); if ($socid < 0) $socid=0;
+=======
+$userid=GETPOST('userid', 'int'); if ($userid < 0) $userid=0;
+$socid=GETPOST('socid', 'int'); if ($socid < 0) $socid=0;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Security check
 if ($user->societe_id > 0)
@@ -40,14 +49,23 @@ if ($user->societe_id > 0)
     $action = '';
     $socid = $user->societe_id;
 }
+<<<<<<< HEAD
 $result=restrictedArea($user,'adherent','','','cotisation');
+=======
+$result=restrictedArea($user, 'adherent', '', '', 'cotisation');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $year = strftime("%Y", time());
 $startyear=$year-2;
 $endyear=$year;
 
+<<<<<<< HEAD
 $langs->load("members");
 $langs->load("companies");
+=======
+// Load translation files required by the page
+$langs->loadLangs(array("companies","members"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 /*
@@ -67,7 +85,11 @@ dol_mkdir($dir);
 $stats = new AdherentStats($db, $socid, $userid);
 
 // Build graphic number of object
+<<<<<<< HEAD
 $data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
+=======
+$data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 //var_dump($data);
 // $data = array(array('Lib',val1,val2,val3),...)
 
@@ -81,7 +103,10 @@ $mesg = $px1->isGraphKo();
 if (! $mesg)
 {
     $px1->SetData($data);
+<<<<<<< HEAD
     $px1->SetPrecisionY(0);
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $i=$startyear;
     while ($i <= $endyear)
     {
@@ -90,12 +115,17 @@ if (! $mesg)
     }
     $px1->SetLegend($legend);
     $px1->SetMaxValue($px1->GetCeilMaxValue());
+<<<<<<< HEAD
     $px1->SetMinValue(min(0,$px1->GetFloorMinValue()));
+=======
+    $px1->SetMinValue(min(0, $px1->GetFloorMinValue()));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $px1->SetWidth($WIDTH);
     $px1->SetHeight($HEIGHT);
     $px1->SetYLabel($langs->trans("NbOfSubscriptions"));
     $px1->SetShading(3);
     $px1->SetHorizTickIncrement(1);
+<<<<<<< HEAD
     $px1->SetPrecisionY(0);
     $px1->mode='depth';
     $px1->SetTitle($langs->trans("NbOfSubscriptions"));
@@ -105,6 +135,16 @@ if (! $mesg)
 
 // Build graphic amount of object
 $data = $stats->getAmountByMonthWithPrevYear($endyear,$startyear);
+=======
+    $px1->mode='depth';
+    $px1->SetTitle($langs->trans("NbOfSubscriptions"));
+
+    $px1->draw($filenamenb, $fileurlnb);
+}
+
+// Build graphic amount of object
+$data = $stats->getAmountByMonthWithPrevYear($endyear, $startyear);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 //var_dump($data);
 // $data = array(array('Lib',val1,val2,val3),...)
 
@@ -116,7 +156,10 @@ $mesg = $px2->isGraphKo();
 if (! $mesg)
 {
     $px2->SetData($data);
+<<<<<<< HEAD
     $px2->SetPrecisionY(0);
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $i=$startyear;
     while ($i <= $endyear)
     {
@@ -125,17 +168,28 @@ if (! $mesg)
     }
     $px2->SetLegend($legend);
     $px2->SetMaxValue($px2->GetCeilMaxValue());
+<<<<<<< HEAD
     $px2->SetMinValue(min(0,$px2->GetFloorMinValue()));
+=======
+    $px2->SetMinValue(min(0, $px2->GetFloorMinValue()));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $px2->SetWidth($WIDTH);
     $px2->SetHeight($HEIGHT);
     $px2->SetYLabel($langs->trans("AmountOfSubscriptions"));
     $px2->SetShading(3);
     $px2->SetHorizTickIncrement(1);
+<<<<<<< HEAD
     $px2->SetPrecisionY(0);
     $px2->mode='depth';
     $px2->SetTitle($langs->trans("AmountOfSubscriptions"));
 
     $px2->draw($filenameamount,$fileurlamount);
+=======
+    $px2->mode='depth';
+    $px2->SetTitle($langs->trans("AmountOfSubscriptions"));
+
+    $px2->draw($filenameamount, $fileurlamount);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 
@@ -151,13 +205,21 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 print '<table class="border" width="100%">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 print '<tr><td>'.$langs->trans("Member").'</td><td>';
+<<<<<<< HEAD
 $filter='s.client in (1,2,3)';
 print $form->select_company($id,'memberid',$filter,1);
+=======
+print $form->select_company($id,'memberid','',1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</td></tr>';
 print '<tr><td>'.$langs->trans("User").'</td><td>';
 print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 print '</td></tr>';
+<<<<<<< HEAD
 print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
+=======
+print '<tr><td class="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</table>';
 print '</form>';
 print '<br><br>';
@@ -167,12 +229,22 @@ print '<br><br>';
 $data = $stats->getAllByYear();
 
 
+<<<<<<< HEAD
 print '<table class="noborder">';
 print '<tr class="liste_titre" height="24">';
 print '<td align="center">'.$langs->trans("Year").'</td>';
 print '<td align="right">'.$langs->trans("NbOfSubscriptions").'</td>';
 print '<td align="right">'.$langs->trans("AmountTotal").'</td>';
 print '<td align="right">'.$langs->trans("AmountAverage").'</td>';
+=======
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder">';
+print '<tr class="liste_titre" height="24">';
+print '<td class="center">'.$langs->trans("Year").'</td>';
+print '<td class="right">'.$langs->trans("NbOfSubscriptions").'</td>';
+print '<td class="right">'.$langs->trans("AmountTotal").'</td>';
+print '<td class="right">'.$langs->trans("AmountAverage").'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</tr>';
 
 $oldyear=0;
@@ -183,11 +255,16 @@ foreach ($data as $val)
     {	// If we have empty year
         $oldyear--;
         print '<tr class="oddeven" height="24">';
+<<<<<<< HEAD
         print '<td align="center">';
+=======
+        print '<td class="center">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         print '<a href="month.php?year='.$oldyear.'&amp;mode='.$mode.'">';
         print $oldyear;
         print '</a>';
         print '</td>';
+<<<<<<< HEAD
         print '<td align="right">0</td>';
         print '<td align="right">0</td>';
         print '<td align="right">0</td>';
@@ -195,25 +272,48 @@ foreach ($data as $val)
     }
     print '<tr class="oddeven" height="24">';
     print '<td align="center">';
+=======
+        print '<td class="right">0</td>';
+        print '<td class="right">0</td>';
+        print '<td class="right">0</td>';
+        print '</tr>';
+    }
+    print '<tr class="oddeven" height="24">';
+    print '<td class="center">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     //print '<a href="month.php?year='.$year.'">';
     print $year;
     //print '</a>';
     print '</td>';
+<<<<<<< HEAD
     print '<td align="right">'.$val['nb'].'</td>';
     print '<td align="right">'.price(price2num($val['total'],'MT'),1).'</td>';
     print '<td align="right">'.price(price2num($val['avg'],'MT'),1).'</td>';
+=======
+    print '<td class="right">'.$val['nb'].'</td>';
+    print '<td class="right">'.price(price2num($val['total'], 'MT'), 1).'</td>';
+    print '<td class="right">'.price(price2num($val['avg'], 'MT'), 1).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print '</tr>';
     $oldyear=$year;
 }
 
 print '</table>';
+<<<<<<< HEAD
+=======
+print '</div>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 // Show graphs
+<<<<<<< HEAD
 print '<table class="border" width="100%"><tr class="pair nohover"><td align="center">';
+=======
+print '<table class="border" width="100%"><tr class="pair nohover"><td class="center">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($mesg) { print $mesg; }
 else {
     print $px1->show();
@@ -229,7 +329,12 @@ print '<div style="clear:both"></div>';
 
 dol_fiche_end();
 
+<<<<<<< HEAD
 
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

@@ -16,6 +16,7 @@ MakeOrder=Tee tilaus
 SupplierOrder=Purchase order
 SuppliersOrders=Purchase orders
 SuppliersOrdersRunning=Current purchase orders
+<<<<<<< HEAD
 CustomerOrder=Asiakkaan tilauksen
 CustomersOrders=Asiakastilaukset
 CustomersOrdersRunning=Viimeisin asiakkaan tilaus
@@ -24,6 +25,16 @@ OrdersDeliveredToBill=Customer orders delivered to bill
 OrdersToBill=Toimitetut asiakastilaukset
 OrdersInProcess=Käsittelyssä olevat asiakastilaukset
 OrdersToProcess=Käsittelyä odottavat asiakastilaukset
+=======
+CustomerOrder=Sales Order
+CustomersOrders=Sales Orders
+CustomersOrdersRunning=Current sales orders
+CustomersOrdersAndOrdersLines=Sales orders and order details
+OrdersDeliveredToBill=Sales orders delivered to bill
+OrdersToBill=Sales orders delivered
+OrdersInProcess=Sales orders in process
+OrdersToProcess=Sales orders to process
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SuppliersOrdersToProcess=Purchase orders to process
 StatusOrderCanceledShort=Peruutettu
 StatusOrderDraftShort=Vedos
@@ -76,8 +87,13 @@ OrdersOpened=Orders to process
 NoDraftOrders=No draft orders
 NoOrder=No order
 NoSupplierOrder=No purchase order
+<<<<<<< HEAD
 LastOrders=Viimeisimmät %s asiakastilaukset
 LastCustomerOrders=Viimeisimmät %s asiakastilaukset
+=======
+LastOrders=Latest %s sales orders
+LastCustomerOrders=Latest %s sales orders
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LastSupplierOrders=Latest %s purchase orders
 LastModifiedOrders=Viimeisimmät %s muokatut tilaukset
 AllOrders=Kaikki tilaukset
@@ -85,10 +101,17 @@ NbOfOrders=Tilausten määrä
 OrdersStatistics=Tilausten tilastot
 OrdersStatisticsSuppliers=Purchase order statistics
 NumberOfOrdersByMonth=Tilausmäärät kuukausittain
+<<<<<<< HEAD
 AmountOfOrdersByMonthHT=Tilausten summa kuukaudessa (net of tax)
 ListOfOrders=Tilausluettelo
 CloseOrder=Sulje tilaus
 ConfirmCloseOrder=Haluatko varmasti asettaa tämän tilauksen toimitetuksi? Kun tilaus on asetettu toimitetuksi sen voi myös asettaa laskutetuksi
+=======
+AmountOfOrdersByMonthHT=Amount of orders by month (excl. tax)
+ListOfOrders=Tilausluettelo
+CloseOrder=Sulje tilaus
+ConfirmCloseOrder=Are you sure you want to set this order to delivered? Once an order is delivered, it can be set to billed.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmDeleteOrder=Haluatko varmasti poistaa tämän tilauksen?
 ConfirmValidateOrder=Haluatko varmasti vahvistaa tämän tilauksen nimelle <b>%s</b>?
 ConfirmUnvalidateOrder=Haluatko varmasti palauttaa tilauksen <b>%s</b> luonnostilaan?
@@ -110,6 +133,7 @@ OrderMode=Tilaustapa
 AuthorRequest=Pyydä tekijältä
 UserWithApproveOrderGrant=Käyttäjille myönnetty oikeus "hyväksyä tilauksia"
 PaymentOrderRef=Tilauksen %s maksu
+<<<<<<< HEAD
 CloneOrder=Luo vastaava tilaus
 ConfirmCloneOrder=Haluatko varmasti luoda vastaavan tilauksen <b>%s</b>?
 DispatchSupplierOrder=Tavarantoimittajan tilauksen %s vastaanotto
@@ -121,6 +145,18 @@ SupplierOrderClassifiedBilled=Purchase Order %s set billed
 OtherOrders=Muut tilaukset
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Edustaja seuraamaan asiakkaan tilausta
+=======
+ConfirmCloneOrder=Haluatko varmasti luoda vastaavan tilauksen <b>%s</b>?
+DispatchSupplierOrder=Receiving purchase order %s
+FirstApprovalAlreadyDone=First approval already done
+SecondApprovalAlreadyDone=Second approval already done
+SupplierOrderReceivedInDolibarr=Purchase Order %s received %s
+SupplierOrderSubmitedInDolibarr=Purchase Order %s submitted
+SupplierOrderClassifiedBilled=Purchase Order %s set billed
+OtherOrders=Muut tilaukset
+##### Types de contacts #####
+TypeContact_commande_internal_SALESREPFOLL=Representative following-up sales order
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TypeContact_commande_internal_SHIPPING=Edustaja seuraamaan toimitusta
 TypeContact_commande_external_BILLING=Yhteystiedot asiakkaan laskutukseen
 TypeContact_commande_external_SHIPPING=Yhteystiedot asiakkaan toimitukseen
@@ -141,6 +177,10 @@ OrderByWWW=Online
 OrderByPhone=Puhelin
 # Documents models
 PDFEinsteinDescription=Täydellinen tilausmalli (logo. ..)
+<<<<<<< HEAD
+=======
+PDFEratostheneDescription=Täydellinen tilausmalli (logo. ..)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PDFEdisonDescription=Yksinkertainen tilausmalli
 PDFProformaDescription=A complete proforma invoice (logo…)
 CreateInvoiceForThisCustomer=Laskuta tilaukset

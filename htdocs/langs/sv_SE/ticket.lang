@@ -1,0 +1,294 @@
+# en_US lang file for module ticket
+# Copyright (C) 2013  Jean-François FERRY <hello@librethic.io>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+Module56000Name=biljetter
+Module56000Desc=Biljettsystem för utfärdande eller förfråganhantering
+
+Permission56001=Se biljetter
+Permission56002=Ändra biljetter
+Permission56003=Radera biljetter
+Permission56004=Hantera biljetter
+Permission56005=Se biljetter till alla tredje parter (inte effektiva för externa användare, alltid begränsad till tredje part som de är beroende av)
+
+TicketDictType=Biljett - Typer
+TicketDictCategory=Biljett - Grupper
+TicketDictSeverity=Ticket - Severiteter
+TicketTypeShortBUGSOFT=Programfel
+TicketTypeShortBUGHARD=Hårdvarufel
+TicketTypeShortCOM=Kommersiell fråga
+TicketTypeShortINCIDENT=Begäran om hjälp
+TicketTypeShortPROJET=Projekt
+TicketTypeShortOTHER=Andra
+
+TicketSeverityShortLOW=Låg
+TicketSeverityShortNORMAL=Vanligt
+TicketSeverityShortHIGH=Hög
+TicketSeverityShortBLOCKING=Kritisk / Blockering
+
+ErrorBadEmailAddress=Fältet '%s' felaktigt
+MenuTicketMyAssign=Mina biljetter
+MenuTicketMyAssignNonClosed=Mina öppna biljetter
+MenuListNonClosed=Öppna biljetter
+
+TypeContact_ticket_internal_CONTRIBUTOR=Bidragsgivare
+TypeContact_ticket_internal_SUPPORTTEC=Tilldelad användare
+TypeContact_ticket_external_SUPPORTCLI=Kundkontakt / incidentspårning
+TypeContact_ticket_external_CONTRIBUTOR=Extern bidragsyter
+
+OriginEmail=E-postkälla
+Notify_TICKET_SENTBYMAIL=Skicka biljettmeddelande via e-post
+
+# Status
+NotRead=Inte läst
+Read=Läsa
+Assigned=Tilldelad
+InProgress=Pågående
+NeedMoreInformation=Waiting for information
+Answered=Besvarade
+Waiting=Väntar
+Closed=Stängt
+Deleted=Raderade
+
+# Dict
+Type=Typ
+Category=Analytisk kod
+Severity=Allvarlighet
+
+# Email templates
+MailToSendTicketMessage=Att skicka e-post från biljettmeddelande
+
+#
+# Admin page
+#
+TicketSetup=Inställning av biljettmodul
+TicketSettings=inställningar
+TicketSetupPage=
+TicketPublicAccess=Ett offentligt gränssnitt som kräver ingen identifiering finns på följande webbadress
+TicketSetupDictionaries=Typ av biljett, svårighetsgrad och analytiska koder är konfigurerbara från ordböcker
+TicketParamModule=Inställning av modulvariabler
+TicketParamMail=E-postinställningar
+TicketEmailNotificationFrom=E-postmeddelande från
+TicketEmailNotificationFromHelp=Används i svar på biljettmeddelande med exempel
+TicketEmailNotificationTo=E-postmeddelande till
+TicketEmailNotificationToHelp=Skicka e-postmeddelanden till den här adressen.
+TicketNewEmailBodyLabel=Textmeddelande skickat efter att du skapat en biljett
+TicketNewEmailBodyHelp=Texten som anges här kommer att införas i e-postmeddelandet som bekräftar skapandet av en ny biljett från det offentliga gränssnittet. Information om samråd med biljetten läggs automatiskt till.
+TicketParamPublicInterface=Inställningar för offentligt gränssnitt
+TicketsEmailMustExist=Kräver en befintlig e-postadress för att skapa en biljett
+TicketsEmailMustExistHelp=I det offentliga gränssnittet ska e-postadressen redan fyllas i databasen för att skapa en ny biljett.
+PublicInterface=Offentligt gränssnitt
+TicketUrlPublicInterfaceLabelAdmin=Alternativ webbadress för offentligt gränssnitt
+TicketUrlPublicInterfaceHelpAdmin=Det är möjligt att definiera ett alias till webbservern och därmed göra tillgängligt det offentliga gränssnittet med en annan webbadress (servern måste fungera som en proxy på den här nya webbadressen)
+TicketPublicInterfaceTextHomeLabelAdmin=Välkomsttext för det offentliga gränssnittet
+TicketPublicInterfaceTextHome=Du kan skapa en supportbiljett eller se existerande från dess identifieringsspårningsbiljett.
+TicketPublicInterfaceTextHomeHelpAdmin=Texten som definieras här visas på hemsidan för det offentliga gränssnittet.
+TicketPublicInterfaceTopicLabelAdmin=Gränssnittets titel
+TicketPublicInterfaceTopicHelp=Denna text kommer att visas som titeln på det offentliga gränssnittet.
+TicketPublicInterfaceTextHelpMessageLabelAdmin=Hjälptext till meddelandeinmatningen
+TicketPublicInterfaceTextHelpMessageHelpAdmin=Denna text kommer att visas ovanför användarens meddelandeinmatningsområde.
+ExtraFieldsTicket=Extra attribut
+TicketCkEditorEmailNotActivated=HTML-editor är inte aktiverad. Vänligen sätt FCKEDITOR_ENABLE_MAIL innehåll till 1 för att få det.
+TicketsDisableEmail=Skicka inte e-postmeddelanden för biljettskapande eller meddelandeinspelning
+TicketsDisableEmailHelp=Som standard skickas e-postmeddelanden när nya biljetter eller meddelanden skapas. Aktivera det här alternativet för att inaktivera * alla * e-postmeddelanden
+TicketsLogEnableEmail=Aktivera logg via e-post
+TicketsLogEnableEmailHelp=Vid varje ändring skickas ett mail ** till varje kontaktperson ** som är kopplad till biljetten.
+TicketParams=params
+TicketsShowModuleLogo=Visa modulens logotyp i det offentliga gränssnittet
+TicketsShowModuleLogoHelp=Aktivera det här alternativet för att dölja logotypmodulen på sidorna i det offentliga gränssnittet
+TicketsShowCompanyLogo=Visa företagets logotyp i det offentliga gränssnittet
+TicketsShowCompanyLogoHelp=Aktivera det här alternativet för att dölja huvudbolags logotyp på sidorna i det offentliga gränssnittet
+TicketsEmailAlsoSendToMainAddress=Skicka även meddelande till huvudadressen
+TicketsEmailAlsoSendToMainAddressHelp=Aktivera det här alternativet för att skicka ett mail till "Notifieringsadress från" -adressen (se inställningen nedan)
+TicketsLimitViewAssignedOnly=Begränsa visningen till biljetter som tilldelats den nuvarande användaren (inte effektiv för externa användare, alltid begränsad till den tredje parten som de är beroende av)
+TicketsLimitViewAssignedOnlyHelp=Endast biljetter som tilldelats den nuvarande användaren kommer att vara synliga. Gäller inte för en användare med biljettförvaltningsrättigheter.
+TicketsActivatePublicInterface=Aktivera det offentliga gränssnittet
+TicketsActivatePublicInterfaceHelp=Offentligt gränssnitt tillåter alla besökare att skapa biljetter.
+TicketsAutoAssignTicket=Tilldela automatiskt användaren som skapade biljetten
+TicketsAutoAssignTicketHelp=När du skapar en biljett kan användaren automatiskt tilldelas biljetten.
+TicketNumberingModules=Biljettnummermodul
+TicketNotifyTiersAtCreation=Meddela tredje part vid skapandet
+TicketGroup=Grupp
+TicketsDisableCustomerEmail=Avaktivera alltid e-postmeddelanden när en biljett skapas från det offentliga gränssnittet
+#
+# Index & list page
+#
+TicketsIndex=Biljett - hem
+TicketList=Lista över biljetter
+TicketAssignedToMeInfos=Denna sidvisningsbiljettlista skapad av eller tilldelad den nuvarande användaren
+NoTicketsFound=Ingen biljett finns
+NoUnreadTicketsFound=No unread ticket found
+TicketViewAllTickets=Visa alla biljetter
+TicketViewNonClosedOnly=Visa bara öppna biljetter
+TicketStatByStatus=Biljetter efter status
+
+#
+# Ticket card
+#
+Ticket=Biljett
+TicketCard=Biljettkort
+CreateTicket=Skapa biljett
+EditTicket=Redigera biljett
+TicketsManagement=Biljettförvaltning
+CreatedBy=Skapad av
+NewTicket=Ny biljett
+SubjectAnswerToTicket=Biljettsvar
+TicketTypeRequest=Förfrågan typ
+TicketCategory=Analytisk kod
+SeeTicket=Se biljett
+TicketMarkedAsRead=Biljett har markerats som läst
+TicketReadOn=Läs vidare
+TicketCloseOn=Sista dag
+MarkAsRead=Markera biljett som läst
+TicketHistory=Biljetthistorik
+AssignUser=Tilldela användare
+TicketAssigned=Biljetten är nu tilldelad
+TicketChangeType=Ändra typ
+TicketChangeCategory=Ändra analytisk kod
+TicketChangeSeverity=Ändra allvarlighet
+TicketAddMessage=Lägg till ett meddelande
+AddMessage=Lägg till ett meddelande
+MessageSuccessfullyAdded=Biljett tillagd
+TicketMessageSuccessfullyAdded=Meddelandet har lagts till
+TicketMessagesList=Meddelandelista
+NoMsgForThisTicket=Inget meddelande för denna biljett
+Properties=Uppmärkning
+LatestNewTickets=Senaste %s senaste biljetterna (ej läst)
+TicketSeverity=Allvarlighet
+ShowTicket=Se biljett
+RelatedTickets=Relaterade biljetter
+TicketAddIntervention=Skapa ingripande
+CloseTicket=Stäng biljett
+CloseATicket=Stäng en biljett
+ConfirmCloseAticket=Bekräfta biljett stängning
+ConfirmDeleteTicket=Vänligen bekräfta att du tar bort biljett
+TicketDeletedSuccess=Biljett raderas med framgång
+TicketMarkedAsClosed=Biljett markerad som stängd
+TicketDurationAuto=Beräknad varaktighet
+TicketDurationAutoInfos=Varaktighet beräknas automatiskt från interventionsrelaterad
+TicketUpdated=Biljett uppdaterad
+SendMessageByEmail=Skicka meddelande via e-post
+TicketNewMessage=Nytt meddelande
+ErrorMailRecipientIsEmptyForSendTicketMessage=Mottagaren är tom. Ingen email skickad
+TicketGoIntoContactTab=Vänligen gå till fliken "Kontakter" för att välja dem
+TicketMessageMailIntro=Introduktion
+TicketMessageMailIntroHelp=Denna text läggs till endast i början av e-postmeddelandet och kommer inte att sparas.
+TicketMessageMailIntroLabelAdmin=Introduktion till meddelandet när du skickar e-post
+TicketMessageMailIntroText=Hej, <br> Ett nytt svar skickades på en biljett som du kontaktar. Här är meddelandet: <br>
+TicketMessageMailIntroHelpAdmin=Denna text kommer att införas före texten på svaret på en biljett.
+TicketMessageMailSignature=Namnteckning
+TicketMessageMailSignatureHelp=Denna text läggs till endast i slutet av e-postmeddelandet och kommer inte att sparas.
+TicketMessageMailSignatureText=<p> Med vänliga hälsningar, </p> <p> -- </p>
+TicketMessageMailSignatureLabelAdmin=Signatur för e-postsvar
+TicketMessageMailSignatureHelpAdmin=Denna text läggs in efter svarmeddelandet.
+TicketMessageHelp=Endast den här texten sparas i meddelandelistan på biljettkortet.
+TicketMessageSubstitutionReplacedByGenericValues=Substitutionsvariabler ersätts av generiska värden.
+TimeElapsedSince=Tid förflutit sedan
+TicketTimeToRead=Tid förfluten innan den läste
+TicketContacts=Kontakter biljett
+TicketDocumentsLinked=Dokument kopplade till biljett
+ConfirmReOpenTicket=Bekräfta återuppta denna biljett?
+TicketMessageMailIntroAutoNewPublicMessage=Ett nytt meddelande publicerades på biljetten med ämnet %s:
+TicketAssignedToYou=Biljett tilldelad
+TicketAssignedEmailBody=Du har tilldelats biljetten # %s av %s
+MarkMessageAsPrivate=Markera meddelande som privat
+TicketMessagePrivateHelp=Det här meddelandet visas inte till externa användare
+TicketEmailOriginIssuer=Utgivare på grund av biljetterna
+InitialMessage=Initialt meddelande
+LinkToAContract=Länk till ett kontrakt
+TicketPleaseSelectAContract=Välj ett kontrakt
+UnableToCreateInterIfNoSocid=Kan inte skapa ett ingripande när ingen tredje part definieras
+TicketMailExchanges=Mail utbyten
+TicketInitialMessageModified=Initialt meddelande ändrat
+TicketMessageSuccesfullyUpdated=Meddelandet har blivit uppdaterat
+TicketChangeStatus=Byta status
+TicketConfirmChangeStatus=Bekräfta statusändringen: %s?
+TicketLogStatusChanged=Status ändrad: %s till %s
+TicketNotNotifyTiersAtCreate=Meddela inte företaget på create
+Unread=Oläst
+
+#
+# Logs
+#
+TicketLogMesgReadBy=Biljett %s läs av %s
+NoLogForThisTicket=Ingen logg på denna biljett ännu
+TicketLogAssignedTo=Biljett %s tilldelad %s
+TicketLogPropertyChanged=Biljett %s modifierad: märkt från %s till %s
+TicketLogClosedBy=Biljett %s stängt av %s
+TicketLogReopen=Biljett %s öppnas igen
+
+#
+# Public pages
+#
+TicketSystem=Biljettsystem
+ShowListTicketWithTrackId=Visa biljellista från spår-ID
+ShowTicketWithTrackId=Visa biljett från spår ID
+TicketPublicDesc=Du kan skapa en supportbiljett eller kolla från ett befintligt ID.
+YourTicketSuccessfullySaved=Biljett har sparats!
+MesgInfosPublicTicketCreatedWithTrackId=En ny biljett har skapats med ID %s.
+PleaseRememberThisId=Var vänlig och håll spårningsnumret som vi kanske frågar dig senare.
+TicketNewEmailSubject=Biljettsättning bekräftelse
+TicketNewEmailSubjectCustomer=Ny supportbiljett
+TicketNewEmailBody=Det här är ett automatiskt e-postmeddelande som bekräftar att du har registrerat en ny biljett.
+TicketNewEmailBodyCustomer=Det här är ett automatiskt e-postmeddelande för att bekräfta en ny biljett har just skapats i ditt konto.
+TicketNewEmailBodyInfosTicket=Information för övervakning av biljetten
+TicketNewEmailBodyInfosTrackId=Biljettspårningsnummer: %s
+TicketNewEmailBodyInfosTrackUrl=Du kan se framstegen på biljetten genom att klicka på länken ovan.
+TicketNewEmailBodyInfosTrackUrlCustomer=Du kan se framstegen på biljetten i det specifika gränssnittet genom att klicka på följande länk
+TicketEmailPleaseDoNotReplyToThisEmail=Vänligen svara inte direkt på det här meddelandet! Använd länken för att svara på gränssnittet.
+TicketPublicInfoCreateTicket=I det här formuläret kan du spela in en supportbiljett i vårt styrsystem.
+TicketPublicPleaseBeAccuratelyDescribe=Var snäll och beskriv problemet. Ge så mycket information som möjligt för att vi ska kunna identifiera din förfrågan korrekt.
+TicketPublicMsgViewLogIn=Vänligen ange biljettspårnings-ID
+TicketTrackId=Public Tracking ID
+OneOfTicketTrackId=Ett av ditt spårnings-ID
+ErrorTicketNotFound=Biljett med spårnings ID %s ej hittat!
+Subject=Ämne
+ViewTicket=Visa biljett
+ViewMyTicketList=Visa min biljettlista
+ErrorEmailMustExistToCreateTicket=Fel: E-postadress hittades inte i vår databas
+TicketNewEmailSubjectAdmin=Ny biljett skapad
+TicketNewEmailBodyAdmin=<p> Biljetten har just skapats med ID # %s, se information: </p>
+SeeThisTicketIntomanagementInterface=Se biljett i hanteringsgränssnittet
+TicketPublicInterfaceForbidden=Det offentliga gränssnittet för biljetterna var inte aktiverat
+ErrorEmailOrTrackingInvalid=Dåligt värde för spårnings-ID eller e-post
+OldUser=Old user
+NewUser=Ny användare
+NumberOfTicketsByMonth=Number of tickets per month
+NbOfTickets=Number of tickets
+# notifications
+TicketNotificationEmailSubject=Biljett %s uppdaterad
+TicketNotificationEmailBody=Detta är ett automatiskt meddelande för att meddela dig att biljetten %s just har uppdaterats
+TicketNotificationRecipient=Meddelande mottagare
+TicketNotificationLogMessage=Logmeddelande
+TicketNotificationEmailBodyInfosTrackUrlinternal=Visa biljett till gränssnitt
+TicketNotificationNumberEmailSent=Meddelande email skickat: %s
+
+ActionsOnTicket=Händelser på biljett
+
+#
+# Boxes
+#
+BoxLastTicket=Senast skapade biljetter
+BoxLastTicketDescription=Senaste %s skapade biljetter
+BoxLastTicketContent=
+BoxLastTicketNoRecordedTickets=Inga senaste olästa biljetter
+BoxLastModifiedTicket=Senast ändrade biljetter
+BoxLastModifiedTicketDescription=Senaste %s modifierade biljetter
+BoxLastModifiedTicketContent=
+BoxLastModifiedTicketNoRecordedTickets=Inga nyligen ändrade biljetter

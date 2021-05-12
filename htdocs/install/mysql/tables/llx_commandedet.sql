@@ -1,6 +1,10 @@
 -- ===================================================================
 -- Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+<<<<<<< HEAD
 -- Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+=======
+-- Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 -- Copyright (C) 2006-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
 -- Copyright (C) 2010		Juanjo Menent			<jmenent@2byte.es>
 -- Copyright (C) 2012      Cédric Salvador      <csalvador@gpcsolutions.fr>

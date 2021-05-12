@@ -3,10 +3,15 @@ BillsLate=Paiements en retard
 InvoiceStandardDesc=Ce type de facture est le type commun.
 InvoiceProFormaDesc=<b>Une facture proforma</b> est l'image d'une vraie facture mais n'a pas de valeur comptable.
 InvoiceReplacementAsk=Facture de remplacement pour facture
+<<<<<<< HEAD
 InvoiceReplacementDesc=Une <b>facture de remplacement</b> est utilisée pour annuler et remplacer complètement une facture pour laquelle aucun paiement n'a encore été reçu. <br><br>Note: Seules les factures sans paiement peuvent être remplacées. Si la facture que vous remplacez n'est pas encore clôturée, elle sera clôturée automatiquement et enregistrée comme 'abandonnée'.
 InvoiceAvoir=Note de crédit
 InvoiceAvoirAsk=Note de crédit pour correction de la facture
 InvoiceAvoirDesc=La <b>note de crédit</b> en Belgique, (facture d'avoir en France) est une facture négative destinée à compenser un montant de facture qui diffère du montant réellement versé (suite à un trop versé par le client par erreur ou un manque non versé par le client suite à un retour produit par exemple). Concernant les règles d'édition des notes de crédits en Belgique, voir <a href="http://www.becompta.be/modules/dictionnaire/140-comptable-note-de-credit.html" target="_blank">becompta.be</a>.
+=======
+InvoiceAvoir=Note de crédit
+InvoiceAvoirAsk=Note de crédit pour correction de la facture
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ReplaceInvoice=Remplacer facture %s
 ReplacementInvoice=Facture de remplacement
 ReplacedByInvoice=Remplacée par facture %s
@@ -18,13 +23,17 @@ SupplierBills=factures fournisseurs
 Payment=Paiement
 Payments=Paiements
 DeletePayment=Supprimer paiement
+<<<<<<< HEAD
 SupplierPayments=Paiements fournisseurs
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ReceivedPayments=Paiements reçus
 ReceivedCustomersPayments=Paiements reçus de clients
 ReceivedCustomersPaymentsToValid=Paiements à valider de clients
 PaymentsReportsForYear=Rapports de paiements pour %s
 PaymentsReports=Rapports de paiements
 PaymentsAlreadyDone=Paiements déjà effectués
+<<<<<<< HEAD
 PaymentMode=Type de paiement
 PaymentModeShort=Type de paiement
 PaymentConditions=Conditions de paiement
@@ -38,6 +47,12 @@ ErrorVATIntraNotConfigured=Numéro de TVA intracommunautaire pas encore défini
 ErrorInvoiceAvoirMustBeNegative=Erreur, une facture de type Note de crédit doit avoir un montant négatif
 ConfirmClassifyPaidPartiallyReasonAvoir=Le reste à payer <b>(%s %s)</b> est un trop facturé (car article retourné, oubli, escompte non défini...) régularisé par un crédit
 ConfirmClassifyPaidPartiallyReasonOtherDesc=Ce choix sera celui choisi dans tout autre cas, par exemple, dans les cas suivants:<br>- paiement partiel car une partie des produits a été retourné.<br>- trop réclamé suite à oubli d'une remise<br>Dans tous les cas, le trop réclamé doit être régularisé en compta et envers le client par un crédit.
+=======
+PaymentAmount=Montant de paiement
+AddBill=Créer facture ou note de crédit
+EnterPaymentDueToCustomer=Réaliser règlement de crédits dus au client
+ErrorInvoiceAvoirMustBeNegative=Erreur, une facture de type Note de crédit doit avoir un montant négatif
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShowInvoiceAvoir=Afficher note de crédit
 EscompteOfferedShort=Ristourne
 Discounts=Ristournes

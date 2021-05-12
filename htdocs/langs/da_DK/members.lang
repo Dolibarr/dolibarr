@@ -4,6 +4,7 @@ MemberCard=Medlem kortet
 SubscriptionCard=Subscription kortet
 Member=Medlem
 Members=Medlemmer
+<<<<<<< HEAD
 ShowMember=Vis medlem kortet
 UserNotLinkedToMember=Brugeren ikke er knyttet til et medlem
 ThirdpartyNotLinkedToMember=Tredjepart, der ikke er knyttet til et medlem
@@ -13,6 +14,17 @@ ListOfValidatedPublicMembers=Liste over validerede offentlige medlemmer
 ErrorThisMemberIsNotPublic=Dette medlem er ikke offentlige
 ErrorMemberIsAlreadyLinkedToThisThirdParty=Et andet medlem <b>(navn: %s, login: %s)</b> er allerede knyttet til en <b>tredjepart %s.</b> Fjern dette link første fordi en tredjepart ikke kan forbindes med kun et medlem (og omvendt).
 ErrorUserPermissionAllowsToLinksToItselfOnly=Af sikkerhedsmæssige grunde skal du være tildelt tilladelser til at redigere alle brugere til at kunne knytte et medlem til en bruger, der ikke er dit.
+=======
+ShowMember=Vis medlemskort
+UserNotLinkedToMember=Brugeren ikke er knyttet til et medlem
+ThirdpartyNotLinkedToMember=Third party not linked to a member
+MembersTickets=Medlemsbilletter
+FundationMembers=Organisationens medlemmer
+ListOfValidatedPublicMembers=Liste over bekræftede offentlige medlemmer
+ErrorThisMemberIsNotPublic=Denne medlem er ikke offentligt
+ErrorMemberIsAlreadyLinkedToThisThirdParty=Et andet medlem <b>(navn: %s, login: %s)</b> er allerede knyttet til en <b>tredjepart %s.</b> Fjern dette link første fordi en tredjepart ikke kan forbindes med kun et medlem (og omvendt).
+ErrorUserPermissionAllowsToLinksToItselfOnly=Af sikkerhedsmæssige grunde skal du have tilladelser til at redigere alle brugere for at kunne linke en medlem til en bruger, der ikke er din.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SetLinkToUser=Link til en Dolibarr bruger
 SetLinkToThirdParty=Link til en Dolibarr tredjepart
 MembersCards=Medlemmer udskrive kort
@@ -24,7 +36,11 @@ MembersListNotUpToDate=Liste over gyldige medlemmer med abonnement uaktuel
 MembersListResiliated=Liste over opsatte medlemmer
 MembersListQualified=Liste over kvalificerede medlemmer
 MenuMembersToValidate=Udkast til medlemmer
+<<<<<<< HEAD
 MenuMembersValidated=Valideret medlemmer
+=======
+MenuMembersValidated=Bekræftet medlemmer
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MenuMembersUpToDate=Ajour medlemmer
 MenuMembersNotUpToDate=Uaktuel medlemmer
 MenuMembersResiliated=Afsluttede medlemmer
@@ -39,10 +55,17 @@ MemberType=Medlem type
 MemberTypeId=Medlem type id
 MemberTypeLabel=Medlem type label
 MembersTypes=Medlemstyper
+<<<<<<< HEAD
 MemberStatusDraft=Udkast (skal valideres)
 MemberStatusDraftShort=Udkast til
 MemberStatusActive=Valideret (venter abonnement)
 MemberStatusActiveShort=Valideret
+=======
+MemberStatusDraft=Udkast (skal bekræftes)
+MemberStatusDraftShort=Udkast til
+MemberStatusActive=Bekræftet (venter abonnement)
+MemberStatusActiveShort=Bekræftet
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MemberStatusActiveLate=Abonnement udløbet
 MemberStatusActiveLateShort=Udløbet
 MemberStatusPaid=Subscription ajour
@@ -54,7 +77,11 @@ MembersStatusResiliated=Afsluttede medlemmer
 NewCotisation=Nye bidrag
 PaymentSubscription=Nye bidrag betaling
 SubscriptionEndDate=Subscription slutdato
+<<<<<<< HEAD
 MembersTypeSetup=Medlemmer type setup
+=======
+MembersTypeSetup=Opsætning af medlemstype
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MemberTypeModified=Medlemstype ændret
 DeleteAMemberType=Slet en medlemstype
 ConfirmDeleteMemberType=Er du sikker på, at du vil slette denne medlemstype?
@@ -67,11 +94,19 @@ Subscriptions=Abonnementer
 SubscriptionLate=Sen
 SubscriptionNotReceived=Subscription aldrig modtaget
 ListOfSubscriptions=Liste over abonnementer
+<<<<<<< HEAD
 SendCardByMail=Send kort
 AddMember=Opret medlem
 NoTypeDefinedGoToSetup=Intet medlem definerede typer. Gå til opsætning - Medlemmer typer
 NewMemberType=Nyt medlem type
 WelcomeEMail=Velkommen e-mail
+=======
+SendCardByMail=Send card by email
+AddMember=Opret medlem
+NoTypeDefinedGoToSetup=Ingen medlemstyper er defineret. Gå til menuen "Medlemstyper"
+NewMemberType=Nyt medlem type
+WelcomeEMail=Welcome email
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SubscriptionRequired=Kræver abonnement
 DeleteType=Slet
 VoteAllowed=Afstemning tilladt
@@ -79,6 +114,7 @@ Physical=Fysisk
 Moral=Moral
 MorPhy=Moralske / Fysisk
 Reenable=Genaktivere
+<<<<<<< HEAD
 ResiliateMember=Afslut et medlem
 ConfirmResiliateMember=Er du sikker på at du vil opsige dette medlem?
 DeleteMember=Slet medlem
@@ -89,6 +125,18 @@ Filehtpasswd=htpasswd fil
 ValidateMember=Validere et medlem
 ConfirmValidateMember=Er du sikker på, at du vil validere dette medlem?
 FollowingLinksArePublic=De følgende links er åbne sider ikke er beskyttet af nogen Dolibarr tilladelse. De er ikke formated sider, gives som eksempel for at vise, hvordan man listen medlemmer database.
+=======
+ResiliateMember=Afslut en medlem
+ConfirmResiliateMember=Er du sikker på at du vil opsige denne medlem?
+DeleteMember=Slet medlem
+ConfirmDeleteMember=Er du sikker på, at du vil slette dette medlem (Sletning af et medlem vil slette alle dens abonnementer)?
+DeleteSubscription=Slet abonnement
+ConfirmDeleteSubscription=Er du sikker på, at du vil slette dette abonnement?
+Filehtpasswd=htpasswd fil
+ValidateMember=Bekræfte et medlem
+ConfirmValidateMember=Er du sikker på, at du vil bekræfte denne medlem?
+FollowingLinksArePublic=Følgende links er åbne sider, der ikke er beskyttet af Dolibarr-tilladelse. De er ikke formaterede sider, der er angivet som eksempel for at vise, hvordan man kan oprette medlemmernes database.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PublicMemberList=Offentlige medlem liste
 BlankSubscriptionForm=Offentlig selvtilmeldingsblanket
 BlankSubscriptionFormDesc=Dolibarr kan give dig en offentlig webadresse / hjemmeside for at give eksterne besøgende mulighed for at anmode om at abonnere på fundamentet. Hvis et online betalingsmodul er aktiveret, kan et betalingsformular også automatisk leveres.
@@ -102,11 +150,16 @@ String=String
 Text=Tekst
 Int=Int
 DateAndTime=Dato og tid
+<<<<<<< HEAD
 PublicMemberCard=Medlem offentlige kortet
+=======
+PublicMemberCard=Medlemskort
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SubscriptionNotRecorded=Abonnement ikke registreret
 AddSubscription=Opret abonnement
 ShowSubscription=Vis tegning
 # Label of email templates
+<<<<<<< HEAD
 SendingAnEMailToMember=Sending information email to member
 SendingEmailOnAutoSubscription=Sending email on auto registration
 SendingEmailOnMemberValidation=Sending email on new member validation
@@ -134,6 +187,35 @@ DescADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION=Template Email to use to send email to 
 DescADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION=Template Email to use to send email remind when subscription is about to expire
 DescADHERENT_EMAIL_TEMPLATE_CANCELATION=Template Email to use to send email to a member on member cancelation
 DescADHERENT_MAIL_FROM=Sender e-mail for automatiske e-mails
+=======
+SendingAnEMailToMember=Afsendelse af e-mail til medlem
+SendingEmailOnAutoSubscription=Afsendelse af e-mail ved automatisk registrering
+SendingEmailOnMemberValidation=Afsendelse af e-mail ved bekræftelse af nye medlemmer
+SendingEmailOnNewSubscription=Afsendelse af e-mail på nyt abonnement
+SendingReminderForExpiredSubscription=Sender påmindelse om udløbne abonnementer
+SendingEmailOnCancelation=Afsendelse af e-mail ved annullering
+# Topic of email templates
+YourMembershipRequestWasReceived=Dit medlemskab blev modtaget.
+YourMembershipWasValidated=Dit medlemskab blev bekræftet
+YourSubscriptionWasRecorded=Dit nye abonnement blev registreret
+SubscriptionReminderEmail=Abonnement påmindelse
+YourMembershipWasCanceled=Dit medlemskab blev annulleret
+CardContent=Indholdet af din medlem kortet
+# Text of email templates
+ThisIsContentOfYourMembershipRequestWasReceived=Vi vil gerne fortælle dig, at din anmodning om medlemskab blev modtaget. <br> <br>
+ThisIsContentOfYourMembershipWasValidated=Vi vil gerne fortælle dig, at dit medlemskab blev bekræftet med følgende oplysninger: <br> <br>
+ThisIsContentOfYourSubscriptionWasRecorded=Vi vil gerne fortælle dig, at dit nye abonnement blev registreret. <br> <br>
+ThisIsContentOfSubscriptionReminderEmail=We want to let you know that your subscription is about to expire or has already expired (__MEMBER_LAST_SUBSCRIPTION_DATE_END__). We hope you will renew it.<br><br>
+ThisIsContentOfYourCard=This is a summary of the information we have about you. Please contact us if anything is incorrect.<br><br>
+DescADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT=Subject of the notification email received in case of auto-inscription of a guest
+DescADHERENT_AUTOREGISTER_NOTIF_MAIL=Content of the notification email received in case of auto-inscription of a guest
+DescADHERENT_EMAIL_TEMPLATE_AUTOREGISTER=Email template to use to send email to a member on member autosubscription
+DescADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION=Email template to use to send email to a member on member validation
+DescADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION=Email template to use to send email to a member on new subscription recording
+DescADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION=Email template to use to send email reminder when subscription is about to expire
+DescADHERENT_EMAIL_TEMPLATE_CANCELATION=Email template to use to send email to a member on member cancelation
+DescADHERENT_MAIL_FROM=Sender Email for automatic emails
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DescADHERENT_ETIQUETTE_TYPE=Etiketter format
 DescADHERENT_ETIQUETTE_TEXT=Tekst udskrives på medlems adresseblade
 DescADHERENT_CARD_TYPE=Format af kort side
@@ -143,7 +225,11 @@ DescADHERENT_CARD_TEXT_RIGHT=Tekst trykt på medlem-kort (tilpasning til højre)
 DescADHERENT_CARD_FOOTER_TEXT=Tekst trykt på bunden af medlem-kort
 ShowTypeCard=Vis type ' %s'
 HTPasswordExport=htpassword fil generation
+<<<<<<< HEAD
 NoThirdPartyAssociatedToMember=Ingen tredjepart forbundet til dette medlem
+=======
+NoThirdPartyAssociatedToMember=Ingen tredjepart forbundet til denne medlem
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MembersAndSubscriptions= Medlemmer og Subscriptions
 MoreActions=Supplerende aktion om kontrolapparatet
 MoreActionsOnSubscription=Supplerende handling, som standard foreslået, når du optager et abonnement
@@ -152,18 +238,31 @@ MoreActionBankViaInvoice=Opret en faktura og en betaling på bankkonto
 MoreActionInvoiceOnly=Opret en faktura uden betaling
 LinkToGeneratedPages=Generer besøg kort
 LinkToGeneratedPagesDesc=Denne skærm giver dig mulighed for at generere PDF-filer med visitkort til alle dine medlemmer eller et bestemt medlem.
+<<<<<<< HEAD
 DocForAllMembersCards=Generer visitkort for alle medlemmer (Format for output faktisk setup: <b>%s)</b>
 DocForOneMemberCards=Generer visitkort for et bestemt medlem (Format for output faktisk setup: <b>%s)</b>
 DocForLabels=Generer adresse ark (Format for output faktisk setup: <b>%s)</b>
 SubscriptionPayment=Abonnement betaling
 LastSubscriptionDate=Latest subscription date
 LastSubscriptionAmount=Latest subscription amount
+=======
+DocForAllMembersCards=Generer visitkort til alle medlemmer
+DocForOneMemberCards=Generer visitkort for et bestemt medlem (Format for output faktisk setup: <b>%s)</b>
+DocForLabels=Generer adresse ark (Format for output faktisk setup: <b>%s)</b>
+SubscriptionPayment=Abonnement betaling
+LastSubscriptionDate=Date of latest subscription payment
+LastSubscriptionAmount=Amount of latest subscription
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MembersStatisticsByCountries=Medlemmer statistik efter land
 MembersStatisticsByState=Medlemmer statistikker stat / provins
 MembersStatisticsByTown=Medlemmer statistikker byen
 MembersStatisticsByRegion=Medlemsstatistik efter region
 NbOfMembers=Antal medlemmer
+<<<<<<< HEAD
 NoValidatedMemberYet=Ingen validerede medlemmer fundet
+=======
+NoValidatedMemberYet=Ingen bekræftede medlemmer fundet
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MembersByCountryDesc=Denne skærm viser dig statistikker over medlemmer af lande. Grafisk afhænger dog på Google online-graf service og er kun tilgængelig, hvis en internetforbindelse virker.
 MembersByStateDesc=Denne skærm viser dig statistikker om medlemmer fra staten / provinser / Canton.
 MembersByTownDesc=Denne skærm viser dig statistikker over medlemmer af byen.
@@ -171,7 +270,11 @@ MembersStatisticsDesc=Vælg statistikker, du ønsker at læse ...
 MenuMembersStats=Statistik
 LastMemberDate=Seneste medlem dato
 LatestSubscriptionDate=Latest subscription date
+<<<<<<< HEAD
 Nature=Natur
+=======
+MemberNature=Nature of member
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Public=Information er offentlige
 NewMemberbyWeb=Nyt medlem tilføjet. Afventer godkendelse
 NewMemberForm=Nyt medlem formular
@@ -187,6 +290,7 @@ MembersStatisticsByProperties=Medlemsstatistik af natur
 MembersByNature=Denne skærm viser dig statistik over medlemmer af natur.
 MembersByRegion=Denne skærm viser statistik over medlemmer efter region.
 VATToUseForSubscriptions=Moms sats at bruge til abonnementer
+<<<<<<< HEAD
 NoVatOnSubscription=Ingen TVA til abonnementer
 MEMBER_PAYONLINE_SENDEMAIL=Email til brug for e-mail advarsel, når Dolibarr modtager en bekræftelse af en valideret betaling for et abonnement (Eksempel: paymentdone@example.com)
 ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS=Produkt anvendt til abonnementslinje i faktura: %s
@@ -196,3 +300,16 @@ NoEmailSentToMember=No email sent to member
 EmailSentToMember=Email sent to member at %s
 SendReminderForExpiredSubscriptionTitle=Send reminder by email for expired subscription
 SendReminderForExpiredSubscription=Send reminder by email to members when subscription is about to expire (parameter is number of days before end of subscription to send the remind)
+=======
+NoVatOnSubscription=No VAT for subscriptions
+ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS=Produkt anvendt til abonnementslinje i faktura: %s
+NameOrCompany=Navn eller firma
+SubscriptionRecorded=Abonnement registreret
+NoEmailSentToMember=Ingen email sendt til medlem
+EmailSentToMember=E-mail sendt til medlem på %s
+SendReminderForExpiredSubscriptionTitle=Send påmindelse via email for udløbet abonnement
+SendReminderForExpiredSubscription=Send påmindelse via e-mail til medlemmer, når abonnementet er ved at udløbe (parameter er antal dage før afslutningen af ​​abonnementet for at sende påmindelsen. Det kan være en liste over dage adskilt af et semikolon, for eksempel '10; 5; 0; -5 ')
+MembershipPaid=Membership paid for current period (until %s)
+YouMayFindYourInvoiceInThisEmail=You may find your invoice attached to this email
+XMembersClosed=%s member(s) closed
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

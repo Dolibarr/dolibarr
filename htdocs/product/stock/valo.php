@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,10 +34,17 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 $langs->load("stocks");
 
 // Security check
+<<<<<<< HEAD
 $result=restrictedArea($user,'stock');
 
 $sref=GETPOST("sref",'alpha');
 $snom=GETPOST("snom",'alpha');
+=======
+$result=restrictedArea($user, 'stock');
+
+$sref=GETPOST("sref", 'alpha');
+$snom=GETPOST("snom", 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 
 $sortfield = GETPOST("sortfield");
@@ -42,10 +53,17 @@ if (! $sortfield) $sortfield="e.ref";
 if (! $sortorder) $sortorder="ASC";
 $page = $_GET["page"];
 if ($page < 0) $page = 0;
+<<<<<<< HEAD
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page;
 
 $year = strftime("%Y",time());
+=======
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$offset = $limit * $page;
+
+$year = strftime("%Y", time());
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 /*
@@ -68,7 +86,11 @@ if ($sall)
     $sql.= " OR e.town LIKE '%".$db->escape($sall)."%')";
 }
 $sql.= " GROUP BY e.rowid, e.ref, e.statut, e.lieu, e.address, e.zip, e.town, e.fk_pays";
+<<<<<<< HEAD
 $sql.= $db->order($sortfield,$sortorder);
+=======
+$sql.= $db->order($sortfield, $sortorder);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $sql.= $db->plimit($limit + 1, $offset);
 
 $result = $db->query($sql);
@@ -79,6 +101,7 @@ if ($result)
     $i = 0;
 
     $help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
+<<<<<<< HEAD
     llxHeader("",$langs->trans("EnhancedValueOfWarehouses"),$help_url);
 
     print_barre_liste($langs->trans("EnhancedValueOfWarehouses"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder,'',$num);
@@ -90,6 +113,19 @@ if ($result)
     print_liste_field_titre("EstimatedStockValue", $_SERVER["PHP_SELF"], "e.valo_pmp",'','','align="right"',$sortfield,$sortorder);
     print_liste_field_titre("EstimatedStockValueSell", $_SERVER["PHP_SELF"], "",'','','align="right"',$sortfield,$sortorder);
     print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "e.statut",'','','align="right"',$sortfield,$sortorder);
+=======
+    llxHeader("", $langs->trans("EnhancedValueOfWarehouses"), $help_url);
+
+    print_barre_liste($langs->trans("EnhancedValueOfWarehouses"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num);
+
+    print '<table class="noborder" width="100%">';
+    print "<tr class=\"liste_titre\">";
+    print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "e.ref", "", "", "", $sortfield, $sortorder);
+    print_liste_field_titre("LocationSummary", $_SERVER["PHP_SELF"], "e.lieu", "", "", "", $sortfield, $sortorder);
+    print_liste_field_titre("EstimatedStockValue", $_SERVER["PHP_SELF"], "e.valo_pmp", '', '', '', $sortfield, $sortorder, 'right ');
+    print_liste_field_titre("EstimatedStockValueSell", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'right ');
+    print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "e.statut", '', '', '', $sortfield, $sortorder, 'right ');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print "</tr>\n";
 
     if ($num)
@@ -97,6 +133,7 @@ if ($result)
         $entrepot=new Entrepot($db);
         $total = $totalsell = 0;
         $var=false;
+<<<<<<< HEAD
         while ($i < min($num,$limit))
         {
             $objp = $db->fetch_object($result);
@@ -118,17 +155,48 @@ if ($result)
             print "</tr>\n";
             $total += price2num($objp->estimatedvalue,'MU');
             $totalsell += price2num($objp->sellvalue,'MU');
+=======
+        while ($i < min($num, $limit))
+        {
+            $objp = $db->fetch_object($result);
+            print '<tr class="oddeven">';
+            print '<td><a href="card.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowWarehouse"), 'stock').' '.$objp->ref.'</a></td>';
+            print '<td>'.$objp->lieu.'</td>';
+            // PMP value
+            print '<td class="right">';
+            if (price2num($objp->estimatedvalue, 'MT')) print price(price2num($objp->estimatedvalue, 'MT'), 1);
+            else print '';
+            print '</td>';
+            // Selling value
+            print '<td class="right">';
+            if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($objp->sellvalue, 'MT'), 1);
+            else print $langs->trans("Variable");
+            print '</td>';
+            // Status
+            print '<td class="right">'.$entrepot->LibStatut($objp->statut, 5).'</td>';
+            print "</tr>\n";
+            $total += price2num($objp->estimatedvalue, 'MU');
+            $totalsell += price2num($objp->sellvalue, 'MU');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
             $i++;
         }
 
         print '<tr class="liste_total">';
+<<<<<<< HEAD
         print '<td colspan="2" align="right">'.$langs->trans("Total").'</td>';
         print '<td align="right">'.price(price2num($total,'MT'),1,$langs,0,0,-1,$conf->currency).'</td>';
         print '<td align="right">'.price(price2num($totalsell,'MT'),1,$langs,0,0,-1,$conf->currency).'</td>';
         print '<td align="right">&nbsp;</td>';
         print "</tr>\n";
 
+=======
+        print '<td colspan="2" class="right">'.$langs->trans("Total").'</td>';
+        print '<td class="right">'.price(price2num($total, 'MT'), 1, $langs, 0, 0, -1, $conf->currency).'</td>';
+        print '<td class="right">'.price(price2num($totalsell, 'MT'), 1, $langs, 0, 0, -1, $conf->currency).'</td>';
+        print '<td class="right">&nbsp;</td>';
+        print "</tr>\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
     $db->free($result);
@@ -150,14 +218,22 @@ if ($result)
         $url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file='.$file;
         print '<br><img src="'.$url.'">';
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 else
 {
     dol_print_error($db);
 }
 
+<<<<<<< HEAD
 
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
+<<<<<<< HEAD
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014-2015 Marcos García       <marcosgdf@gmail.com>
  *
@@ -23,6 +27,7 @@
  *       \brief      File to return Ajax response on product list request
  */
 
+<<<<<<< HEAD
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL',1); // Disables token renewal
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
@@ -38,13 +43,34 @@ $socid=GETPOST('socid','int');
 $action=GETPOST('action', 'alpha');
 $id=GETPOST('id', 'int');
 $discard_closed =GETPOST('discardclosed','int');
+=======
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
+if (empty($_GET['keysearch']) && ! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
+
+require '../../main.inc.php';
+
+$htmlname=GETPOST('htmlname', 'alpha');
+$socid=GETPOST('socid', 'int');
+$action=GETPOST('action', 'alpha');
+$id=GETPOST('id', 'int');
+$discard_closed =GETPOST('discardclosed', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 /*
  * View
  */
 
+<<<<<<< HEAD
 dol_syslog(join(',',$_GET));
+=======
+dol_syslog(join(',', $_GET));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 
@@ -55,7 +81,11 @@ top_httphead();
 
 if (empty($htmlname)) return;
 
+<<<<<<< HEAD
 $match = preg_grep('/('.$htmlname.'[0-9]+)/',array_keys($_GET));
+=======
+$match = preg_grep('/('.$htmlname.'[0-9]+)/', array_keys($_GET));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 sort($match);
 $idprod = (! empty($match[0]) ? $match[0] : '');
 
@@ -70,4 +100,7 @@ $arrayresult=$form->select_projects_list($socid, '', $htmlname, 0, 0, 1, $discar
 $db->close();
 
 print json_encode($arrayresult);
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

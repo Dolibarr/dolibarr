@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2016-2017  Alexandre Spangaro	<aspangaro@zendsi.com>
+=======
+/* Copyright (C) 2016-2017  Alexandre Spangaro	<aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,11 +33,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills'));
 
+<<<<<<< HEAD
 $id=GETPOST('id','int');
 $action=GETPOST('action','aZ09');
 
 // Security check
 $socid = GETPOST('socid','int');
+=======
+$id=GETPOST('id', 'int');
+$action=GETPOST('action', 'aZ09');
+
+// Security check
+$socid = GETPOST('socid', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
@@ -48,7 +60,11 @@ $object = new Tva($db);
 if ($action == 'setlib' && $user->rights->tax->charges->creer)
 {
 	$object->fetch($id);
+<<<<<<< HEAD
 	$result = $object->setValueFrom('label', GETPOST('lib','alpha'), '', '', 'text', '', $user, 'TAX_MODIFY');
+=======
+	$result = $object->setValueFrom('label', GETPOST('lib', 'alpha'), '', '', 'text', '', $user, 'TAX_MODIFY');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if ($result < 0)
 		setEventMessages($object->error, $object->errors, 'errors');
 }
@@ -60,7 +76,11 @@ if ($action == 'setlib' && $user->rights->tax->charges->creer)
 
 $title=$langs->trans("VAT") . " - " . $langs->trans("Info");
 $help_url='';
+<<<<<<< HEAD
 llxHeader("",$title,$helpurl);
+=======
+llxHeader("", $title, $helpurl);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $object = new Tva($db);
 $object->fetch($id);

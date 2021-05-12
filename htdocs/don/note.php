@@ -1,9 +1,15 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2016      Alexandre Spangaro   <aspangaro@zendsi.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2016      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +41,7 @@ if (! empty($conf->projet->enabled))
     require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
+<<<<<<< HEAD
 $langs->load("companies");
 $langs->load("bills");
 $langs->load("donations");
@@ -42,12 +49,24 @@ $langs->load("donations");
 $id=(GETPOST('id','int')?GETPOST('id','int'):GETPOST('facid','int'));  // For backward compatibility
 $ref=GETPOST('ref','alpha');
 $action=GETPOST('action','alpha');
+=======
+// Load translation files required by the page
+$langs->loadLangs(array("companies","bills","donations"));
+
+$id=(GETPOST('id', 'int')?GETPOST('id', 'int'):GETPOST('facid', 'int'));  // For backward compatibility
+$ref=GETPOST('ref', 'alpha');
+$action=GETPOST('action', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
 
 // Security check
 $socid=0;
 if ($user->societe_id) $socid=$user->societe_id;
+<<<<<<< HEAD
 $result=restrictedArea($user,'don',$id,'');
+=======
+$result=restrictedArea($user, 'don', $id, '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $object = new Don($db);
 $object->fetch($id);
@@ -80,7 +99,11 @@ if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 if ($id > 0 || ! empty($ref))
 {
 	$object = new Don($db);
+<<<<<<< HEAD
 	$object->fetch($id,$ref);
+=======
+	$object->fetch($id, $ref);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	$head = donation_prepare_head($object);
 

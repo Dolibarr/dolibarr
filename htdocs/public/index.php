@@ -25,4 +25,7 @@
 require '../master.inc.php';
 
 header("Location: ".DOL_URL_ROOT.'/public/error-404.php');
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

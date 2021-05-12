@@ -52,7 +52,11 @@ if (in_array($modulepart, array('product', 'produit', 'societe', 'user', 'ticket
 if ($action == 'delete')
 {
 	$langs->load("companies");	// Need for string DeleteFile+ConfirmDeleteFiles
+<<<<<<< HEAD
 	$ret = $form->form_confirm(
+=======
+    print $form->formconfirm(
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$_SERVER["PHP_SELF"] . '?id=' . $object->id . '&urlfile=' . urlencode(GETPOST("urlfile")) . '&linkid=' . GETPOST('linkid', 'int') . (empty($param)?'':$param),
 			$langs->trans('DeleteFile'),
 			$langs->trans('ConfirmDeleteFile'),
@@ -61,7 +65,10 @@ if ($action == 'delete')
 			0,
 			1
 	);
+<<<<<<< HEAD
 	if ($ret == 'html') print '<br>';
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 $formfile=new FormFile($db);
@@ -71,7 +78,11 @@ $savingdocmask='';
 if (empty($conf->global->MAIN_DISABLE_SUGGEST_REF_AS_PREFIX))
 {
 	//var_dump($modulepart);
+<<<<<<< HEAD
 	if (in_array($modulepart,array('facture_fournisseur','commande_fournisseur','facture','commande','propal','supplier_proposal','ficheinter','contract','expedition','project','project_task','expensereport','tax', 'produit', 'product_batch')))
+=======
+	if (in_array($modulepart, array('facture_fournisseur','commande_fournisseur','facture','commande','propal','supplier_proposal','ficheinter','contract','expedition','project','project_task','expensereport','tax', 'produit', 'product_batch')))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$savingdocmask=dol_sanitizeFileName($object->ref).'-__file__';
 	}

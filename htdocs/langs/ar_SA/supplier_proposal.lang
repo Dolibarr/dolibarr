@@ -1,6 +1,10 @@
 # Dolibarr language file - Source file is en_US - supplier_proposal
 SupplierProposal=Vendor commercial proposals
+<<<<<<< HEAD
 supplier_proposalDESC=Manage price requests to vendors
+=======
+supplier_proposalDESC=إدارة طلبات السعر للموردين
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SupplierProposalNew=طلب السعر الجديد
 CommRequest=طلب السعر
 CommRequests=طلبات الأسعار
@@ -34,7 +38,10 @@ SupplierProposalStatusSignedShort=قبلت
 SupplierProposalStatusNotSignedShort=رفض
 CopyAskFrom=إنشاء طلب السعر عن طريق نسخ طلب القائمة
 CreateEmptyAsk=إنشاء طلب فارغة
+<<<<<<< HEAD
 CloneAsk=طلب السعر استنساخ
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmCloneAsk=Are you sure you want to clone the price request <b>%s</b>?
 ConfirmReOpenAsk=Are you sure you want to open back the price request <b>%s</b>?
 SendAskByMail=إرسال طلب السعر عن طريق البريد

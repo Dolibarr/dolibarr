@@ -28,6 +28,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_graph_orders_permonth extends ModeleBoxes
 {
+<<<<<<< HEAD
 	var $boxcode="orderspermonth";
 	var $boximg="object_order";
 	var $boxlabel="BoxCustomersOrdersPerMonth";
@@ -37,6 +38,20 @@ class box_graph_orders_permonth extends ModeleBoxes
 
 	var $info_box_head = array();
 	var $info_box_contents = array();
+=======
+    public $boxcode="orderspermonth";
+    public $boximg="object_order";
+    public $boxlabel="BoxCustomersOrdersPerMonth";
+    public $depends = array("commande");
+
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    public $info_box_head = array();
+    public $info_box_contents = array();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	/**
@@ -45,7 +60,11 @@ class box_graph_orders_permonth extends ModeleBoxes
 	 * 	@param	DoliDB	$db			Database handler
 	 *  @param	string	$param		More parameters
 	 */
+<<<<<<< HEAD
 	function __construct($db,$param)
+=======
+	public function __construct($db, $param)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $user;
 
@@ -60,7 +79,11 @@ class box_graph_orders_permonth extends ModeleBoxes
 	 *  @param	int		$max        Maximum number of records to load
      *  @return	void
 	 */
+<<<<<<< HEAD
 	function loadBox($max=5)
+=======
+	public function loadBox($max = 5)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf, $user, $langs, $db;
 
@@ -71,7 +94,11 @@ class box_graph_orders_permonth extends ModeleBoxes
 		//include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 		//$commandestatic=new Commande($db);
 
+<<<<<<< HEAD
 		$text = $langs->trans("BoxCustomersOrdersPerMonth",$max);
+=======
+		$text = $langs->trans("BoxCustomersOrdersPerMonth", $max);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->info_box_head = array(
 				'text' => $text,
 				'limit'=> dol_strlen($text),
@@ -99,6 +126,7 @@ class box_graph_orders_permonth extends ModeleBoxes
 
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			include_once DOL_DOCUMENT_ROOT.'/commande/class/commandestats.class.php';
+<<<<<<< HEAD
 			$autosetarray=preg_split("/[,;:]+/",GETPOST('DOL_AUTOSET_COOKIE'));
 			if (in_array('DOLUSERCOOKIE_box_'.$this->boxcode,$autosetarray))
 			{
@@ -109,12 +137,28 @@ class box_graph_orders_permonth extends ModeleBoxes
 			else
 			{
 				$tmparray=json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode],true);
+=======
+			$autosetarray=preg_split("/[,;:]+/", GETPOST('DOL_AUTOSET_COOKIE'));
+			if (in_array('DOLUSERCOOKIE_box_'.$this->boxcode, $autosetarray))
+			{
+				$endyear=GETPOST($param_year, 'int');
+				$shownb=GETPOST($param_shownb, 'alpha');
+				$showtot=GETPOST($param_showtot, 'alpha');
+			}
+			else
+			{
+				$tmparray=json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode], true);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$endyear=$tmparray['year'];
 				$shownb=$tmparray['shownb'];
 				$showtot=$tmparray['showtot'];
 			}
 			if (empty($shownb) && empty($showtot)) { $shownb=1; $showtot=1; }
+<<<<<<< HEAD
 			$nowarray=dol_getdate(dol_now(),true);
+=======
+			$nowarray=dol_getdate(dol_now(), true);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if (empty($endyear)) $endyear=$nowarray['year'];
 			$startyear=$endyear-1;
 			$mode='customer';
@@ -126,7 +170,11 @@ class box_graph_orders_permonth extends ModeleBoxes
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($shownb)
 			{
+<<<<<<< HEAD
 				$data1 = $stats->getNbByMonthWithPrevYear($endyear,$startyear,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0));
+=======
+				$data1 = $stats->getNbByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				$filenamenb = $dir."/".$prefix."ordersnbinyear-".$endyear.".png";
 				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&amp;file=ordersnbinyear-'.$endyear.'.png';
@@ -138,7 +186,10 @@ class box_graph_orders_permonth extends ModeleBoxes
 				{
 					$px1->SetData($data1);
 					unset($data1);
+<<<<<<< HEAD
 					$px1->SetPrecisionY(0);
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					$i=$startyear;$legend=array();
 					while ($i <= $endyear)
 					{
@@ -152,19 +203,30 @@ class box_graph_orders_permonth extends ModeleBoxes
 					$px1->SetYLabel($langs->trans("NumberOfOrders"));
 					$px1->SetShading(3);
 					$px1->SetHorizTickIncrement(1);
+<<<<<<< HEAD
 					$px1->SetPrecisionY(0);
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					$px1->SetCssPrefix("cssboxes");
 					$px1->mode='depth';
 					$px1->SetTitle($langs->trans("NumberOfOrdersByMonth"));
 
+<<<<<<< HEAD
 					$px1->draw($filenamenb,$fileurlnb);
+=======
+					$px1->draw($filenamenb, $fileurlnb);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 			}
 
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showtot)
 			{
+<<<<<<< HEAD
 				$data2 = $stats->getAmountByMonthWithPrevYear($endyear,$startyear,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0));
+=======
+				$data2 = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				$filenamenb = $dir."/".$prefix."ordersamountinyear-".$endyear.".png";
 				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&amp;file=ordersamountinyear-'.$endyear.'.png';
@@ -176,7 +238,10 @@ class box_graph_orders_permonth extends ModeleBoxes
 				{
 					$px2->SetData($data2);
 					unset($data2);
+<<<<<<< HEAD
 					$px2->SetPrecisionY(0);
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					$i=$startyear;$legend=array();
 					while ($i <= $endyear)
 					{
@@ -190,12 +255,19 @@ class box_graph_orders_permonth extends ModeleBoxes
 					$px2->SetYLabel($langs->trans("AmountOfOrdersHT"));
 					$px2->SetShading(3);
 					$px2->SetHorizTickIncrement(1);
+<<<<<<< HEAD
 					$px2->SetPrecisionY(0);
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					$px2->SetCssPrefix("cssboxes");
 					$px2->mode='depth';
 					$px2->SetTitle($langs->trans("AmountOfOrdersByMonthHT"));
 
+<<<<<<< HEAD
 					$px2->draw($filenamenb,$fileurlnb);
+=======
+					$px2->draw($filenamenb, $fileurlnb);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 			}
 
@@ -217,6 +289,10 @@ class box_graph_orders_permonth extends ModeleBoxes
 					</script>';
 				$stringtoshow.='<div class="center hideobject" id="idfilter'.$this->boxcode.'">';	// hideobject is to start hidden
 				$stringtoshow.='<form class="flat formboxfilter" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+<<<<<<< HEAD
+=======
+				$stringtoshow.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$stringtoshow.='<input type="hidden" name="action" value="'.$refreshaction.'">';
 				$stringtoshow.='<input type="hidden" name="page_y" value="">';
 				$stringtoshow.='<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSERCOOKIE_box_'.$this->boxcode.':year,shownb,showtot">';
@@ -225,7 +301,11 @@ class box_graph_orders_permonth extends ModeleBoxes
 				$stringtoshow.='<input type="checkbox" name="'.$param_showtot.'"'.($showtot?' checked':'').'> '.$langs->trans("AmountOfOrdersByMonthHT");
 				$stringtoshow.='<br>';
 				$stringtoshow.=$langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$endyear.'">';
+<<<<<<< HEAD
 				$stringtoshow.='<input type="image" class="reposition inline-block valigntextbottom" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"),'refresh.png','','',1).'">';
+=======
+				$stringtoshow.='<input type="image" class="reposition inline-block valigntextbottom" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"), 'refresh.png', '', '', 1).'">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$stringtoshow.='</form>';
 				$stringtoshow.='</div>';
 				if ($shownb && $showtot)
@@ -245,6 +325,7 @@ class box_graph_orders_permonth extends ModeleBoxes
 					$stringtoshow.='</div>';
 					$stringtoshow.='</div>';
 				}
+<<<<<<< HEAD
 				$this->info_box_contents[0][0] = array('tr'=>'class="oddeven nohover"', 'td' => 'align="center" class="nohover"','textnoformat'=>$stringtoshow);
 			}
 			else
@@ -258,12 +339,34 @@ class box_graph_orders_permonth extends ModeleBoxes
 		else {
 			$this->info_box_contents[0][0] = array(
 			    'td' => 'align="left" class="nohover opacitymedium"',
+=======
+				$this->info_box_contents[0][0] = array(
+                    'tr'=>'class="oddeven nohover"',
+                    'td' => 'class="nohover center"',
+                    'textnoformat'=>$stringtoshow,
+                );
+			}
+			else
+			{
+				$this->info_box_contents[0][0] = array(
+                    'tr'=>'class="oddeven nohover"',
+                    'td' => 'class="nohover left"',
+                    'maxlength'=>500,
+                    'text' => $mesg,
+                );
+			}
+		}
+		else {
+			$this->info_box_contents[0][0] = array(
+			    'td' => 'class="nohover opacitymedium left"',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 'text' => $langs->trans("ReadPermissionNotAllowed")
 			);
 		}
 	}
 
 	/**
+<<<<<<< HEAD
 	 *	Method to show box
 	 *
 	 *	@param	array	$head       Array with properties of box title
@@ -278,3 +381,17 @@ class box_graph_orders_permonth extends ModeleBoxes
 
 }
 
+=======
+	 *  Method to show box
+	 *
+	 *  @param	array	$head       Array with properties of box title
+	 *  @param  array	$contents   Array with properties of box lines
+	 *  @param	int		$nooutput	No print, only return string
+	 *  @return	string
+	 */
+    public function showBox($head = null, $contents = null, $nooutput = 0)
+    {
+		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+	}
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

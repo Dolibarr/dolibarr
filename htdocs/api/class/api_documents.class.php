@@ -43,7 +43,11 @@ class Documents extends DolibarrApi
 	/**
 	 * Constructor
 	 */
+<<<<<<< HEAD
 	function __construct()
+=======
+	public function __construct()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $db;
 		$this->db = $db;
@@ -67,7 +71,11 @@ class Documents extends DolibarrApi
 	 *
 	 * @url GET /download
 	 */
+<<<<<<< HEAD
 	public function index($module_part, $original_file='')
+=======
+	public function index($module_part, $original_file = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf, $langs;
 
@@ -82,12 +90,20 @@ class Documents extends DolibarrApi
 		$entity=$conf->entity;
 
 		$check_access = dol_check_secure_access_document($module_part, $original_file, $entity, DolibarrApiAccess::$user, '', 'read');
+<<<<<<< HEAD
 		$accessallowed              = $check_access['accessallowed'];
 		$sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 		$original_file              = $check_access['original_file'];
 
 		if (preg_match('/\.\./',$original_file) || preg_match('/[<>|]/',$original_file))
 		{
+=======
+		$accessallowed = $check_access['accessallowed'];
+		$sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
+		$original_file = $check_access['original_file'];
+
+		if (preg_match('/\.\./', $original_file) || preg_match('/[<>|]/', $original_file)) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			throw new RestException(401);
 		}
 		if (!$accessallowed) {
@@ -103,7 +119,11 @@ class Documents extends DolibarrApi
 		}
 
 		$file_content=file_get_contents($original_file_osencoded);
+<<<<<<< HEAD
 		return array('filename'=>$filename, 'content'=>base64_encode($file_content), 'encoding'=>'MIME base64 (base64_encode php function, http://php.net/manual/en/function.base64-encode.php)' );
+=======
+		return array('filename'=>$filename, 'content-type' => dol_mimetype($filename), 'filesize'=>filesize($original_file), 'content'=>base64_encode($file_content), 'encoding'=>'base64' );
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 
@@ -127,7 +147,11 @@ class Documents extends DolibarrApi
 	 *
 	 * @url PUT /builddoc
 	 */
+<<<<<<< HEAD
 	public function builddoc($module_part, $original_file='', $doctemplate='', $langcode='')
+=======
+	public function builddoc($module_part, $original_file = '', $doctemplate = '', $langcode = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf, $langs;
 
@@ -153,7 +177,11 @@ class Documents extends DolibarrApi
 		$sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 		$original_file              = $check_access['original_file'];
 
+<<<<<<< HEAD
 		if (preg_match('/\.\./',$original_file) || preg_match('/[<>|]/',$original_file)) {
+=======
+		if (preg_match('/\.\./', $original_file) || preg_match('/[<>|]/', $original_file)) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			throw new RestException(401);
 		}
 		if (!$accessallowed) {
@@ -224,10 +252,16 @@ class Documents extends DolibarrApi
 		}
 
 		$file_content=file_get_contents($original_file_osencoded);
+<<<<<<< HEAD
 		return array('filename'=>$filename, 'content'=>base64_encode($file_content), 'langcode'=>$outputlangs->defaultlang, 'template'=>$templateused, 'encoding'=>'MIME base64 (base64_encode php function, http://php.net/manual/en/function.base64-encode.php)' );
 	}
 
 
+=======
+		return array('filename'=>$filename, 'content-type' => dol_mimetype($filename), 'filesize'=>filesize($original_file), 'content'=>base64_encode($file_content), 'langcode'=>$outputlangs->defaultlang, 'template'=>$templateused, 'encoding'=>'base64' );
+	}
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * Return the list of documents of a dedicated element (from its ID or Ref)
 	 *
@@ -246,7 +280,11 @@ class Documents extends DolibarrApi
 	 *
 	 * @url GET /
 	 */
+<<<<<<< HEAD
 	function getDocumentsListByElement($modulepart, $id=0, $ref='', $sortfield='', $sortorder='')
+=======
+	public function getDocumentsListByElement($modulepart, $id = 0, $ref = '', $sortfield = '', $sortorder = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf;
 
@@ -276,7 +314,11 @@ class Documents extends DolibarrApi
 
 			$upload_dir = $conf->societe->multidir_output[$object->entity] . "/" . $object->id;
 		}
+<<<<<<< HEAD
 		else if ($modulepart == 'adherent' || $modulepart == 'member')
+=======
+		elseif ($modulepart == 'adherent' || $modulepart == 'member')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
@@ -292,7 +334,11 @@ class Documents extends DolibarrApi
 
 			$upload_dir = $conf->adherent->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'member');
 		}
+<<<<<<< HEAD
 		else if ($modulepart == 'propal' || $modulepart == 'proposal')
+=======
+		elseif ($modulepart == 'propal' || $modulepart == 'proposal')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 
@@ -308,7 +354,11 @@ class Documents extends DolibarrApi
 
 			$upload_dir = $conf->propal->multidir_output[$object->entity] . "/" . get_exdir(0, 0, 0, 1, $object, 'propal');
 		}
+<<<<<<< HEAD
 		else if ($modulepart == 'commande' || $modulepart == 'order')
+=======
+		elseif ($modulepart == 'commande' || $modulepart == 'order')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
@@ -324,7 +374,11 @@ class Documents extends DolibarrApi
 
 			$upload_dir = $conf->commande->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'commande');
 		}
+<<<<<<< HEAD
 		else if ($modulepart == 'shipment' || $modulepart == 'expedition')
+=======
+		elseif ($modulepart == 'shipment' || $modulepart == 'expedition')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
@@ -340,7 +394,11 @@ class Documents extends DolibarrApi
 
 			$upload_dir = $conf->expedition->dir_output . "/sending/" . get_exdir(0, 0, 0, 1, $object, 'shipment');
 		}
+<<<<<<< HEAD
 		else if ($modulepart == 'facture' || $modulepart == 'invoice')
+=======
+		elseif ($modulepart == 'facture' || $modulepart == 'invoice')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
@@ -356,12 +414,51 @@ class Documents extends DolibarrApi
 
 			$upload_dir = $conf->facture->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'invoice');
 		}
+<<<<<<< HEAD
+=======
+        elseif ($modulepart == 'produit' || $modulepart == 'product')
+		{
+			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+
+			if (!DolibarrApiAccess::$user->rights->produit->lire) {
+				throw new RestException(401);
+			}
+
+			$object = new Product($this->db);
+			$result=$object->fetch($id, $ref);
+			if ( ! $result ) {
+				throw new RestException(404, 'Product not found');
+			}
+
+			$upload_dir = $conf->product->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'product');
+		}
+		elseif ($modulepart == 'agenda' || $modulepart == 'action' || $modulepart == 'event')
+		{
+			require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
+			if (!DolibarrApiAccess::$user->rights->agenda->myactions->read && !DolibarrApiAccess::$user->rights->agenda->allactions->read) {
+				throw new RestException(401);
+			}
+
+			$object = new ActionComm($this->db);
+			$result=$object->fetch($id, $ref);
+			if ( ! $result ) {
+				throw new RestException(404, 'Event not found');
+			}
+
+			$upload_dir = $conf->agenda->dir_output.'/'.dol_sanitizeFileName($object->ref);
+		}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		else
 		{
 			throw new RestException(500, 'Modulepart '.$modulepart.' not implemented yet.');
 		}
 
+<<<<<<< HEAD
 		$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+=======
+		$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if (empty($filearray)) {
 			throw new RestException(404, 'Search for modulepart '.$modulepart.' with Id '.$object->id.(! empty($object->Ref)?' or Ref '.$object->ref:'').' does not return any document.');
 		}
@@ -397,6 +494,10 @@ class Documents extends DolibarrApi
 	 * @param   string  $filecontent        File content (string with file content. An empty file will be created if this parameter is not provided)
 	 * @param   string  $fileencoding       File encoding (''=no encoding, 'base64'=Base 64) {@example '' or 'base64'}
 	 * @param   int 	$overwriteifexists  Overwrite file if exists (1 by default)
+<<<<<<< HEAD
+=======
+     * @return  string
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	 *
 	 * @throws 200
 	 * @throws 400
@@ -406,7 +507,11 @@ class Documents extends DolibarrApi
 	 *
 	 * @url POST /upload
 	 */
+<<<<<<< HEAD
 	public function post($filename, $modulepart, $ref='', $subdir='', $filecontent='', $fileencoding='', $overwriteifexists=0)
+=======
+	public function post($filename, $modulepart, $ref = '', $subdir = '', $filecontent = '', $fileencoding = '', $overwriteifexists = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $db, $conf;
 
@@ -486,7 +591,11 @@ class Documents extends DolibarrApi
 				if($result == 0)
 				{
 					throw new RestException(404, "Object with ref '".$ref."' was not found.");
+<<<<<<< HEAD
 			}
+=======
+			    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				elseif ($result < 0)
 				{
 					throw new RestException(500, 'Error while fetching object.');
@@ -561,6 +670,10 @@ class Documents extends DolibarrApi
 		return dol_basename($destfile);
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * Validate fields before create or update object
 	 *
@@ -568,7 +681,13 @@ class Documents extends DolibarrApi
 	 * @return  array
 	 * @throws  RestException
 	 */
+<<<<<<< HEAD
 	function _validate_file($data) {
+=======
+    private function _validate_file($data)
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$result = array();
 		foreach (Documents::$DOCUMENT_FIELDS as $field) {
 			if (!isset($data[$field]))

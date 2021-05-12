@@ -1,11 +1,17 @@
 # Dolibarr language file - Source file is en_US - supplier_proposal
+<<<<<<< HEAD
 SupplierProposal=Vendor commercial proposals
 supplier_proposalDESC=Manage price requests to vendors
+=======
+SupplierProposal=Obchodní návrhy dodavatele
+supplier_proposalDESC=Správa žádostí o ceny k dodavatelům
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SupplierProposalNew=Nový cenový poožadavek
 CommRequest=Cenový požadavek
 CommRequests=Cenové požadavky
 SearchRequest=Najít požadavek
 DraftRequests=Návrhy žádosti
+<<<<<<< HEAD
 SupplierProposalsDraft=Draft vendor proposals
 LastModifiedRequests=Poslední %s modifikované cenové požadavky
 RequestsOpened=Otevřené cenové požadavky
@@ -17,6 +23,19 @@ NewAskPrice=Nový cenový poožadavek
 ShowSupplierProposal=Zobrazit cenový požadavek
 AddSupplierProposal=Vytvoření cenového požadavku
 SupplierProposalRefFourn=Vendor ref
+=======
+SupplierProposalsDraft=Koncept návrhu dodavatele
+LastModifiedRequests=Poslední %s modifikované cenové požadavky
+RequestsOpened=Otevřené cenové požadavky
+SupplierProposalArea=Oblast návrhů dodavatele
+SupplierProposalShort=Návrh dodavatele
+SupplierProposals=Návrhy dodavatele
+SupplierProposalsShort=Návrhy dodavatele
+NewAskPrice=Nový cenový poožadavek
+ShowSupplierProposal=Zobrazit cenový požadavek
+AddSupplierProposal=Vytvoření cenového požadavku
+SupplierProposalRefFourn=Dodavatel ref
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SupplierProposalDate=Termín dodání
 SupplierProposalRefFournNotice=Před uzavřením se „Akceptovaným“, myslí, že pochopil dodavatele reference.
 ConfirmValidateAsk=Jste si jisti, že chcete ověřit tento cenový požadavek pod jménem <b> %s </ b>?
@@ -34,7 +53,10 @@ SupplierProposalStatusSignedShort=Přijato
 SupplierProposalStatusNotSignedShort=Odmítnuto
 CopyAskFrom=Vytvoření cenového požadavku zkopírováním stávající žádosti
 CreateEmptyAsk=Vytvořit prázdný požadavek
+<<<<<<< HEAD
 CloneAsk=Klonovat cenový požadavek
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmCloneAsk=Jste si jisti, že chcete naklonovat požadavek na cenu <b> %s </ b>?
 ConfirmReOpenAsk=Jste si jisti, že chcete otevřít zpět žádost o cenu <b> %s </ b>?
 SendAskByMail=Poslat cenový požadavek mailem
@@ -47,9 +69,16 @@ CommercialAsk=Cenový požadavek
 DefaultModelSupplierProposalCreate=Tvorba z výchozí šablony
 DefaultModelSupplierProposalToBill=Výchozí šablona při zavírání cenového požadavku (vzat v potaz)
 DefaultModelSupplierProposalClosed=Výchozí šablona při zavírání cenového požadavku (zamítnuto)
+<<<<<<< HEAD
 ListOfSupplierProposals=List of vendor proposal requests
 ListSupplierProposalsAssociatedProject=List of vendor proposals associated with project
 SupplierProposalsToClose=Vendor proposals to close
 SupplierProposalsToProcess=Vendor proposals to process
+=======
+ListOfSupplierProposals=Seznam požadavků na návrh dodavatele
+ListSupplierProposalsAssociatedProject=Seznam návrhů dodavatelů spojených s projektem
+SupplierProposalsToClose=Uzavřené návrhy dodavatele
+SupplierProposalsToProcess=Návrhy dodavatele ve zpracování
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LastSupplierProposals=Poslední žádosti %s cena
 AllPriceRequests=Všechny žádosti

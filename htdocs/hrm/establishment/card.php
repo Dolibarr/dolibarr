@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2015      Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+=======
+/* Copyright (C) 2015      Alexandre Spangaro	<aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +23,11 @@
  *  \file       	htdocs/hrm/establishment/card.php
  *  \brief      	Page to show an establishment
  */
+<<<<<<< HEAD
 require('../../main.inc.php');
+=======
+require '../../main.inc.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 require_once DOL_DOCUMENT_ROOT.'/core/lib/hrm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -33,10 +41,17 @@ if (! $user->admin) accessforbidden();
 
 $error=0;
 
+<<<<<<< HEAD
 $action = GETPOST('action','alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm','alpha');
 $id = GETPOST('id','int');
+=======
+$action = GETPOST('action', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
+$id = GETPOST('id', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // List of status
 static $tmpstatus2label=array(
@@ -70,7 +85,11 @@ if ($action == 'confirm_delete' && $confirm == "yes")
     }
 }
 
+<<<<<<< HEAD
 else if ($action == 'add')
+=======
+elseif ($action == 'add')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
     if (! $cancel)
     {
@@ -79,7 +98,11 @@ else if ($action == 'add')
 		$object->name = GETPOST('name', 'alpha');
         if (empty($object->name))
         {
+<<<<<<< HEAD
 	        setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name")), null, 'errors');
+=======
+	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Name")), null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $error++;
         }
 
@@ -89,11 +112,18 @@ else if ($action == 'add')
 			$object->zip 			= GETPOST('zipcode', 'alpha');
 			$object->town			= GETPOST('town', 'alpha');
 			$object->country_id     = $_POST["country_id"];
+<<<<<<< HEAD
 			$object->status     	= GETPOST('status','int');
 			$object->fk_user_author	= $user->id;
 			$object->datec			= dol_now();
 
 
+=======
+			$object->status     	= GETPOST('status', 'int');
+			$object->fk_user_author	= $user->id;
+			$object->datec			= dol_now();
+			$object->entity			= GETPOST('entity', 'int')>0?GETPOST('entity', 'int'):$conf->entity;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			$id = $object->create($user);
 
@@ -120,7 +150,11 @@ else if ($action == 'add')
 }
 
 // Update record
+<<<<<<< HEAD
 else if ($action == 'update')
+=======
+elseif ($action == 'update')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$error = 0;
 
@@ -128,7 +162,11 @@ else if ($action == 'update')
 
 		$name = GETPOST('name', 'alpha');
 		if (empty($name)) {
+<<<<<<< HEAD
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->trans('Name')), null, 'errors');
+=======
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Name')), null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$error ++;
 		}
 
@@ -140,7 +178,12 @@ else if ($action == 'update')
 			$object->town			= GETPOST('town', 'alpha');
 			$object->country_id     = GETPOST('country_id', 'int');
 			$object->fk_user_mod	= $user->id;
+<<<<<<< HEAD
 			$object->status         = GETPOST('status','int');
+=======
+			$object->status         = GETPOST('status', 'int');
+			$object->entity         = GETPOST('entity', 'int')>0?GETPOST('entity', 'int'):$conf->entity;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			$result = $object->update($user);
 
@@ -185,6 +228,7 @@ if ($action == 'create')
     print '<table class="border" width="100%">';
 
 	// Name
+<<<<<<< HEAD
     print '<tr><td>'. fieldLabel('Name','name',1).'</td><td><input name="name" id="name" size="32" value="' . GETPOST("name", "alpha") . '"></td></tr>';
 
 	// Address
@@ -192,23 +236,61 @@ if ($action == 'create')
 	print '<td>'.fieldLabel('Address','address',0).'</td>';
 	print '<td>';
 	print '<input name="address" id="address" class="qutrevingtpercent" value="' . GETPOST('address','alpha') . '">';
+=======
+	print '<tr>';
+	print '<td>'. $form->editfieldkey('Name', 'name', '', $object, 0, 'string', '', 1).'</td>';
+	print '<td><input name="name" id="name" size="32" value="' . GETPOST("name", "alpha") . '"></td>';
+	print '</tr>';
+
+	// Parent
+	print '<tr>';
+	print '<td>'.$form->editfieldkey('Parent', 'entity', '', $object, 0, 'string', '', 1).'</td>';
+	print '<td class="maxwidthonsmartphone">';
+	print $form->selectEstablishments(GETPOST('entity', 'int')>0?GETPOST('entity', 'int'):$conf->entity, 'entity', 1);
+	print '</td>';
+	print '</tr>';
+
+	// Address
+	print '<tr>';
+	print '<td>'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
+	print '<td>';
+	print '<input name="address" id="address" class="qutrevingtpercent" value="' . GETPOST('address', 'alpha') . '">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</td>';
 	print '</tr>';
 
 	// Zipcode
 	print '<tr>';
+<<<<<<< HEAD
 	print '<td>'.fieldLabel('Zip','zipcode',0).'</td>';
 	print '<td>';
 	print $formcompany->select_ziptown(GETPOST('zipcode', 'alpha'), 'zipcode', array (
 			'town',
 			'selectcountry_id'
 	), 6);
+=======
+	print '<td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td>';
+	print '<td>';
+	print $formcompany->select_ziptown(
+		GETPOST('zipcode', 'alpha'),
+		'zipcode',
+		array (
+			'town',
+			'selectcountry_id'
+		),
+		6
+	);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</td>';
 	print '</tr>';
 
 	// Town
 	print '<tr>';
+<<<<<<< HEAD
 	print '<td>'.fieldLabel('Town','town',0).'</td>';
+=======
+	print '<td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '<td>';
 	print $formcompany->select_ziptown(GETPOST('town', 'alpha'), 'town', array (
 			'zipcode',
@@ -219,18 +301,31 @@ if ($action == 'create')
 
 	// Country
 	print '<tr>';
+<<<<<<< HEAD
 	print '<td>'.fieldLabel('Country','selectcountry_id',0).'</td>';
 	print '<td class="maxwidthonsmartphone">';
 	print $form->select_country(GETPOST('country_id','int')>0?GETPOST('country_id','int'):$mysoc->country_id,'country_id');
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+=======
+	print '<td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td>';
+	print '<td class="maxwidthonsmartphone">';
+	print $form->select_country(GETPOST('country_id', 'int')>0?GETPOST('country_id', 'int'):$mysoc->country_id, 'country_id');
+		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</td>';
 	print '</tr>';
 
 	// Status
     print '<tr>';
+<<<<<<< HEAD
     print '<td>'.fieldLabel('Status','status',1).'</td>';
 	print '<td>';
 	print $form->selectarray('status',$status2label,GETPOST('status','alpha'));
+=======
+    print '<td>'.$form->editfieldkey('Status', 'status', '', $object, 0, 'string', '', 1).'</td>';
+	print '<td>';
+	print $form->selectarray('status', $status2label, GETPOST('status', 'alpha'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print '</td></tr>';
 
     print '</table>';
@@ -272,39 +367,74 @@ if (($id || $ref) && $action == 'edit')
             print '</td></tr>';
 
             // Name
+<<<<<<< HEAD
             print '<tr><td>'.fieldLabel('Name','name',1).'</td><td>';
             print '<input name="name" id="name" class="flat" size="32" value="'.$object->name.'">';
             print '</td></tr>';
 
 			// Address
 			print '<tr><td>'.fieldLabel('Address','address',0).'</td>';
+=======
+            print '<tr><td>'.$form->editfieldkey('Name', 'name', '', $object, 0, 'string', '', 1).'</td><td>';
+            print '<input name="name" id="name" class="flat" size="32" value="'.$object->name.'">';
+            print '</td></tr>';
+
+			// Parent
+            print '<tr><td>'.$form->editfieldkey('Parent', 'entity', '', $object, 0, 'string', '', 1).'</td>';
+			print '<td class="maxwidthonsmartphone">';
+			print $form->selectEstablishments($object->entity>0?$object->entity:$conf->entity, 'entity', 1);
+            print '</td></tr>';
+
+			// Address
+			print '<tr><td>'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '<td>';
 			print '<input name="address" id="address" size="32" value="' . $object->address . '">';
 			print '</td></tr>';
 
 			// Zipcode / Town
+<<<<<<< HEAD
 			print '<tr><td>'.fieldLabel('Zip','zipcode',0).'</td><td>';
+=======
+			print '<tr><td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td><td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print $formcompany->select_ziptown($object->zip, 'zipcode', array (
 					'town',
 					'selectcountry_id'
 			), 6) . '</tr>';
+<<<<<<< HEAD
 			print '<tr><td>'.fieldLabel('Town','town',0).'</td><td>';
+=======
+			print '<tr><td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print $formcompany->select_ziptown($object->town, 'town', array (
 					'zipcode',
 					'selectcountry_id'
 			)) . '</td></tr>';
 
 			// Country
+<<<<<<< HEAD
 			print '<tr><td>'.fieldLabel('Country','selectcountry_id',0).'</td>';
 			print '<td class="maxwidthonsmartphone">';
 			print $form->select_country($object->fk_country,'country_id');
 				if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+=======
+			print '<tr><td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td>';
+			print '<td class="maxwidthonsmartphone">';
+			print $form->select_country($object->fk_country, 'country_id');
+				if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '</td>';
 			print '</tr>';
 
 			// Status
+<<<<<<< HEAD
 			print '<tr><td>'.fieldLabel('Status','status',1).'</td><td>';
 			print $form->selectarray('status',$status2label,$object->status);
+=======
+			print '<tr><td>'.$form->editfieldkey('Status', 'status', '', $object, 0, 'string', '', 1).'</td><td>';
+			print $form->selectarray('status', $status2label, $object->status);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '</td></tr>';
 
             print '</table>';
@@ -333,8 +463,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     // Confirmation to delete
     if ($action == 'delete')
     {
+<<<<<<< HEAD
         print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("DeleteEstablishment"),$langs->trans("ConfirmDeleteEstablishment"),"confirm_delete");
 
+=======
+        print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("DeleteEstablishment"), $langs->trans("ConfirmDeleteEstablishment"), "confirm_delete");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
 
@@ -360,6 +494,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<td>'.$object->name.'</td>';
 	print '</tr>';
 
+<<<<<<< HEAD
+=======
+	// Parent
+	print '<tr>';
+	print '<td class="titlefield">'.$langs->trans("Parent").'</td>';
+	print '<td>'.$object->getNomUrlParent($object->entity).'</td>';
+	print '</tr>';
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	// Address
 	print '<tr>';
 	print '<td>'.$langs->trans("Address").'</td>';
@@ -386,7 +529,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	{
 		$img=picto_from_langcode($object->country_code);
 		print $img?$img.' ':'';
+<<<<<<< HEAD
 		print getCountry($object->getCountryCode(),0,$db);
+=======
+		print getCountry($object->getCountryCode(), 0, $db);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 	print '</td>';
 	print '</tr>';
@@ -408,5 +555,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     print '</div>';
 }
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

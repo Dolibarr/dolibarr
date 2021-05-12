@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,15 +36,26 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('trips', 'companies', 'bills', 'orders'));
 
+<<<<<<< HEAD
 $id = GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
 $socid=GETPOST('socid','int');
 $action=GETPOST('action','alpha');
+=======
+$id = GETPOST('id', 'int');
+$ref=GETPOST('ref', 'alpha');
+$socid=GETPOST('socid', 'int');
+$action=GETPOST('action', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Security check
 $socid=0;
 if ($user->societe_id) $socid=$user->societe_id;
+<<<<<<< HEAD
 $result=restrictedArea($user,'expensereport',$id,'expensereport');
+=======
+$result=restrictedArea($user, 'expensereport', $id, 'expensereport');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 $object = new ExpenseReport($db);
@@ -56,7 +71,11 @@ $permissionnote=$user->rights->expensereport->creer;	// Used by the include of a
  * Actions
  */
 
+<<<<<<< HEAD
 include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
+=======
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not include_once
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 /*
@@ -64,7 +83,11 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, 
  */
 $title=$langs->trans("ExpenseReport") . " - " . $langs->trans("Note");
 $helpurl="EN:Module_Expense_Reports";
+<<<<<<< HEAD
 llxHeader("",$title,$helpurl);
+=======
+llxHeader("", $title, $helpurl);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $form = new Form($db);
 
@@ -97,6 +120,10 @@ if ($id > 0 || ! empty($ref))
 	dol_fiche_end();
 }
 
+<<<<<<< HEAD
 
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

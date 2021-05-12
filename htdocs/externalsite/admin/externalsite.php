@@ -26,7 +26,11 @@
  *    \brief      Page de configuration du module externalsite
  */
 
+<<<<<<< HEAD
 if (! defined('NOSCANPOSTFORINJECTION')) define('NOSCANPOSTFORINJECTION','1');		// Do not check anti CSRF attack test
+=======
+if (! defined('NOSCANPOSTFORINJECTION')) define('NOSCANPOSTFORINJECTION', '1');		// Do not check anti CSRF attack test
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -40,7 +44,11 @@ $langs->loadLangs(array('admin', 'other', 'externalsite'));
 
 $def = array();
 
+<<<<<<< HEAD
 $action = GETPOST('action','alpha');
+=======
+$action = GETPOST('action', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Sauvegardes parametres
 if ($action == 'update')
@@ -49,11 +57,19 @@ if ($action == 'update')
 
     $db->begin();
 
+<<<<<<< HEAD
 	$label  = GETPOST('EXTERNALSITE_LABEL','alpha');
     $exturl = GETPOST('EXTERNALSITE_URL','none');
 
     $i+=dolibarr_set_const($db,'EXTERNALSITE_LABEL',trim($label),'chaine',0,'',$conf->entity);
     $i+=dolibarr_set_const($db,'EXTERNALSITE_URL',trim($exturl),'chaine',0,'',$conf->entity);
+=======
+	$label  = GETPOST('EXTERNALSITE_LABEL', 'alpha');
+    $exturl = GETPOST('EXTERNALSITE_URL', 'none');
+
+    $i+=dolibarr_set_const($db, 'EXTERNALSITE_LABEL', trim($label), 'chaine', 0, '', $conf->entity);
+    $i+=dolibarr_set_const($db, 'EXTERNALSITE_URL', trim($exturl), 'chaine', 0, '', $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     if ($i >= 2)
     {
@@ -75,7 +91,11 @@ if ($action == 'update')
 llxHeader();
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+<<<<<<< HEAD
 print load_fiche_titre($langs->trans("ExternalSiteSetup"),$linkback,'title_setup');
+=======
+print load_fiche_titre($langs->trans("ExternalSiteSetup"), $linkback, 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '<br>';
 
 print $langs->trans("Module100Desc")."<br>\n";
@@ -95,7 +115,11 @@ print "</tr>";
 
 print '<tr class="oddeven">';
 print '<td class="fieldrequired">'.$langs->trans("Label")."</td>";
+<<<<<<< HEAD
 print "<td><input type=\"text\" class=\"flat\" name=\"EXTERNALSITE_LABEL\" value=\"". (GETPOST('EXTERNALSITE_LABEL','alpha')?GETPOST('EXTERNALSITE_LABEL','alpha'):((empty($conf->global->EXTERNALSITE_LABEL) || $conf->global->EXTERNALSITE_LABEL=='ExternalSite')?'':$conf->global->EXTERNALSITE_LABEL)) . "\" size=\"12\"></td>";
+=======
+print "<td><input type=\"text\" class=\"flat\" name=\"EXTERNALSITE_LABEL\" value=\"". (GETPOST('EXTERNALSITE_LABEL', 'alpha')?GETPOST('EXTERNALSITE_LABEL', 'alpha'):((empty($conf->global->EXTERNALSITE_LABEL) || $conf->global->EXTERNALSITE_LABEL=='ExternalSite')?'':$conf->global->EXTERNALSITE_LABEL)) . "\" size=\"12\"></td>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print "<td>".$langs->trans("ExampleMyMenuEntry")."</td>";
 print "</tr>";
 
@@ -103,7 +127,11 @@ print "</tr>";
 print '<tr class="oddeven">';
 print '<td class="fieldrequired">'.$langs->trans("ExternalSiteURL")."</td>";
 print '<td><textarea class="flat minwidth500" name="EXTERNALSITE_URL">';
+<<<<<<< HEAD
 print (GETPOST('EXTERNALSITE_URL','none')?GETPOST('EXTERNALSITE_URL','none'):(empty($conf->global->EXTERNALSITE_URL)?'':$conf->global->EXTERNALSITE_URL));
+=======
+print (GETPOST('EXTERNALSITE_URL', 'none')?GETPOST('EXTERNALSITE_URL', 'none'):(empty($conf->global->EXTERNALSITE_URL)?'':$conf->global->EXTERNALSITE_URL));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</textarea></td>';
 print "<td>http://localhost/myurl/";
 print "<br>https://wikipedia.org/";

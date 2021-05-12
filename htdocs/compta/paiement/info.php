@@ -33,8 +33,13 @@ $langs->loadLangs(array('bills', 'companies'));
 
 $id=GETPOST('id');
 $ref=GETPOST('ref', 'alpha');
+<<<<<<< HEAD
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
+=======
+$action=GETPOST('action', 'alpha');
+$confirm=GETPOST('confirm', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 /*
  * Actions
@@ -76,5 +81,9 @@ print '</div>';
 
 dol_fiche_end();
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

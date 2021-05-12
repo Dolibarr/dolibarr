@@ -32,7 +32,11 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 $langs->load("trips");
 
 // Security check
+<<<<<<< HEAD
 $id = GETPOST('id','int');
+=======
+$id = GETPOST('id', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'expensereport', $id, 'expensereport');
 
@@ -45,12 +49,20 @@ $form = new Form($db);
 
 $title=$langs->trans("ExpenseReport") . " - " . $langs->trans("Info");
 $helpurl="EN:Module_Expense_Reports";
+<<<<<<< HEAD
 llxHeader("",$title,$helpurl);
+=======
+llxHeader("", $title, $helpurl);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if ($id > 0 || ! empty($ref))
 {
 	$object = new ExpenseReport($db);
+<<<<<<< HEAD
 	$object->fetch($id,$ref);
+=======
+	$object->fetch($id, $ref);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$object->info($object->id);
 
 	$head = expensereport_prepare_head($object);
@@ -79,6 +91,11 @@ if ($id > 0 || ! empty($ref))
     dol_fiche_end();
 }
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

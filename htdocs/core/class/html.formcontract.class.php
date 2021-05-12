@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2012-2013  Charles-Fr BENKE		<charles.fr@benke.fr>
+=======
+/* Copyright (C) 2012-2018  Charlene BENKE	<charlie@patas-monkey.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,8 +31,20 @@
  */
 class FormContract
 {
+<<<<<<< HEAD
     var $db;
     var $error;
+=======
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
     /**
@@ -42,6 +58,10 @@ class FormContract
     }
 
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *	Show a combo list with contracts qualified for a third party
 	 *
@@ -52,20 +72,45 @@ class FormContract
 	 *	@param	int		$showempty	Show empty line
 	 *	@return int         		Nbr of project if OK, <0 if KO
 	 */
+<<<<<<< HEAD
 	function select_contract($socid=-1, $selected='', $htmlname='contrattid', $maxlength=16, $showempty=1)
 	{
 		global $db,$user,$conf,$langs;
 
 		$hideunselectables = false;
 		if (! empty($conf->global->PROJECT_HIDE_UNSELECTABLES)) $hideunselectables = true;
+=======
+    public function select_contract($socid = -1, $selected = '', $htmlname = 'contrattid', $maxlength = 16, $showempty = 1)
+    {
+        // phpcs:enable
+		global $db,$user,$conf,$langs;
+
+		$hideunselectables = false;
+		if (! empty($conf->global->CONTRACT_HIDE_UNSELECTABLES)) $hideunselectables = true;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Search all contacts
 		$sql = 'SELECT c.rowid, c.ref, c.fk_soc, c.statut';
 		$sql.= ' FROM '.MAIN_DB_PREFIX .'contrat as c';
 		$sql.= " WHERE c.entity = ".$conf->entity;
 		//if ($contratListId) $sql.= " AND c.rowid IN (".$contratListId.")";
+<<<<<<< HEAD
 		if ($socid == 0) $sql.= " AND (c.fk_soc = 0 OR c.fk_soc IS NULL)";
 		if ($socid > 0)  $sql.= " AND (c.fk_soc=".$socid." OR c.fk_soc IS NULL)";
+=======
+		if ($socid > 0)
+		{
+			// CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY is 'all' or a list of ids separated by coma.
+		    	if (empty($conf->global->CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY))
+			    $sql.= " AND (c.fk_soc=".$socid." OR c.fk_soc IS NULL)";
+		    	elseif ($conf->global->CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY != 'all')
+			{
+		        	$sql.= " AND (c.fk_soc IN (".$socid.", ".$conf->global->CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY.") ";
+				$sql.= " OR c.fk_soc IS NULL)";
+		    	}
+		}
+		if ($socid == 0) $sql.= " AND (c.fk_soc = 0 OR c.fk_soc IS NULL)";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql.= " ORDER BY c.ref ";
 
 		dol_syslog(get_class($this)."::select_contract", LOG_DEBUG);
@@ -88,7 +133,11 @@ class FormContract
 					}
 					else
 					{
+<<<<<<< HEAD
 						$labeltoshow=dol_trunc($obj->ref,18);
+=======
+						$labeltoshow=dol_trunc($obj->ref, 18);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
 						//else $labeltoshow.=' ('.$langs->trans("Private").')';
 						if (!empty($selected) && $selected == $obj->rowid && $obj->statut > 0)
@@ -98,12 +147,20 @@ class FormContract
 						else
 						{
 							$disabled=0;
+<<<<<<< HEAD
 							if (! $obj->statut > 0)
+=======
+							if ( $obj->statut ==  0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							{
 								$disabled=1;
 								$labeltoshow.=' ('.$langs->trans("Draft").')';
 							}
+<<<<<<< HEAD
 							if ($socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))
+=======
+							if ( empty($conf->global->CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY) &&  $socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							{
 								$disabled=1;
 								$labeltoshow.=' - '.$langs->trans("LinkedToAnotherCompany");
@@ -130,14 +187,22 @@ class FormContract
 			}
 			print '</select>';
 			$db->free($resql);
+<<<<<<< HEAD
 			
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if (!empty($conf->use_javascript_ajax))
 			{
 				// Make select dynamic
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 				print ajax_combobox($htmlname);
 			}
+<<<<<<< HEAD
 			
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			return $num;
 		}
 		else
@@ -145,6 +210,7 @@ class FormContract
 			dol_print_error($db);
 			return -1;
 		}
+<<<<<<< HEAD
 	}
 	
 	/**
@@ -162,6 +228,25 @@ class FormContract
 	{
 	    global $langs;
 	
+=======
+    }
+
+    /**
+     *  Show a form to select a contract
+     *
+     *  @param  int     $page       Page
+     *  @param  int     $socid      Id third party (-1=all, 0=only contracts not linked to a third party, id=contracts not linked or linked to third party id)
+     *  @param  int     $selected   Id contract preselected
+     *  @param  string  $htmlname   Nom de la zone html
+     *  @param  int     $maxlength	Maximum length of label
+     *  @param  int     $showempty	Show empty line
+     *  @return int                 Nbr of project if OK, <0 if KO
+     */
+    public function formSelectContract($page, $socid = -1, $selected = '', $htmlname = 'contrattid', $maxlength = 16, $showempty = 1)
+    {
+        global $langs;
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         print "\n";
         print '<form method="post" action="'.$page.'">';
         print '<input type="hidden" name="action" value="setcontract">';
@@ -169,6 +254,10 @@ class FormContract
         $this->select_contract($socid, $selected, $htmlname, $maxlength, $showempty);
         print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
         print '</form>';
+<<<<<<< HEAD
 	}	
 	
+=======
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

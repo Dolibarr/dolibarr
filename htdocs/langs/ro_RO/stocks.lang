@@ -2,37 +2,65 @@
 WarehouseCard=Fişă Depozit
 Warehouse=Depozit
 Warehouses=Depozite
+<<<<<<< HEAD
 ParentWarehouse=Parent warehouse
 NewWarehouse=Depozit / Stoc  Nou 
+=======
+ParentWarehouse=Depozit general
+NewWarehouse=Depozit nou / locație stoc
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 WarehouseEdit=Modifică depozit
 MenuNewWarehouse=Depozit nou
 WarehouseSource=Depozit Sursa
 WarehouseSourceNotDefined=Niciun depozit definit,
+<<<<<<< HEAD
 AddWarehouse=Create warehouse
 AddOne=Adaugă unul
 DefaultWarehouse=Default warehouse
+=======
+AddWarehouse=Creați un depozit
+AddOne=Adaugă unul
+DefaultWarehouse=Depozit implicit
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 WarehouseTarget=Depozit ţintă
 ValidateSending=Şterge expedierea
 CancelSending=Anulează expediere
 DeleteSending=Şterge expediere
 Stock=Stoc
 Stocks=Stocuri
+<<<<<<< HEAD
 StocksByLotSerial=Stocks by lot/serial
 LotSerial=Lots/Serials
 LotSerialList=List of lot/serials
+=======
+StocksByLotSerial=Stocuri după lot/serie
+LotSerial=Loturi/Serii
+LotSerialList=Listă lot/serii
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Movements=Mişcări
 ErrorWarehouseRefRequired=Referința  Depozit este obligatorie
 ListOfWarehouses=Lista  depozite
 ListOfStockMovements=Lista mişcări de stoc
+<<<<<<< HEAD
 ListOfInventories=List of inventories
 MovementId=Movement ID
 StockMovementForId=Movement ID %d
 ListMouvementStockProject=List of stock movements associated to project
 StocksArea=Depozite
+=======
+ListOfInventories=Lista inventarelor
+MovementId=ID-ul de mișcare
+StockMovementForId=ID-ul de mișcare %d
+ListMouvementStockProject=Lista miscărilor de stoc asociate proiectului
+StocksArea=Depozite
+AllWarehouses=Toate depozitele
+IncludeAlsoDraftOrders=Includeți, de asemenea, schiţele de proiecte
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Location=Locație
 LocationSummary=Nume scurt locaţie
 NumberOfDifferentProducts=Numărul de produse diferite
 NumberOfProducts=Număr total produse
+<<<<<<< HEAD
 LastMovement=Latest movement
 LastMovements=Latest movements
 Units=Unităţi
@@ -49,16 +77,39 @@ NumberOfUnit=Număr  unităţi
 UnitPurchaseValue=Preţ unitar cumpărare
 StockTooLow=Stoc insuficient
 StockLowerThanLimit=Stock lower than alert limit (%s)
+=======
+LastMovement=Ultima mișcare
+LastMovements=Ultimele mișcări
+Units=Unităţi
+Unit=Unitate
+StockCorrection=Corecția stocurilor
+CorrectStock=Corectează stoc
+StockTransfer=Transfer  stoc
+TransferStock=Transferați stocul
+MassStockTransferShort=Transfer stocurilor în masă
+StockMovement=Transfer stoc
+StockMovements=Transferuri stoc
+NumberOfUnit=Număr  unităţi
+UnitPurchaseValue=Preţ unitar cumpărare
+StockTooLow=Stoc insuficient
+StockLowerThanLimit=Stoc mai mic decât limita de alertă (%s)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 EnhancedValue=Valoric
 PMPValue=Valoric PMP
 PMPValueShort=WAP
 EnhancedValueOfWarehouses=Stoc valoric
+<<<<<<< HEAD
 UserWarehouseAutoCreate=Create a user warehouse automatically when creating a user
 AllowAddLimitStockByWarehouse=Allow to add limit and desired stock per couple (product, warehouse) instead of per product
+=======
+UserWarehouseAutoCreate=Creați automat un depozit utilizator atunci când creați un utilizator
+AllowAddLimitStockByWarehouse=Gestionați, de asemenea, valori pentru stocul minim și dorit pe pereche (produs-depozit) în plus față de valorile pentru fiecare produs
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 IndependantSubProductStock=Stocul de produse și stocul de subproduse sunt independente
 QtyDispatched=Cantitate dipecerizată
 QtyDispatchedShort=Cant Expediate
 QtyToDispatchShort=Cant de expediat
+<<<<<<< HEAD
 OrderDispatch=Item receipts
 RuleForStockManagementDecrease=Rule for automatic stock management decrease (manual decrease is always possible, even if an automatic decrease rule is activated)
 RuleForStockManagementIncrease=Rule for automatic stock management increase (manual increase is always possible, even if an automatic increase rule is activated)
@@ -71,10 +122,27 @@ ReStockOnValidateOrder=Increase real stocks on purchase orders approbation
 ReStockOnDispatchOrder=Increase real stocks on manual dispatching into warehouses, after supplier order receipt of goods
 OrderStatusNotReadyToDispatch=Comanda nu mai este sau nu mai are  un statut care să permită dipecerizarea produselor în depozit
 StockDiffPhysicTeoric=Explanation for difference between physical and virtual stock
+=======
+OrderDispatch=Chitanțe pe elemente
+RuleForStockManagementDecrease=Alegeți regula pentru scăderea automată a stocului (reducerea manuală este întotdeauna posibilă, chiar dacă este activată o regulă de scădere automată)
+RuleForStockManagementIncrease=Alegeți regula pentru creșterea automată a stocului (creșterea manuală este întotdeauna posibilă, chiar dacă este activată o regulă de creștere automată)
+DeStockOnBill=Reduceți stocurile reale la validarea facturii client / notei de credit
+DeStockOnValidateOrder=Reduceți stocurile reale la validarea ordinului de vânzări
+DeStockOnShipment=Descreşte stocul fizic bazat pe validarea livrarilor
+DeStockOnShipmentOnClosing=Decrease real stocks when shipping is set to closed
+ReStockOnBill=Creșteți stocurile reale la validarea facturii vânzătorului / notei de credit
+ReStockOnValidateOrder=Creșterea stocurilor reale la aprobarea comenzii de achiziție
+ReStockOnDispatchOrder=Creșterea stocurilor reale la expedierea manuală în depozit, după primirea comenzii de cumpărare a bunurilor
+StockOnReception=Increase real stocks on validation of reception
+StockOnReceptionOnClosing=Increase real stocks when reception is set to closed
+OrderStatusNotReadyToDispatch=Comanda nu mai este sau nu mai are  un statut care să permită dipecerizarea produselor în depozit
+StockDiffPhysicTeoric=Explicație pentru diferența dintre stocul fizic și virtual
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoPredefinedProductToDispatch=Nu sunt produse predefinite pentru acest obiect. Deci, nici o dispecerizare  în stoc necesară.
 DispatchVerb=Dispecerizează
 StockLimitShort=Limita pentru alerta
 StockLimit=Stoc limită pentru alerta
+<<<<<<< HEAD
 StockLimitDesc=(empty) means no warning.<br>0 can be used for a warning as soon as stock is empty.
 PhysicalStock=Stoc  Fizic
 RealStock=Stoc Real
@@ -82,11 +150,24 @@ RealStockDesc=Physical or real stock is the stock you currently have into your i
 RealStockWillAutomaticallyWhen=The real stock will automatically change according to this rules (see stock module setup to change this):
 VirtualStock=Stoc Virtual
 VirtualStockDesc=Virtual stock is the stock you will get once all open pending actions that affect stocks will be closed (supplier order received, customer order shipped, ...)
+=======
+StockLimitDesc=(gol) înseamnă nici un avertisment. <br> 0 poate fi folosit pentru un avertisment imediat ce stocul este gol.
+PhysicalStock=Stocul fizic
+RealStock=Stoc Real
+RealStockDesc=Stocul fizic / real este stocul aflat în prezent în depozite.
+RealStockWillAutomaticallyWhen=Stocul real va fi modificat în conformitate cu această regulă (așa cum este definită în modulul Stoc):
+VirtualStock=Stoc Virtual
+VirtualStockDesc=Stocul virtual este stocul calculat disponibil imediat ce toate acțiunile deschise / în așteptare (care afectează stocurile) sunt închise (comenzile de achiziție primite, comenzile de vânzări expediate etc.)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 IdWarehouse=ID depozit
 DescWareHouse=Descriere depozit
 LieuWareHouse=Localizare depozit
 WarehousesAndProducts=Depozite şi produse
+<<<<<<< HEAD
 WarehousesAndProductsBatchDetail=Warehouses and products (with detail per lot/serial)
+=======
+WarehousesAndProductsBatchDetail=Depozite și produse (cu detalii pe lot / serie)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AverageUnitPricePMPShort=Preţul mediu ponderat de intrare
 AverageUnitPricePMP=Preţul mediu ponderat de intrare
 SellPriceMin=Preţ vânzare unitar
@@ -95,18 +176,31 @@ EstimatedStockValueSell=Valoarea ieşire
 EstimatedStockValueShort=Valoarea de intrare a stocului
 EstimatedStockValue=Valoarea de intrare a stocului PMP
 DeleteAWarehouse=Şterge un depozit
+<<<<<<< HEAD
 ConfirmDeleteWarehouse=Are you sure you want to delete the warehouse <b>%s</b>?
+=======
+ConfirmDeleteWarehouse=Sigur doriți să ștergeți depozitul <b> %s </b>?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PersonalStock=Stoc  Personal %s
 ThisWarehouseIsPersonalStock=Acest depozit reprezinta stocul personal al lui  %s %s
 SelectWarehouseForStockDecrease=Alege depozitul  pentru scăderea stocului
 SelectWarehouseForStockIncrease=Alege depozitul  pentru creşterea stocului
 NoStockAction=Nicio actiune pe stoc
+<<<<<<< HEAD
 DesiredStock=Desired optimal stock
 DesiredStockDesc=This stock amount will be the value used to fill the stock by replenishment feature.
 StockToBuy=De  comandat
 Replenishment=Reaprovizionare
 ReplenishmentOrders=Comenzi reaprovizionare
 VirtualDiffersFromPhysical=According to increase/decrease stock options, physical stock and virtual stock (physical + current orders) may differ
+=======
+DesiredStock=Stocul dorit
+DesiredStockDesc=Această cantitate stoc va fi valoarea utilizată pentru a umple stocul prin reaprovizionare.
+StockToBuy=De  comandat
+Replenishment=Reaprovizionare
+ReplenishmentOrders=Comenzi reaprovizionare
+VirtualDiffersFromPhysical=Potrivit opțiunilor de creștere / micșorare a stocului, stocul fizic și stocul virtual (comenzi fizice + curente) pot fi diferite
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 UseVirtualStockByDefault=Utilizați stoc virtual implicit, în loc de stoc fizic, pentru facilitatea de reaprovizionare
 UseVirtualStock=Utilizeaza Stoc Virtual 
 UsePhysicalStock=Utilizeaza Stoc Fizic
@@ -114,18 +208,28 @@ CurentSelectionMode=Mod selectie curent
 CurentlyUsingVirtualStock=Stoc Virtual 
 CurentlyUsingPhysicalStock=Stoc  Fizic
 RuleForStockReplenishment=Reguli pentru reaprovizionarea stocului
+<<<<<<< HEAD
 SelectProductWithNotNullQty=Selectați cel puțin un produs cu cantitatea nenulă și un furnizor
+=======
+SelectProductWithNotNullQty=Selectați cel puțin un produs cu cantitate nenulă și un furnizor
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AlertOnly= Numai Alerte
 WarehouseForStockDecrease=Depozitul <b>%s</b> va fi utilizat pentru scăderea stocului
 WarehouseForStockIncrease=Depozitul <b>%s</b> va fi utilizat pentru creşterea stocului
 ForThisWarehouse=Pentru acest depozit
+<<<<<<< HEAD
 ReplenishmentStatusDesc=This is a list of all products with a stock lower than desired stock (or lower than alert value if checkbox "alert only" is checked). Using the checkbox, you can create supplier orders to fill the difference.
 ReplenishmentOrdersDesc=This is a list of all open supplier orders including predefined products. Only open orders with predefined products, so orders that may affect stocks, are visible here.
+=======
+ReplenishmentStatusDesc=Aceasta este o listă a tuturor produselor cu un stoc mai mic decât cel dorit (sau mai mic decât valoarea de alertă dacă este bifat checkbox-ul "numai alertă"). Dacă utilizați checkbox-ul, puteți crea comenzi de achiziție pentru a umple diferența.
+ReplenishmentOrdersDesc=Aceasta este o listă a tuturor comenzilor de cumpărare deschise, inclusiv a produselor predefinite. Numai comenzile deschise cu produse predefinite, deci comenzile care pot afecta stocurile, sunt vizibile aici.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Replenishments=Reaprovizionări
 NbOfProductBeforePeriod=Cantitatea de produs %s în stoc înainte de perioada selectată  (< %s)
 NbOfProductAfterPeriod=Cantitatea de produs %s în stoc după perioada selectată (> %s)
 MassMovement=Mişcare în masă
 SelectProductInAndOutWareHouse=Selectați un produs, o cantitate, un depozit sursă și un depozit țintă, apoi faceți clic pe"%s". Odată făcut acest lucru pentru toate transferurile cerute, faceți clic pe "%s".
+<<<<<<< HEAD
 RecordMovement=Record transfer
 ReceivingForSameOrder=Recepţii pentru această comandă
 StockMovementRecorded=Mişcări stoc înregistrate
@@ -204,3 +308,88 @@ ListInventory=Lista
 StockSupportServices=Stock management support services
 StockSupportServicesDesc=By default, you can stock only product with type "product". If on, and if module service is on, you can also stock a product with type "service"
 ReceiveProducts=Receive items
+=======
+RecordMovement=Transferul înregistrărilor
+ReceivingForSameOrder=Recepţii pentru această comandă
+StockMovementRecorded=Mişcări stoc înregistrate
+RuleForStockAvailability=Reguli pentru cereri stoc
+StockMustBeEnoughForInvoice=Nivelul stocului trebuie să fie suficient pentru a adăuga produsul / serviciul la factură (verificarea se face pe baza stocului real atunci când se adaugă o linie în factură, indiferent de regula pentru schimbarea automată a acțiunilor)
+StockMustBeEnoughForOrder=Nivelul stocului trebuie să fie suficient pentru a adăuga produsul / serviciul la comandă (verificarea se face pe stocul real actual atunci când se adaugă o linie în ordine indiferent de regula pentru schimbarea automată a stocului)
+StockMustBeEnoughForShipment= Nivelul stocului trebuie să fie suficient pentru a adăuga produsul / serviciul la expediere (verificarea se face pe stocul real actual atunci când se adaugă o linie în transport, indiferent de regula pentru schimbarea automată a stocului)
+MovementLabel=Eticheta transferului
+TypeMovement=Tip de mișcare
+DateMovement=Data mișcării
+InventoryCode=Codul de inventar sau transfer
+IsInPackage=Continute in pachet
+WarehouseAllowNegativeTransfer=Stocul poate fi negativ
+qtyToTranferIsNotEnough=Nu aveți suficiente stocuri din depozitul sursă și configurația dvs. nu permite stocuri negative.
+ShowWarehouse=Arată depozit
+MovementCorrectStock=Corecția stocului pentru produsul%s
+MovementTransferStock=Transfer stoc al produsului %s in alt depozit
+InventoryCodeShort=Cod de facturare/mișcare
+NoPendingReceptionOnSupplierOrder=Nu există recepție în așteptare din cauza comenzii de achiziție deschise
+ThisSerialAlreadyExistWithDifferentDate=Acest lot / număr serial (<strong> %s </strong>) există deja, dar cu o dată diferită  de consum sau de vânzare (găsită <strong> %s </strong> dar introduceți <strong> %s </strong>).
+OpenAll=Deschis pentru toate acțiunile
+OpenInternal=Deschideți numai pentru acțiuni interne
+UseDispatchStatus=Utilizați un stadiu de expediere (aprobați/refuzați) pentru linii de produse la recepția comenzii de achiziție
+OptionMULTIPRICESIsOn=Opțiunea "mai multe prețuri pe segment" este activată. Înseamnă că un produs are mai multe prețuri de vânzare, astfel încât valoarea pentru vânzare nu poate fi calculată
+ProductStockWarehouseCreated=Limita de stoc pentru alertă și stocul optim dorit creată corect
+ProductStockWarehouseUpdated=Limita de stoc pentru alertă și stoc optim optim dorit actualizată corect
+ProductStockWarehouseDeleted=Limita de stoc pentru alertă și stocul optim dorit ștearsă corect
+AddNewProductStockWarehouse=Stabiliți o nouă limită pentru stocul optim dorit și de alertă 
+AddStockLocationLine=Reduceți cantitatea, apoi faceți clic pentru a adăuga un alt depozit pentru acest produs
+InventoryDate=Data inventarului
+NewInventory=Inventar nou
+inventorySetup = Organizarea inventarului
+inventoryCreatePermission=Creați un inventar nou
+inventoryReadPermission=Vedeți inventarele
+inventoryWritePermission=Actualizați inventarele
+inventoryValidatePermission=Validați inventarul
+inventoryTitle=Inventar
+inventoryListTitle=Inventarele
+inventoryListEmpty=Nu există inventar în curs
+inventoryCreateDelete=Creați/ștergeți inventarul
+inventoryCreate=Crează nou
+inventoryEdit=Editare
+inventoryValidate=Validată
+inventoryDraft=În service
+inventorySelectWarehouse=Alegerea depozitului
+inventoryConfirmCreate=Crează
+inventoryOfWarehouse=Inventarul pentru depozit: %s
+inventoryErrorQtyAdd=Eroare: o cantitate este mai mică decât zero
+inventoryMvtStock=Prin inventar
+inventoryWarningProductAlreadyExists=Acest produs este deja în listă
+SelectCategory=Categorie filtru
+SelectFournisseur=Filtru furnizor
+inventoryOnDate=Inventar
+INVENTORY_DISABLE_VIRTUAL=Produs virtual (kit): nu reduceți stocul de subprodus
+INVENTORY_USE_MIN_PA_IF_NO_LAST_PA=Utilizați prețul de cumpărare dacă nu puteți găsi ultimul preț de cumpărare
+INVENTORY_USE_INVENTORY_DATE_FROM_DATEMVT=Mişcarea stocurilor are data inventarului
+inventoryChangePMPPermission=Permiteți modificarea valorii PMP pentru un produs
+ColumnNewPMP=Nouă unitate PMP
+OnlyProdsInStock=Nu adăugați produsul fără stoc
+TheoricalQty=Cantitate teoretică
+TheoricalValue=Cantitate teoretică
+LastPA=Ultimul BP
+CurrentPA=BP Curent
+RealQty=Cantitate reală
+RealValue=Valoare reală
+RegulatedQty=Cantitate reglementată
+AddInventoryProduct=Adăugați produsul în inventar
+AddProduct=Adaugă
+ApplyPMP=Aplicați PMP
+FlushInventory=Goliţi inventarul
+ConfirmFlushInventory=Confirmați această acțiune?
+InventoryFlushed=Inventarul golit
+ExitEditMode=Ieșiți din ediție
+inventoryDeleteLine=Şterge linie
+RegulateStock=Reglează stocul
+ListInventory=Lista
+StockSupportServices=Gestiunea stocurilor suportă Servicii
+StockSupportServicesDesc=În mod implicit, puteți stoca numai produse de tipul "produs". Puteți, de asemenea, să stocați un produs de tip "serviciu", dacă sunt activate atât funcția Servicii, cât și această opțiune.
+ReceiveProducts=Primiți articole
+StockIncreaseAfterCorrectTransfer=Măriți prin corecție/transfer
+StockDecreaseAfterCorrectTransfer=Scădeți prin corecție/transfer
+StockIncrease=Creșterea stocului
+StockDecrease=Scăderea stocului
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

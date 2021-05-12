@@ -4,7 +4,11 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+<<<<<<< HEAD
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2011-2013 Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,7 +44,11 @@ if (! $user->admin) accessforbidden();
 
 $type=array('yesno','texte','chaine');
 
+<<<<<<< HEAD
 $action = GETPOST('action','aZ09');
+=======
+$action = GETPOST('action', 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 /*
@@ -63,11 +71,19 @@ if ($action == 'update' || $action == 'add')
     		$consttype=$_POST["consttype"][$key];
     		$constnote=$_POST["constnote"][$key];
 
+<<<<<<< HEAD
         	$res=dolibarr_set_const($db,$constname,$constvalue,$type[$consttype],0,$constnote,$conf->entity);
     		
     		if (! $res > 0) $error++;
     	}
     
+=======
+        	$res=dolibarr_set_const($db, $constname, $constvalue, $type[$consttype], 0, $constnote, $conf->entity);
+
+    		if (! $res > 0) $error++;
+    	}
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      	if (! $error)
         {
             setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -82,7 +98,11 @@ if ($action == 'update' || $action == 'add')
 // Action activation d'un sous module du module adherent
 if ($action == 'set')
 {
+<<<<<<< HEAD
     $result=dolibarr_set_const($db, $_GET["name"],$_GET["value"],'',0,'',$conf->entity);
+=======
+    $result=dolibarr_set_const($db, $_GET["name"], $_GET["value"], '', 0, '', $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     if ($result < 0)
     {
         dol_print_error($db);
@@ -92,7 +112,11 @@ if ($action == 'set')
 // Action desactivation d'un sous module du module adherent
 if ($action == 'unset')
 {
+<<<<<<< HEAD
     $result=dolibarr_del_const($db,$_GET["name"],$conf->entity);
+=======
+    $result=dolibarr_del_const($db, $_GET["name"], $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     if ($result < 0)
     {
         dol_print_error($db);
@@ -107,11 +131,19 @@ if ($action == 'unset')
 
 $help_url='';
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("MailmanSpipSetup"),$help_url);
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("MailmanSpipSetup"),$linkback,'title_setup');
+=======
+llxHeader('', $langs->trans("MailmanSpipSetup"), $help_url);
+
+
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+print load_fiche_titre($langs->trans("MailmanSpipSetup"), $linkback, 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 $head = mailmanspip_admin_prepare_head();
@@ -123,6 +155,7 @@ $head = mailmanspip_admin_prepare_head();
 if (! empty($conf->global->ADHERENT_USE_SPIP))
 {
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+<<<<<<< HEAD
 	
 	dol_fiche_head($head, 'spip', $langs->trans("Setup"), 0, 'user');
     
@@ -130,6 +163,15 @@ if (! empty($conf->global->ADHERENT_USE_SPIP))
     $link='<a href="'.$_SERVER["PHP_SELF"].'?action=unset&value=0&name=ADHERENT_USE_SPIP">';
     //$link.=$langs->trans("Disable");
     $link.=img_picto($langs->trans("Activated"),'switch_on');
+=======
+
+	dol_fiche_head($head, 'spip', $langs->trans("Setup"), 0, 'user');
+
+    //$link=img_picto($langs->trans("Active"),'tick').' ';
+    $link='<a href="'.$_SERVER["PHP_SELF"].'?action=unset&value=0&name=ADHERENT_USE_SPIP">';
+    //$link.=$langs->trans("Disable");
+    $link.=img_picto($langs->trans("Activated"), 'switch_on');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $link.='</a>';
     // Edition des varibales globales
     $constantes=array(
@@ -141,6 +183,7 @@ if (! empty($conf->global->ADHERENT_USE_SPIP))
 
     print load_fiche_titre($langs->trans('SPIPTitle'), $link, '');
 	print '<br>';
+<<<<<<< HEAD
     
 	form_constantes($constantes,2);
 	
@@ -148,11 +191,21 @@ if (! empty($conf->global->ADHERENT_USE_SPIP))
 
     print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
     
+=======
+
+	form_constantes($constantes, 2);
+
+    dol_fiche_end();
+
+    print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print '</form>';
 }
 else
 {
     dol_fiche_head($head, 'spip', $langs->trans("Setup"), 0, 'user');
+<<<<<<< HEAD
     
     $link='<a href="'.$_SERVER["PHP_SELF"].'?action=set&value=1&name=ADHERENT_USE_SPIP">';
     //$link.=$langs->trans("Activate");
@@ -165,4 +218,18 @@ else
 
 llxFooter();
 
+=======
+
+    $link='<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&value=1&name=ADHERENT_USE_SPIP">';
+    //$link.=$langs->trans("Activate");
+    $link.=img_picto($langs->trans("Disabled"), 'switch_off');
+    $link.='</a>';
+    print load_fiche_titre($langs->trans('SPIPTitle'), $link, '');
+
+    dol_fiche_end();
+}
+
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

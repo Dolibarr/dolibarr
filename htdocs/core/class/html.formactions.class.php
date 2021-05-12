@@ -1,6 +1,10 @@
 <?php
 /* Copyright (c) 2008-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2010-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2010-2012 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2010-2018 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,13 +33,26 @@
  */
 class FormActions
 {
+<<<<<<< HEAD
     var $db;
     var $error;
+=======
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
     /**
 	 *	Constructor
 	 *
+<<<<<<< HEAD
 	 *  @param		DoliDB		$db      Database handler
      */
     function __construct($db)
@@ -45,6 +62,17 @@ class FormActions
     }
 
 
+=======
+     *  @param      DoliDB		$db      Database handler
+     */
+    public function __construct($db)
+    {
+        $this->db = $db;
+    }
+
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     /**
      *  Show list of action status
      *
@@ -57,8 +85,14 @@ class FormActions
      *  @param  string  $morecss        More css on select field
      * 	@return	void
      */
+<<<<<<< HEAD
     function form_select_status_action($formname, $selected, $canedit=1, $htmlname='complete', $showempty=0, $onlyselect=0, $morecss='maxwidth100')
     {
+=======
+    public function form_select_status_action($formname, $selected, $canedit = 1, $htmlname = 'complete', $showempty = 0, $onlyselect = 0, $morecss = 'maxwidth100')
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         global $langs,$conf;
 
         $listofstatus = array(
@@ -160,7 +194,11 @@ class FormActions
      *  @param	string	$morehtmlright			More html text on right of title line
      *	@return	int								<0 if KO, >=0 if OK
      */
+<<<<<<< HEAD
     function showactions($object, $typeelement, $socid=0, $forceshowtitle=0, $morecss='listactions', $max=0, $moreparambacktopage='', $morehtmlright='')
+=======
+    public function showactions($object, $typeelement, $socid = 0, $forceshowtitle = 0, $morecss = 'listactions', $max = 0, $moreparambacktopage = '', $morehtmlright = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $langs,$conf,$user;
         global $bc;
@@ -171,7 +209,11 @@ class FormActions
         $sortorder='DESC,DESC';
 
         $listofactions=ActionComm::getActions($this->db, $socid, $object->id, $typeelement, '', $sortfield, $sortorder, ($max?($max+1):0));
+<<<<<<< HEAD
 		if (! is_array($listofactions)) dol_print_error($this->db,'FailedToGetActions');
+=======
+        if (! is_array($listofactions)) dol_print_error($this->db, 'FailedToGetActions');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         $num = count($listofactions);
         if ($num || $forceshowtitle)
@@ -197,9 +239,13 @@ class FormActions
             $newcardbutton='';
 			if (! empty($conf->agenda->enabled))
 			{
+<<<<<<< HEAD
 				$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.dol_print_date(dol_now(),'dayhourlog').'&origin='.$typeelement.'&originid='.$object->id.($object->socid>0?'&socid='.$object->socid:($socid>0?'&socid='.$socid:'')).($projectid>0?'&projectid='.$projectid:'').'&backtopage='.urlencode($urlbacktopage).'"><span class="valignmiddle">'.$langs->trans("AddEvent").'</span>';
 				$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 				$newcardbutton.= '</a>';
+=======
+                $newcardbutton.= dolGetButtonTitle($langs->trans("AddEvent"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.dol_print_date(dol_now(), 'dayhourlog').'&origin='.$typeelement.'&originid='.$object->id.($object->socid>0?'&socid='.$object->socid:($socid>0?'&socid='.$socid:'')).($projectid>0?'&projectid='.$projectid:'').'&backtopage='.urlencode($urlbacktopage));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 
         	print '<!-- formactions->showactions -->'."\n";
@@ -207,15 +253,21 @@ class FormActions
 
         	$page=0; $param='';
 
+<<<<<<< HEAD
         	$total = 0;
 
         	print '<div class="div-table-responsive-no-min">';
         	print '<table class="noborder'.($morecss?' '.$morecss:'').'" width="100%">';
+=======
+        	print '<div class="div-table-responsive-no-min">';
+        	print '<table class="centpercent noborder'.($morecss?' '.$morecss:'').'">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         	print '<tr class="liste_titre">';
         	print getTitleFieldOfList('Ref',   0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
         	print getTitleFieldOfList('By',    0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
         	print getTitleFieldOfList('Type',  0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
         	print getTitleFieldOfList('Title', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
+<<<<<<< HEAD
         	print getTitleFieldOfList('Date',  0, $_SERVER["PHP_SELF"], 'a.datep', $page, $param, 'align="center"', $sortfield, $sortorder, '', 1);
         	print getTitleFieldOfList('',      0, $_SERVER["PHP_SELF"], '', $page, $param, 'align="right"', $sortfield, $sortorder, '', 1);
         	print '</tr>';
@@ -225,23 +277,60 @@ class FormActions
 
         	if (count($listofactions))
         	{
+=======
+        	print getTitleFieldOfList('Date',  0, $_SERVER["PHP_SELF"], 'a.datep', $page, $param, '', $sortfield, $sortorder, 'center ', 1);
+        	print getTitleFieldOfList('',      0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, 'right ', 1);
+        	print '</tr>';
+        	print "\n";
+
+        	if (is_array($listofactions) && count($listofactions))
+        	{
+        		$cacheusers=array();
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	        	$cursorevent = 0;
 	        	foreach($listofactions as $action)
 	        	{
 	        		if ($max && $cursorevent >= $max) break;
 
+<<<<<<< HEAD
 	        		$ref=$action->getNomUrl(1,-1);
 	        		$label=$action->getNomUrl(0,38);
 
 	        		print '<tr class="oddeven">';
 	        		// Ref
 					print '<td>'.$ref.'</td>';
+=======
+	        		$ref=$action->getNomUrl(1, -1);
+	        		$label=$action->getNomUrl(0, 38);
+
+	        		print '<tr class="oddeven">';
+	        		// Ref
+					print '<td class="nowraponall">'.$ref.'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					// Onwer
 	        		print '<td>';
 	        		if (! empty($action->userownerid))
 	        		{
+<<<<<<< HEAD
 	        			$userstatic->fetch($action->userownerid);	// TODO Introduce a cache on users fetched
 	        			print $userstatic->getNomUrl(-1, '', 0, 0, 16, 0, '', '');
+=======
+	        			if (is_object($cacheusers[$action->userownerid]))
+	        			{
+	        				$tmpuser = $cacheusers[$action->userownerid];
+	        			}
+	        			else
+	        			{
+	        				$tmpuser = new User($this->db);
+	        				$tmpuser->fetch($action->userownerid);
+	        				$cacheusers[$action->userownerid] = $tmpuser;
+	        			}
+	        			if ($tmpuser->id > 0)
+	        			{
+	        				print $tmpuser->getNomUrl(-1, '', 0, 0, 16, 0, 'firstelselast', '');
+	        			}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	        		}
 	        		print '</td>';
 					// Type
@@ -265,7 +354,11 @@ class FormActions
 	        		// Label
 	        		print '<td>'.$label.'</td>';
 	        		// Date
+<<<<<<< HEAD
 	        		print '<td align="center">'.dol_print_date($action->datep, 'dayhour', 'tzuserrel');
+=======
+	        		print '<td class="center">'.dol_print_date($action->datep, 'dayhour', 'tzuserrel');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	        		if ($action->datef)
 	        		{
 		        		$tmpa=dol_getdate($action->datep);
@@ -277,11 +370,16 @@ class FormActions
 		        		else print '-'.dol_print_date($action->datef, 'dayhour', 'tzuserrel');
 	        		}
 	        		print '</td>';
+<<<<<<< HEAD
 	        		print '<td align="right">';
 	        		if (! empty($action->author->id))
 	        		{
 	        			print $action->getLibStatut(3);
 	        		}
+=======
+	        		print '<td class="right">';
+        			print $action->getLibStatut(3);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	        		print '</td>';
 	        		print '</tr>';
 
@@ -306,6 +404,10 @@ class FormActions
     }
 
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     /**
      *  Output html select list of type of event
      *
@@ -318,8 +420,14 @@ class FormActions
      *  @param  int             $nooutput       1=No output
      * 	@return	string
      */
+<<<<<<< HEAD
     function select_type_actions($selected='', $htmlname='actioncode', $excludetype='', $onlyautoornot=0, $hideinfohelp=0, $multiselect=0, $nooutput=0)
     {
+=======
+    public function select_type_actions($selected = '', $htmlname = 'actioncode', $excludetype = '', $onlyautoornot = 0, $hideinfohelp = 0, $multiselect = 0, $nooutput = 0)
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         global $langs,$user,$form,$conf;
 
         if (! is_object($form)) $form=new Form($this->db);
@@ -330,7 +438,11 @@ class FormActions
 
        	// Suggest a list with manual events or all auto events
        	$arraylist=$caction->liste_array(1, 'code', $excludetype, $onlyautoornot);
+<<<<<<< HEAD
        	array_unshift($arraylist,'&nbsp;');     // Add empty line at start
+=======
+       	array_unshift($arraylist, '&nbsp;');     // Add empty line at start
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
        	//asort($arraylist);
 
        	if ($selected == 'manual') $selected='AC_OTH';
@@ -352,12 +464,19 @@ class FormActions
 
         if ($user->admin && empty($onlyautoornot) && $hideinfohelp <= 0)
         {
+<<<<<<< HEAD
             $out.=info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup").($hideinfohelp == -1 ? ". ".$langs->trans("YouCanSetDefaultValueInModuleSetup") : ''),1);
+=======
+            $out.=info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup").($hideinfohelp == -1 ? ". ".$langs->trans("YouCanSetDefaultValueInModuleSetup") : ''), 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
 
         if ($nooutput) return $out;
         else print $out;
         return '';
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

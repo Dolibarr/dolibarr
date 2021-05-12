@@ -26,12 +26,21 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/rapport/pdf_paiement_fourn.class.p
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
+<<<<<<< HEAD
+=======
+$langs->loadLangs(array('bills'));
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 // Security check
 $socid='';
 if (! empty($user->societe_id)) $socid=$user->societe_id;
 $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 
+<<<<<<< HEAD
 $action=GETPOST('action','aZ09');
+=======
+$action=GETPOST('action', 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $socid=0;
 if ($user->societe_id > 0)
@@ -56,10 +65,17 @@ if ($action == 'builddoc')
     $rap = new pdf_paiement_fourn($db);
 
     $outputlangs = $langs;
+<<<<<<< HEAD
     if (GETPOST('lang_id','aZ09'))
     {
         $outputlangs = new Translate("",$conf);
         $outputlangs->setDefaultLang(GETPOST('lang_id','aZ09'));
+=======
+    if (GETPOST('lang_id', 'aZ09'))
+    {
+        $outputlangs = new Translate("", $conf);
+        $outputlangs->setDefaultLang(GETPOST('lang_id', 'aZ09'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
     // We save charset_output to restore it because write_file can change it if needed for
@@ -72,7 +88,11 @@ if ($action == 'builddoc')
     else
     {
         $outputlangs->charset_output=$sav_charset_output;
+<<<<<<< HEAD
         dol_print_error($db,$obj->error);
+=======
+        dol_print_error($db, $obj->error);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
     $year = $_POST["reyear"];
@@ -85,11 +105,19 @@ if ($action == 'builddoc')
 
 $formother=new FormOther($db);
 
+<<<<<<< HEAD
 $titre=($year?$langs->trans("PaymentsReportsForYear",$year):$langs->trans("PaymentsReports"));
 
 llxHeader('', $titre);
 
 print load_fiche_titre($titre,'','title_accountancy.png');
+=======
+$titre=($year?$langs->trans("PaymentsReportsForYear", $year):$langs->trans("PaymentsReports"));
+
+llxHeader('', $titre);
+
+print load_fiche_titre($titre, '', 'title_accountancy.png');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Formulaire de generation
 print '<form method="post" action="rapport.php?year='.$year.'">';
@@ -98,9 +126,15 @@ print '<input type="hidden" name="action" value="builddoc">';
 $cmonth = GETPOST("remonth")?GETPOST("remonth"):date("n", time());
 $syear = GETPOST("reyear")?GETPOST("reyear"):date("Y", time());
 
+<<<<<<< HEAD
 print $formother->select_month($cmonth,'remonth');
 
 print $formother->select_year($syear,'reyear');
+=======
+print $formother->select_month($cmonth, 'remonth');
+
+print $formother->select_year($syear, 'reyear');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
 print '</form>';
@@ -118,7 +152,11 @@ if (is_dir($dir))
     {
         while (($file = readdir($handle))!==false)
         {
+<<<<<<< HEAD
             if (is_dir($dir.'/'.$file) && ! preg_match('/^\./',$file) && is_numeric($file))
+=======
+            if (is_dir($dir.'/'.$file) && ! preg_match('/^\./', $file) && is_numeric($file))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             {
                 $found=1;
                 $linkforyear[]=$file;
@@ -143,20 +181,36 @@ if ($year)
         print '<table width="100%" class="noborder">';
         print '<tr class="liste_titre">';
         print '<td>'.$langs->trans("Reporting").'</td>';
+<<<<<<< HEAD
         print '<td align="right">'.$langs->trans("Size").'</td>';
         print '<td align="right">'.$langs->trans("Date").'</td>';
         print '</tr>';
+=======
+        print '<td class="right">'.$langs->trans("Size").'</td>';
+        print '<td class="right">'.$langs->trans("Date").'</td>';
+        print '</tr>';
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         if (is_resource($handle))
         {
             while (($file = readdir($handle))!==false)
             {
+<<<<<<< HEAD
                 if (preg_match('/^supplier_payment/i',$file))
+=======
+                if (preg_match('/^supplier_payment/i', $file))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 {
                     $tfile = $dir . '/'.$year.'/'.$file;
                     $relativepath = $year.'/'.$file;
                     print '<tr class="oddeven">'.'<td><a data-ajax="false" href="'.DOL_URL_ROOT . '/document.php?modulepart=facture_fournisseur&amp;file=payments/'.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a></td>';
+<<<<<<< HEAD
                     print '<td align="right">'.dol_print_size(dol_filesize($tfile)).'</td>';
                     print '<td align="right">'.dol_print_date(dol_filemtime($tfile),"dayhour").'</td></tr>';
+=======
+                    print '<td class="right">'.dol_print_size(dol_filesize($tfile)).'</td>';
+                    print '<td class="right">'.dol_print_date(dol_filemtime($tfile), "dayhour").'</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 }
             }
             closedir($handle);
@@ -165,6 +219,11 @@ if ($year)
     }
 }
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

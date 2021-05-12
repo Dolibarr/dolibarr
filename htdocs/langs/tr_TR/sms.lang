@@ -1,7 +1,12 @@
 # Dolibarr language file - Source file is en_US - sms
 Sms=Sms
+<<<<<<< HEAD
 SmsSetup=Sms kurulums
 SmsDesc=Bu sayfa, SMS özelliklerinin genel seçeneklerini tanımlamanıza olanak tanır
+=======
+SmsSetup=SMS kurulumu
+SmsDesc=Bu sayfa SMS özellikleri için genel seçenekleri tanımlamanıza imkan sağlar
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SmsCard=SMS Kartı
 AllSms=Tüm SMS kampanyaları
 SmsTargets=Hedefler
@@ -13,6 +18,7 @@ SmsTo=Hedef
 SmsTopic=SMS Konusu
 SmsText=Mesaj
 SmsMessage=SMS Mesajı
+<<<<<<< HEAD
 ShowSms=Sms görüntüle
 ListOfSms=SMS kampanyaları listesi
 NewSms=Yeni SMS kampanyası
@@ -27,6 +33,22 @@ SmsResult=SMS gönderimi sonucu
 TestSms=Sms Testi
 ValidSms=Sms Doğrula
 ApproveSms=Sms onayla
+=======
+ShowSms=SMS göster
+ListOfSms=SMS kampanyalarını listele
+NewSms=Yeni SMS kampanyası
+EditSms=SMS'i düzenle
+ResetSms=Yeni gönderim
+DeleteSms=SMS kampanyasını sil
+DeleteASms=Bir SMS kampanyası kaldır
+PreviewSms=SMS Önizleme 
+PrepareSms=SMS hazırla
+CreateSms=SMS oluştur
+SmsResult=SMS gönderiminin sonucu
+TestSms=SMS'i test et
+ValidSms=SMS'i doğrula
+ApproveSms=SMS'i onayla
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SmsStatusDraft=Taslak
 SmsStatusValidated=Doğrulanmış
 SmsStatusApproved=Onaylı
@@ -35,6 +57,7 @@ SmsStatusSentPartialy=Kısmen gönderildi
 SmsStatusSentCompletely=Tamamen gönderildi
 SmsStatusError=Hata
 SmsStatusNotSent=Gönderilmedi
+<<<<<<< HEAD
 SmsSuccessfulySent=Sms doğru olarak gönderildi (%s ten %s e)
 ErrorSmsRecipientIsEmpty=Hedef sayısı boş
 WarningNoSmsAdded=Hedef listesine eklenecek herhangi hiç bir yeni bir telefon numarası yok
@@ -49,3 +72,19 @@ DelayBeforeSending=Gönderimden önceki süre (Dakika)
 SmsNoPossibleSenderFound=Gönderen yok. SMS sağlayıcınızın ayarlarını denetleyin.
 SmsNoPossibleRecipientFound=Hedef yok. SMS sağlayıcı kurulumu kontrol edin.
 DisableStopIfSupported=Disable STOP message (if supported)
+=======
+SmsSuccessfulySent=SMS doğru şekilde gönderildi (%s'nda %s'a)
+ErrorSmsRecipientIsEmpty=Hedef sayısı boş
+WarningNoSmsAdded=Hedef listesine eklenecek herhangi hiç bir yeni bir telefon numarası yok
+ConfirmValidSms=Bu kampanyanın doğrulanmasını onaylıyor musunuz?
+NbOfUniqueSms=Benzersiz telefon numarası sayısı
+NbOfSms=Telefon numarası sayısı
+ThisIsATestMessage=Bu bir test mesajıdır
+SendSms=SMS gönder
+SmsInfoCharRemain=Kalan karakter sayısı
+SmsInfoNumero= (uluslararası format, örn.: +33899701761)
+DelayBeforeSending=Gönderimden önceki süre (Dakika)
+SmsNoPossibleSenderFound=Gönderen yok. SMS sağlayıcınızın ayarlarını denetleyin.
+SmsNoPossibleRecipientFound=Hedef yok. SMS sağlayıcı kurulumu kontrol edin.
+DisableStopIfSupported=STOP mesajını devre dışı bırak (destekleniyorsa)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

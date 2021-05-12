@@ -2,13 +2,24 @@
 FTPClientSetup=FTP Client module setup
 NewFTPClient=New FTP connection setup
 FTPArea=FTP Area
+<<<<<<< HEAD
 FTPAreaDesc=This screen show you content of a FTP server view
 SetupOfFTPClientModuleNotComplete=Setup of FTP client module seems to be not complete
+=======
+FTPAreaDesc=This screen shows a view of an FTP server.
+SetupOfFTPClientModuleNotComplete=The setup of the FTP client module seems to be incomplete
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 FTPFeatureNotSupportedByYourPHP=Your PHP does not support FTP functions
 FailedToConnectToFTPServer=Failed to connect to FTP server (server %s, port %s)
 FailedToConnectToFTPServerWithCredentials=Failed to login to FTP server with defined login/password
 FTPFailedToRemoveFile=Failed to remove file <b>%s</b>.
+<<<<<<< HEAD
 FTPFailedToRemoveDir=Failed to remove directory <b>%s</b> (Check permissions and that directory is empty).
 FTPPassiveMode=Passive mode
 ChooseAFTPEntryIntoMenu=Choose a FTP entry into menu...
+=======
+FTPFailedToRemoveDir=Failed to remove directory <b>%s</b>: check permissions and that the directory is empty.
+FTPPassiveMode=Passive mode
+ChooseAFTPEntryIntoMenu=Choose a FTP site from the menu...
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 FailedToGetFile=Failed to get files %s

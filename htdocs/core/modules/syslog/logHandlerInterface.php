@@ -83,4 +83,8 @@ interface LogHandlerInterface
 	 * 	@return	void
 	 */
 	public function export($content);
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

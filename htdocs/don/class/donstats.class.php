@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2011      Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,6 +38,7 @@ include_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
  */
 class DonationStats extends Stats
 {
+<<<<<<< HEAD
 	public $table_element;
 
 	var $socid;
@@ -42,6 +47,19 @@ class DonationStats extends Stats
     var $from;
 	var $field;
     var $where;
+=======
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element;
+
+	public  $socid;
+    public $userid;
+
+    public $from;
+	public $field;
+    public $where;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
     /**
@@ -52,7 +70,11 @@ class DonationStats extends Stats
 	 * @param 	string	$mode	   	Option (not used)
 	 * @param   int		$userid    	Id user for filter (creation user)
      */
+<<<<<<< HEAD
     function __construct($db, $socid, $mode, $userid=0)
+=======
+    public function __construct($db, $socid, $mode, $userid = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
 		global $user, $conf;
 
@@ -74,6 +96,7 @@ class DonationStats extends Stats
     }
 
     /**
+<<<<<<< HEAD
      * Return shipment number by month for a year
      *
 	 * @param	int		$year		Year to scan
@@ -81,6 +104,15 @@ class DonationStats extends Stats
 	 * @return	array				Array with number by month
      */
     function getNbByMonth($year, $format=0)
+=======
+     *  Return shipment number by month for a year
+     *
+	 *  @param	int		$year		Year to scan
+     *  @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+	 *  @return	array				Array with number by month
+     */
+    public function getNbByMonth($year, $format = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $user;
 
@@ -89,7 +121,11 @@ class DonationStats extends Stats
 		$sql.= " WHERE d.datedon BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
+<<<<<<< HEAD
         $sql.= $this->db->order('dm','DESC');
+=======
+        $sql.= $this->db->order('dm', 'DESC');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$res=$this->_getNbByMonth($year, $sql, $format);
 		return $res;
@@ -101,7 +137,11 @@ class DonationStats extends Stats
 	 * @return	array	Array with number by year
 	 *
 	 */
+<<<<<<< HEAD
 	function getNbByYear()
+=======
+	public function getNbByYear()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $user;
 
@@ -109,11 +149,16 @@ class DonationStats extends Stats
 		$sql.= " FROM ".$this->from;
 		$sql.= " WHERE ".$this->where;
 		$sql.= " GROUP BY dm";
+<<<<<<< HEAD
         $sql.= $this->db->order('dm','DESC');
+=======
+        $sql.= $this->db->order('dm', 'DESC');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		return $this->_getNbByYear($sql);
 	}
 
+<<<<<<< HEAD
 	/**
 	 *	Return nb, total and average
 	 *
@@ -132,3 +177,23 @@ class DonationStats extends Stats
 		return $this->_getAllByYear($sql);
 	}
 }
+=======
+    /**
+     *  Return nb, total and average
+     *
+     *  @return	array	Array of values
+     */
+    public function getAllByYear()
+    {
+        global $user;
+
+        $sql = "SELECT date_format(d.datedon,'%Y') as year, COUNT(*) as nb, SUM(d.".$this->field.") as total, AVG(".$this->field.") as avg";
+        $sql.= " FROM ".$this->from;
+        $sql.= " WHERE ".$this->where;
+        $sql.= " GROUP BY year";
+        $sql.= $this->db->order('year', 'DESC');
+
+        return $this->_getAllByYear($sql);
+    }
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

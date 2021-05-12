@@ -26,9 +26,15 @@
 // This script is called with a POST method.
 // Directory to scan (full path) is inside POST['dir'].
 
+<<<<<<< HEAD
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL',1); // Disables token renewal
 if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
+=======
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
+if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML', '1');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 require '../../main.inc.php';
@@ -49,7 +55,10 @@ $auth->signature = $block_static->getSignature();
 
 foreach($blocks as &$b) {
 	$auth->blockchain.=$b->signature;
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 $hash = $auth->getBlockchainHash();
@@ -58,4 +67,8 @@ $url = $conf->global->BLOCKEDLOG_AUTHORITY_URL.'/blockedlog/ajax/authority.php?s
 
 $res = file_get_contents($url);
 //echo $url;
+<<<<<<< HEAD
 echo $res;
+=======
+echo $res;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

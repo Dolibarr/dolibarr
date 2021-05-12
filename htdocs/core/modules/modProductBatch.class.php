@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2013-2014 Cedric GROSS         <c.gross@kreiz-it.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,7 +42,11 @@ class modProductBatch extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
+<<<<<<< HEAD
 	function __construct($db)
+=======
+	public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
         global $langs,$conf;
 
@@ -46,9 +54,15 @@ class modProductBatch extends DolibarrModules
 		$this->numero = 39000;
 
 		$this->family = "products";
+<<<<<<< HEAD
 		$this->module_position = 45;
 
 		$this->name = preg_replace('/^mod/i','',get_class($this));
+=======
+		$this->module_position = '45';
+
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->description = "Batch number, eat-by and sell-by date management module";
 
 		$this->rights_class = 'productbatch';
@@ -68,9 +82,17 @@ class modProductBatch extends DolibarrModules
 		$this->config_page_url = array("product_lot_extrafields.php@product");
 
 		// Dependencies
+<<<<<<< HEAD
 		$this->depends = array("modProduct","modStock","modExpedition","modFournisseur");		// List of modules id that must be enabled if this module is enabled. modExpedition is required to manage batch exit (by manual stock decrease on shipment), modSupplier to manage batch entry (after supplier order).
 		$this->requiredby = array();	// List of modules id to disable if this one is disabled
 		$this->phpmin = array(5,0);					// Minimum version of PHP required by module
+=======
+		$this->hidden = false;			// A condition to hide module
+		$this->depends = array("modProduct","modStock","modExpedition","modFournisseur");		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->need_dolibarr_version = array(3,0);	// Minimum version of Dolibarr required by module
 		$this->langfiles = array("productbatch");
 
@@ -102,7 +124,10 @@ class modProductBatch extends DolibarrModules
 
 		// Exports
 		$r=0;
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	/**
@@ -113,7 +138,11 @@ class modProductBatch extends DolibarrModules
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
+<<<<<<< HEAD
 	function init($options='')
+=======
+	public function init($options = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 	    global $db,$conf;
 
@@ -122,11 +151,18 @@ class modProductBatch extends DolibarrModules
 		if (! empty($conf->cashdesk->enabled)) {
     		if (empty($conf->global->CASHDESK_NO_DECREASE_STOCK)) {
     		    include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+<<<<<<< HEAD
     		    $res = dolibarr_set_const($db,"CASHDESK_NO_DECREASE_STOCK",1,'chaine',0,'',$conf->entity);
+=======
+    		    $res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK", 1, 'chaine', 0, '', $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     		}
 		}
 
 		return $this->_init($sql, $options);
 	}
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

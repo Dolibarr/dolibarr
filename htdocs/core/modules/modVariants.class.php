@@ -2,7 +2,11 @@
 
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,9 +26,14 @@
 /**
  * 	\defgroup   produit     Module product variants
  *  \brief      Module to manage product combinations based on product attributes
+<<<<<<< HEAD
  *  \file       htdocs/core/modules/modAttributes.class.php
  *  \ingroup    produit
  *  \brief      File to describe module to manage catalog of predefined products
+=======
+ *  \file       htdocs/core/modules/modVariants.class.php
+ *  \ingroup    produit
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
@@ -55,7 +64,11 @@ class modVariants extends DolibarrModules
 		// It is used to group modules in module setup page
 		$this->family = "products";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+<<<<<<< HEAD
 		$this->name = preg_replace('/^mod/i','',get_class($this));
+=======
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = 'Allows creating products variant based on new attributes';
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -79,12 +92,19 @@ class modVariants extends DolibarrModules
 
 		// Dependencies
 		$this->hidden = false;			// A condition to hide module
+<<<<<<< HEAD
 		$this->depends = array(
 			'modProduct'
 		);		// List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array();	// List of modules id to disable if this one is disabled
 		$this->conflictwith = array();	// List of modules id this module is in conflict with
 		$this->phpmin = array(5,0);					// Minimum version of PHP required by module
+=======
+		$this->depends = array('modProduct');	// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->need_dolibarr_version = array(3,0);	// Minimum version of Dolibarr required by module
 		$this->langfiles = array("products");
 
@@ -112,4 +132,7 @@ class modVariants extends DolibarrModules
 		$this->rights = array();		// Permission array used by this module
 	}
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -4,6 +4,14 @@ Processing=Exécution
 Lineofinvoice=Lignes de facture
 Doctype=Type de document
 ErrorDebitCredit=Débit et crédit ne peuvent pas être non-nuls en même temps
+<<<<<<< HEAD
 TotalMarge=Marge de ventes totale
 Selectmodelcsv=Sélectionnez un modèle d'export
 Modelcsv_normal=Export classique
+=======
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. Blocking error.
+TotalMarge=Marge de ventes totale
+Selectmodelcsv=Sélectionnez un modèle d'export
+Modelcsv_normal=Export classique
+Modelcsv_FEC=Export FEC (Art. L47 A)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

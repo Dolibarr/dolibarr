@@ -584,7 +584,11 @@ IMG;
 			// using windows libreoffice that must be in path
 			// using linux/mac libreoffice that must be in path
 			// Note PHP Config "fastcgi.impersonate=0" must set to 0 - Default is 1
+<<<<<<< HEAD
 			$command ='soffice -headless -convert-to pdf -outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
+=======
+			$command ='soffice --headless --convert-to pdf --outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		elseif (preg_match('/unoconv/', $conf->global->MAIN_ODT_AS_PDF))
 		{
@@ -635,6 +639,10 @@ IMG;
 		//$command = DOL_DOCUMENT_ROOT.'/includes/odtphp/odt2pdf.sh '.$name.' '.$dirname;
 
 		dol_syslog(get_class($this).'::exportAsAttachedPDF $execmethod='.$execmethod.' Run command='.$command,LOG_DEBUG);
+<<<<<<< HEAD
+=======
+		$retval=0; $output_arr=array();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if ($execmethod == 1)
 		{
 			exec($command, $output_arr, $retval);
@@ -665,6 +673,10 @@ IMG;
 		if ($retval == 0)
 		{
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $ret_val='.$retval, LOG_DEBUG);
+<<<<<<< HEAD
+=======
+			$filename=''; $linenum=0;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if (headers_sent($filename, $linenum)) {
 				throw new OdfException("headers already sent ($filename at $linenum)");
 			}
@@ -681,16 +693,28 @@ IMG;
 			}
 		} else {
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $ret_val='.$retval, LOG_DEBUG);
+<<<<<<< HEAD
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $output_arr='.var_export($output_arr,true), LOG_DEBUG);
+=======
+			dol_syslog(get_class($this).'::exportAsAttachedPDF $output_arr='.var_export($output_arr, true), LOG_DEBUG);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			if ($retval==126) {
 				throw new OdfException('Permission execute convert script : ' . $command);
 			}
 			else {
+<<<<<<< HEAD
 				foreach($output_arr as $line) {
 					$errors.= $line."<br>";
 				}
 				throw new OdfException('ODT to PDF convert fail : ' . $errors);
+=======
+			    $errorstring='';
+				foreach($output_arr as $line) {
+				    $errorstring.= $line."<br>";
+				}
+				throw new OdfException('ODT to PDF convert fail (option MAIN_ODT_AS_PDF is '.$conf->global->MAIN_ODT_AS_PDF.', command was '.$command.', retval='.$retval.') : ' . $errorstring);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 		}
 	}
@@ -742,7 +766,11 @@ IMG;
 	private function _rrmdir($dir)
 	{
 		if ($handle = opendir($dir)) {
+<<<<<<< HEAD
 			while (false !== ($file = readdir($handle))) {
+=======
+			while (($file = readdir($handle)) !== false) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if ($file != '.' && $file != '..') {
 					if (is_dir($dir . '/' . $file)) {
 						$this->_rrmdir($dir . '/' . $file);

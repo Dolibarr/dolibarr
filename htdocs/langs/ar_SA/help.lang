@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - help
+<<<<<<< HEAD
 CommunitySupport=منتدى / الدعم ويكي
 EMailSupport=رسائل البريد الإلكتروني لدعم
 RemoteControlSupport=الانترنت في الوقت الحقيقي / النائية الدعم
@@ -24,3 +25,27 @@ LinkToGoldMember=تستطيع الاتصال به من قبل المدرب مخ�
 PossibleLanguages=اللغات المدعومة
 SubscribeToFoundation=مساعدة مشروع Dolibarr، الاشتراك في الجمعية
 SeeOfficalSupport=للحصول على الدعم Dolibarr الرسمي في لغتك: <br> <b><a href="%s" target="_blank">٪ الصورة</a></b>
+=======
+CommunitySupport=منتدى / ويكي الدعم
+EMailSupport=دعم رسائل البريد الإلكتروني
+RemoteControlSupport=الوقت الحقيقي عبر الإنترنت / الدعم عن بعد
+OtherSupport=دعم آخر
+ToSeeListOfAvailableRessources=للاتصال / الاطلاع على الموارد المتاحة:
+HelpCenter=مركز المساعدة
+DolibarrHelpCenter=Dolibarr Help and Support Center
+ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
+TypeOfSupport=Type of support
+TypeSupportCommunauty=المجتمع (مجاني)
+TypeSupportCommercial=تجاري
+TypeOfHelp=نوع
+NeedHelpCenter=هل تحتاج إلى مساعدة أو دعم؟
+Efficiency=الكفاءة
+TypeHelpOnly=المساعدة فقط
+TypeHelpDev=مساعدة + التنمية
+TypeHelpDevForm=Help+Development+Training
+BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
+LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
+PossibleLanguages=اللغات المدعومة
+SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
+SeeOfficalSupport=للحصول على دعم رسمي من دوليبار بلغتك: <br> <b> <a href="%s" target="_blank"> %s </a></b>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

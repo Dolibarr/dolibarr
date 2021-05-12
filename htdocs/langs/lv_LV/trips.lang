@@ -19,8 +19,13 @@ ConfirmDeleteTrip=Vai tiešām vēlaties dzēst šo izdevumu atskaiti ?
 ListTripsAndExpenses=Izdevumu pārskatu saraksts
 ListToApprove=Gaida apstiprinājumu
 ExpensesArea=Izdevumu pārskatu sadaļa
+<<<<<<< HEAD
 ClassifyRefunded=Classify 'Refunded'
 ExpenseReportWaitingForApproval=A new expense report has been submitted for approval
+=======
+ClassifyRefunded=Klasificēt "atmaksāts"
+ExpenseReportWaitingForApproval=Apstiprināšanai iesniegts jauns izdevumu pārskats
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ExpenseReportWaitingForApprovalMessage=Ir iesniegts jauns izdevumu pārskats un tas gaida apstiprināšanu. <br> - Lietotājs: %s <br> - Periods: %s <br> Uzklikšķināt šeit, lai apstiprinātu: %s
 ExpenseReportWaitingForReApproval=Izdevumu pārskats ir iesniegts atkārtotai apstiprināšanai
 ExpenseReportWaitingForReApprovalMessage=Izdevumu pārskats ir iesniegts un gaida atkārtotu apstiprināšanu. <br> %s, jūs atteicās apstiprināt izdevumu pārskatu šā iemesla dēļ: %s. <br> Ir ierosināta jauna versija un gaida jūsu apstiprinājumu. <Br > - Lietotājs: %s <br> - Periods: %s <br> Uzklikšķināt šeit, lai apstiprinātu: %s
@@ -34,7 +39,11 @@ ExpenseReportPaid=Izdevumu pārskats tika samaksāts
 ExpenseReportPaidMessage=Izmaksu pārskats %s tika samaksāts. <br> - Lietotājs: %s <br> - Maksā: %s <br> Uzklikšķināt šeit, lai parādītu izdevumu pārskatu: %s
 TripId=Id expense report
 AnyOtherInThisListCanValidate=Person to inform for validation.
+<<<<<<< HEAD
 TripSociete=Informācijas kompānija
+=======
+TripSociete=Uzņēmuma informācija
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TripNDF=Informācijas izdevumu pārskats
 PDFStandardExpenseReports=Standard template to generate a PDF document for expense report
 ExpenseReportLine=Izdevumu pārskata rinda
@@ -73,6 +82,7 @@ EX_PAR_VP=PVN autostāvvieta
 EX_CAM_VP=PV apkope un remonts
 DefaultCategoryCar=Noklusētais transporta veids
 DefaultRangeNumber=Noklusējuma diapazona numurs
+<<<<<<< HEAD
 
 Error_EXPENSEREPORT_ADDON_NotDefined=Kļūda, izdevumu atskaites numerācijas refreģēšanas noteikums nav definēts moduļa "Izdevumu pārskats" iestatīšanā
 ErrorDoubleDeclaration=You have declared another expense report into a similar date range.
@@ -80,16 +90,28 @@ AucuneLigne=There is no expense report declared yet
 
 ModePaiement=Maksājuma veids
 
+=======
+UploadANewFileNow=Augšupielādējiet jaunu dokumentu tagad
+Error_EXPENSEREPORT_ADDON_NotDefined=Kļūda, izdevumu atskaites numerācijas refreģēšanas noteikums nav definēts moduļa "Izdevumu pārskats" iestatīšanā
+ErrorDoubleDeclaration=You have declared another expense report into a similar date range.
+AucuneLigne=There is no expense report declared yet
+ModePaiement=Maksājuma veids
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 VALIDATOR=User responsible for approval
 VALIDOR=Apstiprinājis
 AUTHOR=Ierakstījis
 AUTHORPAIEMENT=Apmaksājis
 REFUSEUR=Aizliedzis
 CANCEL_USER=Dzēsis
+<<<<<<< HEAD
 
 MOTIF_REFUS=Iemesls
 MOTIF_CANCEL=Iemesls
 
+=======
+MOTIF_REFUS=Iemesls
+MOTIF_CANCEL=Iemesls
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DATE_REFUS=Aizliegšanas datums
 DATE_SAVE=Apstiprināšanas datums
 DATE_CANCEL=Atcelšanas datums
@@ -102,7 +124,11 @@ NOT_AUTHOR=You are not the author of this expense report. Operation cancelled.
 ConfirmRefuseTrip=Vai jūs tiešām vēlaties bloķēt šo izdevumu pārskatu?
 ValideTrip=Apstiprināt izdevumu pārskatu
 ConfirmValideTrip=Vai tiešām vēlaties apstiprināt šo izdevumu atskaiti?
+<<<<<<< HEAD
 PaidTrip=Pay an expense report
+=======
+PaidTrip=Izmaksu pārskats
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmPaidTrip=Vai tiešām vēlaties mainīt šī izdevumu pārskata statusu uz "Apmaksātais"?
 ConfirmCancelTrip=Vai tiešām vēlaties atcelt šo izdevumu pārskatu?
 BrouillonnerTrip=Move back expense report to status "Draft"
@@ -112,12 +138,20 @@ ConfirmSaveTrip=Vai tiešām vēlaties apstiprināt šo izdevumu pārskatu?
 NoTripsToExportCSV=No expense report to export for this period.
 ExpenseReportPayment=Expense report payment
 ExpenseReportsToApprove=Izdevumu ziņojumi jāapstiprina
+<<<<<<< HEAD
 ExpenseReportsToPay=Expense reports to pay
 CloneExpenseReport=Klonēt izdevumu pārskatu
 ConfirmCloneExpenseReport=Vai tiešām vēlaties klonēt šo izdevumu pārskatu?
 ExpenseReportsIk=Izdevumu pārskats, kurā ir indekss
 ExpenseReportsRules=Izdevumu pārskatu noteikumi
 ExpenseReportIkDesc=Varat mainīt kilometru izdevumu aprēķinu pa kategorijām un diapazoniem, kurus tie iepriekš ir definējuši. <b> d </ b> ir attālums kilometros
+=======
+ExpenseReportsToPay=Izdevumu pārskati kas jāsamaksā
+ConfirmCloneExpenseReport=Vai tiešām vēlaties klonēt šo izdevumu pārskatu?
+ExpenseReportsIk=Izdevumu pārskats, kurā ir indekss
+ExpenseReportsRules=Izdevumu pārskatu noteikumi
+ExpenseReportIkDesc=Varat mainīt kilometru izdevumu aprēķinu pa kategorijām un diapazoniem, kurus tie iepriekš ir definējuši. <b> d </b> ir attālums kilometros
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ExpenseReportRulesDesc=Jūs varat izveidot vai atjaunināt visus aprēķina noteikumus. Šī daļa tiks izmantota, ja lietotājs izveidos jaunu izdevumu pārskatu
 expenseReportOffset=Kompensācija
 expenseReportCoef=Koeficents
@@ -129,7 +163,11 @@ expenseReportCatDisabled=Kategorija ir atspējota - skatiet c_exp_tax_cat vārdn
 expenseReportRangeDisabled=Diapazons ir atspējots - skatiet c_exp_tax_range dictionay
 expenseReportPrintExample=kompensēt + (d x coef) = %s
 ExpenseReportApplyTo=Pielietot
+<<<<<<< HEAD
 ExpenseReportDomain=Domēns jāpiemēro
+=======
+ExpenseReportDomain=Domēns kam jāpiemēro
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ExpenseReportLimitOn=Ierobežot
 ExpenseReportDateStart=Sākuma datums
 ExpenseReportDateEnd=Beigu datums
@@ -140,7 +178,10 @@ OnExpense=Izdevumu līnija
 ExpenseReportRuleSave=Izdevumu pārskatu noteikums ir saglabāts
 ExpenseReportRuleErrorOnSave=Kļūda: %s
 RangeNum=Diapazons %d
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ExpenseReportConstraintViolationError=Ierobežojuma pārkāpuma ID [%s]: %s ir pārāka par %s %s.
 byEX_DAY=pēc dienas (ierobežojums līdz %s)
 byEX_MON=pēc mēneša (ierobežojums līdz %s)
@@ -151,7 +192,14 @@ nolimitbyEX_DAY=pēc dienas (bez ierobežojuma)
 nolimitbyEX_MON=pa mēnešiem (bez ierobežojumiem)
 nolimitbyEX_YEA=pa gadiem (bez ierobežojumiem)
 nolimitbyEX_EXP=pēc rindas (bez ierobežojuma)
+<<<<<<< HEAD
 
 CarCategory=Automašīnu sadaļa
 ExpenseRangeOffset=Kompensācijas summa: %s
 RangeIk=Nobraukums
+=======
+CarCategory=Automašīnu sadaļa
+ExpenseRangeOffset=Kompensācijas summa: %s
+RangeIk=Nobraukums
+AttachTheNewLineToTheDocument=Pievienojiet rindu augšupielādētajam dokumentam
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

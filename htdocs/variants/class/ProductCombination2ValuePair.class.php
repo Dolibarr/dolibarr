@@ -52,10 +52,22 @@ class ProductCombination2ValuePair
 	 */
 	public $fk_prod_attr_val;
 
+<<<<<<< HEAD
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
 	}
+=======
+    /**
+     * Constructor
+     *
+     * @param   DoliDB $db     Database handler
+     */
+    public function __construct(DoliDB $db)
+    {
+        $this->db = $db;
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	/**
 	 * Translates this class to a human-readable string
@@ -106,12 +118,21 @@ class ProductCombination2ValuePair
 	public function fetchByFkCombination($fk_combination)
 	{
 		$sql = "SELECT
+<<<<<<< HEAD
   c.rowid,
   c2v.fk_prod_attr_val,
   c2v.fk_prod_attr,
   c2v.fk_prod_combination
 FROM ".MAIN_DB_PREFIX."product_attribute c LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination2val c2v ON c.rowid = c2v.fk_prod_attr
 WHERE c2v.fk_prod_combination = ".(int) $fk_combination;
+=======
+        c.rowid,
+        c2v.fk_prod_attr_val,
+        c2v.fk_prod_attr,
+        c2v.fk_prod_combination
+        FROM ".MAIN_DB_PREFIX."product_attribute c LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination2val c2v ON c.rowid = c2v.fk_prod_attr
+        WHERE c2v.fk_prod_combination = ".(int) $fk_combination;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$sql .= $this->db->order('c.rang', 'asc');
 
@@ -152,4 +173,8 @@ WHERE c2v.fk_prod_combination = ".(int) $fk_combination;
 
 		return -1;
 	}
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

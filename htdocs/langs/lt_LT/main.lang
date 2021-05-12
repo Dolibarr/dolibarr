@@ -50,6 +50,7 @@ ErrorFailedToSendMail=Nepavyko išsiųsti laiško (siuntėjas=%s, gavėjas=%s)
 ErrorFileNotUploaded=Failas nebuvo įkeltas. Patikrinkite, ar jo dydis neviršija leistino, ar yra laisvos vietos diske ir ar jau nėra failo su tokiu pačiu pavadinimu šiame kataloge.
 ErrorInternalErrorDetected=Aptikta klaida
 ErrorWrongHostParameter=Neteisingas talpinimo parametras
+<<<<<<< HEAD
 ErrorYourCountryIsNotDefined=Jūsų šalis nėra apibrėžta. Eiti į Pagrindinis-Nustatymai-Redaguoti ir vėl užpildyti formą.
 ErrorRecordIsUsedByChild=Nepavyko ištrinti šio įrašo. Šis įrašas yra naudojamas bent vieno iš jaunesnių įrašų.
 ErrorWrongValue=Neteisinga reikšmė
@@ -59,12 +60,28 @@ ErrorServiceUnavailableTryLater=Paslauga neteikiama šiuo metu. Bandykite dar ka
 ErrorDuplicateField=Dubliuojanti reikšmė unikaliame lauke
 ErrorSomeErrorWereFoundRollbackIsDone=Rastos kai kurios klaidos. Pakeitimai atšaukti.
 ErrorConfigParameterNotDefined=Parametras <b>%s</b> nėra apibrėžta Dolibarr konfigūracijos faile <b>conf.php</b>.
+=======
+ErrorYourCountryIsNotDefined=Your country is not defined. Go to Home-Setup-Edit and post the form again.
+ErrorRecordIsUsedByChild=Failed to delete this record. This record is used by at least one child record.
+ErrorWrongValue=Neteisinga reikšmė
+ErrorWrongValueForParameterX=Neteisinga parametro %s reikšmė
+ErrorNoRequestInError=Nėra užklausos dėl klaidos
+ErrorServiceUnavailableTryLater=Service not available at the moment. Try again later.
+ErrorDuplicateField=Dubliuojanti reikšmė unikaliame lauke
+ErrorSomeErrorWereFoundRollbackIsDone=Some errors were found. Changes have been rolled back.
+ErrorConfigParameterNotDefined=Parameter <b>%s</b> is not defined in the Dolibarr config file <b>conf.php</b>.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorCantLoadUserFromDolibarrDatabase=Nepavyko rasti vartotojo <b>%s</b> Dolibarr duomenų bazėje.
 ErrorNoVATRateDefinedForSellerCountry=Klaida, nėra apibrėžtų PVM tarifų šaliai '%s'.
 ErrorNoSocialContributionForSellerCountry=Klaida, socialiniai / fiskaliniai mokesčiai neapibrėžti šaliai '%s'.
 ErrorFailedToSaveFile=Klaida, nepavyko išsaugoti failo.
+<<<<<<< HEAD
 ErrorCannotAddThisParentWarehouse=You are trying to add a parent warehouse which is already a child of current one
 MaxNbOfRecordPerPage=Max number of record per page
+=======
+ErrorCannotAddThisParentWarehouse=You are trying to add a parent warehouse which is already a child of a existing warehouse
+MaxNbOfRecordPerPage=Max. number of records per page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NotAuthorized=You are not authorized to do that.
 SetDate=Nustatyti datą
 SelectDate=Pasirinkti datą
@@ -78,14 +95,25 @@ FileRenamed=The file was successfully renamed
 FileGenerated=The file was successfully generated
 FileSaved=The file was successfully saved
 FileUploaded=Failas buvo sėkmingai įkeltas
+<<<<<<< HEAD
 FileTransferComplete=File(s) was uploaded successfully
 FilesDeleted=File(s) successfully deleted
 FileWasNotUploaded=Failas prikabinimui pasirinktas, bet dar nebuvo įkeltas. Paspauskite tam "Pridėti failą".
 NbOfEntries=Įrašų skaičius
+=======
+FileTransferComplete=File(s) uploaded successfully
+FilesDeleted=File(s) successfully deleted
+FileWasNotUploaded=Failas prikabinimui pasirinktas, bet dar nebuvo įkeltas. Paspauskite tam "Pridėti failą".
+NbOfEntries=No. of entries
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 GoToWikiHelpPage=Read online help (Internet access needed)
 GoToHelpPage=Skaityti pagalbą
 RecordSaved=Įrašas išsaugotas
 RecordDeleted=Įrašas ištrintas
+<<<<<<< HEAD
+=======
+RecordGenerated=Record generated
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LevelOfFeature=Funkcijų lygis
 NotDefined=Neapibrėžtas
 DolibarrInHttpAuthenticationSoPasswordUseless=Dolibarr authentication mode is set to <b>%s</b> in configuration file <b>conf.php</b>.<br>This means that the password database is external to Dolibarr, so changing this field may have no effect.
@@ -94,9 +122,15 @@ Undefined=Neapibrėžtas
 PasswordForgotten=Password forgotten?
 NoAccount=No account?
 SeeAbove=Žiūrėti aukščiau
+<<<<<<< HEAD
 HomeArea=Pagrindinė sritis
 LastConnexion=Latest connection
 PreviousConnexion=Ankstesnis prisijungimas
+=======
+HomeArea=Pagrindinis
+LastConnexion=Last login
+PreviousConnexion=Previous login
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PreviousValue=Previous value
 ConnectedOnMultiCompany=Prisijungta aplinkoje
 ConnectedSince=Prisijungta nuo
@@ -118,7 +152,11 @@ PrecisionUnitIsLimitedToXDecimals=Dolibarr buvo nustatytas vieneto kainos tikslu
 DoTest=Bandymas
 ToFilter=Filtras
 NoFilter=No filter
+<<<<<<< HEAD
 WarningYouHaveAtLeastOneTaskLate=Įspėjimas, Jūs turite bent vieną elementą, kuris viršijo leistiną vėlavimo nuokrypį.
+=======
+WarningYouHaveAtLeastOneTaskLate=Warning, you have at least one element that has exceeded the tolerance time.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 yes=taip
 Yes=Taip
 no=ne
@@ -142,6 +180,10 @@ Closed=Uždarytas
 Closed2=Uždarytas
 NotClosed=Not closed
 Enabled=Įjungta
+<<<<<<< HEAD
+=======
+Enable=Įjungti
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Deprecated=Užprotestuotas
 Disable=Išjungti
 Disabled=Išjungtas
@@ -153,7 +195,11 @@ Update=Atnaujinimas
 Close=Uždaryti
 CloseBox=Remove widget from your dashboard
 Confirm=Patvirtinti
+<<<<<<< HEAD
 ConfirmSendCardByMail=Do you really want to send content of this card by mail to <b>%s</b>?
+=======
+ConfirmSendCardByMail=Do you really want to send the content of this card by mail to <b>%s</b>?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Delete=Ištrinti
 Remove=Pašalinti
 Resiliate=Terminate
@@ -168,7 +214,11 @@ Save=Išsaugoti
 SaveAs=Įšsaugoti kaip
 TestConnection=Bandyti sujungimą
 ToClone=Klonuoti
+<<<<<<< HEAD
 ConfirmClone=Pasirinkite duomenis, kuriuos norite klonuoti:
+=======
+ConfirmClone=Choose data you want to clone:
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoCloneOptionsSpecified=Nėra apibrėžtų duomenų klonavimui.
 Of=iš
 Go=Eiti
@@ -183,7 +233,11 @@ Valid=Galiojantis
 Approve=Patvirtinti
 Disapprove=Nepritarti
 ReOpen=Atidaryti iš naujo
+<<<<<<< HEAD
 Upload=Siųsti failą
+=======
+Upload=Upload
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ToLink=Nuoroda
 Select=Pasirinkti
 Choose=Pasirinkti
@@ -200,6 +254,10 @@ Password=Slaptažodis
 PasswordRetype=Pakartokite slaptažodį
 NoteSomeFeaturesAreDisabled=Atkreipkite dėmesį, kad daug funkcijų/modulių yra išjungti šioje demonstracijoje.
 Name=Pavadinimas
+<<<<<<< HEAD
+=======
+NameSlashCompany=Name / Company
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Person=Asmuo
 Parameter=Parametras
 Parameters=Parametrai
@@ -220,6 +278,12 @@ Info=Prisijungti
 Family=Šeima
 Description=Aprašymas
 Designation=Aprašymas
+<<<<<<< HEAD
+=======
+DescriptionOfLine=Eilutės aprašymas
+DateOfLine=Date of line
+DurationOfLine=Duration of line
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Model=Doc template
 DefaultModel=Default doc template
 Action=Įvykis
@@ -327,6 +391,7 @@ Copy=Kopijuoti
 Paste=Įklijuoti
 Default=Pagal nutylėjimą
 DefaultValue=Reikšmė pagal nutylėjimą
+<<<<<<< HEAD
 DefaultValues=Default values
 Price=Kaina
 PriceCurrency=Price (currency)
@@ -338,10 +403,24 @@ PriceU=U.P.
 PriceUHT=U.P. (grynasis)
 PriceUHTCurrency=U.P (currency)
 PriceUTTC=U.P. (įsk. mokesčius)
+=======
+DefaultValues=Default values/filters/sorting
+Price=Kaina
+PriceCurrency=Price (currency)
+UnitPrice=Vieneto kaina
+UnitPriceHT=Unit price (excl.)
+UnitPriceHTCurrency=Unit price (excl.) (currency)
+UnitPriceTTC=Vieneto kaina
+PriceU=Kaina vnt.
+PriceUHT=Vnt. kaina (be PVM)
+PriceUHTCurrency=U.P (currency)
+PriceUTTC=Vnt. kaina (su PVM)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Amount=Suma
 AmountInvoice=Sąskaitos-faktūros suma
 AmountInvoiced=Amount invoiced
 AmountPayment=Mokėjimo suma
+<<<<<<< HEAD
 AmountHTShort=Suma (grynoji)
 AmountTTCShort=Suma (įskaitant mokesčius)
 AmountHT=Suma (atskaičius mokesčius)
@@ -351,6 +430,17 @@ MulticurrencyAlreadyPaid=Already payed, original currency
 MulticurrencyRemainderToPay=Remain to pay, original currency
 MulticurrencyPaymentAmount=Payment amount, original currency
 MulticurrencyAmountHT=Amount (net of tax), original currency
+=======
+AmountHTShort=Amount (excl.)
+AmountTTCShort=Suma (su PVM)
+AmountHT=Amount (excl. tax)
+AmountTTC=Suma (su PVM)
+AmountVAT=Mokesčių suma
+MulticurrencyAlreadyPaid=Already paid, original currency
+MulticurrencyRemainderToPay=Remain to pay, original currency
+MulticurrencyPaymentAmount=Payment amount, original currency
+MulticurrencyAmountHT=Amount (excl. tax), original currency
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MulticurrencyAmountTTC=Amount (inc. of tax), original currency
 MulticurrencyAmountVAT=Amount tax, original currency
 AmountLT1=Mokesčių suma 2
@@ -359,6 +449,7 @@ AmountLT1ES=RE suma
 AmountLT2ES=IRPF suma
 AmountTotal=Bendra suma
 AmountAverage=Vidutinė suma
+<<<<<<< HEAD
 PriceQtyMinHT=Min. kaina už kiekį (atskaičius mokesčius)
 PriceQtyMinHTCurrency=Price quantity min. (net of tax) (currency)
 Percentage=Procentai
@@ -373,6 +464,23 @@ Totalforthispage=Total for this page
 TotalTTC=Iš viso (įskaitant mokesčius)
 TotalTTCToYourCredit=Iš viso (įskaitant mokesčius) prie Jūsų kredito
 TotalVAT=Iš viso mokesčių
+=======
+PriceQtyMinHT=Price quantity min. (excl. tax)
+PriceQtyMinHTCurrency=Price quantity min. (excl. tax) (currency)
+Percentage=Procentai
+Total=Visas
+SubTotal=Tarpinė suma
+TotalHTShort=Total (excl.)
+TotalHT100Short=Total 100%% (excl.)
+TotalHTShortCurrency=Total (excl. in currency)
+TotalTTCShort=Iš viso (su PVM)
+TotalHT=Total (excl. tax)
+TotalHTforthispage=Total (excl. tax) for this page
+Totalforthispage=Total for this page
+TotalTTC=Iš viso (su PVM)
+TotalTTCToYourCredit=Iš viso (su PVM) prie Jūsų kredito
+TotalVAT=Iš viso PVM
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TotalVATIN=Total IGST
 TotalLT1=Iš viso mokesčių 2
 TotalLT2=Iš viso mokesčių 3
@@ -380,11 +488,19 @@ TotalLT1ES=Iš viso RE
 TotalLT2ES=Iš viso IRPF
 TotalLT1IN=Total CGST
 TotalLT2IN=Total SGST
+<<<<<<< HEAD
 HT=Atskaityta mokesčių
 TTC=Įtraukta mokesčių
 INCVATONLY=Inc. VAT
 INCT=Inc. all taxes
 VAT=Pardavimo mokestis
+=======
+HT=Excl. tax
+TTC=Įtraukta mokesčiai
+INCVATONLY=Su PVM
+INCT=Inc. all taxes
+VAT=PVM
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 VATIN=IGST
 VATs=Pardavimų mokesčiai
 VATINs=IGST taxes
@@ -396,6 +512,10 @@ LT1ES=RE
 LT2ES=IRPF
 LT1IN=CGST
 LT2IN=SGST
+<<<<<<< HEAD
+=======
+LT1GC=Additionnal cents
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 VATRate=Mokesčio tarifas
 VATCode=Tax Rate code
 VATNPR=Tax Rate NPR
@@ -428,14 +548,23 @@ ActionNotApplicable=Netaikomas
 ActionRunningNotStarted=Pradėti
 ActionRunningShort=In progress
 ActionDoneShort=Baigtas
+<<<<<<< HEAD
 ActionUncomplete=Nepilnas
+=======
+ActionUncomplete=Incomplete
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LatestLinkedEvents=Latest %s linked events
 CompanyFoundation=Company/Organization
 Accountant=Accountant
 ContactsForCompany=Šios trečiosios šalies adresatas
 ContactsAddressesForCompany=Adresatai/adresai šiai trečiajai šaliai
 AddressesForCompany=Adresai šiai trečiajai šaliai
+<<<<<<< HEAD
 ActionsOnCompany=Įvykiai su šia trečiają šalimi
+=======
+ActionsOnCompany=Events for this third party
+ActionsOnContact=Events for this contact/address
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActionsOnMember=Įvykiai su šiuo nariu
 ActionsOnProduct=Events about this product
 NActionsLate=%s vėluoja
@@ -453,8 +582,13 @@ Generate=Generuoti
 Duration=Trukmė
 TotalDuration=Bendra trukmė
 Summary=Suvestinė
+<<<<<<< HEAD
 DolibarrStateBoard=Database statistics
 DolibarrWorkBoard=Open items dashboard
+=======
+DolibarrStateBoard=Database Statistics
+DolibarrWorkBoard=Open Items
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoOpenedElementToProcess=No opened element to process
 Available=Prieinamas
 NotYetAvailable=Dar nėra prieinamas
@@ -482,9 +616,17 @@ Reporting=Ataskaitos
 Reportings=Ataskaitos
 Draft=Projektas
 Drafts=Projektai
+<<<<<<< HEAD
 StatusInterInvoiced=
 Validated=Pripažinti galiojančiais
 Opened=Atidaryta
+=======
+StatusInterInvoiced=Invoiced
+Validated=Pripažinti galiojančiais
+Opened=Atidaryta
+OpenAll=Open (All)
+ClosedAll=Closed (All)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 New=Naujas
 Discount=Nuolaida
 Unknown=Nežinomas
@@ -506,7 +648,11 @@ None=Nė vienas
 NoneF=Nė vienas
 NoneOrSeveral=None or several
 Late=Vėlai
+<<<<<<< HEAD
 LateDesc=Delay to define if a record is late or not depends on your setup. Ask your admin to change delay from menu Home - Setup - Alerts.
+=======
+LateDesc=An item is defined as Delayed as per the system configuration in menu Home - Setup - Alerts.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoItemLate=No late item
 Photo=Nuotrauka
 Photos=Nuotraukos
@@ -530,6 +676,7 @@ September=Rugsėjis
 October=Spalis
 November=Lapkritis
 December=Gruodis
+<<<<<<< HEAD
 JanuaryMin=Sau
 FebruaryMin=Vas
 MarchMin=Kov
@@ -542,6 +689,8 @@ SeptemberMin=Rgs
 OctoberMin=Spa
 NovemberMin=Lap
 DecemberMin=Grd
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Month01=Sausis
 Month02=Vasaris
 Month03=Kovas
@@ -638,14 +787,25 @@ FeatureNotYetSupported=Funkcija dar nepalaikoma
 CloseWindow=Uždaryti langą
 Response=Atsakymas
 Priority=Prioritetas
+<<<<<<< HEAD
 SendByMail=Siųsti e-paštu
+=======
+SendByMail=Send by email
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MailSentBy=E-Laišką atsiuntė
 TextUsedInTheMessageBody=E-laiško pagrindinė dalis
 SendAcknowledgementByMail=Send confirmation email
 SendMail=Siųsti e-laišką
+<<<<<<< HEAD
 EMail=E-mail
 NoEMail=E-laiškų nėra
 Email=El. paštas
+=======
+Email=El. paštas
+NoEMail=E-laiškų nėra
+AlreadyRead=Already read
+NotRead=Not read
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoMobilePhone=Nėra mobilaus telefono
 Owner=Savininkas
 FollowingConstantsWillBeSubstituted=Šios konstantos bus pakeistos atitinkamomis reikšmėmis
@@ -658,8 +818,14 @@ ValueIsValid=Reikšmė galioja
 ValueIsNotValid=Value is not valid
 RecordCreatedSuccessfully=Record created successfully
 RecordModifiedSuccessfully=Įrašas sėkmingai pakeistas
+<<<<<<< HEAD
 RecordsModified=%s record modified
 RecordsDeleted=%s record deleted
+=======
+RecordsModified=%s record(s) modified
+RecordsDeleted=%s record(s) deleted
+RecordsGenerated=%s record(s) generated
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AutomaticCode=Automatinis kodas
 FeatureDisabled=Funkcija išjungta
 MoveBox=Move widget
@@ -670,14 +836,21 @@ Method=Metodas
 Receive=Gauti
 CompleteOrNoMoreReceptionExpected=Complete or nothing more expected
 ExpectedValue=Expected Value
+<<<<<<< HEAD
 CurrentValue=Dabartinė reikšmė
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PartialWoman=Dalinis
 TotalWoman=Visas
 NeverReceived=Niekada negautas
 Canceled=Atšauktas
 YouCanChangeValuesForThisListFromDictionarySetup=You can change values for this list from menu Setup - Dictionaries
 YouCanChangeValuesForThisListFrom=You can change values for this list from menu %s
+<<<<<<< HEAD
 YouCanSetDefaultValueInModuleSetup=You can set the default value used when creating a new record into module setup
+=======
+YouCanSetDefaultValueInModuleSetup=You can set the default value used when creating a new record in module setup
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Color=Spalva
 Documents=Susieti failai
 Documents2=Dokumentai
@@ -709,22 +882,37 @@ Notes=Pastabos
 AddNewLine=Pridėti naują eilutę
 AddFile=Pridėti failą
 FreeZone=Not a predefined product/service
+<<<<<<< HEAD
 FreeLineOfType=Not a predefined entry of type
 CloneMainAttributes=Klonuoti objektą su savo pagrindiniais atributais
+=======
+FreeLineOfType=Free-text item, type:
+CloneMainAttributes=Klonuoti objektą su savo pagrindiniais atributais
+ReGeneratePDF=Re-generate PDF
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PDFMerge=PDF sujungimas
 Merge=Sujungti
 DocumentModelStandardPDF=Standard PDF template
 PrintContentArea=Rodyti puslapio pagrindinio turinio sritį spausdinimui
 MenuManager=Meniu vadovas
+<<<<<<< HEAD
 WarningYouAreInMaintenanceMode=Perspėjimas. Jūs esate serviso režime, todėl tik prisijungimas <b>%s</b> leidžiamas naudotis programa einamu momentu.
+=======
+WarningYouAreInMaintenanceMode=Warning, you are in maintenance mode: only login <b>%s</b> is allowed to use the application in this mode.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CoreErrorTitle=Sistemos klaida
 CoreErrorMessage=Sorry, an error occurred. Contact your system administrator to check the logs or disable $dolibarr_main_prod=1 to get more information.
 CreditCard=Kreditinė kortelė
 ValidatePayment=Mokėjimą pripažinti galiojančiu
 CreditOrDebitCard=Credit or debit card
 FieldsWithAreMandatory=Laukai su <b>%s</b> yra privalomi
+<<<<<<< HEAD
 FieldsWithIsForPublic=Laukai su <b>%s</b> yra rodomi viešame narių sąraše. Jei šito nenorite, išjunkite "public" langelį.
 AccordingToGeoIPDatabase=(Pagal GeoIP konversiją)
+=======
+FieldsWithIsForPublic=Fields with <b>%s</b> are shown in public list of members. If you don't want this, uncheck the "public" box.
+AccordingToGeoIPDatabase=(according to GeoIP conversion)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Line=Eilutė
 NotSupported=Nepalaikoma
 RequiredField=Reikalingas laukas
@@ -732,6 +920,11 @@ Result=Rezultatas
 ToTest=Bandymas
 ValidateBefore=Kortelė turi būti patvirtinta prieš naudojant šią funkciją
 Visibility=Matomumas
+<<<<<<< HEAD
+=======
+Totalizable=Totalizable
+TotalizableDesc=This field is totalizable in list
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Private=Privatus
 Hidden=Paslėptas
 Resources=Ištekliai
@@ -750,14 +943,25 @@ LinkTo=Link to
 LinkToProposal=Link to proposal
 LinkToOrder=Link to order
 LinkToInvoice=Link to invoice
+<<<<<<< HEAD
 LinkToSupplierOrder=Link to supplier order
 LinkToSupplierProposal=Link to supplier proposal
 LinkToSupplierInvoice=Link to supplier invoice
+=======
+LinkToTemplateInvoice=Link to template invoice
+LinkToSupplierOrder=Link to purchase order
+LinkToSupplierProposal=Link to vendor proposal
+LinkToSupplierInvoice=Link to vendor invoice
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LinkToContract=Link to contract
 LinkToIntervention=Link to intervention
 CreateDraft=Sukurti projektą
 SetToDraft=Atgal į projektą
 ClickToEdit=Spausk redaguoti
+<<<<<<< HEAD
+=======
+ClickToRefresh=Click to refresh
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 EditWithEditor=Edit with CKEditor
 EditWithTextEditor=Edit with Text editor
 EditHTMLSource=Edit HTML Source
@@ -772,14 +976,22 @@ ByDay=Pagal dieną
 BySalesRepresentative=Pagal pardavimo atstovą
 LinkedToSpecificUsers=Susieta su tam tikro vartotojo adresatu
 NoResults=Nėra rezultatų
+<<<<<<< HEAD
 AdminTools=Admin tools
+=======
+AdminTools=Admin Tools
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SystemTools=Sistemos įrankiai
 ModulesSystemTools=Modulių įrankiai
 Test=Bandymas
 Element=Elementas
 NoPhotoYet=Galimų nuotraukų dar nėra
 Dashboard=Dashboard
+<<<<<<< HEAD
 MyDashboard=My dashboard
+=======
+MyDashboard=My Dashboard
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Deductible=Atimamas
 from=nuo
 toward=būsimas
@@ -802,7 +1014,11 @@ PrintFile=Spausdinti failą %s
 ShowTransaction=Show entry on bank account
 ShowIntervention=Rodyti intervenciją
 ShowContract=Rodyti sutartį
+<<<<<<< HEAD
 GoIntoSetupToChangeLogo=Eiti į Pradžia - Nustatymai - Bendrovė, kad pakeisti logotipą arba eikite į Pradžia - Nustatymai - Ekranas, kad paslėpti.
+=======
+GoIntoSetupToChangeLogo=Go to Home - Setup - Company to change logo or go to Home - Setup - Display to hide.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Deny=Atmesti
 Denied=Atmestas
 ListOf=List of %s
@@ -818,16 +1034,29 @@ Sincerely=Sincerely
 DeleteLine=Ištrinti eilutę
 ConfirmDeleteLine=Are you sure you want to delete this line?
 NoPDFAvailableForDocGenAmongChecked=No PDF were available for the document generation among checked record
+<<<<<<< HEAD
 TooManyRecordForMassAction=Too many record selected for mass action. The action is restricted to a list of %s record.
 NoRecordSelected=No record selected
 MassFilesArea=Area for files built by mass actions
 ShowTempMassFilesArea=Show area of files built by mass actions
 ConfirmMassDeletion=Bulk delete confirmation
 ConfirmMassDeletionQuestion=Are you sure you want to delete the %s selected record ?
+=======
+TooManyRecordForMassAction=Too many records selected for mass action. The action is restricted to a list of %s records.
+NoRecordSelected=No record selected
+MassFilesArea=Area for files built by mass actions
+ShowTempMassFilesArea=Show area of files built by mass actions
+ConfirmMassDeletion=Bulk Delete confirmation
+ConfirmMassDeletionQuestion=Are you sure you want to delete the %s selected record(s)?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 RelatedObjects=Related Objects
 ClassifyBilled=Klasifikuoti su pateiktomis sąskaitomis-faktūromis
 ClassifyUnbilled=Classify unbilled
 Progress=Pažanga
+<<<<<<< HEAD
+=======
+ProgressShort=Progr.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 FrontOffice=Front office
 BackOffice=Galinis biuras (back office)
 View=View
@@ -836,18 +1065,31 @@ Exports=Eksportas
 ExportFilteredList=Export filtered list
 ExportList=Export list
 ExportOptions=Eksporto pasirinkimai (options)
+<<<<<<< HEAD
+=======
+IncludeDocsAlreadyExported=Include docs already exported
+ExportOfPiecesAlreadyExportedIsEnable=Export of pieces already exported is enable
+ExportOfPiecesAlreadyExportedIsDisable=Export of pieces already exported is disable
+AllExportedMovementsWereRecordedAsExported=All exported movements were recorded as exported
+NotAllExportedMovementsCouldBeRecordedAsExported=Not all exported movements could be recorded as exported
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Miscellaneous=Įvairus
 Calendar=Kalendorius
 GroupBy=Group by...
 ViewFlatList=View flat list
 RemoveString=Remove string '%s'
+<<<<<<< HEAD
 SomeTranslationAreUncomplete=Some languages may be partially translated or may contains errors. If you detect some, you can fix language files registering to <a href="https://transifex.com/projects/p/dolibarr/" target="_blank">https://transifex.com/projects/p/dolibarr/</a>.
+=======
+SomeTranslationAreUncomplete=Some of the languages offered may be only partially translated or may contain errors. Please help to correct your language by registering at <a href="https://transifex.com/projects/p/dolibarr/" target="_blank">https://transifex.com/projects/p/dolibarr/</a> to add your improvements.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DirectDownloadLink=Direct download link (public/external)
 DirectDownloadInternalLink=Direct download link (need to be logged and need permissions)
 Download=Download
 DownloadDocument=Download document
 ActualizeCurrency=Update currency rate
 Fiscalyear=Fiskaliniai metai
+<<<<<<< HEAD
 ModuleBuilder=Module Builder
 SetMultiCurrencyCode=Set currency
 BulkActions=Bulk actions
@@ -855,12 +1097,22 @@ ClickToShowHelp=Click to show tooltip help
 WebSite=Web site
 WebSites=Web sites
 WebSiteAccounts=Web site accounts
+=======
+ModuleBuilder=Module and Application Builder
+SetMultiCurrencyCode=Set currency
+BulkActions=Bulk actions
+ClickToShowHelp=Click to show tooltip help
+WebSite=Website
+WebSites=Websites
+WebSiteAccounts=Website accounts
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ExpenseReport=Išlaidų ataskaita
 ExpenseReports=Išlaidų ataskaitos
 HR=HR
 HRAndBank=HR and Bank
 AutomaticallyCalculated=Automatically calculated
 TitleSetToDraft=Go back to draft
+<<<<<<< HEAD
 ConfirmSetToDraft=Are you sure you want to go back to Draft status ?
 ImportId=Import id
 Events=Įvykiai
@@ -872,6 +1124,27 @@ Rights=Leidimai
 LineNb=Line no.
 IncotermLabel=Incoterms
 # Week day
+=======
+ConfirmSetToDraft=Are you sure you want to go back to Draft status?
+ImportId=Import id
+Events=Įvykiai
+EMailTemplates=Email templates
+FileNotShared=File not shared to external public
+Project=Projektas
+Projects=Projektai
+LeadOrProject=Lead | Project
+LeadsOrProjects=Leads | Projects
+Lead=Lead
+Leads=Leads
+ListOpenLeads=List open leads
+ListOpenProjects=List open projects
+NewLeadOrProject=New lead or project
+Rights=Leidimai
+LineNb=Line no.
+IncotermLabel=Incoterms
+TabLetteringCustomer=Customer lettering
+TabLetteringSupplier=Vendor lettering
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Monday=Pirmadienis
 Tuesday=Antradienis
 Wednesday=Trečiadienis
@@ -917,9 +1190,15 @@ SearchIntoUsers=Vartotojai
 SearchIntoProductsOrServices=Products or services
 SearchIntoProjects=Projektai
 SearchIntoTasks=Uždaviniai
+<<<<<<< HEAD
 SearchIntoCustomerInvoices=Customer invoices
 SearchIntoSupplierInvoices=Vendor invoices
 SearchIntoCustomerOrders=Customer orders
+=======
+SearchIntoCustomerInvoices=Klientų sąskaitos faktūros
+SearchIntoSupplierInvoices=Vendor invoices
+SearchIntoCustomerOrders=Sales orders
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SearchIntoSupplierOrders=Purchase orders
 SearchIntoCustomerProposals=Customer proposals
 SearchIntoSupplierProposals=Vendor proposals
@@ -927,15 +1206,25 @@ SearchIntoInterventions=Intervencijos
 SearchIntoContracts=Sutartys
 SearchIntoCustomerShipments=Customer shipments
 SearchIntoExpenseReports=Išlaidų ataskaitos
+<<<<<<< HEAD
 SearchIntoLeaves=Leaves
+=======
+SearchIntoLeaves=Leave
+SearchIntoTickets=Tickets
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CommentLink=Komentarai
 NbComments=Number of comments
 CommentPage=Comments space
 CommentAdded=Comment added
 CommentDeleted=Comment deleted
 Everybody=Visi
+<<<<<<< HEAD
 PayedBy=Payed by
 PayedTo=Payed to
+=======
+PayedBy=Apmokėtas kieno
+PayedTo=Paid to
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Monthly=Monthly
 Quarterly=Quarterly
 Annual=Annual
@@ -945,6 +1234,23 @@ LocalAndRemote=Local and Remote
 KeyboardShortcut=Keyboard shortcut
 AssignedTo=Priskirtas
 Deletedraft=Delete draft
+<<<<<<< HEAD
 ConfirmMassDraftDeletion=Draft Bulk delete confirmation
 FileSharedViaALink=File shared via a link
 
+=======
+ConfirmMassDraftDeletion=Draft mass delete confirmation
+FileSharedViaALink=File shared via a link
+SelectAThirdPartyFirst=Select a third party first...
+YouAreCurrentlyInSandboxMode=You are currently in the %s "sandbox" mode
+Inventory=Inventory
+AnalyticCode=Analytic code
+TMenuMRP=MRP
+ShowMoreInfos=Show More Infos
+NoFilesUploadedYet=Please upload a document first
+SeePrivateNote=See private note
+PaymentInformation=Payment information
+ValidFrom=Valid from
+ValidUntil=Valid until
+NoRecordedUsers=No users
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

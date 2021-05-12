@@ -162,6 +162,10 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/barcode
 %_datadir/dolibarr/htdocs/blockedlog
 %_datadir/dolibarr/htdocs/bookmarks
+<<<<<<< HEAD
+=======
+%_datadir/dolibarr/htdocs/bom
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 %_datadir/dolibarr/htdocs/cashdesk
 %_datadir/dolibarr/htdocs/categories
 %_datadir/dolibarr/htdocs/collab
@@ -174,9 +178,18 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/core
 %_datadir/dolibarr/htdocs/cron
 %_datadir/dolibarr/htdocs/custom
+<<<<<<< HEAD
 %_datadir/dolibarr/htdocs/dav
 %_datadir/dolibarr/htdocs/don
 %_datadir/dolibarr/htdocs/ecm
+=======
+%_datadir/dolibarr/htdocs/datapolicy
+%_datadir/dolibarr/htdocs/dav
+%_datadir/dolibarr/htdocs/debugbar
+%_datadir/dolibarr/htdocs/don
+%_datadir/dolibarr/htdocs/ecm
+%_datadir/dolibarr/htdocs/emailcollector
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 %_datadir/dolibarr/htdocs/expedition
 %_datadir/dolibarr/htdocs/expensereport
 %_datadir/dolibarr/htdocs/exports
@@ -195,6 +208,10 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/mailmanspip
 %_datadir/dolibarr/htdocs/margin
 %_datadir/dolibarr/htdocs/modulebuilder
+<<<<<<< HEAD
+=======
+%_datadir/dolibarr/htdocs/mrp
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 %_datadir/dolibarr/htdocs/multicurrency
 %_datadir/dolibarr/htdocs/opensurvey
 %_datadir/dolibarr/htdocs/paybox
@@ -203,12 +220,20 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/product
 %_datadir/dolibarr/htdocs/projet
 %_datadir/dolibarr/htdocs/public
+<<<<<<< HEAD
+=======
+%_datadir/dolibarr/htdocs/reception
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 %_datadir/dolibarr/htdocs/resource
 %_datadir/dolibarr/htdocs/societe
 %_datadir/dolibarr/htdocs/stripe
 %_datadir/dolibarr/htdocs/supplier_proposal
 %_datadir/dolibarr/htdocs/support
 %_datadir/dolibarr/htdocs/theme
+<<<<<<< HEAD
+=======
+%_datadir/dolibarr/htdocs/takepos
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 %_datadir/dolibarr/htdocs/ticket
 %_datadir/dolibarr/htdocs/user
 %_datadir/dolibarr/htdocs/variants

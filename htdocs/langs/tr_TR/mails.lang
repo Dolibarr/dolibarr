@@ -1,9 +1,17 @@
 # Dolibarr language file - Source file is en_US - mails
+<<<<<<< HEAD
 Mailing=Epostalama
 EMailing=Epostalama
 EMailings=Epostalamalar
 AllEMailings=Tüm Epostalar
 MailCard=Eposta kartı
+=======
+Mailing=E-postalama
+EMailing=E-postalama
+EMailings=E-postalamalar
+AllEMailings=Tüm e-postalar
+MailCard=E-posta kartı
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MailRecipients=Alıcılar
 MailRecipient=Alıcı
 MailTitle=Açıklama
@@ -15,6 +23,7 @@ MailToUsers=To user(s)
 MailCC=Kopyala
 MailToCCUsers=Copy to users(s)
 MailCCC=Önbelleğe kopyala
+<<<<<<< HEAD
 MailTopic=EPosta konusu
 MailText=Mesaj
 MailFile=Ekli dosyalar
@@ -30,6 +39,25 @@ PreviewMailing=Eposta önizle
 CreateMailing=Eposta oluştur
 TestMailing=Eposta testi
 ValidMailing=Geçerli eposta
+=======
+MailTopic=E-posta konusu
+MailText=Mesaj
+MailFile=Ekli dosyalar
+MailMessage=E-posta gövdesi
+SubjectNotIn=Not in Subject
+BodyNotIn=Not in Body
+ShowEMailing=E-posta göster
+ListOfEMailings=E-posta listesi
+NewMailing=Yeni e-posta
+EditMailing=E-posta düzenle
+ResetMailing=E-postayı yeniden gönder
+DeleteMailing=E-posta sil
+DeleteAMailing=Bir e-posta sil
+PreviewMailing=E-posta önizlemesi
+CreateMailing=E-posta oluştur
+TestMailing=E-posta testi
+ValidMailing=E-posta doğrula
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MailingStatusDraft=Taslak
 MailingStatusValidated=Doğrulanmış
 MailingStatusSent=Gönderildi
@@ -38,6 +66,7 @@ MailingStatusSentCompletely=Tamamen gönderildi
 MailingStatusError=Hata
 MailingStatusNotSent=Gönderilmedi
 MailSuccessfulySent=Email (from %s to %s) successfully accepted for delivery
+<<<<<<< HEAD
 MailingSuccessfullyValidated=Eposta doğrulanması başarılı
 MailUnsubcribe=Aboneliği kaldır
 MailingStatusNotContact=Bir daha görüşme
@@ -72,10 +101,46 @@ EMailSentToNRecipients=EMail sent to %s recipients.
 EMailSentForNElements=Eposta gönderilen öğeler: %s.
 XTargetsAdded=<b>%s</b> alıcılar listesine eklendi
 OnlyPDFattachmentSupported=If the PDF documents were already generated for the objects to send, they will be attached to email. If not, no email will be sent (also, note that only pdf documents are supported as attachment in mass sending in this version).
+=======
+MailingSuccessfullyValidated=E-posta doğrulanması başarılı
+MailUnsubcribe=Aboneliği kaldır
+MailingStatusNotContact=Bir daha görüşme
+MailingStatusReadAndUnsubscribe=Oku ve aboneliği kaldır
+ErrorMailRecipientIsEmpty=E-posta alıcısı boş
+WarningNoEMailsAdded=Alıcı listesine eklenecek yeni e-posta yok.
+ConfirmValidMailing=Bu e-postayı doğrulamak istediğinizden emin misiniz?
+ConfirmResetMailing=Warning, by re-initializing emailing <b>%s</b>, you will allow the re-sending this email in a bulk mailing. Are you sure you want to do this?
+ConfirmDeleteMailing=Bu e-postayı silmek istediğinizden emin misiniz?
+NbOfUniqueEMails=Benzersiz e-posta Sayısı
+NbOfEMails=E-posta sayısı
+TotalNbOfDistinctRecipients=Farklı alıcıların sayısı
+NoTargetYet=Henüz hiç bir alıcı tanımlanmadı (‘Alıcılar’ sekmesine gidin)
+NoRecipientEmail=%s için alıcı e-postası yok
+RemoveRecipient=Alıcı kaldır
+YouCanAddYourOwnPredefindedListHere=E-posta seçim modülünüzü oluşturmak için htdocs/core/modules/mailings/README dosyasına bakın.
+EMailTestSubstitutionReplacedByGenericValues=Test modunu kullanırken, yedek değişkenler genel değerleriyle değiştirilir
+MailingAddFile=Bu dosyayı ekle
+NoAttachedFiles=Ekli dosya yok
+BadEMail=E-posta için hatalı değer
+ConfirmCloneEMailing=Bu e-postayı kopyalamak istediğinizden emin misiniz?
+CloneContent=Mesajı klonla
+CloneReceivers=Alıcıları klonla
+DateLastSend=Son gönderim tarihi
+DateSending=Gönderme tarihi
+SentTo=<b>%s</b> ye gönderilen
+MailingStatusRead=Okundu
+YourMailUnsubcribeOK=E-posta adresiniz <b>%s</b> başarılı bir şekilde mail gönderim listemizden çıkarıldı
+ActivateCheckReadKey="Okuma Alındısı" ve "Abonelik İptali" özelliği için kullanılan URL şifrelemesinde kullanılacak anahtar
+EMailSentToNRecipients=E-posta %s alıcıya gönderildi.
+EMailSentForNElements=Email sent for %s elements.
+XTargetsAdded=<b>%s</b> alıcılar listesine eklendi
+OnlyPDFattachmentSupported=If the PDF documents were already generated for the objects to send, they will be attached to email. If not, no email will be sent (also, note that only pdf documents are supported as attachments in mass sending in this version).
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AllRecipientSelected=The recipients of the %s record selected (if their email is known).
 GroupEmails=Grup e-postaları
 OneEmailPerRecipient=One email per recipient (by default, one email per record selected)
 WarningIfYouCheckOneRecipientPerEmail=Warning, if you check this box, it means only one email will be sent for several different record selected, so, if your message contains substitution variables that refers to data of a record, it becomes not possible to replace them.
+<<<<<<< HEAD
 ResultOfMailSending=Toplu Eposta gönderimi sonuçu
 NbSelected=Seçilen sayısı
 NbIgnored=Yoksayılan sayısı
@@ -86,6 +151,18 @@ MailingModuleDescContactsWithThirdpartyFilter=Contact with customer filters
 MailingModuleDescContactsByCompanyCategory=Contacts by third party category
 MailingModuleDescContactsByCategory=Contacts by categories
 MailingModuleDescContactsByFunction=Contacts by position
+=======
+ResultOfMailSending=Result of mass Email sending
+NbSelected=Number selected
+NbIgnored=Number ignored
+NbSent=Number sent
+SentXXXmessages=%s mesaj gönderildi.
+ConfirmUnvalidateEmailing=<b>%s</b> e-postasını taslak durumuna değiştirmek istediğinizden emin misiniz?
+MailingModuleDescContactsWithThirdpartyFilter=Contact with customer filters
+MailingModuleDescContactsByCompanyCategory=Contacts by third-party category
+MailingModuleDescContactsByCategory=Kategorilere göre kişiler
+MailingModuleDescContactsByFunction=Pozisyona göre kişiler
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MailingModuleDescEmailsFromFile=Dosyadan e-postalar
 MailingModuleDescEmailsFromUser=Kullanıcı tarafından girilen e-postalar
 MailingModuleDescDolibarrUsers=E-postaları olan kullanıcılar
@@ -96,15 +173,24 @@ SendingFromWebInterfaceIsNotAllowed=Sending from web interface is not allowed.
 LineInFile=Satır %s dosyası
 RecipientSelectionModules=Alıcıların seçimine göre tanımlanmış istekler
 MailSelectedRecipients=Seçilen alıcılar
+<<<<<<< HEAD
 MailingArea=Eposta alanı
 LastMailings=Son %s e-postalar
 TargetsStatistics=Hedef istatistikleri
 NbOfCompaniesContacts=Benzersiz kişiler/adresler
 MailNoChangePossible=Doğrulanmış epostaların alıcıları değiştirilemez
+=======
+MailingArea=E-postalama alanı
+LastMailings=En son %s e-posta
+TargetsStatistics=Hedef istatistikleri
+NbOfCompaniesContacts=Benzersiz kişiler/adresler
+MailNoChangePossible=Doğrulanmış e-postaların alıcıları değiştirilemez
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SearchAMailing=Eposta ara
 SendMailing=E-posta gönder
 SentBy=Gönderen
 MailingNeedCommand=Sending an emailing can be performed from command line. Ask your server administrator to launch the following command to send the emailing to all recipients:
+<<<<<<< HEAD
 MailingNeedCommand2=Bunula birlikte, oturum tarafından gönderilecek ençok Eposta sayılı MAILING_LIMIT_SENDBYWEB parametresini ekleyerek çevrim içi olarak gönderebilirsiniz. Bunu için Giriş-Kurulum-Diğer menüsüne gidin.
 ConfirmSendingEmailing=If you want to send emailing directly from this screen, please confirm you are sure you want to send emailing now from your browser ?
 LimitSendingEmailing=Not: Web arayüzünden eposta gönderimi güvenlik ve süre aşımı yüzünden birçok kez yapılmıştır, her gönderme oturumu başına <b>%s<b> alıcıya
@@ -135,25 +221,71 @@ MailSendSetupIs2='%s' Modunu kullanmak için <strong>'%s'</strong> parametresini
 MailSendSetupIs3=SMTP sunucusunun nasıl yapılandırılacağı konusunda sorunuz varsa, %s e sorabilirsiniz.
 YouCanAlsoUseSupervisorKeyword=Ayrıca; kullanıcının danışmanına giden epostayı almak için <strong>__SUPERVISOREMAIL__</strong> anahtar kelimesini de ekleyebilirsiniz (yalnızca bu danışman için bir eposta tanımlanmışsa çalışır).
 NbOfTargetedContacts=Mevcut hedef kişi eposta sayısı
+=======
+MailingNeedCommand2=Bunula birlikte, oturum tarafından gönderilecek ençok e-posta sayılı MAILING_LIMIT_SENDBYWEB parametresini ekleyerek çevrim içi olarak gönderebilirsiniz. Bunu için Giriş-Kurulum-Diğer menüsüne gidin.
+ConfirmSendingEmailing=Direkt olarak bu ekrandan e-posta göndermek istiyorsanız, lütfen e-postayı tarayıcınızdan şimdi göndermek istediğinizden emin olduğunuzu onaylayın.
+LimitSendingEmailing=Not: Web arayüzünden e-posta gönderimi güvenlik ve süre aşımı yüzünden birçok kez yapılmıştır, her gönderme oturumu başına <b>%s<b> alıcıya
+TargetsReset=Listeyi temizle
+ToClearAllRecipientsClickHere=Bu e-posta alıcı listesini temizlemek için burayı tıkla
+ToAddRecipientsChooseHere=Listeden seçerek alıcıları ekle
+NbOfEMailingsReceived=Alınan toplu e-postalar
+NbOfEMailingsSend=Gönderilen toplu e-postalar
+IdRecord=Kimlik kayıtı
+DeliveryReceipt=Teslimat Onayı
+YouCanUseCommaSeparatorForSeveralRecipients=Birçok alıcı belirtmek için <b>virgül</b> ayırıcısını kullanabilirsiniz.
+TagCheckMail=E-posta açılışlarını takip edin
+TagUnsubscribe=Aboneliğini kaldır bağlantısı
+TagSignature=Gönderen kullanıcının imzası
+EMailRecipient=Alıcı E-postası
+TagMailtoEmail=Alıcı E-posta Adresi ("kime:" html linkini içeren)
+NoEmailSentBadSenderOrRecipientEmail=Gönderilen e-posta yok. Hatalı gönderici ya da alıcı epostası. Kullanıcı profilini doğrula.
+# Module Notifications
+Notifications=Bildirimler
+NoNotificationsWillBeSent=Bu etkinlik ve firma için hiçbir e-posta bildirimi planlanmamış
+ANotificationsWillBeSent=E-posta ile 1 bildirim gönderilecektir
+SomeNotificationsWillBeSent=%s bildirim e-posta ile gönderilecektir
+AddNewNotification=Yeni bir e-posta bildirim hedefi/etkinliği oluştur
+ListOfActiveNotifications=E-posta bildirimi için aktif olan hedef/etkinlik listesi
+ListOfNotificationsDone=Gönderilen tüm e-posta bildirimleri listesi
+MailSendSetupIs=E-posta gönderme yapılandırması '%s'ye ayarlandı. Bu mod toplu e-postalama için kullanılamaz.
+MailSendSetupIs2='%s' Modunu kullanmak için <strong>'%s'</strong> parametresini değiştirecekseniz, önce yönetici hesabı ile %sGiriş - Ayarlar - E-postalar%s menüsüne gitmelisiniz. Bu mod ile İnternet Servis Sağlayıcınız tarafından sağlanan SMTP sunucusu ayarlarını girebilir ve Toplu e-posta özelliğini kullanabilirsiniz.
+MailSendSetupIs3=SMTP sunucusunun nasıl yapılandırılacağı konusunda sorunuz varsa, %s e sorabilirsiniz.
+YouCanAlsoUseSupervisorKeyword=Ayrıca; kullanıcının danışmanına giden epostayı almak için <strong>__SUPERVISOREMAIL__</strong> anahtar kelimesini de ekleyebilirsiniz (yalnızca bu danışman için bir e-posta tanımlanmışsa çalışır).
+NbOfTargetedContacts=Mevcut hedef kişi e-posta sayısı
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 UseFormatFileEmailToTarget=Imported file must have format <strong>email;name;firstname;other</strong>
 UseFormatInputEmailToTarget=Enter a string with format <strong>email;name;firstname;other</strong>
 MailAdvTargetRecipients=Alıcılar (gelişmiş seçim)
 AdvTgtTitle=Fill input fields to preselect the third parties or contacts/addresses to target
+<<<<<<< HEAD
 AdvTgtSearchTextHelp=Bunları %% sihirli karakter olarak kullanın. Örneğin; <b>jean, joe, jim</b> gibi tüm öğeleri bulmak için bunları <b>j%%</b> girebilirsiniz, aynı zamanda ayraç olarak ; kullanabilirsiniz, bu değer hariç için ! kullanabilirsiniz. Örneğin; <b>jean;joe;jim%%;!jimo;!jima%</b> dizgesi hedefi şu olacaktır: jim ile başlayan ancak jimo ile başlamayan ve jima ile başlayan her şeyi değil
+=======
+AdvTgtSearchTextHelp=Use %% as wildcards. For example to find all item like <b>jean, joe, jim</b>, you can input <b>j%%</b>, you can also use ; as separator for value, and use ! for except this value. For example  <b>jean;joe;jim%%;!jimo;!jima%</b> will target all jean, joe, start with jim but not jimo and not everything that starts with jima
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AdvTgtSearchIntHelp=Tam sayı veya kayan değer seçmek için aralık kullanın
 AdvTgtMinVal=En düşük değer
 AdvTgtMaxVal=En yüksek değer
 AdvTgtSearchDtHelp=Tarih değerlerini seçmek için aralık kullanın
 AdvTgtStartDt=Başlangıç tar.
 AdvTgtEndDt=Bitiş tar.
+<<<<<<< HEAD
 AdvTgtTypeOfIncudeHelp=Üçüncü taraf epostasını ve üçüncü taraf kişisi epostasını veya yalnızca üçüncü taraf epostasını veya yalnızca kişi epostasını hedefleyin
 AdvTgtTypeOfIncude=Hedef epostası türü
 AdvTgtContactHelp=Yalnızca kişiyi "Hedeflenen eposta türü"ne hedeflerseniz kullanın
+=======
+AdvTgtTypeOfIncudeHelp=Target Email of third party and email of contact of the third party, or just third-party email or just contact email
+AdvTgtTypeOfIncude=Hedef e-postası türü
+AdvTgtContactHelp=Yalnızca kişiyi "Hedeflenen e-posta türü"ne hedeflerseniz kullanın
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddAll=Hepsini ekle
 RemoveAll=Hepsini sil
 ItemsCount=Öğe(ler)
 AdvTgtNameTemplate=Süzgeç adı
+<<<<<<< HEAD
 AdvTgtAddContact=Epostaları kriterlere göre ekle
+=======
+AdvTgtAddContact=Kritere göre e-postalar ekle
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AdvTgtLoadFilter=Süzgeç yükle
 AdvTgtDeleteFilter=Süzgeç sil
 AdvTgtSaveFilter=Süzgeç kaydet
@@ -166,4 +298,8 @@ InGoingEmailSetup=Gelen e-posta kurulumu
 OutGoingEmailSetupForEmailing=Giden e-posta kurulumu (toplu e-posta için)
 DefaultOutgoingEmailSetup=Varsayılan giden e-posta kurulumu
 Information=Bilgi
+<<<<<<< HEAD
 ContactsWithThirdpartyFilter=Contacts avec filtre client
+=======
+ContactsWithThirdpartyFilter=Üçüncü parti filtreli kişiler
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

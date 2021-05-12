@@ -31,6 +31,7 @@ ViewWeek=Weekweergave
 ViewPerUser=Per gebruiker weergave
 ViewPerType=Weergave per type
 AutoActions= Automatisch invullen van de agenda
+<<<<<<< HEAD
 AgendaAutoActionDesc= Definieer hier een gebeurtenis waar Dolibarr deze automatisch in de agenda plaatst. Als niets is aangevinkt worden alleen handmatige acties zichtbaar in de agenda. Automatisch volgen van acties gedaan op objecten (zoals valideren, status wijzigingen) worden niet opgeslagen.
 AgendaSetupOtherDesc= Op deze pagina kunt u andere instellingen van de agendamodule instellen.
 AgendaExtSitesDesc=Op deze pagina kunt configureren externe agenda.
@@ -39,6 +40,18 @@ EventRemindersByEmailNotEnabled=Herinneringen via e-mail van agenda afspraken is
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Derde partij %s aangemaakt
 ContractValidatedInDolibarr=Contract %s gevalideerd
+=======
+AgendaAutoActionDesc= Here you may define events which you want Dolibarr to create automatically  in Agenda. If nothing is checked, only manual actions will be included in logs and displayed in Agenda. Automatic tracking of business actions done on objects (validation, status change) will not be saved.
+AgendaSetupOtherDesc= This page provides options to allow the export of your Dolibarr events into an external calendar (Thunderbird, Google Calendar etc...)
+AgendaExtSitesDesc=Op deze pagina kunt configureren externe agenda.
+ActionsEvents=Gebeurtenissen waarvoor Dolibarr automatisch een item zal maken in de agenda
+EventRemindersByEmailNotEnabled=Gebeurtenisherinneringen per e-mail zijn niet ingeschakeld in %s-module setup.
+##### Agenda event labels #####
+NewCompanyToDolibarr=Relatie %s aangemaakt
+COMPANY_DELETEInDolibarr=Third party %s deleted
+ContractValidatedInDolibarr=Contract %s gevalideerd
+CONTRACT_DELETEInDolibarr=Contract %s verwijderd
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PropalClosedSignedInDolibarr=Voorstel %s getekend
 PropalClosedRefusedInDolibarr=Voorstel %s afgewezen
 PropalValidatedInDolibarr=Voorstel %s gevalideerd
@@ -53,12 +66,22 @@ MemberValidatedInDolibarr=Lid %s gevalideerd
 MemberModifiedInDolibarr=Lid %s gewijzigd
 MemberResiliatedInDolibarr=Lidmaatschap %s beëindigd
 MemberDeletedInDolibarr=Lid %s verwijderd
+<<<<<<< HEAD
 MemberSubscriptionAddedInDolibarr=Subscription %s for member %s added
 MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
 MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=Verzending %s gevalideerd
 ShipmentClassifyClosedInDolibarr=Verzending %s geclassificeerd als gefactureerd
 ShipmentUnClassifyCloseddInDolibarr=Verzending %s geclassificeerd als heropend
+=======
+MemberSubscriptionAddedInDolibarr=Abonnement %s voor lid %s toegevoegd
+MemberSubscriptionModifiedInDolibarr=Abonnement %s voor lid %s gewijzigd
+MemberSubscriptionDeletedInDolibarr=Abonnement %s voor lid %s verwijderd
+ShipmentValidatedInDolibarr=Verzending %s gevalideerd
+ShipmentClassifyClosedInDolibarr=Verzending %s geclassificeerd als gefactureerd
+ShipmentUnClassifyCloseddInDolibarr=Verzending %s geclassificeerd als heropend
+ShipmentBackToDraftInDolibarr=Shipment %s go back to draft status
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShipmentDeletedInDolibarr=Verzending %s verwijderd
 OrderCreatedInDolibarr=Bestelling %s aangemaakt
 OrderValidatedInDolibarr=Opdracht %s gevalideerd
@@ -68,6 +91,7 @@ OrderBilledInDolibarr=Bestelling %s is gefactureerd
 OrderApprovedInDolibarr=Bestel %s goedgekeurd
 OrderRefusedInDolibarr=Order %s is geweigerd
 OrderBackToDraftInDolibarr=Bestel %s terug te gaan naar ontwerp-status
+<<<<<<< HEAD
 ProposalSentByEMail=Offerte %s verzonden per e-mail
 ContractSentByEMail=Contract %s verstuurd per e-mail
 OrderSentByEMail=Afnemersopdracht %s verzonden per e-mail
@@ -77,6 +101,17 @@ SupplierInvoiceSentByEMail=Leveranciersfactuur %s verzonden per e-mail
 ShippingSentByEMail=Stuur verzending %s per e-mail
 ShippingValidated= Verzending %s gevalideerd
 InterventionSentByEMail=Interventie %s via mail verzonden
+=======
+ProposalSentByEMail=Commercial proposal %s sent by email
+ContractSentByEMail=Contract %s sent by email
+OrderSentByEMail=Sales order %s sent by email
+InvoiceSentByEMail=Customer invoice %s sent by email
+SupplierOrderSentByEMail=Purchase order %s sent by email
+SupplierInvoiceSentByEMail=Vendor invoice %s sent by email
+ShippingSentByEMail=Shipment %s sent by email
+ShippingValidated= Verzending %s gevalideerd
+InterventionSentByEMail=Intervention %s sent by email
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProposalDeleted=Voorstel verwijderd
 OrderDeleted=Bestelling verwijderd
 InvoiceDeleted=Factuur verwijderd
@@ -91,16 +126,31 @@ EXPENSE_REPORT_REFUSEDInDolibarr=Kosten rapportage %s afgekeurd
 PROJECT_CREATEInDolibarr=Project %s gecreëerd
 PROJECT_MODIFYInDolibarr=Project %s aangepast
 PROJECT_DELETEInDolibarr=Project %s verwijderd
+<<<<<<< HEAD
+=======
+TICKET_CREATEInDolibarr=Ticket %s created
+TICKET_MODIFYInDolibarr=Ticket %s modified
+TICKET_ASSIGNEDInDolibarr=Ticket %s assigned
+TICKET_CLOSEInDolibarr=Ticket %s closed
+TICKET_DELETEInDolibarr=Ticket %s deleted
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ##### End agenda events #####
 AgendaModelModule=Document sjablonen voor evenement
 DateActionStart=Startdatum
 DateActionEnd=Einddatum
 AgendaUrlOptions1=U kunt ook de volgende parameters gebruiken om te filteren:
 AgendaUrlOptions3=<b>login=%s</b> om uitvoer van acties gedaan door gebruiker <b>%s</b> te beperken.
+<<<<<<< HEAD
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic event.
+=======
+AgendaUrlOptionsNotAdmin=<b>login=%s</b> om uitvoer van acties die niet zijn toegewezen aan gebruiker <b>%s</b> te beperken.
+AgendaUrlOptions4=<b> logint = %s </b>om de uitvoer te beperken tot acties die zijn toegewezen aan gebruiker <b> %s </b>(eigenaar en anderen).
+AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> om uitvoer van acties gekoppeld aan project<b>PROJECT_ID</b> te beperken.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> om automatische gebeurtenissen uit te sluiten.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AgendaShowBirthdayEvents=Verjaardagen van contacten weergeven
 AgendaHideBirthdayEvents=Verjaardagen van contacten verbergen
 Busy=Bezig
@@ -110,9 +160,15 @@ DefaultWorkingHours=Default werkuren in dag (Voorbeeld: 9-18)
 # External Sites ical
 ExportCal=Export kalender
 ExtSites=Externe agenda
+<<<<<<< HEAD
 ExtSitesEnableThisTool=Toon externe kalenders (gedefinieerd in de globale setup) in de agenda. Heeft geen invloed op de externe agenda's gedefinieerd door gebruikers.
 ExtSitesNbOfAgenda=Aantal kalenders
 AgendaExtNb=Calendar no. %s
+=======
+ExtSitesEnableThisTool=Toon externe agenda's (gedefinieerd in algemene setup) in Agenda. Heeft geen invloed op externe agenda's die door gebruikers zijn gedefinieerd.
+ExtSitesNbOfAgenda=Aantal kalenders
+AgendaExtNb=Kalender nr. %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ExtSiteUrlAgenda=URL aan. Ical bestand te openen
 ExtSiteNoLabel=Geen omschrijving
 VisibleTimeRange=Zichtbare werktijd
@@ -121,7 +177,10 @@ AddEvent=Creëer gebeurtenis/taak
 MyAvailability=Beschikbaarheid
 ActionType=Taak type
 DateActionBegin=Begindatum
+<<<<<<< HEAD
 CloneAction=Kloon gebeurtenis/taak
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmCloneEvent=Weet u zeker dat u gebeurtenis <b> %s </b> wilt klonen?
 RepeatEvent=Herhaal gebeurtenis/taak
 EveryWeek=Elke week

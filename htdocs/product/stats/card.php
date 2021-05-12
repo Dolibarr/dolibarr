@@ -1,7 +1,12 @@
 <?php
 /* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+<<<<<<< HEAD
  * Copyright (c) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+=======
+ * Copyright (c) 2004-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2005		Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2013		Juanjo Menent			<jmenent@2byte.es>
  *
@@ -33,17 +38,30 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
+<<<<<<< HEAD
 $WIDTH=DolGraph::getDefaultGraphSizeForStats('width',380);
 $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height',160);
+=======
+$WIDTH=DolGraph::getDefaultGraphSizeForStats('width', 380);
+$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height', 160);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'products', 'stocks', 'bills', 'other'));
 
+<<<<<<< HEAD
 $id		= GETPOST('id','int');         // For this page, id can also be 'all'
 $ref	= GETPOST('ref');
 $mode	= (GETPOST('mode') ? GETPOST('mode') : 'byunit');
 $search_year   = GETPOST('search_year','int');
 $search_categ  = GETPOST('search_categ','int');
+=======
+$id		= GETPOST('id', 'int');         // For this page, id can also be 'all'
+$ref	= GETPOST('ref', 'alpha');
+$mode	= (GETPOST('mode', 'alpha') ? GETPOST('mode', 'alpha') : 'byunit');
+$search_year   = GETPOST('search_year', 'int');
+$search_categ  = GETPOST('search_categ', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $error	= 0;
 $mesg	= '';
@@ -55,7 +73,11 @@ if (! empty($user->societe_id)) $socid=$user->societe_id;
 // Security check
 $fieldvalue = (! empty($id) ? $id : $ref);
 $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
+<<<<<<< HEAD
 $result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype);
+=======
+$result=restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $tmp=dol_getdate(dol_now());
 $currentyear=$tmp['year'];
@@ -79,9 +101,15 @@ $object = new Product($db);
 
 if (! $id && empty($ref))
 {
+<<<<<<< HEAD
     llxHeader("",$langs->trans("ProductStatistics"));
 
     $type = GETPOST('type','int');
+=======
+    llxHeader("", $langs->trans("ProductStatistics"));
+
+    $type = GETPOST('type', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
    	$helpurl='';
     if ($type == '0')
@@ -90,7 +118,11 @@ if (! $id && empty($ref))
         //$title=$langs->trans("StatisticsOfProducts");
         $title=$langs->trans("Statistics");
     }
+<<<<<<< HEAD
     else if ($type == '1')
+=======
+    elseif ($type == '1')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
         //$title=$langs->trans("StatisticsOfServices");
@@ -103,6 +135,7 @@ if (! $id && empty($ref))
         $title=$langs->trans("Statistics");
     }
 
+<<<<<<< HEAD
     print load_fiche_titre($title, $mesg,'title_products.png');
 }
 else
@@ -112,6 +145,17 @@ else
 	$title = $langs->trans('ProductServiceCard');
 	$helpurl = '';
 	$shortlabel = dol_trunc($object->label,16);
+=======
+    print load_fiche_titre($title, $mesg, 'title_products.png');
+}
+else
+{
+    $result = $object->fetch($id, $ref);
+
+	$title = $langs->trans('ProductServiceCard');
+	$helpurl = '';
+	$shortlabel = dol_trunc($object->label, 16);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
 	{
 		$title = $langs->trans('Product')." ". $shortlabel ." - ".$langs->trans('Statistics');
@@ -189,7 +233,11 @@ if ($result || empty($id))
 		{
     		print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td><td>';
     		//$moreforfilter.='<div class="divsearchfield">';
+<<<<<<< HEAD
     		$moreforfilter.=$htmlother->select_categories(Categorie::TYPE_PRODUCT,$search_categ,'search_categ',1);
+=======
+    		$moreforfilter.=$htmlother->select_categories(Categorie::TYPE_PRODUCT, $search_categ, 'search_categ', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     		//$moreforfilter.='</div>';
     		print $moreforfilter;
     		print '</td></tr>';
@@ -203,10 +251,17 @@ if ($result || empty($id))
 	{
 	    $arrayyears[$year]=$year;
 	}
+<<<<<<< HEAD
 	if (! in_array($year,$arrayyears)) $arrayyears[$year]=$year;
 	if (! in_array($nowyear,$arrayyears)) $arrayyears[$nowyear]=$nowyear;
 	arsort($arrayyears);
 	print $form->selectarray('search_year',$arrayyears,$search_year,0);
+=======
+	if (! in_array($year, $arrayyears)) $arrayyears[$year]=$year;
+	if (! in_array($nowyear, $arrayyears)) $arrayyears[$nowyear]=$nowyear;
+	arsort($arrayyears);
+	print $form->selectarray('search_year', $arrayyears, $search_year, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</td></tr>';
 	print '</table>';
 	print '<div class="center"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></div>';
@@ -219,7 +274,11 @@ if ($result || empty($id))
 	if (! empty($conf->dol_use_jmobile)) print "\n".'<div class="fichecenter"><div class="nowrap">'."\n";
 
 	if ($mode == 'bynumber') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).($type != '' ? '&type='.$type:'').'&mode=byunit&search_year='.$search_year.'">';
+<<<<<<< HEAD
 	else print img_picto('','tick').' ';
+=======
+	else print img_picto('', 'tick').' ';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print $langs->trans("StatsByNumberOfUnits");
 	if ($mode == 'bynumber') print '</a>';
 
@@ -227,7 +286,11 @@ if ($result || empty($id))
 	else print ' &nbsp; / &nbsp; ';
 
 	if ($mode == 'byunit') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).($type != '' ? '&type='.$type:'').'&mode=bynumber&search_year='.$search_year.'">';
+<<<<<<< HEAD
 	else print img_picto('','tick').' ';
+=======
+	else print img_picto('', 'tick').' ';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print $langs->trans("StatsByNumberOfEntities");
 	if ($mode == 'byunit') print '</a>';
 
@@ -245,7 +308,11 @@ if ($result || empty($id))
 		{
 			if (dol_mkdir($dir.'/'.$object->id) < 0)
 			{
+<<<<<<< HEAD
 				$mesg = $langs->trans("ErrorCanNotCreateDir",$dir);
+=======
+				$mesg = $langs->trans("ErrorCanNotCreateDir", $dir);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$error++;
 			}
 		}
@@ -269,7 +336,11 @@ if ($result || empty($id))
 		'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsCustomerOrders"):$langs->transnoentitiesnoconv("NumberOfCustomerOrders")));
 	}
 
+<<<<<<< HEAD
 	if($conf->fournisseur->enabled) {
+=======
+	if($conf->supplier_order->enabled) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$graphfiles['orderssuppliers']=array('modulepart'=>'productstats_orderssuppliers',
 		'file' => $object->id.'/orderssuppliers12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year?'_year'.$search_year:'').'.png',
 		'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsSupplierOrders"):$langs->transnoentitiesnoconv("NumberOfSupplierOrders")));
@@ -279,12 +350,27 @@ if ($result || empty($id))
 		$graphfiles['invoices']=array('modulepart'=>'productstats_invoices',
 		'file' => $object->id.'/invoices12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year?'_year'.$search_year:'').'.png',
 		'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsCustomerInvoices"):$langs->transnoentitiesnoconv("NumberOfCustomerInvoices")));
+<<<<<<< HEAD
 
+=======
+	}
+
+	if($conf->supplier_invoice->enabled) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$graphfiles['invoicessuppliers']=array('modulepart'=>'productstats_invoicessuppliers',
 		'file' => $object->id.'/invoicessuppliers12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year?'_year'.$search_year:'').'.png',
 		'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsSupplierInvoices"):$langs->transnoentitiesnoconv("NumberOfSupplierInvoices")));
 	}
 
+<<<<<<< HEAD
+=======
+	if($conf->contrat->enabled) {
+		$graphfiles['contracts']=array('modulepart'=>'productstats_contracts',
+			'file' => $object->id.'/contracts12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year?'_year'.$search_year:'').'.png',
+			'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsContracts"):$langs->transnoentitiesnoconv("NumberOfContracts")));
+	}
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$px = new DolGraph();
 
 	if (! $error && count($graphfiles)>0)
@@ -310,7 +396,11 @@ if ($result || empty($id))
 				        $categ=new Categorie($db);
 				        $categ->fetch($search_categ);
 				        $listofprodids = $categ->getObjectsInCateg('product', 1);
+<<<<<<< HEAD
 				        $morefilters=' AND d.fk_product IN ('.((is_array($listofprodids) && count($listofprodids)) ? join(',',$listofprodids):'0').')';
+=======
+				        $morefilters=' AND d.fk_product IN ('.((is_array($listofprodids) && count($listofprodids)) ? join(',', $listofprodids):'0').')';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				    }
 				    if ($search_categ == -2)
 				    {
@@ -323,6 +413,10 @@ if ($result || empty($id))
 					if ($key == 'proposalssuppliers') $graph_data = $object->get_nb_propalsupplier($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters);
 					if ($key == 'invoicessuppliers')  $graph_data = $object->get_nb_achat($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters);
 					if ($key == 'orderssuppliers')    $graph_data = $object->get_nb_ordersupplier($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters);
+<<<<<<< HEAD
+=======
+					if ($key == 'contracts')          $graph_data = $object->get_nb_contract($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 					// TODO Save cachefile $graphfiles[$key]['file']
 				}
@@ -336,23 +430,39 @@ if ($result || empty($id))
 					$px->SetWidth($WIDTH);
 					$px->SetHeight($HEIGHT);
 					$px->SetHorizTickIncrement(1);
+<<<<<<< HEAD
 					$px->SetPrecisionY(0);
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					$px->SetShading(3);
 					//print 'x '.$key.' '.$graphfiles[$key]['file'];
 
 					$url=DOL_URL_ROOT.'/viewimage.php?modulepart='.$graphfiles[$key]['modulepart'].'&entity='.$object->entity.'&file='.urlencode($graphfiles[$key]['file']);
+<<<<<<< HEAD
 					$px->draw($dir."/".$graphfiles[$key]['file'],$url);
+=======
+					$px->draw($dir."/".$graphfiles[$key]['file'], $url);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 					$graphfiles[$key]['output']=$px->show();
 				}
 				else
 				{
+<<<<<<< HEAD
 					dol_print_error($db,'Error for calculating graph on key='.$key.' - '.$object->error);
 				}
 			}
 		}
 
 		$mesg = $langs->trans("ChartGenerated");
+=======
+					dol_print_error($db, 'Error for calculating graph on key='.$key.' - '.$object->error);
+				}
+			}
+
+			//setEventMessages($langs->trans("ChartGenerated"), null, 'mesgs');
+		}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	// Show graphs
@@ -383,6 +493,7 @@ if ($result || empty($id))
 			// Date generation
 			if ($graphfiles[$key]['output'] && ! $px->isGraphKo())
 			{
+<<<<<<< HEAD
 			    if (file_exists($dir."/".$graphfiles[$key]['file']) && filemtime($dir."/".$graphfiles[$key]['file'])) $dategenerated=$langs->trans("GeneratedOn",dol_print_date(filemtime($dir."/".$graphfiles[$key]['file']),"dayhour"));
 			    else $dategenerated=$langs->trans("GeneratedOn",dol_print_date(dol_now(),"dayhour"));
 			}
@@ -391,6 +502,16 @@ if ($result || empty($id))
 			    print $dategenerated=($mesg?'<font class="error">'.$mesg.'</font>':$langs->trans("ChartNotGenerated"));
 			}
 			$linktoregenerate='<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).((string) $type != ''?'&type='.$type:'').'&action=recalcul&mode='.$mode.'&search_year='.$search_year.'&search_categ='.$search_categ.'">'.img_picto($langs->trans("ReCalculate").' ('.$dategenerated.')','refresh').'</a>';
+=======
+			    if (file_exists($dir."/".$graphfiles[$key]['file']) && filemtime($dir."/".$graphfiles[$key]['file'])) $dategenerated=$langs->trans("GeneratedOn", dol_print_date(filemtime($dir."/".$graphfiles[$key]['file']), "dayhour"));
+			    else $dategenerated=$langs->trans("GeneratedOn", dol_print_date(dol_now(), "dayhour"));
+			}
+			else
+			{
+			    $dategenerated=($mesg?'<font class="error">'.$mesg.'</font>':$langs->trans("ChartNotGenerated"));
+			}
+			$linktoregenerate='<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).((string) $type != ''?'&type='.$type:'').'&action=recalcul&mode='.$mode.'&search_year='.$search_year.'&search_categ='.$search_categ.'">'.img_picto($langs->trans("ReCalculate").' ('.$dategenerated.')', 'refresh').'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			// Show graph
 			print '<table class="noborder" width="100%">';
@@ -433,6 +554,11 @@ if (! $id)
     dol_fiche_end();
 }
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

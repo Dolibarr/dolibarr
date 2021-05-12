@@ -38,14 +38,23 @@ if ($user->societe_id > 0)
     $action = '';
     $socid = $user->societe_id;
 }
+<<<<<<< HEAD
 $result=restrictedArea($user,'adherent','','','cotisation');
+=======
+$result=restrictedArea($user, 'adherent', '', '', 'cotisation');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $year = strftime("%Y", time());
 $startyear=$year-2;
 $endyear=$year;
 
+<<<<<<< HEAD
 $langs->load("members");
 $langs->load("companies");
+=======
+// Load translation files required by the page
+$langs->loadLangs(array("companies","members"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 /*
@@ -54,19 +63,33 @@ $langs->load("companies");
 
 $memberstatic=new Adherent($db);
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("MembersStatisticsByProperties"),'','',0,0,array('https://www.google.com/jsapi'));
 
 $title=$langs->trans("MembersStatisticsByProperties");
 
 print load_fiche_titre($title, $mesg);
+=======
+llxHeader('', $langs->trans("MembersStatisticsByProperties"), '', '', 0, 0, array('https://www.google.com/jsapi'));
+
+$title=$langs->trans("MembersStatisticsByProperties");
+
+print load_fiche_titre($title, '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 dol_mkdir($dir);
 
 $tab='byproperties';
 
 $data = array();
+<<<<<<< HEAD
 $sql.="SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, d.morphy as code";
 $sql.=" FROM ".MAIN_DB_PREFIX."adherent as d";
+=======
+$sql.="SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, d.morphy as code";
+$sql.=" FROM ".MAIN_DB_PREFIX."adherent as d";
+$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.rowid";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $sql.=" WHERE d.entity IN (".getEntity('adherent').")";
 $sql.=" AND d.statut = 1";
 $sql.=" GROUP BY d.morphy";
@@ -87,7 +110,11 @@ if ($resql)
 		if ($obj->code == 'phy') $foundphy++;
 		if ($obj->code == 'mor') $foundmor++;
 
+<<<<<<< HEAD
 		$data[]=array('label'=>$obj->code, 'nb'=>$obj->nb, 'lastdate'=>$db->jdate($obj->lastdate));
+=======
+		$data[]=array('label'=>$obj->code, 'nb'=>$obj->nb, 'lastdate'=>$db->jdate($obj->lastdate), 'lastsubscriptiondate'=>$db->jdate($obj->lastsubscriptiondate));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$i++;
 	}
@@ -112,13 +139,18 @@ if (! count($data))
 }
 else
 {
+<<<<<<< HEAD
 	print load_fiche_titre($langs->trans("MembersByNature"),'','');
+=======
+	print load_fiche_titre($langs->trans("MembersByNature"), '', '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 // Print array
 print '<table class="liste" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Nature").'</td>';
+<<<<<<< HEAD
 print '<td align="right">'.$langs->trans("NbOfMembers").'</td>';
 print '<td align="center">'.$langs->trans("LatestSubscriptionDate").'</td>';
 print '</tr>';
@@ -136,6 +168,24 @@ foreach ($data as $val)
 	print '<td align="center">'.dol_print_date($val['lastdate'],'dayhour').'</td>';
 	print '</tr>';
 	$oldyear=$year;
+=======
+print '<td class="right">'.$langs->trans("NbOfMembers").'</td>';
+print '<td class="center">'.$langs->trans("LastMemberDate").'</td>';
+print '<td class="center">'.$langs->trans("LatestSubscriptionDate").'</td>';
+print '</tr>';
+
+if (! $foundphy) $data[]=array('label'=>'phy','nb'=>'0','lastdate'=>'', 'lastsubscriptiondate'=>'');
+if (! $foundmor) $data[]=array('label'=>'mor','nb'=>'0','lastdate'=>'', 'lastsubscriptiondate'=>'');
+
+foreach ($data as $val)
+{
+	print '<tr class="oddeven">';
+	print '<td>'.$memberstatic->getmorphylib($val['label']).'</td>';
+	print '<td class="right">'.$val['nb'].'</td>';
+	print '<td class="center">'.dol_print_date($val['lastdate'], 'dayhour').'</td>';
+	print '<td class="center">'.dol_print_date($val['lastsubscriptiondate'], 'dayhour').'</td>';
+	print '</tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 print '</table>';
@@ -143,7 +193,12 @@ print '</table>';
 
 dol_fiche_end();
 
+<<<<<<< HEAD
 
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

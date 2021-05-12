@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - sms
 Sms=SMS
+<<<<<<< HEAD
 SmsSetup=Configuração do SMS
 SmsDesc=Esta pagina permite definir as opçoes globais para os SMS
 SmsCard=Chip SMS
@@ -31,5 +32,19 @@ NbOfSms=Numero de numeros telefonicos
 ThisIsATestMessage=Isto e uma mensagem de teste
 SmsInfoCharRemain=Nr de caracteres restantes
 SmsInfoNumero=(formato internacional ex: +33899701761)
+=======
+SmsCard=Chip SMS
+SmsTargets=Alvos
+SmsRecipients=Alvos
+SmsTopic=Topico do SMS
+ResetSms=Novo envio
+SmsStatusNotSent=Nao enviado
+ErrorSmsRecipientIsEmpty=Numero de alvos vazio
+WarningNoSmsAdded=Falta numero telefone para adicionar a lista de alvos
+NbOfUniqueSms=N°. de números de telefone exclusivos
+NbOfSms=N°. de números de telefone
+ThisIsATestMessage=Isto e uma mensagem de teste
+SmsInfoCharRemain=N°. de caracteres restantes
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SmsNoPossibleSenderFound=Nenhum expedidor disponível. Verifique a configuração do seu provedor de SMS.
 DisableStopIfSupported=Desabilitar mensagem PARAR (se suportado)

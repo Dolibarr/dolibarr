@@ -105,4 +105,7 @@ if($absolute_discount <= 0 && $absolute_creditnote <= 0) {
 		print ' (' . $addabsolutediscount . ')';
 	}
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -77,14 +77,24 @@ ALTER TABLE llx_propal DROP FOREIGN KEY fk_propal_fk_currency;
 ALTER TABLE llx_commande DROP FOREIGN KEY fk_commande_fk_currency;
 ALTER TABLE llx_facture DROP FOREIGN KEY fk_facture_fk_currency;
 
+<<<<<<< HEAD
 delete from llx_facturedet where fk_facture in (select rowid from llx_facture where facnumber in ('(PROV)','ErrorBadMask'));
 delete from llx_facture where facnumber in ('(PROV)','ErrorBadMask');
+=======
+delete from llx_facturedet where fk_facture in (select rowid from llx_facture where ref in ('(PROV)','ErrorBadMask'));
+delete from llx_facture where ref in ('(PROV)','ErrorBadMask');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 delete from llx_commandedet where fk_commande in (select rowid from llx_commande where ref in ('(PROV)','ErrorBadMask'));
 delete from llx_commande where ref in ('(PROV)','ErrorBadMask');
 delete from llx_propaldet where fk_propal in (select rowid from llx_propal where ref in ('(PROV)','ErrorBadMask'));
 delete from llx_propal where ref in ('(PROV)','ErrorBadMask');
+<<<<<<< HEAD
 delete from llx_facturedet where fk_facture in (select rowid from llx_facture where facnumber = '');
 delete from llx_facture where facnumber = '';
+=======
+delete from llx_facturedet where fk_facture in (select rowid from llx_facture where ref = '');
+delete from llx_facture where ref = '';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 delete from llx_commandedet where fk_commande in (select rowid from llx_commande where ref = '');
 delete from llx_commande where ref = '';
 delete from llx_propaldet where fk_propal in (select rowid from llx_propal where ref = '');
@@ -199,6 +209,16 @@ delete from llx_element_element where sourcetype='commande' and fk_source not in
 DELETE FROM llx_actioncomm_resources WHERE fk_actioncomm not in (select id from llx_actioncomm);
 
 
+<<<<<<< HEAD
+=======
+-- Fix link on parent that were removed
+DROP table tmp_user;
+CREATE TABLE tmp_user as (select * from llx_user);
+UPDATE llx_user SET fk_user = NULL where fk_user NOT IN (select rowid from tmp_user);
+
+
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 UPDATE llx_product SET canvas = NULL where canvas = 'default@product';
 UPDATE llx_product SET canvas = NULL where canvas = 'service@product';
 
@@ -376,6 +396,19 @@ update llx_bank_url as bu set url_id = (select e.fk_user_author from tmp_bank_ur
 drop table tmp_bank_url_expense_user;
 
 
+<<<<<<< HEAD
+=======
+-- Delete duplicate accounting account, but only if not used
+DROP TABLE tmp_llx_accouting_account;
+CREATE TABLE tmp_llx_accouting_account AS SELECT MIN(rowid) as MINID, account_number, entity, fk_pcg_version, count(*) AS NB FROM llx_accounting_account group BY account_number, entity, fk_pcg_version HAVING count(*) >= 2 order by account_number, entity, fk_pcg_version;
+--SELECT * from tmp_llx_accouting_account;
+DELETE from llx_accounting_account where rowid in (select minid from tmp_llx_accouting_account where minid NOT IN (SELECT fk_code_ventilation from llx_facturedet) AND minid NOT IN (SELECT fk_code_ventilation from llx_facture_fourn_det) AND minid NOT IN (SELECT fk_code_ventilation from llx_expensereport_det));
+
+ALTER TABLE llx_accounting_account DROP INDEX uk_accounting_account;
+ALTER TABLE llx_accounting_account ADD UNIQUE INDEX uk_accounting_account (account_number, entity, fk_pcg_version);
+
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 -- VMYSQL4.1 update llx_projet_task_time set task_datehour = task_date where task_datehour < task_date or task_datehour > DATE_ADD(task_date, interval 1 day);
 
 
@@ -390,6 +423,10 @@ drop table tmp_bank_url_expense_user;
 -- p.tva_tx = 0
 -- where price = 17.5
 
+<<<<<<< HEAD
+=======
+UPDATE llx_chargesociales SET date_creation = tms WHERE date_creation IS NULL;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 -- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
 -- VMYSQL4.1 update llx_accounting_account set tms = datec where DATE(STR_TO_DATE(tms, '%Y-%m-%d')) IS NULL;

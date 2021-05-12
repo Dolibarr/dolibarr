@@ -1,5 +1,10 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
+=======
+/* Copyright (C) 2015       Jean-François Ferry         <jfefe@aternatik.fr>
+ * Copyright (C) 2019       Frédéric France             <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +39,11 @@ class Contacts extends DolibarrApi
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
 	static $FIELDS = array(
+<<<<<<< HEAD
 		'lastname'
+=======
+		'lastname',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	);
 
 	/**
@@ -45,7 +54,11 @@ class Contacts extends DolibarrApi
 	/**
 	 * Constructor
 	 */
+<<<<<<< HEAD
 	function __construct()
+=======
+    public function __construct()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $db, $conf;
 		$this->db = $db;
@@ -61,12 +74,21 @@ class Contacts extends DolibarrApi
 	 *
 	 * Return an array with contact informations
 	 *
+<<<<<<< HEAD
 	 * @param 	int 	$id ID of contact
+=======
+	 * @param 	int    $id                  ID of contact
+	 * @param   int    $includecount        Count and return also number of elements the contact is used as a link for
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	 * @return 	array|mixed data without useless information
 	 *
 	 * @throws 	RestException
 	 */
+<<<<<<< HEAD
 	function get($id)
+=======
+    public function get($id, $includecount = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		if (!DolibarrApiAccess::$user->rights->societe->contact->lire)
 		{
@@ -74,6 +96,10 @@ class Contacts extends DolibarrApi
 		}
 
 		$result = $this->contact->fetch($id);
+<<<<<<< HEAD
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if (!$result)
 		{
 			throw new RestException(404, 'Contact not found');
@@ -84,6 +110,14 @@ class Contacts extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
 		}
 
+<<<<<<< HEAD
+=======
+		if ($includecount)
+		{
+		    $this->contact->load_ref_elements();
+		}
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		return $this->_cleanObjectDatas($this->contact);
 	}
 
@@ -96,6 +130,7 @@ class Contacts extends DolibarrApi
 	 * @param string	$sortorder	        Sort order
 	 * @param int		$limit		        Limit for list
 	 * @param int		$page		        Page number
+<<<<<<< HEAD
      * @param string   	$thirdparty_ids	    Thirdparty ids to filter contacts of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
      * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @return array                        Array of contact objects
@@ -103,6 +138,17 @@ class Contacts extends DolibarrApi
 	 * @throws RestException
 	 */
 	function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '') {
+=======
+	 * @param string   	$thirdparty_ids	    Thirdparty ids to filter contacts of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
+	 * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param int       $includecount       Count and return also number of elements the contact is used as a link for
+	 * @return array                        Array of contact objects
+     *
+	 * @throws RestException
+     */
+    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $includecount = 0)
+    {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $db, $conf;
 
 		$obj_ret = array();
@@ -168,14 +214,28 @@ class Contacts extends DolibarrApi
 		{
 			$num = $db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
+<<<<<<< HEAD
+=======
+            $i = 0;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			while ($i < $min)
 			{
 				$obj = $db->fetch_object($result);
 				$contact_static = new Contact($db);
 				if ($contact_static->fetch($obj->rowid))
 				{
+<<<<<<< HEAD
 					$obj_ret[] = $this->_cleanObjectDatas($contact_static);
 				}
+=======
+		            if ($includecount)
+		            {
+		                $contact_static->load_ref_elements();
+		            }
+					$obj_ret[] = $this->_cleanObjectDatas($contact_static);
+				}
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$i++;
 			}
 		}
@@ -195,7 +255,12 @@ class Contacts extends DolibarrApi
 	 * @param   array   $request_data   Request datas
 	 * @return  int     ID of contact
 	 */
+<<<<<<< HEAD
 	function post($request_data = null) {
+=======
+    public function post($request_data = null)
+    {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if (!DolibarrApiAccess::$user->rights->societe->contact->creer)
 		{
 			throw new RestException(401, 'No permission to create/update contacts');
@@ -220,7 +285,12 @@ class Contacts extends DolibarrApi
 	 * @param array $request_data   Datas
 	 * @return int
 	 */
+<<<<<<< HEAD
 	function put($id, $request_data = null) {
+=======
+    public function put($id, $request_data = null)
+    {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if (!DolibarrApiAccess::$user->rights->societe->contact->creer)
 		{
 			throw new RestException(401, 'No permission to create/update contacts');
@@ -255,7 +325,12 @@ class Contacts extends DolibarrApi
 	 * @param   int     $id Contact ID
 	 * @return  integer
 	 */
+<<<<<<< HEAD
 	function delete($id) {
+=======
+    public function delete($id)
+    {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if (!DolibarrApiAccess::$user->rights->societe->contact->supprimer)
 		{
 			throw new RestException(401, 'No permission to delete contacts');
@@ -283,15 +358,26 @@ class Contacts extends DolibarrApi
 	 *
 	 * @url	POST {id}/createUser
 	 */
+<<<<<<< HEAD
 	function createUser($id, $request_data = null) {
+=======
+    public function createUser($id, $request_data = null)
+    {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    //if (!DolibarrApiAccess::$user->rights->user->user->creer) {
 	    //throw new RestException(401);
 	    //}
 
 	    if (!isset($request_data["login"]))
+<<<<<<< HEAD
 	    				throw new RestException(400, "login field missing");
 	    if (!isset($request_data["password"]))
 	    				throw new RestException(400, "password field missing");
+=======
+    		throw new RestException(400, "login field missing");
+	    if (!isset($request_data["password"]))
+	    	throw new RestException(400, "password field missing");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	    if (!DolibarrApiAccess::$user->rights->societe->contact->lire) {
 	        throw new RestException(401, 'No permission to read contacts');
@@ -314,12 +400,20 @@ class Contacts extends DolibarrApi
 	    $login = $request_data["login"];
 	    $password = $request_data["password"];
 	    $useraccount = new User($this->db);
+<<<<<<< HEAD
 	    $result = $useraccount->create_from_contact($contact,$login,$password);
+=======
+	    $result = $useraccount->create_from_contact($contact, $login, $password);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    if ($result <= 0) {
 	        throw new RestException(500, "User not created");
 	    }
 	    // password parameter not used in create_from_contact
+<<<<<<< HEAD
 	    $useraccount->setPassword($useraccount,$password);
+=======
+	    $useraccount->setPassword($useraccount, $password);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	    return $result;
 	}
@@ -337,7 +431,11 @@ class Contacts extends DolibarrApi
      *
      * @url GET {id}/categories
      */
+<<<<<<< HEAD
 	function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
+=======
+    public function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		if (! DolibarrApiAccess::$user->rights->categorie->lire) {
 			throw new RestException(401);
@@ -358,6 +456,7 @@ class Contacts extends DolibarrApi
 		return $result;
     }
 
+<<<<<<< HEAD
 
     /**
      * Clean sensible object datas
@@ -400,4 +499,93 @@ class Contacts extends DolibarrApi
 
 		return $contact;
 	}
+=======
+    /**
+     * Add a category to a contact
+     *
+     * @url POST {id}/categories/{category_id}
+     *
+     * @param   int		$id             Id of contact
+     * @param   int     $category_id    Id of category
+     *
+     * @return  mixed
+     *
+     * @throws  401     RestException   Insufficient rights
+     * @throws  401     RestException   Access not allowed for login
+     * @throws  404     RestException   Category not found
+     * @throws  404     RestException   Contact not found
+     */
+    public function addCategory($id, $category_id)
+    {
+        if(! DolibarrApiAccess::$user->rights->societe->contact->creer) {
+            throw new RestException(401, 'Insufficient rights');
+        }
+
+        $result = $this->contact->fetch($id);
+        if (! $result) {
+            throw new RestException(404, 'Contact not found');
+        }
+        $category = new Categorie($this->db);
+        $result = $category->fetch($category_id);
+        if (! $result) {
+            throw new RestException(404, 'category not found');
+        }
+
+        if (! DolibarrApi::_checkAccessToResource('contact', $this->contact->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+        if (! DolibarrApi::_checkAccessToResource('category', $category->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        $category->add_type($this->contact, 'contact');
+
+        return $this->_cleanObjectDatas($this->contact);
+    }
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+    /**
+     * Clean sensible object datas
+     *
+     * @param   Object  $object     Object to clean
+     * @return  array               Array of cleaned object properties
+     */
+    protected function _cleanObjectDatas($object)
+    {
+        // phpcs:enable
+        $object = parent::_cleanObjectDatas($object);
+
+        unset($object->total_ht);
+        unset($object->total_tva);
+        unset($object->total_localtax1);
+        unset($object->total_localtax2);
+        unset($object->total_ttc);
+
+        unset($object->note);
+        unset($object->lines);
+        unset($object->thirdparty);
+
+        return $object;
+    }
+
+    /**
+     * Validate fields before create or update object
+     *
+     * @param   array|null     $data   Data to validate
+     * @return  array
+     * @throws  RestException
+     */
+    private function _validate($data)
+    {
+        $contact = array();
+        foreach (Contacts::$FIELDS as $field) {
+            if (!isset($data[$field])) {
+                throw new RestException(400, "$field field missing");
+            }
+            $contact[$field] = $data[$field];
+        }
+
+        return $contact;
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

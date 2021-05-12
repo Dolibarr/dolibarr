@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/contract/modules_contract.php';
  */
 class mod_contract_olive extends ModelNumRefContracts
 {
+<<<<<<< HEAD
 
 
 	var $nom='Olive';					// Nom du modele
@@ -41,6 +42,35 @@ class mod_contract_olive extends ModelNumRefContracts
 	var $code_null = 1;						// Code facultatif
 	var $version='dolibarr';    		// 'development', 'experimental', 'dolibarr'
 	var $code_auto = 0; 	                // Numerotation automatique
+=======
+    /**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see $name
+	 */
+	public $nom='Olive';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Olive';
+
+	public $code_modifiable = 1;				// Code modifiable
+
+	public $code_modifiable_invalide = 1;		// Code modifiable si il est invalide
+
+	public $code_modifiable_null = 1;			// Code modifiables si il est null
+
+	public $code_null = 1;						// Code facultatif
+
+	/**
+     * Dolibarr version of the loaded document
+     * @var string
+     */
+	public $version = 'dolibarr';    		// 'development', 'experimental', 'dolibarr'
+
+	public $code_auto = 0; 	                // Numerotation automatique
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	/**
@@ -48,7 +78,11 @@ class mod_contract_olive extends ModelNumRefContracts
 	 *
 	 *	@return string      		Description of module
 	 */
+<<<<<<< HEAD
 	function info()
+=======
+	public function info()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 
@@ -63,7 +97,11 @@ class mod_contract_olive extends ModelNumRefContracts
 	 * @param	Contrat		$contract	Object contract
 	 * @return	string					Return next value
 	 */
+<<<<<<< HEAD
 	function getNextValue($objsoc,$contract)
+=======
+	public function getNextValue($objsoc, $contract)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 		return '';
@@ -83,7 +121,11 @@ class mod_contract_olive extends ModelNumRefContracts
 	 * 								-3 ErrorProductCodeAlreadyUsed
 	 * 								-4 ErrorPrefixRequired
 	 */
+<<<<<<< HEAD
 	function verif($db, &$code, $product, $type)
+=======
+	public function verif($db, &$code, $product, $type)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf;
 
@@ -94,7 +136,11 @@ class mod_contract_olive extends ModelNumRefContracts
 		{
 			$result=0;
 		}
+<<<<<<< HEAD
 		else if (empty($code) && (! $this->code_null || ! empty($conf->global->MAIN_CONTARCT_CODE_ALWAYS_REQUIRED)) )
+=======
+		elseif (empty($code) && (! $this->code_null || ! empty($conf->global->MAIN_CONTARCT_CODE_ALWAYS_REQUIRED)) )
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			$result=-2;
 		}
@@ -103,4 +149,7 @@ class mod_contract_olive extends ModelNumRefContracts
 		return $result;
 	}
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

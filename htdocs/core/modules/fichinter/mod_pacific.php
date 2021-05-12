@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2013	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,10 +34,37 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/fichinter/modules_fichinter.php';
  */
 class mod_pacific extends ModeleNumRefFicheinter
 {
+<<<<<<< HEAD
     var $version='dolibarr';        // 'development', 'experimental', 'dolibarr'
 	var $prefix='FI';
 	var $error='';
 	var $nom = 'pacific';
+=======
+    /**
+     * Dolibarr version of the loaded document
+     * @var string
+     */
+	public $version = 'dolibarr';        // 'development', 'experimental', 'dolibarr'
+
+	public $prefix='FI';
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='pacific';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='pacific';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	/**
@@ -41,10 +72,17 @@ class mod_pacific extends ModeleNumRefFicheinter
 	 *
      *  @return     string      Text with description
      */
+<<<<<<< HEAD
     function info()
     {
     	global $langs;
       	return $langs->trans("SimpleNumRefModelDesc",$this->prefix);
+=======
+    public function info()
+    {
+    	global $langs;
+      	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
 	/**
@@ -52,7 +90,11 @@ class mod_pacific extends ModeleNumRefFicheinter
 	 *
 	 *  @return     string      Example
 	 */
+<<<<<<< HEAD
 	function getExample()
+=======
+	public function getExample()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return $this->prefix."0501-0001";
 	}
@@ -63,7 +105,11 @@ class mod_pacific extends ModeleNumRefFicheinter
 	 *
 	 *  @return     boolean     false si conflit, true si ok
 	 */
+<<<<<<< HEAD
 	function canBeActivated()
+=======
+	public function canBeActivated()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs,$conf,$db;
 
@@ -81,16 +127,26 @@ class mod_pacific extends ModeleNumRefFicheinter
 		if ($resql)
 		{
 			$row = $db->fetch_row($resql);
+<<<<<<< HEAD
 			if ($row) { $fayymm = substr($row[0],0,6); $max=$row[0]; }
 		}
 		if (! $fayymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i',$fayymm))
+=======
+			if ($row) { $fayymm = substr($row[0], 0, 6); $max=$row[0]; }
+		}
+		if (! $fayymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $fayymm))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			return true;
 		}
 		else
 		{
 			$langs->load("errors");
+<<<<<<< HEAD
 			$this->error=$langs->trans('ErrorNumRefModel',$max);
+=======
+			$this->error=$langs->trans('ErrorNumRefModel', $max);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			return false;
 		}
 	}
@@ -102,7 +158,11 @@ class mod_pacific extends ModeleNumRefFicheinter
 	 *  @param  Object		$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
+<<<<<<< HEAD
 	function getNextValue($objsoc=0,$object='')
+=======
+	public function getNextValue($objsoc = 0, $object = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $db,$conf;
 
@@ -123,10 +183,17 @@ class mod_pacific extends ModeleNumRefFicheinter
 
 		//$date=time();
 		$date=$object->datec;
+<<<<<<< HEAD
 		$yymm = strftime("%y%m",$date);
 
     	if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
     	else $num = sprintf("%04s",$max+1);
+=======
+		$yymm = strftime("%y%m", $date);
+
+    	if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
+    	else $num = sprintf("%04s", $max+1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		return $this->prefix.$yymm."-".$num;
 	}
@@ -138,6 +205,7 @@ class mod_pacific extends ModeleNumRefFicheinter
 	 * 	@param	Object	$objforref	Object for number to search
 	 *  @return string      		Next free value
 	 */
+<<<<<<< HEAD
 	function getNumRef($objsoc,$objforref)
 	{
 		return $this->getNextValue($objsoc,$objforref);
@@ -145,3 +213,10 @@ class mod_pacific extends ModeleNumRefFicheinter
 
 }
 
+=======
+	public function getNumRef($objsoc, $objforref)
+	{
+		return $this->getNextValue($objsoc, $objforref);
+	}
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

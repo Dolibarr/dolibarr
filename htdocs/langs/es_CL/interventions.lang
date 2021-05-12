@@ -6,13 +6,19 @@ ActionsOnFicheInter=Acciones en intervención
 InterventionContact=Contacto de intervención
 ValidateIntervention=Validar la intervención
 ModifyIntervention=Modificar la intervención
+<<<<<<< HEAD
 CloneIntervention=Intervención Clon
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmDeleteIntervention=¿Seguro que quieres eliminar esta intervención?
 ConfirmValidateIntervention=¿Estas seguro que deseas validad esta intervención con el nombre <b>%s</b>?
 ConfirmModifyIntervention=¿Estás seguro de que deseas modificar esta intervención?
 ConfirmDeleteInterventionLine=¿Estás seguro de que deseas eliminar esta línea de intervención?
 ConfirmCloneIntervention=¿Estás seguro de que quieres clonar esta intervención?
+<<<<<<< HEAD
 NameAndSignatureOfInternalContact=Nombre y firma de intervención:
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DocumentModelStandard=Modelo de documento estándar para intervenciones
 InterventionCardsAndInterventionLines=Intervenciones y líneas de intervenciones
 InterventionClassifyBilled=Clasificar "Facturado"
@@ -20,7 +26,10 @@ InterventionClassifyUnBilled=Clasificar "Sin facturar"
 InterventionClassifyDone=Clasificar "Hecho"
 StatusInterInvoiced=Pagado
 SendInterventionRef=Presentación de la intervención %s
+<<<<<<< HEAD
 SendInterventionByMail=Enviar intervención por correo electrónico
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 InterventionCreatedInDolibarr=Intervención %s creado
 InterventionModifiedInDolibarr=Intervención %s modificado
 InterventionClassifiedBilledInDolibarr=Intervención %s configurada como facturada
@@ -34,8 +43,11 @@ TypeContact_fichinter_external_CUSTOMER=Seguimiento de contacto con el cliente
 PrintProductsOnFichinter=Imprima también líneas de tipo "producto" (no solo servicios) en la tarjeta de intervención
 PrintProductsOnFichinterDetails=intervenciones generadas a partir de órdenes
 UseServicesDurationOnFichinter=Usar la duración de los servicios para las intervenciones generadas a partir de órdenes
+<<<<<<< HEAD
 NbOfinterventions=N° de tarjetas de intervención
 NumberOfInterventionsByMonth=Número de tarjetas de intervención por mes (fecha de validación)
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AmountOfInteventionNotIncludedByDefault=La cantidad de intervención no se incluye por defecto en los beneficios (en la mayoría de los casos, las hojas de tiempo se utilizan para contar el tiempo invertido). Agregue la opción PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT a 1 en home-setup-other para incluirlos.
 InterId=Id de intervención
 InterRef=Intervención ref.

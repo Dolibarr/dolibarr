@@ -3,7 +3,11 @@
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2006-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007      Auguria SARL         <info@auguria.org>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2011-2012 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
@@ -43,10 +47,17 @@ $langs->loadLangs(array("admin","products"));
 if (! $user->admin || (empty($conf->product->enabled) && empty($conf->service->enabled)))
 	accessforbidden();
 
+<<<<<<< HEAD
 $action = GETPOST('action','alpha');
 $value = GETPOST('value','alpha');
 $label = GETPOST('label','alpha');
 $scandir = GETPOST('scan_dir','alpha');
+=======
+$action = GETPOST('action', 'alpha');
+$value = GETPOST('value', 'alpha');
+$label = GETPOST('label', 'alpha');
+$scandir = GETPOST('scan_dir', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $type='product';
 
 // Pricing Rules
@@ -77,7 +88,11 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'setcodeproduct')
 {
+<<<<<<< HEAD
 	if (dolibarr_set_const($db, "PRODUCT_CODEPRODUCT_ADDON",$value,'chaine',0,'',$conf->entity) > 0)
+=======
+	if (dolibarr_set_const($db, "PRODUCT_CODEPRODUCT_ADDON", $value, 'chaine', 0, '', $conf->entity) > 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
@@ -90,17 +105,29 @@ if ($action == 'setcodeproduct')
 
 if ($action == 'other' && GETPOST('value_PRODUIT_LIMIT_SIZE') >= 0)
 {
+<<<<<<< HEAD
 	$res = dolibarr_set_const($db, "PRODUIT_LIMIT_SIZE", GETPOST('value_PRODUIT_LIMIT_SIZE'),'chaine',0,'',$conf->entity);
+=======
+	$res = dolibarr_set_const($db, "PRODUIT_LIMIT_SIZE", GETPOST('value_PRODUIT_LIMIT_SIZE'), 'chaine', 0, '', $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if (! $res > 0) $error++;
 }
 if ($action == 'other' && GETPOST('value_PRODUIT_MULTIPRICES_LIMIT') > 0)
 {
+<<<<<<< HEAD
 	$res = dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", GETPOST('value_PRODUIT_MULTIPRICES_LIMIT'),'chaine',0,'',$conf->entity);
+=======
+	$res = dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", GETPOST('value_PRODUIT_MULTIPRICES_LIMIT'), 'chaine', 0, '', $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if (! $res > 0) $error++;
 }
 if ($action == 'other')
 {
+<<<<<<< HEAD
 	$princingrules = GETPOST('princingrule','alpha');
+=======
+	$princingrules = GETPOST('princingrule', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	foreach ($select_pricing_rules as $rule=>$label) // Loop on each possible mode
 	{
 		if ($rule == $princingrules) // We are on selected rule, we enable it
@@ -114,7 +141,11 @@ if ($action == 'other')
 			}
 			else
 			{
+<<<<<<< HEAD
 				$multirule=explode('&',$princingrules);
+=======
+				$multirule=explode('&', $princingrules);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				foreach($multirule as $rulesselected)
 				{
 					$res = dolibarr_set_const($db, $rulesselected, 1, 'chaine', 0, '', $conf->entity);
@@ -123,6 +154,7 @@ if ($action == 'other')
 		}
 		else	// We clear this mode
 		{
+<<<<<<< HEAD
 			if (strpos($rule,'&')===false) {
 				$res = dolibarr_set_const($db, $rule, 0, 'chaine', 0, '', $conf->entity);
 			}
@@ -144,21 +176,66 @@ if ($action == 'other')
 
 	$value = GETPOST('activate_usesearchtoselectproduct','alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_USE_SEARCH_TO_SELECT", $value,'chaine',0,'',$conf->entity);
+=======
+			if (strpos($rule, '&')===false) {
+				$res = dolibarr_set_const($db, $rule, 0, 'chaine', 0, '', $conf->entity);
+			}
+		}
+	}
+
+	$value = GETPOST('PRODUIT_SOUSPRODUITS', 'alpha');
+	$res = dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", $value, 'chaine', 0, '', $conf->entity);
+
+	$value = GETPOST('activate_viewProdDescInForm', 'alpha');
+	$res = dolibarr_set_const($db, "PRODUIT_DESC_IN_FORM", $value, 'chaine', 0, '', $conf->entity);
+
+	$value = GETPOST('activate_viewProdTextsInThirdpartyLanguage', 'alpha');
+	$res = dolibarr_set_const($db, "PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE", $value, 'chaine', 0, '', $conf->entity);
+
+	$value = GETPOST('activate_mergePropalProductCard', 'alpha');
+	$res = dolibarr_set_const($db, "PRODUIT_PDF_MERGE_PROPAL", $value, 'chaine', 0, '', $conf->entity);
+
+	$value = GETPOST('activate_usesearchtoselectproduct', 'alpha');
+	$res = dolibarr_set_const($db, "PRODUIT_USE_SEARCH_TO_SELECT", $value, 'chaine', 0, '', $conf->entity);
+
+	$value = GETPOST('activate_useProdFournDesc', 'alpha');
+	$res = dolibarr_set_const($db, "PRODUIT_FOURN_TEXTS", $value, 'chaine', 0, '', $conf->entity);
+	if ($value) {
+	    $sql_test = "SELECT count(desc_fourn) as cpt FROM ".MAIN_DB_PREFIX."product_fournisseur_price WHERE 1";
+	    $resql = $db->query($sql_test);
+	    if (!$resql && $db->lasterrno == 'DB_ERROR_NOSUCHFIELD') // if the field does not exist, we create it
+	    {
+	        $sql_new = "ALTER TABLE ".MAIN_DB_PREFIX."product_fournisseur_price ADD COLUMN desc_fourn text";
+	        $resql_new = $db->query($sql_new);
+	    }
+	}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 if ($action == 'specimen') // For products
 {
+<<<<<<< HEAD
 	$modele= GETPOST('module','alpha');
+=======
+	$modele= GETPOST('module', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	$product = new Product($db);
 	$product->initAsSpecimen();
 
 	// Search template files
 	$file=''; $classname=''; $filefound=0;
+<<<<<<< HEAD
 	$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 	foreach($dirmodels as $reldir)
 	{
 	    $file=dol_buildpath($reldir."core/modules/product/doc/pdf_".$modele.".modules.php",0);
+=======
+	$dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
+	foreach($dirmodels as $reldir)
+	{
+	    $file=dol_buildpath($reldir."core/modules/product/doc/pdf_".$modele.".modules.php", 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if (file_exists($file))
 		{
 			$filefound=1;
@@ -180,13 +257,21 @@ if ($action == 'specimen') // For products
 		}
 		else
 		{
+<<<<<<< HEAD
 			setEventMessage($obj->error,'errors');
+=======
+			setEventMessages($obj->error, $obj->errors, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			dol_syslog($obj->error, LOG_ERR);
 		}
 	}
 	else
 	{
+<<<<<<< HEAD
 		setEventMessage($langs->trans("ErrorModuleNotFound"),'errors');
+=======
+		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
 }
@@ -202,14 +287,22 @@ if ($action == 'del')
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
 	{
+<<<<<<< HEAD
 		if ($conf->global->PRODUCT_ADDON_PDF == "$value") dolibarr_del_const($db, 'PRODUCT_ADDON_PDF',$conf->entity);
+=======
+		if ($conf->global->PRODUCT_ADDON_PDF == "$value") dolibarr_del_const($db, 'PRODUCT_ADDON_PDF', $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 }
 
 // Set default model
 if ($action == 'setdoc')
 {
+<<<<<<< HEAD
 	if (dolibarr_set_const($db, "PRODUCT_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
+=======
+	if (dolibarr_set_const($db, "PRODUCT_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		// La constante qui a ete lue en avant du nouveau set
 		// on passe donc par une variable pour avoir un affichage coherent
@@ -227,6 +320,7 @@ if ($action == 'setdoc')
 
 if ($action == 'set')
 {
+<<<<<<< HEAD
 	$const = "PRODUCT_SPECIAL_".strtoupper(GETPOST('spe','alpha'));
 	$value = GETPOST('value');
 	if (GETPOST('value','alpha')) $res = dolibarr_set_const($db, $const, $value,'chaine',0,'',$conf->entity);
@@ -240,6 +334,21 @@ if ($action == 'other')
     $res = dolibarr_set_const($db, "PRODUCT_USE_UNITS", $value, 'chaine', 0, '', $conf->entity);
 	if (! $res > 0) $error++;
 }
+=======
+	$const = "PRODUCT_SPECIAL_".strtoupper(GETPOST('spe', 'alpha'));
+	$value = GETPOST('value');
+	if (GETPOST('value', 'alpha')) $res = dolibarr_set_const($db, $const, $value, 'chaine', 0, '', $conf->entity);
+	else $res = dolibarr_del_const($db, $const, $conf->entity);
+	if (! $res > 0) $error++;
+}
+
+//if ($action == 'other')
+//{
+//    $value = GETPOST('activate_units', 'alpha');
+//    $res = dolibarr_set_const($db, "PRODUCT_USE_UNITS", $value, 'chaine', 0, '', $conf->entity);
+//	if (! $res > 0) $error++;
+//}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if ($action)
 {
@@ -261,21 +370,36 @@ $formbarcode=new FormBarCode($db);
 
 $title = $langs->trans('ProductServiceSetup');
 $tab = $langs->trans("ProductsAndServices");
+<<<<<<< HEAD
 if (empty($conf->produit->enabled))
+=======
+if (empty($conf->product->enabled))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$title = $langs->trans('ServiceSetup');
 	$tab = $langs->trans('Services');
 }
+<<<<<<< HEAD
 else if (empty($conf->service->enabled))
+=======
+elseif (empty($conf->service->enabled))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$title = $langs->trans('ProductSetup');
 	$tab = $langs->trans('Products');
 }
 
+<<<<<<< HEAD
 llxHeader('',$title);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($title,$linkback,'title_setup');
+=======
+llxHeader('', $title);
+
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+print load_fiche_titre($title, $linkback, 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $head = product_admin_prepare_head();
 dol_fiche_head($head, 'general', $tab, -1, 'product');
@@ -284,7 +408,11 @@ $form=new Form($db);
 
 // Module to manage product / services code
 $dirproduct=array('/core/modules/product/');
+<<<<<<< HEAD
 $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
+=======
+$dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print load_fiche_titre($langs->trans("ProductCodeChecker"), '', '');
 
@@ -293,14 +421,23 @@ print '<tr class="liste_titre">'."\n";
 print '  <td>'.$langs->trans("Name").'</td>';
 print '  <td>'.$langs->trans("Description").'</td>';
 print '  <td>'.$langs->trans("Example").'</td>';
+<<<<<<< HEAD
 print '  <td align="center" width="80">'.$langs->trans("Status").'</td>';
 print '  <td align="center" width="60">'.$langs->trans("ShortInfo").'</td>';
+=======
+print '  <td class="center" width="80">'.$langs->trans("Status").'</td>';
+print '  <td class="center" width="60">'.$langs->trans("ShortInfo").'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print "</tr>\n";
 
 $var = true;
 foreach ($dirproduct as $dirroot)
 {
+<<<<<<< HEAD
 	$dir = dol_buildpath($dirroot,0);
+=======
+	$dir = dol_buildpath($dirroot, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     $handle = @opendir($dir);
     if (is_resource($handle))
@@ -334,24 +471,41 @@ foreach ($dirproduct as $dirroot)
 
     			if (! empty($conf->global->PRODUCT_CODEPRODUCT_ADDON) && $conf->global->PRODUCT_CODEPRODUCT_ADDON == $file)
     			{
+<<<<<<< HEAD
     				print '<td align="center">'."\n";
     				print img_picto($langs->trans("Activated"),'switch_on');
+=======
+    				print '<td class="center">'."\n";
+    				print img_picto($langs->trans("Activated"), 'switch_on');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     				print "</td>\n";
     			}
     			else
     			{
     				$disabled = false;
     				if (! empty($conf->multicompany->enabled) && (is_object($mc) && ! empty($mc->sharings['referent']) && $mc->sharings['referent'] == $conf->entity) ? false : true);
+<<<<<<< HEAD
     				print '<td align="center">';
     				if (! $disabled) print '<a href="'.$_SERVER['PHP_SELF'].'?action=setcodeproduct&value='.$file.'">';
     				print img_picto($langs->trans("Disabled"),'switch_off');
+=======
+    				print '<td class="center">';
+    				if (! $disabled) print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodeproduct&value='.$file.'">';
+    				print img_picto($langs->trans("Disabled"), 'switch_off');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     				if (! $disabled) print '</a>';
     				print '</td>';
     			}
 
+<<<<<<< HEAD
     			print '<td align="center">';
     			$s=$modCodeProduct->getToolTip($langs,null,-1);
     			print $form->textwithpicto('',$s,1);
+=======
+    			print '<td class="center">';
+    			$s=$modCodeProduct->getToolTip($langs, null, -1);
+    			print $form->textwithpicto('', $s, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     			print '</td>';
 
     			print '</tr>';
@@ -393,15 +547,25 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
+<<<<<<< HEAD
 print '<td align="center" width="60">'.$langs->trans("Status")."</td>\n";
 print '<td align="center" width="60">'.$langs->trans("Default")."</td>\n";
 print '<td align="center" width="80">'.$langs->trans("ShortInfo").'</td>';
 print '<td align="center" width="80">'.$langs->trans("Preview").'</td>';
+=======
+print '<td class="center" width="60">'.$langs->trans("Status")."</td>\n";
+print '<td class="center" width="60">'.$langs->trans("Default")."</td>\n";
+print '<td class="center" width="80">'.$langs->trans("ShortInfo").'</td>';
+print '<td class="center" width="80">'.$langs->trans("Preview").'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print "</tr>\n";
 
 clearstatcache();
 
+<<<<<<< HEAD
 $var=true;
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 foreach ($dirmodels as $reldir)
 {
     foreach (array('','/doc') as $valdir)
@@ -421,7 +585,11 @@ foreach ($dirmodels as $reldir)
 
                 foreach($filelist as $file)
                 {
+<<<<<<< HEAD
                     if (preg_match('/\.modules\.php$/i',$file) && preg_match('/^(pdf_|doc_)/',$file))
+=======
+                    if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                     {
 
                     	if (file_exists($dir.'/'.$file))
@@ -438,31 +606,50 @@ foreach ($dirmodels as $reldir)
 
 	                        if ($modulequalified)
 	                        {
+<<<<<<< HEAD
 	                            $var = !$var;
 	                            print '<tr class="oddeven"><td width="100">';
 	                            print (empty($module->name)?$name:$module->name);
 	                            print "</td><td>\n";
 	                            if (method_exists($module,'info')) print $module->info($langs);
+=======
+	                            print '<tr class="oddeven"><td width="100">';
+	                            print (empty($module->name)?$name:$module->name);
+	                            print "</td><td>\n";
+	                            if (method_exists($module, 'info')) print $module->info($langs);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	                            else print $module->description;
 	                            print '</td>';
 
 	                            // Active
 	                            if (in_array($name, $def))
 	                            {
+<<<<<<< HEAD
 	                            	print '<td align="center">'."\n";
 	                            	print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'">';
 	                            	print img_picto($langs->trans("Enabled"),'switch_on');
+=======
+	                            	print '<td class="center">'."\n";
+	                            	print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'">';
+	                            	print img_picto($langs->trans("Enabled"), 'switch_on');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	                            	print '</a>';
 	                            	print '</td>';
 	                            }
 	                            else
 	                            {
+<<<<<<< HEAD
 	                                print '<td align="center">'."\n";
 	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+=======
+	                                print '<td class="center">'."\n";
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	                                print "</td>";
 	                            }
 
 	                            // Defaut
+<<<<<<< HEAD
 	                            print '<td align="center">';
 	                            if ($conf->global->PRODUCT_ADDON_PDF == $name)
 	                            {
@@ -471,6 +658,16 @@ foreach ($dirmodels as $reldir)
 	                            else
 	                            {
 	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+=======
+	                            print '<td class="center">';
+	                            if ($conf->global->PRODUCT_ADDON_PDF == $name)
+	                            {
+	                                print img_picto($langs->trans("Default"), 'on');
+	                            }
+	                            else
+	                            {
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	                            }
 	                            print '</td>';
 
@@ -482,6 +679,7 @@ foreach ($dirmodels as $reldir)
 			                        $htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
 			                    }
 					    		$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+<<<<<<< HEAD
 					    		$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
 					    		$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
 
@@ -499,6 +697,25 @@ foreach ($dirmodels as $reldir)
 	                            else
 	                            {
 	                                print img_object($langs->trans("PreviewNotAvailable"),'generic');
+=======
+					    		$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
+					    		$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
+
+
+	                            print '<td class="center">';
+	                            print $form->textwithpicto('', $htmltooltip, 1, 0);
+	                            print '</td>';
+
+	                            // Preview
+	                            print '<td class="center">';
+	                            if ($module->type == 'pdf')
+	                            {
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'contract').'</a>';
+	                            }
+	                            else
+	                            {
+	                                print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	                            }
 	                            print '</td>';
 
@@ -524,16 +741,26 @@ print "<br>";
 print load_fiche_titre($langs->trans("ProductOtherConf"), '', '');
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="other">';
 
+<<<<<<< HEAD
 $var=true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
 print '<td align="right" width="60">'.$langs->trans("Value").'</td>'."\n";
+=======
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Parameters").'</td>'."\n";
+print '<td class="right" width="60">'.$langs->trans("Value").'</td>'."\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '<td width="80">&nbsp;</td></tr>'."\n";
 
 
@@ -545,22 +772,38 @@ $rowspan = 4;
 if (! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) $rowspan++;
 if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) $rowspan++;
 if (! empty($conf->global->MAIN_MULTILANGS)) $rowspan++;
+<<<<<<< HEAD
+=======
+if (! empty($conf->fournisseur->enabled)) $rowspan++;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("PricingRule").'</td>';
+<<<<<<< HEAD
 print '<td width="60" align="right">';
+=======
+print '<td width="60" class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $current_rule = 'PRODUCT_PRICE_UNIQ';
 if (!empty($conf->global->PRODUIT_MULTIPRICES)) $current_rule='PRODUIT_MULTIPRICES';
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) $current_rule='PRODUIT_CUSTOMER_PRICES_BY_QTY';
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) $current_rule='PRODUIT_CUSTOMER_PRICES';
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) $current_rule='PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES';
+<<<<<<< HEAD
 print $form->selectarray("princingrule",$select_pricing_rules,$current_rule);
+=======
+print $form->selectarray("princingrule", $select_pricing_rules, $current_rule);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ( empty($conf->multicompany->enabled))
 {
     print $langs->trans("SamePriceAlsoForSharedCompanies");
 }
+<<<<<<< HEAD
 print '</td><td align="right" rowspan="'.$rowspan.'" class="nohover">';
+=======
+print '</td><td rowspan="'.$rowspan.'" class="nohover right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</td>';
 print '</tr>';
@@ -569,10 +812,16 @@ print '</tr>';
 // multiprix nombre de prix a proposer
 if (! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))
 {
+<<<<<<< HEAD
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("MultiPricesNumPrices").'</td>';
 	print '<td align="right"><input size="3" type="text" class="flat" name="value_PRODUIT_MULTIPRICES_LIMIT" value="'.$conf->global->PRODUIT_MULTIPRICES_LIMIT.'"></td>';
+=======
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->trans("MultiPricesNumPrices").'</td>';
+	print '<td class="right"><input size="3" type="text" class="flat" name="value_PRODUIT_MULTIPRICES_LIMIT" value="'.$conf->global->PRODUIT_MULTIPRICES_LIMIT.'"></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</tr>';
 }
 
@@ -580,23 +829,36 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUI
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AssociatedProductsAbility").'</td>';
+<<<<<<< HEAD
 print '<td width="60" align="right">';
 print $form->selectyesno("PRODUIT_SOUSPRODUITS",$conf->global->PRODUIT_SOUSPRODUITS,1);
+=======
+print '<td width="60" class="right">';
+print $form->selectyesno("PRODUIT_SOUSPRODUITS", $conf->global->PRODUIT_SOUSPRODUITS, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</td>';
 print '</tr>';
 
 // Utilisation formulaire Ajax sur choix produit
 
 print '<tr class="oddeven">';
+<<<<<<< HEAD
 print '<td>'.$form->textwithpicto($langs->trans("UseSearchToSelectProduct"),$langs->trans('UseSearchToSelectProductTooltip'),1).'</td>';
 if (empty($conf->use_javascript_ajax))
 {
 	print '<td class="nowrap" align="right" colspan="2">';
+=======
+print '<td>'.$form->textwithpicto($langs->trans("UseSearchToSelectProduct"), $langs->trans('UseSearchToSelectProductTooltip'), 1).'</td>';
+if (empty($conf->use_javascript_ajax))
+{
+	print '<td class="nowrap right" colspan="2">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print $langs->trans("NotAvailableWhenAjaxDisabled");
 	print '</td>';
 }
 else
 {
+<<<<<<< HEAD
 	print '<td width="60" align="right">';
 	$arrval=array(
 		'0'=>$langs->trans("No"),
@@ -605,25 +867,48 @@ else
 	    '3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",3).')',
 	);
 	print $form->selectarray("activate_usesearchtoselectproduct",$arrval,$conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
+=======
+	print '<td width="60" class="right">';
+	$arrval=array(
+		'0'=>$langs->trans("No"),
+		'1'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
+	    '2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
+	    '3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
+	);
+	print $form->selectarray("activate_usesearchtoselectproduct", $arrval, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</td>';
 }
 print '</tr>';
 
 if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT))
 {
+<<<<<<< HEAD
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("NumberOfProductShowInSelect").'</td>';
 	print '<td align="right"><input size="3" type="text" class="flat" name="value_PRODUIT_LIMIT_SIZE" value="'.$conf->global->PRODUIT_LIMIT_SIZE.'"></td>';
+=======
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->trans("NumberOfProductShowInSelect").'</td>';
+	print '<td class="right"><input size="3" type="text" class="flat" name="value_PRODUIT_LIMIT_SIZE" value="'.$conf->global->PRODUIT_LIMIT_SIZE.'"></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</tr>';
 }
 
 // Visualiser description produit dans les formulaires activation/desactivation
+<<<<<<< HEAD
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ViewProductDescInFormAbility").'</td>';
 print '<td width="60" align="right">';
 print $form->selectyesno("activate_viewProdDescInForm",$conf->global->PRODUIT_DESC_IN_FORM,1);
+=======
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("ViewProductDescInFormAbility").'</td>';
+print '<td width="60" class="right">';
+print $form->selectyesno("activate_viewProdDescInForm", $conf->global->PRODUIT_DESC_IN_FORM, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</td>';
 print '</tr>';
 
@@ -632,7 +917,11 @@ print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MergePropalProductCard").'</td>';
+<<<<<<< HEAD
 print '<td width="60" align="right">';
+=======
+print '<td width="60" class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print $form->selectyesno("activate_mergePropalProductCard",$conf->global->PRODUIT_PDF_MERGE_PROPAL,1);
 print '</td>';
 print '</tr>';
@@ -643,7 +932,11 @@ print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("UseUnits").'</td>';
+<<<<<<< HEAD
 print '<td width="60" align="right">';
+=======
+print '<td width="60" class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print $form->selectyesno("activate_units",$conf->global->PRODUCT_USE_UNITS,1);
 print '</td>';
 print '</tr>';
@@ -652,25 +945,50 @@ print '</tr>';
 // View product description in thirdparty language
 if (! empty($conf->global->MAIN_MULTILANGS))
 {
+<<<<<<< HEAD
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("ViewProductDescInThirdpartyLanguageAbility").'</td>';
 	print '<td width="60" align="right">';
+=======
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->trans("ViewProductDescInThirdpartyLanguageAbility").'</td>';
+	print '<td width="60" class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print $form->selectyesno("activate_viewProdTextsInThirdpartyLanguage", (! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)?$conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE:0), 1);
 	print '</td>';
 	print '</tr>';
 }
 
+<<<<<<< HEAD
+=======
+if (! empty($conf->fournisseur->enabled))
+{
+    print '<tr class="oddeven">';
+    print '<td>'.$langs->trans("UseProductFournDesc").'</td>';
+    print '<td width="60" class="right">';
+    print $form->selectyesno("activate_useProdFournDesc", (! empty($conf->global->PRODUIT_FOURN_TEXTS)?$conf->global->PRODUIT_FOURN_TEXTS:0), 1);
+    print '</td>';
+    print '</tr>';
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if (! empty($conf->global->PRODUCT_CANVAS_ABILITY))
 {
 	// Add canvas feature
 	$dir = DOL_DOCUMENT_ROOT . "/product/canvas/";
+<<<<<<< HEAD
 	$var = false;
 
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("ProductSpecial").'</td>'."\n";
 	print '<td align="right" width="60">'.$langs->trans("Value").'</td>'."\n";
+=======
+
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("ProductSpecial").'</td>'."\n";
+	print '<td class="right" width="60">'.$langs->trans("Value").'</td>'."\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '<td width="80">&nbsp;</td></tr>'."\n";
 
 	if (is_dir($dir))
@@ -694,24 +1012,41 @@ if (! empty($conf->global->PRODUCT_CANVAS_ABILITY))
 
     				if ($conf->$module->enabled)
     				{
+<<<<<<< HEAD
 
     					print "<tr ".$bc[$var]."><td>";
 
     					print $object->description;
 
     					print '</td><td align="right">';
+=======
+    					print '<tr class="oddeven"><td>';
+
+    					print $object->description;
+
+    					print '</td><td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     					$const = "PRODUCT_SPECIAL_".strtoupper($file);
 
     					if ($conf->global->$const)
     					{
+<<<<<<< HEAD
     						print img_picto($langs->trans("Active"),'tick');
     						print '</td><td align="right">';
+=======
+    						print img_picto($langs->trans("Active"), 'tick');
+    						print '</td><td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;spe='.$file.'&amp;value=0">'.$langs->trans("Disable").'</a>';
     					}
     					else
     					{
+<<<<<<< HEAD
     						print '&nbsp;</td><td align="right">';
+=======
+    						print '&nbsp;</td><td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;spe='.$file.'&amp;value=1">'.$langs->trans("Activate").'</a>';
     					}
 
@@ -732,7 +1067,13 @@ print '</table>';
 
 print '</form>';
 
+<<<<<<< HEAD
 llxFooter();
 
 $db->close();
 
+=======
+// End of page
+llxFooter();
+$db->close();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

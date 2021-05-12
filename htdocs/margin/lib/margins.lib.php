@@ -44,9 +44,15 @@ function marges_admin_prepare_head()
 	// Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
+<<<<<<< HEAD
 	complete_head_from_modules($conf,$langs,'',$head,$h,'margesadmin');
 
 	complete_head_from_modules($conf,$langs,'',$head,$h,'margesadmin','remove');
+=======
+	complete_head_from_modules($conf, $langs, '', $head, $h, 'margesadmin');
+
+	complete_head_from_modules($conf, $langs, '', $head, $h, 'margesadmin', 'remove');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	return $head;
 }
@@ -88,7 +94,11 @@ function marges_prepare_head()
 	$head[$h][1] = $langs->trans($title);
 	$head[$h][2] = 'agentMargins';
 
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if ($user->rights->margins->creer) {
 		$h++;
 		$head[$h][0] = DOL_URL_ROOT."/margin/checkMargins.php";
@@ -96,6 +106,12 @@ function marges_prepare_head()
 		$head[$h][2] = 'checkMargins';
 	}
 
+<<<<<<< HEAD
+=======
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'margins', 'remove');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'margins');
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	return $head;
 }
 

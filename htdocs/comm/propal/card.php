@@ -1,4 +1,5 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2014 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
@@ -12,6 +13,22 @@
  * Copyright (C) 2013-2014 Florian Henry		 <florian.henry@open-concept.pro>
  * Copyright (C) 2014	   Ferran Marcet		 <fmarcet@2byte.es>
  * Copyright (C) 2016      Marcos García         <marcosgdf@gmail.com>
+=======
+/* Copyright (C) 2001-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2014 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
+ * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@inodbox.com>
+ * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
+ * Copyright (C) 2010-2016 Juanjo Menent         <jmenent@2byte.es>
+ * Copyright (C) 2010-2018 Philippe Grand        <philippe.grand@atoo-net.com>
+ * Copyright (C) 2012-2013 Christophe Battarel   <christophe.battarel@altairis.fr>
+ * Copyright (C) 2012      Cedric Salvador       <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2013-2014 Florian Henry		 <florian.henry@open-concept.pro>
+ * Copyright (C) 2014       Ferran Marcet		 <fmarcet@2byte.es>
+ * Copyright (C) 2016       Marcos García         <marcosgdf@gmail.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,8 +90,13 @@ $origin = GETPOST('origin', 'alpha');
 $originid = GETPOST('originid', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 $lineid = GETPOST('lineid', 'int');
+<<<<<<< HEAD
 $contactid = GETPOST('contactid','int');
 $projectid = GETPOST('projectid','int');
+=======
+$contactid = GETPOST('contactid', 'int');
+$projectid = GETPOST('projectid', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // PDF
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
@@ -164,7 +186,11 @@ if (empty($reshook))
 			if ($object->id > 0) {
 				if (!empty($conf->global->PROPAL_CLONE_DATE_DELIVERY)) {
 					//Get difference between old and new delivery date and change lines according to difference
+<<<<<<< HEAD
 					$date_delivery = dol_mktime(12, 0, 0,
+=======
+    $date_delivery = dol_mktime(12, 0, 0,
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						GETPOST('date_deliverymonth', 'int'),
 						GETPOST('date_deliveryday', 'int'),
 						GETPOST('date_deliveryyear', 'int')
@@ -172,7 +198,11 @@ if (empty($reshook))
 					if (!empty($object->date_livraison) && !empty($date_delivery))
 					{
 						//Attempt to get the date without possible hour rounding errors
+<<<<<<< HEAD
 						$old_date_delivery = dol_mktime(12, 0, 0,
+=======
+    $old_date_delivery = dol_mktime(12, 0, 0,
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							dol_print_date($object->date_livraison, '%m'),
 							dol_print_date($object->date_livraison, '%d'),
 							dol_print_date($object->date_livraison, '%Y')
@@ -191,7 +221,11 @@ if (empty($reshook))
 					}
 				}
 
+<<<<<<< HEAD
 				$result = $object->createFromClone($socid);
+=======
+				$result = $object->createFromClone($user, $socid);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if ($result > 0) {
 					header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $result);
 					exit();
@@ -204,7 +238,11 @@ if (empty($reshook))
 	}
 
 	// Delete proposal
+<<<<<<< HEAD
 	else if ($action == 'confirm_delete' && $confirm == 'yes' && $usercandelete)
+=======
+	elseif ($action == 'confirm_delete' && $confirm == 'yes' && $usercandelete)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$result = $object->delete($user);
 		if ($result > 0) {
@@ -217,7 +255,11 @@ if (empty($reshook))
 	}
 
 	// Remove line
+<<<<<<< HEAD
 	else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $usercancreate)
+=======
+	elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $usercancreate)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$result = $object->deleteline($lineid);
 		// reorder lines
@@ -229,7 +271,11 @@ if (empty($reshook))
 			$outputlangs = $langs;
 			if (! empty($conf->global->MAIN_MULTILANGS)) {
 				$outputlangs = new Translate("", $conf);
+<<<<<<< HEAD
 				$newlang = (GETPOST('lang_id','aZ09') ? GETPOST('lang_id','aZ09') : $object->thirdparty->default_lang);
+=======
+				$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $object->thirdparty->default_lang);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$outputlangs->setDefaultLang($newlang);
 			}
 			$ret = $object->fetch($id); // Reload to get new records
@@ -241,7 +287,11 @@ if (empty($reshook))
 	}
 
 	// Validation
+<<<<<<< HEAD
 	else if ($action == 'confirm_validate' && $confirm == 'yes' && $usercanvalidate)
+=======
+	elseif ($action == 'confirm_validate' && $confirm == 'yes' && $usercanvalidate)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$result = $object->valid($user);
 		if ($result >= 0)
@@ -250,7 +300,11 @@ if (empty($reshook))
 			{
 				$outputlangs = $langs;
 				$newlang = '';
+<<<<<<< HEAD
 				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
+=======
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
 				if (! empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
@@ -268,7 +322,11 @@ if (empty($reshook))
 		}
 	}
 
+<<<<<<< HEAD
 	else if ($action == 'setdate' && $usercancreate)
+=======
+	elseif ($action == 'setdate' && $usercancreate)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$datep = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 
@@ -283,13 +341,21 @@ if (empty($reshook))
 				dol_print_error($db, $object->error);
 		}
 	}
+<<<<<<< HEAD
 	else if ($action == 'setecheance' && $usercancreate)
+=======
+	elseif ($action == 'setecheance' && $usercancreate)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$result = $object->set_echeance($user, dol_mktime(12, 0, 0, $_POST['echmonth'], $_POST['echday'], $_POST['echyear']));
 		if ($result < 0)
 			dol_print_error($db, $object->error);
 	}
+<<<<<<< HEAD
 	else if ($action == 'setdate_livraison' && $usercancreate)
+=======
+	elseif ($action == 'setdate_livraison' && $usercancreate)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$result = $object->set_date_livraison($user, dol_mktime(12, 0, 0, $_POST['date_livraisonmonth'], $_POST['date_livraisonday'], $_POST['date_livraisonyear']));
 		if ($result < 0)
@@ -297,7 +363,11 @@ if (empty($reshook))
 	}
 
 	// Positionne ref client
+<<<<<<< HEAD
 	else if ($action == 'setref_client' && $usercancreate)
+=======
+	elseif ($action == 'setref_client' && $usercancreate)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$result = $object->set_ref_client($user, GETPOST('ref_client'));
 		if ($result < 0)
@@ -313,14 +383,22 @@ if (empty($reshook))
 	}
 
 	// Create proposal
+<<<<<<< HEAD
 	else if ($action == 'add' && $usercancreate)
+=======
+	elseif ($action == 'add' && $usercancreate)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$object->socid = $socid;
 		$object->fetch_thirdparty();
 
 		$datep = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 		$date_delivery = dol_mktime(12, 0, 0, GETPOST('date_livraisonmonth'), GETPOST('date_livraisonday'), GETPOST('date_livraisonyear'));
+<<<<<<< HEAD
 		$duration = GETPOST('duree_validite');
+=======
+		$duration = GETPOST('duree_validite', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		if (empty($datep)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
@@ -347,13 +425,21 @@ if (empty($reshook))
 			// If we select proposal to clone during creation (when option PROPAL_CLONE_ON_CREATE_PAGE is on)
 			if (GETPOST('createmode') == 'copy' && GETPOST('copie_propal'))
 			{
+<<<<<<< HEAD
 				if ($object->fetch(GETPOST('copie_propal')) > 0) {
+=======
+				if ($object->fetch(GETPOST('copie_propal', 'int')) > 0) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					$object->ref = GETPOST('ref');
 					$object->datep = $datep;
 					$object->date_livraison = $date_delivery;
 					$object->availability_id = GETPOST('availability_id');
 					$object->demand_reason_id = GETPOST('demand_reason_id');
+<<<<<<< HEAD
 					$object->fk_delivery_address = GETPOST('fk_address');
+=======
+					$object->fk_delivery_address = GETPOST('fk_address', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					$object->shipping_method_id = GETPOST('shipping_method_id', 'int');
 					$object->duree_validite = $duration;
 					$object->cond_reglement_id = GETPOST('cond_reglement_id');
@@ -361,6 +447,7 @@ if (empty($reshook))
 					$object->fk_account = GETPOST('fk_account', 'int');
 					$object->remise_percent = GETPOST('remise_percent');
 					$object->remise_absolue = GETPOST('remise_absolue');
+<<<<<<< HEAD
 					$object->socid = GETPOST('socid');
 					$object->contactid = GETPOST('contactid');
 					$object->fk_project = GETPOST('projectid');
@@ -368,6 +455,15 @@ if (empty($reshook))
 					$object->author = $user->id; // deprecated
 					$object->note_private = GETPOST('note_private','none');
 					$object->note_public = GETPOST('note_public','none');
+=======
+					$object->socid = GETPOST('socid', 'int');
+					$object->contactid = GETPOST('contactid', 'int');
+					$object->fk_project = GETPOST('projectid', 'int');
+					$object->modelpdf = GETPOST('model');
+					$object->author = $user->id; // deprecated
+					$object->note_private = GETPOST('note_private', 'none');
+					$object->note_public = GETPOST('note_public', 'none');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					$object->statut = Propal::STATUS_DRAFT;
 					$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 					$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
@@ -379,6 +475,10 @@ if (empty($reshook))
 				}
 			} else {
 				$object->ref = GETPOST('ref');
+<<<<<<< HEAD
+=======
+				$object->entity = (GETPOSTISSET('entity')?GETPOST('entity', 'int'):$conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$object->ref_client = GETPOST('ref_client');
 				$object->datep = $datep;
 				$object->date_livraison = $date_delivery;
@@ -390,12 +490,21 @@ if (empty($reshook))
 				$object->cond_reglement_id = GETPOST('cond_reglement_id');
 				$object->mode_reglement_id = GETPOST('mode_reglement_id');
 				$object->fk_account = GETPOST('fk_account', 'int');
+<<<<<<< HEAD
 				$object->contactid = GETPOST('contactid');
 				$object->fk_project = GETPOST('projectid');
 				$object->modelpdf = GETPOST('model');
 				$object->author = $user->id; // deprecated
 				$object->note_private = GETPOST('note_private','none');
 				$object->note_public = GETPOST('note_public','none');
+=======
+				$object->contactid = GETPOST('contactid', 'int');
+				$object->fk_project = GETPOST('projectid', 'int');
+				$object->modelpdf = GETPOST('model');
+				$object->author = $user->id; // deprecated
+				$object->note_private = GETPOST('note_private', 'none');
+				$object->note_public = GETPOST('note_public', 'none');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 
@@ -565,6 +674,19 @@ if (empty($reshook))
 						}
 					}
 
+<<<<<<< HEAD
+=======
+					if (! empty($conf->global->PROPOSAL_AUTO_ADD_AUTHOR_AS_CONTACT))
+					{
+						$result = $object->add_contact($user->id, 'SALESREPFOLL', 'internal');
+						if ($result < 0)
+						{
+							$error++;
+							setEventMessages($langs->trans("ErrorFailedToAddUserAsContact"), null, 'errors');
+						}
+					}
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					if (! $error)
 					{
 						$db->commit();
@@ -574,7 +696,11 @@ if (empty($reshook))
 						{
 							$outputlangs = $langs;
 							$newlang = '';
+<<<<<<< HEAD
 							if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
+=======
+							if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
 							if (! empty($newlang)) {
 								$outputlangs = new Translate("", $conf);
@@ -584,7 +710,11 @@ if (empty($reshook))
 
 							$ret = $object->fetch($id); // Reload to get new records
 							$result=$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+<<<<<<< HEAD
 							if ($result < 0) dol_print_error($db,$result);
+=======
+							if ($result < 0) dol_print_error($db, $result);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						}
 
 						header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $id);
@@ -607,11 +737,19 @@ if (empty($reshook))
 	}
 
 	// Classify billed
+<<<<<<< HEAD
 	else if ($action == 'classifybilled' && $usercanclose)
 	{
 		$db->begin();
 
 		$result=$object->cloture($user, 4, '');
+=======
+	elseif ($action == 'classifybilled' && $usercanclose)
+	{
+		$db->begin();
+
+		$result=$object->cloture($user, Propal::STATUS_BILLED, '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if ($result < 0)
 		{
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -629,9 +767,14 @@ if (empty($reshook))
 	}
 
 	// Close proposal
+<<<<<<< HEAD
 	else if ($action == 'setstatut' && $usercanclose && ! GETPOST('cancel','alpha'))
 	{
 		if (! (GETPOST('statut','int') > 0)) {
+=======
+	elseif ($action == 'setstatut' && $usercanclose && ! GETPOST('cancel', 'alpha')) {
+		if (! (GETPOST('statut', 'int') > 0)) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CloseAs")), null, 'errors');
 			$action = 'statut';
 		} else {
@@ -640,7 +783,11 @@ if (empty($reshook))
 			{
 				$db->begin();
 
+<<<<<<< HEAD
 				$result=$object->cloture($user, GETPOST('statut','int'), GETPOST('note_private','none'));
+=======
+				$result=$object->cloture($user, GETPOST('statut', 'int'), GETPOST('note_private', 'none'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if ($result < 0)
 				{
 					setEventMessages($object->error, $object->errors, 'errors');
@@ -660,8 +807,12 @@ if (empty($reshook))
 	}
 
 	// Reopen proposal
+<<<<<<< HEAD
 	else if ($action == 'confirm_reopen' && $usercanclose && ! GETPOST('cancel','alpha'))
 	{
+=======
+	elseif ($action == 'confirm_reopen' && $usercanclose && ! GETPOST('cancel', 'alpha')) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// prevent browser refresh from reopening proposal several times
 		if ($object->statut == Propal::STATUS_SIGNED || $object->statut == Propal::STATUS_NOTSIGNED || $object->statut == Propal::STATUS_BILLED)
 		{
@@ -685,6 +836,91 @@ if (empty($reshook))
 		}
 	}
 
+<<<<<<< HEAD
+=======
+	// add lines from objectlinked
+	elseif($action == 'import_lines_from_object'
+	    && $user->rights->propal->creer
+	    && $object->statut == Propal::STATUS_DRAFT
+	    )
+	{
+	    $fromElement = GETPOST('fromelement');
+	    $fromElementid = GETPOST('fromelementid');
+	    $importLines = GETPOST('line_checkbox');
+
+	    if(!empty($importLines) && is_array($importLines) && !empty($fromElement) && ctype_alpha($fromElement) && !empty($fromElementid))
+	    {
+	        if($fromElement == 'commande')
+	        {
+	            dol_include_once('/'.$fromElement.'/class/'.$fromElement.'.class.php');
+	            $lineClassName = 'OrderLine';
+	        }
+	        elseif($fromElement == 'propal')
+	        {
+	            dol_include_once('/comm/'.$fromElement.'/class/'.$fromElement.'.class.php');
+	            $lineClassName = 'PropaleLigne';
+	        }
+	        $nextRang = count($object->lines) + 1;
+	        $importCount = 0;
+	        $error = 0;
+	        foreach($importLines as $lineId)
+	        {
+	            $lineId = intval($lineId);
+	            $originLine = new $lineClassName($db);
+	            if(intval($fromElementid) > 0 && $originLine->fetch($lineId) > 0)
+	            {
+	                $originLine->fetch_optionals($lineId);
+	                $desc = $originLine->desc;
+	                $pu_ht = $originLine->subprice;
+	                $qty = $originLine->qty;
+	                $txtva = $originLine->tva_tx;
+	                $txlocaltax1 = $originLine->localtax1_tx;
+	                $txlocaltax2 = $originLine->localtax2_tx;
+	                $fk_product = $originLine->fk_product;
+	                $remise_percent = $originLine->remise_percent;
+	                $date_start = $originLine->date_start;
+	                $date_end = $originLine->date_end;
+	                $ventil = 0;
+	                $info_bits = $originLine->info_bits;
+	                $fk_remise_except = $originLine->fk_remise_except;
+	                $price_base_type='HT';
+	                $pu_ttc=0;
+	                $type = $originLine->product_type;
+	                $rang=$nextRang++;
+	                $special_code = $originLine->special_code;
+	                $origin = $originLine->element;
+	                $origin_id = $originLine->id;
+	                $fk_parent_line=0;
+	                $fk_fournprice=$originLine->fk_fournprice;
+	                $pa_ht = $originLine->pa_ht;
+	                $label = $originLine->label;
+	                $array_options = $originLine->array_options;
+	                $situation_percent = 100;
+	                $fk_prev_id = '';
+	                $fk_unit = $originLine->fk_unit;
+	                $pu_ht_devise = $originLine->multicurrency_subprice;
+
+	                $res = $object->addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $price_base_type, $pu_ttc, $info_bits, $type, $rang, $special_code, $fk_parent_line, $fk_fournprice, $pa_ht, $label, $date_start, $date_end, $array_options, $fk_unit, $origin, $origin_id, $pu_ht_devise, $fk_remise_except);
+
+	                if($res > 0){
+	                    $importCount++;
+	                }else{
+	                    $error++;
+	                }
+	            }
+	            else{
+	                $error++;
+	            }
+	        }
+
+	        if($error)
+	        {
+	            setEventMessages($langs->trans('ErrorsOnXLines', $error), null, 'errors');
+	        }
+	    }
+	}
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 	// Actions to send emails
@@ -698,7 +934,11 @@ if (empty($reshook))
 	// Go back to draft
 	if ($action == 'modif' && $usercancreate)
 	{
+<<<<<<< HEAD
 		$object->set_draft($user);
+=======
+		$object->setDraft($user);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 		{
@@ -706,7 +946,11 @@ if (empty($reshook))
 			$outputlangs = $langs;
 			if (! empty($conf->global->MAIN_MULTILANGS)) {
 				$outputlangs = new Translate("", $conf);
+<<<<<<< HEAD
 				$newlang = (GETPOST('lang_id','aZ09') ? GETPOST('lang_id','aZ09') : $object->thirdparty->default_lang);
+=======
+				$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $object->thirdparty->default_lang);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$outputlangs->setDefaultLang($newlang);
 			}
 			$ret = $object->fetch($id); // Reload to get new records
@@ -714,7 +958,11 @@ if (empty($reshook))
 		}
 	}
 
+<<<<<<< HEAD
 	else if ($action == "setabsolutediscount" && $usercancreate) {
+=======
+	elseif ($action == "setabsolutediscount" && $usercancreate) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if ($_POST["remise_id"]) {
 			if ($object->id > 0) {
 				$result = $object->insert_discount($_POST["remise_id"]);
@@ -726,7 +974,11 @@ if (empty($reshook))
 	}
 
 	// Add line
+<<<<<<< HEAD
 	else if ($action == 'addline' && $usercancreate) {
+=======
+	elseif ($action == 'addline' && $usercancreate) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Set if we used free entry or predefined product
 		$predef='';
@@ -747,11 +999,19 @@ if (empty($reshook))
 
 		$qty = GETPOST('qty' . $predef);
 		$remise_percent = GETPOST('remise_percent' . $predef);
+<<<<<<< HEAD
+=======
+		if (empty($remise_percent)) $remise_percent=0;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Extrafields
 		$extrafieldsline = new ExtraFields($db);
 		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+<<<<<<< HEAD
 		$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
+=======
+		$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line, $predef);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// Unset extrafield
 		if (is_array($extralabelsline)) {
 			// Get extra fields
@@ -783,7 +1043,11 @@ if (empty($reshook))
 				if ($res = $prodcomb->fetchByProductCombination2ValuePairs($idprod, $combinations)) {
 					$idprod = $res->fk_product_child;
 				} else {
+<<<<<<< HEAD
 					setEventMessage($langs->trans('ErrorProductCombinationNotFound'), 'errors');
+=======
+					setEventMessages($langs->trans('ErrorProductCombinationNotFound'), null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					$error ++;
 				}
 			}
@@ -862,7 +1126,11 @@ if (empty($reshook))
 					if ($prod->prices_by_qty[0])	// yes, this product has some prices per quantity
 					{
 						// Search the correct price into loaded array product_price_by_qty using id of array retrieved into POST['pqp'].
+<<<<<<< HEAD
 						$pqp = GETPOST('pbq','int');
+=======
+						$pqp = GETPOST('pbq', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 						// Search price into product_price_by_qty from $prod->id
 						foreach($prod->prices_by_qty_list[0] as $priceforthequantityarray)
@@ -888,7 +1156,11 @@ if (empty($reshook))
 					if ($prod->prices_by_qty[$object->thirdparty->price_level]) // yes, this product has some prices per quantity
 					{
 						// Search the correct price into loaded array product_price_by_qty using id of array retrieved into POST['pqp'].
+<<<<<<< HEAD
 						$pqp = GETPOST('pbq','int');
+=======
+						$pqp = GETPOST('pbq', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 						// Search price into product_price_by_qty from $prod->id
 						foreach($prod->prices_by_qty_list[$object->thirdparty->price_level] as $priceforthequantityarray)
@@ -933,8 +1205,13 @@ if (empty($reshook))
 				if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
 					$outputlangs = $langs;
 					$newlang = '';
+<<<<<<< HEAD
 					if (empty($newlang) && GETPOST('lang_id','aZ09'))
 						$newlang = GETPOST('lang_id','aZ09');
+=======
+					if (empty($newlang) && GETPOST('lang_id', 'aZ09'))
+						$newlang = GETPOST('lang_id', 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					if (empty($newlang))
 						$newlang = $object->thirdparty->default_lang;
 					if (! empty($newlang)) {
@@ -947,7 +1224,12 @@ if (empty($reshook))
 					$desc = $prod->description;
 				}
 
+<<<<<<< HEAD
 				$desc = dol_concatdesc($desc, $product_desc);
+=======
+				if (!empty($product_desc) && !empty($conf->global->MAIN_NO_CONCAT_DESCRIPTION)) $desc= $product_desc;
+				else $desc = dol_concatdesc($desc, $product_desc, '', !empty($conf->global->MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				// Add dimensions into product description
 				/*if (empty($conf->global->MAIN_PRODUCT_DISABLE_AUTOADD_DIM))
@@ -969,8 +1251,13 @@ if (empty($reshook))
 					if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
 						$outputlangs = $langs;
 						$newlang = '';
+<<<<<<< HEAD
 						if (empty($newlang) && GETPOST('lang_id','alpha'))
 							$newlang = GETPOST('lang_id','alpha');
+=======
+						if (empty($newlang) && GETPOST('lang_id', 'alpha'))
+							$newlang = GETPOST('lang_id', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						if (empty($newlang))
 							$newlang = $object->thirdparty->default_lang;
 						if (! empty($newlang)) {
@@ -1026,7 +1313,11 @@ if (empty($reshook))
 			if ($tva_npr)
 				$info_bits |= 0x01;
 
+<<<<<<< HEAD
 			if (! empty($price_min) && (price2num($pu_ht) * (1 - price2num($remise_percent) / 100) < price2num($price_min))) {
+=======
+			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS) ) && (! empty($price_min) && (price2num($pu_ht) * (1 - price2num($remise_percent) / 100) < price2num($price_min)))) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency));
 				setEventMessages($mesg, null, 'errors');
 			} else {
@@ -1041,7 +1332,11 @@ if (empty($reshook))
 						$outputlangs = $langs;
 						if (! empty($conf->global->MAIN_MULTILANGS)) {
 							$outputlangs = new Translate("", $conf);
+<<<<<<< HEAD
 							$newlang = (GETPOST('lang_id','aZ09') ? GETPOST('lang_id','aZ09') : $object->thirdparty->default_lang);
+=======
+							$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $object->thirdparty->default_lang);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							$outputlangs->setDefaultLang($newlang);
 						}
 						$ret = $object->fetch($id); // Reload to get new records
@@ -1090,7 +1385,11 @@ if (empty($reshook))
 	}
 
 	// Update a line within proposal
+<<<<<<< HEAD
 	else if ($action == 'updateligne' && $usercancreate && GETPOST('save'))
+=======
+	elseif ($action == 'updateline' && $usercancreate && GETPOST('save'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		// Define info_bits
 		$info_bits = 0;
@@ -1098,7 +1397,11 @@ if (empty($reshook))
 			$info_bits |= 0x01;
 
 			// Clean parameters
+<<<<<<< HEAD
 		$description = dol_htmlcleanlastbr(GETPOST('product_desc','none'));
+=======
+		$description = dol_htmlcleanlastbr(GETPOST('product_desc', 'none'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Define vat_rate
 		$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
@@ -1119,7 +1422,11 @@ if (empty($reshook))
 		// Extrafields
 		$extrafieldsline = new ExtraFields($db);
 		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+<<<<<<< HEAD
 		$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+=======
+		$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// Unset extrafield
 		if (is_array($extralabelsline)) {
 			// Get extra fields
@@ -1145,8 +1452,12 @@ if (empty($reshook))
 				$price_min = $product->multiprices_min [$object->thirdparty->price_level];
 
 			$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
+<<<<<<< HEAD
 
 			if ($price_min && (price2num($pu_ht) * (1 - price2num(GETPOST('remise_percent')) / 100) < price2num($price_min))) {
+=======
+			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS) )&& ($price_min && (price2num($pu_ht) * (1 - price2num(GETPOST('remise_percent')) / 100) < price2num($price_min)))) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				setEventMessages($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency)), null, 'errors');
 				$error ++;
 			}
@@ -1186,7 +1497,11 @@ if (empty($reshook))
 					$outputlangs = $langs;
 					if (! empty($conf->global->MAIN_MULTILANGS)) {
 						$outputlangs = new Translate("", $conf);
+<<<<<<< HEAD
 						$newlang = (GETPOST('lang_id','aZ09') ? GETPOST('lang_id','aZ09') : $object->thirdparty->default_lang);
+=======
+						$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $object->thirdparty->default_lang);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						$outputlangs->setDefaultLang($newlang);
 					}
 					$ret = $object->fetch($id); // Reload to get new records
@@ -1225,14 +1540,19 @@ if (empty($reshook))
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
+<<<<<<< HEAD
 	}
 
 	else if ($action == 'updateligne' && $usercancreate && GETPOST('cancel','alpha'))
 	{
+=======
+	} elseif ($action == 'updateline' && $usercancreate && GETPOST('cancel', 'alpha')) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id); // Pour reaffichage de la fiche en cours d'edition
 		exit();
 	}
 
+<<<<<<< HEAD
 	// Set project
 	else if ($action == 'classin' && $usercancreate) {
 		$object->setProject(GETPOST('projectid','int'));
@@ -1258,40 +1578,95 @@ if (empty($reshook))
 	}
 
 	else if ($action == 'setremiseabsolue' && $usercancreate) {
+=======
+	elseif ($action == 'classin' && $usercancreate) {
+        // Set project
+        $object->setProject(GETPOST('projectid', 'int'));
+	}
+
+	// Delai de livraison
+	elseif ($action == 'setavailability' && $usercancreate) {
+		$result = $object->set_availability($user, GETPOST('availability_id', 'int'));
+	}
+
+	// Origine de la propale
+	elseif ($action == 'setdemandreason' && $usercancreate) {
+		$result = $object->set_demand_reason($user, GETPOST('demand_reason_id', 'int'));
+	}
+
+	// Conditions de reglement
+	elseif ($action == 'setconditions' && $usercancreate) {
+		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
+	}
+
+	elseif ($action == 'setremisepercent' && $usercancreate) {
+		$result = $object->set_remise_percent($user, $_POST['remise_percent']);
+	}
+
+	elseif ($action == 'setremiseabsolue' && $usercancreate) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$result = $object->set_remise_absolue($user, $_POST['remise_absolue']);
 	}
 
 	// Mode de reglement
+<<<<<<< HEAD
 	else if ($action == 'setmode' && $usercancreate) {
+=======
+	elseif ($action == 'setmode' && $usercancreate) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
 	}
 
 	// Multicurrency Code
+<<<<<<< HEAD
 	else if ($action == 'setmulticurrencycode' && $usercancreate) {
+=======
+	elseif ($action == 'setmulticurrencycode' && $usercancreate) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
 	}
 
 	// Multicurrency rate
+<<<<<<< HEAD
 	else if ($action == 'setmulticurrencyrate' && $usercancreate) {
+=======
+	elseif ($action == 'setmulticurrencyrate' && $usercancreate) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx')));
 	}
 
 	// bank account
+<<<<<<< HEAD
 	else if ($action == 'setbankaccount' && $usercancreate) {
+=======
+	elseif ($action == 'setbankaccount' && $usercancreate) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$result=$object->setBankAccount(GETPOST('fk_account', 'int'));
 	}
 
 	// shipping method
+<<<<<<< HEAD
 	else if ($action == 'setshippingmethod' && $usercancreate) {
 		$result=$object->setShippingMethod(GETPOST('shipping_method_id', 'int'));
 	}
 
 	else if ($action == 'update_extras') {
+=======
+	elseif ($action == 'setshippingmethod' && $usercancreate) {
+		$result=$object->setShippingMethod(GETPOST('shipping_method_id', 'int'));
+	}
+
+	elseif ($action == 'update_extras') {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$object->oldcopy = dol_clone($object);
 
 		// Fill array 'array_options' with data from update form
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+<<<<<<< HEAD
 		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute','none'));
+=======
+		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute', 'none'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if ($ret < 0) $error++;
 		if (! $error)
 		{
@@ -1328,7 +1703,11 @@ if (empty($reshook))
 		}
 
 		// Bascule du statut d'un contact
+<<<<<<< HEAD
 		else if ($action == 'swapstatut') {
+=======
+		elseif ($action == 'swapstatut') {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if ($object->fetch($id) > 0) {
 				$result = $object->swapContactStatus(GETPOST('ligne'));
 			} else {
@@ -1337,7 +1716,11 @@ if (empty($reshook))
 		}
 
 		// Efface un contact
+<<<<<<< HEAD
 		else if ($action == 'deletecontact') {
+=======
+		elseif ($action == 'deletecontact') {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$object->fetch($id);
 			$result = $object->delete_contact($lineid);
 
@@ -1354,7 +1737,10 @@ if (empty($reshook))
 	$upload_dir = $conf->propal->multidir_output[$object->entity];
 	$permissioncreate=$usercancreate;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 
@@ -1503,7 +1889,11 @@ if ($action == 'create')
 			});
 			</script>';
 		}
+<<<<<<< HEAD
 		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
+=======
+		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddThirdParty").'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</td>';
 	}
 	print '</tr>' . "\n";
@@ -1529,6 +1919,7 @@ if ($action == 'create')
 
 	// Date
 	print '<tr><td class="fieldrequired">' . $langs->trans('Date') . '</td><td>';
+<<<<<<< HEAD
 	$form->select_date('', '', '', '', '', "addprop", 1, 1);
 	print '</td></tr>';
 
@@ -1538,6 +1929,17 @@ if ($action == 'create')
 	// Terms of payment
 	print '<tr><td class="nowrap fieldrequired">' . $langs->trans('PaymentConditionsShort') . '</td><td>';
 	$form->select_conditions_paiements($soc->cond_reglement_id, 'cond_reglement_id');
+=======
+	print $form->selectDate('', '', '', '', '', "addprop", 1, 1);
+	print '</td></tr>';
+
+	// Validaty duration
+	print '<tr><td class="fieldrequired">' . $langs->trans("ValidityDuration") . '</td><td><input name="duree_validite" class="width50" value="' . (GETPOST('duree_validite', 'int') ? GETPOST('duree_validite', 'int') : $conf->global->PROPALE_VALIDITY_DURATION) . '"> ' . $langs->trans("days") . '</td></tr>';
+
+	// Terms of payment
+	print '<tr><td class="nowrap">' . $langs->trans('PaymentConditionsShort') . '</td><td>';
+	$form->select_conditions_paiements($soc->cond_reglement_id, 'cond_reglement_id', -1, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</td></tr>';
 
 	// Mode of payment
@@ -1577,9 +1979,15 @@ if ($action == 'create')
 		$syear = date("Y", $tmpdte);
 		$smonth = date("m", $tmpdte);
 		$sday = date("d", $tmpdte);
+<<<<<<< HEAD
 		$form->select_date($syear."-".$smonth."-".$sday, 'date_livraison', '', '', '', "addprop");
 	} else {
 		$form->select_date(-1, 'date_livraison', '', '', '', "addprop", 1, 1);
+=======
+		print $form->selectDate($syear."-".$smonth."-".$sday, 'date_livraison', '', '', '', "addprop");
+	} else {
+		print $form->selectDate(-1, 'date_livraison', '', '', '', "addprop", 1, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 	print '</td></tr>';
 
@@ -1590,7 +1998,11 @@ if ($action == 'create')
 		print '<tr>';
 		print '<td>' . $langs->trans("Project") . '</td><td>';
 		$numprojet = $formproject->select_projects(($soc->id > 0 ? $soc->id : -1), $projectid, 'projectid', 0, 0, 1, 1);
+<<<<<<< HEAD
 		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'">' . $langs->trans("AddProject") . '</a>';
+=======
+		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'"><span class="valignmiddle text-plus-circle">' . $langs->trans("AddProject") . '</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</td>';
 		print '</tr>';
 	}
@@ -1599,7 +2011,11 @@ if ($action == 'create')
 	if (!empty($conf->incoterm->enabled))
 	{
 		print '<tr>';
+<<<<<<< HEAD
 		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $soc->libelle_incoterms, 1).'</label></td>';
+=======
+		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $soc->label_incoterms, 1).'</label></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '<td class="maxwidthonsmartphone">';
 		print $form->select_incoterms((!empty($soc->fk_incoterms) ? $soc->fk_incoterms : ''), (!empty($soc->location_incoterms)?$soc->location_incoterms:''));
 		print '</td></tr>';
@@ -1617,7 +2033,11 @@ if ($action == 'create')
 	if (! empty($conf->multicurrency->enabled))
 	{
 		print '<tr>';
+<<<<<<< HEAD
 		print '<td>'.fieldLabel('Currency','multicurrency_code').'</td>';
+=======
+		print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '<td class="maxwidthonsmartphone">';
 		print $form->selectMultiCurrency($currency_code, 'multicurrency_code', 0);
 		print '</td></tr>';
@@ -1677,8 +2097,13 @@ if ($action == 'create')
 			$newclassname = 'Intervention';
 
 		print '<tr><td>' . $langs->trans($newclassname) . '</td><td>' . $objectsrc->getNomUrl(1) . '</td></tr>';
+<<<<<<< HEAD
 		print '<tr><td>' . $langs->trans('TotalHT') . '</td><td>' . price($objectsrc->total_ht, 0, $langs, 1, -1, -1, $conf->currency) . '</td></tr>';
 		print '<tr><td>' . $langs->trans('TotalVAT') . '</td><td>' . price($objectsrc->total_tva, 0, $langs, 1, -1, -1, $conf->currency) . "</td></tr>";
+=======
+		print '<tr><td>' . $langs->trans('AmountHT') . '</td><td>' . price($objectsrc->total_ht, 0, $langs, 1, -1, -1, $conf->currency) . '</td></tr>';
+		print '<tr><td>' . $langs->trans('AmountVAT') . '</td><td>' . price($objectsrc->total_tva, 0, $langs, 1, -1, -1, $conf->currency) . "</td></tr>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if ($mysoc->localtax1_assuj == "1" || $objectsrc->total_localtax1 != 0 ) 		// Localtax1
 		{
 			print '<tr><td>' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td><td>' . price($objectsrc->total_localtax1, 0, $langs, 1, -1, -1, $conf->currency) . "</td></tr>";
@@ -1688,7 +2113,18 @@ if ($action == 'create')
 		{
 			print '<tr><td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td><td>' . price($objectsrc->total_localtax2, 0, $langs, 1, -1, -1, $conf->currency) . "</td></tr>";
 		}
+<<<<<<< HEAD
 		print '<tr><td>' . $langs->trans('TotalTTC') . '</td><td>' . price($objectsrc->total_ttc, 0, $langs, 1, -1, -1, $conf->currency) . "</td></tr>";
+=======
+		print '<tr><td>' . $langs->trans('AmountTTC') . '</td><td>' . price($objectsrc->total_ttc, 0, $langs, 1, -1, -1, $conf->currency) . "</td></tr>";
+
+		if (!empty($conf->multicurrency->enabled))
+		{
+		    print '<tr><td>' . $langs->trans('MulticurrencyAmountHT') . '</td><td>' . price($objectsrc->multicurrency_total_ht) . '</td></tr>';
+		    print '<tr><td>' . $langs->trans('MulticurrencyAmountVAT') . '</td><td>' . price($objectsrc->multicurrency_total_tva) . "</td></tr>";
+		    print '<tr><td>' . $langs->trans('MulticurrencyAmountTTC') . '</td><td>' . price($objectsrc->multicurrency_total_ttc) . "</td></tr>";
+		}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	print "</table>\n";
@@ -1767,7 +2203,10 @@ if ($action == 'create')
 
 		print '</table>';
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 } elseif ($object->id > 0) {
 	/*
 	 * Show object in view mode
@@ -1794,7 +2233,11 @@ if ($action == 'create')
 			$formquestion[] = array('type' => 'date','name' => 'date_delivery','label' => $langs->trans("DeliveryDate"),'value' => $object->date_livraison);
 		}
 		// Paiement incomplet. On demande si motif = escompte ou autre
+<<<<<<< HEAD
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ClonePropal'), $langs->trans('ConfirmClonePropal', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+=======
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ToClone'), $langs->trans('ConfirmClonePropal', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	if ($action == 'statut')
@@ -1809,32 +2252,55 @@ if ($action == 'create')
 		{
 			require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
 			$notify = new Notify($db);
+<<<<<<< HEAD
 			$formquestion = array_merge($formquestion, array(
+=======
+$formquestion = array_merge($formquestion, array(
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				array('type' => 'onecolumn', 'value' => $notify->confirmMessage('PROPAL_CLOSE_SIGNED', $object->socid, $object)),
 			));
 		}
 
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('SetAcceptedRefused'), $text, 'setstatut', $formquestion, '', 1, 250);
+<<<<<<< HEAD
 
 	}
 
 	// Confirm delete
 	else if ($action == 'delete') {
+=======
+	}
+
+	// Confirm delete
+	elseif ($action == 'delete') {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteProp'), $langs->trans('ConfirmDeleteProp', $object->ref), 'confirm_delete', '', 0, 1);
 	}
 
 	// Confirm reopen
+<<<<<<< HEAD
 	else if ($action == 'reopen') {
+=======
+	elseif ($action == 'reopen') {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ReOpen'), $langs->trans('ConfirmReOpenProp', $object->ref), 'confirm_reopen', '', 0, 1);
 	}
 
 	// Confirmation delete product/service line
+<<<<<<< HEAD
 	else if ($action == 'ask_deleteline') {
+=======
+	elseif ($action == 'ask_deleteline') {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&lineid=' . $lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
 	}
 
 	// Confirm validate proposal
+<<<<<<< HEAD
 	else if ($action == 'validate') {
+=======
+	elseif ($action == 'validate') {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$error = 0;
 
 		// We verifie whether the object is provisionally numbering
@@ -1861,12 +2327,20 @@ if ($action == 'create')
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ValidateProp'), $text, 'confirm_validate', '', 0, 1);
 	}
 
+<<<<<<< HEAD
 	if (! $formconfirm) {
 		$parameters = array('lineid' => $lineid);
 		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
 		elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
 	}
+=======
+	// Call Hook formConfirm
+	$parameters = array('lineid' => $lineid);
+	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
+	elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	// Print form confirm
 	print $formconfirm;
@@ -1881,7 +2355,11 @@ if ($action == 'create')
 	$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $usercancreate, 'string', '', 0, 1);
 	$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $usercancreate, 'string', '', null, null, '', 1);
 	// Thirdparty
+<<<<<<< HEAD
 	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1,'customer');
+=======
+	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1, 'customer');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) $morehtmlref.=' (<a href="'.DOL_URL_ROOT.'/comm/propal/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherProposals").'</a>)';
 	// Project
 	if (! empty($conf->projet->enabled))
@@ -1925,7 +2403,11 @@ if ($action == 'create')
 	print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
 
+<<<<<<< HEAD
 	print '<table class="border" width="100%">';
+=======
+	print '<table class="border tableforfield" width="100%">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	// Link for thirdparty discounts
 	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
@@ -1956,6 +2438,7 @@ if ($action == 'create')
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('Date');
 	print '</td>';
+<<<<<<< HEAD
 	if ($action != 'editdate' && ! empty($object->brouillon) && $usercancreate)
 		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editdate&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetDate'), 1) . '</a></td>';
 	print '</tr></table>';
@@ -1965,6 +2448,17 @@ if ($action == 'create')
 		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 		print '<input type="hidden" name="action" value="setdate">';
 		$form->select_date($object->date, 're', '', '', 0, "editdate");
+=======
+	if ($action != 'editdate' && $object->statut == Propal::STATUS_DRAFT && $usercancreate)
+		print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editdate&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetDate'), 1) . '</a></td>';
+	print '</tr></table>';
+	print '</td><td>';
+	if ($object->statut == Propal::STATUS_DRAFT && $action == 'editdate' && $usercancreate) {
+		print '<form name="editdate" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="post">';
+		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
+		print '<input type="hidden" name="action" value="setdate">';
+		print $form->selectDate($object->date, 're', '', '', 0, "editdate");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
 		print '</form>';
 	} else {
@@ -1982,6 +2476,7 @@ if ($action == 'create')
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('DateEndPropal');
 	print '</td>';
+<<<<<<< HEAD
 	if ($action != 'editecheance' && ! empty($object->brouillon) && $usercancreate)
 		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editecheance&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetConditions'), 1) . '</a></td>';
 	print '</tr></table>';
@@ -1991,6 +2486,17 @@ if ($action == 'create')
 		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 		print '<input type="hidden" name="action" value="setecheance">';
 		$form->select_date($object->fin_validite, 'ech', '', '', '', "editecheance");
+=======
+	if ($action != 'editecheance' && $object->statut == Propal::STATUS_DRAFT && $usercancreate)
+		print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editecheance&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetConditions'), 1) . '</a></td>';
+	print '</tr></table>';
+	print '</td><td>';
+	if ($object->statut == Propal::STATUS_DRAFT && $action == 'editecheance' && $usercancreate) {
+		print '<form name="editecheance" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="post">';
+		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
+		print '<input type="hidden" name="action" value="setecheance">';
+		print $form->selectDate($object->fin_validite, 'ech', '', '', '', "editecheance");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
 		print '</form>';
 	} else {
@@ -2010,11 +2516,19 @@ if ($action == 'create')
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('PaymentConditionsShort');
 	print '</td>';
+<<<<<<< HEAD
 	if ($action != 'editconditions' && ! empty($object->brouillon) && $usercancreate)
 		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editconditions&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetConditions'), 1) . '</a></td>';
 	print '</tr></table>';
 	print '</td><td>';
 	if (! empty($object->brouillon) && $action == 'editconditions' && $usercancreate) {
+=======
+	if ($action != 'editconditions' && $object->statut == Propal::STATUS_DRAFT && $usercancreate)
+		print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editconditions&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetConditions'), 1) . '</a></td>';
+	print '</tr></table>';
+	print '</td><td>';
+	if ($object->statut == Propal::STATUS_DRAFT && $action == 'editconditions' && $usercancreate) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$form->form_conditions_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->cond_reglement_id, 'cond_reglement_id');
 	} else {
 		$form->form_conditions_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->cond_reglement_id, 'none');
@@ -2038,11 +2552,19 @@ if ($action == 'create')
 	if (! empty($conf->commande->enabled))
 		print ' (' . $langs->trans('AfterOrder') . ')';
 	print '</td>';
+<<<<<<< HEAD
 	if ($action != 'editavailability' && ! empty($object->brouillon) && $usercancreate)
 		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editavailability&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetAvailability'), 1) . '</a></td>';
 	print '</tr></table>';
 	print '</td><td>';
 	if (! empty($object->brouillon) && $action == 'editavailability' && $usercancreate) {
+=======
+	if ($action != 'editavailability' && $object->statut == Propal::STATUS_DRAFT && $usercancreate)
+		print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editavailability&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetAvailability'), 1) . '</a></td>';
+	print '</tr></table>';
+	print '</td><td>';
+	if ($object->statut == Propal::STATUS_DRAFT && $action == 'editavailability' && $usercancreate) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$form->form_availability($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->availability_id, 'availability_id', 1);
 	} else {
 		$form->form_availability($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->availability_id, 'none', 1);
@@ -2058,7 +2580,11 @@ if ($action == 'create')
 		print $langs->trans('SendingMethod');
 		print '</td>';
 		if ($action != 'editshippingmethod' && $usercancreate)
+<<<<<<< HEAD
 			print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editshippingmethod&amp;id='.$object->id.'">'.img_edit($langs->trans('SetShippingMode'),1).'</a></td>';
+=======
+			print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editshippingmethod&amp;id='.$object->id.'">'.img_edit($langs->trans('SetShippingMode'), 1).'</a></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editshippingmethod' && $usercancreate) {
@@ -2075,11 +2601,19 @@ if ($action == 'create')
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('Source');
 	print '</td>';
+<<<<<<< HEAD
 	if ($action != 'editdemandreason' && ! empty($object->brouillon) && $usercancreate)
 		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editdemandreason&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetDemandReason'), 1) . '</a></td>';
 	print '</tr></table>';
 	print '</td><td>';
 	if (! empty($object->brouillon) && $action == 'editdemandreason' && $usercancreate) {
+=======
+	if ($action != 'editdemandreason' && $object->statut == Propal::STATUS_DRAFT && $usercancreate)
+		print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editdemandreason&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetDemandReason'), 1) . '</a></td>';
+	print '</tr></table>';
+	print '</td><td>';
+	if ($object->statut == Propal::STATUS_DRAFT && $action == 'editdemandreason' && $usercancreate) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$form->formInputReason($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->demand_reason_id, 'demand_reason_id', 1);
 	} else {
 		$form->formInputReason($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->demand_reason_id, 'none');
@@ -2093,12 +2627,21 @@ if ($action == 'create')
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('PaymentMode');
 	print '</td>';
+<<<<<<< HEAD
 	if ($action != 'editmode' && ! empty($object->brouillon) && $usercancreate)
 		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmode&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMode'), 1) . '</a></td>';
 	print '</tr></table>';
 	print '</td><td>';
 	if (! empty($object->brouillon) && $action == 'editmode' && $usercancreate) {
 		$form->form_modes_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->mode_reglement_id, 'mode_reglement_id', 'CRDT');
+=======
+	if ($action != 'editmode' && $object->statut == Propal::STATUS_DRAFT && $usercancreate)
+		print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmode&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMode'), 1) . '</a></td>';
+	print '</tr></table>';
+	print '</td><td>';
+	if ($object->statut == Propal::STATUS_DRAFT && $action == 'editmode' && $usercancreate) {
+		$form->form_modes_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->mode_reglement_id, 'mode_reglement_id', 'CRDT', 1, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	} else {
 		$form->form_modes_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->mode_reglement_id, 'none');
 	}
@@ -2111,6 +2654,7 @@ if ($action == 'create')
 		print '<tr>';
 		print '<td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
+<<<<<<< HEAD
 		print fieldLabel('Currency','multicurrency_code');
 		print '</td>';
 		if ($action != 'editmulticurrencycode' && ! empty($object->brouillon) && $usercancreate)
@@ -2118,6 +2662,15 @@ if ($action == 'create')
 		print '</tr></table>';
 		print '</td><td>';
 		if (! empty($object->brouillon) && $action == 'editmulticurrencycode' && $usercancreate) {
+=======
+		print $form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0);
+		print '</td>';
+		if ($action != 'editmulticurrencycode' && $object->statut == Propal::STATUS_DRAFT && $usercancreate)
+			print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencycode&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
+		print '</tr></table>';
+		print '</td><td>';
+		if ($object->statut == Propal::STATUS_DRAFT && $action == 'editmulticurrencycode' && $usercancreate) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$form->form_multicurrency_code($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_code, 'multicurrency_code');
 		} else {
 			$form->form_multicurrency_code($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_code, 'none');
@@ -2128,6 +2681,7 @@ if ($action == 'create')
 		print '<tr>';
 		print '<td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
+<<<<<<< HEAD
 		print fieldLabel('CurrencyRate','multicurrency_tx');
 		print '</td>';
 		if ($action != 'editmulticurrencyrate' && ! empty($object->brouillon) && $object->multicurrency_code && $object->multicurrency_code != $conf->currency && $usercancreate)
@@ -2135,6 +2689,15 @@ if ($action == 'create')
 		print '</tr></table>';
 		print '</td><td>';
 		if (! empty($object->brouillon) && ($action == 'editmulticurrencyrate' || $action == 'actualizemulticurrencyrate') && $usercancreate) {
+=======
+		print $form->editfieldkey('CurrencyRate', 'multicurrency_tx', '', $object, 0);
+		print '</td>';
+		if ($action != 'editmulticurrencyrate' && $object->statut == Propal::STATUS_DRAFT && $object->multicurrency_code && $object->multicurrency_code != $conf->currency && $usercancreate)
+			print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
+		print '</tr></table>';
+		print '</td><td>';
+		if ($object->statut == Propal::STATUS_DRAFT && ($action == 'editmulticurrencyrate' || $action == 'actualizemulticurrencyrate') && $usercancreate) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if($action == 'actualizemulticurrencyrate') {
 				list($object->fk_multicurrency, $object->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($object->db, $object->multicurrency_code);
 			}
@@ -2155,7 +2718,11 @@ if ($action == 'create')
 		// Outstanding Bill
 		print '<tr><td>';
 		print $langs->trans('OutstandingBill');
+<<<<<<< HEAD
 		print '</td><td align="right">';
+=======
+		print '</td><td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print price($soc->get_OutstandingBill()) . ' / ';
 		print price($soc->outstanding_limit, 0, $langs, 1, - 1, - 1, $conf->currency);
 		print '</td>';
@@ -2170,7 +2737,11 @@ if ($action == 'create')
 		print $langs->trans('BankAccount');
 		print '</td>';
 		if ($action != 'editbankaccount' && $usercancreate)
+<<<<<<< HEAD
 			print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'),1).'</a></td>';
+=======
+			print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editbankaccount') {
@@ -2204,7 +2775,11 @@ if ($action == 'create')
 		print '<tr><td>';
 		print '<table width="100%" class="nobordernopadding"><tr><td>';
 		print $langs->trans('IncotermLabel');
+<<<<<<< HEAD
 		print '<td><td align="right">';
+=======
+		print '<td><td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if ($usercancreate) print '<a href="'.DOL_URL_ROOT.'/comm/propal/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
 		else print '&nbsp;';
 		print '</td></tr></table>';
@@ -2212,7 +2787,11 @@ if ($action == 'create')
 		print '<td>';
 		if ($action != 'editincoterm')
 		{
+<<<<<<< HEAD
 			print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+=======
+			print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		else
 		{
@@ -2231,22 +2810,38 @@ if ($action == 'create')
 	print '<div class="ficheaddleft">';
 	print '<div class="underbanner clearboth"></div>';
 
+<<<<<<< HEAD
 	print '<table class="border centpercent">';
+=======
+	print '<table class="border tableforfield centpercent">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	if (!empty($conf->multicurrency->enabled) && ($object->multicurrency_code != $conf->currency))
 	{
 		// Multicurrency Amount HT
+<<<<<<< HEAD
 		print '<tr><td class="titlefieldmiddle">' . fieldLabel('MulticurrencyAmountHT','multicurrency_total_ht') . '</td>';
+=======
+		print '<tr><td class="titlefieldmiddle">' . $form->editfieldkey('MulticurrencyAmountHT', 'multicurrency_total_ht', '', $object, 0) . '</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '<td class="nowrap">' . price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
 		print '</tr>';
 
 		// Multicurrency Amount VAT
+<<<<<<< HEAD
 		print '<tr><td>' . fieldLabel('MulticurrencyAmountVAT','multicurrency_total_tva') . '</td>';
+=======
+		print '<tr><td>' . $form->editfieldkey('MulticurrencyAmountVAT', 'multicurrency_total_tva', '', $object, 0) . '</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '<td class="nowrap">' . price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
 		print '</tr>';
 
 		// Multicurrency Amount TTC
+<<<<<<< HEAD
 		print '<tr><td>' . fieldLabel('MulticurrencyAmountTTC','multicurrency_total_ttc') . '</td>';
+=======
+		print '<tr><td>' . $form->editfieldkey('MulticurrencyAmountTTC', 'multicurrency_total_ttc', '', $object, 0) . '</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '<td class="nowrap">' . price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
 		print '</tr>';
 	}
@@ -2281,7 +2876,11 @@ if ($action == 'create')
 	print '</tr>';
 
 	// Statut
+<<<<<<< HEAD
 	//print '<tr><td height="10">' . $langs->trans('Status') . '</td><td align="left" colspan="2">' . $object->getLibStatut(4) . '</td></tr>';
+=======
+	//print '<tr><td height="10">' . $langs->trans('Status') . '</td><td class="left" colspan="2">' . $object->getLibStatut(4) . '</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	print '</table>';
 
@@ -2318,7 +2917,11 @@ if ($action == 'create')
 
 	print '	<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '#addline' : '#line_' . GETPOST('lineid')) . '" method="POST">
 	<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">
+<<<<<<< HEAD
 	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateligne') . '">
+=======
+	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline') . '">
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	<input type="hidden" name="mode" value="">
 	<input type="hidden" name="id" value="' . $object->id . '">
 	';
@@ -2328,10 +2931,22 @@ if ($action == 'create')
 	}
 
 	print '<div class="div-table-responsive-no-min">';
+<<<<<<< HEAD
 	print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
 	if (! empty($object->lines))
 		$ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
+=======
+	if (! empty($object->lines) || ($object->statut == Propal::STATUS_DRAFT && $usercancreate && $action != 'selectlines' && $action != 'editline'))
+	{
+	    print '<table id="tablelines" class="noborder noshadow" width="100%">';
+	}
+
+	if (! empty($object->lines))
+	{
+		$ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
+	}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	// Form to add new line
 	if ($object->statut == Propal::STATUS_DRAFT && $usercancreate && $action != 'selectlines')
@@ -2346,16 +2961,31 @@ if ($action == 'create')
 		}
 	}
 
+<<<<<<< HEAD
 	print '</table>';
+=======
+	if (! empty($object->lines) || ($object->statut == Propal::STATUS_DRAFT && $usercancreate && $action != 'selectlines' && $action != 'editline'))
+	{
+	    print '</table>';
+	}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</div>';
 
 	print "</form>\n";
 
 	dol_fiche_end();
 
+<<<<<<< HEAD
 	/*
 	 * Boutons Actions
 	 */
+=======
+
+	/*
+	 * Button Actions
+	 */
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if ($action != 'presend') {
 		print '<div class="tabsAction">';
 
@@ -2374,7 +3004,11 @@ if ($action == 'create')
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=validate">' . $langs->trans('Validate') . '</a></div>';
 					}
 					else
+<<<<<<< HEAD
 						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">' . $langs->trans('Validate') . '</a></div>';
+=======
+						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">' . $langs->trans('Validate') . '</a></div>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 				// Create event
 				/*if ($conf->agenda->enabled && ! empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 	// Add hidden condition because this is not a "workflow" action so should appears somewhere else on page.
@@ -2397,7 +3031,11 @@ if ($action == 'create')
 					if ($usercansend) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a></div>';
 					} else
+<<<<<<< HEAD
 						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">' . $langs->trans('SendMail') . '</a></div>';
+=======
+						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">' . $langs->trans('SendMail') . '</a></div>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 
 				// Create an order
@@ -2481,7 +3119,17 @@ if ($action == 'create')
 
 		// Show links to link elements
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('propal'));
+<<<<<<< HEAD
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+=======
+
+		$compatibleImportElementsList = false;
+		if($user->rights->propal->creer && $object->statut == Propal::STATUS_DRAFT)
+		{
+		    $compatibleImportElementsList = array('commande','propal'); // import from linked elements
+		}
+		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem, $compatibleImportElementsList);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Show online signature link
 		$useonlinesignature = $conf->global->MAIN_FEATURES_LEVEL;	// Replace this with 1 when feature to make online signature is ok

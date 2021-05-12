@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 // Copyright (C) 2012	Regis Houssin	<regis.houssin@capnetworks.com>
+=======
+// Copyright (C) 2012	Regis Houssin	<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,7 +45,11 @@ $(document).ready(function() {
 				'-moz-border-radius':	 '10px',
 				'border-radius': 		 '10px'
 			},
+<<<<<<< HEAD
 			
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			// styles applied when using $.growlUI
 			dolEventErrorCSS: {
 				width:  	'350px',
@@ -60,7 +68,11 @@ $(document).ready(function() {
 			}
 
 	};*/
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$.dolEventValid = function(title, message, timeout, onClose) {
 		var $m = $('<div class="dolEventValid"></div>');
 		if (title) $m.append('<h1>'+title+'</h1>');
@@ -73,7 +85,11 @@ $(document).ready(function() {
 			css: $.blockUI.events.dolEventValidCSS
 		});
 	};
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$.dolEventError = function(title, message, timeout, onClose) {
 		var $m = $('<div class="dolEventError"></div>');
 		if (title) $m.append('<h1>'+title+'</h1>');
@@ -87,7 +103,11 @@ $(document).ready(function() {
 		});
 		$('.dolEventError').click($.unblockUI);
 	};
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$.pleaseBePatient = function(message) {
 		$.blockUI({
 			message: message,

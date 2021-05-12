@@ -17,7 +17,11 @@ namespace Stripe;
  * @property string $customer
  * @property string $email
  * @property string $external_coupon_code
+<<<<<<< HEAD
  * @property mixed $items
+=======
+ * @property OrderItem[] $items
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * @property bool $livemode
  * @property StripeObject $metadata
  * @property Collection $returns
@@ -33,6 +37,12 @@ namespace Stripe;
  */
 class Order extends ApiResource
 {
+<<<<<<< HEAD
+=======
+
+    const OBJECT_NAME = "order";
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     use ApiOperations\All;
     use ApiOperations\Create;
     use ApiOperations\Retrieve;

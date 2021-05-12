@@ -16,6 +16,10 @@ MembersCategoriesArea=Àrea d'etiquetes de socis
 ContactsCategoriesArea=Àrea d'etiquetes de contactes
 AccountsCategoriesArea=Àrea d'etiquetes de comptes
 ProjectsCategoriesArea=Àrea d'etiquetes de projectes
+<<<<<<< HEAD
+=======
+UsersCategoriesArea=Àrea d'etiquetes d'usuaris
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SubCats=Subcategories
 CatList=Llistat d'etiquetes
 NewCategory=Nova etiqueta
@@ -60,6 +64,10 @@ MembersCategoriesShort=Etiquetes de socis
 ContactCategoriesShort=Etiquetes de contactes
 AccountsCategoriesShort=Etiquetes de comptes
 ProjectsCategoriesShort=Etiquetes de projectes
+<<<<<<< HEAD
+=======
+UsersCategoriesShort=Etiquetes d'usuaris
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ThisCategoryHasNoProduct=Aquesta categoria no conté cap producte.
 ThisCategoryHasNoSupplier=Aquesta categoria no conté cap proveïdor.
 ThisCategoryHasNoCustomer=Aquesta categoria no conté cap client.
@@ -81,7 +89,11 @@ DeleteFromCat=Elimina de l'etiqueta
 ExtraFieldsCategories=Atributs complementaris
 CategoriesSetup=Configuració d'etiquetes
 CategorieRecursiv=Enllaça amb l'etiqueta mare automàticament
+<<<<<<< HEAD
 CategorieRecursivHelp=Si esta activat, el producte s'enllaçara a la categoria pare si l'afegim a una subcategoria
+=======
+CategorieRecursivHelp=Si l'opció està activada, quan afegiu un producte a una subcategoria, el producte també s’afegirà a la categoria pare.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddProductServiceIntoCategory=Afegir el següent producte/servei
 ShowCategory=Mostra etiqueta
 ByDefaultInList=Per defecte en el llistat

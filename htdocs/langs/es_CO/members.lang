@@ -1,2 +1,6 @@
 # Dolibarr language file - Source file is en_US - members
+<<<<<<< HEAD
+=======
+MemberStatusDraft=Borrador (necesita ser validado)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SubscriptionLate=Retraso

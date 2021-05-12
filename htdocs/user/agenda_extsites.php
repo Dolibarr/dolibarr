@@ -37,9 +37,15 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 $langs->loadLangs(array('agenda', 'admin', 'other'));
 
 $def = array();
+<<<<<<< HEAD
 $actiontest=GETPOST('test','alpha');
 $actionsave=GETPOST('save','alpha');
 $contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'useragenda';   // To manage different context of search
+=======
+$actiontest=GETPOST('test', 'alpha');
+$actionsave=GETPOST('save', 'alpha');
+$contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'useragenda';   // To manage different context of search
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if (empty($conf->global->AGENDA_EXT_NB)) $conf->global->AGENDA_EXT_NB=5;
 $MAXAGENDA=$conf->global->AGENDA_EXT_NB;
@@ -48,7 +54,11 @@ $MAXAGENDA=$conf->global->AGENDA_EXT_NB;
 $colorlist=array('BECEDD','DDBECE','BFDDBE','F598B4','F68654','CBF654','A4A4A5');
 
 // Security check
+<<<<<<< HEAD
 $id = GETPOST('id','int');
+=======
+$id = GETPOST('id', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $object = new User($db);
 $object->fetch($id, '', '', 1);
 $object->getrights();
@@ -57,10 +67,14 @@ $object->getrights();
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
+<<<<<<< HEAD
 if ($user->id == $id)	// A user can always read its own card
 {
 	$feature2='';
 }
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
 // If user is not user that read and no permission to read other users, we stop
@@ -75,7 +89,11 @@ $hookmanager->initHooks(array('usercard','useragenda','globalcard'));
  */
 
 $parameters=array('id'=>$socid);
+<<<<<<< HEAD
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+=======
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook)) {
@@ -144,11 +162,19 @@ $formother=new FormOther($db);
 $arrayofjs=array();
 $arrayofcss=array();
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("UserSetup"),'','',0,0,$arrayofjs,$arrayofcss);
+=======
+llxHeader('', $langs->trans("UserSetup"), '', '', 0, 0, $arrayofjs, $arrayofcss);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 print '<form name="extsitesconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="id" value="'.$id.'">';
+<<<<<<< HEAD
+=======
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $head=user_prepare_head($object);
 
@@ -160,23 +186,43 @@ if ($user->rights->user->user->lire || $user->admin) {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 }
 
+<<<<<<< HEAD
 dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
 
 print $langs->trans("AgendaExtSitesDesc")."<br>\n";
+=======
+dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+
+
+print '<div class="underbanner clearboth"></div>';
+
+print '<br>';
+print '<span class="opacitymedium">'.$langs->trans("AgendaExtSitesDesc")."</span><br>\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print "<br>\n";
 
 $selectedvalue=$conf->global->AGENDA_DISABLE_EXT;
 if ($selectedvalue==1) $selectedvalue=0; else $selectedvalue=1;
 
+<<<<<<< HEAD
 print '<div class="div-table-responsive">';
 print "<table class=\"noborder\" width=\"100%\">";
+=======
+
+print '<div class="div-table-responsive">';
+print '<table class="noborder centpercent">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print "<tr class=\"liste_titre\">";
 print "<td>".$langs->trans("Parameter")."</td>";
 print "<td>".$langs->trans("Name")."</td>";
 print "<td>".$langs->trans("ExtSiteUrlAgenda").'<div class="hideonsmartphone">'." (".$langs->trans("Example").': http://yoursite/agenda/agenda.ics)</div></td>';
 print "<td>".$form->textwithpicto($langs->trans("FixTZ"), $langs->trans("FillFixTZOnlyIfRequired"), 1).'</td>';
+<<<<<<< HEAD
 print '<td align="right">'.$langs->trans("Color").'</td>';
+=======
+print '<td class="right">'.$langs->trans("Color").'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print "</tr>";
 
 $i=1;
@@ -191,7 +237,11 @@ while ($i <= $MAXAGENDA)
 
 	print '<tr class="oddeven">';
 	// Nb
+<<<<<<< HEAD
 	print '<td class="maxwidth50onsmartphone">'.$langs->trans("AgendaExtNb",$key)."</td>";
+=======
+	print '<td class="maxwidth50onsmartphone">'.$langs->trans("AgendaExtNb", $key)."</td>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	// Name
 	print '<td class="maxwidth50onsmartphone"><input type="text" class="flat hideifnotset minwidth100" name="AGENDA_EXT_NAME_'.$id.'_'.$key.'" value="'. (GETPOST('AGENDA_EXT_NAME_'.$id.'_'.$key)?GETPOST('AGENDA_EXT_NAME_'.$id.'_'.$key):$object->conf->$name) . '"></td>';
 	// URL
@@ -199,7 +249,11 @@ while ($i <= $MAXAGENDA)
 	// Offset TZ
 	print '<td><input type="text" class="flat hideifnotset" name="AGENDA_EXT_OFFSETTZ_'.$id.'_'.$key.'" value="'. (GETPOST('AGENDA_EXT_OFFSETTZ_'.$id.'_'.$key)?GETPOST('AGENDA_EXT_OFFSETTZ_'.$id.'_'.$key):$object->conf->$offsettz) . '" size="1"></td>';
 	// Color (Possible colors are limited by Google)
+<<<<<<< HEAD
 	print '<td class="nowrap" align="right">';
+=======
+	print '<td class="nowrap right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	//print $formadmin->selectColor($conf->global->$color, "google_agenda_color".$key, $colorlist);
 	print $formother->selectColor((GETPOST("AGENDA_EXT_COLOR_".$id.'_'.$key)?GETPOST("AGENDA_EXT_COLOR_".$id.'_'.$key):$object->conf->$color), "AGENDA_EXT_COLOR_".$id.'_'.$key, 'extsitesconfig', 1, '', 'hideifnotset');
 	print '</td>';
@@ -210,15 +264,27 @@ while ($i <= $MAXAGENDA)
 print '</table>';
 print '</div>';
 
+<<<<<<< HEAD
 dol_fiche_end();
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print '<div class="center">';
 print "<input type=\"submit\" id=\"save\" name=\"save\" class=\"button hideifnotset\" value=\"".$langs->trans("Save")."\">";
 print "</div>";
 
+<<<<<<< HEAD
 print "</form>\n";
 
 
 llxFooter();
 
+=======
+dol_fiche_end();
+
+print "</form>\n";
+
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

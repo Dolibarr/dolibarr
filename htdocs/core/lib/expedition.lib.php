@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2006-2012	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007		Rodolphe Quiedeville <rodolphe@quiedeville.org>
+<<<<<<< HEAD
  * Copyright (C) 2010-2012	Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2010-2012	Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2010		Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015 Claudio Aschieri				<c.aschieri@19.coop>
  *
@@ -59,7 +63,11 @@ function expedition_prepare_head(Expedition $object)
 	}
 	
 
+<<<<<<< HEAD
     complete_head_from_modules($conf,$langs,$object,$head,$h,'order','remove');
+=======
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'order', 'remove');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     return $head;
 }
@@ -134,9 +142,16 @@ function expedition_admin_prepare_head()
 	
 	
 	
+<<<<<<< HEAD
 	complete_head_from_modules($conf,$langs,null,$head,$h,'expedition_admin','remove');
 
 	return $head;
 }
 
 
+=======
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'expedition_admin', 'remove');
+
+	return $head;
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

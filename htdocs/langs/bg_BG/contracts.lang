@@ -14,9 +14,15 @@ ServiceStatusNotLateShort=Не е изтекъл
 ServiceStatusLate=Спринт, изтекъл
 ServiceStatusLateShort=Изтекла
 ServiceStatusClosed=Затворен
+<<<<<<< HEAD
 ShowContractOfService=Show contract of service
 Contracts=Договори
 ContractsSubscriptions=Договори/Абонаменти
+=======
+ShowContractOfService=Показване на договора за услугата
+Contracts=Договори
+ContractsSubscriptions=Договори / Абонаменти
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ContractsAndLine=Договори и договорни линии
 Contract=Договор
 ContractLine=Договорна линия
@@ -28,6 +34,7 @@ MenuRunningServices=Текущи услуги
 MenuExpiredServices=Изтекли услуги
 MenuClosedServices=Затворени услуги
 NewContract=Нов договор
+<<<<<<< HEAD
 NewContractSubscription=New contract/subscription
 AddContract=Създаване на договор
 DeleteAContract=Изтриване на договора
@@ -41,6 +48,21 @@ ConfirmCloseService=Are you sure you want to close this service with date <b>%s<
 ValidateAContract=Одобряване на договор
 ActivateService=Активиране на услугата
 ConfirmActivateService=Are you sure you want to activate this service with date <b>%s</b>?
+=======
+NewContractSubscription=Нов договор / абонамент
+AddContract=Създаване на договор
+DeleteAContract=Изтриване на договора
+ActivateAllOnContract=Активиране всички услуги
+CloseAContract=Затваряне на договора
+ConfirmDeleteAContract=Сигурни ли сте, че искате да изтриете този договор с всички предоставени услуги?
+ConfirmValidateContract=Сигурни ли сте, че искате да валидирате този договор под името <b>%s</b>?
+ConfirmActivateAllOnContract=Това ще отвори всички услуги (които са все още неактивни). Наистина ли искате да отворите всички услуги?
+ConfirmCloseContract=Това ще затвори всички услуги (активни или не). Сигурни ли сте, че искате да прекратите този договор?
+ConfirmCloseService=Сигурни ли сте, че искате да затворите тази услуга с дата <b> %s </b>?
+ValidateAContract=Одобряване на договор
+ActivateService=Активиране на услугата
+ConfirmActivateService=Сигурни ли сте, че искате да активирате тази услуга с дата <b> %s </b>?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 RefContract=Договор препратка
 DateContract=Дата на договора
 DateServiceActivate=Датата на активиране на услугата
@@ -51,8 +73,13 @@ ListOfClosedServices=Списък на затворените услуги
 ListOfRunningServices=Списък на стартираните услуги
 NotActivatedServices=Неактивни услуги (сред валидирани договори)
 BoardNotActivatedServices=Услуги за да активирате сред утвърдени договори
+<<<<<<< HEAD
 LastContracts=Latest %s contracts
 LastModifiedServices=Latest %s modified services
+=======
+LastContracts=Договори: %s последни
+LastModifiedServices=Услуги: %s последно променени
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ContractStartDate=Начална дата
 ContractEndDate=Крайна дата
 DateStartPlanned=Планирана начална дата
@@ -64,6 +91,7 @@ DateStartRealShort=Недвижими началната дата
 DateEndReal=Недвижими крайната дата
 DateEndRealShort=Недвижими крайната дата
 CloseService=Затворете услуга
+<<<<<<< HEAD
 BoardRunningServices=Изтекъл стартирани услуги
 ServiceStatus=Състояние на услугата
 DraftContracts=Чернови договори
@@ -75,12 +103,27 @@ ConfirmDeleteContractLine=Are you sure you want to delete this contract line?
 MoveToAnotherContract=Преместване на службата в друг договор.
 ConfirmMoveToAnotherContract=Избра новата цел на договора и потвърдете, искам да се движат тази услуга в този договор.
 ConfirmMoveToAnotherContractQuestion=Choose in which existing contract (of same third party), you want to move this service to?
+=======
+BoardRunningServices=Услуги в ход
+BoardExpiredServices=Услуги с изтекъл срок
+ServiceStatus=Състояние на услугата
+DraftContracts=Чернови договори
+CloseRefusedBecauseOneServiceActive=Договорът не може да бъде затворен, тъй като има най-малко една отворена услуга в него
+ActivateAllContracts=Активиране на всички договорни линии
+CloseAllContracts=Затворете всички договорни линии
+DeleteContractLine=Изтриване на линия договор
+ConfirmDeleteContractLine=Сигурни ли сте, че искате да изтриете тази договорна линия?
+MoveToAnotherContract=Преместване на службата в друг договор.
+ConfirmMoveToAnotherContract=Избра новата цел на договора и потвърдете, искам да се движат тази услуга в този договор.
+ConfirmMoveToAnotherContractQuestion=Изберете в кой съществуващ договор (на същия контрагент) искате да преместите тази услуга?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PaymentRenewContractId=Поднови договора линия (брой %s)
 ExpiredSince=Срок на годност
 NoExpiredServices=Не изтекъл активни услуги
 ListOfServicesToExpireWithDuration=Списък на Услуги изтичащи в %s дни
 ListOfServicesToExpireWithDurationNeg=Списък на услуги изтекли повече от %s дни
 ListOfServicesToExpire=Списък на изтичащи Услуги
+<<<<<<< HEAD
 NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
 StandardContractsTemplate=Стандартен шаблон за договори
 ContactNameAndSignature=За %s, име и подпис:
@@ -89,6 +132,16 @@ CloneContract=Clone contract
 ConfirmCloneContract=Are you sure you want to clone the contract <b>%s</b>?
 LowerDateEndPlannedShort=Lower planned end date of active services
 SendContractRef=Contract information __REF__
+=======
+NoteListOfYourExpiredServices=Този списък съдържа само услуги от договори с контрагенти, с които сте свързани като търговски представител.
+StandardContractsTemplate=Стандартен шаблон за договори
+ContactNameAndSignature=За %s, име и подпис:
+OnlyLinesWithTypeServiceAreUsed=Само линии с тип "Услуга" ще бъдат клонирани.
+ConfirmCloneContract=Сигурни ли сте, че искате да клонирате договора <b> %s </b>?
+LowerDateEndPlannedShort=По-ранна планирана крайна дата на активните услуги
+SendContractRef=Информация за договор __REF__
+OtherContracts=Други договори
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Търговски представител подписване на договора
 TypeContact_contrat_internal_SALESREPFOLL=Търговски представител проследяване договор

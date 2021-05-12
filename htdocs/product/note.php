@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry	  	<florian.henry@open-concept.pro>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
@@ -35,13 +39,21 @@ $langs->load("companies");
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
+<<<<<<< HEAD
 $action = GETPOST('action','aZ09');
+=======
+$action = GETPOST('action', 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
 $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
 if ($user->societe_id) $socid=$user->societe_id;
+<<<<<<< HEAD
 $result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype);
+=======
+$result=restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $object = new Product($db);
 if ($id > 0 || ! empty($ref)) $object->fetch($id, $ref);
@@ -67,7 +79,11 @@ if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT)) $helpurl
 if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) $helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 
 $title = $langs->trans('ProductServiceCard');
+<<<<<<< HEAD
 $shortlabel = dol_trunc($object->label,16);
+=======
+$shortlabel = dol_trunc($object->label, 16);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
 {
 	$title = $langs->trans('Product')." ". $shortlabel ." - ".$langs->trans('Notes');
@@ -98,7 +114,11 @@ if ($id > 0 || ! empty($ref))
     $object->next_prev_filter=" fk_product_type = ".$object->type;
 
     $shownav = 1;
+<<<<<<< HEAD
     if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+=======
+    if ($user->societe_id && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 
@@ -115,6 +135,12 @@ if ($id > 0 || ! empty($ref))
     dol_fiche_end();
 }
 
+<<<<<<< HEAD
 llxFooter();
 $db->close();
 
+=======
+// End of page
+llxFooter();
+$db->close();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

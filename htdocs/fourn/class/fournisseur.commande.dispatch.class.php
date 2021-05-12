@@ -17,6 +17,7 @@
  */
 
 /**
+<<<<<<< HEAD
  *  \file       fourn/class/fournisseur.commande.dispatch.class.php
  *  \ingroup    fournisseur stock
  *  \brief      This file is an example for a CRUD class file (Create/Read/Update/Delete)
@@ -52,6 +53,90 @@ class CommandeFournisseurDispatch extends CommonObject
 	public $datec='';
 	public $comment;
 	public $status;
+=======
+ *  \file       htdocs/fourn/class/fournisseur.commande.dispatch.class.php
+ *  \ingroup    fournisseur stock
+ *  \brief      This file is an example for a CRUD class file (Create/Read/Update/Delete)
+ *              Initialy built by build_class_from_table on 2015-02-24 10:38
+ */
+
+// Put here all includes required by your class file
+require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
+require_once DOL_DOCUMENT_ROOT."/reception/class/reception.class.php";
+
+
+/**
+ *  Class to manage table commandefournisseurdispatch
+ */
+class CommandeFournisseurDispatch extends CommonObject
+{
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error;
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='commandefournisseurdispatch';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='commande_fournisseur_dispatch';		//!< Name of table without prefix where object is stored
+	public $lines=array();
+
+    /**
+	 * @var int ID
+	 */
+	public $id;
+
+	/**
+     * @var int ID
+     */
+	public $fk_commande;
+
+	/**
+     * @var int ID
+     */
+	public $fk_product;
+
+	/**
+     * @var int ID
+     */
+	public $fk_commandefourndet;
+
+	public $qty;
+
+	/**
+     * @var int ID
+     */
+	public $fk_entrepot;
+
+	/**
+	 * @var int User ID
+	 */
+	public $fk_user;
+
+	public $datec='';
+	public $comment;
+
+	/**
+	 * @var int Status
+	 */
+	public $status;
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	public $tms='';
 	public $batch;
 	public $eatby='';
@@ -65,7 +150,11 @@ class CommandeFournisseurDispatch extends CommonObject
      *
      *  @param	DoliDb		$db      Database handler
      */
+<<<<<<< HEAD
     function __construct($db)
+=======
+    public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $this->db = $db;
 
@@ -76,8 +165,11 @@ class CommandeFournisseurDispatch extends CommonObject
         $this->statutshort[0] = 'Received';
         $this->statutshort[1] = 'Verified';
         $this->statutshort[2] = 'Denied';
+<<<<<<< HEAD
 
         return 1;
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
 
@@ -88,9 +180,15 @@ class CommandeFournisseurDispatch extends CommonObject
      *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
      *  @return int      		   	 <0 if KO, Id of created object if OK
      */
+<<<<<<< HEAD
     function create($user, $notrigger=0)
     {
     	global $conf, $langs;
+=======
+    public function create($user, $notrigger = 0)
+    {
+    	global $conf, $langs, $hookmanager;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$error=0;
 
 		// Clean parameters
@@ -104,6 +202,11 @@ class CommandeFournisseurDispatch extends CommonObject
 		if (isset($this->comment)) $this->comment=trim($this->comment);
 		if (isset($this->status)) $this->status=trim($this->status);
 		if (isset($this->batch)) $this->batch=trim($this->batch);
+<<<<<<< HEAD
+=======
+		if(empty($this->datec)) $this->datec = dol_now();
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -121,7 +224,14 @@ class CommandeFournisseurDispatch extends CommonObject
 		$sql.= "status,";
 		$sql.= "batch,";
 		$sql.= "eatby,";
+<<<<<<< HEAD
 		$sql.= "sellby";
+=======
+		$sql.= "sellby,";
+		$sql.= "fk_reception";
+
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $sql.= ") VALUES (";
 		$sql.= " ".(! isset($this->fk_commande)?'NULL':"'".$this->db->escape($this->fk_commande)."'").",";
 		$sql.= " ".(! isset($this->fk_product)?'NULL':"'".$this->db->escape($this->fk_product)."'").",";
@@ -134,7 +244,12 @@ class CommandeFournisseurDispatch extends CommonObject
 		$sql.= " ".(! isset($this->status)?'NULL':"'".$this->db->escape($this->status)."'").",";
 		$sql.= " ".(! isset($this->batch)?'NULL':"'".$this->db->escape($this->batch)."'").",";
 		$sql.= " ".(! isset($this->eatby) || dol_strlen($this->eatby)==0?'NULL':"'".$this->db->idate($this->eatby)."'").",";
+<<<<<<< HEAD
 		$sql.= " ".(! isset($this->sellby) || dol_strlen($this->sellby)==0?'NULL':"'".$this->db->idate($this->sellby)."'")."";
+=======
+		$sql.= " ".(! isset($this->sellby) || dol_strlen($this->sellby)==0?'NULL':"'".$this->db->idate($this->sellby)."'").",";
+		$sql.= " ".(! isset($this->fk_reception)?'NULL':"'".$this->db->escape($this->fk_reception)."'")."";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql.= ")";
 
 		$this->db->begin();
@@ -159,6 +274,27 @@ class CommandeFournisseurDispatch extends CommonObject
 			}
         }
 
+<<<<<<< HEAD
+=======
+		// Actions on extra fields (by external module or standard code)
+		// TODO le hook fait double emploi avec le trigger !!
+		$hookmanager->initHooks(array('commandefournisseurdispatchdao'));
+		$parameters=array('id'=>$this->id);
+		$reshook=$hookmanager->executeHooks('insertExtraFields', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+		if (empty($reshook))
+		{
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			{
+				$result=$this->insertExtraFields();
+
+				if ($result < 0)
+				{
+					$error++;
+				}
+			}
+        }
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         // Commit or rollback
         if ($error)
 		{
@@ -185,7 +321,11 @@ class CommandeFournisseurDispatch extends CommonObject
      *  @param	string	$ref	Ref
      *  @return int          	<0 if KO, >0 if OK
      */
+<<<<<<< HEAD
     function fetch($id,$ref='')
+=======
+    public function fetch($id, $ref = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
     	global $langs;
         $sql = "SELECT";
@@ -203,7 +343,12 @@ class CommandeFournisseurDispatch extends CommonObject
 		$sql.= " t.tms,";
 		$sql.= " t.batch,";
 		$sql.= " t.eatby,";
+<<<<<<< HEAD
 		$sql.= " t.sellby";
+=======
+		$sql.= " t.sellby,";
+		$sql.= " t.fk_reception";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
@@ -233,8 +378,11 @@ class CommandeFournisseurDispatch extends CommonObject
 				$this->batch = $obj->batch;
 				$this->eatby = $this->db->jdate($obj->eatby);
 				$this->sellby = $this->db->jdate($obj->sellby);
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             }
             $this->db->free($resql);
 
@@ -242,7 +390,11 @@ class CommandeFournisseurDispatch extends CommonObject
         }
         else
         {
+<<<<<<< HEAD
       	    $this->error="Error ".$this->db->lasterror();
+=======
+            $this->error="Error ".$this->db->lasterror();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             return -1;
         }
     }
@@ -255,7 +407,11 @@ class CommandeFournisseurDispatch extends CommonObject
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
+<<<<<<< HEAD
     function update($user, $notrigger=0)
+=======
+    public function update($user, $notrigger = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
     	global $conf, $langs;
 		$error=0;
@@ -305,6 +461,7 @@ class CommandeFournisseurDispatch extends CommonObject
 
 		if (! $error)
 		{
+<<<<<<< HEAD
 			if (! $notrigger)
 			{
 	            // Uncomment this and change MYOBJECT to your own tag if you
@@ -315,6 +472,25 @@ class CommandeFournisseurDispatch extends CommonObject
 	            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
 	            //// End call triggers
 			 }
+=======
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			{
+				if(empty($this->id) && !empty($this->rowid))$this->id=$this->rowid;
+				$result=$this->insertExtraFields();
+				if ($result < 0)
+				{
+					$error++;
+				}
+			}
+
+			if (! $notrigger)
+			{
+	            // Uncomment this and change MYOBJECT to your own tag if you
+	            $result=$this->call_trigger('LINERECEPTION_UPDATE', $user);
+	            if ($result < 0) $error++;
+	            //// End call triggers
+			}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
         // Commit or rollback
@@ -343,7 +519,11 @@ class CommandeFournisseurDispatch extends CommonObject
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return	int					 <0 if KO, >0 if OK
 	 */
+<<<<<<< HEAD
 	function delete($user, $notrigger=0)
+=======
+	public function delete($user, $notrigger = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf, $langs;
 		$error=0;
@@ -397,6 +577,7 @@ class CommandeFournisseurDispatch extends CommonObject
 	/**
 	 *	Load an object from its id and create a new one in database
 	 *
+<<<<<<< HEAD
 	 *	@param	int		$fromid     Id of object to clone
 	 * 	@return	int					New id of clone
 	 */
@@ -404,6 +585,14 @@ class CommandeFournisseurDispatch extends CommonObject
 	{
 		global $user,$langs;
 
+=======
+ 	 *  @param	User	$user		User making the clone
+     *	@param	int		$fromid     Id of object to clone
+	 * 	@return	int					New id of clone
+	 */
+	public function createFromClone(User $user, $fromid)
+	{
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$error=0;
 
 		$object=new Commandefournisseurdispatch($this->db);
@@ -419,6 +608,10 @@ class CommandeFournisseurDispatch extends CommonObject
 		// ...
 
 		// Create clone
+<<<<<<< HEAD
+=======
+		$object->context['createfromclone'] = 'createfromclone';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$result=$object->create($user);
 
 		// Other options
@@ -431,9 +624,16 @@ class CommandeFournisseurDispatch extends CommonObject
 		if (! $error)
 		{
 
+<<<<<<< HEAD
 
 		}
 
+=======
+		}
+
+		unset($object->context['createfromclone']);
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// End
 		if (! $error)
 		{
@@ -452,6 +652,7 @@ class CommandeFournisseurDispatch extends CommonObject
     /**
      *  Return label of the status of object
      *
+<<<<<<< HEAD
 	 *  @param      int		$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto
      *  @return 	string        			Label
      */
@@ -460,6 +661,17 @@ class CommandeFournisseurDispatch extends CommonObject
         return $this->LibStatut($this->status,$mode);
     }
 
+=======
+     *  @param      int		$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto
+     *  @return 	string        			Label
+     */
+    public function getLibStatut($mode = 0)
+    {
+        return $this->LibStatut($this->status, $mode);
+    }
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     /**
      *  Return label of a status
      *
@@ -467,8 +679,14 @@ class CommandeFournisseurDispatch extends CommonObject
      *  @param  int		$mode       0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto
      *  @return string				Label of status
      */
+<<<<<<< HEAD
     function LibStatut($statut,$mode=0)
     {
+=======
+    public function LibStatut($statut, $mode = 0)
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         global $langs;
         $langs->load('orders');
 
@@ -476,6 +694,7 @@ class CommandeFournisseurDispatch extends CommonObject
         {
             return $langs->trans($this->statuts[$statut]);
         }
+<<<<<<< HEAD
         if ($mode == 1)
         {
             return $langs->trans($this->statutshort[$statut]);
@@ -501,6 +720,33 @@ class CommandeFournisseurDispatch extends CommonObject
             if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut0');
             if ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut4');
             if ($statut==2) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut8');
+=======
+        elseif ($mode == 1)
+        {
+            return $langs->trans($this->statutshort[$statut]);
+        }
+        elseif ($mode == 2)
+        {
+            return $langs->trans($this->statuts[$statut]);
+        }
+        elseif ($mode == 3)
+        {
+            if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]), 'statut0');
+            elseif ($statut==1) return img_picto($langs->trans($this->statuts[$statut]), 'statut4');
+            elseif ($statut==2) return img_picto($langs->trans($this->statuts[$statut]), 'statut8');
+        }
+        elseif ($mode == 4)
+        {
+            if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]), 'statut0').' '.$langs->trans($this->statuts[$statut]);
+            elseif ($statut==1) return img_picto($langs->trans($this->statuts[$statut]), 'statut4').' '.$langs->trans($this->statuts[$statut]);
+            elseif ($statut==2) return img_picto($langs->trans($this->statuts[$statut]), 'statut8').' '.$langs->trans($this->statuts[$statut]);
+        }
+        elseif ($mode == 5)
+        {
+            if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]), 'statut0');
+            elseif ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]), 'statut4');
+            elseif ($statut==2) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]), 'statut8');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
     }
 
@@ -511,7 +757,11 @@ class CommandeFournisseurDispatch extends CommonObject
 	 *
 	 *	@return	void
 	 */
+<<<<<<< HEAD
 	function initAsSpecimen()
+=======
+	public function initAsSpecimen()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$this->id=0;
 
@@ -528,8 +778,11 @@ class CommandeFournisseurDispatch extends CommonObject
 		$this->batch='';
 		$this->eatby='';
 		$this->sellby='';
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	/**
@@ -544,7 +797,11 @@ class CommandeFournisseurDispatch extends CommonObject
 	 *
 	 * @return int <0 if KO, >0 if OK
 	 */
+<<<<<<< HEAD
 	public function fetchAll($sortorder='', $sortfield='', $limit=0, $offset=0, array $filter = array(), $filtermode='AND')
+=======
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -585,7 +842,11 @@ class CommandeFournisseurDispatch extends CommonObject
 		}
 
 		if (!empty($sortfield)) {
+<<<<<<< HEAD
 			$sql .= $this->db->order($sortfield,$sortorder);
+=======
+			$sql .= $this->db->order($sortfield, $sortorder);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		if (!empty($limit)) {
 			$sql .=  ' ' . $this->db->plimit($limit, $offset);
@@ -627,5 +888,8 @@ class CommandeFournisseurDispatch extends CommonObject
 			return - 1;
 		}
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

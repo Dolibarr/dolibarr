@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2010-2012 Regis Houssin  <regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2010-2012 Regis Houssin  <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +25,11 @@
  *	\brief      Page to show information on a task
  */
 
+<<<<<<< HEAD
 require ("../../main.inc.php");
+=======
+require "../../main.inc.php";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
@@ -29,6 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 // Load translation files required by the page
 $langs->load('projects');
 
+<<<<<<< HEAD
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
@@ -37,6 +46,16 @@ $id = GETPOST('id','int');
 $ref= GETPOST('ref', 'alpha');
 $withproject=GETPOST('withproject','int');
 $project_ref = GETPOST('project_ref','alpha');
+=======
+$action=GETPOST('action', 'alpha');
+$confirm=GETPOST('confirm', 'alpha');
+$mine = $_REQUEST['mode']=='mine' ? 1 : 0;
+//if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
+$id = GETPOST('id', 'int');
+$ref= GETPOST('ref', 'alpha');
+$withproject=GETPOST('withproject', 'int');
+$project_ref = GETPOST('project_ref', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Security check
 $socid=0;
@@ -49,7 +68,11 @@ $projectstatic = new Project($db);
 
 if ($id > 0 || ! empty($ref))
 {
+<<<<<<< HEAD
 	if ($object->fetch($id,$ref) > 0)
+=======
+	if ($object->fetch($id, $ref) > 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_TASK) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
 		$projectstatic->fetch($object->fk_project);
@@ -68,7 +91,11 @@ if ($id > 0 || ! empty($ref))
 // Retreive First Task ID of Project if withprojet is on to allow project prev next to work
 if (! empty($project_ref) && ! empty($withproject))
 {
+<<<<<<< HEAD
 	if ($projectstatic->fetch(0,$project_ref) > 0)
+=======
+	if ($projectstatic->fetch(0, $project_ref) > 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$tasksarray=$object->getTasksArray(0, 0, $projectstatic->id, $socid, 0);
 		if (count($tasksarray) > 0)
@@ -106,7 +133,11 @@ $now=dol_now();
 
 if ($object->id > 0)
 {
+<<<<<<< HEAD
 	$userWrite  = $projectstatic->restrictedProjectArea($user,'write');
+=======
+	$userWrite  = $projectstatic->restrictedProjectArea($user, 'write');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	if (! empty($withproject))
 	{
@@ -133,8 +164,13 @@ if ($object->id > 0)
 		// Define a complementary filter for search of next/prev ref.
 		if (! $user->rights->projet->all->lire)
 		{
+<<<<<<< HEAD
 		    $objectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,0);
 		    $projectstatic->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
+=======
+		    $objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
+		    $projectstatic->next_prev_filter=" rowid in (".(count($objectsListId)?join(',', array_keys($objectsListId)):'0').")";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -153,9 +189,15 @@ if ($object->id > 0)
 
 		// Date start - end
 		print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
+<<<<<<< HEAD
 		$start = dol_print_date($projectstatic->date_start,'day');
 		print ($start?$start:'?');
 		$end = dol_print_date($projectstatic->date_end,'day');
+=======
+		$start = dol_print_date($projectstatic->date_start, 'day');
+		print ($start?$start:'?');
+		$end = dol_print_date($projectstatic->date_end, 'day');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print ' - ';
 		print ($end?$end:'?');
 		if ($projectstatic->hasDelay()) print img_warning("Late");
@@ -163,7 +205,11 @@ if ($object->id > 0)
 
 		// Budget
 		print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+<<<<<<< HEAD
 		if (strcmp($projectstatic->budget_amount, '')) print price($projectstatic->budget_amount,'',$langs,1,0,0,$conf->currency);
+=======
+		if (strcmp($projectstatic->budget_amount, '')) print price($projectstatic->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</td></tr>';
 
 		// Other attributes
@@ -186,8 +232,13 @@ if ($object->id > 0)
 
 		// Categories
 		if($conf->categorie->enabled) {
+<<<<<<< HEAD
 		    print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
 		    print $form->showCategories($projectstatic->id,'project',1);
+=======
+		    print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
+		    print $form->showCategories($projectstatic->id, 'project', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		    print "</td></tr>";
 		}
 
@@ -213,7 +264,11 @@ if ($object->id > 0)
 
 	if (! GETPOST('withproject') || empty($projectstatic->id))
 	{
+<<<<<<< HEAD
 	    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);
+=======
+	    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    $object->next_prev_filter=" fk_projet in (".$projectsListId.")";
 	}
 	else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
@@ -249,6 +304,10 @@ if ($object->id > 0)
 	dol_fiche_end();
 }
 
+<<<<<<< HEAD
 
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

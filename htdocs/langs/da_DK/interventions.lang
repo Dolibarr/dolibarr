@@ -3,14 +3,23 @@ Intervention=Intervention
 Interventions=Interventioner
 InterventionCard=Intervention kortet
 NewIntervention=Ny intervention
+<<<<<<< HEAD
 AddIntervention=Create intervention
 ListOfInterventions=Liste over interventioner
 ActionsOnFicheInter=Handlinger om intervention
 LastInterventions=Latest %s interventions
+=======
+AddIntervention=Opret indgreb
+ChangeIntoRepeatableIntervention=Change to repeatable intervention
+ListOfInterventions=Liste over interventioner
+ActionsOnFicheInter=Handlinger om intervention
+LastInterventions=Seneste %s indgreb
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AllInterventions=Alle interventioner
 CreateDraftIntervention=Opret udkast
 InterventionContact=Intervention kontakt
 DeleteIntervention=Slet intervention
+<<<<<<< HEAD
 ValidateIntervention=Valider intervention
 ModifyIntervention=Rediger indgreb
 DeleteInterventionLine=Slet intervention linje
@@ -64,3 +73,57 @@ InterLineId=Line id intervention
 InterLineDate=Line date intervention
 InterLineDuration=Line duration intervention
 InterLineDesc=Line description intervention
+=======
+ValidateIntervention=Bekræft intervention
+ModifyIntervention=Rediger indgreb
+DeleteInterventionLine=Slet intervention linje
+ConfirmDeleteIntervention=Er du sikker på, at du vil slette dette indgreb?
+ConfirmValidateIntervention=Er du sikker på, at du vil bekræfte dette indgreb under navnet <b> %s </b>?
+ConfirmModifyIntervention=Er du sikker på, at du vil ændre dette indgreb?
+ConfirmDeleteInterventionLine=Er du sikker på, at du vil slette denne indgrebslinje?
+ConfirmCloneIntervention=Er du sikker på, at du vil klone dette indgreb?
+NameAndSignatureOfInternalContact=Name and signature of intervening:
+NameAndSignatureOfExternalContact=Name and signature of customer:
+DocumentModelStandard=Standard dokument model for indgreb
+InterventionCardsAndInterventionLines=Indgreb og linjer af indgreb
+InterventionClassifyBilled=Klassificere &quot;Billed&quot;
+InterventionClassifyUnBilled=Klassificer "Ikke faktureret"
+InterventionClassifyDone=Klassificer "Udført"
+StatusInterInvoiced=Billed
+SendInterventionRef=Indsend indgreb %s
+SendInterventionByMail=Send intervention by email
+InterventionCreatedInDolibarr=Et indgreb %s er oprettet
+InterventionValidatedInDolibarr=Intervention %s bekræftet
+InterventionModifiedInDolibarr=Ingreb %s ændret
+InterventionClassifiedBilledInDolibarr=Indgreb %s indstillet til fakturering
+InterventionClassifiedUnbilledInDolibarr=Indgreb %s angivet som ikke faktureret
+InterventionSentByEMail=Intervention %s sendt af email
+InterventionDeletedInDolibarr=Indgreb %s er slettet
+InterventionsArea=Ingrebsområde
+DraftFichinter=Udkast til indgreb
+LastModifiedInterventions=Latest %s modified interventions
+FichinterToProcess=Indgreb til behandling
+##### Types de contacts #####
+TypeContact_fichinter_external_CUSTOMER=Opfølgning kunde kontakt
+# Modele numérotation
+PrintProductsOnFichinter=Udskriv også linjer af typen "produkt" (ikke kun tjenester) på ingreb kortet
+PrintProductsOnFichinterDetails=Et indgreb genereret af ordrer
+UseServicesDurationOnFichinter=Brug servicevarighed for indgreb genereret fra ordrer
+UseDurationOnFichinter=Skjuler varighedsfeltet for indgrebsposter
+UseDateWithoutHourOnFichinter=Skjuler timer og minutter fra datofeltet for indgrebsoptegnelser
+InterventionStatistics=Statistikker af indgreb
+NbOfinterventions=Antal interventionskort
+NumberOfInterventionsByMonth=Antal interventionskort efter måned (dato for bekræftelse)
+AmountOfInteventionNotIncludedByDefault=Indgreb beløb er ikke medtaget som standard i overskud (i de fleste tilfælde benyttes tidsskemaer til at tælle tid). Tilføj valgmulighed PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT til 1 i home setup-andre for at inkludere dem.
+##### Exports #####
+InterId=Indgrebs id
+InterRef=Indgreb ref.
+InterDateCreation=Dato oprettelse for indgreb
+InterDuration=Varighed af indgreb
+InterStatus=Status
+InterNote=Bemærk indgreb
+InterLineId=Line id indgreb
+InterLineDate=Linje dato indgreb
+InterLineDuration=Linje varighed indgreb
+InterLineDesc=Line beskrivelse af ingreb
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

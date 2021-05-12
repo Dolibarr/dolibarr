@@ -223,7 +223,11 @@ CountryTO=Tonga
 CountryTT=Trinité-et-Tobago
 CountryTR=Turquie
 CountryTM=Turkménistan
+<<<<<<< HEAD
 CountryTC=Iles Turks-et-Caicos
+=======
+CountryTC=Iles Turques-et-Caïques
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryTV=Tuvalu
 CountryUG=Ouganda
 CountryUA=Ukraine
@@ -290,6 +294,10 @@ CurrencyXOF=Francs CFA BCEAO
 CurrencySingXOF=Franc CFA BCEAO
 CurrencyXPF=Francs CFP
 CurrencySingXPF=Franc CFP
+<<<<<<< HEAD
+=======
+CurrencyCentEUR=centimes
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrencyCentSingEUR=centime
 CurrencyCentINR=paisa
 CurrencyCentSingINR=paise
@@ -306,6 +314,10 @@ DemandReasonTypeSRC_WOM=Bouche à oreille
 DemandReasonTypeSRC_PARTNER=Partenaire
 DemandReasonTypeSRC_EMPLOYEE=Employé
 DemandReasonTypeSRC_SPONSORING=Parrainage/Sponsoring
+<<<<<<< HEAD
+=======
+DemandReasonTypeSRC_SRC_CUSTOMER=Contact entrant d'un client
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 #### Paper formats ####
 PaperFormatEU4A0=Format 4A0
 PaperFormatEU2A0=Format 2A0

@@ -37,7 +37,11 @@ class modGeoIPMaxmind extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
+<<<<<<< HEAD
 	function __construct($db)
+=======
+	public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$this->db = $db;
 		$this->numero = 2900;
@@ -46,7 +50,11 @@ class modGeoIPMaxmind extends DolibarrModules
 		// It is used to group modules in module setup page
 		$this->family = "interface";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+<<<<<<< HEAD
 		$this->name = preg_replace('/^mod/i','',get_class($this));
+=======
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "GeoIP Maxmind conversions capabilities";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -65,9 +73,17 @@ class modGeoIPMaxmind extends DolibarrModules
 		$this->config_page_url = array("geoipmaxmind.php");
 
 		// Dependencies
+<<<<<<< HEAD
 		$this->depends = array();
 		$this->requiredby = array();
 		$this->phpmin = array(4,2,0);
+=======
+		$this->hidden = false;			// A condition to hide module
+		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->phpmax = array();
 		$this->need_dolibarr_version = array(2,7,-1);	// Minimum version of Dolibarr required by module
 		$this->need_javascript_ajax = 1;

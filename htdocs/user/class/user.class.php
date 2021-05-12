@@ -1,4 +1,5 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (c) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (c) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
@@ -11,6 +12,22 @@
  * Copyright (C) 2013-2015 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018      Nicolas ZABOURI	<info@inovea-conseil.com>
+=======
+/* Copyright (c) 2002-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (c) 2002-2003  Jean-Louis Bergamo      <jlb@j1b.org>
+ * Copyright (c) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2005       Lionel Cousteix         <etm_ltd@tiscali.co.uk>
+ * Copyright (C) 2011       Herve Prot              <herve.prot@symeos.com>
+ * Copyright (C) 2013-2019  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2013-2015  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2018       charlene Benke          <charlie@patas-monkey.com>
+ * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,10 +56,33 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class User extends CommonObject
 {
+<<<<<<< HEAD
 	public $element='user';
 	public $table_element='user';
 	public $fk_element='fk_user';
 	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+=======
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='user';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='user';
+
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
+	public $fk_element='fk_user';
+
+	/**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+	public $ismultientitymanaged = 1;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	public $id=0;
 	public $statut;
@@ -52,10 +92,28 @@ class User extends CommonObject
 	public $gender;
 	public $birth;
 	public $email;
+<<<<<<< HEAD
 	public $skype;
 	public $job;
 	public $signature;
 	public $address;
+=======
+	public $personal_email;
+
+	public $skype;
+	public $twitter;
+	public $facebook;
+	public $linkedin;
+
+	public $job;			// job position
+	public $signature;
+
+	/**
+	 * @var string Address
+	 */
+	public $address;
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	public $zip;
 	public $town;
 	public $state_id;		// The state/department
@@ -64,9 +122,20 @@ class User extends CommonObject
 	public $office_phone;
 	public $office_fax;
 	public $user_mobile;
+<<<<<<< HEAD
 	public $admin;
 	public $login;
 	public $api_key;
+=======
+    public $personal_mobile;
+	public $admin;
+	public $login;
+	public $api_key;
+
+	/**
+	 * @var int Entity
+	 */
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	public $entity;
 
 	//! Clear password in memory
@@ -76,25 +145,63 @@ class User extends CommonObject
 	//! Encrypted password in database (always defined)
 	public $pass_indatabase_crypted;
 
+<<<<<<< HEAD
 	public $datec;
 	public $datem;
+=======
+	/**
+     * Date creation record (datec)
+     *
+     * @var integer
+     */
+    public $datec;
+
+	/**
+     * Date modification record (tms)
+     *
+     * @var integer
+     */
+    public $datem;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	//! If this is defined, it is an external user
 	/**
 	 * @deprecated
+<<<<<<< HEAD
 	 * @see socid
+=======
+	 * @see $socid
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	 */
 	public $societe_id;
 	/**
 	 * @deprecated
+<<<<<<< HEAD
 	 * @see contactid
+=======
+	 * @see $contactid
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	 */
 	public $contact_id;
 	public $socid;
 	public $contactid;
 
+<<<<<<< HEAD
 	public $fk_member;
 	public $fk_user;
+=======
+	/**
+     * @var int ID
+     */
+	public $fk_member;
+
+	/**
+	 * @var int User ID
+	 */
+	public $fk_user;
+	public $fk_user_expense_validator;
+    public $fk_user_holiday_validator;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	public $clicktodial_url;
 	public $clicktodial_login;
@@ -132,10 +239,15 @@ class User extends CommonObject
 	public $color;						// Define background color for user in agenda
 
 	public $dateemployment;			// Define date of employment by company
+<<<<<<< HEAD
+=======
+	public $dateemploymentend;		// Define date of employment end by company
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	public $default_c_exp_tax_cat;
 	public $default_range;
 
+<<<<<<< HEAD
 	public $fields=array(
         	'rowid'=>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'index'=>1, 'position'=>1, 'comment'=>'Id'),
         	'lastname'=>array('type'=>'varchar(50)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>20, 'searchall'=>1, 'comment'=>'Reference of object'),
@@ -148,6 +260,22 @@ class User extends CommonObject
 	 *    @param   DoliDb  $db     Database handler
 	 */
 	function __construct($db)
+=======
+	public $fk_warehouse;
+
+	public $fields = array(
+        'rowid'=>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'index'=>1, 'position'=>1, 'comment'=>'Id'),
+        'lastname'=>array('type'=>'varchar(50)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>20, 'searchall'=>1, 'comment'=>'Reference of object'),
+        'firstname'=>array('type'=>'varchar(50)', 'label'=>'Name','enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
+    );
+
+	/**
+	 *    Constructor of the class
+	 *
+	 *    @param   DoliDb  $db     Database handler
+	 */
+	public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$this->db = $db;
 
@@ -163,11 +291,19 @@ class User extends CommonObject
 		$this->admin = 0;
 		$this->employee = 1;
 
+<<<<<<< HEAD
 		$this->conf				    = new stdClass();
 		$this->rights				= new stdClass();
 		$this->rights->user			= new stdClass();
 		$this->rights->user->user	= new stdClass();
 		$this->rights->user->self	= new stdClass();
+=======
+		$this->conf = new stdClass();
+		$this->rights = new stdClass();
+		$this->rights->user = new stdClass();
+		$this->rights->user->user = new stdClass();
+		$this->rights->user->self = new stdClass();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	/**
@@ -181,7 +317,11 @@ class User extends CommonObject
 	 *  @param  int     $entity             If a value is >= 0, we force the search on a specific entity. If -1, means search depens on default setup.
 	 * 	@return	int							<0 if KO, 0 not found, >0 if OK
 	 */
+<<<<<<< HEAD
 	function fetch($id='', $login='', $sid='', $loadpersonalconf=0, $entity=-1)
+=======
+	public function fetch($id = '', $login = '', $sid = '', $loadpersonalconf = 0, $entity = -1)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf, $user;
 
@@ -189,11 +329,20 @@ class User extends CommonObject
 		$login=trim($login);
 
 		// Get user
+<<<<<<< HEAD
 		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.employee, u.gender, u.birth, u.email, u.job, u.skype, u.signature, u.office_phone, u.office_fax, u.user_mobile,";
 		$sql.= " u.address, u.zip, u.town, u.fk_state as state_id, u.fk_country as country_id,";
 		$sql.= " u.admin, u.login, u.note,";
 		$sql.= " u.pass, u.pass_crypted, u.pass_temp, u.api_key,";
 		$sql.= " u.fk_soc, u.fk_socpeople, u.fk_member, u.fk_user, u.ldap_sid,";
+=======
+		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.employee, u.gender, u.birth, u.email, u.personal_email, u.job, u.skype, u.twitter, u.facebook, u.linkedin,";
+		$sql.= " u.signature, u.office_phone, u.office_fax, u.user_mobile, u.personal_mobile,";
+		$sql.= " u.address, u.zip, u.town, u.fk_state as state_id, u.fk_country as country_id,";
+		$sql.= " u.admin, u.login, u.note,";
+		$sql.= " u.pass, u.pass_crypted, u.pass_temp, u.api_key,";
+		$sql.= " u.fk_soc, u.fk_socpeople, u.fk_member, u.fk_user, u.ldap_sid, u.fk_user_expense_validator, u.fk_user_holiday_validator,";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql.= " u.statut, u.lang, u.entity,";
 		$sql.= " u.datec as datec,";
 		$sql.= " u.tms as datem,";
@@ -208,7 +357,12 @@ class User extends CommonObject
 		$sql.= " u.salaryextra,";
 		$sql.= " u.weeklyhours,";
 		$sql.= " u.color,";
+<<<<<<< HEAD
 		$sql.= " u.dateemployment,";
+=======
+		$sql.= " u.dateemployment, u.dateemploymentend,";
+		$sql.= " u.fk_warehouse,";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql.= " u.ref_int, u.ref_ext,";
 		$sql.= " u.default_range, u.default_c_exp_tax_cat,";			// Expense report default mode
 		$sql.= " c.code as country_code, c.label as country,";
@@ -240,7 +394,11 @@ class User extends CommonObject
 		{
 			$sql.= " AND (u.ldap_sid = '".$this->db->escape($sid)."' OR u.login = '".$this->db->escape($login)."') LIMIT 1";
 		}
+<<<<<<< HEAD
 		else if ($login)
+=======
+		elseif ($login)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			$sql.= " AND u.login = '".$this->db->escape($login)."'";
 		}
@@ -281,9 +439,15 @@ class User extends CommonObject
 				$this->zip 			= $obj->zip;
 				$this->town 		= $obj->town;
 
+<<<<<<< HEAD
 				$this->country_id   = $obj->country_id;
 				$this->country_code = $obj->country_id?$obj->country_code:'';
 				//$this->country 		= $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->transnoentities('Country'.$obj->country_code):$obj->country):'';
+=======
+				$this->country_id = $obj->country_id;
+				$this->country_code = $obj->country_id?$obj->country_code:'';
+				//$this->country = $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->transnoentities('Country'.$obj->country_code):$obj->country):'';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				$this->state_id     = $obj->state_id;
 				$this->state_code   = $obj->state_code;
@@ -292,8 +456,18 @@ class User extends CommonObject
 				$this->office_phone	= $obj->office_phone;
 				$this->office_fax   = $obj->office_fax;
 				$this->user_mobile  = $obj->user_mobile;
+<<<<<<< HEAD
 				$this->email		= $obj->email;
 				$this->skype		= $obj->skype;
+=======
+                $this->personal_mobile = $obj->personal_mobile;
+				$this->email		= $obj->email;
+                $this->personal_email = $obj->personal_email;
+				$this->skype		= $obj->skype;
+				$this->twitter		= $obj->twitter;
+				$this->facebook		= $obj->facebook;
+				$this->linkedin		= $obj->linkedin;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$this->job			= $obj->job;
 				$this->signature	= $obj->signature;
 				$this->admin		= $obj->admin;
@@ -303,6 +477,7 @@ class User extends CommonObject
 				$this->openid		= $obj->openid;
 				$this->lang			= $obj->lang;
 				$this->entity		= $obj->entity;
+<<<<<<< HEAD
 				$this->accountancy_code		= $obj->accountancy_code;
 				$this->thm			= $obj->thm;
 				$this->tjm			= $obj->tjm;
@@ -311,21 +486,46 @@ class User extends CommonObject
 				$this->weeklyhours	= $obj->weeklyhours;
 				$this->color		= $obj->color;
 				$this->dateemployment	= $this->db->jdate($obj->dateemployment);
+=======
+				$this->accountancy_code = $obj->accountancy_code;
+				$this->thm			= $obj->thm;
+				$this->tjm			= $obj->tjm;
+				$this->salary		= $obj->salary;
+				$this->salaryextra = $obj->salaryextra;
+				$this->weeklyhours = $obj->weeklyhours;
+				$this->color = $obj->color;
+				$this->dateemployment = $this->db->jdate($obj->dateemployment);
+				$this->dateemploymentend = $this->db->jdate($obj->dateemploymentend);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				$this->datec				= $this->db->jdate($obj->datec);
 				$this->datem				= $this->db->jdate($obj->datem);
 				$this->datelastlogin		= $this->db->jdate($obj->datel);
 				$this->datepreviouslogin	= $this->db->jdate($obj->datep);
 
+<<<<<<< HEAD
 				$this->societe_id           = $obj->fk_soc;		// deprecated
 				$this->contact_id           = $obj->fk_socpeople;	// deprecated
+=======
+				$this->societe_id           = $obj->fk_soc; // deprecated
+				$this->contact_id           = $obj->fk_socpeople;   // deprecated
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$this->socid                = $obj->fk_soc;
 				$this->contactid            = $obj->fk_socpeople;
 				$this->fk_member            = $obj->fk_member;
 				$this->fk_user        		= $obj->fk_user;
+<<<<<<< HEAD
 
 				$this->default_range		= $obj->default_range;
 				$this->default_c_exp_tax_cat	= $obj->default_c_exp_tax_cat;
+=======
+                $this->fk_user_expense_validator = $obj->fk_user_expense_validator;
+                $this->fk_user_holiday_validator = $obj->fk_user_holiday_validator;
+
+				$this->default_range = $obj->default_range;
+				$this->default_c_exp_tax_cat = $obj->default_c_exp_tax_cat;
+				$this->fk_warehouse = $obj->fk_warehouse;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				// Protection when module multicompany was set, admin was set to first entity and then, the module was disabled,
 				// in such case, this admin user must be admin for ALL entities.
@@ -380,6 +580,7 @@ class User extends CommonObject
 				return -2;
 			}
 
+<<<<<<< HEAD
 			// Load user->default_values for user. TODO Save this in memcached ?
 			$sql = "SELECT rowid, entity, type, page, param, value";
 			$sql.= " FROM ".MAIN_DB_PREFIX."default_values";
@@ -426,11 +627,80 @@ class User extends CommonObject
 		}
 
 		return 1;
+=======
+			$result = $this->loadDefaultValues();
+
+			if ($result < 0)
+			{
+				$this->error=$this->db->lasterror();
+				return -3;
+			}
+		}
+
+		return 1;
+	}
+
+	/**
+	 *  Load default value in property ->default_values
+	 *
+	 *  @return int						> 0 if OK, < 0 if KO
+	 */
+	public function loadDefaultValues()
+	{
+		global $conf;
+
+		// Load user->default_values for user. TODO Save this in memcached ?
+		$sql = "SELECT rowid, entity, type, page, param, value";
+		$sql.= " FROM ".MAIN_DB_PREFIX."default_values";
+		$sql.= " WHERE entity IN (".($this->entity > 0 ? $this->entity.", " : "").$conf->entity.")";	// Entity of user (if defined) + current entity
+		$sql.= " AND user_id IN (0".($this->id > 0 ? ", ".$this->id : "").")";							// User 0 (all) + me (if defined)
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			while ($obj = $this->db->fetch_object($resql))
+			{
+				if (! empty($obj->page) && ! empty($obj->type) && ! empty($obj->param))
+				{
+					// $obj->page is relative URL with or without params
+					// $obj->type can be 'filters', 'sortorder', 'createform', ...
+					// $obj->param is key or param
+					$pagewithoutquerystring=$obj->page;
+					$pagequeries='';
+					if (preg_match('/^([^\?]+)\?(.*)$/', $pagewithoutquerystring, $reg))	// There is query param
+					{
+						$pagewithoutquerystring=$reg[1];
+						$pagequeries=$reg[2];
+					}
+					$this->default_values[$pagewithoutquerystring][$obj->type][$pagequeries?$pagequeries:'_noquery_'][$obj->param]=$obj->value;
+					//if ($pagequeries) $this->default_values[$pagewithoutquerystring][$obj->type.'_queries']=$pagequeries;
+				}
+			}
+			// Sort by key, so _noquery_ is last
+			if(!empty($this->default_values)) {
+				foreach($this->default_values as $a => $b)
+				{
+					foreach($b as $c => $d)
+					{
+						krsort($this->default_values[$a][$c]);
+					}
+				}
+			}
+			$this->db->free($resql);
+
+			return 1;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	/**
 	 *  Add a right to the user
 	 *
+<<<<<<< HEAD
 	 * 	@param	int		$rid			id of permission to add
 	 *  @param  string	$allmodule		Add all permissions of module $allmodule
 	 *  @param  string	$allperms		Add all permissions of module $allmodule, subperms $allperms only
@@ -440,6 +710,17 @@ class User extends CommonObject
 	 *  @see	clearrights, delrights, getrights
 	 */
 	function addrights($rid, $allmodule='', $allperms='', $entity=0, $notrigger=0)
+=======
+	 * 	@param	int		$rid			Id of permission to add or 0 to add several permissions
+	 *  @param  string	$allmodule		Add all permissions of module $allmodule or 'allmodules' to include all modules.
+	 *  @param  string	$allperms		Add all permissions of module $allmodule, subperms $allperms only or '' to include all permissions.
+	 *  @param	int		$entity			Entity to use
+	 *  @param  int	    $notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *  @return int						> 0 if OK, < 0 if KO
+	 *  @see	clearrights(), delrights(), getrights()
+	 */
+	public function addrights($rid, $allmodule = '', $allperms = '', $entity = 0, $notrigger = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf, $user, $langs;
 
@@ -476,7 +757,11 @@ class User extends CommonObject
 			$whereforadd="id=".$this->db->escape($rid);
 			// Ajout des droits induits
 			if (! empty($subperms))   $whereforadd.=" OR (module='$module' AND perms='$perms' AND (subperms='lire' OR subperms='read'))";
+<<<<<<< HEAD
 			else if (! empty($perms)) $whereforadd.=" OR (module='$module' AND (perms='lire' OR perms='read') AND subperms IS NULL)";
+=======
+			elseif (! empty($perms)) $whereforadd.=" OR (module='$module' AND (perms='lire' OR perms='read') AND subperms IS NULL)";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		else {
 			// On a pas demande un droit en particulier mais une liste de droits
@@ -484,8 +769,20 @@ class User extends CommonObject
 			// Where pour la liste des droits a ajouter
 			if (! empty($allmodule))
 			{
+<<<<<<< HEAD
 				$whereforadd="module='".$this->db->escape($allmodule)."'";
 				if (! empty($allperms)) $whereforadd.=" AND perms='".$this->db->escape($allperms)."'";
+=======
+				if ($allmodule == 'allmodules')
+				{
+					$whereforadd='allmodules';
+				}
+				else
+				{
+					$whereforadd="module='".$this->db->escape($allmodule)."'";
+					if (! empty($allperms))  $whereforadd.=" AND perms='".$this->db->escape($allperms)."'";
+				}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 		}
 
@@ -495,8 +792,15 @@ class User extends CommonObject
 			//print "$module-$perms-$subperms";
 			$sql = "SELECT id";
 			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
+<<<<<<< HEAD
 			$sql.= " WHERE ".$whereforadd;
 			$sql.= " AND entity = ".$entity;
+=======
+			$sql.= " WHERE entity = ".$entity;
+			if (! empty($whereforadd) && $whereforadd != 'allmodules') {
+				$sql.= " AND ".$whereforadd;
+			}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			$result=$this->db->query($sql);
 			if ($result)
@@ -529,7 +833,11 @@ class User extends CommonObject
 			$this->context = array('audit'=>$langs->trans("PermissionsAdd").($rid?' (id='.$rid.')':''));
 
 			// Call trigger
+<<<<<<< HEAD
 			$result=$this->call_trigger('USER_MODIFY',$user);
+=======
+			$result=$this->call_trigger('USER_MODIFY', $user);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if ($result < 0) { $error++; }
 			// End call triggers
 		}
@@ -542,7 +850,10 @@ class User extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 
@@ -555,9 +866,15 @@ class User extends CommonObject
 	 *  @param	int		$entity		Entity to use
 	 *  @param  int	    $notrigger	1=Does not execute triggers, 0=Execute triggers
 	 *  @return int         		> 0 if OK, < 0 if OK
+<<<<<<< HEAD
 	 *  @see	clearrights, addrights, getrights
 	 */
 	function delrights($rid, $allmodule='', $allperms='', $entity=0, $notrigger=0)
+=======
+	 *  @see	clearrights(), addrights(), getrights()
+	 */
+	public function delrights($rid, $allmodule = '', $allperms = '', $entity = 0, $notrigger = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf, $user, $langs;
 
@@ -567,8 +884,12 @@ class User extends CommonObject
 
 		$this->db->begin();
 
+<<<<<<< HEAD
 		if (! empty($rid))
 		{
+=======
+		if (! empty($rid)) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			// Si on a demande supression d'un droit en particulier, on recupere
 			// les caracteristiques module, perms et subperms de ce droit.
 			$sql = "SELECT module, perms, subperms";
@@ -593,12 +914,30 @@ class User extends CommonObject
 			// Suppression des droits induits
 			if ($subperms=='lire' || $subperms=='read') $wherefordel.=" OR (module='$module' AND perms='$perms' AND subperms IS NOT NULL)";
 			if ($perms=='lire' || $perms=='read')       $wherefordel.=" OR (module='$module')";
+<<<<<<< HEAD
 		}
 		else {
 			// On a demande suppression d'un droit sur la base d'un nom de module ou perms
 			// Where pour la liste des droits a supprimer
 			if (! empty($allmodule)) $wherefordel="module='".$this->db->escape($allmodule)."'";
 			if (! empty($allperms))  $wherefordel=" AND perms='".$this->db->escape($allperms)."'";
+=======
+		} else {
+			// On a demande suppression d'un droit sur la base d'un nom de module ou perms
+			// Where pour la liste des droits a supprimer
+			if (! empty($allmodule))
+			{
+				if ($allmodule == 'allmodules')
+				{
+					$wherefordel='allmodules';
+				}
+				else
+				{
+					$wherefordel="module='".$this->db->escape($allmodule)."'";
+					if (! empty($allperms))  $whereforadd.=" AND perms='".$this->db->escape($allperms)."'";
+				}
+			}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		// Suppression des droits selon critere defini dans wherefordel
@@ -607,8 +946,15 @@ class User extends CommonObject
 			//print "$module-$perms-$subperms";
 			$sql = "SELECT id";
 			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
+<<<<<<< HEAD
 			$sql.= " WHERE $wherefordel";
 			$sql.= " AND entity = ".$entity;
+=======
+			$sql.= " WHERE entity = ".$entity;
+			if (! empty($wherefordel) && $wherefordel != 'allmodules') {
+				$sql.= " AND ".$wherefordel;
+			}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			$result=$this->db->query($sql);
 			if ($result)
@@ -641,7 +987,11 @@ class User extends CommonObject
 			$this->context = array('audit'=>$langs->trans("PermissionsDelete").($rid?' (id='.$rid.')':''));
 
 			// Call trigger
+<<<<<<< HEAD
 			$result=$this->call_trigger('USER_MODIFY',$user);
+=======
+			$result=$this->call_trigger('USER_MODIFY', $user);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if ($result < 0) { $error++; }
 			// End call triggers
 		}
@@ -654,7 +1004,10 @@ class User extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 
@@ -662,6 +1015,7 @@ class User extends CommonObject
 	 *  Clear all permissions array of user
 	 *
 	 *  @return	void
+<<<<<<< HEAD
 	 *  @see	getrights
 	 */
 	function clearrights()
@@ -669,6 +1023,16 @@ class User extends CommonObject
 		dol_syslog(get_class($this)."::clearrights reset user->rights");
 		$this->rights='';
 		$this->all_permissions_are_loaded=false;
+=======
+	 *  @see	getrights()
+	 */
+	public function clearrights()
+	{
+		dol_syslog(get_class($this)."::clearrights reset user->rights");
+		$this->rights='';
+		$this->nb_rights=0;
+		$this->all_permissions_are_loaded=0;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->_tab_loaded=array();
 	}
 
@@ -676,6 +1040,7 @@ class User extends CommonObject
 	/**
 	 *	Load permissions granted to user into object user
 	 *
+<<<<<<< HEAD
 	 *	@param  string	$moduletag    Limit permission for a particular module ('' by default means load all permissions)
 	 *	@return	void
 	 *  @see	clearrights, delrights, addrights
@@ -700,6 +1065,36 @@ class User extends CommonObject
 
 		// D'abord les droits utilisateurs
 		$sql = "SELECT r.module, r.perms, r.subperms";
+=======
+	 *	@param  string	$moduletag		Limit permission for a particular module ('' by default means load all permissions)
+	 *  @param	int		$forcereload	Force reload of permissions even if they were already loaded (ignore cache)
+	 *	@return	void
+	 *  @see	clearrights(), delrights(), addrights()
+	 */
+	public function getrights($moduletag = '', $forcereload = 0)
+	{
+		global $conf;
+
+		if (empty($forcereload))
+		{
+			if ($moduletag && isset($this->_tab_loaded[$moduletag]) && $this->_tab_loaded[$moduletag])
+			{
+				// Rights for this module are already loaded, so we leave
+				return;
+			}
+
+			if (! empty($this->all_permissions_are_loaded))
+			{
+				// We already loaded all rights for this user, so we leave
+				return;
+			}
+		}
+
+		// Get permission of users + Get permissions of groups
+
+		// First user permissions
+		$sql = "SELECT DISTINCT r.module, r.perms, r.subperms";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql.= " FROM ".MAIN_DB_PREFIX."user_rights as ur";
 		$sql.= ", ".MAIN_DB_PREFIX."rights_def as r";
 		$sql.= " WHERE r.id = ur.fk_id";
@@ -752,8 +1147,13 @@ class User extends CommonObject
 			$this->db->free($resql);
 		}
 
+<<<<<<< HEAD
 		// Maintenant les droits groupes
 		$sql = "SELECT r.module, r.perms, r.subperms";
+=======
+		// Now permissions of groups
+		$sql = "SELECT DISTINCT r.module, r.perms, r.subperms";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql.= " FROM ".MAIN_DB_PREFIX."usergroup_rights as gr,";
 		$sql.= " ".MAIN_DB_PREFIX."usergroup_user as gu,";
 		$sql.= " ".MAIN_DB_PREFIX."rights_def as r";
@@ -805,7 +1205,10 @@ class User extends CommonObject
 						// if we have already define a subperm like this $this->rights->$module->level1->level2 with llx_user_rights, we don't want override level1 because the level2 can be not define on user group
 						if (!is_object($this->rights->$module->$perms)) $this->rights->$module->$perms = 1;
 					}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 				$i++;
 			}
@@ -824,7 +1227,11 @@ class User extends CommonObject
 		}
 		else
 		{
+<<<<<<< HEAD
 			// Si module defini, on le marque comme charge en cache
+=======
+			// If module defined, we flag it as loaded into cache
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$this->_tab_loaded[$moduletag]=1;
 		}
 	}
@@ -835,7 +1242,11 @@ class User extends CommonObject
 	 *	@param	int		$statut		Status to set
 	 *  @return int     			<0 if KO, 0 if nothing is done, >0 if OK
 	 */
+<<<<<<< HEAD
 	function setstatus($statut)
+=======
+	public function setstatus($statut)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf,$langs,$user;
 
@@ -857,7 +1268,11 @@ class User extends CommonObject
 		if ($result)
 		{
 			// Call trigger
+<<<<<<< HEAD
 			$result=$this->call_trigger('USER_ENABLEDISABLE',$user);
+=======
+			$result=$this->call_trigger('USER_ENABLEDISABLE', $user);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if ($result < 0) { $error++; }
 			// End call triggers
 		}
@@ -882,6 +1297,10 @@ class User extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param int[]|int $categories Category or categories IDs
+<<<<<<< HEAD
+=======
+     * @return void
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	 */
 	public function setCategories($categories)
 	{
@@ -920,6 +1339,7 @@ class User extends CommonObject
 	}
 
 	/**
+<<<<<<< HEAD
 	 *    	Delete the user
 	 *
 	 * 		@return		int		<0 if KO, >0 if OK
@@ -927,6 +1347,16 @@ class User extends CommonObject
 	function delete()
 	{
 		global $user,$conf,$langs;
+=======
+	 *  Delete the user
+	 *
+	 *	@param		User	$user	User than delete
+	 * 	@return		int				<0 if KO, >0 if OK
+	 */
+	public function delete(User $user)
+	{
+		global $conf,$langs;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$error=0;
 
@@ -967,12 +1397,21 @@ class User extends CommonObject
 		// Remove extrafields
 		if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
 		{
+<<<<<<< HEAD
 			$result=$this->deleteExtraFields();
 			if ($result < 0)
 			{
 		   		$error++;
 		   		dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
 		   	}
+=======
+		    $result=$this->deleteExtraFields();
+		    if ($result < 0)
+		    {
+		        $error++;
+		        dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
+		    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		// Remove user
@@ -990,7 +1429,11 @@ class User extends CommonObject
 		if (! $error)
 		{
 			// Call trigger
+<<<<<<< HEAD
 			$result=$this->call_trigger('USER_DELETE',$user);
+=======
+			$result=$this->call_trigger('USER_DELETE', $user);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if ($result < 0)
 			{
 				$error++;
@@ -1016,7 +1459,11 @@ class User extends CommonObject
 	 *  @param  int		$notrigger		1=do not execute triggers, 0 otherwise
 	 *  @return int			         	<0 if KO, id of created user if OK
 	 */
+<<<<<<< HEAD
 	function create($user, $notrigger=0)
+=======
+	public function create($user, $notrigger = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf,$langs;
 		global $mysoc;
@@ -1031,13 +1478,21 @@ class User extends CommonObject
 		if (! empty($conf->global->USER_MAIL_REQUIRED) && ! isValidEMail($this->email))
 		{
 			$langs->load("errors");
+<<<<<<< HEAD
 			$this->error = $langs->trans("ErrorBadEMail",$this->email);
+=======
+			$this->error = $langs->trans("ErrorBadEMail", $this->email);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			return -1;
 		}
 		if (empty($this->login))
 		{
 			$langs->load("errors");
+<<<<<<< HEAD
 			$this->error = $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Login"));
+=======
+			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Login"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			return -1;
 		}
 
@@ -1084,7 +1539,11 @@ class User extends CommonObject
 					}
 
 					// Update minor fields
+<<<<<<< HEAD
 					$result = $this->update($user,1,1);
+=======
+					$result = $this->update($user, 1, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					if ($result < 0)
 					{
 						$this->db->rollback();
@@ -1096,8 +1555,13 @@ class User extends CommonObject
 						require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 						$langs->load("stocks");
 						$entrepot = new Entrepot($this->db);
+<<<<<<< HEAD
 						$entrepot->libelle = $langs->trans("PersonalStock",$this->getFullName($langs));
 						$entrepot->description = $langs->trans("ThisWarehouseIsPersonalStock",$this->getFullName($langs));
+=======
+						$entrepot->libelle = $langs->trans("PersonalStock", $this->getFullName($langs));
+						$entrepot->description = $langs->trans("ThisWarehouseIsPersonalStock", $this->getFullName($langs));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						$entrepot->statut = 1;
 						$entrepot->country_id = $mysoc->country_id;
 						$entrepot->create($user);
@@ -1106,7 +1570,11 @@ class User extends CommonObject
 					if (! $notrigger)
 					{
 						// Call trigger
+<<<<<<< HEAD
 						$result=$this->call_trigger('USER_CREATE',$user);
+=======
+						$result=$this->call_trigger('USER_CREATE', $user);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						if ($result < 0) { $error++; }
 						// End call triggers
 					}
@@ -1141,6 +1609,10 @@ class User extends CommonObject
 	}
 
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *  Create a user from a contact object. User will be internal but if contact is linked to a third party, user will be external
 	 *
@@ -1149,13 +1621,20 @@ class User extends CommonObject
 	 *  @param  string	$password   Password to force
 	 *  @return int 				<0 if error, if OK returns id of created user
 	 */
+<<<<<<< HEAD
 	function create_from_contact($contact,$login='',$password='')
 	{
+=======
+	public function create_from_contact($contact, $login = '', $password = '')
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf,$user,$langs;
 
 		$error=0;
 
 		// Define parameters
+<<<<<<< HEAD
 		$this->admin		= 0;
 		$this->lastname		= $contact->lastname;
 		$this->firstname	= $contact->firstname;
@@ -1171,6 +1650,26 @@ class User extends CommonObject
 		$this->state_id     = $contact->state_id;
 		$this->country_id   = $contact->country_id;
 		$this->employee     = 0;
+=======
+		$this->admin = 0;
+		$this->lastname = $contact->lastname;
+		$this->firstname = $contact->firstname;
+		$this->gender = $contact->gender;
+		$this->email = $contact->email;
+		$this->skype = $contact->skype;
+		$this->twitter = $contact->twitter;
+		$this->facebook = $contact->facebook;
+		$this->linkedin = $contact->linkedin;
+		$this->office_phone = $contact->phone_pro;
+		$this->office_fax = $contact->fax;
+		$this->user_mobile = $contact->phone_mobile;
+		$this->address = $contact->address;
+		$this->zip = $contact->zip;
+		$this->town = $contact->town;
+		$this->state_id = $contact->state_id;
+		$this->country_id = $contact->country_id;
+		$this->employee = 0;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		if (empty($login)) $login=strtolower(substr($contact->firstname, 0, 4)) . strtolower(substr($contact->lastname, 0, 4));
 		$this->login = $login;
@@ -1193,7 +1692,11 @@ class User extends CommonObject
 				$this->context['createfromcontact']='createfromcontact';
 
 				// Call trigger
+<<<<<<< HEAD
 				$result=$this->call_trigger('USER_CREATE',$user);
+=======
+				$result=$this->call_trigger('USER_CREATE', $user);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if ($result < 0) { $error++; $this->db->rollback(); return -1; }
 				// End call triggers
 
@@ -1216,9 +1719,15 @@ class User extends CommonObject
 			$this->db->rollback();
 			return $result;
 		}
+<<<<<<< HEAD
 
 	}
 
+=======
+	}
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *  Create a user into database from a member object
 	 *
@@ -1226,8 +1735,14 @@ class User extends CommonObject
 	 * 	@param	string		$login		Login to force
 	 *  @return int						<0 if KO, if OK, return id of created account
 	 */
+<<<<<<< HEAD
 	function create_from_member($member,$login='')
 	{
+=======
+	public function create_from_member($member, $login = '')
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf,$user,$langs;
 
 		// Positionne parametres
@@ -1253,7 +1768,11 @@ class User extends CommonObject
 		$result=$this->create($user);
 		if ($result > 0)
 		{
+<<<<<<< HEAD
 			$newpass=$this->setPassword($user,$this->pass);
+=======
+			$newpass=$this->setPassword($user, $this->pass);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if (is_numeric($newpass) && $newpass < 0) $result=-2;
 
 			if ($result > 0 && $member->fk_soc)	// If member is linked to a thirdparty
@@ -1292,13 +1811,23 @@ class User extends CommonObject
 		}
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *    Assign rights by default
 	 *
 	 *    @return     integer erreur <0, si ok renvoi le nbre de droits par defaut positionnes
 	 */
+<<<<<<< HEAD
 	function set_default_rights()
 	{
+=======
+	public function set_default_rights()
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf;
 
 		$sql = "SELECT id FROM ".MAIN_DB_PREFIX."rights_def";
@@ -1345,7 +1874,11 @@ class User extends CommonObject
 	 *		@param	int		$nosynccontact		0=Synchronize linked contact, 1=Do not synchronize linked contact
 	 *    	@return int 		        		<0 si KO, >=0 si OK
 	 */
+<<<<<<< HEAD
 	function update($user, $notrigger=0, $nosyncmember=0, $nosyncmemberpass=0, $nosynccontact=0)
+=======
+	public function update($user, $notrigger = 0, $nosyncmember = 0, $nosyncmemberpass = 0, $nosynccontact = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf, $langs;
 
@@ -1371,8 +1904,20 @@ class User extends CommonObject
 		$this->office_phone = trim($this->office_phone);
 		$this->office_fax   = trim($this->office_fax);
 		$this->user_mobile  = trim($this->user_mobile);
+<<<<<<< HEAD
 		$this->email        = trim($this->email);
 		$this->skype        = trim($this->skype);
+=======
+        $this->personal_mobile  = trim($this->personal_mobile);
+		$this->email        = trim($this->email);
+        $this->personal_email = trim($this->personal_email);
+
+		$this->skype        = trim($this->skype);
+		$this->twitter      = trim($this->twitter);
+		$this->facebook     = trim($this->facebook);
+		$this->linkedin     = trim($this->linkedin);
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->job    		= trim($this->job);
 		$this->signature    = trim($this->signature);
 		$this->note         = trim($this->note);
@@ -1382,20 +1927,35 @@ class User extends CommonObject
 		$this->zip			= empty($this->zip)?'':$this->zip;
 		$this->town			= empty($this->town)?'':$this->town;
 		$this->accountancy_code = trim($this->accountancy_code);
+<<<<<<< HEAD
 		$this->color 		= empty($this->color)?'':$this->color;
 		$this->dateemployment 	= empty($this->dateemployment)?'':$this->dateemployment;
+=======
+		$this->color = empty($this->color)?'':$this->color;
+		$this->dateemployment = empty($this->dateemployment)?'':$this->dateemployment;
+		$this->dateemploymentend = empty($this->dateemploymentend)?'':$this->dateemploymentend;
+		$this->fk_warehouse = trim(empty($this->fk_warehouse)?'':$this->fk_warehouse);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Check parameters
 		if (! empty($conf->global->USER_MAIL_REQUIRED) && ! isValidEMail($this->email))
 		{
 			$langs->load("errors");
+<<<<<<< HEAD
 			$this->error = $langs->trans("ErrorBadEMail",$this->email);
+=======
+			$this->error = $langs->trans("ErrorBadEMail", $this->email);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			return -1;
 		}
 		if (empty($this->login))
 		{
 			$langs->load("errors");
+<<<<<<< HEAD
 			$this->error = $langs->trans("ErrorFieldRequired",$this->login);
+=======
+			$this->error = $langs->trans("ErrorFieldRequired", $this->login);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			return -1;
 		}
 
@@ -1419,17 +1979,36 @@ class User extends CommonObject
 		$sql.= ", office_phone = '".$this->db->escape($this->office_phone)."'";
 		$sql.= ", office_fax = '".$this->db->escape($this->office_fax)."'";
 		$sql.= ", user_mobile = '".$this->db->escape($this->user_mobile)."'";
+<<<<<<< HEAD
 		$sql.= ", email = '".$this->db->escape($this->email)."'";
 		$sql.= ", skype = '".$this->db->escape($this->skype)."'";
+=======
+        $sql.= ", personal_mobile = '".$this->db->escape($this->personal_mobile)."'";
+		$sql.= ", email = '".$this->db->escape($this->email)."'";
+        $sql.= ", personal_email = '".$this->db->escape($this->personal_email)."'";
+		$sql.= ", skype = '".$this->db->escape($this->skype)."'";
+		$sql.= ", twitter = '".$this->db->escape($this->twitter)."'";
+		$sql.= ", facebook = '".$this->db->escape($this->facebook)."'";
+		$sql.= ", linkedin = '".$this->db->escape($this->linkedin)."'";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql.= ", job = '".$this->db->escape($this->job)."'";
 		$sql.= ", signature = '".$this->db->escape($this->signature)."'";
 		$sql.= ", accountancy_code = '".$this->db->escape($this->accountancy_code)."'";
 		$sql.= ", color = '".$this->db->escape($this->color)."'";
 		$sql.= ", dateemployment=".(strval($this->dateemployment)!='' ? "'".$this->db->idate($this->dateemployment)."'" : 'null');
+<<<<<<< HEAD
+=======
+		$sql.= ", dateemploymentend=".(strval($this->dateemploymentend)!='' ? "'".$this->db->idate($this->dateemploymentend)."'" : 'null');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql.= ", note = '".$this->db->escape($this->note)."'";
 		$sql.= ", photo = ".($this->photo?"'".$this->db->escape($this->photo)."'":"null");
 		$sql.= ", openid = ".($this->openid?"'".$this->db->escape($this->openid)."'":"null");
 		$sql.= ", fk_user = ".($this->fk_user > 0?"'".$this->db->escape($this->fk_user)."'":"null");
+<<<<<<< HEAD
+=======
+        $sql.= ", fk_user_expense_validator = ".($this->fk_user_expense_validator > 0?"'".$this->db->escape($this->fk_user_expense_validator)."'":"null");
+        $sql.= ", fk_user_holiday_validator = ".($this->fk_user_holiday_validator > 0?"'".$this->db->escape($this->fk_user_holiday_validator)."'":"null");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if (isset($this->thm) || $this->thm != '')                 $sql.= ", thm= ".($this->thm != ''?"'".$this->db->escape($this->thm)."'":"null");
 		if (isset($this->tjm) || $this->tjm != '')                 $sql.= ", tjm= ".($this->tjm != ''?"'".$this->db->escape($this->tjm)."'":"null");
 		if (isset($this->salary) || $this->salary != '')           $sql.= ", salary= ".($this->salary != ''?"'".$this->db->escape($this->salary)."'":"null");
@@ -1438,6 +2017,10 @@ class User extends CommonObject
 		$sql.= ", entity = '".$this->db->escape($this->entity)."'";
 		$sql.= ", default_range = ".($this->default_range > 0 ? $this->default_range : 'null');
 		$sql.= ", default_c_exp_tax_cat = ".($this->default_c_exp_tax_cat > 0 ? $this->default_c_exp_tax_cat : 'null');
+<<<<<<< HEAD
+=======
+		$sql.= ", fk_warehouse = ".($this->fk_warehouse?"'".$this->db->escape($this->fk_warehouse)."'":"null");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$sql.= " WHERE rowid = ".$this->id;
 
@@ -1453,7 +2036,11 @@ class User extends CommonObject
 				if ($this->pass != $this->pass_indatabase && $this->pass != $this->pass_indatabase_crypted)
 				{
 					// Si mot de passe saisi et different de celui en base
+<<<<<<< HEAD
 					$result=$this->setPassword($user,$this->pass,0,$notrigger,$nosyncmemberpass);
+=======
+					$result=$this->setPassword($user, $this->pass, 0, $notrigger, $nosyncmemberpass);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					if (! $nbrowsaffected) $nbrowsaffected++;
 				}
 			}
@@ -1485,7 +2072,11 @@ class User extends CommonObject
 					$adh=new Adherent($this->db);
 					$result=$adh->fetch($this->fk_member);
 
+<<<<<<< HEAD
 					if ($result >= 0)
+=======
+					if ($result > 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					{
 						$adh->firstname=$this->firstname;
 						$adh->lastname=$this->lastname;
@@ -1504,14 +2095,27 @@ class User extends CommonObject
 						$adh->country_id=$this->country_id;
 
 						$adh->email=$this->email;
+<<<<<<< HEAD
 						$adh->skype=$this->skype;
+=======
+
+						$adh->skype=$this->skype;
+						$adh->twitter=$this->twitter;
+						$adh->facebook=$this->facebook;
+						$adh->linkedin=$this->linkedin;
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						$adh->phone=$this->office_phone;
 						$adh->phone_mobile=$this->user_mobile;
 
 						$adh->user_id=$this->id;
 						$adh->user_login=$this->login;
 
+<<<<<<< HEAD
 						$result=$adh->update($user,0,1,0);
+=======
+						$result=$adh->update($user, 0, 1, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						if ($result < 0)
 						{
 							$this->error=$adh->error;
@@ -1520,7 +2124,11 @@ class User extends CommonObject
 							$error++;
 						}
 					}
+<<<<<<< HEAD
 					else
+=======
+					elseif ($result < 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					{
 						$this->error=$adh->error;
 						$this->errors=$adh->errors;
@@ -1552,7 +2160,16 @@ class User extends CommonObject
 						//$tmpobj->societe=(empty($tmpobj->societe) && $this->societe_id ? $this->societe_id : $tmpobj->societe);
 
 						$tmpobj->email=$this->email;
+<<<<<<< HEAD
 						$tmpobj->skype=$this->skype;
+=======
+
+						$tmpobj->skype=$this->skype;
+						$tmpobj->twitter=$this->twitter;
+						$tmpobj->facebook=$this->facebook;
+						$tmpobj->linkedin=$this->linkedin;
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						$tmpobj->phone_pro=$this->office_phone;
 						$tmpobj->phone_mobile=$this->user_mobile;
 						$tmpobj->fax=$this->office_fax;
@@ -1599,7 +2216,11 @@ class User extends CommonObject
 			if (! $error && ! $notrigger)
 			{
 				// Call trigger
+<<<<<<< HEAD
 				$result=$this->call_trigger('USER_MODIFY',$user);
+=======
+				$result=$this->call_trigger('USER_MODIFY', $user);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}
@@ -1611,7 +2232,11 @@ class User extends CommonObject
 			}
 			else
 			{
+<<<<<<< HEAD
 				dol_syslog(get_class($this)."::update error=".$this->error,LOG_ERR);
+=======
+				dol_syslog(get_class($this)."::update error=".$this->error, LOG_ERR);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$this->db->rollback();
 				return -1;
 			}
@@ -1622,17 +2247,29 @@ class User extends CommonObject
 			$this->db->rollback();
 			return -2;
 		}
+<<<<<<< HEAD
 
 	}
 
+=======
+	}
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *    Mise a jour en base de la date de derniere connexion d'un utilisateur
 	 *	  Fonction appelee lors d'une nouvelle connexion
 	 *
 	 *    @return     <0 si echec, >=0 si ok
 	 */
+<<<<<<< HEAD
 	function update_last_login_date()
 	{
+=======
+	public function update_last_login_date()
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$now=dol_now();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."user SET";
@@ -1667,14 +2304,22 @@ class User extends CommonObject
 	 *	@param	int		$nosyncmember	        Do not synchronize linked member
 	 *  @return string 			          		If OK return clear password, 0 if no change, < 0 if error
 	 */
+<<<<<<< HEAD
 	function setPassword($user, $password='', $changelater=0, $notrigger=0, $nosyncmember=0)
+=======
+	public function setPassword($user, $password = '', $changelater = 0, $notrigger = 0, $nosyncmember = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf, $langs;
 		require_once DOL_DOCUMENT_ROOT .'/core/lib/security2.lib.php';
 
 		$error=0;
 
+<<<<<<< HEAD
 		dol_syslog(get_class($this)."::setPassword user=".$user->id." password=".preg_replace('/./i','*',$password)." changelater=".$changelater." notrigger=".$notrigger." nosyncmember=".$nosyncmember, LOG_DEBUG);
+=======
+		dol_syslog(get_class($this)."::setPassword user=".$user->id." password=".preg_replace('/./i', '*', $password)." changelater=".$changelater." notrigger=".$notrigger." nosyncmember=".$nosyncmember, LOG_DEBUG);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// If new password not provided, we generate one
 		if (! $password)
@@ -1726,11 +2371,19 @@ class User extends CommonObject
 
 						if ($result >= 0)
 						{
+<<<<<<< HEAD
 							$result=$adh->setPassword($user,$this->pass,(empty($conf->global->DATABASE_PWD_ENCRYPTED)?0:1),1);	// Cryptage non gere dans module adherent
 							if ($result < 0)
 							{
 								$this->error=$adh->error;
 								dol_syslog(get_class($this)."::setPassword ".$this->error,LOG_ERR);
+=======
+							$result=$adh->setPassword($user, $this->pass, (empty($conf->global->DATABASE_PWD_ENCRYPTED)?0:1), 1);	// Cryptage non gere dans module adherent
+							if ($result < 0)
+							{
+								$this->error=$adh->error;
+								dol_syslog(get_class($this)."::setPassword ".$this->error, LOG_ERR);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 								$error++;
 							}
 						}
@@ -1741,12 +2394,20 @@ class User extends CommonObject
 						}
 					}
 
+<<<<<<< HEAD
 					dol_syslog(get_class($this)."::setPassword notrigger=".$notrigger." error=".$error,LOG_DEBUG);
+=======
+					dol_syslog(get_class($this)."::setPassword notrigger=".$notrigger." error=".$error, LOG_DEBUG);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 					if (! $error && ! $notrigger)
 					{
 						// Call trigger
+<<<<<<< HEAD
 						$result=$this->call_trigger('USER_NEW_PASSWORD',$user);
+=======
+						$result=$this->call_trigger('USER_NEW_PASSWORD', $user);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						if ($result < 0) { $error++; $this->db->rollback(); return -1; }
 						// End call triggers
 					}
@@ -1790,6 +2451,10 @@ class User extends CommonObject
 	}
 
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *  Send new password by email
 	 *
@@ -1798,9 +2463,16 @@ class User extends CommonObject
 	 *	@param	int		$changelater	0=Send clear passwod into email, 1=Change password only after clicking on confirm email. @TODO Add method 2 = Send link to reset password
 	 *  @return int 		            < 0 si erreur, > 0 si ok
 	 */
+<<<<<<< HEAD
 	function send_password($user, $password='', $changelater=0)
 	{
 		global $conf,$langs;
+=======
+	public function send_password($user, $password = '', $changelater = 0)
+	{
+        // phpcs:enable
+		global $conf, $langs;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $dolibarr_main_url_root;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
@@ -1810,21 +2482,37 @@ class User extends CommonObject
 		// Define $msg
 		$mesg = '';
 
+<<<<<<< HEAD
 		$outputlangs=new Translate("",$conf);
+=======
+		$outputlangs=new Translate("", $conf);
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if (isset($this->conf->MAIN_LANG_DEFAULT)
 		&& $this->conf->MAIN_LANG_DEFAULT != 'auto')
 		{	// If user has defined its own language (rare because in most cases, auto is used)
 			$outputlangs->getDefaultLang($this->conf->MAIN_LANG_DEFAULT);
 		}
+<<<<<<< HEAD
+=======
+		if($user->conf->MAIN_LANG_DEFAULT){
+            $outputlangs->setDefaultLang($user->conf->MAIN_LANG_DEFAULT);
+        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		else
 		{	// If user has not defined its own language, we used current language
 			$outputlangs=$langs;
 		}
 
+<<<<<<< HEAD
 		$outputlangs->load("main");
 		$outputlangs->load("errors");
 		$outputlangs->load("users");
 		$outputlangs->load("other");
+=======
+        // Load translation files required by the page
+		$outputlangs->loadLangs(array("main", "errors", "users", "other"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$appli=constant('DOL_APPLICATION_TITLE');
 		if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_APPLICATION_TITLE;
@@ -1832,13 +2520,20 @@ class User extends CommonObject
 		$subject = $outputlangs->transnoentitiesnoconv("SubjectNewPassword", $appli);
 
 		// Define $urlwithroot
+<<<<<<< HEAD
 		$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+=======
+		$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 
 		if (! $changelater)
 		{
 			$url = $urlwithroot.'/';
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$mesg.= $outputlangs->transnoentitiesnoconv("RequestToResetPasswordReceived").".\n";
 			$mesg.= $outputlangs->transnoentitiesnoconv("NewKeyIs")." :\n\n";
 			$mesg.= $outputlangs->transnoentitiesnoconv("Login")." = ".$this->login."\n";
@@ -1853,7 +2548,11 @@ class User extends CommonObject
 		}
 		else
 		{
+<<<<<<< HEAD
 			$url = $urlwithroot.'/user/passwordforgotten.php?action=validatenewpassword&username='.$this->login."&passwordhash=".dol_hash($password);
+=======
+			$url = $urlwithroot.'/user/passwordforgotten.php?action=validatenewpassword&username='.urlencode($this->login)."&passwordhash=".dol_hash($password);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			$mesg.= $outputlangs->transnoentitiesnoconv("RequestToResetPasswordReceived")."\n";
 			$mesg.= $outputlangs->transnoentitiesnoconv("NewKeyWillBe")." :\n\n";
@@ -1867,8 +2566,13 @@ class User extends CommonObject
 			dol_syslog(get_class($this)."::send_password changelater is on, url=".$url);
 		}
 
+<<<<<<< HEAD
 		$mailfile = new CMailFile(
 			$subject,
+=======
+        $mailfile = new CMailFile(
+            $subject,
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$this->email,
 			$conf->global->MAIN_MAIL_EMAIL_FROM,
 			$mesg,
@@ -1878,8 +2582,13 @@ class User extends CommonObject
 			'',
 			'',
 			0,
+<<<<<<< HEAD
 			$msgishtml
 		);
+=======
+            $msgishtml
+        );
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		if ($mailfile->sendfile())
 		{
@@ -1898,19 +2607,33 @@ class User extends CommonObject
 	 *
 	 * 		@return    string      chaine erreur
 	 */
+<<<<<<< HEAD
 	function error()
+=======
+	public function error()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return $this->error;
 	}
 
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *    	Read clicktodial information for user
 	 *
 	 * 		@return		<0 if KO, >0 if OK
 	 */
+<<<<<<< HEAD
 	function fetch_clicktodial()
 	{
+=======
+	public function fetch_clicktodial()
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql = "SELECT url, login, pass, poste ";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user_clicktodial as u";
 		$sql.= " WHERE u.fk_user = ".$this->id;
@@ -1940,13 +2663,24 @@ class User extends CommonObject
 		}
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *  Update clicktodial info
 	 *
 	 *  @return	integer
+<<<<<<< HEAD
 	 */
 	function update_clicktodial()
 	{
+=======
+     */
+    public function update_clicktodial()
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_clicktodial";
@@ -1976,9 +2710,16 @@ class User extends CommonObject
 			$this->error=$this->db->lasterror();
 			return -1;
 		}
+<<<<<<< HEAD
 	}
 
 
+=======
+    }
+
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *  Add user into a group
 	 *
@@ -1987,8 +2728,14 @@ class User extends CommonObject
 	 *  @param  int		$notrigger  Disable triggers
 	 *  @return int  				<0 if KO, >0 if OK
 	 */
+<<<<<<< HEAD
 	function SetInGroup($group, $entity, $notrigger=0)
 	{
+=======
+	public function SetInGroup($group, $entity, $notrigger = 0)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf, $langs, $user;
 
 		$error=0;
@@ -2014,7 +2761,11 @@ class User extends CommonObject
 				$this->context = array('audit'=>$langs->trans("UserSetInGroup"), 'newgroupid'=>$group);
 
 				// Call trigger
+<<<<<<< HEAD
 				$result=$this->call_trigger('USER_MODIFY',$user);
+=======
+				$result=$this->call_trigger('USER_MODIFY', $user);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}
@@ -2039,6 +2790,10 @@ class User extends CommonObject
 		}
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *  Remove a user from a group
 	 *
@@ -2047,8 +2802,14 @@ class User extends CommonObject
 	 *  @param  int		$notrigger   Disable triggers
 	 *  @return int  			     <0 if KO, >0 if OK
 	 */
+<<<<<<< HEAD
 	function RemoveFromGroup($group, $entity, $notrigger=0)
 	{
+=======
+	public function RemoveFromGroup($group, $entity, $notrigger = 0)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf,$langs,$user;
 
 		$error=0;
@@ -2069,7 +2830,11 @@ class User extends CommonObject
 				$this->context = array('audit'=>$langs->trans("UserRemovedFromGroup"), 'oldgroupid'=>$group);
 
 				// Call trigger
+<<<<<<< HEAD
 				$result=$this->call_trigger('USER_MODIFY',$user);
+=======
+				$result=$this->call_trigger('USER_MODIFY', $user);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}
@@ -2106,11 +2871,17 @@ class User extends CommonObject
 	 * 	@param	string	$imagesize		'mini', 'small' or '' (original)
 	 *	@return	string					String with URL link
 	 */
+<<<<<<< HEAD
 	function getPhotoUrl($width, $height, $cssclass='', $imagesize='')
 	{
 		$result='';
 
 		$result.='<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
+=======
+	public function getPhotoUrl($width, $height, $cssclass = '', $imagesize = '')
+	{
+		$result ='<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$result.=Form::showphoto('userphoto', $this, $width, $height, 0, $cssclass, $imagesize);
 		$result.='</a>';
 
@@ -2127,11 +2898,16 @@ class User extends CommonObject
 	 *  @param	integer	$notooltip					1=Disable tooltip on picto and name
 	 *  @param	int		$maxlen						Max length of visible user name
 	 *  @param	int		$hidethirdpartylogo			Hide logo of thirdparty if user is external user
+<<<<<<< HEAD
 	 *  @param  string  $mode               		''=Show firstname and lastname, 'firstname'=Show only firstname, 'login'=Show login
+=======
+	 *  @param  string  $mode               		''=Show firstname and lastname, 'firstname'=Show only firstname, 'firstelselast'=Show firstname or lastname if not defined, 'login'=Show login
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	 *  @param  string  $morecss            		Add more css on link
 	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return	string								String with URL
 	 */
+<<<<<<< HEAD
 	function getNomUrl($withpictoimg=0, $option='', $infologin=0, $notooltip=0, $maxlen=24, $hidethirdpartylogo=0, $mode='',$morecss='', $save_lastsearch_value=-1)
 	{
 		global $langs, $conf, $db, $hookmanager;
@@ -2142,6 +2918,19 @@ class User extends CommonObject
 
 		$result=''; $label='';
 		$link=''; $linkstart=''; $linkend='';
+=======
+	public function getNomUrl($withpictoimg = 0, $option = '', $infologin = 0, $notooltip = 0, $maxlen = 24, $hidethirdpartylogo = 0, $mode = '', $morecss = '', $save_lastsearch_value = -1)
+	{
+		global $langs, $conf, $db, $hookmanager, $user;
+		global $dolibarr_main_authentication, $dolibarr_main_demo;
+		global $menumanager;
+
+        if(!$user->rights->user->user->lire && $user->id !=$this->id) $option='nolink';
+
+		if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpictoimg) $withpictoimg=0;
+
+		$result=''; $label='';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		if (! empty($this->photo))
 		{
@@ -2153,7 +2942,11 @@ class User extends CommonObject
 		// Info Login
 		$label.= '<div class="centpercent">';
 		$label.= '<u>' . $langs->trans("User") . '</u><br>';
+<<<<<<< HEAD
 		$label.= '<b>' . $langs->trans('Name') . ':</b> ' . $this->getFullName($langs,'');
+=======
+		$label.= '<b>' . $langs->trans('Name') . ':</b> ' . $this->getFullName($langs, '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if (! empty($this->login))
 			$label.= '<br><b>' . $langs->trans('Login') . ':</b> ' . $this->login;
 		$label.= '<br><b>' . $langs->trans("EMail").':</b> '.$this->email;
@@ -2173,12 +2966,21 @@ class User extends CommonObject
 		if ($infologin > 0)
 		{
 			$label.= '<br>';
+<<<<<<< HEAD
 			$label.= '<br><u>'.$langs->trans("Connection").'</u>';
 			$label.= '<br><b>'.$langs->trans("IPAddress").'</b>: '.$_SERVER["REMOTE_ADDR"];
 			if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)) $label.= '<br><b>'.$langs->trans("ConnectedOnMultiCompany").':</b> '.$conf->entity.' (user entity '.$this->entity.')';
 			$label.= '<br><b>'.$langs->trans("AuthenticationMode").':</b> '.$_SESSION["dol_authmode"].(empty($dolibarr_main_demo)?'':' (demo)');
 			$label.= '<br><b>'.$langs->trans("ConnectedSince").':</b> '.dol_print_date($this->datelastlogin,"dayhour",'tzuser');
 			$label.= '<br><b>'.$langs->trans("PreviousConnexion").':</b> '.dol_print_date($this->datepreviouslogin,"dayhour",'tzuser');
+=======
+			$label.= '<br><u>'.$langs->trans("Session").'</u>';
+			$label.= '<br><b>'.$langs->trans("IPAddress").'</b>: '.$_SERVER["REMOTE_ADDR"];
+			if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)) $label.= '<br><b>'.$langs->trans("ConnectedOnMultiCompany").':</b> '.$conf->entity.' (user entity '.$this->entity.')';
+			$label.= '<br><b>'.$langs->trans("AuthenticationMode").':</b> '.$_SESSION["dol_authmode"].(empty($dolibarr_main_demo)?'':' (demo)');
+			$label.= '<br><b>'.$langs->trans("ConnectedSince").':</b> '.dol_print_date($this->datelastlogin, "dayhour", 'tzuser');
+			$label.= '<br><b>'.$langs->trans("PreviousConnexion").':</b> '.dol_print_date($this->datepreviouslogin, "dayhour", 'tzuser');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$label.= '<br><b>'.$langs->trans("CurrentTheme").':</b> '.$conf->theme;
 			$label.= '<br><b>'.$langs->trans("CurrentMenuManager").':</b> '.$menumanager->name;
 			$s=picto_from_langcode($langs->getDefaultLang());
@@ -2186,8 +2988,13 @@ class User extends CommonObject
 			$label.= '<br><b>'.$langs->trans("Browser").':</b> '.$conf->browser->name.($conf->browser->version?' '.$conf->browser->version:'').' ('.$_SERVER['HTTP_USER_AGENT'].')';
 			$label.= '<br><b>'.$langs->trans("Layout").':</b> '.$conf->browser->layout;
 			$label.= '<br><b>'.$langs->trans("Screen").':</b> '.$_SESSION['dol_screenwidth'].' x '.$_SESSION['dol_screenheight'];
+<<<<<<< HEAD
 			if (! empty($conf->browser->phone)) $label.= '<br><b>'.$langs->trans("Phone").':</b> '.$conf->browser->phone;
 			if (! empty($_SESSION["disablemodules"])) $label.= '<br><b>'.$langs->trans("DisabledModules").':</b> <br>'.join(', ',explode(',',$_SESSION["disablemodules"]));
+=======
+			if ($conf->browser->layout == 'phone') $label.= '<br><b>'.$langs->trans("Phone").':</b> '.$langs->trans("Yes");
+			if (! empty($_SESSION["disablemodules"])) $label.= '<br><b>'.$langs->trans("DisabledModules").':</b> <br>'.join(', ', explode(',', $_SESSION["disablemodules"]));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		if ($infologin < 0) $label='';
 
@@ -2198,7 +3005,11 @@ class User extends CommonObject
 		{
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+<<<<<<< HEAD
 			if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+=======
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
 		}
 
@@ -2231,7 +3042,11 @@ class User extends CommonObject
 		if ($withpictoimg)
 		{
 		  	$paddafterimage='';
+<<<<<<< HEAD
 			if (abs($withpictoimg) == 1) $paddafterimage='style="margin-right: 3px;"';
+=======
+		  	if (abs($withpictoimg) == 1) $paddafterimage='style="margin-'.($langs->trans("DIRECTION")=='rtl'?'left':'right').': 3px;"';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			// Only picto
 			if ($withpictoimg > 0) $picto='<!-- picto user --><div class="inline-block nopadding userimg'.($morecss?' '.$morecss:'').'">'.img_object('', 'user', $paddafterimage.' '.($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).'</div>';
 			// Picto must be a photo
@@ -2242,7 +3057,11 @@ class User extends CommonObject
 		{
 			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result.='<div class="inline-block nopadding valignmiddle usertext'.((! isset($this->statut) || $this->statut)?'':' strikefordisabled').($morecss?' '.$morecss:'').'">';
 			if ($mode == 'login') $result.=dol_trunc($this->login, $maxlen);
+<<<<<<< HEAD
 			else $result.=$this->getFullName($langs,'',($mode == 'firstname' ? 2 : -1),$maxlen);
+=======
+			else $result.=$this->getFullName($langs, '', ($mode == 'firstelselast' ? 3 : ($mode == 'firstname' ? 2 : -1)), $maxlen);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result.='</div>';
 		}
 		$result.=(($option == 'nolink')?'':$linkend);
@@ -2253,7 +3072,11 @@ class User extends CommonObject
 		global $action;
 		$hookmanager->initHooks(array('userdao'));
 		$parameters=array('id'=>$this->id, 'getnomurl'=>$result);
+<<<<<<< HEAD
 		$reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+=======
+		$reshook=$hookmanager->executeHooks('getNomUrl', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if ($reshook > 0) $result = $hookmanager->resPrint;
 		else $result .= $hookmanager->resPrint;
 
@@ -2267,21 +3090,42 @@ class User extends CommonObject
 	 *	@param	string	$option			Sur quoi pointe le lien
 	 *	@return	string					Chaine avec URL
 	 */
+<<<<<<< HEAD
 	function getLoginUrl($withpicto=0,$option='')
 	{
 		global $langs;
+=======
+	public function getLoginUrl($withpicto = 0, $option = '')
+	{
+		global $langs, $user;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$result='';
 
 		$linkstart = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
 		$linkend='</a>';
 
+<<<<<<< HEAD
+=======
+                //Check user's rights to see an other user
+                if((!$user->rights->user->user->lire && $this->id !=$user->id)) $option='nolink';
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if ($option == 'xxx')
 		{
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
 			$linkend='</a>';
 		}
 
+<<<<<<< HEAD
+=======
+        if ($option == 'nolink')
+		{
+			$linkstart = '';
+			$linkend='';
+		}
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$result.=$linkstart;
 		if ($withpicto) $result.=img_object($langs->trans("ShowUser"), 'user', 'class="paddingright"');
 		$result.=$this->login;
@@ -2295,6 +3139,7 @@ class User extends CommonObject
 	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return	string 			       Label of status
 	 */
+<<<<<<< HEAD
 	function getLibStatut($mode=0)
 	{
 		return $this->LibStatut($this->statut,$mode);
@@ -2309,11 +3154,30 @@ class User extends CommonObject
 	 */
 	function LibStatut($statut,$mode=0)
 	{
+=======
+	public function getLibStatut($mode = 0)
+	{
+		return $this->LibStatut($this->statut, $mode);
+	}
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
+     *  Renvoi le libelle d'un statut donne
+     *
+     *  @param  int     $statut         Id statut
+     *  @param  int     $mode           0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+     *  @return string                  Label of status
+     */
+    public function LibStatut($statut, $mode = 0)
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $langs;
 		$langs->load('users');
 
 		if ($mode == 0)
 		{
+<<<<<<< HEAD
 			$prefix='';
 			if ($statut == 1) return $langs->trans('Enabled');
 			if ($statut == 0) return $langs->trans('Disabled');
@@ -2342,10 +3206,44 @@ class User extends CommonObject
 		{
 			if ($statut == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4','class="pictostatus"');
 			if ($statut == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5','class="pictostatus"');
+=======
+			if ($statut == 1) return $langs->trans('Enabled');
+			elseif ($statut == 0) return $langs->trans('Disabled');
+		}
+		elseif ($mode == 1)
+		{
+			if ($statut == 1) return $langs->trans('Enabled');
+			elseif ($statut == 0) return $langs->trans('Disabled');
+		}
+		elseif ($mode == 2)
+		{
+			if ($statut == 1) return img_picto($langs->trans('Enabled'), 'statut4', 'class="pictostatus"').' '.$langs->trans('Enabled');
+			elseif ($statut == 0) return img_picto($langs->trans('Disabled'), 'statut5', 'class="pictostatus"').' '.$langs->trans('Disabled');
+		}
+		elseif ($mode == 3)
+		{
+			if ($statut == 1) return img_picto($langs->trans('Enabled'), 'statut4', 'class="pictostatus"');
+			elseif ($statut == 0) return img_picto($langs->trans('Disabled'), 'statut5', 'class="pictostatus"');
+		}
+		elseif ($mode == 4)
+		{
+			if ($statut == 1) return img_picto($langs->trans('Enabled'), 'statut4', 'class="pictostatus"').' '.$langs->trans('Enabled');
+			elseif ($statut == 0) return img_picto($langs->trans('Disabled'), 'statut5', 'class="pictostatus"').' '.$langs->trans('Disabled');
+		}
+		elseif ($mode == 5)
+		{
+			if ($statut == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4', 'class="pictostatus"');
+			elseif ($statut == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5', 'class="pictostatus"');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 	}
 
 
+<<<<<<< HEAD
+=======
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
@@ -2355,6 +3253,7 @@ class User extends CommonObject
 	 *								2=Return key only (RDN) (uid=qqq)
 	 *	@return	string				DN
 	 */
+<<<<<<< HEAD
 	function _load_ldap_dn($info,$mode=0)
 	{
 		global $conf;
@@ -2365,20 +3264,45 @@ class User extends CommonObject
 		return $dn;
 	}
 
+=======
+	public function _load_ldap_dn($info, $mode = 0)
+	{
+        // phpcs:enable
+		global $conf;
+		$dn='';
+		if ($mode==0) $dn=$conf->global->LDAP_KEY_USERS."=".$info[$conf->global->LDAP_KEY_USERS].",".$conf->global->LDAP_USER_DN;
+		elseif ($mode==1) $dn=$conf->global->LDAP_USER_DN;
+		elseif ($mode==2) $dn=$conf->global->LDAP_KEY_USERS."=".$info[$conf->global->LDAP_KEY_USERS];
+		return $dn;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *	Initialize the info array (array of LDAP values) that will be used to call LDAP functions
 	 *
 	 *	@return		array		Tableau info des attributs
 	 */
+<<<<<<< HEAD
 	function _load_ldap_info()
 	{
+=======
+	public function _load_ldap_info()
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf,$langs;
 
 		$info=array();
 		$keymodified=false;
 
 		// Object classes
+<<<<<<< HEAD
 		$info["objectclass"]=explode(',',$conf->global->LDAP_USER_OBJECT_CLASS);
+=======
+		$info["objectclass"]=explode(',', $conf->global->LDAP_USER_OBJECT_CLASS);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$this->fullname=$this->getFullName($langs);
 
@@ -2388,6 +3312,7 @@ class User extends CommonObject
 			'LDAP_FIELD_NAME'		=> 'lastname',
 			'LDAP_FIELD_FIRSTNAME'	=> 'firstname',
 			'LDAP_FIELD_LOGIN'		=> 'login',
+<<<<<<< HEAD
 			'LDAP_FIELD_LOGIN_SAMBA'	=> 'login',
 			'LDAP_FIELD_PHONE'		=> 'office_phone',
 			'LDAP_FIELD_MOBILE'		=> 'user_mobile',
@@ -2395,6 +3320,18 @@ class User extends CommonObject
 			'LDAP_FIELD_MAIL'		=> 'email',
 			'LDAP_FIELD_SID'			=> 'ldap_sid',
 			'LDAP_FIELD_SKYPE'		=> 'skype'
+=======
+			'LDAP_FIELD_LOGIN_SAMBA'=> 'login',
+			'LDAP_FIELD_PHONE'		=> 'office_phone',
+			'LDAP_FIELD_MOBILE'		=> 'user_mobile',
+			'LDAP_FIELD_FAX'		=> 'office_fax',
+			'LDAP_FIELD_MAIL'		=> 'email',
+			'LDAP_FIELD_SID'		=> 'ldap_sid',
+			'LDAP_FIELD_SKYPE'		=> 'skype',
+			'LDAP_FIELD_TWITTER'	=> 'twitter',
+			'LDAP_FIELD_FACEBOOK'	=> 'facebook',
+            'LDAP_FIELD_LINKEDIN'	=> 'linkedin'
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		);
 
 		// Champs
@@ -2433,7 +3370,11 @@ class User extends CommonObject
 			if (! empty($conf->global->LDAP_FIELD_PASSWORD_CRYPTED))		$info[$conf->global->LDAP_FIELD_PASSWORD_CRYPTED] = dol_hash($this->pass, 4); // Create OpenLDAP MD5 password (TODO add type of encryption)
 		}
 		// Set LDAP password if possible
+<<<<<<< HEAD
 		else if ($conf->global->LDAP_SERVER_PROTOCOLVERSION !== '3') // If ldap key is modified and LDAPv3 we use ldap_rename function for avoid lose encrypt password
+=======
+		elseif ($conf->global->LDAP_SERVER_PROTOCOLVERSION !== '3') // If ldap key is modified and LDAPv3 we use ldap_rename function for avoid lose encrypt password
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			if (! empty($conf->global->DATABASE_PWD_ENCRYPTED))
 			{
@@ -2446,7 +3387,11 @@ class User extends CommonObject
 				}
 			}
 			// Use $this->pass_indatabase value if exists
+<<<<<<< HEAD
 			else if (! empty($this->pass_indatabase))
+=======
+			elseif (! empty($this->pass_indatabase))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			{
 				if (! empty($conf->global->LDAP_FIELD_PASSWORD))				$info[$conf->global->LDAP_FIELD_PASSWORD] = $this->pass_indatabase;	// $this->pass_indatabase = mot de passe non crypte
 				if (! empty($conf->global->LDAP_FIELD_PASSWORD_CRYPTED))		$info[$conf->global->LDAP_FIELD_PASSWORD_CRYPTED] = dol_hash($this->pass_indatabase, 4); // md5 for OpenLdap TODO add type of encryption
@@ -2489,7 +3434,11 @@ class User extends CommonObject
 	 *
 	 *  @return	void
 	 */
+<<<<<<< HEAD
 	function initAsSpecimen()
+=======
+	public function initAsSpecimen()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $user,$langs;
 
@@ -2505,10 +3454,22 @@ class User extends CommonObject
 		$this->gender='man';
 		$this->note='This is a note';
 		$this->email='email@specimen.com';
+<<<<<<< HEAD
 		$this->skype='tom.hanson';
 		$this->office_phone='0999999999';
 		$this->office_fax='0999999998';
 		$this->user_mobile='0999999997';
+=======
+        $this->personal_email='personalemail@specimen.com';
+		$this->skype='skypepseudo';
+		$this->twitter='twitterpseudo';
+		$this->facebook='facebookpseudo';
+		$this->linkedin='linkedinpseudo';
+		$this->office_phone='0999999999';
+		$this->office_fax='0999999998';
+		$this->user_mobile='0999999997';
+        $this->personal_mobile='0999999996';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->admin=0;
 		$this->login='dolibspec';
 		$this->pass='dolibspec';
@@ -2532,7 +3493,11 @@ class User extends CommonObject
 	 *  @param  int		$id     Id of user to load
 	 *  @return	void
 	 */
+<<<<<<< HEAD
 	function info($id)
+=======
+	public function info($id)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$sql = "SELECT u.rowid, u.login as ref, u.datec,";
 		$sql.= " u.tms as date_modification, u.entity";
@@ -2548,6 +3513,7 @@ class User extends CommonObject
 
 				$this->id = $obj->rowid;
 
+<<<<<<< HEAD
 				$this->ref			     = (! $obj->ref) ? $obj->rowid : $obj->ref;
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
@@ -2556,6 +3522,15 @@ class User extends CommonObject
 
 			$this->db->free($result);
 
+=======
+				$this->ref = (! $obj->ref) ? $obj->rowid : $obj->ref;
+				$this->date_creation = $this->db->jdate($obj->datec);
+				$this->date_modification = $this->db->jdate($obj->date_modification);
+				$this->entity = $obj->entity;
+			}
+
+			$this->db->free($result);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		else
 		{
@@ -2569,7 +3544,11 @@ class User extends CommonObject
 	 *
 	 *    @return       int     Number of EMailings
 	 */
+<<<<<<< HEAD
 	function getNbOfEMailings()
+=======
+	public function getNbOfEMailings()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$sql = "SELECT count(mc.email) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
@@ -2600,7 +3579,11 @@ class User extends CommonObject
 	 *  @param	int		$admin		Filter on admin tag
 	 *  @return int  				Number of users
 	 */
+<<<<<<< HEAD
 	function getNbOfUsers($limitTo, $option='', $admin=-1)
+=======
+	public function getNbOfUsers($limitTo, $option = '', $admin = -1)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf;
 
@@ -2613,7 +3596,11 @@ class User extends CommonObject
 		}
 		else
 		{
+<<<<<<< HEAD
 			$sql.=" WHERE entity IN (".getEntity('user',0).")";
+=======
+			$sql.=" WHERE entity IN (".getEntity('user', 0).")";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if ($limitTo == 'active') $sql.= " AND statut = 1";
 			if ($admin >= 0) $sql.= " AND admin = ".$admin;
 		}
@@ -2634,6 +3621,7 @@ class User extends CommonObject
 		}
 	}
 
+<<<<<<< HEAD
 	/**
 	 *  Update user using data from the LDAP
 	 *
@@ -2643,6 +3631,18 @@ class User extends CommonObject
 	 */
 	function update_ldap2dolibarr(&$ldapuser)
 	{
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Update user using data from the LDAP
+	 *
+	 *  @param	Object	$ldapuser	Ladp User
+	 *  @return int  				<0 if KO, >0 if OK
+	 */
+	public function update_ldap2dolibarr(&$ldapuser)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// TODO: Voir pourquoi le update met à jour avec toutes les valeurs vide (global $user écrase ?)
 		global $user, $conf;
 
@@ -2657,6 +3657,12 @@ class User extends CommonObject
 		$this->office_fax=$ldapuser->{$conf->global->LDAP_FIELD_FAX};
 		$this->email=$ldapuser->{$conf->global->LDAP_FIELD_MAIL};
 		$this->skype=$ldapuser->{$conf->global->LDAP_FIELD_SKYPE};
+<<<<<<< HEAD
+=======
+		$this->twitter=$ldapuser->{$conf->global->LDAP_FIELD_TWITTER};
+		$this->facebook=$ldapuser->{$conf->global->LDAP_FIELD_FACEBOOK};
+		$this->linkedin=$ldapuser->{$conf->global->LDAP_FIELD_LINKEDIN};
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->ldap_sid=$ldapuser->{$conf->global->LDAP_FIELD_SID};
 
 		$this->job=$ldapuser->{$conf->global->LDAP_FIELD_TITLE};
@@ -2670,14 +3676,26 @@ class User extends CommonObject
 	}
 
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * Return and array with all instanciated first level children users of current user
 	 *
 	 * @return	void
+<<<<<<< HEAD
 	 * @see getAllChildIds
 	 */
 	function get_children()
 	{
+=======
+	 * @see getAllChildIds()
+	 */
+	public function get_children()
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."user";
 		$sql.= " WHERE fk_user = ".$this->id;
 
@@ -2703,11 +3721,19 @@ class User extends CommonObject
 
 
 	/**
+<<<<<<< HEAD
 	 * 	Load this->parentof that is array(id_son=>id_parent, ...)
 	 *
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
 	private function load_parentof()
+=======
+	 *  Load this->parentof that is array(id_son=>id_parent, ...)
+	 *
+	 *  @return     int     <0 if KO, >0 if OK
+	 */
+	private function loadParentOf()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf;
 
@@ -2719,7 +3745,11 @@ class User extends CommonObject
 		$sql.= " WHERE fk_user <> 0";
 		$sql.= " AND entity IN (".getEntity('user').")";
 
+<<<<<<< HEAD
 		dol_syslog(get_class($this)."::load_parentof", LOG_DEBUG);
+=======
+		dol_syslog(get_class($this)."::loadParentOf", LOG_DEBUG);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -2736,6 +3766,10 @@ class User extends CommonObject
 		}
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * 	Reconstruit l'arborescence hierarchique des users sous la forme d'un tableau
 	 *	Set and return this->users that is an array sorted according to tree with arrays of:
@@ -2749,8 +3783,14 @@ class User extends CommonObject
 	 *  @param		string	$filter				SQL filter on users
 	 *	@return		array		      		  	Array of users $this->users. Note: $this->parentof is also set.
 	 */
+<<<<<<< HEAD
 	function get_full_tree($deleteafterid=0, $filter='')
 	{
+=======
+    public function get_full_tree($deleteafterid = 0, $filter = '')
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf, $user;
 		global $hookmanager;
 
@@ -2760,14 +3800,22 @@ class User extends CommonObject
 		$this->users = array();
 
 		// Init this->parentof that is array(id_son=>id_parent, ...)
+<<<<<<< HEAD
 		$this->load_parentof();
+=======
+		$this->loadParentOf();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Init $this->users array
 		$sql = "SELECT DISTINCT u.rowid, u.firstname, u.lastname, u.fk_user, u.fk_soc, u.login, u.email, u.gender, u.admin, u.statut, u.photo, u.entity";	// Distinct reduce pb with old tables with duplicates
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 		// Add fields from hooks
 		$parameters=array();
+<<<<<<< HEAD
 		$reshook=$hookmanager->executeHooks('printUserListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+=======
+		$reshook=$hookmanager->executeHooks('printUserListWhere', $parameters);    // Note that $action and $object may have been modified by hook
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if ($reshook > 0) {
 			$sql.=$hookmanager->resPrint;
 		} else {
@@ -2808,7 +3856,11 @@ class User extends CommonObject
 		dol_syslog(get_class($this)."::get_full_tree call to build_path_from_id_user", LOG_DEBUG);
 		foreach($this->users as $key => $val)
 		{
+<<<<<<< HEAD
 			$result = $this->build_path_from_id_user($key,0);	// Process a branch from the root user key (this user has no parent)
+=======
+			$result = $this->build_path_from_id_user($key, 0);	// Process a branch from the root user key (this user has no parent)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if ($result < 0)
 			{
 				$this->error='ErrorLoopInHierarchy';
@@ -2826,8 +3878,13 @@ class User extends CommonObject
 			$keyfilter4='_'.$deleteafterid.'_';
 			foreach($this->users as $key => $val)
 			{
+<<<<<<< HEAD
 				if (preg_match('/'.$keyfilter1.'/',$val['fullpath']) || preg_match('/'.$keyfilter2.'/',$val['fullpath'])
 					|| preg_match('/'.$keyfilter3.'/',$val['fullpath']) || preg_match('/'.$keyfilter4.'/',$val['fullpath']))
+=======
+				if (preg_match('/'.$keyfilter1.'/', $val['fullpath']) || preg_match('/'.$keyfilter2.'/', $val['fullpath'])
+					|| preg_match('/'.$keyfilter3.'/', $val['fullpath']) || preg_match('/'.$keyfilter4.'/', $val['fullpath']))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				{
 					unset($this->users[$key]);
 				}
@@ -2848,10 +3905,17 @@ class User extends CommonObject
 	 *
 	 *  @param      int      $addcurrentuser    1=Add also current user id to the list.
 	 *	@return		array		      		  	Array of user id lower than user (all levels under user). This overwrite this->users.
+<<<<<<< HEAD
 	 *  @see get_children
 	 */
 	function getAllChildIds($addcurrentuser=0)
 	{
+=======
+	 *  @see get_children()
+	 */
+    public function getAllChildIds($addcurrentuser = 0)
+    {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$childids=array();
 
 		if (isset($this->cache_childids[$this->id]))
@@ -2879,6 +3943,10 @@ class User extends CommonObject
 		return $childids;
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *	For user id_user and its childs available in this->users, define property fullpath and fullname.
 	 *  Function called by get_full_tree().
@@ -2887,8 +3955,14 @@ class User extends CommonObject
 	 * 	@param		int		$protection		Deep counter to avoid infinite loop (no more required, a protection is added with array useridfound)
 	 *	@return		int                     < 0 if KO (infinit loop), >= 0 if OK
 	 */
+<<<<<<< HEAD
 	function build_path_from_id_user($id_user,$protection=0)
 	{
+=======
+    public function build_path_from_id_user($id_user, $protection = 0)
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		dol_syslog(get_class($this)."::build_path_from_id_user id_user=".$id_user." protection=".$protection, LOG_DEBUG);
 
 		if (! empty($this->users[$id_user]['fullpath']))
@@ -2918,7 +3992,11 @@ class User extends CommonObject
 		}
 
 		// We count number of _ to have level
+<<<<<<< HEAD
 		$this->users[$id_user]['level']=dol_strlen(preg_replace('/[^_]/i','',$this->users[$id_user]['fullpath']));
+=======
+		$this->users[$id_user]['level']=dol_strlen(preg_replace('/[^_]/i', '', $this->users[$id_user]['fullpath']));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		return 1;
 	}
@@ -2934,13 +4012,18 @@ class User extends CommonObject
 	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
 	{
 		$tables = array(
+<<<<<<< HEAD
 			'user'
+=======
+			'user',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		);
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
 
 
+<<<<<<< HEAD
 	/**
 	 *      Charge indicateurs this->nb pour le tableau de bord
 	 *
@@ -2949,6 +4032,17 @@ class User extends CommonObject
 	function load_state_board()
 	{
 		global $conf;
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *      Load metrics this->nb for dashboard
+	 *
+	 *      @return     int         <0 if KO, >0 if OK
+	 */
+	public function load_state_board()
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$this->nb=array();
 
@@ -2987,9 +4081,15 @@ class User extends CommonObject
          *  @param   null|array  $moreparams     Array to provide more information
 	 * 	@return     int         				0 if KO, 1 if OK
 	 */
+<<<<<<< HEAD
 	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
 	{
 		global $conf,$user,$langs;
+=======
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
+	{
+		global $conf, $user, $langs;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$langs->load("user");
 
@@ -3011,6 +4111,10 @@ class User extends CommonObject
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *  Return property of user from its id
 	 *
@@ -3018,8 +4122,14 @@ class User extends CommonObject
 	 *  @param  string	$mode       'email' or 'mobile'
 	 *  @return string  			Email of user with format: "Full name <email>"
 	 */
+<<<<<<< HEAD
 	function user_get_property($rowid,$mode)
 	{
+=======
+	public function user_get_property($rowid, $mode)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$user_property='';
 
 		if (empty($rowid)) return '';
@@ -3038,7 +4148,11 @@ class User extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				if ($mode == 'email') $user_property = dolGetFirstLastname($obj->firstname, $obj->lastname)." <".$obj->email.">";
+<<<<<<< HEAD
 				else if ($mode == 'mobile') $user_property = $obj->user_mobile;
+=======
+				elseif ($mode == 'mobile') $user_property = $obj->user_mobile;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 			return $user_property;
 		}
@@ -3051,6 +4165,7 @@ class User extends CommonObject
 	/**
 	 *	Load all objects into $this->users
 	 *
+<<<<<<< HEAD
 	 *  @param	string		$sortorder    sort order
 	 *  @param	string		$sortfield    sort field
 	 *  @param	int			$limit		  limit page
@@ -3081,6 +4196,70 @@ class User extends CommonObject
 		}
 		$sql.= $this->db->order($sortfield,$sortorder);
 		if ($limit) $sql.= $this->db->plimit($limit+1,$offset);
+=======
+	 *  @param	string		$sortorder		sort order
+	 *  @param	string		$sortfield		sort field
+	 *  @param	int			$limit			limit page
+	 *  @param	int			$offset			page
+	 *  @param	array		$filter			Filter array. Example array('field'=>'valueforlike', 'customurl'=>...)
+	 *  @param  string      $filtermode		Filter mode (AND or OR)
+	 *  @param  bool        $entityfilter	Activate entity filter
+	 *  @return int							<0 if KO, >0 if OK
+	 */
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = array(), $filtermode = 'AND', $entityfilter = false)
+    {
+        global $conf, $user;
+
+		$sql="SELECT t.rowid";
+		$sql.= ' FROM '.MAIN_DB_PREFIX .$this->table_element.' as t ';
+
+		if ($entityfilter)
+		{
+			if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+			{
+				if (! empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
+					$sql.= " WHERE t.entity IS NOT NULL"; // Show all users
+				} else {
+					$sql.= ",".MAIN_DB_PREFIX."usergroup_user as ug";
+					$sql.= " WHERE ((ug.fk_user = t.rowid";
+					$sql.= " AND ug.entity IN (".getEntity('user')."))";
+					$sql.= " OR t.entity = 0)"; // Show always superadmin
+				}
+			}
+			else
+			{
+				$sql.= " WHERE t.entity IN (".getEntity('user').")";
+			}
+		}
+		else
+		{
+			$sql.= " WHERE 1";
+		}
+
+		// Manage filter
+		$sqlwhere = array();
+		if (!empty($filter)){
+			foreach($filter as $key => $value) {
+				if ($key=='t.rowid') {
+					$sqlwhere[] = $key . '='. $value;
+				}
+				elseif (strpos($key, 'date') !== false) {
+					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
+				}
+				elseif ($key=='customsql') {
+					$sqlwhere[] = $value;
+				}
+				else {
+					$sqlwhere[] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
+				}
+			}
+		}
+		if (count($sqlwhere) > 0) {
+			$sql .= ' AND (' . implode(' '.$filtermode.' ', $sqlwhere).')';
+		}
+		$sql.= $this->db->order($sortfield, $sortorder);
+		if ($limit) $sql.= $this->db->plimit($limit+1, $offset);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
 
@@ -3105,6 +4284,7 @@ class User extends CommonObject
 		}
 		else
 		{
+<<<<<<< HEAD
 			$this->errors[] = $this->db->lasterror();
 			return -1;
 		}
@@ -3113,3 +4293,10 @@ class User extends CommonObject
 
 }
 
+=======
+            $this->errors[] = $this->db->lasterror();
+            return -1;
+        }
+    }
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

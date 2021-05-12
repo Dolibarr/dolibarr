@@ -2,7 +2,11 @@
 /* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Eric Seigne				<eric.seigne@ryxeo.com>
+<<<<<<< HEAD
  * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  *
@@ -38,6 +42,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 	$prodcustprice = new Productcustomerprice($db);
 }
 
+<<<<<<< HEAD
 $langs->load("products");
 $langs->load("companies");
 $langs->load("bills");
@@ -45,6 +50,13 @@ $langs->load("bills");
 $action = GETPOST('action', 'alpha');
 $search_prod = GETPOST('search_prod','alpha');
 $cancel = GETPOST('cancel','alpha');
+=======
+$langs->loadLangs(array("products", "companies", "bills"));
+
+$action = GETPOST('action', 'alpha');
+$search_prod = GETPOST('search_prod', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Security check
 $socid = GETPOST('socid', 'int')?GETPOST('socid', 'int'):GETPOST('id', 'int');
@@ -64,12 +76,20 @@ $hookmanager->initHooks(array('thirdpartycustomerprice','globalcard'));
  */
 
 $parameters=array('id'=>$socid);
+<<<<<<< HEAD
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+=======
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
 {
+<<<<<<< HEAD
     if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // Both test are required to be compatible with all browsers
+=======
+    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $search_prod = '';
     }
@@ -92,7 +112,11 @@ if (empty($reshook))
     	$tva_tx = preg_replace('/[^0-9\.].*$/', '', $tva_tx_txt);     // keep remove all after the numbers and dot
     	$npr = preg_match('/\*/', $tva_tx_txt) ? 1 : 0;
     	$localtax1 = 0; $localtax2 = 0; $localtax1_type = '0'; $localtax2_type = '0';
+<<<<<<< HEAD
     	// If value contains the unique code of vat line (new recommanded method), we use it to find npr and local taxes
+=======
+    	// If value contains the unique code of vat line (new recommended method), we use it to find npr and local taxes
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg))
     	{
     	    // We look into database using code (we can't use get_localtax() because it depends on buyer that is not known). Same in update price.
@@ -235,7 +259,11 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 	$sortfield = GETPOST("sortfield", 'alpha');
 	$sortorder = GETPOST("sortorder", 'alpha');
+<<<<<<< HEAD
     $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+=======
+    $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$page = GETPOST("page", 'int');
 	if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 	$offset = $limit * $page;
@@ -246,7 +274,11 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 	if (! $sortfield)
 		$sortfield = "soc.nom";
 
+<<<<<<< HEAD
 		// Build filter to diplay only concerned lines
+=======
+		// Build filter to display only concerned lines
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$filter = array (
 		't.fk_soc' => $object->id
 	);
@@ -321,7 +353,11 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		print '</table>';
 
+<<<<<<< HEAD
 		print '<br><div align="center">';
+=======
+		print '<br><div class="center">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '<input type="submit" class="button" value="' . $langs->trans("Save") . '">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '">';
@@ -430,7 +466,11 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		$option = '&socid=' . GETPOST('socid', 'int') . '&prodid=' . GETPOST('prodid', 'int');
 
+<<<<<<< HEAD
 		print_barre_liste($langs->trans('PriceByCustomerLog'), $page, $_SERVEUR ['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords);
+=======
+		print_barre_liste($langs->trans('PriceByCustomerLog'), $page, $_SERVER ['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		if (count($prodcustprice->lines) > 0) {
 
@@ -442,6 +482,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			print '<tr class="liste_titre">';
 			print '<td>' . $langs->trans("Product") . '</td>';
 			print '<td>' . $langs->trans("AppliedPricesFrom") . '</td>';
+<<<<<<< HEAD
 			print '<td align="center">' . $langs->trans("PriceBase") . '</td>';
 			print '<td align="right">' . $langs->trans("VAT") . '</td>';
 			print '<td align="right">' . $langs->trans("HT") . '</td>';
@@ -453,6 +494,19 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			print '</tr>';
 
 			foreach ( $prodcustprice->lines as $line ) {
+=======
+			print '<td class="center">' . $langs->trans("PriceBase") . '</td>';
+			print '<td class="right">' . $langs->trans("VAT") . '</td>';
+			print '<td class="right">' . $langs->trans("HT") . '</td>';
+			print '<td class="right">' . $langs->trans("TTC") . '</td>';
+			print '<td class="right">' . $langs->trans("MinPrice") . ' ' . $langs->trans("HT") . '</td>';
+			print '<td class="right">' . $langs->trans("MinPrice") . ' ' . $langs->trans("TTC") . '</td>';
+			print '<td class="right">' . $langs->trans("ChangedBy") . '</td>';
+			print '<td>&nbsp;</td>';
+			print '</tr>';
+
+			foreach ($prodcustprice->lines as $line) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				print '<tr class="oddeven">';
 				$staticprod = new Product($db);
@@ -461,17 +515,30 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 				print "<td>" . $staticprod->getNomUrl(1) . "</td>";
 				print "<td>" . dol_print_date($line->datec, "dayhour") . "</td>";
 
+<<<<<<< HEAD
 				print '<td align="center">' . $langs->trans($line->price_base_type) . "</td>";
 				print '<td align="right">' . vatrate($line->tva_tx, true, $line->recuperableonly) . "</td>";
 				print '<td align="right">' . price($line->price) . "</td>";
 				print '<td align="right">' . price($line->price_ttc) . "</td>";
 				print '<td align="right">' . price($line->price_min) . '</td>';
 				print '<td align="right">' . price($line->price_min_ttc) . '</td>';
+=======
+				print '<td class="center">' . $langs->trans($line->price_base_type) . "</td>";
+				print '<td class="right">' . vatrate($line->tva_tx, true, $line->recuperableonly) . "</td>";
+				print '<td class="right">' . price($line->price) . "</td>";
+				print '<td class="right">' . price($line->price_ttc) . "</td>";
+				print '<td class="right">' . price($line->price_min) . '</td>';
+				print '<td class="right">' . price($line->price_min_ttc) . '</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				// User
 				$userstatic = new User($db);
 				$userstatic->fetch($line->fk_user);
+<<<<<<< HEAD
 				print '<td align="right">';
+=======
+				print '<td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				print $userstatic->getLoginUrl(1);
 				print '</td>';
 			}
@@ -521,7 +588,11 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 	    print '<!-- view specific price for each product -->'."\n";
 
+<<<<<<< HEAD
 	    print_barre_liste($langs->trans('PriceForEachProduct'), $page, $_SERVEUR['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords, '');
+=======
+	    print_barre_liste($langs->trans('PriceForEachProduct'), $page, $_SERVER['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords, '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
         print '<input type="hidden" name="id" value="' . $object->id . '">';
@@ -531,6 +602,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
         print '<tr class="liste_titre">';
         print '<td>' . $langs->trans("Product") . '</td>';
         print '<td>' . $langs->trans("AppliedPricesFrom") . '</td>';
+<<<<<<< HEAD
         print '<td align="center">' . $langs->trans("PriceBase") . '</td>';
         print '<td align="right">' . $langs->trans("VAT") . '</td>';
         print '<td align="right">' . $langs->trans("HT") . '</td>';
@@ -538,6 +610,15 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
         print '<td align="right">' . $langs->trans("MinPrice") . ' ' . $langs->trans("HT") . '</td>';
         print '<td align="right">' . $langs->trans("MinPrice") . ' ' . $langs->trans("TTC") . '</td>';
         print '<td align="right">' . $langs->trans("ChangedBy") . '</td>';
+=======
+        print '<td class="center">' . $langs->trans("PriceBase") . '</td>';
+        print '<td class="right">' . $langs->trans("VAT") . '</td>';
+        print '<td class="right">' . $langs->trans("HT") . '</td>';
+        print '<td class="right">' . $langs->trans("TTC") . '</td>';
+        print '<td class="right">' . $langs->trans("MinPrice") . ' ' . $langs->trans("HT") . '</td>';
+        print '<td class="right">' . $langs->trans("MinPrice") . ' ' . $langs->trans("TTC") . '</td>';
+        print '<td class="right">' . $langs->trans("ChangedBy") . '</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         print '<td>&nbsp;</td>';
         print '</tr>';
 
@@ -547,7 +628,11 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			print '<td class="liste_titre"><input type="text" class="flat" name="search_prod" value="' . $search_prod . '" size="20"></td>';
             print '<td class="liste_titre" colspan="8">&nbsp;</td>';
             // Print the search button
+<<<<<<< HEAD
             print '<td class="liste_titre" align="right">';
+=======
+            print '<td class="liste_titre maxwidthsearch">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $searchpicto=$form->showFilterAndCheckAddButtons(0);
             print $searchpicto;
             print '</td>';
@@ -566,24 +651,41 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
                 print "<td>" . $staticprod->getNomUrl(1) . "</td>";
                 print "<td>" . dol_print_date($line->datec, "dayhour") . "</td>";
 
+<<<<<<< HEAD
                 print '<td align="center">' . $langs->trans($line->price_base_type) . "</td>";
                 print '<td align="right">' . vatrate($line->tva_tx.($line->default_vat_code?' ('.$line->default_vat_code.')':''), true, $line->recuperableonly) . "</td>";
                 print '<td align="right">' . price($line->price) . "</td>";
                 print '<td align="right">' . price($line->price_ttc) . "</td>";
                 print '<td align="right">' . price($line->price_min) . '</td>';
                 print '<td align="right">' . price($line->price_min_ttc) . '</td>';
+=======
+                print '<td class="center">' . $langs->trans($line->price_base_type) . "</td>";
+                print '<td class="right">' . vatrate($line->tva_tx.($line->default_vat_code?' ('.$line->default_vat_code.')':''), true, $line->recuperableonly) . "</td>";
+                print '<td class="right">' . price($line->price) . "</td>";
+                print '<td class="right">' . price($line->price_ttc) . "</td>";
+                print '<td class="right">' . price($line->price_min) . '</td>';
+                print '<td class="right">' . price($line->price_min_ttc) . '</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
                 // User
                 $userstatic = new User($db);
                 $userstatic->fetch($line->fk_user);
+<<<<<<< HEAD
                 print '<td align="right">';
+=======
+                print '<td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 print $userstatic->getLoginUrl(1);
                 print '</td>';
 
                 // Action
                 if ($user->rights->produit->creer || $user->rights->service->creer)
                 {
+<<<<<<< HEAD
                     print '<td align="right">';
+=======
+                    print '<td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                     print '<a href="' . $_SERVER["PHP_SELF"] . '?action=showlog_customer_price&amp;socid=' . $object->id . '&amp;prodid=' . $line->fk_product . '">';
                     print img_info();
                     print '</a>';
@@ -605,16 +707,28 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
         {
             $colspan=9;
             if ($user->rights->produit->supprimer || $user->rights->service->supprimer) $colspan+=1;
+<<<<<<< HEAD
             print '<tr ' . $bc[false] . '><td colspan="'.$colspan.'">' . $langs->trans('None') . '</td></tr>';
+=======
+            print '<tr class="oddeven"><td colspan="'.$colspan.'">' . $langs->trans('None') . '</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
 
         print "</table>";
 
         print "</form>";
+<<<<<<< HEAD
 
 	}
 }
 
 llxFooter();
 
+=======
+	}
+}
+
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

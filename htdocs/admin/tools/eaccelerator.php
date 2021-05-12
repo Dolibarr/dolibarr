@@ -48,22 +48,38 @@ if (isset($_POST['caching'])) {
     } else {
         eaccelerator_caching(true);
     }
+<<<<<<< HEAD
 } else if (isset($_POST['optimizer']) && function_exists('eaccelerator_optimizer')) {
+=======
+} elseif (isset($_POST['optimizer']) && function_exists('eaccelerator_optimizer')) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     if ($info['optimizer']) {
         eaccelerator_optimizer(false);
     } else {
         eaccelerator_optimizer(true);
     }
+<<<<<<< HEAD
 } else if (isset($_POST['clear'])) {
     eaccelerator_clear();
 } else if (isset($_POST['clean'])) {
     eaccelerator_clean();
 } else if (isset($_POST['purge'])) {
+=======
+} elseif (isset($_POST['clear'])) {
+    eaccelerator_clear();
+} elseif (isset($_POST['clean'])) {
+    eaccelerator_clean();
+} elseif (isset($_POST['purge'])) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     eaccelerator_purge();
 }
 $info = eaccelerator_info();
 if (!is_array($info)) {
+<<<<<<< HEAD
     dol_print_error('','An error occured getting eAccelerator information, this is caused if eAccelerator isn\'t initalised properly');
+=======
+    dol_print_error('', 'An error occured getting eAccelerator information, this is caused if eAccelerator isn\'t initalised properly');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     exit;
 }
 
@@ -81,7 +97,11 @@ function compare($x, $y)
 
     if ( $x[$sortby] == $y[$sortby] ) {
         return 0;
+<<<<<<< HEAD
     } else if ($x[$sortby] < $y[$sortby]) {
+=======
+    } elseif ($x[$sortby] < $y[$sortby]) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         return -1;
     } else {
         return 1;
@@ -101,7 +121,11 @@ function revcompare($x, $y)
 
     if ($x[$sortby] == $y[$sortby]) {
         return 0;
+<<<<<<< HEAD
     } else if ($x[$sortby] < $y[$sortby]) {
+=======
+    } elseif ($x[$sortby] < $y[$sortby]) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         return 1;
     } else {
         return -1;
@@ -168,11 +192,15 @@ function create_script_table($list)
         default:
             $sortby = "file";
             ($order == "asc" ? uasort($list, 'compare') : uasort($list, 'revcompare'));
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
     foreach($list as $script) {
         print '<tr class="oddeven">';
+<<<<<<< HEAD
         print '<td>'.dol_trunc($script['file'],80,'left').'</td>';
         print '<td align="center" class="nowrap">'.dol_print_date($script['mtime'],'dayhour').'</td>';
         print '<td align="right" class="nowrap">'.number_format($script['size'] / 1024, 2).'KB</td>';
@@ -182,6 +210,16 @@ function create_script_table($list)
     }
     print '</table>';
 
+=======
+        print '<td>'.dol_trunc($script['file'], 80, 'left').'</td>';
+        print '<td class="nowrap center">'.dol_print_date($script['mtime'], 'dayhour').'</td>';
+        print '<td class="nowrap right">'.number_format($script['size'] / 1024, 2).'KB</td>';
+        print '<td class="nowrap right">'.$script['reloads'].' ('.$script['usecount'].')</td>';
+        print '<td class="nowrap right">'.$script['hits'].'</td>';
+        print '</tr>';
+    }
+    print '</table>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 /**
@@ -204,16 +242,27 @@ function create_key_table($list)
 
     foreach($list as $key) {
         print '<tr class="oddeven">';
+<<<<<<< HEAD
         print '<td>'.dol_trunc($key['name'],80,'left').'</td>';
         print '<td align="center" class="nowrap">'.dol_print_date($key['created'],'dayhour').'</td>';
         print '<td align="right" class="nowrap">'.number_format($key['size']/1024, 3).'KB</td>';
         print '<td align="right" class="nowrap">';
+=======
+        print '<td>'.dol_trunc($key['name'], 80, 'left').'</td>';
+        print '<td class="nowrap center">'.dol_print_date($key['created'], 'dayhour').'</td>';
+        print '<td class="nowrap right">'.number_format($key['size']/1024, 3).'KB</td>';
+        print '<td class="nowrap right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         if ($key['ttl'] == -1) {
             print 'expired';
         } elseif ($key['ttl'] == 0) {
             print 'none';
         } else {
+<<<<<<< HEAD
             print dol_print_date($key['ttl'],'dayhour');
+=======
+            print dol_print_date($key['ttl'], 'dayhour');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
         print '</td>';
         print '</tr>';
@@ -223,7 +272,11 @@ function create_key_table($list)
 
 
 $form=new Form($db);
+<<<<<<< HEAD
 print load_fiche_titre('Dolibarr eAccelerator '.$info['version'].' control panel','','title_setup');
+=======
+print load_fiche_titre('Dolibarr eAccelerator '.$info['version'].' control panel', '', 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print '<br>';
 
@@ -234,37 +287,65 @@ print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td>Caching enabled</td>';
+<<<<<<< HEAD
 print '<td align="right">'.($info['cache']?'yes':'no').'</td>';
+=======
+print '<td class="right">'.($info['cache']?'yes':'no').'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td>Optimizer enabled</td>';
+<<<<<<< HEAD
 print '<td align="right">'.$info['optimizer']?'yes':'no'.'</td>';
+=======
+print '<td class="right">'.$info['optimizer']?'yes':'no'.'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td>Memory usage</td>';
+<<<<<<< HEAD
 print '<td align="right">'.number_format(100 * $info['memoryAllocated']/$info['memorySize'], 2).'%('.number_format($info['memoryAllocated'] / (1024*1024), 2).'MB / '.number_format($info['memorySize']/(1024*1024), 2).'MB)</td>';
+=======
+print '<td class="right">'.number_format(100 * $info['memoryAllocated']/$info['memorySize'], 2).'%('.number_format($info['memoryAllocated'] / (1024*1024), 2).'MB / '.number_format($info['memorySize']/(1024*1024), 2).'MB)</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td>Free memory in reserved cache</td>';
+<<<<<<< HEAD
 print '<td align="right">'.number_format($info['memoryAvailable']/(1024*1024), 2).'MB</td>';
+=======
+print '<td class="right">'.number_format($info['memoryAvailable']/(1024*1024), 2).'MB</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td>Cached scripts</td>';
+<<<<<<< HEAD
 print '<td align="right">'.$info['cachedScripts'].'</td>';
+=======
+print '<td class="right">'.$info['cachedScripts'].'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td>Removed scripts</td>';
+<<<<<<< HEAD
 print '<td align="right">'.$info['removedScripts'].'</td>';
+=======
+print '<td class="right">'.$info['removedScripts'].'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td>Cached keys</td>';
+<<<<<<< HEAD
 print '<td align="right">'.(isset($info['cachedKeys'])?$info['cachedKeys']:'').'</td>';
+=======
+print '<td class="right">'.(isset($info['cachedKeys'])?$info['cachedKeys']:'').'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</tr>';
 print '</table>';
 
@@ -281,29 +362,49 @@ if (is_array($resCached) || is_array($resRemoved)) {
     if (is_array($resCached)) {
         print '<tr class="oddeven">';
         print "<td>Caching</td>";
+<<<<<<< HEAD
         print '<td align="right"><input type="submit" class="butAction" name="caching" value="'. ($info['cache']?'disable':'enable') .'" /></td>';
+=======
+        print '<td class="right"><input type="submit" class="butAction" name="caching" value="'. ($info['cache']?'disable':'enable') .'" /></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         print "</tr>";
 
         print '<tr class="oddeven">';
         print "<td>Optimizer</td>";
+<<<<<<< HEAD
         print '<td align="right"><input type="submit" class="butAction" name="optimizer" value="'. ($info['optimizer']?'disable':'enable') .'" /></td>';
+=======
+        print '<td class="right"><input type="submit" class="butAction" name="optimizer" value="'. ($info['optimizer']?'disable':'enable') .'" /></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         print "</tr>";
     }
 
     if (is_array($resRemoved)) {
         print '<tr class="oddeven">';
         print "<td>Clear cache</td>";
+<<<<<<< HEAD
         print '<td align="right"><input type="submit" class="butAction" name="clear" value="clear" title="remove all unused scripts and data from shared memory and disk cache" /></td>';
+=======
+        print '<td class="right"><input type="submit" class="butAction" name="clear" value="clear" title="remove all unused scripts and data from shared memory and disk cache" /></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         print "</tr>";
 
         print '<tr class="oddeven">';
         print "<td>Clean cache</td>";
+<<<<<<< HEAD
         print '<td align="right"><input type="submit" class="butAction" name="clean" value="clean" title=" remove all expired scripts and data from shared memory and disk cache" /></td>';
+=======
+        print '<td class="right"><input type="submit" class="butAction" name="clean" value="clean" title=" remove all expired scripts and data from shared memory and disk cache" /></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         print "</tr>";
 
         print '<tr class="oddeven">';
         print "<td>Purge cache</td>";
+<<<<<<< HEAD
         print '<td align="right"><input type="submit" class="butAction" name="purge" value="purge" title="remove all \'removed\' scripts from shared memory" /></td>';
+=======
+        print '<td class="right"><input type="submit" class="butAction" name="purge" value="purge" title="remove all \'removed\' scripts from shared memory" /></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         print "</tr></table></form>";
     }
 
@@ -335,7 +436,12 @@ if (function_exists('eaccelerator_get')) {
 
 print "<br><br>";
 
+<<<<<<< HEAD
 
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

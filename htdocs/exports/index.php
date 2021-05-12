@@ -28,7 +28,11 @@ require_once DOL_DOCUMENT_ROOT.'/exports/class/export.class.php';
 $langs->load("exports");
 
 // Security check
+<<<<<<< HEAD
 $result=restrictedArea($user,'export');
+=======
+$result=restrictedArea($user, 'export');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $export=new Export($db);
 $export->load_arrays($user);
@@ -39,11 +43,16 @@ $export->load_arrays($user);
 
 $form=new Form($db);
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("ExportsArea"),'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
+=======
+llxHeader('', $langs->trans("ExportsArea"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print load_fiche_titre($langs->trans("ExportsArea"));
 
 print $langs->trans("FormatedExportDesc1").'<br>';
+<<<<<<< HEAD
 //print $langs->trans("FormatedExportDesc2").' ';
 //print $langs->trans("FormatedExportDesc3").'<br>';
 print '<br>';
@@ -104,19 +113,40 @@ if (count($export->array_export_code))
 	print ($user->rights->export->creer?'':' disabled');
 	print '><div class="center"></div></form>';
 	*/
+=======
+print '<br>';
+
+
+print '<div class="center">';
+if (count($export->array_export_code))
+{
+    print dolGetButtonTitle($langs->trans('NewExport'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/exports/export.php?leftmenu=export', '', $user->rights->export->creer);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 print '</div>';
 print '<br>';
 
+<<<<<<< HEAD
 //print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 
 // List of available export formats
+=======
+
+
+// List of available export formats
+
+print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("AvailableFormats").'</td>';
 print '<td>'.$langs->trans("LibraryShort").'</td>';
+<<<<<<< HEAD
 print '<td align="right">'.$langs->trans("LibraryVersion").'</td>';
+=======
+print '<td class="right">'.$langs->trans("LibraryVersion").'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</tr>';
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
@@ -125,6 +155,7 @@ $liste=$model->liste_modeles($db);    // This is not a static method for exports
 
 foreach($liste as $key => $val)
 {
+<<<<<<< HEAD
     if (preg_match('/__\(Disabled\)__/',$liste[$key]))
     {
     	$liste[$key]=preg_replace('/__\(Disabled\)__/','('.$langs->transnoentitiesnoconv("Disabled").')',$liste[$key]);
@@ -137,10 +168,25 @@ foreach($liste as $key => $val)
 	print '<td>'.$form->textwithpicto($label,$text).'</td>';
 	print '<td>'.$model->getLibLabelForKey($key).'</td>';
 	print '<td class="nowrap" align="right">'.$model->getLibVersionForKey($key).'</td>';
+=======
+    if (preg_match('/__\(Disabled\)__/', $liste[$key]))
+    {
+    	$liste[$key]=preg_replace('/__\(Disabled\)__/', '('.$langs->transnoentitiesnoconv("Disabled").')', $liste[$key]);
+    }
+
+	print '<tr class="oddeven">';
+	print '<td width="16">'.img_picto_common($model->getDriverLabelForKey($key), $model->getPictoForKey($key)).'</td>';
+	$text=$model->getDriverDescForKey($key);
+	$label=$liste[$key];
+	print '<td>'.$form->textwithpicto($label, $text).'</td>';
+	print '<td>'.$model->getLibLabelForKey($key).'</td>';
+	print '<td class="nowrap right">'.$model->getLibVersionForKey($key).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</tr>';
 }
 
 print '</table>';
+<<<<<<< HEAD
 
 
 //print '</div></div></div>';
@@ -148,4 +194,10 @@ print '</table>';
 
 llxFooter();
 
+=======
+print '</div>';
+
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

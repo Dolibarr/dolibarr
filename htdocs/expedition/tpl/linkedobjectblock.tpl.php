@@ -1,6 +1,11 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2012 Regis Houssin <regis.houssin@capnetworks.com>
  * Copyright (C) 2014 Marcos García <marcosgdf@gmail.com>
+=======
+/* Copyright (C) 2012       Regis Houssin   <regis.houssin@inodbox.com>
+ * Copyright (C) 2014       Marcos García   <marcosgdf@gmail.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,14 +54,24 @@ foreach($linkedObjectBlock as $key => $objectlink)
         <td><?php echo $langs->trans("Shipment"); ?></td>
         <td><?php echo $objectlink->getNomUrl(1); ?></td>
         <td></td>
+<<<<<<< HEAD
     	<td align="center"><?php echo dol_print_date($objectlink->date_delivery,'day'); ?></td>
     	<td align="right"><?php
+=======
+    	<td class="center"><?php echo dol_print_date($objectlink->date_delivery, 'day'); ?></td>
+    	<td class="right"><?php
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     		if ($user->rights->expedition->lire) {
     			$total = $total + $objectlink->total_ht;
     			echo price($objectlink->total_ht);
     		} ?></td>
+<<<<<<< HEAD
     	<td align="right"><?php echo $objectlink->getLibStatut(3); ?></td>
     	<td align="right">
+=======
+    	<td class="right"><?php echo $objectlink->getLibStatut(3); ?></td>
+    	<td class="right">
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     		<?php
     		// For now, shipments must stay linked to order, so link is not deletable
     		if($object->element != 'commande') {
@@ -68,17 +83,29 @@ foreach($linkedObjectBlock as $key => $objectlink)
     </tr>
 <?php
 }
+<<<<<<< HEAD
 if (count($linkedObjectBlock) > 1)
 {
+=======
+if (count($linkedObjectBlock) > 1) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     ?>
     <tr class="liste_total <?php echo (empty($noMoreLinkedObjectBlockAfter)?'liste_sub_total':''); ?>">
         <td><?php echo $langs->trans("Total"); ?></td>
         <td></td>
+<<<<<<< HEAD
     	<td align="center"></td>
     	<td align="center"></td>
     	<td align="right"><?php echo price($total); ?></td>
     	<td align="right"></td>
     	<td align="right"></td>
+=======
+    	<td class="center"></td>
+    	<td class="center"></td>
+    	<td class="right"><?php echo price($total); ?></td>
+    	<td class="right"></td>
+    	<td class="right"></td>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     </tr>
     <?php
 }

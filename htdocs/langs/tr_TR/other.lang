@@ -3,7 +3,11 @@ SecurityCode=Güvenlik kodu
 NumberingShort=N°
 Tools=Araçlar
 TMenuTools=Araçlar
+<<<<<<< HEAD
 ToolsDesc=Diğer menü girişlerine dahil olmayan çeşitli tüm araçlar burada toplanmıştır. <br><br>Tüm araçlara sol menüde ulaşılabilir.
+=======
+ToolsDesc=Diğer menü girişlerinde bulunmayan tüm araçlar burada gruplandırılmıştır.<br>Tüm araçlara sol menüden erişilebilir.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Birthday=Doğumgünü
 BirthdayDate=Doğumgünü tarihi
 DateToBirth=Doğum Tarihi
@@ -20,10 +24,17 @@ ZipFileGeneratedInto=Zip dosyası <b>%s</b> içinde oluşturuldu.
 DocFileGeneratedInto=Doc dosyası <b>%s</b> içinde oluşturuldu.
 JumpToLogin=Bağlantı kesildi. Giriş sayfasına git...
 MessageForm=Online ödeme formundaki mesaj
+<<<<<<< HEAD
 MessageOK=Doğrulama sayfası mesajı
 MessageKO=İptal edilen ödeme sayfası mesajı
 ContentOfDirectoryIsNotEmpty=Content of this directory is not empty.
 DeleteAlsoContentRecursively=Check to delete all content recursiveley
+=======
+MessageOK=Message on the return page for a validated payment
+MessageKO=Message on the return page for a canceled payment
+ContentOfDirectoryIsNotEmpty=Content of this directory is not empty.
+DeleteAlsoContentRecursively=Check to delete all content recursively
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 YearOfInvoice=Fatura tarihi yılı
 PreviousYearOfInvoice=Fatura tarihinden önceki yıl
@@ -31,6 +42,7 @@ NextYearOfInvoice=Fatura tarihinden sonraki yıl
 DateNextInvoiceBeforeGen=Bir sonraki faturanın tarihi (oluşturulmadan önce)
 DateNextInvoiceAfterGen=Bir sonraki faturanın tarihi (oluşturulduktan sonra)
 
+<<<<<<< HEAD
 Notify_FICHINTER_ADD_CONTACT=Müdahaleye kişi eklendi
 Notify_FICHINTER_VALIDATE=Müdahale doğrulandı
 Notify_FICHINTER_SENTBYMAIL=Müdahale posta ile gönderildi
@@ -44,10 +56,23 @@ Notify_PROPAL_VALIDATE=Müşteri teklifi onaylandı
 Notify_PROPAL_CLOSE_SIGNED=Müşteri teklifi kapalı imzalı
 Notify_PROPAL_CLOSE_REFUSED=Müşteri teklifi kapalı reddedildi
 Notify_PROPAL_SENTBYMAIL=Teklif posta ile gönderildi
+=======
+Notify_ORDER_VALIDATE=Müşteri siparişi doğrulandı
+Notify_ORDER_SENTBYMAIL=Müşteri siparişi e-posta ile gönderildi
+Notify_ORDER_SUPPLIER_SENTBYMAIL=Tedarikçi siparişi e-posta ile gönderildi
+Notify_ORDER_SUPPLIER_VALIDATE=Tedarikçi siparişi kaydedildi
+Notify_ORDER_SUPPLIER_APPROVE=Tedarikçi siparişi onaylandı
+Notify_ORDER_SUPPLIER_REFUSE=Tedarikçi siparişi reddedildi
+Notify_PROPAL_VALIDATE=Müşteri teklifi onaylandı
+Notify_PROPAL_CLOSE_SIGNED=Müşteri teklifi imzalanmış olarak kapatıldı
+Notify_PROPAL_CLOSE_REFUSED=Müşteri teklifi reddedilmiş olarak kapatıldı
+Notify_PROPAL_SENTBYMAIL=Teklif e-posta ile gönderildi
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Notify_WITHDRAW_TRANSMIT=Havale çekme
 Notify_WITHDRAW_CREDIT=Kredi çekme
 Notify_WITHDRAW_EMIT=Para çekme uygula
 Notify_COMPANY_CREATE=Üçüncü parti oluşturuldu
+<<<<<<< HEAD
 Notify_COMPANY_SENTBYMAIL=Eposta üçüncü parti kartından gönderildi
 Notify_BILL_VALIDATE=Müşteri faturası onaylandı
 Notify_BILL_UNVALIDATE=Müşteri faturasından doğrulama kaldırıldı
@@ -62,6 +87,24 @@ Notify_CONTRACT_VALIDATE=Sözleşme onaylandı
 Notify_FICHEINTER_VALIDATE=Müdahele onaylandı
 Notify_SHIPPING_VALIDATE=Sevkiyat onaylandı
 Notify_SHIPPING_SENTBYMAIL=Sevkiyat posta ile gönderildi
+=======
+Notify_COMPANY_SENTBYMAIL=Üçüncü parti kartından gönderilen e-postalar
+Notify_BILL_VALIDATE=Müşteri faturası onaylandı
+Notify_BILL_UNVALIDATE=Müşteri faturasının doğrulaması kaldırıldı
+Notify_BILL_PAYED=Müşteri faturası ödendi
+Notify_BILL_CANCEL=Müşteri faturası iptal edildi
+Notify_BILL_SENTBYMAIL=Müşteri faturası e-posta ile gönderildi
+Notify_BILL_SUPPLIER_VALIDATE=Vendor invoice validated
+Notify_BILL_SUPPLIER_PAYED=Vendor invoice paid
+Notify_BILL_SUPPLIER_SENTBYMAIL=Vendor invoice sent by mail
+Notify_BILL_SUPPLIER_CANCELED=Vendor invoice cancelled
+Notify_CONTRACT_VALIDATE=Sözleşme onaylandı
+Notify_FICHEINTER_VALIDATE=Müdahele onaylandı
+Notify_FICHINTER_ADD_CONTACT=Müdahaleye kişi eklendi
+Notify_FICHINTER_SENTBYMAIL=Müdahale e-posta ile gönderildi
+Notify_SHIPPING_VALIDATE=Sevkiyat onaylandı
+Notify_SHIPPING_SENTBYMAIL=Sevkiyat e-posta ile gönderildi
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Notify_MEMBER_VALIDATE=Üye onaylandı
 Notify_MEMBER_MODIFY=Üye bilgileri değiştirildi
 Notify_MEMBER_SUBSCRIPTION=Üye abone
@@ -71,12 +114,21 @@ Notify_PROJECT_CREATE=Proje oluşturma
 Notify_TASK_CREATE=Görev oluşturuldu
 Notify_TASK_MODIFY=Görev bilgileri değiştirildi
 Notify_TASK_DELETE=Görev silindi
+<<<<<<< HEAD
 SeeModuleSetup=%s modülü ayarlarına bak
+=======
+Notify_EXPENSE_REPORT_VALIDATE=Expense report validated (approval required)
+Notify_EXPENSE_REPORT_APPROVE=Gider raporu onaylandı
+Notify_HOLIDAY_VALIDATE=Leave request validated (approval required)
+Notify_HOLIDAY_APPROVE=Leave request approved
+SeeModuleSetup=%s modülü kurulumuna bak
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NbOfAttachedFiles=Eklenen dosya/belge sayısı
 TotalSizeOfAttachedFiles=Eklenen dosyaların/belgelerin toplam boyutu
 MaxSize=Ençok boyut
 AttachANewFile=Yeni bir dosya/belge ekle
 LinkedObject=Bağlantılı nesne
+<<<<<<< HEAD
 NbOfActiveNotifications=Bildirim sayısı (alıcı epostaları sayısı)
 PredefinedMailTest=__(Hello)__\nBu, __EMAIL__ adresine gönderilen bir test mailidir.\nİki satır bir satırbaşı ile birbirinden ayrılır.\n\n__USER_SIGNATURE__
 PredefinedMailTestHtml=__(Hello)__\nBu bir <b>test</b> mailidir (test kelimesi kalın olmalıdır). <br> İki satır bir satırbaşı ile birbirinden ayrılır. <br><br>__USER_SIGNATURE__
@@ -90,6 +142,23 @@ PredefinedMailContentSendSupplierInvoice=__(Hello)__\n\nBurada faturayı bulacak
 PredefinedMailContentSendShipping=__(Hello)__\n\nBurada sevkiyatı bulacaksınız __REF__\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
 PredefinedMailContentSendFichInter=__(Hello)__\n\nBurada müdahaleyi bulacaksınız __REF__\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
 PredefinedMailContentThirdparty=__(Hello)__\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
+=======
+NbOfActiveNotifications=Bildirim sayısı (alıcı e-postalarının sayısı)
+PredefinedMailTest=__(Hello)__\nBu, __EMAIL__ adresine gönderilen bir test mailidir.\nİki satır bir satırbaşı ile birbirinden ayrılır.\n\n__USER_SIGNATURE__
+PredefinedMailTestHtml=__(Hello)__\nBu bir <b>test</b> mailidir (test kelimesi kalın olmalıdır). <br> İki satır bir satırbaşı ile birbirinden ayrılır. <br><br>__USER_SIGNATURE__
+PredefinedMailContentContract=__(Hello)__\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
+PredefinedMailContentSendInvoice=__(Hello)__\n\n__REF__ referans numaralı faturanızı ekte bulabilirsiniz \n\n__ONLINE_PAYMENT_TEXT_AND_URL__\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
+PredefinedMailContentSendInvoiceReminder=__(Hello)__\n\n__REF__ referans numaralı faturanın kayıtlarımızda ödenmemiş olarak göründüğü hatırlatmak isteriz. Faturanın bir kopyası ekte bilginize sunulmuştur.\n\n__ONLINE_PAYMENT_TEXT_AND_URL__\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
+PredefinedMailContentSendProposal=__(Hello)__\n\n__REF__ referans numaralı fiyat teklifini ekte bulabilirsiniz \n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
+PredefinedMailContentSendSupplierProposal=__(Hello)__\n\nPlease find price request __REF__ attached\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
+PredefinedMailContentSendOrder=__(Hello)__\n\n__REF__ referans numaralı siparişi ekte bulabilirsiniz\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
+PredefinedMailContentSendSupplierOrder=__(Hello)__\n\n__REF__ referans numaralı siparişimizi ekte bulabilirsiniz\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
+PredefinedMailContentSendSupplierInvoice=__(Hello)__\n\n__REF__ referans numaralı faturayı ekte bulabilirsiniz\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
+PredefinedMailContentSendShipping=__(Hello)__\n\n__REF__ referans numaralı sevkiyatı ekte bulabilirsiniz\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
+PredefinedMailContentSendFichInter=__(Hello)__\n\n__REF__ referans numaralı müdahaleyi ekte bulabilirsiniz\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
+PredefinedMailContentThirdparty=__(Hello)__\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
+PredefinedMailContentContact=__(Hello)__\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PredefinedMailContentUser=__(Hello)__\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
 PredefinedMailContentLink=You can click on the link below to make your payment if it is not already done.\n\n%s\n\n
 DemoDesc=Dolibarr, çeşitli iş modüllerini destekleyen kompakt bir ERP/CRM çözümüdür. Tüm modüllerin sergilendiği bir demonun mantığı yoktur, çünkü böyle bir senaryo asla gerçekleşmez (birkaç yüz adet mevcut). Bu nedenle birkaç demo profili vardır.
@@ -102,8 +171,13 @@ DemoCompanyShopWithCashDesk=Kasası olan bir mağazayı yönet
 DemoCompanyProductAndStocks=Bir mağazayla ürün satan şirket
 DemoCompanyAll=Birden fazla faaliyet gösteren şirket (tüm ana modüller)
 CreatedBy=Oluşturan %s
+<<<<<<< HEAD
 ModifiedBy=%s tarafından düzenlendi
 ValidatedBy=%s tarafından onaylandı
+=======
+ModifiedBy=Düzenleyen %s 
+ValidatedBy=Doğrulayan %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ClosedBy=%s tarafından kapatıldı
 CreatedById=Oluşturanın kullanıcı kimliği
 ModifiedById=Son değişikliği yapan kullanıcı kimliği
@@ -132,7 +206,11 @@ Weight=Ağırlık
 WeightUnitton=ton
 WeightUnitkg=kg
 WeightUnitg=g
+<<<<<<< HEAD
 WeightUnitmg=mg
+=======
+WeightUnitmg=miligram
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 WeightUnitpound=pound
 WeightUnitounce=ons
 Length=Uzunluk
@@ -165,26 +243,40 @@ SizeUnitinch=inç
 SizeUnitfoot=foot
 SizeUnitpoint=nokta
 BugTracker=Hata izleyici
+<<<<<<< HEAD
 SendNewPasswordDesc=This form allows you to request a new password. It will be sent to your email address.<br>Change will become effective once you click on the confirmation link in the email.<br>Check your inbox.
+=======
+SendNewPasswordDesc=Bu form yeni bir parola istemenizi sağlar. Yeni parolanız e-posta adresinize gönderilecektir. <br>Gelen e-postadaki onay bağlantısını tıkladığınızda değişiklik gerçekleşecektir.<br>Gelen kutunuzu kontrol edin.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BackToLoginPage=Oturum açma sayfasına geri dön
 AuthenticationDoesNotAllowSendNewPassword=Kimlik doğrulama modu <b>%s</b>.<br>bu modda, Dolibarr parolanızı bilemez ve değiştiremez.<br>Parola değiştirmek istiyorsanız sistem yöneticinize danışın.
 EnableGDLibraryDesc=Bu seçeneği kullanmak için PHP nizdeki GD kütüphanesini kurun ya da etkinleştirin.
 ProfIdShortDesc=<b>Uzman no %s</b> üçüncü parti ülkesine bağlı bir bilgidir.<br>Örneğin, <b>%s</b> ülkesi için kodu<b>%s</b>dir.
 DolibarrDemo=Dolibarr ERP/CRM demosu
 StatsByNumberOfUnits=Ürün/hizmet miktarının toplamı için istatistikler
+<<<<<<< HEAD
 StatsByNumberOfEntities=Yönlendiren varlıkların sayı istatistikleri (Fatura veya sipariş sayısı ...)
+=======
+StatsByNumberOfEntities=Bahsedilen varlıkların sayısındaki istatistikler (Fatura, sipariş, ... sayısı)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NumberOfProposals=Teklif sayısı
 NumberOfCustomerOrders=Müşteri siparişlerinin sayısı
 NumberOfCustomerInvoices=Müşteri faturalarının sayısı
 NumberOfSupplierProposals=Tedarikçi tekliflerinin sayısı
+<<<<<<< HEAD
 NumberOfSupplierOrders=Tedarikçi siparişlerinin sayısı
 NumberOfSupplierInvoices=Tedarikçi faturalarının sayısı
+=======
+NumberOfSupplierOrders=Tedarikçi siparişi sayısı
+NumberOfSupplierInvoices=Tedarikçi siparişlerinin sayısı
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NumberOfUnitsProposals=Tekliflerdeki birim sayısı
 NumberOfUnitsCustomerOrders=Müşteri siparişlerindeki birim sayısı
 NumberOfUnitsCustomerInvoices=Müşteri faturalarındaki birim sayısı
 NumberOfUnitsSupplierProposals=Tedarikçi tekliflerinde yer alan birim sayısı
 NumberOfUnitsSupplierOrders=Tedarikçi siparişlerindeki birim sayısı
 NumberOfUnitsSupplierInvoices=Tedarikçi faturalarındaki birim sayısı
+<<<<<<< HEAD
 EMailTextInterventionAddedContact=Bir yeni müdahale olan %s size atandı
 EMailTextInterventionValidated=Müdahele %s doğrulanmıştır.
 EMailTextInvoiceValidated=Fatura %s doğrulanmıştır.
@@ -198,15 +290,41 @@ EMailTextOrderRefused=%s Teklifi reddedilmiştir.
 EMailTextOrderRefusedBy=%s Teklifi %tarafından reddedilmiştir.
 EMailTextExpeditionValidated=%s sevkiyatı onaylandı.
 ImportedWithSet=Ver setinin içeaktarımı
+=======
+EMailTextInterventionAddedContact=Yeni bir müdahale %s size atandı.
+EMailTextInterventionValidated=Müdahele %s doğrulanmıştır.
+EMailTextInvoiceValidated=Fatura %s doğrulandı.
+EMailTextInvoicePayed=Invoice %s has been paid.
+EMailTextProposalValidated=Teklif %s doğrulandı.
+EMailTextProposalClosedSigned=Teklif %s imzalı olarak kapatıldı.
+EMailTextOrderValidated=Sipariş %s doğrulandı.
+EMailTextOrderApproved=Sipariş %s onaylandı.
+EMailTextOrderValidatedBy=Order %s has been recorded by %s.
+EMailTextOrderApprovedBy=Sipariş %s, %s tarafından onaylandı.
+EMailTextOrderRefused=Sipariş %s reddedildi.
+EMailTextOrderRefusedBy=Sipariş %s, %s tarafından reddedildi.
+EMailTextExpeditionValidated=Sevkiyat %s doğrulandı.
+EMailTextExpenseReportValidated=Expense report %s has been validated.
+EMailTextExpenseReportApproved=Expense report %s has been approved.
+EMailTextHolidayValidated=Leave request %s has been validated.
+EMailTextHolidayApproved=Leave request %s has been approved.
+ImportedWithSet=Veri dizisinin içe aktarımı
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DolibarrNotification=Otomatik bilgilendirme
 ResizeDesc=Yeni genişliği <b>VEYA</b> yeni yüksekliği gir. Yeniden boyutlandırma sırasında oran kotunacaktır...
 NewLength=Yeni genişlik
 NewHeight=Yeni yükseklik
 NewSizeAfterCropping=Kırpmadan sonraki yeni boyut
 DefineNewAreaToPick=Alınacak görüntü üzerinde yeni alan tanımla (görüntü üzerine sol klikle sonra karşı köşeye ulaşana kadar sürükle)
+<<<<<<< HEAD
 CurrentInformationOnImage=Bu araç bir görüntüyü yeniden boyutlandırmanızı veya kırpmanızı sağlar. Bu, düzenlenmiş güncel görüntünün bilgisidir
 ImageEditor=Görüntü düzenleyici
 YouReceiveMailBecauseOfNotification=Bu mesajı aldınız çünkü epostanız %s e ait %s yazılımında belirli etkinlikler hakkında bilgilendirilecekler listesine eklenmiştir.
+=======
+CurrentInformationOnImage=This tool was designed to help you to resize or crop an image. This is the information on the current edited image
+ImageEditor=Görüntü düzenleyici
+YouReceiveMailBecauseOfNotification=Bu mesajı aldınız çünkü e-postanız %s e ait %s yazılımında belirli etkinlikler hakkında bilgilendirilecekler listesine eklenmiştir.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 YouReceiveMailBecauseOfNotification2=Bu etkinlik şudur:
 ThisIsListOfModules=Bu, bu demo profili tarafından önceden seçili modüllerin listesidir (yalnızca en çok kullanılan modüller görünür bu demoda). Daha kişiselleştirilmiş bir demo için bunu düzenleyin ve “Başla” ya tıklayın.
 UseAdvancedPerms=Bazı modüllerin gelişmiş izinlerini kullan
@@ -219,12 +337,20 @@ FileIsTooBig=Dosyalar çok büyük
 PleaseBePatient=Lütfen sabırlı olun...
 NewPassword=Yeni şifre
 ResetPassword=Şifreyi sıfırla
+<<<<<<< HEAD
 RequestToResetPasswordReceived=A request to change your password has been received.
+=======
+RequestToResetPasswordReceived=Şifreni değiştirmek için bir talep alındı.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NewKeyIs=Oturum açmak için yeni anahtarınız
 NewKeyWillBe=Yazılımda oturum açmak için yeni anahtarınız bu olacaktır
 ClickHereToGoTo=%s e gitmek için buraya tıkla
 YouMustClickToChange=Ancak önce bu şifre değiştirmeyi doğrulamak için aşağıdaki linke tıklamanız gerekir
+<<<<<<< HEAD
 ForgetIfNothing=Bu değiştirmeyi istemediyseniz, bu epostayı unutun. Kimlik bilgilerinizi güvenli tutulur.
+=======
+ForgetIfNothing=Bu değiştirmeyi istemediyseniz, bu e-postayı unutun. Kimlik bilgilerinizi güvenli tutulur.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 IfAmountHigherThan=Eğer tutar <strong>%s</strong> den büyükse
 SourcesRepository=Kaynaklar için havuz
 Chart=Çizelge
@@ -234,7 +360,16 @@ PermissionsDelete=İzinler kaldırıldı
 YourPasswordMustHaveAtLeastXChars=Şifreniz en az <strong>%s</strong> karakter içermelidir
 YourPasswordHasBeenReset=Şifreniz başarılı bir şekilde sıfırlandı
 ApplicantIpAddress=Başvuru sahibinin IP adresi
+<<<<<<< HEAD
 SMSSentTo=SMS sent to %s
+=======
+SMSSentTo=SMS şuna gönderildi: %s
+MissingIds=Eksik ID'ler
+ThirdPartyCreatedByEmailCollector=Third party created by email collector from email MSGID %s
+ContactCreatedByEmailCollector=Contact/address created by email collector from email MSGID %s
+ProjectCreatedByEmailCollector=Project created by email collector from email MSGID %s
+TicketCreatedByEmailCollector=Ticket created by email collector from email MSGID %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 ##### Export #####
 ExportsArea=Dışaaktar alanı
@@ -244,9 +379,23 @@ LibraryVersion=Kütüphane sürümü
 ExportableDatas=Dışaaktarılabilir veri
 NoExportableData=Dışaaktarılabilir veri yok (dışaaktarılabilir verili modül yok ya da izinler yok)
 ##### External sites #####
+<<<<<<< HEAD
 WebsiteSetup=Websitesi modülü ayarları
 WEBSITE_PAGEURL=Sayfanın URL si
 WEBSITE_TITLE=Unvan
 WEBSITE_DESCRIPTION=Açıklama
 WEBSITE_KEYWORDS=Anahtar kelimeler
 LinesToImport=Lines to import
+=======
+WebsiteSetup=Websitesi modülü kurulumu
+WEBSITE_PAGEURL=Sayfanın URL si
+WEBSITE_TITLE=Unvan
+WEBSITE_DESCRIPTION=Açıklama
+WEBSITE_IMAGE=Görüntü
+WEBSITE_IMAGEDesc=Relative path of the image media. You can keep this empty as this is rarely used (it can be used by dynamic content to show a preview of a list of blog posts).
+WEBSITE_KEYWORDS=Anahtar kelimeler
+LinesToImport=Lines to import
+
+MemoryUsage=Bellek kullanımı
+RequestDuration=Duration of request
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -22,7 +22,11 @@
  *		\brief      Page de bilan
  */
 
+<<<<<<< HEAD
 require('../../main.inc.php');
+=======
+require '../../main.inc.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
@@ -92,5 +96,9 @@ print "<tr class=\"oddeven\"><td>".$langs->trans("BankBalance")."</td><td align=
 
 print "</table>";
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

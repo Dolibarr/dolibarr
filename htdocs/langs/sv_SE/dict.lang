@@ -116,7 +116,11 @@ CountryHM=Heard-och McDonaldöarna
 CountryVA=Heliga stolen (Vatikanen)
 CountryHN=Honduras
 CountryHK=Hongkong
+<<<<<<< HEAD
 CountryIS=Icelande
+=======
+CountryIS=Island
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryIN=Indien
 CountryID=Indonesien
 CountryIR=Iran
@@ -131,7 +135,11 @@ CountryKI=Kiribati
 CountryKP=Nordkorea
 CountryKR=Sydkorea
 CountryKW=Kuwait
+<<<<<<< HEAD
 CountryKG=Kyrghyztan
+=======
+CountryKG=Kirgizistan
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryLA=Lao
 CountryLV=Lettland
 CountryLB=Libanon
@@ -139,7 +147,11 @@ CountryLS=Lesotho
 CountryLR=Liberia
 CountryLY=Libyska
 CountryLI=Liechtenstein
+<<<<<<< HEAD
 CountryLT=Lithuania
+=======
+CountryLT=Litauen
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryLU=Luxemburg
 CountryMO=Macao
 CountryMK=Makedonien, fd jugoslaviska av
@@ -160,7 +172,11 @@ CountryMD=Moldavien
 CountryMN=Mongoliet
 CountryMS=Montserrat
 CountryMZ=Moçambique
+<<<<<<< HEAD
 CountryMM=Birmania (Myanmar)
+=======
+CountryMM=Myanmar (Burma)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryNA=Namibia
 CountryNR=Nauru
 CountryNP=Nepal
@@ -223,7 +239,11 @@ CountryTO=Tonga
 CountryTT=Trinidad och Tobago
 CountryTR=Kalkon
 CountryTM=Turkmenistan
+<<<<<<< HEAD
 CountryTC=Turks-och Cailos Islands
+=======
+CountryTC=Turks- och Caicosöarna
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryTV=Tuvalu
 CountryUG=Uganda
 CountryUA=Ukraina
@@ -290,6 +310,10 @@ CurrencyXOF=FCFA BCEAO
 CurrencySingXOF=CFA Franc BCEAO
 CurrencyXPF=Fiskeripolitiken franc
 CurrencySingXPF=CFP-franc
+<<<<<<< HEAD
+=======
+CurrencyCentEUR=cent
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrencyCentSingEUR=cent
 CurrencyCentINR=paisa
 CurrencyCentSingINR=paise
@@ -306,6 +330,10 @@ DemandReasonTypeSRC_WOM=Word of mouth
 DemandReasonTypeSRC_PARTNER=Partner
 DemandReasonTypeSRC_EMPLOYEE=Anställd
 DemandReasonTypeSRC_SPONSORING=Sponsor
+<<<<<<< HEAD
+=======
+DemandReasonTypeSRC_SRC_CUSTOMER=Inkommande kontakt hos en kund
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 #### Paper formats ####
 PaperFormatEU4A0=Format 4A0
 PaperFormatEU2A0=Format 2A0
@@ -327,9 +355,15 @@ PaperFormatCAP4=Format P4 Kanada
 PaperFormatCAP5=Format P5 Kanada
 PaperFormatCAP6=Format P6 Kanada
 #### Expense report categories ####
+<<<<<<< HEAD
 ExpAutoCat=Car
 ExpCycloCat=Moped
 ExpMotoCat=Motorbike
+=======
+ExpAutoCat=Bil
+ExpCycloCat=Moped
+ExpMotoCat=Motorcykel
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ExpAuto3CV=3 CV
 ExpAuto4CV=4 CV
 ExpAuto5CV=5 CV
@@ -340,6 +374,7 @@ ExpAuto9CV=9 CV
 ExpAuto10CV=10 CV
 ExpAuto11CV=11 CV
 ExpAuto12CV=12 CV
+<<<<<<< HEAD
 ExpAuto3PCV=3 CV and more
 ExpAuto4PCV=4 CV and more
 ExpAuto5PCV=5 CV and more
@@ -355,3 +390,20 @@ ExpCyclo=Capacity lower to 50cm3
 ExpMoto12CV=Motorbike 1 or 2 CV
 ExpMoto345CV=Motorbike 3, 4 or 5 CV
 ExpMoto5PCV=Motorbike 5 CV and more
+=======
+ExpAuto3PCV=3 CV och mer
+ExpAuto4PCV=4 CV och mer
+ExpAuto5PCV=5 CV och mer
+ExpAuto6PCV=6 CV och mer
+ExpAuto7PCV=7 CV och mer
+ExpAuto8PCV=8 CV och mer
+ExpAuto9PCV=9 CV och mer
+ExpAuto10PCV=10 CV och mer
+ExpAuto11PCV=11 CV och mer
+ExpAuto12PCV=12 CV och mer
+ExpAuto13PCV=13 CV och mer
+ExpCyclo=Kapacitet lägre till 50cm3
+ExpMoto12CV=Motorcykel 1 eller 2 CV
+ExpMoto345CV=Motorcykel 3, 4 eller 5 CV
+ExpMoto5PCV=Motorcykel 5 CV och mer
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

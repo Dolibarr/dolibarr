@@ -1,11 +1,17 @@
 # Dolibarr language file - Source file is en_US - supplier_proposal
+<<<<<<< HEAD
 SupplierProposal=Vendor commercial proposals
 supplier_proposalDESC=Beheer prijsaanvragen aan verkopers
+=======
+SupplierProposal=Commerciële voorstellen van leveranciers
+supplier_proposalDESC=Manage price requests to suppliers
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SupplierProposalNew=Opvragen prijs
 CommRequest=Prijs aanvraag
 CommRequests=Prijs aanvragen
 SearchRequest=Vind een verzoek
 DraftRequests=Conceptverzoeken
+<<<<<<< HEAD
 SupplierProposalsDraft=Draft vendor proposals
 LastModifiedRequests=Laatste %s gewijzigde prijsaanvragen
 RequestsOpened=Open price requests
@@ -26,16 +32,46 @@ SupplierProposalStatusDraft=Concept (moet worden gevalideerd)
 SupplierProposalStatusValidated=Validated (request is open)
 SupplierProposalStatusClosed=Gesloten
 SupplierProposalStatusSigned=Accepted
+=======
+SupplierProposalsDraft=Concept voorstellen van leveranciers
+LastModifiedRequests=Laatste %s gewijzigde prijsaanvragen
+RequestsOpened=Openstaande prijsaanvragen
+SupplierProposalArea=Omgeving leveranciersvoorstellen
+SupplierProposalShort=Leveranciersvoorstel
+SupplierProposals=Leveranciersvoorstellen
+SupplierProposalsShort=Leveranciersvoorstellen
+NewAskPrice=Opvragen prijs
+ShowSupplierProposal=Toon prijsaanvraag
+AddSupplierProposal=Maak een prijsaanvraag
+SupplierProposalRefFourn=Leverancier ref
+SupplierProposalDate=Leveringsdatum
+SupplierProposalRefFournNotice=Before closing to "Accepted", think to grasp suppliers references.
+ConfirmValidateAsk=Are you sure you want to validate this price request under name <b>%s</b>?
+DeleteAsk=Verwijder verzoek
+ValidateAsk=Verzoek valideren
+SupplierProposalStatusDraft=Concept (moet worden gevalideerd)
+SupplierProposalStatusValidated=Gevalideerd (aanvraag is open)
+SupplierProposalStatusClosed=Gesloten
+SupplierProposalStatusSigned=Geaccepteerd
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SupplierProposalStatusNotSigned=Geweigerd
 SupplierProposalStatusDraftShort=Ontwerp
 SupplierProposalStatusValidatedShort=Gevalideerd
 SupplierProposalStatusClosedShort=Gesloten
+<<<<<<< HEAD
 SupplierProposalStatusSignedShort=Accepted
 SupplierProposalStatusNotSignedShort=Geweigerd
 CopyAskFrom=Create price request by copying existing a request
 CreateEmptyAsk=Create blank request
 CloneAsk=Clone price request
 ConfirmCloneAsk=Are you sure you want to clone the price request <b>%s</b>?
+=======
+SupplierProposalStatusSignedShort=Geaccepteerd
+SupplierProposalStatusNotSignedShort=Geweigerd
+CopyAskFrom=Create price request by copying existing a request
+CreateEmptyAsk=Create blank request
+ConfirmCloneAsk=Weet u zeker dat u het prijsverzoek <b>%s</b> wilt klonen?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmReOpenAsk=Are you sure you want to open back the price request <b>%s</b>?
 SendAskByMail=Send price request by mail
 SendAskRef=Sending the price request %s

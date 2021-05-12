@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2018      Alexandre Spangaro   <aspangaro@zendsi.com>
+=======
+ * Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +21,11 @@
  */
 
 /**
+<<<<<<< HEAD
  *  \file       document.php
+=======
+ *  \file       htdocs/asset/document.php
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *  \ingroup    asset
  *  \brief      Tab for documents linked to Assets
  */
@@ -34,9 +42,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 $langs->loadLangs(array("assets","companies"));
 
 
+<<<<<<< HEAD
 $action=GETPOST('action','aZ09');
 $confirm=GETPOST('confirm');
 $id=(GETPOST('socid','int') ? GETPOST('socid','int') : GETPOST('id','int'));
+=======
+$action=GETPOST('action', 'aZ09');
+$confirm=GETPOST('confirm');
+$id=(GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $ref = GETPOST('ref', 'alpha');
 
 // Security check - Protection if external user
@@ -45,9 +59,15 @@ $ref = GETPOST('ref', 'alpha');
 //$result = restrictedArea($user, 'asset', $id);
 
 // Get parameters
+<<<<<<< HEAD
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
+=======
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -95,13 +115,22 @@ if ($object->id)
 	 * Show tabs
 	 */
 	if (! empty($conf->notification->enabled)) $langs->load("mails");
+<<<<<<< HEAD
 	$head = AssetsPrepareHead($object);
+=======
+	$head = asset_prepare_head($object);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	dol_fiche_head($head, 'document', $langs->trans("Asset"), -1, 'generic');
 
 
+<<<<<<< HEAD
 	// Construit liste des fichiers
 	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+=======
+	// Build file list
+	$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$totalsize=0;
 	foreach($filearray as $key => $file)
 	{
@@ -110,14 +139,22 @@ if ($object->id)
 
 	// Object card
 	// ------------------------------------------------------------
+<<<<<<< HEAD
 	$linkback = '<a href="' .dol_buildpath('/asset/list.php',1) . '?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+=======
+	$linkback = '<a href="' .dol_buildpath('/asset/list.php', 1) . '?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
 	print '<div class="fichecenter">';
 
 	print '<div class="underbanner clearboth"></div>';
+<<<<<<< HEAD
 	print '<table class="border centpercent">';
+=======
+	print '<table class="border tableforfield centpercent">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	// Number of files
 	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
@@ -145,9 +182,16 @@ if ($object->id)
 }
 else
 {
+<<<<<<< HEAD
 	accessforbidden('',0,0);
 }
 
 
+=======
+	accessforbidden('', 0, 1);
+}
+
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

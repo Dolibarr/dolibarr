@@ -1,8 +1,14 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
+=======
+ * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/vat.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'banks', 'bills'));
 
+<<<<<<< HEAD
 $id=GETPOST("id",'int');
 $action=GETPOST("action","alpha");
 $refund=GETPOST("refund","int");
@@ -39,6 +46,15 @@ if (empty($refund)) $refund=0;
 
 // Security check
 $socid = GETPOST('socid','int');
+=======
+$id=GETPOST("id", 'int');
+$action=GETPOST("action", "alpha");
+$refund=GETPOST("refund", "int");
+if (empty($refund)) $refund=0;
+
+// Security check
+$socid = GETPOST('socid', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
@@ -61,7 +77,11 @@ if ($_POST["cancel"] == $langs->trans("Cancel") && ! $id)
 if ($action == 'setlib' && $user->rights->tax->charges->creer)
 {
 	$object->fetch($id);
+<<<<<<< HEAD
 	$result = $object->setValueFrom('label', GETPOST('lib','alpha'), '', '', 'text', '', $user, 'TAX_MODIFY');
+=======
+	$result = $object->setValueFrom('label', GETPOST('lib', 'alpha'), '', '', 'text', '', $user, 'TAX_MODIFY');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if ($result < 0)
 		setEventMessages($object->error, $object->errors, 'errors');
 }
@@ -69,9 +89,15 @@ if ($action == 'setlib' && $user->rights->tax->charges->creer)
 if ($action == 'setdatev' && $user->rights->tax->charges->creer)
 {
     $object->fetch($id);
+<<<<<<< HEAD
     $object->datev=dol_mktime(12,0,0,GETPOST('datevmonth','int'),GETPOST('datevday','int'),GETPOST('datevyear','int'));
     $result=$object->update($user);
     if ($result < 0) dol_print_error($db,$object->error);
+=======
+    $object->datev=dol_mktime(12, 0, 0, GETPOST('datevmonth', 'int'), GETPOST('datevday', 'int'), GETPOST('datevyear', 'int'));
+    $result=$object->update($user);
+    if ($result < 0) dol_print_error($db, $object->error);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     $action='';
 }
@@ -80,8 +106,13 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
     $error=0;
 
+<<<<<<< HEAD
 	$datev=dol_mktime(12,0,0, $_POST["datevmonth"], $_POST["datevday"], $_POST["datevyear"]);
     $datep=dol_mktime(12,0,0, $_POST["datepmonth"], $_POST["datepday"], $_POST["datepyear"]);
+=======
+	$datev=dol_mktime(12, 0, 0, $_POST["datevmonth"], $_POST["datevday"], $_POST["datevyear"]);
+    $datep=dol_mktime(12, 0, 0, $_POST["datepmonth"], $_POST["datepday"], $_POST["datepyear"]);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     $object->accountid=GETPOST("accountid");
     $object->type_payment=GETPOST("type_payment");
@@ -89,13 +120,22 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
     $object->datev=$datev;
     $object->datep=$datep;
 
+<<<<<<< HEAD
 	$amount = price2num(GETPOST("amount",'alpha'));
+=======
+	$amount = price2num(GETPOST("amount", 'alpha'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if ($refund == 1) {
 		$amount= -$amount;
 	}
     $object->amount= $amount;
+<<<<<<< HEAD
 	$object->label=GETPOST("label",'alpha');
 	$object->note=GETPOST("note",'none');
+=======
+	$object->label=GETPOST("label", 'alpha');
+	$object->note=GETPOST("note", 'none');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	if (empty($object->datev))
 	{
@@ -193,7 +233,11 @@ $form = new Form($db);
 
 $title=$langs->trans("VAT") . " - " . $langs->trans("Card");
 $help_url='';
+<<<<<<< HEAD
 llxHeader("",$title,$helpurl);
+=======
+llxHeader("", $title, $helpurl);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 if ($id)
@@ -255,11 +299,19 @@ if ($action == 'create')
 
     print "<tr>";
     print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
+<<<<<<< HEAD
     print $form->select_date($datep,"datep",'','','','add',1,1);
     print '</td></tr>';
 
     print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo")).'</td><td>';
     print $form->select_date($datev,"datev",'','','','add',1,1);
+=======
+    print $form->selectDate($datep, "datep", '', '', '', 'add', 1, 1);
+    print '</td></tr>';
+
+    print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo")).'</td><td>';
+    print $form->selectDate($datev, "datev", '', '', '', 'add', 1, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print '</td></tr>';
 
 	// Label
@@ -268,15 +320,26 @@ if ($action == 'create')
 	} else {
 		$label = $langs->trans("VATPayment");
 	}
+<<<<<<< HEAD
 	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input class="minwidth300" name="label" id="label" value="'.($_POST["label"]?GETPOST("label",'',2):$label).'"></td></tr>';
 
 	// Amount
 	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.GETPOST("amount","alpha").'"></td></tr>';
+=======
+	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input class="minwidth300" name="label" id="label" value="'.($_POST["label"]?GETPOST("label", '', 2):$label).'"></td></tr>';
+
+	// Amount
+	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.GETPOST("amount", "alpha").'"></td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     if (! empty($conf->banque->enabled))
     {
 		print '<tr><td class="fieldrequired">'.$langs->trans("BankAccount").'</td><td>';
+<<<<<<< HEAD
         $form->select_comptes($_POST["accountid"],"accountid",0,"courant=1",1);  // Affiche liste des comptes courant
+=======
+        $form->select_comptes($_POST["accountid"], "accountid", 0, "courant=1", 1);  // Affiche liste des comptes courant
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         print '</td></tr>';
     }
 
@@ -293,7 +356,11 @@ if ($action == 'create')
 
     // Other attributes
     $parameters=array();
+<<<<<<< HEAD
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+=======
+    $reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print $hookmanager->resPrint;
 
     print '</table>';
@@ -337,7 +404,11 @@ if ($id)
 
 	print "<tr>";
 	print '<td class="titlefield">'.$langs->trans("DatePayment").'</td><td>';
+<<<<<<< HEAD
 	print dol_print_date($object->datep,'day');
+=======
+	print dol_print_date($object->datep, 'day');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</td></tr>';
 
 	print '<tr><td>';
@@ -359,7 +430,11 @@ if ($id)
 			print '<tr>';
 			print '<td>'.$langs->trans('BankTransactionLine').'</td>';
 			print '<td>';
+<<<<<<< HEAD
 			print $bankline->getNomUrl(1,0,'showall');
+=======
+			print $bankline->getNomUrl(1, 0, 'showall');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '</td>';
 			print '</tr>';
 		}
@@ -367,7 +442,11 @@ if ($id)
 
 	// Other attributes
 	$parameters=array();
+<<<<<<< HEAD
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+=======
+	$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print $hookmanager->resPrint;
 
 	print '</table>';
@@ -388,12 +467,20 @@ if ($id)
 		}
 		else
 		{
+<<<<<<< HEAD
 			print '<a class="butActionRefused" href="#" title="'.(dol_escape_htmltag($langs->trans("NotAllowed"))).'">'.$langs->trans("Delete").'</a>';
+=======
+			print '<a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("NotAllowed"))).'">'.$langs->trans("Delete").'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 	}
 	else
 	{
+<<<<<<< HEAD
 		print '<a class="butActionRefused" href="#" title="'.$langs->trans("LinkedToAConciliatedTransaction").'">'.$langs->trans("Delete").'</a>';
+=======
+		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("LinkedToAConciliatedTransaction").'">'.$langs->trans("Delete").'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 	print "</div>";
 }

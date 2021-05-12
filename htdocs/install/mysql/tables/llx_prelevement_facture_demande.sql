@@ -20,7 +20,13 @@
 create table llx_prelevement_facture_demande
 (
   rowid               integer AUTO_INCREMENT PRIMARY KEY,
+<<<<<<< HEAD
   fk_facture          integer NOT NULL,
+=======
+  entity              integer DEFAULT 1 NOT NULL,
+  fk_facture          integer NOT NULL,
+  sourcetype          varchar(32),
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
   amount              double(24,8) NOT NULL,
   date_demande        datetime NOT NULL,
   traite              smallint DEFAULT 0,
@@ -31,6 +37,12 @@ create table llx_prelevement_facture_demande
   code_banque         varchar(128),
   code_guichet        varchar(6),
   number              varchar(255),
+<<<<<<< HEAD
   cle_rib             varchar(5)
 
+=======
+  cle_rib             varchar(5),
+  ext_payment_id      varchar(128),
+  ext_payment_site    varchar(128)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 )ENGINE=innodb;

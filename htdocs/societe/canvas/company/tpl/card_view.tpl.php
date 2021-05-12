@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2010-2011 Regis Houssin <regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2010-2011 Regis Houssin <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +36,11 @@ $soc = $GLOBALS['objcanvas']->control->object;
 
 $head = societe_prepare_head($soc);
 
+<<<<<<< HEAD
 dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
+=======
+dol_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 ?>
 
@@ -183,7 +191,11 @@ for ($i=1; $i<=4; $i++) {
 	<table class="nobordernopadding allwidth">
 		<tr>
 			<td><?php echo $langs->trans('RIB'); ?></td>
+<<<<<<< HEAD
 			<td align="right">
+=======
+			<td class="right">
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			<?php if ($user->rights->societe->creer) { ?>
 			<a href="<?php echo DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$this->control->tpl['id']; ?>"><?php echo $this->control->tpl['image_edit']; ?></a>
 			<?php } else { ?>
@@ -201,7 +213,11 @@ for ($i=1; $i<=4; $i++) {
 	<table class="nobordernopadding allwidth">
 		<tr>
 			<td><?php echo $langs->trans('ParentCompany'); ?></td>
+<<<<<<< HEAD
 			<td align="right">
+=======
+			<td class="right">
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			&nbsp;
 			</td>
 		</tr>
@@ -215,7 +231,11 @@ for ($i=1; $i<=4; $i++) {
 	<table class="nobordernopadding allwidth">
 		<tr>
 			<td><?php echo $langs->trans('SalesRepresentatives'); ?></td>
+<<<<<<< HEAD
 			<td align="right">
+=======
+			<td class="right">
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			<?php if ($user->rights->societe->creer) { ?>
 			<a href="<?php echo DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$this->control->tpl['id']; ?>"><?php echo $this->control->tpl['image_edit']; ?></a>
 			<?php } else { ?>
@@ -267,7 +287,11 @@ $urlsource=$_SERVER["PHP_SELF"]."?socid=".$socid;
 $genallowed=$user->rights->societe->lire;
 $delallowed=$user->rights->societe->creer;
 
+<<<<<<< HEAD
 print $formfile->showdocuments('company',$socid,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$objcanvas->control->object->default_lang);
+=======
+print $formfile->showdocuments('company', $socid, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $objcanvas->control->object->default_lang);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ?>
 
 </td>
@@ -279,6 +303,7 @@ print $formfile->showdocuments('company',$socid,$filedir,$urlsource,$genallowed,
 
 <?php
 // Subsidiaries list
+<<<<<<< HEAD
 $result=show_subsidiaries($conf,$langs,$db,$soc);
 
 // Contacts list
@@ -289,3 +314,15 @@ $result=show_projects($conf,$langs,$db,$soc);
 ?>
 
 <!-- END PHP TEMPLATE -->
+=======
+$result=show_subsidiaries($conf, $langs, $db, $soc);
+
+// Contacts list
+$result=show_contacts($conf, $langs, $db, $soc);
+
+// Projects list
+$result=show_projects($conf, $langs, $db, $soc);
+?>
+
+<!-- END PHP TEMPLATE -->
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

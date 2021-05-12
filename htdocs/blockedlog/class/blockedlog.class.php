@@ -18,9 +18,12 @@
  * See https://medium.com/@lhartikk/a-blockchain-in-200-lines-of-code-963cc1cc0e54
  */
 
+<<<<<<< HEAD
 
 
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 /*ini_set('unserialize_callback_func', 'mycallback');
 
 function mycallback($classname)
@@ -42,13 +45,28 @@ class BlockedLog
 	 * @var int
 	 */
 	public $id;
+<<<<<<< HEAD
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * Entity
 	 * @var int
 	 */
 	public $entity;
 
+<<<<<<< HEAD
 	public $error = '';
+=======
+	/**
+	 * @var string Error message
+	 */
+	public $error = '';
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	public $errors = array();
 
 	/**
@@ -167,10 +185,21 @@ class BlockedLog
 		if ($conf->banque->enabled) $this->trackedevents['PAYMENT_VARIOUS_CREATE']='logPAYMENT_VARIOUS_CREATE';
 		if ($conf->banque->enabled) $this->trackedevents['PAYMENT_VARIOUS_MODIFY']='logPAYMENT_VARIOUS_MODIFY';
 		if ($conf->banque->enabled) $this->trackedevents['PAYMENT_VARIOUS_DELETE']='logPAYMENT_VARIOUS_DELETE';
+<<<<<<< HEAD
+=======
+
+		// $conf->global->BANK_ENABLE_POS_CASHCONTROL must be set to 1 by all POS modules
+		$moduleposenabled = ($conf->cashdesk->enabled || $conf->takepos->enabled || ! empty($conf->global->BANK_ENABLE_POS_CASHCONTROL));
+		if ($moduleposenabled) $this->trackedevents['CASHCONTROL_VALIDATE']='logCASHCONTROL_VALIDATE';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	/**
 	 *  Try to retrieve source object (it it still exists)
+<<<<<<< HEAD
+=======
+     * @return string
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	 */
 	public function getObjectLink()
 	{
@@ -198,7 +227,11 @@ class BlockedLog
 				$this->error++;
 			}
 		}
+<<<<<<< HEAD
 		else if($this->element === 'payment') {
+=======
+		elseif($this->element === 'payment') {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
 			$object = new Paiement($this->db);
@@ -209,7 +242,11 @@ class BlockedLog
 				$this->error++;
 			}
 		}
+<<<<<<< HEAD
 		else if($this->element === 'payment_supplier') {
+=======
+		elseif($this->element === 'payment_supplier') {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 
 			$object = new PaiementFourn($this->db);
@@ -220,7 +257,11 @@ class BlockedLog
 				$this->error++;
 			}
 		}
+<<<<<<< HEAD
 		else if($this->element === 'payment_donation') {
+=======
+		elseif($this->element === 'payment_donation') {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			require_once DOL_DOCUMENT_ROOT.'/don/class/paymentdonation.class.php';
 
 			$object = new PaymentDonation($this->db);
@@ -231,7 +272,11 @@ class BlockedLog
 				$this->error++;
 			}
 		}
+<<<<<<< HEAD
 		else if($this->element === 'payment_various') {
+=======
+		elseif($this->element === 'payment_various') {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 
 			$object = new PaymentVarious($this->db);
@@ -242,7 +287,11 @@ class BlockedLog
 				$this->error++;
 			}
 		}
+<<<<<<< HEAD
 		else if($this->element === 'don' || $this->element === 'donation') {
+=======
+		elseif($this->element === 'don' || $this->element === 'donation') {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
 			$object = new Don($this->db);
@@ -253,7 +302,11 @@ class BlockedLog
 				$this->error++;
 			}
 		}
+<<<<<<< HEAD
 		else if($this->element === 'subscription') {
+=======
+		elseif($this->element === 'subscription') {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 
 			$object = new Subscription($this->db);
@@ -264,6 +317,7 @@ class BlockedLog
 				$this->error++;
 			}
 		}
+<<<<<<< HEAD
 		else if ($this->action == 'MODULE_SET')
 		{
 			return '<i class="opacitymedium">System to track events into unalterable logs were enabled</i>';
@@ -272,6 +326,26 @@ class BlockedLog
 		{
 			if ($this->signature == '0000000000')
 			{
+=======
+		elseif($this->element === 'cashcontrol') {
+			require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
+
+			$object = new CashControl($this->db);
+			if ($object->fetch($this->fk_object)>0) {
+				return $object->getNomUrl(1);
+			}
+			else{
+				$this->error++;
+			}
+		}
+		elseif ($this->action == 'MODULE_SET')
+		{
+			return '<i class="opacitymedium">System to track events into unalterable logs were enabled</i>';
+		}
+		elseif ($this->action == 'MODULE_RESET')
+		{
+			if ($this->signature == '0000000000') {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				return '<i class="opacitymedium">System to track events into unalterable logs were disabled after some recording were done. We saved a special Fingerprint to track the chain as broken.</i>';
 			}
 			else
@@ -281,11 +355,18 @@ class BlockedLog
 		}
 
 		return '<i class="opacitymedium">'.$langs->trans('ImpossibleToReloadObject', $this->element, $this->fk_object).'</i>';
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	/**
 	 *      try to retrieve user author
+<<<<<<< HEAD
+=======
+     * @return string
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	 */
 	public function getUser()
 	{
@@ -345,6 +426,13 @@ class BlockedLog
 		{
 			$this->date_object = $object->dateh;
 		}
+<<<<<<< HEAD
+=======
+		elseif ($object->element=='cashcontrol')
+		{
+			$this->date_object = $object->date_creation;
+		}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		else {
 			$this->date_object = $object->date;
 		}
@@ -358,7 +446,29 @@ class BlockedLog
 
 		// Set object_data
 		$this->object_data=new stdClass();
+<<<<<<< HEAD
 		$arrayoffieldstoexclude = array('table_element','fields','ref_previous','ref_next','origin','origin_id','oldcopy','picto','error','modelpdf','table_element_line','linkedObjectsIds','linkedObjects','fk_delivery_address');
+=======
+		// Add fields to exclude
+		$arrayoffieldstoexclude = array(
+			'table_element','fields','ref_previous','ref_next','origin','origin_id','oldcopy','picto','error','errors','modelpdf','last_main_doc','civility_id','contact','contact_id',
+			'table_element_line','ismultientitymanaged','isextrafieldmanaged',
+            'linkedObjectsIds',
+            'linkedObjects',
+            'fk_delivery_address',
+			'context',
+		    'projet'          // There is already ->fk_project
+		);
+		// Add more fields to exclude depending on object type
+		if ($this->element == 'cashcontrol') {
+            $arrayoffieldstoexclude = array_merge($arrayoffieldstoexclude, array(
+		        'name','lastname','firstname','region','region_id','region_code','state','state_id','state_code','country','country_id','country_code',
+		        'total_ht','total_tva','total_ttc','total_localtax1','total_localtax2',
+		        'barcode_type','barcode_type_code','barcode_type_label','barcode_type_coder','mode_reglement_id','cond_reglement_id','mode_reglement','cond_reglement','shipping_method_id',
+		        'fk_incoterms','label_incoterms','location_incoterms','lines')
+		    );
+		}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Add thirdparty info
 		if (empty($object->thirdparty) && method_exists($object, 'fetch_thirdparty')) $object->fetch_thirdparty();
@@ -407,7 +517,11 @@ class BlockedLog
 			{
 				if (in_array($key, $arrayoffieldstoexclude)) continue;	// Discard some properties
 				if (! in_array($key, array(
+<<<<<<< HEAD
 				'ref','facnumber','ref_client','ref_supplier','date','datef','type','total_ht','total_tva','total_ttc','localtax1','localtax2','revenuestamp','datepointoftax','note_public','lines'
+=======
+					'ref','ref_client','ref_supplier','date','datef','datev','type','total_ht','total_tva','total_ttc','localtax1','localtax2','revenuestamp','datepointoftax','note_public','lines'
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				))) continue;									// Discard if not into a dedicated list
 				if ($key == 'lines')
 				{
@@ -418,7 +532,11 @@ class BlockedLog
 						foreach($tmpline as $keyline => $valueline)
 						{
 							if (! in_array($keyline, array(
+<<<<<<< HEAD
 							'ref','multicurrency_code','multicurrency_total_ht','multicurrency_total_tva','multicurrency_total_ttc','qty','product_type','vat_src_code','tva_tx','info_bits','localtax1_tx','localtax2_tx','total_ht','total_tva','total_ttc','total_localtax1','total_localtax2'
+=======
+								'ref','multicurrency_code','multicurrency_total_ht','multicurrency_total_tva','multicurrency_total_ttc','qty','product_type','vat_src_code','tva_tx','info_bits','localtax1_tx','localtax2_tx','total_ht','total_tva','total_ttc','total_localtax1','total_localtax2'
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							))) continue;									// Discard if not into a dedicated list
 
 							if (! is_object($this->object_data->invoiceline[$lineid])) $this->object_data->invoiceline[$lineid] = new stdClass();
@@ -427,7 +545,11 @@ class BlockedLog
 						}
 					}
 				}
+<<<<<<< HEAD
 				else if (!is_object($value)) $this->object_data->{$key} = $value;
+=======
+				elseif (!is_object($value)) $this->object_data->{$key} = $value;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 
 			if (! empty($object->newref)) $this->object_data->ref = $object->newref;
@@ -438,7 +560,11 @@ class BlockedLog
 			{
 				if (in_array($key, $arrayoffieldstoexclude)) continue;	// Discard some properties
 				if (! in_array($key, array(
+<<<<<<< HEAD
 				'ref','facnumber','ref_client','ref_supplier','date','datef','type','total_ht','total_tva','total_ttc','localtax1','localtax2','revenuestamp','datepointoftax','note_public'
+=======
+				'ref','ref_client','ref_supplier','date','datef','type','total_ht','total_tva','total_ttc','localtax1','localtax2','revenuestamp','datepointoftax','note_public'
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				))) continue;									// Discard if not into a dedicated list
 				if (!is_object($value)) $this->object_data->{$key} = $value;
 			}
@@ -533,7 +659,11 @@ class BlockedLog
 					foreach($tmpobject->thirdparty as $key=>$value)
 					{
 						if (in_array($key, $arrayoffieldstoexclude)) continue;	// Discard some properties
+<<<<<<< HEAD
 						if (! in_array($key, array(
+=======
+    if (! in_array($key, array(
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						'name','name_alias','ref_ext','address','zip','town','state_code','country_code','idprof1','idprof2','idprof3','idprof4','idprof5','idprof6','phone','fax','email','barcode',
 						'tva_intra', 'localtax1_assuj', 'localtax1_value', 'localtax2_assuj', 'localtax2_value', 'managers', 'capital', 'typent_code', 'forme_juridique_code', 'code_client', 'code_fournisseur'
 						))) continue;									// Discard if not into a dedicated list
@@ -550,8 +680,13 @@ class BlockedLog
 					foreach($tmpobject as $key=>$value)
 					{
 						if (in_array($key, $arrayoffieldstoexclude)) continue;	// Discard some properties
+<<<<<<< HEAD
 						if (! in_array($key, array(
 						'ref','facnumber','ref_client','ref_supplier','date','datef','type','total_ht','total_tva','total_ttc','localtax1','localtax2','revenuestamp','datepointoftax','note_public'
+=======
+    if (! in_array($key, array(
+						'ref','ref_client','ref_supplier','date','datef','type','total_ht','total_tva','total_ttc','localtax1','localtax2','revenuestamp','datepointoftax','note_public'
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						))) continue;									// Discard if not into a dedicated list
 						if (!is_object($value))
 						{
@@ -609,7 +744,12 @@ class BlockedLog
 	 *	@param      int		$id       	Id of object to load
 	 *	@return     int         			>0 if OK, <0 if KO, 0 if not found
 	 */
+<<<<<<< HEAD
 	public function fetch($id) {
+=======
+    public function fetch($id)
+    {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		global $langs;
 
@@ -672,7 +812,10 @@ class BlockedLog
 			$this->error=$this->db->error();
 			return -1;
 		}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 
@@ -683,17 +826,27 @@ class BlockedLog
 	 * @param	string	$mode	0=unserialize, 1=json_decode
 	 * @return 	string			Value unserialized
 	 */
+<<<<<<< HEAD
 	public function dolDecodeBlockedData($data, $mode=0)
 	{
 		try
 		{
+=======
+	public function dolDecodeBlockedData($data, $mode = 0)
+	{
+		try {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			//include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 			//include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 			$aaa = unserialize($data);
 			//$aaa = unserialize($data);
+<<<<<<< HEAD
 		}
 		catch(Exception $e)
 		{
+=======
+		} catch(Exception $e) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			//print $e->getErrs);
 		}
 		return $aaa;
@@ -705,14 +858,22 @@ class BlockedLog
 	 *
 	 *	@return	boolean
 	 */
+<<<<<<< HEAD
 	public function setCertified() {
+=======
+    public function setCertified()
+    {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$res = $this->db->query("UPDATE ".MAIN_DB_PREFIX."blockedlog SET certified=1 WHERE rowid=".$this->id);
 		if($res===false) return false;
 
 		return true;
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	/**
@@ -722,7 +883,12 @@ class BlockedLog
 	 *  @param	int		$forcesignature		Force signature (for example '0000000000' when we disabled the module)
 	 *	@return	int							<0 if KO, >0 if OK
 	 */
+<<<<<<< HEAD
 	public function create($user, $forcesignature='') {
+=======
+    public function create($user, $forcesignature = '')
+    {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		global $conf,$langs,$hookmanager;
 
@@ -836,7 +1002,11 @@ class BlockedLog
 	 *	@param	string		$previoushash		If previous signature hash is known, we can provide it to avoid to make a search of it in database.
 	 *	@return	boolean							True if OK, False if KO
 	 */
+<<<<<<< HEAD
 	public function checkSignature($previoushash='')
+=======
+	public function checkSignature($previoushash = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		if (empty($previoushash))
 		{
@@ -879,8 +1049,13 @@ class BlockedLog
 	 *	@param int	$beforeid		ID of a record
 	 *  @return	string				Hash of previous record (if beforeid is defined) or hash of last record (if beforeid is 0)
 	 */
+<<<<<<< HEAD
 	 public function getPreviousHash($withlock=0, $beforeid=0)
 	 {
+=======
+	public function getPreviousHash($withlock = 0, $beforeid = 0)
+	{
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf;
 
 		$previoussignature='';
@@ -930,7 +1105,11 @@ class BlockedLog
 	 *  @param	string	$search_code	search code
 	 *	@return	array|int				Array of object log or <0 if error
 	 */
+<<<<<<< HEAD
 	public function getLog($element, $fk_object, $limit = 0, $sortfield = '', $sortorder = '', $search_fk_user = -1, $search_start = -1, $search_end = -1, $search_ref='', $search_amount='', $search_code='')
+=======
+	public function getLog($element, $fk_object, $limit = 0, $sortfield = '', $sortorder = '', $search_fk_user = -1, $search_start = -1, $search_end = -1, $search_ref = '', $search_amount = '', $search_code = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf, $cachedlogs;
 
@@ -941,6 +1120,7 @@ class BlockedLog
 
 	 		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
 	         WHERE entity=".$conf->entity;
+<<<<<<< HEAD
 
 		}
 		else if ($element=='not_certified') {
@@ -952,6 +1132,16 @@ class BlockedLog
 			$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
 	         WHERE entity=".$conf->entity." AND certified = 1";
 
+=======
+		}
+		elseif ($element=='not_certified') {
+			$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
+	         WHERE entity=".$conf->entity." AND certified = 0";
+		}
+		elseif ($element=='just_certified') {
+			$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
+	         WHERE entity=".$conf->entity." AND certified = 1";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		else{
 			$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
@@ -1014,9 +1204,15 @@ class BlockedLog
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
+<<<<<<< HEAD
 			$fingerprint = dol_hash(print_r($mysoc,true).getRandomPassword(1), '5');
 
 			dolibarr_set_const($db, 'BLOCKEDLOG_ENTITY_FINGERPRINT', $fingerprint, 'chaine',0,'Numeric Unique Fingerprint', $conf->entity);
+=======
+			$fingerprint = dol_hash(print_r($mysoc, true).getRandomPassword(1), '5');
+
+			dolibarr_set_const($db, 'BLOCKEDLOG_ENTITY_FINGERPRINT', $fingerprint, 'chaine', 0, 'Numeric Unique Fingerprint', $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			$conf->global->BLOCKEDLOG_ENTITY_FINGERPRINT=$fingerprint;
 		}
@@ -1025,6 +1221,7 @@ class BlockedLog
 	}
 
 
+<<<<<<< HEAD
 	/**
 	 * Check if module was already used or not for at least one recording.
 	 *
@@ -1032,6 +1229,16 @@ class BlockedLog
 	 */
 	function alreadyUsed($ignoresystem=0)
 	{
+=======
+    /**
+     * Check if module was already used or not for at least one recording.
+     *
+     * @param   int     $ignoresystem       Ignore system events for the test
+     * @return  bool
+     */
+    public function alreadyUsed($ignoresystem = 0)
+    {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf;
 
 		$result = false;
@@ -1052,7 +1259,12 @@ class BlockedLog
 		dol_syslog("Module Blockedlog alreadyUsed with ignoresystem=".$ignoresystem." is ".$result);
 
 		return $result;
+<<<<<<< HEAD
 	}
 
 }
 
+=======
+    }
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

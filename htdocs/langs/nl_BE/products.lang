@@ -1,10 +1,18 @@
 # Dolibarr language file - Source file is en_US - products
 Reference=Artikelcode
+<<<<<<< HEAD
 LastModifiedProductsAndServices=Laatste %s aangepaste producten / services
+=======
+Movements=Mutaties
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 OnSell=Te koop
 OnBuy=Te koop
 NotOnSell=Niet meer beschikbaar
 ProductStatusNotOnSell=Niet meer verkrijgbaar
 ProductStatusOnSellShort=Te koop
+<<<<<<< HEAD
+=======
+ListOfStockMovements=Voorradenlijst
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProductSellByQuarterHT=Bruto omzetcijfer per trimester
 ServiceSellByQuarterHT=Bruto omzetcijfer per trimester

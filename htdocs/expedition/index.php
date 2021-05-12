@@ -1,7 +1,12 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +32,14 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
+<<<<<<< HEAD
+=======
+$hookmanager = new HookManager($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('sendingindex'));
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'sendings'));
 
@@ -39,7 +52,11 @@ $companystatic=new Societe($db);
 $shipment=new Expedition($db);
 
 $helpurl='EN:Module_Shipments|FR:Module_Exp&eacute;ditions|ES:M&oacute;dulo_Expediciones';
+<<<<<<< HEAD
 llxHeader('',$langs->trans("Shipment"),$helpurl);
+=======
+llxHeader('', $langs->trans("Shipment"), $helpurl);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print load_fiche_titre($langs->trans("SendingsArea"));
 
@@ -158,9 +175,15 @@ if ($resql)
 			print $orderstatic->getNomUrl(1);
 			print '</td>';
 			print '<td>';
+<<<<<<< HEAD
 			print $companystatic->getNomUrl(1,'customer',32);
 			print '</td>';
 			print '<td align="right">';
+=======
+			print $companystatic->getNomUrl(1, 'customer', 32);
+			print '</td>';
+			print '<td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print $orderstatic->getLibStatut(3);
 			print '</td>';
 			print '</tr>';
@@ -217,9 +240,15 @@ if ( $resql )
 			print $orderstatic->getNomUrl(1);
 			print '</td>';
 			print '<td>';
+<<<<<<< HEAD
 			print $companystatic->getNomUrl(1,'customer');
 			print '</td>';
             print '<td align="right">';
+=======
+			print $companystatic->getNomUrl(1, 'customer');
+			print '</td>';
+            print '<td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             print $orderstatic->getLibStatut(3);
             print '</td>';
             print '</tr>';
@@ -270,7 +299,11 @@ if ($resql)
 			print '<tr class="oddeven"><td>';
 			print $shipment->getNomUrl(1);
 			print '</td>';
+<<<<<<< HEAD
 			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->name.'</a></td>';
+=======
+			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.$obj->name.'</a></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '<td>';
 			if ($obj->commande_id > 0)
 			{
@@ -291,6 +324,13 @@ else dol_print_error($db);
 
 print '</div></div></div>';
 
+<<<<<<< HEAD
 
+=======
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardWarehouseSendings', $parameters, $object); // Note that $action and $object may have been modified by hook
+
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

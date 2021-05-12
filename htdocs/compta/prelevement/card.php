@@ -1,7 +1,14 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2016 Juanjo Menent 		<jmenent@2byte.es>
+=======
+/* Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,26 +30,38 @@
  *	\brief      Card of a direct debit
  */
 
+<<<<<<< HEAD
 require('../../main.inc.php');
+=======
+require '../../main.inc.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
+<<<<<<< HEAD
 $langs->loadLangs(array('banks', 'categories'));
+=======
+$langs->loadLangs(array('banks', 'categories','bills','withdrawals'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if (!$user->rights->prelevement->bons->lire)
 accessforbidden();
 
+<<<<<<< HEAD
 $langs->load("bills");
 $langs->load("withdrawals");
 
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 // Security check
 if ($user->societe_id > 0) accessforbidden();
 
 // Get supervariables
+<<<<<<< HEAD
 $action = GETPOST('action','alpha');
 $id = GETPOST('id','int');
 $ref = GETPOST('ref', 'alpha');
@@ -53,6 +72,18 @@ $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
+=======
+$action = GETPOST('action', 'alpha');
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
+$socid = GETPOST('socid', 'int');
+
+// Load variable for pagination
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -61,7 +92,11 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield='pl.fk_soc';
 if (! $sortorder) $sortorder='DESC';
 
+<<<<<<< HEAD
 $object = new BonPrelevement($db,"");
+=======
+$object = new BonPrelevement($db, "");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
@@ -82,7 +117,11 @@ if ( $action == 'confirm_delete' )
 }
 
 // Seems to no be used and replaced with $action == 'infocredit
+<<<<<<< HEAD
 if ( $action == 'confirm_credite' && GETPOST('confirm','alpha') == 'yes')
+=======
+if ( $action == 'confirm_credite' && GETPOST('confirm', 'alpha') == 'yes')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$res=$object->set_credite();
 	if ($res >= 0)
@@ -96,7 +135,11 @@ if ($action == 'infotrans' && $user->rights->prelevement->bons->send)
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
+<<<<<<< HEAD
 	$dt = dol_mktime(12,0,0,GETPOST('remonth','int'),GETPOST('reday','int'),GETPOST('reyear','int'));
+=======
+	$dt = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	/*
 	if ($_FILES['userfile']['name'] && basename($_FILES['userfile']['name'],".ps") == $object->ref)
@@ -117,7 +160,11 @@ if ($action == 'infotrans' && $user->rights->prelevement->bons->send)
 		$mesg='BadFile';
 	}*/
 
+<<<<<<< HEAD
 	$error = $object->set_infotrans($user, $dt, GETPOST('methode','alpha'));
+=======
+	$error = $object->set_infotrans($user, $dt, GETPOST('methode', 'alpha'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	if ($error)
 	{
@@ -129,7 +176,11 @@ if ($action == 'infotrans' && $user->rights->prelevement->bons->send)
 // Set direct debit order to credited, create payment and close invoices
 if ($action == 'infocredit' && $user->rights->prelevement->bons->credit)
 {
+<<<<<<< HEAD
 	$dt = dol_mktime(12,0,0,GETPOST('remonth','int'),GETPOST('reday','int'),GETPOST('reyear','int'));
+=======
+	$dt = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	$error = $object->set_infocredit($user, $dt);
 
@@ -148,16 +199,26 @@ if ($action == 'infocredit' && $user->rights->prelevement->bons->credit)
 
 $form = new Form($db);
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("WithdrawalsReceipts"));
+=======
+llxHeader('', $langs->trans("WithdrawalsReceipts"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if ($id > 0 || $ref)
 {
 	$head = prelevement_prepare_head($object);
 	dol_fiche_head($head, 'prelevement', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
 
+<<<<<<< HEAD
 	if (GETPOST('error','alpha')!='')
 	{
 		print '<div class="error">'.$object->getErrorString(GETPOST('error','alpha')).'</div>';
+=======
+	if (GETPOST('error', 'alpha')!='')
+	{
+		print '<div class="error">'.$object->getErrorString(GETPOST('error', 'alpha')).'</div>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	/*if ($action == 'credite')
@@ -175,7 +236,11 @@ if ($id > 0 || $ref)
 	print '<table class="border" width="100%">';
 
 	//print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.$object->getNomUrl(1).'</td></tr>';
+<<<<<<< HEAD
 	print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec,'day').'</td></tr>';
+=======
+	print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount).'</td></tr>';
 
 	// Status
@@ -191,7 +256,11 @@ if ($id > 0 || $ref)
 		$muser->fetch($object->user_trans);
 
 		print '<tr><td>'.$langs->trans("TransData").'</td><td>';
+<<<<<<< HEAD
 		print dol_print_date($object->date_trans,'day');
+=======
+		print dol_print_date($object->date_trans, 'day');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print ' '.$langs->trans("By").' '.$muser->getFullName($langs).'</td></tr>';
 		print '<tr><td>'.$langs->trans("TransMetod").'</td><td>';
 		print $object->methodes_trans[$object->method_trans];
@@ -200,7 +269,11 @@ if ($id > 0 || $ref)
 	if($object->date_credit <> 0)
 	{
 		print '<tr><td>'.$langs->trans('CreditDate').'</td><td>';
+<<<<<<< HEAD
 		print dol_print_date($object->date_credit,'day');
+=======
+		print dol_print_date($object->date_credit, 'day');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</td></tr>';
 	}
 
@@ -244,10 +317,17 @@ if ($id > 0 || $ref)
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("NotifyTransmision").'</td></tr>';
 		print '<tr class="oddeven"><td>'.$langs->trans("TransData").'</td><td>';
+<<<<<<< HEAD
 		print $form->select_date('','','','','',"userfile",1,1);
 		print '</td></tr>';
 		print '<tr class="oddeven"><td>'.$langs->trans("TransMetod").'</td><td>';
 		print $form->selectarray("methode",$object->methodes_trans);
+=======
+		print $form->selectDate('', '', '', '', '', "userfile", 1, 1);
+		print '</td></tr>';
+		print '<tr class="oddeven"><td>'.$langs->trans("TransMetod").'</td><td>';
+		print $form->selectarray("methode", $object->methodes_trans);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</td></tr>';
 /*			print '<tr><td width="20%">'.$langs->trans("File").'</td><td>';
 		print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
@@ -268,7 +348,11 @@ if ($id > 0 || $ref)
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("NotifyCredit").'</td></tr>';
 		print '<tr class="oddeven"><td>'.$langs->trans('CreditDate').'</td><td>';
+<<<<<<< HEAD
 		print $form->select_date('','','','','',"infocredit",1,1);
+=======
+		print $form->selectDate('', '', '', '', '', "infocredit", 1, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</td></tr>';
 		print '</table>';
 		print '<br>'.$langs->trans("ThisWillAlsoAddPaymentOnInvoice");
@@ -299,7 +383,11 @@ if ($id > 0 || $ref)
 	}
 
 
+<<<<<<< HEAD
 	$ligne=new LignePrelevement($db,$user);
+=======
+	$ligne=new LignePrelevement($db, $user);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	/*
 	 * Lines into withdraw request
@@ -345,9 +433,15 @@ if ($id > 0 || $ref)
 		print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
 		print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 		print '<tr class="liste_titre">';
+<<<<<<< HEAD
 		print_liste_field_titre("Lines",$_SERVER["PHP_SELF"],"pl.rowid",'',$urladd);
 		print_liste_field_titre("ThirdParty",$_SERVER["PHP_SELF"],"s.nom",'',$urladd);
 		print_liste_field_titre("Amount",$_SERVER["PHP_SELF"],"pl.amount","",$urladd,'align="right"');
+=======
+		print_liste_field_titre("Lines", $_SERVER["PHP_SELF"], "pl.rowid", '', $urladd);
+		print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", '', $urladd);
+		print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "pl.amount", "", $urladd, 'class="right"');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print_liste_field_titre('');
 		print "</tr>\n";
 
@@ -355,7 +449,11 @@ if ($id > 0 || $ref)
 
 		$total = 0;
 
+<<<<<<< HEAD
 		while ($i < min($num,$conf->liste_limit))
+=======
+		while ($i < min($num, $conf->liste_limit))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			$obj = $db->fetch_object($result);
 
@@ -363,10 +461,17 @@ if ($id > 0 || $ref)
 
 			// Status of line
 			print "<td>";
+<<<<<<< HEAD
 			print $ligne->LibStatut($obj->statut,2);
 			print "&nbsp;";
 			print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid.'">';
 			print sprintf("%06s",$obj->rowid);
+=======
+			print $ligne->LibStatut($obj->statut, 2);
+			print "&nbsp;";
+			print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid.'">';
+			print sprintf("%06s", $obj->rowid);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '</a></td>';
 
 			$thirdparty=new Societe($db);
@@ -375,7 +480,11 @@ if ($id > 0 || $ref)
 			print $thirdparty->getNomUrl(1);
 			print "</td>\n";
 
+<<<<<<< HEAD
 			print '<td align="right">'.price($obj->amount)."</td>\n";
+=======
+			print '<td class="right">'.price($obj->amount)."</td>\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			print '<td>';
 
@@ -400,7 +509,11 @@ if ($id > 0 || $ref)
 			print '<tr class="liste_total">';
 			print '<td>'.$langs->trans("Total").'</td>';
 			print '<td>&nbsp;</td>';
+<<<<<<< HEAD
 			print '<td align="right">';
+=======
+			print '<td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if ($total != $object->amount) print img_warning("AmountOfFileDiffersFromSumOfInvoices");
 			print price($total);
 			print "</td>\n";
@@ -419,6 +532,11 @@ if ($id > 0 || $ref)
 	}
 }
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

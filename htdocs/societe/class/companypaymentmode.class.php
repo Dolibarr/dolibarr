@@ -18,7 +18,11 @@
 
 /**
  * \file        class/companypaymentmode.class.php
+<<<<<<< HEAD
  * \ingroup     monmodule
+=======
+ * \ingroup     company
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * \brief       This file is a CRUD class file for CompanyPaymentMode (Create/Read/Update/Delete)
  */
 
@@ -36,18 +40,34 @@ class CompanyPaymentMode extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'companypaymentmode';
+<<<<<<< HEAD
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'societe_rib';
+<<<<<<< HEAD
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * @var int  Does companypaymentmode support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 2;
+<<<<<<< HEAD
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * @var int  Does companypaymentmode support extrafields ? 0=No, 1=Yes
 	 */
 	public $isextrafieldmanaged = 0;
+<<<<<<< HEAD
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * @var string String with name of icon for companypaymentmode. Must be the part after the 'object_' into object_companypaymentmode.png
 	 */
@@ -114,9 +134,28 @@ class CompanyPaymentMode extends CommonObject
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'Import key', 'enabled'=>1, 'visible'=>-2, 'position'=>105),
 	//'aaa' =>array('type'=>'date', 'label'=>'Ending date', 'enabled'=>0, 'visible'=>-2, 'position'=>185),
 	);
+<<<<<<< HEAD
 	public $rowid;
 	public $fk_soc;
 	public $label;
+=======
+
+	/**
+	 * @var int ID
+	 */
+	public $rowid;
+
+	/**
+	 * @var int Thirdparty ID
+	 */
+    public $fk_soc;
+
+	/**
+     * @var string company payment mode label
+     */
+    public $label;
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	public $bank;
 	public $code_banque;
 	public $code_guichet;
@@ -144,11 +183,37 @@ class CompanyPaymentMode extends CommonObject
 	public $preapproval_key;
 	public $total_amount_of_all_payments;
 	public $stripe_card_ref;
+<<<<<<< HEAD
 	public $status;
 	public $starting_date;
 	public $ending_date;
 	public $datec;
 	public $tms;
+=======
+
+	/**
+	 * @var int Status
+	 */
+	public $status;
+
+	public $starting_date;
+	public $ending_date;
+
+	/**
+     * Date creation record (datec)
+     *
+     * @var integer
+     */
+    public $datec;
+
+	/**
+     * Date modification record (tms)
+     *
+     * @var integer
+     */
+    public $tms;
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	public $import_key;
 	// END MODULEBUILDER PROPERTIES
 
@@ -169,9 +234,15 @@ class CompanyPaymentMode extends CommonObject
 	 */
 	//public $class_element_line = 'CompanyPaymentModeline';
 	/**
+<<<<<<< HEAD
 	 * @var array  Array of child tables (child tables to delete before deleting a record)
 	 */
 	//protected $childtables=array('companypaymentmodedet');
+=======
+     * @var array	List of child tables. To test if we can delete object.
+	 */
+	//protected $childtables=array();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * @var CompanyPaymentModeLine[]     Array of subtable lines
 	 */
@@ -247,6 +318,11 @@ class CompanyPaymentMode extends CommonObject
 	        $this->errors = $object->errors;
 	    }
 
+<<<<<<< HEAD
+=======
+	    unset($object->context['createfromclone']);
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    // End
 	    if (!$error) {
 	        $this->db->commit();
@@ -260,6 +336,7 @@ class CompanyPaymentMode extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
+<<<<<<< HEAD
 	 * @param 	int    	$id   	Id object
 	 * @param 	string 	$ref  	Ref
 	 * @param	int		$socid	Id of company to get first default payment mode
@@ -269,6 +346,17 @@ class CompanyPaymentMode extends CommonObject
 	public function fetch($id, $ref = null, $socid = 0, $type = '')
 	{
 		$morewhere = '';
+=======
+	 * @param 	int    	$id   			Id object
+	 * @param 	string 	$ref  			Ref
+	 * @param	int		$socid			Id of company to get first default payment mode
+	 * @param	string	$type			Filter on type ('ban', 'card', ...)
+	 * @param	string	$morewhere		More SQL filters (' AND ...')
+	 * @return 	int         			<0 if KO, 0 if not found, >0 if OK
+	 */
+	public function fetch($id, $ref = null, $socid = 0, $type = '', $morewhere = '')
+	{
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if ($socid) $morewhere.= " AND fk_soc  = ".$this->db->escape($socid)." AND default_rib = 1";
 		if ($type)  $morewhere.= " AND type = '".$this->db->escape($type)."'";
 
@@ -325,7 +413,11 @@ class CompanyPaymentMode extends CommonObject
      *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return	string								String with URL
 	 */
+<<<<<<< HEAD
 	function getNomUrl($withpicto=0, $option='', $notooltip=0, $morecss='', $save_lastsearch_value=-1)
+=======
+    public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $db, $conf, $langs;
         global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -340,13 +432,21 @@ class CompanyPaymentMode extends CommonObject
         $label.= '<br>';
         $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
+<<<<<<< HEAD
         $url = dol_buildpath('/monmodule/companypaymentmode_card.php',1).'?id='.$this->id;
+=======
+        $url = dol_buildpath('/monmodule/companypaymentmode_card.php', 1).'?id='.$this->id;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         if ($option != 'nolink')
         {
 	        // Add param to save lastsearch_values or not
 	        $add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+<<<<<<< HEAD
 	        if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+=======
+	        if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	        if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
         }
 
@@ -383,7 +483,11 @@ class CompanyPaymentMode extends CommonObject
 	 * @param	string	$alltypes	1=The default is for all payment types instead of per type
 	 * @return  int             	0 if KO, 1 if OK
 	 */
+<<<<<<< HEAD
 	function setAsDefault($id=0, $alltypes=0)
+=======
+    public function setAsDefault($id = 0, $alltypes = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$sql1 = "SELECT rowid as id, fk_soc, type FROM ".MAIN_DB_PREFIX."societe_rib";
 		$sql1.= " WHERE rowid = ".($id?$id:$this->id);
@@ -443,11 +547,20 @@ class CompanyPaymentMode extends CommonObject
 	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return	string 			       Label of status
 	 */
+<<<<<<< HEAD
 	function getLibStatut($mode=0)
 	{
 		return $this->LibStatut($this->status,$mode);
 	}
 
+=======
+    public function getLibStatut($mode = 0)
+	{
+		return $this->LibStatut($this->status, $mode);
+	}
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *  Return the status
 	 *
@@ -455,6 +568,7 @@ class CompanyPaymentMode extends CommonObject
 	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return string 			       	Label of status
 	 */
+<<<<<<< HEAD
 	static function LibStatut($status,$mode=0)
 	{
 		global $langs;
@@ -494,6 +608,42 @@ class CompanyPaymentMode extends CommonObject
 		{
 			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
 			if ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
+=======
+	public static function LibStatut($status, $mode = 0)
+	{
+        // phpcs:enable
+		global $langs;
+
+		if ($mode == 0 || $mode == 1)
+		{
+			if ($status == 1) return $langs->trans('Enabled');
+			elseif ($status == 0) return $langs->trans('Disabled');
+		}
+		elseif ($mode == 2)
+		{
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
+		}
+		elseif ($mode == 3)
+		{
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5');
+		}
+		elseif ($mode == 4)
+		{
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
+		}
+		elseif ($mode == 5)
+		{
+			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
+			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
+		}
+		elseif ($mode == 6)
+		{
+			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
+			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 	}
 
@@ -503,7 +653,11 @@ class CompanyPaymentMode extends CommonObject
 	 *	@param  int		$id       Id of order
 	 *	@return	void
 	 */
+<<<<<<< HEAD
 	function info($id)
+=======
+    public function info($id)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$sql = 'SELECT rowid, date_creation as datec, tms as datem,';
 		$sql.= ' fk_user_creat, fk_user_modif';
@@ -543,7 +697,10 @@ class CompanyPaymentMode extends CommonObject
 			}
 
 			$this->db->free($result);
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		else
 		{
@@ -561,5 +718,8 @@ class CompanyPaymentMode extends CommonObject
 	{
 		$this->initAsSpecimenCommon();
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

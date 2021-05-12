@@ -38,9 +38,15 @@ SmsStatusNotSent=No enviado
 SmsSuccessfulySent=SMS enviado correctamente (desde %s hasta %s)
 ErrorSmsRecipientIsEmpty=El número del destinatario está vacío
 WarningNoSmsAdded=Sin nuevos números de teléfono a añadir a la lista de destinatarios.
+<<<<<<< HEAD
 ConfirmValidSms=¿Confirma la eliminación de esta campaña?
 NbOfUniqueSms=Nº de teléfonos únicos
 NbOfSms=Nº de teléfono
+=======
+ConfirmValidSms=¿Confirma la validación de esta campaña?
+NbOfUniqueSms=Nº de teléfonos únicos
+NbOfSms=Nº de teléfonos
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ThisIsATestMessage=Este es un mensaje de prueba
 SendSms=Enviar SMS
 SmsInfoCharRemain=Nº restante de caracteres

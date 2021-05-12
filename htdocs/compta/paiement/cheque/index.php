@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2009      Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2016      Juanjo Menent	    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,7 +28,11 @@
  *		\brief      Home page for cheque receipts
  */
 
+<<<<<<< HEAD
 require('../../../main.inc.php');
+=======
+require '../../../main.inc.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
@@ -33,7 +41,11 @@ $langs->loadLangs(array('banks', 'categories', 'compta', 'bills'));
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
+<<<<<<< HEAD
 $result = restrictedArea($user, 'banque', '','');
+=======
+$result = restrictedArea($user, 'banque', '', '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 $checkdepositstatic=new RemiseCheque($db);
@@ -44,7 +56,11 @@ $accountstatic=new Account($db);
  * View
  */
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("ChequesArea"));
+=======
+llxHeader('', $langs->trans("ChequesArea"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print load_fiche_titre($langs->trans("ChequesArea"));
 
@@ -66,6 +82,7 @@ print '<tr class="liste_titre">';
 print '<th colspan="2">'.$langs->trans("BankChecks")."</th>\n";
 print "</tr>\n";
 
+<<<<<<< HEAD
 if ($resql)
 {
   if ($row = $db->fetch_row($resql) )
@@ -82,6 +99,22 @@ if ($resql)
 else
 {
   dol_print_error($db);
+=======
+if ($resql) {
+    if ($row = $db->fetch_row($resql) ) {
+        $num = $row[0];
+    }
+    print '<tr class="oddeven">';
+    print '<td>'.$langs->trans("BankChecksToReceipt").'</td>';
+    print '<td class="right">';
+    print '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/card.php?leftmenu=customers_bills_checks&action=new">'.$num.'</a>';
+    print '</td></tr>';
+    print "</table>\n";
+}
+else
+{
+    dol_print_error($db);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 
@@ -105,12 +138,21 @@ if ($resql)
 {
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
+<<<<<<< HEAD
 	print '<th>'.$langs->trans("LastCheckReceiptShort",$max).'</th>';
 	print '<th>'.$langs->trans("Date")."</th>";
 	print '<th>'.$langs->trans("Account").'</th>';
 	print '<th align="right">'.$langs->trans("NbOfCheques").'</th>';
 	print '<th align="right">'.$langs->trans("Amount").'</th>';
 	print '<th align="right">'.$langs->trans("Status").'</th>';
+=======
+	print '<th>'.$langs->trans("LastCheckReceiptShort", $max).'</th>';
+	print '<th>'.$langs->trans("Date")."</th>";
+	print '<th>'.$langs->trans("Account").'</th>';
+	print '<th class="right">'.$langs->trans("NbOfCheques").'</th>';
+	print '<th class="right">'.$langs->trans("Amount").'</th>';
+	print '<th class="right">'.$langs->trans("Status").'</th>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print "</tr>\n";
 
 	while ( $objp = $db->fetch_object($resql) )
@@ -131,11 +173,19 @@ if ($resql)
 		print '<tr class="oddeven">'."\n";
 
 		print '<td>'.$checkdepositstatic->getNomUrl(1).'</td>';
+<<<<<<< HEAD
 		print '<td>'.dol_print_date($db->jdate($objp->db),'day').'</td>';
 		print '<td>'.$accountstatic->getNomUrl(1).'</td>';
 		print '<td align="right">'.$objp->nbcheque.'</td>';
 		print '<td align="right">'.price($objp->amount).'</td>';
 		print '<td align="right">'.$checkdepositstatic->LibStatut($objp->statut,3).'</td>';
+=======
+		print '<td>'.dol_print_date($db->jdate($objp->db), 'day').'</td>';
+		print '<td>'.$accountstatic->getNomUrl(1).'</td>';
+		print '<td class="right">'.$objp->nbcheque.'</td>';
+		print '<td class="right">'.price($objp->amount).'</td>';
+		print '<td class="right">'.$checkdepositstatic->LibStatut($objp->statut, 3).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		print '</tr>';
 	}
@@ -151,6 +201,11 @@ else
 
 print '</div></div></div>';
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

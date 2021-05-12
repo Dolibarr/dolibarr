@@ -1,8 +1,13 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2012 Philippe Grand	    <philippe.grand@atoo-net.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2011-2019 Philippe Grand	    <philippe.grand@atoo-net.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +27,13 @@
 /**
  *  \file       htdocs/core/modules/fichinter/modules_fichinter.php
  *  \ingroup    ficheinter
+<<<<<<< HEAD
  *  \brief      Fichier contenant la classe mere de generation des fiches interventions en PDF
  *   			et la classe mere de numerotation des fiches interventions
+=======
+ *  \brief      File that contains parent class for PDF interventions models
+ *   			and parent class for interventions numbering models
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
@@ -34,9 +44,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
  */
 abstract class ModelePDFFicheinter extends CommonDocGenerator
 {
+<<<<<<< HEAD
 	var $error='';
 
 
+=======
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *	Return list of active generation modules
 	 *
@@ -44,6 +64,7 @@ abstract class ModelePDFFicheinter extends CommonDocGenerator
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
+<<<<<<< HEAD
 	static function liste_modeles($db,$maxfilenamelength=0)
 	{
 		global $conf;
@@ -55,33 +76,70 @@ abstract class ModelePDFFicheinter extends CommonDocGenerator
 		$liste=getListOfModels($db,$type,$maxfilenamelength);
 
 		return $liste;
+=======
+	public static function liste_modeles($db, $maxfilenamelength = 0)
+	{
+        // phpcs:enable
+		global $conf;
+
+		$type='ficheinter';
+		$list=array();
+
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+		$list=getListOfModels($db, $type, $maxfilenamelength);
+
+		return $list;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 }
 
 
 /**
+<<<<<<< HEAD
  *  Classe mere des modeles de numerotation des references de fiches d'intervention
  */
 abstract class ModeleNumRefFicheinter
 {
 	var $error='';
+=======
+ *  Parent class numbering models of intervention sheet references
+ */
+abstract class ModeleNumRefFicheinter
+{
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	/**
 	 * 	Return if a module can be used or not
 	 *
 	 * 	@return		boolean     true if module can be used
 	 */
+<<<<<<< HEAD
 	function isEnabled()
+=======
+	public function isEnabled()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return true;
 	}
 
 	/**
+<<<<<<< HEAD
 	 * 	Renvoi la description par defaut du modele de numerotation
 	 *
 	 * 	@return     string      Texte descripif
 	 */
 	function info()
+=======
+	 * 	Returns the default description of the numbering template
+	 *
+	 * 	@return     string      Descriptive text
+	 */
+	public function info()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 		$langs->load("ficheinter");
@@ -89,11 +147,19 @@ abstract class ModeleNumRefFicheinter
 	}
 
 	/**
+<<<<<<< HEAD
 	 * 	Renvoi un exemple de numerotation
 	 *
 	 * 	@return     string      Example
 	 */
 	function getExample()
+=======
+	 * 	Return a numbering example
+	 *
+	 * 	@return     string      Example
+	 */
+	public function getExample()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 		$langs->load("ficheinter");
@@ -101,46 +167,82 @@ abstract class ModeleNumRefFicheinter
 	}
 
 	/**
+<<<<<<< HEAD
 	 * 	Test si les numeros deja en vigueur dans la base ne provoquent pas de
 	 * 	de conflits qui empechera cette numerotation de fonctionner.
 	 *
 	 * 	@return     boolean     false si conflit, true si ok
 	 */
 	function canBeActivated()
+=======
+	 * 	Tests if the numbers already in force in the database do not cause conflicts
+	 *  that would prevent this numbering from working.
+	 *
+	 * 	@return     boolean     false si conflit, true si ok
+	 */
+	public function canBeActivated()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return true;
 	}
 
 	/**
+<<<<<<< HEAD
 	 * 	Renvoi prochaine valeur attribuee
 	 *
 	 * 	@return     string      Valeur
 	 */
 	function getNextValue()
+=======
+	 * 	Return the next assigned value
+	 *
+	 * 	@return     string      Value
+	 */
+	public function getNextValue()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
 	}
 
 	/**
+<<<<<<< HEAD
 	 * 	Renvoi version du module numerotation
 	 *
 	 * 	@return     string      Valeur
 	 */
 	function getVersion()
+=======
+	 * 	Return the version of the numbering module
+	 *
+	 * 	@return     string      Value
+	 */
+	public function getVersion()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 		$langs->load("admin");
 
 		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
+<<<<<<< HEAD
 		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
 		if ($this->version == 'dolibarr') return DOL_VERSION;
 		if ($this->version) return $this->version;
 		return $langs->trans("NotAvailable");
+=======
+		elseif ($this->version == 'experimental') return $langs->trans("VersionExperimental");
+		elseif ($this->version == 'dolibarr') return DOL_VERSION;
+		elseif ($this->version) return $this->version;
+		else return $langs->trans("NotAvailable");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 }
 
 
+<<<<<<< HEAD
+=======
+// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 /**
  *  Create an intervention document on disk using template defined into FICHEINTER_ADDON_PDF
  *
@@ -153,8 +255,14 @@ abstract class ModeleNumRefFicheinter
  *  @param  int			$hideref        Hide ref
  *  @return int         				0 if KO, 1 if OK
  */
+<<<<<<< HEAD
 function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 {
+=======
+function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+{
+    // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	global $conf,$langs,$user;
 	$langs->load("ficheinter");
 
@@ -176,7 +284,11 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails=0, $
 	}
 
 	// If selected modele is a filename template (then $modele="modelname:filename")
+<<<<<<< HEAD
 	$tmp=explode(':',$modele,2);
+=======
+	$tmp=explode(':', $modele, 2);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     if (! empty($tmp[1]))
     {
         $modele=$tmp[0];
@@ -186,7 +298,11 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails=0, $
 	// Search template files
 	$file=''; $classname=''; $filefound=0;
 	$dirmodels=array('/');
+<<<<<<< HEAD
 	if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels,$conf->modules_parts['models']);
+=======
+	if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels, $conf->modules_parts['models']);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	foreach($dirmodels as $reldir)
 	{
     	foreach(array('doc','pdf') as $prefix)
@@ -194,7 +310,11 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails=0, $
     	    $file = $prefix."_".$modele.".modules.php";
 
     		// On verifie l'emplacement du modele
+<<<<<<< HEAD
 	        $file=dol_buildpath($reldir."core/modules/fichinter/doc/".$file,0);
+=======
+	        $file=dol_buildpath($reldir."core/modules/fichinter/doc/".$file, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     		if (file_exists($file))
     		{
     			$filefound=1;
@@ -228,14 +348,25 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails=0, $
 		else
 		{
 			$outputlangs->charset_output=$sav_charset_output;
+<<<<<<< HEAD
 			dol_print_error($db,"fichinter_pdf_create Error: ".$obj->error);
+=======
+			dol_print_error($db, "fichinter_pdf_create Error: ".$obj->error);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			return 0;
 		}
 	}
 	else
 	{
+<<<<<<< HEAD
 		print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$file);
 		return 0;
 	}
 }
 
+=======
+		print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $file);
+		return 0;
+	}
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

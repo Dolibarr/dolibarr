@@ -58,7 +58,11 @@ Language_ka_GE=Gruzīnu valoda
 Language_km_KH=Khmeru
 Language_kn_IN=Kannada
 Language_ko_KR=Korejiešu
+<<<<<<< HEAD
 Language_lo_LA=Lao
+=======
+Language_lo_LA=Laosa
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Language_lt_LT=Lietuviešu
 Language_lv_LV=Latviešu
 Language_mk_MK=Maķedoniešu
@@ -86,3 +90,7 @@ Language_uz_UZ=Uzbeku
 Language_vi_VN=Vjetnamiešu
 Language_zh_CN=Ķīniešu
 Language_zh_TW=Ķīniešu (tradicionālā)
+<<<<<<< HEAD
+=======
+Language_bh_MY=Malajiešu valoda
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

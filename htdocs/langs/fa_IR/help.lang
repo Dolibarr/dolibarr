@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - help
+<<<<<<< HEAD
 CommunitySupport=انجمن / پشتیبانی از ویکی
 EMailSupport=پشتیبانی ایمیل
 RemoteControlSupport=زمان واقعی آنلاین / پشتیبانی از راه دور
@@ -24,3 +25,27 @@ LinkToGoldMember=شما می توانید یکی از مربی های Dolibarr �
 PossibleLanguages=زبانهای پشتیبانی شده
 SubscribeToFoundation=کمک به پروژه Dolibarr، مشترک به پایه و اساس
 SeeOfficalSupport=برای حمایت Dolibarr رسمی در زبان شما: <br> <a href="%s" target="_blank"><b>از٪ s</b></a>
+=======
+CommunitySupport=پشتیبانی انجمن/ویکی
+EMailSupport=پشتیبانی از طریق رایانامه
+RemoteControlSupport=پشتیبانی برخط آنی/از راه دور
+OtherSupport=سایر انواع پشتیبانی
+ToSeeListOfAvailableRessources=برای تماس/نمایش منابع فعال
+HelpCenter=مرکز کمک
+DolibarrHelpCenter=مرکز کمک و پشتیبانی Dolibarr
+ToGoBackToDolibarr=در غیر این‌صورت <a href="%s">برای ادامۀ استفاده از Dolibarr اینجا کلیک کنید</a>.
+TypeOfSupport=نوع پشتیبانی
+TypeSupportCommunauty=جامعۀ‌مجازی (رایگان)
+TypeSupportCommercial=تجاری
+TypeOfHelp=نوع
+NeedHelpCenter=به کمک و پشتیبانی احتیاج دارید؟
+Efficiency=تاثیرگذاری
+TypeHelpOnly=فقط راهنمائی
+TypeHelpDev=راهنمائی + توسعه
+TypeHelpDevForm=راهنمائی+توسعه+آموزش
+BackToHelpCenter=در غیر این‌صورت، <a href="%s"> به صفحۀ اصلی مرکز کمک بازگردید </a>.
+LinkToGoldMember=شما می‌توانید با کلیک بر بخش مربوطه یکی از آموزش‌دهندگان از پیش انتخاب شدۀ Dolibarr برای زبان خودتان باشید (%s)، (وضعیت و قیمت حداکثر به طور خودکار به‌هنگام می‌شود):
+PossibleLanguages=زبان‌های پشتیبانی شده
+SubscribeToFoundation=پروژه Dolibarr را یاری کنید، و در مؤسسۀ آن عضو شوید
+SeeOfficalSupport=برای حمایت رسمی Dolibarr به زبان شما: <br><b><a href="%s" target="_blank">%s</a></b>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -26,7 +26,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
+<<<<<<< HEAD
 $graphwidth=DolGraph::getDefaultGraphSizeForStats('width',700);
+=======
+$graphwidth=DolGraph::getDefaultGraphSizeForStats('width', 700);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $mapratio = 0.5;
 $graphheight = round($graphwidth * $mapratio);
 
@@ -39,14 +43,23 @@ if ($user->societe_id > 0)
     $action = '';
     $socid = $user->societe_id;
 }
+<<<<<<< HEAD
 $result=restrictedArea($user,'adherent','','','cotisation');
+=======
+$result=restrictedArea($user, 'adherent', '', '', 'cotisation');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $year = strftime("%Y", time());
 $startyear=$year-2;
 $endyear=$year;
 
+<<<<<<< HEAD
 $langs->load("members");
 $langs->load("companies");
+=======
+// Load translation files required by the page
+$langs->loadLangs(array("companies","members"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 /*
@@ -62,7 +75,11 @@ if ($mode == 'memberbystate') $title=$langs->trans("MembersStatisticsByState");
 if ($mode == 'memberbytown') $title=$langs->trans("MembersStatisticsByTown");
 if ($mode == 'memberbyregion') $title=$langs->trans("MembersStatisticsByRegion");
 
+<<<<<<< HEAD
 llxHeader('', $title,'','',0,0,$arrayjs);
+=======
+llxHeader('', $title, '', '', 0, 0, $arrayjs);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print load_fiche_titre($title, $mesg);
 
@@ -77,8 +94,15 @@ if ($mode)
         $tab='statscountry';
 
         $data = array();
+<<<<<<< HEAD
         $sql.="SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, c.code, c.label";
         $sql.=" FROM ".MAIN_DB_PREFIX."adherent as d LEFT JOIN ".MAIN_DB_PREFIX."c_country as c on d.country = c.rowid";
+=======
+        $sql.="SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, c.code, c.label";
+        $sql.=" FROM ".MAIN_DB_PREFIX."adherent as d";
+        $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_country as c on d.country = c.rowid";
+        $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.rowid";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $sql.=" WHERE d.entity IN (".getEntity('adherent').")";
         $sql.=" AND d.statut = 1";
         $sql.=" GROUP BY c.label, c.code";
@@ -92,10 +116,19 @@ if ($mode)
         $tab='statsstate';
 
         $data = array();
+<<<<<<< HEAD
         $sql.="SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, co.code, co.label, c.nom as label2"; //
         $sql.=" FROM ".MAIN_DB_PREFIX."adherent as d LEFT JOIN ".MAIN_DB_PREFIX."c_departements as c on d.state_id = c.rowid";
         $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_regions as r on c.fk_region = r.code_region";
         $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_country as co on d.country = co.rowid";
+=======
+        $sql.="SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, co.code, co.label, c.nom as label2"; //
+        $sql.=" FROM ".MAIN_DB_PREFIX."adherent as d";
+        $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_departements as c on d.state_id = c.rowid";
+        $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_regions as r on c.fk_region = r.code_region";
+        $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_country as co on d.country = co.rowid";
+        $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.rowid";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $sql.=" WHERE d.entity IN (".getEntity('adherent').")";
         $sql.=" AND d.statut = 1";
         $sql.=" GROUP BY co.label, co.code, c.nom";
@@ -108,10 +141,19 @@ if ($mode)
         $tab='statsregion'; //onglet
 
         $data = array(); //tableau de donnée
+<<<<<<< HEAD
         $sql.="SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, co.code, co.label, r.nom as label2";
         $sql.=" FROM ".MAIN_DB_PREFIX."adherent as d LEFT JOIN ".MAIN_DB_PREFIX."c_departements as c on d.state_id = c.rowid";
         $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_regions as r on c.fk_region = r.code_region";
         $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_country as co on d.country = co.rowid";
+=======
+        $sql.="SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, co.code, co.label, r.nom as label2";
+        $sql.=" FROM ".MAIN_DB_PREFIX."adherent as d";
+        $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_departements as c on d.state_id = c.rowid";
+        $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_regions as r on c.fk_region = r.code_region";
+        $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_country as co on d.country = co.rowid";
+        $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.rowid";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $sql.=" WHERE d.entity IN (".getEntity('adherent').")";
         $sql.=" AND d.statut = 1";
         $sql.=" GROUP BY co.label, co.code, r.nom"; //+
@@ -124,16 +166,27 @@ if ($mode)
         $tab='statstown';
 
         $data = array();
+<<<<<<< HEAD
         $sql.="SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, c.code, c.label, d.town as label2";
         $sql.=" FROM ".MAIN_DB_PREFIX."adherent as d";
         $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_country as c on d.country = c.rowid";
+=======
+        $sql.="SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, c.code, c.label, d.town as label2";
+        $sql.=" FROM ".MAIN_DB_PREFIX."adherent as d";
+        $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_country as c on d.country = c.rowid";
+        $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.rowid";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $sql.=" WHERE d.entity IN (".getEntity('adherent').")";
         $sql.=" AND d.statut = 1";
         $sql.=" GROUP BY c.label, c.code, d.town";
         //print $sql;
     }
 
+<<<<<<< HEAD
     $langsen=new Translate('',$conf);
+=======
+    $langsen=new Translate('', $conf);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $langsen->setDefaultLang('en_US');
     $langsen->load("dict");
     //print $langsen->trans("Country"."FI");exit;
@@ -154,6 +207,7 @@ if ($mode)
                             'label_en'=>(($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code)!="Country".$obj->code)?$langsen->transnoentitiesnoconv("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
 							'code'=>$obj->code,
 							'nb'=>$obj->nb,
+<<<<<<< HEAD
 							'lastdate'=>$db->jdate($obj->lastdate)
                 );
             }
@@ -166,13 +220,35 @@ if ($mode)
 							'lastdate'=>$db->jdate($obj->lastdate)
                 );
 	}
+=======
+							'lastdate'=>$db->jdate($obj->lastdate),
+                            'lastsubscriptiondate'=>$db->jdate($obj->lastsubscriptiondate)
+                );
+            }
+            if ($mode == 'memberbyregion') //+
+            {
+                $data[]=array(
+                    'label'=>(($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code)?$langs->trans("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
+                    'label_en'=>(($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code)!="Country".$obj->code)?$langsen->transnoentitiesnoconv("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
+				    'label2'=>($obj->label2?$obj->label2:$langs->trans("Unknown")),
+					'nb'=>$obj->nb,
+					'lastdate'=>$db->jdate($obj->lastdate),
+                    'lastsubscriptiondate'=>$db->jdate($obj->lastsubscriptiondate)
+                );
+	        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             if ($mode == 'memberbystate')
             {
                 $data[]=array('label'=>(($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code)?$langs->trans("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
                             'label_en'=>(($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code)!="Country".$obj->code)?$langsen->transnoentitiesnoconv("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
 				            'label2'=>($obj->label2?$obj->label2:$langs->trans("Unknown")),
 							'nb'=>$obj->nb,
+<<<<<<< HEAD
 							'lastdate'=>$db->jdate($obj->lastdate)
+=======
+							'lastdate'=>$db->jdate($obj->lastdate),
+                            'lastsubscriptiondate'=>$db->jdate($obj->lastsubscriptiondate)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 );
             }
             if ($mode == 'memberbytown')
@@ -181,7 +257,12 @@ if ($mode)
                             'label_en'=>(($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code)!="Country".$obj->code)?$langsen->transnoentitiesnoconv("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
                             'label2'=>($obj->label2?$obj->label2:$langs->trans("Unknown")),
                             'nb'=>$obj->nb,
+<<<<<<< HEAD
                             'lastdate'=>$db->jdate($obj->lastdate)
+=======
+                            'lastdate'=>$db->jdate($obj->lastdate),
+                            'lastsubscriptiondate'=>$db->jdate($obj->lastsubscriptiondate)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 );
             }
 
@@ -210,9 +291,15 @@ if ($mode && ! count($data))
 else
 {
     if ($mode == 'memberbycountry') print $langs->trans("MembersByCountryDesc").'<br>';
+<<<<<<< HEAD
     else if ($mode == 'memberbystate') print $langs->trans("MembersByStateDesc").'<br>';
     else if ($mode == 'memberbytown') print $langs->trans("MembersByTownDesc").'<br>';
     else if ($mode == 'memberbyregion') print $langs->trans("MembersByRegion").'<br>';//+
+=======
+    elseif ($mode == 'memberbystate') print $langs->trans("MembersByStateDesc").'<br>';
+    elseif ($mode == 'memberbytown') print $langs->trans("MembersByTownDesc").'<br>';
+    elseif ($mode == 'memberbyregion') print $langs->trans("MembersByRegion").'<br>';//+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     else
     {
         print $langs->trans("MembersStatisticsDesc").'<br>';
@@ -223,7 +310,11 @@ else
         print '<br>';
         print '<a href="'.$_SERVER["PHP_SELF"].'?mode=memberbytown">'.$langs->trans("MembersStatisticsByTown").'</a><br>';
         print '<br>';//+
+<<<<<<< HEAD
 	print '<a href="'.$_SERVER["PHP_SELF"].'?mode=memberbyregion">'.$langs->trans("MembersStatisticsByRegion").'</a><br>';//+
+=======
+		print '<a href="'.$_SERVER["PHP_SELF"].'?mode=memberbyregion">'.$langs->trans("MembersStatisticsByRegion").'</a><br>';//+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
     print '<br>';
 }
@@ -232,7 +323,11 @@ else
 // Show graphics
 if (count($arrayjs) && $mode == 'memberbycountry')
 {
+<<<<<<< HEAD
     $color_file = DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/graph-color.php';
+=======
+    $color_file = DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     if (is_readable($color_file)) include_once $color_file;
 
     // Assume we've already included the proper headers so just call our script inline
@@ -267,7 +362,11 @@ if (count($arrayjs) && $mode == 'memberbycountry')
     //print "\toptions['zoomOutLabel'] = '".dol_escape_js($langs->transnoentitiesnoconv("Numbers"))."';\n";
     print "\toptions['width'] = ".$graphwidth.";\n";
     print "\toptions['height'] = ".$graphheight.";\n";
+<<<<<<< HEAD
     print "\toptions['colors'] = [0x".colorArrayToHex($theme_datacolor[1],'BBBBBB').", 0x".colorArrayToHex($theme_datacolor[0],'444444')."];\n";
+=======
+    print "\toptions['colors'] = [0x".colorArrayToHex($theme_datacolor[1], 'BBBBBB').", 0x".colorArrayToHex($theme_datacolor[0], '444444')."];\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print "\tvar container = document.getElementById('".$mode."');\n";
     print "\tvar geomap = new google.visualization.GeoMap(container);\n";
     print "\tgeomap.draw(data, options);\n";
@@ -275,7 +374,11 @@ if (count($arrayjs) && $mode == 'memberbycountry')
     print "</script>\n";
 
     // print the div tag that will contain the map
+<<<<<<< HEAD
     print '<div align="center" id="'.$mode.'"></div>'."\n";
+=======
+    print '<div class="center" id="'.$mode.'"></div>'."\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print '<br>';
 }
 
@@ -285,22 +388,39 @@ if ($mode)
     print '<table class="liste" width="100%">';
     print '<tr class="liste_titre">';
     print '<td>'.$label.'</td>';
+<<<<<<< HEAD
     if ($label2) print '<td align="center">'.$label2.'</td>';
     print '<td align="right">'.$langs->trans("NbOfMembers").'</td>';
     print '<td align="center">'.$langs->trans("LastMemberDate").'</td>';
     print '</tr>';
 
     $oldyear=0;
+=======
+    if ($label2) print '<td class="center">'.$label2.'</td>';
+    print '<td class="right">'.$langs->trans("NbOfMembers").'</td>';
+    print '<td class="center">'.$langs->trans("LastMemberDate").'</td>';
+    print '<td class="center">'.$langs->trans("LatestSubscriptionDate").'</td>';
+    print '</tr>';
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     foreach ($data as $val)
     {
         $year = $val['year'];
         print '<tr class="oddeven">';
         print '<td>'.$val['label'].'</td>';
+<<<<<<< HEAD
         if ($label2) print '<td align="center">'.$val['label2'].'</td>';
         print '<td align="right">'.$val['nb'].'</td>';
         print '<td align="center">'.dol_print_date($val['lastdate'],'dayhour').'</td>';
         print '</tr>';
         $oldyear=$year;
+=======
+        if ($label2) print '<td class="center">'.$val['label2'].'</td>';
+        print '<td class="right">'.$val['nb'].'</td>';
+        print '<td class="center">'.dol_print_date($val['lastdate'], 'dayhour').'</td>';
+        print '<td class="center">'.dol_print_date($val['lastsubscriptiondate'], 'dayhour').'</td>';
+        print '</tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
     print '</table>';
@@ -309,8 +429,13 @@ if ($mode)
 
 dol_fiche_end();
 
+<<<<<<< HEAD
 
 
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

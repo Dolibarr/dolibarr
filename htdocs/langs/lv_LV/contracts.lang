@@ -40,7 +40,11 @@ ConfirmCloseContract=This will close all services (active or not). Are you sure 
 ConfirmCloseService=Vai jūs tiešām vēlaties aizvērt šo pakalpojumu ar datumu <b>%s</b> ?
 ValidateAContract=Apstiprināt līgumu
 ActivateService=Aktivizēt pakalpojumu
+<<<<<<< HEAD
 ConfirmActivateService=Are you sure you want to activate this service with date <b>%s</b>?
+=======
+ConfirmActivateService=Vai tiešām vēlaties aktivizēt šo pakalpojumu sākot ar datumu <b> %s </b>?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 RefContract=Līguma atsauce
 DateContract=Līguma datums
 DateServiceActivate=Pakalpojuma aktivizēšanas datums
@@ -52,7 +56,11 @@ ListOfRunningServices=Saraksts ar aktīvajiem pakalpojumiem
 NotActivatedServices=Neaktīvais pakalpojumi (starp apstiprinātiem līgumiem)
 BoardNotActivatedServices=Pakalpojumi aktivizēt starp apstiprinātiem līgumiem
 LastContracts=Jaunākie %s līgumi
+<<<<<<< HEAD
 LastModifiedServices=Pēdējais %s labotais pakalpojums
+=======
+LastModifiedServices=Jaunākais %s labotais pakalpojums
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ContractStartDate=Sākuma datums
 ContractEndDate=Beigu datums
 DateStartPlanned=Plānotais sākuma datums
@@ -64,15 +72,27 @@ DateStartRealShort=Real sākuma datums
 DateEndReal=Real beigu datums
 DateEndRealShort=Real beigu datums
 CloseService=Aizvērt pakalpojumu
+<<<<<<< HEAD
 BoardRunningServices=Beigušies darbojošies pakalpojumi
 ServiceStatus=Pakalpojuma statuss
 DraftContracts=Projektu līgumi
 CloseRefusedBecauseOneServiceActive=Līgumu nevar tikt slēgts kā tur ir vismaz viens atvērts pakalpojums uz to
+=======
+BoardRunningServices=Pakalpojumi darbojas
+BoardExpiredServices=Pakalpojumi beidzās
+ServiceStatus=Pakalpojuma statuss
+DraftContracts=Projektu līgumi
+CloseRefusedBecauseOneServiceActive=Līgumu nevar slēgt, jo tajā ir vismaz viens atvērts pakalpojums
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActivateAllContracts=Aktivizējiet visas līguma līnijas
 CloseAllContracts=Aizveriet visus līguma līnijas
 DeleteContractLine=Izdzēst līgumu līniju
 ConfirmDeleteContractLine=Vai tiešām vēlaties dzēst šo līguma līniju?
+<<<<<<< HEAD
 MoveToAnotherContract=Pārcelšanās serviss citā līgumu.
+=======
+MoveToAnotherContract=Pārvietot servisu citā līgumā.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmMoveToAnotherContract=Es choosed jaunu mērķa līgumu, un apstiprinu, ka vēlaties, lai pārvietotu šo pakalpojumu noslēgtu šo līgumu.
 ConfirmMoveToAnotherContractQuestion=Choose in which existing contract (of same third party), you want to move this service
 PaymentRenewContractId=Atjaunot līgumu pozīcija (numurs %s)
@@ -82,6 +102,7 @@ ListOfServicesToExpireWithDuration=Pakalpojumu sarakstu beidzas %s dienās
 ListOfServicesToExpireWithDurationNeg=Saraksts pakalpojumu beidzies no vairāk nekā %s dienas
 ListOfServicesToExpire=Saraksts pakalpojumu beigsies
 NoteListOfYourExpiredServices=Šajā sarakstā ir tikai pakalpojumu līgumi par trešo pušu jums ir saistītas kā pārdošanas pārstāvis.
+<<<<<<< HEAD
 StandardContractsTemplate=Standard contracts template
 ContactNameAndSignature=For %s, name and signature:
 OnlyLinesWithTypeServiceAreUsed=Only lines with type "Service" will be cloned.
@@ -89,6 +110,15 @@ CloneContract=Klonēt līgumu
 ConfirmCloneContract=Vai tiešām vēlaties klonēt līgumu <b> %s </b>?
 LowerDateEndPlannedShort=Aktīvo pakalpojumu beigu datums
 SendContractRef=Informācija par līgumu __REF__
+=======
+StandardContractsTemplate=Standarta līgumu paraugs
+ContactNameAndSignature=Kam %s vārds un paraksts:
+OnlyLinesWithTypeServiceAreUsed=Only lines with type "Service" will be cloned.
+ConfirmCloneContract=Vai tiešām vēlaties klonēt līgumu <b> %s </b>?
+LowerDateEndPlannedShort=Aktīvo pakalpojumu beigu datums
+SendContractRef=Informācija par līgumu __REF__
+OtherContracts=Citi līgumi
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Tirdzniecības pārstāvis, parakstot līgumu,
 TypeContact_contrat_internal_SALESREPFOLL=Tirdzniecības pārstāvis, turpinot darboties līgums

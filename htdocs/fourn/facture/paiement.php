@@ -4,11 +4,20 @@
  * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
  * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2017       Alexandre Spangaro      <aspangaro@zendsi.com>
+=======
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
+ * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2015       Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2017       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +36,11 @@
 /**
  *	\file       htdocs/fourn/facture/paiement.php
  *	\ingroup    fournisseur,facture
+<<<<<<< HEAD
  *	\brief      Payment page for suppliers invoices
+=======
+ *	\brief      Payment page for supplier invoices
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  */
 
 require '../../main.inc.php';
@@ -37,6 +50,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
+<<<<<<< HEAD
 $langs->load('companies');
 $langs->load('bills');
 $langs->load('banks');
@@ -72,6 +86,41 @@ if (! $sortfield) $sortfield="p.rowid";
 $optioncss = GETPOST('optioncss','alpha');
 
 $amounts = array();array();
+=======
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'bills', 'banks', 'compta'));
+
+$action		= GETPOST('action', 'alpha');
+$confirm	= GETPOST('confirm', 'alpha');
+$optioncss = GETPOST('optioncss', 'alpha');
+
+$facid		= GETPOST('facid', 'int');
+$socid		= GETPOST('socid', 'int');
+$accountid	= GETPOST('accountid', 'int');
+$day		= GETPOST('day', 'int');
+$month		= GETPOST('month', 'int');
+$year		= GETPOST('year', 'int');
+
+$search_ref=GETPOST("search_ref", "alpha");
+$search_account=GETPOST("search_account", "int");
+$search_paymenttype=GETPOST("search_paymenttype");
+$search_amount=GETPOST("search_amount", 'alpha');    // alpha because we must be able to search on "< x"
+$search_company=GETPOST("search_company", 'alpha');
+$search_payment_num=GETPOST('search_payment_num', 'alpha');
+
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+if (! $sortorder) $sortorder="DESC";
+if (! $sortfield) $sortfield="p.rowid";
+
+$amounts = array();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $amountsresttopay=array();
 $addwarning=0;
 
@@ -86,12 +135,20 @@ if ($user->societe_id > 0)
 
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+<<<<<<< HEAD
 $hookmanager->initHooks(array('paymentsupplier'));
+=======
+$hookmanager->initHooks(array('paymentsupplierlist'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('paymentsupplier');
+<<<<<<< HEAD
 $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+=======
+$search_array_options=$extrafields->getOptionalsFromPost('paymentsupplier', '', 'search_');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $arrayfields=array();
 
@@ -101,7 +158,11 @@ $arrayfields=array();
  * Actions
  */
 
+<<<<<<< HEAD
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+=======
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
     $search_ref="";
     $search_account="";
@@ -116,7 +177,11 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 }
 
 $parameters=array('socid'=>$socid);
+<<<<<<< HEAD
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+=======
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -134,9 +199,15 @@ if (empty($reshook))
 	    $tmpinvoice=new FactureFournisseur($db);
 	    foreach ($_POST as $key => $value)
 	    {
+<<<<<<< HEAD
 	        if (substr($key,0,7) == 'amount_')
 	        {
 	            $cursorfacid = substr($key,7);
+=======
+	        if (substr($key, 0, 7) == 'amount_')
+	        {
+	            $cursorfacid = substr($key, 7);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	            $amounts[$cursorfacid] = price2num(trim(GETPOST($key)));
 	            $totalpayment = $totalpayment + $amounts[$cursorfacid];
 	            if (! empty($amounts[$cursorfacid])) $atleastonepaymentnotnull++;
@@ -156,15 +227,25 @@ if (empty($reshook))
 		            {
 		            	$langs->load("errors");
 		                //$error++;
+<<<<<<< HEAD
 		                setEventMessages($langs->transnoentities("WarningPaymentDateLowerThanInvoiceDate", dol_print_date($datepaye,'day'), dol_print_date($tmpinvoice->date, 'day'), $tmpinvoice->ref), null, 'warnings');
+=======
+		                setEventMessages($langs->transnoentities("WarningPaymentDateLowerThanInvoiceDate", dol_print_date($datepaye, 'day'), dol_print_date($tmpinvoice->date, 'day'), $tmpinvoice->ref), null, 'warnings');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		            }
 	            }
 
 	            $formquestion[$i++]=array('type' => 'hidden','name' => $key,  'value' => $_POST[$key]);
 	        }
+<<<<<<< HEAD
 			elseif (substr($key,0,21) == 'multicurrency_amount_')
 			{
 				$cursorfacid = substr($key,21);
+=======
+			elseif (substr($key, 0, 21) == 'multicurrency_amount_')
+			{
+				$cursorfacid = substr($key, 21);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	            $multicurrency_amounts[$cursorfacid] = price2num(trim(GETPOST($key)));
 	            $multicurrency_totalpayment += $multicurrency_amounts[$cursorfacid];
 	            if (! empty($multicurrency_amounts[$cursorfacid])) $atleastonepaymentnotnull++;
@@ -184,7 +265,11 @@ if (empty($reshook))
 		            {
 		            	$langs->load("errors");
 		                //$error++;
+<<<<<<< HEAD
 		                setEventMessages($langs->transnoentities("WarningPaymentDateLowerThanInvoiceDate", dol_print_date($datepaye,'day'), dol_print_date($tmpinvoice->date, 'day'), $tmpinvoice->ref), null, 'warnings');
+=======
+		                setEventMessages($langs->transnoentities("WarningPaymentDateLowerThanInvoiceDate", dol_print_date($datepaye, 'day'), dol_print_date($tmpinvoice->date, 'day'), $tmpinvoice->ref), null, 'warnings');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		            }
 	            }
 
@@ -195,7 +280,11 @@ if (empty($reshook))
 	    // Check parameters
 	    if ($_POST['paiementid'] <= 0)
 	    {
+<<<<<<< HEAD
 	    	setEventMessages($langs->transnoentities('ErrorFieldRequired',$langs->transnoentities('PaymentMode')), null, 'errors');
+=======
+	    	setEventMessages($langs->transnoentities('ErrorFieldRequired', $langs->transnoentities('PaymentMode')), null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	        $error++;
 	    }
 
@@ -204,20 +293,32 @@ if (empty($reshook))
 	        // If bank module is on, account is required to enter a payment
 	        if (GETPOST('accountid') <= 0)
 	        {
+<<<<<<< HEAD
 	        	setEventMessages($langs->transnoentities('ErrorFieldRequired',$langs->transnoentities('AccountToCredit')), null, 'errors');
+=======
+	        	setEventMessages($langs->transnoentities('ErrorFieldRequired', $langs->transnoentities('AccountToCredit')), null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	            $error++;
 	        }
 	    }
 
 	    if (empty($totalpayment) && empty($multicurrency_totalpayment) && empty($atleastonepaymentnotnull))
 	    {
+<<<<<<< HEAD
 	    	setEventMessages($langs->transnoentities('ErrorFieldRequired',$langs->trans('PaymentAmount')), null, 'errors');
+=======
+	    	setEventMessages($langs->transnoentities('ErrorFieldRequired', $langs->trans('PaymentAmount')), null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	        $error++;
 	    }
 
 	    if (empty($datepaye))
 	    {
+<<<<<<< HEAD
 	    	setEventMessages($langs->transnoentities('ErrorFieldRequired',$langs->transnoentities('Date')), null, 'errors');
+=======
+	    	setEventMessages($langs->transnoentities('ErrorFieldRequired', $langs->transnoentities('Date')), null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	        $error++;
 	    }
 
@@ -249,12 +350,49 @@ if (empty($reshook))
 	{
 	    $error=0;
 
+<<<<<<< HEAD
 	    $datepaye = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
+=======
+	    $datepaye = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+
+        // Clean parameters amount if payment is for a credit note
+        foreach ($amounts as $key => $value)	// How payment is dispatched
+        {
+            $tmpinvoice = new FactureFournisseur($db);
+            $tmpinvoice->fetch($key);
+            if ($tmpinvoice->type == FactureFournisseur::TYPE_CREDIT_NOTE)
+            {
+                $newvalue = price2num($value, 'MT');
+                $amounts[$key] = - abs($newvalue);
+            }
+        }
+
+        foreach ($multicurrency_amounts as $key => $value)	// How payment is dispatched
+        {
+            $tmpinvoice = new FactureFournisseur($db);
+            $tmpinvoice->fetch($key);
+            if ($tmpinvoice->type == FactureFournisseur::TYPE_CREDIT_NOTE)
+            {
+                $newvalue = price2num($value, 'MT');
+                $multicurrency_amounts[$key] = - abs($newvalue);
+            }
+        }
+
+		//var_dump($amounts);
+        //var_dump($multicurrency_amounts);
+        //exit;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	    if (! $error)
 	    {
 	        $db->begin();
 
+<<<<<<< HEAD
+=======
+	        $thirdparty = new Societe($db);
+            if ($socid > 0) $thirdparty->fetch($socid);
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	        // Creation de la ligne paiement
 	        $paiement = new PaiementFourn($db);
 	        $paiement->datepaye     = $datepaye;
@@ -265,7 +403,11 @@ if (empty($reshook))
 	        $paiement->note         = $_POST['comment'];
 	        if (! $error)
 	        {
+<<<<<<< HEAD
 	            $paiement_id = $paiement->create($user,(GETPOST('closepaidinvoices')=='on'?1:0));
+=======
+	            $paiement_id = $paiement->create($user, (GETPOST('closepaidinvoices')=='on'?1:0), $thirdparty);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	            if ($paiement_id < 0)
 	            {
 	            	setEventMessages($paiement->error, $paiement->errors, 'errors');
@@ -275,7 +417,11 @@ if (empty($reshook))
 
 	        if (! $error)
 	        {
+<<<<<<< HEAD
 	            $result=$paiement->addPaymentToBank($user,'payment_supplier','(SupplierInvoicePayment)',$accountid,'','');
+=======
+	            $result=$paiement->addPaymentToBank($user, 'payment_supplier', '(SupplierInvoicePayment)', $accountid, '', '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	            if ($result < 0)
 	            {
 	            	setEventMessages($paiement->error, $paiement->errors, 'errors');
@@ -287,7 +433,11 @@ if (empty($reshook))
 	        {
 	            $db->commit();
 
+<<<<<<< HEAD
 	            // If payment dispatching on more than one invoice, we keep on summary page, otherwise go on invoice card
+=======
+	            // If payment dispatching on more than one invoice, we stay on summary page, otherwise go on invoice card
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	            $invoiceid=0;
 	            foreach ($paiement->amounts as $key => $amount)
 	            {
@@ -316,6 +466,7 @@ if (empty($reshook))
  * View
  */
 
+<<<<<<< HEAD
 $supplierstatic=new Societe($db);
 $invoicesupplierstatic = new FactureFournisseur($db);
 
@@ -323,13 +474,26 @@ llxHeader('',$langs->trans('ListPayment'));
 
 $form=new Form($db);
 $formother=new FormOther($db);
+=======
+$form=new Form($db);
+$formother=new FormOther($db);
+
+$supplierstatic=new Societe($db);
+$invoicesupplierstatic = new FactureFournisseur($db);
+
+llxHeader('', $langs->trans('ListPayment'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paiement')
 {
     $object = new FactureFournisseur($db);
     $result = $object->fetch($facid);
 
+<<<<<<< HEAD
     $datefacture=dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
+=======
+    $datefacture=dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $dateinvoice=($datefacture==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$datefacture);
 
     $sql = 'SELECT s.nom as name, s.rowid as socid,';
@@ -431,6 +595,10 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             print '<input type="hidden" name="facid" value="'.$facid.'">';
             print '<input type="hidden" name="ref_supplier" value="'.$obj->ref_supplier.'">';
             print '<input type="hidden" name="socid" value="'.$obj->socid.'">';
+<<<<<<< HEAD
+=======
+            print '<input type="hidden" name="type" id="invoice_type" value="'.$object->type.'">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             print '<input type="hidden" name="societe" value="'.$obj->name.'">';
 
             dol_fiche_head(null);
@@ -440,6 +608,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans('Company').'</td><td>';
             $supplierstatic->id=$obj->socid;
             $supplierstatic->name=$obj->name;
+<<<<<<< HEAD
             print $supplierstatic->getNomUrl(1,'supplier');
             print '</td></tr>';
             print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td>';
@@ -447,11 +616,24 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             print '</td></tr>';
             print '<tr><td class="fieldrequired">'.$langs->trans('PaymentMode').'</td><td>';
             $form->select_types_paiements(empty($_POST['paiementid'])?$obj->fk_mode_reglement:$_POST['paiementid'],'paiementid');
+=======
+            print $supplierstatic->getNomUrl(1, 'supplier');
+            print '</td></tr>';
+            print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td>';
+            print $form->selectDate($dateinvoice, '', '', '', 0, "addpaiement", 1, 1, 0, '', '', $object->date);
+            print '</td></tr>';
+            print '<tr><td class="fieldrequired">'.$langs->trans('PaymentMode').'</td><td>';
+            $form->select_types_paiements(empty($_POST['paiementid'])?$obj->fk_mode_reglement:$_POST['paiementid'], 'paiementid');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             print '</td>';
             if (! empty($conf->banque->enabled))
             {
                 print '<tr><td class="fieldrequired">'.$langs->trans('Account').'</td><td>';
+<<<<<<< HEAD
                 $form->select_comptes(empty($accountid)?$obj->fk_account:$accountid,'accountid',0,'',2);
+=======
+                $form->select_comptes(empty($accountid)?$obj->fk_account:$accountid, 'accountid', 0, '', 2);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 print '</td></tr>';
             }
             else
@@ -467,14 +649,24 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 
 			$parameters=array('facid'=>$facid, 'ref'=>$ref, 'objcanvas'=>$objcanvas);
+<<<<<<< HEAD
 			$reshook=$hookmanager->executeHooks('paymentsupplierinvoices',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+=======
+			$reshook=$hookmanager->executeHooks('paymentsupplierinvoices', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$error=$hookmanager->error; $errors=$hookmanager->errors;
 			if (empty($reshook))
 			{
 				/*
+<<<<<<< HEAD
 	             * Autres factures impayees
 	             */
 	            $sql = 'SELECT f.rowid as facid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.multicurrency_total_ttc, f.datef as df,';
+=======
+	             * All unpayed supplier invoices
+	             */
+	            $sql = 'SELECT f.rowid as facid, f.ref, f.ref_supplier, f.type, f.total_ht, f.total_ttc, f.multicurrency_total_ttc, f.datef as df, f.date_lim_reglement as dlr,';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	            $sql.= ' SUM(pf.amount) as am, SUM(pf.multicurrency_amount) as multicurrency_am';
 	            $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
 	            $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_facturefourn = f.rowid';
@@ -482,16 +674,35 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	            $sql.= ' AND f.fk_soc = '.$object->socid;
 	            $sql.= ' AND f.paye = 0';
 	            $sql.= ' AND f.fk_statut = 1';  // Statut=0 => non validee, Statut=2 => annulee
+<<<<<<< HEAD
 	            $sql.= ' GROUP BY f.rowid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.multicurrency_total_ttc, f.datef';
+=======
+	            if ($object->type != FactureFournisseur::TYPE_CREDIT_NOTE)
+	            {
+	                $sql .= ' AND f.type IN (0,1,3,5)';	// Standard invoice, replacement, deposit, situation
+	            }
+	            else
+	            {
+	                $sql .= ' AND f.type = 2';		// If paying back a credit note, we show all credit notes
+	            }
+                // Group by because we have a total
+	            $sql.= ' GROUP BY f.datef, f.ref, f.ref_supplier, f.rowid, f.type, f.total_ht, f.total_ttc, f.multicurrency_total_ttc, f.datef, f.date_lim_reglement';
+	            // Sort invoices by date and serial number: the older one comes first
+	            $sql.= ' ORDER BY f.datef ASC, f.ref ASC';
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	            $resql = $db->query($sql);
 	            if ($resql)
 	            {
 	                $num = $db->num_rows($resql);
 	                if ($num > 0)
 	                {
+<<<<<<< HEAD
 	                	$sign=1;
 	                	if ($object->type == 2) $sign=-1;
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	                    $i = 0;
 	                    print '<br>';
 
@@ -512,6 +723,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						print '<tr class="liste_titre">';
 	                    print '<td>'.$langs->trans('Invoice').'</td>';
 	                    print '<td>'.$langs->trans('RefSupplier').'</td>';
+<<<<<<< HEAD
 	                    print '<td align="center">'.$langs->trans('Date').'</td>';
 	                    if (!empty($conf->multicurrency->enabled)) print '<td>'.$langs->trans('Currency').'</td>';
 						if (!empty($conf->multicurrency->enabled)) print '<td align="right">'.$langs->trans('MulticurrencyAmountTTC').'</td>';
@@ -522,6 +734,19 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                    print '<td align="right">'.$langs->trans('RemainderToPay').'</td>';
 						print '<td align="center">'.$langs->trans('PaymentAmount').'</td>';
 						if (!empty($conf->multicurrency->enabled)) print '<td align="center">'.$langs->trans('MulticurrencyPaymentAmount').'</td>';
+=======
+	                    print '<td class="center">'.$langs->trans('Date').'</td>';
+	                    print '<td class="center">'.$langs->trans('DateMaxPayment').'</td>';
+	                    if (!empty($conf->multicurrency->enabled)) print '<td>'.$langs->trans('Currency').'</td>';
+						if (!empty($conf->multicurrency->enabled)) print '<td class="right">'.$langs->trans('MulticurrencyAmountTTC').'</td>';
+						if (!empty($conf->multicurrency->enabled)) print '<td class="right">'.$langs->trans('MulticurrencyAlreadyPaid').'</td>';
+						if (!empty($conf->multicurrency->enabled)) print '<td class="right">'.$langs->trans('MulticurrencyRemainderToPay').'</td>';
+	                    print '<td class="right">'.$langs->trans('AmountTTC').'</td>';
+	                    print '<td class="right">'.$langs->trans('AlreadyPaid').'</td>';
+	                    print '<td class="right">'.$langs->trans('RemainderToPay').'</td>';
+						print '<td class="center">'.$langs->trans('PaymentAmount').'</td>';
+						if (!empty($conf->multicurrency->enabled)) print '<td class="center">'.$langs->trans('MulticurrencyPaymentAmount').'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	                    print '</tr>';
 
 	                    $total=0;
@@ -531,6 +756,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                    {
 	                        $objp = $db->fetch_object($resql);
 
+<<<<<<< HEAD
 	                        $invoice=new FactureFournisseur($db);
 	                        $invoice->fetch($objp->facid);
 	                        $paiement = $invoice->getSommePaiement();
@@ -538,6 +764,22 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                        $deposits=$invoice->getSumDepositsUsed();
 	                        $alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
 	                        $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
+=======
+	                        $sign=1;
+	                        if ($objp->type == FactureFournisseur::TYPE_CREDIT_NOTE) $sign=-1;
+
+	                        $invoice=new FactureFournisseur($db);
+	                        $invoice->fetch($objp->facid);
+
+	                        $invoicesupplierstatic->ref=$objp->ref;
+	                        $invoicesupplierstatic->id=$objp->facid;
+
+	                        $paiement = $invoice->getSommePaiement();
+	                        $creditnotes=$invoice->getSumCreditNotesUsed();
+	                        $deposits=$invoice->getSumDepositsUsed();
+	                        $alreadypayed=price2num($paiement + $creditnotes + $deposits, 'MT');
+	                        $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits, 'MT');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	                        // Multicurrency Price
 	                        if (!empty($conf->multicurrency->enabled))
@@ -545,16 +787,25 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                        	$multicurrency_payment = $invoice->getSommePaiement(1);
 	                        	$multicurrency_creditnotes=$invoice->getSumCreditNotesUsed(1);
 	                        	$multicurrency_deposits=$invoice->getSumDepositsUsed(1);
+<<<<<<< HEAD
 	                        	$multicurrency_alreadypayed=price2num($multicurrency_payment + $multicurrency_creditnotes + $multicurrency_deposits,'MT');
 	                        	$multicurrency_remaintopay=price2num($invoice->multicurrency_total_ttc - $multicurrency_payment - $multicurrency_creditnotes - $multicurrency_deposits,'MT');
+=======
+	                        	$multicurrency_alreadypayed=price2num($multicurrency_payment + $multicurrency_creditnotes + $multicurrency_deposits, 'MT');
+	                        	$multicurrency_remaintopay=price2num($invoice->multicurrency_total_ttc - $multicurrency_payment - $multicurrency_creditnotes - $multicurrency_deposits, 'MT');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	                        }
 
 	                        print '<tr class="oddeven">';
 
 	                        // Ref
+<<<<<<< HEAD
 	                        print '<td>';
 	                        $invoicesupplierstatic->ref=$objp->ref;
 	                        $invoicesupplierstatic->id=$objp->facid;
+=======
+	                        print '<td class="nowraponall">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	                        print $invoicesupplierstatic->getNomUrl(1);
 	                        print '</td>';
 
@@ -562,37 +813,79 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                        print '<td>'.$objp->ref_supplier.'</td>';
 
 	                        // Date
+<<<<<<< HEAD
 	                        if ($objp->df > 0 )
 	                        {
 	                            print '<td align="center">';
+=======
+	                        if ($objp->df > 0)
+	                        {
+	                            print '<td class="center">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	                            print dol_print_date($db->jdate($objp->df), 'day').'</td>';
 	                        }
 	                        else
 	                        {
+<<<<<<< HEAD
 	                            print '<td align="center"><b>!!!</b></td>';
+=======
+	                            print '<td class="center"><b>!!!</b></td>';
+	                        }
+
+	                        // Date Max Payment
+	                        if ($objp->dlr > 0)
+	                        {
+	                            print '<td class="center">';
+	                            print dol_print_date($db->jdate($objp->dlr), 'day');
+
+	                            if ($invoice->hasDelay())
+	                            {
+	                                print img_warning($langs->trans('Late'));
+	                            }
+
+	                            print '</td>';
+	                        }
+	                        else
+	                        {
+	                            print '<td class="center"><b>--</b></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	                        }
 
 	                        // Multicurrency
 	                        if (!empty($conf->multicurrency->enabled))
 	                        {
     	                        // Currency
+<<<<<<< HEAD
 	                            print '<td align="center">'.$objp->multicurrency_code."</td>\n";
 
 	                            print '<td align="right">';
+=======
+	                            print '<td class="center">'.$objp->multicurrency_code."</td>\n";
+
+	                            print '<td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	                            if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency)
 	                            {
 	                                print price($objp->multicurrency_total_ttc);
 	                            }
 	                            print '</td>';
 
+<<<<<<< HEAD
 							    print '<td align="right">';
+=======
+							    print '<td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							    if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency)
 						        {
 						            print price($objp->multicurrency_am);
 							    }
 							    print '</td>';
 
+<<<<<<< HEAD
 							    print '<td align="right">';
+=======
+							    print '<td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							    if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency)
 						        {
 						            print price($objp->multicurrency_total_ttc - $objp->multicurrency_am);
@@ -600,6 +893,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							    print '</td>';
 	                        }
 
+<<<<<<< HEAD
 	                        print '<td align="right">'.price($objp->total_ttc).'</td>';
 
 	                        print '<td align="right">'.price($objp->am).'</td>';
@@ -608,6 +902,19 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 	                        // Amount
 	                        print '<td align="center">';
+=======
+	                        print '<td class="right">'.price($sign * $objp->total_ttc).'</td>';
+
+	                        print '<td class="right">'.price($sign * $objp->am);
+							if ($creditnotes) print '+'.price($creditnotes);
+							if ($deposits) print '+'.price($deposits);
+							print '</td>';
+
+	                        print '<td class="right">'.price($sign * $remaintopay).'</td>';
+
+	                        // Amount
+	                        print '<td class="center nowraponall">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	                        $namef = 'amount_'.$objp->facid;
 	                        $nameRemain = 'remain_'.$objp->facid;
@@ -615,7 +922,11 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                        if ($action != 'add_paiement')
 	                        {
 	                        	if (!empty($conf->use_javascript_ajax))
+<<<<<<< HEAD
 	                        		print img_picto("Auto fill",'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $remaintopay)."'");
+=======
+	                        		print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $remaintopay)."'");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	                        		print '<input type="hidden" class="remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
 	                        		print '<input type="text" size="8" class="amount" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">';
 	                        }
@@ -629,7 +940,11 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							// Multicurrency Price
 							if (! empty($conf->multicurrency->enabled))
 							{
+<<<<<<< HEAD
 								print '<td align="right">';
+=======
+								print '<td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 								// Add remind multicurrency amount
 								$namef = 'multicurrency_amount_'.$objp->facid;
@@ -640,7 +955,11 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 									if ($action != 'add_paiement')
 									{
 										if (!empty($conf->use_javascript_ajax))
+<<<<<<< HEAD
 											print img_picto("Auto fill",'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $multicurrency_remaintopay)."'");
+=======
+											print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $multicurrency_remaintopay)."'");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 											print '<input type=hidden class="multicurrency_remain" name="'.$nameRemain.'" value="'.$multicurrency_remaintopay.'">';
 											print '<input type="text" size="8" class="multicurrency_amount" name="'.$namef.'" value="'.$_POST[$namef].'">';
 									}
@@ -657,22 +976,42 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                        $total+=$objp->total_ht;
 	                        $total_ttc+=$objp->total_ttc;
 	                        $totalrecu+=$objp->am;
+<<<<<<< HEAD
+=======
+							$totalrecucreditnote+=$creditnotes;
+							$totalrecudeposits+=$deposits;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	                        $i++;
 	                    }
 	                    if ($i > 1)
 	                    {
 	                        // Print total
 	                        print '<tr class="liste_total">';
+<<<<<<< HEAD
 	                        print '<td colspan="3" align="left">'.$langs->trans('TotalTTC').':</td>';
+=======
+	                        print '<td colspan="4" class="left">'.$langs->trans('TotalTTC').':</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							if (!empty($conf->multicurrency->enabled)) print '<td>&nbsp;</td>';
 							if (!empty($conf->multicurrency->enabled)) print '<td>&nbsp;</td>';
 							if (!empty($conf->multicurrency->enabled)) print '<td>&nbsp;</td>';
 							if (!empty($conf->multicurrency->enabled)) print '<td>&nbsp;</td>';
+<<<<<<< HEAD
 	                        print '<td align="right"><b>'.price($total_ttc).'</b></td>';
 							print '<td align="right"><b>'.price($totalrecu).'</b></td>';
 	                        print '<td align="right"><b>'.price($total_ttc - $totalrecu).'</b></td>';
 	                        print '<td align="center" id="result" style="font-weight: bold;"></td>';		// Autofilled
 							if (!empty($conf->multicurrency->enabled)) print '<td align="right" id="multicurrency_result" style="font-weight: bold;"></td>';
+=======
+							print '<td class="right"><b>'.price($sign * $total_ttc).'</b></td>';
+							print '<td class="right"><b>'.price($sign * $totalrecu);
+							if ($totalrecucreditnote) print '+'.price($totalrecucreditnote);
+							if ($totalrecudeposits) print '+'.price($totalrecudeposits);
+							print	'</b></td>';
+							print '<td class="right"><b>'.price($sign * price2num($total_ttc - $totalrecu - $totalrecucreditnote - $totalrecudeposits, 'MT')).'</b></td>';
+	                        print '<td class="center" id="result" style="font-weight: bold;"></td>';		// Autofilled
+							if (!empty($conf->multicurrency->enabled)) print '<td class="right" id="multicurrency_result" style="font-weight: bold;"></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	                        print "</tr>\n";
 	                    }
 	                    print "</table>\n";
@@ -700,17 +1039,28 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	            $preselectedchoice=$addwarning?'no':'yes';
 
 	            print '<br>';
+<<<<<<< HEAD
 	            if (!empty($totalpayment)) $text=$langs->trans('ConfirmSupplierPayment',price($totalpayment),$langs->trans("Currency".$conf->currency));
 				if (!empty($multicurrency_totalpayment))
 				{
 					$text.='<br>'.$langs->trans('ConfirmSupplierPayment',price($multicurrency_totalpayment),$langs->trans("paymentInInvoiceCurrency"));
+=======
+	            if (!empty($totalpayment)) $text=$langs->trans('ConfirmSupplierPayment', price($totalpayment), $langs->trans("Currency".$conf->currency));
+				if (!empty($multicurrency_totalpayment))
+				{
+					$text.='<br>'.$langs->trans('ConfirmSupplierPayment', price($multicurrency_totalpayment), $langs->trans("paymentInInvoiceCurrency"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 	            if (GETPOST('closepaidinvoices'))
 	            {
 	                $text.='<br>'.$langs->trans("AllCompletelyPayedInvoiceWillBeClosed");
 	                print '<input type="hidden" name="closepaidinvoices" value="'.GETPOST('closepaidinvoices').'">';
 	            }
+<<<<<<< HEAD
 	            print $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$facture->id.'&socid='.$facture->socid.'&type='.$facture->type,$langs->trans('PayedSuppliersPayments'),$text,'confirm_paiement',$formquestion,$preselectedchoice);
+=======
+	            print $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$facture->id.'&socid='.$facture->socid.'&type='.$facture->type, $langs->trans('PayedSuppliersPayments'), $text, 'confirm_paiement', $formquestion, $preselectedchoice);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	        }
 
             print '</form>';
@@ -722,6 +1072,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 /*
  * Show list
  */
+<<<<<<< HEAD
 if (empty($action))
 {
     $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
@@ -729,6 +1080,15 @@ if (empty($action))
     $sortorder = GETPOST("sortorder",'alpha');
     $page=GETPOST("page",'int');
     if ($page == -1 || $page == null) { $page = 0 ; }
+=======
+if (empty($action) || $action == 'list')
+{
+    $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+    $sortfield = GETPOST("sortfield", 'alpha');
+    $sortorder = GETPOST("sortorder", 'alpha');
+    $page=GETPOST("page", 'int');
+    if (empty($page) || $page == -1) { $page = 0; }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $offset = $limit * $page ;
     $pageprev = $page - 1;
     $pagenext = $page + 1;
@@ -753,18 +1113,31 @@ if (empty($action))
     if (!$user->rights->societe->client->voir) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
     if ($socid > 0) $sql .= ' AND f.fk_soc = '.$socid;
     // Search criteria
+<<<<<<< HEAD
     if ($month > 0)
     {
         if ($year > 0 && empty($day))
         $sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($year,$month,false))."' AND '".$db->idate(dol_get_last_day($year,$month,false))."'";
         else if ($year > 0 && ! empty($day))
+=======
+    if ($month > 0) {
+        if ($year > 0 && empty($day))
+        $sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($year, $month, false))."' AND '".$db->idate(dol_get_last_day($year, $month, false))."'";
+        elseif ($year > 0 && ! empty($day))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $sql.= " AND p.datep BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
         else
         $sql.= " AND date_format(p.datep, '%m') = '".$month."'";
     }
+<<<<<<< HEAD
     else if ($year > 0)
     {
         $sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
+=======
+    elseif ($year > 0)
+    {
+        $sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($year, 1, false))."' AND '".$db->idate(dol_get_last_day($year, 12, false))."'";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
     if ($search_ref)       		    $sql .= natural_search('p.rowid', $search_ref);
     if ($search_account > 0)      	$sql .=" AND b.fk_account=".$search_account;
@@ -777,7 +1150,11 @@ if (empty($action))
     if (!$user->rights->societe->client->voir) $sql .= ", sc.fk_soc, sc.fk_user";
     // Add where from extra fields
 
+<<<<<<< HEAD
     $sql.= $db->order($sortfield,$sortorder);
+=======
+    $sql.= $db->order($sortfield, $sortorder);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     $nbtotalofrecords = '';
     if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -800,8 +1177,13 @@ if (empty($action))
         $i = 0;
 
         $param='';
+<<<<<<< HEAD
         if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
         if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+=======
+        if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+        if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         if ($day)                   $param.=($day?"&day=".urlencode($day):"");
         if ($month)                 $param.=($month?"&month=".urlencode($month):"");
         if ($year)                  $param.=($year?"&year=".urlencode($year):"");
@@ -809,7 +1191,11 @@ if (empty($action))
         if ($search_company)        $param.=($search_company?"&search_company=".urlencode($search_company):"");
         if ($search_amount != '')   $param.=($search_amount?"&search_amount=".urlencode($search_amount):"");
         if ($search_payment_num)    $param.=($search_payment_num?"&search_payment_num=".urlencode($search_payment_num):"");
+<<<<<<< HEAD
     	if ($optioncss != '')       $param.='&optioncss='.$optioncss;
+=======
+    	if ($optioncss != '')       $param.='&optioncss='.urlencode($optioncss);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	// Add $param from extra fields
     	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -817,9 +1203,16 @@ if (empty($action))
 
         print_barre_liste($langs->trans('SupplierPayments'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit);
 
+<<<<<<< HEAD
         print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
         if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+=======
+        print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+        if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="action" value="list">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
         print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
         print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
@@ -828,7 +1221,11 @@ if (empty($action))
         $moreforfilter='';
 
         $parameters=array();
+<<<<<<< HEAD
         $reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+=======
+        $reshook=$hookmanager->executeHooks('printFieldPreListTitle', $parameters);    // Note that $action and $object may have been modified by hook
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	if (empty($reshook)) $moreforfilter .= $hookmanager->resPrint;
     	else $moreforfilter = $hookmanager->resPrint;
 
@@ -847,6 +1244,7 @@ if (empty($action))
 
         // Lines for filters fields
         print '<tr class="liste_titre_filter">';
+<<<<<<< HEAD
         print '<td  class="liste_titre" align="left">';
         print '<input class="flat" type="text" size="4" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
         print '</td>';
@@ -871,12 +1269,42 @@ if (empty($action))
         print '<input class="flat" type="text" size="4" name="search_amount" value="'.dol_escape_htmltag($search_amount).'">';
         print '</td>';
         print '<td class="liste_titre" align="right">';
+=======
+        print '<td  class="liste_titre left">';
+        print '<input class="flat" type="text" size="4" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
+        print '</td>';
+        print '<td class="liste_titre center">';
+        if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="day" value="'.dol_escape_htmltag($day).'">';
+        print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="month" value="'.dol_escape_htmltag($month).'">';
+        $formother->select_year($year?$year:-1, 'year', 1, 20, 5);
+        print '</td>';
+        print '<td class="liste_titre">';
+        print '<input class="flat" type="text" size="6" name="search_company" value="'.dol_escape_htmltag($search_company).'">';
+        print '</td>';
+        print '<td class="liste_titre">';
+        $form->select_types_paiements($search_paymenttype, 'search_paymenttype', '', 2, 1, 1);
+        print '</td>';
+        print '<td class="liste_titre">';
+        print '<input class="flat" type="text" size="4" name="search_payment_num" value="'.dol_escape_htmltag($search_payment_num).'">';
+        print '</td>';
+        if (! empty($conf->banque->enabled))
+        {
+            print '<td class="liste_titre">';
+	        $form->select_comptes($search_account, 'search_account', 0, '', 1);
+	        print '</td>';
+        }
+        print '<td class="liste_titre right">';
+        print '<input class="flat" type="text" size="4" name="search_amount" value="'.dol_escape_htmltag($search_amount).'">';
+        print '</td>';
+        print '<td class="liste_titre maxwidthsearch">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $searchpicto=$form->showFilterAndCheckAddButtons(0);
         print $searchpicto;
         print '</td>';
         print "</tr>\n";
 
         print '<tr class="liste_titre">';
+<<<<<<< HEAD
         print_liste_field_titre("RefPayment",$_SERVER["PHP_SELF"],'p.rowid','',$param,'',$sortfield,$sortorder);
         print_liste_field_titre("Date",$_SERVER["PHP_SELF"],'dp','',$param,'align="center"',$sortfield,$sortorder);
         print_liste_field_titre("ThirdParty",$_SERVER["PHP_SELF"],'s.nom','',$param,'',$sortfield,$sortorder);
@@ -889,12 +1317,36 @@ if (empty($action))
         print "</tr>\n";
 
         while ($i < min($num,$limit))
+=======
+        print_liste_field_titre("RefPayment", $_SERVER["PHP_SELF"], 'p.rowid', '', $param, '', $sortfield, $sortorder);
+        print_liste_field_titre("Date", $_SERVER["PHP_SELF"], 'dp', '', $param, '', $sortfield, $sortorder, 'center ');
+        print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], 's.nom', '', $param, '', $sortfield, $sortorder);
+        print_liste_field_titre("Type", $_SERVER["PHP_SELF"], 'c.libelle', '', $param, '', $sortfield, $sortorder);
+        print_liste_field_titre("Numero", $_SERVER["PHP_SELF"], "p.num_paiement", "", $param, "", $sortfield, $sortorder);
+        if (! empty($conf->banque->enabled))
+        {
+            print_liste_field_titre("Account", $_SERVER["PHP_SELF"], 'ba.label', '', $param, '', $sortfield, $sortorder);
+        }
+        print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], 'p.amount', '', $param, '', $sortfield, $sortorder, 'right ');
+
+        $parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
+        $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // Note that $action and $object may have been modified by hook
+        print $hookmanager->resPrint;
+
+        print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
+        print "</tr>\n";
+
+        $i = 0;
+        $totalarray=array();
+        while ($i < min($num, $limit))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         {
             $objp = $db->fetch_object($resql);
 
             print '<tr class="oddeven">';
 
             // Ref payment
+<<<<<<< HEAD
             print '<td class="nowrap"><a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$objp->pid.'">'.img_object($langs->trans('ShowPayment'),'payment').' '.$objp->pid.'</a></td>';
 
             // Date
@@ -919,6 +1371,48 @@ if (empty($action))
             print '</td>';
 
             print '<td align="right">'.price($objp->pamount).'</td>';
+=======
+            print '<td class="nowrap"><a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$objp->pid.'">'.img_object($langs->trans('ShowPayment'), 'payment').' '.$objp->pid.'</a></td>';
+            if (! $i) $totalarray['nbfield']++;
+
+            // Date
+            $dateformatforpayment = 'day';
+            if (! empty($conf->global->INVOICE_USE_HOURS_FOR_PAYMENT)) $dateformatforpayment='dayhour';
+            print '<td class="nowrap center">'.dol_print_date($db->jdate($objp->dp), $dateformatforpayment)."</td>\n";
+            if (! $i) $totalarray['nbfield']++;
+
+            // Thirdparty
+            print '<td>';
+            if ($objp->socid) print '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'), 'company').' '.dol_trunc($objp->name, 32).'</a>';
+            else print '&nbsp;';
+            print '</td>';
+            if (! $i) $totalarray['nbfield']++;
+
+            // Type
+            $payment_type = $langs->trans("PaymentType".$objp->paiement_type)!=("PaymentType".$objp->paiement_type)?$langs->trans("PaymentType".$objp->paiement_type):$objp->paiement_libelle;
+            print '<td>'.$payment_type.' '.dol_trunc($objp->num_paiement, 32)."</td>\n";
+            if (! $i) $totalarray['nbfield']++;
+
+            // Payment number
+            print '<td>'.$objp->num_paiement.'</td>';
+            if (! $i) $totalarray['nbfield']++;
+
+            // Account
+            if (! empty($conf->banque->enabled))
+            {
+                print '<td>';
+	            if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"), 'account').' '.dol_trunc($objp->label, 24).'</a>';
+    	        else print '&nbsp;';
+        	    print '</td>';
+            	if (! $i) $totalarray['nbfield']++;
+            }
+
+            // Amount
+            print '<td class="right">'.price($objp->pamount).'</td>';
+            if (! $i) $totalarray['nbfield']++;
+            $totalarray['pos'][7]='amount';
+            $totalarray['val']['amount'] += $objp->pamount;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
             // Ref invoice
             /*$invoicesupplierstatic->ref=$objp->ref_supplier;
@@ -927,10 +1421,42 @@ if (empty($action))
             print $invoicesupplierstatic->getNomUrl(1);
             print '</td>';*/
 
+<<<<<<< HEAD
 			print '<td>&nbsp;</td>';
             print '</tr>';
             $i++;
         }
+=======
+			print '<td></td>';
+			if (! $i) $totalarray['nbfield']++;
+
+            print '</tr>';
+            $i++;
+        }
+
+        // Show total line
+        if (isset($totalarray['pos']))
+        {
+            print '<tr class="liste_total">';
+            $i=0;
+            while ($i < $totalarray['nbfield'])
+            {
+                $i++;
+                if (! empty($totalarray['pos'][$i]))  print '<td class="right">'.price($totalarray['val'][$totalarray['pos'][$i]]).'</td>';
+                else
+                {
+                    if ($i == 1)
+                    {
+                        if ($num < $limit) print '<td class="left">'.$langs->trans("Total").'</td>';
+                        else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
+                    }
+                    else print '<td></td>';
+                }
+            }
+            print '</tr>';
+        }
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         print "</table>";
         print "</div>";
         print "</form>\n";
@@ -941,5 +1467,9 @@ if (empty($action))
     }
 }
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

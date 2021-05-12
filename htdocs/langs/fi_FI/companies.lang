@@ -5,6 +5,7 @@ SelectThirdParty=Valitse sidosryhmä
 ConfirmDeleteCompany=Haluatko varmasti poistaa tämän yrityksen ja kaikki siitä johdetut tiedot?
 DeleteContact=Poista yhteystieto
 ConfirmDeleteContact=Haluatko varmasti poistaa tämän yhteystiedon ja kaikki siitä johdetut tiedot?
+<<<<<<< HEAD
 MenuNewThirdParty=Uusi sidosryhmä
 MenuNewCustomer=Uusi asiakas
 MenuNewProspect=Uusi prospekti
@@ -12,6 +13,15 @@ MenuNewSupplier=New vendor
 MenuNewPrivateIndividual=Uusi yksityishenkilö
 NewCompany=New company (prospect, customer, vendor)
 NewThirdParty=New third party (prospect, customer, vendor)
+=======
+MenuNewThirdParty=New Third Party
+MenuNewCustomer=New Customer
+MenuNewProspect=New Prospect
+MenuNewSupplier=New Vendor
+MenuNewPrivateIndividual=Uusi yksityishenkilö
+NewCompany=New company (prospect, customer, vendor)
+NewThirdParty=New Third Party (prospect, customer, vendor)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CreateDolibarrThirdPartySupplier=Create a third party (vendor)
 CreateThirdPartyOnly=Luo sidosryhmä
 CreateThirdPartyAndContact=Luo sidosryhmä + ala yhteystieto
@@ -20,6 +30,7 @@ IdThirdParty=Sidosryhmän tunnus
 IdCompany=Yritystunnus
 IdContact=Yhteystiedon tunnus
 Contacts=Yhteystiedot/Osoitteet
+<<<<<<< HEAD
 ThirdPartyContacts=Sidosryhmien yhteystiedot
 ThirdPartyContact=Sidosryhmän yhteystiedot/osoitteet
 Company=Yritys
@@ -32,15 +43,36 @@ ThirdPartyName=Sidosryhmän nimi
 ThirdPartyEmail=Sidosryhmän sähköposti
 ThirdParty=Sidosryhmä
 ThirdParties=Sidosryhmät
+=======
+ThirdPartyContacts=Third-party contacts
+ThirdPartyContact=Third-party contact/address
+Company=Yritys
+CompanyName=Yrityksen nimi
+AliasNames=Lisänimi (tuotenimi, brändi, ...)
+AliasNameShort=Alias Name
+Companies=Yritykset
+CountryIsInEEC=Country is inside the European Economic Community
+PriceFormatInCurrentLanguage=Price format in current language
+ThirdPartyName=Third-party name
+ThirdPartyEmail=Third-party email
+ThirdParty=Third-party
+ThirdParties=Third-parties
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ThirdPartyProspects=Prospektit
 ThirdPartyProspectsStats=Näkymät
 ThirdPartyCustomers=Asiakkaat
 ThirdPartyCustomersStats=Asiakkaat
 ThirdPartyCustomersWithIdProf12=Asiakkaat, joilla on %s tai %s
 ThirdPartySuppliers=Vendors
+<<<<<<< HEAD
 ThirdPartyType=Sidosryhmän tyyppi
 Individual=Yksityishenkilö
 ToCreateContactWithSameName=Luo automaattisesti yhteystiedot/osoitteen sidosryhmän tiedoilla sidosryhmän alaisuuteen. Yleensä, vaikka sidosryhmä olisi henkilö, pelkkä sidosryhmän luominen riittää.
+=======
+ThirdPartyType=Third-party type
+Individual=Yksityishenkilö
+ToCreateContactWithSameName=Will automatically create a contact/address with same information as the third party under the third party. In most cases, even if your third party is a physical person, creating a third party alone is enough.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ParentCompany=Emoyhtiö
 Subsidiaries=Tytäryhtiöt
 ReportByMonth=Report by month
@@ -69,12 +101,17 @@ Chat=Chat
 PhonePro=Työpuhelin
 PhonePerso=Henkilökohtainen puhelin
 PhoneMobile=Matkapuhelin
+<<<<<<< HEAD
 No_Email=Kiellä massa sähköpostit
+=======
+No_Email=Refuse bulk emailings
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Fax=Faksi
 Zip=Postinumero
 Town=Postitoimipaikka
 Web=Kotisivut
 Poste= Asema
+<<<<<<< HEAD
 DefaultLang=Oletuskieli
 VATIsUsed=Sales tax is used
 VATIsUsedWhenSelling=This define if this third party includes a sale tax or not when it makes an invoice to its own customers
@@ -82,6 +119,15 @@ VATIsNotUsed=Sales tax is not used
 CopyAddressFromSoc=Täytä osoite käyttäen sidosryhmän osoitetta
 ThirdpartyNotCustomerNotSupplierSoNoRef=Third party neither customer nor vendor, no available refering objects
 ThirdpartyIsNeitherCustomerNorClientSoCannotHaveDiscounts=Third party neither customer nor supplier, discounts are not available
+=======
+DefaultLang=Language default
+VATIsUsed=Sales tax used
+VATIsUsedWhenSelling=This defines if this third party includes a sale tax or not when it makes an invoice to its own customers
+VATIsNotUsed=Sales tax is not used
+CopyAddressFromSoc=Copy address from third-party details
+ThirdpartyNotCustomerNotSupplierSoNoRef=Third party neither customer nor vendor, no available referring objects
+ThirdpartyIsNeitherCustomerNorClientSoCannotHaveDiscounts=Third party neither customer nor vendor, discounts are not available
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PaymentBankAccount=Maksunt pankkitili
 OverAllProposals=Ehdotukset
 OverAllOrders=Tilaukset
@@ -96,8 +142,11 @@ LocalTax2IsUsedES= IRPF käytössä
 LocalTax2IsNotUsedES= IRPF ei käytössä
 LocalTax1ES=RE
 LocalTax2ES=IRPF
+<<<<<<< HEAD
 TypeLocaltax1ES=RE tyyppi
 TypeLocaltax2ES=IRPF Tyyppi
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 WrongCustomerCode=Asiakastunnus vihreellinen
 WrongSupplierCode=Vendor code invalid
 CustomerCodeModel=Asiakastunnuksen malli
@@ -258,8 +307,13 @@ ProfId1DZ=RC
 ProfId2DZ=Art.
 ProfId3DZ=NIF
 ProfId4DZ=NIS
+<<<<<<< HEAD
 VATIntra=Sales tax ID
 VATIntraShort=Tax ID
+=======
+VATIntra=VAT ID
+VATIntraShort=VAT ID
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 VATIntraSyntaxIsValid=Syntaksi on voimassa
 VATReturn=VAT return
 ProspectCustomer=Prospekti / Asiakas
@@ -272,6 +326,7 @@ CustomerRelativeDiscountShort=Suhteellinen alennus
 CustomerAbsoluteDiscountShort=Absoluuttinen alennus
 CompanyHasRelativeDiscount=Tällä asiakkaalla on oletusalennus<b> %s%%</b>
 CompanyHasNoRelativeDiscount=Tällä asiakkaalla ei ole suhteellista alennusta oletuksena
+<<<<<<< HEAD
 HasRelativeDiscountFromSupplier=You have a default discount of <b>%s%%</b> from this supplier
 HasNoRelativeDiscountFromSupplier=You have no default relative discount from this supplier
 CompanyHasAbsoluteDiscount=Tällä asiakkaalla on alennuksia saatavilla (luottoa tai hyvityksiä) <b>%s</b> %s
@@ -281,13 +336,28 @@ HasNoAbsoluteDiscountFromSupplier=You have no discount credit available from thi
 HasAbsoluteDiscountFromSupplier=You have discounts available (credits notes or down payments) for <b>%s</b> %s from this supplier
 HasDownPaymentOrCommercialDiscountFromSupplier=You have discounts available (commercial, down payments) for <b>%s</b> %s from this supplier
 HasCreditNoteFromSupplier=You have credit notes for <b>%s</b> %s from this supplier
+=======
+HasRelativeDiscountFromSupplier=You have a default discount of <b>%s%%</b> from this vendor
+HasNoRelativeDiscountFromSupplier=You have no default relative discount from this vendor
+CompanyHasAbsoluteDiscount=This customer has discounts available (credits notes or down payments) for <b>%s</b> %s
+CompanyHasDownPaymentOrCommercialDiscount=This customer has discounts available (commercial, down payments) for <b>%s</b> %s
+CompanyHasCreditNote=Tällä asiakkaalla on vielä luottomerkintöjä <b>%s</b> %s
+HasNoAbsoluteDiscountFromSupplier=You have no discount credit available from this vendor
+HasAbsoluteDiscountFromSupplier=You have discounts available (credits notes or down payments) for <b>%s</b> %s from this vendor
+HasDownPaymentOrCommercialDiscountFromSupplier=You have discounts available (commercial, down payments) for <b>%s</b> %s from this vendor
+HasCreditNoteFromSupplier=You have credit notes for <b>%s</b> %s from this vendor
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CompanyHasNoAbsoluteDiscount=Asiakkaalla ei ole alennuksia saatavilla
 CustomerAbsoluteDiscountAllUsers=Absolute customer discounts (granted by all users)
 CustomerAbsoluteDiscountMy=Absolute customer discounts (granted by yourself)
 SupplierAbsoluteDiscountAllUsers=Absolute vendor discounts (entered by all users)
 SupplierAbsoluteDiscountMy=Absolute vendor discounts (entered by yourself)
 DiscountNone=Ei mitään
+<<<<<<< HEAD
 Supplier=Toimittaja
+=======
+Vendor=Vendor
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddContact=Luo yhteystiedot
 AddContactAddress=Luo yhteystiedot/osoite
 EditContact=Muokkaa yhteystiedot / osoite
@@ -303,6 +373,7 @@ AddThirdParty=Luo sidosryhmä
 DeleteACompany=Poista yritys
 PersonalInformations=Henkilötiedot
 AccountancyCode=Kirjanpito tili
+<<<<<<< HEAD
 CustomerCode=Asiakas-koodi
 SupplierCode=Vendor code
 CustomerCodeShort=Asiakas-koodi
@@ -319,6 +390,24 @@ ListOfContacts=Luettelo yhteystiedot
 ListOfContactsAddresses=Yhteystietojen/osoitteiden luettelo
 ListOfThirdParties=Luettelo kolmansien osapuolten
 ShowCompany=Näytä sidosryhmä
+=======
+CustomerCode=Customer Code
+SupplierCode=Vendor Code
+CustomerCodeShort=Customer Code
+SupplierCodeShort=Vendor Code
+CustomerCodeDesc=Customer Code, unique for all customers
+SupplierCodeDesc=Vendor Code, unique for all vendors
+RequiredIfCustomer=Vaaditaan, jos kolmas osapuoli on asiakas tai mahdollisuus
+RequiredIfSupplier=Required if third party is a vendor
+ValidityControledByModule=Validity controlled by module
+ThisIsModuleRules=Rules for this module
+ProspectToContact=Esitetilaus yhteyttä
+CompanyDeleted=Yritys " %s" poistettu tietokannasta.
+ListOfContacts=Luettelo yhteystiedot
+ListOfContactsAddresses=Luettelo yhteystiedot
+ListOfThirdParties=List of Third Parties
+ShowCompany=Show Third Party
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShowContact=Näytä yhteystiedot
 ContactsAllShort=Kaikki (Ei suodatinta)
 ContactType=Yhteystiedon tyyppi
@@ -333,13 +422,18 @@ NoContactForAnyProposal=Tämä yhteys ei ole yhteyttä mihinkään kaupalliseen 
 NoContactForAnyContract=Tämä yhteys ei ole yhteyttä mihinkään sopimukseen
 NoContactForAnyInvoice=Tämä yhteys ei ole yhteyttä mihinkään lasku
 NewContact=Uusi yhteystieto
+<<<<<<< HEAD
 NewContactAddress=Uusi yhteystieto/osoite
+=======
+NewContactAddress=New Contact/Address
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MyContacts=Omat yhteystiedot
 Capital=Pääoma
 CapitalOf=Pääoma of %s
 EditCompany=Muokkaa yritystä
 ThisUserIsNot=This user is not a prospect, customer nor vendor
 VATIntraCheck=Shekki
+<<<<<<< HEAD
 VATIntraCheckDesc=<b>Linkkiä %s</b> sallii pyytää Euroopan alv checker palveluun. Ulkoisen Internet-palvelimelta vaaditaan tätä palvelua työtä.
 VATIntraCheckURL=http://ec.europa.eu/taxation_customs/vies/vieshome.do
 VATIntraCheckableOnEUSite=Tarkista yhteisömyynnin ALV Euroopan komission Internet-sivustolla
@@ -348,6 +442,16 @@ ErrorVATCheckMS_UNAVAILABLE=Tarkista ole mahdollista. Tarkista palvelu ei toimit
 NorProspectNorCustomer=Eikä näköpiirissä, eikä asiakkaan
 JuridicalStatus=Yhtiömuoto
 Staff=Henkilökunta
+=======
+VATIntraCheckDesc=The VAT ID must include the country prefix. The link <b>%s</b> uses the European VAT checker service (VIES) which requires internet access from the Dolibarr server.
+VATIntraCheckURL=http://ec.europa.eu/taxation_customs/vies/vieshome.do
+VATIntraCheckableOnEUSite=Check the intra-Community VAT ID on the European Commission website
+VATIntraManualCheck=You can also check manually on the European Commission website <a href="%s" target="_blank">%s</a>
+ErrorVATCheckMS_UNAVAILABLE=Tarkista ole mahdollista. Tarkista palvelu ei toimiteta jäsenvaltion ( %s).
+NorProspectNorCustomer=Not prospect, nor customer
+JuridicalStatus=Legal Entity Type
+Staff=Työntekijät
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProspectLevelShort=Potenttiaali
 ProspectLevel=Prospekti potentiaali
 ContactPrivate=Yksityinen
@@ -368,7 +472,11 @@ TE_MEDIUM=Keskikokoinen yritys
 TE_ADMIN=Valtiollinen
 TE_SMALL=Pieni yritys
 TE_RETAIL=Vähittäiskauppias
+<<<<<<< HEAD
 TE_WHOLE=Wholetailer
+=======
+TE_WHOLE=Wholesaler
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TE_PRIVATE=Yksityishenkilö
 TE_OTHER=Muu
 StatusProspect-1=Älä ota yhteyttä
@@ -387,6 +495,7 @@ ExportCardToFormat=Vienti kortin muodossa
 ContactNotLinkedToCompany=Yhteystiedot eivät liity minkään kolmannen osapuolen
 DolibarrLogin=Dolibarr sisäänkirjoittautumissivuksesi
 NoDolibarrAccess=Ei Dolibarr pääsyä
+<<<<<<< HEAD
 ExportDataset_company_1=Sidosryhmät (Yritykset / säätiöt / ihmiset) ja ominaisuudet
 ExportDataset_company_2=Yhteystiedot ja ominaisuudet
 ImportDataset_company_1=Sidosryhmät (Yritykset / säätiöt / ihmiset) ja ominaisuudet
@@ -394,6 +503,16 @@ ImportDataset_company_2=Contacts/Addresses (of third parties or not) and attribu
 ImportDataset_company_3=Bank accounts of third parties
 ImportDataset_company_4=Third parties/Sales representatives (Assign sales representatives users to companies)
 PriceLevel=Hintataso
+=======
+ExportDataset_company_1=Third-parties (companies/foundations/physical people) and their properties
+ExportDataset_company_2=Contacts and their properties
+ImportDataset_company_1=Third-parties and their properties
+ImportDataset_company_2=Third-parties additional contacts/addresses and attributes
+ImportDataset_company_3=Third-parties Bank accounts
+ImportDataset_company_4=Third-parties Sales representatives (assign sales representatives/users to companies)
+PriceLevel=Price Level
+PriceLevelLabels=Price Level Labels
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DeliveryAddress=Toimitusosoite
 AddAddress=Lisää osoite
 SupplierCategory=Vendor category
@@ -402,6 +521,7 @@ DeleteFile=Poista tiedosto
 ConfirmDeleteFile=Oletko varma, että haluat poistaa tämän tiedoston?
 AllocateCommercial=Liitä myyntiedustajaan
 Organization=Organisaatio
+<<<<<<< HEAD
 FiscalYearInformation=Tilivuoden tiedot
 FiscalMonthStart=Tilivuoden aloitus kuukausi
 YouMustAssignUserMailFirst=Tälle käyttäjälle täytyy luoda sähköpostiosoite  jotta sähköpostimuistutukset voidaan ottaa käyttöön
@@ -412,6 +532,18 @@ ListCustomersShort=Luettelo asiakkaat
 ThirdPartiesArea=Sidosryhmät ja yhteystiedot
 LastModifiedThirdParties=Viimeisimmät %s muokattua sidosryhmää
 UniqueThirdParties=Yhteensä ainutlaatuinen kolmannen osapuolen
+=======
+FiscalYearInformation=Fiscal Year
+FiscalMonthStart=Tilivuoden aloitus kuukausi
+YouMustAssignUserMailFirst=You must create an email for this user prior to being able to add an email notification.
+YouMustCreateContactFirst=Voidaksesi lisätä sähköposti muistutukset, täytyy ensin täyttää yhteystiedot sidosryhmän oikealla sähköpostiosoitteella
+ListSuppliersShort=List of Vendors
+ListProspectsShort=List of Prospects
+ListCustomersShort=List of Customers
+ThirdPartiesArea=Third Parties/Contacts
+LastModifiedThirdParties=Last %s modified Third Parties
+UniqueThirdParties=Total of Third Parties
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 InActivity=Avoinna
 ActivityCeased=Kiinni
 ThirdPartyIsClosed=Sidosryhmä on suljettu
@@ -420,15 +552,34 @@ CurrentOutstandingBill=Avoin lasku
 OutstandingBill=Avointen laskujen enimmäismäärä
 OutstandingBillReached=Avointen laskujen enimmäismäärä saavutettu
 OrderMinAmount=Minimum amount for order
+<<<<<<< HEAD
 MonkeyNumRefModelDesc=Return numero with format %syymm-nnnn for customer code and %syymm-nnnn for vendor code where yy is year, mm is month and nnnn is a sequence with no break and no return to 0.
+=======
+MonkeyNumRefModelDesc=Return a number with the format %syymm-nnnn for the customer code and %syymm-nnnn for the vendor code where yy is year, mm is month and nnnn is a sequence with no break and no return to 0.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LeopardNumRefModelDesc=Asiakas / toimittaja-koodi on maksuton. Tämä koodi voidaan muuttaa milloin tahansa.
 ManagingDirectors=Johtajien nimet (TJ, johtaja, päällikkö...)
 MergeOriginThirdparty=Monista sidosryhmä (sidosryhmä jonka haluat poistaa)
 MergeThirdparties=Yhdistä sidosryhmät
+<<<<<<< HEAD
 ConfirmMergeThirdparties=Haluatko varmasti yhdistää tämän sidosryhmän nykyiseen? Kaikki yhdistetyt tiedot (laskut, tilaukset, ...) siirretään nykyiselle sidosryhmälle jolloin voit poistaa vastaavan sidosryhmän.
+=======
+ConfirmMergeThirdparties=Are you sure you want to merge this third party into the current one? All linked objects (invoices, orders, ...) will be moved to current third party, then the third party will be deleted.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ThirdpartiesMergeSuccess=Third parties have been merged
 SaleRepresentativeLogin=Myyntiedustajan kirjautuminen
 SaleRepresentativeFirstname=Myyntiedustajan etunimi
 SaleRepresentativeLastname=Myyntiedustajan sukunimi
 ErrorThirdpartiesMerge=There was an error when deleting the third parties. Please check the log. Changes have been reverted.
+<<<<<<< HEAD
 NewCustomerSupplierCodeProposed=New customer or vendor code suggested on duplicate code
+=======
+NewCustomerSupplierCodeProposed=Customer or Vendor code already used, a new code is suggested
+#Imports
+PaymentTypeCustomer=Payment Type - Customer
+PaymentTermsCustomer=Payment Terms - Customer
+PaymentTypeSupplier=Payment Type - Vendor
+PaymentTermsSupplier=Payment Term - Vendor
+MulticurrencyUsed=Use Multicurrency
+MulticurrencyCurrency=Valuutta
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

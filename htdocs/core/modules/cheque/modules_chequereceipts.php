@@ -2,7 +2,11 @@
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
+<<<<<<< HEAD
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2016      Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -36,14 +40,25 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';   // Requ
  */
 abstract class ModeleNumRefChequeReceipts
 {
+<<<<<<< HEAD
 	var $error='';
+=======
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	/**
 	 *	Return if a module can be used or not
 	 *
 	 *	@return		boolean     true if module can be used
 	 */
+<<<<<<< HEAD
 	function isEnabled()
+=======
+	public function isEnabled()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return true;
 	}
@@ -53,7 +68,11 @@ abstract class ModeleNumRefChequeReceipts
 	 *
 	 *	@return     string      Texte descripif
 	 */
+<<<<<<< HEAD
 	function info()
+=======
+	public function info()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 		$langs->load("bills");
@@ -65,7 +84,11 @@ abstract class ModeleNumRefChequeReceipts
 	 *
 	 *	@return     string      Example
 	 */
+<<<<<<< HEAD
 	function getExample()
+=======
+	public function getExample()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 		$langs->load("bills");
@@ -77,7 +100,11 @@ abstract class ModeleNumRefChequeReceipts
 	 *
 	 *	@return     boolean     false si conflit, true si ok
 	 */
+<<<<<<< HEAD
 	function canBeActivated()
+=======
+	public function canBeActivated()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return true;
 	}
@@ -89,7 +116,11 @@ abstract class ModeleNumRefChequeReceipts
 	 *	@param	Object		$object		Object we need next value for
 	 *	@return	string      Valeur
 	 */
+<<<<<<< HEAD
 	function getNextValue($objsoc,$object)
+=======
+	public function getNextValue($objsoc, $object)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
@@ -100,7 +131,11 @@ abstract class ModeleNumRefChequeReceipts
 	 *
 	 *	@return     string      Value
 	 */
+<<<<<<< HEAD
 	function getVersion()
+=======
+	public function getVersion()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 		$langs->load("admin");
@@ -115,12 +150,25 @@ abstract class ModeleNumRefChequeReceipts
 
 /**
  *	\class      ModeleChequeReceipts
+<<<<<<< HEAD
  *	\brief      Classe mere des modeles de 
  */
 abstract class ModeleChequeReceipts extends CommonDocGenerator
 {
 	var $error='';
 
+=======
+ *	\brief      Classe mere des modeles de
+ */
+abstract class ModeleChequeReceipts extends CommonDocGenerator
+{
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *  Return list of active generation modules
 	 *
@@ -128,15 +176,25 @@ abstract class ModeleChequeReceipts extends CommonDocGenerator
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
+<<<<<<< HEAD
 	static function liste_modeles($db,$maxfilenamelength=0)
 	{
+=======
+	public static function liste_modeles($db, $maxfilenamelength = 0)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf;
 
 		$type='chequereceipt';
 		$liste=array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+<<<<<<< HEAD
 		$liste=getListOfModels($db,$type,$maxfilenamelength);
+=======
+		$liste=getListOfModels($db, $type, $maxfilenamelength);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// TODO Remove this to use getListOfModels only
 		$liste = array('blochet'=>'blochet');
 
@@ -146,7 +204,11 @@ abstract class ModeleChequeReceipts extends CommonDocGenerator
 
 
 /**
+<<<<<<< HEAD
  *	Cree un bordereau remise de cheque
+=======
+ *  Cree un bordereau remise de cheque
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * 	@param	DoliDB		$db				Database handler
  *	@param	int			$id				Object invoice (or id of invoice)
@@ -198,6 +260,7 @@ function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)
 		else
 		{
 			$outputlangs->charset_output=$sav_charset_output;
+<<<<<<< HEAD
 			dol_print_error($db,"chequereceipt_pdf_create Error: ".$obj->error);
 			return -1;
 		}
@@ -210,3 +273,15 @@ function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)
 	}
 }
 
+=======
+			dol_print_error($db, "chequereceipt_pdf_create Error: ".$obj->error);
+			return -1;
+		}
+	}
+	else
+	{
+		dol_print_error('', $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $dir.$file));
+		return -1;
+	}
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

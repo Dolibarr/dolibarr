@@ -116,7 +116,11 @@ CountryHM=Herdo ir Makdonaldo
 CountryVA=Šventasis Sostas (Vatikano Miesto Valstybė)
 CountryHN=Hondūras
 CountryHK=Honkongas
+<<<<<<< HEAD
 CountryIS=Islandija
+=======
+CountryIS=Iceland
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryIN=Indija
 CountryID=Indonezija
 CountryIR=Iranas
@@ -131,7 +135,11 @@ CountryKI=Kiribatis
 CountryKP=Šiaurės Korėja
 CountryKR=Pietų Korėja
 CountryKW=Kuveitas
+<<<<<<< HEAD
 CountryKG=Kirgizija
+=======
+CountryKG=Kyrgyzstan
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryLA=Lao
 CountryLV=Latvija
 CountryLB=Libanas
@@ -160,7 +168,11 @@ CountryMD=Moldova
 CountryMN=Mongolija
 CountryMS=Monseratas
 CountryMZ=Mozambikas
+<<<<<<< HEAD
 CountryMM=Birma (Mianmaras)
+=======
+CountryMM=Myanmar (Burma)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryNA=Namibija
 CountryNR=Nauru
 CountryNP=Nepalas
@@ -223,7 +235,11 @@ CountryTO=Tonga
 CountryTT=Trinidadas ir Tobagas
 CountryTR=Turkija
 CountryTM=Turkmėnistanas
+<<<<<<< HEAD
 CountryTC=Terkso ir Cailos salos
+=======
+CountryTC=Turks and Caicos Islands
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryTV=Tuvalu
 CountryUG=Uganda
 CountryUA=Ukraina
@@ -277,7 +293,11 @@ CurrencySingMGA=Ariaris
 CurrencyMUR=Mauricijaus rupijų
 CurrencySingMUR=Mauricijaus rupija
 CurrencyNOK=Norvegijos kronų
+<<<<<<< HEAD
 CurrencySingNOK=Norvegijos krona
+=======
+CurrencySingNOK=Norwegian kronas
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrencyTND=Tuniso dinaras
 CurrencySingTND=Tuniso dinaras
 CurrencyUSD=JAV doleriai
@@ -290,6 +310,10 @@ CurrencyXOF=CFA frankai BCEAO
 CurrencySingXOF=CFA BCEAO frankas
 CurrencyXPF=CFP frankai
 CurrencySingXPF=CFP frankas
+<<<<<<< HEAD
+=======
+CurrencyCentEUR=cents
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrencyCentSingEUR=centas
 CurrencyCentINR=paisa (1/100 rupijos)
 CurrencyCentSingINR=paisa (1/100 rupijos)
@@ -306,6 +330,10 @@ DemandReasonTypeSRC_WOM=Žodis
 DemandReasonTypeSRC_PARTNER=Partneris
 DemandReasonTypeSRC_EMPLOYEE=Darbuotojas
 DemandReasonTypeSRC_SPONSORING=Rėmimas
+<<<<<<< HEAD
+=======
+DemandReasonTypeSRC_SRC_CUSTOMER=Incoming contact of a customer
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 #### Paper formats ####
 PaperFormatEU4A0=Formatas 4A0
 PaperFormatEU2A0=Formatas 2A0

@@ -1,7 +1,13 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2014	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015	Frederic France		<frederic.france@free.fr>
  * Copyright (C) 2017	Regis Houssin		<regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2014	Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2015	Frederic France		<frederic.france@free.fr>
+ * Copyright (C) 2017	Regis Houssin		<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,8 +39,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('other', 'companies', 'contact'));
 
+<<<<<<< HEAD
 $id = GETPOST('id','int');
 $action = GETPOST('action','aZ09');
+=======
+$id = GETPOST('id', 'int');
+$action = GETPOST('action', 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $confirm = GETPOST('confirm', 'alpha');
 
 $object = new Contact($db);
@@ -55,9 +66,15 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', $objcanvas); // If we create a contact with no company (shared contacts), no check on write permission
 
 // Get parameters
+<<<<<<< HEAD
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
+=======
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -85,7 +102,11 @@ include DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 $form = new Form($db);
 
 $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+<<<<<<< HEAD
 if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/contactnameonly/',$conf->global->MAIN_HTML_TITLE) && $object->lastname) $title=$object->lastname;
+=======
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/contactnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->lastname) $title=$object->lastname;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $helpurl);
 
@@ -97,8 +118,13 @@ if ($object->id)
     dol_fiche_head($head, 'documents', $title, -1, 'contact');
 
 
+<<<<<<< HEAD
     // Construit liste des fichiers
     $filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+=======
+    // Build file list
+    $filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $totalsize=0;
     foreach($filearray as $key => $file)
     {
@@ -124,7 +150,11 @@ if ($object->id)
     print '<div class="fichecenter">';
 
     print '<div class="underbanner clearboth"></div>';
+<<<<<<< HEAD
     print '<table class="border centpercent">';
+=======
+    print '<table class="border tableforfield centpercent">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     // Company
     /*
@@ -152,7 +182,11 @@ if ($object->id)
     print '</td></tr>';
 
     print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
+<<<<<<< HEAD
     print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize,1,1).'</td></tr>';
+=======
+    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print '</table>';
 
     print '</div>';

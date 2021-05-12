@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - bills
 Bill=发票
 Bills=发票
+<<<<<<< HEAD
 BillsCustomers=客户发票
 BillsCustomer=客户发票
 BillsSuppliers=供应商发票
@@ -13,18 +14,39 @@ BillsStatistics=客户发票统计
 BillsStatisticsSuppliers=供应商发票统计
 DisabledBecauseDispatchedInBookkeeping=Disabled because invoice was dispatched into bookkeeping
 DisabledBecauseNotLastInvoice=Disabled because invoice is not erasable. Some invoices were recorded after this one and it will create holes in the counter.
+=======
+BillsCustomers=顾客发票
+BillsCustomer=客户发票
+BillsSuppliers=供应商发票
+BillsCustomersUnpaid=未付款顾客发票
+BillsCustomersUnpaidForCompany=%s的未付款顾客发票
+BillsSuppliersUnpaid=Unpaid vendor invoices
+BillsSuppliersUnpaidForCompany=Unpaid vendors invoices for %s
+BillsLate=逾期付款
+BillsStatistics=客户发票统计
+BillsStatisticsSuppliers=Vendors invoices statistics
+DisabledBecauseDispatchedInBookkeeping=已禁用，因为发票已发送到簿记中
+DisabledBecauseNotLastInvoice=禁用，因为发票不可擦除。在此之后记录了一些发票，它将在柜台上创建漏洞。
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DisabledBecauseNotErasable=禁止删除
 InvoiceStandard=标准发票
 InvoiceStandardAsk=标准发票
 InvoiceStandardDesc=这种发票是一种常见的发票。
+<<<<<<< HEAD
 InvoiceDeposit=Down payment invoice
 InvoiceDepositAsk=Down payment invoice
 InvoiceDepositDesc=This kind of invoice is done when a down payment has been received.
+=======
+InvoiceDeposit=首付发票
+InvoiceDepositAsk=首付发票
+InvoiceDepositDesc=这种发票是在收到预付款时完成的。
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 InvoiceProForma=形式发票
 InvoiceProFormaAsk=形式发票
 InvoiceProFormaDesc=<b>形式发票</b>是发票的形式，但其没有真正的会计价值。
 InvoiceReplacement=更换发票
 InvoiceReplacementAsk=为发票更换发票
+<<<<<<< HEAD
 InvoiceReplacementDesc=<b>Replacement invoice</b> is used to cancel and replace completely an invoice with no payment already received.<br><br>Note: Only invoices with no payment on it can be replaced. If the invoice you replace is not yet closed, it will be automatically closed to 'abandoned'.
 InvoiceAvoir=信用记录
 InvoiceAvoirAsk=更正发票的信用记录
@@ -32,6 +54,15 @@ InvoiceAvoirDesc=<b>信用记录</b>是一个阐述事实的证明，即发票�
 invoiceAvoirWithLines=Create Credit Note with lines from the origin invoice
 invoiceAvoirWithPaymentRestAmount=Create Credit Note with remaining unpaid of origin invoice
 invoiceAvoirLineWithPaymentRestAmount=Credit Note for remaining unpaid amount
+=======
+InvoiceReplacementDesc=<b>Replacement invoice</b> is used to cancel and completely replace an invoice with no payment already received.<br><br>Note: Only invoices with no payment on it can be replaced. If the invoice you replace is not yet closed, it will be automatically closed to 'abandoned'.
+InvoiceAvoir=信用记录
+InvoiceAvoirAsk=更正发票的信用记录
+InvoiceAvoirDesc=The <b>credit note</b> is a negative invoice used to correct the fact that an invoice shows an amount that differs from the amount actually paid (eg the customer paid too much by mistake, or will not pay the complete amount since some products were returned).
+invoiceAvoirWithLines=使用原始发票中的行创建贷方通知单
+invoiceAvoirWithPaymentRestAmount=使用剩余未付原始发票创建贷方通知单
+invoiceAvoirLineWithPaymentRestAmount=剩余未付金额的信用票据
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ReplaceInvoice=替换%s的发票
 ReplacementInvoice=更换发票
 ReplacedByInvoice=被发票 %s 替换
@@ -41,9 +72,15 @@ CorrectionInvoice=发票的更正
 UsedByInvoice=用于支付发票%s的
 ConsumedBy=消耗
 NotConsumed=不消耗
+<<<<<<< HEAD
 NoReplacableInvoice=没有替换的发票
 NoInvoiceToCorrect=没有发票，以纠正
 InvoiceHasAvoir=Was source of one or several credit notes
+=======
+NoReplacableInvoice=No replaceable invoices
+NoInvoiceToCorrect=没有发票，以纠正
+InvoiceHasAvoir=是一个或几个信用票据的来源
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CardBill=发票信息
 PredefinedInvoices=预定义的发票
 Invoice=发票
@@ -53,15 +90,22 @@ InvoiceLine=发票线
 InvoiceCustomer=客户发票
 CustomerInvoice=客户发票
 CustomersInvoices=客户发票
+<<<<<<< HEAD
 SupplierInvoice=供应商发票
 SuppliersInvoices=供应商发票
 SupplierBill=供应商发票
+=======
+SupplierInvoice=Vendor invoice
+SuppliersInvoices=Vendors invoices
+SupplierBill=Vendor invoice
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SupplierBills=供应商发票
 Payment=付款
 PaymentBack=付款
 CustomerInvoicePaymentBack=付款
 Payments=付款
 PaymentsBack=付款
+<<<<<<< HEAD
 paymentInInvoiceCurrency=in invoices currency
 PaidBack=已退款
 DeletePayment=删除付款
@@ -72,12 +116,27 @@ SupplierPayments=供应商付款
 ReceivedPayments=收到的付款
 ReceivedCustomersPayments=收到客户付款
 PayedSuppliersPayments=支付给供应商的付款
+=======
+paymentInInvoiceCurrency=在发票货币
+PaidBack=已退款
+DeletePayment=删除付款
+ConfirmDeletePayment=您确定要删除此付款吗？
+ConfirmConvertToReduc=Do you want to convert this %s into an absolute discount?
+ConfirmConvertToReduc2=The amount will be saved among all discounts and could be used as a discount for a current or a future invoice for this customer.
+ConfirmConvertToReducSupplier=Do you want to convert this %s into an absolute discount?
+ConfirmConvertToReducSupplier2=The amount will be saved among all discounts and could be used as a discount for a current or a future invoice for this vendor.
+SupplierPayments=Vendor payments
+ReceivedPayments=收到的付款
+ReceivedCustomersPayments=收到客户付款
+PayedSuppliersPayments=Payments paid to vendors
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ReceivedCustomersPaymentsToValid=收到需要确认的客户付款
 PaymentsReportsForYear=客户 %s 的付款报告
 PaymentsReports=付款报表
 PaymentsAlreadyDone=付款已完成
 PaymentsBackAlreadyDone=付款已完成
 PaymentRule=付款规则
+<<<<<<< HEAD
 PaymentMode=付款方式
 PaymentTypeDC=Debit/Credit Card
 PaymentTypePP=PayPal
@@ -93,6 +152,22 @@ ValidatePayment=确认付款
 PaymentHigherThanReminderToPay=付款金额比需要支付的金额高
 HelpPaymentHigherThanReminderToPay=注意，一个或更多的票据付款金额比其他支付更高。 <br>编辑您的进入，否则确认并考虑建立一个每个多缴发票收到超出信用注记。
 HelpPaymentHigherThanReminderToPaySupplier=Attention, the payment amount of one or more bills is higher than the rest to pay. <br> Edit your entry, otherwise confirm and think about creating a credit note of the excess paid for each overpaid invoice.
+=======
+PaymentMode=Payment Type
+PaymentTypeDC=借记卡/信用卡
+PaymentTypePP=PayPal
+IdPaymentMode=Payment Type (id)
+CodePaymentMode=Payment Type (code)
+LabelPaymentMode=Payment Type (label)
+PaymentModeShort=Payment Type
+PaymentTerm=Payment Term
+PaymentConditions=Payment Terms
+PaymentConditionsShort=Payment Terms
+PaymentAmount=付款金额
+PaymentHigherThanReminderToPay=付款金额比需要支付的金额高
+HelpPaymentHigherThanReminderToPay=Attention, the payment amount of one or more bills is higher than the outstanding amount to pay. <br> Edit your entry, otherwise confirm and consider creating a credit note for the excess received for each overpaid invoice.
+HelpPaymentHigherThanReminderToPaySupplier=Attention, the payment amount of one or more bills is higher than the outstanding amount to pay. <br> Edit your entry, otherwise confirm and consider creating a credit note for the excess paid for each overpaid invoice.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ClassifyPaid=归类为 已支付
 ClassifyPaidPartially=归类分 部分支付
 ClassifyCanceled=归类为 已丢弃
@@ -104,6 +179,7 @@ AddBill=创建发票或信用记录
 AddToDraftInvoices=添加到发票草稿
 DeleteBill=删除发票
 SearchACustomerInvoice=搜索客户发票
+<<<<<<< HEAD
 SearchASupplierInvoice=搜索供应商发票
 CancelBill=取消发票
 SendRemindByMail=通过电子邮件发送提醒
@@ -112,31 +188,59 @@ DoPaymentBack=Enter refund
 ConvertToReduc=Mark as credit available
 ConvertExcessReceivedToReduc=Convert excess received into available credit
 ConvertExcessPaidToReduc=Convert excess paid into available discount
+=======
+SearchASupplierInvoice=Search for a vendor invoice
+CancelBill=取消发票
+SendRemindByMail=通过电子邮件发送提醒
+DoPayment=输入付款
+DoPaymentBack=输入退款
+ConvertToReduc=标记为可用信用
+ConvertExcessReceivedToReduc=将超出的收入转换为可用信用
+ConvertExcessPaidToReduc=将超额付款转换为可用折扣
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 EnterPaymentReceivedFromCustomer=输入从客户收到的付款
 EnterPaymentDueToCustomer=为客户创建付款延迟
 DisabledBecauseRemainderToPayIsZero=禁用，因为未支付金额为0
 PriceBase=价格基准
 BillStatus=发票状态
+<<<<<<< HEAD
 StatusOfGeneratedInvoices=Status of generated invoices
 BillStatusDraft=草案(需要确认)
 BillStatusPaid=已支付
 BillStatusPaidBackOrConverted=Credit note refund or marked as credit available
 BillStatusConverted=Paid (ready for consumption in final invoice)
+=======
+StatusOfGeneratedInvoices=生成的发票的状态
+BillStatusDraft=草案(需要确认)
+BillStatusPaid=已支付
+BillStatusPaidBackOrConverted=信用票据退款或标记为可用信用
+BillStatusConverted=付费（准备在最终发票中消费）
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BillStatusCanceled=已丢弃
 BillStatusValidated=已确认 (需要付款)
 BillStatusStarted=开始
 BillStatusNotPaid=未支付
+<<<<<<< HEAD
 BillStatusNotRefunded=Not refunded
+=======
+BillStatusNotRefunded=没有退款
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BillStatusClosedUnpaid=已关闭 (未支付)
 BillStatusClosedPaidPartially=已支付 (部分)
 BillShortStatusDraft=草稿
 BillShortStatusPaid=已支付
+<<<<<<< HEAD
 BillShortStatusPaidBackOrConverted=Refund or converted
+=======
+BillShortStatusPaidBackOrConverted=Refunded or converted
+Refunded=Refunded
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BillShortStatusConverted=已支付
 BillShortStatusCanceled=已丢弃
 BillShortStatusValidated=已确认
 BillShortStatusStarted=开始
 BillShortStatusNotPaid=未支付
+<<<<<<< HEAD
 BillShortStatusNotRefunded=Not refunded
 BillShortStatusClosedUnpaid=禁用
 BillShortStatusClosedPaidPartially=已支付 (部分)
@@ -146,10 +250,22 @@ ErrorNoPaiementModeConfigured=没有默认的支付方式定义。前往发票�
 ErrorCreateBankAccount=创建一个银行帐户，然后到安装发票模块小组，确定付款方式
 ErrorBillNotFound=发票%s不存在
 ErrorInvoiceAlreadyReplaced=错误，您尝试验证发票来取代发票%，但是，这一发票已被发票%s取代
+=======
+BillShortStatusNotRefunded=没有退款
+BillShortStatusClosedUnpaid=禁用
+BillShortStatusClosedPaidPartially=已支付 (部分)
+PaymentStatusToValidShort=需要确认
+ErrorVATIntraNotConfigured=Intra-Community VAT number not yet defined
+ErrorNoPaiementModeConfigured=No default payment type defined. Go to Invoice module setup to fix this.
+ErrorCreateBankAccount=Create a bank account, then go to Setup panel of Invoice module to define payment types
+ErrorBillNotFound=发票%s不存在
+ErrorInvoiceAlreadyReplaced=Error, you tried to validate an invoice to replace invoice %s. But this one has already been replaced by invoice %s.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorDiscountAlreadyUsed=错误，已经使用优惠
 ErrorInvoiceAvoirMustBeNegative=错误，这种类型的发票必须有一个负数
 ErrorInvoiceOfThisTypeMustBePositive=错误，这种类型的发票必须有一个正数
 ErrorCantCancelIfReplacementInvoiceNotValidated=错误，无法取消一个已经被处于草稿状态发票替代的发票
+<<<<<<< HEAD
 ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved=This part or another is already used so discount serie cant be removed.
 BillFrom=发送方
 BillTo=接收方
@@ -203,12 +319,69 @@ UnvalidateBill=取消确认发票
 NumberOfBills=发票数
 NumberOfBillsByMonth=按月发票数
 AmountOfBills=发票金额
+=======
+ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved=This part or another is already used so discount series cannot be removed.
+BillFrom=发送方
+BillTo=接收方
+ActionsOnBill=发票的动作
+RecurringInvoiceTemplate=模板/重复发票
+NoQualifiedRecurringInvoiceTemplateFound=没有经常生成的模板发票。
+FoundXQualifiedRecurringInvoiceTemplate=找到%s经常生效的模板发票。
+NotARecurringInvoiceTemplate=不是定期模板发票
+NewBill=新建发票
+LastBills=最新的%s发票
+LatestTemplateInvoices=最新的%s模板发票
+LatestCustomerTemplateInvoices=最新的%s顾客临时发票
+LatestSupplierTemplateInvoices=Latest %s vendor template invoices
+LastCustomersBills=最新%s顾客发票
+LastSuppliersBills=Latest %s vendor invoices
+AllBills=全部发票
+AllCustomerTemplateInvoices=所有模板发票
+OtherBills=其他发票
+DraftBills=发票草稿
+CustomersDraftInvoices=顾客草稿发票
+SuppliersDraftInvoices=Vendor draft invoices
+Unpaid=未付
+ConfirmDeleteBill=您确定要删除此发票吗？
+ConfirmValidateBill=您确定要参考<b> %s </b>验证此发票吗？
+ConfirmUnvalidateBill=您确定要将发票<b> %s </b>更改为草稿状态吗？
+ConfirmClassifyPaidBill=您确定要将发票<b> %s </b>更改为已付款状态吗？
+ConfirmCancelBill=你确定要取消发票<b>%s</b>吗 ？
+ConfirmCancelBillQuestion=为什么要将此发票分类为“废弃”？
+ConfirmClassifyPaidPartially=你确定要将发票<b>%s</b>更改为已支付状态吗？
+ConfirmClassifyPaidPartiallyQuestion=This invoice has not been paid completely. What is the reason for closing this invoice?
+ConfirmClassifyPaidPartiallyReasonAvoir=Remaining unpaid <b>(%s %s)</b> is a discount granted because payment was made before term. I regularize the VAT with a credit note.
+ConfirmClassifyPaidPartiallyReasonDiscount=剩余未付<b>（%s %s）</b>是一项折扣，因为付款是在期前完成的。
+ConfirmClassifyPaidPartiallyReasonDiscountNoVat=其余部分支付<b>（%s的%s）</b>是一个折扣，因为获得付款之前任期。我接受失去这个折扣的增值税。
+ConfirmClassifyPaidPartiallyReasonDiscountVat=其余部分支付<b>（%s的%s）</b>是一个折扣，因为获得付款之前任期。我在此折扣不恢复信贷注意到增值税。
+ConfirmClassifyPaidPartiallyReasonBadCustomer=坏顾客
+ConfirmClassifyPaidPartiallyReasonProductReturned=产品部分退回
+ConfirmClassifyPaidPartiallyReasonOther=因其他原因而放弃余额
+ConfirmClassifyPaidPartiallyReasonDiscountNoVatDesc=This choice is possible if your invoice has been provided with suitable comments. (Example «Only the tax corresponding to the price that has been actually paid gives rights to deduction»)
+ConfirmClassifyPaidPartiallyReasonDiscountVatDesc=In some countries, this choice might be possible only if your invoice contains correct notes.
+ConfirmClassifyPaidPartiallyReasonAvoirDesc=使用这个选择，如果所有其他不适合
+ConfirmClassifyPaidPartiallyReasonBadCustomerDesc=A <b>bad customer</b> is a customer that refuses to pay his debt.
+ConfirmClassifyPaidPartiallyReasonProductReturnedDesc=这个选择是付款时使用的是不完整的，因为一些产品被退回
+ConfirmClassifyPaidPartiallyReasonOtherDesc=Use this choice if all others are not suitable, for example in following situation:<br>- payment not complete because some products were shipped back<br>- amount claimed too important because a discount was forgotten<br>In all cases, amount over-claimed must be corrected in accountancy system by creating a credit note.
+ConfirmClassifyAbandonReasonOther=其他
+ConfirmClassifyAbandonReasonOtherDesc=这一选择将用于所有的其他情形。例如，因为你要创建一个替代发票。
+ConfirmCustomerPayment=您确认<b> %s </ b> %s的付款输入？
+ConfirmSupplierPayment=你确认这笔<b>%s</b> %s的支付吗？
+ConfirmValidatePayment=您确定要验证此付款吗？付款验证后，无法进行任何更改。
+ValidateBill=确认发票
+UnvalidateBill=取消确认发票
+NumberOfBills=No. of invoices
+NumberOfBillsByMonth=No. of invoices per month
+AmountOfBills=发票金额
+AmountOfBillsHT=Amount of invoices (net of tax)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AmountOfBillsByMonthHT=按月发票金额 (税后)
 ShowSocialContribution=显示财政税/增值税
 ShowBill=显示发票
 ShowInvoice=显示发票
 ShowInvoiceReplace=显示替换发票
 ShowInvoiceAvoir=显示信用记录
+<<<<<<< HEAD
 ShowInvoiceDeposit=Show down payment invoice
 ShowInvoiceSituation=Show situation invoice
 ShowPayment=显示支付
@@ -223,12 +396,33 @@ Rest=待办
 AmountExpected=索赔额
 ExcessReceived=找零
 ExcessPaid=Excess paid
+=======
+ShowInvoiceDeposit=显示付款发票
+ShowInvoiceSituation=显示情况发票
+ShowPayment=显示支付
+AlreadyPaid=已支付
+AlreadyPaidBack=已支付
+AlreadyPaidNoCreditNotesNoDeposits=已经支付（没有信用票据和预付款）
+Abandoned=已丢弃
+RemainderToPay=未付金额
+RemainderToTake=应付金额
+RemainderToPayBack=剩余金额退款
+Rest=待办
+AmountExpected=索赔额
+ExcessReceived=找零
+ExcessPaid=超额付款
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 EscompteOffered=折扣额 (付款条件前付款)
 EscompteOfferedShort=折扣
 SendBillRef=发票 %s  的提交
 SendReminderBillRef=发票 %s  的提交 (提醒)
+<<<<<<< HEAD
 StandingOrders=Direct debit orders
 StandingOrder=Direct debit order
+=======
+StandingOrders=直接借记订单
+StandingOrder=直接借记订单
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoDraftBills=没有发票草稿
 NoOtherDraftBills=没有其他发票草稿
 NoDraftInvoices=没有发票草稿
@@ -240,6 +434,7 @@ SendReminderBillByMail=通过电子邮件发送提醒
 RelatedCommercialProposals=相关商业报价
 RelatedRecurringCustomerInvoices=再次关联客户发票
 MenuToValid=需要确认
+<<<<<<< HEAD
 DateMaxPayment=Payment due on
 DateInvoice=发票日期
 DatePointOfTax=Point of tax
@@ -253,6 +448,21 @@ SetMode=设置支付方式
 SetRevenuStamp=设置印花税
 Billed=帐单
 RecurringInvoices=Recurring invoices
+=======
+DateMaxPayment=付款到期
+DateInvoice=发票日期
+DatePointOfTax=税点
+NoInvoice=没有发票
+ClassifyBill=分类发票
+SupplierBillsToPay=Unpaid vendor invoices
+CustomerBillsUnpaid=未付款顾客发票
+NonPercuRecuperable=非可收回
+SetConditions=Set Payment Terms
+SetMode=Set Payment Type
+SetRevenuStamp=设置印花税
+Billed=帐单
+RecurringInvoices=定期发票
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 RepeatableInvoice=模板发票
 RepeatableInvoices=模板发票
 Repeatable=模板
@@ -260,6 +470,7 @@ Repeatables=模板
 ChangeIntoRepeatableInvoice=转换为模板发票
 CreateRepeatableInvoice=创建模板发票
 CreateFromRepeatableInvoice=从模板发票创建
+<<<<<<< HEAD
 CustomersInvoicesAndInvoiceLines=客户发票和发票的路线
 CustomersInvoicesAndPayments=客户发票和付款
 ExportDataset_invoice_1=客户发票清单和发票的路线
@@ -269,6 +480,17 @@ Reduction=降价
 ReductionShort=降价
 Reductions=降价
 ReductionsShort=降价
+=======
+CustomersInvoicesAndInvoiceLines=Customer invoices and invoice details
+CustomersInvoicesAndPayments=客户发票和付款
+ExportDataset_invoice_1=Customer invoices and invoice details
+ExportDataset_invoice_2=客户发票和付款
+ProformaBill=形式发票：
+Reduction=降价
+ReductionShort=Disc.
+Reductions=降价
+ReductionsShort=Disc.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Discounts=折扣
 AddDiscount=添加折扣
 AddRelativeDiscount=创建相对折扣
@@ -282,6 +504,7 @@ RelativeDiscount=相对折扣
 GlobalDiscount=全球折扣
 CreditNote=信用记录
 CreditNotes=信用记录
+<<<<<<< HEAD
 CreditNotesOrExcessReceived=Credit notes or excess received
 Deposit=Down payment
 Deposits=Down payments
@@ -305,6 +528,31 @@ BillAddress=账单地址
 HelpEscompte=这是给予客户优惠折扣，因为客户在付款条件日期前已经付清全款。
 HelpAbandonBadCustomer=这一数额已被放弃（客户说是一个坏的客户），并作为一个特殊的松散考虑。
 HelpAbandonOther=这一数额已被放弃，因为这是一个错误（错误的顾客或由其他替代例如发票）
+=======
+CreditNotesOrExcessReceived=信用票据或超额收到
+Deposit=首付
+Deposits=首付
+DiscountFromCreditNote=从信用记录折扣 %s
+DiscountFromDeposit=发票%s的预付款
+DiscountFromExcessReceived=付款超过发票%s
+DiscountFromExcessPaid=付款超过发票%s
+AbsoluteDiscountUse=这种信用值可以在发票被确认前使用
+CreditNoteDepositUse=必须验证发票才能使用此类信用
+NewGlobalDiscount=新的绝对折扣
+NewRelativeDiscount=新的相对折扣
+DiscountType=折扣类型
+NoteReason=备注/原因
+ReasonDiscount=原因
+DiscountOfferedBy=授予人
+DiscountStillRemaining=提供折扣或积分
+DiscountAlreadyCounted=已消费的折扣或积分
+CustomerDiscounts=客户折扣
+SupplierDiscounts=供应商折扣
+BillAddress=账单地址
+HelpEscompte=This discount is a discount granted to customer because payment was made before term.
+HelpAbandonBadCustomer=This amount has been abandoned (customer said to be a bad customer) and is considered as an exceptional loss.
+HelpAbandonOther=This amount has been abandoned since it was an error (wrong customer or invoice replaced by another for example)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 IdSocialContribution=财政税/增值税代码
 PaymentId=付款编号
 PaymentRef=付款编号
@@ -314,10 +562,16 @@ InvoiceDateCreation=发票的创建日期
 InvoiceStatus=发票状态
 InvoiceNote=发票说明
 InvoicePaid=发票已经支付
+<<<<<<< HEAD
+=======
+OrderBilled=Order billed
+DonationPaid=Donation paid
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PaymentNumber=付款号码
 RemoveDiscount=删除折扣
 WatermarkOnDraftBill=基于发票草稿(无则留空)
 InvoiceNotChecked=没有选取发票
+<<<<<<< HEAD
 CloneInvoice=复制发票
 ConfirmCloneInvoice=Are you sure you want to clone this invoice <b>%s</b>?
 DisabledBecauseReplacedInvoice=发票已经被取代，动作被拒绝
@@ -370,6 +624,60 @@ ViewAvailableGlobalDiscounts=View available discounts
 Statut=状态
 PaymentConditionShortRECEP=Due Upon Receipt
 PaymentConditionRECEP=Due Upon Receipt
+=======
+ConfirmCloneInvoice=你确定要复制发票 <b>%s</b> 吗 ？
+DisabledBecauseReplacedInvoice=发票已经被取代，动作被拒绝
+DescTaxAndDividendsArea=This area presents a summary of all payments made for special expenses. Only records with payments during the fixed year are included here.
+NbOfPayments=No. of payments
+SplitDiscount=折扣分为两部分
+ConfirmSplitDiscount=Are you sure you want to split this discount of <b>%s</b> %s into two smaller discounts?
+TypeAmountOfEachNewDiscount=Input amount for each of two parts:
+TotalOfTwoDiscountMustEqualsOriginal=The total of the two new discounts must be equal to the original discount amount.
+ConfirmRemoveDiscount=您确定要删除此折扣吗？
+RelatedBill=关联发票
+RelatedBills=关联发票
+RelatedCustomerInvoices=关联客户发票
+RelatedSupplierInvoices=Related vendor invoices
+LatestRelatedBill=最新关联发票
+WarningBillExist=Warning, one or more invoices already exist
+MergingPDFTool=PDF 合并工具
+AmountPaymentDistributedOnInvoice=付款金额在发票上分配
+PaymentOnDifferentThirdBills=Allow payments on different third parties bills but same parent company
+PaymentNote=付款备注
+ListOfPreviousSituationInvoices=以前的情况发票清单
+ListOfNextSituationInvoices=下一个情况发票清单
+ListOfSituationInvoices=情况发票清单
+CurrentSituationTotal=总现状
+DisabledBecauseNotEnouthCreditNote=要从周期中删除情况发票，此发票的贷方通知单总计必须涵盖此发票总额
+RemoveSituationFromCycle=从周期中删除此发票
+ConfirmRemoveSituationFromCycle=从周期中删除此发票%s？
+ConfirmOuting=确认外出
+FrequencyPer_d=每 %s 天
+FrequencyPer_m=每 %s 月
+FrequencyPer_y=每 %s 年
+FrequencyUnit=频率单位
+toolTipFrequency=例如:<br /><b>设置 7 / 天</b>: 每 7 天给它一张新发票<br /><b>设置 3 / 个月</b>: 每 3 个月给发一张发票过去
+NextDateToExecution=下一次发票生成的日期
+NextDateToExecutionShort=下一代日期。
+DateLastGeneration=最新一代的日期
+DateLastGenerationShort=最新日期。
+MaxPeriodNumber=Max. number of invoice generation
+NbOfGenerationDone=已完成的发票数量
+NbOfGenerationDoneShort=完成的代数
+MaxGenerationReached=达到最大代数
+InvoiceAutoValidate=自动验证发票
+GeneratedFromRecurringInvoice=从模板重复发票%s生成
+DateIsNotEnough=尚未达到日期
+InvoiceGeneratedFromTemplate=从周期性模板发票%s生成的发票%s
+GeneratedFromTemplate=Generated from template invoice %s
+WarningInvoiceDateInFuture=警告，发票日期高于当前日期
+WarningInvoiceDateTooFarInFuture=警告，发票日期与当前日期相差太远
+ViewAvailableGlobalDiscounts=查看可用折扣
+# PaymentConditions
+Statut=状态
+PaymentConditionShortRECEP=由于收到
+PaymentConditionRECEP=由于收到
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PaymentConditionShort30D=30天
 PaymentCondition30D=30天
 PaymentConditionShort30DENDMONTH=30天后的那个月底
@@ -384,6 +692,7 @@ PaymentConditionShortPT_ORDER=订单
 PaymentConditionPT_ORDER=在订单
 PaymentConditionShortPT_5050=50-50
 PaymentConditionPT_5050=预付50%% ，50%%货到后付款
+<<<<<<< HEAD
 PaymentConditionShort10D=10 days
 PaymentCondition10D=10 days
 PaymentConditionShort10DENDMONTH=10 days of month-end
@@ -400,6 +709,24 @@ PaymentTypeVIR=银行转帐
 PaymentTypeShortVIR=银行转帐
 PaymentTypePRE=Direct debit payment order
 PaymentTypeShortPRE=Debit payment order
+=======
+PaymentConditionShort10D=10天
+PaymentCondition10D=10天
+PaymentConditionShort10DENDMONTH=月末10天
+PaymentCondition10DENDMONTH=在月底之后的10天内
+PaymentConditionShort14D=14天
+PaymentCondition14D=14天
+PaymentConditionShort14DENDMONTH=月末14天
+PaymentCondition14DENDMONTH=在月底之后的14天内
+FixAmount=Fixed amount
+VarAmount=可变金额(%% tot.)
+VarAmountOneLine=可变金额（%% tot。） -  1行标签'%s'
+# PaymentType
+PaymentTypeVIR=银行转帐
+PaymentTypeShortVIR=银行转帐
+PaymentTypePRE=直接付款订单
+PaymentTypeShortPRE=借记卡付款单
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PaymentTypeLIQ=现金
 PaymentTypeShortLIQ=现金
 PaymentTypeCB=信用卡
@@ -408,14 +735,20 @@ PaymentTypeCHQ=支票
 PaymentTypeShortCHQ=支票
 PaymentTypeTIP=TIP (付款交单)
 PaymentTypeShortTIP=TIP款项
+<<<<<<< HEAD
 PaymentTypeVAD=在线支付
 PaymentTypeShortVAD=在线支付
+=======
+PaymentTypeVAD=Online payment
+PaymentTypeShortVAD=Online payment
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PaymentTypeTRA=银行账单草稿
 PaymentTypeShortTRA=草稿
 PaymentTypeFAC=因素
 PaymentTypeShortFAC=因素
 BankDetails=银行详情
 BankCode=银行代码
+<<<<<<< HEAD
 DeskCode=台代码
 BankAccountNumber=帐号
 BankAccountNumberKey=关键
@@ -424,6 +757,16 @@ IBANNumber=IBAN号码
 IBAN=银行IBAN
 BIC=BIC/SWIFT
 BICNumber=BIC/SWIFT 号码
+=======
+DeskCode=Branch code
+BankAccountNumber=帐号
+BankAccountNumberKey=Checksum
+Residence=地址
+IBANNumber=IBAN account number
+IBAN=银行IBAN
+BIC=BIC/SWIFT
+BICNumber=BIC/SWIFT code
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ExtraInfos=额外信息
 RegulatedOn=规范了
 ChequeNumber=Check N°
@@ -437,6 +780,7 @@ PhoneNumber=电话
 FullPhoneNumber=电话
 TeleFax=传真
 PrettyLittleSentence=接受付款的以本人名义发出一个由政府批准的财政会计学会会员支票数额。
+<<<<<<< HEAD
 IntracommunityVATNumber=社区内数增值税
 PaymentByChequeOrderedTo=支票付款是支付到%s发送到
 PaymentByChequeOrderedToShort=支票付款，须付予
@@ -446,12 +790,24 @@ VATIsNotUsedForInvoice=* 不得包含增值税, 详见CGI-293B
 LawApplicationPart1=通过对应用的12/05/80法80.335
 LawApplicationPart2=货物仍然是该人士/组织的资产
 LawApplicationPart3=卖方直到完全兑现
+=======
+IntracommunityVATNumber=Intra-Community VAT ID
+PaymentByChequeOrderedTo=Check payments (including tax) are payable to %s, send to
+PaymentByChequeOrderedToShort=Check payments (incl. tax) are payable to
+SendTo=发送到
+PaymentByTransferOnThisBankAccount=Payment by transfer to the following bank account
+VATIsNotUsedForInvoice=* 不得包含增值税, 详见CGI-293B
+LawApplicationPart1=通过对应用的12/05/80法80.335
+LawApplicationPart2=货物仍然是该人士/组织的资产
+LawApplicationPart3=the seller until full payment of
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LawApplicationPart4=他们的价格。
 LimitedLiabilityCompanyCapital=有限责任公司（SARL）注册资金
 UseLine=申请
 UseDiscount=使用折扣
 UseCredit=使用信用卡
 UseCreditNoteInInvoicePayment=减少金额与本信用证支付
+<<<<<<< HEAD
 MenuChequeDeposits=支票存款
 MenuCheques=支票
 MenuChequesReceipts=支票收据
@@ -464,16 +820,35 @@ DepositId=Id deposit
 NbCheque=Number of checks
 CreditNoteConvertedIntoDiscount=This %s has been converted into %s
 UsBillingContactAsIncoiveRecipientIfExist=使用客户账单联络方式而不是合伙人的联络方式作为发票的接收人
+=======
+MenuChequeDeposits=Check Deposits
+MenuCheques=支票
+MenuChequesReceipts=Check receipts
+NewChequeDeposit=新的存款
+ChequesReceipts=Check receipts
+ChequesArea=Check deposits area
+ChequeDeposits=Check deposits
+Cheques=支票
+DepositId=Id存款
+NbCheque=支票数量
+CreditNoteConvertedIntoDiscount=此%s已被转换为%s
+UsBillingContactAsIncoiveRecipientIfExist=Use contact/address with type 'billing contact' instead of third-party address as recipient for invoices
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShowUnpaidAll=显示所有未付发票
 ShowUnpaidLateOnly=只显示超时未付发票
 PaymentInvoiceRef=%s的付款发票
 ValidateInvoice=确认发票
+<<<<<<< HEAD
 ValidateInvoices=Validate invoices
+=======
+ValidateInvoices=验证发票
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Cash=现金
 Reported=延迟
 DisabledBecausePayments=不可操作，因为已经接收了付款
 CantRemovePaymentWithOneInvoicePaid=无法删除，因为至少有一份发票被归类为已支付
 ExpectedToPay=预期付款
+<<<<<<< HEAD
 CantRemoveConciliatedPayment=Can't remove conciliated payment
 PayedByThisPayment=已由此付款来支付
 ClosePaidInvoicesAutomatically=Classify "Paid" all standard, down payment or replacement invoices entirely paid.
@@ -494,11 +869,35 @@ TerreNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoice
 MarsNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for down payment invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 TerreNumRefModelError=A bill starting with $syymm already exists and is not compatible with this model of sequence. Remove it or rename it to activate this module.
 CactusNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for credit notes and %syymm-nnnn for down payment invoices where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+=======
+CantRemoveConciliatedPayment=Can't remove reconciled payment
+PayedByThisPayment=已由此付款来支付
+ClosePaidInvoicesAutomatically=Classify "Paid" all standard, down-payment or replacement invoices paid entirely.
+ClosePaidCreditNotesAutomatically=分类“付费”的所有信贷注意到完全支付。
+ClosePaidContributionsAutomatically=Classify "Paid" all social or fiscal contributions paid entirely.
+AllCompletelyPayedInvoiceWillBeClosed=All invoices with no remainder to pay will be automatically closed with status "Paid".
+ToMakePayment=支付
+ToMakePaymentBack=支付
+ListOfYourUnpaidInvoices=未付发票清单
+NoteListOfYourUnpaidInvoices=注：此清单只包含链接到指派给您作为销售代表的合作方发票。
+RevenueStamp=印花税票
+YouMustCreateInvoiceFromThird=This option is only available when creating an invoice from tab "Customer" of third party
+YouMustCreateInvoiceFromSupplierThird=This option is only available when creating an invoice from tab "Vendor" of third party
+YouMustCreateStandardInvoiceFirstDesc=您必须先创建标准发票并将其转换为“模板”以创建新模板发票
+PDFCrabeDescription=发票模板Crabe。一个完整的发票模板(支援增值税选项，折扣，付款条件，标识等..)
+PDFSpongeDescription=Invoice PDF template Sponge. A complete invoice template
+PDFCrevetteDescription=发票PDF模板Crevette。情况发票的完整发票模板
+TerreNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+MarsNumRefModelDesc1=标准发票的格式为%syymm-nnnn，换发票为%syymm-nnnn，预付款发票为%syymm-nnnn，yy为年份为%syymm-nnnn，mm为月，nnnn为没有中断的序列回到0
+TerreNumRefModelError=A bill starting with $syymm already exists and is not compatible with this model of sequence. Remove it or rename it to activate this module.
+CactusNumRefModelDesc1=返回编号为标准发票的格式为%syymm-nnnn，信用票据为%syymm-nnnn，yy为年的预付款发票为%syymm-nnnn，mm为月，nnnn为没有中断且不返回0的序列
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=代表跟进客户发票
 TypeContact_facture_external_BILLING=客户发票联络人
 TypeContact_facture_external_SHIPPING=客户送货联络人
 TypeContact_facture_external_SERVICE=客户服务联络人
+<<<<<<< HEAD
 TypeContact_invoice_supplier_internal_SALESREPFOLL=代表随访供应商发票
 TypeContact_invoice_supplier_external_BILLING=供应商发票联络人
 TypeContact_invoice_supplier_external_SHIPPING=供应商送货联络人
@@ -546,3 +945,53 @@ AutoFillDateFromShort=Set start date
 AutoFillDateTo=Set end date for service line with next invoice date
 AutoFillDateToShort=Set end date
 MaxNumberOfGenerationReached=Max number of gen. reached
+=======
+TypeContact_invoice_supplier_internal_SALESREPFOLL=Representative following-up vendor invoice
+TypeContact_invoice_supplier_external_BILLING=Vendor invoice contact
+TypeContact_invoice_supplier_external_SHIPPING=Vendor shipping contact
+TypeContact_invoice_supplier_external_SERVICE=Vendor service contact
+# Situation invoices
+InvoiceFirstSituationAsk=第一种情况发票
+InvoiceFirstSituationDesc=<b>现状发票</b>与进展相关的情况有关，例如建筑的进展。每种情况都与发票挂钩。
+InvoiceSituation=情况发票
+InvoiceSituationAsk=根据情况发票
+InvoiceSituationDesc=在已有的情况之后创建新情况
+SituationAmount=情况发票金额（净额）
+SituationDeduction=情况减法
+ModifyAllLines=全部变更
+CreateNextSituationInvoice=创建下一个情况
+ErrorFindNextSituationInvoice=错误无法找到下一个情况循环参考
+ErrorOutingSituationInvoiceOnUpdate=无法出租这种情况发票。
+ErrorOutingSituationInvoiceCreditNote=无法外出联系信用票据。
+NotLastInCycle=此发票不是最新的发票，不得修改。
+DisabledBecauseNotLastInCycle=下一种情况已经存在。
+DisabledBecauseFinal=这种情况是最终的。
+situationInvoiceShortcode_AS=如
+situationInvoiceShortcode_S=S
+CantBeLessThanMinPercent=进展不能小于以前情况下的价值。
+NoSituations=没有开放的情况
+InvoiceSituationLast=最终和一般发票
+PDFCrevetteSituationNumber=情况N°%s
+PDFCrevetteSituationInvoiceLineDecompte=情况发票 -  COUNT
+PDFCrevetteSituationInvoiceTitle=情况发票
+PDFCrevetteSituationInvoiceLine=Situation N°%s: Inv. N°%s on %s
+TotalSituationInvoice=总情况
+invoiceLineProgressError=发票行进度不能大于或等于下一个发票行
+updatePriceNextInvoiceErrorUpdateline=Error: update price on invoice line: %s
+ToCreateARecurringInvoice=要为此合同创建定期发票，请先创建此草稿发票，然后将其转换为发票模板，并定义生成未来发票的频率。
+ToCreateARecurringInvoiceGene=要定期和手动生成未来发票，只需进入菜单<strong> %s  -  %s  -  %s </strong>。
+ToCreateARecurringInvoiceGeneAuto=If you need to have such invoices generated automatically, ask your administrator to enable and setup module <strong>%s</strong>. Note that both methods (manual and automatic) can be used together with no risk of duplication.
+DeleteRepeatableInvoice=删除模板发票
+ConfirmDeleteRepeatableInvoice=您确定要删除模板发票吗？
+CreateOneBillByThird=每个合作方创建一个发票（否则，每个订单一个发票）
+BillCreated=%s条例草案已创建
+StatusOfGeneratedDocuments=文件生成的状态
+DoNotGenerateDoc=不生成文档文件
+AutogenerateDoc=自动生成文档文件
+AutoFillDateFrom=使用发票日期设置服务项目的开始日期
+AutoFillDateFromShort=设置开始日期
+AutoFillDateTo=使用下一个发票日期设置服务项目的结束日期
+AutoFillDateToShort=设置结束日期
+MaxNumberOfGenerationReached=最大数量。到达
+BILL_DELETEInDolibarr=发票已删除
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

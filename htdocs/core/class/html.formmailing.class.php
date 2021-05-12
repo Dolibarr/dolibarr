@@ -23,6 +23,7 @@
 require_once DOL_DOCUMENT_ROOT .'/core/class/html.form.class.php';
 
 /**
+<<<<<<< HEAD
  *	Class to offer components to list and upload files
  */
 class FormMailing extends Form
@@ -50,9 +51,46 @@ class FormMailing extends Form
 		if ($show_empty) {
 			$options[-2] = '';   // Note -1 is used for error
 		}
+=======
+ *  Class to offer components to list and upload files
+ */
+class FormMailing extends Form
+{
+    /**
+     * @var string[] Error codes (or messages)
+     */
+    public $errors = array();
+
+    /**
+     * Output a select with destinaries status
+     *
+     * @param string   $selectedid     The selected id
+     * @param string   $htmlname       Name of controm
+     * @param integer  $show_empty     Show empty option
+     * @return string HTML select
+     */
+    public function selectDestinariesStatus($selectedid = '', $htmlname = 'dest_status', $show_empty = 0)
+    {
+
+        global $langs;
+        $langs->load("mails");
+
+        require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
+        $mailing = new Mailing($this->db);
+
+        $options = array();
+
+        if ($show_empty) {
+            $options[-2] = '';   // Note -1 is used for error
+        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         $options = $options + $mailing->statut_dest;
 
         return Form::selectarray($htmlname, $options, $selectedid, 0, 0, 0, '', 1);
+<<<<<<< HEAD
 	}
+=======
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

@@ -1,7 +1,12 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,11 +32,23 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT .'/comm/propal/class/propal.class.php';
 
+<<<<<<< HEAD
+=======
+$hookmanager = new HookManager($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('proposalindex'));
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 // Load translation files required by the page
 $langs->loadLangs(array('propal', 'companies'));
 
 // Security check
+<<<<<<< HEAD
 $socid=GETPOST('socid','int');
+=======
+$socid=GETPOST('socid', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (isset($user->societe_id) && $user->societe_id  > 0)
 {
 	$action = '';
@@ -50,7 +67,11 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $help_url="EN:Module_Commercial_Proposals|FR:Module_Propositions_commerciales|ES:Módulo_Presupuestos";
 
+<<<<<<< HEAD
 llxHeader("",$langs->trans("ProspectionArea"),$help_url);
+=======
+llxHeader("", $langs->trans("ProspectionArea"), $help_url);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print load_fiche_titre($langs->trans("ProspectionArea"));
 
@@ -117,13 +138,22 @@ if ($resql)
     $listofstatus=array(0,1,2,3,4);
     foreach ($listofstatus as $status)
     {
+<<<<<<< HEAD
     	$dataseries[]=array($propalstatic->LibStatut($status,1), (isset($vals[$status])?(int) $vals[$status]:0));
+=======
+    	$dataseries[]=array($propalstatic->LibStatut($status, 1), (isset($vals[$status])?(int) $vals[$status]:0));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         if (! $conf->use_javascript_ajax)
         {
 
             print '<tr class="oddeven">';
+<<<<<<< HEAD
             print '<td>'.$propalstatic->LibStatut($status,0).'</td>';
             print '<td align="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status])?$vals[$status]:0).'</a></td>';
+=======
+            print '<td>'.$propalstatic->LibStatut($status, 0).'</td>';
+            print '<td class="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status])?$vals[$status]:0).'</a></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             print "</tr>\n";
         }
     }
@@ -144,8 +174,13 @@ if ($resql)
         print '</td></tr>';
     }
     //if ($totalinprocess != $total)
+<<<<<<< HEAD
     //print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("CustomersOrdersRunning").')</td><td align="right">'.$totalinprocess.'</td></tr>';
     print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">'.$total.'</td></tr>';
+=======
+    //print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("CustomersOrdersRunning").')</td><td class="right">'.$totalinprocess.'</td></tr>';
+    print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print "</table><br>";
 }
 else
@@ -172,6 +207,7 @@ if (! empty($conf->propal->enabled))
 	$resql=$db->query($sql);
 	if ($resql)
 	{
+<<<<<<< HEAD
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
@@ -182,6 +218,20 @@ if (! empty($conf->propal->enabled))
 		{
 			$i = 0;
 			while ($i < $num)
+=======
+		$num = $db->num_rows($resql);
+		if ($num)
+		{
+			print '<div class="div-table-responsive-no-min">';
+			print '<table class="noborder" width="100%">';
+			print '<tr class="liste_titre">';
+			$langs->load("propal");
+			print '<td colspan="2">'.$langs->trans("DraftPropals").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?viewstatut=0"><span class="badge">'.$num.'</span></a></td></tr>';
+
+			$i = 0;
+			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?500:$conf->global->MAIN_MAXLIST_OVERLOAD));
+			while ($i < $nbofloop)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			{
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven">';
@@ -194,14 +244,32 @@ if (! empty($conf->propal->enabled))
 				$companystatic->name=$obj->socname;
 				$companystatic->client=$obj->client;
 				$companystatic->canvas=$obj->canvas;
+<<<<<<< HEAD
 				print '<td>'.$companystatic->getNomUrl(1,'customer',24).'</td>';
+=======
+				print '<td>'.$companystatic->getNomUrl(1, 'customer', 24).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				print '</tr>';
 				$i++;
 			}
+<<<<<<< HEAD
 		}
 		print "</table>";
 		print "</div><br>";
+=======
+			if ($num > $nbofloop)
+			{
+				print '<tr class="liste_total"><td colspan="2" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
+			}
+			elseif ($total>0)
+			{
+				print '<tr class="liste_total"><td class="right">'.$langs->trans("Total").'</td><td class="right">'.price($total)."</td></tr>";
+			}
+			print "</table>";
+			print "</div><br>";
+		}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 }
 
@@ -235,7 +303,11 @@ if ($resql)
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
+<<<<<<< HEAD
 	print '<td colspan="4">'.$langs->trans("LastModifiedProposals",$max).'</td></tr>';
+=======
+	print '<td colspan="4">'.$langs->trans("LastModifiedProposals", $max).'</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	$num = $db->num_rows($resql);
 	if ($num)
@@ -260,7 +332,11 @@ if ($resql)
 			print '&nbsp;';
 			print '</td>';
 
+<<<<<<< HEAD
 			print '<td width="16" align="right" class="nobordernopadding">';
+=======
+			print '<td width="16" class="nobordernopadding right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$filename=dol_sanitizeFileName($obj->ref);
 			$filedir=$conf->propal->multidir_output[$obj->entity] . '/' . dol_sanitizeFileName($obj->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
@@ -273,10 +349,17 @@ if ($resql)
 			$companystatic->name=$obj->socname;
 			$companystatic->client=$obj->client;
 			$companystatic->canvas=$obj->canvas;
+<<<<<<< HEAD
 			print '<td>'.$companystatic->getNomUrl(1,'customer').'</td>';
 
 			print '<td>'.dol_print_date($db->jdate($obj->datec),'day').'</td>';
 			print '<td align="right">'.$propalstatic->LibStatut($obj->fk_statut,5).'</td>';
+=======
+			print '<td>'.$companystatic->getNomUrl(1, 'customer').'</td>';
+
+			print '<td>'.dol_print_date($db->jdate($obj->datec), 'day').'</td>';
+			print '<td class="right">'.$propalstatic->LibStatut($obj->fk_statut, 5).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '</tr>';
 			$i++;
 		}
@@ -353,23 +436,40 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 				$companystatic->name=$obj->socname;
 				$companystatic->client=$obj->client;
 				$companystatic->canvas=$obj->canvas;
+<<<<<<< HEAD
 				print '<td align="left">'.$companystatic->getNomUrl(1,'customer',44).'</td>'."\n";
 
 				print '<td align="right">';
 				print dol_print_date($db->jdate($obj->dp),'day').'</td>'."\n";
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
 				print '<td align="center" width="14">'.$propalstatic->LibStatut($obj->fk_statut,3).'</td>'."\n";
+=======
+				print '<td class="left">'.$companystatic->getNomUrl(1, 'customer', 44).'</td>'."\n";
+
+				print '<td class="right">';
+				print dol_print_date($db->jdate($obj->dp), 'day').'</td>'."\n";
+				print '<td class="right">'.price($obj->total_ttc).'</td>';
+				print '<td align="center" width="14">'.$propalstatic->LibStatut($obj->fk_statut, 3).'</td>'."\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				print '</tr>'."\n";
 				$i++;
 				$total += $obj->total_ttc;
 			}
 			if ($num > $nbofloop)
 			{
+<<<<<<< HEAD
 				print '<tr class="liste_total"><td colspan="5">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
 			}
 			else if ($total>0)
 			{
 				print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
+=======
+				print '<tr class="liste_total"><td colspan="5" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
+			}
+			elseif ($total>0)
+			{
+				print '<tr class="liste_total"><td colspan="3" class="right">'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 			print "</table>";
 			print "</div><br>";
@@ -430,7 +530,11 @@ if (! empty($conf->propal->enabled))
 				print '&nbsp;';
 				print '</td>';
 
+<<<<<<< HEAD
 				print '<td width="16" align="right" class="nobordernopadding">';
+=======
+				print '<td width="16" class="nobordernopadding right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$filename=dol_sanitizeFileName($obj->ref);
 				$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
@@ -441,7 +545,11 @@ if (! empty($conf->propal->enabled))
 
 				print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->name,24).'</a></td>';
 
+<<<<<<< HEAD
 				print '<td align="right">'.$propalstatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
+=======
+				print '<td class="right">'.$propalstatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				print '</tr>';
 				$i++;
@@ -503,7 +611,11 @@ if (! empty($conf->propal->enabled))
 				print '&nbsp;';
 				print '</td>';
 
+<<<<<<< HEAD
 				print '<td width="16" align="right" class="nobordernopadding">';
+=======
+				print '<td width="16" class="nobordernopadding right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$filename=dol_sanitizeFileName($obj->ref);
 				$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
@@ -514,7 +626,11 @@ if (! empty($conf->propal->enabled))
 
 				print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->name.'</a></td>';
 
+<<<<<<< HEAD
 				print '<td align="right">'.$propalstatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
+=======
+				print '<td class="right">'.$propalstatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				print '</tr>';
 				$i++;
@@ -530,7 +646,15 @@ if (! empty($conf->propal->enabled))
 //print '</td></tr></table>';
 print '</div></div></div>';
 
+<<<<<<< HEAD
 
 llxFooter();
 
+=======
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardPropals', $parameters, $object); // Note that $action and $object may have been modified by hook
+
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

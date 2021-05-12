@@ -18,6 +18,12 @@ namespace Stripe;
  */
 class ApplicationFeeRefund extends ApiResource
 {
+<<<<<<< HEAD
+=======
+
+    const OBJECT_NAME = "fee_refund";
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     use ApiOperations\Update {
         save as protected _save;
     }

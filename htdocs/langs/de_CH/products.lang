@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - products
+<<<<<<< HEAD
 Reference=Referenz
 ProductVatMassChange=MwSt-Massenänderung
 LastRecordedProducts=%s zuletzt erfasste Produkte
@@ -15,17 +16,35 @@ DiscountQtyMin=Standard-Rabatt für die Menge
 PredefinedProductsToSell=Vordefinierte Verkaufs-Produkte
 PredefinedProductsToPurchase=Vordefinierte Einkaufs-Produkte
 CloneCompositionProduct=Dupliziere Produkt-/Leistungs- Zusammenstellung
+=======
+Create=Erstelle
+Reference=Referenz
+LastRecordedProducts=%s zuletzt erfasste Produkte
+SellingPriceTTC=Verkaufspreis (inkl. MwSt.)
+CantBeLessThanMinPrice=Der Verkaufspreis darf den Mindestpreis für dieses Produkt (%s ohne MwSt.) nicht unterschreiten. Diese Meldung kann auch angezeigt werden, wenn Sie einen zu hohen Rabatt geben.
+ServicesArea=Leistungs-Übersicht
+SetDefaultBarcodeType=Wählen Sie den standardmässigen Barcode-Typ
+ParentProducts=Übergeordnetes Produkt
+PredefinedProductsToPurchase=Vordefinierte Einkaufs-Produkte
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NewRefForClone=Artikel-Nr. des neuen Produkts/Leistungen
 SellingPrices=Verkaufspreise
 BuyingPrices=Einkaufspreise
 CustomerPrices=Kunden Preise
+<<<<<<< HEAD
 SuppliersPrices=Lieferanten Preise
+=======
+SuppliersPrices=Lieferantenpreise
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 unitS=Zweitens
 ServiceCodeModel=Vorlage für Dienstleistungs-Referenz
 FillBarCodeTypeAndValueFromProduct=Barcode-Typ und -Wert von einem Produkt wählen.
 PriceByCustomer=Unterschiedliche Preise je nach Kunde
 PriceCatalogue=Ein einziger Verkaufspreis pro Produkt/Leistung
+<<<<<<< HEAD
 PricingRule=Preisregel für Verkaufspreise
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PriceExpressionEditorHelp2=Sie können auf die ExtraFields mit Variablen wie <b>#extrafield_myextrafieldkey# </b> und globale Variablen mit <b>#global_mycode#</b> zugreifen
 PriceMode=Preisfindungs-Methode
 ComposedProductIncDecStock=Erhöhen/verringern Lagerbestand  bei verknüpften Produkten

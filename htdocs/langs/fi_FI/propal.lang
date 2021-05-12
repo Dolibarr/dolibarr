@@ -22,7 +22,11 @@ SearchAProposal=Hae tarjousta
 NoProposal=Ei tarjousta
 ProposalsStatistics=Tarjoustilastot
 NumberOfProposalsByMonth=Lukumäärä kuukausittain
+<<<<<<< HEAD
 AmountOfProposalsByMonthHT=Määrä kuukausittain (ilman veroja)
+=======
+AmountOfProposalsByMonthHT=Amount by month (excl. tax)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NbOfProposals=Tarjouksen numero
 ShowPropal=Näytä tarjous
 PropalsDraft=Drafts
@@ -33,7 +37,11 @@ PropalStatusSigned=Allekirjoitettu (laskuttaa)
 PropalStatusNotSigned=Ei ole kirjautunut (suljettu)
 PropalStatusBilled=Laskutetun
 PropalStatusDraftShort=Vedos
+<<<<<<< HEAD
 PropalStatusValidatedShort=Hyväksytty
+=======
+PropalStatusValidatedShort=Validated (open)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PropalStatusClosedShort=Suljettu
 PropalStatusSignedShort=Allekirjoitettu
 PropalStatusNotSignedShort=Ei ole kirjautunut
@@ -53,10 +61,16 @@ ErrorPropalNotFound=Propal %s ei löydy
 AddToDraftProposals=Lisää tarjousluonnos
 NoDraftProposals=Ei tarjousluonnoksia
 CopyPropalFrom=Luo tarjous kopioimalla olemassa oleva tarjous pohjaksi
+<<<<<<< HEAD
 CreateEmptyPropal=Luo tyhjä tarjous vierge tai luettelo tuotteet / palvelut
 DefaultProposalDurationValidity=Tarjouksen oletus voimassaolo (päivinä)
 UseCustomerContactAsPropalRecipientIfExist=Käytä asiakkaan yhteystiedot, jos se on määritetty sijaan kolmannen osapuolen osoite ehdotus vastaanottajan osoite
 ClonePropal=Klooni kaupallinen ehdotus
+=======
+CreateEmptyPropal=Create empty commercial proposal or from list of products/services
+DefaultProposalDurationValidity=Tarjouksen oletus voimassaolo (päivinä)
+UseCustomerContactAsPropalRecipientIfExist=Use contact/address with type 'Contact following-up proposal' if defined instead of third party address as proposal recipient address
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmClonePropal=Haluatko varmasti monistaa tarjouksen <b>%s</b>?
 ConfirmReOpenProp=Haluatko varmasti avata uudestaan tarjouksen <b>%s</b>?
 ProposalsAndProposalsLines=Kaupalliset ehdotusta ja linjat
@@ -78,8 +92,16 @@ TypeContact_propal_external_CUSTOMER=Asiakkaan yhteystiedot tarjouksen seurantaa
 TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
 DocModelAzurDescription=Kokonainen tarjouspohja (logo...)
+<<<<<<< HEAD
+=======
+DocModelCyanDescription=Kokonainen tarjouspohja (logo...)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DefaultModelPropalCreate=Oletusmallin luonti
 DefaultModelPropalToBill=Oletus pohja suljettavalle tarjoukselle (laskutukseen)
 DefaultModelPropalClosed=Oletus pohja suljettavalla tarjoukselle (laskuttamaton)
 ProposalCustomerSignature=Kirjallinen hyväksyntä, päivämäärä ja allekirjoitus
+<<<<<<< HEAD
 ProposalsStatisticsSuppliers=Tavarantoimittajan tarjousten tilastot
+=======
+ProposalsStatisticsSuppliers=Vendor proposals statistics
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

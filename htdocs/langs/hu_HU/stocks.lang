@@ -3,7 +3,11 @@ WarehouseCard=Raktár kártya
 Warehouse=Raktár
 Warehouses=Raktárak
 ParentWarehouse=Parent warehouse
+<<<<<<< HEAD
 NewWarehouse=Új raktár / Készletezési terület
+=======
+NewWarehouse=New warehouse / Stock Location
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 WarehouseEdit=Raktár módosítása
 MenuNewWarehouse=Új raktár
 WarehouseSource=Forrás raktár
@@ -29,6 +33,11 @@ MovementId=Movement ID
 StockMovementForId=Mozgatás azonosítója %d
 ListMouvementStockProject=List of stock movements associated to project
 StocksArea=Raktárak
+<<<<<<< HEAD
+=======
+AllWarehouses=All warehouses
+IncludeAlsoDraftOrders=Include also draft orders
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Location=Hely
 LocationSummary=Hely rövid neve
 NumberOfDifferentProducts=Termékek száma összesen
@@ -44,7 +53,10 @@ TransferStock=Készlet mozgatása
 MassStockTransferShort=Tömeges készletmozgatás
 StockMovement=Készletmozgás
 StockMovements=Készletmozgás
+<<<<<<< HEAD
 LabelMovement=Mozgás címkéje
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NumberOfUnit=Egységek száma
 UnitPurchaseValue=Vételár
 StockTooLow=Készlet alacsony
@@ -54,12 +66,18 @@ PMPValue=Súlyozott átlagár
 PMPValueShort=SÁÉ
 EnhancedValueOfWarehouses=Raktárak értéke
 UserWarehouseAutoCreate=Felhasználói raktár automatikus létrehozása felhasználó hozzáadásakor
+<<<<<<< HEAD
 AllowAddLimitStockByWarehouse=Allow to add limit and desired stock per couple (product, warehouse) instead of per product
 IndependantSubProductStock=A termék és származtatott elemeinek készlete egymástól függetlenek
+=======
+AllowAddLimitStockByWarehouse=Manage also values for minimum and desired stock per pairing (product-warehouse) in addition to values per product
+IndependantSubProductStock=Product stock and subproduct stock are independent
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 QtyDispatched=Mennyiség kiküldése
 QtyDispatchedShort=Kiadott mennyiség
 QtyToDispatchShort=Kiadásra vár
 OrderDispatch=Item receipts
+<<<<<<< HEAD
 RuleForStockManagementDecrease=Automatikus készletcsökkenés szabályának beállítása (a kézzel történő csökkentés továbbra is elérhető, az automatikus készletcsökkentés aktiválása esetén is)
 RuleForStockManagementIncrease=Automatikus készletnövelés szabályának beállítása (a kézzel történő növelés továbbra is elérhető, az automatikus készletnövelés aktiválása esetén is)
 DeStockOnBill=Tényleges készlet csökkentése számla/hitel jóváhagyásakor
@@ -69,6 +87,19 @@ DeStockOnShipmentOnClosing=Csökkentse a valós készletet a "kiszállítás meg
 ReStockOnBill=Tényleges készlet növelése számla/hitel jóváhagyásakor
 ReStockOnValidateOrder=Increase real stocks on purchase orders approbation
 ReStockOnDispatchOrder=Tényleges készlet növelése manuális raktárba való feladáskor miután a beszállítói rendelés beérkezett
+=======
+RuleForStockManagementDecrease=Choose Rule for automatic stock decrease (manual decrease is always possible, even if an automatic decrease rule is activated)
+RuleForStockManagementIncrease=Choose Rule for automatic stock increase (manual increase is always possible, even if an automatic increase rule is activated)
+DeStockOnBill=Decrease real stocks on validation of customer invoice/credit note
+DeStockOnValidateOrder=Decrease real stocks on validation of sales order
+DeStockOnShipment=Tényleges készlet csökkentése kiszállítás jóváhagyásakor
+DeStockOnShipmentOnClosing=Decrease real stocks when shipping is set to closed
+ReStockOnBill=Increase real stocks on validation of vendor invoice/credit note
+ReStockOnValidateOrder=Increase real stocks on purchase order approval
+ReStockOnDispatchOrder=Increase real stocks on manual dispatching into warehouse, after purchase order receipt of goods
+StockOnReception=Increase real stocks on validation of reception
+StockOnReceptionOnClosing=Increase real stocks when reception is set to closed
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 OrderStatusNotReadyToDispatch=A rendelés még nincs olyan állapotban, hogy kiküldhető legyen a raktárba.
 StockDiffPhysicTeoric=Magyarázat a fizikai és elméleti készlet közötti eltérésről
 NoPredefinedProductToDispatch=Nincs előredefiniált termék ehhez az objektumhoz. Tehát nincs szükség raktárba küldésre.
@@ -76,12 +107,21 @@ DispatchVerb=Kiküldés
 StockLimitShort=Figyelmeztetés küszöbértéke
 StockLimit=A készlet figyelmeztetési határértéke
 StockLimitDesc=(empty) means no warning.<br>0 can be used for a warning as soon as stock is empty.
+<<<<<<< HEAD
 PhysicalStock=Fizikai készlet
 RealStock=Igazi készlet
 RealStockDesc=Physical or real stock is the stock you currently have into your internal warehouses/emplacements.
 RealStockWillAutomaticallyWhen=The real stock will automatically change according to this rules (see stock module setup to change this):
 VirtualStock=Virtuális készlet
 VirtualStockDesc=Virtual stock is the stock you will get once all open pending actions that affect stocks will be closed (supplier order received, customer order shipped, ...)
+=======
+PhysicalStock=Physical Stock
+RealStock=Igazi készlet
+RealStockDesc=Physical/real stock is the stock currently in the warehouses.
+RealStockWillAutomaticallyWhen=The real stock will be modified according to this rule (as defined in the Stock module):
+VirtualStock=Virtuális készlet
+VirtualStockDesc=Virtual stock is the calculated stock available once all open/pending actions (that affect stocks) are closed (purchase orders received, sales orders shipped etc.)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 IdWarehouse=Raktár azon.
 DescWareHouse=Raktár leírás
 LieuWareHouse=Raktár helye
@@ -101,7 +141,11 @@ ThisWarehouseIsPersonalStock=Ez a raktár %s %s személyes készletet képvisel
 SelectWarehouseForStockDecrease=Válassza ki melyik raktár készlete csökkenjen
 SelectWarehouseForStockIncrease=Válassza ki melyik raktár készlete növekedjen
 NoStockAction=Nincs készletmozgás
+<<<<<<< HEAD
 DesiredStock=Kívánt készletmennyiség
+=======
+DesiredStock=Desired Stock
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DesiredStockDesc=Ez a készlet mennyiség lesz használatos a pótlási funkcióban az alapértelmezett értéknek
 StockToBuy=Rendelésre
 Replenishment=Feltöltés
@@ -114,13 +158,22 @@ CurentSelectionMode=Jelenlegi kiválasztási mód
 CurentlyUsingVirtualStock=Virtuális készlet
 CurentlyUsingPhysicalStock=Fizikai készlet
 RuleForStockReplenishment=A készletek pótlásának szabálya
+<<<<<<< HEAD
 SelectProductWithNotNullQty=Válasszon legalább egy készleten lévő terméket és beszállítót
+=======
+SelectProductWithNotNullQty=Select at least one product with a qty not null and a vendor
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AlertOnly= Csak figyelmeztetések
 WarehouseForStockDecrease=A <b>%s</b> raktár készlete lesz csökkentve
 WarehouseForStockIncrease=A <b>%s</b> raktár készlete lesz növelve
 ForThisWarehouse=Az aktuális raktár részére
+<<<<<<< HEAD
 ReplenishmentStatusDesc=Azon termékek listája melyek készlete alacsonyabb a kívánt értéknél (vagy a figyelmeztetési küszöb értékénél, ha a jelölőnégyzet be van jelölve) A jelölőnégyzet használatával beszállítói rendeléseket készíthet a hiány pótlására.
 ReplenishmentOrdersDesc=Azon termékek megrendelői listája melyek folyamatban lévő megrendeléseken szerepelnek és közvetlenül befolyásolják a készletek alakulását.
+=======
+ReplenishmentStatusDesc=This is a list of all products with a stock lower than desired stock (or lower than alert value if checkbox "alert only" is checked). Using the checkbox, you can create purchase orders to fill the difference.
+ReplenishmentOrdersDesc=This is a list of all open purchase orders including predefined products. Only open orders with predefined products, so orders that may affect stocks, are visible here.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Replenishments=Készletek pótlása
 NbOfProductBeforePeriod=A %s termékből rendelkezésre álló mennyiség a kiválasztott periódusban (%s előtt)
 NbOfProductAfterPeriod=A %s termékből rendelkezésre álló mennyiség a kiválasztott periódusban (%s után)
@@ -130,10 +183,18 @@ RecordMovement=Mozgatás rögzítése
 ReceivingForSameOrder=Megrendelés nyugtái
 StockMovementRecorded=Rögzített készletmozgások
 RuleForStockAvailability=A készlet tartásának szabályai
+<<<<<<< HEAD
 StockMustBeEnoughForInvoice=A készletnek elegendőnek kell lennie a termék/szolgáltatás kiszámlázásához (ellenőrzés végrehajtva a jelenlegi tényleges készlettel, ha sort ad a számlához, bármely automatikus készlet változtató szabály mellett)
 StockMustBeEnoughForOrder=Stock level must be enough to add product/service to order (check is done on current real stock when adding a line into order whatever is rule for automatic stock change)
 StockMustBeEnoughForShipment= Stock level must be enough to add product/service to shipment (check is done on current real stock when adding a line into shipment whatever is rule for automatic stock change)
 MovementLabel=Mozgás címkéje
+=======
+StockMustBeEnoughForInvoice=Stock level must be enough to add product/service to invoice (check is done on current real stock when adding a line into invoice whatever the rule for automatic stock change)
+StockMustBeEnoughForOrder=Stock level must be enough to add product/service to order (check is done on current real stock when adding a line into order whatever the rule for automatic stock change)
+StockMustBeEnoughForShipment= Stock level must be enough to add product/service to shipment (check is done on current real stock when adding a line into shipment whatever the rule for automatic stock change)
+MovementLabel=Mozgás címkéje
+TypeMovement=Type of movement
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DateMovement=Date of movement
 InventoryCode=Mozgás vagy leltár kód
 IsInPackage=Csomag tartalmazza
@@ -143,11 +204,19 @@ ShowWarehouse=Raktár részletei
 MovementCorrectStock=A %s termék készlet-módosítása
 MovementTransferStock=A %s termék készletének mozgatása másik raktárba
 InventoryCodeShort=Lelt./Mozg. kód
+<<<<<<< HEAD
 NoPendingReceptionOnSupplierOrder=Nincs függőben lévő bevételezés mivel létezik nyitott beszállítói megrendelés
 ThisSerialAlreadyExistWithDifferentDate=A (<strong>%s</strong>) tétel/cikkszám már létezik de eltérő lejárati/eladási határidővel (jelenleg <strong>%s</strong> az imént  felvitt érték ellenben <strong>%s</strong>).
 OpenAll=Nyitott minden műveletre
 OpenInternal=Nyitott csak belső műveletek számára
 UseDispatchStatus=Use a dispatch status (approve/refuse) for product lines on supplier order reception
+=======
+NoPendingReceptionOnSupplierOrder=No pending reception due to open purchase order
+ThisSerialAlreadyExistWithDifferentDate=A (<strong>%s</strong>) tétel/cikkszám már létezik de eltérő lejárati/eladási határidővel (jelenleg <strong>%s</strong> az imént  felvitt érték ellenben <strong>%s</strong>).
+OpenAll=Nyitott minden műveletre
+OpenInternal=Nyitott csak belső műveletek számára
+UseDispatchStatus=Use a dispatch status (approve/refuse) for product lines on purchase order reception
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 OptionMULTIPRICESIsOn=Option "several prices per segment" is on. It means a product has several selling price so value for sell can't be calculated
 ProductStockWarehouseCreated=Stock limit for alert and desired optimal stock correctly created
 ProductStockWarehouseUpdated=Stock limit for alert and desired optimal stock correctly updated
@@ -171,6 +240,7 @@ inventoryValidate=Hitelesítetve
 inventoryDraft=Folyamatban
 inventorySelectWarehouse=Warehouse choice
 inventoryConfirmCreate=Készít
+<<<<<<< HEAD
 inventoryOfWarehouse=Inventory for warehouse : %s
 inventoryErrorQtyAdd=Error : one quantity is leaser than zero
 inventoryMvtStock=By inventory
@@ -181,6 +251,18 @@ inventoryOnDate=Készletnyilvántartás
 INVENTORY_DISABLE_VIRTUAL=Allow to not destock child product from a kit on inventory
 INVENTORY_USE_MIN_PA_IF_NO_LAST_PA=Use the buy price if no last buy price can be found
 INVENTORY_USE_INVENTORY_DATE_FROM_DATEMVT=Stock movement have date of inventory
+=======
+inventoryOfWarehouse=Inventory for warehouse: %s
+inventoryErrorQtyAdd=Error: one quantity is less than zero
+inventoryMvtStock=By inventory
+inventoryWarningProductAlreadyExists=Ez a termék már szerepel a listában
+SelectCategory=Kategória szűrés
+SelectFournisseur=Vendor filter
+inventoryOnDate=Készletnyilvántartás
+INVENTORY_DISABLE_VIRTUAL=Virtual product (kit): do not decrement stock of a child product
+INVENTORY_USE_MIN_PA_IF_NO_LAST_PA=Use the buy price if no last buy price can be found
+INVENTORY_USE_INVENTORY_DATE_FROM_DATEMVT=Stock movement has date of inventory
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 inventoryChangePMPPermission=Allow to change PMP value for a product
 ColumnNewPMP=New unit PMP
 OnlyProdsInStock=Do not add product without stock
@@ -195,12 +277,26 @@ AddInventoryProduct=Add product to inventory
 AddProduct=Hozzáadás
 ApplyPMP=Apply PMP
 FlushInventory=Flush inventory
+<<<<<<< HEAD
 ConfirmFlushInventory=Do you confirm this action ?
+=======
+ConfirmFlushInventory=Do you confirm this action?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 InventoryFlushed=Inventory flushed
 ExitEditMode=Exit edition
 inventoryDeleteLine=Sor törlése
 RegulateStock=Regulate Stock
 ListInventory=Lista
+<<<<<<< HEAD
 StockSupportServices=Stock management support services
 StockSupportServicesDesc=By default, you can stock only product with type "product". If on, and if module service is on, you can also stock a product with type "service"
 ReceiveProducts=Receive items
+=======
+StockSupportServices=Stock management supports Services
+StockSupportServicesDesc=By default, you can stock only products of type "product". You may also stock a product of type "service" if both module Services and this option are enabled.
+ReceiveProducts=Receive items
+StockIncreaseAfterCorrectTransfer=Increase by correction/transfer
+StockDecreaseAfterCorrectTransfer=Decrease by correction/transfer
+StockIncrease=Stock increase
+StockDecrease=Stock decrease
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

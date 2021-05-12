@@ -1,10 +1,18 @@
 <?php
 /* Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2016	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013 		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2015-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+=======
+ * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2011-2016	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2013 		Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2015-2016	Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +43,11 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'bills', 'companies', 'compta'));
 
+<<<<<<< HEAD
 $id =GETPOST('id','int');
+=======
+$id =GETPOST('id', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $ref=GETPOST('ref', 'alpha');
 $action=GETPOST('action', 'alpha');
 $confirm=GETPOST('confirm', 'alpha');
@@ -43,7 +55,11 @@ $confirm=GETPOST('confirm', 'alpha');
 // Security check
 $fieldname = (! empty($ref)?'ref':'rowid');
 if ($user->societe_id) $socid=$user->societe_id;
+<<<<<<< HEAD
 $result = restrictedArea($user, 'cheque', $id, 'bordereau_cheque','','fk_user_author',$fieldname);
+=======
+$result = restrictedArea($user, 'cheque', $id, 'bordereau_cheque', '', 'fk_user_author', $fieldname);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $sortfield=GETPOST('sortfield', 'alpha');
 $sortorder=GETPOST('sortorder', 'alpha');
@@ -51,7 +67,11 @@ $page=GETPOST('page', 'int');
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="b.dateo,b.rowid";
 if (empty($page) || $page == -1) { $page = 0; }
+<<<<<<< HEAD
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+=======
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $offset = $limit * $page ;
 
 $dir=$conf->bank->dir_output.'/checkdeposits/';
@@ -67,13 +87,21 @@ $object = new RemiseCheque($db);
 
 if ($action == 'setdate' && $user->rights->banque->cheque)
 {
+<<<<<<< HEAD
     $result = $object->fetch(GETPOST('id','int'));
+=======
+    $result = $object->fetch(GETPOST('id', 'int'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     if ($result > 0)
     {
         //print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
         $date=dol_mktime(0, 0, 0, $_POST['datecreate_month'], $_POST['datecreate_day'], $_POST['datecreate_year']);
 
+<<<<<<< HEAD
         $result=$object->set_date($user,$date);
+=======
+        $result=$object->set_date($user, $date);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         if ($result < 0)
         {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -87,7 +115,11 @@ if ($action == 'setdate' && $user->rights->banque->cheque)
 
 if ($action == 'setrefext' && $user->rights->banque->cheque)
 {
+<<<<<<< HEAD
     $result = $object->fetch(GETPOST('id','int'));
+=======
+    $result = $object->fetch(GETPOST('id', 'int'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     if ($result > 0)
     {
         $ref_ext = GETPOST('ref_ext');
@@ -106,12 +138,20 @@ if ($action == 'setrefext' && $user->rights->banque->cheque)
 
 if ($action == 'setref' && $user->rights->banque->cheque)
 {
+<<<<<<< HEAD
 	$result = $object->fetch(GETPOST('id','int'));
+=======
+	$result = $object->fetch(GETPOST('id', 'int'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if ($result > 0)
 	{
 		$ref=GETPOST('ref');
 
+<<<<<<< HEAD
 		$result=$object->set_number($user,$ref);
+=======
+		$result=$object->set_number($user, $ref);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if ($result < 0)
 		{
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -140,7 +180,11 @@ if ($action == 'create' && $_POST["accountid"] > 0 && $user->rights->banque->che
 	            //if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
 	            if (! empty($newlang))
 	            {
+<<<<<<< HEAD
 	                $outputlangs = new Translate("",$conf);
+=======
+	                $outputlangs = new Translate("", $conf);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	                $outputlangs->setDefaultLang($newlang);
 	            }
 	            $result = $object->generatePdf($_POST["model"], $outputlangs);
@@ -204,7 +248,11 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->banque->c
         //if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
         if (! empty($newlang))
         {
+<<<<<<< HEAD
             $outputlangs = new Translate("",$conf);
+=======
+            $outputlangs = new Translate("", $conf);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $outputlangs->setDefaultLang($newlang);
         }
         $result = $object->generatePdf(GETPOST('model'), $outputlangs);
@@ -252,13 +300,21 @@ if ($action == 'builddoc' && $user->rights->banque->cheque)
     //if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
     if (! empty($newlang))
     {
+<<<<<<< HEAD
         $outputlangs = new Translate("",$conf);
+=======
+        $outputlangs = new Translate("", $conf);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $outputlangs->setDefaultLang($newlang);
     }
 	$result = $object->generatePdf($_POST["model"], $outputlangs);
 	if ($result <= 0)
 	{
+<<<<<<< HEAD
 		dol_print_error($db,$object->error);
+=======
+		dol_print_error($db, $object->error);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		exit;
 	}
 	else
@@ -269,6 +325,7 @@ if ($action == 'builddoc' && $user->rights->banque->cheque)
 }
 
 // Remove file in doc form
+<<<<<<< HEAD
 else if ($action == 'remove_file' && $user->rights->banque->cheque)
 {
 	if ($object->fetch($id) > 0)
@@ -279,6 +336,18 @@ else if ($action == 'remove_file' && $user->rights->banque->cheque)
 
 		$file=$dir.get_exdir($object->ref,0,1,0,$object,'cheque') . GETPOST('file');
 		$ret=dol_delete_file($file,0,0,0,$object);
+=======
+elseif ($action == 'remove_file' && $user->rights->banque->cheque)
+{
+	if ($object->fetch($id) > 0)
+	{
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+		$langs->load("other");
+
+		$file=$dir.get_exdir($object->ref, 0, 1, 0, $object, 'cheque') . GETPOST('file');
+		$ret=dol_delete_file($file, 0, 0, 0, $object);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
 		else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), null, 'errors');
 	}
@@ -297,7 +366,11 @@ if (GETPOST('removefilter'))
 
 $title=$langs->trans("Cheques") . " - " . $langs->trans("Card");
 $helpurl="";
+<<<<<<< HEAD
 llxHeader("",$title,$helpurl);
+=======
+llxHeader("", $title, $helpurl);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $form = new Form($db);
 $formfile = new FormFile($db);
@@ -318,7 +391,11 @@ else
 	$result = $object->fetch($id, $ref);
 	if ($result < 0)
 	{
+<<<<<<< HEAD
 		dol_print_error($db,$object->error);
+=======
+		dol_print_error($db, $object->error);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		exit;
 	}
 
@@ -338,8 +415,12 @@ else
 	 */
 	if ($action == 'delete')
 	{
+<<<<<<< HEAD
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("DeleteCheckReceipt"), $langs->trans("ConfirmDeleteCheckReceipt"), 'confirm_delete','','',1);
 
+=======
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("DeleteCheckReceipt"), $langs->trans("ConfirmDeleteCheckReceipt"), 'confirm_delete', '', '', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	/*
@@ -347,8 +428,12 @@ else
 	 */
 	if ($action == 'valide')
 	{
+<<<<<<< HEAD
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("ValidateCheckReceipt"), $langs->trans("ConfirmValidateCheckReceipt"), 'confirm_valide','','',1);
 
+=======
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("ValidateCheckReceipt"), $langs->trans("ConfirmValidateCheckReceipt"), 'confirm_valide', '', '', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	/*
@@ -360,7 +445,11 @@ else
 			array('type' => 'hidden','name' => 'bankid','value' => GETPOST('lineid')),
 			array('type' => 'date','name' => 'rejectdate_','label' => $langs->trans("RejectCheckDate"),'value' => dol_now())
 		);
+<<<<<<< HEAD
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("RejectCheck"), $langs->trans("ConfirmRejectCheck"), 'confirm_reject_check',$formquestion,'',1);
+=======
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("RejectCheck"), $langs->trans("ConfirmRejectCheck"), 'confirm_reject_check', $formquestion, '', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 }
 
@@ -386,10 +475,17 @@ if ($action == 'new')
 	//print '<tr><td width="30%">'.$langs->trans('Date').'</td><td width="70%">'.dol_print_date($now,'day').'</td></tr>';
 	// Filter
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("DateChequeReceived").'</td><td>';
+<<<<<<< HEAD
 	print $form->select_date($filterdate,'fd',0,0,1,'',1,1,1);
 	print '</td></tr>';
     print '<tr><td>'.$langs->trans("BankAccount").'</td><td>';
     $form->select_comptes($filteraccountid,'accountid',0,'courant <> 2',1);
+=======
+	print $form->selectDate($filterdate, 'fd', 0, 0, 1, '', 1, 1);
+	print '</td></tr>';
+    print '<tr><td>'.$langs->trans("BankAccount").'</td><td>';
+    $form->select_comptes($filteraccountid, 'accountid', 0, 'courant <> 2', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print '</td></tr>';
 	print '</table>';
 
@@ -418,7 +514,11 @@ if ($action == 'new')
 	$sql.= " AND b.amount > 0";
 	if ($filterdate)          $sql.=" AND b.dateo = '".$db->idate($filterdate)."'";
     if ($filteraccountid > 0) $sql.=" AND ba.rowid= '".$filteraccountid."'";
+<<<<<<< HEAD
 	$sql.= $db->order("b.dateo,b.rowid","ASC");
+=======
+	$sql.= $db->order("b.dateo,b.rowid", "ASC");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	$resql = $db->query($sql);
 	if ($resql)
@@ -473,6 +573,7 @@ if ($action == 'new')
         print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 		print '<tr class="liste_titre">';
+<<<<<<< HEAD
 		print '<td style="min-width: 120px">'.$langs->trans("DateChequeReceived").'</td>'."\n";
 		print '<td style="min-width: 120px">'.$langs->trans("ChequeNumber")."</td>\n";
 		print '<td style="min-width: 200px">'.$langs->trans("CheckTransmitter")."</td>\n";
@@ -481,6 +582,16 @@ if ($action == 'new')
 		print '<td align="center" width="100px">'.$langs->trans("Payment")."</td>\n";
 		print '<td align="center" width="100px">'.$langs->trans("LineRecord")."</td>\n";
 		print '<td align="center" width="100px">'.$langs->trans("Select")."<br>";
+=======
+		print '<td>'.$langs->trans("DateChequeReceived").'</td>'."\n";
+		print '<td>'.$langs->trans("ChequeNumber")."</td>\n";
+		print '<td>'.$langs->trans("CheckTransmitter")."</td>\n";
+		print '<td>'.$langs->trans("Bank")."</td>\n";
+		print '<td>'.$langs->trans("Amount")."</td>\n";
+		print '<td class="center">'.$langs->trans("Payment")."</td>\n";
+		print '<td class="center">'.$langs->trans("LineRecord")."</td>\n";
+		print '<td class="center">'.$langs->trans("Select")."<br>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if ($conf->use_javascript_ajax) print '<a href="#" id="checkall_'.$bid.'">'.$langs->trans("All").'</a> / <a href="#" id="checknone_'.$bid.'">'.$langs->trans("None").'</a>';
 		print '</td>';
 		print "</tr>\n";
@@ -497,11 +608,19 @@ if ($action == 'new')
 				$accounts[$bid] += 1;*/
 
 				print '<tr class="oddeven">';
+<<<<<<< HEAD
 				print '<td>'.dol_print_date($value["date"],'day').'</td>';
 				print '<td>'.$value["numero"]."</td>\n";
 				print '<td>'.$value["emetteur"]."</td>\n";
 				print '<td>'.$value["banque"]."</td>\n";
 				print '<td align="right">'.price($value["amount"], 0, $langs, 1, -1, -1, $conf->currency).'</td>';
+=======
+				print '<td>'.dol_print_date($value["date"], 'day').'</td>';
+				print '<td>'.$value["numero"]."</td>\n";
+				print '<td>'.$value["emetteur"]."</td>\n";
+				print '<td>'.$value["banque"]."</td>\n";
+				print '<td class="right">'.price($value["amount"], 0, $langs, 1, -1, -1, $conf->currency).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				// Link to payment
 				print '<td align="center">';
@@ -543,16 +662,27 @@ if ($action == 'new')
 		print '<div class="tabsAction">';
 		if ($user->rights->banque->cheque)
 		{
+<<<<<<< HEAD
 			print '<input type="submit" class="button" value="'.$langs->trans('NewCheckDepositOn',$account_label).'">';
 		}
 		else
 		{
 			print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('NewCheckDepositOn',$account_label).'</a>';
+=======
+			print '<input type="submit" class="button" value="'.$langs->trans('NewCheckDepositOn', $account_label).'">';
+		}
+		else
+		{
+			print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('NewCheckDepositOn', $account_label).'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		print '</div><br>';
 		print '</form>';
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 else
 {
@@ -578,7 +708,11 @@ else
     print '<table class="nobordernopadding" width="100%"><tr><td>';
     print $langs->trans('Date');
     print '</td>';
+<<<<<<< HEAD
     if ($action != 'editdate') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
+=======
+    if ($action != 'editdate') print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print '</tr></table>';
     print '</td><td colspan="2">';
     if ($action == 'editdate')
@@ -586,13 +720,21 @@ else
         print '<form name="setdate" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="setdate">';
+<<<<<<< HEAD
         $form->select_date($object->date_bordereau,'datecreate_','','','',"setdate");
+=======
+        print $form->selectDate($object->date_bordereau, 'datecreate_', '', '', '', "setdate");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
         print '</form>';
     }
     else
     {
+<<<<<<< HEAD
         print $object->date_bordereau ? dol_print_date($object->date_bordereau,'day') : '&nbsp;';
+=======
+        print $object->date_bordereau ? dol_print_date($object->date_bordereau, 'day') : '&nbsp;';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
 	print '</td>';
@@ -605,7 +747,11 @@ else
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
     print $langs->trans('RefExt');
     print '</td>';
+<<<<<<< HEAD
     if ($action != 'editrefext') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editrefext&amp;id='.$object->id.'">'.img_edit($langs->trans('SetRefExt'),1).'</a></td>';
+=======
+    if ($action != 'editrefext') print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editrefext&amp;id='.$object->id.'">'.img_edit($langs->trans('SetRefExt'),1).'</a></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print '</tr></table>';
     print '</td><td colspan="2">';
     if ($action == 'editrefext')
@@ -671,6 +817,7 @@ else
 		$param="&amp;id=".$object->id;
 
 		print '<tr class="liste_titre">';
+<<<<<<< HEAD
 		print_liste_field_titre("Cheques",'','','','','width="30"');
 		print_liste_field_titre("DateChequeReceived",$_SERVER["PHP_SELF"],"b.dateo,b.rowid", "",$param,'align="center"',$sortfield,$sortorder);
 		print_liste_field_titre("Numero",$_SERVER["PHP_SELF"],"b.num_chq", "",$param,'align="center"',$sortfield,$sortorder);
@@ -679,6 +826,16 @@ else
 		print_liste_field_titre("Amount",$_SERVER["PHP_SELF"],"b.amount", "",$param,'align="right"',$sortfield,$sortorder);
 		print_liste_field_titre("Payment",$_SERVER["PHP_SELF"],"p.rowid", "",$param,'align="center"',$sortfield,$sortorder);
 		print_liste_field_titre("LineRecord",$_SERVER["PHP_SELF"],"b.rowid", "",$param,'align="center"',$sortfield,$sortorder);
+=======
+		print_liste_field_titre("Cheques", '', '', '', '', 'width="30"');
+		print_liste_field_titre("DateChequeReceived", $_SERVER["PHP_SELF"], "b.dateo,b.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
+		print_liste_field_titre("Numero", $_SERVER["PHP_SELF"], "b.num_chq", "", $param, 'align="center"', $sortfield, $sortorder);
+		print_liste_field_titre("CheckTransmitter", $_SERVER["PHP_SELF"], "b.emetteur", "", $param, "", $sortfield, $sortorder);
+		print_liste_field_titre("Bank", $_SERVER["PHP_SELF"], "b.banque", "", $param, "", $sortfield, $sortorder);
+		print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "b.amount", "", $param, 'class="right"', $sortfield, $sortorder);
+		print_liste_field_titre("Payment", $_SERVER["PHP_SELF"], "p.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
+		print_liste_field_titre("LineRecord", $_SERVER["PHP_SELF"], "b.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print_liste_field_titre('');
 		print "</tr>\n";
 		$i=1;
@@ -696,11 +853,19 @@ else
 
     			print '<tr class="oddeven">';
     			print '<td align="center">'.$i.'</td>';
+<<<<<<< HEAD
     			print '<td align="center">'.dol_print_date($db->jdate($objp->date),'day').'</td>';	// Date operation
     			print '<td align="center">'.($objp->num_chq?$objp->num_chq:'&nbsp;').'</td>';
     			print '<td>'.dol_trunc($objp->emetteur,24).'</td>';
     			print '<td>'.dol_trunc($objp->banque,24).'</td>';
     			print '<td align="right">'.price($objp->amount).'</td>';
+=======
+    			print '<td align="center">'.dol_print_date($db->jdate($objp->date), 'day').'</td>';	// Date operation
+    			print '<td align="center">'.($objp->num_chq?$objp->num_chq:'&nbsp;').'</td>';
+    			print '<td>'.dol_trunc($objp->emetteur, 24).'</td>';
+    			print '<td>'.dol_trunc($objp->banque, 24).'</td>';
+    			print '<td class="right">'.price($objp->amount).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     			// Link to payment
     			print '<td align="center">';
     			$paymentstatic->id=$objp->pid;
@@ -727,18 +892,30 @@ else
     			}
     			print '</td>';
     			// Action button
+<<<<<<< HEAD
     			print '<td align="right">';
+=======
+    			print '<td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     			if ($object->statut == 0)
     			{
     				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=remove&amp;lineid='.$objp->rowid.'">'.img_delete().'</a>';
     			}
        			if ($object->statut == 1 && $objp->statut != 2)
        			{
+<<<<<<< HEAD
        				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reject_check&amp;lineid='.$objp->rowid.'">'.img_picto($langs->trans("RejectCheck"),'disable').'</a>';
        			}
     			if ($objp->statut == 2)
     			{
     				print ' &nbsp; '.img_picto($langs->trans('CheckRejected'),'statut8').'</a>';
+=======
+       				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reject_check&amp;lineid='.$objp->rowid.'">'.img_picto($langs->trans("RejectCheck"), 'disable').'</a>';
+       			}
+    			if ($objp->statut == 2)
+    			{
+    				print ' &nbsp; '.img_picto($langs->trans('CheckRejected'), 'statut8').'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     			}
     		    print '</td>';
     			print '</tr>';
@@ -773,11 +950,14 @@ else
 
 print '<div class="tabsAction">';
 
+<<<<<<< HEAD
 /*if ($user->societe_id == 0 && count($accounts) == 1 && $action == 'new' && $user->rights->banque->cheque)
 {
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=create&amp;accountid='.$account_id.'">'.$langs->trans('NewCheckReceipt').'</a>';
 }*/
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($user->societe_id == 0 && ! empty($object->id) && $object->statut == 0 && $user->rights->banque->cheque)
 {
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valide&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.$langs->trans('Validate').'</a>';
@@ -786,7 +966,10 @@ if ($user->societe_id == 0 && ! empty($object->id) && $object->statut == 0 && $u
 if ($user->societe_id == 0 && ! empty($object->id) && $user->rights->banque->cheque)
 {
 	print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.$langs->trans('Delete').'</a>';
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 print '</div>';
 
@@ -797,7 +980,11 @@ if ($action != 'new')
 	if ($object->statut == 1)
 	{
 		$filename=dol_sanitizeFileName($object->ref);
+<<<<<<< HEAD
 		$filedir=$dir.get_exdir($object->ref,0,1,0,$object,'cheque') . dol_sanitizeFileName($object->ref);
+=======
+		$filedir=$dir.get_exdir($object->ref, 0, 1, 0, $object, 'cheque') . dol_sanitizeFileName($object->ref);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
 
 		print $formfile->showdocuments('remisecheque', $filename, $filedir, $urlsource, 1, 1);
@@ -806,8 +993,13 @@ if ($action != 'new')
 	}
 }
 
+<<<<<<< HEAD
 
 
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

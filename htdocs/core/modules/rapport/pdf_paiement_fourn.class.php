@@ -35,7 +35,11 @@ class pdf_paiement_fourn extends pdf_paiement
      *
      *  @param      DoliDb		$db      Database handler
 	 */
+<<<<<<< HEAD
 	function __construct($db)
+=======
+	public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		parent::__construct($db);
 		$this->doc_type = "fourn";

@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,8 +31,13 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 
+<<<<<<< HEAD
 $action=GETPOST('action','aZ09');
 $cancel=GETPOST('cancel','alpha');
+=======
+$action=GETPOST('action', 'aZ09');
+$cancel=GETPOST('cancel', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies","products","admin","users","other"));
@@ -38,7 +47,11 @@ if (! $user->admin) accessforbidden();
 
 $dirstandard = array();
 $dirsmartphone = array();
+<<<<<<< HEAD
 $dirmenus=array_merge(array("/core/menus/"),(array) $conf->modules_parts['menus']);
+=======
+$dirmenus=array_merge(array("/core/menus/"), (array) $conf->modules_parts['menus']);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 foreach($dirmenus as $dirmenu)
 {
     $dirstandard[]=$dirmenu.'standard';
@@ -64,6 +77,7 @@ if ($action == 'update' && ! $cancel)
 {
 	$_SESSION["mainmenu"]="home";   // Le gestionnaire de menu a pu changer
 
+<<<<<<< HEAD
 	dolibarr_set_const($db, "MAIN_MENU_STANDARD",        GETPOST('MAIN_MENU_STANDARD','alpha'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MENU_SMARTPHONE",      GETPOST('MAIN_MENU_SMARTPHONE','alpha'),'chaine',0,'',$conf->entity);
 
@@ -76,12 +90,30 @@ if ($action == 'update' && ! $cancel)
 	$listofmenuhandler[preg_replace('/(_backoffice|_frontoffice|_menu)?\.php/i','',GETPOST('MAIN_MENUFRONT_STANDARD','alpha'))]=1;
 	if (GETPOST('MAIN_MENU_SMARTPHONE','alpha'))      $listofmenuhandler[preg_replace('/(_backoffice|_frontoffice|_menu)?\.php/i','',GETPOST('MAIN_MENU_SMARTPHONE','alpha'))]=1;
 	if (GETPOST('MAIN_MENUFRONT_SMARTPHONE','alpha')) $listofmenuhandler[preg_replace('/(_backoffice|_frontoffice|_menu)?\.php/i','',GETPOST('MAIN_MENUFRONT_SMARTPHONE','alpha'))]=1;
+=======
+	dolibarr_set_const($db, "MAIN_MENU_STANDARD", GETPOST('MAIN_MENU_STANDARD', 'alpha'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_MENU_SMARTPHONE", GETPOST('MAIN_MENU_SMARTPHONE', 'alpha'), 'chaine', 0, '', $conf->entity);
+
+	dolibarr_set_const($db, "MAIN_MENUFRONT_STANDARD", GETPOST('MAIN_MENUFRONT_STANDARD', 'alpha'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_MENUFRONT_SMARTPHONE", GETPOST('MAIN_MENUFRONT_SMARTPHONE', 'alpha'), 'chaine', 0, '', $conf->entity);
+
+	// Define list of menu handlers to initialize
+	$listofmenuhandler=array();
+	$listofmenuhandler[preg_replace('/(_backoffice|_frontoffice|_menu)?\.php/i', '', GETPOST('MAIN_MENU_STANDARD', 'alpha'))]=1;
+	$listofmenuhandler[preg_replace('/(_backoffice|_frontoffice|_menu)?\.php/i', '', GETPOST('MAIN_MENUFRONT_STANDARD', 'alpha'))]=1;
+	if (GETPOST('MAIN_MENU_SMARTPHONE', 'alpha'))      $listofmenuhandler[preg_replace('/(_backoffice|_frontoffice|_menu)?\.php/i', '', GETPOST('MAIN_MENU_SMARTPHONE', 'alpha'))]=1;
+	if (GETPOST('MAIN_MENUFRONT_SMARTPHONE', 'alpha')) $listofmenuhandler[preg_replace('/(_backoffice|_frontoffice|_menu)?\.php/i', '', GETPOST('MAIN_MENUFRONT_SMARTPHONE', 'alpha'))]=1;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	// Initialize menu handlers
 	foreach ($listofmenuhandler as $key => $val)
 	{
 		// Load sql init_menu_handler.sql file
+<<<<<<< HEAD
 		$dirmenus=array_merge(array("/core/menus/"),(array) $conf->modules_parts['menus']);
+=======
+		$dirmenus=array_merge(array("/core/menus/"), (array) $conf->modules_parts['menus']);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		foreach($dirmenus as $dirmenu)
 		{
 			$file='init_menu_'.$key.'.sql';
@@ -92,7 +124,11 @@ if ($action == 'update' && ! $cancel)
 			{
 				$db->begin();
 
+<<<<<<< HEAD
 				$result=run_sql($fullpath,1,'',1,$key,'none');
+=======
+				$result=run_sql($fullpath, 1, '', 1, $key, 'none');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if ($result > 0)
 				{
 					$db->commit();
@@ -126,9 +162,15 @@ $form=new Form($db);
 $formadmin=new FormAdmin($db);
 
 $wikihelp='EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
+<<<<<<< HEAD
 llxHeader('',$langs->trans("Setup"),$wikihelp);
 
 print load_fiche_titre($langs->trans("Menus"),'','title_setup');
+=======
+llxHeader('', $langs->trans("Setup"), $wikihelp);
+
+print load_fiche_titre($langs->trans("Menus"), '', 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 $h = 0;
@@ -155,7 +197,11 @@ print '<input type="hidden" name="action" value="update">';
 
 dol_fiche_head($head, 'handler', $langs->trans("Menus"), -1);
 
+<<<<<<< HEAD
 print $langs->trans("MenusDesc")."<br>\n";
+=======
+print '<span class="opacitymedium">'.$langs->trans("MenusDesc")."</span><br>\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print "<br>\n";
 
 
@@ -167,10 +213,17 @@ if ($action == 'edit')
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td width="35%">'.$langs->trans("Menu").'</td>';
 	print '<td>';
+<<<<<<< HEAD
 	print $form->textwithpicto($langs->trans("InternalUsers"),$langs->trans("InternalExternalDesc"));
 	print '</td>';
 	print '<td>';
 	print $form->textwithpicto($langs->trans("ExternalUsers"),$langs->trans("InternalExternalDesc"));
+=======
+	print $form->textwithpicto($langs->trans("InternalUsers"), $langs->trans("InternalExternalDesc"));
+	print '</td>';
+	print '<td>';
+	print $form->textwithpicto($langs->trans("ExternalUsers"), $langs->trans("InternalExternalDesc"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</td>';
 	print '</tr>';
 
@@ -187,10 +240,17 @@ if ($action == 'edit')
 	// Menu smartphone
 	print '<tr class="oddeven"><td>'.$langs->trans("DefaultMenuSmartphoneManager").'</td>';
 	print '<td>';
+<<<<<<< HEAD
 	$formadmin->select_menu(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?$conf->global->MAIN_MENU_SMARTPHONE:$conf->global->MAIN_MENU_SMARTPHONE_FORCED, 'MAIN_MENU_SMARTPHONE', array_merge($dirstandard,$dirsmartphone), empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?'':' disabled');
 	print '</td>';
 	print '<td>';
 	$formadmin->select_menu(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?$conf->global->MAIN_MENUFRONT_SMARTPHONE:$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED, 'MAIN_MENUFRONT_SMARTPHONE', array_merge($dirstandard,$dirsmartphone), empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?'':' disabled');
+=======
+	$formadmin->select_menu(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?$conf->global->MAIN_MENU_SMARTPHONE:$conf->global->MAIN_MENU_SMARTPHONE_FORCED, 'MAIN_MENU_SMARTPHONE', array_merge($dirstandard, $dirsmartphone), empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?'':' disabled');
+	print '</td>';
+	print '<td>';
+	$formadmin->select_menu(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?$conf->global->MAIN_MENUFRONT_SMARTPHONE:$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED, 'MAIN_MENUFRONT_SMARTPHONE', array_merge($dirstandard, $dirsmartphone), empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?'':' disabled');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</td>';
 	print '</tr>';
 
@@ -202,21 +262,36 @@ else
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td width="35%">'.$langs->trans("Menu").'</td>';
 	print '<td>';
+<<<<<<< HEAD
 	print $form->textwithpicto($langs->trans("InternalUsers"),$langs->trans("InternalExternalDesc"));
 	print '</td>';
 	print '<td>';
 	print $form->textwithpicto($langs->trans("ExternalUsers"),$langs->trans("InternalExternalDesc"));
+=======
+	print $form->textwithpicto($langs->trans("InternalUsers"), $langs->trans("InternalExternalDesc"));
+	print '</td>';
+	print '<td>';
+	print $form->textwithpicto($langs->trans("ExternalUsers"), $langs->trans("InternalExternalDesc"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</td>';
 	print '</tr>';
 
 
 	print '<tr class="oddeven"><td>'.$langs->trans("DefaultMenuManager").'</td>';
 	print '<td>';
+<<<<<<< HEAD
 	$filelib=preg_replace('/.php$/i','',(empty($conf->global->MAIN_MENU_STANDARD_FORCED)?$conf->global->MAIN_MENU_STANDARD:$conf->global->MAIN_MENU_STANDARD_FORCED));
 	print $filelib;
 	print '</td>';
 	print '<td>';
 	$filelib=preg_replace('/.php$/i','',(empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED)?$conf->global->MAIN_MENUFRONT_STANDARD:$conf->global->MAIN_MENUFRONT_STANDARD_FORCED));
+=======
+	$filelib=preg_replace('/.php$/i', '', (empty($conf->global->MAIN_MENU_STANDARD_FORCED)?$conf->global->MAIN_MENU_STANDARD:$conf->global->MAIN_MENU_STANDARD_FORCED));
+	print $filelib;
+	print '</td>';
+	print '<td>';
+	$filelib=preg_replace('/.php$/i', '', (empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED)?$conf->global->MAIN_MENUFRONT_STANDARD:$conf->global->MAIN_MENUFRONT_STANDARD_FORCED));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print $filelib;
 	print '</td>';
 	print '</tr>';
@@ -225,19 +300,33 @@ else
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("DefaultMenuSmartphoneManager").'</td>';
 	print '<td>';
+<<<<<<< HEAD
 	$filelib=preg_replace('/.php$/i','',(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?$conf->global->MAIN_MENU_SMARTPHONE:$conf->global->MAIN_MENU_SMARTPHONE_FORCED));
 	print $filelib;
 	if (! empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED) && preg_match('/smartphone/', $conf->global->MAIN_MENU_SMARTPHONE_FORCED)
 	|| (empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED) && ! empty($conf->global->MAIN_MENU_SMARTPHONE) && preg_match('/smartphone/',$conf->global->MAIN_MENU_SMARTPHONE)))
+=======
+	$filelib=preg_replace('/.php$/i', '', (empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?$conf->global->MAIN_MENU_SMARTPHONE:$conf->global->MAIN_MENU_SMARTPHONE_FORCED));
+	print $filelib;
+	if (! empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED) && preg_match('/smartphone/', $conf->global->MAIN_MENU_SMARTPHONE_FORCED)
+	|| (empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED) && ! empty($conf->global->MAIN_MENU_SMARTPHONE) && preg_match('/smartphone/', $conf->global->MAIN_MENU_SMARTPHONE)))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		print ' '.img_warning($langs->transnoentitiesnoconv("ThisForceAlsoTheme"));
 	}
 	print '</td>';
 	print '<td>';
+<<<<<<< HEAD
 	$filelib=preg_replace('/.php$/i','',(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?$conf->global->MAIN_MENUFRONT_SMARTPHONE:$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED));
 	print $filelib;
 	if (! empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED) && preg_match('/smartphone/',$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)
 	|| (empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED) && ! empty($conf->global->MAIN_MENU_SMARTPHONE) && preg_match('/smartphone/',$conf->global->MAIN_MENUFRONT_SMARTPHONE)))
+=======
+	$filelib=preg_replace('/.php$/i', '', (empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?$conf->global->MAIN_MENUFRONT_SMARTPHONE:$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED));
+	print $filelib;
+	if (! empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED) && preg_match('/smartphone/', $conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)
+	|| (empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED) && ! empty($conf->global->MAIN_MENU_SMARTPHONE) && preg_match('/smartphone/', $conf->global->MAIN_MENUFRONT_SMARTPHONE)))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		print ' '.img_warning($langs->transnoentitiesnoconv("ThisForceAlsoTheme"));
 	}
@@ -269,7 +358,12 @@ if ($action != 'edit')
 	print '</div>';
 }
 
+<<<<<<< HEAD
 
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

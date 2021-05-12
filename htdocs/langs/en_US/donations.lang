@@ -27,7 +27,11 @@ IConfirmDonationReception=The recipient declare reception, as a donation, of the
 MinimumAmount=Minimum amount is  %s
 FreeTextOnDonations=Free text to show in footer
 FrenchOptions=Options for France
+<<<<<<< HEAD
 DONATION_ART200=Show article 200 from CGI if you are concerned 
+=======
+DONATION_ART200=Show article 200 from CGI if you are concerned
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DONATION_ART238=Show article 238 from CGI if you are concerned
 DONATION_ART885=Show article 885 from CGI if you are concerned
 DonationPayment=Donation payment

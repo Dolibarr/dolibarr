@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2004-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2008		Raphael Bertrand	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2013	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012      	Christophe Battarel <christophe.battarel@altairis.fr>
@@ -25,7 +29,11 @@
 /**
  *	\file       htdocs/core/modules/commande/doc/pdf_proforma.modules.php
  *	\ingroup    commande
+<<<<<<< HEAD
  *	\brief      Fichier de la classe permettant de generer les commandes au modele Proforma
+=======
+ *	\brief      File of Class to generate PDF orders with template Proforma
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/commande/doc/pdf_einstein.modules.php';
@@ -36,7 +44,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
 
 /**
+<<<<<<< HEAD
  *	Classe permettant de generer les commandes au modele Proforma
+=======
+ *	Class to generate PDF orders with template Proforma
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  */
 class pdf_proforma extends pdf_einstein
 {
@@ -46,7 +58,11 @@ class pdf_proforma extends pdf_einstein
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
+<<<<<<< HEAD
 	function __construct($db)
+=======
+	public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf,$langs,$mysoc;
 
@@ -67,12 +83,20 @@ class pdf_proforma extends pdf_einstein
 	 *  @param	string		$titlekey		Translation key to show as title of document
 	 *  @return	void
 	 */
+<<<<<<< HEAD
 	function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey="InvoiceProForma")
+=======
+	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey = "InvoiceProForma")
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf,$langs,$hookmanager;
 
 		parent::_pagehead($pdf, $object, $showaddress, $outputlangs, $titlekey);
 	}
+<<<<<<< HEAD
 
 }
 
+=======
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

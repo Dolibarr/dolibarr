@@ -52,6 +52,10 @@ ActionAC_TEL=Telefoongesprek
 ActionAC_FAX=Verzenden per fax
 ActionAC_PROP=Verstuur offerte
 ActionAC_EMAIL=E-mail verzenden
+<<<<<<< HEAD
+=======
+ActionAC_EMAIL_IN=Reception of Email
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActionAC_RDV=Vergaderingen
 ActionAC_INT=Interventie op het terrein
 ActionAC_FAC=Stuur factuur
@@ -60,8 +64,13 @@ ActionAC_CLO=Sluiten
 ActionAC_EMAILING=Stuur bulkmail
 ActionAC_COM=Verstuur order per mail
 ActionAC_SHIP=Stuur verzending per post
+<<<<<<< HEAD
 ActionAC_SUP_ORD=Send purchase order by mail
 ActionAC_SUP_INV=Send vendor invoice by mail
+=======
+ActionAC_SUP_ORD=Verzend bestelling per e-mail
+ActionAC_SUP_INV=Stuur leveranciers-factuur per e-mail
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActionAC_OTH=Ander
 ActionAC_OTH_AUTO=Automatisch ingevoegde gebeurtenissen
 ActionAC_MANUAL=Handmatig ingevoerde gebeurtenissen
@@ -72,8 +81,15 @@ StatusProsp=Prospect-status
 DraftPropals=Ontwerp van commerciële voorstellen
 NoLimit=Geen limiet
 ToOfferALinkForOnlineSignature=Link online ondertekenen
+<<<<<<< HEAD
 WelcomeOnOnlineSignaturePage=Welkom op deze pagina voor acceptatie prijsopgave/offerte van %s
 ThisScreenAllowsYouToSignDocFrom=Dit scherm geeft u de mogelijkheid voor acceptatie en ondertekening van de prijsopgave/offerte
 ThisIsInformationOnDocumentToSign=Informatie om te weigeren of te accepteren
 SignatureProposalRef=Handtekening prijsopgave/offerte %s
+=======
+WelcomeOnOnlineSignaturePage=Welcome to the page to accept commercial proposals from %s
+ThisScreenAllowsYouToSignDocFrom=Dit scherm geeft u de mogelijkheid voor acceptatie en ondertekening van de prijsopgave/offerte
+ThisIsInformationOnDocumentToSign=Informatie om te weigeren of te accepteren
+SignatureProposalRef=Signature of quote/commercial proposal %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 FeatureOnlineSignDisabled=Online tekenen niet mogelijkheid of document is aangemaakt voordat dit was aangezet

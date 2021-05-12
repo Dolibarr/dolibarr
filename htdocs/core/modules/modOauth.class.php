@@ -40,19 +40,32 @@ class modOauth extends DolibarrModules
      *
      *  @param      DoliDB      $db      Database handler
      */
+<<<<<<< HEAD
     function  __construct($db)
+=======
+    public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $this->db = $db ;
         $this->numero = 66000;
         // Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
         // It is used to group modules in module setup page
         $this->family = "interface";
+<<<<<<< HEAD
         $this->module_position = 510;
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
         $this->name = preg_replace('/^mod/i','',get_class($this));
         // Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
         $this->description = "Enable OAuth authentication";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or 'dolibarr_deprecated' or version
+=======
+        $this->module_position = '31';
+        // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+        $this->name = preg_replace('/^mod/i', '', get_class($this));
+        // Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
+        $this->description = "Enable OAuth authentication";
+        // Possible values for version are: 'development', 'experimental', 'dolibarr' or 'dolibarr_deprecated' or version
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $this->version = 'dolibarr';
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         // Name of image file used for this module.
@@ -67,9 +80,17 @@ class modOauth extends DolibarrModules
         $this->config_page_url = array("oauth.php");
 
         // Dependencies
+<<<<<<< HEAD
         $this->depends = array();
         $this->requiredby = array();
         $this->phpmin = array(5,1);                     // Minimum version of PHP required by module
+=======
+        $this->hidden = false;			// A condition to hide module
+		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module                    // Minimum version of PHP required by module
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $this->need_dolibarr_version = array(3,7,-2);   // Minimum version of Dolibarr required by module
         $this->conflictwith = array();
         $this->langfiles = array("oauth");
@@ -117,8 +138,11 @@ class modOauth extends DolibarrModules
         //                        'user'=>0);                     // 0=Menu for internal users, 1=external users, 2=both
 
         //$r++;
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
 
@@ -130,7 +154,11 @@ class modOauth extends DolibarrModules
      *      @param      string  $options    Options when enabling module ('', 'noboxes')
      *      @return     int                 1 if OK, 0 if KO
      */
+<<<<<<< HEAD
     function init($options='')
+=======
+    public function init($options = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $conf;
 

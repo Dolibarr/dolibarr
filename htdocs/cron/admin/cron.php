@@ -2,7 +2,11 @@
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2005-2013	Laurent Destailleur		<eldy@users.sourceforge.org>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
+<<<<<<< HEAD
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,7 +29,11 @@
  */
 
 // Dolibarr environment
+<<<<<<< HEAD
 $res = @include("../../main.inc.php"); // From htdocs directory
+=======
+require '../../main.inc.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/cron.lib.php';
 
@@ -44,7 +52,11 @@ if (!empty($actionsave))
 
 	$db->begin();
 
+<<<<<<< HEAD
 	$i+=dolibarr_set_const($db,'CRON_KEY',trim(GETPOST("CRON_KEY")),'chaine',0,'',0);
+=======
+	$i+=dolibarr_set_const($db, 'CRON_KEY', trim(GETPOST("CRON_KEY")), 'chaine', 0, '', 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	if ($i >= 1)
 	{
@@ -66,7 +78,11 @@ if (!empty($actionsave))
 llxHeader();
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+<<<<<<< HEAD
 print load_fiche_titre($langs->trans("CronSetup"),$linkback,'title_setup');
+=======
+print load_fiche_titre($langs->trans("CronSetup"), $linkback, 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Configuration header
 $head = cronadmin_prepare_head();
@@ -117,12 +133,21 @@ print '</div>';
 print '</form>';
 
 
+<<<<<<< HEAD
 print '<br><br>';
 
 print $langs->trans("UseMenuModuleToolsToAddCronJobs").'<br>';
 if (! empty($conf->global->CRON_WARNING_DELAY_HOURS)) print info_admin($langs->trans("WarningCronDelayed", $conf->global->CRON_WARNING_DELAY_HOURS));
 
 print '<br><br>';
+=======
+print '<br><br><br>';
+
+print $langs->trans("UseMenuModuleToolsToAddCronJobs").'<br>';
+if (! empty($conf->global->CRON_WARNING_DELAY_HOURS)) print info_admin($langs->trans("WarningCronDelayed", $conf->global->CRON_WARNING_DELAY_HOURS)).'<br>';
+
+print '<br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 dol_print_cron_urls();
 

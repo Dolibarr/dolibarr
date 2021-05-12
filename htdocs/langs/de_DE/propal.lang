@@ -3,18 +3,28 @@ Proposals=Angebote
 Proposal=Angebot
 ProposalShort=Angebot
 ProposalsDraft=Angebotsentwürfe
+<<<<<<< HEAD
 ProposalsOpened=Offene Angebote
+=======
+ProposalsOpened=offene Angebote
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CommercialProposal=Angebot
 PdfCommercialProposalTitle=Angebot
 ProposalCard=Angebot - Karte
 NewProp=Neues Angebot
+<<<<<<< HEAD
 NewPropal=Neues Angebot
 Prospect=Lead
+=======
+NewPropal=neues Angebot
+Prospect=Interessent
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DeleteProp=Angebot löschen
 ValidateProp=Angebot freigeben
 AddProp=Angebot erstellen
 ConfirmDeleteProp=Möchten Sie dieses Angebot wirklich löschen?
 ConfirmValidateProp=Möchten Sie dieses Angebot wirklich unter dem Namen <b>%s</b> freigeben?
+<<<<<<< HEAD
 LastPropals=Neueste %s Angebote
 LastModifiedProposals=Letzte %s bearbeitete Angebote
 AllPropals=Alle Angebote
@@ -34,13 +44,38 @@ PropalStatusNotSigned=Nicht unterzeichnet (geschlossen)
 PropalStatusBilled=Verrechnet
 PropalStatusDraftShort=Entwurf
 PropalStatusValidatedShort=Bestätigt
+=======
+LastPropals=neueste %s Angebote
+LastModifiedProposals=Letzte %s bearbeitete Angebote
+AllPropals=Alle Angebote
+SearchAProposal=Angebot suchen
+NoProposal=kein Angebot
+ProposalsStatistics=Angebote - Statistiken
+NumberOfProposalsByMonth=Anzahl pro Monat
+AmountOfProposalsByMonthHT=Betrag pro Monat  (ohne Steuern)
+NbOfProposals=Anzahl der Angebote
+ShowPropal=Zeige Angebot
+PropalsDraft=Entwürfe
+PropalsOpened=geöffnet
+PropalStatusDraft=Entwurf (freizugeben)
+PropalStatusValidated=Freigegeben (Angebot wieder geöffnet)
+PropalStatusSigned=Unterzeichnet  (ist zu verrechnen)
+PropalStatusNotSigned=Nicht unterzeichnet (geschlossen)
+PropalStatusBilled=Verrechnet
+PropalStatusDraftShort=Entwurf
+PropalStatusValidatedShort=Bestätigt (offen)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PropalStatusClosedShort=Geschlossen
 PropalStatusSignedShort=Unterzeichnet
 PropalStatusNotSignedShort=Nicht unterzeichnet
 PropalStatusBilledShort=Verrechnet
 PropalsToClose=Zu schließende Angebote
 PropalsToBill=Unterzeichnete Angebote zur Verrechnung
+<<<<<<< HEAD
 ListOfProposals=Liste der Angebote
+=======
+ListOfProposals=Liste Angebote
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActionsOnPropal=Ereignisse zum Angebot
 RefProposal=Angebots-Nr.
 SendPropalByMail=Angebot per E-Mail versenden
@@ -55,8 +90,12 @@ NoDraftProposals=Keine Angebotsentwürfe
 CopyPropalFrom=Erstelle neues Angebot durch Kopieren eines vorliegenden Angebots
 CreateEmptyPropal=Erstelle leeres Angebot oder aus der Liste der Produkte/Leistungen
 DefaultProposalDurationValidity=Standardmäßige Gültigkeitsdauer (Tage)
+<<<<<<< HEAD
 UseCustomerContactAsPropalRecipientIfExist=Falls vorhanden die Adresse des Partnerkontakts statt der Partneradresse verwenden
 ClonePropal=Angebot duplizieren
+=======
+UseCustomerContactAsPropalRecipientIfExist=Verwenden Sie Kontakt / Adresse mit dem Typ &quot;Kontakt-Folgeangebot&quot;, wenn anstelle der Adresse eines Drittanbieters eine Empfängeradresse für das Angebot definiert wurde
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmClonePropal=Sind Sie sicher, dass Sie dieses Angebot <b>%s</b> duplizieren möchten?
 ConfirmReOpenProp=Sind Sie sicher, dass Sie dieses Angebot <b>%s</b> wieder öffnen möchten ?
 ProposalsAndProposalsLines=Angebote und Positionen
@@ -64,7 +103,11 @@ ProposalLine=Angebotsposition
 AvailabilityPeriod=Gültig bis
 SetAvailability=Gültigkeitszeitraum definieren
 AfterOrder=nach Bestellung
+<<<<<<< HEAD
 OtherProposals=Andere Angebote
+=======
+OtherProposals=zeige weitere Angebote für diesen Partners
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ##### Availability #####
 AvailabilityTypeAV_NOW=Sofort
 AvailabilityTypeAV_1W=7 Tage
@@ -74,6 +117,7 @@ AvailabilityTypeAV_1M=1 Monat
 ##### Types de contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Vertreter für Angebot
 TypeContact_propal_external_BILLING=Kontakt für Kundenrechnungen
+<<<<<<< HEAD
 TypeContact_propal_external_CUSTOMER=Partnerkontakt für Angebot
 TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
@@ -82,4 +126,15 @@ DefaultModelPropalCreate=Erstellung Standardvorlage
 DefaultModelPropalToBill=Standard-Template, wenn Sie ein Angebot schließen wollen (zur Verrechung)
 DefaultModelPropalClosed=Standard Schablone wenn sie ein Geschäftsangebot schließen wollen. (ohne Rechnung)
 ProposalCustomerSignature=Schriftliche Annahme, Firmenstempel, Datum und Unterschrift
+=======
+TypeContact_propal_external_CUSTOMER=Kundenkontakt für Angebot
+TypeContact_propal_external_SHIPPING=Kundenkontakt für Lieferung
+# Document models
+DocModelAzurDescription=Eine vollständige Angebotsvorlage (Logo, uwm.)
+DocModelCyanDescription=Eine vollständige Angebotsvorlage (Logo, uwm.)
+DefaultModelPropalCreate=Erstellung Standardvorlage
+DefaultModelPropalToBill=Standard-Template, wenn Sie ein Angebot schließen wollen (zur Verrechung)
+DefaultModelPropalClosed=Standard Schablone wenn sie ein Geschäftsangebot schließen wollen. (ohne Rechnung)
+ProposalCustomerSignature=Bei Beauftragung: Name in Klarschrift, Ort, Datum, Unterschrift
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProposalsStatisticsSuppliers=Statistik Lieferantenanfragen

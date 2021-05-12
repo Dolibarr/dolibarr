@@ -1,7 +1,14 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2013      Antoine Iauch	   <aiauch@gpcsolutions.fr>
  * Copyright (C) 2013-2016 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2015      Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+=======
+/* Copyright (C) 2013       Antoine Iauch	        <aiauch@gpcsolutions.fr>
+ * Copyright (C) 2013-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,11 +40,19 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 $langs->loadLangs(array("products","categories","errors",'accountancy'));
 
 // Security pack (data & check)
+<<<<<<< HEAD
 $socid = GETPOST('socid','int');
 
 if ($user->societe_id > 0) $socid = $user->societe_id;
 if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user,'compta','','','resultat');
 if (! empty($conf->accounting->enabled)) $result=restrictedArea($user,'accounting','','','comptarapport');
+=======
+$socid = GETPOST('socid', 'int');
+
+if ($user->societe_id > 0) $socid = $user->societe_id;
+if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user, 'compta', '', '', 'resultat');
+if (! empty($conf->accounting->enabled)) $result=restrictedArea($user, 'accounting', '', '', 'comptarapport');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
 $modecompta = $conf->global->ACCOUNTING_MODE;
@@ -50,6 +65,10 @@ if (! $sortfield) $sortfield="ref";
 
 // Category
 $selected_cat = (int) GETPOST('search_categ', 'int');
+<<<<<<< HEAD
+=======
+$selected_soc = (int) GETPOST('search_soc', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $subcat = false;
 if (GETPOST('subcat', 'alpha') === 'yes') {
 	$subcat = true;
@@ -69,6 +88,7 @@ $date_endmonth = GETPOST("date_endmonth");
 $date_endday = GETPOST("date_endday");
 if (empty($year))
 {
+<<<<<<< HEAD
 	$year_current = strftime("%Y",dol_now());
 	$month_current = strftime("%m",dol_now());
 	$year_start = $year_current;
@@ -83,6 +103,22 @@ $date_end=dol_mktime(23,59,59,GETPOST("date_endmonth"),GETPOST("date_endday"),GE
 if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 {
 	$q=GETPOST("q","int");
+=======
+	$year_current = strftime("%Y", dol_now());
+	$month_current = strftime("%m", dol_now());
+	$year_start = $year_current;
+} else {
+	$year_current = $year;
+	$month_current = strftime("%m", dol_now());
+	$year_start = $year;
+}
+$date_start=dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"));
+$date_end=dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"));
+// Quarter
+if (empty($date_start) || empty($date_end)) // We define date_start and date_end
+{
+	$q=GETPOST("q", "int");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if (empty($q))
 	{
 		// We define date_start and date_end
@@ -100,6 +136,7 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 			if ($month_end < 1) $month_end=12;
 			else $year_end++;
 		}
+<<<<<<< HEAD
 		$date_start=dol_get_first_day($year_start,$month_start,false); $date_end=dol_get_last_day($year_end,$month_end,false);
 	}
 	else
@@ -108,6 +145,16 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 		if ($q==2) { $date_start=dol_get_first_day($year_start,4,false); $date_end=dol_get_last_day($year_start,6,false); }
 		if ($q==3) { $date_start=dol_get_first_day($year_start,7,false); $date_end=dol_get_last_day($year_start,9,false); }
 		if ($q==4) { $date_start=dol_get_first_day($year_start,10,false); $date_end=dol_get_last_day($year_start,12,false); }
+=======
+		$date_start=dol_get_first_day($year_start, $month_start, false); $date_end=dol_get_last_day($year_end, $month_end, false);
+	}
+	else
+	{
+		if ($q==1) { $date_start=dol_get_first_day($year_start, 1, false); $date_end=dol_get_last_day($year_start, 3, false); }
+		if ($q==2) { $date_start=dol_get_first_day($year_start, 4, false); $date_end=dol_get_last_day($year_start, 6, false); }
+		if ($q==3) { $date_start=dol_get_first_day($year_start, 7, false); $date_end=dol_get_last_day($year_start, 9, false); }
+		if ($q==4) { $date_start=dol_get_first_day($year_start, 10, false); $date_end=dol_get_last_day($year_start, 12, false); }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 } else {
 	// TODO We define q
@@ -136,6 +183,10 @@ $headerparams['q'] = $q;
 
 $tableparams = array();
 $tableparams['search_categ'] = $selected_cat;
+<<<<<<< HEAD
+=======
+$tableparams['search_soc'] = $selected_soc;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $tableparams['search_type'] = $selected_type;
 $tableparams['subcat'] = ($subcat === true)?'yes':'';
 
@@ -177,7 +228,11 @@ if ($modecompta=="CREANCES-DETTES") {
 
 	$builddate=dol_now();
 }
+<<<<<<< HEAD
 else if ($modecompta=="RECETTES-DEPENSES")
+=======
+elseif ($modecompta=="RECETTES-DEPENSES")
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$name=$langs->trans("TurnoverCollected").', '.$langs->trans("ByProductsAndServices");
 	$calcmode=$langs->trans("CalcModeEngagement");
@@ -188,22 +243,38 @@ else if ($modecompta=="RECETTES-DEPENSES")
 
 	$builddate=dol_now();
 }
+<<<<<<< HEAD
 else if ($modecompta=="BOOKKEEPING")
+=======
+elseif ($modecompta=="BOOKKEEPING")
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 
 
 }
+<<<<<<< HEAD
 else if ($modecompta=="BOOKKEEPINGCOLLECTED")
+=======
+elseif ($modecompta=="BOOKKEEPINGCOLLECTED")
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 
 
 }
 
+<<<<<<< HEAD
 $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) $periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
 else $periodlink = '';
 
 report_header($name,$namelink,$period,$periodlink,$description,$builddate,$exportlink,$tableparams,$calcmode);
+=======
+$period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
+if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) $periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
+else $periodlink = '';
+
+report_header($name, $namelink, $period, $periodlink, $description, $builddate, $exportlink, $tableparams, $calcmode);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if (! empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
 {
@@ -224,13 +295,23 @@ if ($modecompta == 'CREANCES-DETTES')
 	$sql = "SELECT DISTINCT p.rowid as rowid, p.ref as ref, p.label as label, p.fk_product_type as product_type,";
 	$sql.= " SUM(l.total_ht) as amount, SUM(l.total_ttc) as amount_ttc,";
 	$sql.= " SUM(CASE WHEN f.type = 2 THEN -l.qty ELSE l.qty END) as qty";
+<<<<<<< HEAD
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."facturedet as l";
+=======
+	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
+    if($selected_soc > 0) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as soc ON (soc.rowid = f.fk_soc)";
+    $sql.= ",".MAIN_DB_PREFIX."facturedet as l";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product = p.rowid";
 	if ($selected_cat === -2)	// Without any category
 	{
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product";
 	}
+<<<<<<< HEAD
 	else if ($selected_cat) 	// Into a specific category
+=======
+	elseif ($selected_cat) 	// Into a specific category
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$sql.= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_product as cp";
 	}
@@ -252,15 +333,26 @@ if ($modecompta == 'CREANCES-DETTES')
 	{
 		$sql.=" AND cp.fk_product is null";
 	}
+<<<<<<< HEAD
 	else if ($selected_cat) {	// Into a specific category
+=======
+	elseif ($selected_cat) {	// Into a specific category
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql.= " AND (c.rowid = ".$selected_cat;
 		if ($subcat) $sql.=" OR c.fk_parent = " . $selected_cat;
 		$sql.= ")";
 		$sql.= " AND cp.fk_categorie = c.rowid AND cp.fk_product = p.rowid";
 	}
+<<<<<<< HEAD
 	$sql.= " AND f.entity = ".$conf->entity;
 	$sql.= " GROUP BY p.rowid, p.ref, p.label, p.fk_product_type";
 	$sql.= $db->order($sortfield,$sortorder);
+=======
+    if($selected_soc > 0) $sql .= " AND soc.rowid=".$selected_soc;
+	$sql.= " AND f.entity IN (".getEntity('invoice').")";
+	$sql.= " GROUP BY p.rowid, p.ref, p.label, p.fk_product_type";
+	$sql.= $db->order($sortfield, $sortorder);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	dol_syslog("cabyprodserv", LOG_DEBUG);
 	$result = $db->query($sql);
@@ -311,16 +403,32 @@ if ($modecompta == 'CREANCES-DETTES')
     // type filter (produit/service)
     print ' ';
     print $langs->trans("Type"). ': ';
+<<<<<<< HEAD
     $form->select_type_of_lines(isset($selected_type)?$selected_type:-1,'search_type',1,1,1);
     print '</td>';
 
     print '<td colspan="5" align="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+=======
+    $form->select_type_of_lines(isset($selected_type)?$selected_type:-1, 'search_type', 1, 1, 1);
+
+    //select thirdparty
+    print '</br>';
+    print $langs->trans("ThirdParty") . ': ' . $form->select_thirdparty_list($selected_soc, 'search_soc', '', 1);
+    print '</td>';
+
+    print '<td colspan="5" class="right">';
+	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</td></tr>';
 
 	// Array header
 	print "<tr class=\"liste_titre\">";
+<<<<<<< HEAD
 	print_liste_field_titre(
+=======
+print_liste_field_titre(
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$langs->trans("Product"),
 		$_SERVER["PHP_SELF"],
 		"ref",
@@ -330,53 +438,94 @@ if ($modecompta == 'CREANCES-DETTES')
 		$sortfield,
 		$sortorder
 	);
+<<<<<<< HEAD
 	print_liste_field_titre(
+=======
+print_liste_field_titre(
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$langs->trans('Quantity'),
 		$_SERVER["PHP_SELF"],
 		"qty",
 		"",
 		$paramslink,
+<<<<<<< HEAD
 		'align="right"',
 		$sortfield,
 		$sortorder
 	);
 	print_liste_field_titre(
+=======
+		'class="right"',
+		$sortfield,
+		$sortorder
+	);
+print_liste_field_titre(
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$langs->trans("Percentage"),
 		$_SERVER["PHP_SELF"],
 		"qty",
 		"",
 		$paramslink,
+<<<<<<< HEAD
 		'align="right"',
 		$sortfield,
 		$sortorder
 	);
 	print_liste_field_titre(
+=======
+		'class="right"',
+		$sortfield,
+		$sortorder
+	);
+print_liste_field_titre(
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$langs->trans('AmountHT'),
 		$_SERVER["PHP_SELF"],
 		"amount",
 		"",
+<<<<<<< HEAD
 		$paramslink,
 		'align="right"',
 		$sortfield,
 		$sortorder
 	);
 	print_liste_field_titre(
+=======
+		$classslink,
+		'class="right"',
+		$sortfield,
+		$sortorder
+	);
+print_liste_field_titre(
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$langs->trans("AmountTTC"),
 		$_SERVER["PHP_SELF"],
 		"amount_ttc",
 		"",
 		$paramslink,
+<<<<<<< HEAD
 		'align="right"',
 		$sortfield,
 		$sortorder
 	);
 	print_liste_field_titre(
+=======
+		'class="right"',
+		$sortfield,
+		$sortorder
+	);
+print_liste_field_titre(
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$langs->trans("Percentage"),
 		$_SERVER["PHP_SELF"],
 		"amount_ttc",
 		"",
 		$paramslink,
+<<<<<<< HEAD
 		'align="right"',
+=======
+		'class="right"',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sortfield,
 		$sortorder
 	);
@@ -391,7 +540,11 @@ if ($modecompta == 'CREANCES-DETTES')
 			print "<td>";
 			$fullname=$name[$key];
 			if ($key > 0) {
+<<<<<<< HEAD
 				$linkname='<a href="'.DOL_URL_ROOT.'/product/card.php?id='.$key.'">'.img_object($langs->trans("ShowProduct"),$type[$key]==0?'product':'service').' '.$fullname.'</a>';
+=======
+				$linkname='<a href="'.DOL_URL_ROOT.'/product/card.php?id='.$key.'">'.img_object($langs->trans("ShowProduct"), $type[$key]==0?'product':'service').' '.$fullname.'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			} else {
 				$linkname=$langs->trans("PaymentsNotLinkedToProduct");
 			}
@@ -399,15 +552,26 @@ if ($modecompta == 'CREANCES-DETTES')
 			print "</td>\n";
 
 			// Quantity
+<<<<<<< HEAD
 			print '<td align="right">';
+=======
+			print '<td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print $qty[$key];
 			print '</td>';
 
 			// Percent;
+<<<<<<< HEAD
 			print '<td align="right">'.($qtytotal > 0 ? round(100 * $qty[$key] / $qtytotal, 2).'%' : '&nbsp;').'</td>';
 
 			// Amount w/o VAT
 			print '<td align="right">';
+=======
+			print '<td class="right">'.($qtytotal > 0 ? round(100 * $qty[$key] / $qtytotal, 2).'%' : '&nbsp;').'</td>';
+
+			// Amount w/o VAT
+			print '<td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			/*if ($key > 0) {
 				print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?productid='.$key.'">';
 			} else {
@@ -418,7 +582,11 @@ if ($modecompta == 'CREANCES-DETTES')
 			print '</td>';
 
 			// Amount with VAT
+<<<<<<< HEAD
 			print '<td align="right">';
+=======
+			print '<td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			/*if ($key > 0) {
 				print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?productid='.$key.'">';
 			} else {
@@ -429,7 +597,11 @@ if ($modecompta == 'CREANCES-DETTES')
 			print '</td>';
 
 			// Percent;
+<<<<<<< HEAD
 			print '<td align="right">'.($catotal > 0 ? round(100 * $amount[$key] / $catotal, 2).'%' : '&nbsp;').'</td>';
+=======
+			print '<td class="right">'.($catotal > 0 ? round(100 * $amount[$key] / $catotal, 2).'%' : '&nbsp;').'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			// TODO: statistics?
 
@@ -440,11 +612,19 @@ if ($modecompta == 'CREANCES-DETTES')
 		// Total
 		print '<tr class="liste_total">';
 		print '<td>'.$langs->trans("Total").'</td>';
+<<<<<<< HEAD
 		print '<td align="right">'.$qtytotal.'</td>';
 		print '<td align="right">100%</td>';
 		print '<td align="right">'.price($catotal_ht).'</td>';
 		print '<td align="right">'.price($catotal).'</td>';
 		print '<td align="right">100%</td>';
+=======
+		print '<td class="right">'.$qtytotal.'</td>';
+		print '<td class="right">100%</td>';
+		print '<td class="right">'.price($catotal_ht).'</td>';
+		print '<td class="right">'.price($catotal).'</td>';
+		print '<td class="right">100%</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</tr>';
 
 		$db->free($result);
@@ -461,5 +641,9 @@ if ($modecompta == 'CREANCES-DETTES')
 	print '<br>'.$langs->trans("TurnoverPerProductInCommitmentAccountingNotRelevant") . '<br>';
 }
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

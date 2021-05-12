@@ -3,7 +3,11 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+<<<<<<< HEAD
  * Copyright (C) 2008-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2008-2011 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +45,11 @@ class modBanque extends DolibarrModules
 	 *
 	 *	@param	DoliDB	$db		Database handler
 	 */
+<<<<<<< HEAD
 	function __construct($db)
+=======
+	public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf;
 
@@ -49,9 +57,15 @@ class modBanque extends DolibarrModules
 		$this->numero = 85;
 
 		$this->family = "financial";
+<<<<<<< HEAD
 		$this->module_position = 510;
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
+=======
+		$this->module_position = '51';
+		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->description = "Gestion des comptes financiers de type Comptes bancaires ou postaux";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -86,49 +100,77 @@ class modBanque extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 111; // id de la permission
+<<<<<<< HEAD
 		$this->rights[$r][1] = 'Lire les comptes bancaires'; // libelle de la permission
+=======
+		$this->rights[$r][1] = 'Read bank account and transactions';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
 		$this->rights[$r][0] = 112; // id de la permission
+<<<<<<< HEAD
 		$this->rights[$r][1] = 'Creer/modifier montant/supprimer ecriture bancaire'; // libelle de la permission
+=======
+		$this->rights[$r][1] = 'Creer/modifier montant/supprimer ecriture bancaire';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'modifier';
 
 		$r++;
 		$this->rights[$r][0] = 113; // id de la permission
+<<<<<<< HEAD
 		$this->rights[$r][1] = 'Configurer les comptes bancaires (creer, gerer categories)'; // libelle de la permission
+=======
+		$this->rights[$r][1] = 'Configurer les comptes bancaires (creer, gerer categories)';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->rights[$r][2] = 'a';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'configurer';
 
 		$r++;
 		$this->rights[$r][0] = 114; // id de la permission
+<<<<<<< HEAD
 		$this->rights[$r][1] = 'Rapprocher les ecritures bancaires'; // libelle de la permission
+=======
+		$this->rights[$r][1] = 'Rapprocher les ecritures bancaires';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'consolidate';
 
 		$r++;
 		$this->rights[$r][0] = 115; // id de la permission
+<<<<<<< HEAD
 		$this->rights[$r][1] = 'Exporter transactions et releves'; // libelle de la permission
+=======
+		$this->rights[$r][1] = 'Exporter transactions et releves';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'export';
 
 		$r++;
 		$this->rights[$r][0] = 116; // id de la permission
+<<<<<<< HEAD
 		$this->rights[$r][1] = 'Virements entre comptes'; // libelle de la permission
+=======
+		$this->rights[$r][1] = 'Virements entre comptes';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'transfer';
 
 		$r++;
 		$this->rights[$r][0] = 117; // id de la permission
+<<<<<<< HEAD
 		$this->rights[$r][1] = 'Gerer les envois de cheques'; // libelle de la permission
+=======
+		$this->rights[$r][1] = 'Gerer les envois de cheques';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'cheque';
@@ -150,6 +192,7 @@ class modBanque extends DolibarrModules
 		$this->export_fields_array[$r]=array(
 			'b.rowid'=>'IdTransaction','ba.ref'=>'AccountRef','ba.label'=>'AccountLabel','b.datev'=>'DateValue','b.dateo'=>'DateOperation','b.label'=>'Label',
 			'b.num_chq'=>'ChequeOrTransferNumber','b.fk_bordereau'=>'ChequeBordereau','-b.amount'=>'Debit','b.amount'=>'Credit',
+<<<<<<< HEAD
 			'b.num_releve'=>'AccountStatement','b.datec'=>"DateCreation","bu.url_id"=>"IdThirdParty","s.nom"=>"ThirdParty",
 			"s.code_compta"=>"CustomerAccountancyCode","s.code_compta_fournisseur"=>"SupplierAccountancyCode"
 		);
@@ -158,6 +201,17 @@ class modBanque extends DolibarrModules
 			'b.rowid'=>'account','ba.ref'=>'account','ba.label'=>'account','b.datev'=>'account','b.dateo'=>'account','b.label'=>'account',
 			'b.num_chq'=>'account','b.fk_bordereau'=>'account','-b.amount'=>'account','b.amount'=>'account','b.num_releve'=>'account',
 			'b.datec'=>"account","bu.url_id"=>"company","s.nom"=>"company","s.code_compta"=>"company","s.code_compta_fournisseur"=>"company"
+=======
+			'b.num_releve'=>'AccountStatement','b.rappro'=>'Conciliated','b.datec'=>"DateCreation","bu.url_id"=>"IdThirdParty",
+			"s.nom"=>"ThirdParty","s.code_compta"=>"CustomerAccountancyCode","s.code_compta_fournisseur"=>"SupplierAccountancyCode"
+		);
+		$this->export_TypeFields_array[$r]=array('ba.ref'=>'Text','ba.label'=>'Text','b.datev'=>'Date','b.dateo'=>'Date','b.label'=>'Text','b.num_chq'=>'Text','b.fk_bordereau'=>'Text','-b.amount'=>'Numeric','b.amount'=>'Numeric','b.num_releve'=>'Text','b.rappro'=>'Boolean','b.datec'=>"Date","bu.url_id"=>"Text","s.nom"=>"Text","s.code_compta"=>"Text","s.code_compta_fournisseur"=>"Text");
+		$this->export_entities_array[$r]=array(
+			'b.rowid'=>'account','ba.ref'=>'account','ba.label'=>'account','b.datev'=>'account','b.dateo'=>'account','b.label'=>'account',
+			'b.num_chq'=>'account','b.fk_bordereau'=>'account','-b.amount'=>'account','b.amount'=>'account',
+			'b.num_releve'=>'account','b.rappro'=>'account','b.datec'=>"account","bu.url_id"=>"company",
+			"s.nom"=>"company","s.code_compta"=>"company","s.code_compta_fournisseur"=>"company"
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		);
 		$this->export_special_array[$r]=array('-b.amount'=>'NULLIFNEG','b.amount'=>'NULLIFNEG');
 		if (empty($conf->fournisseur->enabled))
@@ -178,6 +232,7 @@ class modBanque extends DolibarrModules
 		$this->export_label[$r]='Bordereaux remise Chq/Fact';
 		$this->export_permission[$r]=array(array("banque","export"));
 		$this->export_fields_array[$r]=array("bch.rowid"=>"DepositId","bch.ref"=>"Numero","bch.ref_ext"=>"RefExt",'ba.ref'=>'AccountRef','ba.label'=>'AccountLabel','b.datev'=>'DateValue','b.num_chq'=>'ChequeOrTransferNumber','b.amount'=>'Credit','b.num_releve'=>'AccountStatement','b.datec'=>"DateCreation",
+<<<<<<< HEAD
 			"bch.date_bordereau"=>"Date","bch.amount"=>"Total","bch.nbcheque"=>"NbCheque","bu.url_id"=>"IdThirdParty","s.nom"=>"ThirdParty","s.code_compta"=>"CustomerAccountancyCode","f.facnumber"=>"InvoiceRef"
 			);
 		$this->export_TypeFields_array[$r]=array('ba.ref'=>'Text','ba.label'=>'Text','b.datev'=>'Date','b.num_chq'=>'Text','b.amount'=>'Numeric','b.num_releve'=>'Text','b.datec'=>"Date",
@@ -185,6 +240,15 @@ class modBanque extends DolibarrModules
 			);
 		$this->export_entities_array[$r]=array('ba.ref'=>'account','ba.label'=>'account','b.datev'=>'account','b.num_chq'=>'account','b.amount'=>'account','b.num_releve'=>'account','b.datec'=>"account",
 			"bu.url_id"=>"company","s.nom"=>"company","s.code_compta"=>"company","s.code_compta_fournisseur"=>"company","f.facnumber"=>"invoice");
+=======
+			"bch.date_bordereau"=>"Date","bch.amount"=>"Total","bch.nbcheque"=>"NbCheque","bu.url_id"=>"IdThirdParty","s.nom"=>"ThirdParty","s.code_compta"=>"CustomerAccountancyCode","f.ref"=>"InvoiceRef"
+			);
+		$this->export_TypeFields_array[$r]=array('ba.ref'=>'Text','ba.label'=>'Text','b.datev'=>'Date','b.num_chq'=>'Text','b.amount'=>'Numeric','b.num_releve'=>'Text','b.datec'=>"Date",
+			"bch.date_bordereau"=>"Date","bch.rowid"=>"Numeric","bch.ref"=>"Numeric","bch.ref_ext"=>"Text","bch.amount"=>"Numeric","bch.nbcheque"=>"Numeric","bu.url_id"=>"Text","s.nom"=>"Text","s.code_compta"=>"Text","f.ref"=>"Text"
+			);
+		$this->export_entities_array[$r]=array('ba.ref'=>'account','ba.label'=>'account','b.datev'=>'account','b.num_chq'=>'account','b.amount'=>'account','b.num_releve'=>'account','b.datec'=>"account",
+			"bu.url_id"=>"company","s.nom"=>"company","s.code_compta"=>"company","s.code_compta_fournisseur"=>"company","f.ref"=>"invoice");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->export_special_array[$r]=array('b.amount'=>'NULLIFNEG');
 
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
@@ -199,7 +263,10 @@ class modBanque extends DolibarrModules
 		$this->export_sql_end[$r] .=' AND p.fk_paiement = 7';
 		$this->export_sql_end[$r] .=' AND ba.entity IN ('.getEntity('bank_account').')';
 		$this->export_sql_order[$r] =' ORDER BY b.datev, b.num_releve';
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 
@@ -211,7 +278,11 @@ class modBanque extends DolibarrModules
 	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
+<<<<<<< HEAD
 	function init($options='')
+=======
+	public function init($options = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf;
 
@@ -220,6 +291,10 @@ class modBanque extends DolibarrModules
 
 		$sql = array();
 
+<<<<<<< HEAD
 		return $this->_init($sql,$options);
+=======
+		return $this->_init($sql, $options);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 }

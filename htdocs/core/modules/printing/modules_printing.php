@@ -1,6 +1,10 @@
 <?php
 /*
+<<<<<<< HEAD
  * Copyright (C) 2014-2015 Frederic France      <frederic.france@free.fr>
+=======
+ * Copyright (C) 2014-2018 Frederic France      <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +35,20 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
  */
 class PrintingDriver
 {
+<<<<<<< HEAD
     var $db;
     var $error;
+=======
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
     /**
@@ -40,7 +56,11 @@ class PrintingDriver
      *
      *  @param      DoliDB      $db      Database handler
      */
+<<<<<<< HEAD
     function __construct($db)
+=======
+    public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $this->db = $db;
     }
@@ -52,7 +72,11 @@ class PrintingDriver
      *  @param  integer  $maxfilenamelength  Max length of value to show
      *  @return array                       List of drivers
     */
+<<<<<<< HEAD
     static function listDrivers($db,$maxfilenamelength=0)
+=======
+    public static function listDrivers($db, $maxfilenamelength = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $conf;
 
@@ -60,9 +84,15 @@ class PrintingDriver
         $list = array();
 
         $moduledir=DOL_DOCUMENT_ROOT."/core/modules/printing/";
+<<<<<<< HEAD
         $tmpfiles=dol_dir_list($moduledir,'all',0,'\modules.php','','name',SORT_ASC,0);
         foreach($tmpfiles as $record) {
             $list[$record['fullname']]=str_replace('.modules.php', '',$record['name']);
+=======
+        $tmpfiles=dol_dir_list($moduledir, 'all', 0, '\modules.php', '', 'name', SORT_ASC, 0);
+        foreach($tmpfiles as $record) {
+            $list[$record['fullname']]=str_replace('.modules.php', '', $record['name']);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
 
         return $list;
@@ -73,7 +103,11 @@ class PrintingDriver
      *
      *  @return     string      Return translation of key PrintingModuleDescXXX where XXX is module name, or $this->desc if not exists
      */
+<<<<<<< HEAD
     function getDesc()
+=======
+    public function getDesc()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $langs;
         $langs->load("printing");
@@ -81,6 +115,10 @@ class PrintingDriver
         if ($langs->trans($transstring) != $transstring) return $langs->trans($transstring);
         else return $this->desc;
     }
+<<<<<<< HEAD
 
 }
 
+=======
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

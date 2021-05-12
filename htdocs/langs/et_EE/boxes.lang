@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - boxes
+<<<<<<< HEAD
 BoxLoginInformation=Login information
 BoxLastRssInfos=RSS info
 BoxLastProducts=Latest %s products/services
@@ -8,11 +9,26 @@ BoxLastSupplierBills=Latest supplier invoices
 BoxLastCustomerBills=Latest customer invoices
 BoxOldestUnpaidCustomerBills=Oldest unpaid customer invoices
 BoxOldestUnpaidSupplierBills=Oldest unpaid supplier invoices
+=======
+BoxLoginInformation=Login Information
+BoxLastRssInfos=RSS Information
+BoxLastProducts=Latest %s Products/Services
+BoxProductsAlertStock=Stock alerts for products
+BoxLastProductsInContract=Latest %s contracted products/services
+BoxLastSupplierBills=Latest Vendor invoices
+BoxLastCustomerBills=Latest Customer invoices
+BoxOldestUnpaidCustomerBills=Oldest unpaid customer invoices
+BoxOldestUnpaidSupplierBills=Oldest unpaid vendor invoices
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BoxLastProposals=Latest commercial proposals
 BoxLastProspects=Latest modified prospects
 BoxLastCustomers=Latest modified customers
 BoxLastSuppliers=Latest modified suppliers
+<<<<<<< HEAD
 BoxLastCustomerOrders=Latest customer orders
+=======
+BoxLastCustomerOrders=Latest sales orders
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BoxLastActions=Latest actions
 BoxLastContracts=Latest contracts
 BoxLastContacts=Latest contacts/addresses
@@ -20,6 +36,7 @@ BoxLastMembers=Latest members
 BoxFicheInter=Latest interventions
 BoxCurrentAccounts=Open accounts balance
 BoxTitleLastRssInfos=Latest %s news from %s
+<<<<<<< HEAD
 BoxTitleLastProducts=Latest %s modified products/services
 BoxTitleProductsAlertStock=Laojäägi häirega tooted
 BoxTitleLastSuppliers=Latest %s recorded suppliers
@@ -36,6 +53,24 @@ BoxTitleOldestUnpaidSupplierBills=Oldest %s unpaid supplier invoices
 BoxTitleCurrentAccounts=Open accounts balances
 BoxTitleLastModifiedContacts=Latest %s modified contacts/addresses
 BoxMyLastBookmarks=My latest %s bookmarks
+=======
+BoxTitleLastProducts=Products/Services: last %s modified
+BoxTitleProductsAlertStock=Products: stock alert
+BoxTitleLastSuppliers=Latest %s recorded suppliers
+BoxTitleLastModifiedSuppliers=Vendors: last %s modified
+BoxTitleLastModifiedCustomers=Customers: last %s modified
+BoxTitleLastCustomersOrProspects=Latest %s customers or prospects
+BoxTitleLastCustomerBills=Latest %s Customer invoices
+BoxTitleLastSupplierBills=Latest %s Vendor invoices
+BoxTitleLastModifiedProspects=Prospects: last %s modified
+BoxTitleLastModifiedMembers=Latest %s members
+BoxTitleLastFicheInter=Latest %s modified interventions
+BoxTitleOldestUnpaidCustomerBills=Customer Invoices: oldest %s unpaid
+BoxTitleOldestUnpaidSupplierBills=Vendor Invoices: oldest %s unpaid
+BoxTitleCurrentAccounts=Open Accounts: balances
+BoxTitleLastModifiedContacts=Contacts/Addresses: last %s modified
+BoxMyLastBookmarks=Bookmarks: latest %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BoxOldestExpiredServices=Vanimad aktiivsed aegunud teenused
 BoxLastExpiredServices=Latest %s oldest contacts with active expired services
 BoxTitleLastActionsToDo=Latest %s actions to do
@@ -45,24 +80,38 @@ BoxTitleLastModifiedExpenses=Latest %s modified expense reports
 BoxGlobalActivity=Üldine tegevus (arved, pakkumised, tellimused)
 BoxGoodCustomers=Good customers
 BoxTitleGoodCustomers=%s Good customers
+<<<<<<< HEAD
 FailedToRefreshDataInfoNotUpToDate=Failed to refresh RSS flux. Latest successfull refresh date: %s
+=======
+FailedToRefreshDataInfoNotUpToDate=Failed to refresh RSS flux. Latest successful refresh date: %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LastRefreshDate=Latest refresh date
 NoRecordedBookmarks=Järjehoidjaid pole määratletud.
 ClickToAdd=Klõpsa lisamiseks siia.
 NoRecordedCustomers=Kliente pole salvestatud
 NoRecordedContacts=Kontakte pole salvestatud
 NoActionsToDo=Täitmist vajavaid tegevusi ei ole
+<<<<<<< HEAD
 NoRecordedOrders=No recorded customer orders
 NoRecordedProposals=Pakkumisi pole salvestatud
 NoRecordedInvoices=No recorded customer invoices
 NoUnpaidCustomerBills=No unpaid customer invoices
 NoUnpaidSupplierBills=No unpaid supplier invoices
 NoModifiedSupplierBills=No recorded supplier invoices
+=======
+NoRecordedOrders=No recorded sales orders
+NoRecordedProposals=Pakkumisi pole salvestatud
+NoRecordedInvoices=No recorded customer invoices
+NoUnpaidCustomerBills=No unpaid customer invoices
+NoUnpaidSupplierBills=No unpaid vendor invoices
+NoModifiedSupplierBills=No recorded vendor invoices
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoRecordedProducts=Tooteid/teenuseid pole salvestatud
 NoRecordedProspects=Huvilisi pole salvestatud
 NoContractedProducts=Lepingulisi tooteid/teenuseid ei ole
 NoRecordedContracts=Lepinguid pole salvestatud
 NoRecordedInterventions=Sekkumisi pole salvestatud
+<<<<<<< HEAD
 BoxLatestSupplierOrders=Viimased ostutellimused
 NoSupplierOrder=Ostutellimusi pole salvestatud
 BoxCustomersInvoicesPerMonth=Müügiarveid kuus
@@ -77,6 +126,22 @@ BoxTitleLastModifiedSupplierBills=Latest %s modified supplier bills
 BoxTitleLatestModifiedSupplierOrders=Latest %s modified supplier orders
 BoxTitleLastModifiedCustomerBills=Latest %s modified customer bills
 BoxTitleLastModifiedCustomerOrders=Latest %s modified customer orders
+=======
+BoxLatestSupplierOrders=Latest purchase orders
+NoSupplierOrder=No recorded purchase order
+BoxCustomersInvoicesPerMonth=Customer Invoices per month
+BoxSuppliersInvoicesPerMonth=Vendor Invoices per month
+BoxCustomersOrdersPerMonth=Sales Orders per month
+BoxSuppliersOrdersPerMonth=Vendor Orders per month
+BoxProposalsPerMonth=Pakkumisi kuus
+NoTooLowStockProducts=No products are under the low stock limit
+BoxProductDistribution=Products/Services Distribution
+ForObject=On %s
+BoxTitleLastModifiedSupplierBills=Vendor Invoices: last %s modified
+BoxTitleLatestModifiedSupplierOrders=Vendor Orders: last %s modified
+BoxTitleLastModifiedCustomerBills=Customer Invoices: last %s modified
+BoxTitleLastModifiedCustomerOrders=Sales Orders: last %s modified
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BoxTitleLastModifiedPropals=Latest %s modified proposals
 ForCustomersInvoices=Müügiarved
 ForCustomersOrders=Müügiarved
@@ -84,3 +149,7 @@ ForProposals=Pakkumised
 LastXMonthRolling=The latest %s month rolling
 ChooseBoxToAdd=Add widget to your dashboard
 BoxAdded=Widget was added in your dashboard
+<<<<<<< HEAD
+=======
+BoxTitleUserBirthdaysOfMonth=Birthdays of this month
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

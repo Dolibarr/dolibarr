@@ -4,6 +4,10 @@ BankAccounts=Kontenübersicht
 AccountRef=Konto-Referenz
 AccountLabel=Kontobezeichnung
 CashAccount=Kasse
+<<<<<<< HEAD
+=======
+CashAccounts=Kassen
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BankBalanceBefore=Bilanz vor
 BankBalanceAfter=Bilanz nach
 AllTime=Vom start

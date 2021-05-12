@@ -10,7 +10,11 @@ LoanCapital=Kapital
 Insurance=Versicherung
 Interest=Zins
 Nbterms=Anzahl der Bedingungen
+<<<<<<< HEAD
 Term=Term
+=======
+Term=Bedingungen
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LoanAccountancyCapitalCode=Buchhaltungskonto Kapital
 LoanAccountancyInsuranceCode=Buchhaltungskonto Versicherung
 LoanAccountancyInterestCode=Buchhaltungskonto Zinsen
@@ -20,12 +24,22 @@ ConfirmPayLoan=Bestätigen Sie das Löschen dieses Kredites
 LoanPaid=Kredit bezahlt
 ListLoanAssociatedProject=Liste der Darlehen in dem Projekt
 AddLoan=Darlehen erstellen
+<<<<<<< HEAD
 FinancialCommitment=Financial commitment
 InterestAmount=Zins
 CapitalRemain=Capital remain
+=======
+FinancialCommitment=Finanzielle Verpflichtung
+InterestAmount=Zins
+CapitalRemain=Verbleibendes Kapital
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 # Admin
 ConfigLoan=Konfiguration des Modul Kredite
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Standard-Buchhaltungskonto Kapital
 LOAN_ACCOUNTING_ACCOUNT_INTEREST=Standard-Buchhaltungskonto Zinsen
 LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Standard-Buchhaltungskonto Versicherung
+<<<<<<< HEAD
 CreateCalcSchedule=Edit financial commitment
+=======
+CreateCalcSchedule=Finanzielle Verpflichtung bearbeiten
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

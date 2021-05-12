@@ -21,13 +21,19 @@
  *		\brief      Page to work on a shared document (PAD)
  */
 
+<<<<<<< HEAD
 define('NOSCANPOSTFORINJECTION',1);
 define('NOSTYLECHECK',1);
+=======
+define('NOSCANPOSTFORINJECTION', 1);
+define('NOSTYLECHECK', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
+<<<<<<< HEAD
 $langs->load("admin");
 $langs->load("other");
 $langs->load("website");
@@ -38,12 +44,24 @@ if (! ((GETPOST('testmenuhider','int') || ! empty($conf->global->MAIN_TESTMENUHI
 {
 	$conf->dol_hide_leftmenu = 1;   // Force hide of left menu.
 }
+=======
+// Load translation files required by the page
+$langs->loadLangs(array("admin","other","website"));
+
+if (! $user->admin) accessforbidden();
+
+$conf->dol_hide_leftmenu = 1;   // Force hide of left menu.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $error=0;
 $website=GETPOST('website', 'alpha');
 $page=GETPOST('page', 'alpha');
 $pageid=GETPOST('pageid', 'int');
+<<<<<<< HEAD
 $action=GETPOST('action','alpha');
+=======
+$action=GETPOST('action', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if (GETPOST('delete')) { $action='delete'; }
 if (GETPOST('preview')) $action='preview';
@@ -254,8 +272,13 @@ if (count($object->records) > 0)
 	if (in_array($action, array('editcss','editmenu','create')))
 	{
 		if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="preview">';
+<<<<<<< HEAD
 		if (preg_match('/^create/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 		if (preg_match('/^edit/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+=======
+		if (preg_match('/^create/', $action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+		if (preg_match('/^edit/', $action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	print '</div>';
@@ -381,8 +404,13 @@ if (count($object->records) > 0)
 		if (! in_array($action, array('editcss','editmenu','create')))
 		{
 			if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="preview">';
+<<<<<<< HEAD
 			if (preg_match('/^create/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 			if (preg_match('/^edit/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+=======
+			if (preg_match('/^create/', $action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+			if (preg_match('/^edit/', $action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		print '</div>';
@@ -450,15 +478,24 @@ if ($action == 'editcontent')
 	$contentforedit .= $objectpage->content;
 
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+<<<<<<< HEAD
 	$doleditor=new DolEditor('PAGE_CONTENT',$contentforedit,'',500,'Full','',true,true,true,ROWS_5,'90%');
+=======
+	$doleditor=new DolEditor('PAGE_CONTENT', $contentforedit, '', 500, 'Full', '', true, true, true, ROWS_5, '90%');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$doleditor->Create(0, '', false);
 }
 
 print "</div>\n</form>\n";
 
+<<<<<<< HEAD
 
 
 
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

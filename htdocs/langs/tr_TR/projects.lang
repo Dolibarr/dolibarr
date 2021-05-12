@@ -7,7 +7,11 @@ ProjectsArea=Projeler Alanı
 ProjectStatus=Proje durumu
 SharedProject=Herkes
 PrivateProject=Proje ilgilileri
+<<<<<<< HEAD
 ProjectsImContactFor=Projects I'm explicitely a contact of
+=======
+ProjectsImContactFor=Projects for I am explicitly a contact
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AllAllowedProjects=All project I can read (mine + public)
 AllProjects=Tüm projeler
 MyProjectsDesc=This view is limited to projects you are a contact for
@@ -29,24 +33,44 @@ NewProject=Yeni proje
 AddProject=Proje oluştur
 DeleteAProject=Bir proje sil
 DeleteATask=Bir görev sil
+<<<<<<< HEAD
 ConfirmDeleteAProject=Are you sure you want to delete this project?
 ConfirmDeleteATask=Are you sure you want to delete this task?
 OpenedProjects=Açık projeler
 OpenedTasks=Açık görevler
 OpportunitiesStatusForOpenedProjects=Projelerin durumuna göre fırsat tutarı
 OpportunitiesStatusForProjects=Projelerin durumuna göre fırsat tutarı
+=======
+ConfirmDeleteAProject=Bu projeyi silmek istediğinizden emin misiniz?
+ConfirmDeleteATask=Bu görevi silmek istediğinizden emin misiniz?
+OpenedProjects=Açık projeler
+OpenedTasks=Açık görevler
+OpportunitiesStatusForOpenedProjects=Leads amount of open projects by status
+OpportunitiesStatusForProjects=Leads amount of projects by status
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShowProject=Proje göster
 ShowTask=Görev göster
 SetProject=Proje ayarla
 NoProject=Tanımlı ya da sahip olunan hiçbir proje yok
+<<<<<<< HEAD
 NbOfProjects=Proje sayısı
 NbOfTasks=Görev sayısı
+=======
+NbOfProjects=No. of projects
+NbOfTasks=No. of tasks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TimeSpent=Harcanan süre
 TimeSpentByYou=Tarafınızdan harcanan süre
 TimeSpentByUser=Kullanıcı tarafından harcanan süre
 TimesSpent=Harcanan süre
+<<<<<<< HEAD
 RefTask=Görev ref.
 LabelTask=Görev etiketi
+=======
+TaskId=Task ID
+RefTask=Task ref.
+LabelTask=Task label
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TaskTimeSpent=Göreve harcanan süre
 TaskTimeUser=Kullanıcı
 TaskTimeNote=Not
@@ -56,6 +80,12 @@ WorkloadNotDefined=İşyükü tanımlanmamış
 NewTimeSpent=Harcanan süre
 MyTimeSpent=Harcadığım sürelerim
 BillTime=Bill the time spent
+<<<<<<< HEAD
+=======
+BillTimeShort=Bill time
+TimeToBill=Time not billed
+TimeBilled=Time billed
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Tasks=Görevler
 Task=Görev
 TaskDateStart=Görev başlama tarihi
@@ -79,6 +109,7 @@ GoToListOfTimeConsumed=Tüketilen süre listesine git
 GoToListOfTasks=Görevler listesine git
 GoToGanttView=Go to Gantt view
 GanttView=Gantt View
+<<<<<<< HEAD
 ListProposalsAssociatedProject=Proje ile ilgili tekliflerin listesi
 ListOrdersAssociatedProject=List of customer orders associated with the project
 ListInvoicesAssociatedProject=List of customer invoices associated with the project
@@ -91,6 +122,21 @@ ListFichinterAssociatedProject=Proje ile ilgili müdahalelerin listesi
 ListExpenseReportsAssociatedProject=Bu proje ile ilişkili gider raporları listesi
 ListDonationsAssociatedProject=Bu proje ile ilişkilendirilmiş bağış listesi
 ListVariousPaymentsAssociatedProject=List of miscellaneous payments associated with the project
+=======
+ListProposalsAssociatedProject=List of the commercial proposals related to the project
+ListOrdersAssociatedProject=Proje ile ilgili müşteri siparişlerinin listesi
+ListInvoicesAssociatedProject=Proje ile ilgili müşteri faturalarının listesi
+ListPredefinedInvoicesAssociatedProject=Proje ile ilgili müşteri şablon faturalarının listesi
+ListSupplierOrdersAssociatedProject=Proje ile ilgili tedarikçi siparişlerinin listesi
+ListSupplierInvoicesAssociatedProject=List of vendor invoices related to the project
+ListContractAssociatedProject=Proje ile ilgili sözleşmelerin listesi
+ListShippingAssociatedProject=List of shippings related to the project
+ListFichinterAssociatedProject=Proje ile ilgili müdahalelerin listesi
+ListExpenseReportsAssociatedProject=Projeyle ilgili gider raporlarının listesi
+ListDonationsAssociatedProject=List of donations related to the project
+ListVariousPaymentsAssociatedProject=Proje ile ilgili çeşitli ödemeler listesi
+ListSalariesAssociatedProject=List of payments of salaries related to the project
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ListActionsAssociatedProject=Proje ile ilgili etkinliklerin listesi
 ListTaskTimeUserProject=Projelere harcanan sürelerin listesi
 ListTaskTimeForTask=List of time consumed on task
@@ -106,6 +152,7 @@ NotOwnerOfProject=Bu özel projenin sahibi değil
 AffectedTo=Tahsis edilen
 CantRemoveProject=Bu proje kaldırılamıyor çünkü Bazı diğer nesneler tarafından başvurulUYOR (fatura, sipariş veya diğerleri). Başvuru sekmesine bakın.
 ValidateProject=Proje doğrula
+<<<<<<< HEAD
 ConfirmValidateProject=Are you sure you want to validate this project?
 CloseAProject=Proje kapat
 ConfirmCloseAProject=Are you sure you want to close this project?
@@ -115,32 +162,57 @@ ConfirmReOpenAProject=Are you sure you want to re-open this project?
 ProjectContact=Proje ilgilileri
 TaskContact=Task contacts
 ActionsOnProject=Proje etkinlikleri
+=======
+ConfirmValidateProject=Bu projeyi doğrulamak istediğinizden emin misiniz?
+CloseAProject=Proje kapat
+ConfirmCloseAProject=Bu projeyi kapatmak istediğinizden emin misiniz?
+AlsoCloseAProject=Also close project (keep it open if you still need to follow production tasks on it)
+ReOpenAProject=Proje aç
+ConfirmReOpenAProject=Bu projeyi tekrar açmak istediğinizden emin misiniz?
+ProjectContact=Proje ilgilileri
+TaskContact=Task contacts
+ActionsOnProject=Projedeki etkinlikler
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 YouAreNotContactOfProject=Bu özel projenin bir ilgilisi değilsiniz
 UserIsNotContactOfProject=Kullanıcı bu özel projenin bağlantısı değil
 DeleteATimeSpent=Harcana süre sil
 ConfirmDeleteATimeSpent=Are you sure you want to delete this time spent?
 DoNotShowMyTasksOnly=Bana atanmamış görevleri de göster
 ShowMyTasksOnly=Yalnızca bana atanmış görevleri göster
+<<<<<<< HEAD
 TaskRessourceLinks=Contacts task
+=======
+TaskRessourceLinks=Contacts of task
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProjectsDedicatedToThisThirdParty=Bu üçüncü parti atanmış projeler
 NoTasks=Bu proje için hiçbir görev yok
 LinkedToAnotherCompany=Diğer üçüncü partiye bağlantılı
 TaskIsNotAssignedToUser=Görev kullanıcıya atanmadı. Görevi şimdi atamak için '<strong>%s</strong>' düğmesini kullanın.
 ErrorTimeSpentIsEmpty=Harcanan süre boş
 ThisWillAlsoRemoveTasks=Bu eylem aynı zamanda projenin tüm görevlerini (şu andaki <b>%s</b> görevleri) ve tüm harcanan süre girişlernii siler .
+<<<<<<< HEAD
 IfNeedToUseOhterObjectKeepEmpty=Eğer bazı nesneler başka bir üçüncü partiye aitse  (fatura, sipariş, ...), oluşturulması  için bu projeye bağlanmalıdır, projenin birden çok üçüncü partiye bağlı olması için bunu boş bırakın.
 CloneProject=Proje klonla
+=======
+IfNeedToUseOtherObjectKeepEmpty=Eğer bazı nesneler başka bir üçüncü partiye aitse  (fatura, sipariş, ...), oluşturulması  için bu projeye bağlanmalıdır, projenin birden çok üçüncü partiye bağlı olması için bunu boş bırakın.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CloneTasks=Görev klonla
 CloneContacts=Kişi klonla
 CloneNotes=Not klonla
 CloneProjectFiles=Birleşik proje dosyalarını kopyala
 CloneTaskFiles=Birleşik görev(ler) dosyalarını kopyala (görev(ler) kopyalanmışsa)
+<<<<<<< HEAD
 CloneMoveDate=Update project/tasks dates from now?
 ConfirmCloneProject=Are you sure to clone this project?
+=======
+CloneMoveDate=Proje/görev tarihleri şu andan itibaren güncellensin mi?
+ConfirmCloneProject=Bu projeyi kopyalamak istediğinizden emin misiniz?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProjectReportDate=Change task dates according to new project start date
 ErrorShiftTaskDate=Görev tarihini yeni proje başlama tarihine göre kaydırmak olası değil
 ProjectsAndTasksLines=Projeler ve görevler
 ProjectCreatedInDolibarr=%s projesi oluşturuldu
+<<<<<<< HEAD
 ProjectValidatedInDolibarr=Project %s validated
 ProjectModifiedInDolibarr=Project %s modified
 TaskCreatedInDolibarr=%s görev oluşturuldu
@@ -154,6 +226,21 @@ OpportunityAmount=Fırsat tutarı
 OpportunityAmountShort=Fırs. tutarı
 OpportunityAmountAverageShort=Ortalama Fırsat tutarı
 OpportunityAmountWeigthedShort=Ağırlıklı Fırsat tutarı
+=======
+ProjectValidatedInDolibarr=%s projesi onaylandı
+ProjectModifiedInDolibarr=Proje %s değiştirildi
+TaskCreatedInDolibarr=%s görev oluşturuldu
+TaskModifiedInDolibarr=%s görev değiştirildi
+TaskDeletedInDolibarr=%s görev silindi
+OpportunityStatus=Lead status
+OpportunityStatusShort=Lead status
+OpportunityProbability=Lead probability
+OpportunityProbabilityShort=Lead probab.
+OpportunityAmount=Lead amount
+OpportunityAmountShort=Lead amount
+OpportunityAmountAverageShort=Average lead amount
+OpportunityAmountWeigthedShort=Weighted lead amount
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 WonLostExcluded=Kazanç/Kayıp hariç
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Proje önderi
@@ -167,8 +254,14 @@ TypeContact_project_task_external_TASKCONTRIBUTOR=Katılımcı
 SelectElement=Öğe seç
 AddElement=Öğeye bağlan
 # Documents models
+<<<<<<< HEAD
 DocumentModelBeluga=Bağlantılı nesnelere gözatmak için proje şablonu
 DocumentModelBaleine=Görevler proje raporu şablonu
+=======
+DocumentModelBeluga=Project document template for linked objects overview
+DocumentModelBaleine=Project document template for tasks
+DocumentModelTimeSpent=Project report template for time spent
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PlannedWorkload=Planlı işyükü
 PlannedWorkloadShort=İşyükü
 ProjectReferers=İlgili öğeler
@@ -176,12 +269,20 @@ ProjectMustBeValidatedFirst=Projeler önce doğrulanmalıdır
 FirstAddRessourceToAllocateTime=Zaman tahsisi için göreve bir kullanıcı kaynağı ilişkilendir
 InputPerDay=Günlük giriş
 InputPerWeek=Haftalık giriş
+<<<<<<< HEAD
 InputDetail=Input detail
+=======
+InputDetail=Giriş detayı
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TimeAlreadyRecorded=This is time spent already recorded for this task/day and user %s
 ProjectsWithThisUserAsContact=İlgili olarak bu kullanıcı olan projeler
 TasksWithThisUserAsContact=Bu kullanıcıya atanmış görevler
 ResourceNotAssignedToProject=Projeye atanmamış
 ResourceNotAssignedToTheTask=Bu göreve atanmamış
+<<<<<<< HEAD
+=======
+NoUserAssignedToTheProject=No users assigned to this project
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TimeSpentBy=Time spent by
 TasksAssignedTo=Tasks assigned to
 AssignTaskToMe=Görevi bana ata
@@ -189,6 +290,7 @@ AssignTaskToUser=Görevi %s kullanıcısına ata
 SelectTaskToAssign=Atanacak görevi seçin...
 AssignTask=Ata
 ProjectOverview=Genel bakış
+<<<<<<< HEAD
 ManageTasks=Görev ve süre izlemek için projeleri kullan
 ManageOpportunitiesStatus=Adayları/fırsatları izlemek için projeleri kullan
 ProjectNbProjectByMonth=Aylık oluşturulan proje sayısı
@@ -196,10 +298,20 @@ ProjectNbTaskByMonth=Aylık oluşturulan görevlerin sayısı
 ProjectOppAmountOfProjectsByMonth=Aylık fırsat tutarı
 ProjectWeightedOppAmountOfProjectsByMonth=Aylık fırsat ağırlıklı tutarı
 ProjectOpenedProjectByOppStatus=Fırsat durumuna göre açık proje/aday
+=======
+ManageTasks=Use projects to follow tasks and/or report time spent (timesheets)
+ManageOpportunitiesStatus=Adayları/fırsatları izlemek için projeleri kullan
+ProjectNbProjectByMonth=No. of created projects by month
+ProjectNbTaskByMonth=No. of created tasks by month
+ProjectOppAmountOfProjectsByMonth=Amount of leads by month
+ProjectWeightedOppAmountOfProjectsByMonth=Weighted amount of leads by month
+ProjectOpenedProjectByOppStatus=Open project/lead by lead status
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProjectsStatistics=Projeler/adaylar için istatistikler
 TasksStatistics=Statistics on project/lead tasks
 TaskAssignedToEnterTime=Atanan görevler. Bu göreve süre girmek mümkün olmalı.
 IdTaskTime=Görev zamanı kimliği
+<<<<<<< HEAD
 YouCanCompleteRef=Eğer referansı bazı bilgilerle tamamlamak isterseniz (arama süzgeçleri olarak kullanmak üzere), ayırmak için bir - karakteri eklemeniz önerilir, böylece otomatik numaralandırma sonraki projeler için de çalışacaktır. Örneğin; %s-ABC. Etikete arama anahtarları da eklemeyi yeğleyebilirsiniz. Ama en iyisi özel bir alan olarak da adlandırılan tamamlayıcı özellikler eklemek olabilir.
 OpenedProjectsByThirdparties=Open projects by third parties
 OnlyOpportunitiesShort=Yalnızca fırsatlar
@@ -208,6 +320,17 @@ NotAnOpportunityShort=Bir fırsat değil
 OpportunityTotalAmount=Fırsatlar toplam tutarı
 OpportunityPonderatedAmount=Fırsatların ağırlık tutarı
 OpportunityPonderatedAmountDesc=Olasılıkla ölçülen fırsat tutarı
+=======
+YouCanCompleteRef=If you want to complete the ref with some suffix, it is recommanded to add a - character to separate it, so the automatic numbering will still work correctly for next projects. For example %s-MYSUFFIX
+OpenedProjectsByThirdparties=Open projects by third parties
+OnlyOpportunitiesShort=Only leads
+OpenedOpportunitiesShort=Open leads
+NotOpenedOpportunitiesShort=Not an open lead
+NotAnOpportunityShort=Not a lead
+OpportunityTotalAmount=Total amount of leads
+OpportunityPonderatedAmount=Weighted amount of leads
+OpportunityPonderatedAmountDesc=Leads amount weighted with probability
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 OppStatusPROSP=Araştırma
 OppStatusQUAL=Nitelendirme
 OppStatusPROPO=Teklif
@@ -216,6 +339,7 @@ OppStatusPENDING=Beklemede
 OppStatusWON=Kazanç
 OppStatusLOST=Kayıp
 Budget=Bütçe
+<<<<<<< HEAD
 AllowToLinkFromOtherCompany=Allow to link project from other company<br><br><u>Supported values :</u><br>- Keep empty: Can link any project of the company (default)<br>- "all" : Can link any projects, even project of other companies<br>- A list of thirdparty id separated with commas : Can link all projects of these thirdparty defined (Example : 123,4795,53)<br>
 LatestProjects=Son %s proje
 LatestModifiedProjects=Latest %s modified projects
@@ -224,7 +348,29 @@ NoAssignedTasks=No assigned tasks (assign project/tasks the current user from th
 # Comments trans
 AllowCommentOnTask=Allow user comments on tasks
 AllowCommentOnProject=Allow user comments on projects
+=======
+AllowToLinkFromOtherCompany=Allow to link project from other company<br><br><u>Supported values:</u><br>- Keep empty: Can link any project of the company (default)<br>- "all": Can link any projects, even projects of other companies<br>- A list of third-party ids separated by commas: can link all projects of these third partys (Example: 123,4795,53)<br>
+LatestProjects=Son %s proje
+LatestModifiedProjects=Değiştirilen son %s proje
+OtherFilteredTasks=Diğer filtrelenmiş görevler
+NoAssignedTasks=No assigned tasks found (assign project/tasks to the current user from the top select box to enter time on it)
+ThirdPartyRequiredToGenerateInvoice=A third party must be defined on project to be able to invoice it.
+# Comments trans
+AllowCommentOnTask=Görevlere kullanıcı yorumlarına izin ver
+AllowCommentOnProject=Projelerde kullanıcı yorumlarına izin ver
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DontHavePermissionForCloseProject=You do not have permissions to close the project %s
 DontHaveTheValidateStatus=The project %s must be open to be closed
 RecordsClosed=%s project(s) closed
 SendProjectRef=Information project %s
+<<<<<<< HEAD
+=======
+ModuleSalaryToDefineHourlyRateMustBeEnabled=Module 'Salaries' must be enabled to define employee hourly rate to have time spent valorized
+NewTaskRefSuggested=Task ref already used, a new task ref is required
+TimeSpentInvoiced=Time spent billed
+TimeSpentForInvoice=Harcanan süre
+OneLinePerUser=Kullanıcı başına bir satır
+ServiceToUseOnLines=Service to use on lines
+InvoiceGeneratedFromTimeSpent=Invoice %s has been generated from time spent on project
+ProjectBillTimeDescription=Check if you enter timesheet on tasks of project AND you plan to generate invoice(s) from the timesheet to bill the customer of the project (do not check if you plan to create invoice that is not based on entered timesheets).
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

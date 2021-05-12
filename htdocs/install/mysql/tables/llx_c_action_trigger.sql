@@ -1,5 +1,9 @@
 -- ===================================================================
+<<<<<<< HEAD
 -- Copyright (C) 2011 Regis Houssin	<regis.houssin@capnetworks.com>
+=======
+-- Copyright (C) 2011 Regis Houssin	<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,7 +26,11 @@
 create table llx_c_action_trigger
 (
   rowid			integer AUTO_INCREMENT PRIMARY KEY,
+<<<<<<< HEAD
   elementtype	varchar(24) 			NOT NULL,
+=======
+  elementtype	varchar(32) 			NOT NULL,
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
   code			varchar(32)				NOT NULL,
   label			varchar(128)			NOT NULL,
   description	varchar(255),

@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2010-2018 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,7 +28,11 @@
  *      \brief      Page liste des prelevements
  */
 
+<<<<<<< HEAD
 require('../../main.inc.php');
+=======
+require '../../main.inc.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -33,6 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->loadLangs(array('banks', 'withdrawals', 'companies', 'categories'));
 
 // Security check
+<<<<<<< HEAD
 $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'prelevement','','','bons');
@@ -42,6 +51,17 @@ $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
+=======
+$socid = GETPOST('socid', 'int');
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'prelevement', '', '', 'bons');
+
+
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -49,6 +69,7 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="p.datec";
 
+<<<<<<< HEAD
 $search_line = GETPOST('search_line','alpha');
 $search_bon = GETPOST('search_bon','alpha');
 $search_code = GETPOST('search_code','alpha');
@@ -57,13 +78,27 @@ $statut = GETPOST('statut','int');
 
 $bon=new BonPrelevement($db,"");
 $ligne=new LignePrelevement($db,$user);
+=======
+$search_line = GETPOST('search_line', 'alpha');
+$search_bon = GETPOST('search_bon', 'alpha');
+$search_code = GETPOST('search_code', 'alpha');
+$search_company = GETPOST('search_company', 'alpha');
+$statut = GETPOST('statut', 'int');
+
+$bon=new BonPrelevement($db, "");
+$ligne=new LignePrelevement($db, $user);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 /*
  * Actions
  */
 
+<<<<<<< HEAD
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+=======
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$search_line="";
 	$search_bon="";
@@ -79,10 +114,17 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 
 $form=new Form($db);
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("WithdrawalsLines"));
 
 $sql = "SELECT p.rowid, p.ref, p.statut, p.datec";
 $sql.= " ,f.rowid as facid, f.facnumber, f.total_ttc";
+=======
+llxHeader('', $langs->trans("WithdrawalsLines"));
+
+$sql = "SELECT p.rowid, p.ref, p.statut, p.datec";
+$sql.= " ,f.rowid as facid, f.ref, f.total_ttc";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $sql.= " , s.rowid as socid, s.nom as name, s.code_client";
 $sql.= " , pl.amount, pl.statut as statut_ligne, pl.rowid as rowid_ligne";
 $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
@@ -94,14 +136,22 @@ $sql.= " WHERE pl.fk_prelevement_bons = p.rowid";
 $sql.= " AND pf.fk_prelevement_lignes = pl.rowid";
 $sql.= " AND pf.fk_facture = f.rowid";
 $sql.= " AND f.fk_soc = s.rowid";
+<<<<<<< HEAD
 $sql.= " AND f.entity = ".$conf->entity;
+=======
+$sql.= " AND f.entity IN (".getEntity('invoice').")";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 if ($search_line) $sql.= " AND pl.rowid = '".$db->escape($search_line)."'";
 if ($search_bon) $sql.= natural_search("p.ref", $search_bon);
 if ($search_code) $sql.= natural_search("s.code_client", $search_code);
 if ($search_company) $sql.= natural_search("s.nom", $search_company);
 
+<<<<<<< HEAD
 $sql.= $db->order($sortfield,$sortorder);
+=======
+$sql.= $db->order($sortfield, $sortorder);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -116,7 +166,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     }
 }
 
+<<<<<<< HEAD
 $sql.= $db->plimit($limit + 1,$offset);
+=======
+$sql.= $db->plimit($limit + 1, $offset);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $result = $db->query($sql);
 if ($result)
@@ -146,13 +200,18 @@ if ($result)
     print '<td class="liste_titre" align="center"><input type="text" class="flat" name="search_code" value="'. dol_escape_htmltag($search_code).'" size="6"></td>';
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre">&nbsp;</td>';
+<<<<<<< HEAD
     print '<td class="liste_titre" align="right">';
+=======
+    print '<td class="liste_titre maxwidthsearch">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $searchpicto=$form->showFilterButtons();
     print $searchpicto;
     print '</td>';
     print '</tr>';
 
     print '<tr class="liste_titre">';
+<<<<<<< HEAD
     print_liste_field_titre("Line",$_SERVER["PHP_SELF"]);
     print_liste_field_titre("WithdrawalsReceipts",$_SERVER["PHP_SELF"],"p.ref");
     print_liste_field_titre("Bill",$_SERVER["PHP_SELF"],"f.facnumber",'',$urladd);
@@ -164,12 +223,29 @@ if ($result)
 	print "</tr>\n";
 
     while ($i < min($num,$limit))
+=======
+    print_liste_field_titre("Line", $_SERVER["PHP_SELF"]);
+    print_liste_field_titre("WithdrawalsReceipts", $_SERVER["PHP_SELF"], "p.ref");
+    print_liste_field_titre("Bill", $_SERVER["PHP_SELF"], "f.ref", '', $urladd);
+    print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom");
+    print_liste_field_titre("CustomerCode", $_SERVER["PHP_SELF"], "s.code_client", '', '', 'align="center"');
+    print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "p.datec", "", "", 'align="center"');
+    print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "pl.amount", "", "", 'class="right"');
+    print_liste_field_titre('');
+	print "</tr>\n";
+
+    while ($i < min($num, $limit))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $obj = $db->fetch_object($result);
 
         print '<tr class="oddeven"><td>';
 
+<<<<<<< HEAD
         print $ligne->LibStatut($obj->statut_ligne,2);
+=======
+        print $ligne->LibStatut($obj->statut_ligne, 2);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         print "&nbsp;";
 
         print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid_ligne.'">';
@@ -178,23 +254,38 @@ if ($result)
 
         print '<td>';
 
+<<<<<<< HEAD
         print $bon->LibStatut($obj->statut,2);
+=======
+        print $bon->LibStatut($obj->statut, 2);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         print "&nbsp;";
 
         print '<a href="card.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
 
         print '<td><a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->facid.'">';
+<<<<<<< HEAD
         print img_object($langs->trans("ShowBill"),"bill");
           print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->facid.'">'.$obj->facnumber."</a></td>\n";
+=======
+        print img_object($langs->trans("ShowBill"), "bill");
+          print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->facid.'">'.$obj->ref."</a></td>\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         print '</a></td>';
 
         print '<td><a href="card.php?id='.$obj->rowid.'">'.$obj->name."</a></td>\n";
 
         print '<td align="center"><a href="card.php?id='.$obj->rowid.'">'.$obj->code_client."</a></td>\n";
 
+<<<<<<< HEAD
         print '<td align="center">'.dol_print_date($db->jdate($obj->datec),'day')."</td>\n";
 
         print '<td align="right">'.price($obj->amount)."</td>\n";
+=======
+        print '<td align="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
+
+        print '<td class="right">'.price($obj->amount)."</td>\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         print '<td>&nbsp;</td>';
 
@@ -213,5 +304,9 @@ else
     dol_print_error($db);
 }
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

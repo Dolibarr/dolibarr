@@ -36,29 +36,59 @@ class MyObject extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'myobject';
+<<<<<<< HEAD
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'mymodule_myobject';
+<<<<<<< HEAD
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * @var int  Does myobject support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 0;
+<<<<<<< HEAD
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * @var int  Does myobject support extrafields ? 0=No, 1=Yes
 	 */
 	public $isextrafieldmanaged = 1;
+<<<<<<< HEAD
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'myobject@mymodule';
 
 
+<<<<<<< HEAD
 	/**
 	 *  'type' if the field format.
 	 *  'label' the translation key.
 	 *  'enabled' is a condition when the field must be managed.
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only. Using a negative value means field is not shown by default on list but can be selected for viewing)
+=======
+	const STATUS_DRAFT = 0;
+	const STATUS_VALIDATED = 1;
+	const STATUS_DISABLED = 9;
+
+
+	/**
+	 *  'type' if the field format ('integer', 'integer:Class:pathtoclass', 'varchar(x)', 'double(24,8)', 'text', 'html', 'datetime', 'timestamp', 'float')
+	 *  'label' the translation key.
+	 *  'enabled' is a condition when the field must be managed.
+	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). Using a negative value means field is not shown by default on list but can be selected for viewing)
+	 *  'noteditable' says if field is not editable (1 or 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'default' is a default value for creation (can still be replaced by the global setup of default values)
 	 *  'index' if we want an index in database.
@@ -78,6 +108,7 @@ class MyObject extends CommonObject
      * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
      */
 	public $fields=array(
+<<<<<<< HEAD
 	    'rowid'         =>array('type'=>'integer',      'label'=>'TechnicalID',      'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'index'=>1, 'position'=>1, 'comment'=>'Id'),
 		'ref'           =>array('type'=>'varchar(128)', 'label'=>'Ref',              'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
 	    'entity'        =>array('type'=>'integer',      'label'=>'Entity',           'enabled'=>1, 'visible'=>0,  'default'=>1, 'notnull'=>1,  'index'=>1, 'position'=>20),
@@ -107,29 +138,130 @@ class MyObject extends CommonObject
 	public $tms;
 	public $fk_user_creat;
 	public $fk_user_modif;
+=======
+	    'rowid'         =>array('type'=>'integer',      'label'=>'TechnicalID',      'enabled'=>1, 'visible'=>-2, 'noteditable'=>1, 'notnull'=> 1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
+		'ref'           =>array('type'=>'varchar(128)', 'label'=>'Ref',              'enabled'=>1, 'visible'=>1,  'noteditable'=>0, 'notnull'=> 1, 'default'=>'(PROV)', 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
+	    'entity'        =>array('type'=>'integer',      'label'=>'Entity',           'enabled'=>1, 'visible'=>0,  'notnull'=> 1, 'default'=>1, 'index'=>1, 'position'=>20),
+	    'label'         =>array('type'=>'varchar(255)', 'label'=>'Label',            'enabled'=>1, 'visible'=>1,  'position'=>30, 'searchall'=>1, 'css'=>'minwidth200', 'help'=>'Help text', 'showoncombobox'=>1),
+	    'amount'        =>array('type'=>'double(24,8)', 'label'=>'Amount',           'enabled'=>1, 'visible'=>1,  'default'=>'null', 'position'=>40,  'searchall'=>0, 'isameasure'=>1, 'help'=>'Help text for amount'),
+	    'qty'           =>array('type'=>'real',         'label'=>'Qty',              'enabled'=>1, 'visible'=>1,  'default'=>'0', 'position'=>45,  'searchall'=>0, 'isameasure'=>1, 'help'=>'Help text for quantity', 'css'=>'maxwidth75imp'),
+	    'fk_soc' 		=>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=> 1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'help'=>'LinkToThirparty'),
+		'description'   =>array('type'=>'text',			'label'=>'Description',		 'enabled'=>1, 'visible'=>0,  'position'=>60),
+		'note_public'   =>array('type'=>'html',			'label'=>'NotePublic',		 'enabled'=>1, 'visible'=>0,  'position'=>61),
+		'note_private'  =>array('type'=>'html',			'label'=>'NotePrivate',		 'enabled'=>1, 'visible'=>0,  'position'=>62),
+		'date_creation' =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'notnull'=> 1, 'position'=>500),
+	    'tms'           =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=> 0, 'position'=>501),
+		//'date_validation'    =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'position'=>502),
+		'fk_user_creat' =>array('type'=>'integer',      'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-2, 'notnull'=> 1, 'position'=>510, 'foreignkey'=>'user.rowid'),
+		'fk_user_modif' =>array('type'=>'integer',      'label'=>'UserModif',        'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>511),
+		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
+		'import_key'    =>array('type'=>'varchar(14)',  'label'=>'ImportId',         'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>0,  'position'=>1000),
+	    'status'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=> 1, 'default'=>0, 'index'=>1,  'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', 9=>'Canceled')),
+	);
+
+	/**
+	 * @var int ID
+	 */
+	public $rowid;
+
+	/**
+	 * @var string Ref
+	 */
+	public $ref;
+
+	/**
+	 * @var int Entity
+	 */
+	public $entity;
+
+	/**
+     * @var string label
+     */
+    public $label;
+
+    /**
+     * @var string amount
+     */
+	public $amount;
+
+	/**
+	 * @var int Status
+	 */
+	public $status;
+
+	/**
+     * @var integer|string date_creation
+     */
+	public $date_creation;
+
+	/**
+     * @var integer tms
+     */
+	public $tms;
+
+	/**
+     * @var int ID
+     */
+	public $fk_user_creat;
+
+	/**
+     * @var int ID
+     */
+	public $fk_user_modif;
+
+	/**
+     * @var string import_key
+     */
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	public $import_key;
 	// END MODULEBUILDER PROPERTIES
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	// If this object has a subtable with lines
 
 	/**
 	 * @var int    Name of subtable line
 	 */
+<<<<<<< HEAD
 	//public $table_element_line = 'myobjectdet';
+=======
+	//public $table_element_line = 'mymodule_myobjectline';
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * @var int    Field with ID of parent key if this field has a parent
 	 */
 	//public $fk_element = 'fk_myobject';
+<<<<<<< HEAD
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * @var int    Name of subtable class that manage subtable lines
 	 */
 	//public $class_element_line = 'MyObjectline';
+<<<<<<< HEAD
 	/**
 	 * @var array  Array of child tables (child tables to delete before deleting a record)
 	 */
 	//protected $childtables=array('myobjectdet');
+=======
+
+	/**
+	 * @var array	List of child tables. To test if we can delete object.
+	 */
+	//protected $childtables=array();
+
+	/**
+	 * @var array	List of child tables. To know object to delete on cascade.
+	 */
+	//protected $childtablesoncascade=array('mymodule_myobjectdet');
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * @var MyObjectLine[]     Array of subtable lines
 	 */
@@ -144,7 +276,11 @@ class MyObject extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
+<<<<<<< HEAD
 		global $conf, $user;
+=======
+		global $conf, $langs;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$this->db = $db;
 
@@ -159,6 +295,21 @@ class MyObject extends CommonObject
 				unset($this->fields[$key]);
 			}
 		}
+<<<<<<< HEAD
+=======
+
+		// Translate some data of arrayofkeyval
+		foreach($this->fields as $key => $val)
+		{
+			if (is_array($val['arrayofkeyval']))
+			{
+				foreach($val['arrayofkeyval'] as $key2 => $val2)
+				{
+					$this->fields[$key]['arrayofkeyval'][$key2]=$langs->trans($val2);
+				}
+			}
+		}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	/**
@@ -174,7 +325,11 @@ class MyObject extends CommonObject
 	}
 
 	/**
+<<<<<<< HEAD
 	 * Clone and object into another one
+=======
+	 * Clone an object into another one
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	 *
 	 * @param  	User 	$user      	User that creates
 	 * @param  	int 	$fromid     Id of object to clone
@@ -182,7 +337,11 @@ class MyObject extends CommonObject
 	 */
 	public function createFromClone(User $user, $fromid)
 	{
+<<<<<<< HEAD
 		global $hookmanager, $langs;
+=======
+		global $langs, $extrafields;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    $error = 0;
 
 	    dol_syslog(__METHOD__, LOG_DEBUG);
@@ -192,16 +351,47 @@ class MyObject extends CommonObject
 	    $this->db->begin();
 
 	    // Load source object
+<<<<<<< HEAD
 	    $object->fetchCommon($fromid);
+=======
+	    $result = $object->fetchCommon($fromid);
+	    if ($result > 0 && ! empty($object->table_element_line)) $object->fetchLines();
+
+	    // get lines so they will be clone
+	    //foreach($this->lines as $line)
+	    //	$line->fetch_optionals();
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    // Reset some properties
 	    unset($object->id);
 	    unset($object->fk_user_creat);
 	    unset($object->import_key);
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    // Clear fields
 	    $object->ref = "copy_of_".$object->ref;
 	    $object->title = $langs->trans("CopyOf")." ".$object->title;
 	    // ...
+<<<<<<< HEAD
+=======
+	    // Clear extrafields that are unique
+	    if (is_array($object->array_options) && count($object->array_options) > 0)
+	    {
+	    	$extrafields->fetch_name_optionals_label($this->element);
+	    	foreach($object->array_options as $key => $option)
+	    	{
+	    		$shortkey = preg_replace('/options_/', '', $key);
+	    		if (! empty($extrafields->attributes[$this->element]['unique'][$shortkey]))
+	    		{
+	    			//var_dump($key); var_dump($clonedObj->array_options[$key]); exit;
+	    			unset($object->array_options[$key]);
+	    		}
+	    	}
+	    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	    // Create clone
 		$object->context['createfromclone'] = 'createfromclone';
@@ -212,6 +402,30 @@ class MyObject extends CommonObject
 	        $this->errors = $object->errors;
 	    }
 
+<<<<<<< HEAD
+=======
+	    if (! $error)
+	    {
+	    	// copy internal contacts
+	    	if ($this->copy_linked_contact($object, 'internal') < 0)
+	    	{
+	    		$error++;
+	    	}
+	    }
+
+	    if (! $error)
+	    {
+	    	// copy external contacts if same company
+	    	if (property_exists($this, 'socid') && $this->socid == $object->socid)
+	    	{
+	    		if ($this->copy_linked_contact($object, 'external') < 0)
+	    			$error++;
+	    	}
+	    }
+
+	    unset($object->context['createfromclone']);
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    // End
 	    if (!$error) {
 	        $this->db->commit();
@@ -241,6 +455,7 @@ class MyObject extends CommonObject
 	 *
 	 * @return int         <0 if KO, 0 if not found, >0 if OK
 	 */
+<<<<<<< HEAD
 	/*public function fetchLines()
 	{
 		$this->lines=array();
@@ -249,6 +464,95 @@ class MyObject extends CommonObject
 
 		return count($this->lines)?1:0;
 	}*/
+=======
+	public function fetchLines()
+	{
+		$this->lines=array();
+
+		$result = $this->fetchLinesCommon();
+		return $result;
+	}
+
+
+	/**
+	 * Load list of objects in memory from the database.
+	 *
+	 * @param  string      $sortorder    Sort Order
+	 * @param  string      $sortfield    Sort field
+	 * @param  int         $limit        limit
+	 * @param  int         $offset       Offset
+	 * @param  array       $filter       Filter array. Example array('field'=>'valueforlike', 'customurl'=>...)
+	 * @param  string      $filtermode   Filter mode (AND or OR)
+	 * @return array|int                 int <0 if KO, array of pages if OK
+	 */
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	{
+		global $conf;
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		$records=array();
+
+		$sql = 'SELECT ';
+		$sql .= $this->getFieldList();
+		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element. ' as t';
+		if ($this->ismultientitymanaged) $sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
+		else $sql .= ' WHERE 1 = 1';
+		// Manage filter
+		$sqlwhere = array();
+		if (count($filter) > 0) {
+			foreach ($filter as $key => $value) {
+				if ($key=='t.rowid') {
+					$sqlwhere[] = $key . '='. $value;
+				}
+				elseif (strpos($key, 'date') !== false) {
+					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
+				}
+				elseif ($key=='customsql') {
+					$sqlwhere[] = $value;
+				}
+				else {
+					$sqlwhere[] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
+				}
+			}
+		}
+		if (count($sqlwhere) > 0) {
+			$sql .= ' AND (' . implode(' '.$filtermode.' ', $sqlwhere).')';
+		}
+
+		if (!empty($sortfield)) {
+			$sql .= $this->db->order($sortfield, $sortorder);
+		}
+		if (!empty($limit)) {
+			$sql .=  ' ' . $this->db->plimit($limit, $offset);
+		}
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+            $i = 0;
+			while ($i < min($limit, $num))
+			{
+			    $obj = $this->db->fetch_object($resql);
+
+				$record = new self($this->db);
+				$record->setVarsFromFetchObj($obj);
+
+				$records[$record->id] = $record;
+
+				$i++;
+			}
+			$this->db->free($resql);
+
+			return $records;
+		} else {
+			$this->errors[] = 'Error ' . $this->db->lasterror();
+			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+
+			return -1;
+		}
+	}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	/**
 	 * Update object into database
@@ -272,6 +576,7 @@ class MyObject extends CommonObject
 	public function delete(User $user, $notrigger = false)
 	{
 		return $this->deleteCommon($user, $notrigger);
+<<<<<<< HEAD
 	}
 
 	/**
@@ -289,16 +594,57 @@ class MyObject extends CommonObject
 		global $db, $conf, $langs, $hookmanager;
         global $dolibarr_main_authentication, $dolibarr_main_demo;
         global $menumanager;
+=======
+		//return $this->deleteCommon($user, $notrigger, 1);
+	}
+
+	/**
+	 *  Delete a line of object in database
+	 *
+	 *	@param  User	$user       User that delete
+	 *  @param	int		$idline		Id of line to delete
+	 *  @param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
+	 *  @return int         		>0 if OK, <0 if KO
+	 */
+	public function deleteLine(User $user, $idline, $notrigger = false)
+	{
+		if ($this->status < 0)
+		{
+			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
+			return -2;
+		}
+
+		return $this->deleteLineCommon($user, $idline, $notrigger);
+	}
+
+    /**
+     *  Return a link to the object card (with optionaly the picto)
+     *
+     *  @param  int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+     *  @param  string  $option                     On what the link point to ('nolink', ...)
+     *  @param  int     $notooltip                  1=Disable tooltip
+     *  @param  string  $morecss                    Add more css on link
+     *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *  @return	string                              String with URL
+     */
+    public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
+    {
+        global $conf, $langs, $hookmanager;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
         $result = '';
+<<<<<<< HEAD
         $companylink = '';
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         $label = '<u>' . $langs->trans("MyObject") . '</u>';
         $label.= '<br>';
         $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
+<<<<<<< HEAD
         $url = dol_buildpath('/mymodule/myobject_card.php',1).'?id='.$this->id;
 
         if ($option != 'nolink')
@@ -307,6 +653,16 @@ class MyObject extends CommonObject
 	        $add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
 	        if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
 	        if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+=======
+        $url = dol_buildpath('/mymodule/myobject_card.php', 1).'?id='.$this->id;
+
+        if ($option != 'nolink')
+        {
+            // Add param to save lastsearch_values or not
+            $add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+            if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+            if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
 
         $linkclose='';
@@ -319,6 +675,7 @@ class MyObject extends CommonObject
             }
             $linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
             $linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+<<<<<<< HEAD
 
             /*
              $hookmanager->initHooks(array('myobjectdao'));
@@ -326,6 +683,8 @@ class MyObject extends CommonObject
              $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
              if ($reshook > 0) $linkclose = $hookmanager->resPrint;
              */
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
         else $linkclose = ($morecss?' class="'.$morecss.'"':'');
 
@@ -339,15 +698,26 @@ class MyObject extends CommonObject
 		$result .= $linkend;
 		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 
+<<<<<<< HEAD
 		global $action;
 		$hookmanager->initHooks(array('myobjectdao'));
 		$parameters=array('id'=>$this->id, 'getnomurl'=>$result);
 		$reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+=======
+		global $action,$hookmanager;
+		$hookmanager->initHooks(array('myobjectdao'));
+		$parameters=array('id'=>$this->id, 'getnomurl'=>$result);
+		$reshook=$hookmanager->executeHooks('getNomUrl', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if ($reshook > 0) $result = $hookmanager->resPrint;
 		else $result .= $hookmanager->resPrint;
 
 		return $result;
+<<<<<<< HEAD
 	}
+=======
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	/**
 	 *  Return label of the status
@@ -355,11 +725,19 @@ class MyObject extends CommonObject
 	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return	string 			       Label of status
 	 */
+<<<<<<< HEAD
 	function getLibStatut($mode=0)
+=======
+	public function getLibStatut($mode = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return $this->LibStatut($this->status, $mode);
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *  Return the status
 	 *
@@ -367,20 +745,33 @@ class MyObject extends CommonObject
 	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return string 			       Label of status
 	 */
+<<<<<<< HEAD
 	function LibStatut($status, $mode=0)
 	{
+=======
+	public function LibStatut($status, $mode = 0)
+	{
+		// phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if (empty($this->labelstatus))
 		{
 			global $langs;
 			//$langs->load("mymodule");
+<<<<<<< HEAD
 			$this->labelstatus[1] = $langs->trans('Enabled');
 			$this->labelstatus[0] = $langs->trans('Disabled');
+=======
+			$this->labelstatus[self::STATUS_DRAFT] = $langs->trans('Draft');
+			$this->labelstatus[self::STATUS_VALIDATED] = $langs->trans('Enabled');
+			$this->labelstatus[self::STATUS_CANCELED] = $langs->trans('Disabled');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		if ($mode == 0)
 		{
 			return $this->labelstatus[$status];
 		}
+<<<<<<< HEAD
 		if ($mode == 1)
 		{
 			return $this->labelstatus[$status];
@@ -409,16 +800,50 @@ class MyObject extends CommonObject
 		{
 			if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut4');
 			if ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut5');
+=======
+		elseif ($mode == 1)
+		{
+			return $this->labelstatus[$status];
+		}
+		elseif ($mode == 2)
+		{
+			return img_picto($this->labelstatus[$status], 'statut'.$status, '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
+		}
+		elseif ($mode == 3)
+		{
+			return img_picto($this->labelstatus[$status], 'statut'.$status, '', false, 0, 0, '', 'valignmiddle');
+		}
+		elseif ($mode == 4)
+		{
+			return img_picto($this->labelstatus[$status], 'statut'.$status, '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
+		}
+		elseif ($mode == 5)
+		{
+			return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut'.$status, '', false, 0, 0, '', 'valignmiddle');
+		}
+		elseif ($mode == 6)
+		{
+			return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut'.$status, '', false, 0, 0, '', 'valignmiddle');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 	}
 
 	/**
+<<<<<<< HEAD
 	 *	Charge les informations d'ordre info dans l'objet commande
 	 *
 	 *	@param  int		$id       Id of order
 	 *	@return	void
 	 */
 	function info($id)
+=======
+	 *	Load the info information in the object
+	 *
+	 *	@param  int		$id       Id of object
+	 *	@return	void
+	 */
+	public function info($id)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$sql = 'SELECT rowid, date_creation as datec, tms as datem,';
 		$sql.= ' fk_user_creat, fk_user_modif';
@@ -458,7 +883,10 @@ class MyObject extends CommonObject
 			}
 
 			$this->db->free($result);
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		else
 		{
@@ -477,10 +905,74 @@ class MyObject extends CommonObject
 		$this->initAsSpecimenCommon();
 	}
 
+<<<<<<< HEAD
 
 	/**
 	 * Action executed by scheduler
 	 * CAN BE A CRON TASK. In such a case, paramerts come from the schedule job setup field 'Parameters'
+=======
+	/**
+	 * 	Create an array of lines
+	 *
+	 * 	@return array|int		array of lines if OK, <0 if KO
+	 */
+	public function getLinesArray()
+	{
+	    $this->lines=array();
+
+	    $objectline = new MyObjectLine($this->db);
+	    $result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_myobject = '.$this->id));
+
+	    if (is_numeric($result))
+	    {
+	        $this->error = $this->error;
+	        $this->errors = $this->errors;
+	        return $result;
+	    }
+	    else
+	    {
+	        $this->lines = $result;
+	        return $this->lines;
+	    }
+	}
+
+	/**
+	 *  Create a document onto disk according to template module.
+	 *
+	 *  @param	    string		$modele			Force template to use ('' to not force)
+	 *  @param		Translate	$outputlangs	objet lang a utiliser pour traduction
+	 *  @param      int			$hidedetails    Hide details of lines
+	 *  @param      int			$hidedesc       Hide description
+	 *  @param      int			$hideref        Hide ref
+	 *  @param      null|array  $moreparams     Array to provide more information
+	 *  @return     int         				0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
+	{
+		global $conf,$langs;
+
+		$langs->load("mymodule@mymodule");
+
+		if (! dol_strlen($modele)) {
+
+			$modele = 'standard';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->MYOBJECT_ADDON_PDF)) {
+				$modele = $conf->global->MYOBJECT_ADDON_PDF;
+			}
+		}
+
+		$modelpath = "core/modules/mymodule/doc/";
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+	}
+
+	/**
+	 * Action executed by scheduler
+	 * CAN BE A CRON TASK. In such a case, parameters come from the schedule job setup field 'Parameters'
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	 *
 	 * @return	int			0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
 	 */
@@ -512,6 +1004,7 @@ class MyObject extends CommonObject
 /**
  * Class MyObjectLine. You can also remove this and generate a CRUD class for lines objects.
  */
+<<<<<<< HEAD
 /*
 class MyObjectLine
 {
@@ -523,3 +1016,10 @@ class MyObjectLine
 	public $prop2;
 }
 */
+=======
+class MyObjectLine
+{
+	// To complete with content of an object MyObjectLine
+	// We should have a field rowid, fk_myobject and position
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

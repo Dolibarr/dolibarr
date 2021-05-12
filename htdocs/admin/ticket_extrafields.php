@@ -16,9 +16,15 @@
  */
 
 /**
+<<<<<<< HEAD
  *      \file       ticket/admin/ticket_extrafields.php
  *        \ingroup    ticket
  *        \brief      Page to setup extra fields of ticket
+=======
+ *      \file       admin/ticket_extrafields.php
+ *      \ingroup    ticket
+ *      \brief      Page to setup extra fields of ticket
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  */
 
 require '../main.inc.php';
@@ -66,7 +72,11 @@ $help_url = "FR:Module_Ticket";
 $page_name = "TicketSetup";
 llxHeader('', $langs->trans($page_name), $help_url);
 
+<<<<<<< HEAD
 $linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">' . $langs->trans("BackToModuleList") . '</a>';
+=======
+$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1">' . $langs->trans("BackToModuleList") . '</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print load_fiche_titre($langs->trans("TicketSetup"), $linkback, 'title_setup');
 
 $head = ticketAdminPrepareHead();
@@ -92,7 +102,11 @@ if ($action != 'create' && $action != 'edit') {
 
 if ($action == 'create') {
     print "<br>";
+<<<<<<< HEAD
     print_titre($langs->trans('NewAttribute'));
+=======
+    print load_fiche_titre($langs->trans('NewAttribute'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     include DOL_DOCUMENT_ROOT . '/core/tpl/admin_extrafields_add.tpl.php';
 }
@@ -104,11 +118,20 @@ if ($action == 'create') {
 /* ************************************************************************** */
 if ($action == 'edit' && !empty($attrname)) {
     print "<br>";
+<<<<<<< HEAD
     print_titre($langs->trans("FieldEdition", $attrname));
+=======
+    print load_fiche_titre($langs->trans("FieldEdition", $attrname));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     include DOL_DOCUMENT_ROOT . '/core/tpl/admin_extrafields_edit.tpl.php';
 }
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

@@ -47,7 +47,10 @@ CountryGS=Géorgie du Sud et les îles Sandwich du Sud
 CountrySJ=Svalbard et Jan Mayen
 CountrySY=syrien
 CountryTR=dinde
+<<<<<<< HEAD
 CountryTC=Îles Turques et Cailos
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryUM=Îles mineures éloignées des États-Unis
 CountryVG=Îles Vierges Britanniques
 CountryVI=Îles Vierges américaines
@@ -70,7 +73,10 @@ CurrencySingUSD=Dollars américain
 CurrencyCentINR=Paisa
 CurrencyCentSingINR=Paise
 CurrencyThousandthSingTND=millième
+<<<<<<< HEAD
 DemandReasonTypeSRC_INTE=l'Internet
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DemandReasonTypeSRC_CAMP_MAIL=Campagne de diffusion
 DemandReasonTypeSRC_CAMP_EMAIL=Campagne EMailing
 DemandReasonTypeSRC_CAMP_PHO=Campagne téléphonique

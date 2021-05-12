@@ -3,7 +3,10 @@
  * Copyright (C) 2014-2016  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+<<<<<<< HEAD
  * Copyright (C) ---Put here your own copyright and developer email---
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +23,11 @@
  */
 
 /**
+<<<<<<< HEAD
  * \file        class/societeaccount.class.php
+=======
+ * \file        societe/class/societeaccount.class.php
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * \ingroup     societe
  * \brief       This file is a CRUD class file for SocieteAccount (Create/Read/Update/Delete)
  */
@@ -39,14 +46,26 @@ class SocieteAccount extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'societeaccount';
+<<<<<<< HEAD
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'societe_account';
+<<<<<<< HEAD
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * @var array  Does societeaccount support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 0;
+<<<<<<< HEAD
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * @var string String with name of icon for societeaccount. Must be the part after the 'object_' into object_myobject.png
 	 */
@@ -84,7 +103,11 @@ class SocieteAccount extends CommonObject
 		'pass_temp'    => array('type'=>'varchar(128)', 'label'=>'Temp', 'visible'=>0, 'enabled'=>0, 'position'=>32, 'notnull'=>-1,),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>40, 'notnull'=>-1, 'index'=>1),
 		'site' => array('type'=>'varchar(128)', 'label'=>'Site', 'visible'=>-1, 'enabled'=>1, 'position'=>41),
+<<<<<<< HEAD
 		'fk_website' => array('type'=>'integer:Website:website/class/website.class.php', 'label'=>'WebSite', 'visible'=>1, 'enabled'=>1, 'position'=>42, 'notnull'=>1, 'index'=>1),
+=======
+		'fk_website' => array('type'=>'integer:Website:website/class/website.class.php', 'label'=>'WebSite', 'visible'=>1, 'enabled'=>1, 'position'=>42, 'notnull'=>-1, 'index'=>1),
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		'date_last_login' => array('type'=>'datetime', 'label'=>'LastConnexion', 'visible'=>2, 'enabled'=>1, 'position'=>50, 'notnull'=>0,),
 		'date_previous_login' => array('type'=>'datetime', 'label'=>'PreviousConnexion', 'visible'=>2, 'enabled'=>1, 'position'=>51, 'notnull'=>0,),
 		//'note_public' => array('type'=>'text', 'label'=>'NotePublic', 'visible'=>-1, 'enabled'=>1, 'position'=>45, 'notnull'=>-1,),
@@ -96,6 +119,7 @@ class SocieteAccount extends CommonObject
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'visible'=>-2, 'enabled'=>1, 'position'=>1000, 'notnull'=>-1, 'index'=>1,),
 		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>1000, 'notnull'=>1, 'index'=>1, 'default'=>1, 'arrayofkeyval'=>array('1'=>'Active','0'=>'Disabled')),
 	);
+<<<<<<< HEAD
 	public $rowid;
 	public $entity;
 	public $key_account;
@@ -103,16 +127,61 @@ class SocieteAccount extends CommonObject
 	public $pass_crypted;
 	public $pass_temp;
 	public $fk_soc;
+=======
+
+	/**
+	 * @var int ID
+	 */
+	public $rowid;
+
+	/**
+	 * @var int Entity
+	 */
+	public $entity;
+
+	public $key_account;
+	public $login;
+	public $pass_encoding;
+	public $pass_crypted;
+	public $pass_temp;
+
+	/**
+	 * @var int Thirdparty ID
+	 */
+    public $fk_soc;
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	public $site;
 	public $date_last_login;
 	public $date_previous_login;
 	public $note_private;
 	public $date_creation;
 	public $tms;
+<<<<<<< HEAD
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $import_key;
 	public $status;
+=======
+
+	/**
+     * @var int ID
+     */
+	public $fk_user_creat;
+
+	/**
+     * @var int ID
+     */
+	public $fk_user_modif;
+
+	public $import_key;
+
+	/**
+	 * @var int Status
+	 */
+	public $status;
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -133,9 +202,15 @@ class SocieteAccount extends CommonObject
 	 */
 	//public $class_element_line = 'societeAccountline';
 	/**
+<<<<<<< HEAD
 	 * @var array  Array of child tables (child tables to delete before deleting a record)
 	 */
 	//protected $childtables=array('societe_accountdet');
+=======
+     * @var array	List of child tables. To test if we can delete object.
+	 */
+	//protected $childtables=array();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * @var societeAccountLine[]     Array of subtable lines
 	 */
@@ -208,6 +283,11 @@ class SocieteAccount extends CommonObject
 	        $this->errors = $object->errors;
 	    }
 
+<<<<<<< HEAD
+=======
+	    unset($object->context['createfromclone']);
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    // End
 	    if (!$error) {
 	        $this->db->commit();
@@ -247,17 +327,28 @@ class SocieteAccount extends CommonObject
 	}
 
 	/**
+<<<<<<< HEAD
 	 * Try to find the external customer id of a thirdparty for an another site/system.
+=======
+	 * Try to find the external customer id of a thirdparty for another site/system.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	 *
 	 * @param	int		$id			Id of third party
 	 * @param	string	$site		Site (example: 'stripe', '...')
 	 * @param	int		$status		Status (0=test, 1=live)
 	 * @return	string				Stripe customer ref 'cu_xxxxxxxxxxxxx' or ''
+<<<<<<< HEAD
 	 */
 	public function getCustomerAccount($id, $site, $status=0)
 	{
 		global $conf;
 
+=======
+	 * @see getThirdPartyID()
+	 */
+	public function getCustomerAccount($id, $site, $status = 0)
+	{
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql = "SELECT sa.key_account as key_account, sa.entity";
 		$sql.= " FROM " . MAIN_DB_PREFIX . "societe_account as sa";
 		$sql.= " WHERE sa.fk_soc = " . $id;
@@ -266,7 +357,11 @@ class SocieteAccount extends CommonObject
 		$sql.= " AND key_account IS NOT NULL AND key_account <> ''";
 		//$sql.= " ORDER BY sa.key_account DESC";
 
+<<<<<<< HEAD
 		dol_syslog(get_class($this) . "::getCustomerAccount Try to find the system customer id of thirdparty id=".$id." (exemple: cus_.... for stripe)", LOG_DEBUG);
+=======
+		dol_syslog(get_class($this) . "::getCustomerAccount Try to find the first system customer id for ".$site." of thirdparty id=".$id." (exemple: cus_.... for stripe)", LOG_DEBUG);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$result = $this->db->query($sql);
 		if ($result) {
 			if ($this->db->num_rows($result)) {
@@ -283,6 +378,41 @@ class SocieteAccount extends CommonObject
 	}
 
 	/**
+<<<<<<< HEAD
+=======
+	* Try to find the thirdparty id for an another site/system external id.
+	*
+	* @param	string	$id			Id of customer in external system (example: 'cu_xxxxxxxxxxxxx', ...)
+	* @param	string	$site		Site (example: 'stripe', '...')
+	* @param	int		$status		Status (0=test, 1=live)
+	* @return	int					Id of third party
+	* @see getCustomerAccount()
+	*/
+	public function getThirdPartyID($id, $site, $status = 0)
+	{
+		$socid = 0;
+
+		$sql = "SELECT sa.fk_soc as fk_soc, sa.key_account, sa.entity";
+		$sql.= " FROM " . MAIN_DB_PREFIX . "societe_account as sa";
+		$sql.= " WHERE sa.key_account = '".$this->db->escape($id)."'";
+		$sql.= " AND sa.entity IN (".getEntity('societe').")";
+		$sql.= " AND sa.site = '".$this->db->escape($site)."' AND sa.status = ".((int) $status);
+		$sql.= " AND sa.fk_soc > 0";
+
+		dol_syslog(get_class($this) . "::getCustomerAccount Try to find the first thirdparty id for ".$site." for external id=".$id, LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if ($result) {
+			if ($this->db->num_rows($result)) {
+				$obj = $this->db->fetch_object($result);
+				$socid = $obj->fk_soc;
+			}
+		}
+
+		return $socid;
+	}
+
+	/**
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	 * Update object into database
 	 *
 	 * @param  User $user      User that modifies
@@ -310,6 +440,7 @@ class SocieteAccount extends CommonObject
 	 *  Return a link to the object card (with optionaly the picto)
 	 *
 	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+<<<<<<< HEAD
 	 *	@param	string	$option						On what the link point to ('nolink', ...)
      *  @param	int  	$notooltip					1=Disable tooltip
      *  @param  string  $morecss            		Add more css on link
@@ -318,6 +449,16 @@ class SocieteAccount extends CommonObject
 	 */
 	function getNomUrl($withpicto=0, $option='', $notooltip=0, $morecss='', $save_lastsearch_value=-1)
 	{
+=======
+     *	@param	string	$option						On what the link point to ('nolink', ...)
+     *  @param	int  	$notooltip					1=Disable tooltip
+     *  @param  string  $morecss            		Add more css on link
+     *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *	@return	string								String with URL
+     */
+    public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
+    {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $db, $conf, $langs;
         global $dolibarr_main_authentication, $dolibarr_main_demo;
         global $menumanager;
@@ -334,13 +475,21 @@ class SocieteAccount extends CommonObject
         $label.= '<b>' . $langs->trans('Login') . ':</b> ' . $this->ref;
         //$label.= '<b>' . $langs->trans('WebSite') . ':</b> ' . $this->ref;
 
+<<<<<<< HEAD
         $url = dol_buildpath('/website/websiteaccount_card.php',1).'?id='.$this->id;
+=======
+        $url = dol_buildpath('/website/websiteaccount_card.php', 1).'?id='.$this->id;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         if ($option != 'nolink')
         {
 	        // Add param to save lastsearch_values or not
 	        $add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+<<<<<<< HEAD
 	        if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+=======
+	        if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	        if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
         }
 
@@ -367,6 +516,7 @@ class SocieteAccount extends CommonObject
 		$result .= $linkend;
 
 		return $result;
+<<<<<<< HEAD
 	}
 
 	/**
@@ -379,6 +529,9 @@ class SocieteAccount extends CommonObject
 	{
 		return 'todo';
 	}
+=======
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	/**
 	 *  Retourne le libelle du status d'un user (actif, inactif)
@@ -386,11 +539,20 @@ class SocieteAccount extends CommonObject
 	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return	string 			       Label of status
 	 */
+<<<<<<< HEAD
 	function getLibStatut($mode=0)
 	{
 		return $this->LibStatut($this->status,$mode);
 	}
 
+=======
+	public function getLibStatut($mode = 0)
+	{
+		return $this->LibStatut($this->status, $mode);
+	}
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *  Return the status
 	 *
@@ -398,14 +560,21 @@ class SocieteAccount extends CommonObject
 	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return string 			       	Label of status
 	 */
+<<<<<<< HEAD
 	static function LibStatut($status,$mode=0)
 	{
+=======
+	public static function LibStatut($status, $mode = 0)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $langs;
 
 		if ($mode == 0)
 		{
 			$prefix='';
 			if ($status == 1) return $langs->trans('Enabled');
+<<<<<<< HEAD
 			if ($status == 0) return $langs->trans('Disabled');
 		}
 		if ($mode == 1)
@@ -437,6 +606,39 @@ class SocieteAccount extends CommonObject
 		{
 			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
 			if ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
+=======
+			elseif ($status == 0) return $langs->trans('Disabled');
+		}
+		elseif ($mode == 1)
+		{
+			if ($status == 1) return $langs->trans('Enabled');
+			elseif ($status == 0) return $langs->trans('Disabled');
+		}
+		elseif ($mode == 2)
+		{
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
+		}
+		elseif ($mode == 3)
+		{
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5');
+		}
+		elseif ($mode == 4)
+		{
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
+		}
+		elseif ($mode == 5)
+		{
+			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
+			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
+		}
+		elseif ($mode == 6)
+		{
+			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
+			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 	}
 
@@ -446,7 +648,11 @@ class SocieteAccount extends CommonObject
 	 *	@param  int		$id       Id of order
 	 *	@return	void
 	 */
+<<<<<<< HEAD
 	function info($id)
+=======
+	public function info($id)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$sql = 'SELECT rowid, date_creation as datec, tms as datem,';
 		$sql.= ' fk_user_creat, fk_user_modif';
@@ -486,7 +692,10 @@ class SocieteAccount extends CommonObject
 			}
 
 			$this->db->free($result);
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		else
 		{

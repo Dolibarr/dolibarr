@@ -82,7 +82,11 @@ function FindBadUtf8($string)
  * @param 	string		$value		Value
  * @return	string
  */
+<<<<<<< HEAD
 function ConvertToXmlAttribute( $value )
+=======
+function ConvertToXmlAttribute($value)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	if ( defined('PHP_OS') )
 	{
@@ -110,14 +114,22 @@ function ConvertToXmlAttribute( $value )
  * @param 	array 		$formExtensions		Array of extensions
  * @return 	boolean
  */
+<<<<<<< HEAD
 function IsHtmlExtension( $ext, $formExtensions )
+=======
+function IsHtmlExtension($ext, $formExtensions)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	if (!$formExtensions || !is_array($formExtensions) )
 	{
 		return false ;
 	}
 	$lcaseHtmlExtensions = array();
+<<<<<<< HEAD
 	foreach ( $formExtensions as $key => $val )
+=======
+	foreach ($formExtensions as $key => $val)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$lcaseHtmlExtensions[$key] = strtolower($val);
 	}
@@ -132,7 +144,11 @@ function IsHtmlExtension( $ext, $formExtensions )
  * @param string $filePath absolute path to file
  * @return boolean
  */
+<<<<<<< HEAD
 function DetectHtml( $filePath )
+=======
+function DetectHtml($filePath)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$fp = @fopen($filePath, 'rb');
 
@@ -162,7 +178,11 @@ function DetectHtml( $filePath )
 
 	$tags = array( '<body', '<head', '<html', '<img', '<pre', '<script', '<table', '<title' );
 
+<<<<<<< HEAD
 	foreach( $tags as $tag )
+=======
+	foreach($tags as $tag)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		if( false !== strpos($chunk, $tag) )
 		{
@@ -202,7 +222,11 @@ function DetectHtml( $filePath )
  * @param 	string 	$extension 		File extension
  * @return 	boolean					True or false
  */
+<<<<<<< HEAD
 function IsImageValid( $filePath, $extension )
+=======
+function IsImageValid($filePath, $extension)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	if (!@is_readable($filePath)) {
 		return -1;
@@ -238,4 +262,7 @@ function IsImageValid( $filePath, $extension )
 
 	return true;
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

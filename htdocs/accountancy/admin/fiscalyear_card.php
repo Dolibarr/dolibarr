@@ -1,5 +1,10 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2014-2016  Alexandre Spangaro	<aspangaro@zendsi.com>
+=======
+/* Copyright (C) 2014-2016  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +22,11 @@
 
 /**
  * \file        htdocs/accountancy/admin/fiscalyear_card.php
+<<<<<<< HEAD
  * \ingroup     Advanced accountancy
+=======
+ * \ingroup     Accountancy (Double entries)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * \brief       Page to show a fiscal year
  */
 
@@ -37,7 +46,11 @@ if (empty($user->rights->accounting->fiscalyear))
 
 $error = 0;
 
+<<<<<<< HEAD
 $action = GETPOST('action', 'alpha');
+=======
+$action = GETPOST('action', 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $confirm = GETPOST('confirm', 'alpha');
 $id = GETPOST('id', 'int');
 
@@ -49,7 +62,11 @@ static $tmpstatut2label = array (
 $statut2label = array (
 		''
 );
+<<<<<<< HEAD
 foreach ( $tmpstatut2label as $key => $val )
+=======
+foreach ($tmpstatut2label as $key => $val)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$statut2label[$key] = $langs->trans($val);
 
 $object = new Fiscalyear($db);
@@ -72,7 +89,11 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 	}
 }
 
+<<<<<<< HEAD
 else if ($action == 'add') {
+=======
+elseif ($action == 'add') {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if (! GETPOST('cancel', 'alpha')) {
 		$error = 0;
 
@@ -117,7 +138,11 @@ else if ($action == 'add') {
 }
 
 // Update record
+<<<<<<< HEAD
 else if ($action == 'update') {
+=======
+elseif ($action == 'update') {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if (! GETPOST('cancel', 'alpha')) {
 		$result = $object->fetch($id);
 
@@ -150,7 +175,11 @@ $form = new Form($db);
 
 $title = $langs->trans("Fiscalyear") . " - " . $langs->trans("Card");
 $helpurl = "";
+<<<<<<< HEAD
 llxHeader("",$title,$helpurl);
+=======
+llxHeader("", $title, $helpurl);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if ($action == 'create')
 {
@@ -165,16 +194,28 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
 
 	// Label
+<<<<<<< HEAD
 	print '<tr><td class="titlefieldcreate fieldrequired">' . $langs->trans("Label") . '</td><td><input name="label" size="32" value="' . GETPOST("label") . '"></td></tr>';
 
 	// Date start
 	print '<tr><td class="fieldrequired">' . $langs->trans("DateStart") . '</td><td>';
 	print $form->select_date(($date_start ? $date_start : ''), 'fiscalyear');
+=======
+	print '<tr><td class="titlefieldcreate fieldrequired">' . $langs->trans("Label") . '</td><td><input name="label" size="32" value="' . GETPOST('label', 'alpha') . '"></td></tr>';
+
+	// Date start
+	print '<tr><td class="fieldrequired">' . $langs->trans("DateStart") . '</td><td>';
+	print $form->selectDate(($date_start ? $date_start : ''), 'fiscalyear');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</td></tr>';
 
 	// Date end
 	print '<tr><td class="fieldrequired">' . $langs->trans("DateEnd") . '</td><td>';
+<<<<<<< HEAD
 	print $form->select_date(($date_end ? $date_end : - 1), 'fiscalyearend');
+=======
+	print $form->selectDate(($date_end ? $date_end : - 1), 'fiscalyearend');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</td></tr>';
 
 	/*
@@ -182,7 +223,11 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td class="fieldrequired">' . $langs->trans("Status") . '</td>';
 	print '<td class="valeur">';
+<<<<<<< HEAD
 	print $form->selectarray('statut', $statut2label, GETPOST('statut'));
+=======
+	print $form->selectarray('statut', $statut2label, GETPOST('statut', 'int'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</td></tr>';
 	*/
 
@@ -197,7 +242,11 @@ if ($action == 'create')
 	print '</div>';
 
 	print '</form>';
+<<<<<<< HEAD
 } else if ($id) {
+=======
+} elseif ($id) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$result = $object->fetch($id);
 	if ($result > 0) {
 		$head = fiscalyear_prepare_head($object);
@@ -225,12 +274,20 @@ if ($action == 'create')
 
 			// Date start
 			print '<tr><td class="fieldrequired">' . $langs->trans("DateStart") . '</td><td>';
+<<<<<<< HEAD
 			print $form->select_date($object->date_start ? $object->date_start : - 1, 'fiscalyear');
+=======
+			print $form->selectDate($object->date_start ? $object->date_start : - 1, 'fiscalyear');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '</td></tr>';
 
 			// Date end
 			print '<tr><td class="fieldrequired">' . $langs->trans("DateEnd") . '</td><td>';
+<<<<<<< HEAD
 			print $form->select_date($object->date_end ? $object->date_end : - 1, 'fiscalyearend');
+=======
+			print $form->selectDate($object->date_end ? $object->date_end : - 1, 'fiscalyearend');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '</td></tr>';
 
 			// Statut
@@ -318,5 +375,9 @@ if ($action == 'create')
 	}
 }
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

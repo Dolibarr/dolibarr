@@ -116,7 +116,11 @@ CountryHM=Ilha Heard e McDonald
 CountryVA=Santa Sé (Vaticano)
 CountryHN=Honduras
 CountryHK=Hong Kong
+<<<<<<< HEAD
 CountryIS=Icelande
+=======
+CountryIS=Iceland
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryIN=Índia
 CountryID=Indonésia
 CountryIR=Irão
@@ -131,7 +135,11 @@ CountryKI=Kiribati
 CountryKP=Coreia do Norte
 CountryKR=Coréia do Sul
 CountryKW=Kuwait
+<<<<<<< HEAD
 CountryKG=Kyrghyztan
+=======
+CountryKG=Kyrgyzstan
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryLA=Laociano
 CountryLV=Letônia
 CountryLB=Líbano
@@ -160,7 +168,11 @@ CountryMD=Moldávia
 CountryMN=Mongólia
 CountryMS=Montserrat
 CountryMZ=Moçambique
+<<<<<<< HEAD
 CountryMM=Birmania (Myanmar)
+=======
+CountryMM=Myanmar (Burma)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryNA=Namíbia
 CountryNR=Nauruano
 CountryNP=Nepal
@@ -179,7 +191,11 @@ CountryPK=Paquistão
 CountryPW=Palau
 CountryPS=Território Palestiniano, Ocupado
 CountryPA=Panamá
+<<<<<<< HEAD
 CountryPG=Papuásia-Nova Guiné
+=======
+CountryPG=Papua-Nova Guiné
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryPY=Paraguai
 CountryPE=Peru
 CountryPH=Filipinas
@@ -223,7 +239,11 @@ CountryTO=Tonga
 CountryTT=Trinidad e Tobago
 CountryTR=Turquia
 CountryTM=Turquemenistão
+<<<<<<< HEAD
 CountryTC=Ilhas Turcas e Cailos
+=======
+CountryTC=Turks and Caicos Islands
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryTV=Tuvaluano
 CountryUG=Uganda
 CountryUA=Ucrania
@@ -277,7 +297,11 @@ CurrencySingMGA=Ariary
 CurrencyMUR=Maurício rupias
 CurrencySingMUR=Rupee Maurícia
 CurrencyNOK=Krones norueguês
+<<<<<<< HEAD
 CurrencySingNOK=Coroa Norueguesa
+=======
+CurrencySingNOK=Norwegian kronas
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrencyTND=TND
 CurrencySingTND=Dinar tunisino
 CurrencyUSD=Dólar E.U.
@@ -290,6 +314,10 @@ CurrencyXOF=Francos CFA BCEAO
 CurrencySingXOF=Franco CFA BCEAO
 CurrencyXPF=PCP Francos
 CurrencySingXPF=Franco CFP
+<<<<<<< HEAD
+=======
+CurrencyCentEUR=cents
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrencyCentSingEUR=Cêntimos 
 CurrencyCentINR=paisa
 CurrencyCentSingINR=paisa
@@ -306,6 +334,10 @@ DemandReasonTypeSRC_WOM=Palavra de boca
 DemandReasonTypeSRC_PARTNER=Parceiro
 DemandReasonTypeSRC_EMPLOYEE=Empregado
 DemandReasonTypeSRC_SPONSORING=Patrocínio
+<<<<<<< HEAD
+=======
+DemandReasonTypeSRC_SRC_CUSTOMER=Incoming contact of a customer
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 #### Paper formats ####
 PaperFormatEU4A0=Formato 4A0
 PaperFormatEU2A0=Formato 2A0

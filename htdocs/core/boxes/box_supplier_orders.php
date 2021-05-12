@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2004-2006 Destailleur Laurent  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2012      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
@@ -31,6 +35,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 class box_supplier_orders extends ModeleBoxes
 {
 
+<<<<<<< HEAD
     var $boxcode = "latestsupplierorders";
     var $boximg = "object_order";
     var $boxlabel="BoxLatestSupplierOrders";
@@ -40,6 +45,21 @@ class box_supplier_orders extends ModeleBoxes
     var $param;
     var $info_box_head = array();
     var $info_box_contents = array();
+=======
+    public $boxcode = "latestsupplierorders";
+    public $boximg = "object_order";
+    public $boxlabel="BoxLatestSupplierOrders";
+    public $depends = array("fournisseur");
+
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    public $param;
+    public $info_box_head = array();
+    public $info_box_contents = array();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
     /**
@@ -48,7 +68,11 @@ class box_supplier_orders extends ModeleBoxes
      *  @param  DoliDB  $db         Database handler
      *  @param  string  $param      More parameters
      */
+<<<<<<< HEAD
     function __construct($db,$param)
+=======
+    public function __construct($db, $param)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $user;
 
@@ -63,7 +87,11 @@ class box_supplier_orders extends ModeleBoxes
      *  @param	int		$max        Maximum number of records to load
      *  @return	void
      */
+<<<<<<< HEAD
     function loadBox($max = 5)
+=======
+    public function loadBox($max = 5)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $conf, $user, $langs, $db;
         $langs->load("boxes");
@@ -137,12 +165,21 @@ class box_supplier_orders extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
                         'td' => 'class="right"',
+<<<<<<< HEAD
                         'text' => dol_print_date($date,'day'),
                     );
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="right" width="18"',
                         'text' => $supplierorderstatic->LibStatut($objp->fk_statut,3),
+=======
+                        'text' => dol_print_date($date, 'day'),
+                    );
+
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'class="right" width="18"',
+                        'text' => $supplierorderstatic->LibStatut($objp->fk_statut, 3),
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                     );
 
                     $line++;
@@ -150,7 +187,11 @@ class box_supplier_orders extends ModeleBoxes
 
                 if ($num == 0)
                     $this->info_box_contents[$line][] = array(
+<<<<<<< HEAD
                         'td' => 'align="center"',
+=======
+                        'td' => 'class="center"',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                         'text' => $langs->trans("NoSupplierOrder"),
                     );
 
@@ -166,13 +207,18 @@ class box_supplier_orders extends ModeleBoxes
         else
         {
             $this->info_box_contents[0][] = array(
+<<<<<<< HEAD
                 'td' => 'align="left" class="nohover opacitymedium"',
+=======
+                'td' => 'class="nohover opacitymedium left"',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
         }
     }
 
     /**
+<<<<<<< HEAD
      * 	Method to show box
      *
      * 	@param	array	$head       Array with properties of box title
@@ -187,3 +233,17 @@ class box_supplier_orders extends ModeleBoxes
 
 }
 
+=======
+     *  Method to show box
+     *
+     *  @param  array   $head       Array with properties of box title
+     *  @param  array   $contents   Array with properties of box lines
+     *  @param  int     $nooutput   No print, only return string
+     *  @return string
+     */
+    public function showBox($head = null, $contents = null, $nooutput = 0)
+    {
+        return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+    }
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -24,7 +24,11 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php';
 require_once DOL_DOCUMENT_ROOT.'/cashdesk/class/Facturation.class.php';
+<<<<<<< HEAD
 include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+=======
+require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $obj_facturation = unserialize($_SESSION['serObjFacturation']);
 unset($_SESSION['serObjFacturation']);
@@ -32,12 +36,22 @@ unset($_SESSION['serObjFacturation']);
 $hookmanager->initHooks(array('cashdeskTplTicket'));
 
 $parameters=array();
+<<<<<<< HEAD
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$obj_facturation);
 if (empty($reshook))
 {
     require ('tpl/ticket.tpl.php');
+=======
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $obj_facturation);
+if (empty($reshook))
+{
+    require 'tpl/ticket.tpl.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 
 $_SESSION['serObjFacturation'] = serialize($obj_facturation);
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

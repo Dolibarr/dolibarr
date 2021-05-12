@@ -30,6 +30,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_lastlogin extends ModeleBoxes
 {
+<<<<<<< HEAD
     var $boxcode="lastlogin";
     var $boximg="object_user";
     var $boxlabel='BoxLoginInformation';
@@ -41,6 +42,23 @@ class box_lastlogin extends ModeleBoxes
 
     var $info_box_head = array();
     var $info_box_contents = array();
+=======
+    public $boxcode="lastlogin";
+    public $boximg="object_user";
+    public $boxlabel='BoxLoginInformation';
+    public $depends = array("user");
+
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    public $param;
+    public $enabled = 1;
+
+    public $info_box_head = array();
+    public $info_box_contents = array();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
     /**
@@ -49,7 +67,11 @@ class box_lastlogin extends ModeleBoxes
      *  @param  DoliDB  $db         Database handler
      *  @param  string  $param      More parameters
      */
+<<<<<<< HEAD
     function __construct($db,$param)
+=======
+    public function __construct($db, $param)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $conf;
 
@@ -62,7 +84,11 @@ class box_lastlogin extends ModeleBoxes
      *  @param  int     $max        Maximum number of records to load
      *  @return void
      */
+<<<<<<< HEAD
     function loadBox($max=5)
+=======
+    public function loadBox($max = 5)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $conf, $user, $langs, $db;
 
@@ -71,7 +97,11 @@ class box_lastlogin extends ModeleBoxes
             'text' => $textHead,
             'limit'=> dol_strlen($textHead),
         );
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $line=0;
         $this->info_box_contents[$line][0] = array(
             'td' => '',
@@ -82,23 +112,35 @@ class box_lastlogin extends ModeleBoxes
             'text' => $user->getNomUrl(-1),
             'asis' => 1
         );
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $line=1;
         $this->info_box_contents[$line][0] = array(
             'td' => '',
             'text' => $langs->trans("PreviousConnexion"),
         );
+<<<<<<< HEAD
         if ($user->datepreviouslogin) $tmp= dol_print_date($user->datepreviouslogin,"dayhour",'tzuser');
+=======
+        if ($user->datepreviouslogin) $tmp= dol_print_date($user->datepreviouslogin, "dayhour", 'tzuser');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         else $tmp= $langs->trans("Unknown");
         $this->info_box_contents[$line][1] = array(
             'td' => '',
             'text' => $tmp,
         );
+<<<<<<< HEAD
         
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
 
 	/**
+<<<<<<< HEAD
 	 *	Method to show box
 	 *
 	 *	@param	array	$head       Array with properties of box title
@@ -107,6 +149,16 @@ class box_lastlogin extends ModeleBoxes
 	 *	@return	void
 	 */
     function showBox($head = null, $contents = null, $nooutput=0)
+=======
+	 *  Method to show box
+	 *
+	 *  @param	array	$head       Array with properties of box title
+	 *  @param  array	$contents   Array with properties of box lines
+	 *  @param	int		$nooutput	No print, only return string
+	 *  @return	void
+	 */
+    public function showBox($head = null, $contents = null, $nooutput = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
 		parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}

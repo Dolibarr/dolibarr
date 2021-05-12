@@ -16,7 +16,11 @@ AllPropals=Todos Os Orçamentos
 SearchAProposal=Procurar um Orçamento
 NoProposal=Sem propostas
 ProposalsStatistics=Estatísticas de Orçamentos
+<<<<<<< HEAD
 AmountOfProposalsByMonthHT=Valor por Mês (sem ICMS)
+=======
+AmountOfProposalsByMonthHT=Valor por mês (sem Imposto)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NbOfProposals=Número Orçamentos
 ShowPropal=Ver Orçamento
 PropalsOpened=Aberto
@@ -24,6 +28,10 @@ PropalStatusDraft=Rascunho (a Confirmar)
 PropalStatusValidated=Validado (a proposta esta em aberto)
 PropalStatusSigned=Assinado (A Faturar)
 PropalStatusNotSigned=Sem Assinar (Encerrado)
+<<<<<<< HEAD
+=======
+PropalStatusValidatedShort=Validado (aberto)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PropalStatusClosedShort=Encerrado
 PropalStatusNotSignedShort=Sem Assinar
 PropalsToClose=Orçamentos a Fechar
@@ -39,10 +47,16 @@ SetAcceptedRefused=Configurar aceito/recusado
 AddToDraftProposals=Adicionar a projeto de proposta
 NoDraftProposals=Não há projetos de propostas
 CopyPropalFrom=Criar orçamento por Cópia de um existente
+<<<<<<< HEAD
 CreateEmptyPropal=Criar orçamento a partir da Lista de produtos predefinidos
 DefaultProposalDurationValidity=Prazo de validez por default (em dias)
 UseCustomerContactAsPropalRecipientIfExist=Utilizar endereço contato de seguimento de cliente definido em vez do endereço do Fornecedor como destinatário dos Orçamentos
 ClonePropal=Colonar Proposta Comercial
+=======
+CreateEmptyPropal=Criar proposta comercial vazia ou da lista de produtos / serviços
+DefaultProposalDurationValidity=Prazo de validez por default (em dias)
+UseCustomerContactAsPropalRecipientIfExist=Usar contato / endereço com o tipo "Proposta de acompanhamento de contato", se definido, em vez do endereço de terceiros como endereço do destinatário da proposta
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmClonePropal=Tem certeza que quer clonar a proposta comercial <b>%s</b>?
 ConfirmReOpenProp=Tem certeza que quer reabrir a proposta comercial <b>%s</b>?
 ProposalsAndProposalsLines=Propostas para clientes e diretrizes para apresentação de propostas
@@ -55,9 +69,19 @@ AvailabilityTypeAV_1M=1 mes
 TypeContact_propal_internal_SALESREPFOLL=Representante seguindo a proposta
 TypeContact_propal_external_BILLING=Contato da fatura cliente
 TypeContact_propal_external_CUSTOMER=Contato cliente seguindo a proposta
+<<<<<<< HEAD
 DocModelAzurDescription=Modelo de orçamento completo (logo...)
+=======
+TypeContact_propal_external_SHIPPING=Contato do cliente para entrega
+DocModelAzurDescription=Modelo de orçamento completo (logo...)
+DocModelCyanDescription=Modelo de orçamento completo (logo...)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DefaultModelPropalCreate=Criaçao modelo padrao
 DefaultModelPropalToBill=Modelo padrao no fechamento da proposta comercial ( a se faturar)
 DefaultModelPropalClosed=Modelo padrao no fechamento da proposta comercial (nao faturada)
 ProposalCustomerSignature=Aceite por escrito, carimbo da empresa, data e assinatura
+<<<<<<< HEAD
 ProposalsStatisticsSuppliers=Estatísticas de Propostas a Fornecedor
+=======
+ProposalsStatisticsSuppliers=Estatísticas de propostas de fornecedores
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

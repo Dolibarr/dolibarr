@@ -34,7 +34,11 @@ accessforbidden();
 // Load translation files required by the page
 $langs->loadLangs(array("users","admin","other"));
 
+<<<<<<< HEAD
 $action=GETPOST('action','aZ09');
+=======
+$action=GETPOST('action', 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 $securityevent=new Events($db);
@@ -54,8 +58,13 @@ if ($action == "save")
 	{
 		$param='MAIN_LOGEVENTS_'.$arr['id'];
 		//print "param=".$param." - ".$_POST[$param];
+<<<<<<< HEAD
 		if (! empty($_POST[$param])) dolibarr_set_const($db,$param,$_POST[$param],'chaine',0,'',$conf->entity);
 		else dolibarr_del_const($db,$param,$conf->entity);
+=======
+		if (! empty($_POST[$param])) dolibarr_set_const($db, $param, $_POST[$param], 'chaine', 0, '', $conf->entity);
+		else dolibarr_del_const($db, $param, $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	$db->commit();
@@ -69,12 +78,21 @@ if ($action == "save")
  */
 
 $wikihelp='EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
+<<<<<<< HEAD
 llxHeader('',$langs->trans("Audit"),$wikihelp);
 
 //$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("SecuritySetup"),'','title_setup');
 
 print $langs->trans("LogEventDesc")."<br>\n";
+=======
+llxHeader('', $langs->trans("Audit"), $wikihelp);
+
+//$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
+
+print $langs->trans("LogEventDesc", $langs->transnoentitiesnoconv("AdminTools"), $langs->transnoentitiesnoconv("Audit"))."<br>\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print "<br>\n";
 
 
@@ -94,7 +112,11 @@ print "</tr>\n";
 foreach ($eventstolog as $key => $arr)
 {
 	if ($arr['id'])
+<<<<<<< HEAD
 	{		
+=======
+	{
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '<tr class="oddeven">';
 		print '<td>'.$arr['id'].'</td>';
 		print '<td>';
@@ -114,6 +136,10 @@ print "</div>";
 
 print "</form>\n";
 
+<<<<<<< HEAD
 
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

@@ -9,7 +9,11 @@ PdfCommercialProposalTitle=Tilbud
 ProposalCard=Oversigt over tilbud
 NewProp=Nye tilbud
 NewPropal=Nyt tilbud
+<<<<<<< HEAD
 Prospect=Prospect
+=======
+Prospect=Potentiel kunde
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DeleteProp=Slet tilbud
 ValidateProp=Godkend tilbud
 AddProp=Opret tilbud
@@ -22,13 +26,18 @@ SearchAProposal=Søg tilbud
 NoProposal=Ingen tilbud
 ProposalsStatistics=Statistik for tilbud
 NumberOfProposalsByMonth=Antal af måneden
+<<<<<<< HEAD
 AmountOfProposalsByMonthHT=Beløb af måneden (ekskl. moms)
+=======
+AmountOfProposalsByMonthHT=Beløb pr. Måned (ekskl. Moms)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NbOfProposals=Antal tilbud
 ShowPropal=Vis tilbud
 PropalsDraft=Drafts
 PropalsOpened=Åbent
 PropalStatusDraft=Udkast (skal godkendes)
 PropalStatusValidated=Godkendte (tilbud er åbnet)
+<<<<<<< HEAD
 PropalStatusSigned=Underskrevet (til bill)
 PropalStatusNotSigned=Ikke underskrevet (lukket)
 PropalStatusBilled=Billed
@@ -38,6 +47,17 @@ PropalStatusClosedShort=Lukket
 PropalStatusSignedShort=Underskrevet
 PropalStatusNotSignedShort=Ikke underskrevet
 PropalStatusBilledShort=Billed
+=======
+PropalStatusSigned=Underskrevet (til faktura)
+PropalStatusNotSigned=Ikke underskrevet (lukket)
+PropalStatusBilled=Billed
+PropalStatusDraftShort=Udkast
+PropalStatusValidatedShort=Bekræftet (åben)
+PropalStatusClosedShort=Lukket
+PropalStatusSignedShort=Underskrevet
+PropalStatusNotSignedShort=Ikke underskrevet
+PropalStatusBilledShort=Faktureret
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PropalsToClose=Tilbud, der skal lukkes
 PropalsToBill=Underskrevne tilbud, der skal faktureres
 ListOfProposals=Liste over tilbud
@@ -53,10 +73,16 @@ ErrorPropalNotFound=Propal %s blev ikke fundet
 AddToDraftProposals=Tilføj skabelon
 NoDraftProposals=Ingen skabeloner
 CopyPropalFrom=Opret tilbud ved at kopiere eksisterende tilbud
+<<<<<<< HEAD
 CreateEmptyPropal=Opret tomt tilbud eller fra listen med varer/ydelser
 DefaultProposalDurationValidity=Standard gyldighedstid for tilbud (i dage)
 UseCustomerContactAsPropalRecipientIfExist=Brug kundens kontaktadresse, hvis defineret i stedet for tredjepart-adresse som modtageradresse for tilbud
 ClonePropal=Klon tilbud
+=======
+CreateEmptyPropal=Opret tomt kommercielt forslag eller fra listen over produkter / tjenester
+DefaultProposalDurationValidity=Standard gyldighedstid for tilbud (i dage)
+UseCustomerContactAsPropalRecipientIfExist=Brug kontakt/adresse med type 'Kontakt opfølgnings forslag', hvis det er defineret i stedet for tredjepartsadresse som forslag modtageradresse
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmClonePropal=Er du sikker på, du vil klone tilbuddet <b>%s</b>?
 ConfirmReOpenProp=Er du sikker på du vil genåbne tilbuddet <b>%s</b>?
 ProposalsAndProposalsLines=Tilbud og linjer
@@ -75,11 +101,22 @@ AvailabilityTypeAV_1M=1 måned
 TypeContact_propal_internal_SALESREPFOLL=Repræsentant for opfølgning af tilbud
 TypeContact_propal_external_BILLING=Kundefaktura kontakt
 TypeContact_propal_external_CUSTOMER=Kundekontakt for opfølgning af tilbud
+<<<<<<< HEAD
 TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
 DocModelAzurDescription=En komplet tilbudskabelon (logo. ..)
+=======
+TypeContact_propal_external_SHIPPING=Kundekontakt for levering
+# Document models
+DocModelAzurDescription=En komplet tilbudskabelon (logo. ..)
+DocModelCyanDescription=En komplet tilbudskabelon (logo. ..)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DefaultModelPropalCreate=Oprettelse af skabelon
 DefaultModelPropalToBill=Skabelon, der skal benyttes, når et tilbud lukkes (med fakturering)
 DefaultModelPropalClosed=Skabelon, der skal benyttes, når et tilbud lukkes (uden fakturering)
 ProposalCustomerSignature=Skriftlig accept, firmastempel, dato og underskrift
+<<<<<<< HEAD
 ProposalsStatisticsSuppliers=Statistik over leverandørtilbud
+=======
+ProposalsStatisticsSuppliers=Forhandler forslagsstatistik
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

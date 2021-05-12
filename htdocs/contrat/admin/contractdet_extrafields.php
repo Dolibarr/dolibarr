@@ -2,7 +2,11 @@
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2014		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2013		Philippe Grand			<philippe.grand@atoo-net.com>
  *
@@ -66,7 +70,11 @@ $textobject = $langs->transnoentitiesnoconv('Contracts');
 llxHeader();
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+<<<<<<< HEAD
 print load_fiche_titre($langs->trans("ContractsSetup"),$linkback,'title_setup');
+=======
+print load_fiche_titre($langs->trans("ContractsSetup"), $linkback, 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $head=contract_admin_prepare_head();
 
@@ -81,7 +89,11 @@ dol_fiche_end();
 if ($action != 'create' && $action != 'edit')
 {
     print '<div class="tabsAction">';
+<<<<<<< HEAD
     print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?action=create\">".$langs->trans("NewAttribute")."</a>";
+=======
+    print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?action=create#newattrib\">".$langs->trans("NewAttribute")."</a>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print "</div>";
 }
 
@@ -94,8 +106,13 @@ if ($action != 'create' && $action != 'edit')
 
 if ($action == 'create')
 {
+<<<<<<< HEAD
     print "<br>";
     print load_fiche_titre($langs->trans('NewAttribute'));
+=======
+	print '<br><div id="newattrib"></div>';
+	print load_fiche_titre($langs->trans('NewAttribute'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';
 }

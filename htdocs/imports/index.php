@@ -40,7 +40,11 @@ $import->load_arrays($user);
 
 $form=new Form($db);
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("ImportArea"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
+=======
+llxHeader('', $langs->trans("ImportArea"), 'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print load_fiche_titre($langs->trans("ImportArea"));
 
@@ -92,11 +96,19 @@ if (count($import->array_import_code))
 {
 	//if ($user->rights->import->run)
 	//{
+<<<<<<< HEAD
 	print '<a class="butActionNew" href="'.DOL_URL_ROOT.'/imports/import.php?leftmenu=import">'.$langs->trans("NewImport").'<span class="fa fa-plus-circle valignmiddle"></span></a>';
 	//}
 	//else
 	//{
 	//	print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("NewImport").'</a>';
+=======
+    print dolGetButtonTitle($langs->trans('NewImport'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/imports/import.php?leftmenu=import');
+	//}
+	//else
+	//{
+	//	print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("NewImport").'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	//}
 }
 print '</div>';
@@ -111,7 +123,11 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("AvailableFormats").'</td>';
 print '<td>'.$langs->trans("LibraryShort").'</td>';
+<<<<<<< HEAD
 print '<td align="right">'.$langs->trans("LibraryVersion").'</td>';
+=======
+print '<td class="right">'.$langs->trans("LibraryVersion").'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</tr>';
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/import/modules_import.php';
@@ -121,11 +137,19 @@ $liste=$model->liste_modeles($db);
 foreach($liste as $key)
 {
 	print '<tr class="oddeven">';
+<<<<<<< HEAD
 	print '<td width="16">'.img_picto_common($model->getDriverLabelForKey($key),$model->getPictoForKey($key)).'</td>';
 	$text=$model->getDriverDescForKey($key);
 	print '<td>'.$form->textwithpicto($model->getDriverLabelForKey($key),$text).'</td>';
 	print '<td>'.$model->getLibLabelForKey($key).'</td>';
 	print '<td class="nowrap" align="right">'.$model->getLibVersionForKey($key).'</td>';
+=======
+	print '<td width="16">'.img_picto_common($model->getDriverLabelForKey($key), $model->getPictoForKey($key)).'</td>';
+	$text=$model->getDriverDescForKey($key);
+	print '<td>'.$form->textwithpicto($model->getDriverLabelForKey($key), $text).'</td>';
+	print '<td>'.$model->getLibLabelForKey($key).'</td>';
+	print '<td class="nowrap right">'.$model->getLibVersionForKey($key).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</tr>';
 }
 
@@ -134,7 +158,12 @@ print '</table>';
 
 //print '</div></div></div>';
 
+<<<<<<< HEAD
 
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

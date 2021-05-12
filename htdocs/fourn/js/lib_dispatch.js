@@ -23,23 +23,39 @@
 /**
  * addDispatchLine
  * Adds new table row for dispatching to multiple stock locations
+<<<<<<< HEAD
  * 
+=======
+ *
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * @param	index	int		index of product line. 0 = first product line
  * @param	type	string	type of dispatch (batch = batch dispatch, dispatch = non batch dispatch)
  * @param	mode	string	'qtymissing' will create new line with qty missing, 'lessone' will keep 1 in old line and the rest in new one
  */
+<<<<<<< HEAD
 function addDispatchLine(index, type, mode) 
 {
 	mode = mode || 'qtymissing'
 	
+=======
+function addDispatchLine(index, type, mode)
+{
+	mode = mode || 'qtymissing'
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	console.log("fourn/js/lib_dispatch.js Split line type="+type+" index="+index+" mode="+mode);
 	var $row = $("tr[name='"+type+'_0_'+index+"']").clone(true), 		// clone first batch line to jQuery object
 		nbrTrs = $("tr[name^='"+type+"_'][name$='_"+index+"']").length, // position of line for batch
 		qtyOrdered = parseFloat($("#qty_ordered_0_"+index).val()), 		// Qty ordered is same for all rows
 		qty = parseFloat($("#qty_"+(nbrTrs - 1)+"_"+index).val()),
 		qtyDispatched;
+<<<<<<< HEAD
 			
 	if (mode === 'lessone') 
+=======
+
+	if (mode === 'lessone')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		qtyDispatched = parseFloat($("#qty_dispatched_0_"+index).val()) + 1;
 	}
@@ -47,7 +63,11 @@ function addDispatchLine(index, type, mode)
 	{
 		qtyDispatched = parseFloat($("#qty_dispatched_0_"+index).val()) + qty;
 	}
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if (qtyDispatched < qtyOrdered)
 	{
 		//replace tr suffix nbr
@@ -62,6 +82,7 @@ function addDispatchLine(index, type, mode)
 		$row.attr('name',type+'_'+nbrTrs+'_'+index);
 		//insert new row before last row
 		$("tr[name^='"+type+"_'][name$='_"+index+"']:last").after($row);
+<<<<<<< HEAD
 		
 		//remove cloned select2 with duplicate id.
 		$("#s2id_entrepot_"+nbrTrs+'_'+index).detach();			// old way to find duplicated select2 component
@@ -75,6 +96,21 @@ function addDispatchLine(index, type, mode)
 		$("tr[name^='"+type+"_'][name$='_"+index+"'] .splitbutton").hide();
 		$("tr[name^='"+type+"_'][name$='_"+index+"']:last .splitbutton").show();
 		
+=======
+
+		//remove cloned select2 with duplicate id.
+		$("#s2id_entrepot_"+nbrTrs+'_'+index).detach();			// old way to find duplicated select2 component
+		$(".csswarehouse_"+nbrTrs+"_"+index+":first-child").parent("span.selection").parent(".select2").detach();
+
+		/*  Suffix of lines are:  _ trs.length _ index  */
+		$("#qty_"+nbrTrs+"_"+index).focus();
+		$("#qty_dispatched_0_"+index).val(qtyDispatched);
+
+		//hide all buttons then show only the last one
+		$("tr[name^='"+type+"_'][name$='_"+index+"'] .splitbutton").hide();
+		$("tr[name^='"+type+"_'][name$='_"+index+"']:last .splitbutton").show();
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if (mode === 'lessone')
 		{
 			qty = 1; // keep 1 in old line
@@ -94,11 +130,19 @@ function addDispatchLine(index, type, mode)
 
 /**
  * onChangeDispatchLineQty
+<<<<<<< HEAD
  * 
  * Change event handler for dispatch qty input field, 
  * recalculate qty dispatched when qty input has changed.
  * If qty is more then qty ordered reset input qty to max qty to dispatch.
  * 
+=======
+ *
+ * Change event handler for dispatch qty input field,
+ * recalculate qty dispatched when qty input has changed.
+ * If qty is more then qty ordered reset input qty to max qty to dispatch.
+ *
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * element requires arbitrary data qty (value before change), type (type of dispatch) and index (index of product line)
  */
 
@@ -124,4 +168,8 @@ function onChangeDispatchLineQty() {
 		}
 		$(this).data('qty', $(this).val());
 	}
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

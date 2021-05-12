@@ -1,5 +1,12 @@
 # Dolibarr language file - Source file is en_US - externalsite
+<<<<<<< HEAD
 ExternalSiteSetup=Dış Web Sitesi ayarları
 ExternalSiteURL=Dış Web Sitesi URL si
 ExternalSiteModuleNotComplete=Dış Web Sitesi modülü doğru yapılandırılmamış.
 ExampleMyMenuEntry=Menüme giriş
+=======
+ExternalSiteSetup=Dış web sitesine bağlantı ayarla
+ExternalSiteURL=Dış Web Sitesi URL'si
+ExternalSiteModuleNotComplete=Dış Web Sitesi modülü doğru yapılandırılmamış.
+ExampleMyMenuEntry=Menü girişim
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

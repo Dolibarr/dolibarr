@@ -25,14 +25,22 @@
 global $Config ;
 global $website;
 
+<<<<<<< HEAD
 define('NOTOKENRENEWAL',1); // Disables token renewal
+=======
+define('NOTOKENRENEWAL', 1); // Disables token renewal
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // We must include the main because this page is
 // a web page that require security controls and
 // is a security hole if anybody can access without
 // being an authenticated user.
 require_once '../../../../main.inc.php';
+<<<<<<< HEAD
 $uri=preg_replace('/^http(s?):\/\//i','',$dolibarr_main_url_root);
+=======
+$uri=preg_replace('/^http(s?):\/\//i', '', $dolibarr_main_url_root);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $pos = strstr($uri, '/');       // $pos contient alors url sans nom domaine
 if ($pos == '/') $pos = '';     // si $pos vaut /, on le met a ''
 define('DOL_URL_ROOT', $pos);
@@ -173,4 +181,7 @@ $Config['FileTypesPath']['Media']		= $Config['UserFilesPath'] . 'media/' ;
 $Config['FileTypesAbsolutePath']['Media']= ($Config['UserFilesAbsolutePath'] == '') ? '' : $Config['UserFilesAbsolutePath'].'media/' ;
 $Config['QuickUploadPath']['Media']		= $Config['UserFilesPath'] ;
 $Config['QuickUploadAbsolutePath']['Media']= $Config['UserFilesAbsolutePath'] ;
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

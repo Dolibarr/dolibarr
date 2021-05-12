@@ -4,9 +4,15 @@
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2011-2015	Philippe Grand			<philippe.grand@atoo-net.com>
+=======
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2011-2018	Philippe Grand			<philippe.grand@atoo-net.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,15 +38,24 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 // Load translation files required by the page
+<<<<<<< HEAD
 $langs->loadLangs(array('admin', 'exports'));
 
 $langs->load('other');
+=======
+$langs->loadLangs(array('admin', 'exports', 'other'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if (! $user->admin)
 	accessforbidden();
 
+<<<<<<< HEAD
 $action=GETPOST('action','alpha');
 $value=GETPOST('value','alpha');
+=======
+$action=GETPOST('action', 'alpha');
+$value=GETPOST('value', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 /*
  * Actions
@@ -53,10 +68,16 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
  * View
  */
 
+<<<<<<< HEAD
+=======
+$form=new Form($db);
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $page_name = "ExportSetup";
 llxHeader('', $langs->trans($page_name));
 
 // Subheader
+<<<<<<< HEAD
 $linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">'
     . $langs->trans("BackToModuleList") . '</a>';
 print_fiche_titre($langs->trans($page_name), $linkback);
@@ -87,11 +108,42 @@ print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("set_EXPORTS_SHARE_MODELS").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="center" width="100">';
+=======
+$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">' . $langs->trans("BackToModuleList") . '</a>';
+
+print load_fiche_titre($langs->trans($page_name), $linkback);
+
+//$head = export_admin_prepare_head();
+$h=0;
+$head = array();
+$head[$h][0] = DOL_URL_ROOT.'/admin/export.php';
+$head[$h][1] = $langs->trans("Setup");
+$head[$h][2] = 'setup';
+$h++;
+
+dol_fiche_head($head, 'setup', $langs->trans("ExportsArea"), -1, "exports");
+
+
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Parameters").'</td>'."\n";
+print '<td class="center" width="20">&nbsp;</td>';
+print '<td class="center" width="100"></td>'."\n";
+
+
+// Example with a yes / no select
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("EXPORTS_SHARE_MODELS").'</td>';
+print '<td class="center" width="20">&nbsp;</td>';
+print '<td class="center" width="100">';
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_EXPORTS_SHARE_MODELS">';
 echo ajax_constantonoff('EXPORTS_SHARE_MODELS');
 print '</form>';
+<<<<<<< HEAD
 print '</td></tr>';
 
 
@@ -99,4 +151,15 @@ print '</table>';
 
 llxFooter();
 
+=======
+
+print '</td></tr>';
+
+print '</table>';
+
+dol_fiche_end();
+
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

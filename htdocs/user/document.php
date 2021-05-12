@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  *
@@ -34,11 +38,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 // Load translation files required by page
 $langs->loadLangs(array('users', 'other'));
 
+<<<<<<< HEAD
 $action=GETPOST('action','aZ09');
 $confirm=GETPOST('confirm');
 $id=(GETPOST('userid','int') ? GETPOST('userid','int') : GETPOST('id','int'));
 $ref = GETPOST('ref', 'alpha');
 $contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'userdoc';   // To manage different context of search
+=======
+$action=GETPOST('action', 'aZ09');
+$confirm=GETPOST('confirm');
+$id=(GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('id', 'int'));
+$ref = GETPOST('ref', 'alpha');
+$contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'userdoc';   // To manage different context of search
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Define value to know what current user can do on users
 $canadduser=(! empty($user->admin) || $user->rights->user->user->creer);
@@ -66,6 +78,7 @@ if ($id)
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2='user';
+<<<<<<< HEAD
 if ($user->id == $id) { $feature2=''; $canreaduser=1; } // A user can always read its own card
 if (!$canreaduser) {
 	$result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
@@ -76,6 +89,17 @@ if ($user->id <> $id && ! $canreaduser) accessforbidden();
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
+=======
+
+$result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
+
+if ($user->id <> $id && ! $canreaduser) accessforbidden();
+
+// Get parameters
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -102,7 +126,11 @@ $hookmanager->initHooks(array('usercard','userdoc','globalcard'));
  */
 
 $parameters=array('id'=>$socid);
+<<<<<<< HEAD
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+=======
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook)) {
@@ -117,7 +145,11 @@ if (empty($reshook)) {
 $form = new Form($db);
 
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+<<<<<<< HEAD
 llxHeader('',$langs->trans("ThirdParty").' - '.$langs->trans("Files"),$help_url);
+=======
+llxHeader('', $langs->trans("ThirdParty").' - '.$langs->trans("Files"), $help_url);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if ($object->id)
 {
@@ -136,13 +168,22 @@ if ($object->id)
 		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	}
 
+<<<<<<< HEAD
     dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
+=======
+    dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
 
+<<<<<<< HEAD
 	// Construit liste des fichiers
 	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+=======
+	// Build file list
+	$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$totalsize=0;
 	foreach($filearray as $key => $file)
 	{
@@ -150,7 +191,11 @@ if ($object->id)
 	}
 
 
+<<<<<<< HEAD
 	print '<table class="border" width="100%">';
+=======
+	print '<table class="border tableforfield centpercent">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     // Login
     print '<tr><td class="titlefield">'.$langs->trans("Login").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
@@ -159,7 +204,11 @@ if ($object->id)
 	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td>'.count($filearray).'</td></tr>';
 
 	//Total taille
+<<<<<<< HEAD
 	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>'.dol_print_size($totalsize,1,1).'</td></tr>';
+=======
+	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>'.dol_print_size($totalsize, 1, 1).'</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	print '</table>';
     print '</div>';
@@ -175,9 +224,16 @@ if ($object->id)
 }
 else
 {
+<<<<<<< HEAD
 	accessforbidden('',0,0);
 }
 
 
+=======
+	accessforbidden('', 0, 1);
+}
+
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

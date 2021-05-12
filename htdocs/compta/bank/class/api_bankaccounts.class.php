@@ -43,7 +43,11 @@ class BankAccounts extends DolibarrApi
     /**
      * Constructor
      */
+<<<<<<< HEAD
     function __construct()
+=======
+    public function __construct()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $db;
         $this->db = $db;
@@ -61,11 +65,19 @@ class BankAccounts extends DolibarrApi
      *
      * @throws RestException
      */
+<<<<<<< HEAD
     function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
     {
         $list = array();
 
         if(! DolibarrApiAccess::$user->rights->banque->lire) {
+=======
+    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+    {
+        $list = array();
+
+        if (! DolibarrApiAccess::$user->rights->banque->lire) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             throw new RestException(401);
         }
 
@@ -121,7 +133,11 @@ class BankAccounts extends DolibarrApi
      *
      * @throws RestException
      */
+<<<<<<< HEAD
     function get($id)
+=======
+    public function get($id)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         if (! DolibarrApiAccess::$user->rights->banque->lire) {
             throw new RestException(401);
@@ -142,7 +158,11 @@ class BankAccounts extends DolibarrApi
      * @param array $request_data    Request data
      * @return int ID of account
      */
+<<<<<<< HEAD
     function post($request_data = null)
+=======
+    public function post($request_data = null)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         if (! DolibarrApiAccess::$user->rights->banque->configurer) {
             throw new RestException(401);
@@ -173,7 +193,11 @@ class BankAccounts extends DolibarrApi
      * @param array  $request_data    data
      * @return int
      */
+<<<<<<< HEAD
     function put($id, $request_data = null)
+=======
+    public function put($id, $request_data = null)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         if (! DolibarrApiAccess::$user->rights->banque->configurer) {
             throw new RestException(401);
@@ -196,7 +220,11 @@ class BankAccounts extends DolibarrApi
         }
         else
         {
+<<<<<<< HEAD
         	throw new RestException(500, $account->error);
+=======
+            throw new RestException(500, $account->error);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
     }
 
@@ -206,7 +234,11 @@ class BankAccounts extends DolibarrApi
      * @param int    $id    ID of account
      * @return array
      */
+<<<<<<< HEAD
     function delete($id)
+=======
+    public function delete($id)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         if (! DolibarrApiAccess::$user->rights->banque->configurer) {
             throw new RestException(401);
@@ -237,7 +269,11 @@ class BankAccounts extends DolibarrApi
      *
      * @throws RestException
      */
+<<<<<<< HEAD
     function _validate($data)
+=======
+    private function _validate($data)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $account = array();
         foreach (BankAccounts::$FIELDS as $field) {
@@ -248,14 +284,24 @@ class BankAccounts extends DolibarrApi
         return $account;
     }
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     /**
      * Clean sensible object datas
      *
      * @param object    $object    Object to clean
      * @return array Array of cleaned object properties
      */
+<<<<<<< HEAD
     function _cleanObjectDatas($object)
     {
+=======
+    protected function _cleanObjectDatas($object)
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $object = parent::_cleanObjectDatas($object);
 
         unset($object->rowid);
@@ -273,7 +319,11 @@ class BankAccounts extends DolibarrApi
      *
      * @url GET {id}/lines
      */
+<<<<<<< HEAD
     function getLines($id)
+=======
+    public function getLines($id)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $list = array();
 
@@ -325,7 +375,11 @@ class BankAccounts extends DolibarrApi
      *
      * @url POST {id}/lines
      */
+<<<<<<< HEAD
     function addLine($id, $date, $type, $label, $amount, $category=0, $cheque_number='', $cheque_writer='', $cheque_bank='')
+=======
+    public function addLine($id, $date, $type, $label, $amount, $category = 0, $cheque_number = '', $cheque_writer = '', $cheque_bank = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         if (! DolibarrApiAccess::$user->rights->banque->modifier) {
             throw new RestException(401);
@@ -337,8 +391,21 @@ class BankAccounts extends DolibarrApi
             throw new RestException(404, 'account not found');
         }
 
+<<<<<<< HEAD
         $result = $account->addline($date, $type, $label, $amount, $cheque_number, $category,
                                     DolibarrApiAccess::$user, $cheque_writer, $cheque_bank);
+=======
+        $result = $account->addline(
+            $date,
+            $type,
+            $label,
+            $amount,
+            $cheque_number,
+            $category,
+            DolibarrApiAccess::$user,
+            $cheque_writer, $cheque_bank
+        );
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         if ($result < 0) {
             throw new RestException(503, 'Error when adding line to account: ' . $account->error);
         }
@@ -358,7 +425,11 @@ class BankAccounts extends DolibarrApi
      *
      * @url POST {id}/lines/{line_id}/links
      */
+<<<<<<< HEAD
     function addLink($id, $line_id, $url_id, $url, $label, $type)
+=======
+    public function addLink($id, $line_id, $url_id, $url, $label, $type)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         if (! DolibarrApiAccess::$user->rights->banque->modifier) {
             throw new RestException(401);

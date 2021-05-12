@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2005		Matthieu Valleton	<mv@seeschloss.org>
  * Copyright (C) 2006-2017	Laurent Destailleur	<eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2014	Regis Houssin		<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2014	Regis Houssin		<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2007		Patrick Raguin		<patrick.raguin@gmail.com>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
@@ -35,6 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $langs->load("categories");
 
 // Security check
+<<<<<<< HEAD
 $socid=GETPOST('socid','int');
 if (!$user->rights->categorie->lire) accessforbidden();
 
@@ -46,6 +51,20 @@ $type 		= GETPOST('type','alpha');
 $urlfrom	= GETPOST('urlfrom','alpha');
 
 $socid=GETPOST('socid','int');
+=======
+$socid=GETPOST('socid', 'int');
+if (!$user->rights->categorie->lire) accessforbidden();
+
+$action		= GETPOST('action', 'alpha');
+$cancel		= GETPOST('cancel', 'alpha');
+$origin		= GETPOST('origin', 'alpha');
+$catorigin	= GETPOST('catorigin', 'int');
+$type 		= GETPOST('type', 'alpha');
+$urlfrom	= GETPOST('urlfrom', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
+
+$socid=GETPOST('socid', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $label=GETPOST('label');
 $description=GETPOST('description');
 $color=GETPOST('color');
@@ -88,32 +107,56 @@ if ($action == 'add' && $user->rights->categorie->creer)
 			header("Location: ".$urlfrom);
 			exit;
 		}
+<<<<<<< HEAD
 		else if ($idProdOrigin)
+=======
+		elseif ($idProdOrigin)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProdOrigin.'&type='.$type);
 			exit;
 		}
+<<<<<<< HEAD
 		else if ($idCompanyOrigin)
+=======
+		elseif ($idCompanyOrigin)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idCompanyOrigin.'&type='.$type);
 			exit;
 		}
+<<<<<<< HEAD
 		else if ($idSupplierOrigin)
+=======
+		elseif ($idSupplierOrigin)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idSupplierOrigin.'&type='.$type);
 			exit;
 		}
+<<<<<<< HEAD
 		else if ($idMemberOrigin)
+=======
+		elseif ($idMemberOrigin)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idMemberOrigin.'&type='.$type);
 			exit;
 		}
+<<<<<<< HEAD
 		else if ($idContactOrigin)
+=======
+		elseif ($idContactOrigin)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idContactOrigin.'&type='.$type);
 			exit;
 		}
+<<<<<<< HEAD
 		else if ($idProjectOrigin)
+=======
+		elseif ($idProjectOrigin)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProjectOrigin.'&type='.$type);
 			exit;
@@ -136,7 +179,11 @@ if ($action == 'add' && $user->rights->categorie->creer)
 
 	if ($parent != "-1") $object->fk_parent = $parent;
 
+<<<<<<< HEAD
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+=======
+	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if ($ret < 0) $error++;
 
 	if (! $object->label)
@@ -173,32 +220,61 @@ if (($action == 'add' || $action == 'confirmed') && $user->rights->categorie->cr
 			header("Location: ".$urlfrom);
 			exit;
 		}
+<<<<<<< HEAD
 		else if ($idProdOrigin)
+=======
+		elseif ($backtopage)
+		{
+			header("Location: ".$backtopage);
+			exit;
+		}
+		elseif ($idProdOrigin)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProdOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
 		}
+<<<<<<< HEAD
 		else if ($idCompanyOrigin)
+=======
+		elseif ($idCompanyOrigin)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idCompanyOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
 		}
+<<<<<<< HEAD
 		else if ($idSupplierOrigin)
+=======
+		elseif ($idSupplierOrigin)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idSupplierOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
 		}
+<<<<<<< HEAD
 		else if ($idMemberOrigin)
+=======
+		elseif ($idMemberOrigin)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idMemberOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
 		}
+<<<<<<< HEAD
 		else if ($idContactOrigin)
+=======
+		elseif ($idContactOrigin)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idContactOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
 		}
+<<<<<<< HEAD
 		else if ($idProjectOrigin)
+=======
+		elseif ($idProjectOrigin)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProjectOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
@@ -218,7 +294,11 @@ $form = new Form($db);
 $formother = new FormOther($db);
 
 $helpurl='';
+<<<<<<< HEAD
 llxHeader("",$langs->trans("Categories"),$helpurl);
+=======
+llxHeader("", $langs->trans("Categories"), $helpurl);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if ($user->rights->categorie->creer)
 {
@@ -232,8 +312,14 @@ if ($user->rights->categorie->creer)
 		print '<input type="hidden" name="urlfrom" value="'.$urlfrom.'">';
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="addcat" value="addcat">';
+<<<<<<< HEAD
 		print '<input type="hidden" name="id" value="'.GETPOST('origin').'">';
 		print '<input type="hidden" name="type" value="'.$type.'">';
+=======
+		print '<input type="hidden" name="id" value="'.GETPOST('origin', 'alpha').'">';
+		print '<input type="hidden" name="type" value="'.$type.'">';
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if ($origin) print '<input type="hidden" name="origin" value="'.$origin.'">';
 		if ($catorigin)	print '<input type="hidden" name="catorigin" value="'.$catorigin.'">';
 
@@ -251,13 +337,21 @@ if ($user->rights->categorie->creer)
 		// Description
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+<<<<<<< HEAD
 		$doleditor=new DolEditor('description',$description,'',200,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_PRODUCTDESC,ROWS_6,'90%');
+=======
+		$doleditor=new DolEditor('description', $description, '', 200, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_6, '90%');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$doleditor->Create();
 		print '</td></tr>';
 
 		// Color
 		print '<tr><td>'.$langs->trans("Color").'</td><td>';
+<<<<<<< HEAD
 		print $formother->selectColor($color,'color');
+=======
+		print $formother->selectColor($color, 'color');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</td></tr>';
 
 		// Parent category
@@ -267,11 +361,19 @@ if ($user->rights->categorie->creer)
 		print '</td></tr>';
 
 		$parameters=array();
+<<<<<<< HEAD
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
         print $hookmanager->resPrint;
 		if (empty($reshook))
 		{
 			print $object->showOptionals($extrafields,'edit');
+=======
+		$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+        print $hookmanager->resPrint;
+		if (empty($reshook))
+		{
+			print $object->showOptionals($extrafields, 'edit');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		print '</table>';
@@ -288,7 +390,12 @@ if ($user->rights->categorie->creer)
 	}
 }
 
+<<<<<<< HEAD
 
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

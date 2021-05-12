@@ -1,21 +1,36 @@
 # Dolibarr language file - Source file is en_US - products
+<<<<<<< HEAD
 ProductRef=کد عکس محصول.
 ProductLabel=برچسب محصولات
 ProductLabelTranslated=Translated product label
 ProductDescriptionTranslated=Translated product description
 ProductNoteTranslated=Translated product note
 ProductServiceCard=محصولات / خدمات کارت
+=======
+ProductRef=ارجاع محصول
+ProductLabel=برچسب محصول
+ProductLabelTranslated=برچسب ترجمه‌شدۀ محصول
+ProductDescriptionTranslated=توضیحات ترجمه‌شدۀ محصول
+ProductNoteTranslated=یادداشت ترجمه‌شدۀ محصول
+ProductServiceCard=کارت محصولات/خدمات
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TMenuProducts=محصولات
 TMenuServices=خدمات
 Products=محصولات
 Services=خدمات
 Product=محصول
+<<<<<<< HEAD
 Service=سرویس
 ProductId=کد محصول / خدمات
+=======
+Service=خدمات
+ProductId=شناسۀ محصول/خدمات
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Create=ساختن
 Reference=ارجاع
 NewProduct=محصول جدید
 NewService=خدمات جدید
+<<<<<<< HEAD
 ProductVatMassChange=تغییر مالیات بر ارزش افزوده جرم
 ProductVatMassChangeDesc=اين صفحه را می توان مورد استفاده برای تغییر نرخ مالیات بر ارزش افزوده در محصولات یا خدمات از یک مقدار را به دیگری تعریف شده است. اخطار، این تغییر در تمام پایگاه داده انجام می شود.
 MassBarcodeInit=بارکد جرم init 
@@ -44,10 +59,42 @@ CardProduct1=کارت خدمات
 Stock=موجودی
 Stocks=سهام
 Movements=جنبش
+=======
+ProductVatMassChange=به‌روز‌رسانی سراسری م.ب.ا.ا
+ProductVatMassChangeDesc=این ابزار نرخ مالیات بر ارزش افزوده را که در <b><u>همۀ</u></b> محصولات و سرویس‌ها تعریف شده، روزآمد می‌کند!
+MassBarcodeInit=تعریف دستجمعی بارکد
+MassBarcodeInitDesc=این صفحه می‌تواند برای تعریف بارکد اشیائی که برای آن‌ها بارکد تعریف نشده استفاده شود. قبل از استفاده، مطمئن شوید واحد بارکد به خوبی نصب و برپاسازی شده است.
+ProductAccountancyBuyCode=کد حساب‌داری (خرید)
+ProductAccountancySellCode=کد  حساب‌داری (فروش)
+ProductAccountancySellIntraCode=کد حساب‌داری (فروش داخل جامعه‌ای-اروپا)
+ProductAccountancySellExportCode=کد حساب‌داری (فروش صادرات)
+ProductOrService=محصول یا خدمات
+ProductsAndServices=محصولات و خدمات
+ProductsOrServices=محصولات یا خدمات
+ProductsPipeServices=محصولات | خدمات
+ProductsOnSaleOnly=محصولات فقط برای فروش
+ProductsOnPurchaseOnly=محصولات فقط برای خرید
+ProductsNotOnSell=محصولات نه برای خرید نه برای فروش
+ProductsOnSellAndOnBuy=محصولات هم برای خرید و هم برای فروش
+ServicesOnSaleOnly=خدمات فقط برای فروش
+ServicesOnPurchaseOnly=خدمات فقط برای خرید
+ServicesNotOnSell=خدمات نه برای خرید و نه برای فروش
+ServicesOnSellAndOnBuy=خدمات هم برای خرید و هم برای فروش
+LastModifiedProductsAndServices=آخرین %s محصولات/خدمات تغییریافته
+LastRecordedProducts=آخرین %s محصول ثبت شده
+LastRecordedServices=آخرین %s خدمات ثبت شده
+CardProduct0=محصول
+CardProduct1=خدمات
+Stock=موجودی
+MenuStocks=موجودی‌ها
+Stocks=موجودی و محل (انبار) محصولا
+Movements=جابجائی‌ها
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Sell=فروش
 Buy=خرید
 OnSell=برای فروش
 OnBuy=برای خرید
+<<<<<<< HEAD
 NotOnSell=نه برای فروش
 ProductStatusOnSell=برای فروش
 ProductStatusNotOnSell=نه برای فروش
@@ -115,10 +162,81 @@ ErrorAssociationIsFatherOfThis=یکی از محصول انتخاب پدر و م�
 DeleteProduct=حذف یک محصول / خدمات
 ConfirmDeleteProduct=آیا مطمئن هستید که می خواهید به حذف این محصول / خدمات؟
 ProductDeleted=محصولات / خدمات "٪ s" حذف از پایگاه داده باشد.
+=======
+NotOnSell=غیر قابل فروش
+ProductStatusOnSell=برای فروش
+ProductStatusNotOnSell=غیر قابل فروش
+ProductStatusOnSellShort=برای فروش
+ProductStatusNotOnSellShort=غیر قابل فروش
+ProductStatusOnBuy=برای خرید
+ProductStatusNotOnBuy=غیر قابل خرید
+ProductStatusOnBuyShort=برای خرید
+ProductStatusNotOnBuyShort=غیر قابل خرید
+UpdateVAT=به‌روز‌رسانی م.ب.ا.ا
+UpdateDefaultPrice=به‌روز‌رسانی قیمت پیش‌فرض
+UpdateLevelPrices=به‌روزرسانی قیمت برای هر سطح
+AppliedPricesFrom=به‌کاربرده‌شده از
+SellingPrice=قیمت فروش
+SellingPriceHT=قیمت فروش (منهای مالیات)
+SellingPriceTTC=قیمت فروش (با مالیات)
+SellingMinPriceTTC=حداقل قیمت فروش (با مالیات)
+CostPriceDescription=این بخش قیمت(بدون مالیات) است که می‌تواند برای ذخیرۀ مبلغ متوسطی که این محصول برای شرکت شما هزینه وارد می‌کند استفاده شود. این می‌تواند هر قیمتی که شما محاسبه‌کنید باشد، برای مثال از جمع متوسط قیمت خرید و هزینه تولید و توزیع.
+CostPriceUsage=این مقدار برای محاسبۀ حاشیه قابل استفاده است.
+SoldAmount=مبلغ فروخته‌شده
+PurchasedAmount=مبلغ خریده شده
+NewPrice=قیمت جدید
+MinPrice=حداقل قیمت فروش
+EditSellingPriceLabel=ویرایش برچسب قیمت فروش
+CantBeLessThanMinPrice=قیمت فروش نمی تواند کمتر از حداقل مجاز برای این محصول (%s بدون مالیات) باشد. این پیام همچنین در موقعی ظاهر می‌شود که شما یک تخفیف بسیار جدی داده باشید.
+ContractStatusClosed=بسته
+ErrorProductAlreadyExists=یک محصول با مرجع %s قبلا وجود داشته است
+ErrorProductBadRefOrLabel=مقدار اشتباه برای مرجع یا برچسب
+ErrorProductClone=در هنگام نسخه‌برداری از محصول یا خدمات یک مشکل وجود داشت.
+ErrorPriceCantBeLowerThanMinPrice=خطا، قیمت نمی‌تواند از قیمت‌حداقل پائین‌تر باشد
+Suppliers=فروشندگان
+SupplierRef=کدشناسائی محصول نزد فروشنده
+ShowProduct=نمایش محصول
+ShowService=نمایش خدمات
+ProductsAndServicesArea=بخش محصولات و خدمات
+ProductsArea=بخش محصولات
+ServicesArea=بخش خدمات
+ListOfStockMovements=فهرست جابجائی‌های  انبارها
+BuyingPrice=قیمت خرید
+PriceForEachProduct=محصولات با قیمت خاص
+SupplierCard=کارت فروشنده
+PriceRemoved=قیمت حذف شد
+BarCode=بارکد
+BarcodeType=نوع بارکد
+SetDefaultBarcodeType=تنظیم نوع بارکد
+BarcodeValue=مقدار بارکد
+NoteNotVisibleOnBill=یادداشت (در صورت‌حساب‌ها، پیشنهادها و غیره نمایش داده نمی‌شود)
+ServiceLimitedDuration=در صورتی که محصول، خدماتی با مدت‌زمان محدود است:
+MultiPricesAbility=چند قسمت قیمتی در هر محصول/خدمات (هر مشتری در یک قسمت قیمتی است)
+MultiPricesNumPrices=تعداد قیمت‌ها
+AssociatedProductsAbility=فعال‌کردن محصولات مجازی (بسته‌ها)
+AssociatedProducts=محصولات مجازی
+AssociatedProductsNumber=تعداد محصولاتی که این محصول مجازی را درست می‌کنند
+ParentProductsNumber=تعداد محصولات بسته‌بندی مادر
+ParentProducts=محصولات مادر
+IfZeroItIsNotAVirtualProduct=در صورتی که برابر با 0 باشد، این محصول یک محصول مجازی نیست
+IfZeroItIsNotUsedByVirtualProduct=در صورتی که برابر با 0 باشد، این محصول توسط هیچ محصول مجازی مورد استفاده قرار نگرفته است
+KeywordFilter=صافی کلیدواژه
+CategoryFilter=صافی دسته‌بندی
+ProductToAddSearch=جستجوی محصول برای اضافه‌کردن
+NoMatchFound=هیچ نتیجه‌ای نداشت
+ListOfProductsServices=فهرست محصولات/خدمات
+ProductAssociationList=فهرست محصولات/خدماتی که بخش‌های تشکیل دهندۀ این محصول‌مجازی(بسته) هستند
+ProductParentList=فهرست محصولات/خدمات مجازی که از این محصول به‌عنوان یک جزء تشکیل شده‌اند
+ErrorAssociationIsFatherOfThis=یکی از محصولات انتخاب شده مادر همین محصول است
+DeleteProduct=حذف یک محصول/خدما
+ConfirmDeleteProduct=آیا مطمئن‌هستید می‌خواهید این محصول/خدمات را حذف کنید؟
+ProductDeleted=محصول/خدمات "%s" از پایگاه‌داده حذف شد
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ExportDataset_produit_1=محصولات
 ExportDataset_service_1=خدمات
 ImportDataset_produit_1=محصولات
 ImportDataset_service_1=خدمات
+<<<<<<< HEAD
 DeleteProductLine=حذف خط تولید
 ConfirmDeleteProductLine=آیا مطمئن هستید که می خواهید این خط تولید را حذف کنید؟
 ProductSpecial=ویژه
@@ -334,3 +452,224 @@ CloneDestinationReference=Destination product reference
 ErrorCopyProductCombinations=There was an error while copying the product variants
 ErrorDestinationProductNotFound=Destination product not found
 ErrorProductCombinationNotFound=Product variant not found
+=======
+DeleteProductLine=حذف سطر محصول
+ConfirmDeleteProductLine=آیا مطمئن هستید می‌خواهید این سطر محصول را حذف نمائید؟
+ProductSpecial=ویژه
+QtyMin=حداقل تعداد قابل خرید
+PriceQtyMin=حداقل مبلغ 
+PriceQtyMinCurrency=قیمت (واحد پولی) برای این مقدار (بدون تخفیف)
+VATRateForSupplierProduct=نرخ م.ب.ا.ا. (برای این فروشنده/محصول)
+DiscountQtyMin=تخفیف برای این مقدار
+NoPriceDefinedForThisSupplier=قیمت/مقدار برای این فروشنده/محصول تعریف نشده است
+NoSupplierPriceDefinedForThisProduct=قیمت/مقدار برای این محصول تعریف نشده است
+PredefinedProductsToSell=محصول ازپیش‌تعریف‌شده
+PredefinedServicesToSell=خدمات از پیش‌تعریف‌شده
+PredefinedProductsAndServicesToSell=محصول/خدمات از پیش‌تعریف‌شده برای فروش
+PredefinedProductsToPurchase=محصول از پیش‌تعریف‌شده برای خرید
+PredefinedServicesToPurchase=خدمات از پیش‌تعریف‌شده برای خرید
+PredefinedProductsAndServicesToPurchase=محصول/خدمات از پیش‌تعریف‌شده برای خرید
+NotPredefinedProducts=محصول/خدمات از پیش‌تعریف‌شده‌ای وجود ندارد
+GenerateThumb=تولید تصویرکوچک
+ServiceNb=خدمات #%s
+ListProductServiceByPopularity=فهرست محصولات/خدمات برحسب محبوبیت
+ListProductByPopularity=فهرست محصولات بر حسب محبوبیت
+ListServiceByPopularity=فهرست خدمات بر حسب محبوبیت
+Finished=محصول تولیدشده
+RowMaterial=مواد اولیه
+ConfirmCloneProduct=آیا مطمئنید می‌خواهید از خدمات یا محصولات <b>%s</b> نسخه‌برداری کنید؟
+CloneContentProduct=نسخه‌برداری از از همۀ اطلاعات اصلی محصول/خدما
+ClonePricesProduct=نسخه‌برداری از قیمت‌ها
+CloneCompositionProduct=نسخه‌برداری از محصول/خدمات مجازی
+CloneCombinationsProduct=نسخه‌برداری از انواع مختلف محصول
+ProductIsUsed=این محصول، دست‌دوم است
+NewRefForClone=ارجاع محصول/خدمات جدید
+SellingPrices=قیمت‌های فروش
+BuyingPrices=قیمت‌های خرید
+CustomerPrices=قیمت‌های مشتری
+SuppliersPrices=قیمت‌های فروشنده
+SuppliersPricesOfProductsOrServices=قیمت‌های فروشنده (مربوط به محصولات و خدمات)
+CustomCode=گمرک / کالا / کدبندی هماهنگ کالا
+CountryOrigin=کشور مبدا
+Nature=Nature of produt (material/finished)
+ShortLabel=برچسب کوتاه
+Unit=واحد
+p=واحد
+set=دسته/تنظیم
+se=دسته/تنظیم
+second=ثانیه
+s=ث
+hour=ساعت
+h=س
+day=روز
+d=ر
+kilogram=کیلوگرم
+kg=ک‌گ
+gram=گرم
+g=گ
+meter=متر
+m=م
+lm=lm
+m2=متر²
+m3=متر³
+liter=لیتر
+l=ل
+unitP=قطعه
+unitSET=دسته/تنظیم
+unitS=ثانیه
+unitH=ساعت
+unitD=روز
+unitKG=کیلوگر
+unitG=گرم
+unitM=متر
+unitLM=متر خطی
+unitM2=متر مربع
+unitM3=متر مکعب
+unitL=لیتر
+ProductCodeModel=قالب مرجع محصول
+ServiceCodeModel=قالب مرجع خدمات
+CurrentProductPrice=قیمت کنونی
+AlwaysUseNewPrice=همواره از قیمت کنون محصولات/خدمات استفاده شود
+AlwaysUseFixedPrice=استفاده از قیمت ثابت
+PriceByQuantity=استفاده از قیمت‌ بر حسب تعداد
+DisablePriceByQty=غیرفعال کردن استفاده از قیمت برحسب تعداد
+PriceByQuantityRange=بازۀ تعدا
+MultipriceRules=مقررات قسمت‌بندی قیمت
+UseMultipriceRules=استفاده از مقررات قسمت‌بندی قیمت (که در برپاسازی واحد محصولات آمده است) برای محاسبۀ خودکار قیمت سایر قسمت‌ها بر حسب اولین قسمت
+PercentVariationOver=%% انواع بر حسب%s
+PercentDiscountOver=%% تخفیف بر حسب%s
+KeepEmptyForAutoCalculation=این بخش را خالی نگاه‌دارید تا به‌طور خودکار بر حسب وزن و حجم محصولات محاسبه شود
+VariantRefExample=مثال: COL
+VariantLabelExample=مثال: Color
+### composition fabrication
+Build=تولید
+ProductsMultiPrice=محصولات و قیمت‌ها برای هر قسمت تعیین مبلغ
+ProductsOrServiceMultiPrice=مبالغ دلخواه (محصولات و خدما، چند قیمتی)
+ProductSellByQuarterHT=حجم‌معاملات سه‌ماهۀ محصولات قبل از مالیات
+ServiceSellByQuarterHT=حجم‌معاملات سه‌ماهۀ خدمات قبل از مالیات
+Quarter1=سه‌ماهۀ 1
+Quarter2=سه‌ماهۀ 2
+Quarter3=سه‌ماهۀ 3
+Quarter4=سه‌ماهۀ 4
+BarCodePrintsheet=چاپ بارکد
+PageToGenerateBarCodeSheets=با این ابزار شما می‌توانید برگه‌هائی از برچسب بارکد پرینت کنید. شکل و نوع پرینت بارکد و مقدار آن را از صفحۀ برچسب انتخاب نموده و سپس بر روی کلید <b>%s</b> کلیک کنید.
+NumberOfStickers=تعداد برچسب برای چاپ بر روی صفحه
+PrintsheetForOneBarCode=تعداد برچسب‌چاپ‌شده برای یک بارکد
+BuildPageToPrint=تولید صفحه برای چاپ
+FillBarCodeTypeAndValueManually=ورود نوع بارکد و مقدار را به شکل دستی 
+FillBarCodeTypeAndValueFromProduct=ورود نوع‌بارکد و مقدار از طریق بارکد محصول
+FillBarCodeTypeAndValueFromThirdParty=ورود نوع‌بارکد و مقدار از طریق بارکد شخص‌سوم
+DefinitionOfBarCodeForProductNotComplete=تعریف نوع و مقدار بارکد برای محصول %s کامل نیست.
+DefinitionOfBarCodeForThirdpartyNotComplete=تعریف نوع و مقدار برای شخص‌سوم %s کامل نیست.
+BarCodeDataForProduct=اطلاعات بارکد مربوط به محصول %s:
+BarCodeDataForThirdparty=اطلاعات بارکد مربوط به شخص‌سوم %s:
+ResetBarcodeForAllRecords=تعریف مقدار بارکد برای همۀ ردیف‌ها (این همچنین باعث نوسازی مقدار بارکدهائی که قبلا تعریف شده بودند و جایگزین شدن با مقدار جدید خواهد شد)
+PriceByCustomer=قیمت متفاوت برای هر مشتری
+PriceCatalogue=یک قیمت واحد برای هر محصول/خدمات
+PricingRule=مقررات قیمت‌های فروش
+AddCustomerPrice=افزودن قیمت برحسب مشتری
+ForceUpdateChildPriceSoc=تنظیم قیمت تعیین شده برای مشتری برای زیرمجموعه‌های آن
+PriceByCustomerLog=ثبت‌گزارش همۀ قیمت‌های قبلی مربوط به مشتری
+MinimumPriceLimit=حداقل قیمت نمی‌تواند کمتر از %s باشد
+MinimumRecommendedPrice=حداقل قیمت پیشنهادی برابر است با: %s
+PriceExpressionEditor=ویرایشگر عبارت‌منطقی قیمت
+PriceExpressionSelected=عبارت منطقی انتخاب شده
+PriceExpressionEditorHelp1="price = 2 + 2" یا "2 + 2" برای تعیین قیمت. از ; -ویرگول‌نقطۀ انگلیسی- برای جدا کردن عبارات منطقی استفاده کنید
+PriceExpressionEditorHelp2=شما می‌توانید با متغیرهائی شبیه به <b>#extrafield_myextrafieldkey#</b> به ExtraFields و به متغیرهای سراسری با <b>#global_mycode#</b> دسترسی پیدا کنید
+PriceExpressionEditorHelp3=در قیمت‌های فروشندگان و نیز محصولات/خدمات این متغیرها فعال هستند: <br><b>#tva_tx# #localtax1_tx# #localtax2_tx# #weight# #length# #surface# #price_min#</b>
+PriceExpressionEditorHelp4=تنها در قیمت‌های محصولات/خدمات: <b>#supplier_min_price#</b> <br>تنها در قیمت‌های فروشندگان: <b>#supplier_quantity# and #supplier_tva_tx#</b>
+PriceExpressionEditorHelp5=مقادیر فعال سراسری:
+PriceMode=حالت قیمت
+PriceNumeric=عدد
+DefaultPrice=قیمت‌پیش‌فرض
+ComposedProductIncDecStock=کم/زیاد کردن موجودی در هنگام تغییر مادر
+ComposedProduct=محصولات فرزند
+MinSupplierPrice=حداقل قیمت خرید
+MinCustomerPrice=حداقل قیمت فروش
+DynamicPriceConfiguration=پیکربندی قیمت پویا
+DynamicPriceDesc=شما می‌توانید فرمول ریاضی برای محاسبۀ قیمت‌های مشتری یا فروشنده تعریف کنید. چنین فرمول‌هائی امکان استفاده از عمل‌گرهای ریاضی را بعلاوۀ تعداد مقدارثابت و متغیر دارند. شما می‌توانید در اینجا متغیرهائی که برای استفاده نیاز دارید تعریف کنید. در صورتی که متغیر نیازمند به‌روز‌رسانی خودکار باشد، شما باید نشانی خارجی متعلق به آن را برای به‌روز‌رسانی خودکار مقدار آن به Dolibarr بدهید
+AddVariable=افزودن متغیر
+AddUpdater=افزودن به‌روز‌رسان
+GlobalVariables=متغیرهای سراسری
+VariableToUpdate=متغیر قابل به‌روز‌رسانی
+GlobalVariableUpdaters=به‌روز‌رسان‌های خارجی برای متغیرها
+GlobalVariableUpdaterType0=داده‌های JSON
+GlobalVariableUpdaterHelp0=اطلاعات JSON را از نشانی مشخص شده استخراج می‌کند، VALUE معرّف مکان مقدار مربوطه است.
+GlobalVariableUpdaterHelpFormat0=روش درخواست  {"URL": "http://example.com/urlofjson", "VALUE": "array1,array2,targetvalue"}
+GlobalVariableUpdaterType1=داده‌های سرویس‌وب-WebService
+GlobalVariableUpdaterHelp1=داده‌های وب‌سرویس‌ را از نشانی تعیین شده  استخراج می‌کند، NS نمایانگر namespace بوده و VALUE نمایان‌گر مکان مقدار مربوطه، و  DATA دربردارندۀ داده‌های قابل ارسال و METHOD بیان‌گر فراخوان رویۀ WS است.
+GlobalVariableUpdaterHelpFormat1=روش درخواست به شکل {"URL": "http://example.com/urlofws", "VALUE": "array,targetvalue", "NS": "http://example.com/urlofns", "METHOD": "myWSMethod", "DATA": {"your": "data", "to": "send"}} است
+UpdateInterval=فواصل به‌روز‌رسانی (دقیقه)
+LastUpdated=آخرین به‌روزرسانی
+CorrectlyUpdated=به‌درستی به‌روز‌شد
+PropalMergePdfProductActualFile=فایل‌های قابل استفاده برای اضافه کردن به PDF Azur
+PropalMergePdfProductChooseFile=انتخاب فایل‌های PDF
+IncludingProductWithTag=شامل‌کردن محصولات/خدمات به‌واسطۀ کلیدواژه
+DefaultPriceRealPriceMayDependOnCustomer=قیمت پیش‌فرض، قیمت واقعی ممکن است به مشتری وابسته باشد.
+WarningSelectOneDocument=لطفا حداقل یک سند انتخاب کنید
+DefaultUnitToShow=واحد
+NbOfQtyInProposals=مقدار در پیشنهاد‌ها
+ClinkOnALinkOfColumn=از ستون %s روی یک پیوند کلیک کنید تا نمای جزئیات را ببینید
+ProductsOrServicesTranslations=ترجمه‌های محصولات/خدمات
+TranslatedLabel=ترجمه‌شدۀ برچسب
+TranslatedDescription=ترجمه‌شدۀ توضیحات
+TranslatedNote=ترجمه‌شدۀ یادداشت‌ها
+ProductWeight=وزن برای 1 محصول
+ProductVolume=حجم برای 1 محصول
+WeightUnits=واحد وزن
+VolumeUnits=واحد حجم
+SizeUnits=واحد اندازه
+DeleteProductBuyPrice=حذف قیمت خرید
+ConfirmDeleteProductBuyPrice=آیا مطمئن‌هستید می‌خواهید این قیمت خرید را حذف کنید؟
+SubProduct=زیرمحصول
+ProductSheet=ورقۀ محصول
+ServiceSheet=ورقۀ خدما
+PossibleValues=مقادیر ممکن
+GoOnMenuToCreateVairants=برای آماده‌کردن ویژگی‌های چندگانه (مثل رنگ، اندازه و غیره) به فهرست %s - %s بروید 
+UseProductFournDesc=ایجاد یک قابلیت برای تعریف توضیحات مربوط به محصولاتی که توسط فروشندگان در ادامۀ توضیحات ارائه شده به مشتریان
+ProductSupplierDescription=توضیحات فروشنده برای محصول
+#Attributes
+VariantAttributes=انواع ویژگی
+ProductAttributes=انواع ویژگی‌های محصولات
+ProductAttributeName=انواع ویژگی %s
+ProductAttribute=انواع ویژگی
+ProductAttributeDeleteDialog=آیا مطمئن هستید می‌خواهید این ویژگی را حذف کنید؟ همۀ مقادیر آن نیز حذف خواهد شد
+ProductAttributeValueDeleteDialog=آیا مطمئن هستید می‌خواهید از این ویژگی، مقدار "%s" با ارجاع "%s" را حذف کنید؟
+ProductCombinationDeleteDialog=آیا مطمئن هستید می‌خواهید محصول نوع  "<strong>%s</strong>" را حذف کنید؟
+ProductCombinationAlreadyUsed=یک خطا در هنگام حذف این نوع پیش آمد. مطمئن شوید توسط هیچ شیئی استفاده نمی‌شود
+ProductCombinations=انواع
+PropagateVariant=توزیع انواع
+HideProductCombinations=پنهان کردن انواع محصولات در انتخاب‌گر محصولات
+ProductCombination=نوع
+NewProductCombination=نوع جدید
+EditProductCombination=ویرایش نوع
+NewProductCombinations=انواع جدید
+EditProductCombinations=ویرایش انواع
+SelectCombination=انتخاب یک ترکیب
+ProductCombinationGenerator=تولیدکننده انواع
+Features=قابلیت‌ها
+PriceImpact=تاثیر قیم
+WeightImpact=تاثیر وزن
+NewProductAttribute=ویژگی های جدید
+NewProductAttributeValue=نوع جدید ویژگی
+ErrorCreatingProductAttributeValue=یک خطا در هنگام ساخت مقدار این ویژگی رخ داد. این ممکن است به علت وجود داشتن از پیش همین مقدار با همین ارجاع باشد
+ProductCombinationGeneratorWarning=در صورتی که ادامه دهید، پیش از ساخت انواع جدید، همۀ انواع قبلی حذف می‌شوند. انواع مشابهی که قبلا وجود داشته‌اند نیز با مقادیر جدید روزآمد می‌شوند
+TooMuchCombinationsWarning=تولید تعداد زیادی از انواع می‌تواند استفادۀ زیادی از پردازشگر و حافظه داشته باشد و ممک است Dolibarr قادر به ساخت آن‌ها نباشد. فعال کردن گزینۀ "%s" ممکن است به کاهش استفاده از حافظه کمک کند.
+DoNotRemovePreviousCombinations=عدم حذف انواع پیشین
+UsePercentageVariations=استفاده از انواع درصدی
+PercentageVariation=انواع درصدی
+ErrorDeletingGeneratedProducts=خطائی در هنگام حذف انواع موجود محصول رخ داد
+NbOfDifferentValues=تعداد مقادیر مختلف
+NbProducts=تعداد محصولات
+ParentProduct=محصول مادر
+HideChildProducts=پنهان کردن انواع مختلف محصولات 
+ShowChildProducts=نمایش انواع مختلف محصولات
+NoEditVariants=به کارت محصول مادر رفته و تاثیر قیمت انواع مختلف را در زبانۀ انواع ویرایش کنید
+ConfirmCloneProductCombinations=آیا مطمئنید می‌خواهید همۀ انواع محصولات را به یک محصول مادر دیگر با ارجاع مورد نظر نسخه‌برداری کنید؟
+CloneDestinationReference=مقصد ارجاع محصول
+ErrorCopyProductCombinations=یک خطا در هنگام نسخه‌برداری از انواع محصول پیش آمد
+ErrorDestinationProductNotFound=محصول مقصد پیدا نشد
+ErrorProductCombinationNotFound=نوع محصول پیدا نشد
+ActionAvailableOnVariantProductOnly=این کنش تنها بر روی یک نوع از انواع محصول قابل اجراست
+ProductsPricePerCustomer=قیمت محصول وابسته به مشتریان
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

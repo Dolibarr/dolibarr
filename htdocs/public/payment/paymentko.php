@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +29,13 @@
  *                  This token can be used to get more informations.
  */
 
+<<<<<<< HEAD
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+=======
+define("NOLOGIN", 1);		// This means this output page does not require to be logged.
+define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
@@ -44,6 +53,7 @@ if (! empty($conf->paypal->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
 }
 
+<<<<<<< HEAD
 $langs->load("main");
 $langs->load("other");
 $langs->load("dict");
@@ -52,6 +62,9 @@ $langs->load("companies");
 $langs->load("paybox");
 $langs->load("paypal");
 $langs->load("stripe");
+=======
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paybox", "paypal", "stripe"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if (! empty($conf->paypal->enabled))
 {
@@ -70,7 +83,11 @@ if (! empty($conf->stripe->enabled))
 $FULLTAG=GETPOST('FULLTAG');
 if (empty($FULLTAG)) $FULLTAG=GETPOST('fulltag');
 
+<<<<<<< HEAD
 $suffix=GETPOST("suffix",'aZ09');
+=======
+$suffix=GETPOST("suffix", 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 // Detect $paymentmethod
@@ -114,7 +131,11 @@ $object = new stdClass();   // For triggers
  * View
  */
 
+<<<<<<< HEAD
 dol_syslog("Callback url when an online payment is canceled. query_string=".(empty($_SERVER["QUERY_STRING"])?'':$_SERVER["QUERY_STRING"])." script_uri=".(empty($_SERVER["SCRIPT_URI"])?'':$_SERVER["SCRIPT_URI"]), LOG_DEBUG, 0, '_payment');
+=======
+dol_syslog("Callback url when an online payment is refused or canceled. query_string=".(empty($_SERVER["QUERY_STRING"])?'':$_SERVER["QUERY_STRING"])." script_uri=".(empty($_SERVER["SCRIPT_URI"])?'':$_SERVER["SCRIPT_URI"]), LOG_DEBUG, 0, '_payment');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $tracepost = "";
 foreach($_POST as $k => $v) $tracepost .= "{$k} - {$v}\n";
@@ -133,11 +154,19 @@ if (! empty($_SESSION['ipaddress']))      // To avoid to make action twice
     $FinalPaymentAmt    = $_SESSION['FinalPaymentAmt'];
     // From env
     $ipaddress          = $_SESSION['ipaddress'];
+<<<<<<< HEAD
+=======
+    $errormessage       = $_SESSION['errormessage'];
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     // Appel des triggers
     include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
     $interface=new Interfaces($db);
+<<<<<<< HEAD
     $result=$interface->run_triggers('PAYMENTONLINE_PAYMENT_KO',$object,$user,$langs,$conf);
+=======
+    $result=$interface->run_triggers('PAYMENTONLINE_PAYMENT_KO', $object, $user, $langs, $conf);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     if ($result < 0) { $error++; $errors=$interface->errors; }
     // Fin appel triggers
 
@@ -148,8 +177,18 @@ if (! empty($_SESSION['ipaddress']))      // To avoid to make action twice
         $sendemail = $conf->global->ONLINE_PAYMENT_SENDEMAIL;
     }
 
+<<<<<<< HEAD
     if ($sendemail)
     {
+=======
+    // Send warning of error to administrator
+    if ($sendemail)
+    {
+    	$companylangs = new Translate('', $conf);
+    	$companylangs->setDefaultLang($mysoc->default_lang);
+    	$companylangs->loadLangs(array('main','members','bills','paypal','paybox'));
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $from=$conf->global->MAILING_EMAIL_FROM;
         $sendto=$sendemail;
 
@@ -167,6 +206,7 @@ if (! empty($_SESSION['ipaddress']))      // To avoid to make action twice
     	else $appli.=" ".DOL_VERSION;
 
     	$urlback=$_SERVER["REQUEST_URI"];
+<<<<<<< HEAD
     	$topic='['.$appli.'] '.$langs->transnoentitiesnoconv("NewOnlinePaymentFailed");
     	$content="";
     	$content.=$langs->transnoentitiesnoconv("ValidationOfOnlinePaymentFailed")."\n";
@@ -177,6 +217,24 @@ if (! empty($_SESSION['ipaddress']))      // To avoid to make action twice
     	$content.="tag=".$fulltag."\ntoken=".$onlinetoken." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt;
     	require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
     	$mailfile = new CMailFile($topic, $sendto, $from, $content);
+=======
+    	$topic='['.$appli.'] '.$companylangs->transnoentitiesnoconv("NewOnlinePaymentFailed");
+    	$content="";
+    	$content.='<font color="orange">'.$companylangs->transnoentitiesnoconv("ValidationOfOnlinePaymentFailed")."</font>\n";
+
+    	$content.="<br><br>\n";
+    	$content.='<u>'.$companylangs->transnoentitiesnoconv("TechnicalInformation").":</u><br>\n";
+    	$content.=$companylangs->transnoentitiesnoconv("OnlinePaymentSystem").': <strong>'.$paymentmethod."</strong><br>\n";
+    	$content.=$companylangs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."<br>\n";
+    	$content.=$companylangs->transnoentitiesnoconv("Error").': '.$errormessage."<br>\n";
+    	$content.="<br>\n";
+    	$content.="tag=".$fulltag." token=".$onlinetoken." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt;
+
+    	$ishtml=dol_textishtml($content);	// May contain urls
+
+    	require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+    	$mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     	$result=$mailfile->sendfile();
     	if ($result)
@@ -213,18 +271,30 @@ $logosmall=$mysoc->logo_small;
 $logo=$mysoc->logo;
 $paramlogo='ONLINE_PAYMENT_LOGO_'.$suffix;
 if (! empty($conf->global->$paramlogo)) $logosmall=$conf->global->$paramlogo;
+<<<<<<< HEAD
 else if (! empty($conf->global->ONLINE_PAYMENT_LOGO)) $logosmall=$conf->global->ONLINE_PAYMENT_LOGO;
+=======
+elseif (! empty($conf->global->ONLINE_PAYMENT_LOGO)) $logosmall=$conf->global->ONLINE_PAYMENT_LOGO;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 //print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 // Define urllogo
 $urllogo='';
 if (! empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall))
 {
+<<<<<<< HEAD
 	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('thumbs/'.$logosmall);
+=======
+	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$logosmall);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$width=150;
 }
 elseif (! empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo))
 {
+<<<<<<< HEAD
 	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode($logo);
+=======
+	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/'.$logo);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$width=150;
 }
 // Output html code for logo
@@ -244,7 +314,11 @@ if (! empty($conf->global->$key)) print $conf->global->$key;
 print "\n</div>\n";
 
 
+<<<<<<< HEAD
 htmlPrintOnlinePaymentFooter($mysoc,$langs,0,$suffix);
+=======
+htmlPrintOnlinePaymentFooter($mysoc, $langs, 0, $suffix);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 llxFooter('', 'public');

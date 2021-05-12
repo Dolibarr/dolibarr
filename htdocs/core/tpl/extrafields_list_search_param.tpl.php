@@ -8,9 +8,23 @@ if (empty($conf) || ! is_object($conf))
 }
 
 // Loop to complete $param for extrafields
+<<<<<<< HEAD
 foreach ($search_array_options as $key => $val)
 {
 	$crit=$val;
 	$tmpkey=preg_replace('/search_options_/','',$key);
 	if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
 }
+=======
+if (! empty($search_array_options))	// $extrafieldsobject is the $object->table_element like 'societe', 'socpeople', ...
+{
+    if (empty($search_options_pattern)) $search_options_pattern='search_options_';
+
+    foreach ($search_array_options as $key => $val)
+    {
+        $crit=$val;
+        $tmpkey=preg_replace('/'.$search_options_pattern.'/', '', $key);
+        if ($val != '') $param.='&'.$search_options_pattern.$tmpkey.'='.urlencode($val);
+    }
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
+<<<<<<< HEAD
  * Copyright (C) 2013-2017 Alexandre Spangaro	<aspangaro@zendsi.com>
+=======
+ * Copyright (C) 2013-2017 Alexandre Spangaro	<aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
@@ -23,7 +27,11 @@
 
 /**
  * \file 		htdocs/accountancy/admin/export.php
+<<<<<<< HEAD
  * \ingroup 	Advanced accountancy
+=======
+ * \ingroup 	Accountancy (Double entries)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * \brief 		Setup page to configure accounting expert module
  */
 require '../../main.inc.php';
@@ -41,10 +49,17 @@ if (empty($user->rights->accounting->chartofaccount))
 	accessforbidden();
 }
 
+<<<<<<< HEAD
 $action = GETPOST('action', 'alpha');
 
 // Parameters ACCOUNTING_EXPORT_*
 $main_option = array (
+=======
+$action = GETPOST('action', 'aZ09');
+
+// Parameters ACCOUNTING_EXPORT_*
+$main_option = array(
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     'ACCOUNTING_EXPORT_PREFIX_SPEC',
 );
 
@@ -76,9 +91,17 @@ $model_option = array (
     ),
 );
 
+<<<<<<< HEAD
 /*
  * Actions
  */
+=======
+
+/*
+ * Actions
+ */
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($action == 'update') {
 	$error = 0;
 
@@ -95,7 +118,11 @@ if ($action == 'update') {
 		$error ++;
 	}
 
+<<<<<<< HEAD
 	foreach ( $main_option as $constname ) {
+=======
+	foreach ($main_option as $constname) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$constvalue = GETPOST($constname, 'alpha');
 
 		if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
@@ -103,7 +130,11 @@ if ($action == 'update') {
 		}
 	}
 
+<<<<<<< HEAD
     foreach ($listparam[$modelcsv] as $key => $value ) {
+=======
+    foreach ($listparam[$modelcsv] as $key => $value) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $constante = $key;
 
         if (strpos($constante, 'ACCOUNTING')!==false) {
@@ -124,6 +155,11 @@ if ($action == 'update') {
 	}
 }
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 /*
  * View
  */
@@ -135,6 +171,10 @@ $form = new Form($db);
 // $linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1">' . $langs->trans("BackToModuleList") . '</a>';
 print load_fiche_titre($langs->trans('ConfigAccountingExpert'), $linkback, 'title_setup');
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print "\n".'<script type="text/javascript" language="javascript">'."\n";
 print 'jQuery(document).ready(function () {'."\n";
 print '    function initfields()'."\n";
@@ -192,10 +232,16 @@ print '<tr class="liste_titre">';
 print '<td colspan="3">' . $langs->trans('Options') . '</td>';
 print "</tr>\n";
 
+<<<<<<< HEAD
 
 $num = count($main_option);
 if ($num) {
 	foreach ( $main_option as $key ) {
+=======
+$num = count($main_option);
+if ($num) {
+	foreach ($main_option as $key) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		print '<tr class="oddeven value">';
 
@@ -233,7 +279,11 @@ if (! $conf->use_javascript_ajax) {
 } else {
 	print '<td>';
 	$listmodelcsv = AccountancyExport::getType();
+<<<<<<< HEAD
 	print $form->selectarray("ACCOUNTING_EXPORT_MODELCSV", $listmodelcsv, $conf->global->ACCOUNTING_EXPORT_MODELCSV, 0);
+=======
+	print $form->selectarray("ACCOUNTING_EXPORT_MODELCSV", $listmodelcsv, $conf->global->ACCOUNTING_EXPORT_MODELCSV, 0, 0, 0, '', 0, 0, 0, '', '', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	print '</td>';
 }
@@ -253,7 +303,11 @@ if ($num2) {
 	print '<td colspan="3">' . $langs->trans('OtherOptions') . '</td>';
 	print "</tr>\n";
 
+<<<<<<< HEAD
 	foreach ( $model_option as $key) {
+=======
+	foreach ($model_option as $key) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '<tr class="oddeven value">';
 
         // Param
@@ -267,7 +321,11 @@ if ($num2) {
         } else {
             print '<input type="text" size="20" id="'. $label .'" name="' . $key['label'] . '" value="' . $conf->global->$label . '">';
         }
+<<<<<<< HEAD
 		
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</td></tr>';
 	}
 
@@ -278,5 +336,9 @@ print '<div class="center"><input type="submit" class="button" value="' . dol_es
 
 print '</form>';
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

@@ -35,14 +35,24 @@ class modWebServices extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
      */
+<<<<<<< HEAD
     function __construct($db)
+=======
+    public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $this->db = $db;
         $this->numero = 2600;
 
         $this->family = "interface";
+<<<<<<< HEAD
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
         $this->name = preg_replace('/^mod/i','',get_class($this));
+=======
+        $this->module_position = '25';
+        // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+        $this->name = preg_replace('/^mod/i', '', get_class($this));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $this->description = "Enable the Dolibarr web services server";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
         $this->version = 'dolibarr';
@@ -55,6 +65,7 @@ class modWebServices extends DolibarrModules
         $this->dirs = array();
 
         // Config pages
+<<<<<<< HEAD
         //-------------
         $this->config_page_url = array("index.php@webservices");
 
@@ -79,6 +90,28 @@ class modWebServices extends DolibarrModules
 
         // Permissions
         //------------
+=======
+        $this->config_page_url = array("index.php@webservices");
+
+        // Dependencies
+        $this->hidden = false;			// A condition to hide module
+		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
+        $this->langfiles = array("other");
+
+        // Constants
+        $this->const = array();
+
+        // New pages on tabs
+        $this->tabs = array();
+
+        // Boxes
+        $this->boxes = array();
+
+        // Permissions
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $this->rights = array();
         $this->rights_class = 'webservices';
         $r=0;

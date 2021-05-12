@@ -59,8 +59,12 @@ class DolibarrApiAccess implements iAuthenticate
 	 */
 	public static $user = '';
 
+<<<<<<< HEAD
     // @codingStandardsIgnoreStart
 
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * Check access
 	 *
@@ -69,6 +73,10 @@ class DolibarrApiAccess implements iAuthenticate
 	 */
 	public function __isAllowed()
 	{
+<<<<<<< HEAD
+=======
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf, $db;
 
 		$login = '';
@@ -162,16 +170,25 @@ class DolibarrApiAccess implements iAuthenticate
 	    $userClass::setCacheIdentifier(static::$role);
 	    Resources::$accessControlFunction = 'DolibarrApiAccess::verifyAccess';
 	    $requirefortest = static::$requires;
+<<<<<<< HEAD
 	    if (! is_array($requirefortest)) $requirefortest=explode(',',$requirefortest);
 	    return in_array(static::$role, (array) $requirefortest) || static::$role == 'admin';
 	}
 
+=======
+	    if (! is_array($requirefortest)) $requirefortest=explode(',', $requirefortest);
+	    return in_array(static::$role, (array) $requirefortest) || static::$role == 'admin';
+	}
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * @return string string to be used with WWW-Authenticate header
 	 * @example Basic
 	 * @example Digest
 	 * @example OAuth
 	 */
+<<<<<<< HEAD
 	public function __getWWWAuthenticateString()
     {
         return '';
@@ -186,6 +203,22 @@ class DolibarrApiAccess implements iAuthenticate
 	 * @access private
 	 * @return bool
 	 */
+=======
+    public function __getWWWAuthenticateString()
+    {
+        // phpcs:enable
+        return '';
+    }
+
+    /**
+     * Verify access
+     *
+     * @param   array $m Properties of method
+     *
+     * @access private
+     * @return bool
+     */
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     public static function verifyAccess(array $m)
     {
         $requires = isset($m['class']['DolibarrApiAccess']['properties']['requires'])
@@ -196,6 +229,9 @@ class DolibarrApiAccess implements iAuthenticate
         return $requires
             ? static::$role == 'admin' || in_array(static::$role, (array) $requires)
             : true;
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 }

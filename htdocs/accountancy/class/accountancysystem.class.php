@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy       <jeff@jeffinfo.com>
+<<<<<<< HEAD
  * Copyright (C) 2013-2014 Alexandre Spangaro    <aspangaro@zendsi.com>
+=======
+ * Copyright (C) 2013-2014 Alexandre Spangaro    <aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,7 +23,11 @@
 
 /**
  * \file		htdocs/accountancy/class/accountancysystem.class.php
+<<<<<<< HEAD
  * \ingroup		Advanced accountancy
+=======
+ * \ingroup		Accountancy (Double entries)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * \brief		File of class to manage accountancy systems
  */
 
@@ -28,6 +36,7 @@
  */
 class AccountancySystem
 {
+<<<<<<< HEAD
 	var $db;
 	var $error;
 	var $rowid;
@@ -37,15 +46,54 @@ class AccountancySystem
 	var $label;
 	var $account_number;
 	var $account_parent;
+=======
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	/**
+	 * @var int ID
+	 */
+	public $rowid;
+
+	/**
+     * @var int ID
+     */
+	public $fk_pcg_version;
+
+	public $pcg_type;
+	public $pcg_subtype;
+
+    /**
+     * @var string Accountancy System label
+     */
+    public $label;
+
+	public $account_number;
+	public $account_parent;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	/**
 	 * Constructor
 	 *
 	 * @param DoliDB $db handler
 	 */
+<<<<<<< HEAD
 	function __construct($db) {
 		$this->db = $db;
 	}
+=======
+    public function __construct($db)
+    {
+		$this->db = $db;
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	/**
@@ -55,19 +103,31 @@ class AccountancySystem
 	 * @param 	string 	$ref             	   ref
 	 * @return 	int                            <0 if KO, Id of record if OK and found
 	 */
+<<<<<<< HEAD
 	function fetch($rowid = 0, $ref = '')
+=======
+	public function fetch($rowid = 0, $ref = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 	    global $conf;
 
 	    if ($rowid > 0 || $ref)
 	    {
+<<<<<<< HEAD
 	        $sql  = "SELECT a.pcg_version, a.label, a.active";
+=======
+	        $sql  = "SELECT a.rowid, a.pcg_version, a.label, a.active";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	        $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_system as a";
 	        $sql .= " WHERE";
 	        if ($rowid) {
 	            $sql .= " a.rowid = '" . $rowid . "'";
 	        } elseif ($ref) {
+<<<<<<< HEAD
 	            $sql .= " a.pcg_version = '" . $ref . "'";
+=======
+	            $sql .= " a.pcg_version = '" . $this->db->escape($ref) . "'";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	        }
 
 	        dol_syslog(get_class($this) . "::fetch sql=" . $sql, LOG_DEBUG);
@@ -102,7 +162,12 @@ class AccountancySystem
 	 * @param User $user making insert
 	 * @return int if KO, Id of line if OK
 	 */
+<<<<<<< HEAD
 	function create($user) {
+=======
+    public function create($user)
+    {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$now = dol_now();
 
 		$sql = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_system";
@@ -119,11 +184,16 @@ class AccountancySystem
 				$result = $this->rowid;
 			} else {
 				$result = - 2;
+<<<<<<< HEAD
 				$this->error = "AccountancySystem::Create Erreur $result";
+=======
+				$this->error = "AccountancySystem::Create Error $result";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				dol_syslog($this->error, LOG_ERR);
 			}
 		} else {
 			$result = - 1;
+<<<<<<< HEAD
 			$this->error = "AccountancySystem::Create Erreur $result";
 			dol_syslog($this->error, LOG_ERR);
 		}
@@ -131,3 +201,12 @@ class AccountancySystem
 		return $result;
 	}
 }
+=======
+			$this->error = "AccountancySystem::Create Error $result";
+			dol_syslog($this->error, LOG_ERR);
+		}
+
+        return $result;
+    }
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2013-2016	Olivier Geffroy		<jeff@jeffinfo.com>
+<<<<<<< HEAD
  * Copyright (C) 2013-2017	Alexandre Spangaro	<aspangaro@zendsi.com>
+=======
+ * Copyright (C) 2013-2017	Alexandre Spangaro	<aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2014-2015	Ari Elbaz (elarifr)	<github@accedinfo.com>
  * Copyright (C) 2013-2016	Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Juanjo Menent		<jmenent@2byte.es>
@@ -21,7 +25,11 @@
 
 /**
  * \file 		htdocs/accountancy/expensereport/lines.php
+<<<<<<< HEAD
  * \ingroup 	Advanced accountancy
+=======
+ * \ingroup 	Accountancy (Double entries)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * \brief 		Page of detail of the lines of ventilation of expense reports
  */
 require '../../main.inc.php';
@@ -36,7 +44,11 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("compta","bills","other","accountancy","trips","productbatch"));
 
+<<<<<<< HEAD
 $account_parent = GETPOST('account_parent','int');
+=======
+$account_parent = GETPOST('account_parent', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $changeaccount = GETPOST('changeaccount');
 // Search Getpost
 $search_expensereport = GETPOST('search_expensereport', 'alpha');
@@ -45,12 +57,21 @@ $search_desc = GETPOST('search_desc', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 $search_account = GETPOST('search_account', 'alpha');
 $search_vat = GETPOST('search_vat', 'alpha');
+<<<<<<< HEAD
 $search_day=GETPOST("search_day","int");
 $search_month=GETPOST("search_month","int");
 $search_year=GETPOST("search_year","int");
 
 // Load variable for pagination
 $limit = GETPOST('limit','int')?GETPOST('limit', 'int'):(empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)?$conf->liste_limit:$conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
+=======
+$search_day=GETPOST("search_day", "int");
+$search_month=GETPOST("search_month", "int");
+$search_year=GETPOST("search_year", "int");
+
+// Load variable for pagination
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):(empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)?$conf->liste_limit:$conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page', 'int');
@@ -80,7 +101,11 @@ $formaccounting = new FormAccounting($db);
  */
 
 // Purge search criteria
+<<<<<<< HEAD
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // Both test are required to be compatible with all browsers
+=======
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$search_expensereport = '';
 	$search_label = '';
@@ -96,7 +121,11 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 if (is_array($changeaccount) && count($changeaccount) > 0) {
 	$error = 0;
 
+<<<<<<< HEAD
 	if (! (GETPOST('account_parent','int') >= 0))
+=======
+	if (! (GETPOST('account_parent', 'int') >= 0))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Account")), null, 'errors');
@@ -107,7 +136,11 @@ if (is_array($changeaccount) && count($changeaccount) > 0) {
 		$db->begin();
 
 		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "expensereport_det as erd";
+<<<<<<< HEAD
 		$sql1 .= " SET erd.fk_code_ventilation=" . (GETPOST('account_parent','int') > 0 ? GETPOST('account_parent','int') : '0');
+=======
+		$sql1 .= " SET erd.fk_code_ventilation=" . (GETPOST('account_parent', 'int') > 0 ? GETPOST('account_parent', 'int') : '0');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql1 .= ' WHERE erd.rowid IN (' . implode(',', $changeaccount) . ')';
 
 		dol_syslog('accountancy/expensereport/lines.php::changeaccount sql= ' . $sql1);
@@ -189,15 +222,26 @@ if (strlen(trim($search_vat))) {
 if ($search_month > 0)
 {
 	if ($search_year > 0 && empty($search_day))
+<<<<<<< HEAD
 		$sql.= " AND erd.date BETWEEN '".$db->idate(dol_get_first_day($search_year,$search_month,false))."' AND '".$db->idate(dol_get_last_day($search_year,$search_month,false))."'";
 		else if ($search_year > 0 && ! empty($search_day))
+=======
+		$sql.= " AND erd.date BETWEEN '".$db->idate(dol_get_first_day($search_year, $search_month, false))."' AND '".$db->idate(dol_get_last_day($search_year, $search_month, false))."'";
+		elseif ($search_year > 0 && ! empty($search_day))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$sql.= " AND erd.date BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month, $search_day, $search_year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month, $search_day, $search_year))."'";
 			else
 				$sql.= " AND date_format(erd.date, '%m') = '".$db->escape($search_month)."'";
 }
+<<<<<<< HEAD
 else if ($search_year > 0)
 {
 	$sql.= " AND erd.date BETWEEN '".$db->idate(dol_get_first_day($search_year,1,false))."' AND '".$db->idate(dol_get_last_day($search_year,12,false))."'";
+=======
+elseif ($search_year > 0)
+{
+	$sql.= " AND erd.date BETWEEN '".$db->idate(dol_get_first_day($search_year, 1, false))."' AND '".$db->idate(dol_get_last_day($search_year, 12, false))."'";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 $sql .= " AND er.entity IN (" . getEntity('expensereport', 0) . ")";  // We don't share object for accountancy
 
@@ -236,8 +280,11 @@ if ($result) {
 	if ($search_day)        $param .= '&search_day='.urlencode($search_day);
 	if ($search_month)      $param .= '&search_month='.urlencode($search_month);
 	if ($search_year)       $param .= '&search_year='.urlencode($search_year);
+<<<<<<< HEAD
 	if ($search_country)	$param .= "&search_country=" . urlencode($search_country);
 	if ($search_tvaintra)	$param .= "&search_tvaintra=" . urlencode($search_tvaintra);
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">' . "\n";
 	print '<input type="hidden" name="action" value="ventil">';
@@ -250,7 +297,11 @@ if ($result) {
 
 	print_barre_liste($langs->trans("ExpenseReportLinesDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
 
+<<<<<<< HEAD
 	print $langs->trans("DescVentilDoneExpenseReport") . '<br>';
+=======
+	print '<span class="opacitymedium">'.$langs->trans("DescVentilDoneExpenseReport") . '</span><br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	print '<br><div class="inline-block divButAction">' . $langs->trans("ChangeAccount") . '<br>';
 	print $formaccounting->select_account($account_parent, 'account_parent', 2, array(), 0, 0, 'maxwidth300 maxwidthonsmartphone valignmiddle');
@@ -265,6 +316,7 @@ if ($result) {
 	print '<td class="liste_titre"></td>';
 	print '<td><input type="text" class="flat maxwidth50" name="search_expensereport" value="' . dol_escape_htmltag($search_expensereport) . '"></td>';
 	print '<td class="liste_titre center">';
+<<<<<<< HEAD
    	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_day" value="'.$search_day.'">';
    	print '<input class="flat" type="text" size="1" maxlength="2" name="search_month" value="'.$search_month.'">';
    	$formother->select_year($search_year,'search_year',1, 20, 5);
@@ -276,6 +328,19 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_account" value="' . dol_escape_htmltag($search_account) . '"></td>';
     print '<td class="liste_titre" align="right"></td>';
     print '<td class="liste_titre" align="right">';
+=======
+   	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_day" value="'.$search_day.'">';
+   	print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month" value="'.$search_month.'">';
+   	$formother->select_year($search_year, 'search_year', 1, 20, 5);
+	print '</td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
+	print '<td class="liste_titre right"><input type="text" class="flat maxwidth50" name="search_amount" value="' . dol_escape_htmltag($search_amount) . '"></td>';
+	print '<td class="liste_titre center"><input type="text" class="flat maxwidth50" name="search_vat" size="1" placeholder="%" value="' . dol_escape_htmltag($search_vat) . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_account" value="' . dol_escape_htmltag($search_account) . '"></td>';
+    print '<td class="liste_titre right"></td>';
+    print '<td class="liste_titre right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $searchpicto=$form->showFilterButtons();
     print $searchpicto;
     print '</td>';
@@ -284,6 +349,7 @@ if ($result) {
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("LineId", $_SERVER["PHP_SELF"], "erd.rowid", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("ExpenseReport", $_SERVER["PHP_SELF"], "er.ref", "", $param, '', $sortfield, $sortorder);
+<<<<<<< HEAD
 	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "erd.date, erd.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre("TypeFees", $_SERVER["PHP_SELF"], "f.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "erd.comments", "", $param, '', $sortfield, $sortorder);
@@ -293,6 +359,17 @@ if ($result) {
 	print_liste_field_titre('');
     $checkpicto=$form->showCheckAddButtons();
 	print_liste_field_titre($checkpicto, '', '', '', '', 'align="center"');
+=======
+	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "erd.date, erd.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre("TypeFees", $_SERVER["PHP_SELF"], "f.label", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "erd.comments", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "erd.total_ht", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], "erd.tva_tx", "", $param, '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "aa.account_number", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre('');
+    $checkpicto=$form->showCheckAddButtons();
+	print_liste_field_titre($checkpicto, '', '', '', '', '', '', '', 'center ');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print "</tr>\n";
 
 	$expensereport_static = new ExpenseReport($db);
@@ -311,13 +388,18 @@ if ($result) {
 		// Ref Invoice
 		print '<td>' . $expensereport_static->getNomUrl(1) . '</td>';
 
+<<<<<<< HEAD
 		print '<td align="center">' . dol_print_date($db->jdate($objp->date), 'day') . '</td>';
+=======
+		print '<td class="center">' . dol_print_date($db->jdate($objp->date), 'day') . '</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		print '<td class="tdoverflow">' . ($langs->trans($objp->type_fees_code) == $objp->type_fees_code ? $objp->type_fees_label : $langs->trans(($objp->type_fees_code))) . '</td>';
 
 		print '<td>';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->comments));
 		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
+<<<<<<< HEAD
 		print $form->textwithtooltip(dol_trunc($text,$trunclength), $objp->comments);
 		print '</td>';
 
@@ -328,6 +410,18 @@ if ($result) {
 		print '<td>' . $codeCompta . '</td>';
 
 		print '<td align="left"><a href="./card.php?id=' . $objp->rowid . '&backtopage='.urlencode($_SERVER["PHP_SELF"].($param?'?'.$param:'')). '">';
+=======
+		print $form->textwithtooltip(dol_trunc($text, $trunclength), $objp->comments);
+		print '</td>';
+
+		print '<td class="nowrap right">' . price($objp->total_ht) . '</td>';
+
+		print '<td class="center">' . vatrate($objp->tva_tx.($objp->vat_src_code?' ('.$objp->vat_src_code.')':'')) . '</td>';
+
+		print '<td>' . $codeCompta . '</td>';
+
+		print '<td class="left"><a href="./card.php?id=' . $objp->rowid . '&backtopage='.urlencode($_SERVER["PHP_SELF"].($param?'?'.$param:'')). '">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print img_edit();
 		print '</a></td>';
 
@@ -349,6 +443,10 @@ if ($result) {
 	print $db->lasterror();
 }
 
+<<<<<<< HEAD
 
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

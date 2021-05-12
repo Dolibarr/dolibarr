@@ -33,7 +33,11 @@ PropalStatusSigned=Firmado (a facturar)
 PropalStatusNotSigned=No firmado (cerrado)
 PropalStatusBilled=Facturado
 PropalStatusDraftShort=Borrador
+<<<<<<< HEAD
 PropalStatusValidatedShort=Validado
+=======
+PropalStatusValidatedShort=Validado (abierto)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PropalStatusClosedShort=Cerrado
 PropalStatusSignedShort=Firmado
 PropalStatusNotSignedShort=No firmado
@@ -53,10 +57,16 @@ ErrorPropalNotFound=Presupuesto %s inexistente
 AddToDraftProposals=Añadir a presupuesto borrador
 NoDraftProposals=Sin presupuestos borrador
 CopyPropalFrom=Crear presupuesto por copia de uno existente
+<<<<<<< HEAD
 CreateEmptyPropal=Crear presupuesto vacío
 DefaultProposalDurationValidity=Plazo de validez por defecto (en días)
 UseCustomerContactAsPropalRecipientIfExist=Utilizar dirección contacto de seguimiento de cliente definido en vez de la dirección del tercero como destinatario de los presupuestos
 ClonePropal=Clonar presupuesto
+=======
+CreateEmptyPropal=Crear propuesta comercial vacía o desde lista de productos/servicios.
+DefaultProposalDurationValidity=Plazo de validez por defecto (en días)
+UseCustomerContactAsPropalRecipientIfExist=Utilizar dirección del contacto de seguimiento de cliente definido, en vez de la dirección del tercero como destinatario de los presupuestos
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmClonePropal=¿Está seguro de querer clonar el presupuesto <b>%s</b>?
 ConfirmReOpenProp=¿Está seguro de querer reabrir el presupuesto <b>%s</b>?
 ProposalsAndProposalsLines=Presupuestos a clientes y líneas de presupuestos
@@ -75,9 +85,16 @@ AvailabilityTypeAV_1M=1 mes
 TypeContact_propal_internal_SALESREPFOLL=Comercial seguimiento presupuesto
 TypeContact_propal_external_BILLING=Contacto cliente de facturación presupuesto
 TypeContact_propal_external_CUSTOMER=Contacto cliente seguimiento presupuesto
+<<<<<<< HEAD
 TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
 DocModelAzurDescription=Modelo de presupuesto completo (logo...)
+=======
+TypeContact_propal_external_SHIPPING=Contacto cliente para envíos
+# Document models
+DocModelAzurDescription=Modelo de presupuesto completo (logo...)
+DocModelCyanDescription=Modelo de presupuesto completo (logo...)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DefaultModelPropalCreate=Modelo por defecto
 DefaultModelPropalToBill=Modelo por defecto al cerrar un presupuesto (a facturar)
 DefaultModelPropalClosed=Modelo por defecto al cerrar un presupuesto (no facturado)

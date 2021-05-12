@@ -30,6 +30,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 class modBlockedLog extends DolibarrModules
 {
     /**
+<<<<<<< HEAD
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
 	 *   @param      DoliDB		$db      Database handler
@@ -37,12 +38,22 @@ class modBlockedLog extends DolibarrModules
     function __construct($db)
     {
     	global $langs, $conf, $mysoc;
+=======
+     *   Constructor. Define names, constants, directories, boxes, permissions
+     *
+     *   @param      DoliDB		$db      Database handler
+     */
+    public function __construct($db)
+    {
+        global $langs, $conf, $mysoc;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         $this->db = $db;
         $this->numero = 3200;
         // Key text used to identify module (for permissions, menus, etc...)
         $this->rights_class = 'blockedlog';
 
+<<<<<<< HEAD
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
         $this->family = "base";
@@ -52,6 +63,17 @@ class modBlockedLog extends DolibarrModules
         $this->name = preg_replace('/^mod/i','',get_class($this));
         $this->description = "Enable a log on some business events into a non reversible log. This module may be mandatory for some countries.";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
+=======
+        // Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
+        // It is used to group modules in module setup page
+        $this->family = "base";
+        // Module position in the family on 2 digits ('01', '10', '20', ...)
+        $this->module_position = '75';
+        // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+        $this->name = preg_replace('/^mod/i', '', get_class($this));
+        $this->description = "Enable a log on some business events into a non reversible log. This module may be mandatory for some countries.";
+        // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $this->version = 'dolibarr';
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
@@ -67,10 +89,17 @@ class modBlockedLog extends DolibarrModules
 
         // Dependancies
         //-------------
+<<<<<<< HEAD
 	    $this->hidden = false;	// A condition to disable module
 	    $this->depends = array('always'=>'modFacture');	   // List of modules id that must be enabled if this module is enabled
         $this->requiredby = array();	                   // List of modules id to disable if this one is disabled
 	    $this->conflictwith = array();	                   // List of modules id this module is in conflict with
+=======
+        $this->hidden = false;	// A condition to disable module
+        $this->depends = array('always'=>'modFacture');	   // List of modules id that must be enabled if this module is enabled
+        $this->requiredby = array();	                   // List of modules id to disable if this one is disabled
+        $this->conflictwith = array();	                   // List of modules id this module is in conflict with
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $this->langfiles = array('blockedlog');
 
         $this->warnings_activation = array();                     // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
@@ -81,24 +110,43 @@ class modBlockedLog extends DolibarrModules
         // enable this module.
         /*if (! empty($conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY))
         {
+<<<<<<< HEAD
         	$tmp=explode(',', $conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY);
         	$this->automatic_activation = array();
         	foreach($tmp as $key)
         	{
         		$this->automatic_activation[$key]='BlockedLogActivatedBecauseRequiredByYourCountryLegislation';
         	}
+=======
+            $tmp=explode(',', $conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY);
+            $this->automatic_activation = array();
+            foreach($tmp as $key)
+            {
+                $this->automatic_activation[$key]='BlockedLogActivatedBecauseRequiredByYourCountryLegislation';
+            }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }*/
         //var_dump($this->automatic_activation);
 
         $this->always_enabled = (!empty($conf->blockedlog->enabled)
+<<<<<<< HEAD
         	&& !empty($conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY)
         	&& in_array($mysoc->country_code, explode(',', $conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY))
         	&& $this->alreadyUsed(1));
+=======
+            && !empty($conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY)
+            && in_array($mysoc->country_code, explode(',', $conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY))
+            && $this->alreadyUsed(1));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         // Constants
         //-----------
         $this->const = array(
+<<<<<<< HEAD
         	1=>array('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY', 'chaine', 'FR', 'This is list of country code where the module may be mandatory', 0, 'current', 0)
+=======
+            1=>array('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY', 'chaine', 'FR', 'This is list of country code where the module may be mandatory', 0, 'current', 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         );
 
         // New pages on tabs
@@ -145,11 +193,19 @@ class modBlockedLog extends DolibarrModules
      *
      * @return	boolean		True if already used, otherwise False
      */
+<<<<<<< HEAD
     function alreadyUsed() {
 
     	require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
     	$b=new BlockedLog($this->db);
     	return $b->alreadyUsed(1);
+=======
+    public function alreadyUsed()
+    {
+        require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+        $b=new BlockedLog($this->db);
+        return $b->alreadyUsed(1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
 
@@ -161,6 +217,7 @@ class modBlockedLog extends DolibarrModules
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
      *      @return     int             	1 if OK, 0 if KO
      */
+<<<<<<< HEAD
     function init($options='')
     {
     	global $conf, $user;
@@ -244,5 +301,91 @@ class modBlockedLog extends DolibarrModules
     	}
 
     	return $this->_remove($sql, $options);
+=======
+    public function init($options = '')
+    {
+        global $conf, $user;
+
+        $sql = array();
+
+        // If already used, we add an entry to show we enable module
+           require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+
+           $object=new stdClass();
+        $object->id = 1;
+        $object->element = 'module';
+        $object->ref = 'systemevent';
+        $object->entity = $conf->entity;
+        $object->date = dol_now();
+
+        $b=new BlockedLog($this->db);
+        $result = $b->setObjectData($object, 'MODULE_SET', 0);
+        if ($result < 0)
+        {
+            $this->error = $b->error;
+            $this->errors = $b->erros;
+            return 0;
+        }
+
+        $res = $b->create($user);
+        if ($res<=0) {
+            $this->error = $b->error;
+            $this->errors = $b->errors;
+            return $res;
+        }
+
+        return $this->_init($sql, $options);
+    }
+
+    /**
+     * Function called when module is disabled.
+     * The remove function removes tabs, constants, boxes, permissions and menus from Dolibarr database.
+     * Data directories are not deleted
+     *
+     * @param      string	$options    Options when enabling module ('', 'noboxes')
+     * @return     int             		1 if OK, 0 if KO
+     */
+    public function remove($options = '')
+    {
+
+        global $conf, $user;
+
+        $sql = array();
+
+        // If already used, we add an entry to show we enable module
+        require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+
+        $object=new stdClass();
+        $object->id = 1;
+        $object->element = 'module';
+        $object->ref = 'systemevent';
+        $object->entity = $conf->entity;
+        $object->date = dol_now();
+
+        $b=new BlockedLog($this->db);
+        $result = $b->setObjectData($object, 'MODULE_RESET', 0);
+        if ($result < 0)
+        {
+            $this->error = $b->error;
+            $this->errors = $b->erros;
+            return 0;
+        }
+
+        if ($b->alreadyUsed(1))
+        {
+            $res = $b->create($user, '0000000000'); // If already used for something else than SET or UNSET, we log with error
+        }
+        else
+        {
+            $res = $b->create($user);
+        }
+        if ($res<=0) {
+            $this->error = $b->error;
+            $this->errors = $b->errors;
+            return $res;
+        }
+
+        return $this->_remove($sql, $options);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 }

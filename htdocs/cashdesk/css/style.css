@@ -52,7 +52,11 @@ p {
 }
 .logopos {
 	padding-top: 20px;
+<<<<<<< HEAD
 	max-height: 40px;	
+=======
+	max-height: 40px;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 /* ------------------- Header ------------------- */
@@ -320,7 +324,11 @@ p.titre {
 	padding: 2px 2px;
 }
 
+<<<<<<< HEAD
 /* -------------- Boutons --------------------- */
+=======
+/* -------------- Buttons for SimplePOS --------------------- */
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 .bouton_ajout_article {
 	margin-top: 10px;
 	width: 60%;

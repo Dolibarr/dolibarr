@@ -10,12 +10,20 @@ modify=Modifiko
 Classify=Classify
 CategoriesArea=Tags/Categories area
 ProductsCategoriesArea=Products/Services tags/categories area
+<<<<<<< HEAD
 SuppliersCategoriesArea=Suppliers tags/categories area
+=======
+SuppliersCategoriesArea=Vendors tags/categories area
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CustomersCategoriesArea=Customers tags/categories area
 MembersCategoriesArea=Members tags/categories area
 ContactsCategoriesArea=Contacts tags/categories area
 AccountsCategoriesArea=Accounts tags/categories area
 ProjectsCategoriesArea=Projects tags/categories area
+<<<<<<< HEAD
+=======
+UsersCategoriesArea=Users tags/categories area
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SubCats=Sub-categories
 CatList=List of tags/categories
 NewCategory=New tag/category
@@ -31,7 +39,11 @@ WasAddedSuccessfully=<b>%s</b> was added successfully.
 ObjectAlreadyLinkedToCategory=Element is already linked to this tag/category.
 ProductIsInCategories=Product/service is linked to following tags/categories
 CompanyIsInCustomersCategories=This third party is linked to following customers/prospects tags/categories
+<<<<<<< HEAD
 CompanyIsInSuppliersCategories=This third party is linked to following suppliers tags/categories
+=======
+CompanyIsInSuppliersCategories=This third party is linked to following vendors tags/categories
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MemberIsInCategories=This member is linked to following members tags/categories
 ContactIsInCategories=This contact is linked to following contacts tags/categories
 ProductHasNoCategory=This product/service is not in any tags/categories
@@ -47,6 +59,7 @@ ContentsNotVisibleByAllShort=Contents not visible by all
 DeleteCategory=Delete tag/category
 ConfirmDeleteCategory=Are you sure you want to delete this tag/category?
 NoCategoriesDefined=No tag/category defined
+<<<<<<< HEAD
 SuppliersCategoryShort=Suppliers tag/category
 CustomersCategoryShort=Customers tag/category
 ProductsCategoryShort=Products tag/category
@@ -55,20 +68,40 @@ SuppliersCategoriesShort=Suppliers tags/categories
 CustomersCategoriesShort=Customers tags/categories
 ProspectsCategoriesShort=Prospects tags/categories
 CustomersProspectsCategoriesShort=Custo./Prosp. categories
+=======
+SuppliersCategoryShort=Vendors tag/category
+CustomersCategoryShort=Customers tag/category
+ProductsCategoryShort=Products tag/category
+MembersCategoryShort=Members tag/category
+SuppliersCategoriesShort=Vendors tags/categories
+CustomersCategoriesShort=Customers tags/categories
+ProspectsCategoriesShort=Prospects tags/categories
+CustomersProspectsCategoriesShort=Cust./Prosp. tags/categories
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProductsCategoriesShort=Products tags/categories
 MembersCategoriesShort=Members tags/categories
 ContactCategoriesShort=Contacts tags/categories
 AccountsCategoriesShort=Accounts tags/categories
 ProjectsCategoriesShort=Projects tags/categories
+<<<<<<< HEAD
 ThisCategoryHasNoProduct=This category does not contain any product.
 ThisCategoryHasNoSupplier=This category does not contain any supplier.
+=======
+UsersCategoriesShort=Users tags/categories
+ThisCategoryHasNoProduct=This category does not contain any product.
+ThisCategoryHasNoSupplier=This category does not contain any vendor.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ThisCategoryHasNoCustomer=This category does not contain any customer.
 ThisCategoryHasNoMember=This category does not contain any member.
 ThisCategoryHasNoContact=This category does not contain any contact.
 ThisCategoryHasNoAccount=This category does not contain any account.
 ThisCategoryHasNoProject=This category does not contain any project.
 CategId=Tag/category id
+<<<<<<< HEAD
 CatSupList=List of supplier tags/categories
+=======
+CatSupList=List of vendor tags/categories
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CatCusList=List of customer/prospect tags/categories
 CatProdList=List of products tags/categories
 CatMemberList=List of members tags/categories
@@ -81,7 +114,11 @@ DeleteFromCat=Remove from tags/category
 ExtraFieldsCategories=Complementary attributes
 CategoriesSetup=Tags/categories setup
 CategorieRecursiv=Link with parent tag/category automatically
+<<<<<<< HEAD
 CategorieRecursivHelp=If activated, product will also linked to parent category when adding into a subcategory
+=======
+CategorieRecursivHelp=If option is on, when you add a product into a subcategory, product will also be added into the parent category.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddProductServiceIntoCategory=Add the following product/service
 ShowCategory=Show tag/category
 ByDefaultInList=By default in list

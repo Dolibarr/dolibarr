@@ -50,8 +50,14 @@ ActionAffectedTo=Acção assignada a
 ActionDoneBy=Acção realizada por
 ActionAC_TEL=Chamada telefónica
 ActionAC_FAX=Enviar fax
+<<<<<<< HEAD
 ActionAC_PROP=Envío orçamento por correio
 ActionAC_EMAIL=Enviar email
+=======
+ActionAC_PROP=Envío de orçamento por correio
+ActionAC_EMAIL=Enviar email
+ActionAC_EMAIL_IN=Reception of Email
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActionAC_RDV=Reuniões
 ActionAC_INT=Intervenção no local
 ActionAC_FAC=Enviar fatura do cliente por correio
@@ -69,6 +75,7 @@ ActionAC_AUTO=Eventos inseridos automaticamente
 ActionAC_OTH_AUTOShort=Auto
 Stats=Estatísticas de venda
 StatusProsp=Estado da prospeção
+<<<<<<< HEAD
 DraftPropals=Orçamentos em rascunho
 NoLimit=Sem limite
 ToOfferALinkForOnlineSignature=Link para assinatura online
@@ -76,4 +83,13 @@ WelcomeOnOnlineSignaturePage=Bem-vindo à página onde pode aceitar orçamentos 
 ThisScreenAllowsYouToSignDocFrom=Esta página permite que você aceite e assine, ou recuse um orçamento
 ThisIsInformationOnDocumentToSign=Esta é a informação no documento para aceitar ou recusar
 SignatureProposalRef=Assinatura do orçamento%s
+=======
+DraftPropals=Orçamentos rascunhos
+NoLimit=Sem limite
+ToOfferALinkForOnlineSignature=Link para assinatura online
+WelcomeOnOnlineSignaturePage=Welcome to the page to accept commercial proposals from %s
+ThisScreenAllowsYouToSignDocFrom=Esta página permite-lhe aceitar e assinar, ou recusar um orçamento/cotação
+ThisIsInformationOnDocumentToSign=Esta é a informação no documento para aceitar ou recusar
+SignatureProposalRef=Signature of quote/commercial proposal %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 FeatureOnlineSignDisabled=Recurso para assinatura online desativado ou este documento foi criado antes que o recurso fosse ativado

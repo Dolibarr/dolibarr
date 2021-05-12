@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2010-2011 Regis Houssin <regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2010-2011 Regis Houssin <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2018      Juanjo Menent <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -50,8 +54,13 @@ foreach($linkedObjectBlock as $key => $objectlink)
     <td><?php echo $langs->trans("Contract"); ?></td>
     <td><?php echo $objectlink->getNomUrl(1); ?></td>
     <td></td>
+<<<<<<< HEAD
 	<td align="center"><?php echo dol_print_date($objectlink->date_contrat,'day'); ?></td>
     <td align="right"><?php
+=======
+	<td class="center"><?php echo dol_print_date($objectlink->date_contrat, 'day'); ?></td>
+    <td class="right"><?php
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// Price of contract is not shown by default because a contract is a list of service with
 		// start and end date that change with time andd that may be different that the period of reference for price.
 		// So price of a contract does often means nothing. Prices is on the different invoices done on same contract.
@@ -64,8 +73,13 @@ foreach($linkedObjectBlock as $key => $objectlink)
 			}
 			echo price($totalcontrat);
 		} ?></td>
+<<<<<<< HEAD
 	<td align="right"><?php echo $objectlink->getLibStatut(7); ?></td>
 	<td align="right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
+=======
+	<td class="right"><?php echo $objectlink->getLibStatut(7); ?></td>
+	<td class="right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 </tr>
 <?php } ?>
 

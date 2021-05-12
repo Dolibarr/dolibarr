@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,7 +28,11 @@
  *      \brief      Page with statistics on withdrawals
  */
 
+<<<<<<< HEAD
 require('../../main.inc.php');
+=======
+require '../../main.inc.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
@@ -32,16 +40,26 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies'));
 
 // Security check
+<<<<<<< HEAD
 $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'prelevement','','','bons');
+=======
+$socid = GETPOST('socid', 'int');
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'prelevement', '', '', 'bons');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 /*
  * View
  */
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("WithdrawStatistics"));
+=======
+llxHeader('', $langs->trans("WithdrawStatistics"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print load_fiche_titre($langs->trans("Statistics"));
 
@@ -73,7 +91,11 @@ if ($resql)
 print '<br>';
 print load_fiche_titre($langs->trans("WithdrawStatistics"), '', '');
 
+<<<<<<< HEAD
 $ligne=new LignePrelevement($db,$user);
+=======
+$ligne=new LignePrelevement($db, $user);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $sql = "SELECT sum(pl.amount), count(pl.amount), pl.statut";
 $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
@@ -91,8 +113,13 @@ if ($resql)
 	print"\n<!-- debut table -->\n";
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
+<<<<<<< HEAD
 	print '<td width="30%">'.$langs->trans("Status").'</td><td align="center">'.$langs->trans("Number").'</td><td align="right">%</td>';
 	print '<td align="right">'.$langs->trans("Amount").'</td><td align="right">%</td></tr>';
+=======
+	print '<td width="30%">'.$langs->trans("Status").'</td><td align="center">'.$langs->trans("Number").'</td><td class="right">%</td>';
+	print '<td class="right">'.$langs->trans("Amount").'</td><td class="right">%</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	while ($i < $num)
 	{
@@ -100,11 +127,16 @@ if ($resql)
 
 		print '<tr class="oddeven"><td>';
 
+<<<<<<< HEAD
 		print $ligne->LibStatut($row[2],1);
+=======
+		print $ligne->LibStatut($row[2], 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		//print $st[$row[2]];
 		print '</td><td align="center">';
 		print $row[1];
 
+<<<<<<< HEAD
 		print '</td><td align="right">';
 		print round($row[1]/$nbtotal*100,2)." %";
 
@@ -114,15 +146,33 @@ if ($resql)
 
 		print '</td><td align="right">';
 		print round($row[0]/$total*100,2)." %";
+=======
+		print '</td><td class="right">';
+		print round($row[1]/$nbtotal*100, 2)." %";
+
+		print '</td><td class="right">';
+
+		print price($row[0]);
+
+		print '</td><td class="right">';
+		print round($row[0]/$total*100, 2)." %";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</td></tr>';
 		
 		$i++;
 	}
 
+<<<<<<< HEAD
 	print '<tr class="liste_total"><td align="right">'.$langs->trans("Total").'</td>';
 	print '<td align="center">'.$nbtotal.'</td><td>&nbsp;</td><td align="right">';
 	print price($total);
 	print '</td><td align="right">&nbsp;</td>';
+=======
+	print '<tr class="liste_total"><td class="right">'.$langs->trans("Total").'</td>';
+	print '<td align="center">'.$nbtotal.'</td><td>&nbsp;</td><td class="right">';
+	print price($total);
+	print '</td><td class="right">&nbsp;</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print "</tr></table>";
 	$db->free();
 }
@@ -185,7 +235,11 @@ if ($resql)
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td width="30%">'.$langs->trans("Status").'</td><td align="center">'.$langs->trans("Number").'</td>';
+<<<<<<< HEAD
 	print '<td align="right">%</td><td align="right">'.$langs->trans("Amount").'</td><td align="right">%</td></tr>';
+=======
+	print '<td class="right">%</td><td class="right">'.$langs->trans("Amount").'</td><td class="right">%</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/rejetprelevement.class.php';
 	$Rejet = new RejetPrelevement($db, $user);
@@ -199,6 +253,7 @@ if ($resql)
 
 		print '</td><td align="center">'.$row[1];
 
+<<<<<<< HEAD
 		print '</td><td align="right">';
 		print round($row[1]/$nbtotal*100,2)." %";
 
@@ -207,16 +262,33 @@ if ($resql)
 
 		print '</td><td align="right">';
 		print round($row[0]/$total*100,2)." %";
+=======
+		print '</td><td class="right">';
+		print round($row[1]/$nbtotal*100, 2)." %";
+
+		print '</td><td class="right">';
+		print price($row[0]);
+
+		print '</td><td class="right">';
+		print round($row[0]/$total*100, 2)." %";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		print '</td></tr>';
 		
 		$i++;
 	}
 
+<<<<<<< HEAD
 	print '<tr class="liste_total"><td align="right">'.$langs->trans("Total").'</td><td align="center">'.$nbtotal.'</td>';
 	print '<td>&nbsp;</td><td align="right">';
 	print price($total);
 	print '</td><td align="right">&nbsp;</td>';
+=======
+	print '<tr class="liste_total"><td class="right">'.$langs->trans("Total").'</td><td align="center">'.$nbtotal.'</td>';
+	print '<td>&nbsp;</td><td class="right">';
+	print price($total);
+	print '</td><td class="right">&nbsp;</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print "</tr></table>";
 	$db->free($resql);
 }
@@ -225,7 +297,13 @@ else
 	dol_print_error($db);
 }
 
+<<<<<<< HEAD
 llxFooter();
 
 $db->close();
 
+=======
+// End of page
+llxFooter();
+$db->close();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

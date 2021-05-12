@@ -28,6 +28,7 @@
  */
 class ExpeditionLineBatch extends CommonObject
 {
+<<<<<<< HEAD
 	var $element='expeditionlignebatch';			//!< Id that identify managed objects
 	private static $_table_element='expeditiondet_batch';		//!< Name of table without prefix where object is stored
 
@@ -39,16 +40,39 @@ class ExpeditionLineBatch extends CommonObject
 	var $entrepot_id;
 	var $fk_origin_stock;
 	var $fk_expeditiondet;
+=======
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='expeditionlignebatch';
+
+	private static $_table_element='expeditiondet_batch';		//!< Name of table without prefix where object is stored
+
+	public $sellby;
+	public $eatby;
+	public $batch;
+	public $qty;
+	public $dluo_qty; // deprecated, use qty
+	public $entrepot_id;
+	public $fk_origin_stock;
+	public $fk_expeditiondet;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     /**
      *  Constructor
      *
      *  @param	DoliDb		$db      Database handler
      */
+<<<<<<< HEAD
     function __construct($db)
     {
         $this->db = $db;
         return 1;
+=======
+    public function __construct($db)
+    {
+        $this->db = $db;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
 	/**
@@ -57,7 +81,11 @@ class ExpeditionLineBatch extends CommonObject
 	 * @param	int		$id_stockdluo	Rowid in product_batch table
 	 * @return	int      		   	 -1 if KO, 1 if OK
 	 */
+<<<<<<< HEAD
 	function fetchFromStock($id_stockdluo)
+=======
+	public function fetchFromStock($id_stockdluo)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$sql = "SELECT";
 		$sql.= " pb.batch,";
@@ -101,7 +129,11 @@ class ExpeditionLineBatch extends CommonObject
 	 * @param	int		$id_line_expdet		rowid of expedtiondet record
 	 * @return	int							<0 if KO, Id of record (>0) if OK
 	 */
+<<<<<<< HEAD
 	function create($id_line_expdet)
+=======
+	public function create($id_line_expdet)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$error = 0;
 
@@ -152,7 +184,11 @@ class ExpeditionLineBatch extends CommonObject
 	 * @param	int		$id_expedition	rowid of shipment
 	 * @return 	int						-1 if KO, 1 if OK
 	 */
+<<<<<<< HEAD
 	static function deletefromexp($db,$id_expedition)
+=======
+	public static function deletefromexp($db, $id_expedition)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$id_expedition = (int) $id_expedition;
 
@@ -178,7 +214,11 @@ class ExpeditionLineBatch extends CommonObject
 	 * @param	int			$fk_product			If provided, load also detailed information of lot
 	 * @return	int|array						-1 if KO, array of ExpeditionLineBatch if OK
 	 */
+<<<<<<< HEAD
 	static function fetchAll($db, $id_line_expdet, $fk_product=0)
+=======
+	public static function fetchAll($db, $id_line_expdet, $fk_product = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$sql="SELECT";
 		$sql.= " eb.rowid,";
@@ -234,5 +274,8 @@ class ExpeditionLineBatch extends CommonObject
 			return -1;
 		}
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

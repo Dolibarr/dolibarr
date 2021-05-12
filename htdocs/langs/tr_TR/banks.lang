@@ -1,8 +1,14 @@
 # Dolibarr language file - Source file is en_US - banks
 Bank=Banka
+<<<<<<< HEAD
 MenuBankCash=Bank | Cash
 MenuVariousPayment=Miscellaneous payments
 MenuNewVariousPayment=New Miscellaneous payment
+=======
+MenuBankCash=Banka | Kasa
+MenuVariousPayment=Çeşitli ödemeler
+MenuNewVariousPayment=Yeni Çeşitli ödeme
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BankName=Banka adı
 FinancialAccount=Hesap
 BankAccount=Banka hesabı
@@ -30,23 +36,40 @@ AllTime=Başlangıç
 Reconciliation=Uzlaşma
 RIB=Banka Hesap Numarası
 IBAN=IBAN numarası
+<<<<<<< HEAD
 BIC=BIC/SWIFT numarası
 SwiftValid=BIC/SWIFT valid
 SwiftVNotalid=BIC/SWIFT not valid
 IbanValid=BAN valid
 IbanNotValid=BAN not valid
 StandingOrders=Direct Debit orders
+=======
+BIC=BIC/SWIFT kodu
+SwiftValid=BIC/SWIFT geçerli
+SwiftVNotalid=BIC/SWIFT geçerli değil
+IbanValid=BAN geçerli
+IbanNotValid=BAN geçerli değil
+StandingOrders=Otomatik Ödeme talimatları
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 StandingOrder=Otomatik ödeme talimatı
 AccountStatement=Hesap özeti
 AccountStatementShort=Özet
 AccountStatements=Hesap özetleri
 LastAccountStatements=Son hesap özetleri
 IOMonthlyReporting=Aylık raporlama
+<<<<<<< HEAD
 BankAccountDomiciliation=Hesap adresi
 BankAccountCountry=Hesap ülkesi
 BankAccountOwner=Hesap sahibi adı
 BankAccountOwnerAddress=Hesap sahibi adresi
 RIBControlError=Değerlerin bütünlük denetimi başarısız. Bu demektir ki; bu hesap numarasına ait bilgiler tam değil ya da yanlıştır (ülkeyi, numaraları ve IBAN’ı kontrol edin).
+=======
+BankAccountDomiciliation=Banka adresi
+BankAccountCountry=Hesap ülkesi
+BankAccountOwner=Hesap sahibi adı
+BankAccountOwnerAddress=Hesap sahibi adresi
+RIBControlError=Integrity check of values failed. This means the information for this account number is not complete or is incorrect (check country, numbers and IBAN).
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CreateAccount=Hesap oluştur
 NewBankAccount=Yeni hesap
 NewFinancialAccount=Yeni ticari hesap
@@ -60,6 +83,7 @@ BankType2=Kasa hesabı
 AccountsArea=Hesaplar alanı
 AccountCard=Hesap kartı
 DeleteAccount=Hesap sil
+<<<<<<< HEAD
 ConfirmDeleteAccount=Are you sure you want to delete this account?
 Account=Hesap
 BankTransactionByCategories=Bank entries by categories
@@ -77,17 +101,42 @@ Conciliable=Uzlaştırılabilir
 Conciliate=Uzlaştır
 Conciliation=Uzlaşma
 ReconciliationLate=Reconciliation late
+=======
+ConfirmDeleteAccount=Bu hesabı silmek istediğinizden emin misiniz?
+Account=Hesap
+BankTransactionByCategories=Kategorilere göre banka kayıtları
+BankTransactionForCategory=<b>%s</b> kategorisi için banka kayıtları
+RemoveFromRubrique=Kategori bağlantısını kaldır
+RemoveFromRubriqueConfirm=Giriş ve kategori arasındaki bağlantıyı kaldırmak istediğinizden emin misiniz?
+ListBankTransactions=Banka kayıtlarının listesi
+IdTransaction=İşlem Kimliği
+BankTransactions=Banka kayıtları
+BankTransaction=Banka girişi
+ListTransactions=Kayıtları listele
+ListTransactionsByCategory=Kayıtları/Kategorileri listele
+TransactionsToConciliate=Uzlaştırılacak girişler
+Conciliable=Uzlaştırılabilir
+Conciliate=Uzlaştır
+Conciliation=Uzlaşma
+SaveStatementOnly=Yalnızca bildirimi kaydet
+ReconciliationLate=Uzlaştırma gecikmiş
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 IncludeClosedAccount=Kapalı hesapları içer
 OnlyOpenedAccount=Yalnızca açık hesaplar
 AccountToCredit=Alacak hesabı
 AccountToDebit=Borç hesabı
 DisableConciliation=Bu hesap için uzlaşma özelliğini engelle
 ConciliationDisabled=Uzlaşma özelliği engelli
+<<<<<<< HEAD
 LinkedToAConciliatedTransaction=Linked to a conciliated entry
+=======
+LinkedToAConciliatedTransaction=Uzlaştırılmış bir girişe bağlı
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 StatusAccountOpened=Açık
 StatusAccountClosed=Kapalı
 AccountIdShort=Numarası
 LineRecord=İşlem
+<<<<<<< HEAD
 AddBankRecord=Add entry
 AddBankRecordLong=Add entry manually
 Conciliated=Reconciled
@@ -100,23 +149,49 @@ CustomerInvoicePayment=Müşteri ödemesi
 SupplierInvoicePayment=Tedarikçi ödemesi
 SubscriptionPayment=Abonelik ödemesi
 WithdrawalPayment=Para çekme ödemesi
+=======
+AddBankRecord=Giriş ekle
+AddBankRecordLong=El ile giriş ekle
+Conciliated=Uzlaştırıldı
+ConciliatedBy=Uzlaştıran
+DateConciliating=Uzlaştırma tarihi
+BankLineConciliated=Giriş uzlaştırıldı
+Reconciled=Uzlaştırıldı
+NotReconciled=Uzlaştırılmadı
+CustomerInvoicePayment=Müşteri ödemesi
+SupplierInvoicePayment=Tedarikçi ödemesi
+SubscriptionPayment=Abonelik ödemesi
+WithdrawalPayment=Borç ödeme talimatı
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SocialContributionPayment=Sosyal/mali vergi ödemesi
 BankTransfer=Banka havalesi
 BankTransfers=Banka havaleleri
 MenuBankInternalTransfer=İç aktarım
+<<<<<<< HEAD
 TransferDesc=Transfer from one account to another one, Dolibarr will write two record (a debit in source account and a credit in target account. The same amount (except sign), label and date will be used for this transaction)
+=======
+TransferDesc=Transfer from one account to another, Dolibarr will write two records (a debit in source account and a credit in target account). The same amount (except sign), label and date will be used for this transaction)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TransferFrom=Kimden
 TransferTo=Kime
 TransferFromToDone=<b>%s</b> den <b>%s</b> nin <b>%s</b> %s ne bir transfer kaydedildi.
 CheckTransmitter=Gönderen
+<<<<<<< HEAD
 ValidateCheckReceipt=Validate this check receipt?
 ConfirmValidateCheckReceipt=Are you sure you want to validate this check receipt, no change will be possible once this is done?
 DeleteCheckReceipt=Delete this check receipt?
 ConfirmDeleteCheckReceipt=Are you sure you want to delete this check receipt?
+=======
+ValidateCheckReceipt=Bu çek makbuzu doğrulansın mı?
+ConfirmValidateCheckReceipt=Bu çek makbuzunu doğrulamak istediğinizden emin misiniz? Bu işlem onayından sonra değişiklik yapılamaz.
+DeleteCheckReceipt=Bu çek makbuzu silinsin mi?
+ConfirmDeleteCheckReceipt=Bu çek makbuzunu silmek istediğinizden emin misiniz?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BankChecks=Banka çekleri
 BankChecksToReceipt=Ödeme için bekleyen çekler
 ShowCheckReceipt=Çek tahsilat makbuzunu göster
 NumberOfCheques=Çek sayısı
+<<<<<<< HEAD
 DeleteTransaction=Delete entry
 ConfirmDeleteTransaction=Are you sure you want to delete this entry?
 ThisWillAlsoDeleteBankRecord=This will also delete generated bank entry
@@ -124,6 +199,15 @@ BankMovements=Hareketler
 PlannedTransactions=Planned entries
 Graph=Grafikler
 ExportDataset_banque_1=Bank entries and account statement
+=======
+DeleteTransaction=Girişi sil
+ConfirmDeleteTransaction=Bu girişi silmek istediğinizden emin misiniz?
+ThisWillAlsoDeleteBankRecord=Bu, oluşturulan banka girişini de silecektir
+BankMovements=Hareketler
+PlannedTransactions=Planlanmış girişler
+Graph=Grafikler
+ExportDataset_banque_1=Banka kayıtları ve hesap ekstresi
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ExportDataset_banque_2=Banka cüzdanı
 TransactionOnTheOtherAccount=Diğer hesaptaki işlemler
 PaymentNumberUpdateSucceeded=Ödeme numarası güncellemesi başarılı
@@ -131,6 +215,7 @@ PaymentNumberUpdateFailed=Ödeme numarası güncellenemedi
 PaymentDateUpdateSucceeded=Ödeme tarihi güncellemesi başarılı
 PaymentDateUpdateFailed=Ödeme tarihi güncellenemedi
 Transactions=İşlemler
+<<<<<<< HEAD
 BankTransactionLine=Bank entry
 AllAccounts=All bank and cash accounts
 BackToAccount=Hesaba geri dön
@@ -140,19 +225,37 @@ SelectChequeTransactionAndGenerate=Çek tahsilat makbuzunun içereceği çekleri
 InputReceiptNumber=Uzlaştırma ile ilişkili banka hesap özetini seç. Sıralanabilir bir sayısal değer kullan: YYYYMM ya da YYYYMMDD
 EventualyAddCategory=Sonunda, kayıtları sınıflandırmak için bir kategori belirtin
 ToConciliate=To reconcile?
+=======
+BankTransactionLine=Banka girişi
+AllAccounts=Tüm banka ve kasa hesapları
+BackToAccount=Hesaba geri dön
+ShowAllAccounts=Tüm hesaplar için göster
+FutureTransaction=Future transaction. Unable to reconcile.
+SelectChequeTransactionAndGenerate=Çek mevduat makbuzuna dahil etmek için çekleri seç/filtrele ve "Oluştur" butonuna tıkla.
+InputReceiptNumber=Uzlaştırma ile ilişkili banka hesap özetini seç. Sıralanabilir bir sayısal değer kullan: YYYYMM ya da YYYYMMDD
+EventualyAddCategory=Sonunda, kayıtları sınıflandırmak için bir kategori belirtin
+ToConciliate=Uzlaştırılsın mı?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ThenCheckLinesAndConciliate=Sonra, banka hesap özetindeki kalemleri işaretleyin ve tıklayın
 DefaultRIB=Varsayılan BAN
 AllRIB=Tüm BAN
 LabelRIB=BAN Etiketi
 NoBANRecord=BAN kaydı yok
 DeleteARib=BAN kaydını sil
+<<<<<<< HEAD
 ConfirmDeleteRib=Are you sure you want to delete this BAN record?
 RejectCheck=Çek döndü
 ConfirmRejectCheck=Are you sure you want to mark this check as rejected?
+=======
+ConfirmDeleteRib=Bu BAN kaydını silmek istediğinizden emin misiniz?
+RejectCheck=Çek döndü
+ConfirmRejectCheck=Bu çeki reddedildi olarak işaretlemek istediğinizden emin misiniz?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 RejectCheckDate=Dönen çekin tarihi
 CheckRejected=Çek döndü
 CheckRejectedAndInvoicesReopened=Çek döndü ve fatura yeniden açık yapıldı
 BankAccountModelModule=Banka hesapları için belge şablonları
+<<<<<<< HEAD
 DocumentModelSepaMandate=Template of SEPA mandate. Usefull for european countries in EEC only.
 DocumentModelBan=Template to print a page with BAN information.
 NewVariousPayment=New miscellaneous payments
@@ -163,3 +266,18 @@ AddVariousPayment=Add miscellaneous payments
 SEPAMandate=SEPA mandate
 YourSEPAMandate=Your SEPA mandate
 FindYourSEPAMandate=This is your SEPA mandate to authorize our company to make direct debit order to your bank. Thanks to return it signed (scan of the signed document) or sent it by mail to
+=======
+DocumentModelSepaMandate=Template of SEPA mandate. Useful for European countries in EEC only.
+DocumentModelBan=BAN bilgisini içeren bir sayfayı yazdırmak için şablon
+NewVariousPayment=New miscellaneous payment
+VariousPayment=Miscellaneous payment
+VariousPayments=Çeşitli ödemeler
+ShowVariousPayment=Show miscellaneous payment
+AddVariousPayment=Çeşitli ödeme ekle
+SEPAMandate=SEPA mandate
+YourSEPAMandate=Your SEPA mandate
+FindYourSEPAMandate=This is your SEPA mandate to authorize our company to make direct debit order to your bank. Return it signed (scan of the signed document) or send it by mail to
+AutoReportLastAccountStatement=Automatically fill the field 'number of bank statement' with last statement number when making reconciliation
+CashControl=POS cash fence
+NewCashFence=New cash fence
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

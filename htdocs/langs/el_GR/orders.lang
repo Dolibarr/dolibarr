@@ -16,6 +16,7 @@ MakeOrder=Δημιουργία παραγγελίας
 SupplierOrder=Purchase order
 SuppliersOrders=Purchase orders
 SuppliersOrdersRunning=Current purchase orders
+<<<<<<< HEAD
 CustomerOrder=Παραγγελία του πελάτη
 CustomersOrders=Παραγγελίες πελάτη
 CustomersOrdersRunning=Τρέχουσες παραγγελίες πελατών
@@ -24,6 +25,16 @@ OrdersDeliveredToBill=Customer orders delivered to bill
 OrdersToBill=Παραγγελίες πελάτη που έχουν παραδοθεί
 OrdersInProcess=Παραγγελίες πελάτη σε επεξεργασία
 OrdersToProcess=Παραγγελίες πελατών για επεξεργασία
+=======
+CustomerOrder=Sales Order
+CustomersOrders=Sales Orders
+CustomersOrdersRunning=Current sales orders
+CustomersOrdersAndOrdersLines=Sales orders and order details
+OrdersDeliveredToBill=Sales orders delivered to bill
+OrdersToBill=Sales orders delivered
+OrdersInProcess=Sales orders in process
+OrdersToProcess=Sales orders to process
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SuppliersOrdersToProcess=Purchase orders to process
 StatusOrderCanceledShort=Ακυρωμένη
 StatusOrderDraftShort=Προσχέδιο
@@ -76,8 +87,13 @@ OrdersOpened=Παραγγελίες για επεξεργασία
 NoDraftOrders=Δεν υπάρχουν προσχέδια παραγγελιών
 NoOrder=Αρ. παραγγελίας
 NoSupplierOrder=No purchase order
+<<<<<<< HEAD
 LastOrders=Τελευταίες %s παραγγελίες πελατών
 LastCustomerOrders=Τελευταίες %s παραγγελίες πελατών
+=======
+LastOrders=Latest %s sales orders
+LastCustomerOrders=Latest %s sales orders
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LastSupplierOrders=Latest %s purchase orders
 LastModifiedOrders=Τελευταίες %s τροποποιημένες παραγγελίες
 AllOrders=Όλες οι παραγγελίες
@@ -85,10 +101,17 @@ NbOfOrders=Πλήθος παραγγελιών
 OrdersStatistics=Στατιστικά παραγγελιών
 OrdersStatisticsSuppliers=Purchase order statistics
 NumberOfOrdersByMonth=Πλήθος παραγγελιών ανά μήνα
+<<<<<<< HEAD
 AmountOfOrdersByMonthHT=Ποσό των παραγγελιών ανά μήνα (μετά από φόρους)
 ListOfOrders=Λίστα παραγγελιών
 CloseOrder=Κλείσιμο Παραγγελίας
 ConfirmCloseOrder=Are you sure you want to set this order to deliverd? Once an order is delivered, it can be set to billed.
+=======
+AmountOfOrdersByMonthHT=Amount of orders by month (excl. tax)
+ListOfOrders=Λίστα παραγγελιών
+CloseOrder=Κλείσιμο Παραγγελίας
+ConfirmCloseOrder=Are you sure you want to set this order to delivered? Once an order is delivered, it can be set to billed.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmDeleteOrder=Είστε σίγουρος ότι θέλετε να διαγράψετε την παραγγελία;
 ConfirmValidateOrder=Are you sure you want to validate this order under name <b>%s</b>?
 ConfirmUnvalidateOrder=Are you sure you want to restore order <b>%s</b> to draft status?
@@ -110,6 +133,7 @@ OrderMode=Μέθοδος παραγγελίας
 AuthorRequest=Request author
 UserWithApproveOrderGrant=Users granted with "approve orders" permission.
 PaymentOrderRef=Payment of order %s
+<<<<<<< HEAD
 CloneOrder=Κλωνοποίηση παραγγελίας
 ConfirmCloneOrder=Are you sure you want to clone this order <b>%s</b>?
 DispatchSupplierOrder=Receiving supplier order %s
@@ -121,6 +145,18 @@ SupplierOrderClassifiedBilled=Purchase Order %s set billed
 OtherOrders=Άλλες παραγγελίες
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Representative following-up customer order
+=======
+ConfirmCloneOrder=Are you sure you want to clone this order <b>%s</b>?
+DispatchSupplierOrder=Receiving purchase order %s
+FirstApprovalAlreadyDone=Η πρώτη έγκριση ήδη έγινε
+SecondApprovalAlreadyDone=Second approval already done
+SupplierOrderReceivedInDolibarr=Purchase Order %s received %s
+SupplierOrderSubmitedInDolibarr=Purchase Order %s submitted
+SupplierOrderClassifiedBilled=Purchase Order %s set billed
+OtherOrders=Άλλες παραγγελίες
+##### Types de contacts #####
+TypeContact_commande_internal_SALESREPFOLL=Representative following-up sales order
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TypeContact_commande_internal_SHIPPING=Representative following-up shipping
 TypeContact_commande_external_BILLING=Customer invoice contact
 TypeContact_commande_external_SHIPPING=Customer shipping contact
@@ -136,11 +172,19 @@ Error_OrderNotChecked=Δεν υπάρχουν παραγγελίες στο επ
 # Order modes (how we receive order). Not the "why" are keys stored into dict.lang
 OrderByMail=Ταχυδρομείο
 OrderByFax=Φαξ
+<<<<<<< HEAD
 OrderByEMail=EMail
+=======
+OrderByEMail=Email
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 OrderByWWW=Online
 OrderByPhone=Τηλέφωνο
 # Documents models
 PDFEinsteinDescription=Ολοκληρωμένο πρότυπο παραγγελίας (λογότυπο...)
+<<<<<<< HEAD
+=======
+PDFEratostheneDescription=Ολοκληρωμένο πρότυπο παραγγελίας (λογότυπο...)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PDFEdisonDescription=Απλό πρότυπο παραγγελίας
 PDFProformaDescription=Ένα πλήρες προτιμολόγιο (λογότυπο ...)
 CreateInvoiceForThisCustomer=Τιμολογημένες παραγγελίες

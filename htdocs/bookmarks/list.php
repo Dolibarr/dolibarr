@@ -27,22 +27,38 @@ require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('bookmarks', 'admin'));
 
+<<<<<<< HEAD
 $action=GETPOST('action','alpha');
 $massaction=GETPOST('massaction','alpha');
 $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
+=======
+$action=GETPOST('action', 'alpha');
+$massaction=GETPOST('massaction', 'alpha');
+$show_files=GETPOST('show_files', 'int');
+$confirm=GETPOST('confirm', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $toselect = GETPOST('toselect', 'array');
 
 // Security check
 if (! $user->rights->bookmark->lire) {
 	restrictedArea($user, 'bookmarks');
 }
+<<<<<<< HEAD
 $optioncss = GETPOST('optioncss','alpha');
 
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
+=======
+$optioncss = GETPOST('optioncss', 'alpha');
+
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -50,7 +66,11 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield='position';
 if (! $sortorder) $sortorder='ASC';
 
+<<<<<<< HEAD
 $id = GETPOST("id",'int');
+=======
+$id = GETPOST("id", 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 /*
@@ -82,12 +102,17 @@ $userstatic=new User($db);
 llxHeader('', $langs->trans("ListOfBookmarks"));
 
 $newcardbutton='';
+<<<<<<< HEAD
 if ($user->rights->bookmark->creer)
 {
 	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/bookmarks/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewBookmark').'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 }
+=======
+$newcardbutton.= dolGetButtonTitle($langs->trans('NewBookmark'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/bookmarks/card.php?action=create', '', !empty($user->rights->bookmark->creer));
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print_barre_liste($langs->trans("ListOfBookmarks"), $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, '', -1, '', 'title_generic.png', 0, $newcardbutton);
 
@@ -97,7 +122,11 @@ $sql.= " FROM ".MAIN_DB_PREFIX."bookmark as b LEFT JOIN ".MAIN_DB_PREFIX."user a
 $sql.= " WHERE 1=1";
 $sql.= " AND b.entity = ".$conf->entity;
 if (! $user->admin) $sql.= " AND (b.fk_user = ".$user->id." OR b.fk_user is NULL OR b.fk_user = 0)";
+<<<<<<< HEAD
 $sql.= $db->order($sortfield.", position",$sortorder);
+=======
+$sql.= $db->order($sortfield.", position", $sortorder);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $sql.= $db->plimit($limit, $offset);
 
 $resql=$db->query($sql);
@@ -115,6 +144,7 @@ if ($resql)
 
 	print "<tr class=\"liste_titre\">";
 	//print "<td>&nbsp;</td>";
+<<<<<<< HEAD
 	print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"b.rowid","", $param,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre("Title",$_SERVER["PHP_SELF"],"b.title","", $param,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre("Link",$_SERVER["PHP_SELF"],"b.url","", $param,'align="left"',$sortfield,$sortorder);
@@ -122,6 +152,15 @@ if ($resql)
 	print_liste_field_titre("Owner",$_SERVER["PHP_SELF"],"u.lastname","", $param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"b.dateb","", $param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre("Position",$_SERVER["PHP_SELF"],"b.position","", $param,'align="right"',$sortfield,$sortorder);
+=======
+	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "b.rowid", "", $param, 'align="left"', $sortfield, $sortorder);
+	print_liste_field_titre("Title", $_SERVER["PHP_SELF"], "b.title", "", $param, 'align="left"', $sortfield, $sortorder);
+	print_liste_field_titre("Link", $_SERVER["PHP_SELF"], "b.url", "", $param, 'align="left"', $sortfield, $sortorder);
+	print_liste_field_titre("Target", '', '', '', '', 'align="center"');
+	print_liste_field_titre("Owner", $_SERVER["PHP_SELF"], "u.lastname", "", $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "b.dateb", "", $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre("Position", $_SERVER["PHP_SELF"], "b.position", "", $param, 'class="right"', $sortfield, $sortorder);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print_liste_field_titre('');
 	print "</tr>\n";
 
@@ -132,8 +171,13 @@ if ($resql)
 		print '<tr class="oddeven">';
 
 		// Id
+<<<<<<< HEAD
 		print '<td align="left">';
 		print "<a href=\"card.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowBookmark"),"bookmark").' '.$obj->rowid."</a>";
+=======
+		print '<td class="left">';
+		print "<a href=\"card.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowBookmark"), "bookmark").' '.$obj->rowid."</a>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</td>';
 
 		$linkintern=0;
@@ -176,6 +220,7 @@ if ($resql)
 		print "</td>\n";
 
 		// Date creation
+<<<<<<< HEAD
 		print '<td align="center">'.dol_print_date($db->jdate($obj->dateb),'day')."</td>";
 
 		// Position
@@ -183,6 +228,15 @@ if ($resql)
 
 		// Actions
 		print '<td align="right" class="nowrap">';
+=======
+		print '<td align="center">'.dol_print_date($db->jdate($obj->dateb), 'day')."</td>";
+
+		// Position
+		print '<td class="right">'.$obj->position."</td>";
+
+		// Actions
+		print '<td class="nowrap right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if ($user->rights->bookmark->creer)
 		{
 			print "<a href=\"".DOL_URL_ROOT."/bookmarks/card.php?action=edit&id=".$obj->rowid."&backtopage=".urlencode($_SERVER["PHP_SELF"])."\">".img_edit()."</a> ";
@@ -209,8 +263,14 @@ else
 	dol_print_error($db);
 }
 
+<<<<<<< HEAD
 
 llxFooter();
 $db->close();
 
 
+=======
+// End of page
+llxFooter();
+$db->close();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -1,2 +1,7 @@
 # Dolibarr language file - Source file is en_US - cashdesk
+<<<<<<< HEAD
+=======
+CashDeskStock=Valores
+Change=Exceso recibido
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShowCompany=Mostar empresa

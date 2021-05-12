@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -37,6 +41,7 @@ if (!$user->rights->commande->lire)	accessforbidden();
 $langs->loadLangs(array('orders', 'sendings'));
 
 $socid=0;
+<<<<<<< HEAD
 $comid = GETPOST("id",'int');
 $id = GETPOST("id",'int');
 $ref=GETPOST('ref','alpha');
@@ -44,6 +49,15 @@ $ref=GETPOST('ref','alpha');
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'commande',$comid,'');
+=======
+$comid = GETPOST("id", 'int');
+$id = GETPOST("id", 'int');
+$ref=GETPOST('ref', 'alpha');
+
+// Security check
+if ($user->societe_id) $socid=$user->societe_id;
+$result=restrictedArea($user, 'commande', $comid, '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $object = new Commande($db);
 if (! $object->fetch($id, $ref) > 0)
@@ -59,7 +73,11 @@ if (! $object->fetch($id, $ref) > 0)
 
 $form = new Form($db);
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans('Order'),'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
+=======
+llxHeader('', $langs->trans('Order'), 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $object->fetch_thirdparty();
 $object->info($object->id);
@@ -128,5 +146,9 @@ print '</div>';
 
 dol_fiche_end();
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

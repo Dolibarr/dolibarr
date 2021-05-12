@@ -43,11 +43,19 @@ $sortorder='ASC';
  * View
  */
 
+<<<<<<< HEAD
 llxHeader("","");
 
 $form = new Form($db);
 
 print load_fiche_titre($langs->trans("TriggersAvailable"),'','title_setup');
+=======
+llxHeader("", "");
+
+$form = new Form($db);
+
+print load_fiche_titre($langs->trans("TriggersAvailable"), '', 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print $langs->trans("TriggersDesc")."<br>";
 print "<br>\n";
@@ -84,6 +92,11 @@ foreach ($triggers as $trigger)
 print '</table>';
 print '</div>';
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

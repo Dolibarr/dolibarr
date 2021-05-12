@@ -52,6 +52,10 @@ ActionAC_TEL=電話
 ActionAC_FAX=FAXを送信
 ActionAC_PROP=メールで提案を送る
 ActionAC_EMAIL=電子メールを送信
+<<<<<<< HEAD
+=======
+ActionAC_EMAIL_IN=Reception of Email
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActionAC_RDV=ミーティング
 ActionAC_INT=Intervention on site
 ActionAC_FAC=メールでの顧客の請求書を送る
@@ -72,8 +76,15 @@ StatusProsp=見通しの状態
 DraftPropals=ドラフト商業の提案
 NoLimit=No limit
 ToOfferALinkForOnlineSignature=Link for online signature
+<<<<<<< HEAD
 WelcomeOnOnlineSignaturePage=Welcome on the page to accept commerical proposals from %s
 ThisScreenAllowsYouToSignDocFrom=This screen allow you to accept and sign, or refuse, a quote/commercial proposal
 ThisIsInformationOnDocumentToSign=This is information on document to accept or refuse
 SignatureProposalRef=Signature of quote/commerical proposal %s
+=======
+WelcomeOnOnlineSignaturePage=Welcome to the page to accept commercial proposals from %s
+ThisScreenAllowsYouToSignDocFrom=This screen allow you to accept and sign, or refuse, a quote/commercial proposal
+ThisIsInformationOnDocumentToSign=This is information on document to accept or refuse
+SignatureProposalRef=Signature of quote/commercial proposal %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 FeatureOnlineSignDisabled=Feature for online signing disabled or document generated before the feature was enabled

@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - companies
+<<<<<<< HEAD
 ErrorCompanyNameAlreadyExists=نام شرکت از٪ s از قبل وجود دارد. یکی دیگر را انتخاب کنید.
 ErrorSetACountryFirst=تنظیم این کشور برای اولین بار
 SelectThirdParty=انتخاب شخص ثالث
@@ -58,6 +59,68 @@ State=ایالت / استان
 StateShort=State
 Region=منطقه
 Region-State=Region - State
+=======
+ErrorCompanyNameAlreadyExists=نام شرکت %s از قبل، وجود داشته است. لطفا نام دیگری برگزینید.
+ErrorSetACountryFirst=ابتدا کشور را تعیین کنید
+SelectThirdParty=انتخاب شخص‌سوم
+ConfirmDeleteCompany=آیا مطمئن هستید که می‌خواهید این شرکت و همۀ اطلاعات مربوطه را حذف کنید؟
+DeleteContact=حذف یک طرف‌تماس/نشانی
+ConfirmDeleteContact=آیا مطمئن هستید که می‌خواهید این طرف‌تماس و همۀ اطلاعات مربوطه را حذف کنید؟
+MenuNewThirdParty=شخص‌سوم جدید
+MenuNewCustomer=مشتری جدید
+MenuNewProspect=مشتری‌احتمالی جدید
+MenuNewSupplier=فروشندۀ جدید
+MenuNewPrivateIndividual=فرد خصوصی جدید
+NewCompany=شرکت جدید (مشتری‌احتمالی، مشتری، فروشنده)
+NewThirdParty=شخص‌سوم جدید (مشتری‌احتمالی، مشتری، فروشنده)
+CreateDolibarrThirdPartySupplier=ایجاد شخص‌سوم (فروشنده)
+CreateThirdPartyOnly=ایجاد شخص‌سوم
+CreateThirdPartyAndContact=ایجاد یک شخص‌سوم + یک طرف‌تماس مولود
+ProspectionArea=منطقۀ موردبازرسی
+IdThirdParty=شناسۀ شخص‌سوم
+IdCompany=شناسۀ شرکت
+IdContact=شناسۀ طرف‌تماس
+Contacts=طرف‌های‌تماس/نشانی‌ها
+ThirdPartyContacts=طرف‌های تماس شخص سوم
+ThirdPartyContact=طرف‌تماس‌ها/نشانی‌ شخص‌سوم
+Company=شرکت
+CompanyName=نام شرکت
+AliasNames=سایر اسامی (نام تجاری، علامت‌تجاری و غیره)
+AliasNameShort=سایر اسامی
+Companies=شرکت
+CountryIsInEEC=کشور مربوطه داخل جامعۀ اقتصادی اروپاست
+PriceFormatInCurrentLanguage=چگونگی نمایش قیمت در زبان و واحدپولی فعلی
+ThirdPartyName=نام شخص‌سوم
+ThirdPartyEmail=رایانامۀ شخص‌سوم
+ThirdParty=شخص‌سوم
+ThirdParties=شخص‌های سوم
+ThirdPartyProspects=مشتری‌احتمالی
+ThirdPartyProspectsStats=مشتریان‌احتمالی
+ThirdPartyCustomers=مشتریان
+ThirdPartyCustomersStats=مشتریان
+ThirdPartyCustomersWithIdProf12=مشتریان با %s یا %s
+ThirdPartySuppliers=فروشندگان
+ThirdPartyType=نوع  شخص‌سوم
+Individual=فرد خصوصی
+ToCreateContactWithSameName=به طور خودکار با همین اطلاعات یک طرف/تماس نشانی شبیه به شخص‌سوم در ذیل این شخص‌سوم خواهد ساخت. در اکثر موارد، حتی در صورتی‌که که شخص‌سوم، یک شخص فیزیکی باشد، ساختن یک شخص‌سوم، کافی است. 
+ParentCompany=شرکت والد
+Subsidiaries=شرکتهای تابعه
+ReportByMonth=گزارش ماهانه
+ReportByCustomers=گزارش مشتری
+ReportByQuarter=گزارش بر اساس نرخ
+CivilityCode=کد ملی
+RegisteredOffice=دفتر ثبتی
+Lastname=نام خانوادگی
+Firstname=نام
+PostOrFunction=مرتبۀ شغلی
+UserTitle=عنوان
+NatureOfThirdParty=طبیعت شخص‌سوم
+Address=نشانی
+State=ایالت / استان
+StateShort=استان
+Region=منطقه
+Region-State=منطقه - استان
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Country=کشور
 CountryCode=کد کشور
 CountryId=شناسه کشور
@@ -65,6 +128,7 @@ Phone=تلفن
 PhoneShort=تلفن
 Skype=اسکایپ
 Call=تماس
+<<<<<<< HEAD
 Chat=انجمن
 PhonePro=تلفن پروفسور
 PhonePerso=شخصی سازی. تلفن
@@ -91,11 +155,40 @@ OverAllSupplierProposals=Price requests
 LocalTax1IsUsed=استفاده از مالیات دوم
 LocalTax1IsUsedES= RE استفاده شده است
 LocalTax1IsNotUsedES= RE استفاده نمی شود
+=======
+Chat=گفتگوی اینترنتی
+PhonePro=تلفن کاری
+PhonePerso=تلفن شخصی
+PhoneMobile=تلفن همراه
+No_Email=عدم تمایل به دریافت رایانامه‌های جمعی
+Fax=فکس
+Zip=کدپستی
+Town=شهر
+Web=وبگاه
+Poste= سمت
+DefaultLang=زبان پیش‌فرض
+VATIsUsed=استفاده از مالیات‌برفروش
+VATIsUsedWhenSelling=این گزینه تعیین می‌کند که این شخص‌سوم در هنگام ایجاد یک صورت‌حساب برای مشتریان خود از مالیات‌برفروش استفاده می‌کند یا نه
+VATIsNotUsed=مالیات‌برفروش مورد استفاده نیست
+CopyAddressFromSoc=نسخه‌برداری از نشانی‌های موجود در شخص‌سوم
+ThirdpartyNotCustomerNotSupplierSoNoRef=شخص‌سوم نه فروشنده‌است نه مشتری، شیئی برای اشاره وجود ندارد
+ThirdpartyIsNeitherCustomerNorClientSoCannotHaveDiscounts=شخص‌سوم نه فروشنده است، نه مشتری، تخفیف فعال نیست
+PaymentBankAccount=حساب بانکی پرداخت‌ها
+OverAllProposals=پیشنهادات
+OverAllOrders=سفارشات
+OverAllInvoices=صورت‌حساب‌ها
+OverAllSupplierProposals=درخواست‌های قیمت
+##### Local Taxes #####
+LocalTax1IsUsed=استفاده از مالیات دوم
+LocalTax1IsUsedES= RE استفاده می‌شود
+LocalTax1IsNotUsedES= RE استفاده نمی‌شود
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LocalTax2IsUsed=استفاده از مالیات سوم
 LocalTax2IsUsedES= IRPF استفاده شده است
 LocalTax2IsNotUsedES= IRPF استفاده نمی شود
 LocalTax1ES=RE
 LocalTax2ES=IRPF
+<<<<<<< HEAD
 TypeLocaltax1ES=نوع RE
 TypeLocaltax2ES=IRPF نوع
 WrongCustomerCode=کد مشتری نامعتبر است
@@ -118,10 +211,33 @@ ProfId5=ID حرفه ای 5
 ProfId6=ID حرفه ای 6
 ProfId1AR=پروفسور شناسه 1 (مدار / CUIL)
 ProfId2AR=پروفسور کد 2 (متخصص Revenu)
+=======
+WrongCustomerCode=کد مشتری نامعتبر است
+WrongSupplierCode=کد فروشنده نامعتبر است
+CustomerCodeModel=شکل کد مشتری
+SupplierCodeModel=شکل کد فروشنده
+Gencod=بارکد
+##### Professional ID #####
+ProfId1Short=شناسۀ کاری 1
+ProfId2Short=شناسۀ کاری 2
+ProfId3Short=شناسۀ کاری 3
+ProfId4Short=شناسۀ کاری 4
+ProfId5Short=شناسۀ کاری 5
+ProfId6Short=شناسۀ کاری 6
+ProfId1=شناسۀ کاری 1
+ProfId2=شناسۀ کاری 2
+ProfId3=شناسۀ کاری 3
+ProfId4=شناسۀ کاری 4
+ProfId5=شناسۀ کاری 5
+ProfId6=شناسۀ کاری 6
+ProfId1AR=شناسۀ کاری 1 (CUIT/CUIL)
+ProfId2AR=شناسۀ کاری 2 (Revenu brutes)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProfId3AR=-
 ProfId4AR=-
 ProfId5AR=-
 ProfId6AR=-
+<<<<<<< HEAD
 ProfId1AT=پروفسور شناسه 1 (USt.-IdNr)
 ProfId2AT=پروفسور کد 2 (USt.-شماره)
 ProfId3AT=پروفسور کد 3 (Handelsregister-شماره.)
@@ -129,12 +245,25 @@ ProfId4AT=-
 ProfId5AT=-
 ProfId6AT=-
 ProfId1AU=پروفسور شناسه 1 (ABN)
+=======
+ProfId1AT=شناسۀ کاری 1 (USt.-IdNr)
+ProfId2AT=شناسۀ کاری 2 (USt.-Nr)
+ProfId3AT=شناسۀ کاری 3 (Handelsregister-Nr.)
+ProfId4AT=-
+ProfId5AT=-
+ProfId6AT=-
+ProfId1AU=شناسۀ کاری 1 (ABN)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProfId2AU=-
 ProfId3AU=-
 ProfId4AU=-
 ProfId5AU=-
 ProfId6AU=-
+<<<<<<< HEAD
 ProfId1BE=پروفسور شناسه 1 (تعداد و حرفه ای)
+=======
+ProfId1BE=شناسۀ کاری 1 (شمارۀ حرفه‌ای)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProfId2BE=-
 ProfId3BE=-
 ProfId4BE=-
@@ -142,28 +271,45 @@ ProfId5BE=-
 ProfId6BE=-
 ProfId1BR=-
 ProfId2BR=IE (Inscricao Estadual)
+<<<<<<< HEAD
 ProfId3BR=IM (Inscricao شهری)
+=======
+ProfId3BR=IM (Inscricao Municipal)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProfId4BR=CPF
 #ProfId5BR=CNAE
 #ProfId6BR=INSS
 ProfId1CH=-
 ProfId2CH=-
+<<<<<<< HEAD
 ProfId3CH=پروفسور شناسه 1 (تعداد فدرال)
 ProfId4CH=پروفسور کد 2 (تعداد رکورد های تجاری)
 ProfId5CH=-
 ProfId6CH=-
 ProfId1CL=پروفسور شناسه 1 (RUT)
+=======
+ProfId3CH=شناسۀ حرفه‌ای 1 (Federal number)
+ProfId4CH=شناسۀ حرفه‌ای 2 (Commercial Record number)
+ProfId5CH=-
+ProfId6CH=-
+ProfId1CL=شناسۀ حرفه‌ای 1 (R.U.T.)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProfId2CL=-
 ProfId3CL=-
 ProfId4CL=-
 ProfId5CL=-
 ProfId6CL=-
+<<<<<<< HEAD
 ProfId1CO=پروفسور شناسه 1 (RUT)
+=======
+ProfId1CO=شناسۀ کاری 1 (R.U.T.)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProfId2CO=-
 ProfId3CO=-
 ProfId4CO=-
 ProfId5CO=-
 ProfId6CO=-
+<<<<<<< HEAD
 ProfId1DE=پروفسور شناسه 1 (USt.-IdNr)
 ProfId2DE=پروفسور کد 2 (USt.-شماره)
 ProfId3DE=پروفسور کد 3 (Handelsregister-شماره.)
@@ -183,17 +329,43 @@ ProfId4FR=پروفسور کد 4 (RCS / RM)
 ProfId5FR=-
 ProfId6FR=-
 ProfId1GB=شماره ثبت
+=======
+ProfId1DE= شناسۀ کاری 1 (USt.-IdNr)
+ProfId2DE=شناسۀ کاری 2 (USt.-Nr)
+ProfId3DE=شناسۀ کاری 3 (Handelsregister-Nr.)
+ProfId4DE=-
+ProfId5DE=-
+ProfId6DE=-
+ProfId1ES=شناسۀ کاری 1 (CIF/NIF)
+ProfId2ES=شناسۀ کاری 2 (شمارۀ امنیت اجتماعی)
+ProfId3ES=شناسۀ کاری 3 (CNAE)
+ProfId4ES=شناسۀ کاری 4 (Collegiate number)
+ProfId5ES=-
+ProfId6ES=-
+ProfId1FR=شناسۀ کاری 1 (SIREN)
+ProfId2FR=شناسۀ کاری 2 (SIRET)
+ProfId3FR=شناسۀ کاری 3 (NAF, old APE)
+ProfId4FR=شناسۀ کاری 4 (RCS/RM)
+ProfId5FR=-
+ProfId6FR=-
+ProfId1GB=شمارۀ ثبت
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProfId2GB=-
 ProfId3GB=SIC
 ProfId4GB=-
 ProfId5GB=-
 ProfId6GB=-
+<<<<<<< HEAD
 ProfId1HN=استاد آیدی. 1 (RTN)
+=======
+ProfId1HN=شناسۀ کاری 1 (RTN)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProfId2HN=-
 ProfId3HN=-
 ProfId4HN=-
 ProfId5HN=-
 ProfId6HN=-
+<<<<<<< HEAD
 ProfId1IN=پروفسور شناسه 1 (TIN)
 ProfId2IN=پروفسور کد 2 (PAN)
 ProfId3IN=پروفسور کد 3 (TAX SRVC)
@@ -202,10 +374,21 @@ ProfId5IN=پروفسور کد 5
 ProfId6IN=-
 ProfId1LU=Id. prof. 1 (R.C.S. Luxembourg)
 ProfId2LU=Id. prof. 2 (Business permit)
+=======
+ProfId1IN=شناسۀ کاری 1 (TIN)
+ProfId2IN=شناسۀ کاری 2 (PAN)
+ProfId3IN=شناسۀ کاری 3 (SRVC TAX)
+ProfId4IN=شناسۀ کاری 4
+ProfId5IN=شناسۀ کاری 5
+ProfId6IN=-
+ProfId1LU=شناسۀ کاری 1 (R.C.S. Luxembourg)
+ProfId2LU=شناسۀ کاری 2 (Business permit)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProfId3LU=-
 ProfId4LU=-
 ProfId5LU=-
 ProfId6LU=-
+<<<<<<< HEAD
 ProfId1MA=استاد آیدی. 1 (RC)
 ProfId2MA=استاد آیدی. 2 (Patente)
 ProfId3MA=استاد آیدی. 3 (IF)
@@ -215,6 +398,17 @@ ProfId6MA=-
 ProfId1MX=پروفسور شناسه 1 (RFC).
 ProfId2MX=پروفسور کد 2 (R..P. IMSS)
 ProfId3MX=پروفسور کد 3 (حرفه منشور)
+=======
+ProfId1MA=شناسۀ کاری 1 (R.C.)
+ProfId2MA=شناسۀ کاری 2 (Patente)
+ProfId3MA=شناسۀ کاری 3 (I.F.)
+ProfId4MA=شناسۀ کاری 4 (C.N.S.S.)
+ProfId5MA=شناسۀ کاری 5 (I.C.E.)
+ProfId6MA=-
+ProfId1MX=شناسۀ کاری 1 (R.F.C).
+ProfId2MX=شناسۀ کاری 2 (R..P. IMSS)
+ProfId3MX=شناسۀ کاری (Profesional Charter)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProfId4MX=-
 ProfId5MX=-
 ProfId6MX=-
@@ -224,10 +418,17 @@ ProfId3NL=-
 ProfId4NL=Burgerservicenummer (BSN)
 ProfId5NL=-
 ProfId6NL=-
+<<<<<<< HEAD
 ProfId1PT=پروفسور شناسه 1 (NIPC)
 ProfId2PT=پروفسور کد 2 (شماره امنیت اجتماعی)
 ProfId3PT=پروفسور کد 3 (تعداد رکورد های تجاری)
 ProfId4PT=پروفسور کد 4 (هنرستان)
+=======
+ProfId1PT=شناسۀ کاری 1 (NIPC)
+ProfId2PT=شناسۀ کاری 2 (شمارۀ تامین اجتماعی)
+ProfId3PT=شناسۀ کاری 3 (Commercial Record number)
+ProfId4PT=شناسۀ کاری 4 (Conservatory)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProfId5PT=-
 ProfId6PT=-
 ProfId1SN=RC
@@ -236,6 +437,7 @@ ProfId3SN=-
 ProfId4SN=-
 ProfId5SN=-
 ProfId6SN=-
+<<<<<<< HEAD
 ProfId1TN=پروفسور شناسه 1 (RC)
 ProfId2TN=پروفسور کد 2 (matricule مالی)
 ProfId3TN=پروفسور کد 3 (کد Douane)
@@ -243,21 +445,38 @@ ProfId4TN=پروفسور کد 4 (BAN)
 ProfId5TN=-
 ProfId6TN=-
 ProfId1US=Prof Id (FEIN)
+=======
+ProfId1TN=شناسۀ کاری (RC)
+ProfId2TN=شناسۀ کاری 2 (Fiscal matricule)
+ProfId3TN=شناسۀ کاری 3 (Douane code)
+ProfId4TN=شناسۀ کاری 4 (BAN)
+ProfId5TN=-
+ProfId6TN=-
+ProfId1US=شناسۀ کاری (FEIN)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProfId2US=-
 ProfId3US=-
 ProfId4US=-
 ProfId5US=-
 ProfId6US=-
+<<<<<<< HEAD
 ProfId1RU=پروفسور شناسه 1 (OGRN)
 ProfId2RU=پروفسور کد 2 (INN)
 ProfId3RU=پروفسور کد 3 (KPP)
 ProfId4RU=پروفسور کد 4 (OKPO)
+=======
+ProfId1RU=شناسۀ کاری 1 (OGRN)
+ProfId2RU=شناسۀ کاری 2 (INN)
+ProfId3RU=شناسۀ کاری 3 (KPP)
+ProfId4RU=شناسۀ کاری 4 (OKPO)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProfId5RU=-
 ProfId6RU=-
 ProfId1DZ=RC
 ProfId2DZ=Art.
 ProfId3DZ=NIF
 ProfId4DZ=NIS
+<<<<<<< HEAD
 VATIntra=Sales tax ID
 VATIntraShort=Tax ID
 VATIntraSyntaxIsValid=نحو معتبر است
@@ -300,10 +519,55 @@ NoContactDefinedForThirdParty=بدون تماس تعریف شده برای ای�
 NoContactDefined=بدون تماس تعریف
 DefaultContact=پیش فرض تماس با ما / آدرس
 AddThirdParty=Create third party
+=======
+VATIntra=شناسۀ م.ب.ا.ا
+VATIntraShort=شناسۀ م.ب.ا.ا
+VATIntraSyntaxIsValid=قالب نامعتبر است
+VATReturn=بازگشت م.ب.ا.ا
+ProspectCustomer=مشتری‌احتمالی / مشتری
+Prospect=مشتری‌احتمالی
+CustomerCard=کارت مشتری
+Customer=مشتری
+CustomerRelativeDiscount=تخفیف نسبی مشتری
+SupplierRelativeDiscount=تخفیف نسبی فروشنده
+CustomerRelativeDiscountShort=تخفیف نسبی
+CustomerAbsoluteDiscountShort=تخفیف مطلق
+CompanyHasRelativeDiscount=این مشتری به‌طور پیش‌فرض از تخفیف <b>%s%%</b> برخوردار است
+CompanyHasNoRelativeDiscount=این مشتری به‌طور پیش‌فرض از تحفیف برخوردار نیست
+HasRelativeDiscountFromSupplier=شما تخفیف پیش‌فرض <b>%s%%</b> از این فروشنده دارید
+HasNoRelativeDiscountFromSupplier=شما از این فروشنده هیچ تخفیف پیش‌فرضی ندارید
+CompanyHasAbsoluteDiscount=برای این مشتری تخفیف مبلغ فعال است (یادداشت اعتباری یا پیش‌پرداخت) - به مبلغ <b>%s</b>%s
+CompanyHasDownPaymentOrCommercialDiscount=برای این مشتری تخفیف مبلغ فعال است (پرداخت تجاری یا پیش‌پرداخت) - به مبلغ <b>%s</b>%s
+CompanyHasCreditNote=برای این مشتری هنوز یادداشت اعتباری با <b>%s</b>%s وجود دارد
+HasNoAbsoluteDiscountFromSupplier=شما از این فروشنده اعتبار کاهشی - تخفیف- ندارید
+HasAbsoluteDiscountFromSupplier=شما از این فروشنده تخفیف-کاهش دارید (یادداشت‌های اعتباری یا پیش‌پرداخت) به مبلغ <b>%s</b>%s
+HasDownPaymentOrCommercialDiscountFromSupplier=شما از این فروشنده تخفیف-کاهش دارید (پرداخت تجاری یا پیش‌پرداخت) به مبلغ <b>%s</b>%s
+HasCreditNoteFromSupplier=شما به مبلغ <b>%s</b>%s از این فروشنده یادداشت اعتباری دارید
+CompanyHasNoAbsoluteDiscount=این مشتری هیچ اعتبار تخفیفی ندارد
+CustomerAbsoluteDiscountAllUsers=تخفیف مطلق مشتریان (اعطائی همه کاربران)
+CustomerAbsoluteDiscountMy=تخفیف مطلق مشتریان (اعطائی خود شما)
+SupplierAbsoluteDiscountAllUsers=تخفیف مطلق فروشندگان(واردشدۀ همه کاربران)
+SupplierAbsoluteDiscountMy=تخفیف مطلق فروشندگان(واردشدۀ خودشما)
+DiscountNone=هیچ‌یک
+Vendor=فروشنده
+AddContact=ساخت طرف‌تماس
+AddContactAddress=ساخت طرف‌تماس/نشانی
+EditContact=ویرایش طرف‌تماس
+EditContactAddress=ویرایش طرف‌تماس/نشانی
+Contact=طرف‌تماس
+ContactId=شناسۀ طرف‌تماس
+ContactsAddresses=طرف‌های‌تماس/نشانی‌ها
+FromContactName=نام:
+NoContactDefinedForThirdParty=طرف‌تماسی برای این شخص‌سوم تعریف نشده است
+NoContactDefined=طرف‌تماسی تعریف نشده است
+DefaultContact=طرف‌تماس/نشانی پیش‌فرض
+AddThirdParty=ساخت شخص‌سوم
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DeleteACompany=حذف یک شرکت
 PersonalInformations=اطلاعات شخصی
 AccountancyCode=حساب حسابداری
 CustomerCode=کد مشتری
+<<<<<<< HEAD
 SupplierCode=Vendor code
 CustomerCodeShort=کد مشتری
 SupplierCodeShort=Vendor code
@@ -357,11 +621,67 @@ ContactOthers=دیگر
 OthersNotLinkedToThirdParty=دیگران، به شخص ثالث در ارتباط نیست
 ProspectStatus=وضعیت چشم انداز
 PL_NONE=هیچ یک
+=======
+SupplierCode=کد فروشنده
+CustomerCodeShort=کد مشتری
+SupplierCodeShort=کد فروشنده
+CustomerCodeDesc=کد مشتری، منحصربه‌فرد برای همۀ مشتریان
+SupplierCodeDesc=کد فروشنده، منحصر‌به‌فرد برای همۀ فروشندگان
+RequiredIfCustomer=در صورتی‌که شخص‌سوم یک مشتری یا مشتری‌احتمالی است، الزامی است
+RequiredIfSupplier=در صورتی که شخص‌سوم، فروشنده است، الزامی است
+ValidityControledByModule=اعتبار توسط واحد مربوطه مورد بررسی قرار می‌گیرد
+ThisIsModuleRules=مقررات این واحد
+ProspectToContact=مشتری‌احتمالی به طرف‌تماس
+CompanyDeleted= شرکت "%s" از پایگاه داده حذف شد.
+ListOfContacts=فهرست طرف‌های‌تماس/نشانی‌ها
+ListOfContactsAddresses=فهرست طرف‌های‌تماس/نشانی‌ها
+ListOfThirdParties=فهرست شخص‌سوم‌ها
+ShowCompany=نمایش شخص‌سوم
+ShowContact=نمایش طرف‌تماس
+ContactsAllShort=همه (بدون صافی)
+ContactType=نوع طرف‌تماس
+ContactForOrders=طرف‌تماس مربوط به سفارش
+ContactForOrdersOrShipments=طرف‌تماس مربوط به سفارش یا ارسال
+ContactForProposals=طرف‌تماس مربوط به پیشنهاد
+ContactForContracts=طرف‌تماس مربوط به قرارداد
+ContactForInvoices=طرف‌تماس مربوط به صورت‌حساب
+NoContactForAnyOrder=این طرف‌تماس برای سفارشات در نظر گرفته نشده است
+NoContactForAnyOrderOrShipments=این طرف‌تماس برای سفارشات یا ارسال‌کالا در نظر گرفته نشده است
+NoContactForAnyProposal=این طرف‌تماس برای پیشنهادات تجاری در نظر گرفته نشده است
+NoContactForAnyContract=این طرف‌تماس برای قراردادها در نظر گرفته نشده است
+NoContactForAnyInvoice=این طرف‌تماس برای صورت‌حساب‌ها در نظر گرفته نشده است
+NewContact=طرف‌تماس جدید
+NewContactAddress=طرف‌تماس/نشانی جدید
+MyContacts=طرف‌تماس‌های من
+Capital=سرمایه
+CapitalOf=سرمایۀ %s
+EditCompany=ویرایش شرکت
+ThisUserIsNot=این کاربر یک مشتری‌احتمالی، مشتری یا فروشنده نیست
+VATIntraCheck=چک
+VATIntraCheckDesc=شناسۀ م‌.ب.ا.ا. باید با پیش‌وند کشور بیاید. پیوند <b>%s</b> از خدمات European VAT checker service (VIES) استفاده می‌کند که نیاز به اتصال اینترنتی از سرور Dolibarr دارد
+VATIntraCheckURL=http://ec.europa.eu/taxation_customs/vies/vieshome.do
+VATIntraCheckableOnEUSite=بررسی شناسۀ م.ب.ا.ا. داخل جامعه‌ای روی وبگاه کمیسیون اروپا
+VATIntraManualCheck=همچنین می‌توانید به‌طور دستی روی وبگاه کمیسیون اروپا بررسی کنید <a href="%s" target="_blank">%s</a>
+ErrorVATCheckMS_UNAVAILABLE=بررسی مقدور نبود. خدمات بررسی برای کشور عضو (%s) ارائه نمی‌شود.
+NorProspectNorCustomer=مشتری‌احتمالی نیست/مشتری نیست
+JuridicalStatus=نوع موجودیت قانونی
+Staff=کارمندان
+ProspectLevelShort=توان‌بالقوه-پتانسیل
+ProspectLevel=مشتری‌احتمالی بالقوه
+ContactPrivate=خصوصی
+ContactPublic=به اشتراک گذاشته شده
+ContactVisibility=قابلیت نمایش
+ContactOthers=دیگر
+OthersNotLinkedToThirdParty=دیگران، در ارتباط با شخص سوم نیست
+ProspectStatus=وضعیت مشتری‌احتمالی
+PL_NONE=هیچ‌یک
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PL_UNKNOWN=ناشناخته
 PL_LOW=پایین
 PL_MEDIUM=متوسط
 PL_HIGH=بالا
 TE_UNKNOWN=-
+<<<<<<< HEAD
 TE_STARTUP=راه اندازی
 TE_GROUP=شرکت های بزرگ
 TE_MEDIUM=شرکت متوسط
@@ -432,3 +752,83 @@ SaleRepresentativeFirstname=First name of sales representative
 SaleRepresentativeLastname=Last name of sales representative
 ErrorThirdpartiesMerge=There was an error when deleting the third parties. Please check the log. Changes have been reverted.
 NewCustomerSupplierCodeProposed=New customer or vendor code suggested on duplicate code
+=======
+TE_STARTUP=نوپا
+TE_GROUP=شرکت‌بزرگ
+TE_MEDIUM=شرکت متوسط
+TE_ADMIN=دولتی
+TE_SMALL=شرکت کوچک
+TE_RETAIL=خرده فروش
+TE_WHOLE=عمده‌فروش
+TE_PRIVATE=شخص خصوصی
+TE_OTHER=دیگر
+StatusProspect-1=تماس نگیرید
+StatusProspect0=هرگز تماس‌گرفته نشده
+StatusProspect1=قابل تماس گرفتن
+StatusProspect2=تماس در حال انجام
+StatusProspect3=تماس انجام شد
+ChangeDoNotContact=تغییر وضعیت به 'تماس نگیرید'
+ChangeNeverContacted=تغییر وضعیت به 'هرگز تماس گرفته نشده'
+ChangeToContact=تغییر وضعیت به 'قابل تماس گرفتن'
+ChangeContactInProcess=تغییر وضعیت به 'تماس در حال انجام'
+ChangeContactDone=تغییر وضعیت به 'تماس انجام شد'
+ProspectsByStatus=وضعیت مشتریان احتمالی
+NoParentCompany=هیچ‌یک
+ExportCardToFormat=صادرکردن کارت به حالت
+ContactNotLinkedToCompany=طرف‌تماس به هیچ شخص‌سومی متصل نیست
+DolibarrLogin=ورود Dolibarr
+NoDolibarrAccess=دسترسی Dolibarr مقدور نیست
+ExportDataset_company_1=شخص‌سوم‌ها (شرکت‌ها/سازمان‌ها/مردم فیزیکی) و مشخصات آن‌ها
+ExportDataset_company_2=طرف‌های تماس و مشخصات آن‌ها
+ImportDataset_company_1=شخص‌سوم‌ها و مشخصات آن‌ها
+ImportDataset_company_2=سایر طرف‌های تماس/نشانی‌های شخص‌سوم و ویژگی‌های آن‌ها
+ImportDataset_company_3=حساب‌های بانکی شخص‌سوم‌ها
+ImportDataset_company_4=نمایندگان فروش طرف‌های تماس (نسبت دادن نمایندۀ فروش/کاربران به شرکت‌ها)
+PriceLevel=سطح قیمتی 
+PriceLevelLabels=برچسب‌های سطح قیمتی
+DeliveryAddress=نشانی تحویل
+AddAddress=اضافه‌کردن نشانی
+SupplierCategory=دسته‌بندی فروشنده
+JuridicalStatus200=مستقل
+DeleteFile=حذف فایل
+ConfirmDeleteFile=آیا مطمئن هستید که می خواهید این فایل را حذف کنید؟
+AllocateCommercial=به‌عنوان نمایندۀ فروش نسبت‌داده شد
+Organization=سازمان
+FiscalYearInformation=سال مالی
+FiscalMonthStart=ماه شروع سال مالی
+YouMustAssignUserMailFirst=برای این‌که بتوانید به این کاربر یادآورندۀ از طریق رایانامه بفرستید شما باید برای این کاربر یک رایانامه بسازید
+YouMustCreateContactFirst=برای افزودن یادآورنده از طریق رایانامه، شما ابتدا باید برای این شخص سوم طرف‌تماس با رایانامۀ معتبر بسازید
+ListSuppliersShort=فهرست فروشندگان
+ListProspectsShort=فهرست مشتریان احتمالی
+ListCustomersShort=فهرست مشتریان
+ThirdPartiesArea=شخص‌های سوم/طرف‌های تماس
+LastModifiedThirdParties=آخرین %s شخص‌سوم ویرایش شده
+UniqueThirdParties=تعداد کل شخص‌سوم‌ها
+InActivity=باز
+ActivityCeased=بسته
+ThirdPartyIsClosed=شخص‌سوم بسته شده است
+ProductsIntoElements=فهرست محصولات/خدمات به %s
+CurrentOutstandingBill=صورت‌حساب‌های درانتظار کنونی
+OutstandingBill=حداکثر تعداد صورت‌حساب‌های درانتظار
+OutstandingBillReached=حداکثر تعداد رسیدن به صورت‌حساب‌های درانتظار
+OrderMinAmount=حداقل مقدار سفارش
+MonkeyNumRefModelDesc=یک عدد به شکل %s yymm-nnnn برای این کد مشتری و %s yymm-nnnn برای فروشنده باز می‌گرداند که yy برابر با سال، mm برابر با ماه و nnnn یک سریال بدون توقف و بدون بازگشت به 0 است.
+LeopardNumRefModelDesc=این کد آزاد است و می‌تواند در هر زمانی ویرایش شود.
+ManagingDirectors=نام مدیر (مدیرعامل، مدیر، رئیس...)()
+MergeOriginThirdparty=نسخه‌برداری از شخص سوم (شخص‌سومی که می‌خواهید حذف کنید)
+MergeThirdparties=ادغام شخص‌سوم‌ها
+ConfirmMergeThirdparties=آیا مطمئن هستید می‌خواهید این شخص سوم را با مورد موجود ادغام کنید؟ همۀ اشیاء پیوند شده (صورت‌حساب، سفارش، ...) به شخص سوم کنونی منتقل خواهد شد و سپس این شخص سوم حذف خواهد شد
+ThirdpartiesMergeSuccess=شخص‌سوم‌ها با هم ادغام شدند
+SaleRepresentativeLogin=مشخصات‌ورود نماینده فروش
+SaleRepresentativeFirstname=نام نمایندۀ فروش
+SaleRepresentativeLastname=نام خانوادگی نمایندۀ فروش
+ErrorThirdpartiesMerge=در هنگام حذف شخص‌سوم‌ها یک اشکال پیش آمد. لطفا گزارش‌کار را ببینید. تغییرات انجام نشد.
+NewCustomerSupplierCodeProposed=کد فروشنده یا کد مشتری قبلا استفاده شده است، یک کد جدید پیشنهاد می‌شود
+#Imports
+PaymentTypeCustomer=نوع پرداخت - مشتری
+PaymentTermsCustomer=شرایط پرداخت - مشتری
+PaymentTypeSupplier=نوع پرداخت - فروشنده
+PaymentTermsSupplier=شرایط پرداخت - فروشنده
+MulticurrencyUsed=استفادۀ چند‌واحدپولی
+MulticurrencyCurrency=واحد‌پولی
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

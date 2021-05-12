@@ -3,6 +3,7 @@ CommunitySupport=Forum/Wiki desteği
 EMailSupport=E-posta desteği
 RemoteControlSupport=Çevrimiçi gerçek zamanlı/uzaktan destek
 OtherSupport=Diğer destek
+<<<<<<< HEAD
 ToSeeListOfAvailableRessources=İletişim için/mevcut kaynaklara bakın:
 HelpCenter=Yardım merkezi
 DolibarrHelpCenter=Dolibarr yardım ve destek merkezi
@@ -23,4 +24,23 @@ BackToHelpCenter=Aksi durumda yardım merkezine geri gitmek için <a href="%s">b
 LinkToGoldMember=Bo parçaçcığı (widget) tıklayarak Dolibar tarafından sizin için dilinizde önseçilen eğitmeni arayabilirsiniz (durumu ve ençok ücreti otomatikmen güncellenir):
 PossibleLanguages=Desteklenen diller
 SubscribeToFoundation=Dolibarr projesine yardım edin, vakıfa abone olun
+=======
+ToSeeListOfAvailableRessources=Mevcut kaynaklarla iletişim kurmak/görmek için:
+HelpCenter=Yardım Merkezi
+DolibarrHelpCenter=Dolibarr Yardım ve Destek Merkezi
+ToGoBackToDolibarr=Aksi takdirde, <a href="%s">Dolibarr'ı kullanmaya devam etmek için buraya tıklayın</a>.
+TypeOfSupport=Destek türü
+TypeSupportCommunauty=Topluluk (ücretsiz)
+TypeSupportCommercial=Ticari
+TypeOfHelp=Tür
+NeedHelpCenter=Yardım veya desteğe mi ihtiyacınız var?
+Efficiency=Verim
+TypeHelpOnly=Sadece yardım
+TypeHelpDev=Yardım + Geliştirme
+TypeHelpDevForm=Yardım + Geliştirme + Eğitim
+BackToHelpCenter=Aksi takdirde, <a href="%s">Yardım Merkezi ana sayfasına geri dönün</a>.
+LinkToGoldMember=Dolibar tarafından diliniz (%s) için önceden belirlenmiş eğitmenlerden birini onların ekran etiketlerine tıklayarak arayabilirsiniz (durum ve maksimum fiyat otomatik olarak güncellenir):
+PossibleLanguages=Desteklenen diller
+SubscribeToFoundation=Dolibarr projesine yardımcı olun, vakfa abone olun
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SeeOfficalSupport=Kendi dilinizde Dolibarr desteği için: <br><b><a href="%s" target="_blank">%s</a></b>

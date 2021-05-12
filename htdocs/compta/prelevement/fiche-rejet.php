@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,7 +28,11 @@
  *		\brief      Withdraw reject
  */
 
+<<<<<<< HEAD
 require('../../main.inc.php');
+=======
+require '../../main.inc.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/rejetprelevement.class.php';
@@ -38,6 +46,7 @@ $langs->loadLangs(array("banks","categories",'withdrawals','bills'));
 if ($user->societe_id > 0) accessforbidden();
 
 // Get supervariables
+<<<<<<< HEAD
 $prev_id = GETPOST('id','int');
 $ref = GETPOST('ref', 'alpha');
 
@@ -46,12 +55,26 @@ $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
+=======
+$prev_id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
+
+// Load variable for pagination
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
+<<<<<<< HEAD
 $object = new BonPrelevement($db,"");
+=======
+$object = new BonPrelevement($db, "");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 
@@ -60,7 +83,11 @@ $object = new BonPrelevement($db,"");
  * View
  */
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("WithdrawalsReceipts"));
+=======
+llxHeader('', $langs->trans("WithdrawalsReceipts"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if ($prev_id > 0 || $ref)
 {
@@ -78,7 +105,11 @@ if ($prev_id > 0 || $ref)
 		print '<table class="border centpercent">'."\n";
 
 		//print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.$object->getNomUrl(1).'</td></tr>';
+<<<<<<< HEAD
 		print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec,'day').'</td></tr>';
+=======
+		print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount).'</td></tr>';
 
 		// Status
@@ -94,7 +125,11 @@ if ($prev_id > 0 || $ref)
 			$muser->fetch($object->user_trans);
 
 			print '<tr><td>'.$langs->trans("TransData").'</td><td>';
+<<<<<<< HEAD
 			print dol_print_date($object->date_trans,'day');
+=======
+			print dol_print_date($object->date_trans, 'day');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print ' '.$langs->trans("By").' '.$muser->getFullName($langs).'</td></tr>';
 			print '<tr><td>'.$langs->trans("TransMetod").'</td><td>';
 			print $object->methodes_trans[$object->method_trans];
@@ -103,7 +138,11 @@ if ($prev_id > 0 || $ref)
 		if($object->date_credit <> 0)
 		{
 			print '<tr><td>'.$langs->trans('CreditDate').'</td><td>';
+<<<<<<< HEAD
 			print dol_print_date($object->date_credit,'day');
+=======
+			print dol_print_date($object->date_credit, 'day');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '</td></tr>';
 		}
 
@@ -135,7 +174,10 @@ if ($prev_id > 0 || $ref)
 		print '</div>';
 
 		dol_fiche_end();
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
   	else
     {
@@ -190,8 +232,13 @@ if ($resql)
   	print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
   	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   	print '<tr class="liste_titre">';
+<<<<<<< HEAD
   	print '<td>'.$langs->trans("Line").'</td><td>'.$langs->trans("ThirdParty").'</td><td align="right">'.$langs->trans("Amount").'</td>';
   	print '<td>'.$langs->trans("Reason").'</td><td align="center">'.$langs->trans("ToBill").'</td><td align="center">'.$langs->trans("Invoice").'</td></tr>';
+=======
+  	print '<td>'.$langs->trans("Line").'</td><td>'.$langs->trans("ThirdParty").'</td><td class="right">'.$langs->trans("Amount").'</td>';
+  	print '<td>'.$langs->trans("Reason").'</td><td align="center">'.$langs->trans("ToBill").'</td><td class="center">'.$langs->trans("Invoice").'</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	$total = 0;
 
@@ -210,7 +257,11 @@ if ($resql)
     		print '</a></td>';
     		print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.$obj->name."</a></td>\n";
 
+<<<<<<< HEAD
     		print '<td align="right">'.price($obj->amount)."</td>\n";
+=======
+    		print '<td class="right">'.price($obj->amount)."</td>\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     		print '<td>'.$rej->motifs[$obj->motif].'</td>';
 
     		print '<td align="center">'.yn($obj->afacturer).'</td>';
@@ -231,7 +282,11 @@ if ($resql)
     {
     	print '<tr class="liste_total"><td>&nbsp;</td>';
     	print '<td class="liste_total">'.$langs->trans("Total").'</td>';
+<<<<<<< HEAD
     	print '<td align="right">'.price($total)."</td>\n";
+=======
+    	print '<td class="right">'.price($total)."</td>\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	print '<td colspan="3">&nbsp;</td>';
     	print "</tr>\n";
     }
@@ -245,5 +300,9 @@ else
 	dol_print_error($db);
 }
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

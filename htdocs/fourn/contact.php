@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,16 +45,26 @@ if ($user->societe_id > 0)
     $socid = $user->societe_id;
 }
 
+<<<<<<< HEAD
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
+=======
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="p.name";
+<<<<<<< HEAD
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+=======
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 /*
@@ -94,6 +108,7 @@ if ($result)
     $num = $db->num_rows($result);
 
     $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ListOfContacts") : $langs->trans("ListOfContactsAddresses"));
+<<<<<<< HEAD
     print_barre_liste($title." (".$langs->trans("Suppliers").")",$page, $_SERVER["PHP_SELF"], "",$sortfield,$sortorder,"",$num);
 
     print '<table class="liste" width="100%">';
@@ -101,20 +116,39 @@ if ($result)
     print_liste_field_titre("Lastname",$_SERVER["PHP_SELF"],"p.name", $begin, "", "", $sortfield,$sortorder);
     print_liste_field_titre("Firstname",$_SERVER["PHP_SELF"],"p.firstname", $begin, "", "", $sortfield,$sortorder);
     print_liste_field_titre("Company",$_SERVER["PHP_SELF"],"s.nom", $begin, "", "", $sortfield,$sortorder);
+=======
+    print_barre_liste($title." (".$langs->trans("Suppliers").")", $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
+
+    print '<table class="liste" width="100%">';
+    print '<tr class="liste_titre">';
+    print_liste_field_titre("Lastname", $_SERVER["PHP_SELF"], "p.name", $begin, "", "", $sortfield, $sortorder);
+    print_liste_field_titre("Firstname", $_SERVER["PHP_SELF"], "p.firstname", $begin, "", "", $sortfield, $sortorder);
+    print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", $begin, "", "", $sortfield, $sortorder);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print_liste_field_titre("Email");
     print_liste_field_titre("Phone");
     print "</tr>\n";
 
     $i = 0;
+<<<<<<< HEAD
     while ($i < min($num,$limit))
+=======
+    while ($i < min($num, $limit))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $obj = $db->fetch_object($result);
 
         print '<tr class="oddeven">';
 
+<<<<<<< HEAD
         print '<td><a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$obj->cidp.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$obj->lastname.'</a></td>';
         print '<td>'.$obj->firstname.'</td>';
         print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->name.'</a></td>';
+=======
+        print '<td><a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$obj->cidp.'">'.img_object($langs->trans("ShowContact"), "contact").' '.$obj->lastname.'</a></td>';
+        print '<td>'.$obj->firstname.'</td>';
+        print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.$obj->name.'</a></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         print '<td>'.$obj->email.'</td>';
         print '<td>'.$obj->phone.'</td>';
 
@@ -123,14 +157,22 @@ if ($result)
     }
     print "</table>";
     $db->free($result);
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 else
 {
     dol_print_error($db);
 }
 
+<<<<<<< HEAD
 
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

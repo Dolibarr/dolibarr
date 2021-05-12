@@ -32,10 +32,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
 // Load translation files required by page
 $langs->loadLangs(array('ecm', 'companies', 'other'));
 
+<<<<<<< HEAD
 $action     = GETPOST('action','alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 $confirm    = GETPOST('confirm','alpha');
+=======
+$action     = GETPOST('action', 'alpha');
+$cancel     = GETPOST('cancel', 'aZ09');
+$backtopage = GETPOST('backtopage', 'alpha');
+$confirm    = GETPOST('confirm', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $module  = GETPOST('module', 'alpha');
 $website = GETPOST('website', 'alpha');
@@ -43,9 +50,15 @@ $pageid  = GETPOST('pageid', 'int');
 if (empty($module)) $module='ecm';
 
 // Get parameters
+<<<<<<< HEAD
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
+=======
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -56,7 +69,11 @@ if (! $sortfield) $sortfield="name";
 $section=GETPOST("section", 'alpha')?GETPOST("section", 'alpha'):GETPOST("relativedir", 'alpha');
 if (! $section)
 {
+<<<<<<< HEAD
 	dol_print_error('',"ErrorSectionParamNotDefined");
+=======
+	dol_print_error('', "ErrorSectionParamNotDefined");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	exit;
 }
 
@@ -106,7 +123,11 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
 	if (dol_mkdir($upload_dir) >= 0)
 	{
+<<<<<<< HEAD
 		$resupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . dol_unescapefile($_FILES['userfile']['name']),0,0,$_FILES['userfile']['error']);
+=======
+		$resupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . dol_unescapefile($_FILES['userfile']['name']), 0, 0, $_FILES['userfile']['error']);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if (is_numeric($resupload) && $resupload > 0)
 		{
 		    $result=$ecmdir->changeNbOfFiles('+');
@@ -117,9 +138,14 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 			if ($resupload < 0)	// Unknown error
 			{
 				setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
+<<<<<<< HEAD
 			}
 			else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
 			{
+=======
+			} elseif (preg_match('/ErrorFileIsInfectedWithAVirus/', $resupload)) {
+                // Files infected by a virus
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
 			}
 			else	// Known error
@@ -132,7 +158,11 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	{
 	    // Failed transfer (exceeding the limit file?)
 		$langs->load("errors");
+<<<<<<< HEAD
 		setEventMessages($langs->trans("ErrorFailToCreateDir",$upload_dir), null, 'errors');
+=======
+		setEventMessages($langs->trans("ErrorFailToCreateDir", $upload_dir), null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 }
 
@@ -154,7 +184,11 @@ if ($action == 'confirm_deletedir' && $confirm == 'yes')
 	$backtourl = DOL_URL_ROOT."/ecm/index.php";
 	if ($module == 'medias') $backtourl = DOL_URL_ROOT."/website/index.php?file_manager=1";
 
+<<<<<<< HEAD
 	$deletedirrecursive = (GETPOST('deletedirrecursive','alpha') == 'on' ? 1 : 0);
+=======
+	$deletedirrecursive = (GETPOST('deletedirrecursive', 'alpha') == 'on' ? 1 : 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	if ($module == 'ecm')
 	{
@@ -163,7 +197,11 @@ if ($action == 'confirm_deletedir' && $confirm == 'yes')
 		if ($result <= 0)
 		{
 			$langs->load('errors');
+<<<<<<< HEAD
 			setEventMessages($langs->trans($ecmdir->error,$ecmdir->label), null, 'errors');
+=======
+			setEventMessages($langs->trans($ecmdir->error, $ecmdir->label), null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 	}
 	else
@@ -192,7 +230,11 @@ if ($action == 'confirm_deletedir' && $confirm == 'yes')
 }
 
 // Update dirname or description
+<<<<<<< HEAD
 if ($action == 'update' && ! GETPOST('cancel','alpha'))
+=======
+if ($action == 'update' && ! GETPOST('cancel', 'alpha'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$error=0;
 
@@ -204,7 +246,11 @@ if ($action == 'update' && ! GETPOST('cancel','alpha'))
     }
     else
     {
+<<<<<<< HEAD
     	$olddir=GETPOST('section','alpha');
+=======
+    	$olddir=GETPOST('section', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	$olddir=$conf->medias->multidir_output[$conf->entity].'/'.$relativepath;
     }
 
@@ -224,11 +270,19 @@ if ($action == 'update' && ! GETPOST('cancel','alpha'))
 				$newdir=$ecmdir->getRelativePath(1);		// return "xxx/zzz/" from ecm directory
 				$newdir=$conf->ecm->dir_output.'/'.$newdir;
 				//print $olddir.'-'.$newdir;
+<<<<<<< HEAD
 				$result=@rename($olddir,$newdir);
 				if (! $result)
 				{
 					$langs->load('errors');
 					setEventMessages($langs->trans('ErrorFailToRenameDir',$olddir,$newdir), null, 'errors');
+=======
+				$result=@rename($olddir, $newdir);
+				if (! $result)
+				{
+					$langs->load('errors');
+					setEventMessages($langs->trans('ErrorFailToRenameDir', $olddir, $newdir), null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					$error++;
 				}
 			}
@@ -254,6 +308,7 @@ if ($action == 'update' && ! GETPOST('cancel','alpha'))
     }
     else
     {
+<<<<<<< HEAD
     	$newdir = $conf->medias->multidir_output[$conf->entity].'/'.GETPOST('oldrelparentdir','alpha').'/'.GETPOST('label','alpha');
 
     	$result=@rename($olddir,$newdir);
@@ -261,17 +316,33 @@ if ($action == 'update' && ! GETPOST('cancel','alpha'))
     	{
     		$langs->load('errors');
     		setEventMessages($langs->trans('ErrorFailToRenameDir',$olddir,$newdir), null, 'errors');
+=======
+    	$newdir = $conf->medias->multidir_output[$conf->entity].'/'.GETPOST('oldrelparentdir', 'alpha').'/'.GETPOST('label', 'alpha');
+
+    	$result=@rename($olddir, $newdir);
+    	if (! $result)
+    	{
+    		$langs->load('errors');
+    		setEventMessages($langs->trans('ErrorFailToRenameDir', $olddir, $newdir), null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     		$error++;
     	}
 
     	if (! $error)
     	{
     		// Set new value after renaming
+<<<<<<< HEAD
     		$relativepath=GETPOST('oldrelparentdir','alpha').'/'.GETPOST('label','alpha');
     		$upload_dir = $conf->medias->multidir_output[$conf->entity].'/'.$relativepath;
     		$section = $relativepath;
     	}
 
+=======
+    		$relativepath=GETPOST('oldrelparentdir', 'alpha').'/'.GETPOST('label', 'alpha');
+    		$upload_dir = $conf->medias->multidir_output[$conf->entity].'/'.$relativepath;
+    		$section = $relativepath;
+    	}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 }
 
@@ -293,8 +364,13 @@ if ($module == 'ecm')
 llxHeader();
 
 // Built the file List
+<<<<<<< HEAD
 $filearrayall=dol_dir_list($upload_dir,"all",0,'','',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 $filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+=======
+$filearrayall=dol_dir_list($upload_dir, "all", 0, '', '', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
+$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $totalsize=0;
 foreach($filearray as $key => $file)
 {
@@ -409,7 +485,11 @@ if ($module == 'ecm')
 print '<tr><td class="titlefield">'.$langs->trans("ECMCreationDate").'</td><td>';
 if ($module == 'ecm')
 {
+<<<<<<< HEAD
 	print dol_print_date($ecmdir->date_c,'dayhour');
+=======
+	print dol_print_date($ecmdir->date_c, 'dayhour');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 else
 {
@@ -479,7 +559,11 @@ if ($action != 'edit' && $action != 'delete')
 	}
 	else
 	{
+<<<<<<< HEAD
 		print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('ECMAddSection').'</a>';
+=======
+		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('ECMAddSection').'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	//if (count($filearrayall) == 0)
@@ -496,9 +580,15 @@ if ($action != 'edit' && $action != 'delete')
 	else
 	{
 		if (count($filearray) > 0)
+<<<<<<< HEAD
 			print '<a class="butActionRefused" href="#" title="'.$langs->trans("CannotRemoveDirectoryContainsFiles").'">'.$langs->trans('Delete').'</a>';
 		else
 			print '<a class="butActionRefused" href="#" title="'.$langs->trans("CannotRemoveDirectoryContainsFilesOrDirs").'">'.$langs->trans('Delete').'</a>';
+=======
+			print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("CannotRemoveDirectoryContainsFiles").'">'.$langs->trans('Delete').'</a>';
+		else
+			print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("CannotRemoveDirectoryContainsFilesOrDirs").'">'.$langs->trans('Delete').'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}*/
 	print '</div>';
 }
@@ -506,13 +596,21 @@ if ($action != 'edit' && $action != 'delete')
 // Confirm remove file
 if ($action == 'delete')
 {
+<<<<<<< HEAD
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.GETPOST("section",'alpha').'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile');
+=======
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.GETPOST("section", 'alpha').'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 // Confirm remove file
 if ($action == 'delete_dir')
 {
+<<<<<<< HEAD
 	$relativepathwithoutslash=preg_replace('/[\/]$/','',$relativepath);
+=======
+	$relativepathwithoutslash=preg_replace('/[\/]$/', '', $relativepath);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	//Form to close proposal (signed or not)
 	if (count($filearrayall) > 0)
@@ -523,7 +621,11 @@ if ($action == 'delete_dir')
 		);
 	}
 
+<<<<<<< HEAD
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.GETPOST('section','alpha').($module?'&module='.$module:''), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$relativepathwithoutslash), 'confirm_deletedir', $formquestion, 1, 1);
+=======
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.GETPOST('section', 'alpha').($module?'&module='.$module:''), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection', $relativepathwithoutslash), 'confirm_deletedir', $formquestion, 1, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 

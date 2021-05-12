@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2008-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2008-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2008-2009 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,14 +38,23 @@ $langs->loadLangs(array("ecm","companies","other","users","orders","propal","bil
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
+<<<<<<< HEAD
 $result = restrictedArea($user, 'ecm','');
+=======
+$result = restrictedArea($user, 'ecm', '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Load permissions
 $user->getrights('ecm');
 
 // Get parameters
+<<<<<<< HEAD
 $socid = GETPOST('socid','int');
 $action = GETPOST('action','alpha');
+=======
+$socid = GETPOST('socid', 'int');
+$action = GETPOST('action', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $section=GETPOST('section');
 if (! $section) $section=0;
 
@@ -52,9 +65,15 @@ if (empty($module)) $module='ecm';
 
 $upload_dir = $conf->ecm->dir_output.'/'.$section;
 
+<<<<<<< HEAD
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
+=======
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -68,7 +87,11 @@ if (! empty($section))
 	$result=$ecmdir->fetch($section);
 	if (! $result > 0)
 	{
+<<<<<<< HEAD
 		dol_print_error($db,$ecmdir->error);
+=======
+		dol_print_error($db, $ecmdir->error);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		exit;
 	}
 }
@@ -137,10 +160,17 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<table class="nobordernopadding" width="100%">';
 print "<tr class=\"liste_titre\">";
 print '<td colspan="2">'.$langs->trans("ECMSearchByKeywords").'</td></tr>';
+<<<<<<< HEAD
 print "<tr ".$bc[false]."><td>".$langs->trans("Ref").':</td><td align="right"><input type="text" name="search_ref" class="flat" size="10"></td></tr>';
 print "<tr ".$bc[false]."><td>".$langs->trans("Title").':</td><td align="right"><input type="text" name="search_title" class="flat" size="10"></td></tr>';
 print "<tr ".$bc[false]."><td>".$langs->trans("Keyword").':</td><td align="right"><input type="text" name="search_keyword" class="flat" size="10"></td></tr>';
 print "<tr ".$bc[false].'><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
+=======
+print "<tr ".$bc[false]."><td>".$langs->trans("Ref").':</td><td class="right"><input type="text" name="search_ref" class="flat" size="10"></td></tr>';
+print "<tr ".$bc[false]."><td>".$langs->trans("Title").':</td><td class="right"><input type="text" name="search_title" class="flat" size="10"></td></tr>';
+print "<tr ".$bc[false]."><td>".$langs->trans("Keyword").':</td><td class="right"><input type="text" name="search_keyword" class="flat" size="10"></td></tr>';
+print "<tr ".$bc[false].'><td colspan="2" class="center"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print "</table></form>";
 //print $langs->trans("ECMSectionManualDesc");
 
@@ -162,7 +192,11 @@ foreach($sectionauto as $sectioncur)
 	print "<td>".$sectioncur['label'].':</td>';
 	print '<td';
 	//if ($butshown % 2 == 1)
+<<<<<<< HEAD
 		print ' align="right"';
+=======
+		print ' class="right"';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '>';
 	print '<input type="text" name="search_'.$sectioncur['module'].'" class="flat" size="14">';
 	print '</td>';
@@ -173,7 +207,11 @@ foreach($sectionauto as $sectioncur)
 //if ($butshown % 2 == 1)
 //	print '<td>&nbsp;</td><td>&nbsp;</td></tr>';
 
+<<<<<<< HEAD
 print '<tr '. $bc[false].'><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
+=======
+print '<tr '. $bc[false].'><td colspan="4" class="center"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print "</table></form>";
 //print $langs->trans("ECMSectionAutoDesc");
 
@@ -184,12 +222,20 @@ print '</td><td class="tdtop">';
 // Right area
 $relativepath=$ecmdir->getRelativePath();
 $upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
+<<<<<<< HEAD
 $filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+=======
+$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $formfile=new FormFile($db);
 $param='&amp;section='.$section;
 $textifempty=($section?$langs->trans("NoFileFound"):$langs->trans("ECMSelectASection"));
+<<<<<<< HEAD
 $formfile->list_of_documents($filearray,'','ecm',$param,1,$relativepath,$user->rights->ecm->upload,1,$textifempty);
+=======
+$formfile->list_of_documents($filearray, '', 'ecm', $param, 1, $relativepath, $user->rights->ecm->upload, 1, $textifempty);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 //	print '<table width="100%" class="border">';
 

@@ -27,10 +27,17 @@
 //if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
 //if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');		// Not disabled cause need to do translations
+<<<<<<< HEAD
 if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK',1);
 if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL',1);
 //if (! defined('NOLOGIN')) define('NOLOGIN',1);					// Not disabled cause need to load personalized language
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU',1);
+=======
+if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
+if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
+//if (! defined('NOLOGIN')) define('NOLOGIN',1);					// Not disabled cause need to load personalized language
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 //if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML',1);
 
 require_once '../main.inc.php';
@@ -78,9 +85,16 @@ if ($conf->use_javascript_ajax && 1 == 2)   // select2 is ko with jmobile
 else
 {
     $usedbyinclude = 1; // Used into next include
+<<<<<<< HEAD
 	$showtitlebefore = GETPOST('showtitlebefore','int');
 	include DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php';
 
+=======
+	$showtitlebefore = GETPOST('showtitlebefore', 'int');
+	include DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php';
+
+	$i=0;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $accesskeyalreadyassigned=array();
     foreach($arrayresult as $key => $val)
     {
@@ -94,13 +108,23 @@ else
             $accesskey=$val['label'][0];
             $accesskeyalreadyassigned[$accesskey]=$accesskey;
         }
+<<<<<<< HEAD
         $searchform.=printSearchForm($urlaction, $urlaction, $val['label'], 'minwidth200', $keysearch, $accesskey, $key, img_picto('',$val['img'],'', 0, 1), $showtitlebefore);
+=======
+        $searchform.=printSearchForm($urlaction, $urlaction, $val['label'], 'minwidth200', $keysearch, $accesskey, $key, img_picto('', $val['img'], '', 0, 1), $showtitlebefore, ($i>0?0:1));
+
+        $i++;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 }
 
 // Execute hook printSearchForm
 $parameters=array('searchform'=>$searchform);
+<<<<<<< HEAD
 $reshook=$hookmanager->executeHooks('printSearchForm',$parameters);    // Note that $action and $object may have been modified by some hooks
+=======
+$reshook=$hookmanager->executeHooks('printSearchForm', $parameters);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($reshook))
 {
 	$searchform.=$hookmanager->resPrint;

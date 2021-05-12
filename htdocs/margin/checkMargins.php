@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT . '/margin/lib/margins.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'products', 'margins'));
 
+<<<<<<< HEAD
 $action     = GETPOST('action','alpha');
 $massaction = GETPOST('massaction','alpha');
 $toselect   = GETPOST('toselect', 'array');
@@ -44,22 +45,47 @@ $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
+=======
+$action     = GETPOST('action', 'alpha');
+$massaction = GETPOST('massaction', 'alpha');
+$toselect   = GETPOST('toselect', 'array');
+$contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'margindetail';   // To manage different context of search
+$backtopage = GETPOST('backtopage', 'alpha');
+$optioncss  = GETPOST('optioncss', 'alpha');
+
+// Load variable for pagination
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder = "DESC";
+<<<<<<< HEAD
 if (! $sortfield) $sortfield = 'f.facnumber';
+=======
+if (! $sortfield) $sortfield = 'f.ref';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $startdate = $enddate = '';
 
 $startdate = dol_mktime(0, 0, 0, GETPOST('startdatemonth', 'int'), GETPOST('startdateday', 'int'), GETPOST('startdateyear', 'int'));
 $enddate = dol_mktime(23, 59, 59, GETPOST('enddatemonth', 'int'), GETPOST('enddateday', 'int'), GETPOST('enddateyear', 'int'));
 
+<<<<<<< HEAD
 $search_ref = GETPOST('search_ref','alpha');
 
 // Security check
 $result=restrictedArea($user,'margins');
+=======
+$search_ref = GETPOST('search_ref', 'alpha');
+
+// Security check
+$result=restrictedArea($user, 'margins');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Both test are required to be compatible with all browsers
 if (GETPOST("button_search_x") || GETPOST("button_search")) {
@@ -73,11 +99,19 @@ if (GETPOST("button_search_x") || GETPOST("button_search")) {
  * Actions
  */
 
+<<<<<<< HEAD
 if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
 if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+=======
+if (GETPOST('cancel', 'alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -88,7 +122,11 @@ if (empty($reshook))
     if ($action == 'update') {
         $datapost = $_POST;
 
+<<<<<<< HEAD
         foreach ( $datapost as $key => $value ) {
+=======
+        foreach ($datapost as $key => $value) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             if (strpos($key, 'buyingprice_') !== false) {
                 $tmp_array = explode('_', $key);
                 if (count($tmp_array) > 0) {
@@ -108,7 +146,11 @@ if (empty($reshook))
     }
 
     // Purge search criteria
+<<<<<<< HEAD
     if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+=======
+    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $search_ref='';
         $search_array_options=array();
@@ -143,7 +185,11 @@ $title = $langs->trans("Margins");
 
 llxHeader('', $title);
 
+<<<<<<< HEAD
 // print_fiche_titre($text);
+=======
+// print load_fiche_titre($text);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $param='';
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
@@ -165,11 +211,19 @@ print '<table class="border" width="100%">';
 
 print '<tr><td class="titlefield">' . $langs->trans('DateStart') . ' (' . $langs->trans("DateValidation") . ')</td>';
 print '<td>';
+<<<<<<< HEAD
 $form->select_date($startdate, 'startdate', '', '', 1, "sel", 1, 1);
 print '</td>';
 print '<td>' . $langs->trans('DateEnd') . ' (' . $langs->trans("DateValidation") . ')</td>';
 print '<td>';
 $form->select_date($enddate, 'enddate', '', '', 1, "sel", 1, 1);
+=======
+print $form->selectDate($startdate, 'startdate', '', '', 1, "sel", 1, 1);
+print '</td>';
+print '<td>' . $langs->trans('DateEnd') . ' (' . $langs->trans("DateValidation") . ')</td>';
+print '<td>';
+print $form->selectDate($enddate, 'enddate', '', '', 1, "sel", 1, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</td>';
 print '<td style="text-align: center;">';
 print '<input type="submit" class="button" value="' . dol_escape_htmltag($langs->trans('Refresh')) . '" name="button_search" />';
@@ -183,18 +237,33 @@ dol_fiche_end();
 $arrayfields=array();
 $massactionbutton='';
 
+<<<<<<< HEAD
 
 $sql = "SELECT";
 $sql .= " f.facnumber, f.rowid as invoiceid, d.rowid as invoicedetid, d.buy_price_ht, d.total_ht, d.subprice, d.label, d.description , d.qty";
+=======
+$invoice_status_except_list = array(Facture::STATUS_DRAFT, Facture::STATUS_ABANDONED);
+
+$sql = "SELECT";
+$sql .= " f.ref, f.rowid as invoiceid, d.rowid as invoicedetid, d.buy_price_ht, d.total_ht, d.subprice, d.label, d.description , d.qty";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $sql .= " ,d.fk_product";
 $sql .= " FROM " . MAIN_DB_PREFIX . "facture as f ";
 $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facturedet as d  ON d.fk_facture = f.rowid";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON d.fk_product = p.rowid";
+<<<<<<< HEAD
 $sql .= " WHERE f.fk_statut > 0";
 $sql .= " AND f.entity IN (" . getEntity('facture') . ") ";
 if (! empty($startdate)) $sql .= " AND f.datef >= '" . $db->idate($startdate) . "'";
 if (! empty($enddate))   $sql .= " AND f.datef <= '" . $db->idate($enddate) . "'";
 if ($search_ref) $sql.=natural_search('f.facnumber', $search_ref);
+=======
+$sql .= " WHERE f.fk_statut NOT IN (" . implode(', ', $invoice_status_except_list) . ")";
+$sql .= " AND f.entity IN (" . getEntity('invoice') . ") ";
+if (! empty($startdate)) $sql .= " AND f.datef >= '" . $db->idate($startdate) . "'";
+if (! empty($enddate))   $sql .= " AND f.datef <= '" . $db->idate($enddate) . "'";
+if ($search_ref) $sql.=natural_search('f.ref', $search_ref);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $sql .= " AND d.buy_price_ht IS NOT NULL";
 $sql .= $db->order($sortfield, $sortorder);
 
@@ -249,13 +318,21 @@ if ($result) {
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
+<<<<<<< HEAD
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "f.facnumber", "", $param, '', $sortfield, $sortorder);
+=======
+	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "", "", $param, 'width=20%', $sortfield, $sortorder);
 	print_liste_field_titre("UnitPriceHT", $_SERVER["PHP_SELF"], "d.subprice", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "d.buy_price_ht", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "d.qty", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre("AmountTTC", $_SERVER["PHP_SELF"], "d.total_ht", "", $param, 'align="right"', $sortfield, $sortorder);
+<<<<<<< HEAD
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'',$param,'align="center"',$sortfield,$sortorder,'maxwidthsearch ');
+=======
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print "</tr>\n";
 
     $i=0;
@@ -286,6 +363,7 @@ if ($result) {
 			print $objp->description;
 		}
 		print '</td>';
+<<<<<<< HEAD
 		print '<td align="right">';
 		print price($objp->subprice);
 		print '</td>';
@@ -296,6 +374,18 @@ if ($result) {
 		print $objp->qty;
 		print '</td>';
 		print '<td align="right">';
+=======
+		print '<td class="right">';
+		print price($objp->subprice);
+		print '</td>';
+		print '<td class="right">';
+		print '<input type="text" name="buyingprice_' . $objp->invoicedetid . '" id="buyingprice_' . $objp->invoicedetid . '" size="6" value="' . price($objp->buy_price_ht) . '" class="right flat">';
+		print '</td>';
+		print '<td class="right">';
+		print $objp->qty;
+		print '</td>';
+		print '<td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print price($objp->total_ht);
 		print '</td>';
 		print '<td></td>';
@@ -321,5 +411,9 @@ print '</form>';
 
 $db->free($result);
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

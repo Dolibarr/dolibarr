@@ -89,11 +89,19 @@ if (! defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) 
 		$dolibarr_main_document_root_alt=isset($dolibarr_main_document_root_alt)?trim($dolibarr_main_document_root_alt):'';
 
 		// Remove last / or \ on directories or url value
+<<<<<<< HEAD
 		if (! empty($dolibarr_main_document_root) && ! preg_match('/^[\\/]+$/',$dolibarr_main_document_root)) $dolibarr_main_document_root=preg_replace('/[\\/]+$/','',$dolibarr_main_document_root);
 		if (! empty($dolibarr_main_url_root)      && ! preg_match('/^[\\/]+$/',$dolibarr_main_url_root))      $dolibarr_main_url_root=preg_replace('/[\\/]+$/','',$dolibarr_main_url_root);
 		if (! empty($dolibarr_main_data_root)     && ! preg_match('/^[\\/]+$/',$dolibarr_main_data_root))     $dolibarr_main_data_root=preg_replace('/[\\/]+$/','',$dolibarr_main_data_root);
 		if (! empty($dolibarr_main_document_root_alt)	&& ! preg_match('/^[\\/]+$/',$dolibarr_main_document_root_alt))	$dolibarr_main_document_root_alt=preg_replace('/[\\/]+$/','',$dolibarr_main_document_root_alt);
 		if (! empty($dolibarr_main_url_root_alt)		&& ! preg_match('/^[\\/]+$/',$dolibarr_main_url_root_alt))		$dolibarr_main_url_root_alt=preg_replace('/[\\/]+$/','',$dolibarr_main_url_root_alt);
+=======
+		if (! empty($dolibarr_main_document_root) && ! preg_match('/^[\\/]+$/', $dolibarr_main_document_root)) $dolibarr_main_document_root=preg_replace('/[\\/]+$/', '', $dolibarr_main_document_root);
+		if (! empty($dolibarr_main_url_root)      && ! preg_match('/^[\\/]+$/', $dolibarr_main_url_root))      $dolibarr_main_url_root=preg_replace('/[\\/]+$/', '', $dolibarr_main_url_root);
+		if (! empty($dolibarr_main_data_root)     && ! preg_match('/^[\\/]+$/', $dolibarr_main_data_root))     $dolibarr_main_data_root=preg_replace('/[\\/]+$/', '', $dolibarr_main_data_root);
+		if (! empty($dolibarr_main_document_root_alt)	&& ! preg_match('/^[\\/]+$/', $dolibarr_main_document_root_alt))	$dolibarr_main_document_root_alt=preg_replace('/[\\/]+$/', '', $dolibarr_main_document_root_alt);
+		if (! empty($dolibarr_main_url_root_alt)		&& ! preg_match('/^[\\/]+$/', $dolibarr_main_url_root_alt))		$dolibarr_main_url_root_alt=preg_replace('/[\\/]+$/', '', $dolibarr_main_url_root_alt);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Create conf object
 		if (! empty($dolibarr_main_document_root))
@@ -126,12 +134,21 @@ $conf->global->MAIN_LOGTOHTML = 1;
 
 // Define prefix
 if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_';
+<<<<<<< HEAD
 define('MAIN_DB_PREFIX',(isset($dolibarr_main_db_prefix)?$dolibarr_main_db_prefix:''));
 
 define('DOL_CLASS_PATH', 'class/');                             // Filsystem path to class dir
 define('DOL_DATA_ROOT',(isset($dolibarr_main_data_root)?$dolibarr_main_data_root:''));
 define('DOL_MAIN_URL_ROOT', (isset($dolibarr_main_url_root)?$dolibarr_main_url_root:''));           // URL relative root
 $uri=preg_replace('/^http(s?):\/\//i','',constant('DOL_MAIN_URL_ROOT'));  // $uri contains url without http*
+=======
+define('MAIN_DB_PREFIX', (isset($dolibarr_main_db_prefix)?$dolibarr_main_db_prefix:''));
+
+define('DOL_CLASS_PATH', 'class/');                             // Filsystem path to class dir
+define('DOL_DATA_ROOT', (isset($dolibarr_main_data_root)?$dolibarr_main_data_root:''));
+define('DOL_MAIN_URL_ROOT', (isset($dolibarr_main_url_root)?$dolibarr_main_url_root:''));           // URL relative root
+$uri=preg_replace('/^http(s?):\/\//i', '', constant('DOL_MAIN_URL_ROOT'));  // $uri contains url without http*
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $suburi = strstr($uri, '/');       // $suburi contains url without domain
 if ($suburi == '/') $suburi = '';   // If $suburi is /, it is now ''
 define('DOL_URL_ROOT', $suburi);    // URL relative root ('', '/dolibarr', ...)
@@ -151,7 +168,11 @@ if (empty($conf->db->user)) $conf->db->user='';
 
 
 // Defini objet langs
+<<<<<<< HEAD
 $langs = new Translate('..',$conf);
+=======
+$langs = new Translate('..', $conf);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (GETPOST('lang', 'aZ09')) $langs->setDefaultLang(GETPOST('lang', 'aZ09'));
 else $langs->setDefaultLang('auto');
 
@@ -201,7 +222,11 @@ function conf($dolibarr_main_document_root)
  * @param	string	$action		Action code
  * @return	void
  */
+<<<<<<< HEAD
 function pHeader($soutitre,$next,$action='none')
+=======
+function pHeader($soutitre, $next, $action = 'none')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	global $conf;
 	global $langs;
@@ -217,6 +242,10 @@ function pHeader($soutitre,$next,$action='none')
 	print '<head>'."\n";
 	print '<meta http-equiv="content-type" content="text/html; charset='.$conf->file->character_set_client.'">'."\n";
 	print '<meta name="robots" content="index,follow">'."\n";
+<<<<<<< HEAD
+=======
+	print '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '<meta name="keywords" content="help, center, dolibarr, doliwamp">'."\n";
 	print '<meta name="description" content="Dolibarr help center">'."\n";
 	print '<link rel="stylesheet" type="text/css" href="default.css">'."\n";
@@ -241,7 +270,11 @@ function pHeader($soutitre,$next,$action='none')
  * @param   string	$setuplang		Language code
  * @return	void
  */
+<<<<<<< HEAD
 function pFooter($nonext=0,$setuplang='')
+=======
+function pFooter($nonext = 0, $setuplang = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	global $langs;
 	$langs->load("main");
@@ -250,4 +283,7 @@ function pFooter($nonext=0,$setuplang='')
 	print '</body>'."\n";
 	print '</html>'."\n";
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -6,7 +6,11 @@ Permission=Povolení
 Permissions=Oprávnění
 EditPassword=Upravit heslo
 SendNewPassword=Vytvořit a zaslat heslo
+<<<<<<< HEAD
 SendNewPasswordLink=Send link to reset password
+=======
+SendNewPasswordLink=Odeslat odkaz k obnovení hesla
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ReinitPassword=Vytvořit heslo
 PasswordChangedTo=Heslo změněno na: %s
 SubjectNewPassword=Vaše nové heslo pro %s
@@ -44,11 +48,19 @@ NewGroup=Nová skupina
 CreateGroup=Vytvořit skupinu
 RemoveFromGroup=Odstranit ze skupiny
 PasswordChangedAndSentTo=Heslo změněno a poslán na <b>%s.</b>
+<<<<<<< HEAD
 PasswordChangeRequest=Request to change password for <b>%s</b>
 PasswordChangeRequestSent=Žádost o změnu hesla <b>%s</b> zaslána na <b>%s.</b>
 ConfirmPasswordReset=Confirm password reset
 MenuUsersAndGroups=Uživatelé a skupiny
 LastGroupsCreated=Latest %s groups created
+=======
+PasswordChangeRequest=Požadavek na změnu hesla pro <b> %s</b>
+PasswordChangeRequestSent=Žádost o změnu hesla <b>%s</b> zaslána na <b>%s.</b>
+ConfirmPasswordReset=Potvrďte resetování hesla
+MenuUsersAndGroups=Uživatelé a skupiny
+LastGroupsCreated=Posledních %s vytvořených skupin
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LastUsersCreated=Posledních %s vytvořených uživatelů
 ShowGroup=Zobrazit skupinu
 ShowUser=Zobrazit uživatele
@@ -66,11 +78,19 @@ CreateDolibarrThirdParty=Vytvořit třetí stranu
 LoginAccountDisableInDolibarr=Účet byl zakázán v Dolibarr.
 UsePersonalValue=Používejte osobní hodnotu
 InternalUser=Interní uživatel
+<<<<<<< HEAD
 ExportDataset_user_1=Uživatelé Dolibarr a jejich vlastnosti
 DomainUser=Doménový uživatel %s
 Reactivate=Reaktivace
 CreateInternalUserDesc=This form allows you to create an user internal to your company/organization. To create an external user (customer, supplier, ...), use the button 'Create Dolibarr user' from third party's contact card.
 InternalExternalDesc=An <b>internal</b> user is a user that is part of your company/organization.<br>An <b>external</b> user is a customer, supplier or other.<br><br>In both cases, permissions defines rights on Dolibarr, also external user can have a different menu manager than internal user (See Home - Setup - Display)
+=======
+ExportDataset_user_1=Uživatelé a jejich vlastnosti
+DomainUser=Doménový uživatel %s
+Reactivate=Reaktivace
+CreateInternalUserDesc=Tento formulář umožňuje vytvořit interní uživatele ve vaší společnosti / organizaci. Chcete-li vytvořit externího uživatele (zákazník, dodavatel atd.), použijte tlačítko "Vytvořit uživatele Dolibarr z karty kontaktu subjektu.
+InternalExternalDesc=<b>Interní</b> uživatel je uživatel, který je součástí vaší firmy / nadace. <br> <b>Externí</b> uživatel je zákazník, dodavatel nebo jiný. <br><br> V obou případech se oprávněními definují práva na Dolibarr. Externí uživatel navíc může mít jinou nabídku menu než-li interní (viz Domů - Nastavení - Zobrazení)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PermissionInheritedFromAGroup=Povolení uděleno, neboť je zděděno z některé uživatelské skupiny.
 Inherited=Zděděný
 UserWillBeInternalUser=Vytvořený uživatel bude interní (protože není spojen s žádnou třetí stranou)
@@ -93,7 +113,11 @@ NameToCreate=Název třetí strany k vytvoření
 YourRole=Vaše role
 YourQuotaOfUsersIsReached=Vaše kvóta aktivních uživatelů je dosažena!
 NbOfUsers=Počet uživatelů
+<<<<<<< HEAD
 NbOfPermissions=Nb of permissions
+=======
+NbOfPermissions=Počet oprávnění
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DontDowngradeSuperAdmin=Pouze superadmin může ponížit superadmina
 HierarchicalResponsible=Supervizor
 HierarchicView=Hierarchické zobrazení
@@ -107,4 +131,10 @@ DisabledInMonoUserMode=Zakázán v režimu údržby
 UserAccountancyCode=Účetní kód uživatele
 UserLogoff=odhlášení uživatele
 UserLogged=přihlášený uživatel
+<<<<<<< HEAD
 DateEmployment=Datum zaměstnanost
+=======
+DateEmployment=Datum zahájení zaměstnání
+DateEmploymentEnd=Datum ukončení zaměstnání
+CantDisableYourself=You can't disable your own user record
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

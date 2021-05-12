@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
  * Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,6 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 // Load translation files required by the page
 $langs->load("categories");
 
+<<<<<<< HEAD
 $id=GETPOST('id','int');
 $ref=GETPOST('ref');
 $type=GETPOST('type');
@@ -43,12 +48,29 @@ $socid=GETPOST('socid','int');
 $label=GETPOST('label');
 $description=GETPOST('description');
 $color=GETPOST('color','alpha');
+=======
+$id=GETPOST('id', 'int');
+$ref=GETPOST('ref');
+$type=GETPOST('type');
+$action=(GETPOST('action', 'aZ09')?GETPOST('action', 'aZ09'):'edit');
+$confirm=GETPOST('confirm');
+$cancel=GETPOST('cancel', 'alpha');
+
+$socid=GETPOST('socid', 'int');
+$label=GETPOST('label');
+$description=GETPOST('description');
+$color=GETPOST('color', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $visible=GETPOST('visible');
 $parent=GETPOST('parent');
 
 if ($id == "")
 {
+<<<<<<< HEAD
 	dol_print_error('','Missing parameter id');
+=======
+	dol_print_error('', 'Missing parameter id');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	exit();
 }
 
@@ -81,6 +103,10 @@ if ($cancel)
 // Action mise a jour d'une categorie
 if ($action == 'update' && $user->rights->categorie->creer)
 {
+<<<<<<< HEAD
+=======
+    $object->oldcopy = dol_clone($object);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$object->label          = $label;
 	$object->description    = dol_htmlcleanlastbr($description);
 	$object->color          = $color;
@@ -101,7 +127,11 @@ if ($action == 'update' && $user->rights->categorie->creer)
 	}
 	if (! $error && empty($object->error))
 	{
+<<<<<<< HEAD
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+=======
+		$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if ($ret < 0) $error++;
 
 		if (! $error && $object->update($user) > 0)
@@ -129,7 +159,11 @@ if ($action == 'update' && $user->rights->categorie->creer)
 $form = new Form($db);
 $formother = new FormOther($db);
 
+<<<<<<< HEAD
 llxHeader("","",$langs->trans("Categories"));
+=======
+llxHeader("", "", $langs->trans("Categories"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print load_fiche_titre($langs->trans("ModifCat"));
 
@@ -158,7 +192,11 @@ print '<tr>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td >';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+<<<<<<< HEAD
 $doleditor=new DolEditor('description',$object->description,'',200,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,ROWS_6,'90%');
+=======
+$doleditor=new DolEditor('description', $object->description, '', 200, 'dolibarr_notes', '', false, true, $conf->fckeditor->enabled, ROWS_6, '90%');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $doleditor->Create();
 print '</td></tr>';
 
@@ -171,6 +209,7 @@ print '</td></tr>';
 
 // Parent category
 print '<tr><td>'.$langs->trans("In").'</td><td>';
+<<<<<<< HEAD
 print $form->select_all_categories($type,$object->fk_parent,'parent',64,$object->id);
 print '</td></tr>';
 
@@ -180,6 +219,17 @@ print $hookmanager->resPrint;
 if (empty($reshook))
 {
 	print $object->showOptionals($extrafields,'edit');
+=======
+print $form->select_all_categories($type, $object->fk_parent, 'parent', 64, $object->id);
+print '</td></tr>';
+
+$parameters=array();
+$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+if (empty($reshook))
+{
+	print $object->showOptionals($extrafields, 'edit');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 print '</table>';
@@ -192,7 +242,11 @@ print '<div class="center"><input type="submit" class="button" name"submit" valu
 
 print '</form>';
 
+<<<<<<< HEAD
 
 
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

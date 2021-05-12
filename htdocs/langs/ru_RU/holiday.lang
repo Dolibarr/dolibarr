@@ -1,10 +1,18 @@
 # Dolibarr language file - Source file is en_US - holiday
 HRM=Отдел кадров
+<<<<<<< HEAD
 Holidays=Отпуска
 CPTitreMenu=Отпуска
 MenuReportMonth=Ежемесячная выписка
 MenuAddCP=New leave request
 NotActiveModCP=Вы должны включить модуль "Отпуска" для просмотра этой страницы
+=======
+Holidays=Leave
+CPTitreMenu=Leave
+MenuReportMonth=Ежемесячная выписка
+MenuAddCP=New leave request
+NotActiveModCP=You must enable the module Leave to view this page.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddCP=Подать заявление на отпуск
 DateDebCP=Начальная дата
 DateFinCP=Конечная дата
@@ -15,18 +23,32 @@ ApprovedCP=Утверждено
 CancelCP=Отменено
 RefuseCP=Отказано
 ValidatorCP=Утвердивший
+<<<<<<< HEAD
 ListeCP=Список отпусков
 LeaveId=Leave ID
 ReviewedByCP=Will be approved by
 UserForApprovalID=User for approval ID
 UserForApprovalFirstname=Firstname of approval user
 UserForApprovalLastname=Lastname of approval user
+=======
+ListeCP=List of leave
+LeaveId=Leave ID
+ReviewedByCP=Will be approved by
+UserForApprovalID=User for approval ID
+UserForApprovalFirstname=First name of approval user
+UserForApprovalLastname=Last name of approval user
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 UserForApprovalLogin=Login of approval user
 DescCP=Описание
 SendRequestCP=Создать заявление на отпуск
 DelayToRequestCP=Заявления об отпуске могут создаваться не ранее чем через <b>%s</b> (дней)
+<<<<<<< HEAD
 MenuConfCP=Balance of leaves
 SoldeCPUser=График отпусков  <b>%s</b> дней.
+=======
+MenuConfCP=Balance of leave
+SoldeCPUser=Leave balance is <b>%s</b> days.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorEndDateCP=Выберите конечную дату позже чем начальную.
 ErrorSQLCreateCP=Ошибка SQL возникла во время создания:
 ErrorIDFicheCP=Возникла ошибка, заявление на отпуск отсутствует.
@@ -101,8 +123,13 @@ LEAVE_SICK=Sick leave
 LEAVE_OTHER=Other leave
 LEAVE_PAID_FR=Paid vacation
 ## Configuration du Module ##
+<<<<<<< HEAD
 LastUpdateCP=Latest automatic update of leaves allocation
 MonthOfLastMonthlyUpdate=Month of latest automatic update of leaves allocation
+=======
+LastUpdateCP=Latest automatic update of leave allocation
+MonthOfLastMonthlyUpdate=Month of latest automatic update of leave allocation
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 UpdateConfCPOK=Обновлено успешно
 Module27130Name= Управление заявлениями на отпуск
 Module27130Desc= Управление заявлениями на отпуск
@@ -112,13 +139,31 @@ NoticePeriod=Период уведомления
 HolidaysToValidate=Подтверждение заявления на отпуск
 HolidaysToValidateBody=Ниже список заявлений на отпуск, которые требуют подтверждения
 HolidaysToValidateDelay=Это заявление на отпуск будет рассмотрено в период менее, чем %s дней.
+<<<<<<< HEAD
 HolidaysToValidateAlertSolde=У пользователя, который оставил это заявление на отпуск нет достаточного количество доступных дней. 
 HolidaysValidated=Подтверждённые заявления на отпуск
 HolidaysValidatedBody=Ваше заявление на отпуск с  %s по %s  подтверждено.
 HolidaysRefused=Заявление отклонено.
 HolidaysRefusedBody=Ваше заявление на отпуск с  %s по %s отклонено по следующей причине: 
+=======
+HolidaysToValidateAlertSolde=The user who made this leave request does not have enough available days.
+HolidaysValidated=Подтверждённые заявления на отпуск
+HolidaysValidatedBody=Ваше заявление на отпуск с  %s по %s  подтверждено.
+HolidaysRefused=Заявление отклонено.
+HolidaysRefusedBody=Your leave request for %s to %s has been denied for the following reason:
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 HolidaysCanceled=Отменённые заявления на отпуск
 HolidaysCanceledBody=Ваше заявление на отпуск с  %s по %s отменено. 
 FollowedByACounter=1: This type of leave need to be followed by a counter. Counter is incremented manually or automatically and when a leave request is validated, counter is decremented.<br>0: Not followed by a counter.
 NoLeaveWithCounterDefined=There is no leave types defined that need to be followed by a counter
+<<<<<<< HEAD
 GoIntoDictionaryHolidayTypes=Go into <strong>Home - Setup - Dictionaries - Type of leaves</strong> to setup the different types of leaves.
+=======
+GoIntoDictionaryHolidayTypes=Go into <strong>Home - Setup - Dictionaries - Type of leave</strong> to setup the different types of leaves.
+HolidaySetup=Setup of module Holiday
+HolidaysNumberingModules=Leave requests numbering models
+TemplatePDFHolidays=Template for leave requests PDF
+FreeLegalTextOnHolidays=Free text on PDF
+WatermarkOnDraftHolidayCards=Watermarks on draft leave requests
+HolidaysToApprove=Holidays to approve
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

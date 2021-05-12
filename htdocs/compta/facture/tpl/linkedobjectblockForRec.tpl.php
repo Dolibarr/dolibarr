@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2010-2011	Regis Houssin <regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2010-2011	Regis Houssin <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2013		Juanjo Menent <jmenent@2byte.es>
  * Copyright (C) 2014       Marcos García <marcosgdf@gmail.com>
  *
@@ -47,15 +51,24 @@ foreach($linkedObjectBlock as $key => $objectlink)
     if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass.=' liste_sub_total';
 ?>
 <tr class="<?php echo $trclass; ?>" >
+<<<<<<< HEAD
     <td><?php echo $langs->trans("RepeatableInvoice"); ?></td>
     <td><?php echo $objectlink->getNomUrl(1); ?></td>
 	<td align="center"></td>
 	<td align="center"><?php echo dol_print_date($objectlink->date_when,'day'); ?></td>
 	<td align="right"><?php
+=======
+    <td class="linkedcol-element"><?php echo $langs->trans("RepeatableInvoice"); ?></td>
+    <td class="linkedcol-name"><?php echo $objectlink->getNomUrl(1); ?></td>
+	<td class="linkedcol-ref" align="center"></td>
+	<td class="linkedcol-date" align="center"><?php echo dol_print_date($objectlink->date_when, 'day'); ?></td>
+	<td class="linkedcol-amount right"><?php
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if ($user->rights->facture->lire) {
 			$total = $total + $objectlink->total_ht;
 			echo price($objectlink->total_ht);
 		} ?></td>
+<<<<<<< HEAD
 	<td align="right">
 	<?php
 		print $objectlink->getLibStatut(3);
@@ -65,6 +78,27 @@ foreach($linkedObjectBlock as $key => $objectlink)
 </tr>
 <?php
 }
+=======
+	<td class="linkedcol-statut right"><?php echo $objectlink->getLibStatut(3); ?></td>
+	<td class="linkedcol-action right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
+</tr>
+<?php
+}
+if (count($linkedObjectBlock) > 1)
+{
+	?>
+    <tr class="liste_total <?php echo (empty($noMoreLinkedObjectBlockAfter)?'liste_sub_total':''); ?>">
+        <td><?php echo $langs->trans("Total"); ?></td>
+        <td></td>
+    	<td align="center"></td>
+    	<td align="center"></td>
+    	<td class="right"><?php echo price($total); ?></td>
+    	<td class="right"></td>
+    	<td class="right"></td>
+    </tr>
+    <?php
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ?>
 
 <!-- END PHP TEMPLATE -->

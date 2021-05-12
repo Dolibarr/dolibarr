@@ -19,11 +19,17 @@ FormatDateHourShort=%d/%m/%Y %H:%M
 FormatDateHourSecShort=%d/%m/%Y %H:%M:%S
 FormatDateHourTextShort=%d %b %Y %H:%M
 FormatDateHourText=%d %B %Y %H:%M
+<<<<<<< HEAD
+=======
+NoRecordFound=Kein Eintrag gefunden
+NoRecordDeleted=Kein Eintrag gelöscht
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoError=Kein Fehler
 ErrorLogoFileNotFound=Logo-Datei '%s' kann nicht gefunden werden
 ErrorFailedToSendMail=Fehler beim Senden des Mails (Absender=%s, Empfänger=%s)
 ErrorDuplicateField=Dieser Wert muß einzigartig sein
 LevelOfFeature=Funktions-Level
+<<<<<<< HEAD
 PreviousConnexion=Vorherige Verbindung
 NotePublic=Notiz (öffentlich)
 Closed=geschlossen
@@ -35,6 +41,16 @@ Search=Suche
 SearchOf=Suche
 Upload=Upload
 PasswordRetype=Geben Sie das Passwort erneut ein
+=======
+NotePublic=Notiz (öffentlich)
+Closed2=geschlossen
+ToClone=Klonen
+Of=Von
+Search=Suche
+SearchOf=Suche
+PasswordRetype=Geben Sie das Passwort erneut ein
+Title=Titel
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DateStart=Start-Datum
 DateEnd=End-Datum
 DateDue=Zahlungsziel
@@ -42,7 +58,10 @@ DateRequest=Verlange Datum
 DurationDays=Tag
 days=Tag
 UnitPrice=Bruttopreis (Stk.)
+<<<<<<< HEAD
 UnitPriceHT=Nettopreis (Stk.)
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 UnitPriceTTC=Bruttopreis (Stk.)
 PriceU=Stückpreis
 PriceUHT=Stückpreis (net)
@@ -61,7 +80,10 @@ Month01=Jänner
 ReportName=Berichtname
 AmountInCurrency=Beträge in 1%s
 RefCustomer=Kunden Nr.
+<<<<<<< HEAD
 SendByMail=Per E-Mail senden
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MailSentBy=E-Mail-Absender
 TextUsedInTheMessageBody=E-Mail-Text
 NoEMail=Keine E-Mails
@@ -71,14 +93,20 @@ Documents=Verknüpfte Dateien
 ThisLimitIsDefinedInSetup=Gesetzte System-Limits (Menü Home-Einstellungen-Sicherheit): %s Kb, PHP Limit: %s Kb
 UnHidePassword=Passwort-Zeichen anzeigen
 CloneMainAttributes=Duplikat mit den Haupteigenschaften
+<<<<<<< HEAD
 AttributeCode=Attribut-Code
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LinkTo=Verknüpfen mit...
 LinkToProposal==> Angebot
 LinkToOrder==> Bestellung
 LinkToInvoice==> Rechnung
+<<<<<<< HEAD
 LinkToSupplierOrder==> Lieferantenbestellung
 LinkToSupplierProposal==> Lieferantenangebot
 LinkToSupplierInvoice==> Lieferantenrechnung
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LinkToContract==> Vertrag
 CreateDraft=Erstelle Entwurf
 NoPhotoYet=Es wurde noch kein Bild hochgeladen
@@ -87,5 +115,9 @@ ShowIntervention=Zeige Intervention
 ViewList=Liste anzeigen
 RelatedObjects=Ähnliche Dokumente
 Calendar=Kalender
+<<<<<<< HEAD
+=======
+Events=Termine
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SearchIntoInterventions=Eingriffe
 AssignedTo=zugewisen an

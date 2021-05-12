@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - boxes
+<<<<<<< HEAD
 BoxLoginInformation=Login information
 BoxLastRssInfos=RSS-information
 BoxLastProducts=Latest %s products/services
@@ -47,22 +48,82 @@ BoxGoodCustomers=Good customers
 BoxTitleGoodCustomers=%s Good customers
 FailedToRefreshDataInfoNotUpToDate=Failed to refresh RSS flux. Latest successfull refresh date: %s
 LastRefreshDate=Latest refresh date
+=======
+BoxLoginInformation=inloggningsinformation
+BoxLastRssInfos=RSS Information
+BoxLastProducts=Senaste %s Produkter / tjänster
+BoxProductsAlertStock=Varning lagervaror
+BoxLastProductsInContract=Senaste %s avtalade produkter / tjänster
+BoxLastSupplierBills=Senaste leverantörsfakturor
+BoxLastCustomerBills=Senaste kundfakturor
+BoxOldestUnpaidCustomerBills=Äldsta obetalda kundfakturor
+BoxOldestUnpaidSupplierBills=Äldsta obetalda leverantörsfakturor
+BoxLastProposals=Senaste kommersiella förslag
+BoxLastProspects=Senast ändrade utsikter
+BoxLastCustomers=Senast ändrade kunder
+BoxLastSuppliers=Senast uppdaterade leverantörer
+BoxLastCustomerOrders=Senaste försäljningsorder
+BoxLastActions=Senaste åtgärderna
+BoxLastContracts=Senaste kontrakt
+BoxLastContacts=Senaste kontakter / adresser
+BoxLastMembers=Senaste medlemmarna
+BoxFicheInter=Senaste interventioner
+BoxCurrentAccounts=Öppna konton balans
+BoxTitleLastRssInfos=Senaste %s nyheter från %s
+BoxTitleLastProducts=Produkter / tjänster: senaste %s modifierad
+BoxTitleProductsAlertStock=Produkter: lagervarning
+BoxTitleLastSuppliers=Senaste %s inspelade leverantörerna
+BoxTitleLastModifiedSuppliers=Leverantörer: senaste %s modifierad
+BoxTitleLastModifiedCustomers=Kunder: senaste %s modifierad
+BoxTitleLastCustomersOrProspects=Senaste %s kunder eller framtidsutsikter
+BoxTitleLastCustomerBills=Senaste %s Kundfakturor
+BoxTitleLastSupplierBills=Senaste %s Leverantörsfakturor
+BoxTitleLastModifiedProspects=Utsikter: senaste %s modifierad
+BoxTitleLastModifiedMembers=Senaste %s medlemmarna
+BoxTitleLastFicheInter=Senaste %s modifierade interventioner
+BoxTitleOldestUnpaidCustomerBills=Kundfaktura: äldsta %s obetald
+BoxTitleOldestUnpaidSupplierBills=Leverantörsfakturor: äldsta %s obetald
+BoxTitleCurrentAccounts=Öppna konton: saldon
+BoxTitleLastModifiedContacts=Kontakter / Adresser: senaste %s modifierad
+BoxMyLastBookmarks=Bokmärken: senaste %s
+BoxOldestExpiredServices=Äldsta aktiva passerat tjänster
+BoxLastExpiredServices=Senaste %s äldsta kontakterna med aktiva utgåttjänster
+BoxTitleLastActionsToDo=Senaste %s åtgärderna att göra
+BoxTitleLastContracts=Senaste %s modifierade kontrakten
+BoxTitleLastModifiedDonations=Senast %s ändrade donationer
+BoxTitleLastModifiedExpenses=Senaste %s modifierade kostnadsrapporterna
+BoxGlobalActivity=Global aktivitet (fakturor, förslag, order)
+BoxGoodCustomers=Bra kunder
+BoxTitleGoodCustomers=%s Bra kunder
+FailedToRefreshDataInfoNotUpToDate=Misslyckades med att uppdatera RSS-flöde. Senaste framgångsrika uppdateringsdatum: %s
+LastRefreshDate=Senaste uppdateringsdatum
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoRecordedBookmarks=Inga bokmärken definieras. Klicka <a href="%s">här</a> för att lägga till bokmärken.
 ClickToAdd=Klicka här för att lägga till.
 NoRecordedCustomers=Inga registrerade kunder
 NoRecordedContacts=Inga noterade kontakter
 NoActionsToDo=Inga åtgärder för att göra
+<<<<<<< HEAD
 NoRecordedOrders=No recorded customer orders
 NoRecordedProposals=Inga registrerade förslag
 NoRecordedInvoices=No recorded customer invoices
 NoUnpaidCustomerBills=No unpaid customer invoices
 NoUnpaidSupplierBills=No unpaid supplier invoices
 NoModifiedSupplierBills=No recorded supplier invoices
+=======
+NoRecordedOrders=Inga registrerade försäljningsorder
+NoRecordedProposals=Inga registrerade förslag
+NoRecordedInvoices=Inga registrerade kundfakturor
+NoUnpaidCustomerBills=Inga obetalda kundfakturor
+NoUnpaidSupplierBills=Inga obetalda leverantörsfakturor
+NoModifiedSupplierBills=Inga registrerade leverantörsfakturor
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoRecordedProducts=Inga registrerade produkter / tjänster
 NoRecordedProspects=Inga registrerade framtidsutsikter
 NoContractedProducts=Inga produkter / tjänster avtalade
 NoRecordedContracts=Inga registrerade kontrakt
 NoRecordedInterventions=Inga inspelade interventioner
+<<<<<<< HEAD
 BoxLatestSupplierOrders=Senaste leverantörs order
 NoSupplierOrder=Inga inspelade leverantör ordning
 BoxCustomersInvoicesPerMonth=Kund fakturor per månad
@@ -84,3 +145,27 @@ ForProposals=Förslag
 LastXMonthRolling=The latest %s month rolling
 ChooseBoxToAdd=Add widget to your dashboard
 BoxAdded=Widget was added in your dashboard
+=======
+BoxLatestSupplierOrders=Senaste inköpsorder
+NoSupplierOrder=Ingen registrerad köporder
+BoxCustomersInvoicesPerMonth=Kundfakturor per månad
+BoxSuppliersInvoicesPerMonth=Leverantörsfakturor per månad
+BoxCustomersOrdersPerMonth=Försäljningsorder per månad
+BoxSuppliersOrdersPerMonth=Leverantörsorder per månad
+BoxProposalsPerMonth=Förslag per månad
+NoTooLowStockProducts=Inga produkter ligger under den låga lagergränsen
+BoxProductDistribution=Produkter / Tjänster Distribution
+ForObject=På %s
+BoxTitleLastModifiedSupplierBills=Leverantörsfakturor: senaste %s modifierad
+BoxTitleLatestModifiedSupplierOrders=Leverantörsorder: senaste %s modifierad
+BoxTitleLastModifiedCustomerBills=Kundfaktura: senaste %s modifierad
+BoxTitleLastModifiedCustomerOrders=Försäljningsorder: senaste %s modifierad
+BoxTitleLastModifiedPropals=Senaste %s ändrade förslag
+ForCustomersInvoices=Kundens fakturor
+ForCustomersOrders=Kund beställningar
+ForProposals=Förslag
+LastXMonthRolling=Den senaste %s månaden rullande
+ChooseBoxToAdd=Lägg till widget i din instrumentpanel
+BoxAdded=Widget har lagts till i din instrumentpanel
+BoxTitleUserBirthdaysOfMonth=Födelsedagar i denna månad
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

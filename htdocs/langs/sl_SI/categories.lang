@@ -10,12 +10,20 @@ modify=spremeni
 Classify=Razvrsti
 CategoriesArea=Področje značk/kategorij
 ProductsCategoriesArea=Področje značk/kategorij proizvodov/storitev
+<<<<<<< HEAD
 SuppliersCategoriesArea=Področje značk/kategorij dobaviteljev
+=======
+SuppliersCategoriesArea=Vendors tags/categories area
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CustomersCategoriesArea=Področje značk/kategorij kupcev
 MembersCategoriesArea=Področje značk/kategorij članov
 ContactsCategoriesArea=Področje značk/kategorij kontaktov
 AccountsCategoriesArea=Accounts tags/categories area
 ProjectsCategoriesArea=Projects tags/categories area
+<<<<<<< HEAD
+=======
+UsersCategoriesArea=Users tags/categories area
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SubCats=Sub-categories
 CatList=Seznam značk/kategorij
 NewCategory=Nova značka/kategorija
@@ -31,7 +39,11 @@ WasAddedSuccessfully=<b>%s</b> je bil uspešno dodan.
 ObjectAlreadyLinkedToCategory=Element je že povezan na to značko/kategorijo.
 ProductIsInCategories=Izdelek / storitev je povezana z naslednjimi oznakami / kategorijami
 CompanyIsInCustomersCategories=Ta tretja stranka je povezana z naslednjimi strankami / možnosti Oznake / kategorije
+<<<<<<< HEAD
 CompanyIsInSuppliersCategories=Ta tretja stranka je povezana z naslednjimi dobavitelji Oznake / kategorije
+=======
+CompanyIsInSuppliersCategories=This third party is linked to following vendors tags/categories
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MemberIsInCategories=Ta član je povezana z naslednjimi člani Oznake / kategorije
 ContactIsInCategories=Ta kontakt je povezan z naslednjimi značkami/kategorijami
 ProductHasNoCategory=Ta proizvod/storitev ni vključen v nobenoznačko/ kategorijo
@@ -47,6 +59,7 @@ ContentsNotVisibleByAllShort=Vsebina ni vidna vsem
 DeleteCategory=Briši značko/kategorijo
 ConfirmDeleteCategory=Are you sure you want to delete this tag/category?
 NoCategoriesDefined=Ni določena nobena značka/kategorija
+<<<<<<< HEAD
 SuppliersCategoryShort=Dobavitelji značka/kategorija
 CustomersCategoryShort=Stranke značka/kategorija
 ProductsCategoryShort=Proizvodi značka/kategorija
@@ -55,20 +68,40 @@ SuppliersCategoriesShort=Značke/kategorije dobaviteljev
 CustomersCategoriesShort=Značke/kategorije kupcev
 ProspectsCategoriesShort=Značke/kategorije možnih strank
 CustomersProspectsCategoriesShort=Kategorije kupcev/možnih strank
+=======
+SuppliersCategoryShort=Vendors tag/category
+CustomersCategoryShort=Stranke značka/kategorija
+ProductsCategoryShort=Proizvodi značka/kategorija
+MembersCategoryShort=Člani značka/kategorija
+SuppliersCategoriesShort=Vendors tags/categories
+CustomersCategoriesShort=Značke/kategorije kupcev
+ProspectsCategoriesShort=Značke/kategorije možnih strank
+CustomersProspectsCategoriesShort=Cust./Prosp. tags/categories
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProductsCategoriesShort=Značke/kategorije proizvodov
 MembersCategoriesShort=Značke/kategorije članov
 ContactCategoriesShort=Značke/kategorije kontaktov
 AccountsCategoriesShort=Accounts tags/categories
 ProjectsCategoriesShort=Projects tags/categories
+<<<<<<< HEAD
 ThisCategoryHasNoProduct=Ta kategorija ne vsebuje nobenega proizvoda.
 ThisCategoryHasNoSupplier=Ta kategorija ne vsebuje nobenega proizvoda.
+=======
+UsersCategoriesShort=Users tags/categories
+ThisCategoryHasNoProduct=Ta kategorija ne vsebuje nobenega proizvoda.
+ThisCategoryHasNoSupplier=This category does not contain any vendor.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ThisCategoryHasNoCustomer=Ta kategorija ne vsebuje nobenega kupca.
 ThisCategoryHasNoMember=Ta kategorija ne vsebuje nobenega člana.
 ThisCategoryHasNoContact=Ta kategorija ne vsebuje nobenega kontakta.
 ThisCategoryHasNoAccount=This category does not contain any account.
 ThisCategoryHasNoProject=This category does not contain any project.
 CategId=ID značke/kategorije
+<<<<<<< HEAD
 CatSupList=Seznam značk/kategorij dobaviteljev
+=======
+CatSupList=List of vendor tags/categories
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CatCusList=Seznam značk/kategorij kupcev/možnih strank
 CatProdList=Seznam značk/kategorij proizvodov
 CatMemberList=Seznam značk/kategorij članov
@@ -81,7 +114,11 @@ DeleteFromCat=Odstrani iz značk/kategorije
 ExtraFieldsCategories=Koplementarni atributi
 CategoriesSetup=Nastavitev značk/kategorij
 CategorieRecursiv=Avtomatsko poveži z nadrejeno značko/kategorijo
+<<<<<<< HEAD
 CategorieRecursivHelp=Če je aktivirano, bo proizvod po dodajanju v podkategorijo povezan tudi z nadrejeno kategorijo
+=======
+CategorieRecursivHelp=If option is on, when you add a product into a subcategory, product will also be added into the parent category.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddProductServiceIntoCategory=Dodaj sledeči produkt/storitev
 ShowCategory=Pokaži značko/kategorijo
 ByDefaultInList=Privzeto na seznamu

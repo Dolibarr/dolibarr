@@ -34,6 +34,18 @@ if ($resql)    // This can fail when class is used on old database (during migra
 			case 'boolean':
 				$typeFilter="Boolean";
 				break;
+<<<<<<< HEAD
+=======
+			case 'select':
+			    if (! empty($conf->global->EXPORT_LABEL_FOR_SELECT))
+			    {
+    			    $tmpparam=unserialize($obj->param);	// $tmpparam may be array with 'options' = array(key1=>val1, key2=>val2 ...)
+    			    if ($tmpparam['options'] && is_array($tmpparam['options'])) {
+    			        $typeFilter="Select:".$obj->param;
+    			    }
+			    }
+			    break;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			case 'sellist':
 				$tmp='';
 				$tmpparam=unserialize($obj->param);	// $tmp ay be array 'options' => array 'c_currencies:code_iso:code_iso' => null

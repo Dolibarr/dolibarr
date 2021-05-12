@@ -32,7 +32,11 @@
  *  @param  string	$errorlabel		Error string label
  *  @return User						Return user object identified by login/pass/entity into authentication array
  */
+<<<<<<< HEAD
 function check_authentication($authentication,&$error,&$errorcode,&$errorlabel)
+=======
+function check_authentication($authentication, &$error, &$errorcode, &$errorlabel)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
     global $db,$conf,$langs;
     global $dolibarr_main_authentication,$dolibarr_auto_user;
@@ -53,13 +57,21 @@ function check_authentication($authentication,&$error,&$errorcode,&$errorlabel)
 
     if (! $error)
     {
+<<<<<<< HEAD
         $result=$fuser->fetch('',$authentication['login'],'',0);
+=======
+        $result=$fuser->fetch('', $authentication['login'], '', 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         if ($result < 0)
         {
             $error++;
             $errorcode='ERROR_FETCH_USER'; $errorlabel='A technical error occurred during fetch of user';
         }
+<<<<<<< HEAD
         else if ($result == 0)
+=======
+        elseif ($result == 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         {
             $error++;
             $errorcode='BAD_CREDENTIALS'; $errorlabel='Bad value for login or password';
@@ -81,10 +93,17 @@ function check_authentication($authentication,&$error,&$errorcode,&$errorlabel)
         	// Authentication mode: forceuser
         	if ($dolibarr_main_authentication == 'forceuser' && empty($dolibarr_auto_user)) $dolibarr_auto_user='auto';
         	// Set authmode
+<<<<<<< HEAD
         	$authmode=explode(',',$dolibarr_main_authentication);
 
             include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
         	$login = checkLoginPassEntity($authentication['login'],$authentication['password'],$authentication['entity'],$authmode);
+=======
+        	$authmode=explode(',', $dolibarr_main_authentication);
+
+            include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+        	$login = checkLoginPassEntity($authentication['login'], $authentication['password'], $authentication['entity'], $authmode);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if (empty($login))
 			{
 			    $error++;
@@ -95,4 +114,7 @@ function check_authentication($authentication,&$error,&$errorcode,&$errorlabel)
 
     return $fuser;
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

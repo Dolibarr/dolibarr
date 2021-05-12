@@ -1,10 +1,18 @@
 # Dolibarr language file - Source file is en_US - holiday
 HRM=HRM
+<<<<<<< HEAD
 Holidays=Concedii
 CPTitreMenu=Concedii
 MenuReportMonth=Situaţia lunară
 MenuAddCP=Cerere de concediu noua
 NotActiveModCP=Trebuie să activaţi modulul de concedii pentru a vedea această pagină.
+=======
+Holidays=Concediu
+CPTitreMenu=Concediu
+MenuReportMonth=Situaţia lunară
+MenuAddCP=Cerere de concediu noua
+NotActiveModCP=Trebuie să activați modulul Concediu pentru a vedea această pagină.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddCP=Crează o cerere de concediu
 DateDebCP=Dată început
 DateFinCP=Dată sfărşit
@@ -15,6 +23,7 @@ ApprovedCP=Aprobat
 CancelCP=Şters
 RefuseCP=Refuzat
 ValidatorCP=Aprobator
+<<<<<<< HEAD
 ListeCP=Listă cereri de concedii
 ReviewedByCP=Will be approved by
 DescCP=Descriere
@@ -22,6 +31,20 @@ SendRequestCP=Crează o cerere de concediu
 DelayToRequestCP=Cererile pentru concediu trebuiesc făcute cu cel puţin <b>%s zi(le)</b> înainte.
 MenuConfCP=Balance of leaves
 SoldeCPUser=Soldul concediilor este de <b>%s</b> zile.
+=======
+ListeCP=Lista concediilor
+LeaveId=Lăsați ID-ul
+ReviewedByCP=Va fi aprobat de către
+UserForApprovalID=Utilizator pentru ID de aprobare
+UserForApprovalFirstname=Prenumele utilizatorului de aprobare
+UserForApprovalLastname=Numele utilizatorului de aprobare
+UserForApprovalLogin=Conectarea utilizatorului de aprobare
+DescCP=Descriere
+SendRequestCP=Crează o cerere de concediu
+DelayToRequestCP=Cererile pentru concediu trebuiesc făcute cu cel puţin <b>%s zi(le)</b> înainte.
+MenuConfCP=Restul concediului
+SoldeCPUser=Restul concediului este de <b> %s </b> zile.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorEndDateCP=Trebuie să selectaţi data de sfârşit mai mare decât data de început.
 ErrorSQLCreateCP=O eroare SQL întâlnită în timpul creării:
 ErrorIDFicheCP=O eroare a intervenit, cererea de concediu nu exista
@@ -30,7 +53,18 @@ ErrorUserViewCP=Dvs nu aveti dreptul de a citi aceata cerere de concediu.
 InfosWorkflowCP=Flux de lucru Informatii
 RequestByCP=Solicitat de
 TitreRequestCP=Cereri de concedii
+<<<<<<< HEAD
 NbUseDaysCP=Numărul de zile de concediu consumate
+=======
+TypeOfLeaveId=Tipul de ID de concediu
+TypeOfLeaveCode=Tipul codului de concediu
+TypeOfLeaveLabel=Tipul tabelului de concediu
+NbUseDaysCP=Numărul de zile de concediu consumate
+NbUseDaysCPShort=Zile consumate
+NbUseDaysCPShortInMonth=Zilele consumate în lună
+DateStartInMonth=Data de începere în lună
+DateEndInMonth=Data de încheiere în lună
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 EditCP=Editare
 DeleteCP=Ştergere
 ActionRefuseCP=Refuzare
@@ -59,6 +93,10 @@ DateRefusCP=Data refuzului
 DateCancelCP=Data anulării
 DefineEventUserCP=Atribuie un concediu excepţional pentru un utilizator
 addEventToUserCP=Atribuie concediu
+<<<<<<< HEAD
+=======
+NotTheAssignedApprover=Nu sunteți persoana desemnată pentru aprobare
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MotifCP=Motiv
 UserCP=Utilizator
 ErrorAddEventToUserCP=O eroare a survenit in timpul adaugarii de concediu exceptional.
@@ -72,6 +110,7 @@ NewSoldeCP=Soldul nou
 alreadyCPexist=O cerere de concediu a fost deja făcută pe această perioadă.
 FirstDayOfHoliday=Prima zi a concediului
 LastDayOfHoliday=Ultima zi a concediului
+<<<<<<< HEAD
 BoxTitleLastLeaveRequests=Latest %s modified leave requests
 HolidaysMonthlyUpdate=Actualizare lunară
 ManualUpdate=Actualizare manuală
@@ -85,6 +124,26 @@ AllHolidays=All leave requests
 ## Configuration du Module ##
 LastUpdateCP=Latest automatic update of leaves allocation
 MonthOfLastMonthlyUpdate=Month of latest automatic update of leaves allocation
+=======
+BoxTitleLastLeaveRequests=Ultimele %s cereri de modificare a concediului 
+HolidaysMonthlyUpdate=Actualizare lunară
+ManualUpdate=Actualizare manuală
+HolidaysCancelation=Anulare cerere concediu
+EmployeeLastname=Numele de familie al angajatului
+EmployeeFirstname=Prenumele angajatului
+TypeWasDisabledOrRemoved=Tipul de concediu (id %s) a fost dezactivat sau eliminat
+LastHolidays=Ultimele %s cereri de concediu
+AllHolidays=Toate cererile de concediu
+HalfDay=Jumătate de zi
+NotTheAssignedApprover=Nu sunteți persoana desemnată pentru aprobare
+LEAVE_PAID=Vacanţă platită
+LEAVE_SICK=Concediu medical
+LEAVE_OTHER=Alte concedii
+LEAVE_PAID_FR=Vacanţă plătită
+## Configuration du Module ##
+LastUpdateCP=Ultima actualizare automată a alocării concediilor
+MonthOfLastMonthlyUpdate=Luna ultimei actualizări automate a alocării concediilor
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 UpdateConfCPOK=Actualizare realizată.
 Module27130Name= Managementul cererilor de concedii
 Module27130Desc= Managementul cererilor de concedii
@@ -94,6 +153,7 @@ NoticePeriod=Perioadă notita
 HolidaysToValidate=Validează cereri concedii
 HolidaysToValidateBody=Mai jos este o cerere de concediu de validat
 HolidaysToValidateDelay=Această cerere de concediuva avea loc intr-o  perioadă de mai puţin de %s zile.
+<<<<<<< HEAD
 HolidaysToValidateAlertSolde=Utilizatorul care a făcut această cerere de concediu nu avea destule zile disponibile.
 HolidaysValidated=Cereri de concedii validate
 HolidaysValidatedBody=Cererea dvs pentru concediu  pentru %s la %s a fost validată.
@@ -104,3 +164,21 @@ HolidaysCanceledBody=Cererea dvs pentru concediu  pentru %s la %s a fost anulat�
 FollowedByACounter=1: This type of leave need to be followed by a counter. Counter is incremented manually or automatically and when a leave request is validated, counter is decremented.<br>0: Not followed by a counter.
 NoLeaveWithCounterDefined=There is no leave types defined that need to be followed by a counter
 GoIntoDictionaryHolidayTypes=Du-te  la <strong>Home -Setup - Dictionare -Tip Concedii </strong> pentru a configura diferite tipuri de concediu.
+=======
+HolidaysToValidateAlertSolde=Utilizatorul care a făcut această solicitare de concediu nu are suficiente zile disponibile.
+HolidaysValidated=Cereri de concedii validate
+HolidaysValidatedBody=Cererea dvs pentru concediu  pentru %s la %s a fost validată.
+HolidaysRefused=Cerere respinsă
+HolidaysRefusedBody=Solicitarea dvs. de concediu pentru %s la %s a fost respinsă din următorul motiv:
+HolidaysCanceled=Cereri Concedii anulate
+HolidaysCanceledBody=Cererea dvs pentru concediu  pentru %s la %s a fost anulată.
+FollowedByACounter=1: Acest tip de concediu trebuie urmat de un contor. Counter-ul este incrementat manual sau automat și atunci când o solicitare de concediu este validată, contorul este diminuat. <br> 0: Nu este urmat de un contor.
+NoLeaveWithCounterDefined=Nu sunt definite tipuri de concediu care trebuie urmate de un contor
+GoIntoDictionaryHolidayTypes=Mergi la <strong> Acasă - Configurare - Dicționare - Tip de concediu </strong> pentru a configura diferitele tipuri de concedii.
+HolidaySetup=Configurarea modulului Vacanță
+HolidaysNumberingModules=Modelele de numerotare a cererilor de concediu
+TemplatePDFHolidays=Șablon pentru cererile de concediu PDF
+FreeLegalTextOnHolidays=Text gratuit pe PDF
+WatermarkOnDraftHolidayCards=Bază de fundal privind cererile de permis de concediu
+HolidaysToApprove=Holidays to approve
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

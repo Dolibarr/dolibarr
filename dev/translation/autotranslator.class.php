@@ -12,7 +12,11 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
+<<<<<<< HEAD
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+=======
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  */
 
 /**
@@ -50,7 +54,11 @@ class autoTranslator
      * @param   string $_apikey         Api key
      * @return void
      */
+<<<<<<< HEAD
     function __construct($_destlang,$_refLang,$_langDir,$_limittofile,$_apikey)
+=======
+    public function __construct($_destlang, $_refLang, $_langDir, $_limittofile, $_apikey)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
 
 		// Set enviorment variables
@@ -63,9 +71,14 @@ class autoTranslator
 
 		// Translate
 		//ini_set('default_charset','UTF-8');
+<<<<<<< HEAD
 		ini_set('default_charset',$this->_outputpagecode);
 		$this->parse_refLangTranslationFiles();
 
+=======
+		ini_set('default_charset', $this->_outputpagecode);
+		$this->parseRefLangTranslationFiles();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	/**
@@ -73,7 +86,11 @@ class autoTranslator
 	 *
 	 * 	@return	void
 	 */
+<<<<<<< HEAD
 	private function parse_refLangTranslationFiles()
+=======
+	private function parseRefLangTranslationFiles()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 
 		$files = $this->getTranslationFilesArray($this->_refLang);
@@ -84,7 +101,11 @@ class autoTranslator
 			$counter++;
 			$fileContent = null;
 			$refPath = $this->_langDir.$this->_refLang.self::DIR_SEPARATOR.$file;
+<<<<<<< HEAD
 			$fileContent = file($refPath,FILE_IGNORE_NEW_LINES|FILE_SKIP_EMPTY_LINES);
+=======
+			$fileContent = file($refPath, FILE_IGNORE_NEW_LINES|FILE_SKIP_EMPTY_LINES);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print "Processing file " . $file . ", with ".count($fileContent)." lines<br>\n";
 
 			// Define target dirs
@@ -94,6 +115,7 @@ class autoTranslator
 				$targetlangs=array();
 
 				// If we must process all languages
+<<<<<<< HEAD
 				$arraytmp=dol_dir_list($this->_langDir,'directories',0);
 				foreach($arraytmp as $dirtmp)
 				{
@@ -107,6 +129,21 @@ class autoTranslator
                     if (preg_match('/nl_BE/i',$dirtmp['name']))  continue;  // We discard nl_BE language
 					if (preg_match('/^\./i',$dirtmp['name']))  continue;	// We discard files .*
 					if (preg_match('/^CVS/i',$dirtmp['name']))  continue;	// We discard CVS
+=======
+				$arraytmp=dol_dir_list($this->_langDir, 'directories', 0);
+				foreach($arraytmp as $dirtmp)
+				{
+					if ($dirtmp['name'] === $this->_refLang) continue;	// We discard source language
+					$tmppart=explode('_', $dirtmp['name']);
+					if (preg_match('/^en/i', $dirtmp['name']))  continue;	// We discard en_* languages
+					if (preg_match('/^fr/i', $dirtmp['name']))  continue;	// We discard fr_* languages
+					if (preg_match('/^es/i', $dirtmp['name']))  continue;	// We discard es_* languages
+					if (preg_match('/ca_ES/i', $dirtmp['name']))  continue;	// We discard es_CA language
+					if (preg_match('/pt_BR/i', $dirtmp['name']))  continue;	// We discard pt_BR language
+                    if (preg_match('/nl_BE/i', $dirtmp['name']))  continue;  // We discard nl_BE language
+					if (preg_match('/^\./i', $dirtmp['name']))  continue;	// We discard files .*
+					if (preg_match('/^CVS/i', $dirtmp['name']))  continue;	// We discard CVS
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					$targetlangs[]=$dirtmp['name'];
 				}
 				//var_dump($targetlangs);
@@ -123,7 +160,11 @@ class autoTranslator
 				{
 					// No file present, we generate file
 					echo "File not found: " . $destPath . ". We generate it.<br>\n";
+<<<<<<< HEAD
 					$this->createTranslationFile($destPath,$my_destlang);
+=======
+					$this->createTranslationFile($destPath, $my_destlang);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 				else
 				{
@@ -131,18 +172,30 @@ class autoTranslator
 				}
 
 				// Translate lines
+<<<<<<< HEAD
 				$fileContentDest = file($destPath,FILE_IGNORE_NEW_LINES|FILE_SKIP_EMPTY_LINES);
+=======
+				$fileContentDest = file($destPath, FILE_IGNORE_NEW_LINES|FILE_SKIP_EMPTY_LINES);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$newlines=0;
 				foreach($fileContent as $line){
 					$key = $this->getLineKey($line);
 					$value = $this->getLineValue($line);
 					if ($key && $value)
 					{
+<<<<<<< HEAD
 						$newlines+=$this->translateFileLine($fileContentDest,$file,$key,$value,$my_destlang);
 					}
 				}
 
 				$this->updateTranslationFile($destPath,$file,$my_destlang);
+=======
+						$newlines+=$this->translateFileLine($fileContentDest, $file, $key, $value, $my_destlang);
+					}
+				}
+
+				$this->updateTranslationFile($destPath, $file, $my_destlang);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				echo "New translated lines: " . $newlines . "<br>\n";
 				//if ($counter ==3) die('fim');
 			}
@@ -157,7 +210,11 @@ class autoTranslator
 	 * @param 	string	$my_destlang		Target language code
 	 * @return	void
 	 */
+<<<<<<< HEAD
 	private function updateTranslationFile($destPath,$file,$my_destlang)
+=======
+	private function updateTranslationFile($destPath, $file, $my_destlang)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$this->_time_end = date('Y-m-d H:i:s');
 
@@ -168,7 +225,11 @@ class autoTranslator
 			fwrite($fp, "\n");
 			fwrite($fp, "// START - Lines generated via autotranslator.php tool (".$this->_time.").\n");
 			fwrite($fp, "// Reference language: ".$this->_refLang." -> ".$my_destlang."\n");
+<<<<<<< HEAD
 			foreach( $this->_translatedFiles[$file] as $line) {
+=======
+			foreach($this->_translatedFiles[$file] as $line) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				fwrite($fp, $line . "\n");
 			}
 			fwrite($fp, "// STOP - Lines generated via autotranslator.php tool (".$this->_time_end.").\n");
@@ -184,7 +245,11 @@ class autoTranslator
 	 * @param 	string	$my_destlang		Target language code
 	 * @return	void
 	 */
+<<<<<<< HEAD
 	private function createTranslationFile($path,$my_destlang)
+=======
+	private function createTranslationFile($path, $my_destlang)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$fp = fopen($path, 'w+');
 		fwrite($fp, "/*\n");
@@ -206,11 +271,19 @@ class autoTranslator
 	 * @param	string	$my_destlang	Language code (ie: fr_FR)
 	 * @return	int						0=Nothing translated, 1=Record translated
 	 */
+<<<<<<< HEAD
 	private function translateFileLine($content,$file,$key,$value,$my_destlang)
 	{
 
 		//print "key    =".$key."\n";
 		foreach( $content as $line ) {
+=======
+	private function translateFileLine($content, $file, $key, $value, $my_destlang)
+	{
+
+		//print "key    =".$key."\n";
+		foreach($content as $line) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$destKey = $this->getLineKey($line);
 			$destValue = $this->getLineValue($line);
 			// If translated return
@@ -221,6 +294,7 @@ class autoTranslator
 			}
 		}
 
+<<<<<<< HEAD
 		if ($key == 'CHARSET') $val=$this->_outputpagecode;
 		else if (preg_match('/^Format/',$key)) $val=$value;
 		else if ($value=='-') $val=$value;
@@ -229,6 +303,18 @@ class autoTranslator
 			// If not translated then translate
 			if ($this->_outputpagecode == 'UTF-8') $val=$this->translateTexts(array($value),substr($this->_refLang,0,2),substr($my_destlang,0,2));
 			else $val=utf8_decode($this->translateTexts(array($value),substr($this->_refLang,0,2),substr($my_destlang,0,2)));
+=======
+		if ($key == 'CHARSET') {
+            $val=$this->_outputpagecode;
+        } elseif (preg_match('/^Format/', $key)) {
+            $val=$value;
+        } elseif ($value=='-') {
+            $val=$value;
+        } else {
+			// If not translated then translate
+			if ($this->_outputpagecode == 'UTF-8') $val=$this->translateTexts(array($value), substr($this->_refLang, 0, 2), substr($my_destlang, 0, 2));
+			else $val=utf8_decode($this->translateTexts(array($value), substr($this->_refLang, 0, 2), substr($my_destlang, 0, 2)));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		$val=trim($val);
@@ -247,7 +333,11 @@ class autoTranslator
 	 */
 	private function getLineKey($line)
 	{
+<<<<<<< HEAD
 		$arraykey = explode('=',$line,2);
+=======
+		$arraykey = explode('=', $line, 2);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		return trim($arraykey[0]);
 	}
 
@@ -259,7 +349,11 @@ class autoTranslator
 	 */
 	private function getLineValue($line)
 	{
+<<<<<<< HEAD
 		$arraykey = explode('=',$line,2);
+=======
+		$arraykey = explode('=', $line, 2);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		return trim(isset($arraykey[1])?$arraykey[1]:'');
 	}
 
@@ -273,7 +367,11 @@ class autoTranslator
 	{
 		$dir = new DirectoryIterator($this->_langDir.$lang);
 		while($dir->valid()) {
+<<<<<<< HEAD
 			if(!$dir->isDot() && $dir->isFile() && ! preg_match('/^\./',$dir->getFilename())) {
+=======
+			if(!$dir->isDot() && $dir->isFile() && ! preg_match('/^\./', $dir->getFilename())) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$files[] =  $dir->getFilename();
 			}
 			$dir->next();
@@ -292,16 +390,27 @@ class autoTranslator
 	private function translateTexts($src_texts, $src_lang, $dest_lang)
 	{
 		// We want to be sure that src_lang and dest_lang are using 2 chars only
+<<<<<<< HEAD
 		$tmp=explode('_',$src_lang);
 		if (! empty($tmp[1]) && $tmp[0] == $tmp[1]) $src_lang=$tmp[0];
 		$tmp=explode('_',$dest_lang);
+=======
+		$tmp=explode('_', $src_lang);
+		if (! empty($tmp[1]) && $tmp[0] == $tmp[1]) $src_lang=$tmp[0];
+		$tmp=explode('_', $dest_lang);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if (! empty($tmp[1]) && $tmp[0] == $tmp[1]) $dest_lang=$tmp[0];
 
 		//setting language pair
 		$lang_pair = $src_lang.'|'.$dest_lang;
 
+<<<<<<< HEAD
 		$src_text_to_translate=preg_replace('/%s/','SSSSS',implode('',$src_texts));
 		$src_text_to_translate=preg_replace('/'.preg_quote('\n\n').'/',' NNNNN ',$src_text_to_translate);
+=======
+		$src_text_to_translate=preg_replace('/%s/', 'SSSSS', implode('', $src_texts));
+		$src_text_to_translate=preg_replace('/'.preg_quote('\n\n').'/', ' NNNNN ', $src_text_to_translate);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Define GET URL v1
 		//$url = "http://ajax.googleapis.com/ajax/services/language/translate?v=1.0&q=".urlencode($src_text_to_translate)."&langpair=".urlencode($lang_pair);
@@ -338,13 +447,23 @@ class autoTranslator
 		}
 
 		$rep=$json['data']['translations'][0]['translatedText'];
+<<<<<<< HEAD
 		$rep=preg_replace('/SSSSS/i','%s',$rep);
 		$rep=preg_replace('/NNNNN/i','\n\n',$rep);
 		$rep=preg_replace('/&#39;/i','\'',$rep);
+=======
+		$rep=preg_replace('/SSSSS/i', '%s', $rep);
+		$rep=preg_replace('/NNNNN/i', '\n\n', $rep);
+		$rep=preg_replace('/&#39;/i', '\'', $rep);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		//print "OK ".join('',$src_texts).' => '.$rep."\n";
 
 		return $rep;
+<<<<<<< HEAD
 	}
 
+=======
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

@@ -27,8 +27,20 @@
  */
 class FormIntervention
 {
+<<<<<<< HEAD
     var $db;
     var $error;
+=======
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
     /**
@@ -42,6 +54,10 @@ class FormIntervention
     }
 
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *	Show a combo list with contracts qualified for a third party
 	 *
@@ -52,8 +68,14 @@ class FormIntervention
 	 *	@param	int		$showempty	Show empty line
 	 *	@return int         		Nbre of project if OK, <0 if KO
 	 */
+<<<<<<< HEAD
 	function select_interventions($socid=-1, $selected='', $htmlname='interventionid', $maxlength=16, $showempty=1)
 	{
+=======
+	public function select_interventions($socid = -1, $selected = '', $htmlname = 'interventionid', $maxlength = 16, $showempty = 1)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $db,$user,$conf,$langs;
 
 		$out='';
@@ -90,7 +112,11 @@ class FormIntervention
 					}
 					else
 					{
+<<<<<<< HEAD
 						$labeltoshow=dol_trunc($obj->ref,18);
+=======
+						$labeltoshow=dol_trunc($obj->ref, 18);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						if (!empty($selected) && $selected == $obj->rowid && $obj->statut > 0)
 						{
 							$out.='<option value="'.$obj->rowid.'" selected>'.$labeltoshow.'</option>';

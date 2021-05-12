@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2005      Patrick Rouillon     <patrick@rouillon.net>
  * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +41,7 @@ if (! empty($conf->projet->enabled)) {
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'sendings', 'companies'));
 
+<<<<<<< HEAD
 $id=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
 $action=GETPOST('action','alpha');
@@ -44,6 +49,15 @@ $action=GETPOST('action','alpha');
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'expedition', $id,'');
+=======
+$id=GETPOST('id', 'int');
+$ref=GETPOST('ref', 'alpha');
+$action=GETPOST('action', 'alpha');
+
+// Security check
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'expedition', $id, '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $object = new Expedition($db);
 if ($id > 0 || ! empty($ref))
@@ -103,13 +117,21 @@ if ($action == 'addcontact' && $user->rights->expedition->creer)
 }
 
 // bascule du statut d'un contact
+<<<<<<< HEAD
 else if ($action == 'swapstatut' && $user->rights->expedition->creer)
+=======
+elseif ($action == 'swapstatut' && $user->rights->expedition->creer)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
     $result=$objectsrc->swapContactStatus(GETPOST('ligne'));
 }
 
 // Efface un contact
+<<<<<<< HEAD
 else if ($action == 'deletecontact' && $user->rights->expedition->creer)
+=======
+elseif ($action == 'deletecontact' && $user->rights->expedition->creer)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$result = $objectsrc->delete_contact(GETPOST("lineid"));
 
@@ -123,7 +145,11 @@ else if ($action == 'deletecontact' && $user->rights->expedition->creer)
 	}
 }
 /*
+<<<<<<< HEAD
 else if ($action == 'setaddress' && $user->rights->expedition->creer)
+=======
+elseif ($action == 'setaddress' && $user->rights->expedition->creer)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$object->fetch($id);
 	$result=$object->setDeliveryAddress($_POST['fk_address']);
@@ -135,7 +161,11 @@ else if ($action == 'setaddress' && $user->rights->expedition->creer)
  * View
  */
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans('Order'),'EN:Customers_Orders|FR:expeditions_Clients|ES:Pedidos de clientes');
+=======
+llxHeader('', $langs->trans('Order'), 'EN:Customers_Orders|FR:expeditions_Clients|ES:Pedidos de clientes');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
@@ -221,7 +251,11 @@ if ($id > 0 || ! empty($ref))
 	    $objectsrc->fetch($object->$typeobject->id);
 	    print $langs->trans("RefOrder").'</td>';
 	    print '<td colspan="3">';
+<<<<<<< HEAD
 	    print $objectsrc->getNomUrl(1,'commande');
+=======
+	    print $objectsrc->getNomUrl(1, 'commande');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    print "</td>\n";
 	    print '</tr>';
 	}
@@ -232,7 +266,11 @@ if ($id > 0 || ! empty($ref))
 	    $objectsrc->fetch($object->$typeobject->id);
 	    print $langs->trans("RefProposal").'</td>';
 	    print '<td colspan="3">';
+<<<<<<< HEAD
 	    print $objectsrc->getNomUrl(1,'expedition');
+=======
+	    print $objectsrc->getNomUrl(1, 'expedition');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    print "</td>\n";
 	    print '</tr>';
 	}
@@ -255,19 +293,34 @@ if ($id > 0 || ! empty($ref))
 
 	dol_fiche_end();
 
+<<<<<<< HEAD
 	// Lignes de contacts
 	echo '<br>';
 
 	// Contacts lines (modules that overwrite templates must declare this into descriptor)
 	$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
+=======
+	// Lines of contacts
+	echo '<br>';
+
+	// Contacts lines (modules that overwrite templates must declare this into descriptor)
+	$dirtpls=array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	foreach($dirtpls as $reldir)
 	{
 	    $res=@include dol_buildpath($reldir.'/contacts.tpl.php');
 	    if ($res) break;
 	}
+<<<<<<< HEAD
 
 }
 
 llxFooter();
 
+=======
+}
+
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

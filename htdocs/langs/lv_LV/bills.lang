@@ -3,6 +3,7 @@ Bill=Pavadzīme
 Bills=Pavadzīmes
 BillsCustomers=Klienta rēķini
 BillsCustomer=Klienta rēķins
+<<<<<<< HEAD
 BillsSuppliers=Piegādātāju rēķini
 BillsCustomersUnpaid=Neapmaksātie klienta rēķini
 BillsCustomersUnpaidForCompany=Neapmaksātie klientu rēķini %s
@@ -12,6 +13,17 @@ BillsLate=Kavētie maksājumi
 BillsStatistics=Klientu rēķinu statistika
 BillsStatisticsSuppliers=Piegādātāju rēķinu statistika
 DisabledBecauseDispatchedInBookkeeping=Disabled because invoice was dispatched into bookkeeping
+=======
+BillsSuppliers=Piegādātāja rēķini
+BillsCustomersUnpaid=Neapmaksātie klienta rēķini
+BillsCustomersUnpaidForCompany=Neapmaksātie klientu rēķini %s
+BillsSuppliersUnpaid=Neapmaksāti pārdevēja rēķini
+BillsSuppliersUnpaidForCompany=Neapmaksāti piegādātāji rēķina par %s
+BillsLate=Kavētie maksājumi
+BillsStatistics=Klientu rēķinu statistika
+BillsStatisticsSuppliers=Pārdevēju rēķinu statistika
+DisabledBecauseDispatchedInBookkeeping=Atspējots, jo rēķins tika nosūtīts uzskaites veikšanai
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DisabledBecauseNotLastInvoice=Disabled because invoice is not erasable. Some invoices were recorded after this one and it will create holes in the counter.
 DisabledBecauseNotErasable=Bloķēts, jo nedrīkst dzēst
 InvoiceStandard=Standarta rēķins
@@ -25,15 +37,26 @@ InvoiceProFormaAsk=Proforma rēķins
 InvoiceProFormaDesc=<b>Formāta rēķins</b> ir attēls patiesu rēķina, bet nav nekādas grāmatvedības uzskaites vērtības.
 InvoiceReplacement=Nomaiņas rēķins
 InvoiceReplacementAsk=Nomaiņa rēķins par rēķinu
+<<<<<<< HEAD
 InvoiceReplacementDesc=<b>Replacement invoice</b> is used to cancel and replace completely an invoice with no payment already received.<br><br>Note: Only invoices with no payment on it can be replaced. If the invoice you replace is not yet closed, it will be automatically closed to 'abandoned'.
 InvoiceAvoir=Kredīta piezīme
 InvoiceAvoirAsk=Kredīta piezīme, lai koriģētu rēķinu
 InvoiceAvoirDesc=<b>Kredīts piezīme</b> ir negatīvs rēķins izmantot, lai atrisinātu to, ka rēķins ir summa, kas atšķiras par summu, patiesībā maksā (jo klients maksā pārāk daudz kļūdas dēļ, vai arī nav samaksāta pilnībā, jo viņš atgriezās dažus produktus, piemēram).
+=======
+InvoiceReplacementDesc=<b> Nomaiņa rēķins </ b> tiek izmantots, lai atceltu un pilnībā nomainītu rēķinu bez jau saņemta maksājuma. <br> <br> Piezīme. Var nomainīt tikai rēķinus bez maksājuma. Ja rēķins, kuru nomaināt, vēl nav aizvērts, tas tiks automātiski slēgts, lai "pamestu".
+InvoiceAvoir=Kredīta piezīme
+InvoiceAvoirAsk=Kredīta piezīme, lai koriģētu rēķinu
+InvoiceAvoirDesc=<b> Kredīta piezīme </b> ir negatīvs rēķins, ko izmanto, lai izlabotu faktu, ka rēķinā parādīta summa, kas atšķiras no faktiski samaksātās summas (piemēram, klients kļūdaini samaksājis pārāk daudz vai nemaksās pilno summu kopš daži produkti tika atgriezti).
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 invoiceAvoirWithLines=Create Credit Note with lines from the origin invoice
 invoiceAvoirWithPaymentRestAmount=Create Credit Note with remaining unpaid of origin invoice
 invoiceAvoirLineWithPaymentRestAmount=Kredīta piezīme par atlikušo neapmaksāto summu
 ReplaceInvoice=Aizstāt rēķinu %s
+<<<<<<< HEAD
 ReplacementInvoice=Nomaiņa rēķins
+=======
+ReplacementInvoice=Nomaiņas rēķins
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ReplacedByInvoice=Aizstāts ar rēķinu %s
 ReplacementByInvoice=Aizstāts ar rēķinu
 CorrectInvoice=Labot rēķinu %s
@@ -58,20 +81,38 @@ SuppliersInvoices=Piegādātāju rēķini
 SupplierBill=Piegādātāja rēķins
 SupplierBills=piegādātāju rēķini
 Payment=Maksājums
+<<<<<<< HEAD
 PaymentBack=Maksājumu atpakaļ
 CustomerInvoicePaymentBack=Maksājumu atpakaļ
 Payments=Maksājumi
 PaymentsBack=Maksājumi atpakaļ
+=======
+PaymentBack=Atmaksa
+CustomerInvoicePaymentBack=Maksājumu atpakaļ
+Payments=Maksājumi
+PaymentsBack=Atmaksa
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 paymentInInvoiceCurrency=rēķinu valūtā
 PaidBack=Atmaksāts atpakaļ
 DeletePayment=Izdzēst maksājumu
 ConfirmDeletePayment=Vai tiešām vēlaties dzēst šo maksājumu?
+<<<<<<< HEAD
 ConfirmConvertToReduc=Do you want to convert this %s into an absolute discount ?<br>The amount will so be saved among all discounts and could be used as a discount for a current or a future invoice for this customer.
 ConfirmConvertToReducSupplier=Vai jūs vēlaties pārvērst šo %s par absolūtu atlaidi? <br> Šī summa tiks saglabāta starp visām atlaidēm un varētu tikt izmantota kā atlaide pašreizējam vai nākamajam rēķinam šim piegādātājam.
 SupplierPayments=Piegādātāju maksājumi
 ReceivedPayments=Saņemtie maksājumi
 ReceivedCustomersPayments=Maksājumi, kas saņemti no klientiem
 PayedSuppliersPayments=Payments payed to suppliers
+=======
+ConfirmConvertToReduc=Vai vēlaties konvertēt šo %s par absolūto atlaidi?
+ConfirmConvertToReduc2=Summa tiks saglabāta starp visām atlaidēm un to var izmantot kā atlaidi pašreizējam vai nākotnes rēķinam par šo klientu.
+ConfirmConvertToReducSupplier=Vai vēlaties konvertēt šo %s par absolūto atlaidi?
+ConfirmConvertToReducSupplier2=Summa tiks saglabāta starp visām atlaidēm un to var izmantot kā atlaidi pašreizējam vai nākamajam rēķinam par šo pārdevēju.
+SupplierPayments=Pārdevēja maksājumi
+ReceivedPayments=Saņemtie maksājumi
+ReceivedCustomersPayments=Maksājumi, kas saņemti no klientiem
+PayedSuppliersPayments=Pārdevējiem izmaksātie maksājumi
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ReceivedCustomersPaymentsToValid=Saņemtās klientiem maksājumu apstiprināšanai,
 PaymentsReportsForYear=Maksājumu atskaites par %s
 PaymentsReports=Maksājumu atskaites
@@ -83,6 +124,7 @@ PaymentTypeDC=Debet karte/ kredīt karte
 PaymentTypePP=PayPal
 IdPaymentMode=Maksājuma veids (id)
 CodePaymentMode=Maksājuma veids (kods)
+<<<<<<< HEAD
 LabelPaymentMode=Maksājuma veids (marķējums)
 PaymentModeShort=Maksājuma veids
 PaymentTerm=Apmaksas noteikumi
@@ -93,6 +135,17 @@ ValidatePayment=Apstiprināt maksājumu
 PaymentHigherThanReminderToPay=Maksājumu augstāka nekā atgādinājums par samaksu
 HelpPaymentHigherThanReminderToPay=Uzmanība, maksājuma summu, no vienas vai vairākām rēķinus, ir lielāks nekā pārējās maksāt. <br> Labot savu ierakstu, citādi apstiprināt un domāt par izveidot kredīta piezīmi par pārsnieguma saņem par katru pārmaksāto rēķiniem.
 HelpPaymentHigherThanReminderToPaySupplier=Uzmanību, vienas vai vairāku rēķinu maksājuma summa ir augstāka nekā pārējā summa, kas jāmaksā. <br> Rediģējiet savu ierakstu, citādi apstipriniet un domājiet par kredīta paziņojuma izveidi par pārsniegto samaksu par katru pārmaksāto rēķinu.
+=======
+LabelPaymentMode=Maksājuma veids (etiķete)
+PaymentModeShort=Maksājuma veids
+PaymentTerm=Maksājuma termiņš
+PaymentConditions=Maksājuma nosacījumi
+PaymentConditionsShort=Maksājuma nosacījumi
+PaymentAmount=Maksājuma summa
+PaymentHigherThanReminderToPay=Maksājumu augstāka nekā atgādinājums par samaksu
+HelpPaymentHigherThanReminderToPay=Uzmanību! Viena vai vairāku rēķinu maksājuma summa ir lielāka par nesamaksāto summu. <br> Rediģējiet savu ierakstu, citādi apstipriniet un apsveriet iespēju izveidot kredītzīmi par pārsniegto saņemto summu par katru pārmaksāto rēķinu.
+HelpPaymentHigherThanReminderToPaySupplier=Uzmanību! Viena vai vairāku rēķinu maksājuma summa ir lielāka par nesamaksāto summu. <br> Rediģējiet savu ierakstu, citādi apstipriniet un apsveriet iespēju izveidot kredītzīmi par pārsniegto samaksu par katru pārmaksāto rēķinu.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ClassifyPaid=Klasificēt "Apmaksāts"
 ClassifyPaidPartially=Klasificēt 'Apmaksāts daļēji'
 ClassifyCanceled=Klasificēt &quot;Abandoned&quot;
@@ -104,9 +157,15 @@ AddBill=Izveidot rēķinu vai kredīta piezīmi
 AddToDraftInvoices=Pievienot izstrādāt rēķinu
 DeleteBill=Dzēst rēķinu
 SearchACustomerInvoice=Meklēt klienta rēķinu
+<<<<<<< HEAD
 SearchASupplierInvoice=Meklēt piegādātāja rēķinu
 CancelBill=Atcelt rēķinu
 SendRemindByMail=Sūtīt atgādinājumu izmantojot e-pastu
+=======
+SearchASupplierInvoice=Meklēt pārdevēja rēķinu
+CancelBill=Atcelt rēķinu
+SendRemindByMail=Sūtīt atgādinājumu pa e-pastu
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DoPayment=Ievadiet maksājumu
 DoPaymentBack=Ievadiet atmaksu
 ConvertToReduc=Atzīmējiet kā kredītu
@@ -131,7 +190,12 @@ BillStatusClosedUnpaid=Slēgts (nav apmaksāts)
 BillStatusClosedPaidPartially=Samaksāts (daļēji)
 BillShortStatusDraft=Melnraksts
 BillShortStatusPaid=Apmaksāts
+<<<<<<< HEAD
 BillShortStatusPaidBackOrConverted=Refund or converted
+=======
+BillShortStatusPaidBackOrConverted=Atmaksāts vai konvertēts
+Refunded=Atmaksāts
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BillShortStatusConverted=Apmaksāts
 BillShortStatusCanceled=Pamesti
 BillShortStatusValidated=Pārbaudīts
@@ -141,16 +205,28 @@ BillShortStatusNotRefunded=Neatmaksā
 BillShortStatusClosedUnpaid=Slēgts
 BillShortStatusClosedPaidPartially=Samaksāts (daļēji)
 PaymentStatusToValidShort=Jāpārbauda
+<<<<<<< HEAD
 ErrorVATIntraNotConfigured=Intracommunautary PVN numurs vēl nav noteikta
 ErrorNoPaiementModeConfigured=Nav noklusējuma maksājumu režīms noteikts. Iet uz rēķinu modulis uzstādīšanas noteikt šo.
 ErrorCreateBankAccount=Izveidojiet bankas kontu, tad iet uz Setup paneli Rēķins moduli, lai noteiktu maksājumu veidiem
 ErrorBillNotFound=Rēķins %s neeksistē
 ErrorInvoiceAlreadyReplaced=Kļūdas, jūs mēģināt apstiprināt rēķinu, lai aizstātu rēķinu %s. Bet tas viens jau ir aizstāts ar rēķinu %s.
+=======
+ErrorVATIntraNotConfigured=Kopienas iekšējais PVN maksāšanas numurs vēl nav noteikts
+ErrorNoPaiementModeConfigured=Nav definēts noklusējuma maksājumu veids. Atveriet rēķinu moduļa iestatīšanu, lai to labotu.
+ErrorCreateBankAccount=Izveidojiet bankas kontu, pēc tam dodieties uz Rēķinu moduļa iestatīšanas paneli, lai definētu maksājumu veidus
+ErrorBillNotFound=Rēķins %s neeksistē
+ErrorInvoiceAlreadyReplaced=Kļūda, mēģinājāt apstiprināt rēķinu, lai aizstātu rēķinu %s. Bet šis jau ir aizstāts ar rēķinu %s.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorDiscountAlreadyUsed=Kļūda, atlaide jau tiek pielietota
 ErrorInvoiceAvoirMustBeNegative=Kļūda, pareizs rēķins, jābūt ar negatīvu summu
 ErrorInvoiceOfThisTypeMustBePositive=Kļūda, šim rēķina veidam ir jābūt ar pozitīvu summu
 ErrorCantCancelIfReplacementInvoiceNotValidated=Kļūda, nevar atcelt rēķinu, kas ir aizstāts ar citu rēķina, kas vēl ir projekta stadijā
+<<<<<<< HEAD
 ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved=Šī daļa jau ir izmantota, tāpēc noņemt atlaides seriju.
+=======
+ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved=Šī daļa jau ir izmantota, tāpēc atlaides sērijas nevar noņemt.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BillFrom=No
 BillTo=Kam
 ActionsOnBill=Pasākumi attiecībā uz rēķinu
@@ -163,14 +239,24 @@ LastBills=Pēdējie %s rēķini
 LatestTemplateInvoices=Jaunākie %s veidņu rēķini
 LatestCustomerTemplateInvoices=Jaunākie %s klientu veidņu rēķini
 LatestSupplierTemplateInvoices=Jaunākie %s piegādātāju veidņu rēķini
+<<<<<<< HEAD
 LastCustomersBills=Latest %s customer invoices
 LastSuppliersBills=Latest %s supplier invoices
+=======
+LastCustomersBills=Jaunākie %s klientu rēķini
+LastSuppliersBills=Jaunākie %s pārdevēja rēķini
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AllBills=Visi rēķini
 AllCustomerTemplateInvoices=Visi veidņu rēķini
 OtherBills=Citi rēķini
 DraftBills=Rēķinu sagatave
+<<<<<<< HEAD
 CustomersDraftInvoices=Customer draft invoices
 SuppliersDraftInvoices=Supplier draft invoices
+=======
+CustomersDraftInvoices=Klienta rēķinu sagataves
+SuppliersDraftInvoices=Pārdevēja rēķinu sagataves
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Unpaid=Nesamaksāts
 ConfirmDeleteBill=Vai tiešām vēlaties dzēst šo rēķinu?
 ConfirmValidateBill=Vai jūs tiešām vēlaties apstiprināt šo rēķinu ar atsauci <b>%s</b>?
@@ -179,20 +265,35 @@ ConfirmClassifyPaidBill=Vai esat pārliecināts, ka vēlaties mainīt rēķina <
 ConfirmCancelBill=Vai esat pārliecināts, ka vēlaties atcelt rēķinu <b>%s</b> ?
 ConfirmCancelBillQuestion=Kāpēc jūs vēlaties, lai klasificētu šo rēķinu 'pamests'?
 ConfirmClassifyPaidPartially=Vai esat pārliecināts, ka vēlaties mainīt rēķina <b>%s,</b> statusu uz samaksāts?
+<<<<<<< HEAD
 ConfirmClassifyPaidPartiallyQuestion=Šis rēķins nav samaksāts pilnībā. Kādi ir iemesli, lai aizvērtu šo rēķinu?
 ConfirmClassifyPaidPartiallyReasonAvoir=Remaining unpaid <b>(%s %s)</b> is a discount granted because payment was made before term. I regularise the VAT with a credit note.
 ConfirmClassifyPaidPartiallyReasonDiscount=Atlikušais neapmaksātais <b> (%s %s) </ b> ir piešķirta atlaide, jo maksājums tika veikts pirms termiņa.
+=======
+ConfirmClassifyPaidPartiallyQuestion=Šis rēķins nav pilnībā apmaksāts. Kāds ir šī rēķina slēgšanas iemesls?
+ConfirmClassifyPaidPartiallyReasonAvoir=Atlikušais neapmaksātais <b> (%s %s) </b> ir piešķirta atlaide, jo maksājums tika veikts pirms termiņa. Es regulē PVN ar kredītzīmi.
+ConfirmClassifyPaidPartiallyReasonDiscount=Atlikušais neapmaksātais <b> (%s %s) </b> ir piešķirta atlaide, jo maksājums tika veikts pirms termiņa.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmClassifyPaidPartiallyReasonDiscountNoVat=Remaining unpaid <b>(%s %s)</b> is a discount granted because payment was made before term. I accept to lose the VAT on this discount.
 ConfirmClassifyPaidPartiallyReasonDiscountVat=Remaining unpaid <b>(%s %s)</b> is a discount granted because payment was made before term. I recover the VAT on this discount without a credit note.
 ConfirmClassifyPaidPartiallyReasonBadCustomer=Slikts klients
 ConfirmClassifyPaidPartiallyReasonProductReturned=Produkti daļēji atgriezti
 ConfirmClassifyPaidPartiallyReasonOther=Summa pamesti cita iemesla dēļ
+<<<<<<< HEAD
 ConfirmClassifyPaidPartiallyReasonDiscountNoVatDesc=Šī izvēle ir iespējama, ja jūsu rēķins ir nodrošinātas ar piemērotu komentāru. (Piemērs «tikai nodoklis, kas atbilst cenai, kas ir faktiski samaksāta dod tiesības atskaitīt»)
 ConfirmClassifyPaidPartiallyReasonDiscountVatDesc=Dažās valstīs, šī izvēle varētu būt iespējama tikai tad, ja rēķins ir pareizo noti.
 ConfirmClassifyPaidPartiallyReasonAvoirDesc=Izmantojiet šo izvēli, ja visi citi neapmierina
 ConfirmClassifyPaidPartiallyReasonBadCustomerDesc=<b>Slikts klients</b> ir klients, kas atsakās samaksāt savu parādu.
 ConfirmClassifyPaidPartiallyReasonProductReturnedDesc=Šo izvēli izmanto, ja samaksa nav bijusi pilnīga, jo daži no produktiem, tika atgriezti
 ConfirmClassifyPaidPartiallyReasonOtherDesc=Izmantot šo izvēli, ja visi citi nav piemēroti, piemēram, šādos apstākļos: <br> - Maksājums nav pabeigta, jo daži produkti tika nosūtīti atpakaļ <br> - Pieprasītā summa ir pārāk svarīgs, jo atlaide bija aizmirsts <br> Visos gadījumos, summa pār-apgalvots, ir jākoriģē uzskaites sistēmā, izveidojot kredītu piezīmi.
+=======
+ConfirmClassifyPaidPartiallyReasonDiscountNoVatDesc=Šī izvēle ir iespējama, ja jūsu rēķinā tiek piedāvāti piemēroti komentāri. (Piemērs "Tikai nodoklis, kas atbilst faktiski samaksātajai cenai, dod tiesības uz atskaitījumu")
+ConfirmClassifyPaidPartiallyReasonDiscountVatDesc=Dažās valstīs šī izvēle var būt iespējama tikai tad, ja jūsu rēķins satur pareizas piezīmes.
+ConfirmClassifyPaidPartiallyReasonAvoirDesc=Izmantojiet šo izvēli, ja visi citi neapmierina
+ConfirmClassifyPaidPartiallyReasonBadCustomerDesc=<b> sliktais pircējs</b>  ir klients, kurš atsakās maksāt parādu.
+ConfirmClassifyPaidPartiallyReasonProductReturnedDesc=Šo izvēli izmanto, ja samaksa nav bijusi pilnīga, jo daži no produktiem, tika atgriezti
+ConfirmClassifyPaidPartiallyReasonOtherDesc=Izmantojiet šo izvēli, ja visi citi nav piemēroti, piemēram, šādā situācijā: <br> - maksājums nav pabeigts, jo daži produkti tika nosūtīti atpakaļ <br> - pieprasītā summa ir pārāk svarīga, jo atlaide tika aizmirsta <br> visos gadījumos summa Pārmērīgi liels pieprasījums ir jālabo grāmatvedības sistēmā, izveidojot kredītzīmi.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmClassifyAbandonReasonOther=Cits
 ConfirmClassifyAbandonReasonOtherDesc=Šī izvēle tiek izmantota visos citos gadījumos. Piemēram, tāpēc, ka jūs plānojat, lai izveidotu aizstāt rēķinu.
 ConfirmCustomerPayment=Vai jūs apstiprināt šo maksājuma ievadi, <b>%s</b> %s?
@@ -201,8 +302,14 @@ ConfirmValidatePayment=Vai jūs tiešām vēlaties apstiprināt šo maksājumu? 
 ValidateBill=Apstiprināt rēķinu
 UnvalidateBill=Nepārbaudīts rēķins
 NumberOfBills=Rēķinu skaits
+<<<<<<< HEAD
 NumberOfBillsByMonth=Rēķinu skaits pa mēnešiem
 AmountOfBills=Rēķinu summa
+=======
+NumberOfBillsByMonth=Rēķinu skaits mēnesī
+AmountOfBills=Rēķinu summa
+AmountOfBillsHT=Rēķinu summa (bez nodokļiem)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AmountOfBillsByMonthHT=Summa rēķini mēnesī (neto pēc nodokļiem)
 ShowSocialContribution=Show social/fiscal tax
 ShowBill=Rādīt rēķinu
@@ -214,23 +321,39 @@ ShowInvoiceSituation=Rādīt situāciju rēķinu
 ShowPayment=Rādīt maksājumu
 AlreadyPaid=Jau samaksāts
 AlreadyPaidBack=Jau atgriezta nauda
+<<<<<<< HEAD
 AlreadyPaidNoCreditNotesNoDeposits=Already paid (without credit notes and down payments)
+=======
+AlreadyPaidNoCreditNotesNoDeposits=Jau samaksāts (bez kredīta piezīmes un noguldījumiem)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Abandoned=Pamests
 RemainderToPay=Neapmaksāts
 RemainderToTake=Atlikusī summa, kas jāsaņem
 RemainderToPayBack=Remaining amount to refund
 Rest=Gaida
+<<<<<<< HEAD
 AmountExpected=Pieprasīto summu
 ExcessReceived=Excess saņemti
+=======
+AmountExpected=Pieprasītā summa
+ExcessReceived=Saņemts pārpalikums
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ExcessPaid=Pārmaksātā summa
 EscompteOffered=Piedāvāta atlaide (maksājums pirms termiņa)
 EscompteOfferedShort=Atlaide
 SendBillRef=Submission of invoice %s
 SendReminderBillRef=Submission of invoice %s (reminder)
+<<<<<<< HEAD
 StandingOrders=Direct debit orders
 StandingOrder=Direct debit order
 NoDraftBills=Nav rēķinu sagataves
 NoOtherDraftBills=Nekādi citi projekti rēķini
+=======
+StandingOrders=Tiešā debeta pasūtījumi
+StandingOrder=Tiešā debeta pasūtījums
+NoDraftBills=Nav rēķinu sagataves
+NoOtherDraftBills=Nav citu sagatavotu rēķinu
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoDraftInvoices=Nav projektu rēķini
 RefBill=Rēķina ref
 ToBill=Lai likumprojektu
@@ -245,11 +368,19 @@ DateInvoice=Rēķina datums
 DatePointOfTax=Nodokļu punkts
 NoInvoice=Nav rēķinu
 ClassifyBill=Klasificēt rēķinu
+<<<<<<< HEAD
 SupplierBillsToPay=Neapmaksātie piegādātāja rēķini
 CustomerBillsUnpaid=Neapmaksātie klienta rēķini
 NonPercuRecuperable=Neatgūstams
 SetConditions=Uzstādīt apmaksas nosacījumus
 SetMode=Uzstādīt maksājumu režīmu
+=======
+SupplierBillsToPay=Neapmaksāti pārdevēja rēķini
+CustomerBillsUnpaid=Neapmaksātie klienta rēķini
+NonPercuRecuperable=Neatgūstams
+SetConditions=Iestatiet maksājuma noteikumus
+SetMode=Iestatiet maksājuma veidu
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SetRevenuStamp=Set revenue stamp
 Billed=Samaksāts
 RecurringInvoices=Atkārtoti rēķini
@@ -260,6 +391,7 @@ Repeatables=Sagataves
 ChangeIntoRepeatableInvoice=Pārveidot par parauga rēķinu
 CreateRepeatableInvoice=Izveidot rēķina paraugu
 CreateFromRepeatableInvoice=Izveidot no parauga rēķina
+<<<<<<< HEAD
 CustomersInvoicesAndInvoiceLines=Klientu rēķinus un rēķinu s līnijas
 CustomersInvoicesAndPayments=Klientu rēķini un maksājumi
 ExportDataset_invoice_1=Klientu rēķinu sarakstu un rēķins ir līnijas
@@ -269,6 +401,17 @@ Reduction=Atlaide
 ReductionShort=Atlaide.
 Reductions=Samazinājumi
 ReductionsShort=Samazināšana.
+=======
+CustomersInvoicesAndInvoiceLines=Klientu rēķini un rēķina dati
+CustomersInvoicesAndPayments=Klientu rēķini un maksājumi
+ExportDataset_invoice_1=Klientu rēķini un rēķina dati
+ExportDataset_invoice_2=Klientu rēķiniem un maksājumiem
+ProformaBill=Proforma Bils:
+Reduction=Atlaide
+ReductionShort=Disku.
+Reductions=Samazinājumi
+ReductionsShort=Disku.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Discounts=Atlaides
 AddDiscount=Izveidot atlaidi
 AddRelativeDiscount=Izveidot relatīvo atlaidi
@@ -282,9 +425,15 @@ RelativeDiscount=Relatīva atlaide
 GlobalDiscount=Globālā atlaide
 CreditNote=Kredīta piezīme
 CreditNotes=Kredīta piezīmes
+<<<<<<< HEAD
 CreditNotesOrExcessReceived=Credit notes or excess received
 Deposit=Down payment
 Deposits=Down payments
+=======
+CreditNotesOrExcessReceived=Kredītkritumi vai saņemtie pārsniegumi
+Deposit=Sākuma maksājums
+Deposits=Sākuma maksājumi
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DiscountFromCreditNote=Atlaide no kredīta piezīmes %s
 DiscountFromDeposit=Down payments from invoice %s
 DiscountFromExcessReceived=Maksājumi, kas pārsniedz rēķinu %s
@@ -302,22 +451,37 @@ DiscountAlreadyCounted=Atlaides vai kredīti, kas jau ir iztērēti
 CustomerDiscounts=Klientu atlaides
 SupplierDiscounts=Pārdevēja atlaides
 BillAddress=Rēķina adrese
+<<<<<<< HEAD
 HelpEscompte=Šī atlaide ir piešķirta klientam, jo ​​tas maksājumu veica pirms termiņa.
 HelpAbandonBadCustomer=Šī summa ir pamests (klients teica, ka slikts klients), un tiek uzskatīts par ārkārtēju zaudēt.
 HelpAbandonOther=Šī summa ir atteikusies, jo tā bija kļūda (nepareizs klients vai rēķins aizstāt ar citiem, piemēram)
 IdSocialContribution=Social/fiscal tax payment id
 PaymentId=Maksājuma id
 PaymentRef=Maksājumu ref.
+=======
+HelpEscompte=Šī atlaide ir atlaide, kas piešķirta klientam, jo ​​maksājums tika veikts pirms termiņa.
+HelpAbandonBadCustomer=Šī summa ir atteikta (klients uzskata par sliktu klientu), un tiek uzskatīts par ārkārtas zaudējumiem.
+HelpAbandonOther=Šī summa ir pārtraukta, jo tā bija kļūda (piemēram, nepareizs klients vai rēķins).
+IdSocialContribution=Sociālā / fiskālā nodokļa maksājuma id
+PaymentId=Maksājuma id
+PaymentRef=Maksājuma ref.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 InvoiceId=Rēķina id
 InvoiceRef=Rēķina ref.
 InvoiceDateCreation=Rēķina izveides datums
 InvoiceStatus=Rēķina statuss
 InvoiceNote=Rēķina piezīme
 InvoicePaid=Rēķins samaksāts
+<<<<<<< HEAD
+=======
+OrderBilled=Rēķins ir apmaksāts
+DonationPaid=Ziedojums
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PaymentNumber=Maksājuma numurs
 RemoveDiscount=Noņemt atlaidi
 WatermarkOnDraftBill=Ūdenszīme uz rēķinu sagatavēm (nekāda, ja tukšs)
 InvoiceNotChecked=Nav izvēlēts rēķins
+<<<<<<< HEAD
 CloneInvoice=Klonēt rēķinu
 ConfirmCloneInvoice=Vai tiešām vēlaties klonēt šo rēķinu <b>%s</b>?
 DisabledBecauseReplacedInvoice=Darbība atspējots, jo rēķins ir aizstāts
@@ -337,6 +501,26 @@ WarningBillExist=Uzmanību, viens vai vairāki rēķini jau eksistē
 MergingPDFTool=Merging PDF tool
 AmountPaymentDistributedOnInvoice=Maksājuma summa ir sadalīta rēķinā
 PaymentOnDifferentThirdBills=Atļaut maksājumus dažādiem trešo valstu rēķiniem, bet tas pats mātes uzņēmums
+=======
+ConfirmCloneInvoice=Vai tiešām vēlaties klonēt šo rēķinu <b>%s</b>?
+DisabledBecauseReplacedInvoice=Darbība atspējots, jo rēķins ir aizstāts
+DescTaxAndDividendsArea=Šajā jomā ir apkopoti visi maksājumi par īpašiem izdevumiem. Šeit iekļauti tikai ieraksti ar maksājumiem noteiktajā gadā.
+NbOfPayments=Maksājumu skaits
+SplitDiscount=Sadalīt atlaidi divās
+ConfirmSplitDiscount=Vai tiešām vēlaties sadalīt šo <b> %s </b> %s atlaidi divās mazākās atlaidēs?
+TypeAmountOfEachNewDiscount=Ievades daudzums katrā no divām daļām:
+TotalOfTwoDiscountMustEqualsOriginal=Abu jauno atlaižu kopsummai jābūt vienādai ar sākotnējo diskonta summu.
+ConfirmRemoveDiscount=Vai tiešām vēlaties noņemt šo atlaidi?
+RelatedBill=Saistītais rēķins
+RelatedBills=Saistītie rēķini
+RelatedCustomerInvoices=Saistītie klientu rēķini
+RelatedSupplierInvoices=Saistītie piegādātāja rēķini
+LatestRelatedBill=Jaunākais sasitītais rēķins
+WarningBillExist=Brīdinājums, jau ir viens vai vairāki rēķini
+MergingPDFTool=Apvienot PDF rīks
+AmountPaymentDistributedOnInvoice=Maksājuma summa ir sadalīta rēķinā
+PaymentOnDifferentThirdBills=Atļaut maksājumus dažādām trešo personu parādzīmēm, bet vienai mātes sabiedrībai
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PaymentNote=Maksājuma piezīmes
 ListOfPreviousSituationInvoices=Iepriekšējo situāciju rēķinu saraksts
 ListOfNextSituationInvoices=Nākamo situāciju rēķinu saraksts
@@ -344,7 +528,11 @@ ListOfSituationInvoices=Rēķinu par situāciju saraksts
 CurrentSituationTotal=Kopējā pašreizējā situācija
 DisabledBecauseNotEnouthCreditNote=Lai noņemtu situācijas rēķinu no cikla, šajā rēķina kredītzīmju kopsummā jāaptver šis kopējais rēķins
 RemoveSituationFromCycle=Noņemiet šo rēķinu no cikla
+<<<<<<< HEAD
 ConfirmRemoveSituationFromCycle=Noņemiet šo rēķinu %s no cikla?
+=======
+ConfirmRemoveSituationFromCycle=Noņemt šo rēķinu %s no cikla?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmOuting=Apstipriniet atpūtu
 FrequencyPer_d=Katras %s dienas
 FrequencyPer_m=Katrus %s mēnešus
@@ -355,7 +543,11 @@ NextDateToExecution=Nākamās rēķina izveidošanas datums
 NextDateToExecutionShort=Datums nākamais gen.
 DateLastGeneration=Date of latest generation
 DateLastGenerationShort=Datuma pēdējais gen.
+<<<<<<< HEAD
 MaxPeriodNumber=Maksimālais rēķina radīšanas skaits
+=======
+MaxPeriodNumber=Maks. rēķinu veidošanas skaits
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NbOfGenerationDone=Rēķina paaudzes skaits jau ir pabeigts
 NbOfGenerationDoneShort=Veicamās paaudzes skaits
 MaxGenerationReached=Maksimālais sasniegto paaudžu skaits
@@ -363,13 +555,22 @@ InvoiceAutoValidate=Rēķinus automātiski apstiprināt
 GeneratedFromRecurringInvoice=Generated from template recurring invoice %s
 DateIsNotEnough=Date not reached yet
 InvoiceGeneratedFromTemplate=Invoice %s generated from recurring template invoice %s
+<<<<<<< HEAD
+=======
+GeneratedFromTemplate=Izveidots no veidnes rēķina %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 WarningInvoiceDateInFuture=Brīdinājums! Rēķina datums ir lielāks par pašreizējo datumu
 WarningInvoiceDateTooFarInFuture=Brīdinājums, rēķina datums ir pārāk tālu no pašreizējā datuma
 ViewAvailableGlobalDiscounts=Skatīt pieejamās atlaides
 # PaymentConditions
 Statut=Statuss
+<<<<<<< HEAD
 PaymentConditionShortRECEP=Due Upon Receipt
 PaymentConditionRECEP=Due Upon Receipt
+=======
+PaymentConditionShortRECEP=Pienākas pēc saņemšanas
+PaymentConditionRECEP=Pienākas pēc saņemšanas
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PaymentConditionShort30D=30 dienas
 PaymentCondition30D=30 dienas
 PaymentConditionShort30DENDMONTH=30 days of month-end
@@ -392,9 +593,15 @@ PaymentConditionShort14D=14 dienas
 PaymentCondition14D=14 dienas
 PaymentConditionShort14DENDMONTH=Mēneša 14 dienas
 PaymentCondition14DENDMONTH=14 dienu laikā pēc mēneša beigām
+<<<<<<< HEAD
 FixAmount=Noteikt daudzumu
 VarAmount=Mainīgais apjoms (%% tot.)
 VarAmountOneLine=Variable amount (%% tot.) - 1 line with label '%s'
+=======
+FixAmount=Fiksētā summa
+VarAmount=Mainīgais apjoms (%% tot.)
+VarAmountOneLine=Mainīgā summa (%% kopā) - 1 rinda ar etiķeti '%s'
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 # PaymentType
 PaymentTypeVIR=Bankas pārskaitījums
 PaymentTypeShortVIR=Bankas pārskaitījums
@@ -416,6 +623,7 @@ PaymentTypeFAC=Faktors
 PaymentTypeShortFAC=Faktors
 BankDetails=Bankas rekvizīti
 BankCode=Bankas kods
+<<<<<<< HEAD
 DeskCode=Galda kods
 BankAccountNumber=Konta numurs
 BankAccountNumberKey=Taustiņš
@@ -424,6 +632,16 @@ IBANNumber=IBAN numurs
 IBAN=IBAN
 BIC=BIC/SWIFT
 BICNumber=BIC / SWIFT numurs
+=======
+DeskCode=Filiāles kods
+BankAccountNumber=Konta numurs
+BankAccountNumberKey=Kontrolsumma
+Residence=Adrese
+IBANNumber=IBAN konta numurs
+IBAN=IBAN
+BIC=BIC/SWIFT
+BICNumber=BIC/SWIFT kods
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ExtraInfos=Papildu info
 RegulatedOn=Regulēta uz
 ChequeNumber=Pārbaudiet N °
@@ -437,6 +655,7 @@ PhoneNumber=Tel
 FullPhoneNumber=Tālrunis
 TeleFax=Fakss
 PrettyLittleSentence=Atzīt summu maksājumiem ar čekiem, kas izdoti manā vārdā locekļa grāmatvedības apvienības apstiprinājusi Fiskālās administrācijas.
+<<<<<<< HEAD
 IntracommunityVATNumber=Iekšienē skaits PVN
 PaymentByChequeOrderedTo=Pārbaudiet samaksa (ieskaitot visus nodokļus), ir jāmaksā %s nosūtīt
 PaymentByChequeOrderedToShort=Pārbaudiet samaksa (ieskaitot visus nodokļus), ir jāmaksā
@@ -446,12 +665,24 @@ VATIsNotUsedForInvoice=* Nav piemērojams PVN art-293B ar CGI
 LawApplicationPart1=Piemērojot likuma 80,335 no 12/05/80
 LawApplicationPart2=preces paliek īpašumā
 LawApplicationPart3=pārdevējs kamēr pilnīga Čeka
+=======
+IntracommunityVATNumber=Kopienas iekšējais PVN identifikators
+PaymentByChequeOrderedTo=Pārbaudiet maksājumus (ieskaitot nodokļus) maksā %s, nosūtiet uz
+PaymentByChequeOrderedToShort=Pārbaudiet maksājumus (t.sk. nodokļus)
+SendTo=nosūtīts
+PaymentByTransferOnThisBankAccount=Maksājums ar pārskaitījumu uz sekojošo bankas kontu
+VATIsNotUsedForInvoice=* Nav piemērojams PVN art-293B ar CGI
+LawApplicationPart1=Piemērojot likuma 80,335 no 12/05/80
+LawApplicationPart2=preces paliek īpašumā
+LawApplicationPart3=pārdevējs, kamēr nav pilnībā samaksāts
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LawApplicationPart4=viņu cena.
 LimitedLiabilityCompanyCapital=SARL ar galvaspilsētu
 UseLine=Pielietot
 UseDiscount=Izmantot atlaidi
 UseCredit=Izmantot kredītu
 UseCreditNoteInInvoicePayment=Samazināt summu ko maksā ar šo kredītu
+<<<<<<< HEAD
 MenuChequeDeposits=Pārbauda noguldījumus
 MenuCheques=Pārbaudes
 MenuChequesReceipts=Pārbaudes ieņēmumi
@@ -459,11 +690,24 @@ NewChequeDeposit=Jauns noguldījums
 ChequesReceipts=Pārbaudes ieņēmumi
 ChequesArea=Pārbaudes noguldījumi zona
 ChequeDeposits=Pārbaudes noguldījumi
+=======
+MenuChequeDeposits=Pārbaudiet Noguldījumus
+MenuCheques=Pārbaudes
+MenuChequesReceipts=Pārbaudiet čekus
+NewChequeDeposit=Jauns noguldījums
+ChequesReceipts=Pārbaudiet čekus
+ChequesArea=Pārbaudiet noguldījumu laukumu
+ChequeDeposits=Pārbaudiet noguldījumus
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Cheques=Pārbaudes
 DepositId=Id deposit
 NbCheque=Number of checks
 CreditNoteConvertedIntoDiscount=Šī %s ir pārveidota par %s
+<<<<<<< HEAD
 UsBillingContactAsIncoiveRecipientIfExist=Izmantot klientu norēķinu kontaktadresi, nevis trešo personu adresi, kā adresāta rēķiniem
+=======
+UsBillingContactAsIncoiveRecipientIfExist=Izmantot kontaktpersonu / adresi ar tipa "norēķinu kontaktu", nevis trešo pušu adresi kā rēķinu saņēmēju
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShowUnpaidAll=Rādīt visus neapmaksātos rēķinus
 ShowUnpaidLateOnly=Rādīt vēlu neapmaksātiem rēķiniem tikai
 PaymentInvoiceRef=Maksājuma rēķins %s
@@ -476,19 +720,34 @@ CantRemovePaymentWithOneInvoicePaid=Nevar dzēst maksājumu, jo eksistē kaut vi
 ExpectedToPay=Gaidāmais maksājums
 CantRemoveConciliatedPayment=Nevar noņemt saskaņoto maksājumu
 PayedByThisPayment=Samaksāts ar šo maksājumu
+<<<<<<< HEAD
 ClosePaidInvoicesAutomatically=Classify "Paid" all standard, down payment or replacement invoices entirely paid.
 ClosePaidCreditNotesAutomatically=Classify "Paid" all credit notes entirely paid back.
 ClosePaidContributionsAutomatically=Klasificējiet "Apmaksā" visas sociālās vai fiskālās iemaksas, kas pilnībā samaksātas.
 AllCompletelyPayedInvoiceWillBeClosed=Visi rēķini, kas ir apmaksāti pilnībā automātiski tiks aizvērti ar statusu "Samaksāts".
+=======
+ClosePaidInvoicesAutomatically=Klasificējiet visus apmaksātos standarta, priekšapmaksas vai nomaksas rēķinus.
+ClosePaidCreditNotesAutomatically=Classify "Paid" all credit notes entirely paid back.
+ClosePaidContributionsAutomatically=Klasificējiet "Apmaksā" visas sociālās vai fiskālās iemaksas, kas pilnībā samaksātas.
+AllCompletelyPayedInvoiceWillBeClosed=Visi rēķini, kuriem nav jāmaksā, tiks automātiski aizvērti ar statusu "Paid".
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ToMakePayment=Maksāt
 ToMakePaymentBack=Atmaksāt
 ListOfYourUnpaidInvoices=Saraksts ar neapmaksātiem rēķiniem
 NoteListOfYourUnpaidInvoices=Piezīme: Šis saraksts satur tikai rēķinus par trešo pušu Jums ir saistīti ar kā pārdošanas pārstāvis.
 RevenueStamp=Ieņēmumi zīmogs
+<<<<<<< HEAD
 YouMustCreateInvoiceFromThird=This option is only available when creating invoice from tab "customer" of third par
 YouMustCreateInvoiceFromSupplierThird=Šī opcija ir pieejama tikai, veidojot rēķinu no trešās puses cilnes "piegādātājs"
 YouMustCreateStandardInvoiceFirstDesc=Vispirms vispirms jāizveido standarta rēķins un jāpārveido tas par "veidni", lai izveidotu jaunu veidnes rēķinu
 PDFCrabeDescription=Rēķina PDF  paraugs. Pilnākais rēķina paraugs (vēlamais paraugs)
+=======
+YouMustCreateInvoiceFromThird=Šī opcija ir pieejama tikai tad, ja izveidojat rēķinu no trešās personas cilnes "Klients"
+YouMustCreateInvoiceFromSupplierThird=Šī opcija ir pieejama tikai tad, ja izveidojat rēķinu no trešās puses cilnes „Pārdevējs”
+YouMustCreateStandardInvoiceFirstDesc=Vispirms vispirms jāizveido standarta rēķins un jāpārveido tas par "veidni", lai izveidotu jaunu veidnes rēķinu
+PDFCrabeDescription=Rēķina PDF  paraugs. Pilnākais rēķina paraugs (vēlamais paraugs)
+PDFSpongeDescription=Rēķina PDF veidne Sponge. Pilnīga rēķina veidne
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PDFCrevetteDescription=Rēķina PDF veidne Crevette. Pabeigta rēķina veidne situāciju rēķiniem
 TerreNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 MarsNumRefModelDesc1=Atgriež numuru ar formātu %syymm-nnnn par standarta rēķiniem, %syymm-nnnn par nomainītajiem rēķiniem, %syymm-nnnn par norēķinu rēķiniem un %syymm-nnnn par kredītzīmēm, kur yy ir gads, mm ir mēnesis, un nnnn ir secība bez pārtraukuma un nē atgriezties pie 0
@@ -499,10 +758,17 @@ TypeContact_facture_internal_SALESREPFOLL=Pārstāvis šādi-up klientu rēķinu
 TypeContact_facture_external_BILLING=Klienta rēķina kontakts
 TypeContact_facture_external_SHIPPING=Klientu kuģniecības kontakts
 TypeContact_facture_external_SERVICE=Klienta pakalpojuma kontakts
+<<<<<<< HEAD
 TypeContact_invoice_supplier_internal_SALESREPFOLL=Pārstāvis turpinot darboties piegādātāju rēķinu
 TypeContact_invoice_supplier_external_BILLING=Piegādātāja rēķinu kontaktpersona
 TypeContact_invoice_supplier_external_SHIPPING=Piegādātāja piegādes līgums
 TypeContact_invoice_supplier_external_SERVICE=Piegādātāja pakalpojuma līgums
+=======
+TypeContact_invoice_supplier_internal_SALESREPFOLL=Pārstāvja rēķins pēc pārstāvjiem
+TypeContact_invoice_supplier_external_BILLING=Pārdevēja rēķina kontakts
+TypeContact_invoice_supplier_external_SHIPPING=Pārdevēja nosūtīšanas kontakts
+TypeContact_invoice_supplier_external_SERVICE=Pārdevēja pakalpojuma kontakts
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 # Situation invoices
 InvoiceFirstSituationAsk=First situation invoice
 InvoiceFirstSituationDesc=The <b>situation invoices</b> are tied to situations related to a progression, for example the progression of a construction. Each situation is tied to an invoice.
@@ -527,6 +793,7 @@ InvoiceSituationLast=Final and general invoice
 PDFCrevetteSituationNumber=Situācija Nr. %s
 PDFCrevetteSituationInvoiceLineDecompte=Situācijas faktūrrēķins - COUNT
 PDFCrevetteSituationInvoiceTitle=Situation invoice
+<<<<<<< HEAD
 PDFCrevetteSituationInvoiceLine=Situation N°%s : Inv. N°%s on %s
 TotalSituationInvoice=Kopējā situācija
 invoiceLineProgressError=Rēķina līnijas progress nedrīkst būt lielāks vai vienāds ar nākamo rēķina līniju
@@ -534,6 +801,15 @@ updatePriceNextInvoiceErrorUpdateline=Kļūda: atjauniniet cenu rēķina līnij�
 ToCreateARecurringInvoice=To create a recurring invoice for this contract, first create this draft invoice, then convert it into an invoice template and define the frequency for generation of future invoices.
 ToCreateARecurringInvoiceGene=To generate future invoices regularly and manually, just go on menu <strong>%s - %s - %s</strong>.
 ToCreateARecurringInvoiceGeneAuto=If you need to have such invoices generated automatically, ask you administrator to enable and setup module <strong>%s</strong>. Note that both method (manual and automatic) can be used together with no risk of duplication.
+=======
+PDFCrevetteSituationInvoiceLine=Situācija Nr. %s: Inv. Nr. %s uz %s
+TotalSituationInvoice=Kopējā situācija
+invoiceLineProgressError=Rēķina līnijas progress nedrīkst būt lielāks vai vienāds ar nākamo rēķina līniju
+updatePriceNextInvoiceErrorUpdateline=Kļūda: atjaunināt cenas rēķina rindā: %s
+ToCreateARecurringInvoice=To create a recurring invoice for this contract, first create this draft invoice, then convert it into an invoice template and define the frequency for generation of future invoices.
+ToCreateARecurringInvoiceGene=To generate future invoices regularly and manually, just go on menu <strong>%s - %s - %s</strong>.
+ToCreateARecurringInvoiceGeneAuto=Ja jums ir nepieciešams, lai šādi rēķini tiktu ģenerēti automātiski, lūdziet administratoram aktivizēt un iestatīt moduli <strong> %s </strong>. Ņemiet vērā, ka abas metodes (manuālā un automātiskā) var izmantot kopā ar dublēšanās risku.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DeleteRepeatableInvoice=Dzēst veidnes rēķinu
 ConfirmDeleteRepeatableInvoice=Vai tiešām vēlaties izdzēst veidnes rēķinu?
 CreateOneBillByThird=Izveidojiet vienu rēķinu par trešo pusi (citādi, vienu rēķinu par pasūtījumu)
@@ -546,3 +822,7 @@ AutoFillDateFromShort=Iestatīt sākuma datumu
 AutoFillDateTo=Iestatīt pakalpojuma līnijas beigu datumu ar nākamo rēķina datumu
 AutoFillDateToShort=Iestatīt beigu datumu
 MaxNumberOfGenerationReached=Maksimālais gen. sasniedza
+<<<<<<< HEAD
+=======
+BILL_DELETEInDolibarr=Rēķins dzēsts
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

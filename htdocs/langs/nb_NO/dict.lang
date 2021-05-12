@@ -160,7 +160,11 @@ CountryMD=Moldova
 CountryMN=Mongolia
 CountryMS=Monserrat
 CountryMZ=Mosambik
+<<<<<<< HEAD
 CountryMM=Myanmar
+=======
+CountryMM=Myanmar (Burma)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryNA=Namibia
 CountryNR=Nauru
 CountryNP=Nepal
@@ -223,7 +227,11 @@ CountryTO=Tonga
 CountryTT=Trinidad og Tobago
 CountryTR=Tyrkia
 CountryTM=Turkmenistan
+<<<<<<< HEAD
 CountryTC=Turks- og Caicosøyene
+=======
+CountryTC=Turks og Caicosøyene
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryTV=Tuvalu
 CountryUG=Uganda
 CountryUA=Ukraina
@@ -290,6 +298,10 @@ CurrencyXOF=CFA franc BCEAO
 CurrencySingXOF=CFA franc BCEAO
 CurrencyXPF=CFP franc
 CurrencySingXPF=CFP franc
+<<<<<<< HEAD
+=======
+CurrencyCentEUR=cents
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrencyCentSingEUR=cent
 CurrencyCentINR=paisa
 CurrencyCentSingINR=paise
@@ -306,6 +318,10 @@ DemandReasonTypeSRC_WOM=Jungeltelegrafen
 DemandReasonTypeSRC_PARTNER=Partner
 DemandReasonTypeSRC_EMPLOYEE=Ansatt
 DemandReasonTypeSRC_SPONSORING=Sponsing
+<<<<<<< HEAD
+=======
+DemandReasonTypeSRC_SRC_CUSTOMER=Innkommende kontakt hos en kunde
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 #### Paper formats ####
 PaperFormatEU4A0=Format 4A0
 PaperFormatEU2A0=Format 2A0

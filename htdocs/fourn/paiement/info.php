@@ -28,11 +28,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
+<<<<<<< HEAD
 $langs->load("bills");
 $langs->load("suppliers");
 $langs->load("companies");
 
 $id			= GETPOST('id','int');
+=======
+$langs->loadLangs(array("bills", "suppliers", "companies"));
+
+$id			= GETPOST('id', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $object = new PaiementFourn($db);
 $object->fetch($id);
@@ -57,6 +63,11 @@ print '<table width="100%"><tr><td>';
 dol_print_object_info($object);
 print '</td></tr></table>';
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

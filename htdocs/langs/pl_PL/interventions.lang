@@ -4,6 +4,10 @@ Interventions=Interwencje
 InterventionCard=Karta interwencji
 NewIntervention=Nowa interwencja
 AddIntervention=Tworzenie interwencji
+<<<<<<< HEAD
+=======
+ChangeIntoRepeatableIntervention=Change to repeatable intervention
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ListOfInterventions=Wykaz interwencji
 ActionsOnFicheInter=Działania w zakresie interwencji
 LastInterventions=Ostatnie %s interwencje
@@ -14,14 +18,22 @@ DeleteIntervention=Usuń interwencję
 ValidateIntervention=Zatwierdź interwencję
 ModifyIntervention=Modyfikuj interwencję
 DeleteInterventionLine=Usuń linię interwencji
+<<<<<<< HEAD
 CloneIntervention=Zduplikuj interwencję
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmDeleteIntervention=Jesteś pewien, że chcesz usunąć tę interwencję?
 ConfirmValidateIntervention=Jesteś pewien, że chcesz potwierdzić tę interwencję pod nazwą <b>%s</b>?
 ConfirmModifyIntervention=Jesteś pewien, że chcesz zmodyfikować tę interwencję?
 ConfirmDeleteInterventionLine=Jesteś pewien, że chcesz usunąć tę linię interwencji?
 ConfirmCloneIntervention=Jesteś pewien, że chcesz zduplikować tę interwencję?
+<<<<<<< HEAD
 NameAndSignatureOfInternalContact=Nazwisko i podpis interwencji:
 NameAndSignatureOfExternalContact=Nazwisko i podpis klienta:
+=======
+NameAndSignatureOfInternalContact=Name and signature of intervening:
+NameAndSignatureOfExternalContact=Name and signature of customer:
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DocumentModelStandard=Standardowy model dokumentu dla interwencji
 InterventionCardsAndInterventionLines=Interwencje i kierunki interwencji
 InterventionClassifyBilled=Sklasyfikować "Rozlicz"
@@ -29,13 +41,21 @@ InterventionClassifyUnBilled=Sklasyfikować "Unbilled"
 InterventionClassifyDone=Sklasyfikuj "Gotowe"
 StatusInterInvoiced=Zapowiadane
 SendInterventionRef=Złożenie interwencyjnego% s
+<<<<<<< HEAD
 SendInterventionByMail=Wyślij interwencję przez e-mail
+=======
+SendInterventionByMail=Send intervention by email
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 InterventionCreatedInDolibarr=Interwencja %s stworzona
 InterventionValidatedInDolibarr=Interwencja %s zatwierdzona
 InterventionModifiedInDolibarr=Interwencja %s zmodyfikowana
 InterventionClassifiedBilledInDolibarr=% Interwencyjnej s zestaw jako rozliczane
 InterventionClassifiedUnbilledInDolibarr=% Interwencyjnej s zestaw jako weryfikowane
+<<<<<<< HEAD
 InterventionSentByEMail=Interwencja %s wysłana emailem
+=======
+InterventionSentByEMail=Intervention %s sent by email
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 InterventionDeletedInDolibarr=Interwencja %s usunięta
 InterventionsArea=Obszar interwencji
 DraftFichinter=Szkic interwencji
@@ -47,12 +67,21 @@ TypeContact_fichinter_external_CUSTOMER=W ślad za kontakt z klientem
 PrintProductsOnFichinter=Wydrukuj również linie typu "produkt" (nie tylko usługi) na karcie interwencji
 PrintProductsOnFichinterDetails=Interwencje generowane z zamówień
 UseServicesDurationOnFichinter=Użyj czasu trwania usług dla interwencji generowanych przez zamówienia
+<<<<<<< HEAD
 UseDurationOnFichinter=Hides the duration field for intervention records
 UseDateWithoutHourOnFichinter=Hides hours and minutes off the date field for intervention records
 InterventionStatistics=Statystyki interwencji
 NbOfinterventions=Liczba kart interwencji
 NumberOfInterventionsByMonth=Liczba kart interwencji w miesiącu (data potwierdzenia) 
 AmountOfInteventionNotIncludedByDefault=Amount of intervention is not included by default into profit (in most cases, timesheets are used to count time spent). Add option PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT to 1 into home-setup-other to include them.
+=======
+UseDurationOnFichinter=Ukrywa pole trwania dla rekordów interwencji
+UseDateWithoutHourOnFichinter=Ukrywa godziny i minuty z pola dat dla rekordów interwencji
+InterventionStatistics=Statystyki interwencji
+NbOfinterventions=Ilość kart interwencji
+NumberOfInterventionsByMonth=Ilość kart interwencji w miesiącu (data potwierdzenia)
+AmountOfInteventionNotIncludedByDefault=Ilość interwencji nie jest domyślnie uwzględniana w zysku (w większości przypadków do obliczania czasu wykorzystano karty czasu pracy). Ustaw opcję PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT na 1 w konfiguracji domowej - inne, aby je uwzględnić.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ##### Exports #####
 InterId=ID interwencji
 InterRef=Numer referencyjny interwencji

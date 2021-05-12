@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2004-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +29,12 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
+<<<<<<< HEAD
 $langs->load("install");
+=======
+// Load translation files required by the page
+$langs->loadLangs(array("companies","install","users","other"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if (! $user->admin)
 	accessforbidden();
@@ -40,6 +49,7 @@ if ($user->societe_id > 0)
   $socid = $user->societe_id;
 }
 
+<<<<<<< HEAD
 $langs->load("companies");
 $langs->load("users");
 $langs->load("other");
@@ -47,6 +57,11 @@ $langs->load("other");
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
+=======
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
@@ -68,7 +83,11 @@ if ($action == 'confirm_purge' && $confirm == 'yes' && $user->admin)
 // Lock new sessions
 if ($action == 'confirm_lock' && $confirm == 'yes' && $user->admin)
 {
+<<<<<<< HEAD
 	if (dolibarr_set_const($db, 'MAIN_ONLY_LOGIN_ALLOWED', $user->login, 'text',1,'Logon is restricted to a particular user', 0) < 0)
+=======
+	if (dolibarr_set_const($db, 'MAIN_ONLY_LOGIN_ALLOWED', $user->login, 'text', 1, 'Logon is restricted to a particular user', 0) < 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		dol_print_error($db);
 	}
@@ -99,7 +118,11 @@ $usefilter=0;
 $listofsessions=listOfSessions();
 $num=count($listofsessions);
 
+<<<<<<< HEAD
 print_barre_liste($langs->trans("Sessions"), $page, $_SERVER["PHP_SELF"],"",$sortfield,$sortorder,'', $num, ($num?$num:''),'setup');		// Do not show numer (0) if no session found (it means we can't know)
+=======
+print_barre_liste($langs->trans("Sessions"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num, ($num?$num:''), 'setup');		// Do not show numer (0) if no session found (it means we can't know)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $savehandler=ini_get("session.save_handler");
 $savepath=ini_get("session.save_path");
@@ -116,24 +139,42 @@ print '<br>';
 if ($action == 'purge')
 {
 	$formquestion=array();
+<<<<<<< HEAD
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('PurgeSessions'), $langs->trans('ConfirmPurgeSessions'),'confirm_purge',$formquestion,'no',2);
 }
 else if ($action == 'lock')
 {
 	$formquestion=array();
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('LockNewSessions'), $langs->trans('ConfirmLockNewSessions',$user->login),'confirm_lock',$formquestion,'no',1);
+=======
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('PurgeSessions'), $langs->trans('ConfirmPurgeSessions'), 'confirm_purge', $formquestion, 'no', 2);
+}
+elseif ($action == 'lock')
+{
+	$formquestion=array();
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('LockNewSessions'), $langs->trans('ConfirmLockNewSessions', $user->login), 'confirm_lock', $formquestion, 'no', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 if ($savehandler == 'files')
 {
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
+<<<<<<< HEAD
 	print_liste_field_titre("Login",$_SERVER["PHP_SELF"],"login","","",'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre("SessionId",$_SERVER["PHP_SELF"],"id","","",'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre("DateCreation",$_SERVER["PHP_SELF"],"datec","","",'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre("DateModification",$_SERVER["PHP_SELF"],"datem","","",'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre("Age",$_SERVER["PHP_SELF"],"age","","",'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre("Raw",$_SERVER["PHP_SELF"],"raw","","",'align="left"',$sortfield,$sortorder);
+=======
+	print_liste_field_titre("Login", $_SERVER["PHP_SELF"], "login", "", "", 'align="left"', $sortfield, $sortorder);
+	print_liste_field_titre("SessionId", $_SERVER["PHP_SELF"], "id", "", "", 'align="left"', $sortfield, $sortorder);
+	print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "datec", "", "", 'align="left"', $sortfield, $sortorder);
+	print_liste_field_titre("DateModification", $_SERVER["PHP_SELF"], "datem", "", "", 'align="left"', $sortfield, $sortorder);
+	print_liste_field_titre("Age", $_SERVER["PHP_SELF"], "age", "", "", 'align="left"', $sortfield, $sortorder);
+	print_liste_field_titre("Raw", $_SERVER["PHP_SELF"], "raw", "", "", 'align="left"', $sortfield, $sortorder);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print_liste_field_titre('');
 	print "</tr>\n";
 
@@ -145,22 +186,38 @@ if ($savehandler == 'files')
 		print '<td>'.$sessionentry['login'].'</td>';
 
 		// ID
+<<<<<<< HEAD
 		print '<td align="left" class="nowrap">';
 		if ("$key" == session_id()) print $form->textwithpicto($key,$langs->trans("YourSession"));
+=======
+		print '<td class="nowrap left">';
+		if ("$key" == session_id()) print $form->textwithpicto($key, $langs->trans("YourSession"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		else print $key;
 		print '</td>';
 
 		// Date creation
+<<<<<<< HEAD
 		print '<td align="left" class="nowrap">'.dol_print_date($sessionentry['creation'],'%Y-%m-%d %H:%M:%S').'</td>';
 
 		// Date modification
 		print '<td align="left" class="nowrap">'.dol_print_date($sessionentry['modification'],'%Y-%m-%d %H:%M:%S').'</td>';
+=======
+		print '<td class="nowrap left">'.dol_print_date($sessionentry['creation'], '%Y-%m-%d %H:%M:%S').'</td>';
+
+		// Date modification
+		print '<td class="nowrap left">'.dol_print_date($sessionentry['modification'], '%Y-%m-%d %H:%M:%S').'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Age
 		print '<td>'.$sessionentry['age'].'</td>';
 
 		// Raw
+<<<<<<< HEAD
 		print '<td>'.dol_trunc($sessionentry['raw'],40,'middle').'</td>';
+=======
+		print '<td>'.dol_trunc($sessionentry['raw'], 40, 'middle').'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		print '<td>&nbsp;</td>';
 
@@ -170,10 +227,16 @@ if ($savehandler == 'files')
 
 	if (count($listofsessions) == 0)
 	{
+<<<<<<< HEAD
 		print '<tr '.$bc[false].'><td colspan="6">'.$langs->trans("NoSessionFound",$savepath,$openbasedir).'</td></tr>';
 	}
 	print "</table>";
 
+=======
+		print '<tr '.$bc[false].'><td colspan="6">'.$langs->trans("NoSessionFound", $savepath, $openbasedir).'</td></tr>';
+	}
+	print "</table>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 else
 {
@@ -208,5 +271,9 @@ print '</div>';
 
 print '<br>';
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +27,11 @@
  *	\brief      Actors of a task
  */
 
+<<<<<<< HEAD
 require ("../../main.inc.php");
+=======
+require "../../main.inc.php";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -33,12 +41,21 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies'));
 
+<<<<<<< HEAD
 $id=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $withproject=GETPOST('withproject','int');
 $project_ref=GETPOST('project_ref','alpha');
+=======
+$id=GETPOST('id', 'int');
+$ref=GETPOST('ref', 'alpha');
+$action=GETPOST('action', 'alpha');
+$confirm=GETPOST('confirm', 'alpha');
+$withproject=GETPOST('withproject', 'int');
+$project_ref=GETPOST('project_ref', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Security check
 $socid=0;
@@ -67,7 +84,11 @@ if ($action == 'addcontact' && $user->rights->projet->creer)
     		$result=$projectstatic->fetch($object->fk_project);
     		if ($result <= 0)
     		{
+<<<<<<< HEAD
     			dol_print_error($db,$projectstatic->error,$projectstatic->errors);
+=======
+    			dol_print_error($db, $projectstatic->error, $projectstatic->errors);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     		}
     		else
     		{
@@ -136,7 +157,11 @@ if ($action == 'deleteline' && $user->rights->projet->creer)
 // Retreive First Task ID of Project if withprojet is on to allow project prev next to work
 if (! empty($project_ref) && ! empty($withproject))
 {
+<<<<<<< HEAD
 	if ($projectstatic->fetch(0,$project_ref) > 0)
+=======
+	if ($projectstatic->fetch(0, $project_ref) > 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$tasksarray=$object->getTasksArray(0, 0, $projectstatic->id, $socid, 0);
 		if (count($tasksarray) > 0)
@@ -182,7 +207,11 @@ if ($id > 0 || ! empty($ref))
 
 		$object->project = clone $projectstatic;
 
+<<<<<<< HEAD
 		$userWrite  = $projectstatic->restrictedProjectArea($user,'write');
+=======
+		$userWrite  = $projectstatic->restrictedProjectArea($user, 'write');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		if ($withproject)
 		{
@@ -210,8 +239,13 @@ if ($id > 0 || ! empty($ref))
             // Define a complementary filter for search of next/prev ref.
             if (! $user->rights->projet->all->lire)
             {
+<<<<<<< HEAD
                 $objectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,0);
                 $projectstatic->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
+=======
+                $objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
+                $projectstatic->next_prev_filter=" rowid in (".(count($objectsListId)?join(',', array_keys($objectsListId)):'0').")";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             }
 
             dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -220,7 +254,11 @@ if ($id > 0 || ! empty($ref))
             print '<div class="fichehalfleft">';
             print '<div class="underbanner clearboth"></div>';
 
+<<<<<<< HEAD
             print '<table class="border" width="100%">';
+=======
+            print '<table class="border tableforfield" width="100%">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
             // Visibility
             print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
@@ -230,9 +268,15 @@ if ($id > 0 || ! empty($ref))
 
             // Date start - end
             print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
+<<<<<<< HEAD
             $start = dol_print_date($projectstatic->date_start,'day');
             print ($start?$start:'?');
             $end = dol_print_date($projectstatic->date_end,'day');
+=======
+            $start = dol_print_date($projectstatic->date_start, 'day');
+            print ($start?$start:'?');
+            $end = dol_print_date($projectstatic->date_end, 'day');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             print ' - ';
             print ($end?$end:'?');
             if ($projectstatic->hasDelay()) print img_warning("Late");
@@ -240,7 +284,11 @@ if ($id > 0 || ! empty($ref))
 
             // Budget
             print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+<<<<<<< HEAD
             if (strcmp($projectstatic->budget_amount, '')) print price($projectstatic->budget_amount,'',$langs,1,0,0,$conf->currency);
+=======
+            if (strcmp($projectstatic->budget_amount, '')) print price($projectstatic->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             print '</td></tr>';
 
             // Other attributes
@@ -254,7 +302,11 @@ if ($id > 0 || ! empty($ref))
             print '<div class="ficheaddleft">';
             print '<div class="underbanner clearboth"></div>';
 
+<<<<<<< HEAD
             print '<table class="border" width="100%">';
+=======
+            print '<table class="border tableforfield" width="100%">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
             // Description
             print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
@@ -263,8 +315,13 @@ if ($id > 0 || ! empty($ref))
 
             // Categories
             if($conf->categorie->enabled) {
+<<<<<<< HEAD
                 print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
                 print $form->showCategories($projectstatic->id,'project',1);
+=======
+                print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
+                print $form->showCategories($projectstatic->id, 'project', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 print "</td></tr>";
             }
 
@@ -295,7 +352,11 @@ if ($id > 0 || ! empty($ref))
 
 		if (! GETPOST('withproject') || empty($projectstatic->id))
 		{
+<<<<<<< HEAD
 		    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);
+=======
+		    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		    $object->next_prev_filter=" fk_projet in (".$projectsListId.")";
 		}
 		else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
@@ -326,7 +387,11 @@ if ($id > 0 || ! empty($ref))
 		dol_fiche_end();
 
 		/*
+<<<<<<< HEAD
 		 * Lignes de contacts
+=======
+		 * Lines of contacts
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		 */
 /*
 		// Contacts lines (modules that overwrite templates must declare this into descriptor)
@@ -340,22 +405,34 @@ if ($id > 0 || ! empty($ref))
 
 		/*
 		 * Add a new contact line
+<<<<<<< HEAD
 		 * Non affiche en mode modification de ligne
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		 */
 		print '<table class="noborder" width="100%">';
 
 		if ($action != 'editline' && $user->rights->projet->creer)
 		{
 			print '<tr class="liste_titre">';
+<<<<<<< HEAD
 			print '<td>'.$langs->trans("Source").'</td>';
 			print '<td>'.$langs->trans("ThirdParty").'</td>';
 			print '<td>'.$langs->trans("TaskContact").'</td>';
+=======
+			print '<td>'.$langs->trans("Nature").'</td>';
+			print '<td>'.$langs->trans("ThirdParty").'</td>';
+			print '<td>'.$langs->trans("Users").'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '<td>'.$langs->trans("ContactType").'</td>';
 			print '<td colspan="3">&nbsp;</td>';
 			print "</tr>\n";
 
+<<<<<<< HEAD
 			$var = false;
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="POST">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="addcontact">';
@@ -367,7 +444,11 @@ if ($id > 0 || ! empty($ref))
 			print '<tr class="oddeven">';
 
 			print '<td class="nowrap">';
+<<<<<<< HEAD
 			print img_object('','user').' '.$langs->trans("Users");
+=======
+			print img_object('', 'user').' '.$langs->trans("Users");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '</td>';
 
 			print '<td colspan="1">';
@@ -381,9 +462,15 @@ if ($id > 0 || ! empty($ref))
 			print $form->select_dolusers((GETPOST('contactid')?GETPOST('contactid'):$user->id), 'contactid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 1, $langs->trans("ResourceNotAssignedToProject"));
 			print '</td>';
 			print '<td>';
+<<<<<<< HEAD
 			$formcompany->selectTypeContact($object, '', 'type','internal','rowid');
 			print '</td>';
 			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+=======
+			$formcompany->selectTypeContact($object, '', 'type', 'internal', 'rowid');
+			print '</td>';
+			print '<td class="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '</tr>';
 
 			print '</form>';
@@ -402,7 +489,11 @@ if ($id > 0 || ! empty($ref))
 				print '<tr class="oddeven">';
 
 				print '<td class="nowrap">';
+<<<<<<< HEAD
 				print img_object('','contact').' '.$langs->trans("ThirdPartyContacts");
+=======
+				print img_object('', 'contact').' '.$langs->trans("ThirdPartyContacts");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				print '</td>';
 
 				print '<td colspan="1">';
@@ -413,12 +504,21 @@ if ($id > 0 || ! empty($ref))
 
 				print '<td colspan="1">';
 				$contactofproject=$projectstatic->getListContactId('external');
+<<<<<<< HEAD
 				$nbofcontacts=$form->select_contacts($selectedCompany,'','contactid',0,'',$contactofproject);
 				print '</td>';
 				print '<td>';
 				$formcompany->selectTypeContact($object, '', 'type','external','rowid');
 				print '</td>';
 				print '<td align="right" colspan="3" ><input type="submit" class="button" id="add-customer-contact" value="'.$langs->trans("Add").'"';
+=======
+				$nbofcontacts=$form->select_contacts($selectedCompany, '', 'contactid', 0, '', $contactofproject);
+				print '</td>';
+				print '<td>';
+				$formcompany->selectTypeContact($object, '', 'type', 'external', 'rowid');
+				print '</td>';
+				print '<td class="right" colspan="3" ><input type="submit" class="button" id="add-customer-contact" value="'.$langs->trans("Add").'"';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if (! $nbofcontacts) print ' disabled';
 				print '></td>';
 				print '</tr>';
@@ -433,33 +533,55 @@ if ($id > 0 || ! empty($ref))
 		print '<td>'.$langs->trans("ThirdParty").'</td>';
 		print '<td>'.$langs->trans("TaskContact").'</td>';
 		print '<td>'.$langs->trans("ContactType").'</td>';
+<<<<<<< HEAD
 		print '<td align="center">'.$langs->trans("Status").'</td>';
+=======
+		print '<td class="center">'.$langs->trans("Status").'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '<td colspan="2">&nbsp;</td>';
 		print "</tr>\n";
 
 		$companystatic = new Societe($db);
+<<<<<<< HEAD
 		$var = true;
 
 		foreach(array('internal','external') as $source)
 		{
 			$tab = $object->liste_contact(-1,$source);
+=======
+
+		foreach(array('internal','external') as $source)
+		{
+			$tab = $object->liste_contact(-1, $source);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$num=count($tab);
 
 			$i = 0;
 			while ($i < $num)
 			{
+<<<<<<< HEAD
 				$var = !$var;
 
 				print '<tr '.$bc[$var].' valign="top">';
 
 				// Source
 				print '<td align="left">';
+=======
+				print '<tr class="oddeven" valign="top">';
+
+				// Source
+				print '<td class="left">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if ($tab[$i]['source']=='internal') print $langs->trans("User");
 				if ($tab[$i]['source']=='external') print $langs->trans("ThirdPartyContact");
 				print '</td>';
 
 				// Societe
+<<<<<<< HEAD
 				print '<td align="left">';
+=======
+				print '<td class="left">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if ($tab[$i]['socid'] > 0)
 				{
 					$companystatic->fetch($tab[$i]['socid']);
@@ -499,20 +621,35 @@ if ($id > 0 || ! empty($ref))
 				print '<td>'.$tab[$i]['libelle'].'</td>';
 
 				// Statut
+<<<<<<< HEAD
 				print '<td align="center">';
 				// Activation desativation du contact
 				if ($object->statut >= 0) print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=swapstatut&ligne='.$tab[$i]['rowid'].($withproject?'&withproject=1':'').'">';
 				print $contactstatic->LibStatut($tab[$i]['status'],3);
+=======
+				print '<td class="center">';
+				// Activation desativation du contact
+				if ($object->statut >= 0) print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=swapstatut&ligne='.$tab[$i]['rowid'].($withproject?'&withproject=1':'').'">';
+				print $contactstatic->LibStatut($tab[$i]['status'], 3);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if ($object->statut >= 0) print '</a>';
 				print '</td>';
 
 				// Icon update et delete
+<<<<<<< HEAD
 				print '<td align="center" class="nowrap">';
+=======
+				print '<td class="center nowrap">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if ($user->rights->projet->creer)
 				{
 					print '&nbsp;';
 					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteline&lineid='.$tab[$i]['rowid'].($withproject?'&withproject=1':'').'">';
+<<<<<<< HEAD
 					print img_delete();
+=======
+					print img_picto($langs->trans('Unlink'), 'unlink');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					print '</a>';
 				}
 				print '</td>';
@@ -523,7 +660,10 @@ if ($id > 0 || ! empty($ref))
 			}
 		}
 		print "</table>";
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 	else
 	{
@@ -535,10 +675,18 @@ if (is_object($hookmanager))
 {
 	$hookmanager->initHooks(array('contacttpl'));
 	$parameters=array();
+<<<<<<< HEAD
 	$reshook=$hookmanager->executeHooks('formContactTpl',$parameters,$object,$action);
 }
 
 
 llxFooter();
 
+=======
+	$reshook=$hookmanager->executeHooks('formContactTpl', $parameters, $object, $action);
+}
+
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

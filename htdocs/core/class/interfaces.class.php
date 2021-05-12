@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+<<<<<<< HEAD
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2010      Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,20 +35,42 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
  */
 class Interfaces
 {
+<<<<<<< HEAD
     var $db;
 	var $dir;				// Directory with all core and external triggers files
     var $errors	= array();	// Array for errors
+=======
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    public $dir;				// Directory with all core and external triggers files
+
+    /**
+     * @var string[] Error codes (or messages)
+     */
+    public $errors = array();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     /**
      *	Constructor
      *
      *  @param		DoliDB		$db      Database handler
      */
+<<<<<<< HEAD
     function __construct($db)
+=======
+    public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $this->db = $db;
     }
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     /**
      *   Function called when a Dolibarr business event occurs
      *   This function call all qualified triggers.
@@ -52,6 +78,7 @@ class Interfaces
      *   @param		string		$action     Trigger event code
      *   @param     object		$object     Objet concerned. Some context information may also be provided into array property object->context.
      *   @param     User		$user       Objet user
+<<<<<<< HEAD
      *   @param     Lang		$langs      Objet lang
      *   @param     Conf		$conf       Objet conf
      *   @return    int         			Nb of triggers ran if no error, -Nb of triggers with errors otherwise.
@@ -64,6 +91,21 @@ class Interfaces
         	$this->error='function run_triggers called with wrong parameters action='.$action.' object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf);
             dol_syslog(get_class($this).'::run_triggers '.$this->error, LOG_ERR);
         	$this->errors[]=$this->error;
+=======
+     *   @param     Translate	$langs      Objet lang
+     *   @param     Conf		$conf       Objet conf
+     *   @return    int         			Nb of triggers ran if no error, -Nb of triggers with errors otherwise.
+     */
+    public function run_triggers($action, $object, $user, $langs, $conf)
+    {
+        // phpcs:enable
+        // Check parameters
+        if (! is_object($object) || ! is_object($conf))	// Error
+        {
+            $this->error='function run_triggers called with wrong parameters action='.$action.' object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf);
+            dol_syslog(get_class($this).'::run_triggers '.$this->error, LOG_ERR);
+            $this->errors[]=$this->error;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             return -1;
         }
         if (! is_object($langs))	// Warning
@@ -76,18 +118,32 @@ class Interfaces
             global $db;
             $user = new User($db);
         }
+<<<<<<< HEAD
+=======
+        //dol_syslog(get_class($this)."::run_triggers action=".$action." Launch run_triggers", LOG_DEBUG);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         $nbfile = $nbtotal = $nbok = $nbko = 0;
 
         $files = array();
         $modules = array();
         $orders = array();
+<<<<<<< HEAD
 		$i=0;
 
 		$dirtriggers=array_merge(array('/core/triggers'),$conf->modules_parts['triggers']);
         foreach($dirtriggers as $reldir)
         {
             $dir=dol_buildpath($reldir,0);
+=======
+        $i=0;
+
+
+        $dirtriggers=array_merge(array('/core/triggers'), $conf->modules_parts['triggers']);
+        foreach($dirtriggers as $reldir)
+        {
+            $dir=dol_buildpath($reldir, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $newdir=dol_osencode($dir);
             //print "xx".$dir;exit;
 
@@ -99,21 +155,37 @@ class Interfaces
             {
                 while (($file = readdir($handle))!==false)
                 {
+<<<<<<< HEAD
                     if (is_readable($newdir."/".$file) && preg_match('/^interface_([0-9]+)_([^_]+)_(.+)\.class\.php$/i',$file,$reg))
                     {
 						$part1=$reg[1];
 						$part2=$reg[2];
 						$part3=$reg[3];
+=======
+                    if (is_readable($newdir."/".$file) && preg_match('/^interface_([0-9]+)_([^_]+)_(.+)\.class\.php$/i', $file, $reg))
+                    {
+                        $part1=$reg[1];
+                        $part2=$reg[2];
+                        $part3=$reg[3];
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
                         $nbfile++;
 
                         // Check if trigger file is disabled by name
+<<<<<<< HEAD
                         if (preg_match('/NORUN$/i',$file)) continue;
+=======
+                        if (preg_match('/NORUN$/i', $file)) continue;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                         // Check if trigger file is for a particular module
                         $qualified=true;
                         if (strtolower($reg[2]) != 'all')
                         {
+<<<<<<< HEAD
                             $module=preg_replace('/^mod/i','',$reg[2]);
+=======
+                            $module=preg_replace('/^mod/i', '', $reg[2]);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                             $constparam='MAIN_MODULE_'.strtoupper($module);
                             if (empty($conf->global->$constparam)) $qualified=false;
                         }
@@ -126,7 +198,11 @@ class Interfaces
 
                         $modName = "Interface".ucfirst($reg[3]);
                         //print "file=$file - modName=$modName\n";
+<<<<<<< HEAD
                         if (in_array($modName,$modules))    // $modules = list of modName already loaded
+=======
+                        if (in_array($modName, $modules))    // $modules = list of modName already loaded
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                         {
                             $langs->load("errors");
                             dol_syslog(get_class($this)."::run_triggers action=".$action." ".$langs->trans("ErrorDuplicateTrigger", $newdir."/".$file, $fullpathfiles[$modName]), LOG_WARNING);
@@ -165,6 +241,7 @@ class Interfaces
             $objMod = new $modName($this->db);
             if ($objMod)
             {
+<<<<<<< HEAD
             	$result=0;
 
 				if (method_exists($objMod, 'runTrigger'))	// New method to implement
@@ -181,6 +258,24 @@ class Interfaces
 				{
 	                dol_syslog(get_class($this)."::run_triggers action=".$action." A trigger was declared for class ".get_class($objMod)." but method runTrigger was not found", LOG_ERR);
 				}
+=======
+                $result=0;
+
+                if (method_exists($objMod, 'runTrigger'))	// New method to implement
+                {
+                    //dol_syslog(get_class($this)."::run_triggers action=".$action." Launch runTrigger for file '".$files[$key]."'", LOG_DEBUG);
+                    $result=$objMod->runTrigger($action, $object, $user, $langs, $conf);
+                }
+                elseif (method_exists($objMod, 'run_trigger'))	// Deprecated method
+                {
+                    dol_syslog(get_class($this)."::run_triggers action=".$action." Launch old method run_trigger (rename your trigger into runTrigger) for file '".$files[$key]."'", LOG_WARNING);
+                    $result=$objMod->run_trigger($action, $object, $user, $langs, $conf);
+                }
+                else
+                {
+                    dol_syslog(get_class($this)."::run_triggers action=".$action." A trigger was declared for class ".get_class($objMod)." but method runTrigger was not found", LOG_ERR);
+                }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
                 if ($result > 0)
                 {
@@ -199,13 +294,22 @@ class Interfaces
                     //dol_syslog("Error in trigger ".$action." - Nb of error string returned = ".count($objMod->errors), LOG_ERR);
                     $nbtotal++;
                     $nbko++;
+<<<<<<< HEAD
                     if (! empty($objMod->errors)) $this->errors=array_merge($this->errors,$objMod->errors);
                     else if (! empty($objMod->error))  $this->errors[]=$objMod->error;
+=======
+                    if (! empty($objMod->errors)) $this->errors=array_merge($this->errors, $objMod->errors);
+                    elseif (! empty($objMod->error))  $this->errors[]=$objMod->error;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                     //dol_syslog("Error in trigger ".$action." - Nb of error string returned = ".count($this->errors), LOG_ERR);
                 }
             }
             else
+<<<<<<< HEAD
 			{
+=======
+            {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 dol_syslog(get_class($this)."::run_triggers action=".$action." Failed to instantiate trigger for file '".$files[$key]."'", LOG_ERR);
             }
         }
@@ -226,10 +330,17 @@ class Interfaces
      *  Return list of triggers. Function used by admin page htdoc/admin/triggers.
      *  List is sorted by trigger filename so by priority to run.
      *
+<<<<<<< HEAD
      *	@param	array		$forcedirtriggers		null=All default directories. This parameter is used by modulebuilder module only.
      * 	@return	array								Array list of triggers
      */
     function getTriggersList($forcedirtriggers=null)
+=======
+     *  @param	array		$forcedirtriggers		null=All default directories. This parameter is used by modulebuilder module only.
+     * 	@return	array								Array list of triggers
+     */
+    public function getTriggersList($forcedirtriggers = null)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $conf, $langs, $db;
 
@@ -241,15 +352,26 @@ class Interfaces
         $orders = array();
         $i = 0;
 
+<<<<<<< HEAD
         $dirtriggers=array_merge(array('/core/triggers/'),$conf->modules_parts['triggers']);
         if (is_array($forcedirtriggers))
         {
         	$dirtriggers=$forcedirtriggers;
+=======
+        $dirtriggers=array_merge(array('/core/triggers/'), $conf->modules_parts['triggers']);
+        if (is_array($forcedirtriggers))
+        {
+            $dirtriggers=$forcedirtriggers;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
 
         foreach($dirtriggers as $reldir)
         {
+<<<<<<< HEAD
             $dir=dol_buildpath($reldir,0);
+=======
+            $dir=dol_buildpath($reldir, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $newdir=dol_osencode($dir);
 
             // Check if directory exists (we do not use dol_is_dir to avoid loading files.lib.php at each call)
@@ -260,6 +382,7 @@ class Interfaces
             {
                 while (($file = readdir($handle))!==false)
                 {
+<<<<<<< HEAD
                     if (is_readable($newdir.'/'.$file) && preg_match('/^interface_([0-9]+)_([^_]+)_(.+)\.class\.php/',$file,$reg))
                     {
                         if (preg_match('/\.back$/',$file)) continue;
@@ -274,6 +397,22 @@ class Interfaces
                         {
                             $langs->load("errors");
                             print '<div class="error">'.$langs->trans("Error").' : '.$langs->trans("ErrorDuplicateTrigger",$modName,"/htdocs/core/triggers/").'</div>';
+=======
+                    if (is_readable($newdir.'/'.$file) && preg_match('/^interface_([0-9]+)_([^_]+)_(.+)\.class\.php/', $file, $reg))
+                    {
+                        if (preg_match('/\.back$/', $file)) continue;
+
+                        $part1=$reg[1];
+                        $part2=$reg[2];
+                        $part3=$reg[3];
+
+                        $modName = 'Interface'.ucfirst($reg[3]);
+                        //print "file=$file"; print "modName=$modName"; exit;
+                        if (in_array($modName, $modules))
+                        {
+                            $langs->load("errors");
+                            print '<div class="error">'.$langs->trans("Error").' : '.$langs->trans("ErrorDuplicateTrigger", $modName, "/htdocs/core/triggers/").'</div>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                         }
                         else
                         {
@@ -282,7 +421,11 @@ class Interfaces
 
                         $files[$i] = $file;
                         $fullpath[$i] = $dir.'/'.$file;
+<<<<<<< HEAD
                         $relpath[$i] = preg_replace('/^\//','',$reldir).'/'.$file;
+=======
+                        $relpath[$i] = preg_replace('/^\//', '', $reldir).'/'.$file;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                         $iscoreorexternal[$i] = ($reldir == '/core/triggers/'?'internal':'external');
                         $modules[$i] = $modName;
                         $orders[$i] = $part1.'_'.$part2.'_'.$part3;   // Set sort criteria value
@@ -307,8 +450,13 @@ class Interfaces
 
             if (! class_exists($modName))
             {
+<<<<<<< HEAD
 				print 'Error: A trigger file was found but its class "'.$modName.'" was not found.'."<br>\n";
             	continue;
+=======
+                print 'Error: A trigger file was found but its class "'.$modName.'" was not found.'."<br>\n";
+                continue;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             }
 
             $objMod = new $modName($db);
@@ -319,6 +467,7 @@ class Interfaces
             $module='';
 
             // Check if trigger file is disabled by name
+<<<<<<< HEAD
             if (preg_match('/NORUN$/i',$files[$key])) $disabledbyname=1;
             // Check if trigger file is for a particular module
             if (preg_match('/^interface_([0-9]+)_([^_]+)_(.+)\.class\.php/i',$files[$key],$reg))
@@ -332,12 +481,31 @@ class Interfaces
 
 			// We set info of modules
             $triggers[$j]['picto'] = $objMod->picto?img_object('',$objMod->picto):img_object('','generic');
+=======
+            if (preg_match('/NORUN$/i', $files[$key])) $disabledbyname=1;
+            // Check if trigger file is for a particular module
+            if (preg_match('/^interface_([0-9]+)_([^_]+)_(.+)\.class\.php/i', $files[$key], $reg))
+            {
+                $module=preg_replace('/^mod/i', '', $reg[2]);
+                $constparam='MAIN_MODULE_'.strtoupper($module);
+                if (strtolower($module) == 'all') $disabledbymodule=0;
+                elseif (empty($conf->global->$constparam)) $disabledbymodule=2;
+                $triggers[$j]['module']=strtolower($module);
+            }
+
+            // We set info of modules
+            $triggers[$j]['picto'] = $objMod->picto?img_object('', $objMod->picto):img_object('', 'generic');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $triggers[$j]['file'] = $files[$key];
             $triggers[$j]['fullpath'] = $fullpath[$key];
             $triggers[$j]['relpath'] = $relpath[$key];
             $triggers[$j]['iscoreorexternal'] = $iscoreorexternal[$key];
             $triggers[$j]['version'] = $objMod->getVersion();
+<<<<<<< HEAD
             $triggers[$j]['status'] = img_picto($langs->trans("Active"),'tick');
+=======
+            $triggers[$j]['status'] = img_picto($langs->trans("Active"), 'tick');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             if ($disabledbyname > 0 || $disabledbymodule > 1) $triggers[$j]['status'] = '';
 
             $text ='<b>'.$langs->trans("Description").':</b><br>';
@@ -346,13 +514,22 @@ class Interfaces
             if ($disabledbyname == 1)
             {
                 $text.=$langs->trans("TriggerDisabledByName").'<br>';
+<<<<<<< HEAD
                 if ($disabledbymodule == 2) $text.=$langs->trans("TriggerDisabledAsModuleDisabled",$module).'<br>';
+=======
+                if ($disabledbymodule == 2) $text.=$langs->trans("TriggerDisabledAsModuleDisabled", $module).'<br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             }
             else
             {
                 if ($disabledbymodule == 0) $text.=$langs->trans("TriggerAlwaysActive").'<br>';
+<<<<<<< HEAD
                 if ($disabledbymodule == 1) $text.=$langs->trans("TriggerActiveAsModuleActive",$module).'<br>';
                 if ($disabledbymodule == 2) $text.=$langs->trans("TriggerDisabledAsModuleDisabled",$module).'<br>';
+=======
+                if ($disabledbymodule == 1) $text.=$langs->trans("TriggerActiveAsModuleActive", $module).'<br>';
+                if ($disabledbymodule == 2) $text.=$langs->trans("TriggerDisabledAsModuleDisabled", $module).'<br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             }
 
             $triggers[$j]['info'] = $text;
@@ -360,5 +537,8 @@ class Interfaces
         }
         return $triggers;
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

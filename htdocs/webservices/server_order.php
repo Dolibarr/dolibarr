@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2006-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		JF FERRY			<jfefe@aternatik.fr>
+<<<<<<< HEAD
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -22,6 +26,7 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
+<<<<<<< HEAD
 if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK",'1');
 
 require_once '../master.inc.php';
@@ -30,6 +35,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
+=======
+if (! defined("NOCSRFCHECK")) define("NOCSRFCHECK", '1');
+
+require '../master.inc.php';
+require_once NUSOAP_PATH.'/nusoap.php';        // Include SOAP
+require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT."/commande/class/commande.class.php";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 dol_syslog("Call Dolibarr webservices interfaces");
@@ -41,7 +55,11 @@ if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
 {
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
+<<<<<<< HEAD
 	print $langs->trans("WarningModuleNotActive",'WebServices').'.<br><br>';
+=======
+	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print $langs->trans("ToActivateModule");
 	exit;
 }
@@ -51,7 +69,11 @@ $server = new nusoap_server();
 $server->soap_defencoding='UTF-8';
 $server->decode_utf8=false;
 $ns='http://www.dolibarr.org/ns/';
+<<<<<<< HEAD
 $server->configureWSDL('WebServicesDolibarrOrder',$ns);
+=======
+$server->configureWSDL('WebServicesDolibarrOrder', $ns);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $server->wsdl->schemaTargetNamespace=$ns;
 
 
@@ -115,7 +137,11 @@ $line_fields = array(
 //Retreive all extrafield for thirdsparty
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
+<<<<<<< HEAD
 $extralabels=$extrafields->fetch_name_optionals_label('commandedet',true);
+=======
+$extralabels=$extrafields->fetch_name_optionals_label('commandedet', true);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $extrafield_line_array=null;
 if (is_array($extrafields) && count($extrafields)>0) {
 	$extrafield_line_array = array();
@@ -128,7 +154,11 @@ foreach($extrafields->attribute_label as $key=>$label)
 	else {$type='xsd:string';}
 	$extrafield_line_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
 }
+<<<<<<< HEAD
 if (is_array($extrafield_line_array)) $line_fields=array_merge($line_fields,$extrafield_line_array);
+=======
+if (is_array($extrafield_line_array)) $line_fields=array_merge($line_fields, $extrafield_line_array);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Define other specific objects
 $server->wsdl->addComplexType(
@@ -215,7 +245,11 @@ $order_fields = array(
 //Retreive all extrafield for thirdsparty
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
+<<<<<<< HEAD
 $extralabels=$extrafields->fetch_name_optionals_label('commande',true);
+=======
+$extralabels=$extrafields->fetch_name_optionals_label('commande', true);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $extrafield_array=null;
 if (is_array($extrafields) && count($extrafields)>0) {
 	$extrafield_array = array();
@@ -228,7 +262,11 @@ foreach($extrafields->attribute_label as $key=>$label)
 	else {$type='xsd:string';}
 	$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
 }
+<<<<<<< HEAD
 if (is_array($extrafield_array)) $order_fields=array_merge($order_fields,$extrafield_array);
+=======
+if (is_array($extrafield_array)) $order_fields=array_merge($order_fields, $extrafield_array);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $server->wsdl->addComplexType(
 		'order',
@@ -345,7 +383,11 @@ $server->register(
  * @param	string		$ref_ext			Ref_ext
  * @return	array							Array result
  */
+<<<<<<< HEAD
 function getOrder($authentication,$id='',$ref='',$ref_ext='')
+=======
+function getOrder($authentication, $id = '', $ref = '', $ref_ext = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	global $db,$conf,$langs;
 
@@ -358,7 +400,11 @@ function getOrder($authentication,$id='',$ref='',$ref_ext='')
 	$errorcode='';$errorlabel='';
 	$error=0;
 
+<<<<<<< HEAD
 	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+=======
+	$fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	if ($fuser->societe_id) $socid=$fuser->societe_id;
 
@@ -376,7 +422,11 @@ function getOrder($authentication,$id='',$ref='',$ref_ext='')
 		if ($fuser->rights->commande->lire)
 		{
 			$order=new Commande($db);
+<<<<<<< HEAD
 			$result=$order->fetch($id,$ref,$ref_ext);
+=======
+			$result=$order->fetch($id, $ref, $ref_ext);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if ($result > 0)
 			{
 				// Security for external user
@@ -438,10 +488,17 @@ function getOrder($authentication,$id='',$ref='',$ref_ext='')
 					'total' => $order->total_ttc,
 					'project_id' => $order->fk_project,
 
+<<<<<<< HEAD
 					'date' => $order->date_commande?dol_print_date($order->date_commande,'dayrfc'):'',
 					'date_creation' => $invoice->date_creation?dol_print_date($invoice->date_creation,'dayhourrfc'):'',
 					'date_validation' => $invoice->date_validation?dol_print_date($invoice->date_creation,'dayhourrfc'):'',
 					'date_modification' => $invoice->datem?dol_print_date($invoice->datem,'dayhourrfc'):'',
+=======
+					'date' => $order->date_commande?dol_print_date($order->date_commande, 'dayrfc'):'',
+					'date_creation' => $invoice->date_creation?dol_print_date($invoice->date_creation, 'dayhourrfc'):'',
+					'date_validation' => $invoice->date_validation?dol_print_date($invoice->date_creation, 'dayhourrfc'):'',
+					'date_modification' => $invoice->datem?dol_print_date($invoice->datem, 'dayhourrfc'):'',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 					'remise' => $order->remise,
 					'remise_percent' => $order->remise_percent,
@@ -497,7 +554,11 @@ function getOrder($authentication,$id='',$ref='',$ref_ext='')
  * @param	int			$idthirdparty		Id of thirdparty
  * @return	array							Array result
  */
+<<<<<<< HEAD
 function getOrdersForThirdParty($authentication,$idthirdparty)
+=======
+function getOrdersForThirdParty($authentication, $idthirdparty)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	global $db,$conf,$langs;
 
@@ -509,7 +570,11 @@ function getOrdersForThirdParty($authentication,$idthirdparty)
 	$objectresp=array();
 	$errorcode='';$errorlabel='';
 	$error=0;
+<<<<<<< HEAD
 	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+=======
+	$fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	if ($fuser->societe_id) $socid=$fuser->societe_id;
 
@@ -598,7 +663,11 @@ function getOrdersForThirdParty($authentication,$idthirdparty)
 					'total' => $order->total_ttc,
 					'project_id' => $order->fk_project,
 
+<<<<<<< HEAD
 					'date' => $order->date_commande?dol_print_date($order->date_commande,'dayrfc'):'',
+=======
+					'date' => $order->date_commande?dol_print_date($order->date_commande, 'dayrfc'):'',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 					'remise' => $order->remise,
 					'remise_percent' => $order->remise_percent,
@@ -656,11 +725,19 @@ function getOrdersForThirdParty($authentication,$idthirdparty)
  * @param	array		$order				Order info
  * @return	int								Id of new order
  */
+<<<<<<< HEAD
 function createOrder($authentication,$order)
 {
 	global $db,$conf,$langs;
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+=======
+function createOrder($authentication, $order)
+{
+	global $db,$conf,$langs;
+
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	$now=dol_now();
 
@@ -672,7 +749,11 @@ function createOrder($authentication,$order)
 	$objectresp=array();
 	$errorcode='';$errorlabel='';
 	$error=0;
+<<<<<<< HEAD
 	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+=======
+	$fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	// Check parameters
 
@@ -683,8 +764,13 @@ function createOrder($authentication,$order)
 		$newobject->socid=$order['thirdparty_id'];
 		$newobject->type=$order['type'];
 		$newobject->ref_ext=$order['ref_ext'];
+<<<<<<< HEAD
 		$newobject->date=dol_stringtotime($order['date'],'dayrfc');
 		$newobject->date_lim_reglement=dol_stringtotime($order['date_due'],'dayrfc');
+=======
+		$newobject->date=dol_stringtotime($order['date'], 'dayrfc');
+		$newobject->date_lim_reglement=dol_stringtotime($order['date_due'], 'dayrfc');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$newobject->note_private=$order['note_private'];
 		$newobject->note_public=$order['note_public'];
 		$newobject->statut=Commande::STATUS_DRAFT;	// We start with status draft
@@ -698,7 +784,11 @@ function createOrder($authentication,$order)
 		// Retrieve all extrafield for order
 		// fetch optionals attributes and labels
 		$extrafields=new ExtraFields($db);
+<<<<<<< HEAD
 		$extralabels=$extrafields->fetch_name_optionals_label('commandet',true);
+=======
+		$extralabels=$extrafields->fetch_name_optionals_label('commandet', true);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		foreach($extrafields->attribute_label as $key=>$label)
 		{
 			$key='options_'.$key;
@@ -731,7 +821,11 @@ function createOrder($authentication,$order)
 			// Retrieve all extrafield for lines
 			// fetch optionals attributes and labels
 			$extrafields=new ExtraFields($db);
+<<<<<<< HEAD
 			$extralabels=$extrafields->fetch_name_optionals_label('commandedet',true);
+=======
+			$extralabels=$extrafields->fetch_name_optionals_label('commandedet', true);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			foreach($extrafields->attribute_label as $key=>$label)
 			{
 				$key='options_'.$key;
@@ -750,7 +844,10 @@ function createOrder($authentication,$order)
 		{
 			dol_syslog("Webservice server_order:: order creation failed", LOG_ERR);
 			$error++;
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		if ($order['status'] == 1)   // We want order to have status validated
@@ -778,7 +875,10 @@ function createOrder($authentication,$order)
 			$errorcode='KO';
 			$errorlabel=$newobject->error;
 		}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	if ($error)
@@ -798,7 +898,11 @@ function createOrder($authentication,$order)
  * @param	int			$id_warehouse		Id of warehouse to use for stock decrease
  * @return	array							Array result
  */
+<<<<<<< HEAD
 function validOrder($authentication,$id='',$id_warehouse=0)
+=======
+function validOrder($authentication, $id = '', $id_warehouse = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	global $db,$conf,$langs;
 
@@ -809,7 +913,11 @@ function validOrder($authentication,$id='',$id_warehouse=0)
 	$errorcode='';$errorlabel='';
 	$error=0;
 	if ($authentication['entity']) $conf->entity=$authentication['entity'];
+<<<<<<< HEAD
 	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+=======
+	$fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	if (! $error)
 	{
@@ -818,21 +926,32 @@ function validOrder($authentication,$id='',$id_warehouse=0)
 		if ($fuser->rights->commande->lire)
 		{
 			$order=new Commande($db);
+<<<<<<< HEAD
 			$result=$order->fetch($id,$ref,$ref_ext);
+=======
+			$result=$order->fetch($id, $ref, $ref_ext);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			$order->fetch_thirdparty();
 			$db->begin();
 			if ($result > 0)
 			{
 
+<<<<<<< HEAD
 				$result=$order->valid($fuser,$id_warehouse);
+=======
+				$result=$order->valid($fuser, $id_warehouse);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				if ($result	>= 0)
 				{
 					// Define output language
 					$outputlangs = $langs;
 					$order->generateDocument($order->modelpdf, $outputlangs);
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 				else
 				{
@@ -849,7 +968,10 @@ function validOrder($authentication,$id='',$id_warehouse=0)
 				$errorcode='KO';
 				$errorlabel=$newobject->error;
 			}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		else
 		{
@@ -858,7 +980,10 @@ function validOrder($authentication,$id='',$id_warehouse=0)
 			$errorcode='KO';
 			$errorlabel=$newobject->error;
 		}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	if ($error)
@@ -881,7 +1006,11 @@ function validOrder($authentication,$id='',$id_warehouse=0)
  * @param	array		$order				Order info
  * @return	array							Array result
  */
+<<<<<<< HEAD
 function updateOrder($authentication,$order)
+=======
+function updateOrder($authentication, $order)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	global $db,$conf,$langs;
 
@@ -895,7 +1024,11 @@ function updateOrder($authentication,$order)
 	$objectresp=array();
 	$errorcode='';$errorlabel='';
 	$error=0;
+<<<<<<< HEAD
 	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+=======
+	$fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	// Check parameters
 	if (empty($order['id']) && empty($order['ref']) && empty($order['ref_ext']))	{
 		$error++; $errorcode='KO'; $errorlabel="Order id or ref or ref_ext is mandatory.";
@@ -908,7 +1041,11 @@ function updateOrder($authentication,$order)
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 		$object=new Commande($db);
+<<<<<<< HEAD
 		$result=$object->fetch($order['id'],(empty($order['id'])?$order['ref']:''),(empty($order['id']) && empty($order['ref'])?$order['ref_ext']:''));
+=======
+		$result=$object->fetch($order['id'], (empty($order['id'])?$order['ref']:''), (empty($order['id']) && empty($order['ref'])?$order['ref_ext']:''));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		if (!empty($object->id)) {
 
@@ -927,7 +1064,10 @@ function updateOrder($authentication,$order)
 						// Define output language
 						$outputlangs = $langs;
 						$object->generateDocument($order->modelpdf, $outputlangs);
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					}
 				}
 				if ($order['status'] == 0)  $result=$object->set_reopen($fuser);
@@ -943,7 +1083,11 @@ function updateOrder($authentication,$order)
 			//Retreive all extrafield for object
 			// fetch optionals attributes and labels
 			$extrafields=new ExtraFields($db);
+<<<<<<< HEAD
 			$extralabels=$extrafields->fetch_name_optionals_label('commande',true);
+=======
+			$extralabels=$extrafields->fetch_name_optionals_label('commande', true);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			foreach($extrafields->attribute_label as $key=>$label)
 			{
 				$key='options_'.$key;

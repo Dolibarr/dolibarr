@@ -1,9 +1,30 @@
 <?php
+<<<<<<< HEAD
+=======
+/* Copyright (C) 2019 Laurent Destailleur  <eldy@users.sourceforge.net>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * or see http://www.gnu.org/
+ */
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 /**
  * 	Class to manage comment
  */
 class Comment extends CommonObject
 {
+<<<<<<< HEAD
 	public $element='comment';		//!< Id that identify managed objects
 	public $table_element='comment';	//!< Name of table without prefix where object is stored
 
@@ -18,6 +39,52 @@ class Comment extends CommonObject
 
 	public $fk_user_author;
 
+=======
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='comment';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='comment';
+
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
+	public $fk_element ='';
+
+	public $element_type;
+
+	/**
+	 * @var string description
+	 */
+	public $description;
+
+	/**
+     * Date modification record (tms)
+     *
+     * @var integer
+     */
+	public $tms;
+
+	/**
+     * Date creation record (datec)
+     *
+     * @var integer
+     */
+    public $datec;
+
+	/**
+     * @var int ID
+     */
+	public $fk_user_author;
+
+	/**
+	 * @var int Entity
+	 */
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	public $entity;
 
 	public $import_key;
@@ -32,7 +99,11 @@ class Comment extends CommonObject
 	 *
 	 *  @param      DoliDB		$db      Database handler
 	 */
+<<<<<<< HEAD
 	function __construct($db)
+=======
+	public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$this->db = $db;
 	}
@@ -45,7 +116,11 @@ class Comment extends CommonObject
 	 *  @param 	int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *  @return int 		        	<0 if KO, Id of created object if OK
 	 */
+<<<<<<< HEAD
 	function create($user, $notrigger=0)
+=======
+	public function create($user, $notrigger = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf, $langs;
 
@@ -86,7 +161,11 @@ class Comment extends CommonObject
 			if (! $notrigger)
 			{
 				// Call trigger
+<<<<<<< HEAD
 				$result=$this->call_trigger('TASK_COMMENT_CREATE',$user);
+=======
+				$result=$this->call_trigger('TASK_COMMENT_CREATE', $user);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}
@@ -118,7 +197,11 @@ class Comment extends CommonObject
 	 *  @param	int		$ref		ref object
 	 *  @return int 		        <0 if KO, 0 if not found, >0 if OK
 	 */
+<<<<<<< HEAD
 	function fetch($id, $ref='')
+=======
+	public function fetch($id, $ref = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 
@@ -176,7 +259,11 @@ class Comment extends CommonObject
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *  @return int			         	<=0 if KO, >0 if OK
 	 */
+<<<<<<< HEAD
 	function update(User $user, $notrigger=0)
+=======
+	public function update(User $user, $notrigger = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf, $langs;
 		$error=0;
@@ -209,7 +296,11 @@ class Comment extends CommonObject
 			if (! $notrigger)
 			{
 				// Call trigger
+<<<<<<< HEAD
 				$result=$this->call_trigger('TASK_COMMENT_MODIFY',$user);
+=======
+				$result=$this->call_trigger('TASK_COMMENT_MODIFY', $user);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}
@@ -241,7 +332,11 @@ class Comment extends CommonObject
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
+<<<<<<< HEAD
 	function delete($user, $notrigger=0)
+=======
+	public function delete($user, $notrigger = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf, $langs;
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
@@ -261,7 +356,11 @@ class Comment extends CommonObject
 			if (! $notrigger)
 			{
 				// Call trigger
+<<<<<<< HEAD
 				$result=$this->call_trigger('TASK_COMMENT_DELETE',$user);
+=======
+				$result=$this->call_trigger('TASK_COMMENT_DELETE', $user);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}
@@ -320,12 +419,22 @@ class Comment extends CommonObject
 				}
 				$db->free($resql);
 			} else {
+<<<<<<< HEAD
 				$error++; $this->errors[]="Error ".$this->db->lasterror();
 				return -1;
 			}
 
+=======
+				$this->errors[]="Error ".$this->db->lasterror();
+				return -1;
+			}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		return count($this->comments);
 	}
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

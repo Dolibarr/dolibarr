@@ -7,8 +7,13 @@ Language_bg_BG=Bulgarca
 Language_bs_BA=Boşnakça
 Language_ca_ES=Katalanca
 Language_cs_CZ=Çekçe
+<<<<<<< HEAD
 Language_da_DA=Danimarkaca
 Language_da_DK=Danimarkaca
+=======
+Language_da_DA=Danca
+Language_da_DK=Danca
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Language_de_DE=Almanca
 Language_de_AT=Almanca (Avusturya)
 Language_de_CH=Almanca (İsviçre)
@@ -35,8 +40,13 @@ Language_es_PA=İspanyolca (Panama)
 Language_es_PY=İspanyolca (Paraguay)
 Language_es_PE=İspanyolca (Peru)
 Language_es_PR=İspanyolca (Porto Riko)
+<<<<<<< HEAD
 Language_es_UY=Spanish (Uruguay)
 Language_es_VE=İspanyolca (Venezüella)
+=======
+Language_es_UY=İspanyolca (Uruguay)
+Language_es_VE=İspanyolca (Venezuela)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Language_et_EE=Estonyaca
 Language_eu_ES=Baskça
 Language_fa_IR=Farsça
@@ -50,7 +60,11 @@ Language_fy_NL=Frizyanca
 Language_he_IL=İbranice
 Language_hr_HR=Hırvatça
 Language_hu_HU=Macarca
+<<<<<<< HEAD
 Language_id_ID=Endonezca
+=======
+Language_id_ID=Endonezya dili
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Language_is_IS=İzlandaca
 Language_it_IT=İtalyanca
 Language_ja_JP=Japonca
@@ -59,6 +73,7 @@ Language_km_KH=Khmerce
 Language_kn_IN=Kannadaca
 Language_ko_KR=Korece
 Language_lo_LA=Laoca
+<<<<<<< HEAD
 Language_lt_LT=Litvanyaca
 Language_lv_LV=Letonyaca
 Language_mk_MK=Makedonca
@@ -67,6 +82,16 @@ Language_nb_NO=Norveçce (Bokmål)
 Language_nl_BE=Hollandaca (Belçika)
 Language_nl_NL=Hollandaca (Hollanda)
 Language_pl_PL=Polonyaca
+=======
+Language_lt_LT=Litvanca
+Language_lv_LV=Letonca
+Language_mk_MK=Makedonca
+Language_mn_MN=Moğolca
+Language_nb_NO=Norveççe (Bokmål)
+Language_nl_BE=Flemenkçe (Belçika)
+Language_nl_NL=Flemenkçe (Hollanda)
+Language_pl_PL=Lehçe
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Language_pt_BR=Portekizce (Brezilya)
 Language_pt_PT=Portekizce
 Language_ro_RO=Romence
@@ -74,6 +99,7 @@ Language_ru_RU=Rusça
 Language_ru_UA=Rusça (Ukrayna)
 Language_tr_TR=Türkçe
 Language_sl_SI=Slovence
+<<<<<<< HEAD
 Language_sv_SV=İsveçce
 Language_sv_SE=İsveçce
 Language_sq_AL=Arnavutça
@@ -86,3 +112,18 @@ Language_uz_UZ=Özbek
 Language_vi_VN=Vietnamca
 Language_zh_CN=Çince
 Language_zh_TW=Çince (Geleneksel)
+=======
+Language_sv_SV=İsveççe
+Language_sv_SE=İsveççe
+Language_sq_AL=Arnavutça
+Language_sk_SK=Slovakça
+Language_sr_RS=Sırpça
+Language_sw_SW=Svahili
+Language_th_TH=Tay dili
+Language_uk_UA=Ukraynaca
+Language_uz_UZ=Özbekçe
+Language_vi_VN=Vietnamca
+Language_zh_CN=Çince
+Language_zh_TW=Çince (Geleneksel)
+Language_bh_MY=Malayca
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

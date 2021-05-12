@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2005-2011 Laurent Destailleur <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +34,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
  */
 class mailing_pomme extends MailingTargets
 {
+<<<<<<< HEAD
 	var $name='DolibarrUsers';                      // Identifiant du module mailing
 	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
 	var $desc='Dolibarr users with emails';  		// Libelle utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouv�e
@@ -38,6 +43,19 @@ class mailing_pomme extends MailingTargets
 	var $picto='user';
 
 	var $db;
+=======
+	public $name='DolibarrUsers';                      // Identifiant du module mailing
+	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
+	public $desc='Dolibarr users with emails';  		// Libelle utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouv�e
+	public $require_module=array();                    // Module mailing actif si modules require_module actifs
+	public $require_admin=1;                           // Module mailing actif pour user admin ou non
+	public $picto='user';
+
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	/**
@@ -45,7 +63,11 @@ class mailing_pomme extends MailingTargets
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
+<<<<<<< HEAD
 	function __construct($db)
+=======
+    public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$this->db=$db;
 	}
@@ -59,7 +81,11 @@ class mailing_pomme extends MailingTargets
 	 *
 	 *	@return		string[]		Array with SQL requests
 	 */
+<<<<<<< HEAD
 	function getSqlArrayForStats()
+=======
+    public function getSqlArrayForStats()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf, $langs;
 
@@ -85,7 +111,11 @@ class mailing_pomme extends MailingTargets
      *	@param	string	$sql		SQL request to use to count
      *	@return	int					Number of recipients
      */
+<<<<<<< HEAD
 	function getNbOfRecipients($sql='')
+=======
+    public function getNbOfRecipients($sql = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf;
 
@@ -105,7 +135,11 @@ class mailing_pomme extends MailingTargets
 	 *
 	 *  @return     string      Retourne zone select
 	 */
+<<<<<<< HEAD
 	function formFilter()
+=======
+    public function formFilter()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 
@@ -118,7 +152,11 @@ class mailing_pomme extends MailingTargets
 		$s.='<option value="1">'.$langs->trans("Enabled").'</option>';
 		$s.='<option value="0">'.$langs->trans("Disabled").'</option>';
 		$s.='</select>';
+<<<<<<< HEAD
 		
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$s.=' ';
 		$s.=$langs->trans("Employee").': ';
 		$s.='<select name="filteremployee" class="flat">';
@@ -126,7 +164,11 @@ class mailing_pomme extends MailingTargets
 		$s.='<option value="1">'.$langs->trans("Yes").'</option>';
 		$s.='<option value="0">'.$langs->trans("No").'</option>';
 		$s.='</select>';
+<<<<<<< HEAD
 		
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		return $s;
 	}
 
@@ -137,16 +179,27 @@ class mailing_pomme extends MailingTargets
      *  @param	int		$id		ID
 	 *  @return     string      Url lien
 	 */
+<<<<<<< HEAD
 	function url($id)
 	{
 		return '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$id.'">'.img_object('',"user").'</a>';
 	}
 
 
+=======
+    public function url($id)
+	{
+		return '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$id.'">'.img_object('', "user").'</a>';
+	}
+
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *  Ajoute destinataires dans table des cibles
 	 *
 	 *  @param	int		$mailing_id    	Id of emailing
+<<<<<<< HEAD
 	 *  @param  array	$filtersarray   Requete sql de selection des destinataires
 	 *  @return int           			< 0 si erreur, nb ajout si ok
 	 */
@@ -157,6 +210,13 @@ class mailing_pomme extends MailingTargets
 		    dol_syslog(__METHOD__ . ": filtersarray parameter is deprecated", LOG_WARNING);
 	    }
 	    
+=======
+	 *  @return int           			< 0 si erreur, nb ajout si ok
+	 */
+    public function add_to_target($mailing_id)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    global $conf, $langs;
 		$langs->load("companies");
 
@@ -169,10 +229,17 @@ class mailing_pomme extends MailingTargets
 		$sql.= " WHERE u.email <> ''"; // u.email IS NOT NULL est implicite dans ce test
 		$sql.= " AND u.entity IN (0,".$conf->entity.")";
 		$sql.= " AND u.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
+<<<<<<< HEAD
 		if (isset($_POST["filter"]) && $_POST["filter"] == '1') $sql.= " AND u.statut=1"; 
 		if (isset($_POST["filter"]) && $_POST["filter"] == '0') $sql.= " AND u.statut=0"; 
 		if (isset($_POST["filteremployee"]) && $_POST["filteremployee"] == '1') $sql.= " AND u.employee=1"; 
 		if (isset($_POST["filteremployee"]) && $_POST["filteremployee"] == '0') $sql.= " AND u.employee=0"; 
+=======
+		if (isset($_POST["filter"]) && $_POST["filter"] == '1') $sql.= " AND u.statut=1";
+		if (isset($_POST["filter"]) && $_POST["filter"] == '0') $sql.= " AND u.statut=0";
+		if (isset($_POST["filteremployee"]) && $_POST["filteremployee"] == '1') $sql.= " AND u.employee=1";
+		if (isset($_POST["filteremployee"]) && $_POST["filteremployee"] == '0') $sql.= " AND u.employee=0";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql.= " ORDER BY u.email";
 
 		// Stocke destinataires dans cibles
@@ -192,6 +259,7 @@ class mailing_pomme extends MailingTargets
 				if ($old <> $obj->email)
 				{
 					$cibles[$j] = array(
+<<<<<<< HEAD
                     			'email' => $obj->email,
                     			'fk_contact' => $obj->fk_contact,
                     			'lastname' => $obj->lastname,
@@ -203,6 +271,19 @@ class mailing_pomme extends MailingTargets
                                 'source_url' => $this->url($obj->id),
                                 'source_id' => $obj->id,
                                 'source_type' => 'user'
+=======
+                    	'email' => $obj->email,
+                    	'fk_contact' => $obj->fk_contact,
+                    	'lastname' => $obj->lastname,
+                    	'firstname' => $obj->firstname,
+                    	'other' =>
+					        ($langs->transnoentities("Login").'='.$obj->login).';'.
+                            ($langs->transnoentities("UserTitle").'='.$obj->civility_id).';'.
+					        ($langs->transnoentities("PhonePro").'='.$obj->office_phone),
+                        'source_url' => $this->url($obj->id),
+                        'source_id' => $obj->id,
+                        'source_type' => 'user'
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					);
 					$old = $obj->email;
 					$j++;
@@ -219,7 +300,12 @@ class mailing_pomme extends MailingTargets
 		}
 
 		return parent::add_to_target($mailing_id, $cibles);
+<<<<<<< HEAD
 	}
 
 }
 
+=======
+    }
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

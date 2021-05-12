@@ -15,11 +15,14 @@ MakeOrder=Hacer orden
 SupplierOrder=Orden de compra
 SuppliersOrders=Ordenes de compra
 SuppliersOrdersRunning=Pedidos de compra actuales
+<<<<<<< HEAD
 CustomerOrder=Pedido del cliente
 CustomersOrdersRunning=Pedidos de clientes actuales
 OrdersDeliveredToBill=Pedidos de clientes entregados a la cuenta
 OrdersToBill=Pedidos de clientes entregados
 OrdersToProcess=Pedidos de clientes para procesar
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SuppliersOrdersToProcess=Órdenes de compra para procesar
 StatusOrderCanceledShort=Cancelado
 StatusOrderSentShort=En proceso
@@ -56,19 +59,27 @@ AddToDraftOrders=Añadir a orden de borrador
 OrdersOpened=Órdenes para procesar
 NoDraftOrders=No hay borradores de pedidos
 NoOrder=Sin orden
+<<<<<<< HEAD
 NoSupplierOrder=Sin orden de compra
 LastOrders=Últimas %s pedidos de clientes
 LastCustomerOrders=Últimas %s pedidos de clientes
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LastSupplierOrders=Últimas %s órdenes de compra
 LastModifiedOrders=Últimas %s órdenes modificadas
 AllOrders=Todas las órdenes
 NbOfOrders=Numero de ordenes
 OrdersStatistics=Estadísticas de la orden
 OrdersStatisticsSuppliers=Estadísticas de orden de compra
+<<<<<<< HEAD
 AmountOfOrdersByMonthHT=Cantidad de pedidos por mes (neto de impuestos)
 ListOfOrders=Lista de ordenes
 CloseOrder=Cerrar orden
 ConfirmCloseOrder=¿Estás seguro de que quieres establecer este pedido para entregar? Una vez que se entrega un pedido, se puede configurar para que se facture.
+=======
+ListOfOrders=Lista de ordenes
+CloseOrder=Cerrar orden
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmDeleteOrder=¿Seguro que quieres eliminar esta orden?
 ConfirmValidateOrder=¿Estas seguro que deseas validar esta orden con el nombre <b>%s</b>?
 ConfirmUnvalidateOrder=¿Estas seguro que deseas restaurar la orden <b>%s</b> al estado de borrador?
@@ -81,14 +92,20 @@ DraftSuppliersOrders=Borrador de órdenes de compra
 OnProcessOrders=En órdenes de proceso
 RefOrder=Ref. orden
 RefCustomerOrder=Ref. orden para el cliente
+<<<<<<< HEAD
 RefOrderSupplier=Árbitro. orden para el vendedor
 RefOrderSupplierShort=Árbitro. ordene vendedor
+=======
+RefOrderSupplier=Ref. orden para vendedor
+RefOrderSupplierShort=Ref. orden vendedor
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SendOrderByMail=Enviar pedido por correo
 ActionsOnOrder=Eventos por encargo
 NoArticleOfTypeProduct=Ningún artículo del tipo 'producto' por lo que no se puede enviar un artículo para este pedido
 AuthorRequest=Solicitar autor
 UserWithApproveOrderGrant=Usuarios con permiso de "aprobar órdenes".
 PaymentOrderRef=Pago del pedido %s
+<<<<<<< HEAD
 CloneOrder=Clonar orden
 ConfirmCloneOrder=¿Estas seguro que deseas clonar esta orden <b>%s</b>?
 DispatchSupplierOrder=Recibiendo el pedido del proveedor %s
@@ -99,6 +116,14 @@ SupplierOrderSubmitedInDolibarr=Orden de compra %s enviada
 SupplierOrderClassifiedBilled=Pedido de compra %s establecido facturado
 OtherOrders=Otras órdenes
 TypeContact_commande_internal_SALESREPFOLL=Orden representativa del cliente de seguimiento
+=======
+ConfirmCloneOrder=¿Estas seguro que deseas clonar esta orden <b>%s</b>?
+FirstApprovalAlreadyDone=Primera aprobación ya hecha
+SecondApprovalAlreadyDone=Segunda aprobación ya hecha
+SupplierOrderReceivedInDolibarr=La orden de compra %s recibió %s
+SupplierOrderClassifiedBilled=Pedido de compra %s establecido facturado
+OtherOrders=Otras órdenes
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TypeContact_commande_internal_SHIPPING=Representante de seguimiento de envío
 TypeContact_commande_external_BILLING=Contacto cliente de facturación cotización
 TypeContact_commande_external_SHIPPING=Contacto de envío del cliente
@@ -111,7 +136,10 @@ TypeContact_order_supplier_external_CUSTOMER=Orden de seguimiento de contacto de
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constante COMMANDE_SUPPLIER_ADDON no definido
 Error_COMMANDE_ADDON_NotDefined=Constant COMMANDE_ADDON no definido
 Error_OrderNotChecked=No hay pedidos para facturar seleccionados
+<<<<<<< HEAD
 OrderByEMail=Correo electrónico
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PDFEinsteinDescription=Un modelo de pedido completo (logotipo ...)
 PDFEdisonDescription=Un modelo de orden simple
 PDFProformaDescription=Una factura proforma completa (logotipo ...)

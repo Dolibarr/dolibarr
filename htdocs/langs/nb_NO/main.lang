@@ -50,6 +50,7 @@ ErrorFailedToSendMail=Klarte ikke å sende epost (avsender=%s, mottager=%s)
 ErrorFileNotUploaded=Filen ble ikke lastet oppp. Sjekk at den ikke er større en maksimumsgrensen, at det er plass igjen på disken og at det ikke ligger en fil med samme navn i katalogen.
 ErrorInternalErrorDetected=Feil oppdaget 
 ErrorWrongHostParameter=Feil vertsparameter
+<<<<<<< HEAD
 ErrorYourCountryIsNotDefined=Landet ditt er ikke definert. Gå til Hjem-Innstillinger-Rediger og fyll ut skjemaet igjen.
 ErrorRecordIsUsedByChild=Kan ikke slette posten. Posten refereres til av minst en annen post.
 ErrorWrongValue=Feil verdi
@@ -59,11 +60,26 @@ ErrorServiceUnavailableTryLater=Tjenesten er utilgjengelig for øyeblikket. Prø
 ErrorDuplicateField=Duplikate verdier i unik felttype
 ErrorSomeErrorWereFoundRollbackIsDone=Det ble oppdaget feil. Endringer rulles tilbake.
 ErrorConfigParameterNotDefined=Parameter <b>%s</b> er ikke definert i konfigurasjonsfil <b>conf.php</b>.
+=======
+ErrorYourCountryIsNotDefined=Ditt land er ikke definert. Gå til Hjem-Oppsett-Rediger og legg inn skjemaet på nytt.
+ErrorRecordIsUsedByChild=Kunne ikke slette denne posten. Denne posten brukes av minst en under-post.
+ErrorWrongValue=Feil verdi
+ErrorWrongValueForParameterX=Feil verdi for parameter %s
+ErrorNoRequestInError=Ingen forepørsel i feil
+ErrorServiceUnavailableTryLater=Tjenesten er ikke tilgjengelig for øyeblikket. Prøv igjen senere.
+ErrorDuplicateField=Duplikate verdier i unik felttype
+ErrorSomeErrorWereFoundRollbackIsDone=Noen feil ble funnet. Endringer har blitt rullet tilbake.
+ErrorConfigParameterNotDefined=Parameter <b>%s</b> er ikke definert i konfigurasjonsfilen <b>conf.php</b>.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorCantLoadUserFromDolibarrDatabase=Fant ikke brukeren <b>%s</b> i databasen.
 ErrorNoVATRateDefinedForSellerCountry=Feil: Det er ikke definert noen MVA-satser for landet '%s'.
 ErrorNoSocialContributionForSellerCountry=Feil! Ingen skatter og avgifter definert for landet '%s'
 ErrorFailedToSaveFile=Feil: Klarte ikke å lagre filen.
+<<<<<<< HEAD
 ErrorCannotAddThisParentWarehouse=Du prøver å legge til en forelder-lager som allerede er et barn av nåværende
+=======
+ErrorCannotAddThisParentWarehouse=Du prøver å legge til et forelder-lagerhus som allerede er under et eksisterende lager
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MaxNbOfRecordPerPage=Maks antall poster per side
 NotAuthorized=Du er ikke autorisert for å gjøre dette.
 SetDate=Still dato
@@ -86,6 +102,10 @@ GoToWikiHelpPage=Les online-hjelp (Du må være tilknyttet internett)
 GoToHelpPage=Les hjelp
 RecordSaved=Posten er lagret
 RecordDeleted=Oppføring slettet
+<<<<<<< HEAD
+=======
+RecordGenerated=Post generert
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LevelOfFeature=Funksjonsnivå
 NotDefined=Ikke angitt
 DolibarrInHttpAuthenticationSoPasswordUseless=Dolibarrs godkjenningsmodus er satt til <b>%s</b> i konfigurasjonsfilen <b>conf.php</b>. <br> Dette betyr at passorddatabasen er ekstern, så å endre dette feltet har kanskje ikke noen effekt.
@@ -94,9 +114,15 @@ Undefined=Udefinert
 PasswordForgotten=Glemt passordet?
 NoAccount=Ingen konto?
 SeeAbove=Se ovenfor
+<<<<<<< HEAD
 HomeArea=Hjemmeområde
 LastConnexion=Siste forbindelse
 PreviousConnexion=Forrige tilkobling
+=======
+HomeArea=Hjem
+LastConnexion=Siste innlogging
+PreviousConnexion=Forrige innlogging
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PreviousValue=Forrige verdi
 ConnectedOnMultiCompany=Tilkoblet miljø
 ConnectedSince=Innlogget siden
@@ -118,7 +144,11 @@ PrecisionUnitIsLimitedToXDecimals=Dolibarr er satt opp til å bruke priser med <
 DoTest=Test
 ToFilter=Filter
 NoFilter=Ingen filter
+<<<<<<< HEAD
 WarningYouHaveAtLeastOneTaskLate=OBS! Du har minst ett forsinket element i listen ovenfor.
+=======
+WarningYouHaveAtLeastOneTaskLate=Advarsel, du har minst ett element som har overskredet toleransetiden.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 yes=ja
 Yes=Ja
 no=nei
@@ -142,6 +172,10 @@ Closed=Lukket
 Closed2=Lukket
 NotClosed=Ikke lukket
 Enabled=Slått på
+<<<<<<< HEAD
+=======
+Enable=Aktiver
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Deprecated=Utdatert
 Disable=Slå av
 Disabled=Slått av
@@ -162,13 +196,21 @@ Modify=Endre
 Edit=Rediger
 Validate=Valider
 ValidateAndApprove=Valider og godkjenn
+<<<<<<< HEAD
 ToValidate=Å validere
+=======
+ToValidate=Til validering
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NotValidated=Ikke validert
 Save=Lagre
 SaveAs=Lagre som
 TestConnection=Test tilkobling
 ToClone=Klon
+<<<<<<< HEAD
 ConfirmClone=Velg hvilke data du vil klone :
+=======
+ConfirmClone=Velg hvilke data du vil klone:
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoCloneOptionsSpecified=Det er ikke valgt noen data å klone.
 Of=av
 Go=Gå
@@ -183,7 +225,11 @@ Valid=Gyldig
 Approve=Godkjenn
 Disapprove=Underkjenn
 ReOpen=Gjenåpne
+<<<<<<< HEAD
 Upload=Send fil
+=======
+Upload=Last opp
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ToLink=Lenke
 Select=Velg
 Choose=Velg
@@ -200,6 +246,10 @@ Password=Passord
 PasswordRetype=Gjenta passord
 NoteSomeFeaturesAreDisabled=Mange av egenskapene/modulene er deaktivert i denne demonstrasjonen.
 Name=Navn
+<<<<<<< HEAD
+=======
+NameSlashCompany=Navn/Firma
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Person=Person
 Parameter=Parameter
 Parameters=Parametre
@@ -220,6 +270,12 @@ Info=Logg
 Family=Familie
 Description=Beskrivelse
 Designation=Beskrivelse
+<<<<<<< HEAD
+=======
+DescriptionOfLine=Beskrivelse av linje
+DateOfLine=Dato for linje
+DurationOfLine=Varighet for linjen
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Model=Dokumentmal
 DefaultModel=Standard dokumentmal
 Action=Handling
@@ -327,12 +383,21 @@ Copy=Kopier
 Paste=Lim inn
 Default=Standard
 DefaultValue=Standardverdi
+<<<<<<< HEAD
 DefaultValues=Standardverdier
 Price=Pris
 PriceCurrency=Pris (valuta)
 UnitPrice=Enhetspris
 UnitPriceHT=Enhetspris (netto)
 UnitPriceHTCurrency=Enhetspris (netto) (valuta)
+=======
+DefaultValues=Standardverdier/filtre/sortering
+Price=Pris
+PriceCurrency=Pris (valuta)
+UnitPrice=Enhetspris
+UnitPriceHT=Enhetspris (ekskl.)
+UnitPriceHTCurrency=Enhetspris (ekskl.) (Valuta)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 UnitPriceTTC=Enhetspris
 PriceU=Pris
 PriceUHT=Pris (netto)
@@ -342,6 +407,7 @@ Amount=Beløp
 AmountInvoice=Fakturabeløp
 AmountInvoiced=Beløp fakturert
 AmountPayment=Betalingsbeløp
+<<<<<<< HEAD
 AmountHTShort=Beløp (netto)
 AmountTTCShort=Beløp (inkl. MVA)
 AmountHT=Beløp (eksl. MVA)
@@ -351,6 +417,17 @@ MulticurrencyAlreadyPaid=Allerede betalt, original valuta
 MulticurrencyRemainderToPay=Gjenstår å betale, original valuta
 MulticurrencyPaymentAmount=Beløp, original valuta
 MulticurrencyAmountHT=Beløp (eks. MVA), original valuta
+=======
+AmountHTShort=Beløp (ekskl.)
+AmountTTCShort=Beløp (inkl. MVA)
+AmountHT=Beløp (ekskl. MVA)
+AmountTTC=Beløp (inkl. MVA)
+AmountVAT=MVA beløp
+MulticurrencyAlreadyPaid=Allerede betalt, opprinnelig valuta
+MulticurrencyRemainderToPay=Gjenstår å betale, original valuta
+MulticurrencyPaymentAmount=Beløp, original valuta
+MulticurrencyAmountHT=Beløp (ekskl. MVA), opprinnelig valuta
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MulticurrencyAmountTTC=Beløp (ink. MVA), original valuta
 MulticurrencyAmountVAT=MVA-beløp, original valuta
 AmountLT1=Beløp MVA 2
@@ -359,6 +436,7 @@ AmountLT1ES=Beløp RE
 AmountLT2ES=Beløp IRPF
 AmountTotal=Totaltbeløp
 AmountAverage=Gjennomsnittsbeløp
+<<<<<<< HEAD
 PriceQtyMinHT=Pris for minstekvantum (eksl. MVA)
 PriceQtyMinHTCurrency=Prismengde min. (uten MVA) (valuta)
 Percentage=Prosent
@@ -369,6 +447,19 @@ TotalHTShortCurrency=Total (netto i valuta)
 TotalTTCShort=Totalt (inkl. MVA)
 TotalHT=Totalt (eksl. MVA)
 TotalHTforthispage=Totalt (eks. MVA) for denne siden
+=======
+PriceQtyMinHT=Pris min mengde.  (ekskl. MVA)
+PriceQtyMinHTCurrency=Pris min mengde. (ekskl. MVA) (valuta)
+Percentage=Prosent
+Total=Totalt
+SubTotal=Subtotal
+TotalHTShort=Total (ekskl.)
+TotalHT100Short=Total 100%% (eksl.)
+TotalHTShortCurrency=Totalt (ekskl. I valuta)
+TotalTTCShort=Totalt (inkl. MVA)
+TotalHT=Totalt (ekskl. MVA)
+TotalHTforthispage=Totalt (ekskl. MVA) for denne siden
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Totalforthispage=Totalt for denne siden
 TotalTTC=Totalt (inkl. MVA)
 TotalTTCToYourCredit=Totalt (inkl. MVA) godskrevet deg
@@ -380,7 +471,11 @@ TotalLT1ES=Total RE
 TotalLT2ES=Total IRPF
 TotalLT1IN=Total CGST
 TotalLT2IN=Total SGST
+<<<<<<< HEAD
 HT=Eksl. MVA
+=======
+HT=Ekskl. MVA
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TTC=Inkl. MVA
 INCVATONLY=Inkl. MVA
 INCT=Inkl. alle avgifter
@@ -396,6 +491,10 @@ LT1ES=RE
 LT2ES=IRPF
 LT1IN=CGST
 LT2IN=SGST
+<<<<<<< HEAD
+=======
+LT1GC=Ekstra cents
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 VATRate=MVA-sats
 VATCode=Avgiftsats-kode
 VATNPR=Avgiftsats NPR
@@ -428,14 +527,23 @@ ActionNotApplicable=Ikke aktuelt
 ActionRunningNotStarted=Ikke startet
 ActionRunningShort=Pågår
 ActionDoneShort=Fullført
+<<<<<<< HEAD
 ActionUncomplete=Ikke komplett
+=======
+ActionUncomplete=Ufullstendig
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LatestLinkedEvents=Siste %s koblede hendelser
 CompanyFoundation=Firma/organisasjon
 Accountant=Regnskapsfører
 ContactsForCompany=Kontakter for denne tredjeparten
 ContactsAddressesForCompany=Kontakter/adresser for denne tredjepart
 AddressesForCompany=Adresser for tredjepart
+<<<<<<< HEAD
 ActionsOnCompany=Handlinger ifm. denne tredjeparten
+=======
+ActionsOnCompany=Hendelser for denne tredjeparten
+ActionsOnContact=Hendelser for denne kontakten/adressen
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActionsOnMember=Hendelser om dette medlemmet
 ActionsOnProduct=Hendelser om denne varen
 NActionsLate=%s forsinket
@@ -454,7 +562,11 @@ Duration=Varighet
 TotalDuration=Total varighet
 Summary=Oppsummering
 DolibarrStateBoard=Databasestatistikk
+<<<<<<< HEAD
 DolibarrWorkBoard=Kontrollpanel for åpne elementer
+=======
+DolibarrWorkBoard=Åpne elementer
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoOpenedElementToProcess=Ingen åpne elementer å behandle
 Available=Tilgjengelig
 NotYetAvailable=Ikke tilgjengelig ennå
@@ -482,9 +594,17 @@ Reporting=Rapportering
 Reportings=Rapportering
 Draft=Kladd
 Drafts=Kladder
+<<<<<<< HEAD
 StatusInterInvoiced=
 Validated=Validert
 Opened=Åpent
+=======
+StatusInterInvoiced=Fakturert
+Validated=Validert
+Opened=Åpent
+OpenAll=Åpne (Alle)
+ClosedAll=Lukket (Alle)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 New=Ny
 Discount=Rabatt
 Unknown=Ukjent
@@ -506,7 +626,11 @@ None=Ingen
 NoneF=Ingen
 NoneOrSeveral=Ingen eller flere
 Late=Forsinket
+<<<<<<< HEAD
 LateDesc=Forsinkelse for å bestemme om en post er forsinket eller ikke bestemmes i oppsettet. Kontakt Admin for å endre dette i Hjem - Oppsett - Varslinger.
+=======
+LateDesc=Et element er definert som Forsinket i henhold til systemkonfigurasjonen i menyen Hjem - Oppsett - Varsler.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoItemLate=Ingen forsinket enhet
 Photo=Bilde
 Photos=Bilder
@@ -530,6 +654,7 @@ September=September
 October=Oktober
 November=November
 December=Desember
+<<<<<<< HEAD
 JanuaryMin=Jan
 FebruaryMin=Feb
 MarchMin=Mar
@@ -542,6 +667,8 @@ SeptemberMin=Sep
 OctoberMin=Okt
 NovemberMin=Nov
 DecemberMin=Des
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Month01=januar
 Month02=februar
 Month03=mars
@@ -638,14 +765,25 @@ FeatureNotYetSupported=Funksjon støttes ikke ennå
 CloseWindow=Lukk vindu
 Response=Svar
 Priority=Prioritet
+<<<<<<< HEAD
 SendByMail=Send som e-post
+=======
+SendByMail=Send via epost
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MailSentBy=E-post sendt av
 TextUsedInTheMessageBody=E-mail meldingstekst
 SendAcknowledgementByMail=Send bekrftelse på epost
 SendMail=Send e-post
+<<<<<<< HEAD
 EMail=E-post
 NoEMail=Ingen e-post
 Email=E-post
+=======
+Email=E-post
+NoEMail=Ingen e-post
+AlreadyRead=Allerede lest
+NotRead=Ikke lest
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoMobilePhone=Ingen mobiltelefon
 Owner=Eier
 FollowingConstantsWillBeSubstituted=Følgende konstanter vil bli erstattet med korresponderende verdi.
@@ -658,8 +796,14 @@ ValueIsValid=Verdien er gyldig
 ValueIsNotValid=Verdien er ikke gyldig
 RecordCreatedSuccessfully=Post opprettet
 RecordModifiedSuccessfully=Posten er endret!
+<<<<<<< HEAD
 RecordsModified=%s post endret
 RecordsDeleted=%s poster slettet
+=======
+RecordsModified=%s post(er) endret
+RecordsDeleted=%s post(er) slettet
+RecordsGenerated=%spost(er) generert
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AutomaticCode=Automatisk kode
 FeatureDisabled=Funksjonen er slått av
 MoveBox=Flytt widget
@@ -670,14 +814,21 @@ Method=Metode
 Receive=Motta
 CompleteOrNoMoreReceptionExpected=Komplett eller ingenting mer forventet
 ExpectedValue=Forventet verdi
+<<<<<<< HEAD
 CurrentValue=Gjeldende verdi
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PartialWoman=Delvis
 TotalWoman=Total
 NeverReceived=Aldri mottatt
 Canceled=Kansellert
 YouCanChangeValuesForThisListFromDictionarySetup=Du kan endre verdier for denne listen fra menyen Oppsett - Ordbøker
 YouCanChangeValuesForThisListFrom=Du kan endre verdier for denne listen fra menyen %s
+<<<<<<< HEAD
 YouCanSetDefaultValueInModuleSetup=Du kan sette standardverdi for nye poster i Oppsett-modulen
+=======
+YouCanSetDefaultValueInModuleSetup=Du kan angi standardverdien som brukes når du oppretter en ny post i moduloppsettet
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Color=Farge
 Documents=Tilknyttede filer
 Documents2=Dokumenter
@@ -709,13 +860,20 @@ Notes=Merknader
 AddNewLine=Legg til ny linje
 AddFile=Legg til fil
 FreeZone=Ikke et forhåndsdefinert vare/tjeneste
+<<<<<<< HEAD
 FreeLineOfType=Ikke en forhåndsdefinert oppføring av type
 CloneMainAttributes=Klon objektet med de viktigste attributtene
+=======
+FreeLineOfType=Fritekst element, type:
+CloneMainAttributes=Klon objektet med de viktigste attributtene
+ReGeneratePDF=Regenerere PDF
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PDFMerge=PDF Flett
 Merge=Flett
 DocumentModelStandardPDF=Standard PDF-mal
 PrintContentArea=Vis nettstedet for å skrive ut innholdet på hovedområdet
 MenuManager=Menymanager
+<<<<<<< HEAD
 WarningYouAreInMaintenanceMode=Advarsel, du er i vedlikeholds-modus, så bare <b>%s</b> har lov til å bruke programmet for øyeblikket.
 CoreErrorTitle=Systemfeil
 CoreErrorMessage=Beklager, en feil oppsto. Kontakt din systemadministrator for å sjekke loggene eller deaktiver $dolibarr_main_prod=1 for mer informasjon
@@ -725,6 +883,17 @@ CreditOrDebitCard=Kreditt- eller debetkort
 FieldsWithAreMandatory=Felt med <b>%s</b> er obligatoriske
 FieldsWithIsForPublic=Felt med <b>%s</b> er vist på den offentlige listen over medlemmene. Hvis du ikke ønsker dette, fjern merket "offentlig".
 AccordingToGeoIPDatabase=(Ifølge GeoIP konvertering)
+=======
+WarningYouAreInMaintenanceMode=Advarsel, du er i vedlikeholdsmodus: bare brukeren <b> %s </b> har lov til å bruke programmet i denne modusen.
+CoreErrorTitle=Systemfeil
+CoreErrorMessage=Beklager, en feil oppsto. Kontakt din systemadministrator for å sjekke loggene eller deaktiver $dolibarr_main_prod=1 for mer informasjon
+CreditCard=Kredittkort
+ValidatePayment=Valider betaling
+CreditOrDebitCard=Kreditt- eller debetkort
+FieldsWithAreMandatory=Felt med <b>%s</b> er obligatoriske
+FieldsWithIsForPublic=Felt med <b> %s </b> er vist i den offentlige listen over medlemmer. Hvis du ikke vil ha dette, fjerner du merket i "offentlig" -boksen.
+AccordingToGeoIPDatabase=(i henhold til GeoIP-konvertering)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Line=Linje
 NotSupported=Støttes ikke
 RequiredField=Obligatorisk felt
@@ -732,6 +901,11 @@ Result=Resultater
 ToTest=Test
 ValidateBefore=Kortet må valideres før du bruker denne funksjonen
 Visibility=Synlighet
+<<<<<<< HEAD
+=======
+Totalizable=Totaliserbar
+TotalizableDesc=Dette feltet er totaliserbart i liste
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Private=Privat
 Hidden=Skjult
 Resources=Ressurser
@@ -750,14 +924,25 @@ LinkTo=Lenke til
 LinkToProposal=Lenke til tilbud
 LinkToOrder=Lenke til ordre
 LinkToInvoice=Lenke til faktura
+<<<<<<< HEAD
 LinkToSupplierOrder=Lenke til leverandørordre
 LinkToSupplierProposal=Lenke til leverandørtilbud
 LinkToSupplierInvoice=Lenke til leverandørfaktura
+=======
+LinkToTemplateInvoice=Link til fakturamal
+LinkToSupplierOrder=Link til innkjøpsordre
+LinkToSupplierProposal=Link til leverandørtilbud
+LinkToSupplierInvoice=Link til leverandørfaktura
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LinkToContract=Lenke til kontakt
 LinkToIntervention=Lenke til intervensjon
 CreateDraft=Lag utkast
 SetToDraft=Tilbake til kladd
 ClickToEdit=Klikk for å redigere
+<<<<<<< HEAD
+=======
+ClickToRefresh=Klikk for å oppdatere
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 EditWithEditor=Rediger med CKEditor
 EditWithTextEditor=Rediger med tekstbehandler
 EditHTMLSource=Rediger HTML-kilde
@@ -772,14 +957,22 @@ ByDay=Etter dag
 BySalesRepresentative=Etter salgsrepresentant
 LinkedToSpecificUsers=Knyttet til en bestemt brukerkontakt
 NoResults=Ingen resultater
+<<<<<<< HEAD
 AdminTools=Administrative verktøy
+=======
+AdminTools=Adminverktøy
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SystemTools=Systemverktøy
 ModulesSystemTools=Modulverktøy
 Test=Test
 Element=Element
 NoPhotoYet=Ingen bilder tilgjengelig ennå
 Dashboard=Kontrollpanel
+<<<<<<< HEAD
 MyDashboard=Mitt kontrollpanel
+=======
+MyDashboard=Mitt instrumentpanel
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Deductible=Egenandel
 from=fra
 toward=mot
@@ -802,7 +995,11 @@ PrintFile=Skriv fil %s
 ShowTransaction=Vis oppføring på bankkonto
 ShowIntervention=Vis intervensjon
 ShowContract=Vis kontrakt
+<<<<<<< HEAD
 GoIntoSetupToChangeLogo=Gå til Hjem - Oppsett - Firma for å skifte logo eller Hjem - Oppsett -  Display for å skjule.
+=======
+GoIntoSetupToChangeLogo=Gå til Hjem - Oppsett - Firma for å endre logo eller til Hjem - Oppsett - Skjerm for å skjule.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Deny=Avvis
 Denied=Avvist
 ListOf=Liste over %s
@@ -818,16 +1015,29 @@ Sincerely=Med vennlig hilsen
 DeleteLine=Slett linje
 ConfirmDeleteLine=Er du sikker på at du vil slette denne linjen?
 NoPDFAvailableForDocGenAmongChecked=Ingen PDF var tilgjengelig for dokumentgenerering blant kontrollerte poster
+<<<<<<< HEAD
 TooManyRecordForMassAction=For mange poster valgt for massehandling. Handlingen er begrenset til en liste på%s poster.
 NoRecordSelected=Ingen poster valgt
 MassFilesArea= Filområde bygget av massehandlinger
 ShowTempMassFilesArea=Vis filområde bygget av massehandlinger
 ConfirmMassDeletion=Bekreftelse av massesletting
 ConfirmMassDeletionQuestion=Er du sikker på at du vil slette den %s valgte posten?
+=======
+TooManyRecordForMassAction=For mange poster valgt for masseutførelse. Maksimum %s poster er tillatt.
+NoRecordSelected=Ingen poster valgt
+MassFilesArea= Filområde bygget av massehandlinger
+ShowTempMassFilesArea=Vis filområde bygget av massehandlinger
+ConfirmMassDeletion=Bekreft massesletting
+ConfirmMassDeletionQuestion=Er du sikker på at du vil slette de %s valgte postene?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 RelatedObjects=Relaterte objekter
 ClassifyBilled=Klassifisert fakturert
 ClassifyUnbilled=Klassifiser ufakturert
 Progress=Fremdrift
+<<<<<<< HEAD
+=======
+ProgressShort=Progr.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 FrontOffice=Front office
 BackOffice=Back office
 View=Vis
@@ -836,24 +1046,45 @@ Exports=Eksporter
 ExportFilteredList=Eksporter filtrert liste
 ExportList=Eksportliste
 ExportOptions=Eksportinnstillinger
+<<<<<<< HEAD
+=======
+IncludeDocsAlreadyExported=Inkluder dokumenter som allerede er eksportert
+ExportOfPiecesAlreadyExportedIsEnable=Eksport av deler som allerede er eksportert, er aktivert
+ExportOfPiecesAlreadyExportedIsDisable=Eksport av deler som allerede er eksportert, er deaktivert
+AllExportedMovementsWereRecordedAsExported=Alle eksporterte bevegelser ble registrert som eksportert
+NotAllExportedMovementsCouldBeRecordedAsExported=Ikke alle eksporterte bevegelser kunne registreres som eksportert
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Miscellaneous=Diverse
 Calendar=Kalender
 GroupBy=Grupper etter...
 ViewFlatList=Vis liste
 RemoveString=Fjern strengen '%s'
+<<<<<<< HEAD
 SomeTranslationAreUncomplete=Noen språk kan delvis oversettes eller kan inneholde feil. Hvis du oppdager feil, kan du fikse språkfiler ved å registrere deg på <a href="https://transifex.com/projects/p/dolibarr/" target="_blank"> https://transifex.com/projects/p/dolibarr/</a>.
+=======
+SomeTranslationAreUncomplete=Noen av språkene som tilbys kan bare oversettes delvis eller kan inneholde feil. Vennligst hjelp å korrigere språket ditt ved å registrere deg på <a href="https://transifex.com/projects/p/dolibarr/" target="_blank"> https://transifex.com/projects/p/dolibarr/ </a> for å legge til forbedringene dine.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DirectDownloadLink=Direkte nedlastingslink (offentlig/ekstern)
 DirectDownloadInternalLink=Direkte nedlastingslink (må være logget på og trenger tillatelser)
 Download=Last ned
 DownloadDocument=Last ned dokument
 ActualizeCurrency=Oppdater valutakurs
 Fiscalyear=Regnskapsår
+<<<<<<< HEAD
 ModuleBuilder=Modulbygger
 SetMultiCurrencyCode=Angi valuta
 BulkActions=Massehandlinger
 ClickToShowHelp=Klikk for å vise verktøytipshjelp
 WebSite=Webside
 WebSites=Nettsteder
+=======
+ModuleBuilder=Modul- og applikasjonsbygger
+SetMultiCurrencyCode=Angi valuta
+BulkActions=Massehandlinger
+ClickToShowHelp=Klikk for å vise verktøytipshjelp
+WebSite=Nettsted
+WebSites=Websider
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 WebSiteAccounts=Nettstedskontoer
 ExpenseReport=Reiseregning
 ExpenseReports=Utgiftsrapporter
@@ -868,10 +1099,25 @@ EMailTemplates=E-postmaler
 FileNotShared=Filen er ikke delt eksternt
 Project=Prosjekt
 Projects=Prosjekter
+<<<<<<< HEAD
 Rights=Rettigheter
 LineNb=Linje nr.
 IncotermLabel=Incotermer
 # Week day
+=======
+LeadOrProject=Lead | Prosjekt
+LeadsOrProjects=Leads | Prosjekter
+Lead=Lead
+Leads=Leads
+ListOpenLeads=List åpne leads
+ListOpenProjects=List åpne prosjekter
+NewLeadOrProject=Nytt lead eller prosjekt
+Rights=Rettigheter
+LineNb=Linje nr.
+IncotermLabel=Incotermer
+TabLetteringCustomer=Kundekorrespondanse
+TabLetteringSupplier=Leverandørkorrespondanse
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Monday=Mandag
 Tuesday=Tirsdag
 Wednesday=Onsdag
@@ -919,7 +1165,11 @@ SearchIntoProjects=Prosjekter
 SearchIntoTasks=Oppgaver
 SearchIntoCustomerInvoices=Kundefakturaer
 SearchIntoSupplierInvoices=Leverandørfakturaer
+<<<<<<< HEAD
 SearchIntoCustomerOrders=Kundeordre
+=======
+SearchIntoCustomerOrders=Salgsordrer
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SearchIntoSupplierOrders=Innkjøpsordrer
 SearchIntoCustomerProposals=Kundetilbud
 SearchIntoSupplierProposals=Leverandørtilbud
@@ -927,7 +1177,12 @@ SearchIntoInterventions=Intervensjoner
 SearchIntoContracts=Kontrakter
 SearchIntoCustomerShipments=Kundeforsendelser
 SearchIntoExpenseReports=Utgiftsrapporter
+<<<<<<< HEAD
 SearchIntoLeaves=Ferier
+=======
+SearchIntoLeaves=Permisjon
+SearchIntoTickets=Supportsedler
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CommentLink=Kommentarer
 NbComments=Antall kommentarer
 CommentPage=Kommentarfelt
@@ -945,6 +1200,23 @@ LocalAndRemote=Lokal og ekstern
 KeyboardShortcut=Tastatursnarvei
 AssignedTo=Tildelt
 Deletedraft=Slett utkast
+<<<<<<< HEAD
 ConfirmMassDraftDeletion=Bekreft massesletting av utkast
 FileSharedViaALink=Fil delt via en lenke
 
+=======
+ConfirmMassDraftDeletion=Bekreftelse av massesletting av kladder
+FileSharedViaALink=Fil delt via en lenke
+SelectAThirdPartyFirst=Velg en tredjepart først ...
+YouAreCurrentlyInSandboxMode=Du er for øyeblikket i %s "sandbox" -modus
+Inventory=Varetelling
+AnalyticCode=Analytisk kode
+TMenuMRP=MRP
+ShowMoreInfos=Vis mer info
+NoFilesUploadedYet=Vennligst last opp et dokument først
+SeePrivateNote=Se privat notat
+PaymentInformation=Betalingsinformasjon
+ValidFrom=Gyldig fra
+ValidUntil=Gyldig til
+NoRecordedUsers=Ingen brukere
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

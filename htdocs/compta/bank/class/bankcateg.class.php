@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2009 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2009 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2016 Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,11 +34,29 @@ class BankCateg // extends CommonObject
 {
 	//public $element='bank_categ';			//!< Id that identify managed objects
 	//public $table_element='bank_categ';	//!< Name of table without prefix where object is stored
+<<<<<<< HEAD
     public $picto='generic';
     
 	public $id;
 	public $label;
    
+=======
+    /**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto='generic';
+
+	/**
+     * @var int ID
+     */
+    public $id;
+
+	/**
+     * @var string bank categories label
+     */
+    public $label;
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	/**
 	 * Constructor
@@ -205,7 +227,11 @@ class BankCateg // extends CommonObject
 		{
 		    $sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_account";
     		$sql.= " WHERE fk_categorie = ".$this->id;
+<<<<<<< HEAD
     		
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     		$resql = $this->db->query($sql);
     		if (!$resql)
     		{
@@ -213,13 +239,21 @@ class BankCateg // extends CommonObject
     		    $this->errors[] = "Error ".$this->db->lasterror();
     		}
 		}
+<<<<<<< HEAD
 		
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// Delete link between tag and bank lines
 		if (! $error)
 		{
 		    $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class";
 		    $sql.= " WHERE fk_categ = ".$this->id;
+<<<<<<< HEAD
 		
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		    $resql = $this->db->query($sql);
 		    if (!$resql)
 		    {
@@ -227,21 +261,35 @@ class BankCateg // extends CommonObject
 		        $this->errors[] = "Error ".$this->db->lasterror();
 		    }
 		}
+<<<<<<< HEAD
 		
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// Delete bank categ
 		if (! $error)
 		{
     		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_categ";
     		$sql .= " WHERE rowid=".$this->id;
+<<<<<<< HEAD
     
     		$resql = $this->db->query($sql);
     		if (!$resql) 
+=======
+
+    		$resql = $this->db->query($sql);
+    		if (!$resql)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     		{
     			$error++;
     			$this->errors[] = "Error ".$this->db->lasterror();
     		}
 		}
+<<<<<<< HEAD
 		
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	// Commit or rollback
 		if ($error) {
 			foreach ($this->errors as $errmsg) {
@@ -259,6 +307,7 @@ class BankCateg // extends CommonObject
 	/**
 	 * Load an object from its id and create a new one in database
 	 *
+<<<<<<< HEAD
 	 * @param  int $fromid Id of object to clone
 	 * @return int New id of clone
 	 */
@@ -266,12 +315,23 @@ class BankCateg // extends CommonObject
 	{
 		global $user;
 
+=======
+	 * @param	User	$user		User making the clone
+	 * @param   int     $fromid     Id of object to clone
+	 * @return  int                 New id of clone
+	 */
+	public function createFromClone(User $user, $fromid)
+	{
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$error = 0;
 
 		$object = new BankCateg($this->db);
 
+<<<<<<< HEAD
 		$object->context['createfromclone'] = 'createfromclone';
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->db->begin();
 
 		// Load source object
@@ -280,6 +340,10 @@ class BankCateg // extends CommonObject
 		$object->statut = 0;
 
 		// Create clone
+<<<<<<< HEAD
+=======
+		$object->context['createfromclone'] = 'createfromclone';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$result = $object->create($user);
 
 		// Other options
@@ -339,5 +403,8 @@ class BankCateg // extends CommonObject
 		$this->id = 0;
 		$this->label = '';
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

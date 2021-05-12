@@ -1,6 +1,12 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2005      Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2005       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +38,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
  */
 class mailing_fraise extends MailingTargets
 {
+<<<<<<< HEAD
     var $name='FundationMembers';                    // Identifiant du module mailing
 	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
     var $desc='Foundation members with emails';
@@ -42,15 +49,36 @@ class mailing_fraise extends MailingTargets
     var $picto='user';
 
     var $db;
+=======
+    public $name='FundationMembers';                    // Identifiant du module mailing
+	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
+    public $desc='Foundation members with emails';
+    // Set to 1 if selector is available for admin users only
+    public $require_admin=0;
+
+    public $require_module=array('adherent');
+    public $picto='user';
+
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     /**
      *    Constructor
      *
      *  @param        DoliDB        $db      Database handler
      */
+<<<<<<< HEAD
     function __construct($db)
     {
         $this->db=$db;
+=======
+    public function __construct($db)
+    {
+        $this->db = $db;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
 
@@ -62,7 +90,11 @@ class mailing_fraise extends MailingTargets
      *
      *    @return        string[]        Array with SQL requests
      */
+<<<<<<< HEAD
     function getSqlArrayForStats()
+=======
+    public function getSqlArrayForStats()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $langs;
 
@@ -86,7 +118,11 @@ class mailing_fraise extends MailingTargets
      *  @param    string    $sql        Requete sql de comptage
      *    @return        int            Nb of recipients
      */
+<<<<<<< HEAD
     function getNbOfRecipients($sql='')
+=======
+    public function getNbOfRecipients($sql = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $sql  = "SELECT count(distinct(a.email)) as nb";
         $sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
@@ -103,12 +139,21 @@ class mailing_fraise extends MailingTargets
      *
      *   @return     string      Retourne zone select
      */
+<<<<<<< HEAD
     function formFilter()
     {
         global $conf, $langs;
         $langs->load("members");
 		$langs->load("categories");
 		$langs->load("companies");
+=======
+    public function formFilter()
+    {
+        global $conf, $langs;
+
+        // Load translation files required by the page
+        $langs->loadLangs(array("members","companies","categories"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         $form=new Form($this->db);
 
@@ -142,7 +187,11 @@ class mailing_fraise extends MailingTargets
             {
                 $obj = $this->db->fetch_object($resql);
 
+<<<<<<< HEAD
                 $s.='<option value="'.$obj->rowid.'">'.dol_trunc($obj->libelle,38,'middle');
+=======
+                $s.='<option value="'.$obj->rowid.'">'.dol_trunc($obj->libelle, 38, 'middle');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 $s.='</option>';
                 $i++;
             }
@@ -181,7 +230,11 @@ class mailing_fraise extends MailingTargets
         	{
         		$obj = $this->db->fetch_object($resql);
 
+<<<<<<< HEAD
         		$s.='<option value="'.$obj->rowid.'">'.dol_trunc($obj->label,38,'middle');
+=======
+        		$s.='<option value="'.$obj->rowid.'">'.dol_trunc($obj->label, 38, 'middle');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         		$s.='</option>';
         		$i++;
         	}
@@ -196,9 +249,15 @@ class mailing_fraise extends MailingTargets
 
         $s.='<br>';
         $s.=$langs->trans("DateEndSubscription").': &nbsp;';
+<<<<<<< HEAD
         $s.=$langs->trans("After").' > '.$form->select_date(-1,'subscriptionafter',0,0,1,'fraise',1,0,1,0);
         $s.=' &nbsp; ';
         $s.=$langs->trans("Before").' < '.$form->select_date(-1,'subscriptionbefore',0,0,1,'fraise',1,0,1,0);
+=======
+        $s.=$langs->trans("After").' > '.$form->selectDate(-1, 'subscriptionafter', 0, 0, 1, 'fraise', 1, 0, 0);
+        $s.=' &nbsp; ';
+        $s.=$langs->trans("Before").' < '.$form->selectDate(-1, 'subscriptionbefore', 0, 0, 1, 'fraise', 1, 0, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         return $s;
     }
@@ -210,16 +269,27 @@ class mailing_fraise extends MailingTargets
      *  @param    int        $id        ID
      *  @return     string      Url lien
      */
+<<<<<<< HEAD
     function url($id)
     {
         return '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$id.'">'.img_object('',"user").'</a>';
     }
 
 
+=======
+    public function url($id)
+    {
+        return '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$id.'">'.img_object('', "user").'</a>';
+    }
+
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     /**
      *  Ajoute destinataires dans table des cibles
      *
      *  @param    int        $mailing_id        Id of emailing
+<<<<<<< HEAD
      *  @param  array    $filtersarray   Param to filter sql request. Deprecated. Should use $_POST instead.
      *  @return int                       < 0 si erreur, nb ajout si ok
      */
@@ -233,12 +303,28 @@ class mailing_fraise extends MailingTargets
     	global $langs,$_POST;
 		$langs->load("members");
         $langs->load("companies");
+=======
+     *  @return int                       < 0 si erreur, nb ajout si ok
+     */
+    public function add_to_target($mailing_id)
+    {
+        // phpcs:enable
+    	global $langs,$_POST;
+
+    	// Load translation files required by the page
+        $langs->loadLangs(array("members","companies"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         $cibles = array();
         $now=dol_now();
 
+<<<<<<< HEAD
         $dateendsubscriptionafter=dol_mktime($_POST['subscriptionafterhour'],$_POST['subscriptionaftermin'],$_POST['subscriptionaftersec'],$_POST['subscriptionaftermonth'],$_POST['subscriptionafterday'],$_POST['subscriptionafteryear']);
         $dateendsubscriptionbefore=dol_mktime($_POST['subscriptionbeforehour'],$_POST['subscriptionbeforemin'],$_POST['subscriptionbeforesec'],$_POST['subscriptionbeforemonth'],$_POST['subscriptionbeforeday'],$_POST['subscriptionbeforeyear']);
+=======
+        $dateendsubscriptionafter=dol_mktime($_POST['subscriptionafterhour'], $_POST['subscriptionaftermin'], $_POST['subscriptionaftersec'], $_POST['subscriptionaftermonth'], $_POST['subscriptionafterday'], $_POST['subscriptionafteryear']);
+        $dateendsubscriptionbefore=dol_mktime($_POST['subscriptionbeforehour'], $_POST['subscriptionbeforemin'], $_POST['subscriptionbeforesec'], $_POST['subscriptionbeforemonth'], $_POST['subscriptionbeforeday'], $_POST['subscriptionbeforeyear']);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         // La requete doit retourner: id, email, fk_contact, name, firstname
         $sql = "SELECT a.rowid as id, a.email as email, null as fk_contact, ";
@@ -265,8 +351,13 @@ class mailing_fraise extends MailingTargets
         // Filter on type
         if ($_POST['filter_type']) $sql.= " AND ta.rowid='".$_POST['filter_type']."'";
         // Filter on category
+<<<<<<< HEAD
 		if ($_POST['filter_category']) $sql.= " AND c.rowid='".$_POST['filter_category']."'";
 		$sql.= " ORDER BY a.email";
+=======
+        if ($_POST['filter_category']) $sql.= " AND c.rowid='".$_POST['filter_category']."'";
+        $sql.= " ORDER BY a.email";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         //print $sql;
 
         // Add targets into table
@@ -294,7 +385,11 @@ class mailing_fraise extends MailingTargets
                                 'other' =>
                                 ($langs->transnoentities("Login").'='.$obj->login).';'.
                                 ($langs->transnoentities("UserTitle").'='.($obj->civility_id?$langs->transnoentities("Civility".$obj->civility_id):'')).';'.
+<<<<<<< HEAD
                                 ($langs->transnoentities("DateEnd").'='.dol_print_date($this->db->jdate($obj->datefin),'day')).';'.
+=======
+                                ($langs->transnoentities("DateEnd").'='.dol_print_date($this->db->jdate($obj->datefin), 'day')).';'.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                                 ($langs->transnoentities("Company").'='.$obj->societe),
                                 'source_url' => $this->url($obj->id),
                                 'source_id' => $obj->id,
@@ -316,5 +411,8 @@ class mailing_fraise extends MailingTargets
 
         return parent::add_to_target($mailing_id, $cibles);
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

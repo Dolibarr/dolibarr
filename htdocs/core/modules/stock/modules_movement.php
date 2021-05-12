@@ -30,9 +30,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
  */
 abstract class ModelePDFMovement extends CommonDocGenerator
 {
+<<<<<<< HEAD
 	var $error='';
 
 
+=======
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *	Return list of active generation modules
 	 *
@@ -40,14 +50,27 @@ abstract class ModelePDFMovement extends CommonDocGenerator
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
+<<<<<<< HEAD
 	static function liste_modeles($db,$maxfilenamelength=0)
 	{
+=======
+	public static function liste_modeles($db, $maxfilenamelength = 0)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf;
 
 		$type='mouvement';
 		$liste=array();
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+<<<<<<< HEAD
 		$liste=getListOfModels($db,$type,$maxfilenamelength);
 		return $liste;
 	}
 }
+=======
+		$liste=getListOfModels($db, $type, $maxfilenamelength);
+		return $liste;
+	}
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

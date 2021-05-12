@@ -19,11 +19,18 @@ FormatDateHourShort=%d/%m/%Y %H:%M
 FormatDateHourSecShort=%d/%m/%Y %H:%M:%S
 FormatDateHourTextShort=%d %b %Y %H:%M
 FormatDateHourText=%d %B %Y %H:%M
+<<<<<<< HEAD
+=======
+Enable=Activado
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Disable=Inhabilitar
 Close=Cerrado
 AmountVAT=Importe IGV
 TotalVAT=Total IGV
+<<<<<<< HEAD
 HT=Sin IGV
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TTC=IGV incluido
 VAT=IGV
 VATRate=Tasa IGV

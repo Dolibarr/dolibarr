@@ -1,12 +1,21 @@
 # Dolibarr language file - Source file is en_US - members
+<<<<<<< HEAD
 MembersArea=Mitglieder-Übersicht
 MemberCard=Mitglied - Karte
+=======
+MembersArea=Mitgliederbereich
+MemberCard=Mitgliedskarte
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SubscriptionCard=Abonnement - Karte
 Member=Mitglied
 Members=Mitglieder
 ShowMember=Zeige Mitgliedskarte
 UserNotLinkedToMember=Der Benutzer ist keinem Mitglied zugewiesen
+<<<<<<< HEAD
 ThirdpartyNotLinkedToMember=Partner ist nicht mit einem Mitglied verknüpft
+=======
+ThirdpartyNotLinkedToMember=Third party not linked to a member
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MembersTickets=Tickets von Mitgliedern
 FundationMembers=Stiftungsmitglieder
 ListOfValidatedPublicMembers=Liste der freigegebenen, öffentlichen Mitglieder
@@ -67,11 +76,19 @@ Subscriptions=Mitgliedschaften / Beiträge
 SubscriptionLate=Verspätet
 SubscriptionNotReceived=Abonnement nie erhalten
 ListOfSubscriptions=Liste der Beiträge
+<<<<<<< HEAD
 SendCardByMail=Karte per E-Mail versenden
 AddMember=Mitglied erstellen
 NoTypeDefinedGoToSetup=Sie haben noch keine Mitgliedsarten definiert. Sie können dies unter Einstellungen-Mitgliedsarten vornehmen.
 NewMemberType=Neue Mitgliedsart
 WelcomeEMail=Willkommen E-Mail
+=======
+SendCardByMail=Send card by email
+AddMember=Mitglied erstellen
+NoTypeDefinedGoToSetup=Sie haben noch keine Mitgliedsarten definiert. Sie können dies unter Einstellungen-Mitgliedsarten vornehmen.
+NewMemberType=Neue Mitgliedsart
+WelcomeEMail=Welcome email
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SubscriptionRequired=Abonnement erforderlich
 DeleteType=Lösche Gruppe
 VoteAllowed=Stimmrecht
@@ -88,7 +105,11 @@ ConfirmDeleteSubscription=Sind Sie sicher, dass diese Buchung löschen wollen?
 Filehtpasswd=htpasswd Datei
 ValidateMember=Mitglied freigeben
 ConfirmValidateMember=Möchten Sie dieses Mitglied wirklich aktivieren?
+<<<<<<< HEAD
 FollowingLinksArePublic=Die folgenden Links sind öffentlich zugängliche Seiten und als solche nicht durch die Dolibarr-Zugriffskontrolle geschützt. Es handelt sich dabei zudem um unformatierte Seiten, die beispielsweise eine Liste aller in der Datenbank eingetragenen Mitglieder anzeigen.
+=======
+FollowingLinksArePublic=Die folgenden Links sind öffentlich zugängliche Seiten und als solche nicht durch die Dolibarr-Zugriffskontrolle geschützt. Es handelt sich dabei zudem um unformatierte Seiten, die beispielsweise eine Liste aller in der Datenbank eingetragenen Mitglieder anzeigen. 
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PublicMemberList=Liste öffentlicher Mitglieder
 BlankSubscriptionForm=Öffentliches Selbstabonnement
 BlankSubscriptionFormDesc=Dolibarr kann Ihnen eine öffentliche URL / Website zur Verfügung stellen, die es externen Besuchern erlaubt, die Stiftung zu abonnieren. Wenn ein Online-Zahlungsmodul aktiviert ist, kann auch automatisch ein Zahlungsformular bereitgestellt werden.
@@ -107,6 +128,7 @@ SubscriptionNotRecorded=Mitgliedschaft nicht erfasst
 AddSubscription=Abonnement erstellen
 ShowSubscription=Zeige Abonnement
 # Label of email templates
+<<<<<<< HEAD
 SendingAnEMailToMember=Sending information email to member
 SendingEmailOnAutoSubscription=Sending email on auto registration
 SendingEmailOnMemberValidation=Sending email on new member validation
@@ -134,6 +156,35 @@ DescADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION=Template Email to use to send email to 
 DescADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION=Template Email to use to send email remind when subscription is about to expire
 DescADHERENT_EMAIL_TEMPLATE_CANCELATION=Template Email to use to send email to a member on member cancelation
 DescADHERENT_MAIL_FROM=Absender E-Mail-Adresse für automatische Mails
+=======
+SendingAnEMailToMember=Informationsmail an Mitglied senden
+SendingEmailOnAutoSubscription=E-Mail bei Selbstregistrierung senden
+SendingEmailOnMemberValidation=E-Mail bei Mitgliedervalidierung senden
+SendingEmailOnNewSubscription=E-Mail bei neuem Abonnement senden
+SendingReminderForExpiredSubscription=E-Mail Erinnerung für abgelaufene Abonnemente senden
+SendingEmailOnCancelation=E-Mail bei Stornierung senden
+# Topic of email templates
+YourMembershipRequestWasReceived=Ihr Mitgliedsantrag wurde erhalten.
+YourMembershipWasValidated=Ihre Mitgleidschaft wurde validiert
+YourSubscriptionWasRecorded=Ihr Abonnement wurde registriert
+SubscriptionReminderEmail=Abonnementserinnerung
+YourMembershipWasCanceled=Ihre Mitgliedschaft wurde beendet
+CardContent=Inhalt der Mitgliedskarte
+# Text of email templates
+ThisIsContentOfYourMembershipRequestWasReceived=Wir haben Ihren Mitgliedsantrag erhalten.<br><br>
+ThisIsContentOfYourMembershipWasValidated=Ihr Mitgliedsantrag wurde mit diesem Resultat geprüft:<br><br>
+ThisIsContentOfYourSubscriptionWasRecorded=Ihr neues Abonnement wurde erfasst.<br><br>
+ThisIsContentOfSubscriptionReminderEmail=We want to let you know that your subscription is about to expire or has already expired (__MEMBER_LAST_SUBSCRIPTION_DATE_END__). We hope you will renew it.<br><br>
+ThisIsContentOfYourCard=This is a summary of the information we have about you. Please contact us if anything is incorrect.<br><br>
+DescADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT=Subject of the notification email received in case of auto-inscription of a guest
+DescADHERENT_AUTOREGISTER_NOTIF_MAIL=Content of the notification email received in case of auto-inscription of a guest
+DescADHERENT_EMAIL_TEMPLATE_AUTOREGISTER=Email template to use to send email to a member on member autosubscription
+DescADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION=Email template to use to send email to a member on member validation
+DescADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION=Email template to use to send email to a member on new subscription recording
+DescADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION=Email template to use to send email reminder when subscription is about to expire
+DescADHERENT_EMAIL_TEMPLATE_CANCELATION=Email template to use to send email to a member on member cancelation
+DescADHERENT_MAIL_FROM=Sender Email for automatic emails
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DescADHERENT_ETIQUETTE_TYPE=Format der Etikettenseite
 DescADHERENT_ETIQUETTE_TEXT=Text für den Druck auf der Mitglieds-Adresskarte
 DescADHERENT_CARD_TYPE=Format der Kartenseite
@@ -156,8 +207,13 @@ DocForAllMembersCards=Visitenkarten für alle Mitglieder erstellen (Gewähltes A
 DocForOneMemberCards=Visitenkarten für ein bestimmtes Mitglied erstellen (Gewähltes Ausgabeformat: <b>%s</b>)
 DocForLabels=Etiketten erstellen (Gewähltes Ausgabeformat: <b>%s</b>)
 SubscriptionPayment=Beitragszahlung 
+<<<<<<< HEAD
 LastSubscriptionDate=Letztes Abo-Datum
 LastSubscriptionAmount=Letzter Abo-Betrag
+=======
+LastSubscriptionDate=Date of latest subscription payment
+LastSubscriptionAmount=Amount of latest subscription
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MembersStatisticsByCountries=Mitgliederstatistik nach Ländern
 MembersStatisticsByState=Mitgliederstatistik nach Bundesländern
 MembersStatisticsByTown=Mitgliederstatistik nach Städten
@@ -171,7 +227,11 @@ MembersStatisticsDesc=Wählen Sie die gewünschte Statistik aus ...
 MenuMembersStats=Statistik
 LastMemberDate=Letztes Mitgliedsdatum
 LatestSubscriptionDate=Letztes Abo-Datum
+<<<<<<< HEAD
 Nature=Art
+=======
+MemberNature=Nature of member
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Public=Informationen sind öffentlich (Nein = Privat)
 NewMemberbyWeb=Neues Mitgliede hinzugefügt, warte auf Genehmigung.
 NewMemberForm=Neues Mitgliederformular
@@ -187,6 +247,7 @@ MembersStatisticsByProperties=Natürliche Mitgliederstatistiken
 MembersByNature=Dieser Bildschirm zeigt ihre Statistiken über ihre Mitgliedschaft.
 MembersByRegion=Dieser Bildschirm zeigt Ihnen Statistiken über Mitglieder nach Regionen.
 VATToUseForSubscriptions=Mehrwertsteuersatz für Mitgliedschaften
+<<<<<<< HEAD
 NoVatOnSubscription=Kein USt. auf Mitgliedschaft.
 MEMBER_PAYONLINE_SENDEMAIL=E-Mail-Adresse, die E-Mail-Benachrichtungen verwendet werden soll, wenn Dolibarr die Bestätigung einer freigegebenen Zahlung für eine Mitgliedschaft erhält (Beispiel: paymentdone@example.com)
 ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS=Produkt/Leistung verwendet für den Beitrag in der Rechnungszeile: %s
@@ -196,3 +257,16 @@ NoEmailSentToMember=No email sent to member
 EmailSentToMember=Email sent to member at %s
 SendReminderForExpiredSubscriptionTitle=Send reminder by email for expired subscription
 SendReminderForExpiredSubscription=Send reminder by email to members when subscription is about to expire (parameter is number of days before end of subscription to send the remind)
+=======
+NoVatOnSubscription=No VAT for subscriptions
+ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS=Produkt/Leistung verwendet für den Beitrag in der Rechnungszeile: %s
+NameOrCompany=Name oder Firma
+SubscriptionRecorded=Abonnement erfasst
+NoEmailSentToMember=Kein E-Mail an Mitglied gesendet
+EmailSentToMember=E-Mail an Mitglied %s versendet
+SendReminderForExpiredSubscriptionTitle=E-Mailerinnerung für abgelaufene Abonnemente senden
+SendReminderForExpiredSubscription=Erinnerungen per email an Mitglieder senden, wenn deren Abonnement am ablaufen ist. (Parameter ist die Anzahl Tage vor dem Abonnementsende, um die Erinnerung zu senden. Es können mehrere Tage sein, mit Semikolon getrennt aufgelistet, z.B.  '10;5;0;-5') 
+MembershipPaid=Membership paid for current period (until %s)
+YouMayFindYourInvoiceInThisEmail=You may find your invoice attached to this email
+XMembersClosed=%s member(s) closed
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

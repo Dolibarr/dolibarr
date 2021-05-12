@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2010-2012 Regis Houssin  <regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2010-2012 Regis Houssin  <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2012      Philippe Grand <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,6 +32,7 @@
 abstract class ActionsAdherentCardCommon
 {
     /**
+<<<<<<< HEAD
      * Database handler
      * @var DoliDB
      */
@@ -45,6 +50,31 @@ abstract class ActionsAdherentCardCommon
 	var $error;
 	//! Error array
 	var $errors=array();
+=======
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    public $dirmodule;
+    public $targetmodule;
+    public $canvas;
+    public $card;
+
+	//! Template container
+	public $tpl = array();
+	//! Object container
+	public $object;
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	/**
@@ -53,7 +83,11 @@ abstract class ActionsAdherentCardCommon
      *  @param	int		$id		Object id
      *  @return	object			Object loaded
      */
+<<<<<<< HEAD
     function getObject($id)
+=======
+    public function getObject($id)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
     	//$ret = $this->getInstanceDao();
 
@@ -69,15 +103,26 @@ abstract class ActionsAdherentCardCommon
     	//}
     }
 
+<<<<<<< HEAD
 	/**
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      *  Set content of ->tpl array, to use into template
      *
      *  @param	string		$action    Type of action
      *  @param	int			$id			Id
      *  @return	string					HTML output
      */
+<<<<<<< HEAD
     function assign_values(&$action, $id)
     {
+=======
+    public function assign_values(&$action, $id)
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         global $conf, $langs, $user, $canvas;
         global $form, $formcompany, $objsoc;
 
@@ -113,7 +158,11 @@ abstract class ActionsAdherentCardCommon
         	}
         	else
         	{
+<<<<<<< HEAD
         		$this->tpl['company'] = $form->select_company($this->object->socid,'socid','',1);
+=======
+        		$this->tpl['company'] = $form->select_company($this->object->socid, 'socid', '', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         	}
 
         	// Civility
@@ -131,14 +180,22 @@ abstract class ActionsAdherentCardCommon
         	}
 
             // Zip
+<<<<<<< HEAD
             $this->tpl['select_zip'] = $formcompany->select_ziptown($this->object->zip,'zipcode',array('town','selectcountry_id','state_id'),6);
 
             // Town
             $this->tpl['select_town'] = $formcompany->select_ziptown($this->object->town,'town',array('zipcode','selectcountry_id','state_id'));
+=======
+            $this->tpl['select_zip'] = $formcompany->select_ziptown($this->object->zip, 'zipcode', array('town','selectcountry_id','state_id'), 6);
+
+            // Town
+            $this->tpl['select_town'] = $formcompany->select_ziptown($this->object->town, 'town', array('zipcode','selectcountry_id','state_id'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
             if (dol_strlen(trim($this->object->country_id)) == 0) $this->object->country_id = $objsoc->country_id;
 
             // Country
+<<<<<<< HEAD
             $this->tpl['select_country'] = $form->select_country($this->object->country_id,'country_id');
             $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
@@ -146,11 +203,24 @@ abstract class ActionsAdherentCardCommon
 
             // State
             if ($this->object->country_id) $this->tpl['select_state'] = $formcompany->select_state($this->object->state_id,$this->object->country_code);
+=======
+            $this->tpl['select_country'] = $form->select_country($this->object->country_id, 'country_id');
+            $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
+
+            if ($user->admin) $this->tpl['info_admin'] = info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+
+            // State
+            if ($this->object->country_id) $this->tpl['select_state'] = $formcompany->select_state($this->object->state_id, $this->object->country_code);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             else $this->tpl['select_state'] = $countrynotdefined;
 
             // Physical or Moral
             $selectarray=array('0'=>$langs->trans("Physical"),'1'=>$langs->trans("Moral"));
+<<<<<<< HEAD
             $this->tpl['select_morphy'] = $form->selectarray('morphy',$selectarray,$this->object->morphy,0);
+=======
+            $this->tpl['select_morphy'] = $form->selectarray('morphy', $selectarray, $this->object->morphy, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
 
         if ($action == 'view' || $action == 'edit' || $action == 'delete')
@@ -175,7 +245,11 @@ abstract class ActionsAdherentCardCommon
 
         if ($action == 'view' || $action == 'delete')
         {
+<<<<<<< HEAD
         	$this->tpl['showrefnav'] = $form->showrefnav($this->object,'id');
+=======
+        	$this->tpl['showrefnav'] = $form->showrefnav($this->object, 'id');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         	if ($this->object->socid > 0)
         	{
@@ -198,9 +272,15 @@ abstract class ActionsAdherentCardCommon
             $img=picto_from_langcode($this->object->country_code);
             $this->tpl['country'] = ($img?$img.' ':'').$this->object->country;
 
+<<<<<<< HEAD
             $this->tpl['phone_perso'] 	= dol_print_phone($this->object->phone_perso,$this->object->country_code,0,$this->object->id,'AC_TEL');
             $this->tpl['phone_mobile'] 	= dol_print_phone($this->object->phone_mobile,$this->object->country_code,0,$this->object->id,'AC_TEL');
             $this->tpl['email'] 		= dol_print_email($this->object->email,0,$this->object->id,'AC_EMAIL');
+=======
+            $this->tpl['phone_perso'] 	= dol_print_phone($this->object->phone_perso, $this->object->country_code, 0, $this->object->id, 'AC_TEL');
+            $this->tpl['phone_mobile'] 	= dol_print_phone($this->object->phone_mobile, $this->object->country_code, 0, $this->object->id, 'AC_TEL');
+            $this->tpl['email'] 		= dol_print_email($this->object->email, 0, $this->object->id, 'AC_EMAIL');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
             $this->tpl['visibility'] = $this->object->getmorphylib($this->object->morphy);
 
@@ -222,10 +302,18 @@ abstract class ActionsAdherentCardCommon
         	array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login),
         	array('label' => $langs->trans("Password"), 'type' => 'text', 'name' => 'password', 'value' => $password));
 
+<<<<<<< HEAD
         	$this->tpl['action_create_user'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id,$langs->trans("CreateDolibarrLogin"),$langs->trans("ConfirmCreateAdherent"),"confirm_create_user",$formquestion,'no');
         }
     }
 
+=======
+        	$this->tpl['action_create_user'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id, $langs->trans("CreateDolibarrLogin"), $langs->trans("ConfirmCreateAdherent"), "confirm_create_user", $formquestion, 'no');
+        }
+    }
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     /**
      *  Assign POST values into object
      *
@@ -233,6 +321,7 @@ abstract class ActionsAdherentCardCommon
      */
     private function assign_post()
     {
+<<<<<<< HEAD
         global $langs, $mysoc;
 
         $this->object->old_name 			= 	$_POST["old_name"];
@@ -252,6 +341,28 @@ abstract class ActionsAdherentCardCommon
         $this->object->email				=	$_POST["email"];
         $this->object->note					=	$_POST["note"];
         $this->object->canvas				=	$_POST["canvas"];
+=======
+        // phpcs:enable
+        global $langs, $mysoc;
+
+        $this->object->old_name 		= $_POST["old_name"];
+        $this->object->old_firstname 	= $_POST["old_firstname"];
+
+        $this->object->fk_soc			= $_POST["fk_soc"];
+        $this->object->lastname			= $_POST["lastname"];
+        $this->object->firstname		= $_POST["firstname"];
+        $this->object->civility_id		= $_POST["civility_id"];
+        $this->object->address			= $_POST["address"];
+        $this->object->zip				= $_POST["zipcode"];
+        $this->object->town				= $_POST["town"];
+        $this->object->country_id		= $_POST["country_id"]?$_POST["country_id"]:$mysoc->country_id;
+        $this->object->state_id        	= $_POST["state_id"];
+        $this->object->phone_perso		= $_POST["phone_perso"];
+        $this->object->phone_mobile		= $_POST["phone_mobile"];
+        $this->object->email			= $_POST["email"];
+        $this->object->note				= $_POST["note"];
+        $this->object->canvas			= $_POST["canvas"];
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         // We set country_id, and country_code label of the chosen country
         if ($this->object->country_id)
@@ -262,8 +373,13 @@ abstract class ActionsAdherentCardCommon
             {
                 $obj = $this->db->fetch_object($resql);
 
+<<<<<<< HEAD
                 $this->object->country_code	=	$obj->code;
                 $this->object->country		=	$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;
+=======
+                $this->object->country_code = $obj->code;
+                $this->object->country = $langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             }
             else
             {
@@ -271,5 +387,8 @@ abstract class ActionsAdherentCardCommon
             }
         }
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

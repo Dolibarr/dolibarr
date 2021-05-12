@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Vendors
 SuppliersInvoice=Vendor invoice
@@ -45,3 +46,52 @@ BuyerName=Buyer name
 AllProductServicePrices=All product / service prices
 AllProductReferencesOfSupplier=All product / service references of supplier
 BuyingPriceNumShort=Vendor prices
+=======
+# Dolibarr language file - Source file is en_US - vendors
+Suppliers=Säljare
+SuppliersInvoice=Leverantörsfaktura
+ShowSupplierInvoice=Visa leverantörsfaktura
+NewSupplier=Ny leverantör
+History=Historia
+ListOfSuppliers=Förteckning över leverantörer
+ShowSupplier=Visa leverantör
+OrderDate=Beställ datum
+BuyingPriceMin=Bästa köpeskillingen
+BuyingPriceMinShort=Bästa köpeskillingen
+TotalBuyingPriceMinShort=Totalt subprodukter köper priserna
+TotalSellingPriceMinShort=Summa underprodukter säljer priser
+SomeSubProductHaveNoPrices=Vissa under produkter har inget pris definierat
+AddSupplierPrice=Lägg till köpeskilling
+ChangeSupplierPrice=Ändra köpeskillingen
+SupplierPrices=Leverantörspriser
+ReferenceSupplierIsAlreadyAssociatedWithAProduct=Denna leverantörsreferens är redan associerad med en produkt: %s
+NoRecordedSuppliers=Ingen säljare registrerad
+SupplierPayment=Leverantörsbetalning
+SuppliersArea=Leverantörsareal
+RefSupplierShort=Ref. Säljare
+Availability=Tillgänglighet
+ExportDataset_fournisseur_1=Leverantörsfaktura och faktura detaljer
+ExportDataset_fournisseur_2=Leverantörsfakturor och betalningar
+ExportDataset_fournisseur_3=Beställningar och beställningsuppgifter
+ApproveThisOrder=Godkänna denna ordning
+ConfirmApproveThisOrder=Är du säker på att du vill godkänna beställningen <b> %s </b>?
+DenyingThisOrder=Neka denna order
+ConfirmDenyingThisOrder=Är du säker på att du vill neka denna order <b> %s </b>?
+ConfirmCancelThisOrder=Är du säker på att du vill avbryta denna order <b> %s </b>?
+AddSupplierOrder=Skapa inköpsorder
+AddSupplierInvoice=Skapa leverantörsfaktura
+ListOfSupplierProductForSupplier=Lista över produkter och priser för säljare <b> %s </b>
+SentToSuppliers=Skickas till leverantörer
+ListOfSupplierOrders=Förteckning över inköpsorder
+MenuOrdersSupplierToBill=Inköpsorder att fakturera
+NbDaysToDelivery=Leveransfördröjning (dagar)
+DescNbDaysToDelivery=Den längsta leveransförseningen för produkterna från denna order
+SupplierReputation=Leverantörs rykte
+DoNotOrderThisProductToThisSupplier=Beställ inte
+NotTheGoodQualitySupplier=Låg kvalitet
+ReputationForThisProduct=Rykte
+BuyerName=Köparens namn
+AllProductServicePrices=Alla produkt- / servicepriser
+AllProductReferencesOfSupplier=Alla produkt / service referenser av säljaren
+BuyingPriceNumShort=Leverantörspriser
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

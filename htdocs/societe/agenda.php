@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Brice Davoleau       <brice.davoleau@gmail.com>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
@@ -32,20 +36,33 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
+<<<<<<< HEAD
 $langs->load("companies");
 
 if (GETPOST('actioncode','array'))
 {
     $actioncode=GETPOST('actioncode','array',3);
+=======
+$langs->load(array("companies", "bills", "propal", "orders"));
+
+if (GETPOST('actioncode', 'array'))
+{
+    $actioncode=GETPOST('actioncode', 'array', 3);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     if (! count($actioncode)) $actioncode='0';
 }
 else
 {
+<<<<<<< HEAD
     $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
+=======
+    $actioncode=GETPOST("actioncode", "alpha", 3)?GETPOST("actioncode", "alpha", 3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 $search_agenda_label=GETPOST('search_agenda_label');
 
 // Security check
+<<<<<<< HEAD
 $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe', $socid, '&societe');
@@ -54,6 +71,16 @@ $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
+=======
+$socid = GETPOST('socid', 'int');
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'societe', $socid, '&societe');
+
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -70,20 +97,32 @@ $hookmanager->initHooks(array('agendathirdparty'));
  */
 
 $parameters=array('id'=>$socid);
+<<<<<<< HEAD
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+=======
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
 {
     // Cancel
+<<<<<<< HEAD
     if (GETPOST('cancel','alpha') && ! empty($backtopage))
+=======
+    if (GETPOST('cancel', 'alpha') && ! empty($backtopage))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         header("Location: ".$backtopage);
         exit;
     }
 
     // Purge search criteria
+<<<<<<< HEAD
     if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+=======
+    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $actioncode='';
         $search_agenda_label='';
@@ -96,8 +135,11 @@ if (empty($reshook))
  *	View
  */
 
+<<<<<<< HEAD
 $contactstatic = new Contact($db);
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $form = new Form($db);
 
 if ($socid > 0)
@@ -112,8 +154,13 @@ if ($socid > 0)
 	$result = $object->fetch($socid);
 
 	$title=$langs->trans("Agenda");
+<<<<<<< HEAD
 	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
 	llxHeader('',$title);
+=======
+	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
+	llxHeader('', $title);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	if (! empty($conf->notification->enabled)) $langs->load("mails");
 	$head = societe_prepare_head($object);
@@ -129,7 +176,11 @@ if ($socid > 0)
     print '<div class="underbanner clearboth"></div>';
 
     $object->info($socid);
+<<<<<<< HEAD
 	print dol_print_object_info($object, 1);
+=======
+	dol_print_object_info($object, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	print '</div>';
 
@@ -164,9 +215,13 @@ if ($socid > 0)
     {
     	if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
     	{
+<<<<<<< HEAD
         	$newcardbutton.='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'"><span class="valignmiddle">'.$langs->trans("AddAction").'</span>';
         	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
         	$newcardbutton.= '</a>';
+=======
+            $newcardbutton.= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	}
     }
 
@@ -186,6 +241,7 @@ if ($socid > 0)
         $filters['search_agenda_label']=$search_agenda_label;
 
         // TODO Replace this with same code than into list.php
+<<<<<<< HEAD
         show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters, $sortfield, $sortorder);
     }
 }
@@ -193,4 +249,12 @@ if ($socid > 0)
 
 llxFooter();
 
+=======
+        show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
+    }
+}
+
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

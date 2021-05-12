@@ -24,6 +24,12 @@ namespace Stripe;
  */
 class SKU extends ApiResource
 {
+<<<<<<< HEAD
+=======
+
+    const OBJECT_NAME = "sku";
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     use ApiOperations\All;
     use ApiOperations\Create;
     use ApiOperations\Delete;

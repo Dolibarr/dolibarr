@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry	  	<florian.henry@open-concept.pro>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
@@ -29,12 +33,20 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
+<<<<<<< HEAD
 $action = GETPOST('action','aZ09');
+=======
+$action = GETPOST('action', 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $langs->load("companies");
 
 // Security check
+<<<<<<< HEAD
 $id = GETPOST('id')?GETPOST('id','int'):GETPOST('socid','int');
+=======
+$id = GETPOST('id')?GETPOST('id', 'int'):GETPOST('socid', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($user->societe_id) $id=$user->societe_id;
 $result = restrictedArea($user, 'societe', $id, '&societe');
 
@@ -61,9 +73,15 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, 
 $form = new Form($db);
 
 $title=$langs->trans("ThirdParty").' - '.$langs->trans("Notes");
+<<<<<<< HEAD
 if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name.' - '.$langs->trans("Notes");
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$title,$help_url);
+=======
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name.' - '.$langs->trans("Notes");
+$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+llxHeader('', $title, $help_url);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if ($object->id > 0)
 {
@@ -87,7 +105,11 @@ if ($object->id > 0)
     print '<div class="fichecenter">';
 
     print '<div class="underbanner clearboth"></div>';
+<<<<<<< HEAD
     print '<table class="border centpercent">';
+=======
+    print '<table class="border centpercent tableforfield">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
     {
@@ -129,6 +151,12 @@ else
 	print $langs->trans("ErrorRecordNotFound");
 }
 
+<<<<<<< HEAD
 llxFooter();
 $db->close();
 
+=======
+// End of page
+llxFooter();
+$db->close();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

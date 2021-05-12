@@ -37,6 +37,7 @@ $hookmanager->initHooks(array('homesetup'));
  * View
  */
 
+<<<<<<< HEAD
 $wikihelp='EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
 llxHeader('',$langs->trans("Setup"),$wikihelp);
 
@@ -44,10 +45,20 @@ $form = new Form($db);
 
 
 print load_fiche_titre($langs->trans("SetupArea"),'','title_setup.png');
+=======
+$form = new Form($db);
+
+$wikihelp='EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
+llxHeader('', $langs->trans("Setup"), $wikihelp);
+
+
+print load_fiche_titre($langs->trans("SetupArea"), '', 'title_setup.png');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 if (! empty($conf->global->MAIN_MOTD_SETUPPAGE))
 {
+<<<<<<< HEAD
     $conf->global->MAIN_MOTD_SETUPPAGE=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i','<br>',$conf->global->MAIN_MOTD_SETUPPAGE);
     if (! empty($conf->global->MAIN_MOTD_SETUPPAGE))
     {
@@ -57,6 +68,17 @@ if (! empty($conf->global->MAIN_MOTD_SETUPPAGE))
     		$tmp=explode('|',$reg[1]);
     		if (! empty($tmp[1])) $langs->load($tmp[1]);
     		$conf->global->MAIN_MOTD_SETUPPAGE=preg_replace('/__\('.preg_quote($reg[1]).'\)__/i',$langs->trans($tmp[0]),$conf->global->MAIN_MOTD_SETUPPAGE);
+=======
+    $conf->global->MAIN_MOTD_SETUPPAGE=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', $conf->global->MAIN_MOTD_SETUPPAGE);
+    if (! empty($conf->global->MAIN_MOTD_SETUPPAGE))
+    {
+    	$i=0;
+    	while (preg_match('/__\(([a-zA-Z|@]+)\)__/i', $conf->global->MAIN_MOTD_SETUPPAGE, $reg) && $i < 100)
+    	{
+    		$tmp=explode('|', $reg[1]);
+    		if (! empty($tmp[1])) $langs->load($tmp[1]);
+    		$conf->global->MAIN_MOTD_SETUPPAGE=preg_replace('/__\('.preg_quote($reg[1]).'\)__/i', $langs->trans($tmp[0]), $conf->global->MAIN_MOTD_SETUPPAGE);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     		$i++;
     	}
 
@@ -68,7 +90,11 @@ if (! empty($conf->global->MAIN_MOTD_SETUPPAGE))
     }
 }
 
+<<<<<<< HEAD
 print $langs->trans("SetupDescription1").' ';
+=======
+print $langs->trans("SetupDescription1");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print $langs->trans("AreaForAdminOnly").' ';
 print $langs->trans("SetupDescription2", $langs->transnoentities("MenuCompanySetup"), $langs->transnoentities("Modules"))."<br><br>";
 
@@ -76,7 +102,11 @@ print '<br>';
 
 // Show info setup company
 if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY)) $setupcompanynotcomplete=1;
+<<<<<<< HEAD
 print img_picto('','puce').' '.$langs->trans("SetupDescription3", DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete)?'':'&action=edit'), $langs->transnoentities("Setup"), $langs->transnoentities("MenuCompanySetup"));
+=======
+print img_picto('', 'puce').' '.$langs->trans("SetupDescription3", DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete)?'':'&action=edit'), $langs->transnoentities("Setup"), $langs->transnoentities("MenuCompanySetup"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (! empty($setupcompanynotcomplete))
 {
 	$langs->load("errors");
@@ -88,12 +118,29 @@ print '<br>';
 print '<br>';
 
 // Show info setup module
+<<<<<<< HEAD
 print img_picto('','puce').' '.$langs->trans("SetupDescription4", DOL_URL_ROOT.'/admin/modules.php?mainmenu=home', $langs->transnoentities("Setup"), $langs->transnoentities("Modules"));
 if (count($conf->modules) <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)?1:$conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING))	// If only user module enabled
 {
 	$langs->load("errors");
 	$warnpicto=img_warning($langs->trans("WarningMandatorySetupNotComplete"), 'style="padding-right: 6px;"');
 	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/modules.php?mainmenu=home">'.$warnpicto.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
+=======
+print img_picto('', 'puce').' '.$langs->trans("SetupDescription4", DOL_URL_ROOT.'/admin/modules.php?mainmenu=home', $langs->transnoentities("Setup"), $langs->transnoentities("Modules"));
+
+/*
+$nbofactivatedmodules=count($conf->modules);
+$moreinfo=$langs->trans("TotalNumberOfActivatedModules",($nbofactivatedmodules-1), count($modules));
+if ($nbofactivatedmodules <= 1) $moreinfo .= ' '.img_warning($langs->trans("YouMustEnableOneModule"));
+print '<br>'.$moreinfo;
+*/
+
+if (count($conf->modules) <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)?1:$conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING))	// If only user module enabled
+{
+	$langs->load("errors");
+	$warnpicto=img_warning($langs->trans("WarningEnableYourModulesApplications"), 'style="padding-right: 6px;"');
+	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/modules.php?mainmenu=home">'.$warnpicto.$langs->trans("WarningEnableYourModulesApplications").'</a></div>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 print '<br>';
 print '<br>';
@@ -102,19 +149,32 @@ print '<br>';
 
 // Add hook to add information
 $parameters=array();
+<<<<<<< HEAD
 $reshook=$hookmanager->executeHooks('addHomeSetup',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+=======
+$reshook=$hookmanager->executeHooks('addHomeSetup', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print $hookmanager->resPrint;
 if (empty($reshook))
 {
 	// Show into other
+<<<<<<< HEAD
 	print $langs->trans("SetupDescription5")."<br>";
+=======
+    print '<span class="opacitymedium">'.$langs->trans("SetupDescription5")."</span><br>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print "<br>";
 
 	// Show logo
 	print '<div class="center"><div class="logo_setup"></div></div>';
 }
 
+<<<<<<< HEAD
 
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

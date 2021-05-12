@@ -1,6 +1,11 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2014-2015  Frederic France      <frederic.france@free.fr>
  * Copyright (C) 2016       Laurent Destailleur  <eldy@users.sourceforge.net>
+=======
+/* Copyright (C) 2014-2018  Frederic France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2016       Laurent Destailleur     <eldy@users.sourceforge.net>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,21 +45,32 @@ $langs->load("printing");
  * View
  */
 
+<<<<<<< HEAD
 llxHeader("",$langs->trans("Printing"));
 
 print_barre_liste($langs->trans("Printing"), 0, $_SERVER["PHP_SELF"], '', '', '', '<a class="button" href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("Refresh").'</a>', 0, 0, 'title_setup.png');
+=======
+llxHeader("", $langs->trans("Printing"));
+
+print_barre_liste($langs->trans("Printing"), 0, $_SERVER["PHP_SELF"], '', '', '', '<a class="button" href="' . $_SERVER["PHP_SELF"] . '">' . $langs->trans("Refresh") . '</a>', 0, 0, 'title_setup.png');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print $langs->trans("DirectPrintingJobsDesc").'<br><br>';
 
 // List Jobs from printing modules
 $object = new PrintingDriver($db);
 $result = $object->listDrivers($db, 10);
+<<<<<<< HEAD
 foreach ($result as $driver) 
 {
+=======
+foreach ($result as $driver) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     require_once DOL_DOCUMENT_ROOT.'/core/modules/printing/'.$driver.'.modules.php';
     $classname = 'printing_'.$driver;
     $langs->load($driver);
     $printer = new $classname($db);
+<<<<<<< HEAD
     if ($conf->global->{$printer->active}) 
     {
         //$printer->list_jobs('commande');
@@ -63,11 +79,24 @@ foreach ($result as $driver)
         
         if ($result > 0) 
         {
+=======
+    if ($conf->global->{$printer->active}) {
+        //$printer->listJobs('commande');
+        $result = $printer->listJobs();
+        print $printer->resprint;
+
+        if ($result > 0) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             setEventMessages($printer->error, $printer->errors, 'errors');
         }
     }
 }
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

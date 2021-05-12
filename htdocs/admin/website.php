@@ -34,11 +34,19 @@ require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 // Load translation files required by the page
 $langs->loadlangs(array('errors', 'admin', 'companies', 'website'));
 
+<<<<<<< HEAD
 $action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
 $confirm=GETPOST('confirm','alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 $rowid=GETPOST('rowid','alpha');
+=======
+$action=GETPOST('action', 'alpha')?GETPOST('action', 'alpha'):'view';
+$confirm=GETPOST('confirm', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
+
+$rowid=GETPOST('rowid', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $id=1;
 
@@ -46,16 +54,28 @@ if (!$user->admin) accessforbidden();
 
 $acts[0] = "activate";
 $acts[1] = "disable";
+<<<<<<< HEAD
 $actl[0] = img_picto($langs->trans("Disabled"),'switch_off');
 $actl[1] = img_picto($langs->trans("Activated"),'switch_on');
+=======
+$actl[0] = img_picto($langs->trans("Disabled"), 'switch_off');
+$actl[1] = img_picto($langs->trans("Activated"), 'switch_on');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $status = 1;
 
 // Load variable for pagination
+<<<<<<< HEAD
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
+=======
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -121,12 +141,21 @@ $sourceList=array();
  */
 
 // Actions add or modify a website
+<<<<<<< HEAD
 if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
 {
     $listfield=explode(',',$tabfield[$id]);
     $listfieldinsert=explode(',',$tabfieldinsert[$id]);
     $listfieldmodify=explode(',',$tabfieldinsert[$id]);
     $listfieldvalue=explode(',',$tabfieldvalue[$id]);
+=======
+if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
+{
+    $listfield=explode(',', $tabfield[$id]);
+    $listfieldinsert=explode(',', $tabfieldinsert[$id]);
+    $listfieldmodify=explode(',', $tabfieldinsert[$id]);
+    $listfieldvalue=explode(',', $tabfieldvalue[$id]);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     // Check that all fields are filled
     $ok=1;
@@ -155,7 +184,11 @@ if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
     }
 
     // Si verif ok et action add, on ajoute la ligne
+<<<<<<< HEAD
     if ($ok && GETPOST('actionadd','alpha'))
+=======
+    if ($ok && GETPOST('actionadd', 'alpha'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         if ($tabrowid[$id])
         {
@@ -167,7 +200,10 @@ if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
             {
                 $obj = $db->fetch_object($result);
                 $newid=($obj->newid + 1);
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             } else {
                 dol_print_error($db);
             }
@@ -182,14 +218,22 @@ if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
         // Add new entry
         $sql = "INSERT INTO ".$tabname[$id]." (";
         // List of fields
+<<<<<<< HEAD
         if ($tabrowid[$id] && ! in_array($tabrowid[$id],$listfieldinsert))
+=======
+        if ($tabrowid[$id] && ! in_array($tabrowid[$id], $listfieldinsert))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         	$sql.= $tabrowid[$id].",";
         $sql.= $tabfieldinsert[$id];
         $sql.=",status)";
         $sql.= " VALUES(";
 
         // List of values
+<<<<<<< HEAD
         if ($tabrowid[$id] && ! in_array($tabrowid[$id],$listfieldinsert))
+=======
+        if ($tabrowid[$id] && ! in_array($tabrowid[$id], $listfieldinsert))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         	$sql.= $newid.",";
         $i=0;
         foreach ($listfieldinsert as $f => $value)
@@ -226,7 +270,11 @@ if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
     }
 
     // Si verif ok et action modify, on modifie la ligne
+<<<<<<< HEAD
     if ($ok && GETPOST('actionmodify','alpha'))
+=======
+    if ($ok && GETPOST('actionmodify', 'alpha'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         if ($tabrowid[$id]) { $rowidcol=$tabrowid[$id]; }
         else { $rowidcol="rowid"; }
@@ -234,13 +282,21 @@ if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
         $db->begin();
 
         $website=new Website($db);
+<<<<<<< HEAD
         $rowid=GETPOST('rowid','int');
+=======
+        $rowid=GETPOST('rowid', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $website->fetch($rowid);
 
         // Modify entry
         $sql = "UPDATE ".$tabname[$id]." SET ";
         // Modifie valeur des champs
+<<<<<<< HEAD
         if ($tabrowid[$id] && ! in_array($tabrowid[$id],$listfieldmodify))
+=======
+        if ($tabrowid[$id] && ! in_array($tabrowid[$id], $listfieldmodify))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         {
             $sql.= $tabrowid[$id]."=";
             $sql.= "'".$db->escape($rowid)."', ";
@@ -264,7 +320,11 @@ if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
         $resql = $db->query($sql);
         if ($resql)
         {
+<<<<<<< HEAD
             $newname = dol_sanitizeFileName(GETPOST('ref','aZ09'));
+=======
+            $newname = dol_sanitizeFileName(GETPOST('ref', 'aZ09'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             if ($newname != $website->ref)
             {
 	            $srcfile=DOL_DATA_ROOT.'/website/'.$website->ref;
@@ -307,7 +367,11 @@ if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
     //$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
 }
 
+<<<<<<< HEAD
 if (GETPOST('actioncancel','alpha'))
+=======
+if (GETPOST('actioncancel', 'alpha'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
     //$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
 }
@@ -322,10 +386,23 @@ if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
 
     if ($website->id > 0)
     {
+<<<<<<< HEAD
 	    $sql = "DELETE from ".MAIN_DB_PREFIX."website_page WHERE fk_website ='".$rowid."'";
 	    $result = $db->query($sql);
 
 	    $sql = "DELETE from ".MAIN_DB_PREFIX."website WHERE rowid ='".$rowid."'";
+=======
+    	$sql = "DELETE from ".MAIN_DB_PREFIX."website_account WHERE fk_website ='".$rowid."'";
+    	$result = $db->query($sql);
+
+    	$sql = "DELETE from ".MAIN_DB_PREFIX."website_page WHERE fk_website ='".$rowid."'";
+    	$result = $db->query($sql);
+
+    	$sql = "DELETE from ".MAIN_DB_PREFIX."website_extrafields WHERE fk_object ='".$rowid."'";
+    	$result = $db->query($sql);
+
+    	$sql = "DELETE from ".MAIN_DB_PREFIX."website WHERE rowid ='".$rowid."'";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    $result = $db->query($sql);
 	    if (! $result)
 	    {
@@ -397,7 +474,11 @@ llxHeader('', $langs->trans("WebsiteSetup"));
 
 $titre=$langs->trans("WebsiteSetup");
 $linkback='<a href="'.($backtopage?$backtopage:DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';
+<<<<<<< HEAD
 print load_fiche_titre($titre,$linkback,'title_setup');
+=======
+print load_fiche_titre($titre, $linkback, 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Onglets
 $head=array();
@@ -423,7 +504,11 @@ print "<br>\n";
 // Confirmation de la suppression de la ligne
 if ($action == 'delete')
 {
+<<<<<<< HEAD
     print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid, $langs->trans('DeleteWebsite'), $langs->trans('ConfirmDeleteWebsite'), 'confirm_delete','',0,1);
+=======
+    print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid, $langs->trans('DeleteWebsite'), $langs->trans('ConfirmDeleteWebsite'), 'confirm_delete', '', 0, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 //var_dump($elementList);
 
@@ -434,11 +519,19 @@ if ($id)
 {
     // Complete requete recherche valeurs avec critere de tri
     $sql=$tabsql[$id];
+<<<<<<< HEAD
     $sql.=$db->order($sortfield,$sortorder);
     $sql.=$db->plimit($limit+1, $offset);
     //print $sql;
 
     $fieldlist=explode(',',$tabfield[$id]);
+=======
+    $sql.=$db->order($sortfield, $sortorder);
+    $sql.=$db->plimit($limit+1, $offset);
+    //print $sql;
+
+    $fieldlist=explode(',', $tabfield[$id]);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -450,7 +543,11 @@ if ($id)
         $alabelisused=0;
         $var=false;
 
+<<<<<<< HEAD
         $fieldlist=explode(',',$tabfield[$id]);
+=======
+        $fieldlist=explode(',', $tabfield[$id]);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         // Line for title
         print '<tr class="liste_titre">';
@@ -465,7 +562,11 @@ if ($id)
             if ($valuetoshow != '')
             {
                 print '<td class="'.$align.'">';
+<<<<<<< HEAD
             	if (! empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i',$tabhelp[$id][$value])) print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1,$valuetoshow).'</a>';
+=======
+            	if (! empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             	elseif (! empty($tabhelp[$id][$value]))
            		{
            			if ($value == 'virtualhost') print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2, 'tooltipvirtual');
@@ -473,8 +574,13 @@ if ($id)
            		}
             	else print $valuetoshow;
                 print '</td>';
+<<<<<<< HEAD
              }
              if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') $alabelisused=1;
+=======
+            }
+            if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') $alabelisused=1;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
 
         print '<td colspan="4">';
@@ -486,18 +592,32 @@ if ($id)
 
         $obj = new stdClass();
         // If data was already input, we define them in obj to populate input fields.
+<<<<<<< HEAD
         if (GETPOST('actionadd','alpha'))
         {
             foreach ($fieldlist as $key=>$val)
             {
                 if (GETPOST($val,'alpha'))
+=======
+        if (GETPOST('actionadd', 'alpha'))
+        {
+            foreach ($fieldlist as $key=>$val)
+            {
+                if (GETPOST($val, 'alpha'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 	$obj->$val=GETPOST($val);
             }
         }
 
+<<<<<<< HEAD
         fieldListWebsites($fieldlist,$obj,$tabname[$id],'add');
 
         print '<td colspan="3" align="right">';
+=======
+        fieldListWebsites($fieldlist, $obj, $tabname[$id], 'add');
+
+        print '<td colspan="3" class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         if ($action != 'edit')
         {
         	print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';
@@ -555,11 +675,19 @@ if ($id)
                 // Affiche nom du champ
                 if ($showfield)
                 {
+<<<<<<< HEAD
                     print getTitleFieldOfList($valuetoshow,0,$_SERVER["PHP_SELF"],($sortable?$fieldlist[$field]:''),($page?'page='.$page.'&':''),"","align=".$align,$sortfield,$sortorder);
                 }
             }
 
 			print getTitleFieldOfList($langs->trans("Status"),0,$_SERVER["PHP_SELF"],"status",($page?'page='.$page.'&':''),"",'align="center"',$sortfield,$sortorder);
+=======
+                    print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], ($sortable?$fieldlist[$field]:''), ($page?'page='.$page.'&':''), "", "align=".$align, $sortfield, $sortorder);
+                }
+            }
+
+			print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "status", ($page?'page='.$page.'&':''), "", 'align="center"', $sortfield, $sortorder);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             print getTitleFieldOfList('');
             print getTitleFieldOfList('');
             print '</tr>';
@@ -575,19 +703,32 @@ if ($id)
                 {
                     $tmpaction='edit';
                     $parameters=array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
+<<<<<<< HEAD
                     $reshook=$hookmanager->executeHooks('editWebsiteFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
                     $error=$hookmanager->error; $errors=$hookmanager->errors;
 
                     if (empty($reshook)) fieldListWebsites($fieldlist,$obj,$tabname[$id],'edit');
 
                     print '<td colspan="3" align="right"><a name="'.(! empty($obj->rowid)?$obj->rowid:$obj->code).'">&nbsp;</a><input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
+=======
+                    $reshook=$hookmanager->executeHooks('editWebsiteFieldlist', $parameters, $obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
+                    $error=$hookmanager->error; $errors=$hookmanager->errors;
+
+                    if (empty($reshook)) fieldListWebsites($fieldlist, $obj, $tabname[$id], 'edit');
+
+                    print '<td colspan="3" class="right"><a name="'.(! empty($obj->rowid)?$obj->rowid:$obj->code).'">&nbsp;</a><input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                     print '&nbsp;<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
                 }
                 else
                 {
 	              	$tmpaction = 'view';
                     $parameters=array('var'=>$var, 'fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
+<<<<<<< HEAD
                     $reshook=$hookmanager->executeHooks('viewWebsiteFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
+=======
+                    $reshook=$hookmanager->executeHooks('viewWebsiteFieldlist', $parameters, $obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
                     $error=$hookmanager->error; $errors=$hookmanager->errors;
 
@@ -640,9 +781,13 @@ if ($id)
 
 dol_fiche_end();
 
+<<<<<<< HEAD
 //print '<br>';
 
 
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();
 
@@ -656,7 +801,11 @@ $db->close();
  *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
  *	@return		void
  */
+<<<<<<< HEAD
 function fieldListWebsites($fieldlist, $obj='', $tabname='', $context='')
+=======
+function fieldListWebsites($fieldlist, $obj = '', $tabname = '', $context = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	global $conf,$langs,$db;
 	global $form;
@@ -672,7 +821,11 @@ function fieldListWebsites($fieldlist, $obj='', $tabname='', $context='')
 		if ($fieldlist[$field] == 'lang')
 		{
 			print '<td>';
+<<<<<<< HEAD
 			print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT,'lang');
+=======
+			print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'lang');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '</td>';
 		}
 		elseif ($fieldlist[$field] == 'code' && isset($obj->$fieldname)) {
@@ -692,4 +845,7 @@ function fieldListWebsites($fieldlist, $obj='', $tabname='', $context='')
 		}
 	}
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -2,7 +2,11 @@
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
+<<<<<<< HEAD
  * Copyright (C) 2005      Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005      Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
  */
 abstract class ModeleDon extends CommonDocGenerator
 {
+<<<<<<< HEAD
     var $error='';
 
     /**
@@ -45,13 +50,35 @@ abstract class ModeleDon extends CommonDocGenerator
      */
     static function liste_modeles($db,$maxfilenamelength=0)
     {
+=======
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
+     *  Return list of active generation modules
+     *
+     *  @param	DoliDB  $db     			Database handler
+     *  @param  integer $maxfilenamelength  Max length of value to show
+     *  @return	array						List of templates
+     */
+    public static function liste_modeles($db, $maxfilenamelength = 0)
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         global $conf;
 
         $type='donation';
         $liste=array();
 
         include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+<<<<<<< HEAD
         $liste=getListOfModels($db,$type,$maxfilenamelength);
+=======
+        $liste=getListOfModels($db, $type, $maxfilenamelength);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         return $liste;
     }
@@ -63,14 +90,25 @@ abstract class ModeleDon extends CommonDocGenerator
  */
 abstract class ModeleNumRefDons
 {
+<<<<<<< HEAD
     var $error='';
+=======
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     /**
      * 	Return if a module can be used or not
      *
      *  @return		boolean     true if module can be used
      */
+<<<<<<< HEAD
     function isEnabled()
+=======
+    public function isEnabled()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         return true;
     }
@@ -80,7 +118,11 @@ abstract class ModeleNumRefDons
      *
      *  @return     string      Texte descripif
      */
+<<<<<<< HEAD
     function info()
+=======
+    public function info()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $langs;
         $langs->load("bills");
@@ -92,7 +134,11 @@ abstract class ModeleNumRefDons
      *
      *  @return     string      Example
      */
+<<<<<<< HEAD
     function getExample()
+=======
+    public function getExample()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $langs;
         $langs->load("bills");
@@ -105,7 +151,11 @@ abstract class ModeleNumRefDons
      *
      *  @return     boolean     false si conflit, true si ok
      */
+<<<<<<< HEAD
     function canBeActivated()
+=======
+    public function canBeActivated()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         return true;
     }
@@ -115,7 +165,11 @@ abstract class ModeleNumRefDons
      *
      *  @return     string      Valeur
      */
+<<<<<<< HEAD
     function getNextValue()
+=======
+    public function getNextValue()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $langs;
         return $langs->trans("NotAvailable");
@@ -126,7 +180,11 @@ abstract class ModeleNumRefDons
      *
      *  @return     string      Valeur
      */
+<<<<<<< HEAD
     function getVersion()
+=======
+    public function getVersion()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $langs;
         $langs->load("admin");
@@ -138,4 +196,7 @@ abstract class ModeleNumRefDons
         return $langs->trans("NotAvailable");
     }
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

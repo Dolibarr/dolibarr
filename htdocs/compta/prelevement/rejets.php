@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+<<<<<<< HEAD
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2010-2013 Juanjo Menent 		<jmenent@2byte.es>
  * Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -24,7 +28,11 @@
  *      \brief      Reject page
  */
 
+<<<<<<< HEAD
 require('../../main.inc.php');
+=======
+require '../../main.inc.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/rejetprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
@@ -34,6 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies'));
 
 // Security check
+<<<<<<< HEAD
 $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'prelevement','','','bons');
@@ -42,12 +51,26 @@ $result = restrictedArea($user, 'prelevement','','','bons');
 $page = GETPOST('page','int');
 $sortorder = GETPOST('sortorder','alpha');
 $sortfield = GETPOST('sortfield','alpha');
+=======
+$socid = GETPOST('socid', 'int');
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'prelevement', '', '', 'bons');
+
+// Get supervariables
+$page = GETPOST('page', 'int');
+$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 /*
  * View
  */
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("WithdrawsRefused"));
+=======
+llxHeader('', $langs->trans("WithdrawsRefused"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
@@ -87,19 +110,33 @@ if ($result)
 	print"\n<!-- debut table -->\n";
 	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 	print '<tr class="liste_titre">';
+<<<<<<< HEAD
 	print_liste_field_titre("Line",$_SERVER["PHP_SELF"],"p.ref",'',$urladd);
 	print_liste_field_titre("ThirdParty",$_SERVER["PHP_SELF"],"s.nom",'',$urladd);
 	print_liste_field_titre("Reason",$_SERVER["PHP_SELF"],"pr.motif","",$urladd);
+=======
+	print_liste_field_titre("Line", $_SERVER["PHP_SELF"], "p.ref", '', $urladd);
+	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", '', $urladd);
+	print_liste_field_titre("Reason", $_SERVER["PHP_SELF"], "pr.motif", "", $urladd);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print "</tr>\n";
 
 	$total = 0;
 
+<<<<<<< HEAD
 	while ($i < min($num,$conf->liste_limit))
+=======
+	while ($i < min($num, $conf->liste_limit))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$obj = $db->fetch_object($result);
 
 		print '<tr class="oddeven"><td>';
+<<<<<<< HEAD
 		print $ligne->LibStatut($obj->statut,2).'&nbsp;';
+=======
+		print $ligne->LibStatut($obj->statut, 2).'&nbsp;';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid.'">';
 
 		print substr('000000'.$obj->rowid, -6)."</a></td>";
@@ -120,5 +157,9 @@ else
 	dol_print_error($db);
 }
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

@@ -24,11 +24,16 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 
 
 /**
+<<<<<<< HEAD
  *	Class of a generic business object
+=======
+ *  Class of a generic business object
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  */
 
 class GenericObject extends CommonObject
 {
+<<<<<<< HEAD
 	/**
 	 *	Constructor
 	 *
@@ -41,3 +46,15 @@ class GenericObject extends CommonObject
 
 }
 
+=======
+    /**
+     * Constructor
+     *
+     * @param       DoliDB      $db     Database handler
+     */
+    public function __construct($db)
+    {
+        $this->db=$db;
+    }
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

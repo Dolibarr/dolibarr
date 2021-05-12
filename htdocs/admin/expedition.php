@@ -4,7 +4,11 @@
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2011-2018	Philippe Grand			<philippe.grand@atoo-net.com>
  *
@@ -40,10 +44,17 @@ $langs->loadLangs(array("admin", "sendings", "deliveries", "other"));
 if (! $user->admin)
 	accessforbidden();
 
+<<<<<<< HEAD
 $action=GETPOST('action','alpha');
 $value=GETPOST('value','alpha');
 $label = GETPOST('label','alpha');
 $scandir = GETPOST('scan_dir','alpha');
+=======
+$action=GETPOST('action', 'alpha');
+$value=GETPOST('value', 'alpha');
+$label = GETPOST('label', 'alpha');
+$scandir = GETPOST('scan_dir', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $type='shipping';
 
 if (empty($conf->global->EXPEDITION_ADDON_NUMBER))
@@ -60,10 +71,17 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask')
 {
+<<<<<<< HEAD
 	$maskconst=GETPOST('maskconstexpedition','alpha');
 	$maskvalue=GETPOST('maskexpedition','alpha');
 	if (! empty($maskconst))
 		$res = dolibarr_set_const($db,$maskconst,$maskvalue,'chaine',0,'',$conf->entity);
+=======
+	$maskconst=GETPOST('maskconstexpedition', 'alpha');
+	$maskvalue=GETPOST('maskexpedition', 'alpha');
+	if (! empty($maskconst))
+		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	if (isset($res))
 	{
@@ -74,18 +92,30 @@ if ($action == 'updateMask')
 	}
 }
 
+<<<<<<< HEAD
 else if ($action == 'set_param')
 {
 	$freetext=GETPOST('SHIPPING_FREE_TEXT','none');	// No alpha here, we want exact string
 	$res = dolibarr_set_const($db, "SHIPPING_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
+=======
+elseif ($action == 'set_param')
+{
+	$freetext=GETPOST('SHIPPING_FREE_TEXT', 'none');	// No alpha here, we want exact string
+	$res = dolibarr_set_const($db, "SHIPPING_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if ($res <= 0)
 	{
 		$error++;
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 
+<<<<<<< HEAD
 	$draft=GETPOST('SHIPPING_DRAFT_WATERMARK','alpha');
 	$res = dolibarr_set_const($db, "SHIPPING_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
+=======
+	$draft=GETPOST('SHIPPING_DRAFT_WATERMARK', 'alpha');
+	$res = dolibarr_set_const($db, "SHIPPING_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if ($res <= 0)
 	{
 		$error++;
@@ -98,19 +128,32 @@ else if ($action == 'set_param')
 	}
 }
 
+<<<<<<< HEAD
 else if ($action == 'specimen')
 {
 	$modele=GETPOST('module','alpha');
+=======
+elseif ($action == 'specimen')
+{
+	$modele=GETPOST('module', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	$exp = new Expedition($db);
 	$exp->initAsSpecimen();
 
 	// Search template files
 	$file=''; $classname=''; $filefound=0;
+<<<<<<< HEAD
 	$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 	foreach($dirmodels as $reldir)
 	{
 	    $file=dol_buildpath($reldir."core/modules/expedition/doc/pdf_".$modele.".modules.php",0);
+=======
+	$dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
+	foreach($dirmodels as $reldir)
+	{
+	    $file=dol_buildpath($reldir."core/modules/expedition/doc/pdf_".$modele.".modules.php", 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if (file_exists($file))
 		{
 			$filefound=1;
@@ -125,7 +168,11 @@ else if ($action == 'specimen')
 
 		$module = new $classname($db);
 
+<<<<<<< HEAD
 		if ($module->write_file($exp,$langs) > 0)
+=======
+		if ($module->write_file($exp, $langs) > 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=expedition&file=SPECIMEN.pdf");
 			return;
@@ -144,24 +191,42 @@ else if ($action == 'specimen')
 }
 
 // Activate a model
+<<<<<<< HEAD
 else if ($action == 'set')
+=======
+elseif ($action == 'set')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 }
 
+<<<<<<< HEAD
 else if ($action == 'del')
+=======
+elseif ($action == 'del')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
 	{
+<<<<<<< HEAD
         if ($conf->global->EXPEDITION_ADDON_PDF == "$value") dolibarr_del_const($db, 'EXPEDITION_ADDON_PDF',$conf->entity);
+=======
+        if ($conf->global->EXPEDITION_ADDON_PDF == "$value") dolibarr_del_const($db, 'EXPEDITION_ADDON_PDF', $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 }
 
 // Set default model
+<<<<<<< HEAD
 else if ($action == 'setdoc')
 {
 	if (dolibarr_set_const($db, "EXPEDITION_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
+=======
+elseif ($action == 'setdoc')
+{
+	if (dolibarr_set_const($db, "EXPEDITION_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		// La constante qui a ete lue en avant du nouveau set
 		// on passe donc par une variable pour avoir un affichage coherent
@@ -176,9 +241,15 @@ else if ($action == 'setdoc')
 	}
 }
 
+<<<<<<< HEAD
 else if ($action == 'setmodel')
 {
 	dolibarr_set_const($db, "EXPEDITION_ADDON_NUMBER",$value,'chaine',0,'',$conf->entity);
+=======
+elseif ($action == 'setmodel')
+{
+	dolibarr_set_const($db, "EXPEDITION_ADDON_NUMBER", $value, 'chaine', 0, '', $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 
@@ -186,6 +257,7 @@ else if ($action == 'setmodel')
  * View
  */
 
+<<<<<<< HEAD
 $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 
 $form=new Form($db);
@@ -194,6 +266,16 @@ llxHeader("",$langs->trans("SendingsSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("SendingsSetup"),$linkback,'title_setup');
+=======
+$dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
+
+$form=new Form($db);
+
+llxHeader("", $langs->trans("SendingsSetup"));
+
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+print load_fiche_titre($langs->trans("SendingsSetup"), $linkback, 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '<br>';
 $head = expedition_admin_prepare_head();
 
@@ -247,13 +329,18 @@ foreach ($dirmodels as $reldir)
                         // Show example of numbering module
                         print '<td class="nowrap">';
                         $tmp=$module->getExample();
+<<<<<<< HEAD
                         if (preg_match('/^Error/',$tmp)) {
+=======
+                        if (preg_match('/^Error/', $tmp)) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							$langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>';
 						}
                         elseif ($tmp=='NotConfigured') print $langs->trans($tmp);
                         else print $tmp;
                         print '</td>'."\n";
 
+<<<<<<< HEAD
 						print '<td align="center">';
 						if ($conf->global->EXPEDITION_ADDON_NUMBER == "$file")
 						{
@@ -263,6 +350,17 @@ foreach ($dirmodels as $reldir)
 						{
 							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmodel&amp;value='.$file.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
 							print img_picto($langs->trans("Disabled"),'switch_off');
+=======
+						print '<td class="center">';
+						if ($conf->global->EXPEDITION_ADDON_NUMBER == "$file")
+						{
+							print img_picto($langs->trans("Activated"), 'switch_on');
+						}
+						else
+						{
+							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodel&amp;value='.$file.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
+							print img_picto($langs->trans("Disabled"), 'switch_off');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							print '</a>';
 						}
 						print '</td>';
@@ -273,11 +371,19 @@ foreach ($dirmodels as $reldir)
 						// Info
 						$htmltooltip='';
 						$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
+<<<<<<< HEAD
 						$nextval=$module->getNextValue($mysoc,$expedition);
                         if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
                             $htmltooltip.=''.$langs->trans("NextValue").': ';
                             if ($nextval) {
                                 if (preg_match('/^Error/',$nextval) || $nextval=='NotConfigured')
+=======
+						$nextval=$module->getNextValue($mysoc, $expedition);
+                        if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
+                            $htmltooltip.=''.$langs->trans("NextValue").': ';
+                            if ($nextval) {
+                                if (preg_match('/^Error/', $nextval) || $nextval=='NotConfigured')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                                     $nextval = $langs->trans($nextval);
                                 $htmltooltip.=$nextval.'<br>';
                             } else {
@@ -285,8 +391,13 @@ foreach ($dirmodels as $reldir)
                             }
                         }
 
+<<<<<<< HEAD
 						print '<td align="center">';
 						print $form->textwithpicto('',$htmltooltip,1,0);
+=======
+						print '<td class="center">';
+						print $form->textwithpicto('', $htmltooltip, 1, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						print '</td>';
 
 						print '</tr>';
@@ -336,10 +447,17 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="140">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
+<<<<<<< HEAD
 print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Default").'</td>';
 print '<td align="center" width="80" class="nowrap">'.$langs->trans("ShortInfo").'</td>';
 print '<td align="center" width="80" class="nowrap">'.$langs->trans("Preview").'</td>';
+=======
+print '<td class="center" width="60">'.$langs->trans("Status").'</td>';
+print '<td class="center" width="60">'.$langs->trans("Default").'</td>';
+print '<td class="nowrap center" width="80">'.$langs->trans("ShortInfo").'</td>';
+print '<td class="nowrap center" width="80" >'.$langs->trans("Preview").'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print "</tr>\n";
 
 clearstatcache();
@@ -364,7 +482,11 @@ foreach ($dirmodels as $reldir)
 
                 foreach($filelist as $file)
                 {
+<<<<<<< HEAD
                     if (preg_match('/\.modules\.php$/i',$file) && preg_match('/^(pdf_|doc_)/',$file))
+=======
+                    if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                     {
 
                     	if (file_exists($dir.'/'.$file))
@@ -384,27 +506,43 @@ foreach ($dirmodels as $reldir)
 	                            print '<tr><td width="100">';
 	                            print (empty($module->name)?$name:$module->name);
 	                            print "</td><td>\n";
+<<<<<<< HEAD
 	                            if (method_exists($module,'info')) print $module->info($langs);
+=======
+	                            if (method_exists($module, 'info')) print $module->info($langs);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	                            else print $module->description;
 	                            print '</td>';
 
 	                            // Active
 	                            if (in_array($name, $def))
 	                            {
+<<<<<<< HEAD
 	                            	print '<td align="center">'."\n";
 	                            	print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'">';
 	                            	print img_picto($langs->trans("Enabled"),'switch_on');
+=======
+	                            	print '<td class="center">'."\n";
+	                            	print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'">';
+	                            	print img_picto($langs->trans("Enabled"), 'switch_on');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	                            	print '</a>';
 	                            	print '</td>';
 	                            }
 	                            else
 	                            {
+<<<<<<< HEAD
 	                                print '<td align="center">'."\n";
 	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+=======
+	                                print '<td class="center">'."\n";
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	                                print "</td>";
 	                            }
 
 	                            // Defaut
+<<<<<<< HEAD
 	                            print '<td align="center">';
 	                            if ($conf->global->EXPEDITION_ADDON_PDF == $name)
 	                            {
@@ -413,6 +551,16 @@ foreach ($dirmodels as $reldir)
 	                            else
 	                            {
 	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+=======
+	                            print '<td class="center">';
+	                            if ($conf->global->EXPEDITION_ADDON_PDF == $name)
+	                            {
+	                                print img_picto($langs->trans("Default"), 'on');
+	                            }
+	                            else
+	                            {
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	                            }
 	                            print '</td>';
 
@@ -424,6 +572,7 @@ foreach ($dirmodels as $reldir)
 			                        $htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
 			                    }
 					    		$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+<<<<<<< HEAD
 					    		$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
 					    		$htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg,1,1);
 					    		$htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg,1,1);
@@ -443,6 +592,27 @@ foreach ($dirmodels as $reldir)
 	                            else
 	                            {
 	                                print img_object($langs->trans("PreviewNotAvailable"),'generic');
+=======
+					    		$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
+					    		$htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg, 1, 1);
+					    		$htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg, 1, 1);
+					    		$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
+					    		$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark, 1, 1);
+
+	                            print '<td class="center">';
+	                            print $form->textwithpicto('', $htmltooltip, 1, 0);
+	                            print '</td>';
+
+	                            // Preview
+	                            print '<td class="center">';
+	                            if ($module->type == 'pdf')
+	                            {
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_object($langs->trans("Preview"), 'sending').'</a>';
+	                            }
+	                            else
+	                            {
+	                                print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	                            }
 	                            print '</td>';
 
@@ -491,7 +661,11 @@ if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 else
 {
     include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+<<<<<<< HEAD
     $doleditor=new DolEditor($variablename, $conf->global->$variablename,'',80,'dolibarr_notes');
+=======
+    $doleditor=new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print $doleditor->Create();
 }
 print "</td></tr>\n";
@@ -507,5 +681,9 @@ print '<div class="center"><input type="submit" class="button" value="'.$langs->
 
 print '</form>';
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

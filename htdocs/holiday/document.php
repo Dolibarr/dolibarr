@@ -1,4 +1,5 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
@@ -6,6 +7,16 @@
  * Copyright (C) 2005      Simon TOSSER          <simon@kornog-computing.com>
  * Copyright (C) 2011-2012 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
+=======
+/* Copyright (C) 2003-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2005       Simon TOSSER            <simon@kornog-computing.com>
+ * Copyright (C) 2011-2012  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,10 +49,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('other', 'holidays', 'companies'));
 
+<<<<<<< HEAD
 $id = GETPOST('id','int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action','alpha');
 $confirm = GETPOST('confirm','alpha');
+=======
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
+$action = GETPOST('action', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -50,9 +68,15 @@ $result = restrictedArea($user, 'holiday', $id, 'holiday');
 $langs->load("holiday");
 
 // Get parameters
+<<<<<<< HEAD
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
+=======
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -83,7 +107,11 @@ $form = new Form($db);
 
 $listhalfday=array('morning'=>$langs->trans("Morning"),"afternoon"=>$langs->trans("Afternoon"));
 
+<<<<<<< HEAD
 llxHeader("","",$langs->trans("InterventionCard"));
+=======
+llxHeader("", "", $langs->trans("InterventionCard"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 if ($object->id)
@@ -96,11 +124,19 @@ if ($object->id)
 
 	$head=holiday_prepare_head($object);
 
+<<<<<<< HEAD
 	dol_fiche_head($head, 'documents', $langs->trans("CPTitreMenu"), -1,'holiday');
 
 
 	// Construit liste des fichiers
 	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+=======
+	dol_fiche_head($head, 'documents', $langs->trans("CPTitreMenu"), -1, 'holiday');
+
+
+	// Build file list
+	$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$totalsize=0;
 	foreach($filearray as $key => $file)
 	{
@@ -110,14 +146,22 @@ if ($object->id)
 
 	$linkback='<a href="'.DOL_URL_ROOT.'/holiday/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
+<<<<<<< HEAD
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref');
+=======
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	print '<div class="fichecenter">';
 	//print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
 
+<<<<<<< HEAD
 	print '<table class="border centpercent">';
+=======
+	print '<table class="border tableforfield centpercent">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     print '<tr>';
     print '<td class="titlefield">'.$langs->trans("User").'</td>';
@@ -129,8 +173,13 @@ if ($object->id)
     print '<tr>';
     print '<td>'.$langs->trans("Type").'</td>';
     print '<td>';
+<<<<<<< HEAD
     $typeleaves=$object->getTypes(1,-1);
     print empty($typeleaves[$object->fk_type]['label']) ? $langs->trans("TypeWasDisabledOrRemoved",$object->fk_type) : $typeleaves[$object->fk_type]['label'];
+=======
+    $typeleaves=$object->getTypes(1, -1);
+    print empty($typeleaves[$object->fk_type]['label']) ? $langs->trans("TypeWasDisabledOrRemoved", $object->fk_type) : $typeleaves[$object->fk_type]['label'];
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print '</td>';
     print '</tr>';
 
@@ -141,9 +190,15 @@ if ($object->id)
     {
         print '<tr>';
         print '<td>'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
+<<<<<<< HEAD
         print '<td>'.dol_print_date($object->date_debut,'day');
         print ' &nbsp; &nbsp; ';
         print $langs->trans($listhalfday[$starthalfday]);
+=======
+        print '<td>'.dol_print_date($object->date_debut, 'day');
+        print ' &nbsp; &nbsp; ';
+        print '<span class="opacitymedium">'.$langs->trans($listhalfday[$starthalfday]).'</span>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         print '</td>';
         print '</tr>';
     }
@@ -152,7 +207,11 @@ if ($object->id)
         print '<tr>';
         print '<td>'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
         print '<td>';
+<<<<<<< HEAD
         $form->select_date($object->date_debut,'date_debut_');
+=======
+        print $form->selectDate($object->date_debut, 'date_debut_');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         print ' &nbsp; &nbsp; ';
 		print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday')?GETPOST('starthalfday'):$starthalfday));
         print '</td>';
@@ -163,9 +222,15 @@ if ($object->id)
     {
         print '<tr>';
         print '<td>'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
+<<<<<<< HEAD
         print '<td>'.dol_print_date($object->date_fin,'day');
         print ' &nbsp; &nbsp; ';
         print $langs->trans($listhalfday[$endhalfday]);
+=======
+        print '<td>'.dol_print_date($object->date_fin, 'day');
+        print ' &nbsp; &nbsp; ';
+        print '<span class="opacitymedium">'.$langs->trans($listhalfday[$endhalfday]).'</span>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         print '</td>';
         print '</tr>';
     }
@@ -174,9 +239,15 @@ if ($object->id)
         print '<tr>';
         print '<td>'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
         print '<td>';
+<<<<<<< HEAD
         $form->select_date($object->date_fin,'date_fin_');
         print ' &nbsp; &nbsp; ';
 		print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday')?GETPOST('endhalfday'):$endhalfday));
+=======
+        print $form->selectDate($object->date_fin, 'date_fin_');
+        print ' &nbsp; &nbsp; ';
+        print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday')?GETPOST('endhalfday'):$endhalfday));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         print '</td>';
         print '</tr>';
     }
@@ -210,7 +281,11 @@ if ($object->id)
     }
 
     print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
+<<<<<<< HEAD
     print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize,1,1).'</td></tr>';
+=======
+    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     print '</tbody>';
     print '</table>'."\n";
@@ -222,7 +297,11 @@ if ($object->id)
     print '<div class="underbanner clearboth"></div>';
 
 	// Info workflow
+<<<<<<< HEAD
     print '<table class="border centpercent">'."\n";
+=======
+    print '<table class="border tableforfield centpercent">'."\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print '<tbody>';
 
     if (! empty($object->fk_user_create))
@@ -295,7 +374,12 @@ else
 	print $langs->trans("ErrorUnknown");
 }
 
+<<<<<<< HEAD
 
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

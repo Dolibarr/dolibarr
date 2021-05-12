@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Florian Henry        <florian.henry@open-concept.pro>
+<<<<<<< HEAD
  * Copyright (C) 2013-2018 Alexandre Spangaro   <aspangaro@zendsi.com>
+=======
+ * Copyright (C) 2013-2019 Alexandre Spangaro   <aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2014-2015 Ari Elbaz (elarifr)  <github@accedinfo.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2014      Juanjo Menent        <jmenent@2byte.es>
@@ -24,7 +28,11 @@
 
 /**
  * \file		htdocs/accountancy/admin/index.php
+<<<<<<< HEAD
  * \ingroup		Advanced accountancy
+=======
+ * \ingroup		Accountancy (Double entries)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * \brief		Setup page to configure accounting expert module
  */
 
@@ -41,7 +49,11 @@ if (empty($user->rights->accounting->chartofaccount))
 	accessforbidden();
 }
 
+<<<<<<< HEAD
 $action = GETPOST('action', 'alpha');
+=======
+$action = GETPOST('action', 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Parameters ACCOUNTING_* and others
 $list = array (
@@ -144,6 +156,21 @@ if ($action == 'setenabledraftexport') {
 		}
 }
 
+<<<<<<< HEAD
+=======
+if ($action == 'setenablesubsidiarylist') {
+    $setenablesubsidiarylist = GETPOST('value', 'int');
+    $res = dolibarr_set_const($db, "ACCOUNTANCY_COMBO_FOR_AUX", $setenablesubsidiarylist, 'yesno', 0, '', $conf->entity);
+    if (! $res > 0)
+        $error ++;
+    if (! $error) {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    } else {
+        setEventMessages($langs->trans("Error"), null, 'mesgs');
+    }
+}
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 /*
  * View
  */
@@ -202,11 +229,19 @@ if (! empty($user->admin))
     print '<tr class="oddeven">';
     print '<td>' . $langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_TODO") . '</td>';
     if (! empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO)) {
+<<<<<<< HEAD
         print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setlistsorttodo&value=0">';
         print img_picto($langs->trans("Activated"), 'switch_on');
         print '</a></td>';
     } else {
         print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setlistsorttodo&value=1">';
+=======
+        print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setlistsorttodo&value=0">';
+        print img_picto($langs->trans("Activated"), 'switch_on');
+        print '</a></td>';
+    } else {
+        print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setlistsorttodo&value=1">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         print img_picto($langs->trans("Disabled"), 'switch_off');
         print '</a></td>';
     }
@@ -215,11 +250,19 @@ if (! empty($user->admin))
     print '<tr class="oddeven">';
     print '<td>' . $langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_DONE") . '</td>';
     if (! empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE)) {
+<<<<<<< HEAD
         print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setlistsortdone&value=0">';
         print img_picto($langs->trans("Activated"), 'switch_on');
         print '</a></td>';
     } else {
         print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setlistsortdone&value=1">';
+=======
+        print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setlistsortdone&value=0">';
+        print img_picto($langs->trans("Activated"), 'switch_on');
+        print '</a></td>';
+    } else {
+        print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setlistsortdone&value=1">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         print img_picto($langs->trans("Disabled"), 'switch_off');
         print '</a></td>';
     }
@@ -228,11 +271,19 @@ if (! empty($user->admin))
 	print '<tr class="oddeven">';
 	print '<td>' . $langs->trans("ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL") . '</td>';
 	if (! empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL)) {
+<<<<<<< HEAD
 		print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setenabledraftexport&value=0">';
 		print img_picto($langs->trans("Activated"), 'switch_on');
 		print '</a></td>';
 	} else {
 		print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setenabledraftexport&value=1">';
+=======
+		print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setenabledraftexport&value=0">';
+		print img_picto($langs->trans("Activated"), 'switch_on');
+		print '</a></td>';
+	} else {
+		print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setenabledraftexport&value=1">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print img_picto($langs->trans("Disabled"), 'switch_off');
 		print '</a></td>';
 	}
@@ -241,17 +292,26 @@ if (! empty($user->admin))
 	print '<tr class="oddeven">';
 	print '<td>' . $langs->trans("BANK_DISABLE_DIRECT_INPUT") . '</td>';
 	if (! empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) {
+<<<<<<< HEAD
 		print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=0">';
 		print img_picto($langs->trans("Activated"), 'switch_on');
 		print '</a></td>';
 	} else {
 		print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=1">';
+=======
+		print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=0">';
+		print img_picto($langs->trans("Activated"), 'switch_on');
+		print '</a></td>';
+	} else {
+		print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=1">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print img_picto($langs->trans("Disabled"), 'switch_off');
 		print '</a></td>';
 	}
 	print '</tr>';
 
     print '<tr class="oddeven">';
+<<<<<<< HEAD
     print '<td>' . $langs->trans("ACCOUNTING_MANAGE_ZERO") . '</td>';
     if (! empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
         print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setmanagezero&value=0">';
@@ -259,6 +319,28 @@ if (! empty($user->admin))
         print '</a></td>';
     } else {
         print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setmanagezero&value=1">';
+=======
+    print '<td>' . $langs->trans("ACCOUNTANCY_COMBO_FOR_AUX") . '</td>';
+    if (! empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
+        print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setenablesubsidiarylist&value=0">';
+        print img_picto($langs->trans("Activated"), 'switch_on');
+        print '</a></td>';
+    } else {
+        print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setenablesubsidiarylist&value=1">';
+        print img_picto($langs->trans("Disabled"), 'switch_off');
+        print '</a></td>';
+    }
+    print '</tr>';
+
+    print '<tr class="oddeven">';
+    print '<td>' . $langs->trans("ACCOUNTING_MANAGE_ZERO") . '</td>';
+    if (! empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
+        print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setmanagezero&value=0">';
+        print img_picto($langs->trans("Activated"), 'switch_on');
+        print '</a></td>';
+    } else {
+        print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setmanagezero&value=1">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         print img_picto($langs->trans("Disabled"), 'switch_off');
         print '</a></td>';
     }
@@ -277,7 +359,11 @@ foreach ($list as $key)
     $label = $langs->trans($key);
     print '<td>'.$label.'</td>';
     // Value
+<<<<<<< HEAD
     print '<td align="right">';
+=======
+    print '<td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print '<input type="text" class="maxwidth100" id="' . $key . '" name="' . $key . '" value="' . $conf->global->$key . '">';
     print '</td>';
 
@@ -295,5 +381,9 @@ print '<br>';
 print '<br>';
 print '</form>';
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

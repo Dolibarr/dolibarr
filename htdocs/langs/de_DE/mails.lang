@@ -1,11 +1,16 @@
 # Dolibarr language file - Source file is en_US - mails
+<<<<<<< HEAD
 Mailing=Mailversand
+=======
+Mailing=E-Mail-Versand
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 EMailing=E-Mail-Kampagne
 EMailings=E-Mail-Kampagne
 AllEMailings=Alle E-Mail-Kampagnen
 MailCard=E-Mail-Kampagnenkarte
 MailRecipients=Empfänger
 MailRecipient=Empfänger
+<<<<<<< HEAD
 MailTitle=Titel
 MailFrom=Absender
 MailErrorsTo=Fehler an
@@ -19,6 +24,23 @@ MailTopic=E-Mail-Betreff
 MailText=E-Mail-Text
 MailFile=Angehängte Dateien
 MailMessage=E-Mail-Text
+=======
+MailTitle=Bezeichnung
+MailFrom=Absenderadresse
+MailErrorsTo=Fehlerrückmeldungen an
+MailReply=Antwort an
+MailTo=Empfänger
+MailToUsers=An Empfänger:
+MailCC=Kopie an
+MailToCCUsers=Kopie an Empfänger
+MailCCC=Blindkopie an
+MailTopic=e-Mail Betreff
+MailText=Inhalt
+MailFile=Angehängte Dateien
+MailMessage=E-Mail Text
+SubjectNotIn=Not in Subject
+BodyNotIn=Not in Body
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShowEMailing=Zeige E-Mail-Kampagne
 ListOfEMailings=Liste der E-Mail-Kampagnen
 NewMailing=Neue E-Mail-Kampagne
@@ -32,6 +54,7 @@ TestMailing=Teste E-Mail-Kampagne
 ValidMailing=E-Mail-Kampagne freigeben
 MailingStatusDraft=Entwurf
 MailingStatusValidated=Freigegeben
+<<<<<<< HEAD
 MailingStatusSent=Gesendet
 MailingStatusSentPartialy=Teilweise gesendet
 MailingStatusSentCompletely=Vollständig gesendet
@@ -49,21 +72,47 @@ ConfirmResetMailing=Achtung, wenn Sie diese E-Mail Kampagne <b>%s</b>, können S
 ConfirmDeleteMailing=Möchten Sie diese E-Mail-Kampagne wirklich löschen?
 NbOfUniqueEMails=Anzahl einzigartige E-Mail-Adressen
 NbOfEMails=Anzahl der E-Mails
+=======
+MailingStatusSent=gesendet
+MailingStatusSentPartialy=teilweise gesendet
+MailingStatusSentCompletely=vollständig gesendet
+MailingStatusError=Fehler beim Versand
+MailingStatusNotSent=nicht gesendet
+MailSuccessfulySent=E-Mail von %s an %s erfolgreich versendet
+MailingSuccessfullyValidated=E-Mail erfolgreich überprüft
+MailUnsubcribe=Abmelden
+MailingStatusNotContact=nicht mehr kontaktieren
+MailingStatusReadAndUnsubscribe=nicht mehr kontaktieren
+ErrorMailRecipientIsEmpty=Das Empfängerfeld ist leer
+WarningNoEMailsAdded=Keine neuen E-Mail-Adressen für das Hinzufügen zur Empfängerliste
+ConfirmValidMailing=Möchten Sie diese E-Mail-Kampagne wirklich freigeben?
+ConfirmResetMailing=Warning, by re-initializing emailing <b>%s</b>, you will allow the re-sending this email in a bulk mailing. Are you sure you want to do this?
+ConfirmDeleteMailing=Möchten Sie diese E-Mail-Kampagne wirklich löschen?
+NbOfUniqueEMails=Anzahl einmaliger E-Mail-Adressen
+NbOfEMails=Anzahl der E-Mails 
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TotalNbOfDistinctRecipients=Anzahl der Empfänger
 NoTargetYet=Noch keine Empfänger ausgewählt (Bitte wechseln Sie zur Registerkarte "Empfänger")
 NoRecipientEmail=Keine Empfänger-E-Mail für %s
 RemoveRecipient=Empfänger entfernen
 YouCanAddYourOwnPredefindedListHere=Für nähere Informationen zur Erstellung Ihres eigenen E-Mail-Selector-Moduls, lesen Sie bitte die Datei htdocs/core/modules/mailings/README.
 EMailTestSubstitutionReplacedByGenericValues=Im Testmodus werden die Variablen durch generische Werte ersetzt
+<<<<<<< HEAD
 MailingAddFile=Diese Datei anhängen
 NoAttachedFiles=Keine angehängten Dateien
 BadEMail=Ungültige E-Mail-Adresse
 CloneEMailing=E-Mail Kampagne duplizieren
+=======
+MailingAddFile=Ausgewählte Datei anhängen
+NoAttachedFiles=Keine angehängten Dateien
+BadEMail=falsche Wert für e-Mail
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmCloneEMailing=Möchten Sie diese E-Mail-Kampagne wirklich duplizieren?
 CloneContent=Inhalt duplizieren
 CloneReceivers=Empfängerliste duplizieren
 DateLastSend=Datum des letzten Versands
 DateSending=Versanddatum
+<<<<<<< HEAD
 SentTo=Versandt an <b>%s</b>
 MailingStatusRead=Lesen
 YourMailUnsubcribeOK=Die E-Mail-Adresse <b>%s</b> ist korrekt aus der Mailing-Liste ausgetragen.
@@ -72,10 +121,21 @@ EMailSentToNRecipients=E-Mail versandt an %s Empfänger.
 EMailSentForNElements=%s e-Mails verschickt
 XTargetsAdded=<b>%s</b> Empfänger der Liste zugefügt
 OnlyPDFattachmentSupported=Wenn das PDF Dokument schon erstellt wurde, wird es als Anhang versendet. Falls nicht, wird kein E-Mail versendet. (Es werden nur PDF Dokumente für den Massenversand in dieser Version verwendet).
+=======
+SentTo=Versendet an <b>%s</b>
+MailingStatusRead=gelesen
+YourMailUnsubcribeOK=Die E-Mail-Adresse <b>%s</b> wurde erfolgreich aus der Mailing-Liste ausgetragen.
+ActivateCheckReadKey=Schlüssel um die URL für die Funktion der versteckten Lesebestätigung und den "Abmelden"-Link zu generieren
+EMailSentToNRecipients=E-Mail an %s Empfänger gesendet 
+EMailSentForNElements=Email sent for %s elements.
+XTargetsAdded=<b>%s</b> Empfänger der Liste zugefügt
+OnlyPDFattachmentSupported=If the PDF documents were already generated for the objects to send, they will be attached to email. If not, no email will be sent (also, note that only pdf documents are supported as attachments in mass sending in this version).
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AllRecipientSelected=Die Empfänger der %sDatensätze selektiert (Wenn eine E-Mailadresse hinterlegt ist)
 GroupEmails=Gruppenmails
 OneEmailPerRecipient=Ein E-Mail pro Empfänger (Standardmässig, ein E-Mail pro Datensatz ausgewählt)
 WarningIfYouCheckOneRecipientPerEmail=Achtung: Wenn diese Checkbox angekreuzt ist, wird nur eine E-Mail für mehrere Datensätze versendet. Falls Sie Variablen verwenden die sich auf den Datensatz beziehen, werden diese Variablen nicht ersetzt).
+<<<<<<< HEAD
 ResultOfMailSending=Sende-Ergebnis der E-Mail-Kampagne
 NbSelected=Anz. gewählte
 NbIgnored=Anz. ignoriert
@@ -88,12 +148,27 @@ MailingModuleDescContactsByCategory=Kontakte nach Kategorien
 MailingModuleDescContactsByFunction=Kontakte nach Position
 MailingModuleDescEmailsFromFile=E-Mailadressen aus Datei
 MailingModuleDescEmailsFromUser=E-Mailadressen Eingabe durch Benutzer
+=======
+ResultOfMailSending=Result of mass Email sending
+NbSelected=Number selected
+NbIgnored=Number ignored
+NbSent=Number sent
+SentXXXmessages=%s E-Mail(s) versendet.
+ConfirmUnvalidateEmailing=Möchten Sie die E-Mail-Kampange <b>%s</b> auf den Status "Entwurf" zurücksetzen?
+MailingModuleDescContactsWithThirdpartyFilter=Kontakt mit Kunden Filter
+MailingModuleDescContactsByCompanyCategory=Contacts by third-party category
+MailingModuleDescContactsByCategory=Kontakte nach Kategorien
+MailingModuleDescContactsByFunction=Kontakte nach Position
+MailingModuleDescEmailsFromFile=E-Mail-Adressen aus csv-Datei importieren
+MailingModuleDescEmailsFromUser=E-Mail-Adresse durch manuelle Eingabe hinzufügen
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MailingModuleDescDolibarrUsers=Benutzer mit E-Mailadresse
 MailingModuleDescThirdPartiesByCategories=Partner (nach Kategorien)
 SendingFromWebInterfaceIsNotAllowed=Versand vom Webinterface ist nicht erlaubt
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=Zeile %s in der Datei
+<<<<<<< HEAD
 RecipientSelectionModules=Definiert Auswahl von Empfängern
 MailSelectedRecipients=Ausgewählte Empfänger
 MailingArea=E-Mail Kampagnenübersicht
@@ -113,47 +188,99 @@ ToClearAllRecipientsClickHere=Klicken Sie hier, um die Empfängerliste zu leeren
 ToAddRecipientsChooseHere=Fügen Sie Empfänger über die Listenauswahl hinzu
 NbOfEMailingsReceived=Empfangene E-Mail-Kampagnen
 NbOfEMailingsSend=E-Mail-Kampagne versandt
+=======
+RecipientSelectionModules=Möglichkeit des Hinzufügens
+MailSelectedRecipients=Ausgewählte Empfänger
+MailingArea=Übersicht E-Mail-Kampagnen
+LastMailings=Neueste E-Mail-Kampagnen (maximal %s)
+TargetsStatistics=Zielstatistiken
+NbOfCompaniesContacts=Einzigartige Partnerkontakte
+MailNoChangePossible=Die Empfängerliste einer freigegebenen E-Mail-Kampagne kann nicht mehr bearbeitet werden.
+SearchAMailing=Suche E-Mail-Kampagne
+SendMailing=E-Mail-Kampagne versenden
+SentBy=Gesendet von
+MailingNeedCommand=Aus Sicherheits- und Zeitüberschreitungsgründen sollten E-Mail-Kampagnen von der Kommandozeile aus versendet werden. Bitten Sie Ihren Server-Administrator um die Ausführung des folgenden Befehls, um den Versand an alle Empfänger zu starten:
+MailingNeedCommand2=Sie können den Versand jedoch auch über die Web-Oberfläche starten, indem Sie den Wert des Parameters MAILING_LIMIT_SENDBYWEB entsprechend Ihrer Anforderung hoch setzen. Die entsprechenden Einstellungen finden Sie unter Start - Einstellungen - Andere Einstellungen.
+ConfirmSendingEmailing=Wenn Sie die E-Mail-Kampange trotzdem über die Web-Oberfläche versenden möchten bestätigen Sie diese Meldung bitte mit [Ja].
+LimitSendingEmailing=Hinweis: Der Versand von E-Mails über die Web-Oberfläche ist auf <b>%s</b> Empfänger je Sitzung beschränkt!
+TargetsReset=Liste leeren
+ToClearAllRecipientsClickHere=Klicken Sie hier, um die Empfängerliste zu leeren
+ToAddRecipientsChooseHere=Empfänger hinzufügen
+NbOfEMailingsReceived=Empfangene E-Mail-Kampagnen
+NbOfEMailingsSend=E-Mail-Kampagne versendet
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 IdRecord=Eintrag-ID
 DeliveryReceipt=Empfangsbestätigung
 YouCanUseCommaSeparatorForSeveralRecipients=Trennen Sie mehrere Empfänger mit einem <b>Komma</b>
 TagCheckMail=Öffnen der Mail verfolgen
+<<<<<<< HEAD
 TagUnsubscribe=Abmelde Link
 TagSignature=Absender Signatur
 EMailRecipient=Empfänger E-Mail
 TagMailtoEmail=Empfängers E-Mail (beinhaltet html "mailto:" link)
+=======
+TagUnsubscribe="Abmelden"-Link
+TagSignature=Absender Signatur
+EMailRecipient=Recipient Email
+TagMailtoEmail=Recipient Email (including html "mailto:" link)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoEmailSentBadSenderOrRecipientEmail=Kein E-Mail gesendet. Ungültige Absender oder Empfänger Adresse. Benutzerprofil kontrollieren.
 # Module Notifications
 Notifications=Benachrichtigungen
 NoNotificationsWillBeSent=Für dieses Ereignis und diesen Partner sind keine Benachrichtigungen geplant
+<<<<<<< HEAD
 ANotificationsWillBeSent=Eine Benachrichtigung wird per E-Mail versandt
 SomeNotificationsWillBeSent=%s Benachrichtigungen werden per E-Mail versandt
 AddNewNotification=Neues E-Mail-Benachrichtigungsziel-Event aktivieren
 ListOfActiveNotifications=Liste aller aktiven Empänger/Events für E-Mail Benachrichtigungen
 ListOfNotificationsDone=Liste aller versandten E-Mail Benachrichtigungen
+=======
+ANotificationsWillBeSent=Eine Benachrichtigung wird per E-Mail versendet.
+SomeNotificationsWillBeSent=%s Benachrichtigungen werden per E-Mail versendet.
+AddNewNotification=Neues E-Mail-Benachrichtigungsziel-Event aktivieren
+ListOfActiveNotifications=Liste aller aktiven Empänger/Events für E-Mail Benachrichtigungen
+ListOfNotificationsDone=Liste aller versendeten E-Mail-Benachrichtigungen
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MailSendSetupIs=Der E-Mail-Versand wurde auf '%s' konfiguriert. Dieser Modus kann nicht für E-Mail-Kampagnen verwendet werden.
 MailSendSetupIs2=Sie müssen zuerst mit einem Admin-Konto im Menü %sStart - Einstellungen - E-Mails%s den Parameter <strong>'%s'</strong> auf den Modus '%s' ändern. Dann können Sie die Daten des SMTP-Servers von Ihrem Internetdienstanbieter eingeben und die E-Mail-Kampagnen-Funktion nutzen.
 MailSendSetupIs3=Bei Fragen über die Einrichtung Ihres SMTP-Servers, können Sie %s fragen.
 YouCanAlsoUseSupervisorKeyword=Sie können auch das Schlüsselwort <strong>__SUPERVISOREMAIL__</strong> um E-Mail haben, die an den Vorgesetzten des Benutzers gesendet hinzufügen (funktioniert nur, wenn eine E-Mail für dieses Supervisor definiert)
 NbOfTargetedContacts=Aktuelle Anzahl der E-Mails-Kontakte
+<<<<<<< HEAD
 UseFormatFileEmailToTarget=Importierte Datei muss das Format\n<strong>email;name;firstname;other</strong> haben
 UseFormatInputEmailToTarget=Geben Sie eine Zeichenkette in dem Format <strong>email, name, firstname, other</strong> ein
 MailAdvTargetRecipients=Empfänger (Erweitere Selektion)
 AdvTgtTitle=Fill input fields to preselect the third parties or contacts/addresses to target
 AdvTgtSearchTextHelp=Tipps für die Suche:  <br>- x<b>%%</b> , um alle Wörter zu suchen, mit x beginnen, Frankreich  <b>-</b> als Trennzeichen  von Werten gesucht, Frankreich <b>-</b> ausschließen würdig <br> Beispiel: <b> jean;joe;jim%%;!jimo;!jima% </b>  werden alle Ergebnisse angezeigt werden <i> jean </i> und  <i> joe </i>,, die mit  <i> jim </i> beginnen mit Ausnahme von <i> jimo </i>  und  <i> jima </i>.
+=======
+UseFormatFileEmailToTarget=Die importierte Datei muss im folgenden Format vorliegen:<br><strong>E-Mail-Adresse;Nachname;Vorname;Zusatzinformationen</strong>.
+UseFormatInputEmailToTarget=Geben Sie eine Zeichenkette im Format<br><strong>E-Mail-Adresse;Nachname;Vorname;Zusatzinformationen</strong> ein
+MailAdvTargetRecipients=Empfänger (Erweitere Selektion)
+AdvTgtTitle=Füllen Sie die Eingabefelder zur Vorauswahl der Partner- oder  Kontakt- / Adressen - Empänger
+AdvTgtSearchTextHelp=Use %% as wildcards. For example to find all item like <b>jean, joe, jim</b>, you can input <b>j%%</b>, you can also use ; as separator for value, and use ! for except this value. For example  <b>jean;joe;jim%%;!jimo;!jima%</b> will target all jean, joe, start with jim but not jimo and not everything that starts with jima
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AdvTgtSearchIntHelp=Intervall verwenden um eine Integer oder Fliesskommazahl auszuwählen
 AdvTgtMinVal=Mindestwert
 AdvTgtMaxVal=Maximalwert
 AdvTgtSearchDtHelp=Intervall verwenden um ein Datum auszuwählen
 AdvTgtStartDt=Startdatum
 AdvTgtEndDt=Enddatum
+<<<<<<< HEAD
 AdvTgtTypeOfIncudeHelp=Empfänger EMail des Partners und EMail des Kontakt des Partners, oder einfach nur Partner-EMail oder einfach nur Kontakt EMail
+=======
+AdvTgtTypeOfIncudeHelp=Target Email of third party and email of contact of the third party, or just third-party email or just contact email
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AdvTgtTypeOfIncude=Empfänger
 AdvTgtContactHelp=Verwenden Sie nur, wenn Ihr Zielkontakt unter den  "Typ des E-Mail-Empfänger"
 AddAll=Alle hinzufügen
 RemoveAll=Alle Entfernen
 ItemsCount=Punkt(e)
 AdvTgtNameTemplate=Filtername
+<<<<<<< HEAD
 AdvTgtAddContact=E-Mailadressen gemäss Einschränkungen hinzufügen
+=======
+AdvTgtAddContact=Add emails according to criteria
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AdvTgtLoadFilter=Filter laden
 AdvTgtDeleteFilter=Filter löschen
 AdvTgtSaveFilter=Filter speichern
@@ -161,9 +288,18 @@ AdvTgtCreateFilter=Filter erstellen
 AdvTgtOrCreateNewFilter=Name des neuen Filters
 NoContactWithCategoryFound=Kein Kontakt/Adresse mit einer Kategorie gefunden
 NoContactLinkedToThirdpartieWithCategoryFound=Kein Kontakt/Adresse mit einer Kategorie gefunden
+<<<<<<< HEAD
 OutGoingEmailSetup=eMail Postausgang Einstellungen
 InGoingEmailSetup=eMail Posteingang Einstellungen
 OutGoingEmailSetupForEmailing=Einstellung ausgehende E-Mails (für den Massenversand)
 DefaultOutgoingEmailSetup=Standardeinstellungen für ausgehende E-Mails
 Information=Information
 ContactsWithThirdpartyFilter=Contacts avec filtre client
+=======
+OutGoingEmailSetup=Postausgang
+InGoingEmailSetup=Posteingang
+OutGoingEmailSetupForEmailing=Einstellung ausgehende E-Mails (für den Massenversand)
+DefaultOutgoingEmailSetup=Standardeinstellungen für ausgehende E-Mails
+Information=Information
+ContactsWithThirdpartyFilter=Contacts with third-party filter
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

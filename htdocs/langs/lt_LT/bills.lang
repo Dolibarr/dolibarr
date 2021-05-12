@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - bills
+<<<<<<< HEAD
 Bill=Sąskaita-faktūra
 Bills=Sąskaitos-faktūros
 BillsCustomers=Customer invoices
@@ -20,11 +21,35 @@ InvoiceStandardDesc=Šio tipo sąskaita-faktūra yra bendra sąskaita-faktūra.
 InvoiceDeposit=Down payment invoice
 InvoiceDepositAsk=Down payment invoice
 InvoiceDepositDesc=This kind of invoice is done when a down payment has been received.
+=======
+Bill=PVM Sąskaita-faktūra
+Bills=Sąskaitos-faktūros
+BillsCustomers=Klientų sąskaitos faktūros
+BillsCustomer=Kliento sąskaita-faktūra
+BillsSuppliers=Vendor invoices
+BillsCustomersUnpaid=Neapmokėtos kliento sąskaitos
+BillsCustomersUnpaidForCompany=Nesumokėtos kliento sąskaitos už %s
+BillsSuppliersUnpaid=Unpaid vendor invoices
+BillsSuppliersUnpaidForCompany=Unpaid vendors invoices for %s
+BillsLate=Pavėluoti mokėjimai
+BillsStatistics=Klientų sąskaitų faktūrų statistika
+BillsStatisticsSuppliers=Vendors invoices statistics
+DisabledBecauseDispatchedInBookkeeping=Išjungta, nes sąskaita faktūra buvo išsiųsta į apskaitą
+DisabledBecauseNotLastInvoice=Neleidžiama, nes sąskaita faktūra nėra ištrinama. Kai kurios sąskaitos faktūros buvo užfiksuotos po tokio veiksmo, kai jos sukurs skyles skaitiklyje.
+DisabledBecauseNotErasable=Neleidžiama, nes negalima ištrinti
+InvoiceStandard=Standartinė sąskaita-faktūra
+InvoiceStandardAsk=Standartinė sąskaita-faktūra
+InvoiceStandardDesc=Šio tipo sąskaita-faktūra yra bendra sąskaita-faktūra.
+InvoiceDeposit=Išankstinio apmokėjimo sąskaita
+InvoiceDepositAsk=Išankstinio apmokėjimo sąskaita
+InvoiceDepositDesc=Ši sąskaitos faktūra yra atlikta, kai gaunamas apmokėjimas.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 InvoiceProForma=Išankstinė (proforma) sąskaita-faktūra
 InvoiceProFormaAsk=išankstinė (proforma) sąskaita-faktūra
 InvoiceProFormaDesc=<b>Išankstinė sąskaita-faktūra</b> yra tikros sąskaitos forma, bet neatvaizduojama realioje apskaitoje.
 InvoiceReplacement=Sąskaitos-faktūros pakeitimas
 InvoiceReplacementAsk=Sąskaitos-faktūros pakeitimas sąskaita-faktūra
+<<<<<<< HEAD
 InvoiceReplacementDesc=<b>Sąskaitos-faktūros pakeitimas</b> naudojamas atšaukti ir visiškai pakeisti gautą ir neapmokėtą sąskaitą-faktūrą.<br><br> Pastaba: Tik neapmokėtos sąskaitos-faktūros gali būti pakeičiamos. Jei sąskaita-faktūra, kurią keičiate, dar nėra uždaryta, ji bus automatiškai uždaryta ir pažymėta kaip  "neįvykusi".
 InvoiceAvoir=Kreditinė sąskaita (kredito aviza)
 InvoiceAvoirAsk=Kreditinė sąskaita tikslinanti sąskaitą-faktūrą
@@ -32,6 +57,15 @@ InvoiceAvoirDesc=<b>Kreditinė sąskaita</b> yra neigiama sąskaita-faktūra, na
 invoiceAvoirWithLines=Sukurti kreditinę sąskaitą su eilutėmis iš originalios sąskaitos-faktūros
 invoiceAvoirWithPaymentRestAmount=Create Credit Note with remaining unpaid of origin invoice
 invoiceAvoirLineWithPaymentRestAmount=Credit Note for remaining unpaid amount
+=======
+InvoiceReplacementDesc=<b>Replacement invoice</b> is used to cancel and completely replace an invoice with no payment already received.<br><br>Note: Only invoices with no payment on it can be replaced. If the invoice you replace is not yet closed, it will be automatically closed to 'abandoned'.
+InvoiceAvoir=Kreditinė sąskaita (kredito aviza)
+InvoiceAvoirAsk=Kreditinė sąskaita tikslinanti sąskaitą-faktūrą
+InvoiceAvoirDesc=The <b>credit note</b> is a negative invoice used to correct the fact that an invoice shows an amount that differs from the amount actually paid (eg the customer paid too much by mistake, or will not pay the complete amount since some products were returned).
+invoiceAvoirWithLines=Sukurti kreditinę sąskaitą su eilutėmis iš originalios sąskaitos-faktūros
+invoiceAvoirWithPaymentRestAmount=Sukurkite kreditinę sąskaitą su neapmokėtu sąskaitos faktūros likučiu
+invoiceAvoirLineWithPaymentRestAmount=Kreditinė sąskaita likusiai nesumokėtai sumai
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ReplaceInvoice=Pakeisti sąskaitą %s
 ReplacementInvoice=Sąskaitos-faktūros pakeitimas
 ReplacedByInvoice=Pakeistas sąskaita %s
@@ -41,6 +75,7 @@ CorrectionInvoice=Sąskaitos korekcija
 UsedByInvoice=Panaudota sąskaitos-faktūros apmokėjimui %s
 ConsumedBy=Suvartota
 NotConsumed=Nesuvartota
+<<<<<<< HEAD
 NoReplacableInvoice=Nėra keičiamų sąskaitų-faktūrų
 NoInvoiceToCorrect=Nėra koreguojamų sąskaitų-faktūrų
 InvoiceHasAvoir=Was source of one or several credit notes
@@ -48,14 +83,29 @@ CardBill=Sąskaitos-faktūros kortelė
 PredefinedInvoices=Iš anksto apibrėžtos sąskaitos-faktūros
 Invoice=Sąskaita-faktūra
 PdfInvoiceTitle=Sąskaita-faktūra
+=======
+NoReplacableInvoice=No replaceable invoices
+NoInvoiceToCorrect=Nėra koreguojamų sąskaitų-faktūrų
+InvoiceHasAvoir=Buvo šaltinis vienai ar kelioms kreditinėms sąskaitoms
+CardBill=Sąskaitos-faktūros kortelė
+PredefinedInvoices=Iš anksto apibrėžtos sąskaitos-faktūros
+Invoice=PVM Sąskaita-faktūra
+PdfInvoiceTitle=PVM Sąskaita-faktūra
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Invoices=Sąskaitos-faktūros
 InvoiceLine=Sąskaitos-faktūros linija
 InvoiceCustomer=Kliento sąskaita-faktūra
 CustomerInvoice=Kliento sąskaita-faktūra
 CustomersInvoices=Klientų sąskaitos-faktūros
+<<<<<<< HEAD
 SupplierInvoice=Tiekėjo sąskaita-faktūra
 SuppliersInvoices=Tiekėjų sąskaitos-faktūros
 SupplierBill=Tiekėjo sąskaita-faktūra
+=======
+SupplierInvoice=Vendor invoice
+SuppliersInvoices=Vendors invoices
+SupplierBill=Vendor invoice
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SupplierBills=tiekėjų sąskaitos-faktūros
 Payment=Mokėjimas
 PaymentBack=Mokėjimas atgal (grąžinimas)
@@ -65,6 +115,7 @@ PaymentsBack=Mokėjimai atgal (grąžinimai)
 paymentInInvoiceCurrency=in invoices currency
 PaidBack=Sumokėta atgal (grąžinta)
 DeletePayment=Ištrinti mokėjimą
+<<<<<<< HEAD
 ConfirmDeletePayment=Are you sure you want to delete this payment?
 ConfirmConvertToReduc=Do you want to convert this %s into an absolute discount ?<br>The amount will so be saved among all discounts and could be used as a discount for a current or a future invoice for this customer.
 ConfirmConvertToReducSupplier=Do you want to convert this %s into an absolute discount ?<br>The amount will so be saved among all discounts and could be used as a discount for a current or a future invoice for this supplier.
@@ -72,12 +123,24 @@ SupplierPayments=Tiekėjų mokėjimai
 ReceivedPayments=Gauti mokėjimai
 ReceivedCustomersPayments=Iš klientų gauti mokėjimai
 PayedSuppliersPayments=Mokėjimai sumokėti tiekėjams
+=======
+ConfirmDeletePayment=Ar tikrai norite ištrinti šį mokėjimą?
+ConfirmConvertToReduc=Do you want to convert this %s into an absolute discount?
+ConfirmConvertToReduc2=The amount will be saved among all discounts and could be used as a discount for a current or a future invoice for this customer.
+ConfirmConvertToReducSupplier=Do you want to convert this %s into an absolute discount?
+ConfirmConvertToReducSupplier2=The amount will be saved among all discounts and could be used as a discount for a current or a future invoice for this vendor.
+SupplierPayments=Vendor payments
+ReceivedPayments=Gauti mokėjimai
+ReceivedCustomersPayments=Iš klientų gauti mokėjimai
+PayedSuppliersPayments=Payments paid to vendors
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ReceivedCustomersPaymentsToValid=Gauti klientų mokėjimai tikrinimui ir pripažinimui galiojančiais
 PaymentsReportsForYear=Mokėjimų ataskaitos %s
 PaymentsReports=Mokėjimų ataskaitos
 PaymentsAlreadyDone=Jau atlikti mokėjimai
 PaymentsBackAlreadyDone=Jau atlikti mokėjimai atgal (grąžinimai)
 PaymentRule=Mokėjimo taisyklė
+<<<<<<< HEAD
 PaymentMode=Mokėjimo būdas
 PaymentTypeDC=Debit/Credit Card
 PaymentTypePP=PayPal
@@ -93,10 +156,27 @@ ValidatePayment=Mokėjimą pripažinti galiojančiu
 PaymentHigherThanReminderToPay=Mokėjimas svarbesnis už priminimą sumokėti
 HelpPaymentHigherThanReminderToPay=Dėmesio, vienos ar kelių sąskaitų mokėjimo suma yra didesnė nei reikalingas sumokėti likutis.<br> Redaguokite įvedimą, arba patvirtinkite ir galvokite apie kreditinės sąskaitos kūrimą gautam perviršiui nuo kiekvienos permokėtos sąskaitos.
 HelpPaymentHigherThanReminderToPaySupplier=Attention, the payment amount of one or more bills is higher than the rest to pay. <br> Edit your entry, otherwise confirm and think about creating a credit note of the excess paid for each overpaid invoice.
+=======
+PaymentMode=Payment Type
+PaymentTypeDC=Debetinė / Kreditinė kortelė
+PaymentTypePP=PayPal
+IdPaymentMode=Payment Type (id)
+CodePaymentMode=Payment Type (code)
+LabelPaymentMode=Payment Type (label)
+PaymentModeShort=Payment Type
+PaymentTerm=Payment Term
+PaymentConditions=Payment Terms
+PaymentConditionsShort=Payment Terms
+PaymentAmount=Mokėjimo suma
+PaymentHigherThanReminderToPay=Mokėjimas svarbesnis už priminimą sumokėti
+HelpPaymentHigherThanReminderToPay=Attention, the payment amount of one or more bills is higher than the outstanding amount to pay. <br> Edit your entry, otherwise confirm and consider creating a credit note for the excess received for each overpaid invoice.
+HelpPaymentHigherThanReminderToPaySupplier=Attention, the payment amount of one or more bills is higher than the outstanding amount to pay. <br> Edit your entry, otherwise confirm and consider creating a credit note for the excess paid for each overpaid invoice.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ClassifyPaid=Priskirti 'Apmokėtos'
 ClassifyPaidPartially=Priskirti 'Dalinai apmokėtos'
 ClassifyCanceled=Priskirti 'Neįvykusios'
 ClassifyClosed=Priskirti 'Uždarytos'
+<<<<<<< HEAD
 ClassifyUnBilled=Classify 'Unbilled'
 CreateBill=Sukurti sąskaitą-faktūrą
 CreateCreditNote=Sukurti kreditinę sąskaitą
@@ -122,21 +202,58 @@ BillStatusDraft=Projektas (turi būti pripažintas galiojančiu)
 BillStatusPaid=Apmokėtas
 BillStatusPaidBackOrConverted=Credit note refund or marked as credit available
 BillStatusConverted=Paid (ready for consumption in final invoice)
+=======
+ClassifyUnBilled=Klasifikuoti "Neapmokėtos"
+CreateBill=Sukurti sąskaitą-faktūrą
+CreateCreditNote=Sukurti kreditinę sąskaitą
+AddBill=Sukurti sąskaitą arba kreditinę sąskaitą
+AddToDraftInvoices=Pridėti į projektinę sąskaitą-faktūrą
+DeleteBill=Ištrinti sąskaitą-faktūrą
+SearchACustomerInvoice=Ieškoti kliento sąskaitos-faktūros
+SearchASupplierInvoice=Search for a vendor invoice
+CancelBill=Atšaukti sąskaitą-faktūrą
+SendRemindByMail=Siųsti priminimą e-paštu
+DoPayment=Įveskite mokėjimą
+DoPaymentBack=Įveskite grąžinimą
+ConvertToReduc=Pažymėti kaip kreditą
+ConvertExcessReceivedToReduc=Konvertuoti gautą perviršį į turimą kreditą
+ConvertExcessPaidToReduc=Perskaičiuoti permokėtą sumą į turimą nuolaidą
+EnterPaymentReceivedFromCustomer=Įveskite gautą iš kliento mokėjimą
+EnterPaymentDueToCustomer=Atlikti mokėjimą klientui
+DisabledBecauseRemainderToPayIsZero=Neleidžiama, nes neapmokėtas likutis yra nulinis
+PriceBase=Kainos bazė
+BillStatus=Sąskaitos-faktūros būklė
+StatusOfGeneratedInvoices=Sugeneruotų sąskaitų faktūrų būsena
+BillStatusDraft=Projektas (turi būti pripažintas galiojančiu)
+BillStatusPaid=Apmokėtas
+BillStatusPaidBackOrConverted=Kreditinės sąskaitos lėšų grąžinimas arba pažymėtas kaip kreditas
+BillStatusConverted=Sumokėta (paruošta naudoti galutinėje sąskaitoje faktūroje)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BillStatusCanceled=Neįvykęs
 BillStatusValidated=Pripažintas galiojančiu (turi būti apmokėtas)
 BillStatusStarted=Pradėtas
 BillStatusNotPaid=Neapmokėta
+<<<<<<< HEAD
 BillStatusNotRefunded=Not refunded
+=======
+BillStatusNotRefunded=Negrąžinamas
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BillStatusClosedUnpaid=Uždaryta (neapmokėta)
 BillStatusClosedPaidPartially=Dalinai apmokėta
 BillShortStatusDraft=Projektas
 BillShortStatusPaid=Apmokėta
+<<<<<<< HEAD
 BillShortStatusPaidBackOrConverted=Refund or converted
+=======
+BillShortStatusPaidBackOrConverted=Refunded or converted
+Refunded=Refunded
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BillShortStatusConverted=Apmokėtas
 BillShortStatusCanceled=Neįvykusi
 BillShortStatusValidated=Pripažinta galiojančia
 BillShortStatusStarted=Pradėta
 BillShortStatusNotPaid=Neapmokėta
+<<<<<<< HEAD
 BillShortStatusNotRefunded=Not refunded
 BillShortStatusClosedUnpaid=Uždaryta
 BillShortStatusClosedPaidPartially=Dalinai apmokėta
@@ -146,13 +263,30 @@ ErrorNoPaiementModeConfigured=Mokėjimo būdas pagal nutylėjimą nėra apibrė�
 ErrorCreateBankAccount=Sukurti banko sąskaitą, tada eiti į Nustatymų meniu Sąskaitų-faktūrų modulį ir apibrėžti mokėjimo būdus
 ErrorBillNotFound=Sąskaita-faktūra %s neegzistuoja
 ErrorInvoiceAlreadyReplaced=Klaida, Jūs bandote pripažinti galiojančia sąskaitą-faktūrą ir ja pakeisti sąskaitą-faktūrą %s. Bet ši jau anksčiau buvo pakeista sąskaita-faktūra: %s.
+=======
+BillShortStatusNotRefunded=Negrąžintas
+BillShortStatusClosedUnpaid=Uždaryta
+BillShortStatusClosedPaidPartially=Dalinai apmokėta
+PaymentStatusToValidShort=Pripažinti galiojančia
+ErrorVATIntraNotConfigured=Intra-Community VAT number not yet defined
+ErrorNoPaiementModeConfigured=No default payment type defined. Go to Invoice module setup to fix this.
+ErrorCreateBankAccount=Create a bank account, then go to Setup panel of Invoice module to define payment types
+ErrorBillNotFound=Sąskaita-faktūra %s neegzistuoja
+ErrorInvoiceAlreadyReplaced=Error, you tried to validate an invoice to replace invoice %s. But this one has already been replaced by invoice %s.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorDiscountAlreadyUsed=Klaida, nuolaida jau panaudota
 ErrorInvoiceAvoirMustBeNegative=Klaida, teisinga sąskaita-faktūra turi turėti neigiamą sumą
 ErrorInvoiceOfThisTypeMustBePositive=Klaida, šis sąskaitos-faktūros tipas turi turėti teigiamą sumą
 ErrorCantCancelIfReplacementInvoiceNotValidated=Klaida negalima atšaukti sąskaitos-faktūros, kuri buvo pakeista kita sąskaita-faktūra, kuri vis dar yra projektinėje būklėje
+<<<<<<< HEAD
 ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved=This part or another is already used so discount serie cant be removed.
 BillFrom=Iš
 BillTo=Į
+=======
+ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved=This part or another is already used so discount series cannot be removed.
+BillFrom=Pardavėjas
+BillTo=Pirkėjas
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActionsOnBill=Veiksmai sąskaitoje-faktūroje
 RecurringInvoiceTemplate=Template / Recurring invoice
 NoQualifiedRecurringInvoiceTemplateFound=No recurring template invoice qualified for generation.
@@ -162,23 +296,37 @@ NewBill=Nauja sąskaita-faktūra
 LastBills=Latest %s invoices
 LatestTemplateInvoices=Latest %s template invoices
 LatestCustomerTemplateInvoices=Latest %s customer template invoices
+<<<<<<< HEAD
 LatestSupplierTemplateInvoices=Latest %s supplier template invoices
 LastCustomersBills=Latest %s customer invoices
 LastSuppliersBills=Latest %s supplier invoices
+=======
+LatestSupplierTemplateInvoices=Latest %s vendor template invoices
+LastCustomersBills=Latest %s customer invoices
+LastSuppliersBills=Latest %s vendor invoices
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AllBills=Visos sąskaitos-faktūros
 AllCustomerTemplateInvoices=All template invoices
 OtherBills=Kitos sąskaitos-faktūros
 DraftBills=Sąskaitų-faktūrų projektai
 CustomersDraftInvoices=Customer draft invoices
+<<<<<<< HEAD
 SuppliersDraftInvoices=Supplier draft invoices
 Unpaid=Neapmokėta
 ConfirmDeleteBill=Are you sure you want to delete this invoice?
 ConfirmValidateBill=Are you sure you want to validate this invoice with reference <b>%s</b>?
+=======
+SuppliersDraftInvoices=Vendor draft invoices
+Unpaid=Neapmokėta
+ConfirmDeleteBill=Are you sure you want to delete this invoice?
+ConfirmValidateBill=Ar tikrai norite patvirtinti šią sąskaitą su nuoroda <b> %s </ b>?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmUnvalidateBill=Are you sure you want to change invoice <b>%s</b> to draft status?
 ConfirmClassifyPaidBill=Are you sure you want to change invoice <b>%s</b> to status paid?
 ConfirmCancelBill=Are you sure you want to cancel invoice <b>%s</b>?
 ConfirmCancelBillQuestion=Why do you want to classify this invoice 'abandoned'?
 ConfirmClassifyPaidPartially=Are you sure you want to change invoice <b>%s</b> to status paid?
+<<<<<<< HEAD
 ConfirmClassifyPaidPartiallyQuestion=This invoice has not been paid completely. What are reasons for you to close this invoice?
 ConfirmClassifyPaidPartiallyReasonAvoir=Remaining unpaid <b>(%s %s)</b> is a discount granted because payment was made before term. I regularise the VAT with a credit note.
 ConfirmClassifyPaidPartiallyReasonDiscount=Remaining unpaid <b>(%s %s)</b> is a discount granted because payment was made before term.
@@ -193,6 +341,22 @@ ConfirmClassifyPaidPartiallyReasonAvoirDesc=Naudokite šį pasirinkimą, jei vis
 ConfirmClassifyPaidPartiallyReasonBadCustomerDesc=<b>Blogas klientas</b> yra klientas, kad atsisako apmokėti savo skolą.
 ConfirmClassifyPaidPartiallyReasonProductReturnedDesc=Šis pasirinkimas yra naudojamas, kai mokėjimas neatliktas, nes kai kurie produktai buvo grąžinti
 ConfirmClassifyPaidPartiallyReasonOtherDesc=Naudokite šį pasirinkimą, jei visi kiti netinka, pvz., šiais atvejais: <br>- Apmokėjimas neatliktas, nes kai kurie produktai buvo išsiųsti atgal<br>- Reikalaujama suma pernelyg svarbi, nes nuolaida buvo pamiršta <br>Visais atvejais per didelė reikalaujama suma turi būti ištaisyta apskaitos sistemoje sukuriant kreditinę sąskaitą.
+=======
+ConfirmClassifyPaidPartiallyQuestion=This invoice has not been paid completely. What is the reason for closing this invoice?
+ConfirmClassifyPaidPartiallyReasonAvoir=Remaining unpaid <b>(%s %s)</b> is a discount granted because payment was made before term. I regularize the VAT with a credit note.
+ConfirmClassifyPaidPartiallyReasonDiscount=Nesumokėtas likutis <b> (%s %s) </ b> yra nuolaida, nes mokėjimas buvo atliktas prieš terminą.
+ConfirmClassifyPaidPartiallyReasonDiscountNoVat=Nesumokėtas likutis <b> (%s %s) </ b> yra nuolaida, nes mokėjimas buvo atliktas prieš terminą. Sutinku prarasti PVM su šia nuolaida.
+ConfirmClassifyPaidPartiallyReasonDiscountVat=Nesumokėtas likutis <b> (%s %s) </ b> yra nuolaida, nes mokėjimas buvo atliktas prieš terminą. Aš susigrąžinu PVM su šia nuolaida be kreditinės sąskaitos.
+ConfirmClassifyPaidPartiallyReasonBadCustomer=Blogas klientas
+ConfirmClassifyPaidPartiallyReasonProductReturned=Produktų dalis grąžinta
+ConfirmClassifyPaidPartiallyReasonOther=Suma atsisakyta dėl kitų priežasčių
+ConfirmClassifyPaidPartiallyReasonDiscountNoVatDesc=This choice is possible if your invoice has been provided with suitable comments. (Example «Only the tax corresponding to the price that has been actually paid gives rights to deduction»)
+ConfirmClassifyPaidPartiallyReasonDiscountVatDesc=In some countries, this choice might be possible only if your invoice contains correct notes.
+ConfirmClassifyPaidPartiallyReasonAvoirDesc=Naudokite šį pasirinkimą, jei visi kiti netinka
+ConfirmClassifyPaidPartiallyReasonBadCustomerDesc=A <b>bad customer</b> is a customer that refuses to pay his debt.
+ConfirmClassifyPaidPartiallyReasonProductReturnedDesc=Šis pasirinkimas yra naudojamas, kai mokėjimas neatliktas, nes kai kurie produktai buvo grąžinti
+ConfirmClassifyPaidPartiallyReasonOtherDesc=Use this choice if all others are not suitable, for example in following situation:<br>- payment not complete because some products were shipped back<br>- amount claimed too important because a discount was forgotten<br>In all cases, amount over-claimed must be corrected in accountancy system by creating a credit note.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmClassifyAbandonReasonOther=Kita
 ConfirmClassifyAbandonReasonOtherDesc=Šis pasirinkimas bus naudojamas visais kitais atvejais. Pvz, kai jūs ketinate sukurti pakeičiančią sąskaitą-faktūrą.
 ConfirmCustomerPayment=Do you confirm this payment input for <b>%s</b> %s?
@@ -200,9 +364,16 @@ ConfirmSupplierPayment=Do you confirm this payment input for <b>%s</b> %s?
 ConfirmValidatePayment=Are you sure you want to validate this payment? No change can be made once payment is validated.
 ValidateBill=Sąskaitą-faktūrą pripažinti galiojančia
 UnvalidateBill=Sąskaitą-faktūra pripažinti negaliojančia
+<<<<<<< HEAD
 NumberOfBills=Sąskaitų-faktūrų skaičius
 NumberOfBillsByMonth=Sąskaitų-faktūrų skaičius pagal mėnesius
 AmountOfBills=Sąskaitų-faktūrų suma
+=======
+NumberOfBills=No. of invoices
+NumberOfBillsByMonth=No. of invoices per month
+AmountOfBills=Sąskaitų-faktūrų suma
+AmountOfBillsHT=Amount of invoices (net of tax)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AmountOfBillsByMonthHT=Sąskaitų-faktūrų suma pagal mėnesius (atskaičius mokesčius)
 ShowSocialContribution=Show social/fiscal tax
 ShowBill=Rodyti sąskaitą-faktūrą
@@ -214,14 +385,24 @@ ShowInvoiceSituation=Show situation invoice
 ShowPayment=Rodyti mokėjimą
 AlreadyPaid=Jau apmokėta
 AlreadyPaidBack=Mokėjimas jau grąžintas
+<<<<<<< HEAD
 AlreadyPaidNoCreditNotesNoDeposits=Already paid (without credit notes and down payments)
 Abandoned=Neįvykusi
 RemainderToPay=Remaining unpaid
+=======
+AlreadyPaidNoCreditNotesNoDeposits=Jau sumokėta (be kreditinių sąskaitų ir pradinės įmokos)
+Abandoned=Neįvykusi
+RemainderToPay=Nesumokėtas likutis
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 RemainderToTake=Remaining amount to take
 RemainderToPayBack=Remaining amount to refund
 Rest=Laukiantis
 AmountExpected=Reikalaujama suma
+<<<<<<< HEAD
 ExcessReceived=Gautas perviršis
+=======
+ExcessReceived=Grąža
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ExcessPaid=Excess paid
 EscompteOffered=Siūloma nuolaida (mokėjimas prieš terminą)
 EscompteOfferedShort=Nuolaida
@@ -240,16 +421,28 @@ SendReminderBillByMail=Siųsti priminimą e-paštu
 RelatedCommercialProposals=Susiję komerciniai pasiūlymai
 RelatedRecurringCustomerInvoices=Related recurring customer invoices
 MenuToValid=Įteisinti
+<<<<<<< HEAD
 DateMaxPayment=Payment due on
+=======
+DateMaxPayment=Numatytas apmokėjimo terminas
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DateInvoice=Sąskaitos-faktūros data
 DatePointOfTax=Point of tax
 NoInvoice=Nėra sąskaitos-faktūros
 ClassifyBill=Priskirti sąskaitą-faktūrą
+<<<<<<< HEAD
 SupplierBillsToPay=Neapmokėtos tiekėjo sąskaitos
 CustomerBillsUnpaid=Neapmokėtos kliento sąskaitos
 NonPercuRecuperable=Neatitaisomas
 SetConditions=Nustatykite mokėjimo terminus
 SetMode=Nustatykite mokėjimo būdą
+=======
+SupplierBillsToPay=Unpaid vendor invoices
+CustomerBillsUnpaid=Neapmokėtos kliento sąskaitos
+NonPercuRecuperable=Neatitaisomas
+SetConditions=Set Payment Terms
+SetMode=Set Payment Type
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SetRevenuStamp=Set revenue stamp
 Billed=Pateikta sąskaita
 RecurringInvoices=Recurring invoices
@@ -258,6 +451,7 @@ RepeatableInvoices=Template invoices
 Repeatable=Template
 Repeatables=Templates
 ChangeIntoRepeatableInvoice=Convert into template invoice
+<<<<<<< HEAD
 CreateRepeatableInvoice=Create template invoice
 CreateFromRepeatableInvoice=Create from template invoice
 CustomersInvoicesAndInvoiceLines=Klientų sąskaitos-faktūros ir sąskaitų-faktūrų serijos
@@ -269,6 +463,19 @@ Reduction=Sumažinimas
 ReductionShort=Mažinimo.
 Reductions=Sumažinimai
 ReductionsShort=Mažinimo.
+=======
+CreateRepeatableInvoice=Sukurti sąskaitos faktūros šabloną
+CreateFromRepeatableInvoice=Sukurkite sąskaitos faktūros pagal ruošinį
+CustomersInvoicesAndInvoiceLines=Customer invoices and invoice details
+CustomersInvoicesAndPayments=Kliento sąskaitos-faktūros ir mokėjimai
+ExportDataset_invoice_1=Customer invoices and invoice details
+ExportDataset_invoice_2=Kliento sąskaitos-faktūros ir mokėjimai
+ProformaBill=Išankstinė sąskaita:
+Reduction=Nuolaida
+ReductionShort=Disc.
+Reductions=Nuolaidos
+ReductionsShort=Disc.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Discounts=Nuolaidos
 AddDiscount=Sukurti nuolaidą
 AddRelativeDiscount=Sukurti susijusią nuolaidą
@@ -286,11 +493,19 @@ CreditNotesOrExcessReceived=Credit notes or excess received
 Deposit=Down payment
 Deposits=Down payments
 DiscountFromCreditNote=Nuolaida kreditinei sąskaitai %s
+<<<<<<< HEAD
 DiscountFromDeposit=Down payments from invoice %s
 DiscountFromExcessReceived=Payments in excess of invoice %s
 DiscountFromExcessPaid=Payments in excess of invoice %s
 AbsoluteDiscountUse=Ši kredito rūšis gali būti naudojama sąskaitai-faktūrai prieš ją pripažįstant galiojančia
 CreditNoteDepositUse=Invoice must be validated to use this kind of credits
+=======
+DiscountFromDeposit=Pradinis mokėjimas iš sąskaitos faktūros %s
+DiscountFromExcessReceived=Payments in excess of invoice %s
+DiscountFromExcessPaid=Payments in excess of invoice %s
+AbsoluteDiscountUse=Ši kredito rūšis gali būti naudojama sąskaitai-faktūrai prieš ją pripažįstant galiojančia
+CreditNoteDepositUse=Sąskaita faktūra turi būti patvirtinta, kad būtų galima naudoti šio tipo kreditus
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NewGlobalDiscount=Nauja absoliutinė nuolaida
 NewRelativeDiscount=Naujas susijusi nuolaida
 DiscountType=Discount type
@@ -302,9 +517,15 @@ DiscountAlreadyCounted=Discounts or credits already consumed
 CustomerDiscounts=Customer discounts
 SupplierDiscounts=Vendors discounts
 BillAddress=Sąskaitos adresas
+<<<<<<< HEAD
 HelpEscompte=Ši nuolaida yra nuolaida suteikiama klientui, nes jo mokėjimas buvo atliktas prieš terminą.
 HelpAbandonBadCustomer=Šios sumos buvo atsisakyta (blogas klientas) ir ji yra laikoma išimtiniu nuostoliu.
 HelpAbandonOther=Šios sumos buvo atsisakyta, nes tai buvo klaida (pvz.: neteisingas klientas arba sąskaita-faktūra buvo pakeista kita)
+=======
+HelpEscompte=This discount is a discount granted to customer because payment was made before term.
+HelpAbandonBadCustomer=This amount has been abandoned (customer said to be a bad customer) and is considered as an exceptional loss.
+HelpAbandonOther=This amount has been abandoned since it was an error (wrong customer or invoice replaced by another for example)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 IdSocialContribution=Social/fiscal tax payment id
 PaymentId=Mokėjimo ID
 PaymentRef=Payment ref.
@@ -314,10 +535,16 @@ InvoiceDateCreation=Sąskaitos-faktūros sukūrimo datą
 InvoiceStatus=Sąskaitos-faktūros būklė
 InvoiceNote=Sąskaitos-faktūros pastaba
 InvoicePaid=Sąskaita-faktūra apmokėta
+<<<<<<< HEAD
+=======
+OrderBilled=Order billed
+DonationPaid=Donation paid
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PaymentNumber=Mokėjimo numeris
 RemoveDiscount=Pašalinti nuolaidą
 WatermarkOnDraftBill=Vandens ženklas ant sąskaitos-faktūros projekto (nėra, jei lapas tuščias)
 InvoiceNotChecked=Nėra pasirinktų sąskaitų-faktūrų
+<<<<<<< HEAD
 CloneInvoice=Klonuoti sąskaitą-faktūrą
 ConfirmCloneInvoice=Are you sure you want to clone this invoice <b>%s</b>?
 DisabledBecauseReplacedInvoice=Veiksmas išjungtas, nes sąskaita-faktūra buvo pakeista
@@ -327,16 +554,35 @@ SplitDiscount=Padalinti nuolaidą į dvi dalis
 ConfirmSplitDiscount=Are you sure you want to split this discount of <b>%s</b> %s into 2 lower discounts?
 TypeAmountOfEachNewDiscount=Įveskite sumą kiekvienai iš dviejų dalių:
 TotalOfTwoDiscountMustEqualsOriginal=Dviejų naujų nuolaidų suma turi būti lygi pradinei nuolaidai.
+=======
+ConfirmCloneInvoice=Are you sure you want to clone this invoice <b>%s</b>?
+DisabledBecauseReplacedInvoice=Veiksmas išjungtas, nes sąskaita-faktūra buvo pakeista
+DescTaxAndDividendsArea=This area presents a summary of all payments made for special expenses. Only records with payments during the fixed year are included here.
+NbOfPayments=No. of payments
+SplitDiscount=Padalinti nuolaidą į dvi dalis
+ConfirmSplitDiscount=Are you sure you want to split this discount of <b>%s</b> %s into two smaller discounts?
+TypeAmountOfEachNewDiscount=Input amount for each of two parts:
+TotalOfTwoDiscountMustEqualsOriginal=The total of the two new discounts must be equal to the original discount amount.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmRemoveDiscount=Are you sure you want to remove this discount?
 RelatedBill=Susijusi sąskaita-faktūra
 RelatedBills=Susiję sąskaitos-faktūros
 RelatedCustomerInvoices=Related customer invoices
+<<<<<<< HEAD
 RelatedSupplierInvoices=Related supplier invoices
 LatestRelatedBill=Latest related invoice
 WarningBillExist=Warning, one or more invoice already exist
 MergingPDFTool=Merging PDF tool
 AmountPaymentDistributedOnInvoice=Payment amount distributed on invoice
 PaymentOnDifferentThirdBills=Allow payments on different thirdparties bills but same parent company
+=======
+RelatedSupplierInvoices=Related vendor invoices
+LatestRelatedBill=Latest related invoice
+WarningBillExist=Warning, one or more invoices already exist
+MergingPDFTool=Merging PDF tool
+AmountPaymentDistributedOnInvoice=Payment amount distributed on invoice
+PaymentOnDifferentThirdBills=Allow payments on different third parties bills but same parent company
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PaymentNote=Payment note
 ListOfPreviousSituationInvoices=List of previous situation invoices
 ListOfNextSituationInvoices=List of next situation invoices
@@ -351,6 +597,7 @@ FrequencyPer_m=Every %s months
 FrequencyPer_y=Every %s years
 FrequencyUnit=Frequency unit
 toolTipFrequency=Examples:<br><b>Set 7, Day</b>: give a new invoice every 7 days<br><b>Set 3, Month</b>: give a new invoice every 3 month
+<<<<<<< HEAD
 NextDateToExecution=Date for next invoice generation
 NextDateToExecutionShort=Date next gen.
 DateLastGeneration=Date of latest generation
@@ -363,13 +610,33 @@ InvoiceAutoValidate=Validate invoices automatically
 GeneratedFromRecurringInvoice=Generated from template recurring invoice %s
 DateIsNotEnough=Date not reached yet
 InvoiceGeneratedFromTemplate=Invoice %s generated from recurring template invoice %s
+=======
+NextDateToExecution=Kita sąskaitos faktūros sukūrimo data
+NextDateToExecutionShort=Data kito gen.
+DateLastGeneration=Vėliausio generavimo data
+DateLastGenerationShort=Data vėliausio gen.
+MaxPeriodNumber=Max. number of invoice generation
+NbOfGenerationDone=Number of invoice generation already done
+NbOfGenerationDoneShort=Number of generation done
+MaxGenerationReached=Maximum number of generations reached
+InvoiceAutoValidate=Automatiškai patvirtinti sąskaitas faktūras
+GeneratedFromRecurringInvoice=Generated from template recurring invoice %s
+DateIsNotEnough=Data dar neįvykdyta
+InvoiceGeneratedFromTemplate=Invoice %s generated from recurring template invoice %s
+GeneratedFromTemplate=Generated from template invoice %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 WarningInvoiceDateInFuture=Warning, the invoice date is higher than current date
 WarningInvoiceDateTooFarInFuture=Warning, the invoice date is too far from current date
 ViewAvailableGlobalDiscounts=View available discounts
 # PaymentConditions
 Statut=Būklė
+<<<<<<< HEAD
 PaymentConditionShortRECEP=Due Upon Receipt
 PaymentConditionRECEP=Due Upon Receipt
+=======
+PaymentConditionShortRECEP=Išankstinis mokėjimas
+PaymentConditionRECEP=Išankstinis mokėjimas
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PaymentConditionShort30D=30 dienų
 PaymentCondition30D=30 dienų
 PaymentConditionShort30DENDMONTH=30 days of month-end
@@ -392,14 +659,23 @@ PaymentConditionShort14D=14 days
 PaymentCondition14D=14 days
 PaymentConditionShort14DENDMONTH=14 days of month-end
 PaymentCondition14DENDMONTH=Within 14 days following the end of the month
+<<<<<<< HEAD
 FixAmount=Nustatyti dydį
+=======
+FixAmount=Fixed amount
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 VarAmount=Kintamas dydis (%% tot.)
 VarAmountOneLine=Variable amount (%% tot.) - 1 line with label '%s'
 # PaymentType
 PaymentTypeVIR=Banko pervedimas
 PaymentTypeShortVIR=Banko pervedimas
+<<<<<<< HEAD
 PaymentTypePRE=Direct debit payment order
 PaymentTypeShortPRE=Debit payment order
+=======
+PaymentTypePRE=Tiesioginis mokėjimas į sąskaitą
+PaymentTypeShortPRE=Išankstinis mokėjimo pavedimas
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PaymentTypeLIQ=Grynieji pinigai
 PaymentTypeShortLIQ=Grynieji pinigai
 PaymentTypeCB=Kreditinė kortelė
@@ -408,14 +684,20 @@ PaymentTypeCHQ=Čekis
 PaymentTypeShortCHQ=Čekis
 PaymentTypeTIP=TIP (Documents against Payment)
 PaymentTypeShortTIP=TIP Payment
+<<<<<<< HEAD
 PaymentTypeVAD=Tiesioginis mokėjimas (online)
 PaymentTypeShortVAD=Tiesioginis mokėjimas (online)
+=======
+PaymentTypeVAD=Online payment
+PaymentTypeShortVAD=Online payment
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PaymentTypeTRA=Bank draft
 PaymentTypeShortTRA=Projektas
 PaymentTypeFAC=Factor
 PaymentTypeShortFAC=Factor
 BankDetails=Banko duomenys
 BankCode=Banko kodas
+<<<<<<< HEAD
 DeskCode=Skyriaus kodas
 BankAccountNumber=Sąskaitos numeris
 BankAccountNumberKey=Raktas
@@ -424,6 +706,16 @@ IBANNumber=IBAN numeris
 IBAN=IBAN
 BIC=BIC/SWIFT
 BICNumber=BIC/SWIFT numeris
+=======
+DeskCode=Branch code
+BankAccountNumber=Sąskaitos numeris
+BankAccountNumberKey=Checksum
+Residence=Adresas
+IBANNumber=IBAN account number
+IBAN=IBAN
+BIC=BIC/SWIFT
+BICNumber=BIC/SWIFT code
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ExtraInfos=Papildoma informacija
 RegulatedOn=Reguliuojama
 ChequeNumber=Čekio N°
@@ -431,12 +723,18 @@ ChequeOrTransferNumber=Čekio/Pervedimo N°
 ChequeBordereau=Check schedule
 ChequeMaker=Check/Transfer transmitter
 ChequeBank=Čekio bankas
+<<<<<<< HEAD
 CheckBank=Patikrinti
 NetToBePaid=Grynasis mokėjimas
+=======
+CheckBank=Čekis
+NetToBePaid=Mokėjimas grynaisiais
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PhoneNumber=Tel
 FullPhoneNumber=Telefonas
 TeleFax=Faksas
 PrettyLittleSentence=Priimti mokėtiną sumą čekiais išleistais mano vardu kaip Apskaitos Asociacijos, patvirtintos Fiskalinės Administracijos, nariui.
+<<<<<<< HEAD
 IntracommunityVATNumber=Bendrijos vidinis PVM numeris
 PaymentByChequeOrderedTo=Čekį (įskaitant mokesčius), mokamą į %s siųsti
 PaymentByChequeOrderedToShort=Čekis (įskaitant mokesčius) yra mokamas
@@ -446,11 +744,23 @@ VATIsNotUsedForInvoice=* Netaikoma PVM art-293B iš CGI
 LawApplicationPart1=Taikant įstatymus 80,335 iš 12/05/80
 LawApplicationPart2=Prekės lieka nuosavybe
 LawApplicationPart3=Pardavėjas, iki pilno išgryninimo iš
+=======
+IntracommunityVATNumber=Intra-Community VAT ID
+PaymentByChequeOrderedTo=Check payments (including tax) are payable to %s, send to
+PaymentByChequeOrderedToShort=Check payments (incl. tax) are payable to
+SendTo=išsiųstas
+PaymentByTransferOnThisBankAccount=Payment by transfer to the following bank account
+VATIsNotUsedForInvoice=* Netaikoma PVM art-293B iš CGI
+LawApplicationPart1=Taikant įstatymus 80,335 iš 12/05/80
+LawApplicationPart2=Prekės lieka nuosavybe
+LawApplicationPart3=the seller until full payment of
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LawApplicationPart4=jų kaina.
 LimitedLiabilityCompanyCapital=SARL su Kapitalu
 UseLine=Taikyti
 UseDiscount=Taikyti nuolaidą
 UseCredit=Taikyti kreditą
+<<<<<<< HEAD
 UseCreditNoteInInvoicePayment=Sumažinti mokėjimo sumą su šiuo kreditu
 MenuChequeDeposits=Čekių depozitai
 MenuCheques=Čekiai
@@ -459,36 +769,71 @@ NewChequeDeposit=Naujas depozitas
 ChequesReceipts=Čekių įplaukos
 ChequesArea=Čekių depozitų sritis
 ChequeDeposits=Čekių depozitai
+=======
+UseCreditNoteInInvoicePayment=Sumažinkite mokėtiną sumą naudodami šį kreditą
+MenuChequeDeposits=Check Deposits
+MenuCheques=Čekiai
+MenuChequesReceipts=Check receipts
+NewChequeDeposit=Naujas depozitas
+ChequesReceipts=Check receipts
+ChequesArea=Check deposits area
+ChequeDeposits=Check deposits
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Cheques=Čekiai
 DepositId=Id deposit
 NbCheque=Number of checks
 CreditNoteConvertedIntoDiscount=This %s has been converted into %s
+<<<<<<< HEAD
 UsBillingContactAsIncoiveRecipientIfExist=Naudoti kliento kontaktinį adresą, o ne trečiosios šalies, kaip sąskaitų-faktūrų gavėjo, adresą
+=======
+UsBillingContactAsIncoiveRecipientIfExist=Use contact/address with type 'billing contact' instead of third-party address as recipient for invoices
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShowUnpaidAll=Rodyti visas neapmokėtas sąskaitas-faktūras
 ShowUnpaidLateOnly=Rodyti tik vėluojančias neapmokėtas sąskaitas
 PaymentInvoiceRef=Mokėjimo sąskaita-faktūra %s
 ValidateInvoice=Sąskaitą-faktūrą pripažinti galiojančia
+<<<<<<< HEAD
 ValidateInvoices=Validate invoices
+=======
+ValidateInvoices=Sąskaitas-faktūras pripažinti galiojančiomis
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Cash=Grynieji pinigai
 Reported=Uždelstas
 DisabledBecausePayments=Neįmanoma nuo tada, kai atsirado kai kurie mokėjimai
 CantRemovePaymentWithOneInvoicePaid=Negalima pašalinti mokėjimo, nuo tada kai čia yra bent viena sąskaita-faktūra priskirta apmokėtoms
 ExpectedToPay=Laukiamas mokėjimas
+<<<<<<< HEAD
 CantRemoveConciliatedPayment=Can't remove conciliated payment
 PayedByThisPayment=Sumokėta šiuo mokėjimu
 ClosePaidInvoicesAutomatically=Classify "Paid" all standard, down payment or replacement invoices entirely paid.
 ClosePaidCreditNotesAutomatically=Priskirtii "Apmokėta" visas pilnai grąžintas kreditines sąskaitas.
 ClosePaidContributionsAutomatically=Classify "Paid" all social or fiscal contributions entirely paid.
 AllCompletelyPayedInvoiceWillBeClosed=Visos sąskaitos-faktūros, neturinčios neapmokėto likučio bus automatiškai uždarytos ir perkeltos į "Apmokėta".
+=======
+CantRemoveConciliatedPayment=Can't remove reconciled payment
+PayedByThisPayment=Sumokėta šiuo mokėjimu
+ClosePaidInvoicesAutomatically=Classify "Paid" all standard, down-payment or replacement invoices paid entirely.
+ClosePaidCreditNotesAutomatically=Priskirtii "Apmokėta" visas pilnai grąžintas kreditines sąskaitas.
+ClosePaidContributionsAutomatically=Classify "Paid" all social or fiscal contributions paid entirely.
+AllCompletelyPayedInvoiceWillBeClosed=All invoices with no remainder to pay will be automatically closed with status "Paid".
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ToMakePayment=Mokėti
 ToMakePaymentBack=Grąžinti
 ListOfYourUnpaidInvoices=Sąrašas neapmokėtų sąskaitų-faktūrų
 NoteListOfYourUnpaidInvoices=Pastaba: Šis sąrašas rodo tik sąskaitas trečiosioms šalims, su kuriom Jūs susijęs kaip prekybos atstovas.
 RevenueStamp=Įplaukų rūšis
+<<<<<<< HEAD
 YouMustCreateInvoiceFromThird=This option is only available when creating invoice from tab "customer" of third party
 YouMustCreateInvoiceFromSupplierThird=This option is only available when creating invoice from tab "supplier" of third party
 YouMustCreateStandardInvoiceFirstDesc=You have to create a standard invoice first and convert it to "template" to create a new template invoice
 PDFCrabeDescription=Sąskaitos-faktūros PDF šablonas Crabe. Pilnas sąskaitos-faktūros šablonas (rekomenduojamas Šablonas)
+=======
+YouMustCreateInvoiceFromThird=This option is only available when creating an invoice from tab "Customer" of third party
+YouMustCreateInvoiceFromSupplierThird=This option is only available when creating an invoice from tab "Vendor" of third party
+YouMustCreateStandardInvoiceFirstDesc=You have to create a standard invoice first and convert it to "template" to create a new template invoice
+PDFCrabeDescription=Sąskaitos-faktūros PDF šablonas Crabe. Pilnas sąskaitos-faktūros šablonas (rekomenduojamas Šablonas)
+PDFSpongeDescription=Invoice PDF template Sponge. A complete invoice template
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PDFCrevetteDescription=Invoice PDF template Crevette. A complete invoice template for situation invoices
 TerreNumRefModelDesc1=Grąžinimo numeris formatu %syymm-nnnn standartinėms sąskaitoms-faktūroms ir %syymm-nnnn kreditinėms sąskaitoms, kur yy yra metai, mm mėnuo ir nnnn yra seka be pertrūkių ir be grįžimo į 0
 MarsNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for down payment invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
@@ -499,10 +844,17 @@ TypeContact_facture_internal_SALESREPFOLL=Atstovas šiai kliento sąskaitai-fakt
 TypeContact_facture_external_BILLING=Kliento sąskaitos-faktūros kontaktas
 TypeContact_facture_external_SHIPPING=Kliento pristatymo kontaktas
 TypeContact_facture_external_SERVICE=Kliento paslaugos kontaktai
+<<<<<<< HEAD
 TypeContact_invoice_supplier_internal_SALESREPFOLL=Atstovas šiai tiekėjo sąskaitai-faktūrai
 TypeContact_invoice_supplier_external_BILLING=Tiekėjo sąskaitos-faktūros kontaktai
 TypeContact_invoice_supplier_external_SHIPPING=Tiekėjo pristatymo kontaktai
 TypeContact_invoice_supplier_external_SERVICE=Tiekėjo paslaugos kontaktai
+=======
+TypeContact_invoice_supplier_internal_SALESREPFOLL=Representative following-up vendor invoice
+TypeContact_invoice_supplier_external_BILLING=Vendor invoice contact
+TypeContact_invoice_supplier_external_SHIPPING=Vendor shipping contact
+TypeContact_invoice_supplier_external_SERVICE=Vendor service contact
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 # Situation invoices
 InvoiceFirstSituationAsk=First situation invoice
 InvoiceFirstSituationDesc=The <b>situation invoices</b> are tied to situations related to a progression, for example the progression of a construction. Each situation is tied to an invoice.
@@ -527,6 +879,7 @@ InvoiceSituationLast=Final and general invoice
 PDFCrevetteSituationNumber=Situation N°%s
 PDFCrevetteSituationInvoiceLineDecompte=Situation invoice - COUNT
 PDFCrevetteSituationInvoiceTitle=Situation invoice
+<<<<<<< HEAD
 PDFCrevetteSituationInvoiceLine=Situation N°%s : Inv. N°%s on %s
 TotalSituationInvoice=Total situation
 invoiceLineProgressError=Invoice line progress can't be greater than or equal to the next invoice line
@@ -534,6 +887,15 @@ updatePriceNextInvoiceErrorUpdateline=Error : update price on invoice line : %s
 ToCreateARecurringInvoice=To create a recurring invoice for this contract, first create this draft invoice, then convert it into an invoice template and define the frequency for generation of future invoices.
 ToCreateARecurringInvoiceGene=To generate future invoices regularly and manually, just go on menu <strong>%s - %s - %s</strong>.
 ToCreateARecurringInvoiceGeneAuto=If you need to have such invoices generated automatically, ask you administrator to enable and setup module <strong>%s</strong>. Note that both method (manual and automatic) can be used together with no risk of duplication.
+=======
+PDFCrevetteSituationInvoiceLine=Situation N°%s: Inv. N°%s on %s
+TotalSituationInvoice=Total situation
+invoiceLineProgressError=Invoice line progress can't be greater than or equal to the next invoice line
+updatePriceNextInvoiceErrorUpdateline=Error: update price on invoice line: %s
+ToCreateARecurringInvoice=To create a recurring invoice for this contract, first create this draft invoice, then convert it into an invoice template and define the frequency for generation of future invoices.
+ToCreateARecurringInvoiceGene=To generate future invoices regularly and manually, just go on menu <strong>%s - %s - %s</strong>.
+ToCreateARecurringInvoiceGeneAuto=If you need to have such invoices generated automatically, ask your administrator to enable and setup module <strong>%s</strong>. Note that both methods (manual and automatic) can be used together with no risk of duplication.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DeleteRepeatableInvoice=Delete template invoice
 ConfirmDeleteRepeatableInvoice=Are your sure you want to delete the template invoice?
 CreateOneBillByThird=Create one invoice per third party (otherwise, one invoice per order)
@@ -541,8 +903,17 @@ BillCreated=%s bill(s) created
 StatusOfGeneratedDocuments=Status of document generation
 DoNotGenerateDoc=Do not generate document file
 AutogenerateDoc=Auto generate document file
+<<<<<<< HEAD
 AutoFillDateFrom=Set start date for service line with invoice date
 AutoFillDateFromShort=Set start date
 AutoFillDateTo=Set end date for service line with next invoice date
 AutoFillDateToShort=Set end date
 MaxNumberOfGenerationReached=Max number of gen. reached
+=======
+AutoFillDateFrom=Nustatykite paslaugų eilutės pradžios datą su sąskaitos faktūros data
+AutoFillDateFromShort=Nustatykite pradžios datą
+AutoFillDateTo=Nustatykite paslaugų eilutės pabaigos datą su kita sąskaitos faktūros data
+AutoFillDateToShort=Nustatykite pabaigos datą
+MaxNumberOfGenerationReached=Max number of gen. reached
+BILL_DELETEInDolibarr=Invoice deleted
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

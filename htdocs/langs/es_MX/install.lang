@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - install
 InstallEasy=Sólo tienes que seguir las instrucciones paso a paso.
 MiscellaneousChecks=Verificación de requisitos previos
+<<<<<<< HEAD
 ConfFileDoesNotExistsAndCouldNotBeCreated=!El archivo de configuración <b>%s</b> no existe y no fue posible crearlo!
 ConfFileCouldBeCreated=El archivo de configuración <b>%s</b> existe pudo ser creado.
 ConfFileIsNotWritable=El archivo de configuración <b>%s</b> no se puede escribir. Compruebe los permisos. Para la instalación inicial, el servidor web debe ser capaz de escribir en este archivo durante el proceso de configuración ("chmod 666", por ejemplo en un SO basado en Unix).
@@ -18,20 +19,33 @@ ErrorPHPDoesNotSupportGD=Su instalación de PHP no soporta la función gráfica 
 ErrorPHPDoesNotSupportUTF8=Su instalación de PHP no soporta funciones UTF8. Dolibarr no puede funcionar correctamente. Resuelva esto antes de instalar Dolibarr.
 ErrorDirDoesNotExists=El directorio %s no existe.
 ErrorGoBackAndCorrectParameters=Vuelva hacia atrás y corrija los parámetros erróneos.
+=======
+ConfFileCouldBeCreated=El archivo de configuración <b>%s</b> existe pudo ser creado.
+ConfFileIsWritable=El archivo de configuración <b>%s</b> tiene permisos de escritura.
+PHPSupportSessions=Este PHP soporta sesiones.
+PHPSupportPOSTGETOk=Este PHP soporta variables POST y GET.
+PHPMemoryOK=Su memória máxima de sesiones PHP está configurado en <b>%s</b>. Esto debe ser suficiente.
+ErrorDirDoesNotExists=El directorio %s no existe.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorWrongValueForParameter=Puede haber escrito un valor incorrecto para el parámetro '%s'.
 ErrorFailedToConnectToDatabase=Error al conectar con la base de datos '%s'.
 ErrorDatabaseVersionTooLow=La versión de base de datos (%s) es demasiado antigua. Se requiere la versión %s o superior.
 ErrorPHPVersionTooLow=La versión de PHP es demasiado antigua. Se requiere la versión %s.
+<<<<<<< HEAD
 ErrorConnectedButDatabaseNotFound=La conexión al servidor fue exitosa, pero no se encontró la base de datos '%s'.
 IfDatabaseNotExistsGoBackAndUncheckCreate=Si no existe la base de datos, vuelva atrás y marque la opción "Crear base de datos".
 IfDatabaseExistsGoBackAndCheckCreate=Si ya existe la base de datos, vuelva atrás y desmarque la opción "Crear base de datos".
 WarningBrowserTooOld=La versión del navegador es demasiado antigua. La actualización de su navegador a una versión más reciente de Firefox, Chrome u Opera es muy recomendado.
+=======
+IfDatabaseExistsGoBackAndCheckCreate=Si ya existe la base de datos, vuelva atrás y desmarque la opción "Crear base de datos".
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 License=Uso de licencia
 WebPagesDirectory=Directorio donde se almacenan las páginas web
 DocumentsDirectory=Directorio para almacenar los documentos cargados y generados
 URLRoot=URL raíz
 CheckToForceHttps=Marque esta opción para forzar conexiones seguras (https).<br>Esto requiere que el servidor web esté configurado con un certificado SSL.
 DatabaseType=Tipo de base de datos
+<<<<<<< HEAD
 ServerAddressDescription=Nombre o dirección IP para el servidor de base de datos, por lo general 'localhost' cuando el servidor de base de datos se encuentra alojado en el mismo servidor que el servidor web
 ServerPortDescription=Puerto del servidor de base de datos. Mantenga vacía si no se conoce.
 DatabasePrefix=Prefijo para las tablas de la base de datos
@@ -43,6 +57,11 @@ CheckToCreateDatabase=Marque la casilla si no existe base de datos y se debe cre
 DatabaseRootLoginDescription=Login del usuario con permisos para crear nuevas bases de datos o nuevos usuarios, obligatorio si su base de datos o su propietario no existen.
 KeepEmptyIfNoPassword=Deje en blanco si el usuario no tiene contraseña (evite esto)
 SaveConfigurationFile=Guardar valores
+=======
+ServerPortDescription=Puerto del servidor de base de datos. Mantenga vacía si no se conoce.
+AdminPassword=Contraseña para el propietario de la base de datos de Dolibarr.
+DatabaseSuperUserAccess=Servidor de base de datos - acceso de Superusuario
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ServerConnection=Conexión con el servidor
 DatabaseCreation=Creación de bases de datos
 CreateDatabaseObjects=Creación de objetos de la base de datos
@@ -52,15 +71,19 @@ CreateTableAndPrimaryKey=Crear la tabla %s
 CreateOtherKeysForTable=Crear claves externas e índices para la tabla %s
 OtherKeysCreation=Creación de llaves externas e índices
 AdminAccountCreation=Creación de inicio de sesión de Administrador
+<<<<<<< HEAD
 PleaseTypePassword=¡Por favor escriba una contraseña, las contraseñas vacías no están permitidas!
 PleaseTypeALogin=¡Por favor escriba un inicio de sesión!
 PasswordsMismatch=¡Las contraseñas difieren, por favor intente de nuevo!
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SetupEnd=Fin de la configuración
 SystemIsInstalled=Esta instalación se ha completado.
 SystemIsUpgraded=Dolibarr se ha actualizado correctamente.
 YouNeedToPersonalizeSetup=Es necesario configurar Dolibarr para satisfacer sus necesidades (apariencia, características, ...). Para ello, por favor siga el siguiente enlace:
 GoToDolibarr=Ir a Dolibarr
 GoToSetupArea=Ir a Dolibarr (área de configuración)
+<<<<<<< HEAD
 MigrationNotFinished=La versión de tu base de datos no está completamente actualizada, se requiere que corra el proceso de actualización de nuevo.
 GoToUpgradePage=Ir a actualizar la página de nuevo
 WithNoSlashAtTheEnd=Sin la diagonal "/" al final
@@ -68,16 +91,27 @@ DirectoryRecommendation=Se recommanded utilizar un directorio fuera del director
 DolibarrAdminLogin=Dolibarr Admin Login
 AdminLoginAlreadyExists=Ya existe la cuenta de administrador Dolibarr '<b>%s</b>'. Regresa, si quieres crear otro.
 WarningRemoveInstallDir=Advertencia, por razones de seguridad, una vez que la instalación o actualización esté completa, para evitar el uso de herramientas de instalación de nuevo, se debe añadir un archivo llamado <b>install.lock</b> en el directorio de documentos Dolibarr, con el fin de evitar el uso malintencionado de la misma.
+=======
+GoToUpgradePage=Ir a actualizar la página de nuevo
+WithNoSlashAtTheEnd=Sin la diagonal "/" al final
+DolibarrAdminLogin=Dolibarr Admin Login
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ChoosedMigrateScript=Elija script de migración
 ProcessMigrateScript=Procesamiento de script
 ChooseYourSetupMode=Elige tu modo de configuración y haga clic en "Iniciar"...
 FreshInstall=Nueva instalación
+<<<<<<< HEAD
 FreshInstallDesc=Utilice este modo si esta es su primera instalación. Si no es así, este modo puede reparar una instalación anterior incompleta, pero si desea actualizar su versión, elija la opción del modo "Actualizar".
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 UpgradeDesc=Utilice este modo si ha reemplazado archivos Dolibarr viejos con los archivos de una versión más reciente. Esto actualizará su base de datos y los datos.
 Start=Iniciar
 InstallNotAllowed=Configuración no permitida por permisos en <b>conf.php</b>
 YouMustCreateWithPermission=Debe crear el archivo %s y establecer permisos de escritura para el servidor web durante el proceso de instalación.
+<<<<<<< HEAD
 CorrectProblemAndReloadPage=Por favor, corrija el problema y presione F5 para recargar la página.
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AlreadyDone=Ya migrado
 DatabaseVersion=Versión de Base de Datos
 ServerVersion=Versión del servidor de base de datos

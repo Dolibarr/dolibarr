@@ -116,7 +116,11 @@ CountryHM=Heardův ostrov a McDonaldovy
 CountryVA=Vatikán (Svatý stolec)
 CountryHN=Honduras
 CountryHK=Hongkong
+<<<<<<< HEAD
 CountryIS=Icelande
+=======
+CountryIS=Island
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryIN=Indie
 CountryID=Indonésie
 CountryIR=Írán
@@ -160,7 +164,11 @@ CountryMD=Moldavsko
 CountryMN=Mongolsko
 CountryMS=Monserrat
 CountryMZ=Mosambik
+<<<<<<< HEAD
 CountryMM=Barma (Myanmar)
+=======
+CountryMM=Myanmar (Barma)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryNA=Namibie
 CountryNR=Nauru
 CountryNP=Nepál
@@ -223,7 +231,11 @@ CountryTO=Tonga
 CountryTT=Trinidad a Tobago
 CountryTR=Turecko
 CountryTM=Turkmenistán
+<<<<<<< HEAD
 CountryTC=Turks a Cailos ostrovy
+=======
+CountryTC=ostrovy Turks a Cacois
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryTV=Tuvalu
 CountryUG=Uganda
 CountryUA=Ukrajina
@@ -252,7 +264,11 @@ CountryMF=Svatý Martin
 CivilityMME=Paní
 CivilityMR=Pan
 CivilityMLE=Slečna
+<<<<<<< HEAD
 CivilityMTRE=Mistr
+=======
+CivilityMTRE=Hlavní
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CivilityDR=Lékař
 ##### Currencies #####
 Currencyeuros=Euro
@@ -290,6 +306,10 @@ CurrencyXOF=CFA frank BCEAO
 CurrencySingXOF=CFA frank BCEAO
 CurrencyXPF=CFP frank
 CurrencySingXPF=Frank CFP
+<<<<<<< HEAD
+=======
+CurrencyCentEUR=cents
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrencyCentSingEUR=cent
 CurrencyCentINR=paisa
 CurrencyCentSingINR=paise
@@ -301,11 +321,19 @@ DemandReasonTypeSRC_CAMP_EMAIL=E-mailová kampaň
 DemandReasonTypeSRC_CAMP_PHO=Telefonická kampaň
 DemandReasonTypeSRC_CAMP_FAX=Fax kampaň
 DemandReasonTypeSRC_COMM=Obchodní kontakt
+<<<<<<< HEAD
 DemandReasonTypeSRC_SHOP=Prodejní ontakt
+=======
+DemandReasonTypeSRC_SHOP=Kontakt na prodejce
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DemandReasonTypeSRC_WOM=Dané slovo
 DemandReasonTypeSRC_PARTNER=Partner
 DemandReasonTypeSRC_EMPLOYEE=Zaměstnanec
 DemandReasonTypeSRC_SPONSORING=Sponzoring
+<<<<<<< HEAD
+=======
+DemandReasonTypeSRC_SRC_CUSTOMER=Příchozí kontakt zákazníka
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 #### Paper formats ####
 PaperFormatEU4A0=Formát 4A0
 PaperFormatEU2A0=Formát 2A0
@@ -329,7 +357,11 @@ PaperFormatCAP6=Formát P6 Kanada
 #### Expense report categories ####
 ExpAutoCat=Auto
 ExpCycloCat=Moped
+<<<<<<< HEAD
 ExpMotoCat=Motorbike
+=======
+ExpMotoCat=Motorka
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ExpAuto3CV=3 CV
 ExpAuto4CV=4 CV
 ExpAuto5CV=5 CV
@@ -340,6 +372,7 @@ ExpAuto9CV=9 CV
 ExpAuto10CV=10 CV
 ExpAuto11CV=11 CV
 ExpAuto12CV=12 CV
+<<<<<<< HEAD
 ExpAuto3PCV=3 CV and more
 ExpAuto4PCV=4 CV and more
 ExpAuto5PCV=5 CV and more
@@ -355,3 +388,20 @@ ExpCyclo=Capacity lower to 50cm3
 ExpMoto12CV=Motorbike 1 or 2 CV
 ExpMoto345CV=Motorbike 3, 4 or 5 CV
 ExpMoto5PCV=Motorbike 5 CV and more
+=======
+ExpAuto3PCV=3 CV a více
+ExpAuto4PCV=4 CV a více
+ExpAuto5PCV=5 CV a více
+ExpAuto6PCV=6 CV a více
+ExpAuto7PCV=7 životopisů a více
+ExpAuto8PCV=8 CV a více
+ExpAuto9PCV=9 CV a více
+ExpAuto10PCV=10 CV a více
+ExpAuto11PCV=11 CV a více
+ExpAuto12PCV=12 CV a více
+ExpAuto13PCV=13 CV a více
+ExpCyclo=Kapacita je nižší než 50 cm3
+ExpMoto12CV=Motocykl 1 nebo 2 životopisy
+ExpMoto345CV=Motocykl 3, 4 nebo 5 CV
+ExpMoto5PCV=Motocykl 5 CV a více
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

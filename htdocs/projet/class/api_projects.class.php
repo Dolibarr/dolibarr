@@ -46,10 +46,17 @@ class Projects extends DolibarrApi
     /**
      * Constructor
      */
+<<<<<<< HEAD
     function __construct()
     {
 		global $db, $conf;
 		$this->db = $db;
+=======
+    public function __construct()
+    {
+        global $db, $conf;
+        $this->db = $db;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $this->project = new Project($this->db);
         $this->task = new Task($this->db);
     }
@@ -61,6 +68,7 @@ class Projects extends DolibarrApi
      *
      * @param       int         $id         ID of project
      * @return 	array|mixed data without useless information
+<<<<<<< HEAD
 	 *
      * @throws 	RestException
      */
@@ -69,18 +77,37 @@ class Projects extends DolibarrApi
 		if(! DolibarrApiAccess::$user->rights->projet->lire) {
 			throw new RestException(401);
 		}
+=======
+     *
+     * @throws 	RestException
+     */
+    public function get($id)
+    {
+        if(! DolibarrApiAccess::$user->rights->projet->lire) {
+            throw new RestException(401);
+        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         $result = $this->project->fetch($id);
         if( ! $result ) {
             throw new RestException(404, 'Project not found');
         }
 
+<<<<<<< HEAD
 		if( ! DolibarrApi::_checkAccessToResource('project',$this->project->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
         $this->project->fetchObjectLinked();
 		return $this->_cleanObjectDatas($this->project);
+=======
+        if ( ! DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        $this->project->fetchObjectLinked();
+        return $this->_cleanObjectDatas($this->project);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
 
@@ -98,7 +125,12 @@ class Projects extends DolibarrApi
      * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
      * @return  array                               Array of project objects
      */
+<<<<<<< HEAD
     function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '') {
+=======
+    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '')
+    {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         global $db, $conf;
 
         $obj_ret = array();
@@ -132,7 +164,11 @@ class Projects extends DolibarrApi
             {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
+<<<<<<< HEAD
 	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+=======
+            $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
@@ -170,7 +206,11 @@ class Projects extends DolibarrApi
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No project found');
         }
+<<<<<<< HEAD
 		return $obj_ret;
+=======
+        return $obj_ret;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
     /**
@@ -179,11 +219,19 @@ class Projects extends DolibarrApi
      * @param   array   $request_data   Request data
      * @return  int     ID of project
      */
+<<<<<<< HEAD
     function post($request_data = null)
     {
       if(! DolibarrApiAccess::$user->rights->projet->creer) {
 			  throw new RestException(401, "Insuffisant rights");
 		  }
+=======
+    public function post($request_data = null)
+    {
+        if(! DolibarrApiAccess::$user->rights->projet->creer) {
+            throw new RestException(401, "Insuffisant rights");
+        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         // Check mandatory fields
         $result = $this->_validate($request_data);
 
@@ -214,6 +262,7 @@ class Projects extends DolibarrApi
      *
      * @url	GET {id}/tasks
      */
+<<<<<<< HEAD
     function getLines($id, $includetimespent=0) {
       if(! DolibarrApiAccess::$user->rights->projet->lire) {
 		  	throw new RestException(401);
@@ -243,6 +292,38 @@ class Projects extends DolibarrApi
           array_push($result,$this->_cleanObjectDatas($line));
       }
       return $result;
+=======
+    public function getLines($id, $includetimespent = 0)
+    {
+        if (! DolibarrApiAccess::$user->rights->projet->lire) {
+            throw new RestException(401);
+        }
+
+        $result = $this->project->fetch($id);
+        if ( ! $result ) {
+            throw new RestException(404, 'Project not found');
+        }
+
+        if ( ! DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+        $this->project->getLinesArray(DolibarrApiAccess::$user);
+        $result = array();
+        foreach ($this->project->lines as $line)      // $line is a task
+        {
+            if ($includetimespent == 1)
+            {
+                $timespent = $line->getSummaryOfTimeSpent(0);
+            }
+            if ($includetimespent == 1)
+            {
+                // TODO
+                // Add class for timespent records and loop and fill $line->lines with records of timespent
+            }
+            array_push($result, $this->_cleanObjectDatas($line));
+        }
+        return $result;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
 
@@ -256,19 +337,35 @@ class Projects extends DolibarrApi
      *
      * @return int
      */
+<<<<<<< HEAD
     function getRoles($id, $userid=0) {
         global $db;
 
         if(! DolibarrApiAccess::$user->rights->projet->lire) {
+=======
+    public function getRoles($id, $userid = 0)
+    {
+        global $db;
+
+        if (! DolibarrApiAccess::$user->rights->projet->lire) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             throw new RestException(401);
         }
 
         $result = $this->project->fetch($id);
+<<<<<<< HEAD
         if( ! $result ) {
             throw new RestException(404, 'Project not found');
         }
 
         if( ! DolibarrApi::_checkAccessToResource('project',$this->project->id)) {
+=======
+        if ( ! $result ) {
+            throw new RestException(404, 'Project not found');
+        }
+
+        if ( ! DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -283,7 +380,11 @@ class Projects extends DolibarrApi
         $this->project->roles = $taskstatic->getUserRolesForProjectsOrTasks($userp, 0, $id, 0);
         $result = array();
         foreach ($this->project->roles as $line) {
+<<<<<<< HEAD
             array_push($result,$this->_cleanObjectDatas($line));
+=======
+            array_push($result, $this->_cleanObjectDatas($line));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
         return $result;
     }
@@ -300,6 +401,7 @@ class Projects extends DolibarrApi
      * @return int
      */
     /*
+<<<<<<< HEAD
     function postLine($id, $request_data = null) {
       if(! DolibarrApiAccess::$user->rights->projet->creer) {
 		  	throw new RestException(401);
@@ -315,6 +417,24 @@ class Projects extends DolibarrApi
       }
 			$request_data = (object) $request_data;
       $updateRes = $this->project->addline(
+=======
+    public function postLine($id, $request_data = null)
+    {
+        if(! DolibarrApiAccess::$user->rights->projet->creer) {
+            throw new RestException(401);
+        }
+
+        $result = $this->project->fetch($id);
+        if( ! $result ) {
+            throw new RestException(404, 'Project not found');
+        }
+
+        if( ! DolibarrApi::_checkAccessToResource('project',$this->project->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+        $request_data = (object) $request_data;
+        $updateRes = $this->project->addline(
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                         $request_data->desc,
                         $request_data->subprice,
                         $request_data->qty,
@@ -340,6 +460,7 @@ class Projects extends DolibarrApi
                         $request_data->fk_unit,
                         $this->element,
                         $request_data->id
+<<<<<<< HEAD
       );
 
       if ($updateRes > 0) {
@@ -347,6 +468,15 @@ class Projects extends DolibarrApi
 
       }
       return false;
+=======
+        );
+
+        if ($updateRes > 0) {
+            return $updateRes;
+
+        }
+        return false;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
     */
 
@@ -362,6 +492,7 @@ class Projects extends DolibarrApi
      * @return object
      */
     /*
+<<<<<<< HEAD
     function putLine($id, $lineid, $request_data = null) {
       if(! DolibarrApiAccess::$user->rights->projet->creer) {
 		  	throw new RestException(401);
@@ -377,6 +508,24 @@ class Projects extends DolibarrApi
       }
 			$request_data = (object) $request_data;
       $updateRes = $this->project->updateline(
+=======
+    public function putLine($id, $lineid, $request_data = null)
+    {
+        if(! DolibarrApiAccess::$user->rights->projet->creer) {
+            throw new RestException(401);
+        }
+
+        $result = $this->project->fetch($id);
+        if( ! $result ) {
+            throw new RestException(404, 'Project not found');
+        }
+
+        if( ! DolibarrApi::_checkAccessToResource('project',$this->project->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+        $request_data = (object) $request_data;
+        $updateRes = $this->project->updateline(
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                         $lineid,
                         $request_data->desc,
                         $request_data->subprice,
@@ -398,6 +547,7 @@ class Projects extends DolibarrApi
                         $request_data->special_code,
                         $request_data->array_options,
                         $request_data->fk_unit
+<<<<<<< HEAD
       );
 
       if ($updateRes > 0) {
@@ -406,6 +556,16 @@ class Projects extends DolibarrApi
         return $this->_cleanObjectDatas($result);
       }
       return false;
+=======
+        );
+
+        if ($updateRes > 0) {
+            $result = $this->get($id);
+            unset($result->line);
+            return $this->_cleanObjectDatas($result);
+        }
+        return false;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }*/
 
 
@@ -418,25 +578,43 @@ class Projects extends DolibarrApi
      *
      * @return int
      */
+<<<<<<< HEAD
     function put($id, $request_data = null) {
       if(! DolibarrApiAccess::$user->rights->projet->creer) {
 		  	throw new RestException(401);
 		  }
+=======
+    public function put($id, $request_data = null)
+    {
+        if (! DolibarrApiAccess::$user->rights->projet->creer) {
+            throw new RestException(401);
+        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         $result = $this->project->fetch($id);
         if ($result <= 0) {
             throw new RestException(404, 'Project not found');
         }
 
+<<<<<<< HEAD
 		if( ! DolibarrApi::_checkAccessToResource('project',$this->project->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+=======
+        if ( ! DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         foreach($request_data as $field => $value) {
             if ($field == 'id') continue;
             $this->project->$field = $value;
         }
 
+<<<<<<< HEAD
         if($this->project->update(DolibarrApiAccess::$user) >= 0)
+=======
+        if ($this->project->update(DolibarrApiAccess::$user) >= 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         {
             return $this->get($id);
         }
@@ -453,6 +631,7 @@ class Projects extends DolibarrApi
      *
      * @return  array
      */
+<<<<<<< HEAD
     function delete($id)
     {
         if(! DolibarrApiAccess::$user->rights->projet->supprimer) {
@@ -468,6 +647,23 @@ class Projects extends DolibarrApi
 		}
 
         if( ! $this->project->delete(DolibarrApiAccess::$user)) {
+=======
+    public function delete($id)
+    {
+        if (! DolibarrApiAccess::$user->rights->projet->supprimer) {
+            throw new RestException(401);
+        }
+        $result = $this->project->fetch($id);
+        if ( ! $result ) {
+            throw new RestException(404, 'Project not found');
+        }
+
+        if ( ! DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        if ( ! $this->project->delete(DolibarrApiAccess::$user)) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             throw new RestException(500, 'Error when delete project : '.$this->project->error);
         }
 
@@ -477,7 +673,10 @@ class Projects extends DolibarrApi
                 'message' => 'Project deleted'
             )
         );
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
     /**
@@ -498,16 +697,25 @@ class Projects extends DolibarrApi
      *   "notrigger": 0
      * }
      */
+<<<<<<< HEAD
     function validate($id, $notrigger=0)
     {
         if(! DolibarrApiAccess::$user->rights->projet->creer) {
 			throw new RestException(401);
 		}
+=======
+    public function validate($id, $notrigger = 0)
+    {
+        if(! DolibarrApiAccess::$user->rights->projet->creer) {
+            throw new RestException(401);
+        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $result = $this->project->fetch($id);
         if( ! $result ) {
             throw new RestException(404, 'Project not found');
         }
 
+<<<<<<< HEAD
 		if( ! DolibarrApi::_checkAccessToResource('project',$this->project->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
@@ -519,6 +727,19 @@ class Projects extends DolibarrApi
 		if ($result < 0) {
 		    throw new RestException(500, 'Error when validating Project: '.$this->project->error);
 		}
+=======
+        if ( ! DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        $result = $this->project->setValid(DolibarrApiAccess::$user, $notrigger);
+        if ($result == 0) {
+            throw new RestException(304, 'Error nothing done. May be object is already validated');
+        }
+        if ($result < 0) {
+            throw new RestException(500, 'Error when validating Project: '.$this->project->error);
+        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         return array(
             'success' => array(
@@ -529,14 +750,24 @@ class Projects extends DolibarrApi
     }
 
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     /**
      * Clean sensible object datas
      *
      * @param   object  $object    Object to clean
      * @return    array    Array of cleaned object properties
      */
+<<<<<<< HEAD
     function _cleanObjectDatas($object) {
 
+=======
+    protected function _cleanObjectDatas($object)
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $object = parent::_cleanObjectDatas($object);
 
         unset($object->titre);
@@ -553,7 +784,11 @@ class Projects extends DolibarrApi
         unset($object->fk_account);
         unset($object->note);
         unset($object->fk_incoterms);
+<<<<<<< HEAD
         unset($object->libelle_incoterms);
+=======
+        unset($object->label_incoterms);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         unset($object->location_incoterms);
         unset($object->name);
         unset($object->lastname);
@@ -585,14 +820,21 @@ class Projects extends DolibarrApi
      * @return  array
      * @throws  RestException
      */
+<<<<<<< HEAD
     function _validate($data)
+=======
+    private function _validate($data)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $object = array();
         foreach (self::$FIELDS as $field) {
             if (!isset($data[$field]))
                 throw new RestException(400, "$field field missing");
             $object[$field] = $data[$field];
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
         return $object;
     }

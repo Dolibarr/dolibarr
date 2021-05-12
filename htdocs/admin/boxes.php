@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,8 +37,13 @@ $langs->loadLangs(array('admin', 'boxes'));
 
 if (! $user->admin) accessforbidden();
 
+<<<<<<< HEAD
 $rowid = GETPOST('rowid','int');
 $action = GETPOST('action','alpha');
+=======
+$rowid = GETPOST('rowid', 'int');
+$action = GETPOST('action', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 // Define possible position of boxes
@@ -48,8 +57,13 @@ $boxes = array();
 
 if ($action == 'addconst')
 {
+<<<<<<< HEAD
     dolibarr_set_const($db, "MAIN_BOXES_MAXLINES", $_POST["MAIN_BOXES_MAXLINES"],'',0,'',$conf->entity);
     dolibarr_set_const($db, "MAIN_ACTIVATE_FILECACHE", $_POST["MAIN_ACTIVATE_FILECACHE"],'chaine',0,'',$conf->entity);
+=======
+    dolibarr_set_const($db, "MAIN_BOXES_MAXLINES", $_POST["MAIN_BOXES_MAXLINES"], '', 0, '', $conf->entity);
+    dolibarr_set_const($db, "MAIN_ACTIVATE_FILECACHE", $_POST["MAIN_ACTIVATE_FILECACHE"], 'chaine', 0, '', $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 if ($action == 'add') {
@@ -106,8 +120,13 @@ if ($action == 'add') {
                             while($obj = $db->fetch_object($resql))
                             {
                                 $boxorder=$obj->box_order;
+<<<<<<< HEAD
                                 if (preg_match('/A/',$boxorder)) $nbboxonleft++;
                                 if (preg_match('/B/',$boxorder)) $nbboxonright++;
+=======
+                                if (preg_match('/A/', $boxorder)) $nbboxonleft++;
+                                if (preg_match('/B/', $boxorder)) $nbboxonright++;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                             }
                         }
                         else dol_print_error($db);
@@ -169,7 +188,11 @@ if ($action == 'delete')
 
 if ($action == 'switch')
 {
+<<<<<<< HEAD
 	// On permute les valeur du champ box_order des 2 lignes de la table boxes
+=======
+	// We switch values of field box_order for the 2 lines of table boxes
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$db->begin();
 
 	$objfrom=new ModeleBoxes($db);
@@ -186,9 +209,15 @@ if ($action == 'switch')
 		$newsecond=$objfrom->box_order;
 	    if ($newfirst == $newsecond)
 	    {
+<<<<<<< HEAD
 	         $newsecondchar=preg_replace('/[0-9]+/','',$newsecond);
 	         $newsecondnum=preg_replace('/[a-zA-Z]+/','',$newsecond);
 	         $newsecond=sprintf("%s%02d",$newsecondchar?$newsecondchar:'A',$newsecondnum+1);
+=======
+	         $newsecondchar=preg_replace('/[0-9]+/', '', $newsecond);
+	         $newsecondnum=preg_replace('/[a-zA-Z]+/', '', $newsecond);
+	         $newsecond=sprintf("%s%02d", $newsecondchar?$newsecondchar:'A', $newsecondnum+1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    }
 		$sql="UPDATE ".MAIN_DB_PREFIX."boxes SET box_order='".$newfirst."' WHERE rowid=".$objfrom->rowid;
 		dol_syslog($sql);
@@ -218,9 +247,15 @@ if ($action == 'switch')
 
 $form=new Form($db);
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("Boxes"));
 
 print load_fiche_titre($langs->trans("Boxes"),'','title_setup');
+=======
+llxHeader('', $langs->trans("Boxes"));
+
+print load_fiche_titre($langs->trans("Boxes"), '', 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print $langs->trans("BoxesDesc")." ".$langs->trans("OnlyActiveElementsAreShown")."<br>\n";
 
@@ -254,7 +289,11 @@ if ($resql)
 		$boxes[$obj->position][$obj->box_id]=1;
 		$i++;
 
+<<<<<<< HEAD
 		array_push($actives,$obj->box_id);
+=======
+		array_push($actives, $obj->box_id);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		if ($obj->box_order == '' || $obj->box_order == '0' || $decalage) $decalage++;
 		// On renumerote l'ordre des boites si l'une d'elle est a ''
@@ -283,28 +322,46 @@ if ($resql)
 			{
 				if (dol_strlen($record['box_order']) == 1)
 				{
+<<<<<<< HEAD
 					if (preg_match("/[13579]{1}/",substr($record['box_order'],-1)))
+=======
+					if (preg_match("/[13579]{1}/", substr($record['box_order'], -1)))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					{
 						$box_order = "A0".$record['box_order'];
 						$sql="UPDATE ".MAIN_DB_PREFIX."boxes SET box_order = '".$box_order."' WHERE entity = ".$conf->entity." AND box_order = '".$record['box_order']."'";
 						$resql = $db->query($sql);
 					}
+<<<<<<< HEAD
 					else if (preg_match("/[02468]{1}/",substr($record['box_order'],-1)))
+=======
+					elseif (preg_match("/[02468]{1}/", substr($record['box_order'], -1)))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					{
 						$box_order = "B0".$record['box_order'];
 						$sql="UPDATE ".MAIN_DB_PREFIX."boxes SET box_order = '".$box_order."' WHERE entity = ".$conf->entity." AND box_order = '".$record['box_order']."'";
 						$resql = $db->query($sql);
 					}
 				}
+<<<<<<< HEAD
 				else if (dol_strlen($record['box_order']) == 2)
 				{
 					if (preg_match("/[13579]{1}/",substr($record['box_order'],-1)))
+=======
+				elseif (dol_strlen($record['box_order']) == 2)
+				{
+					if (preg_match("/[13579]{1}/", substr($record['box_order'], -1)))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					{
 						$box_order = "A".$record['box_order'];
 						$sql="UPDATE ".MAIN_DB_PREFIX."boxes SET box_order = '".$box_order."' WHERE entity = ".$conf->entity." AND box_order = '".$record['box_order']."'";
 						$resql = $db->query($sql);
 					}
+<<<<<<< HEAD
 					else if (preg_match("/[02468]{1}/",substr($record['box_order'],-1)))
+=======
+					elseif (preg_match("/[02468]{1}/", substr($record['box_order'], -1)))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					{
 						$box_order = "B".$record['box_order'];
 						$sql="UPDATE ".MAIN_DB_PREFIX."boxes SET box_order = '".$box_order."' WHERE entity = ".$conf->entity." AND box_order = '".$record['box_order']."'";
@@ -318,9 +375,15 @@ if ($resql)
 }
 
 // Available boxes to activate
+<<<<<<< HEAD
 $boxtoadd=InfoBox::listBoxes($db,'available',-1,null,$actives);
 // Activated boxes
 $boxactivated=InfoBox::listBoxes($db,'activated',-1,null);
+=======
+$boxtoadd=InfoBox::listBoxes($db, 'available', -1, null, $actives);
+// Activated boxes
+$boxactivated=InfoBox::listBoxes($db, 'activated', -1, null);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print "<br>\n";
 print "\n\n".'<!-- Boxes Available -->'."\n";
@@ -337,24 +400,41 @@ print '<tr class="liste_titre">';
 print '<td width="300">'.$langs->trans("Box").'</td>';
 print '<td>'.$langs->trans("Note").'/'.$langs->trans("Parameters").'</td>';
 print '<td>'.$langs->trans("SourceFile").'</td>';
+<<<<<<< HEAD
 print '<td width="160" align="center">'.$langs->trans("ActivateOn").'</td>';
+=======
+print '<td width="160" class="center">'.$langs->trans("ActivateOn").'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print "</tr>\n";
 
 foreach($boxtoadd as $box)
 {
+<<<<<<< HEAD
     if (preg_match('/^([^@]+)@([^@]+)$/i',$box->boximg))
+=======
+    if (preg_match('/^([^@]+)@([^@]+)$/i', $box->boximg))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $logo = $box->boximg;
     }
     else
     {
+<<<<<<< HEAD
         $logo=preg_replace("/^object_/i","",$box->boximg);
+=======
+        $logo=preg_replace("/^object_/i", "", $box->boximg);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
     print "\n".'<!-- Box '.$box->boxcode.' -->'."\n";
     print '<tr class="oddeven">'."\n";
+<<<<<<< HEAD
     print '<td>'.img_object("",$logo).' '.$langs->transnoentitiesnoconv($box->boxlabel);
     if (! empty($box->class) && preg_match('/graph_/',$box->class)) print ' ('.$langs->trans("Graph").')';
+=======
+    print '<td>'.img_object("", $logo).' '.$langs->transnoentitiesnoconv($box->boxlabel);
+    if (! empty($box->class) && preg_match('/graph_/', $box->class)) print ' ('.$langs->trans("Graph").')';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print '</td>'."\n";
     print '<td>';
     if ($box->note == '(WarningUsingThisBoxSlowDown)')
@@ -398,33 +478,53 @@ print '<table class="tagtable liste">'."\n";
 print '<tr class="liste_titre">';
 print '<td width="300">'.$langs->trans("Box").'</td>';
 print '<td>'.$langs->trans("Note").'/'.$langs->trans("Parameters").'</td>';
+<<<<<<< HEAD
 print '<td align="center" width="160">'.$langs->trans("ActiveOn").'</td>';
 print '<td align="center" width="60" colspan="2">'.$langs->trans("PositionByDefault").'</td>';
 print '<td align="center" width="80">'.$langs->trans("Disable").'</td>';
+=======
+print '<td class="center" width="160">'.$langs->trans("ActiveOn").'</td>';
+print '<td class="center" width="60" colspan="2">'.$langs->trans("PositionByDefault").'</td>';
+print '<td class="center" width="80">'.$langs->trans("Disable").'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</tr>'."\n";
 
 $box_order=1;
 $foundrupture=1;
 foreach($boxactivated as $key => $box)
 {
+<<<<<<< HEAD
 	if (preg_match('/^([^@]+)@([^@]+)$/i',$box->boximg))
+=======
+	if (preg_match('/^([^@]+)@([^@]+)$/i', $box->boximg))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$logo = $box->boximg;
 	}
 	else
 	{
+<<<<<<< HEAD
 		$logo=preg_replace("/^object_/i","",$box->boximg);
+=======
+		$logo=preg_replace("/^object_/i", "", $box->boximg);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
     print "\n".'<!-- Box '.$box->boxcode.' -->'."\n";
 	print '<tr class="oddeven">';
+<<<<<<< HEAD
 	print '<td>'.img_object("",$logo).' '.$langs->transnoentitiesnoconv($box->boxlabel);
 	if (! empty($box->class) && preg_match('/graph_/',$box->class)) print ' ('.$langs->trans("Graph").')';
+=======
+	print '<td>'.img_object("", $logo).' '.$langs->transnoentitiesnoconv($box->boxlabel);
+	if (! empty($box->class) && preg_match('/graph_/', $box->class)) print ' ('.$langs->trans("Graph").')';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</td>';
 	print '<td>';
 	if ($box->note == '(WarningUsingThisBoxSlowDown)')
 	{
 		$langs->load("errors");
+<<<<<<< HEAD
 		print img_warning('',0).' '.$langs->trans("WarningUsingThisBoxSlowDown");
 	}
 	else print ($box->note?$box->note:'&nbsp;');
@@ -438,6 +538,21 @@ foreach($boxactivated as $key => $box)
 	print ($hasprevious?'<a href="boxes.php?action=switch&amp;switchfrom='.$box->rowid.'&amp;switchto='.$boxactivated[$key-1]->rowid.'">'.img_up().'</a>':'');
 	print '</td>';
 	print '<td align="center">';
+=======
+		print img_warning('', 0).' '.$langs->trans("WarningUsingThisBoxSlowDown");
+	}
+	else print ($box->note?$box->note:'&nbsp;');
+	print '</td>';
+	print '<td class="center">' . (empty($pos_name[$box->position])?'':$langs->trans($pos_name[$box->position])) . '</td>';
+	$hasnext=($key < (count($boxactivated)-1));
+	$hasprevious=($key != 0);
+	print '<td class="center">'.($key+1).'</td>';
+	print '<td class="center">';
+	print ($hasnext?'<a href="boxes.php?action=switch&amp;switchfrom='.$box->rowid.'&amp;switchto='.$boxactivated[$key+1]->rowid.'">'.img_down().'</a>&nbsp;':'');
+	print ($hasprevious?'<a href="boxes.php?action=switch&amp;switchfrom='.$box->rowid.'&amp;switchto='.$boxactivated[$key-1]->rowid.'">'.img_up().'</a>':'');
+	print '</td>';
+	print '<td class="center">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '<a href="boxes.php?rowid='.$box->rowid.'&amp;action=delete">'.img_delete().'</a>';
 	print '</td>';
 
@@ -476,7 +591,11 @@ print '</tr>';
 if ($conf->global->MAIN_FEATURES_LEVEL == 2 || ! empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
 
     print '<tr class="oddeven"><td width="35%">'.$langs->trans("EnableFileCache").'</td><td>';
+<<<<<<< HEAD
     print $form->selectyesno('MAIN_ACTIVATE_FILECACHE',$conf->global->MAIN_ACTIVATE_FILECACHE,1);
+=======
+    print $form->selectyesno('MAIN_ACTIVATE_FILECACHE', $conf->global->MAIN_ACTIVATE_FILECACHE, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print '</td>';
     print '</tr>';
 }
@@ -488,7 +607,12 @@ print '<div class="center"><input type="submit" class="button" value="'.$langs->
 print '</form>';
 print "\n".'<!-- End Other Const -->'."\n";
 
+<<<<<<< HEAD
 
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

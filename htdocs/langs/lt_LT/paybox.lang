@@ -3,27 +3,47 @@ PayBoxSetup=Paybox modulio nustatymas
 PayBoxDesc=Šis modulis siūlo puslapius, leidžiančius mokėjimą <a href="http://www.paybox.com" target="_blank">Paybox</a> klientams. Tai gali būti naudojama nemokamam mokėjimui arba  tam tikram specifiniam Dolibarr mokėjimui (sąskaitos-faktūros, užskymas, ...)
 FollowingUrlAreAvailableToMakePayments=Sekantys URL siūlo puslapį klientui Dolibarr objektų mokėjimui
 PaymentForm=Mokėjimo forma
+<<<<<<< HEAD
 WelcomeOnPaymentPage=Sveiki atvykę į mūsų interneto mokėjimo paslaugą
+=======
+WelcomeOnPaymentPage=Welcome to our online payment service
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ThisScreenAllowsYouToPay=Šis ekranas leidžia atlikti internetinį mokėjimą į %s
 ThisIsInformationOnPayment=Tai informacija apie reikalingą atlikti mokėjimą
 ToComplete=Užbaigti
 YourEMail=E-paštas mokėjimo patvirtinimo gavimui
 Creditor=Kreditorius
 PaymentCode=Mokėjimo kodas
+<<<<<<< HEAD
 PayBoxDoPayment=Pay with Credit or Debit Card (Paybox)
+=======
+PayBoxDoPayment=Pay with Paybox
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ToPay=Atlikti mokėjimą
 YouWillBeRedirectedOnPayBox=Būsite nukreipti į saugų Paybox puslapį kredito kortelės informacijos įvedimui
 Continue=Kitas
 ToOfferALinkForOnlinePayment=URL %s mokėjimui
+<<<<<<< HEAD
 ToOfferALinkForOnlinePaymentOnOrder=URL siūlo %s interneto mokėjimui vartotojo sąsają kliento užsakymui
+=======
+ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment user interface for a sales order
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ToOfferALinkForOnlinePaymentOnInvoice=URL siūlo %s interneto mokėjimui vartotojo sąsają kliento sąskaitai-faktūrai
 ToOfferALinkForOnlinePaymentOnContractLine=URL siūlo %s interneto mokėjimui vartotojo sąsają sutarties eilutei.
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL siūlo %s interneto mokėjimui vartotojo sąsaja nemokamam kiekiui.
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL pasiūlymui %s interneto mokėjimui vartotojo sąsają nario pasirašymui.
+<<<<<<< HEAD
 YouCanAddTagOnUrl=Taip pat galite pridėti URL parametrą <b>&tag=<i>value</i></b> į bet kurį URL (reikalingas tik nemokamam mokėjimui) pridėti nuosavo mokėjimo komentaro žymę.
 SetupPayBoxToHavePaymentCreatedAutomatically=Nustatyti savo Paybox su URL <b>%s</b>, kad mokėjimas būtų sukuriamas automatiškai, kai patvirtintas per PayBox.
 YourPaymentHasBeenRecorded=Šis puslapis patvirtina, kad jūsų mokėjimas buvo užregistruotas. Ačiū.
 YourPaymentHasNotBeenRecorded=Mokėjimas nebuvo įregistruotas ir operacija buvo atšaukta. Ačiū.
+=======
+ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment, user interface for payment of donation
+YouCanAddTagOnUrl=Taip pat galite pridėti URL parametrą <b>&tag=<i>value</i></b> į bet kurį URL (reikalingas tik nemokamam mokėjimui) pridėti nuosavo mokėjimo komentaro žymę.
+SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
+YourPaymentHasBeenRecorded=Šis puslapis patvirtina, kad jūsų mokėjimas buvo užregistruotas. Ačiū.
+YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AccountParameter=Sąskaitos parametrai
 UsageParameter=Naudojimo parametrai
 InformationToFindParameters=Padėti rasti savo %s sąskaitos informaciją
@@ -32,7 +52,15 @@ VendorName=Paravėjo vardas
 CSSUrlForPaymentForm=CSS stiliaus lapo URL mokėjimo formai
 NewPayboxPaymentReceived=Naujas Paybox gautas mokėjimas
 NewPayboxPaymentFailed=Naujas Paybox mokėjimo bandymas, bet nepavykęs
+<<<<<<< HEAD
 PAYBOX_PAYONLINE_SENDEMAIL=E-laiškas įspėjimui po apmokėjimo (sėkmingas ar ne)
 PAYBOX_PBX_SITE=Value for PBX SITE
 PAYBOX_PBX_RANG=Value for PBX Rang
 PAYBOX_PBX_IDENTIFIANT=Value for PBX ID
+=======
+PAYBOX_PAYONLINE_SENDEMAIL=Email notification after payment attempt (success or fail)
+PAYBOX_PBX_SITE=Value for PBX SITE
+PAYBOX_PBX_RANG=Value for PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Value for PBX ID
+PAYBOX_HMAC_KEY=HMAC key
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

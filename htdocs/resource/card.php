@@ -22,12 +22,16 @@
  */
 
 
+<<<<<<< HEAD
 // Change this following line to use the correct relative path (../, ../../, etc)
 $res=0;
 $res=@include("../main.inc.php");				// For root directory
 if (! $res) $res=@include("../../main.inc.php");	// For "custom" directory
 if (! $res) die("Include of main fails");
 
+=======
+require '../main.inc.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
@@ -39,6 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 $langs->loadLangs(array('resource', 'companies', 'other', 'main'));
 
 // Get parameters
+<<<<<<< HEAD
 $id						= GETPOST('id','int');
 $action					= GETPOST('action','alpha');
 $cancel					= GETPOST('cancel','alpha');
@@ -46,6 +51,15 @@ $ref					= GETPOST('ref','alpha');
 $description			= GETPOST('description');
 $confirm				= GETPOST('confirm');
 $fk_code_type_resource	= GETPOST('fk_code_type_resource','alpha');
+=======
+$id						= GETPOST('id', 'int');
+$action					= GETPOST('action', 'alpha');
+$cancel					= GETPOST('cancel', 'alpha');
+$ref					= GETPOST('ref', 'alpha');
+$description			= GETPOST('description');
+$confirm				= GETPOST('confirm');
+$fk_code_type_resource	= GETPOST('fk_code_type_resource', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $country_id				= GETPOST('country_id', 'int');
 
 // Protection if external user
@@ -74,7 +88,11 @@ $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 $hookmanager->initHooks(array('resource', 'resource_card','globalcard'));
 $parameters=array('resource_id'=>$id);
+<<<<<<< HEAD
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+=======
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -102,7 +120,11 @@ if (empty($reshook))
 
 			if (empty($ref))
 			{
+<<<<<<< HEAD
 				setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref")), null, 'errors');
+=======
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$action = 'create';
 			}
 			else
@@ -113,7 +135,11 @@ if (empty($reshook))
 				$object->country_id             = $country_id;
 
 				// Fill array 'array_options' with data from add form
+<<<<<<< HEAD
 				$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+=======
+				$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if ($ret < 0) $error++;
 
 				$result=$object->create($user);
@@ -176,7 +202,10 @@ if (empty($reshook))
 					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
 				}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 			else
 			{
@@ -223,7 +252,11 @@ if (empty($reshook))
 * Put here all code to build page
 ****************************************************/
 $title = $langs->trans($action == 'create' ? 'AddResource' : 'ResourceSingular');
+<<<<<<< HEAD
 llxHeader('',$title,'');
+=======
+llxHeader('', $title, '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $form = new Form($db);
 $formresource = new FormResource($db);
@@ -232,7 +265,11 @@ if ($action == 'create' || $object->fetch($id) > 0)
 {
 	if ($action == 'create')
 	{
+<<<<<<< HEAD
 		print load_fiche_titre($title,'','title_generic');
+=======
+		print load_fiche_titre($title, '', 'title_generic');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		dol_fiche_head('');
 	}
 	else
@@ -243,8 +280,12 @@ if ($action == 'create' || $object->fetch($id) > 0)
 
 	if ($action == 'create' || $action == 'edit')
 	{
+<<<<<<< HEAD
 		if ( ! $user->rights->resource->write )
 			accessforbidden('',0);
+=======
+		if (! $user->rights->resource->write) accessforbidden('', 0, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Create/Edit object
 
@@ -256,12 +297,20 @@ if ($action == 'create' || $object->fetch($id) > 0)
 
 		// Ref
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("ResourceFormLabel_ref").'</td>';
+<<<<<<< HEAD
 		print '<td><input class="minwidth200" name="ref" value="'.($ref ? $ref : $object->ref).'"></td></tr>';
+=======
+		print '<td><input class="minwidth200" name="ref" value="'.($ref ? $ref : $object->ref).'" autofocus="autofocus"></td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Type
 		print '<tr><td>'.$langs->trans("ResourceType").'</td>';
 		print '<td>';
+<<<<<<< HEAD
 		$ret = $formresource->select_types_resource($object->fk_code_type_resource,'fk_code_type_resource','',2);
+=======
+		$ret = $formresource->select_types_resource($object->fk_code_type_resource, 'fk_code_type_resource', '', 2);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</td></tr>';
 
 		// Description
@@ -274,17 +323,30 @@ if ($action == 'create' || $object->fetch($id) > 0)
 
 		// Origin country
 		print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td>';
+<<<<<<< HEAD
 		print $form->select_country($object->country_id,'country_id');
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+=======
+		print $form->select_country($object->country_id, 'country_id');
+		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</td></tr>';
 
 		// Other attributes
 		$parameters=array('objectsrc' => $objectsrc);
+<<<<<<< HEAD
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
         print $hookmanager->resPrint;
 		if (empty($reshook))
 		{
 			print $object->showOptionals($extrafields,'edit');
+=======
+		$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+        print $hookmanager->resPrint;
+		if (empty($reshook))
+		{
+			print $object->showOptionals($extrafields, 'edit');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		print '</table>';
@@ -307,7 +369,11 @@ if ($action == 'create' || $object->fetch($id) > 0)
 		// Confirm deleting resource line
 	    if ($action == 'delete')
 	    {
+<<<<<<< HEAD
 	        $formconfirm = $form->formconfirm("card.php?&id=".$object->id,$langs->trans("DeleteResource"),$langs->trans("ConfirmDeleteResource"),"confirm_delete_resource",'','',1);
+=======
+	        $formconfirm = $form->formconfirm("card.php?&id=".$object->id, $langs->trans("DeleteResource"), $langs->trans("ConfirmDeleteResource"), "confirm_delete_resource", '', '', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    }
 
 	    // Print form confirm
@@ -330,7 +396,11 @@ if ($action == 'create' || $object->fetch($id) > 0)
 		/*---------------------------------------
 		 * View object
 		 */
+<<<<<<< HEAD
 		print '<table width="100%" class="border">';
+=======
+		print '<table class="border tableforfield centpercent">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Resource type
 		print '<tr>';
@@ -356,7 +426,11 @@ if ($action == 'create' || $object->fetch($id) > 0)
 		print '<tr>';
 		print '<td>'.$langs->trans("CountryOrigin").'</td>';
 		print '<td>';
+<<<<<<< HEAD
 		print getCountry($object->country_id,0,$db);
+=======
+		print getCountry($object->country_id, 0, $db);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</td>';
 		print '</tr>';
 
@@ -406,8 +480,11 @@ else {
 	dol_print_error();
 }
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 // End of page
 llxFooter();
 $db->close();

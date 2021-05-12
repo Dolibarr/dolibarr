@@ -33,12 +33,21 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 class modFTP extends DolibarrModules
 {
 
+<<<<<<< HEAD
    /**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
 	 *   @param      DoliDB		$db      Database handler
     */
 	function __construct($db)
+=======
+    /**
+     *   Constructor. Define names, constants, directories, boxes, permissions
+     *
+     *   @param      DoliDB		$db      Database handler
+    */
+	public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$this->db = $db;
 
@@ -50,7 +59,11 @@ class modFTP extends DolibarrModules
 		// It is used to sort modules in module setup page
 		$this->family = "interface";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+<<<<<<< HEAD
 		$this->name = preg_replace('/^mod/i','',get_class($this));
+=======
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// Module description used if translation string 'ModuleXXXDesc' not found (XXX is id value)
 		$this->description = "FTP Client";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -125,4 +138,7 @@ class modFTP extends DolibarrModules
 		$r++;
 	}
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

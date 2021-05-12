@@ -10,12 +10,20 @@ modify=wijzigen
 Classify=Classificeren
 CategoriesArea=Kenmerk / Categorieën omgeving
 ProductsCategoriesArea=Producten/Diensten kenmerk/categorieën omgeving
+<<<<<<< HEAD
 SuppliersCategoriesArea=Leveranciers kenmerken/categorieën omgeving
+=======
+SuppliersCategoriesArea=Vendors tags/categories area
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CustomersCategoriesArea=Klanten kenmerken/categorieën omgeving
 MembersCategoriesArea=Leden kenmerken/categorieën omgeving
 ContactsCategoriesArea=Contacten labels/categorieën omgeving
 AccountsCategoriesArea=Labels/categorieën rekeningen
 ProjectsCategoriesArea=Labels/categorieën projecten
+<<<<<<< HEAD
+=======
+UsersCategoriesArea=Users tags/categories area
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SubCats=Sub-categorieën
 CatList=Lijst van kenmerken/categorieën
 NewCategory=Nieuw label/categorie
@@ -31,7 +39,11 @@ WasAddedSuccessfully=<b>%s</b> is succesvol toegevoegd.
 ObjectAlreadyLinkedToCategory=Element is al verbonden met deze label/categorie.
 ProductIsInCategories=Product/dienst is gekoppeld aan de volgende kenmerken/categorieën
 CompanyIsInCustomersCategories=Deze relatie behoort tot volgende klanten/prospects kenmerk/categorieën
+<<<<<<< HEAD
 CompanyIsInSuppliersCategories=Deze relatie is gekoppeld aan de volgende leverancier kenmerken/categorieën 
+=======
+CompanyIsInSuppliersCategories=This third party is linked to following vendors tags/categories
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MemberIsInCategories=Dit lid is gekoppeld aan de volgende leden kenmerken/categorieën
 ContactIsInCategories=Deze contactpersoon is gekoppeld aan de volgende labels/categorieën voor contactpersonen
 ProductHasNoCategory=Product/dienst staat niet in kenmerken/categorieën
@@ -47,6 +59,7 @@ ContentsNotVisibleByAllShort=Inhoud is niet zichtbaar voor iedereen
 DeleteCategory=Delete label/categorie
 ConfirmDeleteCategory=Weet u zeker dat u dit label / deze categorie wilt verwijderen?
 NoCategoriesDefined=Geen label/categorie gedefinieerd
+<<<<<<< HEAD
 SuppliersCategoryShort=Kenmerk/categorie leveranciers
 CustomersCategoryShort=Klanten kenmerk/categorie
 ProductsCategoryShort=Label/categorie van producten
@@ -55,20 +68,40 @@ SuppliersCategoriesShort=Leveranciers kenmerk/cat.
 CustomersCategoriesShort=Klanten kenmerk/categorieën
 ProspectsCategoriesShort=Prospects labels/categorieën
 CustomersProspectsCategoriesShort=Afnemers- / Prospectencategorie
+=======
+SuppliersCategoryShort=Vendors tag/category
+CustomersCategoryShort=Klanten kenmerk/categorie
+ProductsCategoryShort=Label/categorie van producten
+MembersCategoryShort=Leden label/categorie
+SuppliersCategoriesShort=Vendors tags/categories
+CustomersCategoriesShort=Klanten kenmerk/categorieën
+ProspectsCategoriesShort=Prospects labels/categorieën
+CustomersProspectsCategoriesShort=Cust./Prosp. tags/categories
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProductsCategoriesShort=Producten kenmerk/categorieën
 MembersCategoriesShort=Leden kenmerk/categorieën
 ContactCategoriesShort=Contacten labels/categorieën
 AccountsCategoriesShort=Labels/categorieën rekeningen
 ProjectsCategoriesShort=Labels/categorieën projecten
+<<<<<<< HEAD
 ThisCategoryHasNoProduct=Deze categorie bevat geen producten.
 ThisCategoryHasNoSupplier=Deze categorie bevat geen enkele leverancier.
+=======
+UsersCategoriesShort=Users tags/categories
+ThisCategoryHasNoProduct=Deze categorie bevat geen producten.
+ThisCategoryHasNoSupplier=This category does not contain any vendor.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ThisCategoryHasNoCustomer=Deze categorie bevat geen enkele afnemer.
 ThisCategoryHasNoMember=Deze categorie bevat geen enkel lid.
 ThisCategoryHasNoContact=Deze categorie bevat geen enkel contact.
 ThisCategoryHasNoAccount=This category does not contain any account.
 ThisCategoryHasNoProject=This category does not contain any project.
 CategId=Label/categorie id
+<<<<<<< HEAD
 CatSupList=Lijst van leverancier kenmerken/ categorieën
+=======
+CatSupList=List of vendor tags/categories
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CatCusList=Lijst van de klant/prospect kenmerken/categorieën
 CatProdList=Lijst van product kenmerken/categorieën
 CatMemberList=Lijst leden kenmerken/categorieën
@@ -81,7 +114,11 @@ DeleteFromCat=Verwijderen uit labels/categorie
 ExtraFieldsCategories=Complementaire kenmerken
 CategoriesSetup=Labels/categorieën instelling
 CategorieRecursiv= Automatische koppeling met bovenliggende label/categorie
+<<<<<<< HEAD
 CategorieRecursivHelp=Indien geactiveerd zal het product ook gelinkt worden met de bovenliggende categorie wanneer een subcategorie toegevoegd wordt.
+=======
+CategorieRecursivHelp=If option is on, when you add a product into a subcategory, product will also be added into the parent category.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddProductServiceIntoCategory=Voeg het volgende product/dienst toe
 ShowCategory=Toon label/categorie
 ByDefaultInList=Standaard in de lijst

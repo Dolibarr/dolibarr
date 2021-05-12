@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 -- Copyright (C) 2016 		Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+=======
+-- Copyright (C) 2016 		Alexandre Spangaro   <aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 -- Copyright (C) 2017 		Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify

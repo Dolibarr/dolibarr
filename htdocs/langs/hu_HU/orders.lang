@@ -16,6 +16,7 @@ MakeOrder=Rendelés készítése
 SupplierOrder=Purchase order
 SuppliersOrders=Purchase orders
 SuppliersOrdersRunning=Current purchase orders
+<<<<<<< HEAD
 CustomerOrder=Az ügyfelek érdekében
 CustomersOrders=Vevői megrendelések
 CustomersOrdersRunning=Jelenlegi vevő megrendelései
@@ -24,6 +25,16 @@ OrdersDeliveredToBill=Kézbesített számlázandó vevő megrendelések
 OrdersToBill=Kézbesített vevő megrendelések
 OrdersInProcess=Folyamatban lévő vevő megrendelések
 OrdersToProcess=Feldolgozandó vevő megrendelések
+=======
+CustomerOrder=Sales Order
+CustomersOrders=Sales Orders
+CustomersOrdersRunning=Current sales orders
+CustomersOrdersAndOrdersLines=Sales orders and order details
+OrdersDeliveredToBill=Sales orders delivered to bill
+OrdersToBill=Sales orders delivered
+OrdersInProcess=Sales orders in process
+OrdersToProcess=Sales orders to process
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SuppliersOrdersToProcess=Purchase orders to process
 StatusOrderCanceledShort=Visszavonva
 StatusOrderDraftShort=Tervezet
@@ -76,8 +87,13 @@ OrdersOpened=Feldolgozandó megrendelések
 NoDraftOrders=Nincsenek megrendelés tervek
 NoOrder=Nincs megrendelés
 NoSupplierOrder=No purchase order
+<<<<<<< HEAD
 LastOrders=Utolsó %s vevői megrendelések
 LastCustomerOrders=Utolsó %s vevői megrendelések
+=======
+LastOrders=Latest %s sales orders
+LastCustomerOrders=Latest %s sales orders
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LastSupplierOrders=Latest %s purchase orders
 LastModifiedOrders=Utolsó %s módosított megrendelések
 AllOrders=Minden megrendelés
@@ -85,10 +101,17 @@ NbOfOrders=Megrendelések száma
 OrdersStatistics=Rendelési statisztikák
 OrdersStatisticsSuppliers=Purchase order statistics
 NumberOfOrdersByMonth=Megrendelések száma havonta
+<<<<<<< HEAD
 AmountOfOrdersByMonthHT=Megrendelések összege havonta (nettó)
 ListOfOrders=Megrendelések listája
 CloseOrder=Megrendelés lezárása
 ConfirmCloseOrder=Biztosan kiszállítottként szeretné megjelölni ezt a rendelést? A kézbesített megrendeléseket számlázottként is meg lehet jelölni.
+=======
+AmountOfOrdersByMonthHT=Amount of orders by month (excl. tax)
+ListOfOrders=Megrendelések listája
+CloseOrder=Megrendelés lezárása
+ConfirmCloseOrder=Are you sure you want to set this order to delivered? Once an order is delivered, it can be set to billed.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmDeleteOrder=Biztos benne, hogy törölni kívánja ezt a megrendelést?
 ConfirmValidateOrder=Biztosan érvényesíteni szeretné ezt a megrendelést ezzel a számmal  <b>%s</b>?
 ConfirmUnvalidateOrder=Biztos vagy benne, hogy a <b>%s</b> megrendelést vissza akarja tervezetnek állítani?
@@ -110,6 +133,7 @@ OrderMode=Megrendelés módja
 AuthorRequest=Készítette
 UserWithApproveOrderGrant='Megrendelés jóváhagyása' jogosultsággal rendelkező felhasználók
 PaymentOrderRef=%s megrendeléssel kapcsolatos fizetések
+<<<<<<< HEAD
 CloneOrder=Megrendelés klónozása
 ConfirmCloneOrder=Biztosan klónozni szeretné ezt a <b>%s</b> megrendelést?
 DispatchSupplierOrder=Beszállítói megrendelés %s fogadása
@@ -121,6 +145,18 @@ SupplierOrderClassifiedBilled=Purchase Order %s set billed
 OtherOrders=Egyéb megrendelések
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Reprezentatív nyomon követése az ügyfelek érdekében
+=======
+ConfirmCloneOrder=Biztosan klónozni szeretné ezt a <b>%s</b> megrendelést?
+DispatchSupplierOrder=Receiving purchase order %s
+FirstApprovalAlreadyDone=Első jóváhagyás már elvégezve
+SecondApprovalAlreadyDone=Másod jóváhagyás már elvégezve
+SupplierOrderReceivedInDolibarr=Purchase Order %s received %s
+SupplierOrderSubmitedInDolibarr=Purchase Order %s submitted
+SupplierOrderClassifiedBilled=Purchase Order %s set billed
+OtherOrders=Egyéb megrendelések
+##### Types de contacts #####
+TypeContact_commande_internal_SALESREPFOLL=Representative following-up sales order
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TypeContact_commande_internal_SHIPPING=Képviselő-up a következő hajózási
 TypeContact_commande_external_BILLING=Vevő számlázási cím
 TypeContact_commande_external_SHIPPING=Vevő szállítási cím
@@ -141,6 +177,10 @@ OrderByWWW=Online
 OrderByPhone=Telefon
 # Documents models
 PDFEinsteinDescription=Teljes megrendelés sablon (logo,...)
+<<<<<<< HEAD
+=======
+PDFEratostheneDescription=Teljes megrendelés sablon (logo,...)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PDFEdisonDescription=Egyszerű megrendelési sablon
 PDFProformaDescription=A teljes proforma számla sablon (logo, ..)
 CreateInvoiceForThisCustomer=Megrendelések számlázása

@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +43,11 @@ class Client extends Societe
      *
      *  @param	DoliDB	$db		Database handler
      */
+<<<<<<< HEAD
     function __construct($db)
+=======
+    public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $this->db = $db;
 
@@ -47,13 +55,23 @@ class Client extends Societe
         $this->fournisseur = 0;
     }
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     /**
      *  Load indicators into this->nb for board
      *
      *  @return     int         <0 if KO, >0 if OK
      */
+<<<<<<< HEAD
     function load_state_board()
     {
+=======
+    public function load_state_board()
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         global $user;
 
         $this->nb=array("customers" => 0,"prospects" => 0);
@@ -88,7 +106,10 @@ class Client extends Societe
             $this->error=$this->db->lasterror();
             return -1;
         }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
 	/**
@@ -97,7 +118,11 @@ class Client extends Societe
 	 *  @param	int		$active     1=Active only, 0=Not active only, -1=All
 	 *  @return int					<0 if KO, >0 if OK
 	 */
+<<<<<<< HEAD
     function loadCacheOfProspStatus($active=1)
+=======
+    public function loadCacheOfProspStatus($active = 1)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
     	global $langs;
 
@@ -106,13 +131,20 @@ class Client extends Societe
 		$resql=$this->db->query($sql);
 		$num=$this->db->num_rows($resql);
 		$i=0;
+<<<<<<< HEAD
 		while ($i < $num)
 		{
+=======
+		while ($i < $num) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$obj=$this->db->fetch_object($resql);
 			$this->cacheprospectstatus[$obj->id]=array('id'=>$obj->id, 'code'=>$obj->code, 'label'=> ($langs->trans("ST_".strtoupper($obj->code))=="ST_".strtoupper($obj->code))?$obj->label:$langs->trans("ST_".strtoupper($obj->code)));
 			$i++;
 		}
 		return 1;
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

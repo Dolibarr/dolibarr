@@ -6,9 +6,33 @@ namespace Stripe;
  * Class Recipient
  *
  * @package Stripe
+<<<<<<< HEAD
  */
 class Recipient extends ApiResource
 {
+=======
+ *
+ * @property string $id
+ * @property string $object
+ * @property mixed $active_account
+ * @property Collection $cards
+ * @property int $created
+ * @property string $default_card
+ * @property string $description
+ * @property string $email
+ * @property bool $livemode
+ * @property StripeObject $metadata
+ * @property string $migrated_to
+ * @property string $name
+ * @property string $rolled_back_from
+ * @property string $type
+ */
+class Recipient extends ApiResource
+{
+
+    const OBJECT_NAME = "recipient";
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     use ApiOperations\All;
     use ApiOperations\Create;
     use ApiOperations\Delete;

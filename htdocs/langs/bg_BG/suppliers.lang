@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Vendors
 SuppliersInvoice=Vendor invoice
@@ -45,3 +46,52 @@ BuyerName=Buyer name
 AllProductServicePrices=All product / service prices
 AllProductReferencesOfSupplier=All product / service references of supplier
 BuyingPriceNumShort=Vendor prices
+=======
+# Dolibarr language file - Source file is en_US - vendors
+Suppliers=Доставчици
+SuppliersInvoice=Фактура за доставка
+ShowSupplierInvoice=Покажи фактурата от доставчика
+NewSupplier=Нов доставчик
+History=История
+ListOfSuppliers=Списък на доставчици
+ShowSupplier=Показване на доставчик
+OrderDate=Дата на поръчка
+BuyingPriceMin=Най-добра покупна цена
+BuyingPriceMinShort=Най-добра покупна цена
+TotalBuyingPriceMinShort=Обща сума от покупните цени на субпродукти
+TotalSellingPriceMinShort=Обща сума от продажните цени на субпродукти
+SomeSubProductHaveNoPrices=Някои субпродукти нямат дефинирана цена
+AddSupplierPrice=Добавяне на покупна цена
+ChangeSupplierPrice=Променяне на покупна цена
+SupplierPrices=Доставни цени
+ReferenceSupplierIsAlreadyAssociatedWithAProduct=Този идентификатор е вече свързан с продукт: %s
+NoRecordedSuppliers=Няма регистриран доставчик
+SupplierPayment=Плащане към доставчик
+SuppliersArea=Зона на доставчиците
+RefSupplierShort=Реф. № на доставчик
+Availability=Наличност
+ExportDataset_fournisseur_1=Фактури за доставка и подробности за фактурите
+ExportDataset_fournisseur_2=Фактури и плащания за доставка
+ExportDataset_fournisseur_3=Поръчки за покупка и подробности за поръчките
+ApproveThisOrder=Одобряване на поръчка
+ConfirmApproveThisOrder=Сигурни ли сте, че искате да одобрите тази поръчка <b>%s</b>?
+DenyingThisOrder=Отхвърляне на поръчка
+ConfirmDenyingThisOrder=Сигурни ли сте, че искате да отхвърлите тази поръчка <b>%s</b>?
+ConfirmCancelThisOrder=Сигурни ли сте, че искате да анулирате тази поръчка <b>%s</b>?
+AddSupplierOrder=Създаване на поръчка за покупка
+AddSupplierInvoice=Създаване на фактура за доставка
+ListOfSupplierProductForSupplier=Списък на продукти и цени за доставчик <b>%s</b>
+SentToSuppliers=Изпратено към доставчиците
+ListOfSupplierOrders=Списък на поръчки за покупка
+MenuOrdersSupplierToBill=Поръчки за покупка за фактуриране
+NbDaysToDelivery=Забавяне на доставката (дни)
+DescNbDaysToDelivery=Най-дългото забавяне на доставка на продукти от тази поръчка
+SupplierReputation=Репутация на доставчика
+DoNotOrderThisProductToThisSupplier=Не поръчвайте
+NotTheGoodQualitySupplier=Ниско качество
+ReputationForThisProduct=Репутация
+BuyerName=Име на купувача
+AllProductServicePrices=Всички цени на продукти / услуги
+AllProductReferencesOfSupplier=Всички референтни номера за продукти / услуги на доставчик
+BuyingPriceNumShort=Доставни цени
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

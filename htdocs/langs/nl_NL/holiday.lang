@@ -1,10 +1,18 @@
 # Dolibarr language file - Source file is en_US - holiday
 HRM=HRM
+<<<<<<< HEAD
 Holidays=Verlof
 CPTitreMenu=Verlof
 MenuReportMonth=Maandoverzicht
 MenuAddCP=Nieuw verlofverzoek
 NotActiveModCP=U moet de module 'Beheer van verlofverzoeken' aanzetten om deze pagina te kunnen bekijken.
+=======
+Holidays=Leave
+CPTitreMenu=Leave
+MenuReportMonth=Maandoverzicht
+MenuAddCP=Nieuw verlofverzoek
+NotActiveModCP=You must enable the module Leave to view this page.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddCP=Aanmaken verlofverzoek
 DateDebCP=Begindatum
 DateFinCP=Einddatum
@@ -15,6 +23,7 @@ ApprovedCP=Goedgekeurd
 CancelCP=Geannuleerd
 RefuseCP=Geweigerd
 ValidatorCP=Gevolmachtigde voor goedkeuring
+<<<<<<< HEAD
 ListeCP=Lijst verlofverzoeken
 LeaveId=Leave ID
 ReviewedByCP=Zal worden goedgekeurd door
@@ -27,6 +36,20 @@ SendRequestCP=Aanmaken verlofverzoek
 DelayToRequestCP=Verlofverzoeken moeten tenminste <b>%s dag </b> van te voren worden ingediend.
 MenuConfCP=Saldo verlofverzoeken
 SoldeCPUser=Aantal resterende verlofdagen <b>%s</b>
+=======
+ListeCP=List of leave
+LeaveId=Laat ID achter
+ReviewedByCP=Zal worden goedgekeurd door
+UserForApprovalID=User for approval ID
+UserForApprovalFirstname=First name of approval user
+UserForApprovalLastname=Last name of approval user
+UserForApprovalLogin=Login van goedkeuring gebruiker
+DescCP=Beschrijving
+SendRequestCP=Aanmaken verlofverzoek
+DelayToRequestCP=Verlofverzoeken moeten tenminste <b>%s dag </b> van te voren worden ingediend.
+MenuConfCP=Balance of leave
+SoldeCPUser=Leave balance is <b>%s</b> days.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorEndDateCP=U moet een einddatum kiezen die na de startdatum ligt.
 ErrorSQLCreateCP=Er is een SQL fout ontstaan bij het aanmaken:
 ErrorIDFicheCP=Fout. Verlofverzoek bestaat niet.
@@ -101,8 +124,13 @@ LEAVE_SICK=Ziekteverlof
 LEAVE_OTHER=Overig verlof
 LEAVE_PAID_FR=Betaalde vakantie
 ## Configuration du Module ##
+<<<<<<< HEAD
 LastUpdateCP=Laatste automatische update van verlofverzoek bestemmingen
 MonthOfLastMonthlyUpdate=Laatste maand van automatische verlofverzoek toewijzingen
+=======
+LastUpdateCP=Latest automatic update of leave allocation
+MonthOfLastMonthlyUpdate=Month of latest automatic update of leave allocation
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 UpdateConfCPOK=Bijgewerkt.
 Module27130Name= Beheer verlofverzoeken
 Module27130Desc= Beheer verlofverzoeken
@@ -112,13 +140,31 @@ NoticePeriod=Opzegtermijn
 HolidaysToValidate=Verlofverzoeken goedkeuren
 HolidaysToValidateBody=Hieronder verzoek voor goedkeuring
 HolidaysToValidateDelay=Dit verlofverzoek zal plaatsvinden in minder dan %s dag.
+<<<<<<< HEAD
 HolidaysToValidateAlertSolde=De aanvrager voor dit verzoek heeft geen voldoende beschikbare verlofdagen over.
 HolidaysValidated=Goedkeuren verlofverzoeken
 HolidaysValidatedBody=Uw verlofverzoek van %s tot %s is goedgekeurd.
 HolidaysRefused=Verlofverzoeken geweigerd
 HolidaysRefusedBody=Uw verlofverzoek van %s tot %s is om de volgende reden geweigerd:
+=======
+HolidaysToValidateAlertSolde=The user who made this leave request does not have enough available days.
+HolidaysValidated=Goedkeuren verlofverzoeken
+HolidaysValidatedBody=Uw verlofverzoek van %s tot %s is goedgekeurd.
+HolidaysRefused=Verlofverzoeken geweigerd
+HolidaysRefusedBody=Your leave request for %s to %s has been denied for the following reason:
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 HolidaysCanceled=Annuleren verlofverzoek
 HolidaysCanceledBody=Uw verlofverzoek van%s tot %s is geannuleerd.
 FollowedByACounter=1: Dit soort verlof moet worden vervolgd met een teller. Deze zal handmatig of automatisch worden opgehoogd en wanneer verlofverzoek is goedgekeurd, zal deze automatisch aftellen. <br>0: Niet worden vervolgd met teller
 NoLeaveWithCounterDefined=Er zijn geen soorten verlof waarbij een teller nodig is.
+<<<<<<< HEAD
 GoIntoDictionaryHolidayTypes=Ga naar <strong>Home-Instellingen-Woordenboeken-Soort verlofzoeken</strong> voor het opzetten van verschillende soorten verlofverzoeken.
+=======
+GoIntoDictionaryHolidayTypes=Go into <strong>Home - Setup - Dictionaries - Type of leave</strong> to setup the different types of leaves.
+HolidaySetup=Setup of module Holiday
+HolidaysNumberingModules=Leave requests numbering models
+TemplatePDFHolidays=Template for leave requests PDF
+FreeLegalTextOnHolidays=Free text on PDF
+WatermarkOnDraftHolidayCards=Watermarks on draft leave requests
+HolidaysToApprove=Holidays to approve
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

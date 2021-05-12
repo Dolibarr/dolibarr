@@ -1,8 +1,14 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,22 +30,43 @@
  *		\brief      Home page of contract area
  */
 
+<<<<<<< HEAD
 require ("../main.inc.php");
 require_once (DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
 require_once (DOL_DOCUMENT_ROOT."/product/class/product.class.php");
+=======
+require "../main.inc.php";
+require_once DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php";
+require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
+
+$hookmanager = new HookManager($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('contractindex'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'companies', 'contracts'));
 
+<<<<<<< HEAD
 $sortfield=GETPOST('sortfield','alpha');
 $sortorder=GETPOST('sortorder','alpha');
 $page=GETPOST('page','int');
+=======
+$sortfield=GETPOST('sortfield', 'alpha');
+$sortorder=GETPOST('sortorder', 'alpha');
+$page=GETPOST('page', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $statut=GETPOST('statut')?GETPOST('statut'):1;
 
 // Security check
 $socid=0;
+<<<<<<< HEAD
 $id = GETPOST('id','int');
+=======
+$id = GETPOST('id', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (! empty($user->societe_id)) $socid=$user->societe_id;
 $result = restrictedArea($user, 'contrat', $id);
 
@@ -64,7 +91,11 @@ $now = dol_now();
 
 llxHeader();
 
+<<<<<<< HEAD
 print load_fiche_titre($langs->trans("ContractsArea"),'','title_commercial.png');
+=======
+print load_fiche_titre($langs->trans("ContractsArea"), '', 'title_commercial.png');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 //print '<table border="0" width="100%" class="notopnoleftnoright">';
@@ -183,13 +214,22 @@ print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' -
 $listofstatus=array(0,4,4,5); $bool=false;
 foreach($listofstatus as $status)
 {
+<<<<<<< HEAD
     $dataseries[]=array($staticcontratligne->LibStatut($status,1,($bool?1:0)),(isset($nb[$status.$bool])?(int) $nb[$status.$bool]:0));
+=======
+    $dataseries[]=array($staticcontratligne->LibStatut($status, 1, ($bool?1:0)),(isset($nb[$status.$bool])?(int) $nb[$status.$bool]:0));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     if (empty($conf->use_javascript_ajax))
     {
 
         print '<tr class="oddeven">';
+<<<<<<< HEAD
         print '<td>'.$staticcontratligne->LibStatut($status,0,($bool?1:0)).'</td>';
         print '<td align="right"><a href="services_list.php?mode='.$status.($bool?'&filter=expired':'').'">'.($nb[$status.$bool]?$nb[$status.$bool]:0).' '.$staticcontratligne->LibStatut($status,3,($bool?1:0)).'</a></td>';
+=======
+        print '<td>'.$staticcontratligne->LibStatut($status, 0, ($bool?1:0)).'</td>';
+        print '<td class="right"><a href="services_list.php?mode='.$status.($bool?'&filter=expired':'').'">'.($nb[$status.$bool]?$nb[$status.$bool]:0).' '.$staticcontratligne->LibStatut($status, 3, ($bool?1:0)).'</a></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         print "</tr>\n";
     }
     if ($status==4 && ! $bool) $bool=true;
@@ -197,7 +237,11 @@ foreach($listofstatus as $status)
 }
 if (! empty($conf->use_javascript_ajax))
 {
+<<<<<<< HEAD
     print '<tr class="impair"><td align="center" colspan="2">';
+=======
+    print '<tr class="impair"><td class="center" colspan="2">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
     $dolgraph = new DolGraph();
@@ -217,16 +261,26 @@ foreach($listofstatus as $status)
     if (empty($conf->use_javascript_ajax))
     {
     	print '<tr class="oddeven">';
+<<<<<<< HEAD
     	print '<td>'.$staticcontratligne->LibStatut($status,0,($bool?1:0)).'</td>';
     	print '<td align="right"><a href="services_list.php?mode='.$status.($bool?'&filter=expired':'').'">'.($nb[$status.$bool]?$nb[$status.$bool]:0).' '.$staticcontratligne->LibStatut($status,3,($bool?1:0)).'</a></td>';
+=======
+    	print '<td>'.$staticcontratligne->LibStatut($status, 0, ($bool?1:0)).'</td>';
+    	print '<td class="right"><a href="services_list.php?mode='.$status.($bool?'&filter=expired':'').'">'.($nb[$status.$bool]?$nb[$status.$bool]:0).' '.$staticcontratligne->LibStatut($status, 3, ($bool?1:0)).'</a></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	if ($status==4 && ! $bool) $bool=true;
     	else $bool=false;
         print "</tr>\n";
     }
 }
 //if ($totalinprocess != $total)
+<<<<<<< HEAD
 //print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("ServicesRunning").')</td><td align="right">'.$totalinprocess.'</td></tr>';
 print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">'.$total.'</td></tr>';
+=======
+//print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("ServicesRunning").')</td><td class="right">'.$totalinprocess.'</td></tr>';
+print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print "</table><br>";
 
 
@@ -271,15 +325,25 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 				$companystatic->client=1;
 
 				print '<tr class="oddeven"><td class="nowrap">';
+<<<<<<< HEAD
 				print $staticcontrat->getNomUrl(1,'');
 				print '</td>';
 				print '<td>';
 				print $companystatic->getNomUrl(1,'',16);
+=======
+				print $staticcontrat->getNomUrl(1, '');
+				print '</td>';
+				print '<td>';
+				print $companystatic->getNomUrl(1, '', 16);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				print '</td>';
 				print '</tr>';
 				//$tot_ttc+=$obj->total_ttc;
 				$i++;
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 		}
 		else
@@ -303,11 +367,19 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 // Last modified contracts
 $max=5;
 $sql = 'SELECT ';
+<<<<<<< HEAD
 $sql.= ' sum('.$db->ifsql("cd.statut=0",1,0).') as nb_initial,';
 $sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite >= '".$db->idate($now)."')",1,0).') as nb_running,';
 $sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now)."')",1,0).') as nb_expired,';
 $sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now - $conf->contrat->services->expires->warning_delay)."')",1,0).') as nb_late,';
 $sql.= ' sum('.$db->ifsql("cd.statut=5",1,0).') as nb_closed,';
+=======
+$sql.= ' sum('.$db->ifsql("cd.statut=0", 1, 0).') as nb_initial,';
+$sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite >= '".$db->idate($now)."')", 1, 0).') as nb_running,';
+$sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now)."')", 1, 0).') as nb_expired,';
+$sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now - $conf->contrat->services->expires->warning_delay)."')", 1, 0).') as nb_late,';
+$sql.= ' sum('.$db->ifsql("cd.statut=5", 1, 0).') as nb_closed,';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $sql.= " c.rowid as cid, c.ref, c.datec, c.tms, c.statut, s.nom as name, s.rowid as socid";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
@@ -331,10 +403,17 @@ if ($result)
 
 	print '<table class="noborder" width="100%">';
 
+<<<<<<< HEAD
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastContracts",5).'</th>';
 	print '<th align="center">'.$langs->trans("DateModification").'</th>';
 	//print '<th align="left">'.$langs->trans("Status").'</th>';
 	print '<th align="center" width="80" colspan="4">'.$langs->trans("Services").'</th>';
+=======
+	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastContracts", 5).'</th>';
+	print '<th class="center">'.$langs->trans("DateModification").'</th>';
+	//print '<th class="left">'.$langs->trans("Status").'</th>';
+	print '<th class="center" width="80" colspan="4">'.$langs->trans("Services").'</th>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print "</tr>\n";
 
 	while ($i < $num)
@@ -345,12 +424,17 @@ if ($result)
 		print '<td width="110" class="nowrap">';
 		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->cid);
 		$staticcontrat->id=$obj->cid;
+<<<<<<< HEAD
 		print $staticcontrat->getNomUrl(1,16);
+=======
+		print $staticcontrat->getNomUrl(1, 16);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if ($obj->nb_late) print img_warning($langs->trans("Late"));
 		print '</td>';
 		print '<td>';
 		$staticcompany->id=$obj->socid;
 		$staticcompany->name=$obj->name;
+<<<<<<< HEAD
 		print $staticcompany->getNomUrl(1,'',20);
 		print '</td>';
 		print '<td align="center">'.dol_print_date($db->jdate($obj->tms),'dayhour').'</td>';
@@ -359,13 +443,26 @@ if ($result)
 		print '<td align="right" width="32">'.($obj->nb_running>0 ? $obj->nb_running.$staticcontratligne->LibStatut(4,3,0):'').'</td>';
 		print '<td align="right" width="32">'.($obj->nb_expired>0 ? $obj->nb_expired.$staticcontratligne->LibStatut(4,3,1):'').'</td>';
 		print '<td align="right" width="32">'.($obj->nb_closed>0  ? $obj->nb_closed.$staticcontratligne->LibStatut(5,3):'').'</td>';
+=======
+		print $staticcompany->getNomUrl(1, '', 20);
+		print '</td>';
+		print '<td class="center">'.dol_print_date($db->jdate($obj->tms), 'dayhour').'</td>';
+		//print '<td class="left">'.$staticcontrat->LibStatut($obj->statut,2).'</td>';
+		print '<td class="right" width="32">'.($obj->nb_initial>0 ? $obj->nb_initial.$staticcontratligne->LibStatut(0, 3):'').'</td>';
+		print '<td class="right" width="32">'.($obj->nb_running>0 ? $obj->nb_running.$staticcontratligne->LibStatut(4, 3, 0):'').'</td>';
+		print '<td class="right" width="32">'.($obj->nb_expired>0 ? $obj->nb_expired.$staticcontratligne->LibStatut(4, 3, 1):'').'</td>';
+		print '<td class="right" width="32">'.($obj->nb_closed>0  ? $obj->nb_closed.$staticcontratligne->LibStatut(5, 3):'').'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print "</tr>\n";
 		$i++;
 	}
 	$db->free($result);
 
 	print "</table>";
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 else
 {
@@ -399,10 +496,17 @@ if ($resql)
 
 	print '<table class="noborder" width="100%">';
 
+<<<<<<< HEAD
 	print '<tr class="liste_titre"><th colspan="4">'.$langs->trans("LastModifiedServices",$max).'</th>';
 	print "</tr>\n";
 
 	while ($i < min($num,$max))
+=======
+	print '<tr class="liste_titre"><th colspan="4">'.$langs->trans("LastModifiedServices", $max).'</th>';
+	print "</tr>\n";
+
+	while ($i < min($num, $max))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$obj = $db->fetch_object($resql);
 
@@ -410,7 +514,11 @@ if ($resql)
 		print '<td width="110" class="nowrap">';
 		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->fk_contrat);
 		$staticcontrat->id=$obj->fk_contrat;
+<<<<<<< HEAD
 		print $staticcontrat->getNomUrl(1,16);
+=======
+		print $staticcontrat->getNomUrl(1, 16);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		//if (1 == 1) print img_warning($langs->trans("Late"));
 		print '</td>';
 		print '<td>';
@@ -420,6 +528,7 @@ if ($resql)
             $productstatic->type=$obj->ptype;
             $productstatic->ref=$obj->pref;
 			$productstatic->entity=$obj->pentity;
+<<<<<<< HEAD
             print $productstatic->getNomUrl(1,'',20);
 		}
 		else
@@ -427,14 +536,29 @@ if ($resql)
 		    print '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"),"service");
             if ($obj->label) print ' '.dol_trunc($obj->label,20).'</a>';
             else print '</a> '.dol_trunc($obj->note,20);
+=======
+            print $productstatic->getNomUrl(1, '', 20);
+		}
+		else
+		{
+		    print '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"), "service");
+            if ($obj->label) print ' '.dol_trunc($obj->label, 20).'</a>';
+            else print '</a> '.dol_trunc($obj->note, 20);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		print '</td>';
 		print '<td>';
 		$staticcompany->id=$obj->fk_soc;
 		$staticcompany->name=$obj->name;
+<<<<<<< HEAD
 		print $staticcompany->getNomUrl(1,'',20);
 		print '</td>';
 		print '<td class="nowrap" align="right"><a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
+=======
+		print $staticcompany->getNomUrl(1, '', 20);
+		print '</td>';
+		print '<td class="nowrap right"><a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$dateend=$db->jdate($obj->date_fin_validite);
 		print $staticcontratligne->LibStatut($obj->statut, 3, ($dateend && $dateend < $now)?1:0);
 		print '</a></td>';
@@ -444,7 +568,10 @@ if ($resql)
 	$db->free();
 
 	print "</table>";
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 else
 {
@@ -491,7 +618,11 @@ if ($resql)
 		print '<td width="110" class="nowrap">';
 		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->fk_contrat);
 		$staticcontrat->id=$obj->fk_contrat;
+<<<<<<< HEAD
 		print $staticcontrat->getNomUrl(1,16);
+=======
+		print $staticcontrat->getNomUrl(1, 16);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</td>';
 		print '<td class="nowrap">';
 		if ($obj->fk_product > 0)
@@ -500,6 +631,7 @@ if ($resql)
             $productstatic->type=$obj->ptype;
             $productstatic->ref=$obj->pref;
 			$productstatic->entity=$obj->pentity;
+<<<<<<< HEAD
             print $productstatic->getNomUrl(1,'',20);
 		}
 		else
@@ -507,15 +639,31 @@ if ($resql)
 		    print '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"),"service");
             if ($obj->label) print ' '.dol_trunc($obj->label,20).'</a>';
             else print '</a> '.dol_trunc($obj->note,20);
+=======
+            print $productstatic->getNomUrl(1, '', 20);
+		}
+		else
+		{
+		    print '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"), "service");
+            if ($obj->label) print ' '.dol_trunc($obj->label, 20).'</a>';
+            else print '</a> '.dol_trunc($obj->note, 20);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
         print '</td>';
 		print '<td>';
 		$staticcompany->id=$obj->fk_soc;
 		$staticcompany->name=$obj->name;
+<<<<<<< HEAD
 		print $staticcompany->getNomUrl(1,'',20);
 		print '</td>';
 		print '<td width="16" align="right"><a href="ligne.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
 		print $staticcontratligne->LibStatut($obj->statut,3);
+=======
+		print $staticcompany->getNomUrl(1, '', 20);
+		print '</td>';
+		print '<td width="16" class="right"><a href="ligne.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
+		print $staticcontratligne->LibStatut($obj->statut, 3);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</a></td>';
 		print "</tr>\n";
 		$i++;
@@ -523,7 +671,10 @@ if ($resql)
 	$db->free();
 
 	print "</table>";
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 else
 {
@@ -571,7 +722,11 @@ if ($resql)
 		print '<td width="110" class="nowrap">';
 		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->fk_contrat);
 		$staticcontrat->id=$obj->fk_contrat;
+<<<<<<< HEAD
 		print $staticcontrat->getNomUrl(1,16);
+=======
+		print $staticcontrat->getNomUrl(1, 16);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</td>';
 		print '<td class="nowrap">';
 		if ($obj->fk_product > 0)
@@ -580,6 +735,7 @@ if ($resql)
             $productstatic->type=$obj->ptype;
             $productstatic->ref=$obj->pref;
 			$productstatic->entity=$obj->pentity;
+<<<<<<< HEAD
             print $productstatic->getNomUrl(1,'',20);
 		}
 		else
@@ -587,15 +743,31 @@ if ($resql)
 		    print '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"),"service");
             if ($obj->label) print ' '.dol_trunc($obj->label,20).'</a>';
             else print '</a> '.dol_trunc($obj->note,20);
+=======
+            print $productstatic->getNomUrl(1, '', 20);
+		}
+		else
+		{
+		    print '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"), "service");
+            if ($obj->label) print ' '.dol_trunc($obj->label, 20).'</a>';
+            else print '</a> '.dol_trunc($obj->note, 20);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		print '</td>';
 		print '<td>';
 		$staticcompany->id=$obj->fk_soc;
 		$staticcompany->name=$obj->name;
+<<<<<<< HEAD
 		print $staticcompany->getNomUrl(1,'',20);
 		print '</td>';
 		print '<td width="16" align="right"><a href="ligne.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
 		print $staticcontratligne->LibStatut($obj->statut,3,1);
+=======
+		print $staticcompany->getNomUrl(1, '', 20);
+		print '</td>';
+		print '<td width="16" class="right"><a href="ligne.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
+		print $staticcontratligne->LibStatut($obj->statut, 3, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</a></td>';
 		print "</tr>\n";
 		$i++;
@@ -603,7 +775,10 @@ if ($resql)
 	$db->free();
 
 	print "</table>";
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 else
 {
@@ -614,6 +789,11 @@ else
 //print '</td></tr></table>';
 print '</div></div></div>';
 
+<<<<<<< HEAD
+=======
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardContracts', $parameters, $object); // Note that $action and $object may have been modified by hook
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 llxFooter();
 

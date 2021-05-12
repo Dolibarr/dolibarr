@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2017      Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2018      Alexandre Spangaro   <aspangaro@zendsi.com>
+=======
+ * Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,6 +62,7 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
 
 $textobject=$langs->transnoentitiesnoconv("Assets");
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("AssetsSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
@@ -65,6 +70,15 @@ print load_fiche_titre($langs->trans("AssetsSetup"),$linkback,'title_setup');
 
 
 $head = AssetsAdminPrepareHead();
+=======
+llxHeader('', $langs->trans("AssetsSetup"));
+
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+print load_fiche_titre($langs->trans("AssetsSetup"), $linkback, 'title_setup');
+
+
+$head = asset_admin_prepare_head();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 dol_fiche_head($head, 'attributes', $langs->trans("Assets"), -1, 'generic');
 
@@ -109,6 +123,11 @@ if ($action == 'edit' && ! empty($attrname))
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';
 }
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

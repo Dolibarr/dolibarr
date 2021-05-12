@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2017	Regis Houssin	<regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2017	Regis Houssin	<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,13 +35,21 @@ class MembersTypes extends DolibarrApi
      * @var array   $FIELDS     Mandatory fields, checked when create and update object
      */
     static $FIELDS = array(
+<<<<<<< HEAD
         'label'
+=======
+        'label',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     );
 
     /**
      * Constructor
      */
+<<<<<<< HEAD
     function __construct()
+=======
+    public function __construct()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $db, $conf;
         $this->db = $db;
@@ -53,7 +65,11 @@ class MembersTypes extends DolibarrApi
      *
      * @throws    RestException
      */
+<<<<<<< HEAD
     function get($id)
+=======
+    public function get($id)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         if(! DolibarrApiAccess::$user->rights->adherent->lire) {
             throw new RestException(401);
@@ -65,7 +81,11 @@ class MembersTypes extends DolibarrApi
             throw new RestException(404, 'member type not found');
         }
 
+<<<<<<< HEAD
         if( ! DolibarrApi::_checkAccessToResource('member',$membertype->id,'adherent_type')) {
+=======
+        if( ! DolibarrApi::_checkAccessToResource('member', $membertype->id, 'adherent_type')) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -86,7 +106,12 @@ class MembersTypes extends DolibarrApi
      *
      * @throws RestException
      */
+<<<<<<< HEAD
     function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '') {
+=======
+    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+    {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         global $db, $conf;
 
         $obj_ret = array();
@@ -153,7 +178,11 @@ class MembersTypes extends DolibarrApi
      * @param array $request_data   Request data
      * @return int  ID of member type
      */
+<<<<<<< HEAD
     function post($request_data = null)
+=======
+    public function post($request_data = null)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         if (! DolibarrApiAccess::$user->rights->adherent->configurer) {
             throw new RestException(401);
@@ -178,7 +207,11 @@ class MembersTypes extends DolibarrApi
      * @param array $request_data   Datas
      * @return int
      */
+<<<<<<< HEAD
     function put($id, $request_data = null)
+=======
+    public function put($id, $request_data = null)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         if (! DolibarrApiAccess::$user->rights->adherent->configurer) {
             throw new RestException(401);
@@ -190,7 +223,11 @@ class MembersTypes extends DolibarrApi
             throw new RestException(404, 'member type not found');
         }
 
+<<<<<<< HEAD
         if( ! DolibarrApi::_checkAccessToResource('member',$membertype->id,'adherent_type')) {
+=======
+        if( ! DolibarrApi::_checkAccessToResource('member', $membertype->id, 'adherent_type')) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -219,7 +256,11 @@ class MembersTypes extends DolibarrApi
      * @param int $id   member type ID
      * @return array
      */
+<<<<<<< HEAD
     function delete($id)
+=======
+    public function delete($id)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         if (! DolibarrApiAccess::$user->rights->adherent->configurer) {
             throw new RestException(401);
@@ -230,12 +271,20 @@ class MembersTypes extends DolibarrApi
             throw new RestException(404, 'member type not found');
         }
 
+<<<<<<< HEAD
         if ( ! DolibarrApi::_checkAccessToResource('member',$membertype->id,'adherent_type')) {
+=======
+        if ( ! DolibarrApi::_checkAccessToResource('member', $membertype->id, 'adherent_type')) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
         if (! $membertype->delete($membertype->id)) {
+<<<<<<< HEAD
             throw new RestException(401,'error when deleting member type');
+=======
+            throw new RestException(401, 'error when deleting member type');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
 
         return array(
@@ -254,7 +303,11 @@ class MembersTypes extends DolibarrApi
      *
      * @throws RestException
      */
+<<<<<<< HEAD
     function _validate($data)
+=======
+    private function _validate($data)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $membertype = array();
         foreach (MembersTypes::$FIELDS as $field) {
@@ -265,14 +318,24 @@ class MembersTypes extends DolibarrApi
         return $membertype;
     }
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     /**
      * Clean sensible object datas
      *
      * @param   object  $object    Object to clean
      * @return    array    Array of cleaned object properties
      */
+<<<<<<< HEAD
     function _cleanObjectDatas($object) {
 
+=======
+    protected function _cleanObjectDatas($object)
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $object = parent::_cleanObjectDatas($object);
 
         unset($object->array_options);
@@ -304,7 +367,11 @@ class MembersTypes extends DolibarrApi
         unset($object->note_public);
         unset($object->note_private);
         unset($object->fk_incoterms);
+<<<<<<< HEAD
         unset($object->libelle_incoterms);
+=======
+        unset($object->label_incoterms);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         unset($object->location_incoterms);
         unset($object->name);
         unset($object->lastname);
@@ -318,5 +385,8 @@ class MembersTypes extends DolibarrApi
 
         return $object;
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

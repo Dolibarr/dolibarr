@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2015 		Alexandre Spangaro <aspangaro.dolibarr@gmail.com>
+=======
+/* Copyright (C) 2015 		Alexandre Spangaro <aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +24,11 @@
  * \ingroup HRM
  * \brief 	HRM Establishment module setup page
  */
+<<<<<<< HEAD
 require('../../main.inc.php');
+=======
+require '../../main.inc.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 require_once DOL_DOCUMENT_ROOT.'/core/lib/hrm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
 
@@ -54,14 +62,22 @@ $sortfield     = GETPOST("sortfield");
 if (!$sortorder) $sortorder="DESC";
 if (!$sortfield) $sortfield="e.rowid";
 
+<<<<<<< HEAD
 if ($page == -1) {
+=======
+if (empty($page) || $page == -1) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$page = 0 ;
 }
 
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+<<<<<<< HEAD
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+=======
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $form = new Form($db);
 $establishmenttmp=new Establishment($db);
@@ -78,8 +94,13 @@ dol_fiche_head($head, 'establishments', $langs->trans("HRM"), -1, "user");
 
 $sql = "SELECT e.rowid, e.name, e.address, e.zip, e.town, e.status";
 $sql.= " FROM ".MAIN_DB_PREFIX."establishment as e";
+<<<<<<< HEAD
 $sql.= " WHERE e.entity = ".$conf->entity;
 $sql.= $db->order($sortfield,$sortorder);
+=======
+$sql.= " WHERE e.entity IN (".getEntity('establishment').')';
+$sql.= $db->order($sortfield, $sortorder);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $sql.= $db->plimit($limit+1, $offset);
 
 $result = $db->query($sql);
@@ -91,18 +112,30 @@ if ($result)
 	// Load attribute_label
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
+<<<<<<< HEAD
 	print_liste_field_titre("Name",$_SERVER["PHP_SELF"],"e.name","","","",$sortfield,$sortorder);
 	print_liste_field_titre("Address",$_SERVER["PHP_SELF"],"e.address","","","",$sortfield,$sortorder);
 	print_liste_field_titre("Zipcode",$_SERVER["PHP_SELF"],"e.zip","","","",$sortfield,$sortorder);
 	print_liste_field_titre("Town",$_SERVER["PHP_SELF"],"e.town","","","",$sortfield,$sortorder);
 	print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"e.status","","",'align="right"',$sortfield,$sortorder);
+=======
+	print_liste_field_titre("Name", $_SERVER["PHP_SELF"], "e.name", "", "", "", $sortfield, $sortorder);
+	print_liste_field_titre("Address", $_SERVER["PHP_SELF"], "e.address", "", "", "", $sortfield, $sortorder);
+	print_liste_field_titre("Zipcode", $_SERVER["PHP_SELF"], "e.zip", "", "", "", $sortfield, $sortorder);
+	print_liste_field_titre("Town", $_SERVER["PHP_SELF"], "e.town", "", "", "", $sortfield, $sortorder);
+	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "e.status", "", "", '', $sortfield, $sortorder, 'right ');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print "</tr>\n";
 
 	if ($num > 0)
     {
 	    $establishmentstatic=new Establishment($db);
 
+<<<<<<< HEAD
 		while ($i < min($num,$limit))
+=======
+		while ($i < min($num, $limit))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
             $obj = $db->fetch_object($result);
 
@@ -113,18 +146,29 @@ if ($result)
 
 			print '<tr class="oddeven">';
 			print '<td>'.$establishmentstatic->getNomUrl(1).'</td>';
+<<<<<<< HEAD
             print '<td align="left">'.$obj->address.'</td>';
 			print '<td align="left">'.$obj->zip.'</td>';
 			print '<td align="left">'.$obj->town.'</td>';
 
             print '<td align="right">';
+=======
+            print '<td class="left">'.$obj->address.'</td>';
+			print '<td class="left">'.$obj->zip.'</td>';
+			print '<td class="left">'.$obj->town.'</td>';
+
+            print '<td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print $establishmentstatic->getLibStatut(5);
 			print '</td>';
             print "</tr>\n";
 
             $i++;
         }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
     else
     {
@@ -145,5 +189,9 @@ print '<div class="tabsAction">';
 print '<a class="butAction" href="../establishment/card.php?action=create">'.$langs->trans("NewEstablishment").'</a>';
 print '</div>';
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

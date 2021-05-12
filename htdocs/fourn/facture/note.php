@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  *
@@ -33,12 +37,20 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
+<<<<<<< HEAD
 $langs->load('bills');
 $langs->load("companies");
 
 $id = (GETPOST('id','int') ? GETPOST('id','int') : GETPOST('facid','int'));
 $ref = GETPOST('ref','alpha');
 $action = GETPOST('action','alpha');
+=======
+$langs->loadLangs(array("bills", "companies"));
+
+$id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('facid', 'int'));
+$ref = GETPOST('ref', 'alpha');
+$action = GETPOST('action', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -95,6 +107,10 @@ if ($object->id > 0)
     $morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1);
     // Thirdparty
     $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+<<<<<<< HEAD
+=======
+    if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) $morehtmlref.=' (<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     // Project
     if (! empty($conf->projet->enabled))
     {
@@ -146,13 +162,21 @@ if ($object->id > 0)
 	{
 		$facreplaced=new FactureFournisseur($db);
 		$facreplaced->fetch($object->fk_facture_source);
+<<<<<<< HEAD
 		print ' ('.$langs->transnoentities("ReplaceInvoice",$facreplaced->getNomUrl(1)).')';
+=======
+		print ' ('.$langs->transnoentities("ReplaceInvoice", $facreplaced->getNomUrl(1)).')';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 	if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE)
 	{
 		$facusing=new FactureFournisseur($db);
 		$facusing->fetch($object->fk_facture_source);
+<<<<<<< HEAD
 		print ' ('.$langs->transnoentities("CorrectInvoice",$facusing->getNomUrl(1)).')';
+=======
+		print ' ('.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)).')';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	$facidavoir=$object->getListIdAvoirFromInvoice();
@@ -174,11 +198,16 @@ if ($object->id > 0)
 	{
 		$facthatreplace=new FactureFournisseur($db);
 		$facthatreplace->fetch($facidnext);
+<<<<<<< HEAD
 		print ' ('.$langs->transnoentities("ReplacedByInvoice",$facthatreplace->getNomUrl(1)).')';
+=======
+		print ' ('.$langs->transnoentities("ReplacedByInvoice", $facthatreplace->getNomUrl(1)).')';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 	print '</td></tr>';
 
 	// Label
+<<<<<<< HEAD
 	print '<tr><td>'.$form->editfieldkey("Label",'label',$object->label,$object,0).'</td><td>';
 	print $form->editfieldval("Label",'label',$object->label,$object,0);
 	print '</td></tr>';
@@ -186,22 +215,44 @@ if ($object->id > 0)
 	// Amount
 	print '<tr><td>'.$langs->trans('AmountHT').'</td><td>'.price($object->total_ht,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
 	print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($object->total_tva,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
+=======
+	print '<tr><td>'.$form->editfieldkey("Label", 'label', $object->label, $object, 0).'</td><td>';
+	print $form->editfieldval("Label", 'label', $object->label, $object, 0);
+	print '</td></tr>';
+
+	// Amount
+	print '<tr><td>'.$langs->trans('AmountHT').'</td><td>'.price($object->total_ht, 1, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
+	print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($object->total_tva, 1, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	// Amount Local Taxes
 	//TODO: Place into a function to control showing by country or study better option
 	if ($societe->localtax1_assuj=="1") //Localtax1
 	{
+<<<<<<< HEAD
 		print '<tr><td>'.$langs->transcountry("AmountLT1",$societe->country_code).'</td>';
 		print '<td>'.price($object->total_localtax1,1,$langs,0,-1,-1,$conf->currency).'</td>';
+=======
+		print '<tr><td>'.$langs->transcountry("AmountLT1", $societe->country_code).'</td>';
+		print '<td>'.price($object->total_localtax1, 1, $langs, 0, -1, -1, $conf->currency).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</tr>';
 	}
 	if ($societe->localtax2_assuj=="1") //Localtax2
 	{
+<<<<<<< HEAD
 		print '<tr><td>'.$langs->transcountry("AmountLT2",$societe->country_code).'</td>';
 		print '<td>'.price($object->total_localtax2,1,$langs,0,-1,-1,$conf->currency).'</td>';
 		print '</tr>';
 	}
 	print '<tr><td>'.$langs->trans('AmountTTC').'</td><td>'.price($object->total_ttc,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
+=======
+		print '<tr><td>'.$langs->transcountry("AmountLT2", $societe->country_code).'</td>';
+		print '<td>'.price($object->total_localtax2, 1, $langs, 0, -1, -1, $conf->currency).'</td>';
+		print '</tr>';
+	}
+	print '<tr><td>'.$langs->trans('AmountTTC').'</td><td>'.price($object->total_ttc, 1, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	print "</table>";
 
@@ -214,7 +265,12 @@ if ($object->id > 0)
 	dol_fiche_end();
 }
 
+<<<<<<< HEAD
 
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

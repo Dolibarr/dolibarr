@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,15 +32,24 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 
+<<<<<<< HEAD
 $langs->load("companies");
 $langs->load("bills");
 $langs->load("members");
 $langs->load("users");
+=======
+// Load translation files required by the page
+$langs->loadLangs(array("companies","members","bills","users"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if (!$user->rights->adherent->lire)
 	accessforbidden();
 
+<<<<<<< HEAD
 $rowid=GETPOST("rowid",'int');
+=======
+$rowid=GETPOST("rowid", 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 
@@ -76,5 +89,9 @@ print '</div>';
 
 dol_fiche_end();
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

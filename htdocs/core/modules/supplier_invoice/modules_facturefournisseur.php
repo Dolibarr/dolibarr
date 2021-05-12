@@ -1,8 +1,15 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2010	Juanjo Menent	<jmenent@2byte.es>
  * Copyright (C) 2012	Regis Houssin	<regis.houssin@capnetworks.com>
  * Copyright (C) 2013-2016   Philippe Grand  <philippe.grand@atoo-net.com>
  * Copyright (C) 2014   Marcos García   <marcosgdf@gmail.com>
+=======
+/* Copyright (C) 2010       Juanjo Menent       <jmenent@2byte.es>
+ * Copyright (C) 2012       Regis Houssin       <regis.houssin@inodbox.com>
+ * Copyright (C) 2013-2016  Philippe Grand      <philippe.grand@atoo-net.com>
+ * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,9 +41,19 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';	// requir
  */
 abstract class ModelePDFSuppliersInvoices extends CommonDocGenerator
 {
+<<<<<<< HEAD
 	var $error='';
 
 
+=======
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *  Return list of active generation models
 	 *
@@ -44,6 +61,7 @@ abstract class ModelePDFSuppliersInvoices extends CommonDocGenerator
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of numbers
 	 */
+<<<<<<< HEAD
 	static function liste_modeles($db,$maxfilenamelength=0)
 	{
 		global $conf;
@@ -57,6 +75,21 @@ abstract class ModelePDFSuppliersInvoices extends CommonDocGenerator
 		return $liste;
 	}
 
+=======
+	public static function liste_modeles($db, $maxfilenamelength = 0)
+	{
+        // phpcs:enable
+		global $conf;
+
+		$type = 'invoice_supplier';
+		$list = array();
+
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+		$list = getListOfModels($db, $type, $maxfilenamelength);
+
+		return $list;
+	}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 /**
@@ -64,13 +97,24 @@ abstract class ModelePDFSuppliersInvoices extends CommonDocGenerator
  */
 abstract class ModeleNumRefSuppliersInvoices
 {
+<<<<<<< HEAD
 	var $error='';
+=======
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	/**  Return if a model can be used or not
 	 *
 	 *   @return	boolean     true if model can be used
 	 */
+<<<<<<< HEAD
 	function isEnabled()
+=======
+    public function isEnabled()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return true;
 	}
@@ -79,7 +123,11 @@ abstract class ModeleNumRefSuppliersInvoices
 	 *
 	 *   @return    string      Description Text
 	 */
+<<<<<<< HEAD
 	function info()
+=======
+    public function info()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 		$langs->load("invoices");
@@ -90,7 +138,11 @@ abstract class ModeleNumRefSuppliersInvoices
 	 *
 	 *    @return   string      Example
 	 */
+<<<<<<< HEAD
 	function getExample()
+=======
+    public function getExample()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 		$langs->load("invoices");
@@ -101,7 +153,11 @@ abstract class ModeleNumRefSuppliersInvoices
 	 *
 	 *   @return	boolean     false if conflict, true if ok
 	 */
+<<<<<<< HEAD
 	function canBeActivated()
+=======
+    public function canBeActivated()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return true;
 	}
@@ -113,18 +169,31 @@ abstract class ModeleNumRefSuppliersInvoices
      * @param	string		$mode       'next' for next value or 'last' for last value
      * @return 	string      			Value if OK, 0 if KO
      */
+<<<<<<< HEAD
     function getNextValue($objsoc,$object,$mode)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
 	}
+=======
+    public function getNextValue($objsoc, $object, $mode)
+    {
+		global $langs;
+		return $langs->trans("NotAvailable");
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	/**   Returns version of the model numbering
 	 *
 	 *    @return     string      Value
 	 */
+<<<<<<< HEAD
 	function getVersion()
 	{
+=======
+    public function getVersion()
+    {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $langs;
 		$langs->load("admin");
 
@@ -133,5 +202,9 @@ abstract class ModeleNumRefSuppliersInvoices
 		if ($this->version == 'dolibarr') return DOL_VERSION;
 		if ($this->version) return $this->version;
 		return $langs->trans("NotAvailable");
+<<<<<<< HEAD
 	}
+=======
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2011	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,7 +37,11 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
  */
 class Fournisseur extends Societe
 {
+<<<<<<< HEAD
 	var $next_prev_filter="te.fournisseur = 1";		// Used to add a filter in Form::showrefnav method
+=======
+	public $next_prev_filter="te.fournisseur = 1";		// Used to add a filter in Form::showrefnav method
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	/**
@@ -41,7 +49,11 @@ class Fournisseur extends Societe
 	 *
 	 *  @param	DoliDB	$db		Database handler
 	 */
+<<<<<<< HEAD
 	function __construct($db)
+=======
+	public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$this->db = $db;
 
@@ -55,7 +67,11 @@ class Fournisseur extends Societe
 	 *
 	 * @return 	int		Nb of orders
 	 */
+<<<<<<< HEAD
 	function getNbOfOrders()
+=======
+	public function getNbOfOrders()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$sql = "SELECT rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf";
@@ -81,7 +97,11 @@ class Fournisseur extends Societe
 	 *
 	 * @return	int		Nb of ref prices, or <0 if error
 	 */
+<<<<<<< HEAD
 	function nbOfProductRefs()
+=======
+	public function nbOfProductRefs()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf;
 
@@ -102,13 +122,23 @@ class Fournisseur extends Societe
 		}
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * Load statistics indicators
 	 *
 	 * @return     int         <0 if KO, >0 if OK
 	 */
+<<<<<<< HEAD
 	function load_state_board()
 	{
+=======
+	public function load_state_board()
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf, $user;
 
 		$this->nb=array();
@@ -141,9 +171,15 @@ class Fournisseur extends Societe
 			$this->error=$this->db->error();
 			return -1;
 		}
+<<<<<<< HEAD
 
 	}
 
+=======
+	}
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *  Create a supplier category
 	 *
@@ -151,8 +187,14 @@ class Fournisseur extends Societe
 	 *	@param		string	$name		Category name
 	 *  @return     int         		<0 if KO, 0 if OK
 	 */
+<<<<<<< HEAD
 	function CreateCategory($user, $name)
 	{
+=======
+	public function CreateCategory($user, $name)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie (label,visible,type)";
 		$sql.= " VALUES ";
 		$sql.= " ('".$this->db->escape($name)."',1,1)";
@@ -172,13 +214,23 @@ class Fournisseur extends Societe
 		}
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * 	Return the suppliers list
 	 *
 	 *	@return		array		Array of suppliers
 	 */
+<<<<<<< HEAD
 	function ListArray()
 	{
+=======
+	public function ListArray()
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf;
 		global $user;
 
@@ -207,6 +259,10 @@ class Fournisseur extends Societe
 		}
 		return $arr;
 	}
+<<<<<<< HEAD
 
 }
 
+=======
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

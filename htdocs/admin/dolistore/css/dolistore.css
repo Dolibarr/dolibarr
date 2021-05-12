@@ -6,10 +6,17 @@ div.divsearchfield {
 }
 
 .margeCoteGauche,.margeCote{
+<<<<<<< HEAD
     padding-right: 20px!important;   
 }
 .margeCote,.margeCoteDroite{
     padding-left: 20px!important;    
+=======
+    padding-right: 20px!important;
+}
+.margeCote,.margeCoteDroite{
+    padding-left: 20px!important;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 .nomargesupinf{
     margin-top: 0;
@@ -26,13 +33,21 @@ div.divsearchfield {
     width: 100%;
 }
 .tree{
+<<<<<<< HEAD
     margin: 0px 0px 0px 0px; 
+=======
+    margin: 0px 0px 0px 0px;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     padding:0px;
     list-style: none; line-height: 2em; font-family: Arial;
 }
 .tree li{
     font-size: 16px;
+<<<<<<< HEAD
     position: relative;list-style: none; 
+=======
+    position: relative;list-style: none;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 .tree li:before{
     position: absolute;
@@ -65,7 +80,11 @@ div.divsearchfield {
 .tree li.root:after{
     display: none;
 }
+<<<<<<< HEAD
 .tree li:last-child:after{ 
+=======
+.tree li:last-child:after{
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     display: none
 }
 .blockUI {
@@ -159,7 +178,11 @@ textarea.row4{
 
 .reviewList {
     max-height: 150px;
+<<<<<<< HEAD
     overflow-y: scroll; 
+=======
+    overflow-y: scroll;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 .reviewRow{

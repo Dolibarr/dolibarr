@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2018      Alexandre Spangaro   <aspangaro@zendsi.com>
+=======
+ * Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +21,11 @@
  */
 
 /**
+<<<<<<< HEAD
  *  \file       note.php
+=======
+ *  \file       htdocs/asset/note.php
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *  \ingroup    asset
  *  \brief      Card with notes on Asset
  */
@@ -72,19 +80,31 @@ $form = new Form($db);
 
 //$help_url='EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes';
 $help_url='';
+<<<<<<< HEAD
 llxHeader('',$langs->trans('Assets'),$help_url);
+=======
+llxHeader('', $langs->trans('Assets'), $help_url);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if ($id > 0 || ! empty($ref))
 {
 	$object->fetch_thirdparty();
 
+<<<<<<< HEAD
 	$head = AssetsPrepareHead($object);
+=======
+	$head = asset_prepare_head($object);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	dol_fiche_head($head, 'note', $langs->trans("Asset"), -1, 'generic');
 
 	// Object card
 	// ------------------------------------------------------------
+<<<<<<< HEAD
 	$linkback = '<a href="' .dol_buildpath('/asset/list.php',1) . '?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+=======
+	$linkback = '<a href="' .dol_buildpath('/asset/list.php', 1) . '?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	$morehtmlref='<div class="refidno">';
 	/*
@@ -144,6 +164,10 @@ if ($id > 0 || ! empty($ref))
 	dol_fiche_end();
 }
 
+<<<<<<< HEAD
 
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

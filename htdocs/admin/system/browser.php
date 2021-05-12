@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2005-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+<<<<<<< HEAD
  * Copyright (C) 2007-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2007-2012	Regis Houssin			<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,9 +30,14 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
+<<<<<<< HEAD
 $langs->load("admin");
 $langs->load("install");
 $langs->load("other");
+=======
+// Load translation files required by the page
+$langs->loadLangs(array("install","other","admin"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if (! $user->admin)
 	accessforbidden();
@@ -42,7 +51,11 @@ $form=new Form($db);
 
 llxHeader();
 
+<<<<<<< HEAD
 print load_fiche_titre($langs->trans("InfoBrowser"),'','title_setup');
+=======
+print load_fiche_titre($langs->trans("InfoBrowser"), '', 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $tmp=getBrowserInfo($_SERVER["HTTP_USER_AGENT"]);
 
@@ -66,7 +79,12 @@ print '</table>';
 print '</div>';
 print '<br>';
 
+<<<<<<< HEAD
 
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

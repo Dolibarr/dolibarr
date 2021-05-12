@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/livraison/modules_livraison.php';
  */
 class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
 {
+<<<<<<< HEAD
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $error = '';
 	var $nom = 'Saphir';
@@ -44,6 +49,40 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
 	function info()
 	{
     	global $conf,$langs;
+=======
+	/**
+     * Dolibarr version of the loaded document
+     * @var string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	/**
+	 * @var string Error message
+	 */
+	public $error = '';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see $name
+	 */
+	public $nom='Saphir';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Saphir';
+
+
+    /**
+     *  Returns the description of the numbering model
+     *
+     *  @return     string      Texte descripif
+     */
+    public function info()
+    {
+    	global $conf, $langs;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$langs->load("bills");
 
@@ -56,17 +95,30 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
 		$texte.= '<input type="hidden" name="maskconstdelivery" value="LIVRAISON_SAPHIR_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
+<<<<<<< HEAD
 		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Delivery"),$langs->transnoentities("Delivery"));
 		$tooltip.=$langs->trans("GenericMaskCodes2");
 		$tooltip.=$langs->trans("GenericMaskCodes3");
 		$tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("Delivery"),$langs->transnoentities("Delivery"));
+=======
+		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("Delivery"), $langs->transnoentities("Delivery"));
+		$tooltip.=$langs->trans("GenericMaskCodes2");
+		$tooltip.=$langs->trans("GenericMaskCodes3");
+		$tooltip.=$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Delivery"), $langs->transnoentities("Delivery"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$tooltip.=$langs->trans("GenericMaskCodes5");
 
 		// Parametrage du prefix
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
+<<<<<<< HEAD
 		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskdelivery" value="'.$conf->global->LIVRAISON_SAPHIR_MASK.'">',$tooltip,1,1).'</td>';
 
 		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+=======
+		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskdelivery" value="'.$conf->global->LIVRAISON_SAPHIR_MASK.'">', $tooltip, 1, 1).'</td>';
+
+		$texte.= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$texte.= '</tr>';
 
@@ -81,13 +133,21 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
      *
      *  @return     string      Example
      */
+<<<<<<< HEAD
     function getExample()
+=======
+    public function getExample()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
      	global $conf,$langs,$mysoc;
 
     	$old_code_client=$mysoc->code_client;
     	$mysoc->code_client='CCCCCCCCCC';
+<<<<<<< HEAD
 		$numExample = $this->getNextValue($mysoc,'');
+=======
+		$numExample = $this->getNextValue($mysoc, '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	$mysoc->code_client=$old_code_client;
 
 		if (! $numExample)
@@ -105,7 +165,11 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
 	 *  @param  Object		$object			Object delivery
 	 *  @return string      				Value if OK, 0 if KO
 	 */
+<<<<<<< HEAD
     function getNextValue($objsoc,$object)
+=======
+    public function getNextValue($objsoc, $object)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
 		global $db,$conf;
 
@@ -120,7 +184,11 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
 			return 0;
 		}
 
+<<<<<<< HEAD
 		$numFinal=get_next_value($db,$mask,'livraison','ref','',$objsoc,$object->date_livraison);
+=======
+		$numFinal=get_next_value($db, $mask, 'livraison', 'ref', '', $objsoc, $object->date_livraison);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		return  $numFinal;
     }
@@ -133,6 +201,7 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
 	 * 	@param	string		$objforref	Object for number to search
      *  @return string      			Next free value
      */
+<<<<<<< HEAD
     function getNumRef($objsoc,$objforref)
     {
         return $this->getNextValue($objsoc,$objforref);
@@ -142,10 +211,23 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
 	/**
 	 *  Return next free ref
 	 *
+=======
+    public function getNumRef($objsoc, $objforref)
+    {
+        return $this->getNextValue($objsoc, $objforref);
+    }
+
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
+     *  Return next free ref
+     *
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      *  @param	Societe		$objsoc      	Object thirdparty
      *  @param  Object		$object			Objet livraison
      *  @return string      				Texte descripif
      */
+<<<<<<< HEAD
     function livraison_get_num($objsoc=0,$object='')
     {
         return $this->getNextValue($objsoc,$object);
@@ -153,3 +235,11 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
 
 }
 
+=======
+    public function livraison_get_num($objsoc = 0, $object = '')
+    {
+        // phpcs:enable
+        return $this->getNextValue($objsoc, $object);
+    }
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

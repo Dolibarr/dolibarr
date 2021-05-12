@@ -1,3 +1,7 @@
 # Dolibarr language file - Source file is en_US - companies
 Zip=Postcode
+<<<<<<< HEAD
 Gencod=Barcode
+=======
+AccountancyCode=Account
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

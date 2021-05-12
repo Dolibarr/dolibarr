@@ -49,4 +49,7 @@ if ($nbofsalesrepresentative > 0)
 }
 else print '<span class="opacitymedium">'.$langs->trans("NoSalesRepresentativeAffected").'</span>';
 print '</td></tr>';
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

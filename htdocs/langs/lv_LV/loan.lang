@@ -9,7 +9,11 @@ ShowLoanPayment=Rādīt aizdevuma maksājumu
 LoanCapital=Kapitāls
 Insurance=Apdrošināšana
 Interest=Interese
+<<<<<<< HEAD
 Nbterms=Number of terms
+=======
+Nbterms=Noteikumu skaits
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Term=Termiņš
 LoanAccountancyCapitalCode=Accounting account capital
 LoanAccountancyInsuranceCode=Accounting account insurance
@@ -17,7 +21,11 @@ LoanAccountancyInterestCode=Accounting account interest
 ConfirmDeleteLoan=Apstipriniet aizdevuma dzēšanu
 LoanDeleted=Aizdevums veiksmīgi dzēsts
 ConfirmPayLoan=Confirm classify paid this loan
+<<<<<<< HEAD
 LoanPaid=Loan Paid
+=======
+LoanPaid=Aizdevums ir apmaksāts
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ListLoanAssociatedProject=Ar projektu saistīto aizdevumu saraksts
 AddLoan=Izveidot aizdevumu
 FinancialCommitment=Finanšu saistības

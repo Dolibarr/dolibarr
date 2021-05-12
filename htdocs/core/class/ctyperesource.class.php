@@ -19,7 +19,11 @@
  */
 
 /**
+<<<<<<< HEAD
  * \file    resource/ctyperesource.class.php
+=======
+ * \file    htdocs/core/class/ctyperesource.class.php
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * \ingroup resource
  */
 
@@ -36,6 +40,10 @@ class Ctyperesource
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'ctyperesource';
+<<<<<<< HEAD
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
@@ -46,6 +54,7 @@ class Ctyperesource
 	 */
 	public $lines = array();
 
+<<<<<<< HEAD
 	/**
 	 */
 
@@ -55,6 +64,16 @@ class Ctyperesource
 
 	/**
 	 */
+=======
+	public $code;
+
+	/**
+     * @var string Type resource label
+     */
+    public $label;
+
+	public $active;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	/**
@@ -127,6 +146,7 @@ class Ctyperesource
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
 
+<<<<<<< HEAD
 			if (!$notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action to call a trigger.
@@ -136,6 +156,17 @@ class Ctyperesource
 				//if ($result < 0) $error++;
 				//// End call triggers
 			}
+=======
+			// Uncomment this and change MYOBJECT to your own tag if you
+			// want this action to call a trigger.
+			//if (!$notrigger) {
+
+			//  // Call triggers
+			//  $result=$this->call_trigger('MYOBJECT_CREATE',$user);
+			//  if ($result < 0) $error++;
+			//  // End call triggers
+			//}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		// Commit or rollback
@@ -159,7 +190,11 @@ class Ctyperesource
 	 *
 	 * @return int <0 if KO, 0 if not found, >0 if OK
 	 */
+<<<<<<< HEAD
 	public function fetch($id,$code='',$label='')
+=======
+	public function fetch($id, $code = '', $label = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -188,8 +223,11 @@ class Ctyperesource
 				$this->code = $obj->code;
 				$this->label = $obj->label;
 				$this->active = $obj->active;
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 
 			// Retrieve all extrafields for invoice
@@ -225,7 +263,11 @@ class Ctyperesource
 	 *
 	 * @return int <0 if KO, >0 if OK
 	 */
+<<<<<<< HEAD
 	public function fetchAll($sortorder='', $sortfield='', $limit=0, $offset=0, array $filter = array(), $filtermode='AND')
+=======
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -251,7 +293,11 @@ class Ctyperesource
 			$sql .= ' WHERE ' . implode(' '.$filtermode.' ', $sqlwhere);
 		}
 		if (!empty($sortfield)) {
+<<<<<<< HEAD
 			$sql .= $this->db->order($sortfield,$sortorder);
+=======
+			$sql .= $this->db->order($sortfield, $sortorder);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		if (!empty($limit)) {
 		 $sql .=  ' ' . $this->db->plimit($limit, $offset);
@@ -269,8 +315,11 @@ class Ctyperesource
 				$line->code = $obj->code;
 				$line->label = $obj->label;
 				$line->active = $obj->active;
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 			$this->db->free($resql);
 
@@ -331,6 +380,7 @@ class Ctyperesource
 			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
 		}
 
+<<<<<<< HEAD
 		if (!$error && !$notrigger) {
 			// Uncomment this and change MYOBJECT to your own tag if you
 			// want this action calls a trigger.
@@ -340,6 +390,17 @@ class Ctyperesource
 			//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
 			//// End call triggers
 		}
+=======
+		// Uncomment this and change MYOBJECT to your own tag if you
+		// want this action calls a trigger.
+		//if (!$error && !$notrigger) {
+
+		//  // Call triggers
+		//  $result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+		//  if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+		//  // End call triggers
+		//}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Commit or rollback
 		if ($error) {
@@ -369,6 +430,7 @@ class Ctyperesource
 
 		$this->db->begin();
 
+<<<<<<< HEAD
 		if (!$error) {
 			if (!$notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
@@ -380,6 +442,17 @@ class Ctyperesource
 				//// End call triggers
 			}
 		}
+=======
+		// Uncomment this and change MYOBJECT to your own tag if you
+		// want this action calls a trigger.
+		//if (!$error && !$notrigger) {
+
+		//  // Call triggers
+		//  $result=$this->call_trigger('MYOBJECT_DELETE',$user);
+		//  if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+		//  // End call triggers
+		//}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// If you need to delete child tables to, you can insert them here
 
@@ -410,6 +483,7 @@ class Ctyperesource
 	/**
 	 * Load an object from its id and create a new one in database
 	 *
+<<<<<<< HEAD
 	 * @param int $fromid Id of object to clone
 	 *
 	 * @return int New id of clone
@@ -419,6 +493,16 @@ class Ctyperesource
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		global $user;
+=======
+	 * @param	User	$user		User making the clone
+	 * @param   int     $fromid     Id of object to clone
+	 * @return  int                 New id of clone
+	 */
+	public function createFromClone(User $user, $fromid)
+	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$error = 0;
 		$object = new Ctyperesource($this->db);
 
@@ -433,6 +517,10 @@ class Ctyperesource
 		// ...
 
 		// Create clone
+<<<<<<< HEAD
+=======
+		$object->context['createfromclone'] = 'createfromclone';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$result = $object->create($user);
 
 		// Other options
@@ -442,6 +530,11 @@ class Ctyperesource
 			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
 		}
 
+<<<<<<< HEAD
+=======
+		unset($object->context['createfromclone']);
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// End
 		if (!$error) {
 			$this->db->commit();
@@ -450,7 +543,11 @@ class Ctyperesource
 		} else {
 			$this->db->rollback();
 
+<<<<<<< HEAD
 			return - 1;
+=======
+			return -1;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 	}
 
@@ -468,7 +565,10 @@ class Ctyperesource
 		$this->label = '';
 		$this->active = '';
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 /**
@@ -480,16 +580,33 @@ class CtyperesourceLine
 	 * @var int ID
 	 */
 	public $id;
+<<<<<<< HEAD
 	/**
 	 * @var mixed Sample line property 1
 	 */
 
 	public $code;
 	public $label;
+=======
+
+	/**
+	 * @var mixed Sample line property 1
+	 */
+	public $code;
+
+	/**
+     * @var string Type resource line label
+     */
+    public $label;
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	public $active;
 
 	/**
 	 * @var mixed Sample line property 2
 	 */
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

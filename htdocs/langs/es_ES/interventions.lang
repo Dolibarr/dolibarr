@@ -4,6 +4,10 @@ Interventions=Intervenciones
 InterventionCard=Ficha intervención
 NewIntervention=Nueva intevención
 AddIntervention=Crear intervención
+<<<<<<< HEAD
+=======
+ChangeIntoRepeatableIntervention=Cambiar a intervención repetible.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ListOfInterventions=Listado de intervenciones
 ActionsOnFicheInter=Eventos sobre la intervención
 LastInterventions=Últimas %s intervenciones
@@ -14,7 +18,10 @@ DeleteIntervention=Eliminar intervención
 ValidateIntervention=Validar intervención
 ModifyIntervention=Modificar intervención
 DeleteInterventionLine=Eliminar línea de intervención
+<<<<<<< HEAD
 CloneIntervention=Cerrar intervención
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmDeleteIntervention=¿Está seguro de querer eliminar esta intervención?
 ConfirmValidateIntervention=¿Está seguro de querer validar esta intervención bajo la referencia <b>%s</b>?
 ConfirmModifyIntervention=¿Está seguro de querer modificar esta intervención?
@@ -35,7 +42,11 @@ InterventionValidatedInDolibarr=Intervención %s validada
 InterventionModifiedInDolibarr=Intervención %s modificada
 InterventionClassifiedBilledInDolibarr=Intervención %s clasificada como facturada
 InterventionClassifiedUnbilledInDolibarr=Intervención %s clasificada como no facturada
+<<<<<<< HEAD
 InterventionSentByEMail=Intervención %s enviada por E-Mail
+=======
+InterventionSentByEMail=Intervención %s enviada por e-mail
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 InterventionDeletedInDolibarr=Intervención %s eliminada
 InterventionsArea=Área intervenciones
 DraftFichinter=Intervenciones borrador

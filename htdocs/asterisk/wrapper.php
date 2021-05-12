@@ -28,6 +28,7 @@
  * 				write = system,call,log,verbose,command,agent,user
  */
 
+<<<<<<< HEAD
 if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
 if (! defined('NOREQUIRETRAN'))   define('NOREQUIRETRAN','1');
 if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK','1');
@@ -35,10 +36,23 @@ if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL','1');
 if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
+=======
+if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
+if (! defined('NOREQUIRETRAN'))   define('NOREQUIRETRAN', '1');
+if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK', '1');
+if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', '1');
+if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML', '1');
+if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 /**
  * Empty header
  *
+<<<<<<< HEAD
+=======
+ * @ignore
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * @return	void
  */
 function llxHeader()
@@ -48,9 +62,17 @@ function llxHeader()
     print '<title>Asterisk redirection from Dolibarr...</title>'."\n";
     print '</head>'."\n";
 }
+<<<<<<< HEAD
 /**
  * Empty footer
  *
+=======
+
+/**
+ * Empty footer
+ *
+ * @ignore
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * @return	void
  */
 function llxFooter()
@@ -137,12 +159,20 @@ if ($resql)
 }
 else
 {
+<<<<<<< HEAD
 	dol_print_error($db,'Error');
+=======
+	dol_print_error($db, 'Error');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$found = 'Error';
 }
 
 $number=strtolower($called);
+<<<<<<< HEAD
 $pos=strpos($number,"local");
+=======
+$pos=strpos($number, "local");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (! empty($number))
 {
     if ($pos===false)
@@ -156,10 +186,17 @@ if (! empty($number))
             print '<body>'."\n";
             $txt="Failed to execute fsockopen($strHost, $port, \$errno, \$errstr, 10)<br>\n";
             print $txt;
+<<<<<<< HEAD
             dol_syslog($txt,LOG_ERR);
             $txt=$errstr." (".$errno.")<br>\n";
             print $txt;
             dol_syslog($txt,LOG_ERR);
+=======
+            dol_syslog($txt, LOG_ERR);
+            $txt=$errstr." (".$errno.")<br>\n";
+            print $txt;
+            dol_syslog($txt, LOG_ERR);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             print '</body>'."\n";
         }
         else
@@ -190,5 +227,9 @@ else {
     print 'Bad parameters in URL. Must be '.$_SERVER['PHP_SELF'].'?caller=99999&called=99999&login=xxxxx&password=xxxxx';
 }
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

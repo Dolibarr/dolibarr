@@ -34,6 +34,10 @@ class MouvementStock extends CommonObject
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'stockmouvement';
+<<<<<<< HEAD
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
@@ -43,14 +47,43 @@ class MouvementStock extends CommonObject
 	public $product_id;
 	public $warehouse_id;
 	public $qty;
+<<<<<<< HEAD
+=======
+
+	/**
+	 * @var int Type of movement
+	 * 0=input (stock increase by a stock transfer), 1=output (stock decrease after by a stock transfer),
+	 * 2=output (stock decrease), 3=input (stock increase)
+	 * Note that qty should be > 0 with 0 or 3, < 0 with 1 or 2.
+	 */
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	public $type;
 
 	public $tms = '';
 	public $datem = '';
 	public $price;
+<<<<<<< HEAD
 	public $fk_user_author;
 	public $label;
 	public $fk_origin;
+=======
+
+	/**
+     * @var int ID
+     */
+	public $fk_user_author;
+
+	/**
+     * @var string stock movements label
+     */
+    public $label;
+
+    /**
+     * @var int ID
+     */
+	public $fk_origin;
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	public $origintype;
 	public $inventorycode;
 	public $batch;
@@ -62,12 +95,20 @@ class MouvementStock extends CommonObject
 	 *
 	 *  @param      DoliDB		$db      Database handler
      */
+<<<<<<< HEAD
 	function __construct($db)
+=======
+	public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$this->db = $db;
 	}
 
+<<<<<<< HEAD
 
+=======
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *	Add a movement of stock (in one direction only)
 	 *
@@ -83,16 +124,28 @@ class MouvementStock extends CommonObject
 	 *	@param		string	$label			Label of stock movement
 	 *	@param		string	$inventorycode	Inventory code
 	 *	@param		string	$datem			Force date of movement
+<<<<<<< HEAD
 	 *	@param		date	$eatby			eat-by date. Will be used if lot does not exists yet and will be created.
 	 *	@param		date	$sellby			sell-by date. Will be used if lot does not exists yet and will be created.
+=======
+	 *	@param		integer	$eatby			eat-by date. Will be used if lot does not exists yet and will be created.
+	 *	@param		integer	$sellby			sell-by date. Will be used if lot does not exists yet and will be created.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	 *	@param		string	$batch			batch number
 	 *	@param		boolean	$skip_batch		If set to true, stock movement is done without impacting batch record
 	 * 	@param		int		$id_product_batch	Id product_batch (when skip_batch is false and we already know which record of product_batch to use)
 	 *	@return		int						<0 if KO, 0 if fk_product is null, >0 if OK
 	 */
+<<<<<<< HEAD
 	function _create($user, $fk_product, $entrepot_id, $qty, $type, $price=0, $label='', $inventorycode='', $datem='',$eatby='',$sellby='',$batch='',$skip_batch=false, $id_product_batch=0)
 	{
 		global $conf, $langs;
+=======
+    public function _create($user, $fk_product, $entrepot_id, $qty, $type, $price = 0, $label = '', $inventorycode = '', $datem = '', $eatby = '', $sellby = '', $batch = '', $skip_batch = false, $id_product_batch = 0)
+	{
+	    // phpcs:disable
+	    global $conf, $langs;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
@@ -135,13 +188,21 @@ class MouvementStock extends CommonObject
 		$result=$product->fetch($fk_product);
 		if ($result < 0)
 		{
+<<<<<<< HEAD
 			dol_print_error('',"Failed to fetch product");
+=======
+			dol_print_error('', "Failed to fetch product");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			return -1;
 		}
 
 		$this->db->begin();
 
+<<<<<<< HEAD
 		$product->load_stock();
+=======
+		$product->load_stock('novirtual');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Test if product require batch data. If yes, and there is not, we throw an error.
 		if (! empty($conf->productbatch->enabled) && $product->hasbatch() && ! $skip_batch)
@@ -167,7 +228,11 @@ class MouvementStock extends CommonObject
             $resql = $this->db->query($sql);
             if ($resql)
             {
+<<<<<<< HEAD
             	$num = $this->db->num_rows($resql);
+=======
+                $num = $this->db->num_rows($resql);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             	$i=0;
             	if ($num > 0)
             	{
@@ -301,8 +366,13 @@ class MouvementStock extends CommonObject
     		    if (! $foundforbatch || $qtyisnotenough)
     		    {
     		        $langs->load("stocks");
+<<<<<<< HEAD
         		    $this->error = $langs->trans('qtyToTranferLotIsNotEnough');
         		    $this->errors[] = $langs->trans('qtyToTranferLotIsNotEnough');
+=======
+    		        $this->error = $langs->trans('qtyToTranferLotIsNotEnough').' : '.$product->ref;
+    		        $this->errors[] = $langs->trans('qtyToTranferLotIsNotEnough').' : '.$product->ref;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         		    $this->db->rollback();
         		    return -8;
     		    }
@@ -312,8 +382,13 @@ class MouvementStock extends CommonObject
     		    if (empty($product->stock_warehouse[$entrepot_id]->real) || $product->stock_warehouse[$entrepot_id]->real < abs($qty))
     		    {
     		        $langs->load("stocks");
+<<<<<<< HEAD
     		        $this->error = $langs->trans('qtyToTranferIsNotEnough');
     		        $this->errors[] = $langs->trans('qtyToTranferIsNotEnough');
+=======
+    		        $this->error = $langs->trans('qtyToTranferIsNotEnough').' : '.$product->ref;
+    		        $this->errors[] = $langs->trans('qtyToTranferIsNotEnough').' : '.$product->ref;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     		        $this->db->rollback();
     		        return -8;
     		    }
@@ -349,6 +424,10 @@ class MouvementStock extends CommonObject
 
 			dol_syslog(get_class($this)."::_create insert record into stock_mouvement", LOG_DEBUG);
 			$resql = $this->db->query($sql);
+<<<<<<< HEAD
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if ($resql)
 			{
 				$mvid = $this->db->last_insert_id(MAIN_DB_PREFIX."stock_mouvement");
@@ -411,7 +490,11 @@ class MouvementStock extends CommonObject
 					//print "qty=".$qty." newpmp=".$newpmp;
 					//exit;
 				}
+<<<<<<< HEAD
 				else if ($type == 1 || $type == 2)
+=======
+				elseif ($type == 1 || $type == 2)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				{
 					// After a stock decrease, we don't change value of PMP for product.
 					$newpmp = $oldpmp;
@@ -421,7 +504,10 @@ class MouvementStock extends CommonObject
 					$newpmp = $oldpmp;
 				}
 			}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			// Update stock quantity
 			if (! $error)
 			{
@@ -444,11 +530,18 @@ class MouvementStock extends CommonObject
 					$this->errors[]=$this->db->lasterror();
 					$error = -3;
 				}
+<<<<<<< HEAD
 				else if (empty($fk_product_stock))
 				{
 					$fk_product_stock = $this->db->last_insert_id(MAIN_DB_PREFIX."product_stock");
 				}
 
+=======
+				elseif (empty($fk_product_stock))
+				{
+					$fk_product_stock = $this->db->last_insert_id(MAIN_DB_PREFIX."product_stock");
+				}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 
 			// Update detail stock for batch product
@@ -501,7 +594,11 @@ class MouvementStock extends CommonObject
 		if ($movestock && ! $error)
 		{
             // Call trigger
+<<<<<<< HEAD
             $result=$this->call_trigger('STOCK_MOVEMENT',$user);
+=======
+            $result=$this->call_trigger('STOCK_MOVEMENT', $user);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             if ($result < 0) $error++;
             // End call triggers
 		}
@@ -620,7 +717,11 @@ class MouvementStock extends CommonObject
 	 *  @param		string	$inventorycode	Inventory code
 	 * 	@return 	int     				<0 if KO, 0 if OK
 	 */
+<<<<<<< HEAD
 	function _createSubProduct($user, $idProduct, $entrepot_id, $qty, $type, $price=0, $label='', $inventorycode='')
+=======
+	private function _createSubProduct($user, $idProduct, $entrepot_id, $qty, $type, $price = 0, $label = '', $inventorycode = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 
@@ -686,6 +787,7 @@ class MouvementStock extends CommonObject
 	 * 	@param		int		$price			    Price
 	 * 	@param		string	$label			    Label of stock movement
 	 * 	@param		string	$datem			    Force date of movement
+<<<<<<< HEAD
 	 *	@param		date	$eatby			    eat-by date
 	 *	@param		date	$sellby			    sell-by date
 	 *	@param		string	$batch			    batch number
@@ -693,17 +795,32 @@ class MouvementStock extends CommonObject
 	 * 	@return		int						    <0 if KO, >0 if OK
 	 */
 	function livraison($user, $fk_product, $entrepot_id, $qty, $price=0, $label='', $datem='', $eatby='', $sellby='', $batch='', $id_product_batch=0)
+=======
+	 *	@param		integer	$eatby			    eat-by date
+	 *	@param		integer	$sellby			    sell-by date
+	 *	@param		string	$batch			    batch number
+	 * 	@param		int		$id_product_batch	Id product_batch
+	 *  @param      string  $inventorycode      Inventory code
+	 * 	@return		int						    <0 if KO, >0 if OK
+	 */
+	public function livraison($user, $fk_product, $entrepot_id, $qty, $price = 0, $label = '', $datem = '', $eatby = '', $sellby = '', $batch = '', $id_product_batch = 0, $inventorycode='')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 	    global $conf;
 
 		$skip_batch = empty($conf->productbatch->enabled);
 
+<<<<<<< HEAD
 	    return $this->_create($user, $fk_product, $entrepot_id, (0 - $qty), 2, $price, $label, '', $datem, $eatby, $sellby, $batch, $skip_batch, $id_product_batch);
+=======
+		return $this->_create($user, $fk_product, $entrepot_id, (0 - $qty), 2, $price, $label, $inventorycode, $datem, $eatby, $sellby, $batch, $skip_batch, $id_product_batch);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	/**
 	 *	Increase stock for product and subproducts
 	 *
+<<<<<<< HEAD
 	 * 	@param 		User	$user			Object user
 	 * 	@param		int		$fk_product		Id product
 	 * 	@param		int		$entrepot_id	Warehouse id
@@ -718,6 +835,29 @@ class MouvementStock extends CommonObject
 	function reception($user, $fk_product, $entrepot_id, $qty, $price=0, $label='', $eatby='', $sellby='', $batch='')
 	{
 		return $this->_create($user, $fk_product, $entrepot_id, $qty, 3, $price, $label, '', '', $eatby, $sellby, $batch);
+=======
+	 * 	@param 		User	$user			     Object user
+	 * 	@param		int		$fk_product		     Id product
+	 * 	@param		int		$entrepot_id	     Warehouse id
+	 * 	@param		int		$qty			     Quantity
+	 * 	@param		int		$price			     Price
+	 * 	@param		string	$label			     Label of stock movement
+	 *	@param		integer	$eatby			     eat-by date
+	 *	@param		integer	$sellby			     sell-by date
+	 *	@param		string	$batch			     batch number
+	 * 	@param		string	$datem			     Force date of movement
+	 * 	@param		int		$id_product_batch    Id product_batch
+	 *  @param      string  $inventorycode       Inventory code
+	 *	@return		int						     <0 if KO, >0 if OK
+	 */
+	public function reception($user, $fk_product, $entrepot_id, $qty, $price = 0, $label = '', $eatby = '', $sellby = '', $batch = '', $datem = '', $id_product_batch = 0, $inventorycode='')
+	{
+	    global $conf;
+
+	    $skip_batch = empty($conf->productbatch->enabled);
+
+	    return $this->_create($user, $fk_product, $entrepot_id, $qty, 3, $price, $label, $inventorycode, $datem, $eatby, $sellby, $batch, $skip_batch, $id_product_batch);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 
@@ -729,7 +869,11 @@ class MouvementStock extends CommonObject
 	 * @deprecated A count($product->getChildsArbo($id,1)) is same. No reason to have this in this class.
 	 */
 	/*
+<<<<<<< HEAD
 	function nbOfSubProducts($id)
+=======
+	public function nbOfSubProducts($id)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$nbSP=0;
 
@@ -747,10 +891,17 @@ class MouvementStock extends CommonObject
 	 * Count number of product in stock before a specific date
 	 *
 	 * @param 	int			$productidselected		Id of product to count
+<<<<<<< HEAD
 	 * @param 	timestamp	$datebefore				Date limit
 	 * @return	int			Number
 	 */
 	function calculateBalanceForProductBefore($productidselected, $datebefore)
+=======
+	 * @param 	integer 	$datebefore				Date limit
+	 * @return	int			Number
+	 */
+	public function calculateBalanceForProductBefore($productidselected, $datebefore)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$nb=0;
 
@@ -777,8 +928,13 @@ class MouvementStock extends CommonObject
 	 * Create or update batch record (update table llx_product_batch). No check is done here, done by parent.
 	 *
 	 * @param	array|int	$dluo	      Could be either
+<<<<<<< HEAD
 	 *                                     - int if row id of product_batch table
 	 *                                     - or complete array('fk_product_stock'=>, 'batchnumber'=>)
+=======
+	 *                                    - int if row id of product_batch table
+	 *                                    - or complete array('fk_product_stock'=>, 'batchnumber'=>)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	 * @param	int			$qty	      Quantity of product with batch number. May be a negative amount.
 	 * @return 	int   				      <0 if KO, else return productbatch id
 	 */
@@ -802,14 +958,22 @@ class MouvementStock extends CommonObject
 				$result = -2;
 			}
 		}
+<<<<<<< HEAD
 		else if (is_array($dluo))
+=======
+		elseif (is_array($dluo))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			if (isset($dluo['fk_product_stock']))
 			{
 				$vfk_product_stock=$dluo['fk_product_stock'];
 				$vbatchnumber = $dluo['batchnumber'];
 
+<<<<<<< HEAD
 				$result = $pdluo->find($vfk_product_stock,'','',$vbatchnumber);  // Search on batch number only (eatby and sellby are deprecated here)
+=======
+				$result = $pdluo->find($vfk_product_stock, '', '', $vbatchnumber);  // Search on batch number only (eatby and sellby are deprecated here)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 			else
 			{
@@ -832,9 +996,15 @@ class MouvementStock extends CommonObject
 				$pdluo->qty += $qty;
 				if ($pdluo->qty == 0)
 				{
+<<<<<<< HEAD
 					$result=$pdluo->delete($user,1);
 				} else {
 					$result=$pdluo->update($user,1);
+=======
+					$result=$pdluo->delete($user, 1);
+				} else {
+					$result=$pdluo->update($user, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 			}
 			else					// product_batch record not found
@@ -845,7 +1015,11 @@ class MouvementStock extends CommonObject
 				$pdluo->sellby = $vsellby;
 				$pdluo->batch = $vbatchnumber;
 
+<<<<<<< HEAD
 				$result=$pdluo->create($user,1);
+=======
+				$result=$pdluo->create($user, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if ($result < 0)
 				{
 					$this->error=$pdluo->error;
@@ -857,6 +1031,10 @@ class MouvementStock extends CommonObject
 		return $result;
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * Return Url link of origin object
 	 *
@@ -864,8 +1042,14 @@ class MouvementStock extends CommonObject
 	 * @param  int     $origintype     Type origin
 	 * @return string
 	 */
+<<<<<<< HEAD
 	function get_origin($fk_origin, $origintype)
 	{
+=======
+	public function get_origin($fk_origin, $origintype)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    $origin='';
 
 		switch ($origintype) {
@@ -924,7 +1108,11 @@ class MouvementStock extends CommonObject
 	 *
 	 * @return	void
 	 */
+<<<<<<< HEAD
 	function setOrigin($origin_element, $origin_id)
+=======
+	public function setOrigin($origin_element, $origin_id)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		if (!empty($origin_element) && $origin_id > 0)
 		{
@@ -951,7 +1139,11 @@ class MouvementStock extends CommonObject
      *
      *  @return	void
      */
+<<<<<<< HEAD
     function initAsSpecimen()
+=======
+    public function initAsSpecimen()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $user,$langs,$conf,$mysoc;
 
@@ -972,7 +1164,11 @@ class MouvementStock extends CommonObject
 	 *  @param  string  $morecss            Add more css on link
 	 *	@return	string						String with URL
 	 */
+<<<<<<< HEAD
 	function getNomUrl($withpicto=0, $option='', $notooltip=0, $maxlen=24, $morecss='')
+=======
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $maxlen = 24, $morecss = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs, $conf, $db;
 
@@ -985,7 +1181,11 @@ class MouvementStock extends CommonObject
 		$label.= '<br><b>' . $langs->trans('Qty') . ':</b> ' .$this->qty;
 		$label.= '</div>';
 
+<<<<<<< HEAD
 		$link = '<a href="'.DOL_URL_ROOT.'/product/stock/mouvement.php?id='.$this->warehouse_id.'&msid='.$this->id.'"';
+=======
+		$link = '<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?id='.$this->warehouse_id.'&msid='.$this->id.'"';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$link.= ($notooltip?'':' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss?' '.$morecss:'').'"');
 		$link.= '>';
 		$linkend='</a>';
@@ -1005,17 +1205,26 @@ class MouvementStock extends CommonObject
 	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return	string 			       Label of status
 	 */
+<<<<<<< HEAD
 	function getLibStatut($mode=0)
+=======
+	public function getLibStatut($mode = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return $this->LibStatut($mode);
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *  Renvoi le libelle d'un status donne
 	 *
 	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string 			       	Label of status
 	 */
+<<<<<<< HEAD
 	function LibStatut($mode=0)
 	{
 		global $langs;
@@ -1043,6 +1252,32 @@ class MouvementStock extends CommonObject
 		if ($mode == 5)
 		{
 			return $langs->trans('StatusNotApplicable').' '.img_picto($langs->trans('StatusNotApplicable'),'statut9');
+=======
+	public function LibStatut($mode = 0)
+	{
+        // phpcs:enable
+		global $langs;
+
+		if ($mode == 0 || $mode == 1)
+		{
+			return $langs->trans('StatusNotApplicable');
+		}
+		elseif ($mode == 2)
+		{
+			return img_picto($langs->trans('StatusNotApplicable'), 'statut9').' '.$langs->trans('StatusNotApplicable');
+		}
+		elseif ($mode == 3)
+		{
+			return img_picto($langs->trans('StatusNotApplicable'), 'statut9');
+		}
+		elseif ($mode == 4)
+		{
+			return img_picto($langs->trans('StatusNotApplicable'), 'statut9').' '.$langs->trans('StatusNotApplicable');
+		}
+		elseif ($mode == 5)
+		{
+			return $langs->trans('StatusNotApplicable').' '.img_picto($langs->trans('StatusNotApplicable'), 'statut9');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 	}
 
@@ -1056,10 +1291,17 @@ class MouvementStock extends CommonObject
 	 *  @param     int			$hideref        Hide ref
 	 *  @return    int             				0 if KO, 1 if OK
 	 */
+<<<<<<< HEAD
 	public function generateDocument($modele, $outputlangs='',$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
 		global $conf,$user,$langs;
 	
+=======
+	public function generateDocument($modele, $outputlangs = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	{
+		global $conf,$user,$langs;
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$langs->load("stocks");
 
 		if (! dol_strlen($modele)) {

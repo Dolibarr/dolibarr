@@ -30,6 +30,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_activity extends ModeleBoxes
 {
+<<<<<<< HEAD
     var $boxcode="activity";
     var $boximg="object_bill";
     var $boxlabel='BoxGlobalActivity';
@@ -41,6 +42,23 @@ class box_activity extends ModeleBoxes
 
     var $info_box_head = array();
     var $info_box_contents = array();
+=======
+    public $boxcode="activity";
+    public $boximg="object_bill";
+    public $boxlabel='BoxGlobalActivity';
+    public $depends = array("facture");
+
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    public $param;
+    public $enabled = 1;
+
+    public $info_box_head = array();
+    public $info_box_contents = array();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
     /**
@@ -49,7 +67,11 @@ class box_activity extends ModeleBoxes
      *  @param  DoliDB  $db         Database handler
      *  @param  string  $param      More parameters
      */
+<<<<<<< HEAD
     function __construct($db,$param)
+=======
+    public function __construct($db, $param)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $conf, $user;
 
@@ -70,7 +92,11 @@ class box_activity extends ModeleBoxes
      *  @param  int     $max        Maximum number of records to load
      *  @return void
      */
+<<<<<<< HEAD
     function loadBox($max=5)
+=======
+    public function loadBox($max = 5)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $conf, $user, $langs, $db;
 
@@ -149,6 +175,7 @@ class box_activity extends ModeleBoxes
         		while ($j < count($data))
         		{
         			$this->info_box_contents[$line][0] = array(
+<<<<<<< HEAD
         			'td' => 'align="left" width="16"',
         			'url' => DOL_URL_ROOT."/comm/propal/list.php?mainmenu=commercial&amp;leftmenu=propals&amp;viewstatut=".$data[$j]->fk_statut,
         			'tooltip' => $langs->trans("Proposals")."&nbsp;".$propalstatic->LibStatut($data[$j]->fk_statut,0),
@@ -165,16 +192,43 @@ class box_activity extends ModeleBoxes
         			'text' => $data[$j]->nb,
         			'tooltip' => $langs->trans("Proposals")."&nbsp;".$propalstatic->LibStatut($data[$j]->fk_statut,0),
         			'url' => DOL_URL_ROOT."/comm/propal/list.php?mainmenu=commercial&amp;leftmenu=propals&amp;viewstatut=".$data[$j]->fk_statut,
+=======
+                        'td' => 'class="left" width="16"',
+                        'url' => DOL_URL_ROOT."/comm/propal/list.php?mainmenu=commercial&amp;leftmenu=propals&amp;viewstatut=".$data[$j]->fk_statut,
+                        'tooltip' => $langs->trans("Proposals")."&nbsp;".$propalstatic->LibStatut($data[$j]->fk_statut, 0),
+                        'logo' => 'object_propal'
+        			);
+
+        			$this->info_box_contents[$line][1] = array(
+                        'td' => '',
+                        'text' => $langs->trans("Proposals")."&nbsp;".$propalstatic->LibStatut($data[$j]->fk_statut, 0),
+        			);
+
+        			$this->info_box_contents[$line][2] = array(
+                        'td' => 'class="right"',
+                        'text' => $data[$j]->nb,
+                        'tooltip' => $langs->trans("Proposals")."&nbsp;".$propalstatic->LibStatut($data[$j]->fk_statut, 0),
+                        'url' => DOL_URL_ROOT."/comm/propal/list.php?mainmenu=commercial&amp;leftmenu=propals&amp;viewstatut=".$data[$j]->fk_statut,
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         			);
         			$totalnb += $data[$j]->nb;
 
         			$this->info_box_contents[$line][3] = array(
+<<<<<<< HEAD
         			'td' => 'class="right"',
         			'text' => price($data[$j]->Mnttot,1,$langs,0,0,-1,$conf->currency),
         			);
         			$this->info_box_contents[$line][4] = array(
         			'td' => 'align="right" width="18"',
         			'text' => $propalstatic->LibStatut($data[$j]->fk_statut,3),
+=======
+                        'td' => 'class="right"',
+                        'text' => price($data[$j]->Mnttot, 1, $langs, 0, 0, -1, $conf->currency),
+        			);
+        			$this->info_box_contents[$line][4] = array(
+                        'td' => 'class="right" width="18"',
+                        'text' => $propalstatic->LibStatut($data[$j]->fk_statut, 3),
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         			);
 
         			$line++;
@@ -232,32 +286,54 @@ class box_activity extends ModeleBoxes
                 $j=0;
                 while ($j < count($data)) {
                     $this->info_box_contents[$line][0] = array(
+<<<<<<< HEAD
                         'td' => 'align="left" width="16"',
                         'url' => DOL_URL_ROOT."/commande/list.php?mainmenu=commercial&amp;leftmenu=orders&amp;viewstatut=".$data[$j]->fk_statut,
                         'tooltip' => $langs->trans("Orders")."&nbsp;".$commandestatic->LibStatut($data[$j]->fk_statut,0,0),
+=======
+                        'td' => 'class="left" width="16"',
+                        'url' => DOL_URL_ROOT."/commande/list.php?mainmenu=commercial&amp;leftmenu=orders&amp;viewstatut=".$data[$j]->fk_statut,
+                        'tooltip' => $langs->trans("Orders")."&nbsp;".$commandestatic->LibStatut($data[$j]->fk_statut, 0, 0),
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                         'logo' => 'object_order',
                     );
 
                     $this->info_box_contents[$line][1] = array(
                         'td' => '',
+<<<<<<< HEAD
                         'text' =>$langs->trans("Orders")."&nbsp;".$commandestatic->LibStatut($data[$j]->fk_statut,0,0),
+=======
+                        'text' =>$langs->trans("Orders")."&nbsp;".$commandestatic->LibStatut($data[$j]->fk_statut, 0, 0),
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                     );
 
                     $this->info_box_contents[$line][2] = array(
                         'td' => 'class="right"',
                         'text' => $data[$j]->nb,
+<<<<<<< HEAD
                         'tooltip' => $langs->trans("Orders")."&nbsp;".$commandestatic->LibStatut($data[$j]->fk_statut,0,0),
+=======
+                        'tooltip' => $langs->trans("Orders")."&nbsp;".$commandestatic->LibStatut($data[$j]->fk_statut, 0, 0),
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                         'url' => DOL_URL_ROOT."/commande/list.php?mainmenu=commercial&amp;leftmenu=orders&amp;viewstatut=".$data[$j]->fk_statut,
                     );
                     $totalnb += $data[$j]->nb;
 
                     $this->info_box_contents[$line][3] = array(
                         'td' => 'class="right"',
+<<<<<<< HEAD
                         'text' => price($data[$j]->Mnttot,1,$langs,0,0,-1,$conf->currency),
                     );
                     $this->info_box_contents[$line][4] = array(
                         'td' => 'align="right" width="18"',
                         'text' => $commandestatic->LibStatut($data[$j]->fk_statut,0,3),
+=======
+                        'text' => price($data[$j]->Mnttot, 1, $langs, 0, 0, -1, $conf->currency),
+                    );
+                    $this->info_box_contents[$line][4] = array(
+                        'td' => 'class="right" width="18"',
+                        'text' => $commandestatic->LibStatut($data[$j]->fk_statut, 0, 3),
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                     );
 
                     $line++;
@@ -285,7 +361,11 @@ class box_activity extends ModeleBoxes
         		$sql.= " FROM (".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
         		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         		$sql.= ")";
+<<<<<<< HEAD
         		$sql.= " WHERE f.entity IN (".getEntity('facture').')';
+=======
+        		$sql.= " WHERE f.entity IN (".getEntity('invoice').')';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
         		if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
         		$sql.= " AND f.fk_soc = s.rowid";
@@ -317,6 +397,7 @@ class box_activity extends ModeleBoxes
         		while ($j < count($data)) {
         			$billurl="search_status=2&amp;paye=1&amp;year=".$data[$j]->annee;
         			$this->info_box_contents[$line][0] = array(
+<<<<<<< HEAD
         			'td' => 'align="left" width="16"',
         			'tooltip' => $langs->trans('Bills').'&nbsp;'.$facturestatic->LibStatut(1,$data[$j]->fk_statut,0),
         			'url' => DOL_URL_ROOT."/compta/facture/list.php?".$billurl."&amp;mainmenu=accountancy&amp;leftmenu=customers_bills",
@@ -338,22 +419,55 @@ class box_activity extends ModeleBoxes
         			$this->info_box_contents[$line][3] = array(
         			'td' => 'class="right"',
         			'text' => price($data[$j]->Mnttot,1,$langs,0,0,-1,$conf->currency)
+=======
+                        'td' => 'class="left" width="16"',
+                        'tooltip' => $langs->trans('Bills').'&nbsp;'.$facturestatic->LibStatut(1, $data[$j]->fk_statut, 0),
+                        'url' => DOL_URL_ROOT."/compta/facture/list.php?".$billurl."&amp;mainmenu=accountancy&amp;leftmenu=customers_bills",
+                        'logo' => 'bill',
+        			);
+
+        			$this->info_box_contents[$line][1] = array(
+                        'td' => '',
+                        'text' => $langs->trans("Bills")."&nbsp;".$facturestatic->LibStatut(1, $data[$j]->fk_statut, 0)." ".$data[$j]->annee,
+        			);
+
+        			$this->info_box_contents[$line][2] = array(
+                        'td' => 'class="right"',
+                        'tooltip' => $langs->trans('Bills').'&nbsp;'.$facturestatic->LibStatut(1, $data[$j]->fk_statut, 0),
+                        'text' => $data[$j]->nb,
+                        'url' => DOL_URL_ROOT."/compta/facture/list.php?".$billurl."&amp;mainmenu=accountancy&amp;leftmenu=customers_bills",
+        			);
+
+        			$this->info_box_contents[$line][3] = array(
+                        'td' => 'class="right"',
+                        'text' => price($data[$j]->Mnttot, 1, $langs, 0, 0, -1, $conf->currency)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         			);
 
         			// We add only for the current year
        				$totalnb += $data[$j]->nb;
 
         			$this->info_box_contents[$line][4] = array(
+<<<<<<< HEAD
         			'td' => 'align="right" width="18"',
         			'text' => $facturestatic->LibStatut(1,$data[$j]->fk_statut,3),
+=======
+                        'td' => 'class="right" width="18"',
+                        'text' => $facturestatic->LibStatut(1, $data[$j]->fk_statut, 3),
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         			);
         			$line++;
         			$j++;
         		}
         		if (count($data)==0)
         			$this->info_box_contents[$line][0] = array(
+<<<<<<< HEAD
         			'td' => 'align="center"',
         			'text'=>$langs->trans("NoRecordedInvoices"),
+=======
+                        'td' => 'class="center"',
+                        'text'=>$langs->trans("NoRecordedInvoices"),
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         			);
         	}
 
@@ -367,7 +481,11 @@ class box_activity extends ModeleBoxes
         	if ($refresh) {
         		$sql = "SELECT f.fk_statut, SUM(f.total_ttc) as Mnttot, COUNT(*) as nb";
         		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
+<<<<<<< HEAD
         		$sql.= " WHERE f.entity IN (".getEntity('facture').')';
+=======
+        		$sql.= " WHERE f.entity IN (".getEntity('invoice').')';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         		$sql.= " AND f.fk_soc = s.rowid";
         		$sql.= " AND f.datef >= '".$db->idate($tmpdate)."' AND f.paye=0";
         		$sql.= " GROUP BY f.fk_statut";
@@ -399,6 +517,7 @@ class box_activity extends ModeleBoxes
         		while ($j < count($data)) {
         			$billurl="search_status=".$data[$j]->fk_statut."&amp;paye=0";
         			$this->info_box_contents[$line][0] = array(
+<<<<<<< HEAD
         			'td' => 'align="left" width="16"',
         			'tooltip' => $langs->trans('Bills').'&nbsp;'.$facturestatic->LibStatut(0,$data[$j]->fk_statut,0),
         			'url' => DOL_URL_ROOT."/compta/facture/list.php?".$billurl."&amp;mainmenu=accountancy&amp;leftmenu=customers_bills",
@@ -424,20 +543,57 @@ class box_activity extends ModeleBoxes
         			$this->info_box_contents[$line][4] = array(
         			'td' => 'align="right" width="18"',
         			'text' => $facturestatic->LibStatut(0,$data[$j]->fk_statut,3, $alreadypaid),
+=======
+                        'td' => 'class="left" width="16"',
+                        'tooltip' => $langs->trans('Bills').'&nbsp;'.$facturestatic->LibStatut(0, $data[$j]->fk_statut, 0),
+                        'url' => DOL_URL_ROOT."/compta/facture/list.php?".$billurl."&amp;mainmenu=accountancy&amp;leftmenu=customers_bills",
+                        'logo' => 'bill',
+        			);
+
+        			$this->info_box_contents[$line][1] = array(
+                        'td' => '',
+                        'text' => $langs->trans("Bills")."&nbsp;".$facturestatic->LibStatut(0, $data[$j]->fk_statut, 0),
+        			);
+
+        			$this->info_box_contents[$line][2] = array(
+                        'td' => 'class="right"',
+                        'text' => $data[$j]->nb,
+                        'tooltip' => $langs->trans('Bills').'&nbsp;'.$facturestatic->LibStatut(0, $data[$j]->fk_statut, 0),
+                        'url' => DOL_URL_ROOT."/compta/facture/list.php?".$billurl."&amp;mainmenu=accountancy&amp;leftmenu=customers_bills",
+        			);
+        			$totalnb += $data[$j]->nb;
+        			$this->info_box_contents[$line][3] = array(
+                        'td' => 'class="nowrap right"',
+                        'text' => price($data[$j]->Mnttot, 1, $langs, 0, 0, -1, $conf->currency),
+        			);
+        			$this->info_box_contents[$line][4] = array(
+                        'td' => 'class="right" width="18"',
+                        'text' => $facturestatic->LibStatut(0, $data[$j]->fk_statut, 3, $alreadypaid),
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         			);
         			$line++;
         			$j++;
         		}
+<<<<<<< HEAD
         		if ($num==0)
         			$this->info_box_contents[$line][0] = array(
         			'td' => 'align="center"',
         			'text'=>$langs->trans("NoRecordedInvoices"),
         			);
+=======
+        		if ($num==0) {
+        			$this->info_box_contents[$line][0] = array(
+                        'td' => 'class="center"',
+                        'text'=>$langs->trans("NoRecordedInvoices"),
+                    );
+                }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         	}
         }
 
 		// Add the sum in the bottom of the boxes
 		$this->info_box_contents[$line][0] = array('tr' => 'class="liste_total_wrap"');
+<<<<<<< HEAD
 		$this->info_box_contents[$line][1] = array('td' => 'align="left" class="liste_total" ', 'text' => $langs->trans("Total")."&nbsp;".$textHead);
 		$this->info_box_contents[$line][2] = array('td' => 'align="right" class="liste_total" ', 'text' => $totalnb);
 		$this->info_box_contents[$line][3] = array('td' => 'align="right" class="liste_total" ', 'text' => '');
@@ -457,4 +613,25 @@ class box_activity extends ModeleBoxes
     {
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
+=======
+		$this->info_box_contents[$line][1] = array('td' => 'class="liste_total left" ', 'text' => $langs->trans("Total")."&nbsp;".$textHead);
+		$this->info_box_contents[$line][2] = array('td' => 'class="liste_total right" ', 'text' => $totalnb);
+		$this->info_box_contents[$line][3] = array('td' => 'class="liste_total right" ', 'text' => '');
+		$this->info_box_contents[$line][4] = array('td' => 'class="liste_total right" ', 'text' => "");
+    }
+
+
+    /**
+     *  Method to show box
+     *
+     *  @param	array	$head       Array with properties of box title
+     *  @param  array	$contents   Array with properties of box lines
+     *  @param	int		$nooutput	No print, only return string
+     *  @return	string
+     */
+    public function showBox($head = null, $contents = null, $nooutput = 0)
+    {
+        return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

@@ -1,5 +1,10 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+=======
+/* Copyright (C) 2004-2017  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2018-2019  Frédéric France     <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,7 +22,11 @@
  */
 
 /**
+<<<<<<< HEAD
  * \file    modulebuilder/template/core/boxes/mymodulewidget1.php
+=======
+ * \file    htdocs/modulebuilder/template/core/boxes/mymodulewidget1.php
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * \ingroup mymodule
  * \brief   Widget provided by MyModule
  *
@@ -139,6 +148,7 @@ class mymodulewidget1 extends ModeleBoxes
 			0 => array( // First line
 				0 => array( // First Column
 					//  HTML properties of the TR element. Only available on the first column.
+<<<<<<< HEAD
 					'tr'           => 'align="left"',
 					// HTML properties of the TD element
 					'td'           => '',
@@ -151,10 +161,25 @@ class mymodulewidget1 extends ModeleBoxes
 					'target'       => '_blank',
 					// Fist line logo (deprecated. Include instead logo html code into text or text2, and set asis property to true to avoid HTML cleaning)
 					//'logo'         => 'monmodule@monmodule',
+=======
+					'tr' => 'class="left"',
+					// HTML properties of the TD element
+					'td' => '',
+
+					// Main text for content of cell
+					'text' => 'First cell of first line',
+					// Link on 'text' and 'logo' elements
+					'url' => 'http://example.com',
+					// Link's target HTML property
+					'target' => '_blank',
+					// Fist line logo (deprecated. Include instead logo html code into text or text2, and set asis property to true to avoid HTML cleaning)
+					//'logo' => 'monmodule@monmodule',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					// Unformatted text, added after text. Usefull to add/load javascript code
 					'textnoformat' => '',
 
 					// Main text for content of cell (other method)
+<<<<<<< HEAD
 					//'text2'        => '<p><strong>Another text</strong></p>',
 
 					// Truncates 'text' element to the specified character length, 0 = disabled
@@ -167,32 +192,63 @@ class mymodulewidget1 extends ModeleBoxes
 				1 => array( // Another column
 					// No TR for n≠0
 					'td'   => '',
+=======
+					//'text2' => '<p><strong>Another text</strong></p>',
+
+					// Truncates 'text' element to the specified character length, 0 = disabled
+					'maxlength' => 0,
+					// Prevents HTML cleaning (and truncation)
+					'asis' => false,
+					// Same for 'text2'
+					'asis2' => true
+				),
+				1 => array( // Another column
+					// No TR for n≠0
+					'td' => '',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					'text' => 'Second cell',
 				)
 			),
 			1 => array( // Another line
 				0 => array( // TR
+<<<<<<< HEAD
 					'tr'   => 'align="left"',
 					'text' => 'Another line'
 				),
 				1 => array( // TR
 					'tr'   => 'align="left"',
+=======
+					'tr' => 'class="left"',
+					'text' => 'Another line'
+				),
+				1 => array( // TR
+					'tr' => 'class="left"',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					'text' => ''
 				)
 			),
 			2 => array( // Another line
 				0 => array( // TR
+<<<<<<< HEAD
 					'tr'   => 'align="left"',
 					'text' => ''
 				),
 				0 => array( // TR
 					'tr'   => 'align="left"',
+=======
+					'tr' => 'class="left"',
+					'text' => ''
+				),
+				1 => array( // TR
+					'tr' => 'class="left"',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					'text' => ''
 				)
 			),
 		);
 	}
 
+<<<<<<< HEAD
 	/**
 	 * Method to show box. Called by Dolibarr eatch time it wants to display the box.
 	 *
@@ -206,4 +262,20 @@ class mymodulewidget1 extends ModeleBoxes
 		// … or use the parent's class function using the provided head and contents templates
 		parent::showBox($this->info_box_head, $this->info_box_contents);
 	}
+=======
+    /**
+     * Method to show box. Called by Dolibarr eatch time it wants to display the box.
+     *
+     * @param array $head       Array with properties of box title
+     * @param array $contents   Array with properties of box lines
+     * @param int   $nooutput   No print, only return string
+     * @return void
+     */
+    public function showBox($head = null, $contents = null, $nooutput = 0)
+    {
+        // You may make your own code here…
+        // … or use the parent's class function using the provided head and contents templates
+        parent::showBox($this->info_box_head, $this->info_box_contents);
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

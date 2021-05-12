@@ -17,6 +17,7 @@ Reference=Reference
 NewProduct=Nový produkt
 NewService=Nová služba
 ProductVatMassChange=Hromadná změna DPH
+<<<<<<< HEAD
 ProductVatMassChangeDesc=Tuto stránku lze použít k úpravě sazby DPH definované u produktů nebo služeb  z jedné do druhé hodnoty. Varování:  Tato změna se provádí ve všech databázích!!.
 MassBarcodeInit=Hromadný čárový kód inicializace
 MassBarcodeInitDesc=Tato stránka může být použita k inicializaci čárového kódu na objekty, které nemají definovaný čárový kód. Zkontrolujte před touto akcí, zda je nastavení modulu čárového kódu kompletní.
@@ -46,6 +47,38 @@ Stocks=Zásoby
 Movements=Pohyby
 Sell=Odbyt
 Buy=Nákupy
+=======
+ProductVatMassChangeDesc=Tento nástroj aktualizuje sazbu DPH definovanou na produkty a služby <b> <u> ALL </u> </b>!
+MassBarcodeInit=Hromadný čárový kód inicializace
+MassBarcodeInitDesc=Tato stránka může být použita k inicializaci čárového kódu na objekty, které nemají definovaný čárový kód. Zkontrolujte před touto akcí, zda je nastavení modulu čárového kódu kompletní.
+ProductAccountancyBuyCode=Účetní kód (nákup)
+ProductAccountancySellCode=Účetní kód (prodej)
+ProductAccountancySellIntraCode=Účetní kód (prodej uvnitř Společenství)
+ProductAccountancySellExportCode=Účetní kód (exportní prodej)
+ProductOrService=Produkt nebo služba
+ProductsAndServices=Produkty a služby
+ProductsOrServices=Výrobky nebo služby
+ProductsPipeServices=Produkty | Služby
+ProductsOnSaleOnly=Produkty pouze k prodeji
+ProductsOnPurchaseOnly=Produkty pouze pro nákup
+ProductsNotOnSell=Výrobky, které nejsou určeny k prodeji a nejsou k nákupu
+ProductsOnSellAndOnBuy=Produkty pro prodej a pro nákup
+ServicesOnSaleOnly=Služby pouze pro prodej
+ServicesOnPurchaseOnly=Služby pouze pro nákup
+ServicesNotOnSell=Služby, které nejsou určeny k prodeji a ne k nákupu
+ServicesOnSellAndOnBuy=Služby pro prodej a pro nákup
+LastModifiedProductsAndServices=Poslední %s upravené produkty/služby
+LastRecordedProducts=Poslední zaznamenané %s produkty
+LastRecordedServices=Poslední zaznamenané %s služby
+CardProduct0=Produkt
+CardProduct1=Služba
+Stock=Zásoba
+MenuStocks=Sklady
+Stocks=Zásoby a umístění (sklad) produktů
+Movements=Pohyby
+Sell=Prodávat
+Buy=Nákup
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 OnSell=Na prodej
 OnBuy=Pro nákup
 NotOnSell=Není k prodeji
@@ -60,17 +93,30 @@ ProductStatusNotOnBuyShort=Nelze zakoupit
 UpdateVAT=Aktualizace DPH
 UpdateDefaultPrice=Aktualizace výchozí ceny
 UpdateLevelPrices=Aktualizovat ceny pro každou úroveň
+<<<<<<< HEAD
 AppliedPricesFrom=Aplikované ceny od
 SellingPrice=Prodejní cena
 SellingPriceHT=Prodejní cena (bez DPH)
 SellingPriceTTC=Prodejní cena (vč. DPH)
 CostPriceDescription=Tato cena (bez daně), může být použita k ukládání průměrné ceny tohoto produktu ve vaší společnosti. Může to být jakákoliv cena, kterou spočítat sami, například od průměrné nákupní ceny plus  průměrné výrobní a distribuční náklady.
+=======
+AppliedPricesFrom=Aplikováno z
+SellingPrice=Prodejní cena
+SellingPriceHT=Prodejní cena (bez daně)
+SellingPriceTTC=Prodejní cena (vč. DPH)
+SellingMinPriceTTC=Minimální prodejní cena (včetně daně)
+CostPriceDescription=Toto cenové pole (bez daně) lze použít k ukládání průměrné částky, kterou tento produkt náklady na vaši společnost. Může se jednat o jakoukoli cenu, kterou si vypočítáte, například z průměrné kupní ceny plus průměrné výrobní a distribuční náklady.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CostPriceUsage=Tato hodnota může být použita pro výpočet marže.
 SoldAmount=Prodat množství
 PurchasedAmount=Zakoupená částka
 NewPrice=Nová cena
 MinPrice=Min. prodejní cena
+<<<<<<< HEAD
 EditSellingPriceLabel=Edit selling price label
+=======
+EditSellingPriceLabel=Upravte štítek prodejní ceny
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CantBeLessThanMinPrice=Prodejní cena nesmí být nižší než minimální povolená pro tento produkt (%s bez daně). Toto hlášení se může také zobrazí, pokud zadáte příliš důležitou slevu.
 ContractStatusClosed=Zavřeno
 ErrorProductAlreadyExists=Výrobek s referenčním %s již existuje.
@@ -78,7 +124,11 @@ ErrorProductBadRefOrLabel=Chybná hodnota pro reference nebo etikety.
 ErrorProductClone=Vyskytl se problém při pokusu o kopírování produktu nebo služby.
 ErrorPriceCantBeLowerThanMinPrice=Chyba, cena nesmí být nižší než minimální cena.
 Suppliers=Dodavatelé
+<<<<<<< HEAD
 SupplierRef=Dodavatele produktů čj.
+=======
+SupplierRef=Prodejce SKU
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShowProduct=Zobrazit produkt
 ShowService=Zobrazit servis
 ProductsAndServicesArea=Oblasti produktů a služeb
@@ -87,7 +137,11 @@ ServicesArea=Poskytování služeb v oblasti
 ListOfStockMovements=Seznam skladových pohybů
 BuyingPrice=Nákupní cena
 PriceForEachProduct=Produkty se specifickými cenami
+<<<<<<< HEAD
 SupplierCard=Karta dodavatele
+=======
+SupplierCard=Prodejní karta
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PriceRemoved=Cena odstraněny
 BarCode=Čárový kód
 BarcodeType=Typ čárového kódu
@@ -95,23 +149,40 @@ SetDefaultBarcodeType=Nastavte typ čárového kódu
 BarcodeValue=Hodnota čárového kódu
 NoteNotVisibleOnBill=Poznámka (není vidět na návrzích faktury, ...)
 ServiceLimitedDuration=Je-li výrobek službou s omezeným trváním:
+<<<<<<< HEAD
 MultiPricesAbility=Several segment of prices per product/service (each customer is in one segment)
 MultiPricesNumPrices=Počet cen
 AssociatedProductsAbility=Aktivovat funkci pro správu virtuálních produktů
 AssociatedProducts=Virtuální produkt
+=======
+MultiPricesAbility=Více cenových segmentů na produkt / službu (každý zákazník je v jednom cenovém segmentu)
+MultiPricesNumPrices=Počet cen
+AssociatedProductsAbility=Aktivovat virtuální produkty (sady)
+AssociatedProducts=Virtuální produkty
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AssociatedProductsNumber=Počet výrobků tvořících tento virtuální produkt
 ParentProductsNumber=Počet výchozích balení výrobku
 ParentProducts=Hlavní produkty
 IfZeroItIsNotAVirtualProduct=Pokud je 0, tento produkt není virtuální produkt
+<<<<<<< HEAD
 IfZeroItIsNotUsedByVirtualProduct=Je-li 0, je tento výrobek není používán žádným virtuální produkt
+=======
+IfZeroItIsNotUsedByVirtualProduct=Pokud je 0, tento produkt nepoužívá žádný virtuální produkt
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 KeywordFilter=Filtr klíčového slova
 CategoryFilter=Filtr kategorie
 ProductToAddSearch=Hledat produkt pro přidání
 NoMatchFound=Shoda nenalezena
 ListOfProductsServices=Seznam produktů/služeb
+<<<<<<< HEAD
 ProductAssociationList=Seznam produktů/služeb, které jsou součástí tohoto virtuálního produktu/balíčku
 ProductParentList=Seznam virtuálních produktů / služeb s tímto produktem jako součást
 ErrorAssociationIsFatherOfThis=Jedním z vybraného produktu je rodič s aktuálním produktem
+=======
+ProductAssociationList=Seznam produktů / služeb, které jsou součástí tohoto virtuálního produktu / sady
+ProductParentList=Seznam virtuálních produktů / služeb s tímto produktem jako komponentou
+ErrorAssociationIsFatherOfThis=Jeden vybraný produkt je nadřazený současnému produktu
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DeleteProduct=Odstranění produktu/služby
 ConfirmDeleteProduct=Jste si jisti, že chcete smazat tento výrobek/službu?
 ProductDeleted=Výrobek/služba "%s" vymazán z databáze.
@@ -122,6 +193,7 @@ ImportDataset_service_1=Služby
 DeleteProductLine=Odstranit produktovou řadu
 ConfirmDeleteProductLine=Jste si jisti, že chcete smazat tuto produktovou řadu?
 ProductSpecial=Speciální
+<<<<<<< HEAD
 QtyMin=Minimální množství
 PriceQtyMin=Cena za toto min. množství (w/o sleva)
 PriceQtyMinCurrency=Price for this min. qty (w/o discount) (currency)
@@ -135,6 +207,21 @@ PredefinedProductsAndServicesToSell=Předdefinované produkty/služby na prodej
 PredefinedProductsToPurchase=Předdefinovaný produkt k nákupu
 PredefinedServicesToPurchase=Předdefinované služby pro nákup
 PredefinedProductsAndServicesToPurchase=Předdefinované produkty/služby pro nákup
+=======
+QtyMin=Min. nákupní množství
+PriceQtyMin=Cena min.
+PriceQtyMinCurrency=Cena (měna) pro toto množství. (žádná sleva)
+VATRateForSupplierProduct=DPH (pro tento prodejce / produkt)
+DiscountQtyMin=Sleva pro tento počet.
+NoPriceDefinedForThisSupplier=Pro tento dodavatel / produkt není definována žádná cena / množství
+NoSupplierPriceDefinedForThisProduct=Pro tento produkt není definována cena / množství prodejce
+PredefinedProductsToSell=Předdefinovaný produkt
+PredefinedServicesToSell=Předdefinovaná služba
+PredefinedProductsAndServicesToSell=Předdefinované produkty/služby na prodej
+PredefinedProductsToPurchase=Předdefinovaný produkt k nákupu
+PredefinedServicesToPurchase=Předdefinované služby pro nákup
+PredefinedProductsAndServicesToPurchase=Předdefinované produkty / služby k nákupu
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NotPredefinedProducts=Nejsou předdefinované produkty/služby
 GenerateThumb=Vytvořit náhled
 ServiceNb=Servisní # %s
@@ -143,22 +230,37 @@ ListProductByPopularity=Seznam zboží podle oblíbenosti
 ListServiceByPopularity=Seznam služeb podle oblíbenosti
 Finished=Výrobce produktu
 RowMaterial=Surovina
+<<<<<<< HEAD
 CloneProduct=Kopírovat produkt nebo službu
 ConfirmCloneProduct=Jste si jisti, že chcete kopírovat produkt nebo službu <b>%s</b>?
 CloneContentProduct=Kopírovat všechny hlavní informace o produktu/službě
 ClonePricesProduct=Clone prices
 CloneCompositionProduct=Kopírování balení zboží/služby
+=======
+ConfirmCloneProduct=Jste si jisti, že chcete kopírovat produkt nebo službu <b>%s</b>?
+CloneContentProduct=Klonujte všechny hlavní informace o produktu / službě
+ClonePricesProduct=Kopíruje ceny
+CloneCompositionProduct=Kopíruje virtuální produkt / službu
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CloneCombinationsProduct=Kopírovat varianty produktu
 ProductIsUsed=Tento produkt se používá
 NewRefForClone=Ref. nového produktu/služby
 SellingPrices=Prodejní ceny
 BuyingPrices=Nákupní ceny
 CustomerPrices=Zákaznické ceny
+<<<<<<< HEAD
 SuppliersPrices=Dodavatelské ceny
 SuppliersPricesOfProductsOrServices=Dodavatelské ceny (výrobků či služeb)
 CustomCode=Customs / Commodity / HS code
 CountryOrigin=Země původu
 Nature=Příroda
+=======
+SuppliersPrices=Ceny prodejců
+SuppliersPricesOfProductsOrServices=Ceny prodejců (produktů nebo služeb)
+CustomCode=Kód cla / komodity / HS
+CountryOrigin=Země původu
+Nature=Nature of produt (material/finished)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShortLabel=Krátký štítek
 Unit=Jednotka
 p=u.
@@ -181,24 +283,38 @@ m2=m²
 m3=m³
 liter=litr
 l=L
+<<<<<<< HEAD
 unitP=Piece
 unitSET=Set
+=======
+unitP=Kus
+unitSET=Soubor
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 unitS=Druhý
 unitH=Hodina
 unitD=Den
 unitKG=Kilogram
 unitG=Gram
+<<<<<<< HEAD
 unitM=Meter
 unitLM=Linear meter
 unitM2=Square meter
 unitM3=Cubic meter
 unitL=Liter
+=======
+unitM=Metr
+unitLM=Lineární měřidlo
+unitM2=Metr čtvereční
+unitM3=Metr krychlový
+unitL=Litr
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProductCodeModel=Ref šablona produktu
 ServiceCodeModel=Ref šablona služby
 CurrentProductPrice=Aktuální cena
 AlwaysUseNewPrice=Vždy používejte aktuální cenu produktu/služby
 AlwaysUseFixedPrice=Použijte pevnou cenu
 PriceByQuantity=Různé ceny podle množství
+<<<<<<< HEAD
 DisablePriceByQty=Disable prices by quantity
 PriceByQuantityRange=Množstevní rozsah
 MultipriceRules=Pravidla segmentu cen
@@ -208,6 +324,17 @@ PercentDiscountOver=%% sleva na %s
 KeepEmptyForAutoCalculation=Keep empty to have this calculated automatically from weight or volume of products
 VariantRefExample=Example: COL
 VariantLabelExample=Example: Color
+=======
+DisablePriceByQty=Zakázat ceny podle množství
+PriceByQuantityRange=Množstevní rozsah
+MultipriceRules=Pravidla segmentu cen
+UseMultipriceRules=Použijte pravidla segmentu cen (definovaná v nastavení modulu produktu) pro automatické výpočty cen všech ostatních segmentů podle prvního segmentu
+PercentVariationOver=%% variace přes %s
+PercentDiscountOver=%% sleva na %s
+KeepEmptyForAutoCalculation=Nechte prázdné, aby se to automaticky vypočítalo z hmotnosti nebo objemu produktů
+VariantRefExample=Příklad: COL
+VariantLabelExample=Příklad: Barva
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ### composition fabrication
 Build=Vyrobit
 ProductsMultiPrice=Produkty a ceny pro jednotlivé cenové kategorie
@@ -218,14 +345,20 @@ Quarter1=I. čtvrtletí
 Quarter2=II čtvrtletí
 Quarter3=III čtvrtletí
 Quarter4=IV čtvrtletí
+<<<<<<< HEAD
 BarCodePrintsheet=Tisk čárového kódu
 PageToGenerateBarCodeSheets=Pomocí tohoto nástroje můžete vytisknout archy čárových kódů samolepek. Zvolte formát samolepek, typ a hodnoty čárového kódu a poté klikněte na tlačítko <b>%s</b>.
+=======
+BarCodePrintsheet=tisk čárových kódů
+PageToGenerateBarCodeSheets=Pomocí tohoto nástroje můžete tisknout listy samolepek čárových kódů. Vyberte formát stránky štítku, typ čárového kódu a hodnotu čárového kódu, poté klikněte na tlačítko <b> %s </b>.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NumberOfStickers=Počet samolepek k tisku na stránce
 PrintsheetForOneBarCode=Vytiskněte několik štítků pro jeden čárový kód
 BuildPageToPrint=Generování stránky pro tisk
 FillBarCodeTypeAndValueManually=Zadat typ čárového kódu a hodnotu ručně.
 FillBarCodeTypeAndValueFromProduct=Zadat typ čárového kódu a hodnoty z čárového kódu produktu.
 FillBarCodeTypeAndValueFromThirdParty=Zadat typ čárového kódu a hodnoty z čárového kódu třetí strany.
+<<<<<<< HEAD
 DefinitionOfBarCodeForProductNotComplete=Definice typu nebo hodnoty čárového kódu není kompletní pro produkt %s.
 DefinitionOfBarCodeForThirdpartyNotComplete=Definice typu nebo hodnoty čárového kódu není kompletní pro třetí stranu %s.
 BarCodeDataForProduct=Čárový kód informace o výrobku %s :
@@ -234,6 +367,16 @@ ResetBarcodeForAllRecords=Definovat hodnotu čárového kódu pro všechny zázn
 PriceByCustomer=Různé ceny pro každého zákazníka
 PriceCatalogue=Unikátní cena pro produkt/službu
 PricingRule=Pravidla pro zákaznických ceny
+=======
+DefinitionOfBarCodeForProductNotComplete=Definice typu nebo hodnoty čárového kódu není dokončena pro produkt %s.
+DefinitionOfBarCodeForThirdpartyNotComplete=Definice typu nebo hodnoty čárového kódu, který není úplný pro subjekt %s.
+BarCodeDataForProduct=Informace o čárovém kódu produktu %s:
+BarCodeDataForThirdparty=Informace o čárových kódech subjektu %s:
+ResetBarcodeForAllRecords=Definovat hodnotu čárového kódu pro všechny záznamy (tato akce také obnoví hodnotu čárového kódu již definovanou s novými hodnotami)
+PriceByCustomer=Různé ceny pro každého zákazníka
+PriceCatalogue=Unikátní cena pro produkt/službu
+PricingRule=Pravidla pro prodejní ceny
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddCustomerPrice=Přidejte cenu pro zákazníka
 ForceUpdateChildPriceSoc=Nastavit stejné ceny pro dceřiné společnosti zákazníka
 PriceByCustomerLog=Protokol o cenách předchozího zákazníka
@@ -243,8 +386,13 @@ PriceExpressionEditor=Editor cenových výrazů
 PriceExpressionSelected=Vybrané ceny výraz
 PriceExpressionEditorHelp1="cena = 2 + 2" nebo "2 + 2" pro nastavení ceny. Použijte oddělovač ; pro oddělení výrazů
 PriceExpressionEditorHelp2=Můžete přistupovat k ExtraFields s proměnnými, jako je <b>#extrafield_myextrafieldkey#</b> a globální proměnné s <b>#global_mycode#</b>
+<<<<<<< HEAD
 PriceExpressionEditorHelp3=V obou cenách produktů/služeb a dodavatelů jsou tyto proměnné k dispozici: <br><b>#tva_tx# #localtax1_tx# #localtax2_tx# #weight# #length# #surface# #price_min#</b>
 PriceExpressionEditorHelp4=V produktech/službách pouze cena: <b>#supplier_min_price#</b><br>v dodavatelských cenách pouze: <b>#supplier_quantity# and #supplier_tva_tx#</b>
+=======
+PriceExpressionEditorHelp3=V obou cenách produktů / služeb a prodejců jsou k dispozici tyto proměnné:  <br><b> # tva_tx # # localtax1_tx # # localtax2_tx # # váha # # délka # # plocha # # cena_min # </b>
+PriceExpressionEditorHelp4=Pouze v ceně produktu / služby: <b> # supplier_min_price # </b> <br> Pouze v cenách prodejců: <b> # supplier_quantity # and # supplier_tva_tx # </b>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PriceExpressionEditorHelp5=Dostupné globální hodnoty:
 PriceMode=Režim ceny
 PriceNumeric=Číslo
@@ -252,13 +400,20 @@ DefaultPrice=Výchozí cena
 ComposedProductIncDecStock=Zvýšit/snížit zásoby na výchozí změny
 ComposedProduct=Subprodukt
 MinSupplierPrice=Minimální nákupní cena
+<<<<<<< HEAD
 MinCustomerPrice=Minimum selling price
 DynamicPriceConfiguration=Dynamická konfigurace cen
 DynamicPriceDesc=On product card, with this module enabled, you should be able to set mathematic functions to calculate Customer or Supplier prices. Such function can use all mathematic operators, some constants and variables. You can set here the variables you want to be able to use and if the variable need an automatic update, the external URL to use to ask Dolibarr to update automaticaly the value.
+=======
+MinCustomerPrice=Minimální prodejní cena
+DynamicPriceConfiguration=Dynamická konfigurace cen
+DynamicPriceDesc=Můžete definovat matematické vzorce pro výpočet cen zákazníků nebo prodejců. Takové vzorce mohou používat všechny matematické operátory, některé konstanty a proměnné. Zde můžete definovat proměnné, které chcete použít. Pokud proměnná potřebuje automatickou aktualizaci, můžete definovat externí URL, aby Dolibarr umožnil automatickou aktualizaci hodnoty.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddVariable=Přidat proměnnou
 AddUpdater=Přidat Update
 GlobalVariables=Globální proměnné
 VariableToUpdate=Aktualizovat proměnnou
+<<<<<<< HEAD
 GlobalVariableUpdaters=Aktualizace globálních proměnných
 GlobalVariableUpdaterType0=JSON data
 GlobalVariableUpdaterHelp0=Analyzuje JSON data ze zadané adresy URL, VALUE určuje umístění příslušné hodnoty
@@ -266,6 +421,15 @@ GlobalVariableUpdaterHelpFormat0=Format for request {"URL": "http://example.com/
 GlobalVariableUpdaterType1=WebService data
 GlobalVariableUpdaterHelp1=Analyzuje Webservice data ze zadané adresy URL, NS specifikuje jmenný prostor, VALUE určuje umístění příslušné hodnoty, DATA by měla obsahovat data odesílat a METHOD je volání metody WS
 GlobalVariableUpdaterHelpFormat1=Format for request is {"URL": "http://example.com/urlofws", "VALUE": "array,targetvalue", "NS": "http://example.com/urlofns", "METHOD": "myWSMethod", "DATA": {"your": "data", "to": "send"}}
+=======
+GlobalVariableUpdaters=External updaters for variables
+GlobalVariableUpdaterType0=JSON data
+GlobalVariableUpdaterHelp0=Analyzuje JSON data ze zadané adresy URL, VALUE určuje umístění příslušné hodnoty
+GlobalVariableUpdaterHelpFormat0=Formát požadavku {"URL": "http://example.com/urlofjson", "VALUE": "array1, array2, targetvalue"}
+GlobalVariableUpdaterType1=WebService data
+GlobalVariableUpdaterHelp1=Analyzuje Webservice data ze zadané adresy URL, NS specifikuje jmenný prostor, VALUE určuje umístění příslušné hodnoty, DATA by měla obsahovat data odesílat a METHOD je volání metody WS
+GlobalVariableUpdaterHelpFormat1=Formát požadavku je {"URL": "http://example.com/urlofws", "VALUE": "array, targetvalue", "NS": "http://example.com/urlofns", "METHOD" : "myWSMethod", "DATA": {"vaše": "data", "to": "odeslat"}}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 UpdateInterval=Interval aktualizace (minuty)
 LastUpdated=Poslední aktualizace
 CorrectlyUpdated=Správně aktualizováno
@@ -277,7 +441,11 @@ WarningSelectOneDocument=Vyberte alespoň jeden dokument
 DefaultUnitToShow=Jednotka
 NbOfQtyInProposals=Množství v návrzích
 ClinkOnALinkOfColumn=Kliknout na odkaz sloupce %s získat detailní pohled ...
+<<<<<<< HEAD
 ProductsOrServicesTranslations=Products or services translation
+=======
+ProductsOrServicesTranslations=Překlady výrobků / služeb
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TranslatedLabel=Přeložený štítek
 TranslatedDescription=Přeložený popis
 TranslatedNote=Přeložené poznámky
@@ -289,6 +457,7 @@ SizeUnits=Jednotková velikost
 DeleteProductBuyPrice=Smazat nákupní ceny
 ConfirmDeleteProductBuyPrice=Jste si jisti, že chcete smazat tuto nákupní cenu?
 SubProduct=Sub produkt
+<<<<<<< HEAD
 ProductSheet=Product sheet
 ServiceSheet=Service sheet
 PossibleValues=Possible values
@@ -334,3 +503,55 @@ CloneDestinationReference=Destination product reference
 ErrorCopyProductCombinations=There was an error while copying the product variants
 ErrorDestinationProductNotFound=Destination product not found
 ErrorProductCombinationNotFound=Product variant not found
+=======
+ProductSheet=Produktový list
+ServiceSheet=Servisní list
+PossibleValues=Možné hodnoty
+GoOnMenuToCreateVairants=Přejděte do nabídky %s - %s a připravte varianty atributů (například barvy, velikost, ...)
+UseProductFournDesc=Přidání funkce pro definování popisů produktů definovaných dodavateli vedle popisů pro zákazníky
+ProductSupplierDescription=Popis dodavatele produktu
+#Attributes
+VariantAttributes=Atributy variant
+ProductAttributes=Atributy variant pro produkty
+ProductAttributeName=Atribut varianty %s
+ProductAttribute=Atribut varianty
+ProductAttributeDeleteDialog=Opravdu chcete tento atribut smazat? Všechny hodnoty budou smazány
+ProductAttributeValueDeleteDialog=Opravdu chcete smazat hodnotu "%s" s odkazem na "%s" tohoto atributu?
+ProductCombinationDeleteDialog=Opravdu chcete smazat variantu produktu "<strong> %s </strong>"?
+ProductCombinationAlreadyUsed=Při mazání varianty došlo k chybě. Zkontrolujte, zda není používán v žádném objektu
+ProductCombinations=Varianty
+PropagateVariant=Propagujte varianty
+HideProductCombinations=V nabídce produktů skryjte varianty produktů
+ProductCombination=Varianta
+NewProductCombination=Nová varianta
+EditProductCombination=Úpravy variant
+NewProductCombinations=Nové varianty
+EditProductCombinations=Úpravy variant
+SelectCombination=Vyberte kombinaci
+ProductCombinationGenerator=Generátor variant
+Features=Funkce
+PriceImpact=Dopad na ceny
+WeightImpact=Hmotnostní dopady
+NewProductAttribute=Nový atribut
+NewProductAttributeValue=Nová hodnota atributu
+ErrorCreatingProductAttributeValue=Při vytváření hodnoty atributu došlo k chybě. Mohlo by to být proto, že existuje již existující hodnota s tímto odkazem
+ProductCombinationGeneratorWarning=Pokud budete pokračovat, předtím, než vygenerujete nové varianty, budou všechny předchozí DELETED. Již existující budou aktualizovány s novými hodnotami
+TooMuchCombinationsWarning=Generování mnoha variant může mít za následek vysoký CPU, využití paměti a Dolibarr, které je nemohou vytvořit. Povolení možnosti "%s" může pomoci snížit využití paměti.
+DoNotRemovePreviousCombinations=Neodstraňujte předchozí varianty
+UsePercentageVariations=Použijte procentuální variace
+PercentageVariation=Procentní variace
+ErrorDeletingGeneratedProducts=Při pokusu o odstranění existujících variant produktů došlo k chybě
+NbOfDifferentValues=Počet různých hodnot
+NbProducts=Počet produktů
+ParentProduct=Nadřazený produkt
+HideChildProducts=Skrýt varianty produktů
+ShowChildProducts=Zobrazit variantní produkty
+NoEditVariants=Přejděte na kartě Rodičovská karta a upravte dopad variant varianta na kartě Varianty
+ConfirmCloneProductCombinations=Chtěli byste zkopírovat všechny varianty produktu do druhého nadřazeného produktu s uvedeným odkazem?
+CloneDestinationReference=Cílová položka produktu
+ErrorCopyProductCombinations=Při kopírování variant produktu došlo k chybě
+ErrorDestinationProductNotFound=Cílový produkt nebyl nalezen
+ErrorProductCombinationNotFound=Produkt nebyl nalezen
+ActionAvailableOnVariantProductOnly=Akce je k dispozici pouze u varianty výrobku
+ProductsPricePerCustomer=Ceny produktů na zákazníky
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

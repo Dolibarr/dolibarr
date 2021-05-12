@@ -25,7 +25,11 @@ FormatDateHourTextShort=%d %b %Y %H:%M
 FormatDateHourText=%d %B %Y %H:%M
 DatabaseConnection=Datenbankverbindung
 NoTemplateDefined=Für diesen E-Mail-Typ ist keine Vorlage verfügbar
+<<<<<<< HEAD
 AvailableVariables=verfügbare Ersatzungsvariablen
+=======
+AvailableVariables=verfügbare Variablen
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoTranslation=Keine Übersetzung
 Translation=Übersetzung
 NoRecordFound=Keinen Eintrag gefunden
@@ -50,6 +54,7 @@ ErrorFailedToSendMail=Fehler beim Senden der E-Mail (Absender=%s, Empfänger=%s)
 ErrorFileNotUploaded=Die Datei konnte nicht hochgeladen werden. Stellen Sie sicher dass die Dateigröße nicht den gesetzten Maximalwert übersteigt, das Zielverzeichnis über genügend freien Speicherplatz verfügt und noch keine Datei mit gleichem Namen existiert.
 ErrorInternalErrorDetected=Interner Fehler entdeckt
 ErrorWrongHostParameter=Ungültige Host-Parameter
+<<<<<<< HEAD
 ErrorYourCountryIsNotDefined=Ihr Land ist nicht definiert. Bitte vervollständigen Sie das Profil unter Start - Einstellungen - Firma/Stiftung
 ErrorRecordIsUsedByChild=Kann diesen Eintrag nicht löschen. Dieser Eintrag wird von mindestens einem untergeordneten Datensatz verwendet.
 ErrorWrongValue=Ungültiger Wert
@@ -59,12 +64,28 @@ ErrorServiceUnavailableTryLater=Dieser Service steht derzeit nicht zur Verfügun
 ErrorDuplicateField=Dieser Wert ist schon vorhanden (Das Feld erfordert einen einzigartigen Wert)
 ErrorSomeErrorWereFoundRollbackIsDone=Einige Fehler wurden gefunden. Änderungen werden rückgängig gemacht.
 ErrorConfigParameterNotDefined=Parameter <b>%s</b> innerhalb der Konfigurationsdatei <b>conf.php.</b> nicht definiert.
+=======
+ErrorYourCountryIsNotDefined=Ihr Land ist nicht definiert. Zu "Home-Setup-Bearbeiten" gehen und die Maske erneut absenden.
+ErrorRecordIsUsedByChild=Fehler beim Löschen dieses Datensatzes. Dieser Datensatz wird mindestens von einem Unter-Datensatz verwendet.
+ErrorWrongValue=Ungültiger Wert
+ErrorWrongValueForParameterX=Ungültiger Wert für den Parameter %s
+ErrorNoRequestInError=Keine Anfrage im Fehler
+ErrorServiceUnavailableTryLater=Dienst derzeit nicht verfügbar. Später erneut versuchen.
+ErrorDuplicateField=Dieser Wert ist schon vorhanden (Das Feld erfordert einen einzigartigen Wert)
+ErrorSomeErrorWereFoundRollbackIsDone=Einige Fehler wurden gefunden. Änderungen wurden rückgängig gemacht.
+ErrorConfigParameterNotDefined=Parameter <b>%s</b> is not defined in the Dolibarr config file <b>conf.php</b>.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorCantLoadUserFromDolibarrDatabase=Benutzer <b>%s</b> in der Dolibarr-Datenbank nicht gefunden
 ErrorNoVATRateDefinedForSellerCountry=Fehler, keine MwSt.-Sätze für Land  '%s' definiert.
 ErrorNoSocialContributionForSellerCountry=Fehler, Sozialabgaben/Steuerwerte für Land '%s' nicht definiert.
 ErrorFailedToSaveFile=Fehler, konnte Datei nicht speichern.
+<<<<<<< HEAD
 ErrorCannotAddThisParentWarehouse=Sie versuchen ein HauptLager hinzuzufügen, das bereits ein Unterlager von dem aktuellen Lagerort ist 
 MaxNbOfRecordPerPage=Max number of record per page
+=======
+ErrorCannotAddThisParentWarehouse=Sie versuchen ein Hauptlager hinzuzufügen, das bereits ein Unterlager eines existierenden Lagerortes ist 
+MaxNbOfRecordPerPage=Max. Anzahl der Datensätze pro Seite
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NotAuthorized=Sie haben keine Berechtigung dazu.
 SetDate=Datum
 SelectDate=Wählen Sie ein Datum
@@ -78,25 +99,44 @@ FileRenamed=Datei wurde erfolgreich unbenannt
 FileGenerated=Die Datei wurde erfolgreich erstellt
 FileSaved=Die Datei wurde erfolgreich gespeichert
 FileUploaded=Datei wurde erfolgreich hochgeladen
+<<<<<<< HEAD
 FileTransferComplete=Datei(en) wurde(n) erfolgreich hochgeladen
 FilesDeleted=Datei(en) erfolgreich gelöscht
 FileWasNotUploaded=Ein Dateianhang wurde gewählt aber noch nicht hochgeladen. Klicken Sie auf "Datei anhängen" um den Vorgang zu starten.
 NbOfEntries=Anzahl der Einträge
+=======
+FileTransferComplete=Datei(en) erfolgreich hochgeladen
+FilesDeleted=Datei(en) erfolgreich gelöscht
+FileWasNotUploaded=Ein Dateianhang wurde gewählt aber noch nicht hochgeladen. Klicken Sie auf "Datei anhängen" um den Vorgang zu starten.
+NbOfEntries=Anz. an Einträgen
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 GoToWikiHelpPage=Onlinehilfe lesen (Internetzugang notwendig)
 GoToHelpPage=Hilfe lesen
 RecordSaved=Eintrag gespeichert
 RecordDeleted=Eintrag gelöscht
+<<<<<<< HEAD
+=======
+RecordGenerated=Eintrag erzeugt
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LevelOfFeature=Funktionslevel
 NotDefined=Nicht definiert
 DolibarrInHttpAuthenticationSoPasswordUseless=Der Dolibarr Authentifizierungsmodus wurde mit dem Wert <b>%s</b> in der Konfigurationsdatei <b>conf.php.</b> definiert\n<br> Das bedeutet, dass die Dolibarr Passwörter extern gespeichert werden, und somit Änderungen dieser Felder unwirksam sein können.
 Administrator=Administrator
 Undefined=Nicht definiert
 PasswordForgotten=Passwort vergessen?
+<<<<<<< HEAD
 NoAccount=No account?
 SeeAbove=Siehe oben
 HomeArea=Startseite
 LastConnexion=Letzte Verbindung
 PreviousConnexion=Letzte Anmeldung
+=======
+NoAccount=Kein Konto?
+SeeAbove=Siehe oben
+HomeArea=Start
+LastConnexion=Letzte Anmeldung
+PreviousConnexion=Vorherige Anmeldung
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PreviousValue=Vorheriger Wert
 ConnectedOnMultiCompany=Mit Entität verbunden
 ConnectedSince=Angemeldet seit
@@ -142,6 +182,10 @@ Closed=Geschlossen
 Closed2=Geschlossen
 NotClosed=nicht geschlossen
 Enabled=Aktiviert
+<<<<<<< HEAD
+=======
+Enable=Aktivieren
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Deprecated=Veraltet
 Disable=Deaktivieren
 Disabled=Deaktiviert
@@ -151,9 +195,15 @@ RemoveLink=Entferne Link
 AddToDraft=Zum Entwurf hinzufügen
 Update=Aktualisieren
 Close=Schließen
+<<<<<<< HEAD
 CloseBox=Box vom Ihrer Startseite entfernen
 Confirm=Bestätigen
 ConfirmSendCardByMail=Möchten Sie die Inhalte dieser Karteikarte per E-Mail an <b>%s</b> senden?
+=======
+CloseBox=Box von Ihrer Startseite entfernen
+Confirm=Bestätigen
+ConfirmSendCardByMail=Möchten Sie wirklich die Inhalte dieser Karteikarte per E-Mail an <b>%s</b> senden?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Delete=Löschen
 Remove=Entfernen
 Resiliate=aufheben
@@ -161,7 +211,11 @@ Cancel=Abbrechen
 Modify=Ändern
 Edit=Bearbeiten
 Validate=Bestätigen
+<<<<<<< HEAD
 ValidateAndApprove=Freigaben bestätigen
+=======
+ValidateAndApprove=Bestätigen
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ToValidate=Freizugeben
 NotValidated=Nicht freigegeben
 Save=Speichern
@@ -183,12 +237,20 @@ Valid=Freigeben
 Approve=Genehmigen
 Disapprove=Abgelehnt
 ReOpen=Wiedereröffnen
+<<<<<<< HEAD
 Upload=Datei laden
+=======
+Upload=Upload
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ToLink=Link
 Select=Wählen Sie
 Choose=Wählen
 Resize=Skalieren
+<<<<<<< HEAD
 ResizeOrCrop=Resize or Crop
+=======
+ResizeOrCrop=Grösse ändern oder zuschneiden
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Recenter=Zentrieren
 Author=Autor
 User=Benutzer
@@ -200,6 +262,10 @@ Password=Passwort
 PasswordRetype=Geben Sie das Passwort noch einmal ein
 NoteSomeFeaturesAreDisabled=Bitte beachten Sie, dass viele Funktionen/Module in dieser Demo deaktiviert sind
 Name=Name
+<<<<<<< HEAD
+=======
+NameSlashCompany=Name / Firma
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Person=Person
 Parameter=Parameter
 Parameters=Parameter
@@ -208,18 +274,32 @@ PersonalValue=Persönlicher Wert
 NewObject=Neu %s
 NewValue=Neuer Wert
 CurrentValue=Aktueller Wert
+<<<<<<< HEAD
 Code=Code
+=======
+Code=Name
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Type=Typ
 Language=Sprache
 MultiLanguage=Mehrsprachig
 Note=Hinweis
+<<<<<<< HEAD
 Title=Titel
+=======
+Title=Bezeichnung
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Label=Bezeichnung
 RefOrLabel=Nr. oder Bezeichnung
 Info=Protokoll
 Family=Familie
 Description=Beschreibung
 Designation=Beschreibung
+<<<<<<< HEAD
+=======
+DescriptionOfLine=Beschreibung der Zeile
+DateOfLine=Datum der Zeile
+DurationOfLine=Dauer der Zeile
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Model=Dokumentvorlage
 DefaultModel=Standard Dokumentvorlage
 Action=Ereignis
@@ -232,7 +312,11 @@ Limit=Limit
 Limits=Limits
 Logout=Abmelden
 NoLogoutProcessWithAuthMode=Keine Anwendung Trennungsfunktion mit Authentifizierungsmodus <b>% s </ b>
+<<<<<<< HEAD
 Connection=Benutzername
+=======
+Connection=Anmelden
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Setup=Einstellungen
 Alert=Warnung
 MenuWarnings=Benachrichtigungen
@@ -327,12 +411,20 @@ Copy=Kopieren
 Paste=Einfügen
 Default=Standard
 DefaultValue=Standardwert
+<<<<<<< HEAD
 DefaultValues=Standardwert
+=======
+DefaultValues=Standard-Werte/Filter/Sortierung
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Price=Preis
 PriceCurrency=Preis (Währung)
 UnitPrice=Stückpreis
 UnitPriceHT=Stückpreis (netto)
+<<<<<<< HEAD
 UnitPriceHTCurrency=Unit price (net) (currency)
+=======
+UnitPriceHTCurrency=Stückpreis (Netto) (Währung)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 UnitPriceTTC=Stückpreis (brutto)
 PriceU=VP
 PriceUHT=VP (netto)
@@ -344,6 +436,7 @@ AmountInvoiced=berechneter Betrag
 AmountPayment=Zahlungsbetrag
 AmountHTShort=Nettobetrag
 AmountTTCShort=Bruttobetrag
+<<<<<<< HEAD
 AmountHT=Betrag (exkl. USt.)
 AmountTTC=Bruttobetrag
 AmountVAT=USt.-Betrag
@@ -351,6 +444,15 @@ MulticurrencyAlreadyPaid=Bereits bezahlte, Originalwährung
 MulticurrencyRemainderToPay=Noch zu bezahlen, Originalwährung
 MulticurrencyPaymentAmount=Zahlungsbetrag, Originalwährung
 MulticurrencyAmountHT=Betrag (Netto), Originalwährung
+=======
+AmountHT=Nettobetrag
+AmountTTC=Bruttobetrag
+AmountVAT=USt.-Betrag
+MulticurrencyAlreadyPaid=Schon bezahlt, Originalwährung
+MulticurrencyRemainderToPay=Noch zu bezahlen, Originalwährung
+MulticurrencyPaymentAmount=Zahlungsbetrag, Originalwährung
+MulticurrencyAmountHT=Nettobetrag, Originalwährung
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MulticurrencyAmountTTC=Betrag (Brutto), Originalwährung
 MulticurrencyAmountVAT=Steuerbetrag, Originalwährung
 AmountLT1=USt.-Betrag 2
@@ -360,11 +462,19 @@ AmountLT2ES=Betrag IRPF
 AmountTotal=Gesamtbetrag
 AmountAverage=Durchschnittsbetrag
 PriceQtyMinHT=Mindestmengenpreis (netto)
+<<<<<<< HEAD
 PriceQtyMinHTCurrency=Price quantity min. (net of tax) (currency)
+=======
+PriceQtyMinHTCurrency=Stückpreis pro Menge (Netto) (Währung)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Percentage=Prozentsatz
 Total=Gesamt
 SubTotal=Zwischensumme
 TotalHTShort=Nettosumme
+<<<<<<< HEAD
+=======
+TotalHT100Short=Total 100%% (excl.)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TotalHTShortCurrency=Summe (Netto in Währung)
 TotalTTCShort=Gesamt (inkl. Ust)
 TotalHT=Nettosumme
@@ -396,6 +506,10 @@ LT1ES=RE
 LT2ES=EKSt.
 LT1IN=CGST
 LT2IN=SGST
+<<<<<<< HEAD
+=======
+LT1GC=Additionnal cents
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 VATRate=Steuersatz
 VATCode=Steuersatz
 VATNPR=Steuersatz
@@ -428,14 +542,23 @@ ActionNotApplicable=Nicht anwendbar
 ActionRunningNotStarted=zu beginnen
 ActionRunningShort=in Bearbeitung
 ActionDoneShort=Abgeschlossen
+<<<<<<< HEAD
 ActionUncomplete=unvollständig
+=======
+ActionUncomplete=Unvollständig
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LatestLinkedEvents=Neueste %s verknüpfte Ereignisse
 CompanyFoundation=Firma oder Institution
 Accountant=Buchhalter
 ContactsForCompany=Ansprechpartner/Adressen dieses Partners
 ContactsAddressesForCompany=Ansprechpartner / Adressen zu diesem Partner
 AddressesForCompany=Anschriften zu diesem Partner
+<<<<<<< HEAD
 ActionsOnCompany=Ereignisse zu diesem Partner
+=======
+ActionsOnCompany=Aktionen für diesen Partner
+ActionsOnContact=Aktionen für diesen Kontakt
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActionsOnMember=Aktionen zu diesem Mitglied
 ActionsOnProduct=Ereignisse zu diesem Produkt
 NActionsLate=%s verspätet
@@ -453,8 +576,13 @@ Generate=Erzeugen
 Duration=Dauer
 TotalDuration=Gesamtdauer
 Summary=Zusammenfassung
+<<<<<<< HEAD
 DolibarrStateBoard=Datenbank Statistik
 DolibarrWorkBoard=Aufgabenübersicht
+=======
+DolibarrStateBoard=Datenbank-Statistik
+DolibarrWorkBoard=Offene Einträge
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoOpenedElementToProcess=Kein Element zum Verarbeiten geöffnet
 Available=Verfügbar
 NotYetAvailable=Noch nicht verfügbar
@@ -470,21 +598,37 @@ Other=Andere
 Others=Andere
 OtherInformations=Zusatzinformationen
 Quantity=Menge
+<<<<<<< HEAD
 Qty=Anz.
+=======
+Qty=Menge
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ChangedBy=Geändert von
 ApprovedBy=genehmigt von
 ApprovedBy2=Genehmige von (zweite Genehmigung)
 Approved=genehmigt
 Refused=abgelehnt
 ReCalculate=Neuberechnung
+<<<<<<< HEAD
 ResultKo=Fehlschlag
+=======
+ResultKo=<b>Fehler</b>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Reporting=Berichterstattung
 Reportings=Berichte
 Draft=Entwurf
 Drafts=Entwürfe
+<<<<<<< HEAD
 StatusInterInvoiced=
 Validated=Bestätigt
 Opened=Geöffnet
+=======
+StatusInterInvoiced=Berechnet
+Validated=Bestätigt
+Opened=Geöffnet
+OpenAll=Öffnen (Alle)
+ClosedAll=Schliessen (Alle)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 New=Neu
 Discount=Rabatt
 Unknown=Unbekannt
@@ -495,7 +639,11 @@ Received=Erhalten
 Paid=Bezahlt
 Topic=Thema
 ByCompanies=Von Partnern
+<<<<<<< HEAD
 ByUsers=By user
+=======
+ByUsers=Durch Benutzer
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Links=Links
 Link=Link
 Rejects=Ablehnungen
@@ -506,18 +654,31 @@ None=Keine
 NoneF=Keine
 NoneOrSeveral=Keine oder mehrere
 Late=Verspätet
+<<<<<<< HEAD
 LateDesc=Verzögerung, die definiert, ob ein Datensatz spät ist oder nicht von der Einrichtung abhängig ist. Fragen Sie den Administrator, die Verzögerung im Menü Startseite - Einrichtung - Alarme
 NoItemLate=No late item
+=======
+LateDesc=Ein Element wird gemäß der Systemkonfiguration im Menü Home - Setup - Alerts als verzögert definiert.
+NoItemLate=Keine späten Einträge
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Photo=Bild
 Photos=Bilder
 AddPhoto=Bild hinzufügen
 DeletePicture=Bild löschen
 ConfirmDeletePicture=Bild wirklich löschen?
+<<<<<<< HEAD
 Login=Anmeldung
 LoginEmail=Benutzer (Email)
 LoginOrEmail=Benutzername oder Emailadresse
 CurrentLogin=Aktuelle Anmeldung
 EnterLoginDetail=Geben Sie die Login-Daten ein
+=======
+Login=Benutzername
+LoginEmail=Benutzer (Email)
+LoginOrEmail=Benutzername oder E-Mail-Adresse
+CurrentLogin=Aktuelle Anmeldung
+EnterLoginDetail=Bitte geben ie Ihre Login-Daten ein
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 January=Januar
 February=Februar
 March=März
@@ -530,6 +691,7 @@ September=September
 October=Oktober
 November=November
 December=Dezember
+<<<<<<< HEAD
 JanuaryMin=Jan
 FebruaryMin=Feb
 MarchMin=Mar
@@ -542,6 +704,8 @@ SeptemberMin=Sep
 OctoberMin=Okt
 NovemberMin=Nov
 DecemberMin=Dez
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Month01=Januar
 Month02=Februar
 Month03=März
@@ -596,7 +760,11 @@ File=Datei
 Files=Dateien
 NotAllowed=Nicht erlaubt
 ReadPermissionNotAllowed=Sie haben keine Berechtigung
+<<<<<<< HEAD
 AmountInCurrency=Betrag in %s
+=======
+AmountInCurrency=Alle Beträge in %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Example=Beispiel
 Examples=Beispiele
 NoExample=Kein Beispiel
@@ -622,30 +790,52 @@ BuildDoc=Erstelle Doc
 Entity=Entität
 Entities=Entitäten
 CustomerPreview=Kundenvorschau
+<<<<<<< HEAD
 SupplierPreview=Vendor preview
 ShowCustomerPreview=Zeige Kundenvorschau
 ShowSupplierPreview=Show vendor preview
+=======
+SupplierPreview=Lieferantenvorschau
+ShowCustomerPreview=Zeige Kundenvorschau
+ShowSupplierPreview=Zeige Lieferantenvorschau
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 RefCustomer=Ihr Zeichen
 Currency=Währung
 InfoAdmin=Hinweise für Administratoren
 Undo=Rückgängig
 Redo=Wiederherstellen
+<<<<<<< HEAD
 ExpandAll=Alle ausklappen
 UndoExpandAll=Ausklappen rückgängig machen
+=======
+ExpandAll=Alle aufklappen
+UndoExpandAll=Alle zuklappen
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SeeAll=Zeige alle
 Reason=Grund
 FeatureNotYetSupported=Diese Funktion wird (noch) nicht unterstützt
 CloseWindow=Fenster schließen
 Response=Antwort
 Priority=Wichtigkeit
+<<<<<<< HEAD
 SendByMail=Per E-Mail versenden
+=======
+SendByMail=Versendet per Email
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MailSentBy=E-Mail Absender
 TextUsedInTheMessageBody=E-Mail Text
 SendAcknowledgementByMail=Bestätigungsmail senden
 SendMail=sende E-Mail
+<<<<<<< HEAD
 EMail=E-Mail
 NoEMail=Keine E-Mail
 Email=E-Mail
+=======
+Email=E-Mail
+NoEMail=Keine E-Mail
+AlreadyRead=Bereits gelesen
+NotRead=Nicht gelesen
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoMobilePhone=Kein Handy
 Owner=Eigentümer
 FollowingConstantsWillBeSubstituted=Nachfolgende Konstanten werden durch entsprechende Werte ersetzt.
@@ -659,7 +849,12 @@ ValueIsNotValid=Der Wert ist ungültig
 RecordCreatedSuccessfully=Datensatz erfolgreich erstellt
 RecordModifiedSuccessfully=Wert erfolgreich geändert
 RecordsModified=%s Datensätze geändert
+<<<<<<< HEAD
 RecordsDeleted=Datensatz %s gelöscht
+=======
+RecordsDeleted=%s Datensätze gelöscht
+RecordsGenerated=%s Datensätze generiert
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AutomaticCode=Automatischer Code
 FeatureDisabled=Funktion deaktiviert
 MoveBox=Box verschieben
@@ -670,14 +865,23 @@ Method=Methode
 Receive=Erhalten
 CompleteOrNoMoreReceptionExpected=Vollständig oder nichts mehr erwartet
 ExpectedValue=Erwarteter Wert
+<<<<<<< HEAD
 CurrentValue=Aktueller Wert
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PartialWoman=Teilweise
 TotalWoman=Vollständig
 NeverReceived=Nie erhalten
 Canceled=Storniert
+<<<<<<< HEAD
 YouCanChangeValuesForThisListFromDictionarySetup=Sie können die Listenoptionen in den Wörterbuch-Einstellungen anpassen
 YouCanChangeValuesForThisListFrom=Werte für diese Liste können im Menü %s bearbeitet werden
 YouCanSetDefaultValueInModuleSetup=Sie können den Standardwert verwendet setzen, wenn ein neuer Datensatz in der Modulkonfiguration erstellt wird
+=======
+YouCanChangeValuesForThisListFromDictionarySetup=Sie können die Listenoptionen unter Start - Einstellungen - Stammdaten anpassen
+YouCanChangeValuesForThisListFrom=Werte für diese Liste können im Menü %s bearbeitet werden
+YouCanSetDefaultValueInModuleSetup=Sie können den Standardwert  im Modul-Setup festlegen, der beim Erstellen eines neuen Datensatzes verwendet wird
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Color=Farbe
 Documents=Verknüpfte Dokumente
 Documents2=Dokumente
@@ -694,7 +898,11 @@ CurrentTheme=Aktuelles Design
 CurrentMenuManager=Aktuelle Menüverwaltung
 Browser=Browser
 Layout=Layout
+<<<<<<< HEAD
 Screen=Bildschirm
+=======
+Screen=Bildschirmauflösung
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DisabledModules=Deaktivierte Module
 For=Für
 ForCustomer=Für Kunden
@@ -703,28 +911,47 @@ DateOfSignature=Datum der Unterzeichnung
 HidePassword=Sichere Passworteingabe (Zeichen nicht angezeigt)
 UnHidePassword=Passwort in Klartext anzeigen
 Root=Stammordner
+<<<<<<< HEAD
 Informations=Informationen
+=======
+Informations=Information
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Page=Seite
 Notes=Hinweise
 AddNewLine=Neue Zeile hinzufügen
 AddFile=Datei hinzufügen
 FreeZone=Freier Text
+<<<<<<< HEAD
 FreeLineOfType=Kein vordefinierter Eintrag vom Typ
 CloneMainAttributes=Objekt mit Haupteigenschaften duplizieren
+=======
+FreeLineOfType=Freitextelement, Typ:
+CloneMainAttributes=Objekt mit Haupteigenschaften duplizieren
+ReGeneratePDF=PDF neu erstellen
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PDFMerge=PDFs verbinden
 Merge=Verbinden
 DocumentModelStandardPDF=Standard PDF Vorlage
 PrintContentArea=Zeige Druckansicht für Seiteninhalt
 MenuManager=Menüverwaltung
+<<<<<<< HEAD
 WarningYouAreInMaintenanceMode=Achtung: Die Anwendung befindet sich im Wartungsmodus und kann derzeit nur von Benutzer <b>%s</b> verwendet werden.
+=======
+WarningYouAreInMaintenanceMode=Achtung, Sie befinden sich im Wartungsmodus: Nur der Benutzer <b> %s </b> darf die Anwendung in diesem Modus verwenden.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CoreErrorTitle=Systemfehler
 CoreErrorMessage=Leider ist ein Fehler aufgetreten. Wenden Sie sich an Ihren Systemadministrator, um die Logs zu überprüfen oder deaktivieren Sie die Option $dolibarr_main_prod=1 für weitere Informationen.
 CreditCard=Kredit - Karte
 ValidatePayment=Zahlung freigeben
 CreditOrDebitCard=Kreditkarte
 FieldsWithAreMandatory=Felder mit <b>%s</b> sind Pflichtfelder
+<<<<<<< HEAD
 FieldsWithIsForPublic=Felder mit <b>%s</b> werden auf die öffentlich sichtbare Mitgliederliste angezeigt. Deaktivieren Sie bitte den "Öffentlich"-Kontrollkästchen wenn das nicht möchten.\n
 AccordingToGeoIPDatabase=(nach GeoIP-Auflösung)
+=======
+FieldsWithIsForPublic=Felder mit <b>%s</b> werden auf der öffentlich sichtbaren Mitgliederliste angezeigt. Deaktivieren Sie bitte das "Öffentlich"-Kontrollkästchen, wenn das nicht möchten.\n
+AccordingToGeoIPDatabase=(gemäß GeoIP-Konvertierung)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Line=Zeile
 NotSupported=Nicht unterstützt
 RequiredField=Pflichtfeld
@@ -732,6 +959,11 @@ Result=Ergebnis
 ToTest=Test
 ValidateBefore=Vor Verwendung dieser Funktion müssen Sie die Karte überprüfen
 Visibility=Sichtbarkeit
+<<<<<<< HEAD
+=======
+Totalizable=Summierbar
+TotalizableDesc=Dieses Feld kann in der Liste summiert werden
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Private=Privat
 Hidden=Versteckt
 Resources=Ressourcen
@@ -743,14 +975,23 @@ IPAddress=IP Adresse
 Frequency=Frequenz
 IM=Instant Messaging
 NewAttribute=Neues Attribut
+<<<<<<< HEAD
 AttributeCode=Attribut Code
+=======
+AttributeCode=Attribut-Code
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 URLPhoto=URL für Foto/Bild
 SetLinkToAnotherThirdParty=Link zu einem anderen Partner
 LinkTo=Link zu
 LinkToProposal=Link zu Angebot
 LinkToOrder=Link zur Bestellung
 LinkToInvoice=Link zur Rechnung
+<<<<<<< HEAD
 LinkToSupplierOrder=Link zur Lieferentenbestellung
+=======
+LinkToTemplateInvoice=Link zur Rechnungsvorlage
+LinkToSupplierOrder=Link zur Bestellung
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LinkToSupplierProposal=Link zum Lieferantenangebot
 LinkToSupplierInvoice=Link zur Lieferantenrechnung
 LinkToContract=Link zum Vertrag
@@ -758,6 +999,10 @@ LinkToIntervention=Link zu Arbeitseinsatz
 CreateDraft=Entwurf erstellen
 SetToDraft=Auf Entwurf zurücksetzen
 ClickToEdit=Klicken zum Bearbeiten
+<<<<<<< HEAD
+=======
+ClickToRefresh=Klicken zum Aktualisieren
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 EditWithEditor=Mit CKEditor bearbeiten
 EditWithTextEditor=Mit Texteditor bearbeiten
 EditHTMLSource=HTML-Code bearbeiten
@@ -772,7 +1017,11 @@ ByDay=Bei Tag
 BySalesRepresentative=Nach Vertriebsmitarbeiter
 LinkedToSpecificUsers=Mit Kontakt verknüpft
 NoResults=Keine Ergebnisse
+<<<<<<< HEAD
 AdminTools=Administratorwerkzeuge
+=======
+AdminTools=Admin-Tools
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SystemTools=Systemwerkzeuge
 ModulesSystemTools=Module Hilfsprogramme
 Test=Testen
@@ -818,16 +1067,29 @@ Sincerely=Mit freundlichen Grüßen
 DeleteLine=Zeile löschen
 ConfirmDeleteLine=Möchten Sie diese Zeile wirklich löschen?
 NoPDFAvailableForDocGenAmongChecked=In den selektierten Datensätzen war kein PDF zur Erstellung der Dokumente vorhanden.
+<<<<<<< HEAD
 TooManyRecordForMassAction=Zu viele Datensätze für Massenaktion ausgewählt. Solche Aktionen sind auf maximal %s Zeilen beschränkt.
 NoRecordSelected=Kein Datensatz ausgewählt
 MassFilesArea=Bereich für Dateien aus Massenaktionen
 ShowTempMassFilesArea=Bereich für Dateien aus Massenaktionen zeigen
 ConfirmMassDeletion=MassenLöschbestätigung
 ConfirmMassDeletionQuestion=Möchten Sie den/die %s ausgewählten Datensatz wirklich löschen?
+=======
+TooManyRecordForMassAction=Zu viele Einträge für Massenaktion selektiert. Die Aktion ist auf eine Liste von %s Einträgen beschränkt.
+NoRecordSelected=Kein Datensatz ausgewählt
+MassFilesArea=Bereich für Dateien aus Massenaktionen
+ShowTempMassFilesArea=Bereich für Dateien aus Massenaktionen zeigen
+ConfirmMassDeletion=Bestätigung für Massenlöschen
+ConfirmMassDeletionQuestion=Möchten Sie den/die <b>%s</b> ausgewählten Datensatz/-sätze wirklich löschen?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 RelatedObjects=Verknüpfte Objekte
 ClassifyBilled=Als verrechnet markieren
 ClassifyUnbilled=als "nicht berechnet" markieren
 Progress=Entwicklung
+<<<<<<< HEAD
+=======
+ProgressShort=Progr.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 FrontOffice=Frontoffice
 BackOffice=Backoffice
 View=Ansicht
@@ -836,6 +1098,14 @@ Exports=Exporte
 ExportFilteredList=Exportiere gefilterte Auswahl
 ExportList=Liste exportieren
 ExportOptions=Exportoptionen
+<<<<<<< HEAD
+=======
+IncludeDocsAlreadyExported=Include docs already exported
+ExportOfPiecesAlreadyExportedIsEnable=Export of pieces already exported is enable
+ExportOfPiecesAlreadyExportedIsDisable=Export of pieces already exported is disable
+AllExportedMovementsWereRecordedAsExported=All exported movements were recorded as exported
+NotAllExportedMovementsCouldBeRecordedAsExported=Not all exported movements could be recorded as exported
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Miscellaneous=Verschiedenes
 Calendar=Terminkalender
 GroupBy=Gruppiere nach ...
@@ -848,19 +1118,29 @@ Download=Download
 DownloadDocument=Dokument herunterladen
 ActualizeCurrency=Update-Wechselkurs
 Fiscalyear=Fiskalisches Jahr
+<<<<<<< HEAD
 ModuleBuilder=Modul-Generator
+=======
+ModuleBuilder=Module and Application Builder
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SetMultiCurrencyCode=Währung festlegen
 BulkActions=Massenaktionen
 ClickToShowHelp=Klicken um die Tooltiphilfe anzuzeigen
 WebSite=Webseite
+<<<<<<< HEAD
 WebSites=Internetseiten
 WebSiteAccounts=Website-Konten
+=======
+WebSites=Webseiten
+WebSiteAccounts=Website Konten
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ExpenseReport=Spesenabrechnung
 ExpenseReports=Spesenabrechnungen
 HR=Personalabteilung
 HRAndBank=HR und Bank
 AutomaticallyCalculated=Automatisch berechnet
 TitleSetToDraft=Zurück zu Entwurf gehen
+<<<<<<< HEAD
 ConfirmSetToDraft=Wirklich zurück zum Entwurfstatus gehen?
 ImportId=Import ID
 Events=Ereignisse
@@ -872,6 +1152,27 @@ Rights=Berechtigungen
 LineNb=Zeilennummer
 IncotermLabel=Incoterms
 # Week day
+=======
+ConfirmSetToDraft=Wollen Sie wirklich zum Entwurfsstatus zurück gehen?
+ImportId=Import ID
+Events=Ereignisse
+EMailTemplates=Textvorlagen für E-Mails
+FileNotShared=Datei nicht für die Öffentlichkeit freigegeben
+Project=Projekt
+Projects=Projekte
+LeadOrProject=Anfrage | Projekt
+LeadsOrProjects=Anfragen | Projekte
+Lead=Anfrage
+Leads=Anfragen
+ListOpenLeads=Offene Kontakte auflisten
+ListOpenProjects=List offener Projekte
+NewLeadOrProject=Neuer Kontakt / Projekt
+Rights=Berechtigungen
+LineNb=Zeilennummer
+IncotermLabel=Incoterms
+TabLetteringCustomer=Kundenbeschriftung
+TabLetteringSupplier=Lieferantenbeschriftung
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Monday=Montag
 Tuesday=Dienstag
 Wednesday=Mittwoch
@@ -918,33 +1219,71 @@ SearchIntoProductsOrServices=Produkte oder Dienstleistungen
 SearchIntoProjects=Projekte
 SearchIntoTasks=Aufgaben
 SearchIntoCustomerInvoices=Kundenrechnungen
+<<<<<<< HEAD
 SearchIntoSupplierInvoices=Vendor invoices
 SearchIntoCustomerOrders=Kundenaufträge
 SearchIntoSupplierOrders=Purchase orders
 SearchIntoCustomerProposals=Kunden Angebote
 SearchIntoSupplierProposals=Vendor proposals
+=======
+SearchIntoSupplierInvoices=Lieferantenrechnungen
+SearchIntoCustomerOrders=Verkaufsaufträge
+SearchIntoSupplierOrders=Lieferantenbestellungen
+SearchIntoCustomerProposals=Kunden Angebote
+SearchIntoSupplierProposals=Lieferantenangebote
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SearchIntoInterventions=Serviceaufträge
 SearchIntoContracts=Verträge
 SearchIntoCustomerShipments=Kunden Lieferungen
 SearchIntoExpenseReports=Spesenabrechnungen
+<<<<<<< HEAD
 SearchIntoLeaves=Urlaube
+=======
+SearchIntoLeaves=Urlaub
+SearchIntoTickets=Tickets
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CommentLink=Kommentare
 NbComments=Anzahl der Kommentare
 CommentPage=Kommentare Leerzeichen
 CommentAdded=Kommentar hinzugefügt
 CommentDeleted=Kommentar gelöscht
 Everybody=Jeder
+<<<<<<< HEAD
 PayedBy=Bezahlt durch
 PayedTo=Bezahlt an
+=======
+PayedBy=Einbezahlt von
+PayedTo=Bezahlt
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Monthly=Monatlich
 Quarterly=Quartalsweise
 Annual=Jährlich
 Local=Lokal
 Remote=Remote
 LocalAndRemote=Lokal und Remote
+<<<<<<< HEAD
 KeyboardShortcut=Tastaur Kürzel
 AssignedTo=Zugewiesen an
 Deletedraft=Delete draft
 ConfirmMassDraftDeletion=Draft Bulk delete confirmation
 FileSharedViaALink=Datei via Link geteilt
 
+=======
+KeyboardShortcut=Tastatur Kürzel
+AssignedTo=Zugewiesen an
+Deletedraft=Entwurf löschen
+ConfirmMassDraftDeletion=Bestätigung Massenlöschung Entwurf
+FileSharedViaALink=Datei via Link geteilt
+SelectAThirdPartyFirst=Wähle zuerst einen Partner...
+YouAreCurrentlyInSandboxMode=Sie befinden sich derzeit im %s "Sandbox" -Modus
+Inventory=Inventur
+AnalyticCode=Analyse-Code
+TMenuMRP=Stücklisten
+ShowMoreInfos=Show More Infos
+NoFilesUploadedYet=Please upload a document first
+SeePrivateNote=See private note
+PaymentInformation=Payment information
+ValidFrom=Valid from
+ValidUntil=Valid until
+NoRecordedUsers=No users
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

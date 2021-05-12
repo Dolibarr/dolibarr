@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2009      Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,9 +28,14 @@
 
 require '../../main.inc.php';
 
+<<<<<<< HEAD
 $langs->load("admin");
 $langs->load("user");
 $langs->load("install");
+=======
+// Load translation files required by the page
+$langs->loadLangs(array("install","user","admin"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 if (!$user->admin)
@@ -39,7 +48,11 @@ if (!$user->admin)
 
 llxHeader();
 
+<<<<<<< HEAD
 print load_fiche_titre($langs->trans("SummaryConst"),'','title_setup');
+=======
+print load_fiche_titre($langs->trans("SummaryConst"), '', 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 print load_fiche_titre($langs->trans("ConfigurationFile").' ('.$conffiletoshowshort.')');
@@ -156,9 +169,15 @@ foreach($configfileparameters as $key)
 
 	if (empty($ignore))
 	{
+<<<<<<< HEAD
         $newkey = preg_replace('/^\?/','',$key);
 
         if (preg_match('/^\?/',$key) && empty(${$newkey}))
+=======
+        $newkey = preg_replace('/^\?/', '', $key);
+
+        if (preg_match('/^\?/', $key) && empty(${$newkey}))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         {
             $i++;
             continue;    // We discard parametes starting with ?
@@ -183,8 +202,13 @@ foreach($configfileparameters as $key)
 			print '<td>'.$newkey.'</td>';
 			// Value
 			print "<td>";
+<<<<<<< HEAD
 			if ($newkey == 'dolibarr_main_db_pass') print preg_replace('/./i','*',${$newkey});
 			else if ($newkey == 'dolibarr_main_url_root' && preg_match('/__auto__/',${$newkey})) print ${$newkey}.' => '.constant('DOL_MAIN_URL_ROOT');
+=======
+			if ($newkey == 'dolibarr_main_db_pass') print preg_replace('/./i', '*', ${$newkey});
+			elseif ($newkey == 'dolibarr_main_url_root' && preg_match('/__auto__/', ${$newkey})) print ${$newkey}.' => '.constant('DOL_MAIN_URL_ROOT');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			else print ${$newkey};
 			if ($newkey == 'dolibarr_main_url_root' && ${$newkey} != DOL_MAIN_URL_ROOT) print ' (currently overwritten by autodetected value: '.DOL_MAIN_URL_ROOT.')';
 			print "</td>";
@@ -249,7 +273,12 @@ if ($resql)
 
 print '</table>';
 
+<<<<<<< HEAD
 
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

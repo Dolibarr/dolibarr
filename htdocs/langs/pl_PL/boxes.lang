@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - boxes
+<<<<<<< HEAD
 BoxLoginInformation=Dane logowania
 BoxLastRssInfos=Informacje Rss
 BoxLastProducts=Ostatnie %s produktów/usług
@@ -8,11 +9,26 @@ BoxLastSupplierBills=Ostatnie faktury dostawców
 BoxLastCustomerBills=Ostatnie faktury klientów
 BoxOldestUnpaidCustomerBills=Najstarsze niezapłacone faktury klientów
 BoxOldestUnpaidSupplierBills=Najstarsze niezapłacone faktury dostawców
+=======
+BoxLoginInformation=Login Information
+BoxLastRssInfos=RSS Information
+BoxLastProducts=Latest %s Products/Services
+BoxProductsAlertStock=Alarm zapasu dla artykułów
+BoxLastProductsInContract=Ostatnie %s zlecone produkty/usługi
+BoxLastSupplierBills=Latest Vendor invoices
+BoxLastCustomerBills=Latest Customer invoices
+BoxOldestUnpaidCustomerBills=Najstarsze niezapłacone faktury klientów
+BoxOldestUnpaidSupplierBills=Oldest unpaid vendor invoices
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BoxLastProposals=Ostatnie propozycje handlowe
 BoxLastProspects=Ostatnio zmodyfikowane perspektywy
 BoxLastCustomers=Ostatni modyfikowani klienci
 BoxLastSuppliers=Ostatni modyfikowani dostawcy
+<<<<<<< HEAD
 BoxLastCustomerOrders=Ostatnie zamówienia klienta
+=======
+BoxLastCustomerOrders=Latest sales orders
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BoxLastActions=Ostatnie zdarzenia
 BoxLastContracts=Ostatnie kontrakty
 BoxLastContacts=Ostatnie kontakty/adresy
@@ -20,6 +36,7 @@ BoxLastMembers=Ostatni członkowie
 BoxFicheInter=Ostatnie interwencje
 BoxCurrentAccounts=Otwórz bilans konta
 BoxTitleLastRssInfos=Ostatnie %s wiadomości z %s
+<<<<<<< HEAD
 BoxTitleLastProducts=Ostatnich %s modyfikowanych produktów/usług
 BoxTitleProductsAlertStock=Produkty w alercie magazynowym
 BoxTitleLastSuppliers=Ostani %s zapisani dostawcy
@@ -36,6 +53,24 @@ BoxTitleOldestUnpaidSupplierBills=Najstarszych %s niezapłaconych faktur dostawc
 BoxTitleCurrentAccounts=Bilans otwartych kont
 BoxTitleLastModifiedContacts=Ostatnich %s zmodyfikowanych kontaktów/adresów
 BoxMyLastBookmarks=Moje ostatnie %s zakładek
+=======
+BoxTitleLastProducts=Products/Services: last %s modified
+BoxTitleProductsAlertStock=Products: stock alert
+BoxTitleLastSuppliers=Ostani %s zapisani dostawcy
+BoxTitleLastModifiedSuppliers=Vendors: last %s modified
+BoxTitleLastModifiedCustomers=Customers: last %s modified
+BoxTitleLastCustomersOrProspects=Ostatnich %s klientów lub potencjalnych klientów
+BoxTitleLastCustomerBills=Latest %s Customer invoices
+BoxTitleLastSupplierBills=Latest %s Vendor invoices
+BoxTitleLastModifiedProspects=Prospects: last %s modified
+BoxTitleLastModifiedMembers=Ostatnich %s członków
+BoxTitleLastFicheInter=Ostatnie %s zmodyfikowane interwencje
+BoxTitleOldestUnpaidCustomerBills=Customer Invoices: oldest %s unpaid
+BoxTitleOldestUnpaidSupplierBills=Vendor Invoices: oldest %s unpaid
+BoxTitleCurrentAccounts=Open Accounts: balances
+BoxTitleLastModifiedContacts=Contacts/Addresses: last %s modified
+BoxMyLastBookmarks=Bookmarks: latest %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BoxOldestExpiredServices=Najstarsze aktywne przeterminowane usługi
 BoxLastExpiredServices=Ostanich %s najstarszych kontaktów z aktywnymi upływającymi usługami
 BoxTitleLastActionsToDo=Ostatnich %s zadań do zrobienia
@@ -45,24 +80,38 @@ BoxTitleLastModifiedExpenses=Ostatnich %s zmodyfikowanych raportów kosztów
 BoxGlobalActivity=Globalna aktywność (faktury, wnioski, zamówienia)
 BoxGoodCustomers=Dobrzy klienci
 BoxTitleGoodCustomers=%s dobrych klientów
+<<<<<<< HEAD
 FailedToRefreshDataInfoNotUpToDate=Nie udało się odświeżyć kanału RSS. Data ostatniego udanego odświeżenia: %s
+=======
+FailedToRefreshDataInfoNotUpToDate=Failed to refresh RSS flux. Latest successful refresh date: %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LastRefreshDate=Data ostatniego odświeżenia
 NoRecordedBookmarks=Brak zdefiniowanych zakładek
 ClickToAdd=Kliknij tutaj, aby dodać.
 NoRecordedCustomers=Brak zarejestrowanych klientów
 NoRecordedContacts=Brak zapisanych kontaktów
 NoActionsToDo=Brak działań do wykonania
+<<<<<<< HEAD
 NoRecordedOrders=Brak zarejestrowanych zamówień klienta
 NoRecordedProposals=Brak zarejestrowanych wniosków
 NoRecordedInvoices=Brak zarejestrowanych faktur klienta
 NoUnpaidCustomerBills=Brak niezapłaconych faktur klientów
 NoUnpaidSupplierBills=Brak niezapłaconych faktur dostawców
 NoModifiedSupplierBills=Brak zarejestrowanych faktur dostawców
+=======
+NoRecordedOrders=No recorded sales orders
+NoRecordedProposals=Brak zarejestrowanych wniosków
+NoRecordedInvoices=Brak zarejestrowanych faktur klienta
+NoUnpaidCustomerBills=Brak niezapłaconych faktur klientów
+NoUnpaidSupplierBills=No unpaid vendor invoices
+NoModifiedSupplierBills=No recorded vendor invoices
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoRecordedProducts=Brak zarejestrowanych produktów / usług
 NoRecordedProspects=Brak potencjalnyc klientów
 NoContractedProducts=Brak produktów/usług zakontraktowanych
 NoRecordedContracts=Brak zarejestrowanych kontraktów
 NoRecordedInterventions=Brak zapisanych interwencji
+<<<<<<< HEAD
 BoxLatestSupplierOrders=Ostatnie zamówienia dla dostawcy
 NoSupplierOrder=Brak zarejestrowanych zamówień dla dostawców
 BoxCustomersInvoicesPerMonth=Ilość faktur w skali miesiąca
@@ -77,6 +126,22 @@ BoxTitleLastModifiedSupplierBills=Ostatnie %s zmodyfikowanych rachunków dostawc
 BoxTitleLatestModifiedSupplierOrders=Ostatnie %s zmodyfikowanych zamówień dostawców
 BoxTitleLastModifiedCustomerBills=Ostatnie %s zmodyfikowanych rachunków klientów
 BoxTitleLastModifiedCustomerOrders=Ostatnich %s modyfikowanych zamówień klientów
+=======
+BoxLatestSupplierOrders=Latest purchase orders
+NoSupplierOrder=No recorded purchase order
+BoxCustomersInvoicesPerMonth=Customer Invoices per month
+BoxSuppliersInvoicesPerMonth=Vendor Invoices per month
+BoxCustomersOrdersPerMonth=Sales Orders per month
+BoxSuppliersOrdersPerMonth=Vendor Orders per month
+BoxProposalsPerMonth=Ofert na miesiąc
+NoTooLowStockProducts=No products are under the low stock limit
+BoxProductDistribution=Products/Services Distribution
+ForObject=On %s
+BoxTitleLastModifiedSupplierBills=Vendor Invoices: last %s modified
+BoxTitleLatestModifiedSupplierOrders=Vendor Orders: last %s modified
+BoxTitleLastModifiedCustomerBills=Customer Invoices: last %s modified
+BoxTitleLastModifiedCustomerOrders=Sales Orders: last %s modified
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BoxTitleLastModifiedPropals=Ostatnie %s zmodyfikowane oferty
 ForCustomersInvoices=Faktury Klientów
 ForCustomersOrders=Zamówienia klientów
@@ -84,3 +149,7 @@ ForProposals=Oferty
 LastXMonthRolling=Ostatni %s miesiąc
 ChooseBoxToAdd=Dodaj widget do swojej tablicy...
 BoxAdded=Widget został dodany do twojej tablicy
+<<<<<<< HEAD
+=======
+BoxTitleUserBirthdaysOfMonth=Birthdays of this month
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

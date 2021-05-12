@@ -26,6 +26,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
 class mailing_example extends MailingTargets
 {
     // CHANGE THIS: Put here a name not already used
+<<<<<<< HEAD
     var $name='example';
     // CHANGE THIS: Put here a description of your selector module.
     // This label is used if no translation is found for key MailingModuleDescXXX where XXX=name is found
@@ -38,6 +39,24 @@ class mailing_example extends MailingTargets
     var $require_module=array();
     var $picto='';
     var $db;
+=======
+    public $name='example';
+    // CHANGE THIS: Put here a description of your selector module.
+    // This label is used if no translation is found for key MailingModuleDescXXX where XXX=name is found
+    public $desc='Put here a description';
+    // CHANGE THIS: Set to 1 if selector is available for admin users only
+    public $require_admin=0;
+    // CHANGE THIS: Add a tooltip language key to add a tooltip help icon after the email target selector
+    public $tooltip='MyTooltipLangKey';
+
+    public $require_module=array();
+    public $picto='';
+
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
     // CHANGE THIS: Constructor name must be called mailing_xxx with xxx=name of your selector
@@ -46,21 +65,37 @@ class mailing_example extends MailingTargets
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
+<<<<<<< HEAD
     function __construct($db)
+=======
+    public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $this->db=$db;
     }
 
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     /**
      *  This is the main function that returns the array of emails
      *
      *  @param	int		$mailing_id    	Id of mailing. No need to use it.
+<<<<<<< HEAD
      *  @param  array	$filtersarray   If you used the formFilter function. Empty otherwise.
      *  @return int           			<0 if error, number of emails added if ok
      */
     function add_to_target($mailing_id,$filtersarray=array())
     {
+=======
+     *  @return int           			<0 if error, number of emails added if ok
+     */
+    public function add_to_target($mailing_id)
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $target = array();
 
 	    // CHANGE THIS
@@ -87,7 +122,11 @@ class mailing_example extends MailingTargets
 	 *
 	 *	@return		array		Array with SQL requests
 	 */
+<<<<<<< HEAD
 	function getSqlArrayForStats()
+=======
+    public function getSqlArrayForStats()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 	    // CHANGE THIS: Optionnal
 
@@ -98,6 +137,7 @@ class mailing_example extends MailingTargets
 
 
     /**
+<<<<<<< HEAD
      *	Return here number of distinct emails returned by your selector.
      *	For example if this selector is used to extract 500 different
      *	emails from a text file, this function must return 500.
@@ -108,6 +148,18 @@ class mailing_example extends MailingTargets
     function getNbOfRecipients($sql='')
     {
 	    // CHANGE THIS: Optionnal
+=======
+     *  Return here number of distinct emails returned by your selector.
+     *  For example if this selector is used to extract 500 different
+     *  emails from a text file, this function must return 500.
+     *
+     *  @param		string		$sql		Requete sql de comptage
+     *  @return		int|string				Number of recipient or '?'
+     */
+    public function getNbOfRecipients($sql = '')
+    {
+        // CHANGE THIS: Optionnal
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         // Example: return parent::getNbOfRecipients("SELECT count(*) as nb from dolibarr_table");
         // Example: return 500;
@@ -116,6 +168,7 @@ class mailing_example extends MailingTargets
 
     /**
      *  This is to add a form filter to provide variant of selector
+<<<<<<< HEAD
      *	If used, the HTML select must be called "filter"
      *
      *  @return     string      A html select zone
@@ -123,6 +176,15 @@ class mailing_example extends MailingTargets
     function formFilter()
     {
 	    // CHANGE THIS: Optionnal
+=======
+     *  If used, the HTML select must be called "filter"
+     *
+     *  @return     string      A html select zone
+     */
+    public function formFilter()
+    {
+        // CHANGE THIS: Optionnal
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         $s='';
         return $s;
@@ -136,6 +198,7 @@ class mailing_example extends MailingTargets
      *  @param	int		$id		ID
      *  @return string      	Url link
      */
+<<<<<<< HEAD
     function url($id)
     {
 	    // CHANGE THIS: Optionnal
@@ -145,3 +208,12 @@ class mailing_example extends MailingTargets
 
 }
 
+=======
+    public function url($id)
+    {
+        // CHANGE THIS: Optionnal
+
+        return '';
+    }
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

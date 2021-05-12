@@ -27,12 +27,21 @@ if (empty($langs) || ! is_object($langs))
 
 include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
+<<<<<<< HEAD
 $langs->load("main");
 $langs->load('cashdesk');
 
 top_httphead('text/html');
 
 $facid=GETPOST('facid','int');
+=======
+// Load translation files required by the page
+$langs->loadLangs(array("main","cashdesk"));
+
+top_httphead('text/html');
+
+$facid=GETPOST('facid', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $object=new Facture($db);
 $object->fetch($facid);
 
@@ -47,7 +56,11 @@ $object->fetch($facid);
 
 <div class="entete">
     <div class="logo">
+<<<<<<< HEAD
         <?php print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('/thumbs/'.$mysoc->logo_small).'">'; ?>
+=======
+        <?php print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small).'">'; ?>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     </div>
     <div class="infos">
         <p class="address"><?php echo $mysoc->name; ?><br>
@@ -57,7 +70,11 @@ $object->fetch($facid);
         <p class="date_heure"><?php
         // Recuperation et affichage de la date et de l'heure
         $now = dol_now();
+<<<<<<< HEAD
         print dol_print_date($now,'dayhourtext').'<br>';
+=======
+        print dol_print_date($now, 'dayhourtext').'<br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         print $object->ref;
         ?></p>
     </div>
@@ -91,7 +108,11 @@ $object->fetch($facid);
         <td><?php echo $tab[$i]['label'];?></td>
         <td><?php echo $tab[$i]['qte'];?></td>
         <td><?php echo $tab[$i]['remise_percent'];?></td>
+<<<<<<< HEAD
         <td class="total"><?php echo price(price2num($tab[$i]['total_ht'],'MT'),0,$langs,0,0,-1,$conf->currency);?></td>
+=======
+        <td class="total"><?php echo price(price2num($tab[$i]['total_ht'], 'MT'), 0, $langs, 0, 0, -1, $conf->currency);?></td>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     </tr>
     <?php
     }
@@ -102,6 +123,7 @@ $object->fetch($facid);
 <table class="totaux">
 <tr>
     <th class="nowrap"><?php echo $langs->trans("TotalHT");?></th>
+<<<<<<< HEAD
     <td class="nowrap"><?php echo price(price2num($obj_facturation->prixTotalHt(),'MT'),'',$langs,0,-1,-1,$conf->currency)."\n";?></td>
 </tr>
 <tr>
@@ -109,6 +131,15 @@ $object->fetch($facid);
 </tr>
 <tr>
     <th class="nowrap"><?php echo ''.$langs->trans("TotalTTC").'</th><td class="nowrap">'.price(price2num($obj_facturation->prixTotalTtc(),'MT'),'',$langs,0,-1,-1,$conf->currency)."\n";?></td>
+=======
+    <td class="nowrap"><?php echo price(price2num($obj_facturation->prixTotalHt(), 'MT'), '', $langs, 0, -1, -1, $conf->currency)."\n";?></td>
+</tr>
+<tr>
+    <th class="nowrap"><?php echo $langs->trans("TotalVAT").'</th><td class="nowrap">'.price(price2num($obj_facturation->montantTva(), 'MT'), '', $langs, 0, -1, -1, $conf->currency)."\n";?></td>
+</tr>
+<tr>
+    <th class="nowrap"><?php echo ''.$langs->trans("TotalTTC").'</th><td class="nowrap">'.price(price2num($obj_facturation->prixTotalTtc(), 'MT'), '', $langs, 0, -1, -1, $conf->currency)."\n";?></td>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 </tr>
 </table>
 

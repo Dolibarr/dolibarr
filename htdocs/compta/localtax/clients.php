@@ -1,6 +1,12 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2011-2014	Juanjo Menent 		<jmenent@2byte.es>
  * Copyright (C) 2014	    Ferran Marcet       <fmarcet@2byte.es>
+=======
+/* Copyright (C) 2011-2014	Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2014	    Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,23 +41,36 @@ $langs->loadLangs(array("other","compta","banks","bills","companies","product","
 $local=GETPOST('localTaxType', 'int');
 
 // Date range
+<<<<<<< HEAD
 $year=GETPOST("year","int");
 if (empty($year))
 {
 	$year_current = strftime("%Y",dol_now());
+=======
+$year=GETPOST("year", "int");
+if (empty($year))
+{
+	$year_current = strftime("%Y", dol_now());
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$year_start = $year_current;
 } else {
 	$year_current = $year;
 	$year_start = $year;
 }
+<<<<<<< HEAD
 $date_start=dol_mktime(0,0,0,GETPOST("date_startmonth"),GETPOST("date_startday"),GETPOST("date_startyear"));
 $date_end=dol_mktime(23,59,59,GETPOST("date_endmonth"),GETPOST("date_endday"),GETPOST("date_endyear"));
+=======
+$date_start=dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"));
+$date_end=dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 // Quarter
 if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 {
     $q=GETPOST("q");
     if (empty($q))
 	{
+<<<<<<< HEAD
 		if (GETPOST("month")) { $date_start=dol_get_first_day($year_start,GETPOST("month"),false); $date_end=dol_get_last_day($year_start,GETPOST("month"),false); }
 		else
 		{
@@ -59,10 +78,20 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 			if (empty($conf->global->MAIN_INFO_VAT_RETURN) || $conf->global->MAIN_INFO_VAT_RETURN == 2) $date_end=dol_time_plus_duree($date_start, 3, 'm') - 1;
 			else if ($conf->global->MAIN_INFO_VAT_RETURN == 3) $date_end=dol_time_plus_duree($date_start, 1, 'y') - 1;
 			else if ($conf->global->MAIN_INFO_VAT_RETURN == 1) $date_end=dol_time_plus_duree($date_start, 1, 'm') - 1;
+=======
+		if (GETPOST("month")) { $date_start=dol_get_first_day($year_start, GETPOST("month"), false); $date_end=dol_get_last_day($year_start, GETPOST("month"), false); }
+		else
+		{
+			$date_start=dol_get_first_day($year_start, empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START, false);
+			if (empty($conf->global->MAIN_INFO_VAT_RETURN) || $conf->global->MAIN_INFO_VAT_RETURN == 2) $date_end=dol_time_plus_duree($date_start, 3, 'm') - 1;
+			elseif ($conf->global->MAIN_INFO_VAT_RETURN == 3) $date_end=dol_time_plus_duree($date_start, 1, 'y') - 1;
+			elseif ($conf->global->MAIN_INFO_VAT_RETURN == 1) $date_end=dol_time_plus_duree($date_start, 1, 'm') - 1;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 	}
 	else
 	{
+<<<<<<< HEAD
 		if ($q==1) { $date_start=dol_get_first_day($year_start,1,false); $date_end=dol_get_last_day($year_start,3,false); }
 		if ($q==2) { $date_start=dol_get_first_day($year_start,4,false); $date_end=dol_get_last_day($year_start,6,false); }
 		if ($q==3) { $date_start=dol_get_first_day($year_start,7,false); $date_end=dol_get_last_day($year_start,9,false); }
@@ -71,16 +100,34 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 }
 
 $min = price2num(GETPOST("min","alpha"));
+=======
+		if ($q==1) { $date_start=dol_get_first_day($year_start, 1, false); $date_end=dol_get_last_day($year_start, 3, false); }
+		if ($q==2) { $date_start=dol_get_first_day($year_start, 4, false); $date_end=dol_get_last_day($year_start, 6, false); }
+		if ($q==3) { $date_start=dol_get_first_day($year_start, 7, false); $date_end=dol_get_last_day($year_start, 9, false); }
+		if ($q==4) { $date_start=dol_get_first_day($year_start, 10, false); $date_end=dol_get_last_day($year_start, 12, false); }
+	}
+}
+
+$min = price2num(GETPOST("min", "alpha"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($min)) $min = 0;
 
 // Define modetax (0 or 1)
 // 0=normal, 1=option vat for services is on debit, 2=option on payments for products
 $modetax = $conf->global->TAX_MODE;
+<<<<<<< HEAD
 if (GETPOSTISSET("modetax")) $modetax=GETPOST("modetax",'int');
 if (empty($modetax)) $modetax=0;
 
 // Security check
 $socid = GETPOST('socid','int');
+=======
+if (GETPOSTISSET("modetax")) $modetax=GETPOST("modetax", 'int');
+if (empty($modetax)) $modetax=0;
+
+// Security check
+$socid = GETPOST('socid', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
@@ -100,7 +147,11 @@ foreach($listofparams as $param)
 	if (GETPOST($param)!='') $morequerystring.=($morequerystring?'&':'').$param.'='.GETPOST($param);
 }
 
+<<<<<<< HEAD
 llxHeader('','','','',0,0,'','',$morequerystring);
+=======
+llxHeader('', '', '', '', 0, 0, '', '', $morequerystring);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 $name=$langs->transcountry($local==1?"LT1ReportByCustomers":"LT2ReportByCustomers", $mysoc->country_code);
@@ -116,11 +167,19 @@ $calc=$conf->global->MAIN_INFO_LOCALTAX_CALC.$local;
 if ($calc==0 || $calc==1)	// Calculate on invoice for goods and services
 {
     $calcmode=$calc==0?$langs->trans("CalcModeLT".$local):$langs->trans("CalcModeLT".$local."Rec");
+<<<<<<< HEAD
     $calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRulesLT",DOL_URL_ROOT.'/admin/company.php').')';
     $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
     if (! empty($conf->global->MAIN_MODULE_COMPTABILITE)) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
     $description.=$fsearch;
     $description.='<br>('.$langs->trans("TaxModuleSetupToModifyRulesLT",DOL_URL_ROOT.'/admin/company.php').')';
+=======
+    $calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRulesLT", DOL_URL_ROOT.'/admin/company.php').')';
+    $period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
+    if (! empty($conf->global->MAIN_MODULE_COMPTABILITE)) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
+    $description.=$fsearch;
+    $description.='<br>('.$langs->trans("TaxModuleSetupToModifyRulesLT", DOL_URL_ROOT.'/admin/company.php').')';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$builddate=dol_now();
 
 	$elementcust=$langs->trans("CustomersInvoices");
@@ -133,11 +192,19 @@ if ($calc==0 || $calc==1)	// Calculate on invoice for goods and services
 if ($calc==2) 	// Invoice for goods, payment for services
 {
     $calcmode=$langs->trans("CalcModeLT2Debt");
+<<<<<<< HEAD
     $calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRulesLT",DOL_URL_ROOT.'/admin/company.php').')';
     $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
     if (! empty($conf->global->MAIN_MODULE_COMPTABILITE)) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
     $description.=$fsearch;
     $description.='<br>('.$langs->trans("TaxModuleSetupToModifyRulesLT",DOL_URL_ROOT.'/admin/company.php').')';
+=======
+    $calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRulesLT", DOL_URL_ROOT.'/admin/company.php').')';
+    $period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
+    if (! empty($conf->global->MAIN_MODULE_COMPTABILITE)) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
+    $description.=$fsearch;
+    $description.='<br>('.$langs->trans("TaxModuleSetupToModifyRulesLT", DOL_URL_ROOT.'/admin/company.php').')';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $builddate=dol_now();
 
 	$elementcust=$langs->trans("CustomersInvoices");
@@ -147,15 +214,24 @@ if ($calc==2) 	// Invoice for goods, payment for services
 	$productsup=$langs->trans("Description");
 	$amountsup=$langs->trans("AmountHT");
 }
+<<<<<<< HEAD
 report_header($name,'',$period,$periodlink,$description,$builddate,$exportlink,array(),$calcmode);
 
 
 $vatcust=$langs->transcountry($local==1?"LT1":"LT2",$mysoc->country_code);
 $vatsup=$langs->transcountry($local==1?"LT1":"LT2",$mysoc->country_code);
+=======
+report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array(), $calcmode);
+
+
+$vatcust=$langs->transcountry($local==1?"LT1":"LT2", $mysoc->country_code);
+$vatsup=$langs->transcountry($local==1?"LT1":"LT2", $mysoc->country_code);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // IRPF that the customer has retained me
 if($calc ==0 || $calc == 2)
 {
+<<<<<<< HEAD
 	print "<table class=\"noborder\" width=\"100%\">";
 	print "<tr class=\"liste_titre\">";
 	print '<td align="left">'.$langs->trans("Num")."</td>";
@@ -163,6 +239,15 @@ if($calc ==0 || $calc == 2)
 	print "<td>".$langs->transcountry("ProfId1",$mysoc->country_code)."</td>";
 	print "<td align=\"right\">".$langs->trans("TotalHT")."</td>";
 	print "<td align=\"right\">".$vatcust."</td>";
+=======
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print '<td class="left">'.$langs->trans("Num").'</td>';
+	print '<td class="left">'.$langs->trans("Customer").'</td>';
+	print '<td>'.$langs->transcountry("ProfId1", $mysoc->country_code).'</td>';
+	print '<td class="right">'.$langs->trans("TotalHT").'</td>';
+	print '<td class="right">'.$vatcust.'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print "</tr>\n";
 
 	$coll_list = tax_by_thirdparty('localtax'.$local, $db, 0, $date_start, $date_end, $modetax, 'sell');
@@ -177,7 +262,11 @@ if($calc ==0 || $calc == 2)
 
 	// Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 	$hookmanager->initHooks(array('externalbalance'));
+<<<<<<< HEAD
 	$reshook=$hookmanager->executeHooks('addVatLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+=======
+	$reshook=$hookmanager->executeHooks('addVatLine', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	if (is_array($coll_list))
 	{
@@ -188,7 +277,11 @@ if($calc ==0 || $calc == 2)
 			if(($min == 0 || ($min > 0 && $coll->amount > $min)) && ($local==1?$coll->localtax1:$coll->localtax2) !=0)
 			{
 
+<<<<<<< HEAD
 				$intra = str_replace($find,$replace,$coll->tva_intra);
+=======
+				$intra = str_replace($find, $replace, $coll->tva_intra);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if(empty($intra))
 				{
 					if($coll->assuj == '1')
@@ -207,9 +300,15 @@ if($calc ==0 || $calc == 2)
 				print '<td class="nowrap">'.$company_static->getNomUrl(1).'</td>';
 				$find = array(' ','.');
 				$replace = array('','');
+<<<<<<< HEAD
 				print '<td class="nowrap">'.$intra."</td>";
 				print "<td class=\"nowrap\" align=\"right\">".price($coll->amount)."</td>";
 				print "<td class=\"nowrap\" align=\"right\">".price($local==1?$coll->localtax1:$coll->localtax2)."</td>";
+=======
+				print '<td class="nowrap">'.$intra.'</td>';
+				print '<td class="nowrap right">'.price($coll->amount).'</td>';
+				print '<td class="nowrap right">'.price($local==1?$coll->localtax1:$coll->localtax2).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	            $totalamount = $totalamount + $coll->amount;
 				$total = $total + ($local==1?$coll->localtax1:$coll->localtax2);
 				print "</tr>\n";
@@ -218,9 +317,15 @@ if($calc ==0 || $calc == 2)
 		}
 	    $x_coll_sum = $total;
 
+<<<<<<< HEAD
 		print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("Total").':</td>';
 	    print '<td class="nowrap" align="right">'.price($totalamount).'</td>';
 		print '<td class="nowrap" align="right">'.price($total).'</td>';
+=======
+		print '<tr class="liste_total"><td class="right" colspan="3">'.$langs->trans("Total").':</td>';
+	    print '<td class="nowrap right">'.price($totalamount).'</td>';
+		print '<td class="nowrap right">'.price($total).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</tr>';
 	}
 	else
@@ -228,7 +333,11 @@ if($calc ==0 || $calc == 2)
 		$langs->load("errors");
 		if ($coll_list == -1)
 			print '<tr><td colspan="5">'.$langs->trans("ErrorNoAccountancyModuleLoaded").'</td></tr>';
+<<<<<<< HEAD
 		else if ($coll_list == -2)
+=======
+		elseif ($coll_list == -2)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
 		else
 			print '<tr><td colspan="5">'.$langs->trans("Error").'</td></tr>';
@@ -237,6 +346,7 @@ if($calc ==0 || $calc == 2)
 
 // IRPF I retained my supplier
 if($calc ==0 || $calc == 1){
+<<<<<<< HEAD
 	print "<table class=\"noborder\" width=\"100%\">";
 	print "<tr class=\"liste_titre\">";
 	print '<td align="left">'.$langs->trans("Num")."</td>";
@@ -244,15 +354,32 @@ if($calc ==0 || $calc == 1){
 	print "<td>".$langs->transcountry("ProfId1",$mysoc->country_code)."</td>";
 	print "<td align=\"right\">".$langs->trans("TotalHT")."</td>";
 	print "<td align=\"right\">".$vatsup."</td>";
+=======
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print '<td class="left">'.$langs->trans("Num")."</td>";
+	print '<td class="left">'.$langs->trans("Supplier")."</td>";
+	print '<td>'.$langs->transcountry("ProfId1", $mysoc->country_code).'</td>';
+	print '<td class="right">'.$langs->trans("TotalHT").'</td>';
+	print '<td class="right">'.$vatsup.'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print "</tr>\n";
 
 	$company_static=new Societe($db);
 
+<<<<<<< HEAD
 	$coll_list = tax_by_thirdparty('localtax'.$local, $db, 0, $date_start, $date_end,$modetax, 'buy');
 	$parameters["direction"] = 'buy';
 	$parameters["type"] = 'localtax'.$local;
 
 	$reshook=$hookmanager->executeHooks('addVatLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+=======
+	$coll_list = tax_by_thirdparty('localtax'.$local, $db, 0, $date_start, $date_end, $modetax, 'buy');
+	$parameters["direction"] = 'buy';
+	$parameters["type"] = 'localtax'.$local;
+
+	$reshook=$hookmanager->executeHooks('addVatLine', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if (is_array($coll_list))
 	{
 		$total = 0;  $totalamount = 0;
@@ -262,7 +389,11 @@ if($calc ==0 || $calc == 1){
 			if(($min == 0 || ($min > 0 && $coll->amount > $min)) && ($local==1?$coll->localtax1:$coll->localtax2) != 0)
 			{
 
+<<<<<<< HEAD
 				$intra = str_replace($find,$replace,$coll->tva_intra);
+=======
+				$intra = str_replace($find, $replace, $coll->tva_intra);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if(empty($intra))
 				{
 					if($coll->assuj == '1')
@@ -282,8 +413,13 @@ if($calc ==0 || $calc == 1){
 				$find = array(' ','.');
 				$replace = array('','');
 				print '<td class="nowrap">'.$intra."</td>";
+<<<<<<< HEAD
 				print "<td class=\"nowrap\" align=\"right\">".price($coll->amount)."</td>";
 				print "<td class=\"nowrap\" align=\"right\">".price($local==1?$coll->localtax1:$coll->localtax2)."</td>";
+=======
+				print '<td class="nowrap right">'.price($coll->amount).'</td>';
+				print '<td class="nowrap right">'.price($local==1?$coll->localtax1:$coll->localtax2).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	            $totalamount = $totalamount + $coll->amount;
 				$total = $total + ($local==1?$coll->localtax1:$coll->localtax2);
 				print "</tr>\n";
@@ -292,6 +428,7 @@ if($calc ==0 || $calc == 1){
 		}
 	    $x_paye_sum = $total;
 
+<<<<<<< HEAD
 		print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("Total").':</td>';
 	    print '<td class="nowrap" align="right">'.price($totalamount).'</td>';
 		print '<td class="nowrap" align="right">'.price($total).'</td>';
@@ -299,13 +436,25 @@ if($calc ==0 || $calc == 1){
 
 		print '</table>';
 
+=======
+		print '<tr class="liste_total"><td class="right" colspan="3">'.$langs->trans("Total").':</td>';
+	    print '<td class="nowrap right">'.price($totalamount).'</td>';
+		print '<td class="nowrap right">'.price($total).'</td>';
+		print '</tr>';
+
+		print '</table>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 	else
 	{
 		$langs->load("errors");
 		if ($coll_list == -1)
 			print '<tr><td colspan="5">'.$langs->trans("ErrorNoAccountancyModuleLoaded").'</td></tr>';
+<<<<<<< HEAD
 		else if ($coll_list == -2)
+=======
+		elseif ($coll_list == -2)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
 		else
 			print '<tr><td colspan="5">'.$langs->trans("Error").'</td></tr>';
@@ -319,11 +468,20 @@ if($calc ==0){
 	$diff = $x_coll_sum - $x_paye_sum ;
 	print '<tr class="liste_total">';
 	print '<td class="liste_total" colspan="4">'.$langs->trans("TotalToPay").($q?', '.$langs->trans("Quadri").' '.$q:'').'</td>';
+<<<<<<< HEAD
 	print '<td class="liste_total nowrap" align="right"><b>'.price(price2num($diff,'MT'))."</b></td>\n";
 	print "</tr>\n";
 
 }
 print '</table>';
 
+=======
+	print '<td class="liste_total nowrap right"><b>'.price(price2num($diff, 'MT'))."</b></td>\n";
+	print "</tr>\n";
+}
+print '</table>';
+
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

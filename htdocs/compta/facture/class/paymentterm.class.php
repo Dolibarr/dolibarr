@@ -28,6 +28,7 @@
  */
 class PaymentTerm // extends CommonObject
 {
+<<<<<<< HEAD
 	var $db;							//!< To store db handler
 	var $error;							//!< To return error code (or message)
 	var $errors=array();				//!< To return several error codes (or messages)
@@ -45,6 +46,40 @@ class PaymentTerm // extends CommonObject
 	var $type_cdr;
 	var $nbjour;
 	var $decalage;
+=======
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+
+	//public  $element='c_payment_term';			//!< Id that identify managed objects
+	//public  $table_element='c_payment_term';	//!< Name of table without prefix where object is stored
+	public $context =array();
+
+    /**
+	 * @var int ID
+	 */
+	public $id;
+
+	public $code;
+	public $sortorder;
+	public $active;
+	public $libelle;
+	public $libelle_facture;
+	public $type_cdr;
+	public $nbjour;
+	public $decalage;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 
@@ -54,7 +89,11 @@ class PaymentTerm // extends CommonObject
      *
 	 * 	@param	DoliDB		$db			Database handler
      */
+<<<<<<< HEAD
     function __construct($db)
+=======
+    public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $this->db = $db;
     }
@@ -67,7 +106,11 @@ class PaymentTerm // extends CommonObject
      *      @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
      *      @return     int       			  	<0 if KO, Id of created object if OK
      */
+<<<<<<< HEAD
     function create($user, $notrigger=0)
+=======
+    public function create($user, $notrigger = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
     	global $conf, $langs;
 		$error=0;
@@ -120,6 +163,7 @@ class PaymentTerm // extends CommonObject
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."c_payment_term");
 
+<<<<<<< HEAD
 			if (! $notrigger)
 			{
 	            // Uncomment this and change MYOBJECT to your own tag if you
@@ -132,6 +176,19 @@ class PaymentTerm // extends CommonObject
 	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
 	            //// End call triggers
 			}
+=======
+	        // Uncomment this and change MYOBJECT to your own tag if you
+	        // want this action call a trigger.
+			//if (! $notrigger) {
+
+	        //    // Call triggers
+	        //    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+	        //    $interface=new Interfaces($this->db);
+	        //    $result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
+	        //    if ($result < 0) { $error++; $this->errors=$interface->errors; }
+	        //    // End call triggers
+			//}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
 
         // Commit or rollback
@@ -159,12 +216,20 @@ class PaymentTerm // extends CommonObject
      *    @param      int		$id     Id object
      *    @return     int         		<0 if KO, >0 if OK
      */
+<<<<<<< HEAD
     function fetch($id)
+=======
+    public function fetch($id)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
     	global $langs;
         $sql = "SELECT";
 		$sql.= " t.rowid,";
+<<<<<<< HEAD
 		$sql.= " t.entity";
+=======
+		$sql.= " t.entity,";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$sql.= " t.code,";
 		$sql.= " t.sortorder,";
@@ -197,8 +262,11 @@ class PaymentTerm // extends CommonObject
 				$this->type_cdr = $obj->type_cdr;
 				$this->nbjour = $obj->nbjour;
 				$this->decalage = $obj->decalage;
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             }
             $this->db->free($resql);
 
@@ -217,7 +285,11 @@ class PaymentTerm // extends CommonObject
      *
      *    @return     int         <0 if KO, >0 if OK
      */
+<<<<<<< HEAD
 	function getDefaultId()
+=======
+	public function getDefaultId()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 
@@ -250,6 +322,7 @@ class PaymentTerm // extends CommonObject
 
 
 	/**
+<<<<<<< HEAD
      *      Update database
      *
      *      @param      User	$user        	User that modify
@@ -257,6 +330,15 @@ class PaymentTerm // extends CommonObject
      *      @return     int       			  	<0 if KO, >0 if OK
      */
 	function update($user=null, $notrigger=0)
+=======
+     *  Update database
+     *
+     *  @param      User	$user        	User that modify
+     *  @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
+     *  @return     int       			  	<0 if KO, >0 if OK
+     */
+	public function update($user = null, $notrigger = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf, $langs;
 
@@ -296,6 +378,7 @@ class PaymentTerm // extends CommonObject
 		$resql = $this->db->query($sql);
 		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
+<<<<<<< HEAD
 		if (! $error)
 		{
 			if (! $notrigger)
@@ -303,14 +386,23 @@ class PaymentTerm // extends CommonObject
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action call a trigger.
 
+=======
+		// Uncomment this and change MYOBJECT to your own tag if you
+		// want this action call a trigger.
+		//if (! $error && ! $notrigger) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				// Call triggers
 				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 				//$interface=new Interfaces($this->db);
 				//$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
 				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// End call triggers
+<<<<<<< HEAD
 			}
 		}
+=======
+		//}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Commit or rollback
 		if ($error)
@@ -338,7 +430,11 @@ class PaymentTerm // extends CommonObject
 	 *  @param      int		$notrigger	0=launch triggers after, 1=disable triggers
 	 *	@return		int					<0 if KO, >0 if OK
 	 */
+<<<<<<< HEAD
 	function delete($user, $notrigger=0)
+=======
+	public function delete($user, $notrigger = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf, $langs;
 		$error=0;
@@ -352,6 +448,7 @@ class PaymentTerm // extends CommonObject
 		$resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
+<<<<<<< HEAD
 		if (! $error)
 		{
 			if (! $notrigger)
@@ -359,14 +456,23 @@ class PaymentTerm // extends CommonObject
 				// Uncomment this and change MYOBJECT to your own tag if you
 		        // want this action call a trigger.
 
+=======
+		// Uncomment this and change MYOBJECT to your own tag if you
+		// want this action call a trigger.
+		//if (! $error && ! $notrigger) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		        //// Call triggers
 		        //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 		        //$interface=new Interfaces($this->db);
 		        //$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
 		        //if ($result < 0) { $error++; $this->errors=$interface->errors; }
 		        //// End call triggers
+<<<<<<< HEAD
 			}
 		}
+=======
+		//}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         // Commit or rollback
 		if ($error)
@@ -389,6 +495,7 @@ class PaymentTerm // extends CommonObject
 
 
 	/**
+<<<<<<< HEAD
 	 *		Load an object from its id and create a new one in database
 	 *
 	 *		@param      int		$fromid     Id of object to clone
@@ -398,12 +505,25 @@ class PaymentTerm // extends CommonObject
 	{
 		global $user,$langs;
 
+=======
+	 *  Load an object from its id and create a new one in database
+	 *
+	 *  @param	    User	$user		User making the clone
+	 *  @param      int		$fromid     Id of object to clone
+	 *  @return		int					New id of clone
+	 */
+	public function createFromClone(User $user, $fromid)
+	{
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$error=0;
 
 		$object=new PaymentTerm($this->db);
 
+<<<<<<< HEAD
 		$object->context['createfromclone'] = 'createfromclone';
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->db->begin();
 
 		// Load source object
@@ -415,6 +535,10 @@ class PaymentTerm // extends CommonObject
 		// ...
 
 		// Create clone
+<<<<<<< HEAD
+=======
+		$object->context['createfromclone'] = 'createfromclone';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$result=$object->create($user);
 
 		// Other options
@@ -424,6 +548,7 @@ class PaymentTerm // extends CommonObject
 			$error++;
 		}
 
+<<<<<<< HEAD
 		if (! $error)
 		{
 
@@ -432,6 +557,9 @@ class PaymentTerm // extends CommonObject
 		}
 
 		unset($this->context['createfromclone']);
+=======
+		unset($object->context['createfromclone']);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// End
 		if (! $error)
@@ -447,15 +575,25 @@ class PaymentTerm // extends CommonObject
 	}
 
 
+<<<<<<< HEAD
 	/**
+=======
+    /**
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      *  Initialise an instance with random values.
      *  Used to build previews or test instances.
      *	id must be 0 if object instance is a specimen.
      *
      *  @return	void
+<<<<<<< HEAD
 	 */
 	function initAsSpecimen()
 	{
+=======
+     */
+    public function initAsSpecimen()
+    {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->id=0;
 
 		$this->code='';
@@ -467,5 +605,8 @@ class PaymentTerm // extends CommonObject
 		$this->nbjour='';
 		$this->decalage='';
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

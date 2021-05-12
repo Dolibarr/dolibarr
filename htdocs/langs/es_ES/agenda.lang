@@ -32,6 +32,7 @@ ViewPerUser=Vista por usuario
 ViewPerType=Vista por tipo
 AutoActions= Inclusión automática en la agenda
 AgendaAutoActionDesc= Defina aquí los eventos que desea que Dolibarr cree automáticamente como evento en la agenda. Si no selecciona nada solamente serán visibles en la agenda las acciones manuales. No se guardará el seguimiento automático de las acciones comerciales realizadas sobre los objetos (validación, cambio de estado).
+<<<<<<< HEAD
 AgendaSetupOtherDesc= Esta página le permite configurar algunas opciones que permiten exportar una vista de su agenda Dolibar a un calendario externo (thunderbird, google calendar, ...)
 AgendaExtSitesDesc=Esta página le permite configurar calendarios externos para su visualización en la agenda de Dolibarr.
 ActionsEvents=Eventos para que Dolibarr cree un evento en la agenda de forma automática
@@ -39,6 +40,17 @@ EventRemindersByEmailNotEnabled=Los recordatorios de eventos por e.mail no se ha
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Tercero %s creado
 ContractValidatedInDolibarr=Contrato %s validado
+=======
+AgendaSetupOtherDesc= Esta página le permite configurar algunas opciones que permiten exportar una vista de su agenda Dolibar a un calendario externo (thunderbird, google calendar...)
+AgendaExtSitesDesc=Esta página le permite configurar calendarios externos para su visualización en la agenda de Dolibarr.
+ActionsEvents=Eventos para que Dolibarr cree un evento en la agenda de forma automática
+EventRemindersByEmailNotEnabled=Los recordatorios de eventos por e-mail no se activaron en la configuración del módulo %s.
+##### Agenda event labels #####
+NewCompanyToDolibarr=Tercero %s creado
+COMPANY_DELETEInDolibarr=Tercero %s eliminado
+ContractValidatedInDolibarr=Contrato %s validado
+CONTRACT_DELETEInDolibarr=Contrato %s eliminado
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PropalClosedSignedInDolibarr=Presupuesto %s firmado
 PropalClosedRefusedInDolibarr=Presupuesto %s rechazado
 PropalValidatedInDolibarr=Presupuesto %s validado
@@ -59,6 +71,10 @@ MemberSubscriptionDeletedInDolibarr=Suscripción %s del miembro %s eliminada
 ShipmentValidatedInDolibarr=Expedición %s validada
 ShipmentClassifyClosedInDolibarr=Expedición %s clasificada como pagada
 ShipmentUnClassifyCloseddInDolibarr=Expedición %s clasificada como reabierta
+<<<<<<< HEAD
+=======
+ShipmentBackToDraftInDolibarr=Envío %s ha sido devuelto al estado de borrador
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShipmentDeletedInDolibarr=Expedición %s eliminada
 OrderCreatedInDolibarr=Pedido %s creado
 OrderValidatedInDolibarr=Pedido %s validado
@@ -72,7 +88,11 @@ ProposalSentByEMail=Presupuesto %s enviado por e-mail
 ContractSentByEMail=Contrato %s enviado por E-Mail
 OrderSentByEMail=Pedido de cliente %s enviado por e-mail
 InvoiceSentByEMail=Factura a cliente %s enviada por e-mail
+<<<<<<< HEAD
 SupplierOrderSentByEMail=Pedido a proveedor %s enviada por e-mail
+=======
+SupplierOrderSentByEMail=Pedido a proveedor %s enviado por e-mail
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SupplierInvoiceSentByEMail=Factura de proveedor %s enviada por e-mail
 ShippingSentByEMail=Expedición %s enviada por email
 ShippingValidated= Expedición %s validada
@@ -91,6 +111,14 @@ EXPENSE_REPORT_REFUSEDInDolibarr=Informe de gastos %s rechazado
 PROJECT_CREATEInDolibarr=Proyecto %s creado
 PROJECT_MODIFYInDolibarr=Proyecto %s modificado
 PROJECT_DELETEInDolibarr=Proyecto %s eliminado
+<<<<<<< HEAD
+=======
+TICKET_CREATEInDolibarr=Ticket %s creado
+TICKET_MODIFYInDolibarr=Ticket %s modificado
+TICKET_ASSIGNEDInDolibarr=Ticket %s asignado
+TICKET_CLOSEInDolibarr=Ticket %s cerrado
+TICKET_DELETEInDolibarr=Ticket %s eliminado
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ##### End agenda events #####
 AgendaModelModule=Plantillas de documentos para eventos
 DateActionStart=Fecha de inicio
@@ -112,7 +140,11 @@ ExportCal=Exportar calendario
 ExtSites=Calendarios externos
 ExtSitesEnableThisTool=Mostrar calendarios externos (definido en la configuración global) en la agenda. No afecta a los calendarios externos definidos por los usuarios
 ExtSitesNbOfAgenda=Número de calendarios
+<<<<<<< HEAD
 AgendaExtNb=Calendar no. %s
+=======
+AgendaExtNb=Calendario nº %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ExtSiteUrlAgenda=Url de acceso al archivo .ical
 ExtSiteNoLabel=Sin descripción
 VisibleTimeRange=Rango de tiempo visible
@@ -121,7 +153,10 @@ AddEvent=Crear evento
 MyAvailability=Mi disponibilidad
 ActionType=Tipo de evento
 DateActionBegin=Fecha de inicio del evento
+<<<<<<< HEAD
 CloneAction=Clonar evento
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmCloneEvent=¿Esta seguro de querer clonar el evento <b>%s</b>?
 RepeatEvent=Repetir evento
 EveryWeek=Cada semana

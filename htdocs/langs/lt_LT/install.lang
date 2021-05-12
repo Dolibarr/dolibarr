@@ -2,6 +2,7 @@
 InstallEasy=Tiesiog sekite instrukcijas žingsnis po žingsnio.
 MiscellaneousChecks=Būtinų sąlygų tikrinimas
 ConfFileExists=Konfigūracijos failas <b>%s</b> egzistuoja.
+<<<<<<< HEAD
 ConfFileDoesNotExistsAndCouldNotBeCreated=Konfigūracijos failas <b>%s</b> neegzistuoja ir negali būti sukurtas!
 ConfFileCouldBeCreated=Konfigūracijos failas <b>%s</b> gali būti sukurtas.
 ConfFileIsNotWritable=Konfigūracijos failas <b>%s</b> neįrašomas. Patikrinti leidimus. Diegiant pirmą kartą Jūsų serveris turi būti pajėgus įrašyti į šį failą konfigūracijos proceso metu ("chmod 666", pavyzdžiui Unix tipo OS).
@@ -23,16 +24,49 @@ ErrorPHPDoesNotSupportCurl=Your PHP installation does not support Curl.
 ErrorPHPDoesNotSupportUTF8=Jūsų įdiegta PHP nepalaiko UTF8 funkcijos. Dolibarr negali tinkamai veikti. Išspręsti šią problemą prieš diegdami Dolibarr.
 ErrorDirDoesNotExists=Katalogas %s neegzistuoja.
 ErrorGoBackAndCorrectParameters=Eiti atgal ir ištaisyti klaidingus parametrus.
+=======
+ConfFileDoesNotExistsAndCouldNotBeCreated=Configuration file <b>%s</b> does not exist and could not be created!
+ConfFileCouldBeCreated=Konfigūracijos failas <b>%s</b> gali būti sukurtas.
+ConfFileIsNotWritable=Configuration file <b>%s</b> is not writable. Check permissions. For first install, your web server must be able to write into this file during configuration process ("chmod 666" for example on a Unix like OS).
+ConfFileIsWritable=Konfigūracijos failas <b>%s</b> įrašomas.
+ConfFileMustBeAFileNotADir=Configuration file <b>%s</b> must be a file, not a directory.
+ConfFileReload=Reloading parameters from configuration file.
+PHPSupportSessions=Šis PHP palaiko sesijas.
+PHPSupportPOSTGETOk=Šis PHP palaiko kintamuosius POST ir GET.
+PHPSupportPOSTGETKo=It's possible your PHP setup does not support variables POST and/or GET. Check the parameter <b>variables_order</b> in php.ini.
+PHPSupportGD=This PHP supports GD graphical functions.
+PHPSupportCurl=This PHP supports Curl.
+PHPSupportUTF8=This PHP supports UTF8 functions.
+PHPSupportIntl=This PHP supports Intl functions.
+PHPMemoryOK=Jūsų PHP maksimali sesijos atmintis yra nustatyta į <b>%s</b>. To turėtų būti pakankamai.
+PHPMemoryTooLow=Your PHP max session memory is set to <b>%s</b> bytes. This is too low. Change your <b>php.ini</b> to set <b>memory_limit</b> parameter to at least <b>%s</b> bytes.
+Recheck=Click here for a more detailed test
+ErrorPHPDoesNotSupportSessions=Your PHP installation does not support sessions. This feature is required to allow Dolibarr to work. Check your PHP setup and permissions of the sessions directory.
+ErrorPHPDoesNotSupportGD=Your PHP installation does not support GD graphical functions. No graphs will be available.
+ErrorPHPDoesNotSupportCurl=Your PHP installation does not support Curl.
+ErrorPHPDoesNotSupportUTF8=Your PHP installation does not support UTF8 functions. Dolibarr cannot work correctly. Resolve this before installing Dolibarr.
+ErrorPHPDoesNotSupportIntl=Your PHP installation does not support Intl functions.
+ErrorDirDoesNotExists=Katalogas %s neegzistuoja.
+ErrorGoBackAndCorrectParameters=Go back and check/correct the parameters.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorWrongValueForParameter=Galbūt įvedėte neteisingą parametro '%s' reikšmę.
 ErrorFailedToCreateDatabase=Nepavyko sukurti duomenų bazės '%s'.
 ErrorFailedToConnectToDatabase=Nepavyko prisijungti prie duomenų bazės '%s'.
 ErrorDatabaseVersionTooLow=Duomenų bazės versija (%s) per sena. Reikalinga versija %s arba naujesnė.
 ErrorPHPVersionTooLow=PHP versija pernelyg sena. Reikalinga versija %s.
+<<<<<<< HEAD
 ErrorConnectedButDatabaseNotFound=Prisijungimas prie serverio sėkmingas, bet duomenų bazės '%s' nerasta.
 ErrorDatabaseAlreadyExists=Duomenų bazė '%s' jau egzistuoja.
 IfDatabaseNotExistsGoBackAndUncheckCreate=Jei duomenų bazė neegzistuoja, grįžti ir patikrinti opciją "Sukurti duomenų bazę".
 IfDatabaseExistsGoBackAndCheckCreate=Jei duomenų bazė jau yra, eikite atgal ir nuimkite "Sukurti duomenų bazę" opciją.
 WarningBrowserTooOld=Per sena naršyklės versiją. Rekomenduojama atnaujinti savo naršyklę į naujausią versiją Firefox, Chrome ar Opera.
+=======
+ErrorConnectedButDatabaseNotFound=Connection to server successful but database '%s' not found.
+ErrorDatabaseAlreadyExists=Duomenų bazė '%s' jau egzistuoja.
+IfDatabaseNotExistsGoBackAndUncheckCreate=If the database does not exist, go back and check option "Create database".
+IfDatabaseExistsGoBackAndCheckCreate=Jei duomenų bazė jau yra, eikite atgal ir nuimkite "Sukurti duomenų bazę" opciją.
+WarningBrowserTooOld=Version of browser is too old. Upgrading your browser to a recent version of Firefox, Chrome or Opera is highly recommended.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PHPVersion=PHP versija
 License=Naudojant licenciją
 ConfigurationFile=Konfigūracijos failas
@@ -45,6 +79,7 @@ DolibarrDatabase=Dolibarr duomenų bazė
 DatabaseType=Duomenų bazės tipas
 DriverType=Tvarkyklės tipas
 Server=Serveris
+<<<<<<< HEAD
 ServerAddressDescription=Duomenų bazės serverio vardas arba IP adresas, paprastai "localhost", kai duomenų bazės serveris yra talpinamas tame pačiame serveryje kaip ir web serveris
 ServerPortDescription=Duomenų bazės serverio prievadas (port). Laikyti tuščią, jei nežinomas.
 DatabaseServer=Duomenų bazės serveris
@@ -61,6 +96,25 @@ CheckToCreateUser=Check box if database owner does not exist and must be created
 DatabaseRootLoginDescription=Prisijungimas vartotojui leidžia kurti naujas duomenų bazes arba naujus vartotojus. Tai privaloma, jei Jūsų duomenų bazė ar jos savininkas dar neegzistuoja.
 KeepEmptyIfNoPassword=Palikite tuščią, jei vartotojas neturi slaptažodžio (praleisti)
 SaveConfigurationFile=Išsaugoti reikšmes
+=======
+ServerAddressDescription=Name or ip address for the database server. Usually 'localhost' when the database server is hosted on the same server as the web server.
+ServerPortDescription=Duomenų bazės serverio prievadas (port). Laikyti tuščią, jei nežinomas.
+DatabaseServer=Duomenų bazės serveris
+DatabaseName=Duomenų bazės pavadinimas
+DatabasePrefix=Database table prefix
+DatabasePrefixDescription=Database table prefix. If empty, defaults to llx_.
+AdminLogin=User account for the Dolibarr database owner.
+PasswordAgain=Retype password confirmation
+AdminPassword=Slaptažodis Dolibarr duomenų bazės savininkui.
+CreateDatabase=Sukurti duomenų bazę
+CreateUser=Create user account or grant user account permission on the Dolibarr database
+DatabaseSuperUserAccess=Duomenų bazės serveris - Superuser prieiga
+CheckToCreateDatabase=Check the box if the database does not exist yet and so must be created.<br>In this case, you must also fill in the user name and password for the superuser account at the bottom of this page.
+CheckToCreateUser=Check the box if:<br>the database user account does not yet exist and so must be created, or<br>if the user account exists but the database does not exist and permissions must be granted.<br>In this case, you must enter the user account and password and <b>also</b> the superuser account name and password at the bottom of this page. If this box is unchecked, database owner and password must already exist.
+DatabaseRootLoginDescription=Superuser account name (to create new databases or new users), mandatory if the database or its owner does not already exist.
+KeepEmptyIfNoPassword=Leave empty if superuser has no password (NOT recommended)
+SaveConfigurationFile=Saving parameters to
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ServerConnection=Serverio prisijungimas
 DatabaseCreation=Duomenų bazės sukūrimas
 CreateDatabaseObjects=Duomenų bazės objektų kūrimas
@@ -71,9 +125,15 @@ CreateOtherKeysForTable=Sukurti svetimus raktus ir indeksus lentelei %s
 OtherKeysCreation=Svetimų raktų ir indeksų kūrimas
 FunctionsCreation=Funkcijų kūrimas
 AdminAccountCreation=Administratoriaus prisijungimo kūrimas
+<<<<<<< HEAD
 PleaseTypePassword=Prašome įvesti slaptažodį, tušti slaptažodžiai negalimi !
 PleaseTypeALogin=Prašome įvesti vartotojo vardą
 PasswordsMismatch=Slaptažodžiai skiriasi, bandykite dar kartą!
+=======
+PleaseTypePassword=Please type a password, empty passwords are not allowed!
+PleaseTypeALogin=Please type a login!
+PasswordsMismatch=Passwords differs, please try again!
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SetupEnd=Nustatymų pabaiga
 SystemIsInstalled=Diegimas baigtas
 SystemIsUpgraded=Dolibarr buvo sėkmingai atnaujintas
@@ -81,6 +141,7 @@ YouNeedToPersonalizeSetup=Reikia sukonfigūruoti Dolibarr, kad atitiktų jūsų 
 AdminLoginCreatedSuccessfuly=Dolibarr administrator login '<b>%s</b>' created successfully.
 GoToDolibarr=Eiti į Dolibarr
 GoToSetupArea=Eiti į Dolibarr (Nustatymų sritis)
+<<<<<<< HEAD
 MigrationNotFinished=Duomenų bazės versija nėra naujausiai, todėl jums gali tekti iš naujo paleisti versijos atnaujinimo procesą.
 GoToUpgradePage=Vėl eiti atnaujinti puslapį
 WithNoSlashAtTheEnd=Be simbolio "/" pabaigoje
@@ -91,24 +152,45 @@ AdminLoginAlreadyExists=Dolibarr administratoriaus sąskaita '<b>%s</b>' jau egz
 FailedToCreateAdminLogin=Failed to create Dolibarr administrator account.
 WarningRemoveInstallDir=Įspėjimas. Dėl saugumo priežasčių, kai įdiegimas ar atnaujinimas baigtas, kad būtų išvengta diegimo iš naujo, turėtumėte pridėti failą pavadinimu <b>install.lock</b> į Dolibarr dokumentų aplanką, siekiant išvengti neteisingo jo naudojimo.
 FunctionNotAvailableInThisPHP=Negalimas su šiuo PHP
+=======
+MigrationNotFinished=The database version is not completely up to date: run the upgrade process again.
+GoToUpgradePage=Vėl eiti atnaujinti puslapį
+WithNoSlashAtTheEnd=Be simbolio "/" pabaigoje
+DirectoryRecommendation=It is recommended to use a directory outside of the web pages.
+LoginAlreadyExists=Jau egzistuoja
+DolibarrAdminLogin=Dolibarr administratoriaus prisijungimas
+AdminLoginAlreadyExists=Dolibarr administrator account '<b>%s</b>' already exists. Go back if you want to create another one.
+FailedToCreateAdminLogin=Failed to create Dolibarr administrator account.
+WarningRemoveInstallDir=Warning, for security reasons, once the install or upgrade is complete, you should add a file called <b>install.lock</b> into the Dolibarr document directory in order to prevent the accidental/malicious use of the install tools again.
+FunctionNotAvailableInThisPHP=Not available in this PHP
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ChoosedMigrateScript=Pasirinkite migracijos skriptą
 DataMigration=Database migration (data)
 DatabaseMigration=Database migration (structure + some data)
 ProcessMigrateScript=Skriptas vykdomas
 ChooseYourSetupMode=Pasirinkite nustatymų režimą ir spauskite "Start" ...
 FreshInstall=Naujas diegimas
+<<<<<<< HEAD
 FreshInstallDesc=Naudokite šį režimą, jei tai pirmas diegimas. Jei ne, šis režimas gali sutaisyti nepilną praėjusią diegimą, tačiau, jei norite atnaujinti savo versiją, pasirinkite "Upgrade" režimą.
+=======
+FreshInstallDesc=Use this mode if this is your first install. If not, this mode can repair a incomplete previous install. If you want to upgrade your version, choose "Upgrade" mode.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Upgrade=Atnaujinti
 UpgradeDesc=Naudokite šį režimą, jei buvo pakeisti seni Dolibarr failai į naujesnius iš naujesnės versijos. Taip bus atnaujinti duomenų bazė ir duomenys.
 Start=Pradžia
 InstallNotAllowed=Nustatymai neleidžiami pagal <b>conf.php</b> leidimus
 YouMustCreateWithPermission=Jūs turite sukurti failą %s ir nustatyti įrašymo į jį teises  serveriui, diegimo proceso metu.
+<<<<<<< HEAD
 CorrectProblemAndReloadPage=Prašome išspręsti šią problemą ir paspauskite F5, kad atnaujinti puslapį.
+=======
+CorrectProblemAndReloadPage=Please fix the problem and press F5 to reload the page.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AlreadyDone=Jau migravo
 DatabaseVersion=Duomenų bazės versija
 ServerVersion=Duomenų bazės serverio versija
 YouMustCreateItAndAllowServerToWrite=Jūs turite sukurti šį aplanką ir leisti web serveriui į jį rašyti.
 DBSortingCollation=Simbolių rūšiavimo tvarka
+<<<<<<< HEAD
 YouAskDatabaseCreationSoDolibarrNeedToConnect=Jūs klausiate sukurti duomenų bazę <b>%s</b>, bet tam Dolibarr reikia prisijungti prie serverio <b>%s</b> su Super User <b>%s</b> teisėmis.
 YouAskLoginCreationSoDolibarrNeedToConnect=Jūs klausiate sukurti duomenų bazės prisijungimą <b>i%s</b>. bet tam, Dolibarr reikia prisijungti prie serverio <b>%s</b> su Super User <b>%s</b> teisėmis.
 BecauseConnectionFailedParametersMayBeWrong=Sujungimas nepavyko, Hostingo ar Super vartotojo parametrai yra neteisingi.
@@ -140,6 +222,39 @@ KeepDefaultValuesDeb=Naudojate Dolibarr vedlį iš Linux paketo (Ubuntu, Debian,
 KeepDefaultValuesMamp=Naudojate Dolibarr vedlį iš DoliMamp, todėl čia siūlomos reikšmės jau yra optimizuotos. Keiskite juos tik jei tikrai žinote, ką darote.
 KeepDefaultValuesProxmox=Naudojate Dolibarr vedlį iš Proxmox virtualaus prietaiso, todėl čia siūlomos reikšmės jau yra optimizuotos. keiskite juos tik jei tikrai žinote, ką darote.
 UpgradeExternalModule=Run dedicated upgrade process of external modules
+=======
+YouAskDatabaseCreationSoDolibarrNeedToConnect=You selected create database <b>%s</b>, but for this, Dolibarr needs to connect to server <b>%s</b> with super user <b>%s</b> permissions.
+YouAskLoginCreationSoDolibarrNeedToConnect=You selected create database user <b>%s</b>, but for this, Dolibarr needs to connect to server <b>%s</b> with super user <b>%s</b> permissions.
+BecauseConnectionFailedParametersMayBeWrong=The database connection failed: the host or super user parameters must be wrong.
+OrphelinsPaymentsDetectedByMethod=Našlaičių mokėjimai, aptikti metodu %s
+RemoveItManuallyAndPressF5ToContinue=Pašalinti rankiniu būdu ir paspausti F5 tęsti toliau.
+FieldRenamed=Laukas pervadintas
+IfLoginDoesNotExistsCheckCreateUser=If the user does not exist yet, you must check option "Create user"
+ErrorConnection=Server "<b>%s</b>", database name "<b>%s</b>", login "<b>%s</b>", or database password may be wrong or the PHP client version may be too old compared to the database version.
+InstallChoiceRecommanded=Rekomenduojama pasirinkti įdiegimui versiją <b>%s</b> iš Jūsų einamosios versijos <b>%s</b>
+InstallChoiceSuggested=<b>Instaliuoti diegėjo siūlomą pasirinkimą</b>.
+MigrateIsDoneStepByStep=The targeted version (%s) has a gap of several versions. The install wizard will come back to suggest a further migration once this one is complete.
+CheckThatDatabasenameIsCorrect=Check that the database name "<b>%s</b>" is correct.
+IfAlreadyExistsCheckOption=Jei šis pavadinimas yra teisingas ir duomenų bazė dar neegzistuoja, reikia patikrinti opciją "Sukurti duomenų bazę".
+OpenBaseDir=PHP openbasedir parametras
+YouAskToCreateDatabaseSoRootRequired=You checked the box "Create database". For this, you need to provide the login/password of superuser (bottom of form).
+YouAskToCreateDatabaseUserSoRootRequired=You checked the box "Create database owner". For this, you need to provide the login/password of superuser (bottom of form).
+NextStepMightLastALongTime=The current step may take several minutes. Please wait until the next screen is shown completely before continuing.
+MigrationCustomerOrderShipping=Migrate shipping for sales orders storage
+MigrationShippingDelivery=Atnaujinkite gabenimo saugojimą
+MigrationShippingDelivery2=Atnaujinkite gabenimo 2 saugojimą
+MigrationFinished=Perkėlimas baigtas
+LastStepDesc=<strong>Last step</strong>: Define here the login and password you wish to use to connect to Dolibarr. <b>Do not lose this as it is the master account to administer all other/additional user accounts.</b>
+ActivateModule=Įjungti modulį %s
+ShowEditTechnicalParameters=Spauskite čia, kad galėtumete matyti/redaguoti išplėstinius parametrus (eksperto režime)
+WarningUpgrade=Warning:\nDid you run a database backup first?\nThis is highly recommended. Loss of data (due to for example bugs in mysql version 5.5.40/41/42/43) may be possible during this process, so it is essential to take a complete dump of your database before starting any migration.\n\nClick OK to start migration process...
+ErrorDatabaseVersionForbiddenForMigration=Your database version is %s. It has a critical bug, making data loss possible if you make structural changes in your database, such as is required by the migration process. For his reason, migration will not be allowed until you upgrade your database to a layer (patched) version (list of known buggy versions: %s)
+KeepDefaultValuesWamp=You used the Dolibarr setup wizard from DoliWamp, so values proposed here are already optimized. Change them only if you know what you are doing.
+KeepDefaultValuesDeb=You used the Dolibarr setup wizard from a Linux package (Ubuntu, Debian, Fedora...), so the values proposed here are already optimized. Only the password of the database owner to create must be entered. Change other parameters only if you know what you are doing.
+KeepDefaultValuesMamp=You used the Dolibarr setup wizard from DoliMamp, so the values proposed here are already optimized. Change them only if you know what you are doing.
+KeepDefaultValuesProxmox=You used the Dolibarr setup wizard from a Proxmox virtual appliance, so the values proposed here are already optimized. Change them only if you know what you are doing.
+UpgradeExternalModule=Run dedicated upgrade process of external module
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
 NothingToDelete=Nothing to clean/delete
 NothingToDo=Nothing to do
@@ -151,7 +266,11 @@ MigrationSupplierOrder=Data migration for vendor's orders
 MigrationProposal=Komercinių pasiūlymų duomenų perkėlimas
 MigrationInvoice=Klientų sąskaitų-faktūrų duomenų perkėlimas
 MigrationContract=Sutarčių duomenų perkėlimas
+<<<<<<< HEAD
 MigrationSuccessfullUpdate=Upgrade successfull
+=======
+MigrationSuccessfullUpdate=Atnaujinimas sėkmingas
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MigrationUpdateFailed=Nepavyko atnaujinti proceso
 MigrationRelationshipTables=Ryšių lentelių (%s) duomenų perkėlimas
 MigrationPaymentsUpdate=Mokėjimo duomenų taisymas
@@ -163,9 +282,15 @@ MigrationContractsUpdate=Sutarties duomenų taisymas
 MigrationContractsNumberToUpdate=%s sutarties (-ių) atnaujinimas
 MigrationContractsLineCreation=Sukurti sutarties eilutę sutarčiai su nuoroda %s
 MigrationContractsNothingToUpdate=Nėra daugiau ką daryti
+<<<<<<< HEAD
 MigrationContractsFieldDontExist=Laukelis fk_facture neegzistuoja. Nieko nedaryti.
 MigrationContractsEmptyDatesUpdate=Sutarties tuščių duomenų taisymas
 MigrationContractsEmptyDatesUpdateSuccess=Contract emtpy date correction done successfully
+=======
+MigrationContractsFieldDontExist=Field fk_facture does not exist anymore. Nothing to do.
+MigrationContractsEmptyDatesUpdate=Sutarties tuščių duomenų taisymas
+MigrationContractsEmptyDatesUpdateSuccess=Contract empty date correction done successfully
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MigrationContractsEmptyDatesNothingToUpdate=Nėra sutarties tuščių duomenų taisymui
 MigrationContractsEmptyCreationDatesNothingToUpdate=Nėra sutarties sukūrimo duomenų taisymui
 MigrationContractsInvalidDatesUpdate=Bloga taisoma sutarties datos reikšmė
@@ -187,6 +312,7 @@ MigrationDeliveryDetail=Pristatymo atnaujinimas
 MigrationStockDetail=Atnaujinkite produktų atsargų vertę
 MigrationMenusDetail=Atnaujinkite dinamines meniu lenteles
 MigrationDeliveryAddress=Atnaujinti pristatymo adresus gabenimo dokumentuose
+<<<<<<< HEAD
 MigrationProjectTaskActors=Duomenų perkėlimas į llx_projet_task_actors table
 MigrationProjectUserResp=Duomenų perkėlimo laukelis fk_user_resp iš llx_projet į llx_element_contact
 MigrationProjectTaskTime=Atnaujinti praleistą laiką sekundėmis
@@ -195,10 +321,21 @@ MigrationPaymentMode=Duomenų perkėlimas mokėjimo būdui
 MigrationCategorieAssociation=Kategorijų perkėlimas
 MigrationEvents=Įvykių migracija pridedant įvykio savininką į užduočių lentelę
 MigrationEventsContact=Migration of events to add event contact into assignement table
+=======
+MigrationProjectTaskActors=Data migration for table llx_projet_task_actors
+MigrationProjectUserResp=Duomenų perkėlimo laukelis fk_user_resp iš llx_projet į llx_element_contact
+MigrationProjectTaskTime=Atnaujinti praleistą laiką sekundėmis
+MigrationActioncommElement=Atnaujinti veiksmų duomenis
+MigrationPaymentMode=Data migration for payment type
+MigrationCategorieAssociation=Kategorijų perkėlimas
+MigrationEvents=Migration of events to add event owner into assignment table
+MigrationEventsContact=Migration of events to add event contact into assignment table
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MigrationRemiseEntity=Update entity field value of llx_societe_remise
 MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationUserRightsEntity=Update entity field value of llx_user_rights
 MigrationUserGroupRightsEntity=Update entity field value of llx_usergroup_rights
+<<<<<<< HEAD
 MigrationReloadModule=Perkrauti modulį %s
 MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=Parodyti negalimas opcijas
@@ -208,3 +345,15 @@ YouTryInstallDisabledByDirLock=The application try to sefl upgrade, but install/
 YouTryInstallDisabledByFileLock=The application try to sefl upgrade, but install/upgrade pages pages have been disabled for security reason (by lock file <strong>install.lock</strong> into dolibarr documents directory).<br>
 ClickHereToGoToApp=Click here to go to your application
 ClickOnLinkOrRemoveManualy=Click on following link and if you always reach this page, you must remove the file install.lock into documents directory manually
+=======
+MigrationUserPhotoPath=Migration of photo paths for users
+MigrationReloadModule=Perkrauti modulį %s
+MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
+ShowNotAvailableOptions=Show unavailable options
+HideNotAvailableOptions=Hide unavailable options
+ErrorFoundDuringMigration=Error(s) were reported during the migration process so next step is not available. To ignore errors, you can <a href="%s">click here</a>, but the application or some features may not work correctly until the errors are resolved.
+YouTryInstallDisabledByDirLock=The application tried to self-upgrade, but the install/upgrade pages have been disabled for security (directory renamed with .lock suffix).<br>
+YouTryInstallDisabledByFileLock=The application tried to self-upgrade, but the install/upgrade pages have been disabled for security (by the existence of a lock file <strong>install.lock</strong> in the dolibarr documents directory).<br>
+ClickHereToGoToApp=Click here to go to your application
+ClickOnLinkOrRemoveManualy=Click on the following link. If you always see this same page, you must remove/rename the file install.lock in the documents directory.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

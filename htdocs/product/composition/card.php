@@ -2,7 +2,11 @@
 /* Copyright (C) 2001-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005       Eric Seigne             <eric.seigne@ryxeo.com>
+<<<<<<< HEAD
  * Copyright (C) 2005-2018  Regis Houssin           <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2018  Regis Houssin           <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
  * Copyright (C) 2011-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
@@ -36,11 +40,19 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'products', 'stocks'));
 
+<<<<<<< HEAD
 $id=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $cancel=GETPOST('cancel','alpha');
+=======
+$id=GETPOST('id', 'int');
+$ref=GETPOST('ref', 'alpha');
+$action=GETPOST('action', 'alpha');
+$confirm=GETPOST('confirm', 'alpha');
+$cancel=GETPOST('cancel', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $key=GETPOST('key');
 $parent=GETPOST('parent');
 
@@ -48,13 +60,21 @@ $parent=GETPOST('parent');
 if (! empty($user->societe_id)) $socid=$user->societe_id;
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
 $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
+<<<<<<< HEAD
 $result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype);
+=======
+$result=restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $object = new Product($db);
 $objectid=0;
 if ($id > 0 || ! empty($ref))
 {
+<<<<<<< HEAD
 	$result = $object->fetch($id,$ref);
+=======
+	$result = $object->fetch($id, $ref);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$objectid=$object->id;
 	$id=$object->id;
 }
@@ -112,14 +132,22 @@ if ($action == 'add_prod' && ($user->rights->produit->creer || $user->rights->se
 		exit;
 	}
 }
+<<<<<<< HEAD
 else if($action==='save_composed_product')
+=======
+elseif($action==='save_composed_product')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$TProduct = GETPOST('TProduct', 'array');
 	if (!empty($TProduct))
 	{
 		foreach ($TProduct as $id_product => $row)
 		{
+<<<<<<< HEAD
 			if ($row['qty'] > 0) $object->update_sousproduit($id, $id_product, $row['qty'], isset($row['incdec']) ? 1 : 0 );
+=======
+			if ($row['qty'] > 0) $object->update_sousproduit($id, $id_product, $row['qty'], isset($row['incdec']) ? 1 : 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			else $object->del_sousproduit($id, $id_product);
 		}
 		setEventMessages('RecordSaved', null);
@@ -175,7 +203,11 @@ if ($action == 'search')
 
 $title = $langs->trans('ProductServiceCard');
 $helpurl = '';
+<<<<<<< HEAD
 $shortlabel = dol_trunc($object->label,16);
+=======
+$shortlabel = dol_trunc($object->label, 16);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
 {
 	$title = $langs->trans('Product')." ". $shortlabel ." - ".$langs->trans('AssociatedProducts');
@@ -205,7 +237,11 @@ if ($id > 0 || ! empty($ref))
         $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
         $shownav = 1;
+<<<<<<< HEAD
         if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+=======
+        if ($user->societe_id && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', '', '', '', 0, '', '', 0);
 
@@ -214,7 +250,11 @@ if ($id > 0 || ! empty($ref))
             print '<div class="fichecenter">';
     	    print '<div class="underbanner clearboth"></div>';
 
+<<<<<<< HEAD
     	    print '<table class="border tableforfield" width="100%">';
+=======
+    	    print '<table class="border centpercent tableforfield">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     		// Nature
     		if ($object->type!=Product::TYPE_SERVICE)
@@ -264,6 +304,7 @@ if ($id > 0 || ! empty($ref))
 		$prods_arbo=$object->get_arbo_each_prod();
 
 		$nbofsubsubproducts=count($prods_arbo);		// This include sub sub product into nb
+<<<<<<< HEAD
 		$prodschild = $object->getChildsArbo($id,1);
 		$nbofsubproducts=count($prodschild);		// This include only first level of childs
 
@@ -311,10 +352,53 @@ if ($id > 0 || ! empty($ref))
 			print '</table>';
 		//}
 
+=======
+		$prodschild = $object->getChildsArbo($id, 1);
+		$nbofsubproducts=count($prodschild);		// This include only first level of childs
+
+
+		print '<div class="fichecenter">';
+
+		print load_fiche_titre($langs->trans("ProductParentList"), '', '');
+
+		print '<table class="liste">';
+		print '<tr class="liste_titre">';
+		print '<td>'.$langs->trans('ParentProducts').'</td>';
+		print '<td>'.$langs->trans('Label').'</td>';
+		print '<td>'.$langs->trans('Qty').'</td>';
+		print '</td>';
+		if (count($prodsfather) > 0)
+		{
+			foreach($prodsfather as $value)
+			{
+				$idprod= $value["id"];
+				$productstatic->id=$idprod;// $value["id"];
+				$productstatic->type=$value["fk_product_type"];
+				$productstatic->ref=$value['ref'];
+				$productstatic->label=$value['label'];
+				$productstatic->entity=$value['entity'];
+
+				print '<tr class="oddeven">';
+				print '<td>'.$productstatic->getNomUrl(1, 'composition').'</td>';
+				print '<td>'.$productstatic->label.'</td>';
+				print '<td>'.$value['qty'].'</td>';
+				print '</tr>';
+			}
+		}
+		else
+		{
+			print '<tr class="oddeven">';
+			print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
+			print '</tr>';
+		}
+		print '</table>';
+		print '</div>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		print '<br>'."\n";
 
 
+<<<<<<< HEAD
 		// Number of subproducts
 		//print $form->textwithpicto($langs->trans("AssociatedProductsNumber").': '.(empty($conf->global->PRODUCT_SHOW_SUB_SUB_PRODUCTS)?$nbofsubproducts:$nbofsubsubproducts), $langs->trans('IfZeroItIsNotAVirtualProduct'));
 
@@ -499,6 +583,185 @@ if ($id > 0 || ! empty($ref))
 
 			print '</form>';
 		//}
+=======
+		print '<div class="fichecenter">';
+
+		$atleastonenotdefined=0;
+		print load_fiche_titre($langs->trans("ProductAssociationList"), '', '');
+
+		print '<form name="formComposedProduct" action="'.$_SERVER['PHP_SELF'].'" method="post">';
+		print '<input type="hidden" name="action" value="save_composed_product" />';
+		print '<input type="hidden" name="id" value="'.$id.'" />';
+
+		print '<table class="liste">';
+
+		print '<tr class="liste_titre">';
+		print '<td>'.$langs->trans('ComposedProduct').'</td>';
+		print '<td>'.$langs->trans('Label').'</td>';
+		print '<td class="right" colspan="2">'.$langs->trans('MinSupplierPrice').'</td>';
+		print '<td class="right" colspan="2">'.$langs->trans('MinCustomerPrice').'</td>';
+		if (! empty($conf->stock->enabled)) print '<td class="right">'.$langs->trans('Stock').'</td>';
+		print '<td class="center">'.$langs->trans('Qty').'</td>';
+		print '<td class="center">'.$langs->trans('ComposedProductIncDecStock').'</td>';
+		print '</tr>'."\n";
+
+		$totalsell=0;
+		if (count($prods_arbo))
+		{
+			foreach($prods_arbo as $value)
+			{
+				$productstatic->fetch($value['id']);
+
+				if ($value['level'] <= 1)
+				{
+					print '<tr class="oddeven">';
+
+					$notdefined=0;
+					$nb_of_subproduct = $value['nb'];
+
+					print '<td>'.$productstatic->getNomUrl(1, 'composition').'</td>';
+					print '<td>'.$productstatic->label.'</td>';
+
+					// Best buying price
+					print '<td class="right">';
+					if ($product_fourn->find_min_price_product_fournisseur($productstatic->id) > 0)
+					{
+						print $langs->trans("BuyingPriceMinShort").': ';
+				    	if ($product_fourn->product_fourn_price_id > 0) print $product_fourn->display_price_product_fournisseur(0, 0);
+				    	else { print $langs->trans("NotDefined"); $notdefined++; $atleastonenotdefined++; }
+					}
+					print '</td>';
+
+					// For avoid a non-numeric value
+					$fourn_unitprice = (!empty($product_fourn->fourn_unitprice)?$product_fourn->fourn_unitprice:0);
+					$fourn_remise_percent = (!empty($product_fourn->fourn_remise_percent)?$product_fourn->fourn_remise_percent:0);
+					$fourn_remise = (!empty($product_fourn->fourn_remise)?$product_fourn->fourn_remise:0);
+
+					$totalline=price2num($value['nb'] * ($fourn_unitprice * (1 - $fourn_remise_percent/100) - $fourn_remise), 'MT');
+					$total+=$totalline;
+
+					print '<td class="right">';
+					print ($notdefined?'':($value['nb']> 1 ? $value['nb'].'x' : '').price($fourn_unitprice, '', '', 0, 0, -1, $conf->currency));
+					print '</td>';
+
+					// Best selling price
+					$pricesell=$productstatic->price;
+					if (! empty($conf->global->PRODUIT_MULTIPRICES))
+					{
+						$pricesell='Variable';
+					}
+					else
+					{
+						$totallinesell=price2num($value['nb'] * ($pricesell), 'MT');
+						$totalsell+=$totallinesell;
+					}
+					print '<td class="right" colspan="2">';
+					print ($notdefined?'':($value['nb']> 1 ? $value['nb'].'x' : ''));
+					if (is_numeric($pricesell)) print price($pricesell, '', '', 0, 0, -1, $conf->currency);
+					else print $langs->trans($pricesell);
+					print '</td>';
+
+					// Stock
+					if (! empty($conf->stock->enabled)) print '<td class="right">'.$value['stock'].'</td>';	// Real stock
+
+					// Qty + IncDec
+					if ($user->rights->produit->creer || $user->rights->service->creer)
+					{
+						print '<td class="center"><input type="text" value="'.$nb_of_subproduct.'" name="TProduct['.$productstatic->id.'][qty]" size="4" /></td>';
+						print '<td class="center"><input type="checkbox" name="TProduct['.$productstatic->id.'][incdec]" value="1" '.($value['incdec']==1?'checked':''  ).' /></td>';
+					}
+					else{
+						print '<td>'.$nb_of_subproduct.'</td>';
+						print '<td>'.($value['incdec']==1?'x':''  ).'</td>';
+					}
+
+					print '</tr>'."\n";
+				}
+				else
+				{
+					$hide='';
+					if (empty($conf->global->PRODUCT_SHOW_SUB_SUB_PRODUCTS)) $hide=' hideobject';	// By default, we do not show this. It makes screen very difficult to understand
+
+					print '<tr class="oddeven'.$hide.'" id="sub-'.$value['id_parent'].'">';
+
+					//$productstatic->ref=$value['label'];
+					$productstatic->ref=$value['ref'];
+					print '<td>';
+					for ($i=0; $i < $value['level']; $i++)	print ' &nbsp; &nbsp; ';	// Add indentation
+					print $productstatic->getNomUrl(1, 'composition').'</td>';
+					print '<td>'.$productstatic->label.'</td>';
+
+					// Best buying price
+					print '<td>&nbsp;</td>';
+					print '<td>&nbsp;</td>';
+					// Best selling price
+					print '<td>&nbsp;</td>';
+					print '<td>&nbsp;</td>';
+
+					if (! empty($conf->stock->enabled)) print '<td></td>';	// Real stock
+					print '<td class="center">'.$value['nb'].'</td>';
+					print '<td>&nbsp;</td>';
+
+					print '</tr>'."\n";
+				}
+			}
+
+			print '<tr class="liste_total">';
+			print '<td class="liste_total"></td>';
+			print '<td class="liste_total"></td>';
+
+			// Minimum buying price
+			print '<td class="liste_total right">';
+			print $langs->trans("TotalBuyingPriceMinShort");
+			print '</td>';
+
+			print '<td class="liste_total right">';
+			if ($atleastonenotdefined) print $langs->trans("Unknown").' ('.$langs->trans("SomeSubProductHaveNoPrices").')';
+			print ($atleastonenotdefined?'':price($total, '', '', 0, 0, -1, $conf->currency));
+			print '</td>';
+
+			// Minimum selling price
+			print '<td class="liste_total right">';
+			print $langs->trans("TotalSellingPriceMinShort");
+			print '</td>';
+
+			print '<td class="liste_total right">';
+			if ($atleastonenotdefined) print $langs->trans("Unknown").' ('.$langs->trans("SomeSubProductHaveNoPrices").')';
+			print ($atleastonenotdefined?'':price($totalsell, '', '', 0, 0, -1, $conf->currency));
+			print '</td>';
+
+			// Stock
+			if (! empty($conf->stock->enabled)) print '<td class="liste_total right">&nbsp;</td>';
+
+			print '<td class="right" colspan="2">';
+			if ($user->rights->produit->creer || $user->rights->service->creer)
+			{
+				print '<input type="submit" class="button" value="'.$langs->trans('Save').'">';
+			}
+			print '</td>';
+			print '</tr>'."\n";
+		}
+		else
+		{
+			$colspan=8;
+			if (! empty($conf->stock->enabled)) $colspan++;
+
+			print '<tr class="oddeven">';
+			print '<td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("None").'</td>';
+			print '</tr>';
+		}
+
+		print '</table>';
+
+		/*if($user->rights->produit->creer || $user->rights->service->creer) {
+			print '<input type="submit" class="button" value="'.$langs->trans('Save').'">';
+		}*/
+
+		print '</form>';
+		print '</div>';
+
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Form with product to add
 		if ((empty($action) || $action == 'view' || $action == 'edit' || $action == 'search' || $action == 're-edit') && ($user->rights->produit->creer || $user->rights->service->creer))
@@ -508,7 +771,11 @@ if ($id > 0 || ! empty($ref))
 			$rowspan=1;
 			if (! empty($conf->categorie->enabled)) $rowspan++;
 
+<<<<<<< HEAD
 	        print load_fiche_titre($langs->trans("ProductToAddSearch"),'','');
+=======
+	        print load_fiche_titre($langs->trans("ProductToAddSearch"), '', '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '<form action="'.DOL_URL_ROOT.'/product/composition/card.php?id='.$id.'" method="POST">';
 			print '<input type="hidden" name="action" value="search">';
 			print '<input type="hidden" name="id" value="'.$id.'">';
@@ -543,15 +810,24 @@ if ($id > 0 || ! empty($ref))
 			print '<tr class="liste_titre">';
 			print '<th class="liste_titre">'.$langs->trans("ComposedProduct").'</td>';
 			print '<th class="liste_titre">'.$langs->trans("Label").'</td>';
+<<<<<<< HEAD
 			//print '<th class="liste_titre" align="center">'.$langs->trans("IsInPackage").'</td>';
 			print '<th class="liste_titre" align="right">'.$langs->trans("Qty").'</td>';
 			print '<th align="center">'.$langs->trans('ComposedProductIncDecStock').'</th>';
+=======
+			//print '<th class="liste_titre center">'.$langs->trans("IsInPackage").'</td>';
+			print '<th class="liste_titre right">'.$langs->trans("Qty").'</td>';
+			print '<th class="center">'.$langs->trans('ComposedProductIncDecStock').'</th>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '</tr>';
 			if ($resql)
 			{
 				$num = $db->num_rows($resql);
 				$i=0;
+<<<<<<< HEAD
 				$var=true;
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				if($num == 0) print '<tr><td colspan="4">'.$langs->trans("NoMatchFound").'</td></tr>';
 
@@ -595,7 +871,11 @@ if ($id > 0 || ! empty($ref))
 						$productstatic->type=$objp->type;
 						$productstatic->entity=$objp->entity;
 
+<<<<<<< HEAD
 						print '<td>'.$productstatic->getNomUrl(1,'',24).'</td>';
+=======
+						print '<td>'.$productstatic->getNomUrl(1, '', 24).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						$labeltoshow=$objp->label;
 						if ($conf->global->MAIN_MULTILANGS && $objp->labelm) $labeltoshow=$objp->labelm;
 
@@ -615,6 +895,7 @@ if ($id > 0 || ! empty($ref))
 							$incdec=0;
 						}
 						// Contained into package
+<<<<<<< HEAD
 						/*print '<td align="center"><input type="hidden" name="prod_id_'.$i.'" value="'.$objp->rowid.'">';
 						print '<input type="checkbox" '.$addchecked.'name="prod_id_chk'.$i.'" value="'.$objp->rowid.'"></td>';*/
 						// Qty
@@ -622,6 +903,15 @@ if ($id > 0 || ! empty($ref))
 
 						// Inc Dec
 						print '<td align="center">';
+=======
+						/*print '<td class="center"><input type="hidden" name="prod_id_'.$i.'" value="'.$objp->rowid.'">';
+						print '<input type="checkbox" '.$addchecked.'name="prod_id_chk'.$i.'" value="'.$objp->rowid.'"></td>';*/
+						// Qty
+						print '<td class="right"><input type="hidden" name="prod_id_'.$i.'" value="'.$objp->rowid.'"><input type="text" size="2" name="prod_qty_'.$i.'" value="'.($qty?$qty:'').'"></td>';
+
+						// Inc Dec
+						print '<td class="center">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						if ($qty) print '<input type="checkbox" name="prod_incdec_'.$i.'" value="1" '.($incdec?'checked':'').'>';
 						else
 						{
@@ -635,7 +925,10 @@ if ($id > 0 || ! empty($ref))
 					}
 					$i++;
 				}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 			else
 			{
@@ -655,6 +948,7 @@ if ($id > 0 || ! empty($ref))
 
 			print '</form>';
 		}
+<<<<<<< HEAD
 
 	}
 }
@@ -662,4 +956,11 @@ if ($id > 0 || ! empty($ref))
 
 llxFooter();
 
+=======
+	}
+}
+
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

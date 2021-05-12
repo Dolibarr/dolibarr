@@ -32,7 +32,11 @@
  *	@param		string	$outputfile			Output file
  *	@return		int							<0 if ko, Nb of events in file if ok
  */
+<<<<<<< HEAD
 function build_calfile($format,$title,$desc,$events_array,$outputfile)
+=======
+function build_calfile($format, $title, $desc, $events_array, $outputfile)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	global $conf,$langs;
 
@@ -41,7 +45,11 @@ function build_calfile($format,$title,$desc,$events_array,$outputfile)
 	if (empty($outputfile)) return -1;
 
     // Note: A cal file is an UTF8 encoded file
+<<<<<<< HEAD
 	$calfileh=fopen($outputfile,'w');
+=======
+	$calfileh=fopen($outputfile, 'w');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if ($calfileh)
 	{
 	    include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -51,6 +59,7 @@ function build_calfile($format,$title,$desc,$events_array,$outputfile)
 		if ($format == 'vcal') $encoding='ENCODING=QUOTED-PRINTABLE:';
 
 		// Print header
+<<<<<<< HEAD
 		fwrite($calfileh,"BEGIN:VCALENDAR\n");
 		fwrite($calfileh,"VERSION:2.0\n");
 		fwrite($calfileh,"METHOD:PUBLISH\n");
@@ -66,6 +75,23 @@ function build_calfile($format,$title,$desc,$events_array,$outputfile)
 	        $mm=convertSecondToTime($conf->global->MAIN_AGENDA_EXPORT_CACHE,'min');
 	        $ss=convertSecondToTime($conf->global->MAIN_AGENDA_EXPORT_CACHE,'sec'); 
 	        fwrite($calfileh,"X-PUBLISHED-TTL: P".$hh."H".$mm."M".$ss."S\n");
+=======
+		fwrite($calfileh, "BEGIN:VCALENDAR\n");
+		fwrite($calfileh, "VERSION:2.0\n");
+		fwrite($calfileh, "METHOD:PUBLISH\n");
+		//fwrite($calfileh,"PRODID:-//DOLIBARR ".DOL_VERSION."//EN\n");
+		fwrite($calfileh, "PRODID:-//DOLIBARR ".DOL_VERSION."\n");
+		fwrite($calfileh, "CALSCALE:GREGORIAN\n");
+		fwrite($calfileh, "X-WR-CALNAME:".$encoding.format_cal($format, $title)."\n");
+        fwrite($calfileh, "X-WR-CALDESC:".$encoding.format_cal($format, $desc)."\n");
+        //fwrite($calfileh,"X-WR-TIMEZONE:Europe/Paris\n");
+        if (! empty($conf->global->MAIN_AGENDA_EXPORT_CACHE)
+        && $conf->global->MAIN_AGENDA_EXPORT_CACHE > 60){
+	        $hh=convertSecondToTime($conf->global->MAIN_AGENDA_EXPORT_CACHE, 'hour');
+	        $mm=convertSecondToTime($conf->global->MAIN_AGENDA_EXPORT_CACHE, 'min');
+	        $ss=convertSecondToTime($conf->global->MAIN_AGENDA_EXPORT_CACHE, 'sec');
+	        fwrite($calfileh, "X-PUBLISHED-TTL: P".$hh."H".$mm."M".$ss."S\n");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
 
 		foreach ($events_array as $key => $event)
@@ -88,8 +114,13 @@ function build_calfile($format,$title,$desc,$events_array,$outputfile)
 				$email 		  = $event['email'];
 				$url		  = $event['url'];
 				$transparency = $event['transparency'];		// OPAQUE (busy) or TRANSPARENT (not busy)
+<<<<<<< HEAD
 				$description=preg_replace('/<br[\s\/]?>/i',"\n",$event['desc']);
  				$description=dol_string_nohtmltag($description,0);	// Remove html tags
+=======
+				$description=preg_replace('/<br[\s\/]?>/i', "\n", $event['desc']);
+ 				$description=dol_string_nohtmltag($description, 0);	// Remove html tags
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 $created      = $event['created'];
  				$modified     = $event['modified'];
 
@@ -99,10 +130,17 @@ function build_calfile($format,$title,$desc,$events_array,$outputfile)
 				//$description="MemberValidatedInDolibarr gd gdf gd gdff\nNom: tgdf g dfgdf gfd r ter\nType: gdfgfdf dfg fd gfd gd gdf gdf gfd gdfg dfg ddf\nAuteur: AD01fg dgdgdfg df gdf gd";
 
 				// Format
+<<<<<<< HEAD
 				$summary=format_cal($format,$summary);
 				$description=format_cal($format,$description);
 				$category=format_cal($format,$category);
 				$location=format_cal($format,$location);
+=======
+				$summary=format_cal($format, $summary);
+				$description=format_cal($format, $description);
+				$category=format_cal($format, $category);
+				$location=format_cal($format, $location);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				// Output the vCard/iCal VEVENT object
 				/*
@@ -140,6 +178,7 @@ function build_calfile($format,$title,$desc,$events_array,$outputfile)
                 */
 				if ($type == 'event')
 				{
+<<<<<<< HEAD
 					fwrite($calfileh,"BEGIN:VEVENT\n");
 					fwrite($calfileh,"UID:".$uid."\n");
 					if (! empty($email))
@@ -156,6 +195,24 @@ function build_calfile($format,$title,$desc,$events_array,$outputfile)
                     if ($modified) fwrite($calfileh,"LAST-MODIFIED:".dol_print_date($modified,'dayhourxcard',true)."\n");
                     fwrite($calfileh,"SUMMARY:".$encoding.$summary."\n");
 					fwrite($calfileh,"DESCRIPTION:".$encoding.$description."\n");
+=======
+					fwrite($calfileh, "BEGIN:VEVENT\n");
+					fwrite($calfileh, "UID:".$uid."\n");
+					if (! empty($email))
+					{
+						fwrite($calfileh, "ORGANIZER:MAILTO:".$email."\n");
+						fwrite($calfileh, "CONTACT:MAILTO:".$email."\n");
+					}
+					if (! empty($url))
+					{
+						fwrite($calfileh, "URL:".$url."\n");
+					};
+
+                    if ($created)  fwrite($calfileh, "CREATED:".dol_print_date($created, 'dayhourxcard', true)."\n");
+                    if ($modified) fwrite($calfileh, "LAST-MODIFIED:".dol_print_date($modified, 'dayhourxcard', true)."\n");
+                    fwrite($calfileh, "SUMMARY:".$encoding.$summary."\n");
+					fwrite($calfileh, "DESCRIPTION:".$encoding.$description."\n");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 					/* Other keys:
 					// Status values for a "VEVENT"
@@ -178,6 +235,7 @@ function build_calfile($format,$title,$desc,$events_array,$outputfile)
                     //fwrite($calfileh,"X-MICROSOFT-CDO-BUSYSTATUS:1\n");
                     //ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=ACCEPTED;CN=Laurent Destailleur;X-NUM-GUESTS=0:mailto:eldy10@gmail.com
 
+<<<<<<< HEAD
                     if (! empty($location)) fwrite($calfileh,"LOCATION:".$encoding.$location."\n");
 					if ($fulldayevent) fwrite($calfileh,"X-FUNAMBOL-ALLDAY:1\n");
                     if ($fulldayevent) fwrite($calfileh,"X-MICROSOFT-CDO-ALLDAYEVENT:1\n");
@@ -198,12 +256,35 @@ function build_calfile($format,$title,$desc,$events_array,$outputfile)
 					if ($fulldayevent)
 					{
     					if (empty($enddate)) $enddate=dol_time_plus_duree($startdate,1,'d');
+=======
+                    if (! empty($location)) fwrite($calfileh, "LOCATION:".$encoding.$location."\n");
+					if ($fulldayevent) fwrite($calfileh, "X-FUNAMBOL-ALLDAY:1\n");
+                    if ($fulldayevent) fwrite($calfileh, "X-MICROSOFT-CDO-ALLDAYEVENT:1\n");
+
+					// Date must be GMT dates
+					// Current date
+					fwrite($calfileh, "DTSTAMP:".dol_print_date($now, 'dayhourxcard', true)."\n");
+					// Start date
+                    $prefix='';
+                    $startdatef = dol_print_date($startdate, 'dayhourxcard', true);
+                    if ($fulldayevent)
+					{
+                        $prefix=';VALUE=DATE';
+					    $startdatef = dol_print_date($startdate, 'dayxcard', false);     // Local time
+					}
+					fwrite($calfileh, "DTSTART".$prefix.":".$startdatef."\n");
+                    // End date
+					if ($fulldayevent)
+					{
+    					if (empty($enddate)) $enddate=dol_time_plus_duree($startdate, 1, 'd');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					}
 					else
 					{
                         if (empty($enddate)) $enddate=$startdate+$duration;
 					}
                     $prefix='';
+<<<<<<< HEAD
 					$enddatef = dol_print_date($enddate,'dayhourxcard',true);
 					if ($fulldayevent)
 					{
@@ -216,6 +297,20 @@ function build_calfile($format,$title,$desc,$events_array,$outputfile)
 					if (! empty($transparency)) fwrite($calfileh,"TRANSP:".$transparency."\n");
 					if (! empty($category)) fwrite($calfileh,"CATEGORIES:".$encoding.$category."\n");
 					fwrite($calfileh,"END:VEVENT\n");
+=======
+					$enddatef = dol_print_date($enddate, 'dayhourxcard', true);
+					if ($fulldayevent)
+					{
+                        $prefix=';VALUE=DATE';
+					    $enddatef = dol_print_date($enddate+1, 'dayxcard', false);
+					    //$enddatef .= dol_print_date($enddate+1,'dayhourxcard',false);   // Local time
+					}
+                    fwrite($calfileh, "DTEND".$prefix.":".$enddatef."\n");
+					fwrite($calfileh, 'STATUS:CONFIRMED'."\n");
+					if (! empty($transparency)) fwrite($calfileh, "TRANSP:".$transparency."\n");
+					if (! empty($category)) fwrite($calfileh, "CATEGORIES:".$encoding.$category."\n");
+					fwrite($calfileh, "END:VEVENT\n");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 
 				// Output the vCard/iCal VTODO object
@@ -225,6 +320,7 @@ function build_calfile($format,$title,$desc,$events_array,$outputfile)
 				// Output the vCard/iCal VJOURNAL object
 				if ($type == 'journal')
 				{
+<<<<<<< HEAD
 					fwrite($calfileh,"BEGIN:VJOURNAL\n");
 					fwrite($calfileh,"UID:".$uid."\n");
 					if (! empty($email))
@@ -249,6 +345,32 @@ function build_calfile($format,$title,$desc,$events_array,$outputfile)
 					fwrite($calfileh,"DTSTAMP:".dol_print_date($startdatef,'dayhourxcard',true)."\n");
 
 					fwrite($calfileh,"END:VJOURNAL\n");
+=======
+					fwrite($calfileh, "BEGIN:VJOURNAL\n");
+					fwrite($calfileh, "UID:".$uid."\n");
+					if (! empty($email))
+					{
+						fwrite($calfileh, "ORGANIZER:MAILTO:".$email."\n");
+						fwrite($calfileh, "CONTACT:MAILTO:".$email."\n");
+					}
+					if (! empty($url))
+					{
+						fwrite($calfileh, "URL:".$url."\n");
+					};
+
+                    if ($created)  fwrite($calfileh, "CREATED:".dol_print_date($created, 'dayhourxcard', true)."\n");
+                    if ($modified) fwrite($calfileh, "LAST-MODIFIED:".dol_print_date($modified, 'dayhourxcard', true)."\n");
+					fwrite($calfileh, "SUMMARY:".$encoding.$summary."\n");
+					fwrite($calfileh, "DESCRIPTION:".$encoding.$description."\n");
+					fwrite($calfileh, 'STATUS:CONFIRMED'."\n");
+					fwrite($calfileh, "CATEGORIES:".$category."\n");
+					fwrite($calfileh, "LOCATION:".$location."\n");
+					fwrite($calfileh, "TRANSP:OPAQUE\n");
+					fwrite($calfileh, "CLASS:CONFIDENTIAL\n");
+					fwrite($calfileh, "DTSTAMP:".dol_print_date($startdatef, 'dayhourxcard', true)."\n");
+
+					fwrite($calfileh, "END:VJOURNAL\n");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 
 
@@ -263,12 +385,19 @@ function build_calfile($format,$title,$desc,$events_array,$outputfile)
 				$comment ['enddate']		= $enddate;
 				fwrite($calfileh,"COMMENT:" . serialize ($comment) . "\n");
 				*/
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 		}
 
 		// Footer
+<<<<<<< HEAD
 		fwrite($calfileh,"END:VCALENDAR");
+=======
+		fwrite($calfileh, "END:VCALENDAR");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		fclose($calfileh);
 		if (! empty($conf->global->MAIN_UMASK))
@@ -293,7 +422,11 @@ function build_calfile($format,$title,$desc,$events_array,$outputfile)
  *	@param		string	$filter				Filter
  *	@return		int							<0 if ko, Nb of events in file if ok
  */
+<<<<<<< HEAD
 function build_rssfile($format,$title,$desc,$events_array,$outputfile,$filter='')
+=======
+function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filter = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	global $user,$conf,$langs;
 	global $dolibarr_main_url_root;
@@ -302,7 +435,11 @@ function build_rssfile($format,$title,$desc,$events_array,$outputfile,$filter=''
 
 	if (empty($outputfile)) return -1;
 
+<<<<<<< HEAD
 	$fichier=fopen($outputfile,'w');
+=======
+	$fichier=fopen($outputfile, 'w');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if ($fichier)
 	{
 		$date=date("r");
@@ -325,7 +462,11 @@ function build_rssfile($format,$title,$desc,$events_array,$outputfile,$filter=''
 		'<generator>Dolibarr</generator>'."\n";
 
 		// Define $urlwithroot
+<<<<<<< HEAD
 		$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+=======
+		$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;			// This is to use external domain name found into config file
 		//$urlwithroot=DOL_MAIN_URL_ROOT;						// This is to use same domain name than current
   		$url=$urlwithroot.'/public/agenda/agendaexport.php?format=rss&exportkey='.urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY);
@@ -359,8 +500,13 @@ function build_rssfile($format,$title,$desc,$events_array,$outputfile,$filter=''
                 $location     = $event['location'];
                 $email        = $event['email'];
                 */
+<<<<<<< HEAD
 				$description=preg_replace('/<br[\s\/]?>/i',"\n",$event['desc']);
  				$description=dol_string_nohtmltag($description,0);	// Remove html tags
+=======
+				$description=preg_replace('/<br[\s\/]?>/i', "\n", $event['desc']);
+ 				$description=dol_string_nohtmltag($description, 0);	// Remove html tags
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				fwrite($fichier, "<item>\n");
 				fwrite($fichier, "<title><![CDATA[".$summary."]]></title>\n");
@@ -396,7 +542,11 @@ function build_rssfile($format,$title,$desc,$events_array,$outputfile,$filter=''
  * 	@param 		string	$string		string to encode
  * 	@return		string				string encoded
  */
+<<<<<<< HEAD
 function format_cal($format,$string)
+=======
+function format_cal($format, $string)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	global $conf;
 
@@ -409,9 +559,15 @@ function format_cal($format,$string)
 	if ($format == 'ical')
 	{
 		// Replace new lines chars by '\n'
+<<<<<<< HEAD
 		$newstring=preg_replace('/'."\r\n".'/i',"\n",$newstring);
 		$newstring=preg_replace('/'."\n\r".'/i',"\n",$newstring);
 		$newstring=preg_replace('/'."\n".'/i','\n',$newstring);
+=======
+		$newstring=preg_replace('/'."\r\n".'/i', "\n", $newstring);
+		$newstring=preg_replace('/'."\n\r".'/i', "\n", $newstring);
+		$newstring=preg_replace('/'."\n".'/i', '\n', $newstring);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// Must not exceed 75 char. Cut with "\r\n"+Space
 		$newstring=calEncode($newstring);
 	}
@@ -477,7 +633,11 @@ function calEncode($line)
  *	@param		int		$forcal		1=For cal
  *	@return		string 				String converted
  */
+<<<<<<< HEAD
 function quotedPrintEncode($str,$forcal=0)
+=======
+function quotedPrintEncode($str, $forcal = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$lines = preg_split("/\r\n/", $str);
 	$out = '';
@@ -520,4 +680,7 @@ function quotedPrintDecode($str)
 	$out = quoted_printable_decode($out);	// Available with PHP 4+
 	return trim($out);
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

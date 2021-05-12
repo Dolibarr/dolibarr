@@ -15,6 +15,7 @@ ProductStatusOnBuy=Verfügbar
 ProductStatusNotOnBuy=Veraltet
 ProductStatusOnBuyShort=Verfügbar
 ProductStatusNotOnBuyShort=Veraltet
+<<<<<<< HEAD
 SellingPriceHT=Verkaufspreis (netto)
 SellingPriceTTC=Verkaufspreis (brutto)
 MinPrice=Preisuntergrenze
@@ -22,6 +23,11 @@ CantBeLessThanMinPrice=Der aktuelle Verkaufspreis unterschreitet die Preisunterg
 ContractStatusClosed=geschlossen
 NoMatchFound=Keine Treffer gefunden
 ProductAssociationList=Liste der verknüpften Produkte/Services: Name des Produkts/des Service (Stückzahl)
+=======
+SellingPriceTTC=Verkaufspreis (brutto)
+CantBeLessThanMinPrice=Der aktuelle Verkaufspreis unterschreitet die Preisuntergrenze dieses Produkts (%s ohne MwSt.)
+NoMatchFound=Keine Treffer gefunden
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DeleteProduct=Produkt/Service löschen
 ConfirmDeleteProduct=Möchten Sie dieses Produkt/Service wirklich löschen?
 ProductDeleted=Produkt/Service "%s" aus der Datenbank gelöscht.
@@ -29,12 +35,18 @@ ExportDataset_produit_1=Produkte und Services
 ExportDataset_service_1=Dienstleistung
 ImportDataset_produit_1=Produkte und Services
 ImportDataset_service_1=Dienstleistung
+<<<<<<< HEAD
 QtyMin=Mindestabnahme
 PriceQtyMin=Gesamtpreis Mindestabnahme
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ListProductServiceByPopularity=Liste der Produkte/Services nach Beliebtheit
 ListProductByPopularity=Liste der Produkte/Services nach Beliebtheit
 ListServiceByPopularity=Liste der Services nach Beliebtheit
 Finished=Eigenerzeugung
+<<<<<<< HEAD
 CloneProduct=Produkt/Service duplizieren
 CloneContentProduct=Allgemeine Informationen des Produkts/Services duplizieren
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NewRefForClone=Artikel Nr. des neuen Produkts/Services

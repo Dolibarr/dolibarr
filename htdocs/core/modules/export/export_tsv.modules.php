@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/export/modules_export.php';
  */
 class ExportTsv extends ModeleExports
 {
+<<<<<<< HEAD
     var $id;
     var $label;
     var $extension;
@@ -50,6 +51,41 @@ class ExportTsv extends ModeleExports
 	 *	@param	    DoliDB	$db      Database handler
      */
     function __construct($db)
+=======
+    /**
+	 * @var string ID
+	 */
+	public $id;
+
+    /**
+     * @var string label
+     */
+    public $label;
+
+    public $extension;
+
+    /**
+     * Dolibarr version of the loaded document
+     * @var string
+     */
+	public $version = 'dolibarr';
+
+    public $label_lib;
+
+    public $version_lib;
+
+    public $separator="\t";
+
+    public $handle;    // Handle fichier
+
+
+    /**
+     *  Constructor
+     *
+     *  @param      DoliDB	$db      Database handler
+     */
+    public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $conf, $langs;
         $this->db = $db;
@@ -71,7 +107,11 @@ class ExportTsv extends ModeleExports
 	 *
 	 * @return string
 	 */
+<<<<<<< HEAD
     function getDriverId()
+=======
+    public function getDriverId()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         return $this->id;
     }
@@ -81,7 +121,11 @@ class ExportTsv extends ModeleExports
 	 *
 	 * @return 	string			Return driver label
 	 */
+<<<<<<< HEAD
     function getDriverLabel()
+=======
+    public function getDriverLabel()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         return $this->label;
     }
@@ -91,7 +135,11 @@ class ExportTsv extends ModeleExports
 	 *
 	 * @return string
 	 */
+<<<<<<< HEAD
     function getDriverDesc()
+=======
+    public function getDriverDesc()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         return $this->desc;
     }
@@ -101,7 +149,11 @@ class ExportTsv extends ModeleExports
 	 *
 	 * @return string
 	 */
+<<<<<<< HEAD
     function getDriverExtension()
+=======
+    public function getDriverExtension()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         return $this->extension;
     }
@@ -111,7 +163,11 @@ class ExportTsv extends ModeleExports
 	 *
 	 * @return string
 	 */
+<<<<<<< HEAD
     function getDriverVersion()
+=======
+    public function getDriverVersion()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         return $this->version;
     }
@@ -121,7 +177,11 @@ class ExportTsv extends ModeleExports
 	 *
 	 * @return string
 	 */
+<<<<<<< HEAD
     function getLibLabel()
+=======
+    public function getLibLabel()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         return $this->label_lib;
     }
@@ -131,12 +191,17 @@ class ExportTsv extends ModeleExports
 	 *
 	 * @return string
 	 */
+<<<<<<< HEAD
     function getLibVersion()
+=======
+    public function getLibVersion()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         return $this->version_lib;
     }
 
 
+<<<<<<< HEAD
     /**
 	*	Open output file
 	*
@@ -146,37 +211,73 @@ class ExportTsv extends ModeleExports
 	*/
 	function open_file($file,$outputlangs)
     {
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
+     *   Open output file
+     *
+     *  @param      string		$file			Path of filename to generate
+     *  @param      Translate	$outputlangs	Output language object
+     *  @return     int							<0 if KO, >=0 if OK
+     */
+    public function open_file($file, $outputlangs)
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         global $langs;
 
         dol_syslog("ExportTsv::open_file file=".$file);
 
+<<<<<<< HEAD
 		$ret=1;
+=======
+        $ret=1;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         $outputlangs->load("exports");
 		$this->handle = fopen($file, "wt");
         if (! $this->handle)
 		{
 			$langs->load("errors");
+<<<<<<< HEAD
 			$this->error=$langs->trans("ErrorFailToCreateFile",$file);
+=======
+			$this->error=$langs->trans("ErrorFailToCreateFile", $file);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$ret=-1;
 		}
 
 		return $ret;
     }
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * 	Output header into file
 	 *
 	 * 	@param		Translate	$outputlangs		Output language object
 	 * 	@return		int								<0 if KO, >0 if OK
 	 */
+<<<<<<< HEAD
     function write_header($outputlangs)
     {
+=======
+    public function write_header($outputlangs)
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         return 0;
     }
 
 
+<<<<<<< HEAD
 	/**
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      *  Output title line into file
      *
      *  @param      array		$array_export_fields_label   	Array with list of label of fields
@@ -184,6 +285,7 @@ class ExportTsv extends ModeleExports
      *  @param      Translate	$outputlangs    				Object lang to translate values
      *  @param		array		$array_types					Array with types of fields
 	 * 	@return		int											<0 if KO, >0 if OK
+<<<<<<< HEAD
 	 */
     function write_title($array_export_fields_label,$array_selected_sorted,$outputlangs,$array_types)
     {
@@ -195,10 +297,28 @@ class ExportTsv extends ModeleExports
 			fwrite($this->handle,$newvalue.$this->separator);
         }
         fwrite($this->handle,"\n");
+=======
+     */
+    public function write_title($array_export_fields_label, $array_selected_sorted, $outputlangs, $array_types)
+    {
+        // phpcs:enable
+        foreach($array_selected_sorted as $code => $value)
+        {
+            $newvalue=$outputlangs->transnoentities($array_export_fields_label[$code]);		// newvalue is now $outputlangs->charset_output encoded
+			$newvalue=$this->tsv_clean($newvalue, $outputlangs->charset_output);
+
+			fwrite($this->handle, $newvalue.$this->separator);
+        }
+        fwrite($this->handle, "\n");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         return 0;
     }
 
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * 	Output record line into file
 	 *
@@ -208,31 +328,51 @@ class ExportTsv extends ModeleExports
      *  @param		array		$array_types				Array with types of fields
 	 * 	@return		int										<0 if KO, >0 if OK
 	 */
+<<<<<<< HEAD
     function write_record($array_selected_sorted,$objp,$outputlangs,$array_types)
     {
+=======
+    public function write_record($array_selected_sorted, $objp, $outputlangs, $array_types)
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	global $conf;
 
 		$this->col=0;
  		foreach($array_selected_sorted as $code => $value)
         {
+<<<<<<< HEAD
 			if (strpos($code,' as ') == 0) $alias=str_replace(array('.','-','(',')'),'_',$code);
 			else $alias=substr($code, strpos($code, ' as ') + 4);
             if (empty($alias)) dol_print_error('','Bad value for field with code='.$code.'. Try to redefine export.');
+=======
+			if (strpos($code, ' as ') == 0) $alias=str_replace(array('.','-','(',')'), '_', $code);
+			else $alias=substr($code, strpos($code, ' as ') + 4);
+            if (empty($alias)) dol_print_error('', 'Bad value for field with code='.$code.'. Try to redefine export.');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
             $newvalue=$outputlangs->convToOutputCharset($objp->$alias);		// objp->$alias must be utf8 encoded as any var in memory // newvalue is now $outputlangs->charset_output encoded
             $typefield=isset($array_types[$code])?$array_types[$code]:'';
 
             // Translation newvalue
+<<<<<<< HEAD
 			if (preg_match('/^\((.*)\)$/i',$newvalue,$reg)) $newvalue=$outputlangs->transnoentities($reg[1]);
 
 			$newvalue=$this->tsv_clean($newvalue,$outputlangs->charset_output);
 			
+=======
+			if (preg_match('/^\((.*)\)$/i', $newvalue, $reg)) $newvalue=$outputlangs->transnoentities($reg[1]);
+
+			$newvalue=$this->tsv_clean($newvalue, $outputlangs->charset_output);
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if (preg_match('/^Select:/i', $typefield, $reg) && $typefield = substr($typefield, 7))
 			{
 				$array = unserialize($typefield);
 				$array = $array['options'];
 				$newvalue = $array[$newvalue];
 			}
+<<<<<<< HEAD
 			
 			fwrite($this->handle,$newvalue.$this->separator);
             $this->col++;
@@ -241,32 +381,64 @@ class ExportTsv extends ModeleExports
         return 0;
     }
 
+=======
+
+			fwrite($this->handle, $newvalue.$this->separator);
+            $this->col++;
+		}
+        fwrite($this->handle, "\n");
+        return 0;
+    }
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * 	Output footer into file
 	 *
 	 * 	@param		Translate	$outputlangs		Output language object
 	 * 	@return		int								<0 if KO, >0 if OK
 	 */
+<<<<<<< HEAD
     function write_footer($outputlangs)
     {
 		return 0;
     }
 
+=======
+    public function write_footer($outputlangs)
+    {
+        // phpcs:enable
+		return 0;
+    }
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * 	Close file handle
 	 *
 	 * 	@return		int							<0 if KO, >0 if OK
 	 */
+<<<<<<< HEAD
     function close_file()
     {
+=======
+    public function close_file()
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         fclose($this->handle);
         return 0;
     }
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     /**
      * Clean a cell to respect rules of TSV file cells
      *
      * @param 	string	$newvalue	String to clean
+<<<<<<< HEAD
 	 * @param	string	$charset	Input AND Output character set
      * @return 	string				Value cleaned
      */
@@ -290,3 +462,26 @@ class ExportTsv extends ModeleExports
 
 }
 
+=======
+     * @param	string	$charset	Input AND Output character set
+     * @return 	string				Value cleaned
+     */
+    public function tsv_clean($newvalue, $charset)
+    {
+        // phpcs:enable
+        // Rule Dolibarr: No HTML
+        $newvalue=dol_string_nohtmltag($newvalue, 1, $charset);
+
+        // Rule 1 TSV: No CR, LF in cells
+        $newvalue=str_replace("\r", '', $newvalue);
+        $newvalue=str_replace("\n", '\n', $newvalue);
+
+        // Rule 2 TSV: If value contains tab, we must replace by space
+        if (preg_match('/'.$this->separator.'/', $newvalue)) {
+            $newvalue=str_replace("\t", " ", $newvalue);
+        }
+
+        return $newvalue;
+    }
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -19,3 +19,18 @@ FormatDateHourShort=%m/%d/%Y %I:%M %p
 FormatDateHourSecShort=%m/%d/%Y %I:%M:%S %p
 FormatDateHourTextShort=%b %d, %Y, %I:%M %p
 FormatDateHourText=%B %d, %Y, %I:%M %p
+<<<<<<< HEAD
+=======
+All=Todos
+Delete=Borrar
+Groups=Los grupos
+Setup=Preparar
+Rate=Tarifa
+List=Lista
+CompanyFoundation=Empresa / Organización
+SearchIntoCustomerInvoices=Facturas de clientes
+SearchIntoSupplierInvoices=Facturas de proveedores
+SearchIntoSupplierOrders=Ordenes de compra
+SearchIntoCustomerProposals=Propuestas de clientes
+SearchIntoContracts=Los contratos
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

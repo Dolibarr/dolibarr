@@ -34,7 +34,16 @@ class box_last_ticket extends ModeleBoxes
     public $boximg = "ticket";
     public $boxlabel;
     public $depends = array("ticket");
+<<<<<<< HEAD
     public $db;
+=======
+
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     public $param;
     public $info_box_head = array();
     public $info_box_contents = array();
@@ -70,8 +79,15 @@ class box_last_ticket extends ModeleBoxes
             'limit' => dol_strlen($text),
         );
 
+<<<<<<< HEAD
         $this->info_box_contents[0][0] = array('td' => 'align="left"',
             'text' => $langs->trans("BoxLastTicketContent"));
+=======
+        $this->info_box_contents[0][0] = array(
+            'td' => 'class="left"',
+            'text' => $langs->trans("BoxLastTicketContent"),
+        );
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         if ($user->rights->ticket->read) {
             $sql = "SELECT t.rowid as id, t.ref, t.track_id, t.fk_soc, t.fk_user_create, t.fk_user_assign, t.subject, t.message, t.fk_statut, t.type_code, t.category_code, t.severity_code, t.datec, t.date_read, t.date_close, t.origin_email ";
@@ -115,28 +131,53 @@ class box_last_ticket extends ModeleBoxes
 
                     // Picto
                     $this->info_box_contents[$i][0] = array(
+<<<<<<< HEAD
                         'td' => 'align="left" width="16"',
                         'logo' => $this->boximg,
                         'url' => dol_buildpath("/ticket/card.php?track_id=" . $objp->track_id, 1));
+=======
+                        'td' => 'class="left" width="16"',
+                        'logo' => $this->boximg,
+                        'url' => dol_buildpath("/ticket/card.php?track_id=" . $objp->track_id, 1),
+                    );
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                     $r++;
 
                     // Id
                     $this->info_box_contents[$i][$r] = array(
+<<<<<<< HEAD
                         'td' => 'align="left"',
                         'text' => $objp->ref,
                         'url' => dol_buildpath("/ticket/card.php?track_id=" . $objp->track_id, 1));
+=======
+                        'td' => 'class="left"',
+                        'text' => $objp->ref,
+                        'url' => dol_buildpath("/ticket/card.php?track_id=" . $objp->track_id, 1),
+                    );
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                     $r++;
 
                     // Subject
                     $this->info_box_contents[$i][$r] = array(
+<<<<<<< HEAD
                         'td' => 'align="left"',
                         'text' => $objp->subject, // Some event have no ref
                         'url' => dol_buildpath("/ticket/card.php?track_id=" . $objp->track_id, 1));
+=======
+                        'td' => 'class="left"',
+                        'text' => $objp->subject, // Some event have no ref
+                        'url' => dol_buildpath("/ticket/card.php?track_id=" . $objp->track_id, 1),
+                    );
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                     $r++;
 
                     // Customer
                     $this->info_box_contents[$i][$r] = array(
+<<<<<<< HEAD
                         'td' => 'align="left"',
+=======
+                        'td' => 'class="left"',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                         'logo' => ($objp->fk_soc > 0 ? 'company' : ''),
                         'text' => ($objp->company_name ? $objp->company_name : $objp->origin_email),
                         'url' => ($objp->fk_soc > 0 ? DOL_URL_ROOT . "/comm/card.php?socid=" . $objp->fk_soc : ''),
@@ -145,7 +186,11 @@ class box_last_ticket extends ModeleBoxes
 
                     // Date creation
                     $this->info_box_contents[$i][$r] = array(
+<<<<<<< HEAD
                         'td' => 'align="right"',
+=======
+                        'td' => 'class="right"',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                         'text' => dol_print_date($db->idate($objp->datec), 'dayhour'),
                     );
                     $r++;
@@ -154,7 +199,11 @@ class box_last_ticket extends ModeleBoxes
                     $ticketstat = new Ticket($this->db);
                     $ticketstat->fk_statut = $objp->fk_statut;
                     $this->info_box_contents[$i][$r] = array(
+<<<<<<< HEAD
                         'td' => 'align="right"',
+=======
+                        'td' => 'class="right"',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                         'text' => $ticketstat->getLibStatut(3),
                     );
                     $r++;
@@ -163,13 +212,21 @@ class box_last_ticket extends ModeleBoxes
                 }
 
                 if ($num == 0) {
+<<<<<<< HEAD
                     $this->info_box_contents[$i][0] = array('td' => 'align="center"', 'text' => $langs->trans("BoxLastTicketNoRecordedTickets"));
+=======
+                    $this->info_box_contents[$i][0] = array('td' => 'class="center"', 'text' => $langs->trans("BoxLastTicketNoRecordedTickets"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 }
             } else {
                 dol_print_error($db);
             }
         } else {
+<<<<<<< HEAD
             $this->info_box_contents[0][0] = array('td' => 'align="left"',
+=======
+            $this->info_box_contents[0][0] = array('td' => 'class="left"',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 'text' => $langs->trans("ReadPermissionNotAllowed"));
         }
     }
@@ -182,7 +239,11 @@ class box_last_ticket extends ModeleBoxes
      *     @param  int   $nooutput No print, only return string
      *     @return string
      */
+<<<<<<< HEAD
     function showBox($head = null, $contents = null, $nooutput=0)
+=======
+    public function showBox($head = null, $contents = null, $nooutput = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
     }

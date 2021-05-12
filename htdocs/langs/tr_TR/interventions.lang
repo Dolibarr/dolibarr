@@ -4,6 +4,10 @@ Interventions=Müdahaleler
 InterventionCard=Müdahale kartı
 NewIntervention=Yeni müdahale
 AddIntervention=Müdahale oluştur
+<<<<<<< HEAD
+=======
+ChangeIntoRepeatableIntervention=Tekrarlanabilir müdahaleye dönüştür
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ListOfInterventions=Müdahaleler listesi
 ActionsOnFicheInter=Müdahale eylemleri
 LastInterventions=Son %s müdahale
@@ -14,14 +18,22 @@ DeleteIntervention=Müdahale sil
 ValidateIntervention=Müdahale doğrula
 ModifyIntervention=Müdahale değiştir
 DeleteInterventionLine=Müdahale satırı sil
+<<<<<<< HEAD
 CloneIntervention=Müdahale kopyala
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmDeleteIntervention=Bu müdahaleyi silmek istediğinizden emin misiniz?
 ConfirmValidateIntervention=Bu müdahaleyi <b>%s</b> adıyla doğrulamak istediğinizden emin misiniz?
 ConfirmModifyIntervention=Bu müdahaleyi değiştirmek istediğinizden emin misiniz?
 ConfirmDeleteInterventionLine=Bu müdahale satırını silmek istediğinizden emin misiniz?
 ConfirmCloneIntervention=Bu müdahaleyi kopyalamak istediğinizden emin misiniz?
+<<<<<<< HEAD
 NameAndSignatureOfInternalContact=Müdahilin adı ve imzası :
 NameAndSignatureOfExternalContact=Müşterinin adı ve imzası :
+=======
+NameAndSignatureOfInternalContact=Müdahalenin adı ve imzası:
+NameAndSignatureOfExternalContact=Müşterinin adı ve imzası:
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DocumentModelStandard=Müdahaleler için standart belge modeli
 InterventionCardsAndInterventionLines=Müdahalelere ait müdahaleler ve satırları
 InterventionClassifyBilled=Sınıflandırma "Faturalandı" 
@@ -29,13 +41,21 @@ InterventionClassifyUnBilled=Sınıflandırma "Faturalanmadı"
 InterventionClassifyDone="Bitti" olarak sınıflandır
 StatusInterInvoiced=Faturalanmış
 SendInterventionRef=%s müdahalesinin sunulması
+<<<<<<< HEAD
 SendInterventionByMail=Müdahaleyi Eposta ile gönder
+=======
+SendInterventionByMail=Müdahaleyi e-posta ile gönder
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 InterventionCreatedInDolibarr=Oluşturulan müdahale %s
 InterventionValidatedInDolibarr=Doğrulanan müdahale %s
 InterventionModifiedInDolibarr=Değiştirilen müdahale %s
 InterventionClassifiedBilledInDolibarr=Faturalandı olarak ayarlanan müdahale %s
 InterventionClassifiedUnbilledInDolibarr=Faturalanmadı olarak ayarlanan müdahale %s
+<<<<<<< HEAD
 InterventionSentByEMail=Eposta ile gönderilen müdahale %s
+=======
+InterventionSentByEMail=%s referans no'lu müdahale e-posta ile gönderildi
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 InterventionDeletedInDolibarr=Silinen müdahale %s
 InterventionsArea=Müdahaleler alanı
 DraftFichinter=Taslak müdahale
@@ -47,11 +67,19 @@ TypeContact_fichinter_external_CUSTOMER=Müşteri izleme yetkilisi
 PrintProductsOnFichinter=Müdahale kartında "ürün" türü (yalnızca hizmetleri değil) satırını da yazdır.
 PrintProductsOnFichinterDetails=Siparişlerden oluşturulan müdahaleler
 UseServicesDurationOnFichinter=Siparişlerden oluşturulan müdahaleler için hizmet sürelerini kullan
+<<<<<<< HEAD
 UseDurationOnFichinter=Hides the duration field for intervention records
 UseDateWithoutHourOnFichinter=Hides hours and minutes off the date field for intervention records
 InterventionStatistics=Müdahale istatistikleri
 NbOfinterventions=Müdahale kartları sayısı
 NumberOfInterventionsByMonth=Aylık (doğrulama tarihi) müdahale kartları sayısı
+=======
+UseDurationOnFichinter=Müdahale kayıtları için süre alanını gizler
+UseDateWithoutHourOnFichinter=Müdahale kayıtları için tarih alanının saat ve dakikasını gizler
+InterventionStatistics=Müdahale istatistikleri
+NbOfinterventions=Müdahale kartlarının sayısı
+NumberOfInterventionsByMonth=Aya göre müdahale kartlarının sayısı (doğrulama tarihi)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AmountOfInteventionNotIncludedByDefault=Amount of intervention is not included by default into profit (in most cases, timesheets are used to count time spent). Add option PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT to 1 into home-setup-other to include them.
 ##### Exports #####
 InterId=Müdahale kimliği

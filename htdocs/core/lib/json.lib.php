@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2011-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2011-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2011-2012	Regis Houssin		<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -214,7 +218,11 @@ if (! function_exists('json_decode'))
 	 * @param	bool	$assoc		False return an object, true return an array
 	 * @return 	mixed				Object or Array
 	 */
+<<<<<<< HEAD
 	function json_decode($json, $assoc=false)
+=======
+	function json_decode($json, $assoc = false)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return dol_json_decode($json, $assoc);
 	}
@@ -229,7 +237,11 @@ if (! function_exists('json_decode'))
  * @return 	mixed				Object or Array or false on error
  * @see json_decode()
  */
+<<<<<<< HEAD
 function dol_json_decode($json, $assoc=false)
+=======
+function dol_json_decode($json, $assoc = false)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	dol_syslog("For better performance, enable the native json in your PHP", LOG_WARNING);
 
@@ -242,8 +254,13 @@ function dol_json_decode($json, $assoc=false)
 		if (! $comment)
 		{
 			if (($json[$i] == '{') || ($json[$i] == '[')) $out.= 'array(';
+<<<<<<< HEAD
 			else if (($json[$i] == '}') || ($json[$i] == ']')) $out.= ')';
 			else if ($json[$i] == ':') $out.= ' => ';
+=======
+			elseif (($json[$i] == '}') || ($json[$i] == ']')) $out.= ')';
+			elseif ($json[$i] == ':') $out.= ' => ';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			else $out.=$json[$i];
 		}
 		else $out.= $json[$i];
@@ -282,8 +299,13 @@ function dol_json_decode($json, $assoc=false)
 /**
  * Return text according to type
  *
+<<<<<<< HEAD
  * @param 	string	$val	Value to decode
  * @return	string			Formated value
+=======
+ * @param   string  $val    Value to decode
+ * @return  string          Formated value
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  */
 function _unval($val)
 {
@@ -292,7 +314,11 @@ function _unval($val)
 	    // single, escaped unicode character
 	    $utf16 = chr(hexdec($reg[1])) . chr(hexdec($reg[2]));
 	    $utf8  = utf162utf8($utf16);
+<<<<<<< HEAD
 	    $val=preg_replace('/\\\u'.$reg[1].$reg[2].'/i',$utf8,$val);
+=======
+	    $val=preg_replace('/\\\u'.$reg[1].$reg[2].'/i', $utf8, $val);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 	return $val;
 }
@@ -310,7 +336,11 @@ function _unval($val)
 function utf162utf8($utf16)
 {
 	// oh please oh please oh please oh please oh please
+<<<<<<< HEAD
 	if(function_exists('mb_convert_encoding')) {
+=======
+	if (function_exists('mb_convert_encoding')) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    return mb_convert_encoding($utf16, 'UTF-8', 'UTF-16');
 	}
 

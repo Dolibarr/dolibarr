@@ -1,7 +1,12 @@
 <?php
+<<<<<<< HEAD
 /*
  * Copyright (C) 2009-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
 *
+=======
+/* Copyright (C) 2009-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ *
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -23,8 +28,13 @@
  *      \brief      Function to rebuild PDF and merge PDF files into one
  */
 
+<<<<<<< HEAD
 require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php');
+=======
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 /**
@@ -36,10 +46,17 @@ require_once(DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php');
  * @param	string		$diroutputpdf			Dir to output file
  * @param	string		$newlangid				Lang id
  * @param 	array		$filter					Array with filters
+<<<<<<< HEAD
  * @param 	date		$dateafterdate			Invoice after date
  * @param 	date 		$datebeforedate			Invoice before date
  * @param 	date		$paymentdateafter		Payment after date (must includes hour)
  * @param 	date		$paymentdatebefore		Payment before date (must includes hour)
+=======
+ * @param 	integer		$dateafterdate			Invoice after date
+ * @param 	integer 	$datebeforedate			Invoice before date
+ * @param 	integer		$paymentdateafter		Payment after date (must includes hour)
+ * @param 	integer		$paymentdatebefore		Payment before date (must includes hour)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * @param	int			$usestdout				Add information onto standard output
  * @param	int			$regenerate				''=Use existing PDF files, 'nameofpdf'=Regenerate all PDF files using the template
  * @param	string		$filesuffix				Suffix to add into file name of generated PDF
@@ -48,6 +65,7 @@ require_once(DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php');
  * @param	string		$fileprefix				Prefix to add into filename of generated PDF
  * @return	int									Error code
  */
+<<<<<<< HEAD
 function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filter, $dateafterdate, $datebeforedate, $paymentdateafter, $paymentdatebefore, $usestdout, $regenerate=0, $filesuffix='', $paymentbankid='', $thirdpartiesid='', $fileprefix='mergedpdf')
 {
 	$sql = "SELECT DISTINCT f.rowid, f.facnumber";
@@ -59,6 +77,19 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 		$sqlorder = " ORDER BY f.facnumber ASC";
 	}
 	if (in_array('date',$filter))
+=======
+function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filter, $dateafterdate, $datebeforedate, $paymentdateafter, $paymentdatebefore, $usestdout, $regenerate = 0, $filesuffix = '', $paymentbankid = '', $thirdpartiesid = '', $fileprefix = 'mergedpdf')
+{
+	$sql = "SELECT DISTINCT f.rowid, f.ref";
+	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
+	$sqlwhere='';
+	$sqlorder='';
+	if (in_array('all', $filter))
+	{
+		$sqlorder = " ORDER BY f.ref ASC";
+	}
+	if (in_array('date', $filter))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		if (empty($sqlwhere)) $sqlwhere=' WHERE ';
 		else $sqlwhere.=" AND";
@@ -67,7 +98,11 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 		$sqlwhere.= " AND f.datef <= '".$db->idate($datebeforedate)."'";
 		$sqlorder = " ORDER BY f.datef ASC";
 	}
+<<<<<<< HEAD
 	if (in_array('nopayment',$filter))
+=======
+	if (in_array('nopayment', $filter))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
 		if (empty($sqlwhere)) $sqlwhere=' WHERE ';
@@ -75,45 +110,73 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 		$sqlwhere.= " f.fk_statut > 0";
 		$sqlwhere.= " AND pf.fk_paiement IS NULL";
 	}
+<<<<<<< HEAD
 	if (in_array('payments',$filter) || in_array('bank',$filter))
 	{
 		$sql.= ", ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";
 		if (in_array('bank',$filter)) $sql.= ", ".MAIN_DB_PREFIX."bank as b";
+=======
+	if (in_array('payments', $filter) || in_array('bank', $filter))
+	{
+		$sql.= ", ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";
+		if (in_array('bank', $filter)) $sql.= ", ".MAIN_DB_PREFIX."bank as b";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if (empty($sqlwhere)) $sqlwhere=' WHERE ';
 		else $sqlwhere.=" AND";
 		$sqlwhere.= " f.fk_statut > 0";
 		$sqlwhere.= " AND f.rowid = pf.fk_facture";
 		$sqlwhere.= " AND pf.fk_paiement = p.rowid";
+<<<<<<< HEAD
 		if (in_array('payments',$filter))
+=======
+		if (in_array('payments', $filter))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			$sqlwhere.= " AND p.datep >= '".$db->idate($paymentdateafter)."'";
 			$sqlwhere.= " AND p.datep <= '".$db->idate($paymentdatebefore)."'";
 		}
+<<<<<<< HEAD
 		if (in_array('bank',$filter))
+=======
+		if (in_array('bank', $filter))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			$sqlwhere.= " AND p.fk_bank = b.rowid";
 			$sqlwhere.= " AND b.fk_account = ".$paymentbankid;
 		}
 		$sqlorder = " ORDER BY p.datep ASC";
 	}
+<<<<<<< HEAD
 	if (in_array('nodeposit',$filter))
+=======
+	if (in_array('nodeposit', $filter))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 	    if (empty($sqlwhere)) $sqlwhere=' WHERE ';
 	    else $sqlwhere.=" AND";
 	    $sqlwhere.=' type <> 3';
 	}
+<<<<<<< HEAD
 	if (in_array('noreplacement',$filter))
+=======
+	if (in_array('noreplacement', $filter))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 	    if (empty($sqlwhere)) $sqlwhere=' WHERE ';
 	    else $sqlwhere.=" AND";
 	    $sqlwhere.=' type <> 1';
 	}
+<<<<<<< HEAD
 	if (in_array('nocreditnote',$filter))
+=======
+	if (in_array('nocreditnote', $filter))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 	    if (empty($sqlwhere)) $sqlwhere=' WHERE ';
 	    else $sqlwhere.=" AND";
 	    $sqlwhere.=' type <> 2';
 	}
+<<<<<<< HEAD
 	if (in_array('excludethirdparties',$filter) && is_array($thirdpartiesid))
 	{
 	    if (empty($sqlwhere)) $sqlwhere=' WHERE ';
@@ -125,6 +188,19 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 	    if (empty($sqlwhere)) $sqlwhere=' WHERE ';
 	    else $sqlwhere.=" AND";
 	    $sqlwhere.=' f.fk_soc IN ('.join(',',$thirdpartiesid).')';
+=======
+	if (in_array('excludethirdparties', $filter) && is_array($thirdpartiesid))
+	{
+	    if (empty($sqlwhere)) $sqlwhere=' WHERE ';
+	    else $sqlwhere.=" AND";
+	    $sqlwhere.=' f.fk_soc NOT IN ('.join(',', $thirdpartiesid).')';
+	}
+	if (in_array('onlythirdparties', $filter) && is_array($thirdpartiesid))
+	{
+	    if (empty($sqlwhere)) $sqlwhere=' WHERE ';
+	    else $sqlwhere.=" AND";
+	    $sqlwhere.=' f.fk_soc IN ('.join(',', $thirdpartiesid).')';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 	if ($sqlwhere) $sql.=$sqlwhere;
 	if ($sqlorder) $sql.=$sqlorder;
@@ -168,18 +244,30 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 					{
 						if ($outputlangs->defaultlang != $newlangid)
 						{
+<<<<<<< HEAD
 							$outputlangs = new Translate("",$conf);
+=======
+							$outputlangs = new Translate("", $conf);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							$outputlangs->setDefaultLang($newlangid);
 						}
 					}
 					$filename=$conf->facture->dir_output.'/'.$fac->ref.'/'.$fac->ref.'.pdf';
 					if ($regenerate || ! dol_is_file($filename))
 					{
+<<<<<<< HEAD
 	            	    if ($usestdout) print "Build PDF for invoice ".$obj->facnumber." - Lang = ".$outputlangs->defaultlang."\n";
 	    				$result= $fac->generateDocument($regenerate?$regenerate:$fac->modelpdf, $outputlangs);
 					}
 					else {
 					    if ($usestdout) print "PDF for invoice ".$obj->facnumber." already exists\n";
+=======
+	            	    if ($usestdout) print "Build PDF for invoice ".$obj->ref." - Lang = ".$outputlangs->defaultlang."\n";
+	    				$result= $fac->generateDocument($regenerate?$regenerate:$fac->modelpdf, $outputlangs);
+					}
+					else {
+					    if ($usestdout) print "PDF for invoice ".$obj->ref." already exists\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					}
 
 					// Add file into files array
@@ -203,8 +291,13 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 	        $page_hauteur = $formatarray['height'];
 	        $format = array($page_largeur,$page_hauteur);
 
+<<<<<<< HEAD
 	        if ($usestdout) print "Using output PDF format ".join('x',$format)."\n";
 	        else dol_syslog("Using output PDF format ".join('x',$format), LOG_ERR);
+=======
+	        if ($usestdout) print "Using output PDF format ".join('x', $format)."\n";
+	        else dol_syslog("Using output PDF format ".join('x', $format), LOG_ERR);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	        // Now, build a merged files with all files in $files array
@@ -250,7 +343,11 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 
 			if (! $error && $pagecount)
 			{
+<<<<<<< HEAD
 				$pdf->Output($file,'F');
+=======
+				$pdf->Output($file, 'F');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if (! empty($conf->global->MAIN_UMASK))
 					@chmod($file, octdec($conf->global->MAIN_UMASK));
 			}
@@ -280,4 +377,7 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 	if ($error) return -1;
 	else return $result;
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

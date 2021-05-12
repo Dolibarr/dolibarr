@@ -1,6 +1,11 @@
 # Dolibarr language file - Source file is en_US - commercial
+<<<<<<< HEAD
 Commercial=Komercijala
 CommercialArea=Sučelje komercijale
+=======
+Commercial=Trgovina
+CommercialArea=Sučelje trgovine
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Customer=Kupac
 Customers=Kupci
 Prospect=Potencijalni kupac
@@ -34,7 +39,11 @@ LastActionsToDo=Najstarijih %s nezavršenih akcija
 DoneAndToDoActions=Završeni i za odraditi 
 DoneActions=Završeni događaji
 ToDoActions=Nedovršeni događaji
+<<<<<<< HEAD
 SendPropalRef=Predaja ponude %s
+=======
+SendPropalRef=Ponuda %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SendOrderRef=Predaja narudžbe %s
 StatusNotApplicable=Nije primjenjivo
 StatusActionToDo=Napraviti
@@ -52,6 +61,10 @@ ActionAC_TEL=Telefonski poziv
 ActionAC_FAX=Pošalji faks
 ActionAC_PROP=Pošalji ponudu poštom
 ActionAC_EMAIL=Pošalji e-poštu
+<<<<<<< HEAD
+=======
+ActionAC_EMAIL_IN=Reception of Email
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActionAC_RDV=Sastanci
 ActionAC_INT=Intervencija na lokaciji
 ActionAC_FAC=Pošalji račun kupca poštom
@@ -60,7 +73,11 @@ ActionAC_CLO=Zatvoren
 ActionAC_EMAILING=Masovno slanje e-pošte
 ActionAC_COM=Pošalji narudžbu kupca putem pošte
 ActionAC_SHIP=Pošalji dostavu putem pošte
+<<<<<<< HEAD
 ActionAC_SUP_ORD=Send purchase order by mail
+=======
+ActionAC_SUP_ORD=Pošalji narudžbenicu e-poštom
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActionAC_SUP_INV=Send vendor invoice by mail
 ActionAC_OTH=Ostalo
 ActionAC_OTH_AUTO=Automatski uneseni događaji
@@ -72,8 +89,15 @@ StatusProsp=Status potencijalnog kupca
 DraftPropals=Skica ponude
 NoLimit=Bez ograničenja
 ToOfferALinkForOnlineSignature=Link for online signature
+<<<<<<< HEAD
 WelcomeOnOnlineSignaturePage=Welcome on the page to accept commerical proposals from %s
 ThisScreenAllowsYouToSignDocFrom=This screen allow you to accept and sign, or refuse, a quote/commercial proposal
 ThisIsInformationOnDocumentToSign=This is information on document to accept or refuse
 SignatureProposalRef=Signature of quote/commerical proposal %s
+=======
+WelcomeOnOnlineSignaturePage=Welcome to the page to accept commercial proposals from %s
+ThisScreenAllowsYouToSignDocFrom=This screen allow you to accept and sign, or refuse, a quote/commercial proposal
+ThisIsInformationOnDocumentToSign=This is information on document to accept or refuse
+SignatureProposalRef=Signature of quote/commercial proposal %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 FeatureOnlineSignDisabled=Feature for online signing disabled or document generated before the feature was enabled

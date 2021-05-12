@@ -16,6 +16,7 @@ MakeOrder=Сделать заказ
 SupplierOrder=Purchase order
 SuppliersOrders=Заказы
 SuppliersOrdersRunning=Current purchase orders
+<<<<<<< HEAD
 CustomerOrder=Клиент Заказать
 CustomersOrders=Заказы клиентов
 CustomersOrdersRunning=Current customer orders
@@ -24,6 +25,16 @@ OrdersDeliveredToBill=Customer orders delivered to bill
 OrdersToBill=Customer orders delivered
 OrdersInProcess=Customer orders in process
 OrdersToProcess=Customer orders to process
+=======
+CustomerOrder=Sales Order
+CustomersOrders=Sales Orders
+CustomersOrdersRunning=Current sales orders
+CustomersOrdersAndOrdersLines=Sales orders and order details
+OrdersDeliveredToBill=Sales orders delivered to bill
+OrdersToBill=Sales orders delivered
+OrdersInProcess=Sales orders in process
+OrdersToProcess=Sales orders to process
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SuppliersOrdersToProcess=Purchase orders to process
 StatusOrderCanceledShort=Отменен
 StatusOrderDraftShort=Черновик
@@ -76,8 +87,13 @@ OrdersOpened=Orders to process
 NoDraftOrders=Нет проектов заказов
 NoOrder=No order
 NoSupplierOrder=No purchase order
+<<<<<<< HEAD
 LastOrders=Latest %s customer orders
 LastCustomerOrders=Latest %s customer orders
+=======
+LastOrders=Latest %s sales orders
+LastCustomerOrders=Latest %s sales orders
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LastSupplierOrders=Latest %s purchase orders
 LastModifiedOrders=Latest %s modified orders
 AllOrders=Все заказы
@@ -85,10 +101,17 @@ NbOfOrders=Количество заказов
 OrdersStatistics=Приказы Статистика
 OrdersStatisticsSuppliers=Purchase order statistics
 NumberOfOrdersByMonth=Количество заказов в месяц
+<<<<<<< HEAD
 AmountOfOrdersByMonthHT=Количество заказов по месяцам (за вычетом налогов)
 ListOfOrders=Список заказов
 CloseOrder=Закрыть тему
 ConfirmCloseOrder=Are you sure you want to set this order to deliverd? Once an order is delivered, it can be set to billed.
+=======
+AmountOfOrdersByMonthHT=Amount of orders by month (excl. tax)
+ListOfOrders=Список заказов
+CloseOrder=Закрыть тему
+ConfirmCloseOrder=Are you sure you want to set this order to delivered? Once an order is delivered, it can be set to billed.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmDeleteOrder=Are you sure you want to delete this order?
 ConfirmValidateOrder=Are you sure you want to validate this order under name <b>%s</b>?
 ConfirmUnvalidateOrder=Are you sure you want to restore order <b>%s</b> to draft status?
@@ -110,6 +133,7 @@ OrderMode=Заказать метод
 AuthorRequest=Просьба автора
 UserWithApproveOrderGrant=Useres предоставляется с "утвердить приказы" разрешения.
 PaymentOrderRef=Оплата заказа %s
+<<<<<<< HEAD
 CloneOrder=Клон порядка
 ConfirmCloneOrder=Are you sure you want to clone this order <b>%s</b>?
 DispatchSupplierOrder=Прием %s поставщиком для
@@ -121,6 +145,18 @@ SupplierOrderClassifiedBilled=Purchase Order %s set billed
 OtherOrders=Другие заказы
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Представитель следующие меры для клиентов
+=======
+ConfirmCloneOrder=Are you sure you want to clone this order <b>%s</b>?
+DispatchSupplierOrder=Receiving purchase order %s
+FirstApprovalAlreadyDone=Первое утверждение уже сделано
+SecondApprovalAlreadyDone=Second approval already done
+SupplierOrderReceivedInDolibarr=Purchase Order %s received %s
+SupplierOrderSubmitedInDolibarr=Purchase Order %s submitted
+SupplierOrderClassifiedBilled=Purchase Order %s set billed
+OtherOrders=Другие заказы
+##### Types de contacts #####
+TypeContact_commande_internal_SALESREPFOLL=Representative following-up sales order
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TypeContact_commande_internal_SHIPPING=Представитель следующие меры судоходства
 TypeContact_commande_external_BILLING=свяжитесь со счета
 TypeContact_commande_external_SHIPPING=обратитесь в службу доставки
@@ -136,11 +172,19 @@ Error_OrderNotChecked=Не выбраны заказы для выставлен
 # Order modes (how we receive order). Not the "why" are keys stored into dict.lang
 OrderByMail=Почта
 OrderByFax=Факс
+<<<<<<< HEAD
 OrderByEMail=EMail
+=======
+OrderByEMail=Адрес электронной почты
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 OrderByWWW=Интернет
 OrderByPhone=Телефон
 # Documents models
 PDFEinsteinDescription=Для полной модели (logo. ..)
+<<<<<<< HEAD
+=======
+PDFEratostheneDescription=Для полной модели (logo. ..)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PDFEdisonDescription=Простая модель для
 PDFProformaDescription=Целиком заполненный  счёт (логотип...)
 CreateInvoiceForThisCustomer=Оплатить заказы

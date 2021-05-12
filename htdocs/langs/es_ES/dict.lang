@@ -131,7 +131,11 @@ CountryKI=Kiribati
 CountryKP=Corea del Norte
 CountryKR=Corea del Sur
 CountryKW=Kuwait
+<<<<<<< HEAD
 CountryKG=Kirguistán
+=======
+CountryKG=Kirguizstán
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryLA=Laos
 CountryLV=Letonia
 CountryLB=Líbano
@@ -160,7 +164,11 @@ CountryMD=Moldavia
 CountryMN=Mongolia
 CountryMS=Monserrat
 CountryMZ=Mozambique
+<<<<<<< HEAD
 CountryMM=Birmania (Myanmar)
+=======
+CountryMM=Myanmar (Birmania)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryNA=Namibia
 CountryNR=Nauru
 CountryNP=Nepal
@@ -277,7 +285,11 @@ CurrencySingMGA=Ariary
 CurrencyMUR=Rupias mauritanas
 CurrencySingMUR=Rupia mauritana
 CurrencyNOK=Coronas noruegas
+<<<<<<< HEAD
 CurrencySingNOK=Corona noruega
+=======
+CurrencySingNOK=Coronas noruegas
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrencyTND=Dinares tunecinos
 CurrencySingTND=Dinar tunecino
 CurrencyUSD=Dólares USA
@@ -290,6 +302,10 @@ CurrencyXOF=Francos CFA BCEAO
 CurrencySingXOF=Franco CFA BCEAO
 CurrencyXPF=Francos CFP
 CurrencySingXPF=Franco CFP
+<<<<<<< HEAD
+=======
+CurrencyCentEUR=céntimos
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrencyCentSingEUR=céntimo
 CurrencyCentINR=paisa
 CurrencyCentSingINR=paise
@@ -306,6 +322,10 @@ DemandReasonTypeSRC_WOM=Boca a boca
 DemandReasonTypeSRC_PARTNER=Socio
 DemandReasonTypeSRC_EMPLOYEE=Empleado
 DemandReasonTypeSRC_SPONSORING=Patrocinador
+<<<<<<< HEAD
+=======
+DemandReasonTypeSRC_SRC_CUSTOMER=Contacto entrante de un cliente
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 #### Paper formats ####
 PaperFormatEU4A0=Formato 4A0
 PaperFormatEU2A0=Formato 2A0

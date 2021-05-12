@@ -26,6 +26,7 @@
 // This script is called with a POST method.
 // Directory to scan (full path) is inside POST['dir'].
 
+<<<<<<< HEAD
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL',1); // Disables token renewal
 if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
@@ -35,6 +36,17 @@ $res=require '../../main.inc.php';
 $id = GETPOST('id','int');
 $element = GETPOST('element','alpha');
 $action = GETPOST('action','alpha');
+=======
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
+if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML', '1');
+
+$res=require '../../main.inc.php';
+
+$id = GETPOST('id', 'int');
+$element = GETPOST('element', 'alpha');
+$action = GETPOST('action', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if ($element === 'facture') {
     require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';

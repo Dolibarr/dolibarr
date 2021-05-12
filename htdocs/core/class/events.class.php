@@ -1,6 +1,11 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2007-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +25,7 @@
  *      \file       htdocs/core/class/events.class.php
  *      \ingroup    core
  *		\brief      File of class to manage security events.
+<<<<<<< HEAD
  *		\author		Laurent Destailleur
  */
 
@@ -50,6 +56,58 @@ class Events // extends CommonObject
 
 	// List of all Audit/Security events supported by triggers
 	var $eventstolog=array(
+=======
+ */
+
+
+/**
+ *  Events class
+ */
+class Events // extends CommonObject
+{
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='events';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='events';
+
+	/**
+	 * @var int ID
+	 */
+	public $id;
+
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	public $tms;
+	public $type;
+
+	/**
+	 * @var int Entity
+	 */
+	public $entity;
+
+	public $dateevent;
+
+	/**
+	 * @var string description
+	 */
+	public $description;
+
+	// List of all Audit/Security events supported by triggers
+	public $eventstolog=array(
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		array('id'=>'USER_LOGIN',             'test'=>1),
 		array('id'=>'USER_LOGIN_FAILED',      'test'=>1),
 	    array('id'=>'USER_LOGOUT',            'test'=>1),
@@ -93,10 +151,16 @@ class Events // extends CommonObject
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
+<<<<<<< HEAD
 	function __construct($db)
 	{
 		$this->db = $db;
 		return 1;
+=======
+	public function __construct($db)
+	{
+		$this->db = $db;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 
@@ -104,11 +168,19 @@ class Events // extends CommonObject
 	 *   Create in database
 	 *
 	 *   @param      User	$user       User that create
+<<<<<<< HEAD
 	 *   @return     int     		    <0 if KO, >0 if OK
 	 */
 	function create($user)
 	{
 		global $conf, $langs;
+=======
+	 *   @return     int                <0 if KO, >0 if OK
+	 */
+	public function create($user)
+	{
+		global $conf;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Clean parameters
 		$this->description=trim($this->description);
@@ -130,10 +202,17 @@ class Events // extends CommonObject
 		$sql.= " '".$this->db->escape($this->type)."',";
 		$sql.= " ".$conf->entity.",";
 		$sql.= " '".$this->db->escape(getUserRemoteIP())."',";
+<<<<<<< HEAD
 		$sql.= " ".($this->user_agent ? "'".$this->db->escape(dol_trunc($this->user_agent,250))."'" : 'NULL').",";
 		$sql.= " '".$this->db->idate($this->dateevent)."',";
 		$sql.= " ".($user->id?"'".$this->db->escape($user->id)."'":'NULL').",";
 		$sql.= " '".$this->db->escape(dol_trunc($this->description,250))."'";
+=======
+		$sql.= " ".($this->user_agent ? "'".$this->db->escape(dol_trunc($this->user_agent, 250))."'" : 'NULL').",";
+		$sql.= " '".$this->db->idate($this->dateevent)."',";
+		$sql.= " ".($user->id?"'".$this->db->escape($user->id)."'":'NULL').",";
+		$sql.= " '".$this->db->escape(dol_trunc($this->description, 250))."'";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql.= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -158,10 +237,15 @@ class Events // extends CommonObject
 	 * @param   int		$notrigger	    0=no, 1=yes (no update trigger)
 	 * @return  int         			<0 if KO, >0 if OK
 	 */
+<<<<<<< HEAD
 	function update($user=null, $notrigger=0)
 	{
 		global $conf, $langs;
 
+=======
+    public function update($user = null, $notrigger = 0)
+	{
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// Clean parameters
 		$this->id=trim($this->id);
 		$this->type=trim($this->type);
@@ -195,10 +279,15 @@ class Events // extends CommonObject
 	 *  @param  User	$user       User that load
 	 *  @return int         		<0 if KO, >0 if OK
 	 */
+<<<<<<< HEAD
 	function fetch($id, $user=null)
 	{
 		global $langs;
 
+=======
+    public function fetch($id, $user = null)
+	{
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql = "SELECT";
 		$sql.= " t.rowid,";
 		$sql.= " t.tms,";
@@ -246,10 +335,15 @@ class Events // extends CommonObject
 	 *	@param	User	$user       User that delete
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
+<<<<<<< HEAD
 	function delete($user)
 	{
 		global $conf, $langs;
 
+=======
+    public function delete($user)
+	{
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."events";
 		$sql.= " WHERE rowid=".$this->id;
 
@@ -271,8 +365,13 @@ class Events // extends CommonObject
      *	id must be 0 if object instance is a specimen.
      *
      *  @return	void
+<<<<<<< HEAD
 	 */
 	function initAsSpecimen()
+=======
+     */
+    public function initAsSpecimen()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$this->id=0;
 
@@ -280,6 +379,10 @@ class Events // extends CommonObject
 		$this->type='';
 		$this->dateevent=time();
 		$this->description='This is a specimen event';
+<<<<<<< HEAD
 	}
 
+=======
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

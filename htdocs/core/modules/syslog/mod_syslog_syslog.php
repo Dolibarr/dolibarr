@@ -7,7 +7,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/syslog/logHandler.php';
  */
 class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 {
+<<<<<<< HEAD
 	var $code = 'syslog';
+=======
+    public $code = 'syslog';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	/**
 	 * 	Return name of logger
@@ -124,4 +128,8 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 		syslog($content['level'], $content['message']);
 		closelog();
 	}
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

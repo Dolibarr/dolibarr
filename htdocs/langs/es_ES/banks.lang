@@ -7,7 +7,11 @@ BankName=Nombre del banco
 FinancialAccount=Cuenta
 BankAccount=Cuenta bancaria
 BankAccounts=Cuentas Bancarias
+<<<<<<< HEAD
 BankAccountsAndGateways=Cuentas bancarias | Gateways
+=======
+BankAccountsAndGateways=Cuentas bancarias | Pasarelas
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShowAccount=Mostrar cuenta
 AccountRef=Ref. cuenta financiera
 AccountLabel=Etiqueta cuenta financiera
@@ -30,7 +34,11 @@ AllTime=Mostrar saldo desde el inicio
 Reconciliation=Conciliación
 RIB=Cuenta bancaria
 IBAN=Identificador IBAN
+<<<<<<< HEAD
 BIC=Identificador BIC/SWIFT
+=======
+BIC=Código BIC/SWIFT
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SwiftValid=BIC/SWIFT válido
 SwiftVNotalid=BIC/SWIFT no válido
 IbanValid=BAN válido
@@ -46,7 +54,11 @@ BankAccountDomiciliation=Domiciliación de cuenta
 BankAccountCountry=País de la cuenta
 BankAccountOwner=Nombre del titular de la cuenta
 BankAccountOwnerAddress=Dirección del titular de la cuenta
+<<<<<<< HEAD
 RIBControlError=El dígito de control indica que la información de esta cuenta bancaria es incompleta o incorrecta.
+=======
+RIBControlError=El dígito de control indica que la información de esta cuenta bancaria es incompleta o incorrecta (compruebe el país, números e IBAN).
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CreateAccount=Crear cuenta
 NewBankAccount=Nueva cuenta
 NewFinancialAccount=Nueva cuenta financiera
@@ -76,6 +88,10 @@ TransactionsToConciliate=Registros a conciliar
 Conciliable=Conciliable
 Conciliate=Conciliar
 Conciliation=Conciliación
+<<<<<<< HEAD
+=======
+SaveStatementOnly=Guardar solo extracto
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ReconciliationLate=Conciliación tardía
 IncludeClosedAccount=Incluir cuentas cerradas
 OnlyOpenedAccount=Solamente cuentas abiertas
@@ -99,7 +115,11 @@ NotReconciled=No reconciliado
 CustomerInvoicePayment=Cobro a cliente
 SupplierInvoicePayment=Pago a proveedor
 SubscriptionPayment=Pago cuota
+<<<<<<< HEAD
 WithdrawalPayment=Cobro de domiciliación
+=======
+WithdrawalPayment=Domiciliación
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SocialContributionPayment=Pago impuesto social/fiscal
 BankTransfer=Transferencia bancaria
 BankTransfers=Transferencias bancarias
@@ -116,7 +136,11 @@ ConfirmDeleteCheckReceipt=¿Está seguro de querer eliminar esta remesa?
 BankChecks=Cheques
 BankChecksToReceipt=Cheques en espera de depositar
 ShowCheckReceipt=Mostrar remesa
+<<<<<<< HEAD
 NumberOfCheques=Nº de cheques
+=======
+NumberOfCheques=Nº Cheque
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DeleteTransaction=Eliminar registro
 ConfirmDeleteTransaction=¿Está seguro de querer eliminar este registro?
 ThisWillAlsoDeleteBankRecord=Esto también eliminará el registro bancario
@@ -132,7 +156,11 @@ PaymentDateUpdateSucceeded=Fecha de pago actualizada correctamente
 PaymentDateUpdateFailed=Fecha de pago no pudo ser modificada
 Transactions=Transacciones
 BankTransactionLine=Registro bancario
+<<<<<<< HEAD
 AllAccounts=All bank and cash accounts
+=======
+AllAccounts=Todas las cuentas bancarias/de caja
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BackToAccount=Volver a la cuenta
 ShowAllAccounts=Mostrar para todas las cuentas
 FutureTransaction=Transacción futura. No es posible conciliar.
@@ -153,6 +181,7 @@ RejectCheckDate=Fecha de devolución del cheque
 CheckRejected=Cheque devuelto
 CheckRejectedAndInvoicesReopened=Cheque devuelto y facturas reabiertas
 BankAccountModelModule=Modelos de documentos para cuentas bancarias
+<<<<<<< HEAD
 DocumentModelSepaMandate=Plantilla de mandato SEPA, usable únicamente para paises miembros de la UEE
 DocumentModelBan=Plantilla para imprimir una página con la información IBAN.
 NewVariousPayment=Nuevo pago varios
@@ -163,3 +192,18 @@ AddVariousPayment=Añadir pagos varios
 SEPAMandate=Mandato SEPA
 YourSEPAMandate=Su mandato SEPA
 FindYourSEPAMandate=Este es su mandato SEPA para autorizar a nuestra empresa a realizar un petición de débito directo a su banco. Gracias por devolverlo firmado (escaneo del documento firmado) o enviado por correo a
+=======
+DocumentModelSepaMandate=Plantilla de mandato SEPA. Útil únicamente para países miembros de la UEE
+DocumentModelBan=Plantilla para imprimir una página con la información IBAN.
+NewVariousPayment=Nuevo pago varios
+VariousPayment=Pago varios
+VariousPayments=Pagos varios
+ShowVariousPayment=Mostrar pago varios
+AddVariousPayment=Añadir pago varios
+SEPAMandate=Mandato SEPA
+YourSEPAMandate=Su mandato SEPA
+FindYourSEPAMandate=Este es su mandato SEPA para autorizar a nuestra empresa a realizar un petición de débito directo a su banco. Gracias por devolverlo firmado (escaneo del documento firmado) o enviado por correo a
+AutoReportLastAccountStatement=Rellenar automáticamente el campo 'número de extracto bancario' con el último número de extracto cuando realice la conciliación
+CashControl=Caja de efectivo POS
+NewCashFence=Nueva Caja de efectivo
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

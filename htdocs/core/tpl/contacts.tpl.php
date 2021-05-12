@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2012      Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2012      Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2013-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015-2016 Charlie BENKE 	<charlie@patas-monkey.com>
  *
@@ -42,6 +46,10 @@ elseif ($module == 'invoice_supplier')	{ $permission=$user->rights->fournisseur-
 elseif ($module == 'project')		{ $permission=$user->rights->projet->creer; }
 elseif ($module == 'action')		{ $permission=$user->rights->agenda->myactions->create; }
 elseif ($module == 'shipping')		{ $permission=$user->rights->expedition->creer; }
+<<<<<<< HEAD
+=======
+elseif ($module == 'reception')		{ $permission=$user->rights->reception->creer; }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 elseif ($module == 'project_task')	{ $permission=$user->rights->projet->creer; }
 elseif (! isset($permission) && isset($user->rights->$module->creer))
 {
@@ -62,7 +70,11 @@ $userstatic=new User($db);
 <!-- BEGIN PHP TEMPLATE CONTACTS -->
 <div class="underbanner clearboth"></div>
 <div class="div-table-responsive">
+<<<<<<< HEAD
 <div class="tagtable centpercent noborder nobordertop allwidth">
+=======
+<div class="tagtable tableforcontact centpercent noborder nobordertop allwidth">
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 <?php
 if ($permission) {
@@ -88,14 +100,23 @@ if ($permission) {
 	<input type="hidden" name="action" value="addcontact" />
 	<input type="hidden" name="source" value="internal" />
 	<?php if ($withproject) print '<input type="hidden" name="withproject" value="'.$withproject.'">'; ?>
+<<<<<<< HEAD
 		<div class="nowrap tagtd"><?php echo img_object('','user').' '.$langs->trans("Users"); ?></div>
+=======
+		<div class="nowrap tagtd"><?php echo img_object('', 'user').' '.$langs->trans("Users"); ?></div>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		<div class="tagtd"><?php echo $conf->global->MAIN_INFO_SOCIETE_NOM; ?></div>
 		<div class="tagtd maxwidthonsmartphone"><?php echo $form->select_dolusers($user->id, 'userid', 0, (! empty($userAlreadySelected)?$userAlreadySelected:null), 0, null, null, 0, 56, '', 0, '', 'minwidth200imp'); ?></div>
 		<div class="tagtd maxwidthonsmartphone">
 		<?php
 		$tmpobject=$object;
+<<<<<<< HEAD
 		if ($object->element == 'shipping' && is_object($objectsrc)) $tmpobject=$objectsrc;
 		echo $formcompany->selectTypeContact($tmpobject, '', 'type','internal');
+=======
+		if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) $tmpobject=$objectsrc;
+		echo $formcompany->selectTypeContact($tmpobject, '', 'type', 'internal');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		?></div>
 		<div class="tagtd">&nbsp;</div>
 		<div class="tagtd center"><input type="submit" class="button" value="<?php echo $langs->trans("Add"); ?>"></div>
@@ -115,7 +136,11 @@ if ($permission) {
 	<input type="hidden" name="action" value="addcontact" />
 	<input type="hidden" name="source" value="external" />
 	<?php if ($withproject) print '<input type="hidden" name="withproject" value="'.$withproject.'">'; ?>
+<<<<<<< HEAD
 		<div class="tagtd nowrap noborderbottom"><?php echo img_object('','contact').' '.$langs->trans("ThirdPartyContacts"); ?></div>
+=======
+		<div class="tagtd nowrap noborderbottom"><?php echo img_object('', 'contact').' '.$langs->trans("ThirdPartyContacts"); ?></div>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		<div class="tagtd nowrap maxwidthonsmartphone noborderbottom">
 			<?php $selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$object->socid; ?>
 			<?php
@@ -128,13 +153,22 @@ if ($permission) {
 			<?php $selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0, '', 'minwidth300imp'); ?>
 		</div>
 		<div class="tagtd maxwidthonsmartphone noborderbottom">
+<<<<<<< HEAD
 			<?php $nbofcontacts=$form->select_contacts(($selectedCompany > 0 ? $selectedCompany : -1), '', 'contactid', 3, '', '', 0, 'minwidth100imp'); ?>
+=======
+			<?php $nbofcontacts=$form->select_contacts(($selectedCompany > 0 ? $selectedCompany : -1), '', 'contactid', 3, '', '', 1, 'minwidth100imp'); ?>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		</div>
 		<div class="tagtd maxwidthonsmartphone noborderbottom">
 			<?php
 			$tmpobject=$object;
+<<<<<<< HEAD
 			if ($object->element == 'shipping' && is_object($objectsrc)) $tmpobject=$objectsrc;
 			$formcompany->selectTypeContact($tmpobject, '', 'type','external', 'position', 0, 'minwidth100imp'); ?>
+=======
+			if (($object->element == 'shipping'|| $object->element == 'reception') && is_object($objectsrc)) $tmpobject=$objectsrc;
+			$formcompany->selectTypeContact($tmpobject, '', 'type', 'external', 'position', 0, 'minwidth100imp'); ?>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		</div>
 		<div class="tagtd noborderbottom">&nbsp;</div>
 		<div class="tagtd center noborderbottom">
@@ -157,17 +191,29 @@ if ($permission) {
 	</form>
 
 	<?php
+<<<<<<< HEAD
+=======
+	$var = false;
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$arrayofsource=array('internal','external');	// Show both link to user and thirdparties contacts
 	foreach($arrayofsource as $source) {
 
 		$tmpobject=$object;
+<<<<<<< HEAD
 		if ($object->element == 'shipping' && is_object($objectsrc)) $tmpobject=$objectsrc;
 
 		$tab = $tmpobject->liste_contact(-1,$source);
+=======
+		if (($object->element == 'shipping'|| $object->element == 'reception') && is_object($objectsrc)) $tmpobject=$objectsrc;
+
+		$tab = $tmpobject->liste_contact(-1, $source);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$num=count($tab);
 
 		$i = 0;
 		while ($i < $num) {
+<<<<<<< HEAD
 	?>
 
 	<form class="tagtr oddeven">
@@ -176,6 +222,17 @@ if ($permission) {
 			<?php if ($tab[$i]['source']=='external') echo $langs->trans("ThirdPartyContact"); ?>
 		</div>
 		<div class="tagtd" align="left">
+=======
+		    $var = ! $var;
+	?>
+
+	<form class="tagtr oddeven <?php echo ($var?'impair':'pair') ?>">
+		<div class="tagtd left">
+			<?php if ($tab[$i]['source']=='internal') echo $langs->trans("User"); ?>
+			<?php if ($tab[$i]['source']=='external') echo $langs->trans("ThirdPartyContact"); ?>
+		</div>
+		<div class="tagtd left">
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			<?php
 			if ($tab[$i]['socid'] > 0)
 			{
@@ -199,12 +256,20 @@ if ($permission) {
 			if ($tab[$i]['source']=='internal')
 			{
 				$userstatic->fetch($tab[$i]['id']);
+<<<<<<< HEAD
 				echo $userstatic->getNomUrl(-1);
+=======
+				echo $userstatic->getNomUrl(-1, '', 0, 0, 0, 0, '', 'valignmiddle');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 			if ($tab[$i]['source']=='external')
 			{
 				$contactstatic->fetch($tab[$i]['id']);
+<<<<<<< HEAD
 				echo $contactstatic->getNomUrl(1);
+=======
+				echo $contactstatic->getNomUrl(1, '', 0, '', 0, 0, '', 'valignmiddle');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 			?>
 		</div>
@@ -214,11 +279,19 @@ if ($permission) {
 			<?php
 			if ($tab[$i]['source']=='internal')
 			{
+<<<<<<< HEAD
 				echo $userstatic->LibStatut($tab[$i]['statuscontact'],3);
 			}
 			if ($tab[$i]['source']=='external')
 			{
 				echo $contactstatic->LibStatut($tab[$i]['statuscontact'],3);
+=======
+				echo $userstatic->LibStatut($tab[$i]['statuscontact'], 3);
+			}
+			if ($tab[$i]['source']=='external')
+			{
+				echo $contactstatic->LibStatut($tab[$i]['statuscontact'], 3);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 			?>
 			<?php //if ($object->statut >= 0) echo '</a>'; ?>
@@ -231,7 +304,14 @@ if ($permission) {
 	</form>
 
 <?php $i++; ?>
+<<<<<<< HEAD
 <?php } } ?>
+=======
+<?php
+        }
+    }
+?>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 </div>
 </div>
@@ -241,7 +321,11 @@ if ($permission) {
 	{
 		$hookmanager->initHooks(array('contacttpl'));
 		$parameters=array();
+<<<<<<< HEAD
 		$reshook=$hookmanager->executeHooks('formContactTpl',$parameters,$object,$action);
+=======
+		$reshook=$hookmanager->executeHooks('formContactTpl', $parameters, $object, $action);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 ?>
 <!-- END PHP TEMPLATE CONTACTS -->

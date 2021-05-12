@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2010-2011 Laurent Destailleur  <eldy@users.sourceforge.org>
+<<<<<<< HEAD
  * Copyright (C) 2011      Regis Houssin  		<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2011      Regis Houssin  		<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +52,11 @@ $API_version="56";
  ' For the sandbox, the URL is       https://www.sandbox.paypal.com/webscr&cmd=_express-checkout&token=
  ' For the live site, the URL is        https://www.paypal.com/webscr&cmd=_express-checkout&token=
  */
+<<<<<<< HEAD
 if (! empty($conf->global->PAYPAL_API_SANDBOX) || GETPOST('forcesandbox','alpha'))		// We can force sand box with param 'forcesandbox'
+=======
+if (! empty($conf->global->PAYPAL_API_SANDBOX) || GETPOST('forcesandbox', 'alpha'))		// We can force sand box with param 'forcesandbox'
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
     $API_Endpoint = "https://api-3t.sandbox.paypal.com/nvp";
     $API_Url = "https://www.sandbox.paypal.com/webscr?cmd=_express-checkout&token=";
@@ -75,4 +83,7 @@ $PROXY_PORT = $conf->global->MAIN_PROXY_PORT;
 $PROXY_USER = $conf->global->MAIN_PROXY_USER;
 $PROXY_PASS = $conf->global->MAIN_PROXY_PASS;
 $USE_PROXY = empty($conf->global->MAIN_PROXY_USE)?false:true;
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

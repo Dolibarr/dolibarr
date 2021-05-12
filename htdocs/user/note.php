@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,9 +31,15 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
+<<<<<<< HEAD
 $id = GETPOST('id','int');
 $action = GETPOST('action','aZ09');
 $contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'usernote';   // To manage different context of search
+=======
+$id = GETPOST('id', 'int');
+$action = GETPOST('action', 'aZ09');
+$contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'usernote';   // To manage different context of search
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Load translation files required by page
 $langs->loadLangs(array('companies', 'members', 'bills', 'users'));
@@ -45,7 +55,11 @@ if (($object->id != $user->id) && (! $user->rights->user->user->lire)) accessfor
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
+<<<<<<< HEAD
 if ($user->id == $id) $feature2=''; // A user can always read its own card
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -57,14 +71,22 @@ $hookmanager->initHooks(array('usercard','usernote','globalcard'));
  */
 
 $parameters=array('id'=>$socid);
+<<<<<<< HEAD
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+=======
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook)) {
 	if ($action == 'update' && $user->rights->user->user->creer && !$_POST["cancel"]) {
 		$db->begin();
 
+<<<<<<< HEAD
 		$res = $object->update_note(dol_html_entity_decode(GETPOST('note_private','none'), ENT_QUOTES));
+=======
+		$res = $object->update_note(dol_html_entity_decode(GETPOST('note_private', 'none'), ENT_QUOTES));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if ($res < 0) {
 			$mesg = '<div class="error">'.$adh->error.'</div>';
 			$db->rollback();
@@ -96,7 +118,11 @@ if ($id)
 		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	}
 
+<<<<<<< HEAD
     dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
+=======
+    dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     print '<div class="underbanner clearboth"></div>';
 
@@ -118,7 +144,11 @@ if ($id)
 		print "<input type=\"hidden\" name=\"id\" value=\"".$object->id."\">";
 	    // Editeur wysiwyg
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+<<<<<<< HEAD
 		$doleditor=new DolEditor('note_private',$object->note,'',280,'dolibarr_notes','In',true,false,$conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_8,'90%');
+=======
+		$doleditor=new DolEditor('note_private', $object->note, '', 280, 'dolibarr_notes', 'In', true, false, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_8, '90%');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$doleditor->Create();
 	}
 	else
@@ -158,6 +188,11 @@ if ($id)
 	print "</form>\n";
 }
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

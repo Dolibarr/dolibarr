@@ -23,13 +23,18 @@
  *  \ingroup    projet
  *  \brief      Module to show Projet activity of the current Year
  */
+<<<<<<< HEAD
 include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
+=======
+include_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 /**
  * Class to manage the box to show last projet
  */
 class box_project extends ModeleBoxes
 {
+<<<<<<< HEAD
 	var $boxcode="project";
 	var $boximg="object_projectpub";
 	var $boxlabel;
@@ -39,6 +44,22 @@ class box_project extends ModeleBoxes
 
 	var $info_box_head = array();
 	var $info_box_contents = array();
+=======
+    public $boxcode="project";
+    public $boximg="object_projectpub";
+    public $boxlabel;
+    //var $depends = array("projet");
+
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    public $param;
+
+    public $info_box_head = array();
+    public $info_box_contents = array();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     /**
      *  Constructor
@@ -46,6 +67,7 @@ class box_project extends ModeleBoxes
      *  @param  DoliDB  $db         Database handler
      *  @param  string  $param      More parameters
      */
+<<<<<<< HEAD
     function __construct($db,$param='')
     {
         global $user, $langs;
@@ -54,10 +76,22 @@ class box_project extends ModeleBoxes
 
         $this->db = $db;
         $this->boxlabel="Projects";
+=======
+    public function __construct($db, $param = '')
+    {
+        global $user, $langs;
+
+        // Load translation files required by the page
+        $langs->loadLangs(array('boxes', 'projects'));
+
+        $this->db = $db;
+        $this->boxlabel="OpenedProjects";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         $this->hidden=! ($user->rights->projet->lire);
     }
 
+<<<<<<< HEAD
 	/**
 	*  Load data for box to show them later
 	*
@@ -101,6 +135,47 @@ class box_project extends ModeleBoxes
 
             $sql.= " ORDER BY p.datec DESC";
 			//$sql.= $db->plimit($max, 0);
+=======
+    /**
+    *  Load data for box to show them later
+    *
+    *  @param   int		$max        Maximum number of records to load
+    *  @return  void
+    */
+    public function loadBox($max = 5)
+    {
+        global $conf, $user, $langs, $db;
+
+        $this->max=$max;
+
+        $totalMnt = 0;
+        $totalnb = 0;
+        $totalnbTask=0;
+
+        $textHead = $langs->trans("OpenedProjects");
+        $this->info_box_head = array('text' => $textHead, 'limit'=> dol_strlen($textHead));
+
+        // list the summary of the orders
+        if ($user->rights->projet->lire) {
+
+            include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+            $projectstatic = new Project($this->db);
+
+            $socid=0;
+            //if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+
+            // Get list of project id allowed to user (in a string list separated by coma)
+            $projectsListId='';
+            if (! $user->rights->projet->all->lire) $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
+
+            $sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut, p.public";
+            $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+            $sql.= " WHERE p.fk_statut = 1"; // Only open projects
+            if (! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$projectsListId.")"; // public and assigned to, or restricted to company for external users
+
+            $sql.= " ORDER BY p.datec DESC";
+            //$sql.= $db->plimit($max, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
             $result = $db->query($sql);
 
@@ -116,9 +191,15 @@ class box_project extends ModeleBoxes
                     $projectstatic->public = $objp->public;
 
                     $this->info_box_contents[$i][] = array(
+<<<<<<< HEAD
                         'td' => '',
                         'text' => $projectstatic->getNomUrl(1),
                     	'asis' => 1
+=======
+                        'td' => 'class="nowraponall"',
+                        'text' => $projectstatic->getNomUrl(1),
+                        'asis' => 1
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                     );
 
                     $this->info_box_contents[$i][] = array(
@@ -126,6 +207,7 @@ class box_project extends ModeleBoxes
                         'text' => $objp->title,
                     );
 
+<<<<<<< HEAD
 					$sql ="SELECT count(*) as nb, sum(progress) as totprogress";
 					$sql.=" FROM ".MAIN_DB_PREFIX."projet as p LEFT JOIN ".MAIN_DB_PREFIX."projet_task as pt on pt.fk_projet = p.rowid";
 	           		$sql.= " WHERE p.entity IN (".getEntity('project').')';
@@ -133,15 +215,29 @@ class box_project extends ModeleBoxes
 					$resultTask = $db->query($sql);
 					if ($resultTask) {
 						$objTask = $db->fetch_object($resultTask);
+=======
+                    $sql ="SELECT count(*) as nb, sum(progress) as totprogress";
+                    $sql.=" FROM ".MAIN_DB_PREFIX."projet as p LEFT JOIN ".MAIN_DB_PREFIX."projet_task as pt on pt.fk_projet = p.rowid";
+                       $sql.= " WHERE p.entity IN (".getEntity('project').')';
+                    $sql.=" AND p.rowid = ".$objp->rowid;
+                    $resultTask = $db->query($sql);
+                    if ($resultTask) {
+                        $objTask = $db->fetch_object($resultTask);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                         $this->info_box_contents[$i][] = array(
                             'td' => 'class="right"',
                             'text' => $objTask->nb."&nbsp;".$langs->trans("Tasks"),
                         );
+<<<<<<< HEAD
 						if ($objTask->nb  > 0)
+=======
+                        if ($objTask->nb  > 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                             $this->info_box_contents[$i][] = array(
                                 'td' => 'class="right"',
                                 'text' => round($objTask->totprogress/$objTask->nb, 0)."%",
                             );
+<<<<<<< HEAD
 						else
 							$this->info_box_contents[$i][] = array('td' => 'class="right"', 'text' => "N/A&nbsp;");
 						$totalnbTask += $objTask->nb;
@@ -162,23 +258,54 @@ class box_project extends ModeleBoxes
 
 
 		// Add the sum à the bottom of the boxes
+=======
+                        else
+                            $this->info_box_contents[$i][] = array('td' => 'class="right"', 'text' => "N/A&nbsp;");
+                        $totalnbTask += $objTask->nb;
+                    } else {
+                        $this->info_box_contents[$i][] = array('td' => 'class="right"', 'text' => round(0));
+                        $this->info_box_contents[$i][] = array('td' => 'class="right"', 'text' => "N/A&nbsp;");
+                    }
+
+                    $i++;
+                }
+                if ($max < $num)
+                {
+                    $this->info_box_contents[$i][] = array('td' => 'colspan="5"', 'text' => '...');
+                    $i++;
+                }
+            }
+        }
+
+
+        // Add the sum à the bottom of the boxes
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $this->info_box_contents[$i][] = array(
             'td' => '',
             'text' => $langs->trans("Total")."&nbsp;".$textHead,
              'text' => "&nbsp;",
         );
         $this->info_box_contents[$i][] = array(
+<<<<<<< HEAD
             'td' => 'align="right" ',
             'text' => round($num, 0)."&nbsp;".$langs->trans("Projects"),
         );
         $this->info_box_contents[$i][] = array(
             'td' => 'align="right" ',
+=======
+            'td' => 'class="right" ',
+            'text' => round($num, 0)."&nbsp;".$langs->trans("Projects"),
+        );
+        $this->info_box_contents[$i][] = array(
+            'td' => 'class="right" ',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             'text' => (($max < $num) ? '' : (round($totalnbTask, 0)."&nbsp;".$langs->trans("Tasks"))),
         );
         $this->info_box_contents[$i][] = array(
             'td' => '',
             'text' => "&nbsp;",
         );
+<<<<<<< HEAD
 
 	}
 
@@ -196,3 +323,20 @@ class box_project extends ModeleBoxes
 	}
 }
 
+=======
+    }
+
+    /**
+     *	Method to show box
+     *
+     *	@param	array	$head       Array with properties of box title
+     *	@param  array	$contents   Array with properties of box lines
+     *  @param	int		$nooutput	No print, only return string
+     *	@return	string
+     */
+    public function showBox($head = null, $contents = null, $nooutput = 0)
+    {
+        return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+    }
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

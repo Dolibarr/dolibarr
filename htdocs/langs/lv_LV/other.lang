@@ -3,7 +3,11 @@ SecurityCode=Drošības kods
 NumberingShort=N°
 Tools=Darbarīki
 TMenuTools=Rīki
+<<<<<<< HEAD
 ToolsDesc=All miscellaneous tools not included in other menu entries are collected here.<br><br>All the tools can be reached in the left menu.
+=======
+ToolsDesc=Visi instrumenti, kas nav iekļauti citos izvēlnes ierakstos, tiek sagrupēti šeit. <br> Visiem rīkiem var piekļūt, izmantojot kreiso izvēlni.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Birthday=Dzimšanas diena
 BirthdayDate=Dzimšanas diena
 DateToBirth=Dzimšanas datums
@@ -11,7 +15,11 @@ BirthdayAlertOn=dzimšanas dienas brīdinājums aktīvs
 BirthdayAlertOff=dzimšanas dienas brīdinājums neaktīvs
 TransKey=Translation of the key TransKey
 MonthOfInvoice=Rēķina datuma mēnesis (no 1-12)
+<<<<<<< HEAD
 TextMonthOfInvoice=Month (text) of invoice date
+=======
+TextMonthOfInvoice=Rēķina datuma mēnesis (teksts)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PreviousMonthOfInvoice=Rēķina datuma iepriekšējais mēnesis (no 1-12)
 TextPreviousMonthOfInvoice=Previous month (text) of invoice date
 NextMonthOfInvoice=Pēc mēneša (no 1-12) rēķina datums
@@ -20,14 +28,22 @@ ZipFileGeneratedInto=Zip fails, kas ģenerēts <b> %s </b>.
 DocFileGeneratedInto=Doc fails ir izveidots <b> %s </b>.
 JumpToLogin=Atvienots. Iet uz pieteikšanās lapu ...
 MessageForm=Ziņa par tiešsaistes maksājuma veidlapu
+<<<<<<< HEAD
 MessageOK=Ziņu kopā ar apstiprinātu maksājuma atgriešanās lapā
 MessageKO=Ziņa par atcelto maksājumu atgriešanās lapā
 ContentOfDirectoryIsNotEmpty=Šīs direktorijas saturs nav tukšs.
 DeleteAlsoContentRecursively=Pārbaudiet, lai izdzēstu visu rekursīvu saturu
+=======
+MessageOK=Ziņojums apstiprinātā maksājuma lapā
+MessageKO=Ziņojums par atcelto maksājumu atgriešanas lapā
+ContentOfDirectoryIsNotEmpty=Šīs direktorijas saturs nav tukšs.
+DeleteAlsoContentRecursively=Pārbaudiet, lai rekursīvi izdzēstu visu saturu
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 YearOfInvoice=Rēķina datums
 PreviousYearOfInvoice=Iepriekšējā rēķina datuma gads
 NextYearOfInvoice=Pēc gada rēķina datuma
+<<<<<<< HEAD
 DateNextInvoiceBeforeGen=Nākamā rēķina datums (pirms paaudzes)
 DateNextInvoiceAfterGen=Nākamā rēķina datums (pēc paaudzes)
 
@@ -43,11 +59,26 @@ Notify_ORDER_SUPPLIER_REFUSE=Piegādātājs lai atteicās
 Notify_PROPAL_VALIDATE=Klientu priekšlikums apstiprināts
 Notify_PROPAL_CLOSE_SIGNED=Customer propal closed signed
 Notify_PROPAL_CLOSE_REFUSED=Customer propal closed refused
+=======
+DateNextInvoiceBeforeGen=Nākamā rēķina datums (pirms izveidošanas)
+DateNextInvoiceAfterGen=Nākamā rēķina datums (pēc paaudzes)
+
+Notify_ORDER_VALIDATE=Pārdošanas pasūtījums ir apstiprināts
+Notify_ORDER_SENTBYMAIL=Pārdošanas pasūtījums nosūtīts pa pastu
+Notify_ORDER_SUPPLIER_SENTBYMAIL=Pirkuma pasūtījums, kas nosūtīts pa e-pastu
+Notify_ORDER_SUPPLIER_VALIDATE=Pirkuma pasūtījums reģistrēts
+Notify_ORDER_SUPPLIER_APPROVE=Pirkuma pasūtījums apstiprināts
+Notify_ORDER_SUPPLIER_REFUSE=Pirkuma pasūtījums tika noraidīts
+Notify_PROPAL_VALIDATE=Klientu priekšlikums apstiprināts
+Notify_PROPAL_CLOSE_SIGNED=Klienta piedāvājums ir noslēgts parakstīts
+Notify_PROPAL_CLOSE_REFUSED=Klienta iesniegtais piedāvājums ir noraidīts
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Notify_PROPAL_SENTBYMAIL=Commercial priekšlikums nosūtīts pa pastu
 Notify_WITHDRAW_TRANSMIT=Pārraides atsaukšana
 Notify_WITHDRAW_CREDIT=Kredīta izņemšana
 Notify_WITHDRAW_EMIT=Veikt atcelšanu
 Notify_COMPANY_CREATE=Trešās puse izveidota
+<<<<<<< HEAD
 Notify_COMPANY_SENTBYMAIL=Mails sent from third party card
 Notify_BILL_VALIDATE=Klienta rēķins apstiprināts
 Notify_BILL_UNVALIDATE=Klienta rēķins neapstiprināts
@@ -60,6 +91,22 @@ Notify_BILL_SUPPLIER_SENTBYMAIL=Piegādātāja rēķins nosūtīts pa pastu
 Notify_BILL_SUPPLIER_CANCELED=Supplier invoice cancelled
 Notify_CONTRACT_VALIDATE=Līgums ir apstiprināts
 Notify_FICHEINTER_VALIDATE=Intervences apstiprināts
+=======
+Notify_COMPANY_SENTBYMAIL=Pasta sūtīšana no trešās puses kartiņas
+Notify_BILL_VALIDATE=Klienta rēķins apstiprināts
+Notify_BILL_UNVALIDATE=Klienta rēķins neapstiprināts
+Notify_BILL_PAYED=Klienta rēķins ir samaksāts
+Notify_BILL_CANCEL=Klienta rēķins atcelts
+Notify_BILL_SENTBYMAIL=Klienta rēķins nosūtīts pa pastu
+Notify_BILL_SUPPLIER_VALIDATE=Apstiprināts pārdevēja rēķins
+Notify_BILL_SUPPLIER_PAYED=Tiek samaksāts pārdevēja rēķins
+Notify_BILL_SUPPLIER_SENTBYMAIL=Pārdevēja rēķins, kas nosūtīts pa pastu
+Notify_BILL_SUPPLIER_CANCELED=Pārdevēja rēķins ir atcelts
+Notify_CONTRACT_VALIDATE=Līgums ir apstiprināts
+Notify_FICHEINTER_VALIDATE=Intervences apstiprināts
+Notify_FICHINTER_ADD_CONTACT=Added contact to Intervention
+Notify_FICHINTER_SENTBYMAIL=Intervences nosūtīt pa pastu
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Notify_SHIPPING_VALIDATE=Piegāde apstiprināta
 Notify_SHIPPING_SENTBYMAIL=Piegāde nosūtīta pa pastu
 Notify_MEMBER_VALIDATE=Dalībnieks apstiprināts
@@ -71,12 +118,20 @@ Notify_PROJECT_CREATE=Projekts izveidots
 Notify_TASK_CREATE=Uzdevums izveidots
 Notify_TASK_MODIFY=Uzdevums labots
 Notify_TASK_DELETE=Uzdevums dzēsts
+<<<<<<< HEAD
+=======
+Notify_EXPENSE_REPORT_VALIDATE=Izdevumu pārskats apstiprināts (nepieciešams apstiprinājums)
+Notify_EXPENSE_REPORT_APPROVE=Izdevumu pārskats ir apstiprināts
+Notify_HOLIDAY_VALIDATE=Atteikt pieprasījumu apstiprināt (nepieciešams apstiprinājums)
+Notify_HOLIDAY_APPROVE=Atvaļinājuma pieprasījums apstiprināts
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SeeModuleSetup=See setup of module %s
 NbOfAttachedFiles=Skaits pievienotos failus / dokumentus
 TotalSizeOfAttachedFiles=Kopējais apjoms pievienotos failus / dokumentus
 MaxSize=Maksimālais izmērs
 AttachANewFile=Pievienot jaunu failu / dokumentu
 LinkedObject=Saistītais objekts
+<<<<<<< HEAD
 NbOfActiveNotifications=Number of notifications (nb of recipient emails)
 PredefinedMailTest=__(Sveiki)__\nŠis ir testa pasts, kas nosūtīts uz __EMAIL__.\nAbas līnijas ir atdalītas ar vagona atgriešanu.\n\n__USER_SIGNATURE__
 PredefinedMailTestHtml=__(Sveiki)__\nŠis ir <b> testa </ ​​b> pasts (vārda pārbaude ir treknrakstā). <br> Divas rindas atdala ar rāmja atgriešanu. <br> <br> __USER_SIGNATURE__
@@ -94,12 +149,37 @@ PredefinedMailContentUser=__(Sveiki)__\n\n\n__ (Ar cieņu) __\n\n__USER_SIGNATUR
 PredefinedMailContentLink=You can click on the link below to make your payment if it is not already done.\n\n%s\n\n
 DemoDesc=Dolibarr is a compact ERP/CRM supporting several business modules. A demo showcasing all modules makes no sense as this scenario never occurs (several hundred available). So, several demo profiles are available.
 ChooseYourDemoProfil=Choose the demo profile that best suits your needs...
+=======
+NbOfActiveNotifications=Paziņojumu skaits (saņēmēju e-pasta ziņojumu skaits)
+PredefinedMailTest=__(Labdien)__\nŠis ir testa pasts, kas nosūtīts uz __EMAIL__.\nAbas līnijas ir atdalītas.\n\n__USER_SIGNATURE__
+PredefinedMailTestHtml=__(Labdien)__\nŠis ir <b> testa </b>pasts (vārds testa ir jābūt treknrakstā). <br> Divas rindas atdala ar rāmi. <br> <br> __USER_SIGNATURE__
+PredefinedMailContentContract=__(Labdien,)__\n\n\n__ (Ar cieņu) __\n\n__USER_SIGNATURE__
+PredefinedMailContentSendInvoice=__(Sveiki)__\n\nLūdzu, pievienojiet rēķinu __REF__\n\n__ONLINE_PAYMENT_TEXT_AND_URL__\n\n__ (Ar cieņu) __\n\n__USER_SIGNATURE__
+PredefinedMailContentSendInvoiceReminder=__(Sveiki)__\n\nMēs vēlētos jums atgādināt, ka rēķins __REF__, šķiet, nav samaksāts. Rēķina kopija ir pievienota kā atgādinājums.\n\n__ONLINE_PAYMENT_TEXT_AND_URL__\n\n__ (Ar cieņu) __\n\n__USER_SIGNATURE__
+PredefinedMailContentSendProposal=__(Sveiki)__\n\nLūdzu, pievienojiet komerciālo piedāvājumu __REF__\n\n\n__ (Ar cieņu) __\n\n__USER_SIGNATURE__
+PredefinedMailContentSendSupplierProposal=__(Labdien,)__\n\nLūdzu, apskatiet cenu pieprasījums __REF__ pievienots\n\n\n__ (Ar cieņu) __\n\n__USER_SIGNATURE__
+PredefinedMailContentSendOrder=__(Sveiki)__\n\nLūdzu, pasūtiet pasūtījumu __REF__\n\n\n__ (Ar cieņu) __\n\n__USER_SIGNATURE__
+PredefinedMailContentSendSupplierOrder=__(Sveiki)__\n\nLūdzu, pievienojiet pasūtījumu __REF__\n\n\n__ (Ar cieņu) __\n\n__USER_SIGNATURE__
+PredefinedMailContentSendSupplierInvoice=__(Sveiki)__\n\nLūdzu, pievienojiet rēķinu __REF__\n\n\n__ (Ar cieņu) __\n\n__USER_SIGNATURE__
+PredefinedMailContentSendShipping=__(Sveiki)__\n\nLūdzu, nosūtiet sūtījumu __REF__\n\n\n__ (Ar cieņu) __\n\n__USER_SIGNATURE__
+PredefinedMailContentSendFichInter=__(Sveiki)__\n\nLūdzu, skatiet interviju __REF__\n\n\n__ (Ar cieņu) __\n\n__USER_SIGNATURE__
+PredefinedMailContentThirdparty=__(Sveiki)__\n\n\n__ (Ar cieņu) __\n\n__USER_SIGNATURE__
+PredefinedMailContentContact=__(Labdien,)__\n\n\n__ (Ar cieņu) __\n\n__USER_SIGNATURE__
+PredefinedMailContentUser=__(Labdien,)__\n\n\n__ (Ar cieņu) __\n\n__USER_SIGNATURE__
+PredefinedMailContentLink=Jūs varat noklikšķināt uz zemāk esošās saites, lai veiktu maksājumu, ja tas vēl nav izdarīts.\n\n%s\n\n
+DemoDesc=Dolibarr ir kompakts ERP / CRM, kas atbalsta vairākus biznesa moduļus. Demonstrācija, kas demonstrē visus moduļus, nav jēga, jo šis scenārijs nekad nenotiek (pieejami vairāki simti). Tātad, ir pieejami vairāki demo profili.
+ChooseYourDemoProfil=Izvēlies demo profilu, kas vislabāk atbilst jūsu vajadzībām ...
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ChooseYourDemoProfilMore=... vai izveidojiet savu profilu <br> (manuālā moduļa izvēle)
 DemoFundation=Pārvaldīt locekļus nodibinājumam
 DemoFundation2=Pārvaldīt dalībniekus un bankas kontu nodibinājumam
 DemoCompanyServiceOnly=Company or freelance selling service only
 DemoCompanyShopWithCashDesk=Pārvaldīt veikals ar kasē
+<<<<<<< HEAD
 DemoCompanyProductAndStocks=Company selling products with a shop
+=======
+DemoCompanyProductAndStocks=Uzņēmums, kas pārdod produktus veikalā
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DemoCompanyAll=Company with multiple activities (all main modules)
 CreatedBy=Izveidoja %s
 ModifiedBy=Laboja %s
@@ -164,6 +244,7 @@ SizeUnitmm=mm
 SizeUnitinch=colla
 SizeUnitfoot=pēda
 SizeUnitpoint=punkts
+<<<<<<< HEAD
 BugTracker=Bug tracker
 SendNewPasswordDesc=Šī veidlapa ļauj pieprasīt jaunu paroli. Tas tiks nosūtīts uz jūsu e-pasta adresi. <br> Mainīšana stāsies spēkā pēc tam, kad noklikšķināsit uz e-pasta ziņojuma apstiprinājuma saites. <br> Pārbaudiet savu iesūtni.
 BackToLoginPage=Atpakaļ uz autorizācijas lapu
@@ -197,6 +278,46 @@ EMailTextOrderApprovedBy=Pasūtījumu %s ir apstiprinājis %s.
 EMailTextOrderRefused=Pasūtījums %s ir noraidīts.
 EMailTextOrderRefusedBy=Pasūtījums %s ir noraidījis %s.
 EMailTextExpeditionValidated=Kuģniecības %s ir apstiprināta.
+=======
+BugTracker=Kļūdu meklētājs
+SendNewPasswordDesc=Šī veidlapa ļauj pieprasīt jaunu paroli. Tas tiks nosūtīts uz jūsu e-pasta adresi. <br> Mainīšana stāsies spēkā pēc tam, kad noklikšķināsit uz e-pasta ziņojuma apstiprinājuma saites. <br> Pārbaudiet savu iesūtni.
+BackToLoginPage=Atpakaļ uz autorizācijas lapu
+AuthenticationDoesNotAllowSendNewPassword=Autentifikācijas režīms ir <b>%s.</b> <br> Šajā režīmā, Dolibarr nevar zināt, ne nomainīt savu paroli. <br> Sazinieties ar sistēmas administratoru, ja jūs vēlaties mainīt savu paroli.
+EnableGDLibraryDesc=Instalējiet vai iespējojiet GD bibliotēku savā PHP instalācijā, lai izmantotu šo opciju.
+ProfIdShortDesc=<b>Prof ID %s</b> ir informācija, atkarībā no trešās puses valstīm. <br> Piemēram, attiecībā uz valstu <b>%s,</b> tas ir kods <b>%s.</b>
+DolibarrDemo=Dolibarr ERP/CRM demo
+StatsByNumberOfUnits=Statistics for sum of qty of products/services
+StatsByNumberOfEntities=Pārskatu subjektu skaita statistika (rēķina numurs vai pasūtījums ...)
+NumberOfProposals=Priekšlikumu skaits
+NumberOfCustomerOrders=Pārdošanas pasūtījumu skaits
+NumberOfCustomerInvoices=Klientu rēķinu skaits
+NumberOfSupplierProposals=Pārdevēja priekšlikumu skaits
+NumberOfSupplierOrders=Pirkuma pasūtījumu skaits
+NumberOfSupplierInvoices=Pārdevēja rēķinu skaits
+NumberOfUnitsProposals=Number of units on proposals
+NumberOfUnitsCustomerOrders=Vienību skaits pārdošanas pasūtījumos
+NumberOfUnitsCustomerInvoices=Number of units on customer invoices
+NumberOfUnitsSupplierProposals=Vienību skaits pārdevēja priekšlikumos
+NumberOfUnitsSupplierOrders=Vienību skaits pirkuma pasūtījumos
+NumberOfUnitsSupplierInvoices=Vienību skaits pārdevēja rēķinos
+EMailTextInterventionAddedContact=Jums ir piešķirta jauna iejaukšanās %s.
+EMailTextInterventionValidated=Iejaukšanās %s ir apstiprināta.
+EMailTextInvoiceValidated=Rēķins %s ir apstiprināts.
+EMailTextInvoicePayed=Rēķins %s ir samaksāts.
+EMailTextProposalValidated=Priekšlikums %s ir apstiprināts.
+EMailTextProposalClosedSigned=Priekšlikums %s ir slēgts.
+EMailTextOrderValidated=Pasūtījums %s ir apstiprināts.
+EMailTextOrderApproved=Pasūtījums %s ir apstiprināts.
+EMailTextOrderValidatedBy=Pasūtījums %s ir reģistrēts ar %s.
+EMailTextOrderApprovedBy=Pasūtījums %s ir apstiprinājis %s.
+EMailTextOrderRefused=Pasūtījums %s ir noraidīts.
+EMailTextOrderRefusedBy=Pasūtījumu %s noraidīja %s.
+EMailTextExpeditionValidated=Piegāde %s ir apstiprināta.
+EMailTextExpenseReportValidated=Izdevumu pārskats %s ir apstiprināts.
+EMailTextExpenseReportApproved=Izdevumu pārskats %s ir apstiprināts.
+EMailTextHolidayValidated=Atstāt pieprasījumu %s ir apstiprināta.
+EMailTextHolidayApproved=Atstāt pieprasījumu %s ir apstiprināts.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ImportedWithSet=Ievešanas datu kopu
 DolibarrNotification=Automātiska paziņošana
 ResizeDesc=Ievadiet jaunu platumu <b>vai</b> jaunu augstumu. Attiecība būs jātur laikā izmēru maiņas ...
@@ -204,7 +325,11 @@ NewLength=Jauns platums
 NewHeight=Jauns augstums
 NewSizeAfterCropping=Jauns izmērs pēc apgriešanas
 DefineNewAreaToPick=Definēt jaunu apgabalu uz attēla, lai uzņemt (pa kreisi noklikšķiniet uz attēla, pēc tam velciet, līdz jūs sasniegsiet pretējo stūri)
+<<<<<<< HEAD
 CurrentInformationOnImage=Šis rīks ir izstrādāts, lai palīdzētu jums, lai mainītu vai apgrieztu attēlu. Šī ir informācija par pašreizējo edited attēlu
+=======
+CurrentInformationOnImage=Šis rīks tika izveidots, lai palīdzētu jums mainīt attēla izmērus vai apgriezt tos. Šī ir informācija par pašreizējo rediģēto attēlu
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ImageEditor=Attēlu redaktors
 YouReceiveMailBecauseOfNotification=Jūs saņemat šo ziņojumu, jo jūsu e-pasts ir pievienota saraksta mērķiem ir informēt par konkrētiem notikumiem uz %s programmatūru %s.
 YouReceiveMailBecauseOfNotification2=Šis notikums ir šādi:
@@ -225,16 +350,32 @@ NewKeyWillBe=Jūsu jaunais galvenais, lai pieteiktos uz programmatūru, būs
 ClickHereToGoTo=Klikšķiniet šeit, lai dotos uz %s
 YouMustClickToChange=Jums ir Taču vispirms noklikšķiniet uz šīs saites, lai apstiprinātu šo paroles maiņa
 ForgetIfNothing=Ja Jums nav lūgt šīs izmaiņas, vienkārši aizmirst šo e-pastu. Jūsu akreditācijas dati tiek glabāti drošībā.
+<<<<<<< HEAD
 IfAmountHigherThan=If amount higher than <strong>%s</strong>
+=======
+IfAmountHigherThan=Ja summa pārsniedz  <strong>%s </strong>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SourcesRepository=Repository for sources
 Chart=Diagramma
 PassEncoding=Paroles kodēšana
 PermissionsAdd=Pievienotas atļaujas
 PermissionsDelete=Atļaujas noņemtas
+<<<<<<< HEAD
 YourPasswordMustHaveAtLeastXChars=Jūsu parolei ir jābūt vismaz <strong> %s </ strong> simboliem
 YourPasswordHasBeenReset=Jūsu parole ir veiksmīgi atiestatīta
 ApplicantIpAddress=Pieteikuma iesniedzēja IP adrese
 SMSSentTo=SMS nosūtīta uz %s
+=======
+YourPasswordMustHaveAtLeastXChars=Jūsu parolei ir jāsatur vismaz <strong>%s</strong> simbolus
+YourPasswordHasBeenReset=Jūsu parole ir veiksmīgi atiestatīta
+ApplicantIpAddress=Pieteikuma iesniedzēja IP adrese
+SMSSentTo=SMS nosūtīta uz %s
+MissingIds=Trūkst ID
+ThirdPartyCreatedByEmailCollector=Trešā puse, ko izveidojis e-pasta savācējs no e-pasta MSGID %s
+ContactCreatedByEmailCollector=Kontaktpersona / adrese, ko izveidojis e-pasta kolekcionārs no e-pasta MSGID %s
+ProjectCreatedByEmailCollector=Projekts, ko izveidojis e-pasta savācējs no e-pasta MSGID %s
+TicketCreatedByEmailCollector=Biļete, ko izveidojis e-pasta kolekcionārs no e-pasta MSGID %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 ##### Export #####
 ExportsArea=Eksportēšanas sadaļa
@@ -248,5 +389,15 @@ WebsiteSetup=Moduļa vietnes iestatīšana
 WEBSITE_PAGEURL=Lapas URL
 WEBSITE_TITLE=Virsraksts
 WEBSITE_DESCRIPTION=Apraksts
+<<<<<<< HEAD
 WEBSITE_KEYWORDS=Atslēgas vārdi
 LinesToImport=Importa līnijas
+=======
+WEBSITE_IMAGE=Attēls
+WEBSITE_IMAGEDesc=Attēlu nesēja relatīvais ceļš. Jūs varat to paturēt tukša, jo to reti izmanto (to var izmantot dinamiskais saturs, lai parādītu emuāra ziņu saraksta priekšskatījumu).
+WEBSITE_KEYWORDS=Atslēgas vārdi
+LinesToImport=Importējamās līnijas
+
+MemoryUsage=Atmiņas izmantošana
+RequestDuration=Pieprasījuma ilgums
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

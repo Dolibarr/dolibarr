@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/html.form.class.php';
 class FormOrder extends Form
 {
 
+<<<<<<< HEAD
 	/**
      *    Return combo list of differents status of a orders
      *
@@ -40,6 +41,17 @@ class FormOrder extends Form
      *    @return	void
      */
     public function selectSupplierOrderStatus($selected='', $short=0, $hmlname='order_status')
+=======
+    /**
+     *  Return combo list of differents status of a orders
+     *
+     *  @param	string	$selected   Preselected value
+     *  @param	int		$short		Use short labels
+     *  @param	string	$hmlname	Name of HTML select element
+     *  @return	void
+     */
+    public function selectSupplierOrderStatus($selected = '', $short = 0, $hmlname = 'order_status')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
 	    $options = array();
 
@@ -74,7 +86,11 @@ class FormOrder extends Form
 	 *  @param  int		$addempty		0=list with no empty value, 1=list with empty value
 	 *  @return	array					Tableau des sources de commandes
 	 */
+<<<<<<< HEAD
 	public function selectInputMethod($selected='',$htmlname='source_id',$addempty=0)
+=======
+	public function selectInputMethod($selected = '', $htmlname = 'source_id', $addempty = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 
@@ -96,6 +112,7 @@ class FormOrder extends Form
 			$listofmethods[$obj->rowid] = $langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : $obj->label;
 		}
 
+<<<<<<< HEAD
 		print Form::selectarray($htmlname,$listofmethods,$selected,$addempty);
 
 		return 1;
@@ -103,3 +120,10 @@ class FormOrder extends Form
 
 }
 
+=======
+		print Form::selectarray($htmlname, $listofmethods, $selected, $addempty);
+
+		return 1;
+	}
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

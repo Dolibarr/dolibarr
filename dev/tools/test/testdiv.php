@@ -21,6 +21,7 @@
 
 <div class="center">
 
+<<<<<<< HEAD
 <div class="login_table" align="center">
 
 <!-- <tr><td colspan="2" valign="middle"> -->
@@ -29,6 +30,16 @@
 <div id="login_left" style="display: inline-block; min-width: 250px; margin: 0 auto;"><div class="center">
 
 <table class="none" summary="Login pass" cellpadding="2" align="center">
+=======
+<div class="login_table center">
+
+<!-- <tr><td colspan="2" valign="middle"> -->
+<div id="login_line1" class="center">
+
+<div id="login_left" style="display: inline-block; min-width: 250px; margin: 0 auto;"><div class="center">
+
+<table class="none center" summary="Login pass" cellpadding="2">
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 <!-- Login -->
 <tr>
@@ -50,7 +61,11 @@
 </div> <!-- end div left -->
 
 <!-- </td>
+<<<<<<< HEAD
 <td align="center" valign="middle">-->
+=======
+<td class="center" valign="middle">-->
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 <div id="login_right" style="display: inline-block; min-width: 250px; margin: 0 auto;">
 
 <img alt="Logo" title="" src="/dolibarrnew/theme/dolibarr_logo.png" id="img_logo" />

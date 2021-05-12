@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2006-2010	Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2006-2017	Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2006-2017	Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +36,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 $langs->loadLangs(array('companies', 'ldap'));
 $langs->load("admin");
 
+<<<<<<< HEAD
 $action=GETPOST('action','aZ09');
+=======
+$action=GETPOST('action', 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Security check
 $id = GETPOST('id', 'int');
@@ -61,7 +69,11 @@ if ($action == 'dolibarr2ldap')
 	$dn=$object->_load_ldap_dn($info);
 	$olddn=$dn;	// We can say that old dn = dn as we force synchro
 
+<<<<<<< HEAD
 	$result=$ldap->update($dn,$info,$user,$olddn);
+=======
+	$result=$ldap->update($dn, $info, $user, $olddn);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	if ($result >= 0)
 	{
@@ -82,7 +94,11 @@ if ($action == 'dolibarr2ldap')
 
 $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 
+<<<<<<< HEAD
 llxHeader('',$title,'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
+=======
+llxHeader('', $title, 'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $form = new Form($db);
 
@@ -170,9 +186,15 @@ $result=$ldap->connect_bind();
 if ($result > 0)
 {
 	$info=$object->_load_ldap_info();
+<<<<<<< HEAD
 	$dn=$object->_load_ldap_dn($info,1);
 	$search = "(".$object->_load_ldap_dn($info,2).")";
 	$records = $ldap->getAttribute($dn,$search);
+=======
+	$dn=$object->_load_ldap_dn($info, 1);
+	$search = "(".$object->_load_ldap_dn($info, 2).")";
+	$records = $ldap->getAttribute($dn, $search);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	//var_dump($records);
 
@@ -185,7 +207,11 @@ if ($result > 0)
 		}
 		else
 		{
+<<<<<<< HEAD
 			$result=show_ldap_content($records,0,$records['count'],true);
+=======
+			$result=show_ldap_content($records, 0, $records['count'], true);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 	}
 	else

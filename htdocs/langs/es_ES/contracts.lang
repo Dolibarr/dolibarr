@@ -64,7 +64,12 @@ DateStartRealShort=Fecha inicio
 DateEndReal=Fecha real fin del servicio
 DateEndRealShort=Fecha real finalización
 CloseService=Finalizar servicio
+<<<<<<< HEAD
 BoardRunningServices=Servicios activos expirados
+=======
+BoardRunningServices=Servicios activos
+BoardExpiredServices=Servicios expirados
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ServiceStatus=Estado del servicio
 DraftContracts=Contractos borrador
 CloseRefusedBecauseOneServiceActive=El contrato no puede ser cerrado ya que contiene al menos un servicio abierto.
@@ -85,10 +90,17 @@ NoteListOfYourExpiredServices=Este listado contiene solamente los servicios de c
 StandardContractsTemplate=Modelo de contrato estandar 
 ContactNameAndSignature=Para %s, nombre y firma:
 OnlyLinesWithTypeServiceAreUsed=Solo serán clonadas las líneas del tipo "Servicio"
+<<<<<<< HEAD
 CloneContract=Copiar contacto
 ConfirmCloneContract=¿Está seguro de querer copiar el contrato <b>%s</b>?
 LowerDateEndPlannedShort=La fecha de finalización planificada es anterior a los servicios activos
 SendContractRef=Información del contrato __REF__
+=======
+ConfirmCloneContract=¿Está seguro de querer copiar el contrato <b>%s</b>?
+LowerDateEndPlannedShort=La fecha de finalización planificada es anterior a los servicios activos
+SendContractRef=Información del contrato __REF__
+OtherContracts=Otros contratos
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Comercial firmante del contrato
 TypeContact_contrat_internal_SALESREPFOLL=Comercial seguimiento del contrato

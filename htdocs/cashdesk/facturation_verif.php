@@ -29,10 +29,17 @@ require_once DOL_DOCUMENT_ROOT.'/cashdesk/class/Facturation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
+<<<<<<< HEAD
 $action = GETPOST('action','alpha');
 
 $obj_facturation = unserialize($_SESSION['serObjFacturation']);
 unset ($_SESSION['serObjFacturation']);
+=======
+$action = GETPOST('action', 'alpha');
+
+$obj_facturation = unserialize($_SESSION['serObjFacturation']);
+unset($_SESSION['serObjFacturation']);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 switch($action)
@@ -49,11 +56,19 @@ switch($action)
 			// Recuperation des donnees en fonction de la source (liste deroulante ou champ texte) ...
 			if ( $_POST['hdnSource'] == 'LISTE' )
 			{
+<<<<<<< HEAD
 				$sql.= " AND p.rowid = ".$_POST['selProduit'];
 			}
 			else if ( $_POST['hdnSource'] == 'REF' )
 			{
 				$sql.= " AND p.ref = '".$_POST['txtRef']."'";
+=======
+				$sql.= " AND p.rowid = ".((int) GETPOST('selProduit', 'int'));
+			}
+			elseif ( $_POST['hdnSource'] == 'REF' )
+			{
+				$sql.= " AND p.ref = '".$db->escape(GETPOST('txtRef', 'alpha'))."'";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 
 			$result = $db->query($sql);
@@ -64,7 +79,11 @@ switch($action)
 				{
 					$ret=array();
 					$tab = $db->fetch_array($result);
+<<<<<<< HEAD
 					foreach ( $tab as $key => $value )
+=======
+					foreach ($tab as $key => $value)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					{
 						$ret[$key] = $value;
 					}
@@ -163,7 +182,11 @@ switch($action)
 					{
 						$filtre = $ret['ref'];
 					}
+<<<<<<< HEAD
 					else if ( $_POST['hdnSource'] == 'REF' )
+=======
+					elseif ( $_POST['hdnSource'] == 'REF' )
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					{
 						$filtre = $_POST['txtRef'];
 					}
@@ -197,7 +220,11 @@ switch($action)
 		break;
 
 	case 'change_thirdparty':	// We have clicked on button "Modify" a thirdparty
+<<<<<<< HEAD
 		$newthirdpartyid = GETPOST('CASHDESK_ID_THIRDPARTY','int');
+=======
+		$newthirdpartyid = GETPOST('CASHDESK_ID_THIRDPARTY', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if ($newthirdpartyid > 0)
 		{
 		    $_SESSION["CASHDESK_ID_THIRDPARTY"] = $newthirdpartyid;
@@ -216,7 +243,10 @@ switch($action)
 			$obj_facturation->remisePercent($_POST['txtRemise']);
 			$obj_facturation->ajoutArticle();	// This add an entry into $_SESSION['poscart']
 			// We update prixTotalTtc
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=facturation';
@@ -227,7 +257,10 @@ switch($action)
 
 		$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=facturation';
 		break;
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 // We saved object obj_facturation
@@ -235,4 +268,7 @@ $_SESSION['serObjFacturation'] = serialize($obj_facturation);
 //var_dump($_SESSION['serObjFacturation']);
 header('Location: '.$redirection);
 exit;
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

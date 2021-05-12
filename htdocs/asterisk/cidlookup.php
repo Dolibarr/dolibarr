@@ -31,9 +31,15 @@ include '../master.inc.php';
 
 $phone = GETPOST('phone');
 $notfound = $langs->trans("Unknown");
+<<<<<<< HEAD
  
 // Security check
 if (empty($conf->clicktodial->enabled)) 
+=======
+
+// Security check
+if (empty($conf->clicktodial->enabled))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
     print "Error: Module Click to dial is not enabled.\n";
     exit;
@@ -70,7 +76,11 @@ if ($resql)
 }
 else
 {
+<<<<<<< HEAD
 	dol_print_error($db,'Error');
+=======
+	dol_print_error($db, 'Error');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$found = 'Error';
 }
 //Greek to Latin

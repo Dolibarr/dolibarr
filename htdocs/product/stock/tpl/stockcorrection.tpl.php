@@ -1,5 +1,10 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2010-2017 Laurent Destailleur <eldy@users.sourceforge.net>
+=======
+/* Copyright (C) 2010-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +24,12 @@
  */
 
 // Protection to avoid direct call of template
+<<<<<<< HEAD
 if (empty($conf) || ! is_object($conf))
 {
+=======
+if (empty($conf) || ! is_object($conf)) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -53,7 +62,11 @@ if (empty($conf) || ! is_object($conf))
 		</script>';
 
 
+<<<<<<< HEAD
 		print load_fiche_titre($langs->trans("StockCorrection"),'','title_generic.png');
+=======
+		print load_fiche_titre($langs->trans("StockCorrection"), '', 'title_generic.png');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">'."\n";
 
@@ -70,7 +83,11 @@ if (empty($conf) || ! is_object($conf))
 		{
 			print '<td class="fieldrequired">'.$langs->trans("Warehouse").'</td>';
 			print '<td>';
+<<<<<<< HEAD
 			print $formproduct->selectWarehouses((GETPOST("dwid")?GETPOST("dwid",'int'):(GETPOST('id_entrepot')?GETPOST('id_entrepot','int'):($object->element=='product' && $object->fk_default_warehouse?$object->fk_default_warehouse:'ifone'))), 'id_entrepot', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, null, 'minwidth100');
+=======
+			print $formproduct->selectWarehouses((GETPOST("dwid")?GETPOST("dwid", 'int'):(GETPOST('id_entrepot')?GETPOST('id_entrepot', 'int'):($object->element=='product' && $object->fk_default_warehouse?$object->fk_default_warehouse:'ifone'))), 'id_entrepot', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, null, 'minwidth100');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     		print ' &nbsp; <select name="mouvement" id="mouvement">';
     		print '<option value="0">'.$langs->trans("Add").'</option>';
     		print '<option value="1"'.(GETPOST('mouvement')?' selected="selected"':'').'>'.$langs->trans("Delete").'</option>';
@@ -81,7 +98,11 @@ if (empty($conf) || ! is_object($conf))
 		{
 			print '<td class="fieldrequired">'.$langs->trans("Product").'</td>';
 	        print '<td>';
+<<<<<<< HEAD
 	        print $form->select_produits(GETPOST('product_id'), 'product_id', (empty($conf->global->STOCK_SUPPORTS_SERVICES)?'0':''), 20, 0, -1, 2, '', 0, null, 0, 1, 0, 'maxwidth500');
+=======
+	        print $form->select_produits(GETPOST('product_id', 'int'), 'product_id', (empty($conf->global->STOCK_SUPPORTS_SERVICES)?'0':''), 0, 0, -1, 2, '', 0, null, 0, 1, 0, 'maxwidth500');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     		print ' &nbsp; <select name="mouvement" id="mouvement">';
     		print '<option value="0">'.$langs->trans("Add").'</option>';
     		print '<option value="1"'.(GETPOST('mouvement')?' selected="selected"':'').'>'.$langs->trans("Delete").'</option>';
@@ -100,7 +121,11 @@ if (empty($conf) || ! is_object($conf))
 		{
 			print '<td>'.$langs->trans('Project').'</td>';
 			print '<td>';
+<<<<<<< HEAD
 			$formproject->select_projects(0, '', 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, 0, 'maxwidth300');
+=======
+			$formproject->select_projects(-1, '', 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, 0, 'maxwidth300');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '</td>';
 		}
 		print '</tr>';
@@ -119,23 +144,39 @@ if (empty($conf) || ! is_object($conf))
 			print '<tr>';
 			print '<td>'.$langs->trans("EatByDate").'</td><td>';
 			$eatbyselected=dol_mktime(0, 0, 0, GETPOST('eatbymonth'), GETPOST('eatbyday'), GETPOST('eatbyyear'));
+<<<<<<< HEAD
 			$form->select_date($eatbyselected,'eatby','','',1,"");
 			print '</td>';
 			print '<td>'.$langs->trans("SellByDate").'</td><td>';
 			$sellbyselected=dol_mktime(0, 0, 0, GETPOST('sellbymonth'), GETPOST('sellbyday'), GETPOST('sellbyyear'));
 			$form->select_date($sellbyselected,'sellby','','',1,"");
+=======
+			print $form->selectDate($eatbyselected, 'eatby', '', '', 1, "");
+			print '</td>';
+			print '<td>'.$langs->trans("SellByDate").'</td><td>';
+			$sellbyselected=dol_mktime(0, 0, 0, GETPOST('sellbymonth'), GETPOST('sellbyday'), GETPOST('sellbyyear'));
+			print $form->selectDate($sellbyselected, 'sellby', '', '', 1, "");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '</td>';
 			print '</tr>';
 		}
 
 		// Label of mouvement of id of inventory
+<<<<<<< HEAD
 		$valformovementlabel=((GETPOST("label") && (GETPOST('label') != $langs->trans("MovementCorrectStock",''))) ? GETPOST("label") : $langs->trans("MovementCorrectStock", $productref));
+=======
+		$valformovementlabel=((GETPOST("label") && (GETPOST('label') != $langs->trans("MovementCorrectStock", ''))) ? GETPOST("label") : $langs->trans("MovementCorrectStock", $productref));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '<tr>';
 		print '<td>'.$langs->trans("MovementLabel").'</td>';
 		print '<td>';
 		print '<input type="text" name="label" class="minwidth300" value="'.$valformovementlabel.'">';
 		print '</td>';
+<<<<<<< HEAD
 		print '<td>'.$langs->trans("InventoryCode").'</td><td><input class="maxwidth100onsmartphone" name="inventorycode" id="inventorycode" value="'.(isset($_POST["inventorycode"])?GETPOST("inventorycode",'alpha'):dol_print_date(dol_now(),'%y%m%d%H%M%S')).'"></td>';
+=======
+		print '<td>'.$langs->trans("InventoryCode").'</td><td><input class="maxwidth100onsmartphone" name="inventorycode" id="inventorycode" value="'.(isset($_POST["inventorycode"])?GETPOST("inventorycode", 'alpha'):dol_print_date(dol_now(), '%y%m%d%H%M%S')).'"></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</tr>';
 
 		print '</table>';

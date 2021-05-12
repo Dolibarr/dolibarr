@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2013-2014	Olivier Geffroy			<jeff@jeffinfo.com>
+<<<<<<< HEAD
  * Copyright (C) 2013-2017	Alexandre Spangaro		<aspangaro@zendsi.com>
+=======
+ * Copyright (C) 2013-2017	Alexandre Spangaro		<aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2014-2015	Ari Elbaz (elarifr)		<github@accedinfo.com>
  * Copyright (C) 2013-2014	Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>s
@@ -22,7 +26,11 @@
 
 /**
  * \file 		htdocs/accountancy/expensereport/list.php
+<<<<<<< HEAD
  * \ingroup 	Advanced accountancy
+=======
+ * \ingroup 	Accountancy (Double entries)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * \brief 		Ventilation page from expense reports
  */
 require '../../main.inc.php';
@@ -37,10 +45,17 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("bills","compta","accountancy","other","trips","productbatch"));
 
+<<<<<<< HEAD
 $action=GETPOST('action','alpha');
 $massaction=GETPOST('massaction','alpha');
 $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
+=======
+$action=GETPOST('action', 'alpha');
+$massaction=GETPOST('massaction', 'alpha');
+$show_files=GETPOST('show_files', 'int');
+$confirm=GETPOST('confirm', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $toselect = GETPOST('toselect', 'array');
 
 // Select Box
@@ -53,17 +68,30 @@ $search_desc = GETPOST('search_desc', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 $search_account = GETPOST('search_account', 'alpha');
 $search_vat = GETPOST('search_vat', 'alpha');
+<<<<<<< HEAD
 $search_day=GETPOST("search_day","int");
 $search_month=GETPOST("search_month","int");
 $search_year=GETPOST("search_year","int");
+=======
+$search_day=GETPOST("search_day", "int");
+$search_month=GETPOST("search_month", "int");
+$search_year=GETPOST("search_year", "int");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $btn_ventil = GETPOST('ventil', 'alpha');
 
 // Load variable for pagination
+<<<<<<< HEAD
 $limit = GETPOST('limit','int')?GETPOST('limit', 'int'):(empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)?$conf->liste_limit:$conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page','int');
+=======
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):(empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)?$conf->liste_limit:$conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page < 0) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -92,11 +120,19 @@ $chartaccountcode = dol_getIdFromCode($db, $conf->global->CHARTOFACCOUNTS, 'acco
  * Action
  */
 
+<<<<<<< HEAD
 if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
 if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 // Purge search criteria
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
+=======
+if (GETPOST('cancel', 'alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+
+// Purge search criteria
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
     $search_expensereport = '';
     $search_label = '';
@@ -128,7 +164,11 @@ if ($massaction == 'ventil') {
         $ok=0;
         $ko=0;
 
+<<<<<<< HEAD
         foreach ( $mesCasesCochees as $maLigneCochee ) {
+=======
+        foreach ($mesCasesCochees as $maLigneCochee) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $maLigneCourante = explode("_", $maLigneCochee);
             $monId = $maLigneCourante[0];
             $monCompte = GETPOST('codeventil'.$monId);
@@ -180,8 +220,14 @@ llxHeader('', $langs->trans("ExpenseReportsVentilation"));
 if (empty($chartaccountcode))
 {
 	print $langs->trans("ErrorChartOfAccountSystemNotSelected");
+<<<<<<< HEAD
 	llxFooter();
 	$db->close();
+=======
+	// End of page
+    llxFooter();
+    $db->close();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	exit;
 }
 
@@ -197,6 +243,7 @@ $sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON f.accountan
 $sql.= " WHERE er.fk_statut IN (".ExpenseReport::STATUS_APPROVED.", ".ExpenseReport::STATUS_CLOSED.") AND erd.fk_code_ventilation <= 0";
 // Add search filter like
 if (strlen(trim($search_expensereport))) {
+<<<<<<< HEAD
     $sql .= natural_search("er.ref",$search_expensereport);
 }
 if (strlen(trim($search_label))) {
@@ -213,19 +260,48 @@ if (strlen(trim($search_account))) {
 }
 if (strlen(trim($search_vat))) {
     $sql .= natural_search("erd.tva_tx",$search_vat,1);
+=======
+    $sql .= natural_search("er.ref", $search_expensereport);
+}
+if (strlen(trim($search_label))) {
+    $sql .= natural_search("f.label", $search_label);
+}
+if (strlen(trim($search_desc))) {
+    $sql .= natural_search("erd.comments", $search_desc);
+}
+if (strlen(trim($search_amount))) {
+    $sql .= natural_search("erd.total_ht", $search_amount, 1);
+}
+if (strlen(trim($search_account))) {
+    $sql .= natural_search("aa.account_number", $search_account);
+}
+if (strlen(trim($search_vat))) {
+    $sql .= natural_search("erd.tva_tx", $search_vat, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 if ($search_month > 0)
 {
 	if ($search_year > 0 && empty($search_day))
+<<<<<<< HEAD
 		$sql.= " AND erd.date BETWEEN '".$db->idate(dol_get_first_day($search_year,$search_month,false))."' AND '".$db->idate(dol_get_last_day($search_year,$search_month,false))."'";
 		else if ($search_year > 0 && ! empty($search_day))
+=======
+		$sql.= " AND erd.date BETWEEN '".$db->idate(dol_get_first_day($search_year, $search_month, false))."' AND '".$db->idate(dol_get_last_day($search_year, $search_month, false))."'";
+		elseif ($search_year > 0 && ! empty($search_day))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$sql.= " AND erd.date BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month, $search_day, $search_year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month, $search_day, $search_year))."'";
 			else
 				$sql.= " AND date_format(erd.date, '%m') = '".$db->escape($search_month)."'";
 }
+<<<<<<< HEAD
 else if ($search_year > 0)
 {
 	$sql.= " AND erd.date BETWEEN '".$db->idate(dol_get_first_day($search_year,1,false))."' AND '".$db->idate(dol_get_last_day($search_year,12,false))."'";
+=======
+elseif ($search_year > 0)
+{
+	$sql.= " AND erd.date BETWEEN '".$db->idate(dol_get_first_day($search_year, 1, false))."' AND '".$db->idate(dol_get_last_day($search_year, 12, false))."'";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 $sql .= " AND er.entity IN (" . getEntity('expensereport', 0) . ")";  // We don't share object for accountancy
 
@@ -272,7 +348,11 @@ if ($result) {
 	    //'presend'=>$langs->trans("SendByMail"),
 	    //'builddoc'=>$langs->trans("PDFMerge"),
 	);
+<<<<<<< HEAD
 	//if ($user->rights->mymodule->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+=======
+	//if ($user->rights->mymodule->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	//if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('ventil', $arrayofmassactions, 1);
 
@@ -288,7 +368,11 @@ if ($result) {
 
 	print_barre_liste($langs->trans("ExpenseReportLines"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
 
+<<<<<<< HEAD
 	print $langs->trans("DescVentilTodoExpenseReport") . '</br><br>';
+=======
+	print '<span class="opacitymedium">'.$langs->trans("DescVentilTodoExpenseReport") . '</span></br><br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	/*$topicmail="Information";
 	$modelmail="project";
@@ -308,6 +392,7 @@ if ($result) {
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_expensereport" value="' . dol_escape_htmltag($search_expensereport) . '"></td>';
 	print '<td class="liste_titre center">';
+<<<<<<< HEAD
    	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_day" value="'.$search_day.'">';
    	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_month" value="'.$search_month.'">';
    	$formother->select_year($search_year,'search_year',1, 20, 5);
@@ -319,6 +404,19 @@ if ($result) {
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
 	print '<td align="center" class="liste_titre">';
+=======
+   	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_day" value="'.$search_day.'">';
+   	print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month" value="'.$search_month.'">';
+   	$formother->select_year($search_year, 'search_year', 1, 20, 5);
+	print '</td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidthonsmartphone" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
+	print '<td class="liste_titre right"><input type="text" class="right flat maxwidth50" name="search_amount" value="' . dol_escape_htmltag($search_amount) . '"></td>';
+	print '<td class="liste_titre right"><input type="text" class="right flat maxwidth50" name="search_vat" placeholder="%" size="1" value="' . dol_escape_htmltag($search_vat) . '"></td>';
+	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre"></td>';
+	print '<td class="center" class="liste_titre">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$searchpicto=$form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
@@ -327,6 +425,7 @@ if ($result) {
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("LineId", $_SERVER["PHP_SELF"], "erd.rowid", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("ExpenseReport", $_SERVER["PHP_SELF"], "er.ref", "", $param, '', $sortfield, $sortorder);
+<<<<<<< HEAD
 	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "erd.date, erd.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre("TypeFees", $_SERVER["PHP_SELF"], "f.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "erd.comments", "", $param, '', $sortfield, $sortorder);
@@ -337,6 +436,18 @@ if ($result) {
 	$checkpicto='';
 	if ($massactionbutton) $checkpicto=$form->showCheckAddButtons('checkforselect', 1);
 	print_liste_field_titre($checkpicto, '', '', '', '', 'align="center"');
+=======
+	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "erd.date, erd.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre("TypeFees", $_SERVER["PHP_SELF"], "f.label", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "erd.comments", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "erd.total_ht", "", $param, '', $sortfield, $sortorder, 'right maxwidth50 ');
+	print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], "erd.tva_tx", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("AccountAccountingSuggest", '', '', '', '', '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre("IntoAccount", '', '', '', '', '', $sortfield, $sortorder, 'center ');
+	$checkpicto='';
+	if ($massactionbutton) $checkpicto=$form->showCheckAddButtons('checkforselect', 1);
+	print_liste_field_titre($checkpicto, '', '', '', '', '', '', '', 'center ');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print "</tr>\n";
 
 
@@ -361,7 +472,11 @@ if ($result) {
 		print '<td>' . $expensereport_static->getNomUrl(1) . '</td>';
 
 		// Date
+<<<<<<< HEAD
 		print '<td align="center">' . dol_print_date($db->jdate($objp->date), 'day') . '</td>';
+=======
+		print '<td class="center">' . dol_print_date($db->jdate($objp->date), 'day') . '</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Fees label
 		print '<td>';
@@ -372,29 +487,52 @@ if ($result) {
 		print '<td>';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->comments));
 		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
+<<<<<<< HEAD
 		print $form->textwithtooltip(dol_trunc($text,$trunclength), $objp->comments);
 		print '</td>';
 
 		print '<td align="right">';
+=======
+		print $form->textwithtooltip(dol_trunc($text, $trunclength), $objp->comments);
+		print '</td>';
+
+		print '<td class="nowrap right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print price($objp->price);
 		print '</td>';
 
 		// Vat rate
+<<<<<<< HEAD
 		print '<td align="right">';
+=======
+		print '<td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print vatrate($objp->tva_tx_line.($objp->vat_src_code?' ('.$objp->vat_src_code.')':''));
 		print '</td>';
 
 		// Current account
+<<<<<<< HEAD
 		print '<td align="center">';
+=======
+		print '<td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print length_accountg(html_entity_decode($objp->code_buy));
 		print '</td>';
 
 		// Suggested accounting account
+<<<<<<< HEAD
 		print '<td align="center">';
 		print $formaccounting->select_account($objp->aarowid_suggest, 'codeventil'.$objp->rowid, 1, array(), 0, 0, 'codeventil maxwidth300 maxwidthonsmartphone', 'cachewithshowemptyone');
 		print '</td>';
 
 		print '<td align="center">';
+=======
+		print '<td class="center">';
+		print $formaccounting->select_account($objp->aarowid_suggest, 'codeventil'.$objp->rowid, 1, array(), 0, 0, 'codeventil maxwidth300 maxwidthonsmartphone', 'cachewithshowemptyone');
+		print '</td>';
+
+		print '<td class="center">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '<input type="checkbox" class="flat checkforselect checkforselect'.$objp->rowid.'" name="toselect[]" value="' . $objp->rowid . "_" . $i . '"' . ($objp->aarowid ? "checked" : "") . '/>';
 		print '</td>';
 
@@ -422,5 +560,9 @@ jQuery(document).ready(function() {
 });
 </script>';
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

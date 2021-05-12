@@ -23,8 +23,13 @@
  *                  More data like token are saved into session. This token can be used to get more informations.
  */
 
+<<<<<<< HEAD
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+=======
+define("NOLOGIN", 1);		// This means this output page does not require to be logged.
+define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
@@ -36,6 +41,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
+<<<<<<< HEAD
 $langs->load("main");
 $langs->load("other");
 $langs->load("dict");
@@ -43,6 +49,9 @@ $langs->load("bills");
 $langs->load("companies");
 $langs->load("paybox");
 $langs->load("paypal");
+=======
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paybox", "paypal"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $FULLTAG=GETPOST('FULLTAG');
 if (empty($FULLTAG)) $FULLTAG=GETPOST('fulltag');
@@ -113,13 +122,21 @@ if ($ispaymentok)
     // Appel des triggers
     include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
     $interface=new Interfaces($db);
+<<<<<<< HEAD
     $result=$interface->run_triggers('STRIPE_PAYMENT_OK',$object,$user,$langs,$conf);
+=======
+    $result=$interface->run_triggers('STRIPE_PAYMENT_OK', $object, $user, $langs, $conf);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     if ($result < 0) { $error++; $errors=$interface->errors; }
     // Fin appel triggers
 
 
     print $langs->trans("YourPaymentHasBeenRecorded")."<br>\n";
+<<<<<<< HEAD
     print $langs->trans("ThisIsTransactionId",$TRANSACTIONID)."<br><br>\n";
+=======
+    print $langs->trans("ThisIsTransactionId", $TRANSACTIONID)."<br><br>\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	$key='ONLINE_PAYMENT_MESSAGE_OK';
 	if (! empty($conf->global->$key)) print $conf->global->$key;
@@ -127,7 +144,11 @@ if ($ispaymentok)
     $sendemail = '';
     if (! empty($conf->global->ONLINE_PAYMENT_SENDEMAIL)) $sendemail=$conf->global->ONLINE_PAYMENT_SENDEMAIL;
 
+<<<<<<< HEAD
     $tmptag=dolExplodeIntoArray($fulltag,'.','=');
+=======
+    $tmptag=dolExplodeIntoArray($fulltag, '.', '=');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	// Send an email
     if ($sendemail)
@@ -135,7 +156,11 @@ if ($ispaymentok)
 		$sendto=$sendemail;
 		$from=$conf->global->MAILING_EMAIL_FROM;
 		// Define $urlwithroot
+<<<<<<< HEAD
 		$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+=======
+		$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 		//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
@@ -194,7 +219,11 @@ if ($ispaymentok)
 print "\n</div>\n";
 
 
+<<<<<<< HEAD
 htmlPrintOnlinePaymentFooter($mysoc,$langs,0,$suffix);
+=======
+htmlPrintOnlinePaymentFooter($mysoc, $langs, 0, $suffix);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 llxFooter('', 'public');

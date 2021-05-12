@@ -55,7 +55,11 @@ class TCPDF_STATIC {
 	 * Current TCPDF version.
 	 * @private static
 	 */
+<<<<<<< HEAD
 	private static $tcpdf_version = '6.2.17';
+=======
+	private static $tcpdf_version = '6.2.26';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	/**
 	 * String alias for total number of pages.
@@ -1774,6 +1778,7 @@ class TCPDF_STATIC {
 		return $angle;
 	}
 
+<<<<<<< HEAD
 
 
 
@@ -1807,6 +1812,8 @@ class TCPDF_STATIC {
 
 
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * Split string by a regular expression.
 	 * This is a wrapper for the preg_split function to avoid the bug: https://bugs.php.net/bug.php?id=45850
@@ -1855,6 +1862,52 @@ class TCPDF_STATIC {
 	}
 
 	/**
+<<<<<<< HEAD
+=======
+	 * Check if the URL exist.
+	 * @param url (string) URL to check.
+	 * @return Returns TRUE if the URL exists; FALSE otherwise.
+	 * @public static
+	 */
+	public static function url_exists($url) {
+		$crs = curl_init();
+		curl_setopt($crs, CURLOPT_URL, $url);
+		curl_setopt($crs, CURLOPT_NOBODY, true);
+		curl_setopt($crs, CURLOPT_FAILONERROR, true);
+		if ((ini_get('open_basedir') == '') && (!ini_get('safe_mode'))) {
+			curl_setopt($crs, CURLOPT_FOLLOWLOCATION, true);
+		}
+		curl_setopt($crs, CURLOPT_CONNECTTIMEOUT, 5);
+		curl_setopt($crs, CURLOPT_TIMEOUT, 30);
+		curl_setopt($crs, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($crs, CURLOPT_SSL_VERIFYHOST, false);
+		curl_setopt($crs, CURLOPT_USERAGENT, 'tc-lib-file');
+		curl_exec($crs);
+		$code = curl_getinfo($crs, CURLINFO_HTTP_CODE);
+		curl_close($crs);
+		return ($code == 200);
+	}
+
+	/**
+	 * Wrapper for file_exists.
+	 * Checks whether a file or directory exists.
+	 * Only allows some protocols and local files.
+	 * @param filename (string) Path to the file or directory. 
+	 * @return Returns TRUE if the file or directory specified by filename exists; FALSE otherwise.  
+	 * @public static
+	 */
+	public static function file_exists($filename) {
+		if (preg_match('|^https?://|', $filename) == 1) {
+			return self::url_exists($filename);
+		}
+		if (strpos($filename, '://')) {
+			return false; // only support http and https wrappers for security reasons
+		}
+		return @file_exists($filename);
+	}
+
+	/**
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	 * Reads entire file into a string.
 	 * The file can be also an URL.
 	 * @param $file (string) Name of the file or URL to read.
@@ -1914,8 +1967,15 @@ class TCPDF_STATIC {
 		}
 		//
 		$alt = array_unique($alt);
+<<<<<<< HEAD
 		//var_dump($alt);exit;//DEBUG
 		foreach ($alt as $path) {
+=======
+		foreach ($alt as $path) {
+			if (!self::file_exists($path)) {
+				return false;
+			}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$ret = @file_get_contents($path);
 			if ($ret !== false) {
 			    return $ret;
@@ -1949,8 +2009,11 @@ class TCPDF_STATIC {
 		return false;
 	}
 
+<<<<<<< HEAD
     
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * Get ULONG from string (Big Endian 32-bit unsigned integer).
 	 * @param $str (string) string from where to extract value

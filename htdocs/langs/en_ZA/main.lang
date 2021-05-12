@@ -7,8 +7,13 @@ SeparatorThousand=,
 FormatDateShort=%Y/%m/%d
 FormatDateShortInput=%Y/%m/%d
 FormatDateShortJava=yyy/MM/dd
+<<<<<<< HEAD
 FormatDateShortJavaInput=yyyy/MM/yy
 FormatDateShortJQuery=yy/mm/yy
+=======
+FormatDateShortJavaInput=yyyy/MM/dd
+FormatDateShortJQuery=yy/mm/dd
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 FormatDateShortJQueryInput=yy/mm/dd
 FormatHourShortJQuery=HH:MI
 FormatHourShort=%H:%M

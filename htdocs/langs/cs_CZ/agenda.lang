@@ -12,7 +12,11 @@ Event=Událost
 Events=Události
 EventsNb=Počet událostí
 ListOfActions=Seznam událostí
+<<<<<<< HEAD
 EventReports=Event reports
+=======
+EventReports=Přehledy událostí
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Location=Umístění
 ToUserOfGroup=Každému uživateli ve skupině
 EventOnFullDay=Událost pro celý den (y)
@@ -29,6 +33,7 @@ ViewCal=Měsíční zobrazení
 ViewDay=Denní zobrazení
 ViewWeek=Týdenní zobrazení
 ViewPerUser=Zobrazení za uživatele
+<<<<<<< HEAD
 ViewPerType=Per view typu
 AutoActions= Automatické naplnění
 AgendaAutoActionDesc= Definujte zde události, pro které chcete vytvořit automaticky událost v programu. Pokud není ve výchozím nastavení zaškrtnuta, budou zahrnuty pouze manuální akce v agendě. Automatické sledování obchodních činností provedených na objektech (validace, změna stavu), nebudou uloženy.
@@ -39,6 +44,20 @@ EventRemindersByEmailNotEnabled=Event reminders by email was not enabled into Ag
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Subjekt %s vytvořen
 ContractValidatedInDolibarr=Kontrakt %s ověřen
+=======
+ViewPerType=Podle zobrazení typu
+AutoActions= Automatické naplnění
+AgendaAutoActionDesc= Zde můžete definovat události, které chcete vytvořit v programu Agenda automaticky. Pokud nic není zaškrtnuto, budou do protokolů zahrnuty pouze ruční akce a zobrazeny v Agendě. Automatické sledování obchodních akcí prováděných na objektech (ověřování, změna stavu) nebude uloženo.
+AgendaSetupOtherDesc= Tato stránka obsahuje možnosti umožňující export událostí Dolibarr do externího kalendáře (Thunderbird, Kalendář Google atd.)
+AgendaExtSitesDesc=Tato stránka umožňuje deklarovat externí zdroje kalendářů pro možnost vidět své akce v agendách programu.
+ActionsEvents=Události, pro které Dolibarr vytvoří akci v programu automaticky
+EventRemindersByEmailNotEnabled=Připomenutí událostí e-mailem nebyla povolena do %snastavení modulu .
+##### Agenda event labels #####
+NewCompanyToDolibarr=Subjekt %s vytvořen
+COMPANY_DELETEInDolibarr=Third party %s deleted
+ContractValidatedInDolibarr=Kontrakt %s ověřen
+CONTRACT_DELETEInDolibarr=Smlouva %s byla smazána
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PropalClosedSignedInDolibarr=Nabídka %s podepsána
 PropalClosedRefusedInDolibarr=Nabídka %s odmítnuta
 PropalValidatedInDolibarr=Návrh %s ověřen
@@ -53,12 +72,22 @@ MemberValidatedInDolibarr=Uživatel %s ověřen
 MemberModifiedInDolibarr=Uživatel %s upraven
 MemberResiliatedInDolibarr=Členské %s ukončeno
 MemberDeletedInDolibarr=Uživatel %s smazán
+<<<<<<< HEAD
 MemberSubscriptionAddedInDolibarr=Subscription %s for member %s added
 MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
 MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=Doprava %s ověřena
 ShipmentClassifyClosedInDolibarr=Zásilka %s klasifikováno účtoval
 ShipmentUnClassifyCloseddInDolibarr=Zásilka %s klasifikováno znovuotevření
+=======
+MemberSubscriptionAddedInDolibarr=Odběr %s pro člena %s přidán
+MemberSubscriptionModifiedInDolibarr=Předplatné %s pro člena %supraveno
+MemberSubscriptionDeletedInDolibarr=Předplatné %s pro člena %s bylo smazáno
+ShipmentValidatedInDolibarr=Doprava %s ověřena
+ShipmentClassifyClosedInDolibarr=Zásilka %s klasifikováno účtoval
+ShipmentUnClassifyCloseddInDolibarr=Zásilka %s klasifikováno znovuotevření
+ShipmentBackToDraftInDolibarr=Doprava %s se vrátí zpět na stav konceptu
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShipmentDeletedInDolibarr=Doprava %s odstraněna
 OrderCreatedInDolibarr=Objednat %s vytvořil
 OrderValidatedInDolibarr=Objednávka %s ověřena
@@ -68,6 +97,7 @@ OrderBilledInDolibarr=Objednávka %s označena jako zaúčtovaná
 OrderApprovedInDolibarr=Objednávka %s schválena
 OrderRefusedInDolibarr=Objednávka %s zamítnuta
 OrderBackToDraftInDolibarr=Objednávka %s vrácena do stavu návrhu
+<<<<<<< HEAD
 ProposalSentByEMail=Komerční návrh %s zaslán e-mailem
 ContractSentByEMail=Contract %s sent by EMail
 OrderSentByEMail=Zákaznická objednávka %s zaslána e-mailem
@@ -93,14 +123,53 @@ PROJECT_MODIFYInDolibarr=Projekt %s modifikované
 PROJECT_DELETEInDolibarr=Project %s deleted
 ##### End agenda events #####
 AgendaModelModule=Document templates for event
+=======
+ProposalSentByEMail=Obchodní návrh %s byl zaslán e-mailem
+ContractSentByEMail=Smlouva %s byla zaslána e-mailem
+OrderSentByEMail=Prodejní objednávka %s byla odeslána e-mailem
+InvoiceSentByEMail=Zákaznická faktura %s byla odeslána e-mailem
+SupplierOrderSentByEMail=Objednávka %s byla odeslána e-mailem
+SupplierInvoiceSentByEMail=Faktura dodavatele %s byla odeslána e-mailem
+ShippingSentByEMail=Odeslání zásilky %s e-mailem
+ShippingValidated= Zásilka %s ověřena
+InterventionSentByEMail=Intervence %s odeslána e-mailem
+ProposalDeleted=Návrh odstraněn
+OrderDeleted=Příkaz odstraněn
+InvoiceDeleted=faktura smazána
+PRODUCT_CREATEInDolibarr=Produkt %s byl vytvořen
+PRODUCT_MODIFYInDolibarr=Produkt %s byl upraven 
+PRODUCT_DELETEInDolibarr=Produkt %s byl smazán
+EXPENSE_REPORT_CREATEInDolibarr=Zpráva o výdajích %s byla vytvořena
+EXPENSE_REPORT_VALIDATEInDolibarr=Zpráva o výdajích %s byla ověřena
+EXPENSE_REPORT_APPROVEInDolibarr=Zpráva o výdajích %s byla schválena
+EXPENSE_REPORT_DELETEInDolibarr=Zpráva o výdajích %s byla smazána
+EXPENSE_REPORT_REFUSEDInDolibarr=Zpráva o výdajích %s byla odmítnuta
+PROJECT_CREATEInDolibarr=Projekt %s vytvořen
+PROJECT_MODIFYInDolibarr=Projekt %s modifikované
+PROJECT_DELETEInDolibarr=Projekt %s byl smazán
+TICKET_CREATEInDolibarr=Lístek %s byl vytvořen 
+TICKET_MODIFYInDolibarr=Změna lístku %s
+TICKET_ASSIGNEDInDolibarr=Ticket %s assigned
+TICKET_CLOSEInDolibarr=Lístek %s uzavřen
+TICKET_DELETEInDolibarr=Lístek %s byl smazán
+##### End agenda events #####
+AgendaModelModule=Šablony dokumentů pro události
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DateActionStart=Datum zahájení
 DateActionEnd=Datum ukončení
 AgendaUrlOptions1=Můžete také přidat následující parametry filtrování výstupu:
 AgendaUrlOptions3=<b>logina=%s</b> omezuje výstup na akce vlastněné uživatelem <b>%s</b>.
+<<<<<<< HEAD
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic event.
+=======
+AgendaUrlOptionsNotAdmin=<b> logina =! %s</b> omezit výstup na akce, které nevlastní uživatel <b> %s </b>.
+AgendaUrlOptions4=<b> logint = %s</b> omezit výstup na akce přiřazené uživateli <b> %s</b>(majitel a další).
+AgendaUrlOptionsProject=<b> project = __ PROJECT_ID __ </b> pro omezení výstupu na akce spojené s projektem <b> __ PROJECT_ID __ </b>.
+AgendaUrlOptionsNotAutoEvent=<b> notactiontype = systemauto </b> pro vyloučení automatických událostí.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AgendaShowBirthdayEvents=Zobrazit narozeniny kontaktů
 AgendaHideBirthdayEvents=Skrýt narozeniny kontaktů
 Busy=Zaneprázdněný
@@ -110,9 +179,15 @@ DefaultWorkingHours=Výchozí pracovní hodiny dne. (Příklad: 9-18)
 # External Sites ical
 ExportCal=Export kalendáře
 ExtSites=Importovat externí kalendáře
+<<<<<<< HEAD
 ExtSitesEnableThisTool=Zobrazit externí kalendáře (definováno v globálním nastavení) do agendy. Nemá vliv na externí kalendáře definované uživateli.
 ExtSitesNbOfAgenda=Počet kalendářů
 AgendaExtNb=Calendar no. %s
+=======
+ExtSitesEnableThisTool=Zobrazit externí kalendáře (definované v globálním nastavení) v Agendě. Neovlivňuje externí kalendáře definované uživateli.
+ExtSitesNbOfAgenda=Počet kalendářů
+AgendaExtNb=Kalendář č. %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ExtSiteUrlAgenda=URL pro přístup *.iCal souboru
 ExtSiteNoLabel=Nepodepsáno
 VisibleTimeRange=Viditelný časový rozsah
@@ -121,7 +196,10 @@ AddEvent=Vytvořit událost
 MyAvailability=Moje dostupnost
 ActionType=Typ události
 DateActionBegin=Datum zahájení události
+<<<<<<< HEAD
 CloneAction=Klonovat událost
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmCloneEvent=Jste si jisti, že chcete naklonovat událost <b> %s </ b>?
 RepeatEvent=Opakujte akci
 EveryWeek=Každý týden

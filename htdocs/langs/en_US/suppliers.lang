@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # Dolibarr language file - Source file is en_US - suppliers
+=======
+# Dolibarr language file - Source file is en_US - vendors
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Suppliers=Vendors
 SuppliersInvoice=Vendor invoice
 ShowSupplierInvoice=Show Vendor Invoice
@@ -15,7 +19,11 @@ SomeSubProductHaveNoPrices=Some sub-products have no price defined
 AddSupplierPrice=Add buying price
 ChangeSupplierPrice=Change buying price
 SupplierPrices=Vendor prices
+<<<<<<< HEAD
 ReferenceSupplierIsAlreadyAssociatedWithAProduct=This reference supplier is already associated with a reference: %s
+=======
+ReferenceSupplierIsAlreadyAssociatedWithAProduct=This vendor reference is already associated with a product: %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoRecordedSuppliers=No vendor recorded
 SupplierPayment=Vendor payment
 SuppliersArea=Vendor area
@@ -35,6 +43,7 @@ ListOfSupplierProductForSupplier=List of products and prices for vendor <b>%s</b
 SentToSuppliers=Sent to vendors
 ListOfSupplierOrders=List of purchase orders
 MenuOrdersSupplierToBill=Purchase orders to invoice
+<<<<<<< HEAD
 NbDaysToDelivery=Delivery delay in days
 DescNbDaysToDelivery=The biggest deliver delay of the products from this order
 SupplierReputation=Vendor reputation
@@ -44,4 +53,15 @@ ReputationForThisProduct=Reputation
 BuyerName=Buyer name
 AllProductServicePrices=All product / service prices
 AllProductReferencesOfSupplier=All product / service references of supplier
+=======
+NbDaysToDelivery=Delivery delay (days)
+DescNbDaysToDelivery=The longest delivery delay of the products from this order
+SupplierReputation=Vendor reputation
+DoNotOrderThisProductToThisSupplier=Do not order
+NotTheGoodQualitySupplier=Low quality
+ReputationForThisProduct=Reputation
+BuyerName=Buyer name
+AllProductServicePrices=All product / service prices
+AllProductReferencesOfSupplier=All product / service references of vendor
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BuyingPriceNumShort=Vendor prices

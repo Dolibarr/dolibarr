@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2009      Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,8 +28,13 @@
  *		\author	    Laurent Destailleur
  */
 
+<<<<<<< HEAD
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+=======
+define("NOLOGIN", 1);		// This means this output page does not require to be logged.
+define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
@@ -41,7 +50,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 // Security check
+<<<<<<< HEAD
 if (empty($conf->paybox->enabled)) accessforbidden('',0,0,1);
+=======
+if (empty($conf->paybox->enabled)) accessforbidden('', 0, 0, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $newurl = $_SERVER['REQUEST_URI'];
 $newurl = preg_replace('/\/paybox\/newpayment/', '/payment/newpayment', $newurl);

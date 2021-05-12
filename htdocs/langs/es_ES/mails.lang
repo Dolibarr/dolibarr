@@ -11,14 +11,26 @@ MailFrom=Remitente
 MailErrorsTo=Errores a
 MailReply=Responder a
 MailTo=Destinatario(s)
+<<<<<<< HEAD
 MailToUsers=To user(s)
 MailCC=Copia a
 MailToCCUsers=Copy to users(s)
+=======
+MailToUsers=A usuario(s)
+MailCC=Copia a
+MailToCCUsers=Copia a usuario(s)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MailCCC=Adjuntar copia a
 MailTopic=Asunto del e-mail
 MailText=Mensaje
 MailFile=Archivo
+<<<<<<< HEAD
 MailMessage=Mensaje del e-mail
+=======
+MailMessage=Texto utilizado en el cuerpo del mensaje
+SubjectNotIn=No en el asunto
+BodyNotIn=No en el cuerpo
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShowEMailing=Mostrar E-Mailing
 ListOfEMailings=Listado de E-Mailings
 NewMailing=Nuevo E-Mailing
@@ -58,7 +70,10 @@ EMailTestSubstitutionReplacedByGenericValues=En modo prueba, las variables de su
 MailingAddFile=Adjuntar este archivo
 NoAttachedFiles=Sin archivos adjuntos
 BadEMail=E-Mail incorrecto
+<<<<<<< HEAD
 CloneEMailing=Clonar E-Mailing
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmCloneEMailing=¿Está seguro de querer clonar este e-mailing?
 CloneContent=Clonar mensaje
 CloneReceivers=Clonar destinatarios
@@ -66,7 +81,11 @@ DateLastSend=Fecha del último envío
 DateSending=Fecha envío
 SentTo=Enviado a <b>%s</b>
 MailingStatusRead=Leido
+<<<<<<< HEAD
 YourMailUnsubcribeOK=El correo electrónico <b>%s</b> es correcta desuscribe.
+=======
+YourMailUnsubcribeOK=El e-mail <b>%s</b> ha sido dado de baja correctamente de la lista de correo
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActivateCheckReadKey=Clave usada para cifrar la URL utilizada para la función de "Darse de baja"
 EMailSentToNRecipients=E-Mail enviado a %s destinatarios.
 EMailSentForNElements=E-Mail enviado a %s elementos.
@@ -77,9 +96,15 @@ GroupEmails=E-mail grupales
 OneEmailPerRecipient=Un e-mail por destinatario (de forma predeterminada, un e-mail por registro seleccionado)
 WarningIfYouCheckOneRecipientPerEmail=Atención: Si marca esta casilla, significa que solo se enviará un e-mail para varios registros diferentes seleccionados, por lo tanto, si su mensaje contiene variables de sustitución que hacen referencia a los datos de un registro, no será posible reemplazarlos.
 ResultOfMailSending=Resultado del envío masivo de e-mails
+<<<<<<< HEAD
 NbSelected=Nº seleccionados
 NbIgnored=Nº ignorados
 NbSent=Nº enviados
+=======
+NbSelected=Number selected
+NbIgnored=Number ignored
+NbSent=Number sent
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SentXXXmessages=%s mensaje(s) enviado(s)
 ConfirmUnvalidateEmailing=¿Está seguro de querer cambiar el estado del e-mailing <b>%s</b> a borrador?
 MailingModuleDescContactsWithThirdpartyFilter=Filtro de contactos con tercero
@@ -166,4 +191,8 @@ InGoingEmailSetup=Configuración del correo entrante
 OutGoingEmailSetupForEmailing=Configuración de correo saliente (para correo masivo)
 DefaultOutgoingEmailSetup=Configuración de correo saliente predeterminada
 Information=Información
+<<<<<<< HEAD
 ContactsWithThirdpartyFilter=Contacts avec filtre client
+=======
+ContactsWithThirdpartyFilter=Contactos con filtro de terceros.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

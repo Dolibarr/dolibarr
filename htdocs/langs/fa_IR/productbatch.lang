@@ -1,4 +1,5 @@
 # ProductBATCH language file - en_US - ProductBATCH
+<<<<<<< HEAD
 ManageLotSerial=Use lot/serial number
 ProductStatusOnBatch=Yes (lot/serial required)
 ProductStatusNotOnBatch=No (lot/serial not used)
@@ -22,3 +23,28 @@ ProductLotSetup=Setup of module lot/serial
 ShowCurrentStockOfLot=Show current stock for couple product/lot
 ShowLogOfMovementIfLot=Show log of movements for couple product/lot
 StockDetailPerBatch=Stock detail per lot
+=======
+ManageLotSerial=استفاده از شمارۀ سری‌ساخت/سریال
+ProductStatusOnBatch=بله (نیاز به شمارۀ سری‌ساخت/سریال)
+ProductStatusNotOnBatch=خیر ( بدون نیاز به شمارۀ سری‌ساخت/سریال)
+ProductStatusOnBatchShort=بله
+ProductStatusNotOnBatchShort=خیر
+Batch=سری‌ساخت/سریال
+atleast1batchfield=تاریخ‌مصرف یا تاریخ‌فروش یا شمارۀ سری‌ساخت/سریال
+batch_number=شماره سری‌ساخت/سریال
+BatchNumberShort=سری‌ساخت/سریال
+EatByDate=تاریخ مصرف
+SellByDate=تاریخ فروش
+DetailBatchNumber=جزئیات شمارۀ سری‌‌ساخت/سریال
+printBatch=سری‌ساخت/سریال: %s
+printEatby=تاریخ مصرف: %s
+printSellby=تاریخ فروش: %s
+printQty=تعداد: %d
+AddDispatchBatchLine=توضیحات مدت‌زمان قابلیت ارائه
+WhenProductBatchModuleOnOptionAreForced=هنگامی که قابلیت سری‌ساخت/شماره سریال فعال است، کاهش خودکار موجودی مجبور خواهد شد "با اعتبارسنجی ارسال، موجودی واقعی را کاهش دهد" و حالت افزایش خودکار موجودی نیز مجبور خواهد شد "موجودی واقعی را با ارسال دستی به انبارها، افزایش دهد" و قابل ویرایش نخواهد بود. سایر گزینه‌ها همانطوری خواهد بود که نیاز دارید.
+ProductDoesNotUseBatchSerial=این محصول از شمارۀ سری‌ساخت/سریال استفاده نمی‌کند
+ProductLotSetup=برپاسازی قابلیت سری‌ساخت/شماره‌سریال
+ShowCurrentStockOfLot=نمایش موجودی فعلی برای زوج محصول/سری‌ساخت
+ShowLogOfMovementIfLot=نمایش گزارش‌کار جابجائی‌های مربوط به زوج محصول/سری‌ساخت
+StockDetailPerBatch=جزئیات موجودی هر سری‌ساخت
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

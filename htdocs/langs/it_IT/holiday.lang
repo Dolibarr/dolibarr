@@ -1,10 +1,18 @@
 # Dolibarr language file - Source file is en_US - holiday
 HRM=Risorse umane
+<<<<<<< HEAD
 Holidays=Assenze
 CPTitreMenu=Assenze
 MenuReportMonth=Estratto conto mensile
 MenuAddCP=Nuova richiesta
 NotActiveModCP=Per visualizzare questa pagina devi attivare il modulo Assenze
+=======
+Holidays=Leave
+CPTitreMenu=Leave
+MenuReportMonth=Estratto conto mensile
+MenuAddCP=Nuova richiesta
+NotActiveModCP=You must enable the module Leave to view this page.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddCP=Inserisci nuova richiesta
 DateDebCP=Data di inizio
 DateFinCP=Data di fine
@@ -15,6 +23,7 @@ ApprovedCP=Approvato
 CancelCP=Cancellato
 RefuseCP=Rifiutato
 ValidatorCP=Approvato da
+<<<<<<< HEAD
 ListeCP=Elenco delle assenze
 ReviewedByCP=Sarà approvato da
 DescCP=Descrizione
@@ -22,6 +31,20 @@ SendRequestCP=Inserisci richiesta di assenza
 DelayToRequestCP=Le richieste devono essere inserite almeno <b>%s giorni</b> prima dell'inizio.
 MenuConfCP=Bilancio delle ferie
 SoldeCPUser=Rimangono <b>%s</b> giorni di ferie
+=======
+ListeCP=List of leave
+LeaveId=Leave ID
+ReviewedByCP=Sarà approvato da
+UserForApprovalID=User for approval ID
+UserForApprovalFirstname=First name of approval user
+UserForApprovalLastname=Last name of approval user
+UserForApprovalLogin=Login of approval user
+DescCP=Descrizione
+SendRequestCP=Inserisci richiesta di assenza
+DelayToRequestCP=Le richieste devono essere inserite almeno <b>%s giorni</b> prima dell'inizio.
+MenuConfCP=Balance of leave
+SoldeCPUser=Leave balance is <b>%s</b> days.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorEndDateCP=La data di fine deve essere posteriore alla data di inizio.
 ErrorSQLCreateCP=Si è verificato un errore SQL durante la creazione:
 ErrorIDFicheCP=Si è verificato un errore: la richiesta non esiste.
@@ -30,7 +53,18 @@ ErrorUserViewCP=Non hai i permessi necessari a visualizzare questa richiesta.
 InfosWorkflowCP=Flusso di informazioni
 RequestByCP=Richiesto da
 TitreRequestCP=Richiesta di assenza
+<<<<<<< HEAD
 NbUseDaysCP=Numero di giornate di ferie già godute
+=======
+TypeOfLeaveId=Type of leave ID
+TypeOfLeaveCode=Type of leave code
+TypeOfLeaveLabel=Type of leave label
+NbUseDaysCP=Numero di giornate di ferie già godute
+NbUseDaysCPShort=Days consumed
+NbUseDaysCPShortInMonth=Days consumed in month
+DateStartInMonth=Start date in month
+DateEndInMonth=End date in month
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 EditCP=Modifica
 DeleteCP=Cancella
 ActionRefuseCP=Rifiuta
@@ -59,6 +93,10 @@ DateRefusCP=Data del rifiuto
 DateCancelCP=Data dell'annullamento
 DefineEventUserCP=Assegna permesso straordinario all'utente
 addEventToUserCP=Assegna permesso
+<<<<<<< HEAD
+=======
+NotTheAssignedApprover=You are not the assigned approver
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MotifCP=Motivo
 UserCP=Utente
 ErrorAddEventToUserCP=Si è verificato un errore nell'assegnazione del permesso straordinario.
@@ -81,10 +119,22 @@ EmployeeFirstname=Nome dipendente
 TypeWasDisabledOrRemoved=Permesso di tipo (ID %s) è stato disabilitato o rimosso
 LastHolidays=Ultime %s richieste di permesso
 AllHolidays=Tutte le richieste di permesso
+<<<<<<< HEAD
 
 ## Configuration du Module ##
 LastUpdateCP=Ultimo aggiornamento automatico dell'assegnazione ferie
 MonthOfLastMonthlyUpdate=Mese dell'ultimo aggiornamento automatico delle ferie maturate
+=======
+HalfDay=Mezza giornata
+NotTheAssignedApprover=You are not the assigned approver
+LEAVE_PAID=Paid vacation
+LEAVE_SICK=Sick leave
+LEAVE_OTHER=Other leave
+LEAVE_PAID_FR=Paid vacation
+## Configuration du Module ##
+LastUpdateCP=Latest automatic update of leave allocation
+MonthOfLastMonthlyUpdate=Month of latest automatic update of leave allocation
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 UpdateConfCPOK=Aggiornato con successo
 Module27130Name= Gestione ferie
 Module27130Desc= Gestione ferie
@@ -94,13 +144,31 @@ NoticePeriod=Periodo di avviso
 HolidaysToValidate=Convalida ferie
 HolidaysToValidateBody=Di sotto una richiesta ferie da convalidare
 HolidaysToValidateDelay=Questa richiesta avrà luogo fra meno di %s giorni
+<<<<<<< HEAD
 HolidaysToValidateAlertSolde=L'utente che ha fatto questa richiesta di ferie non ha abbastanza giorni disponibili.
 HolidaysValidated=Richieste di assenza approvate
 HolidaysValidatedBody=La tua richiesta di ferie dal %s al %s è stata approvata
 HolidaysRefused=Richiesta negata
 HolidaysRefusedBody=La tua richiesta di ferie dal %s al %s è stata negata per il seguente motivo :
+=======
+HolidaysToValidateAlertSolde=The user who made this leave request does not have enough available days.
+HolidaysValidated=Richieste di assenza approvate
+HolidaysValidatedBody=La tua richiesta di ferie dal %s al %s è stata approvata
+HolidaysRefused=Richiesta negata
+HolidaysRefusedBody=Your leave request for %s to %s has been denied for the following reason:
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 HolidaysCanceled=Richiesta di assenza cancellata
 HolidaysCanceledBody=La tua richiesta di ferie dal %s al %s è stata cancellata
 FollowedByACounter=<strong>1</strong>: questo tipo di ferie segue un contatore. Il contatore incrementa automaticamente o manualmente e quando una richiesta di ferie è validata. il contatore decrementa.<br><strong>0</strong>: non segue nessun contatore
 NoLeaveWithCounterDefined=Non ci sono tipi di ferie definite che devono seguire un contatore
+<<<<<<< HEAD
 GoIntoDictionaryHolidayTypes=Vai in <strong>Home - Impostazioni - Dizionari - Tipi di ferie</strong> per impostare i differenti tipi di ferie
+=======
+GoIntoDictionaryHolidayTypes=Go into <strong>Home - Setup - Dictionaries - Type of leave</strong> to setup the different types of leaves.
+HolidaySetup=Setup of module Holiday
+HolidaysNumberingModules=Leave requests numbering models
+TemplatePDFHolidays=Template for leave requests PDF
+FreeLegalTextOnHolidays=Free text on PDF
+WatermarkOnDraftHolidayCards=Watermarks on draft leave requests
+HolidaysToApprove=Holidays to approve
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

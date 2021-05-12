@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - multicurrency
+<<<<<<< HEAD
 MultiCurrency=Multi currency
 ErrorAddRateFail=Error in added rate
 ErrorAddCurrencyFail=Error in added currency
@@ -18,3 +19,24 @@ MulticurrencyReceived=Received, original currency
 MulticurrencyRemainderToTake=Remaining amout, original currency
 MulticurrencyPaymentAmount=Výše platby, původní měna
 AmountToOthercurrency=Amount To (in currency of receiving account)
+=======
+MultiCurrency=Více měn
+ErrorAddRateFail=Chyba přidané rychlosti
+ErrorAddCurrencyFail=Chyba v přidané měně
+ErrorDeleteCurrencyFail=Chyba při odstranění chyby
+multicurrency_syncronize_error=Chyba synchronizace: %s
+MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE=Chcete-li zjistit měnovou sazbu, použijte datum dokumentu namísto použití nejnovější známé rychlosti
+multicurrency_useOriginTx=Když je objekt vytvořen jiným, zachovat původní rychlost od zdrojového objektu (jinak použijte nejnovější známou rychlost)
+CurrencyLayerAccount=CurrencyLayer API
+CurrencyLayerAccount_help_to_synchronize=Abyste mohli tuto funkci používat, musíte si vytvořit účet na webu %s. <br> Získejte <b>klíč API</b> . <br> Pokud používáte bezplatný účet, nemůžete změnit <b>zdrojovou měnu</b> (standardně USD). <br> Pokud vaše hlavní měna není USD, aplikace ji automaticky přepočítá. <br><br> Jste omezeni na 1000 synchronizací měsíčně.
+multicurrency_appId=Klíč API
+multicurrency_appCurrencySource=Zdrojová měna
+multicurrency_alternateCurrencySource=Alternativní zdrojová měna
+CurrenciesUsed=Použité měny
+CurrenciesUsed_help_to_add=Přidejte na své <b> návrhy</b>, <b> objednávky </b> různé měny a sazby, které je třeba použít.
+rate=hodnotit
+MulticurrencyReceived=Přijatá, původní měna
+MulticurrencyRemainderToTake=Zbývající částka, původní měna
+MulticurrencyPaymentAmount=Výše platby, původní měna
+AmountToOthercurrency=Částka (v měně přijatého účtu)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

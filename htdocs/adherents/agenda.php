@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Brice Davoleau       <brice.davoleau@gmail.com>
+<<<<<<< HEAD
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
@@ -33,6 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
+<<<<<<< HEAD
 $langs->load("companies");
 $langs->load("members");
 
@@ -42,6 +47,17 @@ $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
+=======
+// Load translation files required by the page
+$langs->loadLangs(array("companies","members"));
+
+$id = GETPOST('id', 'int')?GETPOST('id', 'int'):GETPOST('rowid', 'int');
+
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -49,19 +65,33 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield='a.datep,a.id';
 if (! $sortorder) $sortorder='DESC';
 
+<<<<<<< HEAD
 if (GETPOST('actioncode','array'))
 {
 	$actioncode=GETPOST('actioncode','array',3);
+=======
+if (GETPOST('actioncode', 'array'))
+{
+	$actioncode=GETPOST('actioncode', 'array', 3);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if (! count($actioncode)) $actioncode='0';
 }
 else
 {
+<<<<<<< HEAD
 	$actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
+=======
+	$actioncode=GETPOST("actioncode", "alpha", 3)?GETPOST("actioncode", "alpha", 3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 $search_agenda_label=GETPOST('search_agenda_label');
 
 // Security check
+<<<<<<< HEAD
 $result=restrictedArea($user,'adherent',$id);
+=======
+$result=restrictedArea($user, 'adherent', $id);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $object = new Adherent($db);
 $result=$object->fetch($id);
@@ -79,20 +109,32 @@ if ($result > 0)
  */
 
 $parameters=array('id'=>$id, 'objcanvas'=>$objcanvas);
+<<<<<<< HEAD
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+=======
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
 {
     // Cancel
+<<<<<<< HEAD
     if (GETPOST('cancel','alpha') && ! empty($backtopage))
+=======
+    if (GETPOST('cancel', 'alpha') && ! empty($backtopage))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         header("Location: ".$backtopage);
         exit;
     }
 
     // Purge search criteria
+<<<<<<< HEAD
     if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
+=======
+    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $actioncode='';
         $search_agenda_label='';
@@ -121,7 +163,11 @@ if ($object->id > 0)
 
 	$title=$langs->trans("Member") . " - " . $langs->trans("Agenda");
 	$helpurl="EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros";
+<<<<<<< HEAD
 	llxHeader("",$title,$helpurl);
+=======
+	llxHeader("", $title, $helpurl);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	if (! empty($conf->notification->enabled)) $langs->load("mails");
 	$head = member_prepare_head($object);
@@ -137,7 +183,11 @@ if ($object->id > 0)
 	print '<div class="underbanner clearboth"></div>';
 
 	$object->info($id);
+<<<<<<< HEAD
 	print dol_print_object_info($object, 1);
+=======
+	dol_print_object_info($object, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	print '</div>';
 
@@ -151,9 +201,13 @@ if ($object->id > 0)
 	$newcardbutton = '';
     if (! empty($conf->agenda->enabled))
     {
+<<<<<<< HEAD
     	$newcardbutton.='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&backtopage=1&origin=member&originid='.$id.'"><span class="valignmiddle">'.$langs->trans("AddAction").'</span>';
     	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
     	$newcardbutton.= '</a>';
+=======
+        $newcardbutton.= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create&backtopage=1&origin=member&originid='.$id);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
     if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
@@ -171,6 +225,7 @@ if ($object->id > 0)
     	$filters['search_agenda_label']=$search_agenda_label;
 
     	// TODO Replace this with same code than into list.php
+<<<<<<< HEAD
     	show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters, $sortfield, $sortorder);
     }
 }
@@ -179,4 +234,12 @@ if ($object->id > 0)
 
 llxFooter();
 
+=======
+    	show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
+    }
+}
+
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

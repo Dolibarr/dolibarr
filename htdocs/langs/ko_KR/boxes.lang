@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - boxes
+<<<<<<< HEAD
 BoxLoginInformation=로그인 정보
 BoxLastRssInfos=RSS 정보
 BoxLastProducts=최근 %s 제품 / 서비스
@@ -8,11 +9,26 @@ BoxLastSupplierBills=최근 공급 업체 송장
 BoxLastCustomerBills=최근 고객 송장
 BoxOldestUnpaidCustomerBills=가장 오래된 미납 고객 송장
 BoxOldestUnpaidSupplierBills=가장 오래된 미납 공급 업체 송장
+=======
+BoxLoginInformation=Login Information
+BoxLastRssInfos=RSS Information
+BoxLastProducts=Latest %s Products/Services
+BoxProductsAlertStock=제품에 대한 재고 알림
+BoxLastProductsInContract=최근 %s 계약 된 제품 / 서비스
+BoxLastSupplierBills=Latest Vendor invoices
+BoxLastCustomerBills=Latest Customer invoices
+BoxOldestUnpaidCustomerBills=가장 오래된 미납 고객 송장
+BoxOldestUnpaidSupplierBills=Oldest unpaid vendor invoices
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BoxLastProposals=최근 상업 제안서
 BoxLastProspects=최근 수정 잠재 고객
 BoxLastCustomers=최근 수정 고객
 BoxLastSuppliers=최근 수정 된 공급 업체
+<<<<<<< HEAD
 BoxLastCustomerOrders=최근 고객 주문
+=======
+BoxLastCustomerOrders=Latest sales orders
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BoxLastActions=최근 작업
 BoxLastContracts=최근 계약
 BoxLastContacts=최근 연락처 / 주소
@@ -20,6 +36,7 @@ BoxLastMembers=최근 회원
 BoxFicheInter=최근 개입
 BoxCurrentAccounts=미결제 잔액
 BoxTitleLastRssInfos=최신 %s 뉴스 %s
+<<<<<<< HEAD
 BoxTitleLastProducts=최근 %s 수정 된 제품 / 서비스
 BoxTitleProductsAlertStock=재고가있는 제품 알림
 BoxTitleLastSuppliers=최근 %s 기록 공급자
@@ -36,6 +53,24 @@ BoxTitleOldestUnpaidSupplierBills=가장 오래된 %s 미납 공급 업체 송�
 BoxTitleCurrentAccounts=미결 계정 잔액
 BoxTitleLastModifiedContacts=최근 %s 수정 된 연락처 / 주소
 BoxMyLastBookmarks=내 최근 %s 북마크
+=======
+BoxTitleLastProducts=Products/Services: last %s modified
+BoxTitleProductsAlertStock=Products: stock alert
+BoxTitleLastSuppliers=최근 %s 기록 공급자
+BoxTitleLastModifiedSuppliers=Vendors: last %s modified
+BoxTitleLastModifiedCustomers=Customers: last %s modified
+BoxTitleLastCustomersOrProspects=최근 %s 고객 또는 잠재 고객
+BoxTitleLastCustomerBills=Latest %s Customer invoices
+BoxTitleLastSupplierBills=Latest %s Vendor invoices
+BoxTitleLastModifiedProspects=Prospects: last %s modified
+BoxTitleLastModifiedMembers=최근 %s 구성원
+BoxTitleLastFicheInter=최근 %s 수정 된 개입
+BoxTitleOldestUnpaidCustomerBills=Customer Invoices: oldest %s unpaid
+BoxTitleOldestUnpaidSupplierBills=Vendor Invoices: oldest %s unpaid
+BoxTitleCurrentAccounts=Open Accounts: balances
+BoxTitleLastModifiedContacts=Contacts/Addresses: last %s modified
+BoxMyLastBookmarks=Bookmarks: latest %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BoxOldestExpiredServices=가장 오래된 활성 만료 된 서비스
 BoxLastExpiredServices=만료 된 최신 서비스 %s의 가장 오래된 연락처
 BoxTitleLastActionsToDo=최근 %s 할 일
@@ -45,24 +80,38 @@ BoxTitleLastModifiedExpenses=최근 %s 수정 된 비용 보고서
 BoxGlobalActivity=글로벌 활동 (송장, 제안서, 주문)
 BoxGoodCustomers=좋은 고객
 BoxTitleGoodCustomers=%s 좋은 고객
+<<<<<<< HEAD
 FailedToRefreshDataInfoNotUpToDate=RSS 플럭스를 새로 고치지 못했습니다. 최신의 새로 고침 날짜 : %s
+=======
+FailedToRefreshDataInfoNotUpToDate=Failed to refresh RSS flux. Latest successful refresh date: %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LastRefreshDate=최근 새로 고침 날짜
 NoRecordedBookmarks=북마크가 정의되지 않았습니다.
 ClickToAdd=추가하려면 여기를 클릭하십시오.
 NoRecordedCustomers=등록 된 고객 없음
 NoRecordedContacts=등록 된 연락처 없음
 NoActionsToDo=수행 할 작업이 없습니다.
+<<<<<<< HEAD
 NoRecordedOrders=등록 된 고객 주문 없음
 NoRecordedProposals=등록 된 제안 없음
 NoRecordedInvoices=등록 된 고객 송장 없음
 NoUnpaidCustomerBills=미납 고객 송장 없음
 NoUnpaidSupplierBills=미납 공급 업체 송장 없음
 NoModifiedSupplierBills=등록 된 공급 업체 송장이 없음
+=======
+NoRecordedOrders=No recorded sales orders
+NoRecordedProposals=등록 된 제안 없음
+NoRecordedInvoices=등록 된 고객 송장 없음
+NoUnpaidCustomerBills=미납 고객 송장 없음
+NoUnpaidSupplierBills=No unpaid vendor invoices
+NoModifiedSupplierBills=No recorded vendor invoices
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoRecordedProducts=등록 된 제품 / 서비스 없음
 NoRecordedProspects=등록 된 잠재 고객 없음
 NoContractedProducts=계약 된 제품 / 서비스 없음
 NoRecordedContracts=등록 된 계약 없음
 NoRecordedInterventions=등록 된 개입 없음
+<<<<<<< HEAD
 BoxLatestSupplierOrders=최근 공급 업체 주문
 NoSupplierOrder=등록 된 공급 업체 주문 없음
 BoxCustomersInvoicesPerMonth=매월 고객 송장
@@ -77,6 +126,22 @@ BoxTitleLastModifiedSupplierBills=최근 %s 수정 된 공급 업체 청구서
 BoxTitleLatestModifiedSupplierOrders=최근 %s 수정 된 공급 업체 주문
 BoxTitleLastModifiedCustomerBills=최근 %s 수정 된 고객 청구서
 BoxTitleLastModifiedCustomerOrders=최근 %s 수정 된 고객 주문
+=======
+BoxLatestSupplierOrders=Latest purchase orders
+NoSupplierOrder=No recorded purchase order
+BoxCustomersInvoicesPerMonth=Customer Invoices per month
+BoxSuppliersInvoicesPerMonth=Vendor Invoices per month
+BoxCustomersOrdersPerMonth=Sales Orders per month
+BoxSuppliersOrdersPerMonth=Vendor Orders per month
+BoxProposalsPerMonth=매월 제안
+NoTooLowStockProducts=No products are under the low stock limit
+BoxProductDistribution=Products/Services Distribution
+ForObject=On %s
+BoxTitleLastModifiedSupplierBills=Vendor Invoices: last %s modified
+BoxTitleLatestModifiedSupplierOrders=Vendor Orders: last %s modified
+BoxTitleLastModifiedCustomerBills=Customer Invoices: last %s modified
+BoxTitleLastModifiedCustomerOrders=Sales Orders: last %s modified
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BoxTitleLastModifiedPropals=Latest %s modified proposals
 ForCustomersInvoices=고객 송장
 ForCustomersOrders=고객 주문
@@ -84,3 +149,7 @@ ForProposals=제안
 LastXMonthRolling=최근 %s 월 롤링
 ChooseBoxToAdd=대시 보드에 위젯 추가
 BoxAdded=위젯이 대시 보드에 추가되었습니다.
+<<<<<<< HEAD
+=======
+BoxTitleUserBirthdaysOfMonth=Birthdays of this month
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

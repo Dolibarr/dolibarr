@@ -7,7 +7,10 @@ SendNewPassword=Regenerar y enviar contraseña
 ReinitPassword=Regenerar contraseña
 PasswordChangedTo=La contraseña ha cambiado a: %s
 UserRights=Permisos de usuario
+<<<<<<< HEAD
 UserGUISetup=Configuración de la pantalla del usuario
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DisableAUser=Deshabilitar un usuario
 EnableAUser=Habilitar un usuario
 LastName=Apellido

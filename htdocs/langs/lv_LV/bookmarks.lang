@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - marque pages
+<<<<<<< HEAD
 AddThisPageToBookmarks=Add current page to bookmarks
 Bookmark=Grāmatzīme
 Bookmarks=Grāmatzīmes
@@ -17,4 +18,24 @@ CreateBookmark=Izveidot grāmatzīmi
 SetHereATitleForLink=Uzstādīt grāmatzīmes nosaukumu
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Izmantojiet ārējo http URL vai relatīvo Dolibarr URL
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if linked page must open in new window or not
+=======
+AddThisPageToBookmarks=Pievienot pašreizējo lapu grāmatzīmēm
+Bookmark=Grāmatzīme
+Bookmarks=Grāmatzīmes
+ListOfBookmarks=Grāmatzīmju saraksts
+EditBookmarks=Skatīt / rediģēt grāmatzīmes
+NewBookmark=Jauna grāmatzīme
+ShowBookmark=Rādīt grāmatzīmi
+OpenANewWindow=Atvērt jaunu cilni
+ReplaceWindow=Nomainiet pašreizējo cilni
+BookmarkTargetNewWindowShort=Jauna cilne
+BookmarkTargetReplaceWindowShort=Pašreizējā cilne
+BookmarkTitle=Grāmatzīmes nosaukums
+UrlOrLink=URL
+BehaviourOnClick=Behaviour when a bookmark URL is selected
+CreateBookmark=Izveidot grāmatzīmi
+SetHereATitleForLink=Iestatiet grāmatzīmes nosaukumu
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Izmantojiet ārēju / absolūtu saiti (https: // URL) vai iekšējo / relatīvo saiti (/ DOLIBARR_ROOT / htdocs / ...)
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Izvēlieties, vai saistītā lapa jāatver pašreizējā cilnē vai jaunā cilnē
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BookmarksManagement=Grāmatzīmju vadība

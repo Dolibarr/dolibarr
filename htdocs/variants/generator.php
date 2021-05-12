@@ -1,6 +1,11 @@
 <?php
+<<<<<<< HEAD
 
 /* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
+=======
+/* Copyright (C) 2016   Marcos García   <marcosgdf@gmail.com>
+ * Copyright (C) 2018   Frédéric France <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,8 +29,12 @@ require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttributeValue.class.php'
 require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination2ValuePair.class.php';
 
+<<<<<<< HEAD
 $langs->load("products");
 $langs->load('other');
+=======
+$langs->loadLangs(array("products", "other"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref');
@@ -34,7 +43,11 @@ $form = new Form($db);
 // Security check
 $fieldvalue = (! empty($id) ? $id : $ref);
 $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
+<<<<<<< HEAD
 $result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype);
+=======
+$result=restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $prodattr = new ProductAttribute($db);
 $prodattrval = new ProductAttributeValue($db);
@@ -42,6 +55,16 @@ $product = new Product($db);
 
 $product->fetch($id);
 
+<<<<<<< HEAD
+=======
+$error = 0;
+
+
+/*
+ * Actions
+ */
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (!$product->isProduct()) {
 	header('Location: '.dol_buildpath('/product/card.php?id='.$product->id, 2));
 	exit();
@@ -60,8 +83,13 @@ $combinations = GETPOST('combinations', 'array');
 $price_var_percent = (bool) GETPOST('price_var_percent');
 $donotremove = true;
 
+<<<<<<< HEAD
 if ($_POST) {
 
+=======
+if ($_POST)
+{
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$donotremove = (bool) GETPOST('donotremove');
 
 	//We must check if all those given combinations actually exist
@@ -103,7 +131,12 @@ if ($_POST) {
 
 			$res = 1;
 
+<<<<<<< HEAD
 			foreach (cartesianArray($adapted_values) as $currcomb) 
+=======
+			$cartesianarray = cartesianArray($adapted_values);
+			foreach ($cartesianarray as $currcomb)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			{
 				$res = $combination->createProductCombination($product, $currcomb, $sanitized_values, $price_var_percent);
 				if ($res < 0) {
@@ -115,11 +148,16 @@ if ($_POST) {
 
 			if ($res > 0) {
 				$db->commit();
+<<<<<<< HEAD
 				setEventMessage($langs->trans('RecordSaved'));
+=======
+				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				header('Location: '.dol_buildpath('/variants/combinations.php?id='.$id, 2));
 				exit;
 			}
 		} else {
+<<<<<<< HEAD
 			setEventMessage($langs->trans('ErrorDeletingGeneratedProducts'), 'errors');
 		}
 
@@ -127,6 +165,14 @@ if ($_POST) {
 
 	} else {
 		setEventMessage($langs->trans('ErrorFieldsRequired'), 'errors');
+=======
+			setEventMessages($langs->trans('ErrorDeletingGeneratedProducts'), null, 'errors');
+		}
+
+		$db->rollback();
+	} else {
+		setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 }
 
@@ -146,11 +192,16 @@ if (! empty($id) || ! empty($ref)) {
 	{
 		$showbarcode=empty($conf->barcode->enabled)?0:1;
 		if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode=0;
+<<<<<<< HEAD
 		 
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$head=product_prepare_head($object);
 		$titre=$langs->trans("CardProduct".$object->type);
 		$picto=($object->type== Product::TYPE_SERVICE?'service':'product');
 		dol_fiche_head($head, 'combinations', $titre, 0, $picto);
+<<<<<<< HEAD
 		 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
 		$object->next_prev_filter=" fk_product_type = ".$object->type;
@@ -161,6 +212,18 @@ if (! empty($id) || ! empty($ref)) {
 	}
 
 	print_fiche_titre($langs->trans('ProductCombinationGenerator'));
+=======
+
+		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
+		$object->next_prev_filter=" fk_product_type = ".$object->type;
+
+		dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref', '', '', '', 0, '', '', 1);
+
+		dol_fiche_end();
+	}
+
+	print load_fiche_titre($langs->trans('ProductCombinationGenerator'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	$dictionary_attr = array();
 
@@ -325,7 +388,11 @@ if (! empty($id) || ! empty($ref)) {
 
 			<form method="post" id="combinationsform">
 
+<<<<<<< HEAD
 					<p><?php echo $langs->trans('TooMuchCombinationsWarning', $langs->trans('DoNotRemovePreviousCombinations')) ?></p>
+=======
+					<p><?php echo $langs->trans('TooMuchCombinationsWarning', $langs->transnoentitiesnoconv('DoNotRemovePreviousCombinations')) ?></p>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					<input type="checkbox" name="price_var_percent"
 					       id="price_var_percent"<?php echo $price_var_percent ? ' checked' : '' ?>> <label
 						for="price_var_percent"><?php echo $langs->trans('UsePercentageVariations') ?></label>
@@ -374,5 +441,13 @@ if (! empty($id) || ! empty($ref)) {
 
 	<?php
 
+<<<<<<< HEAD
 	llxFooter();
 }
+=======
+  // End of page
+  llxFooter();
+}
+
+$db->close();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

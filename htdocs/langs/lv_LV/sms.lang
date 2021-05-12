@@ -1,7 +1,12 @@
 # Dolibarr language file - Source file is en_US - sms
 Sms=Sms
+<<<<<<< HEAD
 SmsSetup=Sms iestatīšana
 SmsDesc=Šī lapa ļauj definēt Globālās SMS iespējas
+=======
+SmsSetup=SMS iestatīšana
+SmsDesc=Šī lapa ļauj definēt globālās opcijas īsziņu funkcijās
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SmsCard=SMS karte
 AllSms=Visas SMS kampaņas
 SmsTargets=Mērķi
@@ -13,6 +18,7 @@ SmsTo=Mērķis
 SmsTopic=SMS Tēma
 SmsText=Ziņa
 SmsMessage=SMS ziņojums
+<<<<<<< HEAD
 ShowSms=Rādīt Sms
 ListOfSms=SMS ampaņu saraksts
 NewSms=Jauna SMS kampaņa
@@ -27,6 +33,22 @@ SmsResult=SMS sutīšanas rezultāts
 TestSms=Testa Sms
 ValidSms=Apstiprināt Sms
 ApproveSms=Apstiprināt Sms
+=======
+ShowSms=Parādīt īsziņu
+ListOfSms=Īsziņu saraksta kampaņas
+NewSms=Jauna SMS kampaņa
+EditSms=Rediģēt īsziņu
+ResetSms=Jauna sūtīšana
+DeleteSms=Dzēst SMS kampaņu
+DeleteASms=Noņemt SMS kampaņu
+PreviewSms=Priekšskats SMS
+PrepareSms=Sagatavot SMS
+CreateSms=Izveidot īsziņu
+SmsResult=SMS nosūtīšanas rezultāts
+TestSms=Izmēģiniet SMS
+ValidSms=Apstipriniet SMS
+ApproveSms=Apstiprināt SMS
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SmsStatusDraft=Melnraksts
 SmsStatusValidated=Pārbaudīts
 SmsStatusApproved=Apstiprināts
@@ -35,6 +57,7 @@ SmsStatusSentPartialy=Nosūtīts daļēji
 SmsStatusSentCompletely=Nosūtīta pilnīgi
 SmsStatusError=Kļūda
 SmsStatusNotSent=Nav nosūtīts
+<<<<<<< HEAD
 SmsSuccessfulySent=Sms pareizi nosūtīti (no %s līdz %s)
 ErrorSmsRecipientIsEmpty=Numurs nav norādīts
 WarningNoSmsAdded=Nav jaunu tālruņa numuru, lai pievienotu mērķa sarakstam
@@ -49,3 +72,19 @@ DelayBeforeSending=Aizture pirms nosūtīšanas (minūtēs)
 SmsNoPossibleSenderFound=No sender available. Check setup of your SMS provider.
 SmsNoPossibleRecipientFound=Nav mērķa pieejams. Pārbaudiet iestatījumus jūsu SMS pakalpojumu sniedzēja.
 DisableStopIfSupported=Disable STOP message (if supported)
+=======
+SmsSuccessfulySent=SMS pareizi nosūtīta (no %s līdz %s)
+ErrorSmsRecipientIsEmpty=Numurs nav norādīts
+WarningNoSmsAdded=Nav jaunu tālruņa numuru, lai pievienotu mērķa sarakstam
+ConfirmValidSms=Vai apstiprināt šīs kampaņas apstiprināšanu?
+NbOfUniqueSms=Unikālo tālruņu numuru skaits
+NbOfSms=Tālruņu numuru skaits
+ThisIsATestMessage=Šī ir testa ziņa
+SendSms=Sūtīt SMS
+SmsInfoCharRemain=Atlikušo rakstzīmju skaits
+SmsInfoNumero= (starptautiskais formāts, t.i.: +33899701761)
+DelayBeforeSending=Aizture pirms nosūtīšanas (minūtēs)
+SmsNoPossibleSenderFound=Nav neviena sūtītāja. Pārbaudiet sava SMS pakalpojumu sniedzēja iestatījumus.
+SmsNoPossibleRecipientFound=Nav mērķa pieejams. Pārbaudiet iestatījumus jūsu SMS pakalpojumu sniedzēja.
+DisableStopIfSupported=Atspējot STOP ziņojumu (ja tas ir atbalstīts)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

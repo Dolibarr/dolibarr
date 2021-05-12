@@ -35,6 +35,7 @@ if (! $user->rights->bookmark->lire) {
     restrictedArea($user, 'bookmarks');
 }
 
+<<<<<<< HEAD
 $id=GETPOST("id",'int');
 $action=GETPOST("action","alpha");
 $title=GETPOST("title","alpha");
@@ -44,6 +45,17 @@ $target=GETPOST("target","alpha");
 $userid=GETPOST("userid","int");
 $position=GETPOST("position","int");
 $backtopage=GETPOST('backtopage','alpha');
+=======
+$id=GETPOST("id", 'int');
+$action=GETPOST("action", "alpha");
+$title=GETPOST("title", "alpha");
+$url=GETPOST("url", "alpha");
+$urlsource=GETPOST("urlsource", "alpha");
+$target=GETPOST("target", "alpha");
+$userid=GETPOST("userid", "int");
+$position=GETPOST("position", "int");
+$backtopage=GETPOST('backtopage', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $object=new Bookmark($db);
 
@@ -63,14 +75,22 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 
 	$error = 0;
 
+<<<<<<< HEAD
 	if (GETPOST('cancel','alpha'))
+=======
+	if (GETPOST('cancel', 'alpha'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		if (empty($backtopage)) $backtopage=($urlsource?$urlsource:((! empty($url) && ! preg_match('/^http/i', $url))?$url:DOL_URL_ROOT.'/bookmarks/list.php'));
 		header("Location: ".$backtopage);
 		exit;
 	}
 
+<<<<<<< HEAD
 	if ($action == 'update') $object->fetch(GETPOST("id",'int'));
+=======
+	if ($action == 'update') $object->fetch(GETPOST("id", 'int'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	// Check if null because user not admin can't set an user and send empty value here.
 	if(!empty($userid))
 		$object->fk_user=$userid;
@@ -81,12 +101,20 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 
 	if (! $title) {
 		$error++;
+<<<<<<< HEAD
 		setEventMessages($langs->transnoentities("ErrorFieldRequired",$langs->trans("BookmarkTitle")), null, 'errors');
+=======
+		setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("BookmarkTitle")), null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	if (! $url) {
 		$error++;
+<<<<<<< HEAD
 		setEventMessages($langs->transnoentities("ErrorFieldRequired",$langs->trans("UrlOrLink")), null, 'errors');
+=======
+		setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("UrlOrLink")), null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	if (! $error)
@@ -168,7 +196,11 @@ if ($action == 'create')
 	// Target
 	print '<tr><td>'.$langs->trans("BehaviourOnClick").'</td><td>';
 	$liste=array(0=>$langs->trans("ReplaceWindow"),1=>$langs->trans("OpenANewWindow"));
+<<<<<<< HEAD
 	print $form->selectarray('target',$liste,1);
+=======
+	print $form->selectarray('target', $liste, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</td><td class="hideonsmartphone">'.$langs->trans("ChooseIfANewWindowMustBeOpenedOnClickOnBookmark").'</td></tr>';
 
 	// Owner
@@ -194,7 +226,11 @@ if ($action == 'create')
 }
 
 
+<<<<<<< HEAD
 if ($id > 0 && ! preg_match('/^add/i',$action))
+=======
+if ($id > 0 && ! preg_match('/^add/i', $action))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	/*
 	 * Fact bookmark mode or visually edition
@@ -244,7 +280,11 @@ if ($id > 0 && ! preg_match('/^add/i',$action))
 	}
 
 	print '</td><td>';
+<<<<<<< HEAD
 	if ($action == 'edit') print '<input class="flat minwidth200" name="title" value="'.(isset($_POST["title"])?GETPOST("title",'',2):$object->title).'">';
+=======
+	if ($action == 'edit') print '<input class="flat minwidth200" name="title" value="'.(isset($_POST["title"])?GETPOST("title", '', 2):$object->title).'">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	else print $object->title;
 	print '</td></tr>';
 
@@ -258,14 +298,22 @@ if ($id > 0 && ! preg_match('/^add/i',$action))
 	}
 	print '</td><td>';
 	if ($action == 'edit') print '<input class="flat" name="url" size="80" value="'.(isset($_POST["url"])?$_POST["url"]:$object->url).'">';
+<<<<<<< HEAD
 	else print '<a href="'.(preg_match('/^http/i',$object->url)?$object->url:DOL_URL_ROOT.$object->url).'"'.($object->target?' target="_blank"':'').'>'.$object->url.'</a>';
+=======
+	else print '<a href="'.(preg_match('/^http/i', $object->url)?$object->url:DOL_URL_ROOT.$object->url).'"'.($object->target?' target="_blank"':'').'>'.$object->url.'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("BehaviourOnClick").'</td><td>';
 	if ($action == 'edit')
 	{
 		$liste=array(1=>$langs->trans("OpenANewWindow"),0=>$langs->trans("ReplaceWindow"));
+<<<<<<< HEAD
 		print $form->selectarray('target',$liste,isset($_POST["target"])?$_POST["target"]:$object->target);
+=======
+		print $form->selectarray('target', $liste, isset($_POST["target"])?$_POST["target"]:$object->target);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 	else
 	{
@@ -301,7 +349,11 @@ if ($id > 0 && ! preg_match('/^add/i',$action))
 	print '</td></tr>';
 
 	// Date creation
+<<<<<<< HEAD
 	print '<tr><td>'.$langs->trans("DateCreation").'</td><td>'.dol_print_date($object->datec,'dayhour').'</td></tr>';
+=======
+	print '<tr><td>'.$langs->trans("DateCreation").'</td><td>'.dol_print_date($object->datec, 'dayhour').'</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	print '</table>';
 
@@ -333,10 +385,17 @@ if ($id > 0 && ! preg_match('/^add/i',$action))
 	}
 
 	print '</div>';
+<<<<<<< HEAD
 
 }
 
 
 llxFooter();
 
+=======
+}
+
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

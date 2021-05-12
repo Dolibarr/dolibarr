@@ -116,7 +116,11 @@ CountryHM=Đảo Heard và McDonald
 CountryVA=Tòa Thánh (Vatican City State)
 CountryHN=Honduras
 CountryHK=Hồng Kông
+<<<<<<< HEAD
 CountryIS=Icelande
+=======
+CountryIS=Iceland
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryIN=Ấn Độ
 CountryID=Indonesia
 CountryIR=Iran
@@ -131,7 +135,11 @@ CountryKI=Kiribati
 CountryKP=Bắc Triều Tiên
 CountryKR=Hàn Quốc
 CountryKW=Kuwait
+<<<<<<< HEAD
 CountryKG=Kyrghyztan
+=======
+CountryKG=Kyrgyzstan
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryLA=Lào
 CountryLV=Latvia
 CountryLB=Lebanon
@@ -160,7 +168,11 @@ CountryMD=Moldova
 CountryMN=Mông Cổ
 CountryMS=Monserrat
 CountryMZ=Mozambique
+<<<<<<< HEAD
 CountryMM=Birmania (Myanmar)
+=======
+CountryMM=Myanmar (Burma)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryNA=Namibia
 CountryNR=Nauru
 CountryNP=Nepal
@@ -223,7 +235,11 @@ CountryTO=Tonga
 CountryTT=Trinidad và Tobago
 CountryTR=Thổ Nhĩ Kỳ
 CountryTM=Turkmenistan
+<<<<<<< HEAD
 CountryTC=Quần đảo Turks và Cailos
+=======
+CountryTC=Turks and Caicos Islands
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryTV=Tuvalu
 CountryUG=Uganda
 CountryUA=Ukraina
@@ -277,7 +293,11 @@ CurrencySingMGA=Ariary
 CurrencyMUR=Rupee Mauritius
 CurrencySingMUR=Mauritius rupee
 CurrencyNOK=Krones Na Uy
+<<<<<<< HEAD
 CurrencySingNOK=Krone Na Uy
+=======
+CurrencySingNOK=Norwegian kronas
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrencyTND=Dinar Tunisia
 CurrencySingTND=Dinar Tunisia
 CurrencyUSD=Đô la Mỹ
@@ -290,6 +310,10 @@ CurrencyXOF=CFA Franc BCEAO
 CurrencySingXOF=CFA Franc BCEAO
 CurrencyXPF=CFP Francs
 CurrencySingXPF=CFP Franc
+<<<<<<< HEAD
+=======
+CurrencyCentEUR=cents
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrencyCentSingEUR=phần trăm
 CurrencyCentINR=paisa
 CurrencyCentSingINR=paise
@@ -306,6 +330,10 @@ DemandReasonTypeSRC_WOM=Truyền miệng
 DemandReasonTypeSRC_PARTNER=Đối tác
 DemandReasonTypeSRC_EMPLOYEE=Nhân viên
 DemandReasonTypeSRC_SPONSORING=Tài trợ
+<<<<<<< HEAD
+=======
+DemandReasonTypeSRC_SRC_CUSTOMER=Incoming contact of a customer
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 #### Paper formats ####
 PaperFormatEU4A0=Định dạng 4A0
 PaperFormatEU2A0=Định dạng 2A0

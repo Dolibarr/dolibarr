@@ -7,7 +7,10 @@ NoCategoryYet=Geen tag/categorie van dit type gemaakt
 AddIn=Toevoegen in
 CategoriesArea=Tags/Categorieën omgeving
 ProductsCategoriesArea=Producten/Diensten  tags/categorieën omgeving
+<<<<<<< HEAD
 SuppliersCategoriesArea=Leveranciers tags/categorieën omgeving
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CustomersCategoriesArea=Klanten tags/categorieën omgeving
 MembersCategoriesArea=Leden tags/categorieën omgeving
 ContactsCategoriesArea=Contacten tags/categorieën omgeving
@@ -24,7 +27,10 @@ ImpossibleAddCat=Onmogelijk om de tag/categorie %s toe te voegen
 ObjectAlreadyLinkedToCategory=Het element is al gekoppeld met deze tag/categorie.
 ProductIsInCategories=Product/dienst is gekoppeld met volgende tags/categorieën
 CompanyIsInCustomersCategories=Deze derde is gekoppeld met volgende klanten/prospects tags/categorieën
+<<<<<<< HEAD
 CompanyIsInSuppliersCategories=Deze derde is gekoppeld met volgende leveranciers tags/categorieën
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MemberIsInCategories=Dit lid is gekoppeld met volgende leden tags/categorieën
 ContactIsInCategories=Dit contact is gekoppeld met volgende contacten tags/categorieën
 ProductHasNoCategory=Dit product/dienst staat niet in tags/categorieën
@@ -37,6 +43,7 @@ NotCategorized=Zonder tag/categorie
 DeleteCategory=Tag/Categorie verwijderen
 ConfirmDeleteCategory=Weet u zeker dat u deze tag/categorie wilt verwijderen?
 NoCategoriesDefined=Geen tag/categorie gedefinieerd
+<<<<<<< HEAD
 SuppliersCategoryShort=Leveranciers tag/categorie
 CustomersCategoryShort=Klanten tag/categorie
 ProductsCategoryShort=Producten tag/categorie
@@ -45,6 +52,13 @@ SuppliersCategoriesShort=Leveranciers tags/categorieën
 CustomersCategoriesShort=Klanten tags/categorieën
 ProspectsCategoriesShort=Vooruitzicht labels/categorien
 CustomersProspectsCategoriesShort=Afnemers/Prosp. categorieën
+=======
+CustomersCategoryShort=Klanten tag/categorie
+ProductsCategoryShort=Producten tag/categorie
+MembersCategoryShort=Leden tag/categorie
+CustomersCategoriesShort=Klanten tags/categorieën
+ProspectsCategoriesShort=Vooruitzicht labels/categorien
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProductsCategoriesShort=Producten tags/categorieën
 MembersCategoriesShort=Leden tags/categorieën
 ContactCategoriesShort=Contacten tags/categorieën
@@ -53,7 +67,10 @@ ProjectsCategoriesShort=Projecten tags/categorieën
 ThisCategoryHasNoAccount=Deze categorie bevat geen account.
 ThisCategoryHasNoProject=Deze categorie bevat geen project.
 CategId=Tag/categorie id
+<<<<<<< HEAD
 CatSupList=Lijst van leverancier tags/categorieën
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CatCusList=Lijst van de klant/prospect tags/categorieën
 CatProdList=Lijst van producten tags/categorieën
 CatMemberList=Lijst van leden tags/categorieën
@@ -62,8 +79,13 @@ CatSupLinks=Koppelingen tussen leveranciers en tags/categorieën
 CatCusLinks=Koppelingen tussen klanten/prospects en tags/categorieën
 CatProdLinks=Koppelingen tussen producten/diensten en tags/categorieën
 CatProJectLinks=Koppelingen tussen projecten en tags/categorieën
+<<<<<<< HEAD
 DeleteFromCat=Verwijderen uit tags/categorie
 CategoriesSetup=Tags/categorieën instellingen
 CategorieRecursiv=Automatische koppeling met bovenliggende tag/categorie
 CategorieRecursivHelp=Indien geactiveerd zal het product ook gekoppeld worden met de bovenliggende categorie wanneer een subcategorie toegevoegd wordt.
+=======
+CategoriesSetup=Tags/categorieën instellingen
+CategorieRecursiv=Automatische koppeling met bovenliggende tag/categorie
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShowCategory=Toon tag / categorie

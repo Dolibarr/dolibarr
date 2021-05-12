@@ -22,7 +22,11 @@ SearchAProposal=Išči ponudbo
 NoProposal=No proposal
 ProposalsStatistics=Statistika komercialnih ponudb
 NumberOfProposalsByMonth=Število po mesecih
+<<<<<<< HEAD
 AmountOfProposalsByMonthHT=Znesek po mesecih(brez DDV)
+=======
+AmountOfProposalsByMonthHT=Amount by month (excl. tax)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NbOfProposals=Število komercialnih ponudb
 ShowPropal=Prikaži ponudbo
 PropalsDraft=Osnutki
@@ -33,7 +37,11 @@ PropalStatusSigned=Podpisana (potrebno fakturirati)
 PropalStatusNotSigned=Nepodpisana (zaprta)
 PropalStatusBilled=Fakturirana
 PropalStatusDraftShort=Osnutek
+<<<<<<< HEAD
 PropalStatusValidatedShort=Potrjen
+=======
+PropalStatusValidatedShort=Validated (open)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PropalStatusClosedShort=Zaprta
 PropalStatusSignedShort=Podpisana
 PropalStatusNotSignedShort=Nepodpisana
@@ -53,10 +61,16 @@ ErrorPropalNotFound=Ponudbe %s ne najdem
 AddToDraftProposals=Dodaj osnutku ponudbe
 NoDraftProposals=Ni osnutkov ponudbe
 CopyPropalFrom=Kreiraj komercialno ponudbo s kopiranjem obstoječe ponudbe
+<<<<<<< HEAD
 CreateEmptyPropal=Kreiraj prazno komercialno ponudbo ali izberi s seznama prizvodov/storitev
 DefaultProposalDurationValidity=Privzeto trajanje veljavnosti komercialne ponudbe (v dneh)
 UseCustomerContactAsPropalRecipientIfExist=Kot naslov prejemnika ponudbe uporabi naslov kontakta pri kupcu, če je na voljo, namesto naslova partnerja
 ClonePropal=Kloniraj komercialno ponudbo
+=======
+CreateEmptyPropal=Create empty commercial proposal or from list of products/services
+DefaultProposalDurationValidity=Privzeto trajanje veljavnosti komercialne ponudbe (v dneh)
+UseCustomerContactAsPropalRecipientIfExist=Use contact/address with type 'Contact following-up proposal' if defined instead of third party address as proposal recipient address
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmClonePropal=Are you sure you want to clone the commercial proposal <b>%s</b>?
 ConfirmReOpenProp=Are you sure you want to open back the commercial proposal <b>%s</b>?
 ProposalsAndProposalsLines=Komercialna ponudba in vrstice
@@ -78,8 +92,16 @@ TypeContact_propal_external_CUSTOMER=Kontakt pri kupcu za sledenje ponudbe
 TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
 DocModelAzurDescription=Vzorec kompletne ponudbe (logo...)
+<<<<<<< HEAD
+=======
+DocModelCyanDescription=Vzorec kompletne ponudbe (logo...)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DefaultModelPropalCreate=Ustvarjanje privzetega modela
 DefaultModelPropalToBill=Privzeta predloga za zaključek ponudbe (za fakturiranje)
 DefaultModelPropalClosed=Privzeta predloga za zaključek ponudbe (nefakturirana)
 ProposalCustomerSignature=Pisna potrditev, žig podjetja, datum in podpis
+<<<<<<< HEAD
 ProposalsStatisticsSuppliers=Supplier proposals statistics
+=======
+ProposalsStatisticsSuppliers=Vendor proposals statistics
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

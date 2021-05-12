@@ -41,7 +41,11 @@ $tab = (!empty($tab)) ? $tab : 'card';
 $tab = strtolower($tab);
 
 // Security check
+<<<<<<< HEAD
 $result=restrictedArea($user,'produit|service&fournisseur',$id,'product&product','','','rowid');
+=======
+$result=restrictedArea($user, 'produit|service&fournisseur', $id, 'product&product', '', '', 'rowid');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 //Initialize objects
 $product = new Product($db);
@@ -55,7 +59,11 @@ if (empty($eid)) //This also disables fetch when eid == 0
 {
 	$eid = 0;
 }
+<<<<<<< HEAD
 else if ($action != 'delete')
+=======
+elseif ($action != 'delete')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$price_expression->fetch($eid);
 }
@@ -94,7 +102,11 @@ if ($action == 'add')
 				}
 			}
 		}
+<<<<<<< HEAD
 		else if ($result < 0)
+=======
+		elseif ($result < 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			setEventMessages("add find: ".$price_expression->error, $price_expression->errors, 'errors');
 		}
@@ -134,7 +146,11 @@ if ($action == 'update')
 				}
 			}
 		}
+<<<<<<< HEAD
 		else if ($result < 0)
+=======
+		elseif ($result < 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			setEventMessages("update find: ".$price_expression->error, $price_expression->errors, 'errors');
 		}
@@ -166,7 +182,11 @@ if ($action == 'delete')
 
 $form = new Form($db);
 
+<<<<<<< HEAD
 llxHeader("","",$langs->trans("CardProduct".$product->type));
+=======
+llxHeader("", "", $langs->trans("CardProduct".$product->type));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print load_fiche_titre($langs->trans("PriceExpressionEditor"));
 
@@ -204,9 +224,15 @@ foreach ($price_globals->listGlobalVariables() as $entry) {
 }
 
 //Price expression editor
+<<<<<<< HEAD
 print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans("PriceExpressionEditor"),$help_text,1).'</td><td>';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 $doleditor=new DolEditor('expression',isset($price_expression->expression)?$price_expression->expression:'','',300,'','',false,false,false,ROWS_4,'90%');
+=======
+print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans("PriceExpressionEditor"), $help_text, 1).'</td><td>';
+require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+$doleditor=new DolEditor('expression', isset($price_expression->expression)?$price_expression->expression:'', '', 300, '', '', false, false, false, ROWS_4, '90%');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $doleditor->Create();
 print '</td></tr>';
 print '</table>';
@@ -219,7 +245,11 @@ print '<input type="submit" class="butAction" value="'.$langs->trans("Save").'">
 print '<span id="back" class="butAction">'.$langs->trans("Back").'</span>';
 if ($eid == 0)
 {
+<<<<<<< HEAD
 	print '<div class="inline-block divButAction"><span id="action-delete" class="butActionRefused">'.$langs->trans('Delete').'</span></div>'."\n";
+=======
+	print '<div class="inline-block divButAction"><span id="action-delete" class="butActionRefused classfortooltip">'.$langs->trans('Delete').'</span></div>'."\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 else
 {
@@ -244,5 +274,9 @@ print '<script type="text/javascript">
 	}
 </script>';
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

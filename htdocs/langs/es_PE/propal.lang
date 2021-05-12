@@ -1,3 +1,6 @@
 # Dolibarr language file - Source file is en_US - propal
+<<<<<<< HEAD
 AmountOfProposalsByMonthHT=Importe por mes (Sin IGV)
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PropalsOpened=Abrir

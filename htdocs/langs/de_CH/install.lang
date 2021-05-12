@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - install
 InstallEasy=Wir haben uns bemüht, die Installation von Dolibarr so einfach wie möglich zu gestalten. \nBefolgen Sie einfach die Schritte auf dem Bildschirm.
+<<<<<<< HEAD
 ConfFileIsNotWritable=Die Konfigurationsdatei <b>%s</b> ist nicht beschreibbar. Bitte überprüfen Sie die Dateizugriffsrechte. Für die Erstinstallation muss Ihr Webserver in die Konfigurationsdatei schreiben können, sezzten Sie die Dateiberechtigungen entsprechend (z.B. mittels "chmod 666" auf Unix-Betriebssystemen).
 ErrorDatabaseAlreadyExists=Eine Datenbank mit dem Namen '%s' exisitiert bereits.
 IfDatabaseExistsGoBackAndCheckCreate=Sollte die Datebank bereits existieren, gehen Sie bitte zurück und deaktivieren Sie das Kontrollkästchen "Datenbank erstellen".
@@ -14,3 +15,15 @@ KeepDefaultValuesMamp=Sie verwenden den DoliMamp-Installationsassistent, entspre
 MigrationContractsEmptyDatesUpdateSuccess=Korrektur der undefinierten Vertragsdaten erfolgreich
 MigrationContractsIncoherentCreationDateUpdateSuccess=Korrektur ungültiger Vertragserstellungsdaten erfolgreich
 ErrorFoundDuringMigration=Fehler wurden beim Migrationsprozess entdeckt, daher ist der nächste Schritt nicht verfügbar. Um den Fehler zu ignorieren können sie <a href="%s">hier klicken</a>, aber Anwendungen oder manche Funktionen können eventuell nicht richtig funktionieren solange der Fehler nicht behoben wurde.
+=======
+PHPSupportPOSTGETOk=Ihre PHP unterstützt GET und POST Variablen.
+ErrorDatabaseAlreadyExists=Eine Datenbank mit dem Namen '%s' exisitiert bereits.
+IfDatabaseExistsGoBackAndCheckCreate=Sollte die Datebank bereits existieren, gehen Sie bitte zurück und deaktivieren Sie das Kontrollkästchen "Datenbank erstellen".
+AdminLoginCreatedSuccessfuly=Das dolibarr-Administratorkonto '<b>%s</b>' wurde erfolgreich erstellt.
+GoToDolibarr=Zu dolibarr wechseln
+ChoosedMigrateScript=Migrationsskript auswählen
+ChooseYourSetupMode=Wählen Sie Ihre Installationsart und klicken Sie anschliessend auf "Start"...
+UpgradeDesc=Verwenden Sie diesen Modus zum Ersetzen Ihrer bisherigen Dateien durch eine neuere Version. Dieser Vorgang beinhaltet eine Aktualisierung Ihrer Datenbank und -daten.
+InstallChoiceSuggested=<b>Vom Installationsassistenten vorgeschlagene Wahl.</b>
+MigrationContractsIncoherentCreationDateUpdateSuccess=Korrektur ungültiger Vertragserstellungsdaten erfolgreich
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

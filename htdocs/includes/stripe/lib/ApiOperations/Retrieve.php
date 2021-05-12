@@ -15,7 +15,11 @@ trait Retrieve
      *     or an options array containing an `id` key.
      * @param array|string|null $opts
      *
+<<<<<<< HEAD
      * @return \Stripe\StripeObject
+=======
+     * @return static
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      */
     public static function retrieve($id, $opts = null)
     {

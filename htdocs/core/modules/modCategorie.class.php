@@ -37,7 +37,11 @@ class modCategorie extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
+<<<<<<< HEAD
 	function __construct($db)
+=======
+	public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 	    global $conf;
 
@@ -45,9 +49,15 @@ class modCategorie extends DolibarrModules
 		$this->numero = 1780;
 
 		$this->family = "technic";
+<<<<<<< HEAD
 		$this->module_position = 20;
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
+=======
+		$this->module_position = '20';
+		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->description = "Gestion des categories (produits, clients, fournisseurs...)";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -230,7 +240,11 @@ class modCategorie extends DolibarrModules
 		$this->export_code[$r]='category_'.$r;
 		$this->export_label[$r]='CatProdList';
 		$this->export_icon[$r]='category';
+<<<<<<< HEAD
         $this->export_enabled[$r]='$conf->produit->enabled';
+=======
+        $this->export_enabled[$r]='$conf->product->enabled || $conf->service->enabled';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->export_permission[$r]=array(array("categorie","lire"),array("produit","lire"));
 		$this->export_fields_array[$r]=array('u.rowid'=>"CategId",'u.label'=>"Label",'u.description'=>"Description",'p.rowid'=>'ProductId','p.ref'=>'Ref');
 		$this->export_TypeFields_array[$r]=array('u.label'=>"Text",'u.description'=>"Text",'p.ref'=>'Text');
@@ -284,6 +298,10 @@ class modCategorie extends DolibarrModules
 			'p.email' => 'Email',
 			'p.note_private' => 'NotePrivate',
 			'p.note_public' => 'NotePublic',
+<<<<<<< HEAD
+=======
+            'p.statut' => 'Status',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			's.nom'=>"Name",
 			's.client'=>"Customer",
 			's.fournisseur'=>"Supplier",
@@ -301,6 +319,10 @@ class modCategorie extends DolibarrModules
 			'u.description' => "Text",
 			'p.lastname' => 'Text',
 			'p.firstname' => 'Text',
+<<<<<<< HEAD
+=======
+            'p.statut'=>"Numeric",
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			's.nom'=>"Text",
 			's.status'=>"Text",
 			's.address'=>"Text",
@@ -333,6 +355,10 @@ class modCategorie extends DolibarrModules
 			'p.email' => 'contact',
 			'p.note_private' => 'contact',
 			'p.note_public' => 'contact',
+<<<<<<< HEAD
+=======
+            'p.statut' => 'contact',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			's.nom'=>"company",
 			's.client'=>"company",
 			's.fournisseur'=>"company",
@@ -480,13 +506,21 @@ class modCategorie extends DolibarrModules
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
      */
+<<<<<<< HEAD
 	function init($options='')
+=======
+	public function init($options = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		// Permissions
 		$this->remove($options);
 
 		$sql = array();
 
+<<<<<<< HEAD
 		return $this->_init($sql,$options);
+=======
+		return $this->_init($sql, $options);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 }

@@ -29,29 +29,47 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'orders', 'bills'));
 
+<<<<<<< HEAD
 $id=GETPOST("id",'int');
 
 $socid = GETPOST('id','int')?GETPOST('id','int'):GETPOST('socid','int');
+=======
+$id=GETPOST("id", 'int');
+
+$socid = GETPOST('id', 'int')?GETPOST('id', 'int'):GETPOST('socid', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 // Security check
 if ($user->societe_id > 0)
 {
 	$socid = $user->societe_id;
 }
 
+<<<<<<< HEAD
 $backtopage = GETPOST('backtopage','alpha');
+=======
+$backtopage = GETPOST('backtopage', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 /*
  * Actions
  */
 
+<<<<<<< HEAD
 if (GETPOST('cancel','alpha') && ! empty($backtopage))
+=======
+if (GETPOST('cancel', 'alpha') && ! empty($backtopage))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
      header("Location: ".$backtopage);
      exit;
 }
 
+<<<<<<< HEAD
 if (GETPOST('action','aZ09') == 'setremise')
+=======
+if (GETPOST('action', 'aZ09') == 'setremise')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$object = new Societe($db);
 	$object->fetch($id);
@@ -59,9 +77,15 @@ if (GETPOST('action','aZ09') == 'setremise')
 	$discount_type = GETPOST('discount_type', 'int');
 
 	if(! empty($discount_type)) {
+<<<<<<< HEAD
 		$result=$object->set_remise_supplier(price2num(GETPOST("remise")),GETPOST("note"),$user);
 	} else {
 		$result=$object->set_remise_client(price2num(GETPOST("remise")),GETPOST("note"),$user);
+=======
+		$result=$object->set_remise_supplier(price2num(GETPOST("remise")), GETPOST("note"), $user);
+	} else {
+		$result=$object->set_remise_client(price2num(GETPOST("remise")), GETPOST("note"), $user);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	if ($result > 0)
@@ -106,7 +130,11 @@ if ($socid > 0)
 
 	$head = societe_prepare_head($object);
 
+<<<<<<< HEAD
 	$isCustomer = $object->client == 1 || $object->client == 3;
+=======
+	$isCustomer = ($object->client == 1 || $object->client == 3);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$isSupplier = $object->fournisseur == 1;
 
 	print '<form method="POST" action="remise.php?id='.$object->id.'">';
@@ -122,27 +150,45 @@ if ($socid > 0)
 
     print '<div class="underbanner clearboth"></div>';
 
+<<<<<<< HEAD
     if(! $isCustomer && ! $isSupplier) {
+=======
+    if (! $isCustomer && ! $isSupplier) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	print '<p class="opacitymedium">'.$langs->trans('ThirdpartyIsNeitherCustomerNorClientSoCannotHaveDiscounts').'</p>';
 
     	dol_fiche_end();
 
     	print '</form>';
 
+<<<<<<< HEAD
     	llxFooter();
     	$db->close();
+=======
+    	// End of page
+        llxFooter();
+        $db->close();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	exit;
     }
 
 	print '<table class="border centpercent">';
 
+<<<<<<< HEAD
 	if($isCustomer) {
+=======
+	if ($isCustomer) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// Customer discount
 		print '<tr><td class="titlefield">';
 		print $langs->trans("CustomerRelativeDiscount").'</td><td>'.price2num($object->remise_percent)."%</td></tr>";
 	}
 
+<<<<<<< HEAD
 	if($isSupplier) {
+=======
+	if ($isSupplier) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// Supplier discount
 		print '<tr><td class="titlefield">';
 		print $langs->trans("SupplierRelativeDiscount").'</td><td>'.price2num($object->remise_supplier_percent)."%</td></tr>";
@@ -151,6 +197,7 @@ if ($socid > 0)
 	print '</table>';
 	print '<br>';
 
+<<<<<<< HEAD
 	print load_fiche_titre($langs->trans("NewRelativeDiscount"),'','');
 
 	print '<div class="underbanner clearboth"></div>';
@@ -170,6 +217,34 @@ if ($socid > 0)
 		print '<tr><td class="titlefield fieldrequired">'.$langs->trans('DiscountType').'</td>';
 		print '<td><input type="radio" name="discount_type" id="discount_type_0" selected value="0"/> <label for="discount_type_0">'.$langs->trans('Customer').'</label>';
 		print ' <input type="radio" name="discount_type" id="discount_type_1" selected value="1"/> <label for="discount_type_1">'.$langs->trans('Supplier').'</label>';
+=======
+	print load_fiche_titre($langs->trans("NewRelativeDiscount"), '', '');
+
+	print '<div class="underbanner clearboth"></div>';
+
+	/*if (! ($isCustomer && $isSupplier))
+	{
+	    if ($isCustomer && ! $isSupplier) {
+	        print '<input type="hidden" name="discount_type" value="0" />';
+	    }
+	    if (! $isCustomer && $isSupplier) {
+	        print '<input type="hidden" name="discount_type" value="1" />';
+	    }
+	}*/
+
+	print '<table class="border centpercent">';
+
+	if ($isCustomer || $isSupplier)
+	{
+		// Discount type
+		print '<tr><td class="titlefield fieldrequired">'.$langs->trans('DiscountType').'</td><td>';
+		if ($isCustomer) {
+			print '<input type="radio" name="discount_type" id="discount_type_0" checked value="0"/> <label for="discount_type_0">'.$langs->trans('Customer').'</label>';
+		}
+		if ($isSupplier) {
+		    print ' <input type="radio" name="discount_type" id="discount_type_1"'.($isCustomer?'':' checked').' value="1"/> <label for="discount_type_1">'.$langs->trans('Supplier').'</label>';
+		}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</td></tr>';
 	}
 
@@ -226,7 +301,11 @@ if ($socid > 0)
 			print '<tr class="liste_titre">';
 			print '<td width="160">'.$langs->trans("Date").'</td>';
 			print '<td width="160" align="center">'.$langs->trans("CustomerRelativeDiscountShort").'</td>';
+<<<<<<< HEAD
 			print '<td align="left">'.$langs->trans("NoteReason").'</td>';
+=======
+			print '<td class="left">'.$langs->trans("NoteReason").'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '<td align="center">'.$langs->trans("User").'</td>';
 			print '</tr>';
 			$num = $db->num_rows($resql);
@@ -237,10 +316,17 @@ if ($socid > 0)
 	    		{
 	    			$obj = $db->fetch_object($resql);
 	    			print '<tr class="oddeven">';
+<<<<<<< HEAD
 	    			print '<td>'.dol_print_date($db->jdate($obj->dc),"dayhour").'</td>';
 	    			print '<td align="center">'.price2num($obj->remise_percent).'%</td>';
 	    			print '<td align="left">'.$obj->note.'</td>';
 	    			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
+=======
+	    			print '<td>'.dol_print_date($db->jdate($obj->dc), "dayhour").'</td>';
+	    			print '<td align="center">'.price2num($obj->remise_percent).'%</td>';
+	    			print '<td class="left">'.$obj->note.'</td>';
+	    			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    			print '</tr>';
 	    			$i++;
 	    		}
@@ -285,7 +371,11 @@ if ($socid > 0)
 			print '<tr class="liste_titre">';
 			print '<td width="160">'.$langs->trans("Date").'</td>';
 			print '<td width="160" align="center">'.$langs->trans("CustomerRelativeDiscountShort").'</td>';
+<<<<<<< HEAD
 			print '<td align="left">'.$langs->trans("NoteReason").'</td>';
+=======
+			print '<td class="left">'.$langs->trans("NoteReason").'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '<td align="center">'.$langs->trans("User").'</td>';
 			print '</tr>';
 			$num = $db->num_rows($resql);
@@ -296,10 +386,17 @@ if ($socid > 0)
 				{
 					$obj = $db->fetch_object($resql);
 					print '<tr class="oddeven">';
+<<<<<<< HEAD
 					print '<td>'.dol_print_date($db->jdate($obj->dc),"dayhour").'</td>';
 					print '<td align="center">'.price2num($obj->remise_percent).'%</td>';
 					print '<td align="left">'.$obj->note.'</td>';
 					print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
+=======
+					print '<td>'.dol_print_date($db->jdate($obj->dc), "dayhour").'</td>';
+					print '<td align="center">'.price2num($obj->remise_percent).'%</td>';
+					print '<td class="left">'.$obj->note.'</td>';
+					print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					print '</tr>';
 					$i++;
 				}
@@ -324,5 +421,9 @@ if ($socid > 0)
 	}
 }
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

@@ -6,6 +6,7 @@ Permission23102 = Planlı iş oluştur/güncelle
 Permission23103 = Planlı iş sil
 Permission23104 = Planlı iş yürüt
 # Admin
+<<<<<<< HEAD
 CronSetup= Planlı iş yönetimi ayarları
 URLToLaunchCronJobs=Nitelikli cron işlerini kontrol etmek ve başlatmak için URL
 OrToLaunchASpecificJob=Ya da özel bir işi denetlemek ve başlatmak için
@@ -16,6 +17,18 @@ CronExplainHowToRunWin=Mikrosot (tm) Windows ortamında komut satırını her 5 
 CronMethodDoesNotExists=Sınıf %s hiçbir %s yöntemi içermiyor
 CronJobDefDesc=Cron job profiles are defined into the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=List of predefined cron job profiles
+=======
+CronSetup=Planlı iş yönetimi ayarları
+URLToLaunchCronJobs=Nitelikli cron işlerini kontrol etmek ve başlatmak için URL
+OrToLaunchASpecificJob=Ya da özel bir işi denetlemek ve başlatmak için
+KeyForCronAccess=Cron işlerini başlatacak URL için güvenlik anahtarı
+FileToLaunchCronJobs=Nitelikli cron işlerini kontrol etmek ve başlatmak için komut satırı
+CronExplainHowToRunUnix=Unix ortamında komut satırını her 5 dakikada bir çalıştırmak için kron sekmesi girişini kullanmalısınız
+CronExplainHowToRunWin=On Microsoft(tm) Windows environment you can use Scheduled Task tools to run the command line each 5 minutes
+CronMethodDoesNotExists=Sınıf %s hiçbir %s yöntemi içermiyor
+CronJobDefDesc=Cron job profiles are defined into the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
+CronJobProfiles=Önceden tanımlanmış cron görevi profillerinin listesi
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 # Menu
 EnabledAndDisabled=Etkin ve engelli
 # Page list
@@ -42,8 +55,13 @@ CronModule=Modül
 CronNoJobs=Kayıtlı iş yok
 CronPriority=Öncelik
 CronLabel=Açıklama
+<<<<<<< HEAD
 CronNbRun=Başlatma sayısı
 CronMaxRun=Max number launch
+=======
+CronNbRun=Number of launches
+CronMaxRun=Maximum number of launches
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CronEach=Her
 JobFinished=İş başlatıldı ve bitirildi
 #Page card
@@ -61,11 +79,19 @@ CronStatusInactiveBtn=Engelle
 CronTaskInactive=Bu iş devre dışı
 CronId=Kimlik
 CronClassFile=Sınıfıyla beraber dosya adı
+<<<<<<< HEAD
 CronModuleHelp=Name of Dolibarr module directory (also work with external Dolibarr module). <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/<u>product</u>/class/product.class.php, the value for module is<br><i>product</i>
 CronClassFileHelp=The relative path and file name to load (path is relative to web server root directory). <BR> For exemple to call the fetch method of Dolibarr Product object htdocs/product/class/<u>product.class.php</u>, the value for class file name is<br><i>product/class/product.class.php</i>
 CronObjectHelp=The object name to load. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for class file name is<br><i>Product</i>
 CronMethodHelp=The object method to launch. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for method is<br><i>fetch</i>
 CronArgsHelp=The method arguments. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for paramters can be<br><i>0, ProductRef</i>
+=======
+CronModuleHelp=Name of Dolibarr module directory (also work with external Dolibarr module). <BR> For example to call the fetch method of Dolibarr Product object /htdocs/<u>product</u>/class/product.class.php, the value for module is<br><i>product</i>
+CronClassFileHelp=The relative path and file name to load (path is relative to web server root directory). <BR> For example to call the fetch method of Dolibarr Product object htdocs/product/class/<u>product.class.php</u>, the value for class file name is<br><i>product/class/product.class.php</i>
+CronObjectHelp=The object name to load. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for class file name is<br><i>Product</i>
+CronMethodHelp=The object method to launch. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for method is<br><i>fetch</i>
+CronArgsHelp=The method arguments. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for paramters can be<br><i>0, ProductRef</i>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CronCommandHelp=Yürütülecek sistem komut satırı.
 CronCreateJob=Yeni Planlı İş oluştur
 CronFrom=Gönderen
@@ -79,5 +105,9 @@ CronCannotLoadObject=Class file %s was loaded, but object %s was not found into 
 UseMenuModuleToolsToAddCronJobs=Planlı işleri görmek ve düzenlemek için "Giriş - Yönetici Ayarları - Planlı işler" menüsüne git.
 JobDisabled=İş engellendi
 MakeLocalDatabaseDumpShort=Yerel veritabanı yedeklemesi
+<<<<<<< HEAD
 MakeLocalDatabaseDump=Create a local database dump. Parameters are: compression ('gz' or 'bz' or 'none'), backup type ('mysql' or 'pgsql'), 1, 'auto' or filename to build, number of backup files to keep
+=======
+MakeLocalDatabaseDump=Create a local database dump. Parameters are: compression ('gz' or 'bz' or 'none'), backup type ('mysql', 'pgsql', 'auto'), 1, 'auto' or filename to build, number of backup files to keep
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 WarningCronDelayed=Dikkat: Performans amaçlı olarak etkinleştirilmiş işlerin bir sonraki yürütme tarihi ne olursa olsun, işleriniz çalıştırılmadan önce maksimum %s saat ertelenebilir.

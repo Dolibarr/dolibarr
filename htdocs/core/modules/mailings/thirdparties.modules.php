@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2018-2018 Andre Schild        <a.schild@aarboard.ch>
  * Copyright (C) 2005-2010 Laurent Destailleur <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This file is an example to follow to add your own email selector inside
  * the Dolibarr email tool.
@@ -24,6 +28,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
  */
 class mailing_thirdparties extends MailingTargets
 {
+<<<<<<< HEAD
 	var $name='ThirdPartiesByCategories';
 	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
 	var $desc="Third parties (by categories)";
@@ -32,6 +37,20 @@ class mailing_thirdparties extends MailingTargets
 	var $require_module=array("societe");	// This module allows to select by categories must be also enabled if category module is not activated
 	var $picto='company';
 	var $db;
+=======
+	public $name='ThirdPartiesByCategories';
+	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
+	public $desc="Third parties (by categories)";
+	public $require_admin=0;
+
+	public $require_module=array("societe");	// This module allows to select by categories must be also enabled if category module is not activated
+	public $picto='company';
+
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	/**
@@ -39,7 +58,11 @@ class mailing_thirdparties extends MailingTargets
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
+<<<<<<< HEAD
 	function __construct($db)
+=======
+    public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf, $langs;
         $langs->load("companies");
@@ -48,15 +71,27 @@ class mailing_thirdparties extends MailingTargets
 	}
 
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *    This is the main function that returns the array of emails
 	 *
 	 *    @param	int		$mailing_id    	Id of mailing. No need to use it.
+<<<<<<< HEAD
 	 *    @param	array	$filtersarray   If you used the formFilter function. Empty otherwise.
 	 *    @return   int 					<0 if error, number of emails added if ok
 	 */
 	function add_to_target($mailing_id,$filtersarray=array())
 	{
+=======
+	 *    @return   int 					<0 if error, number of emails added if ok
+	 */
+    public function add_to_target($mailing_id)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf, $langs;
 
 		$cibles = array();
@@ -91,6 +126,7 @@ class mailing_thirdparties extends MailingTargets
 		    $sql.= " AND c.rowid='".$this->db->escape($_POST['filter'])."'";
 		}
 
+<<<<<<< HEAD
                 $addDescription= "";
                 if (isset($_POST["filter_client"]) && $_POST["filter_client"] <> '-1')
                 {
@@ -138,6 +174,55 @@ class mailing_thirdparties extends MailingTargets
 		$sql.= " ORDER BY email";
 
 		// Stock recipients emails into targets table
+=======
+        $addDescription= "";
+        if (isset($_POST["filter_client"]) && $_POST["filter_client"] <> '-1')
+        {
+            $sql.= " AND s.client=" . $_POST["filter_client"];
+            $addDescription= $langs->trans('ProspectCustomer')."=";
+            if ($_POST["filter_client"] == 0)
+            {
+                $addDescription.= $langs->trans('NorProspectNorCustomer');
+            }
+            elseif ($_POST["filter_client"] == 1)
+            {
+                $addDescription.= $langs->trans('Customer');
+            }
+            elseif ($_POST["filter_client"] == 2)
+            {
+                $addDescription.= $langs->trans('Prospect');
+            }
+            elseif ($_POST["filter_client"] == 3)
+            {
+                $addDescription.= $langs->trans('ProspectCustomer');
+            }
+            else
+            {
+                $addDescription.= "Unknown status ".$_POST["filter_client"];
+            }
+        }
+        if (isset($_POST["filter_status"]))
+        {
+            if (strlen($addDescription) > 0)
+            {
+                $addDescription.= ";";
+            }
+            $addDescription.= $langs->trans("Status")."=";
+            if ($_POST["filter_status"] == '1')
+            {
+                $sql.= " AND s.status=1";
+                $addDescription.= $langs->trans("Enabled");
+            }
+            else
+            {
+                $sql.= " AND s.status=0";
+                $addDescription.= $langs->trans("Disabled");
+            }
+        }
+        $sql.= " ORDER BY email";
+
+        // Stock recipients emails into targets table
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -195,7 +280,11 @@ class mailing_thirdparties extends MailingTargets
 	 *
 	 *	@return		array		Array with SQL requests
 	 */
+<<<<<<< HEAD
 	function getSqlArrayForStats()
+=======
+    public function getSqlArrayForStats()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		// CHANGE THIS: Optionnal
 
@@ -213,7 +302,11 @@ class mailing_thirdparties extends MailingTargets
 	 *  @param      string	$sql        Requete sql de comptage
 	 *	@return		int					Nb of recipients
 	 */
+<<<<<<< HEAD
 	function getNbOfRecipients($sql='')
+=======
+    public function getNbOfRecipients($sql = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf;
 
@@ -233,7 +326,11 @@ class mailing_thirdparties extends MailingTargets
 	 *
 	 *  @return     string      A html select zone
 	 */
+<<<<<<< HEAD
 	function formFilter()
+=======
+    public function formFilter()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf, $langs;
 
@@ -269,7 +366,11 @@ class mailing_thirdparties extends MailingTargets
 				$type='';
 				if ($obj->type == 1) $type=$langs->trans("Supplier");
 				if ($obj->type == 2) $type=$langs->trans("Customer");
+<<<<<<< HEAD
 				$s.='<option value="'.$obj->rowid.'">'.dol_trunc($obj->label,38,'middle');
+=======
+				$s.='<option value="'.$obj->rowid.'">'.dol_trunc($obj->label, 38, 'middle');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if ($type) $s.=' ('.$type.')';
 				$s.='</option>';
 				$i++;
@@ -305,16 +406,24 @@ class mailing_thirdparties extends MailingTargets
                 $s.='<option value="0">'.$langs->trans("Disabled").'</option>';
 		$s.='</select>';
 		return $s;
+<<<<<<< HEAD
 
 	}
 
 
 	/**
+=======
+	}
+
+
+    /**
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	 *  Can include an URL link on each record provided by selector shown on target page.
 	 *
      *  @param	int		$id		ID
 	 *  @return string      	Url link
 	 */
+<<<<<<< HEAD
 	function url($id)
 	{
 		return '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$id.'">'.img_object('',"company").'</a>';
@@ -322,3 +431,10 @@ class mailing_thirdparties extends MailingTargets
 
 }
 
+=======
+    public function url($id)
+	{
+		return '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$id.'">'.img_object('', "company").'</a>';
+	}
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

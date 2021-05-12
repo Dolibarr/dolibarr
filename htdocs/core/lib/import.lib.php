@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2006-2009  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+<<<<<<< HEAD
  * Copyright (C) 2010       Regis Houssin           <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2010       Regis Houssin           <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2010       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -32,7 +36,11 @@
  * @param	int			$maxstep	Limit steps to maxstep or no limit if 0
  * @return	array					Array of tabs
  */
+<<<<<<< HEAD
 function import_prepare_head($param, $maxstep=0)
+=======
+function import_prepare_head($param, $maxstep = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	global $langs;
 
@@ -52,4 +60,7 @@ function import_prepare_head($param, $maxstep=0)
 
 	return $head;
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

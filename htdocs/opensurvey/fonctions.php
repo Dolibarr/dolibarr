@@ -29,7 +29,12 @@
  * @param Opensurveysondage $object Current viewing poll
  * @return array Tabs for the opensurvey section
  */
+<<<<<<< HEAD
 function opensurvey_prepare_head(Opensurveysondage $object) {
+=======
+function opensurvey_prepare_head(Opensurveysondage $object)
+{
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	global $langs, $conf;
 
@@ -50,9 +55,15 @@ function opensurvey_prepare_head(Opensurveysondage $object) {
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
+<<<<<<< HEAD
     complete_head_from_modules($conf,$langs,$object,$head,$h,'opensurveypoll');
 
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'opensurveypoll', 'remove');
+=======
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'opensurveypoll');
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'opensurveypoll', 'remove');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	return $head;
 }
@@ -68,7 +79,11 @@ function opensurvey_prepare_head(Opensurveysondage $object) {
  * @param 	array  		$arrayofcss			Array of complementary css files
  * @return	void
  */
+<<<<<<< HEAD
 function llxHeaderSurvey($title, $head="", $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='')
+=======
+function llxHeaderSurvey($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	global $conf, $mysoc;
 
@@ -78,7 +93,11 @@ function llxHeaderSurvey($title, $head="", $disablejs=0, $disablehead=0, $arrayo
 	// Print logo
 	if ($mysoc->logo) {
 		if (file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
+<<<<<<< HEAD
 			$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file=thumbs/'.urlencode($mysoc->logo_small);
+=======
+			$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 	}
 
@@ -120,11 +139,19 @@ function get_server_name()
 {
 	global $dolibarr_main_url_root;
 
+<<<<<<< HEAD
 	$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
 	$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 	$url=$urlwithouturlroot.dol_buildpath('/opensurvey/',1);
+=======
+	$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+	//$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+	$url=$urlwithouturlroot.dol_buildpath('/opensurvey/', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	if (!preg_match("|/$|", $url)) {
 		$url = $url."/";
@@ -206,6 +233,10 @@ function ajouter_sondage()
 	$opensurveysondage = new Opensurveysondage($db);
 	$opensurveysondage->id_sondage = $sondage;
 	$opensurveysondage->commentaires = $_SESSION['commentaires'];
+<<<<<<< HEAD
+=======
+	$opensurveysondage->description = $_SESSION['commentaires'];
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$opensurveysondage->mail_admin = $_SESSION['adresse'];
 	$opensurveysondage->nom_admin = $_SESSION['nom'];
 	$opensurveysondage->titre = $_SESSION['titre'];
@@ -233,7 +264,11 @@ function ajouter_sondage()
 	unset($_SESSION['totalchoixjour']);
 	unset($_SESSION['champdatefin']);
 
+<<<<<<< HEAD
 	$urlback=dol_buildpath('/opensurvey/card.php',1).'?id='.$sondage;
+=======
+	$urlback=dol_buildpath('/opensurvey/card.php', 1).'?id='.$sondage;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	header("Location: ".$urlback);
 	exit();

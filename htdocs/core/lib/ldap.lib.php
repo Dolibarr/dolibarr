@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2006		Laurent Destailleur	<eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2006-2017	Regis Houssin		<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2006-2017	Regis Houssin		<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,7 +91,11 @@ function ldap_prepare_head()
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
+<<<<<<< HEAD
 	complete_head_from_modules($conf,$langs,'',$head,$h,'ldap');
+=======
+	complete_head_from_modules($conf, $langs, '', $head, $h, 'ldap');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	return $head;
 }
@@ -103,7 +111,11 @@ function ldap_prepare_head()
  *  @param	string	$objectclass	Class
  *  @return	void
  */
+<<<<<<< HEAD
 function show_ldap_test_button($butlabel,$testlabel,$key,$dn,$objectclass)
+=======
+function show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	global $langs, $conf, $user;
 	//print 'key='.$key.' dn='.$dn.' objectclass='.$objectclass;
@@ -111,6 +123,7 @@ function show_ldap_test_button($butlabel,$testlabel,$key,$dn,$objectclass)
 	print '<br>';
 	if (! function_exists("ldap_connect"))
 	{
+<<<<<<< HEAD
 		print '<a class="butActionRefused" href="#" title="'.$langs->trans('LDAPFunctionsNotAvailableOnPHP').'">'.$butlabel.'</a>';
 	}
 	else if (empty($conf->global->LDAP_SERVER_HOST))
@@ -121,6 +134,18 @@ function show_ldap_test_button($butlabel,$testlabel,$key,$dn,$objectclass)
 	{
 		$langs->load("errors");
 		print '<a class="butActionRefused" href="#" title="'.$langs->trans('ErrorLDAPSetupNotComplete').'">'.$butlabel.'</a>';
+=======
+		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans('LDAPFunctionsNotAvailableOnPHP').'">'.$butlabel.'</a>';
+	}
+	elseif (empty($conf->global->LDAP_SERVER_HOST))
+	{
+		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans('LDAPSetupNotComplete').'">'.$butlabel.'</a>';
+	}
+	elseif (empty($key) || empty($dn) || empty($objectclass))
+	{
+		$langs->load("errors");
+		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans('ErrorLDAPSetupNotComplete').'">'.$butlabel.'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 	else
 	{
@@ -141,7 +166,11 @@ function show_ldap_test_button($butlabel,$testlabel,$key,$dn,$objectclass)
  * @param   int		$subcount	Subcount
  * @return  int
  */
+<<<<<<< HEAD
 function show_ldap_content($result,$level,$count,$var,$hide=0,$subcount=0)
+=======
+function show_ldap_content($result, $level, $count, $var, $hide = 0, $subcount = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	global $bc, $conf;
 
@@ -170,6 +199,7 @@ function show_ldap_content($result,$level,$count,$var,$hide=0,$subcount=0)
 				print '</td><td>';
 				if (strtolower($key) == 'userpassword') $hide=1;
 			}
+<<<<<<< HEAD
 			show_ldap_content($val,$level+1,$count,$var,$hide,$val["count"]);
 		}
 		else if ($subcount)
@@ -177,6 +207,15 @@ function show_ldap_content($result,$level,$count,$var,$hide=0,$subcount=0)
 			$subcount--;
 			$newstring=dol_htmlentitiesbr($val);
 			if ($hide) print preg_replace('/./i','*',$newstring);
+=======
+			show_ldap_content($val, $level+1, $count, $var, $hide, $val["count"]);
+		}
+		elseif ($subcount)
+		{
+			$subcount--;
+			$newstring=dol_htmlentitiesbr($val);
+			if ($hide) print preg_replace('/./i', '*', $newstring);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			else print $newstring;
 			print '<br>';
 		}
@@ -184,4 +223,7 @@ function show_ldap_content($result,$level,$count,$var,$hide=0,$subcount=0)
 	}
 	return 1;
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

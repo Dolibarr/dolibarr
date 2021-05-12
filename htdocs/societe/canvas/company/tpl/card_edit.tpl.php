@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2010      Regis Houssin       <regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2010      Regis Houssin       <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2010-2012 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -116,7 +120,14 @@ if ($this->control->tpl['fournisseur']) {
 	<td><?php echo $langs->trans('SupplierCategory'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['select_suppliercategory']; ?></td>
 </tr>
+<<<<<<< HEAD
 <?php } }?>
+=======
+<?php
+    }
+}
+?>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 <?php if (! empty($conf->barcode->enabled)) { ?>
 <tr>
@@ -213,7 +224,11 @@ for ($i=1; $i<=4; $i++) {
 </table>
 <br>
 
+<<<<<<< HEAD
 <div align="center">
+=======
+<div class="center">
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 <input type="submit" class="button" name="save" value="<?php echo $langs->trans("Save"); ?>">
 &nbsp; &nbsp;
 <input type="submit" class="button" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
@@ -221,4 +236,8 @@ for ($i=1; $i<=4; $i++) {
 
 </form>
 
+<<<<<<< HEAD
 <!-- END PHP TEMPLATE -->
+=======
+<!-- END PHP TEMPLATE -->
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

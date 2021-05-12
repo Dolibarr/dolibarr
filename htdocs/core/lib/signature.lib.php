@@ -24,6 +24,7 @@
  * @param	string	$ref		Ref of object
  * @return	string				Url string
  */
+<<<<<<< HEAD
 function showOnlineSignatureUrl($type,$ref)
 {
 	global $conf, $langs;
@@ -33,6 +34,18 @@ function showOnlineSignatureUrl($type,$ref)
 	$servicename='Online';
 
 	$out = img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlineSignature",$servicename).'<br>';
+=======
+function showOnlineSignatureUrl($type, $ref)
+{
+	global $conf, $langs;
+
+	// Load translation files required by the page
+    $langs->loadLangs(array("payment","paybox"));
+
+	$servicename='Online';
+
+	$out = img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForOnlineSignature", $servicename).'<br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$url = getOnlineSignatureUrl(0, $type, $ref);
 	$out.= '<input type="text" id="onlinesignatureurl" class="quatrevingtpercent" value="'.$url.'">';
 	$out.= ajax_autoselect("onlinesignatureurl", 0);
@@ -48,11 +61,19 @@ function showOnlineSignatureUrl($type,$ref)
  * @param	string	$ref		Ref of object
  * @return	string				Url string
  */
+<<<<<<< HEAD
 function getOnlineSignatureUrl($mode, $type, $ref='')
 {
 	global $conf, $db, $langs;
 
 	$ref=str_replace(' ','',$ref);
+=======
+function getOnlineSignatureUrl($mode, $type, $ref = '')
+{
+	global $conf, $db, $langs;
+
+	$ref=str_replace(' ', '', $ref);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$out='';
 
 	if ($type == 'proposal')

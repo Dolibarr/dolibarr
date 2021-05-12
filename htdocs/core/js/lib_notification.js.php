@@ -40,7 +40,11 @@ if (! ($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/' || $_SERVER['H
 
     // TODO Try to make a solution with only a javascript timer that is easier. Difficulty is to avoid notification twice when.
     /* session already started into main
+<<<<<<< HEAD
     session_cache_limiter(false);
+=======
+    session_cache_limiter('public');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     header('Cache-Control: no-cache');
     session_set_cookie_params(0, '/', null, false, true);   // Add tag httponly on session cookie
     session_start();*/

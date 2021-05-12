@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2010 Regis Houssin  <regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2010 Regis Houssin  <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +21,11 @@
  */
 
 /**
+<<<<<<< HEAD
  *    \file       ticket/core/modules/ticket/mod_ticket_universal.php
+=======
+ *    \file       htdocs/core/modules/ticket/mod_ticket_universal.php
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *    \ingroup    ticket
  *    \brief      Fichier contenant la classe du modele de numerotation de reference de projet Universal
  */
@@ -29,6 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/ticket/modules_ticket.php';
  */
 class mod_ticket_universal extends ModeleNumRefTicket
 {
+<<<<<<< HEAD
     public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
     public $error = '';
     public $nom = 'Universal';
@@ -36,17 +45,53 @@ class mod_ticket_universal extends ModeleNumRefTicket
 
     /**
      *  Renvoi la description du modele de numerotation
+=======
+    /**
+     * Dolibarr version of the loaded document
+     * @var string
+     */
+    public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
+
+    /**
+     * @var string Error code (or message)
+     */
+    public $error = '';
+
+    /**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Universal';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Universal';
+
+    /**
+     *  Returns the description of the numbering model
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      *
      *  @return string      Texte descripif
      */
     public function info()
     {
+<<<<<<< HEAD
         global $conf, $langs;
 
         $langs->load("ticket");
         $langs->load("admin");
 
         $form = new Form($this->db);
+=======
+        global $db, $conf, $langs;
+
+        // Load translation files required by the page
+        $langs->loadLangs(array("ticket","admin"));
+
+        $form = new Form($db);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         $texte = $langs->trans('GenericNumRefModelDesc') . "<br>\n";
         $texte .= '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
@@ -63,9 +108,15 @@ class mod_ticket_universal extends ModeleNumRefTicket
 
         // Parametrage du prefix
         $texte .= '<tr><td>' . $langs->trans("Mask") . ':</td>';
+<<<<<<< HEAD
         $texte .= '<td align="right">' . $form->textwithpicto('<input type="text" class="flat" size="24" name="maskticket" value="' . $conf->global->TICKET_UNIVERSAL_MASK . '">', $tooltip, 1, 1) . '</td>';
 
         $texte .= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="' . $langs->trans("Modify") . '" name="Button"></td>';
+=======
+        $texte .= '<td class="right">' . $form->textwithpicto('<input type="text" class="flat" size="24" name="maskticket" value="' . $conf->global->TICKET_UNIVERSAL_MASK . '">', $tooltip, 1, 1) . '</td>';
+
+        $texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="' . $langs->trans("Modify") . '" name="Button"></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         $texte .= '</tr>';
 
@@ -121,5 +172,8 @@ class mod_ticket_universal extends ModeleNumRefTicket
 
         return $numFinal;
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

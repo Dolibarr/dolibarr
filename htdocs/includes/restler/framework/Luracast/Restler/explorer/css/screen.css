@@ -1231,7 +1231,11 @@
   cursor: pointer;
 }
 .swagger-section #header {
+<<<<<<< HEAD
   background-color: #646257;
+=======
+  background-color: rgb(163, 188, 210);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
   padding: 14px;
 }
 .swagger-section #input_baseUrl {
@@ -1278,7 +1282,11 @@
   font-size: 1.5em;
   font-weight: bold;
   text-decoration: none;
+<<<<<<< HEAD
   background: transparent url(../images/logo_small.png) no-repeat left center;
+=======
+  background: transparent url(../../../../theme/eldy/img/favicon.ico) no-repeat left center;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
   padding: 20px 0 20px 40px;
   color: white;
 }

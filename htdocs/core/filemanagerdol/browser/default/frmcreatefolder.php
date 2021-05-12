@@ -19,7 +19,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+<<<<<<< HEAD
 define('NOTOKENRENEWAL',1); // Disables token renewal
+=======
+define('NOTOKENRENEWAL', 1); // Disables token renewal
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 require '../../../../main.inc.php';
 ?>
@@ -126,7 +130,11 @@ window.onload = function()
 					<button type="button" style="WIDTH: 100%" onclick="CreateFolder();">
 						<table cellSpacing="0" cellPadding="0" border="0">
 							<tr>
+<<<<<<< HEAD
 								<td><?php echo img_picto_common('','treemenu/folder.gif','width="16" height="16"'); ?></td>
+=======
+								<td><?php echo img_picto_common('', 'treemenu/folder.gif', 'width="16" height="16"'); ?></td>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 								<td>&nbsp;</td>
 								<td class="nowrap">Create New Folder</td>
 							</tr>

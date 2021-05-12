@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2012 Regis Houssin	<regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2012 Regis Houssin	<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,6 +66,7 @@ function checkLinkedElements($sourcetype, $targettype)
 	$targettable=$targettype;
 
 	if ($sourcetype == 'shipping') $sourcetable = 'expedition';
+<<<<<<< HEAD
 	else if ($targettype == 'shipping') $targettable = 'expedition';
 	if ($sourcetype == 'delivery') $sourcetable = 'livraison';
 	else if ($targettype == 'delivery') $targettable = 'livraison';
@@ -69,6 +74,15 @@ function checkLinkedElements($sourcetype, $targettype)
 	else if ($targettype == 'order_supplier') $targettable = 'commande_fournisseur';
 	if ($sourcetype == 'invoice_supplier') $sourcetable = 'facture_fourn';
 	else if ($targettype == 'invoice_supplier') $targettable = 'facture_fourn';
+=======
+	elseif ($targettype == 'shipping') $targettable = 'expedition';
+	if ($sourcetype == 'delivery') $sourcetable = 'livraison';
+	elseif ($targettype == 'delivery') $targettable = 'livraison';
+	if ($sourcetype == 'order_supplier') $sourcetable = 'commande_fournisseur';
+	elseif ($targettype == 'order_supplier') $targettable = 'commande_fournisseur';
+	if ($sourcetype == 'invoice_supplier') $sourcetable = 'facture_fourn';
+	elseif ($targettype == 'invoice_supplier') $targettable = 'facture_fourn';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	$out = $langs->trans('SourceType').': '.$sourcetype.' => '.$langs->trans('TargetType').': '.$targettype.' ';
 
@@ -134,6 +148,7 @@ function clean_data_ecm_directories()
 				$sqlupdate="UPDATE ".MAIN_DB_PREFIX."ecm_directories set label='".$newlabel."' WHERE rowid=".$id;
 				print '<tr><td>'.$sqlupdate."</td></tr>\n";
 				$resqlupdate=$db->query($sqlupdate);
+<<<<<<< HEAD
 				if (! $resqlupdate) dol_print_error($db,'Failed to update');
 			}
 
@@ -144,3 +159,13 @@ function clean_data_ecm_directories()
 	return;
 }
 
+=======
+				if (! $resqlupdate) dol_print_error($db, 'Failed to update');
+			}
+		}
+	}
+	else dol_print_error($db, 'Failed to run request');
+
+	return;
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -287,7 +287,11 @@ class PHPExcel_Shared_OLE
 				$pps = new PHPExcel_Shared_OLE_PPS_File($name);
 				break;
 			default:
+<<<<<<< HEAD
 				continue;
+=======
+				continue 2;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 			fseek($fh, 1, SEEK_CUR);
 			$pps->Type    = $type;

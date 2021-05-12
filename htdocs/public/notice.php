@@ -24,8 +24,13 @@
  *                /public/notice.php?transphrase=url_encoded_sentence_to_show
  */
 
+<<<<<<< HEAD
 define('NOCSRFCHECK',1);
 define('NOLOGIN',1);
+=======
+define('NOCSRFCHECK', 1);
+define('NOLOGIN', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 require '../main.inc.php';
 
@@ -34,7 +39,11 @@ require '../main.inc.php';
  * View
  */
 
+<<<<<<< HEAD
 if (! GETPOST('transkey','alphanohtml') && ! GETPOST('transphrase','alphanohtml'))
+=======
+if (! GETPOST('transkey', 'alphanohtml') && ! GETPOST('transphrase', 'alphanohtml'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
     print 'Sorry, it seems your internet connexion is off.<br>';
     print 'You need to be connected to network to use this software.<br>';
@@ -44,7 +53,13 @@ else
     $langs->load("error");
     $langs->load("other");
 
+<<<<<<< HEAD
     if (GETPOST('transphrase','alphanohtml')) print GETPOST('transphrase','alphanohtml');
     if (GETPOST('transkey','alphanohtml')) print $langs->trans(GETPOST('transkey','alphanohtml'));
 }
 
+=======
+    if (GETPOST('transphrase', 'alphanohtml')) print GETPOST('transphrase', 'alphanohtml');
+    if (GETPOST('transkey', 'alphanohtml')) print $langs->trans(GETPOST('transkey', 'alphanohtml'));
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

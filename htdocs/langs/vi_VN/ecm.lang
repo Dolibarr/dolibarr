@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - ecm
+<<<<<<< HEAD
 ECMNbOfDocs=Nb các tài liệu trong thư mục
 ECMSection=Thư mục
 ECMSectionManual=Hướng dẫn sử dụng thư mục
@@ -7,6 +8,16 @@ ECMSectionsManual=Hướng dẫn sử dụng cây
 ECMSectionsAuto=Cây tự động
 ECMSections=Thư mục
 ECMRoot=ECM Root
+=======
+ECMNbOfDocs=No. of documents in directory
+ECMSection=Thư mục
+ECMSectionManual=Thư mục
+ECMSectionAuto=Thư mục tự động
+ECMSectionsManual=Cây thư mục
+ECMSectionsAuto=Cây tự động
+ECMSections=Thư mục
+ECMRoot=Gốc
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ECMNewSection=Thư mục mới
 ECMAddSection=Thêm thư mục
 ECMCreationDate=Ngày tạo
@@ -14,11 +25,19 @@ ECMNbOfFilesInDir=Số lượng hồ sơ trong thư mục
 ECMNbOfSubDir=Số thư mục con
 ECMNbOfFilesInSubDir=Số ảnh trong thư mục con
 ECMCreationUser=Người tạo
+<<<<<<< HEAD
 ECMArea=DMS/ECM area
 ECMAreaDesc=The DMS/ECM (Document Management System / Electronic Content Management) area allows you to save, share and search quickly all kind of documents in Dolibarr.
 ECMAreaDesc2=* Thư mục tự động được điền tự động khi thêm tài liệu từ thẻ của một phần tử. <br> * Hướng dẫn sử dụng các thư mục có thể được sử dụng để lưu các tài liệu không liên quan đến một yếu tố cụ thể.
 ECMSectionWasRemoved=Thư <b>mục% s</b> đã bị xóa.
 ECMSectionWasCreated=Directory <b>%s</b> has been created.
+=======
+ECMArea=Vùng DMS/ECM
+ECMAreaDesc=Vùng DMS/ECM (Document Management System / Electronic Content Management) cho phép bạn lưu, chia sẻ và tìm nhanh mọi loại tài liệu trong hệ thống.
+ECMAreaDesc2=* Thư mục tự động được điền tự động khi thêm tài liệu từ thẻ của một phần tử. <br> * Hướng dẫn sử dụng các thư mục có thể được sử dụng để lưu các tài liệu không liên quan đến một yếu tố cụ thể.
+ECMSectionWasRemoved=Thư <b>mục% s</b> đã bị xóa.
+ECMSectionWasCreated=Thư mục <b>%s</b> đã được tạo
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ECMSearchByKeywords=Tìm kiếm theo từ khóa
 ECMSearchByEntity=Tìm kiếm theo đối tượng
 ECMSectionOfDocuments=Thư mục tài liệu
@@ -31,9 +50,17 @@ ECMDocsByContracts=Các tài liệu liên quan đến hợp đồng
 ECMDocsByInvoices=Các tài liệu liên quan đến hoá đơn cho khách hàng
 ECMDocsByProducts=Các tài liệu liên quan đến sản phẩm
 ECMDocsByProjects=Các tài liệu liên quan đến dự án
+<<<<<<< HEAD
 ECMDocsByUsers=Documents linked to users
 ECMDocsByInterventions=Documents linked to interventions
 ECMDocsByExpenseReports=Documents linked to expense reports
+=======
+ECMDocsByUsers=Tài liệu liên kết với người dùng
+ECMDocsByInterventions=Documents linked to interventions
+ECMDocsByExpenseReports=Documents linked to expense reports
+ECMDocsByHolidays=Documents linked to holidays
+ECMDocsBySupplierProposals=Documents linked to supplier proposals
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ECMNoDirectoryYet=Không có thư mục được tạo ra
 ShowECMSection=Hiện thư mục
 DeleteSection=Hủy bỏ thư mục
@@ -46,6 +73,11 @@ ECMSelectASection=Select a directory in the tree...
 DirNotSynchronizedSyncFirst=This directory seems to be created or modified outside ECM module. You must click on "Resync" button first to synchronize disk and database to get content of this directory.
 ReSyncListOfDir=Resync list of directories
 HashOfFileContent=Hash of file content
+<<<<<<< HEAD
 FileNotYetIndexedInDatabase=File not yet indexed into database (try to re-upload it)
 FileSharedViaALink=File shared via a link
 NoDirectoriesFound=No directories found
+=======
+NoDirectoriesFound=No directories found
+FileNotYetIndexedInDatabase=File not yet indexed into database (try to re-upload it)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

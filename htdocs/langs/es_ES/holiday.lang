@@ -1,10 +1,18 @@
 # Dolibarr language file - Source file is en_US - holiday
 HRM=RRHH
+<<<<<<< HEAD
 Holidays=Días libres
 CPTitreMenu=Días libres
 MenuReportMonth=Estado mensual
 MenuAddCP=Nueva petición de vacaciones
 NotActiveModCP=Debe activar el módulo Días libres retribuidos para ver esta página
+=======
+Holidays=Día libre
+CPTitreMenu=Día libre
+MenuReportMonth=Estado mensual
+MenuAddCP=Nueva petición de vacaciones
+NotActiveModCP=Debe activar el módulo Días libres para ver esta página
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddCP=Realizar una petición de días libres
 DateDebCP=Fecha inicio
 DateFinCP=Fecha fin
@@ -25,7 +33,11 @@ UserForApprovalLogin=Inicio de sesión de usuario de aprobación
 DescCP=Descripción
 SendRequestCP=Enviar la petición de días libres
 DelayToRequestCP=Las peticiones de días libres deben realizarse al menos <b>%s días</b> antes.
+<<<<<<< HEAD
 MenuConfCP=Balance de vacaciones
+=======
+MenuConfCP=Balance de días libres
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SoldeCPUser=Su saldo de días libres es de <b>%s días</b>.
 ErrorEndDateCP=Debe indicar una fecha de fin superior a la fecha de inicio.
 ErrorSQLCreateCP=Se ha producido un error de SQL durante la creación :
@@ -101,8 +113,13 @@ LEAVE_SICK=Baja por enfermedad
 LEAVE_OTHER=Otra petición
 LEAVE_PAID_FR=Vacación
 ## Configuration du Module ##
+<<<<<<< HEAD
 LastUpdateCP=Última actualización automática de días retribuidos
 MonthOfLastMonthlyUpdate=Mes de la última actualización automática de días retribuidos
+=======
+LastUpdateCP=Última actualización automática de días libres
+MonthOfLastMonthlyUpdate=Mes de la última actualización automática de días libres
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 UpdateConfCPOK=Actualización efectuada correctamente.
 Module27130Name= Gestión de los días libres
 Module27130Desc= Gestión de días libres
@@ -112,13 +129,31 @@ NoticePeriod=Plazo de aviso
 HolidaysToValidate=Días libres retribuidos a validar
 HolidaysToValidateBody=A continuación encontrará una solicitud de días libres retribuidos para validar
 HolidaysToValidateDelay=Esta solicitud de días libres retribuidos tendrá lugar en un plazo de menos de %s días.
+<<<<<<< HEAD
 HolidaysToValidateAlertSolde=El usuario que ha realizado la solicitud de días libres retribuidos no dispone de suficientes días disponibles.
 HolidaysValidated=Días libres retribuidos validados
 HolidaysValidatedBody=Su solicitud de días libres retribuidos desde el %s al %s ha sido validada.
 HolidaysRefused=Días libres retribuidos denegados
 HolidaysRefusedBody=Su solicitud de días libres retribuidos desde el %s al %s ha sido denegada por el siguiente motivo :
+=======
+HolidaysToValidateAlertSolde=El usuario que ha realizado la solicitud de días retribuidos no dispone de suficientes días disponibles.
+HolidaysValidated=Días libres retribuidos validados
+HolidaysValidatedBody=Su solicitud de días libres retribuidos desde el %s al %s ha sido validada.
+HolidaysRefused=Días libres retribuidos denegados
+HolidaysRefusedBody=Su solicitud de vacaciones desde el %s al %s ha sido denegada por el siguiente motivo :
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 HolidaysCanceled=Días libres retribuidos cancelados
 HolidaysCanceledBody=Su solicitud de días libres retribuidos desde el %s al %s ha sido cancelada.
 FollowedByACounter=1: Este tipo de día retribuido necesita ser seguido por un contador. El contador se incrementa de forma manual o automáticamente y cuando se valida una solicitud, el contador disminuye.<br> 0: No es seguido por un contador.
 NoLeaveWithCounterDefined=No hay ningún tipo de peticiones definidas que deben ser seguidas por un contador
+<<<<<<< HEAD
 GoIntoDictionaryHolidayTypes=Vaya a <strong>Inicio - Configuración - Diccionarios - Tipos de vacaciones </strong> para configurar los diferentes tipos.
+=======
+GoIntoDictionaryHolidayTypes=Vaya a <strong>Inicio - Configuración - Diccionarios - Tipos de días libres </strong> para configurar los diferentes tipos.
+HolidaySetup=Configuración del módulo Días libres
+HolidaysNumberingModules=Modelos de numeración de petición de días libres
+TemplatePDFHolidays=Plantilla PDF para petición de días libres
+FreeLegalTextOnHolidays=Texto libre en el PDF
+WatermarkOnDraftHolidayCards=Marca de agua en las peticiones de días libres
+HolidaysToApprove=Vacaciones para aprobar
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

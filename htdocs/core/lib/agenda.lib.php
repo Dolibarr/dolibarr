@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2008-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -47,7 +51,11 @@
  * @param	int   	$resourceid	    Preselected value of resource for filter on resource
  * @return	void
  */
+<<<<<<< HEAD
 function print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, $filtera, $filtert, $filterd, $pid, $socid, $action, $showextcals=array(), $actioncode='', $usergroupid='', $excludetype='', $resourceid=0)
+=======
+function print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, $filtera, $filtert, $filterd, $pid, $socid, $action, $showextcals = array(), $actioncode = '', $usergroupid = '', $excludetype = '', $resourceid = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	global $conf, $user, $langs, $db, $hookmanager;
 	global $begin_h, $end_h, $begin_d, $end_d;
@@ -64,11 +72,19 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	print '<input type="hidden" name="month" value="' . $month . '">';
 	print '<input type="hidden" name="day" value="' . $day . '">';
 	print '<input type="hidden" name="action" value="' . $action . '">';
+<<<<<<< HEAD
 	print '<input type="hidden" name="showbirthday" value="' . $showbirthday . '">';
 
 	print '<div class="fichecenter">';
 
 	if (! empty($conf->browser->phone)) print '<div class="fichehalfleft">';
+=======
+	print '<input type="hidden" name="search_showbirthday" value="' . $showbirthday . '">';
+
+	print '<div class="fichecenter">';
+
+	if ($conf->browser->layout == 'phone') print '<div class="fichehalfleft">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	else print '<table class="nobordernopadding" width="100%"><tr><td class="borderright">';
 
 	print '<table class="nobordernopadding centpercent">';
@@ -79,7 +95,11 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
 		print $langs->trans("ActionsToDoBy").' &nbsp; ';
 		print '</td><td style="padding-bottom: 2px; padding-right: 4px;">';
+<<<<<<< HEAD
 		print $form->select_dolusers($filtert, 'filtert', 1, '', ! $canedit, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+=======
+		print $form->select_dolusers($filtert, 'search_filtert', 1, '', ! $canedit, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if (empty($conf->dol_optimize_smallscreen)) print ' &nbsp; '.$langs->trans("or") . ' '.$langs->trans("ToUserOfGroup").' &nbsp; ';
 		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', ! $canedit);
 		print '</td></tr>';
@@ -94,7 +114,11 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
     		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
     		print $langs->trans("Resource");
     		print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px; padding-right: 4px;">';
+<<<<<<< HEAD
             print $formresource->select_resource_list($resourceid, "resourceid", '', 1, 0, 0, null, '', 2);
+=======
+            print $formresource->select_resource_list($resourceid, "search_resourceid", '', 1, 0, 0, null, '', 2);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     		print '</td></tr>';
 		}
 
@@ -108,7 +132,11 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		{
             $multiselect=(!empty($conf->global->AGENDA_USE_EVENT_TYPE));
 		}
+<<<<<<< HEAD
         print $formactions->select_type_actions($actioncode, "actioncode", $excludetype, (empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:-1), 0, $multiselect);
+=======
+        print $formactions->select_type_actions($actioncode, "search_actioncode", $excludetype, (empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:-1), 0, $multiselect);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</td></tr>';
 	}
 
@@ -118,7 +146,11 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
 		print $langs->trans("ThirdParty").' &nbsp; ';
 		print '</td><td class="nowrap" style="padding-bottom: 2px;">';
+<<<<<<< HEAD
 		print $form->select_company($socid, 'socid', '', 'SelectThirdParty', 0, 0, null, 0);
+=======
+		print $form->select_company($socid, 'search_socid', '', 'SelectThirdParty', 0, 0, null, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</td></tr>';
 	}
 
@@ -131,7 +163,11 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<td class="nowrap" style="padding-bottom: 2px;">';
 		print $langs->trans("Project").' &nbsp; ';
 		print '</td><td class="nowrap" style="padding-bottom: 2px;">';
+<<<<<<< HEAD
 		print $formproject->select_projects($socid?$socid:-1, $pid, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 1, 0, 'maxwidth500');
+=======
+		print $formproject->select_projects($socid?$socid:-1, $pid, 'search_projectid', 0, 0, 1, 0, 0, 0, 0, '', 1, 0, 'maxwidth500');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</td></tr>';
 	}
 
@@ -142,7 +178,11 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
 		print $langs->trans("Status");
 		print ' &nbsp;</td><td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
+<<<<<<< HEAD
 		$formactions->form_select_status_action('formaction', $status, 1, 'status', 1, 2, 'minwidth100');
+=======
+		$formactions->form_select_status_action('formaction', $status, 1, 'search_status', 1, 2, 'minwidth100');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</td></tr>';
 	}
 
@@ -180,10 +220,17 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 
 	print '</table>';
 
+<<<<<<< HEAD
 	if (! empty($conf->browser->phone)) print '</div>';
 	else print '</td>';
 
 	if (! empty($conf->browser->phone)) print '<div class="fichehalfright">';
+=======
+	if ($conf->browser->layout == 'phone') print '</div>';
+	else print '</td>';
+
+	if ($conf->browser->layout == 'phone') print '<div class="fichehalfright">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	else print '<td align="center" valign="middle" class="nowrap">';
 
 	print '<table class="centpercent"><tr><td align="center">';
@@ -193,7 +240,11 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	print '</td></tr>';
 	print '</table>';
 
+<<<<<<< HEAD
 	if (! empty($conf->browser->phone)) print '</div>';
+=======
+	if ($conf->browser->layout == 'phone') print '</div>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	else print '</td></tr></table>';
 
 	print '</div>';	// Close fichecenter
@@ -209,7 +260,11 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
  *  @param	int		$max		Max nb of records
  *  @return	void
  */
+<<<<<<< HEAD
 function show_array_actions_to_do($max=5)
+=======
+function show_array_actions_to_do($max = 5)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	global $langs, $conf, $user, $db, $bc, $socid;
 
@@ -238,8 +293,13 @@ function show_array_actions_to_do($max=5)
 	    $num = $db->num_rows($resql);
 
 	    print '<table class="noborder" width="100%">';
+<<<<<<< HEAD
 	    print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastActionsToDo",$max).'</th>';
 		print '<th colspan="2" align="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?status=todo">'.$langs->trans("FullList").'</a></th>';
+=======
+	    print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastActionsToDo", $max).'</th>';
+		print '<th colspan="2" class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?status=todo">'.$langs->trans("FullList").'</a></th>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</tr>';
 
 		$var = true;
@@ -258,7 +318,11 @@ function show_array_actions_to_do($max=5)
             $staticaction->type_code=$obj->code;
             $staticaction->label=($obj->label?$obj->label:$obj->type_label);
             $staticaction->id=$obj->id;
+<<<<<<< HEAD
             print '<td>'.$staticaction->getNomUrl(1,34).'</td>';
+=======
+            print '<td>'.$staticaction->getNomUrl(1, 34).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
            // print '<td>'.dol_trunc($obj->label,22).'</td>';
 
@@ -268,7 +332,11 @@ function show_array_actions_to_do($max=5)
             	$customerstatic->id=$obj->rowid;
             	$customerstatic->name=$obj->sname;
             	$customerstatic->client=$obj->client;
+<<<<<<< HEAD
             	print $customerstatic->getNomUrl(1,'',16);
+=======
+            	print $customerstatic->getNomUrl(1, '', 16);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             }
             print '</td>';
 
@@ -276,7 +344,11 @@ function show_array_actions_to_do($max=5)
             $datep2=$db->jdate($obj->dp2);
 
             // Date
+<<<<<<< HEAD
 			print '<td width="100" align="right">'.dol_print_date($datep,'day').'&nbsp;';
+=======
+			print '<td width="100" class="right">'.dol_print_date($datep, 'day').'&nbsp;';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$late=0;
 			if ($obj->percent == 0 && $datep && $datep < time()) $late=1;
 			if ($obj->percent == 0 && ! $datep && $datep2 && $datep2 < time()) $late=1;
@@ -286,7 +358,11 @@ function show_array_actions_to_do($max=5)
 			print "</td>";
 
 			// Statut
+<<<<<<< HEAD
 			print "<td align=\"right\" width=\"14\">".$staticaction->LibStatut($obj->percent,3)."</td>\n";
+=======
+			print '<td class="right" width="14">'.$staticaction->LibStatut($obj->percent, 3)."</td>\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			print "</tr>\n";
 
@@ -309,7 +385,11 @@ function show_array_actions_to_do($max=5)
  *  @param	int		$max		Max nb of records
  *  @return	void
  */
+<<<<<<< HEAD
 function show_array_last_actions_done($max=5)
+=======
+function show_array_last_actions_done($max = 5)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	global $langs, $conf, $user, $db, $bc, $socid;
 
@@ -335,8 +415,13 @@ function show_array_last_actions_done($max=5)
 		$num = $db->num_rows($resql);
 
 		print '<table class="noborder" width="100%">';
+<<<<<<< HEAD
 		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastDoneTasks",$max).'</th>';
 		print '<th colspan="2" align="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?status=done">'.$langs->trans("FullList").'</a></th>';
+=======
+		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastDoneTasks", $max).'</th>';
+		print '<th colspan="2" class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?status=done">'.$langs->trans("FullList").'</a></th>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</tr>';
 		$var = true;
 		$i = 0;
@@ -354,7 +439,11 @@ function show_array_last_actions_done($max=5)
 			$staticaction->type_code=$obj->code;
 			$staticaction->libelle=$obj->label;
 			$staticaction->id=$obj->id;
+<<<<<<< HEAD
 			print '<td>'.$staticaction->getNomUrl(1,34).'</td>';
+=======
+			print '<td>'.$staticaction->getNomUrl(1, 34).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
             //print '<td>'.dol_trunc($obj->label,24).'</td>';
 
@@ -364,16 +453,28 @@ function show_array_last_actions_done($max=5)
                 $customerstatic->id=$obj->rowid;
                 $customerstatic->name=$obj->sname;
                 $customerstatic->client=$obj->client;
+<<<<<<< HEAD
 			    print $customerstatic->getNomUrl(1,'',24);
+=======
+			    print $customerstatic->getNomUrl(1, '', 24);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 			print '</td>';
 
 			// Date
+<<<<<<< HEAD
 			print '<td width="100" align="right">'.dol_print_date($db->jdate($obj->da2),'day');
 			print "</td>";
 
 			// Statut
 			print "<td align=\"right\" width=\"14\">".$staticaction->LibStatut($obj->percent,3)."</td>\n";
+=======
+			print '<td width="100" class="right">'.dol_print_date($db->jdate($obj->da2), 'day');
+			print "</td>";
+
+			// Statut
+			print "<td class=\"right\" width=\"14\">".$staticaction->LibStatut($obj->percent, 3)."</td>\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			print "</tr>\n";
 			$i++;
@@ -430,14 +531,22 @@ function agenda_prepare_head()
 	$head[$h][2] = 'extsites';
 	$h++;
 
+<<<<<<< HEAD
 	complete_head_from_modules($conf,$langs,null,$head,$h,'agenda_admin');
+=======
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'agenda_admin');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/agenda_extrafields.php";
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$head[$h][2] = 'attributes';
 	$h++;
 
+<<<<<<< HEAD
 	complete_head_from_modules($conf,$langs,null,$head,$h,'agenda_admin','remove');
+=======
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'agenda_admin', 'remove');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	return $head;
@@ -469,7 +578,11 @@ function actions_prepare_head($object)
 
 		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=action&element_id='.$object->id;
         $listofresourcelinked = $resource->getElementResources($object->element, $object->id);
+<<<<<<< HEAD
         $nbResources=count($listofresourcelinked);
+=======
+        $nbResources=(is_array($listofresourcelinked)?count($listofresourcelinked):0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$head[$h][1] = $langs->trans("Resources");
 		if ($nbResources > 0) $head[$h][1].= ' <span class="badge">'.($nbResources).'</span>';
 		$head[$h][2] = 'resources';
@@ -480,7 +593,11 @@ function actions_prepare_head($object)
     require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
     $upload_dir = $conf->agenda->dir_output . "/" . $object->id;
+<<<<<<< HEAD
     $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
+=======
+    $nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $nbLinks=Link::count($db, $object->element, $object->id);
     $head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$object->id;
     $head[$h][1] = $langs->trans("Documents");
@@ -493,9 +610,15 @@ function actions_prepare_head($object)
 	$head[$h][2] = 'info';
 	$h++;
 
+<<<<<<< HEAD
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'action');
 
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'action','remove');
+=======
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'action');
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'action', 'remove');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	return $head;
 }
@@ -555,6 +678,7 @@ function calendars_prepare_head($param)
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
+<<<<<<< HEAD
     complete_head_from_modules($conf,$langs,$object,$head,$h,'agenda');
 
     complete_head_from_modules($conf,$langs,$object,$head,$h,'agenda','remove');
@@ -562,3 +686,11 @@ function calendars_prepare_head($param)
     return $head;
 }
 
+=======
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'agenda');
+
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'agenda', 'remove');
+
+    return $head;
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

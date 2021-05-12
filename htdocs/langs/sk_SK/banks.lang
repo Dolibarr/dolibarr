@@ -1,6 +1,10 @@
 # Dolibarr language file - Source file is en_US - banks
 Bank=Banka
+<<<<<<< HEAD
 MenuBankCash=Bank | Cash
+=======
+MenuBankCash=Banks | Cash
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MenuVariousPayment=Miscellaneous payments
 MenuNewVariousPayment=New Miscellaneous payment
 BankName=Názov banky
@@ -30,7 +34,11 @@ AllTime=Od začiatku
 Reconciliation=Zmierenie
 RIB=Číslo bankového účtu
 IBAN=IBAN
+<<<<<<< HEAD
 BIC=BIC / SWIFT číslo
+=======
+BIC=BIC/SWIFT code
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SwiftValid=BIC/SWIFT valid
 SwiftVNotalid=BIC/SWIFT not valid
 IbanValid=BAN valid
@@ -42,11 +50,19 @@ AccountStatementShort=Vyhlásenie
 AccountStatements=Výpisy z účtov
 LastAccountStatements=Posledný výpis z účtu
 IOMonthlyReporting=Mesačný reporting
+<<<<<<< HEAD
 BankAccountDomiciliation=Účtovné adresa
 BankAccountCountry=Účet krajiny
 BankAccountOwner=Majiteľ účtu Názov
 BankAccountOwnerAddress=Majiteľ účtu adresa
 RIBControlError=Kontrola integrity hodnôt zlyhá. To znamená, že informácie v tomto čísle účtu nie sú úplné alebo zle (zistiť krajinu, čísla a IBAN).
+=======
+BankAccountDomiciliation=Bank address
+BankAccountCountry=Účet krajiny
+BankAccountOwner=Majiteľ účtu Názov
+BankAccountOwnerAddress=Majiteľ účtu adresa
+RIBControlError=Integrity check of values failed. This means the information for this account number is not complete or is incorrect (check country, numbers and IBAN).
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CreateAccount=Vytvoriť účet
 NewBankAccount=Nový účet
 NewFinancialAccount=Nový finančný účet
@@ -76,6 +92,10 @@ TransactionsToConciliate=Entries to reconcile
 Conciliable=Môže byť porovnaná
 Conciliate=Zmieriť
 Conciliation=Zmierenie
+<<<<<<< HEAD
+=======
+SaveStatementOnly=Save statement only
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ReconciliationLate=Reconciliation late
 IncludeClosedAccount=Zahrnúť uzatvorených účtov
 OnlyOpenedAccount=Iba otvorené účty
@@ -97,14 +117,24 @@ BankLineConciliated=Entry reconciled
 Reconciled=Zlúčiť
 NotReconciled=Nezlúčené
 CustomerInvoicePayment=Klientská platba
+<<<<<<< HEAD
 SupplierInvoicePayment=Dodávatelská platba
 SubscriptionPayment=Odberatelská platba
 WithdrawalPayment=Odstúpenie platba
+=======
+SupplierInvoicePayment=Vendor payment
+SubscriptionPayment=Odberatelská platba
+WithdrawalPayment=Debit payment order
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SocialContributionPayment=Platba sociálnej/fiškálnej dane
 BankTransfer=Bankový prevod
 BankTransfers=Bankové prevody
 MenuBankInternalTransfer=Interný prevod
+<<<<<<< HEAD
 TransferDesc=Prevod z jedného účtu na druhý, Dolibarr zapíše dva záznamy ( debet na zdrojovom účte a kredit na cieľovom účte. Rovnaká suma, názov a čas budú použité )
+=======
+TransferDesc=Transfer from one account to another, Dolibarr will write two records (a debit in source account and a credit in target account). The same amount (except sign), label and date will be used for this transaction)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TransferFrom=Z
 TransferTo=Na
 TransferFromToDone=Transfer z <b>%s</b> na <b>%s</b> %s <b>%s</b> zo bol zaznamenaný.
@@ -116,7 +146,11 @@ ConfirmDeleteCheckReceipt=Určite chcete zmazať túto potvrdenku ?
 BankChecks=Bankové šeky
 BankChecksToReceipt=Šeký čakajúce na zaplatenie
 ShowCheckReceipt=Zobraziť skontrolovať depozitné potvrdenie
+<<<<<<< HEAD
 NumberOfCheques=Nb šeku
+=======
+NumberOfCheques=No. of check
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DeleteTransaction=Delete entry
 ConfirmDeleteTransaction=Are you sure you want to delete this entry?
 ThisWillAlsoDeleteBankRecord=This will also delete generated bank entry
@@ -135,8 +169,13 @@ BankTransactionLine=Bank entry
 AllAccounts=All bank and cash accounts
 BackToAccount=Späť na účte
 ShowAllAccounts=Zobraziť pre všetky účty
+<<<<<<< HEAD
 FutureTransaction=Transakcie v Futur. Žiadny spôsob, ako sa zmieriť.
 SelectChequeTransactionAndGenerate=Výber / filter, aby kontroly zahŕňali do obdržaní šeku vkladov a kliknite na &quot;Vytvoriť&quot;.
+=======
+FutureTransaction=Future transaction. Unable to reconcile.
+SelectChequeTransactionAndGenerate=Select/filter checks to include in the check deposit receipt and click on "Create".
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 InputReceiptNumber=Zvoľte výpis z účtu  potrebný pre náhľad. Zoraďťe podľa číselnej hodnoty YYYYMM alebo YYYYMMDD
 EventualyAddCategory=Nakoniec určiť kategóriu, v ktorej chcete klasifikovať záznamy
 ToConciliate=Na zlúčenie ?
@@ -153,6 +192,7 @@ RejectCheckDate=Dátum kedy bol šek odmietnutý
 CheckRejected=Šek vrátený
 CheckRejectedAndInvoicesReopened=Šek vrátený a faktúra znova otvorená
 BankAccountModelModule=Šablóny dokumentov pre bankové účty
+<<<<<<< HEAD
 DocumentModelSepaMandate=Šablóny SEPA. Užitočné iba pre krajiny v EEC
 DocumentModelBan=Šablóna pre tlač strany s BAN informáciami
 NewVariousPayment=New miscellaneous payments
@@ -163,3 +203,18 @@ AddVariousPayment=Add miscellaneous payments
 SEPAMandate=SEPA mandate
 YourSEPAMandate=Your SEPA mandate
 FindYourSEPAMandate=This is your SEPA mandate to authorize our company to make direct debit order to your bank. Thanks to return it signed (scan of the signed document) or sent it by mail to
+=======
+DocumentModelSepaMandate=Template of SEPA mandate. Useful for European countries in EEC only.
+DocumentModelBan=Šablóna pre tlač strany s BAN informáciami
+NewVariousPayment=New miscellaneous payment
+VariousPayment=Miscellaneous payment
+VariousPayments=Miscellaneous payments
+ShowVariousPayment=Show miscellaneous payment
+AddVariousPayment=Add miscellaneous payment
+SEPAMandate=SEPA mandate
+YourSEPAMandate=Your SEPA mandate
+FindYourSEPAMandate=This is your SEPA mandate to authorize our company to make direct debit order to your bank. Return it signed (scan of the signed document) or send it by mail to
+AutoReportLastAccountStatement=Automatically fill the field 'number of bank statement' with last statement number when making reconciliation
+CashControl=POS cash fence
+NewCashFence=New cash fence
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -17,7 +17,11 @@
  */
 
 /**
+<<<<<<< HEAD
  *  \file       htdocs/core/triggers/interface_50_modStripe_Stripe.class.php
+=======
+ *  \file       htdocs/core/triggers/interface_80_modStripe_Stripe.class.php
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *  \ingroup    core
  *  \brief      Fichier
  *  \remarks    Son propre fichier d'actions peut etre cree par recopie de celui-ci:
@@ -35,6 +39,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
  */
 class InterfaceStripe
 {
+<<<<<<< HEAD
+=======
+    /**
+     * @var DoliDB Database handler.
+     */
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     public $db;
 
     /**
@@ -111,6 +121,7 @@ class InterfaceStripe
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
+<<<<<<< HEAD
 		// Put here code you want to execute when a Dolibarr business events occurs.
 		// Data and type of action are stored into $object and $action
 		global $langs, $db, $conf;
@@ -118,6 +129,14 @@ class InterfaceStripe
 		$langs->load("users");
 		$langs->load("mails");
 		$langs->load('other');
+=======
+		// Put here code you want to execute when a Dolibarr business event occurs.
+		// Data and type of action are stored into $object and $action
+		global $langs, $db, $conf;
+
+		// Load translation files required by the page
+        $langs->loadLangs(array("members","other","users","mails"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 		$stripe = new Stripe($db);
@@ -145,11 +164,26 @@ class InterfaceStripe
 				if ($customer)
 				{
 					$namecleaned = $object->name ? $object->name : null;
+<<<<<<< HEAD
 					$vatcleaned = $object->tva_intra ? $object->tva_intra : null;	// We force data to "null" if empty as expected by Stripe
+=======
+					$vatcleaned = $object->tva_intra ? $object->tva_intra : null;	// Example of valid numbers are 'FR12345678901' or 'FR12345678902'
+					$desccleaned = $object->name_alias ? $object->name_alias : null;
+					$taxexemptcleaned = $object->tva_assuj ? 'none' : 'exempt';
+					$langcleaned = $object->default_lang ? array(substr($object->default_lang, 0, 2)) : null;
+					/*$taxinfo = array('type'=>'vat');
+					if ($vatcleaned)
+					{
+						$taxinfo["tax_id"] = $vatcleaned;
+					}
+					// We force data to "null" if not defined as expected by Stripe
+					if (empty($vatcleaned)) $taxinfo=null;*/
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 					// Detect if we change a Stripe info (email, description, vat id)
 					$changerequested = 0;
 					if (! empty($object->email) && $object->email != $customer->email) $changerequested++;
+<<<<<<< HEAD
 					if ($namecleaned != $customer->description) $changerequested++;
 					if ($vatcleaned != $customer->business_vat_id) $changerequested++;
 
@@ -160,6 +194,72 @@ class InterfaceStripe
 						$customer->business_vat_id = $vatcleaned;
 
 						$customer->save();
+=======
+					/* if ($namecleaned != $customer->description) $changerequested++;
+					if (! isset($customer->tax_info['tax_id']) && ! is_null($vatcleaned)) $changerequested++;
+					elseif (isset($customer->tax_info['tax_id']) && is_null($vatcleaned)) $changerequested++;
+					elseif (isset($customer->tax_info['tax_id']) && ! is_null($vatcleaned))
+					{
+						if ($vatcleaned != $customer->tax_info['tax_id']) $changerequested++;
+					} */
+					if ($namecleaned != $customer->name) $changerequested++;
+					if ($desccleaned != $customer->description) $changerequested++;
+					if (($customer->tax_exempt == 'exempt' && ! $object->tva_assuj) || (! $customer->tax_exempt == 'exempt' && empty($object->tva_assuj))) $changerequested++;
+					if (! isset($customer->tax_ids['data']) && ! is_null($vatcleaned)) $changerequested++;
+					elseif (isset($customer->tax_ids['data']))
+					{
+						$taxinfo = reset($customer->tax_ids['data']);
+						if (empty($taxinfo) && ! empty($vatcleaned)) $changerequested++;
+						if (isset($taxinfo->value) && $vatcleaned != $taxinfo->value) $changerequested++;
+					}
+
+					if ($changerequested)
+					{
+						/*if (! empty($object->email)) $customer->email = $object->email;
+						$customer->description = $namecleaned;
+						if (empty($taxinfo)) $customer->tax_info = array('type'=>'vat', 'tax_id'=>null);
+						else $customer->tax_info = $taxinfo; */
+						$customer->name = $namecleaned;
+						$customer->description = $desccleaned;
+						$customer->preferred_locales = $langcleaned;
+						$customer->tax_exempt = $taxexemptcleaned;
+
+						try {
+							// Update Tax info on Stripe
+							if (! empty($conf->global->STRIPE_SAVE_TAX_IDS))	// We setup to save Tax info on Stripe side. Warning: This may result in error when saving customer
+							{
+								if (! empty($vatcleaned))
+								{
+									$isineec=isInEEC($object);
+									if ($object->country_code && $isineec)
+									{
+										//$taxids = $customer->allTaxIds($customer->id);
+										$customer->createTaxId($customer->id, array('type'=>'eu_vat', 'value'=>$vatcleaned));
+									}
+								}
+								else
+								{
+									$taxids = $customer->allTaxIds($customer->id);
+									if (is_array($taxids->data))
+									{
+										foreach($taxids->data as $taxidobj)
+										{
+											$customer->deleteTaxId($customer->id, $taxidobj->id);
+										}
+									}
+								}
+							}
+
+							// Update Customer on Stripe
+							$customer->save();
+						}
+						catch(Exception $e)
+						{
+						    //var_dump(\Stripe\Stripe::getApiVersion());
+							$this->errors[] = $e->getMessage();
+							$ok = -1;
+						}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					}
 				}
 			}
@@ -172,7 +272,17 @@ class InterfaceStripe
 			$customer = $stripe->customerStripe($object, $stripeacc, $servicestatus);
 			if ($customer)
 			{
+<<<<<<< HEAD
 				$customer->delete();
+=======
+				try {
+					$customer->delete();
+				}
+				catch(Exception $e)
+				{
+					dol_syslog("Failed to delete Stripe customer ".$e->getMessage(), LOG_WARNING);
+				}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_account";
@@ -184,7 +294,10 @@ class InterfaceStripe
 		if ($action == 'COMPANYPAYMENTMODE_MODIFY' && $object->type == 'card') {
 
 			// For creation of credit card, we do not create in Stripe automatically
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		if ($action == 'COMPANYPAYMENTMODE_MODIFY' && $object->type == 'card') {
 			dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
@@ -209,7 +322,11 @@ class InterfaceStripe
 						if ($card) {
 							$card->metadata=array('dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR']));
 							try {
+<<<<<<< HEAD
 								$card->save($dataforcard);
+=======
+								$card->save();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							}
 							catch(Exception $e)
 							{

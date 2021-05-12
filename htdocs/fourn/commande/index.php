@@ -1,8 +1,15 @@
 <?php
 /* Copyright (C) 2001-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+<<<<<<< HEAD
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2012		Vinicius Nogueira		<viniciusvgn@gmail.com>
+=======
+ * Copyright (C) 2004-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2012		Vinicius Nogueira	<viniciusvgn@gmail.com>
+ * Copyright (C) 2019           Nicolas ZABOURI         <info@inovea-conseil.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,15 +41,29 @@ $orderid = GETPOST('orderid');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'fournisseur', $orderid, '', 'commande');
 
+<<<<<<< HEAD
 $langs->load("suppliers");
 $langs->load("orders");
+=======
+$hookmanager = new HookManager($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('orderssuppliersindex'));
+
+// Load translation files required by the page
+$langs->loadLangs(array("suppliers", "orders"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 /*
  * 	View
  */
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("SuppliersOrdersArea"));
+=======
+llxHeader('', $langs->trans("SuppliersOrdersArea"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $commandestatic = new CommandeFournisseur($db);
 $userstatic=new User($db);
@@ -113,19 +134,32 @@ if ($resql)
 	print "</tr>\n";
 	foreach (array(0,1,2,3,4,5,6) as $statut)
 	{
+<<<<<<< HEAD
 		$dataseries[]=array($commandestatic->LibStatut($statut,1), (isset($vals[$statut])?(int) $vals[$statut]:0));
+=======
+		$dataseries[]=array($commandestatic->LibStatut($statut, 1), (isset($vals[$statut])?(int) $vals[$statut]:0));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if (! $conf->use_javascript_ajax)
 		{
 
 			print '<tr class="oddeven">';
+<<<<<<< HEAD
 			print '<td>'.$commandestatic->LibStatut($statut,0).'</td>';
 			print '<td align="right"><a href="list.php?statut='.$statut.'">'.(isset($vals[$statut])?$vals[$statut]:0).'</a></td>';
+=======
+			print '<td>'.$commandestatic->LibStatut($statut, 0).'</td>';
+			print '<td class="right"><a href="list.php?statut='.$statut.'">'.(isset($vals[$statut])?$vals[$statut]:0).'</a></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print "</tr>\n";
 		}
 	}
 	if ($conf->use_javascript_ajax)
 	{
+<<<<<<< HEAD
 		print '<tr class="impair"><td align="center" colspan="2">';
+=======
+		print '<tr class="impair"><td class="center" colspan="2">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 		$dolgraph = new DolGraph();
@@ -140,8 +174,13 @@ if ($resql)
 		print '</td></tr>';
 	}
 	//if ($totalinprocess != $total)
+<<<<<<< HEAD
 	//print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("SuppliersOrdersRunning").')</td><td align="right">'.$totalinprocess.'</td></tr>';
 	print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">'.$total.'</td></tr>';
+=======
+	//print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("SuppliersOrdersRunning").')</td><td class="right">'.$totalinprocess.'</td></tr>';
+	print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	print "</table><br>";
 }
@@ -176,7 +215,11 @@ if ($resql)
 	print '<table class="liste" width="100%">';
 
 	print '<tr class="liste_titre"><th>'.$langs->trans("Status").'</th>';
+<<<<<<< HEAD
 	print '<th align="right">'.$langs->trans("Nb").'</th>';
+=======
+	print '<th class="right">'.$langs->trans("Nb").'</th>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print "</tr>\n";
 
 	while ($i < $num)
@@ -185,7 +228,11 @@ if ($resql)
 
 		print '<tr class="oddeven">';
 		print '<td>'.$commandestatic->LibStatut($row[1]).'</td>';
+<<<<<<< HEAD
 		print '<td align="right"><a href="list.php?statut='.$row[1].'">'.$row[0].' '.$commandestatic->LibStatut($row[1],3).'</a></td>';
+=======
+		print '<td class="right"><a href="list.php?statut='.$row[1].'">'.$row[0].' '.$commandestatic->LibStatut($row[1], 3).'</a></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		print "</tr>\n";
 		$i++;
@@ -232,8 +279,13 @@ if (! empty($conf->fournisseur->enabled))
 
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
+<<<<<<< HEAD
 				print "<a href=\"card.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref."</a></td>";
 				print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->name,24).'</a></td></tr>';
+=======
+				print "<a href=\"card.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowOrder"), "order").' '.$obj->ref."</a></td>";
+				print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.dol_trunc($obj->name, 24).'</a></td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$i++;
 			}
 		}
@@ -316,7 +368,11 @@ if ($resql)
 {
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
+<<<<<<< HEAD
 	print '<th colspan="4">'.$langs->trans("LastModifiedOrders",$max).'</th></tr>';
+=======
+	print '<th colspan="4">'.$langs->trans("LastModifiedOrders", $max).'</th></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	$num = $db->num_rows($resql);
 	if ($num)
@@ -341,7 +397,11 @@ if ($resql)
 			print '&nbsp;';
 			print '</td>';
 
+<<<<<<< HEAD
 			print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
+=======
+			print '<td width="16" class="right nobordernopadding hideonsmartphone">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$filename=dol_sanitizeFileName($obj->ref);
 			$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
@@ -350,9 +410,15 @@ if ($resql)
 
 			print '</td>';
 
+<<<<<<< HEAD
 			print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->name.'</a></td>';
 			print '<td>'.dol_print_date($db->jdate($obj->tms),'day').'</td>';
 			print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,5).'</td>';
+=======
+			print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.$obj->name.'</a></td>';
+			print '<td>'.dol_print_date($db->jdate($obj->tms), 'day').'</td>';
+			print '<td class="right">'.$commandestatic->LibStatut($obj->fk_statut, 5).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '</tr>';
 			$i++;
 		}
@@ -408,7 +474,11 @@ print '<td width="16" class="nobordernopadding nowrap">';
 print '&nbsp;';
 print '</td>';
 
+<<<<<<< HEAD
 print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
+=======
+print '<td width="16" class="right nobordernopadding hideonsmartphone">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $filename=dol_sanitizeFileName($obj->ref);
 $filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 $urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
@@ -419,7 +489,11 @@ print '</td>';
 
 print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->name,24).'</a></td>';
 
+<<<<<<< HEAD
 print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
+=======
+print '<td class="right">'.$commandestatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print '</tr>';
 $i++;
@@ -432,6 +506,14 @@ print "</table><br>";
 
 print '</div></div></div>';
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardOrdersSuppliers', $parameters, $object); // Note that $action and $object may have been modified by hook
+
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

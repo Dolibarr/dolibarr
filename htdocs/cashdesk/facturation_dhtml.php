@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2007-2008 	Jeremie Ollivier 	<jeremie.o@laposte.net>
  * Copyright (C) 2008-2009 	Laurent Destailleur <eldy@uers.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2015		Regis Houssin		<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2015		Regis Houssin		<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,12 +28,21 @@
  */
 
 
+<<<<<<< HEAD
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
+=======
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Change this following line to use the correct relative path (../, ../../, etc)
 require '../main.inc.php';
@@ -76,7 +89,11 @@ if (dol_strlen($search) >= 0)	// If search criteria is on char length at least
 			$ret=array(); $i=0;
 			while ( $tab = $db->fetch_array($result) )
 			{
+<<<<<<< HEAD
 				foreach ( $tab as $cle => $valeur )
+=======
+				foreach ($tab as $cle => $valeur)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				{
 					$ret[$i][$cle] = $valeur;
 				}
@@ -108,5 +125,8 @@ if (dol_strlen($search) >= 0)	// If search criteria is on char length at least
 			print '</ul>';
 		}
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

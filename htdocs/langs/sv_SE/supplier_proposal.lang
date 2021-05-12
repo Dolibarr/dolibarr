@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - supplier_proposal
+<<<<<<< HEAD
 SupplierProposal=Vendor commercial proposals
 supplier_proposalDESC=Manage price requests to vendors
 SupplierProposalNew=New price request
@@ -26,10 +27,40 @@ SupplierProposalStatusDraft=Utkast (måste valideras)
 SupplierProposalStatusValidated=Validated (request is open)
 SupplierProposalStatusClosed=Stängt
 SupplierProposalStatusSigned=Accepted
+=======
+SupplierProposal=Leverantörsförslag
+supplier_proposalDESC=Hantera prisförfrågningar till leverantörer
+SupplierProposalNew=Ny prisförfrågan
+CommRequest=Prisförfrågan
+CommRequests=Prisförfrågningar
+SearchRequest=Hitta en förfrågan
+DraftRequests=Utkast till ansökningar
+SupplierProposalsDraft=Utkast till leverantörsförslag
+LastModifiedRequests=Senaste %s ändrade prisförfrågningar
+RequestsOpened=Öppna prisförfrågningar
+SupplierProposalArea=Leverantörsförslag
+SupplierProposalShort=Leverantörsförslag
+SupplierProposals=Leverantörsförslag
+SupplierProposalsShort=Leverantörsförslag
+NewAskPrice=Ny prisförfrågan
+ShowSupplierProposal=Visa prisförfrågan
+AddSupplierProposal=Skapa en prisförfrågan
+SupplierProposalRefFourn=Leverantör ref
+SupplierProposalDate=Leveransdatum
+SupplierProposalRefFournNotice=Innan du stänger till "Accepterad", tänk att få tag på leverantörens referenser.
+ConfirmValidateAsk=Är du säker på att du vill validera denna prisförfrågan under namn <b> %s </b>?
+DeleteAsk=Ta bort förfrågan
+ValidateAsk=Bekräfta förfrågan
+SupplierProposalStatusDraft=Utkast (måste valideras)
+SupplierProposalStatusValidated=Validerad (begäran är öppen)
+SupplierProposalStatusClosed=Stängt
+SupplierProposalStatusSigned=Accepterad
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SupplierProposalStatusNotSigned=Refused
 SupplierProposalStatusDraftShort=Utkast
 SupplierProposalStatusValidatedShort=Validerade
 SupplierProposalStatusClosedShort=Stängt
+<<<<<<< HEAD
 SupplierProposalStatusSignedShort=Accepted
 SupplierProposalStatusNotSignedShort=Refused
 CopyAskFrom=Create price request by copying existing a request
@@ -53,3 +84,27 @@ SupplierProposalsToClose=Vendor proposals to close
 SupplierProposalsToProcess=Vendor proposals to process
 LastSupplierProposals=Latest %s price requests
 AllPriceRequests=All requests
+=======
+SupplierProposalStatusSignedShort=Accepterad
+SupplierProposalStatusNotSignedShort=Refused
+CopyAskFrom=Skapa prisförfrågan genom att kopiera befintliga en förfrågan
+CreateEmptyAsk=Skapa blank begäran
+ConfirmCloneAsk=Är du säker på att du vill klona prisförfrågan <b> %s </b>?
+ConfirmReOpenAsk=Är du säker på att du vill öppna tillbaka prisförfrågan <b> %s </b>?
+SendAskByMail=Skicka prisförfrågan via post
+SendAskRef=Skicka prisförfrågan %s
+SupplierProposalCard=Förfråganskort
+ConfirmDeleteAsk=Är du säker på att du vill radera denna prisförfrågan <b> %s </b>?
+ActionsOnSupplierProposal=Händelser på prisförfrågan
+DocModelAuroreDescription=En komplett begäran modell (logotyp ...)
+CommercialAsk=Prisförfrågan
+DefaultModelSupplierProposalCreate=Skapa standardmodell
+DefaultModelSupplierProposalToBill=Standardmall när du avslutar en prisförfrågan (accepterad)
+DefaultModelSupplierProposalClosed=Standardmall när du avslutar en prisförfrågan (vägrade)
+ListOfSupplierProposals=Förteckning över leverantörsförslagförfrågningar
+ListSupplierProposalsAssociatedProject=Förteckning över leverantörsförslag i samband med projektet
+SupplierProposalsToClose=Leverantörsförslag att stänga
+SupplierProposalsToProcess=Leverantörsförslag att bearbeta
+LastSupplierProposals=Senaste %s prisförfrågningar
+AllPriceRequests=Alla förfrågningar
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

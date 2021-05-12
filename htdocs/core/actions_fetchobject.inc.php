@@ -32,8 +32,13 @@ if (($id > 0 || (! empty($ref) && ! in_array($action, array('create', 'createtas
 {
 	if (($id > 0 && is_numeric($id)) || ! empty($ref))	// To discard case when id is list of ids like '1,2,3...'
 	{
+<<<<<<< HEAD
 	    $ret = $object->fetch($id, $ref);
 	    if ($ret > 0)
+=======
+		$ret = $object->fetch($id, $ref);
+		if ($ret > 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    {
 	        $object->fetch_thirdparty();
 	        $id = $object->id;

@@ -52,6 +52,10 @@ ActionAC_TEL=Gọi điện thoại
 ActionAC_FAX=Gửi fax
 ActionAC_PROP=Gửi đơn hàng đề xuất qua thư
 ActionAC_EMAIL=Gởi thư
+<<<<<<< HEAD
+=======
+ActionAC_EMAIL_IN=Reception of Email
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActionAC_RDV=Cuộc họp
 ActionAC_INT=Intervention on site
 ActionAC_FAC=Gửi hóa đơn khách hàng bằng thư
@@ -72,8 +76,15 @@ StatusProsp=Trạng thái KH tiềm năng
 DraftPropals=Dự thảo đơn hàng đề xuất
 NoLimit=No limit
 ToOfferALinkForOnlineSignature=Link for online signature
+<<<<<<< HEAD
 WelcomeOnOnlineSignaturePage=Welcome on the page to accept commerical proposals from %s
 ThisScreenAllowsYouToSignDocFrom=This screen allow you to accept and sign, or refuse, a quote/commercial proposal
 ThisIsInformationOnDocumentToSign=This is information on document to accept or refuse
 SignatureProposalRef=Signature of quote/commerical proposal %s
+=======
+WelcomeOnOnlineSignaturePage=Welcome to the page to accept commercial proposals from %s
+ThisScreenAllowsYouToSignDocFrom=This screen allow you to accept and sign, or refuse, a quote/commercial proposal
+ThisIsInformationOnDocumentToSign=This is information on document to accept or refuse
+SignatureProposalRef=Signature of quote/commercial proposal %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 FeatureOnlineSignDisabled=Feature for online signing disabled or document generated before the feature was enabled

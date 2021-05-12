@@ -16,11 +16,19 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+<<<<<<< HEAD
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
+=======
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -31,7 +39,11 @@ header('Content-Type: application/json');
 $id = GETPOST('id', 'int');
 
 if (!$id) {
+<<<<<<< HEAD
 	print json_encode(array(
+=======
+print json_encode(array(
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		'error' => 'ID not set'
 	));
 	exit();
@@ -40,7 +52,11 @@ if (!$id) {
 $product = new Product($db);
 
 if ($product->fetch($id) < 0) {
+<<<<<<< HEAD
 	print json_encode(array(
+=======
+print json_encode(array(
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		'error' => 'Product not found'
 	));
 }

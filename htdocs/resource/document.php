@@ -2,7 +2,11 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
+<<<<<<< HEAD
  * Copyright (C) 2005-2009 Regis Houssin         <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2009 Regis Houssin         <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2005      Simon TOSSER          <simon@kornog-computing.com>
  * Copyright (C) 2011-2012 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
@@ -38,10 +42,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('other', 'resource', 'companies'));
 
+<<<<<<< HEAD
 $id = GETPOST('id','int');
 $ref = GETPOST('ref','alpha');
 $action = GETPOST('action','alpha');
 $confirm = GETPOST('confirm','alpha');
+=======
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
+$action = GETPOST('action', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -49,9 +60,15 @@ $result = restrictedArea($user, 'resource', $id, 'resource');
 
 
 // Get parameters
+<<<<<<< HEAD
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
+=======
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -80,7 +97,11 @@ include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 $form = new Form($db);
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("Resource"));
+=======
+llxHeader('', $langs->trans("Resource"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if ($object->id)
 {
@@ -88,11 +109,19 @@ if ($object->id)
 
 	$head=resource_prepare_head($object);
 
+<<<<<<< HEAD
 	dol_fiche_head($head, 'documents',  $langs->trans("ResourceSingular"), -1, 'resource');
 
 
 	// Construit liste des fichiers
 	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+=======
+	dol_fiche_head($head, 'documents', $langs->trans("ResourceSingular"), -1, 'resource');
+
+
+	// Build file list
+	$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$totalsize=0;
 	foreach($filearray as $key => $file)
 	{
@@ -113,7 +142,11 @@ if ($object->id)
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
+<<<<<<< HEAD
     print '<table class="border" width="100%">';
+=======
+    print '<table class="border tableforfield centpercent">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	// Resource type
 	print '<tr>';
@@ -124,7 +157,11 @@ if ($object->id)
 	print '</tr>';
 
     print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
+<<<<<<< HEAD
     print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize,1,1).'</td></tr>';
+=======
+    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print '</table>';
 
     print '</div>';
@@ -135,14 +172,22 @@ if ($object->id)
     $permission = $user->rights->resource->write;
 
     include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 else
 {
 	print $langs->trans("ErrorUnknown");
 }
 
+<<<<<<< HEAD
 
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

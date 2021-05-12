@@ -9,7 +9,11 @@ UserNotLinkedToMember=Brukeren er ikke knyttet til noe medlem
 ThirdpartyNotLinkedToMember=Tredjepart ikke knyttet til et medlem
 MembersTickets=Medlemsbilletter
 FundationMembers=Organisasjons-medlemmer
+<<<<<<< HEAD
 ListOfValidatedPublicMembers=Liste over godkjente offentlige medlemmer
+=======
+ListOfValidatedPublicMembers=Liste over validerte offentlige medlemmer
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorThisMemberIsNotPublic=Dette medlemet er ikke offentlig
 ErrorMemberIsAlreadyLinkedToThisThirdParty=Et annet medlem (navn: <b>%s</b>, innlogging: <b>%s</b>) er allerede koblet til en tredje part <b>%s</b>. Fjern denne lenken først fordi en tredjepart ikke kan knyttes til bare ett medlem (og vice versa).
 ErrorUserPermissionAllowsToLinksToItselfOnly=Av sikkerhetsgrunner må du ha tilgang til å redigere alle brukere for å kunne knytte et medlem til en bruker som ikke er ditt.
@@ -67,7 +71,11 @@ Subscriptions=Abonnementer
 SubscriptionLate=Forsinket
 SubscriptionNotReceived=Abonnement aldri mottatt
 ListOfSubscriptions=Abonnementsliste
+<<<<<<< HEAD
 SendCardByMail=Send kortet via e-post
+=======
+SendCardByMail=Send kortet via epost
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddMember=Opprett medlem
 NoTypeDefinedGoToSetup=Ingen medlemstyper definert. Gå til Oppsett - Medlemstyper
 NewMemberType=Ny medlemstype
@@ -88,7 +96,11 @@ ConfirmDeleteSubscription=Er du sikker på at du vil slette dette abonnementet?
 Filehtpasswd=htpasswd fil
 ValidateMember=Valider medlem
 ConfirmValidateMember=Er du sikker på at du vil validere dette medlemmet?
+<<<<<<< HEAD
 FollowingLinksArePublic=Følgende koblinger er åpne sider og ikke beskyttet av noen Dolibarr tillatelser. De er ikke formaterte sider, gitt som eksempel for å vise hvordan du lister medlemsdatabasen.
+=======
+FollowingLinksArePublic=Følgende lenker er åpne sider som ikke er beskyttet av noen Dolibarr-tillatelse. De er ikke formaterte sider, gitt som eksempel for å vise hvordan du kan vise en medlemsdatabase.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PublicMemberList=Offentlig medlemsliste
 BlankSubscriptionForm=Offentlig selvinnmeldingsskjema
 BlankSubscriptionFormDesc=Dolibarr kan gi deg en offentlig URL/nettside for å tillate eksterne besøkende å be om å abonnere på firmaet. Hvis en elektronisk betalingsmodul er aktivert, kan et betalingsformular også gis automatisk.
@@ -124,6 +136,7 @@ CardContent=Innhold på medlemskortet ditt
 ThisIsContentOfYourMembershipRequestWasReceived=Din forespørsel om medlemskap ble mottatt. <br> <br>
 ThisIsContentOfYourMembershipWasValidated=Ditt medlemskap ble validert med følgende opplysninger: <br> <br>
 ThisIsContentOfYourSubscriptionWasRecorded=Det nye abonnementet ditt ble registrert. <br> <br>
+<<<<<<< HEAD
 ThisIsContentOfSubscriptionReminderEmail=Abonnementet ditt er i ferd med å utløpe. Vi håper du vil fornye det. <br> <br>
 ThisIsContentOfYourCard=Dette er en påminnelse om informasjonen vi får om deg. Ta gjerne kontakt med oss ​​hvis noe ser feil ut. <br> <br>
 DescADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT=Emnet i e-post som mottas i tilfelle auto-inskripsjon av en gjest
@@ -134,6 +147,18 @@ DescADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION=Epost-mal for å sende epost til et med
 DescADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION=Epost-mal for å sende påminnelse når abonnementet er i ferd med å utløpe
 DescADHERENT_EMAIL_TEMPLATE_CANCELATION=Epost-mal for å sende epost til et medlem ved kansellering av abonnement
 DescADHERENT_MAIL_FROM=E-postadresse for automatisk e-post
+=======
+ThisIsContentOfSubscriptionReminderEmail=Vi vil fortelle deg at abonnementet ditt er i ferd med å utløpe eller allerede er utløpt (__MEMBER_LAST_SUBSCRIPTION_DATE_END__). Vi håper du vil fornye det. <br> <br>
+ThisIsContentOfYourCard=Dette er et sammendrag av informasjonen vi har om deg. Ta kontakt med oss hvis noe er feil. <br> <br>
+DescADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT=Emnet i e-post som mottas i tilfelle auto-inskripsjon av en gjest
+DescADHERENT_AUTOREGISTER_NOTIF_MAIL=Emnet i e-post som mottas i tilfelle auto-inskripsjon av en gjest
+DescADHERENT_EMAIL_TEMPLATE_AUTOREGISTER=Epost-mal for å sende epost til et medlem på medlemmets auto-abonnement
+DescADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION=E-postmal til bruk for å sende e-post til medlem på medlemsvalidering
+DescADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION=E-postmal til bruk for å sende e-post til et medlem på nytt abonnementsopptak
+DescADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION=E-postmal som brukes til å sende epostpåminnelse når abonnementet er i ferd med å utløpe
+DescADHERENT_EMAIL_TEMPLATE_CANCELATION=E-postmal til bruk for å sende e-post til et medlem ved kansellering av medlemskap
+DescADHERENT_MAIL_FROM=Avsenderadresse for automatisk e-post
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DescADHERENT_ETIQUETTE_TYPE=Side for etikettformat
 DescADHERENT_ETIQUETTE_TEXT=Tekst trykt på medlemsadresse ark
 DescADHERENT_CARD_TYPE=Side for kortformat
@@ -156,8 +181,13 @@ DocForAllMembersCards=Generer visittkort for alle medlemmer
 DocForOneMemberCards=Generer visittkort for et bestemt medlem
 DocForLabels=Generer adresseark
 SubscriptionPayment=Abonnementsbetaling
+<<<<<<< HEAD
 LastSubscriptionDate=Siste abonnementsdato
 LastSubscriptionAmount=Siste abonnementsbeløp
+=======
+LastSubscriptionDate=Dato for siste abonnementsbetaling
+LastSubscriptionAmount=Beløp på siste abonnement
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MembersStatisticsByCountries=Medlemsstatistikk etter land
 MembersStatisticsByState=Medlemsstatistikk etter delstat/provins
 MembersStatisticsByTown=Medlemsstatistikk etter by
@@ -171,7 +201,11 @@ MembersStatisticsDesc=Velg statistikk du ønsker å lese ...
 MenuMembersStats=Statistikk
 LastMemberDate=Siste medlemsdato
 LatestSubscriptionDate=Siste abonnementsdato
+<<<<<<< HEAD
 Nature=Natur
+=======
+MemberNature=Nature of member
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Public=Informasjon er offentlig
 NewMemberbyWeb=Nytt medlem lagt til. Venter på godkjenning
 NewMemberForm=Skjema for nytt medlem 
@@ -188,11 +222,21 @@ MembersByNature=Dette skjermbildet viser statistikk over medlemmer etter type.
 MembersByRegion=Dette skjermbildet viser statistikk over medlemmer etter region.
 VATToUseForSubscriptions=Mva-sats som skal brukes for abonnementer
 NoVatOnSubscription=Ingen MVA for abonnementer
+<<<<<<< HEAD
 MEMBER_PAYONLINE_SENDEMAIL=E-post til bruk for e-postvarsel når Dolibarr mottar en bekreftelse på en validert betaling for et abonnement (Eksempel: paymentdone@example.com)
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS=Vare brukt for abonnementslinje i faktura: %s
 NameOrCompany=Navn eller firma
 SubscriptionRecorded=Abonnement registrert
 NoEmailSentToMember=Ingen epost sendt til medlem
 EmailSentToMember=E-post sendt til medlem på %s
 SendReminderForExpiredSubscriptionTitle=Send påminnelse via e-post for utløpt abonnement
+<<<<<<< HEAD
 SendReminderForExpiredSubscription=Send påminnelse via epost til medlemmer når abonnementet holder på å utløpe (parameter er antall dager før slutt på abonnementet for å sende påminnelsen)
+=======
+SendReminderForExpiredSubscription=Send påminnelse via e-post til medlemmer når abonnementet holder på å utløpe (parameter er antall dager før slutt på abonnementet for å sende påminnelsen. Det kan være en liste over dager atskilt med et semikolon, for eksempel '10; 5; 0; -5 ')
+MembershipPaid=Medlemskap betalt for gjeldende periode (til %s)
+YouMayFindYourInvoiceInThisEmail=Du kan finne fakturaen din vedlagt denne e-posten
+XMembersClosed=%s medlem(mer) lukket
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

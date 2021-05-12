@@ -32,7 +32,11 @@
  * @param   int		$entitytotest   Number of instance (always 1 if module multicompany not enabled)
  * @return	string					Login if OK, '' if KO
  */
+<<<<<<< HEAD
 function check_user_password_forceuser($usertotest,$passwordtotest,$entitytotest)
+=======
+function check_user_password_forceuser($usertotest, $passwordtotest, $entitytotest)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	// Variable dolibarr_auto_user must be defined in conf.php file
 	global $dolibarr_auto_user;

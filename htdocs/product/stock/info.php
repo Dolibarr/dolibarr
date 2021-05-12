@@ -29,11 +29,20 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
 // Load translation files required by the page
 $langs->load("stocks");
 
+<<<<<<< HEAD
 $id = GETPOST('id','int');
 $ref = GETPOST('ref','alpha');
 
 // Security check
 $result=restrictedArea($user,'stock');
+=======
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
+
+// Security check
+//$result=restrictedArea($user,'stock', $id, 'entrepot&stock');
+$result=restrictedArea($user, 'stock');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 /*
@@ -41,7 +50,11 @@ $result=restrictedArea($user,'stock');
  */
 
 $help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
+<<<<<<< HEAD
 llxHeader("",$langs->trans("Stocks"),$help_url);
+=======
+llxHeader("", $langs->trans("Stocks"), $help_url);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $object = new Entrepot($db);
 $object->fetch($id, $ref);
@@ -59,7 +72,11 @@ $morehtmlref.=$langs->trans("LocationSummary").' : '.$object->lieu;
 $morehtmlref.='</div>';
 
 $shownav = 1;
+<<<<<<< HEAD
 if ($user->societe_id && ! in_array('stock', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+=======
+if ($user->societe_id && ! in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', 'ref', $morehtmlref);
 
@@ -73,6 +90,11 @@ dol_print_object_info($object);
 
 print '</div>';
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

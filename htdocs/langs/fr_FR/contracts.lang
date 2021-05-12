@@ -64,10 +64,18 @@ DateStartRealShort=Date début
 DateEndReal=Date effective fin de service
 DateEndRealShort=Date effective fin
 CloseService=Fermer service
+<<<<<<< HEAD
 BoardRunningServices=Services actifs et expirés en contrat
 ServiceStatus=Statut du service
 DraftContracts=Contrats brouillons
 CloseRefusedBecauseOneServiceActive=Fermeture du contrat impossible car il y a au moins un service actif
+=======
+BoardRunningServices=Services actifs
+BoardExpiredServices=Services expirés
+ServiceStatus=Statut du service
+DraftContracts=Contrats brouillons
+CloseRefusedBecauseOneServiceActive=Le contrat ne peut pas être fermé car il y a au moins un service ouvert dessus
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActivateAllContracts=Activer tous les services
 CloseAllContracts=Clôturer tous les services
 DeleteContractLine=Supprimer ligne de contrat
@@ -85,10 +93,17 @@ NoteListOfYourExpiredServices=Cette list ne contient que les contrats de service
 StandardContractsTemplate=Modèle standard de contrats
 ContactNameAndSignature=Pour %s, nom et signature:
 OnlyLinesWithTypeServiceAreUsed=Seules les lignes de type "Service" seront clonées
+<<<<<<< HEAD
 CloneContract=Cloner le contrat
 ConfirmCloneContract=Etes vous sûr de vouloir cloner le contrat <b>%s</b> ?
 LowerDateEndPlannedShort=Date de fin de service la plus basse parmi les services actifs
 SendContractRef=Informations contrat __REF__
+=======
+ConfirmCloneContract=Etes vous sûr de vouloir cloner le contrat <b>%s</b> ?
+LowerDateEndPlannedShort=Date de fin de service la plus basse parmi les services actifs
+SendContractRef=Informations contrat __REF__
+OtherContracts=Autres contrats
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Commercial signataire du contrat
 TypeContact_contrat_internal_SALESREPFOLL=Commercial suivi du contrat

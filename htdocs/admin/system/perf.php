@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2013	Laurent Destailleur		<eldy@users.sourceforge.net>
+=======
+/* Copyright (C) 2013-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,14 +30,23 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
+<<<<<<< HEAD
 $langs->load("admin");
 $langs->load("install");
 $langs->load("other");
+=======
+// Load translation files required by the page
+$langs->loadLangs(array("install","other","admin"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if (! $user->admin)
 	accessforbidden();
 
+<<<<<<< HEAD
 if (GETPOST('action','aZ09') == 'donothing')
+=======
+if (GETPOST('action', 'aZ09') == 'donothing')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	exit;
 }
@@ -44,6 +57,7 @@ if (GETPOST('action','aZ09') == 'donothing')
  */
 
 $form=new Form($db);
+<<<<<<< HEAD
 $nowstring=dol_print_date(dol_now(),'dayhourlog');
 
 llxHeader();
@@ -51,6 +65,15 @@ llxHeader();
 print load_fiche_titre($langs->trans("PerfDolibarr"),'','title_setup');
 
 print $langs->trans("YouMayFindPerfAdviceHere",'https://wiki.dolibarr.org/index.php/FAQ_Increase_Performance').' (<a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("Reload").'</a>)<br>';
+=======
+$nowstring=dol_print_date(dol_now(), 'dayhourlog');
+
+llxHeader();
+
+print load_fiche_titre($langs->trans("PerfDolibarr"), '', 'title_setup');
+
+print $langs->trans("YouMayFindPerfAdviceHere", 'https://wiki.dolibarr.org/index.php/FAQ_Increase_Performance').' (<a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("Reload").'</a>)<br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Recupere la version de PHP
 $phpversion=version_php();
@@ -63,14 +86,36 @@ print "<br>Web server - ".$langs->trans("Version").": ".$_SERVER["SERVER_SOFTWAR
 print '<br>';
 print '<strong>'.$langs->trans("XDebug").'</strong>: ';
 $test=!function_exists('xdebug_is_enabled');
+<<<<<<< HEAD
 if ($test) print img_picto('','tick.png').' '.$langs->trans("NotInstalled");
 else
 {
 	print img_picto('','warning').' '.$langs->trans("XDebugInstalled");
+=======
+if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled");
+else
+{
+	print img_picto('', 'warning').' '.$langs->trans("XDebugInstalled");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
 }
 print '<br>';
 
+<<<<<<< HEAD
+=======
+// Module debugbar
+print '<br>';
+print '<strong>'.$langs->trans("DebugBar").'</strong>: ';
+$test=empty($conf->debugbar->enabled);
+if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled");
+else
+{
+    print img_picto('', 'warning').' '.$langs->trans("DebugBarModuleActivated");
+    //print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
+}
+print '<br>';
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 // Applicative cache
 print '<br>';
 print '<strong>'.$langs->trans("ApplicativeCache").'</strong>: ';
@@ -79,6 +124,7 @@ if ($test)
 {
 	if (!empty($conf->global->MEMCACHED_SERVER))
 	{
+<<<<<<< HEAD
 		print img_picto('','tick.png').' '.$langs->trans("MemcachedAvailableAndSetup");
 		print ' '.$langs->trans("MoreInformation").' <a href="'.dol_buildpath('/memcached/admin/memcached.php',1).'">Memcached module admin page</a>';
 	}
@@ -89,6 +135,18 @@ if ($test)
 	}
 }
 else print img_picto('','warning').' '.$langs->trans("MemcachedNotAvailable");
+=======
+		print img_picto('', 'tick.png').' '.$langs->trans("MemcachedAvailableAndSetup");
+		print ' '.$langs->trans("MoreInformation").' <a href="'.dol_buildpath('/memcached/admin/memcached.php', 1).'">Memcached module admin page</a>';
+	}
+	else
+	{
+		print img_picto('', 'warning').' '.$langs->trans("MemcachedModuleAvailableButNotSetup");
+		print ' <a href="'.dol_buildpath('/memcached/admin/memcached.php', 1).'">Memcached module admin page</a>';
+	}
+}
+else print img_picto('', 'warning').' '.$langs->trans("MemcachedNotAvailable");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</br>';
 
 // OPCode cache
@@ -99,20 +157,32 @@ $test=function_exists('xcache_info');
 if (! $foundcache && $test)
 {
 	$foundcache++;
+<<<<<<< HEAD
 	print img_picto('','tick.png').' '.$langs->trans("XCacheInstalled");
+=======
+	print img_picto('', 'tick.png').' '.$langs->trans("XCacheInstalled");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xcache.php'.'">Xcache admin page</a>';
 }
 $test=function_exists('eaccelerator_info');
 if (! $foundcache && $test)
 {
 	$foundcache++;
+<<<<<<< HEAD
 	print img_picto('','tick.png').' '.$langs->trans("EAcceleratorInstalled");
+=======
+	print img_picto('', 'tick.png').' '.$langs->trans("EAcceleratorInstalled");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 $test=function_exists('opcache_get_status');
 if (! $foundcache && $test)
 {
 	$foundcache++;
+<<<<<<< HEAD
 	print img_picto('','tick.png').' '.$langs->trans("ZendOPCacheInstalled");  // Should be by default starting with PHP 5.5
+=======
+	print img_picto('', 'tick.png').' '.$langs->trans("ZendOPCacheInstalled");  // Should be by default starting with PHP 5.5
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	//$tmp=opcache_get_status();
 	//var_dump($tmp);
 }
@@ -123,11 +193,19 @@ if (! $foundcache && $test)
 	if (ini_get('apc.enabled'))
 	{
 		$foundcache++;
+<<<<<<< HEAD
 		print img_picto('','tick.png').' '.$langs->trans("APCInstalled");
 	}
 	else
 	{
 		print img_picto('','warning').' '.$langs->trans("APCCacheInstalledButDisabled");
+=======
+		print img_picto('', 'tick.png').' '.$langs->trans("APCInstalled");
+	}
+	else
+	{
+		print img_picto('', 'warning').' '.$langs->trans("APCCacheInstalledButDisabled");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 }
 if (! $foundcache) print $langs->trans("NoOPCodeCacheFound");
@@ -382,6 +460,7 @@ print ':</strong><br>';
 //print '<div id="httpcachephpok">'.img_picto('','warning.png').' '.$langs->trans("FilesOfTypeNotCompressed",'php (.php)').'</div>';
 //print '<div id="httpcachephpko">'.img_picto('','tick.png').' '.$langs->trans("FilesOfTypeNotCached",'php (.php)').'</div>';
 // Cache on rest
+<<<<<<< HEAD
 print '<div id="httpcachecssok">'.img_picto('','tick.png').' '.$langs->trans("FilesOfTypeCached",'css (.css)').'</div>';
 print '<div id="httpcachecssko">'.img_picto('','warning.png').' '.$langs->trans("FilesOfTypeNotCached",'css (.css)').'</div>';
 print '<div id="httpcachecssphpok">'.img_picto('','tick.png').' '.$langs->trans("FilesOfTypeCached",'css (.css.php)').'</div>';
@@ -392,6 +471,18 @@ print '<div id="httpcachejsok">'.img_picto('','tick.png').' '.$langs->trans("Fil
 print '<div id="httpcachejsko">'.img_picto('','warning.png').' '.$langs->trans("FilesOfTypeNotCached",'javascript (.js)').'</div>';
 print '<div id="httpcachejsphpok">'.img_picto('','tick.png').' '.$langs->trans("FilesOfTypeCached",'javascript (.js.php)').'</div>';
 print '<div id="httpcachejsphpko">'.img_picto('','warning.png').' '.$langs->trans("FilesOfTypeNotCached",'javascript (.js.php)').'</div>';
+=======
+print '<div id="httpcachecssok">'.img_picto('', 'tick.png').' '.$langs->trans("FilesOfTypeCached", 'css (.css)').'</div>';
+print '<div id="httpcachecssko">'.img_picto('', 'warning.png').' '.$langs->trans("FilesOfTypeNotCached", 'css (.css)').'</div>';
+print '<div id="httpcachecssphpok">'.img_picto('', 'tick.png').' '.$langs->trans("FilesOfTypeCached", 'css (.css.php)').'</div>';
+print '<div id="httpcachecssphpko">'.img_picto('', 'warning.png').' '.$langs->trans("FilesOfTypeNotCached", 'css (.css.php)').'</div>';
+print '<div id="httpcacheimgok">'.img_picto('', 'tick.png').' '.$langs->trans("FilesOfTypeCached", 'img (.png)').'</div>';
+print '<div id="httpcacheimgko">'.img_picto('', 'warning.png').' '.$langs->trans("FilesOfTypeNotCached", 'img (.png)').'</div>';
+print '<div id="httpcachejsok">'.img_picto('', 'tick.png').' '.$langs->trans("FilesOfTypeCached", 'javascript (.js)').'</div>';
+print '<div id="httpcachejsko">'.img_picto('', 'warning.png').' '.$langs->trans("FilesOfTypeNotCached", 'javascript (.js)').'</div>';
+print '<div id="httpcachejsphpok">'.img_picto('', 'tick.png').' '.$langs->trans("FilesOfTypeCached", 'javascript (.js.php)').'</div>';
+print '<div id="httpcachejsphpko">'.img_picto('', 'warning.png').' '.$langs->trans("FilesOfTypeNotCached", 'javascript (.js.php)').'</div>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '<br>';
 print '<strong>'.$langs->trans("HTTPCacheStaticResources").' - ';
 print $langs->trans("CacheByClient").':</strong><br>';
@@ -406,6 +497,7 @@ print '</strong>: ';
 //$tmp=getURLContent(DOL_URL_ROOT.'/index.php','GET');var_dump($tmp);
 print '<br>';
 // on PHP
+<<<<<<< HEAD
 print '<div id="httpcompphpok">'.img_picto('','tick.png').' '.$langs->trans("FilesOfTypeCompressed",'php (.php)').'</div>';
 print '<div id="httpcompphpko">'.img_picto('','warning.png').' '.$langs->trans("FilesOfTypeNotCompressed",'php (.php)').'</div>';
 // on rest
@@ -419,6 +511,21 @@ print '<div id="httpcompjsok">'.img_picto('','tick.png').' '.$langs->trans("File
 print '<div id="httpcompjsko">'.img_picto('','warning.png').' '.$langs->trans("FilesOfTypeNotCompressed",'javascript (.js)').'</div>';
 print '<div id="httpcompjsphpok">'.img_picto('','tick.png').' '.$langs->trans("FilesOfTypeCompressed",'javascript (.js.php)').'</div>';
 print '<div id="httpcompjsphpko">'.img_picto('','warning.png').' '.$langs->trans("FilesOfTypeNotCompressed",'javascript (.js.php)').'</div>';
+=======
+print '<div id="httpcompphpok">'.img_picto('', 'tick.png').' '.$langs->trans("FilesOfTypeCompressed", 'php (.php)').'</div>';
+print '<div id="httpcompphpko">'.img_picto('', 'warning.png').' '.$langs->trans("FilesOfTypeNotCompressed", 'php (.php)').'</div>';
+// on rest
+print '<div id="httpcompcssok">'.img_picto('', 'tick.png').' '.$langs->trans("FilesOfTypeCompressed", 'css (.css)').'</div>';
+print '<div id="httpcompcssko">'.img_picto('', 'warning.png').' '.$langs->trans("FilesOfTypeNotCompressed", 'css (.css)').'</div>';
+print '<div id="httpcompcssphpok">'.img_picto('', 'tick.png').' '.$langs->trans("FilesOfTypeCompressed", 'css (.css.php)').'</div>';
+print '<div id="httpcompcssphpko">'.img_picto('', 'warning.png').' '.$langs->trans("FilesOfTypeNotCompressed", 'css (.css.php)').'</div>';
+//print '<div id="httpcompimgok">'.img_picto('','tick.png').' '.$langs->trans("FilesOfTypeCompressed",'img (.png)').'</div>';
+//print '<div id="httpcompimgko">'.img_picto('','warning.png').' '.$langs->trans("FilesOfTypeNotCompressed",'img (.png)').'</div>';
+print '<div id="httpcompjsok">'.img_picto('', 'tick.png').' '.$langs->trans("FilesOfTypeCompressed", 'javascript (.js)').'</div>';
+print '<div id="httpcompjsko">'.img_picto('', 'warning.png').' '.$langs->trans("FilesOfTypeNotCompressed", 'javascript (.js)').'</div>';
+print '<div id="httpcompjsphpok">'.img_picto('', 'tick.png').' '.$langs->trans("FilesOfTypeCompressed", 'javascript (.js.php)').'</div>';
+print '<div id="httpcompjsphpko">'.img_picto('', 'warning.png').' '.$langs->trans("FilesOfTypeNotCompressed", 'javascript (.js.php)').'</div>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Database driver
 print '<br>';
@@ -429,11 +536,19 @@ if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')
 	$test=($conf->db->type == 'mysqli');
 	if ($test)
 	{
+<<<<<<< HEAD
 		print img_picto('','tick.png').' '.$langs->trans("YouUseBestDriver",$conf->db->type);
 	}
 	else
 	{
 		print img_picto('','warning.png').' '.$langs->trans("YouDoNotUseBestDriver",$conf->db->type,'mysqli');
+=======
+		print img_picto('', 'tick.png').' '.$langs->trans("YouUseBestDriver", $conf->db->type);
+	}
+	else
+	{
+		print img_picto('', 'warning.png').' '.$langs->trans("YouDoNotUseBestDriver", $conf->db->type, 'mysqli');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 	print '<br>';
 }
@@ -456,16 +571,28 @@ if ($resql)
 	{
 		if (empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE))
 		{
+<<<<<<< HEAD
 			print img_picto('','warning.png').' '.$langs->trans("YouHaveXProductUseSearchOptim",$nb);
 		}
 		else
 		{
 			print img_picto('','tick.png').' '.$langs->trans("YouHaveXProductAndSearchOptimOn",$nb);
+=======
+			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXProductUseSearchOptim", $nb);
+		}
+		else
+		{
+			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXProductAndSearchOptimOn", $nb);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 	}
 	else
 	{
+<<<<<<< HEAD
 		print img_picto('','tick.png').' '.$langs->trans("NbOfProductIsLowerThanNoPb",$nb);
+=======
+		print img_picto('', 'tick.png').' '.$langs->trans("NbOfProductIsLowerThanNoPb", $nb);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 	print '<br>';
 	$db->free($resql);
@@ -476,11 +603,19 @@ print '<br>';
 print '<strong>'.$langs->trans("Browser").'</strong>:<br>';
 if (! in_array($conf->browser->name, array('chrome','opera','safari','firefox')))
 {
+<<<<<<< HEAD
 	print img_picto('','warning.png').' '.$langs->trans("BrowserIsKO",$conf->browser->name);
 }
 else
 {
 	print img_picto('','tick.png').' '.$langs->trans("BrowserIsOK",$conf->browser->name);
+=======
+	print img_picto('', 'warning.png').' '.$langs->trans("BrowserIsKO", $conf->browser->name);
+}
+else
+{
+	print img_picto('', 'tick.png').' '.$langs->trans("BrowserIsOK", $conf->browser->name);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 print '<br>';
 
@@ -491,7 +626,12 @@ print '<strong>'.$langs->trans("DatabaseStatistics").'</strong>: ';
 print '<br>';
 */
 
+<<<<<<< HEAD
 
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

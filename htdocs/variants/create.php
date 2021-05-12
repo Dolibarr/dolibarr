@@ -1,5 +1,10 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
+=======
+/* Copyright (C) 2016   Marcos García   <marcosgdf@gmail.com>
+ * Copyright (C) 2018   Frédéric France <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +34,11 @@ $backtopage = GETPOST('backtopage', 'alpha');
 
 if ($_POST) {
 	if (empty($ref) || empty($label)) {
+<<<<<<< HEAD
 		setEventMessage($langs->trans('ErrorFieldsRequired'), 'errors');
+=======
+		setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	} else {
 
 		$prodattr = new ProductAttribute($db);
@@ -38,7 +47,11 @@ if ($_POST) {
 
 		$resid = $prodattr->create($user);
 		if ($resid > 0) {
+<<<<<<< HEAD
 			setEventMessage($langs->trans('RecordSaved'));
+=======
+			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if ($backtopage)
 			{
 				header('Location: '.$backtopage);
@@ -49,7 +62,11 @@ if ($_POST) {
 			}
 			exit;
 		} else {
+<<<<<<< HEAD
 			setEventMessage($langs->trans('ErrorRecordAlreadyExists'), 'errors');
+=======
+			setEventMessages($langs->trans('ErrorRecordAlreadyExists'), $prodattr->errors, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 	}
 }
@@ -65,7 +82,11 @@ $title = $langs->trans('NewProductAttribute');
 
 llxHeader('', $title);
 
+<<<<<<< HEAD
 print_fiche_titre($title);
+=======
+print load_fiche_titre($title);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 dol_fiche_head();
 
@@ -76,7 +97,11 @@ print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 ?>
 
+<<<<<<< HEAD
 	<table class="border" style="width: 100%">
+=======
+	<table class="border centpercent">
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		<tr>
 			<td class="titlefield fieldrequired"><label for="ref"><?php echo $langs->trans('Ref') ?></label></td>
 			<td><input type="text" id="ref" name="ref" value="<?php echo $ref ?>"></td>
@@ -97,5 +122,9 @@ print '<div class="center"><input type="submit" class="button" value="'.$langs->
 
 print '</form>';
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

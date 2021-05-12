@@ -1,4 +1,7 @@
 # Dolibarr language file - Source file is en_US - holiday
+<<<<<<< HEAD
 MenuConfCP=Balans van de verloven
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 FollowedByACounter=1: Dit type van verlof moet worden opgevolgd door een teller. De teller wordt manueel vermeerderd of automatisch wanneer een verlof is goedgekeurd, de teller wordt verminderd .<br>0: Niet opgevolgd door een teller.
 NoLeaveWithCounterDefined=Er zijn geen verlof types gedefinieerd dat moet opgevolgd worden door een teller

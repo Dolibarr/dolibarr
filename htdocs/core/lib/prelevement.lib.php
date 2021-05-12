@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2010-2011 	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2010		Laurent Destailleur	<eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2011      	Regis Houssin		<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2011      	Regis Houssin		<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,9 +67,15 @@ function prelevement_prepare_head(BonPrelevement $object)
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
+<<<<<<< HEAD
     complete_head_from_modules($conf,$langs,$object,$head,$h,'prelevement');
 
     complete_head_from_modules($conf,$langs,$object,$head,$h,'prelevement','remove');
+=======
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'prelevement');
+
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'prelevement', 'remove');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     return $head;
 }
@@ -83,4 +93,7 @@ function prelevement_check_config()
     if(empty($conf->global->PRELEVEMENT_USER)) return -1;
 	return 0;
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

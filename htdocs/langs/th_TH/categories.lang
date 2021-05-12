@@ -10,12 +10,20 @@ modify=แก้ไข
 Classify=แยกประเภท
 CategoriesArea=แท็ก / พื้นที่หมวดหมู่
 ProductsCategoriesArea=สินค้า / บริการแท็ก / พื้นที่ประเภท
+<<<<<<< HEAD
 SuppliersCategoriesArea=ซัพพลายเออร์แท็ก / พื้นที่ประเภท
+=======
+SuppliersCategoriesArea=Vendors tags/categories area
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CustomersCategoriesArea=ลูกค้าแท็ก / พื้นที่ประเภท
 MembersCategoriesArea=แท็กสมาชิก / พื้นที่ประเภท
 ContactsCategoriesArea=แท็กติดต่อ / พื้นที่ประเภท
 AccountsCategoriesArea=Accounts tags/categories area
 ProjectsCategoriesArea=Projects tags/categories area
+<<<<<<< HEAD
+=======
+UsersCategoriesArea=Users tags/categories area
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SubCats=Sub-categories
 CatList=รายการของแท็ก / ประเภท
 NewCategory=แท็กใหม่ / หมวดหมู่
@@ -31,7 +39,11 @@ WasAddedSuccessfully=<b>% s</b> ถูกเพิ่มเรียบร้อ
 ObjectAlreadyLinkedToCategory=องค์ประกอบที่มีการเชื่อมโยงกับแท็กนี้ / หมวดหมู่
 ProductIsInCategories=สินค้า / บริการที่มีการเชื่อมโยงต่อไปนี้แท็ก / ประเภท
 CompanyIsInCustomersCategories=บุคคลที่สามนี้มีการเชื่อมโยงต่อกับ ลูกค้า / ลูกค้าเป้าหมาย แท็ก / ประเภท นี้
+<<<<<<< HEAD
 CompanyIsInSuppliersCategories=นี้บุคคลที่สามมีการเชื่อมโยงต่อไปนี้ซัพพลายเออร์แท็ก / ประเภท
+=======
+CompanyIsInSuppliersCategories=This third party is linked to following vendors tags/categories
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MemberIsInCategories=สมาชิกนี้จะถูกเชื่อมโยงกับสมาชิกต่อไปนี้แท็ก / ประเภท
 ContactIsInCategories=ติดต่อนี้มีการเชื่อมโยงต่อไปนี้แท็กรายชื่อ / ประเภท
 ProductHasNoCategory=สินค้า / บริการนี​​้ไม่ได้อยู่ในแท็กใด ๆ / ประเภท
@@ -47,6 +59,7 @@ ContentsNotVisibleByAllShort=ไม่สามารถมองเห็นเ
 DeleteCategory=ลบแท็ก / หมวดหมู่
 ConfirmDeleteCategory=Are you sure you want to delete this tag/category?
 NoCategoriesDefined=ไม่มีแท็ก / หมวดหมู่ที่กำหนดไว้
+<<<<<<< HEAD
 SuppliersCategoryShort=แท็กผู้จัดจำหน่าย / หมวดหมู่
 CustomersCategoryShort=ลูกค้าแท็ก / หมวดหมู่
 ProductsCategoryShort=แท็กสินค้า / หมวดหมู่
@@ -55,20 +68,40 @@ SuppliersCategoriesShort=ซัพพลายเออร์แท็ก / ป�
 CustomersCategoriesShort=ลูกค้าแท็ก / ประเภท
 ProspectsCategoriesShort=Prospects tags/categories
 CustomersProspectsCategoriesShort=custo. / Prosp ประเภท
+=======
+SuppliersCategoryShort=Vendors tag/category
+CustomersCategoryShort=ลูกค้าแท็ก / หมวดหมู่
+ProductsCategoryShort=แท็กสินค้า / หมวดหมู่
+MembersCategoryShort=แท็กสมาชิก / หมวดหมู่
+SuppliersCategoriesShort=Vendors tags/categories
+CustomersCategoriesShort=ลูกค้าแท็ก / ประเภท
+ProspectsCategoriesShort=Prospects tags/categories
+CustomersProspectsCategoriesShort=Cust./Prosp. tags/categories
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProductsCategoriesShort=แท็กสินค้า / ประเภท
 MembersCategoriesShort=แท็กสมาชิก / ประเภท
 ContactCategoriesShort=แท็กติดต่อ / ประเภท
 AccountsCategoriesShort=Accounts tags/categories
 ProjectsCategoriesShort=Projects tags/categories
+<<<<<<< HEAD
 ThisCategoryHasNoProduct=ประเภทนี้ไม่ได้มีผลิตภัณฑ์ใด ๆ
 ThisCategoryHasNoSupplier=ประเภทนี้ไม่ได้มีผู้จัดจำหน่ายใด ๆ
+=======
+UsersCategoriesShort=Users tags/categories
+ThisCategoryHasNoProduct=ประเภทนี้ไม่ได้มีผลิตภัณฑ์ใด ๆ
+ThisCategoryHasNoSupplier=This category does not contain any vendor.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ThisCategoryHasNoCustomer=ประเภทนี้ไม่ได้มีลูกค้า
 ThisCategoryHasNoMember=ประเภทนี้ไม่ได้มีสมาชิกใด ๆ
 ThisCategoryHasNoContact=ประเภทนี้จะไม่ได้มีการติดต่อใด ๆ
 ThisCategoryHasNoAccount=This category does not contain any account.
 ThisCategoryHasNoProject=This category does not contain any project.
 CategId=Tag / รหัสหมวดหมู่
+<<<<<<< HEAD
 CatSupList=รายการของแท็กผู้จัดจำหน่าย / ประเภท
+=======
+CatSupList=List of vendor tags/categories
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CatCusList=รายชื่อลูกค้า / โอกาสแท็ก / ประเภท
 CatProdList=รายการของแท็ก / ผลิตภัณฑ์ประเภท
 CatMemberList=รายชื่อสมาชิกแท็ก / ประเภท
@@ -81,7 +114,11 @@ DeleteFromCat=ลบออกจากแท็ก / หมวดหมู่
 ExtraFieldsCategories=คุณลักษณะที่สมบูรณ์
 CategoriesSetup=แท็ก / ประเภทการติดตั้ง
 CategorieRecursiv=การเชื่อมโยงที่มีแท็กแม่ / หมวดหมู่โดยอัตโนมัติ
+<<<<<<< HEAD
 CategorieRecursivHelp=หากเปิดใช้งานผลิตภัณฑ์นี้ยังจะเชื่อมโยงกับประเภทหลักเมื่อมีการเพิ่มเข้าไปในหมวดหมู่
+=======
+CategorieRecursivHelp=If option is on, when you add a product into a subcategory, product will also be added into the parent category.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddProductServiceIntoCategory=เพิ่มสินค้า / บริการดังต่อไปนี้
 ShowCategory=แสดงแท็ก / หมวดหมู่
 ByDefaultInList=โดยค่าเริ่มต้นในรายการ

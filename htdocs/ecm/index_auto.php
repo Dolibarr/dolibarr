@@ -1,7 +1,12 @@
 <?php
 /* Copyright (C) 2008-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2008-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2016      Alexandre Spangaro   <aspangaro@zendsi.com>
+=======
+ * Copyright (C) 2008-2010 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2016      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +43,7 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'ecm', 0);
 
 // Get parameters
+<<<<<<< HEAD
 $socid=GETPOST('socid','int');
 $action=GETPOST('action','aZ09');
 $section=GETPOST('section','int')?GETPOST('section','int'):GETPOST('section_id','int');
@@ -50,6 +56,20 @@ $search_doc_ref=GETPOST('search_doc_ref','alpha');
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
+=======
+$socid=GETPOST('socid', 'int');
+$action=GETPOST('action', 'aZ09');
+$section=GETPOST('section', 'int')?GETPOST('section', 'int'):GETPOST('section_id', 'int');
+$module=GETPOST('module', 'alpha');
+if (! $section) $section=0;
+$section_dir=GETPOST('section_dir', 'alpha');
+
+$search_doc_ref=GETPOST('search_doc_ref', 'alpha');
+
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -64,7 +84,11 @@ if ($section)
 	$result=$ecmdir->fetch($section);
 	if (! $result > 0)
 	{
+<<<<<<< HEAD
 		dol_print_error($db,$ecmdir->error);
+=======
+		dol_print_error($db, $ecmdir->error);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		exit;
 	}
 }
@@ -81,7 +105,11 @@ $error=0;
  */
 
 // Purge search criteria
+<<<<<<< HEAD
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+=======
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$search_doc_ref='';
 }
@@ -122,7 +150,11 @@ if ($action == 'confirm_deletefile')
 	    	$result=$ecmdir->fetch($section);
 	    	if (! ($result > 0))
 	    	{
+<<<<<<< HEAD
 	    		dol_print_error($db,$ecmdir->error);
+=======
+	    		dol_print_error($db, $ecmdir->error);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    		exit;
 	    	}
 	    	$relativepath=$ecmdir->getRelativePath();
@@ -161,11 +193,19 @@ if ($action == 'refreshmanual')
 	// This part of code is same than into file ecm/ajax/ecmdatabase.php TODO Remove duplicate
 	clearstatcache();
 
+<<<<<<< HEAD
     $diroutputslash=str_replace('\\','/',$conf->ecm->dir_output);
     $diroutputslash.='/';
 
     // Scan directory tree on disk
     $disktree=dol_dir_list($conf->ecm->dir_output,'directories',1,'','^temp$','','',0);
+=======
+    $diroutputslash=str_replace('\\', '/', $conf->ecm->dir_output);
+    $diroutputslash.='/';
+
+    // Scan directory tree on disk
+    $disktree=dol_dir_list($conf->ecm->dir_output, 'directories', 1, '', '^temp$', '', '', 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     // Scan directory tree in database
     $sqltree=$ecmdirstatic->get_full_arbo(0);
@@ -195,6 +235,7 @@ if ($action == 'refreshmanual')
 
             // We must first find the fk_parent of directory to create $dirdesc['fullname']
             $fk_parent=-1;
+<<<<<<< HEAD
             $relativepathmissing=str_replace($diroutputslash,'',$dirdesc['fullname']);
             $relativepathtosearchparent=$relativepathmissing;
             //dol_syslog("Try to find parent id for directory ".$relativepathtosearchparent);
@@ -202,6 +243,15 @@ if ($action == 'refreshmanual')
             //while (preg_match('/\//',$relativepathtosearchparent))
             {
                 $relativepathtosearchparent=preg_replace('/\/[^\/]*$/','',$relativepathtosearchparent);
+=======
+            $relativepathmissing=str_replace($diroutputslash, '', $dirdesc['fullname']);
+            $relativepathtosearchparent=$relativepathmissing;
+            //dol_syslog("Try to find parent id for directory ".$relativepathtosearchparent);
+            if (preg_match('/\//', $relativepathtosearchparent))
+            //while (preg_match('/\//',$relativepathtosearchparent))
+            {
+                $relativepathtosearchparent=preg_replace('/\/[^\/]*$/', '', $relativepathtosearchparent);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 $txt="Is relative parent path ".$relativepathtosearchparent." for ".$relativepathmissing." found in sql tree ?";
                 dol_syslog($txt);
                 //print $txt." -> ";
@@ -275,7 +325,11 @@ if ($action == 'refreshmanual')
 		if (! dol_is_dir($dirtotest))
 		{
 			$ecmdirtmp->id=$dirdesc['id'];
+<<<<<<< HEAD
 			$ecmdirtmp->delete($user,'databaseonly');
+=======
+			$ecmdirtmp->delete($user, 'databaseonly');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			//exit;
 		}
     }
@@ -310,7 +364,11 @@ $moreheadjs.='<script type="text/javascript">'."\n";
 $moreheadjs.='var indicatorBlockUI = \''.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'\';'."\n";
 $moreheadjs.='</script>'."\n";
 
+<<<<<<< HEAD
 llxHeader($moreheadcss.$moreheadjs,$langs->trans("ECMArea"),'','','','',$morejs,'',0,0);
+=======
+llxHeader($moreheadcss.$moreheadjs, $langs->trans("ECMArea"), '', '', '', '', $morejs, '', 0, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 // Add sections to manage
@@ -332,6 +390,10 @@ if (! empty($conf->global->ECM_AUTO_TREE_ENABLED))
 	if (! empty($conf->ficheinter->enabled))	{ $langs->load("interventions"); $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'fichinter', 'test'=>$conf->ficheinter->enabled, 'label'=>$langs->trans("Interventions"), 'desc'=>$langs->trans("ECMDocsByInterventions")); }
 	if (! empty($conf->expensereport->enabled))	{ $langs->load("trips"); $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'expensereport', 'test'=>$conf->expensereport->enabled, 'label'=>$langs->trans("ExpenseReports"), 'desc'=>$langs->trans("ECMDocsByExpenseReports")); }
 	if (! empty($conf->holiday->enabled))		{ $langs->load("holiday"); $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'holiday', 'test'=>$conf->holiday->enabled, 'label'=>$langs->trans("Holidays"), 'desc'=>$langs->trans("ECMDocsByHolidays")); }
+<<<<<<< HEAD
+=======
+	if (! empty($conf->banque->enabled))		{ $langs->load("banks"); $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'banque', 'test'=>$conf->banque->enabled, 'label'=>$langs->trans("BankAccount"), 'desc'=>$langs->trans("ECMDocsByBankAccount")); }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'user', 'test'=>1, 'label'=>$langs->trans("Users"), 'desc'=>$langs->trans("ECMDocsByUsers"));
 }
 
@@ -343,8 +405,12 @@ dol_fiche_head($head, 'index_auto', $langs->trans("ECMArea").' - '.$langs->trans
 // Confirm remove file (for non javascript users)
 if ($action == 'delete' && empty($conf->use_javascript_ajax))
 {
+<<<<<<< HEAD
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile','','',1);
 
+=======
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 // Start container of all panels
@@ -376,12 +442,20 @@ print '</div>';
 // Confirmation de la suppression d'une ligne categorie
 if ($action == 'delete_section')
 {
+<<<<<<< HEAD
     print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section, $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection','','',1);
+=======
+    print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section, $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection', $ecmdir->label), 'confirm_deletesection', '', '', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 // End confirm
 
 
+<<<<<<< HEAD
 if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$action) || $action == 'delete')
+=======
+if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i', $action) || $action == 'delete')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	print '<table width="100%" class="liste noborderbottom">'."\n";
 
@@ -397,7 +471,11 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 	{
 		$htmltooltip=$langs->trans("ECMAreaDesc2");
 
+<<<<<<< HEAD
 		$sectionauto=dol_sort_array($sectionauto,'label','ASC',true,false);
+=======
+		$sectionauto=dol_sort_array($sectionauto, 'label', 'ASC', true, false);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		print '<tr>';
     	print '<td colspan="6">';

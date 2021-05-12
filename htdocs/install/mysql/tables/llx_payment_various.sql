@@ -1,5 +1,9 @@
 -- ===================================================================
+<<<<<<< HEAD
 -- Copyright (C) 2017		Alexandre Spangaro <aspangaro@zendsi.com>
+=======
+-- Copyright (C) 2017-2019	Alexandre Spangaro <aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,7 +23,12 @@
 create table llx_payment_various
 (
   rowid                 integer AUTO_INCREMENT PRIMARY KEY,
+<<<<<<< HEAD
   num_payment           varchar(50),				-- ref
+=======
+  ref                   varchar(30) NULL,           -- payment reference number (currently NULL because there is no numbering manager yet)
+  num_payment           varchar(50),				-- num cheque or other
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
   label                 varchar(255),
   tms                   timestamp,
   datec                 datetime,                   -- Create date
@@ -29,6 +38,10 @@ create table llx_payment_various
   amount                double(24,8) DEFAULT 0 NOT NULL,
   fk_typepayment        integer NOT NULL,
   accountancy_code      varchar(32),
+<<<<<<< HEAD
+=======
+  subledger_account     varchar(32),
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
   fk_projet             integer DEFAULT NULL,
   entity                integer DEFAULT 1 NOT NULL,	-- multi company id
   note                  text,

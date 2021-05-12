@@ -28,7 +28,15 @@
 class FormWebsite
 {
     private $db;
+<<<<<<< HEAD
     public $error;
+=======
+
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
     /**
@@ -36,11 +44,17 @@ class FormWebsite
      *
      *	@param	DoliDB		$db      Database handler
      */
+<<<<<<< HEAD
     function __construct($db)
     {
         $this->db = $db;
 
         return 1;
+=======
+    public function __construct($db)
+    {
+        $this->db = $db;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
 
@@ -52,9 +66,15 @@ class FormWebsite
      *    @param    int		$useempty          Show empty value or not
      *    @return	string					   Html component
      */
+<<<<<<< HEAD
     function selectWebsite($selected='',$htmlname='exportmodelid',$useempty=0)
     {
     	$out='';
+=======
+    public function selectWebsite($selected = '', $htmlname = 'exportmodelid', $useempty = 0)
+    {
+        $out='';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         $sql = "SELECT rowid, ref";
         $sql.= " FROM ".MAIN_DB_PREFIX."website";
@@ -105,6 +125,7 @@ class FormWebsite
      *  @param  string  $moreattrib         More attributes on HTML select tag
      * 	@return	void
      */
+<<<<<<< HEAD
     function selectTypeOfContainer($htmlname, $selected='', $useempty=0, $moreattrib='')
     {
     	global $langs, $conf, $user;
@@ -115,6 +136,18 @@ class FormWebsite
     	$sql.= " FROM ".MAIN_DB_PREFIX.'c_type_container';
     	$sql.= " WHERE active = 1 AND entity IN (".getEntity('c_type_container').")";
     	$sql.= " ORDER BY label";
+=======
+    public function selectTypeOfContainer($htmlname, $selected = '', $useempty = 0, $moreattrib = '')
+    {
+        global $langs, $conf, $user;
+
+        $langs->load("admin");
+
+        $sql = "SELECT rowid, code, label, entity";
+        $sql.= " FROM ".MAIN_DB_PREFIX.'c_type_container';
+        $sql.= " WHERE active = 1 AND entity IN (".getEntity('c_type_container').")";
+        $sql.= " ORDER BY label";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     	dol_syslog(get_class($this)."::selectTypeOfContainer", LOG_DEBUG);
     	$result = $this->db->query($sql);
@@ -146,7 +179,11 @@ class FormWebsite
     				$i++;
     			}
     			print "</select>";
+<<<<<<< HEAD
     			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+=======
+    			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     		}
     		else
     		{
@@ -168,7 +205,11 @@ class FormWebsite
      *  @param  string  $moreattrib         More attributes on HTML select tag
      * 	@return	void
      */
+<<<<<<< HEAD
     function selectSampleOfContainer($htmlname, $selected='', $useempty=0, $moreattrib='')
+=======
+    public function selectSampleOfContainer($htmlname, $selected = '', $useempty = 0, $moreattrib = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
     	global $langs, $conf, $user;
 
@@ -201,5 +242,8 @@ class FormWebsite
 
     	return $out;
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

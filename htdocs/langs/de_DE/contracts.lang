@@ -1,5 +1,9 @@
 # Dolibarr language file - Source file is en_US - contracts
+<<<<<<< HEAD
 ContractsArea=Vertragsübersicht
+=======
+ContractsArea=Übersicht Verträge / Abonnements
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ListOfContracts=Liste der Verträge
 AllContracts=Alle Verträge
 ContractCard=Vertrag - Karte
@@ -55,19 +59,34 @@ LastContracts=%s neueste Verträge
 LastModifiedServices=%s zuletzt veränderte Leistungen
 ContractStartDate=Vertragsbeginn
 ContractEndDate=Vertragsende
+<<<<<<< HEAD
 DateStartPlanned=In Betrieb gesetzt am
 DateStartPlannedShort=Beginn
 DateEndPlanned=aktuell verrechnet bis
 DateEndPlannedShort=Ende
+=======
+DateStartPlanned=Geplanter Beginn
+DateStartPlannedShort=Beginn
+DateEndPlanned=Geplantes Ende
+DateEndPlannedShort=Geplantes Ende
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DateStartReal=Effektiver Beginn
 DateStartRealShort=effektives Startdatum
 DateEndReal=Effektives Ende
 DateEndRealShort=effektives Enddatum
 CloseService=Leistung schließen
+<<<<<<< HEAD
 BoardRunningServices=Abgelaufene, aktive Leistungen
 ServiceStatus=Leistungs-Status
 DraftContracts=Vertragsentwürfe
 CloseRefusedBecauseOneServiceActive=Schließen nicht möglich, es existieren noch aktive Leistungen
+=======
+BoardRunningServices=laufende Leistungen
+BoardExpiredServices=abgelaufene Leistungen
+ServiceStatus=Leistungs-Status
+DraftContracts=Vertragsentwürfe
+CloseRefusedBecauseOneServiceActive=Der Vertrag kann nicht geschlossen werden, da noch mindestens eine offene Leistung vorhanden ist.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActivateAllContracts=Alle Vertragszeilen aktivieren
 CloseAllContracts=schließe alle Vertragsleistungen
 DeleteContractLine=Vertragsposition löschen
@@ -85,10 +104,17 @@ NoteListOfYourExpiredServices=Diese Liste enthält nur Leistungen an Partner, be
 StandardContractsTemplate=Standard Vertragsschablone
 ContactNameAndSignature=Für %s, Name und Unterschrift
 OnlyLinesWithTypeServiceAreUsed=Nur die Zeile der Kategorie "Service" wird kopiert.
+<<<<<<< HEAD
 CloneContract=Dupliziere Vertrag
 ConfirmCloneContract=Möchten Sie den Vertrag <b>%s</b> wirklich duplizieren?
 LowerDateEndPlannedShort=Frühestes geplantes Enddatum der aktiven Dienstleistungen
 SendContractRef=Vertragsinformationen __REF__
+=======
+ConfirmCloneContract=Möchten Sie den Vertrag <b>%s</b> wirklich duplizieren?
+LowerDateEndPlannedShort=Frühestes geplantes Enddatum der aktiven Dienstleistungen
+SendContractRef=Vertragsinformationen __REF__
+OtherContracts=weitere Verträge
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Vertragsunterzeichnung durch Vertreter
 TypeContact_contrat_internal_SALESREPFOLL=Vertrag Nachbetreuung durch Vertreter

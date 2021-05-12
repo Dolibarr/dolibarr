@@ -23,6 +23,7 @@ ErrorNoVATRateDefinedForSellerCountry=Error, no GST rates defined for country '%
 Quadri=Quarter
 PriceUTTC=U.P. (incl GST)
 AmountTTCShort=Amount (inc. GST)
+<<<<<<< HEAD
 AmountHT=Amount (excl GST)
 AmountTTC=Amount (incl. GST)
 AmountVAT=Amount GST
@@ -37,6 +38,16 @@ TotalTTC=Total (incl GST)
 TotalTTCToYourCredit=Total (incl GST) to your credit
 TotalVAT=Total GST
 HT=excl GST
+=======
+AmountTTC=Amount (incl. GST)
+AmountVAT=Amount GST
+MulticurrencyAmountTTC=Amount (incl GST), original currency
+MulticurrencyAmountVAT=Amount GST, original currency
+TotalTTCShort=Total (incl GST)
+TotalTTC=Total (incl GST)
+TotalTTCToYourCredit=Total (incl GST) to your credit
+TotalVAT=Total GST
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TTC=Incl GST
 VAT=GST
 VATRate=GST Rate

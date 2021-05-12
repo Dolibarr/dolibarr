@@ -32,7 +32,11 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 $langs->load("companies");
 if (! empty($conf->facture->enabled)) $langs->load("bills");
 
+<<<<<<< HEAD
 $id = GETPOST('id')?GETPOST('id','int'):GETPOST('socid','int');
+=======
+$id = GETPOST('id')?GETPOST('id', 'int'):GETPOST('socid', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Security check
 if ($user->societe_id) $id=$user->societe_id;
@@ -45,10 +49,17 @@ if ($id > 0) $object->fetch($id);
 $hookmanager->initHooks(array('recapcomptacard','globalcard'));
 
 // Load variable for pagination
+<<<<<<< HEAD
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
+=======
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -83,10 +94,17 @@ $form = new Form($db);
 $userstatic=new User($db);
 
 $title=$langs->trans("ThirdParty").' - '.$langs->trans("Summary");
+<<<<<<< HEAD
 if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name.' - '.$langs->trans("Symmary");
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 
 llxHeader('',$title,$help_url);
+=======
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name.' - '.$langs->trans("Symmary");
+$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+
+llxHeader('', $title, $help_url);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if ($id > 0)
 {
@@ -106,6 +124,7 @@ if ($id > 0)
 
 		print '<table class="noborder tagtable liste" width="100%">';
 		print '<tr class="liste_titre">';
+<<<<<<< HEAD
         if (! empty($arrayfields['f.datef']['checked']))  print_liste_field_titre($arrayfields['f.datef']['label'],$_SERVER["PHP_SELF"],"f.datef","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 		print '<td>'.$langs->trans("Element").'</td>';
 		print '<td>'.$langs->trans("Status").'</td>';
@@ -113,16 +132,33 @@ if ($id > 0)
 		print '<td align="right">'.$langs->trans("Credit").'</td>';
 		print '<td align="right">'.$langs->trans("Balance").'</td>';
 		print '<td align="right">'.$langs->trans("Author").'</td>';
+=======
+        if (! empty($arrayfields['f.datef']['checked']))  print_liste_field_titre($arrayfields['f.datef']['label'], $_SERVER["PHP_SELF"], "f.datef", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+		print '<td>'.$langs->trans("Element").'</td>';
+		print '<td>'.$langs->trans("Status").'</td>';
+		print '<td class="right">'.$langs->trans("Debit").'</td>';
+		print '<td class="right">'.$langs->trans("Credit").'</td>';
+		print '<td class="right">'.$langs->trans("Balance").'</td>';
+		print '<td class="right">'.$langs->trans("Author").'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</tr>';
 
 		$TData = array();
 
+<<<<<<< HEAD
 		$sql = "SELECT s.nom, s.rowid as socid, f.facnumber, f.amount, f.datef as df,";
+=======
+		$sql = "SELECT s.nom, s.rowid as socid, f.ref, f.amount, f.datef as df,";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql.= " f.paye as paye, f.fk_statut as statut, f.rowid as facid,";
 		$sql.= " u.login, u.rowid as userid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f,".MAIN_DB_PREFIX."user as u";
 		$sql.= " WHERE f.fk_soc = s.rowid AND s.rowid = ".$object->id;
+<<<<<<< HEAD
 		$sql.= " AND f.entity = ".$conf->entity;
+=======
+		$sql.= " AND f.entity IN (".getEntity('invoice').")";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql.= " AND f.fk_user_valid = u.rowid";
 		$sql.= $db->order($sortfield, $sortorder);
 
@@ -153,7 +189,11 @@ if ($id > 0)
 					'date' => $fac->date,
 					'datefieldforsort' => $fac->date.'-'.$fac->ref,
 					'link' => $fac->getNomUrl(1),
+<<<<<<< HEAD
 					'status' => $fac->getLibStatut(2,$totalpaye),
+=======
+					'status' => $fac->getLibStatut(2, $totalpaye),
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					'amount' => $fac->total_ttc,
 					'author' => $userstatic->getLoginUrl(1)
 				);
@@ -252,13 +292,20 @@ if ($id > 0)
 
 				print '<tr class="oddeven '.$html_class.'">';
 
+<<<<<<< HEAD
 				print "<td align=\"center\">";
 				if (!empty($data['fk_facture'])) print dol_print_date($data['date'],'day');
 				elseif (!empty($data['fk_paiement'])) print dol_print_date($data['date'],'dayhour');
+=======
+				print "<td class=\"center\">";
+				if (!empty($data['fk_facture'])) print dol_print_date($data['date'], 'day');
+				elseif (!empty($data['fk_paiement'])) print dol_print_date($data['date'], 'dayhour');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				print "</td>\n";
 
 				print '<td>'.$data['link']."</td>\n";
 
+<<<<<<< HEAD
 				print '<td aling="left">'.$data['status'].'</td>';
 
 				print '<td align="right">'.(($data['amount'] > 0) ? price(abs($data['amount'])) : '')."</td>\n";
@@ -273,6 +320,22 @@ if ($id > 0)
 
 				// Author
 				print '<td class="nowrap" align="right">';
+=======
+				print '<td class="left">'.$data['status'].'</td>';
+
+				print '<td class="right">'.(($data['amount'] > 0) ? price(abs($data['amount'])) : '')."</td>\n";
+
+				$totalDebit += ($data['amount'] > 0) ? abs($data['amount']) : 0;
+
+				print '<td class="right">'.(($data['amount'] > 0) ? '' : price(abs($data['amount'])))."</td>\n";
+				$totalCredit += ($data['amount'] > 0) ? 0 : abs($data['amount']);
+
+				// Balance
+				print '<td class="right">'.price($data['balance'])."</td>\n";
+
+				// Author
+				print '<td class="nowrap right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				print $data['author'];
 				print '</td>';
 
@@ -281,9 +344,15 @@ if ($id > 0)
 
 			print '<tr class="liste_total">';
 			print '<td colspan="3">&nbsp;</td>';
+<<<<<<< HEAD
 			print '<td align="right">'.price($totalDebit).'</td>';
 			print '<td align="right">'.price($totalCredit).'</td>';
 			print '<td align="right">'.price(price2num($totalDebit - $totalCredit, 'MT')).'</td>';
+=======
+			print '<td class="right">'.price($totalDebit).'</td>';
+			print '<td class="right">'.price($totalCredit).'</td>';
+			print '<td class="right">'.price(price2num($totalDebit - $totalCredit, 'MT')).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '<td></td>';
 			print "</tr>\n";
 		}

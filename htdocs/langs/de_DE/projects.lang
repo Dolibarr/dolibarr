@@ -3,21 +3,35 @@ RefProject=Projekt-Nr.
 ProjectRef=Chance
 ProjectId=Projekt-ID
 ProjectLabel=Projektbezeichnung
+<<<<<<< HEAD
 ProjectsArea=Projektübersicht
+=======
+ProjectsArea=Projekte - Übersicht
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProjectStatus=Projekt Status
 SharedProject=Jeder
 PrivateProject=Projektkontakte
 ProjectsImContactFor=Projekte bei denen ich ein direkter Kontakt bin
 AllAllowedProjects=Alle Projekte die ich sehen kann (Eigene + Öffentliche)
+<<<<<<< HEAD
 AllProjects=Alle Projekte
 MyProjectsDesc=This view is limited to projects you are a contact for
+=======
+AllProjects=alle Projekte
+MyProjectsDesc=Diese Ansicht ist beschränkt auf Projekte bei denen Sie als Ansprechpartner eingetragen sind.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProjectsPublicDesc=Diese Ansicht zeigt alle Projekte, für die Sie zum Lesen berechtigt sind.
 TasksOnProjectsPublicDesc=Diese Ansicht zeigt alle Aufgaben der Projekte, für die Sie zum Lesen berechtigt sind.
 ProjectsPublicTaskDesc=Diese Ansicht ist beschränkt auf Projekt und Aufgaben bei welchen Sie über Leserechte verfügen.
 ProjectsDesc=Es werden alle Projekte angezeigt (Ihre Berechtigungen berechtigt Sie alle Projekte zu sehen).
 TasksOnProjectsDesc=Es werden alle Aufgaben angezeigt (Ihre Berechtigungen berechtigt Sie alles zu sehen).
+<<<<<<< HEAD
 MyTasksDesc=This view is limited to projects or tasks you are a contact for
 OnlyOpenedProject=Nur offene Projekte sind sichtbar. (Projekte im Status Entwurf oder Geschlossen sind nicht sichtbar)
+=======
+MyTasksDesc=Diese Ansicht ist beschränkt asuf Projekte oder Aufgaben bei denen Sie als Ansprechspartner eingetragen sind
+OnlyOpenedProject=Nur offene Projekte sind sichtbar. (Projekte mit dem Status Entwurf oder Geschlossen sind nicht sichtbar)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ClosedProjectsAreHidden=Abgeschlossene Projekte werden nicht angezeigt.
 TasksPublicDesc=Diese Ansicht ist beschränkt auf Projekt und Aufgaben bei welchen Sie über Leserechte verfügen.
 TasksDesc=Diese Ansicht zeigt alle Projekte und Aufgaben (Ihre Benutzerberechtigungen berechtigt Sie alles zu sehen).
@@ -25,12 +39,17 @@ AllTaskVisibleButEditIfYouAreAssigned=Alle Aufgaben für qualifizierte Projekte 
 OnlyYourTaskAreVisible=Nur Ihnen zugewiesene Aufgaben sind sichtbar. Weisen Sie sich die Aufgabe zu, wenn Sie Zeiten auf der Aufgabe erfassen müssen.
 ImportDatasetTasks=Aufgaben der Projekte
 ProjectCategories=Projektkategorien/Tags
+<<<<<<< HEAD
 NewProject=Neues Projekt
+=======
+NewProject=neues Projekt
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddProject=Projekt erstellen
 DeleteAProject=Löschen eines Projekts
 DeleteATask=Löschen einer Aufgabe
 ConfirmDeleteAProject=Sind Sie sicher, dass diese Vertragsposition löschen wollen?
 ConfirmDeleteATask=Sind Sie sicher, dass diese Aufgabe löschen wollen?
+<<<<<<< HEAD
 OpenedProjects=Offene Projekte
 OpenedTasks=Offene Aufgaben
 OpportunitiesStatusForOpenedProjects=Betrag Verkaufschancen offene Projekt nach Status
@@ -47,6 +66,25 @@ TimeSpentByUser=Zeitaufwand von Benutzer ausgegeben
 TimesSpent=Zeitaufwände
 RefTask=Aufgaben-Nr.
 LabelTask=Aufgabenbezeichnung
+=======
+OpenedProjects=offene Projekte
+OpenedTasks=offene Aufgaben
+OpportunitiesStatusForOpenedProjects=Leads amount of open projects by status
+OpportunitiesStatusForProjects=Leads amount of projects by status
+ShowProject=Projekt anzeigen
+ShowTask=Aufgabe anzeigen
+SetProject=Projekt einstellen
+NoProject=Kein Projekt definiert oder keine Rechte
+NbOfProjects=Anzahl Projekte
+NbOfTasks=Anzahl Aufgaben
+TimeSpent=Zeitaufwand
+TimeSpentByYou=eigener Zeitaufwand
+TimeSpentByUser=Zeitaufwand von Benutzer ausgegeben
+TimesSpent=Zeitaufwände
+TaskId=Task ID
+RefTask=Task ref.
+LabelTask=Task label
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TaskTimeSpent=Zeitaufwände für Aufgaben
 TaskTimeUser=Benutzer
 TaskTimeNote=Hinweis
@@ -54,14 +92,26 @@ TaskTimeDate=Datum
 TasksOnOpenedProject=Aufgaben in offenen Projekten
 WorkloadNotDefined=Arbeitsaufwand nicht definiert
 NewTimeSpent=Zeitaufwände
+<<<<<<< HEAD
 MyTimeSpent=Mein Zeitaufwand
 BillTime=Bill the time spent
+=======
+MyTimeSpent=mein Zeitaufwand
+BillTime=Zeitaufwand verrechnen
+BillTimeShort=Bill time
+TimeToBill=Time not billed
+TimeBilled=Time billed
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Tasks=Aufgaben
 Task=Aufgabe
 TaskDateStart=Startdatum der Aufgabe
 TaskDateEnd=Enddatum der Aufgabe
 TaskDescription=Aufgaben-Beschreibung
+<<<<<<< HEAD
 NewTask=Neue Aufgabe
+=======
+NewTask=neue Aufgabe
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddTask=Aufgabe erstellen
 AddTimeSpent=Erfassen verbrauchte Zeit 
 AddHereTimeSpentForDay=Zeitaufwand für diesen Tag/Aufgabe hier erfassen
@@ -69,7 +119,11 @@ Activity=Tätigkeit
 Activities=Aufgaben/Tätigkeiten
 MyActivities=Meine Aufgaben/Tätigkeiten
 MyProjects=Meine Projekte
+<<<<<<< HEAD
 MyProjectsArea=Meine Projekte
+=======
+MyProjectsArea=meine Projekte - Übersicht
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DurationEffective=Effektivdauer
 ProgressDeclared=Angegebener Fortschritt
 ProgressCalculated=Kalkulierter Fortschritt
@@ -77,6 +131,7 @@ Time=Zeitaufwand
 ListOfTasks=Aufgabenliste
 GoToListOfTimeConsumed=Liste der verwendeten Zeit aufrufen
 GoToListOfTasks=Liste der Aufgaben aufrufen
+<<<<<<< HEAD
 GoToGanttView=Go to Gantt view
 GanttView=Gantt-Diagramm
 ListProposalsAssociatedProject=Liste Angebote, die mit diesem Projekt verknüpft sind
@@ -94,6 +149,26 @@ ListVariousPaymentsAssociatedProject=Liste der sonstigen mit dem Projekt verbund
 ListActionsAssociatedProject=Liste Ereignisse, die mit diesem Projekt verknüpft sind
 ListTaskTimeUserProject=Liste mit Zeitaufwand der Projektaufgaben
 ListTaskTimeForTask=List of time consumed on task
+=======
+GoToGanttView=zum Gantt-Diagramm
+GanttView=Gantt-Diagramm
+ListProposalsAssociatedProject=List of the commercial proposals related to the project
+ListOrdersAssociatedProject=List of sales orders related to the project
+ListInvoicesAssociatedProject=List of customer invoices related to the project
+ListPredefinedInvoicesAssociatedProject=List of customer template invoices related to the project
+ListSupplierOrdersAssociatedProject=List of purchase orders related to the project
+ListSupplierInvoicesAssociatedProject=List of vendor invoices related to the project
+ListContractAssociatedProject=Liste der projektbezogenen Verträge
+ListShippingAssociatedProject=List of shippings related to the project
+ListFichinterAssociatedProject=List of interventions related to the project
+ListExpenseReportsAssociatedProject=List of expense reports related to the project
+ListDonationsAssociatedProject=mit dem Projekt verknüpfte Spendenliste
+ListVariousPaymentsAssociatedProject=List of miscellaneous payments related to the project
+ListSalariesAssociatedProject=List of payments of salaries related to the project
+ListActionsAssociatedProject=Liste der projektbezogenen Ereignisse
+ListTaskTimeUserProject=Liste mit Zeitaufwand der Projektaufgaben
+ListTaskTimeForTask=Zeitaufwand auf Aufgaben
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActivityOnProjectToday=Projektaktivitäten von heute
 ActivityOnProjectYesterday=Projektaktivitäten von gestern
 ActivityOnProjectThisWeek=Projektaktivitäten dieser Woche
@@ -101,7 +176,11 @@ ActivityOnProjectThisMonth=Projektaktivitäten dieses Monats
 ActivityOnProjectThisYear=Projektaktivitäten dieses Jahres
 ChildOfProjectTask=Subelemente des Projekts/Aufgabe
 ChildOfTask=Kindelement der Aufgabe
+<<<<<<< HEAD
 TaskHasChild=Task has child
+=======
+TaskHasChild=Aufgabe hat eine Unteraufgabe
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NotOwnerOfProject=Nicht Eigner des privaten Projekts
 AffectedTo=Zugewiesen an
 CantRemoveProject=Löschen des Projekts auf Grund verbundener Elemente (Rechnungen, Bestellungen oder andere) nicht möglich. Näheres finden Sie unter dem Reiter Bezugnahmen.
@@ -112,8 +191,13 @@ ConfirmCloseAProject=Möchten Sie dieses Projekt wirklich schließen?
 AlsoCloseAProject=Das Projekt auch schließen (lassen Sie es offen, wenn Sie noch Produktions-Aufgaben laufen haben)
 ReOpenAProject=Projekt öffnen
 ConfirmReOpenAProject=Möchten Sie dieses Projekt wirklich wiedereröffnen?
+<<<<<<< HEAD
 ProjectContact=Projekt Kontakte
 TaskContact=Kontakte der Aufgabe
+=======
+ProjectContact=Kontakte zum Projekt
+TaskContact=Kontakte zur Aufgabe
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActionsOnProject=Projektaktionen
 YouAreNotContactOfProject=Sie sind diesem privaten Projekt nicht als Kontakt zugeordnet.
 UserIsNotContactOfProject=Benutzer ist kein Kontakt dieses privaten Projektes
@@ -121,15 +205,25 @@ DeleteATimeSpent=Lösche einen Zeitaufwand
 ConfirmDeleteATimeSpent=Sind Sie sicher, dass diesen Zeitaufwand löschen wollen?
 DoNotShowMyTasksOnly=Zeige auch die Aufgaben der Anderen
 ShowMyTasksOnly=Zeige nur meine Aufgaben
+<<<<<<< HEAD
 TaskRessourceLinks=Aufgaben des Kontaktes
 ProjectsDedicatedToThisThirdParty=Mit diesem Partner verknüpfte Projekte
 NoTasks=Keine Aufgaben für dieses Projekt
+=======
+TaskRessourceLinks=Kontakte für die Aufgabe
+ProjectsDedicatedToThisThirdParty=Mit diesem Partner verknüpfte Projekte
+NoTasks=Keine Aufgaben zu diesem Projekt vorhanden.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LinkedToAnotherCompany=Mit Partner verknüpft
 TaskIsNotAssignedToUser=Aufgabe ist keinem Benutzer zugeteilt. Verwenden Sie den Knopf '<strong>%s</strong>' um die Aufgabe jetzt zuzuweisen.
 ErrorTimeSpentIsEmpty=Zeitaufwand ist leer
 ThisWillAlsoRemoveTasks=Diese Aktion löscht ebenfalls alle Aufgaben zum Projekt (<b>%s</b> aktuelle Aufgaben) und alle Zeitaufwände.
+<<<<<<< HEAD
 IfNeedToUseOhterObjectKeepEmpty=Wenn einige Zuordnungen (Rechnung, Bestellung, ...), einem Dritten gehören, müssen Sie erst alle mit dem Projekt verbinden, damit das Projekt auch Dritten zugänglich ist .
 CloneProject=Dupliziere Projekt
+=======
+IfNeedToUseOtherObjectKeepEmpty=Wenn einige Zuordnungen (Rechnung, Bestellung, ...), einem Dritten gehören, müssen Sie erst alle mit dem Projekt verbinden, damit das Projekt auch Dritten zugänglich ist .
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CloneTasks=Dupliziere Aufgaben
 CloneContacts=Dupliziere Kontakte
 CloneNotes=Dupliziere Hinweise
@@ -141,11 +235,16 @@ ProjectReportDate=Passe Aufgaben-Datum dem neuen Projekt-Startdatum an
 ErrorShiftTaskDate=Es ist nicht möglich, das Aufgabendatum dem neuen Projektdatum anzupassen
 ProjectsAndTasksLines=Projekte und Aufgaben
 ProjectCreatedInDolibarr=Projekt %s erstellt
+<<<<<<< HEAD
 ProjectValidatedInDolibarr=Project %s validated
+=======
+ProjectValidatedInDolibarr=Projekt %s validiert
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProjectModifiedInDolibarr=Projekt %s geändert
 TaskCreatedInDolibarr=Aufgabe %s erstellt
 TaskModifiedInDolibarr=Aufgabe %s geändert
 TaskDeletedInDolibarr=Aufgabe %s gelöscht
+<<<<<<< HEAD
 OpportunityStatus=Verkaufschance Status
 OpportunityStatusShort=Chance Status
 OpportunityProbability=Wahrscheinlichkeit Verkaufschance
@@ -154,6 +253,16 @@ OpportunityAmount=Verkaufschance Betrag
 OpportunityAmountShort=Chance Betrag
 OpportunityAmountAverageShort=Durchschnittsbetrag Chance
 OpportunityAmountWeigthedShort=Gewichtete Erfolgschance
+=======
+OpportunityStatus=Status / Chancen Lead
+OpportunityStatusShort=Status / Chancen Lead
+OpportunityProbability=Lead probability
+OpportunityProbabilityShort=Lead probab.
+OpportunityAmount=Wert/Betrag für Lead
+OpportunityAmountShort=Wert/Betrag für Lead
+OpportunityAmountAverageShort=Average lead amount
+OpportunityAmountWeigthedShort=Weighted lead amount
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 WonLostExcluded=Gewonnene/Verlorene ausgeschlossen
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Projektleiter
@@ -167,8 +276,14 @@ TypeContact_project_task_external_TASKCONTRIBUTOR=Mitwirkender
 SelectElement=Element wählen
 AddElement=Mit Element verknüpfen
 # Documents models
+<<<<<<< HEAD
 DocumentModelBeluga=Bericht Vorlage für verknüpfte Objekte-Übersicht
 DocumentModelBaleine=Projektberichtsvorlage für Aufgaben
+=======
+DocumentModelBeluga=Project document template for linked objects overview
+DocumentModelBaleine=Project document template for tasks
+DocumentModelTimeSpent=Project report template for time spent
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PlannedWorkload=Geplante Auslastung
 PlannedWorkloadShort=Arbeitsaufwand
 ProjectReferers=Verknüpfte Einträge
@@ -182,6 +297,10 @@ ProjectsWithThisUserAsContact=Projekte mit diesem Anwender als Kontakt
 TasksWithThisUserAsContact=Aufgaben zugeordnet zu diesem Anwender
 ResourceNotAssignedToProject=Zugewiesen zu Projekt
 ResourceNotAssignedToTheTask=nicht der Aufgabe zugewiesen
+<<<<<<< HEAD
+=======
+NoUserAssignedToTheProject=No users assigned to this project
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TimeSpentBy=Zeitaufwand durch
 TasksAssignedTo=Aufgabe zugewiesen an
 AssignTaskToMe=Aufgabe mir selbst zuweisen
@@ -189,6 +308,7 @@ AssignTaskToUser=Aufgabe an %s zuweisen
 SelectTaskToAssign=Zuzuweisende Aufgabe auswählen...
 AssignTask=Zuweisen
 ProjectOverview=Projekt-Übersicht
+<<<<<<< HEAD
 ManageTasks=Verwende Projekte um Aufgaben und Zeitaufwand zu verwalten
 ManageOpportunitiesStatus=Verwende Projekte um Leads und Chancen zu verwalten
 ProjectNbProjectByMonth=Anzahl der Projekte pro Monat
@@ -196,10 +316,20 @@ ProjectNbTaskByMonth=Anzahl erstellter Projekte pro Monat
 ProjectOppAmountOfProjectsByMonth=Betrag der Verkaufschancen pro Monat
 ProjectWeightedOppAmountOfProjectsByMonth=gewichteter Betrag der Verkaufschancen pro Monat
 ProjectOpenedProjectByOppStatus=Offene Projekte/Verkaufschancen nach Status
+=======
+ManageTasks=Use projects to follow tasks and/or report time spent (timesheets)
+ManageOpportunitiesStatus=Verwende Projekte um Leads und Chancen zu verwalten
+ProjectNbProjectByMonth=Anzahl der erstellten Projekte pro Monat 
+ProjectNbTaskByMonth=No. of created tasks by month
+ProjectOppAmountOfProjectsByMonth=Amount of leads by month
+ProjectWeightedOppAmountOfProjectsByMonth=Weighted amount of leads by month
+ProjectOpenedProjectByOppStatus=Open project/lead by lead status
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProjectsStatistics=Statistik über Projekte und Leads
 TasksStatistics=Statistik über Projekte und Lead Aufgaben
 TaskAssignedToEnterTime=Aufgabe zugewiesen. Eingabe der Zeit zu diese Aufgabe sollte möglich sein.
 IdTaskTime=ID Zeit Aufgabe
+<<<<<<< HEAD
 YouCanCompleteRef=Wenn Sie die Referenz mit Infromationen vervollständigen möchten (um diese als Suchfilter zu verwenden), wird empfohlen ein Trennzeichen einzusetzen, damit den Nummernkreis der zukünftigen Projekten weiterhin korrekt funktioniert. Zum Beispiel  %s-ABC. Sie können aber auch in den Label Suchbegriffe hinzufügen. Ein bewährtes Verfahren besteht darin, ein dedizierter Feld einzufügen, bekannt unter dem Begriff ergänzenden Attributen.
 OpenedProjectsByThirdparties=Offene Projekte nach Partner
 OnlyOpportunitiesShort=nur Verkaufschancen
@@ -208,6 +338,17 @@ NotAnOpportunityShort=keine Verkaufschance
 OpportunityTotalAmount=Verkaufschancen Gesamtbetrag
 OpportunityPonderatedAmount=Verkaufschancen geschätzter Betrag
 OpportunityPonderatedAmountDesc=Betrag der Verkaufschance gewichtet nach Wahrscheinlichkeit
+=======
+YouCanCompleteRef=If you want to complete the ref with some suffix, it is recommanded to add a - character to separate it, so the automatic numbering will still work correctly for next projects. For example %s-MYSUFFIX
+OpenedProjectsByThirdparties=Offene Projekte nach Partner
+OnlyOpportunitiesShort=nur Interessenten
+OpenedOpportunitiesShort=offene Verkaufschancen
+NotOpenedOpportunitiesShort=Not an open lead
+NotAnOpportunityShort=Not a lead
+OpportunityTotalAmount=Gesamtbetrag Leads/Verkaufschancen
+OpportunityPonderatedAmount=erwarteter Betrag der Leads
+OpportunityPonderatedAmountDesc=Leads amount weighted with probability
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 OppStatusPROSP=Geschäftsanbahnung
 OppStatusQUAL=Qualifikation
 OppStatusPROPO=Angebot
@@ -216,6 +357,7 @@ OppStatusPENDING=Anstehend
 OppStatusWON=Gewonnen
 OppStatusLOST=Verloren
 Budget=Budget
+<<<<<<< HEAD
 AllowToLinkFromOtherCompany=Projekt von anderem Unternehmen verknüpfen lassen <br> <br> <u> Unterstützte Werte: </u> <br> - Leer halten: Kann beliebiges Projekt des Unternehmens verlinken (Standard) <br> - "all": Verbindet beliebige Projekte, auch Projekte anderer Firmen <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br>
 LatestProjects=%s neueste Projekte
 LatestModifiedProjects=Neueste %s modifizierte Projekte
@@ -228,3 +370,26 @@ DontHavePermissionForCloseProject=You do not have permissions to close the proje
 DontHaveTheValidateStatus=The project %s must be open to be closed
 RecordsClosed=%s project(s) closed
 SendProjectRef=Information project %s
+=======
+AllowToLinkFromOtherCompany=Allow to link project from other company<br><br><u>Supported values:</u><br>- Keep empty: Can link any project of the company (default)<br>- "all": Can link any projects, even projects of other companies<br>- A list of third-party ids separated by commas: can link all projects of these third partys (Example: 123,4795,53)<br>
+LatestProjects=%s neueste Projekte
+LatestModifiedProjects=Neueste %s modifizierte Projekte
+OtherFilteredTasks=Andere gefilterte Aufgaben
+NoAssignedTasks=No assigned tasks found (assign project/tasks to the current user from the top select box to enter time on it)
+ThirdPartyRequiredToGenerateInvoice=A third party must be defined on project to be able to invoice it.
+# Comments trans
+AllowCommentOnTask=Alle Benutzerkommentare zur Aufgabe
+AllowCommentOnProject=Benutzer dürfen Projekte kommentieren
+DontHavePermissionForCloseProject=Sie haben nicht die Berechtigung das Projekt %s zu schliessen
+DontHaveTheValidateStatus=Projekt %smuss offen sein, damit es geschlossen werden kann
+RecordsClosed=%s Projekt(e) geschlossen
+SendProjectRef=Informationen zu Projekt %s
+ModuleSalaryToDefineHourlyRateMustBeEnabled=Module 'Salaries' must be enabled to define employee hourly rate to have time spent valorized
+NewTaskRefSuggested=Task ref already used, a new task ref is required
+TimeSpentInvoiced=Time spent billed
+TimeSpentForInvoice=Zeitaufwände
+OneLinePerUser=One line per user
+ServiceToUseOnLines=Service to use on lines
+InvoiceGeneratedFromTimeSpent=Invoice %s has been generated from time spent on project
+ProjectBillTimeDescription=Check if you enter timesheet on tasks of project AND you plan to generate invoice(s) from the timesheet to bill the customer of the project (do not check if you plan to create invoice that is not based on entered timesheets).
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

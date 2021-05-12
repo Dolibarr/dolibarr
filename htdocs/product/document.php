@@ -2,7 +2,11 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2005      Simon TOSSER          <simon@kornog-computing.com>
  * Copyright (C) 2013      Florian Henry          <florian.henry@open-concept.pro>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
@@ -42,22 +46,37 @@ $langs->loadLangs(array('other', 'products'));
 
 $id     = GETPOST('id', 'int');
 $ref    = GETPOST('ref', 'alpha');
+<<<<<<< HEAD
 $action = GETPOST('action','alpha');
 $confirm= GETPOST('confirm','alpha');
+=======
+$action = GETPOST('action', 'alpha');
+$confirm= GETPOST('confirm', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
 $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
 if ($user->societe_id) $socid=$user->societe_id;
+<<<<<<< HEAD
 $result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype);
+=======
+$result=restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('productdocuments'));
 
 // Get parameters
+<<<<<<< HEAD
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
+=======
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -76,8 +95,13 @@ if ($id > 0 || ! empty($ref))
 
 	if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))    // For backward compatiblity, we scan also old dirs
 	{
+<<<<<<< HEAD
 	    if (! empty($conf->product->enabled)) $upload_dirold = $conf->product->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2),1,1).'/'.substr(substr("000".$object->id, -2),0,1).'/'.$object->id."/photos";
 	    else $upload_dirold = $conf->service->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2),1,1).'/'.substr(substr("000".$object->id, -2),0,1).'/'.$object->id."/photos";
+=======
+	    if (! empty($conf->product->enabled)) $upload_dirold = $conf->product->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
+	    else $upload_dirold = $conf->service->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 }
 $modulepart='produit';
@@ -88,7 +112,11 @@ $modulepart='produit';
  */
 
 $parameters=array('id'=>$id);
+<<<<<<< HEAD
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+=======
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -113,7 +141,10 @@ if (empty($reshook))
 
 	// Action submit/delete file/link
 	include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 if ($action=='filemerge')
@@ -126,7 +157,11 @@ if ($action=='filemerge')
 		$filetomerge_file_array = GETPOST('filetoadd');
 
 		if ($conf->global->MAIN_MULTILANGS) {
+<<<<<<< HEAD
 			$lang_id = GETPOST('lang_id','aZ09');
+=======
+			$lang_id = GETPOST('lang_id', 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		// Delete all file already associated
@@ -143,7 +178,11 @@ if ($action=='filemerge')
 
 		// for each file checked add it to the product
 		if (is_array($filetomerge_file_array)) {
+<<<<<<< HEAD
 			foreach ( $filetomerge_file_array as $filetomerge_file ) {
+=======
+			foreach ($filetomerge_file_array as $filetomerge_file) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$filetomerge->fk_product = $object->id;
 				$filetomerge->file_name = $filetomerge_file;
 
@@ -169,7 +208,11 @@ $form = new Form($db);
 
 $title = $langs->trans('ProductServiceCard');
 $helpurl = '';
+<<<<<<< HEAD
 $shortlabel = dol_trunc($object->label,16);
+=======
+$shortlabel = dol_trunc($object->label, 16);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
 {
 	$title = $langs->trans('Product')." ". $shortlabel ." - ".$langs->trans('Documents');
@@ -193,6 +236,7 @@ if ($object->id)
 	dol_fiche_head($head, 'documents', $titre, -1, $picto);
 
 	$parameters=array();
+<<<<<<< HEAD
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
 	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -203,6 +247,18 @@ if ($object->id)
 	if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))    // For backward compatiblity, we scan also old dirs
 	{
 		$filearrayold=dol_dir_list($upload_dirold,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+=======
+	$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
+	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+	// Build file list
+	$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
+
+	if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))    // For backward compatiblity, we scan also old dirs
+	{
+		$filearrayold=dol_dir_list($upload_dirold, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$filearray=array_merge($filearray, $filearrayold);
 	}
 
@@ -217,17 +273,28 @@ if ($object->id)
     $object->next_prev_filter=" fk_product_type = ".$object->type;
 
     $shownav = 1;
+<<<<<<< HEAD
     if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+=======
+    if ($user->societe_id && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 
     print '<div class="fichecenter">';
 
     print '<div class="underbanner clearboth"></div>';
+<<<<<<< HEAD
     print '<table class="border tableforfield" width="100%">';
 
     print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
     print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize,1,1).'</td></tr>';
+=======
+    print '<table class="border tableforfield centpercent">';
+
+    print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
+    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print '</table>';
 
     print '</div>';
@@ -246,7 +313,11 @@ if ($object->id)
     	$filetomerge = new Propalmergepdfproduct($db);
 
     	if ($conf->global->MAIN_MULTILANGS) {
+<<<<<<< HEAD
     		$lang_id = GETPOST('lang_id','aZ09');
+=======
+    		$lang_id = GETPOST('lang_id', 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     		$result = $filetomerge->fetch_by_product($object->id, $lang_id);
     	} else {
     		$result = $filetomerge->fetch_by_product($object->id);
@@ -260,7 +331,11 @@ if ($object->id)
     	if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))    // For backward compatiblity, we scan also old dirs
     	{
 
+<<<<<<< HEAD
     		$filearray = array_merge($filearray,dol_dir_list($upload_dirold, "files", 0, '', '\.meta$', 'name', SORT_ASC, 1));
+=======
+    		$filearray = array_merge($filearray, dol_dir_list($upload_dirold, "files", 0, '', '\.meta$', 'name', SORT_ASC, 1));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	}
 
     	// For each file build select list with PDF extention
@@ -288,11 +363,19 @@ if ($object->id)
 
     			print  '<tr class="liste_titre"><td>';
 
+<<<<<<< HEAD
     			$delauft_lang = empty($lang_id) ? $langs->getDefaultLang() : $lang_id;
 
     			$langs_available = $langs->get_available_languages(DOL_DOCUMENT_ROOT, 12);
 
 			    print Form::selectarray('lang_id', $langs_available, $delauft_lang, 0, 0, 0, '', 0, 0, 0, 'ASC');
+=======
+    			$default_lang = empty($lang_id) ? $langs->getDefaultLang() : $lang_id;
+
+    			$langs_available = $langs->get_available_languages(DOL_DOCUMENT_ROOT, 12);
+
+			    print Form::selectarray('lang_id', $langs_available, $default_lang, 0, 0, 0, '', 0, 0, 0, 'ASC');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     			if ($conf->global->MAIN_MULTILANGS) {
     				print  '<input type="submit" class="button" name="refresh" value="' . $langs->trans('Refresh') . '">';
@@ -301,25 +384,37 @@ if ($object->id)
     			print  '</td></tr>';
     		}
 
+<<<<<<< HEAD
     		$style = 'impair';
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     		foreach ($filearray as $filetoadd)
     		{
     			if ($ext = pathinfo($filetoadd['name'], PATHINFO_EXTENSION) == 'pdf')
     			{
+<<<<<<< HEAD
     				if ($style == 'pair') {
     					$style = 'impair';
     				} else {
     					$style = 'pair';
     				}
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     				$checked = '';
     				$filename = $filetoadd['name'];
 
     				if ($conf->global->MAIN_MULTILANGS)
     				{
+<<<<<<< HEAD
     					if (array_key_exists($filetoadd['name'] . '_' . $delauft_lang, $filetomerge->lines))
     					{
     						$filename = $filetoadd['name'] . ' - ' . $langs->trans('Language_' . $delauft_lang);
+=======
+    					if (array_key_exists($filetoadd['name'] . '_' . $default_lang, $filetomerge->lines))
+    					{
+    						$filename = $filetoadd['name'] . ' - ' . $langs->trans('Language_' . $default_lang);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     						$checked = ' checked ';
     					}
     				}
@@ -331,7 +426,11 @@ if ($object->id)
     					}
     				}
 
+<<<<<<< HEAD
     				print  '<tr class="' . $style . '"><td>';
+=======
+    				print  '<tr class="oddeven"><td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     				print  '<input type="checkbox" ' . $checked . ' name="filetoadd[]" id="filetoadd" value="' . $filetoadd['name'] . '">' . $filename . '</input>';
     				print  '</td></tr>';
     			}
@@ -352,6 +451,10 @@ else
 	print $langs->trans("ErrorUnknown");
 }
 
+<<<<<<< HEAD
 
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

@@ -1193,7 +1193,11 @@ var reservedApiTags = [
   'path',
   'tag'
 ];
+<<<<<<< HEAD
 var supportedOperationMethods = ['delete', 'get', 'head', 'options', 'patch', 'post', 'put'];
+=======
+var supportedOperationMethods = ['head', 'options', 'get', 'post', 'put', 'patch', 'delete'];
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 var SwaggerClient = module.exports = function (url, options) {
   this.authorizations = null;
   this.authorizationScheme = null;
@@ -26327,4 +26331,8 @@ SwaggerUi.Views.StatusCodeView = Backbone.View.extend({
     }
     return this;
   }
+<<<<<<< HEAD
 });}).call(this);
+=======
+});}).call(this);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

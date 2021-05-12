@@ -10,6 +10,7 @@ modify=upravit
 Classify=Třídit
 CategoriesArea=Oblast tagy/kategorie
 ProductsCategoriesArea=Oblast Produkty/Služby tagy/kategorie
+<<<<<<< HEAD
 SuppliersCategoriesArea=Oblast dodavatelské tagy/kategorie
 CustomersCategoriesArea=Oblast zákaznické tagy/kategorie
 MembersCategoriesArea=Oblast uživatelské tagy/kategorie
@@ -17,6 +18,16 @@ ContactsCategoriesArea=Oblast tagy/kategorie kontakty
 AccountsCategoriesArea=Accounts tags/categories area
 ProjectsCategoriesArea=Projects tags/categories area
 SubCats=Sub-categories
+=======
+SuppliersCategoriesArea=Oblast značek/kategorií prodejců
+CustomersCategoriesArea=Oblast zákaznické tagy/kategorie
+MembersCategoriesArea=Oblast uživatelské tagy/kategorie
+ContactsCategoriesArea=Oblast tagy/kategorie kontakty
+AccountsCategoriesArea=Značky/kategorie účtů
+ProjectsCategoriesArea=Oblast projektů značek/kategorií
+UsersCategoriesArea=Kategorie značek/kategorií uživatelů
+SubCats=Podkategorie
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CatList=Výpis tagů/kategorií
 NewCategory=Nový tag/kategorie
 ModifCat=Upravit tag/kategorii
@@ -31,6 +42,7 @@ WasAddedSuccessfully=<b>%s</b> bylo úspěšně přidáno.
 ObjectAlreadyLinkedToCategory=Element je již propojen s tímto tagem/kategorií.
 ProductIsInCategories=Produkt/služba je spojena s následujícími tagy/kategoriemi
 CompanyIsInCustomersCategories=Tato třetí strana je propojena s následujícími zákazníky/cíle tagy/kategorie
+<<<<<<< HEAD
 CompanyIsInSuppliersCategories=Tato třetí strana je propojena na následující dodavatelské tagy/kategorie
 MemberIsInCategories=Tento uživatel je propojen na následující uživatelské tagy/kategorie
 ContactIsInCategories=Tento kontakt je propojen na následujícíí kontakty tagy/kategorie
@@ -39,6 +51,16 @@ CompanyHasNoCategory=This third party is not in any tags/categories
 MemberHasNoCategory=Tento uživatel není v žádném tagu/kategoriích
 ContactHasNoCategory=Tento kontakt není v žádném tagu/kategorii
 ProjectHasNoCategory=This project is not in any tags/categories
+=======
+CompanyIsInSuppliersCategories=Tento subjekt je propojen s následujícími značkami/kategoriemi dodavatelů
+MemberIsInCategories=Tento uživatel je propojen na následující uživatelské tagy/kategorie
+ContactIsInCategories=Tento kontakt je propojen na následujícíí kontakty tagy/kategorie
+ProductHasNoCategory=Tento produkt/služba není v žádném tagu/kategoriích
+CompanyHasNoCategory=Tento subjekt není v žádném tagu/kategoriích
+MemberHasNoCategory=Tento uživatel není v žádném tagu/kategoriích
+ContactHasNoCategory=Tento kontakt není v žádném tagu/kategorii
+ProjectHasNoCategory=Tento projekt není v žádném tagu/kategorii
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ClassifyInCategory=Přidat do tagu/kategorie
 NotCategorized=Bez tagu/kategorie
 CategoryExistsAtSameLevel=Tato kategorie již existuje s tímto čj
@@ -47,12 +69,17 @@ ContentsNotVisibleByAllShort=Obsah není viditelný pro všechny
 DeleteCategory=Smazat tag/kategorii
 ConfirmDeleteCategory=Jste si opravdu jistý, že chcete odstranit tento tag/kategorii?
 NoCategoriesDefined=Není definován žádný tag/kategorie
+<<<<<<< HEAD
 SuppliersCategoryShort=Tag/kategorie dodavatelé
+=======
+SuppliersCategoryShort=Tag/kategorie dodavatelů
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CustomersCategoryShort=Tag/kategorie zákazníci
 ProductsCategoryShort=Tag/kategorie Produkty
 MembersCategoryShort=Tag/kategorie uživatelé
 SuppliersCategoriesShort=Dodavatelé tagy/kategorie
 CustomersCategoriesShort=Zákazníci tagy/kategorie
+<<<<<<< HEAD
 ProspectsCategoriesShort=Prospects tags/categories
 CustomersProspectsCategoriesShort=Zák./Cíl. kategorie
 ProductsCategoriesShort=Produkty tagy/kategorie
@@ -67,6 +94,23 @@ ThisCategoryHasNoMember=Tato kategorie neobsahuje žádné uživatele.
 ThisCategoryHasNoContact=Tato kategorie neobsahuje žádný kontakt.
 ThisCategoryHasNoAccount=This category does not contain any account.
 ThisCategoryHasNoProject=This category does not contain any project.
+=======
+ProspectsCategoriesShort=Cíle tag/kategorie
+CustomersProspectsCategoriesShort=Zák./Cíl. tagy/kategorie
+ProductsCategoriesShort=Produkty tagy/kategorie
+MembersCategoriesShort=Uživatelé tagy/kategorie
+ContactCategoriesShort=Tagy/kategorie kontakty
+AccountsCategoriesShort=Tagy/kategorie účtů
+ProjectsCategoriesShort=Tagy/kategorie projektů
+UsersCategoriesShort=Uživatelské značky/kategorie
+ThisCategoryHasNoProduct=Tato kategorie neobsahuje žádný produkt.
+ThisCategoryHasNoSupplier=Tato kategorie neobsahuje dodavatele.
+ThisCategoryHasNoCustomer=Tato kategorie neobsahuje žádné zákazníky.
+ThisCategoryHasNoMember=Tato kategorie neobsahuje žádné uživatele.
+ThisCategoryHasNoContact=Tato kategorie neobsahuje žádný kontakt.
+ThisCategoryHasNoAccount=Tato kategorie neobsahuje žádný účet.
+ThisCategoryHasNoProject=Tato kategorie neobsahuje žádný projekt.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CategId=ID tagu/kategorie
 CatSupList=Seznam tagů/kategorií dodavatelů
 CatCusList=Seznam tagů/kategorií zákazníků/cílů
@@ -81,8 +125,16 @@ DeleteFromCat=Odebrat z tagů/kategorií
 ExtraFieldsCategories=Doplňkové atributy
 CategoriesSetup=Nastavení tagů/kategorií
 CategorieRecursiv=Odkaz na nadřazený tag/kategorii automaticky
+<<<<<<< HEAD
 CategorieRecursivHelp=Je-li aktivován, bude produkt spojen s nadřazenou kategorií při přidávání do podkategorie
 AddProductServiceIntoCategory=Přidejte následující produkt/službu
 ShowCategory=Zobrazit tag/kategorii
 ByDefaultInList=By default in list
 ChooseCategory=Choose category
+=======
+CategorieRecursivHelp=If option is on, when you add a product into a subcategory, product will also be added into the parent category.
+AddProductServiceIntoCategory=Přidejte následující produkt/službu
+ShowCategory=Zobrazit tag/kategorii
+ByDefaultInList=Ve výchozím nastavení je v seznamu
+ChooseCategory=Vyberte kategorii
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

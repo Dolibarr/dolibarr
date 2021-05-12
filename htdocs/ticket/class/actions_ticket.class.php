@@ -35,22 +35,65 @@ require_once DOL_DOCUMENT_ROOT . '/fichinter/class/fichinter.class.php';
  */
 class ActionsTicket
 {
+<<<<<<< HEAD
     public $db;
     public $dao;
 
     public $mesg;
     public $error;
     public $errors = array();
+=======
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    public $dao;
+
+    public $mesg;
+
+    /**
+     * @var string Error code (or message)
+     */
+    public $error;
+
+    /**
+     * @var string[] Error codes (or messages)
+     */
+    public $errors = array();
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     //! Numero de l'erreur
     public $errno = 0;
 
     public $template_dir;
     public $template;
 
+<<<<<<< HEAD
     public $label;
     public $description;
 
     public $fk_statut;
+=======
+    /**
+     * @var string ticket action label
+     */
+    public $label;
+
+    /**
+     * @var string description
+     */
+    public $description;
+
+    /**
+     * @var int ID
+     */
+    public $fk_statut;
+
+    /**
+     * @var int Thirdparty ID
+     */
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     public $fk_soc;
 
     /**
@@ -76,6 +119,7 @@ class ActionsTicket
     }
 
     /**
+<<<<<<< HEAD
      *     doActions
      *
      *     @param 	string 		$action 	Action type
@@ -932,6 +976,8 @@ class ActionsTicket
     }
 
     /**
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      * Fetch object
      *
      * @param	int		$id				ID of ticket
@@ -949,7 +995,11 @@ class ActionsTicket
      * Print statut
      *
      * @param		int		$mode		Display mode
+<<<<<<< HEAD
      * @return 		void
+=======
+     * @return 		string				Label of status
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      */
     public function getLibStatut($mode = 0)
     {
@@ -962,6 +1012,10 @@ class ActionsTicket
      * Get ticket info
      *
      * @param  int $id    Object id
+<<<<<<< HEAD
+=======
+     * @return void
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      */
     public function getInfo($id)
     {
@@ -975,13 +1029,22 @@ class ActionsTicket
     /**
      * Get action title
      *
+<<<<<<< HEAD
      * @param string $action    Type of action
+=======
+     * @param string 	$action    	Type of action
+     * @return string			Title of action
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      */
     public function getTitle($action = '')
     {
         global $langs;
 
+<<<<<<< HEAD
         if ($action == 'create_ticket') {
+=======
+        if ($action == 'create') {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             return $langs->trans("CreateTicket");
         } elseif ($action == 'edit') {
             return $langs->trans("EditTicket");
@@ -998,10 +1061,18 @@ class ActionsTicket
      * View html list of logs
      *
      * @param boolean $show_user Show user who make action
+<<<<<<< HEAD
      */
     public function viewTicketLogs($show_user = true)
     {
         global $conf, $langs, $bc;
+=======
+     * @return void
+     */
+    public function viewTicketLogs($show_user = true)
+    {
+        global $conf, $langs;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         // Load logs in cache
         $ret = $this->dao->loadCacheLogsTicket();
@@ -1021,11 +1092,16 @@ class ActionsTicket
                 print '</th>';
             }
 
+<<<<<<< HEAD
             $var = true;
 
             foreach ($this->dao->cache_logs_ticket as $id => $arraylogs) {
                 $var = !$var;
                 print "<tr " . $bc[$var] . ">";
+=======
+            foreach ($this->dao->cache_logs_ticket as $id => $arraylogs) {
+                print '<tr class="oddeven">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 print '<td><strong>';
                 print dol_print_date($arraylogs['datec'], 'dayhour');
                 print '</strong></td>';
@@ -1042,7 +1118,11 @@ class ActionsTicket
                     print '</td>';
                 }
                 print '</tr>';
+<<<<<<< HEAD
                 print "<tr " . $bc[$var] . ">";
+=======
+                print '<tr class="oddeven">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 print '<td colspan="2">';
                 print dol_nl2br($arraylogs['message']);
 
@@ -1057,6 +1137,7 @@ class ActionsTicket
     }
 
     /**
+<<<<<<< HEAD
      * View list of logs with timeline view
      *
      * @param 	boolean 	$show_user 	Show user who make action
@@ -1104,6 +1185,8 @@ class ActionsTicket
     }
 
     /**
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      * Show ticket original message
      *
      * @param 	User		$user		User wich display
@@ -1113,6 +1196,7 @@ class ActionsTicket
      */
     public function viewTicketOriginalMessage($user, $action, $object)
     {
+<<<<<<< HEAD
     	global $langs;
     	if (!empty($user->rights->ticket->manage) && $action == 'edit_message_init') {
     		// MESSAGE
@@ -1162,12 +1246,67 @@ class ActionsTicket
     		print ' <input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '">';
     		print '</form>';
     	}
+=======
+        global $langs;
+
+        print '<!-- initial message of ticket -->'."\n";
+        if (!empty($user->rights->ticket->manage) && $action == 'edit_message_init') {
+            // MESSAGE
+
+            print '<form action="' . $_SERVER['PHP_SELF'] . '" method="post">';
+            print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+            print '<input type="hidden" name="track_id" value="' . $object->track_id . '">';
+            print '<input type="hidden" name="action" value="set_message">';
+        }
+
+        // Initial message
+        print '<div class="underbanner clearboth"></div>';
+        print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
+        print '<table class="border centpercent margintable">';
+        print '<tr class="liste_titre"><td class="nowrap titlefield">';
+        print $langs->trans("InitialMessage");
+        print '</td><td>';
+        if ($user->rights->ticket->manage) {
+            print '<a  href="' . $_SERVER['PHP_SELF'] . '?action=edit_message_init&amp;track_id=' . $object->track_id . '">' . img_edit($langs->trans('Modify')) . '</a>';
+        }
+        print '</td></tr>';
+
+        print '<tr>';
+        print '<td colspan="2">';
+        if (!empty($user->rights->ticket->manage) && $action == 'edit_message_init') {
+            // MESSAGE
+            $msg = GETPOST('message_initial', 'alpha') ? GETPOST('message_initial', 'alpha') : $object->message;
+            include_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
+            $uselocalbrowser = true;
+            $doleditor = new DolEditor('message_initial', $msg, '100%', 250, 'dolibarr_details', 'In', true, $uselocalbrowser);
+            $doleditor->Create();
+        } else {
+            // Deal with format differences (text / HTML)
+            if (dol_textishtml($object->message)) {
+                print $object->message;
+            } else {
+                print dol_nl2br($object->message);
+            }
+
+            //print '<div>' . $object->message . '</div>';
+        }
+        if ($user->rights->ticket->manage && $action == 'edit_message_init') {
+            print '<div class="center">';
+            print ' <input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
+            print ' <input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '">';
+            print '</div>';
+        }
+        print '</td>';
+        print '</tr>';
+        print '</table>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
     /**
      * View html list of message for ticket
      *
      * @param boolean $show_private Show private messages
      * @param boolean $show_user    Show user who make action
+<<<<<<< HEAD
      */
     public function viewTicketMessages($show_private, $show_user = true)
     {
@@ -1176,12 +1315,27 @@ class ActionsTicket
 
         // Load logs in cache
         $ret = $object->loadCacheMsgsTicket();
+=======
+     * @return void
+     */
+    public function viewTicketMessages($show_private, $show_user = true)
+    {
+        global $conf, $langs, $user;
+
+        // Load logs in cache
+        $ret = $this->dao->loadCacheMsgsTicket();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $action = GETPOST('action');
 
         $this->viewTicketOriginalMessage($user, $action);
 
+<<<<<<< HEAD
         if (is_array($object->cache_msgs_ticket) && count($object->cache_msgs_ticket) > 0) {
             print_titre($langs->trans('TicketMailExchanges'));
+=======
+        if (is_array($this->dao->cache_msgs_ticket) && count($this->dao->cache_msgs_ticket) > 0) {
+            print load_fiche_titre($langs->trans('TicketMailExchanges'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
             print '<table class="border" style="width:100%;">';
 
@@ -1197,13 +1351,21 @@ class ActionsTicket
                 print '</td>';
             }
 
+<<<<<<< HEAD
             foreach ($object->cache_msgs_ticket as $id => $arraymsgs) {
+=======
+            foreach ($this->dao->cache_msgs_ticket as $id => $arraymsgs) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 if (!$arraymsgs['private']
                     || ($arraymsgs['private'] == "1" && $show_private)
                 ) {
                     //print '<tr>';
+<<<<<<< HEAD
                     $var = !$var;
                     print "<tr " . $bc[$var] . ">";
+=======
+                    print '<tr class="oddeven">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                     print '<td><strong>';
                     print dol_print_date($arraymsgs['datec'], 'dayhour');
                     print '<strong></td>';
@@ -1221,7 +1383,11 @@ class ActionsTicket
                         print '</td>';
                     }
                     print '</td>';
+<<<<<<< HEAD
                     print "<tr " . $bc[$var] . ">";
+=======
+                    print '<tr class="oddeven">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                     print '<td colspan="2">';
                     print $arraymsgs['message'];
                     print '</td>';
@@ -1241,6 +1407,7 @@ class ActionsTicket
      * @param 	boolean 	$show_private Show private messages
      * @param 	boolean 	$show_user    Show user who make action
      * @param	Ticket	$object		 Object ticket
+<<<<<<< HEAD
      */
     public function viewTicketTimelineMessages($show_private, $show_user, Ticket $object)
     {
@@ -1267,6 +1434,35 @@ class ActionsTicket
 
     				print '<span class="cd-date">';
     				print dol_print_date($arraymsgs['datec'], 'dayhour');
+=======
+     * @return void
+     */
+    public function viewTicketTimelineMessages($show_private, $show_user, Ticket $object)
+    {
+        global $conf, $langs, $user;
+
+        // Load logs in cache
+        $ret = $object->loadCacheMsgsTicket();
+        $action = GETPOST('action');
+
+        if (is_array($object->cache_msgs_ticket) && count($object->cache_msgs_ticket) > 0) {
+            print '<section id="cd-timeline">';
+
+            foreach ($object->cache_msgs_ticket as $id => $arraymsgs) {
+                if (!$arraymsgs['private']
+                || ($arraymsgs['private'] == "1" && $show_private)
+                ) {
+                    print '<div class="cd-timeline-block">';
+                    print '<div class="cd-timeline-img">';
+                    print '<img src="img/messages.png" alt="">';
+                    print '</div> <!-- cd-timeline-img -->';
+
+                    print '<div class="cd-timeline-content">';
+                    print $arraymsgs['message'];
+
+                    print '<span class="cd-date">';
+                    print dol_print_date($arraymsgs['datec'], 'dayhour');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
                     if ($show_user) {
                         if ($arraymsgs['fk_user_action'] > 0) {
@@ -1281,6 +1477,7 @@ class ActionsTicket
                             print $langs->trans('Customer');
                         }
                     }
+<<<<<<< HEAD
     				print '</span>';
     				print '</div> <!-- cd-timeline-content -->';
     				print '</div> <!-- cd-timeline-block -->';
@@ -1431,6 +1628,16 @@ class ActionsTicket
                 $imgThumbMini = vignette($destdir . '/' . $filename[$i], $maxwidthmini, $maxheightmini, '_mini', 50, "thumbs");
             }
             $formmail->remove_attached_files($i);
+=======
+                    print '</span>';
+                    print '</div> <!-- cd-timeline-content -->';
+                    print '</div> <!-- cd-timeline-block -->';
+                }
+            }
+            print '</section>';
+        } else {
+            print '<div class="info">' . $langs->trans('NoMsgForThisTicket') . '</div>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
     }
 
@@ -1458,17 +1665,33 @@ class ActionsTicket
         // Sort results to be similar to status object list
         //sort($exclude_status);
 
+<<<<<<< HEAD
         //print '<br><div>';
         foreach ($object->statuts_short as $status => $statut_label) {
+=======
+        foreach ($object->statuts_short as $status => $status_label) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             if (!in_array($status, $exclude_status)) {
                 print '<div class="tagtd">';
 
                 if ($status == 1)
+<<<<<<< HEAD
                 	$urlforbutton = $_SERVER['PHP_SELF'] . '?track_id=' . $object->track_id . '&action=mark_ticket_read';	// To set as read, we use a dedicated action
                	else
                		$urlforbutton = $_SERVER['PHP_SELF'] . '?track_id=' . $object->track_id . '&action=set_status&new_status=' . $status;
 
                 print '<a class="button" href="' . $urlforbutton . '">';
+=======
+                {
+                    $urlforbutton = $_SERVER['PHP_SELF'] . '?track_id=' . $object->track_id . '&action=mark_ticket_read';	// To set as read, we use a dedicated action
+                }
+                else
+                {
+                    $urlforbutton = $_SERVER['PHP_SELF'] . '?track_id=' . $object->track_id . '&action=set_status&new_status=' . $status;
+                }
+
+                print '<a class="button buttonticket" href="' . $urlforbutton . '">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 print img_picto($langs->trans($object->statuts_short[$status]), 'statut' . $status . '.png@ticket') . ' ' . $langs->trans($object->statuts_short[$status]);
                 print '</a>';
                 print '</div>';
@@ -1477,6 +1700,7 @@ class ActionsTicket
         print '</div></div></div><br>';
     }
 
+<<<<<<< HEAD
 
   	/**
   	 * deleteObjectLinked
@@ -1488,6 +1712,8 @@ class ActionsTicket
     	return $this->dao->deleteObjectLinked();
     }
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     /**
      * Hook to add email element template
      *
@@ -1499,6 +1725,7 @@ class ActionsTicket
      */
     public function emailElementlist($parameters, &$object, &$action, $hookmanager)
     {
+<<<<<<< HEAD
     	global $langs;
 
     	$error = 0;
@@ -1513,5 +1740,21 @@ class ActionsTicket
     		$this->errors[] = 'Error message';
     		return -1;
     	}
+=======
+        global $langs;
+
+        $error = 0;
+
+        if (in_array('admin', explode(':', $parameters['context']))) {
+            $this->results = array('ticket_send' => $langs->trans('MailToSendTicketMessage'));
+        }
+
+        if (! $error) {
+            return 0; // or return 1 to replace standard code
+        } else {
+            $this->errors[] = 'Error message';
+            return -1;
+        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 }

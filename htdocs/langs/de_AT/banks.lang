@@ -4,6 +4,10 @@ BankAccount=Kontonummer
 BankAccounts=Kontonummern
 AccountRef=Referenznummer
 CashAccount=Kassa
+<<<<<<< HEAD
+=======
+CashAccounts=Kassen
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrentAccounts=Bargeldkonten
 BankBalance=Saldo
 BalanceMinimalAllowed=minimaler Saldo
@@ -18,15 +22,24 @@ AccountStatementShort=Kontenauszug
 AccountStatements=Kontoauszug
 LastAccountStatements=letzter Kontoauszug
 IOMonthlyReporting=monatlicher Report
+<<<<<<< HEAD
 BankAccountDomiciliation=Konto-Adresse
 LabelBankCashAccount=Bank- oder Kassabezeichnung
 BankType0=Sparkonto\n
 BankType2=Kassa
 Account=Kontonummer
+=======
+LabelBankCashAccount=Bank- oder Kassabezeichnung
+BankType0=Sparkonto\n
+BankType2=Kassa
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 IncludeClosedAccount=Geschlossene konten miteinbeziehen
 StatusAccountClosed=geschlossen
 WithdrawalPayment=Widerrufsrecht Zahlung
 ShowCheckReceipt=Zeige überprüfen Einzahlungsbeleg
 Graph=Grafik
+<<<<<<< HEAD
 FutureTransaction=Transaction in futur. Kein Weg zu versöhnen.
 SelectChequeTransactionAndGenerate=Select / Filter prüft, in die Scheckeinreichung Erhalt gehören und klicken Sie auf &quot;Erstellen&quot;.
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

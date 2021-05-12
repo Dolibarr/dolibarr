@@ -33,7 +33,11 @@
  */
 class DolGeoIP
 {
+<<<<<<< HEAD
 	var $gi;
+=======
+    public $gi;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	/**
 	 * Constructor
@@ -41,14 +45,22 @@ class DolGeoIP
 	 * @param 	string	$type		'country' or 'city'
 	 * @param	string	$datfile	Data file
 	 */
+<<<<<<< HEAD
 	function __construct($type,$datfile)
+=======
+	public function __construct($type, $datfile)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		if ($type == 'country')
 		{
 		    // geoip may have been already included with PEAR
 		    if (! function_exists('geoip_country_code_by_name')) $res=include_once GEOIP_PATH.'geoip.inc';
 		}
+<<<<<<< HEAD
 		else if ($type == 'city')
+=======
+		elseif ($type == 'city')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 		    // geoip may have been already included with PEAR
 		    if (! function_exists('geoip_country_code_by_name')) $res=include_once GEOIP_PATH.'geoipcity.inc';
@@ -72,7 +84,11 @@ class DolGeoIP
 
 		if (function_exists('geoip_open'))
 		{
+<<<<<<< HEAD
 			$this->gi = geoip_open($datfile,GEOIP_STANDARD);
+=======
+			$this->gi = geoip_open($datfile, GEOIP_STANDARD);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		else
 		{
@@ -88,7 +104,11 @@ class DolGeoIP
 	 * @param	string	$ip		IP to scan
 	 * @return	string			Country code (two letters)
 	 */
+<<<<<<< HEAD
 	function getCountryCodeFromIP($ip)
+=======
+	public function getCountryCodeFromIP($ip)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		if (empty($this->gi))
 		{
@@ -112,7 +132,11 @@ class DolGeoIP
 	 * @param	string	$name	FQN of host (example: myserver.xyz.com)
 	 * @return	string			Country code (two letters)
 	 */
+<<<<<<< HEAD
 	function getCountryCodeFromName($name)
+=======
+	public function getCountryCodeFromName($name)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		if (empty($this->gi))
 		{
@@ -121,6 +145,7 @@ class DolGeoIP
 		return geoip_country_code_by_name($this->gi, $name);
 	}
 
+<<<<<<< HEAD
 	/**
 	 * Return verion of data file
 	 *
@@ -144,4 +169,29 @@ class DolGeoIP
 	        geoip_close($this->gi);
 	    }
 	}
+=======
+    /**
+     * Return verion of data file
+     *
+     * @return  string      Version of datafile
+     */
+    public function getVersion()
+    {
+        if ($this->gi == 'NOGI') return geoip_database_info();
+        return 'Not available (not using PHP internal geo functions)';
+    }
+
+    /**
+     * Close geoip object
+     *
+     * @return	void
+     */
+    public function close()
+    {
+        if (function_exists('geoip_close')) {
+            // With some geoip with PEAR, geoip_close function may not exists
+            geoip_close($this->gi);
+        }
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

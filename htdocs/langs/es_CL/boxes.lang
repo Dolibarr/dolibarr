@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - boxes
+<<<<<<< HEAD
 BoxLoginInformation=Información Login
 BoxLastRssInfos=Rss información
 BoxLastProducts=Últimos %s productos / servicios
@@ -20,6 +21,15 @@ BoxTitleLastFicheInter=Últimas intervenciones modificadas con %s
 BoxTitleOldestUnpaidCustomerBills=Las %s facturas más antiguas impagas por cliente
 BoxTitleOldestUnpaidSupplierBills=Las %s  facturas más antiguas impagas a proveedor
 BoxTitleCurrentAccounts=Cuentas con balances abiertos
+=======
+BoxOldestUnpaidCustomerBills=Las facturas impagas más antiguas de los clientes
+BoxLastProposals=Últimas propuestas comerciales
+BoxLastProspects=Últimas prospectos modificados
+BoxCurrentAccounts=Abre el saldo de cuentas
+BoxTitleLastRssInfos=Las últimas %s noticias de %s
+BoxTitleLastCustomersOrProspects=Últimos %s clientes o prospectos
+BoxTitleLastFicheInter=Últimas intervenciones modificadas con %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BoxOldestExpiredServices=Servicios expirados activos más antiguos
 BoxLastExpiredServices=Últimos %s contactos más antiguos con servicios activos caducados
 BoxTitleLastActionsToDo=Últimas %s acciones para hacer
@@ -27,24 +37,34 @@ BoxTitleLastModifiedDonations=Las últimas %s donaciones modificadas
 BoxTitleLastModifiedExpenses=Últimos informes de gastos modificados %s
 BoxGlobalActivity=Actividad global (facturas, propuestas, pedidos)
 BoxTitleGoodCustomers=%s Buenos clientes
+<<<<<<< HEAD
 FailedToRefreshDataInfoNotUpToDate=Error al actualizar el flujo de RSS. Última fecha de actualización exitosa: %s
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LastRefreshDate=Última fecha de actualización
 NoRecordedBookmarks=No hay marcadores definidos
 ClickToAdd=Haga clic aquí para agregar.
 NoRecordedCustomers=Sin clientes registrados
 NoRecordedContacts=Sin contactos grabados
 NoActionsToDo=No hay acciones para hacer
+<<<<<<< HEAD
 NoRecordedOrders=Sin pedidos grabados de clientes
 NoRecordedProposals=Sin cotizaciones registradas
 NoRecordedInvoices=No hay facturas registradas de clientes
 NoUnpaidCustomerBills=No hay facturas impagas de los clientes
 NoUnpaidSupplierBills=Sin facturas impagas de proveedores
 NoModifiedSupplierBills=Sin facturas registradas del proveedor
+=======
+NoRecordedProposals=Sin cotizaciones registradas
+NoRecordedInvoices=No hay facturas registradas de clientes
+NoUnpaidCustomerBills=No hay facturas impagas de los clientes
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoRecordedProducts=Sin productos / servicios grabados
 NoRecordedProspects=Sin perspectivas registradas
 NoContractedProducts=No hay productos/servicios contratados
 NoRecordedContracts=Sin contratos grabados
 NoRecordedInterventions=Sin intervenciones registradas
+<<<<<<< HEAD
 BoxCustomersInvoicesPerMonth=Facturas de clientes por mes
 BoxProposalsPerMonth=Cotizaciones por mes
 NoTooLowStockProducts=Ningún producto bajo el límite de stock bajo
@@ -52,6 +72,9 @@ BoxProductDistribution=Distribución de productos / servicios
 BoxTitleLastModifiedSupplierBills=Últimas %s facturas de proveedor modificadas
 BoxTitleLatestModifiedSupplierOrders=Últimas %s órdenes de proveedor modificadas
 BoxTitleLastModifiedCustomerBills=Últimas %s facturas modificadas del cliente
+=======
+BoxProposalsPerMonth=Cotizaciones por mes
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BoxTitleLastModifiedPropals=Últimas %s propuestas modificadas
 ForCustomersInvoices=Facturas de clientes
 ForProposals=Cotizaciones

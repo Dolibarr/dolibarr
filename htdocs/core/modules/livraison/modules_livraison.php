@@ -2,7 +2,11 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
+<<<<<<< HEAD
  * Copyright (C) 2006-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2006-2011 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2011-2012 Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  *
@@ -36,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
  */
 abstract class ModelePDFDeliveryOrder extends CommonDocGenerator
 {
+<<<<<<< HEAD
 	var $error='';
 
 	/**
@@ -57,11 +62,40 @@ abstract class ModelePDFDeliveryOrder extends CommonDocGenerator
 
 		return $liste;
 	}
+=======
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
+     *  Return list of active generation modules
+     *
+     *  @param  DoliDB  $db                 Database handler
+     *  @param  integer	$maxfilenamelength  Max length of value to show
+     *  @return array                       List of templates
+     */
+    public static function liste_modeles($db, $maxfilenamelength = 0)
+    {
+        // phpcs:enable
+        global $conf;
+
+        $type='delivery';
+        $liste=array();
+
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+        $liste=getListOfModels($db, $type, $maxfilenamelength);
+
+        return $liste;
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 
 
 /**
+<<<<<<< HEAD
  *	\class      ModeleNumRefDeliveryOrder
  *	\brief      Classe mere des modeles de numerotation des references de bon de livraison
  */
@@ -143,4 +177,90 @@ abstract class ModeleNumRefDeliveryOrder
 		if ($this->version) return $this->version;
 		return $langs->trans("NotAvailable");
 	}
+=======
+ *  \class      ModeleNumRefDeliveryOrder
+ *  \brief      Classe mere des modeles de numerotation des references de bon de livraison
+ */
+abstract class ModeleNumRefDeliveryOrder
+{
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
+
+    /**
+     * Return if a module can be used or not
+     *
+     * @return      boolean     true if module can be used
+     */
+    public function isEnabled()
+    {
+        return true;
+    }
+
+    /**
+     * Renvoi la description par defaut du modele de numerotation
+     *
+     * @return     string      Texte descripif
+     */
+    public function info()
+    {
+        global $langs;
+        $langs->load("deliveries");
+        return $langs->trans("NoDescription");
+    }
+
+    /**
+     * Renvoi un exemple de numerotation
+     *
+     * @return     string      Example
+     */
+    public function getExample()
+    {
+        global $langs;
+        $langs->load("deliveries");
+        return $langs->trans("NoExample");
+    }
+
+    /**
+     * Test si les numeros deja en vigueur dans la base ne provoquent pas d
+     * de conflits qui empechera cette numerotation de fonctionner.
+     *
+     * @return     boolean     false si conflit, true si ok
+     */
+    public function canBeActivated()
+    {
+        return true;
+    }
+
+    /**
+     * Renvoi prochaine valeur attribuee
+     *
+     *	@param  Societe     $objsoc         Object third party
+     *  @param  Object      $object         Object delivery
+     *	@return string                      Valeur
+     */
+    public function getNextValue($objsoc, $object)
+    {
+        global $langs;
+        return $langs->trans("NotAvailable");
+    }
+
+    /**
+     * Renvoi version du module numerotation
+     *
+     * @return     string      Valeur
+     */
+    public function getVersion()
+    {
+        global $langs;
+        $langs->load("admin");
+
+        if ($this->version == 'development') return $langs->trans("VersionDevelopment");
+        elseif ($this->version == 'experimental') return $langs->trans("VersionExperimental");
+        elseif ($this->version == 'dolibarr') return DOL_VERSION;
+        elseif ($this->version) return $this->version;
+        else return $langs->trans("NotAvailable");
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

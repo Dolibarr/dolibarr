@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +36,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
  */
 class mailing_contacts1 extends MailingTargets
 {
+<<<<<<< HEAD
 	var $name='ContactCompanies';                     // Identifiant du module mailing
 	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
 	var $desc='Contacts of thirdparties (prospects, customers, suppliers...)';
@@ -51,6 +56,30 @@ class mailing_contacts1 extends MailingTargets
 	{
 		$this->db=$db;
 	}
+=======
+	public $name='ContactCompanies';                     // Identifiant du module mailing
+	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
+	public $desc='Contacts of thirdparties (prospects, customers, suppliers...)';
+	public $require_module=array("societe");               // Module mailing actif si modules require_module actifs
+	public $require_admin=0;                               // Module mailing actif pour user admin ou non
+	public $picto='contact';
+
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+
+    /**
+     *  Constructor
+     *
+     *  @param      DoliDB      $db      Database handler
+     */
+    public function __construct($db)
+    {
+        $this->db=$db;
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
     /**
@@ -61,8 +90,13 @@ class mailing_contacts1 extends MailingTargets
 	 *
 	 *	@return		string[]		Array with SQL requests
 	 */
+<<<<<<< HEAD
 	function getSqlArrayForStats()
 	{
+=======
+    public function getSqlArrayForStats()
+    {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf, $langs;
 
 		$langs->load("commercial");
@@ -77,7 +111,11 @@ class mailing_contacts1 extends MailingTargets
 		$statssql[0].= " AND c.statut = 1";
 
 		return $statssql;
+<<<<<<< HEAD
 	}
+=======
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	/**
@@ -88,8 +126,13 @@ class mailing_contacts1 extends MailingTargets
 	 *  @param		string	$sql		Requete sql de comptage
 	 *	@return		int
 	 */
+<<<<<<< HEAD
 	function getNbOfRecipients($sql='')
 	{
+=======
+    public function getNbOfRecipients($sql = '')
+    {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf;
 
 		$sql  = "SELECT count(distinct(c.email)) as nb";
@@ -102,7 +145,11 @@ class mailing_contacts1 extends MailingTargets
 
 		// The request must return a field called "nb" to be understandable by parent::getNbOfRecipients
 		return parent::getNbOfRecipients($sql);
+<<<<<<< HEAD
 	}
+=======
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	/**
@@ -110,6 +157,7 @@ class mailing_contacts1 extends MailingTargets
 	 *
 	 *   @return     string      Retourne zone select
 	 */
+<<<<<<< HEAD
 	function formFilter()
 	{
 		global $langs;
@@ -117,6 +165,14 @@ class mailing_contacts1 extends MailingTargets
 		$langs->load("commercial");
 		$langs->load("suppliers");
 		$langs->load("categories");
+=======
+    public function formFilter()
+    {
+		global $langs;
+
+		// Load translation files required by the page
+        $langs->loadLangs(array("commercial","companies","suppliers","categories"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$s='';
 
@@ -309,7 +365,11 @@ class mailing_contacts1 extends MailingTargets
 		$s.='</select>';
 
 		return $s;
+<<<<<<< HEAD
 	}
+=======
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	/**
@@ -318,6 +378,7 @@ class mailing_contacts1 extends MailingTargets
      *  @param	int		$id		ID
 	 *  @return string      	Url lien
 	 */
+<<<<<<< HEAD
 	function url($id)
 	{
 		return '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$id.'">'.img_object('',"contact").'</a>';
@@ -340,6 +401,31 @@ class mailing_contacts1 extends MailingTargets
 		$filter_category = GETPOST('filter_category','alpha');
 		$filter_category_customer = GETPOST('filter_category_customer','alpha');
 		$filter_category_supplier = GETPOST('filter_category_supplier','alpha');
+=======
+    public function url($id)
+    {
+        return '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$id.'">'.img_object('', "contact").'</a>';
+    }
+
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Ajoute destinataires dans table des cibles
+	 *
+	 *  @param  int		$mailing_id    	Id of emailing
+	 *  @return int           			<0 si erreur, nb ajout si ok
+	 */
+    public function add_to_target($mailing_id)
+    {
+        // phpcs:enable
+		global $conf, $langs;
+
+		$filter = GETPOST('filter', 'alpha');
+		$filter_jobposition = GETPOST('filter_jobposition', 'alpha');
+		$filter_category = GETPOST('filter_category', 'alpha');
+		$filter_category_customer = GETPOST('filter_category_customer', 'alpha');
+		$filter_category_supplier = GETPOST('filter_category_supplier', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$cibles = array();
 
@@ -445,7 +531,12 @@ class mailing_contacts1 extends MailingTargets
 		}
 
 		return parent::add_to_target($mailing_id, $cibles);
+<<<<<<< HEAD
 	}
 
 }
 
+=======
+    }
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

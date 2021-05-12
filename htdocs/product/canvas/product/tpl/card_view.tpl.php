@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2010-2012 Regis Houssin <regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2010-2018 Regis Houssin <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,9 +31,28 @@ $object=$GLOBALS['object'];
 ?>
 
 <!-- BEGIN PHP TEMPLATE -->
+<<<<<<< HEAD
 <?php echo $langs->trans("Product"); ?>
 
 <?php dol_htmloutput_errors($object->error,$object->errors); ?>
+=======
+<?php
+$head=product_prepare_head($object);
+$titre=$langs->trans("CardProduct".$object->type);
+
+dol_fiche_head($head, 'card', $titre, -1, 'product');
+
+$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
+$object->next_prev_filter=" fk_product_type = ".$object->type;
+
+$shownav = 1;
+if ($user->societe_id && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+
+dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
+?>
+
+<?php dol_htmloutput_errors($object->error, $object->errors); ?>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 <table class="border allwidth">
 
@@ -43,7 +66,11 @@ $object=$GLOBALS['object'];
 <td><?php echo $object->label; ?></td>
 
 <?php if ($object->photos) { ?>
+<<<<<<< HEAD
 <td valign="middle" align="center" width="30%" rowspan="<?php echo $object->nblignes; ?>">
+=======
+<td valign="middle" align="center" width="30%" rowspan="<?php echo $object->nblines; ?>">
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 <?php echo $object->photos; ?>
 </td>
 <?php } ?>
@@ -51,6 +78,7 @@ $object=$GLOBALS['object'];
 </tr>
 
 <tr>
+<<<<<<< HEAD
 <td><?php echo $langs->trans("Status").' ('.$langs->trans("Sell").')'; ?></td>
 <td><?php echo $object->status; ?></td>
 </tr>
@@ -61,6 +89,8 @@ $object=$GLOBALS['object'];
 </tr>
 
 <tr>
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 <td class="tdtop"><?php echo $langs->trans("Description"); ?></td>
 <td colspan="2"><?php echo $object->description; ?></td>
 </tr>

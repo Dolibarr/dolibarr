@@ -1,9 +1,15 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2005-2012 Maxime Kohlhaas      <mko@atm-consulting.fr>
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2005-2012 Maxime Kohlhaas      <mko@atm-consulting.fr>
+ * Copyright (C) 2015-2019 Frédéric France      <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2015      Juanjo Menent	    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -35,6 +41,7 @@ include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
  */
 class box_produits_alerte_stock extends ModeleBoxes
 {
+<<<<<<< HEAD
 	var $boxcode="productsalertstock";
 	var $boximg="object_product";
 	var $boxlabel="BoxProductsAlertStock";
@@ -45,6 +52,22 @@ class box_produits_alerte_stock extends ModeleBoxes
 
 	var $info_box_head = array();
 	var $info_box_contents = array();
+=======
+    public $boxcode="productsalertstock";
+    public $boximg="object_product";
+    public $boxlabel="BoxProductsAlertStock";
+    public $depends = array("produit");
+
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    public $param;
+
+    public $info_box_head = array();
+    public $info_box_contents = array();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	/**
@@ -53,13 +76,21 @@ class box_produits_alerte_stock extends ModeleBoxes
 	 *  @param  DoliDB	$db      	Database handler
 	 *  @param	string	$param		More parameters
 	 */
+<<<<<<< HEAD
 	function __construct($db,$param='')
+=======
+	public function __construct($db, $param = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 	    global $conf,$user;
 
 	    $this->db = $db;
 
+<<<<<<< HEAD
 	    $listofmodulesforexternal=explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL);
+=======
+	    $listofmodulesforexternal=explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    $tmpentry=array('enabled'=>((! empty($conf->product->enabled) || ! empty($conf->service->enabled)) && ! empty($conf->stock->enabled)), 'perms'=>($user->rights->stock->lire), 'module'=>'product|service|stock');
 	    $showmode=isVisibleToUserType(($user->societe_id > 0 ? 1 : 0), $tmpentry, $listofmodulesforexternal);
 	    $this->hidden=($showmode != 1);
@@ -71,7 +102,11 @@ class box_produits_alerte_stock extends ModeleBoxes
 	 *  @param	int		$max        Maximum number of records to load
      *  @return	void
 	 */
+<<<<<<< HEAD
 	function loadBox($max=5)
+=======
+	public function loadBox($max = 5)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $user, $langs, $db, $conf, $hookmanager;
 
@@ -80,12 +115,20 @@ class box_produits_alerte_stock extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$productstatic=new Product($db);
 
+<<<<<<< HEAD
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleProductsAlertStock",$max));
+=======
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleProductsAlertStock", $max));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		if (($user->rights->produit->lire || $user->rights->service->lire) && $user->rights->stock->lire)
 		{
 			$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.seuil_stock_alerte, p.entity,";
+<<<<<<< HEAD
 			$sql.= " SUM(".$db->ifsql("s.reel IS NULL","0","s.reel").") as total_stock";
+=======
+			$sql.= " SUM(".$db->ifsql("s.reel IS NULL", "0", "s.reel").") as total_stock";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as s on p.rowid = s.fk_product";
 			$sql.= ' WHERE p.entity IN ('.getEntity($productstatic->element).')';
@@ -96,11 +139,19 @@ class box_produits_alerte_stock extends ModeleBoxes
     		if (is_object($hookmanager))
     		{
 			    $parameters=array('boxproductalertstocklist'=>1);
+<<<<<<< HEAD
     		    $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
     		    $sql.=$hookmanager->resPrint;
     		}
 		    $sql.= " GROUP BY p.rowid, p.ref, p.label, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.seuil_stock_alerte, p.entity";
 			$sql.= " HAVING SUM(".$db->ifsql("s.reel IS NULL","0","s.reel").") < p.seuil_stock_alerte";
+=======
+    		    $reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
+    		    $sql.=$hookmanager->resPrint;
+    		}
+		    $sql.= " GROUP BY p.rowid, p.ref, p.label, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.seuil_stock_alerte, p.entity";
+			$sql.= " HAVING SUM(".$db->ifsql("s.reel IS NULL", "0", "s.reel").") < p.seuil_stock_alerte";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$sql.= $db->order('p.seuil_stock_alerte', 'DESC');
 			$sql.= $db->plimit($max, 0);
 
@@ -113,6 +164,11 @@ class box_produits_alerte_stock extends ModeleBoxes
                 while ($line < $num) {
 					$objp = $db->fetch_object($result);
 					$datem=$db->jdate($objp->tms);
+<<<<<<< HEAD
+=======
+                    $price = '';
+                    $price_base_type = '';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 					// Multilangs
 					if (! empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
@@ -183,6 +239,7 @@ class box_produits_alerte_stock extends ModeleBoxes
                     );
 
 					$this->info_box_contents[$line][] = array(
+<<<<<<< HEAD
 					    'td' => 'align="center"',
                     'text' => $objp->total_stock . ' / '.$objp->seuil_stock_alerte,
 					'text2'=>img_warning($langs->transnoentitiesnoconv("StockLowerThanLimit", $objp->seuil_stock_alerte)));
@@ -190,12 +247,27 @@ class box_produits_alerte_stock extends ModeleBoxes
 					$this->info_box_contents[$line][] = array(
 					    'td' => 'align="right" width="18"',
                         'text' => '<span class="statusrefsell">'.$productstatic->LibStatut($objp->tosell,3,0).'<span>',
+=======
+					    'td' => 'class="center"',
+                        'text' => $objp->total_stock . ' / '.$objp->seuil_stock_alerte,
+                        'text2'=>img_warning($langs->transnoentitiesnoconv("StockLowerThanLimit", $objp->seuil_stock_alerte)),
+                    );
+
+					$this->info_box_contents[$line][] = array(
+					    'td' => 'class="right" width="18"',
+                        'text' => '<span class="statusrefsell">'.$productstatic->LibStatut($objp->tosell, 3, 0).'<span>',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					    'asis' => 1
 					);
 
                     $this->info_box_contents[$line][] = array(
+<<<<<<< HEAD
                         'td' => 'align="right" width="18"',
                         'text' => '<span class="statusrefbuy">'.$productstatic->LibStatut($objp->tobuy,3,0).'<span>',
+=======
+                        'td' => 'class="right" width="18"',
+                        'text' => '<span class="statusrefbuy">'.$productstatic->LibStatut($objp->tobuy, 3, 0).'<span>',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                         'asis' => 1
                     );
 
@@ -203,7 +275,11 @@ class box_produits_alerte_stock extends ModeleBoxes
                 }
                 if ($num==0)
                     $this->info_box_contents[$line][0] = array(
+<<<<<<< HEAD
                         'td' => 'align="center"',
+=======
+                        'td' => 'class="center"',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                         'text'=>$langs->trans("NoTooLowStockProducts"),
                     );
 
@@ -220,7 +296,11 @@ class box_produits_alerte_stock extends ModeleBoxes
 		}
 		else {
             $this->info_box_contents[0][0] = array(
+<<<<<<< HEAD
                 'td' => 'align="left" class="nohover opacitymedium"',
+=======
+                'td' => 'class="nohover opacitymedium left"',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
 		}
@@ -234,6 +314,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
+<<<<<<< HEAD
     function showBox($head = null, $contents = null, $nooutput=0)
     {
         return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
@@ -241,3 +322,10 @@ class box_produits_alerte_stock extends ModeleBoxes
 
 }
 
+=======
+    public function showBox($head = null, $contents = null, $nooutput = 0)
+    {
+        return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+	}
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

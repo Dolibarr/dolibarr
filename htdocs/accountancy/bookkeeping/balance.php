@@ -1,7 +1,14 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2016       Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2016       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2016-2018  Alexandre Spangaro  <aspangaro@zendsi.com>
+=======
+/* Copyright (C) 2016       Olivier Geffroy         <jeff@jeffinfo.com>
+ * Copyright (C) 2016       Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2016-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +27,11 @@
 
 /**
  *  \file 		htdocs/accountancy/bookkeeping/balance.php
+<<<<<<< HEAD
  *  \ingroup 	Advanced accountancy
+=======
+ *  \ingroup 	Accountancy (Double entries)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *  \brief 		Balance of book keeping
  */
 
@@ -40,6 +51,7 @@ $langs->loadLangs(array("accountancy"));
 $page = GETPOST("page");
 $sortorder = GETPOST("sortorder", 'alpha');
 $sortfield = GETPOST("sortfield", 'alpha');
+<<<<<<< HEAD
 $action = GETPOST('action', 'alpha');
 if (GETPOST("exportcsv",'alpha')) $action = 'export_csv';
 
@@ -49,6 +61,17 @@ $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
 if (empty($page) || $page == -1 || GETPOST('button_search','alpha') || GETPOST('button_removefilter','alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
+=======
+$action = GETPOST('action', 'aZ09');
+if (GETPOST("exportcsv", 'alpha')) $action = 'export_csv';
+
+// Load variable for pagination
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
+if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -130,7 +153,11 @@ if (! empty($search_accountancy_code_end)) {
  * Action
  */
 
+<<<<<<< HEAD
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+=======
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$search_accountancy_code_start = '';
 	$search_accountancy_code_end = '';
@@ -149,6 +176,10 @@ if ($action == 'export_csv')
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 
 	$filename = 'balance';
+<<<<<<< HEAD
+=======
+	$type_export = 'balance';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
 
 	$result = $object->fetchAllBalance($sortorder, $sortfield, $limit, 0, $filter);
@@ -165,6 +196,7 @@ if ($action == 'export_csv')
 		print price($line->credit - $line->debit) . $sep;
 		print "\n";
 	}
+<<<<<<< HEAD
 }
 
 else {
@@ -172,6 +204,20 @@ else {
 
 	llxHeader('', $title_page);
 
+=======
+
+	exit;
+}
+
+
+$title_page = $langs->trans("AccountBalance");
+
+llxHeader('', $title_page);
+
+
+if ($action != 'export_csv')
+{
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	// List
 	$nbtotalofrecords = '';
 	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -204,9 +250,15 @@ else {
 
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= $langs->trans('DateStart') . ': ';
+<<<<<<< HEAD
 	$moreforfilter .= $form->select_date($search_date_start?$search_date_start:-1, 'date_start', 0, 0, 1, '', 1, 0, 1);
 	$moreforfilter .= $langs->trans('DateEnd') . ': ';
 	$moreforfilter .= $form->select_date($search_date_end?$search_date_end:-1, 'date_end', 0, 0, 1, '', 1, 0, 1);
+=======
+	$moreforfilter .= $form->selectDate($search_date_start?$search_date_start:-1, 'date_start', 0, 0, 1, '', 1, 0);
+	$moreforfilter .= $langs->trans('DateEnd') . ': ';
+	$moreforfilter .= $form->selectDate($search_date_end?$search_date_end:-1, 'date_end', 0, 0, 1, '', 1, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$moreforfilter .= '</div>';
 
 	if (! empty($moreforfilter)) {
@@ -228,7 +280,11 @@ else {
 	print $langs->trans('to');
 	print $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', 1, array(), 1, 1, '');
 	print '</td>';
+<<<<<<< HEAD
 	print '<td align="right" class="liste_titre">';
+=======
+	print '<td class="liste_titre right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$searchpicto=$form->showFilterAndCheckAddButtons(0);
 	print $searchpicto;
 	print '</td>';
@@ -238,10 +294,17 @@ else {
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("AccountAccounting", $_SERVER['PHP_SELF'], "t.numero_compte", "", $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("Label", $_SERVER['PHP_SELF'], "t.label_operation", "", $param, "", $sortfield, $sortorder);
+<<<<<<< HEAD
 	print_liste_field_titre("Debit", $_SERVER['PHP_SELF'], "t.debit", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre("Credit", $_SERVER['PHP_SELF'], "t.credit", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre("Balance", $_SERVER["PHP_SELF"], "", $param, "", 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", $param, "", 'width="60" align="center"', $sortfield, $sortorder);
+=======
+	print_liste_field_titre("Debit", $_SERVER['PHP_SELF'], "t.debit", "", $param, 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre("Credit", $_SERVER['PHP_SELF'], "t.credit", "", $param, 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre("Balance", $_SERVER["PHP_SELF"], "", $param, "", 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", $param, "", 'width="60" class="center"', $sortfield, $sortorder);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print "</tr>\n";
 
 	$total_debit = 0;
@@ -258,7 +321,11 @@ else {
 		$description = $object->get_compte_desc($line->numero_compte); // Search description of the account
 		$root_account_description = $object->get_compte_racine($line->numero_compte);
 		if (empty($description)) {
+<<<<<<< HEAD
 			$link = '<a href="../admin/card.php?action=create&compte=' . length_accountg($line->numero_compte) . '">' . img_edit_add() . '</a>';
+=======
+			$link = '<a href="../admin/card.php?action=create&accountingaccount=' . length_accountg($line->numero_compte) . '">' . img_edit_add() . '</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		print '<tr class="oddeven">';
 
@@ -267,7 +334,11 @@ else {
 		{
 			// Affiche un Sous-Total par compte comptable
 			if ($displayed_account != "") {
+<<<<<<< HEAD
 				print '<tr class="liste_total"><td align="right" colspan="2">' . $langs->trans("SubTotal") . ':</td><td class="nowrap" align="right">' . price($sous_total_debit) . '</td><td class="nowrap" align="right">' . price($sous_total_credit) . '</td><td class="nowrap" align="right">' . price($sous_total_credit - $sous_total_debit) . '</td>';
+=======
+				print '<tr class="liste_total"><td class="right" colspan="2">' . $langs->trans("SubTotal") . ':</td><td class="nowrap right">' . price($sous_total_debit) . '</td><td class="nowrap right">' . price($sous_total_credit) . '</td><td class="nowrap right">' . price(price2num($sous_total_credit - $sous_total_debit)) . '</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				print "<td>&nbsp;</td>\n";
 				print '</tr>';
 			}
@@ -286,10 +357,17 @@ else {
 
 		print '<td>' . length_accountg($line->numero_compte) . '</td>';
 		print '<td>' . $description . '</td>';
+<<<<<<< HEAD
 		print '<td align="right">' . price($line->debit) . '</td>';
 		print '<td align="right">' . price($line->credit) . '</td>';
 		print '<td align="right">' . price($line->credit - $line->debit) . '</td>';
 		print '<td align="center">' . $link;
+=======
+		print '<td class="right">' . price($line->debit) . '</td>';
+		print '<td class="right">' . price($line->credit) . '</td>';
+		print '<td class="right">' . price($line->credit - $line->debit) . '</td>';
+		print '<td class="center">' . $link;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</td>';
 		print "</tr>\n";
 
@@ -298,18 +376,33 @@ else {
 		$sous_total_credit += $line->credit;
 	}
 
+<<<<<<< HEAD
 	print '<tr class="liste_total"><td align="right" colspan="2">' . $langs->trans("SubTotal") . ':</td><td class="nowrap" align="right">' . price($sous_total_debit) . '</td><td class="nowrap" align="right">' . price($sous_total_credit) . '</td><td class="nowrap" align="right">' . price($sous_total_credit - $sous_total_debit) . '</td>';
 	print "<td>&nbsp;</td>\n";
 	print '</tr>';
 
 	print '<tr class="liste_total"><td align="right" colspan="2">' . $langs->trans("AccountBalance") . ':</td><td class="nowrap" align="right">' . price($total_debit) . '</td><td class="nowrap" align="right">' . price($total_credit) . '</td><td class="nowrap" align="right">' . price($total_credit - $total_debit) . '</td>';
+=======
+	print '<tr class="liste_total"><td class="right" colspan="2">' . $langs->trans("SubTotal") . ':</td><td class="nowrap right">' . price($sous_total_debit) . '</td><td class="nowrap right">' . price($sous_total_credit) . '</td><td class="nowrap right">' . price(price2num($sous_total_credit - $sous_total_debit)) . '</td>';
+	print "<td>&nbsp;</td>\n";
+	print '</tr>';
+
+	print '<tr class="liste_total"><td class="right" colspan="2">' . $langs->trans("AccountBalance") . ':</td><td class="nowrap right">' . price($total_debit) . '</td><td class="nowrap right">' . price($total_credit) . '</td><td class="nowrap right">' . price(price2num($total_credit - $total_debit)) . '</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print "<td>&nbsp;</td>\n";
 	print '</tr>';
 
 	print "</table>";
 	print '</form>';
+<<<<<<< HEAD
 
 	llxFooter();
 }
 
+=======
+}
+
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

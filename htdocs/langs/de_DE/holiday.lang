@@ -4,17 +4,27 @@ Holidays=Urlaub
 CPTitreMenu=Urlaub
 MenuReportMonth=Monatsaufstellung
 MenuAddCP=Neuer Urlaubsantrag
+<<<<<<< HEAD
 NotActiveModCP=Sie müssen das Urlaubsmodul aktivieren um diese Seite zu sehen.
 AddCP=Erstellen Sie ein Urlaubs-Antrag
+=======
+NotActiveModCP=Sie müssen das Modul Leave aktivieren, um diese Seite anzuzeigen.
+AddCP=Neuer Urlaubsantrag
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DateDebCP=Urlaubsbeginn
 DateFinCP=Urlaubsende
 DateCreateCP=Erstellungsdatum
 DraftCP=Entwurf
+<<<<<<< HEAD
 ToReviewCP=Wartet auf Genehmigung
+=======
+ToReviewCP=wartet auf Genehmigung
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ApprovedCP=genehmigt
 CancelCP=Storniert
 RefuseCP=abgelehnt
 ValidatorCP=Genehmiger
+<<<<<<< HEAD
 ListeCP=Urlaubsliste
 LeaveId=Urlaubs ID
 ReviewedByCP=Wird geprüft von
@@ -27,6 +37,20 @@ SendRequestCP=Erstelle Urlaubs-Antrag
 DelayToRequestCP=Urlaubsanträge müssen mindestens <b>%s Tage</b> im voraus gestellt werden.
 MenuConfCP=Summe der Abwesenheitsanträge
 SoldeCPUser=Urlaubssaldo ist <b>%s</b> Tage.
+=======
+ListeCP=Liste des Urlaubs
+LeaveId=Urlaubs ID
+ReviewedByCP=Wird geprüft von
+UserForApprovalID=Benutzer für die Genehmigungs-ID
+UserForApprovalFirstname=Vorname des Genehmigungsbenutzers
+UserForApprovalLastname=Nachname des Genehmigungsbenutzers
+UserForApprovalLogin=Login des Genehmigers
+DescCP=Beschreibung
+SendRequestCP=Entwurf erstellen
+DelayToRequestCP=Urlaubsanträge müssen mindestens <b>%s Tage</b> im voraus gestellt werden.
+MenuConfCP=Verwaltung Urlaubsanspruch
+SoldeCPUser=Ihr aktueller Urlaubssaldo beträgt <b>%s</b> Tag(e).
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorEndDateCP=Sie müssen ein Urlaubsende-Datum wählen, dass nach dem Urlaubsbeginn-Datum liegt.
 ErrorSQLCreateCP=Ein SQL Fehler trat auf bei der Erstellung von:
 ErrorIDFicheCP=Fehler aufgetreten: der Urlaubsantrag existiert nicht.
@@ -38,6 +62,7 @@ TitreRequestCP=Urlaubsantrag
 TypeOfLeaveId=Art der Urlaubs-ID
 TypeOfLeaveCode=Art des Urlaubscodes
 TypeOfLeaveLabel=Art des Urlaubslabels
+<<<<<<< HEAD
 NbUseDaysCP=Anzahl von konsumierten Tagen des Urlaubs
 NbUseDaysCPShort=Days consumed
 NbUseDaysCPShortInMonth=Days consumed in month
@@ -45,10 +70,20 @@ DateStartInMonth=Start date in month
 DateEndInMonth=End date in month
 EditCP=Bearbeiten
 DeleteCP=Lösche Gruppe
+=======
+NbUseDaysCP=Anzahl genommene Urlaubstage
+NbUseDaysCPShort=genommene Tage
+NbUseDaysCPShortInMonth=Urlaubstage im Monat
+DateStartInMonth=Startdatum im Monat
+DateEndInMonth=Enddatum im Monat
+EditCP=Bearbeiten
+DeleteCP=Urlaubsantrag löschen
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActionRefuseCP=Ablehnen
 ActionCancelCP=Stornieren
 StatutCP=Status
 TitleDeleteCP=Urlaubsantrag löschen
+<<<<<<< HEAD
 ConfirmDeleteCP=Wollen Sie diesen Urlaubsantrag wirklich löschen?
 ErrorCantDeleteCP=Fehler: Sie haben nicht die Berechtigung, diesen Urlaubsantrag zu löschen.
 CantCreateCP=Sie haben nicht die Berechtigung Urlaub zu beantragen.
@@ -61,6 +96,20 @@ ConfirmValidCP=Möchten Sie diesen Urlaubsantrag wirklich genehmigen?
 DateValidCP=Datum genehmigt
 TitleToValidCP=Urlaubsantrag senden
 ConfirmToValidCP=Möchten Sie diesen Urlaubsantrag wirklich senden?
+=======
+ConfirmDeleteCP=Möchten Sie diesen Urlaubsantrag wirklich löschen?
+ErrorCantDeleteCP=Fehler: Sie haben nicht die Berechtigung, diesen Urlaubsantrag zu löschen.
+CantCreateCP=Sie haben nicht die Berechtigung Urlaub zu beantragen.
+InvalidValidatorCP=Bitte wählen Sie einen Vorgesetzten, der Ihren Urlaubsantrag prüft.
+NoDateDebut=Bitte wählen Sie ein Datum für den gewünschten Beginn Ihres Urlaubs
+NoDateFin=Bitte wählen Sie ein Datum für das gewünschte Ende Ihres Urlaubs
+ErrorDureeCP=Ihr Urlaubsantrag enthält keine Werktage.
+TitleValidCP=Urlaubsantrag genehmigen
+ConfirmValidCP=Möchten Sie diesen Urlaubsantrag wirklich genehmigen?
+DateValidCP=Datum der Genehmigung
+TitleToValidCP=Urlaub einreichen
+ConfirmToValidCP=Möchten Sie diesen Urlaub wirklich einreichen?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TitleRefuseCP=Urlaubsantrag ablehnen
 ConfirmRefuseCP=Möchten Sie diesen Urlaubsantrag wirklich ablehnen?
 NoMotifRefuseCP=Sie müssen einen Grund für die Ablehnung angeben.
@@ -73,7 +122,11 @@ DefineEventUserCP=Sonderurlaub für einen Anwender zuweisen
 addEventToUserCP=Urlaub zuweisen
 NotTheAssignedApprover=Sie sind nicht der zugeordnete Genehmiger
 MotifCP=Grund
+<<<<<<< HEAD
 UserCP=Benutzer
+=======
+UserCP=Mitarbeiter
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorAddEventToUserCP=Ein Fehler ist beim Erstellen des Sonderurlaubs aufgetreten.
 AddEventToUserOkCP=Das Hinzufügen des Sonderurlaubs wurde abgeschlossen.
 MenuLogCP=Zeige Änderungsprotokoll
@@ -82,7 +135,11 @@ ActionByCP=Ausgeführt von
 UserUpdateCP=Für den Benutzer
 PrevSoldeCP=Vorherige Übersicht
 NewSoldeCP=Neuer Saldo
+<<<<<<< HEAD
 alreadyCPexist=Ein Urlaubsantrag wurde für diese Periode bereits erstellt.
+=======
+alreadyCPexist=Für den gewählten Zeitraum wurde bereits ein Urlaubsantrag erstellt.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 FirstDayOfHoliday=Erster Tag des Urlaubs
 LastDayOfHoliday=Letzter Tag des Urlaubs
 BoxTitleLastLeaveRequests=%s zuletzt bearbeitete Urlaubsanträge
@@ -90,28 +147,46 @@ HolidaysMonthlyUpdate=Monatliches Update
 ManualUpdate=Manuelles Update
 HolidaysCancelation=Urlaubsantrag stornieren
 EmployeeLastname=Mitarbeiter Nachname
+<<<<<<< HEAD
 EmployeeFirstname=Vorname des Mitarbeiters
+=======
+EmployeeFirstname=Mitarbeiter Vorname
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TypeWasDisabledOrRemoved=Abreise-Art (Nr %s) war deaktiviert oder entfernt
 LastHolidays=%sneuste Ferienanträge
 AllHolidays=Allen Ferienanträge
 HalfDay=Halber Tag
 NotTheAssignedApprover=Sie sind nicht der zugeordnete Genehmiger
 LEAVE_PAID=bezahlter Urlaub
+<<<<<<< HEAD
 LEAVE_SICK=Krankheitstag
 LEAVE_OTHER=Other leave
 LEAVE_PAID_FR=bezahlter Urlaub
 ## Configuration du Module ##
 LastUpdateCP=Letzte automatische Aktualisierung der Urlaubstage
 MonthOfLastMonthlyUpdate=Monat der letzten Aktualisierung der Urlaubstage
+=======
+LEAVE_SICK=Krankheit
+LEAVE_OTHER=Andere Gründe
+LEAVE_PAID_FR=bezahlter Urlaub
+## Configuration du Module ##
+LastUpdateCP=Letzte automatische Aktualisierung der Urlaubszuordnung
+MonthOfLastMonthlyUpdate=Monat der letzten automatischen Aktualisierung der Urlaubszuordnung
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 UpdateConfCPOK=Erfolgreich bearbeitet.
 Module27130Name= Verwaltung von Urlaubsanträgen
 Module27130Desc= Verwaltung von Urlaubsanträgen
 ErrorMailNotSend=Ein Fehler ist beim E-Mail-Senden aufgetreten:
+<<<<<<< HEAD
 NoticePeriod=Kündigungsfrist
+=======
+NoticePeriod=Einreichefrist
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 #Messages
 HolidaysToValidate=Genehmige Urlaubsanträge
 HolidaysToValidateBody=Es folgt ein Urlaubsantrag zur Freigabe
 HolidaysToValidateDelay=Dieser Urlaub wird in weniger als %s Tagen stattfinden.
+<<<<<<< HEAD
 HolidaysToValidateAlertSolde=Der Ersteller dieses Urlaubsantrags besitzt nicht mehr genügend verfügbare Tage.
 HolidaysValidated=Genehmigte Urlaubsanträge
 HolidaysValidatedBody=Ihr Antrag auf Urlaub von %s bis %s wurde bewilligt.
@@ -122,3 +197,21 @@ HolidaysCanceledBody=Ihr Urlaubsantrag von %s bis %s wurde storniert.
 FollowedByACounter=1: Diese Art von Antrag muss mit einem Zähler versehen werden. Der Zähler wird manuell oder automatisch erhöht und verringert, wenn der Urlaubsantrag geprüft wurde.<br>0: nicht mit einem Zähler versehen
 NoLeaveWithCounterDefined=Es gibt keine definierten Antragsarten , die mit einem Zähler versehen werden müssen.
 GoIntoDictionaryHolidayTypes=Öffnen Sie das Menü <strong>Start - Einstellungen - Stammdaten - Arten des Urlaubs </strong> um die verschiedene Urlaubsarten zu konfigurieren.
+=======
+HolidaysToValidateAlertSolde=Dem Benutzer, der diese Urlaubsanfrage gestellt hat, stehen nicht genügend Tage zur Verfügung.
+HolidaysValidated=Genehmigte Urlaubsanträge
+HolidaysValidatedBody=Ihr Antrag auf Urlaub von %s bis %s wurde bewilligt.
+HolidaysRefused=Anfrage abgelehnt
+HolidaysRefusedBody=Ihr Urlaubsantrag von %s bis %s wurde aus folgendem Grund abgelehnt
+HolidaysCanceled=stornierter Urlaubsantrag
+HolidaysCanceledBody=Ihr Urlaubsantrag von %s bis %s wurde storniert.
+FollowedByACounter=0 = Zähler nicht verwenden<br>1 = Zähler verwenden (diese Art von Urlaub wird mit einem Zähler für den mitarbeiterbezogenen Urlaubsanspruch versehen. Der Zähler wird manuell oder automatisch erhöht oder verringert, wenn der Urlaubsantrag genehmigt wurde.)
+NoLeaveWithCounterDefined=Es sind keine Urlaubsarten definiert, die durch einen Zähler überwacht sind.
+GoIntoDictionaryHolidayTypes=Öffnen Sie das Menü <strong>Start - Einstellungen - Stammdaten - Urlaubsarten </strong> um die verschiedenen Urlaubsarten zu konfigurieren.
+HolidaySetup=Einrichtung des Moduls Holiday
+HolidaysNumberingModules=Hinterlegen Sie die Nummerierung der Anforderungsmodelle
+TemplatePDFHolidays=Vorlage für Urlaubsanträge PDF
+FreeLegalTextOnHolidays=Freitext als PDF
+WatermarkOnDraftHolidayCards=Wasserzeichen auf Urlaubsantragsentwurf (leerlassen wenn keines benötigt wird)
+HolidaysToApprove=Feiertage zu genehmigen
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

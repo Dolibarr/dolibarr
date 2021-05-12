@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2011	Regis Houssin	<regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2011	Regis Houssin	<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,12 +47,20 @@ function expensereport_prepare_head($object)
 	// Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
+<<<<<<< HEAD
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'expensereport');
+=======
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'expensereport');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = $conf->expensereport->dir_output . "/" . dol_sanitizeFileName($object->ref);
+<<<<<<< HEAD
 	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
+=======
+	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/expensereport/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
@@ -67,13 +79,21 @@ function expensereport_prepare_head($object)
 	    $head[$h][2] = 'note';
 	    $h++;
 	}
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$head[$h][0] = DOL_URL_ROOT . '/expensereport/info.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;
 
+<<<<<<< HEAD
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'expensereport','remove');
+=======
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'expensereport', 'remove');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	return $head;
 }
@@ -81,11 +101,20 @@ function expensereport_prepare_head($object)
 /**
  * Returns an array with the tabs for the "Expense report payment" section
  * It loads tabs from modules looking for the entity payment
+<<<<<<< HEAD
  * 
  * @param	Paiement	$object		Current payment object
  * @return	array					Tabs for the payment section
  */
 function payment_expensereport_prepare_head(PaymentExpenseReport $object) {
+=======
+ *
+ * @param	Paiement	$object		Current payment object
+ * @return	array					Tabs for the payment section
+ */
+function payment_expensereport_prepare_head(PaymentExpenseReport $object)
+{
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	global $langs, $conf;
 
@@ -101,14 +130,22 @@ function payment_expensereport_prepare_head(PaymentExpenseReport $object) {
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
+<<<<<<< HEAD
     complete_head_from_modules($conf,$langs,$object,$head,$h,'payment_expensereport');
+=======
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'payment_expensereport');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	$head[$h][0] = DOL_URL_ROOT.'/expensereport/payment/info.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;
 
+<<<<<<< HEAD
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'payment_expensereport', 'remove');
+=======
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'payment_expensereport', 'remove');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	return $head;
 }
@@ -139,7 +176,11 @@ function expensereport_admin_prepare_head()
 		$head[$h][2] = 'expenseik';
 		$h++;
 	}
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if (!empty($conf->global->MAIN_USE_EXPENSE_RULE))
 	{
 		$head[$h][0] = DOL_URL_ROOT."/admin/expensereport_rules.php";
@@ -147,12 +188,20 @@ function expensereport_admin_prepare_head()
 		$head[$h][2] = 'expenserules';
 		$h++;
 	}
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+<<<<<<< HEAD
 	complete_head_from_modules($conf,$langs,null,$head,$h,'expensereport_admin');
+=======
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'expensereport_admin');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/expensereport_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
@@ -166,7 +215,13 @@ function expensereport_admin_prepare_head()
     $h++;
 	*/
 
+<<<<<<< HEAD
 	complete_head_from_modules($conf,$langs,null,$head,$h,'expensereport_admin','remove');
 
 	return $head;
+=======
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'expensereport_admin', 'remove');
+
+    return $head;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

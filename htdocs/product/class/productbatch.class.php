@@ -22,7 +22,11 @@
  *  \brief      Manage record and specific data for batch number management
  */
 
+<<<<<<< HEAD
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
+=======
+require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 /**
@@ -30,6 +34,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
  */
 class Productbatch extends CommonObject
 {
+<<<<<<< HEAD
 	var $element='productbatch';			//!< Id that identify managed objects
 	private static $_table_element='product_batch';		//!< Name of table without prefix where object is stored
 
@@ -40,6 +45,26 @@ class Productbatch extends CommonObject
 	var $batch='';
 	var $qty;
 	public $warehouseid;
+=======
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='productbatch';
+
+	private static $_table_element='product_batch';		//!< Name of table without prefix where object is stored
+
+	public $tms='';
+	public $fk_product_stock;
+	public $sellby='';
+	public $eatby='';
+	public $batch='';
+	public $qty;
+	public $warehouseid;
+
+	/**
+     * @var int ID
+     */
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	public $fk_product;
 
 
@@ -49,10 +74,16 @@ class Productbatch extends CommonObject
      *
      *  @param	DoliDb		$db      Database handler
      */
+<<<<<<< HEAD
     function __construct($db)
     {
         $this->db = $db;
         return 1;
+=======
+    public function __construct($db)
+    {
+        $this->db = $db;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
 
@@ -63,13 +94,21 @@ class Productbatch extends CommonObject
      *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
      *  @return int      		   	 <0 if KO, Id of created object if OK
      */
+<<<<<<< HEAD
     function create($user, $notrigger=0)
+=======
+    public function create($user, $notrigger = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
 		global $conf, $langs;
 		$error=0;
 
 		// Clean parameters
+<<<<<<< HEAD
 		$this->clean_param();
+=======
+		$this->cleanParam();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -135,7 +174,11 @@ class Productbatch extends CommonObject
      *  @param	int		$id		Id object
      *  @return int          	<0 if KO, >0 if OK
      */
+<<<<<<< HEAD
     function fetch($id)
+=======
+    public function fetch($id)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
 		global $langs;
 		$sql = "SELECT";
@@ -194,13 +237,21 @@ class Productbatch extends CommonObject
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
+<<<<<<< HEAD
     function update($user=null, $notrigger=0)
+=======
+    public function update($user = null, $notrigger = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
     	global $conf, $langs;
 		$error=0;
 
 		// Clean parameters
+<<<<<<< HEAD
 		$this->clean_param();
+=======
+		$this->cleanParam();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// TODO Check qty is ok for stock move. Negative may not be allowed.
 		if ($this->qty < 0)
@@ -255,6 +306,7 @@ class Productbatch extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
+<<<<<<< HEAD
 	}
 
  	/**
@@ -266,6 +318,19 @@ class Productbatch extends CommonObject
 	 */
 	function delete($user, $notrigger=0)
 	{
+=======
+    }
+
+    /**
+     *  Delete object in database
+     *
+     *  @param  User	$user        User that deletes
+     *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
+     *  @return	int					 <0 if KO, >0 if OK
+     */
+    public function delete($user, $notrigger = 0)
+    {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf, $langs;
 		$error=0;
 
@@ -320,6 +385,7 @@ class Productbatch extends CommonObject
 	/**
 	 *	Load an object from its id and create a new one in database
 	 *
+<<<<<<< HEAD
 	 *	@param	int		$fromid     Id of object to clone
 	 * 	@return	int					New id of clone
 	 */
@@ -327,12 +393,23 @@ class Productbatch extends CommonObject
 	{
 		global $user,$langs;
 
+=======
+	 *  @param	User	$user		User making the clone
+	 *	@param	int		$fromid     Id of object to clone
+	 * 	@return	int					New id of clone
+	 */
+	public function createFromClone(User $user, $fromid)
+	{
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$error=0;
 
 		$object=new Productbatch($this->db);
 
+<<<<<<< HEAD
 		$object->context['createfromclone']='createfromclone';
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  		$this->db->begin();
 
 		// Load source object
@@ -344,19 +421,30 @@ class Productbatch extends CommonObject
 		// ...
 
 		// Create clone
+<<<<<<< HEAD
+=======
+		$object->context['createfromclone']='createfromclone';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$result=$object->create($user);
 
 		// Other options
 		if ($result < 0)
 		{
 			$this->error=$object->error;
+<<<<<<< HEAD
+=======
+			$this->errors=array_merge($this->errors, $object->errors);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$error++;
 		}
 
 		if (! $error)
 		{
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		unset($object->context['createfromclone']);
@@ -381,7 +469,11 @@ class Productbatch extends CommonObject
 	 *
 	 *	@return	void
 	 */
+<<<<<<< HEAD
 	function initAsSpecimen()
+=======
+	public function initAsSpecimen()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$this->id=0;
 
@@ -391,16 +483,25 @@ class Productbatch extends CommonObject
 		$this->eatby='';
 		$this->batch='';
 		$this->import_key='';
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	/**
 	 *  Clean fields (triming)
 	 *
+<<<<<<< HEAD
 	 *	@return	void
 	 */
 	private function clean_param()
+=======
+	 *  @return	void
+	 */
+	private function cleanParam()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		if (isset($this->fk_product_stock)) $this->fk_product_stock=(int) trim($this->fk_product_stock);
 		if (isset($this->batch)) $this->batch=trim($this->batch);
@@ -412,6 +513,7 @@ class Productbatch extends CommonObject
      *  Find first detail record that match eather eat-by or sell-by or batch within given warehouse
      *
      *  @param	int			$fk_product_stock   id product_stock for objet
+<<<<<<< HEAD
      *  @param	date		$eatby    			eat-by date for object - deprecated: a search must be done on batch number
      *  @param	date		$sellby   			sell-by date for object - deprecated: a search must be done on batch number
      *  @param	string		$batch_number   	batch number for object
@@ -420,6 +522,17 @@ class Productbatch extends CommonObject
     function find($fk_product_stock=0, $eatby='',$sellby='',$batch_number='')
     {
     	global $langs;
+=======
+     *  @param	integer		$eatby    			eat-by date for object - deprecated: a search must be done on batch number
+     *  @param	integer		$sellby   			sell-by date for object - deprecated: a search must be done on batch number
+     *  @param	string		$batch_number   	batch number for object
+     *  @return int          					<0 if KO, >0 if OK
+     */
+    public function find($fk_product_stock = 0, $eatby = '', $sellby = '', $batch_number = '')
+    {
+    	global $langs;
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$where = array();
 		$sql = "SELECT";
 		$sql.= " t.rowid,";
@@ -433,12 +546,21 @@ class Productbatch extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX.self::$_table_element." as t";
 		$sql.= " WHERE fk_product_stock=".$fk_product_stock;
 
+<<<<<<< HEAD
 		if (! empty($eatby)) array_push($where," eatby = '".$this->db->idate($eatby)."'");            // deprecated
 		if (! empty($sellby)) array_push($where," sellby = '".$this->db->idate($sellby)."'");         // deprecated
 
 		if (! empty($batch_number)) $sql.= " AND batch = '".$this->db->escape($batch_number)."'";
 
 		if (! empty($where)) $sql.= " AND (".implode(" OR ",$where).")";
+=======
+		if (! empty($eatby)) array_push($where, " eatby = '".$this->db->idate($eatby)."'");            // deprecated
+		if (! empty($sellby)) array_push($where, " sellby = '".$this->db->idate($sellby)."'");         // deprecated
+
+		if (! empty($batch_number)) $sql.= " AND batch = '".$this->db->escape($batch_number)."'";
+
+		if (! empty($where)) $sql.= " AND (".implode(" OR ", $where).")";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -477,7 +599,11 @@ class Productbatch extends CommonObject
      *  @param  int         $fk_product         If set to a product id, get eatby and sellby from table llx_product_lot
      *  @return array         					<0 if KO, array of batch
      */
+<<<<<<< HEAD
     public static function findAll($db, $fk_product_stock, $with_qty=0, $fk_product=0)
+=======
+    public static function findAll($db, $fk_product_stock, $with_qty = 0, $fk_product = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
     	global $langs;
 		$ret = array();
@@ -507,10 +633,16 @@ class Productbatch extends CommonObject
 
 		dol_syslog("productbatch::findAll", LOG_DEBUG);
 		$resql=$db->query($sql);
+<<<<<<< HEAD
 		if ($resql)
         {
 			$num = $db->num_rows($resql);
 			$i=0;
+=======
+        if ($resql) {
+            $num = $db->num_rows($resql);
+            $i=0;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             while ($i < $num)
             {
                 $obj = $db->fetch_object($resql);
@@ -535,9 +667,16 @@ class Productbatch extends CommonObject
         }
         else
         {
+<<<<<<< HEAD
       	    $error="Error ".$db->lasterror();
             return -1;
         }
     }
 
+=======
+            $error="Error ".$db->lasterror();
+            return -1;
+        }
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

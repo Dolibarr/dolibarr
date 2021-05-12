@@ -1,7 +1,12 @@
 <?php
 /* Copyright (C) 2013-2014 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
+<<<<<<< HEAD
  * Copyright (C) 2015-2016 Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
+=======
+ * Copyright (C) 2015-2016 Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,11 +28,19 @@
  *	\brief      Page to create a new survey
  */
 
+<<<<<<< HEAD
 require_once('../../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
 require_once(DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php");
+=======
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php";
+require_once DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Security check
 if (!$user->rights->opensurvey->write) accessforbidden();
@@ -78,7 +91,11 @@ if (GETPOST("creation_sondage_date") || GETPOST("creation_sondage_autre"))
 	}
 
 	$testdate = false;
+<<<<<<< HEAD
 	$champdatefin = dol_mktime(0,0,0,GETPOST('champdatefinmonth'),GETPOST('champdatefinday'),GETPOST('champdatefinyear'));
+=======
+	$champdatefin = dol_mktime(0, 0, 0, GETPOST('champdatefinmonth'), GETPOST('champdatefinday'), GETPOST('champdatefinyear'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	if ($champdatefin && ($champdatefin > 0))	// A date was provided
 	{
@@ -86,12 +103,20 @@ if (GETPOST("creation_sondage_date") || GETPOST("creation_sondage_autre"))
 		if ($champdatefin >= dol_now())
 		{
 			$testdate = true;
+<<<<<<< HEAD
 			$_SESSION['champdatefin'] = dol_print_date($champdatefin,'dayrfc');
+=======
+			$_SESSION['champdatefin'] = dol_print_date($champdatefin, 'dayrfc');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		else
 		{
 			$testdate = true;
+<<<<<<< HEAD
 			$_SESSION['champdatefin'] = dol_print_date($champdatefin,'dayrfc');
+=======
+			$_SESSION['champdatefin'] = dol_print_date($champdatefin, 'dayrfc');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			//$testdate = false;
 			//$_SESSION['champdatefin'] = dol_print_date($champdatefin,'dayrfc');
 			setEventMessages('ExpireDate', null, 'warnings');
@@ -99,7 +124,11 @@ if (GETPOST("creation_sondage_date") || GETPOST("creation_sondage_autre"))
 	}
 
 	if (! $testdate) {
+<<<<<<< HEAD
 		setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("ExpireDate")), null, 'errors');
+=======
+		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("ExpireDate")), null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	if ($titre && $testdate)
@@ -149,14 +178,23 @@ if (! $_SESSION["titre"] && (GETPOST('creation_sondage_date') || GETPOST('creati
 
 print '</tr>'."\n";
 print '<tr><td>'. $langs->trans("Description") .'</td><td>';
+<<<<<<< HEAD
 $doleditor=new DolEditor('commentaires', $_SESSION["commentaires"],'',120,'dolibarr_notes','In',1,1,1,ROWS_7,'90%');
 $doleditor->Create(0,'');
+=======
+$doleditor=new DolEditor('commentaires', $_SESSION["commentaires"], '', 120, 'dolibarr_notes', 'In', 1, 1, 1, ROWS_7, '90%');
+$doleditor->Create(0, '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</td>'."\n";
 print '</tr>'."\n";
 
 print '<tr><td class="fieldrequired">'.  $langs->trans("ExpireDate")  .'</td><td>';
 
+<<<<<<< HEAD
 print $form->select_date($champdatefin?$champdatefin:-1,'champdatefin','','','',"add",1,0,1);
+=======
+print $form->selectDate($champdatefin?$champdatefin:-1, 'champdatefin', '', '', '', "add", 1, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print '</tr>'."\n";
 print '</table>'."\n";
@@ -193,7 +231,11 @@ if (GETPOST('choix_sondage'))
 }
 else
 {
+<<<<<<< HEAD
 	// affichage des boutons pour choisir sondage date ou autre
+=======
+	// Show image to selecte between date survey or other survey
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '<br><table>'."\n";
 	print '<tr><td>'. $langs->trans("CreateSurveyDate") .'</td><td></td> '."\n";
 	print '<td><input type="image" name="creation_sondage_date" value="'.$langs->trans('CreateSurveyDate').'" src="../img/calendar-32.png"></td></tr>'."\n";
@@ -204,6 +246,11 @@ else
 print '<br><br><br>'."\n";
 print '</form>'."\n";
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

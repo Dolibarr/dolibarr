@@ -14,7 +14,11 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+<<<<<<< HEAD
  * 
+=======
+ *
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Page to set how to autocalculate price for each level when option
  * PRODUCT_MULTIPRICE is on.
  */
@@ -92,7 +96,10 @@ if ($_POST) {
 				setEventMessages($langs->trans('ErrorSavingChanges'), null, 'errors');
 			}
 		}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
@@ -114,7 +121,11 @@ while ($result = $db->fetch_object($query)) {
 $title = $langs->trans('ProductServiceSetup');
 $tab = $langs->trans("ProductsAndServices");
 
+<<<<<<< HEAD
 if (empty($conf->produit->enabled)) {
+=======
+if (empty($conf->product->enabled)) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$title = $langs->trans('ServiceSetup');
 	$tab = $langs->trans('Services');
 } elseif (empty($conf->service->enabled)) {
@@ -125,7 +136,11 @@ if (empty($conf->produit->enabled)) {
 llxHeader('', $langs->trans('MultipriceRules'));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+<<<<<<< HEAD
 print load_fiche_titre($title,$linkback,'title_setup');
+=======
+print load_fiche_titre($title, $linkback, 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 
@@ -145,7 +160,11 @@ for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
 	$price_options[$i] = $langs->trans('SellingPrice').' '.$i;
 }
 
+<<<<<<< HEAD
 $genPriceOptions = function($level) use ($price_options) {
+=======
+$genPriceOptions = function ($level) use ($price_options) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	$return = array();
 
@@ -184,22 +203,38 @@ $genPriceOptions = function($level) use ($price_options) {
 				</td>
 				<td style="text-align: center">
 					<input type="text" style="text-align: right" name="var_min_percent[<?php echo $i ?>]" size="5" value="<?php echo price(isset($rules[$i]) ? $rules[$i]->var_min_percent : 0, 2) ?>">
+<<<<<<< HEAD
 					<?php echo $langs->trans('PercentDiscountOver', $langs->trans('SellingPrice').' '.$i) ?>
+=======
+					<?php echo $langs->trans('PercentDiscountOver', $langs->transnoentitiesnoconv('SellingPrice').' '.$i) ?>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				</td>
 			</tr>
 		<?php endfor ?>
 	</table>
 
+<<<<<<< HEAD
 <?php 
+=======
+<?php
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 dol_fiche_end();
 
 print '<div style="text-align: center">
 		<input type="submit" value="'.$langs->trans('Save').'" class="button">
 	</div>';
+<<<<<<< HEAD
 	
 print '</form>';
 
 llxFooter();
 
+=======
+
+print '</form>';
+
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

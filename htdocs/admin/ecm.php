@@ -34,7 +34,11 @@ if (! $user->admin) accessforbidden();
 /*
  * Action
  */
+<<<<<<< HEAD
 if (preg_match('/set_([a-z0-9_\-]+)/i',$action,$reg))
+=======
+if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
     $code=$reg[1];
     if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0)
@@ -48,7 +52,11 @@ if (preg_match('/set_([a-z0-9_\-]+)/i',$action,$reg))
     }
 }
 
+<<<<<<< HEAD
 if (preg_match('/del_([a-z0-9_\-]+)/i',$action,$reg))
+=======
+if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
     $code=$reg[1];
     if (dolibarr_del_const($db, $code, $conf->entity) > 0)
@@ -68,17 +76,29 @@ if (preg_match('/del_([a-z0-9_\-]+)/i',$action,$reg))
  */
 
 $help_url='';
+<<<<<<< HEAD
 llxHeader('',$langs->trans("ECMSetup"),$help_url);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ECMSetup"),$linkback,'title_setup');
+=======
+llxHeader('', $langs->trans("ECMSetup"), $help_url);
+
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+print load_fiche_titre($langs->trans("ECMSetup"), $linkback, 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '<br>';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Description").'</td>';
+<<<<<<< HEAD
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
+=======
+print '<td class="center" width="20">&nbsp;</td>';
+print '<td class="center" width="100">'.$langs->trans("Value").'</td>'."\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</tr>';
 
 $form = new Form($db);
@@ -87,9 +107,15 @@ $form = new Form($db);
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ECMAutoTree").'</td>';
+<<<<<<< HEAD
 print '<td align="center" width="20">&nbsp;</td>';
 
 print '<td align="center" width="100">';
+=======
+print '<td class="center" width="20">&nbsp;</td>';
+
+print '<td class="center" width="100">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($conf->use_javascript_ajax)
 {
 	print ajax_constantonoff('ECM_AUTO_TREE_ENABLED');
@@ -98,16 +124,28 @@ else
 {
 	if (empty($conf->global->ECM_AUTO_TREE_ENABLED))
 	{
+<<<<<<< HEAD
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_ECM_AUTO_TREE_ENABLED">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 	}
 	else if(! empty($conf->global->USER_MAIL_REQUIRED))
 	{
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_ECM_AUTO_TREE_ENABLED">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+=======
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_ECM_AUTO_TREE_ENABLED">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+	}
+	elseif(! empty($conf->global->USER_MAIL_REQUIRED))
+	{
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_ECM_AUTO_TREE_ENABLED">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 }
 print '</td></tr>';
 
 print '</table>';
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

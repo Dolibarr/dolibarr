@@ -5,6 +5,7 @@ SelectThirdParty=Selecteer een derde
 ConfirmDeleteCompany=Weet u zeker dat u dit bedrijf en alle overgenomen informatie wilt verwijderen?
 DeleteContact=Contactpersoon verwijderen
 ConfirmDeleteContact=Weet u zeker dat u deze contactpersoon en alle overgenomen informatie wilt verwijderen?
+<<<<<<< HEAD
 MenuNewThirdParty=Nieuwe Klant
 MenuNewCustomer=Nieuwe afnemer
 MenuNewProspect=Nieuw prospect
@@ -13,6 +14,16 @@ MenuNewPrivateIndividual=Nieuwe particulier
 NewCompany=New company (prospect, customer, vendor)
 NewThirdParty=New third party (prospect, customer, vendor)
 CreateDolibarrThirdPartySupplier=Create a third party (vendor)
+=======
+MenuNewThirdParty=Nieuwe relatie
+MenuNewCustomer=Nieuwe klant
+MenuNewProspect=Nieuwe prospect
+MenuNewSupplier=Nieuwe leverancier
+MenuNewPrivateIndividual=Nieuwe particulier
+NewCompany=Nieuwe onderneming (prospect, klant, leverancier)
+NewThirdParty=Nieuwe derde partij (prospect, klant, leverancier)
+CreateDolibarrThirdPartySupplier=Aanmaken relatie (leverancier)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CreateThirdPartyOnly=Nieuwe relatie
 CreateThirdPartyAndContact=Creëer nieuwe klant + nieuw contact
 ProspectionArea=Prospectenoverzicht
@@ -20,23 +31,38 @@ IdThirdParty=ID Klant
 IdCompany=ID bedrijf
 IdContact=ID contactpersoon
 Contacts=Contactpersonen
+<<<<<<< HEAD
 ThirdPartyContacts=Contacten van Klant
 ThirdPartyContact=Contactpersoon van Klant
+=======
+ThirdPartyContacts=Third-party contacts
+ThirdPartyContact=Third-party contact/address
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Company=Bedrijf
 CompanyName=Bedrijfsnaam
 AliasNames=Alias naam (commercieel, handelsmerk, ...)
 AliasNameShort=Alias naam
 Companies=Bedrijven
+<<<<<<< HEAD
 CountryIsInEEC=Lidstaat van de Europese Unie
 ThirdPartyName=Naam van Klant
 ThirdPartyEmail=Third party email
 ThirdParty=Klant
 ThirdParties=Klant
+=======
+CountryIsInEEC=Land is lid van de EEC
+PriceFormatInCurrentLanguage=Price display format in the current language and currency
+ThirdPartyName=Third-party name
+ThirdPartyEmail=Third-party email
+ThirdParty=Third-party
+ThirdParties=Third-parties
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ThirdPartyProspects=Prospecten
 ThirdPartyProspectsStats=Prospecten
 ThirdPartyCustomers=Afnemers
 ThirdPartyCustomersStats=Klanten
 ThirdPartyCustomersWithIdProf12=Afnemers met %s of %s
+<<<<<<< HEAD
 ThirdPartySuppliers=Vendors
 ThirdPartyType=Type Klant
 Individual=Particulier
@@ -44,6 +70,15 @@ ToCreateContactWithSameName=Will create automatically a contact/address with sam
 ParentCompany=Moedermaatschappij
 Subsidiaries=Dochterondernemingen
 ReportByMonth=Report by month
+=======
+ThirdPartySuppliers=Leveranciers
+ThirdPartyType=Third-party type
+Individual=Particulier
+ToCreateContactWithSameName=Will automatically create a contact/address with same information as the third party under the third party. In most cases, even if your third party is a physical person, creating a third party alone is enough.
+ParentCompany=Moedermaatschappij
+Subsidiaries=Dochterondernemingen
+ReportByMonth=Rapportage per maand
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ReportByCustomers=Overzicht op klant
 ReportByQuarter=Rapportage naar kwartaal
 CivilityCode=Aanspreekvorm
@@ -52,12 +87,20 @@ Lastname=Achternaam
 Firstname=Voornaam
 PostOrFunction=Functie
 UserTitle=Titel
+<<<<<<< HEAD
 NatureOfThirdParty=Nature of Third party
+=======
+NatureOfThirdParty=Aard van relatie
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Address=Adres
 State=Provincie
 StateShort=Provincie
 Region=Regio
+<<<<<<< HEAD
 Region-State=Region - State
+=======
+Region-State=Regio - Staat
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Country=Land
 CountryCode=Landcode
 CountryId=Land-ID
@@ -69,19 +112,32 @@ Chat=Chat
 PhonePro=Telefoonnummer zakelijk
 PhonePerso=Telefoonnummer privé
 PhoneMobile=Telefoonnummer mobiel
+<<<<<<< HEAD
 No_Email=Weigering van bulk e-mail
+=======
+No_Email=Refuse bulk emailings
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Fax=Faxnummer
 Zip=Postcode
 Town=Plaats
 Web=Internetadres
 Poste= Functie
 DefaultLang=Standaard taal
+<<<<<<< HEAD
 VATIsUsed=BTW wordt gebruikt
 VATIsUsedWhenSelling=This define if this third party includes a sale tax or not when it makes an invoice to its own customers
 VATIsNotUsed=BTW wordt niet gebruikt
 CopyAddressFromSoc=Vul het adres in van een relatie
 ThirdpartyNotCustomerNotSupplierSoNoRef=Third party neither customer nor vendor, no available refering objects
 ThirdpartyIsNeitherCustomerNorClientSoCannotHaveDiscounts=Third party neither customer nor supplier, discounts are not available
+=======
+VATIsUsed=Gebruikte BTW
+VATIsUsedWhenSelling=This defines if this third party includes a sale tax or not when it makes an invoice to its own customers
+VATIsNotUsed=BTW wordt niet gebruikt
+CopyAddressFromSoc=Copy address from third-party details
+ThirdpartyNotCustomerNotSupplierSoNoRef=Third party neither customer nor vendor, no available referring objects
+ThirdpartyIsNeitherCustomerNorClientSoCannotHaveDiscounts=Third party neither customer nor vendor, discounts are not available
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PaymentBankAccount=Bank voor te ontvangen betaling
 OverAllProposals=Zakelijke voorstellen / Offertes
 OverAllOrders=Orders
@@ -96,12 +152,19 @@ LocalTax2IsUsedES= Inkomstenbelasting wordt gebruikt
 LocalTax2IsNotUsedES= Inkomstenbelasting wordt niet gebruikt
 LocalTax1ES=RE
 LocalTax2ES=IRPF
+<<<<<<< HEAD
 TypeLocaltax1ES=RE Type
 TypeLocaltax2ES=IRPF Type
 WrongCustomerCode=Ongeldige afnemerscode
 WrongSupplierCode=Vendor code invalid
 CustomerCodeModel=Afnemersmodel
 SupplierCodeModel=Vendor code model
+=======
+WrongCustomerCode=Ongeldige afnemerscode
+WrongSupplierCode=Ongeldige leveranciercode
+CustomerCodeModel=Afnemersmodel
+SupplierCodeModel=Leveranciercode model
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Gencod=Streepjescode
 ##### Professional ID #####
 ProfId1Short=Prof id 1
@@ -200,7 +263,11 @@ ProfId3IN=Prof Id 3
 ProfId4IN=Prof Id 4
 ProfId5IN=Prof-id 5
 ProfId6IN=-
+<<<<<<< HEAD
 ProfId1LU=Id. prof. 1 (R.C.S. Luxembourg)
+=======
+ProfId1LU=Id. prof. 1 (R.C.S. Luxemburg)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProfId2LU=Id. prof. 2 (Business permit)
 ProfId3LU=-
 ProfId4LU=-
@@ -258,20 +325,32 @@ ProfId1DZ=RC
 ProfId2DZ=Art.
 ProfId3DZ=NIF
 ProfId4DZ=NIS
+<<<<<<< HEAD
 VATIntra=BTW-nummer
 VATIntraShort=BTW nr
 VATIntraSyntaxIsValid=Syntax is geldig
 VATReturn=VAT return
+=======
+VATIntra=VAT ID
+VATIntraShort=VAT ID
+VATIntraSyntaxIsValid=Syntax is geldig
+VATReturn=BTW retour
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProspectCustomer=Prospect / afnemer
 Prospect=Prospect
 CustomerCard=Afnemerskaart
 Customer=Afnemer
 CustomerRelativeDiscount=Kortingspercentage
+<<<<<<< HEAD
 SupplierRelativeDiscount=Relative vendor discount
+=======
+SupplierRelativeDiscount=Kortingspercentage leverancier
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CustomerRelativeDiscountShort=Kortingspercentage
 CustomerAbsoluteDiscountShort=Kortingsbedrag
 CompanyHasRelativeDiscount=Voor deze afnemer geldt een kortingspercentage van <b>%s%%</b>
 CompanyHasNoRelativeDiscount=Voor deze afnemer geldt geen kortingspercentage
+<<<<<<< HEAD
 HasRelativeDiscountFromSupplier=You have a default discount of <b>%s%%</b> from this supplier
 HasNoRelativeDiscountFromSupplier=You have no default relative discount from this supplier
 CompanyHasAbsoluteDiscount=This customer has discount available (credits notes or down payments) for <b>%s</b> %s
@@ -288,6 +367,24 @@ SupplierAbsoluteDiscountAllUsers=Absolute vendor discounts (entered by all users
 SupplierAbsoluteDiscountMy=Absolute vendor discounts (entered by yourself)
 DiscountNone=Geen
 Supplier=Leverancier
+=======
+HasRelativeDiscountFromSupplier=You have a default discount of <b>%s%%</b> from this vendor
+HasNoRelativeDiscountFromSupplier=You have no default relative discount from this vendor
+CompanyHasAbsoluteDiscount=This customer has discounts available (credits notes or down payments) for <b>%s</b> %s
+CompanyHasDownPaymentOrCommercialDiscount=This customer has discounts available (commercial, down payments) for <b>%s</b> %s
+CompanyHasCreditNote=Deze afnemer heeft nog creditnota's of eerder stortingen voor <b> %s %s</b>
+HasNoAbsoluteDiscountFromSupplier=You have no discount credit available from this vendor
+HasAbsoluteDiscountFromSupplier=You have discounts available (credits notes or down payments) for <b>%s</b> %s from this vendor
+HasDownPaymentOrCommercialDiscountFromSupplier=You have discounts available (commercial, down payments) for <b>%s</b> %s from this vendor
+HasCreditNoteFromSupplier=You have credit notes for <b>%s</b> %s from this vendor
+CompanyHasNoAbsoluteDiscount=Voor deze afnemer is geen kortingsbedrag ingesteld
+CustomerAbsoluteDiscountAllUsers=Vastgelegde klant kortingen (toegekend door alle gebruikers)
+CustomerAbsoluteDiscountMy=Vastgelegde klant kortingen (toegekend door uzelf)
+SupplierAbsoluteDiscountAllUsers=Vastgelegde leverancier kortingen (toegekend door alle gebruikers)
+SupplierAbsoluteDiscountMy=Vastgelegde klant kortingen (toegekend door uzelf)
+DiscountNone=Geen
+Vendor=Verkoper
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddContact=Nieuwe contactpersoon
 AddContactAddress=Nieuw contact/adres
 EditContact=Bewerk contact / adres
@@ -295,7 +392,11 @@ EditContactAddress=Wijzig contact/adres
 Contact=Contactpersoon
 ContactId=ID contactpersoon
 ContactsAddresses=Contacpersonen / adressen
+<<<<<<< HEAD
 FromContactName=Name:
+=======
+FromContactName=Naam:
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoContactDefinedForThirdParty=Geen contact opgegeven voor deze derde partij
 NoContactDefined=Geen contactpersoon ingesteld voor deze Klant
 DefaultContact=Standaard contactpersoon
@@ -303,6 +404,7 @@ AddThirdParty=Nieuwe relatie
 DeleteACompany=Bedrijf verwijderen
 PersonalInformations=Persoonlijke gegevens
 AccountancyCode=Accounting account
+<<<<<<< HEAD
 CustomerCode=Afnemerscode
 SupplierCode=Vendor code
 CustomerCodeShort=Klantcode
@@ -319,25 +421,56 @@ ListOfContacts=Contactpersonen- / adressenlijst
 ListOfContactsAddresses=Lijst van contacten/adressen
 ListOfThirdParties=Lijst van derde partijen
 ShowCompany=Toon relatie
+=======
+CustomerCode=Klant-code
+SupplierCode=Leverancier-code
+CustomerCodeShort=Klantencode
+SupplierCodeShort=Leverancier-code
+CustomerCodeDesc=Klant code, uniek voor alle klanten
+SupplierCodeDesc=Vendor Code, unique for all vendors
+RequiredIfCustomer=Vereist als relatie een afnemer of prospect is
+RequiredIfSupplier=Vereist als relatie een leverancier is
+ValidityControledByModule=Validity controlled by module
+ThisIsModuleRules=Rules for this module
+ProspectToContact=Prospect om contact mee op te nemen
+CompanyDeleted=Bedrijf '%s' verwijderd uit de database.
+ListOfContacts=Contactpersonen- / adressenlijst
+ListOfContactsAddresses=Contactpersonen- / adressenlijst
+ListOfThirdParties=List of Third Parties
+ShowCompany=Show Third Party
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShowContact=Toon contactpersoon
 ContactsAllShort=Alle (Geen filter)
 ContactType=Type contactpersoon
 ContactForOrders=Opdrachtencontactpersoon
+<<<<<<< HEAD
 ContactForOrdersOrShipments=Order's or shipment's contact
+=======
+ContactForOrdersOrShipments=Contactpersoon bij order of verzending
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ContactForProposals=Offertecontactpersoon
 ContactForContracts=Contractencontactpersoon
 ContactForInvoices=Facturencontactpersoon
 NoContactForAnyOrder=Deze contactpersoon is geen contactpersoon voor enige opdracht
+<<<<<<< HEAD
 NoContactForAnyOrderOrShipments=This contact is not a contact for any order or shipment
+=======
+NoContactForAnyOrderOrShipments=Deze contactpersoon is geen contactpersoon voor enige order of verzending.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoContactForAnyProposal=Deze contactpersoon is geen contactpersoon voor enige offerte
 NoContactForAnyContract=Deze contactpersoon is geen contactpersoon voor enig contract
 NoContactForAnyInvoice=Deze contactpersoon is geen contactpersoon voor enige factuur
 NewContact=Nieuwe contactpersoon
+<<<<<<< HEAD
 NewContactAddress=Nieuw contact/adres
+=======
+NewContactAddress=New Contact/Address
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MyContacts=Mijn contacten
 Capital=Kapitaal
 CapitalOf=Kapitaal van %s
 EditCompany=Bedrijf bewerken
+<<<<<<< HEAD
 ThisUserIsNot=This user is not a prospect, customer nor vendor
 VATIntraCheck=Controleren
 VATIntraCheckDesc=De link <b>%s</b> maakt het mogelijk om de Europese BTW-controledienst te raadplegen. Voor deze dienst is een externe internettoegang vanaf de webserver vereist.
@@ -348,6 +481,18 @@ ErrorVATCheckMS_UNAVAILABLE=Controle niet mogelijk. Controleerdienst wordt niet 
 NorProspectNorCustomer=Noch prospect, noch afnemer
 JuridicalStatus=Juridische status
 Staff=Personeel
+=======
+ThisUserIsNot=Deze gebruiker is geen prospect, klant of leverancier.
+VATIntraCheck=Controleren
+VATIntraCheckDesc=The VAT ID must include the country prefix. The link <b>%s</b> uses the European VAT checker service (VIES) which requires internet access from the Dolibarr server.
+VATIntraCheckURL=http://ec.europa.eu/taxation_customs/vies/vieshome.do
+VATIntraCheckableOnEUSite=Check the intra-Community VAT ID on the European Commission website
+VATIntraManualCheck=You can also check manually on the European Commission website <a href="%s" target="_blank">%s</a>
+ErrorVATCheckMS_UNAVAILABLE=Controle niet mogelijk. Controleerdienst wordt niet verleend door lidstaat (%s).
+NorProspectNorCustomer=Not prospect, nor customer
+JuridicalStatus=Legal Entity Type
+Staff=Werknemers
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProspectLevelShort=Potentieel
 ProspectLevel=Prospectpotentieel
 ContactPrivate=Privé
@@ -368,7 +513,11 @@ TE_MEDIUM=Middelgrote onderneming
 TE_ADMIN=Overheid
 TE_SMALL=Klein bedrijf
 TE_RETAIL=Retailer
+<<<<<<< HEAD
 TE_WHOLE=Groothandel
+=======
+TE_WHOLE=Wholesaler
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TE_PRIVATE=Particulier
 TE_OTHER=Anderen
 StatusProspect-1=Geen contact opnemen
@@ -387,6 +536,7 @@ ExportCardToFormat=Export details naar formaat
 ContactNotLinkedToCompany=Contact niet gekoppeld aan enige Klant
 DolibarrLogin=Dolibarr login
 NoDolibarrAccess=Geen Dolibarr toegang
+<<<<<<< HEAD
 ExportDataset_company_1=Third parties (Companies / foundations / physical people) and properties
 ExportDataset_company_2=Contactpersonen en eigenschappen
 ImportDataset_company_1=Third parties (Companies / foundations / physical people) and properties
@@ -397,11 +547,25 @@ PriceLevel=Prijsniveau
 DeliveryAddress=Afleveradres
 AddAddress=Adres toevoegen
 SupplierCategory=Vendor category
+=======
+ExportDataset_company_1=Third-parties (companies/foundations/physical people) and their properties
+ExportDataset_company_2=Contacts and their properties
+ImportDataset_company_1=Third-parties and their properties
+ImportDataset_company_2=Third-parties additional contacts/addresses and attributes
+ImportDataset_company_3=Bankrekeningen van relaties
+ImportDataset_company_4=Third-parties Sales representatives (assign sales representatives/users to companies)
+PriceLevel=Price Level
+PriceLevelLabels=Price Level Labels
+DeliveryAddress=Afleveradres
+AddAddress=Adres toevoegen
+SupplierCategory=Categorie leverancier
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 JuridicalStatus200=Onafhankelijk
 DeleteFile=Bestand verwijderen
 ConfirmDeleteFile=Weet u zeker dat u dit bestand wilt verwijderen?
 AllocateCommercial=Toegekend aan vertegenwoordiger
 Organization=Organisatie
+<<<<<<< HEAD
 FiscalYearInformation=Informatie over het fiscale jaar
 FiscalMonthStart=Startmaand van het fiscale jaar
 YouMustAssignUserMailFirst=U moet eerst een e-mail voor deze gebruiker maken om e-mailmeldingen voor hem te kunnen toevoegen.
@@ -421,10 +585,32 @@ OutstandingBill=Max. voor openstaande rekening
 OutstandingBillReached=Max. for outstanding bill reached
 OrderMinAmount=Minimum amount for order
 MonkeyNumRefModelDesc=Return numero with format %syymm-nnnn for customer code and %syymm-nnnn for vendor code where yy is year, mm is month and nnnn is a sequence with no break and no return to 0.
+=======
+FiscalYearInformation=Fiscal Year
+FiscalMonthStart=Startmaand van het fiscale jaar
+YouMustAssignUserMailFirst=You must create an email for this user prior to being able to add an email notification.
+YouMustCreateContactFirst=U moet eerst een e-mail voor deze contactpersoon aanmaken om e-mail meldingen voor deze te kunnen toevoegen.
+ListSuppliersShort=List of Vendors
+ListProspectsShort=List of Prospects
+ListCustomersShort=List of Customers
+ThirdPartiesArea=Third Parties/Contacts
+LastModifiedThirdParties=Last %s modified Third Parties
+UniqueThirdParties=Total of Third Parties
+InActivity=Open
+ActivityCeased=Gesloten
+ThirdPartyIsClosed=Relatie is gesloten
+ProductsIntoElements=Lijst producten/diensten in %s
+CurrentOutstandingBill=Huidige openstaande rekening
+OutstandingBill=Max. voor openstaande rekening
+OutstandingBillReached=Max. krediet voor openstaande facturen is bereikt
+OrderMinAmount=Minimum orderbedrag
+MonkeyNumRefModelDesc=Return a number with the format %syymm-nnnn for the customer code and %syymm-nnnn for the vendor code where yy is year, mm is month and nnnn is a sequence with no break and no return to 0.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LeopardNumRefModelDesc=Afnemers- / leverancierscode is vrij. Deze code kan te allen tijde worden gewijzigd.
 ManagingDirectors=Manager(s) Naam (CEO, directeur, voorzitter ...)
 MergeOriginThirdparty=Dupliceren third party (third party die u wilt verwijderen)
 MergeThirdparties=Samenvoegen third parties
+<<<<<<< HEAD
 ConfirmMergeThirdparties=Are you sure you want to merge this third party into the current one? All linked objects (invoices, orders, ...) will be moved to current third party, then the thirdparty will be deleted.
 ThirdpartiesMergeSuccess=Third parties have been merged
 SaleRepresentativeLogin=Login of sales representative
@@ -432,3 +618,19 @@ SaleRepresentativeFirstname=Vertegenwoordiger voornaam
 SaleRepresentativeLastname=Vertegenwoordiger achternaam
 ErrorThirdpartiesMerge=There was an error when deleting the third parties. Please check the log. Changes have been reverted.
 NewCustomerSupplierCodeProposed=New customer or vendor code suggested on duplicate code
+=======
+ConfirmMergeThirdparties=Are you sure you want to merge this third party into the current one? All linked objects (invoices, orders, ...) will be moved to current third party, then the third party will be deleted.
+ThirdpartiesMergeSuccess=Relaties zijn samengevoegd
+SaleRepresentativeLogin=Login vertegenwoordiger
+SaleRepresentativeFirstname=Vertegenwoordiger voornaam
+SaleRepresentativeLastname=Vertegenwoordiger achternaam
+ErrorThirdpartiesMerge=Er is een fout opgetreden bij het verwijderen van de relatie. Controleer het log. Wijzigingen zijn ongedaan gemaakt.
+NewCustomerSupplierCodeProposed=Customer or Vendor code already used, a new code is suggested
+#Imports
+PaymentTypeCustomer=Payment Type - Customer
+PaymentTermsCustomer=Payment Terms - Customer
+PaymentTypeSupplier=Payment Type - Vendor
+PaymentTermsSupplier=Payment Term - Vendor
+MulticurrencyUsed=Use Multicurrency
+MulticurrencyCurrency=Valuta
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

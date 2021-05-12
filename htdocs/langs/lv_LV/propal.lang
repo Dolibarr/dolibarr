@@ -22,18 +22,30 @@ SearchAProposal=Meklēt priekšlikumu
 NoProposal=Nav priekšlikumu
 ProposalsStatistics=Komerciālo priekšlikuma'u statistika
 NumberOfProposalsByMonth=Numurs pēc mēneša
+<<<<<<< HEAD
 AmountOfProposalsByMonthHT=Summa pa mēnešiem (neto pēc nodokļiem)
+=======
+AmountOfProposalsByMonthHT=Summa pa mēnešiem (bez nodokļiem)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NbOfProposals=Skaits tirdzniecības priekšlikumiem
 ShowPropal=Rādīt priekšlikumu
 PropalsDraft=Sagatave
 PropalsOpened=Atvērts
 PropalStatusDraft=Sagatave (ir jāapstiprina)
 PropalStatusValidated=Apstiprināts (priekšlikums ir atvērts)
+<<<<<<< HEAD
 PropalStatusSigned=Parakstīts (vajadzības rēķinu)
 PropalStatusNotSigned=Nav parakstīts (slēgts)
 PropalStatusBilled=Jāmaksā
 PropalStatusDraftShort=Melnraksts
 PropalStatusValidatedShort=Apstiprināts
+=======
+PropalStatusSigned=Parakstīts (vajadzīgs rēķins)
+PropalStatusNotSigned=Nav parakstīts (slēgts)
+PropalStatusBilled=Jāmaksā
+PropalStatusDraftShort=Melnraksts
+PropalStatusValidatedShort=Apstiprināts (atvērts)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PropalStatusClosedShort=Slēgts
 PropalStatusSignedShort=Parakstīts
 PropalStatusNotSignedShort=Nav parakstīts
@@ -42,13 +54,20 @@ PropalsToClose=Komerciālie priekšlikumus, lai aizvērtu
 PropalsToBill=Parakstīts tirdzniecības priekšlikumus likumprojekta
 ListOfProposals=Saraksts tirdzniecības priekšlikumiem
 ActionsOnPropal=Pasākumi attiecībā uz priekšlikumu
+<<<<<<< HEAD
 RefProposal=Commercial priekšlikums ref
 SendPropalByMail=Nosūtīt komerciālo priekšlikumu pa pastu
 DatePropal=Datums, kad priekšlikumu
+=======
+RefProposal=Komercpiedāvājums ref
+SendPropalByMail=Nosūtīt komerciālo priekšlikumu pa pastu
+DatePropal=Priekšlikuma datums
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DateEndPropal=Derīguma beigu datums
 ValidityDuration=Derīguma termiņš
 CloseAs=Iestatīt statusu uz
 SetAcceptedRefused=Iestatījums ir pieņemts / noraidīts
+<<<<<<< HEAD
 ErrorPropalNotFound=Propal %s nav atrasts
 AddToDraftProposals=Pievienot pie priekšlikuma projektā
 NoDraftProposals=Nav sagatavot priekšlikumus
@@ -57,6 +76,15 @@ CreateEmptyPropal=Izveidojiet tukšu komerciālu priekšlikumi Jaunava vai no sa
 DefaultProposalDurationValidity=Default komerciālā priekšlikumu derīguma termiņš (dienās)
 UseCustomerContactAsPropalRecipientIfExist=Izmantojiet klientu kontaktu adresi, ja noteikta nevis trešās puses adresi priekšlikumu saņēmēja adresi
 ClonePropal=Klonēt tirdzniecības priekšlikumu
+=======
+ErrorPropalNotFound=Piedāvājums %s nav atrasts
+AddToDraftProposals=Pievienot pie priekšlikuma projektā
+NoDraftProposals=Nav sagatavot priekšlikumus
+CopyPropalFrom=Izveidot komerciālo priekšlikumu, kopējot esošo priekšlikumu
+CreateEmptyPropal=Izveidojiet tukšus komerciālus priekšlikumus vai produktu / pakalpojumu sarakstu
+DefaultProposalDurationValidity=Default komerciālā priekšlikumu derīguma termiņš (dienās)
+UseCustomerContactAsPropalRecipientIfExist=Izmantojiet kontaktpersonu / adresi ar veidu "Sazināties ar pēcpārbaudes priekšlikumu", ja tā ir definēta kā trešās puses adrese kā pieteikuma saņēmēja adrese
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmClonePropal=Vai tiešām vēlaties klonēt komerciālo priekšlikumu <b> %s </b>?
 ConfirmReOpenProp=Are you sure you want to open back the commercial proposal <b>%s</b>?
 ProposalsAndProposalsLines=Commercial priekšlikumu un līnijas
@@ -78,8 +106,17 @@ TypeContact_propal_external_CUSTOMER=Klientu kontaktu turpinot darboties priekš
 TypeContact_propal_external_SHIPPING=Klienta kontaktpersona piegādei
 # Document models
 DocModelAzurDescription=Pilnīgs priekšlikums modelis (logo. ..)
+<<<<<<< HEAD
 DefaultModelPropalCreate=Default modeļa izveide
 DefaultModelPropalToBill=Noklusējuma veidne aizverot uzņēmējdarbības priekšlikumu (tiks izrakstīts rēķins)
 DefaultModelPropalClosed=Noklusējuma veidne aizverot uzņēmējdarbības priekšlikumu (unbilled)
 ProposalCustomerSignature=Written acceptance, company stamp, date and signature
 ProposalsStatisticsSuppliers=Piegādātāja priekšlikumu statistika
+=======
+DocModelCyanDescription=Pilnīgs priekšlikums modelis (logo. ..)
+DefaultModelPropalCreate=Noklusējuma modeļa izveide
+DefaultModelPropalToBill=Noklusējuma veidne aizverot uzņēmējdarbības priekšlikumu (tiks izrakstīts rēķins)
+DefaultModelPropalClosed=Noklusējuma veidne aizverot uzņēmējdarbības priekšlikumu (unbilled)
+ProposalCustomerSignature=Written acceptance, company stamp, date and signature
+ProposalsStatisticsSuppliers=Pārdevēja priekšlikumi statistikai
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -23,7 +23,11 @@
  *      \ingroup    expensereport
  *      \brief      Description and activation file for module ExpenseReport
  */
+<<<<<<< HEAD
 include_once(DOL_DOCUMENT_ROOT ."/core/modules/DolibarrModules.class.php");
+=======
+include_once DOL_DOCUMENT_ROOT ."/core/modules/DolibarrModules.class.php";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 /**
@@ -36,7 +40,11 @@ class modExpenseReport extends DolibarrModules
 	 *
 	 *   @param		Database	$db      Database handler
 	 */
+<<<<<<< HEAD
 	function __construct($db)
+=======
+	public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf;
 
@@ -44,9 +52,15 @@ class modExpenseReport extends DolibarrModules
 		$this->numero = 770;
 
 		$this->family = "hr";
+<<<<<<< HEAD
 		$this->module_position = 40;
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
+=======
+		$this->module_position = '42';
+		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Manage and claim expense reports (transportation, meal, ...)";
 		$this->version = 'dolibarr';
@@ -61,10 +75,18 @@ class modExpenseReport extends DolibarrModules
 		$this->config_page_url = array('expensereport.php');
 
 		// Dependencies
+<<<<<<< HEAD
 		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
 		// $this->conflictwith = array("modDeplacement"); // Deactivate for access on old information
 		$this->requiredby = array();	// List of modules id to disable if this one is disabled
 		$this->phpmin = array(4,3);					// Minimum version of PHP required by module
+=======
+		$this->hidden = false;			// A condition to hide module
+		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
+		// $this->conflictwith = array("modDeplacement"); // Deactivate for access on old information
+		$this->requiredby = array();	// List of modules id to disable if this one is disabled
+		$this->phpmin = array(5,4);					// Minimum version of PHP required by module
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->need_dolibarr_version = array(3,7);	// Minimum version of Dolibarr required by module
 		$this->langfiles = array("companies","trips");
 
@@ -149,7 +171,11 @@ class modExpenseReport extends DolibarrModules
 		$this->rights[$r][0] = 777;
 		$this->rights[$r][1] = 'Read expense reports of everybody';
 		$this->rights[$r][2] = 'r';
+<<<<<<< HEAD
 		$this->rights[$r][3] = 1;
+=======
+		$this->rights[$r][3] = 0;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->rights[$r][4] = 'readall';
 		$r++;
 
@@ -202,6 +228,7 @@ class modExpenseReport extends DolibarrModules
 	}
 
 	/**
+<<<<<<< HEAD
 	 *	Function called when module is enabled.
 	 *	The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *	It also creates data directories.
@@ -210,6 +237,16 @@ class modExpenseReport extends DolibarrModules
 	 *	@return     int             	1 if OK, 0 if KO
 	 */
 	function init($options='')
+=======
+	 *  Function called when module is enabled.
+	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *  It also creates data directories.
+	 *
+	 *  @param      string  $options    Options
+	 *  @return     int                 1 if OK, 0 if KO
+	 */
+	public function init($options = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf;
 
@@ -221,6 +258,10 @@ class modExpenseReport extends DolibarrModules
 				"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard','expensereport',".$conf->entity.")"
 		);
 
+<<<<<<< HEAD
 		return $this->_init($sql,$options);
+=======
+		return $this->_init($sql, $options);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 }

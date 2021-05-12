@@ -10,4 +10,7 @@ CreateDolibarrThirdParty=Maak Derden
 ConfirmCreateContact=Weet u zeker dat u een Dolibarr account wilt maken voor deze contactpersoon?
 ConfirmCreateThirdParty=Weet u zeker dat u een 'derde' wilt maken voor dit lid?
 UserLogoff=Gebruiker logout
+<<<<<<< HEAD
 DateEmployment=Datum van tewerkstelling
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

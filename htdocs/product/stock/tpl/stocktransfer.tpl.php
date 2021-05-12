@@ -1,5 +1,10 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2010-2017 Laurent Destailleur <eldy@users.sourceforge.net>
+=======
+/* Copyright (C) 2010-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +24,12 @@
  */
 
 // Protection to avoid direct call of template
+<<<<<<< HEAD
 if (empty($conf) || ! is_object($conf))
 {
+=======
+if (empty($conf) || ! is_object($conf)) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -36,7 +45,11 @@ if (empty($conf) || ! is_object($conf))
 
         if (empty($id)) $id = $object->id;
 
+<<<<<<< HEAD
         $pdluoid=GETPOST('pdluoid','int');
+=======
+        $pdluoid=GETPOST('pdluoid', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	    $pdluo = new Productbatch($db);
 
@@ -49,11 +62,19 @@ if (empty($conf) || ! is_object($conf))
 	        }
 	        else
 	        {
+<<<<<<< HEAD
 	            dol_print_error($db,$pdluo->error,$pdluo->errors);
 	        }
 	    }
 
 		print load_fiche_titre($langs->trans("StockTransfer"),'','title_generic.png');
+=======
+	            dol_print_error($db, $pdluo->error, $pdluo->errors);
+	        }
+	    }
+
+		print load_fiche_titre($langs->trans("StockTransfer"), '', 'title_generic.png');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">'."\n";
 
@@ -74,14 +95,22 @@ if (empty($conf) || ! is_object($conf))
 		{
 		    print '<td class="fieldrequired">'.$langs->trans("WarehouseSource").'</td>';
 		    print '<td>';
+<<<<<<< HEAD
 		    print $formproduct->selectWarehouses((GETPOST("dwid")?GETPOST("dwid",'int'):(GETPOST('id_entrepot')?GETPOST('id_entrepot','int'):($object->element=='product' && $object->fk_default_warehouse?$object->fk_default_warehouse:'ifone'))), 'id_entrepot', 'warehouseopen,warehouseinternal', 1);
+=======
+		    print $formproduct->selectWarehouses((GETPOST("dwid")?GETPOST("dwid", 'int'):(GETPOST('id_entrepot')?GETPOST('id_entrepot', 'int'):($object->element=='product' && $object->fk_default_warehouse?$object->fk_default_warehouse:'ifone'))), 'id_entrepot', 'warehouseopen,warehouseinternal', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		    print '</td>';
 		}
 		if ($object->element == 'stock')
 		{
 		    print '<td class="fieldrequired">'.$langs->trans("Product").'</td>';
 		    print '<td>';
+<<<<<<< HEAD
 		    print $form->select_produits(GETPOST('product_id'), 'product_id', (empty($conf->global->STOCK_SUPPORTS_SERVICES)?'0':''), 20, 0, -1, 2, '', 0, null, 0, 1, 0, 'maxwidth500');
+=======
+		    print $form->select_produits(GETPOST('product_id', 'int'), 'product_id', (empty($conf->global->STOCK_SUPPORTS_SERVICES)?'0':''), 0, 0, -1, 2, '', 0, null, 0, 1, 0, 'maxwidth500');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		    print '</td>';
 		}
 
@@ -114,10 +143,17 @@ if (empty($conf) || ! is_object($conf))
 
 			print '<tr>';
 			print '<td>'.$langs->trans("EatByDate").'</td><td>';
+<<<<<<< HEAD
 			print $form->select_date(($d_eatby?$d_eatby:$pdluo->eatby),'eatby','','',1,"", 1, 0, 1, ($pdluoid > 0 ? 1 : 0));		// If form was opened for a specific pdluoid, field is disabled
 			print '</td>';
 			print '<td>'.$langs->trans("SellByDate").'</td><td>';
 			print $form->select_date(($d_sellby?$d_sellby:$pdluo->sellby),'sellby','','',1,"", 1, 0, 1, ($pdluoid > 0 ? 1 : 0));		// If form was opened for a specific pdluoid, field is disabled
+=======
+			print $form->selectDate(($d_eatby?$d_eatby:$pdluo->eatby), 'eatby', '', '', 1, "", 1, 0, ($pdluoid > 0 ? 1 : 0));		// If form was opened for a specific pdluoid, field is disabled
+			print '</td>';
+			print '<td>'.$langs->trans("SellByDate").'</td><td>';
+			print $form->selectDate(($d_sellby?$d_sellby:$pdluo->sellby), 'sellby', '', '', 1, "", 1, 0, ($pdluoid > 0 ? 1 : 0));		// If form was opened for a specific pdluoid, field is disabled
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '</td>';
 			print '</tr>';
 		}
@@ -129,7 +165,11 @@ if (empty($conf) || ! is_object($conf))
 		print '<td>';
 		print '<input type="text" name="label" class="minwidth300" value="'.dol_escape_htmltag($valformovementlabel).'">';
 		print '</td>';
+<<<<<<< HEAD
 		print '<td>'.$langs->trans("InventoryCode").'</td><td><input class="maxwidth100onsmartphone" name="inventorycode" id="inventorycode" value="'.(isset($_POST["inventorycode"])?GETPOST("inventorycode",'alpha'):dol_print_date(dol_now(),'%y%m%d%H%M%S')).'"></td>';
+=======
+		print '<td>'.$langs->trans("InventoryCode").'</td><td><input class="maxwidth100onsmartphone" name="inventorycode" id="inventorycode" value="'.(isset($_POST["inventorycode"])?GETPOST("inventorycode", 'alpha'):dol_print_date(dol_now(), '%y%m%d%H%M%S')).'"></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</tr>';
 
 		print '</table>';

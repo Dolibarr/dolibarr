@@ -5,7 +5,11 @@ LDAPInformationsForThisContact=Information i LDAP-databas för denna kontakt
 LDAPInformationsForThisUser=Information i LDAP-databas för denna användare
 LDAPInformationsForThisGroup=Information i LDAP-databas för denna grupp
 LDAPInformationsForThisMember=Information i LDAP-databas för denna medlem
+<<<<<<< HEAD
 LDAPInformationsForThisMemberType=Information in LDAP database for this member type
+=======
+LDAPInformationsForThisMemberType=Information i LDAP-databasen för denna medlemstyp
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LDAPAttributes=LDAP-attribut
 LDAPCard=LDAP-kort
 LDAPRecordNotFound=Spela som inte finns i LDAP-databas
@@ -13,6 +17,7 @@ LDAPUsers=Användare i LDAP-databas
 LDAPFieldStatus=Status
 LDAPFieldFirstSubscriptionDate=Första teckningsdag
 LDAPFieldFirstSubscriptionAmount=Fist teckningsbelopp
+<<<<<<< HEAD
 LDAPFieldLastSubscriptionDate=Latest subscription date
 LDAPFieldLastSubscriptionAmount=Latest subscription amount
 LDAPFieldSkype=Skype id
@@ -25,3 +30,17 @@ ContactSynchronized=Kontakta synkroniseras
 ForceSynchronize=Tvinga synkronisering Dolibarr -> LDAP
 ErrorFailedToReadLDAP=Misslyckades med att läsa LDAP-databas. Kontrollera LDAP-modul setup och databas tillgänglighet.
 PasswordOfUserInLDAP=Password of user in LDAP
+=======
+LDAPFieldLastSubscriptionDate=Senaste prenumerationsdatum
+LDAPFieldLastSubscriptionAmount=Senaste abonnemangsbeloppet
+LDAPFieldSkype=Skype ID
+LDAPFieldSkypeExample=Exempel: SkypeName
+UserSynchronized=Användare synkroniseras
+GroupSynchronized=Grupp synkroniseras
+MemberSynchronized=Medlem synkroniseras
+MemberTypeSynchronized=Medlemstypen synkroniserad
+ContactSynchronized=Kontakta synkroniseras
+ForceSynchronize=Tvinga synkronisering Dolibarr -> LDAP
+ErrorFailedToReadLDAP=Misslyckades med att läsa LDAP-databas. Kontrollera LDAP-modul setup och databas tillgänglighet.
+PasswordOfUserInLDAP=Lösenord för användare i LDAP
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

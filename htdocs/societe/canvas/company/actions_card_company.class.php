@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2010-2011	Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2010-2011	Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2011		Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,7 +42,11 @@ class ActionsCardCompany extends ActionsCardCommon
      *    @param	string	$canvas			Name of canvas
      *    @param	string	$card			Name of tab (sub-canvas)
 	 */
+<<<<<<< HEAD
 	function __construct($db, $dirmodule, $targetmodule, $canvas, $card)
+=======
+    public function __construct($db, $dirmodule, $targetmodule, $canvas, $card)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
         $this->db				= $db;
         $this->dirmodule		= $dirmodule;
@@ -67,6 +75,10 @@ class ActionsCardCompany extends ActionsCardCommon
     }
 
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
 	 *
@@ -75,12 +87,22 @@ class ActionsCardCompany extends ActionsCardCommon
 	 *    @param	string	$ref		Ref of object
 	 *    @return	void
 	 */
+<<<<<<< HEAD
 	function assign_values(&$action, $id=0, $ref='')
 	{
 		global $conf, $langs, $user, $mysoc;
 		global $form, $formadmin, $formcompany;
 
 		$ret = $this->getObject($id,$ref);
+=======
+    public function assign_values(&$action, $id = 0, $ref = '')
+	{
+        // phpcs:enable
+		global $conf, $langs, $user, $mysoc;
+		global $form, $formadmin, $formcompany;
+
+		$ret = $this->getObject($id, $ref);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		parent::assign_values($action);
 
@@ -107,6 +129,7 @@ class ActionsCardCompany extends ActionsCardCommon
 		{
 			for ($i=1; $i<=4; $i++)
 			{
+<<<<<<< HEAD
 				$this->tpl['langprofid'.$i]		= $langs->transcountry('ProfId'.$i,$this->object->country_code);
 				$this->tpl['showprofid'.$i]		= $formcompany->get_input_id_prof($i,'idprof'.$i,$this->tpl['profid'.$i],$this->object->country_code);
 			}
@@ -119,6 +142,20 @@ class ActionsCardCompany extends ActionsCardCommon
 
 			// Workforce
 			$this->tpl['select_workforce'] = $form->selectarray("effectif_id",$formcompany->effectif_array(0), $this->object->effectif_id);
+=======
+				$this->tpl['langprofid'.$i]		= $langs->transcountry('ProfId'.$i, $this->object->country_code);
+				$this->tpl['showprofid'.$i]		= $formcompany->get_input_id_prof($i, 'idprof'.$i, $this->tpl['profid'.$i], $this->object->country_code);
+			}
+
+			// Type
+			$this->tpl['select_companytype']	= $form->selectarray("typent_id", $formcompany->typent_array(0), $this->object->typent_id);
+
+			// Juridical Status
+			$this->tpl['select_juridicalstatus'] = $formcompany->select_juridicalstatus($this->object->forme_juridique_code, $this->object->country_code);
+
+			// Workforce
+			$this->tpl['select_workforce'] = $form->selectarray("effectif_id", $formcompany->effectif_array(0), $this->object->effectif_id);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			// VAT intra
 			$s='<input type="text" class="flat" name="tva_intra" size="12" maxlength="20" value="'.$this->object->tva_intra.'">';
@@ -129,11 +166,19 @@ class ActionsCardCompany extends ActionsCardCommon
 				if ($conf->use_javascript_ajax)
 				{
 					$s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
+<<<<<<< HEAD
 					$this->tpl['tva_intra'] =  $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
 				}
 				else
 				{
 					$this->tpl['tva_intra'] =  $s.'<a href="'.$langs->transcountry("VATIntraCheckURL",$this->object->country_id).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
+=======
+					$this->tpl['tva_intra'] =  $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
+				}
+				else
+				{
+					$this->tpl['tva_intra'] =  $s.'<a href="'.$langs->transcountry("VATIntraCheckURL", $this->object->country_id).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"), 'help').'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 			}
 			else
@@ -146,14 +191,24 @@ class ActionsCardCompany extends ActionsCardCommon
 			// Confirm delete third party
 			if ($action == 'delete')
 			{
+<<<<<<< HEAD
 				$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$this->object->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,"1,action-delete");
+=======
+				$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$this->object->id, $langs->trans("DeleteACompany"), $langs->trans("ConfirmDeleteCompany"), "confirm_delete", '', 0, "1,action-delete");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 
 			for ($i=1; $i<=4; $i++)
 			{
+<<<<<<< HEAD
 				$this->tpl['langprofid'.$i]		= $langs->transcountry('ProfId'.$i,$this->object->country_code);
 				$this->tpl['checkprofid'.$i]	= $this->object->id_prof_check($i,$this->object);
 				$this->tpl['urlprofid'.$i]		= $this->object->id_prof_url($i,$this->object);
+=======
+				$this->tpl['langprofid'.$i]		= $langs->transcountry('ProfId'.$i, $this->object->country_code);
+				$this->tpl['checkprofid'.$i]	= $this->object->id_prof_check($i, $this->object);
+				$this->tpl['urlprofid'.$i]		= $this->object->id_prof_url($i, $this->object);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 
 			// TVA intra
@@ -168,18 +223,29 @@ class ActionsCardCompany extends ActionsCardCommon
 					if ($conf->use_javascript_ajax)
 					{
 						$s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
+<<<<<<< HEAD
 						$this->tpl['tva_intra'] = $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
 					}
 					else
 					{
 						$this->tpl['tva_intra'] = $s.'<a href="'.$langs->transcountry("VATIntraCheckURL",$this->object->country_id).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
+=======
+						$this->tpl['tva_intra'] = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
+					}
+					else
+					{
+						$this->tpl['tva_intra'] = $s.'<a href="'.$langs->transcountry("VATIntraCheckURL", $this->object->country_id).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"), 'help').'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					}
 				}
 				else
 				{
 					$this->tpl['tva_intra'] = $s;
 				}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 			else
 			{
@@ -199,7 +265,11 @@ class ActionsCardCompany extends ActionsCardCommon
 				$this->tpl['parent_company'] = $langs->trans("NoParentCompany");
 			}
 		}
+<<<<<<< HEAD
 	}
+=======
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	/**
 	 * 	Check permissions of a user to show a page and an object. Check read permission
@@ -214,6 +284,7 @@ class ActionsCardCompany extends ActionsCardCommon
 	 *  @param      string	$dbt_select		Field name for select if not rowid. (optional)
 	 *  @return		int						1
 	 */
+<<<<<<< HEAD
 	function restrictedArea($user, $features='societe', $objectid=0, $dbtablename='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid')
 	{
 		return restrictedArea($user,$features,$objectid,$dbtablename,$feature2,$dbt_keyfield,$dbt_select);
@@ -221,3 +292,10 @@ class ActionsCardCompany extends ActionsCardCommon
 
 }
 
+=======
+    public function restrictedArea($user, $features = 'societe', $objectid = 0, $dbtablename = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid')
+    {
+        return restrictedArea($user, $features, $objectid, $dbtablename, $feature2, $dbt_keyfield, $dbt_select);
+    }
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

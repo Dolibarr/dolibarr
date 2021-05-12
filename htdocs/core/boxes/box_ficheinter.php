@@ -31,6 +31,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_ficheinter extends ModeleBoxes
 {
+<<<<<<< HEAD
 	var $boxcode="ficheinter";
 	var $boximg="object_intervention";
 	var $boxlabel="BoxFicheInter";
@@ -41,6 +42,22 @@ class box_ficheinter extends ModeleBoxes
 
 	var $info_box_head = array();
 	var $info_box_contents = array();
+=======
+    public $boxcode="ficheinter";
+    public $boximg="object_intervention";
+    public $boxlabel="BoxFicheInter";
+    public $depends = array("ficheinter");	// conf->contrat->enabled
+
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    public $param;
+
+    public $info_box_head = array();
+    public $info_box_contents = array();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	/**
@@ -49,7 +66,11 @@ class box_ficheinter extends ModeleBoxes
 	 *  @param  DoliDB  $db         Database handler
 	 *  @param  string  $param      More parameters
 	 */
+<<<<<<< HEAD
 	function __construct($db,$param)
+=======
+	public function __construct($db, $param)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 	    global $user;
 
@@ -64,7 +85,11 @@ class box_ficheinter extends ModeleBoxes
 	 *  @param	int		$max        Maximum number of records to load
 	 *  @return	void
 	*/
+<<<<<<< HEAD
 	function loadBox($max=10)
+=======
+	public function loadBox($max = 10)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $user, $langs, $db, $conf;
 
@@ -73,7 +98,11 @@ class box_ficheinter extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 		$ficheinterstatic=new Fichinter($db);
 
+<<<<<<< HEAD
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastFicheInter",$max));
+=======
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastFicheInter", $max));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		if (! empty($user->rights->ficheinter->lire))
 		{
@@ -110,6 +139,7 @@ class box_ficheinter extends ModeleBoxes
 					$ficheinterstatic->id=$objp->rowid;
 					$ficheinterstatic->ref=$objp->ref;
 
+<<<<<<< HEAD
 					$this->info_box_contents[$i][] = array('td' => '',
 					'text' => $ficheinterstatic->getNomUrl(1),
 					'asis' => 1
@@ -129,26 +159,71 @@ class box_ficheinter extends ModeleBoxes
 					$this->info_box_contents[$i][] = array('td' => 'align="right" class="nowrap"',
 					'text' => $ficheinterstatic->getLibStatut(6),
 					'asis'=>1
+=======
+					$this->info_box_contents[$i][] = array(
+                        'td' => '',
+                        'text' => $ficheinterstatic->getNomUrl(1),
+                        'asis' => 1,
+					);
+
+					$this->info_box_contents[$i][] = array(
+                        'td' => 'class="left" width="16"',
+                        'logo' => 'company',
+                        'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid,
+                    );
+
+					$this->info_box_contents[$i][] = array(
+                        'td' => '',
+                        'text' => dol_trunc($objp->name, 40),
+                        'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid,
+                    );
+
+					$this->info_box_contents[$i][] = array(
+                        'td' => 'class="right"',
+                        'text' => dol_print_date($datec, 'day'),
+                    );
+
+					$this->info_box_contents[$i][] = array(
+                        'td' => 'class="nowrap right"',
+                        'text' => $ficheinterstatic->getLibStatut(6),
+                        'asis' => 1,
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					);
 
 					$i++;
 				}
 
+<<<<<<< HEAD
 				if ($num==0) $this->info_box_contents[$i][] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedInterventions"));
+=======
+				if ($num==0) $this->info_box_contents[$i][] = array('td' => 'class="center"','text'=>$langs->trans("NoRecordedInterventions"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				$db->free($resql);
 			}
 			else
 			{
+<<<<<<< HEAD
 				$this->info_box_contents[0][] = array(  'td' => '',
 				'maxlength'=>500,
 				'text' => ($db->error().' sql='.$sql));
+=======
+				$this->info_box_contents[0][] = array(
+                    'td' => '',
+                    'maxlength'=>500,
+                    'text' => ($db->error().' sql='.$sql),
+                );
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 		}
 		else
 		{
 			$this->info_box_contents[0][] = array(
+<<<<<<< HEAD
 			    'td' => 'align="left" class="nohover opacitymedium"',
+=======
+			    'td' => 'class="nohover opacitymedium left"',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			    'text' => $langs->trans("ReadPermissionNotAllowed")
 			);
 		}
@@ -162,6 +237,7 @@ class box_ficheinter extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
+<<<<<<< HEAD
     function showBox($head = null, $contents = null, $nooutput=0)
     {
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
@@ -169,3 +245,10 @@ class box_ficheinter extends ModeleBoxes
 
 }
 
+=======
+    public function showBox($head = null, $contents = null, $nooutput = 0)
+    {
+		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+	}
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

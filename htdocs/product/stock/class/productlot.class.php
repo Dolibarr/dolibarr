@@ -3,7 +3,11 @@
  * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+<<<<<<< HEAD
  * Copyright (C) ---Put here your own copyright and developer email---
+=======
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +43,10 @@ class Productlot extends CommonObject
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'productlot';
+<<<<<<< HEAD
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
@@ -46,6 +54,7 @@ class Productlot extends CommonObject
 
 	public $picto='barcode';
 
+<<<<<<< HEAD
     public $ismultientitymanaged = 1;
 
 	/**
@@ -58,17 +67,50 @@ class Productlot extends CommonObject
 
 	public $entity;
 	public $fk_product;
+=======
+	/**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+    public $ismultientitymanaged = 1;
+
+	/**
+	 * @var int Entity
+	 */
+	public $entity;
+
+	/**
+     * @var int ID
+     */
+	public $fk_product;
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	public $batch;
 	public $eatby = '';
 	public $sellby = '';
 	public $datec = '';
 	public $tms = '';
+<<<<<<< HEAD
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $import_key;
 
 	/**
 	 */
+=======
+
+	/**
+     * @var int ID
+     */
+	public $fk_user_creat;
+
+	/**
+     * @var int ID
+     */
+	public $fk_user_modif;
+
+	public $import_key;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	/**
@@ -99,19 +141,33 @@ class Productlot extends CommonObject
 		// Clean parameters
 
 		if (isset($this->entity)) {
+<<<<<<< HEAD
 			 $this->entity = trim($this->entity);
 		}
 		if (isset($this->fk_product)) {
 			 $this->fk_product = trim($this->fk_product);
+=======
+			 $this->entity = (int) $this->entity;
+		}
+		if (isset($this->fk_product)) {
+			 $this->fk_product = (int) $this->fk_product;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		if (isset($this->batch)) {
 			 $this->batch = trim($this->batch);
 		}
 		if (isset($this->fk_user_creat)) {
+<<<<<<< HEAD
 			 $this->fk_user_creat = trim($this->fk_user_creat);
 		}
 		if (isset($this->fk_user_modif)) {
 			 $this->fk_user_modif = trim($this->fk_user_modif);
+=======
+			 $this->fk_user_creat = (int) $this->fk_user_creat;
+		}
+		if (isset($this->fk_user_modif)) {
+			 $this->fk_user_modif = (int) $this->fk_user_modif;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		if (isset($this->import_key)) {
 			 $this->import_key = trim($this->import_key);
@@ -172,7 +228,11 @@ class Productlot extends CommonObject
 				// want this action to call a trigger.
 
 				// Call triggers
+<<<<<<< HEAD
 				$result=$this->call_trigger('PRODUCTLOT_CREATE',$user);
+=======
+				$result=$this->call_trigger('PRODUCTLOT_CREATE', $user);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if ($result < 0) $error++;
 				// End call triggers
 			}
@@ -280,19 +340,33 @@ class Productlot extends CommonObject
 		// Clean parameters
 
 		if (isset($this->entity)) {
+<<<<<<< HEAD
 			 $this->entity = trim($this->entity);
 		}
 		if (isset($this->fk_product)) {
 			 $this->fk_product = trim($this->fk_product);
+=======
+			 $this->entity = (int) $this->entity;
+		}
+		if (isset($this->fk_product)) {
+			 $this->fk_product = (int) $this->fk_product;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		if (isset($this->batch)) {
 			 $this->batch = trim($this->batch);
 		}
 		if (isset($this->fk_user_creat)) {
+<<<<<<< HEAD
 			 $this->fk_user_creat = trim($this->fk_user_creat);
 		}
 		if (isset($this->fk_user_modif)) {
 			 $this->fk_user_modif = trim($this->fk_user_modif);
+=======
+			 $this->fk_user_creat = (int) $this->fk_user_creat;
+		}
+		if (isset($this->fk_user_modif)) {
+			 $this->fk_user_modif = (int) $this->fk_user_modif;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		if (isset($this->import_key)) {
 			 $this->import_key = trim($this->import_key);
@@ -342,11 +416,16 @@ class Productlot extends CommonObject
 		}
 
 		if (!$error && !$notrigger) {
+<<<<<<< HEAD
 			// Uncomment this and change MYOBJECT to your own tag if you
 			// want this action calls a trigger.
 
 			// Call triggers
 			$result=$this->call_trigger('PRODUCTLOT_MODIFY',$user);
+=======
+			// Call triggers
+			$result=$this->call_trigger('PRODUCTLOT_MODIFY', $user);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if ($result < 0) { $error++; }
 			// End call triggers
 		}
@@ -379,8 +458,13 @@ class Productlot extends CommonObject
 
 		$this->db->begin();
 
+<<<<<<< HEAD
 		if (!$error) {
 			if (!$notrigger) {
+=======
+		//if (!$error) {
+			//if (!$notrigger) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action calls a trigger.
 
@@ -388,8 +472,13 @@ class Productlot extends CommonObject
 				//$result=$this->call_trigger('MYOBJECT_DELETE',$user);
 				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
 				//// End call triggers
+<<<<<<< HEAD
 			}
 		}
+=======
+			//}
+		//}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		if (!$error) {
 			$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . $this->table_element;
@@ -418,6 +507,7 @@ class Productlot extends CommonObject
 	/**
 	 * Load an object from its id and create a new one in database
 	 *
+<<<<<<< HEAD
 	 * @param int $fromid Id of object to clone
 	 *
 	 * @return int New id of clone
@@ -427,6 +517,16 @@ class Productlot extends CommonObject
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		global $user;
+=======
+	 * @param	User	$user		User making the clone
+	 * @param   int     $fromid     Id of object to clone
+	 * @return  int                 New id of clone
+	 */
+	public function createFromClone(User $user, $fromid)
+	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$error = 0;
 		$object = new Productlot($this->db);
 
@@ -441,6 +541,10 @@ class Productlot extends CommonObject
 		// ...
 
 		// Create clone
+<<<<<<< HEAD
+=======
+		$object->context['createfromclone'] = 'createfromclone';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$result = $object->create($user);
 
 		// Other options
@@ -450,6 +554,11 @@ class Productlot extends CommonObject
 			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 		}
 
+<<<<<<< HEAD
+=======
+		unset($object->context['createfromclone']);
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// End
 		if (!$error) {
 			$this->db->commit();
@@ -469,11 +578,20 @@ class Productlot extends CommonObject
 	 *	@param      int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *	@return     string      		Label of status
 	 */
+<<<<<<< HEAD
 	function getLibStatut($mode=0)
 	{
 	    return $this->LibStatut(0,$mode);
 	}
 
+=======
+	public function getLibStatut($mode = 0)
+	{
+	    return $this->LibStatut(0, $mode);
+	}
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *	Return label of a given status
 	 *
@@ -481,8 +599,14 @@ class Productlot extends CommonObject
 	 *	@param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *	@return string      		Label of status
 	 */
+<<<<<<< HEAD
 	function LibStatut($statut,$mode=0)
 	{
+=======
+	public function LibStatut($statut, $mode = 0)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    global $langs;
 
 	    //$langs->load('stocks');
@@ -503,7 +627,11 @@ class Productlot extends CommonObject
      *  @param  int     $save_lastsearch_value	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return	string							String with URL
 	 */
+<<<<<<< HEAD
 	function getNomUrl($withpicto=0, $option='', $notooltip=0, $maxlen=24, $morecss='', $save_lastsearch_value=-1)
+=======
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $maxlen = 24, $morecss = '', $save_lastsearch_value = -1)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs, $conf, $db;
         global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -529,7 +657,11 @@ class Productlot extends CommonObject
         {
         	// Add param to save lastsearch_values or not
         	$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+<<<<<<< HEAD
         	if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+=======
+        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         	if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
         }
 
@@ -569,13 +701,19 @@ class Productlot extends CommonObject
 	{
 		$this->id = 0;
 
+<<<<<<< HEAD
 		$this->entity = '';
 		$this->fk_product = '';
+=======
+		$this->entity = null;
+		$this->fk_product = null;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->batch = '';
 		$this->eatby = '';
 		$this->sellby = '';
 		$this->datec = '';
 		$this->tms = '';
+<<<<<<< HEAD
 		$this->fk_user_creat = '';
 		$this->fk_user_modif = '';
 		$this->import_key = '';
@@ -583,3 +721,10 @@ class Productlot extends CommonObject
 
 }
 
+=======
+		$this->fk_user_creat = null;
+		$this->fk_user_modif = null;
+		$this->import_key = '';
+	}
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

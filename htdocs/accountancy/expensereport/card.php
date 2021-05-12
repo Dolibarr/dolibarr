@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2005		Simon TOSSER			<simon@kornog-computing.com>
+<<<<<<< HEAD
  * Copyright (C) 2013-2017	Alexandre Spangaro		<aspangaro@zendsi.com>
+=======
+ * Copyright (C) 2013-2017	Alexandre Spangaro		<aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2013-2014	Olivier Geffroy			<jeff@jeffinfo.com>
  * Copyright (C) 2013-2014	Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>
@@ -23,7 +27,11 @@
  */
 /**
  * \file		htdocs/accountancy/supplier/card.php
+<<<<<<< HEAD
  * \ingroup		Advanced accountancy
+=======
+ * \ingroup		Accountancy (Double entries)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * \brief		Card expense report ventilation
  */
 require '../../main.inc.php';
@@ -167,5 +175,9 @@ if (! empty($id)) {
 	print "Error ID incorrect";
 }
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

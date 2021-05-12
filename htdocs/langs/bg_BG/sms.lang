@@ -1,9 +1,16 @@
 # Dolibarr language file - Source file is en_US - sms
 Sms=Sms
+<<<<<<< HEAD
 SmsSetup=Sms настройка
 SmsDesc=Тази страница ви позволява да се определят глобални опции за SMS функции
 SmsCard=SMS карта
 AllSms=Всички SMS кампания
+=======
+SmsSetup=SMS setup
+SmsDesc=This page allows you to define global options on SMS features
+SmsCard=SMS карта
+AllSms=All SMS campaigns
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SmsTargets=Цели
 SmsRecipients=Цели
 SmsRecipient=Цел
@@ -13,6 +20,7 @@ SmsTo=Цел
 SmsTopic=Тема на SMS
 SmsText=Съобщение
 SmsMessage=SMS съобщение
+<<<<<<< HEAD
 ShowSms=Покажи Sms
 ListOfSms=Списък SMS кампания
 NewSms=Нов SMS акция
@@ -27,6 +35,22 @@ SmsResult=Резултат от SMS изпращане
 TestSms=Тест Sms
 ValidSms=Проверка на Sms
 ApproveSms=Одобряване SMS
+=======
+ShowSms=Show SMS
+ListOfSms=List SMS campaigns
+NewSms=New SMS campaign
+EditSms=Edit SMS
+ResetSms=Нов изпращането
+DeleteSms=Delete SMS campaign
+DeleteASms=Remove a SMS campaign
+PreviewSms=Previuw SMS
+PrepareSms=Prepare SMS
+CreateSms=Create SMS
+SmsResult=Result of SMS sending
+TestSms=Test SMS
+ValidSms=Validate SMS
+ApproveSms=Approve SMS
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SmsStatusDraft=Проект
 SmsStatusValidated=Утвърден
 SmsStatusApproved=Одобрен
@@ -35,6 +59,7 @@ SmsStatusSentPartialy=Изпратени частично
 SmsStatusSentCompletely=Изпратени напълно
 SmsStatusError=Грешка
 SmsStatusNotSent=Не е изпратено
+<<<<<<< HEAD
 SmsSuccessfulySent=Sms правилно изпратен (от %s да %s)
 ErrorSmsRecipientIsEmpty=Брой цел е празна
 WarningNoSmsAdded=Няма нови телефонен номер, да добавите към целевия списък
@@ -45,6 +70,18 @@ ThisIsATestMessage=Това е тестово съобщение
 SendSms=Изпращане на SMS
 SmsInfoCharRemain=Nb на останалите герои
 SmsInfoNumero= (Формат международната т.е.: 33899701761)
+=======
+SmsSuccessfulySent=SMS correctly sent (from %s to %s)
+ErrorSmsRecipientIsEmpty=Брой цел е празна
+WarningNoSmsAdded=Няма нови телефонен номер, да добавите към целевия списък
+ConfirmValidSms=Do you confirm validation of this campaign?
+NbOfUniqueSms=No. of unique phone numbers
+NbOfSms=No. of phone numbers
+ThisIsATestMessage=Това е тестово съобщение
+SendSms=Изпращане на SMS
+SmsInfoCharRemain=No. of remaining characters
+SmsInfoNumero= (international format i.e.: +33899701761)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DelayBeforeSending=Забавяне преди изпращане (минути)
 SmsNoPossibleSenderFound=No sender available. Check setup of your SMS provider.
 SmsNoPossibleRecipientFound=Целта на разположение. Проверете настройките на вашия доставчик на SMS.

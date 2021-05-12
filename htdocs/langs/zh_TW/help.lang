@@ -5,9 +5,15 @@ RemoteControlSupport=網上實時/遠程支持
 OtherSupport=其他支持
 ToSeeListOfAvailableRessources=聯絡/查看可用的資源：
 HelpCenter=說明中心
+<<<<<<< HEAD
 DolibarrHelpCenter=Dolibarr幫助和支持中心
 ToGoBackToDolibarr=否則，請點擊<a href="%s">這裏使用Dolibarr</a>
 TypeOfSupport=源支持
+=======
+DolibarrHelpCenter=Dolibarr Help and Support Center
+ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
+TypeOfSupport=Type of support
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TypeSupportCommunauty=社區（免費）
 TypeSupportCommercial=商業
 TypeOfHelp=說明類型
@@ -15,6 +21,7 @@ NeedHelpCenter=需要幫助或支援嗎？
 Efficiency=效率
 TypeHelpOnly=只需要說明
 TypeHelpDev=說明+開發
+<<<<<<< HEAD
 TypeHelpDevForm=說明+開發+表格
 ToGetHelpGoOnSparkAngels1=有些公司可以提供快速（有時直接的），並采取更有效的在線控制您的計算機支持。這些傭工可以是<b>%s</b>網站上找到：
 ToGetHelpGoOnSparkAngels3=您還可以到所有可用的Dolibarr教練列表，點擊這個按鈕
@@ -23,4 +30,11 @@ BackToHelpCenter=否則，請點擊這裏進入<a href="%s">返回幫助中心�
 LinkToGoldMember=你可以調用由Dolibarr預選您的語言（%s的按一下他的小工具（狀態和最高價格自動更新））的教練之一：
 PossibleLanguages=支持的語言
 SubscribeToFoundation=幫助 Dolibarr 專案，訂閱基金會
+=======
+TypeHelpDevForm=Help+Development+Training
+BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
+LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
+PossibleLanguages=支持的語言
+SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SeeOfficalSupport=用您的語言給 Dolibarr 官方支持：<br><b><a href="%s" target="_blank">%s</a></b>

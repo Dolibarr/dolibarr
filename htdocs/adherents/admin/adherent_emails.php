@@ -4,7 +4,11 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2011-2012 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012      J. Fernando Lagrange <fernando@demo-tic.org>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
@@ -33,15 +37,40 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 
+<<<<<<< HEAD
 $langs->load("admin");
 $langs->load("members");
+=======
+// Load translation files required by the page
+$langs->loadLangs(array("admin","members"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if (! $user->admin) accessforbidden();
 
 
 $oldtypetonewone=array('texte'=>'text','chaine'=>'string');	// old type to new ones
 
+<<<<<<< HEAD
 $action = GETPOST('action','alpha');
+=======
+$action = GETPOST('action', 'alpha');
+
+$error = 0;
+
+// Editing global variables not related to a specific theme
+$constantes=array(
+    'MEMBER_REMINDER_EMAIL'=>array('type'=>'yesno', 'label'=>$langs->trans('MEMBER_REMINDER_EMAIL', $langs->transnoentities("Module2300Name"))),
+    'ADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION' =>'emailtemplate:member',
+    'ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER'		=>'emailtemplate:member',		/* old was ADHERENT_AUTOREGISTER_MAIL */
+    'ADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION'	=>'emailtemplate:member',		/* old was ADHERENT_MAIL_VALID */
+    'ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION'		=>'emailtemplate:member',		/* old was ADHERENT_MAIL_COTIS */
+    'ADHERENT_EMAIL_TEMPLATE_CANCELATION'		=>'emailtemplate:member',		/* old was ADHERENT_MAIL_RESIL */
+    'ADHERENT_MAIL_FROM'=>'string',
+    'ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT'=>'string',
+    'ADHERENT_AUTOREGISTER_NOTIF_MAIL'=>'html',
+);
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 /*
@@ -69,8 +98,13 @@ if ($action == 'updateall')
 // Action mise a jour ou ajout d'une constante
 if ($action == 'update' || $action == 'add')
 {
+<<<<<<< HEAD
 	$constlineid = GETPOST('rowid','int');
 	$constname=GETPOST('constname','alpha');
+=======
+	$constlineid = GETPOST('rowid', 'int');
+	$constname=GETPOST('constname', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	$constvalue=(GETPOSTISSET('constvalue_'.$constname) ? GETPOST('constvalue_'.$constname, 'alpha') : GETPOST('constvalue'));
 	$consttype=(GETPOSTISSET('consttype_'.$constname) ? GETPOST('consttype_'.$constname, 'alphanohtml') : GETPOST('consttype'));
@@ -78,7 +112,11 @@ if ($action == 'update' || $action == 'add')
 
 	$typetouse = empty($oldtypetonewone[$consttype]) ? $consttype : $oldtypetonewone[$consttype];
 
+<<<<<<< HEAD
 	$res=dolibarr_set_const($db,$constname, $constvalue, $typetouse, 0, $constnote, $conf->entity);
+=======
+	$res=dolibarr_set_const($db, $constname, $constvalue, $typetouse, 0, $constnote, $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	if (! $res > 0) $error++;
 
@@ -95,7 +133,11 @@ if ($action == 'update' || $action == 'add')
 // Action activation d'un sous module du module adherent
 if ($action == 'set')
 {
+<<<<<<< HEAD
     $result=dolibarr_set_const($db, GETPOST('name','alpha'), GETPOST('value'), '', 0, '', $conf->entity);
+=======
+    $result=dolibarr_set_const($db, GETPOST('name', 'alpha'), GETPOST('value'), '', 0, '', $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     if ($result < 0)
     {
         print $db->error();
@@ -105,7 +147,11 @@ if ($action == 'set')
 // Action desactivation d'un sous module du module adherent
 if ($action == 'unset')
 {
+<<<<<<< HEAD
     $result=dolibarr_del_const($db,GETPOST('name','alpha'),$conf->entity);
+=======
+    $result=dolibarr_del_const($db, GETPOST('name', 'alpha'), $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     if ($result < 0)
     {
         print $db->error();
@@ -122,17 +168,26 @@ $form = new Form($db);
 
 $help_url='EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("MembersSetup"),$help_url);
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("MembersSetup"),$linkback,'title_setup');
+=======
+llxHeader('', $langs->trans("MembersSetup"), $help_url);
+
+
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+print load_fiche_titre($langs->trans("MembersSetup"), $linkback, 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 $head = member_admin_prepare_head();
 
 dol_fiche_head($head, 'emails', $langs->trans("Members"), -1, 'user');
 
+<<<<<<< HEAD
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="updateall">';
@@ -150,6 +205,12 @@ $constantes=array(
 	'ADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION' =>'emailtemplate:member',
 	'ADHERENT_EMAIL_TEMPLATE_CANCELATION'		=>'emailtemplate:member',		/* old was ADHERENT_MAIL_RESIL */
 );
+=======
+// TODO Use global form
+//print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+//print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+//print '<input type="hidden" name="action" value="updateall">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $helptext='*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
 $helptext.='__DOL_MAIN_URL_ROOT__, __ID__, __FIRSTNAME__, __LASTNAME__, __FULLNAME__, __LOGIN__, __PASSWORD__, ';
@@ -158,9 +219,19 @@ $helptext.='__COMPANY__, __ADDRESS__, __ZIP__, __TOWN__, __COUNTRY__, __EMAIL__,
 
 form_constantes($constantes, 0, $helptext);
 
+<<<<<<< HEAD
 dol_fiche_end();
 
 
 llxFooter();
 
+=======
+//print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
+//print '</form>';
+
+dol_fiche_end();
+
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

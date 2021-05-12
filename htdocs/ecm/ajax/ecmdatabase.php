@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2012	Regis Houssin	<regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2012	Regis Houssin	<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,15 +24,26 @@
  *       \brief      File to build ecm database
  */
 
+<<<<<<< HEAD
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
+=======
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
+<<<<<<< HEAD
 $action	= GETPOST('action','alpha');
+=======
+$action	= GETPOST('action', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $element = GETPOST('element', 'alpha');
 
 /*
@@ -58,7 +73,11 @@ if (isset($action) && ! empty($action))
 		$diroutputslash.='/';
 
 		// Scan directory tree on disk
+<<<<<<< HEAD
 		$disktree=dol_dir_list($conf->$element->dir_output,'directories',1,'',array('^temp$'),'','',0);
+=======
+		$disktree=dol_dir_list($conf->$element->dir_output, 'directories', 1, '', array('^temp$'), '', '', 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Scan directory tree in database
 		$sqltree=$ecmdirstatic->get_full_arbo(0);
@@ -89,6 +108,7 @@ if (isset($action) && ! empty($action))
 
 				// We must first find the fk_parent of directory to create $dirdesc['fullname']
 				$fk_parent=-1;
+<<<<<<< HEAD
 				$relativepathmissing=str_replace($diroutputslash,'',$dirdesc['fullname']);
 				$relativepathtosearchparent=$relativepathmissing;
 				//dol_syslog("Try to find parent id for directory ".$relativepathtosearchparent);
@@ -96,6 +116,15 @@ if (isset($action) && ! empty($action))
 					//while (preg_match('/\//',$relativepathtosearchparent))
 				{
 					$relativepathtosearchparent=preg_replace('/\/[^\/]*$/','',$relativepathtosearchparent);
+=======
+				$relativepathmissing=str_replace($diroutputslash, '', $dirdesc['fullname']);
+				$relativepathtosearchparent=$relativepathmissing;
+				//dol_syslog("Try to find parent id for directory ".$relativepathtosearchparent);
+				if (preg_match('/\//', $relativepathtosearchparent))
+					//while (preg_match('/\//',$relativepathtosearchparent))
+				{
+					$relativepathtosearchparent=preg_replace('/\/[^\/]*$/', '', $relativepathtosearchparent);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					$txt="Is relative parent path ".$relativepathtosearchparent." for ".$relativepathmissing." found in sql tree ?";
 					dol_syslog($txt);
 					//print $txt." -> ";
@@ -170,7 +199,11 @@ if (isset($action) && ! empty($action))
 			{
 				$mesg.=$dirtotest." not found onto disk. We delete from database dir with id=".$dirdesc['id']."<br>\n";
 				$ecmdirtmp->id=$dirdesc['id'];
+<<<<<<< HEAD
 				$ecmdirtmp->delete($user,'databaseonly');
+=======
+				$ecmdirtmp->delete($user, 'databaseonly');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				//exit;
 			}
 	    }
@@ -180,4 +213,7 @@ if (isset($action) && ! empty($action))
 		$db->query($sql);
 	}
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

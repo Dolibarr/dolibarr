@@ -22,7 +22,11 @@ SearchAProposal=Pronađi ponudu
 NoProposal=Bez ponude
 ProposalsStatistics=Statistika ponuda
 NumberOfProposalsByMonth=Broj u mjesecu
+<<<<<<< HEAD
 AmountOfProposalsByMonthHT=Iznos po mjesecu (netto bez PDV-a)
+=======
+AmountOfProposalsByMonthHT=Amount by month (excl. tax)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NbOfProposals=Broj ponuda
 ShowPropal=Prikaži ponudu
 PropalsDraft=Skice
@@ -31,6 +35,7 @@ PropalStatusDraft=Skica (potrebno ovjeriti)
 PropalStatusValidated=Validated (proposal is opened)
 PropalStatusSigned=Potpisana (za naplatu)
 PropalStatusNotSigned=Nije potpisana (zatvorena)
+<<<<<<< HEAD
 PropalStatusBilled=Naplaćena
 PropalStatusDraftShort=Skica
 PropalStatusValidatedShort=Ovjereno
@@ -38,6 +43,15 @@ PropalStatusClosedShort=Zatvorena
 PropalStatusSignedShort=Potpisana
 PropalStatusNotSignedShort=Nije potpisana
 PropalStatusBilledShort=Naplaćena
+=======
+PropalStatusBilled=Zaračunato
+PropalStatusDraftShort=Skica
+PropalStatusValidatedShort=Validated (open)
+PropalStatusClosedShort=Zatvorena
+PropalStatusSignedShort=Potpisana
+PropalStatusNotSignedShort=Nije potpisana
+PropalStatusBilledShort=Zaračunato
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PropalsToClose=Ponude za zatvaranje
 PropalsToBill=Potpisane ponude za naplatu
 ListOfProposals=Popis ponuda
@@ -45,7 +59,11 @@ ActionsOnPropal=Događaji vezani uz ponudu
 RefProposal=Broj ponude
 SendPropalByMail=Pošalji ponudu e-poštom
 DatePropal=Datum ponude
+<<<<<<< HEAD
 DateEndPropal=Datum dospijeća
+=======
+DateEndPropal=Vrijedi do
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ValidityDuration=Vrijedi do
 CloseAs=Postavi status na
 SetAcceptedRefused=Postavi prihvaćeno/odbijeno
@@ -53,16 +71,27 @@ ErrorPropalNotFound=Ponuda %s nije pronađena
 AddToDraftProposals=Dodati skici ponude
 NoDraftProposals=Nema skica ponuda
 CopyPropalFrom=Izradi ponudu preslikom postojeće ponude
+<<<<<<< HEAD
 CreateEmptyPropal=Izradi prazan predložak ponude ili popis proizvoda i usluga
 DefaultProposalDurationValidity=Osnovni rok valjanosti ponude (u danima)
 UseCustomerContactAsPropalRecipientIfExist=Ako je navedena, za ponudu upotrijebi adresu kontakta pri kupcu umjesto adrese tvrtke
 ClonePropal=Kloniraj ponudu
+=======
+CreateEmptyPropal=Create empty commercial proposal or from list of products/services
+DefaultProposalDurationValidity=Osnovni rok valjanosti ponude (u danima)
+UseCustomerContactAsPropalRecipientIfExist=Use contact/address with type 'Contact following-up proposal' if defined instead of third party address as proposal recipient address
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmClonePropal=Are you sure you want to clone the commercial proposal <b>%s</b>?
 ConfirmReOpenProp=Are you sure you want to open back the commercial proposal <b>%s</b>?
 ProposalsAndProposalsLines=Ponude i stavke
 ProposalLine=Stavka ponude
+<<<<<<< HEAD
 AvailabilityPeriod=Odgoda dostupnosti
 SetAvailability=Odredi odgodu dostupnosti
+=======
+AvailabilityPeriod=Rok isporuke
+SetAvailability=Odredi rok isporuke
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AfterOrder=poslije narudžbe
 OtherProposals=Ostale ponude
 ##### Availability #####
@@ -78,8 +107,17 @@ TypeContact_propal_external_CUSTOMER=Kontakt osoba pri kupcu za ponudu
 TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
 DocModelAzurDescription=Cjeloviti model ponude (logo...)
+<<<<<<< HEAD
 DefaultModelPropalCreate=Izrada osnovnog modela
 DefaultModelPropalToBill=Osnovni predložak prilikom zatvaranja poslovne ponude (za naplatu)
 DefaultModelPropalClosed=Osnovni predložak prilikom zatvaranja poslovne ponude (nenaplaćeno)
 ProposalCustomerSignature=Pismeno prihvaćanje, pečat tvrtke, datum i potpis
 ProposalsStatisticsSuppliers=Statistika ponuda dobavljača
+=======
+DocModelCyanDescription=Cjeloviti model ponude (logo...)
+DefaultModelPropalCreate=Izrada osnovnog modela
+DefaultModelPropalToBill=Osnovni predložak prilikom zatvaranja poslovne ponude (za naplatu)
+DefaultModelPropalClosed=Osnovni predložak prilikom zatvaranja poslovne ponude (nenaplaćeno)
+ProposalCustomerSignature=Potvrda narudžbe; pečat tvrtke, datum i potpis
+ProposalsStatisticsSuppliers=Vendor proposals statistics
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

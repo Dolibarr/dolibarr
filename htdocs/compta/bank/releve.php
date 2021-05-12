@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2017      Patrick Delcroix	<pmpdelcroix@gmail.com>
  *
@@ -25,7 +29,11 @@
  *		\brief      Page to show a bank statement report
  */
 
+<<<<<<< HEAD
 require('../../main.inc.php');
+=======
+require '../../main.inc.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
@@ -45,6 +53,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 $langs->loadLangs(array("banks","categories","companies","bills","trips"));
 
 $action=GETPOST('action', 'alpha');
+<<<<<<< HEAD
 $id=GETPOST('account','int');
 $ref=GETPOST('ref','alpha');
 $dvid=GETPOST('dvid','alpha');
@@ -53,12 +62,26 @@ $ve=GETPOST("ve",'alpha');
 $brref=GETPOST('brref','alpha');
 $oldbankreceipt=GETPOST('oldbankreceipt','alpha');
 $newbankreceipt=GETPOST('newbankreceipt','alpha');
+=======
+$id=GETPOST('account', 'int');
+$ref=GETPOST('ref', 'alpha');
+$dvid=GETPOST('dvid', 'alpha');
+$numref=GETPOST('num', 'alpha');
+$ve=GETPOST("ve", 'alpha');
+$brref=GETPOST('brref', 'alpha');
+$oldbankreceipt=GETPOST('oldbankreceipt', 'alpha');
+$newbankreceipt=GETPOST('newbankreceipt', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Security check
 $fieldid = (! empty($ref)?$ref:$id);
 $fieldname = isset($ref)?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
+<<<<<<< HEAD
 $result=restrictedArea($user,'banque',$fieldid,'bank_account','','',$fieldname);
+=======
+$result=restrictedArea($user, 'banque', $fieldid, 'bank_account', '', '', $fieldname);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if ($user->rights->banque->consolidate && $action == 'dvnext' && ! empty($dvid))
 {
@@ -73,11 +96,19 @@ if ($user->rights->banque->consolidate && $action == 'dvprev' && ! empty($dvid))
 }
 
 
+<<<<<<< HEAD
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
 $pageplusone = GETPOST("pageplusone",'int');
+=======
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
+$pageplusone = GETPOST("pageplusone", 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($pageplusone) $page = $pageplusone - 1;
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
@@ -233,13 +264,22 @@ if ($action=="dl" && $numref > 0)
 
                                 $arrayofinclusion=array();              // TODO Find a way to get doc ODT or other
                                 // TODO Use get_exdir
+<<<<<<< HEAD
                                 $arrayofinclusion[]=preg_quote($facturestatic->ref.'.pdf','/');
                                 $listoffiles = dol_dir_list($conf->facture->dir_output.$subdir,'all',1,implode('|',$arrayofinclusion),'\.meta$|\.png','date',SORT_DESC,0,true);
+=======
+                                $arrayofinclusion[]=preg_quote($facturestatic->ref.'.pdf', '/');
+                                $listoffiles = dol_dir_list($conf->facture->dir_output.$subdir, 'all', 1, implode('|', $arrayofinclusion), '\.meta$|\.png', 'date', SORT_DESC, 0, true);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                                 // build list of files with full path
                                 $files = array();
                                 foreach($listoffiles as $filefound)
                                 {
+<<<<<<< HEAD
                                     if (strstr($filefound["name"],$facturestatic->ref))
+=======
+                                    if (strstr($filefound["name"], $facturestatic->ref))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                                     {
                                         $files[] = $uploaddir.'/'.$facturestatic->ref.'/'.$filefound["name"];
                                         break;
@@ -270,13 +310,22 @@ if ($action=="dl" && $numref > 0)
 
                                 $arrayofinclusion=array();              // TODO Find a way to get doc ODT or other
                                 // TODO Use get_exdir
+<<<<<<< HEAD
                                 $arrayofinclusion[]=preg_quote($facturestatic->ref.'.pdf','/');
                                 $listoffiles = dol_dir_list($conf->fournisseur->facture->dir_output.$subdir,'all',1,implode('|',$arrayofinclusion),'\.meta$|\.png','date',SORT_DESC,0,true);
+=======
+                                $arrayofinclusion[]=preg_quote($facturestatic->ref.'.pdf', '/');
+                                $listoffiles = dol_dir_list($conf->fournisseur->facture->dir_output.$subdir, 'all', 1, implode('|', $arrayofinclusion), '\.meta$|\.png', 'date', SORT_DESC, 0, true);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                                 // build list of files with full path
                                 $files = array();
                                 foreach($listoffiles as $filefound)
                                 {
+<<<<<<< HEAD
                                     if (strstr($filefound["name"],$facturestatic->ref))
+=======
+                                    if (strstr($filefound["name"], $facturestatic->ref))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                                     {
                                         $files[] = $uploaddir.'/'.$facturestatic->ref.'/'.$filefound["name"];
                                         break;
@@ -352,7 +401,11 @@ if ($action=="dl" && $numref > 0)
 
 $title = $langs->trans("FinancialAccount").' - '.$langs->trans("AccountStatements");
 $helpurl = "";
+<<<<<<< HEAD
 llxHeader('',$title,$helpurl);
+=======
+llxHeader('', $title, $helpurl);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $form = new Form($db);
 $societestatic=new Societe($db);
@@ -381,7 +434,11 @@ if (empty($numref))
 	$sql = "SELECT DISTINCT(b.num_releve) as numr";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql.= " WHERE b.fk_account = ".$object->id;
+<<<<<<< HEAD
 	$sql.=$db->order($sortfield,$sortorder);
+=======
+	$sql.=$db->order($sortfield, $sortorder);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	// Count total nb of records
 	$nbtotalofrecords = '';
@@ -391,7 +448,11 @@ if (empty($numref))
 		$nbtotalofrecords = $db->num_rows($result);
 	}
 
+<<<<<<< HEAD
 	$sql.= $db->plimit($conf->liste_limit+1,$offset);
+=======
+	$sql.= $db->plimit($conf->liste_limit+1, $offset);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	$result = $db->query($sql);
 	if ($result)
@@ -401,7 +462,11 @@ if (empty($numref))
 
 		// Onglets
 		$head=bank_prepare_head($object);
+<<<<<<< HEAD
 		dol_fiche_head($head,'statement',$langs->trans("FinancialAccount"),0,'account');
+=======
+		dol_fiche_head($head, 'statement', $langs->trans("FinancialAccount"), 0, 'account');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -415,16 +480,26 @@ if (empty($numref))
 		if ($object->canBeConciliated() > 0) {
 			// If not cash account and can be reconciliate
 			if ($user->rights->banque->consolidate) {
+<<<<<<< HEAD
 				print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&search_conciliated=0'.$param.'">'.$langs->trans("Conciliate").'</a>';
 			} else {
 				print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Conciliate").'</a>';
+=======
+				print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&search_conciliated=0&search_account='.$id.$param.'">'.$langs->trans("Conciliate").'</a>';
+			} else {
+				print '<a class="butActionRefused classfortooltip" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Conciliate").'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 		}
 
 		print '</div>';
 
 
+<<<<<<< HEAD
 		print_barre_liste('', $page, $_SERVER["PHP_SELF"], "&account=".$object->id, $sortfield, $sortorder,'',$numrows, $totalnboflines, '');
+=======
+		print_barre_liste('', $page, $_SERVER["PHP_SELF"], "&account=".$object->id, $sortfield, $sortorder, '', $numrows, $totalnboflines, '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		print '<form name="aaa" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -435,15 +510,24 @@ if (empty($numref))
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Ref").'</td>';
+<<<<<<< HEAD
 		print '<td align="right">'.$langs->trans("InitialBankBalance").'</td>';
 		print '<td align="right">'.$langs->trans("EndBankBalance").'</td>';
+=======
+		print '<td class="right">'.$langs->trans("InitialBankBalance").'</td>';
+		print '<td class="right">'.$langs->trans("EndBankBalance").'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '<td></td>';
 		print '</tr>';
 
 		$balancestart=array();
 		$content=array();
 
+<<<<<<< HEAD
 		while ($i < min($numrows,$conf->liste_limit))
+=======
+		while ($i < min($numrows, $conf->liste_limit))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			$objp = $db->fetch_object($result);
 
@@ -480,7 +564,11 @@ if (empty($numref))
 					$balancestart[$objp->numr] = $obj->amount;
 					$db->free($resql);
 				}
+<<<<<<< HEAD
 				print '<td align="right">'.price($balancestart[$objp->numr],'',$langs,1,-1,-1,$conf->currency).'</td>';
+=======
+				print '<td class="right">'.price($balancestart[$objp->numr], '', $langs, 1, -1, -1, $conf->currency).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				// Calculate end amount
 				$sql = "SELECT sum(b.amount) as amount";
@@ -494,9 +582,15 @@ if (empty($numref))
 					$content[$objp->numr] = $obj->amount;
 					$db->free($resql);
 				}
+<<<<<<< HEAD
 				print '<td align="right">'.price(($balancestart[$objp->numr]+$content[$objp->numr]),'',$langs,1,-1,-1,$conf->currency).'</td>';
 
 				print '<td align="center">';
+=======
+				print '<td class="right">'.price(($balancestart[$objp->numr]+$content[$objp->numr]), '', $langs, 1, -1, -1, $conf->currency).'</td>';
+
+				print '<td class="center">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if ($user->rights->banque->consolidate && $action != 'editbankreceipt') {
 					print '<a href="'.$_SERVER["PHP_SELF"].'?account='.$object->id.'&action=editbankreceipt&brref='.$objp->numr.'">'.img_edit().'</a>';
 				}
@@ -540,6 +634,7 @@ else
 	print '<input type="hidden" name="action" value="add">';
 
     print '<div class="div-table-responsive">';
+<<<<<<< HEAD
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td align="center">'.$langs->trans("DateOperationShort").'</td>';
@@ -549,6 +644,17 @@ else
 	print '<td align="right" width="60">'.$langs->trans("Debit").'</td>';
 	print '<td align="right" width="60">'.$langs->trans("Credit").'</td>';
 	print '<td align="right">'.$langs->trans("Balance").'</td>';
+=======
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	print '<td class="center">'.$langs->trans("DateOperationShort").'</td>';
+	print '<td class="center">'.$langs->trans("DateValueShort").'</td>';
+	print '<td>'.$langs->trans("Type").'</td>';
+	print '<td>'.$langs->trans("Description").'</td>';
+	print '<td class="right" width="60">'.$langs->trans("Debit").'</td>';
+	print '<td class="right" width="60">'.$langs->trans("Credit").'</td>';
+	print '<td class="right">'.$langs->trans("Balance").'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '<td>&nbsp;</td>';
 	print "</tr>\n";
 
@@ -589,11 +695,19 @@ else
 			print '<tr class="oddeven">';
 
 			// Date operation
+<<<<<<< HEAD
 			print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->do),"day").'</td>';
 
 			// Date de valeur
 			print '<td align="center" valign="center" class="nowrap">';
 			print dol_print_date($db->jdate($objp->dv),"day") .' ';
+=======
+			print '<td class="nowrap center">'.dol_print_date($db->jdate($objp->do), "day").'</td>';
+
+			// Date de valeur
+			print '<td valign="center" class="center nowrap">';
+			print dol_print_date($db->jdate($objp->dv), "day") .' ';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '<a href="releve.php?action=dvprev&amp;num='.$numref.'&amp;account='.$object->id.'&amp;dvid='.$objp->rowid.'">';
 			print img_edit_remove() . "</a> ";
 			print '<a href="releve.php?action=dvnext&amp;num='.$numref.'&amp;account='.$object->id.'&amp;dvid='.$objp->rowid.'">';
@@ -618,7 +732,11 @@ else
 			// Description
 			print '<td valign="center"><a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$object->id.'">';
 			$reg=array();
+<<<<<<< HEAD
 			preg_match('/\((.+)\)/i',$objp->label,$reg);	// Si texte entoure de parenthese on tente recherche de traduction
+=======
+			preg_match('/\((.+)\)/i', $objp->label, $reg);	// Si texte entoure de parenthese on tente recherche de traduction
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if ($reg[1] && $langs->trans($reg[1])!=$reg[1]) print $langs->trans($reg[1]);
 			else print $objp->label;
 			print '</a>';
@@ -649,7 +767,11 @@ else
 				elseif ($links[$key]['type']=='payment_sc')
 				{
 					print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$links[$key]['url_id'].'">';
+<<<<<<< HEAD
 					print ' '.img_object($langs->trans('ShowPayment'),'payment').' ';
+=======
+					print ' '.img_object($langs->trans('ShowPayment'), 'payment').' ';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					print $langs->trans("SocialContributionPayment");
 					print '</a>';
 					$newline=0;
@@ -663,7 +785,11 @@ else
 				elseif ($links[$key]['type']=='payment_salary')
 				{
 					print '<a href="'.DOL_URL_ROOT.'/compta/salaries/card.php?id='.$links[$key]['url_id'].'">';
+<<<<<<< HEAD
 					print ' '.img_object($langs->trans('ShowPayment'),'payment').' ';
+=======
+					print ' '.img_object($langs->trans('ShowPayment'), 'payment').' ';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					print $langs->trans("Payment");
 					print '</a>';
 					$newline=0;
@@ -676,11 +802,19 @@ else
 						$bankstatic->id=$banklinestatic->fk_account;
 						$bankstatic->label=$banklinestatic->bank_account_label;
 						print ' ('.$langs->trans("from").' ';
+<<<<<<< HEAD
 						print $bankstatic->getNomUrl(1,'transactions');
 						print ' '.$langs->trans("toward").' ';
 						$bankstatic->id=$objp->bankid;
 						$bankstatic->label=$objp->bankref;
 						print $bankstatic->getNomUrl(1,'');
+=======
+						print $bankstatic->getNomUrl(1, 'transactions');
+						print ' '.$langs->trans("toward").' ';
+						$bankstatic->id=$objp->bankid;
+						$bankstatic->label=$objp->bankref;
+						print $bankstatic->getNomUrl(1, '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						print ')';
 					}
 					else
@@ -688,12 +822,20 @@ else
 						$bankstatic->id=$objp->bankid;
 						$bankstatic->label=$objp->bankref;
 						print ' ('.$langs->trans("from").' ';
+<<<<<<< HEAD
 						print $bankstatic->getNomUrl(1,'');
+=======
+						print $bankstatic->getNomUrl(1, '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						print ' '.$langs->trans("toward").' ';
 						$banklinestatic->fetch($links[$key]['url_id']);
 						$bankstatic->id=$banklinestatic->fk_account;
 						$bankstatic->label=$banklinestatic->bank_account_label;
+<<<<<<< HEAD
 						print $bankstatic->getNomUrl(1,'transactions');
+=======
+						print $bankstatic->getNomUrl(1, 'transactions');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						print ')';
 					}
 				}
@@ -705,21 +847,33 @@ else
 				}
 				elseif ($links[$key]['type']=='member') {
 					print '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$links[$key]['url_id'].'">';
+<<<<<<< HEAD
 					print img_object($langs->trans('ShowMember'),'user').' ';
+=======
+					print img_object($langs->trans('ShowMember'), 'user').' ';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					print $links[$key]['label'];
 					print '</a>';
 					$newline=0;
 				}
 				elseif ($links[$key]['type']=='user') {
 					print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$links[$key]['url_id'].'">';
+<<<<<<< HEAD
 					print img_object($langs->trans('ShowUser'),'user').' ';
+=======
+					print img_object($langs->trans('ShowUser'), 'user').' ';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					print $links[$key]['label'];
 					print '</a>';
 					$newline=0;
 				}
 				elseif ($links[$key]['type']=='sc') {
 					print '<a href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$links[$key]['url_id'].'">';
+<<<<<<< HEAD
 					print img_object($langs->trans('ShowBill'),'bill').' ';
+=======
+					print img_object($langs->trans('ShowBill'), 'bill').' ';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					print $langs->trans("SocialContribution");
 					print '</a>';
 					$newline=0;
@@ -766,11 +920,16 @@ else
 			if ($objp->amount < 0)
 			{
 				$totald = $totald + abs($objp->amount);
+<<<<<<< HEAD
 				print '<td align="right" class="nowrap">'.price($objp->amount * -1)."</td><td>&nbsp;</td>\n";
+=======
+				print '<td class="nowrap right">'.price($objp->amount * -1)."</td><td>&nbsp;</td>\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 			else
 			{
 				$totalc = $totalc + abs($objp->amount);
+<<<<<<< HEAD
 				print '<td>&nbsp;</td><td align="right" class="nowrap">'.price($objp->amount)."</td>\n";
 			}
 
@@ -779,12 +938,26 @@ else
 			if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
 			{
 				print '<td align="center"><a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&account='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?account='.$object->id.'&num='.$numref).'">';
+=======
+				print '<td>&nbsp;</td><td class="nowrap right">'.price($objp->amount)."</td>\n";
+			}
+
+			print '<td class="nowrap right">'.price(price2num($total, 'MT'))."</td>\n";
+
+			if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
+			{
+				print '<td class="center"><a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&account='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?account='.$object->id.'&num='.$numref).'">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				print img_edit();
 				print "</a></td>";
 			}
 			else
 			{
+<<<<<<< HEAD
 				print "<td align=\"center\">&nbsp;</td>";
+=======
+				print "<td class=\"center\">&nbsp;</td>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 			print "</tr>";
 			$i++;
@@ -793,11 +966,19 @@ else
 	}
 
 	// Line Total
+<<<<<<< HEAD
 	print "\n".'<tr class="liste_total"><td align="right" colspan="4">'.$langs->trans("Total")." :</td><td align=\"right\">".price($totald)."</td><td align=\"right\">".price($totalc)."</td><td>&nbsp;</td><td>&nbsp;</td></tr>";
 
 	// Line Balance
 	print "\n<tr>";
 	print "<td align=\"right\" colspan=\"3\">&nbsp;</td><td colspan=\"3\"><b>".$langs->trans("EndBankBalance")." :</b></td>";
+=======
+	print "\n".'<tr class="liste_total"><td class="right" colspan="4">'.$langs->trans("Total")." :</td><td class=\"right\">".price($totald)."</td><td class=\"right\">".price($totalc)."</td><td>&nbsp;</td><td>&nbsp;</td></tr>";
+
+	// Line Balance
+	print "\n<tr>";
+	print "<td class=\"right\" colspan=\"3\">&nbsp;</td><td colspan=\"3\"><b>".$langs->trans("EndBankBalance")." :</b></td>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '<td class="right"><b>'.price(price2num($total, 'MT'))."</b></td><td>&nbsp;</td>";
 	print "</tr>\n";
 	print "</table>";
@@ -813,7 +994,12 @@ else
 	}
 }
 
+<<<<<<< HEAD
 
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

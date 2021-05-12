@@ -22,7 +22,11 @@ SearchAProposal=Søk i tilbud
 NoProposal=Ingen tilbud
 ProposalsStatistics=Tilbudsstatistikk
 NumberOfProposalsByMonth=Antall tilbud pr måned
+<<<<<<< HEAD
 AmountOfProposalsByMonthHT=Tilbudsbeløp pr måned (eksl. MVA)
+=======
+AmountOfProposalsByMonthHT=Beløp per måned (ekskl. MVA)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NbOfProposals=Antall tilbud
 ShowPropal=Vis tilbud
 PropalsDraft=Kladder
@@ -33,7 +37,11 @@ PropalStatusSigned=Akseptert(kan faktureres)
 PropalStatusNotSigned=Ikke akseptert(lukket)
 PropalStatusBilled=Fakturert
 PropalStatusDraftShort=Kladd
+<<<<<<< HEAD
 PropalStatusValidatedShort=Validert
+=======
+PropalStatusValidatedShort=Validert (åpen)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PropalStatusClosedShort=Lukket
 PropalStatusSignedShort=Signert
 PropalStatusNotSignedShort=Ikke signert
@@ -53,16 +61,27 @@ ErrorPropalNotFound=Tilbudet %s ble ikke funnet
 AddToDraftProposals=Legg til tilbudsutkast
 NoDraftProposals=Ingen tilbudsutkast
 CopyPropalFrom=Opprett nytt tilbud ved å kopiere et eksisterende
+<<<<<<< HEAD
 CreateEmptyPropal=Opprett tomt tilbud eller fra en liste over varer/tjenester
 DefaultProposalDurationValidity=Standard gyldighetstid for tilbud (dager)
 UseCustomerContactAsPropalRecipientIfExist=Bruk kontaktpersonens adresse (hvis den er definert) i stedet for tredjepartens adresse
 ClonePropal=Klon tilbud
+=======
+CreateEmptyPropal=Opprett et tomt tilbud eller fra listen over varer/tjenester
+DefaultProposalDurationValidity=Standard gyldighetstid for tilbud (dager)
+UseCustomerContactAsPropalRecipientIfExist=Bruk kontakt/adresse med typen 'Kontakt tilbudsoppfølging' hvis det er definert, i stedet for tredjepartsadresse som mottakeradresse av tilbud
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmClonePropal=Er du sikker på at du vil klone tilbudet <b>%s</b>?
 ConfirmReOpenProp=Er du sikker på at du vil gjenåpne tilbudet <b>%s</b>?
 ProposalsAndProposalsLines=Tilbud og linjer
 ProposalLine=Tilbudslinje
+<<<<<<< HEAD
 AvailabilityPeriod=Tilgjengelighet forsinkelse
 SetAvailability=Sett tilgjengelighet forsinkelse
+=======
+AvailabilityPeriod=Tilgjengelig forsinkelse
+SetAvailability=Sett tilgjengelig forsinkelse
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AfterOrder=etter bestilling
 OtherProposals=Andre tilbud
 ##### Availability #####
@@ -73,13 +92,25 @@ AvailabilityTypeAV_3W=3 uker
 AvailabilityTypeAV_1M=En måned
 ##### Types de contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Representant for oppfølging av tilbud
+<<<<<<< HEAD
 TypeContact_propal_external_BILLING=Kundens fakturakontakt
+=======
+TypeContact_propal_external_BILLING=Kundekontakt faktura
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TypeContact_propal_external_CUSTOMER=Kundens tilbudsoppfølger
 TypeContact_propal_external_SHIPPING=Kundekontakt for levering
 # Document models
 DocModelAzurDescription=En fullstendig tilbudsmodell (logo...)
+<<<<<<< HEAD
+=======
+DocModelCyanDescription=En fullstendig tilbudsmodell (logo...)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DefaultModelPropalCreate=Standard modellbygging
 DefaultModelPropalToBill=Standardmal når du lukker et tilbud (som skal faktureres)
 DefaultModelPropalClosed=Standardmal når du lukker et tilbud (ufakturert)
 ProposalCustomerSignature=Skriftlig aksept, firmastempel, dato og signatur
+<<<<<<< HEAD
 ProposalsStatisticsSuppliers=Statistikk over leverandørtilbud
+=======
+ProposalsStatisticsSuppliers=Leverandørs tilbudsstatistikk
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

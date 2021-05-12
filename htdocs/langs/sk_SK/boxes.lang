@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - boxes
+<<<<<<< HEAD
 BoxLoginInformation=Login information
 BoxLastRssInfos=Rss informácie
 BoxLastProducts=Najnovšie %s produkty/služby
@@ -8,11 +9,26 @@ BoxLastSupplierBills=Najnovšie dodávateľské faktúry
 BoxLastCustomerBills=Najnovšie zákaznícke faktúry
 BoxOldestUnpaidCustomerBills=Najstaršie nezaplatené zákaznícke faktúry
 BoxOldestUnpaidSupplierBills=Najstaršie nezaplatené dodávateľské faktúry
+=======
+BoxLoginInformation=Login Information
+BoxLastRssInfos=RSS Information
+BoxLastProducts=Latest %s Products/Services
+BoxProductsAlertStock=Upozornenia skladu pre produkt
+BoxLastProductsInContract=Najnovšie %s zazmluvnené produkty/služby
+BoxLastSupplierBills=Latest Vendor invoices
+BoxLastCustomerBills=Latest Customer invoices
+BoxOldestUnpaidCustomerBills=Najstaršie nezaplatené zákaznícke faktúry
+BoxOldestUnpaidSupplierBills=Oldest unpaid vendor invoices
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BoxLastProposals=Najnovšie komerčné ponuky
 BoxLastProspects=Najnovšie upravené vyhľiadky
 BoxLastCustomers=Najnovšie upravení zákazníci
 BoxLastSuppliers=Najnovšie upravení dodávatelia
+<<<<<<< HEAD
 BoxLastCustomerOrders=Najnovšie upravené objednávky
+=======
+BoxLastCustomerOrders=Latest sales orders
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BoxLastActions=Najnovšie akcie
 BoxLastContracts=Najnovšie zmluvy
 BoxLastContacts=Najnovšie kontakty/adresy
@@ -20,6 +36,7 @@ BoxLastMembers=Najnovší užívatelia
 BoxFicheInter=Najnovšie zásahy
 BoxCurrentAccounts=Otvoriť zostatok na účte
 BoxTitleLastRssInfos=Najnovšie %s novinky z %s
+<<<<<<< HEAD
 BoxTitleLastProducts=Naposledy %s upravené produkty/služby
 BoxTitleProductsAlertStock=Produkty skladom pohotovosti
 BoxTitleLastSuppliers=Najnovšie %s pridaný dodávatelia
@@ -36,6 +53,24 @@ BoxTitleOldestUnpaidSupplierBills=Najstaršie %s nezaplatené dodávatelské fak
 BoxTitleCurrentAccounts=Otvoriť zostatky na účtoch
 BoxTitleLastModifiedContacts=Najnovšie %s upravené kontakty/adresy
 BoxMyLastBookmarks=Moje najnovšie %s záložky
+=======
+BoxTitleLastProducts=Products/Services: last %s modified
+BoxTitleProductsAlertStock=Products: stock alert
+BoxTitleLastSuppliers=Najnovšie %s pridaný dodávatelia
+BoxTitleLastModifiedSuppliers=Vendors: last %s modified
+BoxTitleLastModifiedCustomers=Customers: last %s modified
+BoxTitleLastCustomersOrProspects=Najnovší %s zákazníci alebo prospekty
+BoxTitleLastCustomerBills=Latest %s Customer invoices
+BoxTitleLastSupplierBills=Latest %s Vendor invoices
+BoxTitleLastModifiedProspects=Prospects: last %s modified
+BoxTitleLastModifiedMembers=Najnovší %s užívatelia
+BoxTitleLastFicheInter=Najnovšie %s upravené zásahy
+BoxTitleOldestUnpaidCustomerBills=Customer Invoices: oldest %s unpaid
+BoxTitleOldestUnpaidSupplierBills=Vendor Invoices: oldest %s unpaid
+BoxTitleCurrentAccounts=Open Accounts: balances
+BoxTitleLastModifiedContacts=Contacts/Addresses: last %s modified
+BoxMyLastBookmarks=Bookmarks: latest %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BoxOldestExpiredServices=Najstarší aktívny vypršala služby
 BoxLastExpiredServices=Najnovšie %s najstaršie zmluvy s aktívnym expirovaním služby
 BoxTitleLastActionsToDo=Najnovšie %s úlohy na dokončenie
@@ -45,24 +80,38 @@ BoxTitleLastModifiedExpenses=Najnovšie %s upravené správy o výdavkoch
 BoxGlobalActivity=Globálna aktivita (faktúry, návrhy, objednávky)
 BoxGoodCustomers=Top zákazníci
 BoxTitleGoodCustomers=%s Top zákazníkov
+<<<<<<< HEAD
 FailedToRefreshDataInfoNotUpToDate=Aktualizácia RSS zlyhala. Naposledy úspešne aktualizované : %s
+=======
+FailedToRefreshDataInfoNotUpToDate=Failed to refresh RSS flux. Latest successful refresh date: %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LastRefreshDate=Najnovší čas obnovenia
 NoRecordedBookmarks=Žiadne záložky definované.
 ClickToAdd=Klikni pre pridanie.
 NoRecordedCustomers=Žiadne zaznamenané zákazníkmi
 NoRecordedContacts=Zaznamenané žiadne kontakty
 NoActionsToDo=Žiadne akcie robiť
+<<<<<<< HEAD
 NoRecordedOrders=No recorded customer orders
 NoRecordedProposals=Zaznamenané žiadne návrhy
 NoRecordedInvoices=No recorded customer invoices
 NoUnpaidCustomerBills=No unpaid customer invoices
 NoUnpaidSupplierBills=No unpaid supplier invoices
 NoModifiedSupplierBills=No recorded supplier invoices
+=======
+NoRecordedOrders=No recorded sales orders
+NoRecordedProposals=Zaznamenané žiadne návrhy
+NoRecordedInvoices=No recorded customer invoices
+NoUnpaidCustomerBills=No unpaid customer invoices
+NoUnpaidSupplierBills=No unpaid vendor invoices
+NoModifiedSupplierBills=No recorded vendor invoices
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoRecordedProducts=Žiadne zaznamenané produkty / služby
 NoRecordedProspects=Zaznamenané žiadne vyhliadky
 NoContractedProducts=Žiadne produkty / služby zmluvne
 NoRecordedContracts=Žiadne zaznamenané zmluvy
 NoRecordedInterventions=Žiadne zaznamenané zásahy
+<<<<<<< HEAD
 BoxLatestSupplierOrders=Najnovšie dodávateľské objednávky
 NoSupplierOrder=Žiadne zaznamenané dodávateľa, aby
 BoxCustomersInvoicesPerMonth=Zákazníkov faktúry za mesiac
@@ -77,6 +126,22 @@ BoxTitleLastModifiedSupplierBills=Najnovšie %s upravené dodávatelské účten
 BoxTitleLatestModifiedSupplierOrders=Najnovšie %s upravené dodávatelské objednávky
 BoxTitleLastModifiedCustomerBills=Najnovšie %s upravené zákaznícke účtenky
 BoxTitleLastModifiedCustomerOrders=Najnovšie %s upravené zákaznícke objednávky
+=======
+BoxLatestSupplierOrders=Latest purchase orders
+NoSupplierOrder=No recorded purchase order
+BoxCustomersInvoicesPerMonth=Customer Invoices per month
+BoxSuppliersInvoicesPerMonth=Vendor Invoices per month
+BoxCustomersOrdersPerMonth=Sales Orders per month
+BoxSuppliersOrdersPerMonth=Vendor Orders per month
+BoxProposalsPerMonth=Návrhy za mesiac
+NoTooLowStockProducts=No products are under the low stock limit
+BoxProductDistribution=Products/Services Distribution
+ForObject=On %s
+BoxTitleLastModifiedSupplierBills=Vendor Invoices: last %s modified
+BoxTitleLatestModifiedSupplierOrders=Vendor Orders: last %s modified
+BoxTitleLastModifiedCustomerBills=Customer Invoices: last %s modified
+BoxTitleLastModifiedCustomerOrders=Sales Orders: last %s modified
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BoxTitleLastModifiedPropals=Nedávno %s upravené ponuky
 ForCustomersInvoices=Zákazníci faktúry
 ForCustomersOrders=Zákazníci objednávky
@@ -84,3 +149,7 @@ ForProposals=Návrhy
 LastXMonthRolling=Posledný %s mesiac postupu
 ChooseBoxToAdd=Pridať blok na nástenku
 BoxAdded=Widget was added in your dashboard
+<<<<<<< HEAD
+=======
+BoxTitleUserBirthdaysOfMonth=Birthdays of this month
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

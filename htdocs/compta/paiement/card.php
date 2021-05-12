@@ -2,7 +2,11 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2013	   Marcos García		 <marcosgdf@gmail.com>
  * Copyright (C) 2015	   Juanjo Menent		 <jmenent@2byte.es>
  *
@@ -37,11 +41,19 @@ if (! empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/ban
 // Load translation files required by the page
 $langs->loadLangs(array('bills','banks','companies'));
 
+<<<<<<< HEAD
 $id=GETPOST('id','int');
 $ref=GETPOST('ref', 'alpha');
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $backtopage=GETPOST('backtopage','alpha');
+=======
+$id=GETPOST('id', 'int');
+$ref=GETPOST('ref', 'alpha');
+$action=GETPOST('action', 'alpha');
+$confirm=GETPOST('confirm', 'alpha');
+$backtopage=GETPOST('backtopage', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -60,7 +72,11 @@ if ($action == 'setnote' && $user->rights->facture->paiement)
     $db->begin();
 
     $object->fetch($id);
+<<<<<<< HEAD
     $result = $object->update_note(GETPOST('note','none'));
+=======
+    $result = $object->update_note(GETPOST('note', 'none'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     if ($result > 0)
     {
         $db->commit();
@@ -107,7 +123,11 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->facture->
 	$db->begin();
 
     $object->fetch($id);
+<<<<<<< HEAD
 	if ($object->valide() > 0)
+=======
+	if ($object->valide($user) > 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$db->commit();
 
@@ -121,7 +141,11 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->facture->
 			$outputlangs = $langs;
 			if (! empty($_REQUEST['lang_id']))
 			{
+<<<<<<< HEAD
 				$outputlangs = new Translate("",$conf);
+=======
+				$outputlangs = new Translate("", $conf);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 			}
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
@@ -157,7 +181,11 @@ if ($action == 'setnum_paiement' && ! empty($_POST['num_paiement']))
 if ($action == 'setdatep' && ! empty($_POST['datepday']))
 {
 	$object->fetch($id);
+<<<<<<< HEAD
     $datepaye = dol_mktime(12, 0, 0, $_POST['datepmonth'], $_POST['datepday'], $_POST['datepyear']);
+=======
+	$datepaye = dol_mktime(GETPOST('datephour', 'int'), GETPOST('datepmin', 'int'), GETPOST('datepsec', 'int'), GETPOST('datepmonth', 'int'), GETPOST('datepday', 'int'), GETPOST('datepyear', 'int'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$res = $object->update_date($datepaye);
 	if ($res === 0)
 	{
@@ -181,7 +209,11 @@ $thirdpartystatic=new Societe($db);
 $result=$object->fetch($id, $ref);
 if ($result <= 0)
 {
+<<<<<<< HEAD
 	dol_print_error($db,'Payement '.$id.' not found in database');
+=======
+	dol_print_error($db, 'Payement '.$id.' not found in database');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	exit;
 }
 
@@ -191,6 +223,7 @@ $head = payment_prepare_head($object);
 
 dol_fiche_head($head, 'payment', $langs->trans("PaymentCustomerInvoice"), -1, 'payment');
 
+<<<<<<< HEAD
 /*
  * Confirmation de la suppression du paiement
  */
@@ -208,6 +241,19 @@ if ($action == 'valide')
 	$facid = $_GET['facid'];
 	print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
 
+=======
+// Confirmation de la suppression du paiement
+if ($action == 'delete')
+{
+	print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete', '', 0, 2);
+}
+
+// Confirmation de la validation du paiement
+if ($action == 'valide')
+{
+	$facid = $_GET['facid'];
+	print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide', '', 0, 2);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 $linkback = '<a href="' . DOL_URL_ROOT . '/compta/paiement/list.php">' . $langs->trans("BackToList") . '</a>';
@@ -221,21 +267,42 @@ print '<div class="underbanner clearboth"></div>';
 print '<table class="border centpercent">'."\n";
 
 // Date payment
+<<<<<<< HEAD
 print '<tr><td class="titlefield">'.$form->editfieldkey("Date",'datep',$object->date,$object,$user->rights->facture->paiement).'</td><td>';
 print $form->editfieldval("Date",'datep',$object->date,$object,$user->rights->facture->paiement,'datepicker','',null,$langs->trans('PaymentDateUpdateSucceeded'));
+=======
+print '<tr><td class="titlefield">'.$form->editfieldkey("Date", 'datep', $object->date, $object, $user->rights->facture->paiement).'</td><td>';
+print $form->editfieldval("Date", 'datep', $object->date, $object, $user->rights->facture->paiement, 'datehourpicker', '', null, $langs->trans('PaymentDateUpdateSucceeded'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</td></tr>';
 
 // Payment type (VIR, LIQ, ...)
 $labeltype=$langs->trans("PaymentType".$object->type_code)!=("PaymentType".$object->type_code)?$langs->trans("PaymentType".$object->type_code):$object->type_libelle;
+<<<<<<< HEAD
 print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>'.$labeltype.'</td></tr>';
+=======
+print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>'.$labeltype;
+print $object->num_paiement?' - '.$object->num_paiement:'';
+print '</td></tr>';
+
+// Amount
+print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount, '', $langs, 0, -1, -1, $conf->currency).'</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $disable_delete = 0;
 // Bank account
 if (! empty($conf->banque->enabled))
 {
+<<<<<<< HEAD
 	if ($object->fk_account > 0)
 	{
 		$bankline=new AccountLine($db);
+=======
+	$bankline=new AccountLine($db);
+
+	if ($object->fk_account > 0)
+	{
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$bankline->fetch($object->bank_line);
 		if ($bankline->rappro)
 		{
@@ -297,12 +364,17 @@ if (! empty($conf->banque->enabled))
 	print '<tr>';
 	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
 	print '<td>';
+<<<<<<< HEAD
 	print $bankline->getNomUrl(1,0,'showconciliated');
+=======
+	print $bankline->getNomUrl(1, 0, 'showconciliated');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</td>';
 	print '</tr>';
 }
 
 // Comments
+<<<<<<< HEAD
 print '<tr><td class="tdtop">'.$form->editfieldkey("Comments",'note',$object->note,$object,$user->rights->facture->paiement).'</td><td>';
 print $form->editfieldval("Note",'note',$object->note,$object,$user->rights->facture->paiement,'textarea:'.ROWS_3.':90%');
 print '</td></tr>';
@@ -310,6 +382,12 @@ print '</td></tr>';
 // Amount
 print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount,'',$langs,0,-1,-1,$conf->currency).'</td></tr>';
 
+=======
+print '<tr><td class="tdtop">'.$form->editfieldkey("Comments", 'note', $object->note, $object, $user->rights->facture->paiement).'</td><td>';
+print $form->editfieldval("Note", 'note', $object->note, $object, $user->rights->facture->paiement, 'textarea:'.ROWS_3.':90%');
+print '</td></tr>';
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</table>';
 
 print '</div>';
@@ -321,11 +399,19 @@ dol_fiche_end();
  * List of invoices
  */
 
+<<<<<<< HEAD
 $sql = 'SELECT f.rowid as facid, f.facnumber, f.type, f.total_ttc, f.paye, f.fk_statut, pf.amount, s.nom as name, s.rowid as socid';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf,'.MAIN_DB_PREFIX.'facture as f,'.MAIN_DB_PREFIX.'societe as s';
 $sql.= ' WHERE pf.fk_facture = f.rowid';
 $sql.= ' AND f.fk_soc = s.rowid';
 $sql.= ' AND f.entity = '.$conf->entity;
+=======
+$sql = 'SELECT f.rowid as facid, f.ref, f.type, f.total_ttc, f.paye, f.fk_statut, pf.amount, s.nom as name, s.rowid as socid';
+$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf,'.MAIN_DB_PREFIX.'facture as f,'.MAIN_DB_PREFIX.'societe as s';
+$sql.= ' WHERE pf.fk_facture = f.rowid';
+$sql.= ' AND f.fk_soc = s.rowid';
+$sql.= ' AND f.entity IN ('.getEntity('invoice').')';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $sql.= ' AND pf.fk_paiement = '.$object->id;
 $resql=$db->query($sql);
 if ($resql)
@@ -345,10 +431,18 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('Bill').'</td>';
 	print '<td>'.$langs->trans('Company').'</td>';
+<<<<<<< HEAD
 	print '<td align="right">'.$langs->trans('ExpectedToPay').'</td>';
     print '<td align="right">'.$langs->trans('PayedByThisPayment').'</td>';
     print '<td align="right">'.$langs->trans('RemainderToPay').'</td>';
     print '<td align="right">'.$langs->trans('Status').'</td>';
+=======
+	if($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED )print '<td>'.$langs->trans('Entity').'</td>';
+	print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
+    print '<td class="right">'.$langs->trans('PayedByThisPayment').'</td>';
+    print '<td class="right">'.$langs->trans('RemainderToPay').'</td>';
+    print '<td class="right">'.$langs->trans('Status').'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print "</tr>\n";
 
 	if ($num > 0)
@@ -365,8 +459,13 @@ if ($resql)
 			$paiement = $invoice->getSommePaiement();
 			$creditnotes=$invoice->getSumCreditNotesUsed();
 			$deposits=$invoice->getSumDepositsUsed();
+<<<<<<< HEAD
 			$alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
 			$remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
+=======
+			$alreadypayed=price2num($paiement + $creditnotes + $deposits, 'MT');
+			$remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits, 'MT');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			print '<tr class="oddeven">';
 
@@ -381,6 +480,7 @@ if ($resql)
 			print '</td>';
 
 			// Expected to pay
+<<<<<<< HEAD
 			print '<td align="right">'.price($objp->total_ttc).'</td>';
 
             // Amount payed
@@ -391,6 +491,25 @@ if ($resql)
 
 			// Status
 			print '<td align="right">'.$invoice->getLibStatut(5, $alreadypayed).'</td>';
+=======
+			if($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED ){
+				print '<td>';
+				$mc->getInfo($objp->entity);
+				print $mc->label;
+				print '</td>';
+			}
+			// Expected to pay
+			print '<td class="right">'.price($objp->total_ttc).'</td>';
+
+            // Amount payed
+            print '<td class="right">'.price($objp->amount).'</td>';
+
+            // Remain to pay
+            print '<td class="right">'.price($remaintopay).'</td>';
+
+			// Status
+			print '<td class="right">'.$invoice->getLibStatut(5, $alreadypayed).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			print "</tr>\n";
 			if ($objp->paye == 1)	// If at least one invoice is paid, disable delete
@@ -443,13 +562,22 @@ if ($user->societe_id == 0 && $action == '')
 		}
 		else
 		{
+<<<<<<< HEAD
 			print '<a class="butActionRefused" href="#" title="'.$title_button.'">'.$langs->trans('Delete').'</a>';
+=======
+			print '<a class="butActionRefused classfortooltip" href="#" title="'.$title_button.'">'.$langs->trans('Delete').'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 	}
 }
 
 print '</div>';
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

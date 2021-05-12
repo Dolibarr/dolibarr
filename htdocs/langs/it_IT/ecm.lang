@@ -1,5 +1,9 @@
 # Dolibarr language file - Source file is en_US - ecm
+<<<<<<< HEAD
 ECMNbOfDocs=Numero di documenti nella directory
+=======
+ECMNbOfDocs=No. of documents in directory
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ECMSection=Directory
 ECMSectionManual=Directory manuale
 ECMSectionAuto=Directory automatica
@@ -34,6 +38,11 @@ ECMDocsByProjects=Documenti collegati ai progetti
 ECMDocsByUsers=Documenti collegati agli utenti
 ECMDocsByInterventions=Documenti collegati agli interventi
 ECMDocsByExpenseReports=Documenti collegati a note spese
+<<<<<<< HEAD
+=======
+ECMDocsByHolidays=Documents linked to holidays
+ECMDocsBySupplierProposals=Documents linked to supplier proposals
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ECMNoDirectoryYet=Nessuna directory creata
 ShowECMSection=Visualizza la directory
 DeleteSection=Eliminare la directory

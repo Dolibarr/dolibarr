@@ -4,7 +4,11 @@
  * the Symfony Universal ClassLoader by Fabien Potencier. Since PSR-0 handles an underscore in
  * classnames (on the filesystem) as a slash, "Mobile_Detect.php" autoloaders will try to convert
  * the classname and path to "Mobile\Detect.php". This script will ensure autoloading with:
+<<<<<<< HEAD
  *  - Namespace:	   Detection
+=======
+ *  - Namespace:       Detection
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *  - Classname:       MobileDetect
  *  - Namespased:      \Detection\MobileDetect
  *  - Autoload path:   ./namespaced

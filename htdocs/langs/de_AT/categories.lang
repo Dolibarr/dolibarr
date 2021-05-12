@@ -1,3 +1,6 @@
 # Dolibarr language file - Source file is en_US - categories
 CategoryExistsAtSameLevel=Gleichnamige Kategorie auf diesem Level gefunden
+<<<<<<< HEAD
 DeleteFromCat=Aus dieser Kategorie entfernen
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

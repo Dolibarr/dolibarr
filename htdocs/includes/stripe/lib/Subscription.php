@@ -9,6 +9,7 @@ namespace Stripe;
  * @property string $object
  * @property float $application_fee_percent
  * @property string $billing
+<<<<<<< HEAD
  * @property bool $cancel_at_period_end
  * @property int $canceled_at
  * @property int $created
@@ -19,10 +20,32 @@ namespace Stripe;
  * @property mixed $discount
  * @property int $ended_at
  * @property Collection $items
+=======
+ * @property int $billing_cycle_anchor
+ * @property mixed $billing_thresholds
+ * @property bool $cancel_at_period_end
+ * @property int $canceled_at
+ * @property int $created
+ * @property int $current_period_end
+ * @property int $current_period_start
+ * @property string $customer
+ * @property int $days_until_due
+ * @property string $default_payment_method
+ * @property string $default_source
+ * @property array $default_tax_rates
+ * @property Discount $discount
+ * @property int $ended_at
+ * @property Collection $items
+ * @property string $latest_invoice
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * @property boolean $livemode
  * @property StripeObject $metadata
  * @property Plan $plan
  * @property int $quantity
+<<<<<<< HEAD
+=======
+ * @property SubscriptionSchedule $schedule
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * @property int $start
  * @property string $status
  * @property float $tax_percent
@@ -33,6 +56,12 @@ namespace Stripe;
  */
 class Subscription extends ApiResource
 {
+<<<<<<< HEAD
+=======
+
+    const OBJECT_NAME = "subscription";
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     use ApiOperations\All;
     use ApiOperations\Create;
     use ApiOperations\Delete {
@@ -46,11 +75,21 @@ class Subscription extends ApiResource
      *
      * @link https://stripe.com/docs/api#subscription_object-status
      */
+<<<<<<< HEAD
     const STATUS_ACTIVE = 'active';
     const STATUS_CANCELED = 'canceled';
     const STATUS_PAST_DUE = 'past_due';
     const STATUS_TRIALING = 'trialing';
     const STATUS_UNPAID = 'unpaid';
+=======
+    const STATUS_ACTIVE             = 'active';
+    const STATUS_CANCELED           = 'canceled';
+    const STATUS_PAST_DUE           = 'past_due';
+    const STATUS_TRIALING           = 'trialing';
+    const STATUS_UNPAID             = 'unpaid';
+    const STATUS_INCOMPLETE         = 'incomplete';
+    const STATUS_INCOMPLETE_EXPIRED = 'incomplete_expired';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     public static function getSavedNestedResources()
     {
@@ -82,6 +121,7 @@ class Subscription extends ApiResource
         list($response, $opts) = $this->_request('delete', $url);
         $this->refreshFrom(['discount' => null], $opts, true);
     }
+<<<<<<< HEAD
 
     public function serializeParameters($force = false)
     {
@@ -91,4 +131,6 @@ class Subscription extends ApiResource
         }
         return $update;
     }
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

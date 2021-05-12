@@ -32,6 +32,7 @@ require DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
+<<<<<<< HEAD
 $langs->load('bills');
 $langs->load('banks');
 $langs->load('companies');
@@ -40,6 +41,13 @@ $langs->load("suppliers");
 $id			= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
 $confirm	= GETPOST('confirm','alpha');
+=======
+$langs->loadLangs(array('bills', 'banks', 'companies', 'suppliers'));
+
+$id			= GETPOST('id', 'int');
+$action		= GETPOST('action', 'alpha');
+$confirm	= GETPOST('confirm', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $object = new PaiementFourn($db);
 
@@ -57,7 +65,11 @@ if ($action == 'setnote' && $user->rights->fournisseur->facture->creer)
 	$db->begin();
 
 	$object->fetch($id);
+<<<<<<< HEAD
 	$result = $object->update_note(GETPOST('note','none'));
+=======
+	$result = $object->update_note(GETPOST('note', 'none'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if ($result > 0)
 	{
 		$db->commit();
@@ -127,7 +139,11 @@ if ($action == 'setnum_paiement' && ! empty($_POST['num_paiement']))
 if ($action == 'setdatep' && ! empty($_POST['datepday']))
 {
 	$object->fetch($id);
+<<<<<<< HEAD
 	$datepaye = dol_mktime(12, 0, 0, $_POST['datepmonth'], $_POST['datepday'], $_POST['datepyear']);
+=======
+	$datepaye = dol_mktime(GETPOST('datephour', 'int'), GETPOST('datepmin', 'int'), GETPOST('datepsec', 'int'), GETPOST('datepmonth', 'int'), GETPOST('datepday', 'int'), GETPOST('datepyear', 'int'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$res = $object->update_date($datepaye);
 	if ($res === 0)
 	{
@@ -169,7 +185,10 @@ if ($result > 0)
 	if ($action == 'delete')
 	{
 		print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete');
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	/*
@@ -178,13 +197,20 @@ if ($result > 0)
 	if ($action == 'valide')
 	{
 		print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide');
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	$linkback = '<a href="' . DOL_URL_ROOT . '/fourn/facture/paiement.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 
+<<<<<<< HEAD
 	dol_banner_tab($object,'id',$linkback,1,'rowid','ref');
+=======
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
@@ -197,12 +223,18 @@ if ($result > 0)
 	print '</td></tr>';*/
 
 	// Date payment
+<<<<<<< HEAD
 	print '<tr><td class="titlefield" colspan="2">'.$form->editfieldkey("Date",'datep',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
 	print $form->editfieldval("Date",'datep',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'datepicker','',null,$langs->trans('PaymentDateUpdateSucceeded'));
+=======
+	print '<tr><td class="titlefield" colspan="2">'.$form->editfieldkey("Date", 'datep', $object->date, $object, $object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
+	print $form->editfieldval("Date", 'datep', $object->date, $object, $object->statut == 0 && $user->rights->fournisseur->facture->creer, 'datehourpicker', '', null, $langs->trans('PaymentDateUpdateSucceeded'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</td></tr>';
 
 	// Payment mode
 	$labeltype=$langs->trans("PaymentType".$object->type_code)!=("PaymentType".$object->type_code)?$langs->trans("PaymentType".$object->type_code):$object->type_libelle;
+<<<<<<< HEAD
 	print '<tr><td colspan="2">'.$langs->trans('PaymentMode').'</td><td colspan="3">'.$labeltype.'</td></tr>';
 
 	// Payment numero
@@ -212,17 +244,35 @@ if ($result > 0)
 
 	// Amount
 	print '<tr><td colspan="2">'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->montant,'',$langs,0,0,-1,$conf->currency).'</td></tr>';
+=======
+	print '<tr><td colspan="2">'.$langs->trans('PaymentMode').'</td><td colspan="3">'.$labeltype;
+	print $object->num_paiement?' - '.$object->num_paiement:'';
+	print '</td></tr>';
+
+	// Payment numero
+	/* TODO Add field num_payment into payment table and save it
+	print '<tr><td colspan="2">'.$form->editfieldkey("Numero",'num_paiement',$object->num_paiement,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
+	print $form->editfieldval("Numero",'num_paiement',$object->num_paiement,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'string','',null,$langs->trans('PaymentNumberUpdateSucceeded'));
+	print '</td></tr>';
+    */
+
+	// Amount
+	print '<tr><td colspan="2">'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->montant, '', $langs, 0, 0, -1, $conf->currency).'</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 	{
 		print '<tr><td colspan="2">'.$langs->trans('Status').'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
 	}
 
+<<<<<<< HEAD
 	// Note
 	print '<tr><td colspan="2">'.$form->editfieldkey("Note",'note',$object->note,$object,$user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
 	print $form->editfieldval("Note",'note',$object->note,$object,$user->rights->fournisseur->facture->creer,'textarea');
 	print '</td></tr>';
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$allow_delete = 1 ;
 	// Bank account
 	if (! empty($conf->banque->enabled))
@@ -238,23 +288,45 @@ if ($result > 0)
 			}
 
 			print '<tr>';
+<<<<<<< HEAD
 			print '<td colspan="2">'.$langs->trans('BankTransactionLine').'</td>';
 			print '<td colspan="3">';
 			print $bankline->getNomUrl(1,0,'showconciliated');
-			print '</td>';
-			print '</tr>';
-
-			print '<tr>';
+=======
 			print '<td colspan="2">'.$langs->trans('BankAccount').'</td>';
 			print '<td colspan="3">';
 			$accountstatic=new Account($db);
 			$accountstatic->fetch($bankline->fk_account);
 			print $accountstatic->getNomUrl(1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
+			print '</td>';
+			print '</tr>';
+
+			print '<tr>';
+<<<<<<< HEAD
+			print '<td colspan="2">'.$langs->trans('BankAccount').'</td>';
+			print '<td colspan="3">';
+			$accountstatic=new Account($db);
+			$accountstatic->fetch($bankline->fk_account);
+			print $accountstatic->getNomUrl(1);
+=======
+			print '<td colspan="2">'.$langs->trans('BankTransactionLine').'</td>';
+			print '<td colspan="3">';
+			print $bankline->getNomUrl(1, 0, 'showconciliated');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '</td>';
 			print '</tr>';
 		}
 	}
 
+<<<<<<< HEAD
+=======
+	// Note
+	print '<tr><td colspan="2">'.$form->editfieldkey("Note", 'note', $object->note, $object, $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
+	print $form->editfieldval("Note", 'note', $object->note, $object, $user->rights->fournisseur->facture->creer, 'textarea');
+	print '</td></tr>';
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</table>';
 
 	print '</div>';
@@ -281,9 +353,15 @@ if ($result > 0)
 		print '<td>'.$langs->trans('Ref').'</td>';
 		print '<td>'.$langs->trans('RefSupplier').'</td>';
 		print '<td>'.$langs->trans('Company').'</td>';
+<<<<<<< HEAD
 		print '<td align="right">'.$langs->trans('ExpectedToPay').'</td>';
 		print '<td align="center">'.$langs->trans('Status').'</td>';
 		print '<td align="right">'.$langs->trans('PayedByThisPayment').'</td>';
+=======
+		print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
+		print '<td class="right">'.$langs->trans('PayedByThisPayment').'</td>';
+		print '<td class="right">'.$langs->trans('Status').'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print "</tr>\n";
 
 		if ($num > 0)
@@ -305,6 +383,7 @@ if ($result > 0)
 				// Ref supplier
 				print '<td>'.$objp->ref_supplier."</td>\n";
 				// Third party
+<<<<<<< HEAD
 				print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.$objp->name.'</a></td>';
 				// Expected to pay
 				print '<td align="right">'.price($objp->total_ttc).'</td>';
@@ -313,6 +392,17 @@ if ($result > 0)
 				// Payed
 				print '<td align="right">'.price($objp->amount).'</td>';
 				print "</tr>\n";
+=======
+				print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'), 'company').' '.$objp->name.'</a></td>';
+				// Expected to pay
+				print '<td class="right">'.price($objp->total_ttc).'</td>';
+				// Payed
+				print '<td class="right">'.price($objp->amount).'</td>';
+				// Status
+				print '<td class="right">'.$facturestatic->LibStatut($objp->paye, $objp->fk_statut, 6, 1).'</td>';
+				print "</tr>\n";
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if ($objp->paye == 1)
 				{
 					$allow_delete = 0;
@@ -348,7 +438,10 @@ if ($result > 0)
 		   	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->supplier_invoice_advance->validate)))
 			{
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 		}
 	}
@@ -362,7 +455,11 @@ if ($result > 0)
 			}
 			else
 			{
+<<<<<<< HEAD
 				print '<a class="butActionRefused" href="#" title="'.$title_button.'">'.$langs->trans('Delete').'</a>';
+=======
+				print '<a class="butActionRefused classfortooltip" href="#" title="'.$title_button.'">'.$langs->trans('Delete').'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 		}
 	}
@@ -384,7 +481,11 @@ if ($result > 0)
 		$delallowed=$user->rights->fournisseur->facture->creer;
 		$modelpdf=(! empty($object->modelpdf)?$object->modelpdf:(empty($conf->global->SUPPLIER_PAYMENT_ADDON_PDF)?'':$conf->global->SUPPLIER_PAYMENT_ADDON_PDF));
 
+<<<<<<< HEAD
 		print $formfile->showdocuments('supplier_payment',$ref,$filedir,$urlsource,$genallowed,$delallowed,$modelpdf,1,0,0,40,0,'','','',$societe->default_lang);
+=======
+		print $formfile->showdocuments('supplier_payment', $ref, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $societe->default_lang);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$somethingshown=$formfile->numoffiles;
 	}
 
@@ -407,6 +508,11 @@ else
 
 dol_fiche_end();
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

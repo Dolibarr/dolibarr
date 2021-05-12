@@ -12,8 +12,16 @@ namespace Stripe;
  *
  * @package Stripe
  */
+<<<<<<< HEAD
 class Collection extends StripeObject
 {
+=======
+class Collection extends StripeObject implements \IteratorAggregate
+{
+
+    const OBJECT_NAME = "list";
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     use ApiOperations\Request;
 
     protected $_requestParams = [];
@@ -66,6 +74,18 @@ class Collection extends StripeObject
     }
 
     /**
+<<<<<<< HEAD
+=======
+     * @return \ArrayIterator An iterator that can be used to iterate
+     *    across objects in the current page.
+     */
+    public function getIterator()
+    {
+        return new \ArrayIterator($this->data);
+    }
+
+    /**
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      * @return Util\AutoPagingIterator An iterator that can be used to iterate
      *    across all objects across all pages. As page boundaries are
      *    encountered, the next page will be fetched automatically for

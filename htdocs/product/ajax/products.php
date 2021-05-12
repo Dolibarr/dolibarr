@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
+<<<<<<< HEAD
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -176,14 +180,22 @@ else
 
 	$idprod = (! empty($match[0]) ? $match[0] : '');
 
+<<<<<<< HEAD
 	if (GETPOST($htmlname,'alpha') == '' && (! $idprod || ! GETPOST($idprod,'alpha')))
+=======
+	if (GETPOST($htmlname, 'alpha') == '' && (! $idprod || ! GETPOST($idprod, 'alpha')))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		print json_encode(array());
 	    return;
 	}
 
 	// When used from jQuery, the search term is added as GET param "term".
+<<<<<<< HEAD
 	$searchkey = (($idprod && GETPOST($idprod,'alpha')) ? GETPOST($idprod,'alpha') :  (GETPOST($htmlname, 'alpha') ? GETPOST($htmlname, 'alpha') : ''));
+=======
+	$searchkey = (($idprod && GETPOST($idprod, 'alpha')) ? GETPOST($idprod, 'alpha') :  (GETPOST($htmlname, 'alpha') ? GETPOST($htmlname, 'alpha') : ''));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	$form = new Form($db);
 	if (empty($mode) || $mode == 1) {  // mode=1: customer
@@ -197,4 +209,7 @@ else
 	if ($outjson)
 		print json_encode($arrayresult);
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

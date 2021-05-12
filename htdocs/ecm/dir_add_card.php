@@ -1,7 +1,12 @@
 <?php
 /* Copyright (C) 2008-2017	Laurent Destailleur	<eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2015-2016	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+=======
+ * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2015-2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,11 +37,19 @@ require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 $langs->loadLangs(array("ecm","companies","other","users","orders","propal","bills","contracts","categories"));
 
 // Get parameters
+<<<<<<< HEAD
 $socid      = GETPOST('socid','int');
 $action     = GETPOST('action','alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 $confirm    = GETPOST('confirm','alpha');
+=======
+$socid      = GETPOST('socid', 'int');
+$action     = GETPOST('action', 'alpha');
+$cancel     = GETPOST('cancel', 'aZ09');
+$backtopage = GETPOST('backtopage', 'alpha');
+$confirm    = GETPOST('confirm', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $module  = GETPOST('module', 'alpha');
 $website = GETPOST('website', 'alpha');
@@ -50,7 +63,11 @@ if ($user->societe_id > 0)
     $socid = $user->societe_id;
 }
 
+<<<<<<< HEAD
 $section=$urlsection=GETPOST('section','alpha');
+=======
+$section=$urlsection=GETPOST('section', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($urlsection)) $urlsection='misc';
 
 if ($module == 'ecm')
@@ -62,9 +79,15 @@ else	// For example $module == 'medias'
 	$upload_dir = $conf->medias->multidir_output[$conf->entity];
 }
 
+<<<<<<< HEAD
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
+=======
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -78,7 +101,11 @@ if (! empty($section))
 	$result=$ecmdir->fetch($section);
 	if (! $result > 0)
 	{
+<<<<<<< HEAD
 		dol_print_error($db,$ecmdir->error);
+=======
+		dol_print_error($db, $ecmdir->error);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		exit;
 	}
 }
@@ -201,7 +228,11 @@ if ($action == 'add' && $permtoadd)
 }
 
 // Deleting file
+<<<<<<< HEAD
 else if ($action == 'confirm_deletesection' && $confirm == 'yes')
+=======
+elseif ($action == 'confirm_deletesection' && $confirm == 'yes')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$result=$ecmdir->delete($user);
 	setEventMessages($langs->trans("ECMSectionWasRemoved", $ecmdir->label), null, 'mesgs');
@@ -243,7 +274,11 @@ if ($action == 'create')
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" class="minwidth100" maxlength="32" value="'.$ecmdir->label.'"></td></tr>'."\n";
 
 	print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
+<<<<<<< HEAD
 	print $formecm->selectAllSections((GETPOST("catParent",'alpha') ? GETPOST("catParent",'alpha') : $ecmdir->fk_parent), 'catParent', $module);
+=======
+	print $formecm->selectAllSections((GETPOST("catParent", 'alpha') ? GETPOST("catParent", 'alpha') : $ecmdir->fk_parent), 'catParent', $module);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</td></tr>'."\n";
 
 	// Description
@@ -289,8 +324,12 @@ if (empty($action) || $action == 'delete_section')
 	// Confirmation de la suppression d'une ligne categorie
 	if ($action == 'delete_section')
 	{
+<<<<<<< HEAD
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section, $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection');
 
+=======
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section, $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection', $ecmdir->label), 'confirm_deletesection');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	// Construit fiche  rubrique
@@ -304,7 +343,11 @@ if (empty($action) || $action == 'delete_section')
 	}
 	else
 	{
+<<<<<<< HEAD
 		print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
+=======
+		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 	print '</div>';
 }

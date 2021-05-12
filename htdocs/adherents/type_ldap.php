@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2006-2017 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2006-2017 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 
+<<<<<<< HEAD
 $langs->load("members");
 $langs->load("admin");
 $langs->load("ldap");
@@ -38,6 +43,16 @@ $action = GETPOST('action','alpha');
 
 // Security check
 $result=restrictedArea($user,'adherent',$id,'adherent_type');
+=======
+// Load translation files required by the page
+$langs->loadLangs(array("admin","members","ldap"));
+
+$id = GETPOST('rowid', 'int');
+$action = GETPOST('action', 'alpha');
+
+// Security check
+$result=restrictedArea($user, 'adherent', $id, 'adherent_type');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $object = new AdherentType($db);
 $object->fetch($id);
@@ -51,7 +66,11 @@ $hookmanager->initHooks(array('membertypeldapcard','globalcard'));
 
 
 $parameters=array();
+<<<<<<< HEAD
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+=======
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -154,9 +173,15 @@ $result=$ldap->connect_bind();
 if ($result > 0)
 {
     $info=$object->_load_ldap_info();
+<<<<<<< HEAD
     $dn=$object->_load_ldap_dn($info,1);
     $search = "(".$object->_load_ldap_dn($info,2).")";
     $records = $ldap->getAttribute($dn,$search);
+=======
+    $dn=$object->_load_ldap_dn($info, 1);
+    $search = "(".$object->_load_ldap_dn($info, 2).")";
+    $records = $ldap->getAttribute($dn, $search);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     //print_r($records);
 
@@ -169,7 +194,11 @@ if ($result > 0)
         }
         else
         {
+<<<<<<< HEAD
             $result=show_ldap_content($records,0,$records['count'],true);
+=======
+            $result=show_ldap_content($records, 0, $records['count'], true);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
     }
     else
@@ -187,5 +216,9 @@ else
 
 print '</table>';
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

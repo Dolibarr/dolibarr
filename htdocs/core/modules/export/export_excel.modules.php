@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class ExportExcel extends ModeleExports
 {
+<<<<<<< HEAD
 	var $id;
 	var $label;
 	var $extension;
@@ -45,6 +46,39 @@ class ExportExcel extends ModeleExports
 	var $row;
 	var $col;
     var $file;          // To save filename
+=======
+	/**
+	 * @var string ID
+	 */
+	public $id;
+
+    /**
+     * @var string Export Excel label
+     */
+    public $label;
+
+	public $extension;
+
+	/**
+     * Dolibarr version of the loaded document
+     * @var string
+     */
+	public $version = 'dolibarr';
+
+	public $label_lib;
+
+	public $version_lib;
+
+	public $workbook;      // Handle file
+
+	public $worksheet;     // Handle sheet
+
+	public $row;
+
+	public $col;
+
+    public $file;          // To save filename
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	/**
@@ -52,12 +86,17 @@ class ExportExcel extends ModeleExports
 	 *
 	 *	@param	    DoliDB	$db      Database handler
 	 */
+<<<<<<< HEAD
 	function __construct($db)
+=======
+	public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf, $langs;
 		$this->db = $db;
 
 		$this->id='excel';                  // Same value then xxx in file name export_xxx.modules.php
+<<<<<<< HEAD
 		$this->label='Excel 95';             // Label of driver
 		$this->desc = $langs->trans('Excel95FormatDesc');
 		$this->extension='xls';             // Extension for generated file by this driver
@@ -66,6 +105,16 @@ class ExportExcel extends ModeleExports
 
 		$this->disabled = (in_array(constant('PHPEXCEL_PATH'),array('disabled','disabled/'))?1:0);	// A condition to disable module (used for native debian packages)
 		
+=======
+		$this->label='Excel 95 (old library)';            // Label of driver
+		$this->desc = $langs->trans('Excel95FormatDesc');
+		$this->extension='xls';             // Extension for generated file by this driver
+        $this->picto='mime/xls';            // Picto
+		$this->version='1.30';              // Driver version
+
+		$this->disabled = (in_array(constant('PHPEXCEL_PATH'), array('disabled','disabled/'))?1:0);	// A condition to disable module (used for native debian packages)
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if (empty($this->disabled))
 		{
     		// If driver use an external library, put its name here
@@ -94,7 +143,11 @@ class ExportExcel extends ModeleExports
 	 *
 	 * @return string
 	 */
+<<<<<<< HEAD
 	function getDriverId()
+=======
+	public function getDriverId()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return $this->id;
 	}
@@ -104,7 +157,11 @@ class ExportExcel extends ModeleExports
 	 *
 	 * @return 	string			Return driver label
 	 */
+<<<<<<< HEAD
 	function getDriverLabel()
+=======
+	public function getDriverLabel()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return $this->label;
 	}
@@ -114,7 +171,11 @@ class ExportExcel extends ModeleExports
 	 *
 	 * @return string
 	 */
+<<<<<<< HEAD
 	function getDriverDesc()
+=======
+	public function getDriverDesc()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         return $this->desc;
     }
@@ -124,7 +185,11 @@ class ExportExcel extends ModeleExports
 	 *
 	 * @return string
 	 */
+<<<<<<< HEAD
     function getDriverExtension()
+=======
+    public function getDriverExtension()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return $this->extension;
 	}
@@ -134,7 +199,11 @@ class ExportExcel extends ModeleExports
 	 *
 	 * @return string
 	 */
+<<<<<<< HEAD
 	function getDriverVersion()
+=======
+	public function getDriverVersion()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return $this->version;
 	}
@@ -144,7 +213,11 @@ class ExportExcel extends ModeleExports
 	 *
 	 * @return string
 	 */
+<<<<<<< HEAD
 	function getLibLabel()
+=======
+	public function getLibLabel()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return $this->label_lib;
 	}
@@ -154,12 +227,20 @@ class ExportExcel extends ModeleExports
 	 *
 	 * @return string
 	 */
+<<<<<<< HEAD
 	function getLibVersion()
+=======
+	public function getLibVersion()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return $this->version_lib;
 	}
 
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *	Open output file
 	 *
@@ -167,8 +248,14 @@ class ExportExcel extends ModeleExports
 	 *  @param		Translate	$outputlangs	Output language object
 	 *	@return		int							<0 if KO, >=0 if OK
 	 */
+<<<<<<< HEAD
 	function open_file($file,$outputlangs)
 	{
+=======
+	public function open_file($file, $outputlangs)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $user,$conf,$langs;
 
 		if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
@@ -182,8 +269,12 @@ class ExportExcel extends ModeleExports
 		$ret=1;
 
     	$outputlangs->load("exports");
+<<<<<<< HEAD
 		if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
 		{
+=======
+		if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL)) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             require_once PHP_WRITEEXCEL_PATH.'class.writeexcel_workbookbig.inc.php';
             require_once PHP_WRITEEXCEL_PATH.'class.writeexcel_worksheet.inc.php';
             require_once PHP_WRITEEXCEL_PATH.'functions.writeexcel_utility.inc.php';
@@ -202,7 +293,11 @@ class ExportExcel extends ModeleExports
 	            if (! class_exists('ZipArchive'))	// For Excel2007, PHPExcel need ZipArchive
 	            {
 	            	$langs->load("errors");
+<<<<<<< HEAD
 	            	$this->error=$langs->trans('ErrorPHPNeedModule','zip');
+=======
+	            	$this->error=$langs->trans('ErrorPHPNeedModule', 'zip');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	            	return -1;
 	            }
 		    }
@@ -216,11 +311,19 @@ class ExportExcel extends ModeleExports
 		    }
 
             $this->workbook = new PHPExcel();
+<<<<<<< HEAD
             $this->workbook->getProperties()->setCreator($user->getFullName($outputlangs).' - Dolibarr '.DOL_VERSION);
             //$this->workbook->getProperties()->setLastModifiedBy('Dolibarr '.DOL_VERSION);
             $this->workbook->getProperties()->setTitle($outputlangs->trans("Export").' - '.$file);
             $this->workbook->getProperties()->setSubject($outputlangs->trans("Export").' - '.$file);
             $this->workbook->getProperties()->setDescription($outputlangs->trans("Export").' - '.$file);
+=======
+            $this->workbook->getProperties()->setCreator($user->getFullName($outputlangs).' - '.DOL_APPLICATION_TITLE.' '.DOL_VERSION);
+            //$this->workbook->getProperties()->setLastModifiedBy('Dolibarr '.DOL_VERSION);
+            $this->workbook->getProperties()->setTitle(basename($file));
+            $this->workbook->getProperties()->setSubject(basename($file));
+            $this->workbook->getProperties()->setDescription(DOL_APPLICATION_TITLE.' '.DOL_VERSION);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
             $this->workbook->setActiveSheetIndex(0);
             $this->workbook->getActiveSheet()->setTitle($outputlangs->trans("Sheet"));
@@ -229,6 +332,7 @@ class ExportExcel extends ModeleExports
 		return $ret;
 	}
 
+<<<<<<< HEAD
 	/**
 	 *	Write header
 	 *
@@ -237,12 +341,28 @@ class ExportExcel extends ModeleExports
 	 */
 	function write_header($outputlangs)
 	{
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Write header
+	 *
+     *  @param      Translate	$outputlangs        Object lang to translate values
+	 * 	@return		int								<0 if KO, >0 if OK
+	 */
+	public function write_header($outputlangs)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		//$outputlangs->charset_output='ISO-8859-1';	// Because Excel 5 format is ISO
 
 		return 0;
 	}
 
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
      *  Output title line into file
      *
@@ -252,8 +372,14 @@ class ExportExcel extends ModeleExports
      *  @param		array		$array_types					Array with types of fields
 	 * 	@return		int											<0 if KO, >0 if OK
 	 */
+<<<<<<< HEAD
 	function write_title($array_export_fields_label,$array_selected_sorted,$outputlangs,$array_types)
 	{
+=======
+	public function write_title($array_export_fields_label, $array_selected_sorted, $outputlangs, $array_types)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf;
 
 		// Create a format for the column headings
@@ -279,7 +405,11 @@ class ExportExcel extends ModeleExports
 		{
             $alias=$array_export_fields_label[$code];
 			//print "dd".$alias;
+<<<<<<< HEAD
 			if (empty($alias)) dol_print_error('','Bad value for field with code='.$code.'. Try to redefine export.');
+=======
+			if (empty($alias)) dol_print_error('', 'Bad value for field with code='.$code.'. Try to redefine export.');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     		if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
     		{
     			$this->worksheet->write($this->row, $this->col, $outputlangs->transnoentities($alias), $formatheader);
@@ -287,7 +417,11 @@ class ExportExcel extends ModeleExports
     		else
     		{
                 $this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row+1, $outputlangs->transnoentities($alias));
+<<<<<<< HEAD
     		    if (! empty($array_types[$code]) && in_array($array_types[$code],array('Date','Numeric','TextAuto')))		// Set autowidth for some types
+=======
+    		    if (! empty($array_types[$code]) && in_array($array_types[$code], array('Date','Numeric','TextAuto')))		// Set autowidth for some types
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 {
                 	$this->workbook->getActiveSheet()->getColumnDimension($this->column2Letter($this->col + 1))->setAutoSize(true);
                 }
@@ -298,6 +432,10 @@ class ExportExcel extends ModeleExports
 		return 0;
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
      *  Output record line into file
      *
@@ -307,8 +445,14 @@ class ExportExcel extends ModeleExports
      *  @param		array		$array_types				Array with types of fields
 	 * 	@return		int										<0 if KO, >0 if OK
 	 */
+<<<<<<< HEAD
 	function write_record($array_selected_sorted,$objp,$outputlangs,$array_types)
 	{
+=======
+	public function write_record($array_selected_sorted, $objp, $outputlangs, $array_types)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf;
 
 		// Create a format for the column headings
@@ -320,25 +464,45 @@ class ExportExcel extends ModeleExports
 		// Define first row
 		$this->col=0;
 
+<<<<<<< HEAD
 		foreach($array_selected_sorted as $code => $value)
 		{
 			if (strpos($code,' as ') == 0) $alias=str_replace(array('.','-','(',')'),'_',$code);
 			else $alias=substr($code, strpos($code, ' as ') + 4);
             if (empty($alias)) dol_print_error('','Bad value for field with code='.$code.'. Try to redefine export.');
+=======
+		$reg=array();
+
+		foreach($array_selected_sorted as $code => $value)
+		{
+			if (strpos($code, ' as ') == 0) $alias=str_replace(array('.','-','(',')'), '_', $code);
+			else $alias=substr($code, strpos($code, ' as ') + 4);
+            if (empty($alias)) dol_print_error('', 'Bad value for field with code='.$code.'. Try to redefine export.');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $newvalue=$objp->$alias;
 
 			$newvalue=$this->excel_clean($newvalue);
 			$typefield=isset($array_types[$code])?$array_types[$code]:'';
+<<<<<<< HEAD
 			
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if (preg_match('/^Select:/i', $typefield, $reg) && $typefield = substr($typefield, 7))
 			{
 				$array = unserialize($typefield);
 				$array = $array['options'];
 				$newvalue = $array[$newvalue];
 			}
+<<<<<<< HEAD
 			
 			// Traduction newvalue
 			if (preg_match('/^\((.*)\)$/i',$newvalue,$reg))
+=======
+
+			// Traduction newvalue
+			if (preg_match('/^\((.*)\)$/i', $newvalue, $reg))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			{
 				$newvalue=$outputlangs->transnoentities($reg[1]);
 			}
@@ -347,14 +511,22 @@ class ExportExcel extends ModeleExports
 				$newvalue=$outputlangs->convToOutputCharset($newvalue);
 			}
 
+<<<<<<< HEAD
 			if (preg_match('/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/i',$newvalue))
+=======
+			if (preg_match('/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/i', $newvalue))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			{
         		if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
         		{
             		$formatdate=$this->workbook->addformat();
             		$formatdate->set_num_format('yyyy-mm-dd');
             		//$formatdate->set_num_format(0x0f);
+<<<<<<< HEAD
         		    $arrayvalue=preg_split('/[.,]/',xl_parse_date($newvalue));
+=======
+        		    $arrayvalue=preg_split('/[.,]/', xl_parse_date($newvalue));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     				//print "x".$arrayvalue[0].'.'.strval($arrayvalue[1]).'<br>';
     				$newvalue=strval($arrayvalue[0]).'.'.strval($arrayvalue[1]);	// $newvalue=strval(36892.521); directly does not work because . will be convert into , later
         		    $this->worksheet->write($this->row, $this->col, $newvalue, PHPExcel_Shared_Date::PHPToExcel($formatdate));
@@ -367,14 +539,22 @@ class ExportExcel extends ModeleExports
         		    $this->workbook->getActiveSheet()->getStyle($coord)->getNumberFormat()->setFormatCode('yyyy-mm-dd');
         		}
 			}
+<<<<<<< HEAD
 			elseif (preg_match('/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]$/i',$newvalue))
+=======
+			elseif (preg_match('/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]$/i', $newvalue))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			{
 				if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
     		    {
             		$formatdatehour=$this->workbook->addformat();
             		$formatdatehour->set_num_format('yyyy-mm-dd hh:mm:ss');
             		//$formatdatehour->set_num_format(0x0f);
+<<<<<<< HEAD
             		$arrayvalue=preg_split('/[.,]/',xl_parse_date($newvalue));
+=======
+            		$arrayvalue=preg_split('/[.,]/', xl_parse_date($newvalue));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     				//print "x".$arrayvalue[0].'.'.strval($arrayvalue[1]).'<br>';
     				$newvalue=strval($arrayvalue[0]).'.'.strval($arrayvalue[1]);	// $newvalue=strval(36892.521); directly does not work because . will be convert into , later
     		        $this->worksheet->write($this->row, $this->col, $newvalue, $formatdatehour);
@@ -416,25 +596,46 @@ class ExportExcel extends ModeleExports
 	}
 
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
      *	Write footer
      *
 	 * 	@param		Translate	$outputlangs	Output language object
 	 * 	@return		int							<0 if KO, >0 if OK
      */
+<<<<<<< HEAD
 	function write_footer($outputlangs)
 	{
+=======
+	public function write_footer($outputlangs)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		return 0;
 	}
 
 
+<<<<<<< HEAD
 	/**
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      *	Close Excel file
      *
 	 * 	@return		int							<0 if KO, >0 if OK
      */
+<<<<<<< HEAD
 	function close_file()
 	{
+=======
+	public function close_file()
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf;
 
 		if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
@@ -453,6 +654,7 @@ class ExportExcel extends ModeleExports
 	}
 
 
+<<<<<<< HEAD
 	/**
      * Clean a cell to respect rules of Excel file cells
      *
@@ -465,10 +667,27 @@ class ExportExcel extends ModeleExports
     	$newvalue=dol_string_nohtmltag($newvalue);
 
     	return $newvalue;
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
+     *  Clean a cell to respect rules of Excel file cells
+     *
+     *  @param      string  $newvalue   String to clean
+     *  @return     string              Value cleaned
+     */
+    public function excel_clean($newvalue)
+    {
+        // phpcs:enable
+        // Rule Dolibarr: No HTML
+        $newvalue=dol_string_nohtmltag($newvalue);
+
+        return $newvalue;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
 
     /**
+<<<<<<< HEAD
      * Convert a column to letter (1->A, 0->B, 27->AA, ...)
      *
      * @param 	int		$c		Column position
@@ -491,3 +710,27 @@ class ExportExcel extends ModeleExports
     }
 }
 
+=======
+     *  Convert a column to letter (1->A, 0->B, 27->AA, ...)
+     *
+     *  @param      int     $c      Column position
+     *  @return     string          Letter
+     */
+    public function column2Letter($c)
+    {
+
+        $c = intval($c);
+        if ($c <= 0) {
+            return '';
+        }
+
+        while ($c != 0) {
+            $p = ($c - 1) % 26;
+            $c = intval(($c - $p) / 26);
+            $letter = chr(65 + $p) . $letter;
+        }
+
+        return $letter;
+    }
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

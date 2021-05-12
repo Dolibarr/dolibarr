@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - marges
 
 Margin=حاشیه
+<<<<<<< HEAD
 Margins=حاشیه
 TotalMargin=حاشیه ها
 MarginOnProducts=حاشیه / محصولات
@@ -42,3 +43,46 @@ markRateShouldBeLesserThan100=Mark rate should be lower than 100
 ShowMarginInfos=Show margin infos
 CheckMargins=Margins detail
 MarginPerSaleRepresentativeWarning=The report of margin per user use the link between third parties and sale representatives to calculate the margin of each sale representative. Because some thirdparties may not have any ddiated sale representative and some thirdparties may be linked to several, some amounts may not be included into this report (if there is no sale representative) and some may appear on different lines (for each sale representative).
+=======
+Margins=حاشیه‌ه
+TotalMargin=حاشیۀ کل
+MarginOnProducts=حاشیه / محصولات
+MarginOnServices=حاشیه / خدمات
+MarginRate=نرخ حاشیه
+MarkRate=نرخ نشانه
+DisplayMarginRates=نمایش نرخ‌های حاشیه
+DisplayMarkRates=نمایش نرخ‌های نشانه
+InputPrice=قیمت ورودی
+margin=مدیریت حاشیۀ سود
+margesSetup=برپاسازی مدیریت حاشیۀ سود
+MarginDetails=جزئیات حاشیه
+ProductMargins=حاشیۀ محصولات
+CustomerMargins=حاشیۀ مشتری
+SalesRepresentativeMargins=حاشیه‌های نمایندۀ فروش
+UserMargins=حاشیه‌های کاربر
+ProductService=محصولات و خدمات
+AllProducts=همۀ محصولات و خدمات
+ChooseProduct/Service=انتخاب محصول و یا خدمات
+ForceBuyingPriceIfNull=الزام مبلغ خرید/هزینه به قیمت فروش، در صورتی که تعریف نشده باشد
+ForceBuyingPriceIfNullDetails=در صورتی که مبلغ خرید/هزینه تعریف نشده باشد، و این گزینه "روشن" باشد، حاشیۀ این سطر صفر خواهد بود (مبلغ خرید/هزینه = قیمت فروش)، در غیر این‌صورت اگر ("خاموش") باشد، حاشیه برابر با پیش‌فرض پیشنهادی خواهد بود.
+MARGIN_METHODE_FOR_DISCOUNT=روش حاشیه برای تخفیف‌های سراسری
+UseDiscountAsProduct=به عنوان یک محصول
+UseDiscountAsService=به عنوان خدمات
+UseDiscountOnTotal=روی جمع‌جزء
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=در صورتی تعریف می‌شود که تخفیف عمومی به عنوان یک محصول، خدمات یا تنها مجموع‌جزء به‌عنوان محاسبه حاشیه برخورد شود.
+MARGIN_TYPE=مبلغ خرید/هزینه به‌طور پیش‌فرض توسط محاسبۀ حاشیه پیشنهاد می‌شو
+MargeType1=حاشیه براساس بهترین مبلغ فروشنده
+MargeType2=حاشیه بر اساس قیمت میانگین متوازن (WAP)
+MargeType3=حاشیه بر اساس مبلغ هزینه
+MarginTypeDesc=* حاشیه بر اساس بهترین قیمت خرید = قیمت فروش - بهترین قیمت فروش که بر روی کارت محصول تعیین می‌شود. <br> * حاشیه بر اساس مبلغ میانگین متوازن (WAP) = قیمت فروش - قیمت میانگین متوازن محصول یا بهترین قیمت فروش فروشنده در صورتی که هنوز (WAP) تعریف نشده باشد <br> * حاشیه بر اساس قیمت هزینه = قیمت فروش - قیمت هزینه تعریف شده در روی کارت محصول یا WAP در صورتی که قیمت هزینه تعریف نشده باشد، یا بهترین قیمت فروشنده در صورتی که هنوز WAP تعریف نشده باشد
+CostPrice=قیمت هزینه
+UnitCharges=عوارض واحد
+Charges=عوارض
+AgentContactType=نوع طرف‌تماس نمایندۀ تجاری
+AgentContactTypeDetails=تعیین طرف‌تماس (پیوند شده روی صورت‌حساب‌ها) برای گزارش حاشیۀ بر حسب نمایندۀ فروش 
+rateMustBeNumeric=نرخ باید یک مقدار عددی باشد
+markRateShouldBeLesserThan100=نرخ نشان باید کم‌تر از 100 باشد
+ShowMarginInfos=نمایش اطلاعات حاشیه‌ها
+CheckMargins=جزئیات حاشیه‌ها
+MarginPerSaleRepresentativeWarning=گزارش حاشیه بر حسب کاربر با استفاده از پیوند میان اشخاص سوم و نمایندگان فروش برای محاسبۀ حاشیۀ هر نمایندۀ فروش. چون برخی از اشخاص سوم یک نمایندۀ فروش اختصاصی ندارند و برخی نمایندگان فروش ممکن است چند نمایندۀ فروش داشته باشند، برخی مقادیر در گزارش‌ها نخواهد آمد (در صورتی که هیچ نمایندۀ فروشی نباشد) و برخی مقادیر در چند سطر مختلف خواهند آمد (برای هر نمایندۀ فروشی).
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

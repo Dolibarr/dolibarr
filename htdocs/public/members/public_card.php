@@ -1,8 +1,16 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2001-2003	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003	Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2007-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2001-2003  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2002-2003  Jean-Louis Bergamo      <jlb@j1b.org>
+ * Copyright (C) 2007-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,9 +32,15 @@
  * 	\brief      File to show a public card of a member
  */
 
+<<<<<<< HEAD
 if (! defined('NOLOGIN'))		define("NOLOGIN",1);		// This means this output page does not require to be logged.
 if (! defined('NOCSRFCHECK'))	define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 if (! defined('NOIPCHECK'))		define('NOIPCHECK','1');	// Do not check IP defined into conf $dolibarr_main_restrict_ip
+=======
+if (! defined('NOLOGIN'))		define("NOLOGIN", 1);		// This means this output page does not require to be logged.
+if (! defined('NOCSRFCHECK'))	define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
+if (! defined('NOIPCHECK'))		define('NOIPCHECK', '1');	// Do not check IP defined into conf $dolibarr_main_restrict_ip
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
@@ -40,6 +54,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Security check
+<<<<<<< HEAD
 if (empty($conf->adherent->enabled)) accessforbidden('',0,0,1);
 
 
@@ -49,6 +64,14 @@ $langs->load("companies");
 $langs->load("other");
 
 $id=GETPOST('id','int');
+=======
+if (empty($conf->adherent->enabled)) accessforbidden('', 0, 0, 1);
+
+
+$langs->loadLangs(array("main", "members", "companies", "other"));
+
+$id=GETPOST('id', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $object = new Adherent($db);
 $extrafields = new ExtraFields($db);
 
@@ -77,7 +100,11 @@ $extralabels=$extrafields->fetch_name_optionals_label('adherent');
 if ($id > 0)
 {
 	$res=$object->fetch($id);
+<<<<<<< HEAD
 	if ($res < 0) { dol_print_error($db,$object->error); exit; }
+=======
+	if ($res < 0) { dol_print_error($db, $object->error); exit; }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$res=$object->fetch_optionals();
 
 	print load_fiche_titre($langs->trans("MemberCard"), '', '');
@@ -94,12 +121,20 @@ if ($id > 0)
 		print '<tr><td>'.$langs->trans("Person").'</td><td class="valeur">'.$object->morphy.'</td></tr>';
 		print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur" width="35%">'.$object->firstname.'&nbsp;</td></tr>';
 		print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur">'.$object->lastname.'&nbsp;</td></tr>';
+<<<<<<< HEAD
+=======
+		print '<tr><td>'.$langs->trans("Gender").'</td><td class="valeur">'.$object->gender.'&nbsp;</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->societe.'&nbsp;</td></tr>';
 		print '<tr><td>'.$langs->trans("Address").'</td><td class="valeur">'.nl2br($object->address).'&nbsp;</td></tr>';
 		print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td class="valeur">'.$object->zip.' '.$object->town.'&nbsp;</td></tr>';
 		print '<tr><td>'.$langs->trans("Country").'</td><td class="valeur">'.$object->country.'&nbsp;</td></tr>';
 		print '<tr><td>'.$langs->trans("EMail").'</td><td class="valeur">'.$object->email.'&nbsp;</td></tr>';
+<<<<<<< HEAD
 		print '<tr><td>'.$langs->trans("Birthday").'</td><td class="valeur">'.dol_print_date($object->birth,'day').'</td></tr>';
+=======
+		print '<tr><td>'.$langs->trans("Birthday").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		if (isset($object->photo) && $object->photo !='')
 		{
@@ -116,7 +151,10 @@ if ($id > 0)
 
 		print '</table>';
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 
@@ -158,4 +196,7 @@ function llxFooterVierge()
 	print "</body>\n";
 	print "</html>\n";
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

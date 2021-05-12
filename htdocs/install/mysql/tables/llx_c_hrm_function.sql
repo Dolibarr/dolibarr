@@ -1,6 +1,10 @@
 --
 -- Copyright (C) 2013 Jean-François Ferry <jfefe@aternatik.fr>
+<<<<<<< HEAD
 -- Copyright (C) 2015 Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
+=======
+-- Copyright (C) 2015 Alexandre Spangaro  <aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by

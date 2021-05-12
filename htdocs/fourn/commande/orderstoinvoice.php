@@ -1,13 +1,24 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville   	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013 Laurent Destailleur   	<eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo  	<marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin          	<regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville     <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2013 Laurent Destailleur   	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005      Marc Barilley / Ocebo  	<marc@ocebo.com>
+ * Copyright (C) 2005-2012 Regis Houssin          	<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2012	   Andreu Bisquerra Gaya  	<jove@bisquerra.com>
  * Copyright (C) 2012	   David Rodriguez Martinez <davidrm146@gmail.com>
  * Copyright (C) 2012-2017 Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2014	   Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2015      Marcos García            <marcosgdf@gmail.com>
+<<<<<<< HEAD
+=======
+ * Copyright (C) 2018      Frédéric France          <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,9 +51,14 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 }
 
+<<<<<<< HEAD
 $langs->load('orders');
 $langs->load('deliveries');
 $langs->load('companies');
+=======
+// Load translation files required by the page
+$langs->loadLangs(array("orders", "companies", "deliveries"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if (! $user->rights->fournisseur->facture->creer)
 	accessforbidden();
@@ -104,11 +120,19 @@ if (($action == 'create' || $action == 'add') && ! $error) {
 	if (! empty($conf->projet->enabled))
 		require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 
+<<<<<<< HEAD
 	$langs->load('bills');
 	$langs->load('products');
 	$langs->load('main');
 	if (isset($_GET['orders_to_invoice'])) {
 		$orders_id = GETPOST('orders_to_invoice','',1);
+=======
+	// Load translation files required by the page
+    $langs->loadLangs(array("bills", "main", "products"));
+
+	if (isset($_GET['orders_to_invoice'])) {
+		$orders_id = GETPOST('orders_to_invoice', '', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$n = count($orders_id);
 		$i = 0;
 
@@ -116,7 +140,11 @@ if (($action == 'create' || $action == 'add') && ! $error) {
 		$_GET['originid'] = $orders_id[0];
 	}
 	if (isset($_POST['orders_to_invoice'])) {
+<<<<<<< HEAD
 		$orders_id = GETPOST('orders_to_invoice','',2);
+=======
+		$orders_id = GETPOST('orders_to_invoice', '', 2);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$nn = count($orders_id);
 		$ii = 0;
 
@@ -151,12 +179,21 @@ if (($action == 'create' || $action == 'add') && ! $error) {
 		if (! $error) {
 			$object->ref = GETPOST('ref');
 			$object->ref_supplier = GETPOST('ref_supplier');
+<<<<<<< HEAD
 			$object->socid = GETPOST('socid','int');
 			$object->libelle = GETPOST('libelle');
 			$object->date = $datefacture;
 			$object->date_echeance = $datedue;
 			$object->note_public = GETPOST('note_public','none');
 			$object->note_private = GETPOST('note_private','none');
+=======
+			$object->socid = GETPOST('socid', 'int');
+			$object->libelle = GETPOST('libelle');
+			$object->date = $datefacture;
+			$object->date_echeance = $datedue;
+			$object->note_public = GETPOST('note_public', 'none');
+			$object->note_private = GETPOST('note_private', 'none');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$object->cond_reglement_id = GETPOST('cond_reglement_id');
 			$object->mode_reglement_id = GETPOST('mode_reglement_id');
 			$projectid = GETPOST('projectid');
@@ -167,12 +204,20 @@ if (($action == 'create' || $action == 'add') && ! $error) {
 			if (empty($object->date_echeance))
 				$object->date_echeance = $object->calculate_date_lim_reglement();
 
+<<<<<<< HEAD
 			$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+=======
+			$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if ($ret < 0) $error++;
 
 			if ($_POST['origin'] && $_POST['originid']) {
 				$linked_orders_ids=array();
+<<<<<<< HEAD
 				foreach ( $orders_id as $origin => $origin_id ) {
+=======
+				foreach ($orders_id as $origin => $origin_id) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					$origin_id = (! empty($origin_id) ? $origin_id : $orders_id[$ii]);
 					$linked_orders_ids[]=$origin_id;
 				}
@@ -216,7 +261,11 @@ if (($action == 'create' || $action == 'add') && ! $error) {
 									$fk_parent_line = 0;
 								}
 								// FIXME Missing $lines[$i]->ref_supplier and $lines[$i]->label into addline and updateline methods. They are filled when coming from order for example.
+<<<<<<< HEAD
 								$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->qty, $lines[$i]->fk_product, $lines[$i]->remise_percent, $date_start, $date_end, 0, $lines[$i]->info_bits, 'HT', $product_type, -1, false, 0, $lines[$i]->fk_unit);
+=======
+								$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->qty, $lines[$i]->fk_product, $lines[$i]->remise_percent, $date_start, $date_end, 0, $lines[$i]->info_bits, 'HT', $product_type, -1, false, 0, $lines[$i]->fk_unit, $line[$i]->id);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 								if ($result > 0) {
 									$lineid = $result;
@@ -261,7 +310,10 @@ if (($action == 'create' || $action == 'add') && ! $error) {
 						$error++;
 						break;
 					}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 			}
 
@@ -270,7 +322,10 @@ if (($action == 'create' || $action == 'add') && ! $error) {
 				header('Location: ' . DOL_URL_ROOT . '/fourn/facture/card.php?facid=' . $id);
 				exit();
 			}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		} else {
 			$db->rollback();
 			$action = 'create';
@@ -300,16 +355,40 @@ if ($action == 'create' && !$error) {
 	if ($socid)
 		$res = $soc->fetch($socid);
 	if ($res) {
+<<<<<<< HEAD
 		$cond_reglement_id = $soc->cond_reglement_id;
 		$mode_reglement_id = $soc->mode_reglement_id;
 	}
 	$dateinvoice = empty($conf->global->MAIN_AUTOFILL_DATE) ? - 1 : '';
 
+=======
+        $cond_reglement_id = $soc->cond_reglement_supplier_id;
+        $mode_reglement_id = $soc->mode_reglement_supplier_id;
+	}
+	$dateinvoice = empty($conf->global->MAIN_AUTOFILL_DATE) ? - 1 : '';
+
+    $objectsrc = new CommandeFournisseur($db);
+    $listoforders = array();
+    foreach ($selected as $sel) {
+        $result = $objectsrc->fetch($sel);
+        if ($result > 0) {
+            $listoforders[] = $objectsrc->ref;
+        }
+
+        if (empty($cond_reglement_id))  $cond_reglement_id = $objectsrc->cond_reglement_id;
+        if (empty($mode_reglement_id))  $mode_reglement_id = $objectsrc->mode_reglement_id;
+    }
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
 	print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="socid" value="' . $soc->id . '">' . "\n";
+<<<<<<< HEAD
 	print '<input name="facnumber" type="hidden" value="provisoire">';
+=======
+	print '<input name="ref" type="hidden" value="provisoire">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '<input name="ref_client" type="hidden" value="' . $ref_client . '">';
 	print '<input name="ref_int" type="hidden" value="' . $ref_int . '">';
 	print '<input type="hidden" name="origin" value="' . GETPOST('origin') . '">';
@@ -320,7 +399,11 @@ if ($action == 'create' && !$error) {
 	print '<tr><td class="fieldrequired">' . $langs->trans('Ref') . '</td><td colspan="2">' . $langs->trans('Draft') . '</td></tr>';
 
 	// Ref supplier
+<<<<<<< HEAD
 	print '<tr><td class="fieldrequired">' . $langs->trans('RefSupplier') . '</td><td><input name="ref_supplier" value="' . dol_escape_htmltag(isset($_POST['ref_supplier']) ? GETPOST('ref_supplier','alpha', 2) : '') . '" type="text"></td>';
+=======
+	print '<tr><td class="fieldrequired">' . $langs->trans('RefSupplier') . '</td><td><input name="ref_supplier" value="' . dol_escape_htmltag(isset($_POST['ref_supplier']) ? GETPOST('ref_supplier', 'alpha', 2) : '') . '" type="text"></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</tr>';
 
 	// Third party
@@ -332,7 +415,11 @@ if ($action == 'create' && !$error) {
 
 	// Date invoice
 	print '<tr><td class="fieldrequired">' . $langs->trans('Date') . '</td><td colspan="2">';
+<<<<<<< HEAD
 	$html->select_date('', '', '', '', '', "add", 1, 1);
+=======
+	print $html->selectDate('', '', '', '', '', "add", 1, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</td></tr>';
 	// Payment term
 	print '<tr><td class="nowrap">' . $langs->trans('PaymentConditionsShort') . '</td><td colspan="2">';
@@ -352,6 +439,7 @@ if ($action == 'create' && !$error) {
 		print '</td></tr>';
 	}
 
+<<<<<<< HEAD
 	$objectsrc = new CommandeFournisseur($db);
 	$listoforders = array ();
 	foreach ( $selected as $sel ) {
@@ -361,6 +449,8 @@ if ($action == 'create' && !$error) {
 		}
 	}
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	// Other attributes
 	$parameters = array (
 			'objectsrc' => $objectsrc,
@@ -374,7 +464,11 @@ if ($action == 'create' && !$error) {
 	if (empty($reshook))
 	{
 		$object=new FactureFournisseur($db);
+<<<<<<< HEAD
 		print $object->showOptionals($extrafields,'edit');
+=======
+		print $object->showOptionals($extrafields, 'edit');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	// Modele PDF
@@ -486,8 +580,13 @@ if (($action != 'create' && $action != 'add') && !$error) {
 		$num = $db->num_rows($resql);
 		print load_fiche_titre($title);
 		$i = 0;
+<<<<<<< HEAD
 		$period = $html->select_date($date_start, 'date_start', 0, 0, 1, '', 1, 0, 1) . ' - ' . $html->select_date($date_end, 'date_end', 0, 0, 1, '', 1, 0, 1);
 		$periodely = $html->select_date($date_starty, 'date_start_dely', 0, 0, 1, '', 1, 0, 1) . ' - ' . $html->select_date($date_endy, 'date_end_dely', 0, 0, 1, '', 1, 0, 1);
+=======
+		$period = $html->selectDate($date_start, 'date_start', 0, 0, 1, '', 1, 0) . ' - ' . $html->selectDate($date_end, 'date_end', 0, 0, 1, '', 1, 0);
+		$periodely = $html->selectDate($date_starty, 'date_start_dely', 0, 0, 1, '', 1, 0) . ' - ' . $html->selectDate($date_endy, 'date_end_dely', 0, 0, 1, '', 1, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		if (! empty($socid)) {
 			// Company
@@ -502,6 +601,7 @@ if (($action != 'create' && $action != 'add') && !$error) {
 		print '<tr class="liste_titre">';
 		print_liste_field_titre('Ref', 'orderstoinvoice.php', 'c.ref', '', '&amp;socid=' . $socid, '', $sortfield, $sortorder);
 		print_liste_field_titre('RefSupplier', 'orderstoinvoice.php', 'c.ref_supplier', '', '&amp;socid=' . $socid, '', $sortfield, $sortorder);
+<<<<<<< HEAD
 		print_liste_field_titre('OrderDate', 'orderstoinvoice.php', 'c.date_commande', '', '&amp;socid=' . $socid, 'align="center"', $sortfield, $sortorder);
 		print_liste_field_titre('DeliveryDate', 'orderstoinvoice.php', 'c.date_livraison', '', '&amp;socid=' . $socid, 'align="center"', $sortfield, $sortorder);
 		print_liste_field_titre('Status', '', '', '', '', 'align="right"');
@@ -509,33 +609,62 @@ if (($action != 'create' && $action != 'add') && !$error) {
 		print "</tr>\n";
 
 		// Lignes des champs de filtre
+=======
+		print_liste_field_titre('OrderDate', 'orderstoinvoice.php', 'c.date_commande', '', '&amp;socid=' . $socid, '', $sortfield, $sortorder, 'center ');
+		print_liste_field_titre('DeliveryDate', 'orderstoinvoice.php', 'c.date_livraison', '', '&amp;socid=' . $socid, '', $sortfield, $sortorder, 'center ');
+		print_liste_field_titre('Status', '', '', '', '', '', '', '', 'right ');
+		print_liste_field_titre('GenerateBill', '', '', '', '', '', '', '', 'center ');
+		print "</tr>\n";
+
+		// Fields title search
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '<tr class="liste_titre">';
 		print '<td class="liste_titre">';
 		// REF
 		print '<input class="flat" size="10" type="text" name="sref" value="' . $sref . '">';
 		print '</td>';
 		// print '<td class="liste_titre">';
+<<<<<<< HEAD
 		print '<td class="liste_titre" align="left">';
+=======
+		print '<td class="liste_titre left">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '<input class="flat" type="text" size="10" name="sref_client" value="' . $sref_client . '">';
         print '</td>';
 
 		// DATE ORDER
+<<<<<<< HEAD
 		print '<td class="liste_titre" align="center">';
+=======
+		print '<td class="liste_titre center">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print $period;
 		print '</td>';
 
 		// DATE DELIVERY
+<<<<<<< HEAD
 		print '<td class="liste_titre" align="center">';
+=======
+		print '<td class="liste_titre center">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print $periodely;
 		print '</td>';
 
 		// SEARCH BUTTON
+<<<<<<< HEAD
 		print '<td align="right" class="liste_titre">';
+=======
+		print '<td class="right liste_titre">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '<input type="image" class="liste_titre" name="button_search" src="' . img_picto($langs->trans("Search"), 'search.png', '', '', 1) . '"  value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
 		print '</td>';
 
 		// ALL/NONE
+<<<<<<< HEAD
 		print '<td class="liste_titre" align="center">';
+=======
+		print '<td class="liste_titre center">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if ($conf->use_javascript_ajax)
 			print '<a href="#" id="checkall">' . $langs->trans("All") . '</a> / <a href="#" id="checknone">' . $langs->trans("None") . '</a>';
 		print '</td>';
@@ -558,7 +687,11 @@ if (($action != 'create' && $action != 'add') && !$error) {
 			print $generic_commande->getNomUrl(1, $objp->fk_statut);
 			print '</td>';
 
+<<<<<<< HEAD
 			print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
+=======
+			print '<td width="16" class="right nobordernopadding hideonsmartphone">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$filename = dol_sanitizeFileName($objp->ref);
 			$filedir = $conf->fournisseur->commande->dir_output . '/' . dol_sanitizeFileName($objp->ref);
 			$urlsource = $_SERVER['PHP_SELF'] . '?id=' . $objp->rowid;
@@ -569,17 +702,29 @@ if (($action != 'create' && $action != 'add') && !$error) {
 			print '<td>' . $objp->ref_supplier . '</td>';
 
 			// Order date
+<<<<<<< HEAD
 			print '<td align="center" nowrap>';
+=======
+			print '<td class="center nowrap">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print dol_print_date($db->jdate($objp->date_commande), 'day');
 			print '</td>';
 
 			// Delivery date
+<<<<<<< HEAD
 			print '<td align="center" nowrap>';
+=======
+			print '<td class="center nowrap">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print dol_print_date($db->jdate($objp->date_livraison), 'day');
 			print '</td>';
 
 			// Statut
+<<<<<<< HEAD
 			print '<td align="right" class="nowrap">' . $generic_commande->LibStatut($objp->fk_statut, 5) . '</td>';
+=======
+			print '<td class="right nowrap">' . $generic_commande->LibStatut($objp->fk_statut, 5) . '</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			// Checkbox
 			print '<td class="center">';
@@ -617,5 +762,9 @@ if (($action != 'create' && $action != 'add') && !$error) {
 
 dol_htmloutput_mesg($mesg, $mesgs);
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

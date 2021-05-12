@@ -21,7 +21,11 @@
  *		\brief      Popup screen to validate VAT
  */
 
+<<<<<<< HEAD
 require ("../../main.inc.php");
+=======
+require "../../main.inc.php";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once NUSOAP_PATH.'/nusoap.php';
 
@@ -40,24 +44,43 @@ $conf->dol_hide_leftmenu=1;
 
 llxHeader('', $langs->trans("VATIntraCheckableOnEUSite"));
 
+<<<<<<< HEAD
 print '<div>';
 print '<div>';
 
 print load_fiche_titre($langs->trans("VATIntraCheckableOnEUSite"),'','title_setup');
 
 $vatNumber = GETPOST("vatNumber",'alpha');
+=======
+print '<div class="vatcheckarea" style="margin-bottom: 10px">';
+
+print load_fiche_titre($langs->trans("VATIntraCheckableOnEUSite"), '', 'title_setup');
+
+$vatNumber = GETPOST("vatNumber", 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if (! $vatNumber)
 {
 	print '<br>';
+<<<<<<< HEAD
 	print '<font class="error">'.$langs->transnoentities("ErrorFieldRequired",$langs->trans("VATIntraShort")).'</font><br>';
+=======
+	print '<font class="error">'.$langs->transnoentities("ErrorFieldRequired", $langs->trans("VATIntraShort")).'</font><br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 else
 {
 	$vatNumber = preg_replace('/\^\w/', '', $vatNumber);
+<<<<<<< HEAD
 	$countryCode=substr($vatNumber,0,2);
 	$vatNumber=substr($vatNumber,2);
 	
+=======
+	$vatNumber = str_replace(array(' ', '.'), '', $vatNumber);
+	$countryCode=substr($vatNumber, 0, 2);
+	$vatNumber=substr($vatNumber, 2);
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '<b>'.$langs->trans("Country").'</b>: '.$countryCode.'<br>';
 	print '<b>'.$langs->trans("VATIntraShort").'</b>: '.$vatNumber.'<br>';
 	print '<br>';
@@ -72,7 +95,11 @@ else
     $params=getSoapParams();
     //ini_set('default_socket_timeout', $params['response_timeout']);
     //$soapclient = new SoapClient($WS_DOL_URL_WSDL,$params);
+<<<<<<< HEAD
 	$soapclient = new nusoap_client($WS_DOL_URL_WSDL,true,$params['proxy_host'],$params['proxy_port'],$params['proxy_login'],$params['proxy_password'],$params['connection_timeout'],$params['response_timeout']);
+=======
+	$soapclient = new nusoap_client($WS_DOL_URL_WSDL, true, $params['proxy_host'], $params['proxy_port'], $params['proxy_login'], $params['proxy_password'], $params['connection_timeout'], $params['response_timeout']);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$soapclient->soap_defencoding = 'utf-8';
 	$soapclient->xml_encoding = 'utf-8';
 	$soapclient->decode_utf8 = false;
@@ -86,7 +113,11 @@ else
 
 	// Call the WebService and store its result in $result.
 	dol_syslog("Call method ".$WS_METHOD);
+<<<<<<< HEAD
 	$result = $soapclient->call($WS_METHOD,$parameters);
+=======
+	$result = $soapclient->call($WS_METHOD, $parameters);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	//var_dump($parameters);
 	//var_dump($soapclient);
@@ -99,17 +130,29 @@ else
 	print '<b>'.$langs->trans("Response").'</b>:<br>';
 
 	// Service indisponible
+<<<<<<< HEAD
 	if (! is_array($result) || preg_match('/SERVICE_UNAVAILABLE/i',$result['faultstring']))
+=======
+	if (! is_array($result) || preg_match('/SERVICE_UNAVAILABLE/i', $result['faultstring']))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		print '<font class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</font><br>';
 		$messagetoshow=$soapclient->response;
 	}
+<<<<<<< HEAD
 	elseif (preg_match('/TIMEOUT/i',$result['faultstring']))
+=======
+	elseif (preg_match('/TIMEOUT/i', $result['faultstring']))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		print '<font class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</font><br>';
 		$messagetoshow=$soapclient->response;
 	}
+<<<<<<< HEAD
 	elseif (preg_match('/SERVER_BUSY/i',$result['faultstring']))
+=======
+	elseif (preg_match('/SERVER_BUSY/i', $result['faultstring']))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		print '<font class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</font><br>';
 		$messagetoshow=$soapclient->response;
@@ -120,7 +163,11 @@ else
 		$messagetoshow=$result['faultstring'];
 	}
 	// Syntaxe ko
+<<<<<<< HEAD
 	elseif (preg_match('/INVALID_INPUT/i',$result['faultstring'])
+=======
+	elseif (preg_match('/INVALID_INPUT/i', $result['faultstring'])
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	|| ($result['requestDate'] && ! $result['valid']))
 	{
 		if ($result['requestDate']) print $langs->trans("Date").': '.$result['requestDate'].'<br>';
@@ -134,9 +181,15 @@ else
 		if ($result['requestDate']) print $langs->trans("Date").': '.$result['requestDate'].'<br>';
 		print $langs->trans("VATIntraSyntaxIsValid").': <font class="ok">'.$langs->trans("Yes").'</font><br>';
 		print $langs->trans("ValueIsValid").': ';
+<<<<<<< HEAD
 		if (preg_match('/MS_UNAVAILABLE/i',$result['faultstring']))
 		{
 			print '<font class="error">'.$langs->trans("ErrorVATCheckMS_UNAVAILABLE",$countryCode).'</font><br>';
+=======
+		if (preg_match('/MS_UNAVAILABLE/i', $result['faultstring']))
+		{
+			print '<font class="error">'.$langs->trans("ErrorVATCheckMS_UNAVAILABLE", $countryCode).'</font><br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		else
 		{
@@ -163,7 +216,11 @@ else
 }
 
 print '<br>';
+<<<<<<< HEAD
 print $langs->trans("VATIntraManualCheck",$langs->trans("VATIntraCheckURL"),$langs->trans("VATIntraCheckURL")).'<br>';
+=======
+print $langs->trans("VATIntraManualCheck", $langs->trans("VATIntraCheckURL"), $langs->transnoentitiesnoconv("VATIntraCheckURL")).'<br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '<br>';
 print '<div class="center"><input type="button" class="button" value="'.$langs->trans("CloseWindow").'" onclick="javascript: window.close()"></div>';
 
@@ -174,6 +231,12 @@ if ($messagetoshow)
 	print nl2br($messagetoshow);
 }
 
+<<<<<<< HEAD
 
+=======
+print '</div>';
+
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

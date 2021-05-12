@@ -33,7 +33,11 @@
  * @param	int		$silent			Do not output indent and picto, returns only value
  * @return	integer[]					array(0 or 1 if at least one of this level after, 0 or 1 if at least one of higher level after, nbofdirinsub, nbofdocinsub)
  */
+<<<<<<< HEAD
 function tree_showpad(&$fulltree,$key,$silent=0)
+=======
+function tree_showpad(&$fulltree, $key, $silent = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$pos=1;
 
@@ -77,6 +81,7 @@ function tree_showpad(&$fulltree,$key,$silent=0)
 		{
     		if ($atleastoneofthislevelafter)
     		{
+<<<<<<< HEAD
     			if ($fulltree[$key]['level'] == $pos) print img_picto_common('','treemenu/branch.gif');
     			else print img_picto_common('','treemenu/line.gif');
     		}
@@ -84,6 +89,15 @@ function tree_showpad(&$fulltree,$key,$silent=0)
     		{
     			if ($fulltree[$key]['level'] == $pos) print img_picto_common('','treemenu/branchbottom.gif');
     			else print img_picto_common('','treemenu/linebottom.gif');
+=======
+    			if ($fulltree[$key]['level'] == $pos) print img_picto_common('', 'treemenu/branch.gif');
+    			else print img_picto_common('', 'treemenu/line.gif');
+    		}
+    		else
+    		{
+    			if ($fulltree[$key]['level'] == $pos) print img_picto_common('', 'treemenu/branchbottom.gif');
+    			else print img_picto_common('', 'treemenu/linebottom.gif');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     		}
 		}
 		$pos++;
@@ -113,9 +127,15 @@ function tree_showpad(&$fulltree,$key,$silent=0)
  *  @param  int     $showfk         1=show fk_links to parent into label  (used by menu editor only)
  *  @return	void
  */
+<<<<<<< HEAD
 function tree_recur($tab, $pere, $rang, $iddivjstree='iddivjstree', $donoresetalreadyloaded=0, $showfk=0)
 {
     global $tree_recur_alreadyadded;
+=======
+function tree_recur($tab, $pere, $rang, $iddivjstree = 'iddivjstree', $donoresetalreadyloaded = 0, $showfk = 0)
+{
+    global $tree_recur_alreadyadded, $menu_handler_to_search;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     if ($rang == 0 && empty($donoresetalreadyloaded)) $tree_recur_alreadyadded=array();
 
@@ -171,7 +191,11 @@ function tree_recur($tab, $pere, $rang, $iddivjstree='iddivjstree', $donoresetal
 			    print '<strong> &nbsp; ';
 			    print $tab[$x]['title'];
 			    print '&nbsp; (fk_mainmenu='.$tab[$x]['fk_mainmenu'].' fk_leftmenu='.$tab[$x]['fk_leftmenu'].')';
+<<<<<<< HEAD
 			    print '</td><td align="right">';
+=======
+			    print '</td><td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			    print $tab[$x]['buttons'];
 			    print '</td></tr></table>';
 			}
@@ -203,11 +227,19 @@ function tree_recur($tab, $pere, $rang, $iddivjstree='iddivjstree', $donoresetal
 			if ($showfk)
 			{
 			    print '<table class="nobordernopadding centpercent"><tr><td>';
+<<<<<<< HEAD
 			    print '<strong> &nbsp; <a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&menuId='.$menu['rowid'].'">';
 			    print $tab[$x]['title'];
 			    print '</a></strong>';
 			    print '&nbsp; (mainmenu='.$tab[$x]['mainmenu'].' leftmenu='.$tab[$x]['leftmenu'].' - fk_mainmenu='.$tab[$x]['fk_mainmenu'].' fk_leftmenu='.$tab[$x]['fk_leftmenu'].')';
 			    print '</td><td align="right">';
+=======
+			    print '<strong> &nbsp; <a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&menuId='.$tab[$x]['rowid'].'">';
+			    print $tab[$x]['title'];
+			    print '</a></strong>';
+			    print '&nbsp; (mainmenu='.$tab[$x]['mainmenu'].' leftmenu='.$tab[$x]['leftmenu'].' - fk_mainmenu='.$tab[$x]['fk_mainmenu'].' fk_leftmenu='.$tab[$x]['fk_leftmenu'].')';
+			    print '</td><td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			    print $tab[$x]['buttons'];
 			    print '</td></tr></table>';
 			}
@@ -227,4 +259,7 @@ function tree_recur($tab, $pere, $rang, $iddivjstree='iddivjstree', $donoresetal
 
     if ($rang == 0) print '</ul>';
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

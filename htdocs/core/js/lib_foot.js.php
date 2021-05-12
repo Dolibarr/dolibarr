@@ -21,6 +21,7 @@
  * \brief      File that include javascript functions (included if option use_javascript activated)
  */
 
+<<<<<<< HEAD
 if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
 if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK',1);
 if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL',1);
@@ -30,19 +31,35 @@ if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML',1);
 if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
 
 session_cache_limiter(false);
+=======
+if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
+if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
+if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
+if (! defined('NOLOGIN'))         define('NOLOGIN', 1);
+if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU', 1);
+if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML', 1);
+if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
+
+session_cache_limiter('public');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 require_once '../../main.inc.php';
 
 // Define javascript type
 top_httphead('text/javascript; charset=UTF-8');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
+<<<<<<< HEAD
 if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
+=======
+if (empty($dolibarr_nocache)) header('Cache-Control: max-age=10800, public, must-revalidate');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 else header('Cache-Control: no-cache');
 
 //var_dump($conf);
 
 
 // Wrapper to show tooltips (html or onclick popup)
+<<<<<<< HEAD
 if (empty($conf->dol_no_mouse_hover))
 {
 	print "\n/* JS CODE TO ENABLE Tooltips on all object with class classfortooltip */\n";
@@ -74,6 +91,43 @@ if (empty($conf->dol_no_mouse_hover))
            ' . "\n";
 }
 
+=======
+print "\n/* JS CODE TO ENABLE Tooltips on all object with class classfortooltip */\n";
+print "jQuery(document).ready(function () {\n";
+
+if (empty($conf->dol_no_mouse_hover))
+{
+	print 'jQuery(".classfortooltip").tooltip({
+				show: { collision: "flipfit", effect:\'toggle\', delay:50 },
+				hide: { delay: 50 },
+				tooltipClass: "mytooltip",
+				content: function () {
+                    console.log("Return title for popup");
+            		return $(this).prop(\'title\');		/* To force to get title as is */
+          		}
+			});'."\n";
+}
+
+print '
+jQuery(".classfortooltiponclicktext").dialog(
+    { closeOnEscape: true, classes: { "ui-dialog": "highlight" },
+    maxHeight: window.innerHeight-60, width: '.($conf->browser->layout == 'phone' ? max($_SESSION['dol_screenwidth']-20, 320) : 700).',
+    modal: true,
+    autoOpen: false }).css("z-index: 5000");
+jQuery(".classfortooltiponclick").click(function () {
+    console.log("We click on tooltip for element with dolid="+$(this).attr(\'dolid\'));
+    if ($(this).attr(\'dolid\'))
+    {
+        obj=$("#idfortooltiponclick_"+$(this).attr(\'dolid\'));		/* obj is a div component */
+        obj.dialog("open");
+		return false;
+    }
+});'."\n";
+
+print "});\n";
+
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 // Wrapper to manage dropdown
 if (! defined('JS_JQUERY_DISABLE_DROPDOWN'))
 {
@@ -159,4 +213,7 @@ print '
 					}
 				});
 			});'."\n";
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

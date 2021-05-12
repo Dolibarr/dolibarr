@@ -28,8 +28,20 @@
  */
 class FormMargin
 {
+<<<<<<< HEAD
     var $db;
     var $error;
+=======
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
     /**
@@ -37,11 +49,17 @@ class FormMargin
      *
      *	@param	DoliDB		$db      Database handler
      */
+<<<<<<< HEAD
     function __construct($db)
     {
         $this->db = $db;
 
         return 1;
+=======
+    public function __construct($db)
+    {
+        $this->db = $db;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
 
@@ -54,7 +72,11 @@ class FormMargin
 	 * 	@param 	boolean			$force_price	True of not
 	 * 	@return array							Array with info
 	 */
+<<<<<<< HEAD
 	function getMarginInfosArray($object, $force_price=false)
+=======
+	public function getMarginInfosArray($object, $force_price = false)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf, $db;
 
@@ -91,7 +113,11 @@ class FormMargin
 				$line->pa_ht = $line->subprice * (1 - ($line->remise_percent / 100));
 			}
 
+<<<<<<< HEAD
 			$pv = $line->qty * $line->subprice * (1 - $line->remise_percent / 100);
+=======
+			$pv = $line->total_ht;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$pa_ht = ($pv < 0 ? - $line->pa_ht : $line->pa_ht);      // We choosed to have line->pa_ht always positive in database, so we guess the correct sign
 			$pa = $line->qty * $pa_ht;
 
@@ -186,7 +212,11 @@ class FormMargin
 	 * 	@param 	boolean			$force_price	Force price
 	 * 	@return	void
 	 */
+<<<<<<< HEAD
 	function displayMarginInfos($object, $force_price=false)
+=======
+	public function displayMarginInfos($object, $force_price = false)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs, $conf, $user;
 
@@ -202,8 +232,13 @@ class FormMargin
 		{
 			print $langs->trans('ShowMarginInfos').' : ';
 	        $hidemargininfos = $_COOKIE['DOLUSER_MARGININFO_HIDE_SHOW'];
+<<<<<<< HEAD
 	    	print '<span id="showMarginInfos" class="linkobject '.(!empty($hidemargininfos)?'':'hideobject').'">'.img_picto($langs->trans("Disabled"),'switch_off').'</span>';
 	    	print '<span id="hideMarginInfos" class="linkobject '.(!empty($hidemargininfos)?'hideobject':'').'">'.img_picto($langs->trans("Enabled"),'switch_on').'</span>';
+=======
+	    	print '<span id="showMarginInfos" class="linkobject '.(!empty($hidemargininfos)?'':'hideobject').'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</span>';
+	    	print '<span id="hideMarginInfos" class="linkobject '.(!empty($hidemargininfos)?'hideobject':'').'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</span>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     	    print '<script>$(document).ready(function() {
         	    $("span#showMarginInfos").click(function() { $.getScript( "'.dol_buildpath('/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js', 1).'", function( data, textStatus, jqxhr ) { $.cookie("DOLUSER_MARGININFO_HIDE_SHOW", 0); $(".margininfos").show(); $("span#showMarginInfos").addClass("hideobject"); $("span#hideMarginInfos").removeClass("hideobject");})});
@@ -218,6 +253,7 @@ class FormMargin
 		print '<table class="noborder margintable centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td class="liste_titre">'.$langs->trans('Margins').'</td>';
+<<<<<<< HEAD
 		print '<td class="liste_titre" align="right">'.$langs->trans('SellingPrice').'</td>';
 		if ($conf->global->MARGIN_TYPE == "1")
 			print '<td class="liste_titre" align="right">'.$langs->trans('BuyingPrice').'</td>';
@@ -228,6 +264,18 @@ class FormMargin
 			print '<td class="liste_titre" align="right">'.$langs->trans('MarginRate').'</td>';
 		if (! empty($conf->global->DISPLAY_MARK_RATES))
 			print '<td class="liste_titre" align="right">'.$langs->trans('MarkRate').'</td>';
+=======
+		print '<td class="liste_titre right">'.$langs->trans('SellingPrice').'</td>';
+		if ($conf->global->MARGIN_TYPE == "1")
+			print '<td class="liste_titre right">'.$langs->trans('BuyingPrice').'</td>';
+		else
+			print '<td class="liste_titre right">'.$langs->trans('CostPrice').'</td>';
+		print '<td class="liste_titre right">'.$langs->trans('Margin').'</td>';
+		if (! empty($conf->global->DISPLAY_MARGIN_RATES))
+			print '<td class="liste_titre right">'.$langs->trans('MarginRate').'</td>';
+		if (! empty($conf->global->DISPLAY_MARK_RATES))
+			print '<td class="liste_titre right">'.$langs->trans('MarkRate').'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</tr>';
 
 		if (! empty($conf->product->enabled))
@@ -235,6 +283,7 @@ class FormMargin
 			//if ($marginInfo['margin_on_products'] != 0 && $marginInfo['margin_on_services'] != 0) {
 			print '<tr class="oddeven">';
 			print '<td>'.$langs->trans('MarginOnProducts').'</td>';
+<<<<<<< HEAD
 			print '<td align="right">'.price($marginInfo['pv_products'], null, null, null, null, $rounding).'</td>';
 			print '<td align="right">'.price($marginInfo['pa_products'], null, null, null, null, $rounding).'</td>';
 			print '<td align="right">'.price($marginInfo['margin_on_products'], null, null, null, null, $rounding).'</td>';
@@ -242,6 +291,15 @@ class FormMargin
 				print '<td align="right">'.(($marginInfo['margin_rate_products'] == '')?'':price($marginInfo['margin_rate_products'], null, null, null, null, $rounding).'%').'</td>';
 			if (! empty($conf->global->DISPLAY_MARK_RATES))
 				print '<td align="right">'.(($marginInfo['mark_rate_products'] == '')?'':price($marginInfo['mark_rate_products'], null, null, null, null, $rounding).'%').'</td>';
+=======
+			print '<td class="right">'.price($marginInfo['pv_products'], null, null, null, null, $rounding).'</td>';
+			print '<td class="right">'.price($marginInfo['pa_products'], null, null, null, null, $rounding).'</td>';
+			print '<td class="right">'.price($marginInfo['margin_on_products'], null, null, null, null, $rounding).'</td>';
+			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
+				print '<td class="right">'.(($marginInfo['margin_rate_products'] == '')?'':price($marginInfo['margin_rate_products'], null, null, null, null, $rounding).'%').'</td>';
+			if (! empty($conf->global->DISPLAY_MARK_RATES))
+				print '<td class="right">'.(($marginInfo['mark_rate_products'] == '')?'':price($marginInfo['mark_rate_products'], null, null, null, null, $rounding).'%').'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '</tr>';
 		}
 
@@ -249,6 +307,7 @@ class FormMargin
 		{
 			print '<tr class="oddeven">';
 			print '<td>'.$langs->trans('MarginOnServices').'</td>';
+<<<<<<< HEAD
 			print '<td align="right">'.price($marginInfo['pv_services'], null, null, null, null, $rounding).'</td>';
 			print '<td align="right">'.price($marginInfo['pa_services'], null, null, null, null, $rounding).'</td>';
 			print '<td align="right">'.price($marginInfo['margin_on_services'], null, null, null, null, $rounding).'</td>';
@@ -256,6 +315,15 @@ class FormMargin
 				print '<td align="right">'.(($marginInfo['margin_rate_services'] == '')?'':price($marginInfo['margin_rate_services'], null, null, null, null, $rounding).'%').'</td>';
 			if (! empty($conf->global->DISPLAY_MARK_RATES))
 				print '<td align="right">'.(($marginInfo['mark_rate_services'] == '')?'':price($marginInfo['mark_rate_services'], null, null, null, null, $rounding).'%').'</td>';
+=======
+			print '<td class="right">'.price($marginInfo['pv_services'], null, null, null, null, $rounding).'</td>';
+			print '<td class="right">'.price($marginInfo['pa_services'], null, null, null, null, $rounding).'</td>';
+			print '<td class="right">'.price($marginInfo['margin_on_services'], null, null, null, null, $rounding).'</td>';
+			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
+				print '<td class="right">'.(($marginInfo['margin_rate_services'] == '')?'':price($marginInfo['margin_rate_services'], null, null, null, null, $rounding).'%').'</td>';
+			if (! empty($conf->global->DISPLAY_MARK_RATES))
+				print '<td class="right">'.(($marginInfo['mark_rate_services'] == '')?'':price($marginInfo['mark_rate_services'], null, null, null, null, $rounding).'%').'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '</tr>';
 		}
 
@@ -263,6 +331,7 @@ class FormMargin
 		{
 			print '<tr class="liste_total">';
 			print '<td>'.$langs->trans('TotalMargin').'</td>';
+<<<<<<< HEAD
 			print '<td align="right">'.price($marginInfo['pv_total'], null, null, null, null, $rounding).'</td>';
 			print '<td align="right">'.price($marginInfo['pa_total'], null, null, null, null, $rounding).'</td>';
 			print '<td align="right">'.price($marginInfo['total_margin'], null, null, null, null, $rounding).'</td>';
@@ -270,11 +339,24 @@ class FormMargin
 				print '<td align="right">'.(($marginInfo['total_margin_rate'] == '')?'':price($marginInfo['total_margin_rate'], null, null, null, null, $rounding).'%').'</td>';
 			if (! empty($conf->global->DISPLAY_MARK_RATES))
 				print '<td align="right">'.(($marginInfo['total_mark_rate'] == '')?'':price($marginInfo['total_mark_rate'], null, null, null, null, $rounding).'%').'</td>';
+=======
+			print '<td class="right">'.price($marginInfo['pv_total'], null, null, null, null, $rounding).'</td>';
+			print '<td class="right">'.price($marginInfo['pa_total'], null, null, null, null, $rounding).'</td>';
+			print '<td class="right">'.price($marginInfo['total_margin'], null, null, null, null, $rounding).'</td>';
+			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
+				print '<td class="right">'.(($marginInfo['total_margin_rate'] == '')?'':price($marginInfo['total_margin_rate'], null, null, null, null, $rounding).'%').'</td>';
+			if (! empty($conf->global->DISPLAY_MARK_RATES))
+				print '<td class="right">'.(($marginInfo['total_mark_rate'] == '')?'':price($marginInfo['total_mark_rate'], null, null, null, null, $rounding).'%').'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '</tr>';
 		}
 		print '</table>';
 		print '</div>';
 	}
+<<<<<<< HEAD
 
 }
 
+=======
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

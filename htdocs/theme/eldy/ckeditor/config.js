@@ -9,6 +9,11 @@ CKEDITOR.editorConfig = function( config )
 	// http://docs.cksource.com/CKEditor_3.x/Developers_Guide
 	// http://docs.cksource.com/ckeditor_api/symbols/CKEDITOR.config.html
 	config.enterMode = CKEDITOR.ENTER_BR;
+<<<<<<< HEAD
+=======
+	//config.forceSimpleAmpersand = true;	// When you put a <img src="x?a=a&b=b"> into the textarea, and go into "source", then ckeditor change the & into &amp;. We don't want this. But this option does not fix this.
+	//config.entities = false;			// When you put a <img src="x?a=a&b=b"> into the textarea, and go into "source", then ckeditor change the & into &amp;. We don't want this. But this option does not fix this.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	config.resize_enabled = false;
 	//config.resize_maxHeight = 3000;
 	//config.resize_maxWidth = 3000;
@@ -18,7 +23,11 @@ CKEDITOR.editorConfig = function( config )
 	//config.extraPlugins = 'docprops,scayt,showprotected';
 	config.removeDialogTabs = 'flash:advanced';	// config.removeDialogTabs = 'flash:advanced;image:Link';
 	config.protectedSource.push( /<\?[\s\S]*?\?>/g );   // Prevent PHP Code to be formatted
+<<<<<<< HEAD
 	//config.menu_groups = 'clipboard,table,anchor,link,image';	// for context menu 'clipboard,form,tablecell,tablecellproperties,tablerow,tablecolumn,table,anchor,link,image,flash,checkbox,radio,textfield,hiddenfield,imagebutton,button,select,textarea' 
+=======
+	//config.menu_groups = 'clipboard,table,anchor,link,image';	// for context menu 'clipboard,form,tablecell,tablecellproperties,tablerow,tablecolumn,table,anchor,link,image,flash,checkbox,radio,textfield,hiddenfield,imagebutton,button,select,textarea'
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	//config.language = 'de';
 	//config.defaultLanguage = 'en';
 	//config.contentsLanguage = 'fr';
@@ -29,7 +38,11 @@ CKEDITOR.editorConfig = function( config )
 	//config.autoParagraph = false;
 	//config.removeFormatTags = 'b,big,code,del,dfn,em,font,i,ins,kbd';		// See also rules on this.dataProcessor.writer.setRules
 	//config.forcePasteAsPlainText = true;
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	config.toolbar_Full =
 	[
 	    ['Templates','NewPage'],
@@ -51,7 +64,11 @@ CKEDITOR.editorConfig = function( config )
 	];
 
 	// Used for mailing fields
+<<<<<<< HEAD
 	config.toolbar_dolibarr_mailings = 
+=======
+	config.toolbar_dolibarr_mailings =
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	[
 	 	['Maximize','Preview'],
 	 	['SpellChecker', 'Scayt'],
@@ -64,7 +81,11 @@ CKEDITOR.editorConfig = function( config )
 	 	['Link','Unlink','Anchor','Image','Table','HorizontalRule','SpecialChar'],
 	 	['Source']
 	 ];
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	// Used for notes fields
 	config.toolbar_dolibarr_notes =
 	[
@@ -78,7 +99,11 @@ CKEDITOR.editorConfig = function( config )
 	    ['Link','Unlink','Image','Table','HorizontalRule','SpecialChar'],
 	 	['Source']
 	];
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	// Used for details lines
 	config.toolbar_dolibarr_details =
 	[
@@ -91,12 +116,20 @@ CKEDITOR.editorConfig = function( config )
 	    ['Link','Unlink','SpecialChar'],
 	 	['Source']
 	];
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	// Used for mailing fields
 	config.toolbar_dolibarr_readonly =
 	[
 	 	['Maximize'],
 	 	['Find'],
 	 	['Source']
+<<<<<<< HEAD
 	];	
+=======
+	];
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 };

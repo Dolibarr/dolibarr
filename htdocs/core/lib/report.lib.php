@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,23 +35,39 @@
  *	@param 	string				$period         Period of report
  *	@param 	string				$periodlink     Link to switch period
  *	@param 	string				$description    Description
+<<<<<<< HEAD
  *	@param 	timestamp|integer	$builddate      Date generation
+=======
+ *	@param 	integer	            $builddate      Date generation
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *	@param 	string				$exportlink     Link for export or ''
  *	@param	array				$moreparam		Array with list of params to add into form
  *	@param	string				$calcmode		Calculation mode
  *  @param  string              $varlink        Add a variable into the address of the page
  *	@return	void
  */
+<<<<<<< HEAD
 function report_header($reportname,$notused,$period,$periodlink,$description,$builddate,$exportlink='',$moreparam=array(),$calcmode='', $varlink='')
 {
 	global $langs;
 
 	if (empty($hselected)) $hselected='report';
 
+=======
+function report_header($reportname, $notused, $period, $periodlink, $description, $builddate, $exportlink = '', $moreparam = array(), $calcmode = '', $varlink = '')
+{
+	global $langs;
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print "\n\n<!-- start banner of report -->\n";
 
 	if(! empty($varlink)) $varlink = '?'.$varlink;
 
+<<<<<<< HEAD
+=======
+	$head = array();
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$h=0;
 	$head[$h][0] = $_SERVER["PHP_SELF"].$varlink;
 	$head[$h][1] = $langs->trans("Report");
@@ -91,7 +111,11 @@ function report_header($reportname,$notused,$period,$periodlink,$description,$bu
 	print '<td>'.$langs->trans("ReportPeriod").'</td>';
 	print '<td>';
 	if ($period) print $period;
+<<<<<<< HEAD
 	if ($variante) print '<td>'.$periodlink.'</td>';
+=======
+	if ($variante) print '<td class="nowraponall">'.$periodlink.'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</td>';
 	print '</tr>';
 
@@ -122,4 +146,7 @@ function report_header($reportname,$notused,$period,$periodlink,$description,$bu
 
 	print "\n<!-- end banner of report -->\n\n";
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

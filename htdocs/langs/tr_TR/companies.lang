@@ -5,6 +5,7 @@ SelectThirdParty=Bir üçüncü parti seç
 ConfirmDeleteCompany=Bu firmayı ve devralınan tüm bilgilerini silmek istediğinizden emin misiniz?
 DeleteContact=Bir kişi/adres sil
 ConfirmDeleteContact=Bu kişiyi ve devralınan tüm bilgilerini silmek istediğinizden emin misiniz?
+<<<<<<< HEAD
 MenuNewThirdParty=Yeni üçüncü parti
 MenuNewCustomer=Yeni müşteri
 MenuNewProspect=Yeni aday
@@ -13,6 +14,16 @@ MenuNewPrivateIndividual=Yeni özel şahıs
 NewCompany=New company (prospect, customer, vendor)
 NewThirdParty=New third party (prospect, customer, vendor)
 CreateDolibarrThirdPartySupplier=Create a third party (vendor)
+=======
+MenuNewThirdParty=Yeni Üçüncü Parti
+MenuNewCustomer=Yeni Müşteri
+MenuNewProspect=Yeni Aday
+MenuNewSupplier=Yeni Tedarikçi
+MenuNewPrivateIndividual=Yeni özel şahıs
+NewCompany=Yeni firma (aday, müşteri, tedarikçi)
+NewThirdParty=Yeni Üçüncü Parti (aday, müşteri, tedarikçi)
+CreateDolibarrThirdPartySupplier=Bir üçüncü parti oluştur (tedarikçi)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CreateThirdPartyOnly=Üçüncü parti oluştur
 CreateThirdPartyAndContact=Bir üçüncü parti + bağlantılı kişi oluşturun
 ProspectionArea=Aday alanı
@@ -21,22 +32,35 @@ IdCompany=Firma kimliği
 IdContact=Kişi kimliği
 Contacts=Kişiler/Adresler
 ThirdPartyContacts=Üçüncü parti kişileri
+<<<<<<< HEAD
 ThirdPartyContact=Üçüncü parti kişisi/adresi
+=======
+ThirdPartyContact=Üçüncü parti kisi/adresi
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Company=Firma
 CompanyName=Firma adı
 AliasNames=Rumuz (ticari isim, marka ismi, ...)
 AliasNameShort=Rumuz
 Companies=Firmalar
 CountryIsInEEC=Ülke, Avrupa Ekonomik Topluluğu içindedir
+<<<<<<< HEAD
 ThirdPartyName=Üçüncü parti adı
 ThirdPartyEmail=Üçüncü parti e-postası
 ThirdParty=Üçüncü parti
 ThirdParties=Üçüncü partiler
+=======
+PriceFormatInCurrentLanguage=Kullanılan dil ve para biriminde fiyat görüntüleme biçimi
+ThirdPartyName=Üçüncü parti adı
+ThirdPartyEmail=Üçüncü parti e-postası
+ThirdParty=Üçüncü Parti
+ThirdParties=Üçüncü Partiler
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ThirdPartyProspects=Adaylar
 ThirdPartyProspectsStats=Adaylar
 ThirdPartyCustomers=Müşteriler
 ThirdPartyCustomersStats=Müşteriler
 ThirdPartyCustomersWithIdProf12=Müşteriler %s veya %s ile
+<<<<<<< HEAD
 ThirdPartySuppliers=Vendors
 ThirdPartyType=Üçüncü parti türü
 Individual=Özel şahıs
@@ -53,11 +77,33 @@ Firstname=İlk Adı
 PostOrFunction=İş pozisyonu
 UserTitle=Unvan
 NatureOfThirdParty=Nature of Third party
+=======
+ThirdPartySuppliers=Tedarikçiler
+ThirdPartyType=Üçüncü parti türü
+Individual=Özel şahıs
+ToCreateContactWithSameName=Otomatik olarak, üçüncü partinin altında üçüncü partiyle aynı bilgilere sahip olan bir kişi/adres oluşturacaktır. Üçüncü parti eğer bir şahıs ise, sadece üçüncü parti oluşturmak çoğu durumda yeterlidir.
+ParentCompany=Ana firma
+Subsidiaries=Bağlı firmalar
+ReportByMonth=Aya göre rapor
+ReportByCustomers=Müşteriye göre rapor
+ReportByQuarter=Orana göre rapor
+CivilityCode=Hitap kodu
+RegisteredOffice=Merkez
+Lastname=Soyadı
+Firstname=Adı
+PostOrFunction=İş pozisyonu
+UserTitle=Unvan
+NatureOfThirdParty=Üçüncü partinin yapısı
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Address=Adresi
 State=Eyaleti/İli
 StateShort=Durum
 Region=Bölgesi
+<<<<<<< HEAD
 Region-State=Region - State
+=======
+Region-State=Bölge - Eyalet
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Country=Ülkesi
 CountryCode=Ülke kodu
 CountryId=Ülke kimliği
@@ -66,15 +112,22 @@ PhoneShort=Telefon
 Skype=Skype
 Call=Ara
 Chat=Sohbet
+<<<<<<< HEAD
 PhonePro=İş Telefonu
 PhonePerso=Kişi. telefonu
 PhoneMobile=Mobil
+=======
+PhonePro=Telefon
+PhonePerso=Dahili numarası
+PhoneMobile=Cep telefonu
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 No_Email=Toplu e-postaları reddet
 Fax=Faks
 Zip=Posta Kodu
 Town=İlçesi
 Web=Web
 Poste= Durumu
+<<<<<<< HEAD
 DefaultLang=Varsayılan dili
 VATIsUsed=Sales tax is used
 VATIsUsedWhenSelling=This define if this third party includes a sale tax or not when it makes an invoice to its own customers
@@ -82,6 +135,15 @@ VATIsNotUsed=Sales tax is not used
 CopyAddressFromSoc=Adresi üçüncü parti adresiyle doldurun
 ThirdpartyNotCustomerNotSupplierSoNoRef=Third party neither customer nor vendor, no available refering objects
 ThirdpartyIsNeitherCustomerNorClientSoCannotHaveDiscounts=Third party neither customer nor supplier, discounts are not available
+=======
+DefaultLang=Varsayılan dil
+VATIsUsed=KDV kullanılır
+VATIsUsedWhenSelling=Üçüncü partinin kendi müşterilerine fatura keserken satış vergisi kullanıp kullanmadığını burada tanımlayabilirsiniz.
+VATIsNotUsed=KDV kullanılmaz
+CopyAddressFromSoc=Adresi üçüncü parti bilgilerinden kopyala
+ThirdpartyNotCustomerNotSupplierSoNoRef=Üçüncü parti ne müşteri ne de tedarikçidir, mevcut referans nesneler yok
+ThirdpartyIsNeitherCustomerNorClientSoCannotHaveDiscounts=Üçüncü parti ne müşteri ne de tedarikçidir, indirim mevcut değildir
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PaymentBankAccount=Ödeme banka hesabı
 OverAllProposals=Teklifler
 OverAllOrders=Siparişler
@@ -96,6 +158,7 @@ LocalTax2IsUsedES= IRPF kullanılır
 LocalTax2IsNotUsedES= IRPF kullanılmaz
 LocalTax1ES=RE
 LocalTax2ES=IRPF
+<<<<<<< HEAD
 TypeLocaltax1ES=RE Türü
 TypeLocaltax2ES=IRPF Türü
 WrongCustomerCode=Müşteri kodu geçersiz
@@ -116,6 +179,26 @@ ProfId3=Profesyonel ID 3
 ProfId4=Profesyonel ID 4
 ProfId5=Profesyonel ID 5
 ProfId6=Professional ID 6
+=======
+WrongCustomerCode=Müşteri kodu geçersiz
+WrongSupplierCode=Tedarikçi kodu geçersiz
+CustomerCodeModel=Müşteri kodu modeli
+SupplierCodeModel=Tedarikçi kodu modeli
+Gencod=Barkod
+##### Professional ID #####
+ProfId1Short=Vergi Dairesi
+ProfId2Short=Mersis No
+ProfId3Short=Ticaret Sicil No
+ProfId4Short=Oda Sicil No
+ProfId5Short=NACE Kodu
+ProfId6Short=Ticaret Odası
+ProfId1=Vergi Dairesi
+ProfId2=Mersis No
+ProfId3=Ticaret Sicil No
+ProfId4=Oda Sicil No
+ProfId5=NACE Kodu
+ProfId6=Ticaret Odası
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProfId1AR=Prof Id 1 (CUIT / Cuil)
 ProfId2AR=Prof Id 2 (revenu canavarlar)
 ProfId3AR=-
@@ -242,7 +325,11 @@ ProfId3TN=Prof No 3 (Gümrük kodu)
 ProfId4TN=Prof No 4 (BAN)
 ProfId5TN=-
 ProfId6TN=-
+<<<<<<< HEAD
 ProfId1US=Prof Id (FEIN)
+=======
+ProfId1US=Profesyonel Kimlik (FEIN)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProfId2US=-
 ProfId3US=-
 ProfId4US=-
@@ -258,8 +345,13 @@ ProfId1DZ=RC
 ProfId2DZ=Art.
 ProfId3DZ=NIF
 ProfId4DZ=NIS
+<<<<<<< HEAD
 VATIntra=Sales tax ID
 VATIntraShort=Tax ID
+=======
+VATIntra=Vergi Numarası
+VATIntraShort=Vergi Numarası
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 VATIntraSyntaxIsValid=Sözdizimi geçerli
 VATReturn=KDV iadesi
 ProspectCustomer=Aday/Müşteri
@@ -267,12 +359,17 @@ Prospect=Aday
 CustomerCard=Müşteri Kartı
 Customer=Müşteri
 CustomerRelativeDiscount=Göreceli müşteri indirimi
+<<<<<<< HEAD
 SupplierRelativeDiscount=Relative vendor discount
+=======
+SupplierRelativeDiscount=Göreceli tedarikçi indirimi
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CustomerRelativeDiscountShort=Göreceli indirim
 CustomerAbsoluteDiscountShort=Mutlak indirim
 CompanyHasRelativeDiscount=Bu müşterinin varsayılan bir <b>%s%%</b> indirimi var
 CompanyHasNoRelativeDiscount=Bu müşterinin varsayılan hiçbir göreceli indirimi yok
 HasRelativeDiscountFromSupplier=Bu tedarikçiden varsayılan olarak <b>%s%%</b> indiriminiz var
+<<<<<<< HEAD
 HasNoRelativeDiscountFromSupplier=Bu tedarikçiden varsayılan göreceli indiriminiz yok 
 CompanyHasAbsoluteDiscount=Bu müşterinin <b>%s</b>%s için mevcut indirimi var (kredi notları veya peşinat)
 CompanyHasDownPaymentOrCommercialDiscount=This customer has discount available (commercial, down payments) for <b>%s</b> %s
@@ -288,6 +385,23 @@ SupplierAbsoluteDiscountAllUsers=Absolute vendor discounts (entered by all users
 SupplierAbsoluteDiscountMy=Absolute vendor discounts (entered by yourself)
 DiscountNone=Hiçbiri
 Supplier=Tedarikçi
+=======
+HasNoRelativeDiscountFromSupplier=Bu tedarikçiden varsayılan olarak göreceli bir indiriminiz yok
+CompanyHasAbsoluteDiscount=Bu müşteri <b>%s</b>%s için indirimlere sahip (kredi notları veya peşinatlar)
+CompanyHasDownPaymentOrCommercialDiscount=Bu müşterinin <b>%s</b>%s için indirimleri mevcut (ticari, peşinatlar)
+CompanyHasCreditNote=Bu müşterinin hala <b>%s</b> %s için iade faturaları var
+HasNoAbsoluteDiscountFromSupplier=Bu tedarikçiden hiçbir indirim krediniz yok
+HasAbsoluteDiscountFromSupplier=Bu tedarikçiden <b>%s</b> %s için indirimleriniz (alacak dekontu, peşinatlar) var
+HasDownPaymentOrCommercialDiscountFromSupplier=Bu tedarikçiden <b>%s</b> %s için indirimleriniz (ticari, peşinatlar) var
+HasCreditNoteFromSupplier=Bu tedarikçiden <b>%s</b> %s için alacak dekontunuz var
+CompanyHasNoAbsoluteDiscount=Bu müşterinin hiçbir indirim alacağı yoktur
+CustomerAbsoluteDiscountAllUsers=Mutlak müşteri indirimleri (tüm kullanıcılar tarafından verilen)
+CustomerAbsoluteDiscountMy=Mutlak müşteri indirimleri (sizin tarafınızdan verilen)
+SupplierAbsoluteDiscountAllUsers=Mutlak satıcı indirimleri (tüm kullanıcıları tarafından girilen)
+SupplierAbsoluteDiscountMy=Mutlak satıcı indirimleri (tarafınızdan girilen)
+DiscountNone=Hiçbiri
+Vendor=Tedarikçi
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddContact=Kişi oluştur
 AddContactAddress=Kişi/adres oluştur
 EditContact=Kişi düzenle
@@ -295,7 +409,11 @@ EditContactAddress=Kişi/adres düzenle
 Contact=Kişi
 ContactId=Kişi kimliği
 ContactsAddresses=Kişiler/adresler
+<<<<<<< HEAD
 FromContactName=İsim:
+=======
+FromContactName=Hazırlayan:
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoContactDefinedForThirdParty=Bu üçüncü parti için tanımlı kişi yok
 NoContactDefined=Bu üçüncü parti için kişi tanımlanmamış
 DefaultContact=Varsayılan kişi
@@ -303,6 +421,7 @@ AddThirdParty=Üçüncü parti oluştur
 DeleteACompany=Firma sil
 PersonalInformations=Kişisel bilgiler
 AccountancyCode=Muhasebe hesabı
+<<<<<<< HEAD
 CustomerCode=Müşteri kodu
 SupplierCode=Vendor code
 CustomerCodeShort=Müşteri kodu
@@ -319,6 +438,24 @@ ListOfContacts=Kişi/adres listesi
 ListOfContactsAddresses=Kişiler/adresler listesi
 ListOfThirdParties=Üçüncü partiler listesi
 ShowCompany=Üçüncü partiyi göster
+=======
+CustomerCode=Müşteri Kodu
+SupplierCode=Tedarikçi Kodu
+CustomerCodeShort=Müşteri Kodu
+SupplierCodeShort=Tedarikçi Kodu
+CustomerCodeDesc=Müşteri Kodu, tüm müşteriler için benzersiz
+SupplierCodeDesc=Tedarikçi Kodu, tüm tedarikçiler için benzersiz
+RequiredIfCustomer=Eğer üçüncü parti bir müşteri ya da aday ise gereklidir
+RequiredIfSupplier=Eğer üçünü parti tedarikçi ise gereklidir
+ValidityControledByModule=Modül tarafından kontrol edilen geçerlilik
+ThisIsModuleRules=Bu modül için kurallar
+ProspectToContact=İletişime geçilecek aday
+CompanyDeleted="%s" Firması veritabanından silindi.
+ListOfContacts=Kişi/adres listesi
+ListOfContactsAddresses=Kişi/adres listesi
+ListOfThirdParties=Üçüncü Partilerin Listesi
+ShowCompany=Üçüncü Partiyi Göster
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShowContact=Kişi göster
 ContactsAllShort=Hepsi (süzmeden)
 ContactType=Kişi tipi
@@ -333,11 +470,16 @@ NoContactForAnyProposal=Bu kişi herhangi bir teklifin yetkilisi değildir
 NoContactForAnyContract=Bu kişi herhangi bir sözleşmenin yetkilisi değildir
 NoContactForAnyInvoice=Bu kişi herhangi bir faturanın yetkilisi değildir
 NewContact=Yeni kişi
+<<<<<<< HEAD
 NewContactAddress=Yeni kişi/adres
+=======
+NewContactAddress=Yeni Kişi/Adres
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MyContacts=Kişilerim
 Capital=Sermaye
 CapitalOf=Sermaye %s
 EditCompany=Firma düzenle
+<<<<<<< HEAD
 ThisUserIsNot=This user is not a prospect, customer nor vendor
 VATIntraCheck=Denetle
 VATIntraCheckDesc=<b>%s</b> bağlantısı avrupa KDV denetimi hizmetinin istenmesini sağlar. Bu hizmeti çalıştırmak için sunucudan bir dış internet erişimi gerektirir.
@@ -350,6 +492,20 @@ JuridicalStatus=Yasal form
 Staff=Kadro
 ProspectLevelShort=Potansiyel
 ProspectLevel=Potansiyel aday
+=======
+ThisUserIsNot=Bu kullanıcı bir aday, müşteri veya tedarikçi değildir
+VATIntraCheck=Denetle
+VATIntraCheckDesc=Bu Vergi Numarası ülke önekini içermelidir. <b>%s</b> linki, Dolibarr sunucusundan internet erişimi gerektiren Avrupa KDV kontrol hizmetini (VIES) kullanır.
+VATIntraCheckURL=http://ec.europa.eu/taxation_customs/vies/vieshome.do
+VATIntraCheckableOnEUSite=Avrupa Komisyonu web sitesinden topluluk içi Vergi Numarasını kontrol edin
+VATIntraManualCheck=Avrupa Komisyonu'nun <a href="%s" target="_blank">%s</a> web adresinden de manuel olarak kontrol edebilirsiniz
+ErrorVATCheckMS_UNAVAILABLE=Denetlemiyor. Denetim hizmeti üye ülke (%s) tarafından sağlanmıyor.
+NorProspectNorCustomer=Ne aday ne de müşteri
+JuridicalStatus=Tüzel Kişilik Türü
+Staff=Çalışan sayısı
+ProspectLevelShort=Potansiyel
+ProspectLevel=Aday potansiyeli
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ContactPrivate=Özel
 ContactPublic=Paylaşılan
 ContactVisibility=Görünürlük
@@ -387,6 +543,7 @@ ExportCardToFormat=Biçimlenip dışaaktarılacak kart
 ContactNotLinkedToCompany=Kişi herhangi bir üçüncü partiye bağlı değil
 DolibarrLogin=Dolibarr kullanıcı adı
 NoDolibarrAccess=Dolibarr erişimi yok
+<<<<<<< HEAD
 ExportDataset_company_1=Üçüncü partiler (Şirketler/Dernekler/Şahıslar) ve özellikleri
 ExportDataset_company_2=Kişiler ve özellikleri
 ImportDataset_company_1=Üçüncü partiler (Şirketler/Vakıflar/Fiziki şahıslar) ve özellikleri
@@ -421,10 +578,48 @@ OutstandingBill=Ödenmemiş fatura için ençok tutar
 OutstandingBillReached=Ödenmemiş fatura için ulaşılan ençok tutar
 OrderMinAmount=Minimum amount for order
 MonkeyNumRefModelDesc=Return numero with format %syymm-nnnn for customer code and %syymm-nnnn for vendor code where yy is year, mm is month and nnnn is a sequence with no break and no return to 0.
+=======
+ExportDataset_company_1=Üçüncü Partiler (şirketler/dernekler/şahıslar) ve özellikleri
+ExportDataset_company_2=Kişiler ve özellikleri
+ImportDataset_company_1=Üçüncü Partiler ve özellikleri
+ImportDataset_company_2=Üçücü parti ilave kişileri/adresleri ve nitelikleri
+ImportDataset_company_3=Üçüncü Partilerin Banka hesapları
+ImportDataset_company_4=Üçücü parti satış temsilcileri (satış temsilcilerini/kullanıcıları şirketlere atayın)
+PriceLevel=Fiyat Seviyesi
+PriceLevelLabels=Fiyat Seviyesi Etiketleri
+DeliveryAddress=Teslimat adresi
+AddAddress=Adres ekle
+SupplierCategory=Tedarikçi kategorisi
+JuridicalStatus200=Bağımsız
+DeleteFile=Dosya sil
+ConfirmDeleteFile=Bu dosyayı silmek istediğinizden emin misiniz?
+AllocateCommercial=Atanmış satış temsilcileri
+Organization=Kuruluş
+FiscalYearInformation=Mali Yıl
+FiscalMonthStart=Mali yılın başlangıç ayı
+YouMustAssignUserMailFirst=Bir e-posta bildirimi ekleyebilmek için öncelikle bu kullanıcıya bir e-posta oluşturmanız gerekir.
+YouMustCreateContactFirst=E-posta bildirimleri ekleyebilmek için önce geçerli e-postası olan üçüncü taraf kişisi oluşturmanız gerekir.
+ListSuppliersShort=Tedarikçi Listesi
+ListProspectsShort=Aday Listesi
+ListCustomersShort=Müşteri Listesi
+ThirdPartiesArea=Üçüncü Partiler/Kişiler
+LastModifiedThirdParties=Değiştirilen son %s Üçüncü Parti
+UniqueThirdParties=Üçüncü Partilerin Toplamı
+InActivity=Açık
+ActivityCeased=Kapalı
+ThirdPartyIsClosed=Üçüncü taraf kapalı
+ProductsIntoElements=Şu öğeler içindeki ürün/hizmet listesi %s
+CurrentOutstandingBill=Geçerli bekleyen fatura
+OutstandingBill=Ödenmemiş fatura için ençok tutar
+OutstandingBillReached=Ödenmemiş fatura için ulaşılan ençok tutar
+OrderMinAmount=Sipariş için minimum miktar
+MonkeyNumRefModelDesc=%syyaa-nnnn biçiminde bir müşteri kodu ve %syyaa-nnnn biçiminde bir tedarikçi kodu oluşur. Buradaki yy yılı, aa ayı, nnnn ise aralıksız ve 0'a dönmeyen bir diziyi ifade eder.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LeopardNumRefModelDesc=Müşteri/tedarikçi kodu serbesttir. Bu kod herhangi bir zamanda değiştirilebilir.
 ManagingDirectors=Yönetici(lerin) adı (CEO, müdür, başkan...)
 MergeOriginThirdparty=Çifte üçüncü parti (silmek istediğiniz üçüncü parti)
 MergeThirdparties=Üçüncü partileri birleştir
+<<<<<<< HEAD
 ConfirmMergeThirdparties=Bu üçüncü tarafı mevcut olanla birleştirmek istediğinize emin misiniz? Tüm bağlı nesneler (faturalar, siparişler, ...) mevcut üçüncü tarafa taşınacak, sonra üçüncü taraf silinecek.
 ThirdpartiesMergeSuccess=Third parties have been merged
 SaleRepresentativeLogin=Satış temsilcisinin kullanıcı adı
@@ -432,3 +627,19 @@ SaleRepresentativeFirstname=Satış temsilcisinin adı
 SaleRepresentativeLastname=Satış temsilcisinin soyadı
 ErrorThirdpartiesMerge=There was an error when deleting the third parties. Please check the log. Changes have been reverted.
 NewCustomerSupplierCodeProposed=New customer or vendor code suggested on duplicate code
+=======
+ConfirmMergeThirdparties=Bu üçüncü partiyi mevcut olanla birleştirmek istediğinizden emin misiniz? Tüm bağlantılı nesneler (teklifler, siparişler ...) mevcut üçüncü partiye taşınacak ve daha sonra taşınan üçüncü parti silinecektir.
+ThirdpartiesMergeSuccess=Üçüncü partiler birleştirildi
+SaleRepresentativeLogin=Satış temsilcisinin kullanıcı adı
+SaleRepresentativeFirstname=Satış temsilcisinin adı
+SaleRepresentativeLastname=Satış temsilcisinin soyadı
+ErrorThirdpartiesMerge=Üçüncü partiler silinirken bir hata oluştu. Lütfen günlüğü denetleyin. Değişiklikler geri alındı.
+NewCustomerSupplierCodeProposed=Müşteri veya Tedarikçi kodu zaten kullanılmış, yeni bir kod önerilir
+#Imports
+PaymentTypeCustomer=Ödeme Türü - Müşteri
+PaymentTermsCustomer=Ödeme Koşulları - Müşteri
+PaymentTypeSupplier=Ödeme Türü - Tedarikçi
+PaymentTermsSupplier=Ödeme Koşulları - Tedarikçi
+MulticurrencyUsed=Çoklu Para Birimi Kullan
+MulticurrencyCurrency=Para birimi
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

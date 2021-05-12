@@ -24,6 +24,7 @@ include_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
  */
 class ProjectStats extends Stats
 {
+<<<<<<< HEAD
 	private $project;
 	public $userid;
 	public $socid;
@@ -38,6 +39,27 @@ class ProjectStats extends Stats
 		require_once 'project.class.php';
 		$this->project = new Project($this->db);
 	}
+=======
+    private $project;
+    public $userid;
+    public $socid;
+    public $year;
+
+    /**
+     * Constructor
+     *
+     * @param   DoliDB $db     Database handler
+     */
+    public function __construct($db)
+    {
+        global $conf, $user;
+
+        $this->db = $db;
+
+        require_once 'project.class.php';
+        $this->project = new Project($this->db);
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	/**
@@ -48,7 +70,11 @@ class ProjectStats extends Stats
 	 * @return array|int       Array with value or -1 if error
 	 * @throws Exception
 	 */
+<<<<<<< HEAD
 	function getAllProjectByStatus($limit = 5)
+=======
+	public function getAllProjectByStatus($limit = 5)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf, $user, $langs;
 
@@ -113,7 +139,11 @@ class ProjectStats extends Stats
 	 *
 	 * @return array of values
 	 */
+<<<<<<< HEAD
 	function getAllByYear()
+=======
+	public function getAllByYear()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf, $user, $langs;
 
@@ -154,7 +184,11 @@ class ProjectStats extends Stats
 		// Get list of project id allowed to user (in a string list separated by coma)
 		$object = new Project($this->db);
 		$projectsListId='';
+<<<<<<< HEAD
 		if (! $user->rights->projet->all->lire) $projectsListId = $object->getProjectsAuthorizedForUser($user,0,1,$user->socid);
+=======
+		if (! $user->rights->projet->all->lire) $projectsListId = $object->getProjectsAuthorizedForUser($user, 0, 1, $user->socid);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$sqlwhere[] = ' t.entity IN (' . getEntity('project') . ')';
 
@@ -172,7 +206,11 @@ class ProjectStats extends Stats
 		if (! empty($this->status))
 			$sqlwhere[] = " t.fk_opp_status IN (" . $this->status . ")";
 
+<<<<<<< HEAD
 		if (! $user->rights->projet->all->lire) $sqlwhere[] = " AND p.rowid IN (".$projectsListId.")";     // public and assigned to, or restricted to company for external users
+=======
+		if (! $user->rights->projet->all->lire) $sqlwhere[] = " t.rowid IN (".$projectsListId.")";     // public and assigned to, or restricted to company for external users
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		if (count($sqlwhere) > 0) {
 			$sqlwhere_str = ' WHERE ' . implode(' AND ', $sqlwhere);
@@ -188,7 +226,11 @@ class ProjectStats extends Stats
 	 * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 * @return 	array 				Array of values
 	 */
+<<<<<<< HEAD
 	function getNbByMonth($year, $format=0)
+=======
+	public function getNbByMonth($year, $format = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $user;
 
@@ -217,7 +259,11 @@ class ProjectStats extends Stats
 	 * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 * @return 	array 				Array with amount by month
 	 */
+<<<<<<< HEAD
 	function getAmountByMonth($year, $format=0)
+=======
+	public function getAmountByMonth($year, $format = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $user;
 
@@ -248,7 +294,11 @@ class ProjectStats extends Stats
 	 * @param   int     $wonlostfilter  Add a filter on status won/lost
 	 * @return 	array					Array of values
 	 */
+<<<<<<< HEAD
 	function getWeightedAmountByMonthWithPrevYear($endyear,$startyear,$cachedelay=0,$wonlostfilter=1)
+=======
+	public function getWeightedAmountByMonthWithPrevYear($endyear, $startyear, $cachedelay = 0, $wonlostfilter = 1)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf,$user,$langs;
 
@@ -276,7 +326,11 @@ class ProjectStats extends Stats
 			{
 				$foundintocache=1;
 
+<<<<<<< HEAD
 				$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__]=$filedate;
+=======
+				$this->lastfetchdate[get_class($this).'_'.__FUNCTION__]=$filedate;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 			else
 			{
@@ -295,7 +349,11 @@ class ProjectStats extends Stats
 			$year=$startyear;
 			while($year <= $endyear)
 			{
+<<<<<<< HEAD
 				$datay[$year] = $this->getWeightedAmountByMonth($year,$wonlostfilter);
+=======
+				$datay[$year] = $this->getWeightedAmountByMonth($year, $wonlostfilter);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$year++;
 			}
 
@@ -327,7 +385,11 @@ class ProjectStats extends Stats
 				@chmod($newpathofdestfile, octdec($newmask));
 			}
 			else dol_syslog("Failed to write cache file", LOG_ERR);
+<<<<<<< HEAD
 			$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__]=$nowgmt;
+=======
+			$this->lastfetchdate[get_class($this).'_'.__FUNCTION__]=$nowgmt;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		return $data;
@@ -341,7 +403,11 @@ class ProjectStats extends Stats
 	 * @param  int $wonlostfilter      Add a filter on status won/lost
 	 * @return array                   Array with amount by month
 	 */
+<<<<<<< HEAD
 	function getWeightedAmountByMonth($year, $wonlostfilter=1)
+=======
+	public function getWeightedAmountByMonth($year, $wonlostfilter = 1)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $user;
 
@@ -370,7 +436,11 @@ class ProjectStats extends Stats
 	 * @param int $cachedelay accept for cache file (0=No read, no save of cache, -1=No read but save)
 	 * @return array of values
 	 */
+<<<<<<< HEAD
 	function getTransformRateByMonthWithPrevYear($endyear, $startyear, $cachedelay = 0)
+=======
+	public function getTransformRateByMonthWithPrevYear($endyear, $startyear, $cachedelay = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf, $user, $langs;
 
@@ -396,7 +466,11 @@ class ProjectStats extends Stats
 			if ($filedate >= ($nowgmt - $cachedelay)) {
 				$foundintocache = 1;
 
+<<<<<<< HEAD
 				$this->_lastfetchdate[get_class($this) . '_' . __FUNCTION__] = $filedate;
+=======
+				$this->lastfetchdate[get_class($this) . '_' . __FUNCTION__] = $filedate;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			} else {
 				dol_syslog(get_class($this) . '::' . __FUNCTION__ . " cache file " . $newpathofdestfile . " is not found or older than now - cachedelay (" . $nowgmt . " - " . $cachedelay . ") so we can't use it.");
 			}
@@ -438,7 +512,11 @@ class ProjectStats extends Stats
 				$newmask = $conf->global->MAIN_UMASK;
 			@chmod($newpathofdestfile, octdec($newmask));
 
+<<<<<<< HEAD
 			$this->_lastfetchdate[get_class($this) . '_' . __FUNCTION__] = $nowgmt;
+=======
+			$this->lastfetchdate[get_class($this) . '_' . __FUNCTION__] = $nowgmt;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		return $data;
@@ -451,7 +529,11 @@ class ProjectStats extends Stats
 	 * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 * @return 	array 				Array with amount by month
 	 */
+<<<<<<< HEAD
 	function getTransformRateByMonth($year, $format=0)
+=======
+	public function getTransformRateByMonth($year, $format = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $user;
 
@@ -493,7 +575,10 @@ class ProjectStats extends Stats
 			} else {
 				$res[$key]=array($total_row[0],0);
 			}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		// var_dump($res);print '<br>';
 		return $res;

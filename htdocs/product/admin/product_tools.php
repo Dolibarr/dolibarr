@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2012	   Regis Houssin       <regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2012	   Regis Houssin       <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -37,7 +41,11 @@ $langs->loadLangs(array('admin', 'products'));
 // Security check
 if (! $user->admin) accessforbidden();
 
+<<<<<<< HEAD
 $action = GETPOST('action','alpha');
+=======
+$action = GETPOST('action', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $oldvatrate=GETPOST('oldvatrate', 'alpha');
 $newvatrate=GETPOST('newvatrate', 'alpha');
 //$price_base_type=GETPOST('price_base_type');
@@ -118,17 +126,29 @@ if ($action == 'convert')
 
 							if ($price_base_type == 'TTC')
 							{
+<<<<<<< HEAD
 								$newprice=price2num($objectstatic->multiprices_ttc[$level],'MU');    // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
+=======
+								$newprice=price2num($objectstatic->multiprices_ttc[$level], 'MU');    // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 								$newminprice=$objectstatic->multiprices_min_ttc[$level];
 							}
 							else
 							{
+<<<<<<< HEAD
 								$newprice=price2num($objectstatic->multiprices[$level],'MU');    // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
+=======
+								$newprice=price2num($objectstatic->multiprices[$level], 'MU');    // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 								$newminprice=$objectstatic->multiprices_min[$level];
 							}
 							if ($newminprice > $newprice) $newminprice=$newprice;
 
+<<<<<<< HEAD
 							$newvat=str_replace('*','',$newvatrate);
+=======
+							$newvat=str_replace('*', '', $newvatrate);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							$localtaxes_type=getLocalTaxesFromRate($newvat, 0, $mysoc, $mysoc);
 							$newnpr=$objectstatic->multiprices_recuperableonly[$level];
 							$newdefaultvatcode=$vat_src_code_new;
@@ -149,16 +169,28 @@ if ($action == 'convert')
 						$price_base_type = $objectstatic->price_base_type;	// Get price_base_type of product/service to keep the same for update
 						if ($price_base_type == 'TTC')
 						{
+<<<<<<< HEAD
 							$newprice=price2num($objectstatic->price_ttc,'MU');    // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
+=======
+							$newprice=price2num($objectstatic->price_ttc, 'MU');    // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							$newminprice=$objectstatic->price_min_ttc;
 						}
 						else
 						{
+<<<<<<< HEAD
 							$newprice=price2num($objectstatic->price,'MU');    // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
 							$newminprice=$objectstatic->price_min;
 						}
 						if ($newminprice > $newprice) $newminprice=$newprice;
 						$newvat=str_replace('*','',$newvatrate);
+=======
+							$newprice=price2num($objectstatic->price, 'MU');    // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
+							$newminprice=$objectstatic->price_min;
+						}
+						if ($newminprice > $newprice) $newminprice=$newprice;
+						$newvat=str_replace('*', '', $newvatrate);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						$localtaxes_type=getLocalTaxesFromRate($newvat, 0, $mysoc, $mysoc);
 						$newnpr=$objectstatic->recuperableonly;
 						$newdefaultvatcode=$vat_src_code_new;
@@ -216,11 +248,19 @@ if ($action == 'convert')
 					//}
 					//else
 					//{
+<<<<<<< HEAD
 						$newprice=price2num($obj->price,'MU');    // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
 						//$newminprice=$objectstatic2->fourn_price_min;
 					//}
 					//if ($newminprice > $newprice) $newminprice=$newprice;
 					$newvat=str_replace('*','',$newvatrate);
+=======
+						$newprice=price2num($obj->price, 'MU');    // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
+						//$newminprice=$objectstatic2->fourn_price_min;
+					//}
+					//if ($newminprice > $newprice) $newminprice=$newprice;
+					$newvat=str_replace('*', '', $newvatrate);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					$localtaxes_type=getLocalTaxesFromRate($newvat, 0, $mysoc, $mysoc);
 					//$newnpr=$objectstatic2->recuperableonly;
 					$newnpr=0;
@@ -260,14 +300,21 @@ if ($action == 'convert')
 		// Output result
 		if (! $error)
 		{
+<<<<<<< HEAD
 			if ($nbrecordsmodified > 0) setEventMessages($langs->trans("RecordsModified",$nbrecordsmodified), null, 'mesgs');
+=======
+			if ($nbrecordsmodified > 0) setEventMessages($langs->trans("RecordsModified", $nbrecordsmodified), null, 'mesgs');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			else setEventMessages($langs->trans("NoRecordFound"), null, 'warnings');
 		}
 		else
 		{
 			setEventMessages($langs->trans("Error"), null, 'errors');
 		}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 }
 
@@ -279,9 +326,15 @@ $form=new Form($db);
 
 $title = $langs->trans('ProductVatMassChange');
 
+<<<<<<< HEAD
 llxHeader('',$title);
 
 print load_fiche_titre($title,'','title_setup');
+=======
+llxHeader('', $title);
+
+print load_fiche_titre($title, '', 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print $langs->trans("ProductVatMassChangeDesc").'<br><br>';
 
@@ -294,8 +347,11 @@ if (empty($mysoc->country_code))
 else
 {
 
+<<<<<<< HEAD
 	$var=true;
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
 	print '<input type="hidden" name="action" value="convert" />';
@@ -303,13 +359,21 @@ else
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Parameters").'</td>'."\n";
+<<<<<<< HEAD
 	print '<td align="right" width="60">'.$langs->trans("Value").'</td>'."\n";
+=======
+	print '<td class="right" width="60">'.$langs->trans("Value").'</td>'."\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</tr>'."\n";
 
 
 	print '<tr class="oddeven">'."\n";
 	print '<td>'.$langs->trans("OldVATRates").'</td>'."\n";
+<<<<<<< HEAD
 	print '<td width="60" align="right">'."\n";
+=======
+	print '<td width="60" class="right">'."\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print $form->load_tva('oldvatrate', $oldvatrate, $mysoc, null, 0, 0, '', false, 1);
 	print '</td>'."\n";
 	print '</tr>'."\n";
@@ -317,7 +381,11 @@ else
 
 	print '<tr class="oddeven">'."\n";
 	print '<td>'.$langs->trans("NewVATRates").'</td>'."\n";
+<<<<<<< HEAD
 	print '<td width="60" align="right">'."\n";
+=======
+	print '<td width="60" class="right">'."\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print $form->load_tva('newvatrate', $newvatrate, $mysoc, null, 0, 0, '', false, 1);
 	print '</td>'."\n";
 	print '</tr>'."\n";
@@ -326,7 +394,11 @@ else
 
 	print '<tr class="oddeven">'."\n";
 	print '<td>'.$langs->trans("PriceBaseTypeToChange").'</td>'."\n";
+<<<<<<< HEAD
 	print '<td width="60" align="right">'."\n";
+=======
+	print '<td width="60" class="right">'."\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print $form->selectPriceBaseType($price_base_type);
 	print '</td>'."\n";
 	print '</tr>'."\n";
@@ -336,7 +408,12 @@ else
 
 	print '<br>';
 
+<<<<<<< HEAD
 	// Boutons actions
+=======
+	// Buttons for actions
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '<div class="center">';
 	print '<input type="submit" id="convert_vatrate" name="convert_vatrate" value="'.$langs->trans("MassConvert").'" class="button" />';
 	print '</div>';
@@ -344,6 +421,11 @@ else
 	print '</form>';
 }
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

@@ -23,7 +23,11 @@
  *      \ingroup    opensurvey
  *      \brief      Description and activation file for module OpenSurvey
  */
+<<<<<<< HEAD
 include_once(DOL_DOCUMENT_ROOT ."/core/modules/DolibarrModules.class.php");
+=======
+include_once DOL_DOCUMENT_ROOT ."/core/modules/DolibarrModules.class.php";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 /**
@@ -37,8 +41,13 @@ class modOpenSurvey extends DolibarrModules
 	 *
 	 *   @param		DoliDB		$db		Database handler
 	 */
+<<<<<<< HEAD
 	function __construct($db)
 	{
+=======
+    public function __construct($db)
+    {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $langs,$conf;
 
 		$this->db = $db;
@@ -52,9 +61,15 @@ class modOpenSurvey extends DolibarrModules
 		// Family can be 'crm','financial','hr','projects','product','technic','other'
 		// It is used to group modules in module setup page
 		$this->family = "portal";
+<<<<<<< HEAD
 		$this->module_position = 40;
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
+=======
+		$this->module_position = '40';
+		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// Module description used if translation string 'ModuleXXXDesc' not found (XXX is value MyModule)
 		$this->description = "Module to make online surveys (like Doodle, Studs, Rdvz, ...)";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -72,9 +87,17 @@ class modOpenSurvey extends DolibarrModules
 		//$this->dirs[1] = DOL_DATA_ROOT.'/mymodule/temp;
 
 		// Dependencies
+<<<<<<< HEAD
 		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array();	// List of modules id to disable if this one is disabled
 		$this->phpmin = array(4,1);					// Minimum version of PHP required by module
+=======
+		$this->hidden = false;			// A condition to hide module
+		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->need_dolibarr_version = array(3,4,0);	// Minimum version of Dolibarr required by module
 
 		// Constants
@@ -117,6 +140,7 @@ class modOpenSurvey extends DolibarrModules
 		$r++;
 
 
+<<<<<<< HEAD
 		// Menus
 		//-------
         $r=0;
@@ -162,6 +186,59 @@ class modOpenSurvey extends DolibarrModules
 								'user'=>0);
 		$r++;
 	}
+=======
+        // Menus
+        //-------
+        $r=0;
+        $this->menu[$r]=array(
+            'fk_menu'=>'fk_mainmenu=tools',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+            'type'=>'left',
+            'titre'=>'Survey',
+            'mainmenu'=>'tools',
+            'leftmenu'=>'opensurvey',
+            'url'=>'/opensurvey/index.php?mainmenu=tools&leftmenu=opensurvey',
+            'langs'=>'opensurvey',
+            'position'=>200,
+            'enabled'=>'$conf->opensurvey->enabled',         // Define condition to show or hide menu entry. Use '$conf->NewsSubmitter->enabled' if entry must be visible if module is enabled.
+            'perms'=>'$user->rights->opensurvey->read',
+            'target'=>'',
+            'user'=>0,
+        );
+        $r++;
+
+        $this->menu[$r]=array(
+            'fk_menu'=>'fk_mainmenu=tools,fk_leftmenu=opensurvey',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+            'type'=>'left',
+            'titre'=>'NewSurvey',
+            'mainmenu'=>'tools',
+            'leftmenu'=>'opensurvey_new',
+            'url'=>'/opensurvey/wizard/index.php',
+            'langs'=>'opensurvey',
+            'position'=>210,
+            'enabled'=>'$conf->opensurvey->enabled',         // Define condition to show or hide menu entry. Use '$conf->NewsSubmitter->enabled' if entry must be visible if module is enabled.
+            'perms'=>'$user->rights->opensurvey->write',
+            'target'=>'',
+            'user'=>0,
+        );
+        $r++;
+
+        $this->menu[$r]=array(
+            'fk_menu'=>'fk_mainmenu=tools,fk_leftmenu=opensurvey',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+            'type'=>'left',
+            'titre'=>'List',
+            'mainmenu'=>'tools',
+            'leftmenu'=>'opensurvey_list',
+            'url'=>'/opensurvey/list.php',
+            'langs'=>'opensurvey',
+            'position'=>220,
+            'enabled'=>'$conf->opensurvey->enabled',         // Define condition to show or hide menu entry. Use '$conf->NewsSubmitter->enabled' if entry must be visible if module is enabled.
+            'perms'=>'$user->rights->opensurvey->read',
+            'target'=>'',
+            'user'=>0,
+        );
+        $r++;
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	/**
 	 *	Function called when module is enabled.
@@ -171,6 +248,7 @@ class modOpenSurvey extends DolibarrModules
      *  @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *  @return     int             	1 if OK, 0 if KO
 	 */
+<<<<<<< HEAD
 	function init($options='')
 	{
 		// Permissions
@@ -182,3 +260,15 @@ class modOpenSurvey extends DolibarrModules
 	}
 }
 
+=======
+    public function init($options = '')
+    {
+        // Permissions
+        $this->remove($options);
+
+        $sql = array();
+
+        return $this->_init($sql, $options);
+    }
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

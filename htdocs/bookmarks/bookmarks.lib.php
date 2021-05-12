@@ -116,7 +116,11 @@ function printBookmarksList($aDb, $aLangs)
 
 		$ret.=ajax_combobox('boxbookmark');
 
+<<<<<<< HEAD
 		$ret.='<script type="text/javascript">
+=======
+		$ret.='<script>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	        	$(document).ready(function () {';
 		$ret.='    jQuery("#boxbookmark").change(function() {
 		            var urlselected = jQuery("#boxbookmark option:selected").attr("rel");
@@ -150,4 +154,7 @@ function printBookmarksList($aDb, $aLangs)
 
 	return $ret;
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

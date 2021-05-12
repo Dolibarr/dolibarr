@@ -21,6 +21,7 @@
  *      \brief      This file is a CRUD class file (Create/Read/Update/Delete) for c_departements dictionary
  */
 
+<<<<<<< HEAD
 // Put here all includes required by your class file
 //require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -42,6 +43,51 @@ class Cstate // extends CommonObject
 	var $code_departement;
 	var $nom;
 	var $active;
+=======
+/**
+ *  Class to manage dictionary States (used by imports)
+ */
+class Cstate // extends CommonObject
+{
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+
+	//var $element='cstate';			//!< Id that identify managed objects
+	//var $table_element='cstate';	    //!< Name of table without prefix where object is stored
+
+    /**
+	 * @var int ID
+	 */
+	public $id;
+
+	public $code_departement;
+
+	/**
+	 * @var string
+	 * @deprecated
+	 * @see $name
+	 */
+	public $nom='';
+
+	/**
+	 * @var string name
+	 */
+	public $name='';
+
+	public $active;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 
@@ -51,10 +97,16 @@ class Cstate // extends CommonObject
      *
      *  @param      DoliDb		$db      Database handler
      */
+<<<<<<< HEAD
     function __construct($db)
     {
         $this->db = $db;
         return 1;
+=======
+    public function __construct($db)
+    {
+        $this->db = $db;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
 
@@ -65,7 +117,11 @@ class Cstate // extends CommonObject
      *  @param      int		$notrigger   0=launch triggers after, 1=disable triggers
      *  @return     int      		   	 <0 if KO, Id of created object if OK
      */
+<<<<<<< HEAD
     function create($user, $notrigger=0)
+=======
+    public function create($user, $notrigger = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
     	global $conf, $langs;
 		$error=0;
@@ -97,6 +153,7 @@ class Cstate // extends CommonObject
         $resql=$this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
+<<<<<<< HEAD
 		if (! $error)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."c_departements");
@@ -113,6 +170,22 @@ class Cstate // extends CommonObject
 	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
 	            //// End call triggers
 			}
+=======
+        if (! $error) {
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."c_departements");
+
+            //if (! $notrigger) {
+                // Uncomment this and change MYOBJECT to your own tag if you
+                // want this action call a trigger.
+
+                //// Call triggers
+                //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+                //$interface=new Interfaces($this->db);
+                //$result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
+                //if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                //// End call triggers
+            //}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
 
         // Commit or rollback
@@ -141,7 +214,11 @@ class Cstate // extends CommonObject
      *  @param		string	$code	Code
      *  @return     int          	<0 if KO, >0 if OK
      */
+<<<<<<< HEAD
     function fetch($id,$code='')
+=======
+    public function fetch($id, $code = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
     	global $langs;
         $sql = "SELECT";
@@ -185,7 +262,11 @@ class Cstate // extends CommonObject
      *  @param      int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return     int     		   	 <0 if KO, >0 if OK
      */
+<<<<<<< HEAD
     function update($user=null, $notrigger=0)
+=======
+    public function update($user = null, $notrigger = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
     	global $conf, $langs;
 		$error=0;
@@ -212,10 +293,17 @@ class Cstate // extends CommonObject
         $resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
+<<<<<<< HEAD
 		if (! $error)
 		{
 			if (! $notrigger)
 			{
+=======
+		//if (! $error)
+		//{
+		//    if (! $notrigger)
+		//    {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	            // Uncomment this and change MYOBJECT to your own tag if you
 	            // want this action call a trigger.
 
@@ -225,6 +313,7 @@ class Cstate // extends CommonObject
 	            //$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
 	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
 	            //// End call triggers
+<<<<<<< HEAD
 	    	}
 		}
 
@@ -247,6 +336,25 @@ class Cstate // extends CommonObject
     }
 
 
+=======
+	    //    }
+        //}
+
+	    // Commit or rollback
+	    if ($error) {
+		    foreach ($this->errors as $errmsg) {
+			    dol_syslog(get_class($this) . "::update " . $errmsg, LOG_ERR);
+			    $this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
+		    }
+		    $this->db->rollback();
+		    return -1 * $error;
+	    } else {
+		    $this->db->commit();
+		    return 1;
+	    }
+    }
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  	/**
  	 *  Delete object in database
 	 *
@@ -254,7 +362,11 @@ class Cstate // extends CommonObject
      *  @param	int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return	int					 <0 if KO, >0 if OK
 	 */
+<<<<<<< HEAD
 	function delete($user, $notrigger=0)
+=======
+	public function delete($user, $notrigger = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf, $langs;
 		$error=0;
@@ -268,10 +380,17 @@ class Cstate // extends CommonObject
 		$resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
+<<<<<<< HEAD
 		if (! $error)
 		{
 			if (! $notrigger)
 			{
+=======
+		//if (! $error)
+		//{
+		//	if (! $notrigger)
+		//	{
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				// Uncomment this and change MYOBJECT to your own tag if you
 		        // want this action call a trigger.
 
@@ -281,8 +400,13 @@ class Cstate // extends CommonObject
 		        //$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
 		        //if ($result < 0) { $error++; $this->errors=$interface->errors; }
 		        //// End call triggers
+<<<<<<< HEAD
 			}
 		}
+=======
+		//	}
+		//}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         // Commit or rollback
 		if ($error)
@@ -301,5 +425,8 @@ class Cstate // extends CommonObject
 			return 1;
 		}
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

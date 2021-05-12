@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
  */
 class mailing_xinputuser extends MailingTargets
 {
+<<<<<<< HEAD
 	var $name='EmailsFromUser';              // Identifiant du module mailing
 	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
 	var $desc='EMails input by user';        // Libelle utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouv�e
@@ -38,13 +39,27 @@ class mailing_xinputuser extends MailingTargets
 	var $picto='generic';
 	var $tooltip='UseFormatInputEmailToTarget';
 	
+=======
+	public $name='EmailsFromUser';              // Identifiant du module mailing
+	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
+	public $desc='EMails input by user';        // Libelle utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouv�e
+	public $require_module=array();            // Module mailing actif si modules require_module actifs
+	public $require_admin=0;                    // Module mailing actif pour user admin ou non
+	public $picto='generic';
+	public $tooltip='UseFormatInputEmailToTarget';
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
+<<<<<<< HEAD
 	function __construct($db)
+=======
+    public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$this->db=$db;
 	}
@@ -58,7 +73,11 @@ class mailing_xinputuser extends MailingTargets
 	 *
 	 *	@return		array		Array with SQL requests
 	 */
+<<<<<<< HEAD
 	function getSqlArrayForStats()
+=======
+    public function getSqlArrayForStats()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 		$langs->load("users");
@@ -76,7 +95,11 @@ class mailing_xinputuser extends MailingTargets
 	 *  @param      string	$sql   	Sql request to count
 	 *	@return		string			'' means NA
 	 */
+<<<<<<< HEAD
 	function getNbOfRecipients($sql='')
+=======
+    public function getNbOfRecipients($sql = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return '';
 	}
@@ -88,7 +111,11 @@ class mailing_xinputuser extends MailingTargets
      *  @param	int		$id		ID
 	 *  @return string      	Url lien
 	 */
+<<<<<<< HEAD
 	function url($id)
+=======
+    public function url($id)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return '';
 	}
@@ -99,7 +126,11 @@ class mailing_xinputuser extends MailingTargets
 	 *
 	 *   @return     string      Retourne zone select
 	 */
+<<<<<<< HEAD
 	function formFilter()
+=======
+    public function formFilter()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 
@@ -108,20 +139,36 @@ class mailing_xinputuser extends MailingTargets
 		return $s;
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *  Ajoute destinataires dans table des cibles
 	 *
 	 *  @param	int		$mailing_id    	Id of emailing
+<<<<<<< HEAD
 	 *  @param	array	$filtersarray   Requete sql de selection des destinataires
 	 *  @return int           			< 0 si erreur, nb ajout si ok
 	 */
 	function add_to_target($mailing_id,$filtersarray=array())
 	{
+=======
+	 *  @return int           			< 0 si erreur, nb ajout si ok
+	 */
+    public function add_to_target($mailing_id)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf,$langs,$_FILES;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
+<<<<<<< HEAD
 		$tmparray=explode(';',GETPOST('xinputuser'));
+=======
+		$tmparray=explode(';', GETPOST('xinputuser'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$email=$tmparray[0];
 		$lastname=$tmparray[1];
 		$firstname=$tmparray[2];
@@ -147,12 +194,17 @@ class mailing_xinputuser extends MailingTargets
 			else
 			{
 				$langs->load("errors");
+<<<<<<< HEAD
 				$this->error = $langs->trans("ErrorBadEMail",$email);
+=======
+				$this->error = $langs->trans("ErrorBadEMail", $email);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				return -1;
 			}
 		}
 		else
 		{
+<<<<<<< HEAD
 		   	$langs->load("errors");
 		   	$this->error = $langs->trans("ErrorBadEmail",$email);
 			return -1;
@@ -162,3 +214,11 @@ class mailing_xinputuser extends MailingTargets
 
 }
 
+=======
+            $langs->load("errors");
+            $this->error = $langs->trans("ErrorBadEmail", $email);
+			return -1;
+		}
+	}
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

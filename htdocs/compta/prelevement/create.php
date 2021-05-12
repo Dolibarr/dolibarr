@@ -1,9 +1,19 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2010-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2018      Nicolas ZABOURI      <info@inovea-conseil.com>
+=======
+/* Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2010-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2012  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019      Markus Welters       <markus@welters.de>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +35,11 @@
  *	\brief      Prelevement creation page
  */
 
+<<<<<<< HEAD
 require('../../main.inc.php');
+=======
+require '../../main.inc.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -42,11 +56,19 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
 // Get supervariables
+<<<<<<< HEAD
 $action = GETPOST('action','alpha');
 $mode = GETPOST('mode','alpha')?GETPOST('mode','alpha'):'real';
 $format = GETPOST('format','aZ09');
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $page = GETPOST("page",'int');
+=======
+$action = GETPOST('action', 'alpha');
+$mode = GETPOST('mode', 'alpha')?GETPOST('mode', 'alpha'):'real';
+$format = GETPOST('format', 'aZ09');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$page = GETPOST("page", 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 
@@ -59,16 +81,26 @@ if ($action == 'modify')
 {
 	for ($i = 1 ; $i < 9 ; $i++)
 	{
+<<<<<<< HEAD
 		dolibarr_set_const($db, GETPOST("nom$i"), GETPOST("value$i"),'chaine',0,'',$conf->entity);
+=======
+		dolibarr_set_const($db, GETPOST("nom$i"), GETPOST("value$i"), 'chaine', 0, '', $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 }
 if ($action == 'create')
 {
 	// $conf->global->PRELEVEMENT_CODE_BANQUE and $conf->global->PRELEVEMENT_CODE_GUICHET should be empty
 	$bprev = new BonPrelevement($db);
+<<<<<<< HEAD
         $executiondate = dol_mktime(0, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 
         $result = $bprev->create($conf->global->PRELEVEMENT_CODE_BANQUE, $conf->global->PRELEVEMENT_CODE_GUICHET, $mode, $format,$executiondate);
+=======
+        $executiondate = dol_mktime(0, 0, 0, GETPOST('remonth'), (GETPOST('reday')+$conf->global->PRELEVEMENT_ADDDAYS), GETPOST('reyear'));
+
+        $result = $bprev->create($conf->global->PRELEVEMENT_CODE_BANQUE, $conf->global->PRELEVEMENT_CODE_GUICHET, $mode, $format, $executiondate);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if ($result < 0)
 	{
 		setEventMessages($bprev->error, $bprev->errors, 'errors');
@@ -123,7 +155,11 @@ dol_fiche_head();
 
 $nb=$bprev->NbFactureAPrelever();
 $nb1=$bprev->NbFactureAPrelever(1);
+<<<<<<< HEAD
 $nb11=$bprev->NbFactureAPrelever(1,1);
+=======
+$nb11=$bprev->NbFactureAPrelever(1, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $pricetowithdraw=$bprev->SommeAPrelever();
 if ($nb < 0 || $nb1 < 0 || $nb11 < 0)
 {
@@ -153,13 +189,18 @@ print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">'
 if ($nb) {
     if ($pricetowithdraw) {
         print $langs->trans('ExecutionDate').' ';
+<<<<<<< HEAD
         print $form->select_date();
+=======
+        print $form->selectDate();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         if ($mysoc->isInEEC()) {
             print '<select name="format"><option value="FRST">'.$langs->trans('SEPAFRST').'</option><option value="RCUR">'.$langs->trans('SEPARCUR').'</option></select>';
             print '<input class="butAction" type="submit" value="' . $langs->trans("CreateForSepa") . '"/>';
         } else {
             print '<a class="butAction"  type="submit" href="create.php?action=create&format=ALL">' . $langs->trans("CreateAll") . "</a>\n";
 		}
+<<<<<<< HEAD
 
 		}
 		else
@@ -172,14 +213,34 @@ if ($nb) {
 		else
 		{
 			print '<a class="butActionRefused" href="#">'.$langs->trans("CreateAll")."</a>\n";
+=======
+	}
+	else
+	{
+		if ($mysoc->isInEEC())
+		{
+			print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("CreateForSepaFRST")."</a>\n";
+			print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("CreateForSepaRCUR")."</a>\n";
+		}
+		else
+		{
+			print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("CreateAll")."</a>\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 	}
 }
 else
 {
+<<<<<<< HEAD
 	print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoInvoiceToWithdraw", $langs->transnoentitiesnoconv("StandingOrders"))).'">'.$langs->trans("CreateAll")."</a>\n";
 }
 
+=======
+    print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoInvoiceToWithdraw", $langs->transnoentitiesnoconv("StandingOrders"))).'">'.$langs->trans("CreateAll")."</a>\n";
+}
+
+print "</form>\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print "</div>\n";
 print '<br>';
 
@@ -188,13 +249,21 @@ print '<br>';
  * Invoices waiting for withdraw
  */
 
+<<<<<<< HEAD
 $sql = "SELECT f.facnumber, f.rowid, f.total_ttc, s.nom as name, s.rowid as socid,";
+=======
+$sql = "SELECT f.ref, f.rowid, f.total_ttc, s.nom as name, s.rowid as socid,";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $sql.= " pfd.date_demande, pfd.amount";
 $sql.= " FROM ".MAIN_DB_PREFIX."facture as f,";
 $sql.= " ".MAIN_DB_PREFIX."societe as s,";
 $sql.= " ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 $sql.= " WHERE s.rowid = f.fk_soc";
+<<<<<<< HEAD
 $sql.= " AND f.entity = ".$conf->entity;
+=======
+$sql.= " AND f.entity IN (".getEntity('invoice').")";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $sql.= " AND pfd.traite = 0";
 $sql.= " AND pfd.fk_facture = f.rowid";
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
@@ -206,7 +275,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$nbtotalofrecords = $db->num_rows($result);
 }
 
+<<<<<<< HEAD
 $sql.= $db->plimit($limit+1,$offset);
+=======
+$sql.= $db->plimit($limit+1, $offset);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $resql=$db->query($sql);
 if ($resql)
@@ -225,7 +298,11 @@ if ($resql)
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
+<<<<<<< HEAD
     print_barre_liste($langs->trans("InvoiceWaitingWithdraw"),$page,$_SERVER['PHP_SELF'],$param,'','','',$num,$nbtotalofrecords,'title_accountancy.png',0,'','', $limit);
+=======
+    print_barre_liste($langs->trans("InvoiceWaitingWithdraw"), $page, $_SERVER['PHP_SELF'], $param, '', '', '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
@@ -233,8 +310,13 @@ if ($resql)
 	print '<td>'.$langs->trans("ThirdParty").'</td>';
 	print '<td>'.$langs->trans("RIB").'</td>';
 	print '<td>'.$langs->trans("RUM").'</td>';
+<<<<<<< HEAD
 	print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
 	print '<td align="right">'.$langs->trans("DateRequest").'</td>';
+=======
+	print '<td class="right">'.$langs->trans("AmountTTC").'</td>';
+	print '<td class="right">'.$langs->trans("DateRequest").'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</tr>';
 
 	if ($num)
@@ -249,13 +331,22 @@ if ($resql)
 			print '<tr class="oddeven">';
 			print '<td>';
 			$invoicestatic->id=$obj->rowid;
+<<<<<<< HEAD
 			$invoicestatic->ref=$obj->facnumber;
 			print $invoicestatic->getNomUrl(1,'withdraw');
+=======
+			$invoicestatic->ref=$obj->ref;
+			print $invoicestatic->getNomUrl(1, 'withdraw');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '</td>';
 			// Thirdparty
 			print '<td>';
 			$thirdpartystatic->fetch($obj->socid);
+<<<<<<< HEAD
 			print $thirdpartystatic->getNomUrl(1,'ban');
+=======
+			print $thirdpartystatic->getNomUrl(1, 'ban');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '</td>';
 			// RIB
 			print '<td>';
@@ -270,12 +361,21 @@ if ($resql)
 			if ($format) print ' ('.$format.')';
 			print '</td>';
 			// Amount
+<<<<<<< HEAD
 			print '<td align="right">';
 			print price($obj->amount,0,$langs,0,0,-1,$conf->currency);
 			print '</td>';
 			// Date
 			print '<td align="right">';
 			print dol_print_date($db->jdate($obj->date_demande),'day');
+=======
+			print '<td class="right">';
+			print price($obj->amount, 0, $langs, 0, 0, -1, $conf->currency);
+			print '</td>';
+			// Date
+			print '<td class="right">';
+			print dol_print_date($db->jdate($obj->date_demande), 'day');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '</td>';
 			print '</tr>';
 			$i++;
@@ -303,7 +403,11 @@ print load_fiche_titre($langs->trans("LastWithdrawalReceipts",$limit),'','');
 $sql = "SELECT p.rowid, p.ref, p.amount, p.statut";
 $sql.= ", p.datec";
 $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
+<<<<<<< HEAD
 $sql.= " WHERE p.entity IN (".getEntity('facture').")";
+=======
+$sql.= " WHERE p.entity IN (".getEntity('invoice').")";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $sql.= " ORDER BY datec DESC";
 $sql.=$db->plimit($limit);
 
@@ -316,7 +420,11 @@ if ($result)
     print"\n<!-- debut table -->\n";
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Ref").'</td>';
+<<<<<<< HEAD
     print '<td align="center">'.$langs->trans("Date").'</td><td align="right">'.$langs->trans("Amount").'</td>';
+=======
+    print '<td align="center">'.$langs->trans("Date").'</td><td class="right">'.$langs->trans("Amount").'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print '</tr>';
 
     while ($i < min($num,$limit))
@@ -334,7 +442,11 @@ if ($result)
 
         print '<td align="center">'.dol_print_date($db->jdate($obj->datec),'day')."</td>\n";
 
+<<<<<<< HEAD
         print '<td align="right">'.price($obj->amount,0,$langs,0,0,-1,$conf->currency)."</td>\n";
+=======
+        print '<td class="right">'.price($obj->amount,0,$langs,0,0,-1,$conf->currency)."</td>\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         print "</tr>\n";
         $i++;
@@ -348,5 +460,9 @@ else
 }
 */
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

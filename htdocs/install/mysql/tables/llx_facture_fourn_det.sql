@@ -47,7 +47,11 @@ create table llx_facture_fourn_det
   date_end          datetime   DEFAULT NULL,       -- date fin si service
   info_bits						integer    DEFAULT 0,				-- TVA NPR ou non
   fk_code_ventilation integer DEFAULT 0 NOT NULL,
+<<<<<<< HEAD
   special_code				 integer      DEFAULT 0,      -- code pour les lignes speciales
+=======
+  special_code				 integer      DEFAULT 0,      -- code for special lines
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
   rang						 integer      DEFAULT 0,
   import_key        varchar(14),
   fk_unit         integer    DEFAULT NULL,

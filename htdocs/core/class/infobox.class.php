@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +31,7 @@
  */
 class InfoBox
 {
+<<<<<<< HEAD
 	/**
 	 * Name of positions 0=Home, 1=...
 	 *
@@ -36,6 +41,17 @@ class InfoBox
 	{
 		return array(0=>'Home');
 	}
+=======
+    /**
+     * Name of positions 0=Home, 1=...
+     *
+     * @return	string[]		Array with list of zones
+     */
+    public static function getListOfPagesForBoxes()
+    {
+        return array(0=>'Home');
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     /**
      *  Return array of boxes qualified for area and user
@@ -48,7 +64,11 @@ class InfoBox
      *  @param  int         $includehidden  Include also hidden boxes
      *  @return array       	        	Array of boxes
      */
+<<<<<<< HEAD
     static function listBoxes($db, $mode, $zone, $user=null, $excludelist=array(), $includehidden=1)
+=======
+    public static function listBoxes($db, $mode, $zone, $user = null, $excludelist = array(), $includehidden = 1)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $conf;
 
@@ -68,10 +88,17 @@ class InfoBox
             $sql.= " ORDER BY b.box_order";
         }
         else	// available
+<<<<<<< HEAD
 		{
             $sql = "SELECT d.rowid as box_id, d.file, d.note, d.tms";
             $sql.= " FROM ".MAIN_DB_PREFIX."boxes_def as d";
            	$sql.= " WHERE d.entity IN (0,".$conf->entity.")";
+=======
+        {
+            $sql = "SELECT d.rowid as box_id, d.file, d.note, d.tms";
+            $sql.= " FROM ".MAIN_DB_PREFIX."boxes_def as d";
+               $sql.= " WHERE d.entity IN (0,".$conf->entity.")";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
 
         dol_syslog(get_class()."::listBoxes get default box list for mode=".$mode." userid=".(is_object($user)?$user->id:'')."", LOG_DEBUG);
@@ -87,14 +114,21 @@ class InfoBox
                 if (! in_array($obj->box_id, $excludelist))
                 {
 
+<<<<<<< HEAD
                     if (preg_match('/^([^@]+)@([^@]+)$/i',$obj->file,$regs))
                     {
                         $boxname = preg_replace('/\.php$/i','',$regs[1]);
+=======
+                    if (preg_match('/^([^@]+)@([^@]+)$/i', $obj->file, $regs))
+                    {
+                        $boxname = preg_replace('/\.php$/i', '', $regs[1]);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                         $module = $regs[2];
                         $relsourcefile = "/".$module."/core/boxes/".$boxname.".php";
                     }
                     else
                     {
+<<<<<<< HEAD
                         $boxname=preg_replace('/\.php$/i','',$obj->file);
                         $relsourcefile = "/core/boxes/".$boxname.".php";
 					}
@@ -102,12 +136,25 @@ class InfoBox
 					//print $obj->box_id.'-'.$boxname.'-'.$relsourcefile.'<br>';
 
 					// TODO PERF Do not make "dol_include_once" here, nor "new" later. This means, we must store a 'depends' field to store modules list, then
+=======
+                        $boxname=preg_replace('/\.php$/i', '', $obj->file);
+                        $relsourcefile = "/core/boxes/".$boxname.".php";
+                    }
+
+                    //print $obj->box_id.'-'.$boxname.'-'.$relsourcefile.'<br>';
+
+                    // TODO PERF Do not make "dol_include_once" here, nor "new" later. This means, we must store a 'depends' field to store modules list, then
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                     // the "enabled" condition for modules forbidden for external users and the depends condition can be done.
                     // Goal is to avoid making a "new" done for each boxes returned by select.
                     dol_include_once($relsourcefile);
                     if (class_exists($boxname))
                     {
+<<<<<<< HEAD
                     	$box=new $boxname($db,$obj->note);		// Constructor may set properties like box->enabled. obj->note is note into box def, not user params.
+=======
+                        $box=new $boxname($db, $obj->note);		// Constructor may set properties like box->enabled. obj->note is note into box def, not user params.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                         //$box=new stdClass();
 
                         // box properties
@@ -117,9 +164,15 @@ class InfoBox
                         $box->box_order	= (empty($obj->box_order) ? '' : $obj->box_order);
                         $box->fk_user	= (empty($obj->fk_user) ? 0 : $obj->fk_user);
                         $box->sourcefile= $relsourcefile;
+<<<<<<< HEAD
                     	$box->class     = $boxname;
 
                     	if ($mode == 'activated' && ! is_object($user))	// List of activated box was not yet personalized into database
+=======
+                        $box->class     = $boxname;
+
+                        if ($mode == 'activated' && ! is_object($user))	// List of activated box was not yet personalized into database
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                         {
                             if (is_numeric($box->box_order))
                             {
@@ -138,6 +191,7 @@ class InfoBox
                         {
                             foreach($box->depends as $moduleelem)
                             {
+<<<<<<< HEAD
                             	$arrayelem=explode('|',$moduleelem);
                             	$tmpenabled=0;	// $tmpenabled is used for the '|' test (OR)
                             	foreach($arrayelem as $module)
@@ -151,6 +205,21 @@ class InfoBox
         	                    	$enabled=0;
         	                    	break;
         	                    }
+=======
+                                $arrayelem=explode('|', $moduleelem);
+                                $tmpenabled=0;	// $tmpenabled is used for the '|' test (OR)
+                                foreach($arrayelem as $module)
+                                {
+                                    $tmpmodule=preg_replace('/@[^@]+/', '', $module);
+                                    if (! empty($conf->$tmpmodule->enabled)) $tmpenabled=1;
+                                    //print $boxname.'-'.$module.'-module enabled='.(empty($conf->$tmpmodule->enabled)?0:1).'<br>';
+                                }
+                                if (empty($tmpenabled))	// We found at least one module required that is disabled
+                                {
+                                    $enabled=0;
+                                    break;
+                                }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                             }
                         }
                         //print '=>'.$boxname.'-enabled='.$enabled.'<br>';
@@ -160,16 +229,27 @@ class InfoBox
                         else unset($box);
                     }
                     else
+<<<<<<< HEAD
 					{
                     	dol_syslog("Failed to load box '".$boxname."' into file '".$relsourcefile."'", LOG_WARNING);
 					}
+=======
+                    {
+                        dol_syslog("Failed to load box '".$boxname."' into file '".$relsourcefile."'", LOG_WARNING);
+                    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 }
                 $j++;
             }
         }
         else
+<<<<<<< HEAD
 		{
 			dol_syslog($db->lasterror(),LOG_ERR);
+=======
+        {
+            dol_syslog($db->lasterror(), LOG_ERR);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             return array('error'=>$db->lasterror());
         }
 
@@ -186,7 +266,11 @@ class InfoBox
      *  @param  int     $userid     	Id of user
      *  @return int                   	<0 if KO, 0=Nothing done, > 0 if OK
      */
+<<<<<<< HEAD
     static function saveboxorder($db, $zone,$boxorder,$userid=0)
+=======
+    public static function saveboxorder($db, $zone, $boxorder, $userid = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $conf;
 
@@ -224,23 +308,38 @@ class InfoBox
         $result = $db->query($sql);
         if ($result)
         {
+<<<<<<< HEAD
             $colonnes=explode('-',$boxorder);
             foreach ($colonnes as $collist)
             {
                 $part=explode(':',$collist);
+=======
+            $colonnes=explode('-', $boxorder);
+            foreach ($colonnes as $collist)
+            {
+                $part=explode(':', $collist);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 $colonne=$part[0];
                 $list=$part[1];
                 dol_syslog(get_class()."::saveboxorder column=".$colonne.' list='.$list);
 
                 $i=0;
+<<<<<<< HEAD
                 $listarray=explode(',',$list);
+=======
+                $listarray=explode(',', $list);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 foreach ($listarray as $id)
                 {
                     if (is_numeric($id))
                     {
                         //dol_syslog("aaaaa".count($listarray));
                         $i++;
+<<<<<<< HEAD
                         $ii=sprintf('%02d',$i);
+=======
+                        $ii=sprintf('%02d', $i);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                         $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes";
                         $sql.= "(box_id, position, box_order, fk_user, entity)";
                         $sql.= " values (";
@@ -281,6 +380,10 @@ class InfoBox
             return -1;
         }
     }
+<<<<<<< HEAD
 
 }
 
+=======
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

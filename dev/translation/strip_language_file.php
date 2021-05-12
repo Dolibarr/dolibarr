@@ -14,7 +14,11 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
+<<<<<<< HEAD
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+=======
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * -----
  *
@@ -81,14 +85,22 @@ if ($filesToProcess == 'all')
 {
 	$dir = new DirectoryIterator('htdocs/langs/'.$lPrimary);
 	while($dir->valid()) {
+<<<<<<< HEAD
 		if(!$dir->isDot() && $dir->isFile() && ! preg_match('/^\./',$dir->getFilename())) {
+=======
+		if(!$dir->isDot() && $dir->isFile() && ! preg_match('/^\./', $dir->getFilename())) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$files[] =  $dir->getFilename();
 		}
 		$dir->next();
 	}
 	$filesToProcess=$files;
 }
+<<<<<<< HEAD
 else $filesToProcess=explode(',',$filesToProcess);
+=======
+else $filesToProcess=explode(',', $filesToProcess);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Arguments should be OK here.
 
@@ -256,7 +268,11 @@ foreach($filesToProcess as $fileToProcess)
 
 		print "Read Primary File $lPrimaryFile and write ".$output.":\n";
 
+<<<<<<< HEAD
 		fwrite($oh, "# Dolibarr language file - Source file is en_US - ".(preg_replace('/\.lang$/','',$fileToProcess))."\n");
+=======
+		fwrite($oh, "# Dolibarr language file - Source file is en_US - ".(preg_replace('/\.lang$/', '', $fileToProcess))."\n");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$cnt = 0;
 		while (($line = fgets($handle)) !== false)
@@ -306,11 +322,19 @@ foreach($filesToProcess as $fileToProcess)
 			//print "Found primary key = ".$key."\n";
 
 			// Key not in other file
+<<<<<<< HEAD
 			if (in_array($key, $arrayofkeytoalwayskeep) || preg_match('/^FormatDate/',$key) || preg_match('/^FormatHour/',$key))
 			{
 				//print "Key $key is a key we always want to see into secondary file (line: $cnt).\n";
 			}
 			else if ( ! array_key_exists($key, $aSecondary))
+=======
+			if (in_array($key, $arrayofkeytoalwayskeep) || preg_match('/^FormatDate/', $key) || preg_match('/^FormatHour/', $key))
+			{
+				//print "Key $key is a key we always want to see into secondary file (line: $cnt).\n";
+			}
+			elseif ( ! array_key_exists($key, $aSecondary))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			{
 				//print "Key $key does NOT exist in secondary language (line: $cnt).\n";
 				continue;
@@ -320,7 +344,11 @@ foreach($filesToProcess as $fileToProcess)
 			if (
 				(! empty($aSecondary[$key]) && $aSecondary[$key] != $aPrimary[$key]
 			    && ! empty($aEnglish[$key]) && $aSecondary[$key] != $aEnglish[$key])
+<<<<<<< HEAD
 				|| in_array($key, $arrayofkeytoalwayskeep) || preg_match('/^FormatDate/',$key) || preg_match('/^FormatHour/',$key)
+=======
+				|| in_array($key, $arrayofkeytoalwayskeep) || preg_match('/^FormatDate/', $key) || preg_match('/^FormatHour/', $key)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				)
 			{
 				//print "Key $key differs (aSecondary=".$aSecondary[$key].", aPrimary=".$aPrimary[$key].", aEnglish=".$aEnglish[$key].") so we add it into new secondary language (line: $cnt).\n";

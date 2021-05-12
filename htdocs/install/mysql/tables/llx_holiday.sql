@@ -32,9 +32,15 @@ date_debut     DATE NOT NULL,
 date_fin       DATE NOT NULL,
 halfday        integer DEFAULT 0,				-- 0=start morning and end afternoon, -1=start afternoon end afternoon, 1=start morning and end morning, 2=start afternoon and end morning
 statut         integer NOT NULL DEFAULT '1',
+<<<<<<< HEAD
 fk_validator   integer NOT NULL,
 date_valid     DATETIME DEFAULT NULL,
 fk_user_valid  integer DEFAULT NULL,
+=======
+fk_validator   integer NOT NULL,				-- who should approve
+date_valid     DATETIME DEFAULT NULL,			-- date approval
+fk_user_valid  integer DEFAULT NULL,			-- user approval
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 date_refuse    DATETIME DEFAULT NULL,
 fk_user_refuse integer DEFAULT NULL,
 date_cancel    DATETIME DEFAULT NULL,

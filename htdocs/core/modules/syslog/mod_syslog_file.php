@@ -7,8 +7,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/syslog/logHandler.php';
  */
 class mod_syslog_file extends LogHandler implements LogHandlerInterface
 {
+<<<<<<< HEAD
 	var $code = 'file';
 	var $lastTime = 0;
+=======
+    public $code = 'file';
+    public $lastTime = 0;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	/**
 	 * 	Return name of logger
@@ -102,7 +107,11 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	 * @param	string	$suffixinfilename	When output is a file, append this suffix into default log filename.
 	 * @return	string
 	 */
+<<<<<<< HEAD
 	private function getFilename($suffixinfilename='')
+=======
+	private function getFilename($suffixinfilename = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 	    global $conf;
 
@@ -131,7 +140,11 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	 * @param	string	$suffixinfilename	When output is a file, append this suffix into default log filename.
 	 * @return	void
 	 */
+<<<<<<< HEAD
 	public function export($content, $suffixinfilename='')
+=======
+	public function export($content, $suffixinfilename = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf, $dolibarr_main_prod;
 
@@ -173,7 +186,11 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 				$this->lastTime = $now;
 			}
 
+<<<<<<< HEAD
 			$message = strftime("%Y-%m-%d %H:%M:%S", time()).$delay." ".sprintf("%-7s", $logLevels[$content['level']])." ".sprintf("%-15s", $content['ip'])." ".($this->ident>0?str_pad('',$this->ident,' '):'').$content['message'];
+=======
+			$message = strftime("%Y-%m-%d %H:%M:%S", time()).$delay." ".sprintf("%-7s", $logLevels[$content['level']])." ".sprintf("%-15s", $content['ip'])." ".($this->ident>0?str_pad('', $this->ident, ' '):'').$content['message'];
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			fwrite($filefd, $message."\n");
 			fclose($filefd);
 			@chmod($logfile, octdec(empty($conf->global->MAIN_UMASK)?'0664':$conf->global->MAIN_UMASK));

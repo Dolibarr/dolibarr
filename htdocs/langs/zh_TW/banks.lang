@@ -1,11 +1,16 @@
 # Dolibarr language file - Source file is en_US - banks
 Bank=銀行
+<<<<<<< HEAD
 MenuBankCash=Bank | Cash
+=======
+MenuBankCash=Banks | Cash
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MenuVariousPayment=雜項付款
 MenuNewVariousPayment=新的雜項付款
 BankName=銀行名稱
 FinancialAccount=帳戶
 BankAccount=銀行帳戶
+<<<<<<< HEAD
 BankAccounts=各式銀行帳戶
 BankAccountsAndGateways=Bank accounts | Gateways
 ShowAccount=顯示金額
@@ -19,6 +24,21 @@ ErrorBankLabelAlreadyExists=金融帳戶標簽已存在
 BankBalance=餘額
 BankBalanceBefore=Balance before
 BankBalanceAfter=Balance after
+=======
+BankAccounts=銀行帳戶
+BankAccountsAndGateways=Bank accounts | Gateways
+ShowAccount=顯示金額
+AccountRef=金融帳戶參考值
+AccountLabel=金融帳戶標籤
+CashAccount=現金帳戶
+CashAccounts=現金帳戶
+CurrentAccounts=目前帳戶
+SavingAccounts=儲蓄帳戶
+ErrorBankLabelAlreadyExists=金融帳戶標籤已存在
+BankBalance=餘額
+BankBalanceBefore=餘額前
+BankBalanceAfter=餘額後
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BalanceMinimalAllowed=允許的最小餘額
 BalanceMinimalDesired=所需的最少餘額
 InitialBankBalance=期初餘額
@@ -26,6 +46,7 @@ EndBankBalance=期末餘額
 CurrentBalance=目前餘額
 FutureBalance=未來餘額
 ShowAllTimeBalance=從一開始顯示餘額
+<<<<<<< HEAD
 AllTime=From start
 Reconciliation=調節
 RIB=銀行帳戶的號碼
@@ -47,6 +68,29 @@ BankAccountCountry=帳戶的國家
 BankAccountOwner=帳戶持有人姓名
 BankAccountOwnerAddress=帳戶持有人地址
 RIBControlError=值的完整性檢查失敗。這意味著此帳戶的資訊不完整或錯誤（檢查國家，號碼和IBAN）。
+=======
+AllTime=從哪開始
+Reconciliation=調節
+RIB=銀行帳戶的號碼
+IBAN=IBAN 號碼
+BIC=BIC/SWIFT code
+SwiftValid=BIC/SWIFT 有效
+SwiftVNotalid=BIC/SWIFT 無效
+IbanValid=BAN 有效
+IbanNotValid=BAN 無效
+StandingOrders=直接扣款
+StandingOrder=直接扣款
+AccountStatement=帳戶報表
+AccountStatementShort=報表
+AccountStatements=帳戶報表
+LastAccountStatements=最近帳戶報表
+IOMonthlyReporting=每月報告
+BankAccountDomiciliation=Bank address
+BankAccountCountry=帳戶的國家
+BankAccountOwner=帳戶持有人姓名
+BankAccountOwnerAddress=帳戶持有人地址
+RIBControlError=Integrity check of values failed. This means the information for this account number is not complete or is incorrect (check country, numbers and IBAN).
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CreateAccount=建立帳戶
 NewBankAccount=新帳戶
 NewFinancialAccount=新的金融帳戶
@@ -72,6 +116,7 @@ BankTransactions=銀行分錄
 BankTransaction=銀行項目
 ListTransactions=分錄明細表
 ListTransactionsByCategory=分錄/類別明細表
+<<<<<<< HEAD
 TransactionsToConciliate=調整分錄
 Conciliable=可以調節的
 Conciliate=調節
@@ -84,12 +129,28 @@ AccountToDebit=帳戶轉帳
 DisableConciliation=此帳戶禁用調節功能
 ConciliationDisabled=調節功能禁用
 LinkedToAConciliatedTransaction=Linked to a conciliated entry
+=======
+TransactionsToConciliate=要調節的分錄
+Conciliable=可以調節的
+Conciliate=要調節
+Conciliation=調節
+SaveStatementOnly=只儲存報表
+ReconciliationLate=稍後調節
+IncludeClosedAccount=包括已結束帳戶
+OnlyOpenedAccount=僅開放的各式帳戶
+AccountToCredit=要貸方的帳戶
+AccountToDebit=要借方的帳戶
+DisableConciliation=此帳戶停用調節功能
+ConciliationDisabled=調節功能停用
+LinkedToAConciliatedTransaction=連結到調節項目
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 StatusAccountOpened=開放
 StatusAccountClosed=已結束
 AccountIdShort=數字
 LineRecord=交易
 AddBankRecord=新增一項
 AddBankRecordLong=人工方式新增一項
+<<<<<<< HEAD
 Conciliated=Reconciled
 ConciliatedBy=由調節
 DateConciliating=調節日期
@@ -105,6 +166,23 @@ BankTransfer=銀行轉帳
 BankTransfers=銀行轉帳
 MenuBankInternalTransfer=Internal transfer
 TransferDesc=從某帳戶轉到另一帳戶，Dolibarr會寫成兩筆(在來源帳戶的貸方及目的地帳戶的借方。此交易將使用相同金額、標籤及日期)
+=======
+Conciliated=已調節
+ConciliatedBy=由調節
+DateConciliating=調節日期
+BankLineConciliated=項目已調節
+Reconciled=已調節
+NotReconciled=未調節
+CustomerInvoicePayment=客戶付款
+SupplierInvoicePayment=Vendor payment
+SubscriptionPayment=訂閱付款
+WithdrawalPayment=Debit payment order
+SocialContributionPayment=社會/財務稅負繳款單
+BankTransfer=銀行轉帳
+BankTransfers=銀行轉帳
+MenuBankInternalTransfer=內部轉帳
+TransferDesc=Transfer from one account to another, Dolibarr will write two records (a debit in source account and a credit in target account). The same amount (except sign), label and date will be used for this transaction)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TransferFrom=從
 TransferTo=至
 TransferFromToDone=從<b>%s</b>到<b>%s</b>的<b>%s</b>%s轉帳已記錄。
@@ -116,7 +194,11 @@ ConfirmDeleteCheckReceipt=您確認定您要刪除此張支票收據？
 BankChecks=銀行支票
 BankChecksToReceipt=託收票據
 ShowCheckReceipt=顯示支票入存收據
+<<<<<<< HEAD
 NumberOfCheques=檢查數量
+=======
+NumberOfCheques=票據號碼
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DeleteTransaction=刪除項目
 ConfirmDeleteTransaction=您確定要刪除此筆項目
 ThisWillAlsoDeleteBankRecord=也會刪除產生的銀行項目
@@ -124,7 +206,11 @@ BankMovements=移動
 PlannedTransactions=已安排的項目
 Graph=圖像
 ExportDataset_banque_1=銀行項目及會計項目描述
+<<<<<<< HEAD
 ExportDataset_banque_2=Deposit slip
+=======
+ExportDataset_banque_2=存款單
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TransactionOnTheOtherAccount=在其他帳戶的交易
 PaymentNumberUpdateSucceeded=付款號碼更新成功
 PaymentNumberUpdateFailed=付款號碼無法更新
@@ -132,6 +218,7 @@ PaymentDateUpdateSucceeded=付款日期更新成功
 PaymentDateUpdateFailed=付款日期可能無法更新
 Transactions=交易
 BankTransactionLine=銀行項目
+<<<<<<< HEAD
 AllAccounts=All bank and cash accounts
 BackToAccount=回到帳戶
 ShowAllAccounts=顯示所有帳戶
@@ -141,12 +228,24 @@ InputReceiptNumber=選擇要調節的銀行對帳單。使用可排序的數值�
 EventualyAddCategory=Eventually, specify a category in which to classify the records
 ToConciliate=調節嗎？
 ThenCheckLinesAndConciliate=Then, check the lines present in the bank statement and click
+=======
+AllAccounts=所有銀行及現金帳戶
+BackToAccount=回到帳戶
+ShowAllAccounts=顯示所有帳戶
+FutureTransaction=Future transaction. Unable to reconcile.
+SelectChequeTransactionAndGenerate="選擇/篩選器"支票包含在支票存款的收據並點擊“建立”。
+InputReceiptNumber=選擇要調節的銀行對帳單。使用可排序的數值： YYYYMM 或 YYYYMMDD
+EventualyAddCategory=最後，指定記錄的類別進行分類
+ToConciliate=調節嗎？
+ThenCheckLinesAndConciliate=然後，在銀行對帳單中檢查目前行數及點擊
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DefaultRIB=預設 BAN
 AllRIB=全部 BAN
 LabelRIB=BAN 標籤
 NoBANRecord=沒有 BAN 記錄
 DeleteARib=刪除 BAN 記錄
 ConfirmDeleteRib=您確定要刪除此 BAN 記錄
+<<<<<<< HEAD
 RejectCheck=Check returned
 ConfirmRejectCheck=Are you sure you want to mark this check as rejected?
 RejectCheckDate=Date the check was returned
@@ -163,3 +262,24 @@ AddVariousPayment=新增雜項付款
 SEPAMandate=SEPA mandate
 YourSEPAMandate=Your SEPA mandate
 FindYourSEPAMandate=This is your SEPA mandate to authorize our company to make direct debit order to your bank. Thanks to return it signed (scan of the signed document) or sent it by mail to
+=======
+RejectCheck=支票退回
+ConfirmRejectCheck=您確定要將此支票標記為已拒絕嗎？
+RejectCheckDate=退回支票的日期
+CheckRejected=支票退回
+CheckRejectedAndInvoicesReopened=支票退回並重新開啟發票
+BankAccountModelModule=銀行帳戶的文件範例/本
+DocumentModelSepaMandate=歐洲統一支付區要求的範例/本。僅適用於歐洲經濟共同體的歐洲國家。
+DocumentModelBan=列印有BAN資訊的範例/本。
+NewVariousPayment=New miscellaneous payment
+VariousPayment=Miscellaneous payment
+VariousPayments=雜項付款
+ShowVariousPayment=Show miscellaneous payment
+AddVariousPayment=Add miscellaneous payment
+SEPAMandate=歐洲統一支付區要求
+YourSEPAMandate=您的歐洲統一支付區要求
+FindYourSEPAMandate=這是認證我們公司的歐洲統一支付區要求可直接從您的銀行扣款。返回簽名檔（掃描簽名文件）或用郵件發送給
+AutoReportLastAccountStatement=Automatically fill the field 'number of bank statement' with last statement number when making reconciliation
+CashControl=POS cash fence
+NewCashFence=New cash fence
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

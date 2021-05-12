@@ -46,6 +46,7 @@ ErrorSQL=SQL Hatası
 ErrorLogoFileNotFound='%s' Logo dosyası bulunamadı
 ErrorGoToGlobalSetup=Bunu düzeltmek için 'Şirket/Kuruluş' ayarlarına gidin
 ErrorGoToModuleSetup=Bunu düzeltmek için Modül Kurulumuna git
+<<<<<<< HEAD
 ErrorFailedToSendMail=Posta gönderilemedi (gönderen)
 ErrorFileNotUploaded=Dosya gönderilemedi. Boyutun izin verilen ençok dosya boyutunu aşmadığını denetleyin, bu dizinde yeterli boş alan olmalı ve aynı isimde başka bir dosya olmamalı.
 ErrorInternalErrorDetected=Hata algılandı
@@ -59,12 +60,32 @@ ErrorServiceUnavailableTryLater=Hizmet şu an için kullanılamıyor. Daha sonra
 ErrorDuplicateField=Benzersiz bir alanda yinelenen değer
 ErrorSomeErrorWereFoundRollbackIsDone=Bazı hatalar bulundu. Değişikler geri alındı.
 ErrorConfigParameterNotDefined=Parametre <b>%s</b> Dolibarr yapılandırma dosyasında <b>conf.php</b> tanımlı değil.
+=======
+ErrorFailedToSendMail=E-posta gönderilemedi (gönderen=%s, alıcı=%s)
+ErrorFileNotUploaded=Dosya gönderilemedi. Boyutun izin verilen ençok dosya boyutunu aşmadığını denetleyin, bu dizinde yeterli boş alan olmalı ve aynı isimde başka bir dosya olmamalı.
+ErrorInternalErrorDetected=Hata algılandı
+ErrorWrongHostParameter=Yanlış ana parametre
+ErrorYourCountryIsNotDefined=Ülkeniz tanımlı değil. Giriş-Ayarlar-Düzenle kısmına git ve formu yeniden gönder.
+ErrorRecordIsUsedByChild=Bu kayıt silinemedi. Bu kayıt en az bir alt kayıt tarafından kullanılıyor.
+ErrorWrongValue=Yanlış değer
+ErrorWrongValueForParameterX=Parametresi %s için yanlış değer
+ErrorNoRequestInError=Hatalı istek yok
+ErrorServiceUnavailableTryLater=Hizmet şu anda kullanılamıyor. Daha sonra tekrar deneyin.
+ErrorDuplicateField=Benzersiz bir alanda yinelenen değer
+ErrorSomeErrorWereFoundRollbackIsDone=Bazı hatalar bulundu. Değişiklikler geri alındı.
+ErrorConfigParameterNotDefined=<b>%s</b> parametresi Dolibarr yapılandırma dosyası <b>conf.php</b>'de tanımlanmadı.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorCantLoadUserFromDolibarrDatabase=Dolibarr veritabanında kullanıcı <b>%s</b> bulunamadı.
 ErrorNoVATRateDefinedForSellerCountry=Hata, ülke '%s' için herhangi bir KDV oranı tanımlanmamış.
 ErrorNoSocialContributionForSellerCountry=Hata, '%s' ülkesi için sosyal/mali vergi tipi tanımlanmamış.
 ErrorFailedToSaveFile=Hata, dosya kaydedilemedi.
+<<<<<<< HEAD
 ErrorCannotAddThisParentWarehouse=Zaten şu anki deponun bir alt deposu olan bir üst depo eklemeye çalışıyorsunuz
 MaxNbOfRecordPerPage=Max number of record per page
+=======
+ErrorCannotAddThisParentWarehouse=Zaten mevcut bir deponun alt deposu olan bir üst depo eklemeye çalışıyorsunuz
+MaxNbOfRecordPerPage=Sayfa başına maksimum kayıt sayısı
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NotAuthorized=Bunu yapmak için yetkiniz yok.
 SetDate=Ayar tarihi
 SelectDate=Bir tarih seç
@@ -86,6 +107,7 @@ GoToWikiHelpPage=Çevrimiçi yardım oku (Internet erişimi gerekir)
 GoToHelpPage=Yardım oku
 RecordSaved=Kayıt kaydedildi
 RecordDeleted=Kayıt silindi
+<<<<<<< HEAD
 LevelOfFeature=Özellik düzeyleri
 NotDefined=Tanımlanmamış
 DolibarrInHttpAuthenticationSoPasswordUseless=Yapılandırma dosyası <b>conf.php</b> içindeki Dolibarr kimlik doğrulama biçimi <b>%s</b> durumuna ayarlanmıştır.<br>Bu demektir ki; veritabanı parolası Dolibarr dışıdır, yani bu alanı değiştirmek hiçbir etki yaratmaz.
@@ -97,6 +119,20 @@ SeeAbove=Yukarı bak
 HomeArea=Giriş alanı
 LastConnexion=Son bağlantı
 PreviousConnexion=Önceki bağlantı
+=======
+RecordGenerated=Kayıt oluşturuldu
+LevelOfFeature=Özellik düzeyleri
+NotDefined=Tanımlanmamış
+DolibarrInHttpAuthenticationSoPasswordUseless=<b>conf.php</b> yapılandırma dosyasındaki Dolibarr kimlik doğrulama modu <b>%s</b> olarak ayarlanmış.<br>Bu demektir ki; veritabanı parolası Dolibarr dışıdır, yani bu alanı değiştirmek hiçbir etki yaratmaz.
+Administrator=Yönetici
+Undefined=Tanımlanmamış
+PasswordForgotten=Parola mı unutuldu?
+NoAccount=Hesap yok mu?
+SeeAbove=Yukarı bak
+HomeArea=Giriş
+LastConnexion=Son oturum açma
+PreviousConnexion=Önceki oturum açma
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PreviousValue=Önceki değer
 ConnectedOnMultiCompany=Çevreye bağlanmış
 ConnectedSince=Bağlantı başlangıcı
@@ -107,8 +143,13 @@ RequestLastAccessInError=Son veritabanı erişim isteği hatası
 ReturnCodeLastAccessInError=Son veritabanı erişim isteği hata kodunu göster
 InformationLastAccessInError=Son veritabanı erişim isteği hatası bilgisi
 DolibarrHasDetectedError=Dolibarr teknik bir hata algıladı
+<<<<<<< HEAD
 YouCanSetOptionDolibarrMainProdToZero=You can read log file or set option $dolibarr_main_prod to '0' in your config file to get more information.
 InformationToHelpDiagnose=This information can be useful for diagnostic purposes (you can set option $dolibarr_main_prod to '1' to remove such notices)
+=======
+YouCanSetOptionDolibarrMainProdToZero=Daha fazla bilgi almak için log dosyasını okuyabilir veya $dolibarr_main_prod seçeneğini '0' olarak ayarlayabilirsiniz.
+InformationToHelpDiagnose=Bu bilgi sorun tespiti amaçları için yararlı olabilir (bu tür bildirimleri kapatmak için $dolibarr_main_prod seçeneğini '1' olarak ayarlayabilirsiniz)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MoreInformation=Daha fazla bilgi
 TechnicalInformation=Teknik bilgi
 TechnicalID=Teknik Kimlik
@@ -118,7 +159,11 @@ PrecisionUnitIsLimitedToXDecimals=Dolibarr birim fiyatlar için hassasiyeti <b>%
 DoTest=Deneme
 ToFilter=Süzgeç
 NoFilter=Süzgeç yok
+<<<<<<< HEAD
 WarningYouHaveAtLeastOneTaskLate=Uyarı, gecikme toleransını aşan en az bir var.
+=======
+WarningYouHaveAtLeastOneTaskLate=Uyarı: Tolerans süresini aşan en az bir öğeniz var.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 yes=evet
 Yes=Evet
 no=hayır
@@ -142,6 +187,10 @@ Closed=Kapalı
 Closed2=Kapalı
 NotClosed=Kapalı değil
 Enabled=Etkin
+<<<<<<< HEAD
+=======
+Enable=Etkin
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Deprecated=Kullanılmayan
 Disable=Engelle
 Disabled=Engelli
@@ -151,9 +200,15 @@ RemoveLink=Bağlantıyı kaldır
 AddToDraft=Taslağa ekle
 Update=Güncelle
 Close=Kapat
+<<<<<<< HEAD
 CloseBox=Kontrol panelinizden ekran etiketini kaldırın
 Confirm=Onayla
 ConfirmSendCardByMail=Bu kartın içeriğini posta ile gerçekten <b>%s</b> adresine göndermek istiyor musunuz?
+=======
+CloseBox=Gösterge panelinizden ekran etiketini kaldırın
+Confirm=Onayla
+ConfirmSendCardByMail=Bu kartın içeriğini e-posta ile <b>%s</b> adresine gerçekten göndermek istiyor musunuz?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Delete=Sil
 Remove=Kaldır
 Resiliate=Sonlandır
@@ -168,7 +223,11 @@ Save=Kaydet
 SaveAs=Farklı kaydet
 TestConnection=Deneme bağlantısı
 ToClone=Klonla
+<<<<<<< HEAD
 ConfirmClone=Klonlamak istediğiniz verileri seçin:
+=======
+ConfirmClone=Çoğaltmak istediğiniz verileri seçin:
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoCloneOptionsSpecified=Klonlanacak hiçbir veri tanımlanmamış.
 Of=ile ilgili
 Go=Git
@@ -183,8 +242,13 @@ Valid=Geçerli
 Approve=Onayla
 Disapprove=Onaylama
 ReOpen=Yeniden aç
+<<<<<<< HEAD
 Upload=Dosya gönder
 ToLink=Bağlantı
+=======
+Upload=Yükle
+ToLink=Bağlantıla
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Select=Seç
 Choose=Seç
 Resize=Yeniden boyutlandır
@@ -200,6 +264,10 @@ Password=Parola
 PasswordRetype=Parolanızı yeniden yazın
 NoteSomeFeaturesAreDisabled=Bu demoda bir çok özelliğin/modülün engelli olduğuna dikkat edin.
 Name=Adı
+<<<<<<< HEAD
+=======
+NameSlashCompany=İsim / Şirket
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Person=Kişi
 Parameter=Parametre
 Parameters=Parametreler
@@ -220,6 +288,12 @@ Info=Log
 Family=Aile
 Description=Açıklama
 Designation=Açıklama
+<<<<<<< HEAD
+=======
+DescriptionOfLine=Satır açıklaması
+DateOfLine=Date of line
+DurationOfLine=Duration of line
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Model=Doküman şablonu
 DefaultModel=Varsayılan doküman şablonu
 Action=Etkinlik
@@ -232,7 +306,11 @@ Limit=Sınır
 Limits=Sınırlar
 Logout=Çıkış
 NoLogoutProcessWithAuthMode=Kimlik denetimi modu <b>%s</b> için uygulanabilir bağlantı kesme özelliği yok
+<<<<<<< HEAD
 Connection=Kullanıcı adı
+=======
+Connection=Oturum Aç
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Setup=Ayarlar
 Alert=Uyarı
 MenuWarnings=Uyarılar
@@ -327,6 +405,7 @@ Copy=Kopyala
 Paste=Yapıştır
 Default=Varsayılan
 DefaultValue=Varsayılan değer
+<<<<<<< HEAD
 DefaultValues=Varsayılan değerler
 Price=Fiyat
 PriceCurrency=Fiyat (para birimi)
@@ -343,14 +422,39 @@ AmountInvoice=Fatura tutarı
 AmountInvoiced=Amount invoiced
 AmountPayment=Ödeme tutarı
 AmountHTShort=Tutar (net)
+=======
+DefaultValues=Varsayılan değerler/filtreler/sıralama
+Price=Fiyat
+PriceCurrency=Fiyat (para birimi)
+UnitPrice=Birim fiyat
+UnitPriceHT=Birim fiyat (KDV hariç)
+UnitPriceHTCurrency=Birim fiyat (KDV hariç) (para birimi)
+UnitPriceTTC=Birim fiyat
+PriceU=B.F.
+PriceUHT=Birim Fiyat
+PriceUHTCurrency=Birim Fiyat (para birimi)
+PriceUTTC=B.F. (vergi dahil)
+Amount=Tutar
+AmountInvoice=Fatura tutarı
+AmountInvoiced=Faturalandırılmış tutar
+AmountPayment=Ödeme tutarı
+AmountHTShort=Tutar (KDV hariç)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AmountTTCShort=Tutar (KDV dahil)
 AmountHT=Tutar (KDV hariç)
 AmountTTC=Miktarı (KDV dahil)
 AmountVAT=KDV tutarı
+<<<<<<< HEAD
 MulticurrencyAlreadyPaid=Ödenmiş, orijinal para birimi
 MulticurrencyRemainderToPay=Ödemeye devam edin, orijinal para birimi
 MulticurrencyPaymentAmount=Ödeme tutarı, orijinal para birimi
 MulticurrencyAmountHT=Tutar (vergisiz net), ilk para birimi
+=======
+MulticurrencyAlreadyPaid=Zaten ödenmiş, orijinal para birimi
+MulticurrencyRemainderToPay=Ödemeye devam edin, orijinal para birimi
+MulticurrencyPaymentAmount=Ödeme tutarı, orijinal para birimi
+MulticurrencyAmountHT=Tutar (KDV hariç), ilk para birimi
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MulticurrencyAmountTTC=Tutar (vergi dahil), ilk para birimi
 MulticurrencyAmountVAT=Toplam vergi, ilk para birimi
 AmountLT1=Vergi 2 tutarı
@@ -360,6 +464,7 @@ AmountLT2ES=IRPF Tutarı
 AmountTotal=Toplam tutar
 AmountAverage=Ortalama tutar
 PriceQtyMinHT=En düşük miktar fiyatı (KDV hariç)
+<<<<<<< HEAD
 PriceQtyMinHTCurrency=Price quantity min. (net of tax) (currency)
 Percentage=Yüzde
 Total=Toplam
@@ -369,17 +474,38 @@ TotalHTShortCurrency=Toplam (para biriminde net)
 TotalTTCShort=Toplam (KDV dahil)
 TotalHT=Toplam (KDV hariç)
 TotalHTforthispage=Bu sayfa toplamı (vergisiz net)
+=======
+PriceQtyMinHTCurrency=En düşük miktar fiyatı (KDV hariç) (para birimi)
+Percentage=Yüzde
+Total=Toplam
+SubTotal=Aratoplam
+TotalHTShort=Toplam (KDV hariç)
+TotalHT100Short=Toplam 100 %%(KDV hariç)
+TotalHTShortCurrency=Toplam (KDV hariç, para biriminde)
+TotalTTCShort=Toplam (KDV dahil)
+TotalHT=Toplam (KDV hariç)
+TotalHTforthispage=Bu sayfa için Toplam (KDV hariç)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Totalforthispage=Bu sayfa toplamı
 TotalTTC=Toplam (KDV dahil)
 TotalTTCToYourCredit=Alacağınız için toplam (KDV dahil)
 TotalVAT=Toplam KDV
+<<<<<<< HEAD
 TotalVATIN=Total IGST
+=======
+TotalVATIN=Toplam IGST
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TotalLT1=Vergi 2 toplamı
 TotalLT2=Vergi 3 toplamı
 TotalLT1ES=Toplam RE
 TotalLT2ES=Toplam IRPF
+<<<<<<< HEAD
 TotalLT1IN=Total CGST
 TotalLT2IN=Total SGST
+=======
+TotalLT1IN=Toplam CGST
+TotalLT2IN=Toplam SGST
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 HT=KDV hariç
 TTC=KDV dahil
 INCVATONLY=KDV Dahil
@@ -387,15 +513,24 @@ INCT=Tüm vergiler dahil
 VAT=KDV
 VATIN=IGST
 VATs=Satış vergisi
+<<<<<<< HEAD
 VATINs=IGST taxes
 LT1=Sales tax 2
 LT1Type=Sales tax 2 type
 LT2=Sales tax 3
 LT2Type=Sales tax 3 type
+=======
+VATINs=IGST vergileri
+LT1=Satış vergisi 2
+LT1Type=Satış vergisi 2 türü
+LT2=Satış vergisi 3
+LT2Type=Satış vergisi 3 türü
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LT1ES=RE
 LT2ES=IRPF
 LT1IN=CGST
 LT2IN=SGST
+<<<<<<< HEAD
 VATRate=KDV Oranı
 VATCode=Vergi Oranı kodu
 VATNPR=Tax Rate NPR
@@ -404,6 +539,17 @@ Average=Ortalama
 Sum=Toplam
 Delta=Değişim oranı
 RemainToPay=Remain to pay
+=======
+LT1GC=İlave kuruş
+VATRate=KDV Oranı
+VATCode=Vergi Oranı kodu
+VATNPR=KDV Oranı NPR
+DefaultTaxRate=Varsayılan KDV oranı
+Average=Ortalama
+Sum=Toplam
+Delta=Değişim oranı
+RemainToPay=Kalan ödeme
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Module=Modül/Uygulama
 Modules=Modüller/Uygulamalar
 Option=Seçenek
@@ -414,9 +560,15 @@ OtherStatistics=Diğer istatistikler
 Status=Durum
 Favorite=Sık kullanılan
 ShortInfo=Bilgi.
+<<<<<<< HEAD
 Ref=Ref.
 ExternalRef=Ref. stajyer
 RefSupplier=Ref. vendor
+=======
+Ref=Referans No
+ExternalRef=Ref. stajyer
+RefSupplier=Referans tedarikçi
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 RefPayment=Ref. ödeme
 CommercialProposalsShort=Teklifler
 Comment=Açıklama
@@ -429,6 +581,7 @@ ActionRunningNotStarted=Başlayacak
 ActionRunningShort=Devam etmekte
 ActionDoneShort=Bitti
 ActionUncomplete=Tamamlanmamış
+<<<<<<< HEAD
 LatestLinkedEvents=Latest %s linked events
 CompanyFoundation=Şirket/Kuruluş
 Accountant=Accountant
@@ -436,11 +589,25 @@ ContactsForCompany=Bu üçüncü partinin kişileri
 ContactsAddressesForCompany=Bu üçüncü partinin kişleri/adresleri
 AddressesForCompany=Bu üçüncü partinin adresleri
 ActionsOnCompany=Bu üçüncü parti hakkındaki etkinlikler
+=======
+LatestLinkedEvents=Bununla bağlantılı son %s etkinlik
+CompanyFoundation=Şirket/Kuruluş
+Accountant=Muhasebeci
+ContactsForCompany=Bu üçüncü partinin kişileri
+ContactsAddressesForCompany=Bu üçüncü partinin kişleri/adresleri
+AddressesForCompany=Bu üçüncü partinin adresleri
+ActionsOnCompany=Bu üçüncü taraf için etkinlikler
+ActionsOnContact=Bu kişi/adres için etkinlikler
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActionsOnMember=Bu üye hakkındaki etkinlikler
 ActionsOnProduct=Bu ürünle ilgili etkinlikler
 NActionsLate=%s son
 ToDo=Yapılacaklar
+<<<<<<< HEAD
 Completed=Completed
+=======
+Completed=Tamamlanmış
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Running=Devam etmekte
 RequestAlreadyDone=İstek zaten kayıtlı
 Filter=Süzgeç
@@ -453,8 +620,13 @@ Generate=Oluştur
 Duration=Süre
 TotalDuration=Toplam süre
 Summary=Özet
+<<<<<<< HEAD
 DolibarrStateBoard=Veritabanı istatistikleri
 DolibarrWorkBoard=Açık ögeler gösterge tablosu
+=======
+DolibarrStateBoard=Veritabanı İstatistikleri
+DolibarrWorkBoard=Bekleyen İşlemler
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoOpenedElementToProcess=İşlenecek hiçbir açık öğe yok
 Available=Mevcut
 NotYetAvailable=Henüz mevcut değil
@@ -470,7 +642,11 @@ Other=Diğer
 Others=Diğerleri
 OtherInformations=Diğer Bilgiler
 Quantity=Miktar
+<<<<<<< HEAD
 Qty=Mik
+=======
+Qty=Miktar
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ChangedBy=Değiştiren
 ApprovedBy=Onaylayan
 ApprovedBy2=Onaylayan (ikinci onay)
@@ -482,9 +658,17 @@ Reporting=Raporlama
 Reportings=Raporlama
 Draft=Taslak
 Drafts=Taslaklar
+<<<<<<< HEAD
 StatusInterInvoiced=
 Validated=Doğrulanmış
 Opened=Açık
+=======
+StatusInterInvoiced=Faturalanmış
+Validated=Doğrulanmış
+Opened=Açık
+OpenAll=Açık (Tümü)
+ClosedAll=Kapalı (Tümü)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 New=Yeni
 Discount=İndirim
 Unknown=Bilinmeyen
@@ -495,27 +679,45 @@ Received=Alınan
 Paid=Ödenen
 Topic=Konu
 ByCompanies=Üçüncü partilere göre
+<<<<<<< HEAD
 ByUsers=By user
+=======
+ByUsers=Kullanıcılara göre
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Links=Bağlantılar
 Link=Bağlantı
 Rejects=Kusurlular
 Preview=Önizleme
 NextStep=Sonraki adım
+<<<<<<< HEAD
 Datas=Veriler
+=======
+Datas=Veril
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 None=Hiçbiri
 NoneF=Hiçbiri
 NoneOrSeveral=Yok veya Birkaç
 Late=Son
+<<<<<<< HEAD
 LateDesc=Bir kayıdın sizin ayarlarınıza dayanarak gecikmiş olduğu ya da olmadığını tanımlayabilmek için gerekli süre. Yöneticinizden Giriş - Ayarlar - Uyarılar menüsünden süreyi değiştirmesini isteyin.
 NoItemLate=No late item
+=======
+LateDesc=An item is defined as Delayed as per the system configuration in menu Home - Setup - Alerts.
+NoItemLate=Gecikmiş öğe yok
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Photo=Resim
 Photos=Resimler
 AddPhoto=Resim ekle
 DeletePicture=Resim sil
 ConfirmDeletePicture=Resim silmeyi onayla
 Login=Oturum açma
+<<<<<<< HEAD
 LoginEmail=Login (email)
 LoginOrEmail=Login or Email
+=======
+LoginEmail=Giriş (e-posta)
+LoginOrEmail=Oturum açma adı veya E-posta adresi
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrentLogin=Geçerli kullanıcı
 EnterLoginDetail=Giriş bilgilerini giriniz
 January=Ocak
@@ -530,6 +732,7 @@ September=Eylül
 October=Ekim
 November=Kasım
 December=Aralık
+<<<<<<< HEAD
 JanuaryMin=Ara
 FebruaryMin=Şub
 MarchMin=Mar
@@ -542,6 +745,8 @@ SeptemberMin=Eyl
 OctoberMin=Eki
 NovemberMin=Kas
 DecemberMin=Ara
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Month01=Ocak
 Month02=Şubat
 Month03=Mart
@@ -566,6 +771,7 @@ MonthShort09=Eyl
 MonthShort10=Eki
 MonthShort11=Kas
 MonthShort12=Ara
+<<<<<<< HEAD
 MonthVeryShort01=J
 MonthVeryShort02=Cu
 MonthVeryShort03=Pt
@@ -578,6 +784,20 @@ MonthVeryShort09=Pa
 MonthVeryShort10=O
 MonthVeryShort11=N
 MonthVeryShort12=D
+=======
+MonthVeryShort01=Oc
+MonthVeryShort02=Şu
+MonthVeryShort03=Ma
+MonthVeryShort04=Ni
+MonthVeryShort05=Ma
+MonthVeryShort06=Ha
+MonthVeryShort07=Te
+MonthVeryShort08=Ağ
+MonthVeryShort09=Ey
+MonthVeryShort10=Ek
+MonthVeryShort11=Ka
+MonthVeryShort12=Ar
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AttachedFiles=Ekli dosya ve belgeler
 JoinMainDoc=Join main document
 DateFormatYYYYMM=YYYY-AA
@@ -596,7 +816,11 @@ File=Dosya
 Files=Dosyalar
 NotAllowed=İzin verilmez
 ReadPermissionNotAllowed=Okuma izni yok
+<<<<<<< HEAD
 AmountInCurrency=%s para biriminde tutar
+=======
+AmountInCurrency=Para Birimi: %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Example=Örnek
 Examples=Örnekler
 NoExample=Örnek yok
@@ -622,9 +846,15 @@ BuildDoc=Doc oluştur
 Entity=Varlık
 Entities=Varlıklar
 CustomerPreview=Müşteri önizleme
+<<<<<<< HEAD
 SupplierPreview=Vendor preview
 ShowCustomerPreview=Müşteri önizlemeyi göster
 ShowSupplierPreview=Show vendor preview
+=======
+SupplierPreview=Tedarikçi önizlemesi
+ShowCustomerPreview=Müşteri önizlemeyi göster
+ShowSupplierPreview=Tedarikçi önizlemesini göster
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 RefCustomer=Müşteri Ref.
 Currency=Para birimi
 InfoAdmin=Yöneticiler için bilgi
@@ -639,6 +869,7 @@ CloseWindow=Pencereyi kapat
 Response=Yanıt
 Priority=Öncelik
 SendByMail=E-posta ile gönder
+<<<<<<< HEAD
 MailSentBy=E-posta ile gönderildi
 TextUsedInTheMessageBody=Mesaj gövdesinde yazı kullanıldı.
 SendAcknowledgementByMail=Onay epostası gönder
@@ -646,6 +877,16 @@ SendMail=E-posta gönder
 EMail=E-posta
 NoEMail=E-posta yok
 Email=Eposta
+=======
+MailSentBy=E-postayı gönderen
+TextUsedInTheMessageBody=E-posta gövdesi
+SendAcknowledgementByMail=Onay e-postası gönder
+SendMail=E-posta gönder
+Email=E-posta
+NoEMail=E-posta yok
+AlreadyRead=Zaten okundu
+NotRead=Okunmayan
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoMobilePhone=Cep telefonu yok
 Owner=Sahibi
 FollowingConstantsWillBeSubstituted=Aşağıdaki değişmezler uygun değerlerin yerine konacaktır.
@@ -660,6 +901,10 @@ RecordCreatedSuccessfully=Kayıt başarıyla oluşturuldu
 RecordModifiedSuccessfully=Kayıt başarıyla değiştirildi
 RecordsModified=%s kayıt değiştirildi
 RecordsDeleted=%s kayıt silindi
+<<<<<<< HEAD
+=======
+RecordsGenerated=%s kayıt oluşturuldu
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AutomaticCode=Otomatik kod
 FeatureDisabled=Özellik devre dışı
 MoveBox=Ekran etiketini taşı
@@ -670,14 +915,21 @@ Method=Yöntem
 Receive=Al
 CompleteOrNoMoreReceptionExpected=Tamamlandı ya da yapılacak başka şey yok
 ExpectedValue=Beklenen Değer
+<<<<<<< HEAD
 CurrentValue=Geçerli değer
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PartialWoman=Kısmi
 TotalWoman=Toplam
 NeverReceived=Hiç alınmadı
 Canceled=Vazgeçildi
 YouCanChangeValuesForThisListFromDictionarySetup=Bu listenin değerlerini Kurulum - Sözlükler menüsünden değiştirebilirsiniz
 YouCanChangeValuesForThisListFrom=Bu listenin değerlerini %s menüsünden değiştirebilirsiniz
+<<<<<<< HEAD
 YouCanSetDefaultValueInModuleSetup=Modül ayarlarında yeni bir kayıt oluştururken kullanılacak varsayılan değeri belirleybilirsiniz
+=======
+YouCanSetDefaultValueInModuleSetup=Modül ayarlarında yeni bir kayıt oluştururken kullanılan varsayılan değeri ayarlayabilirsiniz
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Color=Renk
 Documents=Bağlı dosyalar
 Documents2=Belgeler
@@ -703,27 +955,46 @@ DateOfSignature=İmza tarihi
 HidePassword=Komutu gizli parola ile göster
 UnHidePassword=Gerçek komutu açık parola ile göster
 Root=Kök
+<<<<<<< HEAD
 Informations=Bilgiler
+=======
+Informations=Bilgi
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Page=Sayfa
 Notes=Notlar
 AddNewLine=Yeni satır ekle
 AddFile=Dosya ekle
+<<<<<<< HEAD
 FreeZone=Not a predefined product/service
 FreeLineOfType=Not a predefined entry of type
 CloneMainAttributes=Nesneyi ana öznitelikleri ile klonla
+=======
+FreeZone=Önceden tanımlanmış bir ürün/hizmet değil
+FreeLineOfType=Serbest metin öğesi, tür:
+CloneMainAttributes=Nesneyi ana öznitelikleri ile klonla
+ReGeneratePDF=PDF'yi yeniden oluştur
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PDFMerge=PDF Birleştir
 Merge=Birleştir
 DocumentModelStandardPDF=Standart PDF şablonu
 PrintContentArea=Yazdırılıcak Sayfanın ana içerik alanını göster
 MenuManager=Menu yöneticisi
+<<<<<<< HEAD
 WarningYouAreInMaintenanceMode=Uyarı, bakım modundasınız, şu anda uygulamayı kullanmak için yalnızca <b>%s</b> girişine izin veriliyor.
+=======
+WarningYouAreInMaintenanceMode=Uyarı: Bakım modundasınız: bu uygulamayı kullanma iznine sadece <b>%s</b> sahiptir.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CoreErrorTitle=Sistem hatası
 CoreErrorMessage=Üzgünüz, bir hata oluştu. Günlükleri kontrol etmek için sistem yöneticinize başvurun veya daha fazla bilgi almak için $dolibarr_main_prod=1 devre dışı bırakın.
 CreditCard=Kredi kartı
 ValidatePayment=Ödeme doğrula
 CreditOrDebitCard=Kredi veya banka kartı
 FieldsWithAreMandatory=<b>%s</b> olan alanları zorunludur
+<<<<<<< HEAD
 FieldsWithIsForPublic=Üyelerin genel listelerinde <b>%s</b> olan alanlar gösterilir. Bunu istemiyorsanız, “genel” kutusundan işareti kaldırın.
+=======
+FieldsWithIsForPublic=Fields with <b>%s</b> are shown in public list of members. If you don't want this, uncheck the "public" box.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AccordingToGeoIPDatabase=(GeoIP dönüşümüne göre)
 Line=Satır
 NotSupported=Desteklenmez
@@ -732,6 +1003,11 @@ Result=Sonuç
 ToTest=Denem
 ValidateBefore=Bu özelliği kullanmadan önce kart doğrulanmalıdır
 Visibility=Görünürlük
+<<<<<<< HEAD
+=======
+Totalizable=Toplanabilir
+TotalizableDesc=Bu alan listede toplanabilir
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Private=Özel
 Hidden=Gizli
 Resources=Kaynaklar
@@ -750,6 +1026,10 @@ LinkTo=Buna bağlantıla
 LinkToProposal=Teklife bağlantıla
 LinkToOrder=Siparişe bağlantıla
 LinkToInvoice=Faturaya bağlantıla
+<<<<<<< HEAD
+=======
+LinkToTemplateInvoice=Şablon faturasına bağlantı
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LinkToSupplierOrder=Tedarikçi siparişine bağlantıla
 LinkToSupplierProposal=Tedarikçi teklifine bağlantıla
 LinkToSupplierInvoice=Tedarikçi faturasına bağlantıla
@@ -758,6 +1038,10 @@ LinkToIntervention=Müdahaleye bağlantıla
 CreateDraft=Taslak oluştur
 SetToDraft=Taslağa geri dön
 ClickToEdit=Düzenlemek için tıklayın
+<<<<<<< HEAD
+=======
+ClickToRefresh=Yenilemek için tıklayın
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 EditWithEditor=CKEditor ile düzenle
 EditWithTextEditor=Metin düzenleyicisiyle düzenle
 EditHTMLSource=HTML Kaynağını Düzenle
@@ -772,13 +1056,21 @@ ByDay=Güne göre
 BySalesRepresentative=Satış temsilcisine göre
 LinkedToSpecificUsers=Belirli bir kullanıcı kişisine bağlantılı
 NoResults=Sonuç yok
+<<<<<<< HEAD
 AdminTools=Yönetici araçları
+=======
+AdminTools=Yönetici Araçları
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SystemTools=Sistem araçları
 ModulesSystemTools=Modül araçları
 Test=Deneme
 Element=Unsur
 NoPhotoYet=Henüz resim yok
+<<<<<<< HEAD
 Dashboard=Kontrol Paneli
+=======
+Dashboard=Gösterge Paneli
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MyDashboard=Gösterge Panelim
 Deductible=Düşülebilir
 from=itibaren
@@ -787,7 +1079,11 @@ Access=Erişim
 SelectAction=Eylem seç
 SelectTargetUser=Hedef kullanıcı/çalışan seçin
 HelpCopyToClipboard=Panoya kopyalamak için Crtl+C
+<<<<<<< HEAD
 SaveUploadedFileWithMask=Dosyayı "<strong>%s</strong>" adlı sunucuya kaydedin (aksi durumda "%s")
+=======
+SaveUploadedFileWithMask=Dosyayı sunucuya "<strong>%s</strong>" adıyla kaydedin (aksi takdirde "%s" kullanılacaktır)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 OriginFileName=Özgün dosya adı
 SetDemandReason=Kaynağı ayarlayın
 SetBankAccount=Banka Hesabı Tanımla
@@ -797,12 +1093,20 @@ XMoreLines=%s gizli satır
 ShowMoreLines=Daha fazla/az satır göster
 PublicUrl=Genel URL
 AddBox=Kutu ekle
+<<<<<<< HEAD
 SelectElementAndClick=Bir öğe seçin ve %s tıklayın
+=======
+SelectElementAndClick=Bir öğe seçin ve %s butonuna tıklayın
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PrintFile=%s Dosyasını Yazdır
 ShowTransaction=Girişi banka hesabında göster
 ShowIntervention=Müdahale göster
 ShowContract=Sözleşmeye bakın
+<<<<<<< HEAD
 GoIntoSetupToChangeLogo=Logoyu değiştirmek için Giriş - Ayarlar - Firma menüsüne ya da gizlemek için Giriş - Ayarlar - Ekran menüsüne git.
+=======
+GoIntoSetupToChangeLogo=Logoyu değiştirmek için Giriş - Ayarlar - Şirket/Kuruluş bölümüne, gizlemek için ise Giriş - Ayarlar - Ekran bölümüne gidin.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Deny=Ret
 Denied=Reddedildi
 ListOf=%s listesi
@@ -818,6 +1122,7 @@ Sincerely=Saygılar
 DeleteLine=Satır sil
 ConfirmDeleteLine=Bu satırı silmek istediğinizden emin misiniz?
 NoPDFAvailableForDocGenAmongChecked=Kontrol edilen kayıtlar arasında doküman üretimi için PDF mevcut değildi
+<<<<<<< HEAD
 TooManyRecordForMassAction=Toplu eylem için çok fazla kayıt seçildi. Eylem %s kayıt listesi ile sınırlıdır.
 NoRecordSelected=Seçilen kayıt yok
 MassFilesArea=Toplu işlemler tarafından yapılan dosyalar için alan
@@ -828,6 +1133,19 @@ RelatedObjects=İlgili Nesneler
 ClassifyBilled=Faturalandı olarak sınıflandır
 ClassifyUnbilled=Classify unbilled
 Progress=İlerleme
+=======
+TooManyRecordForMassAction=Toplu işlem için çok sayıda kayıt seçilmiş. Bu işlem %s kayıt ile sınırlıdır.
+NoRecordSelected=Seçilen kayıt yok
+MassFilesArea=Toplu işlemler tarafından yapılan dosyalar için alan
+ShowTempMassFilesArea=Toplu işlemler tarafından yapılan dosyalar alanını göster
+ConfirmMassDeletion=Toplu Silme onayı
+ConfirmMassDeletionQuestion=Seçilen %s kaydı silmek istediğinizden emin misiniz?
+RelatedObjects=İlgili Nesneler
+ClassifyBilled=Faturalandı olarak sınıflandır
+ClassifyUnbilled=Faturalandırılmamış olarak sınıflandır
+Progress=İlerleme
+ProgressShort=Progr.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 FrontOffice=Ön ofis
 BackOffice=Arka ofis
 View=İzle
@@ -835,25 +1153,48 @@ Export=Dışaaktarım
 Exports=Dışaaktarımlar
 ExportFilteredList=Dışaaktarılan süzülmüş liste
 ExportList=Dışaaktarım listesi
+<<<<<<< HEAD
 ExportOptions=Dışaaktarma seçenekleri
+=======
+ExportOptions=Dışa aktarma Seçenekleri
+IncludeDocsAlreadyExported=Zaten dışa aktarılan dosyaları dahil et
+ExportOfPiecesAlreadyExportedIsEnable=Export of pieces already exported is enable
+ExportOfPiecesAlreadyExportedIsDisable=Export of pieces already exported is disable
+AllExportedMovementsWereRecordedAsExported=All exported movements were recorded as exported
+NotAllExportedMovementsCouldBeRecordedAsExported=Not all exported movements could be recorded as exported
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Miscellaneous=Çeşitli
 Calendar=Takvim
 GroupBy=Gruplandır...
 ViewFlatList=Düz listeyi incele
 RemoveString='%s' dizisini kaldır
+<<<<<<< HEAD
 SomeTranslationAreUncomplete=Bazı diller kısmen tercüme edilmiş veya hatalar içeriyor olabilir. Eğer böyle bir durum tespit ederseniz <a href="https://transifex.com/projects/p/dolibarr/" target="_blank">https://transifex.com/projects/p/dolibarr/</a> adresinden kayıt olarak dil dosyalarını düzeltebilirsiniz.
 DirectDownloadLink=Direct download link (public/external)
 DirectDownloadInternalLink=Direct download link (need to be logged and need permissions)
+=======
+SomeTranslationAreUncomplete=Sunulan dillerden bazıları sadece kısmen çevrilmiş olabilir veya çeviri hatalarına sahip olabilir. Lütfen <a href="https://transifex.com/projects/p/dolibarr/" target="_blank">https://transifex.com/projects/p/dolibarr/</a> adresi üzerinden kayıt yaparak dilinizdeki çeviri hatalarını düzeltmeye yardımcı olun ve yazılımın gelişimine katkıda bulunun.
+DirectDownloadLink=Direkt indirme linki (herkese açık/harici)
+DirectDownloadInternalLink=Direkt indirme linki (giriş yapılmış olmalı ve izin gerekli)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Download=İndir
 DownloadDocument=Belgeyi indir
 ActualizeCurrency=Para birimini güncelle
 Fiscalyear=Mali yıl
+<<<<<<< HEAD
 ModuleBuilder=Module Builder
+=======
+ModuleBuilder=Modül ve Uygulama Oluşturucu
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SetMultiCurrencyCode=Para birimini ayarla
 BulkActions=Toplu eylemler
 ClickToShowHelp=Araç ipucu yardımını göstermek için tıklayın
 WebSite=Web sitesi
+<<<<<<< HEAD
 WebSites=Web siteleri
+=======
+WebSites=Websiteleri
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 WebSiteAccounts=Web sitesi hesapları
 ExpenseReport=Gider raporu
 ExpenseReports=Gider raporları
@@ -861,6 +1202,7 @@ HR=İK
 HRAndBank=İK ve Banka
 AutomaticallyCalculated=Otomatik olarak hesaplandı
 TitleSetToDraft=Taslağa geri dön
+<<<<<<< HEAD
 ConfirmSetToDraft=Taslak durumuna dönmek istediğinizden emin misiniz?
 ImportId=İçe aktarma ID'si
 Events=Etkinlikler
@@ -872,6 +1214,27 @@ Rights=İzinler
 LineNb=Satır no.
 IncotermLabel=Uluslararası Ticaret Terimleri
 # Week day
+=======
+ConfirmSetToDraft=Taslak durumuna geri dönmek istediğinizden emin misiniz?
+ImportId=İçe aktarma ID'si
+Events=Etkinlikler
+EMailTemplates=E-posta şablonları
+FileNotShared=File not shared to external public
+Project=Proje
+Projects=Projeler
+LeadOrProject=Lead | Project
+LeadsOrProjects=Leads | Projects
+Lead=Lead
+Leads=Leads
+ListOpenLeads=List open leads
+ListOpenProjects=Açık projeleri listele
+NewLeadOrProject=New lead or project
+Rights=İzinler
+LineNb=Satır no.
+IncotermLabel=Teslim Koşulları
+TabLetteringCustomer=Customer lettering
+TabLetteringSupplier=Vendor lettering
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Monday=Pazartesi
 Tuesday=Salı
 Wednesday=Çarşamba
@@ -907,7 +1270,11 @@ Select2NotFound=Hiç sonuç bulunamadı
 Select2Enter=Gir
 Select2MoreCharacter=ya da daha fazla harf
 Select2MoreCharacters=ya da daha fazla harf
+<<<<<<< HEAD
 Select2MoreCharactersMore=<strong>Search syntax:</strong><br><kbd><strong> |</strong></kbd><kbd> OR</kbd> (a|b)<br><kbd><strong>*</strong></kbd><kbd> Any character</kbd> (a*b)<br><kbd><strong>^</strong></kbd><kbd> Start with</kbd> (^ab)<br><kbd><strong>$</strong></kbd><kbd> End with</kbd> (ab$)<br>
+=======
+Select2MoreCharactersMore=<strong>Arama sözdizimi:</strong><br><kbd><strong> |</strong></kbd><kbd> VEYA</kbd> (a|b)<br><kbd><strong>*</strong></kbd><kbd>Herhangi bir karakter</kbd> (a*b)<br><kbd><strong>^</strong></kbd><kbd>İle başlayın (^ab)</kbd><br><kbd><strong>$</strong></kbd><kbd> İle biten</kbd> (ab$)<br>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Select2LoadingMoreResults=Daha fazla sonuç yükleniyor...
 Select2SearchInProgress=Arama sürmekte...
 SearchIntoThirdparties=Üçüncü partiler
@@ -918,24 +1285,44 @@ SearchIntoProductsOrServices=Ürünler ya da hizmetler
 SearchIntoProjects=Projeler
 SearchIntoTasks=Görevler
 SearchIntoCustomerInvoices=Müşteri faturaları
+<<<<<<< HEAD
 SearchIntoSupplierInvoices=Vendor invoices
 SearchIntoCustomerOrders=Müşteri siparişleri
 SearchIntoSupplierOrders=Purchase orders
 SearchIntoCustomerProposals=Müşteri teklifleri
 SearchIntoSupplierProposals=Vendor proposals
+=======
+SearchIntoSupplierInvoices=Tedarikçi faturaları
+SearchIntoCustomerOrders=Müşteri siparişleri
+SearchIntoSupplierOrders=Tedarikçi siparişleri
+SearchIntoCustomerProposals=Müşteri teklifleri
+SearchIntoSupplierProposals=Tedarikçi teklifleri
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SearchIntoInterventions=Müdahaleler
 SearchIntoContracts=Sözleşmeler
 SearchIntoCustomerShipments=Müşteri sevkiyatları
 SearchIntoExpenseReports=Gider raporları
+<<<<<<< HEAD
 SearchIntoLeaves=İzinler
 CommentLink=Açıklamalar
 NbComments=Yorum sayısı
 CommentPage=Comments space
+=======
+SearchIntoLeaves=İzin
+SearchIntoTickets=Destek Bildirimleri
+CommentLink=Açıklamalar
+NbComments=Yorum sayısı
+CommentPage=Yorumlar alanı
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CommentAdded=Yorum eklendi
 CommentDeleted=Yorum silindi
 Everybody=Herkes
 PayedBy=Ödeyen
+<<<<<<< HEAD
 PayedTo=Ödenen
+=======
+PayedTo=Paid to
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Monthly=Aylık
 Quarterly=Üç aylık
 Annual=Yıllık
@@ -944,7 +1331,25 @@ Remote=Remote
 LocalAndRemote=Local and Remote
 KeyboardShortcut=Klavye kısayolu
 AssignedTo=Görevlendirilen
+<<<<<<< HEAD
 Deletedraft=Delete draft
 ConfirmMassDraftDeletion=Draft Bulk delete confirmation
 FileSharedViaALink=File shared via a link
 
+=======
+Deletedraft=Taslak sil
+ConfirmMassDraftDeletion=Toplu taslak silme onayı
+FileSharedViaALink=Dosya bir bağlantı üzerinden paylaşıldı
+SelectAThirdPartyFirst=Önce bir üçüncü parti seçin...
+YouAreCurrentlyInSandboxMode=Şu anda %s "sandbox" modundasınız
+Inventory=Envanter
+AnalyticCode=Analitik kod
+TMenuMRP=MRP
+ShowMoreInfos=Daha Fazla Bilgi Göster
+NoFilesUploadedYet=Lütfen önce bir döküman yükleyin
+SeePrivateNote=Özel nota bakın
+PaymentInformation=Ödeme bilgileri
+ValidFrom=Şu tarihten itibaren geçerli
+ValidUntil=Şu tarihe kadar geçerli
+NoRecordedUsers=Kullanıcı yok
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -22,6 +22,7 @@
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled because need to load personalized language
 //if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');	// Not disabled to increase speed. Language code is found on url.
+<<<<<<< HEAD
 if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
 //if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');	// Not disabled because need to do translations
 if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK',1);
@@ -30,6 +31,16 @@ if (! defined('NOLOGIN'))         define('NOLOGIN',1);          // File must be 
 //if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU',1);  // We need top menu content
 if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML',1);
 if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
+=======
+if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
+//if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');	// Not disabled because need to do translations
+if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
+if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
+if (! defined('NOLOGIN'))         define('NOLOGIN', 1);          // File must be accessed by logon page so without login
+//if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU',1);  // We need top menu content
+if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML', 1);
+if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 session_cache_limiter(false);
 
@@ -56,6 +67,7 @@ if (! empty($conf->global->TICKET_SHOW_MODULE_LOGO)) {
 ?>
 }
 
+<<<<<<< HEAD
 body {
     font-size: 0.88em;
     background: none;
@@ -64,6 +76,10 @@ body {
 }
 
 div.corps {
+=======
+
+div.ticketform {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     font-family: arial;
     position: static;
     padding: 2em 1em;
@@ -74,6 +90,7 @@ div.corps {
     border-radius: 10px 10px 10px 10px;
     margin: 1.5em;
     background : #ffffff;
+<<<<<<< HEAD
 
 
 }
@@ -85,6 +102,22 @@ div.corps {
 }
 
 .orange {
+=======
+	text-align: center;
+}
+
+div.ticketform .index_create, .index_display {
+	display: inline-block;
+    width: 200px;
+    height: 58px;
+    text-align: center;
+    vertical-align: middle;
+    margin: 20px;
+    text-transform: uppercase;
+}
+
+div.ticketform .orange {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     color: #fef4e9;
     border: solid 1px #da7c0c;
     background: #f78d1d;
@@ -92,22 +125,34 @@ div.corps {
     background: -moz-linear-gradient(top, #faa51a, #f47a20);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#faa51a', endColorstr='#f47a20');
 }
+<<<<<<< HEAD
 .orange:active {
+=======
+div.ticketform .orange:active {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     color: #fcd3a5;
     background: -webkit-gradient(linear, left top, left bottom, from(#f47a20), to(#faa51a));
     background: -moz-linear-gradient(top, #f47a20, #faa51a);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f47a20', endColorstr='#faa51a');
 }
 
+<<<<<<< HEAD
 .orange:hover {
+=======
+div.ticketform .orange:hover {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     background: #f47c20;
     background: -webkit-gradient(linear, left top, left bottom, from(#f88e11), to(#f06015));
     background: -moz-linear-gradient(top, #f88e11, #f06015);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f88e11', endColorstr='#f06015');
 }
 
+<<<<<<< HEAD
 
 .blue {
+=======
+div.ticketform .blue {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     color: #d9eef7;
     border: solid 1px #0076a3;
     background: #0095cd;
@@ -115,22 +160,35 @@ div.corps {
     background: -moz-linear-gradient(top, #00adee, #0078a5);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00adee', endColorstr='#0078a5');
 }
+<<<<<<< HEAD
 .blue:active {
+=======
+div.ticketform .blue:active {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     color: #80bed6;
     background: -webkit-gradient(linear, left top, left bottom, from(#0078a5), to(#00adee));
     background: -moz-linear-gradient(top, #0078a5, #00adee);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0078a5', endColorstr='#00adee');
 }
+<<<<<<< HEAD
 .blue:hover {
+=======
+div.ticketform .blue:hover {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     background: #007ead;
     background: -webkit-gradient(linear, left top, left bottom, from(#0095cc), to(#00678e));
     background: -moz-linear-gradient(top, #0095cc, #00678e);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0095cc', endColorstr='#00678e');
 }
 
+<<<<<<< HEAD
 #form_create_ticket,
 #form_view_ticket {
 
+=======
+#form_create_ticket, #form_view_ticket
+{
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     margin-left: 10px;
     margin-right: 10px;
     padding-left:1em;

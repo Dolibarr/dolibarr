@@ -1,8 +1,13 @@
 -- ========================================================================
 -- Copyright (C) 2001-2004	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
 -- Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
+<<<<<<< HEAD
 -- Copyright (C) 2014		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
 -- Copyright (C) 2017		Regis Houssin			<regis.houssin@capnetworks.com>
+=======
+-- Copyright (C) 2014		Alexandre Spangaro		<aspangaro@open-dsi.fr>
+-- Copyright (C) 2017		Regis Houssin			<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by

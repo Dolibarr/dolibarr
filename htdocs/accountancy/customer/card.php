@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
+<<<<<<< HEAD
  * Copyright (C) 2013-2017 Alexandre Spangaro	<aspangaro@zendsi.com>
+=======
+ * Copyright (C) 2013-2017 Alexandre Spangaro	<aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +23,11 @@
 
 /**
  * \file 	htdocs/accountancy/customer/card.php
+<<<<<<< HEAD
  * \ingroup Advanced accountancy
+=======
+ * \ingroup Accountancy (Double entries)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * \brief 	Card customer ventilation
  */
 require '../../main.inc.php';
@@ -94,7 +102,11 @@ $facture_static = new Facture($db);
 $formaccounting = new FormAccounting($db);
 
 if (! empty($id)) {
+<<<<<<< HEAD
 	$sql = "SELECT f.facnumber, f.rowid as facid, l.fk_product, l.description, l.price,";
+=======
+	$sql = "SELECT f.ref, f.rowid as facid, l.fk_product, l.description, l.price,";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$sql .= " l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice, p.accountancy_code_sell as code_sell,";
 	$sql .= " l.fk_code_ventilation, aa.account_number, aa.label";
 	$sql .= " FROM " . MAIN_DB_PREFIX . "facturedet as l";
@@ -102,7 +114,11 @@ if (! empty($id)) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON l.fk_code_ventilation = aa.rowid";
 	$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = l.fk_facture";
 	$sql .= " WHERE f.fk_statut > 0 AND l.rowid = " . $id;
+<<<<<<< HEAD
 	$sql .= " AND f.entity IN (" . getEntity('facture', 0) . ")"; // We don't share object for accountancy
+=======
+	$sql .= " AND f.entity IN (" . getEntity('invoice', 0) . ")"; // We don't share object for accountancy
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	dol_syslog("/accounting/customer/card.php sql=" . $sql, LOG_DEBUG);
 	$result = $db->query($sql);
@@ -128,7 +144,11 @@ if (! empty($id)) {
 
 			// Ref facture
 			print '<tr><td>' . $langs->trans("Invoice") . '</td>';
+<<<<<<< HEAD
 			$facture_static->ref = $objp->facnumber;
+=======
+			$facture_static->ref = $objp->ref;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$facture_static->id = $objp->facid;
 			print '<td>' . $facture_static->getNomUrl(1) . '</td>';
 			print '</tr>';
@@ -159,5 +179,9 @@ if (! empty($id)) {
 	print "Error ID incorrect";
 }
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2017  Laurent Destailleur  <eldy@users.sourceforge.net>
+=======
+/* Copyright (C) 2017-2019  Laurent Destailleur  <eldy@users.sourceforge.net>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,24 +42,42 @@ $object->fields = dol_sort_array($object->fields, 'position');
 foreach($object->fields as $key => $val)
 {
 	// Discard if extrafield is a hidden field on form
+<<<<<<< HEAD
 	if (abs($val['visible']) != 1) continue;
 
 	if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! $val['enabled']) continue;	// We don't want this field
+=======
+    if (abs($val['visible']) != 1 && abs($val['visible']) != 4) continue;
+
+	if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! verifCond($val['enabled'])) continue;	// We don't want this field
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	print '<tr><td';
 	print ' class="titlefieldcreate';
 	if ($val['notnull'] > 0) print ' fieldrequired';
 	if ($val['type'] == 'text' || $val['type'] == 'html') print ' tdtop';
 	print '">';
+<<<<<<< HEAD
 	if (! empty($val['help'])) print $form->textwithpicto($langs->trans($val['label']), $val['help']);
+=======
+	if (! empty($val['help'])) print $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	else print $langs->trans($val['label']);
 	print '</td>';
 	print '<td>';
 	if (in_array($val['type'], array('int', 'integer'))) $value = GETPOSTISSET($key)?GETPOST($key, 'int'):$object->$key;
+<<<<<<< HEAD
 	elseif ($val['type'] == 'text' || $val['type'] == 'html') $value = GETPOSTISSET($key)?GETPOST($key,'none'):$object->$key;
 	else $value = GETPOSTISSET($key)?GETPOST($key, 'alpha'):$object->$key;
 	//var_dump($val.' '.$key.' '.$value);
 	print $object->showInputField($val, $key, $value, '', '', '', 0);
+=======
+	elseif ($val['type'] == 'text' || $val['type'] == 'html') $value = GETPOSTISSET($key)?GETPOST($key, 'none'):$object->$key;
+	else $value = GETPOSTISSET($key)?GETPOST($key, 'alpha'):$object->$key;
+	//var_dump($val.' '.$key.' '.$value);
+	if ($val['noteditable']) print $object->showOutputField($val, $key, $value, '', '', '', 0);
+	else print $object->showInputField($val, $key, $value, '', '', '', 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</td>';
 	print '</tr>';
 }

@@ -122,7 +122,11 @@ function ordered($product_id)
 	$sql .= ' ON cfd.fk_commande = cf.rowid WHERE';
 	if ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) {
 		$sql .= ' cf.fk_statut < 3';
+<<<<<<< HEAD
 	} else if ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) {
+=======
+	} elseif ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql .= ' cf.fk_statut < 6 AND cf.rowid NOT IN ' . dispatchedOrders();
 	} else {
 		$sql .= ' cf.fk_statut < 5';
@@ -172,4 +176,7 @@ function getProducts($order_id)
     }
     return $products;
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

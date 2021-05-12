@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2016		Jamal Elbaz			<jamelbaz@gmail.pro>
+<<<<<<< HEAD
  * Copyright (C) 2017		Alexandre Spangaro	<aspangaro@zendsi.com>
+=======
+ * Copyright (C) 2017		Alexandre Spangaro	<aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +22,11 @@
 
 /**
  * \file	htdocs/accountancy/admin/categories.php
+<<<<<<< HEAD
  * \ingroup Advanced accountancy
+=======
+ * \ingroup Accountancy (Double entries)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * \brief	Page to assign mass categories to accounts
  */
 
@@ -35,11 +43,19 @@ $langs->loadLangs(array("bills","accountancy"));
 $mesg = '';
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
+<<<<<<< HEAD
 $cancel = GETPOST('cancel','alpha');
 $action = GETPOST('action','aZ09');
 $cat_id = GETPOST('account_category');
 $selectcpt = GETPOST('cpt_bk', 'array');
 $cpt_id = GETPOST('cptid');
+=======
+$cancel = GETPOST('cancel', 'alpha');
+$action = GETPOST('action', 'aZ09');
+$cat_id = GETPOST('account_category', 'int');
+$selectcpt = GETPOST('cpt_bk', 'array');
+$cpt_id = GETPOST('cptid', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if ($cat_id == 0) {
 	$cat_id = null;
@@ -60,8 +76,13 @@ $accountingcategory = new AccountancyCategory($db);
 
 // si ajout de comptes
 if (! empty($selectcpt)) {
+<<<<<<< HEAD
 	$cpts = array ();
 	foreach ( $selectcpt as $selectedoption ) {
+=======
+	$cpts = array();
+	foreach ($selectcpt as $selectedoption) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if (! array_key_exists($selectedoption, $cpts))
 			$cpts[$selectedoption] = "'" . $selectedoption . "'";
 	}
@@ -71,13 +92,21 @@ if (! empty($selectcpt)) {
 	if ($return<0) {
 		setEventMessages($langs->trans('errors'), $accountingcategory->errors, 'errors');
 	} else {
+<<<<<<< HEAD
 		setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
+=======
+		setEventMessages($langs->trans('RecordModifiedSuccessfully'), null, 'mesgs');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 }
 if ($action == 'delete') {
 	if ($cpt_id) {
 		if ($accountingcategory->deleteCptCat($cpt_id)) {
+<<<<<<< HEAD
 			setEventMessages($langs->trans('CategoryDeleted'), null, 'mesgs');
+=======
+			setEventMessages($langs->trans('AccountRemovedFromGroup'), null, 'mesgs');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		} else {
 			setEventMessages($langs->trans('errors'), null, 'errors');
 		}
@@ -167,6 +196,7 @@ if ($action == 'display' || $action == 'delete') {
 		}
 
 		if (is_array($accountingcategory->lines_display) && count($accountingcategory->lines_display) > 0) {
+<<<<<<< HEAD
 			foreach ( $accountingcategory->lines_display as $cpt ) {
 				print '<tr class="oddeven">';
 				print '<td>' . length_accountg($cpt->account_number) . '</td>';
@@ -175,6 +205,17 @@ if ($action == 'display' || $action == 'delete') {
 				print "<a href= '".$_SERVER['PHP_SELF']."?action=delete&account_category=" . $cat_id . "&cptid=" . $cpt->rowid."'>";
 				print img_delete($langs->trans("DeleteFromCat")).' ';
 				print $langs->trans("DeleteFromCat")."</a>";
+=======
+			foreach ($accountingcategory->lines_display as $cpt) {
+				print '<tr class="oddeven">';
+				print '<td>' . length_accountg($cpt->account_number) . '</td>';
+				print '<td>' . $cpt->label . '</td>';
+				print '<td class="right">';
+				print "<a href= '".$_SERVER['PHP_SELF']."?action=delete&account_category=" . $cat_id . "&cptid=" . $cpt->rowid."'>";
+				print $langs->trans("DeleteFromCat");
+				print img_picto($langs->trans("DeleteFromCat"), 'unlink');
+				print "</a>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				print "</td>";
 				print "</tr>\n";
 			}
@@ -184,6 +225,11 @@ if ($action == 'display' || $action == 'delete') {
 	print "</table>";
 }
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

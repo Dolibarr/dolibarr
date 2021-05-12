@@ -3,7 +3,11 @@
  * Copyright (C) 2003      Jean-Louis Bergamo    <jlb@j1b.org>
  * Copyright (C) 2004-2013 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
+<<<<<<< HEAD
  * Copyright (C) 2005-2007 Regis Houssin         <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2007 Regis Houssin         <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,12 +32,19 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
+<<<<<<< HEAD
 $langs->load("admin");
 $langs->load("help");
 $langs->load("members");
 $langs->load("other");
 
 $action=GETPOST('action','alpha');
+=======
+// Load translation files required by the page
+$langs->loadLangs(array("help","members","other","admin"));
+
+$action=GETPOST('action', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if (! $user->admin) accessforbidden();
 
@@ -55,9 +66,15 @@ $version='0.0';
 llxHeader();
 
 
+<<<<<<< HEAD
 print load_fiche_titre($langs->trans("ExternalResources"),'','title_setup');
 
 print '<div style="padding-left: 30px;">'.img_picto_common('', 'dolibarr_box.png','height="120"').'</div>';
+=======
+print load_fiche_titre($langs->trans("ExternalResources"), '', 'title_setup');
+
+print '<div style="padding-left: 30px;">'.img_picto_common('', 'dolibarr_box.png', 'height="120"').'</div>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 
@@ -85,31 +102,51 @@ print '<li>';
 print '<a target="_blank" href="https://www.dolibarr.org/" rel="external">'.$langs->trans("OfficialWebSite").'</a>';
 print '</li>';
 // Show local site
+<<<<<<< HEAD
 if (preg_match('/^fr_/i',$langs->getDefaultLang()))
+=======
+if (preg_match('/^fr_/i', $langs->getDefaultLang()))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	print '<li>';
 	print '<a target="_blank" href="http://www.dolibarr.fr/" rel="external">'.$langs->trans("OfficialWebSiteLocal", $langs->transnoentitiesnoconv("France")).'</a>';
 	print '</li>';
 }
+<<<<<<< HEAD
 if (preg_match('/^el_/i',$langs->getDefaultLang()))
+=======
+if (preg_match('/^el_/i', $langs->getDefaultLang()))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	print '<li>';
 	print '<a target="_blank" href="http://www.dolibarr.gr/" rel="external">'.$langs->trans("OfficialWebSiteLocal", $langs->transnoentitiesnoconv("Greece")).'</a>';
 	print '</li>';
 }
+<<<<<<< HEAD
 if (preg_match('/^es_/i',$langs->getDefaultLang()))
+=======
+if (preg_match('/^es_/i', $langs->getDefaultLang()))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	print '<li>';
 	print '<a target="_blank" href="http://www.dolibarr.es/" rel="external">'.$langs->trans("OfficialWebSiteLocal", $langs->transnoentitiesnoconv("Spain")).'</a>';
 	print '</li>';
 }
+<<<<<<< HEAD
 if (preg_match('/^it_/i',$langs->getDefaultLang()))
+=======
+if (preg_match('/^it_/i', $langs->getDefaultLang()))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	print '<li>';
 	print '<a target="_blank" href="http://www.dolibarr.it/" rel="external">'.$langs->trans("OfficialWebSiteLocal", $langs->transnoentitiesnoconv("Italy")).'</a>';
 	print '</li>';
 }
+<<<<<<< HEAD
 if (preg_match('/^de_/i',$langs->getDefaultLang()))
+=======
+if (preg_match('/^de_/i', $langs->getDefaultLang()))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	print '<li>';
 	print '<a target="_blank" href="http://www.dolibarr.de/" rel="external">'.$langs->trans("OfficialWebSiteLocal", $langs->transnoentitiesnoconv("Germany")).'</a>';
@@ -151,8 +188,13 @@ print $langs->trans("Foundation").':';
 
 print '<ul>';
 $url='https://wiki.dolibarr.org/index.php/Subscribe';
+<<<<<<< HEAD
 if (preg_match('/^fr_/i',$langs->getDefaultLang())) $url='https://wiki.dolibarr.org/index.php/Adh%C3%A9rer';
 if (preg_match('/^es_/i',$langs->getDefaultLang())) $url='https://wiki.dolibarr.org/index.php/Subscribirse';
+=======
+if (preg_match('/^fr_/i', $langs->getDefaultLang())) $url='https://wiki.dolibarr.org/index.php/Adh%C3%A9rer';
+if (preg_match('/^es_/i', $langs->getDefaultLang())) $url='https://wiki.dolibarr.org/index.php/Subscribirse';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '<li><a href="'.$url.'" target="_blank" rel="external">'.$langs->trans("SubscribeToFoundation").'</a></li>';
 print '</ul>';
 
@@ -171,8 +213,13 @@ print $langs->trans("OtherResources").':';
 print '<ul>';
 
 $url='https://saas.dolibarr.org'; $title=$langs->trans("OfficialWebHostingService");
+<<<<<<< HEAD
 if (preg_match('/^fr_/i',$langs->getDefaultLang())) $url='https://wiki.dolibarr.org/index.php/Solutions_de_Cloud';
 if (preg_match('/^es_/i',$langs->getDefaultLang())) $url='https://wiki.dolibarr.org/index.php/Soluciones_en_la_Nube';
+=======
+if (preg_match('/^fr_/i', $langs->getDefaultLang())) $url='https://wiki.dolibarr.org/index.php/Solutions_de_Cloud';
+if (preg_match('/^es_/i', $langs->getDefaultLang())) $url='https://wiki.dolibarr.org/index.php/Soluciones_en_la_Nube';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '<li>';
 print '<a target="_blank" href="'.$url.'" rel="external">'.$title.'</a>';
 print '</li>';
@@ -196,7 +243,11 @@ if ($showpromotemessage)
     {
         print '<br>';
         print '<br>';
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         if ((empty($tmp[2]) && (strpos($tmp[1], '0') === 0)) || (strpos($tmp[2], '0') === 0))
         {
             print $langs->trans("TitleExampleForMajorRelease").':<br>';
@@ -214,7 +265,12 @@ if ($showpromotemessage)
     }
 }
 
+<<<<<<< HEAD
 
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

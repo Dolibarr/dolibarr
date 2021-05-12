@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,8 +30,13 @@
  *		\brief      File to offer a way to make an online signature for a particular Dolibarr entity
  */
 
+<<<<<<< HEAD
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+=======
+define("NOLOGIN", 1);		// This means this output page does not require to be logged.
+define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
@@ -44,6 +53,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 // Security check
 // No check on module enabled. Done later according to $validpaymentmethod
 
+<<<<<<< HEAD
 $langs->load("main");
 $langs->load("other");
 $langs->load("dict");
@@ -53,6 +63,11 @@ $langs->load("errors");
 $langs->load("paybox");     // File with generic data
 
 $action=GETPOST('action','alpha');
+=======
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "paybox"));
+
+$action=GETPOST('action', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Input are:
 // type ('invoice','order','contractline'),
@@ -61,9 +76,15 @@ $action=GETPOST('action','alpha');
 // tag (a free text, required if type is empty)
 // currency (iso code)
 
+<<<<<<< HEAD
 $suffix=GETPOST("suffix",'alpha');
 $source=GETPOST("source",'alpha');
 $ref=$REF=GETPOST("ref",'alpha');
+=======
+$suffix=GETPOST("suffix", 'alpha');
+$source=GETPOST("source", 'alpha');
+$ref=$REF=GETPOST("ref", 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if (empty($source)) $source='proposal';
 
@@ -112,8 +133,13 @@ if (! empty($entity))
 	$urlok.='entity='.urlencode($entity).'&';
 	$urlko.='entity='.urlencode($entity).'&';
 }
+<<<<<<< HEAD
 $urlok=preg_replace('/&$/','',$urlok);  // Remove last &
 $urlko=preg_replace('/&$/','',$urlko);  // Remove last &
+=======
+$urlok=preg_replace('/&$/', '', $urlok);  // Remove last &
+$urlko=preg_replace('/&$/', '', $urlko);  // Remove last &
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $creditor = $mysoc->name;
 
@@ -126,7 +152,10 @@ $creditor = $mysoc->name;
 if ($action == 'dosign')
 {
     // TODO
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 
@@ -147,6 +176,10 @@ if (! empty($source) && in_array($ref, array('member_ref', 'contractline_ref', '
 {
     $langs->load("errors");
     dol_print_error_email('BADREFINONLINESIGNFORM', $langs->trans("ErrorBadLinkSourceSetButBadValueForRef", $source, $ref));
+<<<<<<< HEAD
+=======
+    // End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     llxFooter();
     $db->close();
     exit;
@@ -157,8 +190,13 @@ print '<div class="center">'."\n";
 print '<form id="dolpaymentform" class="center" name="paymentform" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
 print '<input type="hidden" name="action" value="dosign">'."\n";
+<<<<<<< HEAD
 print '<input type="hidden" name="tag" value="'.GETPOST("tag",'alpha').'">'."\n";
 print '<input type="hidden" name="suffix" value="'.GETPOST("suffix",'alpha').'">'."\n";
+=======
+print '<input type="hidden" name="tag" value="'.GETPOST("tag", 'alpha').'">'."\n";
+print '<input type="hidden" name="suffix" value="'.GETPOST("suffix", 'alpha').'">'."\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '<input type="hidden" name="securekey" value="'.$SECUREKEY.'">'."\n";
 print '<input type="hidden" name="entity" value="'.$entity.'" />';
 print "\n";
@@ -173,17 +211,29 @@ $logosmall=$mysoc->logo_small;
 $logo=$mysoc->logo;
 $paramlogo='ONLINE_SIGN_LOGO_'.$suffix;
 if (! empty($conf->global->$paramlogo)) $logosmall=$conf->global->$paramlogo;
+<<<<<<< HEAD
 else if (! empty($conf->global->ONLINE_SIGN_LOGO)) $logosmall=$conf->global->ONLINE_SIGN_LOGO;
+=======
+elseif (! empty($conf->global->ONLINE_SIGN_LOGO)) $logosmall=$conf->global->ONLINE_SIGN_LOGO;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 //print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 // Define urllogo
 $urllogo='';
 if (! empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall))
 {
+<<<<<<< HEAD
 	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('thumbs/'.$logosmall);
 }
 elseif (! empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo))
 {
 	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode($logo);
+=======
+	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$logosmall);
+}
+elseif (! empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo))
+{
+	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$logo);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$width=96;
 }
 // Output html code for logo
@@ -201,14 +251,22 @@ $text='';
 if (! empty($conf->global->ONLINE_SIGN_NEWFORM_TEXT))
 {
     $langs->load("members");
+<<<<<<< HEAD
     if (preg_match('/^\((.*)\)$/',$conf->global->ONLINE_SIGN_NEWFORM_TEXT,$reg)) $text.=$langs->trans($reg[1])."<br>\n";
+=======
+    if (preg_match('/^\((.*)\)$/', $conf->global->ONLINE_SIGN_NEWFORM_TEXT, $reg)) $text.=$langs->trans($reg[1])."<br>\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     else $text.=$conf->global->ONLINE_SIGN_NEWFORM_TEXT."<br>\n";
     $text='<tr><td align="center"><br>'.$text.'<br></td></tr>'."\n";
 }
 if (empty($text))
 {
     $text.='<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnOnlineSignaturePage", $mysoc->name).'</strong></td></tr>'."\n";
+<<<<<<< HEAD
     $text.='<tr><td class="textpublicpayment">'.$langs->trans("ThisScreenAllowsYouToSignDocFrom",$creditor).'<br><br></td></tr>'."\n";
+=======
+    $text.='<tr><td class="textpublicpayment">'.$langs->trans("ThisScreenAllowsYouToSignDocFrom", $creditor).'<br><br></td></tr>'."\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 print $text;
 
@@ -230,7 +288,11 @@ if ($source == 'proposal')
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 
 	$proposal=new Propal($db);
+<<<<<<< HEAD
 	$result=$proposal->fetch('',$ref);
+=======
+	$result=$proposal->fetch('', $ref);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if ($result <= 0)
 	{
 		$mesg=$proposal->error;
@@ -255,6 +317,7 @@ if ($source == 'proposal')
 
 	// Object
 
+<<<<<<< HEAD
 	$text='<b>'.$langs->trans("SignatureProposalRef",$proposal->ref).'</b>';
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
@@ -263,6 +326,14 @@ if ($source == 'proposal')
 	print '</td></tr>'."\n";
 
 
+=======
+	$text='<b>'.$langs->trans("SignatureProposalRef", $proposal->ref).'</b>';
+	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
+	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
+	print '<input type="hidden" name="source" value="'.GETPOST("source", 'alpha').'">';
+	print '<input type="hidden" name="ref" value="'.$proposal->ref.'">';
+	print '</td></tr>'."\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 
@@ -299,7 +370,11 @@ print '</div>'."\n";
 print '<br>';
 
 
+<<<<<<< HEAD
 htmlPrintOnlinePaymentFooter($mysoc,$langs);
+=======
+htmlPrintOnlinePaymentFooter($mysoc, $langs);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 llxFooter('', 'public');
 

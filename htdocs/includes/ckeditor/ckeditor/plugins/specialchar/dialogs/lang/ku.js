@@ -1,6 +1,11 @@
 ﻿/*
+<<<<<<< HEAD
  Copyright (c) 2003-2017, CKSource - Frederico Knabben. All rights reserved.
  For licensing, see LICENSE.md or http://ckeditor.com/license
+=======
+ Copyright (c) 2003-2019, CKSource - Frederico Knabben. All rights reserved.
+ For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 */
 CKEDITOR.plugins.setLang("specialchar","ku",{euro:"نیشانەی یۆرۆ",lsquo:"نیشانەی فاریزەی سەرووژێری تاکی چەپ",rsquo:"نیشانەی فاریزەی سەرووژێری تاکی ڕاست",ldquo:"نیشانەی فاریزەی سەرووژێری دووهێندەی چه‌پ",rdquo:"نیشانەی فاریزەی سەرووژێری دووهێندەی ڕاست",ndash:"تەقەڵی کورت",mdash:"تەقەڵی درێژ",iexcl:"نیشانەی هەڵەوگێڕی سەرسوڕهێنەر",cent:"نیشانەی سەنت",pound:"نیشانەی پاوەند",curren:"نیشانەی دراو",yen:"نیشانەی یەنی ژاپۆنی",brvbar:"شریتی ئەستوونی پچڕاو",sect:"نیشانەی دوو s لەسەریەک",uml:"خاڵ",copy:"نیشانەی مافی چاپ",
 ordf:"هێڵ لەسەر پیتی a",laquo:"دوو تیری بەدووایەکی چەپ",not:"نیشانەی نەخێر",reg:"نیشانەی R لەناو بازنەدا",macr:"ماکڕۆن",deg:"نیشانەی پلە",sup2:"سەرنووسی دوو",sup3:"سەرنووسی سێ",acute:"لاری تیژ",micro:"نیشانەی u لق درێژی چەپی خواروو",para:"نیشانەی پەڕەگراف",middot:"ناوەڕاستی خاڵ",cedil:"نیشانەی c ژێر چووکرە",sup1:"سەرنووسی یەک",ordm:"هێڵ لەژێر پیتی o",raquo:"دوو تیری بەدووایەکی ڕاست",frac14:"یەک لەسەر چووار",frac12:"یەک لەسەر دوو",frac34:"سێ لەسەر چووار",iquest:"هێمای هەڵەوگێری پرسیار",Agrave:"پیتی لاتینی A-ی گەورە لەگەڵ ڕوومەتداری لار",

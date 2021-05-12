@@ -1,10 +1,19 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018		Frédéric France		<frederic.france@netlogic.fr>
+=======
+/* Copyright (C) 2003       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2015-2017  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,16 +35,28 @@
  *  \brief      	Page for trip and expense report card
  */
 
+<<<<<<< HEAD
 $res=0;
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+<<<<<<< HEAD
 require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/expensereport.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/price.lib.php';
+=======
+require_once DOL_DOCUMENT_ROOT . '/ecm/class/ecmfiles.class.php';
+require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/expensereport.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/price.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/images.lib.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 require_once DOL_DOCUMENT_ROOT . '/core/modules/expensereport/modules_expensereport.php';
 require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT . '/expensereport/class/paymentexpensereport.class.php';
@@ -48,6 +69,7 @@ if (! empty($conf->accounting->enabled)) {
 // Load translation files required by the page
 $langs->loadLangs(array("trips","bills","mails"));
 
+<<<<<<< HEAD
 $action=GETPOST('action','aZ09');
 $cancel=GETPOST('cancel','alpha');
 $confirm = GETPOST('confirm', 'alpha');
@@ -66,6 +88,28 @@ $socid = GETPOST('socid','int')?GETPOST('socid','int'):GETPOST('socid_id','int')
 $id=GETPOST("id",'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'expensereport', 0, 'expensereport');
+=======
+$action=GETPOST('action', 'aZ09');
+$cancel=GETPOST('cancel', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
+
+$date_start = dol_mktime(0, 0, 0, GETPOST('date_debutmonth', 'int'), GETPOST('date_debutday', 'int'), GETPOST('date_debutyear', 'int'));
+$date_end = dol_mktime(0, 0, 0, GETPOST('date_finmonth', 'int'), GETPOST('date_finday', 'int'), GETPOST('date_finyear', 'int'));
+$date = dol_mktime(0, 0, 0, GETPOST('datemonth', 'int'), GETPOST('dateday', 'int'), GETPOST('dateyear', 'int'));
+$fk_projet=GETPOST('fk_projet', 'int');
+$vatrate=GETPOST('vatrate', 'alpha');
+$ref=GETPOST("ref", 'alpha');
+$comments=GETPOST('comments', 'none');
+$fk_c_type_fees=GETPOST('fk_c_type_fees', 'int');
+$socid = GETPOST('socid', 'int')?GETPOST('socid', 'int'):GETPOST('socid_id', 'int');
+
+$childids = $user->getAllChildIds(1);
+
+// Security check
+$id=GETPOST("id", 'int');
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'expensereport', $id, 'expensereport');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 // Hack to use expensereport dir
@@ -79,7 +123,11 @@ if (! empty($conf->multicompany->enabled) && ! empty($conf->entity) && $conf->en
 $conf->expensereport->dir_output = $rootfordata.'/expensereport';
 
 // Define $urlwithroot
+<<<<<<< HEAD
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+=======
+$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
@@ -106,6 +154,23 @@ $permissiondellink = $user->rights->expensereport->creer; 	// Used by the includ
 $permissionedit = $user->rights->expensereport->creer; 		// Used by the include of actions_lineupdown.inc.php
 
 
+<<<<<<< HEAD
+=======
+$upload_dir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($object->ref);
+
+
+if ($object->id > 0)
+{
+    // Check current user can read this expense report
+    $canread = 0;
+    if (! empty($user->rights->expensereport->readall)) $canread=1;
+    if (! empty($user->rights->expensereport->lire) && in_array($object->fk_user_author, $childids)) $canread=1;
+    if (! $canread)
+    {
+        accessforbidden();
+    }
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 /*
@@ -133,11 +198,26 @@ if (empty($reshook))
     	$date='';
     	$comments='';
     	$vatrate='';
+<<<<<<< HEAD
+=======
+    	$value_unit_ht='';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	$value_unit='';
     	$qty=1;
     	$fk_c_type_fees=-1;
 	}
 
+<<<<<<< HEAD
+=======
+	include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+
+	if (GETPOSTISSET('sendit'))    // If we just submit a file
+	{
+	    if ($action == 'updateline') $action='editline';   // To avoid to make the updateline now
+	    else $action='';                                   // To avoid to make the addline now
+	}
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; 	// Must be include, not include_once
 
     include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
@@ -147,7 +227,11 @@ if (empty($reshook))
     // Action clone object
     if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->expensereport->creer)
     {
+<<<<<<< HEAD
         if (1==0 && ! GETPOST('clone_content','alpha') && ! GETPOST('clone_receivers','alpha'))
+=======
+        if (1==0 && ! GETPOST('clone_content', 'alpha') && ! GETPOST('clone_receivers', 'alpha'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         {
             setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
         }
@@ -158,7 +242,11 @@ if (empty($reshook))
                 // Because createFromClone modifies the object, we must clone it so that we can restore it later if it fails
                 $orig = clone $object;
 
+<<<<<<< HEAD
                 $result=$object->createFromClone(GETPOST('fk_user_author','int'));
+=======
+                $result=$object->createFromClone($user, GETPOST('fk_user_author', 'int'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 if ($result > 0)
                 {
                     header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
@@ -174,7 +262,11 @@ if (empty($reshook))
         }
     }
 
+<<<<<<< HEAD
     if ($action == 'confirm_delete' && GETPOST("confirm",'alpha') == "yes" && $id > 0 && $user->rights->expensereport->supprimer)
+=======
+    if ($action == 'confirm_delete' && GETPOST("confirm", 'alpha') == "yes" && $id > 0 && $user->rights->expensereport->supprimer)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
     	$object = new ExpenseReport($db);
     	$result = $object->fetch($id);
@@ -197,17 +289,28 @@ if (empty($reshook))
     	$object->date_debut = $date_start;
     	$object->date_fin = $date_end;
 
+<<<<<<< HEAD
     	$object->fk_user_author             = GETPOST('fk_user_author','int');
+=======
+    	$object->fk_user_author             = GETPOST('fk_user_author', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	if (! ($object->fk_user_author > 0)) $object->fk_user_author = $user->id;
 
     	$fuser=new User($db);
     	$fuser->fetch($object->fk_user_author);
 
     	$object->fk_statut = 1;
+<<<<<<< HEAD
     	$object->fk_c_paiement				= GETPOST('fk_c_paiement','int');
     	$object->fk_user_validator			= GETPOST('fk_user_validator','int');
     	$object->note_public				= GETPOST('note_public','none');
     	$object->note_private				= GETPOST('note_private','none');
+=======
+    	$object->fk_c_paiement				= GETPOST('fk_c_paiement', 'int');
+    	$object->fk_user_validator			= GETPOST('fk_user_validator', 'int');
+    	$object->note_public				= GETPOST('note_public', 'none');
+    	$object->note_private				= GETPOST('note_private', 'none');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	// Fill array 'array_options' with data from add form
     	if (! $error)
     	{
@@ -215,7 +318,11 @@ if (empty($reshook))
     	    if ($ret < 0) $error++;
     	}
 
+<<<<<<< HEAD
     	if (empty($conf->global->EXPENSEREPORT_ALLOW_OVERLAPPING_PERIODS) && $object->periode_existe($fuser,$object->date_debut,$object->date_fin))
+=======
+    	if (! $error && empty($conf->global->EXPENSEREPORT_ALLOW_OVERLAPPING_PERIODS) && $object->periode_existe($fuser, $object->date_debut, $object->date_fin))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	{
     		$error++;
     		setEventMessages($langs->trans("ErrorDoubleDeclaration"), null, 'errors');
@@ -257,12 +364,21 @@ if (empty($reshook))
 
     	if($object->fk_statut < 3)
     	{
+<<<<<<< HEAD
     		$object->fk_user_validator = GETPOST('fk_user_validator','int');
     	}
 
     	$object->fk_c_paiement = GETPOST('fk_c_paiement','int');
     	$object->note_public = GETPOST('note_public','none');
     	$object->note_private = GETPOST('note_private','none');
+=======
+    		$object->fk_user_validator = GETPOST('fk_user_validator', 'int');
+    	}
+
+    	$object->fk_c_paiement = GETPOST('fk_c_paiement', 'int');
+    	$object->note_public = GETPOST('note_public', 'none');
+    	$object->note_private = GETPOST('note_private', 'none');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	$object->fk_user_modif = $user->id;
 
     	$result = $object->update($user);
@@ -319,7 +435,11 @@ if (empty($reshook))
     		{
     			$outputlangs = $langs;
     			$newlang = '';
+<<<<<<< HEAD
     			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
+=======
+    			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
     			if (! empty($newlang)) {
     				$outputlangs = new Translate("", $conf);
@@ -356,11 +476,22 @@ if (empty($reshook))
     			$filename=array(); $filedir=array(); $mimetype=array();
 
     			// SUBJECT
+<<<<<<< HEAD
     			$subject = $langs->transnoentities("ExpenseReportWaitingForApproval");
 
     			// CONTENT
     			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
     			$message = $langs->transnoentities("ExpenseReportWaitingForApprovalMessage", $expediteur->getFullName($langs), get_date_range($object->date_debut,$object->date_fin,'',$langs), $link);
+=======
+    			$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+    			if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $societeName = $conf->global->MAIN_APPLICATION_TITLE;
+
+    			$subject = $societeName." - ".$langs->transnoentities("ExpenseReportWaitingForApproval");
+
+    			// CONTENT
+    			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
+    			$message = $langs->transnoentities("ExpenseReportWaitingForApprovalMessage", $expediteur->getFullName($langs), get_date_range($object->date_debut, $object->date_fin, '', $langs), $link);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     			// Rebuild pdf
     			/*
@@ -375,7 +506,11 @@ if (empty($reshook))
     			*/
 
     			// PREPARE SEND
+<<<<<<< HEAD
     			$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message,$filedir,$mimetype,$filename);
+=======
+    			$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, '', '', 0, -1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     			if ($mailfile)
     			{
@@ -383,7 +518,11 @@ if (empty($reshook))
     				$result=$mailfile->sendfile();
     				if ($result)
     				{
+<<<<<<< HEAD
     					$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($emailFrom,2),$mailfile->getValidAddress($emailTo,2));
+=======
+    					$mesg=$langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($emailFrom, 2), $mailfile->getValidAddress($emailTo, 2));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     					setEventMessages($mesg, null, 'mesgs');
     				}
     				else
@@ -404,7 +543,11 @@ if (empty($reshook))
     			}
     			else
     			{
+<<<<<<< HEAD
     				setEventMessages($mailfile->error,$mailfile->errors,'errors');
+=======
+    				setEventMessages($mailfile->error, $mailfile->errors, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     				$action='';
     			}
     		}
@@ -440,7 +583,11 @@ if (empty($reshook))
     		{
     			$outputlangs = $langs;
     			$newlang = '';
+<<<<<<< HEAD
     			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
+=======
+    			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
     			if (! empty($newlang)) {
     				$outputlangs = new Translate("", $conf);
@@ -472,11 +619,22 @@ if (empty($reshook))
     			$filename=array(); $filedir=array(); $mimetype=array();
 
    			    // SUBJECT
+<<<<<<< HEAD
     			$subject = $langs->transnoentities("ExpenseReportWaitingForReApproval");
 
     			// CONTENT
     			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
 				$dateRefusEx = explode(" ",$object->date_refuse);
+=======
+    			$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+    			if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $societeName = $conf->global->MAIN_APPLICATION_TITLE;
+
+    			$subject = $societeName." - ".$langs->transnoentities("ExpenseReportWaitingForReApproval");
+
+    			// CONTENT
+    			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
+				$dateRefusEx = explode(" ", $object->date_refuse);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     			$message = $langs->transnoentities("ExpenseReportWaitingForReApprovalMessage", $dateRefusEx[0], $object->detail_refuse, $expediteur->getFullName($langs), $link);
 
    				// Rebuild pdf
@@ -496,7 +654,11 @@ if (empty($reshook))
 
 
     			// PREPARE SEND
+<<<<<<< HEAD
     			$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message,$filedir,$mimetype,$filename);
+=======
+    			$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, '', '', 0, -1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     			if ($mailfile)
     			{
@@ -504,7 +666,11 @@ if (empty($reshook))
     				$result=$mailfile->sendfile();
     				if ($result)
     				{
+<<<<<<< HEAD
     					$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($emailFrom,2),$mailfile->getValidAddress($emailTo,2));
+=======
+    					$mesg=$langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($emailFrom, 2), $mailfile->getValidAddress($emailTo, 2));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     					setEventMessages($mesg, null, 'mesgs');
     					header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
     					exit;
@@ -527,7 +693,11 @@ if (empty($reshook))
     			}
     			else
     			{
+<<<<<<< HEAD
     				setEventMessages($mailfile->error,$mailfile->errors,'errors');
+=======
+    				setEventMessages($mailfile->error, $mailfile->errors, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     				$action='';
     			}
     		}
@@ -558,7 +728,11 @@ if (empty($reshook))
     		{
     			$outputlangs = $langs;
     			$newlang = '';
+<<<<<<< HEAD
     			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
+=======
+    			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
     			if (! empty($newlang)) {
     				$outputlangs = new Translate("", $conf);
@@ -594,7 +768,14 @@ if (empty($reshook))
     			$filename=array(); $filedir=array(); $mimetype=array();
 
    			    // SUBJECT
+<<<<<<< HEAD
        			$subject = $langs->transnoentities("ExpenseReportApproved");
+=======
+    			$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+    			if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $societeName = $conf->global->MAIN_APPLICATION_TITLE;
+
+    			$subject = $societeName." - ".$langs->transnoentities("ExpenseReportApproved");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
        			// CONTENT
        			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
@@ -615,7 +796,11 @@ if (empty($reshook))
     			}
     			*/
 
+<<<<<<< HEAD
         		$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message,$filedir,$mimetype,$filename);
+=======
+        		$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, '', '', 0, -1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
        			if ($mailfile)
        			{
@@ -623,7 +808,11 @@ if (empty($reshook))
        				$result=$mailfile->sendfile();
        				if ($result)
        				{
+<<<<<<< HEAD
        					$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($emailFrom,2),$mailfile->getValidAddress($emailTo,2));
+=======
+       					$mesg=$langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($emailFrom, 2), $mailfile->getValidAddress($emailTo, 2));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
        					setEventMessages($mesg, null, 'mesgs');
        					header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
        					exit;
@@ -646,7 +835,11 @@ if (empty($reshook))
        			}
        			else
        			{
+<<<<<<< HEAD
        				setEventMessages($mailfile->error,$mailfile->errors,'errors');
+=======
+       				setEventMessages($mailfile->error, $mailfile->errors, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
        				$action='';
        			}
    			}
@@ -662,10 +855,13 @@ if (empty($reshook))
    			$action='';
    		}
    	}
+<<<<<<< HEAD
    	else
    	{
    		setEventMessages($object->error, $object->errors, 'errors');
    	}
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     if ($action == "confirm_refuse" && GETPOST('confirm', 'alpha')=="yes" && $id > 0 && $user->rights->expensereport->approve)
     {
@@ -681,7 +877,11 @@ if (empty($reshook))
     		{
     			$outputlangs = $langs;
     			$newlang = '';
+<<<<<<< HEAD
     			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
+=======
+    			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
     			if (! empty($newlang)) {
     				$outputlangs = new Translate("", $conf);
@@ -713,7 +913,14 @@ if (empty($reshook))
     			$filename=array(); $filedir=array(); $mimetype=array();
 
     		    // SUBJECT
+<<<<<<< HEAD
        			$subject = $langs->transnoentities("ExpenseReportRefused");
+=======
+    			$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+    			if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $societeName = $conf->global->MAIN_APPLICATION_TITLE;
+
+    			$subject = $societeName." - ".$langs->transnoentities("ExpenseReportRefused");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
        			// CONTENT
        			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
@@ -735,7 +942,11 @@ if (empty($reshook))
     			*/
 
         		// PREPARE SEND
+<<<<<<< HEAD
         		$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message,$filedir,$mimetype,$filename);
+=======
+        		$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, '', '', 0, -1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         		if ($mailfile)
         		{
@@ -743,7 +954,11 @@ if (empty($reshook))
         			$result=$mailfile->sendfile();
         			if ($result)
         			{
+<<<<<<< HEAD
         				$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($emailFrom,2),$mailfile->getValidAddress($emailTo,2));
+=======
+        				$mesg=$langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($emailFrom, 2), $mailfile->getValidAddress($emailTo, 2));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         				setEventMessages($mesg, null, 'mesgs');
         				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
         				exit;
@@ -766,7 +981,11 @@ if (empty($reshook))
         		}
         		else
         		{
+<<<<<<< HEAD
         			setEventMessages($mailfile->error,$mailfile->errors,'errors');
+=======
+        			setEventMessages($mailfile->error, $mailfile->errors, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         			$action='';
         		}
         	}
@@ -782,6 +1001,7 @@ if (empty($reshook))
     	    $action='';
     	}
     }
+<<<<<<< HEAD
     else
     {
     	setEventMessages($object->error, $object->errors, 'errors');
@@ -912,6 +1132,144 @@ if (empty($reshook))
     }
 
     if ($action == "confirm_brouillonner" && GETPOST('confirm', 'alpha')=="yes" && $id > 0 && $user->rights->expensereport->creer)
+=======
+
+    //var_dump($user->id == $object->fk_user_validator);exit;
+    if ($action == "confirm_cancel" && GETPOST('confirm', 'alpha')=="yes" && $id > 0 && $user->rights->expensereport->creer)
+    {
+    	if (! GETPOST('detail_cancel', 'alpha'))
+    	{
+    		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Comment")), null, 'errors');
+    	}
+    	else
+    	{
+	    	$object = new ExpenseReport($db);
+	    	$object->fetch($id);
+
+	    	if ($user->id == $object->fk_user_valid || $user->id == $object->fk_user_author)
+	    	{
+	    		$result = $object->set_cancel($user, GETPOST('detail_cancel', 'alpha'));
+
+	    		if ($result > 0)
+	    		{
+	    			// Define output language
+	    			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+	    			{
+	    				$outputlangs = $langs;
+	    				$newlang = '';
+	    				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+	    				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+	    				if (! empty($newlang)) {
+	    					$outputlangs = new Translate("", $conf);
+	    					$outputlangs->setDefaultLang($newlang);
+	    				}
+	    				$model=$object->modelpdf;
+	    				$ret = $object->fetch($id); // Reload to get new records
+
+	    				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	    			}
+	    		}
+
+	    		if ($result > 0)
+	    		{
+	    			// Send mail
+
+	    			// TO
+	    			$destinataire = new User($db);
+	    			$destinataire->fetch($object->fk_user_author);
+	    			$emailTo = $destinataire->email;
+
+	    			// FROM
+	    			$expediteur = new User($db);
+	    			$expediteur->fetch($object->fk_user_cancel);
+	    			$emailFrom = $expediteur->email;
+
+	    			if ($emailFrom && $emailTo)
+	    			{
+	    			    $filename=array(); $filedir=array(); $mimetype=array();
+
+	    			    // SUBJECT
+	    			    $societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+	    			    if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $societeName = $conf->global->MAIN_APPLICATION_TITLE;
+
+	    			    $subject = $societeName." - ".$langs->transnoentities("ExpenseReportCanceled");
+
+	    				// CONTENT
+	    				$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
+	    				$message = $langs->transnoentities("ExpenseReportCanceledMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), GETPOST('detail_cancel', 'alpha'), $link);
+
+	    				// Rebuilt pdf
+	    				/*
+	    				$object->setDocModel($user,"");
+	    				$resultPDF = expensereport_pdf_create($db,$object,'',"",$langs);
+
+	    				if($resultPDF
+	    				{
+	    					// ATTACHMENT
+	    					$filename=array(); $filedir=array(); $mimetype=array();
+	    					array_push($filename,dol_sanitizeFileName($object->ref).".pdf");
+	    					array_push($filedir, $conf->expensereport->dir_output."/".dol_sanitizeFileName($object->ref)."/".dol_sanitizeFileName($object->ref).".pdf");
+	    					array_push($mimetype,"application/pdf");
+	    				}
+	    				*/
+
+	        			// PREPARE SEND
+	        			$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, '', '', 0, -1);
+
+	        			if ($mailfile)
+	        			{
+	        				// SEND
+	        				$result=$mailfile->sendfile();
+	        				if ($result)
+	        				{
+	        					$mesg=$langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($emailFrom, 2), $mailfile->getValidAddress($emailTo, 2));
+	        					setEventMessages($mesg, null, 'mesgs');
+	        					header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+	        					exit;
+	        				}
+	        				else
+	        				{
+	        					$langs->load("other");
+	        					if ($mailfile->error)
+	        					{
+	        						$mesg='';
+	        						$mesg.=$langs->trans('ErrorFailedToSendMail', $emailFrom, $emailTo);
+	        						$mesg.='<br>'.$mailfile->error;
+	        						setEventMessages($mesg, null, 'errors');
+	        					}
+	        					else
+	        					{
+	        						setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'warnings');
+	        					}
+	        				}
+	        			}
+	        			else
+	        			{
+	        				setEventMessages($mailfile->error, $mailfile->errors, 'errors');
+	        				$action='';
+	        			}
+	    			}
+	    			else
+	    			{
+	    			    setEventMessages($langs->trans("NoEmailSentBadSenderOrRecipientEmail"), null, 'warnings');
+	    			    $action='';
+	    			}
+	    		}
+	    		else
+	    		{
+	    			setEventMessages($langs->trans("FailedToSetToCancel"), null, 'warnings');
+	    			$action='';
+	    		}
+	    	}
+	    	else
+	    	{
+	    		setEventMessages($object->error, $object->errors, 'errors');
+	    	}
+    	}
+    }
+
+    if ($action == "confirm_setdraft" && GETPOST('confirm', 'alpha')=="yes" && $id > 0 && $user->rights->expensereport->creer)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
     	$object = new ExpenseReport($db);
     	$object->fetch($id);
@@ -926,7 +1284,11 @@ if (empty($reshook))
     			{
     				$outputlangs = $langs;
     				$newlang = '';
+<<<<<<< HEAD
     				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
+=======
+    				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
     				if (! empty($newlang)) {
     					$outputlangs = new Translate("", $conf);
@@ -969,7 +1331,11 @@ if (empty($reshook))
     		{
     			$outputlangs = $langs;
     			$newlang = '';
+<<<<<<< HEAD
     			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
+=======
+    			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
     			if (! empty($newlang)) {
     				$outputlangs = new Translate("", $conf);
@@ -1001,12 +1367,20 @@ if (empty($reshook))
     			$filename=array(); $filedir=array(); $mimetype=array();
 
     		    // SUBJECT
+<<<<<<< HEAD
     			$subject = $langs->transnoentities("ExpenseReportPaid");
+=======
+    			$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+    			if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $societeName = $conf->global->MAIN_APPLICATION_TITLE;
+
+    			$subject = $societeName." - ".$langs->transnoentities("ExpenseReportPaid");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     			// CONTENT
     			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
     			$message = $langs->transnoentities("ExpenseReportPaidMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), $link);
 
+<<<<<<< HEAD
         		// CONTENT
         		$message = "Bonjour {$destinataire->firstname},\n\n";
         		$message.= "Votre note de frais \"{$object->ref}\" vient d'être payée.\n";
@@ -1020,6 +1394,14 @@ if (empty($reshook))
 
         		// PREPARE SEND
         		$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message,$filedir,$mimetype,$filename);
+=======
+        		// Generate pdf before attachment
+        		$object->setDocModel($user, "");
+        		$resultPDF = expensereport_pdf_create($db, $object, '', "", $langs);
+
+        		// PREPARE SEND
+        		$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, '', '', 0, -1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         		if ($mailfile)
         		{
@@ -1027,7 +1409,11 @@ if (empty($reshook))
     				$result=$mailfile->sendfile();
         			if ($result)
         			{
+<<<<<<< HEAD
         				$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($emailFrom,2),$mailfile->getValidAddress($emailTo,2));
+=======
+        				$mesg=$langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($emailFrom, 2), $mailfile->getValidAddress($emailTo, 2));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         				setEventMessages($mesg, null, 'mesgs');
         				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
         				exit;
@@ -1050,7 +1436,11 @@ if (empty($reshook))
         		}
         		else
         		{
+<<<<<<< HEAD
         			setEventMessages($mailfile->error,$mailfile->errors,'errors');
+=======
+        			setEventMessages($mailfile->error, $mailfile->errors, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         			$action='';
         		}
     		}
@@ -1066,15 +1456,19 @@ if (empty($reshook))
     		$action='';
     	}
     }
+<<<<<<< HEAD
     else
     {
     	setEventMessages($object->error, $object->errors, 'errors');
     }
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     if ($action == "addline" && $user->rights->expensereport->creer)
     {
     	$error = 0;
 
+<<<<<<< HEAD
 		// if VAT is not used in Dolibarr, set VAT rate to 0 because VAT rate is necessary.
     	if (empty($vatrate)) $vatrate = "0.000";
     	$vatrate = price2num($vatrate);
@@ -1086,19 +1480,58 @@ if (empty($reshook))
     	if (empty($qty)) $qty=1;
 
     	if (! $fk_c_type_fees > 0)
+=======
+    	// First save uploaded file
+    	$fk_ecm_files = 0;
+    	if (GETPOSTISSET('attachfile'))
+    	{
+    	    $arrayoffiles=GETPOST('attachfile', 'array');
+    	    if (is_array($arrayoffiles) && ! empty($arrayoffiles[0]))
+    	    {
+    	        include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+    	        $relativepath='expensereport/'.$object->ref.'/'.$arrayoffiles[0];
+    	        $ecmfiles=new EcmFiles($db);
+    	        $ecmfiles->fetch(0, '', $relativepath);
+    	        $fk_ecm_files = $ecmfiles->id;
+    	    }
+    	}
+
+		// if VAT is not used in Dolibarr, set VAT rate to 0 because VAT rate is necessary.
+    	if (empty($vatrate)) $vatrate = "0.000";
+    	$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $vatrate));
+
+		$value_unit_ht=price2num(GETPOST('value_unit_ht', 'alpha'), 'MU');
+		$value_unit=price2num(GETPOST('value_unit', 'alpha'), 'MU');
+		if (empty($value_unit))
+		{
+		    $value_unit = price2num($value_unit_ht + ($value_unit_ht * $tmpvat / 100), 'MU');
+		}
+
+		$fk_c_exp_tax_cat = GETPOST('fk_c_exp_tax_cat', 'int');
+
+    	$qty = GETPOST('qty', 'int');
+    	if (empty($qty)) $qty=1;
+
+    	if (! ($fk_c_type_fees > 0))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	{
     		$error++;
     		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
     		$action='';
     	}
 
+<<<<<<< HEAD
     	if ($vatrate < 0 || $vatrate == '')
+=======
+    	if ((int) $tmpvat < 0 || $tmpvat == '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	{
     		$error++;
     		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("VAT")), null, 'errors');
     		$action='';
     	}
 
+<<<<<<< HEAD
         /* Projects are never required. To force them, check module forceproject
     	if ($conf->projet->enabled)
     	{
@@ -1109,6 +1542,8 @@ if (empty($reshook))
     		}
     	}*/
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	// Si aucune date n'est rentrée
     	if (empty($date) || $date=="--")
     	{
@@ -1116,7 +1551,11 @@ if (empty($reshook))
     		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
     	}
     	// Si aucun prix n'est rentré
+<<<<<<< HEAD
     	if ($value_unit==0)
+=======
+    	if ($value_unit == 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	{
     		$error++;
     		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PriceUTTC")), null, 'errors');
@@ -1128,14 +1567,23 @@ if (empty($reshook))
     		setEventMessages($langs->trans("WarningDateOfLineMustBeInExpenseReportRange"), null, 'warnings');
     	}
 
+<<<<<<< HEAD
     	// S'il y'a eu au moins une erreur
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	if (! $error)
     	{
     		$type = 0;	// TODO What if service ? We should take the type product/service from the type of expense report llx_c_type_fees
 
 			// Insert line
+<<<<<<< HEAD
 			$result = $object->addline($qty,$value_unit,$fk_c_type_fees,$vatrate,$date,$comments,$fk_projet,$fk_c_exp_tax_cat,$type);
 			if ($result > 0) {
+=======
+    		$result = $object->addline($qty, $value_unit, $fk_c_type_fees, $vatrate, $date, $comments, $fk_projet, $fk_c_exp_tax_cat, $type, $fk_ecm_files);
+			if ($result > 0)
+			{
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$ret = $object->fetch($object->id); // Reload to get new records
 
 				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
@@ -1153,6 +1601,10 @@ if (empty($reshook))
 				}
 
 				unset($qty);
+<<<<<<< HEAD
+=======
+				unset($value_unit_ht);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				unset($value_unit);
 				unset($vatrate);
 				unset($comments);
@@ -1160,7 +1612,10 @@ if (empty($reshook))
 				unset($fk_projet);
 
 				unset($date);
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
@@ -1189,7 +1644,11 @@ if (empty($reshook))
     			{
     				$outputlangs = $langs;
     				$newlang = '';
+<<<<<<< HEAD
     				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
+=======
+    				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
     				if (! empty($newlang)) {
     					$outputlangs = new Translate("", $conf);
@@ -1202,7 +1661,11 @@ if (empty($reshook))
     			}
     		}
 
+<<<<<<< HEAD
     		$object->update_totaux_del($object_ligne->total_ht,$object_ligne->total_tva);
+=======
+    		$object->update_totaux_del($object_ligne->total_ht, $object_ligne->total_tva);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$_GET['id']);
     		exit;
     	}
@@ -1212,23 +1675,60 @@ if (empty($reshook))
     	}
     }
 
+<<<<<<< HEAD
     if ($action == "updateligne" && $user->rights->expensereport->creer)
+=======
+    if ($action == "updateline" && $user->rights->expensereport->creer)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
     	$object = new ExpenseReport($db);
     	$object->fetch($id);
 
+<<<<<<< HEAD
+=======
+    	// First save uploaded file
+    	$fk_ecm_files = 0;
+    	if (GETPOSTISSET('attachfile'))
+    	{
+    	    $arrayoffiles=GETPOST('attachfile', 'array');
+    	    if (is_array($arrayoffiles) && ! empty($arrayoffiles[0]))
+    	    {
+    	        include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+    	        $relativepath='expensereport/'.$object->ref.'/'.$arrayoffiles[0];
+    	        $ecmfiles=new EcmFiles($db);
+    	        $ecmfiles->fetch(0, '', $relativepath);
+    	        $fk_ecm_files = $ecmfiles->id;
+    	    }
+    	}
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	$rowid = $_POST['rowid'];
     	$type_fees_id = GETPOST('fk_c_type_fees', 'int');
 		$fk_c_exp_tax_cat = GETPOST('fk_c_exp_tax_cat', 'int');
     	$projet_id = $fk_projet;
     	$comments = GETPOST('comments', 'none');
     	$qty = GETPOST('qty', 'int');
+<<<<<<< HEAD
     	$value_unit = price2num(GETPOST('value_unit', 'alpha'), 'MU');
     	$vatrate = GETPOST('vatrate', 'alpha');
 
         // if VAT is not used in Dolibarr, set VAT rate to 0 because VAT rate is necessary.
         if (empty($vatrate)) $vatrate = "0.000";
         $vatrate = price2num($vatrate);
+=======
+    	$vatrate = GETPOST('vatrate', 'alpha');
+
+    	// if VAT is not used in Dolibarr, set VAT rate to 0 because VAT rate is necessary.
+    	if (empty($vatrate)) $vatrate = "0.000";
+    	$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $vatrate));
+
+    	$value_unit_ht=price2num(GETPOST('value_unit_ht', 'alpha'), 'MU');
+    	$value_unit=price2num(GETPOST('value_unit', 'alpha'), 'MU');
+    	if (empty($value_unit))
+    	{
+    	    $value_unit = price2num($value_unit_ht + ($value_unit_ht * $tmpvat / 100), 'MU');
+    	}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     	if (! GETPOST('fk_c_type_fees', 'int') > 0)
     	{
@@ -1236,7 +1736,11 @@ if (empty($reshook))
     		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
     		$action='';
     	}
+<<<<<<< HEAD
     	if ((int) $vatrate < 0 || $vatrate == '')
+=======
+    	if ((int) $tmpvat < 0 || $tmpvat == '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	{
     		$error++;
     		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Vat")), null, 'errors');
@@ -1252,7 +1756,11 @@ if (empty($reshook))
     	if (! $error)
     	{
     	    // TODO Use update method of ExpenseReportLine
+<<<<<<< HEAD
     		$result = $object->updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, $qty, $value_unit, $date, $id, $fk_c_exp_tax_cat);
+=======
+    	    $result = $object->updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, $qty, $value_unit, $date, $id, $fk_c_exp_tax_cat, $fk_ecm_files);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     		if ($result >= 0)
     		{
     			if ($result > 0)
@@ -1262,7 +1770,11 @@ if (empty($reshook))
     				{
     					$outputlangs = $langs;
     					$newlang = '';
+<<<<<<< HEAD
     					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
+=======
+    					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     					if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
     					if (! empty($newlang)) {
     						$outputlangs = new Translate("", $conf);
@@ -1309,7 +1821,11 @@ if (empty($reshook))
 
 $title=$langs->trans("ExpenseReport") . " - " . $langs->trans("Card");
 $helpurl="EN:Module_Expense_Reports";
+<<<<<<< HEAD
 llxHeader("",$title,$helpurl);
+=======
+llxHeader("", $title, $helpurl);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $form = new Form($db);
 $formfile = new FormFile($db);
@@ -1317,6 +1833,10 @@ $formproject = new FormProjets($db);
 $projecttmp = new Project($db);
 $paymentexpensereportstatic=new PaymentExpenseReport($db);
 $bankaccountstatic = new Account($db);
+<<<<<<< HEAD
+=======
+$ecmfilesstatic = new EcmFiles($db);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Create
 if ($action == 'create')
@@ -1336,7 +1856,11 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("DateStart").'</td>';
 	print '<td>';
+<<<<<<< HEAD
 	$form->select_date($date_start?$date_start:-1,'date_debut',0,0,0,'',1,1);
+=======
+	print $form->selectDate($date_start?$date_start:-1, 'date_debut', 0, 0, 0, '', 1, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</td>';
 	print '</tr>';
 
@@ -1344,7 +1868,11 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans("DateEnd").'</td>';
 	print '<td>';
+<<<<<<< HEAD
 	$form->select_date($date_end?$date_end:-1,'date_fin',0,0,0,'',1,1);
+=======
+	print $form->selectDate($date_end?$date_end:-1, 'date_fin', 0, 0, 0, '', 1, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</td>';
 	print '</tr>';
 
@@ -1373,7 +1901,11 @@ if ($action == 'create')
     	$defaultselectuser=$user->fk_user;	// Will work only if supervisor has permission to approve so is inside include_users
     	if (! empty($conf->global->EXPENSEREPORT_DEFAULT_VALIDATOR)) $defaultselectuser=$conf->global->EXPENSEREPORT_DEFAULT_VALIDATOR;   // Can force default approver
     	if (GETPOST('fk_user_validator', 'int') > 0) $defaultselectuser=GETPOST('fk_user_validator', 'int');
+<<<<<<< HEAD
     	$s=$form->select_dolusers($defaultselectuser, "fk_user_validator", 1, "", 0, $include_users);
+=======
+    	$s=$form->select_dolusers($defaultselectuser, "fk_user_validator", 1, "", ((empty($defaultselectuser) || empty($conf->global->EXPENSEREPORT_DEFAULT_VALIDATOR_UNCHANGEABLE))?0:1), $include_users);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	print $form->textwithpicto($s, $langs->trans("AnyOtherInThisListCanValidate"));
 	}
 	print '</td>';
@@ -1385,7 +1917,11 @@ if ($action == 'create')
 		print '<tr>';
 		print '<td>'.$langs->trans("ModePaiement").'</td>';
 		print '<td>';
+<<<<<<< HEAD
 		$form->select_types_paiements(2,'fk_c_paiement');
+=======
+		$form->select_types_paiements(2, 'fk_c_paiement');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</td>';
 		print '</tr>';
 	}
@@ -1451,8 +1987,14 @@ else
 					print $langs->trans('NotUserRightToView');
 					print '</div>';
 
+<<<<<<< HEAD
 					llxFooter();
 					$db->close();
+=======
+					// End of page
+                    llxFooter();
+                    $db->close();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 					exit;
 				}
@@ -1500,13 +2042,21 @@ else
 				print '<tr>';
 				print '<td>'.$langs->trans("DateStart").'</td>';
 				print '<td>';
+<<<<<<< HEAD
 				$form->select_date($object->date_debut,'date_debut');
+=======
+				print $form->selectDate($object->date_debut, 'date_debut');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				print '</td>';
 				print '</tr>';
 				print '<tr>';
 				print '<td>'.$langs->trans("DateEnd").'</td>';
 				print '<td>';
+<<<<<<< HEAD
 				$form->select_date($object->date_fin,'date_fin');
+=======
+				print $form->selectDate($object->date_fin, 'date_fin');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				print '</td>';
 				print '</tr>';
 
@@ -1515,7 +2065,11 @@ else
 					print '<tr>';
 					print '<td>'.$langs->trans("ModePaiement").'</td>';
 					print '<td>';
+<<<<<<< HEAD
 					$form->select_types_paiements($object->fk_c_paiement,'fk_c_paiement');
+=======
+					$form->select_types_paiements($object->fk_c_paiement, 'fk_c_paiement');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					print '</td>';
 					print '</tr>';
 				}
@@ -1526,7 +2080,11 @@ else
 					print '<td>'.$langs->trans("VALIDATOR").'</td>';	// Approbator
 					print '<td>';
 					$include_users = $object->fetch_users_approver_expensereport();
+<<<<<<< HEAD
 					$s=$form->select_dolusers($object->fk_user_validator,"fk_user_validator",1,"",0,$include_users);
+=======
+					$s=$form->select_dolusers($object->fk_user_validator, "fk_user_validator", 1, "", 0, $include_users);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					print $form->textwithpicto($s, $langs->trans("AnyOtherInThisListCanValidate"));
 					print '</td>';
 					print '</tr>';
@@ -1551,7 +2109,10 @@ else
 					$userfee->fetch($user->id);
 					print $userfee->getNomUrl(-1);
 					print '</td></tr>';
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 
 				// Other attributes
@@ -1583,36 +2144,61 @@ else
 				        array('type' => 'other','name' => 'fk_user_author','label' => $langs->trans("SelectTargetUser"),'value' => $form->select_dolusers((GETPOST('fk_user_author', 'int')> 0 ? GETPOST('fk_user_author', 'int') : $user->id), 'fk_user_author', 0, null, 0, $criteriaforfilter))
                     );
 				    // Paiement incomplet. On demande si motif = escompte ou autre
+<<<<<<< HEAD
 				    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('CloneExpenseReport'), $langs->trans('ConfirmCloneExpenseReport', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+=======
+				    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneExpenseReport', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 
 				if ($action == 'save')
 				{
+<<<<<<< HEAD
 					$formconfirm=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("SaveTrip"),$langs->trans("ConfirmSaveTrip"),"confirm_validate","","",1);
+=======
+					$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("SaveTrip"), $langs->trans("ConfirmSaveTrip"), "confirm_validate", "", "", 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 
 				if ($action == 'save_from_refuse')
 				{
+<<<<<<< HEAD
 					$formconfirm=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("SaveTrip"),$langs->trans("ConfirmSaveTrip"),"confirm_save_from_refuse","","",1);
+=======
+					$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("SaveTrip"), $langs->trans("ConfirmSaveTrip"), "confirm_save_from_refuse", "", "", 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 
 				if ($action == 'delete')
 				{
+<<<<<<< HEAD
 					$formconfirm=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("DeleteTrip"),$langs->trans("ConfirmDeleteTrip"),"confirm_delete","","",1);
+=======
+					$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("DeleteTrip"), $langs->trans("ConfirmDeleteTrip"), "confirm_delete", "", "", 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 
 				if ($action == 'validate')
 				{
+<<<<<<< HEAD
 					$formconfirm=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("ValideTrip"),$langs->trans("ConfirmValideTrip"),"confirm_approve","","",1);
+=======
+					$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("ValideTrip"), $langs->trans("ConfirmValideTrip"), "confirm_approve", "", "", 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 
 				if ($action == 'paid')
 				{
+<<<<<<< HEAD
 					$formconfirm=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("PaidTrip"),$langs->trans("ConfirmPaidTrip"),"confirm_paid","","",1);
+=======
+					$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("PaidTrip"), $langs->trans("ConfirmPaidTrip"), "confirm_paid", "", "", 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 
 				if ($action == 'cancel')
 				{
+<<<<<<< HEAD
 					$array_input = array('text'=>$langs->trans("ConfirmCancelTrip"), array('type'=>"text",'label'=>$langs->trans("Comment"),'name'=>"detail_cancel",'size'=>"50",'value'=>""));
 					$formconfirm=$form->form_confirm($_SEVER["PHP_SELF"]."?id=".$id,$langs->trans("Cancel"),"","confirm_cancel",$array_input,"",1);
 				}
@@ -1620,17 +2206,34 @@ else
 				if ($action == 'brouillonner')
 				{
 				    $formconfirm=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("BrouillonnerTrip"),$langs->trans("ConfirmBrouillonnerTrip"),"confirm_brouillonner","","",1);
+=======
+					$array_input = array('text'=>$langs->trans("ConfirmCancelTrip"), array('type'=>"text",'label'=>'<strong>'.$langs->trans("Comment").'</strong>','name'=>"detail_cancel",'size'=>"50",'value'=>""));
+					$formconfirm=$form->formconfirm($_SEVER["PHP_SELF"]."?id=".$id, $langs->trans("Cancel"), "", "confirm_cancel", $array_input, "", 1);
+				}
+
+				if ($action == 'setdraft')
+				{
+				    $formconfirm=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("BrouillonnerTrip"), $langs->trans("ConfirmBrouillonnerTrip"), "confirm_setdraft", "", "", 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 
 				if ($action == 'refuse')		// Deny
 				{
 					$array_input = array('text'=>$langs->trans("ConfirmRefuseTrip"), array('type'=>"text",'label'=>$langs->trans("Comment"),'name'=>"detail_refuse",'size'=>"50",'value'=>""));
+<<<<<<< HEAD
 					$formconfirm=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("Deny"),'',"confirm_refuse",$array_input,"yes",1);
+=======
+					$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("Deny"), '', "confirm_refuse", $array_input, "yes", 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 
 				if ($action == 'delete_line')
 				{
+<<<<<<< HEAD
 					$formconfirm=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id."&rowid=".GETPOST('rowid','int'),$langs->trans("DeleteLine"),$langs->trans("ConfirmDeleteLine"),"confirm_delete_line",'','yes',1);
+=======
+					$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id."&rowid=".GETPOST('rowid', 'int'), $langs->trans("DeleteLine"), $langs->trans("ConfirmDeleteLine"), "confirm_delete_line", '', 'yes', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 
 				// Print form confirm
@@ -1686,7 +2289,11 @@ else
 				print '<div class="fichehalfleft">';
 				print '<div class="underbanner clearboth"></div>';
 
+<<<<<<< HEAD
 				print '<table class="border centpercent">';
+=======
+				print '<table class="border tableforfield centpercent">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				// Author
 				print '<tr>';
@@ -1696,7 +2303,11 @@ else
 				{
 				    $userauthor=new User($db);
 				    $result=$userauthor->fetch($object->fk_user_author);
+<<<<<<< HEAD
 				    if ($result < 0) dol_print_error('',$userauthor->error);
+=======
+				    if ($result < 0) dol_print_error('', $userauthor->error);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				    elseif ($result > 0) print $userauthor->getNomUrl(-1);
 				}
 				print '</td></tr>';
@@ -1704,7 +2315,11 @@ else
 				print '<tr>';
 				print '<td class="titlefield">'.$langs->trans("Period").'</td>';
 				print '<td>';
+<<<<<<< HEAD
 				print get_date_range($object->date_debut,$object->date_fin,'day',$langs,0);
+=======
+				print get_date_range($object->date_debut, $object->date_fin, 'day', $langs, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				print '</td>';
 				print '</tr>';
 				if (! empty($conf->global->EXPENSEREPORT_ASK_PAYMENTMODE_ON_CREATION))
@@ -1718,14 +2333,22 @@ else
 				// Validation date
 				print '<tr>';
 				print '<td>'.$langs->trans("DATE_SAVE").'</td>';
+<<<<<<< HEAD
 				print '<td>'.dol_print_date($object->date_valid,'dayhour');
+=======
+				print '<td>'.dol_print_date($object->date_valid, 'dayhour');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if ($object->status == 2 && $object->hasDelay('toapprove')) print ' '.img_warning($langs->trans("Late"));
 				if ($object->status == 5 && $object->hasDelay('topay')) print ' '.img_warning($langs->trans("Late"));
 				print '</td></tr>';
 				print '</tr>';
 
 				// User to inform for approval
+<<<<<<< HEAD
 				if ($object->fk_statut < 3)	// informed
+=======
+				if ($object->fk_statut <= ExpenseReport::STATUS_VALIDATED)	// informed
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				{
 					print '<tr>';
 					print '<td>'.$langs->trans("VALIDATOR").'</td>';   // approver
@@ -1743,7 +2366,11 @@ else
 					}
 					print '</td></tr>';
 				}
+<<<<<<< HEAD
 				elseif($object->fk_statut == 4)
+=======
+				elseif($object->fk_statut == ExpenseReport::STATUS_CANCELED)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				{
 					print '<tr>';
 					print '<td>'.$langs->trans("CANCEL_USER").'</span></td>';
@@ -1762,7 +2389,11 @@ else
 					print '</tr>';
 					print '<tr>';
 					print '<td>'.$langs->trans("DATE_CANCEL").'</td>';
+<<<<<<< HEAD
 					print '<td>'.dol_print_date($object->date_cancel,'dayhour').'</td></tr>';
+=======
+					print '<td>'.dol_print_date($object->date_cancel, 'dayhour').'</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					print '</tr>';
 				}
 				else
@@ -1780,7 +2411,11 @@ else
 
 					print '<tr>';
 					print '<td>'.$langs->trans("DateApprove").'</td>';
+<<<<<<< HEAD
 					print '<td>'.dol_print_date($object->date_approve,'dayhour').'</td></tr>';
+=======
+					print '<td>'.dol_print_date($object->date_approve, 'dayhour').'</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					print '</tr>';
 				}
 
@@ -1796,7 +2431,11 @@ else
 
 					print '<tr>';
 					print '<td>'.$langs->trans("DATE_REFUS").'</td>';
+<<<<<<< HEAD
 					print '<td>'.dol_print_date($object->date_refuse,'dayhour');
+=======
+					print '<td>'.dol_print_date($object->date_refuse, 'dayhour');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					if ($object->detail_refuse) print ' - '.$object->detail_refuse;
 					print '</td>';
 					print '</tr>';
@@ -1830,18 +2469,30 @@ else
 				print '<div class="ficheaddleft">';
 				print '<div class="underbanner clearboth"></div>';
 
+<<<<<<< HEAD
 				print '<table class="border centpercent">';
+=======
+				print '<table class="border tableforfield centpercent">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				// Amount
 				print '<tr>';
 				print '<td class="titlefieldmiddle">'.$langs->trans("AmountHT").'</td>';
 				print '<td class="nowrap amountcard">'.price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency).'</td>';
 				$rowspan = 5;
+<<<<<<< HEAD
 				if ($object->fk_statut < 3) $rowspan++;
 				elseif($object->fk_statut == 4) $rowspan+=2;
 				else $rowspan+=2;
 				if ($object->fk_statut==99 || !empty($object->detail_refuse)) $rowspan+=2;
 				if($object->fk_statut==6) $rowspan+=2;
+=======
+				if ($object->fk_statut <= ExpenseReport::STATUS_VALIDATED) $rowspan++;
+				elseif($object->fk_statut == ExpenseReport::STATUS_CANCELED) $rowspan+=2;
+				else $rowspan+=2;
+				if ($object->fk_statut == ExpenseReport::STATUS_REFUSED || !empty($object->detail_refuse)) $rowspan+=2;
+				if ($object->fk_statut == ExpenseReport::STATUS_CLOSED) $rowspan+=2;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				print "</td>";
 				print '</tr>';
 
@@ -1869,9 +2520,15 @@ else
 				print '<td class="liste_titre">' . $langs->trans('Date') . '</td>';
 				print '<td class="liste_titre">' . $langs->trans('Type') . '</td>';
 				if (! empty($conf->banque->enabled)) {
+<<<<<<< HEAD
 					print '<td class="liste_titre" align="right">' . $langs->trans('BankAccount') . '</td>';
 				}
 				print '<td class="liste_titre" align="right">' . $langs->trans('Amount') . '</td>';
+=======
+					print '<td class="liste_titre right">' . $langs->trans('BankAccount') . '</td>';
+				}
+				print '<td class="liste_titre right">' . $langs->trans('Amount') . '</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				print '<td class="liste_titre" width="18">&nbsp;</td>';
 				print '</tr>';
 
@@ -1907,8 +2564,13 @@ else
 				        print '<td>';
 						print $paymentexpensereportstatic->getNomUrl(1);
 						print '</td>';
+<<<<<<< HEAD
 				        print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 				        $labeltype=$langs->trans("PaymentType".$objp->p_code)!=("PaymentType".$objp->p_code)?$langs->trans("PaymentType".$objp->p_code):$objp->fk_typepayment;
+=======
+				        print '<td>'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
+				        $labeltype=$langs->trans("PaymentType".$objp->p_code)!=("PaymentType".$objp->p_code)?$langs->trans("PaymentType".$objp->p_code):$objp->payment_type;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				        print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
 						if (! empty($conf->banque->enabled))
 						{
@@ -1922,20 +2584,32 @@ else
 
 								$accountingjournal = new AccountingJournal($db);
 								$accountingjournal->fetch($objp->fk_accountancy_journal);
+<<<<<<< HEAD
 								$bankaccountstatic->accountancy_journal = $accountingjournal->getNomUrl(0,1,1,'',1);
 							}
 
 							print '<td align="right">';
+=======
+								$bankaccountstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
+							}
+
+							print '<td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							if ($bankaccountstatic->id)
 								print $bankaccountstatic->getNomUrl(1, 'transactions');
 							print '</td>';
 						}
+<<<<<<< HEAD
 				        print '<td align="right">'.price($objp->amount)."</td>";
+=======
+				        print '<td class="right">'.price($objp->amount)."</td>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				        print '<td></td>';
 				        print "</tr>";
 				        $totalpaid += $objp->amount;
 				        $i++;
 				    }
+<<<<<<< HEAD
 
 				    if ($object->paid == 0)
 				    {
@@ -1947,6 +2621,30 @@ else
 				        print '<tr><td colspan="' . $nbcols . '" align="right">'.$langs->trans("RemainderToPay").':</td>';
 				        print '<td align="right"'.($remaintopay?' class="amountremaintopay"':'').'>'.price($remaintopay).'</td><td></td></tr>';
 				    }
+=======
+				    $totalpaid = price2num($totalpaid);		// Round $totalpaid to fix floating problem after addition into loop
+
+				    $remaintopay = price2num($object->total_ttc - $totalpaid);
+				    $resteapayeraffiche = $remaintopay;
+
+				    $cssforamountpaymentcomplete = 'amountpaymentcomplete';
+
+				    if ($object->status == ExpenseReport::STATUS_REFUSED)
+				    {
+				    	$cssforamountpaymentcomplete = 'amountpaymentneutral';
+				    	$resteapayeraffiche = 0;
+				    }
+			    	elseif ($object->paid == 0)
+			    	{
+			    		$cssforamountpaymentcomplete = 'amountpaymentneutral';
+			    	}
+			        print '<tr><td colspan="' . $nbcols . '" class="right">'.$langs->trans("AlreadyPaid").':</td><td class="right">'.price($totalpaid).'</td><td></td></tr>';
+			        print '<tr><td colspan="' . $nbcols . '" class="right">'.$langs->trans("AmountExpected").':</td><td class="right">'.price($object->total_ttc).'</td><td></td></tr>';
+
+			        print '<tr><td colspan="' . $nbcols . '" class="right">'.$langs->trans("RemainderToPay").':</td>';
+			        print '<td class="right'.($resteapayeraffiche?' amountremaintopay':(' '.$cssforamountpaymentcomplete)).'">'.price($resteapayeraffiche).'</td><td></td></tr>';
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				    $db->free($resql);
 				}
 				else
@@ -1963,10 +2661,17 @@ else
 
 				print '<div style="clear: both;"></div>';
 
+<<<<<<< HEAD
 				$actiontouse='updateligne';
 				if (($object->fk_statut==0 || $object->fk_statut==99) && $action != 'editline') $actiontouse='addline';
 
 				print '<form name="expensereport" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+=======
+				$actiontouse='updateline';
+				if (($object->fk_statut==0 || $object->fk_statut==99) && $action != 'editline') $actiontouse='addline';
+
+				print '<form name="expensereport" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data" method="post" >';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="'.$actiontouse.'">';
 				print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -1980,6 +2685,7 @@ else
 					$i = 0;$total = 0;
 
 					print '<tr class="liste_titre">';
+<<<<<<< HEAD
 					print '<td style="text-align:center;">'.$langs->trans('LineNb').'</td>';
 					//print '<td style="text-align:center;">'.$langs->trans('Piece').'</td>';
 					print '<td style="text-align:center;">'.$langs->trans('Date').'</td>';
@@ -1999,6 +2705,31 @@ else
 					if (($object->fk_statut < 2 || $object->fk_statut == 99) && $user->rights->expensereport->creer)
 					{
 						print '<td style="text-align:right;"></td>';
+=======
+					print '<td class="center">'.$langs->trans('LineNb').'</td>';
+					//print '<td class="center">'.$langs->trans('Piece').'</td>';
+					print '<td class="center">'.$langs->trans('Date').'</td>';
+					if (! empty($conf->projet->enabled)) print '<td class="minwidth100imp">'.$langs->trans('Project').'</td>';
+					if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) print '<td>'.$langs->trans('CarCategory').'</td>';
+					print '<td class="center">'.$langs->trans('Type').'</td>';
+					print '<td>'.$langs->trans('Description').'</td>';
+					print '<td class="right">'.$langs->trans('VAT').'</td>';
+					print '<td class="right">'.$langs->trans('PriceUHT').'</td>';
+					print '<td class="right">'.$langs->trans('PriceUTTC').'</td>';
+					print '<td class="right">'.$langs->trans('Qty').'</td>';
+					if ($action != 'editline')
+					{
+						print '<td class="right">'.$langs->trans('AmountHT').'</td>';
+						print '<td class="right">'.$langs->trans('AmountTTC').'</td>';
+					}
+                    // Picture
+					print '<td>';
+					print '</td>';
+					// Ajout des boutons de modification/suppression
+					if (($object->fk_statut < 2 || $object->fk_statut == 99) && $user->rights->expensereport->creer)
+					{
+						print '<td class="right"></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					}
 					print '</tr>';
 
@@ -2009,6 +2740,7 @@ else
 						if ($action != 'editline' || $line->rowid != GETPOST('rowid', 'int'))
 						{
 							print '<tr class="oddeven">';
+<<<<<<< HEAD
 
 							print '<td style="text-align:center;">';
 							print $numline;
@@ -2027,20 +2759,46 @@ else
 								{
 									$projecttmp->id=$line->fk_projet;
 									$projecttmp->ref=$line->projet_ref;
+=======
+							// Num
+							print '<td class="center">';
+							print $numline;
+							print '</td>';
+							// Date
+							print '<td class="center">'.dol_print_date($db->jdate($line->date), 'day').'</td>';
+							// Project
+							if (! empty($conf->projet->enabled))
+							{
+								print '<td>';
+								if ($line->fk_project > 0)
+								{
+									$projecttmp->id=$line->fk_project;
+									$projecttmp->ref=$line->projet_ref;
+									$projecttmp->title=$line->projet_title;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 									print $projecttmp->getNomUrl(1);
 								}
 								print '</td>';
 							}
+<<<<<<< HEAD
+=======
+							// IK
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
 							{
 								print '<td class="fk_c_exp_tax_cat">';
 								print dol_getIdFromCode($db, $line->fk_c_exp_tax_cat, 'c_exp_tax_cat', 'rowid', 'label');
 								print '</td>';
 							}
+<<<<<<< HEAD
+=======
+							// Type of fee
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							print '<td class="center">';
 							$labeltype = ($langs->trans(($line->type_fees_code)) == $line->type_fees_code ? $line->type_fees_libelle : $langs->trans($line->type_fees_code));
 							print $labeltype;
 							print '</td>';
+<<<<<<< HEAD
 							print '<td style="text-align:left;">'.dol_escape_htmltag($line->comments).'</td>';
 							print '<td style="text-align:right;">'.vatrate($line->vatrate,true).'</td>';
 							print '<td style="text-align:right;">'.price($line->value_unit).'</td>';
@@ -2058,6 +2816,116 @@ else
 								print '<td style="text-align:right;" class="nowrap">';
 
 								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;rowid='.$line->rowid.'#'.$line->rowid.'">';
+=======
+							// Comment
+							print '<td class="left">'.dol_nl2br($line->comments).'</td>';
+							// VAT rate
+							print '<td class="right">'.vatrate($line->vatrate, true).'</td>';
+                            // Unit price HT
+							print '<td class="right">';
+							if (! empty($line->value_unit_ht))
+							{
+							    print price($line->value_unit_ht);
+							}
+							else
+							{
+							    $tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $line->vatrate));
+							    $pricenettoshow = price2num($line->value_unit / (1 + $tmpvat / 100), 'MU');
+							    print $pricenettoshow;
+							}
+							print '</td>';
+
+							print '<td class="right">'.price($line->value_unit).'</td>';
+
+							print '<td class="right">'.dol_escape_htmltag($line->qty).'</td>';
+
+							if ($action != 'editline')
+							{
+								print '<td class="right">'.price($line->total_ht).'</td>';
+								print '<td class="right">'.price($line->total_ttc).'</td>';
+							}
+
+							// Column with preview
+							print '<td class="center">';
+							if ($line->fk_ecm_files > 0)
+							{
+							    $modulepart='expensereport';
+							    $maxheightmini=32;
+
+                                $result = $ecmfilesstatic->fetch($line->fk_ecm_files);
+                                if ($result > 0)
+                                {
+                                    $relativepath=preg_replace('/expensereport\//', '', $ecmfilesstatic->filepath);
+                                    $fileinfo = pathinfo($ecmfilesstatic->filepath.'/'.$ecmfilesstatic->filename);
+                                    if (image_format_supported($fileinfo['basename']) > 0)
+                                    {
+                                        $minifile=getImageFileNameForSize($fileinfo['basename'], '_mini'); // For new thumbs using same ext (in lower case howerver) than original
+                                        if (! dol_is_file($conf->expensereport->dir_output.'/'.$relativepath.'/'.$minifile)) $minifile=getImageFileNameForSize($fileinfo['basename'], '_mini', '.png'); // For backward compatibility of old thumbs that were created with filename in lower case and with .png extension
+                                        //print $file['path'].'/'.$minifile.'<br>';
+                                        $urlforhref=getAdvancedPreviewUrl($modulepart, $relativepath.'/'.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']), 1, '&entity='.(!empty($object->entity)?$object->entity:$conf->entity));
+                                        if (empty($urlforhref)) {
+                                            $urlforhref=DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity)?$object->entity:$conf->entity).'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']));
+                                            print '<a href="'.$urlforhref.'" class="aphoto" target="_blank">';
+                                        } else {
+                                            print '<a href="'.$urlforhref['url'].'" class="'.$urlforhref['css'].'" target="'.$urlforhref['target'].'" mime="'.$urlforhref['mime'].'">';
+                                        }
+                                        print '<img class="photo" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity)?$object->entity:$conf->entity).'&file='.urlencode($relativepath.'/'.$minifile).'" title="">';
+                                        print '</a>';
+                                    }
+                                    else
+                                    {
+                                        $modulepart='expensereport';
+                                        $thumbshown=0;
+                                        if (preg_match('/\.pdf$/i', $ecmfilesstatic->filename))
+                                        {
+                                            $filepdf = $conf->expensereport->dir_output.'/'.$relativepath.'/'.$ecmfilesstatic->filename;
+                                            $fileimage = $conf->expensereport->dir_output.'/'.$relativepath.'/'.$ecmfilesstatic->filename.'_preview.png';
+                                            $relativepathimage = $relativepath.'/'.$ecmfilesstatic->filename.'_preview.png';
+
+                                            $pdfexists = file_exists($filepdf);
+                                            if ($pdfexists)
+                                            {
+                                                // Conversion du PDF en image png si fichier png non existant
+                                                if (! file_exists($fileimage) || (filemtime($fileimage) < filemtime($filepdf)))
+                                                {
+                                                    if (empty($conf->global->MAIN_DISABLE_PDF_THUMBS))		// If you experience trouble with pdf thumb generation and imagick, you can disable here.
+                                                    {
+                                                        include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+                                                        $ret = dol_convert_file($filepdf, 'png', $fileimage, '0');     // Convert first page of PDF into a file _preview.png
+                                                        if ($ret < 0) $error++;
+                                                    }
+                                                }
+                                            }
+
+                                            if ($pdfexists && ! $error)
+                                            {
+                                                $heightforphotref=70;
+                                                if (! empty($conf->dol_optimize_smallscreen)) $heightforphotref=60;
+                                                // If the preview file is found
+                                                if (file_exists($fileimage))
+                                                {
+                                                    $thumbshown=1;
+                                                    print '<img height="'.$heightforphotref.'" class="photo photowithmargin photowithborder" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($relativepathimage).'">';
+                                                }
+                                            }
+                                        }
+
+                                        if (! $thumbshown)
+                                        {
+                                            print img_mime($ecmfilesstatic->filename);
+                                        }
+                                    }
+                                }
+							}
+							print '</td>';
+
+							// Ajout des boutons de modification/suppression
+							if (($object->fk_statut < ExpenseReport::STATUS_VALIDATED || $object->fk_statut == ExpenseReport::STATUS_REFUSED) && $user->rights->expensereport->creer)
+							{
+								print '<td class="nowrap right">';
+
+								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;rowid='.$line->rowid.'">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 								print img_edit();
 								print '</a> &nbsp; ';
 								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete_line&amp;rowid='.$line->rowid.'">';
@@ -2072,6 +2940,7 @@ else
 
 						if ($action == 'editline' && $line->rowid == GETPOST('rowid', 'int'))
 						{
+<<<<<<< HEAD
 								print '<tr class="oddeven">';
 
 								print '<td></td>';
@@ -2133,6 +3002,136 @@ else
 								print '<input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
 								print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
 								print '</td>';
+=======
+						    // Add line with link to add new file or attach line to an existing file
+						    $colspan = 10;
+						    if (! empty($conf->projet->enabled)) $colspan++;
+						    if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) $colspan++;
+
+						    print '<tr class="tredited">';
+
+						    print '<td class="center">';
+						    print $numline;
+						    print '</td>';
+
+						    print '<td colspan="'.($colspan-1).'" class="liste_titre">';
+						    print '<a href="" class="commonlink auploadnewfilenow reposition">'.$langs->trans("UploadANewFileNow");
+						    print img_picto($langs->trans("UploadANewFileNow"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
+						    print '</a>';
+						    if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+						    {
+						        print ' &nbsp; - &nbsp; '.'<a href="" class="commonlink aattachtodoc reposition">'.$langs->trans("AttachTheNewLineToTheDocument");
+						        print img_picto($langs->trans("AttachTheNewLineToTheDocument"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
+						        print '</a>';
+						    }
+
+						    print '<script language="javascript">'."\n";
+						    print '$(document).ready(function() {
+        				        $( ".auploadnewfilenow" ).click(function() {
+        				            jQuery(".truploadnewfilenow").toggle();
+                                    jQuery(".trattachnewfilenow").hide();
+                                    return false;
+                                });
+        				        $( ".aattachtodoc" ).click(function() {
+        				            jQuery(".trattachnewfilenow").toggle();
+                                    jQuery(".truploadnewfilenow").hide();
+                                    return false;
+                                });';
+						    if (is_array(GETPOST('attachfile', 'array')) && count(GETPOST('attachfile', 'array')))
+						    {
+						        print 'jQuery(".trattachnewfilenow").toggle();'."\n";
+						    }
+						    print '
+                            });
+        				    ';
+						    print '</script>'."\n";
+						    print '</td></tr>';
+
+						    $filenamelinked='';
+						    if ($line->fk_ecm_files > 0)
+						    {
+						        $result = $ecmfilesstatic->fetch($line->fk_ecm_files);
+						        if ($result > 0)
+						        {
+						            $filenamelinked = $ecmfilesstatic->filename;
+						        }
+						    }
+
+						    $tredited='tredited';
+						    include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_addfile.tpl.php';
+						    include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_linktofile.tpl.php';
+
+							print '<tr class="oddeven tredited">';
+
+							print '<td></td>';
+
+							// Select date
+							print '<td class="center">';
+							print $form->selectDate($line->date, 'date');
+							print '</td>';
+
+							// Select project
+							if (! empty($conf->projet->enabled))
+							{
+								print '<td>';
+								$formproject->select_projects(-1, $line->fk_project, 'fk_projet', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth300');
+								print '</td>';
+							}
+
+							if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
+							{
+								print '<td class="fk_c_exp_tax_cat">';
+								$params = array('fk_expense' => $object->id, 'fk_expense_det' => $line->rowid, 'date' => $line->dates);
+								print $form->selectExpenseCategories($line->fk_c_exp_tax_cat, 'fk_c_exp_tax_cat', 1, array(), 'fk_c_type_fees', $userauthor->default_c_exp_tax_cat, $params);
+								print '</td>';
+							}
+
+							// Select type
+							print '<td class="center">';
+							select_type_fees_id($line->fk_c_type_fees, 'fk_c_type_fees');
+							print '</td>';
+
+							// Add comments
+							print '<td>';
+							print '<textarea name="comments" class="flat_ndf centpercent">'.dol_escape_htmltag($line->comments, 0, 1).'</textarea>';
+							print '</td>';
+
+							// VAT
+							print '<td class="right">';
+							print $form->load_tva('vatrate', (isset($_POST["vatrate"])?$_POST["vatrate"]:$line->vatrate), $mysoc, '', 0, 0, '', false, 1);
+							print '</td>';
+
+							// Unit price
+							print '<td class="right">';
+							print '<input type="text" min="0" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag(price2num($line->value_unit_ht)).'" />';
+							print '</td>';
+
+							// Unit price with tax
+							print '<td class="right">';
+							print '<input type="text" min="0" class="right maxwidth50" id="value_unit" name="value_unit" value="'.dol_escape_htmltag(price2num($line->value_unit)).'" />';
+							print '</td>';
+
+							// Quantity
+							print '<td class="right">';
+							print '<input type="number" min="0" class="right maxwidth50" name="qty" value="'.dol_escape_htmltag($line->qty).'" />';
+							print '</td>';
+
+							//print '<td class="right">'.$langs->trans('AmountHT').'</td>';
+							//print '<td class="right">'.$langs->trans('AmountTTC').'</td>';
+
+							// Picture
+							print '<td class="center">';
+							//print $line->fk_ecm_files;
+							print '</td>';
+
+							print '<td class="center">';
+							print '<input type="hidden" name="rowid" value="'.$line->rowid.'">';
+							print '<input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
+							print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
+							print '</td>';
+
+							print '</tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						}
 
 						$i++;
@@ -2140,6 +3139,7 @@ else
 				}
 
 				// Add a line
+<<<<<<< HEAD
 				if (($object->fk_statut==0 || $object->fk_statut==99) && $action != 'editline' && $user->rights->expensereport->creer)
 				{
 					print '<tr class="liste_titre">';
@@ -2162,6 +3162,93 @@ else
 					// Select date
 					print '<td align="center">';
 					$form->select_date($date?$date:-1,'date');
+=======
+				if (($object->fk_statut == ExpenseReport::STATUS_DRAFT || $object->fk_statut == ExpenseReport::STATUS_REFUSED)
+				    && $action != 'editline'
+				    && $user->rights->expensereport->creer)
+				{
+				    $colspan = 11;
+				    if (! empty($conf->global->MAIN_USE_EXPENSE_IK)) $colspan++;
+				    if (! empty($conf->projet->enabled)) $colspan++;
+				    if ($action != 'editline') $colspan++;
+
+				    $nbFiles = $nbLinks = 0;
+				    $arrayoffiles = array();
+				    if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+				    {
+				        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+				        require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+				        require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+				        $upload_dir = $conf->expensereport->dir_output . "/" . dol_sanitizeFileName($object->ref);
+				        $arrayoffiles=dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png|'.preg_quote(dol_sanitizeFileName($object->ref.'.pdf'), '/').')$');
+				        $nbFiles = count($arrayoffiles);
+				        $nbLinks=Link::count($db, $object->element, $object->id);
+				    }
+
+				    // Add line with link to add new file or attach to an existing file
+				    print '<tr class="liste_titre">';
+				    print '<td colspan="'.$colspan.'" class="liste_titre">';
+				    print '<a href="" class="commonlink auploadnewfilenow reposition">'.$langs->trans("UploadANewFileNow");
+				    print img_picto($langs->trans("UploadANewFileNow"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
+				    print '</a>';
+				    if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+				    {
+				        print ' &nbsp; - &nbsp; '.'<a href="" class="commonlink aattachtodoc reposition">'.$langs->trans("AttachTheNewLineToTheDocument");
+				        print img_picto($langs->trans("AttachTheNewLineToTheDocument"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
+				        print '</a>';
+				    }
+
+				    print '<script language="javascript">'."\n";
+				    print '$(document).ready(function() {
+				        $( ".auploadnewfilenow" ).click(function() {
+				            jQuery(".truploadnewfilenow").toggle();
+                            jQuery(".trattachnewfilenow").hide();
+                            return false;
+                        });
+				        $( ".aattachtodoc" ).click(function() {
+				            jQuery(".trattachnewfilenow").toggle();
+                            jQuery(".truploadnewfilenow").hide();
+                            return false;
+                        });'."\n";
+				    if (is_array(GETPOST('attachfile', 'array')) && count(GETPOST('attachfile', 'array')) && $action != 'updateline')
+				    {
+				        print 'jQuery(".trattachnewfilenow").show();'."\n";
+				    }
+				    print '
+                    });
+				    ';
+				    print '</script>'."\n";
+				    print '</td></tr>';
+
+				    include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_addfile.tpl.php';
+				    include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_linktofile.tpl.php';
+
+					print '<tr class="liste_titre">';
+					print '<td></td>';
+					print '<td class="center">'.$langs->trans('Date').'</td>';
+					if (! empty($conf->projet->enabled)) print '<td class="minwidth100imp">'.$langs->trans('Project').'</td>';
+					if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) print '<td>'.$langs->trans('CarCategory').'</td>';
+					print '<td class="center">'.$langs->trans('Type').'</td>';
+					print '<td>'.$langs->trans('Description').'</td>';
+					print '<td class="right">'.$langs->trans('VAT').'</td>';
+					print '<td class="right">'.$langs->trans('PriceUHT').'</td>';
+					print '<td class="right">'.$langs->trans('PriceUTTC').'</td>';
+					print '<td class="right">'.$langs->trans('Qty').'</td>';
+					print '<td></td>';
+					print '<td></td>';
+					print '<td></td>';
+					print '<td></td>';
+					print '</tr>';
+
+					print '<tr class="oddeven nohover">';
+
+					// Line number
+					print '<td></td>';
+
+					// Select date
+					print '<td class="center">';
+					print $form->selectDate($date?$date:-1, 'date', 0, 0, 0, '', 1, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					print '</td>';
 
 					// Select project
@@ -2172,7 +3259,11 @@ else
 						print '</td>';
 					}
 
+<<<<<<< HEAD
 					if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
+=======
+					if (! empty($conf->global->MAIN_USE_EXPENSE_IK))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					{
 						print '<td class="fk_c_exp_tax_cat">';
 						$params = array('fk_expense' => $object->id);
@@ -2181,22 +3272,36 @@ else
 					}
 
 					// Select type
+<<<<<<< HEAD
 					print '<td align="center">';
 					select_type_fees_id($fk_c_type_fees,'fk_c_type_fees',1);
+=======
+					print '<td class="center">';
+					select_type_fees_id($fk_c_type_fees, 'fk_c_type_fees', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					print '</td>';
 
 					// Add comments
 					print '<td>';
+<<<<<<< HEAD
 					print '<textarea class="flat_ndf centpercent" name="comments">'.dol_escape_htmltag($comments).'</textarea>';
 					print '</td>';
 
 					// Select VAT
 					print '<td align="right">';
+=======
+					print '<textarea class="flat_ndf centpercent" name="comments" rows="'.ROWS_2.'">'.dol_escape_htmltag($comments, 0, 1).'</textarea>';
+					print '</td>';
+
+					// Select VAT
+					print '<td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					$defaultvat=-1;
 					if (! empty($conf->global->EXPENSEREPORT_NO_DEFAULT_VAT)) $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS = 'none';
 					print $form->load_tva('vatrate', ($vatrate!=''?$vatrate:$defaultvat), $mysoc, '', 0, 0, '', false, 1);
 					print '</td>';
 
+<<<<<<< HEAD
 					// Unit price
 					print '<td align="right">';
 					print '<input type="text" class="right maxwidth50" name="value_unit" value="'.dol_escape_htmltag($value_unit).'">';
@@ -2214,6 +3319,33 @@ else
 					}
 
 					print '<td align="center"><input type="submit" value="'.$langs->trans("Add").'" name="bouton" class="button"></td>';
+=======
+					// Unit price net
+					print '<td class="right">';
+					print '<input type="text" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag($value_unit_ht).'">';
+					print '</td>';
+
+					// Unit price with tax
+					print '<td class="right">';
+					print '<input type="text" class="right maxwidth50" id="value_unit" name="value_unit" value="'.dol_escape_htmltag($value_unit).'">';
+					print '</td>';
+
+					// Quantity
+					print '<td class="right">';
+					print '<input type="text" min="0" class="right maxwidth50" name="qty" value="'.dol_escape_htmltag($qty?$qty:1).'">';    // We must be able to enter decimal qty
+					print '</td>';
+
+					// Picture
+					print '<td></td>';
+
+					if ($action != 'editline')
+					{
+						print '<td class="right"></td>';
+						print '<td class="right"></td>';
+					}
+
+					print '<td class="center"><input type="submit" value="'.$langs->trans("Add").'" name="bouton" class="button"></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 					print '</tr>';
 				} // Fin si c'est payé/validé
@@ -2221,20 +3353,51 @@ else
 				print '</table>';
 				print '</div>';
 
+<<<<<<< HEAD
 				print '</form>';
 
 				dol_fiche_end();
 
 			} // end edit or not edit
 
+=======
+				print '<script javascript>
+
+				/* JQuery for product free or predefined select */
+				jQuery(document).ready(function() {
+				    jQuery("#value_unit_ht").keyup(function(event) {
+				         console.log(event.which);		// discard event tag and arrows
+				        if (event.which != 9 && (event.which < 37 ||event.which > 40) && jQuery("#value_unit_ht").val() != "") {
+				            jQuery("#value_unit").val("");
+				        }
+				    });
+				    jQuery("#value_unit").keyup(function(event) {
+				         console.log(event.which);		// discard event tag and arrows
+				        if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#value_unit").val() != "") {
+				            jQuery("#value_unit_ht").val("");
+				        }
+				    });
+				});
+
+                </script>';
+
+				print '</form>';
+
+				dol_fiche_end();
+			} // end edit or not edit
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}	// end of if result
 		else
 		{
 			dol_print_error($db);
 		}
+<<<<<<< HEAD
 
 	} //fin si id > 0
 
+=======
+	} //fin si id > 0
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 /*
@@ -2253,7 +3416,11 @@ if ($action != 'create' && $action != 'edit')
 		//if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->expensereport->expensereport_advance->send)) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a></div>';
 		//} else
+<<<<<<< HEAD
 		//	print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">' . $langs->trans('SendMail') . '</a></div>';
+=======
+		//	print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">' . $langs->trans('SendMail') . '</a></div>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 
@@ -2262,7 +3429,11 @@ if ($action != 'create' && $action != 'edit')
 	*	ET fk_user_author == user courant
 	* 	Afficher : "Enregistrer" / "Modifier" / "Supprimer"
 	*/
+<<<<<<< HEAD
 	if ($user->rights->expensereport->creer && $object->fk_statut==0)
+=======
+	if ($user->rights->expensereport->creer && $object->fk_statut == ExpenseReport::STATUS_DRAFT)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		if (in_array($object->fk_user_author, $user->getAllChildIds(1)) || !empty($user->rights->expensereport->writeall_advance))
 		{
@@ -2282,26 +3453,43 @@ if ($action != 'create' && $action != 'edit')
 	 *	ET fk_user_author == user courant
 	 * 	Afficher : "Enregistrer" / "Modifier" / "Supprimer"
 	 */
+<<<<<<< HEAD
 	if($user->rights->expensereport->creer && $object->fk_statut==99)
+=======
+	if($user->rights->expensereport->creer && $object->fk_statut == ExpenseReport::STATUS_REFUSED)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid)
 		{
 			// Modify
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$object->id.'">'.$langs->trans('Modify').'</a></div>';
 
+<<<<<<< HEAD
 			// Brouillonner (le statut refusée est identique à brouillon)
+=======
+			// setdraft (le statut refusée est identique à brouillon)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			//print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=brouillonner&id='.$id.'">'.$langs->trans('BROUILLONNER').'</a>';
 			// Enregistrer depuis le statut "Refusée"
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=save_from_refuse&id='.$object->id.'">'.$langs->trans('ValidateAndSubmit').'</a></div>';
 		}
 	}
 
+<<<<<<< HEAD
 	if ($user->rights->expensereport->to_paid && $object->fk_statut==5)
 	{
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid)
 		{
 			// Brouillonner
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=brouillonner&id='.$object->id.'">'.$langs->trans('SetToDraft').'</a></div>';
+=======
+	if ($user->rights->expensereport->to_paid && $object->fk_statut == ExpenseReport::STATUS_APPROVED)
+	{
+		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid)
+		{
+			// setdraft
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=setdraft&id='.$object->id.'">'.$langs->trans('SetToDraft').'</a></div>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 	}
 
@@ -2310,6 +3498,7 @@ if ($action != 'create' && $action != 'edit')
 	 *	ET fk_user_validator == user courant
 	 *	Afficher : "Valider" / "Refuser" / "Supprimer"
 	 */
+<<<<<<< HEAD
 	if ($object->fk_statut == 2)
 	{
 		if (in_array($object->fk_user_author, $user->getAllChildIds(1)))
@@ -2320,6 +3509,18 @@ if ($action != 'create' && $action != 'edit')
 	}
 
 	if ($user->rights->expensereport->approve && $object->fk_statut == 2)
+=======
+	if ($object->fk_statut == ExpenseReport::STATUS_VALIDATED)
+	{
+		if (in_array($object->fk_user_author, $user->getAllChildIds(1)))
+		{
+			// set draft
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=setdraft&id='.$object->id.'">'.$langs->trans('SetToDraft').'</a></div>';
+		}
+	}
+
+	if ($user->rights->expensereport->approve && $object->fk_statut == ExpenseReport::STATUS_VALIDATED)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		//if($object->fk_user_validator==$user->id)
 		//{
@@ -2340,18 +3541,30 @@ if ($action != 'create' && $action != 'edit')
 	// If status is Appoved
 	// --------------------
 
+<<<<<<< HEAD
 	if ($user->rights->expensereport->approve && $object->fk_statut == 5)
+=======
+	if ($user->rights->expensereport->approve && $object->fk_statut == ExpenseReport::STATUS_APPROVED)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 	    print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=refuse&id='.$object->id.'">'.$langs->trans('Deny').'</a></div>';
 	}
 
 	// If bank module is used
+<<<<<<< HEAD
 	if ($user->rights->expensereport->to_paid && ! empty($conf->banque->enabled) && $object->fk_statut == 5)
+=======
+	if ($user->rights->expensereport->to_paid && ! empty($conf->banque->enabled) && $object->fk_statut == ExpenseReport::STATUS_APPROVED)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		// Pay
 		if ($remaintopay == 0)
 		{
+<<<<<<< HEAD
 			print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("DisabledBecauseRemainderToPayIsZero") . '">' . $langs->trans('DoPayment') . '</span></div>';
+=======
+			print '<div class="inline-block divButAction"><span class="butActionRefused classfortooltip" title="' . $langs->trans("DisabledBecauseRemainderToPayIsZero") . '">' . $langs->trans('DoPayment') . '</span></div>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		else
 		{
@@ -2360,7 +3573,11 @@ if ($action != 'create' && $action != 'edit')
 	}
 
 	// If bank module is not used
+<<<<<<< HEAD
 	if (($user->rights->expensereport->to_paid || empty($conf->banque->enabled)) && $object->fk_statut == 5)
+=======
+	if (($user->rights->expensereport->to_paid || empty($conf->banque->enabled)) && $object->fk_statut == ExpenseReport::STATUS_APPROVED)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		//if ((round($remaintopay) == 0 || empty($conf->banque->enabled)) && $object->paid == 0)
 		if ($object->paid == 0)
@@ -2369,14 +3586,22 @@ if ($action != 'create' && $action != 'edit')
 		}
 	}
 
+<<<<<<< HEAD
 	if ($user->rights->expensereport->creer && ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid) && $object->fk_statut == 5)
+=======
+	if ($user->rights->expensereport->creer && ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid) && $object->fk_statut == ExpenseReport::STATUS_APPROVED)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
     	// Cancel
    		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&id='.$object->id.'">'.$langs->trans('Cancel').'</a></div>';
 	}
 
     // TODO Replace this. It should be SetUnpaid and should go back to status unpaid not canceled.
+<<<<<<< HEAD
 	if (($user->rights->expensereport->approve || $user->rights->expensereport->to_paid) && $object->fk_statut == 6)
+=======
+	if (($user->rights->expensereport->approve || $user->rights->expensereport->to_paid) && $object->fk_statut == ExpenseReport::STATUS_CLOSED)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 	    // Cancel
 	    print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&id='.$object->id.'">'.$langs->trans('Cancel').'</a></div>';
@@ -2388,12 +3613,20 @@ if ($action != 'create' && $action != 'edit')
 	}
 
 	/* If draft, validated, cancel, and user can create, he can always delete its card before it is approved */
+<<<<<<< HEAD
 	if ($user->rights->expensereport->creer && $user->id == $object->fk_user_author && $object->fk_statut <= 4)
+=======
+	if ($user->rights->expensereport->creer && $user->id == $object->fk_user_author && $object->fk_statut < ExpenseReport::STATUS_APPROVED)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 	    // Delete
 		print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$object->id.'">'.$langs->trans('Delete').'</a></div>';
 	}
+<<<<<<< HEAD
 	else if($user->rights->expensereport->supprimer && $object->fk_statut != 6)
+=======
+	elseif($user->rights->expensereport->supprimer && $object->fk_statut != ExpenseReport::STATUS_CLOSED)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
     	// Delete
 	    print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$object->id.'">'.$langs->trans('Delete').'</a></div>';
@@ -2406,9 +3639,12 @@ if ($action != 'create' && $action != 'edit')
 print '</div>';
 
 
+<<<<<<< HEAD
 //$conf->global->DOL_URL_ROOT_DOCUMENT_PHP=dol_buildpath('/expensereport/documentwrapper.php',1);
 
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 // Select mail models is same action as presend
 if (GETPOST('modelselected', 'alpha')) {
 	$action = 'presend';
@@ -2416,7 +3652,10 @@ if (GETPOST('modelselected', 'alpha')) {
 
 if ($action != 'presend')
 {
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/*
 	 * Generate documents
 	 */
@@ -2436,11 +3675,21 @@ if ($action != 'presend')
 		$somethingshown = $formfile->numoffiles;
 	}
 
+<<<<<<< HEAD
+=======
+	// Disabled for expensereport, there is no thirdparty on expensereport, so nothing to define the list of other object we can suggest to link to
+	/*
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if ($action != 'create' && $action != 'edit' && ($id || $ref))
 	{
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('expensereport'));
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 	}
+<<<<<<< HEAD
+=======
+    */
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 	// List of actions on element
 	include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
@@ -2448,7 +3697,10 @@ if ($action != 'presend')
 	$somethingshown = $formactions->showactions($object, 'expensereport', null);
 
 	print '</div></div></div>';
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 // Presend form

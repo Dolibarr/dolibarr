@@ -52,6 +52,10 @@ ActionAC_TEL=Llamada telefónica
 ActionAC_FAX=Envío Fax
 ActionAC_PROP=Envío presupuesto por correo
 ActionAC_EMAIL=Envío E-Mail
+<<<<<<< HEAD
+=======
+ActionAC_EMAIL_IN=Recepción de Email
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActionAC_RDV=Cita
 ActionAC_INT=Intervención in situ
 ActionAC_FAC=Envío factura a cliente por correo
@@ -61,7 +65,11 @@ ActionAC_EMAILING=Envío mailing masivo
 ActionAC_COM=Envío pedido de cliente por correo
 ActionAC_SHIP=Envío expedición por correo
 ActionAC_SUP_ORD=Envío pedido a proveedor por correo
+<<<<<<< HEAD
 ActionAC_SUP_INV=Envío de factura de proveedor por correo
+=======
+ActionAC_SUP_INV=Envío factura de proveedor por correo
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActionAC_OTH=Otra
 ActionAC_OTH_AUTO=Eventos creados automáticamente
 ActionAC_MANUAL=Eventos creados manualmente

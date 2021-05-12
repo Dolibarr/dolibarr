@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2005-2009  Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2005-2009  Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2009-2016  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011       Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
@@ -36,8 +40,13 @@ if (! empty($conf->projet->enabled)) {
 $langs->loadLangs(array('companies', 'interventions'));
 
 $socid=0;
+<<<<<<< HEAD
 $id = GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
+=======
+$id = GETPOST('id', 'int');
+$ref=GETPOST('ref', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -58,7 +67,11 @@ if (! $object->fetch($id, $ref) > 0)
 
 $form = new Form($db);
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("Intervention"));
+=======
+llxHeader('', $langs->trans("Intervention"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $object->fetch_thirdparty();
 $object->info($object->id);

@@ -1,5 +1,9 @@
 README (English)
 --------------------------------
 
+<<<<<<< HEAD
 This directory contains example of well formated mail messages.
+=======
+This directory contains example of well formatted mail messages.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 This is to help to build the CMailFile.class.php code.

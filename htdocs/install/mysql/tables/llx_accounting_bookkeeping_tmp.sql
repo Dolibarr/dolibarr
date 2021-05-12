@@ -1,6 +1,10 @@
 -- ============================================================================
 -- Copyright (C) 2013-2017 Olivier Geffroy      <jeff@jeffinfo.com>
+<<<<<<< HEAD
 -- Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
+=======
+-- Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -49,8 +53,12 @@ CREATE TABLE llx_accounting_bookkeeping_tmp
   code_journal          varchar(32) NOT NULL,		-- FEC:JournalCode
   journal_label         varchar(255),				-- FEC:JournalLib
   piece_num             integer NOT NULL,			-- FEC:EcritureNum
+<<<<<<< HEAD
   validated             tinyint DEFAULT 0 NOT NULL,	-- 					| 0 line not validated / 1 line validated (No deleting / No modification) 
   date_validated        datetime,					-- FEC:ValidDate
+=======
+  date_validated        datetime,					-- FEC:ValidDate	| if empty: movement not validated / if not empty: movement validated (No deleting / No modification) 
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
   import_key            varchar(14),
   extraparams	        varchar(255)				-- for other parameters with json format
 ) ENGINE=innodb;

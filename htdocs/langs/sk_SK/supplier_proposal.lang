@@ -1,6 +1,10 @@
 # Dolibarr language file - Source file is en_US - supplier_proposal
 SupplierProposal=Vendor commercial proposals
+<<<<<<< HEAD
 supplier_proposalDESC=Manage price requests to vendors
+=======
+supplier_proposalDESC=Spravovať cenové požiadavky pre dodávateľov
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SupplierProposalNew=Nová cenová požiadávka
 CommRequest=Cenová požiadávka
 CommRequests=Cenové požiadávky
@@ -34,7 +38,10 @@ SupplierProposalStatusSignedShort=Akceptované
 SupplierProposalStatusNotSignedShort=Odmietol
 CopyAskFrom=Vytvoriť cenovú požiadávku skopírovaním existujúcej požiadávky
 CreateEmptyAsk=Vytvoriť prázdnu požiadávku
+<<<<<<< HEAD
 CloneAsk=Duplikovať cenovú požiadávku
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmCloneAsk=Určite chcete duplikovať túto cenovú požiadávku <b>%s</b>?
 ConfirmReOpenAsk=Určite chcete znova otvoriť  cenovú požiadávku  <b>%s</b>?
 SendAskByMail=Odoslať cenovú požiadávku e-mailom

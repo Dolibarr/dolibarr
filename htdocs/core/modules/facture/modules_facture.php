@@ -2,7 +2,11 @@
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -37,8 +41,17 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';   // Requ
  */
 abstract class ModelePDFFactures extends CommonDocGenerator
 {
+<<<<<<< HEAD
 	var $error='';
 
+=======
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *  Return list of active generation modules
 	 *
@@ -46,33 +59,58 @@ abstract class ModelePDFFactures extends CommonDocGenerator
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
+<<<<<<< HEAD
 	static function liste_modeles($db,$maxfilenamelength=0)
 	{
+=======
+    public static function liste_modeles($db, $maxfilenamelength = 0)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf;
 
 		$type='invoice';
 		$liste=array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+<<<<<<< HEAD
 		$liste=getListOfModels($db,$type,$maxfilenamelength);
+=======
+		$liste=getListOfModels($db, $type, $maxfilenamelength);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		return $liste;
 	}
 }
 
 /**
+<<<<<<< HEAD
  *	Classe mere des modeles de numerotation des references de facture
  */
 abstract class ModeleNumRefFactures
 {
 	var $error='';
+=======
+ *  Classe mere des modeles de numerotation des references de facture
+ */
+abstract class ModeleNumRefFactures
+{
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	/**
 	 * Return if a module can be used or not
 	 *
 	 * @return	boolean     true if module can be used
 	 */
+<<<<<<< HEAD
 	function isEnabled()
+=======
+	public function isEnabled()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return true;
 	}
@@ -82,7 +120,11 @@ abstract class ModeleNumRefFactures
 	 *
 	 * @return    string      Texte descripif
 	 */
+<<<<<<< HEAD
 	function info()
+=======
+	public function info()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 		$langs->load("bills");
@@ -94,7 +136,11 @@ abstract class ModeleNumRefFactures
 	 *
 	 * @return	string      Example
 	 */
+<<<<<<< HEAD
 	function getExample()
+=======
+	public function getExample()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 		$langs->load("bills");
@@ -107,7 +153,11 @@ abstract class ModeleNumRefFactures
 	 *
 	 * @return	boolean     false si conflit, true si ok
 	 */
+<<<<<<< HEAD
 	function canBeActivated()
+=======
+	public function canBeActivated()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return true;
 	}
@@ -119,7 +169,11 @@ abstract class ModeleNumRefFactures
 	 * @param   Facture		$facture	Objet facture
 	 * @return  string      			Value
 	 */
+<<<<<<< HEAD
 	function getNextValue($objsoc,$facture)
+=======
+	public function getNextValue($objsoc, $facture)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
@@ -130,15 +184,26 @@ abstract class ModeleNumRefFactures
 	 *
 	 * @return    string      Valeur
 	 */
+<<<<<<< HEAD
 	function getVersion()
+=======
+	public function getVersion()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 		$langs->load("admin");
 
 		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
+<<<<<<< HEAD
 		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
 		if ($this->version == 'dolibarr') return DOL_VERSION;
 		if ($this->version) return $this->version;
 		return $langs->trans("NotAvailable");
+=======
+		elseif ($this->version == 'experimental') return $langs->trans("VersionExperimental");
+		elseif ($this->version == 'dolibarr') return DOL_VERSION;
+		elseif ($this->version) return $this->version;
+		else return $langs->trans("NotAvailable");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 }

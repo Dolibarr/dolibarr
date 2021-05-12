@@ -36,7 +36,11 @@ $sql = "SELECT rowid, code, name, paper_size, orientation, metric, leftmargin, t
 $resql = $db->query($sql);
 if ($resql)
 {
+<<<<<<< HEAD
     while ($row = $db->fetch_array($resql)) 
+=======
+    while ($row = $db->fetch_array($resql))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $_Avery_Labels[$row['code']]['name']=$row['name'];
         $_Avery_Labels[$row['code']]['paper-size']=$row['paper_size'];
@@ -66,4 +70,7 @@ foreach($_Avery_Labels as $key => $val)
 {
 	$_Avery_Labels[$key]['name'].=' ('.$_Avery_Labels[$key]['paper-size'].' - '.$_Avery_Labels[$key]['NX'].'x'.$_Avery_Labels[$key]['NY'].')';
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

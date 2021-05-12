@@ -3,8 +3,13 @@ MailmanSpipSetup=Brevbärare och SPIP modul Setup
 MailmanTitle=Mailman sändlista systemet
 TestSubscribe=För att testa prenumeration på Mailman listor
 TestUnSubscribe=För att testa unsubscribe från Mailman listor
+<<<<<<< HEAD
 MailmanCreationSuccess=Subscription test was executed successfully
 MailmanDeletionSuccess=Unsubscription test was executed successfully
+=======
+MailmanCreationSuccess=Prenumerationstest genomfördes framgångsrikt
+MailmanDeletionSuccess=Avprenumenerationstest utfördes framgångsrikt
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SynchroMailManEnabled=En Mailman uppdatering kommer att utföras
 SynchroSpipEnabled=En SPIP uppdatering kommer att utföras
 DescADHERENT_MAILMAN_ADMINPW=Mailman administratörslösenord
@@ -23,5 +28,10 @@ DeleteIntoSpip=Ta bort från SPIP
 DeleteIntoSpipConfirmation=Är du säker på att du vill ta bort den här medlemmen från SPIP?
 DeleteIntoSpipError=Det gick inte att undertrycka användaren från SPIP
 SPIPConnectionFailed=Det gick inte att ansluta till SPIP
+<<<<<<< HEAD
 SuccessToAddToMailmanList=%s successfully added to mailman list %s or SPIP database
 SuccessToRemoveToMailmanList=%s successfully removed from mailman list %s or SPIP database
+=======
+SuccessToAddToMailmanList=%s framgångsrikt lagd till mailman lista %s eller SPIP databas
+SuccessToRemoveToMailmanList=%s avlägsnades framgångsrikt från brevlistorlistan %s eller SPIP-databasen
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

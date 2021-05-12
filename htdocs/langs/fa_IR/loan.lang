@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
+<<<<<<< HEAD
 Loan=Loan
 Loans=Loans
 NewLoan=New Loan
@@ -29,3 +30,35 @@ LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Accounting account capital by default
 LOAN_ACCOUNTING_ACCOUNT_INTEREST=Accounting account interest by default
 LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Accounting account insurance by default
 CreateCalcSchedule=Edit financial commitment
+=======
+Loan=وام
+Loans=وام‌ها
+NewLoan=وام جدید
+ShowLoan=نمایش وا
+PaymentLoan=پرداخت وا
+LoanPayment=پرداخت وا
+ShowLoanPayment=نمایش پرداخت وام
+LoanCapital=سرمایه
+Insurance=بیمه
+Interest=سود
+Nbterms=تعداد شرایط/دوره‌ها
+Term=شرایط
+LoanAccountancyCapitalCode=با توجه به سرمایۀ حساب
+LoanAccountancyInsuranceCode=با توجه به بیمۀ حساب
+LoanAccountancyInterestCode=با توجه به سود حساب
+ConfirmDeleteLoan=تائید حذف این وا
+LoanDeleted=وام با دقت حذف شد
+ConfirmPayLoan=تائید پرداخت این وام
+LoanPaid=وام پرداخت شد
+ListLoanAssociatedProject=فهرست وام‌های مربوط به این طرح
+AddLoan=ساخت وام
+FinancialCommitment=تعهد مالی
+InterestAmount=سود
+CapitalRemain=سرمایۀ مانده
+# Admin
+ConfigLoan=پیکربندی واحد وام
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=حساب‌حساب‌داری سرمایۀ پیش‌فرض
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=حساب‌حساب‌داری سود پیش‌فرض
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=حساب‌حساب‌داری بیمۀ پیش‌فرض
+CreateCalcSchedule=ویرایش تعهد مالی
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

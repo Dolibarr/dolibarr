@@ -4,6 +4,10 @@ Interventions=المداخلات
 InterventionCard=تدخل البطاقة
 NewIntervention=التدخل الجديدة
 AddIntervention=إنشاء التدخل
+<<<<<<< HEAD
+=======
+ChangeIntoRepeatableIntervention=Change to repeatable intervention
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ListOfInterventions=قائمة التدخلات
 ActionsOnFicheInter=إجراءات على التدخل
 LastInterventions=Latest %s interventions
@@ -14,14 +18,22 @@ DeleteIntervention=حذف التدخل
 ValidateIntervention=تحقق من التدخل
 ModifyIntervention=تعديل التدخل
 DeleteInterventionLine=حذف السطر التدخل
+<<<<<<< HEAD
 CloneIntervention=Clone intervention
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmDeleteIntervention=Are you sure you want to delete this intervention?
 ConfirmValidateIntervention=Are you sure you want to validate this intervention under name <b>%s</b>?
 ConfirmModifyIntervention=Are you sure you want to modify this intervention?
 ConfirmDeleteInterventionLine=Are you sure you want to delete this intervention line?
 ConfirmCloneIntervention=Are you sure you want to clone this intervention?
+<<<<<<< HEAD
 NameAndSignatureOfInternalContact=الاسم والتوقيع على التدخل :
 NameAndSignatureOfExternalContact=اسم وتوقيع العميل :
+=======
+NameAndSignatureOfInternalContact=Name and signature of intervening:
+NameAndSignatureOfExternalContact=Name and signature of customer:
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DocumentModelStandard=نموذج وثيقة موحدة للتدخلات
 InterventionCardsAndInterventionLines=التدخلات وخطوط التدخلات
 InterventionClassifyBilled=تصنيف "المفوتر"
@@ -29,13 +41,21 @@ InterventionClassifyUnBilled=تصنيف "فواتير"
 InterventionClassifyDone=Classify "Done"
 StatusInterInvoiced=فواتير
 SendInterventionRef=تقديم التدخل٪ الصورة
+<<<<<<< HEAD
 SendInterventionByMail=إرسال تدخل عن طريق البريد الإلكتروني
+=======
+SendInterventionByMail=Send intervention by email
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 InterventionCreatedInDolibarr=التدخل٪ الصورة خلقت
 InterventionValidatedInDolibarr=التدخل%s التأكد من صلاحيتها
 InterventionModifiedInDolibarr=التدخل٪ الصورة المعدلة
 InterventionClassifiedBilledInDolibarr=التدخل٪ الصورة كما وصفت مجموعة
 InterventionClassifiedUnbilledInDolibarr=التدخل٪ الصورة مجموعة كما فواتير
+<<<<<<< HEAD
 InterventionSentByEMail=التدخل٪ الصورة إرسالها عن طريق البريد الإلكتروني
+=======
+InterventionSentByEMail=Intervention %s sent by email
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 InterventionDeletedInDolibarr=التدخل٪ الصورة حذفها
 InterventionsArea=منطقة التدخلات
 DraftFichinter=مشروع التدخلات
@@ -50,8 +70,13 @@ UseServicesDurationOnFichinter=Use services duration for interventions generated
 UseDurationOnFichinter=Hides the duration field for intervention records
 UseDateWithoutHourOnFichinter=Hides hours and minutes off the date field for intervention records
 InterventionStatistics=Statistics of interventions
+<<<<<<< HEAD
 NbOfinterventions=Nb of intervention cards
 NumberOfInterventionsByMonth=Nb of intervention cards by month (date of validation)
+=======
+NbOfinterventions=No. of intervention cards
+NumberOfInterventionsByMonth=No. of intervention cards by month (date of validation)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AmountOfInteventionNotIncludedByDefault=Amount of intervention is not included by default into profit (in most cases, timesheets are used to count time spent). Add option PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT to 1 into home-setup-other to include them.
 ##### Exports #####
 InterId=تدخل معرف

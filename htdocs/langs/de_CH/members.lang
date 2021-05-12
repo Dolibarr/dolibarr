@@ -1,9 +1,15 @@
 # Dolibarr language file - Source file is en_US - members
+<<<<<<< HEAD
 MembersArea=Mitgliederbereich
 MemberCard=Mitgliederkarte
 ShowMember=Mitgliederkarte anzeigen
 UserNotLinkedToMember=Benutzer nicht mit einem Mitglied verknüpft
 ThirdpartyNotLinkedToMember=Partner nicht mit einem Mitglied verknüpft
+=======
+MemberCard=Mitgliederkarte
+ShowMember=Mitgliederkarte anzeigen
+UserNotLinkedToMember=Benutzer nicht mit einem Mitglied verknüpft
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 FundationMembers=Gründungsmitglieder
 ListOfValidatedPublicMembers=Liste der verifizierten öffentlichen Mitglieder
 ErrorMemberIsAlreadyLinkedToThisThirdParty=Ein anderes Mitglied (Name: <b>%s</b>, login: <b>%s</b>) ist schon mit Partner <b>%s</b> verknüpft. Entfernen Sie zuerst die Verknüpfung, da immer nur ein Mitglied zugewiesen sein kann (und umgekehrt).
@@ -23,9 +29,13 @@ MemberStatusDraft=Entwürfe (benötigen Bestätigung)
 MemberStatusDraftShort=Entwurf
 Subscriptions=Abonnemente
 ListOfSubscriptions=Liste der Abonnemente
+<<<<<<< HEAD
 SendCardByMail=Karte per E-Mail senden
 NewMemberType=Neue Mitgliederart
 WelcomeEMail=Begrüssungsemail
+=======
+NewMemberType=Neue Mitgliederart
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SubscriptionRequired=Abonnement notwendig
 VoteAllowed=Abstimmen erlaubt
 ShowSubscription=Abonnement anzeigen
@@ -37,4 +47,8 @@ MembersStatisticsByCountries=Mitgliederstatistik nach Land
 MembersStatisticsByState=Mitgliederstatistik nach Kanton
 MembersStatisticsByTown=Mitgliederstatistik nach Ort
 NoValidatedMemberYet=Keine verifizierten Mitglieder gefunden
+<<<<<<< HEAD
+=======
+LatestSubscriptionDate=Enddatum des Abonnementes
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Public=Informationen sind öffentlich

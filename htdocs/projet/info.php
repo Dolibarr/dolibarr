@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +22,13 @@
 
 /**
  *      \file       htdocs/projet/info.php
+<<<<<<< HEAD
  *      \ingroup    commande
  *		\brief      Page with info on project
+=======
+ *      \ingroup    project
+ *		\brief      Page with events on project
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  */
 
 require '../main.inc.php';
@@ -31,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 // Load translation files required by the page
 $langs->load("projects");
 
+<<<<<<< HEAD
 $id     = GETPOST('id','int');
 $ref    = GETPOST('ref','alpha');
 $socid  = GETPOST('socid','int');
@@ -38,6 +48,15 @@ $action = GETPOST('action','alpha');
 
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield","alpha");
+=======
+$id     = GETPOST('id', 'int');
+$ref    = GETPOST('ref', 'alpha');
+$socid  = GETPOST('socid', 'int');
+$action = GETPOST('action', 'aZ09');
+
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield", "alpha");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $sortorder = GETPOST("sortorder");
 $page = GETPOST("page");
 $page = is_numeric($page) ? $page : 0;
@@ -48,6 +67,7 @@ $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
+<<<<<<< HEAD
 if (GETPOST('actioncode','array'))
 {
     $actioncode=GETPOST('actioncode','array',3);
@@ -65,12 +85,31 @@ $id = GETPOST("id",'int');
 $socid=0;
 //if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 $result=restrictedArea($user,'projet',$id,'');
+=======
+if (GETPOST('actioncode', 'array'))
+{
+	$actioncode=GETPOST('actioncode', 'array', 3);
+	if (! count($actioncode)) $actioncode='0';
+}
+else
+{
+	$actioncode=GETPOST("actioncode", "alpha", 3)?GETPOST("actioncode", "alpha", 3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
+}
+$search_agenda_label=GETPOST('search_agenda_label');
+
+// Security check
+$id = GETPOST("id", 'int');
+$socid=0;
+//if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+$result=restrictedArea($user, 'projet', $id, '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if (!$user->rights->projet->lire)	accessforbidden();
 
 
 
 /*
+<<<<<<< HEAD
  *	Actions
  */
 
@@ -83,6 +122,20 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 {
     $actioncode='';
     $search_agenda_label='';
+=======
+ * Actions
+ */
+
+$parameters=array('id'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+// Purge search criteria
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
+{
+	$actioncode='';
+	$search_agenda_label='';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 
@@ -103,9 +156,15 @@ if ($id > 0 || ! empty($ref))
 }
 
 $title=$langs->trans("Project").' - '.$object->ref.' '.$object->name;
+<<<<<<< HEAD
 if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->ref.' '.$object->name.' - '.$langs->trans("Info");
 $help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 llxHeader("",$title,$help_url);
+=======
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->ref.' '.$object->name.' - '.$langs->trans("Info");
+$help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
+llxHeader("", $title, $help_url);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $head = project_prepare_head($object);
 
@@ -129,8 +188,13 @@ $morehtmlref.='</div>';
 // Define a complementary filter for search of next/prev ref.
 if (! $user->rights->projet->all->lire)
 {
+<<<<<<< HEAD
     $objectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
     $object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
+=======
+    $objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
+    $object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',', array_keys($objectsListId)):'0').")";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -162,6 +226,7 @@ if ($permok)
 $morehtmlcenter='';
 if (! empty($conf->agenda->enabled))
 {
+<<<<<<< HEAD
     if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
     {
         $morehtmlcenter.='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'"><span class="valignmiddle">'.$langs->trans("AddAction").'</span>';
@@ -172,6 +237,10 @@ if (! empty($conf->agenda->enabled))
     {
         $morehtmlcenter.='<a class="butActionRefused" href="#">'.$langs->trans("AddAction").'</a>';
     }
+=======
+    $addActionBtnRight = ! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create);
+    $morehtmlcenter.= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $addActionBtnRight);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 //print '</div>';
@@ -189,9 +258,16 @@ if (!empty($object->id))
     // List of all actions
     $filters=array();
     $filters['search_agenda_label']=$search_agenda_label;
+<<<<<<< HEAD
     show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters, $sortfield, $sortorder);
 }
 
 
+=======
+    show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
+}
+
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

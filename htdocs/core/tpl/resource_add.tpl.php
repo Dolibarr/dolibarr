@@ -9,18 +9,30 @@ if (empty($conf) || ! is_object($conf))
 }
 
 
+<<<<<<< HEAD
 require_once(DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php');
+=======
+require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $form = new Form($db);
 $formresources = new FormResource($db);
 
+<<<<<<< HEAD
 $out  = '<div class="tagtable centpercent noborder allwidth nohover">';
+=======
+$out  = '<div class="tagtable centpercent noborder borderbottom allwidth nohover">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $out .= '<form class="tagtr nohover '.($var==true?'pair':'impair').'" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 $out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 $out .= '<input type="hidden" name="action" value="add_element_resource">';
 $out .= '<input type="hidden" name="element" value="'.$element.'">';
 $out .= '<input type="hidden" name="element_id" value="'.$element_id.'">';
+<<<<<<< HEAD
+=======
+$out .= '<input type="hidden" name="ref" value="'.$element_ref.'">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $out .= '<input type="hidden" name="resource_type" value="'.(empty($resource_type) ? 'dolresource' : $resource_type).'">';
 
 
@@ -28,6 +40,7 @@ $out .= '<input type="hidden" name="resource_type" value="'.(empty($resource_typ
 $out .= '<div class="tagtd">'.$langs->trans("SelectResource").'</div>';
 $out .= '<div class="tagtd">';
 $events=array();
+<<<<<<< HEAD
 $out .= $formresources->select_resource_list('','fk_resource','',1,1,0,$events,'',2);
 $out .= '</div>';
 
@@ -35,6 +48,15 @@ $out .= '<div class="tagtd"><label>'.$langs->trans('Busy').'</label> '.$form->se
 $out .= '<div class="tagtd"><label>'.$langs->trans('Mandatory').'</label> '.$form->selectyesno('mandatory',(isset($_POST['mandatory'])?$_POST['mandatory']:0),1).'</div>';
 
 $out .= '<div class="tagtd" align="right">';
+=======
+$out .= $formresources->select_resource_list('', 'fk_resource', '', 1, 1, 0, $events, '', 2, null);
+$out .= '</div>';
+
+$out .= '<div class="tagtd"><label>'.$langs->trans('Busy').'</label> '.$form->selectyesno('busy', (isset($_POST['busy'])?$_POST['busy']:1), 1).'</div>';
+$out .= '<div class="tagtd"><label>'.$langs->trans('Mandatory').'</label> '.$form->selectyesno('mandatory', (isset($_POST['mandatory'])?$_POST['mandatory']:0), 1).'</div>';
+
+$out .= '<div class="tagtd right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $out .='<input type="submit" id="add-resource-place" class="button" value="'.$langs->trans("Add").'"/>';
 $out .= '</div>';
 

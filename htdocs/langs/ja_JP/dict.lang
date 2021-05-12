@@ -116,7 +116,11 @@ CountryHM=ハード島とマクドナルド
 CountryVA=ローマ法王庁（バチカン市国）
 CountryHN=ホンジュラス
 CountryHK=香港
+<<<<<<< HEAD
 CountryIS=Icelande
+=======
+CountryIS=Iceland
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryIN=インド
 CountryID=インドネシア
 CountryIR=イラン
@@ -131,7 +135,11 @@ CountryKI=キリバス
 CountryKP=北朝鮮
 CountryKR=韓国
 CountryKW=クウェート
+<<<<<<< HEAD
 CountryKG=Kyrghyztan
+=======
+CountryKG=Kyrgyzstan
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryLA=ラオ語
 CountryLV=ラトビア
 CountryLB=レバノン
@@ -160,7 +168,11 @@ CountryMD=モルドバ
 CountryMN=モンゴル国
 CountryMS=モントセラト
 CountryMZ=モザンビーク
+<<<<<<< HEAD
 CountryMM=Birmania（ミャンマー）
+=======
+CountryMM=Myanmar (Burma)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryNA=ナミビア
 CountryNR=ナウル
 CountryNP=ネパール
@@ -223,7 +235,11 @@ CountryTO=トンガ
 CountryTT=トリニダードトバゴ
 CountryTR=トルコ
 CountryTM=トルクメニスタン
+<<<<<<< HEAD
 CountryTC=タークス諸島とCailos諸島
+=======
+CountryTC=Turks and Caicos Islands
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryTV=ツバル
 CountryUG=ウガンダ
 CountryUA=ウクライナ
@@ -277,7 +293,11 @@ CurrencySingMGA=アリアリ
 CurrencyMUR=モーリシャスルピー
 CurrencySingMUR=モーリシャスルピー
 CurrencyNOK=ノルウェークローネ
+<<<<<<< HEAD
 CurrencySingNOK=ノルウェークローネ
+=======
+CurrencySingNOK=Norwegian kronas
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrencyTND=チュニジアディナール
 CurrencySingTND=チュニジアディナール
 CurrencyUSD=米ドル
@@ -290,6 +310,10 @@ CurrencyXOF=CFAフランBCEAO
 CurrencySingXOF=CFAフランBCEAO
 CurrencyXPF=CFPフラン
 CurrencySingXPF=CFPフラン
+<<<<<<< HEAD
+=======
+CurrencyCentEUR=cents
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrencyCentSingEUR=セント
 CurrencyCentINR=パイサ
 CurrencyCentSingINR=パイサ（複数）
@@ -306,6 +330,10 @@ DemandReasonTypeSRC_WOM=口頭
 DemandReasonTypeSRC_PARTNER=パートナー
 DemandReasonTypeSRC_EMPLOYEE=従業員
 DemandReasonTypeSRC_SPONSORING=後援
+<<<<<<< HEAD
+=======
+DemandReasonTypeSRC_SRC_CUSTOMER=Incoming contact of a customer
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 #### Paper formats ####
 PaperFormatEU4A0=4A0 用紙
 PaperFormatEU2A0=2A0 用紙

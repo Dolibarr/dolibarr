@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2006-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2006-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2006-2012	Regis Houssin		<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,8 +28,13 @@
 
 require '../../main.inc.php';
 
+<<<<<<< HEAD
 $langs->load("admin");
 $langs->load("other");
+=======
+// Load translation files required by the page
+$langs->loadLangs(array("other","admin"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if (! $user->admin)
 	accessforbidden();
@@ -43,7 +52,11 @@ $type=$db->type;
 
 
 $help_url='EN:Restores|FR:Restaurations|ES:Restauraciones';
+<<<<<<< HEAD
 llxHeader('','',$help_url);
+=======
+llxHeader('', '', $help_url);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 ?>
 <script type="text/javascript">
@@ -65,10 +78,17 @@ jQuery(document).ready(function() {
 </script>
 <?php
 
+<<<<<<< HEAD
 print load_fiche_titre($langs->trans("Restore"),'','title_setup');
 
 print '<div class="center">';
 print $langs->trans("RestoreDesc",DOL_DATA_ROOT);
+=======
+print load_fiche_titre($langs->trans("Restore"), '', 'title_setup');
+
+print '<div class="center opacitymedium">';
+print $langs->trans("RestoreDesc", DOL_DATA_ROOT);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</div>';
 print '<br>';
 
@@ -76,7 +96,11 @@ print '<br>';
 <fieldset>
 <legend style="font-size: 3em">1</legend>
 <?php
+<<<<<<< HEAD
 print $langs->trans("RestoreDesc2",DOL_DATA_ROOT).'<br><br>';
+=======
+print $langs->trans("RestoreDesc2", DOL_DATA_ROOT).'<br><br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ?>
 </fieldset>
 
@@ -85,7 +109,11 @@ print $langs->trans("RestoreDesc2",DOL_DATA_ROOT).'<br><br>';
 <fieldset>
 <legend style="font-size: 3em">2</legend>
 <?php
+<<<<<<< HEAD
 print $langs->trans("RestoreDesc3",$dolibarr_main_db_name).'<br><br>';
+=======
+print $langs->trans("RestoreDesc3", $dolibarr_main_db_name).'<br><br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ?>
 
 <?php print $langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b>'; ?><br><br>
@@ -106,7 +134,11 @@ print $langs->trans("RestoreDesc3",$dolibarr_main_db_name).'<br><br>';
     </div>
     <?php
     }
+<<<<<<< HEAD
     else if (in_array($type, array('pgsql')))
+=======
+    elseif (in_array($type, array('pgsql')))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
     ?>
     <div class="formelementrow">
@@ -138,7 +170,11 @@ if (in_array($type, array('mysql', 'mysqli')))
 	<?php
 	// Parameteres execution
 	$command=$db->getPathOfRestore();
+<<<<<<< HEAD
 	if (preg_match("/\s/",$command)) $command=$command=escapeshellarg($command);	// Use quotes on command
+=======
+	if (preg_match("/\s/", $command)) $command=$command=escapeshellarg($command);	// Use quotes on command
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	$param=$dolibarr_main_db_name;
 	$param.=" -h ".$dolibarr_main_db_host;
@@ -148,13 +184,21 @@ if (in_array($type, array('mysql', 'mysqli')))
 	$paramclear=$param;
 	if (! empty($dolibarr_main_db_pass))
 	{
+<<<<<<< HEAD
 		$paramcrypted.=" -p".preg_replace('/./i','*',$dolibarr_main_db_pass);
+=======
+		$paramcrypted.=" -p".preg_replace('/./i', '*', $dolibarr_main_db_pass);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$paramclear.=" -p".$dolibarr_main_db_pass;
 	}
 
 	echo $langs->trans("ImportMySqlDesc");
 	print '<br>';
+<<<<<<< HEAD
 	print '<textarea rows="1" id="restorecommand" class="centpercent">'.$langs->trans("ImportMySqlCommand",$command,($showpass?$paramclear:$paramcrypted)).'</textarea><br>';
+=======
+	print '<textarea rows="1" id="restorecommand" class="centpercent">'.$langs->trans("ImportMySqlCommand", $command, ($showpass?$paramclear:$paramcrypted)).'</textarea><br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print ajax_autoselect('restorecommand');
 
 	if (empty($_GET["showpass"]) && $dolibarr_main_db_pass) print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=1&amp;radio_dump=mysql_options">'.$langs->trans("UnHidePassword").'</a>';
@@ -164,7 +208,11 @@ if (in_array($type, array('mysql', 'mysqli')))
     </fieldset>
 <?php
 }
+<<<<<<< HEAD
 else if (in_array($type, array('pgsql')))
+=======
+elseif (in_array($type, array('pgsql')))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 ?>
     <fieldset id="postgresql_options">
@@ -173,7 +221,11 @@ else if (in_array($type, array('pgsql')))
     <?php
     // Parameteres execution
     $command=$db->getPathOfRestore();
+<<<<<<< HEAD
     if (preg_match("/\s/",$command)) $command=$command=escapeshellarg($command);    // Use quotes on command
+=======
+    if (preg_match("/\s/", $command)) $command=$command=escapeshellarg($command);    // Use quotes on command
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     $param=" -d ".$dolibarr_main_db_name;
     $param.=" -h ".$dolibarr_main_db_host;
@@ -194,7 +246,11 @@ else if (in_array($type, array('pgsql')))
 
     echo $langs->trans("ImportPostgreSqlDesc");
     print '<br>';
+<<<<<<< HEAD
     print '<textarea rows="1" id="restorecommand" class="centpercent">'.$langs->trans("ImportPostgreSqlCommand",$command,($showpass?$paramclear:$paramcrypted)).'</textarea><br>';
+=======
+    print '<textarea rows="1" id="restorecommand" class="centpercent">'.$langs->trans("ImportPostgreSqlCommand", $command, ($showpass?$paramclear:$paramcrypted)).'</textarea><br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print ajax_autoselect('restorecommand');
     //if (empty($_GET["showpass"]) && $dolibarr_main_db_pass) print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=1&amp;radio_dump=postgresql_options">'.$langs->trans("UnHidePassword").'</a>';
     //else print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=0&amp;radio_dump=mysql_options">'.$langs->trans("HidePassword").'</a>';
@@ -212,6 +268,11 @@ else if (in_array($type, array('pgsql')))
 </fieldset>
 
 <?php
+<<<<<<< HEAD
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

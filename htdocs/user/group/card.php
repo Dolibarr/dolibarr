@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2005-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2017	Regis Houssin		<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2017	Regis Houssin		<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2011		Herve Prot			<herve.prot@symeos.com>
  * Copyright (C) 2012		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2018		Juanjo Menent		<jmenent@2byte.es>
@@ -35,17 +39,27 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 $canreadperms=($user->admin || $user->rights->user->user->lire);
 $caneditperms=($user->admin || $user->rights->user->user->creer);
 $candisableperms=($user->admin || $user->rights->user->user->supprimer);
+<<<<<<< HEAD
+=======
+$feature2 = 'user';
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 // Advanced permissions
 if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 {
     $canreadperms=($user->admin || $user->rights->user->group_advance->read);
     $caneditperms=($user->admin || $user->rights->user->group_advance->write);
     $candisableperms=($user->admin || $user->rights->user->group_advance->delete);
+<<<<<<< HEAD
+=======
+    $feature2 = 'group_advance';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 // Load translation files required by page
 $langs->loadLangs(array('users', 'other'));
 
+<<<<<<< HEAD
 $id         = GETPOST('id', 'int');
 $action     = GETPOST('action', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
@@ -56,6 +70,18 @@ $userid     = GETPOST('user', 'int');
 
 // Security check
 $result = restrictedArea($user, 'user', $id, 'usergroup&usergroup', 'user');
+=======
+$id = GETPOST('id', 'int');
+$action = GETPOST('action', 'alpha');
+$cancel = GETPOST('cancel', 'aZ09');
+$confirm = GETPOST('confirm', 'alpha');
+$contextpage = GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'groupcard';   // To manage different context of search
+
+$userid = GETPOST('user', 'int');
+
+// Security check
+$result = restrictedArea($user, 'user', $id, 'usergroup&usergroup', $feature2);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Users/Groups management only in master entity if transverse mode
 if (! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
@@ -84,7 +110,11 @@ $hookmanager->initHooks(array('groupcard','globalcard'));
  */
 
 $parameters=array('id' => $id, 'userid' => $userid, 'caneditperms' => $caneditperms);
+<<<<<<< HEAD
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+=======
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook)) {
@@ -110,7 +140,11 @@ if (empty($reshook)) {
 		if ($caneditperms)
 		{
 			$object->fetch($id);
+<<<<<<< HEAD
 			$object->delete();
+=======
+			$object->delete($user);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			header("Location: ".DOL_URL_ROOT."/user/group/list.php?restore_lastsearch_values=1");
 			exit;
 		}
@@ -130,12 +164,21 @@ if (empty($reshook)) {
 				setEventMessages($langs->trans("NameNotDefined"), null, 'errors');
 				$action="create";       // Go back to create page
 			} else {
+<<<<<<< HEAD
 				$object->name	= trim(GETPOST("nom",'nohtml'));
 				$object->nom	= $object->name;	// For backward compatibility
 				$object->note	= trim(GETPOST("note",'none'));
 
 				// Fill array 'array_options' with data from add form
 				$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+=======
+				$object->name	= trim(GETPOST("nom", 'nohtml'));
+				$object->nom	= $object->name;	// For backward compatibility
+				$object->note	= trim(GETPOST("note", 'none'));
+
+				// Fill array 'array_options' with data from add form
+				$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if ($ret < 0) $error++;
 
 				if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) $object->entity = 0;
@@ -157,7 +200,11 @@ if (empty($reshook)) {
 					$db->rollback();
 
 					$langs->load("errors");
+<<<<<<< HEAD
 					setEventMessages($langs->trans("ErrorGroupAlreadyExists",$object->name), null, 'errors');
+=======
+					setEventMessages($langs->trans("ErrorGroupAlreadyExists", $object->name), null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					$action="create";       // Go back to create page
 				}
 			}
@@ -181,8 +228,13 @@ if (empty($reshook)) {
 
 				$edituser = new User($db);
 				$edituser->fetch($userid);
+<<<<<<< HEAD
 				if ($action == 'adduser')    $result=$edituser->SetInGroup($object->id,$object->entity);
 				if ($action == 'removeuser') $result=$edituser->RemoveFromGroup($object->id,$object->entity);
+=======
+				if ($action == 'adduser')    $result=$edituser->SetInGroup($object->id, $object->entity);
+				if ($action == 'removeuser') $result=$edituser->RemoveFromGroup($object->id, $object->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				if ($result > 0)
 				{
@@ -213,12 +265,21 @@ if (empty($reshook)) {
 
 			$object->oldcopy = clone $object;
 
+<<<<<<< HEAD
 			$object->name	= trim(GETPOST("group",'nohtml'));
 			$object->nom	= $object->name;			// For backward compatibility
 			$object->note	= dol_htmlcleanlastbr(GETPOST("note",'none'));
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+=======
+			$object->name	= trim(GETPOST("group", 'nohtml'));
+			$object->nom	= $object->name;			// For backward compatibility
+			$object->note	= dol_htmlcleanlastbr(GETPOST("note", 'none'));
+
+			// Fill array 'array_options' with data from add form
+			$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if ($ret < 0) $error++;
 
 			if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) $object->entity = 0;
@@ -255,7 +316,11 @@ if (empty($reshook)) {
  * View
  */
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("GroupCard"));
+=======
+llxHeader('', $langs->trans("GroupCard"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $form = new Form($db);
 $fuserstatic = new User($db);
@@ -274,11 +339,19 @@ if ($action == 'create')
 
     dol_fiche_head('', '', '', 0, '');
 
+<<<<<<< HEAD
     print '<table class="border" width="100%">';
 
 	print "<tr>";
 	print '<td class="fieldrequired titlefield">'.$langs->trans("Name").'</td>';
 	print '<td><input type="text" id="nom" name="nom" value="'.dol_escape_htmltag(GETPOST('nom','nohtml')).'"></td></tr>';
+=======
+    print '<table class="border centpercent">';
+
+	print "<tr>";
+	print '<td class="fieldrequired titlefield">'.$langs->trans("Name").'</td>';
+	print '<td><input type="text" id="nom" name="nom" value="'.dol_escape_htmltag(GETPOST('nom', 'nohtml')).'"></td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	// Multicompany
 	if (! empty($conf->multicompany->enabled) && is_object($mc))
@@ -297,17 +370,29 @@ if ($action == 'create')
 
     print "<tr>".'<td class="tdtop">'.$langs->trans("Description").'</td><td>';
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+<<<<<<< HEAD
     $doleditor=new DolEditor('note','','',240,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_8,'90%');
+=======
+    $doleditor=new DolEditor('note', '', '', 240, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_8, '90%');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $doleditor->Create();
     print "</td></tr>\n";
 
 	// Other attributes
     $parameters=array('object' => $object, 'colspan' => ' colspan="2"');
+<<<<<<< HEAD
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
     if (empty($reshook))
     {
 		print $object->showOptionals($extrafields,'edit');
+=======
+    $reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
+    if (empty($reshook))
+    {
+		print $object->showOptionals($extrafields, 'edit');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
     print "</table>\n";
@@ -341,7 +426,11 @@ else
 		 */
 		if ($action == 'delete')
 		{
+<<<<<<< HEAD
 			print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("DeleteAGroup"),$langs->trans("ConfirmDeleteGroup",$object->name),"confirm_delete", '',0,1);
+=======
+			print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("DeleteAGroup"), $langs->trans("ConfirmDeleteGroup", $object->name), "confirm_delete", '', 0, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		/*
@@ -354,12 +443,20 @@ else
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/user/group/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
+<<<<<<< HEAD
 			dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
+=======
+			dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			print '<div class="fichecenter">';
 			print '<div class="underbanner clearboth"></div>';
 
+<<<<<<< HEAD
 			print '<table class="border" width="100%">';
+=======
+			print '<table class="border centpercent">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
             // Name (already in dol_banner, we keep it to have the GlobalGroup picto, but we should move it in dol_banner)
             if (! empty($conf->mutlicompany->enabled))
@@ -368,7 +465,11 @@ else
     			print '<td class="valeur">'.dol_escape_htmltag($object->name);
     			if (empty($object->entity))
     			{
+<<<<<<< HEAD
     				print img_picto($langs->trans("GlobalGroup"),'redstar');
+=======
+    				print img_picto($langs->trans("GlobalGroup"), 'redstar');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     			}
     			print "</td></tr>\n";
             }
@@ -416,7 +517,11 @@ else
 
             // List users in group
 
+<<<<<<< HEAD
             print load_fiche_titre($langs->trans("ListOfUsersInGroup"),'','');
+=======
+            print load_fiche_titre($langs->trans("ListOfUsersInGroup"), '', '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
             // On selectionne les users qui ne sont pas deja dans le groupe
             $exclude = array();
@@ -431,7 +536,11 @@ else
 
 			// Other form for add user to group
 			$parameters=array('caneditperms' => $caneditperms, 'exclude' => $exclude);
+<<<<<<< HEAD
 			$reshook=$hookmanager->executeHooks('formAddUserToGroup',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+=======
+			$reshook=$hookmanager->executeHooks('formAddUserToGroup', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print $hookmanager->resPrint;
 
 			if (empty($reshook))
@@ -456,13 +565,22 @@ else
 				/*
 				 * Group members
 				 */
+<<<<<<< HEAD
 				print '<table class="noborder" width="100%">';
+=======
+				print '<table class="noborder centpercent">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				print '<tr class="liste_titre">';
 				print '<td class="liste_titre">'.$langs->trans("Login").'</td>';
 				print '<td class="liste_titre">'.$langs->trans("Lastname").'</td>';
 				print '<td class="liste_titre">'.$langs->trans("Firstname").'</td>';
+<<<<<<< HEAD
 				print '<td class="liste_titre" width="5" align="center">'.$langs->trans("Status").'</td>';
 				print '<td class="liste_titre" width="5" align="right">&nbsp;</td>';
+=======
+				print '<td class="liste_titre center" width="5">'.$langs->trans("Status").'</td>';
+				print '<td class="liste_titre right" width="5">&nbsp;</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				print "</tr>\n";
 
 				if (! empty($object->members))
@@ -472,6 +590,7 @@ else
 						print '<tr class="oddeven">';
 						print '<td>';
 						print $useringroup->getNomUrl(-1, '', 0, 0, 24, 0, 'login');
+<<<<<<< HEAD
 						if ($useringroup->admin  && ! $useringroup->entity) print img_picto($langs->trans("SuperAdministrator"),'redstar');
 						else if ($useringroup->admin) print img_picto($langs->trans("Administrator"),'star');
 						print '</td>';
@@ -481,6 +600,19 @@ else
 						print '<td align="right">';
 						if (! empty($user->admin))
 						{
+=======
+						if ($useringroup->admin  && ! $useringroup->entity) {
+                            print img_picto($langs->trans("SuperAdministrator"), 'redstar');
+                        } elseif ($useringroup->admin) {
+                            print img_picto($langs->trans("Administrator"), 'star');
+                        }
+						print '</td>';
+						print '<td>'.$useringroup->lastname.'</td>';
+						print '<td>'.$useringroup->firstname.'</td>';
+						print '<td class="center">'.$useringroup->getLibStatut(3).'</td>';
+						print '<td class="right">';
+						if (! empty($user->admin)) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=removeuser&amp;user='.$useringroup->id.'">';
 							print img_picto($langs->trans("RemoveFromGroup"), 'unlink');
 							print '</a>';
@@ -540,7 +672,11 @@ else
 
             dol_fiche_head($head, 'group', $title, 0, 'group');
 
+<<<<<<< HEAD
             print '<table class="border" width="100%">';
+=======
+            print '<table class="border centpercent">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Name").'</td>';
             print '<td class="valeur"><input class="minwidth300" type="text" name="group" value="'.dol_escape_htmltag($object->name).'">';
             print "</td></tr>\n";
@@ -563,17 +699,29 @@ else
             print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
             print '<td class="valeur">';
             require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+<<<<<<< HEAD
             $doleditor=new DolEditor('note',$object->note,'',240,'dolibarr_notes','',true,false,$conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_8,'90%');
+=======
+            $doleditor=new DolEditor('note', $object->note, '', 240, 'dolibarr_notes', '', true, false, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_8, '90%');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $doleditor->Create();
             print '</td>';
             print "</tr>\n";
 			// Other attributes
             $parameters=array();
+<<<<<<< HEAD
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             print $hookmanager->resPrint;
             if (empty($reshook))
             {
 				print $object->showOptionals($extrafields,'edit');
+=======
+            $reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+            print $hookmanager->resPrint;
+            if (empty($reshook))
+            {
+				print $object->showOptionals($extrafields, 'edit');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             }
 
             print "</table>\n";
@@ -587,5 +735,9 @@ else
     }
 }
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

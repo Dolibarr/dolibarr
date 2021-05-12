@@ -1,10 +1,17 @@
 # Dolibarr language file - Source file is en_US - products
 ProductRef=Produkt ref.
 ProductLabel=Produktmärkning
+<<<<<<< HEAD
 ProductLabelTranslated=Translated product label
 ProductDescriptionTranslated=Translated product description
 ProductNoteTranslated=Translated product note
 ProductServiceCard=Produkter / tjänster kort
+=======
+ProductLabelTranslated=Översatt produktetikett
+ProductDescriptionTranslated=Översatt produktbeskrivning
+ProductNoteTranslated=Översatt produktnotat
+ProductServiceCard=Produkter / tjänster
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TMenuProducts=Produkter
 TMenuServices=Tjänster
 Products=Produkter
@@ -16,6 +23,7 @@ Create=Skapa
 Reference=Referens
 NewProduct=Ny produkt
 NewService=Ny tjänst
+<<<<<<< HEAD
 ProductVatMassChange=Massändring av moms
 ProductVatMassChangeDesc=Denna sida kan användas för att ändra en momssats definierad för produkter eller tjänster från ett värde till ett annat. Varning: denna ändring utförs på hela databasen.
 MassBarcodeInit=Massvis streckkodinitiering
@@ -71,14 +79,79 @@ PurchasedAmount=Purchased amount
 NewPrice=Nytt pris
 MinPrice=Min. selling price
 EditSellingPriceLabel=Edit selling price label
+=======
+ProductVatMassChange=Global momsuppdatering
+ProductVatMassChangeDesc=Detta verktyg uppdaterar mervärdesskattesatsen som definierats på <b> <u> ALL </u> </b> produkter och tjänster!
+MassBarcodeInit=Massvis streckkodinitiering
+MassBarcodeInitDesc=Denna sida kan användas för att initialisera en streckkod på objekt som inte har någon streckkod definierad. Kontrollera först att streckkodsmodulen har fullständiga inställningar.
+ProductAccountancyBuyCode=Redovisningskod (köp)
+ProductAccountancySellCode=Redovisningskod (försäljning)
+ProductAccountancySellIntraCode=Redovisningskod (försäljning inom gemenskapen)
+ProductAccountancySellExportCode=Redovisningskod (försäljningsexport)
+ProductOrService=Produkt eller tjänst
+ProductsAndServices=Produkter och tjänster
+ProductsOrServices=Produkter eller tjänster
+ProductsPipeServices=Produkter | tjänster
+ProductsOnSaleOnly=Endast produkter till försäljning
+ProductsOnPurchaseOnly=Endast produkter för inköp
+ProductsNotOnSell=Produkter som inte är till salu och inte för köp
+ProductsOnSellAndOnBuy=Produkter till försäljning och inköp
+ServicesOnSaleOnly=Endast tjänster till salu 
+ServicesOnPurchaseOnly=Endast tjänster för inköp
+ServicesNotOnSell=Tjänster som inte är till salu och inte för köp
+ServicesOnSellAndOnBuy=Tjänster till försäljning och inköp
+LastModifiedProductsAndServices=Senast %s modifierade produkter / tjänster
+LastRecordedProducts=Senaste %s inspelade produkterna
+LastRecordedServices=Senaste %s inspelade tjänsterna
+CardProduct0=Produkt
+CardProduct1=Service
+Stock=Lager
+MenuStocks=Lager
+Stocks=Lager och plats (lagerplats) för produkter
+Movements=Rörelser
+Sell=Försäljning
+Buy=Inköp
+OnSell=Kan säljas
+OnBuy=Kan köpas
+NotOnSell=Kan ej säljas
+ProductStatusOnSell=Kan säljas
+ProductStatusNotOnSell=Kan ej säljas
+ProductStatusOnSellShort=Kan säljas
+ProductStatusNotOnSellShort=Kan ej säljas
+ProductStatusOnBuy=Kan köpas
+ProductStatusNotOnBuy=Kan ej köpas
+ProductStatusOnBuyShort=Kan köpas
+ProductStatusNotOnBuyShort=Kan ej köpas
+UpdateVAT=Uppdatera moms
+UpdateDefaultPrice=Uppdatera standardpriset
+UpdateLevelPrices=Uppdatera priser för varje nivå
+AppliedPricesFrom=Tillämpad från
+SellingPrice=Försäljningspris
+SellingPriceHT=Försäljningspris (exkl. Moms)
+SellingPriceTTC=Försäljningspris (inkl. moms)
+SellingMinPriceTTC=Minsta försäljningspris (inkl. Skatt)
+CostPriceDescription=Detta prisfält (exkl. Moms) kan användas för att lagra det genomsnittliga beloppet denna produkt kostar för ditt företag. Det kan vara vilket pris du beräknar dig, till exempel från det genomsnittliga köpeskillingen plus genomsnittlig produktion och distributionskostnad.
+CostPriceUsage=Detta värde kan användas för marginalberäkning.
+SoldAmount=Sålt belopp
+PurchasedAmount=Inköpt antal
+NewPrice=Nytt pris
+MinPrice=Min. försäljningspris
+EditSellingPriceLabel=Redigera försäljningsprisetikett
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CantBeLessThanMinPrice=Försäljningspriset kan inte vara lägre än lägsta tillåtna för denna bok (%s utan skatt)
 ContractStatusClosed=Stängt
 ErrorProductAlreadyExists=En produkt med hänvisning %s finns redan.
 ErrorProductBadRefOrLabel=Felaktigt värde för referens eller etikett.
 ErrorProductClone=Ett problem uppstod vid kloning av produkten eller tjänsten.
+<<<<<<< HEAD
 ErrorPriceCantBeLowerThanMinPrice=Error, price can't be lower than minimum price.
 Suppliers=Leverantörer
 SupplierRef=Leverantör ref.
+=======
+ErrorPriceCantBeLowerThanMinPrice=Fel kan priset inte vara lägre än lägsta pris.
+Suppliers=Leverantörer
+SupplierRef=Leverantör SKU
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShowProduct=Visa produkt
 ShowService=Visa tjänst
 ProductsAndServicesArea=Produkter och Tjänster område
@@ -86,8 +159,13 @@ ProductsArea=Produktområde
 ServicesArea=Tjänster område
 ListOfStockMovements=Lista över lageromsättningen
 BuyingPrice=BETALKURS
+<<<<<<< HEAD
 PriceForEachProduct=Products with specific prices
 SupplierCard=Leverantör kort
+=======
+PriceForEachProduct=Produkter med specifika priser
+SupplierCard=Leverantörskort
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PriceRemoved=Pris bort
 BarCode=Barcode
 BarcodeType=Barcode typ
@@ -95,6 +173,7 @@ SetDefaultBarcodeType=Ställ streckkodstypblock
 BarcodeValue=Barcode värde
 NoteNotVisibleOnBill=Obs (ej synlig på fakturor, förslag ...)
 ServiceLimitedDuration=Om produkten är en tjänst med begränsad varaktighet:
+<<<<<<< HEAD
 MultiPricesAbility=Several segment of prices per product/service (each customer is in one segment)
 MultiPricesNumPrices=Antal pris
 AssociatedProductsAbility=Activate the feature to manage virtual products
@@ -102,14 +181,28 @@ AssociatedProducts=Biprodukter
 AssociatedProductsNumber=Antal produkter komponera denna produkt
 ParentProductsNumber=Antal förälder förpackningsartikel
 ParentProducts=Parent products
+=======
+MultiPricesAbility=Flera prissegment per produkt / tjänst (varje kund är i ett prissegment)
+MultiPricesNumPrices=Antal pris
+AssociatedProductsAbility=Aktivera virtuella produkter (kit)
+AssociatedProducts=Virtuella produkter
+AssociatedProductsNumber=Antal produkter komponera denna produkt
+ParentProductsNumber=Antal förälder förpackningsartikel
+ParentProducts=Föräldraprodukter
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 IfZeroItIsNotAVirtualProduct=Om 0 är denna produkt inte en virtuell produkt
 IfZeroItIsNotUsedByVirtualProduct=Om 0 är denna produkt inte använd i någon virtuell produkt
 KeywordFilter=Nyckelord filter
 CategoryFilter=Kategori filter
 ProductToAddSearch=Sök produkt att lägga till
 NoMatchFound=Ingen matchning hittades
+<<<<<<< HEAD
 ListOfProductsServices=List of products/services
 ProductAssociationList=List of products/services that are component of this virtual product/package
+=======
+ListOfProductsServices=Lista över produkter / tjänster
+ProductAssociationList=Lista över produkter / tjänster som är komponent (er) av denna virtuella produkt / kit
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProductParentList=Förteckning över produkter och tjänster med denna produkt som en komponent
 ErrorAssociationIsFatherOfThis=Ett av valda produkten är förälder med nuvarande produkt
 DeleteProduct=Ta bort en produkt / tjänst
@@ -122,6 +215,7 @@ ImportDataset_service_1=Tjänster
 DeleteProductLine=Ta bort produktlinje
 ConfirmDeleteProductLine=Är du säker på att du vill ta bort denna produktlinje?
 ProductSpecial=Särskilda
+<<<<<<< HEAD
 QtyMin=Minsta antal
 PriceQtyMin=Pris för detta minsta antal (exkl. rabatt)
 PriceQtyMinCurrency=Price for this min. qty (w/o discount) (currency)
@@ -136,6 +230,22 @@ PredefinedProductsToPurchase=Fördefinierade produkter för upphandling
 PredefinedServicesToPurchase=Fördefinierade tjänster för upphandling
 PredefinedProductsAndServicesToPurchase=Fördefinierade produkter eller tjänster för upphandling
 NotPredefinedProducts=Not predefined products/services
+=======
+QtyMin=Min. köpmängd
+PriceQtyMin=Pris kvantitet min.
+PriceQtyMinCurrency=Pris (valuta) för denna mängd. (ingen rabatt)
+VATRateForSupplierProduct=Momsavgift (för denna leverantör / produkt)
+DiscountQtyMin=Rabatt för denna mängd.
+NoPriceDefinedForThisSupplier=Inget pris / antal definierat för denna leverantör / produkt
+NoSupplierPriceDefinedForThisProduct=Ingen säljare pris / antal definierad för denna produkt
+PredefinedProductsToSell=Fördefinierad produkt
+PredefinedServicesToSell=Fördefinierad tjänst
+PredefinedProductsAndServicesToSell=Fördefinierade produkter eller tjänster att sälja
+PredefinedProductsToPurchase=Fördefinierade produkter för upphandling
+PredefinedServicesToPurchase=Fördefinierade tjänster för upphandling
+PredefinedProductsAndServicesToPurchase=Fördefinierade produkter / tjänster att köpa
+NotPredefinedProducts=Ej fördefinierade produkter / tjänster
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 GenerateThumb=Generera tumme
 ServiceNb=Service # %s
 ListProductServiceByPopularity=Förteckning över produkter / tjänster efter popularitet
@@ -143,6 +253,7 @@ ListProductByPopularity=Lista produkter efter popularitet
 ListServiceByPopularity=Lista över tjänster efter popularitet
 Finished=Tillverkade produkten
 RowMaterial=Första material
+<<<<<<< HEAD
 CloneProduct=Klon produkt eller tjänst
 ConfirmCloneProduct=Are you sure you want to clone product or service <b>%s</b>?
 CloneContentProduct=Klona alla viktiga informationer av produkt / tjänst
@@ -167,31 +278,75 @@ se=set
 second=second
 s=s
 hour=hour
+=======
+ConfirmCloneProduct=Är du säker på att du vill klona produkten eller tjänsten <b> %s </b>?
+CloneContentProduct=Klona all viktig information om produkt / tjänst
+ClonePricesProduct=Klonpriser
+CloneCompositionProduct=Clone virtuell produkt / tjänst
+CloneCombinationsProduct=Klonproduktvarianter
+ProductIsUsed=Denna produkt används
+NewRefForClone=Ref. av ny produkt / tjänst
+SellingPrices=Försäljningspriser
+BuyingPrices=Köpa priser
+CustomerPrices=Kundpriser
+SuppliersPrices=Leverantörspriser
+SuppliersPricesOfProductsOrServices=Leverantörspriser (av produkter eller tjänster)
+CustomCode=Tull / Varu / HS-kod
+CountryOrigin=Ursprungsland
+Nature=Nature of produt (material/finished)
+ShortLabel=Kort etikett
+Unit=Enhet
+p=u.
+set=uppsättning
+se=uppsättning
+second=andra
+s=s
+hour=timme
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 h=h
 day=dag
 d=d
 kilogram=kilogram
+<<<<<<< HEAD
 kg=Kg
+=======
+kg=kg
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 gram=gram
 g=g
 meter=meter
 m=m
 lm=lm
+<<<<<<< HEAD
 m2=m²
 m3=m³
 liter=liter
 l=L
 unitP=Piece
 unitSET=Set
+=======
+m2=m ^
+m3=m ^
+liter=liter
+l=L
+unitP=Bit
+unitSET=Uppsättning
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 unitS=Sekund
 unitH=Timme
 unitD=Dag
 unitKG=Kilogram
 unitG=Gram
 unitM=Meter
+<<<<<<< HEAD
 unitLM=Linear meter
 unitM2=Square meter
 unitM3=Cubic meter
+=======
+unitLM=Linjär mätare
+unitM2=Kvadratmeter
+unitM3=Kubikmeter
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 unitL=Liter
 ProductCodeModel=Produktmall, ref.
 ServiceCodeModel=Tjänstmall, ref.
@@ -199,6 +354,7 @@ CurrentProductPrice=Nuvarande pris
 AlwaysUseNewPrice=Använd alltid nuvarande pris för produkt / tjänst
 AlwaysUseFixedPrice=Använd fast pris
 PriceByQuantity=Olika priser m.a.p. mängd
+<<<<<<< HEAD
 DisablePriceByQty=Disable prices by quantity
 PriceByQuantityRange=Pris för mängdgaffel
 MultipriceRules=Price segment rules
@@ -214,17 +370,39 @@ ProductsMultiPrice=Products and prices for each price segment
 ProductsOrServiceMultiPrice=Customer prices (of products or services, multi-prices)
 ProductSellByQuarterHT=Products turnover quarterly before tax
 ServiceSellByQuarterHT=Services turnover quarterly before tax
+=======
+DisablePriceByQty=Inaktivera priserna efter antal
+PriceByQuantityRange=Pris för mängdgaffel
+MultipriceRules=Prissegmentregler
+UseMultipriceRules=Använd prissegmentregler (definierad i produktmoduluppsättning) för att automatiskt beräkna priser för alla andra segment enligt första segmentet
+PercentVariationOver=%% variation över %s
+PercentDiscountOver=%% rabatt över %s
+KeepEmptyForAutoCalculation=Håll tomt för att få detta beräknat automatiskt från vikt eller volym av produkter
+VariantRefExample=Exempel: COL
+VariantLabelExample=Exempel: Färg
+### composition fabrication
+Build=Tillverka
+ProductsMultiPrice=Produkter och priser för varje prissegment
+ProductsOrServiceMultiPrice=Kundpriser (av produkter eller tjänster, flera priser)
+ProductSellByQuarterHT=Produktomsättning kvartalsvis före skatt
+ServiceSellByQuarterHT=Tjänsteromsättningen kvartalsvis före skatt
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Quarter1=1:a kvartalet
 Quarter2=2:a kvartalet
 Quarter3=3:e kvartalet
 Quarter4=4:e kvartalet
 BarCodePrintsheet=Skriv ut streckkod
+<<<<<<< HEAD
 PageToGenerateBarCodeSheets=Med detta verktyg kan du skriva ut sidor med streckkodsetiketter. Välj sidformat, streckkodstyp och streckkodsvärde, klicka sedan på knappen <b>%s</b>.
+=======
+PageToGenerateBarCodeSheets=Med det här verktyget kan du skriva ut ark med streckkodstickor. Välj format på din klistersida, typ av streckkod och värde för streckkod, klicka sedan på knappen <b> %s </b>.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NumberOfStickers=Antal etiketter att skriva ut på sidan
 PrintsheetForOneBarCode=Skriv ut flera etiketter per streckkod
 BuildPageToPrint=Generera sidan som ska skrivas ut
 FillBarCodeTypeAndValueManually=Fyll i streckkodstyp och värde manuellt.
 FillBarCodeTypeAndValueFromProduct=Fyll i streckkodstyp och värde från en produkts streckkod.
+<<<<<<< HEAD
 FillBarCodeTypeAndValueFromThirdParty=Fill barcode type and value from barcode of a third party.
 DefinitionOfBarCodeForProductNotComplete=Angivelse av typ och värde för streckkod är ofullständig för produkt %s.
 DefinitionOfBarCodeForThirdpartyNotComplete=Definition of type or value of bar code non complete for third party %s.
@@ -334,3 +512,119 @@ CloneDestinationReference=Destination product reference
 ErrorCopyProductCombinations=There was an error while copying the product variants
 ErrorDestinationProductNotFound=Destination product not found
 ErrorProductCombinationNotFound=Product variant not found
+=======
+FillBarCodeTypeAndValueFromThirdParty=Fyll i streckkodstyp och värdet från streckkoden till en tredje part.
+DefinitionOfBarCodeForProductNotComplete=Definition av typ eller värde för streckkoden inte komplett för produkt %s.
+DefinitionOfBarCodeForThirdpartyNotComplete=Definition av typ eller värde för streckkod ej komplett för tredje part %s.
+BarCodeDataForProduct=Streckkodsinformation för produkten %s:
+BarCodeDataForThirdparty=Streckkodsinformation för tredje part %s:
+ResetBarcodeForAllRecords=Definiera streckkodsvärde för alla poster (det här återställer även streckkodsvärde som redan definierats med nya värden)
+PriceByCustomer=Olika priser för varje kund
+PriceCatalogue=Ett enda försäljningspris per produkt / tjänst
+PricingRule=Regler för försäljningspriser
+AddCustomerPrice=Lägg till pris per kund
+ForceUpdateChildPriceSoc=Sätt samma pris på kunds filialer
+PriceByCustomerLog=Logga på tidigare kundpriser
+MinimumPriceLimit=Lägsta pris kan inte vara lägre än %s
+MinimumRecommendedPrice=Lägsta rekommenderade pris är: %s
+PriceExpressionEditor=Pris uttryck redigerare
+PriceExpressionSelected=Valda pris uttryck
+PriceExpressionEditorHelp1="pris = 2 + 2" eller "2 + 2" för att sätta pris. Använd ; för att skilja uttryck
+PriceExpressionEditorHelp2=Du kan komma åt ExtraFields med variabler som <b> # extrafield_myextrafieldkey # </b> och globala variabler med <b> # global_mycode # </b>
+PriceExpressionEditorHelp3=I både produkt / service och leverantörspriser finns dessa variabler tillgängliga: <br> <b> # tva_tx # # localtax1_tx # # localtax2_tx # # vikt # # längd # # yta # # price_min # </b>
+PriceExpressionEditorHelp4=Endast i produkt / servicepris: <b> # supplier_min_price # </b> <br> Endast i leverantörspriser: <b> # supplier_quantity # and # supplier_tva_tx # </b>
+PriceExpressionEditorHelp5=Tillgängliga globala värden:
+PriceMode=Prisläge
+PriceNumeric=Nummer
+DefaultPrice=Standardpris
+ComposedProductIncDecStock=Öka / minska lagerposten vid föräldraändring
+ComposedProduct=Barnprodukter
+MinSupplierPrice=Lägsta köpkurs
+MinCustomerPrice=Lägsta försäljningspris
+DynamicPriceConfiguration=Dynamisk priskonfiguration
+DynamicPriceDesc=Du kan definiera matematiska formler för att beräkna kund- eller leverantörspriser. Sådana formler kan använda alla matematiska operatörer, vissa konstanter och variabler. Du kan här definiera variablerna du vill använda. Om variabeln behöver en automatisk uppdatering kan du definiera den externa adressen så att Dolibarr kan uppdatera värdet automatiskt.
+AddVariable=Lägg till variabel
+AddUpdater=Lägg till Updater
+GlobalVariables=Globala variabler
+VariableToUpdate=Variabel för uppdatering
+GlobalVariableUpdaters=External updaters for variables
+GlobalVariableUpdaterType0=JSON data
+GlobalVariableUpdaterHelp0=Parsar JSON-data från den angivna webbadressen, VALUE specificerar platsen för relevant värde,
+GlobalVariableUpdaterHelpFormat0=Formatera för begäran {"URL": "http://example.com/urlofjson", "VALUE": "array1, array2, targetvalue"}
+GlobalVariableUpdaterType1=WebService data
+GlobalVariableUpdaterHelp1=Parsar WebService-data från den angivna webbadressen, NS anger namnrymden, VALUE anger platsen för relevant värde, DATA ska innehålla data som ska skickas och METHOD är den anropande WS-metoden
+GlobalVariableUpdaterHelpFormat1=Format för begäran är {"URL": "http://example.com/urlofws", "VALUE": "array, målvärde", "NS": "http://example.com/urlofns", "METHOD" : "myWSMethod", "DATA": {"din": "data", "till": "skicka"}}
+UpdateInterval=Uppdateringsintervall (minuter)
+LastUpdated=Senaste uppdatering
+CorrectlyUpdated=Korrekt uppdaterad
+PropalMergePdfProductActualFile=Filer använder för att lägga till i PDF Azur är / är
+PropalMergePdfProductChooseFile=Välj PDF-filer
+IncludingProductWithTag=Inklusive produkt / service med tagg
+DefaultPriceRealPriceMayDependOnCustomer=Standardpris, realt pris kan bero på kund
+WarningSelectOneDocument=Var god välj minst ett dokument
+DefaultUnitToShow=Enhet
+NbOfQtyInProposals=Antal i förslag
+ClinkOnALinkOfColumn=Klicka på en länk i kolumn %s för att få en detaljerad vy ...
+ProductsOrServicesTranslations=Produkter / tjänster översättningar
+TranslatedLabel=Översatt etikett
+TranslatedDescription=Översatt beskrivning
+TranslatedNote=Översatte anteckningar
+ProductWeight=Vikt för 1 produkt
+ProductVolume=Volym för 1 produkt
+WeightUnits=Viktenhet
+VolumeUnits=Volymenhet
+SizeUnits=Storleksenhet
+DeleteProductBuyPrice=Radera köpeskillingen
+ConfirmDeleteProductBuyPrice=Är du säker på att du vill ta bort det här köpeskillingen?
+SubProduct=Subprodukt
+ProductSheet=Produktblad
+ServiceSheet=Serviceblad
+PossibleValues=Möjliga värden
+GoOnMenuToCreateVairants=Gå på menyn %s - %s för att förbereda attributvarianter (som färger, storlek, ...)
+UseProductFournDesc=Add a feature to define the descriptions of products defined by the vendors in addition to descriptions for customers
+ProductSupplierDescription=Leverantörsbeskrivning för produkten
+#Attributes
+VariantAttributes=Variant attribut
+ProductAttributes=Varianter för produkter
+ProductAttributeName=Variantattribut %s
+ProductAttribute=Variantattribut
+ProductAttributeDeleteDialog=Är du säker på att du vill radera detta attribut? Alla värden kommer att raderas
+ProductAttributeValueDeleteDialog=Är du säker på att du vill radera värdet "%s" med referensen "%s" i det här attributet?
+ProductCombinationDeleteDialog=Vill du verkligen ta bort varan av produkten "<strong> %s </strong>"?
+ProductCombinationAlreadyUsed=Ett fel uppstod när du raderade varianten. Kontrollera att den inte används i något objekt
+ProductCombinations=varianter
+PropagateVariant=Förökningsvarianter
+HideProductCombinations=Dölj produktvariant i produktväljaren
+ProductCombination=Variant
+NewProductCombination=Ny variant
+EditProductCombination=Redigeringsvariant
+NewProductCombinations=Nya varianter
+EditProductCombinations=Redigera varianter
+SelectCombination=Välj kombination
+ProductCombinationGenerator=Varianter generator
+Features=Funktioner
+PriceImpact=Prispåverkan
+WeightImpact=Viktpåverkan
+NewProductAttribute=Nya attribut
+NewProductAttributeValue=Nytt attributvärde
+ErrorCreatingProductAttributeValue=Det uppstod ett fel när du skapade attributvärdet. Det kan bero på att det redan finns ett existerande värde med den referensen
+ProductCombinationGeneratorWarning=Om du fortsätter, innan du genererar nya varianter, raderas alla tidigare. Redan befintliga kommer att uppdateras med de nya värdena
+TooMuchCombinationsWarning=Att generera många varianter kan leda till hög CPU, minnesanvändning och Dolibarr inte kunna skapa dem. Aktivera alternativet "%s" kan bidra till att minska minnesanvändningen.
+DoNotRemovePreviousCombinations=Ta inte bort tidigare varianter
+UsePercentageVariations=Använd procentuella variationer
+PercentageVariation=Procentuell variation
+ErrorDeletingGeneratedProducts=Ett fel uppstod när du försökte radera befintliga varianter av produkter
+NbOfDifferentValues=Antal olika värden
+NbProducts=Antal produkter
+ParentProduct=Föräldraprodukt
+HideChildProducts=Dölj variantprodukter
+ShowChildProducts=Visa variantprodukter
+NoEditVariants=Gå till föräldraproduktkort och ändra varianternas prispåverkan på fliken varianter
+ConfirmCloneProductCombinations=Vill du kopiera alla produktvarianter till den andra förälderprodukten med den angivna referensen?
+CloneDestinationReference=Referensproduktreferens
+ErrorCopyProductCombinations=Ett fel uppstod när du kopierade varianterna
+ErrorDestinationProductNotFound=Destination produkt hittades inte
+ErrorProductCombinationNotFound=Produktvariant inte hittat
+ActionAvailableOnVariantProductOnly=Åtgärd endast tillgänglig på varianter av produkt
+ProductsPricePerCustomer=Product prices per customers
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

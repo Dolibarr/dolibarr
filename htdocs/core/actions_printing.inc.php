@@ -28,8 +28,12 @@
 // Filename to print must be provided into 'file' parameter
 
 // Print file
+<<<<<<< HEAD
 if ($action == 'print_file' && $user->rights->printing->read)
 {
+=======
+if ($action == 'print_file' && $user->rights->printing->read) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $langs->load("printing");
     require_once DOL_DOCUMENT_ROOT . '/core/modules/printing/modules_printing.php';
     $objectprint = new PrintingDriver($db);
@@ -48,6 +52,7 @@ if ($action == 'print_file' && $user->rights->printing->read)
             {
                 $printerfound++;
 
+<<<<<<< HEAD
                 $subdir=(GETPOST('printer', 'alpha')=='expedition'?'sending':'');
                 $module = GETPOST('printer', 'alpha');
                 if ($module =='commande_fournisseur') {
@@ -56,6 +61,26 @@ if ($action == 'print_file' && $user->rights->printing->read)
                 }
                 try {
                     $ret = $printer->print_file(GETPOST('file', 'alpha'), $module, $subdir);
+=======
+                $subdir='';
+                $module = GETPOST('printer', 'alpha');
+                switch ($module )
+                {
+                    case 'livraison' :
+                        $subdir = 'receipt';
+                        $module = 'expedition';
+                        break;
+                    case 'expedition' :
+                        $subdir = 'sending';
+                        break;
+                    case 'commande_fournisseur' :
+                        $module = 'fournisseur';
+                        $subdir = 'commande';
+                        break;
+                }
+                try {
+                    $ret = $printer->printFile(GETPOST('file', 'alpha'), $module, $subdir);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                     if ($ret > 0) {
                         //print '<pre>'.print_r($printer->errors, true).'</pre>';
                         setEventMessages($printer->error, $printer->errors, 'errors');

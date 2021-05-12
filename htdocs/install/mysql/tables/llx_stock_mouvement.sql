@@ -33,6 +33,10 @@ create table llx_stock_mouvement
   fk_user_author  integer,							-- Id user making movement
   label           varchar(255),						-- Comment on movement
   inventorycode   varchar(128),						-- Code used to group different movement line into one operation (may be an inventory, a mass picking)
+<<<<<<< HEAD
+=======
+  fk_project	  integer,
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
   fk_origin       integer,
   origintype      varchar(32),
   model_pdf       varchar(255)

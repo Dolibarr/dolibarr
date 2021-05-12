@@ -7,12 +7,19 @@ NoCategoryYet=Nenhuma tag/categoria deste tipo foi criada
 In=Em
 CategoriesArea=Área Tags / Categorias
 ProductsCategoriesArea=Área tags / categorias de Produtos / Serviços
+<<<<<<< HEAD
 SuppliersCategoriesArea=Área tags / categorias de Fornecedores
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CustomersCategoriesArea=Área tags / categorias de Clientes
 MembersCategoriesArea=Área tags / categorias de Membros
 ContactsCategoriesArea=Área tags / categorias de Contatos
 AccountsCategoriesArea=Tags/categorias da área de Contas
 ProjectsCategoriesArea=Projetos area de tags/categorias
+<<<<<<< HEAD
+=======
+UsersCategoriesArea=Área de tags / categorias de usuários
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CatList=Lista de tags/categorias
 NewCategory=Nova tag/categoria
 ModifCat=Modificar tag/categoria
@@ -26,7 +33,10 @@ WasAddedSuccessfully=Foi adicionado com êxito.
 ObjectAlreadyLinkedToCategory=Elemento já está ligada a esta tag / categoria.
 ProductIsInCategories=Produto / serviço está ligada à seguintes tags / categorias
 CompanyIsInCustomersCategories=Este Terceiro está vinculado às seguintes tags/categorias de Clientes/Prospects
+<<<<<<< HEAD
 CompanyIsInSuppliersCategories=Este Terceiro está vinculado às seguintes tags/categorias de fornecedores
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MemberIsInCategories=Esse membro está vinculado a seguintes membros tags / categorias
 ContactIsInCategories=Este contato é ligado à sequência de contatos tags / categorias
 ProductHasNoCategory=Este produto / serviço não está em nenhuma tags / categorias
@@ -42,6 +52,7 @@ ContentsNotVisibleByAllShort=Conteúdo não visivel por todos
 DeleteCategory=Excluir tag / categoria
 ConfirmDeleteCategory=Tem certeza que quer deleitar esta tag/categoria?
 NoCategoriesDefined=Nenhuma tag / categoria definida
+<<<<<<< HEAD
 SuppliersCategoryShort=Fornecedores tag / categoria
 CustomersCategoryShort=Clientes tag / categoria
 ProductsCategoryShort=Produtos tag / categoria
@@ -50,19 +61,35 @@ SuppliersCategoriesShort=Fornecedores tags / categorias
 CustomersCategoriesShort=Clientes tags / categorias
 ProspectsCategoriesShort=Tag/categoria Prospecção
 CustomersProspectsCategoriesShort=Cat. Clientes/Potenciais
+=======
+CustomersCategoryShort=Clientes tag / categoria
+ProductsCategoryShort=Produtos tag / categoria
+MembersCategoryShort=Membros tag / categoria
+CustomersCategoriesShort=Clientes tags / categorias
+ProspectsCategoriesShort=Tag/categoria Prospecção
+CustomersProspectsCategoriesShort=Cust./Prosp. tags / categorias
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProductsCategoriesShort=Produtos tags / categorias
 MembersCategoriesShort=Tag / categorias de Membros
 ContactCategoriesShort=Contatos tags / categorias
 AccountsCategoriesShort=Tags/categorias Contas
 ProjectsCategoriesShort=Projetos tags/categorias
+<<<<<<< HEAD
 ThisCategoryHasNoProduct=Esta categoria não contém nenhum produto.
 ThisCategoryHasNoSupplier=Esta categoria não contém a nenhum fornecedor.
+=======
+UsersCategoriesShort=Tags / categorias de usuários
+ThisCategoryHasNoProduct=Esta categoria não contém nenhum produto.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ThisCategoryHasNoCustomer=Esta categoria não contém a nenhum cliente.
 ThisCategoryHasNoMember=Esta categoria nao contem nenhum membro.
 ThisCategoryHasNoContact=Esta categoria nao contem nenhum contato.
 ThisCategoryHasNoProject=Esta categoria nao contem nenhum projeto.
 CategId=ID Tag / categoria
+<<<<<<< HEAD
 CatSupList=Lista de fornecedores tags / categorias
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CatCusList=Lista de cliente / perspectivas de tags / categorias
 CatProdList=Lista de produtos tags / categorias
 CatMemberList=Lista de membros tags / categorias
@@ -71,6 +98,7 @@ CatSupLinks=Ligações entre fornecedores e tags / categorias
 CatCusLinks=Relação/links entre clientes / perspectivas e tags / categorias
 CatProdLinks=Relação/links entre produtos / serviços e tags / categorias
 CatProJectLinks=Links entre projetos e tags/categorias
+<<<<<<< HEAD
 DeleteFromCat=Remover de tags / categoria
 ExtraFieldsCategories=atributos complementares
 CategoriesSetup=Configuração Tags / categorias
@@ -78,3 +106,11 @@ CategorieRecursiv=Fazer a ligação com os pais tag/categoria automaticamente
 CategorieRecursivHelp=Se ativado, o produto também será ligada a categoria original quando adicionando em uma subcategoria
 AddProductServiceIntoCategory=Adicione o seguinte produto / serviço
 ShowCategory=Mostrar tag / categoria
+=======
+ExtraFieldsCategories=atributos complementares
+CategoriesSetup=Configuração Tags / categorias
+CategorieRecursiv=Fazer a ligação com os pais tag/categoria automaticamente
+AddProductServiceIntoCategory=Adicione o seguinte produto / serviço
+ShowCategory=Mostrar tag / categoria
+ChooseCategory=Escolher categoria
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

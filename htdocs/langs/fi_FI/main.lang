@@ -50,6 +50,7 @@ ErrorFailedToSendMail=Failed to send mail (sender=%s, receiver=Failed to send ma
 ErrorFileNotUploaded=Tiedosto ei ole ladattu. Tarkista, että koko ei ylitä suurinta sallittua, että vapaata tilaa on käytettävissä levyllä ja että siellä ei ole jo tiedoston samalla nimellä tähän hakemistoon.
 ErrorInternalErrorDetected=Virhe havaittu
 ErrorWrongHostParameter=Väärä vastaanottavan parametri
+<<<<<<< HEAD
 ErrorYourCountryIsNotDefined=Oma maa ei ole määritelty. Siirry Home-Setup-Edit ja sen jälkeen uudelleen muodossa.
 ErrorRecordIsUsedByChild=Epäonnistui poistaa tämän tietueen. Tämä rekisteri on käytössä ainakin lapsen kirjaa.
 ErrorWrongValue=Väärä arvo
@@ -59,12 +60,28 @@ ErrorServiceUnavailableTryLater=Palvelu ei ole tällä hetkellä ole käytettäv
 ErrorDuplicateField=Päällekkäinen arvo ainutlaatuisella alalla
 ErrorSomeErrorWereFoundRollbackIsDone=Joitakin virheitä ei löytynyt. Meidän palautus muutoksia.
 ErrorConfigParameterNotDefined=<b>Parametri %s</b> ei ole määritelty sisällä Dolibarr config file <b>conf.php.</b>
+=======
+ErrorYourCountryIsNotDefined=Your country is not defined. Go to Home-Setup-Edit and post the form again.
+ErrorRecordIsUsedByChild=Failed to delete this record. This record is used by at least one child record.
+ErrorWrongValue=Väärä arvo
+ErrorWrongValueForParameterX=Väärä arvo parametri %s
+ErrorNoRequestInError=N: o pyynnöstä virhe
+ErrorServiceUnavailableTryLater=Service not available at the moment. Try again later.
+ErrorDuplicateField=Päällekkäinen arvo ainutlaatuisella alalla
+ErrorSomeErrorWereFoundRollbackIsDone=Some errors were found. Changes have been rolled back.
+ErrorConfigParameterNotDefined=Parameter <b>%s</b> is not defined in the Dolibarr config file <b>conf.php</b>.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorCantLoadUserFromDolibarrDatabase=Ei onnistunut löytämään <b>käyttäjän %s</b> Dolibarr tietokantaan.
 ErrorNoVATRateDefinedForSellerCountry=Virhe ei alv määritellään maa ' %s'.
 ErrorNoSocialContributionForSellerCountry=Virhe, ei sosiaalisia tai fiskaalisia verotyyppejä, jotka on määritelty maata "%s" varten.
 ErrorFailedToSaveFile=Virhe, ei tallenna tiedosto.
+<<<<<<< HEAD
 ErrorCannotAddThisParentWarehouse=You are trying to add a parent warehouse which is already a child of current one
 MaxNbOfRecordPerPage=Max number of record per page
+=======
+ErrorCannotAddThisParentWarehouse=You are trying to add a parent warehouse which is already a child of a existing warehouse
+MaxNbOfRecordPerPage=Max. number of records per page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NotAuthorized=Oikeutesi ei riitä tähän toimintoon
 SetDate=Aseta päivä
 SelectDate=Valitse päivä
@@ -78,14 +95,25 @@ FileRenamed=Tiedosto on uudelleen nimetty onnistuneesti
 FileGenerated=Tiedosto luotiin onnistuneesti
 FileSaved=Tiedosto tallennettiin onnistuneesti
 FileUploaded=Tiedosto on siirretty onnistuneesti
+<<<<<<< HEAD
 FileTransferComplete=Tiedosto(t) ladattiin onnistuneesti
 FilesDeleted=Tiedosto(t) poistettiin onnistuneesti
 FileWasNotUploaded=Tiedosto on valittu liite mutta ei ollut vielä ladattu. Klikkaa "Liitä tiedosto" tätä.
 NbOfEntries=Huom Merkintöjen
+=======
+FileTransferComplete=File(s) uploaded successfully
+FilesDeleted=Tiedosto(t) poistettiin onnistuneesti
+FileWasNotUploaded=Tiedosto on valittu liite mutta ei ollut vielä ladattu. Klikkaa "Liitä tiedosto" tätä.
+NbOfEntries=No. of entries
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 GoToWikiHelpPage=Lue online-ohjeet (tarvitaan Internet-yhteys)
 GoToHelpPage=Lue auttaa
 RecordSaved=Record tallennettu
 RecordDeleted=Tallennus poistettu
+<<<<<<< HEAD
+=======
+RecordGenerated=Record generated
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LevelOfFeature=Taso ominaisuuksia
 NotDefined=Ei määritelty
 DolibarrInHttpAuthenticationSoPasswordUseless=Dolibarrin todennusmoodi on <b> %s </b> konfigurointitiedostossa <b> conf.php </b>. <br> Tämä tarkoittaa, että salasanatietokanta on Dolibarrin ulkopuolinen, joten tämän kentän muuttaminen ei välttämättä vaikuta.
@@ -94,9 +122,15 @@ Undefined=Määrittelemätön
 PasswordForgotten=Unohditko salasanasi?
 NoAccount=No account?
 SeeAbove=Katso edellä
+<<<<<<< HEAD
 HomeArea=Etusivu alue
 LastConnexion=Viimeisin yhteys
 PreviousConnexion=Edellinen yhteydessä
+=======
+HomeArea=Koti
+LastConnexion=Last login
+PreviousConnexion=Previous login
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PreviousValue=Edellinen arvo
 ConnectedOnMultiCompany=Connected on kokonaisuus
 ConnectedSince=Sidossuhteessa koska
@@ -118,7 +152,11 @@ PrecisionUnitIsLimitedToXDecimals=Dolibarr oli asetettu raja tarkkuus <b>yksikk�
 DoTest=Testi
 ToFilter=Suodata
 NoFilter=Ei suodatinta
+<<<<<<< HEAD
 WarningYouHaveAtLeastOneTaskLate=Varoitus, sinulla on ainakin yksi elementti, joka on ylittänyt toleranssi viivytystä.
+=======
+WarningYouHaveAtLeastOneTaskLate=Warning, you have at least one element that has exceeded the tolerance time.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 yes=kyllä
 Yes=Kyllä
 no=ei
@@ -142,6 +180,10 @@ Closed=Suljettu
 Closed2=Suljettu
 NotClosed=Not closed
 Enabled=Enabled
+<<<<<<< HEAD
+=======
+Enable=Enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Deprecated=Käytöstä poistettu
 Disable=Poistaa käytöstä
 Disabled=Disabled
@@ -153,7 +195,11 @@ Update=Päivittää
 Close=Sulje
 CloseBox=Poista widgetti kojelaudaltasi
 Confirm=Vahvista
+<<<<<<< HEAD
 ConfirmSendCardByMail=Do you really want to send content of this card by mail to <b>%s</b>?
+=======
+ConfirmSendCardByMail=Do you really want to send the content of this card by mail to <b>%s</b>?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Delete=Poistaa
 Remove=Poistaa
 Resiliate=Terminate
@@ -168,7 +214,11 @@ Save=Tallenna
 SaveAs=Tallenna nimellä
 TestConnection=Testaa yhteys
 ToClone=Klooni
+<<<<<<< HEAD
 ConfirmClone=Valitse tietoja haluat klooni:
+=======
+ConfirmClone=Choose data you want to clone:
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoCloneOptionsSpecified=Ei tietoja kloonata määritelty.
 Of=ja
 Go=Mene
@@ -183,7 +233,11 @@ Valid=Voimassa
 Approve=Hyväksy
 Disapprove=Poista hyväksyntä
 ReOpen=Avaa uudelleen
+<<<<<<< HEAD
 Upload=Lähetä tiedosto
+=======
+Upload=Upload
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ToLink=Linkki
 Select=Valitse
 Choose=Valitse
@@ -200,6 +254,10 @@ Password=Salasana
 PasswordRetype=Kirjoitta salasana uudelleen
 NoteSomeFeaturesAreDisabled=Huomaa, että monet piirteet / modules on poistettu käytöstä tämän esittelyn.
 Name=Nimi
+<<<<<<< HEAD
+=======
+NameSlashCompany=Name / Company
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Person=Henkilö
 Parameter=Parametri
 Parameters=Parametrit
@@ -220,6 +278,12 @@ Info=Kirjaudu
 Family=Perhe
 Description=Kuvaus
 Designation=Kuvaus
+<<<<<<< HEAD
+=======
+DescriptionOfLine=Kuvaus linja
+DateOfLine=Date of line
+DurationOfLine=Duration of line
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Model=Doc-pohja
 DefaultModel=Oletus doc-pohja
 Action=Tapahtuma
@@ -327,12 +391,21 @@ Copy=Kopioi
 Paste=Liitä
 Default=Oletus
 DefaultValue=Oletusarvo
+<<<<<<< HEAD
 DefaultValues=Oletusarvot
 Price=Hinta
 PriceCurrency=Price (currency)
 UnitPrice=Yksikköhinta
 UnitPriceHT=Yksikköhinta (netto)
 UnitPriceHTCurrency=Unit price (net) (currency)
+=======
+DefaultValues=Default values/filters/sorting
+Price=Hinta
+PriceCurrency=Price (currency)
+UnitPrice=Yksikköhinta
+UnitPriceHT=Unit price (excl.)
+UnitPriceHTCurrency=Unit price (excl.) (currency)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 UnitPriceTTC=Yksikköhinta
 PriceU=A-hinta
 PriceUHT=Veroton hinta
@@ -342,6 +415,7 @@ Amount=Määrä
 AmountInvoice=Laskun summa
 AmountInvoiced=Amount invoiced
 AmountPayment=Maksun summa
+<<<<<<< HEAD
 AmountHTShort=Määrä (netto)
 AmountTTCShort=Määrä (sis. alv)
 AmountHT=Määrä (ilman veroja)
@@ -351,6 +425,17 @@ MulticurrencyAlreadyPaid=Maksettu jo, alkuperäinen valuutta
 MulticurrencyRemainderToPay=Maksua avoimena, alkuperäinen valuutta
 MulticurrencyPaymentAmount=Suorituksen summa, alkuperäinen valuutta
 MulticurrencyAmountHT=Summa (veroton), alkuperäisessä valuutassa
+=======
+AmountHTShort=Amount (excl.)
+AmountTTCShort=Määrä (sis. alv)
+AmountHT=Amount (excl. tax)
+AmountTTC=Määrä (sis. alv)
+AmountVAT=Verot
+MulticurrencyAlreadyPaid=Already paid, original currency
+MulticurrencyRemainderToPay=Maksua avoimena, alkuperäinen valuutta
+MulticurrencyPaymentAmount=Suorituksen summa, alkuperäinen valuutta
+MulticurrencyAmountHT=Amount (excl. tax), original currency
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MulticurrencyAmountTTC=Summa (verollinen), alkuperäisessä valuutassa
 MulticurrencyAmountVAT=Veron määrä, alkuperäinen valuutta
 AmountLT1=Verot 2
@@ -359,6 +444,7 @@ AmountLT1ES=Määrä RE
 AmountLT2ES=Määrä IRPF
 AmountTotal=Yhteissumma
 AmountAverage=Keskimääräinen summa
+<<<<<<< HEAD
 PriceQtyMinHT=Hinta määrä min. (ilman veroja)
 PriceQtyMinHTCurrency=Price quantity min. (net of tax) (currency)
 Percentage=Prosenttia
@@ -369,6 +455,19 @@ TotalHTShortCurrency=Yhteensä (veroton valuutassa)
 TotalTTCShort=Yhteensä (sis. alv)
 TotalHT=Yhteensä (ilman veroja)
 TotalHTforthispage=Yhteensä (veroton) tällä sivulla
+=======
+PriceQtyMinHT=Price quantity min. (excl. tax)
+PriceQtyMinHTCurrency=Price quantity min. (excl. tax) (currency)
+Percentage=Prosenttia
+Total=Yhteensä
+SubTotal=Välisumma
+TotalHTShort=Total (excl.)
+TotalHT100Short=Total 100%% (excl.)
+TotalHTShortCurrency=Total (excl. in currency)
+TotalTTCShort=Yhteensä (sis. alv)
+TotalHT=Total (excl. tax)
+TotalHTforthispage=Total (excl. tax) for this page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Totalforthispage=Total for this page
 TotalTTC=Yhteensä (sis. alv)
 TotalTTCToYourCredit=Yhteensä (sis. alv) on luotollesi
@@ -380,7 +479,11 @@ TotalLT1ES=Yhteensä RE
 TotalLT2ES=Yhteensä IRPF
 TotalLT1IN=Total CGST
 TotalLT2IN=Total SGST
+<<<<<<< HEAD
 HT=Veroton
+=======
+HT=Excl. tax
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TTC=Sis. alv
 INCVATONLY=Sis. ALV
 INCT=Sis. kaikki verot
@@ -396,6 +499,10 @@ LT1ES=RE
 LT2ES=IRPF
 LT1IN=CGST
 LT2IN=SGST
+<<<<<<< HEAD
+=======
+LT1GC=Additionnal cents
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 VATRate=Veroaste
 VATCode=Tax Rate code
 VATNPR=Tax Rate NPR
@@ -428,14 +535,23 @@ ActionNotApplicable=Ei sovelleta
 ActionRunningNotStarted=Aloitetaan
 ActionRunningShort=Käsittelyssä
 ActionDoneShort=Päättetty
+<<<<<<< HEAD
 ActionUncomplete=Keskeneräinen
+=======
+ActionUncomplete=Incomplete
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LatestLinkedEvents=Latest %s linked events
 CompanyFoundation=Yritys/Organisaatio
 Accountant=Accountant
 ContactsForCompany=Sidosryhmien yhteystiedot
 ContactsAddressesForCompany=Sidosryhmien kontaktit/osoitteet
 AddressesForCompany=Sidosryhmien osoitteet
+<<<<<<< HEAD
 ActionsOnCompany=Sidosryhmien tapahtumat
+=======
+ActionsOnCompany=Events for this third party
+ActionsOnContact=Events for this contact/address
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActionsOnMember=Jäsenen tapahtumat
 ActionsOnProduct=Tapahtumat tästä tuotteesta
 NActionsLate=%s myöhässä
@@ -453,8 +569,13 @@ Generate=Luo
 Duration=Kesto
 TotalDuration=Kokonaiskesto
 Summary=Yhteenveto
+<<<<<<< HEAD
 DolibarrStateBoard=Tietokannan tilastot
 DolibarrWorkBoard=Avoimet työtehtävät
+=======
+DolibarrStateBoard=Database Statistics
+DolibarrWorkBoard=Open Items
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoOpenedElementToProcess=Ei avattuja elementtejä prosessissa
 Available=Saatavissa
 NotYetAvailable=Ei vielä saatavilla
@@ -468,7 +589,11 @@ and=ja
 or=tai
 Other=Muu
 Others=Muut
+<<<<<<< HEAD
 OtherInformations=Muut tiedot
+=======
+OtherInformations=Other information
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Quantity=Määrä
 Qty=Kpl
 ChangedBy=Muuttanut
@@ -482,9 +607,17 @@ Reporting=Raportointi
 Reportings=Raportointi
 Draft=Vedos
 Drafts=Vedokset
+<<<<<<< HEAD
 StatusInterInvoiced=
 Validated=Vahvistetut
 Opened=Avoinna
+=======
+StatusInterInvoiced=Invoiced
+Validated=Vahvistetut
+Opened=Avoinna
+OpenAll=Open (All)
+ClosedAll=Closed (All)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 New=Uusi
 Discount=Alennus
 Unknown=Tuntematon
@@ -506,7 +639,11 @@ None=Ei mitään
 NoneF=Ei mitään
 NoneOrSeveral=Ei yhtään tai useita
 Late=Myöhässä
+<<<<<<< HEAD
 LateDesc=Delay to define if a record is late or not depends on your setup. Ask your admin to change delay from menu Home - Setup - Alerts.
+=======
+LateDesc=An item is defined as Delayed as per the system configuration in menu Home - Setup - Alerts.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoItemLate=No late item
 Photo=Kuva
 Photos=Kuvat
@@ -530,6 +667,7 @@ September=Syyskuu
 October=Lokakuu
 November=Marraskuu
 December=Joulukuu
+<<<<<<< HEAD
 JanuaryMin=Tammikuu
 FebruaryMin=Helmikuu
 MarchMin=Maaliskuu
@@ -542,6 +680,8 @@ SeptemberMin=Syyskuu
 OctoberMin=Lokakuu
 NovemberMin=Marraskuu
 DecemberMin=Joulukuu
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Month01=tammikuu
 Month02=helmikuu
 Month03=maaliskuu
@@ -638,14 +778,25 @@ FeatureNotYetSupported=Ominaisuus ei vielä tue
 CloseWindow=Sulje ikkuna
 Response=Vastaus
 Priority=Prioriteetti
+<<<<<<< HEAD
 SendByMail=Lähetä sähköpostilla
+=======
+SendByMail=Send by email
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MailSentBy=Sähköpostin lähetti
 TextUsedInTheMessageBody=Sähköpostiviesti
 SendAcknowledgementByMail=Lähetä vahvistussähköposti
 SendMail=Lähetä sähköpostia
+<<<<<<< HEAD
 EMail=Sähköposti
 NoEMail=Ei sähköpostia
 Email=Sähköposti
+=======
+Email=Sähköposti
+NoEMail=Ei sähköpostia
+AlreadyRead=Already read
+NotRead=Not read
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoMobilePhone=Ei matkapuhelinta
 Owner=Omistaja
 FollowingConstantsWillBeSubstituted=Seuraavat vakiot voidaan korvata ja vastaava arvo.
@@ -658,8 +809,14 @@ ValueIsValid=Arvo on voimassa
 ValueIsNotValid=Arvo ei kelpaa
 RecordCreatedSuccessfully=Tallennus luotiin onnistuneesti
 RecordModifiedSuccessfully=Tietue muunnettu onnistuneesti
+<<<<<<< HEAD
 RecordsModified=%s tietue muokattu
 RecordsDeleted=%s record deleted
+=======
+RecordsModified=%s record(s) modified
+RecordsDeleted=%s record(s) deleted
+RecordsGenerated=%s record(s) generated
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AutomaticCode=Automaattinen koodi
 FeatureDisabled=Ominaisuus pois päältä
 MoveBox=Siirrä widget
@@ -670,14 +827,21 @@ Method=Menetelmä
 Receive=Vastaanota
 CompleteOrNoMoreReceptionExpected=Complete or nothing more expected
 ExpectedValue=Odotettu Arvo
+<<<<<<< HEAD
 CurrentValue=Nykyinen arvo
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PartialWoman=Osittainen
 TotalWoman=Yhteensä
 NeverReceived=Ei ole saapunut
 Canceled=Peruutettu
 YouCanChangeValuesForThisListFromDictionarySetup=You can change values for this list from menu Setup - Dictionaries
 YouCanChangeValuesForThisListFrom=You can change values for this list from menu %s
+<<<<<<< HEAD
 YouCanSetDefaultValueInModuleSetup=Oletusarvon uudelle luotavalle tietueelle voi määrittää modulin asetuksista
+=======
+YouCanSetDefaultValueInModuleSetup=You can set the default value used when creating a new record in module setup
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Color=Väri
 Documents=Linkitettyjä tiedostoja
 Documents2=Asiakirjat
@@ -703,28 +867,47 @@ DateOfSignature=Allekirjoituksen päivämäärä
 HidePassword=Näytä komento salasana piilotettuna
 UnHidePassword=Näytä todellinen komento salasana näkyen
 Root=Juuri
+<<<<<<< HEAD
 Informations=Informaatiot
+=======
+Informations=Information
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Page=Sivu
 Notes=Huomiot
 AddNewLine=Lisää uusi rivi
 AddFile=Lisää tiedosto
 FreeZone=Not a predefined product/service
+<<<<<<< HEAD
 FreeLineOfType=Not a predefined entry of type
 CloneMainAttributes=Klooni objekti sen tärkeimmät attribuutit
+=======
+FreeLineOfType=Free-text item, type:
+CloneMainAttributes=Klooni objekti sen tärkeimmät attribuutit
+ReGeneratePDF=Re-generate PDF
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PDFMerge=PDF Merge
 Merge=Merge
 DocumentModelStandardPDF=Standardi PDF pohja
 PrintContentArea=Näytä sivu tulostaa päävalikkoon alue
 MenuManager=Valikkomanageri
+<<<<<<< HEAD
 WarningYouAreInMaintenanceMode=Varoitus, olet ylläpitotilassa, joten vain kirjautunut <b>%s</b> saa käyttää hakemuksen tällä hetkellä.
+=======
+WarningYouAreInMaintenanceMode=Warning, you are in maintenance mode: only login <b>%s</b> is allowed to use the application in this mode.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CoreErrorTitle=Järjestelmävirhe
 CoreErrorMessage=Sorry, an error occurred. Contact your system administrator to check the logs or disable $dolibarr_main_prod=1 to get more information.
 CreditCard=Luottokortti
 ValidatePayment=Vahvista maksu
 CreditOrDebitCard=Credit or debit card
 FieldsWithAreMandatory=Tähdellä <b>%s</b> ovat pakollisia
+<<<<<<< HEAD
 FieldsWithIsForPublic=Tähdellä <b>%s</b> näkyvät julkisessa jäsenluettelossa. Jos et halua tätä, poista valinta "julkinen"-kentästä.
 AccordingToGeoIPDatabase=(Mukaan GeoIP muuntaminen)
+=======
+FieldsWithIsForPublic=Fields with <b>%s</b> are shown in public list of members. If you don't want this, uncheck the "public" box.
+AccordingToGeoIPDatabase=(according to GeoIP conversion)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Line=Rivi
 NotSupported=Ei tuettu
 RequiredField=Pakollinen kenttä
@@ -732,6 +915,11 @@ Result=Tulos
 ToTest=Testi
 ValidateBefore=Kortti on vahvistettava ennen toiminnon käyttöä
 Visibility=Näkyvyys
+<<<<<<< HEAD
+=======
+Totalizable=Totalizable
+TotalizableDesc=This field is totalizable in list
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Private=Yksityinen
 Hidden=Kätketty
 Resources=Resurssit
@@ -750,14 +938,25 @@ LinkTo=Linkki
 LinkToProposal=Linkki Tarjoukseen
 LinkToOrder=Linkki Tilauksiin
 LinkToInvoice=Linkki Laskuihin
+<<<<<<< HEAD
 LinkToSupplierOrder=Linkki Toimittaja tilauksiin
 LinkToSupplierProposal=Linkki Toimittaja tarjouksiin
 LinkToSupplierInvoice=Linkki Toimittaja laskuihin
+=======
+LinkToTemplateInvoice=Link to template invoice
+LinkToSupplierOrder=Link to purchase order
+LinkToSupplierProposal=Link to vendor proposal
+LinkToSupplierInvoice=Link to vendor invoice
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LinkToContract=Linkki Sopimuksiin
 LinkToIntervention=Link to intervention
 CreateDraft=Luo luonnos
 SetToDraft=Palaa luonnokseen
 ClickToEdit=Klikkaa muokataksesi
+<<<<<<< HEAD
+=======
+ClickToRefresh=Click to refresh
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 EditWithEditor=Edit with CKEditor
 EditWithTextEditor=Edit with Text editor
 EditHTMLSource=Edit HTML Source
@@ -772,14 +971,22 @@ ByDay=Päivän mukaan
 BySalesRepresentative=Myyntiedustajittain
 LinkedToSpecificUsers=Linkitetty käyttäjätietoon
 NoResults=Ei tuloksia
+<<<<<<< HEAD
 AdminTools=Ylläpidon työkalut
+=======
+AdminTools=Admin Tools
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SystemTools=Kehitysresurssit
 ModulesSystemTools=Moduuli työkalut
 Test=Testi
 Element=Osa
 NoPhotoYet=Ei kuvaa saatavilla vielä
 Dashboard=Kojelauta
+<<<<<<< HEAD
 MyDashboard=Minun kojelauta
+=======
+MyDashboard=My Dashboard
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Deductible=Omavastuu
 from=mistä
 toward=eteenpäin
@@ -802,7 +1009,11 @@ PrintFile=Tulosta tiedostoon %s
 ShowTransaction=Näytä pankkitilin kirjaus
 ShowIntervention=Näytä interventio
 ShowContract=Näytä sopimus
+<<<<<<< HEAD
 GoIntoSetupToChangeLogo=Vaihtaaksesi logoa mene Home - Setup - Company tai Home - Setup - Display poistaaksesi
+=======
+GoIntoSetupToChangeLogo=Go to Home - Setup - Company to change logo or go to Home - Setup - Display to hide.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Deny=Kiellä
 Denied=Kielletty
 ListOf=Luettelo %s
@@ -818,16 +1029,29 @@ Sincerely=Vilpittömästi
 DeleteLine=Poista rivi
 ConfirmDeleteLine=Halutako varmasti poistaa tämän rivin?
 NoPDFAvailableForDocGenAmongChecked=No PDF were available for the document generation among checked record
+<<<<<<< HEAD
 TooManyRecordForMassAction=Too many record selected for mass action. The action is restricted to a list of %s record.
 NoRecordSelected=Tallennusta ei ole valittu
 MassFilesArea=Area for files built by mass actions
 ShowTempMassFilesArea=Show area of files built by mass actions
 ConfirmMassDeletion=Bulk delete confirmation
 ConfirmMassDeletionQuestion=Are you sure you want to delete the %s selected record ?
+=======
+TooManyRecordForMassAction=Too many records selected for mass action. The action is restricted to a list of %s records.
+NoRecordSelected=Tallennusta ei ole valittu
+MassFilesArea=Area for files built by mass actions
+ShowTempMassFilesArea=Show area of files built by mass actions
+ConfirmMassDeletion=Bulk Delete confirmation
+ConfirmMassDeletionQuestion=Are you sure you want to delete the %s selected record(s)?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 RelatedObjects=Related Objects
 ClassifyBilled=Luokittele laskutetaan
 ClassifyUnbilled=Classify unbilled
 Progress=Edistyminen
+<<<<<<< HEAD
+=======
+ProgressShort=Progr.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 FrontOffice=Front office
 BackOffice=Back office
 View=Katso
@@ -836,18 +1060,31 @@ Exports=Exports
 ExportFilteredList=Vie suodatettu luettelo
 ExportList=Vie Luettelo
 ExportOptions=Vienti Valinnat
+<<<<<<< HEAD
+=======
+IncludeDocsAlreadyExported=Include docs already exported
+ExportOfPiecesAlreadyExportedIsEnable=Export of pieces already exported is enable
+ExportOfPiecesAlreadyExportedIsDisable=Export of pieces already exported is disable
+AllExportedMovementsWereRecordedAsExported=All exported movements were recorded as exported
+NotAllExportedMovementsCouldBeRecordedAsExported=Not all exported movements could be recorded as exported
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Miscellaneous=Miscellaneous
 Calendar=Kalenteri
 GroupBy=Group by...
 ViewFlatList=View flat list
 RemoveString=Remove string '%s'
+<<<<<<< HEAD
 SomeTranslationAreUncomplete=Some languages may be partially translated or may contains errors. If you detect some, you can fix language files registering to <a href="https://transifex.com/projects/p/dolibarr/" target="_blank">https://transifex.com/projects/p/dolibarr/</a>.
+=======
+SomeTranslationAreUncomplete=Some of the languages offered may be only partially translated or may contain errors. Please help to correct your language by registering at <a href="https://transifex.com/projects/p/dolibarr/" target="_blank">https://transifex.com/projects/p/dolibarr/</a> to add your improvements.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DirectDownloadLink=Suora latauslinkki (julkinen/ulkoinen)
 DirectDownloadInternalLink=Direct download link (need to be logged and need permissions)
 Download=Lataa
 DownloadDocument=Lataa dokumentti
 ActualizeCurrency=Päivitä valuuttakurssi
 Fiscalyear=Tilivuosi
+<<<<<<< HEAD
 ModuleBuilder=Moduuli Rakentaja
 SetMultiCurrencyCode=Aseta valuutta
 BulkActions=Bulk actions
@@ -855,12 +1092,22 @@ ClickToShowHelp=Click to show tooltip help
 WebSite=Nettisivu
 WebSites=Nettisivut
 WebSiteAccounts=Web site accounts
+=======
+ModuleBuilder=Module and Application Builder
+SetMultiCurrencyCode=Aseta valuutta
+BulkActions=Bulk actions
+ClickToShowHelp=Click to show tooltip help
+WebSite=Website
+WebSites=Nettisivut
+WebSiteAccounts=Website accounts
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ExpenseReport=Kustannusraportti
 ExpenseReports=Kuluraportit
 HR=HR
 HRAndBank=HR and Bank
 AutomaticallyCalculated=Automaattisesti laskettu
 TitleSetToDraft=Go back to draft
+<<<<<<< HEAD
 ConfirmSetToDraft=Are you sure you want to go back to Draft status ?
 ImportId=Vie ID
 Events=Tapahtumat
@@ -872,6 +1119,27 @@ Rights=Oikeudet
 LineNb=Line no.
 IncotermLabel=Incoterm-ehdot
 # Week day
+=======
+ConfirmSetToDraft=Are you sure you want to go back to Draft status?
+ImportId=Vie ID
+Events=Tapahtumat
+EMailTemplates=Email templates
+FileNotShared=File not shared to external public
+Project=Hanke
+Projects=Projektit
+LeadOrProject=Lead | Project
+LeadsOrProjects=Leads | Projects
+Lead=Lead
+Leads=Leads
+ListOpenLeads=List open leads
+ListOpenProjects=List open projects
+NewLeadOrProject=New lead or project
+Rights=Oikeudet
+LineNb=Line no.
+IncotermLabel=Incoterm-ehdot
+TabLetteringCustomer=Customer lettering
+TabLetteringSupplier=Vendor lettering
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Monday=Maanantai
 Tuesday=Tiistai
 Wednesday=Keskiviikko
@@ -919,7 +1187,11 @@ SearchIntoProjects=Projektit
 SearchIntoTasks=Tehtävät
 SearchIntoCustomerInvoices=Asiakkaiden laskut
 SearchIntoSupplierInvoices=Vendor invoices
+<<<<<<< HEAD
 SearchIntoCustomerOrders=Asiakkaan tilaukset
+=======
+SearchIntoCustomerOrders=Sales orders
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SearchIntoSupplierOrders=Purchase orders
 SearchIntoCustomerProposals=Tarjoukset asiakkaille
 SearchIntoSupplierProposals=Vendor proposals
@@ -927,15 +1199,25 @@ SearchIntoInterventions=Interventions
 SearchIntoContracts=Sopimukset
 SearchIntoCustomerShipments=Asiakas lähetykset
 SearchIntoExpenseReports=Kuluraportit
+<<<<<<< HEAD
 SearchIntoLeaves=Leaves
+=======
+SearchIntoLeaves=Leave
+SearchIntoTickets=Tiketit
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CommentLink=Kommentit
 NbComments=Kommenttien määrä
 CommentPage=Comments space
 CommentAdded=Kommentti lisätty
 CommentDeleted=Kommentti poistettu
 Everybody=Yhteiset hanke
+<<<<<<< HEAD
 PayedBy=Maksanut
 PayedTo=Maksettu
+=======
+PayedBy=Paid by
+PayedTo=Paid to
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Monthly=Monthly
 Quarterly=Quarterly
 Annual=Annual
@@ -945,6 +1227,23 @@ LocalAndRemote=Local and Remote
 KeyboardShortcut=Keyboard shortcut
 AssignedTo=Vaikuttaa
 Deletedraft=Delete draft
+<<<<<<< HEAD
 ConfirmMassDraftDeletion=Draft Bulk delete confirmation
 FileSharedViaALink=File shared via a link
 
+=======
+ConfirmMassDraftDeletion=Draft mass delete confirmation
+FileSharedViaALink=File shared via a link
+SelectAThirdPartyFirst=Select a third party first...
+YouAreCurrentlyInSandboxMode=You are currently in the %s "sandbox" mode
+Inventory=Inventory
+AnalyticCode=Analytic code
+TMenuMRP=MRP
+ShowMoreInfos=Show More Infos
+NoFilesUploadedYet=Please upload a document first
+SeePrivateNote=See private note
+PaymentInformation=Payment information
+ValidFrom=Valid from
+ValidUntil=Valid until
+NoRecordedUsers=No users
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

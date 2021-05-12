@@ -28,8 +28,11 @@
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
+<<<<<<< HEAD
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 /**
  * Class to manage ECM files
@@ -40,10 +43,15 @@ class EcmFiles extends CommonObject
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'ecmfiles';
+<<<<<<< HEAD
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'ecm_files';
+<<<<<<< HEAD
 	public $picto = 'generic';
 
 	/**
@@ -56,6 +64,41 @@ class EcmFiles extends CommonObject
 	public $filepath;
 	public $fullpath_orig;
 	public $description;
+=======
+
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto = 'generic';
+
+	/**
+	 * @var string Ref hash of file path
+	 */
+	public $ref;
+
+	/**
+	 * hash of file content (md5_file(dol_osencode($destfull))
+     * @var string Ecm Files label
+     */
+    public $label;
+
+	public $share;					// hash for file sharing, empty by default (example: getRandomPassword(true))
+
+	/**
+	 * @var int Entity
+	 */
+	public $entity;
+
+	public $filename;
+	public $filepath;
+	public $fullpath_orig;
+
+	/**
+	 * @var string description
+	 */
+	public $description;
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	public $keywords;
 	public $cover;
 	public $position;
@@ -63,15 +106,32 @@ class EcmFiles extends CommonObject
 	public $extraparams;
 	public $date_c = '';
 	public $date_m = '';
+<<<<<<< HEAD
 	public $fk_user_c;
 	public $fk_user_m;
+=======
+
+	/**
+     * @var int ID
+     */
+	public $fk_user_c;
+
+	/**
+     * @var int ID
+     */
+	public $fk_user_m;
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	public $acl;
 	public $src_object_type;
 	public $src_object_id;
 
+<<<<<<< HEAD
 	/**
 	 */
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	/**
 	 * Constructor
@@ -152,8 +212,20 @@ class EcmFiles extends CommonObject
 		if (empty($this->date_m)) $this->date_m = dol_now();
 
 		// If ref not defined
+<<<<<<< HEAD
 		$ref = dol_hash($this->filepath.'/'.$this->filename, 3);
 		if (! empty($this->ref)) $ref=$this->ref;
+=======
+		$ref = '';
+		if (! empty($this->ref))
+		{
+			$ref=$this->ref;
+		}
+		else {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+			$ref = dol_hash($this->filepath.'/'.$this->filename, 3);
+		}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$maxposition=0;
 		if (empty($this->position))   // Get max used
@@ -253,7 +325,11 @@ class EcmFiles extends CommonObject
 			if (! $notrigger)
 			{
 				// Call triggers
+<<<<<<< HEAD
 				$result=$this->call_trigger(strtoupper(get_class($this)).'_CREATE',$user);
+=======
+				$result=$this->call_trigger(strtoupper(get_class($this)).'_CREATE', $user);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}
@@ -283,7 +359,11 @@ class EcmFiles extends CommonObject
 	 * @param  string $src_object_id 	src_object_id to search
 	 * @return int                 	   	<0 if KO, 0 if not found, >0 if OK
 	 */
+<<<<<<< HEAD
 	public function fetch($id, $ref = '', $relativepath = '', $hashoffile='', $hashforshare='', $src_object_type='', $src_object_id=0)
+=======
+	public function fetch($id, $ref = '', $relativepath = '', $hashoffile = '', $hashforshare = '', $src_object_type = '', $src_object_id = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf;
 
@@ -342,7 +422,11 @@ class EcmFiles extends CommonObject
 		else {
 			$sql .= ' AND t.rowid = '.$this->db->escape($id);					// rowid already unique
 		}
+<<<<<<< HEAD
 		
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->db->plimit(1);	// When we search on src or on hash of content (hashforfile) to solve hash conflict when several files has same content, we take first one only
 		$this->db->order('t.rowid', 'ASC');
 
@@ -408,7 +492,11 @@ class EcmFiles extends CommonObject
 	 *
 	 * @return int <0 if KO, >0 if OK
 	 */
+<<<<<<< HEAD
 	public function fetchAll($sortorder='', $sortfield='', $limit=0, $offset=0, array $filter = array(), $filtermode='AND')
+=======
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -451,7 +539,11 @@ class EcmFiles extends CommonObject
 			$sql .= ' AND ' . implode(' '.$filtermode.' ', $sqlwhere);
 		}
 		if (!empty($sortfield)) {
+<<<<<<< HEAD
 			$sql .= $this->db->order($sortfield,$sortorder);
+=======
+			$sql .= $this->db->order($sortfield, $sortorder);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		if (!empty($limit)) {
 			$sql .=  ' ' . $this->db->plimit($limit, $offset);
@@ -603,7 +695,11 @@ class EcmFiles extends CommonObject
 		if (! $error && ! $notrigger)
 		{
 			// Call triggers
+<<<<<<< HEAD
 			$result=$this->call_trigger(strtoupper(get_class($this)).'_MODIFY',$user);
+=======
+			$result=$this->call_trigger(strtoupper(get_class($this)).'_MODIFY', $user);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if ($result < 0) { $error++; } //Do also here what you must do to rollback action if trigger fail
 			// End call triggers
 		}
@@ -640,7 +736,11 @@ class EcmFiles extends CommonObject
 		if (! $notrigger)
 		{
 			// Call triggers
+<<<<<<< HEAD
 			$result=$this->call_trigger(strtoupper(get_class($this)).'_DELETE',$user);
+=======
+			$result=$this->call_trigger(strtoupper(get_class($this)).'_DELETE', $user);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if ($result < 0) { $error++; } //Do also here what you must do to rollback action if trigger fail
 			// End call triggers
 		}
@@ -674,6 +774,7 @@ class EcmFiles extends CommonObject
 	/**
 	 * Load an object from its id and create a new one in database
 	 *
+<<<<<<< HEAD
 	 * @param int $fromid Id of object to clone
 	 *
 	 * @return int New id of clone
@@ -683,6 +784,16 @@ class EcmFiles extends CommonObject
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		global $user;
+=======
+	 * @param	User	$user		User making the clone
+	 * @param   int     $fromid     Id of object to clone
+	 * @return  int                 New id of clone
+	 */
+	public function createFromClone(User $user, $fromid)
+	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$error = 0;
 		$object = new Ecmfiles($this->db);
 
@@ -697,6 +808,10 @@ class EcmFiles extends CommonObject
 		// ...
 
 		// Create clone
+<<<<<<< HEAD
+=======
+		$object->context['createfromclone'] = 'createfromclone';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$result = $object->create($user);
 
 		// Other options
@@ -706,6 +821,11 @@ class EcmFiles extends CommonObject
 			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
 		}
 
+<<<<<<< HEAD
+=======
+		unset($object->context['createfromclone']);
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// End
 		if (!$error) {
 			$this->db->commit();
@@ -728,7 +848,11 @@ class EcmFiles extends CommonObject
 	 *  @param  string  $morecss            Add more css on link
 	 *	@return	string						String with URL
 	 */
+<<<<<<< HEAD
 	function getNomUrl($withpicto=0, $option='', $notooltip=0, $maxlen=24, $morecss='')
+=======
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $maxlen = 24, $morecss = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $db, $conf, $langs;
 		global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -777,11 +901,20 @@ class EcmFiles extends CommonObject
 	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return	string 			       Label of status
 	 */
+<<<<<<< HEAD
 	function getLibStatut($mode=0)
 	{
 		return $this->LibStatut($this->status,$mode);
 	}
 
+=======
+	public function getLibStatut($mode = 0)
+	{
+		return $this->LibStatut($this->status, $mode);
+	}
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *  Return the status
 	 *
@@ -789,8 +922,14 @@ class EcmFiles extends CommonObject
 	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 5=Long label + Picto
 	 *  @return string 			       	Label of status
 	 */
+<<<<<<< HEAD
 	static function LibStatut($status,$mode=0)
 	{
+=======
+	public static function LibStatut($status, $mode = 0)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $langs;
 		return '';
 	}
@@ -832,12 +971,34 @@ class EcmFiles extends CommonObject
 
 class EcmfilesLine
 {
+<<<<<<< HEAD
 	public $label;
 	public $entity;
 	public $filename;
 	public $filepath;
 	public $fullpath_orig;
 	public $description;
+=======
+	/**
+     * @var string ECM files line label
+     */
+    public $label;
+
+	/**
+	 * @var int Entity
+	 */
+	public $entity;
+
+	public $filename;
+	public $filepath;
+	public $fullpath_orig;
+
+	/**
+	 * @var string description
+	 */
+	public $description;
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	public $keywords;
 	public $cover;
 	public $position;
@@ -845,8 +1006,22 @@ class EcmfilesLine
 	public $extraparams;
 	public $date_c = '';
 	public $date_m = '';
+<<<<<<< HEAD
 	public $fk_user_c;
 	public $fk_user_m;
+=======
+
+	/**
+     * @var int ID
+     */
+	public $fk_user_c;
+
+	/**
+     * @var int ID
+     */
+	public $fk_user_m;
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	public $acl;
 	public $src_object_type;
 	public $src_object_id;

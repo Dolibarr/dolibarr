@@ -24,6 +24,7 @@ FormatDateHourSecShort=%Y-%m-%d %I:%M:%S %p
 FormatDateHourTextShort=%d %b %Y, %H:%M
 FormatDateHourText=%d %B %Y, %H:%M
 DatabaseConnection=Databasanslutning
+<<<<<<< HEAD
 NoTemplateDefined=No template available for this email type
 AvailableVariables=Available substitution variables
 NoTranslation=Ingen översättning
@@ -31,6 +32,15 @@ Translation=Översättning
 NoRecordFound=Ingen post funnen
 NoRecordDeleted=No record deleted
 NotEnoughDataYet=Not enough data
+=======
+NoTemplateDefined=Ingen mall tillgänglig för denna e-posttyp
+AvailableVariables=Tillgängliga substitutionsvariabler
+NoTranslation=Ingen översättning
+Translation=Översättning
+NoRecordFound=Ingen post funnen
+NoRecordDeleted=Ingen post borttagen
+NotEnoughDataYet=Inte tillräckligt med data
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoError=Inget fel
 Error=Fel
 Errors=Fel
@@ -38,18 +48,28 @@ ErrorFieldRequired=Fältet '%s' måste anges
 ErrorFieldFormat=Fältet '%s' har ett felaktigt värde
 ErrorFileDoesNotExists=Arkiv %s finns inte
 ErrorFailedToOpenFile=Kunde inte öppna filen %s
+<<<<<<< HEAD
 ErrorCanNotCreateDir=Cannot create dir %s
 ErrorCanNotReadDir=Cannot read dir %s
+=======
+ErrorCanNotCreateDir=Kan inte skapa dir %s
+ErrorCanNotReadDir=Kan inte läsa dir %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorConstantNotDefined=Parameter %s inte definierad
 ErrorUnknown=Okänt fel
 ErrorSQL=SQL-fel
 ErrorLogoFileNotFound=Logo fil '%s' hittades inte
+<<<<<<< HEAD
 ErrorGoToGlobalSetup=Go to 'Company/Organization' setup to fix this
+=======
+ErrorGoToGlobalSetup=Gå till "Company / Organization" inställning för att åtgärda det här
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorGoToModuleSetup=Gå till modul inställningarna för att åtgärda detta
 ErrorFailedToSendMail=Det gick inte att skicka e-post (avsändare = %s, mottagare = %s)
 ErrorFileNotUploaded=Filen har inte laddats upp. Kontrollera att storleken inte överskrider högsta tillåtna, att det finns plats på disken och att det inte redan finns en fil med samma namn i den här katalogen.
 ErrorInternalErrorDetected=Fel upptäckt
 ErrorWrongHostParameter=Fel värdparameter
+<<<<<<< HEAD
 ErrorYourCountryIsNotDefined=Ert land är inte definierat. Gå till Hem-Setup-Edit och post igen formuläret.
 ErrorRecordIsUsedByChild=Misslyckades att ta bort denna post. Denna post används av minst en barn-post.
 ErrorWrongValue=Fel värde
@@ -66,11 +86,30 @@ ErrorFailedToSaveFile=Fel, kunde inte spara filen.
 ErrorCannotAddThisParentWarehouse=You are trying to add a parent warehouse which is already a child of current one
 MaxNbOfRecordPerPage=Max number of record per page
 NotAuthorized=You are not authorized to do that.
+=======
+ErrorYourCountryIsNotDefined=Ditt land är inte definierat. Gå till Hem-Setup-Redigera och skicka formuläret igen.
+ErrorRecordIsUsedByChild=Misslyckades med att radera den här posten. Denna post används av minst en barnpost.
+ErrorWrongValue=Fel värde
+ErrorWrongValueForParameterX=Felaktigt värde för parametern %s
+ErrorNoRequestInError=Ingen begäran av misstag
+ErrorServiceUnavailableTryLater=Tjänsten är inte tillgänglig just nu. Försök igen senare.
+ErrorDuplicateField=Dublett-värde i ett unikt fält
+ErrorSomeErrorWereFoundRollbackIsDone=Några fel hittades. Ändringar har rullats tillbaka.
+ErrorConfigParameterNotDefined=Parameter <b> %s </b> definieras inte i Dolibarr config-filen <b> conf.php </b>.
+ErrorCantLoadUserFromDolibarrDatabase=Det gick inte att hitta användare <b>%s</b> i Dolibarr databas.
+ErrorNoVATRateDefinedForSellerCountry=Fel, ingen moms har definierats för landet '%s'.
+ErrorNoSocialContributionForSellerCountry=Fel, ingen social / skatteskatt typ definierad för land "%s".
+ErrorFailedToSaveFile=Fel, kunde inte spara filen.
+ErrorCannotAddThisParentWarehouse=Du försöker lägga till ett förälderlager som redan är ett barn i ett befintligt lager
+MaxNbOfRecordPerPage=Max. Antal poster per sida
+NotAuthorized=Du har inte behörighet att göra det.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SetDate=Ställ in datum
 SelectDate=Välj datum
 SeeAlso=Se även %s
 SeeHere=Se hänvisning
 ClickHere=Klicka här
+<<<<<<< HEAD
 Here=Here
 Apply=Tillämpa
 BackgroundColorByDefault=Standard bakgrundsfärg
@@ -112,13 +151,62 @@ InformationToHelpDiagnose=This information can be useful for diagnostic purposes
 MoreInformation=Mer information
 TechnicalInformation=Teknisk information
 TechnicalID=Technical ID
+=======
+Here=Här
+Apply=Tillämpa
+BackgroundColorByDefault=Standard bakgrundsfärg
+FileRenamed=Filen ändrades med framgång
+FileGenerated=Filen lyckades genereras
+FileSaved=Filen har sparats
+FileUploaded=Filen har laddats upp
+FileTransferComplete=Fil (er) laddade upp framgångsrikt
+FilesDeleted=Fil(erna) har tagits bort
+FileWasNotUploaded=En fil är vald att bifogas, men har ännu inte laddats upp. Klicka på 'Bifoga fil' för detta.
+NbOfEntries=Antal poster
+GoToWikiHelpPage=Läs onlinehjälp (Internet behövs)
+GoToHelpPage=Läs hjälpen
+RecordSaved=Post sparades
+RecordDeleted=Post raderad
+RecordGenerated=Post skapad
+LevelOfFeature=Nivå av funktioner
+NotDefined=Inte definierat
+DolibarrInHttpAuthenticationSoPasswordUseless=Dolibarr-autentiseringsläget är inställt på <b> %s </b> i konfigurationsfilen <b> conf.php </b>. <br> Det betyder att lösenordsdatabasen är extern till Dolibarr, så att ändra detta fält kan inte ha någon effekt.
+Administrator=Administratör
+Undefined=Odefinierad
+PasswordForgotten=Lösenordet glömt?
+NoAccount=Inget konto?
+SeeAbove=Se ovan
+HomeArea=Hem
+LastConnexion=Senaste inloggning
+PreviousConnexion=Tidigare inloggning
+PreviousValue=Föregående värde
+ConnectedOnMultiCompany=Ansluten enhet
+ConnectedSince=Ansluten sedan
+AuthenticationMode=Autentiseringsläge
+RequestedUrl=Begärd webbadress
+DatabaseTypeManager=Database Type Manager
+RequestLastAccessInError=Senaste databasåtkomstförfrågan fel
+ReturnCodeLastAccessInError=Returkod för senaste databasåtkomstbegäran
+InformationLastAccessInError=Information för senaste databasåtkomstbegäran
+DolibarrHasDetectedError=Dolibarr har upptäckt ett tekniskt fel
+YouCanSetOptionDolibarrMainProdToZero=Du kan läsa loggfilen eller ange alternativ $ dolibarr_main_prod till '0' i din config-fil för att få mer information.
+InformationToHelpDiagnose=Denna information kan vara användbar för diagnostiska ändamål (du kan ange alternativ $ dolibarr_main_prod till '1' för att ta bort sådana meddelanden)
+MoreInformation=Mer information
+TechnicalInformation=Teknisk information
+TechnicalID=Tekniskt ID
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NotePublic=Anteckning (offentlig)
 NotePrivate=Anteckning (privat)
 PrecisionUnitIsLimitedToXDecimals=Dolibarr har ställts in för att ange enhetspriser med <b>%s</b> decimaler.
 DoTest=Test
 ToFilter=Filter
+<<<<<<< HEAD
 NoFilter=No filter
 WarningYouHaveAtLeastOneTaskLate=Varning, du har minst ett element som har överskridit den tillåtna förseningen.
+=======
+NoFilter=Inget filter
+WarningYouHaveAtLeastOneTaskLate=Varning, du har minst ett element som har överskridit tolerans tiden.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 yes=ja
 Yes=Ja
 no=nej
@@ -128,25 +216,41 @@ Home=Hem
 Help=Hjälp
 OnlineHelp=Online hjälp
 PageWiki=Wiki-sida
+<<<<<<< HEAD
 MediaBrowser=Media browser
+=======
+MediaBrowser=Media webbläsare
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Always=Alltid
 Never=Aldrig
 Under=under
 Period=Period
 PeriodEndDate=Slutdatum för perioden
+<<<<<<< HEAD
 SelectedPeriod=Selected period
 PreviousPeriod=Previous period
+=======
+SelectedPeriod=Vald period
+PreviousPeriod=Tidigare period
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Activate=Aktivera
 Activated=Aktiverat
 Closed=Stängt
 Closed2=Stängt
+<<<<<<< HEAD
 NotClosed=Not closed
 Enabled=Aktiverat
+=======
+NotClosed=Ej stängd
+Enabled=Aktiverat
+Enable=Aktivera
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Deprecated=Föråldrad
 Disable=Inaktivera
 Disabled=Inaktiverad
 Add=Lägg till
 AddLink=Lägg till länk
+<<<<<<< HEAD
 RemoveLink=Remove link
 AddToDraft=Add to draft
 Update=Uppdatera
@@ -164,31 +268,68 @@ Validate=Validera
 ValidateAndApprove=Validate and Approve
 ToValidate=Att validera
 NotValidated=Not validated
+=======
+RemoveLink=Ta bort länk
+AddToDraft=Lägg till i utkast
+Update=Uppdatera
+Close=Stäng
+CloseBox=Ta bort widget från din instrumentpanel
+Confirm=Bekräfta
+ConfirmSendCardByMail=Vill du verkligen skicka innehållet på detta kort via mail till <b> %s </b>?
+Delete=Ta bort
+Remove=Ta bort
+Resiliate=Avsluta
+Cancel=Avbryt
+Modify=Ändra
+Edit=Redigera
+Validate=Bekräfta
+ValidateAndApprove=Godkänn och bekräft
+ToValidate=Att bekräfta
+NotValidated=Ej bekräftat
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Save=Spara
 SaveAs=Spara som
 TestConnection=Testa anslutning
 ToClone=Klon
+<<<<<<< HEAD
 ConfirmClone=Välj data som du vill klona:
+=======
+ConfirmClone=Välj data du vill klona:
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoCloneOptionsSpecified=Inga uppgifter att klona definierade.
 Of=av
 Go=Gå
 Run=Kör
 CopyOf=Kopia av
 Show=Visa
+<<<<<<< HEAD
 Hide=Hide
+=======
+Hide=Dölj
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShowCardHere=Visa kort
 Search=Sök
 SearchOf=Sök
 Valid=Giltig
 Approve=Godkänn
+<<<<<<< HEAD
 Disapprove=Disapprove
 ReOpen=Öppnar igen
 Upload=Skicka fil
+=======
+Disapprove=Ogilla
+ReOpen=Öppnar igen
+Upload=Ladda upp
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ToLink=Länk
 Select=Välj
 Choose=Välj
 Resize=Ändra storlek
+<<<<<<< HEAD
 ResizeOrCrop=Resize or Crop
+=======
+ResizeOrCrop=Ändra storlek eller beskära
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Recenter=Recenter
 Author=Författare
 User=Användare
@@ -200,12 +341,20 @@ Password=Lösenord
 PasswordRetype=Ange ditt lösenord
 NoteSomeFeaturesAreDisabled=Observera att en hel del funktioner / moduler är inaktiverade i denna demonstration.
 Name=Namn
+<<<<<<< HEAD
+=======
+NameSlashCompany=Namn / Företag
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Person=Person
 Parameter=Parameter
 Parameters=Parametrar
 Value=Värde
 PersonalValue=Personlig värde
+<<<<<<< HEAD
 NewObject=New %s
+=======
+NewObject=Ny %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NewValue=Nytt värde
 CurrentValue=Aktuellt värde
 Code=Kod
@@ -220,8 +369,16 @@ Info=Logg
 Family=Familj
 Description=Beskrivning
 Designation=Beskrivning
+<<<<<<< HEAD
 Model=Doc template
 DefaultModel=Default doc template
+=======
+DescriptionOfLine=Beskrivning av linjen
+DateOfLine=Datum för rad
+DurationOfLine=Varaktighet av raden
+Model=Doc mall
+DefaultModel=Standard doksmall
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Action=Händelse
 About=Om
 Number=Antal
@@ -241,6 +398,7 @@ Next=Nästa
 Cards=Kort
 Card=Kort
 Now=Nu
+<<<<<<< HEAD
 HourStart=Start hour
 Date=Datum
 DateAndHour=Datum och timme
@@ -254,6 +412,21 @@ DateModification=Ändringsdatum
 DateModificationShort=Ändr. datum
 DateLastModification=Latest modification date
 DateValidation=Attestdatum
+=======
+HourStart=Start timme
+Date=Datum
+DateAndHour=Datum och timme
+DateToday=Dagens datum
+DateReference=Referensdatum
+DateStart=Startdatum
+DateEnd=Slutdatum
+DateCreation=Datum för skapande
+DateCreationShort=Creat. datum
+DateModification=Ändringsdatum
+DateModificationShort=Ändr. datum
+DateLastModification=Senaste ändringsdatum
+DateValidation=Bekräftelsesdatum
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DateClosing=Sista dag
 DateDue=Förfallodag
 DateValue=Valuteringsdag
@@ -265,6 +438,7 @@ DateRequest=Begär datum
 DateProcess=Process datum
 DateBuild=Rapportera byggdatum
 DatePayment=Datum för betalning
+<<<<<<< HEAD
 DateApprove=Approving date
 DateApprove2=Approving date (second approval)
 RegistrationDate=Registration date
@@ -274,6 +448,17 @@ UserValidation=Validation user
 UserCreationShort=Creat. user
 UserModificationShort=Modif. user
 UserValidationShort=Valid. user
+=======
+DateApprove=Godkännandedatum
+DateApprove2=Godkännandedatum (andra godkännande)
+RegistrationDate=Registrerings datum
+UserCreation=Skapande användare
+UserModification=Modifieringsanvändare
+UserValidation=Bekräftelsesanvändare
+UserCreationShort=Creat. användare
+UserModificationShort=Modif. användare
+UserValidationShort=Giltig. användare
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DurationYear=år
 DurationMonth=månad
 DurationWeek=vecka
@@ -308,15 +493,24 @@ MonthOfDay=Dagens månad
 HourShort=H
 MinuteShort=mn
 Rate=Sats
+<<<<<<< HEAD
 CurrencyRate=Currency conversion rate
+=======
+CurrencyRate=Valutaomräkningskurs
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 UseLocalTax=Inkludera skatt
 Bytes=Bytes
 KiloBytes=Kilobyte
 MegaBytes=Megabyte
 GigaBytes=Gigabyte
 TeraBytes=Terabyte
+<<<<<<< HEAD
 UserAuthor=User of creation
 UserModif=User of last update
+=======
+UserAuthor=Användare av skapandet
+UserModif=Användare av senaste uppdateringen
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 b=b.
 Kb=Kb
 Mb=Mb
@@ -327,6 +521,7 @@ Copy=Kopiera
 Paste=Klistra in
 Default=Standard
 DefaultValue=Standardvärde
+<<<<<<< HEAD
 DefaultValues=Default values
 Price=Pris
 PriceCurrency=Price (currency)
@@ -353,12 +548,41 @@ MulticurrencyPaymentAmount=Payment amount, original currency
 MulticurrencyAmountHT=Amount (net of tax), original currency
 MulticurrencyAmountTTC=Amount (inc. of tax), original currency
 MulticurrencyAmountVAT=Amount tax, original currency
+=======
+DefaultValues=Standardvärden / filter / sortering
+Price=Pris
+PriceCurrency=Pris (valuta)
+UnitPrice=Pris per enhet
+UnitPriceHT=Enhetspris (exkl.)
+UnitPriceHTCurrency=Enhetspris (exkl.) (Valuta)
+UnitPriceTTC=Pris per enhet
+PriceU=Styckpris
+PriceUHT=St.pris(net)
+PriceUHTCurrency=U.P (valuta)
+PriceUTTC=UPP. (inkl. skatt)
+Amount=Belopp
+AmountInvoice=Fakturabelopp
+AmountInvoiced=Belopp fakturerat
+AmountPayment=Betalningsbelopp
+AmountHTShort=Belopp (exkl.)
+AmountTTCShort=Belopp (inkl. moms)
+AmountHT=Belopp (exkl. Skatt)
+AmountTTC=Belopp (inkl. moms)
+AmountVAT=Belopp moms
+MulticurrencyAlreadyPaid=Redan betalad, ursprunglig valuta
+MulticurrencyRemainderToPay=Fortsätt att betala, ursprunglig valuta
+MulticurrencyPaymentAmount=Betalningsbelopp, ursprunglig valuta
+MulticurrencyAmountHT=Belopp (exkl. Skatt), ursprunglig valuta
+MulticurrencyAmountTTC=Belopp (inkl. Skatt), ursprunglig valuta
+MulticurrencyAmountVAT=Belopp skatt, ursprunglig valuta
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AmountLT1=Belopp skatt 2
 AmountLT2=Belopp skatt 3
 AmountLT1ES=Belopp RE
 AmountLT2ES=Belopp IRPF
 AmountTotal=Summa
 AmountAverage=Genomsnittligt belopp
+<<<<<<< HEAD
 PriceQtyMinHT=Pris kvantitet min. (Netto efter skatt)
 PriceQtyMinHTCurrency=Price quantity min. (net of tax) (currency)
 Percentage=Procent
@@ -374,10 +598,29 @@ TotalTTC=Summa (inkl. moms)
 TotalTTCToYourCredit=Summa kredit (inkl. moms)
 TotalVAT=Summa moms
 TotalVATIN=Total IGST
+=======
+PriceQtyMinHT=Pris kvantitet min. (exkl. skatt)
+PriceQtyMinHTCurrency=Pris kvantitet min. (exkl. skatt) (valuta)
+Percentage=Procent
+Total=Summa
+SubTotal=Delsumma
+TotalHTShort=Totalt (exkl.)
+TotalHT100Short=Total 100%% (excl.)
+TotalHTShortCurrency=Totalt (exkl. I valuta)
+TotalTTCShort=Summa (inkl. moms)
+TotalHT=Totalt (exkl. Skatt)
+TotalHTforthispage=Totalt (exkl. Skatt) för denna sida
+Totalforthispage=Totalt för denna sida
+TotalTTC=Summa (inkl. moms)
+TotalTTCToYourCredit=Summa kredit (inkl. moms)
+TotalVAT=Summa moms
+TotalVATIN=Totalt IGST
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TotalLT1=Summa skatt 2
 TotalLT2=Summa skatt 3
 TotalLT1ES=Totalt RE
 TotalLT2ES=Totalt IRPF
+<<<<<<< HEAD
 TotalLT1IN=Total CGST
 TotalLT2IN=Total SGST
 HT=Netto efter skatt
@@ -392,10 +635,27 @@ LT1=Sales tax 2
 LT1Type=Sales tax 2 type
 LT2=Sales tax 3
 LT2Type=Sales tax 3 type
+=======
+TotalLT1IN=Totalt CGST
+TotalLT2IN=Totalt SGST
+HT=Exkl. beskatta
+TTC=Inkl. moms
+INCVATONLY=Inc. moms
+INCT=Inc. alla skatter
+VAT=Moms
+VATIN=IGST
+VATs=Försäljningsskatt
+VATINs=IGST skatter
+LT1=Försäljningsskatt 2
+LT1Type=Försäljningsskatt 2 typ
+LT2=Försäljningsskatt 3
+LT2Type=Försäljningsskatt 3 typ
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LT1ES=RE
 LT2ES=IRPF
 LT1IN=CGST
 LT2IN=SGST
+<<<<<<< HEAD
 VATRate=Mervärdesskattesats
 VATCode=Tax Rate code
 VATNPR=Tax Rate NPR
@@ -406,6 +666,19 @@ Delta=Delta
 RemainToPay=Remain to pay
 Module=Module/Application
 Modules=Modules/Applications
+=======
+LT1GC=Extra cent
+VATRate=Mervärdesskattesats
+VATCode=Skattesatsskod
+VATNPR=Skattesats NPR
+DefaultTaxRate=Standard skattesats
+Average=Genomsnittlig
+Sum=Summa
+Delta=Delta
+RemainToPay=Fortsätt att betala
+Module=Modul / applikation
+Modules=Moduler / Applications
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Option=Alternativ
 List=Lista
 FullList=Fullständig lista
@@ -416,7 +689,11 @@ Favorite=Favorit
 ShortInfo=Info
 Ref=Ref.
 ExternalRef=Ref. extern
+<<<<<<< HEAD
 RefSupplier=Ref. vendor
+=======
+RefSupplier=Ref. Säljare
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 RefPayment=Ref. betalning
 CommercialProposalsShort=Kommersiella förslag
 Comment=Kommentar
@@ -426,6 +703,7 @@ ActionsToDoShort=Att göra
 ActionsDoneShort=Klar
 ActionNotApplicable=Ej tillämpligt
 ActionRunningNotStarted=Inte påbörjats
+<<<<<<< HEAD
 ActionRunningShort=In progress
 ActionDoneShort=Färdiga
 ActionUncomplete=Icke klar
@@ -445,6 +723,28 @@ Running=In progress
 RequestAlreadyDone=Begär redan registrerats
 Filter=Filter
 FilterOnInto=Search criteria '<strong>%s</strong>' into fields %s
+=======
+ActionRunningShort=Pågående
+ActionDoneShort=Färdiga
+ActionUncomplete=Ofullständig
+LatestLinkedEvents=Senaste %s länkade händelserna
+CompanyFoundation=Företag / Organisation
+Accountant=Revisor
+ContactsForCompany=Kontakter till denna tredje part
+ContactsAddressesForCompany=Kontakter / adresser för denna tredje part
+AddressesForCompany=Adresser för denna tredje part
+ActionsOnCompany=Evenemang för denna tredje part
+ActionsOnContact=Händelser för denna kontakt / adress
+ActionsOnMember=Händelser om denna medlem
+ActionsOnProduct=Händelser om denna produkt
+NActionsLate=%s sent
+ToDo=Att göra
+Completed=Avslutad
+Running=Pågående
+RequestAlreadyDone=Begär redan registrerats
+Filter=Filter
+FilterOnInto=Sökkriterier '<strong> %s </strong>' i fält %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 RemoveFilter=Ta bort filtret
 ChartGenerated=Diagram genererat
 ChartNotGenerated=Diagram ej genererat
@@ -453,6 +753,7 @@ Generate=Generera
 Duration=Längd
 TotalDuration=Total längd
 Summary=Sammanfattning
+<<<<<<< HEAD
 DolibarrStateBoard=Database statistics
 DolibarrWorkBoard=Open items dashboard
 NoOpenedElementToProcess=No opened element to process
@@ -461,6 +762,16 @@ NotYetAvailable=Ännu inte tillgängligt
 NotAvailable=Inte tillgänglig
 Categories=Tags/categories
 Category=Tag/category
+=======
+DolibarrStateBoard=Databasstatistik
+DolibarrWorkBoard=Öppna föremål
+NoOpenedElementToProcess=Inget öppet element att bearbeta
+Available=Tillgängliga
+NotYetAvailable=Ännu inte tillgängligt
+NotAvailable=Inte tillgänglig
+Categories=Taggar / kategorier
+Category=Tag / kategori
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 By=Genom att
 From=Från
 to=till
@@ -468,12 +779,21 @@ and=och
 or=eller
 Other=Andra
 Others=Övrigt
+<<<<<<< HEAD
 OtherInformations=Övriga upplysningar
 Quantity=Kvantitet
 Qty=Antal
 ChangedBy=Ändrad av
 ApprovedBy=Approved by
 ApprovedBy2=Approved by (second approval)
+=======
+OtherInformations=Övrig information
+Quantity=Kvantitet
+Qty=Antal
+ChangedBy=Ändrad av
+ApprovedBy=Godkänd av
+ApprovedBy2=Godkänd av (andra godkännande)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Approved=Godkänd
 Refused=Refused
 ReCalculate=Uppdatera beräkning
@@ -482,20 +802,37 @@ Reporting=Rapportering
 Reportings=Rapportering
 Draft=Utkast
 Drafts=Utkast
+<<<<<<< HEAD
 StatusInterInvoiced=
 Validated=Validerad
 Opened=Öppen
+=======
+StatusInterInvoiced=faktureras
+Validated=Bekräftat
+Opened=Öppen
+OpenAll=Öppna alla)
+ClosedAll=Stängt (Alla)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 New=Ny
 Discount=Rabatt
 Unknown=Okänd
 General=Allmänt
 Size=Storlek
+<<<<<<< HEAD
 OriginalSize=Original size
 Received=Mottagna
 Paid=Betald
 Topic=Subject
 ByCompanies=Av tredje part
 ByUsers=By user
+=======
+OriginalSize=Originalstorlek
+Received=Mottagna
+Paid=Betald
+Topic=Ämne
+ByCompanies=Av tredje part
+ByUsers=Av användaren
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Links=Länkar
 Link=Länk
 Rejects=Rejects
@@ -504,20 +841,34 @@ NextStep=Nästa steg
 Datas=Data
 None=Ingen
 NoneF=Ingen
+<<<<<<< HEAD
 NoneOrSeveral=None or several
 Late=Sent
 LateDesc=Delay to define if a record is late or not depends on your setup. Ask your admin to change delay from menu Home - Setup - Alerts.
 NoItemLate=No late item
+=======
+NoneOrSeveral=Ingen eller flera
+Late=Sent
+LateDesc=Ett objekt definieras som Fördröjd enligt systemkonfigurationen i menyn Hem - Inställningar - Varningar.
+NoItemLate=Inga sena föremål
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Photo=Bild
 Photos=Bilder
 AddPhoto=Lägg till bild
 DeletePicture=Ta bort bild
 ConfirmDeletePicture=Bekräfta ta bort bild?
 Login=Inloggning
+<<<<<<< HEAD
 LoginEmail=Login (email)
 LoginOrEmail=Login or Email
 CurrentLogin=Nuvarande inloggning
 EnterLoginDetail=Enter login details
+=======
+LoginEmail=Logga in (e-post)
+LoginOrEmail=Logga in eller E-post
+CurrentLogin=Nuvarande inloggning
+EnterLoginDetail=Ange inloggningsuppgifter
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 January=Januari
 February=Februari
 March=Mars
@@ -530,6 +881,7 @@ September=September
 October=Oktober
 November=November
 December=December
+<<<<<<< HEAD
 JanuaryMin=Jan
 FebruaryMin=Feb
 MarchMin=Mar
@@ -542,6 +894,8 @@ SeptemberMin=Sep
 OctoberMin=Okt
 NovemberMin=Nov
 DecemberMin=Dec
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Month01=Januari
 Month02=Februari
 Month03=Mars
@@ -569,17 +923,29 @@ MonthShort12=Dec
 MonthVeryShort01=J
 MonthVeryShort02=F
 MonthVeryShort03=M
+<<<<<<< HEAD
 MonthVeryShort04=A
 MonthVeryShort05=M
 MonthVeryShort06=J
 MonthVeryShort07=J
 MonthVeryShort08=A
+=======
+MonthVeryShort04=en
+MonthVeryShort05=M
+MonthVeryShort06=J
+MonthVeryShort07=J
+MonthVeryShort08=en
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MonthVeryShort09=S
 MonthVeryShort10=O
 MonthVeryShort11=N
 MonthVeryShort12=D
 AttachedFiles=Bifogade filer och dokument
+<<<<<<< HEAD
 JoinMainDoc=Join main document
+=======
+JoinMainDoc=Gå med i huvuddokumentet
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DateFormatYYYYMM=ÅÅÅÅ-MM
 DateFormatYYYYMMDD=ÅÅÅÅ-MM-DD
 DateFormatYYYYMMDDHHMM=ÅÅÅÅ-MM-DD HH:SS
@@ -587,8 +953,13 @@ ReportName=Rapport namn
 ReportPeriod=Rapportperiodens utgång
 ReportDescription=Beskrivning
 Report=Rapport
+<<<<<<< HEAD
 Keyword=Keyword
 Origin=Origin
+=======
+Keyword=Nyckelord
+Origin=Ursprung
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Legend=Legend
 Fill=Fyll
 Reset=Återställ
@@ -604,14 +975,23 @@ FindBug=Rapportera ett fel
 NbOfThirdParties=Antal tredje parter
 NbOfLines=Antal rader
 NbOfObjects=Antal objekt
+<<<<<<< HEAD
 NbOfObjectReferers=Number of related items
 Referers=Related items
+=======
+NbOfObjectReferers=Antal relaterade föremål
+Referers=Relaterade saker
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TotalQuantity=Total kvantitet
 DateFromTo=Från %s till %s
 DateFrom=Från %s
 DateUntil=Fram %s
 Check=Kontrollera
+<<<<<<< HEAD
 Uncheck=Uncheck
+=======
+Uncheck=Avmarkera
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Internal=Interna
 External=Extern
 Internals=Interna
@@ -622,9 +1002,15 @@ BuildDoc=Bygg Doc
 Entity=Entity
 Entities=Enheter
 CustomerPreview=Kunden förhandsgranska
+<<<<<<< HEAD
 SupplierPreview=Vendor preview
 ShowCustomerPreview=Visa kunden förhandsgranskning
 ShowSupplierPreview=Show vendor preview
+=======
+SupplierPreview=Leverantörsförhandsgranskning
+ShowCustomerPreview=Visa kunden förhandsgranskning
+ShowSupplierPreview=Visa leverantörsförhandsvisning
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 RefCustomer=Ref. kund
 Currency=Valuta
 InfoAdmin=Information för administratörer
@@ -632,12 +1018,17 @@ Undo=Ångra
 Redo=Gör om
 ExpandAll=Expandera alla
 UndoExpandAll=Ångra expandera
+<<<<<<< HEAD
 SeeAll=See all
+=======
+SeeAll=Se allt
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Reason=Orsak
 FeatureNotYetSupported=Funktionen inte stöds ännu
 CloseWindow=Stäng fönster
 Response=Svar
 Priority=Prioritet
+<<<<<<< HEAD
 SendByMail=Skicka med Email
 MailSentBy=E-post skickas med
 TextUsedInTheMessageBody=E-organ
@@ -646,6 +1037,17 @@ SendMail=Skicka e-post
 EMail=E-mail
 NoEMail=Ingen e-post
 Email=epost
+=======
+SendByMail=Skicka via e-post
+MailSentBy=E-post skickas med
+TextUsedInTheMessageBody=E-organ
+SendAcknowledgementByMail=Skicka bekräftelsemail
+SendMail=Skicka e-post
+Email=epost
+NoEMail=Ingen e-post
+AlreadyRead=Redan läst
+NotRead=Inte läst
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoMobilePhone=Ingen mobiltelefon
 Owner=Ägare
 FollowingConstantsWillBeSubstituted=Följande konstanter kommer att ersätta med motsvarande värde.
@@ -655,6 +1057,7 @@ GoBack=Gå tillbaka
 CanBeModifiedIfOk=Kan ändras om det är giltigt
 CanBeModifiedIfKo=Kan ändras om inte giltigt
 ValueIsValid=Värdet är giltigt
+<<<<<<< HEAD
 ValueIsNotValid=Value is not valid
 RecordCreatedSuccessfully=Record created successfully
 RecordModifiedSuccessfully=Post ändrades korrekt
@@ -663,21 +1066,43 @@ RecordsDeleted=%s record deleted
 AutomaticCode=Automatisk kod
 FeatureDisabled=Funktion avstängd
 MoveBox=Move widget
+=======
+ValueIsNotValid=Värdet är inte giltigt
+RecordCreatedSuccessfully=Spela in skapad framgångsrikt
+RecordModifiedSuccessfully=Post ändrades korrekt
+RecordsModified=%s post (er) modifierad
+RecordsDeleted=%s post (er) raderade
+RecordsGenerated=%s skapade skivor
+AutomaticCode=Automatisk kod
+FeatureDisabled=Funktion avstängd
+MoveBox=Flytta widgeten
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Offered=Erbjuds
 NotEnoughPermissions=Du har inte behörighet för denna åtgärd
 SessionName=Session namn
 Method=Metod
 Receive=Ta emot
+<<<<<<< HEAD
 CompleteOrNoMoreReceptionExpected=Complete or nothing more expected
 ExpectedValue=Expected Value
 CurrentValue=Aktuellt värde
+=======
+CompleteOrNoMoreReceptionExpected=Komplet eller inget mer förväntat
+ExpectedValue=Förväntat värde
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PartialWoman=Partiell
 TotalWoman=Totalt
 NeverReceived=Aldrig fick
 Canceled=Annullerad
+<<<<<<< HEAD
 YouCanChangeValuesForThisListFromDictionarySetup=You can change values for this list from menu Setup - Dictionaries
 YouCanChangeValuesForThisListFrom=You can change values for this list from menu %s
 YouCanSetDefaultValueInModuleSetup=You can set the default value used when creating a new record into module setup
+=======
+YouCanChangeValuesForThisListFromDictionarySetup=Du kan ändra värden för den här listan från menyn Inställningar - Ordböcker
+YouCanChangeValuesForThisListFrom=Du kan ändra värden för den här listan från menyn %s
+YouCanSetDefaultValueInModuleSetup=Du kan ange det standardvärde som används när du skapar en ny post i modulinställningen
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Color=Färg
 Documents=Länkade filer
 Documents2=Dokument
@@ -687,19 +1112,31 @@ MenuECM=Dokument
 MenuAWStats=AWStats
 MenuMembers=Medlemmar
 MenuAgendaGoogle=Google dagordning
+<<<<<<< HEAD
 ThisLimitIsDefinedInSetup=Dolibarr gräns (meny hem-setup-säkerhet): %s Kb, PHP gräns: %s Kb
+=======
+ThisLimitIsDefinedInSetup=Dolibarr gräns (meny hem-inställning-säkerhet): %s Kb, PHP gräns: %s Kb
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoFileFound=Inga dokument har sparats i denhär katalogen
 CurrentUserLanguage=Nuvarande språk
 CurrentTheme=Nuvarande tema
 CurrentMenuManager=Nuvarande menyhanterare
 Browser=Webbläsare
 Layout=Layout
+<<<<<<< HEAD
 Screen=Screen
+=======
+Screen=Skärm
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DisabledModules=Avaktiverade moduler
 For=För
 ForCustomer=För kund
 Signature=Namnteckning
+<<<<<<< HEAD
 DateOfSignature=Date of signature
+=======
+DateOfSignature=Datum för underskrift
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 HidePassword=Visa kommando med dolt lösenord
 UnHidePassword=Visa riktiga kommandot med lösenord i klartext
 Root=Root
@@ -708,6 +1145,7 @@ Page=Sida
 Notes=Anteckningar
 AddNewLine=Lägg till ny rad
 AddFile=Lägg till fil
+<<<<<<< HEAD
 FreeZone=Not a predefined product/service
 FreeLineOfType=Not a predefined entry of type
 CloneMainAttributes=Klona objekt med dess viktigaste attribut
@@ -725,13 +1163,40 @@ CreditOrDebitCard=Credit or debit card
 FieldsWithAreMandatory=Fält med <b>%s</b> är obligatoriska
 FieldsWithIsForPublic=Fält med <b>%s</b> visas på offentlig lista över medlemmar. Om du inte vill det, avmarkera "offentlig".
 AccordingToGeoIPDatabase=(Enligt GeoIP omvandling)
+=======
+FreeZone=Inte en fördefinierad produkt / tjänst
+FreeLineOfType=Fri text text, typ:
+CloneMainAttributes=Klona objekt med dess viktigaste attribut
+ReGeneratePDF=Återskapa PDF
+PDFMerge=PDF-dokument
+Merge=Sammanfoga
+DocumentModelStandardPDF=Standard PDF-mall
+PrintContentArea=Visa sidan för att skriva ut huvudinnehållet
+MenuManager=Menyhanteraren
+WarningYouAreInMaintenanceMode=Varning, du är i underhållsläge: endast inloggning <b> %s </b> får använda programmet i det här läget.
+CoreErrorTitle=Systemfel
+CoreErrorMessage=Beklagar, ett fel uppstod. Kontakta systemadministratören för att kontrollera loggarna eller inaktivera $ dolibarr_main_prod = 1 för att få mer information.
+CreditCard=Kreditkort
+ValidatePayment=Bekräfta betalning
+CreditOrDebitCard=Kredit-eller betalkort
+FieldsWithAreMandatory=Fält med <b>%s</b> är obligatoriska
+FieldsWithIsForPublic=Fält med <b> %s </b> visas i den offentliga listan över medlemmar. Om du inte vill ha det här markerar du kryssrutan "public".
+AccordingToGeoIPDatabase=(enligt GeoIP-omvandling)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Line=Line
 NotSupported=Stöds inte
 RequiredField=Obligatoriskt fält
 Result=Resultat
 ToTest=Test
+<<<<<<< HEAD
 ValidateBefore=Kortet måste valideras innan du använder den här funktionen
 Visibility=Synlighet
+=======
+ValidateBefore=Kortet måste bekräftas innan du använder den här funktionen
+Visibility=Synlighet
+Totalizable=Totalizable
+TotalizableDesc=Det här fältet kan totaliseras i listan
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Private=Privat
 Hidden=Dolda
 Resources=Resurser
@@ -746,6 +1211,7 @@ NewAttribute=Nya attribut
 AttributeCode=Attributkod
 URLPhoto=URL foto / logo
 SetLinkToAnotherThirdParty=Länk till en annan tredje part
+<<<<<<< HEAD
 LinkTo=Link to
 LinkToProposal=Link to proposal
 LinkToOrder=Länk för att beställa
@@ -761,6 +1227,25 @@ ClickToEdit=Klicka för att redigera
 EditWithEditor=Edit with CKEditor
 EditWithTextEditor=Edit with Text editor
 EditHTMLSource=Edit HTML Source
+=======
+LinkTo=Anknyta till
+LinkToProposal=Länk till förslag
+LinkToOrder=Länk för att beställa
+LinkToInvoice=Länk till faktura
+LinkToTemplateInvoice=Länk till mallfaktura
+LinkToSupplierOrder=Länk till inköpsorder
+LinkToSupplierProposal=Länk till leverantörsförslag
+LinkToSupplierInvoice=Länk till leverantörsfaktura
+LinkToContract=Länk till kontrakt
+LinkToIntervention=Länk till intervention
+CreateDraft=Skapa utkast
+SetToDraft=Tillbaka till utkast
+ClickToEdit=Klicka för att redigera
+ClickToRefresh=Klicka för att uppdatera
+EditWithEditor=Redigera med CKEditor
+EditWithTextEditor=Redigera med Textredigerare
+EditHTMLSource=Redigera HTML-källa
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ObjectDeleted=Objekt %s raderad
 ByCountry=Per land
 ByTown=Per stad
@@ -772,25 +1257,40 @@ ByDay=Per dag
 BySalesRepresentative=Genom säljare
 LinkedToSpecificUsers=Länkad till särskild användarekontakt
 NoResults=Inga resultat
+<<<<<<< HEAD
 AdminTools=Admin tools
+=======
+AdminTools=Adminverktyg
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SystemTools=Systemverktyg
 ModulesSystemTools=Modulverktyg
 Test=Test
 Element=Element
 NoPhotoYet=Inga bilder tillgängliga
+<<<<<<< HEAD
 Dashboard=Dashboard
 MyDashboard=My dashboard
+=======
+Dashboard=instrumentbräda
+MyDashboard=Min instrumentpanel
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Deductible=Avdragsgill
 from=från
 toward=mot
 Access=Åtkomst
+<<<<<<< HEAD
 SelectAction=Select action
 SelectTargetUser=Select target user/employee
+=======
+SelectAction=Välj åtgärd
+SelectTargetUser=Välj målanvändare / anställd
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 HelpCopyToClipboard=Använd Ctrl+C för att kopiera till klippbordet
 SaveUploadedFileWithMask=Spara filen på servern med namnet "<strong>%s</strong>" (annars "%s")
 OriginFileName=Ursprungligt filnamn
 SetDemandReason=Ställ in källa
 SetBankAccount=Definiera bankkonto
+<<<<<<< HEAD
 AccountCurrency=Account currency
 ViewPrivateNote=Se noter
 XMoreLines=%s rader osynliga
@@ -872,6 +1372,103 @@ Rights=Behörigheter
 LineNb=Line no.
 IncotermLabel=Incoterms
 # Week day
+=======
+AccountCurrency=Kontovaluta
+ViewPrivateNote=Se noter
+XMoreLines=%s rader osynliga
+ShowMoreLines=Visa fler / mindre rader
+PublicUrl=Offentlig webbadress
+AddBox=Lägg till låda
+SelectElementAndClick=Markera ett element och klicka %s
+PrintFile=Skriv ut fil %s
+ShowTransaction=Visa post på bankkonto
+ShowIntervention=Visar ingripande
+ShowContract=Visa kontrakt
+GoIntoSetupToChangeLogo=Gå till Hem - Inställning - Företag för att byta logotyp eller gå till Hem - Inställning - Display för att dölja.
+Deny=Förneka
+Denied=Nekad
+ListOf=Lista över %s
+ListOfTemplates=Lista över mallar
+Gender=Kön
+Genderman=Man
+Genderwoman=Kvinna
+ViewList=Visa lista
+Mandatory=Obligatorisk
+Hello=Hallå
+GoodBye=Adjö
+Sincerely=vänliga hälsningar
+DeleteLine=Radera rad
+ConfirmDeleteLine=Är du säker på att du vill radera den här raden?
+NoPDFAvailableForDocGenAmongChecked=Ingen PDF var tillgänglig för dokumentgenerering bland kontrollerad post
+TooManyRecordForMassAction=För många poster valda för massåtgärder. Åtgärden är begränsad till en lista över %s poster.
+NoRecordSelected=Ingen post vald
+MassFilesArea=Område för filer som byggts av massåtgärder
+ShowTempMassFilesArea=Visa område med filer som byggts av massåtgärder
+ConfirmMassDeletion=Bulk Ta bort bekräftelse
+ConfirmMassDeletionQuestion=Är du säker på att du vill ta bort %s markerade poster?
+RelatedObjects=Relaterade objekt
+ClassifyBilled=Märk fakturerad
+ClassifyUnbilled=Märk ofakturerad
+Progress=Framsteg
+ProgressShort=Progr.
+FrontOffice=Front office
+BackOffice=Back office
+View=Se
+Export=Export
+Exports=Export
+ExportFilteredList=Exportera filtrerad lista
+ExportList=Exportera listan
+ExportOptions=Export Options
+IncludeDocsAlreadyExported=Include docs already exported
+ExportOfPiecesAlreadyExportedIsEnable=Export of pieces already exported is enable
+ExportOfPiecesAlreadyExportedIsDisable=Export of pieces already exported is disable
+AllExportedMovementsWereRecordedAsExported=All exported movements were recorded as exported
+NotAllExportedMovementsCouldBeRecordedAsExported=Not all exported movements could be recorded as exported
+Miscellaneous=Diverse
+Calendar=Kalender
+GroupBy=Grupp av...
+ViewFlatList=Visa plattlista
+RemoveString=Ta bort strängen '%s'
+SomeTranslationAreUncomplete=Några av de språk som erbjuds kan bara översättas delvis eller kan innehålla fel. Snälla hjälp att korrigera ditt språk genom att registrera dig på <a href="https://transifex.com/projects/p/dolibarr/" target="_blank"> https://transifex.com/projects/p/dolibarr/ </a> för att lägga till dina förbättringar.
+DirectDownloadLink=Direkt nedladdningslänk (offentlig / extern)
+DirectDownloadInternalLink=Direkt nedladdningslänk (måste vara inloggad och behöver behörigheter)
+Download=Ladda ner
+DownloadDocument=Hämta dokument
+ActualizeCurrency=Uppdatera valutakurs
+Fiscalyear=Räkenskapsåret
+ModuleBuilder=Module and Application Builder
+SetMultiCurrencyCode=Ange valuta
+BulkActions=Massåtgärder
+ClickToShowHelp=Klicka för att visa verktygstipshjälp
+WebSite=Hemsida
+WebSites=webbplatser
+WebSiteAccounts=Webbsida konton
+ExpenseReport=Kostnads rapport
+ExpenseReports=Räkningar
+HR=HR
+HRAndBank=HR och Bank
+AutomaticallyCalculated=Automatiskt beräknad
+TitleSetToDraft=Gå tillbaka till utkast
+ConfirmSetToDraft=Är du säker på att du vill gå tillbaka till formulärstatus?
+ImportId=Importera id
+Events=Evenemang
+EMailTemplates=Email mallar
+FileNotShared=Filen delas inte till extern allmänhet
+Project=Projekt
+Projects=Projekt
+LeadOrProject=Bly | Projekt
+LeadsOrProjects=Leads | projekt
+Lead=Leda
+Leads=leads
+ListOpenLeads=Lista öppna ledningar
+ListOpenProjects=Lista öppna projekt
+NewLeadOrProject=Ny ledning eller projekt
+Rights=Behörigheter
+LineNb=Linje nr.
+IncotermLabel=Incoterms
+TabLetteringCustomer=Kundbokstäver
+TabLetteringSupplier=Leverantörs bokstäver
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Monday=Måndag
 Tuesday=Tisdag
 Wednesday=Onsdag
@@ -900,6 +1497,7 @@ ShortThursday=T
 ShortFriday=F
 ShortSaturday=S
 ShortSunday=S
+<<<<<<< HEAD
 SelectMailModel=Select an email template
 SetRef=Set ref
 Select2ResultFoundUseArrows=Some results found. Use arrows to select.
@@ -910,10 +1508,23 @@ Select2MoreCharacters=or more characters
 Select2MoreCharactersMore=<strong>Search syntax:</strong><br><kbd><strong> |</strong></kbd><kbd> OR</kbd> (a|b)<br><kbd><strong>*</strong></kbd><kbd> Any character</kbd> (a*b)<br><kbd><strong>^</strong></kbd><kbd> Start with</kbd> (^ab)<br><kbd><strong>$</strong></kbd><kbd> End with</kbd> (ab$)<br>
 Select2LoadingMoreResults=Loading more results...
 Select2SearchInProgress=Search in progress...
+=======
+SelectMailModel=Välj en e-postmall
+SetRef=Set ref
+Select2ResultFoundUseArrows=Några resultat hittades. Använd pilarna för att välja.
+Select2NotFound=inga resultat
+Select2Enter=Stiga på
+Select2MoreCharacter=eller mer tecken
+Select2MoreCharacters=eller fler tecken
+Select2MoreCharactersMore= <strong> Sök syntax: </strong> <br> <kbd> <strong> | </strong> </kbd> <kbd> ELLER </kbd> (a | b) <br> <kbd> <strong> * </strong> </kbd> <kbd> Alla tecken </kbd> (a * b) <br> <kbd> <strong> ^ </strong> </kbd> <kbd> Börja med </kbd> (^ ab) <br> <kbd> <strong> $ </strong> </kbd> <kbd> Avsluta med </kbd> ( ab $) <br>
+Select2LoadingMoreResults=Laddar fler resultat ...
+Select2SearchInProgress=Sök pågår ...
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SearchIntoThirdparties=Tredje part
 SearchIntoContacts=Kontakter
 SearchIntoMembers=Medlemmar
 SearchIntoUsers=Användare
+<<<<<<< HEAD
 SearchIntoProductsOrServices=Products or services
 SearchIntoProjects=Projekt
 SearchIntoTasks=Uppgifter
@@ -948,3 +1559,51 @@ Deletedraft=Delete draft
 ConfirmMassDraftDeletion=Draft Bulk delete confirmation
 FileSharedViaALink=Fil delad via länk
 
+=======
+SearchIntoProductsOrServices=Produkter eller tjänster
+SearchIntoProjects=Projekt
+SearchIntoTasks=Uppgifter
+SearchIntoCustomerInvoices=Kundfakturor
+SearchIntoSupplierInvoices=Leverantörsfakturor
+SearchIntoCustomerOrders=Försäljningsorder
+SearchIntoSupplierOrders=Beställning
+SearchIntoCustomerProposals=Kundförslag
+SearchIntoSupplierProposals=Leverantörsförslag
+SearchIntoInterventions=Insatser
+SearchIntoContracts=Kontrakt
+SearchIntoCustomerShipments=Kundförsändelser
+SearchIntoExpenseReports=Räkningar
+SearchIntoLeaves=Lämna
+SearchIntoTickets=biljetter
+CommentLink=Kommentarer
+NbComments=Antal kommentarer
+CommentPage=Kommentarer utrymme
+CommentAdded=Kommentar tillagd
+CommentDeleted=Kommentar raderad
+Everybody=Alla
+PayedBy=Betalad av
+PayedTo=Betalad för att
+Monthly=En gång i månaden
+Quarterly=Kvartals
+Annual=Årlig
+Local=Lokal
+Remote=Avlägsen
+LocalAndRemote=Lokal och fjärrkontroll
+KeyboardShortcut=Tangentbordsgenväg
+AssignedTo=Påverkas i
+Deletedraft=Ta bort utkast
+ConfirmMassDraftDeletion=Utkast till massberegningsbekräftelse
+FileSharedViaALink=Fil delad via länk
+SelectAThirdPartyFirst=Välj en tredje part först ...
+YouAreCurrentlyInSandboxMode=Du befinner dig för närvarande i %s "sandbox" -läget
+Inventory=Lager
+AnalyticCode=Analytisk kod
+TMenuMRP=MRP
+ShowMoreInfos=Visa mer info
+NoFilesUploadedYet=Var god ladda upp ett dokument först
+SeePrivateNote=Se privat notering
+PaymentInformation=Payment information
+ValidFrom=Valid from
+ValidUntil=Valid until
+NoRecordedUsers=No users
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

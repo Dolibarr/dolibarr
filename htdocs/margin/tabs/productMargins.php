@@ -26,6 +26,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
+<<<<<<< HEAD
 $langs->load("companies");
 $langs->load("bills");
 $langs->load("products");
@@ -35,20 +36,38 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
+=======
+$langs->loadLangs(array("companies", "bills", "products", "margins"));
+
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
+$action=GETPOST('action', 'alpha');
+$confirm=GETPOST('confirm', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
 $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
 if (! empty($user->societe_id)) $socid=$user->societe_id;
+<<<<<<< HEAD
 $result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype);
+=======
+$result=restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $object = new Product($db);
 
 $mesg = '';
 
+<<<<<<< HEAD
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
+=======
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -71,7 +90,11 @@ if ($id > 0 || ! empty($ref))
 
     $title = $langs->trans('ProductServiceCard');
 	$helpurl = '';
+<<<<<<< HEAD
 	$shortlabel = dol_trunc($object->label,16);
+=======
+	$shortlabel = dol_trunc($object->label, 16);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
 	{
 		$title = $langs->trans('Product')." ". $shortlabel ." - ".$langs->trans('Card');
@@ -134,6 +157,7 @@ if ($id > 0 || ! empty($ref))
 
         if ($user->rights->facture->lire) {
             $sql = "SELECT s.nom as name, s.rowid as socid, s.code_client,";
+<<<<<<< HEAD
             $sql.= " f.rowid as facid, f.facnumber, f.total as total_ht,";
             $sql.= " f.datef, f.paye, f.fk_statut as statut, f.type,";
             if (!$user->rights->societe->client->voir && !$socid) $sql.= " sc.fk_soc, sc.fk_user,";
@@ -141,22 +165,41 @@ if ($id > 0 || ! empty($ref))
             $sql.= " IF(f.type = 2, -1, 1) * sum(d.qty) as qty,";						// not always positive in case of Credit note
             $sql.= " IF(f.type = 2, -1, 1) * sum(d.qty * d.buy_price_ht) as buying_price,";			// not always positive in case of Credit note
             $sql.= " IF(f.type = 2, -1, 1) * sum(abs(d.total_ht) - (d.buy_price_ht * d.qty)) as marge" ;	// not always positive in case of Credit note
+=======
+            $sql.= " f.rowid as facid, f.ref, f.total as total_ht,";
+            $sql.= " f.datef, f.paye, f.fk_statut as statut, f.type,";
+            if (!$user->rights->societe->client->voir && !$socid) $sql.= " sc.fk_soc, sc.fk_user,";
+            $sql.= " sum(d.total_ht) as selling_price,";							// may be negative or positive
+            $sql.= " ".$db->ifsql('f.type = 2', -1, 1)." * sum(d.qty) as qty,";						// not always positive in case of Credit note
+            $sql.= " ".$db->ifsql('f.type = 2', -1, 1)." * sum(d.qty * d.buy_price_ht) as buying_price,";			// not always positive in case of Credit note
+            $sql.= " ".$db->ifsql('f.type = 2', -1, 1)." * sum(abs(d.total_ht) - (d.buy_price_ht * d.qty)) as marge" ;	// not always positive in case of Credit note
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
             $sql.= ", ".MAIN_DB_PREFIX."facture as f";
             $sql.= ", ".MAIN_DB_PREFIX."facturedet as d";
             if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
             $sql.= " WHERE f.fk_soc = s.rowid";
             $sql.= " AND f.fk_statut > 0";
+<<<<<<< HEAD
             $sql.= " AND s.entity = ".$conf->entity;
+=======
+            $sql.= " AND f.entity IN (".getEntity('invoice').")";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $sql.= " AND d.fk_facture = f.rowid";
             $sql.= " AND d.fk_product =".$object->id;
             if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
             if (! empty($socid)) $sql.= " AND f.fk_soc = $socid";
             $sql .= " AND d.buy_price_ht IS NOT NULL";
             if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1) $sql .= " AND d.buy_price_ht <> 0";
+<<<<<<< HEAD
             $sql.= " GROUP BY s.nom, s.rowid, s.code_client, f.rowid, f.facnumber, f.total, f.datef, f.paye, f.fk_statut, f.type";
             if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user";
             $sql.= $db->order($sortfield,$sortorder);
+=======
+            $sql.= " GROUP BY s.nom, s.rowid, s.code_client, f.rowid, f.ref, f.total, f.datef, f.paye, f.fk_statut, f.type";
+            if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user";
+            $sql.= $db->order($sortfield, $sortorder);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             // TODO: calculate total to display then restore pagination
             //$sql.= $db->plimit($conf->liste_limit +1, $offset);
             dol_syslog('margin:tabs:productMargins.php', LOG_DEBUG);
@@ -164,7 +207,11 @@ if ($id > 0 || ! empty($ref))
             if ($result) {
                 $num = $db->num_rows($result);
 
+<<<<<<< HEAD
                 print_barre_liste($langs->trans("MarginDetails"),$page,$_SERVER["PHP_SELF"],"&amp;id=$object->id",$sortfield,$sortorder,'',0,0,'');
+=======
+                print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], "&amp;id=$object->id", $sortfield, $sortorder, '', 0, 0, '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
                 $i = 0;
 
@@ -172,6 +219,7 @@ if ($id > 0 || ! empty($ref))
                 print '<table class="noborder" width="100%">';
 
                 print '<tr class="liste_titre">';
+<<<<<<< HEAD
                 print_liste_field_titre("Invoice",$_SERVER["PHP_SELF"],"f.facnumber","","&amp;id=".$object->id,'',$sortfield,$sortorder);
                 print_liste_field_titre("Company",$_SERVER["PHP_SELF"],"s.nom","","&amp;id=".$object->id,'',$sortfield,$sortorder);
                 print_liste_field_titre("CustomerCode",$_SERVER["PHP_SELF"],"s.code_client","","&amp;id=".$object->id,'',$sortfield,$sortorder);
@@ -185,12 +233,31 @@ if ($id > 0 || ! empty($ref))
                 if (! empty($conf->global->DISPLAY_MARK_RATES))
                     print_liste_field_titre("MarkRate",$_SERVER["PHP_SELF"],"","","&amp;id=".$object->id,'align="right"',$sortfield,$sortorder);
                 print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"f.paye,f.fk_statut","","&amp;id=".$object->id,'align="right"',$sortfield,$sortorder);
+=======
+                print_liste_field_titre("Invoice", $_SERVER["PHP_SELF"], "f.ref", "", "&amp;id=".$object->id, '', $sortfield, $sortorder);
+                print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", "", "&amp;id=".$object->id, '', $sortfield, $sortorder);
+                print_liste_field_titre("CustomerCode", $_SERVER["PHP_SELF"], "s.code_client", "", "&amp;id=".$object->id, '', $sortfield, $sortorder);
+                print_liste_field_titre("DateInvoice", $_SERVER["PHP_SELF"], "f.datef", "", "&amp;id=".$object->id, '', $sortfield, $sortorder, 'left ');
+                print_liste_field_titre("SellingPrice", $_SERVER["PHP_SELF"], "selling_price", "", "&amp;id=".$object->id, '', $sortfield, $sortorder, 'right ');
+                print_liste_field_titre("BuyingPrice", $_SERVER["PHP_SELF"], "buying_price", "", "&amp;id=".$object->id, '', $sortfield, $sortorder, 'right ');
+                print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "d.qty", "", "&amp;id=".$object->id, '', $sortfield, $sortorder, 'right ');
+                print_liste_field_titre("Margin", $_SERVER["PHP_SELF"], "marge", "", "&amp;id=".$object->id, '', $sortfield, $sortorder, 'right ');
+                if (! empty($conf->global->DISPLAY_MARGIN_RATES))
+                    print_liste_field_titre("MarginRate", $_SERVER["PHP_SELF"], "", "", "&amp;id=".$object->id, '', $sortfield, $sortorder, 'right ');
+                if (! empty($conf->global->DISPLAY_MARK_RATES))
+                    print_liste_field_titre("MarkRate", $_SERVER["PHP_SELF"], "", "", "&amp;id=".$object->id, '', $sortfield, $sortorder, 'right ');
+                print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "f.paye,f.fk_statut", "", "&amp;id=".$object->id, '', $sortfield, $sortorder, 'right ');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 print "</tr>\n";
 
                 $cumul_achat = 0;
                 $cumul_vente = 0;
                 $cumul_qty = 0;
+<<<<<<< HEAD
                 $rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
+=======
+                $rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
                 if ($num > 0) {
                     while ($i < $num /*&& $i < $conf->liste_limit*/) {
@@ -202,6 +269,7 @@ if ($id > 0 || ! empty($ref))
                         print '<tr class="oddeven">';
                         print '<td>';
                         $invoicestatic->id=$objp->facid;
+<<<<<<< HEAD
                         $invoicestatic->ref=$objp->facnumber;
                         print $invoicestatic->getNomUrl(1);
                         print "</td>\n";
@@ -218,6 +286,24 @@ if ($id > 0 || ! empty($ref))
 						if (! empty($conf->global->DISPLAY_MARK_RATES))
 							print "<td align=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
 						print '<td align="right">'.$invoicestatic->LibStatut($objp->paye,$objp->statut,5).'</td>';
+=======
+                        $invoicestatic->ref=$objp->ref;
+                        print $invoicestatic->getNomUrl(1);
+                        print "</td>\n";
+                        print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.dol_trunc($objp->name, 44).'</a></td>';
+                        print "<td>".$objp->code_client."</td>\n";
+						print "<td class=\"center\">";
+						print dol_print_date($db->jdate($objp->datef), 'day')."</td>";
+						print "<td class=\"right\">".price($objp->selling_price, null, null, null, null, $rounding)."</td>\n";
+						print "<td class=\"right\">".price($objp->buying_price, null, null, null, null, $rounding)."</td>\n";
+						print "<td class=\"right\">".price($objp->qty, null, null, null, null, $rounding)."</td>\n";
+						print "<td class=\"right\">".price($objp->marge, null, null, null, null, $rounding)."</td>\n";
+						if (! empty($conf->global->DISPLAY_MARGIN_RATES))
+							print "<td class=\"right\">".(($marginRate === '')?'n/a':price($marginRate, null, null, null, null, $rounding)."%")."</td>\n";
+						if (! empty($conf->global->DISPLAY_MARK_RATES))
+							print "<td class=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
+						print '<td class="right">'.$invoicestatic->LibStatut($objp->paye, $objp->statut, 5).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                         print "</tr>\n";
                         $i++;
                         $cumul_achat += $objp->buying_price;
@@ -241,6 +327,7 @@ if ($id > 0 || ! empty($ref))
                 }
                 print '<tr class="liste_total">';
                 print '<td colspan=4>'.$langs->trans('TotalMargin')."</td>";
+<<<<<<< HEAD
                 print '<td align="right">'.price($cumul_vente, null, null, null, null, $rounding)."</td>\n";
                 print '<td align="right">'.price($cumul_achat, null, null, null, null, $rounding)."</td>\n";
                 print '<td align="right">'.price($cumul_qty, null, null, null, null, $rounding)."</td>\n";
@@ -250,6 +337,17 @@ if ($id > 0 || ! empty($ref))
                 if (! empty($conf->global->DISPLAY_MARK_RATES))
                     print "<td align=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
                 print '<td align="right">&nbsp;</td>';
+=======
+                print '<td class="right">'.price($cumul_vente, null, null, null, null, $rounding)."</td>\n";
+                print '<td class="right">'.price($cumul_achat, null, null, null, null, $rounding)."</td>\n";
+                print '<td class="right">'.price($cumul_qty, null, null, null, null, $rounding)."</td>\n";
+                print '<td class="right">'.price($totalMargin, null, null, null, null, $rounding)."</td>\n";
+                if (! empty($conf->global->DISPLAY_MARGIN_RATES))
+                    print '<td class="right">'.(($marginRate === '')?'n/a':price($marginRate, null, null, null, null, $rounding)."%")."</td>\n";
+                if (! empty($conf->global->DISPLAY_MARK_RATES))
+                    print "<td class=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
+                print '<td class="right">&nbsp;</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 print "</tr>\n";
                 print "</table>";
                 print '</div>';
@@ -273,5 +371,9 @@ print '
     </script>
 ';
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

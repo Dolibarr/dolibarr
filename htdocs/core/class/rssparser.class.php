@@ -26,8 +26,20 @@
  */
 class RssParser
 {
+<<<<<<< HEAD
     var $db;
     var $error;
+=======
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     private $_format='';
     private $_urlRSS;
@@ -43,8 +55,13 @@ class RssParser
     private $_rssarray=array();
 
     // For parsing with xmlparser
+<<<<<<< HEAD
     var $stack               = array(); // parser stack
     var $_CONTENT_CONSTRUCTS = array('content', 'summary', 'info', 'title', 'tagline', 'copyright');
+=======
+    public $stack               = array(); // parser stack
+    private $_CONTENT_CONSTRUCTS = array('content', 'summary', 'info', 'title', 'tagline', 'copyright');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
     /**
@@ -54,7 +71,11 @@ class RssParser
      */
     public function __construct($db)
     {
+<<<<<<< HEAD
     	$this->db=$db;
+=======
+        $this->db = $db;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
     /**
@@ -177,7 +198,11 @@ class RssParser
      * 	@param	string	$cachedir	Directory where to save cache file
      *	@return	int					<0 if KO, >0 if OK
      */
+<<<<<<< HEAD
     public function parser($urlRSS, $maxNb=0, $cachedelay=60, $cachedir='')
+=======
+    public function parser($urlRSS, $maxNb = 0, $cachedelay = 60, $cachedir = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $conf;
 
@@ -194,7 +219,11 @@ class RssParser
         }
 
         $this->_urlRSS = $urlRSS;
+<<<<<<< HEAD
         $newpathofdestfile=$cachedir.'/'.dol_hash($this->_urlRSS,3);	// Force md5 hash (does not contains special chars)
+=======
+        $newpathofdestfile=$cachedir.'/'.dol_hash($this->_urlRSS, 3);	// Force md5 hash (does not contains special chars)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $newmask='0644';
 
         //dol_syslog("RssPArser::parser parse url=".$urlRSS." => cache file=".$newpathofdestfile);
@@ -226,7 +255,11 @@ class RssParser
         else
         {
             try {
+<<<<<<< HEAD
                 ini_set("user_agent","Dolibarr ERP-CRM RSS reader");
+=======
+                ini_set("user_agent", "Dolibarr ERP-CRM RSS reader");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 ini_set("max_execution_time", $conf->global->MAIN_USE_RESPONSE_TIMEOUT);
                 ini_set("default_socket_timeout", $conf->global->MAIN_USE_RESPONSE_TIMEOUT);
 
@@ -239,12 +272,17 @@ class RssParser
                 $str = file_get_contents($this->_urlRSS, false, $context);
             }
             catch (Exception $e) {
+<<<<<<< HEAD
                 print 'Error retrieving URL '.$this->urlRSS.' - '.$e->getMessage();
+=======
+                print 'Error retrieving URL '.$this->_urlRSS.' - '.$e->getMessage();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             }
         }
 
         if ($str !== false)
         {
+<<<<<<< HEAD
 	        // Convert $str into xml
 	        if (! empty($conf->global->EXTERNALRSS_USE_SIMPLEXML))
 	        {
@@ -267,6 +305,30 @@ class RssParser
 	            $rss=$this;
 	            //var_dump($rss->_format);exit;
 	        }
+=======
+            // Convert $str into xml
+            if (! empty($conf->global->EXTERNALRSS_USE_SIMPLEXML))
+            {
+                //print 'xx'.LIBXML_NOCDATA;
+                libxml_use_internal_errors(false);
+                $rss = simplexml_load_string($str, "SimpleXMLElement", LIBXML_NOCDATA);
+            }
+            else
+            {
+                $xmlparser=xml_parser_create('');
+                if (!is_resource($xmlparser)) {
+                    $this->error="ErrorFailedToCreateParser"; return -1;
+                }
+
+                xml_set_object($xmlparser, $this);
+                xml_set_element_handler($xmlparser, 'feed_start_element', 'feed_end_element');
+                xml_set_character_data_handler($xmlparser, 'feed_cdata');
+                $status = xml_parse($xmlparser, $str);
+                xml_parser_free($xmlparser);
+                $rss=$this;
+                //var_dump($rss->_format);exit;
+            }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
 
         // If $rss loaded
@@ -280,6 +342,7 @@ class RssParser
                 $fp = fopen($newpathofdestfile, 'w');
                 if ($fp)
                 {
+<<<<<<< HEAD
                 	fwrite($fp, $str);
                 	fclose($fp);
                 	if (! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
@@ -290,6 +353,18 @@ class RssParser
                 else
                 {
                 	print 'Error, failed to open file '.$newpathofdestfile.' for write';
+=======
+                    fwrite($fp, $str);
+                    fclose($fp);
+                    if (! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
+                    @chmod($newpathofdestfile, octdec($newmask));
+
+                    $this->_lastfetchdate=$nowgmt;
+                }
+                else
+                {
+                    print 'Error, failed to open file '.$newpathofdestfile.' for write';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 }
             }
 
@@ -335,7 +410,11 @@ class RssParser
                 else $items=$rss->items;                                                              // With xmlparse
                 //var_dump($items);exit;
             }
+<<<<<<< HEAD
             else if ($rss->_format == 'atom')
+=======
+            elseif ($rss->_format == 'atom')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             {
                 //var_dump($rss);
                 if (! empty($conf->global->EXTERNALRSS_USE_SIMPLEXML))
@@ -403,7 +482,11 @@ class RssParser
                             }
                         }
                     }
+<<<<<<< HEAD
                     else if ($rss->_format == 'atom')
+=======
+                    elseif ($rss->_format == 'atom')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                     {
                         if (! empty($conf->global->EXTERNALRSS_USE_SIMPLEXML))
                         {
@@ -428,6 +511,7 @@ class RssParser
 
                     // Add record to result array
                     $this->_rssarray[$i] = array(
+<<<<<<< HEAD
     					'link'=>$itemLink,
     					'title'=>$itemTitle,
     					'description'=>$itemDescription,
@@ -435,6 +519,15 @@ class RssParser
     					'category'=>$itemCategory,
     				    'id'=>$itemId,
     				    'author'=>$itemAuthor);
+=======
+                        'link'=>$itemLink,
+                        'title'=>$itemTitle,
+                        'description'=>$itemDescription,
+                        'pubDate'=>$itemPubDate,
+                        'category'=>$itemCategory,
+                        'id'=>$itemId,
+                        'author'=>$itemAuthor);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                     //var_dump($this->_rssarray);
 
                     $i++;
@@ -454,6 +547,10 @@ class RssParser
 
 
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     /**
      * 	Triggered when opened tag is found
      *
@@ -462,8 +559,14 @@ class RssParser
      *  @param	array		$attrs		Attributes of tags
      *  @return	void
      */
+<<<<<<< HEAD
     function feed_start_element($p, $element, &$attrs)
     {
+=======
+    public function feed_start_element($p, $element, &$attrs)
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $el = $element = strtolower($element);
         $attrs = array_change_key_case($attrs, CASE_LOWER);
 
@@ -536,8 +639,11 @@ class RssParser
             }
 
             $this->incontent = $el;
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
 
         // if inside an Atom content construct (e.g. content or summary) field treat tags as text
@@ -574,6 +680,10 @@ class RssParser
     }
 
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     /**
      * 	Triggered when CDATA is found
      *
@@ -581,8 +691,14 @@ class RssParser
      *  @param	string	$text	Tag
      *  @return	void
      */
+<<<<<<< HEAD
     function feed_cdata($p, $text)
     {
+=======
+    public function feed_cdata($p, $text)
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         if ($this->_format == 'atom' and $this->incontent)
         {
             $this->append_content($text);
@@ -594,6 +710,10 @@ class RssParser
         }
     }
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     /**
      * 	Triggered when closed tag is found
      *
@@ -601,8 +721,14 @@ class RssParser
      *  @param	string		$el		Tag
      *  @return	void
      */
+<<<<<<< HEAD
     function feed_end_element($p, $el)
     {
+=======
+    public function feed_end_element($p, $el)
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $el = strtolower($el);
 
         if ($el == 'item' or $el == 'entry')
@@ -655,7 +781,11 @@ class RssParser
      *  @param	string	$str2		Str2
      *  @return	string				String cancatenated
      */
+<<<<<<< HEAD
     function concat(&$str1, $str2="")
+=======
+    public function concat(&$str1, $str2 = "")
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         if (!isset($str1) ) {
             $str1="";
@@ -663,14 +793,24 @@ class RssParser
         $str1 .= $str2;
     }
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     /**
      * Enter description here ...
      *
      * @param	string	$text		Text
      * @return	void
      */
+<<<<<<< HEAD
     function append_content($text)
     {
+=======
+    public function append_content($text)
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         if ( $this->initem ) {
             $this->concat($this->current_item[ $this->incontent ], $text);
         }
@@ -686,7 +826,11 @@ class RssParser
      * 	@param	string	$text	Text
      * 	@return	void
      */
+<<<<<<< HEAD
     function append($el, $text)
+=======
+    public function append($el, $text)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         if (!$el) {
             return;
@@ -719,10 +863,15 @@ class RssParser
             elseif ($this->inchannel) {
                 $this->concat($this->channel[ $el ], $text);
             }
+<<<<<<< HEAD
 
         }
     }
 
+=======
+        }
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 
@@ -745,11 +894,18 @@ function xml2php($xml)
         foreach($value->attributes() as $ak=>$av)
         {
             $child[$ak] = (string) $av;
+<<<<<<< HEAD
 
         }
 
         //Let see if the new child is not in the array
         if($tab === false && in_array($key,array_keys($array)))
+=======
+        }
+
+        //Let see if the new child is not in the array
+        if ($tab === false && in_array($key, array_keys($array)))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         {
             //If this element is already in the array we will create an indexed array
             $tmp = $array[$key];
@@ -773,12 +929,20 @@ function xml2php($xml)
     }
 
 
+<<<<<<< HEAD
     if($fils==0)
+=======
+    if ($fils==0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         return (string) $xml;
     }
 
     return $array;
+<<<<<<< HEAD
 
 }
 
+=======
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

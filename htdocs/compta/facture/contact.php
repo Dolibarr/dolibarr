@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2005      Patrick Rouillon     <patrick@rouillon.net>
  * Copyright (C) 2005-2009 Destailleur Laurent  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2011-2015 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  *
@@ -38,11 +42,19 @@ if (! empty($conf->projet->enabled)) {
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'companies'));
 
+<<<<<<< HEAD
 $id     = (GETPOST('id')?GETPOST('id','int'):GETPOST('facid','int'));  // For backward compatibility
 $ref    = GETPOST('ref','alpha');
 $lineid = GETPOST('lineid','int');
 $socid  = GETPOST('socid','int');
 $action = GETPOST('action','alpha');
+=======
+$id     = (GETPOST('id')?GETPOST('id', 'int'):GETPOST('facid', 'int'));  // For backward compatibility
+$ref    = GETPOST('ref', 'alpha');
+$lineid = GETPOST('lineid', 'int');
+$socid  = GETPOST('socid', 'int');
+$action = GETPOST('action', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -61,7 +73,11 @@ if ($action == 'addcontact' && $user->rights->facture->creer)
 
     if ($result > 0 && $id > 0)
     {
+<<<<<<< HEAD
     	$contactid = (GETPOST('userid') ? GETPOST('userid','int') : GETPOST('contactid','int'));
+=======
+    	$contactid = (GETPOST('userid') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
   		$result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
     }
 
@@ -85,7 +101,11 @@ if ($action == 'addcontact' && $user->rights->facture->creer)
 }
 
 // Toggle the status of a contact
+<<<<<<< HEAD
 else if ($action == 'swapstatut' && $user->rights->facture->creer)
+=======
+elseif ($action == 'swapstatut' && $user->rights->facture->creer)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	if ($object->fetch($id))
 	{
@@ -98,7 +118,11 @@ else if ($action == 'swapstatut' && $user->rights->facture->creer)
 }
 
 // Deletes a contact
+<<<<<<< HEAD
 else if ($action == 'deletecontact' && $user->rights->facture->creer)
+=======
+elseif ($action == 'deletecontact' && $user->rights->facture->creer)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$object->fetch($id);
 	$result = $object->delete_contact($lineid);
@@ -155,7 +179,11 @@ if ($id > 0 || ! empty($ref))
 		$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
 		$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
 		// Thirdparty
+<<<<<<< HEAD
 		$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1,'customer');
+=======
+		$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1, 'customer');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// Project
 		if (! empty($conf->projet->enabled))
 		{
@@ -193,20 +221,31 @@ if ($id > 0 || ! empty($ref))
 
 		$object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
+<<<<<<< HEAD
 		dol_banner_tab($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref, '', 0, '', '', 1);
+=======
+		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		dol_fiche_end();
 
 		print '<br>';
 
 		// Contacts lines (modules that overwrite templates must declare this into descriptor)
+<<<<<<< HEAD
 		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
+=======
+		$dirtpls=array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		foreach($dirtpls as $reldir)
 		{
 		    $res=@include dol_buildpath($reldir.'/contacts.tpl.php');
 		    if ($res) break;
 		}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 	else
 	{
@@ -215,6 +254,10 @@ if ($id > 0 || ! empty($ref))
 	}
 }
 
+<<<<<<< HEAD
 
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

@@ -3,7 +3,11 @@ WarehouseCard=Noliktava kartiņa
 Warehouse=Noliktava
 Warehouses=Noliktavas
 ParentWarehouse=Galvenā noliktava
+<<<<<<< HEAD
 NewWarehouse=Jauns noliktavu / Noliktavas platība
+=======
+NewWarehouse=Jauna noliktava/krājuma atrašanās vieta
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 WarehouseEdit=Modificēt noliktavas
 MenuNewWarehouse=Jauna noliktava
 WarehouseSource=Sākotnējā noliktava
@@ -17,7 +21,11 @@ CancelSending=Atcelt sūtīšanu
 DeleteSending=Dzēst nosūtot
 Stock=Krājums
 Stocks=Krājumi
+<<<<<<< HEAD
 StocksByLotSerial=Stocks by lot/serial
+=======
+StocksByLotSerial=Krājumi pēc partijas/sērijas
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LotSerial=Daudz / sērijas nr
 LotSerialList=Partijas saraksts / sērijas nr
 Movements=Kustības
@@ -29,6 +37,11 @@ MovementId=Pārvietošanas ID
 StockMovementForId=Pārvietošanas ID %d
 ListMouvementStockProject=Ar projektu saistīto krājumu kustību saraksts
 StocksArea=Noliktavas platība
+<<<<<<< HEAD
+=======
+AllWarehouses=Visas noliktavas
+IncludeAlsoDraftOrders=Iekļaujiet arī pasūtījumu projektus
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Location=Vieta
 LocationSummary=Īsais atrašanās vietas nosaukums
 NumberOfDifferentProducts=Dažādu produktu skaits
@@ -44,7 +57,10 @@ TransferStock=Pārvietot krājumus
 MassStockTransferShort=Masveida krājumu pārvietošana
 StockMovement=Krājumu pārvietošana
 StockMovements=Krājumu pārvietošanas
+<<<<<<< HEAD
 LabelMovement=Kustību nosaukums
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NumberOfUnit=Vienību skaits
 UnitPurchaseValue=Vienības iepirkuma cena
 StockTooLow=Krājumi pārāk maz
@@ -54,12 +70,18 @@ PMPValue=Vidējā svērtā cena
 PMPValueShort=VSC
 EnhancedValueOfWarehouses=Noliktavas vērtība
 UserWarehouseAutoCreate=Lietotāja noliktavas izveide, izveidojot lietotāju
+<<<<<<< HEAD
 AllowAddLimitStockByWarehouse=Ļauj pievienot ierobežojumu un vēlamo krājumu uz pāris (produkts, noliktava), nevis uz produktu
 IndependantSubProductStock=Product stock and subproduct stock are independant
+=======
+AllowAddLimitStockByWarehouse=Pārvaldiet arī minimālo un vēlamo krājumu vērtības attiecībā uz pāriem (produktu noliktava) papildus vērtībām katram produktam
+IndependantSubProductStock=Produktu krājumi un apakšprodukti ir neatkarīgi
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 QtyDispatched=Nosūtītais daudzums
 QtyDispatchedShort=Daudz. nosūtīts
 QtyToDispatchShort=Daudzums nosūtīšanai
 OrderDispatch=Posteņu ieņēmumi
+<<<<<<< HEAD
 RuleForStockManagementDecrease=Rule for automatic stock management decrease (manual decrease is always possible, even if an automatic decrease rule is activated)
 RuleForStockManagementIncrease=Rule for automatic stock management increase (manual increase is always possible, even if an automatic increase rule is activated)
 DeStockOnBill=Samazināt nekustamā krājumi uz klientu rēķinu / kredīta piezīmes apstiprināšanu
@@ -69,6 +91,19 @@ DeStockOnShipmentOnClosing=Samazināt reālās krājumus kuģošanas klasifikāc
 ReStockOnBill=Palielināt nekustamā krājumus piegādātāju rēķinu / kredīta piezīmes apstiprināšanu
 ReStockOnValidateOrder=Increase real stocks on purchase orders approbation
 ReStockOnDispatchOrder=Increase real stocks on manual dispatching into warehouses, after supplier order receipt of goods
+=======
+RuleForStockManagementDecrease=Lai automātiski samazinātu krājumu samazinājumu, izvēlieties noteikumu (manuāla samazināšana vienmēr ir iespējama, pat ja ir aktivizēts automātiskais samazināšanas noteikums).
+RuleForStockManagementIncrease=Izvēlieties noteikumu automātiskai krājumu palielināšanai (manuāla palielināšana vienmēr ir iespējama, pat ja ir aktivizēts automātiskais pieauguma noteikums).
+DeStockOnBill=Samaziniet reālos krājumus klienta rēķina / kredītzīmes atzīmēšanā
+DeStockOnValidateOrder=Samaziniet reālos krājumus pārdošanas pasūtījuma apstiprināšanā
+DeStockOnShipment=Samazināt reālos krājumus piegādes apstiprinājuma gadījumā
+DeStockOnShipmentOnClosing=Decrease real stocks when shipping is set to closed
+ReStockOnBill=Palieliniet reālos krājumus, apstiprinot pārdevēja rēķinu / kredīta piezīmi
+ReStockOnValidateOrder=Palieliniet reālo krājumu pirkšanas pasūtījuma apstiprinājumā
+ReStockOnDispatchOrder=Palieliniet reālos krājumus manuālajā nosūtīšanā noliktavā, pēc pirkuma pasūtījuma saņemšanas
+StockOnReception=Increase real stocks on validation of reception
+StockOnReceptionOnClosing=Increase real stocks when reception is set to closed
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 OrderStatusNotReadyToDispatch=Lai vēl nav vai vairs statusu, kas ļauj sūtījumiem produktu krājumu noliktavās.
 StockDiffPhysicTeoric=Explanation for difference between physical and virtual stock
 NoPredefinedProductToDispatch=Nav iepriekš produktu šo objektu. Līdz ar to nav nosūtot noliktavā ir nepieciešama.
@@ -76,12 +111,21 @@ DispatchVerb=Nosūtīšana
 StockLimitShort=Brīdinājuma limits
 StockLimit=Krājumu brīdinājuma limits
 StockLimitDesc=(tukšs) nozīmē, ka nav brīdinājuma. <br> 0 var izmantot brīdinājumam, tiklīdz krājums ir tukšs.
+<<<<<<< HEAD
 PhysicalStock=Fiziskie krājumi
 RealStock=Rālie krājumi
 RealStockDesc=Fiziskais vai reālais krājums ir krājums, kas jums patlaban ir pieejams jūsu iekšējās noliktavās / izvietojumos.
 RealStockWillAutomaticallyWhen=Reālais krājums automātiski mainās saskaņā ar šiem noteikumiem (skatiet krājumu moduļa iestatījumus, lai mainītu šo):
 VirtualStock=Virtuālie krājumi
 VirtualStockDesc=Virtuālais krājums ir krājums, ko saņemsiet, kad tiks atvērtas visas atvērtas, neapdraudētās darbības, kas ietekmē krājumus (piegādes pasūtījums saņemts, nosūtīts pasūtītājs, ...)
+=======
+PhysicalStock=Fiziskais krājums
+RealStock=Rālie krājumi
+RealStockDesc=Fiziskā / reālā krājumi ir krājumi, kas pašlaik atrodas noliktavās.
+RealStockWillAutomaticallyWhen=Reālais krājums tiks mainīts saskaņā ar šo noteikumu (kā noteikts Stock modulī):
+VirtualStock=Virtuālie krājumi
+VirtualStockDesc=Virtuālais krājums ir aprēķinātais krājums, kas pieejams, kad visas atvērtās / nepabeigtās darbības (kas ietekmē krājumus) ir slēgtas (saņemtie pasūtījumi, nosūtītie pasūtījumi utt.)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 IdWarehouse=Id noliktava
 DescWareHouse=Apraksts noliktava
 LieuWareHouse=Lokālā noliktava
@@ -101,7 +145,11 @@ ThisWarehouseIsPersonalStock=Šī noliktava ir personīgie krājumi %s %s
 SelectWarehouseForStockDecrease=Izvēlieties noliktavu krājumu samazināšanai
 SelectWarehouseForStockIncrease=Izvēlieties noliktavu krājumu palielināšanai
 NoStockAction=Nav akciju darbība
+<<<<<<< HEAD
 DesiredStock=Vēlamais minimālais krājums
+=======
+DesiredStock=Vēlamais krājums
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DesiredStockDesc=Šī krājuma summa būs vērtība, ko izmanto krājumu papildināšanai, izmantojot papildināšanas funkciju.
 StockToBuy=Lai pasūtītu
 Replenishment=Papildinājums
@@ -114,13 +162,22 @@ CurentSelectionMode=Current selection mode
 CurentlyUsingVirtualStock=Virtuāla noliktava
 CurentlyUsingPhysicalStock=Reāla noliktava
 RuleForStockReplenishment=Noteikums par krājumu papildināšanu
+<<<<<<< HEAD
 SelectProductWithNotNullQty=Izvēlieties vismaz vienu produktu ar Daudz kas nav nulles un piegādātāju
+=======
+SelectProductWithNotNullQty=Atlasiet vismaz vienu produktu, kura daudzums nav null un pārdevējs
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AlertOnly= Brīdinājumi tikai
 WarehouseForStockDecrease=Noliktava <b>%s</b> tiks izmantota krājumu samazināšanai
 WarehouseForStockIncrease=Noliktava <b>%s</b> tiks izmantota krājumu palielināšanai
 ForThisWarehouse=Šai noliktavai
+<<<<<<< HEAD
 ReplenishmentStatusDesc=This is a list of all products with a stock lower than desired stock (or lower than alert value if checkbox "alert only" is checked). Using the checkbox, you can create supplier orders to fill the difference.
 ReplenishmentOrdersDesc=This is a list of all opened supplier orders including predefined products. Only opened orders with predefined products, so orders that may affect stocks, are visible here.
+=======
+ReplenishmentStatusDesc=Šis ir saraksts ar visiem produktiem, kuru krājumi ir mazāki par vēlamo krājumu (vai ir zemāka par brīdinājuma vērtību, ja ir atzīmēta izvēles rūtiņa "tikai brīdinājums"). Izmantojot izvēles rūtiņu, varat izveidot pirkuma pasūtījumus, lai aizpildītu starpību.
+ReplenishmentOrdersDesc=Šis ir visu atvērto pirkumu pasūtījumu saraksts, ieskaitot iepriekš definētus produktus. Atveriet pasūtījumus tikai ar iepriekš definētiem produktiem, tāpēc šeit ir redzami pasūtījumi, kas var ietekmēt krājumus.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Replenishments=Papildinājumus
 NbOfProductBeforePeriod=Produktu daudzums %s noliktavā pirms izvēlētā perioda (< %s)
 NbOfProductAfterPeriod=Daudzums produktu %s krājumā pēc izvēlētā perioda (&gt; %s)
@@ -130,10 +187,18 @@ RecordMovement=Ierakstīt pārvietošanu
 ReceivingForSameOrder=Receipts for this order
 StockMovementRecorded=Krājumu pārvietošana saglabāta
 RuleForStockAvailability=Noteikumi krājumu nepieciešamībai
+<<<<<<< HEAD
 StockMustBeEnoughForInvoice=Krājumu līmenim ir jābūt pietiekamam, lai produktu / pakalpojumu pievienotu rēķinam (pārbaudīt tiek veikta, izmantojot esošo reālo krājumus, pievienojot rindu rēķinā neatkarīgi no tā, vai ir spēkā automātiskas krājumu izmaiņas)
 StockMustBeEnoughForOrder=Krājumu līmenim ir jābūt pietiekamam, lai produktu / pakalpojumu pasūtītam pēc pasūtījuma (pārbaude tiek veikta, izmantojot esošo reālo krājumus, pievienojot rindu kārtībā neatkarīgi no tā, kāds ir noteikums par automātisko krājumu maiņu)
 StockMustBeEnoughForShipment= Krājumu līmenim ir jābūt pietiekamam, lai produktam / pakalpojumam pievienotu sūtījumu (pārbaude tiek veikta, izmantojot pašreizējo reālo krājumu, pievienojot līniju sūtījumā neatkarīgi no tā, vai ir spēkā automātiskas krājumu izmaiņas)
 MovementLabel=Label of movement
+=======
+StockMustBeEnoughForInvoice=Krājumu līmenim ir jābūt pietiekamam, lai produktu / pakalpojumu pievienotu rēķinam (pārbaudiet, vai pašreizējā reālā krājumā tiek pievienota rinda rēķinā neatkarīgi no automātiskās krājumu maiņas noteikuma)
+StockMustBeEnoughForOrder=Krājuma līmenim ir jābūt pietiekamam, lai produktu / pakalpojumu pasūtītam pēc pasūtījuma (pārbaudiet, vai pašreizējā reālā krājumā tiek pievienota rinda, lai kāds būtu noteikums automātiskai krājumu maiņai).
+StockMustBeEnoughForShipment= Krājumu līmenim ir jābūt pietiekamam, lai produktu / pakalpojumu nosūtītu sūtījumam (pārbaudiet pašreizējo reālo krājumu, pievienojot līniju sūtījumā neatkarīgi no automātiskās krājumu maiņas)
+MovementLabel=Kustības marķējums
+TypeMovement=Kustības veids
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DateMovement=Pārvietošanas datums
 InventoryCode=Movement or inventory code
 IsInPackage=Contained into package
@@ -143,11 +208,19 @@ ShowWarehouse=Rādīt noliktavu
 MovementCorrectStock=Stock correction for product %s
 MovementTransferStock=Stock transfer of product %s into another warehouse
 InventoryCodeShort=Inv./Mov. code
+<<<<<<< HEAD
 NoPendingReceptionOnSupplierOrder=No pending reception due to open supplier order
 ThisSerialAlreadyExistWithDifferentDate=This lot/serial number (<strong>%s</strong>) already exists but with different eatby or sellby date (found <strong>%s</strong> but you enter <strong>%s</strong>).
 OpenAll=Atvērt visām darbībām
 OpenInternal=Atveras tikai iekšējām darbībām
 UseDispatchStatus=Izmantojiet nosūtīšanas statusu (apstipriniet / noraidiet) produktu līnijām piegādātāja pasūtījuma saņemšanā
+=======
+NoPendingReceptionOnSupplierOrder=Nav atvērta saņemšanas, jo atvērts pirkuma pasūtījums
+ThisSerialAlreadyExistWithDifferentDate=This lot/serial number (<strong>%s</strong>) already exists but with different eatby or sellby date (found <strong>%s</strong> but you enter <strong>%s</strong>).
+OpenAll=Atvērt visām darbībām
+OpenInternal=Atveras tikai iekšējām darbībām
+UseDispatchStatus=Izmantojiet nosūtīšanas statusu (apstipriniet / noraidiet) produktu līnijām pirkuma pasūtījuma saņemšanā
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 OptionMULTIPRICESIsOn=Ir ieslēgta opcija "vairākas cenas par segmentu". Tas nozīmē, ka produktam ir vairākas pārdošanas cenas, tāpēc pārdošanas vērtību nevar aprēķināt
 ProductStockWarehouseCreated=Brīdinājuma krājuma limits un pareizi izveidots vēlamais optimālais krājums
 ProductStockWarehouseUpdated=Uzturvērtības ierobežojums brīdinājumam un vēlamais optimālais krājums ir pareizi atjaunināts
@@ -171,6 +244,7 @@ inventoryValidate=Apstiprināts
 inventoryDraft=Darbojas
 inventorySelectWarehouse=Noliktavas izvēle
 inventoryConfirmCreate=Izveidot
+<<<<<<< HEAD
 inventoryOfWarehouse=Noliktavas inventārs : %s
 inventoryErrorQtyAdd=Kļūda: viens daudzums ir leaser nekā nulle
 inventoryMvtStock=Pēc inventāra
@@ -181,6 +255,18 @@ inventoryOnDate=Inventārs
 INVENTORY_DISABLE_VIRTUAL=Ļaujiet neiznīcināt bērnu produktu no inventāra komplekta
 INVENTORY_USE_MIN_PA_IF_NO_LAST_PA=Izmantojiet pirkuma cenu, ja nevarat atrast pēdējo pirkuma cenu
 INVENTORY_USE_INVENTORY_DATE_FROM_DATEMVT=Krājumu kustība ir inventāra datums
+=======
+inventoryOfWarehouse=Noliktavas krājums: %s
+inventoryErrorQtyAdd=Kļūda: viens daudzums ir mazāks par nulli
+inventoryMvtStock=Pēc inventāra
+inventoryWarningProductAlreadyExists=Šis produkts jau ir iekļauts sarakstā
+SelectCategory=Sadaļu filtrs
+SelectFournisseur=Pārdevēja filtrs
+inventoryOnDate=Inventārs
+INVENTORY_DISABLE_VIRTUAL=Virtuālais produkts (komplekts): nesamazina bērna produkta krājumus
+INVENTORY_USE_MIN_PA_IF_NO_LAST_PA=Izmantojiet pirkuma cenu, ja nevarat atrast pēdējo pirkuma cenu
+INVENTORY_USE_INVENTORY_DATE_FROM_DATEMVT=Krājumu kustībai ir inventarizācijas datums
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 inventoryChangePMPPermission=Ļauj mainīt produkta PMP vērtību
 ColumnNewPMP=Jauna vienība PMP
 OnlyProdsInStock=Nepievienojiet produktu bez krājuma
@@ -198,9 +284,22 @@ FlushInventory=Ielieciet inventāru
 ConfirmFlushInventory=Vai jūs apstiprināt šo darbību?
 InventoryFlushed=Inventory flushed
 ExitEditMode=Iziet no labošanas
+<<<<<<< HEAD
 inventoryDeleteLine=Delete line
 RegulateStock=Regulēt krājumus
 ListInventory=Saraksts
 StockSupportServices=Stock management support services
 StockSupportServicesDesc=Pēc noklusējuma varat iegādāties tikai produktu ar veidu "produkts". Ja ieslēgts un ja moduļa pakalpojums ir ieslēgts, varat arī nolikt produktu ar tipu "pakalpojums"
 ReceiveProducts=Saņemt priekšmetus
+=======
+inventoryDeleteLine=Dzēst rindu
+RegulateStock=Regulēt krājumus
+ListInventory=Saraksts
+StockSupportServices=Stock management atbalsta Pakalpojumi
+StockSupportServicesDesc=Pēc noklusējuma jūs varat uzkrāt tikai "produkta" produktus. Jūs varat arī uzglabāt "pakalpojuma" tipa produktu, ja ir iespējoti abi moduļu pakalpojumi un šī opcija.
+ReceiveProducts=Saņemt priekšmetus
+StockIncreaseAfterCorrectTransfer=Palielināt ar korekciju/pārvietošanu
+StockDecreaseAfterCorrectTransfer=Samazināt pēc korekcijas/pārsvietošanas
+StockIncrease=Krājumu pieaugums
+StockDecrease=Krājumu samazinājums
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

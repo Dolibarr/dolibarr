@@ -28,6 +28,7 @@
  */
 class DolEditor
 {
+<<<<<<< HEAD
     var $tool;      // Store the selected tool
 
 	// If using fckeditor
@@ -65,6 +66,45 @@ class DolEditor
 	 *      @param	int		$readonly						0=Read/Edit, 1=Read only
 	 */
     function __construct($htmlname, $content, $width='', $height=200, $toolbarname='Basic', $toolbarlocation='In', $toolbarstartexpanded=false, $uselocalbrowser=true, $okforextendededitor=true, $rows=0, $cols=0, $readonly=0)
+=======
+    public $tool;      // Store the selected tool
+
+    // If using fckeditor
+    public $editor;
+
+    // If not using fckeditor
+    public $content;
+    public $htmlname;
+    public $toolbarname;
+    public $toolbarstartexpanded;
+    public $rows;
+    public $cols;
+    public $height;
+    public $width;
+    public $readonly;
+
+
+    /**
+     *  Create an object to build an HTML area to edit a large string content
+     *
+     *  @param 	string	$htmlname		        		HTML name of WYSIWIG field
+     *  @param 	string	$content		        		Content of WYSIWIG field
+     *  @param	int		$width							Width in pixel of edit area (auto by default)
+     *  @param 	int		$height			       		 	Height in pixel of edit area (200px by default)
+     *  @param 	string	$toolbarname	       		 	Name of bar set to use ('Full', 'dolibarr_notes[_encoded]', 'dolibarr_details[_encoded]'=the less featured, 'dolibarr_mailings[_encoded]', 'dolibarr_readonly').
+     *  @param  string	$toolbarlocation       			Where bar is stored :
+     *                       		                    'In' each window has its own toolbar
+     *                              		            'Out:name' share toolbar into the div called 'name'
+     *  @param  boolean	$toolbarstartexpanded  			Bar is visible or not at start
+	 *  @param	int		$uselocalbrowser				Enabled to add links to local object with local browser. If false, only external images can be added in content.
+	 *  @param  boolean|string	$okforextendededitor    True=Allow usage of extended editor tool if qualified (like ckeditor). If 'textarea', force use of simple textarea. If 'ace', force use of Ace.
+	 *                                                  Warning: If you use 'ace', don't forget to also include ace.js in page header. Also, the button "save" must have class="buttonforacesave".
+     *  @param  int		$rows                   		Size of rows for textarea tool
+	 *  @param  string	$cols                   		Size of cols for textarea tool (textarea number of cols '70' or percent 'x%')
+	 *  @param	int		$readonly						0=Read/Edit, 1=Read only
+	 */
+    public function __construct($htmlname, $content, $width = '', $height = 200, $toolbarname = 'Basic', $toolbarlocation = 'In', $toolbarstartexpanded = false, $uselocalbrowser = true, $okforextendededitor = true, $rows = 0, $cols = 0, $readonly = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
     	global $conf,$langs;
 
@@ -72,7 +112,11 @@ class DolEditor
 
     	if (! $rows) $rows=round($height/20);
     	if (! $cols) $cols=($width?round($width/6):80);
+<<<<<<< HEAD
 		$shorttoolbarname=preg_replace('/_encoded$/','',$toolbarname);
+=======
+		$shorttoolbarname=preg_replace('/_encoded$/', '', $toolbarname);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         // Name of extended editor to use (FCKEDITOR_EDITORNAME can be 'ckeditor' or 'fckeditor')
         $defaulteditor='ckeditor';
@@ -124,12 +168,17 @@ class DolEditor
     	}
 
     	// Define some properties
+<<<<<<< HEAD
         if (in_array($this->tool,array('textarea','ckeditor','ace')))
+=======
+        if (in_array($this->tool, array('textarea','ckeditor','ace')))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         {
     	    $this->content				= $content;
     	    $this->htmlname 			= $htmlname;
     	    $this->toolbarname			= $shorttoolbarname;
     	    $this->toolbarstartexpanded = $toolbarstartexpanded;
+<<<<<<< HEAD
             $this->rows					= max(ROWS_3,$rows);
             $this->cols					= (preg_match('/%/',$cols)?$cols:max(40,$cols));	// If $cols is a percent, we keep it, otherwise, we take max
             $this->height				= $height;
@@ -138,6 +187,16 @@ class DolEditor
 
     }
 
+=======
+            $this->rows					= max(ROWS_3, $rows);
+            $this->cols					= (preg_match('/%/', $cols)?$cols:max(40, $cols));	// If $cols is a percent, we keep it, otherwise, we take max
+            $this->height				= $height;
+            $this->width				= $width;
+    	}
+    }
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     /**
      *	Output edit area inside the HTML stream.
      *	Output depends on this->tool (fckeditor, ckeditor, textarea, ...)
@@ -149,8 +208,14 @@ class DolEditor
      *  @param	string	$option				 For ACE editor, set the source language ('html', 'php', 'javascript', ...)
      *  @return	void|string
      */
+<<<<<<< HEAD
     function Create($noprint=0, $morejs='', $disallowAnyContent=true, $titlecontent='', $option='')
     {
+=======
+    public function Create($noprint = 0, $morejs = '', $disallowAnyContent = true, $titlecontent = '', $option = '')
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	global $conf,$langs;
 
     	$fullpage=false;
@@ -167,11 +232,16 @@ class DolEditor
 			$found=1;
             $this->editor->Create();
         }
+<<<<<<< HEAD
         if (in_array($this->tool,array('textarea','ckeditor')))
+=======
+        if (in_array($this->tool, array('textarea','ckeditor')))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         {
             $found=1;
             //$out.= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" '.($this->readonly?' disabled':'').' rows="'.$this->rows.'"'.(preg_match('/%/',$this->cols)?' style="margin-top: 5px; width: '.$this->cols.'"':' cols="'.$this->cols.'"').' class="flat">';
             // TODO We do not put the disabled tag because on a read form, it change style with grey.
+<<<<<<< HEAD
             $out.= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" rows="'.$this->rows.'"'.(preg_match('/%/',$this->cols)?' style="margin-top: 5px; width: '.$this->cols.'"':' cols="'.$this->cols.'"').' class="flat">';
             $out.= $this->content;
             $out.= '</textarea>';
@@ -179,6 +249,15 @@ class DolEditor
             if ($this->tool == 'ckeditor' && ! empty($conf->use_javascript_ajax))
             {
             	if (! defined('REQUIRE_CKEDITOR')) define('REQUIRE_CKEDITOR','1');
+=======
+            $out.= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" rows="'.$this->rows.'"'.(preg_match('/%/', $this->cols)?' style="margin-top: 5px; width: '.$this->cols.'"':' cols="'.$this->cols.'"').' class="flat">';
+            $out.= $this->content;
+            $out.= '</textarea>';
+
+            if ($this->tool == 'ckeditor' && ! empty($conf->use_javascript_ajax) && ! empty($conf->fckeditor->enabled))
+            {
+            	if (! defined('REQUIRE_CKEDITOR')) define('REQUIRE_CKEDITOR', '1');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
             	if (! empty($conf->global->FCKEDITOR_SKIN)) {
 					$skin = $conf->global->FCKEDITOR_SKIN;
@@ -186,7 +265,11 @@ class DolEditor
 					$skin = 'moono-lisa'; // default with ckeditor 4.6 : moono-lisa
 				}
 
+<<<<<<< HEAD
             	$htmlencode_force=preg_match('/_encoded$/',$this->toolbarname)?'true':'false';
+=======
+            	$htmlencode_force=preg_match('/_encoded$/', $this->toolbarname)?'true':'false';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
             	$out.= '<!-- Output ckeditor $disallowAnyContent='.$disallowAnyContent.' toolbarname='.$this->toolbarname.' -->'."\n";
             	$out.= '<script type="text/javascript">
@@ -345,6 +428,10 @@ class DolEditor
         if ($noprint) return $out;
         else print $out;
     }
+<<<<<<< HEAD
 
 }
 
+=======
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

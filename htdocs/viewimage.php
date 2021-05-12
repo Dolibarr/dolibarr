@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +32,7 @@
 
 //if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
+<<<<<<< HEAD
 if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC','1');
 if (! defined('NOREQUIRETRAN'))		define('NOREQUIRETRAN','1');
 if (! defined('NOCSRFCHECK'))		define('NOCSRFCHECK','1');
@@ -42,17 +47,41 @@ if ((isset($_GET["modulepart"]) && ($_GET["modulepart"] == 'mycompany' || $_GET[
 	if (! defined("NOLOGIN"))		define("NOLOGIN",1);
 	if (! defined("NOCSRFCHECK"))	define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 	if (! defined("NOIPCHECK"))		define("NOIPCHECK",1);		// Do not check IP defined into conf $dolibarr_main_restrict_ip
+=======
+if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC', '1');
+if (! defined('NOREQUIRETRAN'))		define('NOREQUIRETRAN', '1');
+if (! defined('NOCSRFCHECK'))		define('NOCSRFCHECK', '1');
+if (! defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL', '1');
+if (! defined('NOREQUIREMENU'))		define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
+if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
+
+// Some value of modulepart can be used to get resources that are public so no login are required.
+// Note that only directory logo is free to access without login.
+if (isset($_GET["modulepart"]) && $_GET["modulepart"] == 'mycompany' && preg_match('/^\/?logos\//', $_GET['file']))
+{
+	if (! defined("NOLOGIN"))		define("NOLOGIN", 1);
+	if (! defined("NOCSRFCHECK"))	define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
+	if (! defined("NOIPCHECK"))		define("NOIPCHECK", 1);		// Do not check IP defined into conf $dolibarr_main_restrict_ip
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 // For direct external download link, we don't need to load/check we are into a login session
 if (isset($_GET["hashp"]) && ! defined("NOLOGIN"))
 {
+<<<<<<< HEAD
 	if (! defined("NOLOGIN"))		define("NOLOGIN",1);
 	if (! defined("NOCSRFCHECK"))	define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 	if (! defined("NOIPCHECK"))		define("NOIPCHECK",1);		// Do not check IP defined into conf $dolibarr_main_restrict_ip
+=======
+	if (! defined("NOLOGIN"))		define("NOLOGIN", 1);
+	if (! defined("NOCSRFCHECK"))	define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
+	if (! defined("NOIPCHECK"))		define("NOIPCHECK", 1);		// Do not check IP defined into conf $dolibarr_main_restrict_ip
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 // Some value of modulepart can be used to get resources that are public so no login are required.
 if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias'))
 {
+<<<<<<< HEAD
 	if (! defined("NOLOGIN"))		define("NOLOGIN",1);
 	if (! defined("NOCSRFCHECK"))	define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 	if (! defined("NOIPCHECK"))		define("NOIPCHECK",1);		// Do not check IP defined into conf $dolibarr_main_restrict_ip
@@ -73,10 +102,40 @@ function llxHeader() { }
  * @return	void
  */
 function llxFooter() { }
+=======
+	if (! defined("NOLOGIN"))		define("NOLOGIN", 1);
+	if (! defined("NOCSRFCHECK"))	define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
+	if (! defined("NOIPCHECK"))		define("NOIPCHECK", 1);		// Do not check IP defined into conf $dolibarr_main_restrict_ip
+}
+
+// For multicompany
+$entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
+if (is_numeric($entity)) define("DOLENTITY", $entity);
+
+/**
+ * Header empty
+ *
+ * @ignore
+ * @return	void
+ */
+function llxHeader()
+{
+}
+/**
+ * Footer empty
+ *
+ * @ignore
+ * @return	void
+ */
+function llxFooter()
+{
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 require 'main.inc.php';	// Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
+<<<<<<< HEAD
 
 $action=GETPOST('action','alpha');
 $original_file=GETPOST('file','alpha');		// Do not use urldecode here ($_GET are already decoded by PHP).
@@ -91,6 +150,22 @@ if (empty($original_file) && empty($hashp) && $modulepart != 'barcode') accessfo
 if ($modulepart == 'fckeditor') $modulepart='medias';   // For backward compatibility
 
 
+=======
+$action=GETPOST('action', 'alpha');
+$original_file=GETPOST('file', 'alphanohtml');  // Do not use urldecode here ($_GET are already decoded by PHP).
+$hashp=GETPOST('hashp', 'aZ09');
+$modulepart=GETPOST('modulepart', 'alpha');
+$urlsource=GETPOST('urlsource', 'alpha');
+$entity=GETPOST('entity', 'int')?GETPOST('entity', 'int'):$conf->entity;
+
+// Security check
+if (empty($modulepart) && empty($hashp)) accessforbidden('Bad link. Bad value for parameter modulepart', 0, 0, 1);
+if (empty($original_file) && empty($hashp) && $modulepart != 'barcode') accessforbidden('Bad link. Missing identification to find file (original_file or hashp)', 0, 0, 1);
+if ($modulepart == 'fckeditor') $modulepart='medias';   // For backward compatibility
+
+
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 /*
  * Actions
  */
@@ -103,7 +178,11 @@ if ($modulepart == 'fckeditor') $modulepart='medias';   // For backward compatib
  * View
  */
 
+<<<<<<< HEAD
 if (GETPOST("cache",'alpha'))
+=======
+if (GETPOST("cache", 'alpha'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
     // Important: Following code is to avoid page request by browser and PHP CPU at
     // each Dolibarr page access.
@@ -125,8 +204,19 @@ if (! empty($hashp))
 	if ($result > 0)
 	{
 		$tmp = explode('/', $ecmfile->filepath, 2);		// $ecmfile->filepath is relative to document directory
+<<<<<<< HEAD
 		$moduleparttocheck = $tmp[0];
 		if ($modulepart)	// Not required for link using public hashp
+=======
+		// filepath can be 'users/X' or 'X/propale/PR11111'
+		if (is_numeric($tmp[0])) // If first tmp is numeric, it is subdir of company for multicompany, we take next part.
+		{
+			$tmp = explode('/', $tmp[1], 2);
+		}
+		$moduleparttocheck = $tmp[0];	// moduleparttocheck is first part of path
+
+		if ($modulepart)	// Not required, so often not defined, for link using public hashp parameter.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			if ($moduleparttocheck == $modulepart)
 			{
@@ -136,7 +226,11 @@ if (! empty($hashp))
 			}
 			else
 			{
+<<<<<<< HEAD
 				accessforbidden('Bad link. File is from another module part.',0,0,1);
+=======
+				accessforbidden('Bad link. File is from another module part.', 0, 0, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 		}
 		else
@@ -148,23 +242,42 @@ if (! empty($hashp))
 	else
 	{
 		$langs->load("errors");
+<<<<<<< HEAD
 		accessforbidden($langs->trans("ErrorFileNotFoundWithSharedLink"),0,0,1);
+=======
+		accessforbidden($langs->trans("ErrorFileNotFoundWithSharedLink"), 0, 0, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 }
 
 // Define mime type
 $type = 'application/octet-stream';
+<<<<<<< HEAD
 if (GETPOST('type','alpha')) $type=GETPOST('type','alpha');
 else $type=dol_mimetype($original_file);
 
 // Security: Delete string ../ into $original_file
 $original_file = str_replace("../","/", $original_file);
+=======
+if (GETPOST('type', 'alpha')) $type=GETPOST('type', 'alpha');
+else $type=dol_mimetype($original_file);
+
+// Security: This wrapper is for images. We do not allow type/html
+if (preg_match('/html/', $type)) accessforbidden('Error: Using the image wrapper to output a file with a mime type HTML is not possible.', 0, 0, 1);
+
+// Security: Delete string ../ into $original_file
+$original_file = str_replace("../", "/", $original_file);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Find the subdirectory name as the reference
 $refname=basename(dirname($original_file)."/");
 
 // Security check
+<<<<<<< HEAD
 if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');
+=======
+if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart', 0, 0, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $refname);
 $accessallowed              = $check_access['accessallowed'];
@@ -212,7 +325,11 @@ if (! $accessallowed)
 
 // Security:
 // On interdit les remontees de repertoire ainsi que les pipe dans les noms de fichiers.
+<<<<<<< HEAD
 if (preg_match('/\.\./',$fullpath_original_file) || preg_match('/[<>|]/',$fullpath_original_file))
+=======
+if (preg_match('/\.\./', $fullpath_original_file) || preg_match('/[<>|]/', $fullpath_original_file))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	dol_syslog("Refused to deliver file ".$fullpath_original_file);
 	print "ErrorFileNameInvalid: ".$original_file;
@@ -223,10 +340,17 @@ if (preg_match('/\.\./',$fullpath_original_file) || preg_match('/[<>|]/',$fullpa
 
 if ($modulepart == 'barcode')
 {
+<<<<<<< HEAD
     $generator=GETPOST("generator","alpha");
     $code=GETPOST("code",'none');							// This can be rich content (qrcode, datamatrix, ...)
     $encoding=GETPOST("encoding","alpha");
     $readable=GETPOST("readable",'alpha')?GETPOST("readable","alpha"):"Y";
+=======
+    $generator=GETPOST("generator", "alpha");
+    $code=GETPOST("code", 'none');							// This can be rich content (qrcode, datamatrix, ...)
+    $encoding=GETPOST("encoding", "alpha");
+    $readable=GETPOST("readable", 'alpha')?GETPOST("readable", "alpha"):"Y";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     if (empty($generator) || empty($encoding))
     {
@@ -234,13 +358,21 @@ if ($modulepart == 'barcode')
         exit;
     }
 
+<<<<<<< HEAD
     $dirbarcode=array_merge(array("/core/modules/barcode/doc/"),$conf->modules_parts['barcode']);
+=======
+    $dirbarcode=array_merge(array("/core/modules/barcode/doc/"), $conf->modules_parts['barcode']);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     $result=0;
 
     foreach($dirbarcode as $reldir)
     {
+<<<<<<< HEAD
         $dir=dol_buildpath($reldir,0);
+=======
+        $dir=dol_buildpath($reldir, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $newdir=dol_osencode($dir);
 
         // Check if directory exists (we do not use dol_is_dir to avoid loading files.lib.php)
@@ -255,7 +387,11 @@ if ($modulepart == 'barcode')
     $module = new $classname($db);
     if ($module->encodingIsSupported($encoding))
     {
+<<<<<<< HEAD
         $result=$module->buildBarCode($code,$encoding,$readable);
+=======
+        $result=$module->buildBarCode($code, $encoding, $readable);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 }
 else					// Open and return file

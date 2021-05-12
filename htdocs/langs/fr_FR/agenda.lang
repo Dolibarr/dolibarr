@@ -32,6 +32,7 @@ ViewPerUser=Vue par utilisateur
 ViewPerType=Vue par type
 AutoActions= Alimentation automatique
 AgendaAutoActionDesc= Définissez ici les événements pour lesquels Dolibarr créera automatiquement une entrée dans l'agenda. Si aucun n'est coché, seules les actions manuelles seront affichées dans l'agenda. Les événements sur les objets (validation, changement de statut, modification) ne seront pas enregistrées.
+<<<<<<< HEAD
 AgendaSetupOtherDesc= Cette page permet de configurer quelques options permettant d'exporter une vue de votre agenda Dolibarr vers un calendrier externe (Thunderbird, Google calendar, …)
 AgendaExtSitesDesc=Cette page permet d'ajouter des sources de calendriers externes pour les visualiser au sein de l'agenda Dolibarr.
 ActionsEvents=Événements pour lesquels Dolibarr doit insérer un évènement dans l'agenda en automatique.
@@ -39,6 +40,17 @@ EventRemindersByEmailNotEnabled=Les rappels d'événements par email n'ont pas �
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Tiers %s créé
 ContractValidatedInDolibarr=Contrat %s validé
+=======
+AgendaSetupOtherDesc= Cette page permet de configurer quelques options permettant d'exporter une vue de votre agenda Dolibarr vers un calendrier externe (thunderbird, google calendar, ...)
+AgendaExtSitesDesc=Cette page permet d'ajouter des sources de calendriers externes pour les visualiser au sein de l'agenda Dolibarr.
+ActionsEvents=Événements pour lesquels Dolibarr doit insérer un évènement dans l'agenda en automatique.
+EventRemindersByEmailNotEnabled=Les rappels d'événement par email n'ont pas été activés dans la configuration du module %s.
+##### Agenda event labels #####
+NewCompanyToDolibarr=Tiers %s créé
+COMPANY_DELETEInDolibarr=Tiers  %s supprimé
+ContractValidatedInDolibarr=Contrat %s validé
+CONTRACT_DELETEInDolibarr=Contrat %s supprimé
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PropalClosedSignedInDolibarr=Proposition %s signée
 PropalClosedRefusedInDolibarr=Proposition %s refusée
 PropalValidatedInDolibarr=Proposition %s validée
@@ -59,6 +71,10 @@ MemberSubscriptionDeletedInDolibarr=Abonnement %s pour l'adhérent %s supprimé
 ShipmentValidatedInDolibarr=Expédition %s validée
 ShipmentClassifyClosedInDolibarr=Expédition %s classée payée
 ShipmentUnClassifyCloseddInDolibarr=Expédition %s réouverte
+<<<<<<< HEAD
+=======
+ShipmentBackToDraftInDolibarr=Expédition %s remise au statut brouillon
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShipmentDeletedInDolibarr=Expédition %s supprimée
 OrderCreatedInDolibarr=Commande %s créée
 OrderValidatedInDolibarr=Commande %s validée
@@ -71,12 +87,20 @@ OrderBackToDraftInDolibarr=Commande %s repassée en brouillon
 ProposalSentByEMail=Proposition commerciale %s envoyée par email
 ContractSentByEMail=Contrat %s envoyé par e-mail
 OrderSentByEMail=Commande client %s envoyée par email
+<<<<<<< HEAD
 InvoiceSentByEMail=Facture client %s envoyée par eMail
+=======
+InvoiceSentByEMail=Facture client %s envoyée par email
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SupplierOrderSentByEMail=Commande fournisseur %s envoyée par email
 SupplierInvoiceSentByEMail=Facture fournisseur %s envoyée par email
 ShippingSentByEMail=Bon d'expédition %s envoyé par email
 ShippingValidated= Expédition %s validée
+<<<<<<< HEAD
 InterventionSentByEMail=Intervention %s envoyée par email
+=======
+InterventionSentByEMail=Intervention %s envoyé par email
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProposalDeleted=Proposition commerciale supprimée
 OrderDeleted=Commande supprimée
 InvoiceDeleted=Facture supprimée
@@ -91,6 +115,14 @@ EXPENSE_REPORT_REFUSEDInDolibarr=Note de frais %s refusée
 PROJECT_CREATEInDolibarr=Projet %s créé
 PROJECT_MODIFYInDolibarr=Projet %s modifié
 PROJECT_DELETEInDolibarr=Projet %s supprimé
+<<<<<<< HEAD
+=======
+TICKET_CREATEInDolibarr=Ticket %s créé
+TICKET_MODIFYInDolibarr=Ticket %s modifié
+TICKET_ASSIGNEDInDolibarr=Ticket %s assigné
+TICKET_CLOSEInDolibarr=Ticket %s fermé
+TICKET_DELETEInDolibarr=Ticket %s supprimé
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ##### End agenda events #####
 AgendaModelModule=Modèle de document pour les événements
 DateActionStart=Date de début
@@ -99,8 +131,13 @@ AgendaUrlOptions1=Vous pouvez aussi ajouter les paramètres suivants pour filtre
 AgendaUrlOptions3=<b>logina=%s</b> pour limiter l'export aux actions dont l'utilisateur <b>%s</b> est propriétaire.
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> pour limiter l'export aux actions non assignées à l'utilisateur <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b>pour limiter l'export aux actions assignées à l'utilisateur <b>%s</b> (propriétaire et autres).
+<<<<<<< HEAD
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> pour restreindre aux événements associés au projet <b>PROJECT_ID</b>.
 AgendaUrlOptionsNotAutoEvent=<b> notactiontype=systemauto </b> pour exclure un événement automatique.
+=======
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> pour restreindre aux événements associés au projet <b>__PROJECT_ID__</b>.
+AgendaUrlOptionsNotAutoEvent=<b> notactiontype=systemauto </b> pour exclure les événements automatiques.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AgendaShowBirthdayEvents=Afficher les anniversaires de contacts
 AgendaHideBirthdayEvents=Masquer les anniversaires de contacts
 Busy=Occupé
@@ -121,7 +158,10 @@ AddEvent=Créer un événement
 MyAvailability=Ma disponibilité
 ActionType=Type événement
 DateActionBegin=Date début événément
+<<<<<<< HEAD
 CloneAction=Cloner l'événement
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmCloneEvent=Êtes-vous sûr de vouloir cloner cet événement <b>%s</b> ?
 RepeatEvent=Evénement répétitif
 EveryWeek=Chaque semaine

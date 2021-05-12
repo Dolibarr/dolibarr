@@ -3,7 +3,11 @@
  * Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
  * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
+<<<<<<< HEAD
  * Copyright (C) 2016-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
+=======
+ * Copyright (C) 2016-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +25,11 @@
 
 /**
  *	\file       htdocs/core/class/html.formaccounting.class.php
+<<<<<<< HEAD
  *  \ingroup    Advanced accountancy
+=======
+ *  \ingroup    Accountancy (Double entries)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *	\brief      File of class with all html predefined components
  */
 require_once DOL_DOCUMENT_ROOT .'/core/class/html.form.class.php';
@@ -35,10 +43,24 @@ class FormAccounting extends Form
 
 	private $options_cache = array();
 
+<<<<<<< HEAD
 	var $db;
 	var $error;
 
 	/**
+=======
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+   /**
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	* Constructor
 	*
 	* @param		DoliDB		$db      Database handler
@@ -48,6 +70,10 @@ class FormAccounting extends Form
 	    $this->db = $db;
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * Return list of journals with label by nature
 	 *
@@ -62,8 +88,14 @@ class FormAccounting extends Form
 	 * @param   int     $disabledajaxcombo Disable ajax combo box.
 	 * @return	string				String with HTML select
 	 */
+<<<<<<< HEAD
 	function select_journal($selectid, $htmlname = 'journal', $nature=0, $showempty = 0, $select_in = 0, $select_out = 0, $morecss='maxwidth300 maxwidthonsmartphone', $usecache='', $disabledajaxcombo=0)
 	{
+=======
+	public function select_journal($selectid, $htmlname = 'journal', $nature = 0, $showempty = 0, $select_in = 0, $select_out = 0, $morecss = 'maxwidth300 maxwidthonsmartphone', $usecache = '', $disabledajaxcombo = 0)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf,$langs;
 
 		$out = '';
@@ -80,7 +112,11 @@ class FormAccounting extends Form
 			$sql.= " FROM " . MAIN_DB_PREFIX . "accounting_journal";
 			$sql.= " WHERE active = 1";
 			$sql.= " AND entity = ".$conf->entity;
+<<<<<<< HEAD
 			//if ($nature && is_numeric($nature))   $sql .= " AND nature = ".$nature;
+=======
+			if ($nature && is_numeric($nature))   $sql .= " AND nature = ".$nature;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$sql.= " ORDER BY code";
 
 			dol_syslog(get_class($this) . "::select_journal", LOG_DEBUG);
@@ -129,6 +165,10 @@ class FormAccounting extends Form
 		return $out;
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     /**
      *	Return list of accounting category.
      * 	Use mysoc->country_id or mysoc->country_code so they must be defined.
@@ -141,13 +181,23 @@ class FormAccounting extends Form
      *  @param  int     $allcountries   All countries
      * 	@return	void
      */
+<<<<<<< HEAD
     function select_accounting_category($selected='',$htmlname='account_category', $useempty=0, $maxlen=0, $help=1, $allcountries=0)
     {
+=======
+    public function select_accounting_category($selected = '', $htmlname = 'account_category', $useempty = 0, $maxlen = 0, $help = 1, $allcountries = 0)
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         global $db,$langs,$user,$mysoc;
 
         if (empty($mysoc->country_id) && empty($mysoc->country_code) && empty($allcountries))
         {
+<<<<<<< HEAD
             dol_print_error('','Call to select_accounting_account with mysoc country not yet defined');
+=======
+            dol_print_error('', 'Call to select_accounting_account with mysoc country not yet defined');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             exit;
         }
 
@@ -187,7 +237,11 @@ class FormAccounting extends Form
                     $obj = $db->fetch_object($resql);
                     $out .= '<option value="'.$obj->rowid.'"';
                     if ($obj->rowid == $selected) $out .= ' selected';
+<<<<<<< HEAD
                     $out .= '>'.($maxlen ? dol_trunc($obj->type,$maxlen) : $obj->type);
+=======
+                    $out .= '>'.($maxlen ? dol_trunc($obj->type, $maxlen) : $obj->type);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					$out .= ' ('.$obj->range_account.')';
                     $i++;
                 }
@@ -196,12 +250,20 @@ class FormAccounting extends Form
             }
             else
             {
+<<<<<<< HEAD
                 $out .= $langs->trans("ErrorNoAccountingCategoryForThisCountry",$mysoc->country_code);
+=======
+                $out .= $langs->trans("ErrorNoAccountingCategoryForThisCountry", $mysoc->country_code);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             }
         }
         else
         {
+<<<<<<< HEAD
             dol_print_error($db,$db->lasterror());
+=======
+            dol_print_error($db, $db->lasterror());
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
 
         $out .= ajax_combobox($htmlname, array());
@@ -209,6 +271,7 @@ class FormAccounting extends Form
         print $out;
     }
 
+<<<<<<< HEAD
 	/**
 	 * Return select filter with date of transaction
 	 *
@@ -217,6 +280,19 @@ class FormAccounting extends Form
 	 * @return string HTML edit field
 	 */
 	function select_bookkeeping_importkey($htmlname = 'importkey', $selectedkey = '') {
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * Return select filter with date of transaction
+	 *
+	 * @param string $htmlname         Name of select field
+	 * @param string $selectedkey      Value
+	 * @return string                  HTML edit field
+	 */
+    public function select_bookkeeping_importkey($htmlname = 'importkey', $selectedkey = '')
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$options = array();
 
 		$sql = 'SELECT DISTINCT import_key from ' . MAIN_DB_PREFIX . 'accounting_bookkeeping';
@@ -233,12 +309,20 @@ class FormAccounting extends Form
 		}
 
 		while ($obj = $this->db->fetch_object($resql)) {
+<<<<<<< HEAD
 			$options[$obj->import_key] = dol_print_date($obj->import_key, 'dayhourtext');
+=======
+			$options[$obj->import_key] = $obj->import_key;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		return Form::selectarray($htmlname, $options, $selectedkey);
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * Return list of accounts with label by chart of accounts
 	 *
@@ -252,8 +336,14 @@ class FormAccounting extends Form
 	 * @param string   $usecache           Key to use to store result into a cache. Next call with same key will reuse the cache.
 	 * @return string                      String with HTML select
 	 */
+<<<<<<< HEAD
 	function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $morecss='maxwidth300 maxwidthonsmartphone', $usecache='')
 	{
+=======
+	public function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $morecss = 'maxwidth300 maxwidthonsmartphone', $usecache = '')
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf, $langs;
 
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
@@ -330,6 +420,10 @@ class FormAccounting extends Form
 		return $out;
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * Return list of auxilary thirdparty accounts
 	 *
@@ -339,7 +433,13 @@ class FormAccounting extends Form
 	 * @param string   $morecss        More css
 	 * @return string                  String with HTML select
 	 */
+<<<<<<< HEAD
 	function select_auxaccount($selectid, $htmlname='account_num_aux', $showempty=0, $morecss='maxwidth200') {
+=======
+    public function select_auxaccount($selectid, $htmlname = 'account_num_aux', $showempty = 0, $morecss = 'maxwidth200')
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$aux_account = array();
 
@@ -348,6 +448,10 @@ class FormAccounting extends Form
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe";
 	    $sql .= " WHERE entity IN (" . getEntity('societe') . ")";
 		$sql .= " ORDER BY code_compta";
+<<<<<<< HEAD
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		dol_syslog(get_class($this)."::select_auxaccount", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -358,7 +462,11 @@ class FormAccounting extends Form
 			}
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
+<<<<<<< HEAD
 			dol_syslog(get_class($this)."::select_pcgsubtype ".$this->error, LOG_ERR);
+=======
+			dol_syslog(get_class($this)."::select_auxaccount ".$this->error, LOG_ERR);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			return -1;
 		}
 		$this->db->free($resql);
@@ -372,23 +480,58 @@ class FormAccounting extends Form
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
+<<<<<<< HEAD
 				if (!empty($obj->code_compta_fournisseur)) {
+=======
+				if ($obj->code_compta_fournisseur != "") {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					$aux_account[$obj->code_compta_fournisseur] = $obj->code_compta_fournisseur.' ('.$obj->nom.')';
 				}
 			}
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
+<<<<<<< HEAD
 			dol_syslog(get_class($this)."::select_pcgsubtype ".$this->error, LOG_ERR);
+=======
+			dol_syslog(get_class($this)."::select_auxaccount ".$this->error, LOG_ERR);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			return -1;
 		}
 		$this->db->free($resql);
 
+<<<<<<< HEAD
+=======
+        // Auxiliary user account
+        $sql = "SELECT DISTINCT accountancy_code, lastname, firstname ";
+        $sql .= " FROM ".MAIN_DB_PREFIX."user";
+        $sql .= " WHERE entity IN (" . getEntity('user') . ")";
+        $sql .= " ORDER BY accountancy_code";
+        dol_syslog(get_class($this)."::select_auxaccount", LOG_DEBUG);
+        $resql = $this->db->query($sql);
+        if ($resql) {
+            while ($obj = $this->db->fetch_object($resql)) {
+                if (!empty($obj->accountancy_code)) {
+                    $aux_account[$obj->accountancy_code] = $obj->accountancy_code.' ('.dolGetFirstLastname($obj->firstname, $obj->lastname).')';
+                }
+            }
+        } else {
+            $this->error = "Error ".$this->db->lasterror();
+            dol_syslog(get_class($this)."::select_auxaccount ".$this->error, LOG_ERR);
+            return -1;
+        }
+        $this->db->free($resql);
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// Build select
 		$out .= Form::selectarray($htmlname, $aux_account, $selectid, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, 1);
 
 		return $out;
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * Return HTML combo list of years existing into book keepping
 	 *
@@ -398,8 +541,14 @@ class FormAccounting extends Form
 	 * @param string $output_format (html/opton (for option html only)/array (to return options arrays
 	 * @return string/array
 	 */
+<<<<<<< HEAD
 	function selectyear_accountancy_bookkepping($selected = '', $htmlname = 'yearid', $useempty = 0, $output_format = 'html')
 	{
+=======
+	public function selectyear_accountancy_bookkepping($selected = '', $htmlname = 'yearid', $useempty = 0, $output_format = 'html')
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    global $conf;
 
 		$out_array = array();
@@ -428,4 +577,7 @@ class FormAccounting extends Form
 		}
 	}
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

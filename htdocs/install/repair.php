@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,7 +46,11 @@ error_reporting(0);
 @set_time_limit(120);
 error_reporting($err);
 
+<<<<<<< HEAD
 $setuplang=GETPOST("selectlang",'az09',3)?GETPOST("selectlang",'az09',3):'auto';
+=======
+$setuplang=GETPOST("selectlang", 'az09', 3)?GETPOST("selectlang", 'az09', 3):'auto';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $langs->setDefaultLang($setuplang);
 
 $langs->loadLangs(array("admin","install","other"));
@@ -60,13 +68,18 @@ if (! is_object($conf)) dolibarr_install_syslog("repair: conf file not initializ
  * View
  */
 
+<<<<<<< HEAD
 pHeader('',"upgrade2",GETPOST('action','aZ09'));
+=======
+pHeader('', "upgrade2", GETPOST('action', 'aZ09'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Action to launch the repair script
 $actiondone=1;
 
 print '<h3>'.$langs->trans("Repair").'</h3>';
 
+<<<<<<< HEAD
 print 'Option standard (0 or \'confirmed\') is '.(GETPOST('standard','alpha')?GETPOST('standard','alpha'):'0').'<br>'."\n";
 print 'Option restore_thirdparties_logos (0 or \'confirmed\') is '.(GETPOST('restore_thirdparties_logos','alpha')?GETPOST('restore_thirdparties_logos','alpha'):'0').'<br>'."\n";
 print 'Option clean_linked_elements (0 or \'confirmed\') is '.(GETPOST('clean_linked_elements','alpha')?GETPOST('clean_linked_elements','alpha'):'0').'<br>'."\n";
@@ -78,16 +91,36 @@ print 'Option rebuild_product_thumbs (0 or \'test\' or \'confirmed\') is '.(GETP
 print 'Option force_disable_of_modules_not_found (0 or \'test\' or \'confirmed\') is '.(GETPOST('force_disable_of_modules_not_found','alpha')?GETPOST('force_disable_of_modules_not_found','alpha'):'0').'<br>'."\n";
 print 'Option clean_perm_table (0 or \'test\' or \'confirmed\') is '.(GETPOST('clean_perm_table','alpha')?GETPOST('clean_perm_table','alpha'):'0').'<br>'."\n";
 print 'Option force_utf8_on_tables, for mysql/mariadb only (0 or \'test\' or \'confirmed\') is '.(GETPOST('force_utf8_on_tables','alpha')?GETPOST('force_utf8_on_tables','alpha'):'0').'<br>'."\n";
+=======
+print 'Option standard (\'test\' or \'confirmed\') is '.(GETPOST('standard', 'alpha')?GETPOST('standard', 'alpha'):'undefined').'<br>'."\n";
+print 'Option restore_thirdparties_logos (\'test\' or \'confirmed\') is '.(GETPOST('restore_thirdparties_logos', 'alpha')?GETPOST('restore_thirdparties_logos', 'alpha'):'undefined').'<br>'."\n";
+print 'Option clean_linked_elements (\'test\' or \'confirmed\') is '.(GETPOST('clean_linked_elements', 'alpha')?GETPOST('clean_linked_elements', 'alpha'):'undefined').'<br>'."\n";
+print 'Option clean_menus (\'test\' or \'confirmed\') is '.(GETPOST('clean_menus', 'alpha')?GETPOST('clean_menus', 'alpha'):'undefined').'<br>'."\n";
+print 'Option clean_orphelin_dir (\'test\' or \'confirmed\') is '.(GETPOST('clean_orphelin_dir', 'alpha')?GETPOST('clean_orphelin_dir', 'alpha'):'undefined').'<br>'."\n";
+print 'Option clean_product_stock_batch (\'test\' or \'confirmed\') is '.(GETPOST('clean_product_stock_batch', 'alpha')?GETPOST('clean_product_stock_batch', 'alpha'):'undefined').'<br>'."\n";
+print 'Option set_empty_time_spent_amount (\'test\' or \'confirmed\') is '.(GETPOST('set_empty_time_spent_amount', 'alpha')?GETPOST('set_empty_time_spent_amount', 'alpha'):'undefined').'<br>'."\n";
+print 'Option rebuild_product_thumbs (\'test\' or \'confirmed\') is '.(GETPOST('rebuild_product_thumbs', 'alpha')?GETPOST('rebuild_product_thumbs', 'alpha'):'undefined').'<br>'."\n";
+print 'Option force_disable_of_modules_not_found (\'test\' or \'confirmed\') is '.(GETPOST('force_disable_of_modules_not_found', 'alpha')?GETPOST('force_disable_of_modules_not_found', 'alpha'):'undefined').'<br>'."\n";
+print 'Option clean_perm_table (\'test\' or \'confirmed\') is '.(GETPOST('clean_perm_table', 'alpha')?GETPOST('clean_perm_table', 'alpha'):'undefined').'<br>'."\n";
+print 'Option force_utf8_on_tables, for mysql/mariadb only (\'test\' or \'confirmed\') is '.(GETPOST('force_utf8_on_tables', 'alpha')?GETPOST('force_utf8_on_tables', 'alpha'):'undefined').'<br>'."\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '<br>';
 
 print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
 $error=0;
 
 // If password is encoded, we decode it
+<<<<<<< HEAD
 if (preg_match('/crypted:/i',$dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
 {
     require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
     if (preg_match('/crypted:/i',$dolibarr_main_db_pass))
+=======
+if (preg_match('/crypted:/i', $dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
+{
+    require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
+    if (preg_match('/crypted:/i', $dolibarr_main_db_pass))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
         $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
@@ -108,18 +141,30 @@ $conf->db->pass = $dolibarr_main_db_pass;
 $conf->db->dolibarr_main_db_encryption	= isset($dolibarr_main_db_encryption)?$dolibarr_main_db_encryption:'';
 $conf->db->dolibarr_main_db_cryptkey	= isset($dolibarr_main_db_cryptkey)?$dolibarr_main_db_cryptkey:'';
 
+<<<<<<< HEAD
 $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
+=======
+$db=getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, $conf->db->port);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if ($db->connected)
 {
     print '<tr><td class="nowrap">';
+<<<<<<< HEAD
     print $langs->trans("ServerConnection")." : $dolibarr_main_db_host</td><td align=\"right\">".$langs->trans("OK")."</td></tr>";
+=======
+    print $langs->trans("ServerConnection")." : $dolibarr_main_db_host</td><td class=\"right\">".$langs->trans("OK")."</td></tr>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     dolibarr_install_syslog("repair: " . $langs->transnoentities("ServerConnection") . ": " . $dolibarr_main_db_host . $langs->transnoentities("OK"));
     $ok = 1;
 }
 else
 {
+<<<<<<< HEAD
     print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name)."</td><td align=\"right\">".$langs->transnoentities("Error")."</td></tr>";
+=======
+    print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name)."</td><td class=\"right\">".$langs->transnoentities("Error")."</td></tr>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     dolibarr_install_syslog("repair: " . $langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
     $ok = 0;
 }
@@ -129,13 +174,21 @@ if ($ok)
     if($db->database_selected)
     {
         print '<tr><td class="nowrap">';
+<<<<<<< HEAD
         print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name."</td><td align=\"right\">".$langs->trans("OK")."</td></tr>";
+=======
+        print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name."</td><td class=\"right\">".$langs->trans("OK")."</td></tr>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         dolibarr_install_syslog("repair: database connection successful: " . $dolibarr_main_db_name);
         $ok=1;
     }
     else
     {
+<<<<<<< HEAD
         print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name)."</td><td align=\"right\">".$langs->trans("Error")."</td></tr>";
+=======
+        print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name)."</td><td class=\"right\">".$langs->trans("Error")."</td></tr>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         dolibarr_install_syslog("repair: " . $langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
         $ok=0;
     }
@@ -147,9 +200,15 @@ if ($ok)
     $version=$db->getVersion();
     $versionarray=$db->getVersionArray();
     print '<tr><td>'.$langs->trans("ServerVersion").'</td>';
+<<<<<<< HEAD
     print '<td align="right">'.$version.'</td></tr>';
     dolibarr_install_syslog("repair: " . $langs->transnoentities("ServerVersion") . ": " . $version);
     //print '<td align="right">'.join('.',$versionarray).'</td></tr>';
+=======
+    print '<td class="right">'.$version.'</td></tr>';
+    dolibarr_install_syslog("repair: " . $langs->transnoentities("ServerVersion") . ": " . $version);
+    //print '<td class="right">'.join('.',$versionarray).'</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 $conf->setValues($db);
@@ -160,10 +219,17 @@ $conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
 
 /* Start action here */
 $oneoptionset=0;
+<<<<<<< HEAD
 $oneoptionset=(GETPOST('standard', 'alpha') || GETPOST('restore_thirdparties_logos','alpha') || GETPOST('clean_linked_elements','alpha') || GETPOST('clean_menus','alpha')
 	|| GETPOST('clean_orphelin_dir','alpha') || GETPOST('clean_product_stock_batch','alpha') || GETPOST('set_empty_time_spent_amount','alpha') || GETPOST('rebuild_product_thumbs','alpha')
 	|| GETPOST('clean_perm_table','alpha')
 	|| GETPOST('force_disable_of_modules_not_found','alpha') || GETPOST('force_utf8_on_tables','alpha'));
+=======
+$oneoptionset=(GETPOST('standard', 'alpha') || GETPOST('restore_thirdparties_logos', 'alpha') || GETPOST('clean_linked_elements', 'alpha') || GETPOST('clean_menus', 'alpha')
+	|| GETPOST('clean_orphelin_dir', 'alpha') || GETPOST('clean_product_stock_batch', 'alpha') || GETPOST('set_empty_time_spent_amount', 'alpha') || GETPOST('rebuild_product_thumbs', 'alpha')
+	|| GETPOST('clean_perm_table', 'alpha')
+	|| GETPOST('force_disable_of_modules_not_found', 'alpha') || GETPOST('force_utf8_on_tables', 'alpha'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if ($ok && $oneoptionset)
 {
@@ -189,14 +255,22 @@ if ($ok && GETPOST('standard', 'alpha'))
     {
         while (($file = readdir($handle))!==false)
         {
+<<<<<<< HEAD
             if (preg_match('/\.sql$/i',$file)) $filesindir[]=$file;
+=======
+            if (preg_match('/\.sql$/i', $file)) $filesindir[]=$file;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
     }
     sort($filesindir);
 
     foreach($filesindir as $file)
     {
+<<<<<<< HEAD
         if (preg_match('/repair/i',$file))
+=======
+        if (preg_match('/repair/i', $file))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         {
             $filelist[]=$file;
         }
@@ -206,7 +280,11 @@ if ($ok && GETPOST('standard', 'alpha'))
     foreach($filelist as $file)
     {
         print '<tr><td class="nowrap">*** ';
+<<<<<<< HEAD
         print $langs->trans("Script").'</td><td align="right">'.$file.'</td></tr>';
+=======
+        print $langs->trans("Script").'</td><td class="right">'.$file.'</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         $name = substr($file, 0, dol_strlen($file) - 4);
 
@@ -245,7 +323,11 @@ if ($ok && GETPOST('standard', 'alpha'))
 	        while($obj=$db->fetch_object($resql))
 	        {
 	            $fieldname=$fieldtype='';
+<<<<<<< HEAD
 	            if (preg_match('/mysql/',$db->type))
+=======
+	            if (preg_match('/mysql/', $db->type))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	            {
 	                $fieldname=$obj->Field;
 	                $fieldtype=$obj->Type;
@@ -257,14 +339,22 @@ if ($ok && GETPOST('standard', 'alpha'))
 	            }
 
 	            if (empty($fieldname)) continue;
+<<<<<<< HEAD
 	            if (in_array($fieldname,array('rowid','tms','fk_object','import_key'))) continue;
+=======
+	            if (in_array($fieldname, array('rowid','tms','fk_object','import_key'))) continue;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	            $arrayoffieldsfound[$fieldname]=array('type'=>$fieldtype);
 	        }
 
 	        // If it does not match, we create fields
 	        foreach($arrayoffieldsdesc as $code => $label)
 	        {
+<<<<<<< HEAD
 	            if (! in_array($code,array_keys($arrayoffieldsfound)))
+=======
+	            if (! in_array($code, array_keys($arrayoffieldsfound)))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	            {
 	                print 'Found field '.$code.' declared into '.MAIN_DB_PREFIX.'extrafields table but not found into desc of table '.$tableextra." -> ";
 	                $type=$extrafields->attributes[$elementtype]['type'][$code]; $length=$extrafields->attributes[$elementtype]['size'][$code]; $attribute=''; $default=''; $extra=''; $null='null';
@@ -302,6 +392,7 @@ if ($ok && GETPOST('standard', 'alpha'))
 	                );
 	                //var_dump($field_desc);exit;
 
+<<<<<<< HEAD
 	                $result=$db->DDLAddField($tableextra,$code,$field_desc,"");
 	                if ($result < 0)
 	                {
@@ -310,6 +401,25 @@ if ($ok && GETPOST('standard', 'alpha'))
 	                else
 	                {
 	                    print "OK<br>\n";
+=======
+	                $result = 0;
+	                if (GETPOST('standard', 'alpha') == 'confirmed')
+	                {
+	                	$result=$db->DDLAddField($tableextra, $code, $field_desc, "");
+
+		                if ($result < 0)
+		                {
+	    	                print "KO ".$db->lasterror."<br>\n";
+	        	        }
+	            	    else
+	                	{
+	                    	print "OK<br>\n";
+		                }
+	                }
+	                else
+	                {
+	                	print ' - Mode test, no column added.';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	                }
 	            }
 	        }
@@ -324,7 +434,10 @@ if ($ok && GETPOST('standard', 'alpha'))
 }
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 // clean_data_ecm_dir: Clean data into ecm_directories table
 if ($ok && GETPOST('standard', 'alpha'))
 {
@@ -332,10 +445,154 @@ if ($ok && GETPOST('standard', 'alpha'))
 }
 
 
+<<<<<<< HEAD
 
 
 /* From here, actions need a parameter */
 
+=======
+// clean declaration constants
+if ($ok && GETPOST('standard', 'alpha'))
+{
+	print '<tr><td colspan="2"><br>*** Clean module_parts entries of modules not enabled</td></tr>';
+
+	$sql ="SELECT name, entity, value";
+	$sql.=" FROM ".MAIN_DB_PREFIX."const as c";
+	$sql.=" WHERE name LIKE 'MAIN_MODULE_%_TPL' OR name LIKE 'MAIN_MODULE_%_CSS' OR name LIKE 'MAIN_MODULE_%_JS' OR name LIKE 'MAIN_MODULE_%_HOOKS'";
+	$sql.=" OR name LIKE 'MAIN_MODULE_%_TRIGGERS' OR name LIKE 'MAIN_MODULE_%_THEME' OR name LIKE 'MAIN_MODULE_%_SUBSTITUTIONS' OR name LIKE 'MAIN_MODULE_%_MODELS'";
+	$sql.=" OR name LIKE 'MAIN_MODULE_%_MENUS' OR name LIKE 'MAIN_MODULE_%_LOGIN' OR name LIKE 'MAIN_MODULE_%_BARCODE'";
+	$sql.=" ORDER BY name, entity";
+
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+
+		if ($num)
+		{
+			$db->begin();
+
+			$i = 0;
+			while ($i < $num)
+			{
+				$obj=$db->fetch_object($resql);
+
+				$reg = array();
+				if (preg_match('/MAIN_MODULE_(.*)_(.*)/i', $obj->name, $reg))
+				{
+					$name=$reg[1];
+					$type=$reg[2];
+
+					$sql2 ="SELECT COUNT(*) as nb";
+					$sql2.=" FROM ".MAIN_DB_PREFIX."const as c";
+					$sql2.=" WHERE name LIKE 'MAIN_MODULE_".$name."'";
+					$sql2.=" AND entity = ".$obj->entity;
+					$resql2 = $db->query($sql2);
+					if ($resql2)
+					{
+						$obj2 = $db->fetch_object($resql2);
+						if ($obj2 && $obj2->nb == 0)
+						{
+							// Module not found, so we canremove entry
+							$sqldelete = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$db->escape($obj->name)."' AND entity = ".$obj->entity;
+
+							if (GETPOST('standard', 'alpha') == 'confirmed')
+							{
+								$db->query($sqldelete);
+
+								print '<tr><td>Widget '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module not enabled in entity '.$obj->entity.', we delete record</td></tr>';
+							}
+							else
+							{
+								print '<tr><td>Widget '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module not enabled in entity '.$obj->entity.', we should delete record (not done, mode test)</td></tr>';
+							}
+						}
+						else
+						{
+							//print '<tr><td>Constant '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module found in entity '.$obj->entity.', we keep record</td></tr>';
+						}
+					}
+				}
+
+				$i++;
+			}
+
+			$db->commit();
+		}
+	}
+}
+
+
+// clean box of not enabled modules
+if ($ok && GETPOST('standard', 'alpha'))
+{
+	print '<tr><td colspan="2"><br>*** Clean definition of boxes of modules not enabled</td></tr>';
+
+	$sql ="SELECT file, entity FROM ".MAIN_DB_PREFIX."boxes_def";
+	$sql.=" WHERE file like '%@%'";
+
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+
+		if ($num)
+		{
+			$db->begin();
+
+			$i = 0;
+			while ($i < $num)
+			{
+				$obj=$db->fetch_object($resql);
+
+				$reg = array();
+				if (preg_match('/^(.+)@(.+)$/i', $obj->file, $reg))
+				{
+					$name=$reg[1];
+					$module=$reg[2];
+
+					$sql2 ="SELECT COUNT(*) as nb";
+					$sql2.=" FROM ".MAIN_DB_PREFIX."const as c";
+					$sql2.=" WHERE name = 'MAIN_MODULE_".strtoupper($module)."'";
+					$sql2.=" AND entity = ".$obj->entity;
+					$sql2.=" AND value <> 0";
+					$resql2 = $db->query($sql2);
+					if ($resql2)
+					{
+						$obj2 = $db->fetch_object($resql2);
+						if ($obj2 && $obj2->nb == 0)
+						{
+							// Module not found, so we canremove entry
+							$sqldeletea = "DELETE FROM ".MAIN_DB_PREFIX."boxes WHERE entity = ".$obj->entity." AND box_id IN (SELECT rowid FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = '".$obj->file."' AND entity = ".$obj->entity.")";
+							$sqldeleteb = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = '".$obj->file."' AND entity = ".$obj->entity;
+
+							if (GETPOST('standard', 'alpha') == 'confirmed')
+							{
+								$db->query($sqldeletea);
+								$db->query($sqldeleteb);
+
+								print '<tr><td>Constant '.$obj->file.' set in boxes_def for entity '.$obj->entity.' but MAIN_MODULE_'.strtoupper($module).' not defined in entity '.$obj->entity.', we delete record</td></tr>';
+							}
+							else
+							{
+								print '<tr><td>Constant '.$obj->file.' set in boxes_def for entity '.$obj->entity.' but MAIN_MODULE_'.strtoupper($module).' not defined in entity '.$obj->entity.', we should delete record (not done, mode test)</td></tr>';
+							}
+						}
+						else
+						{
+							//print '<tr><td>Constant '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module found in entity '.$obj->entity.', we keep record</td></tr>';
+						}
+					}
+				}
+
+				$i++;
+			}
+
+			$db->commit();
+		}
+	}
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 // restore_thirdparties_logos: Move logos to correct new directory.
@@ -365,7 +622,11 @@ if ($ok && GETPOST('restore_thirdparties_logos'))
 				$name=preg_replace('/\'/','',$name);
 				*/
 
+<<<<<<< HEAD
 				$tmp=explode('.',$obj->logo);
+=======
+				$tmp=explode('.', $obj->logo);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$name=$tmp[0];
 				if (isset($tmp[1])) $ext='.'.$tmp[1];
 
@@ -414,7 +675,11 @@ if ($ok && GETPOST('restore_thirdparties_logos'))
 
 
 // rebuild_product_thumbs: Rebuild thumbs for product files
+<<<<<<< HEAD
 if ($ok && GETPOST('rebuild_product_thumbs','alpha'))
+=======
+if ($ok && GETPOST('rebuild_product_thumbs', 'alpha'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
     $ext='';
     global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini;
@@ -441,14 +706,22 @@ if ($ok && GETPOST('rebuild_product_thumbs','alpha'))
 					if (image_format_supported($file['fullname']) == 1)
 					{
 					    $imgThumbSmall='notbuild';
+<<<<<<< HEAD
                         if (GETPOST('rebuild_product_thumbs','alpha') == 'confirmed')
+=======
+                        if (GETPOST('rebuild_product_thumbs', 'alpha') == 'confirmed')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                         {
                             // Used on logon for example
                             $imgThumbSmall = vignette($file['fullname'], $maxwidthsmall, $maxheightsmall, '_small', 50, "thumbs");
                         }
 					    print 'Check product '.$obj->rowid.", file ".$file['fullname']." -> ".$imgThumbSmall." maxwidthsmall=".$maxwidthsmall." maxheightsmall=".$maxheightsmall."<br>\n";
 					    $imgThumbMini='notbuild';
+<<<<<<< HEAD
                         if (GETPOST('rebuild_product_thumbs','alpha') == 'confirmed')
+=======
+                        if (GETPOST('rebuild_product_thumbs', 'alpha') == 'confirmed')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                         {
                             // Create mini thumbs for image (Ratio is near 16/9)
                             // Used on menu or for setup page for example
@@ -472,7 +745,11 @@ if ($ok && GETPOST('rebuild_product_thumbs','alpha'))
 }
 
 // clean_linked_elements: Check and clean linked elements
+<<<<<<< HEAD
 if ($ok && GETPOST('clean_linked_elements','alpha'))
+=======
+if ($ok && GETPOST('clean_linked_elements', 'alpha'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
     print '<tr><td colspan="2"><br>*** Check table of linked elements and delete orphelins links</td></tr>';
 	// propal => order
@@ -496,7 +773,11 @@ if ($ok && GETPOST('clean_linked_elements','alpha'))
 
 
 // clean_menus: Check orphelins menus
+<<<<<<< HEAD
 if ($ok && GETPOST('clean_menus','alpha'))
+=======
+if ($ok && GETPOST('clean_menus', 'alpha'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	print '<tr><td colspan="2"><br>*** Clean menu entries coming from disabled modules</td></tr>';
 
@@ -517,7 +798,11 @@ if ($ok && GETPOST('clean_menus','alpha'))
 				$obj=$db->fetch_object($resql);
 
 				$modulecond=$obj->module;
+<<<<<<< HEAD
 				$modulecondarray = explode('|',$obj->module);				// Name of module
+=======
+				$modulecondarray = explode('|', $obj->module);				// Name of module
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				print '<tr><td>';
 				print $modulecond;
@@ -549,11 +834,19 @@ if ($ok && GETPOST('clean_menus','alpha'))
 								dol_print_error($db);
 							}
 							else
+<<<<<<< HEAD
 								print ' - <font class="warning">Cleaned</font>';
 						}
 						else
 						{
 							print ' - <font class="warning">Canceled (test mode)</font>';
+=======
+								print ' - <span class="warning">Cleaned</span>';
+						}
+						else
+						{
+							print ' - <span class="warning">Canceled (test mode)</span>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						}
 					}
 					else
@@ -586,7 +879,11 @@ if ($ok && GETPOST('clean_menus','alpha'))
 
 
 // clean_orphelin_dir: Run purge of directory
+<<<<<<< HEAD
 if ($ok && GETPOST('clean_orphelin_dir','alpha'))
+=======
+if ($ok && GETPOST('clean_orphelin_dir', 'alpha'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
     $listmodulepart=array('company','invoice','invoice_supplier','propal','order','order_supplier','contract','tax');
     foreach ($listmodulepart as $modulepart)
@@ -604,7 +901,11 @@ if ($ok && GETPOST('clean_orphelin_dir','alpha'))
 
         print '<tr><td colspan="2"><br>*** Clean orphelins files into files '.$upload_dir.'</td></tr>';
 
+<<<<<<< HEAD
         $filearray=dol_dir_list($upload_dir,"files",1,'',array('^SPECIMEN\.pdf$','^\.','(\.meta|_preview.*\.png)$','^temp$','^payments$','^CVS$','^thumbs$'),'',SORT_DESC,1,true);
+=======
+        $filearray=dol_dir_list($upload_dir, "files", 1, '', array('^SPECIMEN\.pdf$','^\.','(\.meta|_preview.*\.png)$','^temp$','^payments$','^CVS$','^thumbs$'), '', SORT_DESC, 1, true);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         // To show ref or specific information according to view to show (defined by $module)
         if ($modulepart == 'company')
@@ -617,38 +918,65 @@ if ($ok && GETPOST('clean_orphelin_dir','alpha'))
             include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
             $object_instance=new Facture($db);
         }
+<<<<<<< HEAD
         else if ($modulepart == 'invoice_supplier')
+=======
+        elseif ($modulepart == 'invoice_supplier')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         {
             include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
             $object_instance=new FactureFournisseur($db);
         }
+<<<<<<< HEAD
         else if ($modulepart == 'propal')
+=======
+        elseif ($modulepart == 'propal')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         {
             include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
             $object_instance=new Propal($db);
         }
+<<<<<<< HEAD
         else if ($modulepart == 'order')
+=======
+        elseif ($modulepart == 'order')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         {
             include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
             $object_instance=new Commande($db);
         }
+<<<<<<< HEAD
         else if ($modulepart == 'order_supplier')
+=======
+        elseif ($modulepart == 'order_supplier')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         {
             include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
             $object_instance=new CommandeFournisseur($db);
         }
+<<<<<<< HEAD
         else if ($modulepart == 'contract')
+=======
+        elseif ($modulepart == 'contract')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         {
             include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
             $object_instance=new Contrat($db);
         }
+<<<<<<< HEAD
         else if ($modulepart == 'tax')
+=======
+        elseif ($modulepart == 'tax')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         {
             include_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
             $object_instance=new ChargeSociales($db);
         }
 
+<<<<<<< HEAD
         $var=true;
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         foreach($filearray as $key => $file)
         {
             if (!is_dir($file['name'])
@@ -658,13 +986,18 @@ if ($ok && GETPOST('clean_orphelin_dir','alpha'))
             )
             {
                 // Define relative path used to store the file
+<<<<<<< HEAD
                 $relativefile=preg_replace('/'.preg_quote($upload_dir.'/','/').'/','',$file['fullname']);
+=======
+                $relativefile=preg_replace('/'.preg_quote($upload_dir.'/', '/').'/', '', $file['fullname']);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
                 //var_dump($file);
                 $id=0; $ref=''; $object_instance->id=0; $object_instance->ref=''; $label='';
 
                 // To show ref or specific information according to view to show (defined by $module)
                 if ($modulepart == 'invoice')          {
+<<<<<<< HEAD
                     preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=$reg[1];
                 }
                 if ($modulepart == 'invoice_supplier') {
@@ -684,18 +1017,44 @@ if ($ok && GETPOST('clean_orphelin_dir','alpha'))
                 }
                 if ($modulepart == 'tax')              {
                     preg_match('/(\d+)\/[^\/]+$/',$relativefile,$reg); $id=$reg[1];
+=======
+                    preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);  $ref=$reg[1];
+                }
+                if ($modulepart == 'invoice_supplier') {
+                    preg_match('/(\d+)\/[^\/]+$/', $relativefile, $reg); $id=empty($reg[1])?'':$reg[1];
+                }
+                if ($modulepart == 'propal')           {
+                    preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);  $ref=$reg[1];
+                }
+                if ($modulepart == 'order')            {
+                    preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);  $ref=$reg[1];
+                }
+                if ($modulepart == 'order_supplier')   {
+                    preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);  $ref=$reg[1];
+                }
+                if ($modulepart == 'contract')         {
+                    preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);  $ref=$reg[1];
+                }
+                if ($modulepart == 'tax')              {
+                    preg_match('/(\d+)\/[^\/]+$/', $relativefile, $reg); $id=$reg[1];
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 }
 
                 if ($id || $ref)
                 {
                     //print 'Fetch '.$id.' or '.$ref.'<br>';
+<<<<<<< HEAD
                     $result=$object_instance->fetch($id,$ref);
+=======
+                    $result=$object_instance->fetch($id, $ref);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                     //print $result.'<br>';
                     if ($result == 0)    // Not found but no error
                     {
                         // Clean of orphelins directories are done into repair.php
                         print '<tr><td colspan="2">';
                         print 'Delete orphelins file '.$file['fullname'].'<br>';
+<<<<<<< HEAD
                         if (GETPOST('clean_orphelin_dir','alpha') == 'confirmed')
                         {
                             dol_delete_file($file['fullname'],1,1,1);
@@ -704,6 +1063,16 @@ if ($ok && GETPOST('clean_orphelin_dir','alpha'))
                         print "</td></tr>";
                     }
                     else if ($result < 0) print 'Error in '.get_class($object_instance).'.fetch of id'.$id.' ref='.$ref.', result='.$result.'<br>';
+=======
+                        if (GETPOST('clean_orphelin_dir', 'alpha') == 'confirmed')
+                        {
+                            dol_delete_file($file['fullname'], 1, 1, 1);
+                            dol_delete_dir(dirname($file['fullname']), 1);
+                        }
+                        print "</td></tr>";
+                    }
+                    elseif ($result < 0) print 'Error in '.get_class($object_instance).'.fetch of id'.$id.' ref='.$ref.', result='.$result.'<br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 }
             }
         }
@@ -711,9 +1080,15 @@ if ($ok && GETPOST('clean_orphelin_dir','alpha'))
 }
 
 // clean_linked_elements: Check and clean linked elements
+<<<<<<< HEAD
 if ($ok && GETPOST('clean_product_stock_batch','alpha'))
 {
     $methodtofix=GETPOST('methodtofix','alpha')?GETPOST('methodtofix','alpha'):'updatestock';
+=======
+if ($ok && GETPOST('clean_product_stock_batch', 'alpha'))
+{
+    $methodtofix=GETPOST('methodtofix', 'alpha')?GETPOST('methodtofix', 'alpha'):'updatestock';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     print '<tr><td colspan="2"><br>*** Clean table product_batch, methodtofix='.$methodtofix.' (possible values: updatestock or updatebatch)</td></tr>';
 
@@ -774,7 +1149,11 @@ if ($ok && GETPOST('clean_product_stock_batch','alpha'))
                             if ($resql2)
                             {
                                 // We update product_stock, so we must field stock into product too.
+<<<<<<< HEAD
                                 $sql3='UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps WHERE ps.fk_product = p.rowid)';
+=======
+                                $sql3='UPDATE '.MAIN_DB_PREFIX.'product p SET p.stock= (SELECT SUM(ps.reel) FROM '.MAIN_DB_PREFIX.'product_stock ps WHERE ps.fk_product = p.rowid)';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                                 $resql3=$db->query($sql3);
                                 if (! $resql3)
                                 {
@@ -812,7 +1191,11 @@ if ($ok && GETPOST('clean_product_stock_batch','alpha'))
 
 
 // clean_product_stock_negative_if_batch
+<<<<<<< HEAD
 if ($ok && GETPOST('clean_product_stock_negative_if_batch','alpha'))
+=======
+if ($ok && GETPOST('clean_product_stock_negative_if_batch', 'alpha'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
     print '<tr><td colspan="2"><br>Clean table product_batch, methodtofix='.$methodtofix.' (possible values: updatestock or updatebatch)</td></tr>';
 
@@ -842,7 +1225,11 @@ if ($ok && GETPOST('clean_product_stock_negative_if_batch','alpha'))
 }
 
 // set_empty_time_spent_amount
+<<<<<<< HEAD
 if ($ok && GETPOST('set_empty_time_spent_amount','alpha'))
+=======
+if ($ok && GETPOST('set_empty_time_spent_amount', 'alpha'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
     print '<tr><td colspan="2"><br>*** Set value of time spent without amount</td></tr>';
 
@@ -898,14 +1285,23 @@ if ($ok && GETPOST('set_empty_time_spent_amount','alpha'))
     {
         dol_print_error($db);
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 
 // force_disable_of_modules_not_found
+<<<<<<< HEAD
 if ($ok && GETPOST('force_disable_of_modules_not_found','alpha'))
 {
     print '<tr><td colspan="2"><br>*** Force modules not found to be disabled (only modules adding js, css or hooks can be detected as removed)</td></tr>';
+=======
+if ($ok && GETPOST('force_disable_of_modules_not_found', 'alpha'))
+{
+    print '<tr><td colspan="2"><br>*** Force modules not found physicaly to be disabled (only modules adding js, css or hooks can be detected as removed physicaly)</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     $arraylistofkey=array('hooks','js','css');
 
@@ -933,25 +1329,42 @@ if ($ok && GETPOST('force_disable_of_modules_not_found','alpha'))
 
 	                $db->begin();
 
+<<<<<<< HEAD
+=======
+	                $reg = array();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	                if (preg_match('/MAIN_MODULE_(.*)_'.strtoupper($key).'/i', $constantname, $reg))
 	                {
 	                    $name=strtolower($reg[1]);
 
+<<<<<<< HEAD
 	                    if ($name)		// And entry for key $key and module $name was found in database.
 	                    {
+=======
+	                    if ($name)		// An entry for key $key and module $name was found in database.
+	                    {
+	                    	$reloffile = '';
+							$result = 'found';
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	                    	if ($key == 'hooks') $reloffile=$name.'/class/actions_'.$name.'.class.php';
 	                    	if ($key == 'js')
 	                    	{
 		                    	$value=$obj->value;
 		                    	$valuearray=json_decode($value);
 	                    		$reloffile=$valuearray[0];
+<<<<<<< HEAD
 	                    		$reloffile=preg_replace('/^\//','',$valuearray[0]);
+=======
+	                    		$reloffile=preg_replace('/^\//', '', $valuearray[0]);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	                    	}
 	                    	if ($key == 'css')
 	                    	{
 		                    	$value=$obj->value;
 		                    	$valuearray=json_decode($value);
 		                    	if ($value && count($valuearray)==0) $valuearray[0]=$value;	// If value was not a json array but a string
+<<<<<<< HEAD
 	                    		$reloffile=preg_replace('/^\//','',$valuearray[0]);
 	                    	}
 
@@ -962,6 +1375,22 @@ if ($ok && GETPOST('force_disable_of_modules_not_found','alpha'))
 	                    	catch(Exception $e)
 	                    	{
 								// No catch yet
+=======
+	                    		$reloffile=preg_replace('/^\//', '', $valuearray[0]);
+	                    	}
+
+	                    	if ($reloffile)
+	                    	{
+		                    	//var_dump($key.' - '.$value.' - '.$reloffile);
+		                    	try {
+		                        	$result = dol_buildpath($reloffile, 0, 2);
+		                    	}
+		                    	catch(Exception $e)
+		                    	{
+									// No catch yet
+									$result = 'found';	// If error, we force lke if we found to avoid any deletion
+		                    	}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	                    	}
 
 	                        if (! $result)
@@ -976,19 +1405,33 @@ if ($ok && GETPOST('force_disable_of_modules_not_found','alpha'))
 	                                    $error++;
 	                                    dol_print_error($db);
 	                                }
+<<<<<<< HEAD
 	                                $sql2 ="DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_MODULE_".strtoupper($name)."'";
 	                                $resql2=$db->query($sql2);
 	                                if (! $resql2)
+=======
+	                                $sql3 ="DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_MODULE_".strtoupper($name)."'";
+	                                $resql3=$db->query($sql3);
+	                                if (! $resql3)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	                                {
 	                                    $error++;
 	                                    dol_print_error($db);
 	                                }
 	                                else
+<<<<<<< HEAD
 	                                    print ' - <font class="warning">Cleaned</font>';
 	                            }
 	                            else
 	                            {
 	                                print ' - <font class="warning">Canceled (test mode)</font>';
+=======
+	                                    print ' - <span class="warning">Cleaned</span>';
+	                            }
+	                            else
+	                            {
+	                                print ' - <span class="warning">Canceled (test mode)</span>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	                            }
 	                        }
 	                        else
@@ -1022,7 +1465,11 @@ if ($ok && GETPOST('force_disable_of_modules_not_found','alpha'))
 
 
 // clean_old_module_entries: Clean data into const when files of module were removed without being
+<<<<<<< HEAD
 if ($ok && GETPOST('clean_perm_table','alpha'))
+=======
+if ($ok && GETPOST('clean_perm_table', 'alpha'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	print '<tr><td colspan="2"><br>*** Clean table user_rights from lines of external modules no more enabled</td></tr>';
 
@@ -1045,7 +1492,11 @@ if ($ok && GETPOST('clean_perm_table','alpha'))
 				if ($obj->id > 0)
 				{
 					print '<tr><td>Found line with id '.$obj->id.', label "'.$obj->libelle.'" of module "'.$obj->module.'" to delete';
+<<<<<<< HEAD
 					if (GETPOST('clean_perm_table','alpha') == 'confirmed')
+=======
+					if (GETPOST('clean_perm_table', 'alpha') == 'confirmed')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					{
 						$sqldelete = 'DELETE FROM '.MAIN_DB_PREFIX.'rights_def WHERE id = '.$obj->id;
 						$resqldelete = $db->query($sqldelete);
@@ -1074,13 +1525,21 @@ if ($ok && GETPOST('clean_perm_table','alpha'))
 
 
 // force utf8 on tables
+<<<<<<< HEAD
 if ($ok && GETPOST('force_utf8_on_tables','alpha'))
+=======
+if ($ok && GETPOST('force_utf8_on_tables', 'alpha'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
     print '<tr><td colspan="2"><br>*** Force page code and collation of tables into utf8/utf8_unicode_ci (for mysql/mariadb only)</td></tr>';
 
     if ($db->type == "mysql" || $db->type == "mysqli")
     {
+<<<<<<< HEAD
     	$force_utf8_on_tables = GETPOST('force_utf8_on_tables','alpha');
+=======
+    	$force_utf8_on_tables = GETPOST('force_utf8_on_tables', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     	$listoftables = $db->DDLListTables($db->database_name);
 
@@ -1148,7 +1607,11 @@ else
 }
 
 dolibarr_install_syslog("--- repair: end");
+<<<<<<< HEAD
 pFooter(1,$setuplang);
+=======
+pFooter(1, $setuplang);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if ($db->connected) $db->close();
 

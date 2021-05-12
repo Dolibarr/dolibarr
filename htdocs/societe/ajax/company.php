@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,6 +26,7 @@
  *       \brief      File to return Ajax response on thirdparty list request
  */
 
+<<<<<<< HEAD
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL',1); // Disables token renewal
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
@@ -37,6 +42,23 @@ $outjson=(GETPOST('outjson','int') ? GETPOST('outjson','int') : 0);
 $action=GETPOST('action', 'alpha');
 $id=GETPOST('id', 'int');
 $showtype=GETPOST('showtype','int');
+=======
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
+
+require '../../main.inc.php';
+
+$htmlname=GETPOST('htmlname', 'alpha');
+$filter=GETPOST('filter', 'alpha');
+$outjson=(GETPOST('outjson', 'int') ? GETPOST('outjson', 'int') : 0);
+$action=GETPOST('action', 'alpha');
+$id=GETPOST('id', 'int');
+$showtype=GETPOST('showtype', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 /*
@@ -78,7 +100,11 @@ else
 
 	if (empty($htmlname)) return;
 
+<<<<<<< HEAD
 	$match = preg_grep('/('.$htmlname.'[0-9]+)/',array_keys($_GET));
+=======
+	$match = preg_grep('/('.$htmlname.'[0-9]+)/', array_keys($_GET));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	sort($match);
 	$id = (! empty($match[0]) ? $match[0] : '');
 
@@ -94,4 +120,7 @@ else
 
 	if ($outjson) print json_encode($arrayresult);
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -24,5 +24,9 @@
 $form=new Form($db);
 
 // Affichage des templates
+<<<<<<< HEAD
 require ('tpl/validation1.tpl.php');
 
+=======
+require 'tpl/validation1.tpl.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

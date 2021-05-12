@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - resource
 MenuResourceIndex=Ressourcen
+<<<<<<< HEAD
 MenuResourceAdd=Neue Ressource
 DeleteResource=Ressource löschen
 ConfirmDeleteResourceElement=Bitte Löschung der Ressource dieses Elements bestätigen
@@ -9,6 +10,17 @@ NoResourceLinked=Keine Ressource verknüpft
 ResourcePageIndex=Liste der Ressourcen
 ResourceSingular=Ressource
 ResourceCard=Ressource - Karte
+=======
+MenuResourceAdd=neue Ressource
+DeleteResource=Ressource löschen
+ConfirmDeleteResourceElement=Löschung der Ressource zu diesem Element bestätigen
+NoResourceInDatabase=Keine Ressource in der Datenbank
+NoResourceLinked=keine Ressource verknüpft
+ActionsOnResource=Ereignisse zu dieser Ressource
+ResourcePageIndex=Liste der Ressourcen
+ResourceSingular=Ressource
+ResourceCard=Ressource - Übersicht
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddResource=Ressource erstellen
 ResourceFormLabel_ref=Ressourcen-Name
 ResourceType=Ressourcen-Typ
@@ -18,7 +30,11 @@ ResourcesLinkedToElement=mit Element verknüpfte Ressourcen
 
 ShowResource=Ressource anzeigen
 
+<<<<<<< HEAD
 ResourceElementPage=Element-Ressourcen
+=======
+ResourceElementPage=Ressourcen-Element
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ResourceCreatedWithSuccess=Ressource erfolgreich erstellt
 RessourceLineSuccessfullyDeleted=Ressourcen-Zeile erfolgreich gelöscht
 RessourceLineSuccessfullyUpdated=Ressourcen-Zeile erfolgreich aktualisiert
@@ -30,7 +46,11 @@ DictionaryResourceType=Ressourcen-Typ
 
 SelectResource=Ressource wählen
 
+<<<<<<< HEAD
 IdResource=Resourcen ID
+=======
+IdResource=Ressourcen ID
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AssetNumber=Seriennummer
 ResourceTypeCode=Ressourcen-Typ Code
 ImportDataset_resource_1=Ressourcen

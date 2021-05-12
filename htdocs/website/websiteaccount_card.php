@@ -22,6 +22,7 @@
  */
 
 // Load Dolibarr environment
+<<<<<<< HEAD
 $res=0;
 // Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
 if (! $res && ! empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) $res=@include($_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php");
@@ -40,6 +41,13 @@ include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
 include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php');
 include_once(DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php');
 include_once(DOL_DOCUMENT_ROOT.'/website/lib/websiteaccount.lib.php');
+=======
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
+require_once DOL_DOCUMENT_ROOT.'/website/lib/websiteaccount.lib.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Load translation files required by the page
 $langs->loadLangs(array("website","other"));
@@ -59,6 +67,7 @@ $diroutputmassaction=$conf->website->dir_output . '/temp/massgeneration/'.$user-
 $hookmanager->initHooks(array('websiteaccountcard'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('societeaccount');
+<<<<<<< HEAD
 $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
 
 // Initialize array of search criterias
@@ -67,6 +76,16 @@ $search=array();
 foreach($object->fields as $key => $val)
 {
     if (GETPOST('search_'.$key,'alpha')) $search[$key]=GETPOST('search_'.$key,'alpha');
+=======
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
+
+// Initialize array of search criterias
+$search_all=trim(GETPOST("search_all", 'alpha'));
+$search=array();
+foreach($object->fields as $key => $val)
+{
+    if (GETPOST('search_'.$key, 'alpha')) $search[$key]=GETPOST('search_'.$key, 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 if (empty($action) && empty($id) && empty($ref)) $action='view';
@@ -76,11 +95,23 @@ if (empty($action) && empty($id) && empty($ref)) $action='view';
 //if ($user->societe_id > 0) $socid = $user->societe_id;
 //$result = restrictedArea($user, 'website', $id);
 
+<<<<<<< HEAD
+=======
+$permissionnote=$user->rights->websiteaccount->write;	// Used by the include of actions_setnotes.inc.php
+$permissiondellink=$user->rights->websiteaccount->write;	// Used by the include of actions_dellink.inc.php
+$permissionedit=$user->rights->websiteaccount->write; // Used by the include of actions_lineupdown.inc.php
+$permissiontoadd=$user->rights->websiteaccount->write; // Used by the include of actions_addupdatedelete.inc.php
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
+<<<<<<< HEAD
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+=======
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 
@@ -89,7 +120,11 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
  */
 
 $parameters=array();
+<<<<<<< HEAD
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+=======
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -98,7 +133,11 @@ if (empty($reshook))
 
 	$permissiontoadd = $user->rights->website->write;
 	$permissiontodelete = $user->rights->website->delete;
+<<<<<<< HEAD
 	$backurlforlist = dol_buildpath('/website/websiteaccount_list.php',1);
+=======
+	$backurlforlist = dol_buildpath('/website/websiteaccount_list.php', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	// Actions cancel, add, update or delete
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
@@ -121,7 +160,11 @@ if (empty($reshook))
 $form=new Form($db);
 $formfile=new FormFile($db);
 
+<<<<<<< HEAD
 llxHeader('','WebsiteAccount','');
+=======
+llxHeader('', 'WebsiteAccount', '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Example : Adding jquery code
 print '<script type="text/javascript" language="javascript">
@@ -220,12 +263,20 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteWebsiteAccount'), $langs->trans('ConfirmDeleteWebsiteAccount'), 'confirm_delete', '', 0, 1);
 	}
 
+<<<<<<< HEAD
 	if (! $formconfirm) {
 	    $parameters = array('lineid' => $lineid);
 	    $reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	    if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
 	    elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
 	}
+=======
+	// Call Hook formConfirm
+	$parameters = array('lineid' => $lineid);
+	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
+	elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	// Print form confirm
 	print $formconfirm;
@@ -311,7 +362,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($action != 'presend' && $action != 'editline') {
     	print '<div class="tabsAction">'."\n";
     	$parameters=array();
+<<<<<<< HEAD
     	$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+=======
+    	$reshook=$hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
     	if (empty($reshook))
@@ -395,7 +450,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 // End of page
 llxFooter();
 $db->close();

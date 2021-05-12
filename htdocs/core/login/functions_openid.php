@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2007-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2007-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2007-2009 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +38,11 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/openid.class.php';
  * @param   int		$entitytotest   Number of instance (always 1 if module multicompany not enabled)
  * @return	string					Login if OK, '' if KO
  */
+<<<<<<< HEAD
 function check_user_password_openid($usertotest,$passwordtotest,$entitytotest)
+=======
+function check_user_password_openid($usertotest, $passwordtotest, $entitytotest)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
     global $_POST,$db,$conf,$langs;
 
@@ -70,7 +78,11 @@ function check_user_password_openid($usertotest,$passwordtotest,$entitytotest)
         $openid = new SimpleOpenID();
         $openid->SetIdentity($_GET['openid_identity']);
         $openid_validation_result = $openid->ValidateWithServer();
+<<<<<<< HEAD
         if ($openid_validation_result == true)
+=======
+        if ($openid_validation_result === true)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         {
             // OK HERE KEY IS VALID
 
@@ -90,7 +102,11 @@ function check_user_password_openid($usertotest,$passwordtotest,$entitytotest)
                 }
             }
         }
+<<<<<<< HEAD
         else if($openid->IsError() == true)
+=======
+        elseif($openid->IsError() === true)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         {
             // ON THE WAY, WE GOT SOME ERROR
             $error = $openid->GetError();
@@ -103,7 +119,11 @@ function check_user_password_openid($usertotest,$passwordtotest,$entitytotest)
             return false;
         }
     }
+<<<<<<< HEAD
     else if ($_GET['openid_mode'] == 'cancel')
+=======
+    elseif ($_GET['openid_mode'] == 'cancel')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         // User Canceled your Request
         //echo "USER CANCELED REQUEST";

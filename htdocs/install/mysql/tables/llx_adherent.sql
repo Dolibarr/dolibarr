@@ -2,7 +2,11 @@
 -- Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
 -- Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
 -- Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+-- Copyright (C) 2009      Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -30,6 +34,10 @@ create table llx_adherent
   entity           integer DEFAULT 1 NOT NULL,	-- multi company id
   ref_ext          varchar(128),                -- reference into an external system (not used by dolibarr)
 
+<<<<<<< HEAD
+=======
+  gender           varchar(10),
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
   civility         varchar(6),
   lastname         varchar(50),
   firstname        varchar(50),
@@ -46,7 +54,21 @@ create table llx_adherent
   state_id         integer,
   country          integer,
   email            varchar(255),
+<<<<<<< HEAD
   skype            varchar(255),
+=======
+
+  skype            varchar(255),
+  twitter          varchar(255),                        		--
+  facebook         varchar(255),                        		--
+  linkedin         varchar(255),                        		--
+  instagram        varchar(255),                        		--
+  snapchat         varchar(255),                        		--
+  googleplus       varchar(255),                        		--
+  youtube          varchar(255),                        		--
+  whatsapp         varchar(255),                        		--
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
   phone            varchar(30),
   phone_perso      varchar(30),
   phone_mobile     varchar(30),

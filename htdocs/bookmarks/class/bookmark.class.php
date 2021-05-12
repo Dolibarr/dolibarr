@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2005 Laurent Destailleur <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+=======
+ * Copyright (C) 2015 Marcos García       <marcosgdf@gmail.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +32,7 @@
  */
 class Bookmark extends CommonObject
 {
+<<<<<<< HEAD
     public $element='bookmark';
     public $table_element='bookmark';
     public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -43,6 +48,60 @@ class Bookmark extends CommonObject
     var $title;
     var $position;
     var $favicon;
+=======
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element='bookmark';
+
+    /**
+     * @var string Name of table without prefix where object is stored
+     */
+    public $table_element='bookmark';
+
+    /**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+    public $ismultientitymanaged = 1;
+
+    /**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto = 'bookmark';
+
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    /**
+     * @var int ID
+     */
+    public $id;
+
+    /**
+	 * @var int User ID
+	 */
+	public $fk_user;
+
+    /**
+     * Date creation record (datec)
+     *
+     * @var integer
+     */
+    public $datec;
+
+    public $url;
+
+    public $target;	// 0=replace, 1=new window
+
+    public $title;
+
+    public $position;
+
+    public $favicon;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
     /**
@@ -50,7 +109,11 @@ class Bookmark extends CommonObject
 	 *
 	 *  @param		DoliDB		$db      Database handler
      */
+<<<<<<< HEAD
     function __construct($db)
+=======
+    public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $this->db = $db;
     }
@@ -61,7 +124,11 @@ class Bookmark extends CommonObject
      *    @param    int		$id		Bookmark Id Loader
      *    @return	int				<0 if KO, >0 if OK
      */
+<<<<<<< HEAD
     function fetch($id)
+=======
+    public function fetch($id)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $conf;
 
@@ -103,7 +170,11 @@ class Bookmark extends CommonObject
      *
      *      @return     int     <0 si ko, rowid du bookmark cree si ok
      */
+<<<<<<< HEAD
     function create()
+=======
+    public function create()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $conf;
 
@@ -127,7 +198,11 @@ class Bookmark extends CommonObject
         $sql.= ", ".$this->db->escape($conf->entity);
         $sql.= ")";
 
+<<<<<<< HEAD
         dol_syslog("Bookmark::update", LOG_DEBUG);
+=======
+        dol_syslog("Bookmark::create", LOG_DEBUG);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -160,7 +235,11 @@ class Bookmark extends CommonObject
      *
      *      @return     int         <0 if KO, > if OK
      */
+<<<<<<< HEAD
     function update()
+=======
+    public function update()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
     	// Clean parameters
     	$this->url=trim($this->url);
@@ -195,7 +274,11 @@ class Bookmark extends CommonObject
      *      @param      int		$id     Id removed bookmark
      *      @return     int         	<0 si ko, >0 si ok
      */
+<<<<<<< HEAD
     function remove($id)
+=======
+    public function remove($id)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $sql  = "DELETE FROM ".MAIN_DB_PREFIX."bookmark";
         $sql .= " WHERE rowid = ".$id;
@@ -211,7 +294,10 @@ class Bookmark extends CommonObject
             $this->error=$this->db->lasterror();
             return -1;
         }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
 	/**
@@ -237,9 +323,16 @@ class Bookmark extends CommonObject
 	 *	@param      int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 * 	@return 	string					Label of contact status
 	 */
+<<<<<<< HEAD
 	function getLibStatut($mode)
 	{
 	    return '';
 	}
 
+=======
+	public function getLibStatut($mode)
+	{
+	    return '';
+	}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

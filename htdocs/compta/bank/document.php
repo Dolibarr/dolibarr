@@ -3,7 +3,11 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
+<<<<<<< HEAD
  * Copyright (C) 2005-2017 Regis Houssin         <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2017 Regis Houssin         <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +28,11 @@
  * 	\ingroup    banque
  * 	\brief      Page de gestion des documents attaches a un compte bancaire
  */
+<<<<<<< HEAD
 require('../../main.inc.php');
+=======
+require '../../main.inc.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 require_once DOL_DOCUMENT_ROOT . "/core/lib/bank.lib.php";
 require_once DOL_DOCUMENT_ROOT . "/core/lib/files.lib.php";
 require_once DOL_DOCUMENT_ROOT . "/core/lib/images.lib.php";
@@ -91,7 +99,11 @@ include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 $title = $langs->trans("FinancialAccount").' - '.$langs->trans("Documents");
 $helpurl = "";
+<<<<<<< HEAD
 llxHeader('',$title,$helpurl);
+=======
+llxHeader('', $title, $helpurl);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $form = new Form($db);
 
@@ -105,7 +117,11 @@ if ($id > 0 || !empty($ref)) {
         dol_fiche_head($head, 'document', $langs->trans("FinancialAccount"), -1, 'account');
 
 
+<<<<<<< HEAD
         // Construit liste des fichiers
+=======
+        // Build file list
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $filearray = dol_dir_list($upload_dir, "files", 0, '', '\.meta$',
                 $sortfield,
                 (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
@@ -122,9 +138,15 @@ if ($id > 0 || !empty($ref)) {
         print '<div class="fichecenter">';
         print '<div class="underbanner clearboth"></div>';
 
+<<<<<<< HEAD
         print '<table class="border" width="100%">';
         print '<tr><td class="titlefield">' . $langs->trans("NbOfAttachedFiles") . '</td><td colspan="3">' . count($filearray) . '</td></tr>';
         print '<tr><td>' . $langs->trans("TotalSizeOfAttachedFiles") . '</td><td colspan="3">' .dol_print_size($totalsize,1,1).'</td></tr>';
+=======
+        print '<table class="border tableforfield centpercent">';
+        print '<tr><td class="titlefield">' . $langs->trans("NbOfAttachedFiles") . '</td><td colspan="3">' . count($filearray) . '</td></tr>';
+        print '<tr><td>' . $langs->trans("TotalSizeOfAttachedFiles") . '</td><td colspan="3">' .dol_print_size($totalsize, 1, 1).'</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         print "</table>\n";
 
         print '</div>';
@@ -147,7 +169,12 @@ else {
     exit;
 }
 
+<<<<<<< HEAD
 
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

@@ -1,9 +1,16 @@
 # Dolibarr language file - Source file is en_US - sms
 Sms=Sms
+<<<<<<< HEAD
 SmsSetup=Sms setup
 SmsDesc=This page allows you to define globals options on SMS features
 SmsCard=SMS Card
 AllSms=All SMS campains
+=======
+SmsSetup=SMS setup
+SmsDesc=This page allows you to define global options on SMS features
+SmsCard=SMS Card
+AllSms=All SMS campaigns
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SmsTargets=Targets
 SmsRecipients=Targets
 SmsRecipient=Target
@@ -13,6 +20,7 @@ SmsTo=Target
 SmsTopic=Topic of SMS
 SmsText=Message
 SmsMessage=SMS Message
+<<<<<<< HEAD
 ShowSms=Show Sms
 ListOfSms=List SMS campains
 NewSms=New SMS campain
@@ -27,6 +35,22 @@ SmsResult=Result of Sms sending
 TestSms=Test Sms
 ValidSms=Validate Sms
 ApproveSms=Approve Sms
+=======
+ShowSms=Show SMS
+ListOfSms=List SMS campaigns
+NewSms=New SMS campaign
+EditSms=Edit SMS
+ResetSms=New sending
+DeleteSms=Delete SMS campaign
+DeleteASms=Remove a SMS campaign
+PreviewSms=Previuw SMS
+PrepareSms=Prepare SMS
+CreateSms=Create SMS
+SmsResult=Result of SMS sending
+TestSms=Test SMS
+ValidSms=Validate SMS
+ApproveSms=Approve SMS
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SmsStatusDraft=Draft
 SmsStatusValidated=Validated
 SmsStatusApproved=Approved
@@ -35,7 +59,11 @@ SmsStatusSentPartialy=Sent partially
 SmsStatusSentCompletely=Sent completely
 SmsStatusError=Error
 SmsStatusNotSent=Not sent
+<<<<<<< HEAD
 SmsSuccessfulySent=Sms correctly sent (from %s to %s)
+=======
+SmsSuccessfulySent=SMS correctly sent (from %s to %s)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorSmsRecipientIsEmpty=Number of target is empty
 WarningNoSmsAdded=No new phone number to add to target list
 ConfirmValidSms=Do you confirm validation of this campaign?
@@ -44,8 +72,16 @@ NbOfSms=No. of phone numbers
 ThisIsATestMessage=This is a test message
 SendSms=Send SMS
 SmsInfoCharRemain=No. of remaining characters
+<<<<<<< HEAD
 SmsInfoNumero= (international format ie : +33899701761)
 DelayBeforeSending=Delay before sending (minutes)
 SmsNoPossibleSenderFound=No sender available. Check setup of your SMS provider.
 SmsNoPossibleRecipientFound=No target available. Check setup of your SMS provider.
 DisableStopIfSupported=Disable STOP message (if supported) 
+=======
+SmsInfoNumero= (international format i.e.: +33899701761)
+DelayBeforeSending=Delay before sending (minutes)
+SmsNoPossibleSenderFound=No sender available. Check setup of your SMS provider.
+SmsNoPossibleRecipientFound=No target available. Check setup of your SMS provider.
+DisableStopIfSupported=Disable STOP message (if supported)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -1,8 +1,16 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2011-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2014      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
  * Copyright (C) 2015      Charlie BENKE        <charlie@patas-monkey.com>
+=======
+/* Copyright (C) 2011-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2014       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2015       Charlie BENKE           <charlie@patas-monkey.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
+<<<<<<< HEAD
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta","banks","bills","users","salaries","hrm"));
@@ -38,6 +47,25 @@ $action=GETPOST('action','aZ09');
 
 // Security check
 $socid = GETPOST("socid","int");
+=======
+if (! empty($conf->projet->enabled))
+{
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+}
+
+// Load translation files required by the page
+$langs->loadLangs(array("compta","banks","bills","users","salaries","hrm"));
+if (! empty($conf->projet->enabled))	$langs->load("projects");
+
+$id=GETPOST("id", 'int');
+$action=GETPOST('action', 'aZ09');
+$cancel= GETPOST('cancel', 'aZ09');
+$projectid = (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : GETPOST('fk_project', 'int'));
+
+// Security check
+$socid = GETPOST("socid", "int");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'salaries', '', '', '');
 
@@ -52,6 +80,7 @@ $hookmanager->initHooks(array('salarycard','globalcard'));
  * Actions
  */
 
+<<<<<<< HEAD
 if ($_POST["cancel"] == $langs->trans("Cancel"))
 {
 	header("Location: index.php");
@@ -66,12 +95,40 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$datev=dol_mktime(12,0,0, $_POST["datevmonth"], $_POST["datevday"], $_POST["datevyear"]);
 	$datesp=dol_mktime(12,0,0, $_POST["datespmonth"], $_POST["datespday"], $_POST["datespyear"]);
 	$dateep=dol_mktime(12,0,0, $_POST["dateepmonth"], $_POST["dateepday"], $_POST["dateepyear"]);
+=======
+if ($cancel)
+{
+	header("Location: list.php");
+	exit;
+}
+
+// Link to a project
+if ($action == 'classin' && $user->rights->banque->modifier)
+{
+	$object->fetch($id);
+	$object->setProject(GETPOST('projectid'));
+}
+
+if ($action == 'add' && empty($cancel))
+{
+	$error=0;
+
+	$datep=dol_mktime(12, 0, 0, GETPOST("datepmonth", 'int'), GETPOST("datepday", 'int'), GETPOST("datepyear", 'int'));
+	$datev=dol_mktime(12, 0, 0, GETPOST("datevmonth", 'int'), GETPOST("datevday", 'int'), GETPOST("datevyear", 'int'));
+	$datesp=dol_mktime(12, 0, 0, GETPOST("datespmonth", 'int'), GETPOST("datespday", 'int'), GETPOST("datespyear", 'int'));
+	$dateep=dol_mktime(12, 0, 0, GETPOST("dateepmonth", 'int'), GETPOST("dateepday", 'int'), GETPOST("dateepyear", 'int'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if (empty($datev)) $datev=$datep;
 
 	$type_payment = dol_getIdFromCode($db, GETPOST("paymenttype", 'alpha'), 'c_paiement', 'code', 'id', 1);
 
+<<<<<<< HEAD
 	$object->accountid=GETPOST("accountid") > 0 ? GETPOST("accountid","int") : 0;
 	$object->fk_user=GETPOST("fk_user") > 0 ? GETPOST("fk_user","int") : 0;
+=======
+	$object->accountid=GETPOST("accountid") > 0 ? GETPOST("accountid", "int") : 0;
+	$object->fk_user=GETPOST("fk_user") > 0 ? GETPOST("fk_user", "int") : 0;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$object->datev=$datev;
 	$object->datep=$datep;
 	$object->amount=price2num(GETPOST("amount"));
@@ -82,10 +139,18 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$object->type_payment=($type_payment > 0 ? $type_payment : 0);
 	$object->num_payment=GETPOST("num_payment");
 	$object->fk_user_author=$user->id;
+<<<<<<< HEAD
 
 	// Set user current salary as ref salaray for the payment
 	$fuser=new User($db);
 	$fuser->fetch(GETPOST("fk_user","int"));
+=======
+	$object->fk_project= GETPOST('fk_project', 'int');
+
+	// Set user current salary as ref salaray for the payment
+	$fuser=new User($db);
+	$fuser->fetch(GETPOST("fk_user", "int"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$object->salary=$fuser->salary;
 
 	if (empty($datep) || empty($datev) || empty($datesp) || empty($dateep))
@@ -122,7 +187,11 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 		if ($ret > 0)
 		{
 			$db->commit();
+<<<<<<< HEAD
 			header("Location: index.php");
+=======
+			header("Location: list.php");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			exit;
 		}
 		else
@@ -157,7 +226,11 @@ if ($action == 'delete')
 			if ($result >= 0)
 			{
 				$db->commit();
+<<<<<<< HEAD
 				header("Location: ".DOL_URL_ROOT.'/compta/salaries/index.php');
+=======
+				header("Location: ".DOL_URL_ROOT.'/compta/salaries/list.php');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				exit;
 			}
 			else
@@ -184,9 +257,16 @@ if ($action == 'delete')
  *	View
  */
 
+<<<<<<< HEAD
 llxHeader("",$langs->trans("SalaryPayment"));
 
 $form = new Form($db);
+=======
+llxHeader("", $langs->trans("SalaryPayment"));
+
+$form = new Form($db);
+if (! empty($conf->projet->enabled)) $formproject = new FormProjets($db);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if ($id)
 {
@@ -202,8 +282,13 @@ if ($id)
 // Create
 if ($action == 'create')
 {
+<<<<<<< HEAD
 	$year_current = strftime("%Y",dol_now());
 	$pastmonth = strftime("%m",dol_now()) - 1;
+=======
+	$year_current = strftime("%Y", dol_now());
+	$pastmonth = strftime("%m", dol_now()) - 1;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$pastmonthyear = $year_current;
 	if ($pastmonth == 0)
 	{
@@ -222,14 +307,22 @@ if ($action == 'create')
 
 	if (empty($datesp) || empty($dateep)) // We define date_start and date_end
 	{
+<<<<<<< HEAD
 		$datesp=dol_get_first_day($pastmonthyear,$pastmonth,false); $dateep=dol_get_last_day($pastmonthyear,$pastmonth,false);
+=======
+		$datesp=dol_get_first_day($pastmonthyear, $pastmonth, false); $dateep=dol_get_last_day($pastmonthyear, $pastmonth, false);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	print '<form name="salary" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 
+<<<<<<< HEAD
 	print load_fiche_titre($langs->trans("NewSalaryPayment"),'', 'title_accountancy.png');
+=======
+	print load_fiche_titre($langs->trans("NewSalaryPayment"), '', 'title_accountancy.png');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	dol_fiche_head('', '');
 
@@ -237,59 +330,117 @@ if ($action == 'create')
 
 	// Date payment
 	print '<tr><td>';
+<<<<<<< HEAD
 	print fieldLabel('DatePayment','datep',1).'</td><td>';
 	print $form->select_date((empty($datep)?-1:$datep),"datep",'','','','add',1,1);
+=======
+	print $form->editfieldkey('DatePayment', 'datep', '', $object, 0, 'string', '', 1).'</td><td>';
+	print $form->selectDate((empty($datep)?-1:$datep), "datep", '', '', '', 'add', 1, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</td></tr>';
 
 	// Date value for bank
 	print '<tr><td>';
+<<<<<<< HEAD
 	print fieldLabel('DateValue','datev',0).'</td><td>';
 	print $form->select_date((empty($datev)?-1:$datev),"datev",'','','','add',1,1);
+=======
+	print $form->editfieldkey('DateValue', 'datev', '', $object, 0).'</td><td>';
+	print $form->selectDate((empty($datev)?-1:$datev), "datev", '', '', '', 'add', 1, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</td></tr>';
 
 	// Employee
 	print '<tr><td>';
+<<<<<<< HEAD
 	print fieldLabel('Employee','fk_user',1).'</td><td>';
 	$noactive=0;	// We keep active and unactive users
 	print $form->select_dolusers(GETPOST('fk_user','int'), 'fk_user', 1, '', 0, '', '', 0, 0, 0, 'AND employee=1', 0, '', 'maxwidth300', $noactive);
+=======
+	print $form->editfieldkey('Employee', 'fk_user', '', $object, 0, 'string', '', 1).'</td><td>';
+	$noactive=0;	// We keep active and unactive users
+	print $form->select_dolusers(GETPOST('fk_user', 'int'), 'fk_user', 1, '', 0, '', '', 0, 0, 0, 'AND employee=1', 0, '', 'maxwidth300', $noactive);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</td></tr>';
 
 	// Label
 	print '<tr><td>';
+<<<<<<< HEAD
 	print fieldLabel('Label','label',1).'</td><td>';
+=======
+	print $form->editfieldkey('Label', 'label', '', $object, 0, 'string', '', 1).'</td><td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '<input name="label" id="label" class="minwidth300" value="'.(GETPOST("label")?GETPOST("label"):$langs->trans("SalaryPayment")).'">';
 	print '</td></tr>';
 
 	// Date start period
 	print '<tr><td>';
+<<<<<<< HEAD
 	print fieldLabel('DateStartPeriod','datesp',1).'</td><td>';
 	print $form->select_date($datesp,"datesp",'','','','add');
+=======
+	print $form->editfieldkey('DateStartPeriod', 'datesp', '', $object, 0, 'string', '', 1).'</td><td>';
+	print $form->selectDate($datesp, "datesp", '', '', '', 'add');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</td></tr>';
 
 	// Date end period
 	print '<tr><td>';
+<<<<<<< HEAD
 	print fieldLabel('DateEndPeriod','dateep',1).'</td><td>';
 	print $form->select_date($dateep,"dateep",'','','','add');
+=======
+	print $form->editfieldkey('DateEndPeriod', 'dateep', '', $object, 0, 'string', '', 1).'</td><td>';
+	print $form->selectDate($dateep, "dateep", '', '', '', 'add');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</td></tr>';
 
 	// Amount
 	print '<tr><td>';
+<<<<<<< HEAD
 	print fieldLabel('Amount','amount',1).'</td><td>';
 	print '<input name="amount" id="amount" class="minwidth100" value="'.GETPOST("amount").'">';
 	print '</td></tr>';
 
+=======
+	print $form->editfieldkey('Amount', 'amount', '', $object, 0, 'string', '', 1).'</td><td>';
+	print '<input name="amount" id="amount" class="minwidth100" value="'.GETPOST("amount").'">';
+	print '</td></tr>';
+
+	// Project
+	if (! empty($conf->projet->enabled))
+	{
+		$formproject=new FormProjets($db);
+
+		print '<tr><td>'.$langs->trans("Project").'</td><td>';
+
+		$numproject=$formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1);
+
+		print '</td></tr>';
+	}
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	// Bank
 	if (! empty($conf->banque->enabled))
 	{
 		print '<tr><td>';
+<<<<<<< HEAD
 		print fieldLabel('BankAccount','selectaccountid',1).'</td><td>';
 		$form->select_comptes($_POST["accountid"],"accountid",0,'',1);  // Affiche liste des comptes courant
+=======
+		print $form->editfieldkey('BankAccount', 'selectaccountid', '', $object, 0, 'string', '', 1).'</td><td>';
+		$form->select_comptes($_POST["accountid"], "accountid", 0, '', 1);  // Affiche liste des comptes courant
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</td></tr>';
 	}
 
 	// Type payment
 	print '<tr><td>';
+<<<<<<< HEAD
 	print fieldLabel('PaymentMode','selectpaymenttype',1).'</td><td>';
+=======
+	print $form->editfieldkey('PaymentMode', 'selectpaymenttype', '', $object, 0, 'string', '', 1).'</td><td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$form->select_types_paiements(GETPOST("paymenttype"), "paymenttype", '', 2);
 	print '</td></tr>';
 
@@ -305,7 +456,11 @@ if ($action == 'create')
 
 	// Other attributes
 	$parameters=array();
+<<<<<<< HEAD
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+=======
+	$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print $hookmanager->resPrint;
 
 	print '</table>';
@@ -335,6 +490,7 @@ if ($id)
 
 	dol_fiche_head($head, 'card', $langs->trans("SalaryPayment"), -1, 'payment');
 
+<<<<<<< HEAD
     $linkback = '<a href="'.DOL_URL_ROOT.'/compta/salaries/index.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref='<div class="refidno">';
@@ -343,6 +499,48 @@ if ($id)
 	$userstatic->fetch($object->fk_user);
 
 	$morehtmlref.=$langs->trans('Employee') . ' : ' . $userstatic->getNomUrl(1);
+=======
+	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/salaries/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+
+	$morehtmlref='<div class="refidno">';
+
+	// Employee
+	$userstatic=new User($db);
+	$userstatic->fetch($object->fk_user);
+	$morehtmlref.=$langs->trans('Employee') . ' : ' . $userstatic->getNomUrl(1);
+
+	// Project
+	if (! empty($conf->projet->enabled))
+	{
+		$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+		if ($user->rights->salaries->write)
+		{
+			if ($action != 'classify')
+				$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+				if ($action == 'classify') {
+					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+					$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+					$morehtmlref.='<input type="hidden" name="action" value="classin">';
+					$morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+					$morehtmlref.=$formproject->select_projects(0, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+					$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+					$morehtmlref.='</form>';
+				} else {
+					$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+				}
+		} else {
+			if (! empty($object->fk_project)) {
+				$proj = new Project($db);
+				$proj->fetch($object->fk_project);
+				$morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+				$morehtmlref.=$proj->ref;
+				$morehtmlref.='</a>';
+			} else {
+				$morehtmlref.='';
+			}
+		}
+	}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$morehtmlref.='</div>';
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
@@ -357,15 +555,24 @@ if ($id)
 
 	print "<tr>";
 	print '<td>'.$langs->trans("DateStartPeriod").'</td><td>';
+<<<<<<< HEAD
 	print dol_print_date($object->datesp,'day');
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("DateEndPeriod").'</td><td>';
 	print dol_print_date($object->dateep,'day');
+=======
+	print dol_print_date($object->datesp, 'day');
+	print '</td></tr>';
+
+	print '<tr><td>'.$langs->trans("DateEndPeriod").'</td><td>';
+	print dol_print_date($object->dateep, 'day');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</td></tr>';
 
 	print "<tr>";
 	print '<td>'.$langs->trans("DatePayment").'</td><td>';
+<<<<<<< HEAD
 	print dol_print_date($object->datep,'day');
 	print '</td></tr>';
 
@@ -374,6 +581,16 @@ if ($id)
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
+=======
+	print dol_print_date($object->datep, 'day');
+	print '</td></tr>';
+
+	print '<tr><td>'.$langs->trans("DateValue").'</td><td>';
+	print dol_print_date($object->datev, 'day');
+	print '</td></tr>';
+
+	print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	if (! empty($conf->banque->enabled))
 	{
@@ -385,7 +602,11 @@ if ($id)
 			print '<tr>';
 			print '<td>'.$langs->trans('BankTransactionLine').'</td>';
 			print '<td>';
+<<<<<<< HEAD
 			print $bankline->getNomUrl(1,0,'showall');
+=======
+			print $bankline->getNomUrl(1, 0, 'showall');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '</td>';
 			print '</tr>';
 		}
@@ -393,7 +614,11 @@ if ($id)
 
 	// Other attributes
 	$parameters=array();
+<<<<<<< HEAD
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+=======
+	$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print $hookmanager->resPrint;
 
 	print '</table>';
@@ -415,18 +640,31 @@ if ($id)
 		}
 		else
 		{
+<<<<<<< HEAD
 			print '<a class="butActionRefused" href="#" title="'.(dol_escape_htmltag($langs->trans("NotAllowed"))).'">'.$langs->trans("Delete").'</a>';
+=======
+			print '<a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("NotAllowed"))).'">'.$langs->trans("Delete").'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 	}
 	else
 	{
+<<<<<<< HEAD
 		print '<a class="butActionRefused" href="#" title="'.$langs->trans("LinkedToAConciliatedTransaction").'">'.$langs->trans("Delete").'</a>';
+=======
+		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("LinkedToAConciliatedTransaction").'">'.$langs->trans("Delete").'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 	print "</div>";
 }
 
+<<<<<<< HEAD
 
 
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

@@ -12,7 +12,11 @@ PasswordChangedTo=Parole mainīts: %s
 SubjectNewPassword=Jūsu jaunā parole %s
 GroupRights=Grupas atļaujas
 UserRights=Lietotāja atļaujas
+<<<<<<< HEAD
 UserGUISetup=Lietotāja attēlošanas iestatīšana
+=======
+UserGUISetup=Lietotāja displeja iestatīšana
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DisableUser=Bloķēt
 DisableAUser=Bloķēt lietotāju
 DeleteUser=Izdzēst
@@ -35,7 +39,11 @@ SuperAdministrator=Super administrators
 SuperAdministratorDesc=Galvenais administrators
 AdministratorDesc=Administrators
 DefaultRights=Noklusējuma atļaujas
+<<<<<<< HEAD
 DefaultRightsDesc=Definēt šeit <u>noklusējuma</u> atļaujas, kas automātiski tiek piešķirtas uz <u>Jaunizveidotās</u> lietotājs (Doties uz lietotāja kartes, lai mainītu atļaujas esošās lietotājs).
+=======
+DefaultRightsDesc=Šeit definējiet <u>noklusējuma</u> atļaujas, kas automātiski tiek piešķirtas lietotājam <u>jauns</u> (lai mainītu atļaujas esošajiem lietotājiem, dodieties uz lietotāja karti).
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DolibarrUsers=Dolibarr lietotājiem
 LastName=Uzvārds
 FirstName=Vārds
@@ -66,6 +74,7 @@ CreateDolibarrThirdParty=Izveidot trešo pusi
 LoginAccountDisableInDolibarr=Konts bloķēts Dolibarr.
 UsePersonalValue=Izmantot personisko vērtību
 InternalUser=Iekšējais lietotājs
+<<<<<<< HEAD
 ExportDataset_user_1=Dolibarr lietotāji un īpašības
 DomainUser=Domēna lietotājs %s
 Reactivate=Aktivizēt
@@ -75,6 +84,17 @@ PermissionInheritedFromAGroup=Atļauja piešķirta, jo mantojis no viena lietot�
 Inherited=Iedzimta
 UserWillBeInternalUser=Izveidots lietotājs būs iekšējā lietotāja (jo nav saistīta ar konkrētu trešajai personai)
 UserWillBeExternalUser=Izveidots lietotājs būs ārējo lietotāju (jo saistīts ar konkrētu trešajai personai)
+=======
+ExportDataset_user_1=Lietotāji un to īpašības
+DomainUser=Domēna lietotājs %s
+Reactivate=Aktivizēt
+CreateInternalUserDesc=Šī veidlapa ļauj izveidot iekšējo lietotāju savā uzņēmumā/organizācijā. Lai izveidotu ārēju lietotāju (klientu, pārdevēju utt.), Izmantojiet trešās puses kontakta kartītes pogu “Izveidot Dolibarr lietotāju”.
+InternalExternalDesc=<b> iekšējais </b> lietotājs ir lietotājs, kas ir daļa no jūsu uzņēmuma / organizācijas. <br> <b> Ārējais </b> lietotājs ir klients, pārdevējs vai cits. <br> <br> abos gadījumos atļaujas definē tiesības uz Dolibarr, arī ārējam lietotājam var būt atšķirīgs izvēlņu pārvaldnieks nekā iekšējais lietotājs (sk. Mājas - iestatīšana - displejs)
+PermissionInheritedFromAGroup=Atļauja piešķirta, jo mantojis no viena lietotāja grupai.
+Inherited=Iedzimta
+UserWillBeInternalUser=Izveidots lietotājs būs iekšējā lietotāja (jo nav saistīta ar konkrētu trešajai personai)
+UserWillBeExternalUser=Izveidots lietotājs būs ārējais lietotājs (jo saistīts ar konkrētu trešo personu)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 IdPhoneCaller=Id zvanītāja tālrunis
 NewUserCreated=Lietotājs %s izveidots
 NewUserPassword=Parole nomainīta %s
@@ -83,17 +103,29 @@ UserDisabled=Lietotājs %s bloķēts
 UserEnabled=Lietotājs %s aktivizēts
 UserDeleted=Lietotājs %s noņemts
 NewGroupCreated=Grupa %s izveidota
+<<<<<<< HEAD
 GroupModified=Group %s modified
+=======
+GroupModified=Grupa %s ir labota
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 GroupDeleted=Grupa %s noņemta
 ConfirmCreateContact=Vai Jūs tiešām vēlaties izveidot Dolibarr kontu šim kontaktam?
 ConfirmCreateLogin=Vai jūs tiešām vēlaties izveidot Dolibarr kontu šim lietotājam?
 ConfirmCreateThirdParty=Vai jūs tiešām vēlaties izveidot trešo personu šim lietotājam?
 LoginToCreate=Pieslēdzies, lai izveidotu
+<<<<<<< HEAD
 NameToCreate=Nosaukums trešās puses, lai radītu
 YourRole=Jūsu lomas
 YourQuotaOfUsersIsReached=Jūsu aktīvo lietotāju limits ir sasniegts!
 NbOfUsers=Lietotāju sk
 NbOfPermissions=Nb atļauju
+=======
+NameToCreate=Trešās puses nosaukums kas jāizveido
+YourRole=Jūsu lomas
+YourQuotaOfUsersIsReached=Jūsu aktīvo lietotāju limits ir sasniegts!
+NbOfUsers=Lietotāju skaits
+NbOfPermissions=Atļauju skaits
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DontDowngradeSuperAdmin=Tikai superadmins var pazemināt superadminu
 HierarchicalResponsible=Uzraugs
 HierarchicView=Hierarhiska view
@@ -107,4 +139,10 @@ DisabledInMonoUserMode=Atspējots uzturēšanas režīmā
 UserAccountancyCode=Lietotāja grāmatvedības kods
 UserLogoff=Lietotājs atslēdzies
 UserLogged=Lietotājs pieteicies
+<<<<<<< HEAD
 DateEmployment=Darba uzsākšanas datums
+=======
+DateEmployment=Nodarbinātības sākuma datums
+DateEmploymentEnd=Nodarbinātības beigu datums
+CantDisableYourself=Jūs nevarat atspējot savu lietotāja ierakstu
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

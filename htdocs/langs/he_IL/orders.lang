@@ -16,6 +16,7 @@ MakeOrder=Make order
 SupplierOrder=Purchase order
 SuppliersOrders=Purchase orders
 SuppliersOrdersRunning=Current purchase orders
+<<<<<<< HEAD
 CustomerOrder=Customer Order
 CustomersOrders=הזמנות של לקוחות
 CustomersOrdersRunning=Current customer orders
@@ -24,6 +25,16 @@ OrdersDeliveredToBill=Customer orders delivered to bill
 OrdersToBill=Customer orders delivered
 OrdersInProcess=Customer orders in process
 OrdersToProcess=Customer orders to process
+=======
+CustomerOrder=Sales Order
+CustomersOrders=Sales Orders
+CustomersOrdersRunning=Current sales orders
+CustomersOrdersAndOrdersLines=Sales orders and order details
+OrdersDeliveredToBill=Sales orders delivered to bill
+OrdersToBill=Sales orders delivered
+OrdersInProcess=Sales orders in process
+OrdersToProcess=Sales orders to process
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SuppliersOrdersToProcess=Purchase orders to process
 StatusOrderCanceledShort=Canceled
 StatusOrderDraftShort=Draft
@@ -76,8 +87,13 @@ OrdersOpened=Orders to process
 NoDraftOrders=No draft orders
 NoOrder=No order
 NoSupplierOrder=No purchase order
+<<<<<<< HEAD
 LastOrders=Latest %s customer orders
 LastCustomerOrders=Latest %s customer orders
+=======
+LastOrders=Latest %s sales orders
+LastCustomerOrders=Latest %s sales orders
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LastSupplierOrders=Latest %s purchase orders
 LastModifiedOrders=Latest %s modified orders
 AllOrders=All orders
@@ -85,10 +101,17 @@ NbOfOrders=Number of orders
 OrdersStatistics=Order's statistics
 OrdersStatisticsSuppliers=Purchase order statistics
 NumberOfOrdersByMonth=Number of orders by month
+<<<<<<< HEAD
 AmountOfOrdersByMonthHT=Amount of orders by month (net of tax)
 ListOfOrders=List of orders
 CloseOrder=Close order
 ConfirmCloseOrder=Are you sure you want to set this order to deliverd? Once an order is delivered, it can be set to billed.
+=======
+AmountOfOrdersByMonthHT=Amount of orders by month (excl. tax)
+ListOfOrders=List of orders
+CloseOrder=Close order
+ConfirmCloseOrder=Are you sure you want to set this order to delivered? Once an order is delivered, it can be set to billed.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmDeleteOrder=Are you sure you want to delete this order?
 ConfirmValidateOrder=Are you sure you want to validate this order under name <b>%s</b>?
 ConfirmUnvalidateOrder=Are you sure you want to restore order <b>%s</b> to draft status?
@@ -110,6 +133,7 @@ OrderMode=Order method
 AuthorRequest=Request author
 UserWithApproveOrderGrant=Users granted with "approve orders" permission.
 PaymentOrderRef=Payment of order %s
+<<<<<<< HEAD
 CloneOrder=Clone order
 ConfirmCloneOrder=Are you sure you want to clone this order <b>%s</b>?
 DispatchSupplierOrder=Receiving supplier order %s
@@ -121,6 +145,18 @@ SupplierOrderClassifiedBilled=Purchase Order %s set billed
 OtherOrders=Other orders
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Representative following-up customer order
+=======
+ConfirmCloneOrder=Are you sure you want to clone this order <b>%s</b>?
+DispatchSupplierOrder=Receiving purchase order %s
+FirstApprovalAlreadyDone=First approval already done
+SecondApprovalAlreadyDone=Second approval already done
+SupplierOrderReceivedInDolibarr=Purchase Order %s received %s
+SupplierOrderSubmitedInDolibarr=Purchase Order %s submitted
+SupplierOrderClassifiedBilled=Purchase Order %s set billed
+OtherOrders=Other orders
+##### Types de contacts #####
+TypeContact_commande_internal_SALESREPFOLL=Representative following-up sales order
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TypeContact_commande_internal_SHIPPING=Representative following-up shipping
 TypeContact_commande_external_BILLING=Customer invoice contact
 TypeContact_commande_external_SHIPPING=Customer shipping contact
@@ -136,11 +172,19 @@ Error_OrderNotChecked=No orders to invoice selected
 # Order modes (how we receive order). Not the "why" are keys stored into dict.lang
 OrderByMail=Mail
 OrderByFax=Fax
+<<<<<<< HEAD
 OrderByEMail=EMail
+=======
+OrderByEMail=Email
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 OrderByWWW=Online
 OrderByPhone=Phone
 # Documents models
 PDFEinsteinDescription=A complete order model (logo...)
+<<<<<<< HEAD
+=======
+PDFEratostheneDescription=A complete order model (logo...)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PDFEdisonDescription=A simple order model
 PDFProformaDescription=A complete proforma invoice (logo…)
 CreateInvoiceForThisCustomer=Bill orders

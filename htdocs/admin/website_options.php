@@ -34,21 +34,36 @@ require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('errors', 'admin', 'companies', 'website'));
 
+<<<<<<< HEAD
 $action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
 $confirm=GETPOST('confirm','alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 $rowid=GETPOST('rowid','alpha');
+=======
+$action=GETPOST('action', 'alpha')?GETPOST('action', 'alpha'):'view';
+$confirm=GETPOST('confirm', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
+
+$rowid=GETPOST('rowid', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if (!$user->admin) accessforbidden();
 
 $status = 1;
 
 // Load variable for pagination
+<<<<<<< HEAD
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
+=======
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -78,7 +93,11 @@ llxHeader('', $langs->trans("WebsiteSetup"));
 
 $titre=$langs->trans("WebsiteSetup");
 $linkback='<a href="'.($backtopage?$backtopage:DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';
+<<<<<<< HEAD
 print load_fiche_titre($titre,$linkback,'title_setup');
+=======
+print load_fiche_titre($titre, $linkback, 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Onglets
 $head=array();
@@ -109,7 +128,11 @@ if ($action == 'edit')
 	foreach($arrayofparameters as $key => $val)
 	{
 		print '<tr class="oddeven"><td>';
+<<<<<<< HEAD
 		print $form->textwithpicto($langs->trans($key),$langs->trans($key.'Tooltip'));
+=======
+		print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</td><td><input name="'.$key.'"  class="flat '.(empty($val['css'])?'minwidth200':$val['css']).'" value="' . $conf->global->$key . '"></td></tr>';
 	}
 
@@ -130,7 +153,11 @@ else
 	foreach($arrayofparameters as $key => $val)
 	{
 		print '<tr class="oddeven"><td>';
+<<<<<<< HEAD
 		print $form->textwithpicto($langs->trans($key),$langs->trans($key.'Tooltip'));
+=======
+		print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</td><td>' . $conf->global->$key . '</td></tr>';
 	}
 
@@ -143,9 +170,16 @@ else
 
 
 dol_fiche_end();
+<<<<<<< HEAD
 //print '<br>';
 
 
 llxFooter();
 $db->close();
 
+=======
+
+// End of page
+llxFooter();
+$db->close();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

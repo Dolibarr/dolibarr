@@ -31,6 +31,7 @@ ViewWeek=Vedere  săptămânala
 ViewPerUser=Vedere pe utilizator
 ViewPerType=Vizualizare pe tip
 AutoActions= Completarea automată
+<<<<<<< HEAD
 AgendaAutoActionDesc= Definiți aici evenimentele pentru care doriți ca Dolibarr să creeze automat un eveniment în agendă. În cazul în care nimic nu este bifat doar acțiunile manuale vor fi incluse în agendă.\nUrmărirea automată a acțiunilor de business efectuate pe obiecte (validare, schimbare de stare) nu vor fi salvate.
 AgendaSetupOtherDesc= Această pagină permite configurarea unor opțiuni pentru exportul de evenimente Dolibarr într-un calendar extern (Thunderbird, Google Calendar, ...)
 AgendaExtSitesDesc=Această pagină vă permite să declaraţi sursele externe de calendare pentru a vedea evenimentele lor în agenda Dolibarr.
@@ -39,6 +40,18 @@ EventRemindersByEmailNotEnabled=Evenimentul reamintire prin email nu a fost acti
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Terța parte %s a fost creată
 ContractValidatedInDolibarr=Contract %s validat
+=======
+AgendaAutoActionDesc= Aici puteți defini evenimentele pe care doriți ca Dolibarr să le creeze automat în Agendă. Dacă nu este bifat nimic, numai acțiunile manuale vor fi incluse în jurnale și afișate în Agendă. Urmărirea automată a acțiunilor de afaceri efectuate pe obiecte (validare, schimbare de stare) nu va fi salvată.
+AgendaSetupOtherDesc= Această pagină oferă opțiuni pentru a permite exportul evenimentelor Dolibarr într-un calendar extern (Thunderbird, Google Calendar etc.)
+AgendaExtSitesDesc=Această pagină vă permite să declaraţi sursele externe de calendare pentru a vedea evenimentele lor în agenda Dolibarr.
+ActionsEvents=Evenimente pentru care Dolibarr va crea o acţiune în agendă în mod automat
+EventRemindersByEmailNotEnabled=Evenimentul pentru mementouri prin e-mail nu a fost activat în configurarea modulului %s.
+##### Agenda event labels #####
+NewCompanyToDolibarr=Terța parte %s a fost creată
+COMPANY_DELETEInDolibarr=Third party %s deleted
+ContractValidatedInDolibarr=Contract %s validat
+CONTRACT_DELETEInDolibarr=Contractul %s a fost șters
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PropalClosedSignedInDolibarr=Oferta  %s semnată
 PropalClosedRefusedInDolibarr=Oferta  %s refuzată
 PropalValidatedInDolibarr=Oferta %s validată
@@ -53,12 +66,22 @@ MemberValidatedInDolibarr=Membru %s validat
 MemberModifiedInDolibarr=Membrul %s modificat
 MemberResiliatedInDolibarr=Membru %s terminat
 MemberDeletedInDolibarr=Membru %s şters
+<<<<<<< HEAD
 MemberSubscriptionAddedInDolibarr=Subscription %s for member %s added
 MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
 MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=Livrarea %s validata
 ShipmentClassifyClosedInDolibarr=Expediere %s clasificată facturată
 ShipmentUnClassifyCloseddInDolibarr=Expediere %s clasificată redeschisă
+=======
+MemberSubscriptionAddedInDolibarr=Abonament %s pentru membru %s a fost adăugat
+MemberSubscriptionModifiedInDolibarr=Abonamentul %s pentru membrul %s a fost modificat
+MemberSubscriptionDeletedInDolibarr=Abonamentul %s pentru membrul %s a fost eliminat
+ShipmentValidatedInDolibarr=Livrarea %s validata
+ShipmentClassifyClosedInDolibarr=Expediere %s clasificată facturată
+ShipmentUnClassifyCloseddInDolibarr=Expediere %s clasificată redeschisă
+ShipmentBackToDraftInDolibarr=Expedierea %s revine la starea de proiect
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShipmentDeletedInDolibarr=Livrare %s ştearsă
 OrderCreatedInDolibarr=Comanda %s a fost creată
 OrderValidatedInDolibarr=Comanda %s validată
@@ -68,6 +91,7 @@ OrderBilledInDolibarr=Comanda livrată %s  facturată
 OrderApprovedInDolibarr=Comanda %s aprobată
 OrderRefusedInDolibarr=Comanda %s refuzată
 OrderBackToDraftInDolibarr=Comanda %s revenită de statutul schiţă
+<<<<<<< HEAD
 ProposalSentByEMail=Oferta comercială %s  trimisă prin e-mail
 ContractSentByEMail=Contract %s  trimis pe  EMail
 OrderSentByEMail=Comanda client %s trimisă prin e-mail
@@ -77,6 +101,17 @@ SupplierInvoiceSentByEMail=Factura furnizor %s trimise prin e-mail
 ShippingSentByEMail=Avizul de expediţie %s trimis prin e-mail
 ShippingValidated= Livrarea %s validata
 InterventionSentByEMail=Intervenţia %s  trimisă prin e-mail
+=======
+ProposalSentByEMail=Propunerea comercială %s a fost trimisă prin e-mail
+ContractSentByEMail=Contractul %s a fost trimis prin e-mail
+OrderSentByEMail=Comanda vânzări %s a fost trimisă prin e-mail
+InvoiceSentByEMail=Factura clientului %s a fost trimisă prin e-mail
+SupplierOrderSentByEMail=Comanda de aprovizionare %s a fost trimisă prin e-mail
+SupplierInvoiceSentByEMail=Factura furnizorului%s a fost trimisă prin e-mail
+ShippingSentByEMail=Expedierea %s trimisă prin e-mail
+ShippingValidated= Livrarea %s validata
+InterventionSentByEMail=Intervenția %s trimisă prin e-mail
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProposalDeleted=Ofertă ştearsă
 OrderDeleted=Comandă ştearsă
 InvoiceDeleted=Factură ştearsă
@@ -91,6 +126,14 @@ EXPENSE_REPORT_REFUSEDInDolibarr=Raport cheltuieli %s refuzat
 PROJECT_CREATEInDolibarr=Proiect %s creat
 PROJECT_MODIFYInDolibarr=Proiect %s modificat
 PROJECT_DELETEInDolibarr=Proiect %s sters
+<<<<<<< HEAD
+=======
+TICKET_CREATEInDolibarr=Tichetul%s a fost creat
+TICKET_MODIFYInDolibarr=Tichetul %s a fost modificat
+TICKET_ASSIGNEDInDolibarr=Ticket %s assigned
+TICKET_CLOSEInDolibarr=Ticket %s closed
+TICKET_DELETEInDolibarr=Tichetul %s a fost șters
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ##### End agenda events #####
 AgendaModelModule=Șabloane de documente pentru eveniment
 DateActionStart=Data începerii
@@ -99,8 +142,13 @@ AgendaUrlOptions1=Puteţi, de asemenea, să adăugaţi următorii parametri pent
 AgendaUrlOptions3=<b>logind=%s</b> ​​pentru a limita exportul de acțiuni deţinute de utilizatorul <b>%s</b>
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> ​​pentru a limita exportul de acțiuni deţinute de utilizatorul  <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> ​​pentru a limita exportul de acțiuni atribuite utilizatorului <b>%s</b>( proprietari sau altii).
+<<<<<<< HEAD
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic event.
+=======
+AgendaUrlOptionsProject=<b> project = __ PROJECT_ID __ </b> pentru a restricționa ieșirea la acțiunile legate de proiectul <b> __ PROJECT_ID __ </b>.
+AgendaUrlOptionsNotAutoEvent=<b> notactiontype = systemauto </b> pentru a exclude evenimentele automate.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AgendaShowBirthdayEvents=Afişează ziua de naştere a contactelor
 AgendaHideBirthdayEvents=Ascunde ziua de naştere a contactelor
 Busy=Ocupat
@@ -110,9 +158,15 @@ DefaultWorkingHours=Orele lucrătoare predefinite ale zilei (Examplu: 9-18)
 # External Sites ical
 ExportCal=Export calendar
 ExtSites=Import calendare externe
+<<<<<<< HEAD
 ExtSitesEnableThisTool=Afişează calendarele externe (definite in setup global) în agenda. Nu afectează calendarele externe definite de utilizatori.
 ExtSitesNbOfAgenda=Număr calendare
 AgendaExtNb=Calendar no. %s
+=======
+ExtSitesEnableThisTool=Afișați calendarele externe (definite în configurația globală) din Agendă. Nu afectează calendarele externe definite de utilizatori.
+ExtSitesNbOfAgenda=Număr calendare
+AgendaExtNb=Calendar nr. %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ExtSiteUrlAgenda=URL-ul pentru a accesa  fişierul . ical
 ExtSiteNoLabel=Nicio descriere
 VisibleTimeRange=Interval de timp vizibil
@@ -121,7 +175,10 @@ AddEvent=Creare eveniment
 MyAvailability=Disponibilitatea mea
 ActionType=Tip Eveniment
 DateActionBegin=Dată începere eveniment
+<<<<<<< HEAD
 CloneAction=Clonează eveniment
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmCloneEvent=Sigur doriți să clonați evenimentul <b> %s</b>?
 RepeatEvent=Repeta eveniment
 EveryWeek=Fiecare săptămână

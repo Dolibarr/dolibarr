@@ -7,12 +7,15 @@ OrderToProcess=Commander pour traiter
 NewOrder=nouvel ordre
 ToOrder=Faire une commande
 MakeOrder=Faire une commande
+<<<<<<< HEAD
 CustomersOrdersRunning=Commandes clients actuelles
 CustomersOrdersAndOrdersLines=Commandes client et lignes de commande
 OrdersDeliveredToBill=Ordres des clients livrés à la facture
 OrdersToBill=Commandes du client livrées
 OrdersInProcess=Commandes clients en cours
 OrdersToProcess=Ordres clients à traiter
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 StatusOrderCanceledShort=Annulé
 StatusOrderProcessedShort=Traité
 StatusOrderDelivered=Livré
@@ -47,6 +50,7 @@ AddOrder=Créer un ordre
 AddToDraftOrders=Ajouter au projet d'ordre
 ShowOrder=Afficher l'ordre
 NoDraftOrders=Aucun projet de commande
+<<<<<<< HEAD
 LastOrders=Derniers %s commandes client
 LastCustomerOrders=Derniers %s commandes client
 LastModifiedOrders=Derniers %s commandes modifiées
@@ -55,6 +59,12 @@ OrdersStatistics=Statistiques de la commande
 AmountOfOrdersByMonthHT=Montant des commandes par mois (net d'impôt)
 CloseOrder=Fermer l'ordre
 ConfirmCloseOrder=Êtes-vous sûr de vouloir régler cette commande? Une fois la commande livrée, elle peut être configurée comme facturée.
+=======
+LastModifiedOrders=Derniers %s commandes modifiées
+AllOrders=Tous les ordres
+OrdersStatistics=Statistiques de la commande
+CloseOrder=Fermer l'ordre
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmDeleteOrder=Êtes-vous sûr de vouloir supprimer cette commande?
 ConfirmValidateOrder=Êtes-vous sûr de vouloir valider cette commande sous le nom <b>%s</b>?
 ConfirmUnvalidateOrder=Êtes-vous sûr de vouloir rétablir l'ordre <b>%s</b> pour ébauche d'état?
@@ -71,12 +81,18 @@ NoArticleOfTypeProduct=Aucun article de type 'produit' donc aucun article expéd
 AuthorRequest=Demandeur
 UserWithApproveOrderGrant=Les utilisateurs bénéficient d'une autorisation «d'approbation des commandes».
 PaymentOrderRef=Paiement de la commande %s
+<<<<<<< HEAD
 CloneOrder=Ordre de clone
 ConfirmCloneOrder=Êtes-vous sûr de vouloir cloner cette commande <b>%s</b>?
 DispatchSupplierOrder=Commande de fournisseur de réception %s
 FirstApprovalAlreadyDone=Première approbation déjà terminée
 SecondApprovalAlreadyDone=Deuxième approbation déjà terminée
 TypeContact_commande_internal_SALESREPFOLL=Ordre de suivi du client représentatif
+=======
+ConfirmCloneOrder=Êtes-vous sûr de vouloir cloner cette commande <b>%s</b>?
+FirstApprovalAlreadyDone=Première approbation déjà terminée
+SecondApprovalAlreadyDone=Deuxième approbation déjà terminée
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TypeContact_commande_internal_SHIPPING=Expédition complémentaire représentative
 TypeContact_commande_external_BILLING=Contact client facturation
 TypeContact_commande_external_SHIPPING=Contact client livraison

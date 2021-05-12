@@ -1,3 +1,10 @@
 # Dolibarr language file - Source file is en_US - propal
 Proposals=Cotizaciones
+<<<<<<< HEAD
 PropalsDraft=Borradores
+=======
+ProposalShort=Propuesta
+PropalsDraft=Borradores
+PropalStatusDraft=Borrador (necesita ser validado)
+TypeContact_propal_external_BILLING=Contacto factura cliente
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -97,7 +97,11 @@ class Swift_Mime_Headers_ParameterizedHeader extends Swift_Mime_Headers_Unstruct
     {
         $params = $this->getParameters();
 
+<<<<<<< HEAD
         return $params[$parameter] ?? null;
+=======
+        return isset($params[$parameter]) ? $params[$parameter] : null;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
     /**

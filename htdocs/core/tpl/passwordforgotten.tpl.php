@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2009-2010 Regis Houssin <regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2009-2010 Regis Houssin <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2011-2013 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,6 +28,11 @@ if (empty($conf) || ! is_object($conf))
 }
 
 
+<<<<<<< HEAD
+=======
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 header('Cache-Control: Public, must-revalidate');
 header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
@@ -42,10 +51,24 @@ $php_self.= dol_escape_htmltag($_SERVER["QUERY_STRING"])?'?'.dol_escape_htmltag(
 $titleofpage=$langs->trans('SendNewPassword');
 
 print top_htmlhead('', $titleofpage);
+<<<<<<< HEAD
 ?>
 <!-- BEGIN PHP TEMPLATE PASSWORDFORGOTTEN.TPL.PHP -->
 
 <body class="body bodylogin"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file='.urlencode($conf->global->MAIN_LOGIN_BACKGROUND).'\')"'; ?>>
+=======
+
+
+$colorbackhmenu1='60,70,100';      // topmenu
+if (! isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_TOPMENU_BACK1=$colorbackhmenu1;
+$colorbackhmenu1     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$conf->global->THEME_ELDY_TOPMENU_BACK1)   :(empty($user->conf->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$user->conf->THEME_ELDY_TOPMENU_BACK1);
+$colorbackhmenu1=join(',', colorStringToArray($colorbackhmenu1));    // Normalize value to 'x,y,z'
+
+?>
+<!-- BEGIN PHP TEMPLATE PASSWORDFORGOTTEN.TPL.PHP -->
+
+<body class="body bodylogin"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file='.urlencode('logos/'.$conf->global->MAIN_LOGIN_BACKGROUND).'\')"'; ?>>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 <?php if (empty($conf->dol_use_jmobile)) { ?>
 <script type="text/javascript">
@@ -57,7 +80,11 @@ $(document).ready(function () {
 <?php } ?>
 
 
+<<<<<<< HEAD
 <div class="login_center center">
+=======
+<div class="login_center center"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND)?' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: linear-gradient(rgb('.$colorbackhmenu1.',0.3), rgb(240,240,240));"':'' ?>>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 <div class="login_vertical_align">
 
 <form id="login" name="login" method="POST" action="<?php echo $php_self; ?>">
@@ -88,6 +115,7 @@ if ($disablenofollow) echo '</a>';
 
 <div id="login_right">
 
+<<<<<<< HEAD
 <table summary="Login pass" class="centpercent">
 
 <!-- Login -->
@@ -99,6 +127,19 @@ if ($disablenofollow) echo '</a>';
 </span>
 </td>
 </tr>
+=======
+<div class="tagtable centpercent" title="Login pass" >
+
+<!-- Login -->
+<div class="trinputlogin">
+<div class="tagtd nowraponall center valignmiddle tdinputlogin">
+<!-- <span class="span-icon-user">-->
+<span class="fa fa-user">
+</span>
+<input type="text" placeholder="<?php echo $langs->trans("Login"); ?>" <?php echo $disabled; ?> id="username" name="username" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($username); ?>" tabindex="1" />
+</div>
+</div>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 <?php
 if (! empty($morelogincontent)) {
@@ -120,6 +161,7 @@ if (! empty($morelogincontent)) {
 
 <?php if ($captcha) {
 		// Add a variable param to force not using cache (jmobile)
+<<<<<<< HEAD
 		$php_self = preg_replace('/[&\?]time=(\d+)/','',$php_self);	// Remove param time
 		if (preg_match('/\?/',$php_self)) $php_self.='&time='.dol_print_date(dol_now(),'dayhourlog');
 		else $php_self.='?time='.dol_print_date(dol_now(),'dayhourlog');
@@ -129,6 +171,18 @@ if (! empty($morelogincontent)) {
 	<td class="tdtop nowrap none center">
 
 	<table class="login_table_securitycode centpercent"><tr class="valignmiddle">
+=======
+		$php_self = preg_replace('/[&\?]time=(\d+)/', '', $php_self);	// Remove param time
+		if (preg_match('/\?/', $php_self)) $php_self.='&time='.dol_print_date(dol_now(), 'dayhourlog');
+		else $php_self.='?time='.dol_print_date(dol_now(), 'dayhourlog');
+	?>
+	<!-- Captcha -->
+	<div class="trinputlogin">
+	<div class="tdinputlogin nowraponall none center valignmiddle tdinputlogin">
+
+	<table class="login_table_securitycode centpercent">
+	<tr class="valignmiddle">
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	<td>
 	<!-- <span class="span-icon-security"> -->
 	<span class="nofa">
@@ -139,12 +193,21 @@ if (! empty($morelogincontent)) {
 	<td><a href="<?php echo $php_self; ?>" tabindex="4"><?php echo $captcha_refresh; ?></a></td>
 	</tr></table>
 
+<<<<<<< HEAD
 	</td></tr>
 <?php } ?>
 
 </table>
 
 </div> <!-- end div login right -->
+=======
+	</div></div>
+<?php } ?>
+
+</div>
+
+</div> <!-- end div login_right -->
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 </div> <!-- end div login_line1 -->
 
@@ -155,6 +218,7 @@ if (! empty($morelogincontent)) {
 <br><input type="submit" <?php echo $disabled; ?> class="button" name="button_password" value="<?php echo $langs->trans('SendNewPassword'); ?>" tabindex="4" />
 
 <br>
+<<<<<<< HEAD
 <div align="center" style="margin-top: 8px;">
 	<?php
 	$moreparam='';
@@ -164,6 +228,17 @@ if (! empty($morelogincontent)) {
 	if (! empty($conf->dol_use_jmobile))    $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_use_jmobile='.$conf->dol_use_jmobile;
 
 	print '<a class="alogin" href="'.$dol_url_root.'/index.php'.$moreparam.'">('.$langs->trans('BackToLoginPage').')</a>';
+=======
+<div class="center" style="margin-top: 15px;">
+	<?php
+	$moreparam='';
+	if (! empty($conf->dol_hide_topmenu))   $moreparam.=(strpos($moreparam, '?')===false?'?':'&').'dol_hide_topmenu='.$conf->dol_hide_topmenu;
+	if (! empty($conf->dol_hide_leftmenu))  $moreparam.=(strpos($moreparam, '?')===false?'?':'&').'dol_hide_leftmenu='.$conf->dol_hide_leftmenu;
+	if (! empty($conf->dol_no_mouse_hover)) $moreparam.=(strpos($moreparam, '?')===false?'?':'&').'dol_no_mouse_hover='.$conf->dol_no_mouse_hover;
+	if (! empty($conf->dol_use_jmobile))    $moreparam.=(strpos($moreparam, '?')===false?'?':'&').'dol_use_jmobile='.$conf->dol_use_jmobile;
+
+	print '<a class="alogin" href="'.$dol_url_root.'/index.php'.$moreparam.'">'.$langs->trans('BackToLoginPage').'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	?>
 </div>
 
@@ -174,7 +249,11 @@ if (! empty($morelogincontent)) {
 </form>
 
 
+<<<<<<< HEAD
 <div class="center login_main_home paddingtopbottom<?php echo empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' backgroundsemitransparent'; ?>" style="max-width: 70%">
+=======
+<div class="center login_main_home divpasswordmessagedesc paddingtopbottom<?php echo empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' backgroundsemitransparent'; ?>" style="max-width: 70%">
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 <?php if ($mode == 'dolibarr' || ! $disabled) { ?>
 	<span class="passwordmessagedesc">
 	<?php echo $langs->trans('SendNewPasswordDesc'); ?>
@@ -191,7 +270,11 @@ if (! empty($morelogincontent)) {
 
 <?php if ($message) { ?>
 	<div class="center login_main_message">
+<<<<<<< HEAD
 	<?php echo dol_htmloutput_mesg($message,'','',1); ?>
+=======
+	<?php echo dol_htmloutput_mesg($message, '', '', 1); ?>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	</div>
 <?php } ?>
 
@@ -204,7 +287,11 @@ if (! empty($morelogincontent)) {
 		}
 	}
 }
+<<<<<<< HEAD
 else if (! empty($moreloginextracontent)) {
+=======
+elseif (! empty($moreloginextracontent)) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	echo '<!-- Javascript by hook -->';
 	echo $moreloginextracontent;
 }

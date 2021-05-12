@@ -1,13 +1,19 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal-Modul Setup
+<<<<<<< HEAD
 PaypalDesc=Dieses Modul bieten Seiten, die Zahlung ermöglichen <a href="http://www.paypal.com" target="_blank">PayPal</a> von Kunden. Dies kann für eine kostenlose Zahlung oder eine Zahlung zu einem bestimmten Dolibarr Objekt verwendet werden (Rechnung, Bestellung, ...)
 PaypalDoPayment=Bezahlen Sie mit Paypal
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PAYPAL_API_USER=API Benutzername
 PAYPAL_API_PASSWORD=API Passwort
 PAYPAL_API_SIGNATURE=API Unterschrift
 PaypalModeOnlyPaypal=nur PayPal
 ThisIsTransactionId=Dies ist id Geschäftsart: <b>%s</b>
+<<<<<<< HEAD
 PAYPAL_ADD_PAYMENT_URL=Fügen Sie die URL der Paypal Zahlung, wenn Sie ein Dokument per E-Mail senden
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ReturnURLAfterPayment=Rückkehr zur URL nach der Zahlung
 DetailedErrorMessage=genaue Fehlermeldung
 ShortErrorMessage=kurze Fehlermeldung

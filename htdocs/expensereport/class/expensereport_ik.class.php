@@ -29,8 +29,24 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/coreobject.class.php';
  */
 class ExpenseReportIk extends CoreObject
 {
+<<<<<<< HEAD
 	public $element='expenseik';
 	public $table_element='expensereport_ik';
+=======
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='expenseik';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='expensereport_ik';
+
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	public $fk_element='fk_expense_ik';
 
 	/**
@@ -91,7 +107,11 @@ class ExpenseReportIk extends CoreObject
 	 * @param	int		$mode	1=only active; 2=only inactive; other value return all
 	 * @return	array of category
 	 */
+<<<<<<< HEAD
 	public static function getTaxCategories($mode=1)
+=======
+	public static function getTaxCategories($mode = 1)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $db;
 
@@ -120,8 +140,20 @@ class ExpenseReportIk extends CoreObject
 		return $categories;
 	}
 
+<<<<<<< HEAD
 	public static function getRangeByUser(User $userauthor, $fk_c_exp_tax_cat)
 	{
+=======
+    /**
+     * Return an array of ranges for a user
+     *
+     * @param User  $userauthor         user author id
+     * @param int   $fk_c_exp_tax_cat   category
+     * @return boolean|array
+     */
+    public static function getRangeByUser(User $userauthor, $fk_c_exp_tax_cat)
+    {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$default_range = (int) $userauthor->default_range; // if not defined, then 0
 		$ranges = self::getRangesByCategory($fk_c_exp_tax_cat);
 
@@ -137,7 +169,11 @@ class ExpenseReportIk extends CoreObject
 	 * @param int	$active				active
 	 * @return array
 	 */
+<<<<<<< HEAD
 	public static function getRangesByCategory($fk_c_exp_tax_cat, $active=1)
+=======
+	public static function getRangesByCategory($fk_c_exp_tax_cat, $active = 1)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $db;
 
@@ -219,7 +255,11 @@ class ExpenseReportIk extends CoreObject
 	 * @param int $default_c_exp_tax_cat id
 	 * @return int
 	 */
+<<<<<<< HEAD
 	public static function getMaxRangeNumber($default_c_exp_tax_cat=0)
+=======
+	public static function getMaxRangeNumber($default_c_exp_tax_cat = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $db,$conf;
 

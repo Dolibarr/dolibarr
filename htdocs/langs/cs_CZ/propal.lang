@@ -13,6 +13,7 @@ Prospect=Cíl
 DeleteProp=Smazat obchodní nabídku
 ValidateProp=Ověřit obchodní nabídku
 AddProp=Vytvořit nabídku
+<<<<<<< HEAD
 ConfirmDeleteProp=Are you sure you want to delete this commercial proposal?
 ConfirmValidateProp=Are you sure you want to validate this commercial proposal under name <b>%s</b>?
 LastPropals=Latest %s proposals
@@ -23,17 +24,37 @@ NoProposal=No proposal
 ProposalsStatistics=Statistiky obchodních nabídek
 NumberOfProposalsByMonth=Číslo podle měsíce
 AmountOfProposalsByMonthHT=Částka podle měsíce (bez DPH)
+=======
+ConfirmDeleteProp=Opravdu chcete smazat tento komerční návrh?
+ConfirmValidateProp=Opravdu chcete ověřit tento komerční návrh pod názvem <b> %s </b>?
+LastPropals=Nejnovější %s návrhy
+LastModifiedProposals=Poslední modifikované návrhy %s
+AllPropals=Všechny nabídky
+SearchAProposal=Hledat nabídku
+NoProposal=Žádný návrh
+ProposalsStatistics=Statistiky obchodních nabídek
+NumberOfProposalsByMonth=Číslo podle měsíce
+AmountOfProposalsByMonthHT=Částka měsíčně (bez daně)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NbOfProposals=Počet obchodních nabídek
 ShowPropal=Zobrazit nabídku
 PropalsDraft=Návrhy
 PropalsOpened=Otevřeno
 PropalStatusDraft=Návrh (musí být ověřen)
+<<<<<<< HEAD
 PropalStatusValidated=Validated (proposal is opened)
+=======
+PropalStatusValidated=Potvrzeno (návrh je otevřen)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PropalStatusSigned=Podpis (potřeba fakturace)
 PropalStatusNotSigned=Nejste přihlášen (uzavřený)
 PropalStatusBilled=Účtováno
 PropalStatusDraftShort=Návrh
+<<<<<<< HEAD
 PropalStatusValidatedShort=Ověřeno
+=======
+PropalStatusValidatedShort=Ověřeno (otevřeno)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PropalStatusClosedShort=Zavřeno
 PropalStatusSignedShort=Podepsaný
 PropalStatusNotSignedShort=Nepodepsaný
@@ -47,18 +68,31 @@ SendPropalByMail=Poslat obchodní nabídku poštou
 DatePropal=Datum nabídky
 DateEndPropal=Datum ukončení platnosti
 ValidityDuration=Trvání platnosti
+<<<<<<< HEAD
 CloseAs=Set status to
 SetAcceptedRefused=Set accepted/refused
+=======
+CloseAs=Nastavte stav na
+SetAcceptedRefused=Nastavte přijato/odmítnuto
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorPropalNotFound=Propal %s nebyl nalezen
 AddToDraftProposals=Přidat do předlohy nabídky
 NoDraftProposals=Žádné návrhy nabídek
 CopyPropalFrom=Vytvořit obchodní nabídku zkopírováním existující nabídky
+<<<<<<< HEAD
 CreateEmptyPropal=Vytvořte prázdnou obchodní nabídku z šablony nebo ze seznamu produktů/služeb
 DefaultProposalDurationValidity=Doba platnosti výchozí obchodní nabídky (ve dnech)
 UseCustomerContactAsPropalRecipientIfExist=Použití kontaktní adresy zákazníka, je-li definována místo třetí stranou jako adresa příjemce nabídky
 ClonePropal=Kopírovat obchodní nabídku
 ConfirmClonePropal=Are you sure you want to clone the commercial proposal <b>%s</b>?
 ConfirmReOpenProp=Are you sure you want to open back the commercial proposal <b>%s</b>?
+=======
+CreateEmptyPropal=Vytvoření prázdného komerčního návrhu nebo ze seznamu produktů / služeb
+DefaultProposalDurationValidity=Doba platnosti výchozí obchodní nabídky (ve dnech)
+UseCustomerContactAsPropalRecipientIfExist=Použijte kontakt / adresu s typem "Návrh na další kontakt", pokud je definována namísto adresy subjektu jako adresy příjemce návrhu
+ConfirmClonePropal=Jste si jisti, že chcete kopírovat obchodní nabídku <b>%s</b> ?
+ConfirmReOpenProp=Jste si jisti, že chcete otevřít zpět obchodní nabídku <b>%s</b> ?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProposalsAndProposalsLines=Obchodní nabídka a řádky
 ProposalLine=Řádky nabídky
 AvailabilityPeriod=Dostupné zpoždění
@@ -75,11 +109,22 @@ AvailabilityTypeAV_1M=1 měsíc
 TypeContact_propal_internal_SALESREPFOLL=Zástupce následující vypracované nabídky
 TypeContact_propal_external_BILLING=Fakturační kontakt zákazníka
 TypeContact_propal_external_CUSTOMER=Kontakt se zákazníkem pro následující vypracované nabídky
+<<<<<<< HEAD
 TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
 DocModelAzurDescription=Kompletní šablona nabídky (logo. ..)
+=======
+TypeContact_propal_external_SHIPPING=Zákaznický kontakt pro doručení
+# Document models
+DocModelAzurDescription=Kompletní šablona nabídky (logo. ..)
+DocModelCyanDescription=Kompletní šablona nabídky (logo. ..)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DefaultModelPropalCreate=Tvorba z výchozí šablony
 DefaultModelPropalToBill=Výchozí šablona při uzavírání obchodní nabídky (bude se fakturovat)
 DefaultModelPropalClosed=Výchozí šablona při uzavírání obchodní nabídky (nevyfakturované)
 ProposalCustomerSignature=Písemný souhlas, razítko firmy, datum a podpis
+<<<<<<< HEAD
 ProposalsStatisticsSuppliers=Supplier proposals statistics
+=======
+ProposalsStatisticsSuppliers=Statistika návrhů dodavatelů
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

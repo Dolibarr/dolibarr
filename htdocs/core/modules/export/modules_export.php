@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
  */
 class ModeleExports extends CommonDocGenerator    // This class can't be abstract as there is instance propreties loaded by liste_modeles
 {
+<<<<<<< HEAD
 	var $error='';
 
 	var $driverlabel=array();
@@ -39,6 +44,23 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	var $libversion=array();
 
 
+=======
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	public $driverlabel=array();
+
+	public $driverversion=array();
+
+	public $liblabel=array();
+
+	public $libversion=array();
+
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *  Load into memory list of available export format
 	 *
@@ -46,8 +68,14 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates (same content than array this->driverlabel)
 	 */
+<<<<<<< HEAD
 	function liste_modeles($db,$maxfilenamelength=0)
 	{
+=======
+	public function liste_modeles($db, $maxfilenamelength = 0)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		dol_syslog(get_class($this)."::liste_modeles");
 
 		$dir=DOL_DOCUMENT_ROOT."/core/modules/export/";
@@ -59,7 +87,11 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
         {
     		while (($file = readdir($handle))!==false)
     		{
+<<<<<<< HEAD
     			if (preg_match("/^export_(.*)\.modules\.php$/i",$file,$reg))
+=======
+    			if (preg_match("/^export_(.*)\.modules\.php$/i", $file, $reg))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     			{
     				$moduleid=$reg[1];
 
@@ -100,7 +132,11 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	 *  @param	string	$key	Key of driver
 	 *  @return	string			Picto string
 	 */
+<<<<<<< HEAD
 	function getPictoForKey($key)
+=======
+	public function getPictoForKey($key)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return $this->picto[$key];
 	}
@@ -111,7 +147,11 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	 *  @param	string	$key	Key of driver
 	 *  @return	string			Label
 	 */
+<<<<<<< HEAD
 	function getDriverLabelForKey($key)
+=======
+	public function getDriverLabelForKey($key)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return $this->driverlabel[$key];
 	}
@@ -122,7 +162,11 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	 *  @param	string	$key	Key of driver
 	 *  @return	string			Description
 	 */
+<<<<<<< HEAD
 	function getDriverDescForKey($key)
+=======
+	public function getDriverDescForKey($key)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return $this->driverdesc[$key];
 	}
@@ -133,7 +177,11 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	 *  @param	string	$key	Key of driver
 	 *  @return	string			Driver version
 	 */
+<<<<<<< HEAD
 	function getDriverVersionForKey($key)
+=======
+	public function getDriverVersionForKey($key)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return $this->driverversion[$key];
 	}
@@ -144,7 +192,11 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	 *  @param	string	$key	Key of driver
 	 *  @return	string			Label of library
 	 */
+<<<<<<< HEAD
 	function getLibLabelForKey($key)
+=======
+	public function getLibLabelForKey($key)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return $this->liblabel[$key];
 	}
@@ -155,6 +207,7 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	 *  @param	string	$key	Key of driver
 	 *  @return	string			Version of library
 	 */
+<<<<<<< HEAD
 	function getLibVersionForKey($key)
 	{
 		return $this->libversion[$key];
@@ -163,3 +216,10 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 }
 
 
+=======
+	public function getLibVersionForKey($key)
+	{
+		return $this->libversion[$key];
+	}
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

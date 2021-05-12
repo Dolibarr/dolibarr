@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2010-2012 Regis Houssin  <regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2010-2012 Regis Houssin  <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2012      Philippe Grand <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,7 +36,11 @@ $contact = $GLOBALS['objcanvas']->control->object;
 <?php echo $this->control->tpl['showhead']; ?>
 
 <?php
+<<<<<<< HEAD
 dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']);
+=======
+dol_htmloutput_errors($this->control->tpl['error'], $this->control->tpl['errors']);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ?>
 
 <?php if (! empty($this->control->tpl['action_create_user'])) echo $this->control->tpl['action_create_user']; ?>

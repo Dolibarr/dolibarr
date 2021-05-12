@@ -35,9 +35,15 @@
  *  @param	string		$addfieldentry	Array of the field entry to add array('key'=>,'type'=>,''label'=>,'visible'=>,'enabled'=>,'position'=>,'notnull'=>','index'=>,'searchall'=>,'comment'=>,'help'=>,'isameasure')
  *  @param	string		$delfieldentry	Id of field to remove
  * 	@return	int|object					<=0 if KO, Object if OK
+<<<<<<< HEAD
  *  @see rebuildObjectSql
  */
 function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir='', $addfieldentry=array() ,$delfieldentry='')
+=======
+ *  @see rebuildObjectSql()
+ */
+function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir = '', $addfieldentry = array(), $delfieldentry = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
     global $db, $langs;
 
@@ -63,7 +69,13 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir='
     		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Label")), null, 'errors');
     		return -2;
     	}
+<<<<<<< HEAD
     	if (! preg_match('/^(integer|date|timestamp|varchar|double|html|price)/', $addfieldentry['type']))
+=======
+
+    	if (! preg_match('/^(price|boolean|sellist|integer|date|timestamp|varchar|double|text|html)/', $addfieldentry['type']))
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	{
     		setEventMessages($langs->trans('BadFormatForType', $objectname), null, 'errors');
     		return -2;
@@ -206,9 +218,15 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir='
  *  @param	string      $readdir		Directory source (use $destdir when not defined)
  *  @param	Object		$object			If object was already loaded/known, it is pass to avaoid another include and new.
  * 	@return	int							<=0 if KO, >0 if OK
+<<<<<<< HEAD
  *  @see rebuildObjectClass
  */
 function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='', $object=null)
+=======
+ *  @see rebuildObjectClass()
+ */
+function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '', $object = null)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
     global $db, $langs;
 
@@ -259,8 +277,15 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='',
 
             $type = $val['type'];
             $type = preg_replace('/:.*$/', '', $type);		// For case type = 'integer:Societe:societe/class/societe.class.php'
+<<<<<<< HEAD
             if ($type == 'html') $type = 'text';            // html modulebuilder type is a text type in database
             if ($type == 'price') $type = 'double';            // html modulebuilder type is a text type in database
+=======
+
+            if ($type == 'html') $type = 'text';            // html modulebuilder type is a text type in database
+            elseif ($type == 'price') $type = 'double';            // html modulebuilder type is a text type in database
+            elseif ($type == 'link' || $type == 'sellist') $type = 'integer';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $texttoinsert.= "\t".$key." ".$type;
             if ($key == 'rowid')  $texttoinsert.= ' AUTO_INCREMENT PRIMARY KEY';
             if ($key == 'entity') $texttoinsert.= ' DEFAULT 1';
@@ -269,7 +294,11 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='',
             	if ($val['default'] != '')
             	{
             		if (preg_match('/^null$/i', $val['default'])) $texttoinsert.= " DEFAULT NULL";
+<<<<<<< HEAD
             		else if (preg_match('/varchar/', $val['type'])) $texttoinsert.= " DEFAULT '".$db->escape($val['default'])."'";
+=======
+            		elseif (preg_match('/varchar/', $type)) $texttoinsert.= " DEFAULT '".$db->escape($val['default'])."'";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             		else $texttoinsert.= (($val['default'] > 0)?' DEFAULT '.$val['default']:'');
             	}
             }
@@ -312,7 +341,11 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='',
             }
             if (! empty($val['foreignkey']))
             {
+<<<<<<< HEAD
             	$tmp=explode('.',$val['foreignkey']);
+=======
+            	$tmp=explode('.', $val['foreignkey']);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             	if (! empty($tmp[0]) && ! empty($tmp[1]))
             	{
             		$texttoinsert.= "ALTER TABLE llx_".strtolower($module).'_'.strtolower($objectname)." ADD CONSTRAINT llx_".strtolower($module).'_'.strtolower($objectname)."_".$key." FOREIGN KEY (".$key.") REFERENCES ".$tmp[0]."(".$tmp[1].");";
@@ -339,5 +372,8 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='',
 
     return $error ? -1 : 1;
 }
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

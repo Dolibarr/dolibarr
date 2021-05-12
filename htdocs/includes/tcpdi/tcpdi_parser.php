@@ -484,7 +484,11 @@ class tcpdi_parser {
 			$v = $sarr[$key];
 			if (($key == '/Type') AND ($v[0] == PDF_TYPE_TOKEN AND ($v[1] == 'XRef'))) {
 				$valid_crs = true;
+<<<<<<< HEAD
 			} elseif (($key == '/Index') AND ($v[0] == PDF_TYPE_ARRAY AND count($v[1] >= 2))) {
+=======
+			} elseif (($key == '/Index') AND ($v[0] == PDF_TYPE_ARRAY AND count($v[1]) >= 2)) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				// first object number in the subsection
 				$index_first = intval($v[1][0][1]);
 				// number of entries in the subsection

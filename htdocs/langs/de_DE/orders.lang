@@ -1,6 +1,11 @@
 # Dolibarr language file - Source file is en_US - orders
+<<<<<<< HEAD
 OrdersArea=Kundenaufträge-Übersicht
 SuppliersOrdersArea=Purchase orders area
+=======
+OrdersArea=Übersicht Kundenaufträge
+SuppliersOrdersArea=Übersicht Lieferantenbestellungen
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 OrderCard=Bestellung - Karte
 OrderId=Bestell-ID
 Order=Bestellung
@@ -13,6 +18,7 @@ OrderToProcess=Auftrag zur Bearbeitung
 NewOrder=Neue Bestellung
 ToOrder=Erzeuge Bestellung
 MakeOrder=Erzeuge Bestellung
+<<<<<<< HEAD
 SupplierOrder=Purchase order
 SuppliersOrders=Purchase orders
 SuppliersOrdersRunning=Current purchase orders
@@ -25,6 +31,20 @@ OrdersToBill=Gelieferte Kundenaufträge
 OrdersInProcess=Kundenaufträge in Bearbeitung
 OrdersToProcess=Zu bearbeitende Kundenaufträge
 SuppliersOrdersToProcess=Purchase orders to process
+=======
+SupplierOrder=Lieferantenbestellung
+SuppliersOrders=Lieferantenbestellungen
+SuppliersOrdersRunning=Aktuelle Lieferantenbestellungen
+CustomerOrder=Bestellung
+CustomersOrders=Verkaufsaufträge
+CustomersOrdersRunning=Aktuelle Kundenbestellungen
+CustomersOrdersAndOrdersLines=Kundenaufträge und Auftragspositionen 
+OrdersDeliveredToBill=Gelieferte Kundenbestellungen zu verrechnen
+OrdersToBill=Gelieferte Kundenaufträge
+OrdersInProcess=Kundenaufträge in Bearbeitung 
+OrdersToProcess=Zu bearbeitende Kundenaufträge
+SuppliersOrdersToProcess=Lieferantenbestellung in Bearbeitung
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 StatusOrderCanceledShort=Storniert
 StatusOrderDraftShort=Entwurf
 StatusOrderValidatedShort=Freigegeben
@@ -71,6 +91,7 @@ CancelOrder=Bestellung stornieren
 OrderReopened= Auftrag %s wieder geöffnet
 AddOrder=Bestellung erstellen
 AddToDraftOrders=Zu Bestellentwurf hinzufügen
+<<<<<<< HEAD
 ShowOrder=Zeige Bestellung
 OrdersOpened=Bestellungen zu bearbeiten
 NoDraftOrders=Keine Auftrags-Entwürfe
@@ -79,13 +100,29 @@ NoSupplierOrder=No purchase order
 LastOrders=%s neueste Kundenbestellungen
 LastCustomerOrders=%s neueste Kundenbestellungen
 LastSupplierOrders=Latest %s purchase orders
+=======
+ShowOrder=Bestellung anzeigen
+OrdersOpened=Bestellungen zu bearbeiten
+NoDraftOrders=Keine Auftrags-Entwürfe
+NoOrder=Kein Auftrag
+NoSupplierOrder=Keine Lieferantenbestellung
+LastOrders=Letzte %s Kundenaufträge
+LastCustomerOrders=Letzte %s Kundenaufträge
+LastSupplierOrders=%s neueste Lieferantenbestellungen
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LastModifiedOrders=%s zuletzt bearbeitete Bestellungen
 AllOrders=Alle Bestellungen
 NbOfOrders=Anzahl der Bestellungen
 OrdersStatistics=Bestellstatistik
+<<<<<<< HEAD
 OrdersStatisticsSuppliers=Purchase order statistics
 NumberOfOrdersByMonth=Anzahl der Bestellungen pro Monat
 AmountOfOrdersByMonthHT=Anzahl der Aufträge pro Monat (nach Steuern)
+=======
+OrdersStatisticsSuppliers=Statistik Lieferantenbestellungen
+NumberOfOrdersByMonth=Anzahl der Bestellungen pro Monat
+AmountOfOrdersByMonthHT=Anzahl der Aufträge pro Monat (excl. Steuern)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ListOfOrders=Liste Aufträge
 CloseOrder=Bestellung schließen
 ConfirmCloseOrder=Möchten Sie diese Bestellung wirklich auf "geliefert" setzen? Sobald eine Bestellung geliefert ist, kann sie auf "berechnet" gesetzt werden.
@@ -97,6 +134,7 @@ ConfirmMakeOrder=Bestätigen Sie, dass Sie diese Bestellung am <b>%s</b> aufgege
 GenerateBill=Erzeuge Rechnung
 ClassifyShipped=Als geliefert markieren
 DraftOrders=Entwürfe
+<<<<<<< HEAD
 DraftSuppliersOrders=Draft purchase orders
 OnProcessOrders=Bestellungen in Bearbeitung
 RefOrder=Bestell-Nr.
@@ -111,36 +149,74 @@ AuthorRequest=Autor/Anforderer
 UserWithApproveOrderGrant=Benutzer mit Berechtigung zur 'Bestellfreigabe'
 PaymentOrderRef=Zahlung zur Bestellung %s
 CloneOrder=Bestellung duplizieren
+=======
+DraftSuppliersOrders=Entwürfe Lieferantenbestellungen
+OnProcessOrders=Bestellungen in Bearbeitung
+RefOrder=Bestell-Nr.
+RefCustomerOrder=Kunden-BestellNr.
+RefOrderSupplier=Bestell Nr. für Lieferant
+RefOrderSupplierShort=Lieferanten-BestellNr.
+SendOrderByMail=Bestellung per Post versenden
+ActionsOnOrder=Ereignisse zu dieser Bestellung
+NoArticleOfTypeProduct=Keine Artikel vom Typ 'Produkt' und deshalb keine Versandkostenposition
+OrderMode=Bestellmethode
+AuthorRequest=Autor/Anforderer
+UserWithApproveOrderGrant=Benutzer mit Berechtigung zur 'Bestellfreigabe'
+PaymentOrderRef=Zahlung zur Bestellung %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmCloneOrder=Möchten Sie die Bestellung <b>%s</b> wirklich duplizieren?
 DispatchSupplierOrder=Lieferantenbestellung %s erhalten
 FirstApprovalAlreadyDone=1. Bestätigung bereits erledigt
 SecondApprovalAlreadyDone=2. Bestätigung bereits erledigt
+<<<<<<< HEAD
 SupplierOrderReceivedInDolibarr=Purchase Order %s received %s
 SupplierOrderSubmitedInDolibarr=Purchase Order %s submited
 SupplierOrderClassifiedBilled=Purchase Order %s set billed
 OtherOrders=Bestellungen Anderer
+=======
+SupplierOrderReceivedInDolibarr=Lieferantenbestellung %s erhalten %s
+SupplierOrderSubmitedInDolibarr=Lieferantenbestellung %s versendet
+SupplierOrderClassifiedBilled=Bestellung %s als verrechnet markieren
+OtherOrders=zeige weitere Bestellungen dieses Partners
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Kundenauftrag-Nachbetreuung durch Vertreter
 TypeContact_commande_internal_SHIPPING=Versand-Nachbetreuung durch Vertreter
 TypeContact_commande_external_BILLING=Rechnungskontakt des Kunden
 TypeContact_commande_external_SHIPPING=Versandkontakt des Kunden
 TypeContact_commande_external_CUSTOMER=Bestellung-Nachbetreuung durch Kundenkontakt
+<<<<<<< HEAD
 TypeContact_order_supplier_internal_SALESREPFOLL=Representative following-up purchase order
 TypeContact_order_supplier_internal_SHIPPING=Versand-Nachbetreuung durch Vertreter
 TypeContact_order_supplier_external_BILLING=Vendor invoice contact
 TypeContact_order_supplier_external_SHIPPING=Vendor shipping contact
 TypeContact_order_supplier_external_CUSTOMER=Vendor contact following-up order
+=======
+TypeContact_order_supplier_internal_SALESREPFOLL=Lieferantenbestellung-Nachbetreuung durch Vertreter
+TypeContact_order_supplier_internal_SHIPPING=Versand-Nachbetreuung durch Vertreter
+TypeContact_order_supplier_external_BILLING=Kontakt für Lieferantenrechnungen
+TypeContact_order_supplier_external_SHIPPING=Kontakt für Lieferantenversand
+TypeContact_order_supplier_external_CUSTOMER=Lieferantenkontakt für Bestellverfolgung
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Konstante COMMANDE_SUPPLIER_ADDON nicht definiert
 Error_COMMANDE_ADDON_NotDefined=Konstante COMMANDE_ADDON nicht definiert
 Error_OrderNotChecked=Keine zu verrechnende Bestellungen ausgewählt
 # Order modes (how we receive order). Not the "why" are keys stored into dict.lang
 OrderByMail=Post
 OrderByFax=Fax
+<<<<<<< HEAD
 OrderByEMail=E-Mail
+=======
+OrderByEMail=E-Mail (Feld mit automatischer E-Mail-Syntaxprüfung)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 OrderByWWW=Online
 OrderByPhone=Telefon
 # Documents models
 PDFEinsteinDescription=Eine vollständige Bestellvorlage (Logo, uwm.)
+<<<<<<< HEAD
+=======
+PDFEratostheneDescription=Eine vollständige Bestellvorlage (Logo, uwm.)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PDFEdisonDescription=Eine einfache Bestellvorlage
 PDFProformaDescription=Eine vollständige Proforma-Rechnung (Logo, uwm.)
 CreateInvoiceForThisCustomer=Bestellung verrechnen

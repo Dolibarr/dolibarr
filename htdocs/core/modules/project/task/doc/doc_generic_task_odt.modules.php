@@ -3,6 +3,10 @@
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013		Florian Henry		<florian.henry@ope-concept.pro>
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
+<<<<<<< HEAD
+=======
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,10 +58,30 @@ if (! empty($conf->agenda->enabled))      require_once DOL_DOCUMENT_ROOT.'/comm/
  */
 class doc_generic_task_odt extends ModelePDFTask
 {
+<<<<<<< HEAD
 	var $emetteur;	// Objet societe qui emet
 
 	var $phpmin = array(5,2,0);	// Minimum version of PHP required by module
 	var $version = 'dolibarr';
+=======
+	/**
+	 * Issuer
+	 * @var Company object that emits
+	 */
+	public $emetteur;
+
+	/**
+     * @var array Minimum version of PHP required by module.
+     * e.g.: PHP ≥ 5.5 = array(5, 5)
+     */
+	public $phpmin = array(5, 5);
+
+	/**
+     * Dolibarr version of the loaded document
+     * @var string
+     */
+	public $version = 'dolibarr';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	/**
@@ -65,12 +89,21 @@ class doc_generic_task_odt extends ModelePDFTask
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
+<<<<<<< HEAD
 	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
 
 		$langs->load("main");
 		$langs->load("companies");
+=======
+    public function __construct($db)
+	{
+		global $conf, $langs, $mysoc;
+
+		// Load translation files required by the page
+        $langs->loadLangs(array("main","companies"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$this->db = $db;
 		$this->name = "ODT templates";
@@ -100,10 +133,18 @@ class doc_generic_task_odt extends ModelePDFTask
 
 		// Recupere emetteur
 		$this->emetteur=$mysoc;
+<<<<<<< HEAD
 		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'etait pas defini
 	}
 
 
+=======
+		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang, -2);    // Par defaut, si n'etait pas defini
+	}
+
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * Define array with couple substitution key => substitution value
 	 *
@@ -112,8 +153,14 @@ class doc_generic_task_odt extends ModelePDFTask
      * @param   string		    $array_key	        Name of the key for return array
 	 * @return	array								Array of substitution
 	 */
+<<<<<<< HEAD
 	function get_substitutionarray_object($object,$outputlangs,$array_key='object')
 	{
+=======
+	public function get_substitutionarray_object($object, $outputlangs, $array_key = 'object')
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf;
 
 		$resarray=array(
@@ -121,10 +168,17 @@ class doc_generic_task_odt extends ModelePDFTask
             $array_key.'_ref'=>$object->ref,
             $array_key.'_title'=>$object->title,
             $array_key.'_description'=>$object->description,
+<<<<<<< HEAD
             $array_key.'_date_creation'=>dol_print_date($object->date_c,'day'),
             $array_key.'_date_modification'=>dol_print_date($object->date_m,'day'),
             $array_key.'_date_start'=>dol_print_date($object->date_start,'day'),
             $array_key.'_date_end'=>dol_print_date($object->date_end,'day'),
+=======
+            $array_key.'_date_creation'=>dol_print_date($object->date_c, 'day'),
+            $array_key.'_date_modification'=>dol_print_date($object->date_m, 'day'),
+            $array_key.'_date_start'=>dol_print_date($object->date_start, 'day'),
+            $array_key.'_date_end'=>dol_print_date($object->date_end, 'day'),
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $array_key.'_note_private'=>$object->note_private,
             $array_key.'_note_public'=>$object->note_public,
             $array_key.'_public'=>$object->public,
@@ -138,15 +192,26 @@ class doc_generic_task_odt extends ModelePDFTask
 
 			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 			$extrafields = new ExtraFields($this->db);
+<<<<<<< HEAD
 			$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey,true);
 			$object->fetch_optionals();
 
 			$resarray = $this->fill_substitutionarray_with_extrafields($object,$resarray,$extrafields,$array_key,$outputlangs);
+=======
+			$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey, true);
+			$object->fetch_optionals();
+
+			$resarray = $this->fill_substitutionarray_with_extrafields($object, $resarray, $extrafields, $array_key, $outputlangs);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		return $resarray;
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
@@ -154,6 +219,7 @@ class doc_generic_task_odt extends ModelePDFTask
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @return	array								Return a substitution array
 	 */
+<<<<<<< HEAD
 	function get_substitutionarray_tasks($task,$outputlangs)
 	{
 		global $conf;
@@ -176,6 +242,32 @@ class doc_generic_task_odt extends ModelePDFTask
 		);
 	}
 
+=======
+    public function get_substitutionarray_tasks($task, $outputlangs)
+    {
+        // phpcs:enable
+        global $conf;
+
+        return array(
+            'task_ref'=>$task->ref,
+            'task_fk_project'=>$task->fk_project,
+            'task_projectref'=>$task->projectref,
+            'task_projectlabel'=>$task->projectlabel,
+            'task_label'=>$task->label,
+            'task_description'=>$task->description,
+            'task_fk_parent'=>$task->fk_parent,
+            'task_duration'=>$task->duration,
+            'task_progress'=>$task->progress,
+            'task_public'=>$task->public,
+            'task_date_start'=>dol_print_date($task->date_start, 'day'),
+            'task_date_end'=>dol_print_date($task->date_end, 'day'),
+            'task_note_private'=>$task->note_private,
+            'task_note_public'=>$task->note_public
+        );
+    }
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
@@ -183,8 +275,14 @@ class doc_generic_task_odt extends ModelePDFTask
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @return	array								Return a substitution array
 	 */
+<<<<<<< HEAD
 	function get_substitutionarray_project_contacts($contact,$outputlangs)
 	{
+=======
+	public function get_substitutionarray_project_contacts($contact, $outputlangs)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf;
 
 		return array(
@@ -199,6 +297,10 @@ class doc_generic_task_odt extends ModelePDFTask
 		);
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
@@ -206,17 +308,31 @@ class doc_generic_task_odt extends ModelePDFTask
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @return	array								Return a substitution array
 	 */
+<<<<<<< HEAD
 	function get_substitutionarray_project_file($file,$outputlangs)
 	{
+=======
+	public function get_substitutionarray_project_file($file, $outputlangs)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf;
 
 		return array(
 		'projfile_name'=>$file['name'],
+<<<<<<< HEAD
 		'projfile_date'=>dol_print_date($file['date'],'day'),
+=======
+		'projfile_date'=>dol_print_date($file['date'], 'day'),
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		'projfile_size'=>$file['size']
 		);
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
@@ -224,21 +340,38 @@ class doc_generic_task_odt extends ModelePDFTask
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @return	array								Return a substitution array
 	 */
+<<<<<<< HEAD
 	function get_substitutionarray_project_reference($refdetail,$outputlangs)
 	{
+=======
+	public function get_substitutionarray_project_reference($refdetail, $outputlangs)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf;
 
 		return array(
 		'projref_type'=>$refdetail['type'],
 		'projref_ref'=>$refdetail['ref'],
+<<<<<<< HEAD
 		'projref_date'=>dol_print_date($refdetail['date'],'day'),
 		'projref_socname'=>$refdetail['socname'],
 		'projref_amountht'=>price($refdetail['amountht'],0,$outputlangs),
 		'projref_amountttc'=>price($refdetail['amountttc'],0,$outputlangs),
+=======
+		'projref_date'=>dol_print_date($refdetail['date'], 'day'),
+		'projref_socname'=>$refdetail['socname'],
+		'projref_amountht'=>price($refdetail['amountht'], 0, $outputlangs),
+		'projref_amountttc'=>price($refdetail['amountttc'], 0, $outputlangs),
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		'projref_status'=>$refdetail['status']
 		);
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
@@ -246,8 +379,14 @@ class doc_generic_task_odt extends ModelePDFTask
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @return	array								Return a substitution array
 	 */
+<<<<<<< HEAD
 	function get_substitutionarray_tasksressource($taskressource,$outputlangs)
 	{
+=======
+	public function get_substitutionarray_tasksressource($taskressource, $outputlangs)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf;
 		//dol_syslog(get_class($this).'::get_substitutionarray_tasksressource taskressource='.var_export($taskressource,true),LOG_DEBUG);
 		return array(
@@ -261,6 +400,10 @@ class doc_generic_task_odt extends ModelePDFTask
 		);
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
@@ -268,14 +411,25 @@ class doc_generic_task_odt extends ModelePDFTask
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @return	array								Return a substitution array
 	 */
+<<<<<<< HEAD
 	function get_substitutionarray_taskstime($tasktime,$outputlangs)
 	{
+=======
+	public function get_substitutionarray_taskstime($tasktime, $outputlangs)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf;
 
 		return array(
 		'tasktime_rowid'=>$tasktime['rowid'],
+<<<<<<< HEAD
 		'tasktime_task_date'=>dol_print_date($tasktime['task_date'],'day'),
 		'tasktime_task_duration'=>convertSecondToTime($tasktime['task_duration'],'all'),
+=======
+		'tasktime_task_date'=>dol_print_date($tasktime['task_date'], 'day'),
+		'tasktime_task_duration'=>convertSecondToTime($tasktime['task_duration'], 'all'),
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		'tasktime_note'=>$tasktime['note'],
 		'tasktime_fk_user'=>$tasktime['fk_user'],
 		'tasktime_user_name'=>$tasktime['name'],
@@ -284,6 +438,10 @@ class doc_generic_task_odt extends ModelePDFTask
 		);
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
@@ -291,13 +449,23 @@ class doc_generic_task_odt extends ModelePDFTask
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @return	array								Return a substitution array
 	 */
+<<<<<<< HEAD
 	function get_substitutionarray_task_file($file,$outputlangs)
 	{
+=======
+	public function get_substitutionarray_task_file($file, $outputlangs)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf;
 
 		return array(
 		'tasksfile_name'=>$file['name'],
+<<<<<<< HEAD
 		'tasksfile_date'=>dol_print_date($file['date'],'day'),
+=======
+		'tasksfile_date'=>dol_print_date($file['date'], 'day'),
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		'tasksfile_size'=>$file['size']
 		);
 	}
@@ -309,12 +477,21 @@ class doc_generic_task_odt extends ModelePDFTask
 	 *	@param	Translate	$langs      Lang object to use for output
 	 *	@return string       			Description
 	 */
+<<<<<<< HEAD
 	function info($langs)
 	{
 		global $conf,$langs;
 
 		$langs->load("companies");
 		$langs->load("errors");
+=======
+	public function info($langs)
+	{
+		global $conf,$langs;
+
+		// Load translation files required by the page
+        $langs->loadLangs(array("errors","companies"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$form = new Form($this->db);
 
@@ -328,11 +505,16 @@ class doc_generic_task_odt extends ModelePDFTask
 		// List of directories area
 		$texte.= '<tr><td>';
 		$texttitle=$langs->trans("ListOfDirectories");
+<<<<<<< HEAD
 		$listofdir=explode(',',preg_replace('/[\r\n]+/',',',trim($conf->global->PROJECT_TASK_ADDON_PDF_ODT_PATH)));
+=======
+		$listofdir=explode(',', preg_replace('/[\r\n]+/', ',', trim($conf->global->PROJECT_TASK_ADDON_PDF_ODT_PATH)));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$listoffiles=array();
 		foreach($listofdir as $key=>$tmpdir)
 		{
 			$tmpdir=trim($tmpdir);
+<<<<<<< HEAD
 			$tmpdir=preg_replace('/DOL_DATA_ROOT/',DOL_DATA_ROOT,$tmpdir);
 			if (! $tmpdir) {
 				unset($listofdir[$key]); continue;
@@ -342,6 +524,17 @@ class doc_generic_task_odt extends ModelePDFTask
 			{
 				$tmpfiles=dol_dir_list($tmpdir,'files',0,'\.(ods|odt)');
 				if (count($tmpfiles)) $listoffiles=array_merge($listoffiles,$tmpfiles);
+=======
+			$tmpdir=preg_replace('/DOL_DATA_ROOT/', DOL_DATA_ROOT, $tmpdir);
+			if (! $tmpdir) {
+				unset($listofdir[$key]); continue;
+			}
+			if (! is_dir($tmpdir)) $texttitle.=img_warning($langs->trans("ErrorDirNotFound", $tmpdir), 0);
+			else
+			{
+				$tmpfiles=dol_dir_list($tmpdir, 'files', 0, '\.(ods|odt)');
+				if (count($tmpfiles)) $listoffiles=array_merge($listoffiles, $tmpfiles);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 		}
 		$texthelp=$langs->trans("ListOfDirectoriesForModelGenODT");
@@ -349,7 +542,11 @@ class doc_generic_task_odt extends ModelePDFTask
 		$texthelp.='<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
 		$texthelp.=$langs->transnoentitiesnoconv("FullListOnOnlineDocumentation");    // This contains an url, we don't modify it
 
+<<<<<<< HEAD
 		$texte.= $form->textwithpicto($texttitle,$texthelp,1,'help','',1);
+=======
+		$texte.= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$texte.= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
 		$texte.= '<textarea class="flat" cols="60" name="value1">';
 		$texte.=$conf->global->PROJECT_TASK_ADDON_PDF_ODT_PATH;
@@ -392,6 +589,10 @@ class doc_generic_task_odt extends ModelePDFTask
 		return $texte;
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
@@ -400,8 +601,14 @@ class doc_generic_task_odt extends ModelePDFTask
 	 * 	@param	string		$srctemplatepath	    Full path of source filename for generator using a template file
 	 *	@return	int         						1 if OK, <=0 if KO
 	 */
+<<<<<<< HEAD
 	function write_file($object,$outputlangs,$srctemplatepath)
 	{
+=======
+	public function write_file($object, $outputlangs, $srctemplatepath)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $user,$langs,$conf,$mysoc,$hookmanager;
 
 		if (empty($srctemplatepath))
@@ -414,10 +621,15 @@ class doc_generic_task_odt extends ModelePDFTask
 		$sav_charset_output=$outputlangs->charset_output;
 		$outputlangs->charset_output='UTF-8';
 
+<<<<<<< HEAD
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
 		$outputlangs->load("companies");
 		$outputlangs->load("projects");
+=======
+		// Load translation files required by the page
+		$outputlangs->loadLangs(array("main", "dict", "companies", "projects"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		if ($conf->projet->dir_output)
 		{
@@ -429,7 +641,11 @@ class doc_generic_task_odt extends ModelePDFTask
 				$result=$object->fetch($id);
 				if ($result < 0)
 				{
+<<<<<<< HEAD
 					dol_print_error($this->db,$object->error);
+=======
+					dol_print_error($this->db, $object->error);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					return -1;
 				}
 			}
@@ -439,7 +655,11 @@ class doc_generic_task_odt extends ModelePDFTask
 
 			$dir = $conf->projet->dir_output. "/" . $project->ref. "/";
 			$objectref = dol_sanitizeFileName($object->ref);
+<<<<<<< HEAD
 			if (! preg_match('/specimen/i',$objectref)) $dir.= "/" . $objectref;
+=======
+			if (! preg_match('/specimen/i', $objectref)) $dir.= "/" . $objectref;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$file = $dir . "/" . $objectref . ".odt";
 
 			if (! file_exists($dir))
@@ -447,7 +667,11 @@ class doc_generic_task_odt extends ModelePDFTask
 				print '$dir'.$dir;
 				if (dol_mkdir($dir) < 0)
 				{
+<<<<<<< HEAD
 					$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
+=======
+					$this->error=$langs->transnoentities("ErrorCanNotCreateDir", $dir);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					return -1;
 				}
 			}
@@ -457,9 +681,15 @@ class doc_generic_task_odt extends ModelePDFTask
 			{
 				//print "srctemplatepath=".$srctemplatepath;	// Src filename
 				$newfile=basename($srctemplatepath);
+<<<<<<< HEAD
 				$newfiletmp=preg_replace('/\.(ods|odt)/i','',$newfile);
 				$newfiletmp=preg_replace('/template_/i','',$newfiletmp);
 				$newfiletmp=preg_replace('/modele_/i','',$newfiletmp);
+=======
+				$newfiletmp=preg_replace('/\.(ods|odt)/i', '', $newfile);
+				$newfiletmp=preg_replace('/template_/i', '', $newfiletmp);
+				$newfiletmp=preg_replace('/modele_/i', '', $newfiletmp);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$newfiletmp=$objectref.'_'.$newfiletmp;
 				//$file=$dir.'/'.$newfiletmp.'.'.dol_print_date(dol_now(),'%Y%m%d%H%M%S').'.odt';
 				$file=$dir.'/'.$newfiletmp.'.odt';
@@ -480,12 +710,20 @@ class doc_generic_task_odt extends ModelePDFTask
 				complete_substitutions_array($substitutionarray, $langs, $object);
 				// Call the ODTSubstitution hook
 				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
+<<<<<<< HEAD
 				$reshook=$hookmanager->executeHooks('ODTSubstitution',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+=======
+				$reshook=$hookmanager->executeHooks('ODTSubstitution', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
+<<<<<<< HEAD
 					$odfHandler = new odf(
+=======
+                    $odfHandler = new odf(
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						$srctemplatepath,
 						array(
 						'PATH_TO_TMP'	  => $conf->projet->dir_temp,
@@ -510,6 +748,7 @@ class doc_generic_task_odt extends ModelePDFTask
 				// Define substitution array
 				$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
 				$array_object_from_properties = $this->get_substitutionarray_each_var_object($object, $outputlangs);
+<<<<<<< HEAD
 				$array_objet=$this->get_substitutionarray_object($project,$outputlangs);
 				$array_user=$this->get_substitutionarray_user($user,$outputlangs);
 				$array_soc=$this->get_substitutionarray_mysoc($mysoc,$outputlangs);
@@ -517,12 +756,25 @@ class doc_generic_task_odt extends ModelePDFTask
 				$array_other=$this->get_substitutionarray_other($outputlangs);
 
 				$tmparray = array_merge($substitutionarray,$array_object_from_properties,$array_user,$array_soc,$array_thirdparty,$array_objet,$array_other);
+=======
+				$array_objet=$this->get_substitutionarray_object($project, $outputlangs);
+				$array_user=$this->get_substitutionarray_user($user, $outputlangs);
+				$array_soc=$this->get_substitutionarray_mysoc($mysoc, $outputlangs);
+				$array_thirdparty=$this->get_substitutionarray_thirdparty($socobject, $outputlangs);
+				$array_other=$this->get_substitutionarray_other($outputlangs);
+
+				$tmparray = array_merge($substitutionarray, $array_object_from_properties, $array_user, $array_soc, $array_thirdparty, $array_objet, $array_other);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				complete_substitutions_array($tmparray, $outputlangs, $object);
 
 				foreach($tmparray as $key=>$value)
 				{
 					try {
+<<<<<<< HEAD
 						if (preg_match('/logo$/',$key)) // Image
+=======
+						if (preg_match('/logo$/', $key)) // Image
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						{
 							if (file_exists($value)) $odfHandler->setImage($key, $value);
 							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
@@ -531,9 +783,14 @@ class doc_generic_task_odt extends ModelePDFTask
 						{
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
+<<<<<<< HEAD
 					}
 					catch(OdfException $e)
 					{
+=======
+					} catch (OdfException $e) {
+                        dol_syslog($e->getMessage(), LOG_INFO);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					}
 				}
 
@@ -544,6 +801,7 @@ class doc_generic_task_odt extends ModelePDFTask
 					$socid=0;
 					if (!empty($project->fk_soc)) $socid = $project->fk_soc;
 
+<<<<<<< HEAD
 					$tmparray=$this->get_substitutionarray_tasks($object,$outputlangs);
 					complete_substitutions_array($tmparray, $outputlangs, $object);
 					foreach($tmparray as $key => $val)
@@ -557,6 +815,18 @@ class doc_generic_task_odt extends ModelePDFTask
 						}
 						catch(SegmentException $e)
 						{
+=======
+					$tmparray=$this->get_substitutionarray_tasks($object, $outputlangs);
+					complete_substitutions_array($tmparray, $outputlangs, $object);
+					foreach($tmparray as $key => $val)
+					{
+						try {
+							$odfHandler->setVars($key, $val, true, 'UTF-8');
+						} catch (OdfException $e) {
+							dol_syslog($e->getMessage(), LOG_INFO);
+						} catch(SegmentException $e) {
+							dol_syslog($e->getMessage(), LOG_INFO);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						}
 					}
 
@@ -564,10 +834,17 @@ class doc_generic_task_odt extends ModelePDFTask
 					$sourcearray=array('internal','external');
 					$contact_arrray=array();
 					foreach ($sourcearray as $source) {
+<<<<<<< HEAD
 						$contact_temp=$object->liste_contact(-1,$source);
 						if ((is_array($contact_temp) && count($contact_temp) > 0))
 						{
 							$contact_arrray=array_merge($contact_arrray,$contact_temp);
+=======
+						$contact_temp=$object->liste_contact(-1, $source);
+						if ((is_array($contact_temp) && count($contact_temp) > 0))
+						{
+							$contact_arrray=array_merge($contact_arrray, $contact_temp);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						}
 					}
 					if ((is_array($contact_arrray) && count($contact_arrray) > 0))
@@ -588,6 +865,7 @@ class doc_generic_task_odt extends ModelePDFTask
 								$soc->fetch($contact['socid']);
 								$contact['socname']=$soc->name;
 							}
+<<<<<<< HEAD
 							$contact['fullname']=$objectdetail->getFullName($outputlangs,1);
 
 							$tmparray=$this->get_substitutionarray_tasksressource($contact,$outputlangs);
@@ -603,6 +881,21 @@ class doc_generic_task_odt extends ModelePDFTask
 								}
 								catch(SegmentException $e)
 								{
+=======
+							$contact['fullname']=$objectdetail->getFullName($outputlangs, 1);
+
+							$tmparray=$this->get_substitutionarray_tasksressource($contact, $outputlangs);
+
+							foreach($tmparray as $key => $val)
+							{
+								try {
+									$listlinestaskres->setVars($key, $val, true, 'UTF-8');
+								} catch (OdfException $e) {
+									dol_syslog($e->getMessage(), LOG_INFO);
+								}
+								catch (SegmentException $e) {
+									dol_syslog($e->getMessage(), LOG_INFO);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 								}
 							}
 							$listlinestaskres->merge();
@@ -633,12 +926,20 @@ class doc_generic_task_odt extends ModelePDFTask
 								$objectdetail=new User($this->db);
 								$objectdetail->fetch($row['fk_user']);
 								// TODO Use a cache to aoid fetch for same user
+<<<<<<< HEAD
 								$row['fullcivname']=$objectdetail->getFullName($outputlangs,1);
+=======
+								$row['fullcivname']=$objectdetail->getFullName($outputlangs, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							} else {
 								$row['fullcivname']='';
 							}
 
+<<<<<<< HEAD
 							$tmparray=$this->get_substitutionarray_taskstime($row,$outputlangs);
+=======
+							$tmparray=$this->get_substitutionarray_taskstime($row, $outputlangs);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 							foreach($tmparray as $key => $val)
 							{
@@ -648,9 +949,17 @@ class doc_generic_task_odt extends ModelePDFTask
 								}
 								catch(OdfException $e)
 								{
+<<<<<<< HEAD
 								}
 								catch(SegmentException $e)
 								{
+=======
+									dol_syslog($e->getMessage(), LOG_INFO);
+								}
+								catch(SegmentException $e)
+								{
+									dol_syslog($e->getMessage(), LOG_INFO);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 								}
 							}
 							$listlinestasktime->merge();
@@ -666,12 +975,20 @@ class doc_generic_task_odt extends ModelePDFTask
 					$listtasksfiles = $odfHandler->setSegment('tasksfiles');
 
 					$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($project->ref).'/'.dol_sanitizeFileName($object->ref);
+<<<<<<< HEAD
 					$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$','name',SORT_ASC,1);
+=======
+					$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', 'name', SORT_ASC, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 					foreach ($filearray as $filedetail)
 					{
+<<<<<<< HEAD
 						$tmparray=$this->get_substitutionarray_task_file($filedetail,$outputlangs);
+=======
+						$tmparray=$this->get_substitutionarray_task_file($filedetail, $outputlangs);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						//dol_syslog(get_class($this).'::main $tmparray'.var_export($tmparray,true));
 						foreach($tmparray as $key => $val)
 						{
@@ -681,9 +998,17 @@ class doc_generic_task_odt extends ModelePDFTask
 							}
 							catch(OdfException $e)
 							{
+<<<<<<< HEAD
 							}
 							catch(SegmentException $e)
 							{
+=======
+								dol_syslog($e->getMessage(), LOG_INFO);
+							}
+							catch(SegmentException $e)
+							{
+								dol_syslog($e->getMessage(), LOG_INFO);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							}
 						}
 						$listtasksfiles->merge();
@@ -691,7 +1016,10 @@ class doc_generic_task_odt extends ModelePDFTask
 					//$listlines->merge();
 
 					$odfHandler->mergeSegment($listtasksfiles);
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 				catch(OdfException $e)
 				{
@@ -708,13 +1036,21 @@ class doc_generic_task_odt extends ModelePDFTask
 					$listlines = $odfHandler->setSegment('projectfiles');
 
 					$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($object->ref);
+<<<<<<< HEAD
 					$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$','name',SORT_ASC,1);
+=======
+					$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', 'name', SORT_ASC, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 					foreach ($filearray as $filedetail)
 					{
 						//dol_syslog(get_class($this).'::main $filedetail'.var_export($filedetail,true));
+<<<<<<< HEAD
 						$tmparray=$this->get_substitutionarray_project_file($filedetail,$outputlangs);
+=======
+						$tmparray=$this->get_substitutionarray_project_file($filedetail, $outputlangs);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 						foreach($tmparray as $key => $val)
 						{
@@ -724,9 +1060,17 @@ class doc_generic_task_odt extends ModelePDFTask
 							}
 							catch(OdfException $e)
 							{
+<<<<<<< HEAD
 							}
 							catch(SegmentException $e)
 							{
+=======
+								dol_syslog($e->getMessage(), LOG_INFO);
+							}
+							catch(SegmentException $e)
+							{
+								dol_syslog($e->getMessage(), LOG_INFO);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							}
 						}
 						$listlines->merge();
@@ -744,10 +1088,17 @@ class doc_generic_task_odt extends ModelePDFTask
 				$sourcearray=array('internal','external');
 				$contact_arrray=array();
 				foreach ($sourcearray as $source) {
+<<<<<<< HEAD
 					$contact_temp=$project->liste_contact(-1,$source);
 					if ((is_array($contact_temp) && count($contact_temp) > 0))
 					{
 						$contact_arrray=array_merge($contact_arrray,$contact_temp);
+=======
+					$contact_temp=$project->liste_contact(-1, $source);
+					if ((is_array($contact_temp) && count($contact_temp) > 0))
+					{
+						$contact_arrray=array_merge($contact_arrray, $contact_temp);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					}
 				}
 				if ((is_array($contact_arrray) && count($contact_arrray) > 0))
@@ -770,9 +1121,15 @@ class doc_generic_task_odt extends ModelePDFTask
 								$soc->fetch($contact['socid']);
 								$contact['socname']=$soc->name;
 							}
+<<<<<<< HEAD
 							$contact['fullname']=$objectdetail->getFullName($outputlangs,1);
 
 							$tmparray=$this->get_substitutionarray_project_contacts($contact,$outputlangs);
+=======
+							$contact['fullname']=$objectdetail->getFullName($outputlangs, 1);
+
+							$tmparray=$this->get_substitutionarray_project_contacts($contact, $outputlangs);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 							foreach($tmparray as $key => $val)
 							{
@@ -782,9 +1139,17 @@ class doc_generic_task_odt extends ModelePDFTask
 								}
 								catch(OdfException $e)
 								{
+<<<<<<< HEAD
 								}
 								catch(SegmentException $e)
 								{
+=======
+									dol_syslog($e->getMessage(), LOG_INFO);
+								}
+								catch(SegmentException $e)
+								{
+									dol_syslog($e->getMessage(), LOG_INFO);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 								}
 							}
 							$listlines->merge();
@@ -802,28 +1167,48 @@ class doc_generic_task_odt extends ModelePDFTask
 
 				// Call the beforeODTSave hook
 				$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
+<<<<<<< HEAD
 				$reshook=$hookmanager->executeHooks('beforeODTSave',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+=======
+				$reshook=$hookmanager->executeHooks('beforeODTSave', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 				// Write new file
 				if (!empty($conf->global->MAIN_ODT_AS_PDF)) {
 					try {
 						$odfHandler->exportAsAttachedPDF($file);
+<<<<<<< HEAD
 					}catch (Exception $e){
 						$this->error=$e->getMessage();
+=======
+					} catch (Exception $e) {
+						$this->error=$e->getMessage();
+                        dol_syslog($e->getMessage(), LOG_INFO);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						return -1;
 					}
 				}
 				else {
 					try {
 						$odfHandler->saveToDisk($file);
+<<<<<<< HEAD
 					}catch (Exception $e){
 						$this->error=$e->getMessage();
+=======
+					} catch (Exception $e) {
+						$this->error=$e->getMessage();
+                        dol_syslog($e->getMessage(), LOG_INFO);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						return -1;
 					}
 				}
 				$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
+<<<<<<< HEAD
 				$reshook=$hookmanager->executeHooks('afterODTCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+=======
+				$reshook=$hookmanager->executeHooks('afterODTCreation', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				if (! empty($conf->global->MAIN_UMASK))
 					@chmod($file, octdec($conf->global->MAIN_UMASK));
@@ -836,12 +1221,19 @@ class doc_generic_task_odt extends ModelePDFTask
 			}
 			else
 			{
+<<<<<<< HEAD
 				$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
+=======
+				$this->error=$langs->transnoentities("ErrorCanNotCreateDir", $dir);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				return -1;
 			}
 		}
 
 		return -1;
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

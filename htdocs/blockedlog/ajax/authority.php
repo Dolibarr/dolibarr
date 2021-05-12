@@ -26,9 +26,15 @@
 // This script is called with a POST method.
 // Directory to scan (full path) is inside POST['dir'].
 
+<<<<<<< HEAD
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL',1); // Disables token renewal
 if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
+=======
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
+if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML', '1');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $res=require '../../master.inc.php';
 
@@ -53,7 +59,10 @@ if($auth->fetch(0, $signature)<=0) {
 if(!empty($hash)) {
 
 	echo $auth->checkBlockchain($hash) ? 'hashisok' : 'hashisjunk';
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 elseif(!empty($newblock)){
 	if($auth->checkBlock($newblock)) {
@@ -65,11 +74,17 @@ elseif(!empty($newblock)){
 	else{
 
 		echo 'blockalreadyadded';
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 }
 else{
 	echo 'idontunderstandwhatihavetodo';
 }
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -2,11 +2,19 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
+<<<<<<< HEAD
  * Copyright (C) 2005-2009 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2005      Simon TOSSER          <simon@kornog-computing.com>
  * Copyright (C) 2011-2012 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Alexandre Spangaro    <aspangaro.dolibarr@gmail.com>
+=======
+ * Copyright (C) 2005-2009 Regis Houssin         <regis.houssin@inodbox.com>
+ * Copyright (C) 2005      Simon TOSSER          <simon@kornog-computing.com>
+ * Copyright (C) 2011-2012 Juanjo Menent         <jmenent@2byte.es>
+ * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2015      Alexandre Spangaro    <aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +48,7 @@ if (! empty($conf->projet->enabled))
     require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
+<<<<<<< HEAD
 $langs->load("other");
 $langs->load("donations");
 $langs->load("companies");
@@ -48,6 +57,15 @@ $id = GETPOST('id','int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action','alpha');
 $confirm = GETPOST('confirm','alpha');
+=======
+// Load translation files required by the page
+$langs->loadLangs(array("companies","other","donations"));
+
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
+$action = GETPOST('action', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
 
 // Security check
@@ -56,9 +74,15 @@ $result = restrictedArea($user, 'don', $id, '');
 
 
 // Get parameters
+<<<<<<< HEAD
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
+=======
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -70,7 +94,11 @@ if (! $sortfield) $sortfield="name";
 $object = new Don($db);
 $object->fetch($id, $ref);
 
+<<<<<<< HEAD
 $upload_dir = $conf->don->dir_output . '/' . get_exdir($filename,0,0,0,$object,'donation'). '/'. dol_sanitizeFileName($object->ref);
+=======
+$upload_dir = $conf->don->dir_output . '/' . get_exdir($filename, 0, 0, 0, $object, 'donation'). '/'. dol_sanitizeFileName($object->ref);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $modulepart='don';
 
 
@@ -104,11 +132,19 @@ if ($object->id)
 
 	$head=donation_prepare_head($object);
 
+<<<<<<< HEAD
 	dol_fiche_head($head, 'documents',  $langs->trans("Donation"), -1, 'generic');
 
 
 	// Construit liste des fichiers
 	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+=======
+	dol_fiche_head($head, 'documents', $langs->trans("Donation"), -1, 'generic');
+
+
+	// Build file list
+	$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$totalsize=0;
 	foreach($filearray as $key => $file)
 	{
@@ -158,7 +194,11 @@ if ($object->id)
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
+<<<<<<< HEAD
     print '<table class="border" width="100%">';
+=======
+    print '<table class="border tableforfield centpercent">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	// Ref
 	/*
@@ -171,7 +211,11 @@ if ($object->id)
 	//print "<tr><td>".$langs->trans("Company")."</td><td>".$object->client->getNomUrl(1)."</td></tr>";
 
     print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
+<<<<<<< HEAD
     print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize,1,1).'</td></tr>';
+=======
+    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print '</table>';
 
     print '</div>';
@@ -185,7 +229,10 @@ if ($object->id)
     $permtoedit = $user->rights->don->creer;
     $param = '&id=' . $object->id;
     include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 else
 {

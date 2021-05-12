@@ -1,7 +1,12 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,11 +32,23 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
+<<<<<<< HEAD
+=======
+$hookmanager = new HookManager($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('stockindex'));
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 // Load translation files required by the page
 $langs->loadLangs(array('stocks', 'productbatch'));
 
 // Security check
+<<<<<<< HEAD
 $result=restrictedArea($user,'stock');
+=======
+$result=restrictedArea($user, 'stock');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 /*
@@ -41,7 +58,11 @@ $result=restrictedArea($user,'stock');
 $producttmp=new Product($db);
 
 $help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
+<<<<<<< HEAD
 llxHeader("",$langs->trans("Stocks"),$help_url);
+=======
+llxHeader("", $langs->trans("Stocks"), $help_url);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print load_fiche_titre($langs->trans("StocksArea"));
 
@@ -68,7 +89,11 @@ $sql = "SELECT e.ref as label, e.rowid, e.statut";
 $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 $sql.= " WHERE e.statut in (0,1)";
 $sql.= " AND e.entity IN (".getEntity('stock').")";
+<<<<<<< HEAD
 $sql.= $db->order('e.statut','DESC');
+=======
+$sql.= $db->order('e.statut', 'DESC');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $sql.= $db->plimit(15, 0);
 
 $result = $db->query($sql);
@@ -91,13 +116,21 @@ if ($result)
             $objp = $db->fetch_object($result);
 
             print '<tr class="oddeven">';
+<<<<<<< HEAD
             print "<td><a href=\"card.php?id=$objp->rowid\">".img_object($langs->trans("ShowStock"),"stock")." ".$objp->label."</a></td>\n";
             print '<td align="right">'.$entrepot->LibStatut($objp->statut,5).'</td>';
+=======
+            print "<td><a href=\"card.php?id=$objp->rowid\">".img_object($langs->trans("ShowStock"), "stock")." ".$objp->label."</a></td>\n";
+            print '<td class="right">'.$entrepot->LibStatut($objp->statut, 5).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             print "</tr>\n";
             $i++;
         }
         $db->free($result);
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
     print "</table>";
 }
@@ -123,8 +156,13 @@ $sql.= " WHERE m.fk_product = p.rowid";
 $sql.= " AND m.fk_entrepot = e.rowid";
 $sql.= " AND e.entity IN (".getEntity('stock').")";
 if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) $sql.= " AND p.fk_product_type = 0";
+<<<<<<< HEAD
 $sql.= $db->order("datem","DESC");
 $sql.= $db->plimit($max,0);
+=======
+$sql.= $db->order("datem", "DESC");
+$sql.= $db->plimit($max, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 dol_syslog("Index:list stock movements", LOG_DEBUG);
 $resql = $db->query($sql);
@@ -134,7 +172,11 @@ if ($resql)
 
 	print '<table class="noborder" width="100%">';
 	print "<tr class=\"liste_titre\">";
+<<<<<<< HEAD
 	print '<th>'.$langs->trans("LastMovements",min($num,$max)).'</th>';
+=======
+	print '<th>'.$langs->trans("LastMovements", min($num, $max)).'</th>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '<th>'.$langs->trans("Product").'</th>';
 	if (! empty($conf->productbatch->enabled))
 	{
@@ -143,11 +185,19 @@ if ($resql)
 		print '<th>'.$langs->trans("EatByDate").'</th>';
 	}
 	print '<th>'.$langs->trans("Warehouse").'</th>';
+<<<<<<< HEAD
 	print '<th align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/product/stock/mouvement.php">'.$langs->trans("FullList").'</a></th>';
 	print "</tr>\n";
 
 	$i=0;
 	while ($i < min($num,$max))
+=======
+	print '<th class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/product/stock/movement_list.php">'.$langs->trans("FullList").'</a></th>';
+	print "</tr>\n";
+
+	$i=0;
+	while ($i < min($num, $max))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$objp = $db->fetch_object($resql);
 
@@ -158,13 +208,18 @@ if ($resql)
 		$producttmp->status_buy = $objp->tobuy;
 
 		print '<tr class="oddeven">';
+<<<<<<< HEAD
 		print '<td>'.dol_print_date($db->jdate($objp->datem),'dayhour').'</td>';
+=======
+		print '<td>'.dol_print_date($db->jdate($objp->datem), 'dayhour').'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '<td class="tdoverflowmax200">';
 		print $producttmp->getNomUrl(1);
 		print "</td>\n";
 		if (! empty($conf->productbatch->enabled))
 		{
 			print '<td>'.$objp->batch.'</td>';
+<<<<<<< HEAD
 			print '<td>'.dol_print_date($db->jdate($objp->sellby),'day').'</td>';
 			print '<td>'.dol_print_date($db->jdate($objp->eatby),'day').'</td>';
 		}
@@ -172,6 +227,15 @@ if ($resql)
 		print img_object($langs->trans("ShowWarehouse"),"stock").' '.$objp->stock;
 		print "</a></td>\n";
 		print '<td align="right">';
+=======
+			print '<td>'.dol_print_date($db->jdate($objp->sellby), 'day').'</td>';
+			print '<td>'.dol_print_date($db->jdate($objp->eatby), 'day').'</td>';
+		}
+		print '<td class="tdoverflowmax200"><a href="card.php?id='.$objp->entrepot_id.'">';
+		print img_object($langs->trans("ShowWarehouse"), "stock").' '.$objp->stock;
+		print "</a></td>\n";
+		print '<td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if ($objp->qty > 0) print '+';
 		print $objp->qty.'</td>';
 		print "</tr>\n";
@@ -185,6 +249,14 @@ if ($resql)
 //print '</td></tr></table>';
 print '</div></div></div>';
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardWarehouse', $parameters, $object); // Note that $action and $object may have been modified by hook
+
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

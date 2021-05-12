@@ -4,7 +4,11 @@ Holidays=İzinler
 CPTitreMenu=İzinler
 MenuReportMonth=Aylık özet
 MenuAddCP=Yeni izin isteği
+<<<<<<< HEAD
 NotActiveModCP=Bu sayfayı görmek için İzinler modülünü etkinleştirmelisiniz
+=======
+NotActiveModCP=Bu sayfayı görüntülemek için İzin modülünü etkinleştirmelisiniz.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddCP=Bir izin isteği yap
 DateDebCP=Başlama tarihi
 DateFinCP=Bitiş tarihi
@@ -15,6 +19,7 @@ ApprovedCP=Onaylandı
 CancelCP=İptal edildi
 RefuseCP=Reddedildi
 ValidatorCP=Onaylayan
+<<<<<<< HEAD
 ListeCP=İzinler listesi
 ReviewedByCP=Şunun tarafından onaylanacak
 DescCP=Açıklama
@@ -22,6 +27,20 @@ SendRequestCP=İzin isteği oluştur
 DelayToRequestCP=İzin istekleri enaz <b>%s gün</b> önce yapolmalıdır.
 MenuConfCP=İzinlerin bakiyesi
 SoldeCPUser=İzin bakiyesi <b>%s</b> gündür.
+=======
+ListeCP=İzin Listesi
+LeaveId=İzin Kimliği
+ReviewedByCP=Şunun tarafından onaylanacak
+UserForApprovalID=User for approval ID
+UserForApprovalFirstname=First name of approval user
+UserForApprovalLastname=Last name of approval user
+UserForApprovalLogin=Login of approval user
+DescCP=Açıklama
+SendRequestCP=İzin isteği oluştur
+DelayToRequestCP=İzin istekleri enaz <b>%s gün</b> önce yapolmalıdır.
+MenuConfCP=Balance of leave
+SoldeCPUser=Leave balance is <b>%s</b> days.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorEndDateCP=Başlama tarihinden büyük bir bitiş tarihi seçmelisiniz.
 ErrorSQLCreateCP=Oluşturma sırasında bir SQL hatası oluştu:
 ErrorIDFicheCP=Bir hata oluştu, izin isteği yok.
@@ -30,7 +49,18 @@ ErrorUserViewCP=İzin isteklerini okumak için yetkiniz yok.
 InfosWorkflowCP=Bilgi işakışı
 RequestByCP=İsteyen
 TitreRequestCP=İzin isteği
+<<<<<<< HEAD
 NbUseDaysCP=Tüketilen tatil gün sayısı
+=======
+TypeOfLeaveId=İzin Kimlik türü
+TypeOfLeaveCode=İzin kod türü
+TypeOfLeaveLabel=İzin etiketi türü
+NbUseDaysCP=Tüketilen tatil gün sayısı
+NbUseDaysCPShort=Tüketilen gün
+NbUseDaysCPShortInMonth=Days consumed in month
+DateStartInMonth=Start date in month
+DateEndInMonth=End date in month
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 EditCP=Düzenle
 DeleteCP=Sil
 ActionRefuseCP=Reddet
@@ -59,6 +89,10 @@ DateRefusCP=Ret tarihi
 DateCancelCP=İptal tarihi
 DefineEventUserCP=Bir kullanıcı için özel izin tahsis et
 addEventToUserCP=İzin Tahsisi
+<<<<<<< HEAD
+=======
+NotTheAssignedApprover=Atanmış onaylayıcı siz değilsiniz
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MotifCP=Neden
 UserCP=Kullanıcı
 ErrorAddEventToUserCP=Özel izin eklenirken hata oluştu.
@@ -79,6 +113,7 @@ HolidaysCancelation=İzin isteği iptali
 EmployeeLastname=Çalışanın soyadı
 EmployeeFirstname=Çalışanın ilk adı
 TypeWasDisabledOrRemoved=Ayrılma türü (id %s) devre dışı bırakıldı veya kaldırıldı
+<<<<<<< HEAD
 LastHolidays=Latest %s leave requests
 AllHolidays=All leave requests
 
@@ -89,18 +124,53 @@ UpdateConfCPOK=Güncelleme başarılı
 Module27130Name= İzin istekleri yönetimi
 Module27130Desc= İzin istekleri yönetimi
 ErrorMailNotSend=Eposta gönderilirken bir hata oluştu:
+=======
+LastHolidays=En son %s izin isteği
+AllHolidays=Tüm izin istekleri
+HalfDay=Yarım gün
+NotTheAssignedApprover=Atanmış onaylayıcı siz değilsiniz
+LEAVE_PAID=Paid vacation
+LEAVE_SICK=Hastalık izni
+LEAVE_OTHER=Diğer izin
+LEAVE_PAID_FR=Paid vacation
+## Configuration du Module ##
+LastUpdateCP=İzin dağıtımının en son otomatik güncelleme
+MonthOfLastMonthlyUpdate=İzin dağıtımının en son otomatik güncelleme ayı
+UpdateConfCPOK=Güncelleme başarılı
+Module27130Name= İzin istekleri yönetimi
+Module27130Desc= İzin istekleri yönetimi
+ErrorMailNotSend=E-posta gönderilirken bir hata oluştu:
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoticePeriod=Bildirim dönemi
 #Messages
 HolidaysToValidate=İzin isteği doğrula
 HolidaysToValidateBody=Doğrulanacak izin isteği aşağıdadır
 HolidaysToValidateDelay=Bu izin isteği %s günden kısa bir sürede gerçekleşecektir.
+<<<<<<< HEAD
 HolidaysToValidateAlertSolde=Bu izin isteğini yapan kullanıcının yeterli uygun günü yok.
 HolidaysValidated=Doğrulanmış izin istekleri
 HolidaysValidatedBody=İzin isteğiniz %s - %s arası doğrulanmıştır.
 HolidaysRefused=İstek reddedildi
 HolidaysRefusedBody=%s - %s arası izin isteğiniz aşağıdaki nedenden dolayı reddedilmiştir:
+=======
+HolidaysToValidateAlertSolde=Bu izin talebini gerçekleştiren kullanıcının yeterli mevcut günü yok.
+HolidaysValidated=Doğrulanmış izin istekleri
+HolidaysValidatedBody=İzin isteğiniz %s - %s arası doğrulanmıştır.
+HolidaysRefused=İstek reddedildi
+HolidaysRefusedBody=%s - %s için izin talebiniz aşağıdaki nedenden dolayı reddedildi:
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 HolidaysCanceled=İptal edilen izin istekleri
 HolidaysCanceledBody=%s - %s arası izin isteğiniz iptal edilmiştir.
 FollowedByACounter=1: Bu türdeki bir izin isteği bir sayaçla izlenmelidir. Bu sayaç elle ya da otomatik olarak arttırılır ve bir izin isteği doğrulandığında sayaç azaltılır.<br>0: Bir sayaçla izlenmez.
 NoLeaveWithCounterDefined=Bir sayaçla izlenmek üzere tanımlanan hiç izin isteği yok.
+<<<<<<< HEAD
 GoIntoDictionaryHolidayTypes=Farklı izin türleri ayarlamak için <strong>Giriş - Ayarlar - Sözlükler - İzin türleri</strong> menüsüne git.
+=======
+GoIntoDictionaryHolidayTypes=Farklı izin türlerini ayarlamak için <strong>Giriş - Ayarlar - Sözlükler - İzin türleri</strong> bölümüne gidin
+HolidaySetup=Tatil modülü kurulumu
+HolidaysNumberingModules=İzin istekleri numaralandırma modelleri
+TemplatePDFHolidays=İzin istek PDF'leri için taslaklar
+FreeLegalTextOnHolidays=PDF'deki serbest metin
+WatermarkOnDraftHolidayCards=Taslak izin isteklerindeki filigranlar
+HolidaysToApprove=Onaylanacak izinler
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

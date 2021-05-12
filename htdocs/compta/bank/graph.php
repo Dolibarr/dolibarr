@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +27,11 @@
  *	\brief      Page graph des transactions bancaires
  */
 
+<<<<<<< HEAD
 require('../../main.inc.php');
+=======
+require '../../main.inc.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
@@ -31,8 +39,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories'));
 
+<<<<<<< HEAD
 $WIDTH=DolGraph::getDefaultGraphSizeForStats('width',768);
 $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height',200);
+=======
+$WIDTH=DolGraph::getDefaultGraphSizeForStats('width', 768);
+$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height', 200);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Security check
 if (isset($_GET["account"]) || isset($_GET["ref"]))
@@ -41,7 +54,11 @@ if (isset($_GET["account"]) || isset($_GET["ref"]))
 }
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
+<<<<<<< HEAD
 $result=restrictedArea($user,'banque',$id,'bank_account&bank_account','','',$fieldid);
+=======
+$result=restrictedArea($user, 'banque', $id, 'bank_account&bank_account', '', '', $fieldid);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $account=GETPOST("account");
 $mode='standard';
@@ -55,7 +72,11 @@ $error=0;
 
 $title = $langs->trans("FinancialAccount").' - '.$langs->trans("Graph");
 $helpurl = "";
+<<<<<<< HEAD
 llxHeader('',$title,$helpurl);
+=======
+llxHeader('', $title, $helpurl);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $form = new Form($db);
 
@@ -63,12 +84,21 @@ $datetime = dol_now();
 $year = dol_print_date($datetime, "%Y");
 $month = dol_print_date($datetime, "%m");
 $day = dol_print_date($datetime, "%d");
+<<<<<<< HEAD
 if (GETPOST("year"))  $year=sprintf("%04d",GETPOST("year"));
 if (GETPOST("month")) $month=sprintf("%02d",GETPOST("month"));
 
 
 $object = new Account($db);
 if ($_GET["account"] && ! preg_match('/,/',$_GET["account"]))	// if for a particular account and not a list
+=======
+if (GETPOST("year"))  $year=sprintf("%04d", GETPOST("year"));
+if (GETPOST("month")) $month=sprintf("%02d", GETPOST("month"));
+
+
+$object = new Account($db);
+if ($_GET["account"] && ! preg_match('/,/', $_GET["account"]))	// if for a particular account and not a list
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$result=$object->fetch(GETPOST("account", "int"));
 }
@@ -165,7 +195,11 @@ else
 		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql.= " WHERE b.fk_account = ba.rowid";
 		$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
+<<<<<<< HEAD
 		$sql.= " AND b.datev < '".$year."-".sprintf("%02s",$month)."-01'";
+=======
+		$sql.= " AND b.datev < '".$year."-".sprintf("%02s", $month)."-01'";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if ($account && $_GET["option"]!='all') $sql.= " AND b.fk_account IN (".$account.")";
 
 		$resql = $db->query($sql);
@@ -186,11 +220,19 @@ else
 		$datamin = array();
 
 		$subtotal = 0;
+<<<<<<< HEAD
 		$day = dol_mktime(12,0,0,$month,1,$year);
 		$textdate = strftime("%Y%m%d",$day);
 		$xyear = substr($textdate,0,4);
 		$xday = substr($textdate,6,2);
 		$xmonth = substr($textdate,4,2);
+=======
+		$day = dol_mktime(12, 0, 0, $month, 1, $year);
+		$textdate = strftime("%Y%m%d", $day);
+		$xyear = substr($textdate, 0, 4);
+		$xday = substr($textdate, 6, 2);
+		$xmonth = substr($textdate, 4, 2);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$i = 0;
 		while ($xmonth == $month)
@@ -210,10 +252,17 @@ else
 			$labels[$i] = $xday;
 
 			$day += 86400;
+<<<<<<< HEAD
 			$textdate = strftime("%Y%m%d",$day);
 			$xyear = substr($textdate,0,4);
 			$xday = substr($textdate,6,2);
 			$xmonth = substr($textdate,4,2);
+=======
+			$textdate = strftime("%Y%m%d", $day);
+			$xyear = substr($textdate, 0, 4);
+			$xday = substr($textdate, 6, 2);
+			$xmonth = substr($textdate, 4, 2);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			$i++;
 		}
@@ -232,15 +281,25 @@ else
 		foreach($datas as $i => $val)
 		{
 			$graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i]);
+<<<<<<< HEAD
 			if ($object->min_desired) array_push($graph_datas[$i],$datamin[$i]);
 			if ($object->min_allowed) array_push($graph_datas[$i],$dataall[$i]);
+=======
+			if ($object->min_desired) array_push($graph_datas[$i], $datamin[$i]);
+			if ($object->min_allowed) array_push($graph_datas[$i], $dataall[$i]);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		$px1 = new DolGraph();
 		$px1->SetData($graph_datas);
 		$arraylegends=array($langs->transnoentities("Balance"));
+<<<<<<< HEAD
 		if ($object->min_desired) array_push($arraylegends,$langs->transnoentities("BalanceMinimalDesired"));
 		if ($object->min_allowed) array_push($arraylegends,$langs->transnoentities("BalanceMinimalAllowed"));
+=======
+		if ($object->min_desired) array_push($arraylegends, $langs->transnoentities("BalanceMinimalDesired"));
+		if ($object->min_allowed) array_push($arraylegends, $langs->transnoentities("BalanceMinimalAllowed"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$px1->SetLegend($arraylegends);
 		$px1->SetLegendWidthMin(180);
 		$px1->SetMaxValue($px1->GetCeilMaxValue()<0?0:$px1->GetCeilMaxValue());
@@ -252,8 +311,12 @@ else
 		$px1->setBgColor('onglet');
 		$px1->setBgColorGrid(array(255,255,255));
 		$px1->SetHorizTickIncrement(1);
+<<<<<<< HEAD
 		$px1->SetPrecisionY(0);
 		$px1->draw($file,$fileurl);
+=======
+		$px1->draw($file, $fileurl);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$show1=$px1->show();
 		unset($graph_datas);
@@ -265,7 +328,11 @@ else
 		unset($amounts);
 	}
 
+<<<<<<< HEAD
 	// Tableau 2
+=======
+	// Graph Balance for the year
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	if ($mode == 'standard')
 	{
@@ -331,10 +398,17 @@ else
 
 		$subtotal = 0;
 		$now = time();
+<<<<<<< HEAD
 		$day = dol_mktime(12,0,0,1,1,$year);
 		$textdate = strftime("%Y%m%d",$day);
 		$xyear = substr($textdate,0,4);
 		$xday = substr($textdate,6,2);
+=======
+		$day = dol_mktime(12, 0, 0, 1, 1, $year);
+		$textdate = strftime("%Y%m%d", $day);
+		$xyear = substr($textdate, 0, 4);
+		$xday = substr($textdate, 6, 2);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$i = 0;
 		while ($xyear == $year && $day <= $datetime)
@@ -352,12 +426,21 @@ else
 			$dataall[$i] = $object->min_allowed;
 			if ($xday == '15')
 			{
+<<<<<<< HEAD
 				$labels[$i] = dol_print_date($day,"%b");
 			}
 			$day += 86400;
 			$textdate = strftime("%Y%m%d",$day);
 			$xyear = substr($textdate,0,4);
 			$xday = substr($textdate,6,2);
+=======
+				$labels[$i] = dol_print_date($day, "%b");
+			}
+			$day += 86400;
+			$textdate = strftime("%Y%m%d", $day);
+			$xyear = substr($textdate, 0, 4);
+			$xday = substr($textdate, 6, 2);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$i++;
 		}
 
@@ -369,14 +452,24 @@ else
 		foreach($datas as $i => $val)
 		{
 			$graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i]);
+<<<<<<< HEAD
 			if ($object->min_desired) array_push($graph_datas[$i],$datamin[$i]);
 			if ($object->min_allowed) array_push($graph_datas[$i],$dataall[$i]);
+=======
+			if ($object->min_desired) array_push($graph_datas[$i], $datamin[$i]);
+			if ($object->min_allowed) array_push($graph_datas[$i], $dataall[$i]);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		$px2 = new DolGraph();
 		$px2->SetData($graph_datas);
 		$arraylegends=array($langs->transnoentities("Balance"));
+<<<<<<< HEAD
 		if ($object->min_desired) array_push($arraylegends,$langs->transnoentities("BalanceMinimalDesired"));
 		if ($object->min_allowed) array_push($arraylegends,$langs->transnoentities("BalanceMinimalAllowed"));
+=======
+		if ($object->min_desired) array_push($arraylegends, $langs->transnoentities("BalanceMinimalDesired"));
+		if ($object->min_allowed) array_push($arraylegends, $langs->transnoentities("BalanceMinimalAllowed"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$px2->SetLegend($arraylegends);
 		$px2->SetLegendWidthMin(180);
 		$px2->SetMaxValue($px2->GetCeilMaxValue()<0?0:$px2->GetCeilMaxValue());
@@ -384,13 +477,21 @@ else
 		$px2->SetTitle($title);
 		$px2->SetWidth($WIDTH);
 		$px2->SetHeight($HEIGHT);
+<<<<<<< HEAD
 		$px2->SetType(array('lines','lines','lines'));
+=======
+		$px2->SetType(array('linesnopoint','linesnopoint','linesnopoint'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$px2->setBgColor('onglet');
 		$px2->setBgColorGrid(array(255,255,255));
 		$px2->SetHideXGrid(true);
 		//$px2->SetHorizTickIncrement(30.41);	// 30.41 jours/mois en moyenne
+<<<<<<< HEAD
 		$px2->SetPrecisionY(0);
 		$px2->draw($file,$fileurl);
+=======
+		$px2->draw($file, $fileurl);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$show2=$px2->show();
 
@@ -403,7 +504,11 @@ else
 		unset($amounts);
 	}
 
+<<<<<<< HEAD
 	// Tableau 3 - All time line
+=======
+	// Graph 3 - Balance for all time line
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	if ($mode == 'showalltime')
 	{
@@ -449,7 +554,11 @@ else
 		$subtotal = 0;
 
 		$day = $min;
+<<<<<<< HEAD
 		$textdate=strftime("%Y%m%d",$day);
+=======
+		$textdate=strftime("%Y%m%d", $day);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		//print "x".$textdate;
 		$i = 0;
 		while ($day <= ($max+86400))	// On va au dela du dernier jour
@@ -466,6 +575,7 @@ else
 			}
 			$datamin[$i] = $object->min_desired;
 			$dataall[$i] = $object->min_allowed;
+<<<<<<< HEAD
 			if (substr($textdate,6,2) == '01' || $i == 0)
 			{
 				$labels[$i] = substr($textdate,4,2);
@@ -473,6 +583,15 @@ else
 
 			$day += 86400;
 			$textdate=strftime("%Y%m%d",$day);
+=======
+			if (substr($textdate, 6, 2) == '01' || $i == 0)
+			{
+				$labels[$i] = substr($textdate, 4, 2);
+			}
+
+			$day += 86400;
+			$textdate=strftime("%Y%m%d", $day);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$i++;
 		}
 
@@ -484,15 +603,25 @@ else
 		foreach($datas as $i => $val)
 		{
 			$graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i]);
+<<<<<<< HEAD
 			if ($object->min_desired) array_push($graph_datas[$i],$datamin[$i]);
 			if ($object->min_allowed) array_push($graph_datas[$i],$dataall[$i]);
+=======
+			if ($object->min_desired) array_push($graph_datas[$i], $datamin[$i]);
+			if ($object->min_allowed) array_push($graph_datas[$i], $dataall[$i]);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		$px3 = new DolGraph();
 		$px3->SetData($graph_datas);
 		$arraylegends=array($langs->transnoentities("Balance"));
+<<<<<<< HEAD
 		if ($object->min_desired) array_push($arraylegends,$langs->transnoentities("BalanceMinimalDesired"));
 		if ($object->min_allowed) array_push($arraylegends,$langs->transnoentities("BalanceMinimalAllowed"));
+=======
+		if ($object->min_desired) array_push($arraylegends, $langs->transnoentities("BalanceMinimalDesired"));
+		if ($object->min_allowed) array_push($arraylegends, $langs->transnoentities("BalanceMinimalAllowed"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$px3->SetLegend($arraylegends);
 		$px3->SetLegendWidthMin(180);
 		$px3->SetMaxValue($px3->GetCeilMaxValue()<0?0:$px3->GetCeilMaxValue());
@@ -500,11 +629,18 @@ else
 		$px3->SetTitle($title);
 		$px3->SetWidth($WIDTH);
 		$px3->SetHeight($HEIGHT);
+<<<<<<< HEAD
 		$px3->SetType(array('lines','lines','lines'));
 		$px3->setBgColor('onglet');
 		$px3->setBgColorGrid(array(255,255,255));
 		$px3->SetPrecisionY(0);
 		$px3->draw($file,$fileurl);
+=======
+		$px3->SetType(array('linesnopoint','linesnopoint','linesnopoint'));
+		$px3->setBgColor('onglet');
+		$px3->setBgColorGrid(array(255,255,255));
+		$px3->draw($file, $fileurl);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$show3=$px3->show();
 
@@ -604,9 +740,15 @@ else
 		$data_debit = array();
 		for ($i = 0 ; $i < 31 ; $i++)
 		{
+<<<<<<< HEAD
 			$data_credit[$i] = isset($credits[substr("0".($i+1),-2)]) ? $credits[substr("0".($i+1),-2)] : 0;
 			$data_debit[$i] = isset($debits[substr("0".($i+1),-2)]) ? $debits[substr("0".($i+1),-2)] : 0;
 			$labels[$i] = sprintf("%02d",$i+1);
+=======
+			$data_credit[$i] = isset($credits[substr("0".($i+1), -2)]) ? $credits[substr("0".($i+1), -2)] : 0;
+			$data_debit[$i] = isset($debits[substr("0".($i+1), -2)]) ? $debits[substr("0".($i+1), -2)] : 0;
+			$labels[$i] = sprintf("%02d", $i+1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$datamin[$i] = $object->min_desired;
 		}
 
@@ -633,8 +775,12 @@ else
 		$px4->setBgColor('onglet');
 		$px4->setBgColorGrid(array(255,255,255));
 		$px4->SetHorizTickIncrement(1);
+<<<<<<< HEAD
 		$px4->SetPrecisionY(0);
 		$px4->draw($file,$fileurl);
+=======
+		$px4->draw($file, $fileurl);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$show4=$px4->show();
 
@@ -713,9 +859,15 @@ else
 		$data_debit = array();
 		for ($i = 0 ; $i < 12 ; $i++)
 		{
+<<<<<<< HEAD
 			$data_credit[$i] = isset($credits[substr("0".($i+1),-2)]) ? $credits[substr("0".($i+1),-2)] : 0;
 			$data_debit[$i] = isset($debits[substr("0".($i+1),-2)]) ? $debits[substr("0".($i+1),-2)] : 0;
 			$labels[$i] = dol_print_date(dol_mktime(12,0,0,$i+1,1,2000),"%b");
+=======
+			$data_credit[$i] = isset($credits[substr("0".($i+1), -2)]) ? $credits[substr("0".($i+1), -2)] : 0;
+			$data_debit[$i] = isset($debits[substr("0".($i+1), -2)]) ? $debits[substr("0".($i+1), -2)] : 0;
+			$labels[$i] = dol_print_date(dol_mktime(12, 0, 0, $i+1, 1, 2000), "%b");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$datamin[$i] = $object->min_desired;
 		}
 
@@ -742,8 +894,12 @@ else
 		$px5->setBgColor('onglet');
 		$px5->setBgColorGrid(array(255,255,255));
 		$px5->SetHorizTickIncrement(1);
+<<<<<<< HEAD
 		$px5->SetPrecisionY(0);
 		$px5->draw($file,$fileurl);
+=======
+		$px5->draw($file, $fileurl);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$show5=$px5->show();
 
@@ -757,14 +913,22 @@ else
 
 // Onglets
 $head=bank_prepare_head($object);
+<<<<<<< HEAD
 dol_fiche_head($head,'graph',$langs->trans("FinancialAccount"),0,'account');
+=======
+dol_fiche_head($head, 'graph', $langs->trans("FinancialAccount"), 0, 'account');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 if ($account)
 {
+<<<<<<< HEAD
 	if (! preg_match('/,/',$account))
+=======
+	if (! preg_match('/,/', $account))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$moreparam='&month='.$month.'&year='.$year.($mode=='showalltime'?'&mode=showalltime':'');
 
@@ -783,7 +947,11 @@ if ($account)
 	else
 	{
 	    $bankaccount=new Account($db);
+<<<<<<< HEAD
 		$listid=explode(',',$account);
+=======
+		$listid=explode(',', $account);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		foreach($listid as $key => $id)
 		{
 			$bankaccount->fetch($id);
@@ -804,7 +972,11 @@ dol_fiche_end();
 print '<table class="notopnoleftnoright" width="100%">';
 
 // Navigation links
+<<<<<<< HEAD
 print '<tr><td align="right">'.$morehtml.' &nbsp; &nbsp; ';
+=======
+print '<tr><td class="right">'.$morehtml.' &nbsp; &nbsp; ';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($mode == 'showalltime')
 {
 	print '<a href="'.$_SERVER["PHP_SELF"].'?account='.$account.'">';
@@ -830,20 +1002,31 @@ if ($mode == 'standard')
 
 	// For month
 	$link="<a href='".$_SERVER["PHP_SELF"]."?account=".$account.($_GET["option"]!='all'?'':'&option=all')."&year=".$prevyear."&month=".$prevmonth."'>".img_previous('', 'class="valignbottom"')."</a> ".$langs->trans("Month")." <a href='".$_SERVER["PHP_SELF"]."?account=".$account."&year=".$nextyear."&month=".$nextmonth."'>".img_next('', 'class="valignbottom"')."</a>";
+<<<<<<< HEAD
 	print '<tr><td align="right">'.$link.'</td></tr>';
 
 	print '<tr><td align="center">';
+=======
+	print '<tr><td class="right">'.$link.'</td></tr>';
+
+	print '<tr><td class="center">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$file = "movement".$account."-".$year.$month.".png";
 	print $show4;
 	print '</td></tr>';
 
+<<<<<<< HEAD
 	print '<tr><td align="center">';
+=======
+	print '<tr><td class="center">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print $show1;
 	print '</td></tr>';
 
 	// For year
 	$prevyear=$year-1;$nextyear=$year+1;
 	$link="<a href='".$_SERVER["PHP_SELF"]."?account=".$account.($_GET["option"]!='all'?'':'&option=all')."&year=".($prevyear)."'>".img_previous('', 'class="valignbottom"')."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$account."&year=".($nextyear)."'>".img_next('', 'class="valignbottom"')."</a>";
+<<<<<<< HEAD
 	print '<tr><td align="right">'.$link.'</td></tr>';
 
 	print '<tr><td align="center">';
@@ -851,20 +1034,38 @@ if ($mode == 'standard')
 	print '</td></tr>';
 
 	print '<tr><td align="center">';
+=======
+	print '<tr><td class="right">'.$link.'</td></tr>';
+
+	print '<tr><td class="center">';
+	print $show5;
+	print '</td></tr>';
+
+	print '<tr><td class="center">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print $show2;
 	print '</td></tr>';
 }
 
 if ($mode == 'showalltime')
 {
+<<<<<<< HEAD
 	print '<tr><td align="center">';
+=======
+	print '<tr><td class="center">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print $show3;
 	print '</td></tr>';
 }
 
 print '</table>';
 
+<<<<<<< HEAD
 
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

@@ -1,6 +1,11 @@
 <?php
 /* Copyright (C) 2007-2009	Laurent Destailleur	<eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2009-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2009-2012	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,19 +33,63 @@
  */
 class Menubase
 {
+<<<<<<< HEAD
     public $db;							// To store db handler
     public $error;							// To return error code (or message)
     public $errors=array();				// To return several error codes (or messages)
 
     public $id;
+=======
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    /**
+     * @var string Error code (or message)
+     */
+    public $error;
+
+    /**
+     * @var string[] Error codes (or messages)
+     */
+    public $errors = array();
+
+    /**
+	 * @var int ID
+	 */
+	public $id;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     public $menu_handler;
     public $module;
     public $type;
     public $mainmenu;
+<<<<<<< HEAD
     public $fk_menu;
     public $fk_mainmenu;
     public $fk_leftmenu;
+=======
+
+    /**
+     * @var int ID
+     */
+    public $fk_menu;
+
+    /**
+     * @var string fk_mainmenu
+     */
+    public $fk_mainmenu;
+
+    /**
+     * @var string fk_leftmenu
+     */
+    public $fk_leftmenu;
+
+    /**
+     * @var int position
+     */
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     public $position;
     public $url;
     public $target;
@@ -60,7 +109,11 @@ class Menubase
 	 *  @param		DoliDB		$db 		    Database handler
      *  @param     	string		$menu_handler	Menu handler
      */
+<<<<<<< HEAD
     function __construct($db,$menu_handler='')
+=======
+    public function __construct($db, $menu_handler = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $this->db = $db;
         $this->menu_handler = $menu_handler;
@@ -74,7 +127,11 @@ class Menubase
      *      @param      User	$user       User that create
      *      @return     int      			<0 if KO, Id of record if OK
      */
+<<<<<<< HEAD
     function create($user=null)
+=======
+    public function create($user = null)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $conf, $langs;
 
@@ -84,10 +141,17 @@ class Menubase
         $this->type=trim($this->type);
         $this->mainmenu=trim($this->mainmenu);
         $this->leftmenu=trim($this->leftmenu);
+<<<<<<< HEAD
         $this->fk_menu=trim($this->fk_menu);          // If -1, fk_mainmenu and fk_leftmenu must be defined
         $this->fk_mainmenu=trim($this->fk_mainmenu);
         $this->fk_leftmenu=trim($this->fk_leftmenu);
         $this->position=trim($this->position);
+=======
+        $this->fk_menu = (int) $this->fk_menu;          // If -1, fk_mainmenu and fk_leftmenu must be defined
+        $this->fk_mainmenu=trim($this->fk_mainmenu);
+        $this->fk_leftmenu=trim($this->fk_leftmenu);
+        $this->position = (int) $this->position;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $this->url=trim($this->url);
         $this->target=trim($this->target);
         $this->titre=trim($this->titre);
@@ -95,7 +159,11 @@ class Menubase
         $this->perms=trim($this->perms);
         $this->enabled=trim($this->enabled);
         $this->user=trim($this->user);
+<<<<<<< HEAD
         $this->position=trim($this->position);
+=======
+        if (empty($this->position)) $this->position=0;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         if (! $this->level) $this->level=0;
 
         // Check parameters
@@ -104,7 +172,11 @@ class Menubase
         // For PGSQL, we must first found the max rowid and use it as rowid in insert because postgresql
         // may use an already used value because its internal cursor does not increase when we do
         // an insert with a forced id.
+<<<<<<< HEAD
         if (in_array($this->db->type,array('pgsql')))
+=======
+        if (in_array($this->db->type, array('pgsql')))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         {
           $sql = "SELECT MAX(rowid) as maxrowid FROM ".MAIN_DB_PREFIX."menu";
           $resqlrowid=$this->db->query($sql);
@@ -128,7 +200,11 @@ class Menubase
         $sql = "SELECT count(*)";
         $sql.= " FROM ".MAIN_DB_PREFIX."menu";
         $sql.= " WHERE menu_handler = '".$this->db->escape($this->menu_handler)."'";
+<<<<<<< HEAD
         $sql.= " AND fk_menu = ".((int) $this->db->escape($this->fk_menu));
+=======
+        $sql.= " AND fk_menu = ".((int) $this->fk_menu);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $sql.= " AND position = ".((int) $this->position);
         $sql.= " AND url = '".$this->db->escape($this->url)."'";
         $sql.= " AND entity = ".$conf->entity;
@@ -214,7 +290,11 @@ class Menubase
      *  @param  int		$notrigger	    0=no, 1=yes (no update trigger)
      *  @return int 		        	<0 if KO, >0 if OK
      */
+<<<<<<< HEAD
     function update($user=null, $notrigger=0)
+=======
+    public function update($user = null, $notrigger = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $conf, $langs;
 
@@ -225,10 +305,17 @@ class Menubase
         $this->type=trim($this->type);
         $this->mainmenu=trim($this->mainmenu);
         $this->leftmenu=trim($this->leftmenu);
+<<<<<<< HEAD
         $this->fk_menu=trim($this->fk_menu);
         $this->fk_mainmenu=trim($this->fk_mainmenu);
         $this->fk_leftmenu=trim($this->fk_leftmenu);
         $this->position=trim($this->position);
+=======
+        $this->fk_menu = (int) $this->fk_menu;
+        $this->fk_mainmenu=trim($this->fk_mainmenu);
+        $this->fk_leftmenu=trim($this->fk_leftmenu);
+        $this->position = (int) $this->position;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $this->url=trim($this->url);
         $this->target=trim($this->target);
         $this->titre=trim($this->titre);
@@ -247,7 +334,11 @@ class Menubase
         $sql.= " type='".$this->db->escape($this->type)."',";
         $sql.= " mainmenu='".$this->db->escape($this->mainmenu)."',";
         $sql.= " leftmenu='".$this->db->escape($this->leftmenu)."',";
+<<<<<<< HEAD
         $sql.= " fk_menu='".$this->db->escape($this->fk_menu)."',";
+=======
+        $sql.= " fk_menu=".$this->fk_menu.",";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $sql.= " fk_mainmenu=".($this->fk_mainmenu?"'".$this->db->escape($this->fk_mainmenu)."'":"null").",";
         $sql.= " fk_leftmenu=".($this->fk_leftmenu?"'".$this->db->escape($this->fk_leftmenu)."'":"null").",";
         $sql.= " position=".($this->position > 0 ? $this->position : 0).",";
@@ -279,7 +370,11 @@ class Menubase
      *   @param		User    $user       User that load
      *   @return	int         		<0 if KO, >0 if OK
      */
+<<<<<<< HEAD
     function fetch($id, $user=null)
+=======
+    public function fetch($id, $user = null)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $langs;
 
@@ -331,7 +426,11 @@ class Menubase
                 $this->titre = $obj->titre;
                 $this->langs = $obj->langs;
                 $this->perms = $obj->perms;
+<<<<<<< HEAD
                 $this->enabled = str_replace("\"","'",$obj->enabled);
+=======
+                $this->enabled = str_replace("\"", "'", $obj->enabled);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 $this->user = $obj->user;
                 $this->tms = $this->db->jdate($obj->tms);
             }
@@ -353,7 +452,11 @@ class Menubase
      *	@param	User	$user       User that delete
      *	@return	int					<0 if KO, >0 if OK
      */
+<<<<<<< HEAD
     function delete($user)
+=======
+    public function delete($user)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $conf, $langs;
 
@@ -379,7 +482,11 @@ class Menubase
      *
      *  @return	void
      */
+<<<<<<< HEAD
     function initAsSpecimen()
+=======
+    public function initAsSpecimen()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $this->id=0;
 
@@ -412,7 +519,11 @@ class Menubase
      * 	@param  array	$tabMenu       If array with menu entries already loaded, we put this array here (in most cases, it's empty)
      * 	@return	array					Return array with menu entries for top menu
      */
+<<<<<<< HEAD
     function menuTopCharger($mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
+=======
+    public function menuTopCharger($mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $langs, $user, $conf;	// To export to dol_eval function
         global $mainmenu,$leftmenu;		// To export to dol_eval function
@@ -441,7 +552,11 @@ class Menubase
      * 	@param  array	$tabMenu       Array with menu entries already loaded
      * 	@return Menu    		       	Menu array for particular mainmenu value or full tabArray
      */
+<<<<<<< HEAD
     function menuLeftCharger($newmenu, $mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
+=======
+    public function menuLeftCharger($newmenu, $mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $langs, $user, $conf; 	// To export to dol_eval function
         global $mainmenu,$leftmenu; 	// To export to dol_eval function
@@ -449,6 +564,7 @@ class Menubase
         $mainmenu=$mymainmenu;  // To export to dol_eval function
         $leftmenu=$myleftmenu;  // To export to dol_eval function
 
+<<<<<<< HEAD
 		// Detect what is top mainmenu id
         $menutopid='';
         foreach($tabMenu as $key => $val)
@@ -459,6 +575,18 @@ class Menubase
         		$menutopid=$val['rowid'];
         		break;
         	}
+=======
+        // Detect what is top mainmenu id
+        $menutopid='';
+        foreach($tabMenu as $key => $val)
+        {
+            // Define menutopid of mainmenu
+            if (empty($menutopid) && $val['type'] == 'top' && $val['mainmenu'] == $mainmenu)
+            {
+                $menutopid=$val['rowid'];
+                break;
+            }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
 
         // We initialize newmenu with first already found menu entries
@@ -530,7 +658,11 @@ class Menubase
      *  @param  array	$tabMenu        Array to store new entries found (in most cases, it's empty, but may be alreay filled)
      *  @return int     		        >0 if OK, <0 if KO
      */
+<<<<<<< HEAD
     function menuLoad($mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
+=======
+    public function menuLoad($mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $langs, $user, $conf; // To export to dol_eval function
         global $mainmenu, $leftmenu; // To export to dol_eval function
@@ -546,10 +678,17 @@ class Menubase
         if ($type_user == 0) $sql.= " AND m.usertype IN (0,2)";
         if ($type_user == 1) $sql.= " AND m.usertype IN (1,2)";
         $sql.= " ORDER BY m.position, m.rowid";
+<<<<<<< HEAD
 		//print $sql;
 
 		//$tmp1=microtime(true);
 		//print '>>> 1 0<br>';
+=======
+        //print $sql;
+
+        //$tmp1=microtime(true);
+        //print '>>> 1 0<br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         dol_syslog(get_class($this)."::menuLoad mymainmenu=".$mymainmenu." myleftmenu=".$myleftmenu." type_user=".$type_user." menu_handler=".$menu_handler." tabMenu size=".count($tabMenu)."", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
@@ -558,7 +697,10 @@ class Menubase
 
             $a = 0;
             $b = 0;
+<<<<<<< HEAD
             $oldrowid=0;
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             while ($a < $numa)
             {
                 //$objm = $this->db->fetch_object($resql);
@@ -569,7 +711,11 @@ class Menubase
                 if ($menu['perms'])
                 {
                 	$tmpcond=$menu['perms'];
+<<<<<<< HEAD
                 	if ($leftmenu == 'all') $tmpcond=preg_replace('/\$leftmenu\s*==\s*["\'a-zA-Z_]+/','1==1',$tmpcond);	// Force part of condition to true
+=======
+                	if ($leftmenu == 'all') $tmpcond=preg_replace('/\$leftmenu\s*==\s*["\'a-zA-Z_]+/', '1==1', $tmpcond);	// Force part of condition to true
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 	$perms = verifCond($tmpcond);
                     //print "verifCond rowid=".$menu['rowid']." ".$tmpcond.":".$perms."<br>\n";
                 }
@@ -579,7 +725,11 @@ class Menubase
                 if ($menu['enabled'])
                 {
                 	$tmpcond=$menu['enabled'];
+<<<<<<< HEAD
                 	if ($leftmenu == 'all') $tmpcond=preg_replace('/\$leftmenu\s*==\s*["\'a-zA-Z_]+/','1==1',$tmpcond);	// Force part of condition to true
+=======
+                	if ($leftmenu == 'all') $tmpcond=preg_replace('/\$leftmenu\s*==\s*["\'a-zA-Z_]+/', '1==1', $tmpcond);	// Force part of condition to true
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                     $enabled = verifCond($tmpcond);
                 }
 
@@ -599,6 +749,7 @@ class Menubase
                         $substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
                         $menu['titre'] = make_substitutions($menu['titre'], $substitarray);
 
+<<<<<<< HEAD
                         if (preg_match("/\//",$menu['titre'])) // To manage translation when title is string1/string2
                         {
                             $tab_titre = explode("/",$menu['titre']);
@@ -608,6 +759,18 @@ class Menubase
                         {
                         	$tab_title = explode("||",$menu['titre']);
                         	$alt_title = explode("@",$tab_title[1]);
+=======
+                        if (preg_match("/\//", $menu['titre'])) // To manage translation when title is string1/string2
+                        {
+                            $tab_titre = explode("/", $menu['titre']);
+                            $title = $langs->trans($tab_titre[0])."/".$langs->trans($tab_titre[1]);
+                        }
+                        elseif (preg_match('/\|\|/', $menu['titre']))
+                        {
+                            // To manage different translation (Title||AltTitle@ConditionForAltTitle)
+                        	$tab_title = explode("||", $menu['titre']);
+                        	$alt_title = explode("@", $tab_title[1]);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                         	$title_enabled = verifCond($alt_title[1]);
                         	$title = ($title_enabled ? $langs->trans($alt_title[0]) : $langs->trans($tab_title[0]));
                         }
@@ -616,17 +779,28 @@ class Menubase
                             $title = $langs->trans($menu['titre']);
                         }
                     }
+<<<<<<< HEAD
 					//$tmp4=microtime(true);
 					//print '>>> 3 '.($tmp4 - $tmp3).'<br>';
+=======
+                    //$tmp4=microtime(true);
+                    //print '>>> 3 '.($tmp4 - $tmp3).'<br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
                     // We complete tabMenu
                     $tabMenu[$b]['rowid']       = $menu['rowid'];
                     $tabMenu[$b]['module']      = $menu['module'];
                     $tabMenu[$b]['fk_menu']     = $menu['fk_menu'];
                     $tabMenu[$b]['url']         = $menu['url'];
+<<<<<<< HEAD
                     if (! preg_match("/^(http:\/\/|https:\/\/)/i",$tabMenu[$b]['url']))
                     {
                         if (preg_match('/\?/',$tabMenu[$b]['url'])) $tabMenu[$b]['url'].='&amp;idmenu='.$menu['rowid'];
+=======
+                    if (! preg_match("/^(http:\/\/|https:\/\/)/i", $tabMenu[$b]['url']))
+                    {
+                        if (preg_match('/\?/', $tabMenu[$b]['url'])) $tabMenu[$b]['url'].='&amp;idmenu='.$menu['rowid'];
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                         else $tabMenu[$b]['url'].='?idmenu='.$menu['rowid'];
                     }
                     $tabMenu[$b]['titre']       = $title;
@@ -682,7 +856,12 @@ class Menubase
                 $this->recur($tab, $tab[$x]['rowid'], ($level+1));
             }
         }
+<<<<<<< HEAD
    }
 
 }
 
+=======
+    }
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

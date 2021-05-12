@@ -1,8 +1,14 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +43,14 @@ if (! empty($conf->fournisseur->enabled)) require_once DOL_DOCUMENT_ROOT.'/fourn
 
 if (! $user->rights->societe->lire) accessforbidden();
 
+<<<<<<< HEAD
+=======
+$hookmanager = new HookManager($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('commercialindex'));
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 // Load translation files required by the page
 $langs->loadLangs(array("commercial", "propal"));
 
@@ -44,14 +58,22 @@ $action=GETPOST('action', 'alpha');
 $bid=GETPOST('bid', 'int');
 
 // Securite acces client
+<<<<<<< HEAD
 $socid=GETPOST('socid','int');
+=======
+$socid=GETPOST('socid', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (isset($user->societe_id) && $user->societe_id > 0)
 {
 	$action = '';
 	$socid = $user->societe_id;
 }
 
+<<<<<<< HEAD
 $max=5;
+=======
+$max=3;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $now=dol_now();
 
 /*
@@ -71,9 +93,15 @@ if (! empty($conf->supplier_proposal->enabled)) $supplierproposalstatic=new Supp
 if (! empty($conf->commande->enabled)) $orderstatic=new Commande($db);
 if (! empty($conf->fournisseur->enabled)) $supplierorderstatic=new CommandeFournisseur($db);
 
+<<<<<<< HEAD
 llxHeader("",$langs->trans("CommercialArea"));
 
 print load_fiche_titre($langs->trans("CommercialArea"),'','title_commercial.png');
+=======
+llxHeader("", $langs->trans("CommercialArea"));
+
+print load_fiche_titre($langs->trans("CommercialArea"), '', 'title_commercial.png');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
@@ -159,12 +187,21 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
+<<<<<<< HEAD
 		print '<th colspan="3">'.$langs->trans("ProposalsDraft").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
+=======
+		print '<th colspan="3">'.$langs->trans("ProposalsDraft").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?viewstatut=0"><span class="badge">'.$num.'</span></a></th></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		if ($num > 0)
 		{
 			$i = 0;
+<<<<<<< HEAD
 			while ($i < $num)
+=======
+			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?500:$conf->global->MAIN_MAXLIST_OVERLOAD));
+			while ($i < $nbofloop)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			{
 				$obj = $db->fetch_object($resql);
 
@@ -184,6 +221,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
                 $companystatic->code_client = $obj->code_client;
                 $companystatic->code_fournisseur = $obj->code_fournisseur;
 				$companystatic->canvas=$obj->canvas;
+<<<<<<< HEAD
 				print $companystatic->getNomUrl(1,'customer',16);
 				print '</td>';
 				print '<td align="right" class="nowrap">'.price($obj->total_ht).'</td></tr>';
@@ -194,6 +232,21 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 			{
 
 				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
+=======
+				print $companystatic->getNomUrl(1, 'customer', 16);
+				print '</td>';
+				print '<td class="nowrap right">'.price($obj->total_ht).'</td></tr>';
+				$i++;
+				$total += $obj->total_ht;
+			}
+			if ($num > $nbofloop)
+			{
+				print '<tr class="liste_total"><td colspan="3" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
+			}
+			elseif ($total>0)
+			{
+				print '<tr class="liste_total"><td colspan="2" class="right">'.$langs->trans("Total").'</td><td class="right">'.price($total)."</td></tr>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 		}
 		else
@@ -245,7 +298,12 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
         if ($num > 0)
         {
             $i = 0;
+<<<<<<< HEAD
             while ($i < $num)
+=======
+			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?500:$conf->global->MAIN_MAXLIST_OVERLOAD));
+			while ($i < $nbofloop)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             {
                 $obj = $db->fetch_object($resql);
 
@@ -264,6 +322,7 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
                 $companystatic->code_client = $obj->code_client;
                 $companystatic->code_fournisseur = $obj->code_fournisseur;
                 $companystatic->canvas=$obj->canvas;
+<<<<<<< HEAD
                 print $companystatic->getNomUrl(1,'supplier',16);
                 print '</td>';
                 print '<td align="right" class="nowrap">'.price($obj->total_ht).'</td></tr>';
@@ -273,6 +332,21 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
             if ($total>0)
             {
                 print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
+=======
+                print $companystatic->getNomUrl(1, 'supplier', 16);
+                print '</td>';
+                print '<td class="nowrap right">'.price($obj->total_ht).'</td></tr>';
+                $i++;
+                $total += $obj->total_ht;
+            }
+			if ($num > $nbofloop)
+			{
+				print '<tr class="liste_total"><td colspan="3" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
+			}
+			elseif ($total>0)
+            {
+                print '<tr class="liste_total"><td class="right">'.$langs->trans("Total").'</td><td colspan="2" class="right">'.price($total)."</td></tr>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             }
         }
         else
@@ -322,9 +396,15 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 		if ($num > 0)
 		{
 			$i = 0;
+<<<<<<< HEAD
 			while ($i < $num)
 			{
 
+=======
+			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?500:$conf->global->MAIN_MAXLIST_OVERLOAD));
+			while ($i < $nbofloop)
+			{
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven"><td class="nowrap">';
                 $orderstatic->id=$obj->rowid;
@@ -342,6 +422,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
                 $companystatic->code_client = $obj->code_client;
                 $companystatic->code_fournisseur = $obj->code_fournisseur;
                 $companystatic->canvas=$obj->canvas;
+<<<<<<< HEAD
 				print $companystatic->getNomUrl(1,'customer',16);
 				print '</td>';
 				if(! empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT)) {
@@ -349,14 +430,33 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 				}
 				else {
 					print '<td align="right" class="nowrap">'.price($obj->total_ttc).'</td></tr>';
+=======
+				print $companystatic->getNomUrl(1, 'customer', 16);
+				print '</td>';
+				if(! empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT)) {
+					print '<td class="nowrap right">'.price($obj->total_ht).'</td></tr>';
+				}
+				else {
+					print '<td class="nowrap right">'.price($obj->total_ttc).'</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 				$i++;
 				$total += $obj->total_ttc;
 			}
+<<<<<<< HEAD
 			if ($total>0)
 			{
 
 				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
+=======
+			if ($num > $nbofloop)
+			{
+				print '<tr class="liste_total"><td colspan="3" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
+			}
+			elseif ($total>0)
+            {
+                print '<tr class="liste_total"><td class="right">'.$langs->trans("Total").'</td><td colspan="2" class="right">'.price($total)."</td></tr>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 		}
 		else
@@ -409,7 +509,12 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
         if ($num > 0)
         {
             $i = 0;
+<<<<<<< HEAD
             while ($i < $num)
+=======
+			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?500:$conf->global->MAIN_MAXLIST_OVERLOAD));
+			while ($i < $nbofloop)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             {
 
                 $obj = $db->fetch_object($resql);
@@ -429,6 +534,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
                 $companystatic->code_client = $obj->code_client;
                 $companystatic->code_fournisseur = $obj->code_fournisseur;
                 $companystatic->canvas=$obj->canvas;
+<<<<<<< HEAD
                 print $companystatic->getNomUrl(1,'supplier',16);
                 print '</td>';
 				if(! empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT)) {
@@ -436,14 +542,33 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
 				}
 				else {
 					print '<td align="right" class="nowrap">'.price($obj->total_ttc).'</td></tr>';
+=======
+                print $companystatic->getNomUrl(1, 'supplier', 16);
+                print '</td>';
+				if(! empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT)) {
+					print '<td class="nowrap right">'.price($obj->total_ht).'</td></tr>';
+				}
+				else {
+					print '<td class="nowrap right">'.price($obj->total_ttc).'</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
                 $i++;
                 $total += $obj->total_ttc;
             }
+<<<<<<< HEAD
             if ($total>0)
             {
 
                 print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
+=======
+ 			if ($num > $nbofloop)
+			{
+				print '<tr class="liste_total"><td colspan="3" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
+			}
+			elseif ($total>0)
+            {
+                print '<tr class="liste_total"><td class="right">'.$langs->trans("Total").'</td><td colspan="2" class="right">'.price($total)."</td></tr>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             }
         }
         else
@@ -464,7 +589,10 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
+<<<<<<< HEAD
 $NBMAX=3;
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $max=3;
 
 
@@ -496,11 +624,19 @@ if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">';
+<<<<<<< HEAD
 		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print $langs->trans("BoxTitleLastCustomersOrProspects",$max);
         else if (! empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print $langs->trans("BoxTitleLastModifiedProspects",$max);
 		else print $langs->trans("BoxTitleLastModifiedCustomers",$max);
 		print '</th>';
 		print '<th align="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/societe/list.php?type=p,c">'.$langs->trans("FullList").'</a></th>';
+=======
+		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print $langs->trans("BoxTitleLastCustomersOrProspects", $max);
+        elseif (! empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print $langs->trans("BoxTitleLastModifiedProspects", $max);
+		else print $langs->trans("BoxTitleLastModifiedCustomers", $max);
+		print '</th>';
+		print '<th class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/societe/list.php?type=p,c">'.$langs->trans("FullList").'</a></th>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</tr>';
 		if ($num)
 		{
@@ -514,6 +650,7 @@ if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
                 $companystatic->code_fournisseur = $objp->code_fournisseur;
                 $companystatic->canvas=$objp->canvas;
 				print '<tr class="oddeven">';
+<<<<<<< HEAD
 				print '<td class="nowrap">'.$companystatic->getNomUrl(1,'customer',48).'</td>';
 				print '<td align="right" nowrap>';
 				print $companystatic->getLibCustProspStatut();
@@ -522,6 +659,15 @@ if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
 				print '</tr>';
 				$i++;
 
+=======
+				print '<td class="nowrap">'.$companystatic->getNomUrl(1, 'customer', 48).'</td>';
+				print '<td class="right" nowrap>';
+				print $companystatic->getLibCustProspStatut();
+				print "</td>";
+				print '<td class="right" nowrap>'.dol_print_date($db->jdate($objp->tms), 'day')."</td>";
+				print '</tr>';
+				$i++;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 
 			$db->free($resql);
@@ -560,8 +706,13 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->societe->lire)
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
+<<<<<<< HEAD
 		print '<th>'.$langs->trans("BoxTitleLastModifiedSuppliers",min($max,$num)).'</th>';
 		print '<th align="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/societe/list.php?type=f">'.$langs->trans("FullList").'</a></th>';
+=======
+		print '<th>'.$langs->trans("BoxTitleLastModifiedSuppliers", min($max, $num)).'</th>';
+		print '<th class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/societe/list.php?type=f">'.$langs->trans("FullList").'</a></th>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</tr>';
 		if ($num)
 		{
@@ -574,13 +725,21 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->societe->lire)
                 $companystatic->code_fournisseur = $objp->code_fournisseur;
                 $companystatic->canvas=$objp->canvas;
                 print '<tr class="oddeven">';
+<<<<<<< HEAD
 				print '<td class="nowrap">'.$companystatic->getNomUrl(1,'supplier',44).'</td>';
 				print '<td align="right">'.dol_print_date($db->jdate($objp->dm),'day').'</td>';
+=======
+				print '<td class="nowrap">'.$companystatic->getNomUrl(1, 'supplier', 44).'</td>';
+				print '<td class="right">'.dol_print_date($db->jdate($objp->dm), 'day').'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				print '</tr>';
 
 				$i++;
 			}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		else
 		{
@@ -641,7 +800,11 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) // TO
 		{
 			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder" width="100%">';
+<<<<<<< HEAD
 			print '<tr class="liste_titre"><th colspan="3">'.$langs->trans("LastContracts",5).'</th></tr>';
+=======
+			print '<tr class="liste_titre"><th colspan="3">'.$langs->trans("LastContracts", 5).'</th></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$i = 0;
 
 			$staticcontrat=new Contrat($db);
@@ -656,9 +819,15 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) // TO
                 $companystatic->code_client = $objp->code_client;
                 $companystatic->code_fournisseur = $objp->code_fournisseur;
                 $companystatic->canvas=$objp->canvas;
+<<<<<<< HEAD
                 print $companystatic->getNomUrl(1,'customer',44);
 				print '</td>'."\n";
 				print "<td align=\"right\">".$staticcontrat->LibStatut($obj->statut,3)."</td></tr>\n";
+=======
+                print $companystatic->getNomUrl(1, 'customer', 44);
+				print '</td>'."\n";
+				print "<td class=\"right\">".$staticcontrat->LibStatut($obj->statut, 3)."</td></tr>\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				$i++;
 			}
@@ -745,6 +914,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
                 $companystatic->canvas=$obj->canvas;
                 print $companystatic->getNomUrl(1, 'customer', 44);
                 print '</td>';
+<<<<<<< HEAD
 				print '<td align="right">';
 				print dol_print_date($db->jdate($obj->dp),'day').'</td>'."\n";
 				if(! empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT)) {
@@ -754,17 +924,36 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 					print '<td align="right">'.price($obj->total_ttc).'</td>';
 				}
 				print '<td align="center" width="14">'.$propalstatic->LibStatut($obj->fk_statut,3).'</td>'."\n";
+=======
+				print '<td class="right">';
+				print dol_print_date($db->jdate($obj->dp), 'day').'</td>'."\n";
+				if(! empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT)) {
+					print '<td class="right">'.price($obj->total_ht).'</td>';
+				}
+				else {
+					print '<td class="right">'.price($obj->total_ttc).'</td>';
+				}
+				print '<td align="center" width="14">'.$propalstatic->LibStatut($obj->fk_statut, 3).'</td>'."\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				print '</tr>'."\n";
 				$i++;
 				$total += $obj->total_ttc;
 			}
 			if ($num > $nbofloop)
 			{
+<<<<<<< HEAD
 				print '<tr class="liste_total"><td colspan="5">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
 			}
 			else if ($total>0)
 			{
 				print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
+=======
+				print '<tr class="liste_total"><td colspan="5" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
+			}
+			elseif ($total>0)
+			{
+				print '<tr class="liste_total"><td colspan="3" class="right">'.$langs->trans("Total")."</td><td class=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 			print "</table>";
 			print "</div><br>";
@@ -849,6 +1038,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
                 $companystatic->canvas=$obj->canvas;
                 print $companystatic->getNomUrl(1, 'customer', 44);
                 print '</td>';
+<<<<<<< HEAD
 				print '<td align="right">';
 				print dol_print_date($db->jdate($obj->dp),'day').'</td>'."\n";
 				if(! empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT)) {
@@ -858,17 +1048,36 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 					print '<td align="right">'.price($obj->total_ttc).'</td>';
 				}
 				print '<td align="center" width="14">'.$orderstatic->LibStatut($obj->fk_statut,$obj->billed,3).'</td>'."\n";
+=======
+				print '<td class="right">';
+				print dol_print_date($db->jdate($obj->dp), 'day').'</td>'."\n";
+				if(! empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT)) {
+					print '<td class="right">'.price($obj->total_ht).'</td>';
+				}
+				else {
+					print '<td class="right">'.price($obj->total_ttc).'</td>';
+				}
+				print '<td align="center" width="14">'.$orderstatic->LibStatut($obj->fk_statut, $obj->billed, 3).'</td>'."\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				print '</tr>'."\n";
 				$i++;
 				$total += $obj->total_ttc;
 			}
 			if ($num > $nbofloop)
 			{
+<<<<<<< HEAD
 				print '<tr class="liste_total"><td colspan="5">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
 			}
 			else if ($total>0)
 			{
 				print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
+=======
+				print '<tr class="liste_total"><td colspan="5" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
+			}
+			elseif ($total>0)
+			{
+				print '<tr class="liste_total"><td colspan="3" class="right">'.$langs->trans("Total")."</td><td class=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 			print "</table>";
 			print "</div><br>";
@@ -884,6 +1093,14 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 
 print '</div></div></div>';
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardCommercials', $parameters, $object); // Note that $action and $object may have been modified by hook
+
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

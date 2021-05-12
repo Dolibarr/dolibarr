@@ -60,7 +60,11 @@ class Auth
 	 * @param 	string	$aPasswd	Password
 	 * @return	void
 	 */
+<<<<<<< HEAD
 	function passwd($aPasswd)
+=======
+	public function passwd($aPasswd)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$this->passwd = $aPasswd;
 	}
@@ -99,13 +103,21 @@ class Auth
         // Authentication mode: forceuser
         if ($dolibarr_main_authentication == 'forceuser' && empty($dolibarr_auto_user)) $dolibarr_auto_user='auto';
         // Set authmode
+<<<<<<< HEAD
         $authmode=explode(',',$dolibarr_main_authentication);
+=======
+        $authmode=explode(',', $dolibarr_main_authentication);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         // No authentication mode
         if (! count($authmode))
         {
             $langs->load('main');
+<<<<<<< HEAD
             dol_print_error('',$langs->trans("ErrorConfigParameterNotDefined",'dolibarr_main_authentication'));
+=======
+            dol_print_error('', $langs->trans("ErrorConfigParameterNotDefined", 'dolibarr_main_authentication'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             exit;
         }
 
@@ -117,13 +129,22 @@ class Auth
         // If ok, the variable will be initialized login
         // If error, we will put error message in session under the name dol_loginmesg
         $goontestloop=false;
+<<<<<<< HEAD
         if (isset($_SERVER["REMOTE_USER"]) && in_array('http',$authmode)) $goontestloop=true;
         if (isset($aLogin) || GETPOST('openid_mode','alpha',1)) $goontestloop=true;
+=======
+        if (isset($_SERVER["REMOTE_USER"]) && in_array('http', $authmode)) $goontestloop=true;
+        if (isset($aLogin) || GETPOST('openid_mode', 'alpha', 1)) $goontestloop=true;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         if ($test && $goontestloop)
         {
             include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+<<<<<<< HEAD
 			$login = checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmode);
+=======
+			$login = checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $authmode);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             if ($login)
             {
                 $this->login($aLogin);
@@ -138,6 +159,10 @@ class Auth
 
 		return $ret;
 	}
+<<<<<<< HEAD
 
 }
 
+=======
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

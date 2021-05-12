@@ -32,11 +32,18 @@ require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 
 global $langs;
 
+<<<<<<< HEAD
 $setuplang=GETPOST('selectlang','aZ09',3)?GETPOST('selectlang','aZ09',3):(empty($argv[1])?'auto':$argv[1]);
 $langs->setDefaultLang($setuplang);
 
 $langs->load("admin");
 $langs->load("install");
+=======
+$setuplang=GETPOST('selectlang', 'aZ09', 3)?GETPOST('selectlang', 'aZ09', 3):(empty($argv[1])?'auto':$argv[1]);
+$langs->setDefaultLang($setuplang);
+
+$langs->loadLangs(array("admin", "install"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Now we load forced value from install.forced.php file.
 $useforcedwizard=false;
@@ -47,7 +54,11 @@ if (@file_exists($forcedfile)) {
 	include_once $forcedfile;
 }
 
+<<<<<<< HEAD
 dolibarr_install_syslog("--- step4: entering step4.php page");
+=======
+dolibarr_install_syslog("- step4: entering step4.php page");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $error=0;
 $ok = 0;
@@ -58,13 +69,22 @@ $ok = 0;
  *	View
  */
 
+<<<<<<< HEAD
 pHeader($langs->trans("AdminAccountCreation"),"step5");
+=======
+pHeader($langs->trans("AdminAccountCreation"), "step5");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Test if we can run a first install process
 if (! is_writable($conffile))
 {
+<<<<<<< HEAD
     print $langs->trans("ConfFileIsNotWritable",$conffiletoshow);
     pFooter(1,$setuplang,'jscheckparam');
+=======
+    print $langs->trans("ConfFileIsNotWritable", $conffiletoshow);
+    pFooter(1, $setuplang, 'jscheckparam');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     exit;
 }
 
@@ -74,6 +94,7 @@ print '<h3><img class="valigntextbottom" src="../theme/common/octicons/build/svg
 print $langs->trans("LastStepDesc").'<br><br>';
 
 
+<<<<<<< HEAD
 print '<table cellspacing="0" cellpadding="2" width="100%">';
 
 $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
@@ -86,6 +107,20 @@ if ($db->ok)
     print '<input type="password" name="pass"></td></tr>';
     print '<tr><td>'.$langs->trans("PasswordAgain").' :</td><td>';
     print '<input type="password" name="pass_verif"></td></tr>';
+=======
+print '<table cellspacing="0" cellpadding="2">';
+
+$db=getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, $conf->db->port);
+
+if ($db->ok)
+{
+    print '<tr><td><label for="login">'.$langs->trans("Login").' :</label></td><td>';
+	print '<input id="login" name="login" type="text" value="' . (!empty($_GET["login"]) ? GETPOST("login") : (isset($force_install_dolibarrlogin) ? $force_install_dolibarrlogin : '')) . '"' . (@$force_install_noedit == 2 && $force_install_dolibarrlogin !== null ? ' disabled' : '') . '></td></tr>';
+    print '<tr><td><label for="pass">'.$langs->trans("Password").' :</label></td><td>';
+    print '<input type="password" id="pass" name="pass"></td></tr>';
+    print '<tr><td><label for="pass_verif">'.$langs->trans("PasswordAgain").' :</label></td><td>';
+    print '<input type="password" id="pass_verif" name="pass_verif"></td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print '</table>';
 
     if (isset($_GET["error"]) && $_GET["error"] == 1)
@@ -110,17 +145,28 @@ if ($db->ok)
         print '<div class="error">'.$langs->trans("PleaseTypeALogin").'</div>';
         $error=0;	// We show button
     }
+<<<<<<< HEAD
 
 }
 
 
+=======
+}
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $ret=0;
 if ($error && isset($argv[1])) $ret=1;
 dolibarr_install_syslog("Exit ".$ret);
 
+<<<<<<< HEAD
 dolibarr_install_syslog("--- step4: end");
 
 pFooter($error,$setuplang);
+=======
+dolibarr_install_syslog("- step4: end");
+
+pFooter($error, $setuplang);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $db->close();
 

@@ -34,9 +34,15 @@
 if ($action == 'builddoc' && $permissioncreate)
 {
 
+<<<<<<< HEAD
     if (is_numeric(GETPOST('model','alpha')))
     {
         $error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Model"));
+=======
+    if (is_numeric(GETPOST('model', 'alpha')))
+    {
+        $error=$langs->trans("ErrorFieldRequired", $langs->transnoentities("Model"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
     else
     {
@@ -50,17 +56,30 @@ if ($action == 'builddoc' && $permissioncreate)
         }*/
 
         // Save last template used to generate document
+<<<<<<< HEAD
     	if (GETPOST('model','alpha'))
     	{
     	    $object->setDocModel($user, GETPOST('model','alpha'));
+=======
+    	if (GETPOST('model', 'alpha'))
+    	{
+    	    $object->setDocModel($user, GETPOST('model', 'alpha'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	}
 
         // Special case to force bank account
         //if (property_exists($object, 'fk_bank'))
         //{
+<<<<<<< HEAD
             if (GETPOST('fk_bank','int')) { // this field may come from an external module
                 $object->fk_bank = GETPOST('fk_bank','int');
             } else if (! empty($object->fk_account)) {
+=======
+            if (GETPOST('fk_bank', 'int')) {
+                // this field may come from an external module
+                $object->fk_bank = GETPOST('fk_bank', 'int');
+            } elseif (! empty($object->fk_account)) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 $object->fk_bank = $object->fk_account;
             }
         //}
@@ -68,12 +87,20 @@ if ($action == 'builddoc' && $permissioncreate)
         $outputlangs = $langs;
         $newlang='';
 
+<<<<<<< HEAD
         if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang=GETPOST('lang_id','aZ09');
+=======
+        if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang=GETPOST('lang_id', 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($object->thirdparty->default_lang)) $newlang=$object->thirdparty->default_lang;  // for proposal, order, invoice, ...
         if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($object->default_lang)) $newlang=$object->default_lang;                  // for thirdparty
         if (! empty($newlang))
         {
+<<<<<<< HEAD
             $outputlangs = new Translate("",$conf);
+=======
+            $outputlangs = new Translate("", $conf);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $outputlangs->setDefaultLang($newlang);
         }
 
@@ -119,9 +146,15 @@ if ($action == 'remove_file' && $permissioncreate)
     }
 
     $langs->load("other");
+<<<<<<< HEAD
     $filetodelete=GETPOST('file','alpha');
     $file =	$upload_dir	. '/' .	$filetodelete;
     $ret=dol_delete_file($file,0,0,0,$object);
+=======
+    $filetodelete=GETPOST('file', 'alpha');
+    $file =	$upload_dir	. '/' .	$filetodelete;
+    $ret=dol_delete_file($file, 0, 0, 0, $object);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     if ($ret) setEventMessages($langs->trans("FileWasRemoved", $filetodelete), null, 'mesgs');
     else setEventMessages($langs->trans("ErrorFailToDeleteFile", $filetodelete), null, 'errors');
 
@@ -133,4 +166,7 @@ if ($action == 'remove_file' && $permissioncreate)
     header('Location: '.$urltoredirect);
     exit;
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

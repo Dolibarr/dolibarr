@@ -23,6 +23,7 @@
  */
 
 
+<<<<<<< HEAD
 require_once('../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
@@ -38,6 +39,23 @@ if (GETPOST('id'))
 $object=new Opensurveysondage($db);
 $result=$object->fetch(0,$numsondage);
 if ($result <= 0) dol_print_error('','Failed to get survey id '.$numsondage);
+=======
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
+require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
+
+$action=GETPOST('action', 'aZ09');
+$numsondage = '';
+if (GETPOST('id'))
+{
+	$numsondage=GETPOST("id", 'alpha');
+}
+
+$object=new Opensurveysondage($db);
+$result=$object->fetch(0, $numsondage);
+if ($result <= 0) dol_print_error('', 'Failed to get survey id '.$numsondage);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 /*
@@ -52,8 +70,13 @@ if ($result <= 0) dol_print_error('','Failed to get survey id '.$numsondage);
 
 $now=dol_now();
 
+<<<<<<< HEAD
 $nbcolonnes=substr_count($object->sujet,',')+1;
 $toutsujet=explode(",",$object->sujet);
+=======
+$nbcolonnes=substr_count($object->sujet, ',')+1;
+$toutsujet=explode(",", $object->sujet);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // affichage des sujets du sondage
 $input.=$langs->trans("Name").";";
@@ -61,7 +84,11 @@ for ($i=0;$toutsujet[$i];$i++)
 {
 	if ($object->format=="D")
 	{
+<<<<<<< HEAD
 		$input.=''.dol_print_date($toutsujet[$i],'dayhour').';';
+=======
+		$input.=''.dol_print_date($toutsujet[$i], 'dayhour').';';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	} else {
 		$input.=''.$toutsujet[$i].';';
 	}
@@ -69,12 +96,20 @@ for ($i=0;$toutsujet[$i];$i++)
 
 $input.="\r\n";
 
+<<<<<<< HEAD
 if (strpos($object->sujet,'@') !== false)
+=======
+if (strpos($object->sujet, '@') !== false)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$input.=";";
 	for ($i=0;$toutsujet[$i];$i++)
 	{
+<<<<<<< HEAD
 		$heures=explode("@",$toutsujet[$i]);
+=======
+		$heures=explode("@", $toutsujet[$i]);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$input.=''.$heures[1].';';
 	}
 
@@ -96,20 +131,32 @@ if ($resql)
 		$obj=$db->fetch_object($resql);
 
 		// Le name de l'utilisateur
+<<<<<<< HEAD
 		$nombase=str_replace("°","'",$obj->name);
+=======
+		$nombase=str_replace("°", "'", $obj->name);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$input.=$nombase.';';
 
 		//affichage des resultats
 		$ensemblereponses=$obj->reponses;
 		for ($k=0;$k<$nbcolonnes;$k++)
 		{
+<<<<<<< HEAD
 			$car=substr($ensemblereponses,$k,1);
+=======
+			$car=substr($ensemblereponses, $k, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if ($car == "1")
 			{
 				$input.='OK;';
 				$somme[$k]++;
 			}
+<<<<<<< HEAD
 			else if ($car == "2")
+=======
+			elseif ($car == "2")
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			{
 				$input.='KO;';
 				$somme[$k]++;
@@ -128,7 +175,11 @@ else dol_print_error($db);
 
 
 $filesize = strlen($input);
+<<<<<<< HEAD
 $filename=$numsondage."_".dol_print_date($now,'%Y%m%d%H%M').".csv";
+=======
+$filename=$numsondage."_".dol_print_date($now, '%Y%m%d%H%M').".csv";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 

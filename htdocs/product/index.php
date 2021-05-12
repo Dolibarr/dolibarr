@@ -1,9 +1,18 @@
 <?php
 /* Copyright (C) 2001-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2014  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2014-2016  Charlie BENKE           <charlie@patas-monkey.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+=======
+ * Copyright (C) 2005-2014  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2014-2016  Charlie BENKE           <charlie@patas-monkey.com>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2019       Pierre Ardoin           <mapiolca@me.com>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +29,11 @@
  */
 
 /**
+<<<<<<< HEAD
  *	\file       htdocs/product/index.php
+=======
+ *  \file       htdocs/product/index.php
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *  \ingroup    product
  *  \brief      Homepage products and services
  */
@@ -30,14 +43,24 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 
+<<<<<<< HEAD
 $type=GETPOST("type",'int');
+=======
+$type=GETPOST("type", 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($type =='' && !$user->rights->produit->lire) $type='1';	// Force global page on service page only
 if ($type =='' && !$user->rights->service->lire) $type='0';	// Force global page on product page only
 
 // Security check
+<<<<<<< HEAD
 if ($type=='0') $result=restrictedArea($user,'produit');
 else if ($type=='1') $result=restrictedArea($user,'service');
 else $result=restrictedArea($user,'produit|service');
+=======
+if ($type=='0') $result=restrictedArea($user, 'produit');
+elseif ($type=='1') $result=restrictedArea($user, 'service');
+else $result=restrictedArea($user, 'produit|service');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks'));
@@ -74,7 +97,11 @@ if ((isset($_GET["type"]) && $_GET["type"] == 1) || empty($conf->product->enable
 llxHeader("", $langs->trans("ProductsAndServices"), $helpurl);
 
 $linkback="";
+<<<<<<< HEAD
 print load_fiche_titre($transAreaType,$linkback,'title_products.png');
+=======
+print load_fiche_titre($transAreaType, $linkback, 'title_products.png');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -121,7 +148,11 @@ $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 $sql.= ' WHERE p.entity IN ('.getEntity($product_static->element, 1).')';
 // Add where from hooks
 $parameters=array();
+<<<<<<< HEAD
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+=======
+$reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $sql.=$hookmanager->resPrint;
 $sql.= " GROUP BY p.fk_product_type, p.tosell, p.tobuy";
 $result = $db->query($sql);
@@ -141,6 +172,7 @@ print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</
 if (! empty($conf->product->enabled))
 {
 	$statProducts = '<tr class="oddeven">';
+<<<<<<< HEAD
 	$statProducts.= '<td><a href="list.php?type=0&amp;tosell=0&amp;tobuy=0">'.$langs->trans("ProductsNotOnSell").'</a></td><td align="right">'.round($prodser[0][0]).'</td>';
 	$statProducts.= "</tr>";
 	$statProducts.= '<tr class="oddeven">';
@@ -153,10 +185,24 @@ if (! empty($conf->product->enabled))
 	$statProducts.= '<td><a href="list.php?type=0&amp;tosell=1&amp;tobuy=1">'.$langs->trans("ProductsOnSellAndOnBuy").'</a></td><td align="right">'.round($prodser[0][3]).'</td>';
 	$statProducts.= "</tr>";
 
+=======
+	$statProducts.= '<td><a href="list.php?type=0&amp;tosell=0&amp;tobuy=0">'.$langs->trans("ProductsNotOnSell").'</a></td><td class="right">'.round($prodser[0][0]).'</td>';
+	$statProducts.= "</tr>";
+	$statProducts.= '<tr class="oddeven">';
+	$statProducts.= '<td><a href="list.php?type=0">'.$langs->trans("ProductsOnSaleOnly").'</a></td><td class="right">'.round($prodser[0][1]).'</td>';
+	$statProducts.= "</tr>";
+	$statProducts.= '<tr class="oddeven">';
+	$statProducts.= '<td><a href="list.php?type=0">'.$langs->trans("ProductsOnPurchaseOnly").'</a></td><td class="right">'.round($prodser[0][2]).'</td>';
+	$statProducts.= "</tr>";
+	$statProducts.= '<tr class="oddeven">';
+	$statProducts.= '<td><a href="list.php?type=0&amp;tosell=1&amp;tobuy=1">'.$langs->trans("ProductsOnSellAndOnBuy").'</a></td><td class="right">'.round($prodser[0][3]).'</td>';
+	$statProducts.= "</tr>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 if (! empty($conf->service->enabled))
 {
 	$statServices = '<tr class="oddeven">';
+<<<<<<< HEAD
 	$statServices.= '<td><a href="list.php?type=1&amp;tosell=0&amp;tobuy=0">'.$langs->trans("ServicesNotOnSell").'</a></td><td align="right">'.round($prodser[1][0]).'</td>';
 	$statServices.= "</tr>";
 	$statServices.= '<tr class="oddeven">';
@@ -169,24 +215,52 @@ if (! empty($conf->service->enabled))
 	$statServices.= '<td><a href="list.php?type=1&amp;tosell=1&amp;tobuy=1">'.$langs->trans("ServicesOnSellAndOnBuy").'</a></td><td align="right">'.round($prodser[1][3]).'</td>';
 	$statServices.= "</tr>";
 
+=======
+	$statServices.= '<td><a href="list.php?type=1&amp;tosell=0&amp;tobuy=0">'.$langs->trans("ServicesNotOnSell").'</a></td><td class="right">'.round($prodser[1][0]).'</td>';
+	$statServices.= "</tr>";
+	$statServices.= '<tr class="oddeven">';
+	$statServices.= '<td><a href="list.php?type=1">'.$langs->trans("ServicesOnSaleOnly").'</a></td><td class="right">'.round($prodser[1][1]).'</td>';
+	$statServices.= "</tr>";
+	$statServices.= '<tr class="oddeven">';
+	$statServices.= '<td><a href="list.php?type=1">'.$langs->trans("ServicesOnPurchaseOnly").'</a></td><td class="right">'.round($prodser[1][2]).'</td>';
+	$statServices.= "</tr>";
+	$statServices.= '<tr class="oddeven">';
+	$statServices.= '<td><a href="list.php?type=1&amp;tosell=1&amp;tobuy=1">'.$langs->trans("ServicesOnSellAndOnBuy").'</a></td><td class="right">'.round($prodser[1][3]).'</td>';
+	$statServices.= "</tr>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 $total=0;
 if ($type == '0')
 {
 	print $statProducts;
+<<<<<<< HEAD
 	$total=round($prodser[0][0])+round($prodser[0][1])+round($prodser[0][2]);
 }
 else if ($type == '1')
 {
 	print $statServices;
 	$total=round($prodser[1][0])+round($prodser[1][1])+round($prodser[1][2]);
+=======
+	$total=round($prodser[0][0])+round($prodser[0][1])+round($prodser[0][2])+round($prodser[0][3]);
+}
+elseif ($type == '1')
+{
+	print $statServices;
+	$total=round($prodser[1][0])+round($prodser[1][1])+round($prodser[1][2])+round($prodser[1][3]);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 else
 {
 	print $statProducts.$statServices;
+<<<<<<< HEAD
 	$total=round($prodser[1][0])+round($prodser[1][1])+round($prodser[1][2])+round($prodser[0][0])+round($prodser[0][1])+round($prodser[0][2]);
 }
 print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">';
+=======
+	$total=round($prodser[0][0])+round($prodser[0][1])+round($prodser[0][2])+round($prodser[0][3])+round($prodser[1][0])+round($prodser[1][1])+round($prodser[1][2])+round($prodser[1][3]); //Calcul du Total des Produits et Services
+}
+print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print $total;
 print '</td></tr>';
 print '</table>';
@@ -199,7 +273,11 @@ if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHS
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Categories").'</th></tr>';
+<<<<<<< HEAD
 	print '<tr '.$bc[0].'><td align="center" colspan="2">';
+=======
+	print '<tr '.$bc[0].'><td class="center" colspan="2">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$sql = "SELECT c.label, count(*) as nb";
 	$sql.= " FROM ".MAIN_DB_PREFIX."categorie_product as cs";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cs.fk_categorie = c.rowid";
@@ -259,7 +337,11 @@ if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHS
 		}
 	}
 	print '</td></tr>';
+<<<<<<< HEAD
 	print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">';
+=======
+	print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print $total;
 	print '</td></tr>';
 	print '</table>';
@@ -280,10 +362,17 @@ $sql.= " WHERE p.entity IN (".getEntity($product_static->element, 1).")";
 if ($type != '') $sql.= " AND p.fk_product_type = ".$type;
 // Add where from hooks
 $parameters=array();
+<<<<<<< HEAD
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 $sql.= $db->order("p.tms","DESC");
 $sql.= $db->plimit($max,0);
+=======
+$reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
+$sql.=$hookmanager->resPrint;
+$sql.= $db->order("p.tms", "DESC");
+$sql.= $db->plimit($max, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 //print $sql;
 $result = $db->query($sql);
@@ -295,9 +384,15 @@ if ($result)
 
 	if ($num > 0)
 	{
+<<<<<<< HEAD
 		$transRecordedType = $langs->trans("LastModifiedProductsAndServices",$max);
 		if (isset($_GET["type"]) && $_GET["type"] == 0) $transRecordedType = $langs->trans("LastRecordedProducts",$max);
 		if (isset($_GET["type"]) && $_GET["type"] == 1) $transRecordedType = $langs->trans("LastRecordedServices",$max);
+=======
+		$transRecordedType = $langs->trans("LastModifiedProductsAndServices", $max);
+		if (isset($_GET["type"]) && $_GET["type"] == 0) $transRecordedType = $langs->trans("LastRecordedProducts", $max);
+		if (isset($_GET["type"]) && $_GET["type"] == 1) $transRecordedType = $langs->trans("LastRecordedServices", $max);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
@@ -338,11 +433,19 @@ if ($result)
 			$product_static->type=$objp->fk_product_type;
 			$product_static->entity = $objp->entity;
 			$product_static->status_batch = $objp->tobatch;
+<<<<<<< HEAD
 			print $product_static->getNomUrl(1,'',16);
 			print "</td>\n";
 			print '<td>'.dol_trunc($objp->label,32).'</td>';
 			print "<td>";
 			print dol_print_date($db->jdate($objp->datem),'day');
+=======
+			print $product_static->getNomUrl(1, '', 16);
+			print "</td>\n";
+			print '<td>'.dol_trunc($objp->label, 32).'</td>';
+			print "<td>";
+			print dol_print_date($db->jdate($objp->datem), 'day');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print "</td>";
 			// Sell price
 			if (empty($conf->global->PRODUIT_MULTIPRICES))
@@ -357,16 +460,28 @@ if ($result)
                         $objp->price = $price_result;
                     }
                 }
+<<<<<<< HEAD
 				print '<td align="right">';
+=======
+				print '<td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     			if (isset($objp->price_base_type) && $objp->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
     			else print price($objp->price).' '.$langs->trans("HT");
     			print '</td>';
 			}
+<<<<<<< HEAD
 			print '<td align="right" class="nowrap"><span class="statusrefsell">';
 			print $product_static->LibStatut($objp->tosell,3,0);
 			print "</span></td>";
             print '<td align="right" class="nowrap"><span class="statusrefbuy">';
             print $product_static->LibStatut($objp->tobuy,3,1);
+=======
+			print '<td class="right nowrap"><span class="statusrefsell">';
+			print $product_static->LibStatut($objp->tosell, 3, 0);
+			print "</span></td>";
+            print '<td class="right nowrap"><span class="statusrefbuy">';
+            print $product_static->LibStatut($objp->tobuy, 3, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             print "</span></td>";
 			print "</tr>\n";
 			$i++;
@@ -397,8 +512,16 @@ if (! empty($conf->global->MAIN_SHOW_PRODUCT_ACTIVITY_TRIM))
 
 print '</div></div></div>';
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+$parameters = array('type' => $type, 'user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardProductsServices', $parameters, $object); // Note that $action and $object may have been modified by hook
+
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();
 
 
@@ -414,18 +537,30 @@ function activitytrim($product_type)
 	global $bc;
 
 	// We display the last 3 years
+<<<<<<< HEAD
 	$yearofbegindate=date('Y',dol_time_plus_duree(time(), -3, "y"));
+=======
+	$yearofbegindate=date('Y', dol_time_plus_duree(time(), -3, "y"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	// breakdown by quarter
 	$sql = "SELECT DATE_FORMAT(p.datep,'%Y') as annee, DATE_FORMAT(p.datep,'%m') as mois, SUM(fd.total_ht) as Mnttot";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."facturedet as fd";
 	$sql.= " , ".MAIN_DB_PREFIX."paiement as p,".MAIN_DB_PREFIX."paiement_facture as pf";
+<<<<<<< HEAD
 	$sql.= " WHERE f.entity = " . $conf->entity;
+=======
+	$sql.= " WHERE f.entity IN (".getEntity('invoice').")";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$sql.= " AND f.rowid = fd.fk_facture";
 	$sql.= " AND pf.fk_facture = f.rowid";
 	$sql.= " AND pf.fk_paiement= p.rowid";
 	$sql.= " AND fd.product_type=".$product_type;
+<<<<<<< HEAD
 	$sql.= " AND p.datep >= '".$db->idate(dol_get_first_day($yearofbegindate),1)."'";
+=======
+	$sql.= " AND p.datep >= '".$db->idate(dol_get_first_day($yearofbegindate), 1)."'";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$sql.= " GROUP BY annee, mois ";
 	$sql.= " ORDER BY annee, mois ";
 
@@ -445,6 +580,7 @@ function activitytrim($product_type)
 			print '<table class="noborder" width="75%">';
 
 			if ($product_type==0)
+<<<<<<< HEAD
 				print '<tr class="liste_titre"><td  align=left>'.$langs->trans("ProductSellByQuarterHT").'</td>';
 			else
 				print '<tr class="liste_titre"><td  align=left>'.$langs->trans("ServiceSellByQuarterHT").'</td>';
@@ -453,12 +589,25 @@ function activitytrim($product_type)
 			print '<td align=right>'.$langs->trans("Quarter3").'</td>';
 			print '<td align=right>'.$langs->trans("Quarter4").'</td>';
 			print '<td align=right>'.$langs->trans("Total").'</td>';
+=======
+				print '<tr class="liste_titre"><td class=left>'.$langs->trans("ProductSellByQuarterHT").'</td>';
+			else
+				print '<tr class="liste_titre"><td class=left>'.$langs->trans("ServiceSellByQuarterHT").'</td>';
+			print '<td class=right>'.$langs->trans("Quarter1").'</td>';
+			print '<td class=right>'.$langs->trans("Quarter2").'</td>';
+			print '<td class=right>'.$langs->trans("Quarter3").'</td>';
+			print '<td class=right>'.$langs->trans("Quarter4").'</td>';
+			print '<td class=right>'.$langs->trans("Total").'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '</tr>';
 		}
 		$i = 0;
 
+<<<<<<< HEAD
 		$var=true;
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($result);
@@ -466,6 +615,7 @@ function activitytrim($product_type)
 			{
 				if ($trim1+$trim2+$trim3+$trim4 > 0)
 				{
+<<<<<<< HEAD
 
 					print '<tr class="oddeven"><td align=left>'.$tmpyear.'</td>';
 					print '<td align=right>'.price($trim1).'</td>';
@@ -473,6 +623,14 @@ function activitytrim($product_type)
 					print '<td align=right>'.price($trim3).'</td>';
 					print '<td align=right>'.price($trim4).'</td>';
 					print '<td align=right>'.price($trim1+$trim2+$trim3+$trim4).'</td>';
+=======
+					print '<tr class="oddeven"><td class=left>'.$tmpyear.'</td>';
+					print '<td class=right>'.price($trim1).'</td>';
+					print '<td class=right>'.price($trim2).'</td>';
+					print '<td class=right>'.price($trim3).'</td>';
+					print '<td class=right>'.price($trim4).'</td>';
+					print '<td class=right>'.price($trim1+$trim2+$trim3+$trim4).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					print '</tr>';
 					$lgn++;
 				}
@@ -500,6 +658,7 @@ function activitytrim($product_type)
 		}
 		if ($trim1+$trim2+$trim3+$trim4 > 0)
 		{
+<<<<<<< HEAD
 
 			print '<tr class="oddeven"><td align=left>'.$tmpyear.'</td>';
 			print '<td align=right>'.price($trim1).'</td>';
@@ -507,10 +666,21 @@ function activitytrim($product_type)
 			print '<td align=right>'.price($trim3).'</td>';
 			print '<td align=right>'.price($trim4).'</td>';
 			print '<td align=right>'.price($trim1+$trim2+$trim3+$trim4).'</td>';
+=======
+			print '<tr class="oddeven"><td class=left>'.$tmpyear.'</td>';
+			print '<td class=right>'.price($trim1).'</td>';
+			print '<td class=right>'.price($trim2).'</td>';
+			print '<td class=right>'.price($trim3).'</td>';
+			print '<td class=right>'.price($trim4).'</td>';
+			print '<td class=right>'.price($trim1+$trim2+$trim3+$trim4).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '</tr>';
 		}
 		if ($num > 0 )
 			print '</table>';
 	}
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,16 +35,47 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/supplier_order/modules_commandefo
  */
 class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 {
+<<<<<<< HEAD
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $error = '';
 	var $nom = 'Muguet';
 	var $prefix='CF';
+=======
+	/**
+     * Dolibarr version of the loaded document
+     * @var string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	/**
+     * @var string Error code (or message)
+     */
+    public $error = '';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Muguet';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Muguet';
+
+	public $prefix='CF';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	/**
 	 * Constructor
 	 */
+<<<<<<< HEAD
 	function __construct()
+=======
+	public function __construct()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 	    global $conf;
 
@@ -52,10 +87,17 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
      *
      *  @return     string      Text with description
      */
+<<<<<<< HEAD
     function info()
     {
     	global $langs;
       	return $langs->trans("SimpleNumRefModelDesc",$this->prefix);
+=======
+    public function info()
+    {
+    	global $langs;
+      	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
 
@@ -64,7 +106,11 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
      *
      *  @return     string      Example
      */
+<<<<<<< HEAD
     function getExample()
+=======
+    public function getExample()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         return $this->prefix."0501-0001";
     }
@@ -76,7 +122,11 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
      *
      *  @return     boolean     false si conflit, true si ok
      */
+<<<<<<< HEAD
     function canBeActivated()
+=======
+    public function canBeActivated()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
     	global $conf,$langs,$db;
 
@@ -91,16 +141,26 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
         if ($resql)
         {
             $row = $db->fetch_row($resql);
+<<<<<<< HEAD
             if ($row) { $coyymm = substr($row[0],0,6); $max=$row[0]; }
         }
         if (! $coyymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i',$coyymm))
+=======
+            if ($row) { $coyymm = substr($row[0], 0, 6); $max=$row[0]; }
+        }
+        if (! $coyymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         {
             return true;
         }
         else
         {
 			$langs->load("errors");
+<<<<<<< HEAD
 			$this->error=$langs->trans('ErrorNumRefModel',$max);
+=======
+			$this->error=$langs->trans('ErrorNumRefModel', $max);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             return false;
         }
     }
@@ -112,7 +172,11 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 	 *  @param  Object		$object		Object
 	 *  @return string      			Value if OK, 0 if KO
      */
+<<<<<<< HEAD
     function getNextValue($objsoc=0,$object='')
+=======
+    public function getNextValue($objsoc = 0, $object = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $db,$conf;
 
@@ -134,15 +198,26 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 		//$date=time();
         $date=$object->date_commande;   // Not always defined
         if (empty($date)) $date=$object->date;  // Creation date is order date for suppliers orders
+<<<<<<< HEAD
         $yymm = strftime("%y%m",$date);
 
         if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
         else $num = sprintf("%04s",$max+1);
+=======
+        $yymm = strftime("%y%m", $date);
+
+        if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
+        else $num = sprintf("%04s", $max+1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         return $this->prefix.$yymm."-".$num;
     }
 
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     /**
      * 	Renvoie la reference de commande suivante non utilisee
      *
@@ -150,9 +225,18 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 	 *  @param  Object	    $object		Object
      *  @return string      			Texte descripif
      */
+<<<<<<< HEAD
     function commande_get_num($objsoc=0,$object='')
     {
         return $this->getNextValue($objsoc,$object);
     }
 }
 
+=======
+    public function commande_get_num($objsoc = 0, $object = '')
+    {
+        // phpcs:enable
+        return $this->getNextValue($objsoc, $object);
+    }
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

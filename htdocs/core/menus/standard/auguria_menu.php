@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
+<<<<<<< HEAD
  * Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2009      Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2008-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,6 +32,7 @@
  */
 class MenuManager
 {
+<<<<<<< HEAD
 	var $db;
 	var $type_user;								// Put 0 for internal users, 1 for external users
 	var $atarget="";                            // To store default target to use onto links
@@ -37,6 +42,21 @@ class MenuManager
 	var $menu_array_after;
 
 	var $tabMenu;
+=======
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    public $type_user;								// Put 0 for internal users, 1 for external users
+    public $atarget="";                            // To store default target to use onto links
+    public $name="auguria";
+
+    public $menu_array;
+    public $menu_array_after;
+
+    public $tabMenu;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
     /**
@@ -45,7 +65,11 @@ class MenuManager
 	 *  @param	DoliDB		$db     	Database handler
      *  @param	int			$type_user	Type of user
      */
+<<<<<<< HEAD
     function __construct($db, $type_user)
+=======
+    public function __construct($db, $type_user)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
     	$this->type_user=$type_user;
     	$this->db=$db;
@@ -59,7 +83,11 @@ class MenuManager
    	 * @param	string	$forceleftmenu		To force leftmenu to load
    	 * @return	void
    	 */
+<<<<<<< HEAD
    	function loadMenu($forcemainmenu='',$forceleftmenu='')
+=======
+   	public function loadMenu($forcemainmenu = '', $forceleftmenu = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
    	{
     	global $conf, $user, $langs;
 
@@ -105,7 +133,11 @@ class MenuManager
 
     	require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
     	$tabMenu=array();
+<<<<<<< HEAD
     	$menuArbo = new Menubase($this->db,'auguria');
+=======
+    	$menuArbo = new Menubase($this->db, 'auguria');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	$menuArbo->menuLoad($mainmenu, $leftmenu, $this->type_user, 'auguria', $tabMenu);
 
     	$this->tabMenu=$tabMenu;
@@ -119,7 +151,11 @@ class MenuManager
      *  @param	array	$moredata		An array with more data to output
      *  @return int                     0 or nb of top menu entries if $mode = 'topnb'
 	 */
+<<<<<<< HEAD
 	function showmenu($mode, $moredata=null)
+=======
+	public function showmenu($mode, $moredata = null)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
     	global $conf, $langs, $user;
 
@@ -134,18 +170,31 @@ class MenuManager
 		require_once DOL_DOCUMENT_ROOT.'/core/class/menu.class.php';
         $this->menu=new Menu();
 
+<<<<<<< HEAD
         if ($mode == 'top')  print_auguria_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,0,$mode);
         if ($mode == 'left') print_left_auguria_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$this->menu,0,'','',$moredata);
 
 		if ($mode == 'topnb')
 		{
 		    print_auguria_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1,$mode);
+=======
+        if ($mode == 'top')  print_auguria_menu($this->db, $this->atarget, $this->type_user, $this->tabMenu, $this->menu, 0, $mode);
+        if ($mode == 'left') print_left_auguria_menu($this->db, $this->menu_array, $this->menu_array_after, $this->tabMenu, $this->menu, 0, '', '', $moredata);
+
+		if ($mode == 'topnb')
+		{
+		    print_auguria_menu($this->db, $this->atarget, $this->type_user, $this->tabMenu, $this->menu, 1, $mode);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		    return $this->menu->getNbOfVisibleMenuEntries();
 		}
 
         if ($mode == 'jmobile')     // Used to get menu in xml ul/li
         {
+<<<<<<< HEAD
         	print_auguria_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1,$mode);
+=======
+        	print_auguria_menu($this->db, $this->atarget, $this->type_user, $this->tabMenu, $this->menu, 1, $mode);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
             // $this->menu->liste is top menu
             //var_dump($this->menu->liste);exit;
@@ -161,8 +210,13 @@ class MenuManager
         			$substitarray['__USERID__'] = $user->id;	// For backward compatibility
         			$val['url'] = make_substitutions($val['url'], $substitarray);
 
+<<<<<<< HEAD
         			$relurl=dol_buildpath($val['url'],1);
         			$canonurl=preg_replace('/\?.*$/','',$val['url']);
+=======
+        			$relurl=dol_buildpath($val['url'], 1);
+        			$canonurl=preg_replace('/\?.*$/', '', $val['url']);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         			print '<a class="alilevel0" href="#">';
 
@@ -176,6 +230,7 @@ class MenuManager
         			$tmpmainmenu=$val['mainmenu'];
         			$tmpleftmenu='all';
         			$submenu=new Menu();
+<<<<<<< HEAD
         			print_left_auguria_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$submenu,1,$tmpmainmenu,$tmpleftmenu);
         			$nexturl=dol_buildpath($submenu->liste[0]['url'],1);
 
@@ -189,6 +244,21 @@ class MenuManager
 					{
 						// We add sub entry
 						print str_pad('',1).'<li class="lilevel1 ui-btn-icon-right ui-btn">';	 // ui-btn to highlight on clic
+=======
+        			print_left_auguria_menu($this->db, $this->menu_array, $this->menu_array_after, $this->tabMenu, $submenu, 1, $tmpmainmenu, $tmpleftmenu);
+        			$nexturl=dol_buildpath($submenu->liste[0]['url'], 1);
+
+        			$canonrelurl=preg_replace('/\?.*$/', '', $relurl);
+        			$canonnexturl=preg_replace('/\?.*$/', '', $nexturl);
+        			//var_dump($canonrelurl);
+        			//var_dump($canonnexturl);
+        			print '<ul>'."\n";
+        			if (($canonrelurl != $canonnexturl && ! in_array($val['mainmenu'], array('tools')))
+        				|| (strpos($canonrelurl, '/product/index.php') !== false || strpos($canonrelurl, '/compta/bank/list.php') !== false))
+					{
+						// We add sub entry
+						print str_pad('', 1).'<li class="lilevel1 ui-btn-icon-right ui-btn">';	 // ui-btn to highlight on clic
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						print '<a href="'.$relurl.'">';
 					    if ($langs->trans(ucfirst($val['mainmenu'])."Dashboard") == ucfirst($val['mainmenu'])."Dashboard")  // No translation
         				{
@@ -206,7 +276,11 @@ class MenuManager
 					    {
 					        $lastlevel[0]='enabled';
 					    }
+<<<<<<< HEAD
 					    else if ($showmenu)                 // Not enabled but visible (so greyed)
+=======
+					    elseif ($showmenu)                 // Not enabled but visible (so greyed)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					    {
 					        $lastlevel[0]='greyed';
 					    }
@@ -241,15 +315,25 @@ class MenuManager
 
        						if (! preg_match("/^(http:\/\/|https:\/\/)/i", $val2['url']))
        						{
+<<<<<<< HEAD
        							$relurl2=dol_buildpath($val2['url'],1);
+=======
+       							$relurl2=dol_buildpath($val2['url'], 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
        						}
        						else
        						{
        							$relurl2=$val2['url'];
        						}
+<<<<<<< HEAD
 	        				$canonurl2=preg_replace('/\?.*$/','',$val2['url']);
 	        				//var_dump($val2['url'].' - '.$canonurl2.' - '.$val2['level']);
 	        				if (in_array($canonurl2,array('/admin/index.php','/admin/tools/index.php','/core/tools.php'))) $relurl2='';
+=======
+	        				$canonurl2=preg_replace('/\?.*$/', '', $val2['url']);
+	        				//var_dump($val2['url'].' - '.$canonurl2.' - '.$val2['level']);
+	        				if (in_array($canonurl2, array('/admin/index.php','/admin/tools/index.php','/core/tools.php'))) $relurl2='';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	        				$disabled='';
 	        				if (! $val2['enabled'])
@@ -257,7 +341,11 @@ class MenuManager
 	        				    $disabled=" vsmenudisabled";
 	        				}
 
+<<<<<<< HEAD
 	        				print str_pad('',$val2['level']+1);
+=======
+	        				print str_pad('', $val2['level']+1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	        				print '<li class="lilevel'.($val2['level']+1);
 	        				if ($val2['level']==0) print ' ui-btn-icon-right ui-btn';  // ui-btn to highlight on clic
 	        				print $disabled.'">';	 // ui-btn to highlight on clic
@@ -313,4 +401,7 @@ class MenuManager
         unset($this->menu);
     }
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

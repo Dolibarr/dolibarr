@@ -1,0 +1,13 @@
+README (English)
+--------------------------------
+This directory contains sub-directories to provide tools or
+documentation for developers.
+Note: All files in this directory are in VCS only and are not
+provided with a standard release.
+
+
+There is also some documentation on Dolibarr Wiki:
+https://wiki.dolibarr.org/
+and
+https://doxygen.dolibarr.org/
+

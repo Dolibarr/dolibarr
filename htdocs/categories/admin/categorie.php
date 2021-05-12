@@ -31,15 +31,25 @@ if (!$user->admin)
 accessforbidden();
 
 // Load translation files required by the page
+<<<<<<< HEAD
 $langs->load("categories");
 
 $action=GETPOST('action','aZ09');
+=======
+$langs->loadLangs(array("categories","admin"));
+
+$action=GETPOST('action', 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 /*
  *	Actions
  */
 
+<<<<<<< HEAD
 if (preg_match('/set_([a-z0-9_\-]+)/i',$action,$reg))
+=======
+if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
     $code=$reg[1];
     if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0)
@@ -53,7 +63,11 @@ if (preg_match('/set_([a-z0-9_\-]+)/i',$action,$reg))
     }
 }
 
+<<<<<<< HEAD
 if (preg_match('/del_([a-z0-9_\-]+)/i',$action,$reg))
+=======
+if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
     $code=$reg[1];
     if (dolibarr_del_const($db, $code, $conf->entity) > 0)
@@ -76,10 +90,17 @@ if (preg_match('/del_([a-z0-9_\-]+)/i',$action,$reg))
 $help_url='EN:Module Categories|FR:Module Catégories|ES:Módulo Categorías';
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("Categories"),$help_url);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("CategoriesSetup"),$linkback,'title_setup');
+=======
+llxHeader('', $langs->trans("Categories"), $help_url);
+
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+print load_fiche_titre($langs->trans("CategoriesSetup"), $linkback, 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 $head=categoriesadmin_prepare_head();
@@ -100,7 +121,11 @@ $form = new Form($db);
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("CategorieRecursiv").'</td>';
+<<<<<<< HEAD
 print '<td align="center" width="20">'. $form->textwithpicto('',$langs->trans("CategorieRecursivHelp"),1,'help').'</td>';
+=======
+print '<td align="center" width="20">'. $form->textwithpicto('', $langs->trans("CategorieRecursivHelp"), 1, 'help').'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print '<td align="center" width="100">';
 if ($conf->use_javascript_ajax)
@@ -111,16 +136,28 @@ else
 {
 	if (empty($conf->global->CATEGORIE_RECURSIV_ADD))
 	{
+<<<<<<< HEAD
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_CATEGORIE_RECURSIV_ADD">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 	}
 	else
 	{
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_CATEGORIE_RECURSIV_ADD">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+=======
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_CATEGORIE_RECURSIV_ADD">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+	}
+	else
+	{
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_CATEGORIE_RECURSIV_ADD">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 }
 print '</td></tr>';
 
 print '</table>';
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

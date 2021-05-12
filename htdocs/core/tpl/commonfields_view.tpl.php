@@ -40,19 +40,33 @@ $object->fields = dol_sort_array($object->fields, 'position');
 foreach($object->fields as $key => $val)
 {
 	// Discard if extrafield is a hidden field on form
+<<<<<<< HEAD
 	if (abs($val['visible']) != 1) continue;
 
 	if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! $val['enabled']) continue;	// We don't want this field
+=======
+    if (abs($val['visible']) != 1 && abs($val['visible']) != 4) continue;
+
+	if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! verifCond($val['enabled'])) continue;	// We don't want this field
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if (in_array($key, array('ref','status'))) continue;	// Ref and status are already in dol_banner
 
 	$value=$object->$key;
 
 	print '<tr><td';
+<<<<<<< HEAD
 	print ' class="titlefield';
 	if ($val['notnull'] > 0) print ' fieldrequired';
 	if ($val['type'] == 'text' || $val['type'] == 'html') print ' tdtop';
 	print '">';
 	if (! empty($val['help'])) print $form->textwithpicto($langs->trans($val['label']), $val['help']);
+=======
+	print ' class="titlefield fieldname_'.$key;
+	//if ($val['notnull'] > 0) print ' fieldrequired';     // No fieldrequired on the view output
+	if ($val['type'] == 'text' || $val['type'] == 'html') print ' tdtop';
+	print '">';
+	if (! empty($val['help'])) print $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	else print $langs->trans($val['label']);
 	print '</td>';
 	print '<td>';
@@ -65,11 +79,21 @@ foreach($object->fields as $key => $val)
 }
 
 print '</table>';
+<<<<<<< HEAD
 print '</div>';
 print '<div class="fichehalfright">';
 print '<div class="ficheaddleft">';
 print '<div class="underbanner clearboth"></div>';
 print '<table class="border centpercent">';
+=======
+
+// We close div and reopen for second column
+print '</div>';
+print '<div class="fichehalfright">';
+
+print '<div class="underbanner clearboth"></div>';
+print '<table class="border centpercent tableforfield">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $alreadyoutput = 1;
 foreach($object->fields as $key => $val)
@@ -87,11 +111,19 @@ foreach($object->fields as $key => $val)
 	$value=$object->$key;
 
 	print '<tr><td';
+<<<<<<< HEAD
 	print ' class="titlefield';
 	if ($val['notnull'] > 0) print ' fieldrequired';
 	if ($val['type'] == 'text' || $val['type'] == 'html') print ' tdtop';
 	print '">';
 	if (! empty($val['help'])) print $form->textwithpicto($langs->trans($val['label']), $val['help']);
+=======
+	print ' class="titlefield fieldname_'.$key;
+	//if ($val['notnull'] > 0) print ' fieldrequired';		// No fieldrequired inthe view output
+	if ($val['type'] == 'text' || $val['type'] == 'html') print ' tdtop';
+	print '">';
+	if (! empty($val['help'])) print $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	else print $langs->trans($val['label']);
 	print '</td>';
 	print '<td>';

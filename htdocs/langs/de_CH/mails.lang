@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - mails
+<<<<<<< HEAD
 DateLastSend=Datum des letzten Versand
 ActivateCheckReadKey=Schlüssel um die URL für "Lesebestätigung" und "Abmelden/Unsubscribe" zu verschlüsseln
 ResultOfMailSending=Ergebnis der Massen-E-Mailversand
@@ -10,6 +11,39 @@ NbOfCompaniesContacts=Einzigartige Geschäftspartner-Kontakte
 EMailRecipient=E-Mailadresses des Empfängers
 TagMailtoEmail=Empfänger E-Mail (Inklusive html "mailto:" link)
 NoNotificationsWillBeSent=Für dieses Ereignis und diesen Geschäftspartner sind keine Benachrichtigungen geplant
+=======
+Mailing=Mailversand
+MailTitle=Titel
+MailFrom=Absender
+MailErrorsTo=Fehler an
+MailText=E-Mail-Text
+MailingStatusSent=Gesendet
+MailingStatusSentPartialy=Teileweise gesendet
+MailingStatusSentCompletely=Vollständig gesendet
+MailingStatusNotSent=Nicht gesendet
+MailingStatusNotContact=Nicht mehr kontaktieren
+MailingStatusReadAndUnsubscribe=Lesen und abmelden
+WarningNoEMailsAdded=Keine neuen E-Mail-Adressen für das Hinzufügen zur Empfängerliste.
+MailingAddFile=Diese Datei anhängen
+DateLastSend=Datum des letzten Versand
+SentTo=Versandt an <b>%s</b>
+MailingStatusRead=Lesen
+RecipientSelectionModules=Definiert Empfängerauswahlen
+MailingArea=E-Mail Kampagnenübersicht
+NbOfCompaniesContacts=Einzigartige Geschäftspartner-Kontakte
+MailNoChangePossible=Die Empfängerliste einer freigegebenen E-Mail Kampagne kann nicht mehr geändert werden
+SearchAMailing=Suche E-Mail Kampagne
+SendMailing=E-Mail Kampagne versenden
+MailingNeedCommand2=Sie können den Versand jedoch auch online starten, indem Sie den Parameter MAILING_LIMIT_SENDBYWEB auf den Wert der pro Sitzung gleichzeitig zu versendenden Mails setzen. Die entsprechenden Einstellungen finden Sie unter Übersicht-Einstellungen-Andere.
+LimitSendingEmailing=Hinweis: Aus Sicherheits- und Zeitüberschreitungsgründen ist der Online-Versand von E-Mails auf <b>%s</b> Empfänger je Sitzung beschränkt.
+ToAddRecipientsChooseHere=Fügen Sie Empfänger über die Listenauswahl hinzu
+NbOfEMailingsSend=E-Mail-Kampagne versandt
+TagUnsubscribe=Abmelde Link
+NoNotificationsWillBeSent=Für dieses Ereignis und diesen Geschäftspartner sind keine Benachrichtigungen geplant
+ANotificationsWillBeSent=Eine Benachrichtigung wird per E-Mail versandt
+SomeNotificationsWillBeSent=%s Benachrichtigungen werden per E-Mail versandt
+ListOfNotificationsDone=Liste aller versandten E-Mail Benachrichtigungen
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MailSendSetupIs2=Sie müssen zuerst mit einem Admin-Konto im Menü %sStart - Einstellungen - EMails%s den Parameter <strong>'%s'</strong> auf den Modus '%s' ändern. Dann können Sie die Daten des SMTP-Servers von Ihrem Internetdienstanbieter eingeben und die E-Mail-Kampagnen-Funktion nutzen.
 MailAdvTargetRecipients=Empfänger (Erweiterte Selektion)
 AdvTgtSearchIntHelp=Intervall verwenden um den Zahlenwert auszuwählen
@@ -17,6 +51,9 @@ AdvTgtMinVal=Minimalwert
 AdvTgtSearchDtHelp=Intervall verwenden um den Datumswert auszuwählen
 RemoveAll=Alle entfernen
 ItemsCount=Eintrag/Einträge
+<<<<<<< HEAD
 AdvTgtAddContact=E-Mails gemäss Bedingungen hinzufügen
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoContactWithCategoryFound=Keine Kontakte/Adresse mit einer Kategorie gefunden
 NoContactLinkedToThirdpartieWithCategoryFound=Keine verlinkte Kontakte/Adresse mit einer Kategorie gefunden

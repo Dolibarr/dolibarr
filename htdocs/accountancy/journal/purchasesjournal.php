@@ -1,4 +1,5 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2007-2010  Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2007-2010  Jean Heimburger		<jean@tiaris.info>
  * Copyright (C) 2011       Juanjo Menent		<jmenent@2byte.es>
@@ -6,6 +7,17 @@
  * Copyright (C) 2013-2017  Alexandre Spangaro	<aspangaro@zendsi.com>
  * Copyright (C) 2013-2016  Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry		<florian.henry@open-concept.pro>
+=======
+/* Copyright (C) 2007-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2010  Jean Heimburger         <jean@tiaris.info>
+ * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2013-2017  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018       Eric Seigne             <eric.seigne@cap-rel.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +35,11 @@
 
 /**
  * \file		htdocs/accountancy/journal/purchasesjournal.php
+<<<<<<< HEAD
  * \ingroup		Advanced accountancy
+=======
+ * \ingroup		Accountancy (Double entries)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * \brief		Page with purchases journal
  */
 require '../../main.inc.php';
@@ -40,7 +56,11 @@ require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
 $langs->loadLangs(array("commercial", "compta","bills","other","accountancy","errors"));
 
 $id_journal = GETPOST('id_journal', 'int');
+<<<<<<< HEAD
 $action = GETPOST('action','aZ09');
+=======
+$action = GETPOST('action', 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $date_startmonth = GETPOST('date_startmonth');
 $date_startday = GETPOST('date_startday');
@@ -63,12 +83,18 @@ $parameters=array();
 /*
  * Actions
  */
+<<<<<<< HEAD
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$user,$action);    // Note that $action and $object may have been modified by some hooks
 
 
 /*
  * Views
  */
+=======
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $user, $action);    // Note that $action and $object may have been modified by some hooks
+
+$accountingaccount = new AccountingAccount($db);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Get informations of journal
 $accountingjournalstatic = new AccountingJournal($db);
@@ -93,9 +119,13 @@ if (! GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end)
 	$date_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
 }
 
+<<<<<<< HEAD
 $idpays = $mysoc->country_id;
 
 $sql = "SELECT f.rowid, f.ref, f.type, f.datef as df, f.libelle,f.ref_supplier, f.date_lim_reglement as dlf, f.close_code,";
+=======
+$sql = "SELECT f.rowid, f.ref as ref, f.type, f.datef as df, f.libelle,f.ref_supplier, f.date_lim_reglement as dlf, f.close_code,";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $sql .= " fd.rowid as fdid, fd.description, fd.product_type, fd.total_ht, fd.tva as total_tva, fd.total_localtax1, fd.total_localtax2, fd.tva_tx, fd.total_ttc, fd.vat_src_code,";
 $sql .= " s.rowid as socid, s.nom as name, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
 $sql .= " p.accountancy_code_buy , aa.rowid as fk_compte, aa.account_number as compte, aa.label as label_compte";
@@ -141,7 +171,11 @@ if ($result) {
 	$num = $db->num_rows($result);
 
 	// Variables
+<<<<<<< HEAD
 	$cptfour = (! empty($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER)) ? $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER : 'NotDefined';
+=======
+	$cptfour = ($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER != "") ? $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER : 'NotDefined';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$cpttva = (! empty($conf->global->ACCOUNTING_VAT_BUY_ACCOUNT)) ? $conf->global->ACCOUNTING_VAT_BUY_ACCOUNT : 'NotDefined';
 
 	$i = 0;
@@ -149,7 +183,11 @@ if ($result) {
 		$obj = $db->fetch_object($result);
 
 		// Controls
+<<<<<<< HEAD
 		$compta_soc = (! empty($obj->code_compta_fournisseur)) ? $obj->code_compta_fournisseur : $cptfour;
+=======
+		$compta_soc = ($obj->code_compta_fournisseur != "") ? $obj->code_compta_fournisseur : $cptfour;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$compta_prod = $obj->compte;
 		if (empty($compta_prod)) {
@@ -297,7 +335,11 @@ if ($action == 'writebookkeeping') {
 		// Thirdparty
 		if (! $errorforline)
 		{
+<<<<<<< HEAD
 			foreach ( $tabttc[$key] as $k => $mt ) {
+=======
+			foreach ($tabttc[$key] as $k => $mt) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				//if ($mt) {
 					$bookkeeping = new BookKeeping($db);
 					$bookkeeping->doc_date = $val["date"];
@@ -309,8 +351,17 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->fk_docdet = 0;    // Useless, can be several lines that are source of this record to add
 					$bookkeeping->thirdparty_code = $companystatic->code_fournisseur;
 					$bookkeeping->subledger_account = $tabcompany[$key]['code_compta_fournisseur'];
+<<<<<<< HEAD
 					$bookkeeping->subledger_label = '';    // TODO To complete
 					$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
+=======
+					$bookkeeping->subledger_label = $tabcompany[$key]['name'];
+					$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
+
+					$accountingaccount->fetch(null, $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER, true);
+					$bookkeeping->label_compte = $accountingaccount->label;
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref_supplier . ' - ' . $langs->trans("SubledgerAccount");
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt >= 0) ? 'C' : 'D';
@@ -348,10 +399,16 @@ if ($action == 'writebookkeeping') {
 		// Product / Service
 		if (! $errorforline)
 		{
+<<<<<<< HEAD
 			foreach ( $tabht[$key] as $k => $mt ) {
 				//if ($mt) {
 					// get compte id and label
 					$accountingaccount = new AccountingAccount($db);
+=======
+			foreach ($tabht[$key] as $k => $mt) {
+				//if ($mt) {
+					// get compte id and label
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					if ($accountingaccount->fetch(null, $k, true)) {
 						$bookkeeping = new BookKeeping($db);
 						$bookkeeping->doc_date = $val["date"];
@@ -365,6 +422,10 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->subledger_account = '';
 						$bookkeeping->subledger_label = '';
 						$bookkeeping->numero_compte = $k;
+<<<<<<< HEAD
+=======
+						$bookkeeping->label_compte = $accountingaccount->label;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref_supplier . ' - ' . $accountingaccount->label;
 						$bookkeeping->montant = $mt;
 						$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
@@ -411,7 +472,11 @@ if ($action == 'writebookkeeping') {
 				if ($numtax == 1) $arrayofvat = $tablocaltax1;
 				if ($numtax == 2) $arrayofvat = $tablocaltax2;
 
+<<<<<<< HEAD
 				foreach ( $arrayofvat[$key] as $k => $mt ) {
+=======
+				foreach ($arrayofvat[$key] as $k => $mt) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					if ($mt) {
 						$bookkeeping = new BookKeeping($db);
 						$bookkeeping->doc_date = $val["date"];
@@ -425,7 +490,15 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->subledger_account = '';
 						$bookkeeping->subledger_label = '';
 						$bookkeeping->numero_compte = $k;
+<<<<<<< HEAD
 						$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref_supplier . ' - ' . $langs->trans("VAT").' '.join(', ',$def_tva[$key][$k]) .' %' . ($numtax?' - Localtax '.$numtax:'');
+=======
+
+						$accountingaccount->fetch($k, null, true);
+						$bookkeeping->label_compte = $accountingaccount->label;
+
+						$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref_supplier . ' - ' . $langs->trans("VAT").' '.join(', ', $def_tva[$key][$k]) .' %' . ($numtax?' - Localtax '.$numtax:'');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						$bookkeeping->montant = $mt;
 						$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
 						$bookkeeping->debit = ($mt > 0) ? $mt : 0;
@@ -464,7 +537,11 @@ if ($action == 'writebookkeeping') {
 		// var_dump($tabother);
 		if (! $errorforline && is_array($tabother[$key]))
 		{
+<<<<<<< HEAD
 			foreach ( $tabother[$key] as $k => $mt ) {
+=======
+			foreach ($tabother[$key] as $k => $mt) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if ($mt) {
 					$bookkeeping = new BookKeeping($db);
 					$bookkeeping->doc_date = $val["date"];
@@ -580,12 +657,20 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 
 	$filename = 'journal';
+<<<<<<< HEAD
+=======
+	$type_export = 'journal';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
 
 	$companystatic = new Fournisseur($db);
 	$invoicestatic = new FactureFournisseur($db);
 
+<<<<<<< HEAD
 	foreach ( $tabfac as $key => $val )
+=======
+	foreach ($tabfac as $key => $val)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
@@ -620,17 +705,29 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 		}
 
 		// Third party
+<<<<<<< HEAD
 		foreach ( $tabttc[$key] as $k => $mt ) {
+=======
+		foreach ($tabttc[$key] as $k => $mt) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			//if ($mt) {
 				print '"' . $key . '"' . $sep;
 				print '"' . $date . '"' . $sep;
 				print '"' . $val["refsologest"] . '"' . $sep;
+<<<<<<< HEAD
 				print '"' . utf8_decode ( dol_trunc($companystatic->name, 32) ). '"' . $sep;
+=======
+				print '"' . utf8_decode(dol_trunc($companystatic->name, 32)). '"' . $sep;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
 				print '"' . $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER . '"' . $sep;
 				print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
 				print '"' . $langs->trans("Thirdparty") . '"' . $sep;
+<<<<<<< HEAD
 				print '"' . utf8_decode ( dol_trunc($companystatic->name, 16) ) . ' - ' . $val["refsuppliersologest"] . ' - ' . $langs->trans("Thirdparty") . '"' . $sep;
+=======
+				print '"' . utf8_decode(dol_trunc($companystatic->name, 16)) . ' - ' . $val["refsuppliersologest"] . ' - ' . $langs->trans("Thirdparty") . '"' . $sep;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
 				print '"' . ($mt >= 0 ? price($mt) : '') . '"'. $sep;
 				print '"' . $journal . '"' ;
@@ -639,19 +736,32 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 		}
 
 		// Product / Service
+<<<<<<< HEAD
 		foreach ( $tabht[$key] as $k => $mt ) {
+=======
+		foreach ($tabht[$key] as $k => $mt) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$accountingaccount = new AccountingAccount($db);
 			$accountingaccount->fetch(null, $k, true);
 			//if ($mt) {
 				print '"' . $key . '"' . $sep;
 				print '"' . $date . '"' . $sep;
 				print '"' . $val["refsologest"] . '"' . $sep;
+<<<<<<< HEAD
 				print '"' . utf8_decode ( dol_trunc($companystatic->name, 32) ) . '"' . $sep;
 				print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
 				print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
 				print '""' . $sep;
 				print '"' . utf8_decode ( dol_trunc($accountingaccount->label, 32) ) . '"' . $sep;
 				print '"' . utf8_decode ( dol_trunc($companystatic->name, 16) ) . ' - ' . $val["refsuppliersologest"] . ' - ' . dol_trunc($accountingaccount->label, 32) . '"' . $sep;
+=======
+				print '"' . utf8_decode(dol_trunc($companystatic->name, 32)) . '"' . $sep;
+				print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
+				print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
+				print '""' . $sep;
+				print '"' . utf8_decode(dol_trunc($accountingaccount->label, 32)) . '"' . $sep;
+				print '"' . utf8_decode(dol_trunc($companystatic->name, 16)) . ' - ' . $val["refsuppliersologest"] . ' - ' . dol_trunc($accountingaccount->label, 32) . '"' . $sep;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
 				print '"' . ($mt < 0 ? price(- $mt) : '') . '"'. $sep;
 				print '"' . $journal . '"' ;
@@ -671,12 +781,20 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 					print '"' . $key . '"' . $sep;
 					print '"' . $date . '"' . $sep;
 					print '"' . $val["refsologest"] . '"' . $sep;
+<<<<<<< HEAD
 					print '"' . utf8_decode ( dol_trunc($companystatic->name, 32) ) . '"' . $sep;
+=======
+					print '"' . utf8_decode(dol_trunc($companystatic->name, 32)) . '"' . $sep;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
 					print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
 					print '""' . $sep;
 					print '"' . $langs->trans("VAT") . ' - ' . $def_tva[$key] . '"' . $sep;
+<<<<<<< HEAD
 					print '"' . utf8_decode(dol_trunc($companystatic->name, 16) ) . ' - ' . $val["refsuppliersologest"] . ' - ' . $langs->trans("VAT") . join(', ',$def_tva[$key][$k]) .' %' . ($numtax?' - Localtax '.$numtax:'') . '"' . $sep;
+=======
+					print '"' . utf8_decode(dol_trunc($companystatic->name, 16)) . ' - ' . $val["refsuppliersologest"] . ' - ' . $langs->trans("VAT") . join(', ', $def_tva[$key][$k]) .' %' . ($numtax?' - Localtax '.$numtax:'') . '"' . $sep;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
 					print '"' . ($mt < 0 ? price(- $mt) : '') . '"'. $sep;
 					print '"' . $journal . '"' ;
@@ -687,17 +805,29 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 			// VAT counterpart for NPR
 			if (is_array($tabother[$key]))
 			{
+<<<<<<< HEAD
 				foreach ( $tabother[$key] as $k => $mt ) {
+=======
+				foreach ($tabother[$key] as $k => $mt) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					if ($mt) {
 						print '"' . $key . '"' . $sep;
 						print '"' . $date . '"' . $sep;
 						print '"' . $val["refsologest"] . '"' . $sep;
+<<<<<<< HEAD
 						print '"' . utf8_decode ( dol_trunc($companystatic->name, 32) ). '"' . $sep;
+=======
+						print '"' . utf8_decode(dol_trunc($companystatic->name, 32)). '"' . $sep;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
 						print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
 						print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
 						print '"' . $langs->trans("Thirdparty") . '"' . $sep;
+<<<<<<< HEAD
 						print '"' . utf8_decode ( dol_trunc($companystatic->name, 16) ) . ' - ' . $val["refsuppliersologest"] . ' - ' . $langs->trans("VAT") . ' NPR"' . $sep;
+=======
+						print '"' . utf8_decode(dol_trunc($companystatic->name, 16)) . ' - ' . $val["refsuppliersologest"] . ' - ' . $langs->trans("VAT") . ' NPR"' . $sep;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
 						print '"' . ($mt >= 0 ? price($mt) : '') . '"'. $sep;
 						print '"' . $journal . '"' ;
@@ -713,7 +843,11 @@ if (empty($action) || $action == 'view') {
 
 	llxHeader('', $langs->trans("PurchasesJournal"));
 
+<<<<<<< HEAD
 	$nom = $langs->trans("PurchasesJournal") . ' | ' . $accountingjournalstatic->getNomUrl(0,1,1,'',1);
+=======
+	$nom = $langs->trans("PurchasesJournal") . ' | ' . $accountingjournalstatic->getNomUrl(0, 1, 1, '', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$nomlink = '';
 	$periodlink = '';
 	$exportlink = '';
@@ -726,13 +860,19 @@ if (empty($action) || $action == 'view') {
 	}
 
 	$listofchoices=array('notyet'=>$langs->trans("NotYetInGeneralLedger"), 'already'=>$langs->trans("AlreadyInGeneralLedger"));
+<<<<<<< HEAD
 	$period = $form->select_date($date_start?$date_start:-1, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end?$date_end:-1, 'date_end', 0, 0, 0, '', 1, 0, 1). ' -  ' .$langs->trans("JournalizationInLedgerStatus").' '. $form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
+=======
+    $period = $form->selectDate($date_start?$date_start:-1, 'date_start', 0, 0, 0, '', 1, 0) . ' - ' . $form->selectDate($date_end?$date_end:-1, 'date_end', 0, 0, 0, '', 1, 0);
+    $period .= ' -  ' .$langs->trans("JournalizationInLedgerStatus").' '. $form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	$varlink = 'id_journal=' . $id_journal;
 
 	journalHead($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink);
 
 	// Button to write into Ledger
+<<<<<<< HEAD
 	if (empty($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1') {
 		print img_warning().' '.$langs->trans("SomeMandatoryStepsOfSetupWereNotDone");
 		print ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
@@ -745,6 +885,21 @@ if (empty($action) || $action == 'view') {
 	else {
 		if ($in_bookkeeping == 'notyet') print '<input type="button" class="butAction" name="writebookkeeping" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
 		else print '<a href="#" class="butActionRefused" name="writebookkeeping">' . $langs->trans("WriteBookKeeping") . '</a>';
+=======
+	if (($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == "") || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1') {
+		print '<br>';
+		print img_warning().' '.$langs->trans("SomeMandatoryStepsOfSetupWereNotDone");
+		print ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
+	}
+	print '<div class="tabsAction tabsActionNoBottom">';
+	if (! empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL)) print '<input type="button" class="butAction" name="exportcsv" value="' . $langs->trans("ExportDraftJournal") . '" onclick="launch_export();" />';
+	if (($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == "") || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1') {
+		print '<input type="button" class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("SomeMandatoryStepsOfSetupWereNotDone")).'" value="' . $langs->trans("WriteBookKeeping") . '" />';
+	}
+	else {
+		if ($in_bookkeeping == 'notyet') print '<input type="button" class="butAction" name="writebookkeeping" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
+		else print '<a href="#" class="butActionRefused classfortooltip" name="writebookkeeping">' . $langs->trans("WriteBookKeeping") . '</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 	print '</div>';
 
@@ -773,14 +928,22 @@ if (empty($action) || $action == 'view') {
 	print '<div class="div-table-responsive">';
 	print "<table class=\"noborder\" width=\"100%\">";
 	print "<tr class=\"liste_titre\">";
+<<<<<<< HEAD
 	print "<td></td>";
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print "<td>" . $langs->trans("Date") . "</td>";
 	print "<td>" . $langs->trans("Piece") . ' (' . $langs->trans("InvoiceRef") . ")</td>";
 	print "<td>" . $langs->trans("AccountAccounting") . "</td>";
 	print "<td>" . $langs->trans("SubledgerAccount") . "</td>";
 	print "<td>" . $langs->trans("LabelOperation") . "</td>";
+<<<<<<< HEAD
 	print "<td align='right'>" . $langs->trans("Debit") . "</td>";
 	print "<td align='right'>" . $langs->trans("Credit") . "</td>";
+=======
+	print '<td class="center">' . $langs->trans("Debit") . "</td>";
+	print '<td class="center">' . $langs->trans("Credit") . "</td>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print "</tr>\n";
 
 	$r = '';
@@ -788,7 +951,11 @@ if (empty($action) || $action == 'view') {
 	$invoicestatic = new FactureFournisseur($db);
 	$companystatic = new Fournisseur($db);
 
+<<<<<<< HEAD
 	foreach ( $tabfac as $key => $val )
+=======
+	foreach ($tabfac as $key => $val)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
@@ -820,7 +987,11 @@ if (empty($action) || $action == 'view') {
 		if ($replacedinvoice == 1)
 		{
 			print '<tr class="oddeven">';
+<<<<<<< HEAD
 			print "<td><!-- Replaced invoice --></td>";
+=======
+			print "<!-- Replaced invoice -->";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print "<td>" . $date . "</td>";
 			print "<td><strike>" . $invoicestatic->getNomUrl(1) . "</strike></td>";
 			// Account
@@ -832,8 +1003,13 @@ if (empty($action) || $action == 'view') {
 			print '</td>';
 			print "<td>";
 			print "</td>";
+<<<<<<< HEAD
 			print '<td align="right"></td>';
 			print '<td align="right"></td>';
+=======
+			print '<td class="right"></td>';
+			print '<td class="right"></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print "</tr>";
 
 			continue;
@@ -841,7 +1017,11 @@ if (empty($action) || $action == 'view') {
 		if ($errorforinvoice[$key] == 'somelinesarenotbound')
 		{
 			print '<tr class="oddeven">';
+<<<<<<< HEAD
 			print "<td><!-- Some lines are not bound --></td>";
+=======
+			print "<!-- Some lines are not bound -->";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print "<td>" . $date . "</td>";
 			print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
 			// Account
@@ -853,57 +1033,96 @@ if (empty($action) || $action == 'view') {
 			print '</td>';
 			print "<td>";
 			print "</td>";
+<<<<<<< HEAD
 			print '<td align="right"></td>';
 			print '<td align="right"></td>';
+=======
+			print '<td class="right"></td>';
+			print '<td class="right"></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print "</tr>";
 		}
 
 		// Third party
+<<<<<<< HEAD
 		foreach ( $tabttc[$key] as $k => $mt ) {
 			//if ($mt) {
 				print '<tr class="oddeven">';
 				print "<td><!-- Thirdparty --></td>";
+=======
+		foreach ($tabttc[$key] as $k => $mt) {
+			//if ($mt) {
+				print '<tr class="oddeven">';
+				print "<!-- Thirdparty -->";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				print "<td>" . $date . "</td>";
 				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
 				// Account
 				print "<td>";
 				$accountoshow = length_accounta($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER);
+<<<<<<< HEAD
 				if (empty($accountoshow) || $accountoshow == 'NotDefined')
 				{
 					print '<span class="error">'.$langs->trans("MainAccountForCustomersNotDefined").'</span>';
+=======
+				if (($accountoshow == "") || $accountoshow == 'NotDefined')
+				{
+					print '<span class="error">'.$langs->trans("MainAccountForSuppliersNotDefined").'</span>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 				else print $accountoshow;
 				print '</td>';
 				// Subledger account
 				print "<td>";
 				$accountoshow = length_accounta($k);
+<<<<<<< HEAD
 				if (empty($accountoshow) || $accountoshow == 'NotDefined')
+=======
+				if (($accountoshow == "") || $accountoshow == 'NotDefined')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				{
 					print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
 				}
 				else print $accountoshow;
 				print '</td>';
 				print "<td>" . $companystatic->getNomUrl(0, 'supplier', 16) . ' - ' . $invoicestatic->ref_supplier . ' - ' . $langs->trans("SubledgerAccount") . "</td>";
+<<<<<<< HEAD
 				print '<td align="right">'. ($mt < 0 ? price(- $mt) : '') . "</td>";
 				print '<td align="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+=======
+				print '<td class="right nowraponall">'. ($mt < 0 ? price(- $mt) : '') . "</td>";
+				print '<td class="right nowraponall">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				print "</tr>";
 			//}
 		}
 
 		// Product / Service
+<<<<<<< HEAD
 		foreach ( $tabht[$key] as $k => $mt ) {
+=======
+		foreach ($tabht[$key] as $k => $mt) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$accountingaccount = new AccountingAccount($db);
 			$accountingaccount->fetch(null, $k, true);
 
 			//if ($mt) {
 				print '<tr class="oddeven">';
+<<<<<<< HEAD
 				print "<td><!-- Product --></td>";
+=======
+				print "<!-- Product -->";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				print "<td>" . $date . "</td>";
 				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
 				// Account
 				print "<td>";
 				$accountoshow = length_accountg($k);
+<<<<<<< HEAD
 				if (empty($accountoshow) || $accountoshow == 'NotDefined')
+=======
+				if (($accountoshow == "") || $accountoshow == 'NotDefined')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				{
 					print '<span class="error">'.$langs->trans("ProductAccountNotDefined").'</span>';
 				}
@@ -915,8 +1134,13 @@ if (empty($action) || $action == 'view') {
 				$companystatic->id = $tabcompany[$key]['id'];
 				$companystatic->name = $tabcompany[$key]['name'];
 				print "<td>" . $companystatic->getNomUrl(0, 'supplier', 16) . ' - ' . $invoicestatic->ref_supplier . ' - ' . $accountingaccount->label . "</td>";
+<<<<<<< HEAD
 				print '<td align="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
 				print '<td align="right">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
+=======
+				print '<td class="right nowraponall">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+				print '<td class="right nowraponall">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				print "</tr>";
 			//}
 		}
@@ -928,16 +1152,27 @@ if (empty($action) || $action == 'view') {
 			if ($numtax == 1) $arrayofvat = $tablocaltax1;
 			if ($numtax == 2) $arrayofvat = $tablocaltax2;
 
+<<<<<<< HEAD
 			foreach ( $arrayofvat[$key] as $k => $mt ) {
 				if ($mt) {
 					print '<tr class="oddeven">';
 					print "<td><!-- VAT --></td>";
+=======
+			foreach ($arrayofvat[$key] as $k => $mt) {
+				if ($mt) {
+					print '<tr class="oddeven">';
+					print "<!-- VAT -->";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					print "<td>" . $date . "</td>";
 					print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
 					// Account
 					print "<td>";
 					$accountoshow = length_accountg($k);
+<<<<<<< HEAD
 					if (empty($accountoshow) || $accountoshow == 'NotDefined')
+=======
+					if (($accountoshow == "") || $accountoshow == 'NotDefined')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					{
 						print '<span class="error">'.$langs->trans("VATAccountNotDefined").' ('.$langs->trans("Purchase").')'.'</span>';
 					}
@@ -947,10 +1182,17 @@ if (empty($action) || $action == 'view') {
 					print "<td>";
 					print '</td>';
 					print "<td>";
+<<<<<<< HEAD
 					print $companystatic->getNomUrl(0, 'supplier', 16) . ' - ' . $invoicestatic->ref_supplier . ' - ' . $langs->trans("VAT"). ' '.join(', ',$def_tva[$key][$k]).' %'.($numtax?' - Localtax '.$numtax:'');
 					print "</td>";
 					print '<td align="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
 					print '<td align="right">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
+=======
+					print $companystatic->getNomUrl(0, 'supplier', 16) . ' - ' . $invoicestatic->ref_supplier . ' - ' . $langs->trans("VAT"). ' '.join(', ', $def_tva[$key][$k]).' %'.($numtax?' - Localtax '.$numtax:'');
+					print "</td>";
+					print '<td class="right nowraponall">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+					print '<td class="right nowraponall">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					print "</tr>";
 				}
 			}
@@ -959,16 +1201,27 @@ if (empty($action) || $action == 'view') {
 		// VAT counterpart for NPR
 		if (is_array($tabother[$key]))
 		{
+<<<<<<< HEAD
 			foreach ( $tabother[$key] as $k => $mt ) {
 				if ($mt) {
 					print '<tr class="oddeven">';
 					print "<td><!-- VAT counterpart NPR --></td>";
+=======
+			foreach ($tabother[$key] as $k => $mt) {
+				if ($mt) {
+					print '<tr class="oddeven">';
+					print "<!-- VAT counterpart NPR -->";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					print "<td>" . $date . "</td>";
 					print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
 					// Account
 					print "<td>";
 					$accountoshow = length_accountg($k);
+<<<<<<< HEAD
 					if (empty($accountoshow) || $accountoshow == 'NotDefined')
+=======
+					if (($accountoshow == "") || $accountoshow == 'NotDefined')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					{
 						print '<span class="error">'.$langs->trans("VATAccountNotDefined").' ('.$langs->trans("NPR counterpart").'). Set ACCOUNTING_COUNTERPART_VAT_NPR to the subvention account'.'</span>';
 					}
@@ -978,8 +1231,13 @@ if (empty($action) || $action == 'view') {
 					print "<td>";
 					print '</td>';
 					print "<td>" . $companystatic->getNomUrl(0, 'supplier', 16) . ' - ' . $invoicestatic->ref_supplier . ' - ' . $langs->trans("VAT") . " NPR (counterpart)</td>";
+<<<<<<< HEAD
 					print '<td align="right">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
 					print '<td align="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+=======
+					print '<td class="right nowraponall">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
+					print '<td class="right nowraponall">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					print "</tr>";
 				}
 			}

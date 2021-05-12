@@ -1,8 +1,15 @@
 #!/usr/bin/env php
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
+=======
+/* Copyright (C) 2013-2014  Olivier Geffroy     <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2014  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2014       Florian Henry       <florian.henry@open-concept.pro>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +31,7 @@
  * \brief		Page to detect empty accounting account
  */
 
+<<<<<<< HEAD
 require_once($path."../../htdocs/master.inc.php");
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -32,6 +40,13 @@ $langs->load("companies");
 $langs->load("compta");
 $langs->load("main");
 $langs->load("accountancy");
+=======
+require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+$langs->loadLangs(array("companies", "compta", "main", "accountancy"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Security check
 if (!$user->admin)
@@ -102,7 +117,11 @@ $periodlink = '';
 $exportlink = '';
 
 $nom = $langs->trans("ReportThirdParty");
+<<<<<<< HEAD
 $period = $form->select_date($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1);
+=======
+$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0) . ' - ' . $form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $description = $langs->trans("DescThirdPartyReport");
 $builddate=dol_now();
 
@@ -130,7 +149,11 @@ $sql .= " WHERE f.fk_soc = s.rowid";
 $sql .= " AND s.fk_pays = cp.rowid";
 if (! empty($date_start) && ! empty($date_end))
 	$sql .= " AND f.datec >= '" . $db->idate($date_start) . "' AND f.datec <= '" . $db->idate($date_end) . "'";
+<<<<<<< HEAD
 $sql .= " AND f.entity = " . $conf->entity;
+=======
+$sql .= " AND f.entity IN (".getEntity('invoice', 0).")";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($socid)
 	$sql .= " AND f.fk_soc = " . $socid;
 $sql .= " GROUP BY name";
@@ -159,7 +182,11 @@ if ($resql) {
 	$i = 0;
 
 	// export csv
+<<<<<<< HEAD
 	if (GETPOST('action','aZ09') == 'export_csv') {
+=======
+	if (GETPOST('action', 'aZ09') == 'export_csv') {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		header('Content-Type: text/csv');
 		header('Content-Disposition: attachment;filename=export_csv.csv');
@@ -190,6 +217,7 @@ if ($resql) {
 	print '</td><td valign="top" width="70%" class="notopnoleftnoright"></td>';
 	print '</tr><tr><td colspan=2>';
 	print '<table class="noborder" width="100%">';
+<<<<<<< HEAD
 	print '<tr class="liste_titre"><td align="left">' . $langs->trans("ThirdParties") . '</td>';
 	print '<td align="left">' . $langs->trans("AccountNumber") . '</td>';
 	print '<td align="left">' . $langs->trans("RaisonSociale") . '</td>';
@@ -200,6 +228,18 @@ if ($resql) {
 	print '<td align="left">' . $langs->trans("Contact") . '</td>';
 	print '<td align="left">' . $langs->trans("Phone") . '</td>';
 	print '<td align="left">' . $langs->trans("Fax") . '</td></tr>';
+=======
+	print '<tr class="liste_titre"><td class="left">' . $langs->trans("ThirdParties") . '</td>';
+	print '<td class="left">' . $langs->trans("AccountNumber") . '</td>';
+	print '<td class="left">' . $langs->trans("RaisonSociale") . '</td>';
+	print '<td class="left">' . $langs->trans("Address") . '</td>';
+	print '<td class="left">' . $langs->trans("Zip") . '</td>';
+	print '<td class="left">' . $langs->trans("Town") . '</td>';
+	print '<td class="left">' . $langs->trans("Country") . '</td>';
+	print '<td class="left">' . $langs->trans("Contact") . '</td>';
+	print '<td class="left">' . $langs->trans("Phone") . '</td>';
+	print '<td class="left">' . $langs->trans("Fax") . '</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	while ($obj = $db->fetch_object($resql))
 	{
@@ -212,6 +252,7 @@ if ($resql) {
 		$thirdpartystatic->status = $obj->status;
 		print $thirdpartystatic->getNomUrl(1);
 		print '</td>';
+<<<<<<< HEAD
 		print '<td align="left">' . $obj->compta . '</td>' . "\n";
 		print '<td align="left"></td>';
 		print '<td align="left">' . $obj->address . '</td>';
@@ -221,6 +262,17 @@ if ($resql) {
 		print '<td align="left"></td>';
 		print '<td align="left">' . $obj->phone . '</td>';
 		print '<td align="left">' . $obj->fax . '</td>';
+=======
+		print '<td class="left">' . $obj->compta . '</td>' . "\n";
+		print '<td class="left"></td>';
+		print '<td class="left">' . $obj->address . '</td>';
+		print '<td class="left">' . $obj->zip . '</td>';
+		print '<td class="left">' . $obj->town . '</td>';
+		print '<td class="left">' . $obj->country . '</td>';
+		print '<td class="left"></td>';
+		print '<td class="left">' . $obj->phone . '</td>';
+		print '<td class="left">' . $obj->fax . '</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print "</tr>\n";
 
 		$i ++;

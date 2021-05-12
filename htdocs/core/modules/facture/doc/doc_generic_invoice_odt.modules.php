@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010-2012	Laurent Destailleur	<ely@users.sourceforge.net>
+<<<<<<< HEAD
 * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
 * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
 * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
@@ -18,6 +19,27 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 * or see http://www.gnu.org/
 */
+=======
+ * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
+ * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
+ * Copyright (C) 2018		Frédéric France		<frederic.france@netlogic.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * or see http://www.gnu.org/
+ */
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 /**
  *	\file       htdocs/core/modules/facture/doc/doc_generic_invoice_odt.modules.php
@@ -38,10 +60,30 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
  */
 class doc_generic_invoice_odt extends ModelePDFFactures
 {
+<<<<<<< HEAD
 	var $emetteur;	// Objet societe qui emet
 
 	var $phpmin = array(5,2,0);	// Minimum version of PHP required by module
 	var $version = 'dolibarr';
+=======
+	/**
+	 * Issuer
+	 * @var Company object that emits
+	 */
+	public $emetteur;
+
+	/**
+     * @var array Minimum version of PHP required by module.
+     * e.g.: PHP ≥ 5.5 = array(5, 5)
+     */
+	public $phpmin = array(5, 5);
+
+	/**
+     * Dolibarr version of the loaded document
+     * @var string
+     */
+	public $version = 'dolibarr';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	/**
@@ -49,12 +91,21 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
+<<<<<<< HEAD
 	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
 
 		$langs->load("main");
 		$langs->load("companies");
+=======
+    public function __construct($db)
+    {
+		global $conf, $langs, $mysoc;
+
+		// Load translation files required by the page
+        $langs->loadLangs(array("main","companies"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$this->db = $db;
 		$this->name = "ODT/ODS templates";
@@ -84,8 +135,13 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 
 		// Recupere emetteur
 		$this->emetteur=$mysoc;
+<<<<<<< HEAD
 		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // Par defaut, si n'etait pas defini
 	}
+=======
+		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang, -2);    // Par defaut, si n'etait pas defini
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	/**
@@ -94,12 +150,21 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 	 * @param	Translate	$langs      Lang object to use for output
 	 * @return	string      			Description
 	 */
+<<<<<<< HEAD
 	function info($langs)
 	{
 		global $conf,$langs;
 
 		$langs->load("companies");
 		$langs->load("errors");
+=======
+    public function info($langs)
+    {
+		global $conf, $langs;
+
+		// Load translation files required by the page
+        $langs->loadLangs(array("errors","companies"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$form = new Form($this->db);
 
@@ -113,11 +178,16 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		// List of directories area
 		$texte.= '<tr><td valign="middle">';
 		$texttitle=$langs->trans("ListOfDirectories");
+<<<<<<< HEAD
 		$listofdir=explode(',',preg_replace('/[\r\n]+/',',',trim($conf->global->FACTURE_ADDON_PDF_ODT_PATH)));
+=======
+		$listofdir=explode(',', preg_replace('/[\r\n]+/', ',', trim($conf->global->FACTURE_ADDON_PDF_ODT_PATH)));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$listoffiles=array();
 		foreach($listofdir as $key=>$tmpdir)
 		{
 			$tmpdir=trim($tmpdir);
+<<<<<<< HEAD
 			$tmpdir=preg_replace('/DOL_DATA_ROOT/',DOL_DATA_ROOT,$tmpdir);
 			if (! $tmpdir) {
 				unset($listofdir[$key]); continue;
@@ -127,6 +197,17 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 			{
 				$tmpfiles=dol_dir_list($tmpdir,'files',0,'\.(ods|odt)');
 				if (count($tmpfiles)) $listoffiles=array_merge($listoffiles,$tmpfiles);
+=======
+			$tmpdir=preg_replace('/DOL_DATA_ROOT/', DOL_DATA_ROOT, $tmpdir);
+			if (! $tmpdir) {
+				unset($listofdir[$key]); continue;
+			}
+			if (! is_dir($tmpdir)) $texttitle.=img_warning($langs->trans("ErrorDirNotFound", $tmpdir), 0);
+			else
+			{
+				$tmpfiles=dol_dir_list($tmpdir, 'files', 0, '\.(ods|odt)');
+				if (count($tmpfiles)) $listoffiles=array_merge($listoffiles, $tmpfiles);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 		}
 		$texthelp=$langs->trans("ListOfDirectoriesForModelGenODT");
@@ -134,7 +215,11 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		$texthelp.='<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
 		$texthelp.=$langs->transnoentitiesnoconv("FullListOnOnlineDocumentation");    // This contains an url, we don't modify it
 
+<<<<<<< HEAD
 		$texte.= $form->textwithpicto($texttitle,$texthelp,1,'help','',1);
+=======
+		$texte.= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$texte.= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
 		$texte.= '<textarea class="flat" cols="60" name="value1">';
 		$texte.=$conf->global->FACTURE_ADDON_PDF_ODT_PATH;
@@ -174,10 +259,18 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		$texte.= '</form>';
 
 		return $texte;
+<<<<<<< HEAD
 	}
 
 	/**
 	 *	Function to build a document on disk using the generic odt module.
+=======
+    }
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Function to build a document on disk using the generic odt module.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	 *
 	 *	@param		Facture		$object				Object source to build document
 	 *	@param		Translate	$outputlangs		Lang output object
@@ -187,8 +280,14 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 	 *  @param		int			$hideref			Do not show ref
 	 *	@return		int         					1 if OK, <=0 if KO
 	 */
+<<<<<<< HEAD
 	function write_file($object,$outputlangs,$srctemplatepath,$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
+=======
+    public function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $user,$langs,$conf,$mysoc,$hookmanager;
 
 		if (empty($srctemplatepath))
@@ -210,10 +309,15 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		$sav_charset_output=$outputlangs->charset_output;
 		$outputlangs->charset_output='UTF-8';
 
+<<<<<<< HEAD
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
 		$outputlangs->load("companies");
 		$outputlangs->load("bills");
+=======
+		// Load translation files required by the page
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		if ($conf->facture->dir_output)
 		{
@@ -225,21 +329,33 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				$result=$object->fetch($id);
 				if ($result < 0)
 				{
+<<<<<<< HEAD
 					dol_print_error($this->db,$object->error);
+=======
+					dol_print_error($this->db, $object->error);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					return -1;
 				}
 			}
 
 			$dir = $conf->facture->dir_output;
 			$objectref = dol_sanitizeFileName($object->ref);
+<<<<<<< HEAD
 			if (! preg_match('/specimen/i',$objectref)) $dir.= "/" . $objectref;
+=======
+			if (! preg_match('/specimen/i', $objectref)) $dir.= "/" . $objectref;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$file = $dir . "/" . $objectref . ".odt";
 
 			if (! file_exists($dir))
 			{
 				if (dol_mkdir($dir) < 0)
 				{
+<<<<<<< HEAD
 					$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
+=======
+					$this->error=$langs->transnoentities("ErrorCanNotCreateDir", $dir);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					return -1;
 				}
 			}
@@ -248,9 +364,15 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 			{
 				//print "srctemplatepath=".$srctemplatepath;	// Src filename
 				$newfile=basename($srctemplatepath);
+<<<<<<< HEAD
 				$newfiletmp=preg_replace('/\.od(t|s)/i','',$newfile);
 				$newfiletmp=preg_replace('/template_/i','',$newfiletmp);
 				$newfiletmp=preg_replace('/modele_/i','',$newfiletmp);
+=======
+				$newfiletmp=preg_replace('/\.od(t|s)/i', '', $newfile);
+				$newfiletmp=preg_replace('/template_/i', '', $newfiletmp);
+				$newfiletmp=preg_replace('/modele_/i', '', $newfiletmp);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				$newfiletmp=$objectref.'_'.$newfiletmp;
 
@@ -260,7 +382,11 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				{
 				    $format=$conf->global->MAIN_DOC_USE_TIMING;
 				    if ($format == '1') $format='%Y%m%d%H%M%S';
+<<<<<<< HEAD
 					$filename=$newfiletmp.'-'.dol_print_date(dol_now(),$format).'.'.$newfileformat;
+=======
+					$filename=$newfiletmp.'-'.dol_print_date(dol_now(), $format).'.'.$newfileformat;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 				else
 				{
@@ -278,7 +404,11 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 
 				// If BILLING contact defined on invoice, we use it
 				$usecontact=false;
+<<<<<<< HEAD
 				$arrayidcontact=$object->getIdContact('external','BILLING');
+=======
+				$arrayidcontact=$object->getIdContact('external', 'BILLING');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if (count($arrayidcontact) > 0)
 				{
 					$usecontact=true;
@@ -301,7 +431,11 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				}
 
 				// Fetch info for linked propal
+<<<<<<< HEAD
 				$object->fetchObjectLinked('','','','');
+=======
+				$object->fetchObjectLinked('', '', '', '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				//print_r($object->linkedObjects['propal']); exit;
 
 				$propal_object = $object->linkedObjects['propal'][0];
@@ -317,20 +451,32 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				complete_substitutions_array($substitutionarray, $langs, $object);
 				// Call the ODTSubstitution hook
 				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$substitutionarray);
+<<<<<<< HEAD
 				$reshook=$hookmanager->executeHooks('ODTSubstitution',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+=======
+				$reshook=$hookmanager->executeHooks('ODTSubstitution', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				// Line of free text
 				$newfreetext='';
 				$paramfreetext='INVOICE_FREE_TEXT';
 				if (! empty($conf->global->$paramfreetext))
 				{
+<<<<<<< HEAD
 					$newfreetext=make_substitutions($conf->global->$paramfreetext,$substitutionarray);
+=======
+					$newfreetext=make_substitutions($conf->global->$paramfreetext, $substitutionarray);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
+<<<<<<< HEAD
 					$odfHandler = new odf(
+=======
+    $odfHandler = new odf(
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						$srctemplatepath,
 						array(
 						'PATH_TO_TMP'	  => $conf->facture->dir_temp,
@@ -340,9 +486,16 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 						)
 					);
 				}
+<<<<<<< HEAD
 				catch(Exception $e)
 				{
 					$this->error=$e->getMessage();
+=======
+				catch (Exception $e)
+				{
+					$this->error=$e->getMessage();
+					dol_syslog($e->getMessage(), LOG_INFO);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					return -1;
 				}
 				// After construction $odfHandler->contentXml contains content and
@@ -356,13 +509,20 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				try {
 					$odfHandler->setVars('free_text', $newfreetext, true, 'UTF-8');
 				}
+<<<<<<< HEAD
 				catch(OdfException $e)
 				{
+=======
+				catch (OdfException $e)
+				{
+					dol_syslog($e->getMessage(), LOG_INFO);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 
 				// Define substitution array
 				$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
 				$array_object_from_properties=$this->get_substitutionarray_each_var_object($object, $outputlangs);
+<<<<<<< HEAD
 				$array_objet=$this->get_substitutionarray_object($object,$outputlangs);
 				$array_user=$this->get_substitutionarray_user($user,$outputlangs);
 				$array_soc=$this->get_substitutionarray_mysoc($mysoc,$outputlangs);
@@ -374,17 +534,38 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				if ($usecontact && is_object($contactobject)) $array_thirdparty_contact=$this->get_substitutionarray_contact($contactobject,$outputlangs,'contact');
 
 				$tmparray = array_merge($substitutionarray,$array_object_from_properties,$array_user,$array_soc,$array_thirdparty,$array_objet,$array_propal,$array_other,$array_thirdparty_contact);
+=======
+				$array_objet=$this->get_substitutionarray_object($object, $outputlangs);
+				$array_user=$this->get_substitutionarray_user($user, $outputlangs);
+				$array_soc=$this->get_substitutionarray_mysoc($mysoc, $outputlangs);
+				$array_thirdparty=$this->get_substitutionarray_thirdparty($socobject, $outputlangs);
+				$array_propal=is_object($propal_object)?$this->get_substitutionarray_object($propal_object, $outputlangs, 'propal'):array();
+				$array_other=$this->get_substitutionarray_other($outputlangs);
+				// retrieve contact information for use in object as contact_xxx tags
+				$array_thirdparty_contact = array();
+				if ($usecontact && is_object($contactobject)) $array_thirdparty_contact=$this->get_substitutionarray_contact($contactobject, $outputlangs, 'contact');
+
+				$tmparray = array_merge($substitutionarray, $array_object_from_properties, $array_user, $array_soc, $array_thirdparty, $array_objet, $array_propal, $array_other, $array_thirdparty_contact);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				complete_substitutions_array($tmparray, $outputlangs, $object);
 
 				// Call the ODTSubstitution hook
 				$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
+<<<<<<< HEAD
 				$reshook=$hookmanager->executeHooks('ODTSubstitution',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+=======
+				$reshook=$hookmanager->executeHooks('ODTSubstitution', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				//var_dump($tmparray); exit;
 				foreach($tmparray as $key=>$value)
 				{
 					try {
+<<<<<<< HEAD
 						if (preg_match('/logo$/',$key)) // Image
+=======
+						if (preg_match('/logo$/', $key)) // Image
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						{
 							//var_dump($value);exit;
 							if (file_exists($value)) $odfHandler->setImage($key, $value);
@@ -395,8 +576,14 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
 					}
+<<<<<<< HEAD
 					catch(OdfException $e)
 					{
+=======
+					catch (OdfException $e)
+					{
+                        dol_syslog($e->getMessage(), LOG_INFO);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					}
 				}
 				// Replace tags of lines
@@ -416,11 +603,19 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 					{
 						foreach ($object->lines as $line)
 						{
+<<<<<<< HEAD
 							$tmparray=$this->get_substitutionarray_lines($line,$outputlangs);
 							complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");
 							// Call the ODTSubstitutionLine hook
 							$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray,'line'=>$line);
 							$reshook=$hookmanager->executeHooks('ODTSubstitutionLine',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+=======
+							$tmparray=$this->get_substitutionarray_lines($line, $outputlangs);
+							complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");
+							// Call the ODTSubstitutionLine hook
+							$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray,'line'=>$line);
+							$reshook=$hookmanager->executeHooks('ODTSubstitutionLine', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							foreach($tmparray as $key => $val)
 							{
 								try
@@ -429,9 +624,17 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 								}
 								catch(OdfException $e)
 								{
+<<<<<<< HEAD
 								}
 								catch(SegmentException $e)
 								{
+=======
+									dol_syslog($e->getMessage(), LOG_INFO);
+								}
+								catch(SegmentException $e)
+								{
+									dol_syslog($e->getMessage(), LOG_INFO);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 								}
 							}
 							$listlines->merge();
@@ -455,12 +658,20 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 					}
 					catch(OdfException $e)
 					{
+<<<<<<< HEAD
+=======
+                        dol_syslog($e->getMessage(), LOG_INFO);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					}
 				}
 
 				// Call the beforeODTSave hook
 				$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
+<<<<<<< HEAD
 				$reshook=$hookmanager->executeHooks('beforeODTSave',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+=======
+				$reshook=$hookmanager->executeHooks('beforeODTSave', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				// Write new file
 				if (!empty($conf->global->MAIN_ODT_AS_PDF)) {
@@ -468,19 +679,34 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 						$odfHandler->exportAsAttachedPDF($file);
 					}catch (Exception $e){
 						$this->error=$e->getMessage();
+<<<<<<< HEAD
+=======
+                        dol_syslog($e->getMessage(), LOG_INFO);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						return -1;
 					}
 				}
 				else {
 					try {
+<<<<<<< HEAD
 					$odfHandler->saveToDisk($file);
 					}catch (Exception $e){
 						$this->error=$e->getMessage();
+=======
+						$odfHandler->saveToDisk($file);
+					} catch (Exception $e) {
+						$this->error=$e->getMessage();
+                        dol_syslog($e->getMessage(), LOG_INFO);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						return -1;
 					}
 				}
 				$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
+<<<<<<< HEAD
 				$reshook=$hookmanager->executeHooks('afterODTCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+=======
+				$reshook=$hookmanager->executeHooks('afterODTCreation', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				if (! empty($conf->global->MAIN_UMASK))
 					@chmod($file, octdec($conf->global->MAIN_UMASK));
@@ -493,13 +719,22 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 			}
 			else
 			{
+<<<<<<< HEAD
 				$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
+=======
+				$this->error=$langs->transnoentities("ErrorCanNotCreateDir", $dir);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				return -1;
 			}
 		}
 
 		return -1;
+<<<<<<< HEAD
 	}
 
 }
 
+=======
+    }
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

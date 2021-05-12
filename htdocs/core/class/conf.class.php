@@ -2,7 +2,11 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2017 Regis Houssin      	<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2017 Regis Houssin      	<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2006 	   Jean Heimburger    	<jean@tiaris.info>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,6 +36,7 @@
  */
 class Conf
 {
+<<<<<<< HEAD
 	/** \public */
 	//! To store properties found in conf file
 	var $file;
@@ -44,6 +49,24 @@ class Conf
 
 	//! To store if javascript/ajax is enabked
 	public $use_javascript_ajax;
+=======
+    /** \public */
+    //! To store properties found in conf file
+    public $file;
+
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    //! To store properties found into database
+    public $global;
+    //! To store browser info
+    public $browser;
+
+    //! To store if javascript/ajax is enabked
+    public $use_javascript_ajax;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	//! Used to store current currency (ISO code like 'USD', 'EUR', ...)
 	public $currency;
 	//! Used to store current css (from theme)
@@ -51,6 +74,7 @@ class Conf
 	public $css;          // Contains full path of css page ("/theme/eldy/style.css.php", ...)
     //! Used to store current menu handler
 	public $standard_menu;
+<<<<<<< HEAD
 
 	public $modules					= array();	// List of activated modules
 	public $modules_parts			= array('css'=>array(),'js'=>array(),'tabs'=>array(),'triggers'=>array(),'login'=>array(),'substitutions'=>array(),'menus'=>array(),'theme'=>array(),'sms'=>array(),'tpl'=>array(),'barcode'=>array(),'models'=>array(),'societe'=>array(),'hooks'=>array(),'dir'=>array(), 'syslog' =>array());
@@ -64,6 +88,38 @@ class Conf
 
 	//! To store properties of multi-company
 	public $multicompany;
+=======
+    // List of activated modules
+    public $modules = array();
+    public $modules_parts = array(
+        'css' => array(),
+        'js' => array(),
+        'tabs' => array(),
+        'triggers' => array(),
+        'login' => array(),
+        'substitutions' => array(),
+        'menus' => array(),
+        'theme' => array(),
+        'sms' => array(),
+        'tpl' => array(),
+        'barcode' => array(),
+        'models' => array(),
+        'societe' => array(),
+        'hooks' => array(),
+        'dir' => array(),
+        'syslog' => array(),
+    );
+
+    public $logbuffer = array();
+
+    /**
+     * @var LogHandlerInterface[]
+     */
+    public $loghandlers = array();
+
+    //! To store properties of multi-company
+    public $multicompany;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	//! Used to store running instance for multi-company (default 1)
 	public $entity					= 1;
 	//! Used to store list of entities to use for each element
@@ -79,7 +135,11 @@ class Conf
 	/**
 	 * Constructor
 	 */
+<<<<<<< HEAD
 	function __construct()
+=======
+	public function __construct()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		// Properly declare multi-modules objects.
 		$this->file				= new stdClass();
@@ -120,6 +180,7 @@ class Conf
 
 
 	/**
+<<<<<<< HEAD
 	 *	Load setup values into conf object (read llx_const)
 	 *  Note that this->db->xxx, this->file->xxx and this->multicompany have been already loaded when setValues is called.
 	 *
@@ -127,6 +188,15 @@ class Conf
 	 *	@return     int					< 0 if KO, >= 0 if OK
 	 */
 	function setValues($db)
+=======
+	 *  Load setup values into conf object (read llx_const)
+	 *  Note that this->db->xxx, this->file->xxx and this->multicompany have been already loaded when setValues is called.
+	 *
+	 *  @param      DoliDB      $db     Database handler
+	 *  @return     int                 < 0 if KO, >= 0 if OK
+	 */
+	public function setValues($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf;
 
@@ -154,6 +224,7 @@ class Conf
 					//if (! defined("$key")) define("$key", $value);	// In some cases, the constant might be already forced (Example: SYSLOG_HANDLERS during install)
 					$this->global->$key=$value;
 
+<<<<<<< HEAD
 					if ($value && preg_match('/^MAIN_MODULE_/',$key))
 					{
 						// If this is constant for a new tab page activated by a module. It initializes modules_parts['tabs'].
@@ -161,6 +232,15 @@ class Conf
 						{
 							$partname = 'tabs';
 							$params=explode(':',$value,2);
+=======
+					if ($value && preg_match('/^MAIN_MODULE_/', $key))
+					{
+						// If this is constant for a new tab page activated by a module. It initializes modules_parts['tabs'].
+						if (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_TABS_/i', $key))
+						{
+							$partname = 'tabs';
+							$params=explode(':', $value, 2);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							if (! isset($this->modules_parts[$partname]) || ! is_array($this->modules_parts[$partname])) { $this->modules_parts[$partname] = array(); }
 							$this->modules_parts[$partname][$params[0]][]=$value;	// $value may be a string or an array
 						}
@@ -169,11 +249,16 @@ class Conf
 						// modules_parts['models'], modules_parts['theme']
 						// modules_parts['sms'],
 						// modules_parts['css'], ...
+<<<<<<< HEAD
 						elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_([A-Z]+)$/i',$key,$reg))
+=======
+						elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_([A-Z]+)$/i', $key, $reg))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						{
 							$modulename = strtolower($reg[1]);
 							$partname = strtolower($reg[2]);
 							if (! isset($this->modules_parts[$partname]) || ! is_array($this->modules_parts[$partname])) { $this->modules_parts[$partname] = array(); }
+<<<<<<< HEAD
 							$arrValue = json_decode($value,true);
 							if (is_array($arrValue) && ! empty($arrValue)) $value = $arrValue;
 							else if (in_array($partname,array('login','menus','substitutions','triggers','tpl'))) $value = '/'.$modulename.'/core/'.$partname.'/';
@@ -184,6 +269,18 @@ class Conf
 						}
                         // If this is a module constant (must be at end)
 						elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)$/i',$key,$reg))
+=======
+							$arrValue = json_decode($value, true);
+							if (is_array($arrValue) && ! empty($arrValue)) $value = $arrValue;
+							elseif (in_array($partname, array('login','menus','substitutions','triggers','tpl'))) $value = '/'.$modulename.'/core/'.$partname.'/';
+							elseif (in_array($partname, array('models','theme'))) $value = '/'.$modulename.'/';
+							elseif (in_array($partname, array('sms'))) $value = '/'.$modulename.'/';
+							elseif ($value == 1) $value = '/'.$modulename.'/core/modules/'.$partname.'/';	// ex: partname = societe
+							$this->modules_parts[$partname] = array_merge($this->modules_parts[$partname], array($modulename => $value));	// $value may be a string or an array
+						}
+                        // If this is a module constant (must be at end)
+						elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)$/i', $key, $reg))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						{
 							$modulename=strtolower($reg[1]);
 							if ($modulename == 'propale') $modulename='propal';
@@ -197,8 +294,13 @@ class Conf
 				$i++;
 			}
 
+<<<<<<< HEAD
 		    $db->free($resql);
 		}
+=======
+            $db->free($resql);
+        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         // Include other local consts.php files and fetch their values to the corresponding database constants.
         if (! empty($this->global->LOCAL_CONSTS_FILES)) {
@@ -212,8 +314,13 @@ class Conf
             }
         }
 
+<<<<<<< HEAD
 		//var_dump($this->modules);
 		//var_dump($this->modules_parts['theme']);
+=======
+        //var_dump($this->modules);
+        //var_dump($this->modules_parts['theme']);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// If you can't set timezone of your PHP, set this constant. Better is to set it to UTC.
 		// In future, this constant will be forced to 'UTC' so PHP server timezone will not have effect anymore.
@@ -230,11 +337,21 @@ class Conf
 		}
 
 		// Object $mc
+<<<<<<< HEAD
 		if (! defined('NOREQUIREMC') && ! empty($this->multicompany->enabled))
 		{
 			global $mc;
 			$ret = @dol_include_once('/multicompany/class/actions_multicompany.class.php');
 			if ($ret) $mc = new ActionsMulticompany($db);
+=======
+		if (! defined('NOREQUIREMC') && ! empty($this->multicompany->enabled)) {
+			global $mc;
+			$ret = @dol_include_once('/multicompany/class/actions_multicompany.class.php');
+			if ($ret) {
+				$mc = new ActionsMulticompany($db);
+				$this->mc = $mc;
+			}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		// Clean some variables
@@ -244,7 +361,11 @@ class Conf
 		if (empty($this->global->MAIN_MENUFRONT_SMARTPHONE)) $this->global->MAIN_MENUFRONT_SMARTPHONE="eldy_menu.php";	// Use eldy by default because smartphone does not work on all phones
 		// Clean var use vat for company
 		if (! isset($this->global->FACTURE_TVAOPTION)) $this->global->FACTURE_TVAOPTION=1;
+<<<<<<< HEAD
 		else if (! empty($this->global->FACTURE_TVAOPTION) && ! is_numeric($this->global->FACTURE_TVAOPTION))
+=======
+		elseif (! empty($this->global->FACTURE_TVAOPTION) && ! is_numeric($this->global->FACTURE_TVAOPTION))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			// Old value of option, we clean to use new value (0 or 1)
 			if ($this->global->FACTURE_TVAOPTION != "franchise") $this->global->FACTURE_TVAOPTION=1;
@@ -341,6 +462,7 @@ class Conf
 		$this->livraison_bon->enabled=(! empty($this->global->MAIN_SUBMODULE_LIVRAISON)?$this->global->MAIN_SUBMODULE_LIVRAISON:0);
 
 		// Module fournisseur
+<<<<<<< HEAD
 		if (! empty($this->fournisseur))
 		{
 			$this->fournisseur->commande=new stdClass();
@@ -370,6 +492,50 @@ class Conf
     			$this->supplierproposal=new stdClass();
     			$this->supplierproposal->dir_output=$rootfordata."/supplier_proposal";
     			$this->supplierproposal->dir_temp=$rootfordata."/supplier_proposal/temp";
+=======
+		// TODO To split into module supplier_invoice and supplier_order
+		if (! empty($this->fournisseur))
+		{
+			$this->fournisseur->commande=new stdClass();
+			$this->fournisseur->commande->multidir_output=array($this->entity => $rootfordata."/fournisseur/commande");
+			$this->fournisseur->commande->multidir_temp  =array($this->entity => $rootfordata."/fournisseur/commande/temp");
+			$this->fournisseur->commande->dir_output=$rootfordata."/fournisseur/commande";		// For backward compatibility
+			$this->fournisseur->commande->dir_temp  =$rootfordata."/fournisseur/commande/temp";	// For backward compatibility
+			$this->fournisseur->facture=new stdClass();
+			$this->fournisseur->facture->multidir_output=array($this->entity => $rootfordata."/fournisseur/facture");
+			$this->fournisseur->facture->multidir_temp  =array($this->entity => $rootfordata."/fournisseur/facture/temp");
+			$this->fournisseur->facture->dir_output =$rootfordata."/fournisseur/facture";		// For backward compatibility
+			$this->fournisseur->facture->dir_temp   =$rootfordata."/fournisseur/facture/temp";	// For backward compatibility
+
+			$this->fournisseur->payment=new stdClass();
+			$this->fournisseur->payment->multidir_output=array($this->entity => $rootfordata."/fournisseur/payment");
+			$this->fournisseur->payment->multidir_temp  =array($this->entity => $rootfordata."/fournisseur/payment/temp");
+			$this->fournisseur->payment->dir_output =$rootfordata."/fournisseur/payment";		// For backward compatibility
+			$this->fournisseur->payment->dir_temp   =$rootfordata."/fournisseur/payment/temp";	// For backward compatibility
+
+			// To prepare split of module vendor(fournisseur) into vendor + supplier_order + supplier_invoice + supplierproposal
+			if (! empty($this->fournisseur->enabled))  // By default, if module supplier is on, we set new properties
+			{
+				if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))	// This can be set to 1 once modules purchase order and supplier invoice exists
+				{
+	    			$this->supplier_order=new stdClass();
+	    			$this->supplier_order->enabled=1;
+	    			$this->supplier_order->multidir_output=array($this->entity => $rootfordata."/fournisseur/commande");
+	    			$this->supplier_order->multidir_temp  =array($this->entity => $rootfordata."/fournisseur/commande/temp");
+	    			$this->supplier_order->dir_output=$rootfordata."/fournisseur/commande";			// For backward compatibility
+	    			$this->supplier_order->dir_temp=$rootfordata."/fournisseur/commande/temp";		// For backward compatibility
+				}
+
+				if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))	// This can be set to 1 once modules purchase order and supplier invoice exists
+				{
+					$this->supplier_invoice=new stdClass();
+	    			$this->supplier_invoice->enabled=1;
+	    			$this->supplier_invoice->multidir_output=array($this->entity => $rootfordata."/fournisseur/facture");
+	    			$this->supplier_invoice->multidir_temp  =array($this->entity => $rootfordata."/fournisseur/facture/temp");
+	    			$this->supplier_invoice->dir_output=$rootfordata."/fournisseur/facture";		// For backward compatibility
+	    			$this->supplier_invoice->dir_temp=$rootfordata."/fournisseur/facture/temp";		// For backward compatibility
+				}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 		}
 
@@ -406,10 +572,18 @@ class Conf
         $this->global->MAIN_MAIL_USE_MULTI_PART=1;
 
 		// societe
+<<<<<<< HEAD
 		if (empty($this->global->SOCIETE_CODECLIENT_ADDON))       $this->global->SOCIETE_CODECLIENT_ADDON="mod_codeclient_leopard";
 		if (empty($this->global->SOCIETE_CODECOMPTA_ADDON))       $this->global->SOCIETE_CODECOMPTA_ADDON="mod_codecompta_panicum";
 
 		if (empty($this->global->CHEQUERECEIPTS_ADDON))           $this->global->CHEQUERECEIPTS_ADDON='mod_chequereceipt_mint';
+=======
+		if (empty($this->global->SOCIETE_CODECLIENT_ADDON))		$this->global->SOCIETE_CODECLIENT_ADDON="mod_codeclient_leopard";
+		if (empty($this->global->SOCIETE_CODECOMPTA_ADDON))		$this->global->SOCIETE_CODECOMPTA_ADDON="mod_codecompta_panicum";
+
+		if (empty($this->global->CHEQUERECEIPTS_ADDON))			$this->global->CHEQUERECEIPTS_ADDON='mod_chequereceipt_mint';
+		if (empty($conf->global->TICKET_ADDON))				    $this->global->TICKET_ADDON='mod_ticket_simple';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         // Security
 		if (empty($this->global->USER_PASSWORD_GENERATED)) $this->global->USER_PASSWORD_GENERATED='standard'; // Default password generator
@@ -435,7 +609,15 @@ class Conf
 			$this->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE=0;
 			$this->global->STOCK_CALCULATE_ON_SUPPLIER_BILL=0;
 			$this->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER=0;
+<<<<<<< HEAD
 			$this->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER=1;
+=======
+			if(empty($this->reception->enabled))$this->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER=1;
+			else {
+				$this->global->STOCK_CALCULATE_ON_RECEPTION=1;
+				$this->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE=0;
+			}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		// conf->currency
@@ -548,7 +730,13 @@ class Conf
 		    $this->adherent->subscription = new stdClass();
             $this->adherent->subscription->warning_delay=(isset($this->global->MAIN_DELAY_MEMBERS)?$this->global->MAIN_DELAY_MEMBERS:0)*24*60*60;
 		}
+<<<<<<< HEAD
 		if (isset($this->agenda)) $this->agenda->warning_delay=(isset($this->global->MAIN_DELAY_ACTIONS_TODO)?$this->global->MAIN_DELAY_ACTIONS_TODO:7)*24*60*60;
+=======
+		if (isset($this->agenda)) {
+            $this->agenda->warning_delay=(isset($this->global->MAIN_DELAY_ACTIONS_TODO)?$this->global->MAIN_DELAY_ACTIONS_TODO:7)*24*60*60;
+        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if (isset($this->projet))
 		{
 		    $this->projet->warning_delay=(isset($this->global->MAIN_DELAY_PROJECT_TO_CLOSE)?$this->global->MAIN_DELAY_PROJECT_TO_CLOSE:7)*24*60*60;
@@ -588,11 +776,23 @@ class Conf
 		    $this->bank->cheque->warning_delay=(isset($this->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT)?$this->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT:0)*24*60*60;
 		}
 		if (isset($this->expensereport)) {
+<<<<<<< HEAD
 		    $this->expensereport->approve		= new stdClass();
 		    $this->expensereport->approve->warning_delay=(isset($this->global->MAIN_DELAY_EXPENSEREPORTS)?$this->global->MAIN_DELAY_EXPENSEREPORTS:0)*24*60*60;
 		    $this->expensereport->payment		= new stdClass();
 		    $this->expensereport->payment->warning_delay=(isset($this->global->MAIN_DELAY_EXPENSEREPORTS_TO_PAY)?$this->global->MAIN_DELAY_EXPENSEREPORTS_TO_PAY:0)*24*60*60;
 		}
+=======
+		    $this->expensereport->approve = new stdClass();
+		    $this->expensereport->approve->warning_delay=(isset($this->global->MAIN_DELAY_EXPENSEREPORTS)?$this->global->MAIN_DELAY_EXPENSEREPORTS:0)*24*60*60;
+		    $this->expensereport->payment = new stdClass();
+		    $this->expensereport->payment->warning_delay=(isset($this->global->MAIN_DELAY_EXPENSEREPORTS_TO_PAY)?$this->global->MAIN_DELAY_EXPENSEREPORTS_TO_PAY:0)*24*60*60;
+		}
+        if (isset($this->holiday)) {
+            $this->holiday->approve = new stdClass();
+            $this->holiday->approve->warning_delay=(isset($this->global->MAIN_DELAY_HOLIDAYS)?$this->global->MAIN_DELAY_HOLIDAYS:0)*24*60*60;
+        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		if (! empty($this->global->PRODUIT_MULTIPRICES) && empty($this->global->PRODUIT_MULTIPRICES_LIMIT))
 		{
@@ -615,8 +815,13 @@ class Conf
 
 		if (! isset($this->global->MAIN_EXTRAFIELDS_IN_ONE_TD)) $this->global->MAIN_EXTRAFIELDS_IN_ONE_TD = 1;
 
+<<<<<<< HEAD
 		$this->global->MAIN_MODULE_DOLISTORE_API_SRV='https://www.dolistore.com';
 		$this->global->MAIN_MODULE_DOLISTORE_API_KEY='dolistorecatalogpublickey1234567';
+=======
+		if (empty($this->global->MAIN_MODULE_DOLISTORE_API_SRV)) $this->global->MAIN_MODULE_DOLISTORE_API_SRV='https://www.dolistore.com';
+		if (empty($this->global->MAIN_MODULE_DOLISTORE_API_KEY)) $this->global->MAIN_MODULE_DOLISTORE_API_KEY='dolistorecatalogpublickey1234567';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// For backward compatibility
 		if (isset($this->product))   $this->produit=$this->product;
@@ -624,6 +829,10 @@ class Conf
 		if (isset($this->commande))  $this->order=$this->commande;
 		if (isset($this->contrat))   $this->contract=$this->contrat;
 		if (isset($this->categorie)) $this->category=$this->categorie;
+<<<<<<< HEAD
+=======
+		if (isset($this->project))   $this->project=$this->projet;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         // Object $mc
         if (! defined('NOREQUIREMC') && ! empty($this->multicompany->enabled))
@@ -665,7 +874,12 @@ class Conf
 				$this->loghandlers[$handler] = $loghandlerinstance;
 			}
 		}
+<<<<<<< HEAD
 
 	}
 }
 
+=======
+	}
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

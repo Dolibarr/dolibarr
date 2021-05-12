@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2010-2011	Regis Houssin <regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2010-2011	Regis Houssin <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2013		Juanjo Menent <jmenent@2byte.es>
  * Copyright (C) 2014       Marcos García <marcosgdf@gmail.com>
  *
@@ -39,6 +43,11 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 // Load translation files required by the page
 $langs->load("orders");
 
+<<<<<<< HEAD
+=======
+$linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date', 'desc');
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $total=0; $ilink=0;
 foreach($linkedObjectBlock as $key => $objectlink)
 {
@@ -49,18 +58,32 @@ foreach($linkedObjectBlock as $key => $objectlink)
 ?>
     <tr class="<?php echo $trclass; ?>" >
         <td class="linkedcol-element" ><?php echo $langs->trans("CustomerOrder"); ?>
+<<<<<<< HEAD
         <?php if(!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES) print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0,'',0,1).'&amp;action=selectlines"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a';  ?>
         </td>
         <td class="linkedcol-name" ><?php echo $objectlink->getNomUrl(1); ?></td>
     	<td class="linkedcol-ref" align="center"><?php echo $objectlink->ref_client; ?></td>
     	<td class="linkedcol-date" align="center"><?php echo dol_print_date($objectlink->date,'day'); ?></td>
     	<td class="linkedcol-amount" align="right"><?php
+=======
+        <?php if(!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES) print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, '', 0, 1).'&amp;action=selectlines"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a';  ?>
+        </td>
+        <td class="linkedcol-name" ><?php echo $objectlink->getNomUrl(1); ?></td>
+    	<td class="linkedcol-ref" align="center"><?php echo $objectlink->ref_client; ?></td>
+    	<td class="linkedcol-date" align="center"><?php echo dol_print_date($objectlink->date, 'day'); ?></td>
+    	<td class="linkedcol-amount right"><?php
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     		if ($user->rights->commande->lire) {
     			$total = $total + $objectlink->total_ht;
     			echo price($objectlink->total_ht);
     		} ?></td>
+<<<<<<< HEAD
     	<td class="linkedcol-statut" align="right"><?php echo $objectlink->getLibStatut(3); ?></td>
     	<td class="linkedcol-action" align="right">
+=======
+    	<td class="linkedcol-statut right"><?php echo $objectlink->getLibStatut(3); ?></td>
+    	<td class="linkedcol-action right">
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     		<?php
     		// For now, shipments must stay linked to order, so link is not deletable
     		if($object->element != 'shipping') {
@@ -81,9 +104,15 @@ if (count($linkedObjectBlock) > 1)
         <td></td>
     	<td align="center"></td>
     	<td align="center"></td>
+<<<<<<< HEAD
     	<td align="right"><?php echo price($total); ?></td>
     	<td align="right"></td>
     	<td align="right"></td>
+=======
+    	<td class="right"><?php echo price($total); ?></td>
+    	<td class="right"></td>
+    	<td class="right"></td>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     </tr>
     <?php
 }

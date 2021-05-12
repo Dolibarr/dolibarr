@@ -2,6 +2,7 @@
 DIRECTION=ltr
 FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
+<<<<<<< HEAD
 SeparatorDecimal=,
 SeparatorThousand=None
 FormatDateShort=%d/%m/%Y
@@ -25,3 +26,22 @@ HT=Sin ISV
 TTC=ISV incluido
 VAT=ISV
 VATRate=Tasa ISV
+=======
+SeparatorDecimal=.
+SeparatorThousand=None
+FormatDateShort=%m/%d/%Y
+FormatDateShortInput=%m/%d/%Y
+FormatDateShortJava=MM/dd/yyyy
+FormatDateShortJavaInput=MM/dd/yyyy
+FormatDateShortJQuery=mm/dd/yy
+FormatDateShortJQueryInput=mm/dd/yy
+FormatHourShortJQuery=HH:MI
+FormatHourShort=%I:%M %p
+FormatHourShortDuration=%H:%M
+FormatDateTextShort=%b %d, %Y
+FormatDateText=%B %d, %Y
+FormatDateHourShort=%m/%d/%Y %I:%M %p
+FormatDateHourSecShort=%m/%d/%Y %I:%M:%S %p
+FormatDateHourTextShort=%b %d, %Y, %I:%M %p
+FormatDateHourText=%B %d, %Y, %I:%M %p
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -50,7 +50,11 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 					'fontsize' => 8,
 					'stretchtext' => 4
 	);
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	// set style for 2d barcode
 	private $_style2d = array(
 					'border' => false,
@@ -61,6 +65,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 					'module_width' => 1, // width of a single module in points
 					'module_height' => 1 // height of a single module in points
 	);
+<<<<<<< HEAD
 	
 	private $_align2d = 'N';
 	
@@ -69,16 +74,36 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 	/**
 	 * write barcode to pdf
 	 * 
+=======
+
+	private $_align2d = 'N';
+
+	private $_xres = 0.4;
+
+	/**
+	 * write barcode to pdf
+	 *
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	 * @param PDF	  $pdf		  PDF reference
 	 * @param string  $code		   code to print
 	 * @param string  $encoding	   type of barcode
 	 * @param boolean $is2d		   true if 2d barcode
+<<<<<<< HEAD
 	 * @param int	  $x		   x position in user units 
 	 * @param int	  $y		   y position in user units
 	 * @param int	  $w		   width in user units
 	 * @param int	  $h		   height in user units
 	 */	   
 	private function writeBarcode(&$pdf, $code, $encoding, $is2d, $x, $y, $w, $h) 
+=======
+	 * @param int	  $x		   x position in user units
+	 * @param int	  $y		   y position in user units
+	 * @param int	  $w		   width in user units
+	 * @param int	  $h		   height in user units
+	 * @return void
+	 */
+	private function writeBarcode(&$pdf, $code, $encoding, $is2d, $x, $y, $w, $h)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		if ($is2d) {
 			$pdf->write2DBarcode($code, $encoding, $x, $y, $w, $h, $this->_style2d, $this->_align2d);
@@ -86,7 +111,11 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 			$pdf->write1DBarcode($code, $encoding, $x, $y, $w, $h, $this->_xres, $this->_style1d);
 		}
 	}
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * Output a sticker on page at position _COUNTX, _COUNTY (_COUNTX and _COUNTY start from 0)
 	 *
@@ -95,10 +124,17 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 	 * @param	array		$param			Associative array containing label content and optional parameters
 	 * @return	void
 	 */
+<<<<<<< HEAD
 	function addSticker(&$pdf,$outputlangs,$param) 
 	{
 		global $mysoc,$conf;
 		
+=======
+	public function addSticker(&$pdf, $outputlangs, $param)
+	{
+		global $mysoc,$conf;
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$textleft = $param['textleft'];
 		$header = $param['textheader'];
 		$footer = $param['textfooter'];
@@ -106,8 +142,13 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 		$code = $param['code'];
 		$encoding = $param['encoding'];
 		$is2d = $param['is2d'];
+<<<<<<< HEAD
 		
 		
+=======
+
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// We are in a new page, then we must add a page
 		if (($this->_COUNTX ==0) && ($this->_COUNTY==0) and (!$this->_First==1)) {
@@ -132,14 +173,22 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 			}
 		}
 
+<<<<<<< HEAD
 		$xleft = 2; 
+=======
+		$xleft = 2;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$ytop = 2;
 
 		// Top
 		if ($header!='')
 		{
 			$pdf->SetXY($_PosX+$xleft, $_PosY+1); // Only 1 mm and not ytop for top text
+<<<<<<< HEAD
 			$pdf->Cell($this->_Width-2*$xleft, $this->_Line_Height, $outputlangs->convToOutputCharset($header),0,1,'C');
+=======
+			$pdf->Cell($this->_Width-2*$xleft, $this->_Line_Height, $outputlangs->convToOutputCharset($header), 0, 1, 'C');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		$ytop += (empty($header)?0:(1+$this->_Line_Height));
@@ -153,8 +202,13 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 		$widthtouse = $maxwidthtouse;
 		$heighttouse = $maxheighttouse;
 		$logoHeight = $heighttouse;
+<<<<<<< HEAD
 		$logoWidth = $heighttouse;
 		
+=======
+		$logoWidth = $widthtouse;
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		//var_dump($this->_Width.'x'.$this->_Height.' with border and scale '.$imgscale.' => max '.$maxwidthtouse.'x'.$maxheighttouse.' => We use '.$widthtouse.'x'.$heighttouse);exit;
 
 		// Center
@@ -162,13 +216,18 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 		{
 			// Output left area
 			if ($textleft == '%LOGO%' && $logo) $pdf->Image($logo, $_PosX+$xleft, $_PosY+$ytop, 0, $logoHeight);
+<<<<<<< HEAD
 			else if ($code && !empty($encoding)) 
+=======
+			elseif ($code && !empty($encoding))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			{
 				$this->writeBarcode($pdf, $code, $encoding, $is2d, $_PosX+$xleft, $_PosY+$ytop, $widthtouse, $heighttouse);
 			}
 			else
 			{
 				$pdf->SetXY($_PosX+$xleft, $_PosY+$ytop);
+<<<<<<< HEAD
 				$pdf->MultiCell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft),0,'L');
 			}
 		}
@@ -178,23 +237,49 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 			{
 				if ($textleft == '%LOGO%' && $logo) $pdf->Image($logo, $_PosX+$xleft, $_PosY+$ytop, $widthtouse/2, 0);
 				else if ($code && !empty($encoding)) 
+=======
+				$pdf->MultiCell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft), 0, 'L');
+			}
+		}
+		elseif ($textleft!='' && $textright!='')	// left and right part
+		{
+			$logoHeight = $heighttouse/2;
+			$logoWidth = $widthtouse/2;
+			if (($textleft == '%LOGO%' || $textleft == '%PHOTO%' || $textleft == '%BARCODE%') && !strstr($textright, '%') )	 // left part logo/barcode right part text
+			{
+				if ($textleft == '%LOGO%' && $logo) $pdf->Image($logo, $_PosX+$xleft, $_PosY+$ytop, $logoWidth, 0);
+				elseif ($code && !empty($encoding))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				{
 					$this->writeBarcode($pdf, $code, $encoding, $is2d, $_PosX+$xleft, $_PosY+$ytop, $widthtouse/2, $heighttouse);
 				}
 				$pdf->SetXY($_PosX+($widthtouse/2), $_PosY+$ytop);
 				$pdf->MultiCell($widthtouse/2, $this->_Line_Height, $outputlangs->convToOutputCharset($textright), 0, 'R');
 			}
+<<<<<<< HEAD
 			else if (($textright == '%LOGO%' || $textright == '%PHOTO%' || $textright == '%BARCODE%') && !strstr($textleft, '%')) // right part logo/barcode left part text
 			{
 				if ($textright == '%LOGO%' && $logo) $pdf->Image($logo, $_PosX+($widthtouse/2), $_PosY+$ytop, $widthtouse/2, 0);
 				else if ($code && !empty($encoding)) 
+=======
+			elseif (($textright == '%LOGO%' || $textright == '%PHOTO%' || $textright == '%BARCODE%') && !strstr($textleft, '%')) // right part logo/barcode left part text
+			{
+				if ($textright == '%LOGO%' && $logo) $pdf->Image($logo, $_PosX+($widthtouse/2), $_PosY+$ytop, $logoWidth, 0);
+				elseif ($code && !empty($encoding))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				{
 					$this->writeBarcode($pdf, $code, $encoding, $is2d, $_PosX+($widthtouse/2), $_PosY+$ytop, $widthtouse/2, $heighttouse);
 				}
 				$pdf->SetXY($_PosX+$xleft, $_PosY+$ytop);
+<<<<<<< HEAD
 				$pdf->MultiCell($widthtouse/2, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft),0,'L');
 			}
 			else if ($textleft == '%LOGO%')	 // left part logo right part text/barcode
+=======
+				$pdf->MultiCell($widthtouse/2, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft), 0, 'L');
+			}
+			elseif ($textleft == '%LOGO%')	 // left part logo right part text/barcode
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			{
 				if ($logo) $pdf->Image($logo, $_PosX+$xleft, $_PosY+$ytop, 0, $logoHeight);
 				if ($code && !empty($encoding))
@@ -202,10 +287,17 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 					$this->writeBarcode($pdf, $code, $encoding, $is2d, $_PosX+$xleft+$logoWidth+1, $_PosY+$ytop, $widthtouse-$logoWidth-1, $heighttouse);
 				} else {
 					$pdf->SetXY($_PosX+$xleft+$logoWidth+1, $_PosY+$ytop);
+<<<<<<< HEAD
 					$pdf->MultiCell($widthtouse-$logoWidth1-1, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
 				}				
 			}
 			else if ($textright == '%LOGO%')  // right part logo left part text/barcode
+=======
+					$pdf->MultiCell($widthtouse-$logoWidth-1, $this->_Line_Height, $outputlangs->convToOutputCharset($textright), 0, 'R');
+				}
+			}
+			elseif ($textright == '%LOGO%')  // right part logo left part text/barcode
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			{
 				if ($logo) $pdf->Image($logo, $_PosX+$xleft+$widthtouse-$logoWidth+1, $_PosY+$ytop, 0, $logoHeight);
 				if ($code && !empty($encoding))
@@ -213,29 +305,48 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 					$this->writeBarcode($pdf, $code, $encoding, $is2d, $_PosX+$xleft, $_PosY+$ytop, $widthtouse-$logoWidth-1, $heighttouse);
 				} else {
 					$pdf->SetXY($_PosX+$xleft, $_PosY+$ytop);
+<<<<<<< HEAD
 					$pdf->MultiCell($widthtouse-$logoWidth-1, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft),0,'L');
 				}				
+=======
+					$pdf->MultiCell($widthtouse-$logoWidth-1, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft), 0, 'L');
+				}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 			else	// text on halft left and text on half right
 			{
 				$pdf->SetXY($_PosX+$xleft, $_PosY+$ytop);
+<<<<<<< HEAD
 				$pdf->MultiCell(round($this->_Width/2), $this->_Line_Height, $outputlangs->convToOutputCharset($textleft),0,'L');
 				$pdf->SetXY($_PosX+round($this->_Width/2), $_PosY+$ytop);
 				$pdf->MultiCell(round($this->_Width/2)-2, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
+=======
+				$pdf->MultiCell(round($this->_Width/2), $this->_Line_Height, $outputlangs->convToOutputCharset($textleft), 0, 'L');
+				$pdf->SetXY($_PosX+round($this->_Width/2), $_PosY+$ytop);
+				$pdf->MultiCell(round($this->_Width/2)-2, $this->_Line_Height, $outputlangs->convToOutputCharset($textright), 0, 'R');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 		}
 		else	// Only a right part
 		{
 			// Output right area
 			if ($textright == '%LOGO%' && $logo) $pdf->Image($logo, $_PosX+$this->_Width-$widthtouse-$xleft, $_PosY+$ytop, 0, $logoHeight);
+<<<<<<< HEAD
 			else if ($code && !empty($encoding)) 
+=======
+			elseif ($code && !empty($encoding))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			{
 				$this->writeBarcode($pdf, $code, $encoding, $is2d, $_PosX+$this->_Width-$widthtouse-$xleft, $_PosY+$ytop, $widthtouse, $heighttouse);
 			}
 			else
 			{
 				$pdf->SetXY($_PosX+$xleft, $_PosY+$ytop);
+<<<<<<< HEAD
 				$pdf->MultiCell($this->_Width-$xleft, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
+=======
+				$pdf->MultiCell($this->_Width-$xleft, $this->_Line_Height, $outputlangs->convToOutputCharset($textright), 0, 'R');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 		}
 
@@ -243,7 +354,11 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 		if ($footer!='')
 		{
 			$pdf->SetXY($_PosX, $_PosY+$this->_Height-$this->_Line_Height-1);
+<<<<<<< HEAD
 			$pdf->Cell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($footer),0,1,'C');
+=======
+			$pdf->Cell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($footer), 0, 1, 'C');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		//print "$_PosY+$this->_Height-$this->_Line_Height-1<br>\n";
 
@@ -265,6 +380,10 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 
 
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *	Function to build PDF on disk, then output on HTTP strem.
 	 *
@@ -275,13 +394,23 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 	 *  @param  string      $filename           Short file name of PDF output file
 	 *	@return int								1=OK, 0=KO
 	 */
+<<<<<<< HEAD
 	function write_file($arrayofrecords,$outputlangs,$srctemplatepath,$outputdir='',$filename='tmp_address_sheet.pdf')
 	{
+=======
+	public function write_file($arrayofrecords, $outputlangs, $srctemplatepath, $outputdir = '', $filename = 'tmp_address_sheet.pdf')
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $user,$conf,$langs,$mysoc,$_Avery_Labels;
 
 		$this->code=$srctemplatepath;
 		$this->Tformat = $_Avery_Labels[$this->code];
+<<<<<<< HEAD
 		if (empty($this->Tformat)) { dol_print_error('','ErrorBadTypeForCard'.$this->code); exit; }
+=======
+		if (empty($this->Tformat)) { dol_print_error('', 'ErrorBadTypeForCard'.$this->code); exit; }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->type = 'pdf';
         // standard format or custom
         if ($this->Tformat['paper-size']!='custom') {
@@ -296,10 +425,15 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
+<<<<<<< HEAD
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
 		$outputlangs->load("companies");
 		$outputlangs->load("admin");
+=======
+		// Load traductions files requiredby by page
+		$outputlangs->loadLangs(array("main", "dict", "companies", "admin"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$title=$outputlangs->transnoentities('Labels');
 		$keywords=$title." ".$outputlangs->convToOutputCharset($mysoc->name);
@@ -311,12 +445,20 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 		{
 			if (dol_mkdir($dir) < 0)
 			{
+<<<<<<< HEAD
 				$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+=======
+				$this->error=$langs->trans("ErrorCanNotCreateDir", $dir);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				return 0;
 			}
 		}
 
+<<<<<<< HEAD
 		$pdf=pdf_getInstance($this->format,$this->Tformat['metric'], $this->Tformat['orientation']);
+=======
+		$pdf=pdf_getInstance($this->format, $this->Tformat['metric'], $this->Tformat['orientation']);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		if (class_exists('TCPDF'))
 		{
@@ -332,7 +474,11 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 		$pdf->SetKeyWords($keywords);
 		if (! empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
 
+<<<<<<< HEAD
 		$pdf->SetMargins(0,0);
+=======
+		$pdf->SetMargins(0, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$pdf->SetAutoPageBreak(false);
 
 		$this->_Metric_Doc = $this->Tformat['metric'];
@@ -362,7 +508,11 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 
 
 		// Output to file
+<<<<<<< HEAD
 		$pdf->Output($file,'F');
+=======
+		$pdf->Output($file, 'F');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		if (! empty($conf->global->MAIN_UMASK))
 			@chmod($file, octdec($conf->global->MAIN_UMASK));

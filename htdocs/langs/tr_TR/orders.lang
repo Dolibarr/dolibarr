@@ -1,6 +1,10 @@
 # Dolibarr language file - Source file is en_US - orders
 OrdersArea=Müşteri siparişleri alanı
+<<<<<<< HEAD
 SuppliersOrdersArea=Purchase orders area
+=======
+SuppliersOrdersArea=Tedarikçi siparişleri alanı
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 OrderCard=Sipariş kartı
 OrderId=Sipariş Kimliği
 Order=Sipariş
@@ -13,6 +17,7 @@ OrderToProcess=İşlenecek sipariş
 NewOrder=Yeni sipariş
 ToOrder=Sipariş yap
 MakeOrder=Sipariş yap
+<<<<<<< HEAD
 SupplierOrder=Purchase order
 SuppliersOrders=Purchase orders
 SuppliersOrdersRunning=Current purchase orders
@@ -25,6 +30,20 @@ OrdersToBill=Teslim edilecek müşteri siparişleri
 OrdersInProcess=İşlemde olan müşteri siparişleri
 OrdersToProcess=İşlenecek müşteri siparişleri
 SuppliersOrdersToProcess=Purchase orders to process
+=======
+SupplierOrder=Tedarikçi siparişi
+SuppliersOrders=Tedarikçi siparişleri
+SuppliersOrdersRunning=Mevcut tedarikçi siparişleri
+CustomerOrder=Müşteri Siparişi
+CustomersOrders=Müşteri Siparişleri
+CustomersOrdersRunning=Mevcut müşteri siparişleri
+CustomersOrdersAndOrdersLines=Müşteri siparişleri ve sipariş detayları
+OrdersDeliveredToBill=Faturaya gönderilen müşteri siparişleri
+OrdersToBill=Teslim edilen müşteri siparişleri
+OrdersInProcess=İşlemdeki müşteri siparişleri
+OrdersToProcess=İşlenecek müşteri siparişleri
+SuppliersOrdersToProcess=İşlenecek tedarikçi siparişleri
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 StatusOrderCanceledShort=İptal edilmiş
 StatusOrderDraftShort=Taslak
 StatusOrderValidatedShort=Doğrulanmış
@@ -75,20 +94,36 @@ ShowOrder=Siparişi göster
 OrdersOpened=İşlenecek siparişler
 NoDraftOrders=Taslak sipariş yok
 NoOrder=Sipariş yok
+<<<<<<< HEAD
 NoSupplierOrder=No purchase order
 LastOrders=Son %s müşteri siparişi
 LastCustomerOrders=Son %s müşteri siparişi
 LastSupplierOrders=Latest %s purchase orders
+=======
+NoSupplierOrder=Tedarikçi siparişi yok
+LastOrders=En son %s müşteri siparişi 
+LastCustomerOrders=En son %s müşteri siparişi 
+LastSupplierOrders=En son %s tedarikçi siparişi
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LastModifiedOrders=Değiştirilen son %s sipariş
 AllOrders=Bütün siparişler
 NbOfOrders=Sipariş sayısı
 OrdersStatistics=Sipariş istatistikleri
+<<<<<<< HEAD
 OrdersStatisticsSuppliers=Purchase order statistics
 NumberOfOrdersByMonth=Aylık sipariş sayısı
 AmountOfOrdersByMonthHT=Aylık sipariş tutarı (vergisiz net)
 ListOfOrders=Sipariş listesi
 CloseOrder=Siparişi kapat
 ConfirmCloseOrder=Bu siparişi "teslim edildi" şeklinde ayarlamak istediğinizden emin misiniz? Bir sipariş teslim edildikten sonra "faturalandı" olarak ayarlanabilir.
+=======
+OrdersStatisticsSuppliers=Tedarikçi siparişi istatistikleri
+NumberOfOrdersByMonth=Aylık sipariş sayısı
+AmountOfOrdersByMonthHT=Aylık sipariş tutarı (KDV hariç)
+ListOfOrders=Sipariş listesi
+CloseOrder=Siparişi kapat
+ConfirmCloseOrder=Bu siparişi teslim edildi olarak ayarlamak istediğinizden emin misiniz? Bir sipariş teslim edildiğinde, faturalandırıldı olarak ayarlanabilir.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmDeleteOrder=Bu siparişi silmek istediğinizden emin misiniz?
 ConfirmValidateOrder=Bu siparişi <b>%s</b> adı altında onaylamak istediğinizden emin misiniz?
 ConfirmUnvalidateOrder=<b>%s</b> siparişini taslak durumuna geri yüklemek istediğinizden emin misiniz?
@@ -97,6 +132,7 @@ ConfirmMakeOrder=Are you sure you want to confirm you made this order on <b>%s</
 GenerateBill=Fatura oluştur
 ClassifyShipped=Teslim edildi sınıflandır
 DraftOrders=Taslak siparişler
+<<<<<<< HEAD
 DraftSuppliersOrders=Draft purchase orders
 OnProcessOrders=İşlemdeki siparişler
 RefOrder=Sipariş ref.
@@ -104,12 +140,22 @@ RefCustomerOrder=Müşterinin sipariş ref.
 RefOrderSupplier=Ref. order for vendor
 RefOrderSupplierShort=Ref. order vendor
 SendOrderByMail=Siparişi postayla gönder
+=======
+DraftSuppliersOrders=Taslak tedarikçi siparişleri
+OnProcessOrders=İşlemdeki siparişler
+RefOrder=Sipariş ref.
+RefCustomerOrder=Müşterinin sipariş ref.
+RefOrderSupplier=Satıcı için referans siparişi
+RefOrderSupplierShort=Ref. order vendor
+SendOrderByMail=Siparişi e-posta ile gönder
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActionsOnOrder=Sipariş etkinlikleri
 NoArticleOfTypeProduct='ürün' türünde herhangi bir madde olmadığından bu sipariş için sevkedilebilir madde yok
 OrderMode=Sipariş yöntemi
 AuthorRequest=Siparişi yazan
 UserWithApproveOrderGrant=Kullanıcılara "sipariş onaylama" izin hakkı verilmiştir..
 PaymentOrderRef=Sipariş %s ödemesi
+<<<<<<< HEAD
 CloneOrder=Siparişi klonla
 ConfirmCloneOrder=Bu siparişi kopyalamak istediğinizden emin misiniz <b>%s</b>?
 DispatchSupplierOrder=%s tedarikçi siparişini al
@@ -121,26 +167,54 @@ SupplierOrderClassifiedBilled=Purchase Order %s set billed
 OtherOrders=Diğer siparişler
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Müşteri siparişi izleme temsilcisi
+=======
+ConfirmCloneOrder=Bu siparişi kopyalamak istediğinizden emin misiniz <b>%s</b>?
+DispatchSupplierOrder=Receiving purchase order %s
+FirstApprovalAlreadyDone=İlk onay zaten yapılmış
+SecondApprovalAlreadyDone=İkinci onaylama zaten yapılmış
+SupplierOrderReceivedInDolibarr=%s Tedarikçi Siparişi teslim alındı %s
+SupplierOrderSubmitedInDolibarr=%s Tedarikçi Siparişi gönderildi
+SupplierOrderClassifiedBilled=%s Tedarikçi Siparişi faturalandı olarak ayarlı
+OtherOrders=Diğer siparişler
+##### Types de contacts #####
+TypeContact_commande_internal_SALESREPFOLL=Representative following-up sales order
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TypeContact_commande_internal_SHIPPING=Sevkiyat izleme temsilcisi
 TypeContact_commande_external_BILLING=Müşteri fatura yetkilisi
 TypeContact_commande_external_SHIPPING=Müşteri nakliye yetkilisi
 TypeContact_commande_external_CUSTOMER=Müşteri sipariş izleme yetkilisi
+<<<<<<< HEAD
 TypeContact_order_supplier_internal_SALESREPFOLL=Representative following-up purchase order
 TypeContact_order_supplier_internal_SHIPPING=Sevkiyat izleme temsilcisi
 TypeContact_order_supplier_external_BILLING=Vendor invoice contact
 TypeContact_order_supplier_external_SHIPPING=Vendor shipping contact
 TypeContact_order_supplier_external_CUSTOMER=Vendor contact following-up order
+=======
+TypeContact_order_supplier_internal_SALESREPFOLL=Tedarikçi siparişi izleme temsilcisi
+TypeContact_order_supplier_internal_SHIPPING=Sevkiyat izleme temsilcisi
+TypeContact_order_supplier_external_BILLING=Tedarikçi faturası kişisi
+TypeContact_order_supplier_external_SHIPPING=Tedarikçi sevkiyat yetkilisi
+TypeContact_order_supplier_external_CUSTOMER=Tedarikçi sipariş izleme yetkilisi
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=COMMANDE_SUPPLIER_ADDON değişmezi tanımlanmamış
 Error_COMMANDE_ADDON_NotDefined=Sabit COMMANDE_ADDON tanımlanmamış
 Error_OrderNotChecked=Faturalanacak seçilmiş sipariş yok
 # Order modes (how we receive order). Not the "why" are keys stored into dict.lang
 OrderByMail=Posta
 OrderByFax=Faks
+<<<<<<< HEAD
 OrderByEMail=Eposta
+=======
+OrderByEMail=E-posta
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 OrderByWWW=Çevrimiçi
 OrderByPhone=Telefon
 # Documents models
 PDFEinsteinDescription=Bir tam sipariş modeli (logo. ..)
+<<<<<<< HEAD
+=======
+PDFEratostheneDescription=Bir tam sipariş modeli (logo. ..)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PDFEdisonDescription=Basit bir sipariş modeli
 PDFProformaDescription=Eksiksiz bir proforma fatura (logo...)
 CreateInvoiceForThisCustomer=Sipariş Faturala

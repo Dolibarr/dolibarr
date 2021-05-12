@@ -2,6 +2,10 @@
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
+<<<<<<< HEAD
+=======
+ * Copyright (C) 2018 	   Philippe Grand		<philippe.grand@atoo-net.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
  */
 class Notify
 {
+<<<<<<< HEAD
 	var $id;
 	var $db;
 	var $error;
@@ -41,10 +46,46 @@ class Notify
 	var $duree;
 	var $note;
 	var $fk_project;
+=======
+	/**
+	 * @var int ID
+	 */
+	public $id;
+
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+
+	public $author;
+	public $ref;
+	public $date;
+	public $duree;
+	public $note;
+
+	/**
+     * @var int Project ID
+     */
+    public $fk_project;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	// Les codes actions sont definis dans la table llx_notify_def
 
 	// codes actions supported are
+<<<<<<< HEAD
+=======
+	// @TODO defined also into interface_50_modNotificiation_Notificiation.class.php
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	public $arrayofnotifsupported = array(
 		'BILL_VALIDATE',
 		'BILL_PAYED',
@@ -56,7 +97,15 @@ class Notify
 		'ORDER_SUPPLIER_VALIDATE',
 		'ORDER_SUPPLIER_APPROVE',
 		'ORDER_SUPPLIER_REFUSE',
+<<<<<<< HEAD
 		'SHIPPING_VALIDATE'
+=======
+		'SHIPPING_VALIDATE',
+		'EXPENSE_REPORT_VALIDATE',
+		'EXPENSE_REPORT_APPROVE',
+		'HOLIDAY_VALIDATE',
+		'HOLIDAY_APPROVE'
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	);
 
 
@@ -65,7 +114,11 @@ class Notify
 	 *
 	 *	@param 		DoliDB		$db		Database handler
 	 */
+<<<<<<< HEAD
 	function __construct($db)
+=======
+	public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$this->db = $db;
 	}
@@ -80,11 +133,16 @@ class Notify
 	 *  @param	Object	$object		Object the notification is about
 	 *	@return	string				Message
 	 */
+<<<<<<< HEAD
 	function confirmMessage($action,$socid,$object)
+=======
+	public function confirmMessage($action, $socid, $object)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 		$langs->load("mails");
 
+<<<<<<< HEAD
 		$listofnotiftodo=$this->getNotificationsArray($action,$socid,$object,0);
 
 		$nb=-1;
@@ -93,6 +151,16 @@ class Notify
 		if ($nb == 0) $texte=img_object($langs->trans("Notifications"),'email').' '.$langs->trans("NoNotificationsWillBeSent");
    		if ($nb == 1) $texte=img_object($langs->trans("Notifications"),'email').' '.$langs->trans("ANotificationsWillBeSent");
    		if ($nb >= 2) $texte=img_object($langs->trans("Notifications"),'email').' '.$langs->trans("SomeNotificationsWillBeSent",$nb);
+=======
+		$listofnotiftodo=$this->getNotificationsArray($action, $socid, $object, 0);
+
+		$nb=-1;
+		if (is_array($listofnotiftodo)) $nb=count($listofnotiftodo);
+		if ($nb < 0)  $texte=img_object($langs->trans("Notifications"), 'email').' '.$langs->trans("ErrorFailedToGetListOfNotificationsToSend");
+		if ($nb == 0) $texte=img_object($langs->trans("Notifications"), 'email').' '.$langs->trans("NoNotificationsWillBeSent");
+   		if ($nb == 1) $texte=img_object($langs->trans("Notifications"), 'email').' '.$langs->trans("ANotificationsWillBeSent");
+   		if ($nb >= 2) $texte=img_object($langs->trans("Notifications"), 'email').' '.$langs->trans("SomeNotificationsWillBeSent", $nb);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
    		if (is_array($listofnotiftodo))
    		{
@@ -121,7 +189,11 @@ class Notify
 	 * @param   array   $scope          Scope where to search
 	 * @return	array|int				<0 if KO, array of notifications to send if OK
 	 */
+<<<<<<< HEAD
 	function getNotificationsArray($notifcode, $socid=0, $object=null, $userid=0, $scope=array('thirdparty', 'user', 'global'))
+=======
+	public function getNotificationsArray($notifcode, $socid = 0, $object = null, $userid = 0, $scope = array('thirdparty', 'user', 'global'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf, $user;
 
@@ -242,7 +314,11 @@ class Notify
 					$threshold = (float) $reg[1];
 					if ($valueforthreshold < $threshold) continue;
 
+<<<<<<< HEAD
 					$tmpemail=explode(',',$val);
+=======
+					$tmpemail=explode(',', $val);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					foreach($tmpemail as $key2 => $val2)
 					{
 						$newval2=trim($val2);
@@ -284,7 +360,11 @@ class Notify
 	 *	@param 	array	$mimefilename_list	List of attached file name in message
 	 *	@return	int							<0 if KO, or number of changes if OK
 	 */
+<<<<<<< HEAD
 	function send($notifcode, $object, $filename_list=array(), $mimetype_list=array(), $mimefilename_list=array())
+=======
+	public function send($notifcode, $object, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array())
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $user,$conf,$langs,$mysoc;
 		global $hookmanager;
@@ -305,7 +385,11 @@ class Notify
 		$langs->load("other");
 
 		// Define $urlwithroot
+<<<<<<< HEAD
 		$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+=======
+		$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;			// This is to use external domain name found into config file
 		//$urlwithroot=DOL_MAIN_URL_ROOT;						// This is to use same domain name than current
 
@@ -320,6 +404,7 @@ class Notify
 		$oldref=(empty($object->oldref)?$object->ref:$object->oldref);
 		$newref=(empty($object->newref)?$object->ref:$object->newref);
 
+<<<<<<< HEAD
 		// Check notification per third party
 		$sql = "SELECT 'tocontactid' as type_target, c.email, c.rowid as cid, c.lastname, c.firstname, c.default_lang,";
 		$sql.= " a.rowid as adid, a.label, a.code, n.rowid, n.type";
@@ -336,6 +421,29 @@ class Notify
 		// Check notification per user
 		$sql.= "\nUNION\n";
 
+=======
+		$sql = '';
+
+		// Check notification per third party
+		if ($object->socid > 0)
+		{
+			$sql.= "SELECT 'tocontactid' as type_target, c.email, c.rowid as cid, c.lastname, c.firstname, c.default_lang,";
+			$sql.= " a.rowid as adid, a.label, a.code, n.rowid, n.type";
+			$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c,";
+			$sql.= " ".MAIN_DB_PREFIX."c_action_trigger as a,";
+			$sql.= " ".MAIN_DB_PREFIX."notify_def as n,";
+			$sql.= " ".MAIN_DB_PREFIX."societe as s";
+			$sql.= " WHERE n.fk_contact = c.rowid AND a.rowid = n.fk_action";
+			$sql.= " AND n.fk_soc = s.rowid";
+			if (is_numeric($notifcode)) $sql.= " AND n.fk_action = ".$notifcode;	// Old usage
+			else $sql.= " AND a.code = '".$notifcode."'";	// New usage
+			$sql .= " AND s.rowid = ".$object->socid;
+
+			$sql.= "\nUNION\n";
+		}
+
+		// Check notification per user
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql.= "SELECT 'touserid' as type_target, c.email, c.rowid as cid, c.lastname, c.firstname, c.lang as default_lang,";
 		$sql.= " a.rowid as adid, a.label, a.code, n.rowid, n.type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as c,";
@@ -343,12 +451,27 @@ class Notify
 		$sql.= " ".MAIN_DB_PREFIX."notify_def as n";
 		$sql.= " WHERE n.fk_user = c.rowid AND a.rowid = n.fk_action";
 		if (is_numeric($notifcode)) $sql.= " AND n.fk_action = ".$notifcode;	// Old usage
+<<<<<<< HEAD
 		else $sql.= " AND a.code = '".$notifcode."'";	// New usage
+=======
+		else $sql.= " AND a.code = '".$this->db->escape($notifcode)."'";	// New usage
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$result = $this->db->query($sql);
 		if ($result)
 		{
 			$num = $this->db->num_rows($result);
+<<<<<<< HEAD
+=======
+			$projtitle='';
+			if (! empty($object->fk_project))
+			{
+				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+				$proj = new Project($this->db);
+				$proj->fetch($object->fk_project);
+				$projtitle='('.$proj->title.')';
+			}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			if ($num > 0)
 			{
@@ -357,7 +480,11 @@ class Notify
 				{
 					$obj = $this->db->fetch_object($result);
 
+<<<<<<< HEAD
 					$sendto = dolGetFirstLastname($obj->firstname,$obj->lastname) . " <".$obj->email.">";
+=======
+					$sendto = dolGetFirstLastname($obj->firstname, $obj->lastname) . " <".$obj->email.">";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					$notifcodedefid = $obj->adid;
 
 					if (dol_strlen($obj->email))
@@ -371,57 +498,93 @@ class Notify
 							$outputlangs->loadLangs(array("main","other"));
 						}
 
+<<<<<<< HEAD
 						$subject = '['.$mysoc->name.'] '.$outputlangs->transnoentitiesnoconv("DolibarrNotification");
+=======
+						$subject = '['.$mysoc->name.'] '.$outputlangs->transnoentitiesnoconv("DolibarrNotification").($projtitle?' '.$projtitle:'');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 						switch ($notifcode) {
 							case 'BILL_VALIDATE':
 								$link='/compta/facture/card.php?facid='.$object->id;
 								$dir_output = $conf->facture->dir_output;
 								$object_type = 'facture';
+<<<<<<< HEAD
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInvoiceValidated",$newref);
+=======
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInvoiceValidated", $newref);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 								break;
 							case 'BILL_PAYED':
 								$link='/compta/facture/card.php?facid='.$object->id;
 								$dir_output = $conf->facture->dir_output;
 								$object_type = 'facture';
+<<<<<<< HEAD
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInvoicePayed",$newref);
+=======
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInvoicePayed", $newref);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 								break;
 							case 'ORDER_VALIDATE':
 								$link='/commande/card.php?id='.$object->id;
 								$dir_output = $conf->commande->dir_output;
 								$object_type = 'order';
+<<<<<<< HEAD
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextOrderValidated",$newref);
+=======
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextOrderValidated", $newref);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 								break;
 							case 'PROPAL_VALIDATE':
 								$link='/comm/propal/card.php?id='.$object->id;
 								$dir_output = $conf->propal->multidir_output[$object->entity];
 								$object_type = 'propal';
+<<<<<<< HEAD
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextProposalValidated",$newref);
+=======
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextProposalValidated", $newref);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 								break;
 							case 'PROPAL_CLOSE_SIGNED':
 								$link='/comm/propal/card.php?id='.$object->id;
 								$dir_output = $conf->propal->multidir_output[$object->entity];
 								$object_type = 'propal';
+<<<<<<< HEAD
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextProposalClosedSigned",$newref);
+=======
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextProposalClosedSigned", $newref);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 								break;
 							case 'FICHINTER_ADD_CONTACT':
 								$link='/fichinter/card.php?id='.$object->id;
 								$dir_output = $conf->ficheinter->dir_output;
 								$object_type = 'ficheinter';
+<<<<<<< HEAD
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInterventionAddedContact",$newref);
+=======
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInterventionAddedContact", $newref);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 								break;
 							case 'FICHINTER_VALIDATE':
 								$link='/fichinter/card.php?id='.$object->id;
 								$dir_output = $conf->ficheinter->dir_output;
 								$object_type = 'ficheinter';
+<<<<<<< HEAD
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInterventionValidated",$newref);
+=======
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInterventionValidated", $newref);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 								break;
 							case 'ORDER_SUPPLIER_VALIDATE':
 								$link='/fourn/commande/card.php?id='.$object->id;
 								$dir_output = $conf->fournisseur->commande->dir_output;
 								$object_type = 'order_supplier';
 								$mesg = $outputlangs->transnoentitiesnoconv("Hello").",\n\n";
+<<<<<<< HEAD
 								$mesg.= $outputlangs->transnoentitiesnoconv("EMailTextOrderValidatedBy",$newref,$user->getFullName($langs));
+=======
+								$mesg.= $outputlangs->transnoentitiesnoconv("EMailTextOrderValidatedBy", $newref, $user->getFullName($outputlangs));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 								$mesg.= "\n\n".$outputlangs->transnoentitiesnoconv("Sincerely").".\n\n";
 								break;
 							case 'ORDER_SUPPLIER_APPROVE':
@@ -429,7 +592,11 @@ class Notify
 								$dir_output = $conf->fournisseur->commande->dir_output;
 								$object_type = 'order_supplier';
 								$mesg = $outputlangs->transnoentitiesnoconv("Hello").",\n\n";
+<<<<<<< HEAD
 								$mesg.= $outputlangs->transnoentitiesnoconv("EMailTextOrderApprovedBy",$newref,$user->getFullName($langs));
+=======
+								$mesg.= $outputlangs->transnoentitiesnoconv("EMailTextOrderApprovedBy", $newref, $user->getFullName($outputlangs));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 								$mesg.= "\n\n".$outputlangs->transnoentitiesnoconv("Sincerely").".\n\n";
 								break;
 							case 'ORDER_SUPPLIER_REFUSE':
@@ -437,13 +604,41 @@ class Notify
 								$dir_output = $conf->fournisseur->commande->dir_output;
 								$object_type = 'order_supplier';
 								$mesg = $outputlangs->transnoentitiesnoconv("Hello").",\n\n";
+<<<<<<< HEAD
 								$mesg.= $outputlangs->transnoentitiesnoconv("EMailTextOrderRefusedBy",$newref,$user->getFullName($langs));
+=======
+								$mesg.= $outputlangs->transnoentitiesnoconv("EMailTextOrderRefusedBy", $newref, $user->getFullName($outputlangs));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 								$mesg.= "\n\n".$outputlangs->transnoentitiesnoconv("Sincerely").".\n\n";
 								break;
 							case 'SHIPPING_VALIDATE':
 								$dir_output = $conf->expedition->dir_output.'/sending/';
 								$object_type = 'order_supplier';
+<<<<<<< HEAD
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextExpeditionValidated",$newref);
+=======
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextExpeditionValidated", $newref);
+								break;
+							case 'EXPENSE_REPORT_VALIDATE':
+								$dir_output = $conf->expensereport->dir_output;
+								$object_type = 'expensereport';
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextExpenseReportValidated", $newref);
+								break;
+							case 'EXPENSE_REPORT_APPROVE':
+								$dir_output = $conf->expensereport->dir_output;
+								$object_type = 'expensereport';
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextExpenseReportApproved", $newref);
+								break;
+							case 'HOLIDAY_VALIDATE':
+								$dir_output = $conf->holiday->dir_output;
+								$object_type = 'holiday';
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextHolidayValidated", $newref);
+								break;
+							case 'HOLIDAY_APPROVE':
+								$dir_output = $conf->holiday->dir_output;
+								$object_type = 'holiday';
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextHolidayApproved", $newref);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 								break;
 						}
 						$ref = dol_sanitizeFileName($newref);
@@ -458,21 +653,34 @@ class Notify
 							$filepdf = $pdf_path;
 						}
 
+<<<<<<< HEAD
 						$message = $outputlangs->transnoentities("YouReceiveMailBecauseOfNotification",$application,$mysoc->name)."\n";
 						$message.= $outputlangs->transnoentities("YouReceiveMailBecauseOfNotification2",$application,$mysoc->name)."\n";
+=======
+						$message = $outputlangs->transnoentities("YouReceiveMailBecauseOfNotification", $application, $mysoc->name)."\n";
+						$message.= $outputlangs->transnoentities("YouReceiveMailBecauseOfNotification2", $application, $mysoc->name)."\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						$message.= "\n";
 						$message.= $mesg;
 						if ($link) $message.= "\n" . $urlwithroot . $link;
 
 						$parameters=array('notifcode'=>$notifcode, 'sendto'=>$sendto, 'replyto'=>$replyto, 'file'=>$filename_list, 'mimefile'=>$mimetype_list, 'filename'=>$mimefilename_list);
+<<<<<<< HEAD
 						$reshook=$hookmanager->executeHooks('formatNotificationMessage',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+=======
+						$reshook=$hookmanager->executeHooks('formatNotificationMessage', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						if (empty($reshook))
 						{
 							if (! empty($hookmanager->resArray['subject'])) $subject.=$hookmanager->resArray['subject'];
 							if (! empty($hookmanager->resArray['message'])) $message.=$hookmanager->resArray['message'];
 						}
 
+<<<<<<< HEAD
 						$mailfile = new CMailFile(
+=======
+                        $mailfile = new CMailFile(
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							$subject,
 							$sendto,
 							$replyto,
@@ -484,19 +692,29 @@ class Notify
 							'',
 							0,
 							-1
+<<<<<<< HEAD
 						);
+=======
+                        );
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 						if ($mailfile->sendfile())
 						{
 							if ($obj->type_target == 'touserid') {
 	 							$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_soc, fk_user, type, objet_type, type_target, objet_id, email)";
 								$sql.= " VALUES ('".$this->db->idate(dol_now())."', ".$notifcodedefid.", ".($object->socid?$object->socid:'null').", ".$obj->cid.", '".$obj->type."', '".$object_type."', '".$obj->type_target."', ".$object->id.", '".$this->db->escape($obj->email)."')";
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							}
 							else {
 								$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_soc, fk_contact, type, objet_type, type_target, objet_id, email)";
 								$sql.= " VALUES ('".$this->db->idate(dol_now())."', ".$notifcodedefid.", ".($object->socid?$object->socid:'null').", ".$obj->cid.", '".$obj->type."', '".$object_type."', '".$obj->type_target."', ".$object->id.", '".$this->db->escape($obj->email)."')";
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							}
 							if (! $this->db->query($sql))
 							{
@@ -553,57 +771,93 @@ class Notify
 				$link = '';
 				$num++;
 
+<<<<<<< HEAD
 				$subject = '['.$mysoc->name.'] '.$langs->transnoentitiesnoconv("DolibarrNotification");
+=======
+				$subject = '['.$mysoc->name.'] '.$langs->transnoentitiesnoconv("DolibarrNotification").($projtitle?' '.$projtitle:'');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				switch ($notifcode) {
 					case 'BILL_VALIDATE':
 						$link = '<a href="' . $urlwithroot . '/compta/facture/card.php?facid=' . $object->id . '">' . $newref . '</a>';
 						$dir_output = $conf->facture->dir_output;
 						$object_type = 'facture';
+<<<<<<< HEAD
 						$mesg = $langs->transnoentitiesnoconv("EMailTextInvoiceValidated",$link);
+=======
+						$mesg = $langs->transnoentitiesnoconv("EMailTextInvoiceValidated", $link);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						break;
 					case 'BILL_PAYED':
 						$link ='<a href="' . $urlwithroot . '/compta/facture/card.php?facid='.$object->id . '">' . $newref . '</a>';
 						$dir_output = $conf->facture->dir_output;
 						$object_type = 'facture';
+<<<<<<< HEAD
 						$mesg = $langs->transnoentitiesnoconv("EMailTextInvoicePayed",$link);
+=======
+						$mesg = $langs->transnoentitiesnoconv("EMailTextInvoicePayed", $link);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						break;
 					case 'ORDER_VALIDATE':
 						$link = '<a href="' . $urlwithroot . '/commande/card.php?id='.$object->id . '">' . $newref . '</a>';
 						$dir_output = $conf->commande->dir_output;
 						$object_type = 'order';
+<<<<<<< HEAD
 						$mesg = $langs->transnoentitiesnoconv("EMailTextOrderValidated",$link);
+=======
+						$mesg = $langs->transnoentitiesnoconv("EMailTextOrderValidated", $link);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						break;
 					case 'PROPAL_VALIDATE':
 						$link = '<a href="' . $urlwithroot . '/comm/propal/card.php?id='.$object->id . '">' . $newref . '</a>';
 						$dir_output = $conf->propal->multidir_output[$object->entity];
 						$object_type = 'propal';
+<<<<<<< HEAD
 						$mesg = $langs->transnoentitiesnoconv("EMailTextProposalValidated",$link);
+=======
+						$mesg = $langs->transnoentitiesnoconv("EMailTextProposalValidated", $link);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						break;
 					case 'PROPAL_CLOSE_SIGNED':
 						$link = '<a href="' . $urlwithroot . '/comm/propal/card.php?id='.$object->id . '">' . $newref . '</a>';
 						$dir_output = $conf->propal->multidir_output[$object->entity];
 						$object_type = 'propal';
+<<<<<<< HEAD
 						$mesg = $langs->transnoentitiesnoconv("EMailTextProposalClosedSigned",$link);
+=======
+						$mesg = $langs->transnoentitiesnoconv("EMailTextProposalClosedSigned", $link);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						break;
 					case 'FICHINTER_ADD_CONTACT':
 						$link = '<a href="' . $urlwithroot . '/fichinter/card.php?id='.$object->id . '">' . $newref . '</a>';
 						$dir_output = $conf->facture->dir_output;
 						$object_type = 'ficheinter';
+<<<<<<< HEAD
 						$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionAddedContact",$link);
+=======
+						$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionAddedContact", $link);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						break;
 					case 'FICHINTER_VALIDATE':
 						$link = '<a href="' . $urlwithroot . '/fichinter/card.php?id='.$object->id . '">' . $newref . '</a>';
 						$dir_output = $conf->facture->dir_output;
 						$object_type = 'ficheinter';
+<<<<<<< HEAD
 						$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionValidated",$link);
+=======
+						$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionValidated", $link);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						break;
 					case 'ORDER_SUPPLIER_VALIDATE':
 						$link = '<a href="' . $urlwithroot . '/fourn/commande/card.php?id='.$object->id . '">' . $newref . '</a>';
 						$dir_output = $conf->fournisseur->commande->dir_output;
 						$object_type = 'order_supplier';
 						$mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
+<<<<<<< HEAD
 						$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderValidatedBy",$link,$user->getFullName($langs));
+=======
+						$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderValidatedBy", $link, $user->getFullName($langs));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						$mesg.= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
 						break;
 					case 'ORDER_SUPPLIER_APPROVE':
@@ -611,7 +865,11 @@ class Notify
 						$dir_output = $conf->fournisseur->commande->dir_output;
 						$object_type = 'order_supplier';
 						$mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
+<<<<<<< HEAD
 						$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderApprovedBy",$link,$user->getFullName($langs));
+=======
+						$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderApprovedBy", $link, $user->getFullName($langs));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						$mesg.= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
 						break;
 					case 'ORDER_SUPPLIER_APPROVE2':
@@ -619,7 +877,11 @@ class Notify
 						$dir_output = $conf->fournisseur->commande->dir_output;
 						$object_type = 'order_supplier';
 						$mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
+<<<<<<< HEAD
 						$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderApprovedBy",$link,$user->getFullName($langs));
+=======
+						$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderApprovedBy", $link, $user->getFullName($langs));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						$mesg.= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
 						break;
 					case 'ORDER_SUPPLIER_REFUSE':
@@ -627,13 +889,41 @@ class Notify
 						$dir_output = $conf->fournisseur->dir_output.'/commande/';
 						$object_type = 'order_supplier';
 						$mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
+<<<<<<< HEAD
 						$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderRefusedBy",$link,$user->getFullName($langs));
+=======
+						$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderRefusedBy", $link, $user->getFullName($langs));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						$mesg.= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
 						break;
 					case 'SHIPPING_VALIDATE':
 						$dir_output = $conf->expedition->dir_output.'/sending/';
 						$object_type = 'order_supplier';
+<<<<<<< HEAD
 						$mesg = $langs->transnoentitiesnoconv("EMailTextExpeditionValidated",$newref);
+=======
+						$mesg = $langs->transnoentitiesnoconv("EMailTextExpeditionValidated", $newref);
+						break;
+					case 'EXPENSE_REPORT_VALIDATE':
+						$dir_output = $conf->expensereport->dir_output;
+						$object_type = 'expensereport';
+						$mesg = $langs->transnoentitiesnoconv("EMailTextExpenseReportValidated", $newref);
+						break;
+					case 'EXPENSE_REPORT_APPROVE':
+						$dir_output = $conf->expensereport->dir_output;
+						$object_type = 'expensereport';
+						$mesg = $langs->transnoentitiesnoconv("EMailTextExpenseReportApproved", $newref);
+						break;
+					case 'HOLIDAY_VALIDATE':
+						$dir_output = $conf->holiday->dir_output;
+						$object_type = 'holiday';
+						$mesg = $langs->transnoentitiesnoconv("EMailTextHolidayValidated", $newref);
+						break;
+					case 'HOLIDAY_APPROVE':
+						$dir_output = $conf->holiday->dir_output;
+						$object_type = 'holiday';
+						$mesg = $langs->transnoentitiesnoconv("EMailTextHolidayApproved", $newref);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						break;
 				}
 				$ref = dol_sanitizeFileName($newref);
@@ -648,8 +938,13 @@ class Notify
 					$filepdf = $pdf_path;
 				}
 
+<<<<<<< HEAD
 				$message = $langs->transnoentities("YouReceiveMailBecauseOfNotification",$application,$mysoc->name)."\n";
 				$message.= $langs->transnoentities("YouReceiveMailBecauseOfNotification2",$application,$mysoc->name)."\n";
+=======
+				$message = $langs->transnoentities("YouReceiveMailBecauseOfNotification", $application, $mysoc->name)."\n";
+				$message.= $langs->transnoentities("YouReceiveMailBecauseOfNotification2", $application, $mysoc->name)."\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$message.= "\n";
 				$message.= $mesg;
 				//if ($link) $message.= "\n" . $urlwithroot . $link;	// link already added around the ref into the text
@@ -676,13 +971,21 @@ class Notify
 				if ($sendto)
 				{
 					$parameters=array('notifcode'=>$notifcode, 'sendto'=>$sendto, 'replyto'=>$replyto, 'file'=>$filename_list, 'mimefile'=>$mimetype_list, 'filename'=>$mimefilename_list);
+<<<<<<< HEAD
 					$reshook=$hookmanager->executeHooks('formatNotificationMessage',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+=======
+					$reshook=$hookmanager->executeHooks('formatNotificationMessage', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					if (empty($reshook))
 					{
 						if (! empty($hookmanager->resArray['subject'])) $subject.=$hookmanager->resArray['subject'];
 						if (! empty($hookmanager->resArray['message'])) $message.=$hookmanager->resArray['message'];
 					}
+<<<<<<< HEAD
 					$mailfile = new CMailFile(
+=======
+                    $mailfile = new CMailFile(
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						$subject,
 						$sendto,
 						$replyto,
@@ -717,6 +1020,10 @@ class Notify
 		if (! $error) return $num;
 		else return -1 * $error;
 	}
+<<<<<<< HEAD
 
 }
 
+=======
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

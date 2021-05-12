@@ -45,7 +45,11 @@ function DoResponse()
     if (!isset($_GET)) {
         global $_GET;
     }
+<<<<<<< HEAD
 	if ( !isset( $_GET['Command'] ) || !isset( $_GET['Type'] ) || !isset( $_GET['CurrentFolder'] ) )
+=======
+	if ( !isset($_GET['Command']) || !isset($_GET['Type']) || !isset($_GET['CurrentFolder']) )
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		return;
 
 	// Get the main request informaiton.

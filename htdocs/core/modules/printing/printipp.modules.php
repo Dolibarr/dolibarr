@@ -1,6 +1,10 @@
 <?php
 /*
+<<<<<<< HEAD
  * Copyright (C) 2014-2015  Frederic France      <frederic.france@free.fr>
+=======
+ * Copyright (C) 2014-2018  Frederic France      <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +23,11 @@
 
 /**
  *      \file       htdocs/core/modules/printing/printipp.modules.php
+<<<<<<< HEAD
  *      \ingroup    mailing
+=======
+ *      \ingroup    printing
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *      \brief      File to provide printing with PrintIPP
  */
 
@@ -30,6 +38,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/printing/modules_printing.php';
  */
 class printing_printipp extends PrintingDriver
 {
+<<<<<<< HEAD
     var $name='printipp';
     var $desc='PrintIPPDesc';
     var $picto='printer';
@@ -43,6 +52,33 @@ class printing_printipp extends PrintingDriver
     var $error;
     var $errors = array();
     var $db;
+=======
+    public $name = 'printipp';
+    public $desc = 'PrintIPPDesc';
+    public $picto = 'printer';
+    public $active = 'PRINTING_PRINTIPP';
+    public $conf = array();
+    public $host;
+    public $port;
+    public $userid;    /* user login */
+    public $user;
+    public $password;
+
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
+
+    /**
+     * @var string[] Error codes (or messages)
+     */
+    public $errors = array();
+
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
     /**
@@ -50,7 +86,11 @@ class printing_printipp extends PrintingDriver
      *
      *  @param      DoliDB      $db      Database handler
      */
+<<<<<<< HEAD
     function __construct($db)
+=======
+    public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $conf;
 
@@ -75,7 +115,11 @@ class printing_printipp extends PrintingDriver
      *
      * @return  int                     0 if OK, >0 if KO
      */
+<<<<<<< HEAD
     function print_file($file, $module, $subdir='')
+=======
+    public function printFile($file, $module, $subdir = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $conf, $user;
         $error = 0;
@@ -83,18 +127,31 @@ class printing_printipp extends PrintingDriver
         include_once DOL_DOCUMENT_ROOT.'/includes/printipp/CupsPrintIPP.php';
 
         $ipp = new CupsPrintIPP();
+<<<<<<< HEAD
         $ipp->setLog(DOL_DATA_ROOT.'/dolibarr_printipp.log','file',3); // logging very verbose
         $ipp->setHost($this->host);
         $ipp->setPort($this->port);
         $ipp->setJobName($file,true);
         $ipp->setUserName($this->userid);
         if (! empty($this->user)) $ipp->setAuthentication($this->user,$this->password);
+=======
+        $ipp->setLog(DOL_DATA_ROOT.'/dolibarr_printipp.log', 'file', 3); // logging very verbose
+        $ipp->setHost($this->host);
+        $ipp->setPort($this->port);
+        $ipp->setJobName($file, true);
+        $ipp->setUserName($this->userid);
+        if (! empty($this->user)) $ipp->setAuthentication($this->user, $this->password);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         // select printer uri for module order, propal,...
         $sql = "SELECT rowid,printer_id,copy FROM ".MAIN_DB_PREFIX."printing WHERE module = '".$module."' AND driver = 'printipp' AND userid = ".$user->id;
         $result = $this->db->query($sql);
+<<<<<<< HEAD
         if ($result)
         {
+=======
+        if ($result) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $obj = $this->db->fetch_object($result);
             if ($obj)
             {
@@ -105,18 +162,32 @@ class printing_printipp extends PrintingDriver
             {
                 if (! empty($conf->global->PRINTIPP_URI_DEFAULT))
                 {
+<<<<<<< HEAD
 					dol_syslog("Will use default printer conf->global->PRINTIPP_URI_DEFAULT = ".$conf->global->PRINTIPP_URI_DEFAULT);
                     $ipp->setPrinterURI($conf->global->PRINTIPP_URI_DEFAULT);
                 }
                 else
 				{
+=======
+                    dol_syslog("Will use default printer conf->global->PRINTIPP_URI_DEFAULT = ".$conf->global->PRINTIPP_URI_DEFAULT);
+                    $ipp->setPrinterURI($conf->global->PRINTIPP_URI_DEFAULT);
+                }
+                else
+                {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                     $this->errors[] = 'NoDefaultPrinterDefined';
                     $error++;
                     return $error;
                 }
             }
+<<<<<<< HEAD
         }
         else dol_print_error($this->db);
+=======
+        } else {
+            dol_print_error($this->db);
+        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         // Set number of copy
         $ipp->setCopies($obj->copy);
@@ -140,9 +211,15 @@ class printing_printipp extends PrintingDriver
      *
      *  @return  int                     0 if OK, >0 if KO
      */
+<<<<<<< HEAD
     function listAvailablePrinters()
     {
         global $bc, $conf, $langs;
+=======
+    public function listAvailablePrinters()
+    {
+        global $conf, $langs;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $error = 0;
 
         $html = '<tr class="liste_titre">';
@@ -158,11 +235,17 @@ class printing_printipp extends PrintingDriver
         $html.= '<td>'.$langs->trans('IPP_Supported').'</td>';
         $html.= '<td align="center">'.$langs->trans("Select").'</td>';
         $html.= "</tr>\n";
+<<<<<<< HEAD
         $list = $this->getlist_available_printers();
         foreach ($list as $value)
         {
 
             $printer_det = $this->get_printer_detail($value);
+=======
+        $list = $this->getlistAvailablePrinters();
+        foreach ($list as $value) {
+            $printer_det = $this->getPrinterDetail($value);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $html.= '<tr class="oddeven">';
             $html.= '<td>'.$value.'</td>';
             //$html.= '<td><pre>'.print_r($printer_det,true).'</pre></td>';
@@ -177,6 +260,7 @@ class printing_printipp extends PrintingDriver
             $html.= '<td>'.$langs->trans('MEDIA_IPP_'.$printer_det->media_type_supported->_value1).'</td>';
             // Defaut
             $html.= '<td align="center">';
+<<<<<<< HEAD
             if ($conf->global->PRINTIPP_URI_DEFAULT == $value)
             {
                 $html.= img_picto($langs->trans("Default"),'on');
@@ -186,6 +270,14 @@ class printing_printipp extends PrintingDriver
             	$html.= '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&amp;mode=test&amp;varname=PRINTIPP_URI_DEFAULT&amp;driver=printipp&amp;value='.urlencode($value).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
           	}
 			$html.= '</td>';
+=======
+            if ($conf->global->PRINTIPP_URI_DEFAULT == $value) {
+                $html.= img_picto($langs->trans("Default"), 'on');
+            } else {
+                $html.= '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&amp;mode=test&amp;varname=PRINTIPP_URI_DEFAULT&amp;driver=printipp&amp;value='.urlencode($value).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+            }
+            $html.= '</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $html.= '</tr>'."\n";
         }
         $this->resprint = $html;
@@ -197,6 +289,7 @@ class printing_printipp extends PrintingDriver
      *
      *  @return array                list of printers
      */
+<<<<<<< HEAD
     function getlist_available_printers()
     {
         global $conf,$db;
@@ -207,6 +300,20 @@ class printing_printipp extends PrintingDriver
         $ipp->setPort($this->port);
         $ipp->setUserName($this->userid);
         if (! empty($this->user)) $ipp->setAuthentication($this->user,$this->password);
+=======
+    public function getlistAvailablePrinters()
+    {
+        global $conf, $db;
+        include_once DOL_DOCUMENT_ROOT.'/includes/printipp/CupsPrintIPP.php';
+        $ipp = new CupsPrintIPP();
+        $ipp->setLog(DOL_DATA_ROOT.'/dolibarr_printipp.log', 'file', 3); // logging very verbose
+        $ipp->setHost($this->host);
+        $ipp->setPort($this->port);
+        $ipp->setUserName($this->userid);
+        if (! empty($this->user)) {
+            $ipp->setAuthentication($this->user, $this->password);
+        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $ipp->getPrinters();
         return $ipp->available_printers;
     }
@@ -217,17 +324,31 @@ class printing_printipp extends PrintingDriver
      *  @param  string  $uri    URI
      *  @return array           List of attributes
      */
+<<<<<<< HEAD
     function get_printer_detail($uri)
+=======
+    private function getPrinterDetail($uri)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $conf,$db;
 
         include_once DOL_DOCUMENT_ROOT.'/includes/printipp/CupsPrintIPP.php';
         $ipp = new CupsPrintIPP();
+<<<<<<< HEAD
         $ipp->setLog(DOL_DATA_ROOT.'/dolibarr_printipp.log','file',3); // logging very verbose
         $ipp->setHost($this->host);
         $ipp->setPort($this->port);
         $ipp->setUserName($this->userid);
         if (! empty($this->user)) $ipp->setAuthentication($this->user,$this->password);
+=======
+        $ipp->setLog(DOL_DATA_ROOT.'/dolibarr_printipp.log', 'file', 3); // logging very verbose
+        $ipp->setHost($this->host);
+        $ipp->setPort($this->port);
+        $ipp->setUserName($this->userid);
+        if (! empty($this->user)) {
+            $ipp->setAuthentication($this->user, $this->password);
+        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $ipp->setPrinterURI($uri);
         $ipp->getPrinterAttributes();
         return $ipp->printer_attributes;
@@ -240,13 +361,20 @@ class printing_printipp extends PrintingDriver
      *
      *  @return  int                     0 if OK, >0 if KO
      */
+<<<<<<< HEAD
     function list_jobs($module)
     {
         global $conf, $db, $bc;
+=======
+    public function listJobs($module)
+    {
+        global $conf;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $error = 0;
         $html = '';
         include_once DOL_DOCUMENT_ROOT.'/includes/printipp/CupsPrintIPP.php';
         $ipp = new CupsPrintIPP();
+<<<<<<< HEAD
         $ipp->setLog(DOL_DATA_ROOT.'/dolibarr_printipp.log','file',3); // logging very verbose
         $ipp->setHost($this->host);
         $ipp->setPort($this->port);
@@ -264,13 +392,34 @@ class printing_printipp extends PrintingDriver
             }
             else
             {
+=======
+        $ipp->setLog(DOL_DATA_ROOT.'/dolibarr_printipp.log', 'file', 3); // logging very verbose
+        $ipp->setHost($this->host);
+        $ipp->setPort($this->port);
+        $ipp->setUserName($this->userid);
+        if (! empty($this->user)) {
+            $ipp->setAuthentication($this->user, $this->password);
+        }
+        // select printer uri for module order, propal,...
+        $sql = 'SELECT rowid,printer_uri,printer_name FROM '.MAIN_DB_PREFIX.'printer_ipp WHERE module="'.$module.'"';
+        $result = $this->db->query($sql);
+        if ($result) {
+            $obj = $this->db->fetch_object($result);
+            if ($obj) {
+                $ipp->setPrinterURI($obj->printer_uri);
+            } else {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 // All printers
                 $ipp->setPrinterURI("ipp://localhost:631/printers/");
             }
         }
         // Getting Jobs
         try {
+<<<<<<< HEAD
             $ipp->getJobs(false,0,'completed',false);
+=======
+            $ipp->getJobs(false, 0, 'completed', false);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         } catch (Exception $e) {
             $this->errors[] = $e->getMessage();
             $error++;
@@ -287,8 +436,12 @@ class printing_printipp extends PrintingDriver
         $jobs = $ipp->jobs_attributes;
 
         //$html .= '<pre>'.print_r($jobs,true).'</pre>';
+<<<<<<< HEAD
         foreach ($jobs as $value )
         {
+=======
+        foreach ($jobs as $value) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $html .= '<tr class="oddeven">';
             $html .= '<td>'.$value->job_id->_value0.'</td>';
             $html .= '<td>'.$value->job_originating_user_name->_value0.'</td>';
@@ -302,5 +455,8 @@ class printing_printipp extends PrintingDriver
         $this->resprint = $html;
         return $error;
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

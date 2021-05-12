@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2010		Laurent Destailleur	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,11 +35,38 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/project/modules_project.php';
  */
 class mod_project_simple extends ModeleNumRefProjects
 {
+<<<<<<< HEAD
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $prefix='PJ';
     var $error='';
 	var $nom = "Simple";
 	var $name = "Simple";
+=======
+	/**
+     * Dolibarr version of the loaded document
+     * @var string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	public $prefix='PJ';
+
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Simple';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Simple';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
     /**
@@ -43,10 +74,17 @@ class mod_project_simple extends ModeleNumRefProjects
      *
      *  @return     string      Text with description
      */
+<<<<<<< HEAD
     function info()
     {
     	global $langs;
       	return $langs->trans("SimpleNumRefModelDesc",$this->prefix);
+=======
+    public function info()
+    {
+    	global $langs;
+      	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
 
@@ -55,7 +93,11 @@ class mod_project_simple extends ModeleNumRefProjects
      *
      * 	@return     string      Example
      */
+<<<<<<< HEAD
     function getExample()
+=======
+    public function getExample()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         return $this->prefix."0501-0001";
     }
@@ -66,7 +108,11 @@ class mod_project_simple extends ModeleNumRefProjects
      *
      *   @return     boolean     false si conflit, true si ok
      */
+<<<<<<< HEAD
     function canBeActivated()
+=======
+    public function canBeActivated()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
     	global $conf,$langs,$db;
 
@@ -81,16 +127,26 @@ class mod_project_simple extends ModeleNumRefProjects
         if ($resql)
         {
             $row = $db->fetch_row($resql);
+<<<<<<< HEAD
             if ($row) { $coyymm = substr($row[0],0,6); $max=$row[0]; }
         }
         if (! $coyymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i',$coyymm))
+=======
+            if ($row) { $coyymm = substr($row[0], 0, 6); $max=$row[0]; }
+        }
+        if (! $coyymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         {
             return true;
         }
         else
         {
 			$langs->load("errors");
+<<<<<<< HEAD
 			$this->error=$langs->trans('ErrorNumRefModel',$max);
+=======
+			$this->error=$langs->trans('ErrorNumRefModel', $max);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             return false;
         }
     }
@@ -103,7 +159,11 @@ class mod_project_simple extends ModeleNumRefProjects
 	*  @param   Project	$project	Object project
 	*  @return	string				Value if OK, 0 if KO
 	*/
+<<<<<<< HEAD
     function getNextValue($objsoc,$project)
+=======
+    public function getNextValue($objsoc, $project)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
 		global $db,$conf;
 
@@ -130,26 +190,48 @@ class mod_project_simple extends ModeleNumRefProjects
 		$date=empty($project->date_c)?dol_now():$project->date_c;
 
 		//$yymm = strftime("%y%m",time());
+<<<<<<< HEAD
 		$yymm = strftime("%y%m",$date);
 
 		if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
 		else $num = sprintf("%04s",$max+1);
+=======
+		$yymm = strftime("%y%m", $date);
+
+		if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
+		else $num = sprintf("%04s", $max+1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		dol_syslog("mod_project_simple::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;
     }
 
 
+<<<<<<< HEAD
     /**
      * 	Return next reference not yet used as a reference
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
+     *  Return next reference not yet used as a reference
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      *
      *  @param	Societe	$objsoc     Object third party
      *  @param  Project	$project	Object project
      *  @return string      		Next not used reference
      */
+<<<<<<< HEAD
     function project_get_num($objsoc=0,$project='')
     {
         return $this->getNextValue($objsoc,$project);
     }
 }
 
+=======
+    public function project_get_num($objsoc = 0, $project = '')
+    {
+        // phpcs:enable
+        return $this->getNextValue($objsoc, $project);
+    }
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

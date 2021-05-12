@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2011      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
  *
@@ -26,7 +30,11 @@
  */
 
 
+<<<<<<< HEAD
 require('../../main.inc.php');
+=======
+require '../../main.inc.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -37,9 +45,15 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->loadLangs(array('banks', 'categories', 'withdrawals'));
 
 // Security check
+<<<<<<< HEAD
 $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'prelevement','','');
+=======
+$socid = GETPOST('socid', 'int');
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'prelevement', '', '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 /*
@@ -53,7 +67,11 @@ $result = restrictedArea($user, 'prelevement','','');
  * View
  */
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("CustomersStandingOrdersArea"));
+=======
+llxHeader('', $langs->trans("CustomersStandingOrdersArea"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if (prelevement_check_config() < 0)
 {
@@ -75,15 +93,24 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
 
 print '<tr class="oddeven"><td>'.$langs->trans("NbOfInvoiceToWithdraw").'</td>';
+<<<<<<< HEAD
 print '<td align="right">';
+=======
+print '<td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/demandes.php?status=0">';
 print $bprev->NbFactureAPrelever();
 print '</a>';
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>'.$langs->trans("AmountToWithdraw").'</td>';
+<<<<<<< HEAD
 print '<td align="right">';
 print price($bprev->SommeAPrelever(),'','',1,-1,-1,'auto');
+=======
+print '<td class="right">';
+print price($bprev->SommeAPrelever(), '', '', 1, -1, -1, 'auto');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</td></tr></table><br>';
 
 
@@ -91,7 +118,11 @@ print '</td></tr></table><br>';
 /*
  * Invoices waiting for withdraw
  */
+<<<<<<< HEAD
 $sql = "SELECT f.facnumber, f.rowid, f.total_ttc, f.fk_statut, f.paye, f.type,";
+=======
+$sql = "SELECT f.ref, f.rowid, f.total_ttc, f.fk_statut, f.paye, f.type,";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $sql.= " pfd.date_demande, pfd.amount,";
 $sql.= " s.nom as name, s.rowid as socid";
 $sql.= " FROM ".MAIN_DB_PREFIX."facture as f,";
@@ -99,7 +130,11 @@ $sql.= " ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " , ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 $sql.= " WHERE s.rowid = f.fk_soc";
+<<<<<<< HEAD
 $sql.= " AND f.entity = ".$conf->entity;
+=======
+$sql.= " AND f.entity IN (".getEntity('invoice').")";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $sql.= " AND pfd.traite = 0 AND pfd.fk_facture = f.rowid";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
@@ -120,7 +155,11 @@ if ($resql)
             $obj = $db->fetch_object($resql);
 
             $invoicestatic->id=$obj->rowid;
+<<<<<<< HEAD
             $invoicestatic->ref=$obj->facnumber;
+=======
+            $invoicestatic->ref=$obj->ref;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $invoicestatic->statut=$obj->fk_statut;
             $invoicestatic->paye=$obj->paye;
             $invoicestatic->type=$obj->type;
@@ -128,12 +167,17 @@ if ($resql)
 
 
             print '<tr class="oddeven"><td>';
+<<<<<<< HEAD
             print $invoicestatic->getNomUrl(1,'withdraw');
+=======
+            print $invoicestatic->getNomUrl(1, 'withdraw');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             print '</td>';
 
             print '<td>';
             $thirdpartystatic->id=$obj->socid;
             $thirdpartystatic->name=$obj->name;
+<<<<<<< HEAD
             print $thirdpartystatic->getNomUrl(1,'customer');
             print '</td>';
 
@@ -147,6 +191,21 @@ if ($resql)
 
             print '<td align="right">';
             print $invoicestatic->getLibStatut(3,$alreadypayed);
+=======
+            print $thirdpartystatic->getNomUrl(1, 'customer');
+            print '</td>';
+
+            print '<td class="right">';
+            print price($obj->amount);
+            print '</td>';
+
+            print '<td class="right">';
+            print dol_print_date($db->jdate($obj->date_demande), 'day');
+            print '</td>';
+
+            print '<td class="right">';
+            print $invoicestatic->getLibStatut(3, $alreadypayed);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             print '</td>';
             print '</tr>';
             $i++;
@@ -184,6 +243,7 @@ if ($result)
 
     print"\n<!-- debut table -->\n";
     print '<table class="noborder" width="100%">';
+<<<<<<< HEAD
     print '<tr class="liste_titre"><th>'.$langs->trans("LastWithdrawalReceipt",$limit).'</th>';
     print '<th>'.$langs->trans("Date").'</th>';
     print '<th align="right">'.$langs->trans("Amount").'</th>';
@@ -191,6 +251,15 @@ if ($result)
     print '</tr>';
 
     while ($i < min($num,$limit))
+=======
+    print '<tr class="liste_titre"><th>'.$langs->trans("LastWithdrawalReceipt", $limit).'</th>';
+    print '<th>'.$langs->trans("Date").'</th>';
+    print '<th class="right">'.$langs->trans("Amount").'</th>';
+    print '<th class="right">'.$langs->trans("Status").'</th>';
+    print '</tr>';
+
+    while ($i < min($num, $limit))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $obj = $db->fetch_object($result);
 
@@ -203,9 +272,15 @@ if ($result)
         $bprev->statut=$obj->statut;
         print $bprev->getNomUrl(1);
         print "</td>\n";
+<<<<<<< HEAD
         print '<td>'.dol_print_date($db->jdate($obj->datec),"dayhour")."</td>\n";
         print '<td align="right">'.price($obj->amount)."</td>\n";
         print '<td align="right">'.$bprev->getLibStatut(3)."</td>\n";
+=======
+        print '<td>'.dol_print_date($db->jdate($obj->datec), "dayhour")."</td>\n";
+        print '<td class="right">'.price($obj->amount)."</td>\n";
+        print '<td class="right">'.$bprev->getLibStatut(3)."</td>\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         print "</tr>\n";
         $i++;
@@ -221,6 +296,11 @@ else
 
 print '</div></div></div>';
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

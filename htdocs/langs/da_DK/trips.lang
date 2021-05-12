@@ -12,7 +12,11 @@ ShowTrip=Vis omkostningsrapport
 NewTrip=Ny udgiftsrapport
 LastExpenseReports=Seneste %s udgiftsrapporter
 AllExpenseReports=Alle udgiftsrapporter
+<<<<<<< HEAD
 CompanyVisited=Company/organization visited
+=======
+CompanyVisited=Besøgt firma / organisation
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 FeesKilometersOrAmout=Beløb eller kilometer
 DeleteTrip=Slet udgiftsrapport
 ConfirmDeleteTrip=Er du sikker på, at du vil slette denne udgiftsrapport?
@@ -21,6 +25,7 @@ ListToApprove=Venter på godkendelse
 ExpensesArea=Omkostningsrapporteringsområde
 ClassifyRefunded=Klassificer 'refunderet'
 ExpenseReportWaitingForApproval=En ny udgiftsrapport er indsendt til godkendelse
+<<<<<<< HEAD
 ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.<br> - User: %s<br> - Period: %s<br>Click here to validate: %s
 ExpenseReportWaitingForReApproval=En udgiftsrapport er indsendt til genoptagelse
 ExpenseReportWaitingForReApprovalMessage=An expense report has been submitted and is waiting for re-approval.<br>The %s, you refused to approve the expense report for this reason: %s.<br>A new version has been proposed and waiting for your approval.<br> - User: %s<br> - Period: %s<br>Click here to validate: %s
@@ -34,6 +39,21 @@ ExpenseReportPaid=En udgiftsrapport blev betalt
 ExpenseReportPaidMessage=The expense report %s was paid.<br> - User: %s<br> - Paid by: %s<br>Click here to show the expense report: %s
 TripId=Id udgiftsrapport
 AnyOtherInThisListCanValidate=Person til oplysning om validering.
+=======
+ExpenseReportWaitingForApprovalMessage=En ny udgiftsrapport er indsendt og venter på godkendelse. <br> - Bruger: %s <br> - Periode: %s <br> Klik her for at bekræfte: %s
+ExpenseReportWaitingForReApproval=En udgiftsrapport er indsendt til genoptagelse
+ExpenseReportWaitingForReApprovalMessage=En udgiftsrapport er indsendt og venter på genkendelse. <br> %s, du nægtede at godkende regningsrapporten af ​​denne grund: %s. <br> En ny version er blevet foreslået og venter på din godkendelse. <Br > - Bruger: %s <br> - Periode: %s <br> Klik her for at bekræfte: %s
+ExpenseReportApproved=En udgiftsrapport blev godkendt
+ExpenseReportApprovedMessage=Udgiftsrapporten %s blev godkendt. <br> - Bruger: %s <br> - Godkendt af: %s <br> Klik her for at vise udgiftsrapporten: %s
+ExpenseReportRefused=En udgiftsrapport blev afvist
+ExpenseReportRefusedMessage=Udgiftsrapporten %s blev afvist. <br> - Bruger: %s <br> - Afvist af: %s <br> - Motiver til afvisning: %s <br> Klik her for at vise udgiftsrapporten: %s
+ExpenseReportCanceled=En udgiftsrapport blev annulleret
+ExpenseReportCanceledMessage=Udgiftsrapporten %s blev annulleret. <br> - Bruger: %s <br> - Annulleret af: %s <br> - Motiv for annullering: %s <br> Klik her for at vise udgiftsrapporten: %s
+ExpenseReportPaid=En udgiftsrapport blev betalt
+ExpenseReportPaidMessage=Udgiftsrapporten %s blev betalt. <br> - Bruger: %s <br> - Betalt af: %s <br> Klik her for at vise udgiftsrapporten: %s
+TripId=Id udgiftsrapport
+AnyOtherInThisListCanValidate=Person til oplysning om bekræftelse.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TripSociete=Informationsselskab
 TripNDF=Informationsomkostningsrapport
 PDFStandardExpenseReports=Standard skabelon til at generere et PDF-dokument til udgiftsrapport
@@ -73,6 +93,7 @@ EX_PAR_VP=Parkering PV
 EX_CAM_VP=PV vedligeholdelse og reparation
 DefaultCategoryCar=Standard transport mode
 DefaultRangeNumber=Standard interval nummer
+<<<<<<< HEAD
 
 Error_EXPENSEREPORT_ADDON_NotDefined=Error, the rule for expense report numbering ref was not defined into setup of module 'Expense Report'
 ErrorDoubleDeclaration=Du har erklæret en anden regningsrapport i et lignende datointerval.
@@ -80,24 +101,43 @@ AucuneLigne=Der er ikke angivet nogen omkostningsrapport endnu
 
 ModePaiement=Betalingsmåde
 
+=======
+UploadANewFileNow=Upload a new document now
+Error_EXPENSEREPORT_ADDON_NotDefined=Fejl, reglen for udgiftsrapport nummerering ref blev ikke defineret i opsætning af modul 'Udgiftsrapport'
+ErrorDoubleDeclaration=Du har erklæret en anden regningsrapport i et lignende datointerval.
+AucuneLigne=Der er ikke angivet nogen omkostningsrapport endnu
+ModePaiement=Betalingsmåde
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 VALIDATOR=Bruger ansvarlig for godkendelse
 VALIDOR=Godkendt af
 AUTHOR=Optaget af
 AUTHORPAIEMENT=Betalt af
 REFUSEUR=Nægtet af
 CANCEL_USER=Slettet af
+<<<<<<< HEAD
 
 MOTIF_REFUS=Årsag
 MOTIF_CANCEL=Årsag
 
 DATE_REFUS=Nægte dato
 DATE_SAVE=Validering dato
+=======
+MOTIF_REFUS=Årsag
+MOTIF_CANCEL=Årsag
+DATE_REFUS=Nægte dato
+DATE_SAVE=Bekræftelsesdato
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DATE_CANCEL=Annulleringsdato
 DATE_PAIEMENT=Betalingsdato
 BROUILLONNER=Åbn
 ExpenseReportRef=Ref. udgiftsrapport
+<<<<<<< HEAD
 ValidateAndSubmit=Valider og indsend for godkendelse
 ValidatedWaitingApproval=Valideret (venter på godkendelse)
+=======
+ValidateAndSubmit=Bekræft og indsend for godkendelse
+ValidatedWaitingApproval=Bekræftet (venter på godkendelse)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NOT_AUTHOR=Du er ikke forfatteren af ​​denne udgiftsrapport. Drift aflyst.
 ConfirmRefuseTrip=Er du sikker på, at du vil nægte denne udgiftsrapport?
 ValideTrip=Godkendelse af udgiftsrapport
@@ -107,13 +147,21 @@ ConfirmPaidTrip=Er du sikker på, at du vil ændre status for denne udgiftsrappo
 ConfirmCancelTrip=Er du sikker på, at du vil annullere denne udgiftsrapport?
 BrouillonnerTrip=Flyt tilbage bekostning rapport til status "Udkast"
 ConfirmBrouillonnerTrip=Er du sikker på, at du vil flytte denne udgiftsrapport til status "Udkast"?
+<<<<<<< HEAD
 SaveTrip=Validere udgiftsrapport
 ConfirmSaveTrip=Er du sikker på, at du vil validere denne udgiftsrapport?
+=======
+SaveTrip=Bekræfte udgiftsrapport
+ConfirmSaveTrip=Er du sikker på, at du vil bekræfte denne udgiftsrapport?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoTripsToExportCSV=Ingen udgiftsrapport til eksport for denne periode.
 ExpenseReportPayment=Udgift rapport betaling
 ExpenseReportsToApprove=Udgiftsrapporter til at godkende
 ExpenseReportsToPay=Udgifter rapporterer at betale
+<<<<<<< HEAD
 CloneExpenseReport=Klonudgiftsrapport
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmCloneExpenseReport=Er du sikker på, at du vil klone denne omkostningsrapport?
 ExpenseReportsIk=Udgiftsrapport milles indeks
 ExpenseReportsRules=Regnskabsregnskabsregler
@@ -140,7 +188,10 @@ OnExpense=Udgiftslinje
 ExpenseReportRuleSave=Regnskabsregnskabsreglen er gemt
 ExpenseReportRuleErrorOnSave=Fejl: %s
 RangeNum=Område %d
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ExpenseReportConstraintViolationError=Begrænsnings overtrædelses id [%s]: %s er bedre end %s %s
 byEX_DAY=om dagen (begrænsning til %s)
 byEX_MON=efter måned (begrænsning til %s)
@@ -151,7 +202,14 @@ nolimitbyEX_DAY=om dagen (ingen begrænsning)
 nolimitbyEX_MON=efter måned (ingen begrænsning)
 nolimitbyEX_YEA=efter år (ingen begrænsning)
 nolimitbyEX_EXP=efter linie (ingen begrænsning)
+<<<<<<< HEAD
 
 CarCategory=Kategori af bil
 ExpenseRangeOffset=Forskudsbeløb: %s
 RangeIk=Mileage rækkevidde
+=======
+CarCategory=Kategori af bil
+ExpenseRangeOffset=Forskudsbeløb: %s
+RangeIk=Mileage rækkevidde
+AttachTheNewLineToTheDocument=Attach the new line to an existing document
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

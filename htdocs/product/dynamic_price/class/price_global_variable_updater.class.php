@@ -29,6 +29,7 @@
  */
 class PriceGlobalVariableUpdater
 {
+<<<<<<< HEAD
     var $db;							//!< To store db handler
     var $error;							//!< To return error code (or message)
     var $errors=array();				//!< To return several error codes (or messages)
@@ -42,17 +43,71 @@ class PriceGlobalVariableUpdater
     var $update_interval;				//!< Interval in mins
     var $next_update;					//!< Next update timestamp
     var $last_status;
+=======
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
+
+    /**
+     * @var string[] Error codes (or messages)
+     */
+    public $errors = array();
+
+    public $types=array(0, 1);				//!< Updater types
+    public $update_min = 5;				//!< Minimal update rate
+
+    /**
+     * @var int ID
+     */
+    public $id;
+
+    public $type;
+
+    /**
+     * @var string description
+     */
+    public $description;
+
+    public $parameters;
+
+    /**
+     * @var int ID
+     */
+    public $fk_variable;
+
+    public $update_interval;				//!< Interval in mins
+    public $next_update;					//!< Next update timestamp
+    public $last_status;
+
+    /**
+     * @var string Name of table without prefix where object is stored
+     */
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     public $table_element = "c_price_global_variable_updater";
 
     /**
      *  Constructor
      *
+<<<<<<< HEAD
      *  @param	DoliDb		$db      Database handler
      */
     function __construct($db)
     {
         $this->db = $db;
         return 1;
+=======
+     *  @param  DoliDb      $db      Database handler
+     */
+    public function __construct($db)
+    {
+        $this->db = $db;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
 
@@ -63,7 +118,11 @@ class PriceGlobalVariableUpdater
      *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
      *  @return int      		   	 <0 if KO, Id of created object if OK
      */
+<<<<<<< HEAD
     function create($user, $notrigger=0)
+=======
+    public function create($user, $notrigger = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $error=0;
 
@@ -129,7 +188,11 @@ class PriceGlobalVariableUpdater
      *  @param		int		$id    	Id object
      *  @return		int			    < 0 if KO, 0 if OK but not found, > 0 if OK
      */
+<<<<<<< HEAD
     function fetch($id)
+=======
+    public function fetch($id)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $sql = "SELECT type, description, parameters, fk_variable, update_interval, next_update, last_status";
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
@@ -172,7 +235,11 @@ class PriceGlobalVariableUpdater
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
+<<<<<<< HEAD
     function update($user=0, $notrigger=0)
+=======
+    public function update($user = 0, $notrigger = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $error=0;
 
@@ -195,6 +262,7 @@ class PriceGlobalVariableUpdater
         $resql = $this->db->query($sql);
         if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
+<<<<<<< HEAD
         if (! $error)
         {
             if (! $notrigger)
@@ -208,6 +276,21 @@ class PriceGlobalVariableUpdater
                 //// End call triggers
              }
         }
+=======
+        // if (! $error)
+        // {
+        //     if (! $notrigger)
+        //     {
+        //         // Uncomment this and change MYOBJECT to your own tag if you
+        //         // want this action calls a trigger.
+
+        //         //// Call triggers
+        //         //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+        //         //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+        //         //// End call triggers
+        //     }
+        // }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         // Commit or rollback
         if ($error)
@@ -235,16 +318,27 @@ class PriceGlobalVariableUpdater
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return	int					 <0 if KO, >0 if OK
      */
+<<<<<<< HEAD
     function delete($rowid, $user, $notrigger=0)
+=======
+    public function delete($rowid, $user, $notrigger = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $error=0;
 
         $this->db->begin();
 
+<<<<<<< HEAD
         if (! $error)
         {
             if (! $notrigger)
             {
+=======
+        //if (! $error)
+        //{
+        //    if (! $notrigger)
+        //    {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 // Uncomment this and change MYOBJECT to your own tag if you
                 // want this action calls a trigger.
 
@@ -252,8 +346,13 @@ class PriceGlobalVariableUpdater
                 //$result=$this->call_trigger('MYOBJECT_DELETE',$user);
                 //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
                 //// End call triggers
+<<<<<<< HEAD
             }
         }
+=======
+        //    }
+        //}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         if (! $error)
         {
@@ -289,7 +388,11 @@ class PriceGlobalVariableUpdater
      *
      *	@return	void
      */
+<<<<<<< HEAD
     function initAsSpecimen()
+=======
+    public function initAsSpecimen()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $this->id=0;
         $this->type=0;
@@ -302,11 +405,19 @@ class PriceGlobalVariableUpdater
     }
 
     /**
+<<<<<<< HEAD
      *	Returns the last updated time in string html format, returns "never" if its less than 1
      *
      *	@return	string
      */
     function getLastUpdated()
+=======
+     *  Returns the last updated time in string html format, returns "never" if its less than 1
+     *
+     *  @return	string
+     */
+    public function getLastUpdated()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $langs;
         $last = $this->next_update - ($this->update_interval * 60);
@@ -322,7 +433,11 @@ class PriceGlobalVariableUpdater
      *
      *	@return	void
      */
+<<<<<<< HEAD
     function checkParameters()
+=======
+    public function checkParameters()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         // Clean parameters
         if (isset($this->description)) $this->description=trim($this->description);
@@ -341,7 +456,11 @@ class PriceGlobalVariableUpdater
      *
      *  @return	array				Array of price global variable updaters
      */
+<<<<<<< HEAD
     function listUpdaters()
+=======
+    public function listUpdaters()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $sql = "SELECT rowid, type, description, parameters, fk_variable, update_interval, next_update, last_status";
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
@@ -382,7 +501,11 @@ class PriceGlobalVariableUpdater
      *
      *  @return	array				Array of price global variable updaters
      */
+<<<<<<< HEAD
     function listPendingUpdaters()
+=======
+    public function listPendingUpdaters()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $sql = "SELECT rowid, type, description, parameters, fk_variable, update_interval, next_update, last_status";
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
@@ -420,11 +543,19 @@ class PriceGlobalVariableUpdater
     }
 
     /**
+<<<<<<< HEAD
      *	Handles the processing of this updater
      *
      *  @return	int					 <0 if KO, 0 if OK but no global variable found, >0 if OK
      */
     function process()
+=======
+     *  Handles the processing of this updater
+     *
+     *  @return	int					 <0 if KO, 0 if OK but no global variable found, >0 if OK
+     */
+    public function process()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $langs, $user;
         $langs->load("errors");
@@ -504,7 +635,11 @@ class PriceGlobalVariableUpdater
                 $soap_client = new nusoap_client($url);
                 $soap_client->soap_defencoding='UTF-8';
                 $soap_client->decodeUTF8(false);
+<<<<<<< HEAD
                 $result = $soap_client->call($method, $data, $ns,'');
+=======
+                $result = $soap_client->call($method, $data, $ns, '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
                 //Check if result is a error
                 if ($result === false) {
@@ -530,6 +665,10 @@ class PriceGlobalVariableUpdater
         return 1;
     }
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     /**
      *  Update next_update into database
      *
@@ -538,8 +677,14 @@ class PriceGlobalVariableUpdater
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
+<<<<<<< HEAD
     function update_next_update($next_update, $user=0, $notrigger=0)
     {
+=======
+    public function update_next_update($next_update, $user = 0, $notrigger = 0)
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $error=0;
 
         $this->next_update = $next_update;
@@ -574,6 +719,10 @@ class PriceGlobalVariableUpdater
         }
     }
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     /**
      *  Update last_status into database
      *
@@ -582,8 +731,14 @@ class PriceGlobalVariableUpdater
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
+<<<<<<< HEAD
     function update_status($last_status, $user=0, $notrigger=0)
     {
+=======
+    public function update_status($last_status, $user = 0, $notrigger = 0)
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $error=0;
 
         $this->last_status = $last_status;

@@ -21,6 +21,7 @@
  *	\brief			A set of functions for Dolibarr
  *					This file contains all frequently used functions.
  */
+<<<<<<< HEAD
  
  
 /**
@@ -91,6 +92,78 @@ function dol_convertToWord($num, $langs, $currency=false, $centimes=false)
     	$langs->transnoentitiesnoconv('quadrillion')
     );
 	
+=======
+
+
+/**
+ * Function to return number in text.
+ *
+ *
+ * @param	float       $num			Number to convert
+ * @param	Translate   $langs			Language
+ * @param	boolean     $currency		0=number to translate | 1=currency to translate
+ * @param	boolean     $centimes		0=no centimes | 1=centimes to translate
+ * @return 	string|false			    Text of the number
+ */
+function dol_convertToWord($num, $langs, $currency = false, $centimes = false)
+{
+	global $conf;
+
+    $num = str_replace(array(',', ' '), '', trim($num));
+    if (! $num) {
+        return false;
+    }
+	if ($centimes && strlen($num) == 1) {
+		$num = $num*10;
+	}
+	$TNum = explode('.', $num);
+    $num = (int) $TNum[0];
+    $words = array();
+    $list1 = array(
+    	'',
+    	$langs->transnoentitiesnoconv('one'),
+    	$langs->transnoentitiesnoconv('two'),
+    	$langs->transnoentitiesnoconv('three'),
+    	$langs->transnoentitiesnoconv('four'),
+    	$langs->transnoentitiesnoconv('five'),
+    	$langs->transnoentitiesnoconv('six'),
+    	$langs->transnoentitiesnoconv('seven'),
+    	$langs->transnoentitiesnoconv('eight'),
+    	$langs->transnoentitiesnoconv('nine'),
+    	$langs->transnoentitiesnoconv('ten'),
+    	$langs->transnoentitiesnoconv('eleven'),
+        $langs->transnoentitiesnoconv('twelve'),
+        $langs->transnoentitiesnoconv('thirteen'),
+        $langs->transnoentitiesnoconv('fourteen'),
+        $langs->transnoentitiesnoconv('fifteen'),
+        $langs->transnoentitiesnoconv('sixteen'),
+        $langs->transnoentitiesnoconv('seventeen'),
+        $langs->transnoentitiesnoconv('eighteen'),
+        $langs->transnoentitiesnoconv('nineteen')
+    );
+    $list2 = array(
+    	'',
+	    $langs->transnoentitiesnoconv('ten'),
+	    $langs->transnoentitiesnoconv('twenty'),
+	    $langs->transnoentitiesnoconv('thirty'),
+	    $langs->transnoentitiesnoconv('forty'),
+	    $langs->transnoentitiesnoconv('fifty'),
+	    $langs->transnoentitiesnoconv('sixty'),
+	    $langs->transnoentitiesnoconv('seventy'),
+	    $langs->transnoentitiesnoconv('eighty'),
+	    $langs->transnoentitiesnoconv('ninety'),
+	    $langs->transnoentitiesnoconv('hundred')
+	);
+    $list3 = array(
+    	'',
+    	$langs->transnoentitiesnoconv('thousand'),
+    	$langs->transnoentitiesnoconv('million'),
+    	$langs->transnoentitiesnoconv('billion'),
+    	$langs->transnoentitiesnoconv('trillion'),
+    	$langs->transnoentitiesnoconv('quadrillion')
+    );
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $num_length = strlen($num);
     $levels = (int) (($num_length + 2) / 3);
     $max_length = $levels * 3;
@@ -120,11 +193,19 @@ function dol_convertToWord($num, $langs, $currency=false, $centimes=false)
 	$concatWords = implode(' ', $words);
 	// Delete multi whitespaces
 	$concatWords = trim(preg_replace('/[ ]+/', ' ', $concatWords));
+<<<<<<< HEAD
 	
 	if(!empty($currency)) {
 		$concatWords .= ' '.$currency;
 	}
 	
+=======
+
+	if(!empty($currency)) {
+		$concatWords .= ' '.$currency;
+	}
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	// If we need to write cents call again this function for cents
 	if(!empty($TNum[1])) {
 		if(!empty($currency)) $concatWords .= ' '.$langs->transnoentities('and');
@@ -133,6 +214,7 @@ function dol_convertToWord($num, $langs, $currency=false, $centimes=false)
 	}
     return $concatWords;
 }
+<<<<<<< HEAD
  
  
 /**
@@ -145,13 +227,31 @@ function dol_convertToWord($num, $langs, $currency=false, $centimes=false)
  * @return 	string  				Text of the number or -1 in case TOO LONG (more than 1000000000000.99)
  */
 function dolNumberToWord($numero, $langs, $numorcurrency='number')
+=======
+
+
+/**
+ * Function to return number or amount in text.
+ *
+ * @deprecated
+ * @param	float 	    $numero			Number to convert
+ * @param	Translate	$langs			Language
+ * @param	string	    $numorcurrency	'number' or 'amount'
+ * @return 	string  	       			Text of the number or -1 in case TOO LONG (more than 1000000000000.99)
+ */
+function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	// If the number is negative convert to positive and return -1 if is too long
 	if ($numero < 0) $numero *= -1;
 	if ($numero >= 1000000000001)
 		return -1;
 	// Get 2 decimals to cents, another functions round or truncate
+<<<<<<< HEAD
 	$strnumber = number_format ($numero,10);
+=======
+	$strnumber = number_format($numero, 10);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$len=strlen($strnumber);
 	for ($i=0; $i<$len; $i++)
 	{
@@ -164,7 +264,11 @@ function dolNumberToWord($numero, $langs, $numorcurrency='number')
 	/*In dolibarr 3.6.2 (my current version) doesn't have $langs->default and
 	in case exist why ask $lang like a parameter?*/
 	if (((is_object($langs) && $langs->default == 'es_MX') || (! is_object($langs) && $langs == 'es_MX')) && $numorcurrency == 'currency')
+<<<<<<< HEAD
 	{	
+=======
+	{
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if ($numero>=1 && $numero<2) {
 			return ("UN PESO ".$parte_decimal." / 100 M.N.");
 		}
@@ -187,7 +291,11 @@ function dolNumberToWord($numero, $langs, $numorcurrency='number')
 				$numero = $numero - $DdMMillon * 10000000000;
 				$UdMMillon = (int) ($numero / 1000000000);
 				$numero = $numero - $UdMMillon * 1000000000;
+<<<<<<< HEAD
 				$entexto .= hundreds2text ($CdMMillon, $DdMMillon, $UdMMillon);
+=======
+				$entexto .= hundreds2text($CdMMillon, $DdMMillon, $UdMMillon);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$entexto .= " MIL ";
 			}
 			if ($number >= 1000000){
@@ -197,7 +305,11 @@ function dolNumberToWord($numero, $langs, $numorcurrency='number')
 				$numero = $numero - $DdMILLON * 10000000;
 				$udMILLON = (int) ($numero / 1000000);
 				$numero = $numero - $udMILLON * 1000000;
+<<<<<<< HEAD
 				$entexto .= hundreds2text ($CdMILLON, $DdMILLON, $udMILLON);
+=======
+				$entexto .= hundreds2text($CdMILLON, $DdMILLON, $udMILLON);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if (!$CdMMillon && !$DdMMillon && !$UdMMillon && !$CdMILLON && !$DdMILLON && $udMILLON==1)
 					$entexto .= " MILL&OacuteN ";
 				else
@@ -210,7 +322,11 @@ function dolNumberToWord($numero, $langs, $numorcurrency='number')
 				$numero = $numero - $ddm * 10000;
 				$udm = (int) ($numero / 1000);
 				$numero = $numero - $udm * 1000;
+<<<<<<< HEAD
 				$entexto .= hundreds2text ($cdm, $ddm, $udm);
+=======
+				$entexto .= hundreds2text($cdm, $ddm, $udm);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if ($cdm || $ddm || $udm)
 					$entexto .= " MIL ";
 			}
@@ -218,7 +334,11 @@ function dolNumberToWord($numero, $langs, $numorcurrency='number')
 			$numero = $numero - $c * 100;
 			$d = (int) ($numero / 10);
 			$u = (int) $numero - $d * 10;
+<<<<<<< HEAD
 			$entexto .= hundreds2text ($c, $d, $u);
+=======
+			$entexto .= hundreds2text($c, $d, $u);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if (!$cdm && !$ddm && !$udm && !$c && !$d && !$u && $number>1000000)
 				$entexto .= " DE";
 			$entexto .= " PESOS ".$parte_decimal." / 100 M.N.";
@@ -229,10 +349,18 @@ function dolNumberToWord($numero, $langs, $numorcurrency='number')
 
 /**
  * hundreds2text
+<<<<<<< HEAD
  * 
  * @param integer $hundreds     Hundreds
  * @param integer $tens         Tens
  * @param integer $units        Units
+=======
+ *
+ * @param integer $hundreds     Hundreds
+ * @param integer $tens         Tens
+ * @param integer $units        Units
+ * @return string
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  */
 function hundreds2text($hundreds, $tens, $units)
 {

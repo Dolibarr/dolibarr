@@ -25,6 +25,7 @@
 // Load Dolibarr environment
 $res=0;
 // Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
+<<<<<<< HEAD
 if (! $res && ! empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) $res=@include($_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php");
 // Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
 $tmp=empty($_SERVER['SCRIPT_FILENAME'])?'':$_SERVER['SCRIPT_FILENAME'];$tmp2=realpath(__FILE__); $i=strlen($tmp)-1; $j=strlen($tmp2)-1;
@@ -35,6 +36,18 @@ if (! $res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i+1)))."/main.inc.
 if (! $res && file_exists("../main.inc.php")) $res=@include("../main.inc.php");
 if (! $res && file_exists("../../main.inc.php")) $res=@include("../../main.inc.php");
 if (! $res && file_exists("../../../main.inc.php")) $res=@include("../../../main.inc.php");
+=======
+if (! $res && ! empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) $res=@include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
+// Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
+$tmp=empty($_SERVER['SCRIPT_FILENAME'])?'':$_SERVER['SCRIPT_FILENAME'];$tmp2=realpath(__FILE__); $i=strlen($tmp)-1; $j=strlen($tmp2)-1;
+while($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i]==$tmp2[$j]) { $i--; $j--; }
+if (! $res && $i > 0 && file_exists(substr($tmp, 0, ($i+1))."/main.inc.php")) $res=@include substr($tmp, 0, ($i+1))."/main.inc.php";
+if (! $res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i+1)))."/main.inc.php")) $res=@include dirname(substr($tmp, 0, ($i+1)))."/main.inc.php";
+// Try main.inc.php using relative path
+if (! $res && file_exists("../main.inc.php")) $res=@include "../main.inc.php";
+if (! $res && file_exists("../../main.inc.php")) $res=@include "../../main.inc.php";
+if (! $res && file_exists("../../../main.inc.php")) $res=@include "../../../main.inc.php";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (! $res) die("Include of main fails");
 
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -54,14 +67,24 @@ $action		= GETPOST('action', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
+<<<<<<< HEAD
 if (GETPOST('actioncode','array'))
 {
     $actioncode=GETPOST('actioncode','array',3);
+=======
+if (GETPOST('actioncode', 'array'))
+{
+    $actioncode=GETPOST('actioncode', 'array', 3);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     if (! count($actioncode)) $actioncode='0';
 }
 else
 {
+<<<<<<< HEAD
     $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
+=======
+    $actioncode=GETPOST("actioncode", "alpha", 3)?GETPOST("actioncode", "alpha", 3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 $search_agenda_label=GETPOST('search_agenda_label');
 
@@ -70,10 +93,17 @@ $search_agenda_label=GETPOST('search_agenda_label');
 //if ($user->societe_id > 0) $socid = $user->societe_id;
 //$result = restrictedArea($user, 'mymodule', $id);
 
+<<<<<<< HEAD
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
+=======
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -100,20 +130,32 @@ if ($id > 0 || ! empty($ref)) $upload_dir = $conf->mymodule->multidir_output[$ob
  */
 
 $parameters=array('id'=>$socid);
+<<<<<<< HEAD
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+=======
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
 {
     // Cancel
+<<<<<<< HEAD
     if (GETPOST('cancel','alpha') && ! empty($backtopage))
+=======
+    if (GETPOST('cancel', 'alpha') && ! empty($backtopage))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         header("Location: ".$backtopage);
         exit;
     }
 
     // Purge search criteria
+<<<<<<< HEAD
     if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+=======
+    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $actioncode='';
         $search_agenda_label='';
@@ -141,11 +183,19 @@ if ($object->id > 0)
 	$head = myobjectPrepareHead($object);
 
 
+<<<<<<< HEAD
 	dol_fiche_head($head, 'agenda', $langs->trans("MyObject"), -1, 'myobject@mymodule');
 
 	// Object card
 	// ------------------------------------------------------------
 	$linkback = '<a href="' .dol_buildpath('/mymodule/myobject_list.php',1) . '?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+=======
+	dol_fiche_head($head, 'agenda', $langs->trans("MyObject"), -1, $object->picto);
+
+	// Object card
+	// ------------------------------------------------------------
+	$linkback = '<a href="' .dol_buildpath('/mymodule/myobject_list.php', 1) . '?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	$morehtmlref='<div class="refidno">';
 	/*
@@ -196,7 +246,11 @@ if ($object->id > 0)
     print '<div class="underbanner clearboth"></div>';
 
     $object->info($object->id);
+<<<<<<< HEAD
 	print dol_print_object_info($object, 1);
+=======
+	dol_print_object_info($object, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	print '</div>';
 
@@ -209,7 +263,11 @@ if ($object->id > 0)
     $objthirdparty=$object;
     $objcon=new stdClass();
 
+<<<<<<< HEAD
     $out='';
+=======
+    $out='&origin='.$object->element.'&originid='.$object->id;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $permok=$user->rights->agenda->myactions->create;
     if ((! empty($objthirdparty->id) || ! empty($objcon->id)) && $permok)
     {
@@ -232,7 +290,11 @@ if ($object->id > 0)
     	}
     	else
     	{
+<<<<<<< HEAD
         	print '<a class="butActionRefused" href="#">'.$langs->trans("AddAction").'</a>';
+=======
+        	print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("AddAction").'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	}
     }
 
@@ -240,18 +302,28 @@ if ($object->id > 0)
 
     if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
     {
+<<<<<<< HEAD
         $param='&socid='.$socid;
         if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
         if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 
 
 		print load_fiche_titre($langs->trans("ActionsOnMyObject"),'','');
+=======
+        $param='&id='.$object->id.'&socid='.$socid;
+        if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+        if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+
+
+		//print load_fiche_titre($langs->trans("ActionsOnMyObject"), '', '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         // List of all actions
 		$filters=array();
         $filters['search_agenda_label']=$search_agenda_label;
 
         // TODO Replace this with same code than into list.php
+<<<<<<< HEAD
         //show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters, $sortfield, $sortorder);
     }
 }
@@ -259,4 +331,12 @@ if ($object->id > 0)
 
 llxFooter();
 
+=======
+        //show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
+    }
+}
+
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

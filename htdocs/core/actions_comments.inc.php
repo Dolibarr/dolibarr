@@ -40,8 +40,13 @@ if ($action == 'addcomment')
 	{
 		$comment->description = $description;
 		$comment->datec = time();
+<<<<<<< HEAD
 		$comment->fk_element = GETPOST('id','int');
 		$comment->element_type = GETPOST('comment_element_type','alpha');
+=======
+		$comment->fk_element = GETPOST('id', 'int');
+		$comment->element_type = GETPOST('comment_element_type', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$comment->fk_user_author = $user->id;
 		$comment->entity = $conf->entity;
 		if ($comment->create($user) > 0)
@@ -52,7 +57,11 @@ if ($action == 'addcomment')
 		}
 		else
 		{
+<<<<<<< HEAD
 			setEventMessages($comment->error, $comment->errors,'errors');
+=======
+			setEventMessages($comment->error, $comment->errors, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$action='';
 		}
 	}
@@ -69,8 +78,16 @@ if ($action == 'deletecomment')
 		}
 		else
 		{
+<<<<<<< HEAD
 			setEventMessages($comment->error, $comment->errors,'errors');
 			$action='';
 		}
 	}
 }
+=======
+			setEventMessages($comment->error, $comment->errors, 'errors');
+			$action='';
+		}
+	}
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

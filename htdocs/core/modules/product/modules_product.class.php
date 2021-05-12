@@ -2,7 +2,11 @@
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +37,7 @@
  */
 abstract class ModelePDFProduct extends CommonDocGenerator
 {
+<<<<<<< HEAD
 	var $error='';
 
 
@@ -54,18 +59,57 @@ abstract class ModelePDFProduct extends CommonDocGenerator
 		$liste=getListOfModels($db,$type,$maxfilenamelength);
 		return $liste;
 	}
+=======
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
+
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
+     *  Return list of active generation modules
+     *
+     *  @param	DoliDB	$db     			Database handler
+     *  @param  integer	$maxfilenamelength  Max length of value to show
+     *  @return	array						List of templates
+     */
+    public static function liste_modeles($db, $maxfilenamelength = 0)
+    {
+        // phpcs:enable
+        global $conf;
+
+        $type='product';
+        $liste=array();
+
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+        $liste=getListOfModels($db, $type, $maxfilenamelength);
+        return $liste;
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 abstract class ModeleProductCode
 {
+<<<<<<< HEAD
     var $error='';
+=======
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     /**     Renvoi la description par defaut du modele de numerotation
      *
      *		@param	Translate	$langs		Object langs
      *      @return string      			Texte descripif
      */
+<<<<<<< HEAD
     function info($langs)
+=======
+    public function info($langs)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $langs->load("bills");
         return $langs->trans("NoDescription");
@@ -76,7 +120,11 @@ abstract class ModeleProductCode
      *		@param	Translate	$langs		Object langs
      *      @return string      			Nom du module
      */
+<<<<<<< HEAD
     function getNom($langs)
+=======
+    public function getNom($langs)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         return empty($this->name)?$this->nom:$this->name;
     }
@@ -87,7 +135,11 @@ abstract class ModeleProductCode
      *		@param	Translate	$langs		Object langs
      *      @return string      			Example
      */
+<<<<<<< HEAD
     function getExample($langs)
+=======
+    public function getExample($langs)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $langs->load("bills");
         return $langs->trans("NoExample");
@@ -98,7 +150,11 @@ abstract class ModeleProductCode
      *
      *      @return     boolean     false si conflit, true si ok
      */
+<<<<<<< HEAD
     function canBeActivated()
+=======
+    public function canBeActivated()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         return true;
     }
@@ -110,7 +166,11 @@ abstract class ModeleProductCode
      *	@param	int			$type		Type
      *  @return string      			Value
      */
+<<<<<<< HEAD
     function getNextValue($objproduct=0,$type=-1)
+=======
+    public function getNextValue($objproduct = 0, $type = -1)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $langs;
         return $langs->trans("Function_getNextValue_InModuleNotWorking");
@@ -121,7 +181,11 @@ abstract class ModeleProductCode
      *
      *      @return     string      Version
      */
+<<<<<<< HEAD
     function getVersion()
+=======
+    public function getVersion()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $langs;
         $langs->load("admin");
@@ -133,6 +197,10 @@ abstract class ModeleProductCode
         return $langs->trans("NotAvailable");
     }
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     /**
      *  Renvoi la liste des modeles de numérotation
      *
@@ -140,8 +208,14 @@ abstract class ModeleProductCode
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of numbers
      */
+<<<<<<< HEAD
     static function liste_modeles($db,$maxfilenamelength=0)
     {
+=======
+    public static function liste_modeles($db, $maxfilenamelength = 0)
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $liste=array();
         $sql ="";
 
@@ -165,6 +239,7 @@ abstract class ModeleProductCode
     }
 
     /**
+<<<<<<< HEAD
      *      Return description of module parameters
      *
      *      @param	Translate	$langs      Output language
@@ -173,14 +248,31 @@ abstract class ModeleProductCode
      *		@return	string					HTML translated description
      */
     function getToolTip($langs,$product,$type)
+=======
+     *  Return description of module parameters
+     *
+     *  @param	Translate	$langs      Output language
+     *  @param	Product		$product	Product object
+     *  @param	int			$type		-1=Nothing, 0=Customer, 1=Supplier
+     *  @return	string					HTML translated description
+     */
+    public function getToolTip($langs, $product, $type)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $conf;
 
         $langs->load("admin");
 
         $s='';
+<<<<<<< HEAD
         if ($type == -1) $s.=$langs->trans("Name").': <b>'.$this->getNom($langs).'</b><br>';
         if ($type == -1) $s.=$langs->trans("Version").': <b>'.$this->getVersion().'</b><br>';
+=======
+        if ($type == -1) {
+            $s.=$langs->trans("Name").': <b>'.$this->getNom($langs).'</b><br>';
+            $s.=$langs->trans("Version").': <b>'.$this->getVersion().'</b><br>';
+        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         if ($type == 0)  $s.=$langs->trans("ProductCodeDesc").'<br>';
         if ($type == 1)  $s.=$langs->trans("ServiceCodeDesc").'<br>';
         if ($type != -1) $s.=$langs->trans("ValidityControledByModule").': <b>'.$this->getNom($langs).'</b><br>';
@@ -190,6 +282,7 @@ abstract class ModeleProductCode
         {
             $s.=$langs->trans("RequiredIfProduct").': ';
             if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='<strike>';
+<<<<<<< HEAD
             $s.=yn(!$this->code_null,1,2);
             if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1,1,2).' ('.$langs->trans("ForcedToByAModule",$langs->transnoentities("yes")).')';
             $s.='<br>';
@@ -219,18 +312,54 @@ abstract class ModeleProductCode
         if ($type == 0 || $type == -1)
         {
             $nextval=$this->getNextValue($product,0);
+=======
+            $s.=yn(!$this->code_null, 1, 2);
+            if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
+            $s.='<br>';
+        }
+        elseif ($type == 1)
+        {
+            $s.=$langs->trans("RequiredIfService").': ';
+            if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='<strike>';
+            $s.=yn(!$this->code_null, 1, 2);
+            if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
+            $s.='<br>';
+        }
+        elseif ($type == -1)
+        {
+            $s.=$langs->trans("Required").': ';
+            if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='<strike>';
+            $s.=yn(!$this->code_null, 1, 2);
+            if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
+            $s.='<br>';
+        }
+        $s.=$langs->trans("CanBeModifiedIfOk").': ';
+        $s.=yn($this->code_modifiable, 1, 2);
+        $s.='<br>';
+        $s.=$langs->trans("CanBeModifiedIfKo").': '.yn($this->code_modifiable_invalide, 1, 2).'<br>';
+        $s.=$langs->trans("AutomaticCode").': '.yn($this->code_auto, 1, 2).'<br>';
+        $s.='<br>';
+        if ($type == 0 || $type == -1)
+        {
+            $nextval=$this->getNextValue($product, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             if (empty($nextval)) $nextval=$langs->trans("Undefined");
             $s.=$langs->trans("NextValue").($type == -1?' ('.$langs->trans("Product").')':'').': <b>'.$nextval.'</b><br>';
         }
         if ($type == 1 || $type == -1)
         {
+<<<<<<< HEAD
             $nextval=$this->getNextValue($product,1);
+=======
+            $nextval=$this->getNextValue($product, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             if (empty($nextval)) $nextval=$langs->trans("Undefined");
             $s.=$langs->trans("NextValue").($type == -1?' ('.$langs->trans("Service").')':'').': <b>'.$nextval.'</b>';
         }
         return $s;
     }
 
+<<<<<<< HEAD
 	/**
 	 *   Check if mask/numbering use prefix
 	 *
@@ -243,3 +372,17 @@ abstract class ModeleProductCode
 
 }
 
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
+     *   Check if mask/numbering use prefix
+     *
+     *   @return	int		0=no, 1=yes
+     */
+    public function verif_prefixIsUsed()
+    {
+        // phpcs:enable
+        return 0;
+    }
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

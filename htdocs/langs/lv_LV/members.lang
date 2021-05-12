@@ -6,10 +6,17 @@ Member=Biedrs
 Members=Biedri
 ShowMember=Rādīt dalībnieka kartiņu
 UserNotLinkedToMember=Lietotājs nav saistīts ar dalībnieku
+<<<<<<< HEAD
 ThirdpartyNotLinkedToMember=Trešās puses nav piesaistīta dalībniekam
 MembersTickets=Dalībnieku pieteikumi
 FundationMembers=Fonda biedri
 ListOfValidatedPublicMembers=Saraksts ar apstiprināto valsts locekļu
+=======
+ThirdpartyNotLinkedToMember=Trešā persona, kas nav saistīta ar dalībnieku
+MembersTickets=Dalībnieku pieteikumi
+FundationMembers=Fonda biedri
+ListOfValidatedPublicMembers=Saraksts ar apstiprinātiem dalībniekiem
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorThisMemberIsNotPublic=Šis dalībnieks nav publisks
 ErrorMemberIsAlreadyLinkedToThisThirdParty=Vēl viens dalībnieks (nosaukums: <b>%s,</b> pieteikšanās: <b>%s)</b> jau ir saistīts ar trešo personu <b>%s.</b> Noņemt šo saiti vispirms tāpēc, ka trešā persona nevar saistīt tikai loceklim (un otrādi).
 ErrorUserPermissionAllowsToLinksToItselfOnly=Drošības apsvērumu dēļ, jums ir jāpiešķir atļaujas, lai rediģētu visi lietotāji varētu saistīt locekli, lai lietotājam, kas nav jūsu.
@@ -21,7 +28,11 @@ MembersListToValid=Saraksts projektu dalībnieki (tiks apstiprināts)
 MembersListValid=Derīgo dalībnieku saraksts
 MembersListUpToDate=Saraksts derīgiem locekļiem ar līdz šim abonementu
 MembersListNotUpToDate=Saraksts derīgiem locekļiem ar abonementu novecojis
+<<<<<<< HEAD
 MembersListResiliated=List of terminated members
+=======
+MembersListResiliated=Dzēsto dalībnieku saraksts
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MembersListQualified=Saraksts kvalificētiem locekļiem
 MenuMembersToValidate=Projektu dalībnieki
 MenuMembersValidated=Apstiprināti biedri
@@ -50,12 +61,21 @@ MemberStatusPaidShort=Aktuāls
 MemberStatusResiliated=Apturēts dalībnieks
 MemberStatusResiliatedShort=Izbeigta
 MembersStatusToValid=Projektu dalībnieki
+<<<<<<< HEAD
 MembersStatusResiliated=Terminated members
 NewCotisation=Jauns ieguldījums
 PaymentSubscription=Jauns ieguldījums maksājums
 SubscriptionEndDate=Abonēšanas beigu datums
 MembersTypeSetup=Dalībnieki tipa iestatīšana
 MemberTypeModified=Dalībnieka tips ir modificēts
+=======
+MembersStatusResiliated=Izbeigti dalībnieki
+NewCotisation=Jauns ieguldījums
+PaymentSubscription=Jauns ieguldījums maksājums
+SubscriptionEndDate=Abonēšanas beigu datums
+MembersTypeSetup=Dalībnieku veida iestatīšana
+MemberTypeModified=Dalībnieka veids ir labots
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DeleteAMemberType=Dzēst biedra veidu
 ConfirmDeleteMemberType=Vai tiešām vēlaties dzēst šo dalībnieka veidu?
 MemberTypeDeleted=Dalībnieka veids dzēsts
@@ -66,6 +86,7 @@ Subscription=Abonēšana
 Subscriptions=Abonementi
 SubscriptionLate=Vēlu
 SubscriptionNotReceived=Abonēšana nekad nav saņēmusi
+<<<<<<< HEAD
 ListOfSubscriptions=Saraksts abonementu
 SendCardByMail=Nosūtīt kartiņu pa e-pastu
 AddMember=Izveidot biedru
@@ -73,12 +94,22 @@ NoTypeDefinedGoToSetup=Neviens dalībnieka veids nav definēts. Iet uz izvēlnes
 NewMemberType=Jauns dalībnieka veids
 WelcomeEMail=Sveiciena e-pasts
 SubscriptionRequired=Abonēšanas nepieciešams
+=======
+ListOfSubscriptions=Abonementu saraksts
+SendCardByMail=Sūtīt karti pa e-pastu
+AddMember=Izveidot biedru
+NoTypeDefinedGoToSetup=Neviens dalībnieka veids nav definēts. Iet uz izvēlnes "Dalībnieku veidi"
+NewMemberType=Jauns dalībnieka veids
+WelcomeEMail=Laipni lūdzam pasts
+SubscriptionRequired=Abonēšana nepieciešama
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DeleteType=Dzēst
 VoteAllowed=Balsot atļauts
 Physical=Fizisks
 Moral=Morāls
 MorPhy=Morālā/Fiziskā
 Reenable=Reenable
+<<<<<<< HEAD
 ResiliateMember=Terminate a member
 ConfirmResiliateMember=Are you sure you want to terminate this member?
 DeleteMember=Dzēst dalībnieku
@@ -89,6 +120,18 @@ Filehtpasswd=Htpasswd fails
 ValidateMember=Apstiprināt dalībnieku
 ConfirmValidateMember=Are you sure you want to validate this member?
 FollowingLinksArePublic=Šādas saites ir atvērtas lapas, kas nav aizsargāti ar kādu Dolibarr atļauju. Tie nav formated lapas, sniedz kā piemērs, lai parādītu, kā uzskaitīt biedrus datu bāzi.
+=======
+ResiliateMember=Izslēgt dalībnieku
+ConfirmResiliateMember=Vai tiešām vēlaties pārtraukt šo dalībnieku?
+DeleteMember=Dzēst dalībnieku
+ConfirmDeleteMember=Are you sure you want to delete this member (Deleting a member will delete all his subscriptions)?
+DeleteSubscription=Dzēst abonementu
+ConfirmDeleteSubscription=Vai tiešām vēlaties dzēst šo abonementu?
+Filehtpasswd=Htpasswd fails
+ValidateMember=Apstiprināt dalībnieku
+ConfirmValidateMember=Are you sure you want to validate this member?
+FollowingLinksArePublic=Šīs saites ir atvērtas lapas, kuras nav aizsargātas ar Dolibarr atļaujām. Tās nav formatētas lapas, kas tiek piedāvātas kā piemērs, lai parādītu, kā sarakstu dalībnieku datu bāzi.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PublicMemberList=Sabiedrības Biedru saraksts
 BlankSubscriptionForm=Publiska pašapkalpošanās veidlapa
 BlankSubscriptionFormDesc=Dolibarr var nodrošināt jums publisku URL / tīmekļa vietni, lai ļautu ārējiem apmeklētājiem lūgt parakstīties uz fondu. Ja ir iespējots tiešsaistes maksājumu modulis, maksājuma veidlapa var tikt automātiski nodrošināta.
@@ -108,10 +151,17 @@ AddSubscription=Izveidot abonementu
 ShowSubscription=Rādīt abonementu
 # Label of email templates
 SendingAnEMailToMember=Sūtīt informācijas e-pastu dalībniekam
+<<<<<<< HEAD
 SendingEmailOnAutoSubscription=E-pasta sūtīšana uz automātisko reģistrāciju
 SendingEmailOnMemberValidation=E-pasta sūtīšana uz jauno dalībnieku apstiprināšanu
 SendingEmailOnNewSubscription=E-pasta sūtīšana uz jaunu abonementu
 SendingReminderForExpiredSubscription=Atgādinājuma nosūtīšana uz abonementu beigu datumu
+=======
+SendingEmailOnAutoSubscription=E-pasta sūtīšana automātiskajai reģistrācijai
+SendingEmailOnMemberValidation=E-pasta sūtīšana jauno dalībnieku apstiprināšana
+SendingEmailOnNewSubscription=E-pasta sūtīšana uz jaunu abonementu
+SendingReminderForExpiredSubscription=Atgādinājuma nosūtīšana par abonementu beigu datumu
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SendingEmailOnCancelation=E-pasta sūtīšana par atcelšanu
 # Topic of email templates
 YourMembershipRequestWasReceived=Jūsu dalība tika saņemta.
@@ -124,6 +174,7 @@ CardContent=Saturu jūsu dalības kartes
 ThisIsContentOfYourMembershipRequestWasReceived=Mēs vēlamies jūs informēt, ka jūsu dalības pieprasījums ir saņemts. <br> <br>
 ThisIsContentOfYourMembershipWasValidated=Mēs vēlamies jūs informēt, ka jūsu dalība tika apstiprināta ar šādu informāciju: <br> <br>
 ThisIsContentOfYourSubscriptionWasRecorded=Mēs vēlamies jūs informēt, ka jūsu jaunais abonements tika reģistrēts. <br> <br>
+<<<<<<< HEAD
 ThisIsContentOfSubscriptionReminderEmail=Mēs vēlamies jūs paziņot, ka jūsu abonēšanas termiņš beigsies. Mēs ceram, ka jūs varat to atjaunot. <br> <br>
 ThisIsContentOfYourCard=Tas ir atgādinājums par informāciju, kuru mēs saņemam par jums. Jūtieties brīvi sazināties ar mums, ja kaut kas izskatās nepareizi. <br> <br>
 DescADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT=Priekšmets e-pastu saņēma, ja auto-uzrakstu viesis
@@ -134,6 +185,18 @@ DescADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION=Veidne Nosūtīt izmantot, lai nosūtī
 DescADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION=Veidne E-pasts, lai izmantotu, lai nosūtītu e-pastu, ir jāatgādina, kad beidzas abonementa derīguma termiņš
 DescADHERENT_EMAIL_TEMPLATE_CANCELATION=Veidne E-pasts, lai izmantotu, lai nosūtītu e-pastu dalībniekam par atteikšanos no dalībniekiem
 DescADHERENT_MAIL_FROM=Sūtītāja e-pasts automātisko e-pastiem
+=======
+ThisIsContentOfSubscriptionReminderEmail=Vēlamies informēt, ka jūsu abonements beidzas vai ir beidzies (__MEMBER_LAST_SUBSCRIPTION_DATE_END__). Mēs ceram, ka jūs to atjaunosit. <br> <br>
+ThisIsContentOfYourCard=Tas ir informācijas kopsavilkums, kas mums ir par jums. Lūdzu, sazinieties ar mums, ja kaut kas nav pareizs. <br> <br>
+DescADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT=Paziņojuma e-pasta objekts, kas saņemts viesa automātiskās uzrakstīšanas gadījumā
+DescADHERENT_AUTOREGISTER_NOTIF_MAIL=Paziņojuma e-pasta saturs, kas saņemts viesa automātiskās uzrakstīšanas gadījumā
+DescADHERENT_EMAIL_TEMPLATE_AUTOREGISTER=E-pasta veidne, kas jāizmanto, lai nosūtītu e-pastu dalībnieka autosubsrakstā
+DescADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION=E-pasta veidne, kas jāizmanto, lai nosūtītu e-pastu dalībniekam, kas ir apstiprināts
+DescADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION=E-pasta veidne, ko izmanto, lai nosūtītu e-pastu dalībniekam jaunā abonēšanas ierakstā
+DescADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION=E-pasta veidne, ko izmanto, lai nosūtītu e-pasta atgādinājumu, kad abonements drīz beigsies
+DescADHERENT_EMAIL_TEMPLATE_CANCELATION=E-pasta veidne, kas jāizmanto, lai nosūtītu e-pastu dalībniekam dalībnieka atcelšanas laikā
+DescADHERENT_MAIL_FROM=Sūtītāja e-pasts automātiskajiem e-pastiem
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DescADHERENT_ETIQUETTE_TYPE=Formāts etiķešu lapā
 DescADHERENT_ETIQUETTE_TEXT=Teksts drukāts uz dalībvalstu adrese lapām
 DescADHERENT_CARD_TYPE=Formāts kartes lapas
@@ -142,8 +205,13 @@ DescADHERENT_CARD_TEXT=Teksts drukāts uz biedru kartes (izlīdzinājums pa krei
 DescADHERENT_CARD_TEXT_RIGHT=Teksts drukāts uz biedru kartes (izlīdzinājums pa labi)
 DescADHERENT_CARD_FOOTER_TEXT=Teksts uzdrukāts uz biedru kartes apakšā
 ShowTypeCard=Rādīt veidu "%s"
+<<<<<<< HEAD
 HTPasswordExport=htpassword faila paaudze
 NoThirdPartyAssociatedToMember=Neviena trešā puse saistīta ar šo locekli
+=======
+HTPasswordExport=htpassword faila izveide
+NoThirdPartyAssociatedToMember=Neviena trešā puse nav saistīta ar šo dalībnieku
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MembersAndSubscriptions= Dalībnieki un Abonementi
 MoreActions=Papildu darbības ar ierakstu
 MoreActionsOnSubscription=Papildina rīcību, kas ierosināta pēc noklusējuma, ierakstot abonementu
@@ -156,8 +224,13 @@ DocForAllMembersCards=Izveidot vizītkartes visiem dalībniekiem
 DocForOneMemberCards=Izveidot vizītkartes kādā konkrētā dalībnieka
 DocForLabels=Izveidot adrešu lapas
 SubscriptionPayment=Abonēšanas maksa
+<<<<<<< HEAD
 LastSubscriptionDate=Jaunākais piereģistrēšanās datums
 LastSubscriptionAmount=Latest subscription amount
+=======
+LastSubscriptionDate=Pēdējā abonēšanas maksājuma datums
+LastSubscriptionAmount=Jaunākās abonēšanas summa
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MembersStatisticsByCountries=Dalībnieku statistika pa valstīm
 MembersStatisticsByState=Dalībnieku statistika pēc štatiem/provincēm
 MembersStatisticsByTown=Dalībnieku statistika pa pilsētām
@@ -167,32 +240,58 @@ NoValidatedMemberYet=Nav apstiprinātas locekļi atrasti
 MembersByCountryDesc=Šis ekrāns parādīs statistiku par biedriem pa valstīm. Grafiskais tomēr ir atkarīga Google tiešsaistes grafiku pakalpojums un ir pieejama tikai tad, ja interneta pieslēgums darbojas.
 MembersByStateDesc=Šis ekrāns parādīs statistiku par dalībniekiem, valsts / provinces / Canton.
 MembersByTownDesc=Šis ekrāns parādīs statistiku par biedriem ar pilsētu.
+<<<<<<< HEAD
 MembersStatisticsDesc=Izvēlieties statistiku vēlaties izlasīt ...
 MenuMembersStats=Statistika
 LastMemberDate=Pēdējā biedra datums
 LatestSubscriptionDate=Jaunākais piereģistrēšanās datums
 Nature=Daba
+=======
+MembersStatisticsDesc=Izvēlieties statistiku kuru vēlaties izlasīt ...
+MenuMembersStats=Statistika
+LastMemberDate=Pēdējā biedra datums
+LatestSubscriptionDate=Jaunākais piereģistrēšanās datums
+MemberNature=Nature of member
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Public=Informācija ir publiska
 NewMemberbyWeb=Jauns dalībnieks pievienots. Gaida apstiprinājumu
 NewMemberForm=Jauna dalībnieka forma
 SubscriptionsStatistics=Statistika par abonementu
 NbOfSubscriptions=Abonementu skaits
+<<<<<<< HEAD
 AmountOfSubscriptions=Apjoms abonementu
 TurnoverOrBudget=Apgrozījums (uzņēmumam) vai budžets (par pamatu)
 DefaultAmount=Default summa parakstīšanās
+=======
+AmountOfSubscriptions=Abonementu daudzums
+TurnoverOrBudget=Apgrozījums (uzņēmumam) vai budžets (par pamatu)
+DefaultAmount=Noklusējuma abonēšanas summa
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CanEditAmount=Apmeklētājs var izvēlēties / rediģēt summu no tās parakstītā
 MEMBER_NEWFORM_PAYONLINE=Pārlēkt uz integrētu tiešsaistes maksājumu lapā
 ByProperties=Pēc būtības
 MembersStatisticsByProperties=Dalībnieku statistika pēc būtības
 MembersByNature=This screen show you statistics on members by nature.
 MembersByRegion=This screen show you statistics on members by region.
+<<<<<<< HEAD
 VATToUseForSubscriptions=PVN likme izmantot abonementu
 NoVatOnSubscription=Nav TVA par abonēšanu
 MEMBER_PAYONLINE_SENDEMAIL=Email to use for email warning when Dolibarr receive a confirmation of a validated payment for a subscription (Example: paymentdone@example.com)
+=======
+VATToUseForSubscriptions=PVN likme kuru izmantot abonementiem
+NoVatOnSubscription=Nav PVN abonementiem
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS=Product used for subscription line into invoice: %s
 NameOrCompany=Vārds vai uzņēmums
 SubscriptionRecorded=Abonements ir ierakstīts
 NoEmailSentToMember=Biedram nav nosūtīts neviens e-pasts
 EmailSentToMember=E-pasts tiek nosūtīts dalībniekam %s
 SendReminderForExpiredSubscriptionTitle=Nosūtiet atgādinājumu pa e-pastu, kad esat beidzis abonementu
+<<<<<<< HEAD
 SendReminderForExpiredSubscription=Nosūtiet atgādinājumu pa e-pastu dalībniekiem, kad abonements beigsies (parametrs ir dienu skaits pirms abonēšanas beigām, lai nosūtītu atgādinājumu).
+=======
+SendReminderForExpiredSubscription=Sūtīt atgādinājumu pa e-pastu dalībniekiem, kad abonements beigsies (parametrs ir dienu skaits pirms abonementa beigām, lai nosūtītu atgādinājumu. Tas var būt dienu saraksts, kas atdalīti ar semikolu, piemēram, '10; 5; 0; -5 ")
+MembershipPaid=Dalība, kas samaksāta par kārtējo periodu (līdz %s)
+YouMayFindYourInvoiceInThisEmail=Jūsu rēķinu varat atrast šī e-pasta pielikumā
+XMembersClosed=%s dalībnieks (-i) slēgts
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

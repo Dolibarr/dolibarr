@@ -1,10 +1,18 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+=======
+ * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +34,11 @@
  *		\brief      Page de saisie d'un virement
  */
 
+<<<<<<< HEAD
 require('../../main.inc.php');
+=======
+require '../../main.inc.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
@@ -36,7 +48,11 @@ $langs->loadLangs(array("banks", "categories", "multicurrency"));
 if (! $user->rights->banque->transfer)
   accessforbidden();
 
+<<<<<<< HEAD
 $action = GETPOST('action','alpha');
+=======
+$action = GETPOST('action', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $error = 0;
 
 
@@ -48,10 +64,17 @@ if ($action == 'add')
 {
 	$langs->load("errors");
 
+<<<<<<< HEAD
 	$dateo = dol_mktime(12,0,0,GETPOST('remonth','int'),GETPOST('reday','int'),GETPOST('reyear','int'));
 	$label = GETPOST('label','alpha');
 	$amount= GETPOST('amount','alpha');
 	$amountto= GETPOST('amountto','alpha');
+=======
+	$dateo = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+	$label = GETPOST('label', 'alpha');
+	$amount= GETPOST('amount', 'alpha');
+	$amountto= GETPOST('amountto', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	if (! $label)
 	{
@@ -63,12 +86,20 @@ if ($action == 'add')
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount")), null, 'errors');
 	}
+<<<<<<< HEAD
 	if (! GETPOST('account_from','int'))
+=======
+	if (! GETPOST('account_from', 'int'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("TransferFrom")), null, 'errors');
 	}
+<<<<<<< HEAD
 	if (! GETPOST('account_to','int'))
+=======
+	if (! GETPOST('account_to', 'int'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("TransferTo")), null, 'errors');
@@ -78,10 +109,17 @@ if ($action == 'add')
 		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 		$accountfrom=new Account($db);
+<<<<<<< HEAD
 		$accountfrom->fetch(GETPOST('account_from','int'));
 
 		$accountto=new Account($db);
 		$accountto->fetch(GETPOST('account_to','int'));
+=======
+		$accountfrom->fetch(GETPOST('account_from', 'int'));
+
+		$accountto=new Account($db);
+		$accountto->fetch(GETPOST('account_to', 'int'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		if ($accountto->currency_code == $accountfrom->currency_code)
 		{
@@ -221,10 +259,17 @@ $amount='';
 
 if ($error)
 {
+<<<<<<< HEAD
 	$account_from =	GETPOST('account_from','int');
 	$account_to	= GETPOST('account_to','int');
 	$label = GETPOST('label','alpha');
 	$amount = GETPOST('amount','alpha');
+=======
+	$account_from =	GETPOST('account_from', 'int');
+	$account_to	= GETPOST('account_to', 'int');
+	$label = GETPOST('label', 'alpha');
+	$amount = GETPOST('amount', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 print load_fiche_titre($langs->trans("MenuBankInternalTransfer"), '', 'title_bank.png');
@@ -253,7 +298,11 @@ $form->select_comptes($account_to, 'account_to', 0, '', 1, '', empty($conf->mult
 print "</td>\n";
 
 print "<td>";
+<<<<<<< HEAD
 $form->select_date((! empty($dateo)?$dateo:''),'','','','','add');
+=======
+print $form->selectDate((! empty($dateo)?$dateo:''), '', '', '', '', 'add');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print "</td>\n";
 print '<td><input name="label" class="flat quatrevingtpercent" type="text" value="'.dol_escape_htmltag($label).'"></td>';
 print '<td><input name="amount" class="flat" type="text" size="6" value="'.dol_escape_htmltag($amount).'"></td>';
@@ -265,5 +314,9 @@ print '<br><div class="center"><input type="submit" class="button" value="'.$lan
 
 print "</form>";
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

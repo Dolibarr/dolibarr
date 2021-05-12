@@ -1,6 +1,12 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2016	Marcos García	      <marcosgdf@gmail.com>
  * Copyright (C) 2017	Laurent Destailleur   <eldy@users.sourceforge.net>
+=======
+/* Copyright (C) 2016      Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2017      Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2018-2019 Frédéric France     <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttributeValue.class.php'
 require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination2ValuePair.class.php';
 
+<<<<<<< HEAD
 $langs->load("products");
 $langs->load("other");
 
@@ -42,11 +49,33 @@ $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
 $toselect = GETPOST('toselect', 'array');
 $cancel = GETPOST('cancel','alpha');
+=======
+$langs->loadLangs(array("products", "other"));
+
+$id = GETPOST('id', 'int');
+$valueid = GETPOST('valueid', 'int');
+$ref = GETPOST('ref', 'alpha');
+$weight_impact = GETPOST('weight_impact', 'alpha');
+$price_impact = GETPOST('price_impact', 'alpha');
+$price_impact_percent = (bool) GETPOST('price_impact_percent');
+$form = new Form($db);
+
+$action=GETPOST('action', 'alpha');
+$massaction=GETPOST('massaction', 'alpha');
+$show_files=GETPOST('show_files', 'int');
+$confirm=GETPOST('confirm', 'alpha');
+$toselect = GETPOST('toselect', 'array');
+$cancel = GETPOST('cancel', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Security check
 $fieldvalue = (! empty($id) ? $id : $ref);
 $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
+<<<<<<< HEAD
 $result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype);
+=======
+$result=restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $prodstatic = new Product($db);
 $prodattr = new ProductAttribute($db);
@@ -80,7 +109,11 @@ if ($action == 'add')
 	unset($selectedvariant);
 	unset($_SESSION['addvariant_'.$object->id]);
 }
+<<<<<<< HEAD
 if ($action == 'create' && GETPOST('selectvariant','alpha'))	// We click on select combination
+=======
+if ($action == 'create' && GETPOST('selectvariant', 'alpha'))	// We click on select combination
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
     $action = 'add';
     if (GETPOST('attribute') != '-1' && GETPOST('value') != '-1')
@@ -104,7 +137,11 @@ if ($_POST) {
         $features = $_SESSION['addvariant_'.$object->id];
 
 		if (!$features) {
+<<<<<<< HEAD
 			setEventMessage($langs->trans('ErrorFieldsRequired'), 'errors');
+=======
+			setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		else
 		{
@@ -147,7 +184,11 @@ if ($_POST) {
 				$result = $prodcomb->createProductCombination($object, $sanit_features, array(), $price_impact_percent, $price_impact, $weight_impact);
 				if ($result > 0)
 				{
+<<<<<<< HEAD
 					setEventMessage($langs->trans('RecordSaved'));
+=======
+					setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					unset($_SESSION['addvariant_'.$object->id]);
 
 					$db->commit();
@@ -211,12 +252,19 @@ if ($_POST) {
 			} else {
 				setEventMessages($langs->trans('CoreErrorMessage'), null, 'errors');
 			}
+<<<<<<< HEAD
 
 		} else {
 			$db->commit();
 			setEventMessage($langs->trans('RecordSaved'));
 		}
 
+=======
+		} else {
+			$db->commit();
+			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+		}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 	elseif ($valueid > 0) {
 
@@ -230,7 +278,11 @@ if ($_POST) {
 		$prodcomb->variation_weight = $weight_impact;
 
 		if ($prodcomb->update($user) > 0) {
+<<<<<<< HEAD
 			setEventMessage($langs->trans('RecordSaved'));
+=======
+			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			header('Location: '.dol_buildpath('/variants/combinations.php?id='.$id, 2));
 			exit();
 		} else {
@@ -250,13 +302,21 @@ if ($action === 'confirm_deletecombination') {
 
 		if ($prodcomb->delete($user) > 0 && $prodstatic->fetch($prodcomb->fk_product_child) > 0 && $prodstatic->delete($user) > 0) {
 			$db->commit();
+<<<<<<< HEAD
 			setEventMessage($langs->trans('RecordSaved'));
+=======
+			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			header('Location: '.dol_buildpath('/variants/combinations.php?id='.$object->id, 2));
 			exit();
 		}
 
 		$db->rollback();
+<<<<<<< HEAD
 		setEventMessage($langs->trans('ProductCombinationAlreadyUsed'), 'errors');
+=======
+		setEventMessages($langs->trans('ProductCombinationAlreadyUsed'), null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$action = '';
 	}
 } elseif ($action === 'edit') {
@@ -284,6 +344,7 @@ if ($action === 'confirm_deletecombination') {
 				header('Location: '.dol_buildpath('/variants/combinations.php?id='.$prodstatic->id, 2));
 				exit();
 			} else {
+<<<<<<< HEAD
 				setEventMessage($langs->trans('ErrorCopyProductCombinations'), 'errors');
 			}
 		}
@@ -292,6 +353,14 @@ if ($action === 'confirm_deletecombination') {
 		setEventMessage($langs->trans('ErrorDestinationProductNotFound'), 'errors');
 	}
 
+=======
+				setEventMessages($langs->trans('ErrorCopyProductCombinations'), null, 'errors');
+			}
+		}
+	} else {
+		setEventMessages($langs->trans('ErrorDestinationProductNotFound'), null, 'errors');
+	}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 
@@ -312,13 +381,81 @@ if (! empty($id) || ! empty($ref))
     $head=product_prepare_head($object);
     $titre=$langs->trans("CardProduct".$object->type);
     $picto=($object->type== Product::TYPE_SERVICE?'service':'product');
+<<<<<<< HEAD
     dol_fiche_head($head, 'combinations', $titre, 0, $picto);
+=======
+
+    dol_fiche_head($head, 'combinations', $titre, -1, $picto);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
     $object->next_prev_filter=" fk_product_type = ".$object->type;
 
     dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref', '', '', '', 0, '', '', 1);
 
+<<<<<<< HEAD
+=======
+	print '<div class="fichecenter">';
+
+	print '<div class="underbanner clearboth"></div>';
+	print '<table class="border tableforfield" width="100%">';
+
+    // TVA
+    print '<tr><td class="titlefield">' . $langs->trans("DefaultTaxRate") . '</td><td>';
+
+    $positiverates='';
+    if (price2num($object->tva_tx))       $positiverates.=($positiverates?'/':'').price2num($object->tva_tx);
+    if (price2num($object->localtax1_type)) $positiverates.=($positiverates?'/':'').price2num($object->localtax1_tx);
+    if (price2num($object->localtax2_type)) $positiverates.=($positiverates?'/':'').price2num($object->localtax2_tx);
+    if (empty($positiverates)) $positiverates='0';
+    echo vatrate($positiverates.($object->default_vat_code?' ('.$object->default_vat_code.')':''), '%', $object->tva_npr);
+    /*
+    if ($object->default_vat_code)
+    {
+        print vatrate($object->tva_tx, true) . ' ('.$object->default_vat_code.')';
+    }
+    else print vatrate($object->tva_tx, true, $object->tva_npr, true);*/
+    print '</td></tr>';
+
+    // Price
+    print '<tr><td>' . $langs->trans("SellingPrice") . '</td><td>';
+    if ($object->price_base_type == 'TTC') {
+        print price($object->price_ttc) . ' ' . $langs->trans($object->price_base_type);
+    } else {
+        print price($object->price) . ' ' . $langs->trans($object->price_base_type);
+    }
+    print '</td></tr>';
+
+    // Price minimum
+    print '<tr><td>' . $langs->trans("MinPrice") . '</td><td>';
+    if ($object->price_base_type == 'TTC') {
+        print price($object->price_min_ttc) . ' ' . $langs->trans($object->price_base_type);
+    } else {
+        print price($object->price_min) . ' ' . $langs->trans($object->price_base_type);
+    }
+    print '</td></tr>';
+
+	// Weight
+	print '<tr><td>'.$langs->trans("Weight").'</td><td>';
+	if ($object->weight != '')
+	{
+		print $object->weight." ".measuring_units_string($object->weight_units, "weight");
+	}
+	else
+	{
+		print '&nbsp;';
+	}
+	print "</td></tr>\n";
+
+
+
+
+	print "</table>\n";
+
+	print '</div>';
+	print '<div style="clear:both"></div>';
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	dol_fiche_end();
 
 
@@ -327,7 +464,11 @@ if (! empty($id) || ! empty($ref))
 
 		if ($action == 'add') {
 			$title = $langs->trans('NewProductCombination');
+<<<<<<< HEAD
 			print dol_fiche_head();
+=======
+			//print dol_fiche_head();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$features = $_SESSION['addvariant_'.$object->id];
 			//First, sanitize
 			print '<div id="parttoaddvariant">';
@@ -348,11 +489,20 @@ if (! empty($id) || ! empty($ref))
 				}
 			}
 			print '</div>';
+<<<<<<< HEAD
 			print dol_fiche_end();
 		} else {
 			$title = $langs->trans('EditProductCombination');
 		}
 		print_fiche_titre($title);
+=======
+			print '<br><br>';
+			//print dol_fiche_end();
+		} else {
+			$title = $langs->trans('EditProductCombination');
+		}
+		print load_fiche_titre($title);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		if ($action == 'add') {
 			$prodattr_all = $prodattr->fetchAll();
@@ -446,10 +596,17 @@ if (! empty($id) || ! empty($ref))
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="id" value="'.dol_escape_htmltag($id).'">'."\n";
 		print '<input type="hidden" name="action" value="' .  (($valueid > 0) ? "update" : "create") .'">'."\n";
+<<<<<<< HEAD
                 if($valueid > 0) {
                     print '<input type="hidden" name="valueid" value="' . $valueid .'">'."\n";
                 }
                     
+=======
+        if($valueid > 0) {
+            print '<input type="hidden" name="valueid" value="' . $valueid .'">'."\n";
+        }
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print dol_fiche_head();
 
 		?>
@@ -506,7 +663,11 @@ if (! empty($id) || ! empty($ref))
 			</tr>
 		</table>
 		<?php
+<<<<<<< HEAD
 		}
+=======
+            }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		if (is_array($productCombination2ValuePairs1)) {
 		?>
@@ -519,6 +680,7 @@ if (! empty($id) || ! empty($ref))
 					<?php
 					if (is_array($productCombination2ValuePairs1))
 					{
+<<<<<<< HEAD
                                             foreach ($productCombination2ValuePairs1 as $key => $val) {
                                             $result1 = $prodattr->fetch($val->fk_prod_attr);
                                             $result2 = $prodattr_val->fetch($val->fk_prod_attr_val);
@@ -528,6 +690,17 @@ if (! empty($id) || ! empty($ref))
                                                        // TODO Add delete link
                                                 }
                                             }
+=======
+                        foreach ($productCombination2ValuePairs1 as $key => $val) {
+                            $result1 = $prodattr->fetch($val->fk_prod_attr);
+                            $result2 = $prodattr_val->fetch($val->fk_prod_attr_val);
+                            if ($result1 > 0 && $result2 > 0)
+                            {
+                                print $prodattr->label . ' - '.$prodattr_val->value.'<br>';
+                                // TODO Add delete link
+                            }
+                        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					}
 					?>
 					</div>
@@ -543,7 +716,12 @@ if (! empty($id) || ! empty($ref))
 				<td><input type="text" id="price_impact" name="price_impact" value="<?php echo price($price_impact) ?>">
 				<input type="checkbox" id="price_impact_percent" name="price_impact_percent" <?php echo $price_impact_percent ? ' checked' : '' ?>> <label for="price_impact_percent"><?php echo $langs->trans('PercentageVariation') ?></label></td>
 			</tr>
+<<<<<<< HEAD
 <?php   	if ($object->isProduct()) {
+=======
+<?php
+            if ($object->isProduct()) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				print '<tr>';
 				print '<td><label for="weight_impact">'.$langs->trans('WeightImpact').'</label></td>';
 				print '<td><input type="text" id="weight_impact" name="weight_impact" value="'.price($weight_impact).'"></td>';
@@ -583,6 +761,7 @@ if (! empty($id) || ! empty($ref))
 				);
 			}
 		} elseif ($action === 'copy') {
+<<<<<<< HEAD
 
 			print $form->formconfirm(
 				'combinations.php?id='.$id,
@@ -599,6 +778,9 @@ if (! empty($id) || ! empty($ref))
 				0,
 				1
 			);
+=======
+            print $form->formconfirm('combinations.php?id='.$id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneProductCombinations'), 'confirm_copycombination', array(array('type' => 'text', 'label' => $langs->trans('CloneDestinationReference'), 'name' => 'dest_product')), 0, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		$comb2val = new ProductCombination2ValuePair($db);
@@ -634,12 +816,23 @@ if (! empty($id) || ! empty($ref))
 		print '<div class="tabsAction">';
 
 		print '	<div class="inline-block divButAction">';
+<<<<<<< HEAD
 		if ($productCombinations) {
 		    print '<a href="combinations.php?id='.$object->id.'&action=copy" class="butAction">'.$langs->trans('PropagateVariant').'</a>';
 		}
 
 		print '<a href="combinations.php?id='.$object->id.'&action=add" class="butAction">'.$langs->trans('NewProductCombination').'</a>'; // NewVariant
 
+=======
+
+		print '<a href="combinations.php?id='.$object->id.'&action=add" class="butAction">'.$langs->trans('NewProductCombination').'</a>'; // NewVariant
+
+		if ($productCombinations)
+		{
+			print '<a href="combinations.php?id='.$object->id.'&action=copy" class="butAction">'.$langs->trans('PropagateVariant').'</a>';
+		}
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// Too much bugged page.
 		/*
 		print '<a href="generator.php?id='.$object->id.'" class="butAction">'.$langs->trans('ProductCombinationGenerator').'</a>';
@@ -667,7 +860,11 @@ if (! empty($id) || ! empty($ref))
 		    'presend'=>$langs->trans("SendByMail"),
 		    'builddoc'=>$langs->trans("PDFMerge"),
 		);
+<<<<<<< HEAD
 		if ($user->rights->product->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+=======
+		if ($user->rights->product->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 		$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 		*/
@@ -704,7 +901,11 @@ if (! empty($id) || ! empty($ref))
 				<td class="liste_titre center"><?php echo $langs->trans('OnBuy') ?></td>
 				<td class="liste_titre"></td>
         		<?php
+<<<<<<< HEAD
         		print '<td class="liste_titre" align="middle">';
+=======
+        		print '<td class="liste_titre center">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         		$searchpicto=$form->showCheckAddButtons('checkforselect', 1);
         		print $searchpicto;
         		print '</td>';
@@ -736,14 +937,23 @@ if (! empty($id) || ! empty($ref))
     				</td>
     				<td class="right"><?php echo ($currcomb->variation_price >= 0 ? '+' : '').price($currcomb->variation_price).($currcomb->variation_price_percentage ? ' %' : '') ?></td>
                     <?php if ($object->isProduct()) print '<td class="right">'.($currcomb->variation_weight >= 0 ? '+' : '').price($currcomb->variation_weight).' '.measuring_units_string($prodstatic->weight_units, 'weight').'</td>'; ?>
+<<<<<<< HEAD
     				<td style="text-align: center;"><?php echo $prodstatic->getLibStatut(2, 0) ?></td>
     				<td style="text-align: center;"><?php echo $prodstatic->getLibStatut(2, 1) ?></td>
+=======
+    				<td class="center;"><?php echo $prodstatic->getLibStatut(2, 0) ?></td>
+    				<td class="center;"><?php echo $prodstatic->getLibStatut(2, 1) ?></td>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     				<td class="right">
     					<a class="paddingleft paddingright" href="<?php echo dol_buildpath('/variants/combinations.php?id='.$id.'&action=edit&valueid='.$currcomb->id, 2) ?>"><?php echo img_edit() ?></a>
     					<a class="paddingleft paddingright" href="<?php echo dol_buildpath('/variants/combinations.php?id='.$id.'&action=delete&valueid='.$currcomb->id, 2) ?>"><?php echo img_delete() ?></a>
     				</td>
     				<?php
+<<<<<<< HEAD
     				print '<td class="nowrap" align="center">';
+=======
+    				print '<td class="nowrap center">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     				if ($productCombinations || $massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
     				{
     				    $selected=0;
@@ -773,7 +983,12 @@ if (! empty($id) || ! empty($ref))
 	// not found
 }
 
+<<<<<<< HEAD
 
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

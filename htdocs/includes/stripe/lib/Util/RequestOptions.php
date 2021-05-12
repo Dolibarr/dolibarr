@@ -16,11 +16,21 @@ class RequestOptions
 
     public $headers;
     public $apiKey;
+<<<<<<< HEAD
 
     public function __construct($key = null, $headers = [])
     {
         $this->apiKey = $key;
         $this->headers = $headers;
+=======
+    public $apiBase;
+
+    public function __construct($key = null, $headers = [], $base = null)
+    {
+        $this->apiKey = $key;
+        $this->headers = $headers;
+        $this->apiBase = $base;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
     /**
@@ -36,6 +46,12 @@ class RequestOptions
         if ($other_options->apiKey === null) {
             $other_options->apiKey = $this->apiKey;
         }
+<<<<<<< HEAD
+=======
+        if ($other_options->apiBase === null) {
+            $other_options->apiBase = $this->apiBase;
+        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $other_options->headers = array_merge($this->headers, $other_options->headers);
         return $other_options;
     }
@@ -65,16 +81,28 @@ class RequestOptions
         }
 
         if (is_null($options)) {
+<<<<<<< HEAD
             return new RequestOptions(null, []);
         }
 
         if (is_string($options)) {
             return new RequestOptions($options, []);
+=======
+            return new RequestOptions(null, [], null);
+        }
+
+        if (is_string($options)) {
+            return new RequestOptions($options, [], null);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
 
         if (is_array($options)) {
             $headers = [];
             $key = null;
+<<<<<<< HEAD
+=======
+            $base = null;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             if (array_key_exists('api_key', $options)) {
                 $key = $options['api_key'];
             }
@@ -87,7 +115,14 @@ class RequestOptions
             if (array_key_exists('stripe_version', $options)) {
                 $headers['Stripe-Version'] = $options['stripe_version'];
             }
+<<<<<<< HEAD
             return new RequestOptions($key, $headers);
+=======
+            if (array_key_exists('api_base', $options)) {
+                $base = $options['api_base'];
+            }
+            return new RequestOptions($key, $headers, $base);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
 
         $message = 'The second argument to Stripe API method calls is an '

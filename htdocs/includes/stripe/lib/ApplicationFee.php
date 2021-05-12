@@ -24,6 +24,12 @@ namespace Stripe;
  */
 class ApplicationFee extends ApiResource
 {
+<<<<<<< HEAD
+=======
+
+    const OBJECT_NAME = "application_fee";
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     use ApiOperations\All;
     use ApiOperations\NestedResource;
     use ApiOperations\Retrieve;
@@ -31,6 +37,7 @@ class ApplicationFee extends ApiResource
     const PATH_REFUNDS = '/refunds';
 
     /**
+<<<<<<< HEAD
      * This is a special case because the application fee endpoint has an
      *    underscore in it. The parent `className` function strips underscores.
      *
@@ -42,6 +49,8 @@ class ApplicationFee extends ApiResource
     }
 
     /**
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      * @param array|null $params
      * @param array|string|null $opts
      *
@@ -55,7 +64,11 @@ class ApplicationFee extends ApiResource
     }
 
     /**
+<<<<<<< HEAD
      * @param array|null $id The ID of the application fee on which to create the refund.
+=======
+     * @param string|null $id The ID of the application fee on which to create the refund.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      * @param array|null $params
      * @param array|string|null $opts
      *
@@ -67,7 +80,11 @@ class ApplicationFee extends ApiResource
     }
 
     /**
+<<<<<<< HEAD
      * @param array|null $id The ID of the application fee to which the refund belongs.
+=======
+     * @param string|null $id The ID of the application fee to which the refund belongs.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      * @param array|null $refundId The ID of the refund to retrieve.
      * @param array|null $params
      * @param array|string|null $opts
@@ -80,7 +97,11 @@ class ApplicationFee extends ApiResource
     }
 
     /**
+<<<<<<< HEAD
      * @param array|null $id The ID of the application fee to which the refund belongs.
+=======
+     * @param string|null $id The ID of the application fee to which the refund belongs.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      * @param array|null $refundId The ID of the refund to update.
      * @param array|null $params
      * @param array|string|null $opts
@@ -93,11 +114,19 @@ class ApplicationFee extends ApiResource
     }
 
     /**
+<<<<<<< HEAD
      * @param array|null $id The ID of the application fee on which to retrieve the refunds.
      * @param array|null $params
      * @param array|string|null $opts
      *
      * @return ApplicationFeeRefund
+=======
+     * @param string|null $id The ID of the application fee on which to retrieve the refunds.
+     * @param array|null $params
+     * @param array|string|null $opts
+     *
+     * @return Collection The list of refunds.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      */
     public static function allRefunds($id, $params = null, $opts = null)
     {

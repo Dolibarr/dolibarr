@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
+<<<<<<< HEAD
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Cyrille de Lambert   <info@auguria.net>
  *
@@ -23,12 +27,21 @@
  *       \brief      File to return Ajax response on third parties request
  */
 
+<<<<<<< HEAD
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL',1); // Disables token renewal
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
+=======
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 require '../main.inc.php';
 
@@ -46,11 +59,19 @@ top_httphead();
 
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
+<<<<<<< HEAD
 dol_syslog(join(',',$_GET));
 
 
 // Generation liste des societes
 if (GETPOST('newcompany') || GETPOST('socid','int') || GETPOST('id_fourn'))
+=======
+dol_syslog(join(',', $_GET));
+
+
+// Generation liste des societes
+if (GETPOST('newcompany') || GETPOST('socid', 'int') || GETPOST('id_fourn'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$return_arr = array();
 
@@ -81,7 +102,11 @@ if (GETPOST('newcompany') || GETPOST('socid','int') || GETPOST('id_fourn'))
 		if (! empty($conf->global->SOCIETE_ALLOW_SEARCH_ON_ROWID)) $sql.=" OR rowid = '" . $db->escape($socid) . "'";
 		$sql.=")";
 	}
+<<<<<<< HEAD
 	if (GETPOST("filter")) $sql.= " AND ".GETPOST("filter","alpha"); // Add other filters
+=======
+	//if (GETPOST("filter")) $sql.= " AND (".GETPOST("filter", "alpha").")"; // Add other filters
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$sql.= " ORDER BY nom ASC";
 
 	//dol_syslog("ajaxcompanies", LOG_DEBUG);
@@ -91,12 +116,20 @@ if (GETPOST('newcompany') || GETPOST('socid','int') || GETPOST('id_fourn'))
 		while ($row = $db->fetch_array($resql))
 		{
 		    $label=$row['nom'];
+<<<<<<< HEAD
 		    if ($socid) $label=preg_replace('/('.preg_quote($socid,'/').')/i','<strong>$1</strong>',$label,1);
+=======
+		    if ($socid) $label=preg_replace('/('.preg_quote($socid, '/').')/i', '<strong>$1</strong>', $label, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$row_array['label'] = $label;
 			$row_array['value'] = $row['nom'];
 	        $row_array['key'] = $row['rowid'];
 
+<<<<<<< HEAD
 	        array_push($return_arr,$row_array);
+=======
+	        array_push($return_arr, $row_array);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    }
 
 	    echo json_encode($return_arr);

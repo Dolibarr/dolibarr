@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 $langs->load("admin");
 
+<<<<<<< HEAD
 $action=GETPOST('action','alpha');
 $what=GETPOST('what','alpha');
 $export_type=GETPOST('export_type','alpha');
@@ -43,13 +44,33 @@ if (! $sortfield) $sortfield="date";
 if ($page < 0) { $page = 0; }
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page;
+=======
+$action=GETPOST('action', 'alpha');
+$what=GETPOST('what', 'alpha');
+$export_type=GETPOST('export_type', 'alpha');
+$file=GETPOST('filename_template', 'alpha');
+
+// Load variable for pagination
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST("page", 'int');
+if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
+$offset = $limit * $page;
+if (! $sortorder) $sortorder="DESC";
+if (! $sortfield) $sortfield="date";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if (! $user->admin) accessforbidden();
 
 if ($file && ! $what)
 {
     //print DOL_URL_ROOT.'/dolibarr_export.php';
+<<<<<<< HEAD
     header("Location: ".DOL_URL_ROOT.'/admin/tools/dolibarr_export.php?msg='.urlencode($langs->trans("ErrorFieldRequired",$langs->transnoentities("ExportMethod"))));
+=======
+    header("Location: ".DOL_URL_ROOT.'/admin/tools/dolibarr_export.php?msg='.urlencode($langs->trans("ErrorFieldRequired", $langs->transnoentities("ExportMethod"))));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     exit;
 }
 
@@ -132,7 +153,12 @@ if ($what == 'mysql')
         dol_syslog("Command are restricted to ".$dolibarr_main_restrict_os_commands.". We check that one of this command is inside ".$cmddump);
         foreach($arrayofallowedcommand as $allowedcommand)
         {
+<<<<<<< HEAD
             if (preg_match('/'.preg_quote($allowedcommand,'/').'/', $cmddump))
+=======
+            $basenamecmddump=basename($cmddump);
+            if (preg_match('/^'.preg_quote($allowedcommand, '/').'$/', $basenamecmddump)) // the provided command $cmddump must be an allowed command
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             {
                 $ok=1;
                 break;
@@ -146,12 +172,20 @@ if ($what == 'mysql')
 
     if (! $errormsg && $cmddump)
     {
+<<<<<<< HEAD
         dolibarr_set_const($db, 'SYSTEMTOOLS_MYSQLDUMP', $cmddump,'chaine',0,'',$conf->entity);
+=======
+        dolibarr_set_const($db, 'SYSTEMTOOLS_MYSQLDUMP', $cmddump, 'chaine', 0, '', $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
     if (! $errormsg)
     {
+<<<<<<< HEAD
         $utils->dumpDatabase(GETPOST('compression','alpha'), $what, 0, $file);
+=======
+        $utils->dumpDatabase(GETPOST('compression', 'alpha'), $what, 0, $file);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $errormsg=$utils->error;
         $_SESSION["commandbackuplastdone"]=$utils->result['commandbackuplastdone'];
         $_SESSION["commandbackuptorun"]=$utils->result['commandbackuptorun'];
@@ -161,7 +195,11 @@ if ($what == 'mysql')
 // MYSQL NO BIN
 if ($what == 'mysqlnobin')
 {
+<<<<<<< HEAD
     $utils->dumpDatabase(GETPOST('compression','alpha'), $what, 0, $file);
+=======
+    $utils->dumpDatabase(GETPOST('compression', 'alpha'), $what, 0, $file);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     $errormsg=$utils->error;
     $_SESSION["commandbackuplastdone"]=$utils->result['commandbackuplastdone'];
@@ -176,12 +214,20 @@ if ($what == 'postgresql')
 
     if (! $errormsg && $cmddump)
     {
+<<<<<<< HEAD
         dolibarr_set_const($db, 'SYSTEMTOOLS_POSTGRESQLDUMP', $cmddump,'chaine',0,'',$conf->entity);
+=======
+        dolibarr_set_const($db, 'SYSTEMTOOLS_POSTGRESQLDUMP', $cmddump, 'chaine', 0, '', $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
     if (! $errormsg)
     {
+<<<<<<< HEAD
         $utils->dumpDatabase(GETPOST('compression','alpha'), $what, 0, $file);
+=======
+        $utils->dumpDatabase(GETPOST('compression', 'alpha'), $what, 0, $file);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $errormsg=$utils->error;
         $_SESSION["commandbackuplastdone"]=$utils->result['commandbackuplastdone'];
         $_SESSION["commandbackuptorun"]=$utils->result['commandbackuptorun'];
@@ -234,4 +280,7 @@ header("Location: dolibarr_export.php");
 $time_end = time();
 
 $db->close();
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

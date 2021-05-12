@@ -160,7 +160,11 @@ CountryMD=Moldavya
 CountryMN=Moğolistan
 CountryMS=Montserrat
 CountryMZ=Mozambik
+<<<<<<< HEAD
 CountryMM=Birmanya (Myanmar)
+=======
+CountryMM=Myanmar (Burma)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryNA=Namibya
 CountryNR=Nauru
 CountryNP=Nepal
@@ -223,7 +227,11 @@ CountryTO=Tonga
 CountryTT=Trinidad ve Tobago
 CountryTR=Türkiye
 CountryTM=Türkmenistan
+<<<<<<< HEAD
 CountryTC=Türk ve Caicos Adaları
+=======
+CountryTC=Turks ve Caicos Adaları
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryTV=Tuvalu
 CountryUG=Uganda
 CountryUA=Ukrayna
@@ -249,10 +257,17 @@ CountryBL=Saint Barthelemy
 CountryMF=Saint Martin
 
 ##### Civilities #####
+<<<<<<< HEAD
 CivilityMME=Bn.
 CivilityMR=Bay
 CivilityMLE=Bn.
 CivilityMTRE=Master
+=======
+CivilityMME=Bayan
+CivilityMR=Bay
+CivilityMLE=Bn.
+CivilityMTRE=Uzman
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CivilityDR=Doktor
 ##### Currencies #####
 Currencyeuros=Euro
@@ -266,8 +281,13 @@ CurrencyEUR=Euro
 CurrencySingEUR=Euro
 CurrencyFRF=Fransız Frangı
 CurrencySingFRF=Fransız Frangı
+<<<<<<< HEAD
 CurrencyGBP=GB Poundu
 CurrencySingGBP=GB Poundu
+=======
+CurrencyGBP=İngiliz Sterlini
+CurrencySingGBP=İngiliz Sterlini
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrencyINR=Hint rupisi
 CurrencySingINR=Hint rupisi
 CurrencyMAD=Dirhem
@@ -277,7 +297,11 @@ CurrencySingMGA=Ariary
 CurrencyMUR=Mauritius rupisi
 CurrencySingMUR=Mauritius Rupisi
 CurrencyNOK=Norveç Kronu
+<<<<<<< HEAD
 CurrencySingNOK=Norveç Kronu
+=======
+CurrencySingNOK=Norveç kronu
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrencyTND=Tunus dinarı
 CurrencySingTND=Tunus dinarı
 CurrencyUSD=ABD Doları
@@ -290,6 +314,10 @@ CurrencyXOF=CFA Frangı BCEAO
 CurrencySingXOF=CFA Frangı BCEAO
 CurrencyXPF=CFP Frangı
 CurrencySingXPF=CFP Frangı
+<<<<<<< HEAD
+=======
+CurrencyCentEUR=kuruş
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrencyCentSingEUR=cent
 CurrencyCentINR=paisa
 CurrencyCentSingINR=paise
@@ -297,7 +325,11 @@ CurrencyThousandthSingTND=thousandth
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=Internet
 DemandReasonTypeSRC_CAMP_MAIL=Posta kampanyası
+<<<<<<< HEAD
 DemandReasonTypeSRC_CAMP_EMAIL=Eposta kampanyası
+=======
+DemandReasonTypeSRC_CAMP_EMAIL=E-posta kampanyası
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DemandReasonTypeSRC_CAMP_PHO=Telefon kampanyası
 DemandReasonTypeSRC_CAMP_FAX=Faks kampanyası
 DemandReasonTypeSRC_COMM=Ticari ilgili
@@ -306,6 +338,10 @@ DemandReasonTypeSRC_WOM=Başkasından duyarak
 DemandReasonTypeSRC_PARTNER=İş Ortağı
 DemandReasonTypeSRC_EMPLOYEE=Çalışan
 DemandReasonTypeSRC_SPONSORING=Destekçi
+<<<<<<< HEAD
+=======
+DemandReasonTypeSRC_SRC_CUSTOMER=Incoming contact of a customer
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 #### Paper formats ####
 PaperFormatEU4A0=Biçim 4A0
 PaperFormatEU2A0=Biçim 2A0
@@ -329,7 +365,11 @@ PaperFormatCAP6=Biçim P6 Kanada
 #### Expense report categories ####
 ExpAutoCat=Araba
 ExpCycloCat=Moped
+<<<<<<< HEAD
 ExpMotoCat=Motorbike
+=======
+ExpMotoCat=Motosiklet
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ExpAuto3CV=3 CV
 ExpAuto4CV=4 CV
 ExpAuto5CV=5 CV
@@ -340,6 +380,7 @@ ExpAuto9CV=9 CV
 ExpAuto10CV=10 CV
 ExpAuto11CV=11 CV
 ExpAuto12CV=12 CV
+<<<<<<< HEAD
 ExpAuto3PCV=3 CV and more
 ExpAuto4PCV=4 CV and more
 ExpAuto5PCV=5 CV and more
@@ -355,3 +396,20 @@ ExpCyclo=Capacity lower to 50cm3
 ExpMoto12CV=Motorbike 1 or 2 CV
 ExpMoto345CV=Motorbike 3, 4 or 5 CV
 ExpMoto5PCV=Motorbike 5 CV and more
+=======
+ExpAuto3PCV=3 CV ve daha fazlası
+ExpAuto4PCV=4 CV ve daha fazlası
+ExpAuto5PCV=5 CV ve daha fazlası
+ExpAuto6PCV=6 CV ve daha fazlası
+ExpAuto7PCV=7 CV ve daha fazlası
+ExpAuto8PCV=8 CV ve daha fazlası
+ExpAuto9PCV=9 CV ve daha fazlası
+ExpAuto10PCV=10 CV ve daha fazlası
+ExpAuto11PCV=11 CV ve daha fazlası
+ExpAuto12PCV=12 CV ve daha fazlası
+ExpAuto13PCV=13 CV ve daha fazlası
+ExpCyclo=Capacity lower to 50cm3
+ExpMoto12CV=Motorbike 1 or 2 CV
+ExpMoto345CV=Motorbike 3, 4 or 5 CV
+ExpMoto5PCV=Motosiklet 5 CV ve daha fazlası
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

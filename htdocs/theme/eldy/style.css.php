@@ -1,9 +1,16 @@
 <?php
 /* Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+<<<<<<< HEAD
  * Copyright (C) 2007-2017	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
+=======
+ * Copyright (C) 2007-2017	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,7 +19,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+<<<<<<< HEAD
  * MERCHANTABILITY or FI8TNESS FOR A PARTICULAR PURPOSE.  See the
+=======
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -26,6 +37,7 @@
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled because need to load personalized language
 //if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');	// Not disabled to increase speed. Language code is found on url.
+<<<<<<< HEAD
 if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
 //if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');	// Not disabled because need to do translations
 if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK',1);
@@ -65,11 +77,43 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 // Load user to have $user->conf loaded (not done into main because of NOLOGIN constant defined)
 if (empty($user->id) && ! empty($_SESSION['dol_login'])) $user->fetch('',$_SESSION['dol_login'],'',1);
+=======
+if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
+//if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');	// Not disabled because need to do translations
+if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
+if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
+if (! defined('NOLOGIN'))         define('NOLOGIN', 1);          // File must be accessed by logon page so without login
+//if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU',1);  // We need top menu content
+if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML', 1);
+if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
+
+
+define('ISLOADEDBYSTEELSHEET', '1');
+
+
+require __DIR__ . '/theme_vars.inc.php';
+if (defined('THEME_ONLY_CONSTANT')) return;
+
+
+session_cache_limiter('public');
+
+require_once __DIR__.'/../../main.inc.php'; // __DIR__ allow this script to be included in custom themes
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
+// Load user to have $user->conf loaded (not done into main because of NOLOGIN constant defined)
+// and permission, so we can later calculate number of top menu ($nbtopmenuentries) according to user profile.
+if (empty($user->id) && ! empty($_SESSION['dol_login']))
+{
+    $user->fetch('', $_SESSION['dol_login'], '', 1);
+    $user->getrights();
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 // Define css type
 top_httphead('text/css');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
+<<<<<<< HEAD
 if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
 else header('Cache-Control: no-cache');
 
@@ -77,6 +121,15 @@ if (GETPOST('theme','alpha')) $conf->theme=GETPOST('theme','alpha');  // If them
 if (GETPOST('lang','aZ09')) $langs->setDefaultLang(GETPOST('lang', 'aZ09'));	// If language was forced on URL
 
 $langs->load("main",0,1);
+=======
+if (empty($dolibarr_nocache)) header('Cache-Control: max-age=10800, public, must-revalidate');
+else header('Cache-Control: no-cache');
+
+if (GETPOST('theme', 'alpha')) $conf->theme=GETPOST('theme', 'alpha');  // If theme was forced on URL
+if (GETPOST('lang', 'aZ09')) $langs->setDefaultLang(GETPOST('lang', 'aZ09'));	// If language was forced on URL
+
+$langs->load("main", 0, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $right=($langs->trans("DIRECTION")=='rtl'?'left':'right');
 $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
 
@@ -88,7 +141,11 @@ if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path='/'.$conf->global-
 $fontlist='roboto,arial,tahoma,verdana,helvetica';    //$fontlist='helvetica, verdana, arial, sans-serif';
 //$fontlist='"open sans", "Helvetica Neue", Helvetica, Arial, sans-serif;';
 $img_head='';
+<<<<<<< HEAD
 $img_button=dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1);
+=======
+$img_button=dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $dol_hide_topmenu=$conf->dol_hide_topmenu;
 $dol_hide_leftmenu=$conf->dol_hide_leftmenu;
 $dol_optimize_smallscreen=$conf->dol_optimize_smallscreen;
@@ -107,6 +164,10 @@ if (! isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_
 if (! isset($conf->global->THEME_ELDY_VERMENU_BACK1)) $conf->global->THEME_ELDY_VERMENU_BACK1=$colorbackvmenu1;
 if (! isset($conf->global->THEME_ELDY_BACKTITLE1)) $conf->global->THEME_ELDY_BACKTITLE1=$colorbacktitle1;
 if (! isset($conf->global->THEME_ELDY_USE_HOVER)) $conf->global->THEME_ELDY_USE_HOVER=$colorbacklinepairhover;
+<<<<<<< HEAD
+=======
+if (! isset($conf->global->THEME_ELDY_USE_CHECKED)) $conf->global->THEME_ELDY_USE_CHECKED=$colorbacklinepairchecked;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (! isset($conf->global->THEME_ELDY_LINEBREAK)) $conf->global->THEME_ELDY_LINEBREAK=$colorbacklinebreak;
 if (! isset($conf->global->THEME_ELDY_TEXTTITLENOTAB)) $conf->global->THEME_ELDY_TEXTTITLENOTAB=$colortexttitlenotab;
 if (! isset($conf->global->THEME_ELDY_TEXTLINK)) $conf->global->THEME_ELDY_TEXTLINK=$colortextlink;
@@ -114,11 +175,19 @@ if (! isset($conf->global->THEME_ELDY_TEXTLINK)) $conf->global->THEME_ELDY_TEXTL
 // Case of option editable only if option THEME_ELDY_ENABLE_PERSONALIZED is on
 if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
 {
+<<<<<<< HEAD
 	$conf->global->THEME_ELDY_BACKTABCARD1='255,255,255';     // card
 	$conf->global->THEME_ELDY_BACKTABACTIVE='234,234,234';
 	$conf->global->THEME_ELDY_TEXT='0,0,0';
 	$conf->global->THEME_ELDY_FONT_SIZE1='0.86em';
 	$conf->global->THEME_ELDY_FONT_SIZE2='0.75em';
+=======
+    $conf->global->THEME_ELDY_BACKTABCARD1='255,255,255';     // card
+    $conf->global->THEME_ELDY_BACKTABACTIVE='234,234,234';
+    $conf->global->THEME_ELDY_TEXT='0,0,0';
+    $conf->global->THEME_ELDY_FONT_SIZE1='0.86em';
+    $conf->global->THEME_ELDY_FONT_SIZE2='0.75em';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 // Case of option availables only if THEME_ELDY_ENABLE_PERSONALIZED is on
@@ -142,6 +211,7 @@ $fontsize            =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty(
 $fontsizesmaller     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_FONT_SIZE2)   ?$fontsize:$conf->global->THEME_ELDY_FONT_SIZE2)             :(empty($user->conf->THEME_ELDY_FONT_SIZE2)?$fontsize:$user->conf->THEME_ELDY_FONT_SIZE2);
 
 // Hover color
+<<<<<<< HEAD
 $colorbacklinepairhover=((! isset($conf->global->THEME_ELDY_USE_HOVER) || (string) $conf->global->THEME_ELDY_USE_HOVER === '0')?'':($conf->global->THEME_ELDY_USE_HOVER === '1'?'edf4fb':$conf->global->THEME_ELDY_USE_HOVER));
 if (! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED))
 {
@@ -153,16 +223,36 @@ if (! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED))
 // Set text color to black or white
 $colorbackhmenu1=join(',',colorStringToArray($colorbackhmenu1));    // Normalize value to 'x,y,z'
 $tmppart=explode(',',$colorbackhmenu1);
+=======
+$colorbacklinepairhover=((! isset($conf->global->THEME_ELDY_USE_HOVER) || (string) $conf->global->THEME_ELDY_USE_HOVER === '255,255,255')?'':($conf->global->THEME_ELDY_USE_HOVER === '1'?'e6edf0':$conf->global->THEME_ELDY_USE_HOVER));
+$colorbacklinepairchecked=((! isset($conf->global->THEME_ELDY_USE_CHECKED) || (string) $conf->global->THEME_ELDY_USE_CHECKED === '255,255,255')?'':($conf->global->THEME_ELDY_USE_CHECKED === '1'?'e6edf0':$conf->global->THEME_ELDY_USE_CHECKED));
+if (! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED))
+{
+    $colorbacklinepairhover=((! isset($user->conf->THEME_ELDY_USE_HOVER) || $user->conf->THEME_ELDY_USE_HOVER === '0')?'':($user->conf->THEME_ELDY_USE_HOVER === '1'?'e6edf0':$user->conf->THEME_ELDY_USE_HOVER));
+    $colorbacklinepairchecked=((! isset($user->conf->THEME_ELDY_USE_CHECKED) || $user->conf->THEME_ELDY_USE_CHECKED === '0')?'':($user->conf->THEME_ELDY_USE_CHECKED === '1'?'e6edf0':$user->conf->THEME_ELDY_USE_CHECKED));
+}
+
+
+// Set text color to black or white
+$colorbackhmenu1=join(',', colorStringToArray($colorbackhmenu1));    // Normalize value to 'x,y,z'
+$tmppart=explode(',', $colorbackhmenu1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $tmpval=(! empty($tmppart[0]) ? $tmppart[0] : 0)+(! empty($tmppart[1]) ? $tmppart[1] : 0)+(! empty($tmppart[2]) ? $tmppart[2] : 0);
 if ($tmpval <= 460) $colortextbackhmenu='FFFFFF';
 else $colortextbackhmenu='000000';
 
+<<<<<<< HEAD
 $colorbackvmenu1=join(',',colorStringToArray($colorbackvmenu1));    // Normalize value to 'x,y,z'
 $tmppart=explode(',',$colorbackvmenu1);
+=======
+$colorbackvmenu1=join(',', colorStringToArray($colorbackvmenu1));    // Normalize value to 'x,y,z'
+$tmppart=explode(',', $colorbackvmenu1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $tmpval=(! empty($tmppart[0]) ? $tmppart[0] : 0)+(! empty($tmppart[1]) ? $tmppart[1] : 0)+(! empty($tmppart[2]) ? $tmppart[2] : 0);
 if ($tmpval <= 460) { $colortextbackvmenu='FFFFFF'; }
 else { $colortextbackvmenu='000000'; }
 
+<<<<<<< HEAD
 $colorbacktitle1=join(',',colorStringToArray($colorbacktitle1));    // Normalize value to 'x,y,z'
 $tmppart=explode(',',$colorbacktitle1);
 if ($colortexttitle == '')
@@ -196,6 +286,42 @@ $colortexttitlenotab=join(',',colorStringToArray($colortexttitlenotab));
 $colortexttitle=join(',',colorStringToArray($colortexttitle));
 $colortext=join(',',colorStringToArray($colortext));
 $colortextlink=join(',',colorStringToArray($colortextlink));
+=======
+$colorbacktitle1=join(',', colorStringToArray($colorbacktitle1));    // Normalize value to 'x,y,z'
+$tmppart=explode(',', $colorbacktitle1);
+if ($colortexttitle == '')
+{
+    $tmpval=(! empty($tmppart[0]) ? $tmppart[0] : 0)+(! empty($tmppart[1]) ? $tmppart[1] : 0)+(! empty($tmppart[2]) ? $tmppart[2] : 0);
+    if ($tmpval <= 460) { $colortexttitle='FFFFFF'; $colorshadowtitle='888888'; }
+    else { $colortexttitle='000000'; $colorshadowtitle='FFFFFF'; }
+}
+else $colorshadowtitle='888888';
+
+$colorbacktabcard1=join(',', colorStringToArray($colorbacktabcard1));    // Normalize value to 'x,y,z'
+$tmppart=explode(',', $colorbacktabcard1);
+$tmpval=(! empty($tmppart[0]) ? $tmppart[0] : 0)+(! empty($tmppart[1]) ? $tmppart[1] : 0)+(! empty($tmppart[2]) ? $tmppart[2] : 0);
+if ($tmpval <= 460) { $colortextbacktab='FFFFFF'; }
+else { $colortextbacktab='000000'; }
+
+
+// Format color value to match expected format (may be 'FFFFFF' or '255,255,255')
+$colorbackhmenu1=join(',', colorStringToArray($colorbackhmenu1));
+$colorbackvmenu1=join(',', colorStringToArray($colorbackvmenu1));
+$colorbacktitle1=join(',', colorStringToArray($colorbacktitle1));
+$colorbacktabcard1=join(',', colorStringToArray($colorbacktabcard1));
+$colorbacktabactive=join(',', colorStringToArray($colorbacktabactive));
+$colorbacklineimpair1=join(',', colorStringToArray($colorbacklineimpair1));
+$colorbacklineimpair2=join(',', colorStringToArray($colorbacklineimpair2));
+$colorbacklinepair1=join(',', colorStringToArray($colorbacklinepair1));
+$colorbacklinepair2=join(',', colorStringToArray($colorbacklinepair2));
+if ($colorbacklinepairhover != '') $colorbacklinepairhover=join(',', colorStringToArray($colorbacklinepairhover));
+if ($colorbacklinepairchecked != '') $colorbacklinepairchecked=join(',', colorStringToArray($colorbacklinepairchecked));
+$colorbackbody=join(',', colorStringToArray($colorbackbody));
+$colortexttitlenotab=join(',', colorStringToArray($colortexttitlenotab));
+$colortexttitle=join(',', colorStringToArray($colortexttitle));
+$colortext=join(',', colorStringToArray($colortext));
+$colortextlink=join(',', colorStringToArray($colortextlink));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $nbtopmenuentries=$menumanager->showmenu('topnb');
 
@@ -218,6 +344,10 @@ print 'colorbacklineimpair2='.$colorbacklineimpair2."\n";
 print 'colorbacklinepair1='.$colorbacklinepair1."\n";
 print 'colorbacklinepair2='.$colorbacklinepair2."\n";
 print 'colorbacklinepairhover='.$colorbacklinepairhover."\n";
+<<<<<<< HEAD
+=======
+print 'colorbacklinepairchecked='.$colorbacklinepairchecked."\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '$colortexttitlenotab='.$colortexttitlenotab."\n";
 print '$colortexttitle='.$colortexttitle."\n";
 print '$colortext='.$colortext."\n";
@@ -232,6 +362,7 @@ print 'dol_screenwidth='.$_SESSION['dol_screenwidth']."\n";
 print 'dol_screenheight='.$_SESSION['dol_screenheight']."\n";
 print 'fontsize='.$fontsize."\n";
 print 'nbtopmenuentries='.$nbtopmenuentries."\n";
+<<<<<<< HEAD
 print '*/'."\n";
 
 ?>
@@ -5720,4 +5851,16 @@ div.tabsElem a.tab {
 }
 
 <?php
+=======
+print 'fontsizesmaller='.$fontsizesmaller;
+print 'topMenuFontSize='.$topMenuFontSize."\n";
+print 'toolTipBgColor='.$toolTipBgColor."\n";
+print 'toolTipFontColor='.$toolTipFontColor."\n";
+print '*/'."\n";
+
+
+require __DIR__ . '/global.inc.php';
+
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (is_object($db)) $db->close();

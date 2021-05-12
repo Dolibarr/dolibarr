@@ -61,12 +61,20 @@ if ($action == 'updateoptions')
  * View
  */
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans('ResourceSetup'));
+=======
+llxHeader('', $langs->trans('ResourceSetup'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $form = new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+<<<<<<< HEAD
 print load_fiche_titre($langs->trans('ResourceSetup'),$linkback,'title_setup');
+=======
+print load_fiche_titre($langs->trans('ResourceSetup'), $linkback, 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $head=resource_admin_prepare_head();
 
@@ -79,7 +87,11 @@ print '<input type="hidden" name="action" value="updateoptions">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
+<<<<<<< HEAD
 print '<td align="right" width="60">'.$langs->trans("Value").'</td>'."\n";
+=======
+print '<td class="right" width="60">'.$langs->trans("Value").'</td>'."\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '<td></td>';
 
 
@@ -88,12 +100,17 @@ print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("UseSearchToSelectResource").'</td>';
 if (empty($conf->use_javascript_ajax))
 {
+<<<<<<< HEAD
 	print '<td class="nowrap" align="right" colspan="2">';
+=======
+	print '<td class="nowrap right" colspan="2">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print $langs->trans("NotAvailableWhenAjaxDisabled");
 	print '</td>';
 }
 else
 {
+<<<<<<< HEAD
 	print '<td width="60" align="right">';
 	$arrval=array(
 			'0'=>$langs->trans("No"),
@@ -104,6 +121,18 @@ else
 	print $form->selectarray("activate_RESOURCE_USE_SEARCH_TO_SELECT",$arrval,$conf->global->RESOURCE_USE_SEARCH_TO_SELECT);
 	print '</td>';
 	print '<td align="right">';
+=======
+	print '<td width="60" class="right">';
+	$arrval=array(
+			'0'=>$langs->trans("No"),
+			'1'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
+			'2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
+			'3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
+	);
+	print $form->selectarray("activate_RESOURCE_USE_SEARCH_TO_SELECT", $arrval, $conf->global->RESOURCE_USE_SEARCH_TO_SELECT);
+	print '</td>';
+	print '<td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '<input type="submit" class="button" name="RESOURCE_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print '</td>';
 }
@@ -137,6 +166,10 @@ print '</form>';
 
 dol_fiche_end();
 
+<<<<<<< HEAD
 
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

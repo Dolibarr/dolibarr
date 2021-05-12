@@ -1,3 +1,6 @@
 # Dolibarr language file - Source file is en_US - paybox
+<<<<<<< HEAD
 WelcomeOnPaymentPage=Bienvenido a nuestro servicio de pago en línea
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Continue=Siguiente

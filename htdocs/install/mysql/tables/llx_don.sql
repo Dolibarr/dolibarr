@@ -1,8 +1,14 @@
 -- ===================================================================
 -- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+<<<<<<< HEAD
 -- Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
 -- Copyright (C) 2011      Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+=======
+-- Copyright (C) 2009      Regis Houssin        <regis.houssin@inodbox.com>
+-- Copyright (C) 2011      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2015      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -31,6 +37,10 @@ create table llx_don
   amount          double(24,8) DEFAULT 0,
   fk_payment      integer,						-- Id of payment mode
   paid            smallint default 0 NOT NULL,
+<<<<<<< HEAD
+=======
+  fk_soc      	  integer NULL, 
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
   firstname       varchar(50),
   lastname        varchar(50),
   societe         varchar(50),
@@ -38,7 +48,11 @@ create table llx_don
   zip             varchar(30),
   town            varchar(50),
   country         varchar(50),					-- Deprecated - Replace with fk_country
+<<<<<<< HEAD
   fk_country	  integer        NOT NULL,
+=======
+  fk_country      integer NOT NULL,
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
   email           varchar(255),
   phone           varchar(24),
   phone_mobile    varchar(24),

@@ -6,15 +6,28 @@ ProjectsCategoriesArea=Zone de tags / catégories de projets
 ImpossibleAddCat=Impossible d'ajouter le tag / catégorie %s
 ProductIsInCategories=Produit/service appartient aux tags/catégories suivant(e)s
 CompanyIsInCustomersCategories=Ce tiers appartient aux tags/catégories de clients/prospects suivant(e)s
+<<<<<<< HEAD
 CompanyIsInSuppliersCategories=Ce tiers appartient aux tags/catégories de fournisseurs suivant(e)s
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MemberIsInCategories=Ce membre appartient aux tags/catégories suivant(e)s
 ContactIsInCategories=Ce contact appartient aux tags/catégories suivant(e)s
 CompanyHasNoCategory=Ce tiers n'est pas dans les tags / catégories
 ProjectHasNoCategory=Ce projet n'est pas dans les tags / catégories
 ClassifyInCategory=Classer dans le(a) tag/catégorie
 ConfirmDeleteCategory=Êtes-vous sûr de vouloir supprimer cette étiquette / catégorie?
+<<<<<<< HEAD
 MembersCategoryShort=Tags/catégories de membres
 ProspectsCategoriesShort=Prospects tags/catégories
+=======
+CustomersCategoryShort=Tags/catégories de clients
+ProductsCategoryShort=Tags/catégories de produits
+MembersCategoryShort=Tags/catégories de membres
+CustomersCategoriesShort=Tags/catégories de clients
+ProspectsCategoriesShort=Prospects tags/catégories
+ProductsCategoriesShort=Tags/catégories de produits
+MembersCategoriesShort=Tags/catégories de membres
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AccountsCategoriesShort=Étiquettes / catégories de comptes
 ProjectsCategoriesShort=Projets Tags / catégories
 ThisCategoryHasNoAccount=Cette catégorie ne contient aucun compte.

@@ -29,10 +29,20 @@ class TaskStats extends Stats
 	public $socid;
 	public $year;
 
+<<<<<<< HEAD
 	function __construct($db)
 	{
 		global $conf, $user;
 
+=======
+    /**
+     * Constructor of the class
+     *
+     * @param   DoliDb  $db     Database handler
+     */
+	public function __construct($db)
+	{
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->db = $db;
 
 		require_once 'task.class.php';
@@ -47,7 +57,11 @@ class TaskStats extends Stats
 	 * @return array|int       Array with value or -1 if error
 	 * @throws Exception
 	 */
+<<<<<<< HEAD
 	function getAllTaskByStatus($limit = 5)
+=======
+	public function getAllTaskByStatus($limit = 5)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf, $user, $langs;
 
@@ -104,7 +118,11 @@ class TaskStats extends Stats
 	 *
 	 * @return array of values
 	 */
+<<<<<<< HEAD
 	function getAllByYear()
+=======
+	public function getAllByYear()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf, $user, $langs;
 
@@ -163,7 +181,11 @@ class TaskStats extends Stats
      * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 * @return 	array 				Array of values
 	 */
+<<<<<<< HEAD
 	function getNbByMonth($year, $format=0)
+=======
+	public function getNbByMonth($year, $format = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $user;
 

@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
+=======
+ * Copyright (C) 2019 Pierre Ardoin <mapiolca@me.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +34,11 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 $langs->loadLangs(array('bills', 'companies'));
 
 // Security check
+<<<<<<< HEAD
 $socid = GETPOST("socid",'int');
+=======
+$socid = GETPOST("socid", 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($user->societe_id > 0)
 {
     $action = '';
@@ -76,6 +84,10 @@ if ($socid > 0)
         $sql.= " u.login, u.rowid as userid";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f,".MAIN_DB_PREFIX."user as u";
         $sql.= " WHERE f.fk_soc = s.rowid AND s.rowid = ".$societe->id;
+<<<<<<< HEAD
+=======
+	$sql.= " AND f.entity IN (".getEntity("facture_fourn").")"; // Reconaissance de l'entité attribuée à cette facture pour Multicompany
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $sql.= " AND f.fk_user_valid = u.rowid";
         $sql.= " ORDER BY f.datef DESC";
 
@@ -85,12 +97,21 @@ if ($socid > 0)
             $num = $db->num_rows($resql);
 
             print '<tr class="liste_titre">';
+<<<<<<< HEAD
             print '<td width="100" align="center">'.$langs->trans("Date").'</td>';
             print '<td>&nbsp;</td>';
             print '<td>'.$langs->trans("Status").'</td>';
             print '<td align="right">'.$langs->trans("Debit").'</td>';
             print '<td align="right">'.$langs->trans("Credit").'</td>';
             print '<td align="right">'.$langs->trans("Balance").'</td>';
+=======
+            print '<td width="100" class="center">'.$langs->trans("Date").'</td>';
+            print '<td>&nbsp;</td>';
+            print '<td>'.$langs->trans("Status").'</td>';
+            print '<td class="right">'.$langs->trans("Debit").'</td>';
+            print '<td class="right">'.$langs->trans("Credit").'</td>';
+            print '<td class="right">'.$langs->trans("Balance").'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             print '<td>&nbsp;</td>';
             print '</tr>';
 
@@ -117,6 +138,7 @@ if ($socid > 0)
 
                 print '<tr class="oddeven">';
 
+<<<<<<< HEAD
                 print "<td align=\"center\">".dol_print_date($fac->date)."</td>\n";
                 print "<td><a href=\"facture/card.php?facid=$fac->id\">".img_object($langs->trans("ShowBill"),"bill")." ".$fac->ref."</a></td>\n";
 
@@ -129,6 +151,20 @@ if ($socid > 0)
 
                 // Author
                 print '<td class="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$objf->userid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$objf->login.'</a></td>';
+=======
+                print "<td class=\"center\">".dol_print_date($fac->date)."</td>\n";
+                print "<td><a href=\"facture/card.php?facid=$fac->id\">".img_object($langs->trans("ShowBill"), "bill")." ".$fac->ref."</a></td>\n";
+
+                print '<td class="left">'.$fac->getLibStatut(2, $totalpaye).'</td>';
+                print '<td class="right">'.price($fac->total_ttc)."</td>\n";
+                $solde = $solde + $fac->total_ttc;
+
+                print '<td class="right">&nbsp;</td>';
+                print '<td class="right">'.price($solde)."</td>\n";
+
+                // Author
+                print '<td class="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$objf->userid.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$objf->login.'</a></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
                 print "</tr>\n";
 
@@ -152,6 +188,7 @@ if ($socid > 0)
                         $objp = $db->fetch_object($resqlp);
                         //
                         print '<tr class="oddeven">';
+<<<<<<< HEAD
                         print '<td align="center">'.dol_print_date($db->jdate($objp->dp))."</td>\n";
                         print '<td>';
                         print '&nbsp; &nbsp; &nbsp; '; // Decalage
@@ -164,6 +201,20 @@ if ($socid > 0)
 
                         // Auteur
                         print '<td class="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$objp->userid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$objp->login.'</a></td>';
+=======
+                        print '<td class="center">'.dol_print_date($db->jdate($objp->dp))."</td>\n";
+                        print '<td>';
+                        print '&nbsp; &nbsp; &nbsp; '; // Decalage
+                        print '<a href="paiement/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"), "payment").' '.$langs->trans("Payment").' '.$objp->rowid.'</td>';
+                        print "<td>&nbsp;</td>\n";
+                        print "<td>&nbsp;</td>\n";
+                        print '<td class="right">'.price($objp->amount).'</td>';
+                        $solde = $solde - $objp->amount;
+                        print '<td class="right">'.price($solde)."</td>\n";
+
+                        // Auteur
+                        print '<td class="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$objp->userid.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$objp->login.'</a></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
                         print '</tr>';
 
@@ -191,5 +242,9 @@ else
     dol_print_error($db);
 }
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

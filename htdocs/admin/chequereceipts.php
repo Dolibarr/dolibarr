@@ -37,8 +37,13 @@ $langs->loadLangs(array("admin","companies","bills","other","banks"));
 if (!$user->admin)
   accessforbidden();
 
+<<<<<<< HEAD
 $action = GETPOST('action','alpha');
 $value = GETPOST('value','alpha');
+=======
+$action = GETPOST('action', 'alpha');
+$value = GETPOST('value', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 if (empty($conf->global->CHEQUERECEIPTS_ADDON)) $conf->global->CHEQUERECEIPTS_ADDON = 'mod_chequereceipts_mint.php';
@@ -51,9 +56,15 @@ if (empty($conf->global->CHEQUERECEIPTS_ADDON)) $conf->global->CHEQUERECEIPTS_AD
 
 if ($action == 'updateMask')
 {
+<<<<<<< HEAD
 	$maskconstchequereceipts=GETPOST('maskconstchequereceipts','alpha');
 	$maskchequereceipts=GETPOST('maskchequereceipts','alpha');
 	if ($maskconstchequereceipts) $res = dolibarr_set_const($db,$maskconstchequereceipts,$maskchequereceipts,'chaine',0,'',$conf->entity);
+=======
+	$maskconstchequereceipts=GETPOST('maskconstchequereceipts', 'alpha');
+	$maskchequereceipts=GETPOST('maskchequereceipts', 'alpha');
+	if ($maskconstchequereceipts) $res = dolibarr_set_const($db, $maskconstchequereceipts, $maskchequereceipts, 'chaine', 0, '', $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	if (! $res > 0) $error++;
 
@@ -69,14 +80,24 @@ if ($action == 'updateMask')
 
 if ($action == 'setmod')
 {
+<<<<<<< HEAD
 	dolibarr_set_const($db, "CHEQUERECEIPTS_ADDON",$value, 'chaine', 0, '', $conf->entity);
+=======
+	dolibarr_set_const($db, "CHEQUERECEIPTS_ADDON", $value, 'chaine', 0, '', $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 if ($action == 'set_BANK_CHEQUERECEIPT_FREE_TEXT')
 {
+<<<<<<< HEAD
 	$freetext = GETPOST('BANK_CHEQUERECEIPT_FREE_TEXT','none');	// No alpha here, we want exact string
 
     $res = dolibarr_set_const($db, "BANK_CHEQUERECEIPT_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
+=======
+	$freetext = GETPOST('BANK_CHEQUERECEIPT_FREE_TEXT', 'none');	// No alpha here, we want exact string
+
+    $res = dolibarr_set_const($db, "BANK_CHEQUERECEIPT_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	if (! $res > 0) $error++;
 
@@ -94,13 +115,22 @@ if ($action == 'set_BANK_CHEQUERECEIPT_FREE_TEXT')
  * view
  */
 
+<<<<<<< HEAD
 $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 llxHeader("",$langs->trans("BankSetupModule"));
+=======
+$dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
+llxHeader("", $langs->trans("BankSetupModule"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+<<<<<<< HEAD
 print load_fiche_titre($langs->trans("BankSetupModule"),$linkback,'title_setup');
+=======
+print load_fiche_titre($langs->trans("BankSetupModule"), $linkback, 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $head = bank_admin_prepare_head(null);
 dol_fiche_head($head, 'checkreceipts', $langs->trans("BankSetupModule"), -1, 'account');
@@ -116,8 +146,13 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td class="nowrap">'.$langs->trans("Example").'</td>';
+<<<<<<< HEAD
 print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
 print '<td align="center" width="16">'.$langs->trans("ShortInfo").'</td>';
+=======
+print '<td class="center" width="60">'.$langs->trans("Status").'</td>';
+print '<td class="center" width="16">'.$langs->trans("ShortInfo").'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</tr>'."\n";
 
 clearstatcache();
@@ -136,7 +171,11 @@ foreach ($dirmodels as $reldir)
 				{
 					$filebis = $file;
 					$name = substr($file, 4, dol_strlen($file) -16);
+<<<<<<< HEAD
 					$classname = preg_replace('/\.php$/','',$file);
+=======
+					$classname = preg_replace('/\.php$/', '', $file);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					// For compatibility
 					if (! is_file($dir.$filebis))
 					{
@@ -144,11 +183,19 @@ foreach ($dirmodels as $reldir)
 						$classname = "mod_chequereceipt_".$file;
 					}
 					// Check if there is a filter on country
+<<<<<<< HEAD
 					preg_match('/\-(.*)_(.*)$/',$classname,$reg);
 					if (! empty($reg[2]) && $reg[2] != strtoupper($mysoc->country_code)) continue;
 
 					$classname = preg_replace('/\-.*$/','',$classname);
 					if (! class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/',$filebis) || preg_match('/mod_/',$classname)) && substr($filebis, dol_strlen($filebis)-3, 3) == 'php')
+=======
+					preg_match('/\-(.*)_(.*)$/', $classname, $reg);
+					if (! empty($reg[2]) && $reg[2] != strtoupper($mysoc->country_code)) continue;
+
+					$classname = preg_replace('/\-.*$/', '', $classname);
+					if (! class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/', $filebis) || preg_match('/mod_/', $classname)) && substr($filebis, dol_strlen($filebis)-3, 3) == 'php')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					{
 						// Charging the numbering class
 						require_once $dir.$filebis;
@@ -172,11 +219,16 @@ foreach ($dirmodels as $reldir)
 							// Show example of numbering module
 							print '<td class="nowrap">';
 							$tmp=$module->getExample();
+<<<<<<< HEAD
 							if (preg_match('/^Error/',$tmp)) print '<div class="error">'.$langs->trans($tmp).'</div>';
+=======
+							if (preg_match('/^Error/', $tmp)) print '<div class="error">'.$langs->trans($tmp).'</div>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							elseif ($tmp=='NotConfigured') print $langs->trans($tmp);
 							else print $tmp;
 							print '</td>'."\n";
 
+<<<<<<< HEAD
 							print '<td align="center">';
 							if ($conf->global->CHEQUERECEIPTS_ADDON == $file || $conf->global->CHEQUERECEIPTS_ADDON.'.php' == $file)
 							{
@@ -185,6 +237,16 @@ foreach ($dirmodels as $reldir)
 							else
 							{
 								print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&value='.preg_replace('/\.php$/','',$file).'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+=======
+							print '<td class="center">';
+							if ($conf->global->CHEQUERECEIPTS_ADDON == $file || $conf->global->CHEQUERECEIPTS_ADDON.'.php' == $file)
+							{
+								print img_picto($langs->trans("Activated"), 'switch_on');
+							}
+							else
+							{
+								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&value='.preg_replace('/\.php$/', '', $file).'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							}
 							print '</td>';
 
@@ -194,11 +256,19 @@ foreach ($dirmodels as $reldir)
 							// Example
 							$htmltooltip='';
 							$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
+<<<<<<< HEAD
 							$nextval=$module->getNextValue($mysoc,$chequereceipts);
 							if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
 								$htmltooltip.=$langs->trans("NextValue").': ';
 								if ($nextval) {
 									if (preg_match('/^Error/',$nextval) || $nextval=='NotConfigured')
+=======
+							$nextval=$module->getNextValue($mysoc, $chequereceipts);
+							if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
+								$htmltooltip.=$langs->trans("NextValue").': ';
+								if ($nextval) {
+									if (preg_match('/^Error/', $nextval) || $nextval=='NotConfigured')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 										$nextval = $langs->trans($nextval);
 									$htmltooltip.=$nextval.'<br>';
 								} else {
@@ -206,18 +276,30 @@ foreach ($dirmodels as $reldir)
 								}
 							}
 
+<<<<<<< HEAD
 							print '<td align="center">';
 							print $form->textwithpicto('',$htmltooltip,1,0);
 
 							if ($conf->global->CHEQUERECEIPTS_ADDON.'.php' == $file)  // If module is the one used, we show existing errors
 							{
 								if (! empty($module->error)) dol_htmloutput_mesg($module->error,'','error',1);
+=======
+							print '<td class="center">';
+							print $form->textwithpicto('', $htmltooltip, 1, 0);
+
+							if ($conf->global->CHEQUERECEIPTS_ADDON.'.php' == $file)  // If module is the one used, we show existing errors
+							{
+								if (! empty($module->error)) dol_htmloutput_mesg($module->error, '', 'error', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							}
 
 							print '</td>';
 
 							print "</tr>\n";
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						}
 					}
 				}
@@ -236,7 +318,11 @@ print '<br>';
  * Other options
  *
  */
+<<<<<<< HEAD
 print load_fiche_titre($langs->trans("OtherOptions"),'','');
+=======
+print load_fiche_titre($langs->trans("OtherOptions"), '', '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -245,7 +331,11 @@ print '<input type="hidden" name="action" value="set_BANK_CHEQUERECEIPT_FREE_TEX
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>';
+<<<<<<< HEAD
 print '<td align="center" width="60">&nbsp;</td>';
+=======
+print '<td class="center" width="60">&nbsp;</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
@@ -265,10 +355,17 @@ if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 else
 {
     include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+<<<<<<< HEAD
     $doleditor=new DolEditor($variablename, $conf->global->$variablename,'',80,'dolibarr_notes');
     print $doleditor->Create();
 }
 print '</td><td align="right">';
+=======
+    $doleditor=new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
+    print $doleditor->Create();
+}
+print '</td><td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 print '</table>';
@@ -280,6 +377,11 @@ dol_fiche_end();
 
 print '</form>';
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

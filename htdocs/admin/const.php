@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2013		Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,6 +37,7 @@ $langs->load("admin");
 if (! $user->admin)
 	accessforbidden();
 
+<<<<<<< HEAD
 $rowid=GETPOST('rowid','int');
 $entity=GETPOST('entity','int');
 $action=GETPOST('action','alpha');
@@ -43,6 +48,18 @@ $consts=GETPOST('const','array');
 $constname=GETPOST('constname','alpha');
 $constvalue=GETPOST('constvalue','none');	// We shoul dbe able to send everything here
 $constnote=GETPOST('constnote','alpha');
+=======
+$rowid=GETPOST('rowid', 'int');
+$entity=GETPOST('entity', 'int');
+$action=GETPOST('action', 'alpha');
+$update=GETPOST('update', 'alpha');
+$delete=GETPOST('delete', 'none');	// Do not use alpha here
+$debug=GETPOST('debug', 'int');
+$consts=GETPOST('const', 'array');
+$constname=GETPOST('constname', 'alpha');
+$constvalue=GETPOST('constvalue', 'none');	// We shoul dbe able to send everything here
+$constnote=GETPOST('constnote', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 
@@ -148,7 +165,11 @@ if ($action == 'delete')
 $form = new Form($db);
 
 $wikihelp='EN:Setup_Other|FR:Paramétrage_Divers|ES:Configuración_Varios';
+<<<<<<< HEAD
 llxHeader('',$langs->trans("Setup"),$wikihelp);
+=======
+llxHeader('', $langs->trans("Setup"), $wikihelp);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Add logic to show/hide buttons
 if ($conf->use_javascript_ajax)
@@ -174,7 +195,11 @@ jQuery(document).ready(function() {
 <?php
 }
 
+<<<<<<< HEAD
 print load_fiche_titre($langs->trans("OtherSetup"),'','title_setup');
+=======
+print load_fiche_titre($langs->trans("OtherSetup"), '', 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print $langs->trans("ConstDesc")."<br>\n";
 print "<br>\n";
@@ -190,7 +215,11 @@ print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print '<td>'.$langs->trans("Comment").'</td>';
 if (! empty($conf->multicompany->enabled) && !$user->entity) print '<td>'.$langs->trans("Entity").'</td>';
+<<<<<<< HEAD
 print '<td align="center">'.$langs->trans("Action").'</td>';
+=======
+print '<td class="center">'.$langs->trans("Action").'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print "</tr>\n";
 
 
@@ -210,11 +239,19 @@ if (! empty($conf->multicompany->enabled) && !$user->entity)
 	print '<td>';
 	print '<input type="text" class="flat" size="1" name="entity" value="'.$conf->entity.'">';
 	print '</td>';
+<<<<<<< HEAD
 	print '<td align="center">';
 }
 else
 {
 	print '<td align="center">';
+=======
+	print '<td class="center">';
+}
+else
+{
+	print '<td class="center">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 }
 print '<input type="submit" class="button" value="'.$langs->trans("Add").'" name="add">';
@@ -233,7 +270,11 @@ $sql.= ", entity";
 $sql.= " FROM ".MAIN_DB_PREFIX."const";
 $sql.= " WHERE entity IN (".$user->entity.",".$conf->entity.")";
 if ((empty($user->entity) || $user->admin) && $debug) {} 										// to force for superadmin to debug
+<<<<<<< HEAD
 else if (! GETPOST('visible') || GETPOST('visible') != 'all') $sql.= " AND visible = 1";		// We must always have this. Otherwise, array is too large and submitting data fails due to apache POST or GET limits
+=======
+elseif (! GETPOST('visible') || GETPOST('visible') != 'all') $sql.= " AND visible = 1";		// We must always have this. Otherwise, array is too large and submitting data fails due to apache POST or GET limits
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (GETPOST('name')) $sql.=natural_search("name", GETPOST('name'));
 $sql.= " ORDER BY entity, name ASC";
 
@@ -264,7 +305,11 @@ if ($result)
 
 		// Note
 		print '<td>';
+<<<<<<< HEAD
 		print '<input type="text" id="note_'.$i.'" class="flat inputforupdate" size="40" name="const['.$i.'][note]" value="'.htmlspecialchars($obj->note,1).'">';
+=======
+		print '<input type="text" id="note_'.$i.'" class="flat inputforupdate" size="40" name="const['.$i.'][note]" value="'.htmlspecialchars($obj->note, 1).'">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</td>';
 
 		// Entity limit to superadmin
@@ -273,11 +318,19 @@ if ($result)
 			print '<td>';
 			print '<input type="text" class="flat" size="1" name="const['.$i.'][entity]" value="'.$obj->entity.'">';
 			print '</td>';
+<<<<<<< HEAD
 			print '<td align="center">';
 		}
 		else
 		{
 			print '<td align="center">';
+=======
+			print '<td class="center">';
+		}
+		else
+		{
+			print '<td class="center">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '<input type="hidden" name="const['.$i.'][entity]" value="'.$obj->entity.'">';
 		}
 
@@ -304,17 +357,29 @@ print '</div>';
 if ($conf->use_javascript_ajax)
 {
 	print '<br>';
+<<<<<<< HEAD
 	print '<div id="updateconst" align="right">';
 	print '<input type="submit" name="update" class="button" value="'.$langs->trans("Modify").'">';
 	print '</div>';
 	print '<div id="delconst" align="right">';
+=======
+	print '<div id="updateconst" class="right">';
+	print '<input type="submit" name="update" class="button" value="'.$langs->trans("Modify").'">';
+	print '</div>';
+	print '<div id="delconst" class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '<input type="submit" name="delete" class="button" value="'.$langs->trans("Delete").'">';
 	print '</div>';
 }
 
 print "</form>\n";
 
+<<<<<<< HEAD
 
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

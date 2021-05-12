@@ -32,7 +32,11 @@ CREATE TABLE llx_societe_account(
 	date_last_login   datetime,
 	date_previous_login datetime,
 	date_creation datetime NOT NULL, 
+<<<<<<< HEAD
 	tms timestamp NOT NULL, 
+=======
+	tms timestamp, 
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	fk_user_creat integer NOT NULL, 
 	fk_user_modif integer, 
 	import_key varchar(14), 

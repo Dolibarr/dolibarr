@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - commercial
+<<<<<<< HEAD
 Commercial=Vertrieb
 CommercialArea=Vertrieb - Übersicht
 Customer=Kunde
@@ -11,12 +12,31 @@ AddAction=Termin/Aufgabe erstellen
 AddAnAction=Erstelle Termin/Aufgabe
 AddActionRendezVous=erstelle Termin
 ConfirmDeleteAction=Möchten Sie diese Veranstaltung wirklich löschen ?
+=======
+Commercial=Einkauf | Vertrieb
+CommercialArea=Vertrieb - Übersicht
+Customer=Kunde
+Customers=Kunden
+Prospect=Interessent
+Prospects=Interessenten
+DeleteAction=Ereignis löschen
+NewAction=erstelle Termin/Aufgabe
+AddAction=Termin/Aufgabe erstellen
+AddAnAction=Erstelle Termin/Aufgabe
+AddActionRendezVous=erstelle Termin
+ConfirmDeleteAction=Dieses Ereignis wirklich löschen ?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CardAction=Ereignis - Karte
 ActionOnCompany=Verknüpftes Unternehmen
 ActionOnContact=Verknüpfter Kontakt
 TaskRDVWith=Termin mit %s
+<<<<<<< HEAD
 ShowTask=Zeige Aufgabe
 ShowAction=Ereignisse anzeigen
+=======
+ShowTask=Aufgabe anzeigen
+ShowAction=Ereignis anzeigen
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActionsReport=Ereignis Journal
 ThirdPartiesOfSaleRepresentative=Partner mit Vertriebsmitarbeiter
 SaleRepresentativesOfThirdParty=Vertriebsmittarbeiter des Partners
@@ -25,9 +45,15 @@ SalesRepresentatives=Vertreter
 SalesRepresentativeFollowUp=Vertriebsmitarbeiter (Follow-up)
 SalesRepresentativeSignature=Vertriebsmitarbeiter (Unterschrift)
 NoSalesRepresentativeAffected=Keine besonderen Vertriebsmitarbeiter betroffen
+<<<<<<< HEAD
 ShowCustomer=Zeige Kunden
 ShowProspect=Zeige Lead
 ListOfProspects=Leads-Liste
+=======
+ShowCustomer=Kunden anzeigen
+ShowProspect=Interessent anzeigen
+ListOfProspects=Liste der Interessenten
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ListOfCustomers=Kundenliste
 LastDoneTasks=Letzte %s erledigte Aufgaben
 LastActionsToDo=%s älteste nicht erledigte Aufgaben
@@ -38,7 +64,11 @@ SendPropalRef=Einreichung der Angebote %s
 SendOrderRef=Einreichung der Bestellung %s
 StatusNotApplicable=Nicht anwendbar
 StatusActionToDo=Zu erledigen
+<<<<<<< HEAD
 StatusActionDone=Abgeschlossen
+=======
+StatusActionDone=erledigt
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 StatusActionInProcess=In Bearbeitung
 TasksHistoryForThisContact=Ereignisse zu diesem Kontakt
 LastProspectDoNotContact=Nicht kontaktieren
@@ -49,6 +79,7 @@ LastProspectContactDone=Kontaktaufnahme erledigt
 ActionAffectedTo=Ereignis zugewiesen an
 ActionDoneBy=Ereignis erledigt von
 ActionAC_TEL=Anruf
+<<<<<<< HEAD
 ActionAC_FAX=Fax versenden
 ActionAC_PROP=Angebot senden
 ActionAC_EMAIL=E-Mail senden
@@ -62,11 +93,28 @@ ActionAC_COM=Sende Bestellung per Post
 ActionAC_SHIP=Lieferschein senden
 ActionAC_SUP_ORD=Send purchase order by mail
 ActionAC_SUP_INV=Send vendor invoice by mail
+=======
+ActionAC_FAX=Fax senden
+ActionAC_PROP=Angebot per Post senden
+ActionAC_EMAIL=E-Mail senden
+ActionAC_EMAIL_IN=Empfang von E-Mails
+ActionAC_RDV=Termine
+ActionAC_INT=Serviceaufträge vor Ort
+ActionAC_FAC=Kundenrechnung senden
+ActionAC_REL=Kundenrechnung senden  (Erinnerung)
+ActionAC_CLO=schließen
+ActionAC_EMAILING=E-Mail-Kampagne starten
+ActionAC_COM=Sende Bestellung per Post
+ActionAC_SHIP=Lieferschein senden
+ActionAC_SUP_ORD=Lieferantenbestellung per E-Mail versenden
+ActionAC_SUP_INV=Lieferanten-Rechnung per E-Mail versenden
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActionAC_OTH=Sonstiges
 ActionAC_OTH_AUTO=Automatisch eingefügte Ereignisse
 ActionAC_MANUAL=Manuell eingefügte Ereignisse
 ActionAC_AUTO=Automatisch eingefügte Ereignisse
 ActionAC_OTH_AUTOShort=Automatisch
+<<<<<<< HEAD
 Stats=Verkaufsstatistik
 StatusProsp=Lead Status
 DraftPropals=Entworfene Angebote
@@ -77,3 +125,15 @@ ThisScreenAllowsYouToSignDocFrom=Auf dieser Seite können Angebote akzeptiert un
 ThisIsInformationOnDocumentToSign=Information zum Dokument zum Akzeptieren oder Ablehnen
 SignatureProposalRef=Unterschrift des Angebotes %s
 FeatureOnlineSignDisabled=Onlineunterschrift ist deaktiviert oder das Dokument wurde erstellt, bevor dieses Funktion aktiviert wurde
+=======
+Stats=Verkaufsstatistiken
+StatusProsp=Kontaktstatus
+DraftPropals=Entworfene Angebote
+NoLimit=ohne Begrenzung
+ToOfferALinkForOnlineSignature=Link zur Onlinesignatur
+WelcomeOnOnlineSignaturePage=Wilkommen auf der Seite um Angebote von %s zu akzeptieren
+ThisScreenAllowsYouToSignDocFrom=Auf dieser Seite können Angebote akzeptiert und unterschreiben oder ablehnt werden
+ThisIsInformationOnDocumentToSign=Information zum Dokument zum Akzeptieren oder Ablehnen
+SignatureProposalRef=Unterschrift des Angebotes %s
+FeatureOnlineSignDisabled=Onlineunterschrift ist deaktiviert oder das Dokument wurde erstellt, bevor diese Funktion aktiviert wurde
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

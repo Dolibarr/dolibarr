@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2005      Patrick Rouillon     <patrick@rouillon.net>
  * Copyright (C) 2005-2018 Destailleur Laurent  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -81,7 +85,11 @@ if ($action == 'addcontact' && $permissiontoedit)
 }
 
 // Toggle the status of a contact
+<<<<<<< HEAD
 else if ($action == 'swapstatut' && $permissiontoedit)
+=======
+elseif ($action == 'swapstatut' && $permissiontoedit)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	if ($object->fetch($id))
 	{
@@ -94,10 +102,17 @@ else if ($action == 'swapstatut' && $permissiontoedit)
 }
 
 // Deleting a contact
+<<<<<<< HEAD
 else if ($action == 'deletecontact' && $permissiontoedit)
 {
 	$object->fetch($id);
 	$result = $object->delete_contact(GETPOST("lineid",'int'));
+=======
+elseif ($action == 'deletecontact' && $permissiontoedit)
+{
+	$object->fetch($id);
+	$result = $object->delete_contact(GETPOST("lineid", 'int'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	if ($result >= 0)
 	{
@@ -116,7 +131,11 @@ else if ($action == 'deletecontact' && $permissiontoedit)
  */
 
 $help_url='';
+<<<<<<< HEAD
 llxHeader('',$langs->trans("SupplierProposals"),$help_url);
+=======
+llxHeader('', $langs->trans("SupplierProposals"), $help_url);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
@@ -193,7 +212,10 @@ if ($id > 0 || ! empty($ref))
 
 		// Contacts lines
 		include DOL_DOCUMENT_ROOT.'/core/tpl/contacts.tpl.php';
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 	else
 	{
@@ -202,6 +224,10 @@ if ($id > 0 || ! empty($ref))
 	}
 }
 
+<<<<<<< HEAD
 
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

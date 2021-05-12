@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,8 +28,13 @@
 
 require '../main.inc.php';
 
+<<<<<<< HEAD
 $langs->load("companies");
 $langs->load("other");
+=======
+// Load translation files required by the page
+$langs->loadLangs(array("companies","other"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Security check
 $socid=0;
@@ -39,7 +48,11 @@ if ($user->societe_id > 0) $socid=$user->societe_id;
 
 $socstatic=new Societe($db);
 
+<<<<<<< HEAD
 llxHeader("",$langs->trans("Tools"),"");
+=======
+llxHeader("", $langs->trans("Tools"), "");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $text=$langs->trans("Tools");
 

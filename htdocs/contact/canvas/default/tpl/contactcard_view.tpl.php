@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2010-2012 Regis Houssin <regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2010-2012 Regis Houssin <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +34,11 @@ $contact = $GLOBALS['objcanvas']->control->object;
 <?php echo $this->control->tpl['showhead']; ?>
 
 <?php
+<<<<<<< HEAD
 dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']);
+=======
+dol_htmloutput_errors($this->control->tpl['error'], $this->control->tpl['errors']);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ?>
 
 <?php if (! empty($this->control->tpl['action_create_user'])) echo $this->control->tpl['action_create_user']; ?>
@@ -111,11 +119,14 @@ dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']
 </tr>
 
 <tr>
+<<<<<<< HEAD
 	<td><?php echo $langs->trans("IM"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['jabberid']; ?></td>
 </tr>
 
 <tr>
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	<td><?php echo $langs->trans("ContactVisibility"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['visibility']; ?></td>
 </tr>

@@ -22,10 +22,17 @@
  *	\brief      Page to create a new survey (choice selection)
  */
 
+<<<<<<< HEAD
 require_once('../../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php");
+=======
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
+require_once DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Security check
 if (!$user->rights->opensurvey->write) accessforbidden();
@@ -69,7 +76,11 @@ if (isset($_POST["confirmecreation"]))
 		}
 	}
 
+<<<<<<< HEAD
 	$toutchoix=substr("$toutchoix",1);
+=======
+	$toutchoix=substr("$toutchoix", 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$_SESSION["toutchoix"]=$toutchoix;
 
 	//test de remplissage des cases
@@ -161,6 +172,11 @@ print '<a name=bas></a>'."\n";
 print '<br><br><br>'."\n";
 print '</div>'."\n";
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

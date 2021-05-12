@@ -1,9 +1,16 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2007-2012  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) ---Put here your own copyright and developer email---
+=======
+/* Copyright (C) 2007-2018  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
+ * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
+ * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,16 +46,25 @@ class WebsitePage extends CommonObject
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'websitepage';
+<<<<<<< HEAD
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'website_page';
+<<<<<<< HEAD
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * @var string String with name of icon for websitepage. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'label';
 
 	/**
+<<<<<<< HEAD
 	 */
 
 	public $fk_website;
@@ -62,6 +78,42 @@ class WebsitePage extends CommonObject
 	public $content;
 	public $grabbed_from;
 	public $status;
+=======
+     * @var int ID
+     */
+	public $fk_website;
+
+	public $pageurl;
+	public $aliasalt;
+	public $type_container;
+
+	/**
+	 * @var string title
+	 */
+	public $title;
+	/**
+	 * @var string description
+	 */
+	public $description;
+	/**
+	 * @var string image
+	 */
+	public $image;
+	/**
+	 * @var string keywords
+	 */
+	public $keywords;
+
+	public $htmlheader;
+	public $content;
+	public $grabbed_from;
+
+	/**
+	 * @var int Status
+	 */
+	public $status;
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	public $date_creation;
 	public $date_modification;
 
@@ -77,7 +129,12 @@ class WebsitePage extends CommonObject
 		'type_container' =>array('type'=>'varchar(16)',  'label'=>'Type',             'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'index'=>0, 'position'=>12, 'comment'=>'Type of container'),
 		'title'          =>array('type'=>'varchar(255)', 'label'=>'Label',            'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1),
 	    'description'    =>array('type'=>'varchar(255)', 'label'=>'Description',      'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1),
+<<<<<<< HEAD
 	    'keywords'       =>array('type'=>'varchar(255)', 'label'=>'Keywords',         'enabled'=>1, 'visible'=>1,  'position'=>45,  'searchall'=>0),
+=======
+		'image'          =>array('type'=>'varchar(255)', 'label'=>'Image',            'enabled'=>1, 'visible'=>1,  'position'=>32,  'searchall'=>0, 'help'=>'Relative path of media. Used if Type is "blog_post"'),
+		'keywords'       =>array('type'=>'varchar(255)', 'label'=>'Keywords',         'enabled'=>1, 'visible'=>1,  'position'=>45,  'searchall'=>0),
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		'lang'           =>array('type'=>'varchar(6)',   'label'=>'Lang',             'enabled'=>1, 'visible'=>1,  'position'=>45,  'searchall'=>0),
 		//'status'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'index'=>true,   'position'=>1000),
 	    'fk_website'     =>array('type'=>'integer',      'label'=>'WebsiteId',        'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'position'=>40,  'searchall'=>0, 'foreignkey'=>'websitepage.rowid'),
@@ -88,8 +145,13 @@ class WebsitePage extends CommonObject
 	    'date_creation'  =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
 		'tms'            =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>501),
 		//'date_valid'    =>array('type'=>'datetime',     'label'=>'DateValidation',     'enabled'=>1, 'visible'=>-1, 'position'=>502),
+<<<<<<< HEAD
 		//'fk_user_creat' =>array('type'=>'integer',      'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-1, 'notnull'=>true, 'position'=>510),
 		//'fk_user_modif' =>array('type'=>'integer',      'label'=>'UserModif',        'enabled'=>1, 'visible'=>-1, 'position'=>511),
+=======
+		'fk_user_creat'  =>array('type'=>'integer',      'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-1, 'notnull'=>true, 'position'=>510),
+		'fk_user_modif'  =>array('type'=>'integer',      'label'=>'UserModif',        'enabled'=>1, 'visible'=>-1, 'position'=>511),
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
 		'import_key'     =>array('type'=>'varchar(14)',  'label'=>'ImportId',         'enabled'=>1, 'visible'=>-1,  'index'=>1,  'position'=>1000, 'notnull'=>-1),
 	);
@@ -125,10 +187,19 @@ class WebsitePage extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
+<<<<<<< HEAD
 	 * @param int		$id         	Id object. If this is 0, the value into $page will be used. If not found of $page not defined, the default page of website_id will be used or the first page found if not set.
 	 * @param string	$website_id 	Web site id (page name must also be filled if this parameter is used)
 	 * @param string	$page       	Page name (website id must also be filled if this parameter is used)
 	 * @param string	$aliasalt		Alternative alias to search page (slow)
+=======
+	 * @param int       $id             Id object.
+	 *                                  - If this is 0, the value into $page will be used. If not found or $page not defined, the default page of website_id will be used or the first page found if not set.
+	 *                                  - If value is < 0, we must exclude this ID.
+	 * @param string    $website_id     Web site id (page name must also be filled if this parameter is used)
+	 * @param string    $page           Page name (website id must also be filled if this parameter is used)
+	 * @param string    $aliasalt       Alternative alias to search page (slow)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	 *
 	 * @return int <0 if KO, 0 if not found, >0 if OK
 	 */
@@ -144,6 +215,10 @@ class WebsitePage extends CommonObject
 		$sql .= " t.aliasalt,";
 		$sql .= " t.title,";
 		$sql .= " t.description,";
+<<<<<<< HEAD
+=======
+		$sql .= " t.image,";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql .= " t.keywords,";
 		$sql .= " t.htmlheader,";
 		$sql .= " t.content,";
@@ -152,7 +227,13 @@ class WebsitePage extends CommonObject
 		$sql .= " t.status,";
 		$sql .= " t.grabbed_from,";
 		$sql .= " t.date_creation,";
+<<<<<<< HEAD
 		$sql .= " t.tms as date_modification";
+=======
+		$sql .= " t.tms as date_modification,";
+		$sql .= " t.fk_user_creat,";
+		$sql .= " t.fk_user_modif";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		//$sql .= ' WHERE entity IN ('.getEntity('website').')';       // entity is on website level
 		$sql .= ' WHERE 1 = 1';
@@ -162,10 +243,18 @@ class WebsitePage extends CommonObject
 		}
 		else
 		{
+<<<<<<< HEAD
 			if (null !== $website_id) {
 			    $sql .= " AND t.fk_website = '" . $this->db->escape($website_id) . "'";
 			    if ($page)		$sql .= " AND t.pageurl = '" . $this->db->escape($page) . "'";
 			    if ($aliasalt)	$sql .= " AND t.aliasalt LIKE '%," . $this->db->escape($aliasalt) . ",%'";
+=======
+			if ($id < 0) $sql .= ' AND t.rowid <> ' . abs($id);
+			if (null !== $website_id) {
+			    $sql .= " AND t.fk_website = '" . $this->db->escape($website_id) . "'";
+			    if ($page)		$sql .= " AND t.pageurl = '" . $this->db->escape($page) . "'";
+			    if ($aliasalt)	$sql .= " AND (t.aliasalt LIKE '%," . $this->db->escape($aliasalt) . ",%' OR t.aliasalt LIKE '%, " . $this->db->escape($aliasalt) . ",%')";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 		}
         $sql .= $this->db->plimit(1);
@@ -180,10 +269,21 @@ class WebsitePage extends CommonObject
 
 				$this->fk_website = $obj->fk_website;
 				$this->type_container = $obj->type_container;
+<<<<<<< HEAD
 				$this->pageurl = $obj->pageurl;
 				$this->aliasalt = preg_replace('/,+$/', '', preg_replace('/^,+/', '', $obj->aliasalt));
 				$this->title = $obj->title;
 				$this->description = $obj->description;
+=======
+
+				$this->pageurl = $obj->pageurl;
+				$this->ref = $obj->pageurl;
+				$this->aliasalt = preg_replace('/,+$/', '', preg_replace('/^,+/', '', $obj->aliasalt));
+
+				$this->title = $obj->title;
+				$this->description = $obj->description;
+				$this->image = $obj->image;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$this->keywords = $obj->keywords;
 				$this->htmlheader = $obj->htmlheader;
 				$this->content = $obj->content;
@@ -193,6 +293,11 @@ class WebsitePage extends CommonObject
 				$this->grabbed_from = $obj->grabbed_from;
 				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
+<<<<<<< HEAD
+=======
+				$this->fk_user_creat = $obj->fk_user_creat;
+				$this->fk_user_modif = $obj->fk_user_modif;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 			$this->db->free($resql);
 
@@ -210,7 +315,11 @@ class WebsitePage extends CommonObject
 	}
 
 	/**
+<<<<<<< HEAD
 	 * Load object in memory from the database
+=======
+	 * Load list of objects in memory from the database.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	 *
 	 * @param  string      $websiteid    Web site
 	 * @param  string      $sortorder    Sort Order
@@ -221,7 +330,11 @@ class WebsitePage extends CommonObject
 	 * @param  string      $filtermode   Filter mode (AND or OR)
 	 * @return array|int                 int <0 if KO, array of pages if OK
 	 */
+<<<<<<< HEAD
 	public function fetchAll($websiteid, $sortorder='', $sortfield='', $limit=0, $offset=0, array $filter = array(), $filtermode='AND')
+=======
+	public function fetchAll($websiteid, $sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -235,6 +348,10 @@ class WebsitePage extends CommonObject
 		$sql .= " t.aliasalt,";
 		$sql .= " t.title,";
 		$sql .= " t.description,";
+<<<<<<< HEAD
+=======
+		$sql .= " t.image,";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql .= " t.keywords,";
 		$sql .= " t.htmlheader,";
 		$sql .= " t.content,";
@@ -243,7 +360,13 @@ class WebsitePage extends CommonObject
 		$sql .= " t.status,";
 		$sql .= " t.grabbed_from,";
 		$sql .= " t.date_creation,";
+<<<<<<< HEAD
 		$sql .= " t.tms as date_modification";
+=======
+		$sql .= " t.tms as date_modification,";
+		$sql .= " t.fk_user_creat,";
+		$sql .= " t.fk_user_modif";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element. ' as t';
 		$sql .= ' WHERE t.fk_website = '.$websiteid;
 		// Manage filter
@@ -258,6 +381,7 @@ class WebsitePage extends CommonObject
 			}
 		}
 		if (count($sqlwhere) > 0) {
+<<<<<<< HEAD
 			$sql .= ' AND ' . implode(' '.$filtermode.' ', $sqlwhere);
 		}
 
@@ -266,6 +390,16 @@ class WebsitePage extends CommonObject
 		}
 		if (!empty($limit)) {
             $sql .=  ' ' . $this->db->plimit($limit, $offset);
+=======
+			$sql .= ' AND (' . implode(' '.$filtermode.' ', $sqlwhere).')';
+		}
+
+		if (!empty($sortfield)) {
+			$sql .= $this->db->order($sortfield, $sortorder);
+		}
+		if (!empty($limit)) {
+			$sql .=  ' ' . $this->db->plimit($limit, $offset);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		$resql = $this->db->query($sql);
@@ -283,6 +417,10 @@ class WebsitePage extends CommonObject
 				$record->aliasalt = preg_replace('/,+$/', '', preg_replace('/^,+/', '', $obj->aliasalt));
 				$record->title = $obj->title;
 				$record->description = $obj->description;
+<<<<<<< HEAD
+=======
+				$record->image = $obj->image;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$record->keywords = $obj->keywords;
 				$record->htmlheader = $obj->htmlheader;
 				$record->content = $obj->content;
@@ -292,6 +430,11 @@ class WebsitePage extends CommonObject
 				$record->grabbed_from = $obj->grabbed_from;
 				$record->date_creation = $this->db->jdate($obj->date_creation);
 				$record->date_modification = $this->db->jdate($obj->date_modification);
+<<<<<<< HEAD
+=======
+				$record->fk_user_creat = $obj->fk_user_creat;
+				$record->fk_user_modif = $obj->fk_user_modif;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				//var_dump($record->id);
 				$records[$record->id] = $record;
 			}
@@ -362,12 +505,24 @@ class WebsitePage extends CommonObject
 	 * @param	string	$newref				New ref/alias of page
 	 * @param	string	$newlang			New language
 	 * @param	int		$istranslation		1=New page is a translation of the cloned page.
+<<<<<<< HEAD
 	 * @param	int		$newwebsite			0=Same web site, 1=New web site
 	 * @return 	mixed 						New object created, <0 if KO
 	 */
 	public function createFromClone(User $user, $fromid, $newref, $newlang='', $istranslation=0, $newwebsite=0)
 	{
 		global $hookmanager, $langs;
+=======
+	 * @param	int		$newwebsite			0=Same web site, >0=Id of new website
+	 * @param	int		$keeptitleunchanged	1=Keep title unchanged
+	 * @return 	mixed 						New object created, <0 if KO
+	 */
+	public function createFromClone(User $user, $fromid, $newref, $newlang = '', $istranslation = 0, $newwebsite = 0, $keeptitleunchanged = 0)
+	{
+		global $hookmanager, $langs;
+
+		$now = dol_now();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$error = 0;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -385,7 +540,13 @@ class WebsitePage extends CommonObject
 		$object->ref = $newref;
 		$object->pageurl = $newref;
 		$object->aliasalt = '';
+<<<<<<< HEAD
 		$object->title = $langs->trans("CopyOf").' '.$object->title;
+=======
+		$object->fk_user_creat = $user->id;
+		$object->date_creation = $now;
+		$object->title = ($keeptitleunchanged ? '' : $langs->trans("CopyOf").' ').$object->title;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if (! empty($newlang)) $object->lang=$newlang;
 		if ($istranslation) $object->fk_page = $fromid;
 		else $object->fk_page = 0;
@@ -401,6 +562,11 @@ class WebsitePage extends CommonObject
 			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 		}
 
+<<<<<<< HEAD
+=======
+		unset($object->context['createfromclone']);
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// End
 		if (!$error) {
 			$this->db->commit();
@@ -424,7 +590,11 @@ class WebsitePage extends CommonObject
      *  @param  string  $morecss            Add more css on link
 	 *	@return	string						String with URL
 	 */
+<<<<<<< HEAD
 	function getNomUrl($withpicto=0, $option='', $notooltip=0, $maxlen=24, $morecss='')
+=======
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $maxlen = 24, $morecss = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs, $conf, $db;
         global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -459,11 +629,20 @@ class WebsitePage extends CommonObject
 	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return	string 			       Label of status
 	 */
+<<<<<<< HEAD
 	function getLibStatut($mode=0)
 	{
 		return $this->LibStatut($this->status,$mode);
 	}
 
+=======
+	public function getLibStatut($mode = 0)
+	{
+		return $this->LibStatut($this->status, $mode);
+	}
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *  Renvoi le libelle d'un status donne
 	 *
@@ -471,14 +650,21 @@ class WebsitePage extends CommonObject
 	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string 			       	Label of status
 	 */
+<<<<<<< HEAD
 	function LibStatut($status,$mode=0)
 	{
+=======
+	public function LibStatut($status, $mode = 0)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $langs;
 
 		if ($mode == 0)
 		{
 			$prefix='';
 			if ($status == 1) return $langs->trans('Enabled');
+<<<<<<< HEAD
 			if ($status == 0) return $langs->trans('Disabled');
 		}
 		if ($mode == 1)
@@ -505,6 +691,34 @@ class WebsitePage extends CommonObject
 		{
 			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
 			if ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
+=======
+			elseif ($status == 0) return $langs->trans('Disabled');
+		}
+		elseif ($mode == 1)
+		{
+			if ($status == 1) return $langs->trans('Enabled');
+			elseif ($status == 0) return $langs->trans('Disabled');
+		}
+		elseif ($mode == 2)
+		{
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
+		}
+		elseif ($mode == 3)
+		{
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5');
+		}
+		elseif ($mode == 4)
+		{
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
+		}
+		elseif ($mode == 5)
+		{
+			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
+			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 	}
 
@@ -517,6 +731,11 @@ class WebsitePage extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
+<<<<<<< HEAD
+=======
+		global $user;
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->id = 0;
 
 		$now=dol_now();
@@ -527,6 +746,10 @@ class WebsitePage extends CommonObject
 		$this->aliasalt = 'specimenalt';
 		$this->title = 'My Page';
 		$this->description = 'This is my page';
+<<<<<<< HEAD
+=======
+		$this->image = '';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->keywords = 'keyword1, keyword2';
 		$this->htmlheader = '';
 		$this->content = '<html><body>This is a html content</body></html>';
@@ -534,6 +757,11 @@ class WebsitePage extends CommonObject
 		$this->grabbed_from = '';
 		$this->date_creation = $now - (24 * 30 * 3600);
 		$this->date_modification = $now - (24 * 7 * 3600);
+<<<<<<< HEAD
 	}
 
+=======
+		$this->fk_user_creat = $user->id;
+	}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

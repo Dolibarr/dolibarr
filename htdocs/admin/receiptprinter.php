@@ -35,8 +35,13 @@ $langs->loadLangs(array("admin","receiptprinter"));
 
 if (! $user->admin) accessforbidden();
 
+<<<<<<< HEAD
 $action = GETPOST('action','alpha');
 $mode = GETPOST('mode','alpha');
+=======
+$action = GETPOST('action', 'alpha');
+$mode = GETPOST('mode', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $printername = GETPOST('printername', 'alpha');
 $printerid = GETPOST('printerid', 'int');
@@ -52,9 +57,21 @@ if (!$mode) $mode='config';
 
 // used in library escpos maybe useful if php doesn't support gzdecode
 if (!function_exists('gzdecode')) {
+<<<<<<< HEAD
     function gzdecode($data)
     {
         return gzinflate(substr($data,10,-8));
+=======
+    /**
+     * Gzdecode
+     *
+     * @param string    $data   data to deflate
+     * @return string           data deflated
+     */
+    function gzdecode($data)
+    {
+        return gzinflate(substr($data, 10, -8));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 }
 
@@ -62,8 +79,12 @@ if (!function_exists('gzdecode')) {
  * Action
  */
 
+<<<<<<< HEAD
 if ($action == 'addprinter' && $user->admin)
 {
+=======
+if ($action == 'addprinter' && $user->admin) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $error=0;
     $db->begin();
     if (empty($printername)) {
@@ -75,15 +96,24 @@ if ($action == 'addprinter' && $user->admin)
         setEventMessages($langs->trans("PrinterParameterEmpty"), null, 'warnings');
     }
 
+<<<<<<< HEAD
     if (! $error)
     {
         $result= $printer->AddPrinter($printername, GETPOST('printertypeid', 'int'), GETPOST('printerprofileid', 'int'), $parameter);
+=======
+    if (! $error) {
+        $result= $printer->addPrinter($printername, GETPOST('printertypeid', 'int'), GETPOST('printerprofileid', 'int'), $parameter);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         if ($result > 0) $error++;
 
         if (! $error)
         {
             $db->commit();
+<<<<<<< HEAD
             setEventMessages($langs->trans("PrinterAdded",$printername), null);
+=======
+            setEventMessages($langs->trans("PrinterAdded", $printername), null);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
         else
         {
@@ -94,8 +124,12 @@ if ($action == 'addprinter' && $user->admin)
     $action = '';
 }
 
+<<<<<<< HEAD
 if ($action == 'deleteprinter' && $user->admin)
 {
+=======
+if ($action == 'deleteprinter' && $user->admin) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $error=0;
     $db->begin();
     if (empty($printerid)) {
@@ -103,15 +137,24 @@ if ($action == 'deleteprinter' && $user->admin)
         setEventMessages($langs->trans("PrinterIdEmpty"), null, 'errors');
     }
 
+<<<<<<< HEAD
     if (! $error)
     {
         $result= $printer->DeletePrinter($printerid);
+=======
+    if (! $error) {
+        $result= $printer->deletePrinter($printerid);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         if ($result > 0) $error++;
 
         if (! $error)
         {
             $db->commit();
+<<<<<<< HEAD
             setEventMessages($langs->trans("PrinterDeleted",$printername), null);
+=======
+            setEventMessages($langs->trans("PrinterDeleted", $printername), null);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
         else
         {
@@ -122,8 +165,12 @@ if ($action == 'deleteprinter' && $user->admin)
     $action = '';
 }
 
+<<<<<<< HEAD
 if ($action == 'updateprinter' && $user->admin)
 {
+=======
+if ($action == 'updateprinter' && $user->admin) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $error=0;
     $db->begin();
     if (empty($printerid)) {
@@ -131,6 +178,7 @@ if ($action == 'updateprinter' && $user->admin)
         setEventMessages($langs->trans("PrinterIdEmpty"), null, 'errors');
     }
 
+<<<<<<< HEAD
     if (! $error)
     {
         $result= $printer->UpdatePrinter($printername, GETPOST('printertypeid', 'int'), GETPOST('printerprofileid', 'int'), $parameter, $printerid);
@@ -143,6 +191,16 @@ if ($action == 'updateprinter' && $user->admin)
         }
         else
         {
+=======
+    if (! $error) {
+        $result= $printer->updatePrinter($printername, GETPOST('printertypeid', 'int'), GETPOST('printerprofileid', 'int'), $parameter, $printerid);
+        if ($result > 0) $error++;
+
+        if (! $error) {
+            $db->commit();
+            setEventMessages($langs->trans("PrinterUpdated", $printername), null);
+        } else {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $db->rollback();
             dol_print_error($db);
         }
@@ -150,14 +208,19 @@ if ($action == 'updateprinter' && $user->admin)
     $action = '';
 }
 
+<<<<<<< HEAD
 if ($action == 'testprinter' && $user->admin)
 {
+=======
+if ($action == 'testprinter' && $user->admin) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $error=0;
     if (empty($printerid)) {
         $error++;
         setEventMessages($langs->trans("PrinterIdEmpty"), null, 'errors');
     }
 
+<<<<<<< HEAD
     if (! $error)
     {
         // test
@@ -168,6 +231,14 @@ if ($action == 'testprinter' && $user->admin)
         }
         else
         {
+=======
+    if (! $error) {
+        // test
+        $ret = $printer->sendTestToPrinter($printerid);
+        if ($ret == 0) {
+            setEventMessages($langs->trans("TestSentToPrinter", $printername), null);
+        } else {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             setEventMessages($printer->error, $printer->errors, 'errors');
         }
     }
@@ -175,8 +246,12 @@ if ($action == 'testprinter' && $user->admin)
 }
 
 
+<<<<<<< HEAD
 if ($action == 'updatetemplate' && $user->admin)
 {
+=======
+if ($action == 'updatetemplate' && $user->admin) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $error=0;
     $db->begin();
     if (empty($templateid)) {
@@ -184,6 +259,7 @@ if ($action == 'updatetemplate' && $user->admin)
         setEventMessages($langs->trans("TemplateIdEmpty"), null, 'errors');
     }
 
+<<<<<<< HEAD
     if (! $error)
     {
         $result= $printer->UpdateTemplate($templatename, $template, $templateid);
@@ -196,6 +272,16 @@ if ($action == 'updatetemplate' && $user->admin)
         }
         else
         {
+=======
+    if (! $error) {
+        $result= $printer->updateTemplate($templatename, $template, $templateid);
+        if ($result > 0) $error++;
+
+        if (! $error) {
+            $db->commit();
+            setEventMessages($langs->trans("TemplateUpdated", $templatename), null);
+        } else {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $db->rollback();
             dol_print_error($db);
         }
@@ -210,6 +296,7 @@ if ($action == 'updatetemplate' && $user->admin)
 
 $form = new Form($db);
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("ReceiptPrinterSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
@@ -219,6 +306,16 @@ $head = receiptprinteradmin_prepare_head($mode);
 
 if ($mode == 'config' && $user->admin)
 {
+=======
+llxHeader('', $langs->trans("ReceiptPrinterSetup"));
+
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+print load_fiche_titre($langs->trans("ReceiptPrinterSetup"), $linkback, 'title_setup');
+
+$head = receiptprinteradmin_prepare_head($mode);
+
+if ($mode == 'config' && $user->admin) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=config" autocomplete="off">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     if ($action!='editprinter') {
@@ -243,6 +340,7 @@ if ($mode == 'config' && $user->admin)
     print "</tr>\n";
     $ret = $printer->listprinters();
     $nbofprinters = count($printer->listprinters);
+<<<<<<< HEAD
     
     if ($ret > 0) {
         setEventMessages($printer->error, $printer->errors, 'errors');
@@ -252,6 +350,15 @@ if ($mode == 'config' && $user->admin)
             print '<tr class="oddeven">';
             if ($action=='editprinter' && $printer->listprinters[$line]['rowid']==$printerid) 
             {
+=======
+
+    if ($ret > 0) {
+        setEventMessages($printer->error, $printer->errors, 'errors');
+    } else {
+        for ($line=0; $line < $nbofprinters; $line++) {
+            print '<tr class="oddeven">';
+            if ($action=='editprinter' && $printer->listprinters[$line]['rowid']==$printerid) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 print '<input type="hidden" name="printerid" value="'.$printer->listprinters[$line]['rowid'].'">';
                 print '<td><input size="50" type="text" name="printername" value="'.$printer->listprinters[$line]['name'].'"></td>';
                 $ret = $printer->selectTypePrinter($printer->listprinters[$line]['fk_type']);
@@ -263,13 +370,18 @@ if ($mode == 'config' && $user->admin)
                 print '<td></td>';
                 print '<td></td>';
                 print '</tr>';
+<<<<<<< HEAD
              } else {
+=======
+            } else {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 print '<td>'.$printer->listprinters[$line]['name'].'</td>';
                 print '<td>'.$langs->trans($printer->listprinters[$line]['fk_type_name']).'</td>';
                 print '<td>'.$langs->trans($printer->listprinters[$line]['fk_profile_name']).'</td>';
                 print '<td>'.$printer->listprinters[$line]['parameter'].'</td>';
                 // edit icon
                 print '<td><a href="'.$_SERVER['PHP_SELF'].'?mode=config&amp;action=editprinter&amp;printerid='.$printer->listprinters[$line]['rowid'].'">';
+<<<<<<< HEAD
                 print img_picto($langs->trans("Edit"),'edit');
                 print '</a></td>';
                 // delete icon
@@ -279,16 +391,32 @@ if ($mode == 'config' && $user->admin)
                 // test icon
                 print '<td><a href="'.$_SERVER['PHP_SELF'].'?mode=config&amp;action=testprinter&amp;printerid='.$printer->listprinters[$line]['rowid'].'&amp;printername='.$printer->listprinters[$line]['name'].'">';
                 print img_picto($langs->trans("TestPrinter"),'printer');
+=======
+                print img_picto($langs->trans("Edit"), 'edit');
+                print '</a></td>';
+                // delete icon
+                print '<td><a href="'.$_SERVER['PHP_SELF'].'?mode=config&amp;action=deleteprinter&amp;printerid='.$printer->listprinters[$line]['rowid'].'&amp;printername='.$printer->listprinters[$line]['name'].'">';
+                print img_picto($langs->trans("Delete"), 'delete');
+                print '</a></td>';
+                // test icon
+                print '<td><a href="'.$_SERVER['PHP_SELF'].'?mode=config&amp;action=testprinter&amp;printerid='.$printer->listprinters[$line]['rowid'].'&amp;printername='.$printer->listprinters[$line]['name'].'">';
+                print img_picto($langs->trans("TestPrinter"), 'printer');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 print '</a></td>';
                 print '</tr>';
             }
         }
     }
 
+<<<<<<< HEAD
     if ($action!='editprinter') 
     {
         if ($nbofprinters > 0)
         {
+=======
+    if ($action!='editprinter') {
+        if ($nbofprinters > 0) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             print '<tr class="liste_titre">';
             print '<th>'.$langs->trans("Name").'</th>';
             print '<th>'.$langs->trans("Type").'</th>';
@@ -299,7 +427,11 @@ if ($mode == 'config' && $user->admin)
             print '<th></th>';
             print "</tr>\n";
         }
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         print '<tr>';
         print '<td><input size="50" type="text" name="printername"></td>';
         $ret = $printer->selectTypePrinter();
@@ -315,7 +447,11 @@ if ($mode == 'config' && $user->admin)
     print '</table>';
 
     dol_fiche_end();
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     if ($action!='editprinter') {
         print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Add")).'"></div>';
     } else {
@@ -324,9 +460,15 @@ if ($mode == 'config' && $user->admin)
     print '</form>';
 
     print '<div><p></div>';
+<<<<<<< HEAD
     
     dol_fiche_head();
     
+=======
+
+    dol_fiche_head();
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print $langs->trans("ReceiptPrinterTypeDesc")."<br><br>\n";
     print '<table class="noborder" width="100%">'."\n";
     print '<tr class="oddeven"><td>'.$langs->trans("CONNECTOR_DUMMY").':</td><td>'.$langs->trans("CONNECTOR_DUMMY_HELP").'</td></tr>';
@@ -338,7 +480,11 @@ if ($mode == 'config' && $user->admin)
     dol_fiche_end();
 
     print '<div><p></div>';
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     dol_fiche_head();
     print $langs->trans("ReceiptPrinterProfileDesc")."<br><br>\n";
     print '<table class="noborder" width="100%">'."\n";
@@ -351,8 +497,12 @@ if ($mode == 'config' && $user->admin)
     dol_fiche_end();
 }
 
+<<<<<<< HEAD
 if ($mode == 'template' && $user->admin)
 {
+=======
+if ($mode == 'template' && $user->admin) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=template" autocomplete="off">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     if ($action!='edittemplate') {
@@ -378,7 +528,11 @@ if ($mode == 'template' && $user->admin)
         setEventMessages($printer->error, $printer->errors, 'errors');
     } else {
         $max = count($printer->listprinterstemplates);
+<<<<<<< HEAD
         for ($line=0; $line < $max; $line++) 
+=======
+        for ($line=0; $line < $max; $line++)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         {
             print '<tr class="oddeven">';
             if ($action=='edittemplate' && $printer->listprinterstemplates[$line]['rowid']==$templateid) {
@@ -394,6 +548,7 @@ if ($mode == 'template' && $user->admin)
                 print '<td>'.nl2br(htmlentities($printer->listprinterstemplates[$line]['template'])).'</td>';
                 // edit icon
                 print '<td><a href="'.$_SERVER['PHP_SELF'].'?mode=template&amp;action=edittemplate&amp;templateid='.$printer->listprinterstemplates[$line]['rowid'].'">';
+<<<<<<< HEAD
                 print img_picto($langs->trans("Edit"),'edit');
                 print '</a></td>';
                 // delete icon
@@ -403,6 +558,17 @@ if ($mode == 'template' && $user->admin)
                 // test icon
                 print '<td><a href="'.$_SERVER['PHP_SELF'].'?mode=template&amp;action=testtemplate&amp;templateid='.$printer->listprinterstemplates[$line]['rowid'].'&amp;templatename='.$printer->listprinterstemplates[$line]['name'].'">';
                 print img_picto($langs->trans("TestPrinterTemplate"),'printer');
+=======
+                print img_picto($langs->trans("Edit"), 'edit');
+                print '</a></td>';
+                // delete icon
+                print '<td><a href="'.$_SERVER['PHP_SELF'].'?mode=template&amp;action=deletetemplate&amp;templateid='.$printer->listprinterstemplates[$line]['rowid'].'&amp;templatename='.$printer->listprinterstemplates[$line]['name'].'">';
+                print img_picto($langs->trans("Delete"), 'delete');
+                print '</a></td>';
+                // test icon
+                print '<td><a href="'.$_SERVER['PHP_SELF'].'?mode=template&amp;action=testtemplate&amp;templateid='.$printer->listprinterstemplates[$line]['rowid'].'&amp;templatename='.$printer->listprinterstemplates[$line]['name'].'">';
+                print img_picto($langs->trans("TestPrinterTemplate"), 'printer');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 print '</a></td>';
             }
             print '</tr>';
@@ -423,8 +589,12 @@ if ($mode == 'template' && $user->admin)
     print '<th>'.$langs->trans("Description").'</th>';
     print "</tr>\n";
     $max = count($printer->tags);
+<<<<<<< HEAD
     for ($tag=0; $tag < $max; $tag++) 
     {
+=======
+    for ($tag=0; $tag < $max; $tag++) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         print '<tr class="oddeven">';
         print '<td>&lt;'.$printer->tags[$tag].'&gt;</td><td>'.$langs->trans(strtoupper($printer->tags[$tag])).'</td>';
         print '</tr>';
@@ -432,6 +602,7 @@ if ($mode == 'template' && $user->admin)
     print '</table>';
 
     dol_fiche_end();
+<<<<<<< HEAD
 
 }
 
@@ -451,3 +622,22 @@ llxFooter();
 
 $db->close();
 
+=======
+}
+
+// to remove after test
+// $object=new stdClass();
+// $object->date_time = '2015-11-02 22:30:25';
+// $object->id = 1234;
+// $object->customer_firstname  = 'John';
+// $object->customer_lastname  = 'Deuf';
+// $object->vendor_firstname  = 'Jim';
+// $object->vendor_lastname  = 'Big';
+// $object->barcode = '3700123862396';
+//$printer->sendToPrinter($object, 1, 16);
+//setEventMessages($printer->error, $printer->errors, 'errors');
+
+// End of page
+llxFooter();
+$db->close();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

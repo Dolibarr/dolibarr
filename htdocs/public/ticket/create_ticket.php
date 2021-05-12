@@ -33,6 +33,12 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
+<<<<<<< HEAD
+=======
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
@@ -56,7 +62,11 @@ $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
  */
 
 // Add file in email form
+<<<<<<< HEAD
 if (GETPOST('addfile') && !GETPOST('add_ticket')) {
+=======
+if (GETPOST('addfile', 'alpha') && ! GETPOST('add', 'alpha')) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     ////$res = $object->fetch('','',GETPOST('track_id'));
     ////if($res > 0)
     ////{
@@ -74,7 +84,11 @@ if (GETPOST('addfile') && !GETPOST('add_ticket')) {
 }
 
 // Remove file
+<<<<<<< HEAD
 if (GETPOST('removedfile') && !GETPOST('add_ticket')) {
+=======
+if (GETPOST('removedfile', 'alpha') && !GETPOST('add', 'alpha')) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
@@ -86,7 +100,11 @@ if (GETPOST('removedfile') && !GETPOST('add_ticket')) {
     dol_remove_file_process($_POST['removedfile'], 0, 0);
     $action = 'create_ticket';
 }
+<<<<<<< HEAD
 if ($action == 'create_ticket' && GETPOST('add_ticket')) {
+=======
+if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $error = 0;
     $origin_email = GETPOST('email', 'alpha');
     if (empty($origin_email)) {
@@ -109,11 +127,19 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
         }
     }
 
+<<<<<<< HEAD
     if (!GETPOST("subject","none")) {
         $error++;
         array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Subject")));
         $action = '';
     } elseif (!GETPOST("message","none")) {
+=======
+    if (!GETPOST("subject", "none")) {
+        $error++;
+        array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Subject")));
+        $action = '';
+    } elseif (!GETPOST("message", "none")) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $error++;
         array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("message")));
         $action = '';
@@ -131,8 +157,13 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
 
         $object->track_id = generate_random_id(16);
 
+<<<<<<< HEAD
         $object->subject = GETPOST("subject","none");
         $object->message = GETPOST("message","none");
+=======
+        $object->subject = GETPOST("subject", "none");
+        $object->message = GETPOST("message", "none");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $object->origin_email = $origin_email;
 
         $object->type_code = GETPOST("type_code", 'az09');
@@ -177,7 +208,11 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
         	$action = "infos_success";
         } else {
 	    	$object->db->rollback();
+<<<<<<< HEAD
 	    	setEventMessage($object->errors, 'errors');
+=======
+	    	setEventMessages($object->error, $object->errors, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    	$action = 'create_ticket';
 	    }
 
@@ -213,7 +248,11 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
                 $message .= dol_nl2br($infos_new_ticket);
                 $message .= $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE ? $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE : $langs->transnoentities('TicketMessageMailSignatureText');
 
+<<<<<<< HEAD
                 $sendto = GETPOST('email','alpha');
+=======
+                $sendto = GETPOST('email', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
                 $from = $conf->global->MAIN_INFO_SOCIETE_NOM . '<' . $conf->global->TICKET_NOTIFICATION_EMAIL_FROM . '>';
                 $replyto = $from;
@@ -226,8 +265,13 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
                 }
                 include_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
                 $mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1);
+<<<<<<< HEAD
                 if ($mailfile->error) {
                     setEventMessage($mailfile->error, 'errors');
+=======
+                if ($mailfile->error || $mailfile->errors) {
+                    setEventMessages($mailfile->error, $mailfile->errors, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 } else {
                     $result = $mailfile->sendfile();
                 }
@@ -287,9 +331,15 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
 	                }
 	                include_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
 	                $mailfile = new CMailFile($subject, $sendto, $from, $message_admin, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1);
+<<<<<<< HEAD
 	                if ($mailfile->error) {
 	                    setEventMessage($mailfile->error, 'errors');
 	                } else {
+=======
+	                if ($mailfile->error || $mailfile->errors) {
+                        setEventMessages($mailfile->error, $mailfile->errors, 'errors');
+                    } else {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	                    $result = $mailfile->sendfile();
 	                }
 	                if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
@@ -308,10 +358,23 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
             	$formmail->remove_attached_files($i);
             }
 
+<<<<<<< HEAD
             setEventMessage($langs->trans('YourTicketSuccessfullySaved'));
         }
     } else {
         setEventMessage($object->errors, 'errors');
+=======
+            //setEventMessages($langs->trans('YourTicketSuccessfullySaved'), null, 'mesgs');
+
+            // Make a redirect to avoid to have ticket submitted twice if we make back
+            setEventMessages($langs->trans('MesgInfosPublicTicketCreatedWithTrackId', '<strong>' . $object->track_id . '</strong>'), null, 'warnings');
+            setEventMessages($langs->trans('PleaseRememberThisId'), null, 'warnings');
+            header("Location: index.php");
+			exit;
+        }
+    } else {
+        setEventMessages($object->error, $object->errors, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 }
 
@@ -321,6 +384,7 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
  * View
  */
 
+<<<<<<< HEAD
 $arrayofjs = array();
 $arrayofcss = array('/opensurvey/css/style.css', '/ticket/css/styles.css.php');
 
@@ -330,12 +394,29 @@ $form = new Form($db);
 $formticket = new FormTicket($db);
 
 if (!$conf->global->TICKET_ENABLE_PUBLIC_INTERFACE) {
+=======
+$form = new Form($db);
+$formticket = new FormTicket($db);
+
+if (!$conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)
+{
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print '<div class="error">' . $langs->trans('TicketPublicInterfaceForbidden') . '</div>';
     $db->close();
     exit();
 }
 
+<<<<<<< HEAD
 print '<div style="width:60%; margin: 0 auto;">';
+=======
+$arrayofjs = array();
+$arrayofcss = array('/opensurvey/css/style.css', '/ticket/css/styles.css.php');
+
+llxHeaderTicket($langs->trans("CreateTicket"), "", 0, 0, $arrayofjs, $arrayofcss);
+
+
+print '<div style="width:60%; margin: 0 auto;" class="ticketpublicarea">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if ($action != "infos_success") {
     $formticket->withfromsocid = isset($socid) ? $socid : $user->societe_id;
@@ -358,6 +439,7 @@ if ($action != "infos_success") {
 
     print '<div class="info marginleftonly marginrightonly">' . $langs->trans('TicketPublicInfoCreateTicket') . '</div>';
     $formticket->showForm();
+<<<<<<< HEAD
 } else {
     print '<div class="info center">' . $langs->trans('MesgInfosPublicTicketCreatedWithTrackId', '<strong>' . $object->track_id . '</strong>');
     print '<br>';
@@ -368,5 +450,15 @@ print '</div>';
 // End of page
 
 llxFooter('');
+=======
+}
+
+print '</div>';
+
+// End of page
+htmlPrintOnlinePaymentFooter($mysoc, $langs, 1, $suffix, $object);
+
+llxFooter('', 'public');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $db->close();

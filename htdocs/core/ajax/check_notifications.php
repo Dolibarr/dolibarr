@@ -16,11 +16,19 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+<<<<<<< HEAD
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
+=======
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 require '../../main.inc.php';
 
@@ -33,7 +41,11 @@ top_httphead('text/html');  // TODO Use a json mime type
 
 global $user, $db, $langs, $conf;
 
+<<<<<<< HEAD
 $time = (int) GETPOST('time','int');    // Use the time parameter that is always increased by time_update, even if call is late
+=======
+$time = (int) GETPOST('time', 'int');    // Use the time parameter that is always increased by time_update, even if call is late
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 //$time=dol_now();
 
 
@@ -44,6 +56,7 @@ $eventfound = array();
 //dol_syslog('time='.$time.' $_SESSION[auto_ck_events_not_before]='.$_SESSION['auto_check_events_not_before']);
 
 // TODO Try to make a solution with only a javascript timer that is easier. Difficulty is to avoid notification twice when several tabs are opened.
+<<<<<<< HEAD
 if ($time >= $_SESSION['auto_check_events_not_before']) 
 {
     $time_update = (int) $conf->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY;   // Always defined
@@ -54,11 +67,24 @@ if ($time >= $_SESSION['auto_check_events_not_before'])
         $starttime = $_SESSION['auto_check_events_not_before'];
         // Protection to avoid too long sessions
         if ($starttime < ($time - (int) $conf->global->MAIN_SESSION_TIMEOUT)) 
+=======
+if ($time >= $_SESSION['auto_check_events_not_before'])
+{
+    $time_update = (int) $conf->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY;   // Always defined
+    if (! empty($_SESSION['auto_check_events_not_before']))
+    {
+        // We start scan from the not before so if two tabs were opend at differents seconds and we close one (so the js timer),
+        // then we are not losing periods
+        $starttime = $_SESSION['auto_check_events_not_before'];
+        // Protection to avoid too long sessions
+        if ($starttime < ($time - (int) $conf->global->MAIN_SESSION_TIMEOUT))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         {
             dol_syslog("We ask to check browser notification on a too large period. We fix this with current date.");
             $starttime = $time;
         }
     }
+<<<<<<< HEAD
     else 
     {
         $starttime = $time;
@@ -75,6 +101,24 @@ if ($time >= $_SESSION['auto_check_events_not_before'])
     
     dol_syslog('NEW $_SESSION[auto_check_events_not_before]='.$_SESSION['auto_check_events_not_before']);
     
+=======
+    else
+    {
+        $starttime = $time;
+    }
+
+    $_SESSION['auto_check_events_not_before'] = $time + $time_update;
+
+    // Force save of session change we did.
+    // WARNING: Any change in sessions after that will not be saved !
+    session_write_close();
+
+    require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
+
+    dol_syslog('NEW $_SESSION[auto_check_events_not_before]='.$_SESSION['auto_check_events_not_before']);
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $sql = 'SELECT id';
     $sql .= ' FROM ' . MAIN_DB_PREFIX . 'actioncomm a, ' . MAIN_DB_PREFIX . 'actioncomm_resources ar';
     $sql .= ' WHERE a.id = ar.fk_actioncomm';
@@ -91,11 +135,19 @@ if ($time >= $_SESSION['auto_check_events_not_before'])
 
         $actionmod = new ActionComm($db);
 
+<<<<<<< HEAD
         while ($obj = $db->fetch_object($resql)) 
         {
             $langs->load("agenda");
             $langs->load("commercial");
             
+=======
+        while ($obj = $db->fetch_object($resql))
+        {
+            // Load translation files required by the page
+            $langs->loadLangs(array('agenda', 'commercial'));
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $actionmod->fetch($obj->id);
 
             // Message must be formated and translated to be used with javascript directly
@@ -105,7 +157,11 @@ if ($time >= $_SESSION['auto_check_events_not_before'])
             $event['tipo'] = $langs->transnoentities('Action' . $actionmod->code);
             $event['titulo'] = $actionmod->label;
             $event['location'] = $langs->transnoentities('Location').': '.$actionmod->location;
+<<<<<<< HEAD
             
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $eventfound[] = $event;
         }
     }
@@ -113,8 +169,14 @@ if ($time >= $_SESSION['auto_check_events_not_before'])
     {
         dol_syslog("Error sql = ".$db->lasterror(), LOG_ERR);
     }
+<<<<<<< HEAD
 
 }
 
 print json_encode($eventfound);
 
+=======
+}
+
+print json_encode($eventfound);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

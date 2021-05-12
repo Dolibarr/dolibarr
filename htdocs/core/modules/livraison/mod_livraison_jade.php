@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/livraison/modules_livraison.php';
 
 class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 {
+<<<<<<< HEAD
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $error = '';
 	var $nom = "Jade";
@@ -50,6 +55,43 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 	{
 		global $langs;
 		return $langs->trans("SimpleNumRefModelDesc",$this->prefix);
+=======
+	/**
+     * Dolibarr version of the loaded document
+     * @var string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	/**
+	 * @var string Error message
+	 */
+	public $error = '';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see $name
+	 */
+	public $nom='Jade';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Jade';
+
+    public $prefix='BL';
+
+
+	/**
+	 *   Returns the description of the numbering model
+	 *
+	 *   @return     string      Texte descripif
+	 */
+	public function info()
+	{
+		global $langs;
+		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	/**
@@ -57,7 +99,11 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 	 *
      *  @return     string      Example
      */
+<<<<<<< HEAD
     function getExample()
+=======
+    public function getExample()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         return $this->prefix."0501-0001";
     }
@@ -68,7 +114,11 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
      *
      *  @return     boolean     false si conflit, true si ok
      */
+<<<<<<< HEAD
     function canBeActivated()
+=======
+    public function canBeActivated()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $langs,$conf,$db;
 
@@ -87,12 +137,21 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
         if ($resql)
         {
             $row = $db->fetch_row($resql);
+<<<<<<< HEAD
             if ($row) { $fayymm = substr($row[0],0,6); $max=$row[0]; }
         }
         if ($fayymm && ! preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i',$fayymm))
         {
             $langs->load("errors");
             $this->error=$langs->trans('ErrorNumRefModel',$max);
+=======
+            if ($row) { $fayymm = substr($row[0], 0, 6); $max=$row[0]; }
+        }
+        if ($fayymm && ! preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $fayymm))
+        {
+            $langs->load("errors");
+            $this->error=$langs->trans('ErrorNumRefModel', $max);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             return false;
         }
 
@@ -106,7 +165,11 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 	 *  @param  Object		$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
+<<<<<<< HEAD
     function getNextValue($objsoc,$object)
+=======
+    public function getNextValue($objsoc, $object)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $db,$conf;
 
@@ -119,8 +182,12 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 
         $resql=$db->query($sql);
         dol_syslog("mod_livraison_jade::getNextValue", LOG_DEBUG);
+<<<<<<< HEAD
         if ($resql)
         {
+=======
+        if ($resql) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $obj = $db->fetch_object($resql);
             if ($obj) $max = intval($obj->max);
             else $max=0;
@@ -132,16 +199,24 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 
         $date=$object->date_delivery;
         if (empty($date)) $date=dol_now();
+<<<<<<< HEAD
         $yymm = strftime("%y%m",$date);
 
         if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
         else $num = sprintf("%04s",$max+1);
+=======
+        $yymm = strftime("%y%m", $date);
+
+        if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
+        else $num = sprintf("%04s", $max+1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         dol_syslog("mod_livraison_jade::getNextValue return ".$this->prefix.$yymm."-".$num);
         return $this->prefix.$yymm."-".$num;
     }
 
 
+<<<<<<< HEAD
 	/**
 	 *  Return next free ref
 	 *
@@ -154,4 +229,19 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
         return $this->getNextValue($objsoc,$object);
     }
 
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
+     *  Return next free ref
+     *
+     *  @param  Societe     $objsoc         Object thirdparty
+     *  @param  Object      $object         Object livraison
+     *  @return string                      Texte descriptif
+     */
+    public function livraison_get_num($objsoc = 0, $object = '')
+    {
+        // phpcs:enable
+        return $this->getNextValue($objsoc, $object);
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

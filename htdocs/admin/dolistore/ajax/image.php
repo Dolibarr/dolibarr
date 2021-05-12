@@ -20,6 +20,7 @@ if (!defined('REQUIRE_JQUERY_BLOCKUI')) define('REQUIRE_JQUERY_BLOCKUI', 1);
 
 
 /**
+<<<<<<< HEAD
  *      \file       htdocs/commande/info.php
  *      \ingroup    commande
  * 		\brief      Page des informations d'une commande
@@ -36,6 +37,13 @@ if (!$res && file_exists("../../../../dolibarr/htdocs/main.inc.php"))
 if (!$res && file_exists("../../../../../dolibarr/htdocs/main.inc.php"))
         $res = @include("../../../../../dolibarr/htdocs/main.inc.php");   // Used on dev env only
 if (!$res) die("Include of main fails");
+=======
+ *      \file       htdocs/admin/dolistore/ajax/image.php
+ *      \ingroup    admin
+ *      \brief      Page des informations dolistore
+ */
+require "../../../main.inc.php";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // CORE
 
@@ -52,8 +60,15 @@ $quality    = GETPOST('quality', 'alpha');
 
 try {
     $url = $conf->global->MAIN_MODULE_DOLISTORE_API_SRV.'/api/images/products/'.$id_product.'/'.$id_image.'/'.$quality;
+<<<<<<< HEAD
     $api        = new PrestaShopWebservice($conf->global->MAIN_MODULE_DOLISTORE_API_SRV,
         $conf->global->MAIN_MODULE_DOLISTORE_API_KEY, $dolistore->debug_api);
+=======
+    $api = new PrestaShopWebservice(
+        $conf->global->MAIN_MODULE_DOLISTORE_API_SRV,
+        $conf->global->MAIN_MODULE_DOLISTORE_API_KEY, $dolistore->debug_api
+    );
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     //echo $url;
     $request = $api->executeRequest($url, array(CURLOPT_CUSTOMREQUEST => 'GET'));
     header('Content-type:image');
@@ -62,7 +77,13 @@ try {
     // Here we are dealing with errors
     $trace = $e->getTrace();
     if ($trace[0]['args'][0] == 404) die('Bad ID');
+<<<<<<< HEAD
     else if ($trace[0]['args'][0] == 401) die('Bad auth key');
     else die('Can not access to '.$conf->global->MAIN_MODULE_DOLISTORE_API_SRV);
 }
 
+=======
+    elseif ($trace[0]['args'][0] == 401) die('Bad auth key');
+    else die('Can not access to '.$conf->global->MAIN_MODULE_DOLISTORE_API_SRV);
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

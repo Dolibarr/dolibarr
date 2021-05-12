@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2005      Patrick Rouillon     <patrick@rouillon.net>
  * Copyright (C) 2005-2016 Destailleur Laurent  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin		<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin		<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2011-2015 Philippe Grand       <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -35,10 +39,17 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('facture', 'orders', 'sendings', 'companies'));
 
+<<<<<<< HEAD
 $id=GETPOST('id','int');
 $ref= GETPOST('ref','alpha');
 $lineid=GETPOST('lineid','int');
 $action=GETPOST('action','alpha');
+=======
+$id=GETPOST('id', 'int');
+$ref= GETPOST('ref', 'alpha');
+$lineid=GETPOST('lineid', 'int');
+$action=GETPOST('action', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -56,7 +67,11 @@ if ($id > 0 || ! empty($ref))
 		setEventMessages($langs->trans('ErrorRecordNotFound'), null, 'errors');
 		$error++;
 	}
+<<<<<<< HEAD
 	else if ($ret < 0)
+=======
+	elseif ($ret < 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		setEventMessages($object->error, $object->errors, 'errors');
 		$error++;
@@ -81,7 +96,11 @@ if ($action == 'addcontact' && $user->rights->propale->creer)
 {
     if ($object->id > 0)
     {
+<<<<<<< HEAD
     	$contactid = (GETPOST('userid','int') ? GETPOST('userid','int') : GETPOST('contactid','int'));
+=======
+    	$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
   		$result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
     }
 
@@ -105,7 +124,11 @@ if ($action == 'addcontact' && $user->rights->propale->creer)
 }
 
 // Toggle the status of a contact
+<<<<<<< HEAD
 else if ($action == 'swapstatut' && $user->rights->propale->creer)
+=======
+elseif ($action == 'swapstatut' && $user->rights->propale->creer)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	if ($object->id > 0)
 	{
@@ -114,7 +137,11 @@ else if ($action == 'swapstatut' && $user->rights->propale->creer)
 }
 
 // Deletes a contact
+<<<<<<< HEAD
 else if ($action == 'deletecontact' && $user->rights->propale->creer)
+=======
+elseif ($action == 'deletecontact' && $user->rights->propale->creer)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$result = $object->delete_contact($lineid);
 
@@ -129,7 +156,11 @@ else if ($action == 'deletecontact' && $user->rights->propale->creer)
 	}
 }
 /*
+<<<<<<< HEAD
 else if ($action == 'setaddress' && $user->rights->propale->creer)
+=======
+elseif ($action == 'setaddress' && $user->rights->propale->creer)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$result=$object->setDeliveryAddress($_POST['fk_address']);
 	if ($result < 0) dol_print_error($db,$object->error);
@@ -140,7 +171,11 @@ else if ($action == 'setaddress' && $user->rights->propale->creer)
  * View
  */
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans('Proposal'),'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
+=======
+llxHeader('', $langs->trans('Proposal'), 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $form = new Form($db);
 $formcompany= new FormCompany($db);
@@ -162,7 +197,11 @@ if ($object->id > 0)
 	$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
 	$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
 	// Thirdparty
+<<<<<<< HEAD
 	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1,'customer');
+=======
+	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1, 'customer');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	// Project
 	if (! empty($conf->projet->enabled))
 	{
@@ -204,7 +243,11 @@ if ($object->id > 0)
 
 
 	// Contacts lines (modules that overwrite templates must declare this into descriptor)
+<<<<<<< HEAD
 	$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
+=======
+	$dirtpls=array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	foreach($dirtpls as $reldir)
 	{
 		$res=@include dol_buildpath($reldir.'/contacts.tpl.php');
@@ -212,6 +255,11 @@ if ($object->id > 0)
 	}
 }
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

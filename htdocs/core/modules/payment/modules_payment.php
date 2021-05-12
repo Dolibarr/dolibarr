@@ -23,14 +23,25 @@
 
 abstract class ModeleNumRefPayments
 {
+<<<<<<< HEAD
 	var $error='';
+=======
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	/**
 	 *	Return if a module can be used or not
 	 *
 	 *	@return		boolean     true if module can be used
 	 */
+<<<<<<< HEAD
 	function isEnabled()
+=======
+	public function isEnabled()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return true;
 	}
@@ -40,7 +51,11 @@ abstract class ModeleNumRefPayments
 	 *
 	 *	@return     string      Texte descripif
 	 */
+<<<<<<< HEAD
 	function info()
+=======
+	public function info()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 		$langs->load("bills");
@@ -52,7 +67,11 @@ abstract class ModeleNumRefPayments
 	 *
 	 *	@return     string      Example
 	 */
+<<<<<<< HEAD
 	function getExample()
+=======
+	public function getExample()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 		$langs->load("bills");
@@ -64,7 +83,11 @@ abstract class ModeleNumRefPayments
 	 *
 	 *	@return     boolean     false si conflit, true si ok
 	 */
+<<<<<<< HEAD
 	function canBeActivated()
+=======
+	public function canBeActivated()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return true;
 	}
@@ -76,7 +99,11 @@ abstract class ModeleNumRefPayments
 	 *	@param	Object		$object		Object we need next value for
 	 *	@return	string      Valeur
 	 */
+<<<<<<< HEAD
 	function getNextValue($objsoc,$object)
+=======
+	public function getNextValue($objsoc, $object)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
@@ -87,15 +114,26 @@ abstract class ModeleNumRefPayments
 	 *
 	 *	@return     string      Value
 	 */
+<<<<<<< HEAD
 	function getVersion()
+=======
+	public function getVersion()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 		$langs->load("admin");
 
 		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
+<<<<<<< HEAD
 		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
 		if ($this->version == 'dolibarr') return DOL_VERSION;
 		if ($this->version) return $this->version;
 		return $langs->trans("NotAvailable");
+=======
+		elseif ($this->version == 'experimental') return $langs->trans("VersionExperimental");
+		elseif ($this->version == 'dolibarr') return DOL_VERSION;
+		elseif ($this->version) return $this->version;
+		else return $langs->trans("NotAvailable");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 }

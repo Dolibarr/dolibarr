@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+<<<<<<< HEAD
  * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2015	Regis Houssin			<regis.houssin@capnetworks.com>
@@ -15,6 +16,25 @@
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016		Charlie Benke			<charlie@patas-monkey.com>
  * Copyright (C) 2016		Meziane Sof				<virtualsof@yahoo.fr>
+=======
+ * Copyright (C) 2004-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005		Eric Seigne		<eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2015	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2006		Andre Cianfarani	<acianfa@free.fr>
+ * Copyright (C) 2006		Auguria SARL		<info@auguria.org>
+ * Copyright (C) 2010-2015	Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2013-2016	Marcos García		<marcosgdf@gmail.com>
+ * Copyright (C) 2012-2013	Cédric Salvador		<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2011-2017	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2014		Cédric Gross		<c.gross@kreiz-it.fr>
+ * Copyright (C) 2014-2015	Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2015		Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2015		Raphaël Doursenaud	<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
+ * Copyright (C) 2016		Meziane Sof		<virtualsof@yahoo.fr>
+ * Copyright (C) 2017		Josep Lluís Amador	<joseplluis@lliuretic.cat>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,6 +87,7 @@ $refalreadyexists=0;
 
 $id=GETPOST('id', 'int');
 $ref=GETPOST('ref', 'alpha');
+<<<<<<< HEAD
 $type=GETPOST('type','int');
 $action=(GETPOST('action','alpha') ? GETPOST('action','alpha') : 'view');
 $cancel=GETPOST('cancel','alpha');
@@ -74,6 +95,15 @@ $confirm=GETPOST('confirm','alpha');
 $socid=GETPOST('socid','int');
 $duration_value = GETPOST('duration_value');
 $duration_unit = GETPOST('duration_unit');
+=======
+$type=GETPOST('type', 'int');
+$action=(GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
+$cancel=GETPOST('cancel', 'alpha');
+$confirm=GETPOST('confirm', 'alpha');
+$socid=GETPOST('socid', 'int');
+$duration_value = GETPOST('duration_value', 'int');
+$duration_unit = GETPOST('duration_unit', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (! empty($user->societe_id)) $socid=$user->societe_id;
 
 $object = new Product($db);
@@ -92,8 +122,13 @@ if ($id > 0 || ! empty($ref))
 
     if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))    // For backward compatiblity, we scan also old dirs
     {
+<<<<<<< HEAD
         if (! empty($conf->product->enabled)) $upload_dirold = $conf->product->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2),1,1).'/'.substr(substr("000".$object->id, -2),0,1).'/'.$object->id."/photos";
         else $upload_dirold = $conf->service->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2),1,1).'/'.substr(substr("000".$object->id, -2),0,1).'/'.$object->id."/photos";
+=======
+        if (! empty($conf->product->enabled)) $upload_dirold = $conf->product->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
+        else $upload_dirold = $conf->service->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 }
 
@@ -105,14 +140,23 @@ $objcanvas=null;
 if (! empty($canvas))
 {
     require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
+<<<<<<< HEAD
     $objcanvas = new Canvas($db,$action);
     $objcanvas->getCanvas('product','card',$canvas);
+=======
+    $objcanvas = new Canvas($db, $action);
+    $objcanvas->getCanvas('product', 'card', $canvas);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
 $fieldtype = (! empty($id) ? 'rowid' : 'ref');
+<<<<<<< HEAD
 $result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype,$objcanvas);
+=======
+$result=restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('productcard','globalcard'));
@@ -132,7 +176,11 @@ $createbarcode=empty($conf->barcode->enabled)?0:1;
 if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->creer_advance)) $createbarcode=0;
 
 $parameters=array('id'=>$id, 'ref'=>$ref, 'objcanvas'=>$objcanvas);
+<<<<<<< HEAD
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+=======
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -146,7 +194,11 @@ if (empty($reshook))
     }
 
     // Actions to build doc
+<<<<<<< HEAD
     $upload_dir = $conf->produit->dir_output;
+=======
+    $upload_dir = $conf->product->dir_output;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $permissioncreate = $usercancreate;
     include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
@@ -163,7 +215,11 @@ if (empty($reshook))
     // Barcode value
     if ($action ==	'setbarcode' && $createbarcode)
     {
+<<<<<<< HEAD
     	$result=$object->check_barcode(GETPOST('barcode'),GETPOST('barcode_type_code'));
+=======
+    	$result=$object->check_barcode(GETPOST('barcode'), GETPOST('barcode_type_code'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		if ($result >= 0)
 		{
@@ -175,8 +231,13 @@ if (empty($reshook))
 		{
 			$langs->load("errors");
         	if ($result == -1) $errors[] = 'ErrorBadBarCodeSyntax';
+<<<<<<< HEAD
         	else if ($result == -2) $errors[] = 'ErrorBarCodeRequired';
         	else if ($result == -3) $errors[] = 'ErrorBarCodeAlreadyUsed';
+=======
+        	elseif ($result == -2) $errors[] = 'ErrorBarCodeRequired';
+        	elseif ($result == -3) $errors[] = 'ErrorBarCodeAlreadyUsed';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         	else $errors[] = 'FailedToValidateBarCode';
 
 			$error++;
@@ -191,19 +252,31 @@ if (empty($reshook))
 
         if (! GETPOST('label'))
         {
+<<<<<<< HEAD
             setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentities('Label')), null, 'errors');
+=======
+            setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Label')), null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $action = "create";
             $error++;
         }
         if (empty($ref))
         {
+<<<<<<< HEAD
             setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentities('Ref')), null, 'errors');
+=======
+            setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Ref')), null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $action = "create";
             $error++;
         }
         if (! empty($duration_value) && empty($duration_unit))
         {
+<<<<<<< HEAD
             setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentities('Unit')), null, 'errors');
+=======
+            setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Unit')), null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $action = "create";
             $error++;
         }
@@ -285,12 +358,21 @@ if (empty($reshook))
             $object->barcode_type_coder     = $stdobject->barcode_type_coder;
             $object->barcode_type_label     = $stdobject->barcode_type_label;
 
+<<<<<<< HEAD
             $object->description        	 = dol_htmlcleanlastbr(GETPOST('desc','none'));
             $object->url					 = GETPOST('url');
             $object->note_private          	 = dol_htmlcleanlastbr(GETPOST('note_private','none'));
             $object->note               	 = $object->note_private;   // deprecated
             $object->customcode              = GETPOST('customcode','alpha');
             $object->country_id              = GETPOST('country_id','int');
+=======
+            $object->description        	 = dol_htmlcleanlastbr(GETPOST('desc', 'none'));
+            $object->url					 = GETPOST('url');
+            $object->note_private          	 = dol_htmlcleanlastbr(GETPOST('note_private', 'none'));
+            $object->note               	 = $object->note_private;   // deprecated
+            $object->customcode              = GETPOST('customcode', 'alpha');
+            $object->country_id              = GETPOST('country_id', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $object->duration_value     	 = $duration_value;
             $object->duration_unit      	 = $duration_unit;
             $object->fk_default_warehouse	 = GETPOST('fk_default_warehouse');
@@ -307,6 +389,7 @@ if (empty($reshook))
             $object->surface_units      	 = GETPOST('surface_units');
             $object->volume             	 = GETPOST('volume');
             $object->volume_units       	 = GETPOST('volume_units');
+<<<<<<< HEAD
             $object->finished           	 = GETPOST('finished','alpha');
             $object->fk_unit                 = GETPOST('units','alpha');
 
@@ -314,6 +397,15 @@ if (empty($reshook))
 	        $accountancy_code_sell_intra	 = GETPOST('accountancy_code_sell_intra','alpha');
 	        $accountancy_code_sell_export	 = GETPOST('accountancy_code_sell_export','alpha');
 	        $accountancy_code_buy 			 = GETPOST('accountancy_code_buy','alpha');
+=======
+            $object->finished           	 = GETPOST('finished', 'alpha');
+            $object->fk_unit                 = GETPOST('units', 'alpha');
+
+	        $accountancy_code_sell 			 = GETPOST('accountancy_code_sell', 'alpha');
+	        $accountancy_code_sell_intra	 = GETPOST('accountancy_code_sell_intra', 'alpha');
+	        $accountancy_code_sell_export	 = GETPOST('accountancy_code_sell_export', 'alpha');
+	        $accountancy_code_buy 			 = GETPOST('accountancy_code_buy', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			if ($accountancy_code_sell <= 0) { $object->accountancy_code_sell = ''; } else { $object->accountancy_code_sell = $accountancy_code_sell; }
 			if ($accountancy_code_sell_intra <= 0) { $object->accountancy_code_sell_intra = ''; } else { $object->accountancy_code_sell_intra = $accountancy_code_sell_intra; }
@@ -327,7 +419,11 @@ if (empty($reshook))
                 {
                     if (isset($_POST["price_".$i]))
                     {
+<<<<<<< HEAD
                         $object->multiprices["$i"] = price2num($_POST["price_".$i],'MU');
+=======
+                        $object->multiprices["$i"] = price2num($_POST["price_".$i], 'MU');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                         $object->multiprices_base_type["$i"] = $_POST["multiprices_base_type_".$i];
                     }
                     else
@@ -338,7 +434,11 @@ if (empty($reshook))
             }
 
             // Fill array 'array_options' with data from add form
+<<<<<<< HEAD
         	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+=======
+        	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if ($ret < 0) $error++;
 
 			if (! $error)
@@ -367,7 +467,11 @@ if (empty($reshook))
     // Update a product or service
     if ($action == 'update' && $usercancreate)
     {
+<<<<<<< HEAD
     	if (GETPOST('cancel','alpha'))
+=======
+    	if (GETPOST('cancel', 'alpha'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         {
             $action = '';
         }
@@ -379,6 +483,7 @@ if (empty($reshook))
 
                 $object->ref                    = $ref;
                 $object->label                  = GETPOST('label');
+<<<<<<< HEAD
                 $object->description            = dol_htmlcleanlastbr(GETPOST('desc','none'));
             	$object->url					= GETPOST('url');
     			if (! empty($conf->global->MAIN_DISABLE_NOTES_TAB))
@@ -391,14 +496,33 @@ if (empty($reshook))
                 $object->status                 = GETPOST('statut','int');
                 $object->status_buy             = GETPOST('statut_buy','int');
                 $object->status_batch	        = GETPOST('status_batch','aZ09');
+=======
+                $object->description            = dol_htmlcleanlastbr(GETPOST('desc', 'none'));
+            	$object->url					= GETPOST('url');
+    			if (! empty($conf->global->MAIN_DISABLE_NOTES_TAB))
+    			{
+                	$object->note_private           = dol_htmlcleanlastbr(GETPOST('note_private', 'none'));
+                    $object->note                   = $object->note_private;
+    			}
+                $object->customcode             = GETPOST('customcode', 'alpha');
+                $object->country_id             = GETPOST('country_id', 'int');
+                $object->status                 = GETPOST('statut', 'int');
+                $object->status_buy             = GETPOST('statut_buy', 'int');
+                $object->status_batch	        = GETPOST('status_batch', 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 // removed from update view so GETPOST always empty
                 $object->fk_default_warehouse   = GETPOST('fk_default_warehouse');
                 /*
                 $object->seuil_stock_alerte     = GETPOST('seuil_stock_alerte');
                 $object->desiredstock           = GETPOST('desiredstock');
                 */
+<<<<<<< HEAD
                 $object->duration_value         = GETPOST('duration_value');
                 $object->duration_unit          = GETPOST('duration_unit');
+=======
+                $object->duration_value         = GETPOST('duration_value', 'int');
+                $object->duration_unit          = GETPOST('duration_unit', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
                 $object->canvas                 = GETPOST('canvas');
                 $object->weight                 = GETPOST('weight');
@@ -412,7 +536,11 @@ if (empty($reshook))
                 $object->surface_units          = GETPOST('surface_units');
                 $object->volume                 = GETPOST('volume');
                 $object->volume_units           = GETPOST('volume_units');
+<<<<<<< HEAD
                 $object->finished               = GETPOST('finished','alpha');
+=======
+                $object->finished               = GETPOST('finished', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	            $units = GETPOST('units', 'int');
 
@@ -439,10 +567,17 @@ if (empty($reshook))
     	        $object->barcode_type_coder     = $stdobject->barcode_type_coder;
     	        $object->barcode_type_label     = $stdobject->barcode_type_label;
 
+<<<<<<< HEAD
     	        $accountancy_code_sell 			 = GETPOST('accountancy_code_sell','alpha');
     	        $accountancy_code_sell_intra	 = GETPOST('accountancy_code_sell_intra','alpha');
     	        $accountancy_code_sell_export	 = GETPOST('accountancy_code_sell_export','alpha');
     	        $accountancy_code_buy 			 = GETPOST('accountancy_code_buy','alpha');
+=======
+    	        $accountancy_code_sell 			 = GETPOST('accountancy_code_sell', 'alpha');
+    	        $accountancy_code_sell_intra	 = GETPOST('accountancy_code_sell_intra', 'alpha');
+    	        $accountancy_code_sell_export	 = GETPOST('accountancy_code_sell_export', 'alpha');
+    	        $accountancy_code_buy 			 = GETPOST('accountancy_code_buy', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				if ($accountancy_code_sell <= 0) { $object->accountancy_code_sell = ''; } else { $object->accountancy_code_sell = $accountancy_code_sell; }
 				if ($accountancy_code_sell_intra <= 0) { $object->accountancy_code_sell_intra = ''; } else { $object->accountancy_code_sell_intra = $accountancy_code_sell_intra; }
@@ -450,7 +585,11 @@ if (empty($reshook))
 				if ($accountancy_code_buy <= 0) { $object->accountancy_code_buy = ''; } else { $object->accountancy_code_buy = $accountancy_code_buy; }
 
                 // Fill array 'array_options' with data from add form
+<<<<<<< HEAD
         		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+=======
+        		$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if ($ret < 0) $error++;
 
                 if (! $error && $object->check())
@@ -477,7 +616,10 @@ if (empty($reshook))
                     $action = 'edit';
                 }
             }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
     }
 
@@ -496,7 +638,11 @@ if (empty($reshook))
             $originalId = $id;
             if ($object->id > 0)
             {
+<<<<<<< HEAD
                 $object->ref = GETPOST('clone_ref');
+=======
+                $object->ref = GETPOST('clone_ref', 'alphanohtml');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 $object->status = 0;
                 $object->status_buy = 0;
                 $object->id = null;
@@ -504,7 +650,12 @@ if (empty($reshook))
 
                 if ($object->check())
                 {
+<<<<<<< HEAD
                     $id = $object->create($user);
+=======
+                	$object->context['createfromclone'] = 'createfromclone';
+                	$id = $object->create($user);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                     if ($id > 0)
                     {
                         if (GETPOST('clone_composition'))
@@ -539,32 +690,57 @@ if (empty($reshook))
                             $refalreadyexists++;
                             $action = "";
 
+<<<<<<< HEAD
                             $mesg=$langs->trans("ErrorProductAlreadyExists",$object->ref);
+=======
+                            $mesg=$langs->trans("ErrorProductAlreadyExists", $object->ref);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                             $mesg.=' <a href="'.$_SERVER["PHP_SELF"].'?ref='.$object->ref.'">'.$langs->trans("ShowCardHere").'</a>.';
                             setEventMessages($mesg, null, 'errors');
                             $object->fetch($id);
                         }
                         else
+<<<<<<< HEAD
                      {
+=======
+                     	{
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                             $db->rollback();
                             if (count($object->errors))
                             {
                             	setEventMessages($object->error, $object->errors, 'errors');
+<<<<<<< HEAD
                             	dol_print_error($db,$object->errors);
+=======
+                            	dol_print_error($db, $object->errors);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                             }
                             else
                             {
                             	setEventMessages($langs->trans($object->error), null, 'errors');
+<<<<<<< HEAD
                             	dol_print_error($db,$object->error);
                             }
                         }
                     }
+=======
+                            	dol_print_error($db, $object->error);
+                            }
+                        }
+                    }
+
+                    unset($object->context['createfromclone']);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 }
             }
             else
             {
                 $db->rollback();
+<<<<<<< HEAD
                 dol_print_error($db,$object->error);
+=======
+                dol_print_error($db, $object->error);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             }
         }
     }
@@ -599,7 +775,11 @@ if (empty($reshook))
 	        $result=$propal->fetch(GETPOST('propalid'));
 	        if ($result <= 0)
 	        {
+<<<<<<< HEAD
 	            dol_print_error($db,$propal->error);
+=======
+	            dol_print_error($db, $propal->error);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	            exit;
 	        }
 	        $thirpdartyid = $propal->socid;
@@ -610,7 +790,11 @@ if (empty($reshook))
 	        $result=$commande->fetch(GETPOST('commandeid'));
 	        if ($result <= 0)
 	        {
+<<<<<<< HEAD
 	            dol_print_error($db,$commande->error);
+=======
+	            dol_print_error($db, $commande->error);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	            exit;
 	        }
 	        $thirpdartyid = $commande->socid;
@@ -621,7 +805,11 @@ if (empty($reshook))
 	        $result=$facture->fetch(GETPOST('factureid'));
 	        if ($result <= 0)
 	        {
+<<<<<<< HEAD
 	            dol_print_error($db,$facture->error);
+=======
+	            dol_print_error($db, $facture->error);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	            exit;
 	        }
 	        $thirpdartyid = $facture->socid;
@@ -689,7 +877,11 @@ if (empty($reshook))
                 if (($result = $propal->defineBuyPrice($pu_ht, GETPOST('remise_percent'), $object->id)) < 0)
                 {
                     dol_syslog($langs->trans('FailedToGetCostPrice'));
+<<<<<<< HEAD
                     setEventMessage($langs->trans('FailedToGetCostPrice'), 'errors');
+=======
+                    setEventMessages($langs->trans('FailedToGetCostPrice'), null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 }
                 else
                 {
@@ -732,7 +924,11 @@ if (empty($reshook))
                 if (($result = $commande->defineBuyPrice($pu_ht, GETPOST('remise_percent'), $object->id)) < 0)
                 {
                     dol_syslog($langs->trans('FailedToGetCostPrice'));
+<<<<<<< HEAD
                     setEventMessage($langs->trans('FailedToGetCostPrice'), 'errors');
+=======
+                    setEventMessages($langs->trans('FailedToGetCostPrice'), null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 }
                 else
                 {
@@ -775,7 +971,11 @@ if (empty($reshook))
                 if (($result = $facture->defineBuyPrice($pu_ht, GETPOST('remise_percent'), $object->id)) < 0)
                 {
                     dol_syslog($langs->trans('FailedToGetCostPrice'));
+<<<<<<< HEAD
                     setEventMessage($langs->trans('FailedToGetCostPrice'), 'errors');
+=======
+                    setEventMessages($langs->trans('FailedToGetCostPrice'), null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 }
                 else
                 {
@@ -834,7 +1034,11 @@ if (empty($reshook))
 
 $title = $langs->trans('ProductServiceCard');
 $helpurl = '';
+<<<<<<< HEAD
 $shortlabel = dol_trunc($object->label,16);
+=======
+$shortlabel = dol_trunc($object->label, 16);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
 {
 	$title = $langs->trans('Product')." ". $shortlabel ." - ".$langs->trans('Card');
@@ -858,7 +1062,11 @@ $res=0;
 if (! empty($conf->barcode->enabled) && ! empty($conf->global->BARCODE_PRODUCT_ADDON_NUM))
 {
 	$module=strtolower($conf->global->BARCODE_PRODUCT_ADDON_NUM);
+<<<<<<< HEAD
 	$dirbarcode=array_merge(array('/core/modules/barcode/'),$conf->modules_parts['barcode']);
+=======
+	$dirbarcode=array_merge(array('/core/modules/barcode/'), $conf->modules_parts['barcode']);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	foreach ($dirbarcode as $dirroot)
 	{
 		$res=dol_include_once($dirroot.$module.'.php');
@@ -880,7 +1088,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 	{
 		$object = new Product($db);
 		$result=$object->fetch($id);
+<<<<<<< HEAD
 		if ($result <= 0) dol_print_error('',$object->error);
+=======
+		if ($result <= 0) dol_print_error('', $object->error);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 	$objcanvas->assign_values($action, $object->id, $object->ref);	// Set value for templates
 	$objcanvas->display_canvas($action);							// Show template
@@ -921,7 +1133,11 @@ else
         if ($type==1) $title=$langs->trans("NewService");
         else $title=$langs->trans("NewProduct");
         $linkback="";
+<<<<<<< HEAD
         print load_fiche_titre($title,$linkback,'title_products.png');
+=======
+        print load_fiche_titre($title, $linkback, 'title_products.png');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         dol_fiche_head('');
 
@@ -929,7 +1145,11 @@ else
 
         print '<tr>';
         $tmpcode='';
+<<<<<<< HEAD
 		if (! empty($modCodeProduct->code_auto)) $tmpcode=$modCodeProduct->getNextValue($object,$type);
+=======
+		if (! empty($modCodeProduct->code_auto)) $tmpcode=$modCodeProduct->getNextValue($object, $type);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input id="ref" name="ref" class="maxwidth200" maxlength="128" value="'.dol_escape_htmltag(GETPOST('ref')?GETPOST('ref'):$tmpcode).'">';
         if ($refalreadyexists)
         {
@@ -943,13 +1163,21 @@ else
         // On sell
         print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td colspan="3">';
         $statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
+<<<<<<< HEAD
         print $form->selectarray('statut',$statutarray,GETPOST('statut'));
+=======
+        print $form->selectarray('statut', $statutarray, GETPOST('statut'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         print '</td></tr>';
 
         // To buy
         print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td colspan="3">';
         $statutarray=array('1' => $langs->trans("ProductStatusOnBuy"), '0' => $langs->trans("ProductStatusNotOnBuy"));
+<<<<<<< HEAD
         print $form->selectarray('statut_buy',$statutarray,GETPOST('statut_buy'));
+=======
+        print $form->selectarray('statut_buy', $statutarray, GETPOST('statut_buy'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         print '</td></tr>';
 
 	    // Batch number management
@@ -957,7 +1185,11 @@ else
 		{
 			print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="3">';
 			$statutarray=array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"));
+<<<<<<< HEAD
 			print $form->selectarray('status_batch',$statutarray,GETPOST('status_batch'));
+=======
+			print $form->selectarray('status_batch', $statutarray, GETPOST('status_batch'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '</td></tr>';
 		}
 
@@ -977,10 +1209,17 @@ else
 	        }
 	        require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
             $formbarcode = new FormBarCode($db);
+<<<<<<< HEAD
 	        print $formbarcode->select_barcode_type($fk_barcode_type, 'fk_barcode_type', 1);
 	        print '</td><td>'.$langs->trans("BarcodeValue").'</td><td>';
 	        $tmpcode=isset($_POST['barcode'])?GETPOST('barcode'):$object->barcode;
 	        if (empty($tmpcode) && ! empty($modBarCodeProduct->code_auto)) $tmpcode=$modBarCodeProduct->getNextValue($object,$type);
+=======
+            print $formbarcode->selectBarcodeType($fk_barcode_type, 'fk_barcode_type', 1);
+	        print '</td><td>'.$langs->trans("BarcodeValue").'</td><td>';
+	        $tmpcode=isset($_POST['barcode'])?GETPOST('barcode'):$object->barcode;
+	        if (empty($tmpcode) && ! empty($modBarCodeProduct->code_auto)) $tmpcode=$modBarCodeProduct->getNextValue($object, $type);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	        print '<input class="maxwidth100" type="text" name="barcode" value="'.dol_escape_htmltag($tmpcode).'">';
 	        print '</td></tr>';
         }
@@ -988,7 +1227,11 @@ else
         // Description (used in invoice, propal...)
         print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">';
 
+<<<<<<< HEAD
         $doleditor = new DolEditor('desc', GETPOST('desc','none'), '', 160, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_4, '90%');
+=======
+        $doleditor = new DolEditor('desc', GETPOST('desc', 'none'), '', 160, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_4, '90%');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $doleditor->Create();
 
         print "</td></tr>";
@@ -1020,6 +1263,7 @@ else
             print '<input name="desiredstock" type="hidden" value="0">';
         }
 
+<<<<<<< HEAD
         // Nature
         if ($type != 1)
         {
@@ -1048,6 +1292,29 @@ else
             print '<tr><td>'.$langs->trans("Weight").'</td><td colspan="3">';
             print '<input name="weight" size="4" value="'.GETPOST('weight').'">';
             print $formproduct->select_measuring_units("weight_units","weight");
+=======
+        // Duration
+        if ($type == 1)
+        {
+            print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">';
+            print '<input name="surface" size="4" value="'.GETPOST('duration_value', 'int').'">';
+            print $formproduct->selectMeasuringUnits("duration_unit", "time", GETPOST('duration_value', 'alpha'), 0, 1);
+            print '</td></tr>';
+        }
+
+        if ($type != 1)	// Nature, Weight and volume only applies to products and not to services
+        {
+            // Nature
+            print '<tr><td>'.$langs->trans("Nature").'</td><td colspan="3">';
+            $statutarray=array('1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
+            print $form->selectarray('finished', $statutarray, GETPOST('finished', 'alpha'), 1);
+            print '</td></tr>';
+
+            // Weight
+            print '<tr><td>'.$langs->trans("Weight").'</td><td colspan="3">';
+            print '<input name="weight" size="4" value="'.GETPOST('weight').'">';
+            print $formproduct->selectMeasuringUnits("weight_units", "weight", (empty($conf->global->MAIN_WEIGHT_DEFAULT_UNIT)?0:$conf->global->MAIN_WEIGHT_DEFAULT_UNIT));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             print '</td></tr>';
             // Length
             if (empty($conf->global->PRODUCT_DISABLE_SIZE))
@@ -1056,7 +1323,11 @@ else
                 print '<input name="size" size="4" value="'.GETPOST('size').'"> x ';
                 print '<input name="sizewidth" size="4" value="'.GETPOST('sizewidth').'"> x ';
                 print '<input name="sizeheight" size="4" value="'.GETPOST('sizeheight').'">';
+<<<<<<< HEAD
                 print $formproduct->select_measuring_units("size_units","size");
+=======
+                print $formproduct->selectMeasuringUnits("size_units", "size");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 print '</td></tr>';
             }
             if (empty($conf->global->PRODUCT_DISABLE_SURFACE))
@@ -1064,6 +1335,7 @@ else
                 // Surface
                 print '<tr><td>'.$langs->trans("Surface").'</td><td colspan="3">';
                 print '<input name="surface" size="4" value="'.GETPOST('surface').'">';
+<<<<<<< HEAD
                 print $formproduct->select_measuring_units("surface_units","surface");
                 print '</td></tr>';
             }
@@ -1072,6 +1344,19 @@ else
             print '<input name="volume" size="4" value="'.GETPOST('volume').'">';
             print $formproduct->select_measuring_units("volume_units","volume");
             print '</td></tr>';
+=======
+                print $formproduct->selectMeasuringUnits("surface_units", "surface");
+                print '</td></tr>';
+            }
+            if (empty($conf->global->PRODUCT_DISABLE_VOLUME))
+            {
+                // Volume
+                print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="3">';
+                print '<input name="volume" size="4" value="'.GETPOST('volume').'">';
+                print $formproduct->selectMeasuringUnits("volume_units", "volume");
+                print '</td></tr>';
+            }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
 
         // Units
@@ -1079,7 +1364,11 @@ else
 	    {
 		    print '<tr><td>'.$langs->trans('DefaultUnitToShow').'</td>';
 		    print '<td colspan="3">';
+<<<<<<< HEAD
 		    print $form->selectUnits('','units');
+=======
+		    print $form->selectUnits('', 'units');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		    print '</td></tr>';
 	    }
 
@@ -1089,18 +1378,31 @@ else
 	        print '<tr><td>'.$langs->trans("CustomCode").'</td><td><input name="customcode" class="maxwidth100onsmartphone" value="'.GETPOST('customcode').'"></td>';
 	        // Origin country
 	        print '<td>'.$langs->trans("CountryOrigin").'</td><td>';
+<<<<<<< HEAD
 	        print $form->select_country(GETPOST('country_id','int'),'country_id');
 	        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+=======
+	        print $form->select_country(GETPOST('country_id', 'int'), 'country_id');
+	        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	        print '</td></tr>';
         }
 
         // Other attributes
         $parameters=array('colspan' => 3);
+<<<<<<< HEAD
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
         print $hookmanager->resPrint;
         if (empty($reshook))
         {
         	print $object->showOptionals($extrafields,'edit',$parameters);
+=======
+        $reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+        print $hookmanager->resPrint;
+        if (empty($reshook))
+        {
+        	print $object->showOptionals($extrafields, 'edit', $parameters);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
 
         // Note (private, no output on invoices, propales...)
@@ -1109,7 +1411,11 @@ else
             print '<tr><td class="tdtop">'.$langs->trans("NoteNotVisibleOnBill").'</td><td colspan="3">';
 
             // We use dolibarr_details as type of DolEditor here, because we must not accept images as description is included into PDF and not accepted by TCPDF.
+<<<<<<< HEAD
             $doleditor = new DolEditor('note_private', GETPOST('note_private','none'), '', 140, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_8, '90%');
+=======
+            $doleditor = new DolEditor('note_private', GETPOST('note_private', 'none'), '', 140, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_8, '90%');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	    $doleditor->Create();
 
             print "</td></tr>";
@@ -1174,6 +1480,7 @@ else
 			// Accountancy_code_sell
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
 			print '<td>';
+<<<<<<< HEAD
 			print $formaccounting->select_account(GETPOST('accountancy_code_sell'), 'accountancy_code_sell', 1, null, 1, 1, '');
 			print '</td></tr>';
 
@@ -1199,6 +1506,46 @@ else
 			print '<tr><td>'.$langs->trans("ProductAccountancyBuyCode").'</td>';
 			print '<td>';
 			print $formaccounting->select_account(GETPOST('accountancy_code_buy'), 'accountancy_code_buy', 1, null, 1, 1, '');
+=======
+            if($type = 0) {
+                $accountancy_code_sell = (GETPOST('accountancy_code_sell', 'alpha')?(GETPOST('accountancy_code_sell', 'alpha')):$conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT);
+            } else {
+                $accountancy_code_sell = (GETPOST('accountancy_code_sell', 'alpha')?(GETPOST('accountancy_code_sell', 'alpha')):$conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT);
+            }
+            print $formaccounting->select_account($accountancy_code_sell, 'accountancy_code_sell', 1, null, 1, 1, '');
+			print '</td></tr>';
+
+			// Accountancy_code_sell_intra
+			if ($mysoc->isInEEC())
+			{
+				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellIntraCode").'</td>';
+				print '<td>';
+                if($type = 0) {
+                    $accountancy_code_sell_intra = (GETPOST('accountancy_code_sell_intra', 'alpha')?(GETPOST('accountancy_code_sell_intra', 'alpha')):$conf->global->ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT);
+                } else {
+                    $accountancy_code_sell_intra = GETPOST('accountancy_code_sell_intra', 'alpha');
+                }
+                print $formaccounting->select_account($accountancy_code_sell_intra, 'accountancy_code_sell_intra', 1, null, 1, 1, '');
+                print '</td></tr>';
+			}
+
+			// Accountancy_code_sell_export
+			print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellExportCode").'</td>';
+			print '<td>';
+            if($type = 0)
+            {
+                $accountancy_code_sell_export = (GETPOST('accountancy_code_sell_export', 'alpha')?(GETPOST('accountancy_code_sell_export', 'alpha')):$conf->global->ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT);
+            } else {
+                $accountancy_code_sell_export = GETPOST('accountancy_code_sell_export', 'alpha');
+            }
+            print $formaccounting->select_account($accountancy_code_sell_export, 'accountancy_code_sell_export', 1, null, 1, 1, '');
+            print '</td></tr>';
+
+			// Accountancy_code_buy
+			print '<tr><td>'.$langs->trans("ProductAccountancyBuyCode").'</td>';
+			print '<td>';
+			print $formaccounting->select_account(GETPOST('accountancy_code_buy', 'alpha'), 'accountancy_code_buy', 1, null, 1, 1, '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '</td></tr>';
 		}
 		else // For external software
@@ -1208,6 +1555,7 @@ else
 			print '<td class="maxwidthonsmartphone"><input class="minwidth100" name="accountancy_code_sell" value="'.$object->accountancy_code_sell.'">';
 			print '</td></tr>';
 
+<<<<<<< HEAD
 			if ($conf->global->MAIN_FEATURES_LEVEL)
 			{
 				// Accountancy_code_sell_intra
@@ -1224,6 +1572,21 @@ else
 				print '</td></tr>';
 			}
 
+=======
+			// Accountancy_code_sell_intra
+			if ($mysoc->isInEEC())
+			{
+				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellIntraCode").'</td>';
+				print '<td class="maxwidthonsmartphone"><input class="minwidth100" name="accountancy_code_sell_intra" value="'.$object->accountancy_code_sell_intra.'">';
+				print '</td></tr>';
+			}
+
+			// Accountancy_code_sell_export
+			print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellExportCode").'</td>';
+			print '<td class="maxwidthonsmartphone"><input class="minwidth100" name="accountancy_code_sell_export" value="'.$object->accountancy_code_sell_export.'">';
+			print '</td></tr>';
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			// Accountancy_code_buy
 			print '<tr><td>'.$langs->trans("ProductAccountancyBuyCode").'</td>';
 			print '<td class="maxwidthonsmartphone"><input class="minwidth100" name="accountancy_code_buy" value="'.$object->accountancy_code_buy.'">';
@@ -1246,7 +1609,11 @@ else
      * Product card
      */
 
+<<<<<<< HEAD
     else if ($object->id > 0)
+=======
+    elseif ($object->id > 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         // Fiche en mode edition
 		if ($action == 'edit' && $usercancreate)
@@ -1317,7 +1684,11 @@ else
 				{
 					print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="3">';
 					$statutarray=array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"));
+<<<<<<< HEAD
 					print $form->selectarray('status_batch',$statutarray,$object->status_batch);
+=======
+					print $form->selectarray('status_batch', $statutarray, $object->status_batch);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					print '</td></tr>';
 				}
 			}
@@ -1340,10 +1711,17 @@ else
 		        }
 		        require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
 	            $formbarcode = new FormBarCode($db);
+<<<<<<< HEAD
 		        print $formbarcode->select_barcode_type($fk_barcode_type, 'fk_barcode_type', 1);
 		        print '</td><td>'.$langs->trans("BarcodeValue").'</td><td>';
 		        $tmpcode=isset($_POST['barcode'])?GETPOST('barcode'):$object->barcode;
 		        if (empty($tmpcode) && ! empty($modBarCodeProduct->code_auto)) $tmpcode=$modBarCodeProduct->getNextValue($object,$type);
+=======
+                print $formbarcode->selectBarcodeType($fk_barcode_type, 'fk_barcode_type', 1);
+		        print '</td><td>'.$langs->trans("BarcodeValue").'</td><td>';
+		        $tmpcode=isset($_POST['barcode'])?GETPOST('barcode'):$object->barcode;
+		        if (empty($tmpcode) && ! empty($modBarCodeProduct->code_auto)) $tmpcode=$modBarCodeProduct->getNextValue($object, $type);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		        print '<input size="40" class="maxwidthonsmartphone" type="text" name="barcode" value="'.dol_escape_htmltag($tmpcode).'">';
 		        print '</td></tr>';
 	        }
@@ -1360,7 +1738,11 @@ else
 
             // Public Url
             print '<tr><td>'.$langs->trans("PublicUrl").'</td><td colspan="3">';
+<<<<<<< HEAD
 			print '<input type="text" name="url" class="quatrevingtpercent" value="'.$object->url.'">';
+=======
+            print '<input type="text" name="url" class="quatrevingtpercent" value="'.$object->url.'">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             print '</td></tr>';
 
             // Stock
@@ -1388,6 +1770,7 @@ else
                 print '<input name="desiredstock" type="hidden" value="'.$object->desiredstock.'">';
             }*/
 
+<<<<<<< HEAD
             // Nature
             if($object->type!= Product::TYPE_SERVICE)
             {
@@ -1431,13 +1814,49 @@ else
         			print '<input name="sizeheight" size="5" value="'.$object->height.'"> ';
         			print $formproduct->select_measuring_units("size_units", "size", $object->length_units);
         			print '</td></tr>';
+=======
+            if ($object->isService())
+            {
+                // Duration
+                print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">';
+                print '<input name="duration_value" size="5" value="'.$object->duration_value.'"> ';
+                print $formproduct->selectMeasuringUnits("duration_unit", "time", $object->duration_unit, 0, 1);
+                print '</td></tr>';
+            }
+            else
+            {
+                // Nature
+                print '<tr><td>'.$langs->trans("Nature").'</td><td colspan="3">';
+                $statutarray=array('-1'=>'&nbsp;', '1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
+                print $form->selectarray('finished', $statutarray, $object->finished);
+                print '</td></tr>';
+
+                // Weight
+                print '<tr><td>'.$langs->trans("Weight").'</td><td colspan="3">';
+                print '<input name="weight" size="5" value="'.$object->weight.'"> ';
+                print $formproduct->selectMeasuringUnits("weight_units", "weight", $object->weight_units);
+                print '</td></tr>';
+                if (empty($conf->global->PRODUCT_DISABLE_SIZE))
+                {
+                  // Length
+                  print '<tr><td>'.$langs->trans("Length").' x '.$langs->trans("Width").' x '.$langs->trans("Height").'</td><td colspan="3">';
+                  print '<input name="size" size="5" value="'.$object->length.'">x';
+                  print '<input name="sizewidth" size="5" value="'.$object->width.'">x';
+                  print '<input name="sizeheight" size="5" value="'.$object->height.'"> ';
+                  print $formproduct->selectMeasuringUnits("size_units", "size", $object->length_units);
+                  print '</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 }
                 if (empty($conf->global->PRODUCT_DISABLE_SURFACE))
                 {
                     // Surface
                     print '<tr><td>'.$langs->trans("Surface").'</td><td colspan="3">';
                     print '<input name="surface" size="5" value="'.$object->surface.'"> ';
+<<<<<<< HEAD
                     print $formproduct->select_measuring_units("surface_units", "surface", $object->surface_units);
+=======
+                    print $formproduct->selectMeasuringUnits("surface_units", "surface", $object->surface_units);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                     print '</td></tr>';
                 }
                 if (empty($conf->global->PRODUCT_DISABLE_VOLUME))
@@ -1445,7 +1864,11 @@ else
                     // Volume
                     print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="3">';
                     print '<input name="volume" size="5" value="'.$object->volume.'"> ';
+<<<<<<< HEAD
                     print $formproduct->select_measuring_units("volume_units", "volume", $object->volume_units);
+=======
+                    print $formproduct->selectMeasuringUnits("volume_units", "volume", $object->volume_units);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                     print '</td></tr>';
                 }
             }
@@ -1465,26 +1888,45 @@ else
 	            // Origin country
 	            print '<td>'.$langs->trans("CountryOrigin").'</td><td>';
 	            print $form->select_country($object->country_id, 'country_id', '', 0, 'minwidth100 maxwidthonsmartphone');
+<<<<<<< HEAD
 	            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+=======
+	            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	            print '</td></tr>';
         	}
 
             // Other attributes
             $parameters=array('colspan' => ' colspan="3"', 'cols'=>3);
+<<<<<<< HEAD
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             print $hookmanager->resPrint;
             if (empty($reshook))
             {
             	print $object->showOptionals($extrafields,'edit');
+=======
+            $reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+            print $hookmanager->resPrint;
+            if (empty($reshook))
+            {
+            	print $object->showOptionals($extrafields, 'edit');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             }
 
 			// Tags-Categories
             if ($conf->categorie->enabled)
 			{
+<<<<<<< HEAD
 				print '<tr><td class="tdtop">'.$langs->trans("Categories").'</td><td colspan="3">';
 				$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
 				$c = new Categorie($db);
 				$cats = $c->containing($object->id,Categorie::TYPE_PRODUCT);
+=======
+				print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
+				$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
+				$c = new Categorie($db);
+				$cats = $c->containing($object->id, Categorie::TYPE_PRODUCT);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$arrayselected=array();
 				foreach($cats as $cat) {
 					$arrayselected[] = $cat->id;
@@ -1518,6 +1960,7 @@ else
 				print $formaccounting->select_account($object->accountancy_code_sell, 'accountancy_code_sell', 1, '', 1, 1);
 				print '</td></tr>';
 
+<<<<<<< HEAD
 				if ($conf->global->MAIN_FEATURES_LEVEL)
 				{
 					// Accountancy_code_sell_intra
@@ -1536,6 +1979,23 @@ else
 					print '</td></tr>';
 				}
 
+=======
+				// Accountancy_code_sell_intra
+				if ($mysoc->isInEEC())
+				{
+					print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellIntraCode").'</td>';
+					print '<td>';
+					print $formaccounting->select_account($object->accountancy_code_sell_intra, 'accountancy_code_sell_intra', 1, '', 1, 1);
+					print '</td></tr>';
+				}
+
+				// Accountancy_code_sell_export
+				print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellExportCode").'</td>';
+				print '<td>';
+				print $formaccounting->select_account($object->accountancy_code_sell_export, 'accountancy_code_sell_export', 1, '', 1, 1);
+				print '</td></tr>';
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				// Accountancy_code_buy
 				print '<tr><td>'.$langs->trans("ProductAccountancyBuyCode").'</td>';
 				print '<td>';
@@ -1549,6 +2009,7 @@ else
 				print '<td><input name="accountancy_code_sell" class="maxwidth200" value="'.$object->accountancy_code_sell.'">';
 				print '</td></tr>';
 
+<<<<<<< HEAD
 				if ($conf->global->MAIN_FEATURES_LEVEL)
 				{
 					// Accountancy_code_sell_intra
@@ -1565,6 +2026,21 @@ else
 					print '</td></tr>';
 				}
 
+=======
+				// Accountancy_code_sell_intra
+				if ($mysoc->isInEEC())
+				{
+					print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellIntraCode").'</td>';
+					print '<td><input name="accountancy_code_sell_intra" class="maxwidth200" value="'.$object->accountancy_code_sell_intra.'">';
+					print '</td></tr>';
+				}
+
+				// Accountancy_code_sell_export
+				print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellExportCode").'</td>';
+				print '<td><input name="accountancy_code_sell_export" class="maxwidth200" value="'.$object->accountancy_code_sell_export.'">';
+				print '</td></tr>';
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				// Accountancy_code_buy
 				print '<tr><td>'.$langs->trans("ProductAccountancyBuyCode").'</td>';
 				print '<td><input name="accountancy_code_buy" class="maxwidth200" value="'.$object->accountancy_code_buy.'">';
@@ -1598,7 +2074,11 @@ else
             $object->next_prev_filter=" fk_product_type = ".$object->type;
 
             $shownav = 1;
+<<<<<<< HEAD
             if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+=======
+            if ($user->societe_id && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
             dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 
@@ -1610,7 +2090,11 @@ else
             print '<table class="border tableforfield" width="100%">';
 
 			// Type
+<<<<<<< HEAD
 			if (! empty($conf->produit->enabled) && ! empty($conf->service->enabled))
+=======
+			if (! empty($conf->product->enabled) && ! empty($conf->service->enabled))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			{
 				// TODO change for compatibility with edit in place
 				$typeformat='select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
@@ -1626,7 +2110,11 @@ else
                 print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
                 print $langs->trans("BarcodeType");
                 print '</td>';
+<<<<<<< HEAD
                 if (($action != 'editbarcodetype') && $usercancreate && $createbarcode) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcodetype&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
+=======
+                if (($action != 'editbarcodetype') && $usercancreate && $createbarcode) print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcodetype&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'), 1).'</a></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 print '</tr></table>';
                 print '</td><td colspan="2">';
                 if ($action == 'editbarcodetype' || $action == 'editbarcode')
@@ -1636,7 +2124,11 @@ else
 				}
                 if ($action == 'editbarcodetype')
                 {
+<<<<<<< HEAD
                     $formbarcode->form_barcode_type($_SERVER['PHP_SELF'].'?id='.$object->id,$object->barcode_type,'fk_barcode_type');
+=======
+                    print $formbarcode->formBarcodeType($_SERVER['PHP_SELF'].'?id='.$object->id, $object->barcode_type, 'fk_barcode_type');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 }
                 else
                 {
@@ -1650,13 +2142,21 @@ else
                 print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
                 print $langs->trans("BarcodeValue");
                 print '</td>';
+<<<<<<< HEAD
                 if (($action != 'editbarcode') && $usercancreate && $createbarcode) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcode&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
+=======
+                if (($action != 'editbarcode') && $usercancreate && $createbarcode) print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcode&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'), 1).'</a></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 print '</tr></table>';
                 print '</td><td colspan="2">';
                 if ($action == 'editbarcode')
                 {
 					$tmpcode=isset($_POST['barcode'])?GETPOST('barcode'):$object->barcode;
+<<<<<<< HEAD
 					if (empty($tmpcode) && ! empty($modBarCodeProduct->code_auto)) $tmpcode=$modBarCodeProduct->getNextValue($object,$type);
+=======
+					if (empty($tmpcode) && ! empty($modBarCodeProduct->code_auto)) $tmpcode=$modBarCodeProduct->getNextValue($object, $type);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 					print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
 					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1682,15 +2182,22 @@ else
 				if (! empty($object->accountancy_code_sell))
 				{
 					$accountingaccount = new AccountingAccount($db);
+<<<<<<< HEAD
 					$accountingaccount->fetch('',$object->accountancy_code_sell,1);
 
 					print $accountingaccount->getNomUrl(0,1,1,'',1);
+=======
+					$accountingaccount->fetch('', $object->accountancy_code_sell, 1);
+
+					print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 			} else {
 				print $object->accountancy_code_sell;
 			}
 			print '</td></tr>';
 
+<<<<<<< HEAD
 			if ($conf->global->MAIN_FEATURES_LEVEL)
 			{
 				// Accountancy sell code intra-community
@@ -1729,10 +2236,50 @@ else
 					}
 				} else {
 					print $object->accountancy_code_sell_export;
+=======
+			// Accountancy sell code intra-community
+			if ($mysoc->isInEEC())
+			{
+				print '<tr><td class="nowrap">';
+				print $langs->trans("ProductAccountancySellIntraCode");
+				print '</td><td colspan="2">';
+				if (! empty($conf->accounting->enabled))
+				{
+					if (! empty($object->accountancy_code_sell_intra))
+					{
+						$accountingaccount2 = new AccountingAccount($db);
+						$accountingaccount2->fetch('', $object->accountancy_code_sell_intra, 1);
+
+						print $accountingaccount2->getNomUrl(0, 1, 1, '', 1);
+					}
+				} else {
+					print $object->accountancy_code_sell_intra;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 				print '</td></tr>';
 			}
 
+<<<<<<< HEAD
+=======
+			// Accountancy sell code export
+			print '<tr><td class="nowrap">';
+			print $langs->trans("ProductAccountancySellExportCode");
+			print '</td><td colspan="2">';
+			if (! empty($conf->accounting->enabled))
+			{
+				if (! empty($object->accountancy_code_sell_export))
+				{
+					$accountingaccount3 = new AccountingAccount($db);
+					$accountingaccount3->fetch('', $object->accountancy_code_sell_export, 1);
+
+					print $accountingaccount3->getNomUrl(0, 1, 1, '', 1);
+				}
+			} else {
+				print $object->accountancy_code_sell_export;
+			}
+			print '</td></tr>';
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			// Accountancy buy code
 			print '<tr><td class="nowrap">';
 			print $langs->trans("ProductAccountancyBuyCode");
@@ -1742,9 +2289,15 @@ else
 				if (! empty($object->accountancy_code_buy))
 				{
 					$accountingaccount4 = new AccountingAccount($db);
+<<<<<<< HEAD
 					$accountingaccount4->fetch('',$object->accountancy_code_buy,1);
 
 					print $accountingaccount4->getNomUrl(0,1,1,'',1);
+=======
+					$accountingaccount4->fetch('', $object->accountancy_code_buy, 1);
+
+					print $accountingaccount4->getNomUrl(0, 1, 1, '', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 			} else {
 				print $object->accountancy_code_buy;
@@ -1760,14 +2313,22 @@ else
             	    if (! empty($conf->use_javascript_ajax) && $usercancreate && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
             	        print ajax_object_onoff($object, 'status_batch', 'tobatch', 'ProductStatusOnBatch', 'ProductStatusNotOnBatch');
             	    } else {
+<<<<<<< HEAD
             	        print $object->getLibStatut(0,2);
+=======
+            	        print $object->getLibStatut(0, 2);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             	    }
             	    print '</td></tr>';
 				}
             }
 
             // Description
+<<<<<<< HEAD
             print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td colspan="2">'.(dol_textishtml($object->description)?$object->description:dol_nl2br($object->description,1,true)).'</td></tr>';
+=======
+            print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td colspan="2">'.(dol_textishtml($object->description)?$object->description:dol_nl2br($object->description, 1, true)).'</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
             // Public URL
             print '<tr><td>'.$langs->trans("PublicUrl").'</td><td colspan="2">';
@@ -1808,6 +2369,7 @@ else
             print '<div class="underbanner clearboth"></div>';
             print '<table class="border tableforfield" width="100%">';
 
+<<<<<<< HEAD
             // Nature
             if($object->type!= Product::TYPE_SERVICE)
             {
@@ -1816,6 +2378,8 @@ else
                 print '</td></tr>';
             }
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             if ($object->isService())
             {
                 // Duration
@@ -1824,7 +2388,11 @@ else
                 {
                     $dur=array("i"=>$langs->trans("Minute"),"h"=>$langs->trans("Hours"),"d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
                 }
+<<<<<<< HEAD
                 else if ($object->duration_value > 0)
+=======
+                elseif ($object->duration_value > 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 {
                     $dur=array("i"=>$langs->trans("Minute"),"h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
                 }
@@ -1834,11 +2402,22 @@ else
             }
             else
             {
+<<<<<<< HEAD
+=======
+                // Nature
+                print '<tr><td class="titlefield">'.$langs->trans("Nature").'</td><td colspan="2">';
+                print $object->getLibFinished();
+                print '</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 // Weight
                 print '<tr><td class="titlefield">'.$langs->trans("Weight").'</td><td colspan="2">';
                 if ($object->weight != '')
                 {
+<<<<<<< HEAD
                     print $object->weight." ".measuring_units_string($object->weight_units,"weight");
+=======
+                    print $object->weight." ".measuring_units_string($object->weight_units, "weight");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 }
                 else
                 {
@@ -1854,7 +2433,11 @@ else
                         print $object->length;
                         if ($object->width) print " x ".$object->width;
                         if ($object->height) print " x ".$object->height;
+<<<<<<< HEAD
                         print ' '.measuring_units_string($object->length_units,"size");
+=======
+                        print ' '.measuring_units_string($object->length_units, "size");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                     }
                     else
                     {
@@ -1868,7 +2451,11 @@ else
                     print '<tr><td>'.$langs->trans("Surface").'</td><td colspan="2">';
                     if ($object->surface != '')
                     {
+<<<<<<< HEAD
                         print $object->surface." ".measuring_units_string($object->surface_units,"surface");
+=======
+                        print $object->surface." ".measuring_units_string($object->surface_units, "surface");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                     }
                     else
                     {
@@ -1882,7 +2469,11 @@ else
                     print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="2">';
                     if ($object->volume != '')
                     {
+<<<<<<< HEAD
                         print $object->volume." ".measuring_units_string($object->volume_units,"volume");
+=======
+                        print $object->volume." ".measuring_units_string($object->volume_units, "volume");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                     }
                     else
                     {
@@ -1905,12 +2496,20 @@ else
 			}
 
         	// Custom code
+<<<<<<< HEAD
         	if (! $object->isService() && empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO))
+=======
+    	    if (! $object->isService() && empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         	{
 	            print '<tr><td>'.$langs->trans("CustomCode").'</td><td colspan="2">'.$object->customcode.'</td>';
 
             	// Origin country code
+<<<<<<< HEAD
             	print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td colspan="2">'.getCountry($object->country_id,0,$db).'</td>';
+=======
+            	print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td colspan="2">'.getCountry($object->country_id, 0, $db).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         	}
 
             // Other attributes
@@ -1919,8 +2518,13 @@ else
 
 			// Categories
 			if($conf->categorie->enabled) {
+<<<<<<< HEAD
 				print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td colspan="3">';
 				print $form->showCategories($object->id,'product',1);
+=======
+				print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td colspan="3">';
+				print $form->showCategories($object->id, 'product', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				print "</td></tr>";
 			}
 
@@ -1928,7 +2532,11 @@ else
 			if (! empty($conf->global->MAIN_DISABLE_NOTES_TAB))
 			{
     			print '<!-- show Note --> '."\n";
+<<<<<<< HEAD
                 print '<tr><td class="tdtop">'.$langs->trans("NotePrivate").'</td><td colspan="'.(2+(($showphoto||$showbarcode)?1:0)).'">'.(dol_textishtml($object->note_private)?$object->note_private:dol_nl2br($object->note_private,1,true)).'</td></tr>'."\n";
+=======
+                print '<tr><td class="tdtop">'.$langs->trans("NotePrivate").'</td><td colspan="'.(2+(($showphoto||$showbarcode)?1:0)).'">'.(dol_textishtml($object->note_private)?$object->note_private:dol_nl2br($object->note_private, 1, true)).'</td></tr>'."\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 print '<!-- End show Note --> '."\n";
 			}
 
@@ -1940,9 +2548,14 @@ else
 
             dol_fiche_end();
         }
+<<<<<<< HEAD
 
     }
     else if ($action != 'create')
+=======
+    }
+    elseif ($action != 'create')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         exit;
     }
@@ -1961,7 +2574,11 @@ if ($result > 0)
 }
 
 $tmpcode='';
+<<<<<<< HEAD
 if (! empty($modCodeProduct->code_auto)) $tmpcode=$modCodeProduct->getNextValue($object,$object->type);
+=======
+if (! empty($modCodeProduct->code_auto)) $tmpcode=$modCodeProduct->getNextValue($object, $object->type);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Define confirmation messages
 $formquestionclone=array(
@@ -1979,14 +2596,22 @@ if (! empty($conf->global->PRODUIT_SOUSPRODUITS))
 if (($action == 'delete' && (empty($conf->use_javascript_ajax) || ! empty($conf->dol_use_jmobile)))	// Output when action = clone if jmobile or no js
 	|| (! empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)))							// Always output when not jmobile nor js
 {
+<<<<<<< HEAD
     print $form->formconfirm("card.php?id=".$object->id,$langs->trans("DeleteProduct"),$langs->trans("ConfirmDeleteProduct"),"confirm_delete",'',0,"action-delete");
+=======
+    print $form->formconfirm("card.php?id=".$object->id, $langs->trans("DeleteProduct"), $langs->trans("ConfirmDeleteProduct"), "confirm_delete", '', 0, "action-delete");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 // Clone confirmation
 if (($action == 'clone' && (empty($conf->use_javascript_ajax) || ! empty($conf->dol_use_jmobile)))		// Output when action = clone if jmobile or no js
 	|| (! empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)))							// Always output when not jmobile nor js
 {
+<<<<<<< HEAD
     print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneProduct'),$langs->trans('ConfirmCloneProduct',$object->ref),'confirm_clone',$formquestionclone,'yes','action-clone',260,600);
+=======
+    print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneProduct', $object->ref), 'confirm_clone', $formquestionclone, 'yes', 'action-clone', 350, 600);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 
@@ -2000,7 +2625,11 @@ if ($action != 'create' && $action != 'edit')
     print "\n".'<div class="tabsAction">'."\n";
 
     $parameters=array();
+<<<<<<< HEAD
     $reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+=======
+    $reshook=$hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     if (empty($reshook))
 	{
 		if ($usercancreate)
@@ -2036,12 +2665,20 @@ if ($action != 'create' && $action != 'edit')
             }
             else
     		{
+<<<<<<< HEAD
                 print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("ProductIsUsed").'">'.$langs->trans("Delete").'</a></div>';
+=======
+                print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ProductIsUsed").'">'.$langs->trans("Delete").'</a></div>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             }
         }
         else
     	{
+<<<<<<< HEAD
             print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Delete").'</a></div>';
+=======
+            print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Delete").'</a></div>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
     }
 
@@ -2065,7 +2702,11 @@ if (! empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action =
 
         $langs->load("propal");
 
+<<<<<<< HEAD
         $otherprop = $propal->liste_array(2,1,0);
+=======
+        $otherprop = $propal->liste_array(2, 1, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         if (is_array($otherprop) && count($otherprop))
         {
@@ -2138,7 +2779,11 @@ if (! empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action =
     	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     	print '<input type="hidden" name="action" value="addin">';
 
+<<<<<<< HEAD
 	    print load_fiche_titre($langs->trans("AddToDraft"),'','');
+=======
+	    print load_fiche_titre($langs->trans("AddToDraft"), '', '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		dol_fiche_head('');
 
@@ -2175,12 +2820,20 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete')
     // Documents
     $objectref = dol_sanitizeFileName($object->ref);
     $relativepath = $comref . '/' . $objectref . '.pdf';
+<<<<<<< HEAD
     $filedir = $conf->produit->dir_output . '/' . $objectref;
+=======
+    $filedir = $conf->product->dir_output . '/' . $objectref;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
     $genallowed=$usercanread;
     $delallowed=$usercancreate;
 
+<<<<<<< HEAD
     print $formfile->showdocuments($modulepart,$object->ref,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang, '', $object);
+=======
+    print $formfile->showdocuments($modulepart, $object->ref, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $object->default_lang, '', $object);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $somethingshown=$formfile->numoffiles;
 
     print '</div><div class="fichehalfright"><div class="ficheaddleft">';
@@ -2199,6 +2852,10 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete')
     print '</div></div></div>';
 }
 
+<<<<<<< HEAD
 
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

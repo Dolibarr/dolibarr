@@ -55,7 +55,11 @@ ErrorRecordIsUsedByChild=Imposible de suprimir este registro. Esta siendo utiliz
 ErrorWrongValue=Valor incorrecto
 ErrorWrongValueForParameterX=Valor incorrecto del parámetro %s
 ErrorNoRequestInError=Ninguna petición en error
+<<<<<<< HEAD
 ErrorServiceUnavailableTryLater=Servicio no disponible actualmente. Vuélvalo a intentar más tarde.
+=======
+ErrorServiceUnavailableTryLater=Servicio no disponible actualmente. Inténtelo de nuevo más tarde.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorDuplicateField=Duplicado en un campo único
 ErrorSomeErrorWereFoundRollbackIsDone=Se encontraron algunos errores. Modificaciones deshechas.
 ErrorConfigParameterNotDefined=El parámetro <b>%s</b> no está definido en el archivo de configuración Dolibarr <b>conf.php</b>.
@@ -78,7 +82,11 @@ FileRenamed=El archivo ha sido renombrado correctamente
 FileGenerated=el archivo ha sido generado correctamente
 FileSaved=El fichero ha sido guardado correctamente
 FileUploaded=El archivo se ha subido correctamente
+<<<<<<< HEAD
 FileTransferComplete=Fichero(s) cargados correctamente
+=======
+FileTransferComplete=Archivo(s) cargado(s) correctamente
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 FilesDeleted=Fichero(s) eliminados correctamente
 FileWasNotUploaded=Un archivo ha sido seleccionado para adjuntarlo, pero aún no se ha subido. Haga clic en "Adjuntar este archivo" para ello.
 NbOfEntries=Nº de entradas
@@ -86,6 +94,10 @@ GoToWikiHelpPage=Leer la ayuda en línea (es necesario acceso a Internet )
 GoToHelpPage=Consultar la ayuda
 RecordSaved=Registro guardado
 RecordDeleted=Registro eliminado
+<<<<<<< HEAD
+=======
+RecordGenerated=Registro generado
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LevelOfFeature=Nivel de funciones
 NotDefined=No definida
 DolibarrInHttpAuthenticationSoPasswordUseless=Dolibarr está configurado en modo de autentificación <b>%s</b> en el archivo de configuración <b>conf.php</b>.<br> Eso significa que la base de datos de las contraseñas es externa a Dolibarr, por eso toda modificación de este campo puede resultar sin efecto alguno.
@@ -94,7 +106,11 @@ Undefined=No definido
 PasswordForgotten=¿Olvidó su contraseña?
 NoAccount=¿Sin cuenta?
 SeeAbove=Mencionado anteriormente
+<<<<<<< HEAD
 HomeArea=Área inicio
+=======
+HomeArea=Inicio
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LastConnexion=Última conexión
 PreviousConnexion=Conexión anterior
 PreviousValue=Valor previo
@@ -142,6 +158,10 @@ Closed=Cerrado
 Closed2=Cerrado
 NotClosed=No cerrado
 Enabled=Activado
+<<<<<<< HEAD
+=======
+Enable=Activo
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Deprecated=Obsoleto
 Disable=Desactivar
 Disabled=Desactivado
@@ -153,7 +173,11 @@ Update=Modificar
 Close=Cerrar
 CloseBox=Eliminar panel de su  tablero
 Confirm=Confirmar
+<<<<<<< HEAD
 ConfirmSendCardByMail=¿Quiere enviar el contenido de esta ficha por e-mail a la dirección <b>%s</b>?
+=======
+ConfirmSendCardByMail=¿Quiere enviar el contenido de esta ficha por e-mail a <b>%s</b>?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Delete=Eliminar
 Remove=Retirar
 Resiliate=Cancelar
@@ -200,6 +224,10 @@ Password=Contraseña
 PasswordRetype=Repetir contraseña
 NoteSomeFeaturesAreDisabled=Atención, sólo unos pocos módulos/funcionalidades han sido activados en esta demo.
 Name=Nombre
+<<<<<<< HEAD
+=======
+NameSlashCompany=Nombre / Empresa
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Person=Persona
 Parameter=Parámetro
 Parameters=Parámetros
@@ -220,6 +248,12 @@ Info=Log
 Family=Familia
 Description=Descripción
 Designation=Descripción
+<<<<<<< HEAD
+=======
+DescriptionOfLine=Descripción de línea
+DateOfLine=Fecha de la línea
+DurationOfLine=Duración de la línea
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Model=Plantilla documento
 DefaultModel=Plantilla por defecto
 Action=Acción
@@ -232,7 +266,11 @@ Limit=Límite
 Limits=Límites
 Logout=Desconexión
 NoLogoutProcessWithAuthMode=Sin funcionalidades de desconexión con el modo de autenticación <b>%s</b>
+<<<<<<< HEAD
 Connection=Usuario
+=======
+Connection=Conexión
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Setup=Configuración
 Alert=Alerta
 MenuWarnings=Alertas
@@ -327,12 +365,20 @@ Copy=Copiar
 Paste=Pegar
 Default=Predeterminado
 DefaultValue=Valor por defecto
+<<<<<<< HEAD
 DefaultValues=Valores por defecto
+=======
+DefaultValues=Valores/filtros/ordenación por defecto
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Price=Precio
 PriceCurrency=Precio (moneda)
 UnitPrice=Precio unitario
 UnitPriceHT=Precio base
+<<<<<<< HEAD
 UnitPriceHTCurrency=Precio unitario (sin impuestos) (moneda)
+=======
+UnitPriceHTCurrency=Precio base (moneda)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 UnitPriceTTC=Precio unitario total
 PriceU=P.U.
 PriceUHT=P.U.
@@ -360,6 +406,7 @@ AmountLT2ES=Importe IRPF
 AmountTotal=Importe total
 AmountAverage=Importe medio
 PriceQtyMinHT=Precio cantidad min. total
+<<<<<<< HEAD
 PriceQtyMinHTCurrency=Precio cantidad min. (sin impuestos) (moneda)
 Percentage=Porcentaje
 Total=Total
@@ -368,6 +415,17 @@ TotalHTShort=Importe
 TotalHTShortCurrency=Total (divisa)
 TotalTTCShort=Total
 TotalHT=Base imponible
+=======
+PriceQtyMinHTCurrency=Precio cantidad min. (moneda)
+Percentage=Porcentaje
+Total=Total
+SubTotal=Subtotal
+TotalHTShort=Base imp.
+TotalHT100Short=Total  100%% (Base imp.)
+TotalHTShortCurrency=Base imponible (divisa)
+TotalTTCShort=Total
+TotalHT=Total (Base imp).
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TotalHTforthispage=Total (base imponible) de esta página
 Totalforthispage=Total en esta página
 TotalTTC=Total
@@ -396,6 +454,10 @@ LT1ES=RE
 LT2ES=IRPF
 LT1IN=CGST
 LT2IN=SGST
+<<<<<<< HEAD
+=======
+LT1GC=Céntimos adicionales
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 VATRate=Tasa IVA
 VATCode=Código tasa IVA
 VATNPR=Tasa NPR
@@ -403,7 +465,11 @@ DefaultTaxRate=Tasa de impuesto por defecto
 Average=Media
 Sum=Suma
 Delta=Diferencia
+<<<<<<< HEAD
 RemainToPay=Queda per pagar
+=======
+RemainToPay=Queda por pagar
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Module=Módulo
 Modules=Módulos
 Option=Opción
@@ -435,7 +501,12 @@ Accountant=Contable
 ContactsForCompany=Contactos de este tercero
 ContactsAddressesForCompany=Contactos/direcciones de este tercero
 AddressesForCompany=Direcciones de este tercero
+<<<<<<< HEAD
 ActionsOnCompany=Eventos respecto a este tercero
+=======
+ActionsOnCompany=Eventos de este tercero
+ActionsOnContact=Eventos de este contacto/dirección
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActionsOnMember=Eventos respecto a este miembro
 ActionsOnProduct=Eventos sobre este producto
 NActionsLate=%s en retraso
@@ -453,8 +524,13 @@ Generate=Generar
 Duration=Duración
 TotalDuration=Duración total
 Summary=Resumen
+<<<<<<< HEAD
 DolibarrStateBoard=Estadísticas
 DolibarrWorkBoard=Indicadores de trabajo
+=======
+DolibarrStateBoard=Estadísticas de la base de datos
+DolibarrWorkBoard=Tickets abiertos
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoOpenedElementToProcess=Sin elementos a procesar
 Available=Disponible
 NotYetAvailable=Aún no disponible
@@ -468,7 +544,11 @@ and=y
 or=o
 Other=Otro
 Others=Otros
+<<<<<<< HEAD
 OtherInformations=Otras informaciones
+=======
+OtherInformations=Otra información
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Quantity=Cantidad
 Qty=Cant.
 ChangedBy=Modificado por
@@ -482,9 +562,17 @@ Reporting=Informe
 Reportings=Informes
 Draft=Borrador
 Drafts=Borradores
+<<<<<<< HEAD
 StatusInterInvoiced=
 Validated=Validado
 Opened=Activo
+=======
+StatusInterInvoiced=Facturada
+Validated=Validado
+Opened=Activo
+OpenAll=Abierto (todo)
+ClosedAll=Cerrado (Todo)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 New=Nuevo
 Discount=Descuento
 Unknown=Desconocido
@@ -506,8 +594,13 @@ None=Nada
 NoneF=Ninguna
 NoneOrSeveral=Ninguno o varios
 Late=Retraso
+<<<<<<< HEAD
 LateDesc=El retraso que indica si un registro lleva retraso o no depende de la configuración. Pregunte a su administrador para cambiar el retraso desde el menú Inicio - Configuración - Alertas.
 NoItemLate=No late item
+=======
+LateDesc=El retraso que indica si un registro lleva retraso o no depende de la configuración del menú Inicio - Configuración - Alertas.
+NoItemLate=Sin items en retraso
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Photo=Foto
 Photos=Fotos
 AddPhoto=Añadir foto
@@ -530,6 +623,7 @@ September=septiembre
 October=octubre
 November=noviembre
 December=Diciembre
+<<<<<<< HEAD
 JanuaryMin=Ene
 FebruaryMin=Feb
 MarchMin=Mar
@@ -542,6 +636,8 @@ SeptemberMin=Sep
 OctoberMin=Oct
 NovemberMin=Nov
 DecemberMin=Dic
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Month01=enero
 Month02=febrero
 Month03=marzo
@@ -643,9 +739,16 @@ MailSentBy=Mail enviado por
 TextUsedInTheMessageBody=Texto utilizado en el cuerpo del mensaje
 SendAcknowledgementByMail=Enviar email de confirmación
 SendMail=Enviar e-mail
+<<<<<<< HEAD
 EMail=E-mail
 NoEMail=Sin e-mail
 Email=Correo
+=======
+Email=Correo
+NoEMail=Sin e-mail
+AlreadyRead=Ya leído
+NotRead=No lleído
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoMobilePhone=Sin teléfono móvil
 Owner=Propietario
 FollowingConstantsWillBeSubstituted=Las siguientes constantes serán substituidas por su valor correspondiente.
@@ -658,8 +761,14 @@ ValueIsValid=Valor válido
 ValueIsNotValid=Valor no válido
 RecordCreatedSuccessfully=Registro creado correctamente
 RecordModifiedSuccessfully=Registro modificado con éxito
+<<<<<<< HEAD
 RecordsModified=%s registros modificados
 RecordsDeleted=%s registros eliminados
+=======
+RecordsModified=%s registro(s) modificado(s)
+RecordsDeleted=%s registro(s) eliminado(s)
+RecordsGenerated=%s registro(s) generado(s)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AutomaticCode=Creación automática de código
 FeatureDisabled=Función desactivada
 MoveBox=Mover panel
@@ -670,7 +779,10 @@ Method=Método
 Receive=Recepción
 CompleteOrNoMoreReceptionExpected=Completado o no se espera más
 ExpectedValue=Valor esperado
+<<<<<<< HEAD
 CurrentValue=Valor actual
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PartialWoman=Parcial
 TotalWoman=Total
 NeverReceived=Nunca recibido
@@ -711,6 +823,10 @@ AddFile=Añadir archivo
 FreeZone=Entrada libre
 FreeLineOfType=Entrada libre del tipo
 CloneMainAttributes=Clonar el objeto con estos atributos principales
+<<<<<<< HEAD
+=======
+ReGeneratePDF=Regenerar PDF
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PDFMerge=Fusión PDF
 Merge=Fusión
 DocumentModelStandardPDF=Modelo PDF estándard
@@ -724,7 +840,11 @@ ValidatePayment=Validar pago
 CreditOrDebitCard=Tarjeta de crédito o débito
 FieldsWithAreMandatory=Los campos marcados por un <b>%s</b> son obligatorios
 FieldsWithIsForPublic=Los campos marcados por <b>%s</b> se mostrarán en la lista pública de miembros. Si no desea verlos, desactive la casilla "público".
+<<<<<<< HEAD
 AccordingToGeoIPDatabase=(Obtenido por conversión GeoIP)
+=======
+AccordingToGeoIPDatabase=(obtenido por conversión GeoIP)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Line=Línea
 NotSupported=No soportado
 RequiredField=Campo obligatorio
@@ -732,6 +852,11 @@ Result=Resultado
 ToTest=Probar
 ValidateBefore=Para poder usar esta función debe validarse la ficha
 Visibility=Visibilidad
+<<<<<<< HEAD
+=======
+Totalizable=Totalizable
+TotalizableDesc=Este campo es totalizable en los listados
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Private=Privado
 Hidden=Caché
 Resources=Recursos
@@ -750,6 +875,10 @@ LinkTo=Enlazar a
 LinkToProposal=Enlazar a pedido
 LinkToOrder=Enlazar a pedido
 LinkToInvoice=Enlazar a factura
+<<<<<<< HEAD
+=======
+LinkToTemplateInvoice=Enlazar a plantilla de factura
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LinkToSupplierOrder=Enlazar a pedido a proveedor
 LinkToSupplierProposal=Enlazar a presupuesto de proveedor
 LinkToSupplierInvoice=Enlazar a factura de proveedor
@@ -758,6 +887,10 @@ LinkToIntervention=Enlazar a intervención
 CreateDraft=Crear borrador
 SetToDraft=Volver a borrador
 ClickToEdit=Clic para editar
+<<<<<<< HEAD
+=======
+ClickToRefresh=Clic para actualizar
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 EditWithEditor=Editar con CKEditor
 EditWithTextEditor=Editar con editor de texto
 EditHTMLSource=Editar código HTML
@@ -772,14 +905,22 @@ ByDay=Por día
 BySalesRepresentative=Por comercial
 LinkedToSpecificUsers=Enlazado a un contacto de usuario particular
 NoResults=Ningún resultado
+<<<<<<< HEAD
 AdminTools=Utilidades administración
+=======
+AdminTools=Herramientas de administración
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SystemTools=Utilidades sistema
 ModulesSystemTools=Utilidades módulos
 Test=Prueba
 Element=Elemento
 NoPhotoYet=No hay fotografía disponible
 Dashboard=Tablero
+<<<<<<< HEAD
 MyDashboard=Mi tablero
+=======
+MyDashboard=Mi panel de control
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Deductible=Deducible
 from=de
 toward=hacia
@@ -818,16 +959,28 @@ Sincerely=Atentamente
 DeleteLine=Eliminación de línea
 ConfirmDeleteLine=¿Está seguro de querer eliminar esta línea?
 NoPDFAvailableForDocGenAmongChecked=Sin PDF disponibles para la generación de documentos entre los registros seleccionados
+<<<<<<< HEAD
 TooManyRecordForMassAction=Demasiados registros seleccionados para la acción masiva. La acción está restringida a un listado de %s registros.
+=======
+TooManyRecordForMassAction=Demasiados registros seleccionardos para la acción masiva. La acción está restringida a un listado de %s registros.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoRecordSelected=Sin registros seleccionados
 MassFilesArea=Área de archivos generados por acciones masivas
 ShowTempMassFilesArea=Mostrar área de archivos generados por acciones masivas
 ConfirmMassDeletion=Confirmación de borrado en lote
+<<<<<<< HEAD
 ConfirmMassDeletionQuestion=Esta seguro que quiere supprimir el/los %s registro(s) seleccionado(s) ?
+=======
+ConfirmMassDeletionQuestion=¿Estás seguro que quieres eliminar los %s registro(s) seleccionado(s)?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 RelatedObjects=Objetos relacionados
 ClassifyBilled=Clasificar facturado
 ClassifyUnbilled=Clasificar no facturado
 Progress=Progreso
+<<<<<<< HEAD
+=======
+ProgressShort=Progr.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 FrontOffice=Front office
 BackOffice=Back office
 View=Ver
@@ -836,12 +989,24 @@ Exports=Exportaciones
 ExportFilteredList=Listado filtrado de exportación
 ExportList=Listado de exportación
 ExportOptions=Opciones de exportación
+<<<<<<< HEAD
+=======
+IncludeDocsAlreadyExported=Incluir documentos ya exportados
+ExportOfPiecesAlreadyExportedIsEnable=Exportar piezas ya exportadas está activado
+ExportOfPiecesAlreadyExportedIsDisable=Exportar piezas ya exportadas está desactivado
+AllExportedMovementsWereRecordedAsExported=Todos los movimientos exportados han sido registrados como exportados
+NotAllExportedMovementsCouldBeRecordedAsExported=No todos los movimientos exportados pueden ser registrados como exportados
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Miscellaneous=Miscelánea
 Calendar=Calendario
 GroupBy=Agrupado por...
 ViewFlatList=Ver lista plana
 RemoveString=Eliminar cadena '%s'
+<<<<<<< HEAD
 SomeTranslationAreUncomplete=Algunos idiomas pueden estar parcialmente traducidos o pueden contener errores. Si detecta algunos, puede arreglar los archivos de idiomas registrándose en <a href="https://transifex.com/projects/p/dolibarr/" target="_blank">http://transifex.com/projects/p/dolibarr/</a>.
+=======
+SomeTranslationAreUncomplete=Algunos de los idiomas ofrecidos pueden estar parcialmente traducidos o pueden contener errores. Si detecta algunos, puede corregir los archivos de idiomas registrándose en <a href="https://transifex.com/projects/p/dolibarr/" target="_blank">http://transifex.com/projects/p/dolibarr/</a>.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DirectDownloadLink=Enlace de descarga directa
 DirectDownloadInternalLink=Enlace de descarga directa (necesita estar registrado y necesita permisos)
 Download=Descargar
@@ -864,6 +1029,7 @@ TitleSetToDraft=Devolver a borrador
 ConfirmSetToDraft=¿Está seguro de querer devolver al estado Borrador?
 ImportId=ID de importación
 Events=Eventos
+<<<<<<< HEAD
 EMailTemplates=Plantillas E-Mails
 FileNotShared=Archivo no compartido a público externo
 Project=Proyecto
@@ -872,6 +1038,24 @@ Rights=Permisos
 LineNb=Línea
 IncotermLabel=Incoterms
 # Week day
+=======
+EMailTemplates=Plantillas Email
+FileNotShared=Archivo no compartido a público externo
+Project=Proyecto
+Projects=Proyectos
+LeadOrProject=Oportunidad | Proyecto
+LeadsOrProjects=Oportunidades | Proyectos
+Lead=Oportunidad
+Leads=Oportunidades
+ListOpenLeads=Lista oportunidades abiertas
+ListOpenProjects=Lista proyectos abiertos
+NewLeadOrProject=Nueva oportunidad o proyecto
+Rights=Permisos
+LineNb=Línea
+IncotermLabel=Incoterms
+TabLetteringCustomer=Letras del cliente
+TabLetteringSupplier=Letras del proveedor
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Monday=Lunes
 Tuesday=Martes
 Wednesday=Miércoles
@@ -919,7 +1103,11 @@ SearchIntoProjects=Proyectos
 SearchIntoTasks=Tareas
 SearchIntoCustomerInvoices=Facturas a clientes
 SearchIntoSupplierInvoices=Facturas proveedor
+<<<<<<< HEAD
 SearchIntoCustomerOrders=Pedidos de clientes
+=======
+SearchIntoCustomerOrders=Pedidos
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SearchIntoSupplierOrders=Pedidos a proveedor
 SearchIntoCustomerProposals=Presupuestos a clientes
 SearchIntoSupplierProposals=Presupuestos de proveedor
@@ -927,7 +1115,12 @@ SearchIntoInterventions=Intervenciones
 SearchIntoContracts=Contratos
 SearchIntoCustomerShipments=Envíos a clientes
 SearchIntoExpenseReports=Informes de gastos
+<<<<<<< HEAD
 SearchIntoLeaves=Permisos
+=======
+SearchIntoLeaves=Día libre
+SearchIntoTickets=Tickets
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CommentLink=Comentarios
 NbComments=Número de comentarios
 CommentPage=Espacio de comentarios
@@ -945,6 +1138,23 @@ LocalAndRemote=Local y remoto
 KeyboardShortcut=Atajo de teclado
 AssignedTo=Asignada a
 Deletedraft=Eliminar borrador
+<<<<<<< HEAD
 ConfirmMassDraftDeletion=Confirmación de borrado de borradores en lote
 FileSharedViaALink=Archivo compartido a través de un enlace
 
+=======
+ConfirmMassDraftDeletion=Confirmación de borrado de borradores en masa
+FileSharedViaALink=Archivo compartido a través de un enlace
+SelectAThirdPartyFirst=Selecciona un tercero primero...
+YouAreCurrentlyInSandboxMode=Actualmente se encuentra en el modo %s "sandbox"
+Inventory=Inventario
+AnalyticCode=Código analítico
+TMenuMRP=MRP
+ShowMoreInfos=Mostrar más información
+NoFilesUploadedYet=Por favor, cargue un documento primero
+SeePrivateNote=Ver nota privada
+PaymentInformation=Información del pago
+ValidFrom=Válido desde
+ValidUntil=Válido hasta
+NoRecordedUsers=Sin usuarios
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

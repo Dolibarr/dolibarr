@@ -31,7 +31,20 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 {
 	public $family = 'mailmanspip';
 	public $description = "Triggers of this module allows to synchronize Mailman an Spip.";
+<<<<<<< HEAD
 	public $version = self::VERSION_DOLIBARR;
+=======
+
+	/**
+	 * Version of the trigger
+	 * @var string
+	 */
+	public $version = self::VERSION_DOLIBARR;
+
+	/**
+	 * @var string Image of the trigger
+	 */
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	public $picto = 'technic';
 
 	/**
@@ -90,6 +103,7 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
         }
 
         // Members
+<<<<<<< HEAD
         elseif ($action == 'MEMBER_VALIDATE' || $action == 'MEMBER_MODIFY')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
@@ -123,6 +137,59 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 					$return=1;
 				}
 			}
+=======
+        elseif ($action == 'MEMBER_VALIDATE')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+
+            $return=0;
+            if ($object->add_to_abo() < 0)
+            {
+                $this->errors=$object->errors;
+                if (! empty($object->error)) $this->errors[]=$object->error;
+                $return=-1;
+            }
+            else
+            {
+                $return=1;
+            }
+
+            return $return;
+        }
+        elseif ($action == 'MEMBER_MODIFY')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+
+            $return=0;
+            // Add user into some linked tools (mailman, spip, etc...)
+            if (($object->oldcopy->email != $object->email) || ($object->oldcopy->typeid != $object->typeid))
+            {
+                if (is_object($object->oldcopy) && (($object->oldcopy->email != $object->email) || ($object->oldcopy->typeid != $object->typeid)))    // If email has changed or if list has changed we delete mailman subscription for old email
+                {
+                    if ($object->oldcopy->del_to_abo() < 0)
+                    {
+                        $this->errors=$object->oldcopy->errors;
+                        if (! empty($object->oldcopy->error)) $this->errors[]=$object->oldcopy->error;
+                        $return=-1;
+                    }
+                    else
+                    {
+                        $return=1;
+                    }
+                }
+                // We add subscription if new email or new type (new type may means more mailing-list to subscribe)
+                if ($object->add_to_abo() < 0)
+                {
+                    $this->errors=$object->errors;
+                    if (! empty($object->error)) $this->errors[]=$object->error;
+                    $return=-1;
+                }
+                else
+                {
+                    $return=1;
+                }
+            }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			return $return;
         }
@@ -134,8 +201,13 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
             // Remove from external tools (mailman, spip, etc...)
         	if ($object->del_to_abo() < 0)
 			{
+<<<<<<< HEAD
 				if (! empty($object->error)) $this->error=$object->error;
 				$this->errors=$object->errors;
+=======
+				$this->errors=$object->errors;
+				if (! empty($object->error)) $this->errors[]=$object->error;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$return=-1;
 			}
 			else
@@ -148,5 +220,8 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 
 		return 0;
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

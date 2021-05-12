@@ -29,14 +29,23 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 if (! empty($conf->projet->enabled)) {
+<<<<<<< HEAD
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+=======
+	include_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills'));
 
+<<<<<<< HEAD
 $id = GETPOST("facid","int");
 $ref=GETPOST("ref",'alpha');
+=======
+$id = GETPOST("facid", "int");
+$ref=GETPOST("ref", 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 /*
@@ -69,7 +78,11 @@ $morehtmlref='<div class="refidno">';
 $morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
 $morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
 // Thirdparty
+<<<<<<< HEAD
 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1,'customer');
+=======
+$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1, 'customer');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 // Project
 if (! empty($conf->projet->enabled))
 {
@@ -107,7 +120,11 @@ $morehtmlref.='</div>';
 
 $object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
+<<<<<<< HEAD
 dol_banner_tab($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref, '', 0);
+=======
+dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
@@ -122,5 +139,9 @@ print '</div>';
 
 dol_fiche_end();
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

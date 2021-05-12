@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2012 Regis Houssin       <regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2012 Regis Houssin       <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2016 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,6 +25,7 @@
  *       \brief      File to load contacts combobox
  */
 
+<<<<<<< HEAD
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
@@ -31,6 +36,18 @@ $id			= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
 $htmlname	= GETPOST('htmlname','alpha');
 $showempty	= GETPOST('showempty','int');
+=======
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+
+require '../../main.inc.php';
+
+$id			= GETPOST('id', 'int');
+$action		= GETPOST('action', 'alpha');
+$htmlname	= GETPOST('htmlname', 'alpha');
+$showempty	= GETPOST('showempty', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 /*
  * View
@@ -48,10 +65,17 @@ if (! empty($id) && ! empty($action) && ! empty($htmlname))
 	$return=array();
 	if (empty($showempty)) $showempty=0;
 
+<<<<<<< HEAD
 	$return['value']	= $form->selectcontacts($id,'',$htmlname,$showempty,'','',0,'',true);
+=======
+	$return['value']	= $form->selectcontacts($id, '', $htmlname, $showempty, '', '', 0, '', true);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$return['num']		= $form->num;
 	$return['error']	= $form->error;
 
 	echo json_encode($return);
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -13,8 +13,11 @@ MemberStatusActiveLateShort=abgelaufen
 SubscriptionEndDate=Abonnementauslaufdatum
 SubscriptionLate=Versätet
 NewMemberType=Neues Mitgliedsrt
+<<<<<<< HEAD
 WelcomeEMail=Willkommens-E-Mail
 DeleteType=Löschen
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Physical=Physisch
 Moral=Rechtlich
 MorPhy=Physisch/Rechtlich

@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2010 Regis Houssin  <regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2010-2018 Regis Houssin  <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +32,7 @@ include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
  */
 class ActionsCardProduct
 {
+<<<<<<< HEAD
     var $targetmodule;
     var $canvas;
     var $card;
@@ -37,20 +42,42 @@ class ActionsCardProduct
 
 	// List of fiels for action=list
 	var $field_list =array();
+=======
+    public $targetmodule;
+    public $canvas;
+    public $card;
+
+    //! Template container
+	public $tpl = array();
+
+	// List of fiels for action=list
+	public $field_list =array();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     public $list_datas = array();
 
 
     /**
+<<<<<<< HEAD
 	 *    Constructor
 	 *
+=======
+     *    Constructor
+     *
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      *    @param	DoliDB	$db             Database handler
      *    @param	string	$dirmodule		Name of directory of module
      *    @param	string	$targetmodule	Name of directory where canvas is stored
      *    @param	string	$canvas         Name of canvas
      *    @param	string	$card           Name of tab (sub-canvas)
+<<<<<<< HEAD
 	 */
 	function __construct($db, $dirmodule, $targetmodule, $canvas, $card)
 	{
+=======
+     */
+    public function __construct($db, $dirmodule, $targetmodule, $canvas, $card)
+    {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $this->db               = $db;
         $this->dirmodule		= $dirmodule;
         $this->targetmodule     = $targetmodule;
@@ -64,6 +91,10 @@ class ActionsCardProduct
 	}
 
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
 	 *
@@ -72,24 +103,42 @@ class ActionsCardProduct
 	 *    @param	string	$ref		Ref of object
 	 *    @return	void
 	 */
+<<<<<<< HEAD
 	function assign_values(&$action, $id=0, $ref='')
 	{
+=======
+    public function assign_values(&$action, $id = 0, $ref = '')
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $limit, $offset, $sortfield, $sortorder;
         global $conf, $langs, $user, $mysoc, $canvas;
 		global $form, $formproduct;
 
    		$tmpobject = new Product($this->db);
+<<<<<<< HEAD
    		if (! empty($id) || ! empty($ref)) $tmpobject->fetch($id,$ref);
+=======
+   		if (! empty($id) || ! empty($ref)) $tmpobject->fetch($id, $ref);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $this->object = $tmpobject;
 
 		//parent::assign_values($action);
 
+<<<<<<< HEAD
 	    foreach($this->object as $key => $value)
         {
             $this->tpl[$key] = $value;
         }
 
         $this->tpl['error'] = get_htmloutput_errors($this->object->error,$this->object->errors);
+=======
+        foreach($this->object as $key => $value) {
+            $this->tpl[$key] = $value;
+        }
+
+        $this->tpl['error'] = get_htmloutput_errors($this->object->error, $this->object->errors);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         // canvas
 		$this->tpl['canvas'] = $this->canvas;
@@ -120,6 +169,7 @@ class ActionsCardProduct
 			$this->tpl['price_base_type'] = $form->selectPriceBaseType($this->price_base_type, "price_base_type");
 
 			// VAT
+<<<<<<< HEAD
 			$this->tpl['tva_tx'] = $form->load_tva("tva_tx",-1,$mysoc,'');
 		}
 
@@ -135,13 +185,20 @@ class ActionsCardProduct
 
             $this->tpl['description'] = $this->description;
             $this->tpl['note'] = $this->note;
+=======
+			$this->tpl['tva_tx'] = $form->load_tva("tva_tx", -1, $mysoc, '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		if ($action == 'view')
 		{
             $head = product_prepare_head($this->object);
 
+<<<<<<< HEAD
             $this->tpl['showrefnav'] = $form->showrefnav($this->object,'ref','',1,'ref');
+=======
+            $this->tpl['showrefnav'] = $form->showrefnav($this->object, 'ref', '', 1, 'ref');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     		$titre=$langs->trans("CardProduct".$this->object->type);
     		$picto=($this->object->type==Product::TYPE_SERVICE?'service':'product');
@@ -149,12 +206,21 @@ class ActionsCardProduct
             $this->tpl['showend']=dol_get_fiche_end();
 
             // Accountancy buy code
+<<<<<<< HEAD
 			$this->tpl['accountancyBuyCodeKey'] = $form->editfieldkey("ProductAccountancyBuyCode",'productaccountancycodesell',$this->accountancy_code_sell,$this,$user->rights->produit->creer);
 			$this->tpl['accountancyBuyCodeVal'] = $form->editfieldval("ProductAccountancyBuyCode",'productaccountancycodesell',$this->accountancy_code_sell,$this,$user->rights->produit->creer);
 
 			// Accountancy sell code
 			$this->tpl['accountancySellCodeKey'] = $form->editfieldkey("ProductAccountancySellCode",'productaccountancycodebuy',$this->accountancy_code_buy,$this,$user->rights->produit->creer);
 			$this->tpl['accountancySellCodeVal'] = $form->editfieldval("ProductAccountancySellCode",'productaccountancycodebuy',$this->accountancy_code_buy,$this,$user->rights->produit->creer);
+=======
+			$this->tpl['accountancyBuyCodeKey'] = $form->editfieldkey("ProductAccountancyBuyCode", 'productaccountancycodesell', $this->accountancy_code_sell, $this, $user->rights->produit->creer);
+			$this->tpl['accountancyBuyCodeVal'] = $form->editfieldval("ProductAccountancyBuyCode", 'productaccountancycodesell', $this->accountancy_code_sell, $this, $user->rights->produit->creer);
+
+			// Accountancy sell code
+			$this->tpl['accountancySellCodeKey'] = $form->editfieldkey("ProductAccountancySellCode", 'productaccountancycodebuy', $this->accountancy_code_buy, $this, $user->rights->produit->creer);
+			$this->tpl['accountancySellCodeVal'] = $form->editfieldval("ProductAccountancySellCode", 'productaccountancycodebuy', $this->accountancy_code_buy, $this, $user->rights->produit->creer);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		$this->tpl['finished'] = $this->object->finished;
@@ -180,6 +246,7 @@ class ActionsCardProduct
 		{
     		// Status
     		$statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
+<<<<<<< HEAD
     		$this->tpl['status'] = $form->selectarray('statut',$statutarray,$_POST["statut"]);
 
     		$statutarray=array('1' => $langs->trans("ProductStatusOnBuy"), '0' => $langs->trans("ProductStatusNotOnBuy"));
@@ -204,10 +271,40 @@ class ActionsCardProduct
 			// Volume
 			$this->tpl['volume'] = $this->object->volume;
 			$this->tpl['volume_units'] = $formproduct->load_measuring_units("volume_units","volume",$this->object->volume_units);
+=======
+    		$this->tpl['status'] = $form->selectarray('statut', $statutarray, $this->object->status);
+
+    		$statutarray=array('1' => $langs->trans("ProductStatusOnBuy"), '0' => $langs->trans("ProductStatusNotOnBuy"));
+    		$this->tpl['status_buy'] = $form->selectarray('statut_buy', $statutarray, $this->object->status_buy);
+
+    		$this->tpl['description'] = $this->description;
+    		$this->tpl['note'] = $this->note;
+
+		    // Finished
+			$statutarray=array('1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
+			$this->tpl['finished'] = $form->selectarray('finished', $statutarray, $this->object->finished);
+
+			// Weight
+			$this->tpl['weight'] = $this->object->weight;
+			$this->tpl['weight_units'] = $formproduct->selectMeasuringUnits("weight_units", "weight", $this->object->weight_units);
+
+			// Length
+			$this->tpl['length'] = $this->object->length;
+			$this->tpl['length_units'] = $formproduct->selectMeasuringUnits("length_units", "size", $this->object->length_units);
+
+			// Surface
+			$this->tpl['surface'] = $this->object->surface;
+			$this->tpl['surface_units'] = $formproduct->selectMeasuringUnits("surface_units", "surface", $this->object->surface_units);
+
+			// Volume
+			$this->tpl['volume'] = $this->object->volume;
+			$this->tpl['volume_units'] = $formproduct->selectMeasuringUnits("volume_units", "volume", $this->object->volume_units);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		if ($action == 'view')
 		{
+<<<<<<< HEAD
     		// Status
     		$this->tpl['status'] = $this->object->getLibStatut(2,0);
     		$this->tpl['status_buy'] = $this->object->getLibStatut(2,1);
@@ -217,6 +314,13 @@ class ActionsCardProduct
 			if ($this->object->is_photo_available($conf->product->multidir_output[$this->object->entity]))
 			{
 				$this->tpl['photos'] = $this->object->show_photos('product', $conf->product->multidir_output[$this->object->entity],1,1,0,0,0,80);
+=======
+    		// Photo
+			$this->tpl['nblines'] = 4;
+			if ($this->object->is_photo_available($conf->product->multidir_output[$this->object->entity]))
+			{
+				$this->tpl['photos'] = $this->object->show_photos('product', $conf->product->multidir_output[$this->object->entity], 1, 1, 0, 0, 0, 80);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 
 			// Nature
@@ -225,25 +329,41 @@ class ActionsCardProduct
 			// Weight
 			if ($this->object->weight != '')
 			{
+<<<<<<< HEAD
 				$this->tpl['weight'] = $this->object->weight." ".measuring_units_string($this->object->weight_units,"weight");
+=======
+				$this->tpl['weight'] = $this->object->weight." ".measuring_units_string($this->object->weight_units, "weight");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 
 			// Length
 			if ($this->object->length != '')
 			{
+<<<<<<< HEAD
 				$this->tpl['length'] = $this->object->length." ".measuring_units_string($this->object->length_units,"size");
+=======
+				$this->tpl['length'] = $this->object->length." ".measuring_units_string($this->object->length_units, "size");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 
 			// Surface
 			if ($this->object->surface != '')
 			{
+<<<<<<< HEAD
 				$this->tpl['surface'] = $this->object->surface." ".measuring_units_string($this->object->surface_units,"surface");
+=======
+				$this->tpl['surface'] = $this->object->surface." ".measuring_units_string($this->object->surface_units, "surface");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 
 			// Volume
 			if ($this->object->volume != '')
 			{
+<<<<<<< HEAD
 				$this->tpl['volume'] = $this->object->volume." ".measuring_units_string($this->object->volume_units,"volume");
+=======
+				$this->tpl['volume'] = $this->object->volume." ".measuring_units_string($this->object->volume_units, "volume");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 
     		$this->tpl['fiche_end']=dol_get_fiche_end();
@@ -253,7 +373,10 @@ class ActionsCardProduct
 		{
 	        $this->LoadListDatas($limit, $offset, $sortfield, $sortorder);
 		}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 
@@ -268,7 +391,11 @@ class ActionsCardProduct
 
 		$this->field_list = array();
 
+<<<<<<< HEAD
 		$sql = "SELECT rowid, name, alias, title, align, sort, search, enabled, rang";
+=======
+		$sql = "SELECT rowid, name, alias, title, align, sort, search, visible, enabled, rang";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_field_list";
 		$sql.= " WHERE element = '".$this->db->escape($this->fieldListName)."'";
 		$sql.= " AND entity = ".$conf->entity;
@@ -293,10 +420,18 @@ class ActionsCardProduct
 				$fieldlist["align"]		= $obj->align;
 				$fieldlist["sort"]		= $obj->sort;
 				$fieldlist["search"]	= $obj->search;
+<<<<<<< HEAD
 				$fieldlist["enabled"]	= verifCond($obj->enabled);
 				$fieldlist["order"]		= $obj->rang;
 
 				array_push($this->field_list,$fieldlist);
+=======
+				$fieldlist["visible"]	= $obj->visible;
+				$fieldlist["enabled"]	= verifCond($obj->enabled);
+				$fieldlist["order"]		= $obj->rang;
+
+				array_push($this->field_list, $fieldlist);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				$i++;
 			}
@@ -304,11 +439,19 @@ class ActionsCardProduct
 		}
 		else
 		{
+<<<<<<< HEAD
 			dol_print_error($this->db,$sql);
+=======
+			dol_print_error($this->db, $sql);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 	}
 
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * 	Fetch datas list and save into ->list_datas
 	 *
@@ -318,8 +461,14 @@ class ActionsCardProduct
 	 *  @param	string	$sortorder	Sort order ('ASC' or 'DESC')
 	 *  @return	void
 	 */
+<<<<<<< HEAD
 	function LoadListDatas($limit, $offset, $sortfield, $sortorder)
 	{
+=======
+    public function LoadListDatas($limit, $offset, $sortfield, $sortorder)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf, $langs;
 
         $this->getFieldList();
@@ -388,7 +537,11 @@ class ActionsCardProduct
 		{
 			$sql.= " AND p.canvas = '".$this->db->escape($_GET["canvas"])."'";
 		}
+<<<<<<< HEAD
 		$sql.= $this->db->order($sortfield,$sortorder);
+=======
+		$sql.= $this->db->order($sortfield, $sortorder);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql.= $this->db->plimit($limit+1, $offset);
 		//print $sql;
 
@@ -398,7 +551,11 @@ class ActionsCardProduct
 			$num = $this->db->num_rows($resql);
 
 			$i = 0;
+<<<<<<< HEAD
 			while ($i < min($num,$limit))
+=======
+			while ($i < min($num, $limit))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			{
 				$datas = array();
 
@@ -418,23 +575,40 @@ class ActionsCardProduct
 							$this->ref 		= $obj->$alias;
 							$this->type 	= $obj->fk_product_type;
 							$this->entity	= $obj->entity;
+<<<<<<< HEAD
 							$datas[$alias] 	= $this->getNomUrl(1,'',24);
 						}
 						else if ($alias == 'stock')
+=======
+							$datas[$alias] 	= $this->getNomUrl(1, '', 24);
+						}
+						elseif ($alias == 'stock')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						{
 							$this->load_stock();
 							if ($this->stock_reel < $obj->seuil_stock_alerte) $datas[$alias] = $this->stock_reel.' '.img_warning($langs->trans("StockTooLow"));
 							else $datas[$alias] = $this->stock_reel;
 						}
+<<<<<<< HEAD
 						else if ($alias == 'label')	$datas[$alias] = dol_trunc($obj->$alias,40);
 						else if (preg_match('/price/i',$alias))	$datas[$alias] = price($obj->$alias);
 						else if ($alias == 'datem') $datas[$alias] = dol_print_date($this->db->jdate($obj->$alias),'day');
 						else if ($alias == 'status') $datas[$alias] = $this->LibStatut($obj->$alias,5);
+=======
+						elseif ($alias == 'label')	$datas[$alias] = dol_trunc($obj->$alias, 40);
+						elseif (preg_match('/price/i', $alias))	$datas[$alias] = price($obj->$alias);
+						elseif ($alias == 'datem') $datas[$alias] = dol_print_date($this->db->jdate($obj->$alias), 'day');
+						elseif ($alias == 'status') $datas[$alias] = $this->LibStatut($obj->$alias, 5);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						else $datas[$alias] = $obj->$alias;
 					}
 				}
 
+<<<<<<< HEAD
 				array_push($this->list_datas,$datas);
+=======
+				array_push($this->list_datas, $datas);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				$i++;
 			}
@@ -445,6 +619,10 @@ class ActionsCardProduct
 			dol_print_error($this->db);
 		}
 	}
+<<<<<<< HEAD
 
 }
 
+=======
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

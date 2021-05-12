@@ -116,7 +116,11 @@ CountryHM=Isola Heard e McDonald
 CountryVA=Santa Sede (Stato della Città del Vaticano)
 CountryHN=Honduras
 CountryHK=Hong Kong
+<<<<<<< HEAD
 CountryIS=Islanda
+=======
+CountryIS=Iceland
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryIN=India
 CountryID=Indonesia
 CountryIR=Iran
@@ -131,7 +135,11 @@ CountryKI=Kiribati
 CountryKP=Corea del Nord
 CountryKR=Corea del Sud
 CountryKW=Kuwait
+<<<<<<< HEAD
 CountryKG=Kirghizistan
+=======
+CountryKG=Kyrgyzstan
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryLA=Laos
 CountryLV=Lettonia
 CountryLB=Libano
@@ -160,7 +168,11 @@ CountryMD=Moldavia
 CountryMN=Mongolia
 CountryMS=Montserrat
 CountryMZ=Mozambico
+<<<<<<< HEAD
 CountryMM=Birmania (Myanmar)
+=======
+CountryMM=Myanmar (Burma)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryNA=Namibia
 CountryNR=Nauru
 CountryNP=Nepal
@@ -223,7 +235,11 @@ CountryTO=Tonga
 CountryTT=Trinidad e Tobago
 CountryTR=Turchia
 CountryTM=Turkmenistan
+<<<<<<< HEAD
 CountryTC=Turks e Isole Cailos
+=======
+CountryTC=Turks and Caicos Islands
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryTV=Tuvalu
 CountryUG=Uganda
 CountryUA=Ucraina
@@ -277,7 +293,11 @@ CurrencySingMGA=Ariary
 CurrencyMUR=Rupie delle Mauritius
 CurrencySingMUR=Rupia delle Mauritius
 CurrencyNOK=Corone norvegesi
+<<<<<<< HEAD
 CurrencySingNOK=corona norvegese
+=======
+CurrencySingNOK=Norwegian kronas
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrencyTND=TND
 CurrencySingTND=Dinaro tunisino
 CurrencyUSD=Dollari USA
@@ -290,6 +310,10 @@ CurrencyXOF=Franchi CFA BCEAO
 CurrencySingXOF=Franco CFA BCEAO
 CurrencyXPF=Franchi CFP
 CurrencySingXPF=Franco CFP
+<<<<<<< HEAD
+=======
+CurrencyCentEUR=cents
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrencyCentSingEUR=centesimo
 CurrencyCentINR=paisa
 CurrencyCentSingINR=paise
@@ -306,6 +330,10 @@ DemandReasonTypeSRC_WOM=Passaparola
 DemandReasonTypeSRC_PARTNER=Partner
 DemandReasonTypeSRC_EMPLOYEE=Dipendente
 DemandReasonTypeSRC_SPONSORING=Sponsorship
+<<<<<<< HEAD
+=======
+DemandReasonTypeSRC_SRC_CUSTOMER=Incoming contact of a customer
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 #### Paper formats ####
 PaperFormatEU4A0=Formato 4A0
 PaperFormatEU2A0=Formato 2A0

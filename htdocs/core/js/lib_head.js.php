@@ -1,6 +1,11 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2005-2014  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014  Regis Houssin       <regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2005-2018  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2014  Regis Houssin       <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,6 +29,7 @@
  * 				JQuery (providing object $) and JQuery-UI (providing $datepicker) libraries must be loaded before this file.
  */
 
+<<<<<<< HEAD
 if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
 if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK',1);
 if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL',1);
@@ -33,19 +39,35 @@ if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML',1);
 if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
 
 session_cache_limiter(false);
+=======
+if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
+if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
+if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
+if (! defined('NOLOGIN'))         define('NOLOGIN', 1);
+if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU', 1);
+if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML', 1);
+if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
+
+session_cache_limiter('public');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 require_once '../../main.inc.php';
 
 // Define javascript type
 top_httphead('text/javascript; charset=UTF-8');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
+<<<<<<< HEAD
 if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
+=======
+if (empty($dolibarr_nocache)) header('Cache-Control: max-age=10800, public, must-revalidate');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 else header('Cache-Control: no-cache');
 
 
 
 // Define tradMonths javascript array (we define this in datepicker AND in parent page to avoid errors with IE8)
 $tradMonths=array(
+<<<<<<< HEAD
 dol_escape_js($langs->transnoentitiesnoconv("January")),
 dol_escape_js($langs->transnoentitiesnoconv("February")),
 dol_escape_js($langs->transnoentitiesnoconv("March")),
@@ -73,6 +95,35 @@ $langs->trans("SeptemberMin"),
 $langs->trans("OctoberMin"),
 $langs->trans("NovemberMin"),
 $langs->trans("DecemberMin")
+=======
+dol_escape_js($langs->transnoentitiesnoconv("Month01")),
+dol_escape_js($langs->transnoentitiesnoconv("Month02")),
+dol_escape_js($langs->transnoentitiesnoconv("Month03")),
+dol_escape_js($langs->transnoentitiesnoconv("Month04")),
+dol_escape_js($langs->transnoentitiesnoconv("Month05")),
+dol_escape_js($langs->transnoentitiesnoconv("Month06")),
+dol_escape_js($langs->transnoentitiesnoconv("Month07")),
+dol_escape_js($langs->transnoentitiesnoconv("Month08")),
+dol_escape_js($langs->transnoentitiesnoconv("Month09")),
+dol_escape_js($langs->transnoentitiesnoconv("Month10")),
+dol_escape_js($langs->transnoentitiesnoconv("Month11")),
+dol_escape_js($langs->transnoentitiesnoconv("Month12"))
+);
+
+$tradMonthsShort=array(
+$langs->trans("MonthShort01"),
+$langs->trans("MonthShort02"),
+$langs->trans("MonthShort03"),
+$langs->trans("MonthShort04"),
+$langs->trans("MonthShort05"),
+$langs->trans("MonthShort06"),
+$langs->trans("MonthShort07"),
+$langs->trans("MonthShort08"),
+$langs->trans("MonthShort09"),
+$langs->trans("MonthShort10"),
+$langs->trans("MonthShort11"),
+$langs->trans("MonthShort12")
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 );
 
 $tradDays=array(
@@ -816,7 +867,11 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 
 
 /**
+<<<<<<< HEAD
  * Function to output a dialog bog for copy/paste
+=======
+ * Function to output a dialog box for copy/paste
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * @param	string	text	Text to put into copy/paste area
  * @param	string	text2	Text to put under the copy/paste area
@@ -841,10 +896,18 @@ function copyToClipboard(text,text2)
  * @return	boolean			False
  * @see document_preview
  */
+<<<<<<< HEAD
 function newpopup(url,title) {
 	var argv = newpopup.arguments;
 	var argc = newpopup.arguments.length;
 	tmp=url;
+=======
+function newpopup(url, title) {
+	var argv = newpopup.arguments;
+	var argc = newpopup.arguments.length;
+	tmp=url;
+	console.log("newpopup "+argv[2]+" "+argv[3]);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	var l = (argc > 2) ? argv[2] : 600;
 	var h = (argc > 3) ? argv[3] : 400;
 	var left = (screen.width - l)/2;
@@ -918,7 +981,11 @@ function document_preview(file, type, title)
 		{
 			optionsbuttons = {
 			    "<?php echo dol_escape_js($langs->transnoentitiesnoconv("OriginalSize")); ?>": function() { console.log("Click on original size"); jQuery(".ui-dialog-content.ui-widget-content > object").css({ "max-height": "none" }); },
+<<<<<<< HEAD
 				"<?php echo dol_escape_js($langs->transnoentitiesnoconv("Close")); ?>": function() { $( this ).dialog( "close" ); }
+=======
+				"<?php echo dol_escape_js($langs->transnoentitiesnoconv("CloseWindow")); ?>": function() { $( this ).dialog( "close" ); }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				};
 		}
 
@@ -1010,6 +1077,26 @@ function dolroundjs(number, decimals) { return +(Math.round(number + "e+" + deci
 
 
 /**
+<<<<<<< HEAD
+=======
+ * Function similar to PHP price()
+ *
+ * @param  {number|string} amount    The amount to show
+ * @param  {string} mode             'MT' or 'MU'
+ * @return {string}                  The amount with digits
+ */
+function pricejs(amount, mode) {
+	var main_max_dec_shown = <?php echo (int) str_replace('.', '', $conf->global->MAIN_MAX_DECIMALS_SHOWN); ?>;
+	var main_rounding_unit = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_UNIT; ?>;
+	var main_rounding_tot = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_TOT; ?>;
+
+	if (mode == 'MU') return amount.toFixed(main_rounding_unit);
+	if (mode == 'MT') return amount.toFixed(main_rounding_tot);
+	return 'Bad value for parameter mode';
+}
+
+/**
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Function similar to PHP price2num()
  *
  * @param  {number|string} amount    The amount to convert/clean

@@ -21,9 +21,15 @@ SupplierPayment=Pagament al proveïdor
 SuppliersArea=Àrea de proveïdors
 RefSupplierShort=Ref. proveïdor
 Availability=Disponibilitat
+<<<<<<< HEAD
 ExportDataset_fournisseur_1=Vendor invoices list and invoice lines
 ExportDataset_fournisseur_2=Vendor invoices and payments
 ExportDataset_fournisseur_3=Comandes de compra i línies de comanda
+=======
+ExportDataset_fournisseur_1=Factures de proveïdor i línies de factura
+ExportDataset_fournisseur_2=Factures i pagaments de proveïdors
+ExportDataset_fournisseur_3=Comandes de proveïdor i línies de comanda
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ApproveThisOrder=Aprovar aquesta comanda
 ConfirmApproveThisOrder=Vols aprovar la comanda <b>%s</b>?
 DenyingThisOrder=Denegar aquesta comanda

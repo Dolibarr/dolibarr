@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2007-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2007-2012 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php'
  */
 class mod_codeproduct_elephant extends ModeleProductCode
 {
+<<<<<<< HEAD
 	var $nom='Elephant';				// Nom du modele
 	var $name='Elephant';				// Nom du modele
 	var $code_modifiable;				// Code modifiable
@@ -46,12 +51,51 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	var $searchcode; // String de recherche
 	var $numbitcounter; // Nombre de chiffres du compteur
 	var $prefixIsRequired; // Le champ prefix du tiers doit etre renseigne quand on utilise {pre}
+=======
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Elephant';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Elephant';
+
+	public $code_modifiable;				// Code modifiable
+
+	public $code_modifiable_invalide;		// Code modifiable si il est invalide
+
+	public $code_modifiable_null;			// Code modifiables si il est null
+
+	public $code_null;						// Code facultatif
+
+	/**
+     * Dolibarr version of the loaded document
+     * @var string
+     */
+	public $version = 'dolibarr';    		// 'development', 'experimental', 'dolibarr'
+
+	public $code_auto;                     // Numerotation automatique
+
+	public $searchcode; // String de recherche
+
+	public $numbitcounter; // Nombre de chiffres du compteur
+
+	public $prefixIsRequired; // Le champ prefix du tiers doit etre renseigne quand on utilise {pre}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	/**
 	 *	Constructor
 	 */
+<<<<<<< HEAD
 	function __construct()
+=======
+	public function __construct()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$this->code_null = 0;
 		$this->code_modifiable = 1;
@@ -62,6 +106,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	}
 
 
+<<<<<<< HEAD
 	/**		Return description of module
 	 *
 	 * 		@param	Translate	$langs		Object langs
@@ -69,6 +114,16 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	 */
 	function info($langs)
 	{
+=======
+    /**
+     *  Return description of module
+     *
+     *  @param	Translate	$langs		Object langs
+     *  @return string      			Description of module
+     */
+    public function info($langs)
+    {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf, $mc;
 		global $form;
 
@@ -84,29 +139,47 @@ class mod_codeproduct_elephant extends ModeleProductCode
 		$texte.= '<input type="hidden" name="param2" value="PRODUCT_ELEPHANT_MASK_SERVICE">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
+<<<<<<< HEAD
 		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Product"),$langs->transnoentities("Product"));
+=======
+		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("Product"), $langs->transnoentities("Product"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$tooltip.=$langs->trans("GenericMaskCodes3");
 		$tooltip.=$langs->trans("GenericMaskCodes4c");
 		$tooltip.=$langs->trans("GenericMaskCodes5");
 
 		// Parametrage du prefix customers
 		$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("ProductCodeModel").'):</td>';
+<<<<<<< HEAD
 		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value1" value="'.(! empty($conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT)?$conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT:'').'"'.$disabled.'>',$tooltip,1,1).'</td>';
 
 		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"'.$disabled.'></td>';
+=======
+		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value1" value="'.(! empty($conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT)?$conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT:'').'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
+
+		$texte.= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"'.$disabled.'></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$texte.= '</tr>';
 
 		// Parametrage du prefix suppliers
 		$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("ServiceCodeModel").'):</td>';
+<<<<<<< HEAD
 		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value2" value="'.(! empty($conf->global->PRODUCT_ELEPHANT_MASK_SERVICE)?$conf->global->PRODUCT_ELEPHANT_MASK_SERVICE:'').'"'.$disabled.'>',$tooltip,1,1).'</td>';
+=======
+		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value2" value="'.(! empty($conf->global->PRODUCT_ELEPHANT_MASK_SERVICE)?$conf->global->PRODUCT_ELEPHANT_MASK_SERVICE:'').'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$texte.= '</tr>';
 
 		$texte.= '</table>';
 		$texte.= '</form>';
 
 		return $texte;
+<<<<<<< HEAD
 	}
+=======
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	/**
@@ -117,11 +190,19 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string					Return string example
 	 */
+<<<<<<< HEAD
 	function getExample($langs,$objproduct=0,$type=-1)
 	{
 		if ($type == 0 || $type == -1)
 		{
 			$exampleproduct = $this->getNextValue($objproduct,0);
+=======
+    public function getExample($langs, $objproduct = 0, $type = -1)
+	{
+		if ($type == 0 || $type == -1)
+		{
+			$exampleproduct = $this->getNextValue($objproduct, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if (! $exampleproduct)
 			{
 				$exampleproduct = $langs->trans('NotConfigured');
@@ -134,7 +215,11 @@ class mod_codeproduct_elephant extends ModeleProductCode
 		}
 		if ($type == 1 || $type == -1)
 		{
+<<<<<<< HEAD
 			$exampleservice = $this->getNextValue($objproduct,1);
+=======
+			$exampleservice = $this->getNextValue($objproduct, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if (! $exampleservice)
 			{
 				$exampleservice = $langs->trans('NotConfigured');
@@ -158,7 +243,11 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	 * @param  	int		    $type       Produit ou service (0:product, 1:service)
 	 * @return 	string      			Value if OK, '' if module not configured, <0 if KO
 	 */
+<<<<<<< HEAD
 	function getNextValue($objproduct=0,$type=-1)
+=======
+	public function getNextValue($objproduct = 0, $type = -1)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $db,$conf;
 
@@ -168,7 +257,11 @@ class mod_codeproduct_elephant extends ModeleProductCode
 		$mask = '';
 		if ($type == 0 && ! empty($conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT))
 			$mask = $conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT;
+<<<<<<< HEAD
 		else if ($type == 1 && ! empty($conf->global->PRODUCT_ELEPHANT_MASK_SERVICE))
+=======
+		elseif ($type == 1 && ! empty($conf->global->PRODUCT_ELEPHANT_MASK_SERVICE))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$mask = $conf->global->PRODUCT_ELEPHANT_MASK_SERVICE;
 
 		if (empty($mask))
@@ -183,7 +276,11 @@ class mod_codeproduct_elephant extends ModeleProductCode
 			$field = 'ref';
 			//$where = ' AND client in (1,2)';
 		}
+<<<<<<< HEAD
 		else if ($type == 1)
+=======
+		elseif ($type == 1)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			$field = 'ref';
 			//$where = ' AND fournisseur = 1';
@@ -192,17 +289,26 @@ class mod_codeproduct_elephant extends ModeleProductCode
 
 		$now=dol_now();
 
+<<<<<<< HEAD
 		$numFinal=get_next_value($db,$mask,'product',$field,$where,'',$now);
+=======
+		$numFinal=get_next_value($db, $mask, 'product', $field, $where, '', $now);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		return  $numFinal;
 	}
 
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *   Check if mask/numbering use prefix
 	 *
 	 *   @return	int			0 or 1
 	 */
+<<<<<<< HEAD
 	function verif_prefixIsUsed()
 	{
 		global $conf;
@@ -212,6 +318,18 @@ class mod_codeproduct_elephant extends ModeleProductCode
 
 		$mask = $conf->global->PRODUCT_ELEPHANT_MASK_SERVICE;
 		if (preg_match('/\{pre\}/i',$mask)) return 1;
+=======
+	public function verif_prefixIsUsed()
+	{
+        // phpcs:enable
+		global $conf;
+
+		$mask = $conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT;
+		if (preg_match('/\{pre\}/i', $mask)) return 1;
+
+		$mask = $conf->global->PRODUCT_ELEPHANT_MASK_SERVICE;
+		if (preg_match('/\{pre\}/i', $mask)) return 1;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		return 0;
 	}
@@ -231,7 +349,11 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	 * 								-4 ErrorPrefixRequired
 	 * 								-5 Other (see this->error)
 	 */
+<<<<<<< HEAD
 	function verif($db, &$code, $product, $type)
+=======
+	public function verif($db, &$code, $product, $type)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf;
 
@@ -244,7 +366,11 @@ class mod_codeproduct_elephant extends ModeleProductCode
 		{
 			$result=0;
 		}
+<<<<<<< HEAD
 		else if (empty($code) && (! $this->code_null || ! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) )
+=======
+		elseif (empty($code) && (! $this->code_null || ! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) )
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			$result=-2;
 		}
@@ -260,7 +386,11 @@ class mod_codeproduct_elephant extends ModeleProductCode
 				return -5;
 			}
 
+<<<<<<< HEAD
 			$result=check_value($mask,$code);
+=======
+			$result=check_value($mask, $code);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if (is_string($result))
 			{
 				$this->error = $result;
@@ -273,6 +403,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	}
 
 
+<<<<<<< HEAD
 	/**
 	 *		Renvoi si un code est pris ou non (par autre tiers)
 	 *
@@ -283,6 +414,20 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	 */
 	function verif_dispo($db, $code, $product)
 	{
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Renvoi si un code est pris ou non (par autre tiers)
+	 *
+	 *  @param	DoliDB		$db			Handler acces base
+	 *  @param	string		$code		Code a verifier
+	 *  @param	Product		$product		Objet product
+	 *  @return	int						0 if available, <0 if KO
+	 */
+	public function verif_dispo($db, $code, $product)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql = "SELECT ref FROM ".MAIN_DB_PREFIX."product";
 		$sql.= " WHERE ref = '".$code."'";
 		if ($product->id > 0) $sql.= " AND rowid <> ".$product->id;
@@ -303,8 +448,13 @@ class mod_codeproduct_elephant extends ModeleProductCode
 		{
 			return -2;
 		}
+<<<<<<< HEAD
 
 	}
 
 }
 
+=======
+	}
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

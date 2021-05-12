@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2017      Alexandre Spangaro   <aspangaro@zendsi.com>
+=======
+/* Copyright (C) 2017      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,9 +48,15 @@ function stripeadmin_prepare_head()
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
+<<<<<<< HEAD
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'stripeadmin');
 
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'stripeadmin','remove');
+=======
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'stripeadmin');
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'stripeadmin', 'remove');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     return $head;
 }
@@ -60,7 +70,11 @@ function stripeadmin_prepare_head()
  * @param	string	$ref		Ref of object
  * @return	string				Url string
  */
+<<<<<<< HEAD
 function showStripePaymentUrl($type,$ref)
+=======
+function showStripePaymentUrl($type, $ref)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	global $conf, $langs;
 
@@ -70,8 +84,13 @@ function showStripePaymentUrl($type,$ref)
 
     $servicename='Stripe';
     $out='<br><br>';
+<<<<<<< HEAD
     $out.=img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePayment",$servicename).'<br>';
     $url=getStripePaymentUrl(0,$type,$ref);
+=======
+    $out.=img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePayment", $servicename).'<br>';
+    $url=getStripePaymentUrl(0, $type, $ref);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $out.='<input type="text" id="stripeurl" class="quatrevingtpercent" value="'.$url.'"><br>';
     $out.=ajax_autoselect("stripeurl", 0);
     return $out;
@@ -87,12 +106,21 @@ function showStripePaymentUrl($type,$ref)
  * @param	string	$freetag	Free tag
  * @return	string				Url string
  */
+<<<<<<< HEAD
 function getStripePaymentUrl($mode,$type,$ref='',$amount='9.99',$freetag='your_free_tag')
 {
 	global $conf;
 
 	$ref=str_replace(' ','',$ref);
 	
+=======
+function getStripePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag = 'your_tag')
+{
+	global $conf;
+
+	$ref=str_replace(' ', '', $ref);
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     if ($type == 'free')
     {
 	    $out=DOL_MAIN_URL_ROOT.'/public/stripe/newpayment.php?amount='.($mode?'<font color="#666666">':'').$amount.($mode?'</font>':'').'&tag='.($mode?'<font color="#666666">':'').$freetag.($mode?'</font>':'');
@@ -140,7 +168,11 @@ function getStripePaymentUrl($mode,$type,$ref='',$amount='9.99',$freetag='your_f
  * @param   Translate	$langs			Output language
  * @return	void
  */
+<<<<<<< HEAD
 function html_print_stripe_footer($fromcompany,$langs)
+=======
+function html_print_stripe_footer($fromcompany, $langs)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	global $conf;
 
@@ -153,20 +185,34 @@ function html_print_stripe_footer($fromcompany,$langs)
 	// Capital
 	if ($fromcompany->capital)
 	{
+<<<<<<< HEAD
 		$line1.=($line1?" - ":"").$langs->transnoentities("CapitalOf",$fromcompany->capital)." ".$langs->transnoentities("Currency".$conf->currency);
+=======
+		$line1.=($line1?" - ":"").$langs->transnoentities("CapitalOf", $fromcompany->capital)." ".$langs->transnoentities("Currency".$conf->currency);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 	// Prof Id 1
 	if ($fromcompany->idprof1 && ($fromcompany->country_code != 'FR' || ! $fromcompany->idprof2))
 	{
+<<<<<<< HEAD
 		$field=$langs->transcountrynoentities("ProfId1",$fromcompany->country_code);
 		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
+=======
+		$field=$langs->transcountrynoentities("ProfId1", $fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i', $field, $reg)) $field=$reg[1];
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$line1.=($line1?" - ":"").$field.": ".$fromcompany->idprof1;
 	}
 	// Prof Id 2
 	if ($fromcompany->idprof2)
 	{
+<<<<<<< HEAD
 		$field=$langs->transcountrynoentities("ProfId2",$fromcompany->country_code);
 		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
+=======
+		$field=$langs->transcountrynoentities("ProfId2", $fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i', $field, $reg)) $field=$reg[1];
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$line1.=($line1?" - ":"").$field.": ".$fromcompany->idprof2;
 	}
 
@@ -175,15 +221,25 @@ function html_print_stripe_footer($fromcompany,$langs)
 	// Prof Id 3
 	if ($fromcompany->idprof3)
 	{
+<<<<<<< HEAD
 		$field=$langs->transcountrynoentities("ProfId3",$fromcompany->country_code);
 		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
+=======
+		$field=$langs->transcountrynoentities("ProfId3", $fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i', $field, $reg)) $field=$reg[1];
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$line2.=($line2?" - ":"").$field.": ".$fromcompany->idprof3;
 	}
 	// Prof Id 4
 	if ($fromcompany->idprof4)
 	{
+<<<<<<< HEAD
 		$field=$langs->transcountrynoentities("ProfId4",$fromcompany->country_code);
 		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
+=======
+		$field=$langs->transcountrynoentities("ProfId4", $fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i', $field, $reg)) $field=$reg[1];
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$line2.=($line2?" - ":"").$field.": ".$fromcompany->idprof4;
 	}
 	// IntraCommunautary VAT
@@ -199,4 +255,7 @@ function html_print_stripe_footer($fromcompany,$langs)
 	print $line2;
 	print '</font></div>'."\n";
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

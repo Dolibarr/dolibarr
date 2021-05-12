@@ -34,13 +34,21 @@ class Subscriptions extends DolibarrApi
         'fk_adherent',
         'dateh',
         'datef',
+<<<<<<< HEAD
         'amount'
+=======
+        'amount',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     );
 
     /**
      * Constructor
      */
+<<<<<<< HEAD
     function __construct()
+=======
+    public function __construct()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $db, $conf;
         $this->db = $db;
@@ -56,7 +64,11 @@ class Subscriptions extends DolibarrApi
      *
      * @throws    RestException
      */
+<<<<<<< HEAD
     function get($id)
+=======
+    public function get($id)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         if(! DolibarrApiAccess::$user->rights->adherent->cotisation->lire) {
             throw new RestException(401);
@@ -85,7 +97,12 @@ class Subscriptions extends DolibarrApi
      *
      * @throws RestException
      */
+<<<<<<< HEAD
     function index($sortfield = "dateadh", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '') {
+=======
+    public function index($sortfield = "dateadh", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+    {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         global $db, $conf;
 
         $obj_ret = array();
@@ -150,7 +167,11 @@ class Subscriptions extends DolibarrApi
      * @param array $request_data   Request data
      * @return int  ID of subscription
      */
+<<<<<<< HEAD
     function post($request_data = null)
+=======
+    public function post($request_data = null)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         if(! DolibarrApiAccess::$user->rights->adherent->cotisation->creer) {
             throw new RestException(401);
@@ -175,7 +196,11 @@ class Subscriptions extends DolibarrApi
      * @param array $request_data   Datas
      * @return int
      */
+<<<<<<< HEAD
     function put($id, $request_data = null)
+=======
+    public function put($id, $request_data = null)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         if(! DolibarrApiAccess::$user->rights->adherent->creer) {
             throw new RestException(401);
@@ -208,7 +233,11 @@ class Subscriptions extends DolibarrApi
      * @param int $id   ID of subscription to delete
      * @return array
      */
+<<<<<<< HEAD
     function delete($id)
+=======
+    public function delete($id)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         // The right to delete a subscription comes with the right to create one.
         if(! DolibarrApiAccess::$user->rights->adherent->cotisation->creer) {
@@ -221,7 +250,11 @@ class Subscriptions extends DolibarrApi
         }
 
         if (! $subscription->delete(DolibarrApiAccess::$user)) {
+<<<<<<< HEAD
             throw new RestException(401,'error when deleting subscription');
+=======
+            throw new RestException(401, 'error when deleting subscription');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
 
         return array(
@@ -240,7 +273,11 @@ class Subscriptions extends DolibarrApi
      *
      * @throws RestException
      */
+<<<<<<< HEAD
     function _validate($data)
+=======
+    private function _validate($data)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $subscription = array();
         foreach (Subscriptions::$FIELDS as $field) {

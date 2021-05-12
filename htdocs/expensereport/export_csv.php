@@ -1,5 +1,9 @@
 <?php
 /* Copyright (C) 2004-2011	Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
+=======
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +40,11 @@ if(!$user->rights->expensereport->export_csv) {
 // Security check
 $socid = $_GET["socid"]?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
+<<<<<<< HEAD
 $result = restrictedArea($user, 'expensereport','','');
+=======
+$result = restrictedArea($user, 'expensereport', '', '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $req = "SELECT * FROM ".MAIN_DB_PREFIX."rights_def WHERE id = '178'";
 $result = $db->query($req);
@@ -59,7 +67,10 @@ if($num < 1) {
    $insert.= ")";
 
    $req = $db->query($insert);
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 
@@ -114,7 +125,11 @@ if (isset($_POST['action']))
 {
 	if($_POST['action'] == 'export')
 	{
+<<<<<<< HEAD
 		$select_date = $_POST['annee'].'-'.$_POST['mois'];
+=======
+		$dateselected = $_POST['annee'].'-'.$_POST['mois'];
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		//var_dump($conf->expensereport->dir_output.'/export/');
 		if (!file_exists($conf->expensereport->dir_output.'/export/'))
@@ -122,7 +137,11 @@ if (isset($_POST['action']))
 			dol_mkdir($conf->expensereport->dir_output.'/export/');
 		}
 
+<<<<<<< HEAD
 		$dir = $conf->expensereport->dir_output.'/export/expensereport-'.$select_date.'.csv';
+=======
+		$dir = $conf->expensereport->dir_output.'/export/expensereport-'.$dateselected.'.csv';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$outputlangs = $langs;
 		$outputlangs->charset_output = 'UTF-8';
 
@@ -135,16 +154,26 @@ if (isset($_POST['action']))
 		$num = $db->num_rows($result);
 		if ($num)
 		{
+<<<<<<< HEAD
 			$open = fopen($dir,"w+");
+=======
+			$open = fopen($dir, "w+");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			$ligne = "ID, Référence, ----, Date paiement, Montant HT, TVA, Montant TTC\n";
 			for ($i = 0; $i < $num; $i++)
 			{
 				$ligne.= "----, ----, ----, ----, ----, ----, ----\n";
 				$objet = $db->fetch_object($result);
+<<<<<<< HEAD
 				$objet->total_ht = number_format($objet->total_ht,2);
 				$objet->total_tva = number_format($objet->total_tva,2);
 				$objet->total_ttc = number_format($objet->total_ttc,2);
+=======
+				$objet->total_ht = number_format($objet->total_ht, 2);
+				$objet->total_tva = number_format($objet->total_tva, 2);
+				$objet->total_ttc = number_format($objet->total_ttc, 2);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$objet->ref = trim($objet->ref);
 				$ligne.= "{$objet->rowid}, {$objet->ref}, ----, {$objet->total_ht}, {$objet->total_tva}, {$objet->total_ttc}\n";
 
@@ -165,21 +194,34 @@ if (isset($_POST['action']))
 					for ($a = 0; $a < $num2; $a++)
 					{
 						$objet2 = $db->fetch_object($result2);
+<<<<<<< HEAD
 						$objet2->total_ht = number_format($objet2->total_ht,2);
 						$objet2->total_tva = number_format($objet2->total_tva,2);
 						$objet2->total_ttc = number_format($objet2->total_ttc,2);
 						$objet2->comments = str_replace(',',';',$objet2->comments);
 						$objet2->comments = str_replace("\r\n",' ',$objet2->comments);
 						$objet2->comments = str_replace("\n",' ',$objet2->comments);
+=======
+						$objet2->total_ht = number_format($objet2->total_ht, 2);
+						$objet2->total_tva = number_format($objet2->total_tva, 2);
+						$objet2->total_ttc = number_format($objet2->total_ttc, 2);
+						$objet2->comments = str_replace(',', ';', $objet2->comments);
+						$objet2->comments = str_replace("\r\n", ' ', $objet2->comments);
+						$objet2->comments = str_replace("\n", ' ', $objet2->comments);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 						$ligne.= "--->, {$objet2->rowid}, {$objet2->libelle}, {$objet2->comments}, {$objet2->total_ht}, {$objet2->total_tva}, {$objet2->total_ttc}\n";
 					}
 				}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 
 			$ligne = $outputlangs->convToOutputCharset($ligne);
 
+<<<<<<< HEAD
 			fwrite($open,$ligne);
 			fclose($open);
 
@@ -189,12 +231,26 @@ if (isset($_POST['action']))
 
 			print '<b>'.$langs->trans('NoTripsToExportCSV').'</b>';
 
+=======
+			fwrite($open, $ligne);
+			fclose($open);
+
+			print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=expensereport&file=export%2Fexpensereport-'.$dateselected.'.csv" target="_blank">Télécharger le fichier expensereport-'.$dateselected.'.csv</a>';
+		} else {
+
+			print '<b>'.$langs->trans('NoTripsToExportCSV').'</b>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 	}
 }
 
 print '</div>';
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2005      Christophe
  * Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2013      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
@@ -33,6 +37,7 @@ include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
  */
 class box_comptes extends ModeleBoxes
 {
+<<<<<<< HEAD
 	var $boxcode="currentaccounts";
 	var $boximg="object_bill";
 	var $boxlabel="BoxCurrentAccounts";
@@ -44,6 +49,23 @@ class box_comptes extends ModeleBoxes
 
 	var $info_box_head = array();
 	var $info_box_contents = array();
+=======
+    public $boxcode="currentaccounts";
+    public $boximg="object_bill";
+    public $boxlabel="BoxCurrentAccounts";
+    public $depends = array("banque");     // Box active if module banque active
+
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    public $param;
+    public $enabled = 1;
+
+    public $info_box_head = array();
+    public $info_box_contents = array();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	/**
@@ -52,15 +74,24 @@ class box_comptes extends ModeleBoxes
 	 *  @param  DoliDB	$db      	Database handler
      *  @param	string	$param		More parameters
 	 */
+<<<<<<< HEAD
 	function __construct($db,$param='')
+=======
+	public function __construct($db, $param = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf, $user;
 
 		$this->db = $db;
 
 		// disable module for such cases
+<<<<<<< HEAD
 		$listofmodulesforexternal=explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL);
 		if (! in_array('banque',$listofmodulesforexternal) && ! empty($user->societe_id)) $this->enabled=0;	// disabled for external users
+=======
+		$listofmodulesforexternal=explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
+		if (! in_array('banque', $listofmodulesforexternal) && ! empty($user->societe_id)) $this->enabled=0;	// disabled for external users
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$this->hidden = ! ($user->rights->banque->lire);
 	}
@@ -71,7 +102,11 @@ class box_comptes extends ModeleBoxes
 	 *  @param	int		$max        Maximum number of records to load
      *  @return	void
 	 */
+<<<<<<< HEAD
 	function loadBox($max=5)
+=======
+	public function loadBox($max = 5)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $user, $langs, $db, $conf;
 
@@ -141,16 +176,28 @@ class box_comptes extends ModeleBoxes
                 foreach ($solde_total as $key=>$solde) {
                     $this->info_box_contents[$line][] = array(
                         'tr' => 'class="liste_total"',
+<<<<<<< HEAD
                         'td' => 'align="left" class="liste_total"',
                         'text' => $langs->trans('Total').' '.$key,
                     );
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="right" class="liste_total"',
+=======
+                        'td' => 'class="liste_total left"',
+                        'text' => $langs->trans('Total').' '.$key,
+                    );
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'class="liste_total right"',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                         'text' => '&nbsp;'
                     );
 
                     $this->info_box_contents[$line][] = array(
+<<<<<<< HEAD
                         'td' => 'align="right" class="liste_total"',
+=======
+                        'td' => 'class="liste_total right"',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                         'text' => price($solde, 0, $langs, 0, -1, -1, $key)
                     );
                     $line++;
@@ -166,6 +213,7 @@ class box_comptes extends ModeleBoxes
             }
         } else {
             $this->info_box_contents[0][0] = array(
+<<<<<<< HEAD
                 'td' => 'align="left" class="nohover opacitymedium"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
@@ -188,3 +236,24 @@ class box_comptes extends ModeleBoxes
 
 }
 
+=======
+                'td' => 'class="nohover opacitymedium left"',
+                'text' => $langs->trans("ReadPermissionNotAllowed")
+            );
+        }
+	}
+
+    /**
+     *  Method to show box
+     *
+     *  @param  array   $head       Array with properties of box title
+     *  @param  array   $contents   Array with properties of box lines
+     *  @param  int     $nooutput   No print, only return string
+     *  @return string
+     */
+    public function showBox($head = null, $contents = null, $nooutput = 0)
+    {
+        return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+    }
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

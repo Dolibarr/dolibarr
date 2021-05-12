@@ -24,8 +24,13 @@ FormatDateHourSecShort=%m/%d/%Y %I:%M:%S %p
 FormatDateHourTextShort=%d %b %Y %H:%M
 FormatDateHourText=%d %B %Y %H:%M
 DatabaseConnection=Database forbindelse
+<<<<<<< HEAD
 NoTemplateDefined=Ingen skabelon til rådighed for denne e-mail-type
 AvailableVariables=Tilgængelige substitutionsvariabler
+=======
+NoTemplateDefined=Ingen skabelon til rådighed for denne Email-type
+AvailableVariables=Tilgængelige erstatnings variabler
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoTranslation=Ingen oversættelse
 Translation=Oversættelse
 NoRecordFound=Ingen poster fundet
@@ -34,8 +39,13 @@ NotEnoughDataYet=Ikke nok data
 NoError=Ingen fejl
 Error=Fejl
 Errors=Fejl
+<<<<<<< HEAD
 ErrorFieldRequired=Felt ' %s' er påkrævet
 ErrorFieldFormat=Felt ' %s' har en dårlig værdi
+=======
+ErrorFieldRequired=Felt '%s' er påkrævet
+ErrorFieldFormat=Felt '%s' har en forkert værdi
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorFileDoesNotExists=Fil %s ikke eksisterer
 ErrorFailedToOpenFile=Kunne ikke åbne filen %s
 ErrorCanNotCreateDir=Kan ikke oprette dir %s
@@ -43,6 +53,7 @@ ErrorCanNotReadDir=Kan ikke læse dir %s
 ErrorConstantNotDefined=Parameter %s ikke defineret
 ErrorUnknown=Ukendt fejl
 ErrorSQL=SQL Fejl
+<<<<<<< HEAD
 ErrorLogoFileNotFound=Logo fil ' %s' blev ikke fundet
 ErrorGoToGlobalSetup=Go to 'Company/Organization' setup to fix this
 ErrorGoToModuleSetup=Gå til Modul setup at rette dette
@@ -59,25 +70,54 @@ ErrorServiceUnavailableTryLater=Tjenesten er ikke tilgængelig for øjeblikket. 
 ErrorDuplicateField=Dobbelt værdi i et unikt område
 ErrorSomeErrorWereFoundRollbackIsDone=Nogle fejl blev fundet. Vi rollback ændringer.
 ErrorConfigParameterNotDefined=<b>Parameter %s</b> er ikke defineret inde Dolibarr konfigurationsfil <b>conf.php.</b>
+=======
+ErrorLogoFileNotFound=Logo fil '%s' blev ikke fundet
+ErrorGoToGlobalSetup=Gå til 'Firma/Organisation' opsætning for at rette dette
+ErrorGoToModuleSetup=Gå til modulopsætning for at rette dette
+ErrorFailedToSendMail=Det lykkedes ikke at sende Email (sender=%s, receiver= %s)
+ErrorFileNotUploaded=Filen blev ikke uploadet. Kontroller, at størrelse ikke overstiger det maksimalt tilladte, at den frie plads der er til rådighed på disken, og at der ikke allerede en fil med samme navn i denne mappe.
+ErrorInternalErrorDetected=Fejl opdaget
+ErrorWrongHostParameter=Forkert vært parameter
+ErrorYourCountryIsNotDefined=Dit land er ikke defineret. Gå til Hjem-Indstillinger-Rediger og send formularen igen.
+ErrorRecordIsUsedByChild=Kunne ikke slette denne post. Denne post bruges af mindst en børnepost.
+ErrorWrongValue=Forkert værdi
+ErrorWrongValueForParameterX=Forkert værdi for parameter %s
+ErrorNoRequestInError=Ingen anmodning ved fejl
+ErrorServiceUnavailableTryLater=Tjenesten er ikke tilgængelig i øjeblikket. Prøv igen senere.
+ErrorDuplicateField=Dobbelt værdi i et unikt område
+ErrorSomeErrorWereFoundRollbackIsDone=Nogle fejl blev fundet. Ændringer er blevet rullet tilbage.
+ErrorConfigParameterNotDefined=Parameter <b>%s</b> is not defined in the Dolibarr config file <b>conf.php</b>.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorCantLoadUserFromDolibarrDatabase=Kunne ikke finde <b>bruger %s</b> i Dolibarr database.
 ErrorNoVATRateDefinedForSellerCountry=Fejl, der ikke momssatser defineret for land ' %s'.
 ErrorNoSocialContributionForSellerCountry=Fejl, ingen type af skatter/afgifter defineret for landet '%s'.
 ErrorFailedToSaveFile=Fejl, kunne ikke gemme filen.
+<<<<<<< HEAD
 ErrorCannotAddThisParentWarehouse=Du forsøger at tilføje et forældrelager, som allerede er et barn i den nuværende
 MaxNbOfRecordPerPage=Max number of record per page
+=======
+ErrorCannotAddThisParentWarehouse=You are trying to add a parent warehouse which is already a child of a existing warehouse
+MaxNbOfRecordPerPage=Max. number of records per page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NotAuthorized=Du har ikke tilladelse til at gøre det.
 SetDate=Indstil dato
 SelectDate=Vælg en dato
 SeeAlso=Se også %s
 SeeHere=Se her
 ClickHere=Klik her
+<<<<<<< HEAD
 Here=Here
 Apply=ansøge
+=======
+Here=Her
+Apply=Ansøge
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BackgroundColorByDefault=Standard baggrundsfarve
 FileRenamed=Filen blev omdøbt
 FileGenerated=Filen blev genereret
 FileSaved=Filen er blevet gemt
 FileUploaded=Filen blev uploadet
+<<<<<<< HEAD
 FileTransferComplete=File(s) er blevet uploadet
 FilesDeleted=Fil (er), der er slettet korrekt
 FileWasNotUploaded=En fil er valgt for udlæg, men endnu ikke var uploadet. Klik på "Vedhæft fil" for dette.
@@ -105,6 +145,36 @@ RequestedUrl=Angivne URL
 DatabaseTypeManager=Database type manager
 RequestLastAccessInError=Seneste database adgang anmodning fejl
 ReturnCodeLastAccessInError=Vende tilbage kode for seneste database adgang anmodning fejl
+=======
+FileTransferComplete=Fil (er) uploadet succesfuldt
+FilesDeleted=Fil(er), der er slettet korrekt
+FileWasNotUploaded=En fil er valgt som vedhæng, men endnu ikke uploadet. Klik på "Vedhæft fil" for dette.
+NbOfEntries=Antal indgange
+GoToWikiHelpPage=Læs online hjælp (Adgang til Internettet er nødvendig)
+GoToHelpPage=Læs hjælp
+RecordSaved=Data gemt
+RecordDeleted=Post slettet
+RecordGenerated=Record generated
+LevelOfFeature=Niveau funktionsliste
+NotDefined=Ikke defineret
+DolibarrInHttpAuthenticationSoPasswordUseless=Dolibarr authentication mode er sat til <b>%s</b> i konfigurationsfilen <b>conf.php</b>.<br>Dette betyder, at adgangskoden databasen er ekstern i forhold til Dolibarr, så ændrer dette felt har ingen effekt.
+Administrator=Administrator
+Undefined=Undefineret
+PasswordForgotten=Har du glemt dit kodeord ?
+NoAccount=Ingen konto?
+SeeAbove=Se ovenfor
+HomeArea=Hjem
+LastConnexion=Last login
+PreviousConnexion=Previous login
+PreviousValue=Tidligere værdi
+ConnectedOnMultiCompany=Forbind til enhed
+ConnectedSince=Forbundet siden
+AuthenticationMode=Autentificerings tilstand
+RequestedUrl=Angivne URL
+DatabaseTypeManager=Database type opsætning
+RequestLastAccessInError=Seneste database adgang forspørelses fejl
+ReturnCodeLastAccessInError=Retur kode for seneste fejl i database forspørgelse
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 InformationLastAccessInError=Information efter seneste database adgang anmodning fejl
 DolibarrHasDetectedError=Dolibarr har opdaget en teknisk fejl
 YouCanSetOptionDolibarrMainProdToZero=Du kan læse logfil eller sæt indstillingen $ dolibarr_main_prod til '0' i din config-fil for at få flere oplysninger.
@@ -118,7 +188,11 @@ PrecisionUnitIsLimitedToXDecimals=Dolibarr blev setup at begrænse præcision p�
 DoTest=Test
 ToFilter=Filter
 NoFilter=Intet filter
+<<<<<<< HEAD
 WarningYouHaveAtLeastOneTaskLate=Advarsel, du har mindst ét element, der har oversteget den tolerance forsinkelse.
+=======
+WarningYouHaveAtLeastOneTaskLate=Warning, you have at least one element that has exceeded the tolerance time.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 yes=ja
 Yes=Ja
 no=nej
@@ -142,6 +216,10 @@ Closed=Lukket
 Closed2=Lukket
 NotClosed=Ikke lukket
 Enabled=Aktiveret
+<<<<<<< HEAD
+=======
+Enable=Aktiver
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Deprecated=Underkendt
 Disable=Deaktivere
 Disabled=Deaktiveret
@@ -153,22 +231,39 @@ Update=Opdatering
 Close=Luk
 CloseBox=Fjern widget fra dit dashboard
 Confirm=Bekræft
+<<<<<<< HEAD
 ConfirmSendCardByMail=Ønsker du virkelig at sende indhold af dette kort pr. Mail til <b> %s </b>?
+=======
+ConfirmSendCardByMail=Vil du virkelig sende indholdet af dette kort pr. Mail til <b> %s </ b>?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Delete=Slet
 Remove=Fjerne
 Resiliate=Afslutte
 Cancel=Annuller
+<<<<<<< HEAD
 Modify=Gem
 Edit=Redigér
 Validate=Validate
 ValidateAndApprove=Validere og Godkende
 ToValidate=At validere
 NotValidated=Ikke valideret
+=======
+Modify=Ret
+Edit=Redigér
+Validate=Godkend
+ValidateAndApprove=Bekræfte og godkende
+ToValidate=Skal godkendes
+NotValidated=Ikke godkendt
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Save=Gem
 SaveAs=Gem som
 TestConnection=Test forbindelse
 ToClone=Klon
+<<<<<<< HEAD
 ConfirmClone=Vælg de data, du vil klone:
+=======
+ConfirmClone=Choose data you want to clone:
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoCloneOptionsSpecified=Ingen data at klone defineret.
 Of=af
 Go=Gå
@@ -182,6 +277,7 @@ SearchOf=Søg
 Valid=Gyldig
 Approve=Godkend
 Disapprove=Afvist
+<<<<<<< HEAD
 ReOpen=Re-Open
 Upload=Send fil
 ToLink=Link
@@ -189,6 +285,15 @@ Select=Vælg
 Choose=Vælge
 Resize=Resize
 ResizeOrCrop=Resize or Crop
+=======
+ReOpen=Genåbne
+Upload=Upload
+ToLink=Link
+Select=Vælg
+Choose=Vælge
+Resize=Tilpasse størrelsen
+ResizeOrCrop=Tilpasse størrelsen eller Beskær
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Recenter=Recenter
 Author=Forfatter
 User=Bruger
@@ -196,10 +301,18 @@ Users=Brugere
 Group=Gruppe
 Groups=Grupper
 NoUserGroupDefined=Ingen brugergruppe definéret
+<<<<<<< HEAD
 Password=Password
 PasswordRetype=Gentag dit password
 NoteSomeFeaturesAreDisabled=Bemærk, at en masse funktioner / moduler er slået fra i denne demonstration.
 Name=Navn
+=======
+Password=Kodeord
+PasswordRetype=Gentag dit kodeord
+NoteSomeFeaturesAreDisabled=Bemærk, at en masse funktioner / moduler er slået fra i denne demonstration.
+Name=Navn
+NameSlashCompany=Name / Company
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Person=Person
 Parameter=Parameter
 Parameters=Parametre
@@ -212,7 +325,11 @@ Code=Kode
 Type=Type
 Language=Sprog
 MultiLanguage=Multi-sprog
+<<<<<<< HEAD
 Note=Note
+=======
+Note=Nota
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Title=Titel
 Label=Label
 RefOrLabel=Ref. eller etiket
@@ -220,6 +337,12 @@ Info=Log
 Family=Familie
 Description=Beskrivelse
 Designation=Beskrivelse
+<<<<<<< HEAD
+=======
+DescriptionOfLine=Beskrivelse af linje
+DateOfLine=Date of line
+DurationOfLine=Duration of line
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Model=Dokumenter skabeloner
 DefaultModel=Standard dokument skabelon
 Action=Begivenhed
@@ -227,18 +350,31 @@ About=Om
 Number=Antal
 NumberByMonth=Antal efter måned
 AmountByMonth=Beløb efter måned
+<<<<<<< HEAD
 Numero=Numero
 Limit=Limit
 Limits=Grænseværdier
 Logout=Log ud
 NoLogoutProcessWithAuthMode=Ingen applicative afbryd funktion med authentication mode <b>%s</b>
 Connection=Login
+=======
+Numero=Nummer
+Limit=Grænseværdi
+Limits=Grænseværdier
+Logout=Log ud
+NoLogoutProcessWithAuthMode=Ingen applikations afbrydelses funktion med autentificeringstilstand <b>%s</b>
+Connection=Logind
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Setup=Opsætning
 Alert=Alarm
 MenuWarnings=Indberetninger
 Previous=Forrige
 Next=Næste
+<<<<<<< HEAD
 Cards=Postkort
+=======
+Cards=Kort
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Card=Kort
 Now=Nu
 HourStart=Start time
@@ -253,18 +389,28 @@ DateCreationShort=Creat. dato
 DateModification=Ændringsdatoen
 DateModificationShort=Modif. dato
 DateLastModification=Seneste ændring dato
+<<<<<<< HEAD
 DateValidation=Validering dato
+=======
+DateValidation=Bekræftelsesdato
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DateClosing=Udløbsdato
 DateDue=Forfaldsdag
 DateValue=Valørdato
 DateValueShort=Valørdato
 DateOperation=Operation dato
+<<<<<<< HEAD
 DateOperationShort=OPE. Dato
 DateLimit=Limit dato
+=======
+DateOperationShort=Opret. Dato
+DateLimit=Grænse dato
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DateRequest=Anmodning dato
 DateProcess=Proces dato
 DateBuild=Rapport genereret den
 DatePayment=Dato for betaling
+<<<<<<< HEAD
 DateApprove=Godkendelse af dato
 DateApprove2=Godkendelse af dato (anden godkendelse)
 RegistrationDate=Registrerings dato
@@ -272,6 +418,15 @@ UserCreation=Oprettelsesbruger
 UserModification=Modifikation bruger
 UserValidation=Valideringsbruger
 UserCreationShort=Creat. bruger
+=======
+DateApprove=Godkendelsesdato
+DateApprove2=Godkendelse af dato (Anden godkendelse)
+RegistrationDate=Registrerings dato
+UserCreation=Oprettelsesbruger
+UserModification=Modifikation bruger
+UserValidation=Bruger som bekræftet
+UserCreationShort=Opret. bruger
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 UserModificationShort=Modif. bruger
 UserValidationShort=Gyldig. bruger
 DurationYear=år
@@ -303,25 +458,40 @@ Yesterday=I går
 Tomorrow=I morgen
 Morning=Morgen
 Afternoon=Eftermiddag
+<<<<<<< HEAD
 Quadri=Quadri
 MonthOfDay=Måned fra den dato
 HourShort=H
 MinuteShort=mn
 Rate=Hyppighed
 CurrencyRate=Valutaomregningskurs
+=======
+Quadri=Kvatal
+MonthOfDay=Måned fra den dato
+HourShort=T
+MinuteShort=min
+Rate=Hyppighed
+CurrencyRate=Valuta omregningskurs
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 UseLocalTax=Incl. Moms
 Bytes=Bytes
 KiloBytes=Kilobyte
 MegaBytes=Megabyte
 GigaBytes=Gigabyte
 TeraBytes=Terabyte
+<<<<<<< HEAD
 UserAuthor=Bruger af oprettelsen
 UserModif=Bruger af sidste opdatering
+=======
+UserAuthor=Oprettet af bruger
+UserModif=Bruger som sidst opdateret
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 b=b.
 Kb=Kb
 Mb=Mb
 Gb=Gb
 Tb=Tb
+<<<<<<< HEAD
 Cut=Skære
 Copy=Kopier
 Paste=Paste
@@ -355,10 +525,46 @@ MulticurrencyAmountTTC=Beløb (inkl. Moms), oprindelig valuta
 MulticurrencyAmountVAT=Beløb i Moms, oprindelige valuta
 AmountLT1=Beløb afgift 2
 AmountLT2=Beløb afgift 3
+=======
+Cut=Klip
+Copy=Kopier
+Paste=Klister
+Default=Standard
+DefaultValue=Standardværdi
+DefaultValues=Standardværdier / filtre / sortering
+Price=Pris
+PriceCurrency=Pris (valuta)
+UnitPrice=Enhedspris
+UnitPriceHT=Unit price (excl.)
+UnitPriceHTCurrency=Unit price (excl.) (currency)
+UnitPriceTTC=Enhedspris
+PriceU=Salgspris
+PriceUHT=Salgspris (netto)
+PriceUHTCurrency=Salgspris (Valuta)
+PriceUTTC=Brutto(Inkl.Moms)
+Amount=Beløb
+AmountInvoice=Fakturabeløbet
+AmountInvoiced=Beløb faktureres
+AmountPayment=Indbetalingsbeløb
+AmountHTShort=Amount (excl.)
+AmountTTCShort=Beløb (inkl. moms)
+AmountHT=Amount (excl. tax)
+AmountTTC=Beløb (inkl. moms)
+AmountVAT=Momsbeløb
+MulticurrencyAlreadyPaid=Allerede betalt, original valuta
+MulticurrencyRemainderToPay=Manglene betaling , original valuta
+MulticurrencyPaymentAmount=Betalingsbeløb, oprindelig valuta
+MulticurrencyAmountHT=Amount (excl. tax), original currency
+MulticurrencyAmountTTC=Beløb (inkl. Moms), oprindelig valuta
+MulticurrencyAmountVAT=Momsbeløb, oprindelige valuta
+AmountLT1=Momsbeløb 2
+AmountLT2=Momsbeløb 3
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AmountLT1ES=Beløb RE
 AmountLT2ES=Beløb IRPF
 AmountTotal=Beløb i alt
 AmountAverage=Gennemsnitligt beløb
+<<<<<<< HEAD
 PriceQtyMinHT=Pris mindsteantal (inkl. moms)
 PriceQtyMinHTCurrency=Price quantity min. (net of tax) (currency)
 Percentage=Pourcentage
@@ -375,15 +581,41 @@ TotalTTCToYourCredit=I alt (inkl. moms) til dit kredit
 TotalVAT=Moms i alt
 TotalVATIN=IGST i alt
 TotalLT1=Total moms 2
+=======
+PriceQtyMinHT=Price quantity min. (excl. tax)
+PriceQtyMinHTCurrency=Price quantity min. (excl. tax) (currency)
+Percentage=Procent
+Total=I alt
+SubTotal=Sum
+TotalHTShort=Total (excl.)
+TotalHT100Short=Total 100%% (excl.)
+TotalHTShortCurrency=Total (excl. in currency)
+TotalTTCShort=I alt (Inkl. moms)
+TotalHT=Total (excl. tax)
+TotalHTforthispage=Total (excl. tax) for this page
+Totalforthispage=I alt for denne side
+TotalTTC=I alt (Inkl. Moms)
+TotalTTCToYourCredit=I alt (Inkl. Moms) til din kredit
+TotalVAT=Moms i alt
+TotalVATIN=IGST i alt
+TotalLT1=Total Moms 2
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TotalLT2=Total Moms 3
 TotalLT1ES=RE i alt
 TotalLT2ES=IRPF i alt
 TotalLT1IN=I alt CGST
 TotalLT2IN=I alt SGST
+<<<<<<< HEAD
 HT=Ekskl. moms
 TTC=Inkl. moms
 INCVATONLY=Inc. moms
 INCT=Inc. Alle skatter 
+=======
+HT=Excl. tax
+TTC=Inkl. Moms
+INCVATONLY=Inkl. Moms
+INCT=Inkl. Alle skatter 
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 VAT=Moms
 VATIN=IGST
 VATs=Salgs Moms
@@ -396,6 +628,7 @@ LT1ES=RE
 LT2ES=IRPF
 LT1IN=CGST
 LT2IN=SGST
+<<<<<<< HEAD
 VATRate=Momssats
 VATCode=Tax Rate code
 VATNPR=Tax Rate NPR
@@ -407,6 +640,20 @@ RemainToPay=Remain to pay
 Module=Modul/Applikation
 Modules=Moduler/applikationer
 Option=Option
+=======
+LT1GC=Additionnal cents
+VATRate=Momssats
+VATCode=Moms kode
+VATNPR=Moms NPR
+DefaultTaxRate=Standards Moms sats
+Average=Gennemsnit
+Sum=Sum
+Delta=Delta
+RemainToPay=Manglende betaling
+Module=Modul/Applikation
+Modules=Moduler/Applikationer
+Option=Valgmulighed
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 List=Liste
 FullList=Fuldstændig liste
 Statistics=Statistik
@@ -416,7 +663,11 @@ Favorite=Favorite
 ShortInfo=Info.
 Ref=Ref.
 ExternalRef=Ref. extern
+<<<<<<< HEAD
 RefSupplier=Ref. vendor
+=======
+RefSupplier=Ref. sælger
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 RefPayment=Ref. betaling
 CommercialProposalsShort=Tilbud
 Comment=Kommentar
@@ -427,6 +678,7 @@ ActionsDoneShort=Gjort
 ActionNotApplicable=Ikke relevant
 ActionRunningNotStarted=Ikke startet
 ActionRunningShort=I gang
+<<<<<<< HEAD
 ActionDoneShort=Finished
 ActionUncomplete=Uafsluttet
 LatestLinkedEvents=Seneste %s linkede begivenheder
@@ -443,6 +695,25 @@ ToDo=Udestående
 Completed=Completed
 Running=I gang
 RequestAlreadyDone=Anmodning allerede er registreret
+=======
+ActionDoneShort=Færdig
+ActionUncomplete=Ufuldstændig
+LatestLinkedEvents=Seneste %s linkede begivenheder
+CompanyFoundation=Virksomhed/Organisation
+Accountant=Revisor
+ContactsForCompany=Kontakter for denne tredjepart
+ContactsAddressesForCompany=Kontakter/adresser for denne tredjepart
+AddressesForCompany=Adresse for denne tredjepart
+ActionsOnCompany=Events for this third party
+ActionsOnContact=Events for this contact/address
+ActionsOnMember=Begivenheder for denne medlem
+ActionsOnProduct=Begivenheder omkring dette produkt
+NActionsLate=%s sent
+ToDo=At gøre
+Completed=Afsluttet
+Running=I gang
+RequestAlreadyDone=Anmodning allerede registreret
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Filter=Filter
 FilterOnInto=Søgekriterier '<strong> %s </strong>' i felter %s
 RemoveFilter=Fjern filter
@@ -453,11 +724,19 @@ Generate=Generer
 Duration=Varighed
 TotalDuration=Varighed i alt
 Summary=Resumé
+<<<<<<< HEAD
 DolibarrStateBoard=Database statistik
 DolibarrWorkBoard=Åbne poster instrumentbræt
 NoOpenedElementToProcess=Intet åbnet element til behandling
 Available=Tilgængelig
 NotYetAvailable=Endnu ikke tilgængelig
+=======
+DolibarrStateBoard=Database Statistik
+DolibarrWorkBoard=Open Items
+NoOpenedElementToProcess=Intet åbnet element til behandling
+Available=Tilgængelig
+NotYetAvailable=Ikke tilgængelig endnu 
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NotAvailable=Ikke til rådighed
 Categories=Tags/kategorier
 Category=Tags/kategori
@@ -468,7 +747,11 @@ and=og
 or=eller
 Other=Anden
 Others=Andre
+<<<<<<< HEAD
 OtherInformations=Andre informationer
+=======
+OtherInformations=Anden information
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Quantity=Antal
 Qty=Qty
 ChangedBy=Ændret af
@@ -481,12 +764,23 @@ ResultKo=Fejl
 Reporting=Rapportering
 Reportings=Rapportering
 Draft=Udkast
+<<<<<<< HEAD
 Drafts=Drafts
 StatusInterInvoiced=
 Validated=Valideret
 Opened=Åbent
 New=Ny
 Discount=Discount
+=======
+Drafts=Udkast
+StatusInterInvoiced=Invoiced
+Validated=Godkendt
+Opened=Åben
+OpenAll=Open (All)
+ClosedAll=Closed (All)
+New=Ny
+Discount=Rabat
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Unknown=Ukendt
 General=Almindelige
 Size=Størrelse
@@ -495,7 +789,11 @@ Received=Modtaget
 Paid=Betales
 Topic=Emne
 ByCompanies=Tredjeparter
+<<<<<<< HEAD
 ByUsers=By user
+=======
+ByUsers=Af bruger
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Links=Links
 Link=Link
 Rejects=Afviser
@@ -505,19 +803,32 @@ Datas=Oplysningerne
 None=Ingen
 NoneF=Ingen
 NoneOrSeveral=Ingen eller flere
+<<<<<<< HEAD
 Late=Sen
 LateDesc=Forsinkelse om at definere, om en optegnelse er forsinket eller ikke, afhænger af dit opsætning. Bed din administrator om at ændre forsinkelsen fra menuen Hjem - Opsætning - Advarsler.
 NoItemLate=No late item
+=======
+Late=Sent
+LateDesc=An item is defined as Delayed as per the system configuration in menu Home - Setup - Alerts.
+NoItemLate=Ingen forsinket vare
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Photo=Billede
 Photos=Billeder
 AddPhoto=Tilføj billede
 DeletePicture=Billede slette
 ConfirmDeletePicture=Bekræft billed sletning?
 Login=Login
+<<<<<<< HEAD
 LoginEmail=Login (email)
 LoginOrEmail=Login eller Email
 CurrentLogin=Nuværende login
 EnterLoginDetail=Indtast loginoplysninger
+=======
+LoginEmail=Logind (email)
+LoginOrEmail=Logind eller Email
+CurrentLogin=Nuværende login
+EnterLoginDetail=Indtast logind oplysninger
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 January=Januar
 February=Februar
 March=Marts
@@ -530,6 +841,7 @@ September=September
 October=Oktober
 November=November
 December=December
+<<<<<<< HEAD
 JanuaryMin=Jan
 FebruaryMin=Feb
 MarchMin=Mar
@@ -566,6 +878,32 @@ MonthShort09=sep
 MonthShort10=okt
 MonthShort11=nov
 MonthShort12=dec
+=======
+Month01=Januar
+Month02=Februar
+Month03=Marts
+Month04=April
+Month05=Maj
+Month06=Juni
+Month07=Juli
+Month08=August
+Month09=September
+Month10=Oktober
+Month11=November
+Month12=December
+MonthShort01=Jan
+MonthShort02=Feb
+MonthShort03=Mar
+MonthShort04=Apr
+MonthShort05=Maj
+MonthShort06=Jun
+MonthShort07=Jul
+MonthShort08=Aug
+MonthShort09=Sep
+MonthShort10=Okt
+MonthShort11=Nov
+MonthShort12=Dec
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MonthVeryShort01=J
 MonthVeryShort02=F
 MonthVeryShort03=M
@@ -579,7 +917,11 @@ MonthVeryShort10=O
 MonthVeryShort11=N
 MonthVeryShort12=D
 AttachedFiles=Vedhæftede filer og dokumenter
+<<<<<<< HEAD
 JoinMainDoc=Tilmeld dig hoveddokumentet
+=======
+JoinMainDoc=Tilmeld dig til hoveddokument
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DateFormatYYYYMM=ÅÅÅÅ-MM
 DateFormatYYYYMMDD=ÅÅÅÅ-MM-DD
 DateFormatYYYYMMDDHHMM=ÅÅÅÅ-MM-DD HH: SS
@@ -593,9 +935,15 @@ Legend=Legend
 Fill=Udfyld
 Reset=Nulstil
 File=Fil
+<<<<<<< HEAD
 Files=Files
 NotAllowed=Ikke tilladt
 ReadPermissionNotAllowed=Læs tilladelse ikke tilladt
+=======
+Files=Filer
+NotAllowed=Ikke tilladt
+ReadPermissionNotAllowed=Læsetilladelse ikke tilladt
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AmountInCurrency=Beløb i %s valuta
 Example=Eksempel
 Examples=Eksempler
@@ -621,11 +969,19 @@ Warnings=Advarsler
 BuildDoc=Build Dok
 Entity=Enhed
 Entities=Enheder
+<<<<<<< HEAD
 CustomerPreview=Forhåndsvisning for kunde
 SupplierPreview=Vendor preview
 ShowCustomerPreview=Vis forhåndsvisning for kunde
 ShowSupplierPreview=Show vendor preview
 RefCustomer=Ref. kunde
+=======
+CustomerPreview=Forhåndsvisning til kunde
+SupplierPreview=Forhandler forhåndsvisning
+ShowCustomerPreview=Vis forhåndsvisning til kunde
+ShowSupplierPreview=Vis sælger forhåndsvisning
+RefCustomer=Ref. Kunde
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Currency=Valuta
 InfoAdmin=Oplysninger til administratorer
 Undo=Fortryd
@@ -634,6 +990,7 @@ ExpandAll=Udvid alle
 UndoExpandAll=Fortryd udvide
 SeeAll=Se alt
 Reason=Årsag
+<<<<<<< HEAD
 FeatureNotYetSupported=Feature endnu ikke understøttet
 CloseWindow=Luk vindue
 Response=Response
@@ -649,6 +1006,24 @@ Email=EMail
 NoMobilePhone=Ingen mobil telefon
 Owner=Ejer
 FollowingConstantsWillBeSubstituted=Efter konstanterne skal erstatte med tilsvarende værdi.
+=======
+FeatureNotYetSupported=Funktion endnu ikke understøttet
+CloseWindow=Luk vindue
+Response=Responds
+Priority=Prioritet
+SendByMail=Send by email
+MailSentBy=Email sendt fra
+TextUsedInTheMessageBody=Email indhold
+SendAcknowledgementByMail=Send bekræftelses Email
+SendMail=Send Email
+Email=EMail
+NoEMail=Ingen Email
+AlreadyRead=Already read
+NotRead=Not read
+NoMobilePhone=Ingen mobil telefon
+Owner=Ejer
+FollowingConstantsWillBeSubstituted=Følgende konstanterne skal erstatte med tilsvarende værdi.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Refresh=Opdatér
 BackToList=Tilbage til listen
 GoBack=Gå tilbage
@@ -657,36 +1032,62 @@ CanBeModifiedIfKo=Kan ændres, hvis ikke gyldigt
 ValueIsValid=Værdi er gyldigt
 ValueIsNotValid=Værdien er ikke gyldig
 RecordCreatedSuccessfully=Optag oprettet med succes
+<<<<<<< HEAD
 RecordModifiedSuccessfully=Optag modificerede held
 RecordsModified=%s  optag ændret
 RecordsDeleted=%s post slettet
 AutomaticCode=Automatisk kode
 FeatureDisabled=Feature handicappede
+=======
+RecordModifiedSuccessfully=Ændring gennemført med succes
+RecordsModified=%s record(s) modified
+RecordsDeleted=%s record(s) deleted
+RecordsGenerated=%s record(s) generated
+AutomaticCode=Automatisk kode
+FeatureDisabled=Modul slået fra
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MoveBox=Flyt box
 Offered=Fri
 NotEnoughPermissions=Du har ikke tilladelse til denne handling
 SessionName=Session navn
 Method=Metode
 Receive=Modtag
+<<<<<<< HEAD
 CompleteOrNoMoreReceptionExpected=Komplet eller intet mere forventet
 ExpectedValue=Forventet værdi
 CurrentValue=Nuværende værdi
+=======
+CompleteOrNoMoreReceptionExpected=Komplet eller intet mere at forvente
+ExpectedValue=Forventet værdi
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PartialWoman=Delvis
 TotalWoman=I alt
 NeverReceived=Aldrig modtaget
 Canceled=Annulleret
 YouCanChangeValuesForThisListFromDictionarySetup=Du kan ændre værdier for denne liste fra menuen Opsætning - Ordbøger
 YouCanChangeValuesForThisListFrom=Du kan ændre værdierne for denne liste fra menuen %s
+<<<<<<< HEAD
 YouCanSetDefaultValueInModuleSetup=Du kan indstille standard værdi, der bruges, når du opretter en ny post i modul opsætning
 Color=Color
 Documents=Linkede filer
 Documents2=Dokumenter
 UploadDisabled=Upload handicappede
+=======
+YouCanSetDefaultValueInModuleSetup=Du kan indstille standardværdien, der bruges, når du opretter en ny post i modulopsætningen
+Color=Farve
+Documents=Tilknyttet filer
+Documents2=Dokumenter
+UploadDisabled=Upload deaktiveret
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MenuAccountancy=Regnskab
 MenuECM=Dokumenter
 MenuAWStats=AWStats
 MenuMembers=Medlemmer
+<<<<<<< HEAD
 MenuAgendaGoogle=Google tidsplan
+=======
+MenuAgendaGoogle=Google dagsorden
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ThisLimitIsDefinedInSetup=Dolibarr grænse (Menu hjemme-setup-sikkerhed): %s Kb, PHP grænse: %s Kb
 NoFileFound=Ingen dokumenter gemt i denne mappe
 CurrentUserLanguage=Valgt sprog
@@ -694,21 +1095,35 @@ CurrentTheme=Nuværende tema
 CurrentMenuManager=Aktuel menuhåndtering
 Browser=Browser
 Layout=Layout
+<<<<<<< HEAD
 Screen=skærm
 DisabledModules=Handikappede moduler
 For=For
 ForCustomer=For kunder
+=======
+Screen=Skærm
+DisabledModules=Deaktive moduler
+For=For
+ForCustomer=Til kunder
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Signature=Underskrift
 DateOfSignature=Dato for underskrift
 HidePassword=Vis kommandoen med adgangskode skjulte
 UnHidePassword=Vis reelle kommandoen med klare adgangskode
+<<<<<<< HEAD
 Root=Rot
 Informations=Informations
 Page=Page
+=======
+Root=Rod
+Informations=Information
+Page=Side
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Notes=Noter
 AddNewLine=Tilføj ny linje
 AddFile=Tilføj fil
 FreeZone=Ingen registrerede varer/ydelser
+<<<<<<< HEAD
 FreeLineOfType=Ikke en foruddefineret indlæg af type
 CloneMainAttributes=Klon formål med sine vigtigste attributter
 PDFMerge=PDF Sammenflet
@@ -717,21 +1132,47 @@ DocumentModelStandardPDF=Standard PDF-skabelon
 PrintContentArea=Vis side for at udskrive hovedindhold område
 MenuManager=Menuhåndtering
 WarningYouAreInMaintenanceMode=Advarsel, du er i en vedligeholdelses mode, så kun login <b>%s</b> er tilladt at bruge ansøgningen på i øjeblikket.
+=======
+FreeLineOfType=Free-text item, type:
+CloneMainAttributes=Klon formål med sine vigtigste attributter
+ReGeneratePDF=Re-generate PDF
+PDFMerge=PDF Sammenflet
+Merge=Sammeflet
+DocumentModelStandardPDF=Standard PDF-skabelon
+PrintContentArea=Vis side for at udskrive hovedindhold område
+MenuManager=Menuhåndtering
+WarningYouAreInMaintenanceMode=Warning, you are in maintenance mode: only login <b>%s</b> is allowed to use the application in this mode.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CoreErrorTitle=Systemfejl
 CoreErrorMessage=Beklager, der opstod en fejl. Kontakt systemadministratoren for at kontrollere logfilerne eller deaktivere $dolibarr_main_prod=1 for at få flere oplysninger.
 CreditCard=Kreditkort
 ValidatePayment=Godkend betaling
+<<<<<<< HEAD
 CreditOrDebitCard=Credit or debit card
 FieldsWithAreMandatory=Felter med <b>%s</b> er obligatoriske
 FieldsWithIsForPublic=Felter med <b>%s</b> er vist på offentlig liste over medlemmer. Hvis du ikke ønsker dette, se "offentlige" boks.
 AccordingToGeoIPDatabase=(Ifølge GeoIP konvertering)
 Line=Line
+=======
+CreditOrDebitCard=Kredit- eller betalingskort
+FieldsWithAreMandatory=Felter med <b>%s</b> er obligatoriske
+FieldsWithIsForPublic=Felter med <b> %s </ b> vises i den offentlige liste over medlemmer. Hvis du ikke vil have det, skal du fjerne markeringen i feltet "offentlig".
+AccordingToGeoIPDatabase=(ifølge GeoIP konvertering)
+Line=Linje
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NotSupported=Ikke understøttet
 RequiredField=Obligatorisk felt
 Result=Resultat
 ToTest=Test
+<<<<<<< HEAD
 ValidateBefore=Kortet skal være valideret, før du bruger denne funktion
 Visibility=Synlighed
+=======
+ValidateBefore=Kortet skal være bekræftet, før du bruger denne funktion
+Visibility=Synlighed
+Totalizable=Totalizable
+TotalizableDesc=Dette felt kan totaliseres i listen
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Private=Private
 Hidden=Skjulte
 Resources=Ressourcer
@@ -741,23 +1182,41 @@ Before=Før
 After=Efter
 IPAddress=IP-adressen
 Frequency=Frekvens
+<<<<<<< HEAD
 IM=Instant messaging
 NewAttribute=Ny attribut
 AttributeCode=Attribut koden
 URLPhoto=Url af foto / logo
+=======
+IM=Instant besked
+NewAttribute=Ny attribut
+AttributeCode=Attribut koden
+URLPhoto=Url af foto/logo
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SetLinkToAnotherThirdParty=Link til en anden tredjepart
 LinkTo=Link til
 LinkToProposal=Link til forslag
 LinkToOrder=Link til ordre
 LinkToInvoice=Link til faktura
+<<<<<<< HEAD
 LinkToSupplierOrder=Link til leverandørordre
 LinkToSupplierProposal=Link til leverandørforslag
 LinkToSupplierInvoice=Link til leverandørfaktura
+=======
+LinkToTemplateInvoice=Link til skabelonfaktura
+LinkToSupplierOrder=Link to purchase order
+LinkToSupplierProposal=Link to vendor proposal
+LinkToSupplierInvoice=Link to vendor invoice
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LinkToContract=Link til kontrakt
 LinkToIntervention=Link til intervention
 CreateDraft=Opret udkast
 SetToDraft=Tilbage til udkast
 ClickToEdit=Klik for at redigere
+<<<<<<< HEAD
+=======
+ClickToRefresh=Click to refresh
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 EditWithEditor=Rediger med CKEditor
 EditWithTextEditor=Rediger med tekst editor
 EditHTMLSource=Rediger HTML-kilde
@@ -772,20 +1231,34 @@ ByDay=Dag
 BySalesRepresentative=Salgsrepræsentant
 LinkedToSpecificUsers=Linked til en bestemt bruger kontakt
 NoResults=Ingen resultater
+<<<<<<< HEAD
 AdminTools=Administrative værktøjer
+=======
+AdminTools=Admin Tools
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SystemTools=Systemværktøjer
 ModulesSystemTools=Modul værktøjer
 Test=Test
 Element=Element
+<<<<<<< HEAD
 NoPhotoYet=Inge billeder til rådighed
 Dashboard=Instrumentbræt
 MyDashboard=Mit kontrolpanel
+=======
+NoPhotoYet=Ingen billeder til rådighed
+Dashboard=Instrumentbræt
+MyDashboard=Mit Dashboard
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Deductible=Fradragsberettigede
 from=fra
 toward=mod
 Access=Adgang
 SelectAction=Vælg handling
+<<<<<<< HEAD
 SelectTargetUser=Vælg målbruger / medarbejder
+=======
+SelectTargetUser=Vælg målbruger/medarbejder
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 HelpCopyToClipboard=Brug Ctrl+C for at kopiere til udklipsholderen
 SaveUploadedFileWithMask=Gem filen på serveren med navnet "<strong>%s</strong>" (ellers "%s")
 OriginFileName=Orginal filnavn
@@ -794,7 +1267,11 @@ SetBankAccount=Definér bankkonto
 AccountCurrency=Konto møntsort
 ViewPrivateNote=Vis noter
 XMoreLines=%s linje(r) skjult
+<<<<<<< HEAD
 ShowMoreLines=Vis flere / færre linjer
+=======
+ShowMoreLines=Vis flere/færre linjer
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PublicUrl=Offentlige URL
 AddBox=Tilføj box
 SelectElementAndClick=Vælg et element og klik på %s
@@ -802,9 +1279,15 @@ PrintFile=Print fil %s
 ShowTransaction=Vis indlæg på bankkonto
 ShowIntervention=Vis indgreb
 ShowContract=Vis kontrakt
+<<<<<<< HEAD
 GoIntoSetupToChangeLogo=Gå ind i Home - Setup - Firma for at skifte logo eller gå ind i Home - Setup - Display for at skjule.
 Deny=Nægte
 Denied=Denied
+=======
+GoIntoSetupToChangeLogo=Gå til Home - Setup - Firma for at skifte logo eller gå til Hjem - Setup - Display for at skjule.
+Deny=Nægte
+Denied=Nægtet
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ListOf=Liste over %s
 ListOfTemplates=Liste over skabeloner
 Gender=Køn
@@ -815,6 +1298,7 @@ Mandatory=Obligatorisk
 Hello=Hallo
 GoodBye=Farvel
 Sincerely=Med venlig hilsen
+<<<<<<< HEAD
 DeleteLine=Slet linie
 ConfirmDeleteLine=Er du sikker på, at du vil slette denne linje?
 NoPDFAvailableForDocGenAmongChecked=Der var ikke nogen PDF til dokumentgenerering blandt kontrollerede poster
@@ -836,18 +1320,53 @@ Exports=Eksporter
 ExportFilteredList=Eksporter filtreret liste
 ExportList=Eksportliste
 ExportOptions=Eksportindstillinger
+=======
+DeleteLine=Slet linje
+ConfirmDeleteLine=Er du sikker på, at du vil slette denne linje?
+NoPDFAvailableForDocGenAmongChecked=Der var ikke nogen PDF til dokument generering blandt kontrollerede poster
+TooManyRecordForMassAction=For mange poster valgt til massehandling. Handlingen er begrænset til en liste over %s poster.
+NoRecordSelected=Ingen rekord valgt
+MassFilesArea=Område for filer opbygget af massehandlinger
+ShowTempMassFilesArea=Vis område af filer bygget af massehandlinger
+ConfirmMassDeletion=Bulk Delete confirmation
+ConfirmMassDeletionQuestion=Are you sure you want to delete the %s selected record(s)?
+RelatedObjects=Relaterede objekter
+ClassifyBilled=Klassificere faktureret
+ClassifyUnbilled=Klassificer Ikke faktureret
+Progress=Fremskridt
+ProgressShort=Progr.
+FrontOffice=Forreste kontor
+BackOffice=Back office
+View=Udsigt
+Export=Eksport
+Exports=Eksporter
+ExportFilteredList=Eksporter filtreret liste
+ExportList=Eksportliste
+ExportOptions=Eksport indstillinger
+IncludeDocsAlreadyExported=Include docs already exported
+ExportOfPiecesAlreadyExportedIsEnable=Export of pieces already exported is enable
+ExportOfPiecesAlreadyExportedIsDisable=Export of pieces already exported is disable
+AllExportedMovementsWereRecordedAsExported=All exported movements were recorded as exported
+NotAllExportedMovementsCouldBeRecordedAsExported=Not all exported movements could be recorded as exported
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Miscellaneous=Diverse
 Calendar=Kalender
 GroupBy=Gruppér efter
 ViewFlatList=Se flad liste
 RemoveString=Fjern streng '%s'
+<<<<<<< HEAD
 SomeTranslationAreUncomplete=Nogle sprog kan oversættes delvis eller kan indeholde fejl. Hvis du registrerer noget, kan du rette sprogfiler, der registrerer dig til <a href="https://transifex.com/projects/p/dolibarr/" target="_blank"> https://transifex.com/projects/p/ Dolibarr / </a>.
 DirectDownloadLink=Direkte download link (offentlig / ekstern)
+=======
+SomeTranslationAreUncomplete=Nogle af de sprog, der tilbydes, kan kun oversættes eller måske indeholde fejl. Hjælp venligst med at korrigere dit sprog ved at registrere dig på <a href="https://transifex.com/projects/p/dolibarr/" target="_blank"> https://transifex.com/projects/p/dolibarr/ </a> at tilføje dine forbedringer.
+DirectDownloadLink=Direkte download link (offentlig/ekstern)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DirectDownloadInternalLink=Direkte download link (skal logges og har brug for tilladelser)
 Download=Hent
 DownloadDocument=Hent dokument
 ActualizeCurrency=Opdater valutakurs
 Fiscalyear=Regnskabsår
+<<<<<<< HEAD
 ModuleBuilder=Modulbygger
 SetMultiCurrencyCode=Indstil valuta
 BulkActions=Bulk handlinger
@@ -855,6 +1374,15 @@ ClickToShowHelp=Klik for at vise værktøjstiphjælp
 WebSite=Internet side
 WebSites=Websteder
 WebSiteAccounts=Webstedkonti
+=======
+ModuleBuilder=Module and Application Builder
+SetMultiCurrencyCode=Indstil valuta
+BulkActions=Masse handlinger
+ClickToShowHelp=Klik for at vise værktøjs tips
+WebSite=Internet side
+WebSites=Websites
+WebSiteAccounts=Website accounts
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ExpenseReport=Udgiftsrapport
 ExpenseReports=Udgiftsrapporter
 HR=HR
@@ -864,6 +1392,7 @@ TitleSetToDraft=Gå tilbage til udkast
 ConfirmSetToDraft=Er du sikker på, at du vil gå tilbage til Udkast status?
 ImportId=Import id
 Events=Begivenheder
+<<<<<<< HEAD
 EMailTemplates=E-mail skabeloner
 FileNotShared=Filen er ikke delt til ekstern offentlighed
 Project=Projekt
@@ -872,6 +1401,24 @@ Rights=Tilladelser
 LineNb=Line no.
 IncotermLabel=Incoterms
 # Week day
+=======
+EMailTemplates=Email skabeloner
+FileNotShared=Filen er ikke delt til ekstern offentlighed
+Project=Projekt
+Projects=Projekter
+LeadOrProject=Bly | Projekt
+LeadsOrProjects=Potentielle kunder | Projekter
+Lead=At føre
+Leads=Potentielle kunder
+ListOpenLeads=Liste åbne ledninger
+ListOpenProjects=Liste åbne projekter
+NewLeadOrProject=Ny ledelse eller projekt
+Rights=Tilladelser
+LineNb=Linje nr.
+IncotermLabel=Inkassovilkor
+TabLetteringCustomer=Customer lettering
+TabLetteringSupplier=Vendor lettering
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Monday=Mandag
 Tuesday=Tirsdag
 Wednesday=Onsdag
@@ -879,6 +1426,7 @@ Thursday=Torsdag
 Friday=Fredag
 Saturday=Lørdag
 Sunday=Søndag
+<<<<<<< HEAD
 MondayMin=Mo
 TuesdayMin=Tu
 WednesdayMin=Vi
@@ -886,6 +1434,15 @@ ThursdayMin=Th
 FridayMin=Fr
 SaturdayMin=Sa
 SundayMin=Su
+=======
+MondayMin=Man
+TuesdayMin=Tir
+WednesdayMin=Ons
+ThursdayMin=Tor
+FridayMin=Fre
+SaturdayMin=Lør
+SundayMin=Søn
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Day1=Mandag
 Day2=Tirsdag
 Day3=Onsdag
@@ -895,6 +1452,7 @@ Day6=Lørdag
 Day0=Søndag
 ShortMonday=M
 ShortTuesday=T
+<<<<<<< HEAD
 ShortWednesday=W
 ShortThursday=T
 ShortFriday=F
@@ -902,6 +1460,15 @@ ShortSaturday=S
 ShortSunday=S
 SelectMailModel=Vælg en e-mail-skabelon
 SetRef=Sæt ref
+=======
+ShortWednesday=O
+ShortThursday=T
+ShortFriday=F
+ShortSaturday=L
+ShortSunday=S
+SelectMailModel=Vælg en Email-skabelon
+SetRef=Sæt ref.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Select2ResultFoundUseArrows=Nogle resultater fundet. Brug pilene til at vælge.
 Select2NotFound=Intet resultat fundet
 Select2Enter=Gå ind
@@ -917,17 +1484,31 @@ SearchIntoUsers=Brugere
 SearchIntoProductsOrServices=Produkter eller tjenester
 SearchIntoProjects=Projekter
 SearchIntoTasks=Opgaver
+<<<<<<< HEAD
 SearchIntoCustomerInvoices=Kundefakturaer
 SearchIntoSupplierInvoices=Leverandørfakturaer
 SearchIntoCustomerOrders=Kundeordrer
 SearchIntoSupplierOrders=Indkøbsordre
 SearchIntoCustomerProposals=Kundeforslag
 SearchIntoSupplierProposals=Vendor proposals
+=======
+SearchIntoCustomerInvoices=Kunde fakturaer
+SearchIntoSupplierInvoices=Leverandør fakturaer
+SearchIntoCustomerOrders=Salgsordrer
+SearchIntoSupplierOrders=Indkøbsordre
+SearchIntoCustomerProposals=Kundeforslag
+SearchIntoSupplierProposals=Forhandler forslag
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SearchIntoInterventions=Interventioner
 SearchIntoContracts=Kontrakter
 SearchIntoCustomerShipments=Kundeforsendelser
 SearchIntoExpenseReports=Udgiftsrapporter
+<<<<<<< HEAD
 SearchIntoLeaves=Leaves
+=======
+SearchIntoLeaves=Forlade
+SearchIntoTickets=Tickets
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CommentLink=Kommentarer
 NbComments=Antal kommentarer
 CommentPage=Kommentarer plads
@@ -936,6 +1517,7 @@ CommentDeleted=Kommentar slettet
 Everybody=Fælles projekt
 PayedBy=Betalt af
 PayedTo=Betalt til
+<<<<<<< HEAD
 Monthly=Monthly
 Quarterly=Quarterly
 Annual=Annual
@@ -948,3 +1530,28 @@ Deletedraft=Delete draft
 ConfirmMassDraftDeletion=Draft Bulk delete confirmation
 FileSharedViaALink=File shared via a link
 
+=======
+Monthly=Månedlige
+Quarterly=Kvartalsvis
+Annual=Årligt
+Local=Lokal
+Remote=Fjern
+LocalAndRemote=Lokal og Ekstern
+KeyboardShortcut=Tastaturgenvej
+AssignedTo=Tildelt til
+Deletedraft=Slet udkast
+ConfirmMassDraftDeletion=Udkast til masse slette bekræftelse
+FileSharedViaALink=Fil deles via et link
+SelectAThirdPartyFirst=Vælg en tredjepart først ...
+YouAreCurrentlyInSandboxMode=Du er i øjeblikket i %s "sandbox" -tilstanden
+Inventory=Beholdning
+AnalyticCode=Analytic code
+TMenuMRP=MRP
+ShowMoreInfos=Show More Infos
+NoFilesUploadedYet=Please upload a document first
+SeePrivateNote=See private note
+PaymentInformation=Payment information
+ValidFrom=Valid from
+ValidUntil=Valid until
+NoRecordedUsers=No users
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

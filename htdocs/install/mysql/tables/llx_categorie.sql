@@ -1,7 +1,11 @@
 -- ============================================================================
 -- Copyright (C) 2005		Brice Davoleau		<e1davole@iu-vannes.fr>
 -- Copyright (C) 2005		Matthieu Valleton	<mv@seeschloss.org>
+<<<<<<< HEAD
 -- Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>		
+=======
+-- Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>		
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 -- Copyright (C) 2017       Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -24,7 +28,12 @@ create table llx_categorie
 	rowid 		    integer AUTO_INCREMENT PRIMARY KEY,
 	entity          integer DEFAULT 1 NOT NULL,			-- multi company id
 	fk_parent		integer DEFAULT 0 NOT NULL,
+<<<<<<< HEAD
 	label 		    varchar(180) NOT NULL,				-- category name
+=======
+	label 		    varchar(180) NOT NULL,				-- category ref/name
+	ref_ext			varchar(255),						-- reference into an external system (not used by dolibarr)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	type	        tinyint DEFAULT 1 NOT NULL,			-- category type (product, supplier, customer, member)
 	description 	text,								-- description of the category
     color           varchar(8),                         -- color

@@ -5,7 +5,11 @@ ProposalShort=Teklif
 ProposalsDraft=Taslak teklifler
 ProposalsOpened=Açık teklifler
 CommercialProposal=Teklif
+<<<<<<< HEAD
 PdfCommercialProposalTitle=Teklif
+=======
+PdfCommercialProposalTitle=PROFORMA FATURA
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProposalCard=Teklif kartı
 NewProp=Yeni teklif
 NewPropal=Yeni teklif
@@ -22,7 +26,11 @@ SearchAProposal=Teklif ara
 NoProposal=Teklif yok
 ProposalsStatistics=Teklif istatistikleri
 NumberOfProposalsByMonth=Aylara göre sayısı
+<<<<<<< HEAD
 AmountOfProposalsByMonthHT=Aylık tutar (vergi hariç)
+=======
+AmountOfProposalsByMonthHT=Aylık tutar (KDV hariç)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NbOfProposals=Teklif sayısı
 ShowPropal=Teklif göster
 PropalsDraft=Taslaklar
@@ -33,7 +41,11 @@ PropalStatusSigned=İmzalı(faturalanacak)
 PropalStatusNotSigned=İmzalanmamış (kapalı)
 PropalStatusBilled=Faturalanmış
 PropalStatusDraftShort=Taslak
+<<<<<<< HEAD
 PropalStatusValidatedShort=Doğrulandı
+=======
+PropalStatusValidatedShort=Doğrulanmış (açık)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PropalStatusClosedShort=Kapalı
 PropalStatusSignedShort=İmzalı
 PropalStatusNotSignedShort=İmzalanmamış
@@ -41,11 +53,19 @@ PropalStatusBilledShort=Faturalanmış
 PropalsToClose=Kapatılacak teklifler
 PropalsToBill=Faturalanacak imzalı teklifler
 ListOfProposals=Teklif listesi
+<<<<<<< HEAD
 ActionsOnPropal=Tekliler için yapılan etkinlikler
 RefProposal=Teklif ref
 SendPropalByMail=Teklifi postayla gönder
 DatePropal=Teklif tarihi
 DateEndPropal=Son geçerlilik tarihi
+=======
+ActionsOnPropal=Teklifteki etkinlikler
+RefProposal=Teklif ref
+SendPropalByMail=Teklifi e-posta ile gönder
+DatePropal=Teklif tarihi
+DateEndPropal=Teklif son geçerlilik tarihi
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ValidityDuration=Geçerlilik süresi
 CloseAs=Durumu buna ayarlayın
 SetAcceptedRefused=Kabul edildi/reddedildi ayarla
@@ -53,10 +73,16 @@ ErrorPropalNotFound=%s teklifi bulunamadı
 AddToDraftProposals=Taslak teklife ekle
 NoDraftProposals=Taslak teklif yok
 CopyPropalFrom=Varolan teklifi kopyalayarak teklif oluştur
+<<<<<<< HEAD
 CreateEmptyPropal=Boş teklif oluştur veya ürünler/hizmetler listesinden oluştur
 DefaultProposalDurationValidity=Varsayılan teklif geçerlilik süresi (gün olarak)
 UseCustomerContactAsPropalRecipientIfExist=Teklif alıcısı olarak üçüncü parti yerine, eğer tanımlanmışsa, kişi adresini kullan
 ClonePropal=Teklif kopyala
+=======
+CreateEmptyPropal=Boş veya Ürünler/Hizmetler listesinden ticari teklif oluştur
+DefaultProposalDurationValidity=Varsayılan teklif geçerlilik süresi (gün olarak)
+UseCustomerContactAsPropalRecipientIfExist=Use contact/address with type 'Contact following-up proposal' if defined instead of third party address as proposal recipient address
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmClonePropal=Ticari teklifi çoğaltmak istediğinizden emin misiniz? <b>%s</b>?
 ConfirmReOpenProp=Ticari teklifi geri açmak istediğinizden emin misiniz <b>%s</b>?
 ProposalsAndProposalsLines=Teklif ve satırları
@@ -66,15 +92,24 @@ SetAvailability=Teslim süresi ayarla
 AfterOrder=siparişten sonra
 OtherProposals=Diğer teklifler
 ##### Availability #####
+<<<<<<< HEAD
 AvailabilityTypeAV_NOW=İvedi
 AvailabilityTypeAV_1W=1 hafta
 AvailabilityTypeAV_2W=2 hafta
 AvailabilityTypeAV_3W=3 hafta
 AvailabilityTypeAV_1M=1 ay
+=======
+AvailabilityTypeAV_NOW=Listedeki tüm ürünler hemen teslim edilecektir
+AvailabilityTypeAV_1W=Listedeki tüm ürünler 1 haftada teslim edilecektir
+AvailabilityTypeAV_2W=Listedeki tüm ürünler 2 haftada teslim edilecektir
+AvailabilityTypeAV_3W=Listedeki tüm ürünler 3 haftada teslim edilecektir
+AvailabilityTypeAV_1M=Listedeki tüm ürünler 4-6 haftada teslim edilecektir
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ##### Types de contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Teklif izleme temsilcisi
 TypeContact_propal_external_BILLING=Müşteri faturası ilgilisi
 TypeContact_propal_external_CUSTOMER=Müşteri teklif izleme ilgilisi
+<<<<<<< HEAD
 TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
 DocModelAzurDescription=Eksiksiz bir teklif modeli (logo. ..)
@@ -83,3 +118,14 @@ DefaultModelPropalToBill=Bir teklifi kapatma sırasında varsayılan şablon (fa
 DefaultModelPropalClosed=Bir teklifi kapatma sırasında varsayılan şablon (faturalanmamış)
 ProposalCustomerSignature=Yazılı kabul, firma kaşesi, tarih ve imza
 ProposalsStatisticsSuppliers=Tedarikçi teklif istatistikleri
+=======
+TypeContact_propal_external_SHIPPING=Teslimat için müşteri iletişim kişisi
+# Document models
+DocModelAzurDescription=Eksiksiz bir teklif modeli (logo. ..)
+DocModelCyanDescription=Eksiksiz bir teklif modeli (logo. ..)
+DefaultModelPropalCreate=Varsayılan model oluşturma
+DefaultModelPropalToBill=Bir teklifi kapatma sırasında varsayılan şablon (faturalanacak)
+DefaultModelPropalClosed=Bir teklifi kapatma sırasında varsayılan şablon (faturalanmamış)
+ProposalCustomerSignature=Kesin sipariş için Firma Kaşesi, Tarih ve İmza
+ProposalsStatisticsSuppliers=Tedarikçi teklifi istatistikleri
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

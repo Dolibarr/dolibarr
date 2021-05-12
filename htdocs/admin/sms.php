@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2009      Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2013 	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -39,7 +43,11 @@ $substitutionarrayfortest=array(
 '__FIRSTNAME__' => 'TESTFirstname'
 );
 
+<<<<<<< HEAD
 $action=GETPOST('action','aZ09');
+=======
+$action=GETPOST('action', 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 /*
@@ -48,12 +56,21 @@ $action=GETPOST('action','aZ09');
 
 if ($action == 'update' && empty($_POST["cancel"]))
 {
+<<<<<<< HEAD
 	dolibarr_set_const($db, "MAIN_DISABLE_ALL_SMS",   $_POST["MAIN_DISABLE_ALL_SMS"],'chaine',0,'',$conf->entity);
 
 	dolibarr_set_const($db, "MAIN_SMS_SENDMODE",      $_POST["MAIN_SMS_SENDMODE"],'chaine',0,'',$conf->entity);
 
 	dolibarr_set_const($db, "MAIN_MAIL_SMS_FROM",     $_POST["MAIN_MAIL_SMS_FROM"],'chaine',0,'',$conf->entity);
 	//dolibarr_set_const($db, "MAIN_MAIL_AUTOCOPY_TO",    $_POST["MAIN_MAIL_AUTOCOPY_TO"],'chaine',0,'',$conf->entity);
+=======
+	dolibarr_set_const($db, "MAIN_DISABLE_ALL_SMS", $_POST["MAIN_DISABLE_ALL_SMS"], 'chaine', 0, '', $conf->entity);
+
+	dolibarr_set_const($db, "MAIN_SMS_SENDMODE", $_POST["MAIN_SMS_SENDMODE"], 'chaine', 0, '', $conf->entity);
+
+	dolibarr_set_const($db, "MAIN_MAIL_SMS_FROM", $_POST["MAIN_MAIL_SMS_FROM"], 'chaine', 0, '', $conf->entity);
+	//dolibarr_set_const($db, "MAIN_MAIL_AUTOCOPY_TO", $_POST["MAIN_MAIL_AUTOCOPY_TO"], 'chaine', 0, '', $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
@@ -94,13 +111,21 @@ if ($action == 'send' && ! $_POST['cancel'])
         $action='test';
         $error++;
     }
+<<<<<<< HEAD
 	if (empty($smsfrom) || ! str_replace('+','',$smsfrom))
+=======
+	if (empty($smsfrom) || ! str_replace('+', '', $smsfrom))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("SmsFrom")), null, 'errors');
         $action='test';
 		$error++;
 	}
+<<<<<<< HEAD
 	if (empty($sendto) || ! str_replace('+','',$sendto))
+=======
+	if (empty($sendto) || ! str_replace('+', '', $sendto))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("SmsTo")), null, 'errors');
         $action='test';
@@ -110,7 +135,11 @@ if ($action == 'send' && ! $_POST['cancel'])
 	{
 		// Make substitutions into message
         complete_substitutions_array($substitutionarrayfortest, $langs);
+<<<<<<< HEAD
 	    $body=make_substitutions($body,$substitutionarrayfortest);
+=======
+	    $body=make_substitutions($body, $substitutionarrayfortest);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/CSMSFile.class.php';
 
@@ -119,7 +148,11 @@ if ($action == 'send' && ! $_POST['cancel'])
 
 		if ($result)
 		{
+<<<<<<< HEAD
 			setEventMessages($langs->trans("SmsSuccessfulySent",$smsfrom,$sendto), null, 'mesgs');
+=======
+			setEventMessages($langs->trans("SmsSuccessfulySent", $smsfrom, $sendto), null, 'mesgs');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			setEventMessages($smsfile->error, $smsfile->errors, 'mesgs');
 		}
 		else
@@ -139,6 +172,7 @@ if ($action == 'send' && ! $_POST['cancel'])
  */
 
 $linuxlike=1;
+<<<<<<< HEAD
 if (preg_match('/^win/i',PHP_OS)) $linuxlike=0;
 if (preg_match('/^mac/i',PHP_OS)) $linuxlike=0;
 
@@ -146,6 +180,15 @@ $wikihelp='EN:Setup Sms|FR:Paramétrage Sms|ES:Configuración Sms';
 llxHeader('',$langs->trans("Setup"),$wikihelp);
 
 print load_fiche_titre($langs->trans("SmsSetup"),'','title_setup');
+=======
+if (preg_match('/^win/i', PHP_OS)) $linuxlike=0;
+if (preg_match('/^mac/i', PHP_OS)) $linuxlike=0;
+
+$wikihelp='EN:Setup Sms|FR:Paramétrage Sms|ES:Configuración Sms';
+llxHeader('', $langs->trans("Setup"), $wikihelp);
+
+print load_fiche_titre($langs->trans("SmsSetup"), '', 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print $langs->trans("SmsDesc")."<br>\n";
 print "<br>\n";
@@ -158,7 +201,11 @@ if ($action == 'edit')
 {
 	$form=new Form($db);
 
+<<<<<<< HEAD
 	if (! count($listofmethods)) print '<div class="warning">'.$langs->trans("NoSmsEngine",'<a href="http://www.dolistore.com/search.php?orderby=position&orderway=desc&search_query=smsmanager">DoliStore</a>').'</div>';
+=======
+	if (! count($listofmethods)) print '<div class="warning">'.$langs->trans("NoSmsEngine", '<a href="http://www.dolistore.com/search.php?orderby=position&orderway=desc&search_query=smsmanager">DoliStore</a>').'</div>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -169,6 +216,7 @@ if ($action == 'edit')
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
+<<<<<<< HEAD
 	// Disable	
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_SMS").'</td><td>';
 	print $form->selectyesno('MAIN_DISABLE_ALL_SMS',$conf->global->MAIN_DISABLE_ALL_SMS,1);
@@ -185,6 +233,24 @@ if ($action == 'edit')
 
 	// From	
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMS_FROM",$langs->transnoentities("Undefined")).'</td>';
+=======
+	// Disable
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_SMS").'</td><td>';
+	print $form->selectyesno('MAIN_DISABLE_ALL_SMS', $conf->global->MAIN_DISABLE_ALL_SMS, 1);
+	print '</td></tr>';
+
+	// Separator
+	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
+
+	// Method
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_SMS_SENDMODE").'</td><td>';
+	if (count($listofmethods)) print $form->selectarray('MAIN_SMS_SENDMODE', $listofmethods, $conf->global->MAIN_SMS_SENDMODE, 1);
+	else print '<font class="error">'.$langs->trans("None").'</font>';
+    print '</td></tr>';
+
+	// From
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMS_FROM", $langs->transnoentities("Undefined")).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '<td><input class="flat" name="MAIN_MAIL_SMS_FROM" size="32" value="' . $conf->global->MAIN_MAIL_SMS_FROM;
 	print '"></td></tr>';
 
@@ -208,11 +274,16 @@ if ($action == 'edit')
 else
 {
 
+<<<<<<< HEAD
 	if (! count($listofmethods)) print '<div class="warning">'.$langs->trans("NoSmsEngine",'<a target="_blank" href="http://www.dolistore.com/search.php?orderby=position&orderway=desc&search_query=smsmanager">DoliStore</a>').'</div>';
+=======
+	if (! count($listofmethods)) print '<div class="warning">'.$langs->trans("NoSmsEngine", '<a target="_blank" href="http://www.dolistore.com/search.php?orderby=position&orderway=desc&search_query=smsmanager">DoliStore</a>').'</div>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
+<<<<<<< HEAD
 	// Disable	
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_SMS").'</td><td>'.yn($conf->global->MAIN_DISABLE_ALL_SMS).'</td></tr>';
 
@@ -220,14 +291,28 @@ else
 	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
 
 	// Method	
+=======
+	// Disable
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_SMS").'</td><td>'.yn($conf->global->MAIN_DISABLE_ALL_SMS).'</td></tr>';
+
+	// Separator
+	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
+
+	// Method
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_SMS_SENDMODE").'</td><td>';
 	$text=$listofmethods[$conf->global->MAIN_SMS_SENDMODE];
 	if (empty($text)) $text=$langs->trans("Undefined").' '.img_warning();
 	print $text;
 	print '</td></tr>';
 
+<<<<<<< HEAD
 	// From	
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMS_FROM",$langs->transnoentities("Undefined")).'</td>';
+=======
+	// From
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMS_FROM", $langs->transnoentities("Undefined")).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '<td>'.$conf->global->MAIN_MAIL_SMS_FROM;
 	if (!empty($conf->global->MAIN_MAIL_SMS_FROM) && ! isValidPhone($conf->global->MAIN_MAIL_SMS_FROM)) print ' '.img_warning($langs->trans("ErrorBadPhone"));
 	print '</td></tr>';
@@ -243,7 +328,11 @@ else
 	print '</table>';
 
 
+<<<<<<< HEAD
 	// Boutons actions
+=======
+	// Buttons for actions
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	print '<div class="tabsAction">';
 
@@ -258,7 +347,11 @@ else
 	}
 	else
 	{
+<<<<<<< HEAD
 		print '<a class="butActionRefused" href="#" title="'.$langs->trans("FeatureNotAvailableOnLinux").'">'.$langs->trans("DoTestServerAvailability").'</a>';
+=======
+		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("FeatureNotAvailableOnLinux").'">'.$langs->trans("DoTestServerAvailability").'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}*/
 
 	if (count($listofmethods) && ! empty($conf->global->MAIN_SMS_SENDMODE))
@@ -267,7 +360,11 @@ else
 	}
 	else
 	{
+<<<<<<< HEAD
        print '<a class="butActionRefused" href="#">'.$langs->trans("DoTestSend").'</a>';
+=======
+       print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("DoTestSend").'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 	print '</div>';
 
@@ -331,7 +428,12 @@ else
 	}
 }
 
+<<<<<<< HEAD
 
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

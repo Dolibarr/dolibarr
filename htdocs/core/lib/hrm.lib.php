@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2015 Alexandre Spangaro <aspangaro.dolibarr@gmail.com>
+=======
+/* Copyright (C) 2015 Alexandre Spangaro <aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +22,11 @@
 /**
  * \file    htdocs/core/lib/hrm.lib.php
  * \ingroup HRM
+<<<<<<< HEAD
  * \brief   Library for hrm 
+=======
+ * \brief   Library for hrm
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  */
 $langs->load('hrm');
 
@@ -44,14 +52,22 @@ function establishment_prepare_head($object)
 	// Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
+<<<<<<< HEAD
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'establishment');
+=======
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'establishment');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	$head[$h][0] = DOL_URL_ROOT.'/hrm/establishment/info.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;
 
+<<<<<<< HEAD
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'establishment','remove');
+=======
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'establishment', 'remove');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	return $head;
 }
@@ -82,6 +98,7 @@ function hrm_admin_prepare_head()
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+<<<<<<< HEAD
     complete_head_from_modules($conf,$langs,'',$head,$h,'hrm_admin');
 
     complete_head_from_modules($conf,$langs,'',$head,$h,'hrm_admin','remove');
@@ -89,3 +106,11 @@ function hrm_admin_prepare_head()
     return $head;
 }
 
+=======
+    complete_head_from_modules($conf, $langs, '', $head, $h, 'hrm_admin');
+
+    complete_head_from_modules($conf, $langs, '', $head, $h, 'hrm_admin', 'remove');
+
+    return $head;
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -1,0 +1,5 @@
+README
+------
+
+Scripts in this directory can be used to load or purge data of a database instance.
+WARNING: Some of this script may delete definitely data.

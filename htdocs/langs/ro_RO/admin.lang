@@ -1,7 +1,11 @@
 # Dolibarr language file - Source file is en_US - admin
 Foundation=Fundaţie
 Version=Versiune
+<<<<<<< HEAD
 Publisher=Publisher
+=======
+Publisher=Editor
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 VersionProgram=Versiune program
 VersionLastInstall=Versiunea iniţială instalată
 VersionLastUpgrade=Ultima versiune upgrade
@@ -9,6 +13,7 @@ VersionExperimental=Experimental
 VersionDevelopment=Dezvoltare
 VersionUnknown=Necunoscut
 VersionRecommanded=Recomandat
+<<<<<<< HEAD
 FileCheck=Cercetarea integrității fișierelor
 FileCheckDesc=This tool allows you to check the integrity of files and setup of your application, comparing each files with the official ones. Value of some setup constants may also be checked. You can use this tool to detect if some files were modified by a hacker for example.
 FileIntegrityIsStrictlyConformedWithReference=Files integrity is strictly conformed with the reference.
@@ -42,6 +47,41 @@ DBStoringCharset=Set caractere  al bazei de date pentru  stocarea datelor
 DBSortingCharset=Set caractereal bazei de date pentru sortarea datelor
 ClientCharset=Client charset
 ClientSortingCharset=Client collation
+=======
+FileCheck=Seturi de verificări de integritate a pachetelor
+FileCheckDesc=Acest instrument vă permite să verificați integritatea fișierelor și configurarea aplicației dvs., comparând fiecare fișier cu cel oficial. Este posibilă verificarea valorilor unor constante de configurare. Puteți utiliza acest instrument pentru a determina dacă fișierele au fost modificate (de exemplu, de către un hacker).
+FileIntegrityIsStrictlyConformedWithReference=Integritatea fișierelor este in strictă conformitate cu referința.
+FileIntegrityIsOkButFilesWereAdded=Verificarea integrității fișierelor a reușit, totuși au fost adăugate unele fișiere noi.
+FileIntegritySomeFilesWereRemovedOrModified=Verificarea integrității fișierelor a eșuat. Unele fișiere au fost modificate, eliminate sau adăugate.
+GlobalChecksum=Sumă de control globală
+MakeIntegrityAnalysisFrom=Analizați integritatea fișierelor de aplicații de la
+LocalSignature=Semnătura locală încorporată (mai puțin fiabilă)
+RemoteSignature=Semnătura remote (mai fiabilă)
+FilesMissing= Fișiere Lipsa
+FilesUpdated= Fișiere Actualizate
+FilesModified=Fișiere modificate
+FilesAdded=Fișiere adăugate
+FileCheckDolibarr=Verificați integritatea fișierelor de aplicații
+AvailableOnlyOnPackagedVersions=Fișierul local pentru verificarea integrității este disponibil numai când aplicația este instalată dintr-un pachet oficial
+XmlNotFound=Integritatea fișierului de aplicație Xml nu a fost găsit
+SessionId=ID Sesiune
+SessionSaveHandler=Handler pentru a salva sesiunile
+SessionSavePath=Locația sesiunii salvate
+PurgeSessions=Goleşte sesiunile
+ConfirmPurgeSessions=Chiar vrei să ștergi toate sesiunile? Acest lucru va deconecta fiecare utilizator (cu excepția dvs.).
+NoSessionListWithThisHandler=Handlerul sesiunii salvate configurat la dvs. în PHP nu permite afișarea tuturor sesiunilor in derulare.
+LockNewSessions=Blocare  conexiuni noi
+ConfirmLockNewSessions=Sigur doriți să restricționați orice nouă conexiune Dolibarr către dvs.? Numai utilizatorul <b> %s </b> se va putea conecta după aceea.
+UnlockNewSessions=Înlăturaţi blocarea  conexiunii
+YourSession=Sesiuniea dvs
+Sessions=Sesiuni utilizatori
+WebUserGroup=Web Server utilizator / grup
+NoSessionFound=Configurația dvs. PHP pare să nu permită listarea sesiunilor active. Directorul utilizat pentru salvarea sesiunilor (<b> %s </b>) ar putea fi protejat (de exemplu prin permisiuni ale sistemului de operare sau prin directiva PHP open_basedir).
+DBStoringCharset=Set caractere  al bazei de date pentru  stocarea datelor
+DBSortingCharset=Set caractereal bazei de date pentru sortarea datelor
+ClientCharset=Set de caractere client
+ClientSortingCharset=Compararea clienților
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 WarningModuleNotActive=<b>Modulul %s</b> trebuie să fie activat
 WarningOnlyPermissionOfActivatedModules=Numai permisiunile legate de modulele activate  sunt prezentate aici. Aveţi posibilitatea să activaţi alte module în Setup -  Pagina Module.
 DolibarrSetup=Dolibarr instalare sau actualizare
@@ -50,6 +90,7 @@ ExternalUser=Utilizator extern
 InternalUsers=Utilizatori interni
 ExternalUsers=Utilizatori externi
 GUISetup=Afişare
+<<<<<<< HEAD
 SetupArea=CONFIGURARE
 UploadNewTemplate=Upload new template(s)
 FormToTestFileUploadForm=Formular pentru testarear încărcării de  fişiere (în funcţie de configurare)
@@ -58,6 +99,16 @@ RemoveLock=Eliminaţi  fişierul <b>%s</b> dacă acesta există, pentru a permit
 RestoreLock=Înlocuiţi un <b>fisier %s</b> cu permisiunea citit doar pe fişier pentru a dezactiva orice utilizare de update.
 SecuritySetup=Setări Securitate
 SecurityFilesDesc=Define here options related to security about uploading files.
+=======
+SetupArea=Setări
+UploadNewTemplate=Încărcați șabloane noi
+FormToTestFileUploadForm=Formular pentru testarear încărcării de  fişiere (în funcţie de configurare)
+IfModuleEnabled=Notă: Da este folositor numai dacă modul  <b>%s</b> este activat
+RemoveLock=Eliminați / redenumiți fișierul <b> %s </b> dacă există, pentru a permite utilizarea instrumentului Actualizare / Instalare.
+RestoreLock=Restaurați fișierul <b> %s </b>, numai cu permisiunea de citire, pentru a dezactiva orice viitoare utilizare a instrumentului Actualizare / Instalare.
+SecuritySetup=Setări Securitate
+SecurityFilesDesc=Definiți aici opțiunile legate de securitatea încărcării fișierelor.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorModuleRequirePHPVersion=Eroare, acest modul necesită PHP versiunea %s sau mai mare
 ErrorModuleRequireDolibarrVersion=Eroare, acest modul Dolibarr necesită versiunea %s sau mai mare
 ErrorDecimalLargerThanAreForbidden=Eroare, o precizie mai mare decât  <b>%s</b> nu este suportat.
@@ -65,6 +116,7 @@ DictionarySetup=Setări Dictionar
 Dictionary=Dicţionare
 ErrorReservedTypeSystemSystemAuto=Valorile 'system' și 'systemauto' pentru  tip sunt rezervate. Puteți utiliza 'user' ca valoare pentru a adăuga propriile dvs. înregistrări
 ErrorCodeCantContainZero=Codul nu poate conţine valoarea 0
+<<<<<<< HEAD
 DisableJavascript=Dezactivează funcţiile JavaScript si Ajax (Recomandat pentru persoanele oarbe sau browserele text )
 UseSearchToSelectCompanyTooltip= De asemenea, dacă aveți un număr mare de terţi (> 100 000), puteți crește viteza prin setarea constantei COMPANY_DONOTSEARCH_ANYWHERE la 1 la Setup->Other. Căutarea va fi limitată la începutul șirului.
 UseSearchToSelectContactTooltip=De asemenea, dacă aveți un număr mare de terţi (> 100 000), puteți crește viteza prin setarea constantei COMPANY_DONOTSEARCH_ANYWHERE la 1 la Setup->Other. Căutarea va fi limitată la începutul șirului.
@@ -73,6 +125,19 @@ DelaiedFullListToSelectContact=Așteptați să apăsați o cheie înainte de a �
 NumberOfKeyToSearch=Nr caractere pentru a declanşa căutare: %s
 NotAvailableWhenAjaxDisabled=Nu este disponibil, atunci când Ajax cu handicap
 AllowToSelectProjectFromOtherCompany=On document of a third party, can choose a project linked to another third party
+=======
+DisableJavascript=Dezactivează funcţiile  JavaScript si Ajax
+DisableJavascriptNote=Note: For test or debug purpose. For optimization for blind person or text browsers, you may prefer to use the setup on the profile of user
+UseSearchToSelectCompanyTooltip= De asemenea, dacă aveți un număr mare de terţi (> 100 000), puteți crește viteza prin setarea constantei COMPANY_DONOTSEARCH_ANYWHERE la 1 la Setup->Other. Căutarea va fi limitată la începutul șirului.
+UseSearchToSelectContactTooltip=De asemenea, dacă aveți un număr mare de terţi (> 100 000), puteți crește viteza prin setarea constantei COMPANY_DONOTSEARCH_ANYWHERE la 1 la Setup->Other. Căutarea va fi limitată la începutul șirului.
+DelaiedFullListToSelectCompany=Așteptați până când o tastă este apăsată înainte de a încărca conținutul listei combo-urilor terțe. <br> Acest lucru ar putea crește performanța dacă aveți un număr mare de terțe părți, dar este mai puțin convenabil.
+DelaiedFullListToSelectContact=Așteptați până când este apăsată o tastă înainte de a încărca conținutul listei de contacte combo. <br> Aceasta ar putea crește performanța dacă aveți un număr mare de contacte, dar este mai puțin convenabil)
+NumberOfKeyToSearch=Number of characters to trigger search: %s
+NumberOfBytes=Number of Bytes
+SearchString=Search string
+NotAvailableWhenAjaxDisabled=Nu este disponibil, atunci când Ajax cu handicap
+AllowToSelectProjectFromOtherCompany=Pe documentul unui terț, puteți alege un proiect legat de un alt terț
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 JavascriptDisabled=JavaScript dezactivat
 UsePreviewTabs=Utilizaţi taburile previzualizare
 ShowPreview=Arată previzualizare
@@ -80,7 +145,11 @@ PreviewNotAvailable=Preview nu este disponibil
 ThemeCurrentlyActive=Tema activă în prezent
 CurrentTimeZone=TimeZone PHP (server)
 MySQLTimeZone=TimeZone MySql (database)
+<<<<<<< HEAD
 TZHasNoEffect=Datele sunt stocate și returnate de către serverul de baze de date ca și în cazul în care au fost păstrate ca șiruri transmise. Timezone are efect numai atunci când se utilizează funcția UNIX_TIMESTAMP (care nu ar trebui să fie utilizate de către Dolibarr, astfel TZ al bazei de date ar trebui să aibă nici un efect, chiar dacă sa schimbat după ce a fost introduse date).
+=======
+TZHasNoEffect=Datele sunt stocate și returnate de serverul de baze de date ca și cum ar fi păstrate ca șir trimis. Fusul orar are efect doar atunci când se folosește funcția UNIX_TIMESTAMP (care nu ar trebui să fie utilizată de Dolibarr, astfel că baza de date TZ nu ar trebui să aibă efect, chiar dacă este schimbată după introducerea datelor).
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Space=Spaţiu
 Table=Tabel
 Fields=Câmpuri
@@ -91,7 +160,11 @@ NextValueForInvoices=Urmatoarea valoare (facturi)
 NextValueForCreditNotes=Urmatoarea valoare (credit note)
 NextValueForDeposit=Valoarea următoare (plata în avans)
 NextValueForReplacements=Urmatoarea valoare(înlocuiri)
+<<<<<<< HEAD
 MustBeLowerThanPHPLimit=Notă:  PHP limitează fiecare upload ladimensiunea de <b> %s</b>  %s chiar dacă valoarea acestui parametru este
+=======
+MustBeLowerThanPHPLimit=Notă: configurația <b> dvs. </b>  PHP limitează în prezent dimensiunea maximă a fișierului pentru încărcare la <b> %s </b> %s, indiferent de valoarea acestui parametru
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoMaxSizeByPHPLimit=Notă: Nicio limită setată în configuraţia dvs. PHP
 MaxSizeForUploadedFiles=Mărimea maximă pentru fişierele încărcate (0 pentru a interzice orice încărcare)
 UseCaptchaCode=Utilizaţi codul grafic  (CAPTCHA)  pe pagina de login
@@ -101,7 +174,11 @@ AntiVirusParam= Mai multe despre parametrii în linia de comandă
 AntiVirusParamExample= Exemplu pentru ClamWin: --database="C:\\Program Files (x86)\\ClamWin\\lib"
 ComptaSetup=Setări Modul Contabilitate
 UserSetup=Setări Modul Utilizatori
+<<<<<<< HEAD
 MultiCurrencySetup=Multi-currency setup
+=======
+MultiCurrencySetup=Setarea în mai multe valute
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MenuLimits=Limite şi precizii
 MenuIdParent=ID Meniu părinte
 DetailMenuIdParent=ID-ul  meniului părinte (0 pentru top meniu )
@@ -111,14 +188,22 @@ NotConfigured=Modulul / aplicația nu a fost configurată
 Active=Activ
 SetupShort=Setări
 OtherOptions=Alte opţiuni
+<<<<<<< HEAD
 OtherSetup=Alte Setări
+=======
+OtherSetup=Alte setări
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrentValueSeparatorDecimal=Separator zecimal
 CurrentValueSeparatorThousand=Separator mii
 Destination=Destinaţii
 IdModule=ID Modul
 IdPermissions=ID Permisiuni
 LanguageBrowserParameter=Parametru %s
+<<<<<<< HEAD
 LocalisationDolibarrParameters=Parametrii Localizare
+=======
+LocalisationDolibarrParameters=Parametrii localizării
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ClientTZ=Time Zone client (utilizator)
 ClientHour=Client Time(utilizator)
 OSTZ=Time Zone Server OS
@@ -126,18 +211,28 @@ PHPTZ=Time Zone Server PHP
 DaylingSavingTime=Ora de vară (utilizator)
 CurrentHour=Timp  PHP (server)
 CurrentSessionTimeOut=Sesiunea curentă timeout
+<<<<<<< HEAD
 YouCanEditPHPTZ=Pentru a seta un alt fus orar PHP (nu este necesar), puteți încerca să adăugați un fișier .htaccess cu o linie precum "SetEnv TZ Europe / Paris"
 HoursOnThisPageAreOnServerTZ=Warning, in contrary of other screens, hours on this page are not in your local timezone, but for the timezone of the server.
 Box=Widget
 Boxes=Widgeturi
 MaxNbOfLinesForBoxes=Număr maxim de linii pentru widgeturi
 AllWidgetsWereEnabled=All available widgets are enabled
+=======
+YouCanEditPHPTZ=Pentru a seta un alt fus de orar PHP (nu se cere), puteți încerca să adăugați un fișier .htaccess cu o linie ca "SetEnv TZ Europe / Paris"
+HoursOnThisPageAreOnServerTZ=Atenție, contrar altor ecrane, orele din această pagină nu sunt în fusul orar local, ci în fusul orar al serverului.
+Box=Widget
+Boxes=Widgeturi
+MaxNbOfLinesForBoxes=Numărul maxim de linii pentru widget-uri
+AllWidgetsWereEnabled=Toate widgeturile disponibile sunt activate
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PositionByDefault=Poziţia implicită
 Position=Poziţie
 MenusDesc=Managerii de meniuri au stabilit conținutul celor două bare de meniu (orizontală și verticală).
 MenusEditorDesc=Editorul de meniuri vă permite să definiți intrări personalizate din meniu. Folosiți-l cu grijă pentru a evita instabilitatea și intrările de meniuri care nu pot fi accesate permanent. <br> Unele module adaugă meniuri (mai ales în meniul <b> Toate </b>). Dacă eliminați din greșeală unele dintre aceste intrări, le puteți restabili dezactivând și reînființând modulul.
 MenuForUsers=Meniu pentru utilizatori
 LangFile=Fişiere. Lang
+<<<<<<< HEAD
 System=Sistem
 SystemInfo=Informaţii Sistem
 SystemToolsArea=Instrumente Sistem
@@ -152,6 +247,23 @@ PurgeRunNow=Elimină acum
 PurgeNothingToDelete=Nici un director sau fișier de șters.
 PurgeNDirectoriesDeleted=<b> %s</b> fişiere sau directoare şterse.
 PurgeNDirectoriesFailed=Failed to delete <b>%s</b> files or directories.
+=======
+Language_en_US_es_MX_etc=Limba (en_US, es_MX, ...)
+System=Sistem
+SystemInfo=Informaţii Sistem
+SystemToolsArea=Instrumente Sistem
+SystemToolsAreaDesc=Această zonă oferă funcții de administrare. Utilizați meniul pentru a alege caracteristica cerută.
+Purge=Curăţenie
+PurgeAreaDesc=Această pagină vă permite să ștergeți toate fișierele generate sau stocate de Dolibarr (fișiere temporare sau toate fișierele din directorul <b> %s </b>). Utilizarea acestei funcții nu este în mod normal necesară. Este oferită ca soluție pentru utilizatorii care găzduiesc Dolibarr la un furnizor care nu oferă permisiuni de ștergere a fișierelor generate de serverul web.
+PurgeDeleteLogFile=Ștergeți fișierele din jurnal, inclusiv <b> %s </ b> definite pentru modulul Syslog (fără risc de pierdere a datelor)
+PurgeDeleteTemporaryFiles=Delete all temporary files (no risk of losing data). Note: Deletion is done only if the temp directory was created 24 hours ago.
+PurgeDeleteTemporaryFilesShort=Sterge fisiere temporare
+PurgeDeleteAllFilesInDocumentsDir=Ștergeți toate fișierele din directorul: <b>%s</b>.<br>\nAceasta va șterge toate documentele generate legate de elemente (terțe părți, facturi etc.), fișierele încărcate în modulul ECM, gropile de rezervă pentru baze de date și fișierele temporare . 
+PurgeRunNow=Elimină acum
+PurgeNothingToDelete=Nici un director sau fișier de șters.
+PurgeNDirectoriesDeleted=<b> %s</b> fişiere sau directoare şterse.
+PurgeNDirectoriesFailed=Nu s-au putut șterge fișierele sau directoarele <b> %s </b>.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PurgeAuditEvents=Elimină toate evenimentele de securitate
 ConfirmPurgeAuditEvents=Sigur doriți să eliminați toate evenimentele de securitate? Toate jurnalele de securitate vor fi șterse, nu vor fi eliminate alte date.
 GenerateBackup=Generează backup
@@ -160,16 +272,28 @@ Restore=Restaurare
 RunCommandSummary=Backup poate fi lansat cu următoarea comandă
 BackupResult=Backup rezultat
 BackupFileSuccessfullyCreated=Fişier backup generat 
+<<<<<<< HEAD
 YouCanDownloadBackupFile=Fişiere generate pot fi acum descarcate
+=======
+YouCanDownloadBackupFile=Fișierul generat poate fi acum descărcat
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoBackupFileAvailable=Niciun fişier backup disponibil.
 ExportMethod=Metodă Export
 ImportMethod=Metodă Import
 ToBuildBackupFileClickHere=To build a backup file, click <a href=Pentru a construi un fişier de rezervă, faceţi clic <a href="%s">aici.</a>
+<<<<<<< HEAD
 ImportMySqlDesc=Pentru a importa un fişier copie de siguranţă, trebuie să utilizaţi mysql comanda de la linia de comandă:
 ImportPostgreSqlDesc=Pentru a importa un fişier copie de siguranţă, trebuie să utilizaţi pg_restore de comandă de la linia de comandă:
 ImportMySqlCommand=%s %s &lt;mybackupfile.sql
 ImportPostgreSqlCommand=%s %s mybackupfile.sql
 FileNameToGenerate=Nume  fişier de generat
+=======
+ImportMySqlDesc=Pentru a importa un fișier de backup MySQL, puteți folosi phpMyAdmin prin intermediul găzduirii dvs. sau puteți folosi comanda mysql din linia de comandă. <br> De exemplu:
+ImportPostgreSqlDesc=Pentru a importa un fişier copie de siguranţă, trebuie să utilizaţi pg_restore de comandă de la linia de comandă:
+ImportMySqlCommand=%s %s &lt;mybackupfile.sql
+ImportPostgreSqlCommand=%s %s mybackupfile.sql
+FileNameToGenerate=Nume fișier pentru copiere de rezervă:
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Compression=Compresie
 CommandsToDisableForeignKeysForImport=Comandă pentru a dezactiva cheile străine la import
 CommandsToDisableForeignKeysForImportWarning=Necesar dacă doriți să puteţi restaura sql dump -ul dvs  mai târziu
@@ -190,6 +314,7 @@ EncodeBinariesInHexa=Codifică  date binar  în hexazecimal
 IgnoreDuplicateRecords=Ignorați erorile de înregistrare duplicat (INSERT IGNORE)
 AutoDetectLang=Autodetect (browser limbă)
 FeatureDisabledInDemo=Funcţonalitate dezactivată în demo
+<<<<<<< HEAD
 FeatureAvailableOnlyOnStable=Feature only available on official stable versions
 BoxesDesc=Widgeturile sunt componente care prezintă unele informații pe care le puteți adăuga pentru a personaliza unele pagini. Aveți posibilitatea să alegeți între afișarea widget-ului sau nu, selectând pagina țintă și făcând clic pe "Activare" sau făcând clic pe coșul de gunoi pentru a-l dezactiva.
 OnlyActiveElementsAreShown=Numai elementele din <a href="%s"> module activate </a> sunt afişate.
@@ -214,6 +339,32 @@ DoliStoreDesc=DoliStore, market place oficial  pentru  module externe Dolibarr E
 DoliPartnersDesc=Lista companiilor care oferă module sau caracteristici dezvoltate personalizate (Notă: oricine are experiență în programarea PHP poate oferi dezvoltare personalizată pentru un proiect open source)
 WebSiteDesc=Site-uri web de referință pentru a găsi mai multe module ...
 DevelopYourModuleDesc=Some solutions to develop your own module...
+=======
+FeatureAvailableOnlyOnStable=Funcție disponibilă numai pe versiuni oficiale stabile
+BoxesDesc=Widgeturile sunt componente care prezintă unele informații pe care le puteți adăuga pentru a personaliza unele pagini. Puteți alege între afișarea sau neafișarea widget-ului , selectând pagina țintă și dând clic pe "Activați" sau făcând clic pe coșul de gunoi pentru a o dezactiva.
+OnlyActiveElementsAreShown=Numai elementele din <a href="%s"> module activate </a> sunt afişate.
+ModulesDesc=Modulele / aplicațiile determină care caracteristici sunt disponibile în software. Unele module necesită permisiuni pentru a fi acordate utilizatorilor după activarea modulului. Faceți clic pe butonul on/off (la sfârșitul liniei de module) pentru a activa/dezactiva un modul/aplicație.
+ModulesMarketPlaceDesc=Puteți descărca mai multe module de pe site-uri externe de pe Internet ...
+ModulesDeployDesc=Dacă permisiunile sistemului dvs. de fișiere permit acest lucru, puteți utiliza acest instrument pentru a implementa un modul extern. Modulul va fi apoi vizibil în tab <strong> %s </strong>.
+ModulesMarketPlaces=Găsiți aplicația / modulele externe
+ModulesDevelopYourModule=Dezvoltați-vă propriile aplicații / module
+ModulesDevelopDesc=De asemenea, va puteți dezvolta propriul modul sau puteți găsi un partener pentru a vă dezvolta unul.
+DOLISTOREdescriptionLong=În loc să porniți site-ul web <a href="https://www.dolistore.com"> www.dolistore.com </a> pentru a găsi un modul extern, puteți utiliza acest instrument încorporat care va efectua căutarea pe piața externă pentru dvs. (poate fi lentă, are nevoie de acces la internet) ...
+NewModule=Nou
+FreeModule=Liber
+CompatibleUpTo=Compatibil cu versiunea %s
+NotCompatible=Acest modul nu pare compatibil cu Dolibarr %s (Min %s - Max %s).
+CompatibleAfterUpdate=Acest modul necesită o actualizare la Dolibarr %s (Min %s - Max %s).
+SeeInMarkerPlace=Consultați Market place
+Updated=Updatat
+Nouveauté=Noutate
+AchatTelechargement=Cumpărați / Descărcați
+GoModuleSetupArea=Pentru a implementa / instala un nou modul, accesați zona de configurare a modulelor: <a href="%s"> %s </a>.
+DoliStoreDesc=DoliStore, market place oficial  pentru  module externe Dolibarr ERP / CRM
+DoliPartnersDesc=Lista companiilor care oferă module sau caracteristici dezvoltate la comandă. <br> Nota: deoarece Dolibarr este o aplicație open source, <i> oricine </i> cu experiență în programarea PHP poate dezvolta un modul.
+WebSiteDesc=Site-uri externe pentru module suplimentare (non-core) ...
+DevelopYourModuleDesc=Unele soluții pentru a vă dezvolta propriul modul ...
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 URL=Link
 BoxesAvailable=Widgeturi disponibile
 BoxesActivated=Widgeturile activate
@@ -225,23 +376,38 @@ Required=Solicitat
 UsedOnlyWithTypeOption=Folosit numai de unele optiuni agenda
 Security=Securitate
 Passwords=Parolele
+<<<<<<< HEAD
 DoNotStoreClearPassword=Nu stoca parole în mod clar în baza de date
 MainDbPasswordFileConfEncrypted=Baza de date parola criptat în conf.php
 InstrucToEncodePass=Pentru a fi parola codificată în dosarul <b>conf.php</b>, înlocuiţi linia  <br><b>$dolibarr_main_db_pass="...";</b><br>by<br><b>$dolibarr_main_db_pass="crypted:%s";</b>
 InstrucToClearPass=Pentru a avea o parolă decodificată în fișierul <b> conf.php </b>, înlocuiți linia <br> <b> $dolibarr_main_db_pass = "cripted:..."; </b> <br> cu <br> <b> $ dolibarr_main_db_pass = "%s"; </br>
 ProtectAndEncryptPdfFiles=Protecţie a generat pdf (nu recommandd, pauzele de masă PDF Generation)
+=======
+DoNotStoreClearPassword=Criptați parolele stocate în baza de date (nu ca text simplu). Este foarte recomandat să activați această opțiune.
+MainDbPasswordFileConfEncrypted=Criptați parola bazei de date stocată în conf.php. Este foarte recomandat să activați această opțiune.
+InstrucToEncodePass=Pentru a fi parola codificată în dosarul <b>conf.php</b>, înlocuiţi linia  <br><b>$dolibarr_main_db_pass="...";</b><br>by<br><b>$dolibarr_main_db_pass="crypted:%s";</b>
+InstrucToClearPass=Pentru a avea o parolă decodificată în fișierul <b> conf.php </b>, înlocuiți linia <br> <b> $dolibarr_main_db_pass = "cripted:..."; </b> <br> cu <br> <b> $ dolibarr_main_db_pass = "%s"; </br>
+ProtectAndEncryptPdfFiles=Protejați fișierele PDF generate. Acest lucru NU este recomandat, deoarece încalcă generarea PDF în bloc.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProtectAndEncryptPdfFilesDesc=Protecția unui document PDF îi permite să fie citit și imprimat cu orice browser PDF. Cu toate acestea, editarea și copierea nu mai sunt posibile. Rețineți că utilizarea acestei funcții face  nefunctională construirea unui fișier PDF global .
 Feature=Funcţionalitate
 DolibarrLicense=Licenţa
 Developpers=Dezvoltatori / colaboratori
+<<<<<<< HEAD
 OfficialWebSite=Site-ul web oficial international
 OfficialWebSiteLocal=Local web site (%s)
 OfficialWiki=Dolibarr Wiki
+=======
+OfficialWebSite=Site-ul oficial Dolibarr
+OfficialWebSiteLocal=Site-ul web local (%s)
+OfficialWiki=Documentația Dolibarr / Wiki
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 OfficialDemo=Dolibarr demo online
 OfficialMarketPlace=Oficial loc pe piaţă pentru modulelor externe / addons
 OfficialWebHostingService=Referinţă Servicii de web hosting (Cloud hosting)
 ReferencedPreferredPartners=Parteneri preferati
 OtherResources=Alte resurse
+<<<<<<< HEAD
 ExternalResources=External resources
 SocialNetworks=Social Networks
 ForDocumentationSeeWiki=Pentru utilizator sau developer documentaţia (doc, FAQs ...), <br> aruncăm o privire la Dolibarr Wiki: <br> <a href="%s" target="_blank"><b> %s</b></a>
@@ -294,6 +460,64 @@ ModuleFamilyBase=Sistem
 ModuleFamilyCrm=Clientul Ressource Management (CRM)
 ModuleFamilySrm=Vendor Relation Management (VRM)
 ModuleFamilyProducts=Managementul Produselor (PM)
+=======
+ExternalResources=Resurse externe
+SocialNetworks=Retele sociale
+ForDocumentationSeeWiki=Pentru utilizator sau developer documentaţia (doc, FAQs ...), <br> aruncăm o privire la Dolibarr Wiki: <br> <a href="%s" target="_blank"><b> %s</b></a>
+ForAnswersSeeForum=Pentru orice alte întrebări / ajutor, se poate utiliza Dolibarr forum: <br> <a href="%s" target="_blank"><b> %s</b></a>
+HelpCenterDesc1=Iată câteva resurse pentru a obține ajutor și asistență cu Dolibarr.
+HelpCenterDesc2=Unele dintre aceste resurse sunt disponibile numai în <b> engleză </b>.
+CurrentMenuHandler=Gestionarul meniu curent
+MeasuringUnit=Unitate de măsură
+LeftMargin=Marginea stângă
+TopMargin=Marginea superioar‮a
+PaperSize=Tipul hârtiei
+Orientation=Orientare
+SpaceX=Spaţiul X
+SpaceY=Spaţiul Y
+FontSize=Marimea fontului
+Content=Conţinut
+NoticePeriod=Perioadă notita
+NewByMonth=Nou pe lună
+Emails=E-mailuri
+EMailsSetup=Setarea e-mailurilor
+EMailsDesc=Această pagină vă permite să înlocuiți parametrii impliciți PHP pentru trimiterea e-mailurilor. În majoritatea cazurilor pe sistemul de operare Unix / Linux, configurarea PHP este corectă și acești parametri nu sunt necesari.
+EmailSenderProfiles=Profilurile expeditorului mailurilor
+MAIN_MAIL_SMTP_PORT=Portul SMTP / SMTPS (valoarea implicită în php.ini: <b> %s </b>)
+MAIN_MAIL_SMTP_SERVER=Gazdă SMTP / SMTPS (valoarea implicită în php.ini: <b> %s </b>)
+MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike=Portul SMTP / SMTPS (nu este definit în PHP pe sistemele de tip Unix)
+MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike=Gazdă SMTP / SMTPS (nu este definită în PHP pe sistemele de tip Unix)
+MAIN_MAIL_EMAIL_FROM=E-mailul expeditorului pentru e-mailurile automate (valoarea implicită în php.ini: <b> %s </b>)
+MAIN_MAIL_ERRORS_TO=E-mailul utilizat pentru e-mailurile care se întorc cu erori (câmpurile "Erori-To" în e-mailurile trimise)
+MAIN_MAIL_AUTOCOPY_TO= Copiați (Bcc) toate e-mailurile trimise către
+MAIN_DISABLE_ALL_MAILS=Dezactivați trimiterea tuturor e-mailurilor (în scopuri de testare sau demonstrații)
+MAIN_MAIL_FORCE_SENDTO=Trimiteți toate e-mailurile către (în loc de destinatari reali, în scopuri de testare)
+MAIN_MAIL_ENABLED_USER_DEST_SELECT=Adăugați utilizatori ai angajaților cu e-mail în lista de destinatari autorizată
+MAIN_MAIL_SENDMODE=Metoda de trimitere prin e-mail
+MAIN_MAIL_SMTPS_ID=ID SMTP (dacă serverul de expediere necesită autentificare)
+MAIN_MAIL_SMTPS_PW=Parola SMTP (dacă serverul de trimitere necesită autentificare)
+MAIN_MAIL_EMAIL_TLS=Utilizați criptarea TLS (SSL)
+MAIN_MAIL_EMAIL_STARTTLS=Utilizați criptarea TLS (STARTTLS)
+MAIN_MAIL_EMAIL_DKIM_ENABLED=Utilizați DKIM pentru a genera semnătura de e-mail
+MAIN_MAIL_EMAIL_DKIM_DOMAIN=Domeniul de e-mail pentru utilizare cu dkim
+MAIN_MAIL_EMAIL_DKIM_SELECTOR=Numele selectorului dkim
+MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY=Cheie privată pentru semnarea dkim
+MAIN_DISABLE_ALL_SMS=Dezactivați toate trimiterile prin SMS (în scopuri de testare sau demonstrații)
+MAIN_SMS_SENDMODE=Metoda de  utilizare  pentru  trimiterea SMS-urilor
+MAIN_MAIL_SMS_FROM=Numărul de telefon implicit pentru expeditor prin SMS
+MAIN_MAIL_DEFAULT_FROMTYPE=E-mailul implicit al expeditorului pentru trimiterea manuală (e-mailul utilizatorului sau e-mailul companiei)
+UserEmail=E-mailul utilizatorului
+CompanyEmail=E-mailul companiei
+FeatureNotAvailableOnLinux=Caracteristicã nu sunt disponibile pe Unix, cum ar fi sisteme. Testaţi-vă sendmail program la nivel local.
+SubmitTranslation=Dacă traducerea pentru această limbă nu este completă sau dacă găsiți erori, puteți corecta aceasta prin editarea fișierelor din directorul <b> langs / %s </b> și trimiteți modificarea la www.transifex.com/dolibarr-association/dolibarr/
+SubmitTranslationENUS=Dacă traducerea pentru această limbă nu este completă sau dacă găsiți erori, puteți corecta aceasta prin editarea fișierelor în directorul <b> langs / %s </b> și trimiteți fișiere modificate pe dolibarr.org/forum sau pentru dezvoltatori pe github.com/ Dolibarr / Dolibarr.
+ModuleSetup=Configurare Modul
+ModulesSetup=Configurare Module / Aplicație
+ModuleFamilyBase=Sistem
+ModuleFamilyCrm=Gestionarea relațiilor cu clienții (CRM)
+ModuleFamilySrm=Gestionarea relațiilor cu furnizorii (VRM)
+ModuleFamilyProducts=Gestionarea produselor (PM)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ModuleFamilyHr=Management Resurse Umane (HR)
 ModuleFamilyProjects=Proiecte
 ModuleFamilyOther=Altele
@@ -301,6 +525,7 @@ ModuleFamilyTechnic=Instrumente Multi-module
 ModuleFamilyExperimental=Module Experimentale
 ModuleFamilyFinancial=Module financiare (Contabilitate / Trezorerie)
 ModuleFamilyECM=ECM
+<<<<<<< HEAD
 ModuleFamilyPortal=Web sites and other frontal application
 ModuleFamilyInterface=Interfaces with external systems
 MenuHandlers=Manager Meniu
@@ -333,6 +558,40 @@ GenericMaskCodes4a=<u>Example on the 99th %s of the third party TheCompany, with
 GenericMaskCodes4b=<u>Exemplu de la o terţă parte a creat pe 2007-03-01:</u> <br>
 GenericMaskCodes4c=<u>Examplu pe produs creat pe  2007-03-01:</u><br>
 GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> will give <b>ABC0701-000099</b><br><b>{0000+100@1}-ZZZ/{dd}/XXX</b> will give <b>0199-ZZZ/31/XXX</b><br><b>IN{yy}{mm}-{0000}-{t}</b> will give <b>IN0701-0099-A</b> if the type of company is 'Responsable Inscripto' with code for type that is 'A_RI'
+=======
+ModuleFamilyPortal=Site-uri web și alte aplicații frontale
+ModuleFamilyInterface=Interfețe cu sisteme externe
+MenuHandlers=Manager Meniu
+MenuAdmin=Editor Meniu
+DoNotUseInProduction=Nu utilizaţi în producţie
+ThisIsProcessToFollow=Procedura de upgrade:
+ThisIsAlternativeProcessToFollow=Aceasta este o configurare alternativă de procesare manuală:
+StepNb=Pasul %s
+FindPackageFromWebSite=Găsiți un pachet care oferă funcțiile de care aveți nevoie (de exemplu, pe site-ul oficial %s).
+DownloadPackageFromWebSite=Descărcați pachetul (de exemplu de pe site-ul oficial %s).
+UnpackPackageInDolibarrRoot=Despachetați / dezarhivați fișierele arhivate în directorul serverului Dolibarr: <b> %s </b>
+UnpackPackageInModulesRoot=Pentru a implementa / instala un modul extern, despachetați / dezarhivați fișierele arhivate în directorul serverului dedicat modulelor externe: <br> <b> %s </b>
+SetupIsReadyForUse=Implementarea modulului a fost terminată. Cu toate acestea, trebuie să activați și să configurați modulul în aplicația dvs. accesând modulele de configurare a paginii: <a href="%s"> %s </a>.
+NotExistsDirect=Directorul rădăcină alternativ nu este atribuit unui director existent. <br>
+InfDirAlt=De la versiunea 3, este posibil să se definească un director rădăcină alternativ. Acest lucru vă permite să stocați, într-un director dedicat, plug-in-uri și șabloane personalizate. <br> Doar creați un director in rădăcina Dolibarr (de exemplu: personalizat).<br>
+InfDirExample=<br> Atunci declarați în fișierul <strong> conf.php </strong> <br> $ dolibarr_main_url_root_alt = '/ custom' <br> $ dolibarr_main_document_root_alt = '/ calea / din / dolibarr / htdocs / personalizat' <br> Dacă aceste linii sunt comentate cu "#", pentru a le activa, doar anulaţi comentarea prin eliminarea caracterului "#".
+YouCanSubmitFile=Alternativ, puteți încărca pachetul de fișiere .zip pentru module:
+CurrentVersion=Dolibarr versiunea curentă
+CallUpdatePage=Navigați la pagina care actualizează structura și datele bazei de date: %s.
+LastStableVersion=Ultima versiune stabilă
+LastActivationDate=Ultima dată de activare
+LastActivationAuthor=Ultimul autor de activare
+LastActivationIP=Ultimul IP de activare
+UpdateServerOffline=Update server offline
+WithCounter=Gestionați un contor
+GenericMaskCodes=Puteți introduce orice mască de numerotare. În această mască, ar putea fi folosit următoarele etichete: <br> <b>{000000}</b> corespunde unui număr care va fi incrementat pe fiecare% s. Introduceți cât mai multe zerouri ca lungimea dorită a contra. Contorul va fi completat cu zerouri la stânga, în scopul de a avea cât mai multe zerouri ca masca. <br> <b>{000000} +000</b> fel ca și anterior, dar o compensare corespunzător cu numărul din dreapta semnului + se aplică începând cu prima% s. <br> <b>{000000 @ x}</b> fel ca și anterior, dar contorul este resetat la zero atunci când se ajunge la o lună x (x între 1 și 12, sau 0 pentru a folosi primele luni ale anului fiscal definite în configurația dvs., sau 99 pentru a reseta la zero în fiecare lună ). Dacă această opțiune este folosită și x este 2 sau mai mare, atunci secvența {aa} {mm} sau {AAAA} {mm} este de asemenea necesară. <br> <b>{Dd}</b> zi (01 la 31). <br> <b>{Mm}</b> luni (01 la 12). <br> <b>{AA}, {AAAA}</b> sau <b>{y}</b> an peste 2, 4 sau 1 numere. <br>
+GenericMaskCodes2=<b> {cccc} </b> codul clientului pe n caractere <br><b> {cccc000} </b> codul clientului pe n caractere este urmat de un contor dedicat clientului. Acest contor dedicat clientului este resetat în același timp cu contorul global. <br> <b> {tttt} </b> Codul tipului de terță parte pe n caractere (vedeți meniul Acasă - Configurare - Dicționar - Tipuri de terțe părți) . Dacă adăugați această etichetă, contorul va fi diferit pentru fiecare tip de terță parte<br>\n
+GenericMaskCodes3=Toate celelalte caractere în masca va rămâne intactă. <br> Spaţiile nu sunt permise. <br>
+GenericMaskCodes4a=<u> Exemplu privind al 99-lea %s  terț TheCompany, cu data 2007-01-31: </u> <br>
+GenericMaskCodes4b=<u>Exemplu de la o terţă parte a creat pe 2007-03-01:</u> <br>
+GenericMaskCodes4c=<u>Examplu pe produs creat pe  2007-03-01:</u><br>
+GenericMaskCodes5=<b> ABC{yy}{mm}-{000000}</b> va da <b> ABC0701-000099 </b> <br> <b> {0000+100@1}-ZZZ/{dd}/XXX</b> va da <b> 0199-ZZZ/31/XXX</b> <br> <b> IN{yy}{mm}-{0000}-{t} </b> va da <b> IN0701-0099-A </b> dacă tipul companiei este "Responsible Inscripto" cu codul pentru tipul care este "A_RI"
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 GenericNumRefModelDesc=Întoarceţi-vă un număr de personalizabil definite în conformitate cu o masca.
 ServerAvailableOnIPOrPort=Server este disponibil la <b>adresa %s</b> pe <b>portul %s</b>
 ServerNotAvailableOnIPOrPort=Serverul nu este disponibil la <b>adresa %s</b> pe <b>portul %s</b>
@@ -343,6 +602,7 @@ ErrorCantUseRazIfNoYearInMask=Eroare, nu se poate folosi opțiunea  @ resetează
 ErrorCantUseRazInStartedYearIfNoYearMonthInMask=Eroare, nu poate utilizator @ opţiune dacă secvenţa (aa) (mm) sau (AAAA) (mm) nu este în masca.
 UMask=UMask parametru pentru noi imagini pe Unix / Linux / BSD sistem de fişiere.
 UMaskExplanation=Acest parametru permite să se definească permissions stabilit, în mod implicit pe fişierele create de Dolibarr pe server (în timpul de încărcare, de exemplu). <br> Acesta trebuie să fie de octal valoare (de exemplu, 0666 înseamnă citi şi scrie pentru toată lumea). <br> Ce paramtre ne sert pas sous un serveur Windows.
+<<<<<<< HEAD
 SeeWikiForAllTeam=Take a look at the wiki page for full list of all actors and their organization
 UseACacheDelay= Întârziere pentru caching de export de răspuns în câteva secunde (0 sau gol pentru nici un cache)
 DisableLinkToHelpCenter=Ascundere link-ul <b>"Aveţi nevoie de ajutor sau sprijin"</b> de la pagina de login
@@ -356,20 +616,45 @@ ExamplesWithCurrentSetup=Exemple cu care rulează curent setup
 ListOfDirectories=Lista de directoare OpenDocument template-uri
 ListOfDirectoriesForModelGenODT=List of directories containing templates files with OpenDocument format.<br><br>Put here full path of directories.<br>Add a carriage return between eah directory.<br>To add a directory of the GED module, add here <b>DOL_DATA_ROOT/ecm/yourdirectoryname</b>.<br><br>Files in those directories must end with <b>.odt</b> or <b>.ods</b>.
 NumberOfModelFilesFound=Numărul de şabloane fişiere ODT/ODS   găsite în acele directoare
+=======
+SeeWikiForAllTeam=Uitați-vă la pagina Wiki pentru o listă de contribuitori și organizațiiile lor
+UseACacheDelay= Întârziere pentru caching de export de răspuns în câteva secunde (0 sau gol pentru nici un cache)
+DisableLinkToHelpCenter=Ascundere link-ul <b>"Aveţi nevoie de ajutor sau sprijin"</b> de la pagina de login
+DisableLinkToHelp=Ascunde link-ul Ajutor Online "<b>%s</b>"
+AddCRIfTooLong=Nu există nici o adaptare automată a textului, textul prea lung nu va fi afișat pe documente. Vă rugăm să apăsaţi tasta ENTER în zona de text, dacă este necesar.
+ConfirmPurge=Sigur doriți să executați această curățare ? <br> Aceasta va șterge definitiv toate fișierele de date fără nici o modalitate de a le reconstitui (fișiere ECM, fișiere atașate ...).
+MinLength=Lungimea minimă
+LanguageFilesCachedIntoShmopSharedMemory=Fişierele  .lang încărcate în memorie partajata
+LanguageFile=Fișier lingvistic
+ExamplesWithCurrentSetup=Exemple cu configurația curentă
+ListOfDirectories=Lista de directoare OpenDocument template-uri
+ListOfDirectoriesForModelGenODT=Lista de directoare care conţin fişiere șablon in format OpenDocument.<br><br>puneţi aici intreaga cale de directoare.<br>Intoarceţi-va la inceputul textului la fiecare director.<br>Pentru a adăuga un director de modul GED, adăugaţi aici <b>DOL_DATA_ROOT/ecm/yourdirectoryname</b>.<br><br>Fişierele în aceste directoare trebuie să se termine cu <b>.odt</b> or <b>.ods</b>.
+NumberOfModelFilesFound=Numărul de fișiere șablon ODT / ODS găsite în aceste directoare
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ExampleOfDirectoriesForModelGen=Exemple de sintaxa: <br> c: mydir \\ <br> / Home / mydir <br> DOL_DATA_ROOT / ECM / ecmdir
 FollowingSubstitutionKeysCanBeUsed=<br> Pentru a şti cum să vă creaţi şabloane DOCX, ODT documente, înainte de a le stoca în aceste directoare, citiţi documentaţia wiki:
 FullListOnOnlineDocumentation=http://wiki.dolibarr.org/index.php/Create_an_ODT_document_template
 FirstnameNamePosition=Poziţia Prenume / Nume
+<<<<<<< HEAD
 DescWeather=Următoarele imagini vor fi afişate pe tabloul de bord atunci când numărul de acţiuni întârziere atinge următoarele valori:
 KeyForWebServicesAccess=Pentru a utiliza Web Services (parametru &quot;dolibarrkey&quot; în WebServices)
 TestSubmitForm=Intrare test de formă
 ThisForceAlsoTheme=Folosind acest meniu managerul va folosi, de asemenea, propria temă tot ce este alegerea de către utilizator. De asemenea, acest manager de meniu specializat pentru smartphone-uri nu functioneaza pe toate smartphone-uri. Utilizaţi un alt manager de meniu, dacă aveţi probleme pe a ta.
 ThemeDir=Director Teme
 ConnectionTimeout=Conexiune timeout
+=======
+DescWeather=Următoarele imagini vor fi afișate pe tabloul de bord atunci când numărul ultimelor acțiuni va atinge următoarele valori:
+KeyForWebServicesAccess=Pentru a utiliza Web Services (parametru &quot;dolibarrkey&quot; în WebServices)
+TestSubmitForm=Intrare test de formă
+ThisForceAlsoTheme=Utilizând acest meniu, managerul va folosi și propria temă indiferent de alegerea utilizatorului. De asemenea, acest manager de meniu specializat pentru smartphone-uri nu funcționează pe toate smartphone-urile. Utilizați un alt manager de meniuri dacă întâmpinați probleme cu smartphone-ul dvs.
+ThemeDir=Director Teme
+ConnectionTimeout=Pauză de conectare
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ResponseTimeout=Răspuns timeout
 SmsTestMessage=Mesaj de test de la PHONEFROM__ __ la __ PHONETO__
 ModuleMustBeEnabledFirst=Modulul <b> %s</b> trebuie să fie activat daca aveti nevoie de aceasta functie
 SecurityToken=Cheia pentru URL-uri sigure
+<<<<<<< HEAD
 NoSmsEngine=Nu expeditor SMS Manager disponibile. SMS expeditor manager nu sunt instalate implicit cu distribuţia (deoarece depinde de un furnizor extern), dar puteţi găsi unele pe http://www.dolistore.com
 PDF=PDF
 PDFDesc=Puteţi seta opţiunile de fiecare globale referitoare la generarea PDF
@@ -382,11 +667,26 @@ HideDescOnPDF=Ascunde descrierea produselor pe PDF ul generat
 HideRefOnPDF=Ascunde ref. produs pe PDF ul generat
 HideDetailsOnPDF=Ascunde detaliile liniilor de produs în PDF-ul generat
 PlaceCustomerAddressToIsoLocation=Use french standard position (La Poste) for customer address position
+=======
+NoSmsEngine=Nu este disponibil niciun manager de expediere SMS-uri. Un manager de expediere SMS-uri nu este instalat cu distribuția implicită deoarece acesta depinde de un furnizor extern, dar puteți găsi pe %s
+PDF=PDF
+PDFDesc=Opțiuni globale pentru generare PDF.
+PDFAddressForging=Reguli pentru casetele de adrese
+HideAnyVATInformationOnPDF=Ascundeți toate informațiile referitoare la taxa pe vânzări / TVA
+PDFRulesForSalesTax=Reguli pentru taxa pe vânzări / TVA
+PDFLocaltax=Reguli pentru %s
+HideLocalTaxOnPDF=Ascundeți %s rata în coloana Vânzare fiscală
+HideDescOnPDF=Ascunde descrierea produselor
+HideRefOnPDF=Ascundeți referinţele produselor
+HideDetailsOnPDF=Ascundeți detaliile liniei de produs
+PlaceCustomerAddressToIsoLocation=Utilizați poziția standard franceză (La Poste) pentru poziția adresei clienților
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Library=Bibliotecă
 UrlGenerationParameters=Parametrii pentru a asigura URL-uri
 SecurityTokenIsUnique=Utilizaţi un unic parametru securekey pentru fiecare URL
 EnterRefToBuildUrl=Introduceţi de referinţă pentru %s obiect
 GetSecuredUrl=Obţineţi URL-ul calculat
+<<<<<<< HEAD
 ButtonHideUnauthorized=Ascundeți butoanele pentru utilizatorii care nu sunt administratori pentru acțiuni neautorizate, în loc să apară butoane dezactivate în culoarea gri.
 OldVATRates=Vechea rată TVA
 NewVATRates=Noua rată TVA
@@ -395,6 +695,16 @@ MassConvert=Lansare convertire în masă
 String=String
 TextLong=Long text
 HtmlText=Html text
+=======
+ButtonHideUnauthorized=Ascundeți butoanele pentru utilizatorii care nu sunt administratori pentru acțiuni neautorizate, în loc să apară butoane dezactivate în culoarea gri
+OldVATRates=Vechea rată TVA
+NewVATRates=Noua rată TVA
+PriceBaseTypeToChange=Modifică la prețuri cu valoarea de referință de bază definit pe
+MassConvert=Lansați conversia în bloc
+String=String
+TextLong=Long text
+HtmlText=Text HTML
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Int=Întreg
 Float=Float
 DateAndTime=Data şi ora
@@ -408,6 +718,7 @@ ExtrafieldSelect = Select Listă
 ExtrafieldSelectList = Select din tabel
 ExtrafieldSeparator=Separator (nu un câmp)
 ExtrafieldPassword=Parolă
+<<<<<<< HEAD
 ExtrafieldRadio=Butoane radio (numai la alegere)
 ExtrafieldCheckBox=Casetele de selectare
 ExtrafieldCheckBoxFromList=Căsuțele de selectare din tabel
@@ -423,22 +734,47 @@ ExtrafieldParamHelpchkbxlst=List of values comes from a table<br>Syntax : table_
 ExtrafieldParamHelplink=Parameters must be ObjectName:Classpath<br>Syntax : ObjectName:Classpath<br>Examples :<br>Societe:societe/class/societe.class.php<br>Contact:contact/class/contact.class.php
 LibraryToBuildPDF=Bibliotecă utilizată pentru generarea PDF-urilor
 LocalTaxDesc=Unele țări aplică 2 sau 3 taxe pe fiecare linie de facturare. Dacă este cazul, alegeți tipul pentru al doilea și al treilea impozit și rata sa. Tipul posibil sunt: ​​<br> 1: taxa locală se aplică produselor și serviciilor fără TVA (taxa locala se calculează pe valoare fără taxă) <br> 2: taxa locală se aplică produselor și serviciilor, inclusiv TVA (taxa locala se calculează în funcție de valoare+ taxa principala ) <br> 3: taxa locală se aplică produselor fără TVA (taxa locala se calculează în funcție de valoare fără taxa) <br> 4: taxa locală se aplică produselor care includ tva (taxa locala se calculează în funcție de valoare+ tva principală) <br> 5: taxa locala se aplică serviciilor fără TVA (taxa locala se calculează pe valoarea fără taxă) <br> 6: taxa locală se aplică serviciilor, inclusiv TVA (taxa locala se calculează pe valoare+ taxă)
+=======
+ExtrafieldRadio=Butoane radio (doar o singură alegere)
+ExtrafieldCheckBox=Casetele de selectare
+ExtrafieldCheckBoxFromList=Căsuțele de selectare din tabel
+ExtrafieldLink=Link către un obiect
+ComputedFormula=Câmp calculat
+ComputedFormulaDesc=Puteți introduce aici o formulă care utilizează alte proprietăți ale obiectului sau orice codare PHP pentru a obține o valoare dinamică calculată. Puteți utiliza orice formule compatibile PHP, inclusiv operatorul de stare "?" și următorul obiect global:<strong>$db, $conf, $langs, $mysoc, $user, $object </strong>. <br><strong>AVERTISMENT </strong> Doar unele proprietăţi ale $obiect pot fi disponibile. Dacă aveți nevoie de proprietăți care nu sunt încărcate, trebuie doar să vă aduceți obiectul în formula dvs. ca în cel de-al doilea exemplu.<br> Utilizarea unui câmp calculat înseamnă că nu vă puteți introduce nici o valoare din interfață. De asemenea, dacă există o eroare de sintaxă, formula poate să nu redea nimic. <br><br> Exemplul formulei: <br>$object->id < 10? round($object-> id / 2, 2): ($object->id + 2 * $user-> id) * (int) substr($mysoc->zip, 1, 2) <br><br> Exemplu de reîncărcare a obiectului <br> (($reloadedobj = new Societe($db)) && ($reloadedobj->fetch($obj->id ? $obj->id: ($obj->rowid ? $obj->rowid: $object->id)) > 0)) ?$reloadedobj->array_options['options_extrafieldkey'] * $reloadedobj->capital / 5: '-1'<br><br> Alt exemplu de formula pentru forțarea încărcării obiectului și a obiectului său părinte:<br> (($reloadedobj = new Task($db)) && ($reloadedobj->fetch($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetch($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref: "Proiectul părinte nu a fost găsit"
+ExtrafieldParamHelpPassword=Lăsând acest câmp necompletat înseamnă că această valoare va fi stocată fără criptare (câmpul trebuie ascuns numai cu stea pe ecran). <br> Setarea "auto" pentru utilizarea regulii de criptare implicită pentru a salva parola în baza de date (atunci valoarea citită va fi hash numai, nici o şansă de a recupera valoarea inițială)
+ExtrafieldParamHelpselect=Lista de valori trebuie să fie linii cu format cheie,valoare (unde cheia nu poate fi "0") <br> <br> de exemplu: <br> 1,valoare1 <br> 2,valoare2 <br> code3,valoare3 <br> ... <br> <br> Pentru a avea lista în funcție de o altă listă de atribute complementare: <br> 1, valoare1| opţiuni_<i> parent_list_code </i>: parent_key <br> 2,valoare2|opţiuni_ <i> parent_list_code </i>: parent_key <br><br> Pentru a avea lista în funcție de altă listă: <br> 1, valoare1| <i> parent_list_code </i>: parent_key <br> 2, valoare2| <i> parent_list_code </i>: parent_key
+ExtrafieldParamHelpcheckbox=Lista de valori trebuie să fie linii cu format cheie,valoare ( cheia nu poate fi "0") <br> <br> de exemplu: <br> 1,valoare1 <br> 2,valoare2 <br> 3,valoare3 <br> ...
+ExtrafieldParamHelpradio=Lista de valori trebuie să fie linii cu format cheie,valoare ( cheia nu poate fi "0") <br> <br> de exemplu: <br> 1,valoare1 <br> 2,valoare2 <br> 3,valoare3 <br> ...
+ExtrafieldParamHelpsellist=Lista de valori provine dintr-un tabel <br> Sintaxă: table_name: label_field: id_field :: filter <br> Exemplu: c_typent: libelle: id :: filter <br> <br> - idfilter este obligatoriu o cheie primară <br> - filtrul poate fi un test simplu (de exemplu, activ = 1) pentru a afișa numai valoarea activă <br> Puteți utiliza, de asemenea, $ID$ în filtrul care este ID-ul curent al obiectului curent <br> Pentru a face SELECT în filtru utilizați $SEL$ <br> dacă vrei să filtrezi în extracâmpuri foloseste sintaxa extra.fieldcode = ... (unde codul de câmp este codul extra-câmpului) <br> <br> Pentru a avea lista în funcție de o altă listă de atribute complementare: <br> c_typent: libelle: id: options_ <i> parent_list_code </i> |parent_column: filter <br> <br> Pentru a avea lista în funcție de altă listă: <br> c_typent: libelle: id: <i> parent_list_code </i> | parent_column: filtru
+ExtrafieldParamHelpchkbxlst=Lista de valori vine dintr-un tabel<br>Sintaxă: table_name:label_field:id_field::filter<br>Examplu: c_typent:libelle:id::filter<br><br>filtrul poate fi un simplu test (ex active=1) pentru a afişa doar valoarea activă<br>De asemenea se poate utiliza $ID$ în filtrul care este ID-ul curent al obiectului curent<br>Pentru a face o SELECTARE în filtru folosiţi $SEL$<br>dacă doriţi să filtraţi în extracâmpuri folosiţi sintaxa extra.fieldcode=... (unde codul câmpului este codul extracâmpului)<br><br>Pentru a avea lista în funcție de o altă listă de atribute complementare:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>Pentru a avea lista în funcție de o altă listă :<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
+ExtrafieldParamHelplink=Parametrii trebuie să fie ObjectName: Classpath <br> Sintaxă: ObjectName: Classpath <br> Exemple: <br> Societe:societe/class/societe.class.php <br> Contact: contact/class/contact.class.php
+LibraryToBuildPDF=Bibliotecă utilizată pentru generarea PDF-urilor
+LocalTaxDesc=Unele țări pot aplica două sau trei taxe pe fiecare linie de facturare. Dacă este cazul, alegeți tipul pentru a doua și a treia taxă și rata acestora. Tipuri posibile sunt: <br> 1: taxa locală se aplică produselor și serviciilor fără TVA (localtax se calculează pe valoare fără taxă)<br> 2: taxa locală se aplică produselor și serviciilor, inclusiv TVA (localtax se calculează în funcție de valoare+ taxa principală ) <br>3: taxa locală se aplică produselor fără TVA (localtax se calculează pe valoare fără taxă) <br>4: taxa locală se aplică produselor şi includ tva (localtax  se calculeaza pe valoare + TVA principală) <br> 5: taxa locală se aplică serviciilor fără TVA (localtax se calculează pe valoarea fără TVA) <br> 6: taxa locală se aplică serviciilor, inclusiv TVA (localtax se calculează pe sumă + taxă)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SMS=SMS
 LinkToTestClickToDial=Introduceți un număr de telefon pentru a afișa un link de test ClickToDial  Url pentru utilizatorul<strong>%s</strong>
 RefreshPhoneLink=Refresh link
 LinkToTest=Link accesibil generat pentru utilizatorul <strong>% s</strong> (faceți clic pe numărul de telefon pentru a testa)
 KeepEmptyToUseDefault=Lasă gol pentru utilizarea valorii implicite
 DefaultLink=Link implicit
+<<<<<<< HEAD
 SetAsDefault=Set as default
 ValueOverwrittenByUserSetup=Atenție, această valoare poate fi suprascrisă de setările specifice utilizatorului (fiecare utilizator poate seta propriul url clicktodial)
 ExternalModule=Modul extern - instalat în directorul %s
 BarcodeInitForThirdparties=Init cod de bare în  masă pentru terţi
+=======
+SetAsDefault=Setați ca implicit
+ValueOverwrittenByUserSetup=Atenție, această valoare poate fi suprascrisă de setările specifice utilizatorului (fiecare utilizator poate seta propriul url clicktodial)
+ExternalModule=Modul extern - instalat în directorul %s
+BarcodeInitForthird-parties=Cod de bare de masă pentru terți
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BarcodeInitForProductsOrServices=Init sau reset cod de bare în  masă pentru produse şi servicii
 CurrentlyNWithoutBarCode=În prezent, aveti <strong> %s </strong>inregistrari pe <strong> %s</strong> %s fără cod de bare definit.
 InitEmptyBarCode=Valoare inițializare pentru următoarele %s înregistrări goale
 EraseAllCurrentBarCode=Ștergeți toate valorile curente de coduri de bare 
 ConfirmEraseAllCurrentBarCode=Sigur doriți să ștergeți toate valorile actuale ale codurilor de bare?
 AllBarcodeReset=Toate valorile codurilor de bare au fost eliminate
+<<<<<<< HEAD
 NoBarcodeNumberingTemplateDefined=Niciun model numeric de cod de bare disponibil in configurarea modulului cod de bare
 EnableFileCache=Enable file cache
 ShowDetailsInPDFPageFoot=Add more details into footer of PDF files, like your company address, or manager names (to complete professional ids, company capital and VAT number).
@@ -499,10 +835,78 @@ Module30Desc=Facturi şi note de credit "de management pentru clienţi. Facturi 
 Module40Name=Furnizori
 Module40Desc=Suppliers and purchase management (purchase orders and billing)
 Module42Name=Debug Logs
+=======
+NoBarcodeNumberingTemplateDefined=Nu este activat niciun șablon de cod de bare de numere în modulul de configurare Cod de bare
+EnableFileCache=Activați memoria cache a fișierelor
+ShowDetailsInPDFPageFoot=Adăugați mai multe detalii în subsolul paginii, cum ar fi adresa companiei sau numele managerului (în plus față de ID-urile profesionale, capitalul companiei și numărul de identificare fiscală TVA).
+NoDetails=Nu există detalii suplimentare în subsolul paginii
+DisplayCompanyInfo=Afiseaza adresa societatii
+DisplayCompanyManagers=Afiseaza nume manager
+DisplayCompanyInfoAndManagers=Afișați numele companiei și numele managerului
+EnableAndSetupModuleCron=Dacă doriți ca această factură recurentă să fie generată automat, modulul * %s * trebuie să fie activat și setat corect. În caz contrar, generarea de facturi trebuie făcută manual din acest șablon utilizând butonul * Creare *. Rețineți că, chiar dacă ați activat generarea automată, puteți lansa manual generarea manuală. Generarea de duplicate pentru aceeași perioadă nu este posibilă.
+ModuleCompanyCodeCustomerAquarium=%s urmat de codul clientului pentru un cod contabil al clientului
+ModuleCompanyCodeSupplierAquarium=%s urmat de codul furnizorului pentru un cod contabil al furnizorului
+ModuleCompanyCodePanicum=Returneaza un cod contabil gol.
+ModuleCompanyCodeDigitaria=Codul contabil depinde de codul terț. Codul este compus din caracterul "C" în prima poziție urmat de primele 5 caractere ale codului terț.
+Use3StepsApproval=În mod implicit, comenzile de cumpărare trebuie să fie create și aprobate de 2 utilizatori diferiți (un pas/utilizator de creat și un pas/utilizator de aprobat. Rețineți că, dacă utilizatorul are atât permisiunea de a crea și de a aproba, va fi suficient un pas/un utilizator). Puteți solicita această opțiune pentru a introduce un al treilea pas/aprobare pentru utilizatori, dacă suma este mai mare decât o valoare dedicată (astfel încât vor fi necesari 3 pași:  1 = validare, 2 = prima aprobare și 3 = o a doua aprobare dacă suma este suficientă). <br> Setați acest lucru la gol, dacă este suficientă o aprobare (2 pași), setați-o la o valoare foarte mică (0,1) dacă este întotdeauna necesară o a doua aprobare (3 pași).
+UseDoubleApproval=Utilizați o aprobare de 3 pași atunci când suma (fără taxă) este mai mare decât ...
+WarningPHPMail=AVERTISMENT: Este adesea mai bine să configurați e-mailurile de trimis pentru a utiliza serverul de e-mail al furnizorului dvs. în loc de setarea implicită. Unii furnizori de e-mail (cum ar fi Yahoo) nu vă permit să trimiteți un e-mail de la un alt server decât propriul lor server. Setarea dvs. curentă utilizează serverul aplicației pentru a trimite e-mailuri și nu serverul furnizorului de servicii de e-mail, astfel încât unii destinatari (cel compatibil cu protocolul DMARC restrictiv) vor întreba furnizorul dvs. de e-mail dacă pot accepta e-mailul dvs. și anumiți furnizori de e-mail (cum ar fi Yahoo) pot răspunde "nu" deoarece serverul nu este al lor, astfel încât puține dintre e-mailurile trimise nu pot fi acceptate (aveți grijă și de cota de trimitere a furnizorului de servicii de e-mail). această restricție trebuie să schimbați configurarea e-mailului pentru a alege cealaltă metodă "server SMTP" și introduceți serverul SMTP și acreditările furnizate de furnizorul dvs. de e-mail.
+WarningPHPMail2=Dacă furnizorul dvs. de e-mail SMTP trebuie să restricționeze clientul de e-mail la unele adrese IP (foarte rar), aceasta este adresa IP a agentului utilizator de e-mail (MUA) pentru aplicația ERP CRM: <strong> %s </strong>.
+ClickToShowDescription=Faceți clic pentru a afișa descrierea
+DependsOn=Acest modul are nevoie de modulul (modulele)
+RequiredBy=Acest modul este solicitat de modulul (modulele)
+TheKeyIsTheNameOfHtmlField=Acesta este numele câmpului HTML. Cunoștințele tehnice sunt necesare pentru a citi conținutul paginii HTML pentru a obține numele cheie al unui câmp.
+PageUrlForDefaultValues=Trebuie să introduceți calea relativă a adresei URL a paginii. Dacă includeți parametrii în URL, valorile implicite vor fi eficiente dacă toți parametrii sunt setați la aceeași valoare.
+PageUrlForDefaultValuesCreate=<br> Exemplu: <br> Pentru formularul de creare a unei terțe părți noi este <strong> %s </strong>. <br> Pentru URL-ul modulelor externe instalate în directorul personalizat, nu includeți "personalizat/" , astfel folosiți o cale ca <strong> mymodule / mypage.php </strong> și nu personalizat /mymodule/mypage.php. <br> Dacă doriți valoarea implicită numai dacă url are un anumit parametru, puteți utiliza <strong> %s </strong>
+PageUrlForDefaultValuesList=<br> Exemplu: <br> Pentru pagina care afișează terțe părți, este <strong> %s </strong>. <br> Pentru URL-ul modulelor externe instalate în directorul personalizat, nu includeți "personalizat / utilizati o cale ca <strong> mymodule / mypagelist.php </strong> și nu personalizat /mymodule/mypagelist.php. <br> Dacă doriți valoarea implicită numai dacă URL-ul are un anumit parametru, puteți utiliza <strong> %s </strong>
+AlsoDefaultValuesAreEffectiveForActionCreate=Also note that overwritting default values for form creation works only for pages that were correctly designed (so with parameter action=create or presend...)
+EnableDefaultValues=Activați personalizarea valorilor implicite
+EnableOverwriteTranslation=Activați utilizarea traducerilor suprascrise
+GoIntoTranslationMenuToChangeThis=A fost găsită o traducere pentru cheia cu acest cod. Pentru a modifica această valoare, trebuie să o editați din Acasă-Configurare-Traducere.
+WarningSettingSortOrder=Avertisment, setarea unei ordini de sortare implicite poate duce la o eroare tehnică atunci când mergeți în lista paginii dacă câmpul este un câmp necunoscut. Dacă întâmpinați o astfel de eroare, reveniți la această pagină pentru a elimina ordinea de sortare implicită și pentru a restabili comportamentul implicit.
+Field=Câmp
+ProductDocumentTemplates=Șabloane de documente pentru a genera documentul produsului
+FreeLegalTextOnExpenseReports=Text legal gratuit pe rapoartele de cheltuieli
+WatermarkOnDraftExpenseReports=Filigran pe rapoartele de cheltuieli
+AttachMainDocByDefault=Setați această valoare la 1 dacă doriți să atașați documentul principal la e-mail în mod prestabilit (dacă este cazul)
+FilesAttachedToEmail=Ataşează fişier
+SendEmailsReminders=Trimiteți mementouri de agendă prin e-mailuri
+davDescription=Configurați un server WebDAV
+DAVSetup=Configurarea modulului DAV
+DAV_ALLOW_PRIVATE_DIR=Enable the generic private directory (WebDAV dedicated directory named "private" - login required)
+DAV_ALLOW_PRIVATE_DIRTooltip=The generic private directory is a WebDAV directory anybody can access with its application login/pass.
+DAV_ALLOW_PUBLIC_DIR=Enable the generic public directory (WebDAV dedicated directory named "public" - no login required)
+DAV_ALLOW_PUBLIC_DIRTooltip=The generic public directory is a WebDAV directory anybody can access (in read and write mode), with no authorization required (login/password account).
+DAV_ALLOW_ECM_DIR=Enable the DMS/ECM private directory (root directory of the DMS/ECM module - login required)
+DAV_ALLOW_ECM_DIRTooltip=Directorul rădăcină în care toate fișierele sunt încărcate manual când se utilizează modulul DMS / ECM. Similar accesului din interfața web, veți avea nevoie de autentificare/parolă valabilă, cu permisiuni adecvate de accesare a acestuia.
+# Modules
+Module0Name=Utilizatorii & Grupuri
+Module0Desc=Managementul Utilizatorilor/Angajaților și Grupurilor
+Module1Name=Terțe părți
+Module1Desc=Gestionarea companiilor și a contactelor (clienți, perspective ...)
+Module2Name=Comercial
+Module2Desc=Management Comercial
+Module10Name=Accounting (simplified)
+Module10Desc=Rapoarte contabile simple (jurnale, cifre de afaceri) bazate pe conținutul bazei de date. Nu folosește niciun registru contabil.
+Module20Name=Oferte
+Module20Desc=Managementul Ofertelor Comerciale
+Module22Name=Mass e-mailuri
+Module22Desc=Gestionați e-mailurile în bloc
+Module23Name=Energie
+Module23Desc=Monitorizarea consumului de energie
+Module25Name=Comenzile de vânzări
+Module25Desc=Gestionarea comenzilor de vânzări
+Module30Name=Facturi
+Module30Desc=Gestionarea facturilor și a bonurilor de credit pentru clienți. Gestionarea facturilor și a bonurilor de credit pentru furnizori
+Module40Name=Furnizori
+Module40Desc=Gestionarea furnizorilor și achizițiilor (comenzi de achiziție și facturare)
+Module42Name=Depanați jurnalele
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Module42Desc=Facilități de înregistrare (fișier, syslog, ...). Aceste jurnale sunt pentru scopuri tehnice / de depanare.
 Module49Name=Editori
 Module49Desc=Managementul Editorilor
 Module50Name=Produse
+<<<<<<< HEAD
 Module50Desc=Managementul Produselor
 Module51Name=Mass-mailing
 Module51Desc=Mass-mailing hârtie "de gestionare a
@@ -512,12 +916,28 @@ Module53Name=Servicii
 Module53Desc=Managementul Serviciilor
 Module54Name=Contracte / Abonamente
 Module54Desc=Managementul contractelor (servicii sau abonamente periodice)
+=======
+Module50Desc=Gestionarea produselor
+Module51Name=Mass-mailing
+Module51Desc=Mass-mailing hârtie "de gestionare a
+Module52Name=Stocuri
+Module52Desc=Gestiunea stocurilor (numai pentru produse)
+Module53Name=Servicii
+Module53Desc=Gestiunea serviciilor
+Module54Name=Contracte / Abonamente
+Module54Desc=Gestionarea contractelor (servicii sau abonamente periodice)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Module55Name=Coduri de bare
 Module55Desc=Coduri de bare "de gestionare a
 Module56Name=Telefonie
 Module56Desc=Telefonie integrare
+<<<<<<< HEAD
 Module57Name=Ordine de plată bancare directe
 Module57Desc=Managementul ordinelor de plată prin debit direct. Acesta include generarea de fișiere SEPA pentru țările europene.
+=======
+Module57Name=Plăți debitoare bancare directe
+Module57Desc=Gestionarea ordinelor de plată directă. Aceasta include generarea dosarului SEPA pentru țările europene.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Module58Name=ClickToDial
 Module58Desc=ClickToDial integrare
 Module59Name=Bookmark4u
@@ -527,6 +947,7 @@ Module70Desc=Managementul Intervenţiilor
 Module75Name=Ordine de deplasare şi Note de Cheltuieli
 Module75Desc=Managementul Ordinele de deplasare şi Notelor de Cheltuieli
 Module80Name=Livrări
+<<<<<<< HEAD
 Module80Desc=Managementul Livrărilor şi a Recepţiilor
 Module85Name=Banca si Casa
 Module85Desc=Managementul conturilor bancare şi in numerar
@@ -536,6 +957,17 @@ Module105Name=Mailman şi SIP
 Module105Desc=Interfaţă Mailman sau SPIP pentru modul membru
 Module200Name=LDAP
 Module200Desc=LDAP directorul de sincronizare
+=======
+Module80Desc=Livrările și gestionarea notei de livrare
+Module85Name=Bănci și numerar
+Module85Desc=Managementul conturilor bancare şi in numerar
+Module100Name=Site extern
+Module100Desc=Add a link to an external website as a main menu icon. Website is shown in a frame under the top menu.
+Module105Name=Mailman şi SIP
+Module105Desc=Interfaţă Mailman sau SPIP pentru modul membru
+Module200Name=LDAP
+Module200Desc=Sincronizarea directorului LDAP
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Module210Name=PostNuke
 Module210Desc=PostNuke integrare
 Module240Name=Exportul de date
@@ -545,6 +977,7 @@ Module250Desc=Instrument pentru a importa date în Dolibarr (cu asistenți)
 Module310Name=Membri
 Module310Desc=Fundatia membri de management
 Module320Name=Feed RSS
+<<<<<<< HEAD
 Module320Desc=Adauga RSS feed interiorul Dolibarr ecran pagini
 Module330Name=Marcaje
 Module330Desc=Management bookmark-uri
@@ -624,14 +1057,105 @@ Module54000Name=Print lP IPrinter
 Module54000Desc=Imprimare directă (fără a deschide documentele) folosind interfața CUPS IPP (imprimanta trebuie să fie vizibilă de pe server și CUPS trebuie să fie instalat pe server).
 Module55000Name=Sondaj, supraveghere sau vot
 Module55000Desc=Modulul pentru a face sondaje online, supravegheri sau voturi (cum ar fi Doodle, Studs, Rdvz, ...)
+=======
+Module320Desc=Adăugați un feed RSS la paginile Dolibarr
+Module330Name=Marcaje & comenzi rapide
+Module330Desc=Creați comenzi rapide, întotdeauna accesibile, paginilor interne sau externe pe care le accesați frecvent
+Module400Name=Proiecte sau inițiative
+Module400Desc=Gestionarea proiectelor, a potențialilor și / sau a sarcinilor. De asemenea, puteți asocia orice element (factură, comandă, propunere, intervenție, ...) unui proiect și obține o vedere transversală din vizualizarea proiectului.
+Module410Name=Webcalendar
+Module410Desc=Webcalendar integrare
+Module500Name=Taxe și cheltuieli speciale
+Module500Desc=Gestionarea altor cheltuieli (impozite de vânzare, taxe sociale sau fiscale, dividende, ...)
+Module510Name=Salarii
+Module510Desc=Înregistrați și urmăriți plățile angajaților
+Module520Name=Credite
+Module520Desc=Gestionarea creditelor
+Module600Name=Notificări
+Module600Desc=Trimiteți notificări prin e-mail declanșate de un eveniment de afaceri: pentru fiecare utilizator (setarea definită pentru fiecare utilizator), pentru contacte terțe (setare definită pentru fiecare terț) sau pentru e-mailuri specifice
+Module600Long=Rețineți că acest modul trimite e-mailuri în timp real când apare un anumit eveniment de afaceri. Dacă sunteți în căutarea unei funcții pentru a trimite memento-uri de e-mail pentru evenimente de agendă, mergeți la configurarea agendei modulului.
+Module610Name=Variante de produs
+Module610Desc=Crearea de variante de produse (culoare, dimensiune etc.)
+Module700Name=Donatii
+Module700Desc=MAnagementul Donaţiilor
+Module770Name=Rapoarte de cheltuieli
+Module770Desc=Gestionați cererile de rapoarte de cheltuieli (transport, masă, ...)
+Module1120Name=Propuneri comerciale ale furnizorilor
+Module1120Desc=Solicitați vânzătorului propunerea comercială și prețurile
+Module1200Name=Mantis
+Module1200Desc=Mantis integrare
+Module1520Name=Generare Document 
+Module1520Desc=Generarea de documente de mass e-mail
+Module1780Name=Tag-uri / Categorii
+Module1780Desc=Creați etichete/categorii (produse, clienti, furnizori, contacte sau membri)
+Module2000Name=Fckeditor
+Module2000Desc=Permite câmpurilor de text să fie editate / formatate folosind CKEditor (html)
+Module2200Name=Preţuri dinamice
+Module2200Desc=Utilizați expresii de matematică pentru generarea automată a prețurilor
+Module2300Name=Joburi programate
+Module2300Desc=Gestionarea planificată a locurilor de muncă (alias cron sau tabelul chrono)
+Module2400Name=Evenimente / Agenda
+Module2400Desc=Urmăriți evenimentele. Înregistrați evenimente automate pentru a urmări scopurile sau pentru a înregistra evenimente sau întâlniri manuale. Acesta este modulul principal pentru o bună gestionare a relațiilor cu clienții sau furnizorii.
+Module2500Name=DMS / ECM
+Module2500Desc=Sistemul de management al documentelor / Gestiunea conținutului electronic. Organizarea automată a documentelor dvs. generate sau stocate. Împărțiți-le când aveți nevoie.
+Module2600Name=API/Web services (SOAP server)
+Module2600Desc=Activați serviciile serverului Dolibarr SOAP care furnizează servicii API
+Module2610Name=Servicii API/Web (serverul REST)
+Module2610Desc=Activați serverul Dolibarr REST furnizând servicii API
+Module2660Name=Call WebServices (SOAP client)
+Module2660Desc=Activați clientul de servicii Web Dolibarr (Poate fi folosit pentru a împinge datele / cererile către servere externe. În prezent, sunt acceptate numai comenzile de cumpărare.)
+Module2700Name=Gravatar
+Module2700Desc=Utilizați serviciul Gravatar online (www.gravatar.com) pentru a afișa fotografia utilizatorilor / membrilor (găsite cu e-mailurile lor). Necesită acces la Internet
+Module2800Desc=FTP Client
+Module2900Name=GeoIPMaxmind
+Module2900Desc=GeoIP conversii Maxmind capacităţile
+Module3200Name=Arhivele nealterabile
+Module3200Desc=Activează un jurnal inalterabil al evenimentelor de afaceri. Evenimentele sunt arhivate în timp real. Jurnalul este o tabelă cu functie doar de citire a evenimentelor în lanț care pot fi exportate. Acest modul poate fi obligatoriu pentru unele țări.
+Module4000Name=HRM
+Module4000Desc=Managementul resurselor umane (managementul departamentului, contracte și păreri ale angajaților)
+Module5000Name=Multi-societate
+Module5000Desc=Vă permite să administraţi mai multe companii
+Module6000Name=Flux de lucru
+Module6000Desc=Gestionarea fluxului de lucru (crearea automată a modificării obiectului și / sau a stării automate)
+Module10000Name=Site-uri
+Module10000Desc=Creați site-uri web (publice) cu un editor WYSIWYG. Doar configurați serverul dvs. web (Apache, Nginx, ...) pentru a indica directorul dedicat Dolibarr pentru a-l avea pe internet cu propriul nume de domeniu.
+Module20000Name=Managementul cererilor de concediu
+Module20000Desc=Definiți și urmăriți cererile de concediu pentru angajați
+Module39000Name=Loturi de producţie
+Module39000Desc=Loturi, numere seriale, administrare consum de date eat-by/sell-by pentru produse
+Module40000Name=Mai multe cursuri valutare
+Module40000Desc=Utilizați cursuri valutare alternative în prețuri și documente
+Module50000Name=Paybox
+Module50000Desc=Oferiți clienților o pagină pentru plata online PayBox (carduri de credit / debit). Aceasta poate fi utilizată pentru a permite clienților dvs. să efectueze plăți ad-hoc sau plăți legate de un anumit obiect Dolibarr (factură, comandă etc.)
+Module50100Name=POS SimplePOS
+Module50100Desc=Punct de vânzare modul SimplePOS (POS simplu).
+Module50150Name=POS TakePOS
+Module50150Desc=Punct de vânzare modul TakePOS (touchscreen POS).
+Module50200Name=PayPal
+Module50200Desc=Oferiți clienților o pagină de plată online PayPal (cont PayPal sau carduri de credit / debit). Aceasta poate fi utilizată pentru a permite clienților dvs. să efectueze plăți ad-hoc sau plăți legate de un anumit obiect Dolibarr (factură, comandă etc.)
+Module50300Name=Dunga
+Module50300Desc=Oferiți clienţilor o pagină Stripe de plată online (carduri de credit/debit). Aceasta poate fi utilizată pentru a permite clienţilor să facă plăţi ad-hoc sau plăţi legate de un anumit obiect Dolibarr (factură, comandă etc ...)
+Module50400Name=Accounting (double entry)
+Module50400Desc=Gestionarea contabilă (intrări duble, suport general şi registre auxiliare). Exportați registrul în mai multe alte formate contabile .
+Module54000Name=Print lP IPrinter
+Module54000Desc=Imprimare directă (fără a deschide documentele) utilizând interfața Cups IPP (Imprimanta trebuie să fie vizibilă pe server, and CUPS trebuie să fie instalat pe server).
+Module55000Name=Sondaj, supraveghere sau vot
+Module55000Desc=Creați sondaje online, sondaje sau voturi (cum ar fi Doodle, Studs, RDVz etc ...)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Module59000Name=Marje
 Module59000Desc=Modul management marje
 Module60000Name=Comisioane
 Module60000Desc=Modul management comisioane
 Module62000Name=Incoterm
+<<<<<<< HEAD
 Module62000Desc=Adaugă functionalitati  pentru  gestionarea  Incoterm
 Module63000Name=Resurse
 Module63000Desc=Manage resources (printers, cars, room, ...) you can then share into events
+=======
+Module62000Desc=Adăugați caracteristici pentru a gestiona Incoterms
+Module63000Name=Resurse
+Module63000Desc=Gestionați resursele (imprimante, mașini, camere, ...) pentru a le aloca evenimentelor
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Permission11=Citeşte facturi
 Permission12=Creaţi/Modificare facturi
 Permission13=Facturi client nevalidate
@@ -651,9 +1175,15 @@ Permission32=Creare / Modificare produse / servicii
 Permission34=Ştergere produse / servicii
 Permission36=Exportul de produse / servicii
 Permission38=Exportul de produse
+<<<<<<< HEAD
 Permission41=Citeste proiectele și sarcinile (proiect comun și proiecte pentru care eu sunt persoana de contact). Se poate intoduce, de asemenea, timpul consumat cu sarcinile atribuite (Timesheet), pentru mine sau pentru ierarhia mea, 
 Permission42=Creați / modificați proiecte (proiecte și proiecte comune pentru care sunt persoana de contact). De asemenea, se pot crea sarcini și atribui proiecte și sarcini utilizatorilor.
 Permission44=Ştergere proiecte
+=======
+Permission41=Citiți proiectele și sarcinile (proiecte și proiecte comune pentru care sunt persoană de contact). Se poate, de asemenea, să introduceți timpul consumat, pentru mine sau pentru ierarhia mea, asupra sarcinilor atribuite (Timesheet)
+Permission42=Creați/modificați proiecte (proiecte și proiecte comune pentru care sunt persoană de contact). De asemenea, se pot crea sarcini și se pot atribui utilizatorilor proiecte și sarcini
+Permission44=Ștergeți proiectele (proiectul comun și proiectele pentru care sunt persoană de contact)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Permission45=Export proiecte
 Permission61=Citeşte intervenţii
 Permission62=Creare / Modificare intervenţii
@@ -686,23 +1216,39 @@ Permission109=Ştergere sendings
 Permission111=Citeşte conturile financiare
 Permission112=Crea / modifica / delete şi compara tranzacţiile
 Permission113=Configurare conturi financiare( creare, gestionare categorii)
+<<<<<<< HEAD
 Permission114=Tranzactii Reconciliate
 Permission115=Tranzacţii de export şi în declaraţiile
 Permission116=Transferuri între conturile
 Permission117=Gestionare cecuri de expediţie
+=======
+Permission114=Decontați tranzacțiile
+Permission115=Tranzacţii de export şi în declaraţiile
+Permission116=Transferuri între conturile
+Permission117=Gestionați cecuri de expediţie 
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Permission121=Citiţi cu terţe părţi legate de utilizator
 Permission122=Creare / Modificare terţe părţi legate de utilizator
 Permission125=Ştergere terţe părţi legate de utilizator
 Permission126=Export terţi
+<<<<<<< HEAD
 Permission141=Citește toate proiectele și sarcinile (inclusiv proiectele private pentru care nu sunt persoană de contact)
 Permission142=Creați/modificați toate proiectele și sarcinile (inclusiv proiectele private pentru care nu sunt persoană de contact)
+=======
+Permission141=Citește toate proiectele și sarcinile (inclusiv proiectele private pentru care nu sunt persoană de contact) 
+Permission142=Creați/modificați toate proiectele și sarcinile (inclusiv proiectele private pentru care nu sunt persoană de contact) 
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Permission144=Şterge toate proiectele și sarcinile (inclusiv proiectele private pentru care nu sunt persoană de contact)
 Permission146=Citiţi cu furnizorii
 Permission147=Citeşte stats
 Permission151=Citiți comenzile de plată prin debitare directă
 Permission152=Creați/modificați un ordin de plată prin debit direct
 Permission153=Trimite/transmite ordine de plată prin debit direct
+<<<<<<< HEAD
 Permission154=Inregistreaza creditarea / respingerea ordinelor de plată prin debitare directă
+=======
+Permission154=Inregistreaza creditarea/respingerea ordinelor de plată prin debitare directă 
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Permission161=Citește contracte / abonamente
 Permission162=Creare / modificare contracte / abonamente
 Permission163=Activează un serviciu / abonament al unui contract
@@ -715,6 +1261,7 @@ Permission173=Ştergere ordin de deplasare şi cheltuieli
 Permission174=Citeşte toate ordinele de deplasare şi cheltuieli
 Permission178=Export  ordin de deplasare şi cheltuieli
 Permission180=Citiţi cu furnizorii
+<<<<<<< HEAD
 Permission181=Citeşte furnizor ordinelor
 Permission182=Creare / Modificare furnizor ordinelor
 Permission183=Validate furnizor ordinelor
@@ -726,6 +1273,19 @@ Permission188=Anulare furnizor ordinelor
 Permission192=Creaţi linii
 Permission193=Anulare linii
 Permission194=Citiţi cu latimea de banda de linii
+=======
+Permission181=Citiți comenzile de achiziţie
+Permission182=Creați/modificați comenzile de achiziţie
+Permission183=Validați comenzile de achiziţie
+Permission184=Aprobați comenzile de achiziţie
+Permission185=Ordonați sau anulați comenzile de achiziţie
+Permission186=Primiți comenzile de achiziţie
+Permission187=Închideţi comenzile de achiziţie
+Permission188=Anulaţi comenzile de achiziţie
+Permission192=Creaţi linii
+Permission193=Anulare linii
+Permission194=Citiți liniile de lățime de bandă
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Permission202=Creaţi conexiuni ADSL
 Permission203=Ordinul de conexiuni ordinelor
 Permission204=Ordinul de conexiuni
@@ -750,12 +1310,20 @@ Permission244=A se vedea conţinutul ascunse categorii
 Permission251=Citiţi cu alţi utilizatori şi grupuri
 PermissionAdvanced251=Citeste alţi utilizatori
 Permission252=Creare / Modificare altor utilizatori, grupuri şi a ta permisssions
+<<<<<<< HEAD
 Permission253=Modificare de alţi utilizatori parola
+=======
+Permission253=Creați / modificați alți utilizatori, grupuri și permisiuni
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PermissionAdvanced253=Crearea / modificarea utilizatorii interni / externi şi permisiuni
 Permission254=Ştergere sau dezactiva alţi utilizatori
 Permission255=Creaţi / modifica propriile informaţii de utilizator
 Permission256=Modificare propria parolă
+<<<<<<< HEAD
 Permission262=Extindeți accesul la toate părțile terțe (nu numai terțelor părți al căror utilizator este un reprezentant de vânzari). <br> Nu este utilizabil pentru utilizatorii externi (doar pentru uz intern, pentru propuneri, ordine, facturi, contracte etc.). <br> Nu este utilizabil pentru proiecte (doar reguli privind permisiunile de proiect, aspecte de vizibilitate și de atribuire).
+=======
+Permission262=Extindeți accesul la toţi terţii (nu numai terţii pentru care utilizatorul este un reprezentant de vânzări). <br> Nu este eficient pentru utilizatori externi (întotdeauna se autolimiteaza la propuneri, comenzi, facturi, contracte etc..). <br> Nu este eficient pentru proiecte (doar reguli privind permisiunile proiectului, aspectul vizibilității și atribuții).
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Permission271=Citeşte CA
 Permission272=Citeşte facturi
 Permission273=Problema facturilor
@@ -765,10 +1333,17 @@ Permission283=Ştergere contacte
 Permission286=Exportaţi contacte
 Permission291=Citeşte tarife
 Permission292=Setaţi permisiunile cu privire la tarifele de
+<<<<<<< HEAD
 Permission293=Modificare clienti tarife
 Permission300=Citiţi cu coduri de bare
 Permission301=Creare / Modificare coduri de bare
 Permission302=Ştergere coduri de bare
+=======
+Permission293=Modificați tarifele clientului
+Permission300=Citiți coduri de bare
+Permission301=Creați/modificați coduri de bare
+Permission302=Ștergeți codurile de bare
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Permission311=Citeşte servicii
 Permission312=Atribuire serviciu / abonament la contract
 Permission331=Citiţi cu marcaje
@@ -787,11 +1362,18 @@ Permission401=Citiţi cu reduceri
 Permission402=Creare / Modificare reduceri
 Permission403=Validate reduceri
 Permission404=Ştergere reduceri
+<<<<<<< HEAD
 Permission501=Read employee contracts/salaries
 Permission502=Create/modify employee contracts/salaries
 Permission511=Read payment of salaries
 Permission512=Create/modify payment of salaries
 Permission514=Şterge salarii
+=======
+Permission430=Use Debug Bar
+Permission511=Citire salarii
+Permission512=Creare / Modificare plata salariilor 
+Permission514=Şterge plata salariilor 
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Permission517=Export salarii
 Permission520=Citeşte credite
 Permission522=Creare/modificare credite
@@ -803,6 +1385,12 @@ Permission532=Creare / Modificare servicii
 Permission534=Ştergere servicii
 Permission536=A se vedea / administra serviciile ascunse
 Permission538=Exportul de servicii
+<<<<<<< HEAD
+=======
+Permission650=Read bom of Bom
+Permission651=Create/Update bom of Bom
+Permission652=Delete bom of Bom
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Permission701=Citiţi donaţii
 Permission702=Creare / Modificare donaţii
 Permission703=Ştergere donaţii
@@ -822,6 +1410,7 @@ Permission1101=Citiţi cu livrare comenzi
 Permission1102=Creare / Modificare ordine de livrare
 Permission1104=Validate livrarea comenzilor
 Permission1109=Ştergere livrarea comenzilor
+<<<<<<< HEAD
 Permission1181=Citiţi cu furnizorii
 Permission1182=Citeşte furnizor ordinelor
 Permission1183=Creaţi comenzi furnizor
@@ -854,28 +1443,101 @@ Permission23001=Citeste Joburi programate
 Permission23002=Creare/Modificare job programat
 Permission23003=Şterge Joburi programate
 Permission23004=Execută Joburi programate
+=======
+Permission1121=Read supplier proposals
+Permission1122=Create/modify supplier proposals
+Permission1123=Validate supplier proposals
+Permission1124=Send supplier proposals
+Permission1125=Delete supplier proposals
+Permission1126=Close supplier price requests
+Permission1181=Citiţi cu furnizorii
+Permission1182=Citiți purchase orders
+Permission1183=Creați/modificați comenzile de achiziţie
+Permission1184=Validați comenzile de achiziţie
+Permission1185=Aprobați comenzile de achiziţie
+Permission1186=Comanda comenzi de cumpărare
+Permission1187=Recunoașteți bonul comenzii de cumpărare
+Permission1188=Șterge comenzile de cumpărare
+Permission1190=Aprobă comenzile de achiziție (a doua aprobare)
+Permission1201=Obţineţi rezultatul unui export
+Permission1202=Creare / Modificare de export
+Permission1231=Citiți facturile furnizorilor
+Permission1232=Creați/modificați facturile furnizorilor
+Permission1233=Valideaza facturile furnizorilor
+Permission1234=Șterge facturile furnizorilor
+Permission1235=Trimite facturile furnizorului pe email
+Permission1236=Exportați facturile furnizorilor, atributele și plățile
+Permission1237=Exportați comenzile de achiziție și detaliile acestora
+Permission1251=Run masa importurile de date externe în baza de date (date de sarcină)
+Permission1321=Export client facturi, atribute şi plăţile
+Permission1322=Redeschide o factură plătită
+Permission1421=Exportaţi comenzi de vânzări și atribute
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Permission2401=Citeşte acţiuni (evenimente sau sarcini) legate de acest cont
 Permission2402=Crea / modifica / delete acţiuni (evenimente sau sarcini) legate de acest cont
 Permission2403=Citeşte acţiuni (evenimente sau sarcini) de alţii
 Permission2411=Citeşte acţiuni (evenimente sau sarcini) ale altor persoane
 Permission2412=Crearea / modificarea acţiuni (evenimente sau sarcini) ale altor persoane
 Permission2413=Ştergeţi acţiuni (evenimente sau sarcini) ale altor persoane
+<<<<<<< HEAD
 Permission2414=Export actions/tasks of others
+=======
+Permission2414=Acțiuni de export/sarcini ale altora
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Permission2501=Citeşte documente
 Permission2502=Trimiteti sau şterge documente
 Permission2503=Trimite sau şterge documente
 Permission2515=Setup documente directoare
 Permission2801=Folosiți client FTP în modul de citire (numai navigare și descărcare )
 Permission2802=Folosiți client FTP în modul de scriere (ştergere şi încărcare fişiere )
+<<<<<<< HEAD
 Permission50101=Utilizează Point of Sales
 Permission50201=Citeşte tranzacţii
 Permission50202=Tranzacţiilor de import
+=======
+Permission3200=Read archived events and fingerprints
+Permission4001=See employees
+Permission4002=Create employees
+Permission4003=Delete employees
+Permission4004=Export employees
+Permission10001=Read website content
+Permission10002=Create/modify website content (html and javascript content)
+Permission10003=Create/modify website content (dynamic php code). Dangerous, must be reserved to restricted developers.
+Permission10005=Delete website content
+Permission20001=Citiți cererile de concediu (concediul dvs. și cele ale subordonaților dvs)
+Permission20002=Creați/modificați cererile dvs. de concediu (concediul și cele ale subordonaților dvs.)
+Permission20003=Şterge cererile de concediu
+Permission20004=Citiți toate solicitările de concediu (chiar și pentru utilizatori care nu sunt subordonați)
+Permission20005=Creați/modificați solicitările de concediu pentru toată lumea (chiar și pentru utilizatorii care nu sunt subordonați)
+Permission20006=Solicitări de concediu ale administrării (gestionare si actualizare balanţă)
+Permission23001=Citeste Joburi programate
+Permission23002=Creare/Modificare job programat
+Permission23003=Şterge Joburi programate
+Permission23004=Execută Joburi programate
+Permission50101=Utilizați punctul de vânzări
+Permission50201=Citeşte tranzacţii
+Permission50202=Tranzacţiilor de import
+Permission50401=Bind products and invoices with accounting accounts
+Permission50411=Read operations in ledger
+Permission50412=Write/Edit operations in ledger
+Permission50414=Delete operations in ledger
+Permission50415=Delete all operations by year and journal in ledger
+Permission50418=Export operations of the ledger
+Permission50420=Report and export reports (turnover, balance, journals, ledger)
+Permission50430=Define and close a fiscal year
+Permission50440=Manage chart of accounts, setup of accountancy
+Permission51001=Read assets
+Permission51002=Create/Update assets
+Permission51003=Delete assets
+Permission51005=Setup types of asset
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Permission54001=Printare
 Permission55001=Cieşte sondaje
 Permission55002=Creare / Modificare sondaje
 Permission59001=Citeşte marje comerciale
 Permission59002=Defineşte marje comerciale
 Permission59003=Citeşte marjele fiecarui utilizator
+<<<<<<< HEAD
 Permission63001=Read resources
 Permission63002=Create/modify resources
 Permission63003=Delete resources
@@ -930,10 +1592,68 @@ LTRate=Rată
 LocalTax1IsNotUsed=Nu utilizează taxa secundă
 LocalTax1IsUsedDesc=Utilizează un al doilea tip de taxă ( altul decât TVA )
 LocalTax1IsNotUsedDesc=Nu utilizează un al tip de taxă ( altul decât TVA )
+=======
+Permission63001=Citiți resursele
+Permission63002=Creaţi/modificaţi resursele 
+Permission63003=Ștergeți resursele
+Permission63004=Asociaţi resursele la agenda de evenimentele
+DictionaryCompanyType=Tipuri de terţi
+DictionaryCompanyJuridicalType=Entități juridice terțe
+DictionaryProspectLevel=Prospect potenţial
+DictionaryCanton=State/Provincii
+DictionaryRegion=Regiuni
+DictionaryCountry=Ţări
+DictionaryCurrency=Monede
+DictionaryCivility=Titlul de politețe
+DictionaryActions=Tipuri evenimente agenda
+DictionarySocialContributions=Tipuri  de taxe sociale si fiscale
+DictionaryVAT=Cote TVA sau Cote Taxe Vanzări
+DictionaryRevenueStamp=Valoarea taxei de timbru
+DictionaryPaymentConditions=Termeni de plată
+DictionaryPaymentModes=Modalităţi de plată
+DictionaryTypeContact=Tipuri Contact/adresă
+DictionaryTypeOfContainer=Website - tip de pagini / containere de site
+DictionaryEcotaxe=Ecotax (DEEE)
+DictionaryPaperFormat=Formate hârtie
+DictionaryFormatCards=Formaturi de card
+DictionaryFees=Raportul de cheltuieli - Linii de tipuri de rapoarte de cheltuieli
+DictionarySendingMethods=Metode Livrare
+DictionaryStaff=Număr de angajaţi
+DictionaryAvailability=Livrare întârziere
+DictionaryOrderMethods=Metode de comandă
+DictionarySource=Originea ofertei  / comenzi
+DictionaryAccountancyCategory=Grupuri personalizate pentru rapoarte
+DictionaryAccountancysystem=Model pentru plan de conturi
+DictionaryAccountancyJournal=Jurnalele contabile
+DictionaryEMailTemplates=Șabloane de e-mail
+DictionaryUnits=Unităţi
+DictionaryMeasuringUnits=Unități de măsură
+DictionaryProspectStatus=Statut Prospect
+DictionaryHolidayTypes=Tipuri de concediu
+DictionaryOpportunityStatus=Stare de conducere pentru proiect/conducere
+DictionaryExpenseTaxCat=Raport de cheltuieli - Categorii de transport
+DictionaryExpenseTaxRange=Raport de cheltuieli - Gama de categorii de transport
+SetupSaved=Setup salvate
+SetupNotSaved=Seturea nu a fost salvată
+BackToModuleList=Înapoi la lista Module
+BackToDictionaryList=Înapoi la lista de Dicționare
+TypeOfRevenueStamp=Tip de taxei de timbru
+VATManagement=Gestionarea taxelor de vânzare
+VATIsUsedDesc=Implicit atunci când creați proiecte, facturi, comenzi etc. rata taxei pe vânzări respectă regula standard activă <br> Dacă furnizorul nu este supus taxei pe vânzări , atunci taxa pe vânzări este implicit 0. Sfârșitul regulii. <br> Dacă țara (furnizorului= țara cumpărătorului), atunci taxa pe vânzări este implicit este egală cu taxa de vânzare a cumpărătorului. Sfârșitul regulii. <br> În cazul în care furnizorul şi cumpărătorul sunt ambii în Comunitatea Europeană şi bunurile sunt legate de transportul produselor (transport, livrare, linii aeriene), valoarea implicita a TVA este 0. Această regulă depinde de țara furnizorului - consultați contabilul dvs. TVA-ul ar trebui plătit de către cumpărători la biroul vamal din țara lor şi nu de către furnizor. Sfârșitul regulii. <br> În cazul în care furnizorul şi cumpărătorul sunt ambii în Comunitatea Europeană şi cumpărătorul nu sunt persoane juridice (cu o înregistrare intracomunitara de TVA), TVA-ul devine implicit egal cu TVA-ul din țara furnizorului. Sfârșitul regulii. <br> În cazul în care furnizorul şi cumpărătorul sunt ambii în Comunitatea Europeană şi cumpărătorul este o persoană juridică (cu o înregistrare intracomunitara de TVA), atunci TVA este implicit 0. Sfârșitul regulii. <br> În orice alt caz, valoarea implicită propusă a taxei de vânzare este  = 0. Sfârșitul regulii.
+VATIsNotUsedDesc=Implicit, taxa de vânzare propusă este 0, ea poate fi utilizată pentru cazuri precum asociații, persoane fizice sau companii mici.
+VATIsUsedExampleFR=În Franța, înseamnă companii sau organizații care au un sistem fiscal real (Simplificat real sau normal real). Un sistem în care TVA este declarată .
+VATIsNotUsedExampleFR=În Franța, înseamnă că sunt declarate asociații care nu sunt plătitoare de taxe sau societăți, organizații sau profesii liberale care au ales sistemul fiscal micro intreprindere (taxe de vânzări în franciză) şi plătesc taxe de vânzare de franciză fără nicio declarație de taxe de vânzare. Această opțiune va afișa referinţa "Vânzări  cu taxe neaplicabile - art-293B de CGI" pe facturi.
+##### Local Taxes #####
+LTRate=Rată
+LocalTax1IsNotUsed=Nu utilizează taxa secundă
+LocalTax1IsUsedDesc=Utilizați un al doilea tip de taxă (alta decât prima)
+LocalTax1IsNotUsedDesc=Nu utilizați al doilea tip de taxă (alta decât prima)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LocalTax1Management=Tip secund taxă
 LocalTax1IsUsedExample=
 LocalTax1IsNotUsedExample=
 LocalTax2IsNotUsed=Nu utilizează taxa treia
+<<<<<<< HEAD
 LocalTax2IsUsedDesc=Utilizează un al treilea tip de taxă ( altul decât TVA )
 LocalTax2IsNotUsedDesc=Nu utilizează un al tip de taxă ( altul decât TVA )
 LocalTax2Management=Tipul trei al taxei
@@ -949,6 +1669,23 @@ LocalTax2IsUsedDescES= Rata de RE, în mod implicit atunci când perspectivele c
 LocalTax2IsNotUsedDescES= În mod implicit propus IRPF este 0. Sfârşitul regulă.
 LocalTax2IsUsedExampleES= În Spania, liber profesionişti şi specialişti independenţi, care presta servicii şi companiile care au ales sistemul de impozitare de module.
 LocalTax2IsNotUsedExampleES= În Spania nu sunt afaceri care fac obiectul sistemului de impozitare de module.
+=======
+LocalTax2IsUsedDesc=Utilizați un al treilea tip de taxă (alta decât prima)
+LocalTax2IsNotUsedDesc=Nu utilizați al doilea tip de taxă (alta decât prima)
+LocalTax2Management=Tipul trei al taxei
+LocalTax2IsUsedExample=
+LocalTax2IsNotUsedExample=
+LocalTax1ManagementES=RE Management
+LocalTax1IsUsedDescES=Rata RE în mod implicit la crearea perspectivelor, facturilor, comenzilor etc. respectă regula standard activă: <br> Dacă cumpărătorul nu este supus ratei RE, RE impliciy va fi 0. Sfârșitul regulii. <br> Dacă cumpărătorul este supus ratei RE, este RE implicit. Sfârșitul regulii. <br>
+LocalTax1IsNotUsedDescES=În mod implicit RE propus este 0. Sfârşitul regulă.
+LocalTax1IsUsedExampleES=În Spania sunt profesionisti supuse unor secţiuni specifice ale IAE spaniole.
+LocalTax1IsNotUsedExampleES=În Spania sunt profesionişti şi societăţile şi sub rezerva la anumite secţiuni ale IAE spaniole.
+LocalTax2ManagementES=IRPF Management
+LocalTax2IsUsedDescES=Rata IRPF în mod implicit când se creează perspective, facturi, comenzi etc. respectă regula standard activă <br> Dacă furnizorul nu este supus IRPF, atunci IRPF implicit = 0. Sfârșitul regulii. <br> Dacă furnizorul este supus IRPF atunci IRPF este implicit. Sfârșitul regulii. <br>
+LocalTax2IsNotUsedDescES=În mod implicit propus IRPF este 0. Sfârşitul regulă.
+LocalTax2IsUsedExampleES=În Spania, liber profesionişti şi specialişti independenţi, care presta servicii şi companiile care au ales sistemul de impozitare de module.
+LocalTax2IsNotUsedExampleES=În Spania, sunt întreprinderi care nu sunt supuse sistemului de taxare pe module.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CalcLocaltax=Rapoarte pe taxe locale
 CalcLocaltax1=Vânzări - Cumpârări
 CalcLocaltax1Desc=Rapoarte Taxe Locale este calcult ca diferenţă dintre taxele locale de vanzare şi taxele locale de cumparare
@@ -958,14 +1695,26 @@ CalcLocaltax3=Vânzări
 CalcLocaltax3Desc=Rapoarte Taxe Locale este totalul taxelor locale de vanzare
 LabelUsedByDefault=Eticheta utilizat în mod implicit în cazul în care nu poate fi găsit de traducere pentru codul
 LabelOnDocuments=Eticheta de pe documente
+<<<<<<< HEAD
 NbOfDays=Nr zile
 AtEndOfMonth=La sfârşitul lunii
 CurrentNext=Current/Next
+=======
+LabelOrTranslationKey=Etichetă sau cheie de traducere
+ValueOfConstantKey=Valoarea constantei
+NbOfDays=Nr. de zile
+AtEndOfMonth=La sfârşitul lunii
+CurrentNext=Curent / Urmatoarea
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Offset=Decalaj
 AlwaysActive=Întotdeauna activ
 Upgrade=Upgrade
 MenuUpgrade=Upgrade / Extinde
+<<<<<<< HEAD
 AddExtensionThemeModuleOrOther=Deploy/install external app/module
+=======
+AddExtensionThemeModuleOrOther=Implementați / instalați aplicația externă / modul
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 WebServer=Server Web
 DocumentRootServer=Server Web este directorul rădăcină
 DataRootServer=Directorul de fişiere de date
@@ -974,7 +1723,10 @@ Port=Port
 VirtualServerName=Virtual server de nume
 OS=OS
 PhpWebLink=Web link-PHP
+<<<<<<< HEAD
 Browser=Browser
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Server=Server
 Database=Baza de date
 DatabaseServer=Baza de date gazdă
@@ -984,18 +1736,27 @@ DatabaseUser=Baza de date de utilizator
 DatabasePassword=Baza de date parola
 Tables=Tabele
 TableName=Nume Tabel
+<<<<<<< HEAD
 NbOfRecord=Nr  înregistrări
+=======
+NbOfRecord=Nr de înregistrări
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Host=Server
 DriverType=Driver de tip
 SummarySystem=Sistemul de informaţii rezumat
 SummaryConst=Lista tuturor Dolibarr setarea parametrilor
+<<<<<<< HEAD
 MenuCompanySetup=Company/Organization
+=======
+MenuCompanySetup=Compania/Instituția
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DefaultMenuManager= Manager meniul Standard
 DefaultMenuSmartphoneManager=Manager meniul  Smartphone
 Skin=Tema vizuală
 DefaultSkin=Tema vizuală Implicită
 MaxSizeList=Lungime  max pentru lista
 DefaultMaxSizeList=Lungime max implicită pentru lista
+<<<<<<< HEAD
 DefaultMaxSizeShortList=Default max length for short lists (ie in customer card)
 MessageOfDay=Mesajul zilei
 MessageLogin=Mesaj pagina login
@@ -1007,13 +1768,30 @@ EnableMultilangInterface=Activaţi multilingv interfaţă
 EnableShowLogo=Afişare logo în meniul stânga
 CompanyInfo=Company/organization information
 CompanyIds=Company/organization identities
+=======
+DefaultMaxSizeShortList=Lungimea maximă implicită pentru listele scurte (de ex. în cardul clientului)
+MessageOfDay=Mesajul zilei
+MessageLogin=Mesaj pagina login
+LoginPage=Pagină de autentificare
+BackgroundImageLogin=Imagine de fundal
+PermanentLeftSearchForm=Formular de căutare permanent in meniu din  stânga
+DefaultLanguage=Limba implicită
+EnableMultilangInterface=Activați suportul multilingv
+EnableShowLogo=Afişare logo în meniul stânga
+CompanyInfo=Compania/Instituția
+CompanyIds=Identități ale companiei/organizației
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CompanyName=Nume
 CompanyAddress=Adresă
 CompanyZip=Zip
 CompanyTown=Oraş
 CompanyCountry=Ţară
 CompanyCurrency=Deviza principală
+<<<<<<< HEAD
 CompanyObject=Object of the company
+=======
+CompanyObject=Obiectul companiei
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Logo=Logo
 DoNotSuggestPaymentMode=Nu sugerează
 NoActiveBankAccountDefined=Niciun cont bancar activ definit
@@ -1021,6 +1799,7 @@ OwnerOfBankAccount=Titular de cont bancar %s
 BankModuleNotActive=Conturi bancare de module nu a permis
 ShowBugTrackLink=Arată link-ul "<strong>%s</strong>"
 Alerts=Alerte
+<<<<<<< HEAD
 DelaysOfToleranceBeforeWarning=Toleranta întârzieri înainte de avertisment
 DelaysOfToleranceDesc=Acest ecran vă permite să definiţi de tolerat întârzieri înainte de o alertă este raportat de pe ecran cu picto %s târziu, pentru fiecare element.
 Delays_MAIN_DELAY_ACTIONS_TODO=Întârziere acceptată (în zile) înainte de a alerta cu privire la evenimentele planificate (evenimentele de pe ordinea de zi) care nu au fost finalizate încă
@@ -1043,6 +1822,30 @@ SetupDescription2=The two mandatory setup steps are the following steps (the two
 SetupDescription3=Settings in menu <a href="%s">%s -> %s</a>. This step is required because it defines data used on Dolibarr screens to customize the default behavior of the software (for country-related features for example).
 SetupDescription4=Settings in menu <a href="%s">%s -> %s</a>. This step is required because Dolibarr ERP/CRM is a collection of several modules/applications, all more or less independent. New features are added to menus for every module you activate.
 SetupDescription5=Alte meniul intrări gestiona parametri opţionali.
+=======
+DelaysOfToleranceBeforeWarning=Întârziere înainte de a afișa o alertă de avertizare pentru:
+DelaysOfToleranceDesc=Setați întârzierea înainte ca o pictogramă de alertă %s să apară pe ecran pentru ultimul element.
+Delays_MAIN_DELAY_ACTIONS_TODO=Evenimente planificate (evenimente din agendă) nu au fost finalizate
+Delays_MAIN_DELAY_PROJECT_TO_CLOSE=Proiectul nu a fost închis în timp
+Delays_MAIN_DELAY_TASKS_TODO=Sarcina planificată (sarcinile proiectului) nu a fost finalizată
+Delays_MAIN_DELAY_ORDERS_TO_PROCESS=Comanda nu a fost procesată
+Delays_MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS=Comanda de aprovizionare nu a fost procesată
+Delays_MAIN_DELAY_PROPALS_TO_CLOSE=Propunerea nu este închisă
+Delays_MAIN_DELAY_PROPALS_TO_BILL=Propunerea nu a fost facturată
+Delays_MAIN_DELAY_NOT_ACTIVATED_SERVICES=Serviciul pentru activare
+Delays_MAIN_DELAY_RUNNING_SERVICES=Serviciu expirat
+Delays_MAIN_DELAY_SUPPLIER_BILLS_TO_PAY=Factura furnizor neachitată
+Delays_MAIN_DELAY_CUSTOMER_BILLS_UNPAYED=Factura client neachitată
+Delays_MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE=În așteptarea reconcilierii bancare
+Delays_MAIN_DELAY_MEMBERS=Taxă de membru întârziată
+Delays_MAIN_DELAY_CHEQUES_TO_DEPOSIT=Cecul nu a fost creat
+Delays_MAIN_DELAY_EXPENSEREPORTS=Raportul de cheltuieli pentru aprobare
+SetupDescription1=Înainte de a începe să utilizați Dolibarr, unii parametri inițiali trebuie să fie definiți and modulele activate/configurate.
+SetupDescription2=Următoarele două secțiuni sunt obligatorii (primele două intrări din meniul de configurare)
+SetupDescription3=<a href="%s">%s -> %s</a><br>Basic parameters used to customize the default behavior of your application (e.g for country-related features).
+SetupDescription4=<a href="%s">%s -> %s</a><br>This software is a suite of many modules/applications, all more or less independent. The modules relevant to your needs must be enabled and configured. New items/options are added to menus with the activation of a module.
+SetupDescription5=Alte intrări în meniul de configurare gestionează parametrii opționali.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LogEvents=Audit de securitate evenimente
 Audit=Audit
 InfoDolibarr=Despre Dolibarr
@@ -1056,6 +1859,7 @@ BrowserName=Nume Browser
 BrowserOS=Browser OS
 ListOfSecurityEvents=Lista de evenimente Dolibarr de securitate
 SecurityEventsPurged=Evenimentelor de securitate epurate
+<<<<<<< HEAD
 LogEventDesc=Puteţi activa jurnalul de evenimente de securitate Dolibarr aici. Administratorii pot vedea apoi conţinutul său prin meniul <b>System Tools - Audit.</b> Atenţie, această caracteristică poate consuma o cantitate mare de date în baza de date.
 AreaForAdminOnly=Parametrii de configurare pot fi setați numai de <b> utilizatorii administratori </b>.
 SystemInfoDesc=Sistemul de informare este diverse informaţii tehnice ai citit doar în modul şi vizibil doar pentru administratori.
@@ -1070,10 +1874,27 @@ SessionTimeOut=Time out pentru sesiune
 SessionExplanation=Acest număr de sesiune se va garanta că nu expiră înainte de această întârziere. Dar PHP sessoin de management nu garanţie că întotdeauna sesiune expira după această întârziere: Acest lucru se produce în cazul în care un sistem pentru a curăţa cache-ul de sesiune se execută. <br> Notă: cu nici un sistem special, interne PHP proces va curat la fiecare sesiune <b>despre %s / %s</b> de acces, dar numai în timpul acces făcute de alte sesiuni.
 TriggersAvailable=Disponibil declanşează
 TriggersDesc=Declanşările sunt fişiere care vor modifica comportamentul Dolibarr flux de lucru, o dată copiată în directorul <b>htdocs / includes / declanşează.</b> Ei realizate de noi acţiuni, pe activat Dolibarr evenimente (crearea de noi societăţi, factura de validare, ...).
+=======
+LogEventDesc=Activați autentificarea pentru anumite evenimente de securitate. Administratorii se autentificaprin meniu <b> %s - %s </b>. Atenție, această caracteristică poate genera o cantitate mare de date în baza de date.
+AreaForAdminOnly=Parametrii de configurare pot fi setați numai de <b> utilizatorii administratori </b>.
+SystemInfoDesc=Sistemul de informare este diverse informaţii tehnice ai citit doar în modul şi vizibil doar pentru administratori.
+SystemAreaForAdminOnly=Acest zonă este disponibilă numai administratori. Permisiunile utilizatorilor Dolibarr nu pot modifica această restricție
+CompanyFundationDesc=Editați informațiile companiei / entității. Click pe "%s" sau "%s" din partea de jos a paginii.
+AccountantDesc=If you have an external accountant/bookkeeper, you can edit here its information.
+AccountantFileNumber=Accountant code
+DisplayDesc=Parametrii care afectează aspectul şi comportamentul  Dolibarr pot fi modificaţi aici.
+AvailableModules=Aplicații/module disponibile 
+ToActivateModule=Pentru a activa modulele, du-te la zona de configurare.
+SessionTimeOut=Time out pentru sesiune
+SessionExplanation=Acest număr garantează că sesiunea nu va expira niciodată înainte de această întârziere, în cazul în care curățarea sesiunii este efectuată de Cleaner intern pentru sesiuni PHP (și nimic altceva). Interfața de curățare internă a sesiunii PHP nu garantează că sesiunea va expira după această întârziere. Va expira, după această întârziere și atunci când curățătorul sesiunii va fi rulat, astfel încât fiecare <b> %s / %s </b>, acces dar numai în timpul accesului realizat de alte sesiuni (dacă valoarea este 0, înseamnă că ștergerea sesiunii se face numai printr-un proces extern). <br> Notă: pe unele servere cu mecanism extern de curățare a sesiunilor (cron sub debian, ubuntu ...) sesiunile pot fi distruse după o perioadă definită de o configurație externă, indiferent de valoarea introdusă aici.
+TriggersAvailable=Disponibil declanşează
+TriggersDesc=Triggerele sunt fișiere care vor modifica comportamentul fluxului de lucru Dolibarr după copierea în director <b> htdocs / core / triggers </b>. Ei realizează acțiuni noi, activate la evenimentele Dolibarr (creare de noi companii, validare facturi ...).
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TriggerDisabledByName=Declanşările în acest dosar sunt dezactivate <b>de-NoRun</b> sufix în numele lor.
 TriggerDisabledAsModuleDisabled=Declanşările în acest dosar sunt dezactivate ca <b>modul %s</b> este dezactivat.
 TriggerAlwaysActive=Declanşările în acest dosar sunt întotdeauna activ, ce sunt activate Dolibarr module.
 TriggerActiveAsModuleActive=Declanşările în acest dosar sunt active ca <b>modul %s</b> este activată.
+<<<<<<< HEAD
 GeneratedPasswordDesc=Definiţi aici regulă care doriţi să-l utilizaţi pentru a genera o parolă nouă, dacă vă întrebaţi de a avea auto generate parola
 DictionaryDesc=Introduceți toate datele de referință. Puteți adăuga valorile dvs. la valorile implicite.
 ConstDesc=Această pagină vă permite să editați toți ceilalți parametri care nu sunt disponibili în paginile anterioare. Acestia sunt în principal parametrii rezervați pentru dezvoltatori sau soluții avansate de depanare. Pentru o listă de opțiuni <a href="https://wiki.dolibarr.org/index.php/Setup_Other#List_of_known_hidden_options" title="External Site-deschide într-o fereastră nouă" target="_blank"> verificați aici </a>.
@@ -1137,6 +1958,71 @@ ExtraFieldsMember=Atribute complementare (membri)
 ExtraFieldsMemberType=Atribute complementare (tip membri)
 ExtraFieldsCustomerInvoices=Atribute complementare (facturi)
 ExtraFieldsCustomerInvoicesRec=Complementary attributes (templates invoices)
+=======
+GeneratedPasswordDesc=Alegeți metoda care va fi utilizată pentru parolele auto-generate.
+DictionaryDesc=Introduceți toate datele de referință. Puteți adăuga valorile dvs. la valorile implicite.
+ConstDesc=Această pagină vă permite să editați (suprascrieți) parametrii care nu sunt disponibili în alte pagini.  Aceştia sunt în principal parametrii rezervaţi pentru dezvoltatori/soluții avansate de depanare. Pentru o listă completă a parametrilor disponibilii </a>.
+MiscellaneousDesc=Toți ceilalți parametri legați de securitate sunt definiți aici.
+LimitsSetup=Limitele / Precizie
+LimitsDesc=Puteți defini limite, precizări şi optimizări utilizate de Dolibarr aici
+MAIN_MAX_DECIMALS_UNIT=Nr. max. de  zecimale pentru preţurile unitare
+MAIN_MAX_DECIMALS_TOT=Nr. max. de zecimale pentru preţurile finale
+MAIN_MAX_DECIMALS_SHOWN=Nr. max. de zecimale pentru preţurile  <b> afișate pe ecran </b>. Adăugați o elipsă <b> ... </b> după acest parametru (de ex. "2 ...") dacă doriți să vedeți "<b> ... </b>" suficient pentru preţul trunchiat
+MAIN_ROUNDING_RULE_TOT=Pasul intervalului de rotunjire (pentru țările în care rotunjirea se face pe altceva decât baza 10. De exemplu, puneți 0,05 dacă rotunjirea se face cu 0,05 pași)
+UnitPriceOfProduct=preţul unitar net al unui produs
+TotalPriceAfterRounding=Preț total (fără TVA / TVA inclus) după rotunjire
+ParameterActiveForNextInputOnly=Parametru de eficient pentru următoarea intrare numai
+NoEventOrNoAuditSetup=Nu a fost înregistrat niciun eveniment de securitate. Acest lucru este normal dacă Auditul nu a fost activat în pagina "Configurare - Securitate - Evenimente".
+NoEventFoundWithCriteria=Nu a fost găsit niciun eveniment de securitate pentru aceste criterii de căutare.
+SeeLocalSendMailSetup=Vedeţi-vă locale sendmail setup
+BackupDesc=O <b> completă </b> copie de rezervă a unei instalări Dolibarr necesită doi pași.
+BackupDesc2=Faceţi o copie de rezervă a conținutului directorului "documente" (<b> %s </b>) conținând toate fișierele încărcate și generate. Aceasta va include, de asemenea, toate fișierele de memorie generate în etapa 1.
+BackupDesc3=Faceţi o copie de rezervă la structura și conținutul bazei de date (<b> %s </b>) într-un cos de gunoi. Pentru aceasta, puteți utiliza următorul asistent
+BackupDescX=Directorul arhivat trebuie să fie stocat într-un loc sigur.
+BackupDescY=Generate de fişier de imagine memorie trebuie să fie depozitate într-un loc sigur.
+BackupPHPWarning=Copia de rezervă nu poate fi garantată prin această metodă. Copia anterioră recomandată.
+RestoreDesc=Pentru a restabili o copie de rezervă Dolibarr, sunt necesari doi pași.
+RestoreDesc2=Restabiliți fișierul de rezervă (de exemplu, fișierul zip) al directorului "documente" la o nouă instalație Dolibarr sau în acest director de documente actualey (<b> %s </b>).
+RestoreDesc3=Restaurați structura bazei de date și datele dintr-un fișier de memorie de rezervă în baza de date a noii instalări Dolibarr sau în baza de date a instalării curente (<b> %s </b>). Avertisment, odată ce restaurarea este completă, trebuie să utilizați o autentificare care a existat din timpul instalarea copiei de rezervă pentru a vă conecta din nou. <br> Pentru a restabili baza de date a copiei de rezervă în această instalare curentă, puteți urma acest asistent.
+RestoreMySQL=MySQL import
+ForcedToByAModule= Această regulă este obligat <b>la %s</b> către un activat modulul
+PreviousDumpFiles=Fișiere de rezervă existente
+WeekStartOnDay=Prima zi a săptămânii
+RunningUpdateProcessMayBeRequired=Rularea procesului de actualizare pare a fi necesară (versiunea programului %s diferă de versiunea bazei de date %s)
+YouMustRunCommandFromCommandLineAfterLoginToUser=Trebuie să rulaţi această comandă de la linia de comandă, după login la un raft cu <b>%s</b> utilizator.
+YourPHPDoesNotHaveSSLSupport=SSL funcţii nu sunt disponibile în PHP dvs.
+DownloadMoreSkins=Mai multe teme de  descărcat
+SimpleNumRefModelDesc=Returnează numărul de referință cu formatul%syymm-nnnn unde yy este anul, mm este luna and nnnn este secvențială fără resetare
+ShowProfIdInAddress=Afișați id profesional cu adrese
+ShowVATIntaInAddress=Ascunde TVA ul intracomunitar cu adrese
+TranslationUncomplete=Parţială traducere
+MAIN_DISABLE_METEO=Dezactivați vizualizarea meteorologică
+MeteoStdMod=Mod Standard
+MeteoStdModEnabled=Modul Standard activat
+MeteoPercentageMod=Mod Procent
+MeteoPercentageModEnabled=Modul Procent activat
+MeteoUseMod=Faceți clic pentru a utiliza %s
+TestLoginToAPI=Testaţi logati pentru a API
+ProxyDesc=Unele caracteristici ale Dolibarr necesită acces la internet. Definiți aici parametrii conexiunii la internet, cum ar fi accesul prin intermediul unui server proxy, dacă este necesar
+ExternalAccess=Acces Extern/Internet
+MAIN_PROXY_USE=Utilizați un server proxy (altfel accesul este direct la internet)
+MAIN_PROXY_HOST=Server proxy: Nume/adresa
+MAIN_PROXY_PORT=Server proxy: Port
+MAIN_PROXY_USER=Server proxy: Autentificare/Utilizator
+MAIN_PROXY_PASS=Server proxy: Parola
+DefineHereComplementaryAttributes=Definiți aici orice atribute suplimentare/personalizate pe care doriți să le includeți pentru: %s
+ExtraFields=Atribute complementare
+ExtraFieldsLines=Atribute complementare (linii)
+ExtraFieldsLinesRec=Atribute complementare (linii de șabloane de facturi)
+ExtraFieldsSupplierOrdersLines=Atribute complementare (linii de comandă)
+ExtraFieldsSupplierInvoicesLines=Atribute complementare (linii de facturare)
+ExtraFieldsThirdParties=Atribute complementare (terți)
+ExtraFieldsContacts=Atribute complementare (contacte /adrese)
+ExtraFieldsMember=Atribute complementare (membri)
+ExtraFieldsMemberType=Atribute complementare (tip membri)
+ExtraFieldsCustomerInvoices=Atribute complementare (facturi)
+ExtraFieldsCustomerInvoicesRec=Atribute complementare (șabloane facturi)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ExtraFieldsSupplierOrders=Atribute complementare (comenzi)
 ExtraFieldsSupplierInvoices=Atribute complementare (facturi)
 ExtraFieldsProject=Atribute complementare (proiecte)
@@ -1146,6 +2032,7 @@ AlphaNumOnlyLowerCharsAndNoSpace=numai caractere minuscule,  alfanumerice fără
 SendmailOptionNotComplete=Atenţie, pe unele sisteme Linux, pentru a trimite e-mail de la e-mail, sendmail configurare execuţie trebuie să conatins optiunea-ba (mail.force_extra_parameters parametri în fişierul php.ini). Dacă nu unor destinatari a primi e-mailuri, încercaţi să editaţi acest parametru PHP cu mail.force_extra_parameters =-BA).
 PathToDocuments=Cale de acces documente
 PathDirectory=Director
+<<<<<<< HEAD
 SendmailOptionMayHurtBuggedMTA=Functionalitate pentru a trimite mesaje utilizând metoda "mail PHP direct" va genera un mesaj e-mail care nu s-ar putea să fie corect interpretat de către unele servere de e-mail . Rezultatul este că unele mail-uri nu pot fi citite de unele persoane . Este cazul unor furnizori de Internet (Ex: Orange în Franţa). Aceasta nu este o problemă în Dolibarr nici în PHP, dar primesc pe serverul de poştă electronică. Puteţi adăuga toate acestea, opţiunea MAIN_FIX_FOR_BUGGED_MTA la 1 în configurare - pentru a modifica alte Dolibarr pentru a evita acest lucru. Cu toate acestea, este posibil să aveţi probleme cu alte servere care sens strict standard SMTP. Altă soluţie (recommanded) este de a utiliza metoda "SMTP socket bibliotecă", care nu are dezavantaje.
 TranslationSetup=Configurarea traducerii
 TranslationKeySearch=Search a translation key or string
@@ -1177,11 +2064,46 @@ XDebugInstalled=XDebug este încărcat.
 XCacheInstalled=XCache este încărcată.
 AddRefInList=Afișează ref client / furnizor în lista (listă select sau combobox) și mai multe hyperlinkuri. Terții vor apare cu numele "CC12345 - SC45678 - The big company coorp", în loc de "The big company coorp".
 AskForPreferredShippingMethod=Ask for preferred Sending Method for Third Parties.
+=======
+SendmailOptionMayHurtBuggedMTA=Funcția de trimitere a e-mailurilor utilizând metoda "PHP mail direct" va genera un mesaj pe e-mail care ar putea să nu fie analizat corect de către unele servere de e-mail . Rezultatul este că unele e-mailuri nu pot fi citite de persoanele găzduite de acele platforme cu probleme. Acesta este cazul pentru unii furnizori de Internet (Ex: Orange în Franța). Aceasta nu este o problemă cu Dolibarr sau PHP, ci cu serverul de mail. Cu toate acestea, puteți adăuga o opțiune MAIN_FIX_FOR_BUGGED_MTA la 1 din Setup - Other pentru a modifica Dolibarr pentru a evita acest lucru. Cu toate acestea, este posibil să întâmpinați probleme cu alte servere care utilizează strict standardul SMTP. Cealaltă soluție (recomandată) este utilizarea metodei "SMTP socket library" care nu are dezavantaje.
+TranslationSetup=Configurarea traducerii
+TranslationKeySearch=Căutați o cheie sau un șir de traducere 
+TranslationOverwriteKey=Suprascrieți un șir de traducere
+TranslationDesc=Cum pentru a seta limba de afișare: <br> * Default / systemwide: menu <strong>Acasă -> Configurare-> Afișaj </strong> <br> * Per utilizator: Faceți clic pe numele utilizatorului în partea de sus a ecranului și modificați  fila  <strong> Afișare utilizator Setare </strong> pe card de utilizator.
+TranslationOverwriteDesc=Puteți, de asemenea, să înlocuiți șiruri de caractere care completează urmatorul tabel . Alegeți limba dvs. din meniul derulant "%s", inserați șirul de chei de traducere în "%s" si noua dvs. traducere în "%s"
+TranslationOverwriteDesc2=Puteți utiliza cealaltă filă pentru a vă ajuta să aflați ce cheie de traducere trebuie să se utilizeze
+TranslationString=Șir de traducere
+CurrentTranslationString=Șirul de traducere curent
+WarningAtLeastKeyOrTranslationRequired=Un criteriu de căutare este necesar cel puțin pentru o cheie sau un șir de traducere
+NewTranslationStringToShow=Noul șir de traducere de afișat
+OriginalValueWas=Traducerea originală este suprascrisă. Valoarea originală a fost: <br> <br> %s
+TransKeyWithoutOriginalValue=Ați forțat o traducere nouă pentru cheia de traducere '<strong> %s </strong>' care nu există în niciun fişier de limbă
+TotalNumberOfActivatedModules=Aplicație / module activate: <b> %s </b> / <b> %s </b>
+YouMustEnableOneModule=Trebuie activat cel puţin 1 modul
+ClassNotFoundIntoPathWarning=Clasa %s nu a fost găsită în calea PHP
+YesInSummer=Da în vară
+OnlyFollowingModulesAreOpenedToExternalUsers=Rețineți că numai următoarele module sunt disponibile pentru utilizatorii externi  (indiferent de permisiunile unor astfel de utilizatori) și numai dacă sunt acordate permisiuni:<br>
+SuhosinSessionEncrypt=Stocarea sesiune criptată prin Suhosin
+ConditionIsCurrently=Condiția este momentan %s
+YouUseBestDriver=Utilizați driverul %s, care este cel mai bun driver disponibil în prezent.
+YouDoNotUseBestDriver=Utilizați driverul %s dar  driverul %s este recomandat.
+NbOfProductIsLowerThanNoPb=Aveți numai %s produse/servicii în fișierul bazei de date. Acest lucru nu necesită o optimizare particulară.
+SearchOptim=Optimizare căutare
+YouHaveXProductUseSearchOptim=Aveți %s produse în fișierul bazei de date. Trebuie să adăugați constanta PRODUCT_DONOTSEARCH_ANYWHERE la 1 înAcasă-Gestionare-Altele. Limitați căutarea la începutul șirurilor, ceea ce face posibil ca baza de date să utilizeze indexari si ar trebui să primiți un răspuns imediat.
+BrowserIsOK=Utilizați browserul web %s. Acest browser este ok pentru securitate și performanţă.
+BrowserIsKO=Utilizați browserul web %s. Acest browser este cunoscut ca fiind o alegere proastă pentru securitate, fiabilitate și performanță. Vă recomandăm să utilizați Firefox, Chrome, Opera sau Safari.
+XDebugInstalled=XDebug este încărcat.
+XCacheInstalled=XCache este încărcată.
+AddRefInList=Afișați Lista de  informatii a clientului/Furnizorului  (selectați lista sau combobox)  și cea mai mare parte a hiperlinkului.<br> Terții vor apărea cu un format de nume "CC12345 - SC45678 - The Big Company corp". în loc de "The Big Company corp".
+AddAdressInList=Afișați Lista de informatii a clientului/Furnizorului (selectați lista sau combobox).<br> Terții i vor apărea cu numele format din "Big Company corp - 21 jump street 123456 Big city - USA" în loc de "Big Company corp".
+AskForPreferredShippingMethod=Solicitați o metodă de transport preferată pentru terți.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 FieldEdition=Editarea  campului %s
 FillThisOnlyIfRequired=Exemplu: +2 (completați numai dacă problemele decalajjului fusului orar sunt cunoscute)
 GetBarCode=Dă codbare
 ##### Module password generation
 PasswordGenerationStandard=Întoarceţi-vă o parolă generate în funcţie de interne Dolibarr algoritmul: 8 caractere care conţin numere în comun şi în caractere minuscule.
+<<<<<<< HEAD
 PasswordGenerationNone=Nu sugera nici o parolă generată . Parola trebuie să fie introdusă manual.
 PasswordGenerationPerso=Return a password according to your personally defined configuration.
 SetupPerso=According to your configuration
@@ -1191,10 +2113,22 @@ RuleForGeneratedPasswords=Regulă pentru a genera parole sugerate sau validareal
 DisableForgetPasswordLinkOnLogonPage=Nu afişa link-ul "Uită parola" de pe pagina de login
 UsersSetup=Utilizatorii modul de configurare
 UserMailRequired=EMail necesare pentru a crea un utilizator nou
+=======
+PasswordGenerationNone=Nu sugerați o parolă generată. Parola trebuie introdusă manual.
+PasswordGenerationPerso=Returnați o parolă în funcție de configurația dvs. personal definită.
+SetupPerso=În funcție de configurația dvs.
+PasswordPatternDesc=Descrierea modelului de parolă
+##### Users setup #####
+RuleForGeneratedPasswords=Reguli pentru generarea și validarea parolelor
+DisableForgetPasswordLinkOnLogonPage=Nu afișați link-ul "Parola uitată" pe pagina de autentificare
+UsersSetup=Utilizatorii modul de configurare
+UserMailRequired=E-mailul necesar pentru a crea un utilizator nou
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ##### HRM setup #####
 HRMSetup=Configurare Modul HRM
 ##### Company setup #####
 CompanySetup=Setări Modul Terţi
+<<<<<<< HEAD
 CompanyCodeChecker=Module for third parties code generation and checking (customer or vendor)
 AccountCodeManager=Module for accounting code generation (customer or vendor)
 NotificationsDesc=Funcția notificări prin e-mail permite trimiterea de email-uri automate pentru anumite evenimente Dolibarr. Recipienții notificărilor pot fi definiți.
@@ -1213,12 +2147,33 @@ TechnicalServicesProvided=Technical services provided
 #####DAV #####
 WebDAVSetupDesc=This is the links to access the WebDAV directory. It contains a "public" dir open to any user knowing the URL (if public directory access allowed) and a "private" directory that need an existing login account/password to access to.
 WebDavServer=Root URL of %s server : %s
+=======
+CompanyCodeChecker=Opțiuni pentru generarea automată a codurilor de client/furnizor
+AccountCodeManager=Opțiuni pentru generarea automată a codurilor contabile de client/furnizor
+NotificationsDesc=Anunțurile prin e-mail pot fi trimise automat pentru unele evenimente Dolibarr. <br> Destinatarii notificărilor pot fi definiți:
+NotificationsDescUser=* pe utilizator, câte un utilizator la un moment dat.
+NotificationsDescContact=* pe contacte terți (clienți sau furnizori), câte un contact la un moment dat
+NotificationsDescGlobal=* sau prin setarea adreselor globale de e-mail în această pagină de configurare
+ModelModules=Șabloane de documente
+DocumentModelOdt=Generați documente din șabloanele OpenDocument (fișiere .ODT / .ODS de la LibreOffice, OpenOffice, KOffice, TextEdit, ...)
+WatermarkOnDraft=Watermark pe schiţa de document
+JSOnPaimentBill=Activaţi funcţia de autocompletare a liniilor de plata pe formularul de plată
+CompanyIdProfChecker=Reguli pentru ID-uri profesionale
+MustBeUnique=Trebuie sa fie unic?
+MustBeMandatory=Obligatoriu pentru a crea terți (dacă TVA-ul sau tipul de companie este definit)?
+MustBeInvoiceMandatory=Este obligatorie validarea facturilor?
+TechnicalServicesProvided=Servicii tehnice furnizate
+#####DAV #####
+WebDAVSetupDesc=Acesta este linkul pentru a accesa directorul WebDAV. Acesta conține un director "public" deschis oricărui utilizator care cunoaște adresa URL (dacă este permis accesul la un director public) și un director "privat" care are nevoie de un cont de acces / parolă existent pentru acces.
+WebDavServer=Rădăcina URL a %s: serverului %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ##### Webcal setup #####
 WebCalUrlForVCalExport=O export se leagă de <b>format %s</b> este disponibil la următoarea adresă: %s
 ##### Invoices #####
 BillsSetup=Facturi modul de configurare
 BillsNumberingModule=Facturi şi note de credit, modul de numerotare
 BillsPDFModules=Factura modele de documente
+<<<<<<< HEAD
 PaymentsPDFModules=Payment documents models
 CreditNote=Nota de credit
 CreditNotes=Credit note
@@ -1231,14 +2186,32 @@ WatermarkOnDraftInvoices=Filigranul pe facturile schiţă (niciunul daca e gol)
 PaymentsNumberingModule=Payments numbering model
 SuppliersPayment=Plăţi Furnizori
 SupplierPaymentSetup=Configarari Plati Furnizori
+=======
+BillsPDFModulesAccordindToInvoiceType=Modele de documente de facturare în funcție de tipul de factură
+PaymentsPDFModules=Modele de documente de plată
+ForceInvoiceDate=Vigoare la data facturii de validare data
+SuggestedPaymentModesIfNotDefinedInInvoice=Sugestii cu privire la modul de plata facturii, în mod implicit, dacă nu este definit de factură
+SuggestPaymentByRIBOnAccount=Sugerați plata prin retragere din cont
+SuggestPaymentByChequeToAddress=Sugerați plata de prin cec către
+FreeLegalTextOnInvoices=Free text pe facturi
+WatermarkOnDraftInvoices=Filigranul pe facturile schiţă (niciunul daca e gol)
+PaymentsNumberingModule=Model de numerotare a plăților
+SuppliersPayment=Plățile furnizorului
+SupplierPaymentSetup=Configurarea plăților furnizorului
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ##### Proposals #####
 PropalSetup=Modul configurare Oferte Comerciale 
 ProposalsNumberingModules=Modele numerotare  Oferte Comerciale 
 ProposalsPDFModules=Modele documente Oferte Comerciale 
+<<<<<<< HEAD
+=======
+SuggestedPaymentModesIfNotDefinedInProposal=Suggested payments mode on proposal by default if not defined for proposal
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 FreeLegalTextOnProposal=Text liber pe ofertele comerciale
 WatermarkOnDraftProposal=Filigranul pe ofertele comerciale schiţă (niciunul daca e gol)
 BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL=Cere contul bancar destinație al ofertei
 ##### SupplierProposal #####
+<<<<<<< HEAD
 SupplierProposalSetup=Price requests vendors module setup
 SupplierProposalNumberingModules=Price requests vendors numbering models
 SupplierProposalPDFModules=Price requests vendors documents models
@@ -1250,6 +2223,19 @@ WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER=Ask for Warehouse Source for order
 BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER=Ask for bank account destination of purchase order
 ##### Orders #####
 OrdersSetup=Ordinele de gestionare setup
+=======
+SupplierProposalSetup=Configurarea modului de cerere de ofertă de la furnizor
+SupplierProposalNumberingModules=Numerotarea modului de cerere de ofertă de la furnizor
+SupplierProposalPDFModules=Modele de documente de tip cerere de ofertă
+FreeLegalTextOnSupplierProposal=Textul liber pe cererile de ofertă de la furnizori
+WatermarkOnDraftSupplierProposal=Watermark privind furnizorii de cereri de ofertă (nu este cazul dacă este gol)
+BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL=Cereţi contul bancar al beneficiarului în cazul unei cereri de ofertă
+WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER=Cereţi sursa depozitului pentru comandă
+##### Suppliers Orders #####
+BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER=Cereţi contul bancar al beneficiarului unei comenzi de achiziție
+##### Orders #####
+OrdersSetup=Setări pentru gestionarea comenzilor de vânzări
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 OrdersNumberingModules=Ordinele de numerotare module
 OrdersModelModule=Ordinul modele de documente
 FreeLegalTextOnOrders=Free text de pe ordinele de
@@ -1272,9 +2258,16 @@ WatermarkOnDraftContractCards=Filigranul pe contractele ciornă (niciunul daca e
 MembersSetup=Membrii modul de configurare
 MemberMainOptions=Principalele opţiuni
 AdherentLoginRequired= Gestiona un Autentificare pentru fiecare membru
+<<<<<<< HEAD
 AdherentMailRequired=EMail necesare pentru a crea un nou membru
 MemberSendInformationByMailByDefault=Validare pentru a trimite mail de confirmare a membrilor este în mod implicit
 VisitorCanChooseItsPaymentMode=Visitor can choose among available payment modes
+=======
+AdherentMailRequired=E-mail necesar pentru a crea un nou membru
+MemberSendInformationByMailByDefault=Validare pentru a trimite mail de confirmare a membrilor este în mod implicit
+VisitorCanChooseItsPaymentMode=Vizitatorul poate alege din modurile disponibile de plată
+MEMBER_REMINDER_EMAIL=Activați memento automat <b> prin email </b> de abonamente expirate. Notă: Modul <strong> %s </strong> trebuie să fie activat and setat corect pentru a trimite mementouri.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ##### LDAP setup #####
 LDAPSetup=LDAP Setup
 LDAPGlobalParameters=Global parametrii
@@ -1292,11 +2285,19 @@ LDAPSynchronizeUsers=Sincronizaţi Dolibarr utilizatorii cu LDAP
 LDAPSynchronizeGroups=Sincronizaţi Dolibarr grupuri cu LDAP
 LDAPSynchronizeContacts=Sincronizaţi Dolibarr contacte cu LDAP
 LDAPSynchronizeMembers=Sincronizarea membrilor Dolibarr Fundaţia modulul cu LDAP
+<<<<<<< HEAD
 LDAPSynchronizeMembersTypes=Organization of foundation's members types in LDAP
 LDAPPrimaryServer=Primar server
 LDAPSecondaryServer=Secundar server
 LDAPServerPort=Port server
 LDAPServerPortExample=Implicit port: 389
+=======
+LDAPSynchronizeMembersTypes=Organizarea tipurilor de membri ai fundației în LDAP
+LDAPPrimaryServer=Primar server
+LDAPSecondaryServer=Secundar server
+LDAPServerPort=Port server
+LDAPServerPortExample=Portul implicit: 389
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LDAPServerProtocolVersion=Protocol versiunea
 LDAPServerUseTLS=Utilizaţi TLS
 LDAPServerUseTLSExample=Parerea LDAP server utilizează TLS
@@ -1316,7 +2317,11 @@ LDAPDnContactActive=Contacte "sincronizare
 LDAPDnContactActiveExample=Activat / Unactivated de sincronizare
 LDAPDnMemberActive=Membrilor de sincronizare
 LDAPDnMemberActiveExample=Activat / Unactivated de sincronizare
+<<<<<<< HEAD
 LDAPDnMemberTypeActive=Members types' synchronization
+=======
+LDAPDnMemberTypeActive=Sincronizarea tipurilor de membri
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LDAPDnMemberTypeActiveExample=Activat / Unactivated de sincronizare
 LDAPContactDn=Dolibarr contacte 'DN
 LDAPContactDnExample=Complete DN (ex: ou=contacts,dc=society,dc=Finalizarea DN (ex: ou= contacte, dc= societate, dc= com)
@@ -1324,8 +2329,13 @@ LDAPMemberDn=Dolibarr membrilor DN
 LDAPMemberDnExample=Complete DN (ex: ou=members,dc=society,dc=Finalizarea DN (ex: ou= membri, dc= societate, dc= com)
 LDAPMemberObjectClassList=Lista de objectClass
 LDAPMemberObjectClassListExample=Lista de objectClass definirea record atributele (ex: top, inetOrgPerson sau de sus, utilizatorul pentru Active Directory)
+<<<<<<< HEAD
 LDAPMemberTypeDn=Dolibarr members types DN
 LDAPMemberTypepDnExample=Complete DN (ex: ou=memberstypes,dc=example,dc=com)
+=======
+LDAPMemberTypeDn=Membrii Dolibarr tip DN
+LDAPMemberTypepDnExample=DN complet (ex: ou = tipuridemembri, dc = exemplu, dc = com)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LDAPMemberTypeObjectClassList=Lista de objectClass
 LDAPMemberTypeObjectClassListExample=Lista de objectClass definirea record atributele (ex: top, groupOfUniqueNames)
 LDAPUserObjectClassList=Lista de objectClass
@@ -1339,6 +2349,7 @@ LDAPTestSynchroContact=Test de contact de sincronizare
 LDAPTestSynchroUser=Test de utilizator de sincronizare
 LDAPTestSynchroGroup=Test de sincronizare a grupului
 LDAPTestSynchroMember=Test membru de sincronizare
+<<<<<<< HEAD
 LDAPTestSynchroMemberType=Test member type synchronization
 LDAPTestSearch= Test căutare LDAP
 LDAPSynchroOK=Sincronizare încercare reuşită
@@ -1348,11 +2359,23 @@ LDAPTCPConnectOK=TCP connect to LDAP server successful (Server=%s, Port=TCP se c
 LDAPTCPConnectKO=TCP connect to LDAP server failed (Server=%s, Port=TCP se conecteze la serverul LDAP a eşuat (Server= %s, port= %s)
 LDAPBindOK=Conectare/Autentificare la  serverul LDAP cu succes (Server=%s, Port=%s, Admin=%s, Password=%s)
 LDAPBindKO=Connect/Authentificate to LDAP server failed (Server=%s, Port=%s, Admin=%s, Password=Conectare / Authentificate la serverul LDAP a eşuat (Server= %s, port= %s, %s= admin, parola= %s)
+=======
+LDAPTestSynchroMemberType=Testați sincronizarea de tip membru
+LDAPTestSearch= Test căutare LDAP
+LDAPSynchroOK=Sincronizare încercare reuşită
+LDAPSynchroKO=Eşuare încercare de sincronizare
+LDAPSynchroKOMayBePermissions=Testul de sincronizare eșuat. Verificați că conexiunea la server este corect configurată și permite actualizarea LDAP
+LDAPTCPConnectOK=TCP connect to LDAP server successful (Server=%s, Port=TCP se conecteze la serverul LDAP de succes (Server= %s, port= %s)
+LDAPTCPConnectKO=TCP connect to LDAP server failed (Server=%s, Port=TCP se conecteze la serverul LDAP a eşuat (Server= %s, port= %s)
+LDAPBindOK=Conectare/Autentificare la serverul LDAP cu succes (Server = %s, Port = %s, Admin = %s, Parolă= %s)
+LDAPBindKO=Conectare/Autentificare la serverul LDAP eșuată (Server = %s, Port = %s, Admin = %s, Parolă= %s)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LDAPSetupForVersion3=LDAP server configurat pentru versiunea 3
 LDAPSetupForVersion2=LDAP server configurat pentru versiunea 2
 LDAPDolibarrMapping=Dolibarr Mapping
 LDAPLdapMapping=LDAP Mapping
 LDAPFieldLoginUnix=Login (Unix)
+<<<<<<< HEAD
 LDAPFieldLoginExample=Exemplu: Uid
 LDAPFilterConnection=Cautati filtru
 LDAPFilterConnectionExample=Example : &(objectClass=inetOrgPerson)
@@ -1396,6 +2419,51 @@ LDAPFieldCompany=Companie
 LDAPFieldCompanyExample=Exemplu: o
 LDAPFieldSid=SID
 LDAPFieldSidExample=Exemplu: objectsid
+=======
+LDAPFieldLoginExample=Examplu: uid
+LDAPFilterConnection=Cautati filtru
+LDAPFilterConnectionExample=Examplu: & (objectClass = inetOrgPerson)
+LDAPFieldLoginSamba=Login (samba, activedirectory)
+LDAPFieldLoginSambaExample=Examplu: samaccountname
+LDAPFieldFullname=Prenume Nume
+LDAPFieldFullnameExample=Examplu: cn
+LDAPFieldPasswordNotCrypted=Parola nu este criptată
+LDAPFieldPasswordCrypted=Parolă criptată
+LDAPFieldPasswordExample=Examplu: userPassword
+LDAPFieldCommonNameExample=Examplu: cn
+LDAPFieldName=Nume
+LDAPFieldNameExample=Examplu: sn
+LDAPFieldFirstName=Prenume
+LDAPFieldFirstNameExample=Examplu: givenName
+LDAPFieldMail=Adresa de e-mail
+LDAPFieldMailExample=Examplu: mail
+LDAPFieldPhone=Numărul de telefon profesional 
+LDAPFieldPhoneExample=Examplu: telephonenumber
+LDAPFieldHomePhone=Personale numărul de telefon
+LDAPFieldHomePhoneExample=Examplu: homephone
+LDAPFieldMobile=Telefon celular
+LDAPFieldMobileExample=Examplu: mobile
+LDAPFieldFax=Număr de fax
+LDAPFieldFaxExample=Examplu: facsimiletelephonenumber
+LDAPFieldAddress=Strada
+LDAPFieldAddressExample=Examplu: stradă
+LDAPFieldZip=Zip
+LDAPFieldZipExample=Examplu: postalcode
+LDAPFieldTown=Oraş
+LDAPFieldTownExample=Examplu: l
+LDAPFieldCountry=Ţară
+LDAPFieldDescription=Descriere
+LDAPFieldDescriptionExample=Examplu: descriere
+LDAPFieldNotePublic=Note Publice
+LDAPFieldNotePublicExample=Examplu: publicnote
+LDAPFieldGroupMembers= Membrii grupului
+LDAPFieldGroupMembersExample= Examplu: uniqueMember
+LDAPFieldBirthdate=Data naşterii
+LDAPFieldCompany=Companie
+LDAPFieldCompanyExample=Examplu: o
+LDAPFieldSid=SID
+LDAPFieldSidExample=Examplu: objectsid
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LDAPFieldEndLastSubscription=Data de sfârşit de abonament
 LDAPFieldTitle=Funcţie
 LDAPFieldTitleExample=Examplu: titlu
@@ -1405,24 +2473,38 @@ LDAPDescContact=Această pagină vă permite să definiţi numele atribute LDAP 
 LDAPDescUsers=Această pagină vă permite să definiţi numele atribute LDAP LDAP în copac pentru fiecare date găsite pe Dolibarr utilizatori.
 LDAPDescGroups=Această pagină vă permite să definiţi numele atribute LDAP LDAP în copac pentru fiecare date găsite pe Dolibarr grupuri.
 LDAPDescMembers=Această pagină vă permite să definiţi numele atribute LDAP LDAP în copac pentru fiecare găsit date cu privire la modul de Dolibarr membri.
+<<<<<<< HEAD
 LDAPDescMembersTypes=This page allows you to define LDAP attributes name in LDAP tree for each data found on Dolibarr members types.
 LDAPDescValues=Exemplu de valori sunt proiectate pentru <b>OpenLDAP</b> încărcate cu următoarele scheme: <b>core.schema, cosine.schema, inetorgperson.schema).</b> Dacă utilizaţi thoose valori şi OpenLDAP, vă modifica LDAP fişier de configurare <b>slapd.conf</b> de a avea toate thoose scheme încărcate.
 ForANonAnonymousAccess=Pentru un acces autentificat (pentru o scriere de exemplu)
 PerfDolibarr=Raport performanţă setări/optimizări
 YouMayFindPerfAdviceHere=Veți găsi pe această pagină unele verificări sau sfaturi privind performanţa.
 NotInstalled=Neinstalat,  astfel serverul dvs nu este încetinit de acesta.
+=======
+LDAPDescMembersTypes=Această pagină vă permite să definiți numele atributelor LDAP în arborele LDAP pentru fiecare dată găsită pe tipurile de membri Dolibarr.
+LDAPDescValues=Exemplu de valori sunt proiectate pentru <b>OpenLDAP</b> încărcate cu următoarele scheme: <b>core.schema, cosine.schema, inetorgperson.schema).</b> Dacă utilizaţi thoose valori şi OpenLDAP, vă modifica LDAP fişier de configurare <b>slapd.conf</b> de a avea toate thoose scheme încărcate.
+ForANonAnonymousAccess=Pentru un acces autentificat (pentru o scriere de exemplu)
+PerfDolibarr=Raport performanţă setări/optimizări
+YouMayFindPerfAdviceHere=Această pagină oferă unele verificări sau sfaturi legate de performanță.
+NotInstalled=Nu este instalat, deci serverul dvs. nu este încetinit de acest lucru.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ApplicativeCache=Cache aplicativ
 MemcachedNotAvailable=Niciun cache aplicatie găsit. Puteți îmbunătăți performanța prin instalarea unui server de cache memcached și un modul capabil de a utiliza acest server cache. <br>Mai multe informatii aici <a href="http://wiki.dolibarr.org/index.php/Module_MemCached_EN">http://wiki.dolibarr.org/index.php/Module_MemCached_EN</a>.\n<br>Rețineți că o mulțime de furnizor de web hosting nu oferă astfel de server de cache.
 MemcachedModuleAvailableButNotSetup=Modulul memcahed pentru aplicarea cache este găsit dar nu este configurat complet
 MemcachedAvailableAndSetup=Modulul Memcached  pentru a utiliza serverul memcached este activat.
 OPCodeCache=Cache OPCode
+<<<<<<< HEAD
 NoOPCodeCacheFound=Niciun cache Opcode găsit. Puteţi să folosiți un alt cache Opcode decât XCache sau eAccelerator (bun), poate nu ai cache Opcode (foarte rău).
+=======
+NoOPCodeCacheFound=Nu a fost găsită o memorie cache OPCode. Poate că utilizați o memorie cache OPCode, alta decât XCache sau eAccelerator (bună), sau poate că nu aveți memorie OPCode cache (foarte rău).
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 HTTPCacheStaticResources=HTTP cache pentru resursele statice (CSS, img, javascript)
 FilesOfTypeCached=Fișierele de tip %s sunt puse în cache de serverul HTTP
 FilesOfTypeNotCached=Fișierele de tip %s nu sunt puse în cache de serverul HTTP
 FilesOfTypeCompressed=Fișierele de tip %s sunt comprimate de serverul HTTP
 FilesOfTypeNotCompressed=Fișierele de tip %s nu sunt comprimate de serverul HTTP
 CacheByServer=Cache pe server
+<<<<<<< HEAD
 CacheByServerDesc=For exemple using the Apache directive "ExpiresByType image/gif A2592000"
 CacheByClient=Cache pe browser
 CompressionOfResources=Compresie a răspunsului HTTP
@@ -1433,10 +2515,24 @@ DefaultCreateForm=Default values (on forms to create)
 DefaultSearchFilters=Default search filters
 DefaultSortOrder=Default sort orders
 DefaultFocus=Default focus fields
+=======
+CacheByServerDesc=De exemplu, utilizând directiva Apache "ExpiresByType image / gif A2592000"
+CacheByClient=Cache pe browser
+CompressionOfResources=Compresie a răspunsului HTTP
+CompressionOfResourcesDesc=De exemplu, utilizând directiva Apache "AddOutputFilterByType DEFLATE"
+TestNotPossibleWithCurrentBrowsers=O astfel de detectare automată nu este posibilă cu browserele curente
+DefaultValuesDesc=Aici puteți defini valoarea implicită pe care doriți să o utilizați când creați o nouă înregistrare, şi/sau filtrele implicite sau ordinea de sortare când listați înregistrările.
+DefaultCreateForm=Valorile implicite (de utilizat pe formulare)
+DefaultSearchFilters=Filtrele de căutare implicite
+DefaultSortOrder=Ordine de sortare implicite
+DefaultFocus=Câmpurile de focalizare implicite
+DefaultMandatory=Campuri obligatorii ale formularului
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ##### Products #####
 ProductSetup=Produse modul de configurare
 ServiceSetup=Servicii de modul de configurare
 ProductServiceSetup=Produse şi Servicii de module de configurare
+<<<<<<< HEAD
 NumberOfProductShowInSelect=Max number of products in combos select lists (0=Max număr de produse din combos selectaţi liste (0= nici o limită)
 ViewProductDescInFormAbility=Vizualizare descrierile de produs, în forme (de altfel ca popup tooltip)
 MergePropalProductCard=Activate in product/service Attached Files tab an option to merge product PDF document to proposal PDF azur if product/service is in the proposal
@@ -1446,6 +2542,17 @@ UseSearchToSelectProduct=Așteptați să apăsați o cheie înainte de a încăr
 SetDefaultBarcodeTypeProducts=Implicit tip de cod de bare de a utiliza pentru produse
 SetDefaultBarcodeTypeThirdParties=Implicit tip de cod de bare de a utiliza pentru terţi
 UseUnits=Define a unit of measure for Quantity during order, proposal or invoice lines edition
+=======
+NumberOfProductShowInSelect=Numărul maxim de produse pentru a fi afișate în listele de selectare combo (0 = fără limită)
+ViewProductDescInFormAbility=Afișează descrierile produsului în formulare (altfel este afișat într-un pop-up de tip tooltip)
+MergePropalProductCard=Activați în fișier atașat la produs/serviciu o opțiune de îmbinare a produsului de tip document PDF la propunerea PDF azur dacă produsul/serviciul se află în propunere
+ViewProductDescInThirdpartyLanguageAbility=Afișați descrierile produselor în limba părții terțea 
+UseSearchToSelectProductTooltip=De asemenea, dacă aveți un număr mare de number de produse (> 100 000), puteți crește viteza prin configurarea constantă a PRODUCT_DONOTSEARCH_ANYWHERE la 1 în Configurare-> Altele. Căutarea va fi apoi limitată la începutul șirului.
+UseSearchToSelectProduct=Așteptați până când apăsați o tastă înainte de a încărca conținutul listei combo-ului de produse (aceasta poate crește performanța dacă aveți un număr mare de produse, dar este mai puțin convenabil)
+SetDefaultBarcodeTypeProducts=Implicit tip de cod de bare de a utiliza pentru produse
+SetDefaultBarcodeTypeThirdParties=Implicit tip de cod de bare de a utiliza pentru terţi
+UseUnits=Definiți o unitate de măsură pentru Cantitate în timpul ediției pentru comenzi, propuneri sau linii de facturare
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProductCodeChecker= Modul pentru generare de cod de produs și verificare (produs sau serviciu)
 ProductOtherConf= Configurare Produse / Servicii
 IsNotADir=nu este director!
@@ -1458,9 +2565,15 @@ SyslogFilename=Nume fişier şi calea
 YouCanUseDOL_DATA_ROOT=Puteţi folosi DOL_DATA_ROOT / dolibarr.log pentru un fişier de log în Dolibarr "Documente" director. Aveţi posibilitatea să setaţi o altă cale de a păstra acest fişier.
 ErrorUnknownSyslogConstant=Constant %s nu este un cunoscut syslog constant
 OnlyWindowsLOG_USER=Windows suportă numai LOG_USER
+<<<<<<< HEAD
 CompressSyslogs=Compression and backup of debug log files (generated by module Log for debug)
 SyslogFileNumberOfSaves=Log backups
 ConfigureCleaningCronjobToSetFrequencyOfSaves=Configure cleaning scheduled job to set log backup frequency
+=======
+CompressSyslogs=Comprimarea și copierea de rezervă a fișierelor jurnal de depanare (generate de modulul Log pentru depanare)
+SyslogFileNumberOfSaves=Copii de rezervă ale autentificărilor
+ConfigureCleaningCronjobToSetFrequencyOfSaves=Configurați curățarea lucrării programate pentru a configura frecvența copiei de rezervă a autentificărilor
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ##### Donations #####
 DonationsSetup=Donatii modul de configurare
 DonationsReceiptModel=Format de donatie la primirea
@@ -1477,13 +2590,22 @@ BarcodeDescUPC=Coduri de bare de tip UPC
 BarcodeDescISBN=Coduri de bare de tip ISBN
 BarcodeDescC39=Coduri de bare de tip C39
 BarcodeDescC128=Coduri de bare de tip C128
+<<<<<<< HEAD
 BarcodeDescDATAMATRIX=Barcode of type Datamatrix
 BarcodeDescQRCODE=Barcode of type QR code
+=======
+BarcodeDescDATAMATRIX=Cod de bare de tip Datamatrix
+BarcodeDescQRCODE=Cod de bare de tip QR code
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 GenbarcodeLocation=Instrument pentru linia de comandă de generare de coduri de bare (utilizat de motorul intern pentru anumite tipuri de coduri de bare). Trebuie să fie compatibil cu "genbarcode". <br> De exemplu: / usr / local / bin / genbarcode
 BarcodeInternalEngine=Motor intern
 BarCodeNumberManager=Manager pentru autodefinire numere coduri bare
 ##### Prelevements #####
+<<<<<<< HEAD
 WithdrawalsSetup=Configurarea modulului ordinelor de plată prin debit direct
+=======
+WithdrawalsSetup=Configurarea modulului de plăți debit direct
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ##### ExternalRSS #####
 ExternalRSSSetup=Extern RSS importurile setup
 NewRSS=New RSS Feed
@@ -1491,6 +2613,7 @@ RSSUrl=RSS URL
 RSSUrlExample=Un interesant RSS feed
 ##### Mailing #####
 MailingSetup=Să trimiteţi un email la modul de instalare
+<<<<<<< HEAD
 MailingEMailFrom=Expeditorul e-mail (la) pentru e-mail-uri trimise prin email-uri de module
 MailingEMailError=Întoarcere Email (Erori-a) pentru e-mailuri cu erori
 MailingDelay=Secunde de asteptare pentru trimiterea urmatorului mesaj
@@ -1504,6 +2627,21 @@ SendingsReceiptModel=Trimiterea primirea model
 SendingsNumberingModules=Trimiteri de numerotare module
 SendingsAbility=Foi de transport suport pentru livrările către clienți.
 NoNeedForDeliveryReceipts=În majoritatea cazurilor, foile de expediere sunt utilizate atât ca foi pentru livrările clienților (lista de produse care trebuie trimise), cât și pentru foile care sunt primite și semnate de către client. Prin urmare, chitanțele livrărilor de produse reprezintă o caracteristică dublă și sunt rareori activate.
+=======
+MailingEMailFrom=Expeditor e-mail (de la) pentru e-mailurile trimise prin modul de trimitere e-mailuri
+MailingEMailError=Returnați e-mail (Erori-la) pentru e-mailuri cu erori
+MailingDelay=Secunde de asteptare pentru trimiterea urmatorului mesaj
+##### Notification #####
+NotificationSetup=Configurarea modulului de notificare prin e-mail
+NotificationEMailFrom=E-mail expeditor (De la) pentru e-mailurile trimise de modulul Notificări
+FixedEmailTarget=Recipient
+##### Sendings #####
+SendingsSetup=Configurare a modulului de expediere
+SendingsReceiptModel=Trimiterea primirea model
+SendingsNumberingModules=Trimiteri de numerotare module
+SendingsAbility=Foi de transport suport pentru livrările către clienți.
+NoNeedForDeliveryReceipts=În majoritatea cazurilor, foile de expediere sunt utilizate atât ca foi pentru livrările clienților (lista de produse care trebuie trimise), cât și pentru foile care sunt primite și semnate de către client. Prin urmare, foaia de confirmare a livrărilor de produse este o caracteristică duplicată și este rar activată.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 FreeLegalTextOnShippings=Text liber pe livrari
 ##### Deliveries #####
 DeliveryOrderNumberingModules=Produse livrările primirea modul de numerotare
@@ -1515,6 +2653,7 @@ AdvancedEditor=Editor avansat
 ActivateFCKeditor=Activaţi FCKeditor pentru:
 FCKeditorForCompany=WYSIWIG crearea / editie a companiilor şi de note descriere
 FCKeditorForProduct=WYSIWIG crearea / editie a produselor / serviciilor "descrierea şi nota
+<<<<<<< HEAD
 FCKeditorForProductDetails=WYSIWIG creare / editare detalii linii de produse pentru toate entităţile (propuneri, comenzilor, facturilor, etc ..) <font class="warning"> Atenţie: Folosind această opţiune nu este recommanda deoarece astfel  pot apare  probleme la caracterele speciale şi paginare atunci când se creaza fişiere PDF.</font>
 FCKeditorForMailing= WYSIWIG crearea / ediţie de mailing
 FCKeditorForUserSignature=Creare/editare WYSIWIG  a semnăturii utilizatorilor
@@ -1527,11 +2666,24 @@ OSCommerceTestKo2=Conectarea la server ' %s' cu utilizatorul " %s" nu a reuşit.
 ##### Stock #####
 StockSetup=Stock module setup
 IfYouUsePointOfSaleCheckModule=Dacă utilizați unmodul punct de vânzare  (modulul POS furnizat în mod implicit sau un alt modul extern), acest setup poate fi ignorat de către modul punctul de vânzare . Cele mai multe module de puncte  de vânzări sunt concepute pentru a crea imediat o factură și reduce stocul implicit indiferent de ce optiune  aveţi aici. Deci, dacă aveți nevoie sau nu de a avea o scădere de stoc la înregistrarea unei vinzări din punctul dvs. de vânzare, verificați de asemenea modulul POS configurat.
+=======
+FCKeditorForProductDetails=WYSIWIG creare / editare de linii cu detalii ale produselor pentru toate entitățile (propuneri, comenzi, facturi, etc ...). <font class="warning"> Avertisment: utilizarea acestei opțiuni pentru acest caz nu este foarte recomandată, deoarece poate create probleme cu caracterele speciale and formatarea paginii la construirea fişierelor PDF. </font>
+FCKeditorForMailing= WYSIWIG crearea / ediţie de mailing
+FCKeditorForUserSignature=Creare/editare WYSIWIG  a semnăturii utilizatorilor
+FCKeditorForMail=Crearea / editarea WYSIWIG pentru toate e-mailurile (cu excepția Tools-> eMailing)
+##### Stock #####
+StockSetup=Gestionarea modulelor de stoc
+IfYouUsePointOfSaleCheckModule=Dacă utilizați modulul Punct de vânzare (POS) furnizat în mod implicit sau un modul extern, această configurare poate fi ignorată de modulul POS. Cele mai multe module POS sunt proiectate în mod implicit pentru a crea o factură imediat și pentru a scădea din stoc, indiferent de opțiunile de aici. Deci, dacă aveți nevoie sau nu să aveți o scădere din stoc la înregistrarea unei vânzări de pe POS, verificați și configurarea modulului POS.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ##### Menu #####
 MenuDeleted=Meniu eliminat
 Menus=Meniuri
 TreeMenuPersonalized=Meniuri personalizate
+<<<<<<< HEAD
 NotTopTreeMenuPersonalized=Personalized menus not linked to a top menu entry
+=======
+NotTopTreeMenuPersonalized=Meniuri personalizate care nu sunt legate de o intrare de meniu de sus
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NewMenu=New meniul
 Menu=Selecţie de meniu
 MenuHandler=Meniu manipulant
@@ -1548,11 +2700,16 @@ DetailRight=Conditia pentru a afişa neautorizate gri meniuri
 DetailLangs=Lang de nume de fişier pentru eticheta cod de traducere
 DetailUser=Intern / Extern / Toate
 Target=Ţintă
+<<<<<<< HEAD
 DetailTarget=Ţintă pentru link-uri (_blank top deschide o fereastră nouă)
+=======
+DetailTarget=Țintă pentru linkuri (_blank top deschide o fereastră nouă)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DetailLevel=Nivel (-1: meniul de sus, 0: antet meniu,&gt; 0 meniu şi submeniu)
 ModifMenu=Schimbare Meniu
 DeleteMenu=Ştergere intrare în meniu
 ConfirmDeleteMenu=Sunteţi sigur că doriţi să ştergeţi meniul de intrare <b>%s</b>?
+<<<<<<< HEAD
 FailedToInitializeMenu=Failed to initialize menu
 ##### Tax #####
 TaxSetup=Modul de configurare pentru impozite, taxe sociale sau fiscale și dividende 
@@ -1564,6 +2721,19 @@ OptionVatDebitOptionDesc=TVA este datorată: <br> - La livrare / plăţile pentr
 OptionPaymentForProductAndServices=Cash basis for products and services
 OptionPaymentForProductAndServicesDesc=VAT is due:<br>- on payment for goods<br>- on payments for services
 SummaryOfVatExigibilityUsedByDefault=Momentul implicit  TVA-ului exigibil pentru opțiunea selectată:
+=======
+FailedToInitializeMenu=Eroare la inițializarea meniului
+##### Tax #####
+TaxSetup=Modul de configurare pentru impozite, taxe sociale sau fiscale și dividende 
+OptionVatMode=Opţiunea de exigibilit de TVA
+OptionVATDefault=Bază standard 
+OptionVATDebitOption=Bazată pe debit
+OptionVatDefaultDesc=TVA se datorează: <br> - pentru livrare de mărfuri (bazată pe facturare) <br> - Pe plăţi pentru servicii
+OptionVatDebitOptionDesc=TVA se datorează: <br> - pentru livrare de mărfuri (bazată pe facturare) <br> - pe facturi(debit) pentru servicii
+OptionPaymentForProductAndServices=Baza de numerar pentru produse și servicii
+OptionPaymentForProductAndServicesDesc=TVA se datorează: <br> - pe plăti pentru mărfuri <br> - pe plăti pentru servicii
+SummaryOfVatExigibilityUsedByDefault=Timpul pentru alegerea TVA implicit în funcție de opțiunea aleasă:
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 OnDelivery=Pe  livrare
 OnPayment=Pe  plată
 OnInvoice=Pe factura
@@ -1572,14 +2742,20 @@ SupposedToBeInvoiceDate=Data facturii utilizat
 Buy=Cumpăra
 Sell=Vinde
 InvoiceDateUsed=Data facturii utilizat
+<<<<<<< HEAD
 YourCompanyDoesNotUseVAT=Your company has been defined to not use VAT (Home - Setup - Company/Organization), so there is no VAT options to setup.
 AccountancyCode=Accounting Code
+=======
+YourCompanyDoesNotUseVAT=Compania dvs. a fost definită ca să nu folosească TVA (Acasă - Configurare - Companie / Organizare), deci nu există opțiuni de TVA la configurare.
+AccountancyCode=Cod contabil
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AccountancyCodeSell=Cont vânzare. cod
 AccountancyCodeBuy=Cont cumpărare. cod
 ##### Agenda #####
 AgendaSetup=Acţiuni de ordine de zi şi de modul de configurare
 PasswordTogetVCalExport=Cheia de a autoriza export link
 PastDelayVCalExport=Nu de export eveniment mai în vârstă decât
+<<<<<<< HEAD
 AGENDA_USE_EVENT_TYPE=Use events types (managed into menu Setup -> Dictionaries -> Type of agenda events)
 AGENDA_USE_EVENT_TYPE_DEFAULT=Set automatically this default value for type of event into event create form
 AGENDA_DEFAULT_FILTER_TYPE=Setați automat acest tip de eveniment în filtrul de căutare al vederii agenda
@@ -1610,6 +2786,38 @@ CashDeskYouDidNotDisableStockDecease=Nu ai dezactivați scăderea de stocului at
 ##### Bookmark #####
 BookmarkSetup=Bookmark modul de configurare
 BookmarkDesc=Acest modul vă permite să gestionaţi marcaje. De asemenea, puteţi adăuga comenzi rapide pentru orice Dolibarr pagini sau site-uri web externale pe partea stanga de meniu.
+=======
+AGENDA_USE_EVENT_TYPE=Utilizați tipuri de evenimente (gestionate în menu Configuare-> Dicționare -> Tipul agendei de evenimente)
+AGENDA_USE_EVENT_TYPE_DEFAULT=Puneți automat această valoare implicită pentru tipul de eveniment în formularul de creare a evenimentului
+AGENDA_DEFAULT_FILTER_TYPE=Puneți automat acest tip de eveniment în filtrul de căutare al vizualizării agendei
+AGENDA_DEFAULT_FILTER_STATUS=Puneți automat această stare pentru evenimentele din filtrul de căutare din vizualizarea agendei
+AGENDA_DEFAULT_VIEW=Care tab doriţi să deschideţi când selectaţi meniul Agenda
+AGENDA_REMINDER_EMAIL=Activați memento-ul evenimentului <b> de emailuri </b> (opțiunea de reamintire / întârziere poate fi definită pe fiecare event). Nota: Modulul <strong> %s </strong> trebuie să fie activat and gestionat corect pentru a avea memento trimis la frecvența corectă.
+AGENDA_REMINDER_BROWSER=Activați memento-ul evenimentului <b> pe browser-ul utlizatorului </b> (când se ajunge la data evenimentului, fiecare utilizator poate să refuze întrebarea de confirmare a browserului)
+AGENDA_REMINDER_BROWSER_SOUND=Activați notificarea sonoră
+AGENDA_SHOW_LINKED_OBJECT=Afișați un obiect asociat în vizualizarea agendei
+##### Clicktodial #####
+ClickToDialSetup=Click pentru a Dial modul setup
+ClickToDialUrlDesc=URL-ul se apelează când se face clic pe pictograma telefonului. În URL-ul, puteți utiliza etichete <br> <b> __PHONETO__ </b> care va fi înlocuit cu numărul de telefon al persoanei de apelat <br> <b> __PHONEFROM__ </b> care va fi înlocuit cu numărul de telefon al apelantului (al tău) <br> <b> __LOGIN__ </b>, care va fi înlocuit cu autentificare clicktodial (definită pe cartela de utilizator) <br> <b> __PASS__ </b> care va fi înlocuit cu parola clicktodial (definită pe cartela de utilizator).
+ClickToDialDesc=Acest modul face ca numerele de telefon să facă clic pe link-uri. Un clic pe pictogramă va face telefonul să apeleze numărul. Acesta poate fi utilizat pentru a apela un sistem de call-center de la Dolibarr care poate apela numărul de telefon dintr-un sistem SIP, de exemplu
+ClickToDialUseTelLink=Utilizați doar link "tel:" pe numerele de telefon
+ClickToDialUseTelLinkDesc=Utilizați această metodă dacă utilizatorii dvs. au un softphone sau o interfață software instalată pe același computer ca browserul și sună când faceți clic pe un link din browser care începe cu "tel:". Dacă aveți nevoie de o soluție completă de server (nu este nevoie de instalarea software-ului local), trebuie să setați această opțiune la "Nu" și să completați câmpul următor
+##### Point Of Sale (CashDesk) #####
+CashDesk=POS
+CashDeskSetup=Configurare Modul POS
+CashDeskThirdPartyForSell=Terț generic implicit de utilizat pentru vânzări
+CashDeskBankAccountForSell=Case de cont pentru a utiliza pentru vinde
+CashDeskBankAccountForCheque= Contul implicit de folosit pentru a primi plata cu cec
+CashDeskBankAccountForCB= Cont pentru a folosi pentru a primi plăţi în numerar de carduri de credit
+CashDeskDoNotDecreaseStock=Dezactivați scăderea stocului atunci când o vânzare se face prin POS (dacă "nu", scaderea stocului se face pentru fiecare vânzare făcută prin POS, indiferent de opțiunea stabilită în modulul Stoc).
+CashDeskIdWareHouse=Forţează și limitează depozitul să folosească scăderea stocului
+StockDecreaseForPointOfSaleDisabled=Scăderea stocului la vânzarea făcută prin POS dezactivată
+StockDecreaseForPointOfSaleDisabledbyBatch=Scăderea stocului la plata prin POS nu este compatibilă cu gestionarea modulului Serial/Lot (activă în prezent), astfel că scăderea stocului este dezactivată.
+CashDeskYouDidNotDisableStockDecease=Nu ați dezactivat scăderea stocului la efectuarea unei vânzări de la POS. Prin urmare, este necesar un depozit.
+##### Bookmark #####
+BookmarkSetup=Bookmark modul de configurare
+BookmarkDesc=Acest modul vă permite să gestionați marcajele. De asemenea, puteți adăuga comenzi rapide la orice pagini Dolibarr sau site-uri externe din meniul din stânga.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NbOfBoomarkToShow=Numărul maxim de marcaje în stânga pentru a afişa meniul
 ##### WebServices #####
 WebServicesSetup=WebServices modul de configurare
@@ -1618,6 +2826,7 @@ WSDLCanBeDownloadedHere=WSDL Descriptorul de fişier cu condiţia serviceses pot
 EndPointIs=Clienții SOAP trebuie să își trimită cererile la punctul final Dolibarr disponibil la adresa URL
 ##### API ####
 ApiSetup=Configurare Modul API
+<<<<<<< HEAD
 ApiDesc=By enabling this module, Dolibarr become a REST server to provide miscellaneous web services.
 ApiProductionMode=Enable production mode (this will activate use of a cache for services management)
 ApiExporerIs=You can explore and test the APIs at URL
@@ -1627,11 +2836,23 @@ WarningAPIExplorerDisabled=The API explorer has been disabled. API explorer is n
 ##### Bank #####
 BankSetupModule=Banca modul de configurare
 FreeLegalTextOnChequeReceipts=Free text pe cec încasări
+=======
+ApiDesc=Prin activarea acestui modul, Dolibarr devine un server REST pentru furnizare de diverse servicii web.
+ApiProductionMode=Activați modul de producție (aceasta va activa utilizarea unei memorii cache pentru gestionarea serviciilor)
+ApiExporerIs=Puteți explora și testa API-urile la adresa URL
+OnlyActiveElementsAreExposed=Doar elementele din modulele activate sunt expuse
+ApiKey=Cheie pentru API
+WarningAPIExplorerDisabled=Exploratorul API a fost dezactivat. Exploratorul API nu este obligat să furnizeze servicii API . Este un instrument pentru dezvoltator de a găsi/testa API-urile REST. Dacă aveți nevoie de acest instrument, mergeți la gestionarea din module API REST pentru a-l activa.
+##### Bank #####
+BankSetupModule=Banca modul de configurare
+FreeLegalTextOnChequeReceipts=Text liber pe chitanţe
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BankOrderShow=Afişarea ordinea de conturi bancare pentru ţările care folosesc &quot;numărul de bancă detaliate&quot;
 BankOrderGlobal=General
 BankOrderGlobalDesc=General, pentru afişaj
 BankOrderES=Spaniol
 BankOrderESDesc=Spaniolă de afişare pentru
+<<<<<<< HEAD
 ChequeReceiptsNumberingModule=Cheque Receipts Numbering module
 ##### Multicompany #####
 MultiCompanySetup=Multi-societate modul setup
@@ -1640,6 +2861,16 @@ SuppliersSetup=Furnizorul modul de configurare
 SuppliersCommandModel=Complete template of prchase order (logo...)
 SuppliersInvoiceModel=Complete template of vendor invoice (logo...)
 SuppliersInvoiceNumberingModel=Modele numerotaţie al facturilor furnizori
+=======
+ChequeReceiptsNumberingModule=Modul de verificare a numerotării chitanţelor
+##### Multicompany #####
+MultiCompanySetup=Multi-societate modul setup
+##### Suppliers #####
+SuppliersSetup=Configurarea modulului furnizor
+SuppliersCommandModel=Șablonul complet al comenzii de achiziție (logo ...)
+SuppliersInvoiceModel=Șablonul complet al facturii furnizorului (logo ...)
+SuppliersInvoiceNumberingModel=Modele de numerotare a facturilor furnizorilor
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 IfSetToYesDontForgetPermission=Dacă este setat la da, nu uitați să furnizați permisiuni grupurilor sau utilizatorilor cărora li se permite a doua aprobare
 ##### GeoIPMaxmind #####
 GeoIPMaxmindSetup=GeoIP Maxmind modul de configurare
@@ -1654,17 +2885,29 @@ ProjectsSetup=Proiect modul de configurare
 ProjectsModelModule=Proiectul de raport document model
 TasksNumberingModules=Model de numerotaţie al taskurilor
 TaskModelModule=Modele  de document de rapoarte taskuri
+<<<<<<< HEAD
 UseSearchToSelectProject=Wait you press a key before loading content of project combo list (This may increase performance if you have a large number of project, but it is less convenient)
 ##### ECM (GED) #####
 ##### Fiscal Year #####
 AccountingPeriods=Accounting periods
 AccountingPeriodCard=Accounting period
+=======
+UseSearchToSelectProject=Așteptați până când este apăsat o tastă înainte de a încărca conținutul listei proiectului combo. <br> Aceasta poate îmbunătăți performanţa dacă aveți un number mare de proiecte, dar este mai puțin convenabil.
+##### ECM (GED) #####
+##### Fiscal Year #####
+AccountingPeriods=Perioade contabiile
+AccountingPeriodCard=Perioadă contabilă
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NewFiscalYear=Perioadă contabilă nouă 
 OpenFiscalYear=Deschide perioada contabilă
 CloseFiscalYear=Închide perioada contabila
 DeleteFiscalYear=Ștergeți perioada contabilă
 ConfirmDeleteFiscalYear=Sigur doriți să ștergeți această perioadă contabila?
+<<<<<<< HEAD
 ShowFiscalYear=Show accounting period
+=======
+ShowFiscalYear=Arată perioada contabilă
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AlwaysEditable=Permite a fi editat mereu
 MAIN_APPLICATION_TITLE=Forțează numele vizibil al aplicare (avertisment: setarea propriul nume aici poate duce la eliminarea facilitaţii de conectare automată atunci când se utilizează aplicația mobilă DoliDroid)
 NbMajMin=Numărul minim al caracterelor majuscule
@@ -1675,6 +2918,7 @@ NoAmbiCaracAutoGeneration=Nu utiliza caractere ambigue  ("1","l","i","|","0","O"
 SalariesSetup=Configurare modul salarii
 SortOrder=Ordine sortare
 Format=Format
+<<<<<<< HEAD
 TypePaymentDesc=0:Customer payment type, 1:Vendor payment type, 2:Both customers and vendors payment type
 IncludePath=Include calea (definita in variabila %s)
 ExpenseReportsSetup=Configurarea modului rapoartelor de cheltuieli
@@ -1737,10 +2981,76 @@ MailToSendIntervention=Intervenţii
 MailToSendSupplierRequestForQuotation=Quotation request
 MailToSendSupplierOrder=Purchase orders
 MailToSendSupplierInvoice=Vendor invoices
+=======
+TypePaymentDesc=0: tipul de plată al clientului, 1: tipul de plată al furnizorului, 2: tipul de plată al clienților și al furnizorilor
+IncludePath=Include calea (definita in variabila %s)
+ExpenseReportsSetup=Configurarea modului rapoartelor de cheltuieli
+TemplatePDFExpenseReports=Șabloane de documente pentru a genera un document de raportare a cheltuielilor
+ExpenseReportsIkSetup=Configurare din module Rapoarte de cheltuieli - indicele Milles
+ExpenseReportsRulesSetup=Configurare din module Rapoarte de cheltuieli - Reguli
+ExpenseReportNumberingModules=Modul de numerotare a rapoartelor de cheltuieli
+NoModueToManageStockIncrease=Nu a fost activat niciun modul capabil să gestioneze creșterea stocului automat. Creșterea stocurilor se va face doar prin introducere manuală.
+YouMayFindNotificationsFeaturesIntoModuleNotification=Puteți găsi opțiuni pentru notificările prin e-mail prin activarea și configurarea modulului "Notificare".
+ListOfNotificationsPerUser=Listă de notificări pe utilizator *
+ListOfNotificationsPerUserOrContact=Listă de notificări (evenimente) disponibilă pe utilizator* sau pe contact **
+ListOfFixedNotifications=Listă de notificări fixe
+GoOntoUserCardToAddMore=Accesați fila "Notificări" a unui mesaj de utilizator pentru a adăuga sau elimina notificările pentru utilizatori
+GoOntoContactCardToAddMore=Mergeți în fila "Notificări" a unei terțe părți pentru a adăuga sau elimina notificări pentru contacte / adrese
+Threshold=Prag
+BackupDumpWizard=Expertul pentru a construi copie de siguranţă
+SomethingMakeInstallFromWebNotPossible=Instalarea modulului extern nu este posibilă din interfața web din următorul motiv:
+SomethingMakeInstallFromWebNotPossible2=Din acest motiv, procesul de actualizare descris aici este un proces manual pe care numai un utilizator privilegiat poate face.
+InstallModuleFromWebHasBeenDisabledByFile=Instalarea modulului extern din aplicație a fost dezactivată de administratorul dvs. Trebuie să-l rogi să-l elimine fişierul <strong> %s </strong> pentru a permite această caracteristică
+ConfFileMustContainCustom=Instalarea sau construirea unui modul extern din aplicație trebuie să salveze fişierele modulului în directorul <strong> %s </strong>. Pentru a avea acest director procesat de Dolibarr, trebuie să vă configuraţi<strong> conf / conf.php </strong> pentru a adăuga 2 linii directoare: <br> <strong> $ dolibarr_main_url_root_alt = '/ custom'; </strong> <br> <strong> $ dolibarr_main_document_root_alt = '%s / personalizat'; </strong>
+HighlightLinesOnMouseHover=Evidențiați liniile tabelului când mișcarea mouse-ului trece peste ele
+HighlightLinesColor=Highlight color of the line when the mouse passes over (use 'ffffff' for no highlight)
+HighlightLinesChecked=Highlight color of the line when it is checked (use 'ffffff' for no highlight)
+TextTitleColor=Culoarea textului paginii de titlu
+LinkColor=Culoare link-uri
+PressF5AfterChangingThis=Apăsați CTRL + F5 pe tastatură sau ștergeți memoria cache a browserului după ce ați modificat această valoare pentru a o avea eficientă
+NotSupportedByAllThemes=Va funcționa cu teme de bază, poate nu este susținută de teme externe
+BackgroundColor=Culoare Background 
+TopMenuBackgroundColor=Culoare Background pentru Top menu
+TopMenuDisableImages=Ascundeți imaginile în meniul de deasupra
+LeftMenuBackgroundColor=Culoare Background pentru Left menu
+BackgroundTableTitleColor=Culoarea de fundal pentru linia de titlul a tabelului
+BackgroundTableTitleTextColor=Culoarea textului pentru linia de titlul a tabelului
+BackgroundTableLineOddColor=Culoarea de fundal pentru liniile impare ale tabelului
+BackgroundTableLineEvenColor=Culoarea de fundal pentru liniile pare ale tabelului
+MinimumNoticePeriod=Perioada minimă de preaviz (cererea dvs. de concediu trebuie făcută înainte de această întârziere)
+NbAddedAutomatically=Număr de zile adăugate la contoarele utilizatorilor (automat) în fiecare lună
+EnterAnyCode=Acest câmp conține o referinţă pentru a identifica linia. Introduceţi o valoare aleatoare, dar fără caractere speciale.
+UnicodeCurrency=Enter aici între paranteze, lista de octeți care reprezintă simbolul monedei. De exemplu: pentru $, enter [36] - pentru Brazilia real R$ [82,36] - pentru €, enter [8364]
+ColorFormat=Culoarea RGB este în format HEX , de exemplu: FF0000
+PositionIntoComboList=Poziția linei în listele combo
+SellTaxRate=Rata taxei de vânzare
+RecuperableOnly=Da pentru TVA "neperceput, dar recuperabil" dedicat pentru unele state din Franța. Mențineți valoarea "Nu" în toate celelalte cazuri.
+UrlTrackingDesc=Dacă furnizorul sau serviciul de transport oferă o pagină sau un site web pentru a verifica starea expedierilor dvs., puteți să o introduceți aici. Puteți utiliza tasta {TRACKID} în parametrii adresei URL, astfel încât sistemul să îl înlocuiască cu numărul de urmărire introdus de utilizator în cartea de expediere.
+OpportunityPercent=Când creați o iniţiativă, veți defini o valoare estimată a proiectului/iniţiativei. În funcție de starea iniţiativei, această valoare poate fi înmulțită cu această rată pentru a evalua o valoare totală generată de toți potențialii clienți. Valoarea este un procentaj (între 0 și 100).
+TemplateForElement=Această înregistrare șablon este dedicată pentru elementul care 
+TypeOfTemplate=Tip Model
+TemplateIsVisibleByOwnerOnly=Șablonul este vizibil numai pentru proprietar
+VisibleEverywhere=Vizibil peste tot
+VisibleNowhere=Invizibil
+FixTZ=Fixează TimeZone
+FillFixTZOnlyIfRequired=Examplu: +2 (completați numai dacă se întâlnește o problemă)
+ExpectedChecksum=Checksum așteptat
+CurrentChecksum=Checksum curent
+ForcedConstants=Valori constante necesare
+MailToSendProposal=Oferte Clienti
+MailToSendOrder=Ordine de vânzări 
+MailToSendInvoice=Facturi Clienţi
+MailToSendShipment=Livrări
+MailToSendIntervention=Intervenţii
+MailToSendSupplierRequestForQuotation=Cerere de cotaţie
+MailToSendSupplierOrder=Comenzile de achiziție
+MailToSendSupplierInvoice=Facturi Furnizori
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MailToSendContract=Contracte
 MailToThirdparty=Terţi
 MailToMember=Membri
 MailToUser=Utilizatori
+<<<<<<< HEAD
 MailToProject=Projects page
 ByDefaultInList=Show by default on list view
 YouUseLastStableVersion=You use the latest stable version
@@ -1763,10 +3073,35 @@ AddBoxes=Add widgets
 AddSheduledJobs=Add scheduled jobs
 AddHooks=Add hooks
 AddTriggers=Add triggers
+=======
+MailToProject=Pagina de proiecte
+ByDefaultInList=Afișați în mod implicit în vizualizarea listei
+YouUseLastStableVersion=Utilizați ultima versiune stabilă
+TitleExampleForMajorRelease=Exemplu de mesaj pe care îl puteți utiliza pentru a anunța această lansare majoră (nu ezitați să o utilizați pe site-urile dvs.)
+TitleExampleForMaintenanceRelease=Exemplu de mesaj pe care îl puteți utiliza pentru a anunța această mentenanţă majoră (nu ezitați să o utilizați pe site-urile dvs.)
+ExampleOfNewsMessageForMajorRelease=Dolibarr ERP & CRM %s este disponibil. Versiunea %s este o versiune majoră cu o mulţime de caracteristici noi atât pentru utilizatori cât şi pentru dezvoltatori . Puteți să o descărcați din https://www.dolibarr.org (versiuni stabile subdirector). Puteți să citiţi<a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog"> ChangeLog </a> pentru lista completă a modificărilor.
+ExampleOfNewsMessageForMaintenanceRelease=Dolibarr ERP & CRM %s este disponibil. Versiunea %s este o versiune de întreținere, deci conține doar corecții de erori. Recomandăm tuturor utilizatoriilor să faceți upgrade la această versiune. O versiune de întreținere nu introduce noi caracteristici sau modificări la baza de date. Puteți să o descărcați din https://www.dolibarr.org (versiuni stabile subdirector). Puteți să citiţi<a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog"> ChangeLog </a> pentru lista completă a modificărilor.
+MultiPriceRuleDesc=Când opțiunea "Mai multe niveluri de prețuri pe produs / serviciu" este activată, puteți defini diferite prețuri (câte unul pentru fiecare nivel de preț) pentru fiecare produs. Pentru a vă economisi timp, aici puteți introduce o regulă pentru a calcula automat un preț pentru fiecare nivel, pe baza prețului primului nivel, astfel încât va trebui să introduceți un preț pentru primul nivel pentru fiecare produs. Această pagină are rolul de a economisi timp, dar este utilă numai dacă prețurile pentru fiecare nivel sunt relative la primul nivel. În majoritatea cazurilor, puteți ignora această pagină.
+ModelModulesProduct=Șabloane pentru documente de produs
+ToGenerateCodeDefineAutomaticRuleFirst=Pentru a putea genera automat coduri, trebuie mai întâi să definiți un manager pentru a defini automat numărul de cod de bare.
+SeeSubstitutionVars=Consultați * notă pentru lista variabilelor de înlocuire posibile
+SeeChangeLog=Vedeți fişierul ChangeLog (numai în engleză)
+AllPublishers=Toți editorii
+UnknownPublishers=Editori necunoscuți
+AddRemoveTabs=Add sau inlatura taburi
+AddDataTables=Adăugați tabelele de obiect
+AddDictionaries=Adăugați tabele de dicționare
+AddData=Adăugați date desptre obiecte sau dicționare
+AddBoxes=Adăugați widget-uri
+AddSheduledJobs=Adăugați lucrări programate
+AddHooks=Adăugați elemente de agăţare
+AddTriggers=Adăugați declanșatoare
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddMenus=Add meniuri
 AddPermissions=Add permisiunii
 AddExportProfiles=Add profile export
 AddImportProfiles=Add profile import
+<<<<<<< HEAD
 AddOtherPagesOrServices=Add other pages or services
 AddModels=Add document or numbering templates
 AddSubstitutions=Add keys substitutions
@@ -1801,3 +3136,115 @@ UseSearchToSelectResource=Use a search form to choose a resource (rather than a 
 DisabledResourceLinkUser=Disable feature to link a resource to users
 DisabledResourceLinkContact=Disable feature to link a resource to contacts
 ConfirmUnactivation=Confirm module reset
+=======
+AddOtherPagesOrServices=Adăugați alte pagini sau servicii
+AddModels=Adăugați șabloane de document sau de numerotare
+AddSubstitutions=Adăugați chei de înlocuire
+DetectionNotPossible=Detectarea nu este posibilă
+UrlToGetKeyToUseAPIs=URL pentru a obține tokenul pentru a utiliza API (odată ce a fost primit token este salvată în  tabelul cu baza de date a utilizatorului şi trebuie să fie furnizat pentru fiecare apel API)
+ListOfAvailableAPIs=List de API-uri disponibile
+activateModuleDependNotSatisfied=Modulul "%s" depinde de modulul "%s", care lipsește, astfel că modulul "%1$s" este posibil ca să nu funcționeze corect. Instalați modulul "%2$s" sau dezactivați modulul "%1$s" dacă doriți să fiți în siguranță de orice surpriză
+CommandIsNotInsideAllowedCommands=Comanda pe care încercați să o executați nu este în lista comenzilor permise definite în parametrul <strong> $ dolibarr_main_restrict_os_commands </strong> în fişierul<strong> conf.php </strong>.
+LandingPage=Pagina de destinație
+SamePriceAlsoForSharedCompanies=Dacă utilizați un modul multi-companie, cu opțiunea "preț unic", prețul va fi, de asemenea, același pentru toate companiile dacă produsele sunt partajate între medii
+ModuleEnabledAdminMustCheckRights=Modulul a fost activat. Permisiunile pentru modulul (modulele) activate au fost acordate numai administratorilor. Poate fi necesar să acordați permisiuni manuale altor utilizatori sau grupuri  dacă este necesar.
+UserHasNoPermissions=Acest utilizator nu are definite permisiuni
+TypeCdr=Utilizați "Niciunul" dacă data termenului de plată este data facturii plus o delta în zile (delta este câmpul "%s") <br> Utilizați "La sfârșitul lunii" dacă, după delta, date trebuie mărită pentru a ajunge la sfârșitul lunii (+ un opțional "%s" în zile) <br> Utilizați "Curent / Următor" pentru a aveadata termenului de plată fiind primul Nth din lună după delta (delta este câmpul "%s" N este stocat în câmpul "%s")
+BaseCurrency=Valuta de referință a companiei (mergeți în configurarea companiei pentru a schimba acest lucru)
+WarningNoteModuleInvoiceForFrenchLaw=Acest modul %s respectă legile franceze (Loi Finance 2016).
+WarningNoteModulePOSForFrenchLaw=Acest modul %s respectă legile franceze (Loi Finance 2016) deoarece modulul Autentificări ireversibile este automat activat.
+WarningInstallationMayBecomeNotCompliantWithLaw=Încercați să instalați modulul %s care este un modul extern. Activarea unui modul extern înseamnă că aveți încredere în editorul modulului şi că sunteți sigur (ă) că acest modul nu afectează negativ comportamentul aplicației dvs., şi este în concordanţă cu legile țării dvs. (%s). Dacă modulul introduce o o caracteristică ilegală, devii responsabil pentru utilizarea software-ului ilegal.
+MAIN_PDF_MARGIN_LEFT=Marginea stângă a PDF-ului
+MAIN_PDF_MARGIN_RIGHT=Marginea dreaptă a PDF-ului 
+MAIN_PDF_MARGIN_TOP=Marginea superioară a PDF-ului 
+MAIN_PDF_MARGIN_BOTTOM=Marginea inferioară a PDF-ului 
+NothingToSetup=Nu există o configurație specifică necesară pentru acest modul.
+SetToYesIfGroupIsComputationOfOtherGroups=Setați acest lucru la da dacă acest grup este un calcul al altor grupuri
+EnterCalculationRuleIfPreviousFieldIsYes=Introduceți regula de calcul în cazul în care câmpul anterior a fost setat la Da (de exemplu "CODEGRP1 + CODEGRP2")
+SeveralLangugeVariatFound=Mai multe variante de limbă au fost găsite
+COMPANY_AQUARIUM_REMOVE_SPECIAL=Eliminați caracterele speciale
+COMPANY_AQUARIUM_CLEAN_REGEX=Filtrul Regex pentru a curăța valoarea (COMPANY_AQUARIUM_CLEAN_REGEX)
+GDPRContact=Responsabilul cu protecția datelor (DPO, confidențialitatea datelor sau contact GDPR )
+GDPRContactDesc=Dacă stocați date despre companii/cetățeni europeni, puteți numi persoana de contact care este responsabilă cu Regulamentul general privind protecția datelor aici
+HelpOnTooltip=Text de ajutor care să apară pe butonul de sugestii
+HelpOnTooltipDesc=Puneți un text sau o cheie de traducere aici pentru ca textul să apară într-o sugestie atunci când acest câmp apare într-un formular
+YouCanDeleteFileOnServerWith=Puteți șterge acest fișier pe server cu Linia de comandă: <br> %s
+ChartLoaded=Schema de cont încărcată
+SocialNetworkSetup=Configurarea modulelor Rețele sociale
+EnableFeatureFor=Activați caracteristici pentru <strong> %s </strong>
+VATIsUsedIsOff=Nota: Opțiunea de a utiliza impozitul pe vânzări sau TVA a fost setată la <strong>Oprit</strong> în meniu %s - %s, astfel încât impozitul pe vânzări sau TVA utilizate vor fi întotdeauna 0 pentru vânzări.
+SwapSenderAndRecipientOnPDF=Swap sender and recipient address position on PDF documents
+FeatureSupportedOnTextFieldsOnly=Avertizare, caracteristică acceptată numai pe câmpurile de text. De asemenea, trebuie să fie setat un parametru URL = create sau action = editare SAU numele paginii trebuie să se termine cu "new.php" pentru a declanșa această caracteristică.
+EmailCollector=Colector de e-mailuri
+EmailCollectorDescription=Adăugați o lucrare programată și o pagină de configurare pentru a scana în mod regulat căsuţele de e-mail (utilizând protocolul IMAP) și pentru a înregistra e-mailurile primite în aplicația dvs., la locul potrivit și/sau pentru a crea automat înregistrări (cum ar fi clienții).
+NewEmailCollector=Noul colector de e-mailuri
+EMailHost=Gazdă a serverului de email IMAP 
+MailboxSourceDirectory=Directorul sursă al cutiei poștale
+MailboxTargetDirectory=Directorul ţintă al cutiei poștale 
+EmailcollectorOperations=Operațiuni de făcut de către colector
+MaxEmailCollectPerCollect=Max number of emails collected per collect
+CollectNow=Colectați acum
+ConfirmCloneEmailCollector=Are you sure you want to clone the Email collector %s ?
+DateLastCollectResult=Date latest collect tried
+DateLastcollectResultOk=Date latest collect successfull
+LastResult=Latest result
+EmailCollectorConfirmCollectTitle=Confirmarea colectării de emailuri
+EmailCollectorConfirmCollect=Doriți să rulați acum colecția pentru acest colector?
+NoNewEmailToProcess=Niciun email de procesat (care sa se potriveasca cu filtrele)
+NothingProcessed=Nimic nu s-a făcut
+XEmailsDoneYActionsDone=%s emails qualified, %s emails successfully processed (for %s record/actions done)
+RecordEvent=Înregistrați evenimentul de e-mail
+CreateLeadAndThirdParty=Creați iniţiativă (și terț, dacă este necesar)
+CreateTicketAndThirdParty=Create ticket (and third party if necessary)
+CodeLastResult=Ultimul cod rezultat
+NbOfEmailsInInbox=Number of emails in source directory
+LoadThirdPartyFromName=Load third party searching on %s (load only)
+LoadThirdPartyFromNameOrCreate=Load third party searching on %s (create if not found)
+WithDolTrackingID=ID de urmărire Dolibarr găsit
+WithoutDolTrackingID=ID de urmărire Dolibarr nu a fost găsit
+FormatZip=Zip
+MainMenuCode=Codul de introducere a meniului (meniu principal)
+ECMAutoTree=Afișați arborele ECM automat
+OperationParamDesc=Define values to use for action, or how to extract values. For example:<br>objproperty1=SET:abc<br>objproperty1=SET:a value with replacement of __objproperty1__<br>objproperty3=SETIFEMPTY:abc<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey.*[^\\s]+(.*)<br>options_myextrafield=EXTRACT:SUBJECT:([^\\s]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
+OpeningHours=Ore de program
+OpeningHoursDesc=Introduceți aici orele de program normale ale companiei dvs.
+ResourceSetup=Configurarea modulului Resurse 
+UseSearchToSelectResource=Utilizați un formular de căutare pentru a alege o resursă (mai degrabă decât o listă derulantă).
+DisabledResourceLinkUser=Dezactivați caracteristica care conectează o resursă la utilizatori
+DisabledResourceLinkContact=Dezactivați caracteristica care conectează o resursă la contacte
+ConfirmUnactivation=Confirmați resetarea modulului
+OnMobileOnly=Numai pe ecranul mic (smartphone)
+DisableProspectCustomerType=Dezactivați tipul de terţ "Prospect + Client" (deci terţul trebuie să fie Prospect sau Client, dar nu poate fi ambele)
+MAIN_OPTIMIZEFORTEXTBROWSER=Simplificați interfața pentru o persoană nevăzătoare
+MAIN_OPTIMIZEFORTEXTBROWSERDesc=Activați această opțiune dacă sunteți o persoană nevăzătoare sau dacă utilizați aplicația dintr-un browser de text precum Lynx sau Links.
+ThisValueCanOverwrittenOnUserLevel=Această valoare poate fi suprascrisă de fiecare utilizator de pe pagina sa de utilizator- tab '%s'
+DefaultCustomerType=Tipul terțului implicit pentru formularul de creare "Client nou" 
+ABankAccountMustBeDefinedOnPaymentModeSetup=Note: The bank account must be defined on the module of each payment mode (Paypal, Stripe, ...) to have this feature working.
+RootCategoryForProductsToSell=Root category of products to sell
+RootCategoryForProductsToSellDesc=If defined, only products inside this category or childs of this category will be available in the Point Of Sale
+DebugBar=Debug Bar
+DebugBarDesc=Toolbar that comes with a plenty of tools to simplify debugging
+DebugBarSetup=DebugBar Setup
+GeneralOptions=General Options
+LogsLinesNumber=Number of lines to show on logs tab
+UseDebugBar=Use the debug bar
+DEBUGBAR_LOGS_LINES_NUMBER=Number of last log lines to keep in console
+WarningValueHigherSlowsDramaticalyOutput=Warning, higher values slows dramaticaly output
+DebugBarModuleActivated=Module debugbar is activated and slows dramaticaly the interface
+EXPORTS_SHARE_MODELS=Export models are share with everybody
+ExportSetup=Setup of module Export
+InstanceUniqueID=Unique ID of the instance
+SmallerThan=Smaller than
+LargerThan=Larger than
+IfTrackingIDFoundEventWillBeLinked=Note that If a tracking ID is found into incoming email, the event will be automatically linked to the related objects.
+WithGMailYouCanCreateADedicatedPassword=With a GMail account, if you enabled the 2 steps validation, it is recommanded to create a dedicated second password for the application instead of using your own account passsword from https://myaccount.google.com/.
+IFTTTSetup=IFTTT module setup
+IFTTT_SERVICE_KEY=IFTTT Service key
+IFTTT_DOLIBARR_ENDPOINT_SECUREKEY=Security key to secure the endpoint URL used by IFTTT to send messages to your Dolibarr.
+IFTTTDesc=This module is designed to trigger events on IFTTT and/or to execute some action on external IFTTT triggers.
+UrlForIFTTT=URL endpoint for IFTTT
+YouWillFindItOnYourIFTTTAccount=You will find it on your IFTTT account
+EndPointFor=End point for %s : %s
+DeleteEmailCollector=Delete email collector
+ConfirmDeleteEmailCollector=Are you sure you want to delete this email collectore?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

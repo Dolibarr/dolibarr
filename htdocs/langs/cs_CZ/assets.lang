@@ -1,0 +1,65 @@
+# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+Assets = Aktiva
+NewAsset = Nové aktivum
+AccountancyCodeAsset = Kód účetnictví (aktiva)
+AccountancyCodeDepreciationAsset = Účetnictví (účet odpisů)
+AccountancyCodeDepreciationExpense = Účetnictví (účet odpisů)
+NewAssetType=Nový typ majetku
+AssetsTypeSetup=Nastavení typu majetku
+AssetTypeModified=Typ majetku změněn
+AssetType=Typ majetku
+AssetsLines=Aktiva
+DeleteType=Vymazat
+DeleteAnAssetType=Odstranit typ aktiva
+ConfirmDeleteAssetType=Opravdu chcete tento typ položky odstranit?
+ShowTypeCard=Zobrazit typ '%s'
+
+# Module label 'ModuleAssetsName'
+ModuleAssetsName = Aktiva
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc = Popis aktiv
+
+#
+# Admin page
+#
+AssetsSetup = Nastavení aktiv
+Settings = Nastavení
+AssetsSetupPage = Stránka nastavení aktiv
+ExtraFieldsAssetsType = Doplňkové atributy (typ aktiv)
+AssetsType=Typ majetku
+AssetsTypeId=ID typu aktiv
+AssetsTypeLabel=Typ označení majetku
+AssetsTypes=Typy aktiv
+
+#
+# Menu
+#
+MenuAssets = Aktiva
+MenuNewAsset = Nové aktivum
+MenuTypeAssets = Zadejte majetek
+MenuListAssets = Seznam
+MenuNewTypeAssets = Nový
+MenuListTypeAssets = Seznam
+
+#
+# Module
+#
+NewAssetType=Nový typ majetku
+NewAsset=Nové aktivum

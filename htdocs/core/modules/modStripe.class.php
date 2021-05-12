@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2017		Alexandre Spangaro		<aspangaro@zendsi.com>
+=======
+/* Copyright (C) 2017		Alexandre Spangaro		<aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2017		Saasprov				<saasprov@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -36,7 +40,11 @@ class modStripe extends DolibarrModules
      *
      *   @param      DoliDB		$db      Database handler
      */
+<<<<<<< HEAD
     function __construct($db)
+=======
+    public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $this->db = $db;
 
@@ -50,7 +58,11 @@ class modStripe extends DolibarrModules
         // It is used to group modules in module setup page
         $this->family = "interface";
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+<<<<<<< HEAD
         $this->name = preg_replace('/^mod/i','',get_class($this));
+=======
+        $this->name = preg_replace('/^mod/i', '', get_class($this));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         // Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
         $this->description = "Module to offer an online payment page by credit card with Stripe";
         // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -65,10 +77,18 @@ class modStripe extends DolibarrModules
         // Data directories to create when module is enabled.
         $this->dirs = array();
 
+<<<<<<< HEAD
         // Config pages. Put here list of php page names stored in admmin directory used to setup module.
         $this->config_page_url = array("stripe.php@stripe");
 
         // Dependencies
+=======
+        // Config pages. Put here list of php page names stored in admin directory used to setup module.
+        $this->config_page_url = array("stripe.php@stripe");
+
+        // Dependencies
+        $this->hidden = false;			// A condition to hide module
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $this->depends = array();		// List of modules id that must be enabled if this module is enabled
         $this->requiredby = array();	// List of modules id to disable if this one is disabled
         $this->phpmin = array(5,4);					// Minimum version of PHP required by module
@@ -91,7 +111,11 @@ class modStripe extends DolibarrModules
 
         // Main menu entries
         $r=0;
+<<<<<<< HEAD
         $this->menu[$r]=array(
+=======
+       /* $this->menu[$r]=array(
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         	'fk_menu'=>'fk_mainmenu=billing,fk_leftmenu=customers_bills_payment',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 	        'mainmenu'=>'billing',
         	'leftmenu'=>'customers_bills_payment_stripe',
@@ -105,7 +129,11 @@ class modStripe extends DolibarrModules
 	        'target'=>'',
 	        'user'=>2
         );				                // 0=Menu for internal users, 1=external users, 2=both
+<<<<<<< HEAD
         $r++;
+=======
+        $r++;*/
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         $this->menu[$r] = array(
         	'fk_menu'=>'fk_mainmenu=bank',
@@ -130,7 +158,11 @@ class modStripe extends DolibarrModules
 			'url' => '/stripe/charge.php',
 			'langs' => 'stripe',
 			'position' => 102,
+<<<<<<< HEAD
 			'enabled' => '$conf->stripe->enabled && $conf->banque->enabled && $conf->global->MAIN_FEATURES_LEVEL >= 2',
+=======
+			'enabled' => '$conf->stripe->enabled && $conf->banque->enabled && $conf->global->MAIN_FEATURES_LEVEL >= 1',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			'perms' => '$user->rights->banque->lire',
 			'target' => '',
 			'user' => 0
@@ -144,7 +176,23 @@ class modStripe extends DolibarrModules
 			'url' => '/stripe/transaction.php',
 			'langs' => 'stripe',
 			'position' => 102,
+<<<<<<< HEAD
 			'enabled' => '$conf->stripe->enabled && $conf->banque->enabled && $conf->global->MAIN_FEATURES_LEVEL >= 2',
+=======
+			'enabled' => '$conf->stripe->enabled && $conf->banque->enabled && $conf->global->MAIN_FEATURES_LEVEL >= 1',
+			'perms' => '$user->rights->banque->lire',
+			'target' => '',
+			'user' => 0
+		);
+	    		$this->menu[$r] = array(
+			'fk_menu' => 'fk_mainmenu=bank,fk_leftmenu=stripe',
+			'type' => 'left',
+			'titre' => 'StripePayoutList',
+			'url' => '/stripe/payout.php',
+			'langs' => 'stripe',
+			'position' => 103,
+			'enabled' => '$conf->stripe->enabled && $conf->banque->enabled && $conf->global->MAIN_FEATURES_LEVEL >= 1',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			'perms' => '$user->rights->banque->lire',
 			'target' => '',
 			'user' => 0
@@ -154,4 +202,7 @@ class modStripe extends DolibarrModules
         $r=1;
     }
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

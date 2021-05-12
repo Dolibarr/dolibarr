@@ -32,7 +32,11 @@ $langs->loadLangs(array("admin","other","blockedlog"));
 
 if (! $user->admin || empty($conf->blockedlog->enabled)) accessforbidden();
 
+<<<<<<< HEAD
 $action = GETPOST('action','alpha');
+=======
+$action = GETPOST('action', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $backtopage = GETPOST('backtopage', 'alpha');
 
 
@@ -40,7 +44,11 @@ $backtopage = GETPOST('backtopage', 'alpha');
  * Actions
  */
 
+<<<<<<< HEAD
 if (preg_match('/set_(.*)/',$action,$reg))
+=======
+if (preg_match('/set_(.*)/', $action, $reg))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$code=$reg[1];
 	$values = GETPOST($code);
@@ -57,7 +65,11 @@ if (preg_match('/set_(.*)/',$action,$reg))
 	}
 }
 
+<<<<<<< HEAD
 if (preg_match('/del_(.*)/',$action,$reg))
+=======
+if (preg_match('/del_(.*)/', $action, $reg))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$code=$reg[1];
 	if (dolibarr_del_const($db, $code, 0) > 0)
@@ -79,17 +91,30 @@ if (preg_match('/del_(.*)/',$action,$reg))
 $form=new Form($db);
 $block_static = new BlockedLog($db);
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("BlockedLogSetup"));
 
 $linkback='';
 if (GETPOST('withtab','alpha'))
+=======
+llxHeader('', $langs->trans("BlockedLogSetup"));
+
+$linkback='';
+if (GETPOST('withtab', 'alpha'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$linkback='<a href="'.($backtopage?$backtopage:DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';
 }
 
+<<<<<<< HEAD
 print load_fiche_titre($langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog'),$linkback);
 
 if (GETPOST('withtab','alpha'))
+=======
+print load_fiche_titre($langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog'), $linkback);
+
+if (GETPOST('withtab', 'alpha'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$head=blockedlogadmin_prepare_head();
 	dol_fiche_head($head, 'blockedlog', '', -1);
@@ -116,7 +141,11 @@ if (!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY)) {
 	// Example with a yes / no select
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("BlockedLogAuthorityUrl").img_info($langs->trans('BlockedLogAuthorityNeededToStoreYouFingerprintsInNonAlterableRemote')).'</td>';
+<<<<<<< HEAD
 	print '<td align="right" width="300">';
+=======
+	print '<td class="right" width="300">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="set_BLOCKEDLOG_AUTHORITY_URL">';
@@ -147,7 +176,11 @@ if ($resql)
 	}
 }
 
+<<<<<<< HEAD
 $seledted = empty($conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY) ? array() : explode(',',$conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY);
+=======
+$seledted = empty($conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY) ? array() : explode(',', $conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print $form->multiselectarray('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY', $countryArray, $seledted);
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
@@ -171,12 +204,20 @@ print '</tr>';
 
 print '</table>';
 
+<<<<<<< HEAD
 if (GETPOST('withtab','alpha'))
+=======
+if (GETPOST('withtab', 'alpha'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	dol_fiche_end();
 }
 
 print '<br><br>';
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

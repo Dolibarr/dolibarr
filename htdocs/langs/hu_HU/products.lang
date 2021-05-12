@@ -16,13 +16,22 @@ Create=Létrehozás
 Reference=Referencia
 NewProduct=Új termék
 NewService=Új szolgáltatás
+<<<<<<< HEAD
 ProductVatMassChange=Mass VAT change
 ProductVatMassChangeDesc=This page can be used to modify a VAT rate defined on products or services from a value to another. Warning, this change is done on all database.
+=======
+ProductVatMassChange=Global VAT Update
+ProductVatMassChangeDesc=This tool updates the VAT rate defined on <b><u>ALL</u></b> products and services!
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MassBarcodeInit=Mass barcode init
 MassBarcodeInitDesc=This page can be used to initialize a barcode on objects that does not have barcode defined. Check before that setup of module barcode is complete.
 ProductAccountancyBuyCode=Accounting code (purchase)
 ProductAccountancySellCode=Accounting code (sale)
+<<<<<<< HEAD
 ProductAccountancySellIntraCode=Accounting code (sale intra-community)
+=======
+ProductAccountancySellIntraCode=Accounting code (sale intra-Community)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProductAccountancySellExportCode=Accounting code (sale export)
 ProductOrService=Termék vagy Szolgáltatás
 ProductsAndServices=Termékek és Szolgáltatások
@@ -36,6 +45,7 @@ ServicesOnSaleOnly=Services for sale only
 ServicesOnPurchaseOnly=Services for purchase only
 ServicesNotOnSell=Services not for sale and not for purchase
 ServicesOnSellAndOnBuy=Services for sale and for purchase
+<<<<<<< HEAD
 LastModifiedProductsAndServices=Latest %s modified products/services
 LastRecordedProducts=Latest %s recorded products
 LastRecordedServices=Latest %s recorded services
@@ -46,6 +56,19 @@ Stocks=Készletek
 Movements=Mozgások
 Sell=Értékesítés
 Buy=Vásárlások
+=======
+LastModifiedProductsAndServices=Utolsó %s nyílvántartásba vett termékek/szolgáltatások
+LastRecordedProducts=Latest %s recorded products
+LastRecordedServices=Latest %s recorded services
+CardProduct0=Termék
+CardProduct1=Szolgáltatás
+Stock=Készlet
+MenuStocks=Készletek
+Stocks=Stocks and location (warehouse) of products
+Movements=Mozgások
+Sell=Eladás
+Buy=Purchase
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 OnSell=Elérhető
 OnBuy=A vásárlás
 NotOnSell=Elavult
@@ -60,16 +83,29 @@ ProductStatusNotOnBuyShort=Nem vásárolható
 UpdateVAT=ÁFA frissítése
 UpdateDefaultPrice=Alapár fissítése
 UpdateLevelPrices=Árak frissítése minden szinten
+<<<<<<< HEAD
 AppliedPricesFrom=Alkalmazott árak
 SellingPrice=Eladási ár
 SellingPriceHT=Eladási ár (nettó)
 SellingPriceTTC=Eladási ár (bruttó)
 CostPriceDescription=This price (net of tax) can be used to store the average amount this product cost to your company. It may be any price you calculate yourself, for example from the average buying price plus average production and distribution cost.
+=======
+AppliedPricesFrom=Applied from
+SellingPrice=Eladási ár
+SellingPriceHT=Selling price (excl. tax)
+SellingPriceTTC=Eladási ár (bruttó)
+SellingMinPriceTTC=Minimum Selling price (inc. tax)
+CostPriceDescription=This price field (excl. tax) can be used to store the average amount this product costs to your company. It may be any price you calculate yourself, for example from the average buying price plus average production and distribution cost.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CostPriceUsage=This value could be used for margin calculation.
 SoldAmount=Sold amount
 PurchasedAmount=Purchased amount
 NewPrice=Új ár
+<<<<<<< HEAD
 MinPrice=Min. eladási ár
+=======
+MinPrice=Min. sell price
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 EditSellingPriceLabel=Edit selling price label
 CantBeLessThanMinPrice=Az eladási ár nem lehet kisebb a minimum árnál (nettó %s)
 ContractStatusClosed=Lezárva
@@ -77,8 +113,13 @@ ErrorProductAlreadyExists=Egy terméke ezzel a referenciával %s már létezik.
 ErrorProductBadRefOrLabel=Rossz érték a referenciának vagy feliratnak.
 ErrorProductClone=A termék vagy szolgáltatás duplikálása során hiba lépett fel
 ErrorPriceCantBeLowerThanMinPrice=Error, price can't be lower than minimum price.
+<<<<<<< HEAD
 Suppliers=Beszállítók
 SupplierRef=Beszállítók ref#.
+=======
+Suppliers=Vendors
+SupplierRef=Vendor SKU
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShowProduct=Termék megmutatása
 ShowService=Szolgáltatás megmutatása
 ProductsAndServicesArea=Termékek és Szolgáltatások területe
@@ -87,7 +128,11 @@ ServicesArea=Szolgáltatások területe
 ListOfStockMovements=Készlet mozgások listája
 BuyingPrice=Vásárlási ár
 PriceForEachProduct=Products with specific prices
+<<<<<<< HEAD
 SupplierCard=Beszállító kártya
+=======
+SupplierCard=Vendor card
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PriceRemoved=Ár eltávolítva
 BarCode=Vonalkód
 BarcodeType=Vonalkód típus
@@ -95,10 +140,17 @@ SetDefaultBarcodeType=Vonalkód típusának beállítása
 BarcodeValue=Vonalkód érték
 NoteNotVisibleOnBill=Megjegyzés (nem látszik a számlákon, ajánlatokon...)
 ServiceLimitedDuration=Ha a termék vagy szolgáltatás időkorlátos:
+<<<<<<< HEAD
 MultiPricesAbility=Several segment of prices per product/service (each customer is in one segment)
 MultiPricesNumPrices=Árak száma
 AssociatedProductsAbility=Aktiválja a modult a virtuális termékek kezeléséhez
 AssociatedProducts=Kapcsolódó termékek
+=======
+MultiPricesAbility=Multiple price segments per product/service (each customer is in one price segment)
+MultiPricesNumPrices=Árak száma
+AssociatedProductsAbility=Activate virtual products (kits)
+AssociatedProducts=Virtual products
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AssociatedProductsNumber=Kapcsolódó termékek száma
 ParentProductsNumber=Number of parent packaging product
 ParentProducts=Parent products
@@ -109,7 +161,11 @@ CategoryFilter=Kategória szűrés
 ProductToAddSearch=Termék keresése hozzáadáshoz
 NoMatchFound=Nincs találat
 ListOfProductsServices=List of products/services
+<<<<<<< HEAD
 ProductAssociationList=List of products/services that are component of this virtual product/package
+=======
+ProductAssociationList=List of products/services that are component(s) of this virtual product/kit
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProductParentList=Jegyzéke termékek / szolgáltatások ezzel a termékkel, mint egy komponens
 ErrorAssociationIsFatherOfThis=Az egyik kiválaszott termék szülője az aktuális terméknek
 DeleteProduct=Termék/szolgáltatás törlése
@@ -122,6 +178,7 @@ ImportDataset_service_1=Szolgáltatások
 DeleteProductLine=Termékvonal törlése
 ConfirmDeleteProductLine=Biztos törölni akarja ezt a termékvonalat?
 ProductSpecial=Különleges
+<<<<<<< HEAD
 QtyMin=Min. mennyiség
 PriceQtyMin=A min. mennyiség ára (áreng. nélkül)
 PriceQtyMinCurrency=Price for this min. qty (w/o discount) (currency)
@@ -135,6 +192,21 @@ PredefinedProductsAndServicesToSell=Predefined products/services to sell
 PredefinedProductsToPurchase=Predefined product to purchase
 PredefinedServicesToPurchase=Predefined services to purchase
 PredefinedProductsAndServicesToPurchase=Predefined products/services to puchase
+=======
+QtyMin=Min. purchase quantity
+PriceQtyMin=Price quantity min.
+PriceQtyMinCurrency=Price (currency) for this qty. (no discount)
+VATRateForSupplierProduct=VAT Rate (for this vendor/product)
+DiscountQtyMin=Discount for this qty.
+NoPriceDefinedForThisSupplier=No price/qty defined for this vendor/product
+NoSupplierPriceDefinedForThisProduct=No vendor price/qty defined for this product
+PredefinedProductsToSell=Predefined Product
+PredefinedServicesToSell=Predefined Service
+PredefinedProductsAndServicesToSell=Predefined products/services to sell
+PredefinedProductsToPurchase=Predefined product to purchase
+PredefinedServicesToPurchase=Predefined services to purchase
+PredefinedProductsAndServicesToPurchase=Predefined products/services to purchase
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NotPredefinedProducts=Not predefined products/services
 GenerateThumb=Kiskép generálása
 ServiceNb=#%s szolgáltatás
@@ -143,22 +215,37 @@ ListProductByPopularity=Termékek/szolgáltatások listázása népszerűség sz
 ListServiceByPopularity=Szolgáltatások listája népszerűség szerint
 Finished=Gyártott termék
 RowMaterial=Nyersanyag
+<<<<<<< HEAD
 CloneProduct=Termék vagy szolgáltatás klónozása
 ConfirmCloneProduct=Are you sure you want to clone product or service <b>%s</b>?
 CloneContentProduct=A termék/szolgáltatás minden fő információjának a klónozása
 ClonePricesProduct=Clone prices
 CloneCompositionProduct=Előre csomagolt termék/szolgáltatás duplikálása
+=======
+ConfirmCloneProduct=Are you sure you want to clone product or service <b>%s</b>?
+CloneContentProduct=Clone all main information of product/service
+ClonePricesProduct=Clone prices
+CloneCompositionProduct=Clone virtual product/service
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CloneCombinationsProduct=Clone product variants
 ProductIsUsed=Ez a termék használatban van
 NewRefForClone=Új termék/szolgáltatás ref#.
 SellingPrices=Eladási árak
 BuyingPrices=Vételi árak
 CustomerPrices=Végfelhasználói árak
+<<<<<<< HEAD
 SuppliersPrices=Beszállítói árak
 SuppliersPricesOfProductsOrServices=Beszállítói árak (termék vagy szolgáltatás)
 CustomCode=Customs / Commodity / HS code
 CountryOrigin=Származási ország
 Nature=Természet
+=======
+SuppliersPrices=Vendor prices
+SuppliersPricesOfProductsOrServices=Vendor prices (of products or services)
+CustomCode=Customs / Commodity / HS code
+CountryOrigin=Származási ország
+Nature=Nature of produt (material/finished)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShortLabel=Rövid címke
 Unit=Egység
 p=db.
@@ -202,7 +289,11 @@ PriceByQuantity=Mennyiségtől függő ár
 DisablePriceByQty=Disable prices by quantity
 PriceByQuantityRange=Mennyiségi intervallum
 MultipriceRules=Árazási szabályok
+<<<<<<< HEAD
 UseMultipriceRules=Use price segment rules (defined into product module setup) to autocalculate prices of all other segment according to first segment
+=======
+UseMultipriceRules=Use price segment rules (defined into product module setup) to auto calculate prices of all other segments according to first segment
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PercentVariationOver=%% változó ár %s fölött
 PercentDiscountOver=%% kedvezmény %s fölött
 KeepEmptyForAutoCalculation=Keep empty to have this calculated automatically from weight or volume of products
@@ -218,14 +309,20 @@ Quarter1=1. negyedév
 Quarter2=2. negyedév
 Quarter3=3. negyedév
 Quarter4=4. negyedév
+<<<<<<< HEAD
 BarCodePrintsheet=Vonalkód nyomtatása
 PageToGenerateBarCodeSheets=Ezzel az eszközzel vonalkód lapokat nyomtathat. Válassza ki a matricák oldalának formátumát, a vonalkód típusát és értékét majd kattintson a <b>%s</b> gombra.
+=======
+BarCodePrintsheet=Print barcode
+PageToGenerateBarCodeSheets=With this tool, you can print sheets of barcode stickers. Choose format of your sticker page, type of barcode and value of barcode, then click on button <b>%s</b>.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NumberOfStickers=Egy lapon lévő matricák száma
 PrintsheetForOneBarCode=Több matrica nyomtatása egyetlen vonalkóddal
 BuildPageToPrint=Oldal generálása nyomtatáshoz
 FillBarCodeTypeAndValueManually=Adja meg a vonalkód típusát és értékét.
 FillBarCodeTypeAndValueFromProduct=Vonalkód típusának és értékének megadása létező termékről
 FillBarCodeTypeAndValueFromThirdParty=Fill barcode type and value from barcode of a third party.
+<<<<<<< HEAD
 DefinitionOfBarCodeForProductNotComplete=A %s termék számára megadott vonalkód nem teljes.
 DefinitionOfBarCodeForThirdpartyNotComplete=Definition of type or value of bar code non complete for third party %s.
 BarCodeDataForProduct=Barcode information of product %s :
@@ -234,32 +331,63 @@ ResetBarcodeForAllRecords=Define barcode value for all record (this will also re
 PriceByCustomer=Egyedi ár minden vevő számára
 PriceCatalogue=Egyetlen eladási ár termékenként/szolgáltatásonként
 PricingRule=Rules for sell prices
+=======
+DefinitionOfBarCodeForProductNotComplete=Definition of type or value of barcode not complete for product %s.
+DefinitionOfBarCodeForThirdpartyNotComplete=Definition of type or value of barcode non complete for third party %s.
+BarCodeDataForProduct=Barcode information of product %s:
+BarCodeDataForThirdparty=Barcode information of third party %s:
+ResetBarcodeForAllRecords=Define barcode value for all record (this will also reset barcode value already defined with new values)
+PriceByCustomer=Egyedi ár minden vevő számára
+PriceCatalogue=Egyetlen eladási ár termékenként/szolgáltatásonként
+PricingRule=Rules for selling prices
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddCustomerPrice=Add price by customer
 ForceUpdateChildPriceSoc=Set same price on customer subsidiaries
 PriceByCustomerLog=Log of previous customer prices
 MinimumPriceLimit=A minimális ár nem lehet kisebb mint %s
+<<<<<<< HEAD
 MinimumRecommendedPrice=A minimális ajánlott ár: %s
+=======
+MinimumRecommendedPrice=Minimum recommended price is: %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PriceExpressionEditor=Ármeghatározó képletszerkesztő
 PriceExpressionSelected=Aktuális ármeghatározó képlet
 PriceExpressionEditorHelp1="price = 2 + 2" vagy "2 + 2" az ár meghatározásához. Használjon ";"-t a képletek elválasztásához
 PriceExpressionEditorHelp2=You can access ExtraFields with variables like <b>#extrafield_myextrafieldkey#</b> and global variables with <b>#global_mycode#</b>
+<<<<<<< HEAD
 PriceExpressionEditorHelp3=In both product/service and supplier prices there are these variables available:<br><b>#tva_tx# #localtax1_tx# #localtax2_tx# #weight# #length# #surface# #price_min#</b>
 PriceExpressionEditorHelp4=In product/service price only: <b>#supplier_min_price#</b><br>In supplier prices only: <b>#supplier_quantity# and #supplier_tva_tx#</b>
+=======
+PriceExpressionEditorHelp3=In both product/service and vendor prices there are these variables available:<br><b>#tva_tx# #localtax1_tx# #localtax2_tx# #weight# #length# #surface# #price_min#</b>
+PriceExpressionEditorHelp4=In product/service price only: <b>#supplier_min_price#</b><br>In vendor prices only: <b>#supplier_quantity# and #supplier_tva_tx#</b>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PriceExpressionEditorHelp5=Elérhető globális értékek:
 PriceMode=Ár mód
 PriceNumeric=Szám
 DefaultPrice=Alapár
 ComposedProductIncDecStock=Növelje/csökkentse a készletet a szülő termék változásakor
+<<<<<<< HEAD
 ComposedProduct=Sub-product
 MinSupplierPrice=Minimális vételár
 MinCustomerPrice=Minimum selling price
 DynamicPriceConfiguration=Dynamic price configuration
 DynamicPriceDesc=On product card, with this module enabled, you should be able to set mathematic functions to calculate Customer or Supplier prices. Such function can use all mathematic operators, some constants and variables. You can set here the variables you want to be able to use and if the variable need an automatic update, the external URL to use to ask Dolibarr to update automaticaly the value.
+=======
+ComposedProduct=Child products
+MinSupplierPrice=Minimális vételár
+MinCustomerPrice=Minimum selling price
+DynamicPriceConfiguration=Dynamic price configuration
+DynamicPriceDesc=You may define mathematical formulae to calculate Customer or Vendor prices. Such formulas can use all mathematical operators, some constants and variables. You can define here the variables you wish to use. If the variable needs an automatic update, you may define the external URL to allow Dolibarr to update the value automatically.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddVariable=Add Variable
 AddUpdater=Add Updater
 GlobalVariables=Globális változók
 VariableToUpdate=Variable to update
+<<<<<<< HEAD
 GlobalVariableUpdaters=Globális változók frissítése
+=======
+GlobalVariableUpdaters=External updaters for variables
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 GlobalVariableUpdaterType0=JSON data
 GlobalVariableUpdaterHelp0=Parses JSON data from specified URL, VALUE specifies the location of relevant value,
 GlobalVariableUpdaterHelpFormat0=Format for request {"URL": "http://example.com/urlofjson", "VALUE": "array1,array2,targetvalue"}
@@ -277,7 +405,11 @@ WarningSelectOneDocument=Please select at least one document
 DefaultUnitToShow=Egység
 NbOfQtyInProposals=Qty in proposals
 ClinkOnALinkOfColumn=Kattintson a %s oszlop hivatkozására a részletes nézethez...
+<<<<<<< HEAD
 ProductsOrServicesTranslations=Products or services translation
+=======
+ProductsOrServicesTranslations=Products/Services translations
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TranslatedLabel=Translated label
 TranslatedDescription=Translated description
 TranslatedNote=Translated notes
@@ -293,7 +425,12 @@ ProductSheet=Product sheet
 ServiceSheet=Service sheet
 PossibleValues=Possible values
 GoOnMenuToCreateVairants=Go on menu %s - %s to prepare attribute variants (like colors, size, ...)
+<<<<<<< HEAD
 
+=======
+UseProductFournDesc=Add a feature to define the descriptions of products defined by the vendors in addition to descriptions for customers
+ProductSupplierDescription=Vendor description for the product
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 #Attributes
 VariantAttributes=Variant attributes
 ProductAttributes=Variant attributes for products
@@ -325,12 +462,26 @@ DoNotRemovePreviousCombinations=Do not remove previous variants
 UsePercentageVariations=Use percentage variations
 PercentageVariation=Percentage variation
 ErrorDeletingGeneratedProducts=There was an error while trying to delete existing product variants
+<<<<<<< HEAD
 NbOfDifferentValues=Nb of different values
 NbProducts=Nb. of products
 ParentProduct=Parent product
 HideChildProducts=Hide variant products
+=======
+NbOfDifferentValues=No. of different values
+NbProducts=No. of products
+ParentProduct=Parent product
+HideChildProducts=Hide variant products
+ShowChildProducts=Show variant products
+NoEditVariants=Go to Parent product card and edit variants price impact in the variants tab
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmCloneProductCombinations=Would you like to copy all the product variants to the other parent product with the given reference?
 CloneDestinationReference=Destination product reference
 ErrorCopyProductCombinations=There was an error while copying the product variants
 ErrorDestinationProductNotFound=Destination product not found
 ErrorProductCombinationNotFound=Product variant not found
+<<<<<<< HEAD
+=======
+ActionAvailableOnVariantProductOnly=Action only available on the variant of product
+ProductsPricePerCustomer=Product prices per customers
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -1,6 +1,10 @@
 # Dolibarr language file - Source file is en_US - supplier_proposal
 SupplierProposal=Demande de prix fournisseur
+<<<<<<< HEAD
 supplier_proposalDESC=Gestion des demandes de prix aux fournisseurs
+=======
+supplier_proposalDESC=Gestion des demandes de prix fournisseurs
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SupplierProposalNew=Nouvelle demande de prix
 CommRequest=Demande de prix
 CommRequests=Demandes de prix
@@ -34,7 +38,10 @@ SupplierProposalStatusSignedShort=Accepté
 SupplierProposalStatusNotSignedShort=Refusé
 CopyAskFrom=Créer demande/devis par recopie d'une demande existante
 CreateEmptyAsk=Créer demande/devis vierge
+<<<<<<< HEAD
 CloneAsk=Cloner demande de prix
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmCloneAsk=Êtes-vous sûr de vouloir cloner la demande de prix <b>%s</b> ?
 ConfirmReOpenAsk=Êtes-vous sûr de vouloir réouvrir la demande de prix <b>%s</b> ?
 SendAskByMail=Envoyer demande de prix par email

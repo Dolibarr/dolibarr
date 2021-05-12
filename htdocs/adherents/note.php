@@ -28,6 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
+<<<<<<< HEAD
 $langs->load("companies");
 $langs->load("members");
 $langs->load("bills");
@@ -37,6 +38,16 @@ $id=GETPOST('id','int');
 
 // Security check
 $result=restrictedArea($user,'adherent',$id);
+=======
+// Load translation files required by the page
+$langs->loadLangs(array("companies","members","bills"));
+
+$action=GETPOST('action', 'alpha');
+$id=GETPOST('id', 'int');
+
+// Security check
+$result=restrictedArea($user, 'adherent', $id);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $object = new Adherent($db);
 $result=$object->fetch($id);
@@ -61,7 +72,11 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, 
  */
 $title=$langs->trans("Member") . " - " . $langs->trans("Note");
 $helpurl="EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros";
+<<<<<<< HEAD
 llxHeader("",$title,$helpurl);
+=======
+llxHeader("", $title, $helpurl);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $form = new Form($db);
 
@@ -93,8 +108,13 @@ if ($id)
     print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
 
     // Morphy
+<<<<<<< HEAD
     print '<tr><td class="titlefield">'.$langs->trans("Nature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
     /*print '<td rowspan="'.$rowspan.'" align="center" valign="middle" width="25%">';
+=======
+    print '<tr><td class="titlefield">'.$langs->trans("MemberNature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
+    /*print '<td rowspan="'.$rowspan.'" class="center" valign="middle" width="25%">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print $form->showphoto('memberphoto',$member);
     print '</td>';*/
     print '</tr>';
@@ -117,9 +137,15 @@ if ($id)
 
 
     dol_fiche_end();
+<<<<<<< HEAD
 
 }
 
 
+=======
+}
+
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

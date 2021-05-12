@@ -23,25 +23,47 @@
 /**
  *      \file       public/emailing/mailing-unsubscribe.php
  *      \ingroup    mailing
+<<<<<<< HEAD
  *      \brief      Script use to update unsubcribe contact to prospect mailing list
  */
 
 if (! defined('NOLOGIN'))        define("NOLOGIN",1);			// This means this output page does not require to be logged.
 if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');		// Do not check anti CSRF attack test
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');	// If there is no need to load and show top and left menu
+=======
+ *      \brief      Script use to update unsubcribe status of an email
+ *                  https://myserver/public/emailing/mailing-unsubscribe.php?unsuscrib=1&securitykey=securitykey&tag=abcdefghijklmn
+ */
+
+if (! defined('NOLOGIN'))        define("NOLOGIN", 1);			// This means this output page does not require to be logged.
+if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');		// Do not check anti CSRF attack test
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');	// If there is no need to load and show top and left menu
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 /**
  * Header empty
  *
  * @return	void
  */
+<<<<<<< HEAD
 function llxHeader() { }
+=======
+function llxHeader()
+{
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 /**
  * Footer empty
  *
  * @return	void
  */
+<<<<<<< HEAD
 function llxFooter() { }
+=======
+function llxFooter()
+{
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 require '../../main.inc.php';
@@ -49,8 +71,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 global $user, $conf, $langs;
 
+<<<<<<< HEAD
 $langs->load("main");
 $langs->load("mails");
+=======
+$langs->loadLangs(array("main", "mails"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $tag=GETPOST('tag');
 $unsuscrib=GETPOST('unsuscrib');
@@ -72,21 +98,51 @@ if ($securitykey != $conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY)
 
 if (! empty($tag) && ($unsuscrib=='1'))
 {
+<<<<<<< HEAD
 	// Update status of mail in recipient mailing list table
 	$statut='3';
 	$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=".$statut." WHERE tag='".$db->escape($tag)."'";
 	dol_syslog("public/emailing/mailing-unsubscribe.php : Mail unsubcribe : ".$sql, LOG_DEBUG);
+=======
+	dol_syslog("public/emailing/mailing-unsubscribe.php : Launch unsubscribe requests", LOG_DEBUG);
+
+	$sql = "SELECT mc.email, m.entity";
+	$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc, ".MAIN_DB_PREFIX."mailing as m";
+	$sql .= " WHERE mc.fk_mailing = m.rowid AND mc.tag='".$db->escape($tag)."'";
 
 	$resql=$db->query($sql);
 	if (! $resql) dol_print_error($db);
 
+	$obj = $db->fetch_object($resql);
+
+	if (empty($obj->email))
+	{
+		print 'Email not found. No need to unsubscribe.';
+		exit;
+	}
+
+	// Update status of mail in recipient mailing list table
+	$statut='3';
+	$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=".$statut." WHERE tag='".$db->escape($tag)."'";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
+
+	$resql=$db->query($sql);
+	if (! $resql) dol_print_error($db);
+
+<<<<<<< HEAD
 	// Update status communication of thirdparty prospect
 	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=-1 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE tag='".$db->escape($tag)."' AND source_type='thirdparty' AND source_id is not null)";
 	dol_syslog("public/emailing/mailing-unsubscribe.php : Mail unsubcribe thirdparty : ".$sql, LOG_DEBUG);
+=======
+	/*
+	// Update status communication of thirdparty prospect (old usage)
+	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=-1 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE tag = '".$db->escape($tag)."' AND source_type='thirdparty' AND source_id is not null)";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	$resql=$db->query($sql);
 	if (! $resql) dol_print_error($db);
 
+<<<<<<< HEAD
     // Update status communication of contact prospect
 	$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET no_email=1 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE tag = '".$db->escape($tag)."' AND source_type='contact' AND source_id is not null)";
 	dol_syslog("public/emailing/mailing-unsubscribe.php : Mail unsubcribe contact : ".$sql, LOG_DEBUG);
@@ -103,6 +159,21 @@ if (! empty($tag) && ($unsuscrib=='1'))
 	if (! $resql) dol_print_error($db);
 
 	$obj = $db->fetch_object($resql);
+=======
+    // Update status communication of contact prospect (old usage)
+	$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET no_email=1 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE tag = '".$db->escape($tag)."' AND source_type='contact' AND source_id is not null)";
+
+	$resql=$db->query($sql);
+	if (! $resql) dol_print_error($db);
+	*/
+
+	// Update status communication of email (new usage)
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe (date_creat, entity, email) VALUES ('".$db->idate(dol_now())."', ".$obj->entity.", '".$obj->email."')";
+
+	$resql=$db->query($sql);
+	//if (! $resql) dol_print_error($db);	No test on errors, may fail if already unsubscribed
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
@@ -123,7 +194,11 @@ if (! empty($tag) && ($unsuscrib=='1'))
 	print "</head>\n";
 	print '<body style="margin: 20px;">'."\n";
 	print '<table><tr><td style="text_align:center;">';
+<<<<<<< HEAD
 	print $langs->trans("YourMailUnsubcribeOK",$obj->email)."<br>\n";
+=======
+	print $langs->trans("YourMailUnsubcribeOK", $obj->email)."<br>\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</td></tr></table>';
 	print "</body>\n";
 	print "</html>\n";

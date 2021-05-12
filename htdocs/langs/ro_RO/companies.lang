@@ -2,6 +2,7 @@
 ErrorCompanyNameAlreadyExists=Numele societăţii %s există deja. Alegeţi un altul.
 ErrorSetACountryFirst=Setaţi mai întâi ţară
 SelectThirdParty=Selectaţi un terţ
+<<<<<<< HEAD
 ConfirmDeleteCompany=Are you sure you want to delete this company and all inherited information?
 DeleteContact=Şterge un contact
 ConfirmDeleteContact=Are you sure you want to delete this contact and all inherited information?
@@ -15,11 +16,27 @@ NewThirdParty=New third party (prospect, customer, vendor)
 CreateDolibarrThirdPartySupplier=Create a third party (vendor)
 CreateThirdPartyOnly=Creare terţ
 CreateThirdPartyAndContact=Create a third party + a child contact
+=======
+ConfirmDeleteCompany=Sigur doriți să ștergeți această companie și toate informațiile moștenite?
+DeleteContact=Şterge un contact
+ConfirmDeleteContact=Sigur doriți să ștergeți acest contact și toate informațiile moștenite?
+MenuNewThirdParty=Terț nou
+MenuNewCustomer=Client nou
+MenuNewProspect=Prospect nou
+MenuNewSupplier=Furnizor nou
+MenuNewPrivateIndividual=Particular nou
+NewCompany=Compania nouă (prospect, client, furnizor)
+NewThirdParty=Terț nou (prospect, client, furnizor)
+CreateDolibarrThirdPartySupplier=Creează un terț (furnizor)
+CreateThirdPartyOnly=Creare terţ
+CreateThirdPartyAndContact=Creați un terț + un contact pentru copil
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProspectionArea=Prospecte
 IdThirdParty=ID Terţ
 IdCompany=ID Societate
 IdContact=Id Contact
 Contacts=Contacte
+<<<<<<< HEAD
 ThirdPartyContacts=Contacte Terţi
 ThirdPartyContact=Contact Terţ
 Company=Societate
@@ -32,11 +49,27 @@ ThirdPartyName=Nume Terţ
 ThirdPartyEmail=Third party email
 ThirdParty=Terţ
 ThirdParties=Terţi
+=======
+ThirdPartyContacts=Contactele terți
+ThirdPartyContact=Contact / adresă terț
+Company=Societate
+CompanyName=Nume  societate
+AliasNames=Alias nume (comercial, marca inregistrata, ...)
+AliasNameShort=Porecla
+Companies=Societăţi
+CountryIsInEEC=Țara se află în interiorul Comunității Economice Europene
+PriceFormatInCurrentLanguage=Formatul prețului în limba curentă
+ThirdPartyName=Numele terț
+ThirdPartyEmail=E-mail terț
+ThirdParty=Terț
+ThirdParties=Terți
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ThirdPartyProspects=Prospecte
 ThirdPartyProspectsStats=Prospecte
 ThirdPartyCustomers=Clienţi
 ThirdPartyCustomersStats=Clienţi
 ThirdPartyCustomersWithIdProf12=Clienţii cu %s sau %s
+<<<<<<< HEAD
 ThirdPartySuppliers=Vendors
 ThirdPartyType=Tip de terţi
 Individual=Persoană privată
@@ -45,6 +78,16 @@ ParentCompany=Societatea-mamă
 Subsidiaries=Filiale
 ReportByMonth=Report by month
 ReportByCustomers=Report by customer
+=======
+ThirdPartySuppliers=Furnizori
+ThirdPartyType=Tip de terț
+Individual=Persoană privată
+ToCreateContactWithSameName=Va crea automat o persoană de contact / o adresă cu aceleași informații ca și terțul terțului. În cele mai multe cazuri, chiar dacă partea terță este o persoană fizică, este suficientă crearea unei terțe părți singură.
+ParentCompany=Societatea-mamă
+Subsidiaries=Filiale
+ReportByMonth=Raportați pe lună
+ReportByCustomers=Raportați pe client
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ReportByQuarter=Raport pe rată
 CivilityCode=Mod adresare
 RegisteredOffice=Sediul social
@@ -52,12 +95,20 @@ Lastname=Nume
 Firstname=Prenume
 PostOrFunction=Funcţie
 UserTitle=Titlu
+<<<<<<< HEAD
 NatureOfThirdParty=Nature of Third party
+=======
+NatureOfThirdParty=Natura terților
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Address=Adresă
 State=Regiune / Judeţ
 StateShort=Stare
 Region=Regiune
+<<<<<<< HEAD
 Region-State=Region - State
+=======
+Region-State=Region - Țară
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Country=Ţară
 CountryCode=Cod ţară
 CountryId=ID Ţara
@@ -69,13 +120,18 @@ Chat=Chat
 PhonePro=Telefon Prof.
 PhonePerso=Telefon Pers.
 PhoneMobile=Telefon Mobil
+<<<<<<< HEAD
 No_Email=Nu permite mass e-mailing
+=======
+No_Email=Refuzați e-mailurile în vrac
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Fax=Fax
 Zip=Cod postal
 Town=Oraş
 Web=Web
 Poste= Poziţie
 DefaultLang=Limba implicită
+<<<<<<< HEAD
 VATIsUsed=Sales tax is used
 VATIsUsedWhenSelling=This define if this third party includes a sale tax or not when it makes an invoice to its own customers
 VATIsNotUsed=Sales tax is not used
@@ -83,6 +139,15 @@ CopyAddressFromSoc=Fill address with third party address
 ThirdpartyNotCustomerNotSupplierSoNoRef=Third party neither customer nor vendor, no available refering objects
 ThirdpartyIsNeitherCustomerNorClientSoCannotHaveDiscounts=Third party neither customer nor supplier, discounts are not available
 PaymentBankAccount=Payment bank account
+=======
+VATIsUsed=Impozitul pe vânzări utilizat
+VATIsUsedWhenSelling=Aceasta definește dacă acest terț include sau nu o taxă de vânzare atunci când efectuează o factură către clienții săi
+VATIsNotUsed=Impozitul pe vânzări nu este utilizat
+CopyAddressFromSoc=Copiați adresa de la detaliile terților
+ThirdpartyNotCustomerNotSupplierSoNoRef=Partea terță nici client, nici vânzător, nu există obiecte care se face referință
+ThirdpartyIsNeitherCustomerNorClientSoCannotHaveDiscounts=Partea terță nici client, nici vânzător, reduceri nu sunt disponibile
+PaymentBankAccount=Cont bancar de plată
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 OverAllProposals=Oferte
 OverAllOrders=Comenzi
 OverAllInvoices=Facturi
@@ -96,6 +161,7 @@ LocalTax2IsUsedES= IRPF este utilizat
 LocalTax2IsNotUsedES= IRPF nu este utilizat
 LocalTax1ES=RE
 LocalTax2ES=IRPF
+<<<<<<< HEAD
 TypeLocaltax1ES=RE Tip
 TypeLocaltax2ES=IRPF Tip
 WrongCustomerCode=Cod  Client invalid
@@ -103,6 +169,13 @@ WrongSupplierCode=Vendor code invalid
 CustomerCodeModel=Model cod client
 SupplierCodeModel=Vendor code model
 Gencod=Cod de bare
+=======
+WrongCustomerCode=Cod  Client invalid
+WrongSupplierCode=Codul furnizorului este invalid
+CustomerCodeModel=Model cod client
+SupplierCodeModel=Modelul codului furnizorului
+Gencod=Coduri de bare
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ##### Professional ID #####
 ProfId1Short=Prof. id 1
 ProfId2Short=Prof. ID 2
@@ -210,7 +283,11 @@ ProfId1MA=Id prof. univ. 1 (RC)
 ProfId2MA=Id prof. univ. 2 (Patente)
 ProfId3MA=Id prof. univ. 3 (IF)
 ProfId4MA=Id prof. univ. 4 (CNSS)
+<<<<<<< HEAD
 ProfId5MA=Id. prof. 5 (I.C.E.)
+=======
+ProfId5MA=Id-ul. prof. 5 (I.C.E.)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProfId6MA=-
 ProfId1MX=Prof. Id-ul 1 (RFC).
 ProfId2MX=Prof. Id-ul 2 (R.. P. IMSS)
@@ -242,7 +319,11 @@ ProfId3TN=Prof Id 3 (Douane cod)
 ProfId4TN=Prof Id 4 (BAN)
 ProfId5TN=-
 ProfId6TN=-
+<<<<<<< HEAD
 ProfId1US=Prof Id (FEIN)
+=======
+ProfId1US=Id-ul prof (FEIN)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProfId2US=-
 ProfId3US=-
 ProfId4US=-
@@ -258,20 +339,32 @@ ProfId1DZ=RC
 ProfId2DZ=Art.
 ProfId3DZ=NIF
 ProfId4DZ=NIS
+<<<<<<< HEAD
 VATIntra=Sales tax ID
 VATIntraShort=Tax ID
 VATIntraSyntaxIsValid=Sintaxa este validă
 VATReturn=VAT return
+=======
+VATIntra=Cod TVA
+VATIntraShort=Cod TVA
+VATIntraSyntaxIsValid=Sintaxa este validă
+VATReturn=Restituire TVA
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProspectCustomer=Prospect / Client
 Prospect=Prospect
 CustomerCard=Fişa Client
 Customer=Client
 CustomerRelativeDiscount=Discount Relativ client
+<<<<<<< HEAD
 SupplierRelativeDiscount=Relative vendor discount
+=======
+SupplierRelativeDiscount=Reducere relativă a furnizorului
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CustomerRelativeDiscountShort=Discount Relativ
 CustomerAbsoluteDiscountShort=Discount Absolut
 CompanyHasRelativeDiscount=Acest client are un discount <b>de %s%%</b>
 CompanyHasNoRelativeDiscount=Acest client nu are nici un discount în mod implicit
+<<<<<<< HEAD
 HasRelativeDiscountFromSupplier=You have a default discount of <b>%s%%</b> from this supplier
 HasNoRelativeDiscountFromSupplier=You have no default relative discount from this supplier
 CompanyHasAbsoluteDiscount=This customer has discount available (credits notes or down payments) for <b>%s</b> %s
@@ -288,6 +381,24 @@ SupplierAbsoluteDiscountAllUsers=Absolute vendor discounts (entered by all users
 SupplierAbsoluteDiscountMy=Absolute vendor discounts (entered by yourself)
 DiscountNone=Niciunul
 Supplier=Furnizor
+=======
+HasRelativeDiscountFromSupplier=Aveți o reducere implicită de <b> %s%% </b> de la acest furnizor
+HasNoRelativeDiscountFromSupplier=Nu aveți nici o reducere relativă implicită de la acest furnizor
+CompanyHasAbsoluteDiscount=Acest client are reduceri disponibile (note de credit sau plăți în avans) pentru <b> %s </b> %s
+CompanyHasDownPaymentOrCommercialDiscount=Acest client are reduceri disponibile (comerciale, plăți în avans) pentru <b> %s </b> %s
+CompanyHasCreditNote=Acest client are încă note de credit pentru <b>%s</b> %s
+HasNoAbsoluteDiscountFromSupplier=Nu aveți credit de reducere disponibil de la acest furnizor
+HasAbsoluteDiscountFromSupplier=Aveți reduceri disponibile (note de credit sau plăți în avans) pentru <b> %s </b> %s de la acest furnizor
+HasDownPaymentOrCommercialDiscountFromSupplier=Aveți reduceri disponibile (comerciale, plăți în avans) pentru <b> %s </b> %s de la acest furnizor
+HasCreditNoteFromSupplier=Aveți note de credit pentru <b> %s </b> %s de la acest furnizor
+CompanyHasNoAbsoluteDiscount=Acest client nu are nici o reducere de credit disponibil
+CustomerAbsoluteDiscountAllUsers=Reduceri absolute ale clienților (acordate de toți utilizatorii)
+CustomerAbsoluteDiscountMy=Reduceri absolute ale clienților (acordate de dvs.)
+SupplierAbsoluteDiscountAllUsers=Reduceri absolute ale furnizorului (introduse de toți utilizatorii)
+SupplierAbsoluteDiscountMy=Reduceri absolute ale furnizorilor  (introduse de dvs.)
+DiscountNone=Niciunul
+Vendor=Furnizor
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddContact=Creare contact
 AddContactAddress=Creare contact/adresă
 EditContact=Editare contact
@@ -295,7 +406,11 @@ EditContactAddress=Editează contact
 Contact=Contact
 ContactId=Id contact
 ContactsAddresses=Contacte
+<<<<<<< HEAD
 FromContactName=Name:
+=======
+FromContactName=Nume:
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoContactDefinedForThirdParty=Niciun contact definit pentru acest terţ
 NoContactDefined=Niciun contact definit
 DefaultContact=Contact Implicit
@@ -303,6 +418,7 @@ AddThirdParty=Creare terţ
 DeleteACompany=Şterge o societate
 PersonalInformations=Informaţii personale
 AccountancyCode=Cont contabil
+<<<<<<< HEAD
 CustomerCode=Cod Client
 SupplierCode=Vendor code
 CustomerCodeShort=Cod Client
@@ -319,6 +435,24 @@ ListOfContacts=Lista Contacte
 ListOfContactsAddresses=Lista  contacte
 ListOfThirdParties=Lista  terţi
 ShowCompany=Show third party
+=======
+CustomerCode=Cod client
+SupplierCode=Cod furnizor
+CustomerCodeShort=Cod client
+SupplierCodeShort=Cod furnizor
+CustomerCodeDesc=Cod client, unic pentru toți clienți
+SupplierCodeDesc=Cod furnizor, unic pentru toți furnizori
+RequiredIfCustomer=Obligatoriu, dacă un terţ este un client sau prospect
+RequiredIfSupplier=Obligatoriu dacă un terț este un furnizor
+ValidityControledByModule=Valabilitate controlată de modul
+ThisIsModuleRules=Reguli pentru acest modul
+ProspectToContact=Prospect de contact
+CompanyDeleted=Societatea " %s" a fost ştearsă din baza de date.
+ListOfContacts=Lista Contacte
+ListOfContactsAddresses=Lista Contacte
+ListOfThirdParties=Lista terților
+ShowCompany=Arată terțul
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShowContact=Afişeză contact
 ContactsAllShort=Toate (fără filtru)
 ContactType=Tip Contact
@@ -338,6 +472,7 @@ MyContacts=Contactele mele
 Capital=Capital
 CapitalOf=Capital de % s
 EditCompany=Modifică societate
+<<<<<<< HEAD
 ThisUserIsNot=This user is not a prospect, customer nor vendor
 VATIntraCheck=Verifică
 VATIntraCheckDesc=Linkul  <b>%s</b>permite solicitarea verificării TVA european . Este necesar  acces la internet  pentru  ca acest  serviciu să funcționeze.
@@ -348,6 +483,18 @@ ErrorVATCheckMS_UNAVAILABLE=Verificare imposibilă. Verificaţi dacă serviciu n
 NorProspectNorCustomer=Nici prospect, nici client
 JuridicalStatus=Forma juridică
 Staff=Efectiv
+=======
+ThisUserIsNot=Acest utilizator nu este o perspectivă nici client nici vânzător
+VATIntraCheck=Verifică
+VATIntraCheckDesc=ID-ul de TVA trebuie să includă prefixul țării. Linkul <b> %s </b> utilizează serviciul european de verificare a TVA-ului (VIES), care necesită acces la internet de pe serverul Dolibarr.
+VATIntraCheckURL=http://ec.europa.eu/taxation_customs/vies/vieshome.do
+VATIntraCheckableOnEUSite=Verificați codul TV intracomunitar pe site-ul web al Comisiei Europene
+VATIntraManualCheck=De asemenea, puteți verifica manual pe site-ul web al Comisiei Europene <a href="%s" target="_blank"> %s </a>
+ErrorVATCheckMS_UNAVAILABLE=Verificare imposibilă. Verificaţi dacă serviciu nu este furnizat de către statul membru ( %s).
+NorProspectNorCustomer=Fără perspectivă, fără client
+JuridicalStatus=Tipul entității juridice
+Staff=Angajati
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProspectLevelShort=Potential
 ProspectLevel=Prospect potenţial
 ContactPrivate=Privat
@@ -387,6 +534,7 @@ ExportCardToFormat=Export fişă în format
 ContactNotLinkedToCompany=Contact nelegat la un terţ
 DolibarrLogin=Identificator utilizator
 NoDolibarrAccess=Niciun acces utilizator
+<<<<<<< HEAD
 ExportDataset_company_1=Third parties (Companies / foundations / physical people) and properties
 ExportDataset_company_2=Contacte şi atribute
 ImportDataset_company_1=Third parties (Companies / foundations / physical people) and properties
@@ -397,10 +545,24 @@ PriceLevel=Nivel de Pret
 DeliveryAddress=Adresă de livrare
 AddAddress=Adaugă adresă
 SupplierCategory=Vendor category
+=======
+ExportDataset_company_1=Terți (companii / fundații / persoane fizice) și proprietățile acestora
+ExportDataset_company_2=Persoanele de contact și proprietățile acestora
+ImportDataset_company_1=Terți și proprietățile acestora
+ImportDataset_company_2=Contacte / adrese și atribute suplimentare pentru terţi
+ImportDataset_company_3=Conturi bancare ale terților
+ImportDataset_company_4=Reprezentanți de vânzări terți (desemnați reprezentanți de vânzări / utilizatori în companii)
+PriceLevel=Nivelul prețului
+PriceLevelLabels=Etichete de nivel de preț
+DeliveryAddress=Adresă de livrare
+AddAddress=Adaugă adresă
+SupplierCategory=Categoria furnizorului
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 JuridicalStatus200=Freelancer
 DeleteFile=Şterge fişier
 ConfirmDeleteFile=Sigur  doriţi să ştergeţi acest fişier?
 AllocateCommercial=Asociat la reprezentant vânzări
+<<<<<<< HEAD
 Organization=Organizaţia
 FiscalYearInformation=Informaţii pe anul fiscal
 FiscalMonthStart=Luna de început a anului fiscal
@@ -415,16 +577,38 @@ UniqueThirdParties=Total terţi unici
 InActivity=Deschis
 ActivityCeased=Închis
 ThirdPartyIsClosed=Third party is closed
+=======
+Organization=Instituția
+FiscalYearInformation=An fiscal
+FiscalMonthStart=Luna de început a anului fiscal
+YouMustAssignUserMailFirst=Trebuie să creați un e-mail pentru acest utilizator înainte de a putea adăuga o notificare prin e-mail.
+YouMustCreateContactFirst=Pentru a putea adaugă notificări pe email, este necesară definirea unor contacte pentru terţi cu adresa de email validă
+ListSuppliersShort=Lista furnizori
+ListProspectsShort=Lista prospecte
+ListCustomersShort=Lista clienți
+ThirdPartiesArea=Terțe/Contacte
+LastModifiedThirdParties=Ultimii %s Terți modificaţi
+UniqueThirdParties=Totalul terţilor
+InActivity=Deschis
+ActivityCeased=Închis
+ThirdPartyIsClosed=Terțul este închis
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProductsIntoElements=Ultimele produse / servicii in %s
 CurrentOutstandingBill=Facturi in suspensie curente
 OutstandingBill=Max. limită credit
 OutstandingBillReached=Limită credit depăsită 
+<<<<<<< HEAD
 OrderMinAmount=Minimum amount for order
 MonkeyNumRefModelDesc=Return numero with format %syymm-nnnn for customer code and %syymm-nnnn for vendor code where yy is year, mm is month and nnnn is a sequence with no break and no return to 0.
+=======
+OrderMinAmount=Suma minim a comenzii
+MonkeyNumRefModelDesc=Returnați un număr cu formatul %syymm-nnnn pentru codul clientului și %syymm-nnnn pentru codul furnizorului unde yy este anul, mm este luna și nnnn este o secvență fără pauză și nici o revenire la 0.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LeopardNumRefModelDesc=Codul este liber fîrî verificare. Acest cod poate fi modificat în orice moment.
 ManagingDirectors=Nume Manager(i) nume (CEO, director, preşedinte...)
 MergeOriginThirdparty=Duplica terț (terț dorit să-l ștergeți)
 MergeThirdparties=Imbina terti
+<<<<<<< HEAD
 ConfirmMergeThirdparties=Are you sure you want to merge this third party into the current one? All linked objects (invoices, orders, ...) will be moved to current third party, then the thirdparty will be deleted.
 ThirdpartiesMergeSuccess=Third parties have been merged
 SaleRepresentativeLogin=Autentificare reprezentant vânzări
@@ -432,3 +616,19 @@ SaleRepresentativeFirstname=First name of sales representative
 SaleRepresentativeLastname=Last name of sales representative
 ErrorThirdpartiesMerge=There was an error when deleting the third parties. Please check the log. Changes have been reverted.
 NewCustomerSupplierCodeProposed=New customer or vendor code suggested on duplicate code
+=======
+ConfirmMergeThirdparties=Sunteți sigur că doriți să fuzionați aceast terț cu cel curent? Toate obiectele legate (facturi, comenzi, ...) vor fi mutate la un terț curent, iar terțul va fi șters.
+ThirdpartiesMergeSuccess=Părțile terțe au fost fuzionate
+SaleRepresentativeLogin=Autentificare reprezentant vânzări
+SaleRepresentativeFirstname=Numele reprezentantului vânzări
+SaleRepresentativeLastname=Prenumele reprezentantului vânzări
+ErrorThirdpartiesMerge=A apărut o eroare la ștergerea terților Verificați jurnalul. S-a revenit la setarile anterioare.
+NewCustomerSupplierCodeProposed=Codul clientului sau furnizorului utilizat deja, este sugerat un nou cod
+#Imports
+PaymentTypeCustomer=Tip de plată - Client
+PaymentTermsCustomer=Conditii de plata - Client
+PaymentTypeSupplier=Tip de plată - Furnizor
+PaymentTermsSupplier=Termen de plată - furnizor
+MulticurrencyUsed=Utilizați mai multe monede
+MulticurrencyCurrency=Moneda
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

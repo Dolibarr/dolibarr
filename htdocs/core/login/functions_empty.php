@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2010 Regis Houssin  <regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2010 Regis Houssin  <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +35,11 @@
  * @param   int		$entitytotest   Number of instance (always 1 if module multicompany not enabled)
  * @return	string					Login if OK, '' if KO
  */
+<<<<<<< HEAD
 function check_user_password_empty($usertotest,$passwordtotest,$entitytotest)
+=======
+function check_user_password_empty($usertotest, $passwordtotest, $entitytotest)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	global $langs;
 

@@ -39,7 +39,11 @@ $shmoffset=1000;	// Max number of entries found into a language file. If too low
  * 	@param	string		$data			Data to save
  * 	@return	int							<0 if KO, Nb of bytes written if OK
  */
+<<<<<<< HEAD
 function dol_setcache($memoryid,$data)
+=======
+function dol_setcache($memoryid, $data)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	global $conf;
 	$result=0;
@@ -51,14 +55,22 @@ function dol_setcache($memoryid,$data)
 		if (empty($dolmemcache) || ! is_object($dolmemcache))
     	{
        	    $dolmemcache=new Memcached();
+<<<<<<< HEAD
        		$tmparray=explode(':',$conf->global->MEMCACHED_SERVER);
+=======
+       		$tmparray=explode(':', $conf->global->MEMCACHED_SERVER);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
        		$result=$dolmemcache->addServer($tmparray[0], $tmparray[1]?$tmparray[1]:11211);
        		if (! $result) return -1;
        	}
        	
 	    $memoryid=session_name().'_'.$memoryid;
 		//$dolmemcache->setOption(Memcached::OPT_COMPRESSION, false);
+<<<<<<< HEAD
 		$dolmemcache->add($memoryid,$data);    // This fails if key already exists
+=======
+		$dolmemcache->add($memoryid, $data);    // This fails if key already exists
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$rescode=$dolmemcache->getResultCode();
 		if ($rescode == 0)
 		{
@@ -69,20 +81,32 @@ function dol_setcache($memoryid,$data)
 			return -$rescode;
 		}
 	}
+<<<<<<< HEAD
 	else if (! empty($conf->memcached->enabled) && class_exists('Memcache'))
+=======
+	elseif (! empty($conf->memcached->enabled) && class_exists('Memcache'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $dolmemcache;
 		if (empty($dolmemcache) || ! is_object($dolmemcache))
     	{
        	    $dolmemcache=new Memcache();
+<<<<<<< HEAD
        		$tmparray=explode(':',$conf->global->MEMCACHED_SERVER);
+=======
+       		$tmparray=explode(':', $conf->global->MEMCACHED_SERVER);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
        		$result=$dolmemcache->addServer($tmparray[0], $tmparray[1]?$tmparray[1]:11211);
        		if (! $result) return -1;
        	}
 	    
        	$memoryid=session_name().'_'.$memoryid;
 		//$dolmemcache->setOption(Memcached::OPT_COMPRESSION, false);
+<<<<<<< HEAD
 		$result=$dolmemcache->add($memoryid,$data);    // This fails if key already exists
+=======
+		$result=$dolmemcache->add($memoryid, $data);    // This fails if key already exists
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if ($result)
 		{
 			return count($data);
@@ -93,9 +117,15 @@ function dol_setcache($memoryid,$data)
 		}
 	}
 	// Using shmop
+<<<<<<< HEAD
 	else if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02))
 	{
 		$result=dol_setshmop($memoryid,$data);
+=======
+	elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02))
+	{
+		$result=dol_setshmop($memoryid, $data);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	return $result;
@@ -118,7 +148,11 @@ function dol_getcache($memoryid)
 		if (empty($m) || ! is_object($m))
     	{
             $m=new Memcached();
+<<<<<<< HEAD
        		$tmparray=explode(':',$conf->global->MEMCACHED_SERVER);
+=======
+       		$tmparray=explode(':', $conf->global->MEMCACHED_SERVER);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
        		$result=$m->addServer($tmparray[0], $tmparray[1]?$tmparray[1]:11211);
        		if (! $result) return -1;
        	}
@@ -139,13 +173,21 @@ function dol_getcache($memoryid)
 			return -$rescode;
 		}
 	}
+<<<<<<< HEAD
 	else if (! empty($conf->memcached->enabled) && class_exists('Memcache'))
+=======
+	elseif (! empty($conf->memcached->enabled) && class_exists('Memcache'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $m;
 		if (empty($m) || ! is_object($m))
     	{
        	    $m=new Memcache();
+<<<<<<< HEAD
        		$tmparray=explode(':',$conf->global->MEMCACHED_SERVER);
+=======
+       		$tmparray=explode(':', $conf->global->MEMCACHED_SERVER);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
        		$result=$m->addServer($tmparray[0], $tmparray[1]?$tmparray[1]:11211);
        		if (! $result) return -1;
        	}
@@ -165,7 +207,11 @@ function dol_getcache($memoryid)
 		}
 	}
 	// Using shmop
+<<<<<<< HEAD
 	else if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02))
+=======
+	elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$data=dol_getshmop($memoryid);
 		return $data;
@@ -214,7 +260,11 @@ function dol_listshmop()
  * 	@param	string	$data			Data to save
  * 	@return	int						<0 if KO, Nb of bytes written if OK
  */
+<<<<<<< HEAD
 function dol_setshmop($memoryid,$data)
+=======
+function dol_setshmop($memoryid, $data)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	global $shmkeys,$shmoffset;
 
@@ -224,11 +274,19 @@ function dol_setshmop($memoryid,$data)
 	$newdata=serialize($data);
 	$size=strlen($newdata);
 	//print 'dol_setshmop memoryid='.$memoryid." shmkey=".$shmkey." newdata=".$size."bytes<br>\n";
+<<<<<<< HEAD
 	$handle=shmop_open($shmkey,'c',0644,6+$size);
 	if ($handle)
 	{
 		$shm_bytes_written1=shmop_write($handle,str_pad($size,6),0);
 		$shm_bytes_written2=shmop_write($handle,$newdata,6);
+=======
+	$handle=shmop_open($shmkey, 'c', 0644, 6+$size);
+	if ($handle)
+	{
+		$shm_bytes_written1=shmop_write($handle, str_pad($size, 6), 0);
+		$shm_bytes_written2=shmop_write($handle, $newdata, 6);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if (($shm_bytes_written1 + $shm_bytes_written2) != (6+dol_strlen($newdata)))
 		{
    			print "Couldn't write the entire length of data\n";
@@ -256,11 +314,19 @@ function dol_getshmop($memoryid)
 	if (empty($shmkeys[$memoryid]) || ! function_exists("shmop_open")) return 0;
 	$shmkey=dol_getshmopaddress($memoryid);
 	//print 'dol_getshmop memoryid='.$memoryid." shmkey=".$shmkey."<br>\n";
+<<<<<<< HEAD
 	$handle=@shmop_open($shmkey,'a',0,0);
 	if ($handle)
 	{
 		$size=trim(shmop_read($handle,0,6));
 		if ($size) $data=unserialize(shmop_read($handle,6,$size));
+=======
+	$handle=@shmop_open($shmkey, 'a', 0, 0);
+	if ($handle)
+	{
+		$size=trim(shmop_read($handle, 0, 6));
+		if ($size) $data=unserialize(shmop_read($handle, 6, $size));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		else return -1;
 		shmop_close($handle);
 	}
@@ -270,4 +336,7 @@ function dol_getshmop($memoryid)
 	}
 	return $data;
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -32,6 +32,10 @@ MonthVeryShort03=L
 MonthVeryShort05=L
 MonthVeryShort09=D
 FindBug=Señalar un bug
+<<<<<<< HEAD
+=======
+ValidatePayment=Validar este pago
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NewAttribute=Nuevo atributo
 AttributeCode=Código atributo
 LinkToOrder=Enlazar a un pedido
@@ -39,4 +43,7 @@ Progress=Progresión
 Export=Exportación
 ExpenseReports=Gastos
 SearchIntoExpenseReports=Gastos
+<<<<<<< HEAD
 SearchIntoLeaves=Días libres
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

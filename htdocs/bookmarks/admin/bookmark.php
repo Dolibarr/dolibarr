@@ -31,12 +31,21 @@ $langs->load("admin");
 if (!$user->admin)
 accessforbidden();
 
+<<<<<<< HEAD
 $action=GETPOST('action','alpha');
 
 if ($action == 'setvalue')
 {
 	$showmenu = GETPOST('BOOKMARKS_SHOW_IN_MENU','alpha');
 	$res = dolibarr_set_const($db, "BOOKMARKS_SHOW_IN_MENU",$showmenu,'chaine',0,'',$conf->entity);
+=======
+$action=GETPOST('action', 'alpha');
+
+if ($action == 'setvalue')
+{
+	$showmenu = GETPOST('BOOKMARKS_SHOW_IN_MENU', 'alpha');
+	$res = dolibarr_set_const($db, "BOOKMARKS_SHOW_IN_MENU", $showmenu, 'chaine', 0, '', $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	if (! $res > 0) $error++;
 
@@ -60,7 +69,11 @@ if ($action == 'setvalue')
 llxHeader();
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+<<<<<<< HEAD
 print load_fiche_titre($langs->trans("BookmarkSetup"),$linkback,'title_setup');
+=======
+print load_fiche_titre($langs->trans("BookmarkSetup"), $linkback, 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print $langs->trans("BookmarkDesc")."<br>\n";
 
@@ -81,5 +94,9 @@ print '<input size="3" type="text" name="BOOKMARKS_SHOW_IN_MENU" value="'.$conf-
 print '</td></tr>';
 print '</table><br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div></form>';
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

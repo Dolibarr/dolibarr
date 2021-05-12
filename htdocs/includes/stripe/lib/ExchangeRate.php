@@ -9,6 +9,7 @@ namespace Stripe;
  */
 class ExchangeRate extends ApiResource
 {
+<<<<<<< HEAD
     use ApiOperations\All;
     use ApiOperations\Retrieve;
 
@@ -22,4 +23,11 @@ class ExchangeRate extends ApiResource
     {
         return 'exchange_rate';
     }
+=======
+
+    const OBJECT_NAME = "exchange_rate";
+
+    use ApiOperations\All;
+    use ApiOperations\Retrieve;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

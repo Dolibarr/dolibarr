@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +43,11 @@ class modExternalSite extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
      */
+<<<<<<< HEAD
 	function __construct($db)
+=======
+	public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$this->db = $db;
 
@@ -51,7 +59,11 @@ class modExternalSite extends DolibarrModules
 		// It is used to sort modules in module setup page
 		$this->family = "interface";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+<<<<<<< HEAD
 		$this->name = preg_replace('/^mod/i','',get_class($this));
+=======
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// Module description used if translation string 'ModuleXXXDesc' not found (XXX is id value)
 		$this->description = "This module include an external web site or page into Dolibarr menus and view it into a Dolibarr frame.";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -113,7 +125,12 @@ class modExternalSite extends DolibarrModules
 			'user'=>0
 		);
 		$r++;
+<<<<<<< HEAD
 
 	}
 }
 
+=======
+	}
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -1,5 +1,6 @@
 # Dolibarr language file - en_US - hrm
 # Admin
+<<<<<<< HEAD
 HRM_EMAIL_EXTERNAL_SERVICE=Email to prevent HRM external service
 Establishments=Establishments
 Establishment=Establishment
@@ -8,6 +9,16 @@ DeleteEstablishment=Delete establishment
 ConfirmDeleteEstablishment=Are-you sure to delete this establishment?
 OpenEtablishment=Open establishment
 CloseEtablishment=Close establishment
+=======
+HRM_EMAIL_EXTERNAL_SERVICE=E-pasts, lai novērstu HRM ārējo pakalpojumu
+Establishments=Iestādes
+Establishment=Izveide
+NewEstablishment=Jauns uzņēmums
+DeleteEstablishment=Dzēst uzņēmumu
+ConfirmDeleteEstablishment=Vai tiešām vēlaties dzēst šo uzņēmumu?
+OpenEtablishment=Atvērts uzņēmums
+CloseEtablishment=Aizvērt uzņēmumu
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 # Dictionary
 DictionaryDepartment=HRM - Department list
 DictionaryFunction=HRM - Function list

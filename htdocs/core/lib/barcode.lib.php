@@ -65,11 +65,19 @@ else $genbarcode_loc = $conf->global->GENBARCODE_LOCATION;
  * @param	string	       $mode		'png' or 'jpg' ...
  * @return	array|string   $bars		array('encoding': the encoding which has been used, 'bars': the bars, 'text': text-positioning info) or string with error message
  */
+<<<<<<< HEAD
 function barcode_print($code, $encoding="ANY", $scale = 2 ,$mode = "png")
 {
     dol_syslog("barcode.lib.php::barcode_print $code $encoding $scale $mode");
 
     $bars=barcode_encode($code,$encoding);
+=======
+function barcode_print($code, $encoding = "ANY", $scale = 2, $mode = "png")
+{
+    dol_syslog("barcode.lib.php::barcode_print $code $encoding $scale $mode");
+
+    $bars=barcode_encode($code, $encoding);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     if (! $bars || ! empty($bars['error']))
     {
         // Return error message instead of array
@@ -106,9 +114,15 @@ function barcode_print($code, $encoding="ANY", $scale = 2 ,$mode = "png")
  *
  * @param	string	$code		Code
  * @param	string	$encoding	Encoding
+<<<<<<< HEAD
  * @return	array				array('encoding': the encoding which has been used, 'bars': the bars, 'text': text-positioning info)
  */
 function barcode_encode($code,$encoding)
+=======
+ * @return	array|false			array('encoding': the encoding which has been used, 'bars': the bars, 'text': text-positioning info)
+ */
+function barcode_encode($code, $encoding)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
     global $genbarcode_loc;
 
@@ -128,7 +142,11 @@ function barcode_encode($code,$encoding)
         dol_syslog("barcode.lib.php::barcode_encode Use barcode_encode_ean");
         $bars=barcode_encode_ean($code, $encoding);
     }
+<<<<<<< HEAD
     else if (file_exists($genbarcode_loc))	// For example C39
+=======
+    elseif (file_exists($genbarcode_loc))	// For example C39
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         /* use genbarcode */
         dol_syslog("barcode.lib.php::barcode_encode Use genbarcode ".$genbarcode_loc." code=".$code." encoding=".$encoding);
@@ -184,7 +202,11 @@ function barcode_encode_ean($ean, $encoding = "EAN-13")
     $guards=array("9a1a","1a1a1","a1a");
 
     $ean=trim($ean);
+<<<<<<< HEAD
     if (preg_match("/[^0-9]/i",$ean))
+=======
+    if (preg_match("/[^0-9]/i", $ean))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         return array("error"=>"Invalid encoding/code. encoding=".$encoding." code=".$ean." (not a numeric)", "text"=>"Invalid encoding/code. encoding=".$encoding." code=".$ean." (not a numeric)");
     }
@@ -199,7 +221,11 @@ function barcode_encode_ean($ean, $encoding = "EAN-13")
         return array("error"=>"Invalid encoding/code. encoding=".$encoding." code=".$ean." (must have 12/13 numbers)", "text"=>"Invalid encoding/code. encoding=".$encoding." code=".$ean." (must have 12/13 numbers)");
     }
 
+<<<<<<< HEAD
     $ean=substr($ean,0,12);
+=======
+    $ean=substr($ean, 0, 12);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $eansum=barcode_gen_ean_sum($ean);
     $ean.=$eansum;
     $line=$guards[0];
@@ -219,7 +245,11 @@ function barcode_encode_ean($ean, $encoding = "EAN-13")
         if ($a>0) $text.=" ";
         $text.="$pos:12:{$ean[$a]}";
         if ($a==0) $pos+=12;
+<<<<<<< HEAD
         else if ($a==6) $pos+=12;
+=======
+        elseif ($a==6) $pos+=12;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         else $pos+=7;
     }
 
@@ -236,14 +266,24 @@ function barcode_encode_ean($ean, $encoding = "EAN-13")
  *
  * @param	string	$code		Code
  * @param	string	$encoding	Encoding
+<<<<<<< HEAD
  * @return	array				array('encoding': the encoding which has been used, 'bars': the bars, 'text': text-positioning info)
  */
 function barcode_encode_genbarcode($code,$encoding)
+=======
+ * @return	array|false			array('encoding': the encoding which has been used, 'bars': the bars, 'text': text-positioning info)
+ */
+function barcode_encode_genbarcode($code, $encoding)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
     global $genbarcode_loc;
 
     // Clean parameters
+<<<<<<< HEAD
     if (preg_match("/^ean$/i", $encoding) && strlen($code)==13) $code=substr($code,0,12);
+=======
+    if (preg_match("/^ean$/i", $encoding) && strlen($code)==13) $code=substr($code, 0, 12);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     if (!$encoding) $encoding="ANY";
     $encoding=preg_replace("/[\\\|]/", "_", $encoding);
     $code=preg_replace("/[\\\|]/", "_", $code);
@@ -251,7 +291,11 @@ function barcode_encode_genbarcode($code,$encoding)
     $command=escapeshellarg($genbarcode_loc);
     //$paramclear=" \"".str_replace("\"", "\\\"",$code)."\" \"".str_replace("\"", "\\\"",strtoupper($encoding))."\"";
     $paramclear=" ".escapeshellarg($code)." ".escapeshellarg(strtoupper($encoding));
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $fullcommandclear=$command." ".$paramclear." 2>&1";
     //print $fullcommandclear."<br>\n";exit;
 
@@ -277,8 +321,13 @@ function barcode_encode_genbarcode($code,$encoding)
     	"error" => ""
     );
     //var_dump($ret);
+<<<<<<< HEAD
     if (preg_match('/permission denied/i',$ret['bars'])) 
     { 
+=======
+    if (preg_match('/permission denied/i', $ret['bars']))
+    {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	$ret['error']=$ret['bars']; $ret['bars']='';
     	return $ret;
     }
@@ -348,9 +397,15 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0,
     }
     $im=imagecreate($total_x, $total_y);
     /* create two images */
+<<<<<<< HEAD
     $col_bg=ImageColorAllocate($im,$bg_color[0],$bg_color[1],$bg_color[2]);
     $col_bar=ImageColorAllocate($im,$bar_color[0],$bar_color[1],$bar_color[2]);
     $col_text=ImageColorAllocate($im,$text_color[0],$text_color[1],$text_color[2]);
+=======
+    $col_bg=ImageColorAllocate($im, $bg_color[0], $bg_color[1], $bg_color[2]);
+    $col_bar=ImageColorAllocate($im, $bar_color[0], $bar_color[1], $bar_color[2]);
+    $col_text=ImageColorAllocate($im, $text_color[0], $text_color[1], $text_color[2]);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $height=round($total_y-($scale*10));
     $height2=round($total_y-$space['bottom']);
 
@@ -397,14 +452,24 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0,
         header("Content-Type: image/jpeg; name=\"barcode.jpg\"");
         imagejpeg($im);
     }
+<<<<<<< HEAD
     else if ($mode=='gif')
+=======
+    elseif ($mode=='gif')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         header("Content-Type: image/gif; name=\"barcode.gif\"");
         imagegif($im);
     }
+<<<<<<< HEAD
     else if (! empty($filebarcode))    // To wxrite into  afile onto disk
     {
         imagepng($im,$filebarcode);
+=======
+    elseif (! empty($filebarcode))    // To wxrite into  afile onto disk
+    {
+        imagepng($im, $filebarcode);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
     else
     {
@@ -412,4 +477,7 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0,
         imagepng($im);
     }
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

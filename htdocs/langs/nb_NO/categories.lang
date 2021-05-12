@@ -10,12 +10,20 @@ modify=endre
 Classify=Klassifiser
 CategoriesArea=Merker/Kategorier-område
 ProductsCategoriesArea=Område for varer/tjenester, merker/kategorier
+<<<<<<< HEAD
 SuppliersCategoriesArea=Område for leverandør-merker/kategorier
+=======
+SuppliersCategoriesArea=Vendors tags/categories area
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CustomersCategoriesArea=Område for kunde-merker/kategorier
 MembersCategoriesArea=Område for medlems-merker/kategorier
 ContactsCategoriesArea=Område for kontakters merker/kategorier
 AccountsCategoriesArea=Område for kontomerker/-kategorier
 ProjectsCategoriesArea=Prosjekters merker/kategori-område
+<<<<<<< HEAD
+=======
+UsersCategoriesArea=Users tags/categories area
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SubCats=Underkategorier
 CatList=Liste over merker/kategorier
 NewCategory=Nytt merke/kategori
@@ -31,7 +39,11 @@ WasAddedSuccessfully=<b>%s</b> ble lagt til.
 ObjectAlreadyLinkedToCategory=Elementet er allerede lenket til dette merket/kategorien
 ProductIsInCategories=Vare/tjeneste er lenket til følgende merker/kategorier
 CompanyIsInCustomersCategories=Denne tredjeparten er lenket til følgende kunders/prospekters merker/kategorier
+<<<<<<< HEAD
 CompanyIsInSuppliersCategories=Denne tredjeparten er lenket til følgende leverandørers merker/kategorier
+=======
+CompanyIsInSuppliersCategories=This third party is linked to following vendors tags/categories
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MemberIsInCategories=Dette medlemmet er lenket til følgende medlems-merker/kategorier
 ContactIsInCategories=Denne kontakten er lenket til følgende kunde-merker/kategorier
 ProductHasNoCategory=Denne varen/tjenesten har ikke noen merker/kategorier
@@ -47,6 +59,7 @@ ContentsNotVisibleByAllShort=Innhold ikke synlig for alle
 DeleteCategory=Slett merke/kategori
 ConfirmDeleteCategory=Er du sikker på at du vil slette dette merket/kategorien?
 NoCategoriesDefined=Ingen merke/kategori definert
+<<<<<<< HEAD
 SuppliersCategoryShort=Leverandørs merke/kategori
 CustomersCategoryShort=Kundes merke/kategori
 ProductsCategoryShort=Vare merke/kategori
@@ -55,20 +68,40 @@ SuppliersCategoriesShort=Levrandørers merker/kategorier
 CustomersCategoriesShort=Kunders merker/kategorier
 ProspectsCategoriesShort=Etiketter/kategorier for prospekter
 CustomersProspectsCategoriesShort=Kunde-/prospektkategorier
+=======
+SuppliersCategoryShort=Vendors tag/category
+CustomersCategoryShort=Kundes merke/kategori
+ProductsCategoryShort=Vare merke/kategori
+MembersCategoryShort=Medlems merke/kategori
+SuppliersCategoriesShort=Vendors tags/categories
+CustomersCategoriesShort=Kunders merker/kategorier
+ProspectsCategoriesShort=Etiketter/kategorier for prospekter
+CustomersProspectsCategoriesShort=Cust./Prosp. tags/categories
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProductsCategoriesShort=Varenes merker/kategorier
 MembersCategoriesShort=Medlemmers merker/kategorier
 ContactCategoriesShort=Kontakters merker/kategorier
 AccountsCategoriesShort=Kontomerker/-kategorier
 ProjectsCategoriesShort=Prosjekter merker/kategorier
+<<<<<<< HEAD
 ThisCategoryHasNoProduct=Denne kategorien inneholder ingen varer.
 ThisCategoryHasNoSupplier=Denne kategorien inneholder ingen leverandører.
+=======
+UsersCategoriesShort=Users tags/categories
+ThisCategoryHasNoProduct=Denne kategorien inneholder ingen varer.
+ThisCategoryHasNoSupplier=This category does not contain any vendor.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ThisCategoryHasNoCustomer=Denne kategorien inneholder ingen kunder.
 ThisCategoryHasNoMember=Denne kategorien inneholder ingen medlemmer.
 ThisCategoryHasNoContact=Denne kategorien inneholder ikke noen kontakt.
 ThisCategoryHasNoAccount=Denne kategorien inneholder ingen kontoer
 ThisCategoryHasNoProject=Denne kategorien er ikke brukt i noen prosjekter
 CategId=Merke/kategori-ID
+<<<<<<< HEAD
 CatSupList=Liste over leverandør-merker/kategorier
+=======
+CatSupList=List of vendor tags/categories
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CatCusList=Liste over kunde/prospekt merker/kategorier
 CatProdList=Liste over vare-merker/kategorier
 CatMemberList=Liste over medlems-merker/kategorier
@@ -81,7 +114,11 @@ DeleteFromCat=Fjern fra merker/kategorier
 ExtraFieldsCategories=Komplementære attributter
 CategoriesSetup=Oppsett av merker/kategorier
 CategorieRecursiv=Automatisk lenke til overordnet merke/kategori
+<<<<<<< HEAD
 CategorieRecursivHelp=Hvis aktivert, vil varen også knyttes til overordnet kategori når du legger inn en underkategori
+=======
+CategorieRecursivHelp=If option is on, when you add a product into a subcategory, product will also be added into the parent category.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddProductServiceIntoCategory=Legg til følgende vare/tjeneste
 ShowCategory=Vis merke/kategori
 ByDefaultInList=Som standard i liste

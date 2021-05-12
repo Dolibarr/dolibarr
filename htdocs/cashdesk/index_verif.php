@@ -30,6 +30,7 @@ include '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php';
 require_once DOL_DOCUMENT_ROOT.'/cashdesk/class/Auth.class.php';
 
+<<<<<<< HEAD
 $langs->load("main");
 $langs->load("admin");
 $langs->load("cashdesk");
@@ -41,18 +42,38 @@ $warehouseid = (GETPOST("warehouseid") > 0)?GETPOST("warehouseid",'int'):$conf->
 $bankid_cash = (GETPOST("CASHDESK_ID_BANKACCOUNT_CASH") > 0)?GETPOST("CASHDESK_ID_BANKACCOUNT_CASH",'int'):$conf->global->CASHDESK_ID_BANKACCOUNT_CASH;
 $bankid_cheque = (GETPOST("CASHDESK_ID_BANKACCOUNT_CHEQUE") > 0)?GETPOST("CASHDESK_ID_BANKACCOUNT_CHEQUE",'int'):$conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE;
 $bankid_cb = (GETPOST("CASHDESK_ID_BANKACCOUNT_CB") > 0)?GETPOST("CASHDESK_ID_BANKACCOUNT_CB",'int'):$conf->global->CASHDESK_ID_BANKACCOUNT_CB;
+=======
+// Load translation files required by the page
+$langs->loadLangs(array("main","admin","cashdesk"));
+
+$username = GETPOST("txtUsername");
+$password = GETPOST("pwdPassword");
+$thirdpartyid = (GETPOST('socid', 'int') > 0)?GETPOST('socid', 'int'):$conf->global->CASHDESK_ID_THIRDPARTY;
+$warehouseid = (GETPOST("warehouseid") > 0)?GETPOST("warehouseid", 'int'):$conf->global->CASHDESK_ID_WAREHOUSE;
+$bankid_cash = (GETPOST("CASHDESK_ID_BANKACCOUNT_CASH") > 0)?GETPOST("CASHDESK_ID_BANKACCOUNT_CASH", 'int'):$conf->global->CASHDESK_ID_BANKACCOUNT_CASH;
+$bankid_cheque = (GETPOST("CASHDESK_ID_BANKACCOUNT_CHEQUE") > 0)?GETPOST("CASHDESK_ID_BANKACCOUNT_CHEQUE", 'int'):$conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE;
+$bankid_cb = (GETPOST("CASHDESK_ID_BANKACCOUNT_CB") > 0)?GETPOST("CASHDESK_ID_BANKACCOUNT_CB", 'int'):$conf->global->CASHDESK_ID_BANKACCOUNT_CB;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Check username
 if (empty($username))
 {
+<<<<<<< HEAD
 	$retour=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Login"));
+=======
+	$retour=$langs->trans("ErrorFieldRequired", $langs->transnoentities("Login"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	header('Location: '.DOL_URL_ROOT.'/cashdesk/index.php?err='.urlencode($retour).'&user='.$username.'&socid='.$thirdpartyid.'&warehouseid='.$warehouseid.'&bankid_cash='.$bankid_cash.'&bankid_cheque='.$bankid_cheque.'&bankid_cb='.$bankid_cb);
 	exit;
 }
 // Check third party id
 if (! ($thirdpartyid > 0))
 {
+<<<<<<< HEAD
     $retour=$langs->trans("ErrorFieldRequired",$langs->transnoentities("CashDeskThirdPartyForSell"));
+=======
+    $retour=$langs->trans("ErrorFieldRequired", $langs->transnoentities("CashDeskThirdPartyForSell"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     header('Location: '.DOL_URL_ROOT.'/cashdesk/index.php?err='.urlencode($retour).'&user='.$username.'&socid='.$thirdpartyid.'&warehouseid='.$warehouseid.'&bankid_cash='.$bankid_cash.'&bankid_cheque='.$bankid_cheque.'&bankid_cb='.$bankid_cb);
     exit;
 }
@@ -69,7 +90,11 @@ if (! empty($conf->stock->enabled) && empty($conf->global->CASHDESK_NO_DECREASE_
 if (! empty($conf->stock->enabled) && empty($conf->global->CASHDESK_NO_DECREASE_STOCK) && ! empty($username))
 {
 	$testuser=new User($db);
+<<<<<<< HEAD
 	$testuser->fetch(0,$username);
+=======
+	$testuser->fetch(0, $username);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$testuser->getrights('stock');
 	if (empty($testuser->rights->stock->creer))
 	{
@@ -108,7 +133,11 @@ if ( $retour >= 0 )
 	{
 		$tab = $db->fetch_array($res);
 
+<<<<<<< HEAD
 		foreach ( $tab as $key => $value )
+=======
+		foreach ($tab as $key => $value)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			$return[$key] = $value;
 		}
@@ -119,7 +148,11 @@ if ( $retour >= 0 )
 		$_SESSION['firstname'] = $tab['firstname'];
 		$_SESSION['CASHDESK_ID_THIRDPARTY'] = ($thirdpartyid > 0 ? $thirdpartyid : '');
         $_SESSION['CASHDESK_ID_WAREHOUSE'] = ($warehouseid > 0 ? $warehouseid : '');
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $_SESSION['CASHDESK_ID_BANKACCOUNT_CASH'] = ($bankid_cash > 0 ? $bankid_cash : '');
         $_SESSION['CASHDESK_ID_BANKACCOUNT_CHEQUE'] = ($bankid_cheque > 0 ? $bankid_cheque : '');
         $_SESSION['CASHDESK_ID_BANKACCOUNT_CB'] = ($bankid_cb > 0 ? $bankid_cb : '');
@@ -135,10 +168,18 @@ if ( $retour >= 0 )
 }
 else
 {
+<<<<<<< HEAD
 	$langs->load("errors");
     $langs->load("other");
+=======
+	// Load translation files required by the page
+    $langs->loadLangs(array("other","errors"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$retour=$langs->trans("ErrorBadLoginPassword");
 	header('Location: '.DOL_URL_ROOT.'/cashdesk/index.php?err='.urlencode($retour).'&user='.$username.'&socid='.$thirdpartyid.'&warehouseid='.$warehouseid);
 	exit;
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

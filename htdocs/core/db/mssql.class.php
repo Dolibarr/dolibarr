@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2007      Simon Desee          <simon@dedisoft.com>
  * Copyright (C) 2015       Cedric GROSS            <c.gross@kreiz-it.fr>
  *
@@ -36,9 +40,15 @@ class DoliDBMssql extends DoliDB
 	//! Database label
 	const LABEL='MSSQL';
 	//! Charset used to force charset when creating database
+<<<<<<< HEAD
 	var $forcecharset='latin1';      // Can't be static as it may be forced with a dynamic value
 	//! Collate used to force collate when creating database
 	var $forcecollate='latin1_swedish_ci';      // Can't be static as it may be forced with a dynamic value
+=======
+    public $forcecharset='latin1';      // Can't be static as it may be forced with a dynamic value
+	//! Collate used to force collate when creating database
+    public $forcecollate='latin1_swedish_ci';      // Can't be static as it may be forced with a dynamic value
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	//! Version min database
 	const VERSIONMIN='2000';
 	/** @var resource Resultset of last query */
@@ -55,7 +65,11 @@ class DoliDBMssql extends DoliDB
 	 *	@param	    string	$name		Nom de la database
 	 *	@param	    int		$port		Port of database server
      */
+<<<<<<< HEAD
 	function __construct($type, $host, $user, $pass, $name='', $port=0)
+=======
+    public function __construct($type, $host, $user, $pass, $name = '', $port = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 
@@ -69,7 +83,11 @@ class DoliDBMssql extends DoliDB
 			$this->connected = false;
 			$this->ok = false;
 			$this->error="Mssql PHP functions for using MSSql driver are not available in this version of PHP";
+<<<<<<< HEAD
 			dol_syslog(get_class($this)."::DoliDBMssql : MSsql PHP functions for using MSsql driver are not available in this version of PHP",LOG_ERR);
+=======
+			dol_syslog(get_class($this)."::DoliDBMssql : MSsql PHP functions for using MSsql driver are not available in this version of PHP", LOG_ERR);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			return $this->ok;
 		}
 
@@ -78,7 +96,11 @@ class DoliDBMssql extends DoliDB
 			$this->connected = false;
 			$this->ok = false;
 			$this->error=$langs->trans("ErrorWrongHostParameter");
+<<<<<<< HEAD
 			dol_syslog(get_class($this)."::DoliDBMssql : Erreur Connect, wrong host parameters",LOG_ERR);
+=======
+			dol_syslog(get_class($this)."::DoliDBMssql : Erreur Connect, wrong host parameters", LOG_ERR);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			return $this->ok;
 		}
 
@@ -97,7 +119,11 @@ class DoliDBMssql extends DoliDB
 			$this->connected = false;
 			$this->ok = false;
 			$this->error=mssql_get_last_message();
+<<<<<<< HEAD
 			dol_syslog(get_class($this)."::DoliDBMssql : Erreur Connect mssql_get_last_message=".$this->error,LOG_ERR);
+=======
+			dol_syslog(get_class($this)."::DoliDBMssql : Erreur Connect mssql_get_last_message=".$this->error, LOG_ERR);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		// Si connexion serveur ok et si connexion base demandee, on essaie connexion base
@@ -115,7 +141,11 @@ class DoliDBMssql extends DoliDB
 				$this->database_name = '';
 				$this->ok = false;
 				$this->error=$this->error();
+<<<<<<< HEAD
 				dol_syslog(get_class($this)."::DoliDBMssql : Erreur Select_db ".$this->error,LOG_ERR);
+=======
+				dol_syslog(get_class($this)."::DoliDBMssql : Erreur Select_db ".$this->error, LOG_ERR);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 		}
 		else
@@ -134,19 +164,33 @@ class DoliDBMssql extends DoliDB
      *  @param     string	$type	Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
      *  @return    string   		SQL request line converted
      */
+<<<<<<< HEAD
 	static function convertSQLFromMysql($line,$type='ddl')
+=======
+    public static function convertSQLFromMysql($line, $type = 'ddl')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return $line;
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *	Select a database
 	 *
 	 *	@param	    string	$database	Name of database
 	 *	@return	    boolean  		    true if OK, false if KO
 	 */
+<<<<<<< HEAD
 	function select_db($database)
 	{
+=======
+    public function select_db($database)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		return @mssql_select_db($database, $this->db);
 	}
 
@@ -159,9 +203,15 @@ class DoliDBMssql extends DoliDB
 	 *	@param		string	$name		name of database (not used for mysql, used for pgsql)
 	 *	@param		int		$port		Port of database server
 	 *	@return		false|resource|true	Database access handler
+<<<<<<< HEAD
 	 *	@see		close
 	 */
 	function connect($host, $login, $passwd, $name, $port=0)
+=======
+	 *	@see		close()
+	 */
+    public function connect($host, $login, $passwd, $name, $port = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		dol_syslog(get_class($this)."::connect host=$host, port=$port, login=$login, passwd=--hidden--, name=$name");
 		$newhost=$host;
@@ -179,7 +229,11 @@ class DoliDBMssql extends DoliDB
 		    "SET CONCAT_NULL_YIELDS_NULL ON;",
 		    "SET QUOTED_IDENTIFIER ON;"
 		);
+<<<<<<< HEAD
 		mssql_query(implode(' ',$set_options),$this->db);
+=======
+		mssql_query(implode(' ', $set_options), $this->db);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		return $this->db;
 	}
@@ -189,7 +243,11 @@ class DoliDBMssql extends DoliDB
 	 *
 	 *	@return	        string      Version string
 	 */
+<<<<<<< HEAD
 	function getVersion()
+=======
+    public function getVersion()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$resql=$this->query("SELECT @@VERSION");
 		if ($resql)
@@ -205,7 +263,11 @@ class DoliDBMssql extends DoliDB
 	 *
 	 *	@return	        string      Version string
 	 */
+<<<<<<< HEAD
 	function getDriverInfo()
+=======
+    public function getDriverInfo()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return 'php mssql driver';
 	}
@@ -214,6 +276,7 @@ class DoliDBMssql extends DoliDB
      *  Close database connexion
      *
      *  @return     bool     True if disconnect successfull, false otherwise
+<<<<<<< HEAD
      *  @see        connect
      */
     function close()
@@ -221,6 +284,15 @@ class DoliDBMssql extends DoliDB
         if ($this->db)
         {
           if ($this->transaction_opened > 0) dol_syslog(get_class($this)."::close Closing a connection with an opened transaction depth=".$this->transaction_opened,LOG_ERR);
+=======
+     *  @see        connect()
+     */
+    public function close()
+    {
+        if ($this->db)
+        {
+          if ($this->transaction_opened > 0) dol_syslog(get_class($this)."::close Closing a connection with an opened transaction depth=".$this->transaction_opened, LOG_ERR);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
           $this->connected=false;
           return mssql_close($this->db);
         }
@@ -233,7 +305,11 @@ class DoliDBMssql extends DoliDB
 	 *
 	 * @return	    bool         true if transaction successfuly opened or already opened, false if error
 	 */
+<<<<<<< HEAD
 	function begin()
+=======
+    public function begin()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 
 	    $res=mssql_query('select @@TRANCOUNT');
@@ -242,10 +318,17 @@ class DoliDBMssql extends DoliDB
 	    if ($this->transaction_opened == 0)
 		{
 		    //return 1; //There is a mess with auto_commit and 'SET IMPLICIT_TRANSACTIONS ON' generate also a mess
+<<<<<<< HEAD
 			$ret=mssql_query("SET IMPLICIT_TRANSACTIONS OFF;BEGIN TRANSACTION;",$this->db);
 			if ($ret)
 			{
 				dol_syslog("BEGIN Transaction",LOG_DEBUG);
+=======
+			$ret=mssql_query("SET IMPLICIT_TRANSACTIONS OFF;BEGIN TRANSACTION;", $this->db);
+			if ($ret)
+			{
+				dol_syslog("BEGIN Transaction", LOG_DEBUG);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 			return $ret;
 		}
@@ -261,7 +344,11 @@ class DoliDBMssql extends DoliDB
      * @param	string	$log        Add more log to default log line
      * @return  bool         		true if validation is OK or transaction level no started, false if ERROR
 	 */
+<<<<<<< HEAD
 	function commit($log='')
+=======
+    public function commit($log = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 	    $res=mssql_query('select @@TRANCOUNT');
 	    $this->transaction_opened=mssql_result($res, 0, 0);
@@ -269,10 +356,17 @@ class DoliDBMssql extends DoliDB
 		if ($this->transaction_opened == 1)
 		{
 		    //return 1; //There is a mess with auto_commit and 'SET IMPLICIT_TRANSACTION ON' generate also a mess
+<<<<<<< HEAD
 			$ret=mssql_query("COMMIT TRANSACTION",$this->db);
 			if ($ret)
 			{
 				dol_syslog("COMMIT Transaction",LOG_DEBUG);
+=======
+			$ret=mssql_query("COMMIT TRANSACTION", $this->db);
+			if ($ret)
+			{
+				dol_syslog("COMMIT Transaction", LOG_DEBUG);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				return true;
 			}
 			else
@@ -294,15 +388,24 @@ class DoliDBMssql extends DoliDB
 	 * @param	string	$log	Add more log to default log line
 	 * @return	bool             true si annulation ok ou transaction non ouverte, false en cas d'erreur
 	 */
+<<<<<<< HEAD
 	function rollback($log='')
+=======
+    public function rollback($log = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 	    $res=mssql_query('select @@TRANCOUNT');
 	    $this->transaction_opened=mssql_result($res, 0, 0);
 
 		if ($this->transaction_opened == 1)
 		{
+<<<<<<< HEAD
 			$ret=mssql_query("ROLLBACK TRANSACTION",$this->db);
 			dol_syslog("ROLLBACK Transaction".($log?' '.$log:''),LOG_DEBUG);
+=======
+			$ret=mssql_query("ROLLBACK TRANSACTION", $this->db);
+			dol_syslog("ROLLBACK Transaction".($log?' '.$log:''), LOG_DEBUG);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			return $ret;
 		}
 		elseif ($this->transaction_opened > 1)
@@ -322,17 +425,26 @@ class DoliDBMssql extends DoliDB
      *  @param  string	$type           Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
      *  @return false|resource|true		Resultset of answer
 	 */
+<<<<<<< HEAD
 	function query($query,$usesavepoint=0,$type='auto')
 	{
 		$query = trim($query);
 
 		if (preg_match('/^--/',$query)) return true;
+=======
+    public function query($query, $usesavepoint = 0, $type = 'auto')
+	{
+		$query = trim($query);
+
+		if (preg_match('/^--/', $query)) return true;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Conversion syntaxe MySql vers MSDE.
 		$query = str_ireplace("now()", "getdate()", $query);
 		// Erreur SQL: cannot update timestamp field
 		$query = str_ireplace(", tms = tms", "", $query);
 
+<<<<<<< HEAD
 		$query=preg_replace("/([. ,\t(])(percent|file|public)([. ,=\t)])/","$1[$2]$3",$query);
 
 		if ($type=="auto" || $type='dml')
@@ -346,13 +458,33 @@ class DoliDBMssql extends DoliDB
     		$matches=array();
     		$original_query='';
     		if (preg_match('/ALTER TABLE\h+(\w+?)\h+ADD\h+(?:(UNIQUE)|INDEX)\h+(?:INDEX)?\h*(\w+?)\h*\((.+)\)/is', $query,$matches))
+=======
+		$query=preg_replace("/([. ,\t(])(percent|file|public)([. ,=\t)])/", "$1[$2]$3", $query);
+
+		if ($type=="auto" || $type='dml')
+		{
+    		$query=preg_replace('/AUTO_INCREMENT/i', 'IDENTITY', $query);
+    		$query=preg_replace('/double/i', 'float', $query);
+    		$query=preg_replace('/float\((.*)\)/', 'numeric($1)', $query);
+    		$query=preg_replace('/([ \t])unsigned|IF NOT EXISTS[ \t]/i', '$1', $query);
+    		$query=preg_replace('/([ \t])(MEDIUM|TINY|LONG){0,1}TEXT([ \t,])/i', "$1VARCHAR(MAX)$3", $query);
+
+    		$matches=array();
+    		$original_query='';
+    		if (preg_match('/ALTER TABLE\h+(\w+?)\h+ADD\h+(?:(UNIQUE)|INDEX)\h+(?:INDEX)?\h*(\w+?)\h*\((.+)\)/is', $query, $matches))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     		{
                 $original_query=$query;
                 $query="CREATE ".trim($matches[2])." INDEX [".trim($matches[3])."] ON [".trim($matches[1])."] (".trim($matches[4]).")";
                 if ($matches[2]) {
                     //check if columun is nullable cause Sql server only allow 1 null value if unique index.
+<<<<<<< HEAD
                     $fields=explode(",",trim($matches[4]));
                     $fields_clear=array_map('trim',$fields);
+=======
+                    $fields=explode(",", trim($matches[4]));
+                    $fields_clear=array_map('trim', $fields);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                     $infos=$this->GetFieldInformation(trim($matches[1]), $fields_clear);
                     $query_comp=array();
                     foreach($infos as $fld) {
@@ -361,11 +493,16 @@ class DoliDBMssql extends DoliDB
                         }
                     }
                     if (! empty($query_comp))
+<<<<<<< HEAD
                         $query.=" WHERE ".implode(" AND ",$query_comp);
+=======
+                        $query.=" WHERE ".implode(" AND ", $query_comp);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 }
     		}
     		else
     		{
+<<<<<<< HEAD
     		    if (preg_match('/ALTER TABLE\h+(\w+?)\h+ADD\h+PRIMARY\h+KEY\h+(\w+?)\h*\((.+)\)/is', $query, $matches))
     		    {
                     $original_query=$query;
@@ -373,6 +510,14 @@ class DoliDBMssql extends DoliDB
     		    }
     		}
 
+=======
+                if (preg_match('/ALTER TABLE\h+(\w+?)\h+ADD\h+PRIMARY\h+KEY\h+(\w+?)\h*\((.+)\)/is', $query, $matches))
+                {
+                    $original_query=$query;
+                    $query="ALTER TABLE [".$matches[1]."] ADD CONSTRAINT [".$matches[2]."] PRIMARY KEY CLUSTERED (".$matches[3].")";
+                }
+    		}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		if ($type=="auto" || $type='ddl')
@@ -406,7 +551,11 @@ class DoliDBMssql extends DoliDB
     			// Inserer la date en parametre et le reste de la requete
     			$query = $newquery." DATEPART(week, ".$extractvalue.$endofquery;
     		}
+<<<<<<< HEAD
     	   if (preg_match('/^insert\h+(?:INTO)?\h*(\w+?)\h*\(.*\b(?:row)?id\b.*\)\h+VALUES/i',$query,$matches))
+=======
+    	   if (preg_match('/^insert\h+(?:INTO)?\h*(\w+?)\h*\(.*\b(?:row)?id\b.*\)\h+VALUES/i', $query, $matches))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	   {
     	       //var_dump($query);
     	       //var_dump($matches);
@@ -414,12 +563,19 @@ class DoliDBMssql extends DoliDB
     	       $sql='SET IDENTITY_INSERT ['.trim($matches[1]).'] ON;';
     	       @mssql_query($sql, $this->db);
     	       $post_query='SET IDENTITY_INSERT ['.trim($matches[1]).'] OFF;';
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	   }
 		}
 		//print "<!--".$query."-->";
 
+<<<<<<< HEAD
 		if (! in_array($query,array('BEGIN','COMMIT','ROLLBACK'))) dol_syslog('sql='.$query, LOG_DEBUG);
+=======
+		if (! in_array($query, array('BEGIN','COMMIT','ROLLBACK'))) dol_syslog('sql='.$query, LOG_DEBUG);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		if (! $this->database_name)
 		{
@@ -436,7 +592,11 @@ class DoliDBMssql extends DoliDB
 		    @mssql_query($post_query, $this->db);
 		}
 
+<<<<<<< HEAD
 		if (! preg_match("/^COMMIT/i",$query) && ! preg_match("/^ROLLBACK/i",$query))
+=======
+		if (! preg_match("/^COMMIT/i", $query) && ! preg_match("/^ROLLBACK/i", $query))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			// Si requete utilisateur, on la sauvegarde ainsi que son resultset
 			if (! $ret)
@@ -459,60 +619,103 @@ class DoliDBMssql extends DoliDB
 		return $ret;
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *	Renvoie la ligne courante (comme un objet) pour le curseur resultset
 	 *
 	 *	@param	resource	$resultset  Curseur de la requete voulue
 	 *	@return	object|false			Object result line or false if KO or end of cursor
 	 */
+<<<<<<< HEAD
 	function fetch_object($resultset)
 	{
+=======
+    public function fetch_object($resultset)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
 		if (! is_resource($resultset)) { $resultset=$this->_results; }
 		return mssql_fetch_object($resultset);
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
      *	Return datas as an array
      *
      *	@param	resource	$resultset  Resultset of request
      *	@return	array|false				Array or false if KO or end of cursor
 	 */
+<<<<<<< HEAD
 	function fetch_array($resultset)
 	{
+=======
+    public function fetch_array($resultset)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
 		if (! is_resource($resultset)) { $resultset=$this->_results; }
 		return mssql_fetch_array($resultset);
 	}
 
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
      *	Return datas as an array
      *
      *	@param	resource	$resultset  Resultset of request
      *	@return	array|false				Array or false if KO or end of cursor
 	 */
+<<<<<<< HEAD
 	function fetch_row($resultset)
 	{
+=======
+    public function fetch_row($resultset)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
 		if (! is_resource($resultset)) { $resultset=$this->_results; }
 		return @mssql_fetch_row($resultset);
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
      *	Return number of lines for result of a SELECT
      *
      *	@param	resource	$resultset  Resulset of requests
      *	@return int		    			Nb of lines
+<<<<<<< HEAD
      *	@see    affected_rows
 	 */
 	function num_rows($resultset)
 	{
+=======
+     *	@see    affected_rows()
+	 */
+    public function num_rows($resultset)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
 		if (! is_resource($resultset)) { $resultset=$this->_results; }
 		return mssql_num_rows($resultset);
 	}
 
+<<<<<<< HEAD
 	/**
 	 *	Renvoie le nombre de lignes dans le resultat d'une requete INSERT, DELETE ou UPDATE
 	 *
@@ -522,6 +725,19 @@ class DoliDBMssql extends DoliDB
 	 */
 	function affected_rows($resultset)
 	{
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *	Return the number of lines in the result of a request INSERT, DELETE or UPDATE
+	 *
+	 *	@param	resource	$resultset   Curseur de la requete voulue
+	 *	@return int		    Number of lines
+	 *	@see    num_rows()
+	 */
+    public function affected_rows($resultset)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
 		if (! is_resource($resultset)) { $resultset=$this->_results; }
 		// mssql necessite un link de base pour cette fonction contrairement
@@ -538,7 +754,11 @@ class DoliDBMssql extends DoliDB
 	 *	@param  resource	$resultset   Curseur de la requete voulue
 	 *	@return	bool
 	 */
+<<<<<<< HEAD
 	function free($resultset=null)
+=======
+    public function free($resultset = null)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
 		if (! is_resource($resultset)) { $resultset=$this->_results; }
@@ -552,7 +772,11 @@ class DoliDBMssql extends DoliDB
 	 *  @param	string	$stringtoencode		String to escape
 	 *  @return	string						String escaped
 	 */
+<<<<<<< HEAD
 	function escape($stringtoencode)
+=======
+    public function escape($stringtoencode)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return addslashes($stringtoencode);
 	}
@@ -565,9 +789,15 @@ class DoliDBMssql extends DoliDB
 	 *   @param	    string	$param      Date TMS to convert
 	 *   @return	string      		Date in a string YYYY-MM-DD HH:MM:SS
 	 */
+<<<<<<< HEAD
 	function idate($param)
 	{
 		return dol_print_date($param,"%Y-%m-%d %H:%M:%S");
+=======
+    public function idate($param)
+	{
+		return dol_print_date($param, "%Y-%m-%d %H:%M:%S");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	/**
@@ -575,7 +805,11 @@ class DoliDBMssql extends DoliDB
      *
      *	@return	string		Error code (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
 	 */
+<<<<<<< HEAD
 	function errno()
+=======
+    public function errno()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		if (! $this->connected)
 		{
@@ -628,7 +862,11 @@ class DoliDBMssql extends DoliDB
 	 *
 	 *	@return	string		Error text
 	 */
+<<<<<<< HEAD
 	function error()
+=======
+    public function error()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		if (! $this->connected) {
 			// Si il y a eu echec de connexion, $this->db n'est pas valide pour mssql_get_last_message.
@@ -639,6 +877,10 @@ class DoliDBMssql extends DoliDB
 		}
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * Get last ID after an insert INSERT
 	 *
@@ -646,8 +888,14 @@ class DoliDBMssql extends DoliDB
 	 * @param	string	$fieldid	Field name
 	 * @return  int     			Id of row or -1 on error
 	 */
+<<<<<<< HEAD
 	function last_insert_id($tab,$fieldid='rowid')
 	{
+=======
+    public function last_insert_id($tab, $fieldid = 'rowid')
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$res = $this->query("SELECT @@IDENTITY as id");
 		if ($res && $data = $this->fetch_array($res))
 		{
@@ -667,7 +915,11 @@ class DoliDBMssql extends DoliDB
      *  @param	int		$withQuotes     Return string with quotes
      *  @return string          		XXX(field) or XXX('value') or field or 'value'
 	 */
+<<<<<<< HEAD
 	function encrypt($fieldorvalue, $withQuotes=0)
+=======
+    public function encrypt($fieldorvalue, $withQuotes = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf;
 
@@ -687,7 +939,11 @@ class DoliDBMssql extends DoliDB
      *	@param	string	$value			Value to decrypt
      * 	@return	string					Decrypted value if used
 	 */
+<<<<<<< HEAD
 	function decrypt($value)
+=======
+    public function decrypt($value)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf;
 
@@ -702,13 +958,23 @@ class DoliDBMssql extends DoliDB
 	}
 
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * Return connexion ID
 	 *
 	 * @return	        string      Id connexion
 	 */
+<<<<<<< HEAD
 	function DDLGetConnectId()
 	{
+=======
+    public function DDLGetConnectId()
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$resql=$this->query('SELECT CONNECTION_ID()');
 		if ($resql)
 		{
@@ -718,6 +984,10 @@ class DoliDBMssql extends DoliDB
 		else return '?';
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *	Create a new database
 	 *	Do not use function xxx_create_db (xxx=mysql, ...) as they are deprecated
@@ -729,8 +999,14 @@ class DoliDBMssql extends DoliDB
 	 * 	@param	string	$owner			Username of database owner
 	 * 	@return	false|resource|true		resource defined if OK, false if KO
 	 */
+<<<<<<< HEAD
 	function DDLCreateDb($database,$charset='',$collation='',$owner='')
 	{
+=======
+    public function DDLCreateDb($database, $charset = '', $collation = '', $owner = '')
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         /*if (empty($charset))   $charset=$this->forcecharset;
         if (empty($collation)) $collation=$this->forcecollate;
         */
@@ -742,6 +1018,7 @@ class DoliDBMssql extends DoliDB
 
 		$this->select_db($database);
 		$sql="CREATE USER [$owner] FOR LOGIN [$owner]";
+<<<<<<< HEAD
 		mssql_query($sql,$this->db);
 		$sql="ALTER ROLE [db_owner] ADD MEMBER [$owner]";
 		mssql_query($sql,$this->db);
@@ -750,10 +1027,24 @@ class DoliDBMssql extends DoliDB
 	    @mssql_query($sql,$this->db);
 	    $sql="ALTER DATABASE [$database] SET ANSI_NULL ON;";
 	    @mssql_query($sql,$this->db);
+=======
+		mssql_query($sql, $this->db);
+		$sql="ALTER ROLE [db_owner] ADD MEMBER [$owner]";
+		mssql_query($sql, $this->db);
+
+		$sql="ALTER DATABASE [$database] SET ANSI_NULL_DEFAULT ON;";
+	    @mssql_query($sql, $this->db);
+	    $sql="ALTER DATABASE [$database] SET ANSI_NULL ON;";
+	    @mssql_query($sql, $this->db);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	    return $ret;
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *  List tables into a database
 	 *
@@ -761,20 +1052,36 @@ class DoliDBMssql extends DoliDB
 	 *  @param	string		$table		Nmae of table filter ('xxx%')
      *  @return	array					List of tables in an array
 	 */
+<<<<<<< HEAD
 	function DDLListTables($database,$table='')
 	{
+=======
+    public function DDLListTables($database, $table = '')
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->_results = mssql_list_tables($database, $this->db);
 		return $this->_results;
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *	List information of columns into a table.
 	 *
 	 *	@param	string	$table		Name of table
 	 *	@return	array				Tableau des informations des champs de la table
 	 */
+<<<<<<< HEAD
 	function DDLInfoTable($table)
 	{
+=======
+    public function DDLInfoTable($table)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// FIXME: Dummy method
 		// TODO: Implement
@@ -784,6 +1091,10 @@ class DoliDBMssql extends DoliDB
 		return $infotables;
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *	Create a table into database
 	 *
@@ -796,8 +1107,14 @@ class DoliDBMssql extends DoliDB
 	 *	@param	    array	$keys 			Tableau des champs cles noms => valeur
 	 *	@return	    int						<0 if KO, >=0 if OK
 	 */
+<<<<<<< HEAD
 	function DDLCreateTable($table,$fields,$primary_key,$type,$unique_keys=null,$fulltext_keys=null,$keys=null)
 	{
+=======
+    public function DDLCreateTable($table, $fields, $primary_key, $type, $unique_keys = null, $fulltext_keys = null, $keys = null)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// FIXME: $fulltext_keys parameter is unused
 
 		// cles recherchees dans le tableau des descriptions (fields) : type,value,attribute,null,default,extra
@@ -808,6 +1125,7 @@ class DoliDBMssql extends DoliDB
 		{
 			$sqlfields[$i] = $field_name." ";
 			$sqlfields[$i]  .= $field_desc['type'];
+<<<<<<< HEAD
 			if( preg_match("/^[^\s]/i",$field_desc['value']))
 			$sqlfields[$i]  .= "(".$field_desc['value'].")";
 			else if( preg_match("/^[^\s]/i",$field_desc['attribute']))
@@ -815,15 +1133,32 @@ class DoliDBMssql extends DoliDB
 			else if( preg_match("/^[^\s]/i",$field_desc['default']))
 			{
 				if(preg_match("/null/i",$field_desc['default']))
+=======
+			if( preg_match("/^[^\s]/i", $field_desc['value']))
+			    $sqlfields[$i]  .= "(".$field_desc['value'].")";
+			elseif( preg_match("/^[^\s]/i", $field_desc['attribute']))
+			    $sqlfields[$i] .= " ".$field_desc['attribute'];
+			elseif( preg_match("/^[^\s]/i", $field_desc['default']))
+			{
+				if(preg_match("/null/i", $field_desc['default']))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$sqlfields[$i]  .= " default ".$field_desc['default'];
 				else
 				$sqlfields[$i]  .= " default '".$field_desc['default']."'";
 			}
+<<<<<<< HEAD
 			else if( preg_match("/^[^\s]/i",$field_desc['null']))
 			$sqlfields[$i]  .= " ".$field_desc['null'];
 
 			else if( preg_match("/^[^\s]/i",$field_desc['extra']))
 			$sqlfields[$i]  .= " ".$field_desc['extra'];
+=======
+			elseif (preg_match("/^[^\s]/i", $field_desc['null']))
+			    $sqlfields[$i] .= " ".$field_desc['null'];
+
+			elseif (preg_match("/^[^\s]/i", $field_desc['extra']))
+			    $sqlfields[$i]  .= " ".$field_desc['extra'];
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$i++;
 		}
 		if($primary_key != "")
@@ -847,6 +1182,7 @@ class DoliDBMssql extends DoliDB
 				$i++;
 			}
 		}
+<<<<<<< HEAD
 		$sql .= implode(',',$sqlfields);
 		if($primary_key != "")
 		$sql .= ",".$pk;
@@ -854,6 +1190,15 @@ class DoliDBMssql extends DoliDB
 		$sql .= ",".implode(',',$sqluq);
 		if(is_array($keys))
 		$sql .= ",".implode(',',$sqlk);
+=======
+		$sql .= implode(',', $sqlfields);
+		if($primary_key != "")
+		$sql .= ",".$pk;
+		if(is_array($unique_keys))
+		$sql .= ",".implode(',', $sqluq);
+		if(is_array($keys))
+		$sql .= ",".implode(',', $sqlk);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql .=") type=".$type;
 
 		dol_syslog($sql);
@@ -863,14 +1208,24 @@ class DoliDBMssql extends DoliDB
 		return 1;
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *	Drop a table into database
 	 *
 	 *	@param	    string	$table 			Name of table
 	 *	@return	    int						<0 if KO, >=0 if OK
 	 */
+<<<<<<< HEAD
 	function DDLDropTable($table)
 	{
+=======
+    public function DDLDropTable($table)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql = "DROP TABLE ".$table;
 
 		if (! $this->query($sql))
@@ -879,6 +1234,10 @@ class DoliDBMssql extends DoliDB
 			return 1;
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *	Return a pointer of line with description of a table or field
 	 *
@@ -886,8 +1245,14 @@ class DoliDBMssql extends DoliDB
 	 *	@param	string		$field	Optionnel : Name of field if we want description of field
 	 *	@return	false|resource|true	Resource
 	 */
+<<<<<<< HEAD
 	function DDLDescTable($table,$field="")
 	{
+=======
+    public function DDLDescTable($table, $field = "")
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql="DESC ".$table." ".$field;
 
 		dol_syslog($sql);
@@ -895,6 +1260,10 @@ class DoliDBMssql extends DoliDB
 		return $this->_results;
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *	Create a new field into table
 	 *
@@ -904,12 +1273,19 @@ class DoliDBMssql extends DoliDB
 	 *	@param	string	$field_position 	Optionnel ex.: "after champtruc"
 	 *	@return	int							<0 if KO, >0 if OK
 	 */
+<<<<<<< HEAD
 	function DDLAddField($table,$field_name,$field_desc,$field_position="")
 	{
+=======
+    public function DDLAddField($table, $field_name, $field_desc, $field_position = "")
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// cles recherchees dans le tableau des descriptions (field_desc) : type,value,attribute,null,default,extra
 		// ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
 		$sql= "ALTER TABLE ".$table." ADD ".$field_name." ";
 		$sql .= $field_desc['type'];
+<<<<<<< HEAD
 		if( preg_match("/^[^\s]/i",$field_desc['value']))
 		$sql  .= "(".$field_desc['value'].")";
 		if( preg_match("/^[^\s]/i",$field_desc['attribute']))
@@ -922,6 +1298,20 @@ class DoliDBMssql extends DoliDB
 		else
 		$sql  .= " default '".$field_desc['default']."'";
 		if( preg_match("/^[^\s]/i",$field_desc['extra']))
+=======
+		if( preg_match("/^[^\s]/i", $field_desc['value']))
+		$sql  .= "(".$field_desc['value'].")";
+		if( preg_match("/^[^\s]/i", $field_desc['attribute']))
+		$sql  .= " ".$field_desc['attribute'];
+		if( preg_match("/^[^\s]/i", $field_desc['null']))
+		$sql  .= " ".$field_desc['null'];
+		if( preg_match("/^[^\s]/i", $field_desc['default']))
+		if(preg_match("/null/i", $field_desc['default']))
+		$sql  .= " default ".$field_desc['default'];
+		else
+		$sql  .= " default '".$field_desc['default']."'";
+		if( preg_match("/^[^\s]/i", $field_desc['extra']))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql  .= " ".$field_desc['extra'];
 		$sql .= " ".$field_position;
 
@@ -931,6 +1321,10 @@ class DoliDBMssql extends DoliDB
 		return 1;
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *	Update format of a field into a table
 	 *
@@ -939,21 +1333,35 @@ class DoliDBMssql extends DoliDB
 	 *	@param	string	$field_desc 		Array with description of field format
 	 *	@return	int							<0 if KO, >0 if OK
 	 */
+<<<<<<< HEAD
 	function DDLUpdateField($table,$field_name,$field_desc)
 	{
+=======
+    public function DDLUpdateField($table, $field_name, $field_desc)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql = "ALTER TABLE ".$table;
 		$sql .= " MODIFY COLUMN ".$field_name." ".$field_desc['type'];
 		if ($field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int' || $field_desc['type'] == 'varchar') {
 			$sql.="(".$field_desc['value'].")";
 		}
 
+<<<<<<< HEAD
 		dol_syslog($sql,LOG_DEBUG);
+=======
+		dol_syslog($sql, LOG_DEBUG);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if (! $this->query($sql))
 		return -1;
 		else
 		return 1;
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *	Drop a field from table
 	 *
@@ -961,10 +1369,18 @@ class DoliDBMssql extends DoliDB
 	 *	@param	string	$field_name 	Name of field to drop
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
+<<<<<<< HEAD
 	function DDLDropField($table,$field_name)
 	{
 		$sql= "ALTER TABLE ".$table." DROP COLUMN `".$field_name."`";
 		dol_syslog($sql,LOG_DEBUG);
+=======
+    public function DDLDropField($table, $field_name)
+	{
+        // phpcs:enable
+		$sql= "ALTER TABLE ".$table." DROP COLUMN `".$field_name."`";
+		dol_syslog($sql, LOG_DEBUG);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if (! $this->query($sql))
 		{
 			$this->error=$this->lasterror();
@@ -973,6 +1389,10 @@ class DoliDBMssql extends DoliDB
 		else return 1;
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * 	Create a user and privileges to connect to database (even if database does not exists yet)
 	 *
@@ -982,9 +1402,16 @@ class DoliDBMssql extends DoliDB
 	 *	@param	string	$dolibarr_main_db_name		Database name where user must be granted
 	 *	@return	int									<0 if KO, >=0 if OK
 	 */
+<<<<<<< HEAD
 	function DDLCreateUser($dolibarr_main_db_host,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_name)
 	{
 	    $sql = "CREATE LOGIN ".$this->EscapeFieldName($dolibarr_main_db_user)." WITH PASSWORD='$dolibarr_main_db_pass'";
+=======
+    public function DDLCreateUser($dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_name)
+	{
+        // phpcs:enable
+        $sql = "CREATE LOGIN ".$this->EscapeFieldName($dolibarr_main_db_user)." WITH PASSWORD='$dolibarr_main_db_pass'";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG);	// No sql to avoid password in log
         $resql=$this->query($sql);
         if (! $resql)
@@ -1025,7 +1452,11 @@ class DoliDBMssql extends DoliDB
      *
      *	@return		string		Charset
      */
+<<<<<<< HEAD
     function getDefaultCharacterSetDatabase()
+=======
+    public function getDefaultCharacterSetDatabase()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		// FIXME: Dummy method
 		// TODO: Implement
@@ -1038,7 +1469,11 @@ class DoliDBMssql extends DoliDB
 	 *
 	 *	@return		array		List of Charset
 	 */
+<<<<<<< HEAD
 	function getListOfCharacterSet()
+=======
+    public function getListOfCharacterSet()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		// FIXME: Dummy method
 		// TODO: Implement
@@ -1051,7 +1486,11 @@ class DoliDBMssql extends DoliDB
 	 *
 	 *	@return		string		Collation value
 	 */
+<<<<<<< HEAD
 	function getDefaultCollationDatabase()
+=======
+    public function getDefaultCollationDatabase()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$resql=$this->query("SELECT SERVERPROPERTY('collation')");
 		if (!$resql)
@@ -1067,7 +1506,11 @@ class DoliDBMssql extends DoliDB
 	 *
 	 *	@return		array		Liste of Collation
 	 */
+<<<<<<< HEAD
 	function getListOfCollation()
+=======
+    public function getListOfCollation()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		// FIXME: Dummy method
 		// TODO: Implement
@@ -1080,7 +1523,11 @@ class DoliDBMssql extends DoliDB
 	 *
 	 *	@return		string		Full path of dump program
 	 */
+<<<<<<< HEAD
 	function getPathOfDump()
+=======
+    public function getPathOfDump()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		// FIXME: Dummy method
 		// TODO: Implement
@@ -1093,7 +1540,11 @@ class DoliDBMssql extends DoliDB
 	 *
 	 *	@return		string		Full path of restore program
 	 */
+<<<<<<< HEAD
 	function getPathOfRestore()
+=======
+    public function getPathOfRestore()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		// FIXME: Dummy method
 		// TODO: Implement
@@ -1107,7 +1558,11 @@ class DoliDBMssql extends DoliDB
 	 * @param	string	$filter		Filter list on a particular value
 	 * @return	array				Array of key-values (key=>value)
 	 */
+<<<<<<< HEAD
 	function getServerParametersValues($filter='')
+=======
+    public function getServerParametersValues($filter = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		// FIXME: Dummy method
 		// TODO: Implement
@@ -1123,7 +1578,11 @@ class DoliDBMssql extends DoliDB
 	 * @param	string	$filter		Filter list on a particular value
 	 * @return  array				Array of key-values (key=>value)
 	 */
+<<<<<<< HEAD
 	function getServerStatusValues($filter='')
+=======
+    public function getServerStatusValues($filter = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		// FIXME: Dummy method
 		// TODO: Implement
@@ -1132,17 +1591,31 @@ class DoliDBMssql extends DoliDB
 		return array();
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *    Escape a field name according to escape's syntax
 	 *
 	 * @param      string $fieldname   Field's name to escape
 	 * @return     string              field's name escaped
 	 */
+<<<<<<< HEAD
 	function EscapeFieldName($fieldname) {
+=======
+    public function EscapeFieldName($fieldname)
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    return "[".$fieldname."]";
 	}
 
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * Get information on field
 	 *
@@ -1150,18 +1623,32 @@ class DoliDBMssql extends DoliDB
 	 * @param      mixed   $fields     String for one field or array of string for multiple field
 	 * @return false|object
 	 */
+<<<<<<< HEAD
 	function GetFieldInformation($table,$fields) {
 	    $sql="SELECT * from INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='".$this->escape($table)."' AND COLUMN_NAME";
 	    if (is_array($fields))
 	    {
 	        $where=" IN ('".implode("','",$fields)."')";
+=======
+    public function GetFieldInformation($table, $fields)
+    {
+        // phpcs:enable
+	    $sql="SELECT * from INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='".$this->escape($table)."' AND COLUMN_NAME";
+	    if (is_array($fields))
+	    {
+	        $where=" IN ('".implode("','", $fields)."')";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    }
 	    else
 	    {
 	        $where="='".$this->escape($fields)."'";
 	    }
 	    $result=array();
+<<<<<<< HEAD
 	    $ret=mssql_query($sql.$where,$this->db);
+=======
+	    $ret=mssql_query($sql.$where, $this->db);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    if ($ret)
 	    {
 	        while($obj=mssql_fetch_object($ret))
@@ -1174,6 +1661,10 @@ class DoliDBMssql extends DoliDB
 
 	    return $result;
 	}
+<<<<<<< HEAD
 
 }
 
+=======
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

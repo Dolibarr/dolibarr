@@ -5,6 +5,7 @@ RemoteControlSupport=网上实时/远程支持
 OtherSupport=其他支持
 ToSeeListOfAvailableRessources=查看/联络可用的资源：
 HelpCenter=帮助中心
+<<<<<<< HEAD
 DolibarrHelpCenter=Dolibarr帮助和支持中心
 ToGoBackToDolibarr=或者，请点击<a href="%s">返回</a>简体中文翻译可到Dolibarr爱好者交流Q群技术交流：206239089
 TypeOfSupport=源支持
@@ -23,4 +24,21 @@ BackToHelpCenter=或者，请点击<a href="%s">返回帮助中心</a> 。简体
 LinkToGoldMember=你可以调用由Dolibarr预选您的语言（%s的按一下他的小工具（状态和最高价格自动更新））的教练之一：
 PossibleLanguages=支持的语言
 SubscribeToFoundation=帮助Dolibarr项目，认购的机构
+=======
+DolibarrHelpCenter=Dolibarr Help and Support Center
+ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
+TypeOfSupport=Type of support
+TypeSupportCommunauty=社区（免费）
+TypeSupportCommercial=商业
+TypeOfHelp=类型
+NeedHelpCenter=需要帮助或支持？
+Efficiency=效率
+TypeHelpOnly=只有帮助
+TypeHelpDev=帮助+开发
+TypeHelpDevForm=Help+Development+Training
+BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
+LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
+PossibleLanguages=支持的语言
+SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SeeOfficalSupport=使用您的语言的 Dolibarr 官方支持: <br><b><a href="%s" target="_blank">%s</a></b>

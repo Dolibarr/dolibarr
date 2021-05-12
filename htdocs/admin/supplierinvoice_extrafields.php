@@ -2,9 +2,15 @@
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2012		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2013		Philippe Grand			<philippe.grand@atoo-net.com>
+=======
+ * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2012		Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2018	Philippe Grand			<philippe.grand@atoo-net.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2013		Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,17 +38,24 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load translation files required by the page
+<<<<<<< HEAD
 $langs->load("orders");
+=======
+$langs->loadLangs(array("admin", "other", "bills", "orders", "suppliers"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if (!$user->admin)
 	accessforbidden();
 
+<<<<<<< HEAD
 $langs->load("admin");
 $langs->load("other");
 $langs->load("bills");
 $langs->load("orders");
 $langs->load("suppliers");
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
 
@@ -72,10 +85,17 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
 
 $textobject=$langs->transnoentitiesnoconv("BillsSuppliers");
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("SuppliersSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("SuppliersSetup"),$linkback,'title_setup');
+=======
+llxHeader('', $langs->trans("SuppliersSetup"));
+
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+print load_fiche_titre($langs->trans("SuppliersSetup"), $linkback, 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print "<br>\n";
 
 $head = supplierorder_admin_prepare_head();
@@ -91,7 +111,11 @@ dol_fiche_end();
 if ($action != 'create' && $action != 'edit')
 {
     print '<div class="tabsAction">';
+<<<<<<< HEAD
     print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?action=create\">".$langs->trans("NewAttribute")."</a>";
+=======
+    print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?action=create#newattrib\">".$langs->trans("NewAttribute")."</a>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print "</div>";
 }
 
@@ -104,7 +128,11 @@ if ($action != 'create' && $action != 'edit')
 
 if ($action == 'create')
 {
+<<<<<<< HEAD
     print "<br>";
+=======
+	print '<br><div id="newattrib"></div>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print load_fiche_titre($langs->trans('NewAttribute'));
 
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';
@@ -123,6 +151,11 @@ if ($action == 'edit' && ! empty($attrname))
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';
 }
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

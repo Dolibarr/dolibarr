@@ -1,7 +1,11 @@
 -- ===================================================================
 -- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
+<<<<<<< HEAD
 -- Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+-- Copyright (C) 2009      Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -29,6 +33,10 @@ create table llx_adherent_type
   tms              timestamp,
   statut           smallint NOT NULL DEFAULT 0,
   libelle          varchar(50) NOT NULL,
+<<<<<<< HEAD
+=======
+  morphy           varchar(3) NOT NULL,
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
   subscription     varchar(3) NOT NULL DEFAULT 'yes',
   vote             varchar(3) NOT NULL DEFAULT 'yes',
   note             text,

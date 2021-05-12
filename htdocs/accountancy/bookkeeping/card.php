@@ -1,8 +1,16 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2013-2017 Olivier Geffroy      <jeff@jeffinfo.com>
  * Copyright (C) 2013-2017 Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2018 Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2017      Laurent Destailleur  <eldy@users.sourceforge.net>
+=======
+/* Copyright (C) 2013-2017  Olivier Geffroy         <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2017  Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +28,11 @@
 
 /**
  * \file		htdocs/accountancy/bookkeeping/card.php
+<<<<<<< HEAD
  * \ingroup		Advanced accountancy
+=======
+ * \ingroup		Accountancy (Double entries)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * \brief		Page to show book-entry
  */
 
@@ -31,15 +43,27 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
+<<<<<<< HEAD
+=======
+require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Load translation files required by the page
 $langs->loadLangs(array("accountancy", "bills", "compta"));
 
+<<<<<<< HEAD
 $action = GETPOST('action','aZ09');
 
 $id = GETPOST('id', 'int');					// id of record
 $mode = GETPOST('mode','aZ09');		 		// '' or 'tmp'
 $piece_num = GETPOST("piece_num",'int');	// id of transaction (several lines share the same transaction id)
+=======
+$action = GETPOST('action', 'aZ09');
+
+$id = GETPOST('id', 'int');					// id of record
+$mode = GETPOST('mode', 'aZ09');		 		// '' or 'tmp'
+$piece_num = GETPOST("piece_num", 'int');	// id of transaction (several lines share the same transaction id)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Security check
 if ($user->societe_id > 0) {
@@ -48,6 +72,7 @@ if ($user->societe_id > 0) {
 
 $mesg = '';
 
+<<<<<<< HEAD
 $account_number = GETPOST('account_number','alphanohtml');
 $subledger_account = GETPOST('subledger_account','alphanohtml');
 if ($subledger_account == - 1) {
@@ -61,6 +86,30 @@ $credit = price2num(GETPOST('credit','alpha'));
 $save = GETPOST('save','alpha');
 if (! empty($save)) $action = 'add';
 $update = GETPOST('update','alpha');
+=======
+$accountingaccount = new AccountingAccount($db);
+$accountingjournal = new AccountingJournal($db);
+
+$accountingaccount_number = GETPOST('accountingaccount_number', 'alphanohtml');
+$accountingaccount->fetch(null, $accountingaccount_number, true);
+$accountingaccount_label = $accountingaccount->label;
+
+$journal_code = GETPOST('code_journal', 'alpha');
+$accountingjournal->fetch(null, $journal_code);
+$journal_label = $accountingjournal->label;
+
+$subledger_account = GETPOST('subledger_account', 'alphanohtml');
+if ($subledger_account == - 1) {
+	$subledger_account = null;
+}
+$label_operation= GETPOST('label_operation', 'alphanohtml');
+$debit = price2num(GETPOST('debit', 'alpha'));
+$credit = price2num(GETPOST('credit', 'alpha'));
+
+$save = GETPOST('save', 'alpha');
+if (! empty($save)) $action = 'add';
+$update = GETPOST('update', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (! empty($update)) $action = 'confirm_update';
 
 $object = new BookKeeping($db);
@@ -79,7 +128,11 @@ if ($action == "confirm_update") {
 		setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
 		$action='update';
 	}
+<<<<<<< HEAD
 	if (empty($account_number) || $account_number == '-1')
+=======
+	if (empty($accountingaccount_number) || $accountingaccount_number == '-1')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$error++;
 		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("AccountAccountingShort")), null, 'errors');
@@ -95,9 +148,15 @@ if ($action == "confirm_update") {
 			$error++;
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
+<<<<<<< HEAD
 			$object->numero_compte = $account_number;
 			$object->subledger_account = $subledger_account;
 			$object->label_compte = $label_compte;
+=======
+			$object->numero_compte = $accountingaccount_number;
+			$object->subledger_account = $subledger_account;
+			$object->label_compte = $accountingaccount_label;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$object->label_operation= $label_operation;
 			$object->debit = $debit;
 			$object->credit = $credit;
@@ -129,7 +188,11 @@ if ($action == "confirm_update") {
 	}
 }
 
+<<<<<<< HEAD
 else if ($action == "add") {
+=======
+elseif ($action == "add") {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$error = 0;
 
 	if ((floatval($debit) != 0.0) && (floatval($credit) != 0.0))
@@ -138,7 +201,11 @@ else if ($action == "add") {
 		setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
 		$action='';
 	}
+<<<<<<< HEAD
 	if (empty($account_number) || $account_number == '-1')
+=======
+	if (empty($accountingaccount_number) || $accountingaccount_number == '-1')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$error++;
 		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("AccountAccountingShort")), null, 'errors');
@@ -148,6 +215,7 @@ else if ($action == "add") {
 	if (! $error) {
 		$object = new BookKeeping($db);
 
+<<<<<<< HEAD
 		$object->numero_compte = $account_number;
 		$object->subledger_account = $subledger_account;
 		$object->label_compte = $label_compte;
@@ -161,6 +229,22 @@ else if ($action == "add") {
 		$object->code_journal = GETPOST('code_journal','alpha');
 		$object->fk_doc = GETPOST('fk_doc','alpha');
 		$object->fk_docdet = GETPOST('fk_docdet','alpha');
+=======
+		$object->numero_compte = $accountingaccount_number;
+		$object->subledger_account = $subledger_account;
+		$object->label_compte = $accountingaccount_label;
+		$object->label_operation= $label_operation;
+		$object->debit = $debit;
+		$object->credit = $credit;
+		$object->doc_date = GETPOST('doc_date', 'alpha');
+		$object->doc_type = GETPOST('doc_type', 'alpha');
+		$object->piece_num = $piece_num;
+		$object->doc_ref = GETPOST('doc_ref', 'alpha');
+		$object->code_journal = $journal_code;
+		$object->journal_label = $journal_label;
+		$object->fk_doc = (int) GETPOST('fk_doc', 'int');
+		$object->fk_docdet = (int) GETPOST('fk_docdet', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		if (floatval($debit) != 0.0) {
 			$object->montant = $debit;
@@ -189,7 +273,11 @@ else if ($action == "add") {
 	}
 }
 
+<<<<<<< HEAD
 else if ($action == "confirm_delete") {
+=======
+elseif ($action == "confirm_delete") {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$object = new BookKeeping($db);
 
 	$result = $object->fetch($id, null, $mode);
@@ -206,17 +294,29 @@ else if ($action == "confirm_delete") {
 	$action = '';
 }
 
+<<<<<<< HEAD
 else if ($action == "confirm_create") {
+=======
+elseif ($action == "confirm_create") {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$error = 0;
 
 	$object = new BookKeeping($db);
 
+<<<<<<< HEAD
 	if (! GETPOST('code_journal','alpha') || GETPOST('code_journal','alpha') == '-1') {
+=======
+	if (! $journal_code || $journal_code == '-1') {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Journal")), null, 'errors');
 		$action='create';
 		$error++;
 	}
+<<<<<<< HEAD
 	if (! GETPOST('next_num_mvt'))
+=======
+	if (! GETPOST('next_num_mvt', 'alpha'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NumPiece")), null, 'errors');
 		$error++;
@@ -227,16 +327,29 @@ else if ($action == "confirm_create") {
 		$object->label_compte = '';
 		$object->debit = 0;
 		$object->credit = 0;
+<<<<<<< HEAD
 		$object->doc_date = $date_start = dol_mktime(0, 0, 0, GETPOST('doc_datemonth','int'), GETPOST('doc_dateday','int'), GETPOST('doc_dateyear','int'));
 		$object->doc_type = GETPOST('doc_type','alpha');
 		$object->piece_num = GETPOST('next_num_mvt','alpha');
 		$object->doc_ref = GETPOST('doc_ref','alpha');
 		$object->code_journal = GETPOST('code_journal','alpha');
+=======
+		$object->doc_date = $date_start = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
+		$object->doc_type = GETPOST('doc_type', 'alpha');
+		$object->piece_num = GETPOST('next_num_mvt', 'alpha');
+		$object->doc_ref = GETPOST('doc_ref', 'alpha');
+		$object->code_journal = $journal_code;
+		$object->journal_label = $journal_label;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$object->fk_doc = 0;
 		$object->fk_docdet = 0;
 		$object->montant = 0;
 
+<<<<<<< HEAD
 		$result = $object->createStd($user,0, $mode);
+=======
+		$result = $object->createStd($user, 0, $mode);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
@@ -252,8 +365,13 @@ else if ($action == "confirm_create") {
 }
 
 if ($action == 'setdate') {
+<<<<<<< HEAD
 	$datedoc = dol_mktime(0, 0, 0, GETPOST('doc_datemonth'), GETPOST('doc_dateday'), GETPOST('doc_dateyear'));
 	$result = $object->updateByMvt($piece_num,'doc_date',$db->idate($datedoc),$mode);
+=======
+	$datedoc = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
+	$result = $object->updateByMvt($piece_num, 'doc_date', $db->idate($datedoc), $mode);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	} else {
@@ -266,8 +384,13 @@ if ($action == 'setdate') {
 }
 
 if ($action == 'setjournal') {
+<<<<<<< HEAD
 	$journaldoc = trim(GETPOST('code_journal','alpha'));
 	$result = $object->updateByMvt($piece_num, 'code_journal', $journaldoc, $mode);
+=======
+	$result = $object->updateByMvt($piece_num, 'code_journal', $journal_code, $mode);
+	$result = $object->updateByMvt($piece_num, 'journal_label', $journal_label, $mode);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	} else {
@@ -280,8 +403,13 @@ if ($action == 'setjournal') {
 }
 
 if ($action == 'setdocref') {
+<<<<<<< HEAD
 	$refdoc = trim(GETPOST('doc_ref','alpha'));
 	$result = $object->updateByMvt($piece_num,'doc_ref',$refdoc,$mode);
+=======
+	$refdoc = trim(GETPOST('doc_ref', 'alpha'));
+	$result = $object->updateByMvt($piece_num, 'doc_ref', $refdoc, $mode);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	} else {
@@ -295,7 +423,11 @@ if ($action == 'setdocref') {
 
 // Validate transaction
 if ($action == 'valid') {
+<<<<<<< HEAD
 	$result = $object->transformTransaction(0,$piece_num);
+=======
+	$result = $object->transformTransaction(0, $piece_num);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	} else {
@@ -311,7 +443,10 @@ if ($action == 'valid') {
 
 $html = new Form($db);
 $formaccounting = new FormAccounting($db);
+<<<<<<< HEAD
 $accountjournal = new AccountingJournal($db);
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 llxHeader('', $langs->trans("CreateMvts"));
 
@@ -350,18 +485,30 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td class="titlefieldcreate fieldrequired">' . $langs->trans("Docdate") . '</td>';
 	print '<td>';
+<<<<<<< HEAD
 	print $html->select_date('', 'doc_date', '', '', '', "create_mvt", 1, 1);
+=======
+	print $html->selectDate('', 'doc_date', '', '', '', "create_mvt", 1, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</td>';
 	print '</tr>';
 
 	print '<tr>';
 	print '<td class="fieldrequired">' . $langs->trans("Codejournal") . '</td>';
+<<<<<<< HEAD
 	print '<td>' . $formaccounting->select_journal(GETPOST('code_journal'),'code_journal',0,1,array(),1,1) . '</td>';
+=======
+	print '<td>' . $formaccounting->select_journal($journal_code, 'code_journal', 0, 0, 1, 1) . '</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</tr>';
 
 	print '<tr>';
 	print '<td>' . $langs->trans("Piece") . '</td>';
+<<<<<<< HEAD
 	print '<td><input type="text" class="minwidth200" name="doc_ref" value=""/></td>';
+=======
+	print '<td><input type="text" class="minwidth200" name="doc_ref" value="'.GETPOST('doc_ref', 'alpha').'"></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</tr>';
 
 	/*
@@ -424,7 +571,11 @@ if ($action == 'create')
 		print $langs->trans('Docdate');
 		print '</td>';
 		if ($action != 'editdate')
+<<<<<<< HEAD
 		print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;piece_num='. $object->piece_num .'&amp;mode='. $mode .'">'.img_edit($langs->transnoentitiesnoconv('SetDate'),1).'</a></td>';
+=======
+		print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;piece_num='. $object->piece_num .'&amp;mode='. $mode .'">'.img_edit($langs->transnoentitiesnoconv('SetDate'), 1).'</a></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</tr></table>';
 		print '</td><td colspan="3">';
 		if ($action == 'editdate') {
@@ -432,7 +583,11 @@ if ($action == 'create')
 			print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 			print '<input type="hidden" name="action" value="setdate">';
 			print '<input type="hidden" name="mode" value="'.$mode.'">';
+<<<<<<< HEAD
 			$form->select_date($object->doc_date ? $object->doc_date : - 1, 'doc_date', '', '', '', "setdate");
+=======
+			print $form->selectDate($object->doc_date ? $object->doc_date : - 1, 'doc_date', '', '', '', "setdate");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
 			print '</form>';
 		} else {
@@ -447,7 +602,11 @@ if ($action == 'create')
 		print $langs->trans('Codejournal');
 		print '</td>';
 		if ($action != 'editjournal')
+<<<<<<< HEAD
 		print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editjournal&amp;piece_num='.$object->piece_num.'&amp;mode='. $mode .'">'.img_edit($langs->transnoentitiesnoconv('Edit'),1).'</a></td>';
+=======
+		print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editjournal&amp;piece_num='.$object->piece_num.'&amp;mode='. $mode .'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editjournal') {
@@ -455,11 +614,19 @@ if ($action == 'create')
 			print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 			print '<input type="hidden" name="action" value="setjournal">';
 			print '<input type="hidden" name="mode" value="'.$mode.'">';
+<<<<<<< HEAD
 			print $formaccounting->select_journal($object->code_journal,'code_journal',0,0,array(),1,1);
 			print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
 			print '</form>';
 		} else {
 		print $object->code_journal ;
+=======
+			print $formaccounting->select_journal($object->code_journal, 'code_journal', 0, 0, array(), 1, 1);
+			print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
+			print '</form>';
+		} else {
+			print $object->code_journal ;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		print '</td>';
 		print '</tr>';
@@ -470,7 +637,11 @@ if ($action == 'create')
 		print $langs->trans('Piece');
 		print '</td>';
 		if ($action != 'editdocref')
+<<<<<<< HEAD
 		print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdocref&amp;piece_num='.$object->piece_num.'&amp;mode='. $mode .'">'.img_edit($langs->transnoentitiesnoconv('Edit'),1).'</a></td>';
+=======
+		print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdocref&amp;piece_num='.$object->piece_num.'&amp;mode='. $mode .'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editdocref') {
@@ -519,11 +690,19 @@ if ($action == 'create')
 		print '<td class="titlefield">' . $langs->trans("Status") . '</td>';
 		print '<td>';
 			if (empty($object->validated)) {
+<<<<<<< HEAD
 				print '<a href="' . $_SERVER["PHP_SELF"] . '?piece_num=' . $line->rowid . '&action=enable">';
 				print img_picto($langs->trans("Disabled"), 'switch_off');
 				print '</a>';
 			} else {
 				print '<a href="' . $_SERVER["PHP_SELF"] . '?piece_num=' . $line->rowid . '&action=disable">';
+=======
+				print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?piece_num=' . $line->rowid . '&action=enable">';
+				print img_picto($langs->trans("Disabled"), 'switch_off');
+				print '</a>';
+			} else {
+				print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?piece_num=' . $line->rowid . '&action=disable">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				print img_picto($langs->trans("Activated"), 'switch_on');
 				print '</a>';
 			}
@@ -589,11 +768,18 @@ if ($action == 'create')
 
 				print_liste_field_titre("AccountAccountingShort");
 				print_liste_field_titre("SubledgerAccount");
+<<<<<<< HEAD
 				print_liste_field_titre("LabelAccount");
 				print_liste_field_titre("LabelOperation");
 				print_liste_field_titre("Debit", "", "", "", "", 'align="right"');
 				print_liste_field_titre("Credit", "", "", "", "", 'align="right"');
 				print_liste_field_titre("Action", "", "", "", "", 'width="60" align="center"');
+=======
+				print_liste_field_titre("LabelOperation");
+				print_liste_field_titre("Debit", "", "", "", "", 'class="right"');
+				print_liste_field_titre("Credit", "", "", "", "", 'class="right"');
+				print_liste_field_titre("Action", "", "", "", "", 'width="60" class="center"');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				print "</tr>\n";
 
@@ -604,13 +790,18 @@ if ($action == 'create')
 
 					if ($action == 'update' && $line->id == $id) {
 						print '<td>';
+<<<<<<< HEAD
 						print $formaccounting->select_account($line->numero_compte, 'account_number', 1, array (), 1, 1, '');
+=======
+						print $formaccounting->select_account((GETPOSTISSET("accountingaccount_number") ? GETPOST("accountingaccount_number", "alpha") : $line->numero_compte), 'accountingaccount_number', 1, array (), 1, 1, '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						print '</td>';
 						print '<td>';
 						// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because it does not
 						// use setup of keypress to select thirdparty and this hang browser on large database.
 						if (! empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
 						{
+<<<<<<< HEAD
 							print $formaccounting->select_auxaccount($line->subledger_account, 'subledger_account', 1);
 						}
 						else
@@ -622,11 +813,24 @@ if ($action == 'create')
 						print '<td><input type="text" class="minwidth200" name="label_operation" value="' . $line->label_operation. '"/></td>';
 						print '<td align="right"><input type="text" size="6" class="right" name="debit" value="' . price($line->debit) . '"/></td>';
 						print '<td align="right"><input type="text" size="6" class="right" name="credit" value="' . price($line->credit) . '"/></td>';
+=======
+							print $formaccounting->select_auxaccount((GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account), 'subledger_account', 1);
+						}
+						else
+						{
+							print '<input type="text" class="maxwidth150" name="subledger_account" value="'.(GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account).'">';
+						}
+						print '</td>';
+						print '<td><input type="text" class="minwidth200" name="label_operation" value="' . (GETPOSTISSET("label_operation") ? GETPOST("label_operation", "alpha") : $line->label_operation). '"></td>';
+						print '<td class="right"><input type="text" size="6" class="right" name="debit" value="' . (GETPOSTISSET("debit") ? GETPOST("debit", "alpha") : price($line->debit)) . '"></td>';
+						print '<td class="right"><input type="text" size="6" class="right" name="credit" value="' . (GETPOSTISSET("credit") ? GETPOST("credit", "alpha") : price($line->credit)) . '"></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						print '<td>';
 						print '<input type="hidden" name="id" value="' . $line->id . '">' . "\n";
 						print '<input type="submit" class="button" name="update" value="' . $langs->trans("Update") . '">';
 						print '</td>';
 					} else {
+<<<<<<< HEAD
 						print '<td>' . length_accountg($line->numero_compte) . '</td>';
 						print '<td>' . length_accounta($line->subledger_account) . '</td>';
 						print '<td>' . $line->label_compte . '</td>';
@@ -635,6 +839,16 @@ if ($action == 'create')
 						print '<td align="right">' . price($line->credit) . '</td>';
 
 						print '<td align="center">';
+=======
+						$accountingaccount->fetch(null, $line->numero_compte, true);
+						print '<td>' . $accountingaccount->getNomUrl(0, 1, 1, '', 0) . '</td>';
+						print '<td>' . length_accounta($line->subledger_account) . '</td>';
+						print '<td>' . $line->label_operation. '</td>';
+						print '<td class="right">' . price($line->debit) . '</td>';
+						print '<td class="right">' . price($line->credit) . '</td>';
+
+						print '<td class="center">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						print '<a href="' . $_SERVER["PHP_SELF"] . '?action=update&id=' . $line->id . '&piece_num=' . $line->piece_num . '&mode='.$mode.'">';
 						print img_edit();
 						print '</a> &nbsp;';
@@ -651,8 +865,13 @@ if ($action == 'create')
 					print "</tr>\n";
 				}
 
+<<<<<<< HEAD
 				$total_debit = price2num($total_debit);
 				$total_credit = price2num($total_credit);
+=======
+				$total_debit = price2num($total_debit, 'MT');
+				$total_credit = price2num($total_credit, 'MT');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				if ($total_debit != $total_credit)
 				{
@@ -662,13 +881,18 @@ if ($action == 'create')
 				if ($action == "" || $action == 'add') {
 					print '<tr class="oddeven">';
 					print '<td>';
+<<<<<<< HEAD
 					print $formaccounting->select_account($account_number, 'account_number', 1, array (), 1, 1, '');
+=======
+					print $formaccounting->select_account('', 'accountingaccount_number', 1, array (), 1, 1, '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					print '</td>';
 					print '<td>';
 					// TODO For the moment we keep a fre input text instead of a combo. The select_auxaccount has problem because it does not
 					// use setup of keypress to select thirdparty and this hang browser on large database.
 					if (! empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
 					{
+<<<<<<< HEAD
 						print $formaccounting->select_auxaccount($subledger_account, 'subledger_account', 1);
 					}
 					else
@@ -680,6 +904,18 @@ if ($action == 'create')
 					print '<td><input type="text" class="minwidth200" name="label_operation" value=""/></td>';
 					print '<td align="right"><input type="text" size="6" class="right" name="debit" value=""/></td>';
 					print '<td align="right"><input type="text" size="6" class="right" name="credit" value=""/></td>';
+=======
+						print $formaccounting->select_auxaccount('', 'subledger_account', 1);
+					}
+					else
+					{
+						print '<input type="text" class="maxwidth150" name="subledger_account" value="">';
+					}
+					print '</td>';
+					print '<td><input type="text" class="minwidth200" name="label_operation" value="'.$label_operation.'"/></td>';
+					print '<td class="right"><input type="text" size="6" class="right" name="debit" value=""/></td>';
+					print '<td class="right"><input type="text" size="6" class="right" name="credit" value=""/></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					print '<td><input type="submit" class="button" name="save" value="' . $langs->trans("Add") . '"></td>';
 					print '</tr>';
 				}
@@ -714,5 +950,9 @@ if ($action == 'create')
 
 dol_fiche_end();
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

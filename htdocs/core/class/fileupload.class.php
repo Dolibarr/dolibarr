@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2011-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2011-2012	Regis Houssin		<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2011-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -41,16 +45,29 @@ class FileUpload
 	 * @param int		$fk_element		fk_element
 	 * @param string	$element		element
 	 */
+<<<<<<< HEAD
 	function __construct($options=null,$fk_element=null,$element=null)
 	{
 		global $db, $conf;
 		global $object;
+=======
+	public function __construct($options = null, $fk_element = null, $element = null)
+	{
+		global $db, $conf;
+		global $object;
+		global $hookmanager;
+		$hookmanager->initHooks(array('fileupload'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$this->fk_element=$fk_element;
 		$this->element=$element;
 
 		$pathname=$filename=$element;
+<<<<<<< HEAD
 		if (preg_match('/^([^_]+)_([^_]+)/i',$element,$regs))
+=======
+		if (preg_match('/^([^_]+)_([^_]+)/i', $element, $regs))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			$pathname = $regs[1];
 			$filename = $regs[2];
@@ -135,8 +152,13 @@ class FileUpload
 
 		$object_ref = dol_sanitizeFileName($object->ref);
 		if ($element == 'invoice_supplier') {
+<<<<<<< HEAD
 			$object_ref = get_exdir($object->id,2,0,0,$object,'invoice_supplier') . $object_ref;
 		} else if ($element == 'project_task') {
+=======
+			$object_ref = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier') . $object_ref;
+		} elseif ($element == 'project_task') {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$object_ref = $object->project->ref . '/' . $object_ref;
 		}
 
@@ -183,6 +205,21 @@ class FileUpload
 						)
 				)
 		);
+<<<<<<< HEAD
+=======
+
+        $hookmanager->executeHooks(
+            'overrideUploadOptions',
+            array(
+                'options' => &$options,
+                'element' => $element
+            ),
+            $object,
+            $action,
+            $hookmanager
+        );
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if ($options) {
 			$this->options = array_replace_recursive($this->options, $options);
 		}
@@ -202,7 +239,11 @@ class FileUpload
 		(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : ($_SERVER['SERVER_NAME'].
 				($https && $_SERVER['SERVER_PORT'] === 443 ||
 						$_SERVER['SERVER_PORT'] === 80 ? '' : ':'.$_SERVER['SERVER_PORT']))).
+<<<<<<< HEAD
 						substr($_SERVER['SCRIPT_NAME'],0, strrpos($_SERVER['SCRIPT_NAME'], '/'));
+=======
+						substr($_SERVER['SCRIPT_NAME'], 0, strrpos($_SERVER['SCRIPT_NAME'], '/'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	/**
@@ -234,12 +275,20 @@ class FileUpload
 		{
 			$file = new stdClass();
 			$file->name = $file_name;
+<<<<<<< HEAD
 			$file->mime = dol_mimetype($file_name,'',2);
+=======
+			$file->mime = dol_mimetype($file_name, '', 2);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$file->size = filesize($file_path);
 			$file->url = $this->options['upload_url'].rawurlencode($file->name);
 			foreach($this->options['image_versions'] as $version => $options) {
 				if (is_file($options['upload_dir'].$file_name)) {
+<<<<<<< HEAD
 					$tmp=explode('.',$file->name);
+=======
+					$tmp=explode('.', $file->name);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					$file->{$version.'_url'} = $options['upload_url'].rawurlencode($tmp[0].'_mini.'.$tmp[1]);
 				}
 			}
@@ -280,9 +329,15 @@ class FileUpload
 				return false;
 			}
 
+<<<<<<< HEAD
 			$res=vignette($file_path,$maxwidthmini,$maxheightmini,'_mini');  // We don't use ->addThumbs here because there is no object and we don't need all thumbs, only the "mini".
 
 			if (preg_match('/error/i',$res)) return false;
+=======
+			$res=vignette($file_path, $maxwidthmini, $maxheightmini, '_mini');  // We don't use ->addThumbs here because there is no object and we don't need all thumbs, only the "mini".
+
+			if (preg_match('/error/i', $res)) return false;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			return true;
 		}
 		else
@@ -421,7 +476,11 @@ class FileUpload
 	{
 		$file = new stdClass();
 		$file->name = $this->trimFileName($name, $type, $index);
+<<<<<<< HEAD
 		$file->mime = dol_mimetype($file->name,'',2);
+=======
+		$file->mime = dol_mimetype($file->name, '', 2);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$file->size = intval($size);
 		$file->type = $type;
 		if ($this->validate($uploaded_file, $file, $error, $index) && dol_mkdir($this->options['upload_dir']) >= 0)
@@ -451,12 +510,20 @@ class FileUpload
 				{
 					if ($this->createScaledImage($file->name, $options))
 					{
+<<<<<<< HEAD
 						$tmp=explode('.',$file->name);
+=======
+						$tmp=explode('.', $file->name);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						$file->{$version.'_url'} = $options['upload_url'].rawurlencode($tmp[0].'_mini.'.$tmp[1]);
 					}
 				}
 			}
+<<<<<<< HEAD
 			else if ($this->options['discard_aborted_uploads'])
+=======
+			elseif ($this->options['discard_aborted_uploads'])
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			{
 				unlink($file_path);
 				$file->error = 'abort';

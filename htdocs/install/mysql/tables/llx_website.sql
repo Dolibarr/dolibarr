@@ -24,6 +24,7 @@ CREATE TABLE llx_website
 	entity        integer NOT NULL DEFAULT 1,
 	ref	          varchar(128) NOT NULL,
 	description   varchar(255),
+<<<<<<< HEAD
 	status		  integer DEFAULT 1,
 	fk_default_home integer, 
 	virtualhost   varchar(255), 
@@ -32,4 +33,16 @@ CREATE TABLE llx_website
     date_creation  datetime,
 	tms            timestamp,
     import_key     varchar(14)      -- import key	
+=======
+	maincolor     varchar(16),
+	maincolorbis  varchar(16),
+	status		  integer DEFAULT 1,
+	fk_default_home integer, 
+	virtualhost   varchar(255), 
+    fk_user_creat integer,
+    fk_user_modif integer,
+    date_creation datetime,
+	tms           timestamp,
+    import_key    varchar(14)      -- import key	
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ) ENGINE=innodb;

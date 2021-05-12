@@ -1,4 +1,5 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
@@ -6,6 +7,15 @@
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2014      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
+=======
+/* Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2014-2015  Ari Elbaz (elarifr)     <github@accedinfo.com>
+ * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +34,11 @@
 
 /**
  * \file		htdocs/accountancy/admin/defaultaccounts.php
+<<<<<<< HEAD
  * \ingroup		Advanced accountancy
+=======
+ * \ingroup		Accountancy (Double entries)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * \brief		Setup page to configure accounting expert module
  */
 require '../../main.inc.php';
@@ -43,7 +57,11 @@ if (empty($user->rights->accounting->chartofaccount))
 	accessforbidden();
 }
 
+<<<<<<< HEAD
 $action = GETPOST('action', 'alpha');
+=======
+$action = GETPOST('action', 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 $list_account_main = array (
@@ -55,6 +73,11 @@ $list_account_main = array (
 $list_account = array (
     'ACCOUNTING_PRODUCT_BUY_ACCOUNT',
     'ACCOUNTING_PRODUCT_SOLD_ACCOUNT',
+<<<<<<< HEAD
+=======
+    'ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT',
+    'ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     'ACCOUNTING_SERVICE_BUY_ACCOUNT',
     'ACCOUNTING_SERVICE_SOLD_ACCOUNT',
     'ACCOUNTING_VAT_BUY_ACCOUNT',
@@ -63,6 +86,10 @@ $list_account = array (
     'ACCOUNTING_ACCOUNT_SUSPENSE',
     'ACCOUNTING_ACCOUNT_TRANSFER_CASH',
     'DONATION_ACCOUNTINGACCOUNT',
+<<<<<<< HEAD
+=======
+    'ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     'LOAN_ACCOUNTING_ACCOUNT_CAPITAL',
     'LOAN_ACCOUNTING_ACCOUNT_INTEREST',
     'LOAN_ACCOUNTING_ACCOUNT_INSURANCE'
@@ -75,8 +102,12 @@ $list_account = array (
 
 $accounting_mode = empty($conf->global->ACCOUNTING_MODE) ? 'RECETTES-DEPENSES' : $conf->global->ACCOUNTING_MODE;
 
+<<<<<<< HEAD
 
 if (GETPOST('change_chart'))
+=======
+if (GETPOST('change_chart', 'alpha'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
     $chartofaccounts = GETPOST('chartofaccounts', 'int');
 
@@ -93,7 +124,11 @@ if (GETPOST('change_chart'))
 if ($action == 'update') {
 	$error = 0;
 
+<<<<<<< HEAD
 	foreach ( $list_account_main as $constname ) {
+=======
+	foreach ($list_account_main as $constname) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$constvalue = GETPOST($constname, 'alpha');
 
 		if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
@@ -101,7 +136,11 @@ if ($action == 'update') {
 		}
 	}
 
+<<<<<<< HEAD
 	foreach ( $list_account as $constname ) {
+=======
+	foreach ($list_account as $constname) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    $constvalue = GETPOST($constname, 'alpha');
 
 	    if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
@@ -129,7 +168,11 @@ llxHeader();
 $linkback = '';
 print load_fiche_titre($langs->trans('MenuDefaultAccounts'), $linkback, 'title_accountancy');
 
+<<<<<<< HEAD
 print $langs->trans("DefaultBindingDesc").'<br>';
+=======
+print '<span class="opacitymedium">'.$langs->trans("DefaultBindingDesc").'</span><br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '<br>';
 
 print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
@@ -153,7 +196,11 @@ foreach ($list_account_main as $key) {
     print $form->textwithpicto($label, $htmltext);
     print '</td>';
     // Value
+<<<<<<< HEAD
     print '<td>';  // Do not force align=right, or it align also the content of the select box
+=======
+    print '<td>';  // Do not force class=right, or it align also the content of the select box
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
     print '</td>';
     print '</tr>';
@@ -176,7 +223,11 @@ foreach ($list_account as $key) {
 	$label = $langs->trans($key);
 	print '<td width="50%">' . $label . '</td>';
 	// Value
+<<<<<<< HEAD
 	print '<td>';  // Do not force align=right, or it align also the content of the select box
+=======
+	print '<td>';  // Do not force class=right, or it align also the content of the select box
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
 	print '</td>';
 	print '</tr>';
@@ -190,5 +241,9 @@ print '<div class="center"><input type="submit" class="button" value="' . $langs
 
 print '</form>';
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

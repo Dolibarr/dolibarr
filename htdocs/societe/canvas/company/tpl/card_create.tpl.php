@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2010      Regis Houssin       <regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2010      Regis Houssin       <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2010-2012 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -203,7 +207,11 @@ for ($i=1; $i<=4; $i++) {
 <?php } ?>
 
 <tr>
+<<<<<<< HEAD
 	<td colspan="4" align="center"><input type="submit" class="button" value="<?php echo $langs->trans('AddThirdParty'); ?>"></td>
+=======
+	<td colspan="4" class="center"><input type="submit" class="button" value="<?php echo $langs->trans('AddThirdParty'); ?>"></td>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 </tr>
 
 </table>

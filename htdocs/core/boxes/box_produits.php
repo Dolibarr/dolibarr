@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,6 +37,7 @@ include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
  */
 class box_produits extends ModeleBoxes
 {
+<<<<<<< HEAD
 	var $boxcode="lastproducts";
 	var $boximg="object_product";
 	var $boxlabel="BoxLastProducts";
@@ -43,6 +48,22 @@ class box_produits extends ModeleBoxes
 
 	var $info_box_head = array();
 	var $info_box_contents = array();
+=======
+    public $boxcode="lastproducts";
+    public $boximg="object_product";
+    public $boxlabel="BoxLastProducts";
+    public $depends = array("produit");
+
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    public $param;
+
+    public $info_box_head = array();
+    public $info_box_contents = array();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	/**
@@ -51,13 +72,21 @@ class box_produits extends ModeleBoxes
 	 *  @param  DoliDB  $db         Database handler
 	 *  @param  string  $param      More parameters
 	 */
+<<<<<<< HEAD
 	function __construct($db,$param)
+=======
+	public function __construct($db, $param)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 	    global $conf, $user;
 
 	    $this->db=$db;
 
+<<<<<<< HEAD
 	    $listofmodulesforexternal=explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL);
+=======
+	    $listofmodulesforexternal=explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    $tmpentry=array('enabled'=>(! empty($conf->product->enabled) || ! empty($conf->service->enabled)), 'perms'=>(! empty($user->rights->produit->lire) || ! empty($user->rights->service->lire)), 'module'=>'product|service');
 	    $showmode=isVisibleToUserType(($user->societe_id > 0 ? 1 : 0), $tmpentry, $listofmodulesforexternal);
 	    $this->hidden=($showmode != 1);
@@ -69,7 +98,11 @@ class box_produits extends ModeleBoxes
 	 *  @param	int		$max        Maximum number of records to load
      *  @return	void
 	 */
+<<<<<<< HEAD
 	function loadBox($max=5)
+=======
+	public function loadBox($max = 5)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $user, $langs, $db, $conf, $hookmanager;
 
@@ -78,7 +111,11 @@ class box_produits extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$productstatic=new Product($db);
 
+<<<<<<< HEAD
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastProducts",$max));
+=======
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastProducts", $max));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		if ($user->rights->produit->lire || $user->rights->service->lire)
 		{
@@ -91,7 +128,11 @@ class box_produits extends ModeleBoxes
 			if (is_object($hookmanager))
 			{
 			    $parameters=array('boxproductlist'=>1);
+<<<<<<< HEAD
 			    $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+=======
+			    $reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			    $sql.=$hookmanager->resPrint;
 			}
 			$sql.= $db->order('p.datec', 'DESC');
@@ -131,13 +172,21 @@ class box_produits extends ModeleBoxes
 					$productstatic->entity = $objp->entity;
 
 					$this->info_box_contents[$line][] = array(
+<<<<<<< HEAD
                         'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
+=======
+                        'td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                         'text' => $productstatic->getNomUrl(1),
                         'asis' => 1,
                     );
 
                     $this->info_box_contents[$line][] = array(
+<<<<<<< HEAD
                         'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
+=======
+                        'td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                         'text' => $objp->label,
                     );
 
@@ -175,18 +224,32 @@ class box_produits extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
                         'td' => 'class="right"',
+<<<<<<< HEAD
                         'text' => dol_print_date($datem,'day'),
                     );
 
 					$this->info_box_contents[$line][] = array(
                         'td' => 'align="right" width="18"',
                         'text' => '<span class="statusrefsell">'.$productstatic->LibStatut($objp->tosell,3,0).'<span>',
+=======
+                        'text' => dol_print_date($datem, 'day'),
+                    );
+
+					$this->info_box_contents[$line][] = array(
+                        'td' => 'class="right" width="18"',
+                        'text' => '<span class="statusrefsell">'.$productstatic->LibStatut($objp->tosell, 3, 0).'<span>',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					    'asis' => 1
                     );
 
                     $this->info_box_contents[$line][] = array(
+<<<<<<< HEAD
                         'td' => 'align="right" width="18"',
                         'text' => '<span class="statusrefbuy">'.$productstatic->LibStatut($objp->tobuy,3,1).'</span>',
+=======
+                        'td' => 'class="right" width="18"',
+                        'text' => '<span class="statusrefbuy">'.$productstatic->LibStatut($objp->tobuy, 3, 1).'</span>',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					    'asis' => 1
                     );
 
@@ -194,7 +257,11 @@ class box_produits extends ModeleBoxes
                 }
                 if ($num==0)
                     $this->info_box_contents[$line][0] = array(
+<<<<<<< HEAD
                         'td' => 'align="center"',
+=======
+                        'td' => 'class="center"',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                         'text'=>$langs->trans("NoRecordedProducts"),
                     );
 
@@ -208,12 +275,17 @@ class box_produits extends ModeleBoxes
             }
         } else {
             $this->info_box_contents[0][0] = array(
+<<<<<<< HEAD
                 'td' => 'align="left" class="nohover opacitymedium"',
+=======
+                'td' => 'class="nohover opacitymedium left"',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
         }
     }
 
+<<<<<<< HEAD
 	/**
 	 *	Method to show box
 	 *
@@ -229,3 +301,18 @@ class box_produits extends ModeleBoxes
 
 }
 
+=======
+    /**
+     *  Method to show box
+     *
+     *  @param	array	$head       Array with properties of box title
+     *  @param  array	$contents   Array with properties of box lines
+     *  @param	int		$nooutput	No print, only return string
+     *  @return	string
+     */
+    public function showBox($head = null, $contents = null, $nooutput = 0)
+    {
+        return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+    }
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

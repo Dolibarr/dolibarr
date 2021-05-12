@@ -23,7 +23,11 @@ ClassifyRefunded=Klassifisert 'refundert'
 ExpenseReportWaitingForApproval=En ny reiseregning er sendt inn for godkjenning
 ExpenseReportWaitingForApprovalMessage=En ny kostnadsrapport er sendt og venter på godkjenning. <br> - Bruker: %s <br> - Periode: %s <br> Klikk her for å validere: %s
 ExpenseReportWaitingForReApproval=En utgiftsrapport er blitt sendt inn for ny godkjenning
+<<<<<<< HEAD
 ExpenseReportWaitingForReApprovalMessage=En kostnadsrapport er sendt og venter på godkjenning. <br> %s, du nektet å godkjenne kostnadsrapporten av denne årsak: %s.<br> En ny versjon har blitt foreslått og venter på godkjenning.<br> - Bruker: %s <br> - Periode: %s<br> Klikk her for å validere: %s
+=======
+ExpenseReportWaitingForReApprovalMessage=En kostnadsrapport er sendt og venter på re-godkjenning. <br> %s, du nektet å godkjenne kostnadsrapporten av denne årsak: %s.<br> En ny versjon har blitt foreslått og venter på godkjenning.<br> - Bruker: %s <br> - Periode: %s<br> Klikk her for å validere: %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ExpenseReportApproved=En utgiftsrapport ble godkjent
 ExpenseReportApprovedMessage=Utgiftsrapporten %s ble godkjent. <br> - Bruker: %s <br> - Godkjent av: %s <br> Klikk her for å vise utgiftsrapporten: %s
 ExpenseReportRefused=En utgiftsrapport ble avvist
@@ -73,6 +77,7 @@ EX_PAR_VP=Parkering PV
 EX_CAM_VP=PV vedlikehold og reparasjon
 DefaultCategoryCar=Standard transportmetode
 DefaultRangeNumber=Standard område nummer
+<<<<<<< HEAD
 
 Error_EXPENSEREPORT_ADDON_NotDefined=Feil, regelen for utgiftsrapport-nummerering ref ble ikke definert i oppsett av modulen 'Utgiftsrapport'
 ErrorDoubleDeclaration=Du har opprettet en annen reiseregning i overlappende tidsperiode
@@ -80,16 +85,28 @@ AucuneLigne=Ingen reiseregning er opprettet enda
 
 ModePaiement=Betalingsmåte
 
+=======
+UploadANewFileNow=Last opp et nytt dokument nå
+Error_EXPENSEREPORT_ADDON_NotDefined=Feil, regelen for utgiftsrapport-nummerering ref ble ikke definert i oppsett av modulen 'Utgiftsrapport'
+ErrorDoubleDeclaration=Du har opprettet en annen reiseregning i overlappende tidsperiode
+AucuneLigne=Ingen reiseregning er opprettet enda
+ModePaiement=Betalingsmåte
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 VALIDATOR=Bruker som er ansvarlig for godkjenning
 VALIDOR=Godkjent av
 AUTHOR=Registrert av
 AUTHORPAIEMENT=Betalt av
 REFUSEUR=Avvist av
 CANCEL_USER=Slettet av
+<<<<<<< HEAD
 
 MOTIF_REFUS=Grunn
 MOTIF_CANCEL=Grunn
 
+=======
+MOTIF_REFUS=Grunn
+MOTIF_CANCEL=Grunn
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DATE_REFUS=Avvist dato
 DATE_SAVE=Godkjennelsesdato
 DATE_CANCEL=Kansellert dato
@@ -107,13 +124,20 @@ ConfirmPaidTrip=Er du sikker på at du vil endre status på denne utgiftsrapport
 ConfirmCancelTrip=Er du sikker på at du vil kansellere denne utgiftsrapporten?
 BrouillonnerTrip=Endre reiseregning til "kladd"
 ConfirmBrouillonnerTrip=Er du sikker på at du vil endre status på denne utgiftsrapporten til "utkast"?
+<<<<<<< HEAD
 SaveTrip=Godkjenn reiseregning
+=======
+SaveTrip=Valider reiseregning
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmSaveTrip=Er du sikker på at du vil validere denne utgiftsrapporten?
 NoTripsToExportCSV=Ingen reiseregning å eksportere for denne perioden
 ExpenseReportPayment=Betaling av utgiftsrapport
 ExpenseReportsToApprove=Utgiftsrapporter for godkjenning
 ExpenseReportsToPay=Utgiftsrapport å betale
+<<<<<<< HEAD
 CloneExpenseReport=Klon kostnadsrapport
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmCloneExpenseReport=Er du sikker på at du vil klone denne utgiftsrapporten?
 ExpenseReportsIk=Utgiftsrapport kilometerindeks
 ExpenseReportsRules=Utgifts-rapportregler
@@ -140,7 +164,10 @@ OnExpense=Utgiftslinje
 ExpenseReportRuleSave=Utgiftsrapportregel lagret
 ExpenseReportRuleErrorOnSave=Feil: %s
 RangeNum=Område %d
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ExpenseReportConstraintViolationError=Begrensningsbrudd ID [%s]: %s går foran%s %s
 byEX_DAY=etter dag (begrensning til %s)
 byEX_MON=etter måned (begrensning til %s)
@@ -151,7 +178,14 @@ nolimitbyEX_DAY=etter dag (ingen begrensning)
 nolimitbyEX_MON=etter måned (ingen begrensning)
 nolimitbyEX_YEA=etter år (ingen begrensning)
 nolimitbyEX_EXP=etter linje (ingen begrensning)
+<<<<<<< HEAD
 
 CarCategory=Bilkategori
 ExpenseRangeOffset=Offset-beløp: %s
 RangeIk=Kilometerstand
+=======
+CarCategory=Bilkategori
+ExpenseRangeOffset=Offset-beløp: %s
+RangeIk=Kilometerstand
+AttachTheNewLineToTheDocument=Fest linjen til et opplastet dokument
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

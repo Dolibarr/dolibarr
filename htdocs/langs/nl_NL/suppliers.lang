@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Vendors
+=======
+# Dolibarr language file - Source file is en_US - vendors
+Suppliers=Leveranciers
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SuppliersInvoice=Factuur leverancier
 ShowSupplierInvoice=Toon factuur van leverancier
 NewSupplier=Nieuwe leverancier
@@ -14,6 +19,7 @@ TotalSellingPriceMinShort=Totaal verkoopprijs sub-producten
 SomeSubProductHaveNoPrices=Sommige sub-producten hebben geen prijs ingevuld
 AddSupplierPrice=Voeg inkoopprijs toe
 ChangeSupplierPrice=Wijzig inkoopprijs
+<<<<<<< HEAD
 SupplierPrices=Vendor prices
 ReferenceSupplierIsAlreadyAssociatedWithAProduct=Deze leveranciersreferentie is al in verband met de referentie: %s
 NoRecordedSuppliers=No vendor recorded
@@ -25,10 +31,24 @@ ExportDataset_fournisseur_1=Vendor invoices list and invoice lines
 ExportDataset_fournisseur_2=Vendor invoices and payments
 ExportDataset_fournisseur_3=Purchase orders and order lines
 ApproveThisOrder=Opdracht goedkeuren
+=======
+SupplierPrices=Prijzen van leveranciers
+ReferenceSupplierIsAlreadyAssociatedWithAProduct=This vendor reference is already associated with a product: %s
+NoRecordedSuppliers=Geen leverancier opgenomen
+SupplierPayment=Betaling van de leverancier
+SuppliersArea=Leveranciersomgeving
+RefSupplierShort=Ref. verkoper
+Availability=Beschikbaarheid
+ExportDataset_fournisseur_1=Vendor invoices and invoice details
+ExportDataset_fournisseur_2=Facturen en betalingen van leveranciers
+ExportDataset_fournisseur_3=Purchase orders and order details
+ApproveThisOrder=Order goedkeuren
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmApproveThisOrder=Weet u zeker dat u deze order wilt accepteren <b>%s</b>?
 DenyingThisOrder=Wijger deze bestelling
 ConfirmDenyingThisOrder=Weet u zeker dat u deze order wilt negeren <b>%s</b>?
 ConfirmCancelThisOrder=Weet u zeker dat u deze order wilt annuleren <b>%s</b>?
+<<<<<<< HEAD
 AddSupplierOrder=Create Purchase Order
 AddSupplierInvoice=Create vendor invoice
 ListOfSupplierProductForSupplier=List of products and prices for vendor <b>%s</b>
@@ -45,3 +65,21 @@ BuyerName=Afnemer
 AllProductServicePrices=Prijzen alle producten/diensten
 AllProductReferencesOfSupplier=Referenties alle producten/diensten van leverancier
 BuyingPriceNumShort=Vendor prices
+=======
+AddSupplierOrder=Maak inkooporder aan
+AddSupplierInvoice=Maak leveranciers-factuur aan
+ListOfSupplierProductForSupplier=Lijst van producten en prijzen voor leverancier <b> %s </b>
+SentToSuppliers=Verzonden aan verkopers
+ListOfSupplierOrders=Lijst met inkooporders
+MenuOrdersSupplierToBill=Te factureren inkooporders
+NbDaysToDelivery=Levertijd (dagen)
+DescNbDaysToDelivery=De langste leveringstermijn van de producten van deze bestelling
+SupplierReputation=Reputatie van de leverancier
+DoNotOrderThisProductToThisSupplier=Niet bestellen
+NotTheGoodQualitySupplier=Lage kwaliteit
+ReputationForThisProduct=Reputatie
+BuyerName=Afnemer
+AllProductServicePrices=Prijzen alle producten/diensten
+AllProductReferencesOfSupplier=Alle product- / service-referenties van leverancier
+BuyingPriceNumShort=Prijzen van leveranciers
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

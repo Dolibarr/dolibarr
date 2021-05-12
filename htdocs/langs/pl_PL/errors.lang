@@ -4,7 +4,11 @@
 NoErrorCommitIsDone=Nie ma błędu, zobowiązujemy
 # Errors
 ErrorButCommitIsDone=Znalezione błędy, ale mimo to możemy potwierdzić
+<<<<<<< HEAD
 ErrorBadEMail=EMail %s jest błędny
+=======
+ErrorBadEMail=Email %s is wrong
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorBadUrl=Url %s jest błędny
 ErrorBadValueForParamNotAString=Bad value for your parameter. It appends generally when translation is missing.
 ErrorLoginAlreadyExists=Zaloguj %s już istnieje.
@@ -23,6 +27,7 @@ ErrorFailToGenerateFile=Failed to generate file '<b>%s</b>'.
 ErrorThisContactIsAlreadyDefinedAsThisType=Ten kontakt jest już zdefiniowana jako kontaktowy dla tego typu.
 ErrorCashAccountAcceptsOnlyCashMoney=To konto bankowe jest kontem gotówkowym, więc akceptuje jedynie płatności gotówkowe
 ErrorFromToAccountsMustDiffers=Konta źródłowe i docelowe muszą być inne
+<<<<<<< HEAD
 ErrorBadThirdPartyName=Zła wartość dla nazwy kontrahenta
 ErrorProdIdIsMandatory=%s jest obowiązkowy
 ErrorBadCustomerCodeSyntax=Zła skadnia dla kodu klienta
@@ -31,6 +36,16 @@ ErrorCustomerCodeRequired=Wymagany kod klienta
 ErrorBarCodeRequired=Wymagany kod kreskowy
 ErrorCustomerCodeAlreadyUsed=Kod klienta jest już używany
 ErrorBarCodeAlreadyUsed=Kod kreskowy jest już używany
+=======
+ErrorBadThirdPartyName=Bad value for third-party name
+ErrorProdIdIsMandatory=%s jest obowiązkowy
+ErrorBadCustomerCodeSyntax=Zła skadnia dla kodu klienta
+ErrorBadBarCodeSyntax=Bad syntax for barcode. May be you set a bad barcode type or you defined a barcode mask for numbering that does not match value scanned.
+ErrorCustomerCodeRequired=Wymagany kod klienta
+ErrorBarCodeRequired=Barcode required
+ErrorCustomerCodeAlreadyUsed=Kod klienta jest już używany
+ErrorBarCodeAlreadyUsed=Barcode already used
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorPrefixRequired=Wymaga przedrostka
 ErrorBadSupplierCodeSyntax=Bad syntax for vendor code
 ErrorSupplierCodeRequired=Vendor code required
@@ -42,7 +57,11 @@ ErrorBadDateFormat=Wartość '%s' ma zły format daty
 ErrorWrongDate=Data nie jest poprawna!
 ErrorFailedToWriteInDir=Nie można zapisać w katalogu %s
 ErrorFoundBadEmailInFile=Znaleziono nieprawidłową składnię adresu email dla %s linii w pliku (przykładowo linia %s z adresem email %s)
+<<<<<<< HEAD
 ErrorUserCannotBeDelete=User cannot be deleted. May be it is associated to Dolibarr entities.
+=======
+ErrorUserCannotBeDelete=User cannot be deleted. Maybe it is associated to Dolibarr entities.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorFieldsRequired=Niektóre pola wymagane nie były uzupełnione.
 ErrorSubjectIsRequired=Temat wiadomości jest wymagany
 ErrorFailedToCreateDir=Nie można utworzyć katalogu. Sprawdź, czy serwer WWW użytkownik ma uprawnienia do zapisu do katalogu dokumentów Dolibarr. Jeśli parametr <b>safe_mode</b> jest włączona w tym PHP, czy posiada Dolibarr php pliki do serwera internetowego użytkownika (lub grupy).
@@ -65,12 +84,19 @@ ErrorNoValueForSelectType=Proszę wypełnić wartości dla listy wyboru
 ErrorNoValueForCheckBoxType=Proszę wypełnić wartości dla listy checkbox
 ErrorNoValueForRadioType=Proszę wypełnić wartość liście radiowej
 ErrorBadFormatValueList=Wartość na tej liście nie może mieć więcej niż jeden <u>przecinek: %s,</u> ale wymagany jest przynajmniej jeden: klucz, wartość
+<<<<<<< HEAD
 ErrorFieldCanNotContainSpecialCharacters=<b>Pole %s</b> nie zawiera znaki specjalne.
 ErrorFieldCanNotContainSpecialNorUpperCharacters=<b>Pole% s nie</b> może zawierać znaków specjalnych, ani wielkich liter i nie może zawierać tylko liczby.
+=======
+ErrorFieldCanNotContainSpecialCharacters=The field <b>%s</b> must not contains special characters.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=The field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
+ErrorFieldMustHaveXChar=The field <b>%s</b> must have at least %s characters.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorNoAccountancyModuleLoaded=Nie aktywowano modułu księgowości
 ErrorExportDuplicateProfil=Ta nazwa profil już istnieje dla tego zestawu eksportu.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP dopasowywania nie jest kompletna.
 ErrorLDAPMakeManualTest=A. LDIF plik został wygenerowany w katalogu %s. Spróbuj załadować go ręcznie z wiersza polecenia, aby mieć więcej informacji na temat błędów.
+<<<<<<< HEAD
 ErrorCantSaveADoneUserWithZeroPercentage=Nie można zapisać działania z "Statut nie rozpocznie", jeśli pole "wykonana przez" jest wypełniona.
 ErrorRefAlreadyExists=Numer identyfikacyjny używany do tworzenia już istnieje.
 ErrorPleaseTypeBankTransactionReportName=Please enter the bank statement name where the entry has to be reported (Format YYYYMM or YYYYMMDD)
@@ -88,14 +114,41 @@ ErrorFileIsInfectedWithAVirus=Program antywirusowy nie był w stanie potwierdzi�
 ErrorSpecialCharNotAllowedForField=Znaki specjalne nie są dozwolone dla pola "%s"
 ErrorNumRefModel=Odniesienia nie istnieje w bazie danych (%s) i nie jest zgodna z tą zasadą numeracji. Zmiana nazwy lub usuwanie zapisu w odniesieniu do aktywacji tego modułu.
 ErrorQtyTooLowForThisSupplier=Quantity too low for this vendor or no price defined on this product for this supplier
+=======
+ErrorCantSaveADoneUserWithZeroPercentage=Can't save an action with "status not started" if field "done by" is also filled.
+ErrorRefAlreadyExists=Numer identyfikacyjny używany do tworzenia już istnieje.
+ErrorPleaseTypeBankTransactionReportName=Please enter the bank statement name where the entry has to be reported (Format YYYYMM or YYYYMMDD)
+ErrorRecordHasChildren=Failed to delete record since it has some child records.
+ErrorRecordHasAtLeastOneChildOfType=Object has at least one child of type %s
+ErrorRecordIsUsedCantDelete=Can't delete record. It is already used or included into another object.
+ErrorModuleRequireJavascript=JavaScript nie może być wyłączony aby korzystać z tej funkcji. Aby włączyć/wyłączyć Javascript, przejdź do menu Start->Ustawienia->Ekran.
+ErrorPasswordsMustMatch=Zarówno wpisane hasło musi się zgadzać się
+ErrorContactEMail=A technical error occured. Please, contact administrator to following email <b>%s</b> and provide the error code <b>%s</b> in your message, or add a screen copy of this page.
+ErrorWrongValueForField=Field <b>%s</b>: '<b>%s</b>' does not match regex rule <b>%s</b>
+ErrorFieldValueNotIn=Field <b>%s</b>: '<b>%s</b>' is not a value found in field <b>%s</b> of <b>%s</b>
+ErrorFieldRefNotIn=Field <b>%s</b>: '<b>%s</b>' is not a <b>%s</b> existing ref
+ErrorsOnXLines=%s errors found
+ErrorFileIsInfectedWithAVirus=Program antywirusowy nie był w stanie potwierdzić (plik może być zainfekowany przez wirusa)
+ErrorSpecialCharNotAllowedForField=Znaki specjalne nie są dozwolone dla pola "%s"
+ErrorNumRefModel=Odniesienia nie istnieje w bazie danych (%s) i nie jest zgodna z tą zasadą numeracji. Zmiana nazwy lub usuwanie zapisu w odniesieniu do aktywacji tego modułu.
+ErrorQtyTooLowForThisSupplier=Quantity too low for this vendor or no price defined on this product for this vendor
+ErrorOrdersNotCreatedQtyTooLow=Some orders haven't been created because of too-low quantities
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorModuleSetupNotComplete=Ustawienia modułu wyglądają na niekompletne. Idź do Strona główna - Konfiguracja - Moduły aby ukończyć.
 ErrorBadMask=Błąd w masce wprowadzania
 ErrorBadMaskFailedToLocatePosOfSequence=Błąd, maska ​​bez kolejnego numeru
 ErrorBadMaskBadRazMonth=Błąd, zła wartość zresetowane
+<<<<<<< HEAD
 ErrorMaxNumberReachForThisMask=Maksymalna liczba zasięg dla tej maski
 ErrorCounterMustHaveMoreThan3Digits=Licznik musi mieć więcej niż 3 cyfry
 ErrorSelectAtLeastOne=Błąd. Wybierz co najmniej jeden wpis.
 ErrorDeleteNotPossibleLineIsConsolidated=Usunięcie nie możliwe, ponieważ wpis jest związany z transakcją bankową, która była konsyliowana
+=======
+ErrorMaxNumberReachForThisMask=Maximum number reached for this mask
+ErrorCounterMustHaveMoreThan3Digits=Licznik musi mieć więcej niż 3 cyfry
+ErrorSelectAtLeastOne=Błąd. Wybierz co najmniej jeden wpis.
+ErrorDeleteNotPossibleLineIsConsolidated=Delete not possible because record is linked to a bank transaction that is conciliated
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorProdIdAlreadyExist=%s jest przypisany do innego państwa
 ErrorFailedToSendPassword=Nie można wysłać hasła
 ErrorFailedToLoadRSSFile=Nie dostać kanału RSS. Spróbuj dodać stałą MAIN_SIMPLEXMLLOAD_DEBUG czy komunikaty o błędach nie zawiera wystarczających informacji.
@@ -115,6 +168,10 @@ ErrorLoginDoesNotExists=Użytkownik <b>%s</b> nie został znaleziony.
 ErrorLoginHasNoEmail=Ten użytkownik nie ma adresu e-mail. Proces przerwany.
 ErrorBadValueForCode=Zła wartość kody zabezpieczeń. Wprowadź nową wartość...
 ErrorBothFieldCantBeNegative=Pola %s i %s nie może być zarówno negatywny
+<<<<<<< HEAD
+=======
+ErrorFieldCantBeNegativeOnInvoice=Field <strong>%s</strong> cannot be negative on this type of invoice. If you want to add a discount line, just create the discount first with link %s on screen and apply it to the invoice. You can also ask your admin to set option FACTURE_ENABLE_NEGATIVE_LINES to 1 to allow the old behaviour.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorQtyForCustomerInvoiceCantBeNegative=Ilość linii do faktur dla klientów nie może być ujemna
 ErrorWebServerUserHasNotPermission=Konto użytkownika <b>%s</b> wykorzystywane do wykonywania serwer WWW nie ma zgody na który
 ErrorNoActivatedBarcode=Nie Typ aktywny kodów kreskowych
@@ -138,7 +195,11 @@ ErrorBadFormat=Zły format!
 ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Error, this member is not yet linked to any third party. Link member to an existing third party or create a new third party before creating subscription with invoice.
 ErrorThereIsSomeDeliveries=Błąd, występuje kilka dostaw związanych z tą przesyłką. Usunięcie odrzucone.
 ErrorCantDeletePaymentReconciliated=Can't delete a payment that had generated a bank entry that was reconciled
+<<<<<<< HEAD
 ErrorCantDeletePaymentSharedWithPayedInvoice=Nie można usunąć płatności udostępnionej przez co najmniej jednego stanu zapłaci faktury z
+=======
+ErrorCantDeletePaymentSharedWithPayedInvoice=Can't delete a payment shared by at least one invoice with status Paid
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorPriceExpression1=Nie można przypisać do stałej '% s'
 ErrorPriceExpression2=Nie można przedefiniować wbudowanej funkcji "%s"
 ErrorPriceExpression3=Niezdefiniowana zmienna '% s' w definicji funkcji
@@ -147,7 +208,11 @@ ErrorPriceExpression5=Nieoczekiwany '%s'
 ErrorPriceExpression6=Błędna liczba argumentów (%s podano, %s oczekiwany)
 ErrorPriceExpression8=Nieoczekiwany operator '%s'
 ErrorPriceExpression9=Wystąpił nieoczekiwany błąd
+<<<<<<< HEAD
 ErrorPriceExpression10=Iperator '% s' nie ma argumentu
+=======
+ErrorPriceExpression10=Operator '%s' lacks operand
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorPriceExpression11=Spodziewając '% s'
 ErrorPriceExpression14=Dzielenie przez zero
 ErrorPriceExpression17=Niezdefiniowana zmienna '%s'
@@ -171,10 +236,17 @@ ErrorGlobalVariableUpdater4=Klient SOAP nie powiodło się z powodu błędu '% s
 ErrorGlobalVariableUpdater5=Nie wybrano zmiennej globalnej
 ErrorFieldMustBeANumeric=Pole <b>%s</b> musi mieć wartość numeryczną
 ErrorMandatoryParametersNotProvided=Obowiązkowe parametr (y) nie przewidziane
+<<<<<<< HEAD
 ErrorOppStatusRequiredIfAmount=Możesz ustawić szacunkową kwotę za możliwość / ołowiu. Więc należy także wprowadzić swój status
 ErrorFailedToLoadModuleDescriptorForXXX=Failed to load module descriptor class for %s
 ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Bad definicja tablicy w menu modułu deskryptora (zły stosunek jakości do kluczowego fk_menu)
 ErrorSavingChanges=Wystąpił błąd podczas zapisywania zmian
+=======
+ErrorOppStatusRequiredIfAmount=You set an estimated amount for this lead. So you must also enter it's status.
+ErrorFailedToLoadModuleDescriptorForXXX=Failed to load module descriptor class for %s
+ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Bad definicja tablicy w menu modułu deskryptora (zły stosunek jakości do kluczowego fk_menu)
+ErrorSavingChanges=An error has occurred when saving the changes
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorWarehouseRequiredIntoShipmentLine=Warehouse is required on the line to ship
 ErrorFileMustHaveFormat=Flik musi mieć format %s
 ErrorSupplierCountryIsNotDefined=Country for this vendor is not defined. Correct this first.
@@ -208,18 +280,38 @@ ErrorFileNotFoundWithSharedLink=File was not found. May be the share key was mod
 ErrorProductBarCodeAlreadyExists=The product barcode %s already exists on another product reference.
 ErrorNoteAlsoThatSubProductCantBeFollowedByLot=Note also that using virtual product to have auto increase/decrease of subproducts is not possible when at least one subproduct (or subproduct of subproducts) needs a serial/lot number.
 ErrorDescRequiredForFreeProductLines=Description is mandatory for lines with free product
+<<<<<<< HEAD
 
 # Warnings
 WarningPasswordSetWithNoAccount=Hasło zostało ustawione dla tego użytkownika. Jednakże nie Konto użytkownika zostało utworzone. Więc to hasło jest przechowywane, ale nie mogą być używane do logowania do Dolibarr. Może być stosowany przez zewnętrzny moduł / interfejsu, ale jeśli nie trzeba definiować dowolną logowania ani hasła do członka, można wyłączyć opcję "Zarządzaj login dla każdego członka" od konfiguracji modułu użytkownika. Jeśli potrzebujesz zarządzać logowanie, ale nie wymagają hasła, możesz zachować to pole puste, aby uniknąć tego ostrzeżenia. Uwaga: E może być również stosowany jako login, jeśli element jest połączony do użytkownika.
 WarningMandatorySetupNotComplete=Parametry konfiguracyjne obowiązkowe nie są jeszcze określone
+=======
+ErrorAPageWithThisNameOrAliasAlreadyExists=The page/container <strong>%s</strong> has the same name or alternative alias that the one your try to use
+ErrorDuringChartLoad=Error when loading chart of accounts. If few accounts were not loaded, you can still enter them manually.
+ErrorBadSyntaxForParamKeyForContent=Bad syntax for param keyforcontent. Must have a value starting with %s or %s
+ErrorVariableKeyForContentMustBeSet=Error, the constant with name %s (with text content to show) or %s (with external url to show) must be set.
+ErrorURLMustStartWithHttp=URL %s must start with http:// or https://
+ErrorNewRefIsAlreadyUsed=Error, the new reference is already used
+ErrorDeletePaymentLinkedToAClosedInvoiceNotPossible=Error, delete payment linked to a closed invoice is not possible.
+# Warnings
+WarningPasswordSetWithNoAccount=Hasło zostało ustawione dla tego użytkownika. Jednakże nie Konto użytkownika zostało utworzone. Więc to hasło jest przechowywane, ale nie mogą być używane do logowania do Dolibarr. Może być stosowany przez zewnętrzny moduł / interfejsu, ale jeśli nie trzeba definiować dowolną logowania ani hasła do członka, można wyłączyć opcję "Zarządzaj login dla każdego członka" od konfiguracji modułu użytkownika. Jeśli potrzebujesz zarządzać logowanie, ale nie wymagają hasła, możesz zachować to pole puste, aby uniknąć tego ostrzeżenia. Uwaga: E może być również stosowany jako login, jeśli element jest połączony do użytkownika.
+WarningMandatorySetupNotComplete=Click here to setup mandatory parameters
+WarningEnableYourModulesApplications=Click here to enable your modules and applications
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 WarningSafeModeOnCheckExecDir=Uwaga, opcja <b>safe_mode</b> w PHP jest więc polecenia muszą być przechowywane wewnątrz katalogu <b>safe_mode_exec_dir</b> parametrów deklarowanych przez php.
 WarningBookmarkAlreadyExists=Zakładka z tego tytułu lub ten cel (URL) już istnieje.
 WarningPassIsEmpty=Ostrzeżenie, hasło do bazy danych jest puste. Jest to luka w zabezpieczeniach. Powinieneś dodać hasło do bazy danych i zmienić wpis w pliku conf.php aby zmiany przyniosły efekt.
 WarningConfFileMustBeReadOnly=Uwaga, plik konfiguracyjny <b>(htdocs / conf / conf.php)</b> mogą być zastąpione przez serwer internetowy. Jest to poważna luka w zabezpieczeniach. Modyfikowanie uprawnień na wniosek jest w trybie tylko do odczytu dla użytkownika system operacyjny używany przez serwer sieci Web. Jeśli używasz systemu Windows i format FAT na dysku, musisz wiedzieć, że ten system plików nie pozwala na dodawanie uprawnień do pliku, więc nie może być całkowicie bezpieczne.
 WarningsOnXLines=Ostrzeżeń na linii źródło <b>%s</b>
+<<<<<<< HEAD
 WarningNoDocumentModelActivated=Nie modelu do generowania dokumentu, został aktywowany. Model będzie wybraną domyślnie dopóki nie zajrzysz do modułu konfiguracji.
 WarningLockFileDoesNotExists=Uwaga, po zakończeniu instalacji, musisz wyłączyć narzędzia instalacji/migracji poprzez dodanie pliku <b>install.lock</b> do katalogu <b>%s</b>. Brak tego pliku jest luką w zabezpieczeniach.
 WarningUntilDirRemoved=Wszystkie ostrzeżenia na temat bezpieczeństwa (widoczne tylko dla użytkowników z uprawnieniami Administratora) pozostaną aktywne tak długo jak luka w zabezpieczeniach istnieje (lub stała MAIN_REMOVE_INSTALL_WARNING zostanie dodana w menu Konfiguracja -> Inne konfiguracje).
+=======
+WarningNoDocumentModelActivated=No model, for document generation, has been activated. A model will be chosen by default until you check your module setup.
+WarningLockFileDoesNotExists=Warning, once setup is finished, you must disable the installation/migration tools by adding a file <b>install.lock</b> into directory <b>%s</b>. Omitting the creation of this file is a grave security risk.
+WarningUntilDirRemoved=All security warnings (visible by admin users only) will remain active as long as the vulnerability is present (or that constant MAIN_REMOVE_INSTALL_WARNING is added in Setup->Other Setup).
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 WarningCloseAlways=Ostrzeżenie, zamykanie odbywa się nawet wtedy, gdy kwota zależy od elementów źródłowych i docelowych. Włącz tę funkcję, z zachowaniem ostrożności.
 WarningUsingThisBoxSlowDown=Ostrzeżenie, za pomocą tego pola spowolnić poważnie do wszystkich stron zawierających pola.
 WarningClickToDialUserSetupNotComplete=Konfiguracja ClickToDial informacji dla użytkownika nie są kompletne (patrz zakładka ClickToDial na kartę użytkownika).
@@ -229,5 +321,11 @@ WarningTooManyDataPleaseUseMoreFilters=Zbyt wiele danych (więcej niż% s linii)
 WarningSomeLinesWithNullHourlyRate=Some times were recorded by some users while their hourly rate was not defined. A value of 0 %s per hour was used but this may result in wrong valuation of time spent.
 WarningYourLoginWasModifiedPleaseLogin=Twój login został zmodyfikowany. Z powodów bezpieczeństwa musisz zalogować się z użyciem nowego loginy przed kolejną czynnością.
 WarningAnEntryAlreadyExistForTransKey=An entry already exists for the translation key for this language
+<<<<<<< HEAD
 WarningNumberOfRecipientIsRestrictedInMassAction=Warning, number of different recipient is limited to <b>%s</b> when using the bulk actions on lists
 WarningDateOfLineMustBeInExpenseReportRange=Warning, the date of line is not in the range of the expense report
+=======
+WarningNumberOfRecipientIsRestrictedInMassAction=Warning, number of different recipient is limited to <b>%s</b> when using the mass actions on lists
+WarningDateOfLineMustBeInExpenseReportRange=Warning, the date of line is not in the range of the expense report
+WarningProjectClosed=Project is closed. You must re-open it first.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

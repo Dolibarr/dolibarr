@@ -20,6 +20,7 @@
 /**
  * Returns an array with the tabs for the "salaries" section
  * It loads tabs from modules looking for the entity salaries
+<<<<<<< HEAD
  *  
  * @param Paiement $object Current salaries object
  * @return array Tabs for the salaries section
@@ -28,6 +29,17 @@ function salaries_prepare_head($object) {
 	
 	global $db, $langs, $conf;
 	
+=======
+ *
+ * @param Paiement $object Current salaries object
+ * @return array Tabs for the salaries section
+ */
+function salaries_prepare_head($object)
+{
+
+	global $db, $langs, $conf;
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$h = 0;
 	$head = array();
 
@@ -40,12 +52,20 @@ function salaries_prepare_head($object) {
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
+<<<<<<< HEAD
     complete_head_from_modules($conf,$langs,$object,$head,$h,'salaries');
+=======
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'salaries');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = $conf->salaries->dir_output . "/" . dol_sanitizeFileName($object->ref);
+<<<<<<< HEAD
 	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
+=======
+	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/compta/salaries/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
@@ -57,8 +77,13 @@ function salaries_prepare_head($object) {
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;
+<<<<<<< HEAD
     
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'salaries', 'remove');
+=======
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'salaries', 'remove');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	return $head;
 }

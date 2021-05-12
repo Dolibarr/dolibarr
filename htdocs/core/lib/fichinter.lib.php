@@ -1,9 +1,16 @@
 <?php
 /* Copyright (C) 2006-2007	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+<<<<<<< HEAD
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2016		   Gilles Poirier 		   <glgpoirier@gmail.com>
  
+=======
+ * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2016		Gilles Poirier 		   <glgpoirier@gmail.com>
+ * Copyright (C) 2018		charlene Benke 		   <charlie@patas-monkey.com>
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +54,11 @@ function fichinter_prepare_head($object)
 
 	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	{
+<<<<<<< HEAD
 	    $nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
+=======
+	    $nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    $head[$h][0] = DOL_URL_ROOT.'/fichinter/contact.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('InterventionContact');
 		if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
@@ -59,7 +70,11 @@ function fichinter_prepare_head($object)
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
+<<<<<<< HEAD
     complete_head_from_modules($conf,$langs,$object,$head,$h,'intervention');
+=======
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'intervention');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	// Tab to link resources
 	if ($conf->resource->enabled)
@@ -74,12 +89,20 @@ function fichinter_prepare_head($object)
 				$resources=(array) $resources;  // To be sure $resources is an array
 				foreach($resources as $resource_obj)
 				{
+<<<<<<< HEAD
 					$linked_resources = $object->getElementResources('fichinter',$object->id,$resource_obj);
 					
 				}
 			}
 		}
 				
+=======
+					$linked_resources = $object->getElementResources('fichinter', $object->id, $resource_obj);
+				}
+			}
+		}
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
    		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=fichinter&element_id='.$object->id;
 		$head[$h][1] = $langs->trans("Resources");
 		if ($nbResource > 0) $head[$h][1].= ' <span class="badge">'.$nbResource.'</span>';
@@ -102,7 +125,11 @@ function fichinter_prepare_head($object)
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = $conf->ficheinter->dir_output . "/" . dol_sanitizeFileName($object->ref);
+<<<<<<< HEAD
 	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
+=======
+	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/fichinter/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Documents");
@@ -115,7 +142,11 @@ function fichinter_prepare_head($object)
 	$head[$h][2] = 'info';
 	$h++;
 
+<<<<<<< HEAD
     complete_head_from_modules($conf,$langs,$object,$head,$h,'intervention','remove');
+=======
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'intervention', 'remove');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     return $head;
 }
@@ -143,7 +174,11 @@ function fichinter_admin_prepare_head()
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+<<<<<<< HEAD
 	complete_head_from_modules($conf,$langs,null,$head,$h,'fichinter_admin');
+=======
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'fichinter_admin');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	$head[$h][0] = DOL_URL_ROOT.'/fichinter/admin/fichinter_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
@@ -157,9 +192,41 @@ function fichinter_admin_prepare_head()
 
 
 
+<<<<<<< HEAD
 	complete_head_from_modules($conf,$langs,null,$head,$h,'fichinter_admin','remove');
+=======
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'fichinter_admin', 'remove');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		return $head;
 }
 
+<<<<<<< HEAD
 
+=======
+/**
+ * Prepare array with list of tabs
+ *
+ * @param   Object  $object     Object related to tabs
+ * @return  array               Array of tabs to show
+ */
+function fichinter_rec_prepare_head($object)
+{
+	global $langs, $conf; //, $user;
+
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT.'/fichinter/card-rec.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("CardFichinter");
+	$head[$h][2] = 'card';
+	$h++;
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'intervention-rec');
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'intervention-rec', 'remove');
+
+
+	return $head;
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

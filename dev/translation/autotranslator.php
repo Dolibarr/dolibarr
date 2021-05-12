@@ -13,7 +13,11 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
+<<<<<<< HEAD
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+=======
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  */
 
 /**
@@ -37,8 +41,13 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 // Include Dolibarr environment
+<<<<<<< HEAD
 require_once($path.'../../htdocs/master.inc.php');
 require_once($path.'../../htdocs/core/lib/files.lib.php');
+=======
+require_once $path.'../../htdocs/master.inc.php';
+require_once $path.'../../htdocs/core/lib/files.lib.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 // After this $db is an opened handler to database. We close it at end of file.
 
 // Load main language strings
@@ -88,9 +97,15 @@ if ($argv[2] != 'all')
 	}
 }
 
+<<<<<<< HEAD
 require_once(DOL_DOCUMENT_ROOT."/../dev/translation/autotranslator.class.php");
 
 $langParser = new autoTranslator($argv[2],$argv[1],$dir,$file,$argv[3]);
+=======
+require_once DOL_DOCUMENT_ROOT."/../dev/translation/autotranslator.class.php";
+
+$langParser = new autoTranslator($argv[2], $argv[1], $dir, $file, $argv[3]);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print "***** Finished *****\n";
 

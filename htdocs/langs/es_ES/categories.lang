@@ -16,6 +16,10 @@ MembersCategoriesArea=Área etiquetas/categorías Miembros
 ContactsCategoriesArea=Área etiquetas/categorías de contactos
 AccountsCategoriesArea=Área categorías contables
 ProjectsCategoriesArea=Área etiquetas/categorías Proyectos
+<<<<<<< HEAD
+=======
+UsersCategoriesArea=Área etiquetas/categorías Usuarios
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SubCats=Subcategorías
 CatList=Listado de etiquetas/categorías
 NewCategory=Nueva etiqueta/categoría
@@ -47,6 +51,7 @@ ContentsNotVisibleByAllShort=Contenido no visible por todos
 DeleteCategory=Eliminar etiqueta/categoría
 ConfirmDeleteCategory=¿Está seguro de querer eliminar esta etiqueta/categoría?
 NoCategoriesDefined=Ninguna etiqueta/categoría definida
+<<<<<<< HEAD
 SuppliersCategoryShort=Etiquetas/categorías de proveedores
 CustomersCategoryShort=Etiquetas/categorías de clientes
 ProductsCategoryShort=Etiquetas/categorías de productos
@@ -55,11 +60,25 @@ SuppliersCategoriesShort=Etiquetas/categorías de proveedores
 CustomersCategoriesShort=Etiquetas/categorías de clientes
 ProspectsCategoriesShort=Etiquetas/categorías clientes potenciales
 CustomersProspectsCategoriesShort=Categorías clientes
+=======
+SuppliersCategoryShort=Categoría de proveedor
+CustomersCategoryShort=Etiquetas/categorías de clientes
+ProductsCategoryShort=Etiquetas/categorías de productos
+MembersCategoryShort=Etiquetas/categorías de miembros
+SuppliersCategoriesShort=Categorías de proveedor
+CustomersCategoriesShort=Etiquetas/categorías de clientes
+ProspectsCategoriesShort=Etiquetas/categorías clientes potenciales
+CustomersProspectsCategoriesShort=Categorias clientes/potenciales
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProductsCategoriesShort=Etiquetas/categorías de productos
 MembersCategoriesShort=Etiquetas/categorías de miembros
 ContactCategoriesShort=Etiquetas/categorías de contactos
 AccountsCategoriesShort=Categorías contables
 ProjectsCategoriesShort=Etiquetas/categorías de Proyectos
+<<<<<<< HEAD
+=======
+UsersCategoriesShort=Área etiquetas/categorías Usuarios
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ThisCategoryHasNoProduct=Esta categoría no contiene ningún producto.
 ThisCategoryHasNoSupplier=Esta categoría no contiene ningún proveedor.
 ThisCategoryHasNoCustomer=Esta categoría no contiene ningún cliente.
@@ -81,8 +100,16 @@ DeleteFromCat=Eliminar de la etiqueta/categoría
 ExtraFieldsCategories=Campos adicionales
 CategoriesSetup=Configuración de etiquetas/categorías
 CategorieRecursiv=Enlazar con la etiqueta/categoría automáticamente
+<<<<<<< HEAD
 CategorieRecursivHelp=Si está activado, el producto se enlazará a la categoría padre si lo añadimos a una subcategoría
 AddProductServiceIntoCategory=Añadir el siguiente producto/servicio
 ShowCategory=Mostrar etiqueta/categoría
 ByDefaultInList=Por defecto en lista
 ChooseCategory=Choose category
+=======
+CategorieRecursivHelp=Si la opción está activada, cuando agrega un producto a una subcategoría, el producto también se agregará a la categoría principal.
+AddProductServiceIntoCategory=Añadir el siguiente producto/servicio
+ShowCategory=Mostrar etiqueta/categoría
+ByDefaultInList=Por defecto en lista
+ChooseCategory=Elija una categoría
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

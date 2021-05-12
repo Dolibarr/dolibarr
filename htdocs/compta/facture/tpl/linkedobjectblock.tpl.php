@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2010-2011	Regis Houssin <regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2010-2011	Regis Houssin <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2013		Juanjo Menent <jmenent@2byte.es>
  * Copyright (C) 2014       Marcos García <marcosgdf@gmail.com>
  *
@@ -38,6 +42,11 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 $langs->load("bills");
 
+<<<<<<< HEAD
+=======
+$linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date', 'desc');
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $total=0; $ilink=0;
 foreach($linkedObjectBlock as $key => $objectlink)
 {
@@ -47,11 +56,40 @@ foreach($linkedObjectBlock as $key => $objectlink)
     if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass.=' liste_sub_total';
 ?>
 	<tr class="<?php echo $trclass; ?>" data-element="<?php echo $objectlink->element; ?>"  data-id="<?php echo $objectlink->id; ?>" >
+<<<<<<< HEAD
         <td class="linkedcol-element" ><?php echo $langs->trans("CustomerInvoice"); ?></td>
         <td class="linkedcol-name" ><?php echo $objectlink->getNomUrl(1); ?></td>
     	<td class="linkedcol-ref" align="center"><?php echo $objectlink->ref_client; ?></td>
     	<td class="linkedcol-date" align="center"><?php echo dol_print_date($objectlink->date,'day'); ?></td>
     	<td class="linkedcol-amount" align="right"><?php
+=======
+		<td class="linkedcol-element"><?php
+		switch ($objectlink->type) {
+			case Facture::TYPE_REPLACEMENT:
+				echo $langs->trans("InvoiceReplacement");
+				break;
+			case Facture::TYPE_CREDIT_NOTE:
+				echo $langs->trans("InvoiceAvoir");
+				break;
+			case Facture::TYPE_DEPOSIT:
+				echo $langs->trans("InvoiceDeposit");
+				break;
+			case Facture::TYPE_PROFORMA:
+				echo $langs->trans("InvoiceProForma");
+				break;
+			case Facture::TYPE_SITUATION:
+				echo $langs->trans("InvoiceSituation");
+				break;
+			default:
+				echo $langs->trans("CustomerInvoice");
+				break;
+		}
+		?></td>
+        <td class="linkedcol-name"><?php echo $objectlink->getNomUrl(1); ?></td>
+    	<td class="linkedcol-ref left"><?php echo $objectlink->ref_client; ?></td>
+    	<td class="linkedcol-date center"><?php echo dol_print_date($objectlink->date, 'day'); ?></td>
+    	<td class="linkedcol-amount right"><?php
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     		if ($user->rights->facture->lire) {
     			$sign = 1;
     			if ($object->type == Facture::TYPE_CREDIT_NOTE) $sign = -1;
@@ -65,8 +103,13 @@ foreach($linkedObjectBlock as $key => $objectlink)
     				echo '<strike>'.price($objectlink->total_ht).'</strike>';
     			}
     		} ?></td>
+<<<<<<< HEAD
     	<td class="linkedcol-statut" align="right"><?php echo $objectlink->getLibStatut(3); ?></td>
     	<td class="linkedcol-action" align="right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
+=======
+    	<td class="linkedcol-statut right"><?php echo $objectlink->getLibStatut(3); ?></td>
+    	<td class="linkedcol-action right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     </tr>
 <?php
 }
@@ -76,11 +119,19 @@ if (count($linkedObjectBlock) > 1)
     <tr class="liste_total <?php echo (empty($noMoreLinkedObjectBlockAfter)?'liste_sub_total':''); ?>">
         <td><?php echo $langs->trans("Total"); ?></td>
         <td></td>
+<<<<<<< HEAD
     	<td align="center"></td>
     	<td align="center"></td>
     	<td align="right"><?php echo price($total); ?></td>
     	<td align="right"></td>
     	<td align="right"></td>
+=======
+    	<td class="center"></td>
+    	<td class="center"></td>
+    	<td class="right"><?php echo price($total); ?></td>
+    	<td class="right"></td>
+    	<td class="right"></td>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     </tr>
     <?php
 }

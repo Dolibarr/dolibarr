@@ -154,15 +154,25 @@ function dol_ch_controle_bvrb($bvrb)
 
 
 	// Clean data
+<<<<<<< HEAD
 	$bv=str_replace(' ','',$bvrb);
+=======
+	$bv=str_replace(' ', '', $bvrb);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	// Make control
 	$report=0;
 	while (dol_strlen($bv)>1)
 	{
+<<<<<<< HEAD
 		$match=substr($bv,0,1);
 		$report=$tableau[$report][$match];
 		$bv=substr($bv,1);
+=======
+		$match=substr($bv, 0, 1);
+		$report=$tableau[$report][$match];
+		$bv=substr($bv, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 	$controle=$tableau[$report][10];
 

@@ -17,16 +17,26 @@ AccountAccountingShort=Rekening
 AccountAccountingSuggest=Voorgesteld boekhoudkundige rekening
 CreateMvts=Nieuwe transactie maken
 UpdateMvts=Wijzigen van een transactie
+<<<<<<< HEAD
 WriteBookKeeping=Wegschrijven van transacties naar grootboek.
 CAHTF=Totaal leveranciersaankoop voor BTW
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Processing=Verwerken
 EndProcessing=Verwerking beëindigd
 Lineofinvoice=Factuur lijn
 Docdate=Datum
 Docref=Artikelcode
+<<<<<<< HEAD
+=======
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. Blocking error.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TotalVente=Totaal omzet voor belastingen
 AccountingJournalType2=Verkoop
 AccountingJournalType3=Inkoop
 Modelcsv=Model van een export
 Selectmodelcsv=Selecteer een model van export
+<<<<<<< HEAD
 Modelcsv_CEGID=Exporteer naar CEGID Expert Comptabilité
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

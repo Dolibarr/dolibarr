@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2013	   Juanjo Menent        <jmenent@2byte.es>
  *
@@ -35,7 +39,11 @@ if (!$user->admin) accessforbidden();
 $langs->loadLangs(array("admin","other"));
 
 $error=0;
+<<<<<<< HEAD
 $action = GETPOST('action','aZ09');
+=======
+$action = GETPOST('action', 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $syslogModules = array();
 $activeModules = array();
@@ -102,7 +110,11 @@ if ($action == 'set')
 				{
 					$_POST[$option['constant']] = trim($_POST[$option['constant']]);
 					dolibarr_del_const($db, $option['constant'], -1);
+<<<<<<< HEAD
 					dolibarr_set_const($db, $option['constant'], $_POST[$option['constant']], 'chaine',0, '', 0);
+=======
+					dolibarr_set_const($db, $option['constant'], $_POST[$option['constant']], 'chaine', 0, '', 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 			}
 		}
@@ -111,7 +123,11 @@ if ($action == 'set')
 	$activeModules = $newActiveModules;
 
     dolibarr_del_const($db, 'SYSLOG_HANDLERS', -1);  // To be sure ther is not a setup into another entity
+<<<<<<< HEAD
     dolibarr_set_const($db, 'SYSLOG_HANDLERS', json_encode($activeModules), 'chaine',0,'',0);
+=======
+    dolibarr_set_const($db, 'SYSLOG_HANDLERS', json_encode($activeModules), 'chaine', 0, '', 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	// Check configuration
 	foreach ($activeModules as $modulename) {
@@ -132,16 +148,24 @@ if ($action == 'set')
 	{
 		$db->rollback();
 		setEventMessages($error, $errors, 'errors');
+<<<<<<< HEAD
 
 	}
 
+=======
+	}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 // Set level
 if ($action == 'setlevel')
 {
 	$level = GETPOST("level");
+<<<<<<< HEAD
 	$res = dolibarr_set_const($db,"SYSLOG_LEVEL",$level,'chaine',0,'',0);
+=======
+	$res = dolibarr_set_const($db, "SYSLOG_LEVEL", $level, 'chaine', 0, '', 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	dol_syslog("admin/syslog: level ".$level);
 
 	if (! $res > 0) $error++;
@@ -149,7 +173,11 @@ if ($action == 'setlevel')
 	if (! $error)
 	{
 		$file_saves = GETPOST("file_saves");
+<<<<<<< HEAD
 		$res = dolibarr_set_const($db,"SYSLOG_FILE_SAVES",$file_saves,'chaine',0,'',0);
+=======
+		$res = dolibarr_set_const($db, "SYSLOG_FILE_SAVES", $file_saves, 'chaine', 0, '', 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		dol_syslog("admin/syslog: file saves  ".$file_saves);
 
 		if (! $res > 0) $error++;
@@ -174,13 +202,22 @@ llxHeader();
 $form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+<<<<<<< HEAD
 print load_fiche_titre($langs->trans("SyslogSetup"),$linkback,'title_setup');
+=======
+print load_fiche_titre($langs->trans("SyslogSetup"), $linkback, 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '<br>';
 
 $def = array();
 
+<<<<<<< HEAD
 $syslogfacility=$defaultsyslogfacility=dolibarr_get_const($db,"SYSLOG_FACILITY",0);
 $syslogfile=$defaultsyslogfile=dolibarr_get_const($db,"SYSLOG_FILE",0);
+=======
+$syslogfacility=$defaultsyslogfacility=dolibarr_get_const($db, "SYSLOG_FACILITY", 0);
+$syslogfile=$defaultsyslogfile=dolibarr_get_const($db, "SYSLOG_FILE", 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if (! $defaultsyslogfacility) $defaultsyslogfacility='LOG_USER';
 if (! $defaultsyslogfile) $defaultsyslogfile='dolibarr.log';
@@ -204,7 +241,11 @@ print '<input type="hidden" name="action" value="set">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Type").'</td><td>'.$langs->trans("Value").'</td>';
+<<<<<<< HEAD
 print '<td align="right" colspan="2"><input type="submit" class="button" '.$option.' value="'.$langs->trans("Modify").'"></td>';
+=======
+print '<td class="right" colspan="2"><input type="submit" class="button" '.$option.' value="'.$langs->trans("Modify").'"></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print "</tr>\n";
 
 foreach ($syslogModules as $moduleName)
@@ -232,14 +273,22 @@ foreach ($syslogModules as $moduleName)
 		    if (! empty($tmpoption))
 		    {
     			if (isset($_POST[$tmpoption])) $value=$_POST[$tmpoption];
+<<<<<<< HEAD
     			else if (! empty($conf->global->$tmpoption)) $value = $conf->global->$tmpoption;
+=======
+    			elseif (! empty($conf->global->$tmpoption)) $value = $conf->global->$tmpoption;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		    }
 			else $value = (isset($option['default']) ? $option['default'] : '');
 
 			print $option['name'].': <input type="text" class="flat" name="'.$option['constant'].'" value="'.$value.'"'.(isset($option['attr']) ? ' '.$option['attr'] : '').'>';
 			if (! empty($option['example'])) print '<br>'.$langs->trans("Example").': '.$option['example'];
 
+<<<<<<< HEAD
 			if ($option['constant'] == 'SYSLOG_FILE' && preg_match('/^DOL_DATA_ROOT\/[^\/]*$/',$value))
+=======
+			if ($option['constant'] == 'SYSLOG_FILE' && preg_match('/^DOL_DATA_ROOT\/[^\/]*$/', $value))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			{
     			$filelogparam =' (<a href="'.DOL_URL_ROOT.'/document.php?modulepart=logs&file='.basename($value).'">';
     			$filelogparam.=$langs->trans('Download');
@@ -250,7 +299,11 @@ foreach ($syslogModules as $moduleName)
 	}
 	print '</td>';
 
+<<<<<<< HEAD
 	print '<td align="left">';
+=======
+	print '<td class="left">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if ($module->getInfo())
 	{
 		print $form->textwithpicto('', $module->getInfo(), 1, 'help');
@@ -271,13 +324,21 @@ print '<br>'."\n\n";
 print load_fiche_titre($langs->trans("SyslogLevel"));
 
 // Level
+<<<<<<< HEAD
 print '<form action="syslog.php" method="post">';
+=======
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="setlevel">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td>';
+<<<<<<< HEAD
 print '<td align="right"><input type="submit" class="button" '.$option.' value="'.$langs->trans("Modify").'"></td>';
+=======
+print '<td class="right"><input type="submit" class="button" '.$option.' value="'.$langs->trans("Modify").'"></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print "</tr>\n";
 
 print '<tr class="oddeven"><td width="140">'.$langs->trans("SyslogLevel").'</td>';
@@ -302,6 +363,11 @@ if(! empty($conf->loghandlers['mod_syslog_file']) && ! empty($conf->cron->enable
 print '</table>';
 print "</form>\n";
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

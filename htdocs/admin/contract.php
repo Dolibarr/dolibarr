@@ -33,10 +33,17 @@ $langs->loadLangs(array("admin","errors","contracts"));
 
 if (!$user->admin) accessforbidden();
 
+<<<<<<< HEAD
 $action = GETPOST('action','alpha');
 $value = GETPOST('value','alpha');
 $label = GETPOST('label','alpha');
 $scandir = GETPOST('scan_dir','alpha');
+=======
+$action = GETPOST('action', 'alpha');
+$value = GETPOST('value', 'alpha');
+$label = GETPOST('label', 'alpha');
+$scandir = GETPOST('scan_dir', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $type='contract';
 
 if (empty($conf->global->CONTRACT_ADDON))
@@ -53,9 +60,15 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask')
 {
+<<<<<<< HEAD
     $maskconst = GETPOST('maskconstcontract','alpha');
     $maskvalue =  GETPOST('maskcontract','alpha');
     if ($maskconst) $res = dolibarr_set_const($db,$maskconst,$maskvalue,'chaine',0,'',$conf->entity);
+=======
+    $maskconst = GETPOST('maskconstcontract', 'alpha');
+    $maskvalue =  GETPOST('maskcontract', 'alpha');
+    if ($maskconst) $res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     if (! $res > 0) $error++;
 
@@ -69,19 +82,32 @@ if ($action == 'updateMask')
     }
 }
 
+<<<<<<< HEAD
 else if ($action == 'specimen') // For contract
 {
 	$modele= GETPOST('module','alpha');
+=======
+elseif ($action == 'specimen') // For contract
+{
+	$modele= GETPOST('module', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	$contract = new Contrat($db);
 	$contract->initAsSpecimen();
 
 	// Search template files
 	$file=''; $classname=''; $filefound=0;
+<<<<<<< HEAD
 	$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 	foreach($dirmodels as $reldir)
 	{
 	    $file=dol_buildpath($reldir."core/modules/contract/doc/pdf_".$modele.".modules.php",0);
+=======
+	$dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
+	foreach($dirmodels as $reldir)
+	{
+	    $file=dol_buildpath($reldir."core/modules/contract/doc/pdf_".$modele.".modules.php", 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if (file_exists($file))
 		{
 			$filefound=1;
@@ -96,7 +122,11 @@ else if ($action == 'specimen') // For contract
 
 		$module = new $classname($db);
 
+<<<<<<< HEAD
 		if ($module->write_file($contract,$langs) > 0)
+=======
+		if ($module->write_file($contract, $langs) > 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=contract&file=SPECIMEN.pdf");
 			return;
@@ -115,24 +145,42 @@ else if ($action == 'specimen') // For contract
 }
 
 // Activate a model
+<<<<<<< HEAD
 else if ($action == 'set')
+=======
+elseif ($action == 'set')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 }
 
+<<<<<<< HEAD
 else if ($action == 'del')
+=======
+elseif ($action == 'del')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
 	{
+<<<<<<< HEAD
         if ($conf->global->CONTRACT_ADDON_PDF == "$value") dolibarr_del_const($db, 'CONTRACT_ADDON_PDF',$conf->entity);
+=======
+        if ($conf->global->CONTRACT_ADDON_PDF == "$value") dolibarr_del_const($db, 'CONTRACT_ADDON_PDF', $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 }
 
 // Set default model
+<<<<<<< HEAD
 else if ($action == 'setdoc')
 {
 	if (dolibarr_set_const($db, "CONTRACT_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
+=======
+elseif ($action == 'setdoc')
+{
+	if (dolibarr_set_const($db, "CONTRACT_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		// La constante qui a ete lue en avant du nouveau set
 		// on passe donc par une variable pour avoir un affichage coherent
@@ -147,11 +195,16 @@ else if ($action == 'setdoc')
 	}
 }
 
+<<<<<<< HEAD
 else if ($action == 'setmod')
+=======
+elseif ($action == 'setmod')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	// TODO Verifier si module numerotation choisi peut etre active
 	// par appel methode canBeActivated
 
+<<<<<<< HEAD
 	dolibarr_set_const($db, "CONTRACT_ADDON",$value,'chaine',0,'',$conf->entity);
 }
 
@@ -162,6 +215,18 @@ else if ($action == 'set_other')
 
 	$draft= GETPOST('CONTRACT_DRAFT_WATERMARK','alpha');
 	$res2 = dolibarr_set_const($db, "CONTRACT_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
+=======
+	dolibarr_set_const($db, "CONTRACT_ADDON", $value, 'chaine', 0, '', $conf->entity);
+}
+
+elseif ($action == 'set_other')
+{
+	$freetext= GETPOST('CONTRACT_FREE_TEXT', 'none');	// No alpha here, we want exact string
+	$res1 = dolibarr_set_const($db, "CONTRACT_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
+
+	$draft= GETPOST('CONTRACT_DRAFT_WATERMARK', 'alpha');
+	$res2 = dolibarr_set_const($db, "CONTRACT_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	if (! $res1 > 0 || ! $res2 > 0) $error++;
 
@@ -180,14 +245,22 @@ else if ($action == 'set_other')
  * View
  */
 
+<<<<<<< HEAD
 $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
+=======
+$dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 llxHeader();
 
 $form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+<<<<<<< HEAD
 print load_fiche_titre($langs->trans("ContractsSetup"),$linkback,'title_setup');
+=======
+print load_fiche_titre($langs->trans("ContractsSetup"), $linkback, 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $head=contract_admin_prepare_head();
 
@@ -197,15 +270,24 @@ dol_fiche_head($head, 'contract', $langs->trans("Contracts"), -1, 'contract');
  * Contracts Numbering model
  */
 
+<<<<<<< HEAD
 print load_fiche_titre($langs->trans("ContractsNumberingModules"),'','');
+=======
+print load_fiche_titre($langs->trans("ContractsNumberingModules"), '', '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="100">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td>'.$langs->trans("Example").'</td>';
+<<<<<<< HEAD
 print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
 print '<td align="center" width="16">'.$langs->trans("ShortInfo").'</td>';
+=======
+print '<td class="center" width="60">'.$langs->trans("Status").'</td>';
+print '<td class="center" width="16">'.$langs->trans("ShortInfo").'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print "</tr>\n";
 
 clearstatcache();
@@ -244,11 +326,16 @@ foreach ($dirmodels as $reldir)
 						// Show example of numbering model
 						print '<td class="nowrap">';
 						$tmp=$module->getExample();
+<<<<<<< HEAD
 						if (preg_match('/^Error/',$tmp)) { $langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>'; }
+=======
+						if (preg_match('/^Error/', $tmp)) { $langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>'; }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						elseif ($tmp=='NotConfigured') print $langs->trans($tmp);
 						else print $tmp;
 						print '</td>'."\n";
 
+<<<<<<< HEAD
 						print '<td align="center">';
 						if ($conf->global->CONTRACT_ADDON == "$file")
 						{
@@ -258,6 +345,17 @@ foreach ($dirmodels as $reldir)
 						{
 							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'">';
 							print img_picto($langs->trans("Disabled"),'switch_off');
+=======
+						print '<td class="center">';
+						if ($conf->global->CONTRACT_ADDON == "$file")
+						{
+							print img_picto($langs->trans("Activated"), 'switch_on');
+						}
+						else
+						{
+							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'">';
+							print img_picto($langs->trans("Disabled"), 'switch_off');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							print '</a>';
 						}
 						print '</td>';
@@ -268,11 +366,19 @@ foreach ($dirmodels as $reldir)
 						// Info
 						$htmltooltip='';
 						$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
+<<<<<<< HEAD
 						$nextval=$module->getNextValue($mysoc,$contract);
                         if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
                             $htmltooltip.=''.$langs->trans("NextValue").': ';
                             if ($nextval) {
                                 if (preg_match('/^Error/',$nextval) || $nextval=='NotConfigured')
+=======
+						$nextval=$module->getNextValue($mysoc, $contract);
+                        if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
+                            $htmltooltip.=''.$langs->trans("NextValue").': ';
+                            if ($nextval) {
+                                if (preg_match('/^Error/', $nextval) || $nextval=='NotConfigured')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                                     $nextval = $langs->trans($nextval);
                                 $htmltooltip.=$nextval.'<br>';
                             } else {
@@ -280,8 +386,13 @@ foreach ($dirmodels as $reldir)
                             }
                         }
 
+<<<<<<< HEAD
 						print '<td align="center">';
 						print $form->textwithpicto('',$htmltooltip,1,0);
+=======
+						print '<td class="center">';
+						print $form->textwithpicto('', $htmltooltip, 1, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						print '</td>';
 
 						print '</tr>';
@@ -299,7 +410,11 @@ print '</table><br>';
  *  Documents models for Contracts
  */
 
+<<<<<<< HEAD
 print load_fiche_titre($langs->trans("TemplatePDFContracts"),'','');
+=======
+print load_fiche_titre($langs->trans("TemplatePDFContracts"), '', '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Defini tableau def des modeles
 $def = array();
@@ -329,10 +444,17 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
+<<<<<<< HEAD
 print '<td align="center" width="60">'.$langs->trans("Status")."</td>\n";
 print '<td align="center" width="60">'.$langs->trans("Default")."</td>\n";
 print '<td align="center" width="80">'.$langs->trans("ShortInfo").'</td>';
 print '<td align="center" width="80">'.$langs->trans("Preview").'</td>';
+=======
+print '<td class="center" width="60">'.$langs->trans("Status")."</td>\n";
+print '<td class="center" width="60">'.$langs->trans("Default")."</td>\n";
+print '<td class="center" width="80">'.$langs->trans("ShortInfo").'</td>';
+print '<td class="center" width="80">'.$langs->trans("Preview").'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print "</tr>\n";
 
 clearstatcache();
@@ -357,7 +479,11 @@ foreach ($dirmodels as $reldir)
 
                 foreach($filelist as $file)
                 {
+<<<<<<< HEAD
                     if (preg_match('/\.modules\.php$/i',$file) && preg_match('/^(pdf_|doc_)/',$file))
+=======
+                    if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                     {
 
                     	if (file_exists($dir.'/'.$file))
@@ -377,27 +503,43 @@ foreach ($dirmodels as $reldir)
 	                            print '<tr class="oddeven"><td width="100">';
 	                            print (empty($module->name)?$name:$module->name);
 	                            print "</td><td>\n";
+<<<<<<< HEAD
 	                            if (method_exists($module,'info')) print $module->info($langs);
+=======
+	                            if (method_exists($module, 'info')) print $module->info($langs);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	                            else print $module->description;
 	                            print '</td>';
 
 	                            // Active
 	                            if (in_array($name, $def))
 	                            {
+<<<<<<< HEAD
 	                            	print '<td align="center">'."\n";
 	                            	print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'">';
 	                            	print img_picto($langs->trans("Enabled"),'switch_on');
+=======
+	                            	print '<td class="center">'."\n";
+	                            	print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'">';
+	                            	print img_picto($langs->trans("Enabled"), 'switch_on');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	                            	print '</a>';
 	                            	print '</td>';
 	                            }
 	                            else
 	                            {
+<<<<<<< HEAD
 	                                print '<td align="center">'."\n";
 	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+=======
+	                                print '<td class="center">'."\n";
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	                                print "</td>";
 	                            }
 
 	                            // Defaut
+<<<<<<< HEAD
 	                            print '<td align="center">';
 	                            if ($conf->global->CONTRACT_ADDON_PDF == $name)
 	                            {
@@ -406,6 +548,16 @@ foreach ($dirmodels as $reldir)
 	                            else
 	                            {
 	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+=======
+	                            print '<td class="center">';
+	                            if ($conf->global->CONTRACT_ADDON_PDF == $name)
+	                            {
+	                                print img_picto($langs->trans("Default"), 'on');
+	                            }
+	                            else
+	                            {
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	                            }
 	                            print '</td>';
 
@@ -417,6 +569,7 @@ foreach ($dirmodels as $reldir)
 			                        $htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
 			                    }
 					    		$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+<<<<<<< HEAD
 					    		$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
 					    		$htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg,1,1);
 					    		$htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg,1,1);
@@ -437,6 +590,28 @@ foreach ($dirmodels as $reldir)
 	                            else
 	                            {
 	                                print img_object($langs->trans("PreviewNotAvailable"),'generic');
+=======
+					    		$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
+					    		$htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg, 1, 1);
+					    		$htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg, 1, 1);
+					    		$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
+					    		$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark, 1, 1);
+
+
+	                            print '<td class="center">';
+	                            print $form->textwithpicto('', $htmltooltip, 1, 0);
+	                            print '</td>';
+
+	                            // Preview
+	                            print '<td class="center">';
+	                            if ($module->type == 'pdf')
+	                            {
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'contract').'</a>';
+	                            }
+	                            else
+	                            {
+	                                print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	                            }
 	                            print '</td>';
 
@@ -462,11 +637,19 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_other">';
 
+<<<<<<< HEAD
 print load_fiche_titre($langs->trans("OtherOptions"),'','');
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
+=======
+print load_fiche_titre($langs->trans("OtherOptions"), '', '');
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td class="center" width="60">'.$langs->trans("Value").'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print "</tr>\n";
 
 $substitutionarray=pdf_getSubstitutionArray($langs, array('objectamount'), null, 2);
@@ -486,7 +669,11 @@ if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 else
 {
     include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+<<<<<<< HEAD
     $doleditor=new DolEditor($variablename, $conf->global->$variablename,'',80,'dolibarr_notes');
+=======
+    $doleditor=new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print $doleditor->Create();
 }
 print '</td></tr>'."\n";
@@ -509,7 +696,12 @@ print '</form>';
 
 dol_fiche_end();
 
+<<<<<<< HEAD
 
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

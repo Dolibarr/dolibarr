@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2005-2009	Laurent Destailleur	<eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2006		Marc Barilley		<marc@ocebo.com>
  * Copyright (C) 2011-2013  Philippe Grand      <philippe.grand@atoo-net.com>
  *
@@ -45,7 +49,11 @@ function facturefourn_prepare_head($object)
 
 	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	{
+<<<<<<< HEAD
 	    $nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
+=======
+	    $nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    $head[$h][0] = DOL_URL_ROOT.'/fourn/facture/contact.php?facid='.$object->id;
 		$head[$h][1] = $langs->trans('ContactsAddresses');
 		if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
@@ -57,7 +65,11 @@ function facturefourn_prepare_head($object)
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
+<<<<<<< HEAD
     complete_head_from_modules($conf,$langs,$object,$head,$h,'supplier_invoice');
+=======
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_invoice');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
     {
@@ -73,8 +85,13 @@ function facturefourn_prepare_head($object)
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+<<<<<<< HEAD
 	$upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2,0,0,$object,'invoice_supplier').$object->ref;
 	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
+=======
+	$upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$object->ref;
+	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/document.php?facid='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
@@ -87,7 +104,11 @@ function facturefourn_prepare_head($object)
 	$head[$h][2] = 'info';
 	$h++;
 
+<<<<<<< HEAD
     complete_head_from_modules($conf,$langs,$object,$head,$h,'supplier_invoice','remove');
+=======
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_invoice', 'remove');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     return $head;
 }
@@ -113,7 +134,11 @@ function ordersupplier_prepare_head($object)
 
 	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	{
+<<<<<<< HEAD
 	    $nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
+=======
+	    $nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	    $head[$h][0] = DOL_URL_ROOT.'/fourn/commande/contact.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('ContactsAddresses');
 		if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
@@ -121,7 +146,11 @@ function ordersupplier_prepare_head($object)
 		$h++;
 	}
 
+<<<<<<< HEAD
 	if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
+=======
+	if (! empty($conf->stock->enabled) && (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$langs->load("stocks");
 		$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/dispatch.php?id='.$object->id;
@@ -134,7 +163,11 @@ function ordersupplier_prepare_head($object)
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+<<<<<<< HEAD
     complete_head_from_modules($conf,$langs,$object,$head,$h,'supplier_order');
+=======
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_order');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
     {
@@ -151,7 +184,11 @@ function ordersupplier_prepare_head($object)
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = $conf->fournisseur->dir_output . "/commande/" . dol_sanitizeFileName($object->ref);
+<<<<<<< HEAD
 	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
+=======
+	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
@@ -168,7 +205,11 @@ function ordersupplier_prepare_head($object)
 	}
 	$head[$h][2] = 'info';
 	$h++;
+<<<<<<< HEAD
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'supplier_order', 'remove');
+=======
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_order', 'remove');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	return $head;
 }
 
@@ -199,7 +240,11 @@ function supplierorder_admin_prepare_head()
 	$head[$h][2] = 'supplierpayment';
 	$h++;
 
+<<<<<<< HEAD
 	complete_head_from_modules($conf,$langs,null,$head,$h,'supplierorder_admin');
+=======
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'supplierorder_admin');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/supplierorder_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierOrders");
@@ -223,9 +268,16 @@ function supplierorder_admin_prepare_head()
 	$head[$h][2] = 'supplierinvoicedet';
 	$h++;
 
+<<<<<<< HEAD
 	complete_head_from_modules($conf,$langs,null,$head,$h,'supplierorder_admin','remove');
 
 	return $head;
 }
 
 
+=======
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'supplierorder_admin', 'remove');
+
+	return $head;
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

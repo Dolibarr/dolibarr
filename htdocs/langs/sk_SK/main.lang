@@ -50,6 +50,7 @@ ErrorFailedToSendMail=Nepodarilo sa odoslať poštu (vysielač, prijímač = %s 
 ErrorFileNotUploaded=Súbor nebol nahraný. Skontrolujte, či veľkosť nepresahuje maximálnu povolenú, že voľné miesto na disku a že už nie je súbor s rovnakým názvom v tomto adresári.
 ErrorInternalErrorDetected=Bola zistená chyba
 ErrorWrongHostParameter=Zle hostiteľ parametrov
+<<<<<<< HEAD
 ErrorYourCountryIsNotDefined=Vaša krajina nie je definovaná. Prejsť na Home-Nastavenie-Úpravy a post znovu formulár.
 ErrorRecordIsUsedByChild=Nepodarilo sa zmazať tento záznam. Tento záznam sa používa aspoň jedno dieťa záznamov.
 ErrorWrongValue=Chybná hodnota
@@ -59,12 +60,28 @@ ErrorServiceUnavailableTryLater=Služba nie je k dispozícii pre túto chvíľu.
 ErrorDuplicateField=Duplicitné hodnota v jedinečnej poľa
 ErrorSomeErrorWereFoundRollbackIsDone=Niektoré boli nájdené chyby. My rollback zmien.
 ErrorConfigParameterNotDefined=Parameter <b>%s</b> nie je definovaná v súbore config Dolibarr <b>conf.php.</b>
+=======
+ErrorYourCountryIsNotDefined=Your country is not defined. Go to Home-Setup-Edit and post the form again.
+ErrorRecordIsUsedByChild=Failed to delete this record. This record is used by at least one child record.
+ErrorWrongValue=Chybná hodnota
+ErrorWrongValueForParameterX=Chybná hodnota parametra %s
+ErrorNoRequestInError=Žiadna požiadavka omylom
+ErrorServiceUnavailableTryLater=Service not available at the moment. Try again later.
+ErrorDuplicateField=Duplicitné hodnota v jedinečnej poľa
+ErrorSomeErrorWereFoundRollbackIsDone=Some errors were found. Changes have been rolled back.
+ErrorConfigParameterNotDefined=Parameter <b>%s</b> is not defined in the Dolibarr config file <b>conf.php</b>.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorCantLoadUserFromDolibarrDatabase=Nepodarilo sa nájsť užívateľa <b>%s</b> v databáze Dolibarr.
 ErrorNoVATRateDefinedForSellerCountry=Chyba, žiadne sadzby DPH stanovenej pre krajinu &quot;%s&quot;.
 ErrorNoSocialContributionForSellerCountry=Error, no social/fiscal taxes type defined for country '%s'.
 ErrorFailedToSaveFile=Chyba sa nepodarilo uložiť súbor.
+<<<<<<< HEAD
 ErrorCannotAddThisParentWarehouse=You are trying to add a parent warehouse which is already a child of current one
 MaxNbOfRecordPerPage=Max number of record per page
+=======
+ErrorCannotAddThisParentWarehouse=You are trying to add a parent warehouse which is already a child of a existing warehouse
+MaxNbOfRecordPerPage=Max. number of records per page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NotAuthorized=You are not authorized to do that.
 SetDate=Nastaviť dátum
 SelectDate=Vybrať dátum
@@ -78,14 +95,25 @@ FileRenamed=The file was successfully renamed
 FileGenerated=The file was successfully generated
 FileSaved=The file was successfully saved
 FileUploaded=Súbor sa úspešne nahral
+<<<<<<< HEAD
 FileTransferComplete=File(s) was uploaded successfully
 FilesDeleted=File(s) successfully deleted
 FileWasNotUploaded=Súbor vybraný pre pripojenie, ale ešte nebol nahraný. Kliknite na &quot;Priložiť súbor&quot; za to.
 NbOfEntries=Nb záznamov
+=======
+FileTransferComplete=File(s) uploaded successfully
+FilesDeleted=File(s) successfully deleted
+FileWasNotUploaded=Súbor vybraný pre pripojenie, ale ešte nebol nahraný. Kliknite na &quot;Priložiť súbor&quot; za to.
+NbOfEntries=No. of entries
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 GoToWikiHelpPage=Read online help (Internet access needed)
 GoToHelpPage=Prečítajte si pomáhať
 RecordSaved=Záznam uložený
 RecordDeleted=Zaznamenajte zmazaný
+<<<<<<< HEAD
+=======
+RecordGenerated=Record generated
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LevelOfFeature=Úroveň vlastností
 NotDefined=Nie je definované
 DolibarrInHttpAuthenticationSoPasswordUseless=Dolibarr authentication mode is set to <b>%s</b> in configuration file <b>conf.php</b>.<br>This means that the password database is external to Dolibarr, so changing this field may have no effect.
@@ -94,9 +122,15 @@ Undefined=Undefined
 PasswordForgotten=Password forgotten?
 NoAccount=No account?
 SeeAbove=Pozri vyššie
+<<<<<<< HEAD
 HomeArea=Hlavná oblasť
 LastConnexion=Latest connection
 PreviousConnexion=Predchádzajúca pripojenie
+=======
+HomeArea=Domáce
+LastConnexion=Last login
+PreviousConnexion=Previous login
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PreviousValue=Previous value
 ConnectedOnMultiCompany=Pripojené na životné prostredie
 ConnectedSince=Pripojený od
@@ -118,7 +152,11 @@ PrecisionUnitIsLimitedToXDecimals=Dolibarr bolo nastavenie obmedziť presnosť j
 DoTest=Test
 ToFilter=Filter
 NoFilter=No filter
+<<<<<<< HEAD
 WarningYouHaveAtLeastOneTaskLate=Pozor, máte aspoň jeden prvok, ktorý prekročil tolerancie meškanie.
+=======
+WarningYouHaveAtLeastOneTaskLate=Warning, you have at least one element that has exceeded the tolerance time.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 yes=áno
 Yes=Áno
 no=nie
@@ -142,6 +180,10 @@ Closed=Zatvorené
 Closed2=Zatvorené
 NotClosed=Not closed
 Enabled=Povolené
+<<<<<<< HEAD
+=======
+Enable=Umožniť
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Deprecated=Zastaralá
 Disable=Zakázať
 Disabled=Invalidný
@@ -153,7 +195,11 @@ Update=Aktualizovať
 Close=Zavrieť
 CloseBox=Remove widget from your dashboard
 Confirm=Potvrdiť
+<<<<<<< HEAD
 ConfirmSendCardByMail=Do you really want to send content of this card by mail to <b>%s</b>?
+=======
+ConfirmSendCardByMail=Do you really want to send the content of this card by mail to <b>%s</b>?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Delete=Vymazať
 Remove=Odstrániť
 Resiliate=Terminate
@@ -168,7 +214,11 @@ Save=Uložiť
 SaveAs=Uložiť ako
 TestConnection=Skúšobné pripojenie
 ToClone=Klon
+<<<<<<< HEAD
 ConfirmClone=Vyberte údaje, ktoré chcete klonovať:
+=======
+ConfirmClone=Choose data you want to clone:
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoCloneOptionsSpecified=Žiadne údaje nie sú k klonovať definovaný.
 Of=z
 Go=Ísť
@@ -183,7 +233,11 @@ Valid=Platný
 Approve=Schvaľovať
 Disapprove=Neschváliť
 ReOpen=Znovu otvoriť
+<<<<<<< HEAD
 Upload=Odoslať súbor
+=======
+Upload=Upload
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ToLink=Odkaz
 Select=Vybrať
 Choose=Vybrať
@@ -200,6 +254,10 @@ Password=Heslo
 PasswordRetype=Zadajte znovu heslo
 NoteSomeFeaturesAreDisabled=Všimnite si, že mnoho funkcií / modules sú zakázané v tejto ukážke.
 Name=Názov
+<<<<<<< HEAD
+=======
+NameSlashCompany=Name / Company
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Person=Osoba
 Parameter=Parameter
 Parameters=Parametre
@@ -220,6 +278,12 @@ Info=Prihlásiť
 Family=Rodina
 Description=Popis
 Designation=Popis
+<<<<<<< HEAD
+=======
+DescriptionOfLine=Popis linky
+DateOfLine=Date of line
+DurationOfLine=Duration of line
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Model=Doc template
 DefaultModel=Default doc template
 Action=Udalosť
@@ -327,12 +391,21 @@ Copy=Kopírovať
 Paste=Pasta
 Default=Štandardné
 DefaultValue=Východisková hodnota
+<<<<<<< HEAD
 DefaultValues=Default values
 Price=Cena
 PriceCurrency=Price (currency)
 UnitPrice=Jednotková cena
 UnitPriceHT=Jednotková cena (bez DPH)
 UnitPriceHTCurrency=Unit price (net) (currency)
+=======
+DefaultValues=Default values/filters/sorting
+Price=Cena
+PriceCurrency=Price (currency)
+UnitPrice=Jednotková cena
+UnitPriceHT=Unit price (excl.)
+UnitPriceHTCurrency=Unit price (excl.) (currency)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 UnitPriceTTC=Jednotková cena
 PriceU=UP
 PriceUHT=UP (bez DPH)
@@ -342,6 +415,7 @@ Amount=Množstvo
 AmountInvoice=Fakturovaná čiastka
 AmountInvoiced=Amount invoiced
 AmountPayment=Suma platby
+<<<<<<< HEAD
 AmountHTShort=Suma (bez DPH)
 AmountTTCShort=Čiastka (s DPH)
 AmountHT=Suma (bez DPH)
@@ -351,6 +425,17 @@ MulticurrencyAlreadyPaid=Already payed, original currency
 MulticurrencyRemainderToPay=Remain to pay, original currency
 MulticurrencyPaymentAmount=Payment amount, original currency
 MulticurrencyAmountHT=Amount (net of tax), original currency
+=======
+AmountHTShort=Amount (excl.)
+AmountTTCShort=Čiastka (s DPH)
+AmountHT=Amount (excl. tax)
+AmountTTC=Čiastka (s DPH)
+AmountVAT=Čiastka dane
+MulticurrencyAlreadyPaid=Already paid, original currency
+MulticurrencyRemainderToPay=Remain to pay, original currency
+MulticurrencyPaymentAmount=Payment amount, original currency
+MulticurrencyAmountHT=Amount (excl. tax), original currency
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MulticurrencyAmountTTC=Amount (inc. of tax), original currency
 MulticurrencyAmountVAT=Amount tax, original currency
 AmountLT1=Čiastka dane z 2
@@ -359,6 +444,7 @@ AmountLT1ES=Množstvo RE
 AmountLT2ES=Suma IRPF
 AmountTotal=Celková čiastka
 AmountAverage=Priemerná suma
+<<<<<<< HEAD
 PriceQtyMinHT=Cena množstvo min. (Po zdanení)
 PriceQtyMinHTCurrency=Price quantity min. (net of tax) (currency)
 Percentage=Percento
@@ -369,6 +455,19 @@ TotalHTShortCurrency=Total (net in currency)
 TotalTTCShort=Celkom (s DPH)
 TotalHT=Celkom (bez dane)
 TotalHTforthispage=Total (net of tax) for this page
+=======
+PriceQtyMinHT=Price quantity min. (excl. tax)
+PriceQtyMinHTCurrency=Price quantity min. (excl. tax) (currency)
+Percentage=Percento
+Total=Celkový
+SubTotal=Medzisúčet
+TotalHTShort=Total (excl.)
+TotalHT100Short=Total 100%% (excl.)
+TotalHTShortCurrency=Total (excl. in currency)
+TotalTTCShort=Celkom (s DPH)
+TotalHT=Total (excl. tax)
+TotalHTforthispage=Total (excl. tax) for this page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Totalforthispage=Total for this page
 TotalTTC=Celkom (s DPH)
 TotalTTCToYourCredit=Celkom (s DPH) na Váš účet
@@ -380,7 +479,11 @@ TotalLT1ES=Celkom RE
 TotalLT2ES=Celkom IRPF
 TotalLT1IN=Total CGST
 TotalLT2IN=Total SGST
+<<<<<<< HEAD
 HT=Po odpočítaní dane
+=======
+HT=Excl. tax
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TTC=Inc daň
 INCVATONLY=Inc. VAT
 INCT=Inc. all taxes
@@ -396,6 +499,10 @@ LT1ES=RE
 LT2ES=IRPF
 LT1IN=CGST
 LT2IN=SGST
+<<<<<<< HEAD
+=======
+LT1GC=Additionnal cents
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 VATRate=Daňová sadzba
 VATCode=Tax Rate code
 VATNPR=Tax Rate NPR
@@ -428,14 +535,23 @@ ActionNotApplicable=Nevzťahuje sa
 ActionRunningNotStarted=Ak chcete začať
 ActionRunningShort=In progress
 ActionDoneShort=Hotový
+<<<<<<< HEAD
 ActionUncomplete=Neúplné
+=======
+ActionUncomplete=Incomplete
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LatestLinkedEvents=Latest %s linked events
 CompanyFoundation=Company/Organization
 Accountant=Accountant
 ContactsForCompany=Kontakty pre túto tretiu stranu
 ContactsAddressesForCompany=Kontakty / adries tretím stranám tejto
 AddressesForCompany=Adresy pre túto tretiu stranu
+<<<<<<< HEAD
 ActionsOnCompany=Akcia o tejto tretej osobe
+=======
+ActionsOnCompany=Events for this third party
+ActionsOnContact=Events for this contact/address
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActionsOnMember=Akcia o tomto členovi
 ActionsOnProduct=Events about this product
 NActionsLate=%s neskoro
@@ -453,8 +569,13 @@ Generate=Generovať
 Duration=Trvanie
 TotalDuration=Celkové trvanie
 Summary=Zhrnutie
+<<<<<<< HEAD
 DolibarrStateBoard=Database statistics
 DolibarrWorkBoard=Open items dashboard
+=======
+DolibarrStateBoard=Database Statistics
+DolibarrWorkBoard=Open Items
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoOpenedElementToProcess=No opened element to process
 Available=Dostupný
 NotYetAvailable=Zatiaľ nie je k dispozícii
@@ -468,7 +589,11 @@ and=a
 or=alebo
 Other=Ostatné
 Others=Ostatné
+<<<<<<< HEAD
 OtherInformations=Ostatné informácie
+=======
+OtherInformations=Other information
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Quantity=Množstvo
 Qty=Množstvo
 ChangedBy=Zmenil
@@ -482,9 +607,17 @@ Reporting=Hlásenie
 Reportings=Hlásenie
 Draft=Návrh
 Drafts=Dáma
+<<<<<<< HEAD
 StatusInterInvoiced=
 Validated=Overené
 Opened=Otvorení
+=======
+StatusInterInvoiced=Invoiced
+Validated=Overené
+Opened=Otvorení
+OpenAll=Open (All)
+ClosedAll=Closed (All)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 New=Nový
 Discount=Zľava
 Unknown=Neznámy
@@ -506,7 +639,11 @@ None=Nikto
 NoneF=Nikto
 NoneOrSeveral=None or several
 Late=Neskoro
+<<<<<<< HEAD
 LateDesc=Delay to define if a record is late or not depends on your setup. Ask your admin to change delay from menu Home - Setup - Alerts.
+=======
+LateDesc=An item is defined as Delayed as per the system configuration in menu Home - Setup - Alerts.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoItemLate=No late item
 Photo=Obrázok
 Photos=Obrázky
@@ -530,6 +667,7 @@ September=Septembra
 October=Október
 November=November
 December=December
+<<<<<<< HEAD
 JanuaryMin=Január
 FebruaryMin=Február
 MarchMin=Mar
@@ -542,6 +680,8 @@ SeptemberMin=Septembra
 OctoberMin=Október
 NovemberMin=November
 DecemberMin=Decembra
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Month01=január
 Month02=február
 Month03=pochod
@@ -638,14 +778,25 @@ FeatureNotYetSupported=Funkcia zatiaľ nie je podporované
 CloseWindow=Zavrieť okno
 Response=Odpoveď
 Priority=Priorita
+<<<<<<< HEAD
 SendByMail=Poslať e-mailom
+=======
+SendByMail=Send by email
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MailSentBy=E-mail zaslaná
 TextUsedInTheMessageBody=E-mail telo
 SendAcknowledgementByMail=Send confirmation email
 SendMail=Odoslať e-mail
+<<<<<<< HEAD
 EMail=E-mail
 NoEMail=Žiadny e-mail
 Email=E-mail
+=======
+Email=E-mail
+NoEMail=Žiadny e-mail
+AlreadyRead=Already read
+NotRead=Not read
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoMobilePhone=Žiadny mobil
 Owner=Majiteľ
 FollowingConstantsWillBeSubstituted=Nasledujúci konštanty bude nahradený zodpovedajúcou hodnotou.
@@ -658,8 +809,14 @@ ValueIsValid=Hodnota je platná
 ValueIsNotValid=Value is not valid
 RecordCreatedSuccessfully=Record created successfully
 RecordModifiedSuccessfully=Nahrávanie bolo úspešne upravené
+<<<<<<< HEAD
 RecordsModified=%s record modified
 RecordsDeleted=%s record deleted
+=======
+RecordsModified=%s record(s) modified
+RecordsDeleted=%s record(s) deleted
+RecordsGenerated=%s record(s) generated
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AutomaticCode=Automatické kód
 FeatureDisabled=Funkcia vypnutá
 MoveBox=Move widget
@@ -670,14 +827,21 @@ Method=Metóda
 Receive=Prijať
 CompleteOrNoMoreReceptionExpected=Complete or nothing more expected
 ExpectedValue=Expected Value
+<<<<<<< HEAD
 CurrentValue=Súčasná hodnota
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PartialWoman=Čiastočný
 TotalWoman=Celkový
 NeverReceived=Nikdy nedostal
 Canceled=Zrušený
 YouCanChangeValuesForThisListFromDictionarySetup=You can change values for this list from menu Setup - Dictionaries
 YouCanChangeValuesForThisListFrom=You can change values for this list from menu %s
+<<<<<<< HEAD
 YouCanSetDefaultValueInModuleSetup=You can set the default value used when creating a new record into module setup
+=======
+YouCanSetDefaultValueInModuleSetup=You can set the default value used when creating a new record in module setup
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Color=Farba
 Documents=Pripojené súbory
 Documents2=Dokumenty
@@ -709,22 +873,37 @@ Notes=Poznámky
 AddNewLine=Pridať nový riadok
 AddFile=Pridať súbor
 FreeZone=Not a predefined product/service
+<<<<<<< HEAD
 FreeLineOfType=Not a predefined entry of type
 CloneMainAttributes=Clone objekt s jeho hlavnými atribútmi
+=======
+FreeLineOfType=Free-text item, type:
+CloneMainAttributes=Clone objekt s jeho hlavnými atribútmi
+ReGeneratePDF=Re-generate PDF
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PDFMerge=PDF Merge
 Merge=Spojiť
 DocumentModelStandardPDF=Standard PDF template
 PrintContentArea=Zobraziť stránku pre tlač hlavnú obsahovú časť
 MenuManager=Menu manažér
+<<<<<<< HEAD
 WarningYouAreInMaintenanceMode=Pozor, ste v režime údržby, tak len prihlásení <b>%s</b> je dovolené používať aplikácie v túto chvíľu.
+=======
+WarningYouAreInMaintenanceMode=Warning, you are in maintenance mode: only login <b>%s</b> is allowed to use the application in this mode.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CoreErrorTitle=Systémová chyba
 CoreErrorMessage=Sorry, an error occurred. Contact your system administrator to check the logs or disable $dolibarr_main_prod=1 to get more information.
 CreditCard=Kreditná karta
 ValidatePayment=Overenie platby
 CreditOrDebitCard=Credit or debit card
 FieldsWithAreMandatory=Polia označené * sú povinné <b>%s</b>
+<<<<<<< HEAD
 FieldsWithIsForPublic=Polia s <b>%s</b> sú uvedené na verejnom zozname členov. Ak nechcete, aby to, zaškrtnúť &quot;verejný&quot; box.
 AccordingToGeoIPDatabase=(Podľa prepočet GeoIP)
+=======
+FieldsWithIsForPublic=Fields with <b>%s</b> are shown in public list of members. If you don't want this, uncheck the "public" box.
+AccordingToGeoIPDatabase=(according to GeoIP conversion)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Line=Linka
 NotSupported=Nie je podporované
 RequiredField=Povinné polia
@@ -732,6 +911,11 @@ Result=Výsledok
 ToTest=Test
 ValidateBefore=Karta musí byť overená pred použitím tejto funkcie
 Visibility=Viditeľnosť
+<<<<<<< HEAD
+=======
+Totalizable=Totalizable
+TotalizableDesc=This field is totalizable in list
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Private=Súkromný
 Hidden=Skrytý
 Resources=Zdroje
@@ -750,14 +934,25 @@ LinkTo=Link to
 LinkToProposal=Link to proposal
 LinkToOrder=Link to order
 LinkToInvoice=Link to invoice
+<<<<<<< HEAD
 LinkToSupplierOrder=Link to supplier order
 LinkToSupplierProposal=Link to supplier proposal
 LinkToSupplierInvoice=Link to supplier invoice
+=======
+LinkToTemplateInvoice=Link to template invoice
+LinkToSupplierOrder=Link to purchase order
+LinkToSupplierProposal=Link to vendor proposal
+LinkToSupplierInvoice=Link to vendor invoice
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LinkToContract=Link to contract
 LinkToIntervention=Link to intervention
 CreateDraft=Vytvorte návrh
 SetToDraft=Späť na návrh
 ClickToEdit=Kliknutím možno upraviť
+<<<<<<< HEAD
+=======
+ClickToRefresh=Click to refresh
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 EditWithEditor=Edit with CKEditor
 EditWithTextEditor=Edit with Text editor
 EditHTMLSource=Edit HTML Source
@@ -772,14 +967,22 @@ ByDay=Vo dne
 BySalesRepresentative=Do obchodného zástupcu
 LinkedToSpecificUsers=V súvislosti s konkrétnym kontakte s užívateľom
 NoResults=Žiadne výsledky
+<<<<<<< HEAD
 AdminTools=Admin tools
+=======
+AdminTools=Admin Tools
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SystemTools=Systémové nástroje
 ModulesSystemTools=Moduly náradie
 Test=Test
 Element=Prvok
 NoPhotoYet=Žiadne fotografie zatiaľ k dispozícii
 Dashboard=Dashboard
+<<<<<<< HEAD
 MyDashboard=My dashboard
+=======
+MyDashboard=My Dashboard
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Deductible=Spoluúčasť
 from=z
 toward=k
@@ -802,7 +1005,11 @@ PrintFile=Vytlačiť súbor %s
 ShowTransaction=Show entry on bank account
 ShowIntervention=Zobraziť zásah
 ShowContract=Zobraziť zmluvy
+<<<<<<< HEAD
 GoIntoSetupToChangeLogo=Choďte na Domov - Nastavenie - Spoločnosť pre zmenu loga, alebo na Domov - Nastavenie - Zobrazenie pre skrytie loga.
+=======
+GoIntoSetupToChangeLogo=Go to Home - Setup - Company to change logo or go to Home - Setup - Display to hide.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Deny=Deny
 Denied=Denied
 ListOf=List of %s
@@ -818,16 +1025,29 @@ Sincerely=Sincerely
 DeleteLine=Odstránenie riadka
 ConfirmDeleteLine=Are you sure you want to delete this line?
 NoPDFAvailableForDocGenAmongChecked=No PDF were available for the document generation among checked record
+<<<<<<< HEAD
 TooManyRecordForMassAction=Too many record selected for mass action. The action is restricted to a list of %s record.
 NoRecordSelected=No record selected
 MassFilesArea=Area for files built by mass actions
 ShowTempMassFilesArea=Show area of files built by mass actions
 ConfirmMassDeletion=Bulk delete confirmation
 ConfirmMassDeletionQuestion=Are you sure you want to delete the %s selected record ?
+=======
+TooManyRecordForMassAction=Too many records selected for mass action. The action is restricted to a list of %s records.
+NoRecordSelected=No record selected
+MassFilesArea=Area for files built by mass actions
+ShowTempMassFilesArea=Show area of files built by mass actions
+ConfirmMassDeletion=Bulk Delete confirmation
+ConfirmMassDeletionQuestion=Are you sure you want to delete the %s selected record(s)?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 RelatedObjects=Related Objects
 ClassifyBilled=Klasifikovať účtované
 ClassifyUnbilled=Classify unbilled
 Progress=Pokrok
+<<<<<<< HEAD
+=======
+ProgressShort=Progr.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 FrontOffice=Front office
 BackOffice=Back office
 View=View
@@ -836,18 +1056,31 @@ Exports=Exports
 ExportFilteredList=Export filtered list
 ExportList=Export list
 ExportOptions=Možnosti exportu
+<<<<<<< HEAD
+=======
+IncludeDocsAlreadyExported=Include docs already exported
+ExportOfPiecesAlreadyExportedIsEnable=Export of pieces already exported is enable
+ExportOfPiecesAlreadyExportedIsDisable=Export of pieces already exported is disable
+AllExportedMovementsWereRecordedAsExported=All exported movements were recorded as exported
+NotAllExportedMovementsCouldBeRecordedAsExported=Not all exported movements could be recorded as exported
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Miscellaneous=Zmiešaný
 Calendar=Kalendár
 GroupBy=Group by...
 ViewFlatList=View flat list
 RemoveString=Remove string '%s'
+<<<<<<< HEAD
 SomeTranslationAreUncomplete=Some languages may be partially translated or may contains errors. If you detect some, you can fix language files registering to <a href="https://transifex.com/projects/p/dolibarr/" target="_blank">https://transifex.com/projects/p/dolibarr/</a>.
+=======
+SomeTranslationAreUncomplete=Some of the languages offered may be only partially translated or may contain errors. Please help to correct your language by registering at <a href="https://transifex.com/projects/p/dolibarr/" target="_blank">https://transifex.com/projects/p/dolibarr/</a> to add your improvements.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DirectDownloadLink=Direct download link (public/external)
 DirectDownloadInternalLink=Direct download link (need to be logged and need permissions)
 Download=Download
 DownloadDocument=Download document
 ActualizeCurrency=Update currency rate
 Fiscalyear=Fiškálny rok
+<<<<<<< HEAD
 ModuleBuilder=Module Builder
 SetMultiCurrencyCode=Set currency
 BulkActions=Bulk actions
@@ -855,12 +1088,22 @@ ClickToShowHelp=Click to show tooltip help
 WebSite=Web stránka
 WebSites=Web sites
 WebSiteAccounts=Web site accounts
+=======
+ModuleBuilder=Module and Application Builder
+SetMultiCurrencyCode=Set currency
+BulkActions=Bulk actions
+ClickToShowHelp=Click to show tooltip help
+WebSite=Website
+WebSites=Web stránky
+WebSiteAccounts=Website accounts
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ExpenseReport=Expense report
 ExpenseReports=Expense reports
 HR=HR
 HRAndBank=HR and Bank
 AutomaticallyCalculated=Automatically calculated
 TitleSetToDraft=Go back to draft
+<<<<<<< HEAD
 ConfirmSetToDraft=Are you sure you want to go back to Draft status ?
 ImportId=Import id
 Events=Udalosti
@@ -872,6 +1115,27 @@ Rights=Oprávnenia
 LineNb=Line no.
 IncotermLabel=Incoterms
 # Week day
+=======
+ConfirmSetToDraft=Are you sure you want to go back to Draft status?
+ImportId=Import id
+Events=Udalosti
+EMailTemplates=Email templates
+FileNotShared=File not shared to external public
+Project=Projekt
+Projects=Projekty
+LeadOrProject=Lead | Project
+LeadsOrProjects=Leads | Projects
+Lead=Lead
+Leads=Leads
+ListOpenLeads=List open leads
+ListOpenProjects=List open projects
+NewLeadOrProject=New lead or project
+Rights=Oprávnenia
+LineNb=Line no.
+IncotermLabel=Incoterms
+TabLetteringCustomer=Customer lettering
+TabLetteringSupplier=Vendor lettering
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Monday=Pondelok
 Tuesday=Utorok
 Wednesday=Streda
@@ -919,7 +1183,11 @@ SearchIntoProjects=Projekty
 SearchIntoTasks=Úlohy
 SearchIntoCustomerInvoices=Customer invoices
 SearchIntoSupplierInvoices=Vendor invoices
+<<<<<<< HEAD
 SearchIntoCustomerOrders=Customer orders
+=======
+SearchIntoCustomerOrders=Sales orders
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SearchIntoSupplierOrders=Purchase orders
 SearchIntoCustomerProposals=Customer proposals
 SearchIntoSupplierProposals=Vendor proposals
@@ -927,15 +1195,25 @@ SearchIntoInterventions=Zásahy
 SearchIntoContracts=Zmluvy
 SearchIntoCustomerShipments=Customer shipments
 SearchIntoExpenseReports=Expense reports
+<<<<<<< HEAD
 SearchIntoLeaves=Leaves
+=======
+SearchIntoLeaves=Leave
+SearchIntoTickets=Tickets
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CommentLink=Komentáre
 NbComments=Number of comments
 CommentPage=Comments space
 CommentAdded=Comment added
 CommentDeleted=Comment deleted
 Everybody=Všetci
+<<<<<<< HEAD
 PayedBy=Payed by
 PayedTo=Payed to
+=======
+PayedBy=Paid by
+PayedTo=Paid to
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Monthly=Monthly
 Quarterly=Quarterly
 Annual=Annual
@@ -945,6 +1223,23 @@ LocalAndRemote=Local and Remote
 KeyboardShortcut=Keyboard shortcut
 AssignedTo=Priradené
 Deletedraft=Delete draft
+<<<<<<< HEAD
 ConfirmMassDraftDeletion=Draft Bulk delete confirmation
 FileSharedViaALink=File shared via a link
 
+=======
+ConfirmMassDraftDeletion=Draft mass delete confirmation
+FileSharedViaALink=File shared via a link
+SelectAThirdPartyFirst=Select a third party first...
+YouAreCurrentlyInSandboxMode=You are currently in the %s "sandbox" mode
+Inventory=Inventory
+AnalyticCode=Analytic code
+TMenuMRP=MRP
+ShowMoreInfos=Show More Infos
+NoFilesUploadedYet=Please upload a document first
+SeePrivateNote=See private note
+PaymentInformation=Payment information
+ValidFrom=Valid from
+ValidUntil=Valid until
+NoRecordedUsers=No users
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

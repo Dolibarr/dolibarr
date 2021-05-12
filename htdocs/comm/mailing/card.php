@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2005-2016	Laurent Destailleur		<eldy@uers.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2016	Regis Houssin			<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2016	Regis Houssin			<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +27,11 @@
  *       \brief      Fiche mailing, onglet general
  */
 
+<<<<<<< HEAD
 if (! defined('NOSTYLECHECK')) define('NOSTYLECHECK','1');
+=======
+if (! defined('NOSTYLECHECK')) define('NOSTYLECHECK', '1');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/emailing.lib.php';
@@ -40,9 +48,15 @@ $langs->load("mails");
 
 if (! $user->rights->mailing->lire || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->societe_id > 0)) accessforbidden();
 
+<<<<<<< HEAD
 $id=(GETPOST('mailid','int') ? GETPOST('mailid','int') : GETPOST('id','int'));
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
+=======
+$id=(GETPOST('mailid', 'int') ? GETPOST('mailid', 'int') : GETPOST('id', 'int'));
+$action=GETPOST('action', 'alpha');
+$confirm=GETPOST('confirm', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $urlfrom=GETPOST('urlfrom');
 
 $object=new Mailing($db);
@@ -83,7 +97,11 @@ $listofmethods['smtps']='SMTP/SMTPS socket library';
  */
 
 $parameters=array();
+<<<<<<< HEAD
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+=======
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -97,7 +115,11 @@ if (empty($reshook))
 		}
 		else
 		{
+<<<<<<< HEAD
 			$result=$object->createFromClone($object->id,$_REQUEST["clone_content"],$_REQUEST["clone_receivers"]);
+=======
+			$result=$object->createFromClone($user, $object->id, $_REQUEST["clone_content"], $_REQUEST["clone_receivers"]);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if ($result > 0)
 			{
 				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
@@ -122,18 +144,30 @@ if (empty($reshook))
 			setEventMessages($langs->trans("MailingNeedCommand2"), null, 'warnings');
 			$action='';
 		}
+<<<<<<< HEAD
 		else if ($conf->global->MAILING_LIMIT_SENDBYWEB < 0)
+=======
+		elseif ($conf->global->MAILING_LIMIT_SENDBYWEB < 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			setEventMessages($langs->trans("NotEnoughPermissions"), null, 'warnings');
 			$action='';
 		}
 		else
 		{
+<<<<<<< HEAD
 			$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1,$object,'mailing');
 
 			if ($object->statut == 0)
 			{
 				dol_print_error('','ErrorMailIsNotValidated');
+=======
+			$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id, 2, 0, 1, $object, 'mailing');
+
+			if ($object->statut == 0)
+			{
+				dol_print_error('', 'ErrorMailIsNotValidated');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				exit;
 			}
 
@@ -145,7 +179,11 @@ if (empty($reshook))
 			$errorsto = $object->email_errorsto;
 			// Le message est-il en html
 			$msgishtml=-1;	// Unknown by default
+<<<<<<< HEAD
 			if (preg_match('/[\s\t]*<html>/i',$message)) $msgishtml=1;
+=======
+			if (preg_match('/[\s\t]*<html>/i', $message)) $msgishtml=1;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			// Warning, we must not use begin-commit transaction here
 			// because we want to save update for each mail sent.
@@ -191,6 +229,7 @@ if (empty($reshook))
 						$obj = $db->fetch_object($resql);
 
 						// sendto en RFC2822
+<<<<<<< HEAD
 						$sendto = str_replace(',',' ',dolGetFirstLastname($obj->firstname, $obj->lastname))." <".$obj->email.">";
 
 						// Make substitutions on topic and body. From (AA=YY;BB=CC;...) we keep YY, CC, ...
@@ -200,6 +239,17 @@ if (empty($reshook))
 	                    $tmpfield=explode('=',$other[2],2); $other3=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
 	                    $tmpfield=explode('=',$other[3],2); $other4=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
 	                    $tmpfield=explode('=',$other[4],2); $other5=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
+=======
+						$sendto = str_replace(',', ' ', dolGetFirstLastname($obj->firstname, $obj->lastname))." <".$obj->email.">";
+
+						// Make substitutions on topic and body. From (AA=YY;BB=CC;...) we keep YY, CC, ...
+						$other=explode(';', $obj->other);
+						$tmpfield=explode('=', $other[0], 2); $other1=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
+	                    $tmpfield=explode('=', $other[1], 2); $other2=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
+	                    $tmpfield=explode('=', $other[2], 2); $other3=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
+	                    $tmpfield=explode('=', $other[3], 2); $other4=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
+	                    $tmpfield=explode('=', $other[4], 2); $other5=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	                    $signature = ((!empty($user->signature) && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))?$user->signature:'');
 
@@ -265,15 +315,24 @@ if (empty($reshook))
 						//$substitutionisok=true;
 
 	                    complete_substitutions_array($substitutionarray, $langs);
+<<<<<<< HEAD
 						$newsubject=make_substitutions($subject,$substitutionarray);
 						$newmessage=make_substitutions($message,$substitutionarray);
+=======
+						$newsubject=make_substitutions($subject, $substitutionarray);
+						$newmessage=make_substitutions($message, $substitutionarray);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 						$arr_file = array();
 						$arr_mime = array();
 						$arr_name = array();
 						$arr_css  = array();
 
+<<<<<<< HEAD
 						$listofpaths=dol_dir_list($upload_dir,'all',0,'','','name',SORT_ASC,0);
+=======
+						$listofpaths=dol_dir_list($upload_dir, 'all', 0, '', '', 'name', SORT_ASC, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						if (count($listofpaths))
 						{
 							foreach($listofpaths as $key => $val)
@@ -379,20 +438,33 @@ if (empty($reshook))
 				if ($nbko > 0)
 				{
 					$statut=2;	// Status 'sent partially' (because at least one error)
+<<<<<<< HEAD
 					if ($nbok > 0) 	setEventMessages($langs->transnoentitiesnoconv("EMailSentToNRecipients",$nbok), null, 'mesgs');
 					else setEventMessages($langs->transnoentitiesnoconv("EMailSentToNRecipients",$nbok), null, 'mesgs');
+=======
+					if ($nbok > 0) 	setEventMessages($langs->transnoentitiesnoconv("EMailSentToNRecipients", $nbok), null, 'mesgs');
+					else setEventMessages($langs->transnoentitiesnoconv("EMailSentToNRecipients", $nbok), null, 'mesgs');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 				else
 				{
 					if ($nbok >= $num)
 					{
 						$statut=3;	// Send to everybody
+<<<<<<< HEAD
 						setEventMessages($langs->transnoentitiesnoconv("EMailSentToNRecipients",$nbok), null, 'mesgs');
+=======
+						setEventMessages($langs->transnoentitiesnoconv("EMailSentToNRecipients", $nbok), null, 'mesgs');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					}
 					else
 					{
 						$statut=2;	// Status 'sent partially' (because not send to everybody)
+<<<<<<< HEAD
 						setEventMessages($langs->transnoentitiesnoconv("EMailSentToNRecipients",$nbok), null, 'mesgs');
+=======
+						setEventMessages($langs->transnoentitiesnoconv("EMailSentToNRecipients", $nbok), null, 'mesgs');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					}
 				}
 
@@ -419,12 +491,20 @@ if (empty($reshook))
 	{
 		$error=0;
 
+<<<<<<< HEAD
 		$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1,$object,'mailing');
+=======
+		$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id, 2, 0, 1, $object, 'mailing');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$object->sendto = $_POST["sendto"];
 		if (! $object->sendto)
 		{
+<<<<<<< HEAD
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("MailTo")), null, 'errors');
+=======
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("MailTo")), null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$error++;
 		}
 
@@ -432,7 +512,11 @@ if (empty($reshook))
 		{
 			// Le message est-il en html
 			$msgishtml=-1;	// Inconnu par defaut
+<<<<<<< HEAD
 			if (preg_match('/[\s\t]*<html>/i',$object->body)) $msgishtml=1;
+=======
+			if (preg_match('/[\s\t]*<html>/i', $object->body)) $msgishtml=1;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			// other are set at begin of page
 			$object->substitutionarrayfortest['__EMAIL__'] = $object->sendto;
@@ -440,8 +524,13 @@ if (empty($reshook))
 
 			// Pratique les substitutions sur le sujet et message
 	        complete_substitutions_array($object->substitutionarrayfortest, $langs);
+<<<<<<< HEAD
 			$tmpsujet=make_substitutions($object->sujet,$object->substitutionarrayfortest);
 			$tmpbody=make_substitutions($object->body,$object->substitutionarrayfortest);
+=======
+			$tmpsujet=make_substitutions($object->sujet, $object->substitutionarrayfortest);
+			$tmpbody=make_substitutions($object->body, $object->substitutionarrayfortest);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			$arr_file = array();
 			$arr_mime = array();
@@ -449,11 +538,19 @@ if (empty($reshook))
 			$arr_css  = array();
 
 	        // Ajout CSS
+<<<<<<< HEAD
 	        if (!empty($object->bgcolor)) $arr_css['bgcolor'] = (preg_match('/^#/',$object->bgcolor)?'':'#').$object->bgcolor;
 	        if (!empty($object->bgimage)) $arr_css['bgimage'] = $object->bgimage;
 
 	        // Attached files
 			$listofpaths=dol_dir_list($upload_dir,'all',0,'','','name',SORT_ASC,0);
+=======
+	        if (!empty($object->bgcolor)) $arr_css['bgcolor'] = (preg_match('/^#/', $object->bgcolor)?'':'#').$object->bgcolor;
+	        if (!empty($object->bgimage)) $arr_css['bgimage'] = $object->bgimage;
+
+	        // Attached files
+			$listofpaths=dol_dir_list($upload_dir, 'all', 0, '', '', 'name', SORT_ASC, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if (count($listofpaths))
 			{
 				foreach($listofpaths as $key => $val)
@@ -470,14 +567,24 @@ if (empty($reshook))
 			$result=$mailfile->sendfile();
 			if ($result)
 			{
+<<<<<<< HEAD
 				setEventMessages($langs->trans("MailSuccessfulySent",$mailfile->getValidAddress($object->email_from,2),$mailfile->getValidAddress($object->sendto,2)), null, 'mesgs');
+=======
+				setEventMessages($langs->trans("MailSuccessfulySent", $mailfile->getValidAddress($object->email_from, 2), $mailfile->getValidAddress($object->sendto, 2)), null, 'mesgs');
+				$action = '';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 			else
 			{
 				setEventMessages($langs->trans("ResultKo").'<br>'.$mailfile->error.' '.$result, null, 'errors');
+<<<<<<< HEAD
 			}
 
 			$action='';
+=======
+				$action = 'test';
+			}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 	}
 
@@ -496,6 +603,7 @@ if (empty($reshook))
 		$object->bgimage        = trim($_POST["bgimage"]);
 
 		if (! $object->titre) {
+<<<<<<< HEAD
 			$mesgs[] = $langs->trans("ErrorFieldRequired",$langs->transnoentities("MailTitle"));
 		}
 		if (! $object->sujet) {
@@ -503,6 +611,15 @@ if (empty($reshook))
 		}
 		if (! $object->body)  {
 			$mesgs[] = $langs->trans("ErrorFieldRequired",$langs->transnoentities("MailMessage"));
+=======
+			$mesgs[] = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTitle"));
+		}
+		if (! $object->sujet) {
+			$mesgs[] = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTopic"));
+		}
+		if (! $object->body)  {
+			$mesgs[] = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailMessage"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		if (!count($mesgs))
@@ -522,6 +639,7 @@ if (empty($reshook))
 	// Action update description of emailing
 	if ($action == 'settitre' || $action == 'setemail_from' || $action == 'setreplyto' || $action == 'setemail_errorsto')
 	{
+<<<<<<< HEAD
 		$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1,$object,'mailing');
 
 		if ($action == 'settitre')					$object->titre          = trim(GETPOST('titre','alpha'));
@@ -533,6 +651,19 @@ if (empty($reshook))
 		}
 		else if ($action == 'setfrom' && empty($object->email_from)) {
 			$mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("MailFrom"));
+=======
+		$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id, 2, 0, 1, $object, 'mailing');
+
+		if ($action == 'settitre') $object->titre = trim(GETPOST('titre', 'alpha'));
+		elseif ($action == 'setemail_from') $object->email_from = trim(GETPOST('email_from', 'alpha'));
+		elseif ($action == 'setemail_replyto') $object->email_replyto  = trim(GETPOST('email_replyto', 'alpha'));
+		elseif ($action == 'setemail_errorsto') {
+            $object->email_errorsto = trim(GETPOST('email_errorsto', 'alpha'));
+        } elseif ($action == 'settitre' && empty($object->titre)) {
+			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTitle"));
+		} elseif ($action == 'setfrom' && empty($object->email_from)) {
+			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailFrom"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		if (! $mesg)
@@ -554,12 +685,20 @@ if (empty($reshook))
 	 */
 	if (! empty($_POST['addfile']))
 	{
+<<<<<<< HEAD
 		$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1,$object,'mailing');
+=======
+		$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id, 2, 0, 1, $object, 'mailing');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	    // Set tmp user directory
+<<<<<<< HEAD
 	    dol_add_file_process($upload_dir,0,0);
+=======
+	    dol_add_file_process($upload_dir, 0, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$action="edit";
 	}
@@ -567,11 +706,19 @@ if (empty($reshook))
 	// Action remove file
 	if (! empty($_POST["removedfile"]))
 	{
+<<<<<<< HEAD
 		$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1,$object,'mailing');
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	    dol_remove_file_process($_POST['removedfile'],0,0);    // We really delete file linked to mailing
+=======
+		$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id, 2, 0, 1, $object, 'mailing');
+
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+	    dol_remove_file_process($_POST['removedfile'], 0, 0);    // We really delete file linked to mailing
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$action="edit";
 	}
@@ -593,10 +740,17 @@ if (empty($reshook))
 			$object->bgimage        = trim($_POST["bgimage"]);
 
 			if (! $object->sujet) {
+<<<<<<< HEAD
 				$mesgs[] = $langs->trans("ErrorFieldRequired",$langs->transnoentities("MailTopic"));
 			}
 			if (! $object->body) {
 				$mesgs[] = $langs->trans("ErrorFieldRequired",$langs->transnoentities("MailMessage"));
+=======
+				$mesgs[] = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTopic"));
+			}
+			if (! $object->body) {
+				$mesgs[] = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailMessage"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 
 			if (!count($mesgs))
@@ -746,18 +900,31 @@ if ($action == 'create')
 
 	dol_fiche_head();
 
+<<<<<<< HEAD
 	print '<table class="border" width="100%">';
 	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTitle").'</td><td><input class="flat minwidth300" name="titre" value="'.dol_escape_htmltag(GETPOST('titre')).'"></td></tr>';
+=======
+	print '<table class="border centpercent">';
+	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTitle").'</td><td><input class="flat minwidth300" name="titre" value="'.dol_escape_htmltag(GETPOST('titre')).'" autofocus="autofocus"></td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '<tr><td class="fieldrequired">'.$langs->trans("MailFrom").'</td><td><input class="flat minwidth200" name="from" value="'.$conf->global->MAILING_EMAIL_FROM.'"></td></tr>';
 	print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td><input class="flat minwidth200" name="errorsto" value="'.(!empty($conf->global->MAILING_EMAIL_ERRORSTO)?$conf->global->MAILING_EMAIL_ERRORSTO:$conf->global->MAIN_MAIL_ERRORS_TO).'"></td></tr>';
 
 	// Other attributes
 	$parameters=array();
+<<<<<<< HEAD
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
 	if (empty($reshook))
 	{
 		print $object->showOptionals($extrafields,'edit');
+=======
+	$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
+	if (empty($reshook))
+	{
+		print $object->showOptionals($extrafields, 'edit');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	print '</table>';
@@ -766,7 +933,11 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
 	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTopic").'</td><td><input class="flat minwidth200 quatrevingtpercent" name="sujet" value="'.dol_escape_htmltag(GETPOST('sujet')).'"></td></tr>';
 	print '<tr><td>'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
+<<<<<<< HEAD
 	print $htmlother->selectColor($_POST['bgcolor'],'bgcolor','',0);
+=======
+	print $htmlother->selectColor($_POST['bgcolor'], 'bgcolor', '', 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</td></tr>';
 
 	print '</table>';
@@ -774,7 +945,11 @@ if ($action == 'create')
 	print '<div style="padding-top: 10px">';
 	// Editeur wysiwyg
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+<<<<<<< HEAD
 	$doleditor=new DolEditor('bodyemail',GETPOST('bodyemail','none'),'',600,'dolibarr_mailings','',true,true,$conf->global->FCKEDITOR_ENABLE_MAILING,20,'90%');
+=======
+	$doleditor=new DolEditor('bodyemail', GETPOST('bodyemail', 'none'), '', 600, 'dolibarr_mailings', '', true, true, $conf->global->FCKEDITOR_ENABLE_MAILING, 20, '90%');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$doleditor->Create();
 	print '</div>';
 
@@ -788,18 +963,27 @@ else
 {
 	if ($object->id > 0)
 	{
+<<<<<<< HEAD
 		$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1,$object,'mailing');
+=======
+		$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id, 2, 0, 1, $object, 'mailing');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$head = emailing_prepare_head($object);
 
 		// Confirmation back to draft
 		if ($action == 'settodraft')
 		{
+<<<<<<< HEAD
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("SetToDraft"),$langs->trans("ConfirmUnvalidateEmailing"),"confirm_settodraft",'','',1);
+=======
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("SetToDraft"), $langs->trans("ConfirmUnvalidateEmailing"), "confirm_settodraft", '', '', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		// Confirmation validation of mailing
 		if ($action == 'valid')
 		{
+<<<<<<< HEAD
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("ValidMailing"),$langs->trans("ConfirmValidMailing"),"confirm_valid",'','',1);
 		}
 		// Confirm reset
@@ -811,6 +995,19 @@ else
 		else if ($action == 'delete')
 		{
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id.(! empty($urlfrom) ? '&urlfrom='.urlencode($urlfrom) : ''),$langs->trans("DeleteAMailing"),$langs->trans("ConfirmDeleteMailing"),"confirm_delete",'','',1);
+=======
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("ValidMailing"), $langs->trans("ConfirmValidMailing"), "confirm_valid", '', '', 1);
+		}
+		// Confirm reset
+		elseif ($action == 'reset')
+		{
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("ResetMailing"), $langs->trans("ConfirmResetMailing", $object->ref), "confirm_reset", '', '', 2);
+		}
+		// Confirm delete
+		elseif ($action == 'delete')
+		{
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id.(! empty($urlfrom) ? '&urlfrom='.urlencode($urlfrom) : ''), $langs->trans("DeleteAMailing"), $langs->trans("ConfirmDeleteMailing"), "confirm_delete", '', '', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 
@@ -842,7 +1039,11 @@ else
 					if (! empty($conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS)) setEventMessages($langs->trans("MailSendSetupIs3", $conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS), null, 'warnings');
 					$_GET["action"]='';
 				}
+<<<<<<< HEAD
 				else if ($conf->global->MAILING_LIMIT_SENDBYWEB < 0)
+=======
+				elseif ($conf->global->MAILING_LIMIT_SENDBYWEB < 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				{
 				    if (! empty($conf->global->MAILING_LIMIT_WARNING_PHPMAIL) && $sendingmode == 'mail') setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_PHPMAIL), null, 'warnings');
 				    if (! empty($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL) && $sendingmode != 'mail') setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL), null, 'warnings');
@@ -869,12 +1070,21 @@ else
                     	$text.='<br><br>';
                     }
 				    $text.=$langs->trans('ConfirmSendingEmailing').'<br>';
+<<<<<<< HEAD
 					$text.=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
 					print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('SendMailing'),$text,'sendallconfirmed',$formquestion,'',1,300);
 				}
 			}
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("BackToList").'</a>';
+=======
+					$text.=$langs->trans('LimitSendingEmailing', $conf->global->MAILING_LIMIT_SENDBYWEB);
+					print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('SendMailing'), $text, 'sendallconfirmed', $formquestion, '', 1, 330, 600);
+				}
+			}
+
+			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			$morehtmlright='';
 			$nbtry = $nbok = 0;
@@ -893,6 +1103,7 @@ else
 			print '<div class="fichecenter">';
 			print '<div class="underbanner clearboth"></div>';
 
+<<<<<<< HEAD
 			print '<table class="border" width="100%">';
 
 			// Description
@@ -908,6 +1119,23 @@ else
 			// Errors to
 			print '<tr><td>'.$form->editfieldkey("MailErrorsTo",'email_errorsto',$object->email_errorsto,$object,$user->rights->mailing->creer && $object->statut < 3,'string').'</td><td colspan="3">';
 			print $form->editfieldval("MailErrorsTo",'email_errorsto',$object->email_errorsto,$object,$user->rights->mailing->creer && $object->statut < 3,'string');
+=======
+			print '<table class="border centpercent tableforfield">';
+
+			// Description
+			print '<tr><td class="titlefield">'.$form->editfieldkey("MailTitle", 'titre', $object->titre, $object, $user->rights->mailing->creer && $object->statut < 3, 'string').'</td><td colspan="3">';
+			print $form->editfieldval("MailTitle", 'titre', $object->titre, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
+			print '</td></tr>';
+
+			// From
+			print '<tr><td>'.$form->editfieldkey("MailFrom", 'email_from', $object->email_from, $object, $user->rights->mailing->creer && $object->statut < 3, 'string').'</td><td colspan="3">';
+			print $form->editfieldval("MailFrom", 'email_from', $object->email_from, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
+			print '</td></tr>';
+
+			// Errors to
+			print '<tr><td>'.$form->editfieldkey("MailErrorsTo", 'email_errorsto', $object->email_errorsto, $object, $user->rights->mailing->creer && $object->statut < 3, 'string').'</td><td colspan="3">';
+			print $form->editfieldval("MailErrorsTo", 'email_errorsto', $object->email_errorsto, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '</td></tr>';
 
 			// Nb of distinct emails
@@ -922,7 +1150,11 @@ else
 			    {
     				if ($conf->global->MAILING_LIMIT_SENDBYWEB > 0)
     				{
+<<<<<<< HEAD
     					$text.=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
+=======
+    					$text.=$langs->trans('LimitSendingEmailing', $conf->global->MAILING_LIMIT_SENDBYWEB);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     				}
     				else
     				{
@@ -932,7 +1164,11 @@ else
 			    if (empty($nbemail)) $nbemail.=' '.img_warning('').' <font class="warning">'.$langs->trans("NoTargetYet").'</font>';
 				if ($text)
     			{
+<<<<<<< HEAD
     			    print $form->textwithpicto($nbemail,$text,1,'warning');
+=======
+    			    print $form->textwithpicto($nbemail, $text, 1, 'warning');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     			}
     			else
     			{
@@ -961,14 +1197,22 @@ else
 				array('type' => 'checkbox', 'name' => 'clone_receivers', 'label' => $langs->trans("CloneReceivers"), 'value' => 0)
 				);
 				// Paiement incomplet. On demande si motif = escompte ou autre
+<<<<<<< HEAD
 				print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneEMailing'),$langs->trans('ConfirmCloneEMailing',$object->ref),'confirm_clone',$formquestion,'yes',2,240);
+=======
+				print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneEMailing', $object->ref), 'confirm_clone', $formquestion, 'yes', 2, 240);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 
 			/*
 			 * Boutons d'action
 			 */
 
+<<<<<<< HEAD
 			if (GETPOST('cancel','alpha') || $confirm=='no' || $action == '' || in_array($action,array('settodraft','valid','delete','sendall','clone','test')))
+=======
+			if (GETPOST('cancel', 'alpha') || $confirm=='no' || $action == '' || in_array($action, array('settodraft','valid','delete','sendall','clone','test')))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			{
 				print "\n\n<div class=\"tabsAction\">\n";
 
@@ -995,7 +1239,11 @@ else
 
 				if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! $user->rights->mailing->mailing_advance->send)
 				{
+<<<<<<< HEAD
 					print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("TestMailing").'</a>';
+=======
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("TestMailing").'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 				else
 				{
@@ -1006,11 +1254,19 @@ else
 				{
 					if ($object->nbemail <= 0)
 					{
+<<<<<<< HEAD
 						print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoTargetYet")).'">'.$langs->trans("ValidMailing").'</a>';
 					}
 					else if (empty($user->rights->mailing->valider))
 					{
 						print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("ValidMailing").'</a>';
+=======
+						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoTargetYet")).'">'.$langs->trans("ValidMailing").'</a>';
+					}
+					elseif (empty($user->rights->mailing->valider))
+					{
+						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("ValidMailing").'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					}
 					else
 					{
@@ -1022,11 +1278,19 @@ else
 				{
 					if ($conf->global->MAILING_LIMIT_SENDBYWEB < 0)
 					{
+<<<<<<< HEAD
 						print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("SendingFromWebInterfaceIsNotAllowed")).'">'.$langs->trans("SendMailing").'</a>';
 					}
 					else if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! $user->rights->mailing->mailing_advance->send)
 					{
 						print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("SendMailing").'</a>';
+=======
+						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("SendingFromWebInterfaceIsNotAllowed")).'">'.$langs->trans("SendMailing").'</a>';
+					}
+					elseif (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! $user->rights->mailing->mailing_advance->send)
+					{
+						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("SendMailing").'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					}
 					else
 					{
@@ -1043,7 +1307,11 @@ else
 				{
 					if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! $user->rights->mailing->mailing_advance->send)
 					{
+<<<<<<< HEAD
 						print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("ResetMailing").'</a>';
+=======
+						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("ResetMailing").'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					}
 					else
 					{
@@ -1055,7 +1323,11 @@ else
 				{
 					if ($object->statut > 0 && (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! $user->rights->mailing->mailing_advance->delete))
 					{
+<<<<<<< HEAD
 						print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("DeleteMailing").'</a>';
+=======
+						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("DeleteMailing").'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					}
 					else
 					{
@@ -1129,7 +1401,11 @@ else
 			// Joined files
 			print '<tr><td>'.$langs->trans("MailFile").'</td><td colspan="3">';
 			// List of files
+<<<<<<< HEAD
 			$listofpaths=dol_dir_list($upload_dir,'all',0,'','','name',SORT_ASC,0);
+=======
+			$listofpaths=dol_dir_list($upload_dir, 'all', 0, '', '', 'name', SORT_ASC, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if (count($listofpaths))
 			{
 				foreach($listofpaths as $key => $val)
@@ -1152,20 +1428,31 @@ else
 			print '</table>';
 
 		    // Message
+<<<<<<< HEAD
 			print '<div style="padding-top: 10px; background: '.($object->bgcolor?(preg_match('/^#/',$object->bgcolor)?'':'#').$object->bgcolor:'white').'">';
+=======
+			print '<div style="padding-top: 10px; background: '.($object->bgcolor?(preg_match('/^#/', $object->bgcolor)?'':'#').$object->bgcolor:'white').'">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if (empty($object->bgcolor) || strtolower($object->bgcolor) == 'ffffff')	// CKEditor does not apply the color of the div into its content area
 			{
 				$readonly=1;
 				// Editeur wysiwyg
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+<<<<<<< HEAD
 				$doleditor=new DolEditor('bodyemail',$object->body,'',600,'dolibarr_mailings','',false,true,empty($conf->global->FCKEDITOR_ENABLE_MAILING)?0:1,20,'90%',$readonly);
+=======
+				$doleditor=new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', false, true, empty($conf->global->FCKEDITOR_ENABLE_MAILING)?0:1, 20, '90%', $readonly);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$doleditor->Create();
 			}
 			else print dol_htmlentitiesbr($object->body);
 			print '</div>';
 
 			dol_fiche_end();
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		else
 		{
@@ -1197,9 +1484,15 @@ else
 			// Topic
 			print '<tr><td class="titlefield">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->titre.'</td></tr>';
 			// From
+<<<<<<< HEAD
 			print '<tr><td class="titlefield">'.$langs->trans("MailFrom").'</td><td colspan="3">'.dol_print_email($object->email_from,0,0,0,0,1).'</td></tr>';
 			// To
 			print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td colspan="3">'.dol_print_email($object->email_errorsto,0,0,0,0,1).'</td></tr>';
+=======
+			print '<tr><td class="titlefield">'.$langs->trans("MailFrom").'</td><td colspan="3">'.dol_print_email($object->email_from, 0, 0, 0, 0, 1).'</td></tr>';
+			// To
+			print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td colspan="3">'.dol_print_email($object->email_errorsto, 0, 0, 0, 0, 1).'</td></tr>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			// Nb of distinct emails
 			print '<tr><td>';
@@ -1213,7 +1506,11 @@ else
 				{
 					if ($conf->global->MAILING_LIMIT_SENDBYWEB > 0)
 					{
+<<<<<<< HEAD
 						$text.=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
+=======
+						$text.=$langs->trans('LimitSendingEmailing', $conf->global->MAILING_LIMIT_SENDBYWEB);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					}
 					else
 					{
@@ -1223,7 +1520,11 @@ else
 				if (empty($nbemail)) $nbemail.=' '.img_warning('').' <font class="warning">'.$langs->trans("NoTargetYet").'</font>';
 				if ($text)
 				{
+<<<<<<< HEAD
 					print $form->textwithpicto($nbemail,$text,1,'warning');
+=======
+					print $form->textwithpicto($nbemail, $text, 1, 'warning');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 				else
 				{
@@ -1234,11 +1535,19 @@ else
 
 			// Other attributes
 			$parameters=array();
+<<<<<<< HEAD
 			$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             print $hookmanager->resPrint;
 			if (empty($reshook))
 			{
 				print $object->showOptionals($extrafields,'edit');
+=======
+			$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+            print $hookmanager->resPrint;
+			if (empty($reshook))
+			{
+				print $object->showOptionals($extrafields, 'edit');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 
 			print '</table>';
@@ -1280,7 +1589,11 @@ else
 			print '<tr><td>'.$langs->trans("MailFile").'</td>';
 			print '<td colspan="3">';
 			// List of files
+<<<<<<< HEAD
 			$listofpaths=dol_dir_list($upload_dir,'all',0,'','','name',SORT_ASC,0);
+=======
+			$listofpaths=dol_dir_list($upload_dir, 'all', 0, '', '', 'name', SORT_ASC, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			// TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
 			$out.= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
@@ -1297,7 +1610,11 @@ else
 				{
 					$out.= '<div id="attachfile_'.$key.'">';
 					$out.= img_mime($listofpaths[$key]['name']).' '.$listofpaths[$key]['name'];
+<<<<<<< HEAD
 					$out.= ' <input type="image" style="border: 0px;" src="'.img_picto($langs->trans("Search"),'delete.png','','',1).'" value="'.($key+1).'" class="removedfile" id="removedfile_'.$key.'" name="removedfile_'.$key.'" />';
+=======
+					$out.= ' <input type="image" style="border: 0px;" src="'.img_picto($langs->trans("Search"), 'delete.png', '', '', 1).'" value="'.($key+1).'" class="removedfile" id="removedfile_'.$key.'" name="removedfile_'.$key.'" />';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					$out.= '<br></div>';
 				}
 			}
@@ -1314,7 +1631,11 @@ else
 
 		    // Background color
 			print '<tr><td>'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
+<<<<<<< HEAD
 			print $htmlother->selectColor($object->bgcolor,'bgcolor','',0);
+=======
+			print $htmlother->selectColor($object->bgcolor, 'bgcolor', '', 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '</td></tr>';
 
 			print '</table>';
@@ -1326,14 +1647,22 @@ else
 			{
 				// Editeur wysiwyg
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+<<<<<<< HEAD
 				$doleditor=new DolEditor('bodyemail',$object->body,'',600,'dolibarr_mailings','',true,true,$conf->global->FCKEDITOR_ENABLE_MAILING,20,'90%');
+=======
+				$doleditor=new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', true, true, $conf->global->FCKEDITOR_ENABLE_MAILING, 20, '90%');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$doleditor->Create();
 			}
 			if ($action == 'edithtml')
 			{
 				// Editor HTML source
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+<<<<<<< HEAD
 				$doleditor=new DolEditor('bodyemail',$object->body,'',600,'dolibarr_mailings','',true,true,'ace',20,'90%');
+=======
+				$doleditor=new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', true, true, 'ace', 20, '90%');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$doleditor->Create(0, '', false, 'HTML Source', 'php');
 			}
 
@@ -1354,9 +1683,17 @@ else
 	}
 	else
 	{
+<<<<<<< HEAD
 		dol_print_error($db,$object->error);
 	}
 }
 
+=======
+		dol_print_error($db, $object->error);
+	}
+}
+
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

@@ -7,6 +7,7 @@ NewStandingOrder=Nova ordem de pagamento de débito direto
 StandingOrderToProcess=Para processar
 WithdrawalsReceipts=Encomenda de débito direto
 WithdrawalReceipt=Encomenda de Débito Direto
+<<<<<<< HEAD
 LastWithdrawalReceipts=Latest %s direct debit files
 WithdrawalsLines=Linhas de ordem de débito direto
 RequestStandingOrderToTreat=Request for direct debit payment order to process
@@ -29,6 +30,30 @@ ThirdPartyBankCode=Código Banco do Terceiro
 NoInvoiceCouldBeWithdrawed=No invoice withdrawed with success. Check that invoices are on companies with a valid default BAN and that BAN has a RUM with mode <strong>%s</strong>.
 ClassCredited=Classificar como creditado
 ClassCreditedConfirm=Está seguro de querer classificar este débito directo como realizado sobre a sua conta bancaria?
+=======
+LastWithdrawalReceipts=Últimos arquivos de débito direto %s
+WithdrawalsLines=Linhas de ordem de débito direto
+RequestStandingOrderToTreat=Pedido para ordem de pagamento por débito direto a processar
+RequestStandingOrderTreated=Pedido de ordem de pagamento por débito direto processado
+NotPossibleForThisStatusOfWithdrawReceiptORLine=Ainda não é possível. Retirar status deve ser definido como 'creditado' antes de declarar rejeitar em linhas específicas.
+NbOfInvoiceToWithdraw=N.º de fatura qualificada com pedido de débito direto em espera
+NbOfInvoiceToWithdrawWithInfo=Nº de fatura do cliente com ordens de pagamento por débito direto com informações definidas sobre a conta bancária
+InvoiceWaitingWithdraw=Fatura a aguardar por débito direto
+AmountToWithdraw=Quantidade a Levantar
+WithdrawsRefused=Débito direto recusado
+NoInvoiceToWithdraw=Não existe nenhuma fatura à espera com 'Pedidos de débito direto' abertos. Vá ao separador '%s' na ficha da fatura para fazer um pedido.
+ResponsibleUser=User Responsible
+WithdrawalsSetup=Configurar pagamento de débito direto
+WithdrawStatistics=Estatísticas de pagamento de débito direto
+WithdrawRejectStatistics=Estatísticas de pagamento de débito direto rejeitado
+LastWithdrawalReceipt=Últimos recibos de débito direto %s
+MakeWithdrawRequest=Efetuar um pedido de pagamento por débito direto
+WithdrawRequestsDone=Pedidos de pagamento por débito direto %s registrados
+ThirdPartyBankCode=Third-party bank code
+NoInvoiceCouldBeWithdrawed=Nenhuma fatura debitada com sucesso. Verifique se as faturas estão em empresas com um IBAN válido e se o IBAN tem uma UMR (Unique Mandate Reference) com o modo <strong> %s </ strong>.
+ClassCredited=Classificar como creditado
+ClassCreditedConfirm=Tem a certeza que quer classificar este débito direto como creditado na sua conta bancária?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TransData=Data de Envio
 TransMetod=Método de transmissão
 Send=Enviar
@@ -40,7 +65,11 @@ RefusedData=Data de rejeição
 RefusedReason=Motivo da rejeição
 RefusedInvoicing=Faturação da rejeição
 NoInvoiceRefused=Não cobrar a rejeição
+<<<<<<< HEAD
 InvoiceRefused=Invoice refused (Charge the rejection to customer)
+=======
+InvoiceRefused=Fatura recusada (cobrar a rejeição ao cliente)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 StatusDebitCredit=Estado do débito/crédito
 StatusWaiting=Em espera
 StatusTrans=Enviado
@@ -50,14 +79,24 @@ StatusMotif0=Não especificado
 StatusMotif1=Fundos insuficientes
 StatusMotif2=Pedido contestado
 StatusMotif3=Nenhum pedido de pagamento por débito direto
+<<<<<<< HEAD
 StatusMotif4=Encomenda de cliente
+=======
+StatusMotif4=Sales Order
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 StatusMotif5=RIB inutilizável
 StatusMotif6=Conta sem saldo
 StatusMotif7=Decisão Judicial
 StatusMotif8=Outro motivo
+<<<<<<< HEAD
 CreateForSepaFRST=Create direct debit file (SEPA FRST)
 CreateForSepaRCUR=Create direct debit file (SEPA RCUR)
 CreateAll=Create direct debit file (all)
+=======
+CreateForSepaFRST=Criar arquivo de débito direto (SEPA FRST)
+CreateForSepaRCUR=Criar arquivo de débito direto (SEPA RCUR)
+CreateAll=Criar arquivo de débito direto (todos)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CreateGuichet=Apenas escritório
 CreateBanque=Apenas banco
 OrderWaiting=À espera de tratamento
@@ -66,6 +105,7 @@ NotifyCredit=levantamento de crédito
 NumeroNationalEmetter=Número Nacional de Transmissor
 WithBankUsingRIB=Para contas bancárias usando RIB
 WithBankUsingBANBIC=Para contas bancárias usando IBAN / BIC / SWIFT
+<<<<<<< HEAD
 BankToReceiveWithdraw=Bank account to receive direct debit
 CreditDate=Crédito em
 WithdrawalFileNotCapable=Unable to generate withdrawal receipt file for your country %s (Your country is not supported)
@@ -111,4 +151,55 @@ InfoTransMessage=The direct debit payment order %s has been sent to bank by %s %
 InfoTransData=Valor: %s <br> Metode: %s <br> Data: %s
 InfoRejectSubject=Direct debit payment order refused
 InfoRejectMessage=Hello,<br><br>the direct debit payment order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%s
+=======
+BankToReceiveWithdraw=Receiving Bank Account
+CreditDate=Crédito em
+WithdrawalFileNotCapable=Não é possível gerar o arquivo de recibo de retirada para o seu país %s (Seu país não é suportado)
+ShowWithdraw=Show Direct Debit Order
+IfInvoiceNeedOnWithdrawPaymentWontBeClosed=However, if invoice has at least one direct debit payment order not yet processed, it won't be set as paid to allow prior withdrawal management.
+DoStandingOrdersBeforePayments=Essa guia permite que você solicite uma ordem de pagamento por débito direto. Uma vez feito, entre no menu Banco-> Débito Direto para administrar a ordem de pagamento por débito direto. Quando a ordem de pagamento é encerrada, o pagamento na fatura será registrado automaticamente e a fatura será encerrada se o restante a pagar for nulo.
+WithdrawalFile=arquivo retirado
+SetToStatusSent=Definir o estado como "Ficheiro Enviado"
+ThisWillAlsoAddPaymentOnInvoice=Isso também registrará os pagamentos para as faturas e os classificará como "Pago" se o restante a pagar for nulo
+StatisticsByLineStatus=Estatísticas por status de linhas
+RUM=UMR
+RUMLong=Referência de mandato exclusivo
+RUMWillBeGenerated=If empty, a UMR (Unique Mandate Reference) will be generated once the bank account information is saved.
+WithdrawMode=Modo de débito direto (FRST ou RECUR)
+WithdrawRequestAmount=Quantidade de solicitação de débito direto:
+WithdrawRequestErrorNilAmount=Não é possível criar um pedido de débito direto para o valor vazio.
+SepaMandate=Mandato de Débito Direto SEPA
+SepaMandateShort=Mandato SEPA
+PleaseReturnMandate=Por favor, devolva este formulário de mandato por e-mail para %s ou por e-mail para
+SEPALegalText=Ao assinar este formulário de mandato, você autoriza (A) %s a enviar instruções ao seu banco para debitar sua conta e (B) seu banco a debitar sua conta de acordo com as instruções de %s. Como parte de seus direitos, você tem direito a um reembolso de seu banco, de acordo com os termos e condições de seu contrato com seu banco. Um reembolso deve ser solicitado no prazo de oito semanas a partir da data em que sua conta foi debitada. Seus direitos em relação ao mandato acima são explicados em uma declaração que você pode obter do seu banco.
+CreditorIdentifier=Identificador do Credor
+CreditorName=Creditor Name
+SEPAFillForm=(B) Por favor, preencha todos os campos marcados com *
+SEPAFormYourName=O seu nome
+SEPAFormYourBAN=O nome da sua conta bancária (IBAN)
+SEPAFormYourBIC=Seu código de identificação bancária (BIC)
+SEPAFrstOrRecur=Tipo de pagamento
+ModeRECUR=Recurring payment
+ModeFRST=Pagamento único
+PleaseCheckOne=Por favor, marque apenas um
+DirectDebitOrderCreated=Ordem de débito direto %s criada
+AmountRequested=Quantidade solicitada
+SEPARCUR=SEPA CUR
+SEPAFRST=SEPA FRST
+ExecutionDate=Data de execução
+CreateForSepa=Criar ficheiro de débito direto
+ICS=Creditor Identifier CI
+END_TO_END="EndToEndId" SEPA XML tag - Unique id assigned per transaction
+USTRD="Unstructured" SEPA XML tag
+ADDDAYS=Add days to Execution Date
+
+### Notifications
+InfoCreditSubject=Pagamento da ordem de pagamento de débito direto %s pelo banco
+InfoCreditMessage=A ordem de pagamento por débito directo %s foi paga pelo banco <br> Dados do pagamento: %s
+InfoTransSubject=Transmissão da ordem de pagamento de débito direto %s para o banco
+InfoTransMessage=A ordem de pagamento por débito directo %s foi enviada para o banco por %s %s. <br> <br>
+InfoTransData=Valor: %s <br> Metode: %s <br> Data: %s
+InfoRejectSubject=Pedido de pagamento por débito direto recusado
+InfoRejectMessage=Olá, <br> <br> a ordem de pagamento de débito directo da factura  %s relacionada com a empresa %s, com uma quantidade de %s foi recusada pelo banco. <br> <br> <br> <br>%s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ModeWarning=Opção para o modo real não foi definido, nós paramos depois desta simulação

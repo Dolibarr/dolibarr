@@ -10,13 +10,22 @@ modify=modifică
 Classify=Clasează
 CategoriesArea=Tag-uri / Categorii
 ProductsCategoriesArea=Taguri/ Categorii Produse / Servicii
+<<<<<<< HEAD
 SuppliersCategoriesArea=Tag-uri/categorii Furnizori
+=======
+SuppliersCategoriesArea=Zona etichetelor/categoriilor furnizorilor
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CustomersCategoriesArea=Tag-uri / categorii Clienții
 MembersCategoriesArea=Tag-uri  / categorii Membri
 ContactsCategoriesArea=Tag-uri / Categorii Contacte
 AccountsCategoriesArea=Tag-uri / Categorii Contabilitate
 ProjectsCategoriesArea=Zona etichetelor / categoriilor de proiecte
+<<<<<<< HEAD
 SubCats=Sub-categories
+=======
+UsersCategoriesArea=Zona etichetelor / categoriilor utilizatorilor
+SubCats=Subcategorii
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CatList=Lista Tag-uri / Categorii
 NewCategory=Tag / categorie noua
 ModifCat=Modifica Tag / categoria
@@ -31,7 +40,11 @@ WasAddedSuccessfully=<b> %s</b> a fost adaugat cu succes.
 ObjectAlreadyLinkedToCategory=Elementul este deja asociat cu acest tag/ categorie.
 ProductIsInCategories=Produsul/ serviciul este asociat cu următoarele tag-uri/ categorii
 CompanyIsInCustomersCategories=Acest partener este asociat cu următoarele tag-uri/ categorii clienţi/ prospecţi
+<<<<<<< HEAD
 CompanyIsInSuppliersCategories=Acest partener este asociat cu următoarele tag-uri/ categorii furnizori
+=======
+CompanyIsInSuppliersCategories=Acest terț este legată de următoarele etichete/categorii de furnizori
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MemberIsInCategories=Acest menbru este asociat cu următoarele tag-uri/ categorii membri
 ContactIsInCategories=Acest contact este asociat cu următoarele tag-uri/ categorii contacte
 ProductHasNoCategory=Acest produs / serviciu nu este în niciun tag/ categorie
@@ -47,6 +60,7 @@ ContentsNotVisibleByAllShort=Conţinutul nu va fi vizibil pentru toţi
 DeleteCategory=Ştergere tag / categorie
 ConfirmDeleteCategory=Sigur doriți să ștergeți această etichetă / categorie?
 NoCategoriesDefined=Niciun tag / categorie definită
+<<<<<<< HEAD
 SuppliersCategoryShort=Tag  / categorie Furnizori
 CustomersCategoryShort=Tag  / categorie Clienții
 ProductsCategoryShort= Tag / categorie Produse
@@ -55,20 +69,40 @@ SuppliersCategoriesShort=Tag-uri/categorii Furnizori
 CustomersCategoriesShort=Tag-uri / categorii Clienții
 ProspectsCategoriesShort=Tag-uri / categorii prospecte
 CustomersProspectsCategoriesShort=Categorii  Clienţi / Prospecte
+=======
+SuppliersCategoryShort=Eticheta/categoria furnizorilor
+CustomersCategoryShort=Tag  / categorie Clienții
+ProductsCategoryShort= Tag / categorie Produse
+MembersCategoryShort=Tag  / categorie Membri
+SuppliersCategoriesShort=Etichetele/categoriile furnizorilor
+CustomersCategoriesShort=Tag-uri / categorii Clienții
+ProspectsCategoriesShort=Tag-uri / categorii prospecte
+CustomersProspectsCategoriesShort=Etichetele/categoriile client/proiecte
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProductsCategoriesShort=Tag-uri / categorii Produse 
 MembersCategoriesShort=Tag-uri  / categorii Membri
 ContactCategoriesShort=Tag-uri / Categorii Contacte
 AccountsCategoriesShort=Tag-uri / Categorii Contabilitate
 ProjectsCategoriesShort=Etichete / categorii de proiecte
+<<<<<<< HEAD
 ThisCategoryHasNoProduct=Această categorie nu conţine nici un produs.
 ThisCategoryHasNoSupplier=Această categorie nu conţine nici un furnizor.
+=======
+UsersCategoriesShort=Etichetele/categoriile utilizatorilor
+ThisCategoryHasNoProduct=Această categorie nu conţine nici un produs.
+ThisCategoryHasNoSupplier=Această categorie nu conține niciun furnizor.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ThisCategoryHasNoCustomer=Această categorie nu conţine nici un client.
 ThisCategoryHasNoMember=Această categorie nu conţine nici un membru.
 ThisCategoryHasNoContact=Această categorie nu conţine nici un contact
 ThisCategoryHasNoAccount=Această categorie nu conţine nici un cont
 ThisCategoryHasNoProject=Această categorie nu conține niciun proiect.
 CategId=Id Tag / Categorie
+<<<<<<< HEAD
 CatSupList=Lista Tag-uri / Categorii furnizori
+=======
+CatSupList=Lista de etichete/categorii furnizori
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CatCusList=Lista Categorii/ taguri  clienţi / prospecte
 CatProdList=Lista Tag-uri / categorii Produse 
 CatMemberList=Lista Tag-uri  / categorii Membri
@@ -81,8 +115,16 @@ DeleteFromCat=Elimina din tag-uri / categoriii
 ExtraFieldsCategories=Atribute complementare
 CategoriesSetup=Configurare Tag-uri / categorii
 CategorieRecursiv=Link automat către  tag /categoria părinte
+<<<<<<< HEAD
 CategorieRecursivHelp=Dacă este activat, produsul va fi legat către categoria părinte atunci când este adăugat în subcategorie
 AddProductServiceIntoCategory=Add  următoarele produseservicii
 ShowCategory=Arată tag / categorie
 ByDefaultInList=Implicit în listă
 ChooseCategory=Choose category
+=======
+CategorieRecursivHelp=If option is on, when you add a product into a subcategory, product will also be added into the parent category.
+AddProductServiceIntoCategory=Add  următoarele produseservicii
+ShowCategory=Arată tag / categorie
+ByDefaultInList=Implicit în listă
+ChooseCategory=Alegeți categoria
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -14,13 +14,22 @@ ServiceStatusNotLateShort=Neuplynula
 ServiceStatusLate=Probíhá, uplynula
 ServiceStatusLateShort=Vypršela
 ServiceStatusClosed=Zavřeno
+<<<<<<< HEAD
 ShowContractOfService=Show contract of service
+=======
+ShowContractOfService=Zobrazit smlouvu o službě
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Contracts=Smlouvy
 ContractsSubscriptions=Smlouvy/Objednávky
 ContractsAndLine=Smlouvy a řádky smluv
 Contract=Smlouva
+<<<<<<< HEAD
 ContractLine=Contract line
 Closing=Closing
+=======
+ContractLine=řádek smlouvy
+Closing=Uzavření
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoContracts=Žádné smlouvy
 MenuServices=Služby
 MenuInactiveServices=Služby, které nejsou aktivní
@@ -28,6 +37,7 @@ MenuRunningServices=Spuštěné služby
 MenuExpiredServices=Expirované služby
 MenuClosedServices=Uzavřené služby
 NewContract=Nová smlouva
+<<<<<<< HEAD
 NewContractSubscription=New contract/subscription
 AddContract=Vytvoření smlouvy
 DeleteAContract=Odstranit smlouvu
@@ -41,6 +51,21 @@ ConfirmCloseService=Are you sure you want to close this service with date <b>%s<
 ValidateAContract=Ověření smlouvy
 ActivateService=Aktivace služby
 ConfirmActivateService=Are you sure you want to activate this service with date <b>%s</b>?
+=======
+NewContractSubscription=Nová smlouva / předplatné
+AddContract=Vytvoření smlouvy
+DeleteAContract=Odstranit smlouvu
+ActivateAllOnContract=Aktivujte všechny služby
+CloseAContract=Zavřít smlouvu
+ConfirmDeleteAContract=Opravdu chcete smazat tuto smlouvu a všechny její služby?
+ConfirmValidateContract=Opravdu chcete tuto smlouvu ověřit pod jménem  <b>%s</b>?
+ConfirmActivateAllOnContract=Otevřou e všechny služby (dosud neaktivní). Opravdu chcete otevřít všechny služby?
+ConfirmCloseContract=Tímto zavřete všechny služby (aktivní nebo ne). Opravdu chcete uzavřít tuto smlouvu?
+ConfirmCloseService=Opravdu chcete tuto službu zavřít s datem  <b>%s</b>?
+ValidateAContract=Ověření smlouvy
+ActivateService=Aktivace služby
+ConfirmActivateService=Jste si jisti, že chcete aktivovat tuto službu s datem <b>%s</b> ?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 RefContract=Reference smlouvy
 DateContract=Datum smlouvy
 DateServiceActivate=Datum aktivace služby
@@ -51,8 +76,13 @@ ListOfClosedServices=Seznam uzavřených služeb
 ListOfRunningServices=Seznam spuštěných služeb
 NotActivatedServices=Neaktivní služby (u ověřených smluv)
 BoardNotActivatedServices=Služby pro aktivaci u ověřených smluv
+<<<<<<< HEAD
 LastContracts=Latest %s contracts
 LastModifiedServices=Latest %s modified services
+=======
+LastContracts=Nejnovější %s smlouvy
+LastModifiedServices=Nejnovější %s modifikované služby
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ContractStartDate=Datum zahájení
 ContractEndDate=Datum ukončení
 DateStartPlanned=Plánované datum zahájení
@@ -64,6 +94,7 @@ DateStartRealShort=Skutečné datum zahájení
 DateEndReal=Skutečné datum ukončení
 DateEndRealShort=Skutečné datum ukončení
 CloseService=Zavřít služby
+<<<<<<< HEAD
 BoardRunningServices=Prošlé spuštěné služby
 ServiceStatus=Stav služby
 DraftContracts=Koncepty smlouvy
@@ -75,6 +106,20 @@ ConfirmDeleteContractLine=Are you sure you want to delete this contract line?
 MoveToAnotherContract=Přesuňte službu do jiné smlouvy.
 ConfirmMoveToAnotherContract=Vybral jste novou cílovou smlouvu, a potvrzujete vlastní krví, že chcete přesunout tuto službu do tohoto smluvního vztahu.
 ConfirmMoveToAnotherContractQuestion=Choose in which existing contract (of same third party), you want to move this service to?
+=======
+BoardRunningServices=Spuštěné služby
+BoardExpiredServices=Vypršené služby
+ServiceStatus=Stav služby
+DraftContracts=Koncepty smlouvy
+CloseRefusedBecauseOneServiceActive=Smlouvu nelze uzavřít, protože u ní ní existuje alespoň jedna otevřená služba
+ActivateAllContracts=Aktivujte všechny kontrakty
+CloseAllContracts=Zavřete všechny smluvní řádky
+DeleteContractLine=Odstranění řádku smlouvy
+ConfirmDeleteContractLine=Jste si jisti, že chcete smazat tuto řádku smlouvy?
+MoveToAnotherContract=Přesuňte službu do jiné smlouvy.
+ConfirmMoveToAnotherContract=Vybral jste novou cílovou smlouvu, a potvrzujete vlastní krví, že chcete přesunout tuto službu do tohoto smluvního vztahu.
+ConfirmMoveToAnotherContractQuestion=Vybral jste ze  stávajících smluv (z téhož subjektu) tu, na kterou chcete přesunout tuto službu?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PaymentRenewContractId=Obnovit smlouvu na řádku (číslo %s)
 ExpiredSince=Datum expirace
 NoExpiredServices=Žádné expirované aktivní služby
@@ -85,10 +130,17 @@ NoteListOfYourExpiredServices=Tento seznam obsahuje pouze služby smluv pro tře
 StandardContractsTemplate=Šablony standardních smluv
 ContactNameAndSignature=Pro %s,  jméno a podpis:
 OnlyLinesWithTypeServiceAreUsed=Pouze řádky s typem  "Služby" budou zkopírovány.
+<<<<<<< HEAD
 CloneContract=Clone contract
 ConfirmCloneContract=Are you sure you want to clone the contract <b>%s</b>?
 LowerDateEndPlannedShort=Lower planned end date of active services
 SendContractRef=Contract information __REF__
+=======
+ConfirmCloneContract=Opravdu chcete vytvořit kopii smlouvy<b>  %s </b>?
+LowerDateEndPlannedShort=Nižší plánovaný konečný den aktivních služeb
+SendContractRef=Informace o zakázce __REF__
+OtherContracts=Ostatní smlouvy
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Obchodní zástupce podepsal smlouvu
 TypeContact_contrat_internal_SALESREPFOLL=Obchodní zástupce následující-up smlouva

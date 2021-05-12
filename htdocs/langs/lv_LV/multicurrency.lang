@@ -4,6 +4,7 @@ ErrorAddRateFail=Pievienotās likmes kļūda
 ErrorAddCurrencyFail=Pievienotajā valūtā radusies kļūda
 ErrorDeleteCurrencyFail=Kļūda dzēšot
 multicurrency_syncronize_error=Sinhronizācijas kļūda: %s
+<<<<<<< HEAD
 MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE=Use date of document to find currency rate, instead of using latest known rate
 multicurrency_useOriginTx=When an object is created from another, keep the original rate of source object (otherwise use the latest known rate)
 CurrencyLayerAccount=CurrencyLayer API
@@ -18,3 +19,19 @@ MulticurrencyReceived=Received, original currency
 MulticurrencyRemainderToTake=Atlikušā summa, oriģinālā valūtā
 MulticurrencyPaymentAmount=Maksājuma summa, oriģinālajā valūtā
 AmountToOthercurrency=Amount To (in currency of receiving account)
+=======
+MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE=Izmantojiet dokumenta datumu, lai atrastu valūtas kursu, nevis izmantojiet jaunāko zināmo kursu
+multicurrency_useOriginTx=Ja objekts tiek izveidots no cita, saglabājiet sākotnējo likmi no avota objekta (citādi izmantojiet jaunāko zināmo likmi)
+CurrencyLayerAccount=CurrencyLayer API
+CurrencyLayerAccount_help_to_synchronize=Lai izmantotu šo funkciju, vietnē %s ir jāizveido konts. <br> Iegūstiet savu <b>API atslēgu</b> . <br> Ja izmantojat bezmaksas kontu, nevar mainīt <b>avota valūtu</b> (pēc noklusējuma USD). <br> Ja jūsu galvenā valūta nav USD, programma automātiski pārrēķinās to. <br><br> Jūs esat ierobežots līdz 1000 sinhronizācijām mēnesī.
+multicurrency_appId=API atslēga
+multicurrency_appCurrencySource=Avota valūta
+multicurrency_alternateCurrencySource=Alternatīva avota valūta
+CurrenciesUsed=Izmantotās valūtas
+CurrenciesUsed_help_to_add=Pievienojiet dažādas valūtas un likmes, kas jāizmanto <b> priekšlikumiem</b>, <b> pasūtījumiem</b> utt.
+rate=likme
+MulticurrencyReceived=Saņemta oriģinālā valūta
+MulticurrencyRemainderToTake=Atlikušā summa, oriģināla valūta
+MulticurrencyPaymentAmount=Maksājuma summa, oriģinālajā valūtā
+AmountToOthercurrency=Summa līdz (konta saņemšanas valūtā)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -37,7 +37,11 @@ $cancel = GETPOST('cancel', 'alpha');
 if (!$user->rights->ecm->setup) accessforbidden();
 
 // Get parameters
+<<<<<<< HEAD
 $socid = GETPOST("socid","int");
+=======
+$socid = GETPOST("socid", "int");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Security check
 if ($user->societe_id > 0)
@@ -46,9 +50,15 @@ if ($user->societe_id > 0)
     $socid = $user->societe_id;
 }
 
+<<<<<<< HEAD
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
+=======
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -56,25 +66,43 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="label";
 
+<<<<<<< HEAD
 $section=GETPOST("section",'alpha');
 if (! $section)
 {
     dol_print_error('','Error, section parameter missing');
+=======
+$section=GETPOST("section", 'alpha');
+if (! $section)
+{
+    dol_print_error('', 'Error, section parameter missing');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     exit;
 }
 $urlfile=GETPOST("urlfile");
 if (! $urlfile)
 {
+<<<<<<< HEAD
     dol_print_error('',"ErrorParamNotDefined");
+=======
+    dol_print_error('', "ErrorParamNotDefined");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     exit;
 }
 
 // Load ecm object
 $ecmdir = new EcmDirectory($db);
+<<<<<<< HEAD
 $result=$ecmdir->fetch(GETPOST("section",'alpha'));
 if (! $result > 0)
 {
     dol_print_error($db,$ecmdir->error);
+=======
+$result=$ecmdir->fetch(GETPOST("section", 'alpha'));
+if (! $result > 0)
+{
+    dol_print_error($db, $ecmdir->error);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     exit;
 }
 $relativepath=$ecmdir->getRelativePath();
@@ -150,7 +178,11 @@ if ($action == 'update')
         if (! $result)
         {
             $langs->load('errors');
+<<<<<<< HEAD
             setEventMessages($langs->trans('ErrorFailToRenameFile',$oldfile,$newfile), null, 'errors');
+=======
+            setEventMessages($langs->trans('ErrorFailToRenameFile', $oldfile, $newfile), null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $error++;
         }
 
@@ -264,7 +296,11 @@ while ($tmpecmdir && $result > 0)
 	$i++;
 }
 
+<<<<<<< HEAD
 $s = img_picto('','object_dir').' <a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$langs->trans("ECMRoot").'</a> -> '.$s.' -> ';
+=======
+$s = img_picto('', 'object_dir').' <a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$langs->trans("ECMRoot").'</a> -> '.$s.' -> ';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($action == 'edit') $s .= '<input type="text" name="label" class="quatrevingtpercent" value="'.$urlfile.'">';
 else $s .= $urlfile;
 
@@ -276,7 +312,11 @@ print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 print '<table class="border" width="100%">';
 print '<tr><td class="titlefield">'.$langs->trans("ECMCreationDate").'</td><td>';
+<<<<<<< HEAD
 print dol_print_date(dol_filemtime($fullpath),'dayhour');
+=======
+print dol_print_date(dol_filemtime($fullpath), 'dayhour');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</td></tr>';
 /*print '<tr><td>'.$langs->trans("ECMDirectoryForFiles").'</td><td>';
 print '/ecm/'.$relativepath;
@@ -305,7 +345,11 @@ else
 print '</td></tr>';
 
 // Define $urlwithroot
+<<<<<<< HEAD
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+=======
+$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
@@ -318,7 +362,11 @@ if ($forcedownload) $rellink.='&attachment=1';
 if (! empty($object->entity)) $rellink.='&entity='.$object->entity;
 $rellink.='&file='.urlencode($filepath);
 $fulllink=$urlwithroot.$rellink;
+<<<<<<< HEAD
 print img_picto('','object_globe.png').' ';
+=======
+print img_picto('', 'object_globe.png').' ';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($action != 'edit') print '<input type="text" class="quatrevingtpercent" id="downloadinternallink" name="downloadinternellink" value="'.dol_escape_htmltag($fulllink).'">';
 else print $fulllink;
 if ($action != 'edit') print ' <a href="'.$fulllink.'">'.$langs->trans("Download").'</a>';		// No target here.
@@ -343,7 +391,11 @@ if (! empty($object->share))
 		//if (! empty($object->ref))       $fulllink.='&hashn='.$object->ref;		// Hash of file path
 		//elseif (! empty($object->label)) $fulllink.='&hashc='.$object->label;		// Hash of file content
 
+<<<<<<< HEAD
 		print img_picto('','object_globe.png').' ';
+=======
+		print img_picto('', 'object_globe.png').' ';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if ($action != 'edit') print '<input type="text" class="quatrevingtpercent" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'">';
 		else print $fulllink;
 		if ($action != 'edit') print ' <a href="'.$fulllink.'">'.$langs->trans("Download").'</a>';	// No target here
@@ -389,8 +441,12 @@ if ($action == 'edit')
 // Confirmation de la suppression d'une ligne categorie
 if ($action == 'delete_file')
 {
+<<<<<<< HEAD
     print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.urlencode($section), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile',$urlfile), 'confirm_deletefile', '', 1, 1);
 
+=======
+    print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.urlencode($section), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile', $urlfile), 'confirm_deletefile', '', 1, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 if ($action != 'edit')
@@ -411,7 +467,11 @@ if ($action != 'edit')
 	}
 	else
 	{
+<<<<<<< HEAD
 		print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
+=======
+		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 */
 	print '</div>';

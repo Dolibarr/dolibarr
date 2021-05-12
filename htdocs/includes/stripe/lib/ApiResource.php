@@ -67,6 +67,7 @@ abstract class ApiResource extends StripeObject
     }
 
     /**
+<<<<<<< HEAD
      * @return string The name of the class, with namespacing and underscores
      *    stripped.
      */
@@ -91,6 +92,8 @@ abstract class ApiResource extends StripeObject
     }
 
     /**
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      * @return string The base URL for the given class.
      */
     public static function baseUrl()
@@ -103,7 +106,13 @@ abstract class ApiResource extends StripeObject
      */
     public static function classUrl()
     {
+<<<<<<< HEAD
         $base = static::className();
+=======
+        // Replace dots with slashes for namespaced resources, e.g. if the object's name is
+        // "foo.bar", then its URL will be "/v1/foo/bars".
+        $base = str_replace('.', '/', static::OBJECT_NAME);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         return "/v1/${base}s";
     }
 

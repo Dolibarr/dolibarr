@@ -17,14 +17,24 @@
         "php": ">=5.0.0"
     },
     "require-dev": {
+<<<<<<< HEAD
         "phpunit/phpunit": "*",
         "johnkary/phpunit-speedtrap": "~1.0@dev",
         "codeclimate/php-test-reporter": "dev-master"
+=======
+        "phpunit/phpunit": "~4.8.35||~5.7"
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     },
     "autoload": {
         "classmap": ["Mobile_Detect.php"],
         "psr-0": {
             "Detection": "namespaced/"
         }
+<<<<<<< HEAD
+=======
+    },
+    "archive": {
+      "exclude": ["docs", "examples", "export"]
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 }

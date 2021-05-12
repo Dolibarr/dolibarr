@@ -32,7 +32,20 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 {
 	public $family = 'system';
 	public $description = "Triggers of this module add action for BlockedLog module.";
+<<<<<<< HEAD
 	public $version = self::VERSION_DOLIBARR;
+=======
+
+	/**
+	 * Version of the trigger
+	 * @var string
+	 */
+	public $version = self::VERSION_DOLIBARR;
+
+	/**
+	 * @var string Image of the trigger
+	 */
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	public $picto = 'technic';
 
 	/**
@@ -47,10 +60,17 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
+<<<<<<< HEAD
         if (empty($conf->blockedlog->enabled)) return 0;     // Module not active, we do nothing
 
 		// Test if event/record is qualified
 		$listofqualifiedelement = array('facture', 'don', 'payment', 'payment_donation', 'subscription','payment_various');
+=======
+		if (empty($conf->blockedlog->enabled)) return 0;     // Module not active, we do nothing
+
+		// Test if event/record is qualified
+		$listofqualifiedelement = array('facture', 'don', 'payment', 'payment_donation', 'subscription', 'payment_various', 'cashcontrol');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if (! in_array($object->element, $listofqualifiedelement)) return 1;
 
 		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
@@ -67,11 +87,21 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		// Event/record is qualified
 		$qualified = 0;
 		$amounts = 0;
+<<<<<<< HEAD
 		if ($action==='BILL_VALIDATE' || $action==='BILL_DELETE' || $action === 'BILL_SENTBYMAIL'
 			|| $action==='BILL_SUPPLIER_VALIDATE' || $action==='BILL_SUPPLIER_DELETE' || $action === 'BILL_SUPPLIER_SENTBYMAIL'
 			|| $action==='MEMBER_SUBSCRIPTION_CREATE' || $action==='MEMBER_SUBSCRIPTION_MODIFY' || $action==='MEMBER_SUBSCRIPTION_DELETE'
 			|| $action==='DON_VALIDATE' || $action==='DON_MODIFY' || $action==='DON_DELETE'
 			|| (in_array($object->element, array('facture','suplier_invoice')) && $action === 'DOC_DOWNLOAD') || (in_array($object->element, array('facture','suplier_invoice')) && $action === 'DOC_PREVIEW')
+=======
+		if ($action==='BILL_VALIDATE' || (($action==='BILL_DELETE' || $action === 'BILL_SENTBYMAIL') && $object->statut != 0)
+		    || $action==='BILL_SUPPLIER_VALIDATE' || (($action==='BILL_SUPPLIER_DELETE' || $action === 'BILL_SUPPLIER_SENTBYMAIL') && $object->statut != 0)
+		    || $action==='MEMBER_SUBSCRIPTION_CREATE' || $action==='MEMBER_SUBSCRIPTION_MODIFY' || $action==='MEMBER_SUBSCRIPTION_DELETE'
+		    || $action==='DON_VALIDATE' || (($action==='DON_MODIFY' || $action==='DON_DELETE') && $object->statut != 0)
+		    || $action==='CASHCONTROL_VALIDATE'
+		    || (in_array($object->element, array('facture','supplier_invoice')) && $action === 'DOC_DOWNLOAD' && $object->statut != 0)
+		    || (in_array($object->element, array('facture','supplier_invoice')) && $action === 'DOC_PREVIEW' && $object->statut != 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		)
 		{
 			$qualified++;
@@ -79,6 +109,13 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			if (in_array($action, array(
 				'MEMBER_SUBSCRIPTION_CREATE','MEMBER_SUBSCRIPTION_MODIFY','MEMBER_SUBSCRIPTION_DELETE',
 				'DON_VALIDATE','DON_MODIFY','DON_DELETE'))) $amounts = (double) $object->amount;
+<<<<<<< HEAD
+=======
+			elseif ($action == 'CASHCONTROL_VALIDATE')
+			{
+				$amounts = (double) $object->cash + (double) $object->cheque + (double) $object->card;
+			}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			else $amounts = (double) $object->total_ttc;
 		}
 		/*if ($action === 'BILL_PAYED' || $action==='BILL_UNPAYED'
@@ -94,11 +131,19 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			$amounts = 0;
 			if(!empty($object->amounts)) {
 				foreach($object->amounts as $amount) {
+<<<<<<< HEAD
 					$amounts+= price2num($amount);
 				}
 			}
 		}
 		elseif (strpos($action,'PAYMENT')!==false && ! in_array($action, array('PAYMENT_ADD_TO_BANK')))
+=======
+					$amounts += price2num($amount);
+				}
+			}
+		}
+		elseif (strpos($action, 'PAYMENT')!==false && ! in_array($action, array('PAYMENT_ADD_TO_BANK')))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			$qualified++;
 			$amounts = (double) $object->amount;
@@ -133,5 +178,8 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			return 1;
 		}
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

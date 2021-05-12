@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2013	   Philippe Grand	    <philippe.grand@atoo-net.com>
  *
@@ -41,7 +45,11 @@ class modExpedition extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
+<<<<<<< HEAD
 	function __construct($db)
+=======
+	public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf, $user;
 
@@ -49,9 +57,15 @@ class modExpedition extends DolibarrModules
 		$this->numero = 80;
 
 		$this->family = "crm";
+<<<<<<< HEAD
 		$this->module_position = 40;
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
+=======
+		$this->module_position = '40';
+		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->description = "Gestion des expeditions";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -229,9 +243,15 @@ class modExpedition extends DolibarrModules
 
 		include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 		$shipment=new Commande($this->db);
+<<<<<<< HEAD
 		$contact_arrays=$shipment->liste_type_contact('external','',0,0,'');
 		if (is_array($contact_arrays) && count($contact_arrays)>0){
 			$idcontacts=join(',',array_keys($shipment->liste_type_contact('external','',0,0,'')));
+=======
+		$contact_arrays=$shipment->liste_type_contact('external', '', 0, 0, '');
+		if (is_array($contact_arrays) && count($contact_arrays)>0){
+			$idcontacts=join(',', array_keys($shipment->liste_type_contact('external', '', 0, 0, '')));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		} else {
 			$idcontacts=0;
 		}
@@ -283,6 +303,11 @@ class modExpedition extends DolibarrModules
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		$keyforselect='expeditiondet'; $keyforelement='shipment_line'; $keyforaliasextra='extra2';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+<<<<<<< HEAD
+=======
+		$keyforselect='product'; $keyforelement='product'; $keyforaliasextra='extraprod';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'expedition as c';
@@ -295,6 +320,10 @@ class modExpedition extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'expeditiondet_extrafields as extra2 ON ed.rowid = extra2.fk_object';
 		$this->export_sql_end[$r] .=' , '.MAIN_DB_PREFIX.'commandedet as cd';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on cd.fk_product = p.rowid';
+<<<<<<< HEAD
+=======
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields as extraprod ON p.rowid = extraprod.fk_object';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if ($idcontacts && ! empty($conf->global->SHIPMENT_ADD_CONTACTS_IN_EXPORT))
 		{
 		  $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'element_contact as ee ON ee.element_id = cd.fk_commande AND ee.fk_c_type_contact IN ('.$idcontacts.')';
@@ -308,6 +337,7 @@ class modExpedition extends DolibarrModules
 
 
 	/**
+<<<<<<< HEAD
 	 *		Function called when module is enabled.
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *		It also creates data directories
@@ -316,6 +346,16 @@ class modExpedition extends DolibarrModules
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
 	function init($options='')
+=======
+	 *  Function called when module is enabled.
+	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *  It also creates data directories
+	 *
+     *  @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *  @return     int             	1 if OK, 0 if KO
+	 */
+	public function init($options = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf,$langs;
 
@@ -331,11 +371,19 @@ class modExpedition extends DolibarrModules
 		{
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
+<<<<<<< HEAD
 			$result=dol_copy($src,$dest,0,0);
 			if ($result < 0)
 			{
 				$langs->load("errors");
 				$this->error=$langs->trans('ErrorFailToCopyFile',$src,$dest);
+=======
+			$result=dol_copy($src, $dest, 0, 0);
+			if ($result < 0)
+			{
+				$langs->load("errors");
+				$this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				return 0;
 			}
 		}
@@ -349,6 +397,10 @@ class modExpedition extends DolibarrModules
 			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[3][2])."','delivery',".$conf->entity.")",
 		);
 
+<<<<<<< HEAD
 		return $this->_init($sql,$options);
+=======
+		return $this->_init($sql, $options);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 }

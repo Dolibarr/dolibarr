@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2011-2012 Regis Houssin  <regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2011-2012 Regis Houssin  <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,18 +24,32 @@
  *       \brief      File to save field value
  */
 
+<<<<<<< HEAD
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
+=======
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 
+<<<<<<< HEAD
 $field			= GETPOST('field','alpha',2);
 $element		= GETPOST('element','alpha',2);
 $table_element	= GETPOST('table_element','alpha',2);
 $fk_element		= GETPOST('fk_element','alpha',2);
+=======
+$field			= GETPOST('field', 'alpha', 2);
+$element		= GETPOST('element', 'alpha', 2);
+$table_element	= GETPOST('table_element', 'alpha', 2);
+$fk_element		= GETPOST('fk_element', 'alpha', 2);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 /* Example:
 field:editval_ref_customer (8 first chars will removed to know name of property)
@@ -58,12 +76,21 @@ top_httphead();
 // Load original field value
 if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($fk_element))
 {
+<<<<<<< HEAD
 	$ext_element		= GETPOST('ext_element','alpha',2);
 	$field				= substr($field, 8); // remove prefix val_
 	$type				= GETPOST('type','alpha',2);
 	$value				= ($type == 'ckeditor' ? GETPOST('value','',2) : GETPOST('value','alpha',2));
 	$loadmethod			= GETPOST('loadmethod','alpha',2);
 	$savemethod			= GETPOST('savemethod','alpha',2);
+=======
+	$ext_element		= GETPOST('ext_element', 'alpha', 2);
+	$field				= substr($field, 8); // remove prefix val_
+	$type				= GETPOST('type', 'alpha', 2);
+	$value				= ($type == 'ckeditor' ? GETPOST('value', '', 2) : GETPOST('value', 'alpha', 2));
+	$loadmethod			= GETPOST('loadmethod', 'alpha', 2);
+	$savemethod			= GETPOST('savemethod', 'alpha', 2);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$savemethodname		= (! empty($savemethod) ? $savemethod : 'setValueFrom');
 	$newelement			= $element;
 
@@ -72,13 +99,18 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 	$return=array();
 	$error=0;
 
+<<<<<<< HEAD
 	if ($element != 'order_supplier' && $element != 'invoice_supplier' && preg_match('/^([^_]+)_([^_]+)/i',$element,$regs))
+=======
+	if ($element != 'order_supplier' && $element != 'invoice_supplier' && preg_match('/^([^_]+)_([^_]+)/i', $element, $regs))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$element = $regs[1];
 		$subelement = $regs[2];
 	}
 
 	if ($element == 'propal') $newelement = 'propale';
+<<<<<<< HEAD
 	else if ($element == 'fichinter') $newelement = 'ficheinter';
 	else if ($element == 'product') $newelement = 'produit';
 	else if ($element == 'member') $newelement = 'adherent';
@@ -87,6 +119,16 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 		$subelement = 'commande';
 	}
 	else if ($element == 'invoice_supplier') {
+=======
+	elseif ($element == 'fichinter') $newelement = 'ficheinter';
+	elseif ($element == 'product') $newelement = 'produit';
+	elseif ($element == 'member') $newelement = 'adherent';
+	elseif ($element == 'order_supplier') {
+		$newelement = 'fournisseur';
+		$subelement = 'commande';
+	}
+	elseif ($element == 'invoice_supplier') {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$newelement = 'fournisseur';
 		$subelement = 'facture';
 	}
@@ -131,6 +173,7 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 				$return['error'] = $langs->trans('ErrorBadValue');
 			}
 		}
+<<<<<<< HEAD
 		else if ($type == 'datepicker')
 		{
 			$timestamp	= GETPOST('timestamp','int',2);
@@ -138,6 +181,15 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 			$newvalue	= ($timestamp / 1000);
 		}
 		else if ($type == 'select')
+=======
+		elseif ($type == 'datepicker')
+		{
+			$timestamp	= GETPOST('timestamp', 'int', 2);
+			$format		= 'date';
+			$newvalue	= ($timestamp / 1000);
+		}
+		elseif ($type == 'select')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			$loadmethodname	= 'load_cache_'.$loadmethod;
 			$loadcachename	= 'cache_'.$loadmethod;
@@ -167,7 +219,11 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 			else
 			{
 				$module = $subelement = $ext_element;
+<<<<<<< HEAD
 				if (preg_match('/^([^_]+)_([^_]+)/i',$ext_element,$regs))
+=======
+				if (preg_match('/^([^_]+)_([^_]+)/i', $ext_element, $regs))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				{
 					$module = $regs[1];
 					$subelement = $regs[2];
@@ -211,7 +267,11 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 			if ($ret > 0)
 			{
 				if ($type == 'numeric') $value = price($newvalue);
+<<<<<<< HEAD
 				else if ($type == 'textarea') $value = dol_nl2br($newvalue);
+=======
+				elseif ($type == 'textarea') $value = dol_nl2br($newvalue);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				$return['value'] = $value;
 				$return['view'] = (! empty($view) ? $view : $value);
@@ -229,4 +289,7 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 		echo $langs->trans('NotEnoughPermissions');
 	}
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

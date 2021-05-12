@@ -7,10 +7,17 @@ ProjectsArea=Project omgeving
 ProjectStatus=Project status
 SharedProject=Iedereen
 PrivateProject=Projectcontacten
+<<<<<<< HEAD
 ProjectsImContactFor=Projects I'm explicitely a contact of
 AllAllowedProjects=All project I can read (mine + public)
 AllProjects=Alle projecten
 MyProjectsDesc=This view is limited to projects you are a contact for
+=======
+ProjectsImContactFor=Projects for I am explicitly a contact
+AllAllowedProjects=Alle projecten die ik kan lezen (mine + public)
+AllProjects=Alle projecten
+MyProjectsDesc=Deze weergave is beperkt tot projecten waarvan u een contactpersoon bent
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProjectsPublicDesc=Deze weergave toont alle projecten waarvoor u gerechtigd bent deze in te zien.
 TasksOnProjectsPublicDesc=Dit overzicht laat alle taken zien van projecten waarvoor u gemachtigd bent.
 ProjectsPublicTaskDesc=Deze weergave toont alle projecten en taken die je mag lezen.
@@ -32,21 +39,38 @@ DeleteATask=Taak verwijderen
 ConfirmDeleteAProject=Weet u zeker dat u dit project wilt verwijderen?
 ConfirmDeleteATask=Weet u zeker dat u deze taak wilt verwijderen?
 OpenedProjects=Projecten in bewerking
+<<<<<<< HEAD
 OpenedTasks=Open tasks
 OpportunitiesStatusForOpenedProjects=Kansen bij projecten in bewerking per status
 OpportunitiesStatusForProjects=Opportunities amount of projects by status
+=======
+OpenedTasks=Open taken
+OpportunitiesStatusForOpenedProjects=Leads amount of open projects by status
+OpportunitiesStatusForProjects=Leads amount of projects by status
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShowProject=Toon project
 ShowTask=Toon taak
 SetProject=Stel project in
 NoProject=Geen enkel project gedefinieerd of in eigendom
+<<<<<<< HEAD
 NbOfProjects=Aantal projecten
 NbOfTasks=Aantal taken
+=======
+NbOfProjects=No. of projects
+NbOfTasks=No. of tasks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TimeSpent=Bestede tijd
 TimeSpentByYou=Uw tijdsbesteding
 TimeSpentByUser=Gebruikers tijdsbesteding
 TimesSpent=Bestede tijd
+<<<<<<< HEAD
 RefTask=Ref. taak
 LabelTask=Label taak
+=======
+TaskId=Task ID
+RefTask=Task ref.
+LabelTask=Task label
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TaskTimeSpent=Tijd besteed aan taken
 TaskTimeUser=Gebruiker
 TaskTimeNote=Notitie
@@ -56,6 +80,12 @@ WorkloadNotDefined=Workload niet gedefinieerd
 NewTimeSpent=Bestede tijd
 MyTimeSpent=Mijn bestede tijd
 BillTime=Bill the time spent
+<<<<<<< HEAD
+=======
+BillTimeShort=Bill time
+TimeToBill=Time not billed
+TimeBilled=Time billed
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Tasks=Taken
 Task=Taak
 TaskDateStart=Taak startdatum
@@ -79,6 +109,7 @@ GoToListOfTimeConsumed=Go to list of time consumed
 GoToListOfTasks=Go to list of tasks
 GoToGanttView=Go to Gantt view
 GanttView=Gantt View
+<<<<<<< HEAD
 ListProposalsAssociatedProject=Lijst van aan het project verbonden offertes
 ListOrdersAssociatedProject=Lijst met relaties gekoppeld aan dit project
 ListInvoicesAssociatedProject=Lijst met facturen gekoppeld aan dit project
@@ -92,6 +123,22 @@ ListExpenseReportsAssociatedProject=Lijst van onkostennota's in verband met het 
 ListDonationsAssociatedProject=Lijst van donaties in verband met het project
 ListVariousPaymentsAssociatedProject=List of miscellaneous payments associated with the project
 ListActionsAssociatedProject=Lijst van aan het project verbonden acties
+=======
+ListProposalsAssociatedProject=List of the commercial proposals related to the project
+ListOrdersAssociatedProject=List of sales orders related to the project
+ListInvoicesAssociatedProject=List of customer invoices related to the project
+ListPredefinedInvoicesAssociatedProject=List of customer template invoices related to the project
+ListSupplierOrdersAssociatedProject=List of purchase orders related to the project
+ListSupplierInvoicesAssociatedProject=List of vendor invoices related to the project
+ListContractAssociatedProject=List of contracts related to the project
+ListShippingAssociatedProject=List of shippings related to the project
+ListFichinterAssociatedProject=List of interventions related to the project
+ListExpenseReportsAssociatedProject=List of expense reports related to the project
+ListDonationsAssociatedProject=List of donations related to the project
+ListVariousPaymentsAssociatedProject=List of miscellaneous payments related to the project
+ListSalariesAssociatedProject=List of payments of salaries related to the project
+ListActionsAssociatedProject=List of events related to the project
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ListTaskTimeUserProject=List of time consumed on tasks of project
 ListTaskTimeForTask=List of time consumed on task
 ActivityOnProjectToday=Activity on project today
@@ -112,7 +159,11 @@ ConfirmCloseAProject=Weet u zeker dat u dit project wilt afsluiten?
 AlsoCloseAProject=Also close project (keep it open if you still need to follow production tasks on it)
 ReOpenAProject=Project heropenen
 ConfirmReOpenAProject=Weet u zeker dat u dit project wilt her-openen?
+<<<<<<< HEAD
 ProjectContact=Projectcontacten
+=======
+ProjectContact=Contacten van het project
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TaskContact=Task contacts
 ActionsOnProject=Acties in het project
 YouAreNotContactOfProject=U bent geen contactpersoon van dit privé project
@@ -121,15 +172,23 @@ DeleteATimeSpent=Verwijder gespendeerde tijd
 ConfirmDeleteATimeSpent=Weet u zeker dat u gebruikte tijd wilt verwijderen?
 DoNotShowMyTasksOnly=Bekijk ook taken niet aan mij toegewezen
 ShowMyTasksOnly=Bekijk alleen taken die aan mij toegewezen
+<<<<<<< HEAD
 TaskRessourceLinks=Contacts task
+=======
+TaskRessourceLinks=Contacts of task
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProjectsDedicatedToThisThirdParty=Projecten gewijd aan deze derde partij
 NoTasks=Geen taken voor dit project
 LinkedToAnotherCompany=Gekoppeld aan een andere derde partij
 TaskIsNotAssignedToUser=Task not assigned to user. Use button '<strong>%s</strong>' to assign task now.
 ErrorTimeSpentIsEmpty=Gespendeerde tijd is leeg
 ThisWillAlsoRemoveTasks=Deze actie zal ook alle taken van het project <b>(%s</b> taken op het moment) en alle ingangen van de tijd doorgebracht.
+<<<<<<< HEAD
 IfNeedToUseOhterObjectKeepEmpty=Als sommige objecten (factuur, order, ...), die behoren tot een andere derde, moet worden gekoppeld aan het project te maken, houden deze leeg naar het project dat met meerdere derden.
 CloneProject=Kloon project
+=======
+IfNeedToUseOtherObjectKeepEmpty=Als sommige objecten (factuur, order, ...), die behoren tot een andere derde, moet worden gekoppeld aan het project te maken, houden deze leeg naar het project dat met meerdere derden.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CloneTasks=Kloon taken
 CloneContacts=Kloon contacten
 CloneNotes=Kloon notities
@@ -146,6 +205,7 @@ ProjectModifiedInDolibarr=Project %s aangepast
 TaskCreatedInDolibarr=Taak %s gecreëerd
 TaskModifiedInDolibarr=Taak %s gewijzigd
 TaskDeletedInDolibarr=Taak %s verwijderd
+<<<<<<< HEAD
 OpportunityStatus=Opportunity status
 OpportunityStatusShort=Opp. status
 OpportunityProbability=Opportunity probability
@@ -154,6 +214,16 @@ OpportunityAmount=Opportunity amount
 OpportunityAmountShort=Opp. bedrag
 OpportunityAmountAverageShort=Average Opp. amount
 OpportunityAmountWeigthedShort=Weighted Opp. amount
+=======
+OpportunityStatus=Lead status
+OpportunityStatusShort=Lead status
+OpportunityProbability=Lead probability
+OpportunityProbabilityShort=Lead probab.
+OpportunityAmount=Lead amount
+OpportunityAmountShort=Lead amount
+OpportunityAmountAverageShort=Average lead amount
+OpportunityAmountWeigthedShort=Weighted lead amount
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 WonLostExcluded=Exclusief akkoord/niet doorgegaan
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Projectmanager
@@ -167,8 +237,14 @@ TypeContact_project_task_external_TASKCONTRIBUTOR=Inzender
 SelectElement=Kies een element
 AddElement=Koppeling naar element
 # Documents models
+<<<<<<< HEAD
 DocumentModelBeluga=Project template for linked objects overview
 DocumentModelBaleine=Project report template for tasks
+=======
+DocumentModelBeluga=Project document template for linked objects overview
+DocumentModelBaleine=Project document template for tasks
+DocumentModelTimeSpent=Project report template for time spent
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PlannedWorkload=Geplande workload
 PlannedWorkloadShort=Workload
 ProjectReferers=Gerelateerde items
@@ -182,6 +258,10 @@ ProjectsWithThisUserAsContact=Projects with this user as contact
 TasksWithThisUserAsContact=Taken toegekend aan gebruiker
 ResourceNotAssignedToProject=Not assigned to project
 ResourceNotAssignedToTheTask=Not assigned to the task
+<<<<<<< HEAD
+=======
+NoUserAssignedToTheProject=No users assigned to this project
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TimeSpentBy=Time spent by
 TasksAssignedTo=Taken toegekend aan
 AssignTaskToMe=Taak aan mij toewijzen
@@ -189,6 +269,7 @@ AssignTaskToUser=Ken taak toe aan %s
 SelectTaskToAssign=Select task to assign...
 AssignTask=Toewijzen
 ProjectOverview=Overzicht
+<<<<<<< HEAD
 ManageTasks=Use projects to follow tasks and time
 ManageOpportunitiesStatus=Use projects to follow leads/opportinuties
 ProjectNbProjectByMonth=Aantal nieuwe projecten per maand
@@ -196,10 +277,20 @@ ProjectNbTaskByMonth=Nb of created tasks by month
 ProjectOppAmountOfProjectsByMonth=Aantal kansen per maand
 ProjectWeightedOppAmountOfProjectsByMonth=Gewogen aantal kansen per maand
 ProjectOpenedProjectByOppStatus=Open project/lead op status van kans
+=======
+ManageTasks=Use projects to follow tasks and/or report time spent (timesheets)
+ManageOpportunitiesStatus=Use projects to follow leads/opportinuties
+ProjectNbProjectByMonth=No. of created projects by month
+ProjectNbTaskByMonth=No. of created tasks by month
+ProjectOppAmountOfProjectsByMonth=Amount of leads by month
+ProjectWeightedOppAmountOfProjectsByMonth=Weighted amount of leads by month
+ProjectOpenedProjectByOppStatus=Open project/lead by lead status
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProjectsStatistics=Projecten/leads statistieken
 TasksStatistics=Statistics on project/lead tasks
 TaskAssignedToEnterTime=Task assigned. Entering time on this task should be possible.
 IdTaskTime=Id task time
+<<<<<<< HEAD
 YouCanCompleteRef=If you want to complete the ref with some information (to use it as search filters), it is recommanded to add a - character to separate it, so the automatic numbering will still work correctly for next projects. For example %s-ABC. You may also prefer to add search keys into label. But best practice may be to add a dedicated field, also called complementary attributes.
 OpenedProjectsByThirdparties=Projecten in bewerking bij relaties
 OnlyOpportunitiesShort=Alleen kansen
@@ -208,6 +299,17 @@ NotAnOpportunityShort=Geen kans
 OpportunityTotalAmount=Totaalbedrag aan kansen
 OpportunityPonderatedAmount=Opportunities weighted amount
 OpportunityPonderatedAmountDesc=Opportunities amount weighted with probability
+=======
+YouCanCompleteRef=If you want to complete the ref with some suffix, it is recommanded to add a - character to separate it, so the automatic numbering will still work correctly for next projects. For example %s-MYSUFFIX
+OpenedProjectsByThirdparties=Projecten in bewerking bij relaties
+OnlyOpportunitiesShort=Only leads
+OpenedOpportunitiesShort=Open leads
+NotOpenedOpportunitiesShort=Not an open lead
+NotAnOpportunityShort=Not a lead
+OpportunityTotalAmount=Total amount of leads
+OpportunityPonderatedAmount=Weighted amount of leads
+OpportunityPonderatedAmountDesc=Leads amount weighted with probability
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 OppStatusPROSP=Prospectie
 OppStatusQUAL=Kwalificatie
 OppStatusPROPO=Offerte
@@ -216,11 +318,20 @@ OppStatusPENDING=Hangende
 OppStatusWON=Won
 OppStatusLOST=Verloren
 Budget=Budget
+<<<<<<< HEAD
 AllowToLinkFromOtherCompany=Allow to link project from other company<br><br><u>Supported values :</u><br>- Keep empty: Can link any project of the company (default)<br>- "all" : Can link any projects, even project of other companies<br>- A list of thirdparty id separated with commas : Can link all projects of these thirdparty defined (Example : 123,4795,53)<br>
 LatestProjects=Laatste %s projecten
 LatestModifiedProjects=Laatste %s aangepaste projecten
 OtherFilteredTasks=Other filtered tasks
 NoAssignedTasks=No assigned tasks (assign project/tasks the current user from the top select box to enter time on it)
+=======
+AllowToLinkFromOtherCompany=Allow to link project from other company<br><br><u>Supported values:</u><br>- Keep empty: Can link any project of the company (default)<br>- "all": Can link any projects, even projects of other companies<br>- A list of third-party ids separated by commas: can link all projects of these third partys (Example: 123,4795,53)<br>
+LatestProjects=Laatste %s projecten
+LatestModifiedProjects=Laatste %s aangepaste projecten
+OtherFilteredTasks=Other filtered tasks
+NoAssignedTasks=No assigned tasks found (assign project/tasks to the current user from the top select box to enter time on it)
+ThirdPartyRequiredToGenerateInvoice=A third party must be defined on project to be able to invoice it.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 # Comments trans
 AllowCommentOnTask=Allow user comments on tasks
 AllowCommentOnProject=Allow user comments on projects
@@ -228,3 +339,14 @@ DontHavePermissionForCloseProject=You do not have permissions to close the proje
 DontHaveTheValidateStatus=The project %s must be open to be closed
 RecordsClosed=%s project(s) closed
 SendProjectRef=Information project %s
+<<<<<<< HEAD
+=======
+ModuleSalaryToDefineHourlyRateMustBeEnabled=Module 'Salaries' must be enabled to define employee hourly rate to have time spent valorized
+NewTaskRefSuggested=Task ref already used, a new task ref is required
+TimeSpentInvoiced=Time spent billed
+TimeSpentForInvoice=Bestede tijd
+OneLinePerUser=One line per user
+ServiceToUseOnLines=Service to use on lines
+InvoiceGeneratedFromTimeSpent=Invoice %s has been generated from time spent on project
+ProjectBillTimeDescription=Check if you enter timesheet on tasks of project AND you plan to generate invoice(s) from the timesheet to bill the customer of the project (do not check if you plan to create invoice that is not based on entered timesheets).
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

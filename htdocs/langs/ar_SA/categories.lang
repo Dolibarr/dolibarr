@@ -10,12 +10,20 @@ modify=تعديل
 Classify=صنف
 CategoriesArea=منطقة الكلمات / الفئات 
 ProductsCategoriesArea=منطقة المنتجات / الخدمات العلامات / الفئات
+<<<<<<< HEAD
 SuppliersCategoriesArea=منطقة علامات / فئات الموردون 
+=======
+SuppliersCategoriesArea=Vendors tags/categories area
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CustomersCategoriesArea=منطقة علامات / فئات العملاء 
 MembersCategoriesArea=منطقة علامات / فئات الأعضاء 
 ContactsCategoriesArea=منطقة  اتصالات العلامات / الفئات 
 AccountsCategoriesArea=منطقة علامات / فئات حسابات 
 ProjectsCategoriesArea=منطقة علامات / فئات المشاريع
+<<<<<<< HEAD
+=======
+UsersCategoriesArea=Users tags/categories area
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SubCats=Sub-categories
 CatList=قائمة العلامات / الفئات
 NewCategory=علامة / فئة جديدة
@@ -31,7 +39,11 @@ WasAddedSuccessfully=تمت إضافة <b> %s</b> بنجاح.
 ObjectAlreadyLinkedToCategory=العنصر مرتبط بالفعل بهذه العلامة / الفئة.
 ProductIsInCategories=المنتج / الخدمة مرتبط بـ العلامات / الفئات التالية
 CompanyIsInCustomersCategories=هذا الطرف الثالث مرتبط  بـ العملاء / العملاء المحتملون العلامات / فئات التالية 
+<<<<<<< HEAD
 CompanyIsInSuppliersCategories=هذا الطرف الثالث مرتبط  بـ  علامات / فئات الموردين التالية
+=======
+CompanyIsInSuppliersCategories=This third party is linked to following vendors tags/categories
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MemberIsInCategories=هذا العضو مرتبط  بـ علامات / فئات الأعضاء التالية
 ContactIsInCategories=ويرتبط هذا الاتصال إلى علامات / فئات جهات الاتصال التالية 
 ProductHasNoCategory=هذا المنتج / الخدمة ليست في أي علامات / فئات
@@ -47,6 +59,7 @@ ContentsNotVisibleByAllShort=المحتويات غير مرئية من قبل ا
 DeleteCategory=حذف العلامة / الفئة
 ConfirmDeleteCategory=هل تريد بالتأكيد حذف هذه العلامة / الفئة؟
 NoCategoriesDefined=لم يتم تحديد أي علامة / فئة
+<<<<<<< HEAD
 SuppliersCategoryShort=علامة / فئة الموردون 
 CustomersCategoryShort=علامة / فئة العملاء 
 ProductsCategoryShort=علامة / فئة المنتجات 
@@ -55,20 +68,40 @@ SuppliersCategoriesShort=علامات / فئات الموردون 
 CustomersCategoriesShort=علامات / فئات العملاء 
 ProspectsCategoriesShort=علامات/ فئات الاحتمال
 CustomersProspectsCategoriesShort=فئات عميل./احتمال.
+=======
+SuppliersCategoryShort=Vendors tag/category
+CustomersCategoryShort=علامة / فئة العملاء 
+ProductsCategoryShort=علامة / فئة المنتجات 
+MembersCategoryShort=علامة / فئة الأعضاء 
+SuppliersCategoriesShort=Vendors tags/categories
+CustomersCategoriesShort=علامات / فئات العملاء 
+ProspectsCategoriesShort=علامات/ فئات الاحتمال
+CustomersProspectsCategoriesShort=Cust./Prosp. tags/categories
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProductsCategoriesShort=علامات / فئات المنتجات 
 MembersCategoriesShort=علامات / فئات الأعضاء 
 ContactCategoriesShort=علامات / فئات جهات الاتصال 
 AccountsCategoriesShort=علامات / فئات الحسابات 
 ProjectsCategoriesShort=علامات / فئات المشاريع 
+<<<<<<< HEAD
 ThisCategoryHasNoProduct=لا تحتوي هذه الفئة على أي منتج.
 ThisCategoryHasNoSupplier=هذه الفئة لا تحتوي على أي مورد.
+=======
+UsersCategoriesShort=Users tags/categories
+ThisCategoryHasNoProduct=لا تحتوي هذه الفئة على أي منتج.
+ThisCategoryHasNoSupplier=This category does not contain any vendor.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ThisCategoryHasNoCustomer=لا تحتوي هذه الفئة على أي عميل.
 ThisCategoryHasNoMember=لا تحتوي هذه الفئة على أي عضو.
 ThisCategoryHasNoContact=لا تحتوي هذه الفئة على أي جهة اتصال.
 ThisCategoryHasNoAccount=لا تحتوي هذه الفئة على أي حساب.
 ThisCategoryHasNoProject=لا تحتوي هذه الفئة على أي مشروع.
 CategId=معرف العلامة / الفئة 
+<<<<<<< HEAD
 CatSupList=قائمة علامات / فئات المورد 
+=======
+CatSupList=List of vendor tags/categories
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CatCusList=قائمة  علامات / فئات العملاء / احتمال
 CatProdList=قائمة علامات / فئات المنتجات 
 CatMemberList=قائمة علامات / فئات الأعضاء 
@@ -81,7 +114,11 @@ DeleteFromCat=إزالة من العلامة / الفئة
 ExtraFieldsCategories=سمات تكميلية
 CategoriesSetup=إعداد العلامات / الفئات 
 CategorieRecursiv=ربط مع العلامة / الفئة الاب تلقائيا
+<<<<<<< HEAD
 CategorieRecursivHelp=إذا تم تنشيطها، فسيتم ربط المنتج أيضا بفئة الوالدين عند إضافتها إلى فئة فرعية
+=======
+CategorieRecursivHelp=If option is on, when you add a product into a subcategory, product will also be added into the parent category.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddProductServiceIntoCategory=أضف المنتج / الخدمة التالية
 ShowCategory=إظهار العلامة / الفئة
 ByDefaultInList=افتراضيا في القائمة

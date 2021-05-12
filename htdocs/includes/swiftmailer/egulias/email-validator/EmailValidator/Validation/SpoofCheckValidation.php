@@ -13,10 +13,17 @@ class SpoofCheckValidation implements EmailValidation
      * @var InvalidEmail
      */
     private $error;
+<<<<<<< HEAD
     
     public function __construct()
     {
         if (!class_exists(Spoofchecker::class)) {
+=======
+
+    public function __construct()
+    {
+        if (!extension_loaded('intl')) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             throw new \LogicException(sprintf('The %s class requires the Intl extension.', __CLASS__));
         }
     }

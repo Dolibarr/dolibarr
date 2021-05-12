@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2010-2014    Regis Houssin    <regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2010-2014    Regis Houssin    <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2014       Marcos García   <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,6 +33,12 @@
  */
 abstract class ModeleNumRefTicket
 {
+<<<<<<< HEAD
+=======
+    /**
+     * @var string Error code (or message)
+     */
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     public $error = '';
 
     /**

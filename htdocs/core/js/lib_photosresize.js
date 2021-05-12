@@ -21,10 +21,17 @@
 
 /* Enable jcrop plugin onto id cropbox */
 jQuery(function() {
+<<<<<<< HEAD
    jQuery('#cropbox').Jcrop({
       onSelect: updateCoords, 
       onChange: updateCoords
    });
+=======
+    jQuery('#cropbox').Jcrop({
+        onSelect: updateCoords,
+        onChange: updateCoords
+    });
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 });
 
 /* Update fields that store new size */

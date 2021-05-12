@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2007      Patrick Raguin 		<patrick.raguin@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,6 +33,7 @@
  */
 class FormAdmin
 {
+<<<<<<< HEAD
 	var $db;
 	var $error;
 
@@ -63,6 +68,46 @@ class FormAdmin
 		global $langs;
 
 		$langs_available=$langs->get_available_languages(DOL_DOCUMENT_ROOT,12);
+=======
+    public $db;
+    public $error;
+
+
+	/**
+	 *  Constructor
+     *
+     *  @param      DoliDB      $db      Database handler
+     */
+    public function __construct($db)
+    {
+        $this->db = $db;
+    }
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
+     *  Return html select list with available languages (key='en_US', value='United States' for example)
+     *
+     *  @param      string		$selected       Language pre-selected
+     *  @param      string		$htmlname       Name of HTML select
+     *  @param      int			$showauto       Show 'auto' choice
+	 *  @param      array		$filter         Array of keys to exclude in list
+	 *  @param		string		$showempty		'1'=Add empty value or string to show
+	 *  @param      int			$showwarning    Show a warning if language is not complete
+	 *  @param		int			$disabled		Disable edit of select
+	 *  @param		string		$morecss		Add more css styles
+	 *  @param      int         $showcode       1=Add language code into label at begining, 2=Add language code into label at end
+     *  @param		int			$forcecombo		Force to use combo box (so no ajax beautify effect)
+     *  @return		string						Return HTML select string with list of languages
+     */
+    public function select_language($selected = '', $htmlname = 'lang_id', $showauto = 0, $filter = null, $showempty = '', $showwarning = 0, $disabled = 0, $morecss = '', $showcode = 0, $forcecombo = 0)
+	{
+		// phpcs:enable
+		global $conf, $langs;
+
+		if (!empty($conf->global->MAIN_DEFAULT_LANGUAGE_FILTER)) $filter[$conf->global->MAIN_DEFAULT_LANGUAGE_FILTER] = 1;
+
+		$langs_available=$langs->get_available_languages(DOL_DOCUMENT_ROOT, 12);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$out='';
 
@@ -87,8 +132,14 @@ class FormAdmin
 
 		foreach ($langs_available as $key => $value)
 		{
+<<<<<<< HEAD
 		    $valuetoshow=$value;
 		    if ($showcode) $valuetoshow=$key.' - '.$value;
+=======
+			$valuetoshow=$value;
+			if ($showcode == 1) $valuetoshow=$key.' - '.$value;
+			if ($showcode == 2) $valuetoshow=$value.' ('.$key.')';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			if ($filter && is_array($filter))
 			{
@@ -97,7 +148,11 @@ class FormAdmin
 					$out.= '<option value="'.$key.'">'.$valuetoshow.'</option>';
 				}
 			}
+<<<<<<< HEAD
 			else if ($selected == $key)
+=======
+			elseif ($selected == $key)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			{
 				$out.= '<option value="'.$key.'" selected>'.$valuetoshow.'</option>';
 			}
@@ -109,13 +164,26 @@ class FormAdmin
 		$out.= '</select>';
 
 		// Make select dynamic
+<<<<<<< HEAD
         include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
         $out.= ajax_combobox($htmlname);
+=======
+		if (! $forcecombo)
+		{
+			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+			$out.= ajax_combobox($htmlname);
+		}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		return $out;
 	}
 
+<<<<<<< HEAD
 	/**
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      *    Return list of available menus (eldy_backoffice, ...)
      *
      *    @param	string		$selected        Preselected menu value
@@ -124,8 +192,14 @@ class FormAdmin
      *    @param    string		$moreattrib      More attributes on html select tag
      *    @return	integer|null
      */
+<<<<<<< HEAD
     function select_menu($selected, $htmlname, $dirmenuarray, $moreattrib='')
     {
+=======
+    public function select_menu($selected, $htmlname, $dirmenuarray, $moreattrib = '')
+    {
+		// phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         global $langs,$conf;
 
         // Clean parameters
@@ -150,6 +224,7 @@ class FormAdmin
     	                {
     	                    if (is_file($dir."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && substr($file, 0, 5) != 'index')
     	                    {
+<<<<<<< HEAD
     	                        if (preg_match('/lib\.php$/i',$file)) continue;	// We exclude library files
     	                        if (preg_match('/eldy_(backoffice|frontoffice)\.php$/i',$file)) continue;		// We exclude all menu manager files
     	                        if (preg_match('/auguria_(backoffice|frontoffice)\.php$/i',$file)) continue;	// We exclude all menu manager files
@@ -160,6 +235,18 @@ class FormAdmin
     	        				// 0=Recommanded, 1=Experimental, 2=Developpement, 3=Other
     	        				if (preg_match('/^eldy/i',$file)) $prefix='0';
                                 else if (preg_match('/^smartphone/i',$file)) $prefix='2';
+=======
+    	                        if (preg_match('/lib\.php$/i', $file)) continue;	// We exclude library files
+    	                        if (preg_match('/eldy_(backoffice|frontoffice)\.php$/i', $file)) continue;		// We exclude all menu manager files
+    	                        if (preg_match('/auguria_(backoffice|frontoffice)\.php$/i', $file)) continue;	// We exclude all menu manager files
+    	                        if (preg_match('/smartphone_(backoffice|frontoffice)\.php$/i', $file)) continue;	// We exclude all menu manager files
+
+    	                        $filelib=preg_replace('/\.php$/i', '', $file);
+    	        				$prefix='';
+    	        				// 0=Recommanded, 1=Experimental, 2=Developpement, 3=Other
+    	        				if (preg_match('/^eldy/i', $file)) $prefix='0';
+                                elseif (preg_match('/^smartphone/i', $file)) $prefix='2';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	        				else $prefix='3';
 
     	                        if ($file == $selected)
@@ -184,7 +271,11 @@ class FormAdmin
         $oldprefix='';
 		foreach ($menuarray as $key => $val)
 		{
+<<<<<<< HEAD
 			$tab=explode('_',$key);
+=======
+			$tab=explode('_', $key);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$newprefix=$tab[0];
 			if ($newprefix=='1' && ($conf->global->MAIN_FEATURES_LEVEL < 1)) continue;
 			if ($newprefix=='2' && ($conf->global->MAIN_FEATURES_LEVEL < 2)) continue;
@@ -204,6 +295,10 @@ class FormAdmin
 		print '</select>';
     }
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     /**
      *  Return combo list of available menu families
      *
@@ -212,12 +307,22 @@ class FormAdmin
      *  @param	string[]	$dirmenuarray    Directories to scan
      *  @return	void
      */
+<<<<<<< HEAD
     function select_menu_families($selected, $htmlname, $dirmenuarray)
     {
 		global $langs,$conf;
 
         //$expdevmenu=array('smartphone_backoffice.php','smartphone_frontoffice.php');  // Menu to disable if $conf->global->MAIN_FEATURES_LEVEL is not set
 		$expdevmenu=array();
+=======
+    public function select_menu_families($selected, $htmlname, $dirmenuarray)
+    {
+        // phpcs:enable
+        global $langs,$conf;
+
+        //$expdevmenu=array('smartphone_backoffice.php','smartphone_frontoffice.php');  // Menu to disable if $conf->global->MAIN_FEATURES_LEVEL is not set
+        $expdevmenu=array();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$menuarray=array();
 
@@ -235,12 +340,21 @@ class FormAdmin
 	        			{
 	        				if (is_file($dir."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
 	        				{
+<<<<<<< HEAD
 	        					$filelib=preg_replace('/(_backoffice|_frontoffice)?\.php$/i','',$file);
 	        					if (preg_match('/^index/i',$filelib)) continue;
 	        					if (preg_match('/^default/i',$filelib)) continue;
 	        					if (preg_match('/^empty/i',$filelib)) continue;
 	        					if (preg_match('/\.lib/i',$filelib)) continue;
 	        					if (empty($conf->global->MAIN_FEATURES_LEVEL) && in_array($file,$expdevmenu)) continue;
+=======
+	        					$filelib=preg_replace('/(_backoffice|_frontoffice)?\.php$/i', '', $file);
+	        					if (preg_match('/^index/i', $filelib)) continue;
+	        					if (preg_match('/^default/i', $filelib)) continue;
+	        					if (preg_match('/^empty/i', $filelib)) continue;
+	        					if (preg_match('/\.lib/i', $filelib)) continue;
+	        					if (empty($conf->global->MAIN_FEATURES_LEVEL) && in_array($file, $expdevmenu)) continue;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	        					$menuarray[$filelib]=1;
 	        				}
@@ -259,7 +373,11 @@ class FormAdmin
         $oldprefix='';
 		foreach ($menuarray as $key => $val)
 		{
+<<<<<<< HEAD
 			$tab=explode('_',$key);
+=======
+			$tab=explode('_', $key);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$newprefix=$tab[0];
 			print '<option value="'.$key.'"';
             if ($key == $selected)
@@ -275,6 +393,10 @@ class FormAdmin
     }
 
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     /**
      *  Return a HTML select list of timezones
      *
@@ -282,6 +404,7 @@ class FormAdmin
      *  @param  string		$htmlname        Nom de la zone select
      *  @return	void
      */
+<<<<<<< HEAD
     function select_timezone($selected,$htmlname)
     {
 		global $langs,$conf;
@@ -290,6 +413,17 @@ class FormAdmin
 		print '<option value="-1">&nbsp;</option>';
 
 		$arraytz=array(
+=======
+    public function select_timezone($selected, $htmlname)
+    {
+        // phpcs:enable
+        global $langs,$conf;
+
+        print '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
+        print '<option value="-1">&nbsp;</option>';
+
+        $arraytz = array(
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			"Pacific/Midway"=>"GMT-11:00",
 			"Pacific/Fakaofo"=>"GMT-10:00",
 			"America/Anchorage"=>"GMT-09:00",
@@ -316,6 +450,7 @@ class FormAdmin
 			"Pacific/Auckland"=>"GMT+12:00",
 			"Pacific/Enderbury"=>"GMT+13:00"
 		);
+<<<<<<< HEAD
 		foreach ($arraytz as $lib => $gmt)
 		{
 			print '<option value="'.$lib.'"';
@@ -338,6 +473,31 @@ class FormAdmin
 	 */
 	function select_paper_format($selected='',$htmlname='paperformat_id',$filter=0,$showempty=0)
 	{
+=======
+        foreach ($arraytz as $lib => $gmt) {
+            print '<option value="'.$lib.'"';
+            if ($selected == $lib || $selected == $gmt) print ' selected';
+            print '>'.$gmt.'</option>'."\n";
+        }
+        print '</select>';
+    }
+
+
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Return html select list with available languages (key='en_US', value='United States' for example)
+	 *
+	 *  @param      string	$selected       Paper format pre-selected
+	 *  @param      string	$htmlname       Name of HTML select field
+	 *  @param		string	$filter			Value to filter on code
+	 *  @param		int		$showempty		Add empty value
+	 *  @return		string					Return HTML output
+	 */
+	public function select_paper_format($selected = '', $htmlname = 'paperformat_id', $filter = 0, $showempty = 0)
+	{
+		// phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $langs;
 
 		$langs->load("dict");

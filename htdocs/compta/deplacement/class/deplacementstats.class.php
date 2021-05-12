@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +34,7 @@ include_once DOL_DOCUMENT_ROOT . '/compta/deplacement/class/deplacement.class.ph
  */
 class DeplacementStats extends Stats
 {
+<<<<<<< HEAD
     public $table_element;
 
     var $socid;
@@ -38,6 +43,19 @@ class DeplacementStats extends Stats
     var $from;
     var $field;
     var $where;
+=======
+    /**
+     * @var string Name of table without prefix where object is stored
+     */
+    public $table_element;
+
+    public $socid;
+    public $userid;
+
+    public $from;
+    public $field;
+    public $where;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	/**
 	 * Constructor
@@ -47,7 +65,11 @@ class DeplacementStats extends Stats
      * @param   mixed		$userid    Id user for filter or array of user ids
 	 * @return 	void
 	 */
+<<<<<<< HEAD
 	function __construct($db, $socid=0, $userid=0)
+=======
+	public function __construct($db, $socid = 0, $userid = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf;
 
@@ -65,8 +87,13 @@ class DeplacementStats extends Stats
 		{
 			$this->where.=" AND fk_soc = ".$this->socid;
 		}
+<<<<<<< HEAD
 		if (is_array($this->userid) && count($this->userid) > 0) $this->where.=' AND fk_user IN ('.join(',',$this->userid).')';
         else if ($this->userid > 0) $this->where.=' AND fk_user = '.$this->userid;
+=======
+		if (is_array($this->userid) && count($this->userid) > 0) $this->where.=' AND fk_user IN ('.join(',', $this->userid).')';
+        elseif ($this->userid > 0) $this->where.=' AND fk_user = '.$this->userid;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 
@@ -75,7 +102,11 @@ class DeplacementStats extends Stats
 	 *
 	 *	@return		array	Array of values
 	 */
+<<<<<<< HEAD
 	function getNbByYear()
+=======
+	public function getNbByYear()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$sql = "SELECT YEAR(dated) as dm, count(*)";
 		$sql.= " FROM ".$this->from;
@@ -93,14 +124,22 @@ class DeplacementStats extends Stats
      *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 *	@return	array			Array of values
 	 */
+<<<<<<< HEAD
 	function getNbByMonth($year, $format=0)
+=======
+	public function getNbByMonth($year, $format = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$sql = "SELECT MONTH(dated) as dm, count(*)";
 		$sql.= " FROM ".$this->from;
 		$sql.= " WHERE YEAR(dated) = ".$year;
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
+<<<<<<< HEAD
         $sql.= $this->db->order('dm','DESC');
+=======
+        $sql.= $this->db->order('dm', 'DESC');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$res=$this->_getNbByMonth($year, $sql, $format);
 		//var_dump($res);print '<br>';
@@ -115,14 +154,22 @@ class DeplacementStats extends Stats
      *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 *	@return	array				Array of values
 	 */
+<<<<<<< HEAD
 	function getAmountByMonth($year, $format=0)
+=======
+	public function getAmountByMonth($year, $format = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$sql = "SELECT date_format(dated,'%m') as dm, sum(".$this->field.")";
 		$sql.= " FROM ".$this->from;
 		$sql.= " WHERE date_format(dated,'%Y') = '".$year."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
+<<<<<<< HEAD
 		$sql.= $this->db->order('dm','DESC');
+=======
+		$sql.= $this->db->order('dm', 'DESC');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$res=$this->_getAmountByMonth($year, $sql, $format);
 		//var_dump($res);print '<br>';
@@ -135,14 +182,22 @@ class DeplacementStats extends Stats
 	 *	@param	int		$year		Year to scan
 	 *	@return	array				Array of values
 	 */
+<<<<<<< HEAD
 	function getAverageByMonth($year)
+=======
+	public function getAverageByMonth($year)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$sql = "SELECT date_format(dated,'%m') as dm, avg(".$this->field.")";
 		$sql.= " FROM ".$this->from;
 		$sql.= " WHERE date_format(dated,'%Y') = '".$year."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
+<<<<<<< HEAD
         $sql.= $this->db->order('dm','DESC');
+=======
+        $sql.= $this->db->order('dm', 'DESC');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		return $this->_getAverageByMonth($year, $sql);
 	}
@@ -152,6 +207,7 @@ class DeplacementStats extends Stats
 	 *
 	 *	@return	array				Array of values
 	 */
+<<<<<<< HEAD
 	function getAllByYear()
 	{
 		$sql = "SELECT date_format(dated,'%Y') as year, count(*) as nb, sum(".$this->field.") as total, avg(".$this->field.") as avg";
@@ -164,3 +220,16 @@ class DeplacementStats extends Stats
 	}
 }
 
+=======
+    public function getAllByYear()
+    {
+        $sql = "SELECT date_format(dated,'%Y') as year, count(*) as nb, sum(".$this->field.") as total, avg(".$this->field.") as avg";
+        $sql.= " FROM ".$this->from;
+        $sql.= " WHERE ".$this->where;
+        $sql.= " GROUP BY year";
+        $sql.= $this->db->order('year', 'DESC');
+
+        return $this->_getAllByYear($sql);
+    }
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

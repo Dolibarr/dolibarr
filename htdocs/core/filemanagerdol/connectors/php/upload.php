@@ -47,7 +47,11 @@ if ( !$Config['Enabled'] )
 $sCommand = 'QuickUpload' ;
 
 // The file type (from the QueryString, by default 'File').
+<<<<<<< HEAD
 $sType = isset( $_GET['Type'] ) ? $_GET['Type'] : 'File' ;
+=======
+$sType = isset($_GET['Type']) ? $_GET['Type'] : 'File' ;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $sCurrentFolder	= "/" ;
 
@@ -68,5 +72,8 @@ $CKEcallback = $_GET['CKEditorFuncNum'];
 
 //modify the next line adding in the new param
 FileUpload($sType, $sCurrentFolder, $sCommand, $CKEcallback);
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

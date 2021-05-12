@@ -39,10 +39,17 @@ if ($user->societe_id > 0)
 }
 
 
+<<<<<<< HEAD
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
+=======
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -71,14 +78,22 @@ if ($socid)
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON pf.fk_facture = f.rowid";
 }
+<<<<<<< HEAD
 $sql.= " WHERE p.entity IN (" . getEntity('facture') . ')';
+=======
+$sql.= " WHERE p.entity IN (" . getEntity('invoice') . ')';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($socid)
 {
     $sql.= " AND f.fk_soc = ".$socid;
 }
 $sql.= " AND p.statut = 0";
 
+<<<<<<< HEAD
 $sql.= $db->order($sortfield,$sortorder);
+=======
+$sql.= $db->order($sortfield, $sortorder);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -93,7 +108,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     }
 }
 
+<<<<<<< HEAD
 $sql.= $db->plimit($limit + 1,$offset);
+=======
+$sql.= $db->plimit($limit + 1, $offset);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $resql = $db->query($sql);
 if ($resql)
@@ -101,6 +120,7 @@ if ($resql)
     $num = $db->num_rows($resql);
     $i = 0;
 
+<<<<<<< HEAD
     print_barre_liste($langs->trans("ReceivedCustomersPaymentsToValid"), $page, $_SERVER["PHP_SELF"],"",$sortfield,$sortorder,'',$num);
 
     print '<table class="noborder" width="100%">';
@@ -113,14 +133,35 @@ if ($resql)
     print "</tr>\n";
 
     while ($i < min($num,$limit))
+=======
+    print_barre_liste($langs->trans("ReceivedCustomersPaymentsToValid"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num);
+
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.rowid", "", "", 'width="60"', $sortfield, $sortorder);
+    print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "dp", "", "", 'width="80" align="center"', $sortfield, $sortorder);
+    print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "c.libelle", "", "", "", $sortfield, $sortorder);
+    print_liste_field_titre("AmountTTC", $_SERVER["PHP_SELF"], "c.libelle", "", "", 'class="right"', $sortfield, $sortorder);
+    print_liste_field_titre('');
+    print "</tr>\n";
+
+    while ($i < min($num, $limit))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $objp = $db->fetch_object($resql);
 
         print '<tr class="oddeven">';
+<<<<<<< HEAD
         print '<td><a href="'.DOL_URL_ROOT.'/compta/paiement/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"),"payment").' '.$objp->rowid.'</a></td>';
         print '<td width="80" align="center">'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
         print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
         print '<td align="right">'.price($objp->amount).'</td>';
+=======
+        print '<td><a href="'.DOL_URL_ROOT.'/compta/paiement/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"), "payment").' '.$objp->rowid.'</a></td>';
+        print '<td width="80" align="center">'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
+        print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
+        print '<td class="right">'.price($objp->amount).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         print '<td align="center">';
 
         if ($objp->statut == 0)
@@ -139,5 +180,9 @@ if ($resql)
     print "</table>";
 }
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

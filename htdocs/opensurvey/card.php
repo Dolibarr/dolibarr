@@ -1,6 +1,12 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2013-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García		<marcosgdf@gmail.com>
+=======
+/* Copyright (C) 2013-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,20 +28,34 @@
  *	\brief      Page to edit survey
  */
 
+<<<<<<< HEAD
 require_once('../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
 require_once(DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php");
 require_once(DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php");
+=======
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php";
+require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
+require_once DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 // Security check
 if (!$user->rights->opensurvey->read) accessforbidden();
 
 // Initialisation des variables
+<<<<<<< HEAD
 $action=GETPOST('action','aZ09');
 $cancel=GETPOST('cancel','alpha');
+=======
+$action=GETPOST('action', 'aZ09');
+$cancel=GETPOST('cancel', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $numsondage = '';
 
@@ -48,7 +68,11 @@ $object=new Opensurveysondage($db);
 $result=$object->fetch(0, $numsondage);
 if ($result <= 0)
 {
+<<<<<<< HEAD
     dol_print_error($db,$object->error);
+=======
+    dol_print_error($db, $object->error);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     exit;
 }
 
@@ -74,9 +98,15 @@ if (empty($reshook))
     	// Security check
     	if (!$user->rights->opensurvey->write) accessforbidden();
 
+<<<<<<< HEAD
     	$result=$object->delete($user,'',$numsondage);
 
     	header('Location: '.dol_buildpath('/opensurvey/list.php',1));
+=======
+    	$result=$object->delete($user, '', $numsondage);
+
+    	header('Location: '.dol_buildpath('/opensurvey/list.php', 1));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	exit();
     }
 
@@ -111,6 +141,7 @@ if (empty($reshook))
 
     	if (! $error)
     	{
+<<<<<<< HEAD
     		$object->titre = GETPOST('nouveautitre');
     		$object->commentaires = GETPOST('nouveauxcommentaires');
     		$object->mail_admin = GETPOST('nouvelleadresse');
@@ -118,6 +149,16 @@ if (empty($reshook))
     		$object->allow_comments = GETPOST('cancomment') == 'on' ? true : false;
     		$object->allow_spy = GETPOST('canseeothersvote') == 'on' ? true : false;
     		$object->mailsonde = GETPOST('mailsonde') == 'on' ? true : false;
+=======
+    		$object->titre = GETPOST('nouveautitre', 'nohtml');
+    		$object->commentaires = GETPOST('nouveauxcommentaires', 'nohtml');
+    		$object->description = GETPOST('nouveauxcommentaires', 'nohtml');
+    		$object->mail_admin = GETPOST('nouvelleadresse', 'alpha');
+    		$object->date_fin = $expiredate;
+    		$object->allow_comments = GETPOST('cancomment', 'alpha') == 'on' ? true : false;
+    		$object->allow_spy = GETPOST('canseeothersvote', 'alpha') == 'on' ? true : false;
+    		$object->mailsonde = GETPOST('mailsonde', 'alpha') == 'on' ? true : false;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     		$res=$object->update($user);
     		if ($res < 0)
@@ -159,7 +200,11 @@ if (empty($reshook))
     }
 
     // Delete comment
+<<<<<<< HEAD
     $idcomment=GETPOST('deletecomment','int');
+=======
+    $idcomment=GETPOST('deletecomment', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     if ($idcomment)
     {
     	// Security check
@@ -192,6 +237,7 @@ $title = $object->titre." - ".$langs->trans('Card');
 $helpurl = '';
 $arrayofjs=array();
 $arrayofcss=array('/opensurvey/css/style.css');
+<<<<<<< HEAD
 llxHeader('',$title, $helpurl, 0, 0, 0, $arrayofjs, $arrayofcss);
 
 
@@ -205,6 +251,21 @@ foreach ($toutsujet as $value)
 }
 $toutsujet=str_replace("@","<br>",$toutsujet);
 $toutsujet=str_replace("°","'",$toutsujet);
+=======
+llxHeader('', $title, $helpurl, 0, 0, 0, $arrayofjs, $arrayofcss);
+
+
+// Define format of choices
+$toutsujet=explode(",", $object->sujet);
+$listofanswers=array();
+foreach ($toutsujet as $value)
+{
+	$tmp=explode('@', $value);
+	$listofanswers[]=array('label'=>$tmp[0],'format'=>($tmp[1]?$tmp[1]:'checkbox'));
+}
+$toutsujet=str_replace("@", "<br>", $toutsujet);
+$toutsujet=str_replace("°", "'", $toutsujet);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print '<form name="updatesurvey" action="'.$_SERVER["PHP_SELF"].'?id='.$numsondage.'" method="POST">'."\n";
 print '<input type="hidden" name="action" value="update">';
@@ -212,7 +273,11 @@ print '<input type="hidden" name="action" value="update">';
 $head = opensurvey_prepare_head($object);
 
 
+<<<<<<< HEAD
 dol_fiche_head($head,'general',$langs->trans("Survey"), -1, DOL_URL_ROOT.'/opensurvey/img/object_opensurvey.png', 1);
+=======
+dol_fiche_head($head, 'general', $langs->trans("Survey"), -1, DOL_URL_ROOT.'/opensurvey/img/object_opensurvey.png', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $morehtmlref = '';
 
@@ -224,12 +289,20 @@ dol_banner_tab($object, 'id', $linkback, 1, 'id_sondage', 'id_sondage', $morehtm
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 
+<<<<<<< HEAD
 print '<table class="border" width="100%">';
+=======
+print '<table class="border tableforfield centpercent">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Type
 $type=($object->format=="A")?'classic':'date';
 print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td colspan="2">';
+<<<<<<< HEAD
 print img_picto('',dol_buildpath('/opensurvey/img/'.($type == 'classic'?'chart-32.png':'calendar-32.png'),1),'width="16"',1);
+=======
+print img_picto('', dol_buildpath('/opensurvey/img/'.($type == 'classic'?'chart-32.png':'calendar-32.png'), 1), 'width="16"', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print ' '.$langs->trans($type=='classic'?"TypeClassic":"TypeDate").'</td></tr>';
 
 // Title
@@ -247,12 +320,21 @@ print '</td></tr>';
 print '<tr><td class="tdtop">'.$langs->trans("Description") .'</td><td colspan="2">';
 if ($action == 'edit')
 {
+<<<<<<< HEAD
 	$doleditor=new DolEditor('nouveauxcommentaires', dol_htmlentities($object->commentaires),'',120,'dolibarr_notes','In',1,1,1,ROWS_7,'90%');
 	$doleditor->Create(0,'');
 }
 else
 {
 	 print (dol_textishtml($object->commentaires)?$object->commentaires:dol_nl2br($object->commentaires,1,true));
+=======
+	$doleditor=new DolEditor('nouveauxcommentaires', dol_htmlentities($object->commentaires), '', 120, 'dolibarr_notes', 'In', 1, 1, 1, ROWS_7, '90%');
+	$doleditor->Create(0, '');
+}
+else
+{
+	 print (dol_textishtml($object->commentaires)?$object->commentaires:dol_nl2br($object->commentaires, 1, true));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 print '</td></tr>';
 
@@ -306,10 +388,17 @@ print '</td></tr>';
 
 // Expire date
 print '<tr><td>'.$langs->trans('ExpireDate').'</td><td colspan="2">';
+<<<<<<< HEAD
 if ($action == 'edit') print $form->select_date($expiredate?$expiredate:$object->date_fin,'expire',0,0,0,'',1,0,1);
 else
 {
     print dol_print_date($object->date_fin,'day');
+=======
+if ($action == 'edit') print $form->selectDate($expiredate?$expiredate:$object->date_fin, 'expire', 0, 0, 0, '', 1, 0);
+else
+{
+    print dol_print_date($object->date_fin, 'day');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     if ($object->date_fin && $object->date_fin < dol_now() && $object->status == Opensurveysondage::STATUS_VALIDATED) print img_warning($langs->trans("Expired"));
 }
 print '</td></tr>';
@@ -325,10 +414,17 @@ if ($object->fk_user_creat) {
 print '</td></tr>';
 
 // Link
+<<<<<<< HEAD
 print '<tr><td>'.img_picto('','object_globe.png').' '.$langs->trans("UrlForSurvey",'').'</td><td colspan="2">';
 
 // Define $urlwithroot
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+=======
+print '<tr><td>'.img_picto('', 'object_globe.png').' '.$langs->trans("UrlForSurvey", '').'</td><td colspan="2">';
+
+// Define $urlwithroot
+$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
@@ -386,7 +482,11 @@ print '</div>';
 
 if ($action == 'delete')
 {
+<<<<<<< HEAD
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?&id='.$numsondage, $langs->trans("RemovePoll"), $langs->trans("ConfirmRemovalOfPoll",$id), 'delete_confirm', '', '', 1);
+=======
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?&id='.$numsondage, $langs->trans("RemovePoll"), $langs->trans("ConfirmRemovalOfPoll", $id), 'delete_confirm', '', '', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 
@@ -396,7 +496,11 @@ print '<br>';
 
 print '<form name="formulaire5" action="#" method="POST">'."\n";
 
+<<<<<<< HEAD
 print load_fiche_titre($langs->trans("CommentsOfVoters"),'','');
+=======
+print load_fiche_titre($langs->trans("CommentsOfVoters"), '', '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Comment list
 $comments = $object->getComments();
@@ -404,7 +508,11 @@ $comments = $object->getComments();
 if ($comments) {
 	foreach ($comments as $comment) {
 		if ($user->rights->opensurvey->write) {
+<<<<<<< HEAD
 			print '<a href="'.dol_buildpath('/opensurvey/card.php',1).'?deletecomment='.$comment->id_comment.'&id='.$numsondage.'"> '.img_picto('', 'delete.png').'</a> ';
+=======
+			print '<a href="'.dol_buildpath('/opensurvey/card.php', 1).'?deletecomment='.$comment->id_comment.'&id='.$numsondage.'"> '.img_picto('', 'delete.png').'</a> ';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		print dol_htmlentities($comment->usercomment).': '.dol_nl2br(dol_htmlentities($comment->comment))." <br>";
@@ -424,12 +532,21 @@ if ($object->allow_comments) {
 	print $langs->trans("Name") .': <input type="text" size="50" name="commentuser" value="'.$user->getFullName($langs).'"><br>'."\n";
 	print '<input type="submit" class="button" name="ajoutcomment" value="'.dol_escape_htmltag($langs->trans("AddComment")).'"><br>'."\n";
 	if (isset($erreur_commentaire_vide) && $erreur_commentaire_vide=="yes") {
+<<<<<<< HEAD
 		print "<font color=#FF0000>" . $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name")) . "</font>";
+=======
+		print "<font color=#FF0000>" . $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Name")) . "</font>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 }
 
 print '</form>';
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

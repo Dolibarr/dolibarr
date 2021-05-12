@@ -11,13 +11,25 @@ namespace Stripe;
  * @property string $balance_transaction
  * @property int $created
  * @property string $currency
+<<<<<<< HEAD
  * @property StripeObject $metadata
+=======
+ * @property string $destination_payment_refund
+ * @property StripeObject $metadata
+ * @property string $source_refund
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * @property string $transfer
  *
  * @package Stripe
  */
 class TransferReversal extends ApiResource
 {
+<<<<<<< HEAD
+=======
+
+    const OBJECT_NAME = "transfer_reversal";
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     use ApiOperations\Update {
         save as protected _save;
     }

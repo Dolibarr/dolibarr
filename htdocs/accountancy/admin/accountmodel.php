@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+<<<<<<< HEAD
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
@@ -9,6 +10,17 @@
  * Copyright (C) 2012-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012       Christophe Battarel     <christophe.battarel@ltairis.fr>
  * Copyright (C) 2011-2016  Alexandre Spangaro      <aspangaro@zendsi.com>
+=======
+ * Copyright (C) 2004-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2011-2019  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011       Remy Younes             <ryounes@gmail.com>
+ * Copyright (C) 2012-2015  Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2012       Christophe Battarel     <christophe.battarel@ltairis.fr>
+ * Copyright (C) 2011-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2015       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
@@ -28,7 +40,11 @@
 
 /**
  *	    \file       htdocs/accountancy/admin/accountmodel.php
+<<<<<<< HEAD
  *		\ingroup    Advanced accountancy
+=======
+ *		\ingroup    Accountancy (Double entries)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *		\brief      Page to administer model of chart of accounts
  */
 
@@ -44,6 +60,7 @@ if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core
 // Load translation files required by the page
 $langs->loadLangs(array("errors","admin","companies","resource","holiday","compta","accountancy","hrm"));
 
+<<<<<<< HEAD
 $action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
 $confirm=GETPOST('confirm','alpha');
 $id=31;
@@ -62,12 +79,36 @@ $active = 1;
 $sortfield = GETPOST("sortfield",'aZ09comma');
 $sortorder = GETPOST("sortorder",'aZ09comma');
 $page = GETPOST("page",'int');
+=======
+$action=GETPOST('action', 'aZ09')?GETPOST('action', 'aZ09'):'view';
+$confirm=GETPOST('confirm', 'alpha');
+$id=31;
+$rowid=GETPOST('rowid', 'alpha');
+$code=GETPOST('code', 'alpha');
+
+$acts[0] = "activate";
+$acts[1] = "disable";
+$actl[0] = img_picto($langs->trans("Disabled"), 'switch_off');
+$actl[1] = img_picto($langs->trans("Activated"), 'switch_on');
+
+$listoffset=GETPOST('listoffset', 'alpha');
+$listlimit=GETPOST('listlimit', 'int')>0?GETPOST('listlimit', 'int'):1000;
+$active = 1;
+
+$sortfield = GETPOST("sortfield", 'aZ09comma');
+$sortorder = GETPOST("sortorder", 'aZ09comma');
+$page = GETPOST("page", 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $listlimit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
+<<<<<<< HEAD
 $search_country_id = GETPOST('search_country_id','int');
+=======
+$search_country_id = GETPOST('search_country_id', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 // Security check
@@ -139,25 +180,43 @@ $sourceList=array();
  * Actions
  */
 
+<<<<<<< HEAD
 if (GETPOST('button_removefilter') || GETPOST('button_removefilter.x') || GETPOST('button_removefilter_x'))
+=======
+if (GETPOST('button_removefilter', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter_x', 'alpha'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$search_country_id = '';
 }
 
 // Actions add or modify an entry into a dictionary
+<<<<<<< HEAD
 if (GETPOST('actionadd') || GETPOST('actionmodify'))
 {
 	$listfield=explode(',', str_replace(' ', '',$tabfield[$id]));
 	$listfieldinsert=explode(',',$tabfieldinsert[$id]);
 	$listfieldmodify=explode(',',$tabfieldinsert[$id]);
 	$listfieldvalue=explode(',',$tabfieldvalue[$id]);
+=======
+if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
+{
+	$listfield=explode(',', str_replace(' ', '', $tabfield[$id]));
+	$listfieldinsert=explode(',', $tabfieldinsert[$id]);
+	$listfieldmodify=explode(',', $tabfieldinsert[$id]);
+	$listfieldvalue=explode(',', $tabfieldvalue[$id]);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	// Check that all fields are filled
 	$ok=1;
 	foreach ($listfield as $f => $value)
 	{
+<<<<<<< HEAD
 		if ($value == 'country_id' && in_array($tablib[$id],array('DictionaryVAT','DictionaryRegion','DictionaryCompanyType','DictionaryHolidayTypes','DictionaryRevenueStamp','DictionaryAccountancyCategory','Pcg_version'))) continue;		// For some pages, country is not mandatory
 		if ($value == 'country' && in_array($tablib[$id],array('DictionaryCanton','DictionaryCompanyType','DictionaryRevenueStamp'))) continue;		// For some pages, country is not mandatory
+=======
+		if ($value == 'country_id' && in_array($tablib[$id], array('DictionaryVAT','DictionaryRegion','DictionaryCompanyType','DictionaryHolidayTypes','DictionaryRevenueStamp','DictionaryAccountancyCategory','Pcg_version'))) continue;		// For some pages, country is not mandatory
+		if ($value == 'country' && in_array($tablib[$id], array('DictionaryCanton','DictionaryCompanyType','DictionaryRevenueStamp'))) continue;		// For some pages, country is not mandatory
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if ($value == 'localtax1' && empty($_POST['localtax1_type'])) continue;
 		if ($value == 'localtax2' && empty($_POST['localtax2_type'])) continue;
 		if ($value == 'color' && empty($_POST['color'])) continue;
@@ -192,7 +251,11 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 		}
 	}
 	// Other checks
+<<<<<<< HEAD
 	if ($tabname[$id] == MAIN_DB_PREFIX."c_actioncomm" && isset($_POST["type"]) && in_array($_POST["type"],array('system','systemauto'))) {
+=======
+	if ($tabname[$id] == MAIN_DB_PREFIX."c_actioncomm" && isset($_POST["type"]) && in_array($_POST["type"], array('system','systemauto'))) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$ok=0;
 		setEventMessages($langs->transnoentities('ErrorReservedTypeSystemSystemAuto'), null, 'errors');
 	}
@@ -211,13 +274,18 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 	}
 	if (isset($_POST["country"]) && ($_POST["country"]=='0') && ($id != 2))
 	{
+<<<<<<< HEAD
 		if (in_array($tablib[$id],array('DictionaryCompanyType','DictionaryHolidayTypes')))	// Field country is no mandatory for such dictionaries
+=======
+		if (in_array($tablib[$id], array('DictionaryCompanyType','DictionaryHolidayTypes')))	// Field country is no mandatory for such dictionaries
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			$_POST["country"]='';
 		}
 		else
 		{
 			$ok=0;
+<<<<<<< HEAD
 			setEventMessages($langs->transnoentities("ErrorFieldRequired",$langs->transnoentities("Country")), null, 'errors');
 		}
 	}
@@ -225,6 +293,15 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 	{
 	   	$ok=0;
 	   	setEventMessages($langs->transnoentities("ErrorFieldMustBeANumeric",$langs->transnoentities("Code")), null, 'errors');
+=======
+			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities("Country")), null, 'errors');
+		}
+	}
+	if (! is_numeric($_POST["code"]))
+	{
+	   	$ok=0;
+	   	setEventMessages($langs->transnoentities("ErrorFieldMustBeANumeric", $langs->transnoentities("Code")), null, 'errors');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	// Clean some parameters
@@ -235,7 +312,11 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 	if ($_POST["accountancy_code_buy"] <= 0) $_POST["accountancy_code_buy"]='';	// If empty, we force to null
 
 	// Si verif ok et action add, on ajoute la ligne
+<<<<<<< HEAD
 	if ($ok && GETPOST('actionadd'))
+=======
+	if ($ok && GETPOST('actionadd', 'alpha'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		if ($tabrowid[$id])
 		{
@@ -247,7 +328,10 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 			{
 				$obj = $db->fetch_object($result);
 				$newid=($obj->newid + 1);
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			} else {
 				dol_print_error($db);
 			}
@@ -256,22 +340,37 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 		// Add new entry
 		$sql = "INSERT INTO ".$tabname[$id]." (";
 		// List of fields
+<<<<<<< HEAD
 		if ($tabrowid[$id] && ! in_array($tabrowid[$id],$listfieldinsert))
+=======
+		if ($tabrowid[$id] && ! in_array($tabrowid[$id], $listfieldinsert))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$sql.= $tabrowid[$id].",";
 		$sql.= $tabfieldinsert[$id];
 		$sql.=",active)";
 		$sql.= " VALUES(";
 
 		// List of values
+<<<<<<< HEAD
 		if ($tabrowid[$id] && ! in_array($tabrowid[$id],$listfieldinsert))
+=======
+		if ($tabrowid[$id] && ! in_array($tabrowid[$id], $listfieldinsert))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$sql.= $newid.",";
 		$i=0;
 		foreach ($listfieldinsert as $f => $value)
 		{
+<<<<<<< HEAD
 			if ($value == 'price' || preg_match('/^amount/i',$value) || $value == 'taux') {
 				$_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]],'MU');
 			}
 			else if ($value == 'entity') {
+=======
+			if ($value == 'price' || preg_match('/^amount/i', $value) || $value == 'taux') {
+				$_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]], 'MU');
+			}
+			elseif ($value == 'entity') {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$_POST[$listfieldvalue[$i]] = $conf->entity;
 			}
 			if ($i) $sql.=",";
@@ -300,7 +399,11 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 	}
 
 	// Si verif ok et action modify, on modifie la ligne
+<<<<<<< HEAD
 	if ($ok && GETPOST('actionmodify'))
+=======
+	if ($ok && GETPOST('actionmodify', 'alpha'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		if ($tabrowid[$id]) { $rowidcol=$tabrowid[$id]; }
 		else { $rowidcol="rowid"; }
@@ -308,7 +411,11 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 		// Modify entry
 		$sql = "UPDATE ".$tabname[$id]." SET ";
 		// Modifie valeur des champs
+<<<<<<< HEAD
 		if ($tabrowid[$id] && ! in_array($tabrowid[$id],$listfieldmodify))
+=======
+		if ($tabrowid[$id] && ! in_array($tabrowid[$id], $listfieldmodify))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			$sql.= $tabrowid[$id]."=";
 			$sql.= "'".$db->escape($rowid)."', ";
@@ -316,10 +423,17 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 		$i = 0;
 		foreach ($listfieldmodify as $field)
 		{
+<<<<<<< HEAD
 			if ($field == 'price' || preg_match('/^amount/i',$field) || $field == 'taux') {
 				$_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]],'MU');
 			}
 			else if ($field == 'entity') {
+=======
+			if ($field == 'price' || preg_match('/^amount/i', $field) || $field == 'taux') {
+				$_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]], 'MU');
+			}
+			elseif ($field == 'entity') {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$_POST[$listfieldvalue[$i]] = $conf->entity;
 			}
 			if ($i) $sql.=",";
@@ -341,7 +455,11 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 	//$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
 }
 
+<<<<<<< HEAD
 if (GETPOST('actioncancel'))
+=======
+if (GETPOST('actioncancel', 'alpha'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	//$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
 }
@@ -461,6 +579,7 @@ llxHeader();
 $titre=$langs->trans($tablib[$id]);
 $linkback='';
 
+<<<<<<< HEAD
 print load_fiche_titre($titre,$linkback,'title_accountancy');
 
 if (empty($id))
@@ -469,12 +588,19 @@ if (empty($id))
 	print " ".$langs->trans("OnlyActiveElementsAreShown")."<br>\n";
 }
 print "<br>\n";
+=======
+print load_fiche_titre($titre, $linkback, 'title_accountancy');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 // Confirmation de la suppression de la ligne
 if ($action == 'delete')
 {
+<<<<<<< HEAD
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page?'page='.urlencode($page).'&':'').'sortfield='.urlencode($sortfield).'&sortorder='.urlencode($sortorder).'&rowid='.urlencode($rowid).'&code='.urlencode($code).'&id='.urlencode($id), $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete','',0,1);
+=======
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page?'page='.urlencode($page).'&':'').'sortfield='.urlencode($sortfield).'&sortorder='.urlencode($sortorder).'&rowid='.urlencode($rowid).'&code='.urlencode($code).'&id='.urlencode($id), $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 //var_dump($elementList);
 
@@ -488,18 +614,30 @@ if ($id)
 
 	if ($search_country_id > 0)
 	{
+<<<<<<< HEAD
 		if (preg_match('/ WHERE /',$sql)) $sql.= " AND ";
+=======
+		if (preg_match('/ WHERE /', $sql)) $sql.= " AND ";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		else $sql.=" WHERE ";
 		$sql.= " c.rowid = ".$search_country_id;
 	}
 
 	// If sort order is "country", we use country_code instead
 	if ($sortfield == 'country') $sortfield='country_code';
+<<<<<<< HEAD
 	$sql.=$db->order($sortfield,$sortorder);
 	$sql.=$db->plimit($listlimit+1,$offset);
 	//print $sql;
 
 	$fieldlist=explode(',',$tabfield[$id]);
+=======
+	$sql.=$db->order($sortfield, $sortorder);
+	$sql.=$db->plimit($listlimit+1, $offset);
+	//print $sql;
+
+	$fieldlist=explode(',', $tabfield[$id]);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -513,7 +651,11 @@ if ($id)
 		$alabelisused=0;
 		$var=false;
 
+<<<<<<< HEAD
 		$fieldlist=explode(',',$tabfield[$id]);
+=======
+		$fieldlist=explode(',', $tabfield[$id]);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Line for title
 		print '<tr class="liste_titre">';
@@ -523,6 +665,7 @@ if ($id)
 			// dans les dictionnaires de donnees
 			$valuetoshow=ucfirst($fieldlist[$field]);   // Par defaut
 			$valuetoshow=$langs->trans($valuetoshow);   // try to translate
+<<<<<<< HEAD
 			$align="left";
 			if ($fieldlist[$field]=='source')          { $valuetoshow=$langs->trans("Contact"); }
 			if ($fieldlist[$field]=='price')           { $valuetoshow=$langs->trans("PriceUHT"); }
@@ -541,10 +684,14 @@ if ($id)
 				if ($tabname[$id] == MAIN_DB_PREFIX."c_paiement") $valuetoshow=$form->textwithtooltip($langs->trans("Type"),$langs->trans("TypePaymentDesc"),2,1,img_help(1,''));
 				else $valuetoshow=$langs->trans("Type");
 			}
+=======
+			$class="left";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); }
 			if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label')
 			{
 				$valuetoshow=$langs->trans("Label");
+<<<<<<< HEAD
 				if ($id != 25) $valuetoshow.="*";
 			}
 			if ($fieldlist[$field]=='libelle_facture') { $valuetoshow=$langs->trans("LabelOnDocuments")."*"; }
@@ -590,6 +737,28 @@ if ($id)
 				print '</td>';
 			 }
 			 if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') $alabelisused=1;
+=======
+			}
+			if ($fieldlist[$field]=='country')         {
+				if (in_array('region_id', $fieldlist)) { print '<td>&nbsp;</td>'; continue; }		// For region page, we do not show the country input
+				$valuetoshow=$langs->trans("Country");
+			}
+			if ($fieldlist[$field]=='country_id') { $valuetoshow=''; }
+			if ($fieldlist[$field]=='pcg_version' || $fieldlist[$field]=='fk_pcg_version') { $valuetoshow=$langs->trans("Pcg_version"); }
+
+			if ($valuetoshow != '') {
+				print '<td class="'.$class.'">';
+                if (! empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) {
+                    print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
+                } elseif (! empty($tabhelp[$id][$value])) {
+                    print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value]);
+                } else {
+                    print $valuetoshow;
+                }
+				print '</td>';
+			}
+			if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') $alabelisused=1;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		print '<td>';
@@ -604,7 +773,11 @@ if ($id)
 
 		$obj = new stdClass();
 		// If data was already input, we define them in obj to populate input fields.
+<<<<<<< HEAD
 		if (GETPOST('actionadd'))
+=======
+		if (GETPOST('actionadd', 'alpha'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			foreach ($fieldlist as $key=>$val)
 			{
@@ -615,25 +788,39 @@ if ($id)
 
 		$tmpaction = 'create';
 		$parameters=array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
+<<<<<<< HEAD
 		$reshook=$hookmanager->executeHooks('createDictionaryFieldlist',$parameters, $obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
+=======
+		$reshook=$hookmanager->executeHooks('createDictionaryFieldlist', $parameters, $obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$error=$hookmanager->error; $errors=$hookmanager->errors;
 
 		if (empty($reshook))
 		{
+<<<<<<< HEAD
 			fieldListAccountModel($fieldlist,$obj,$tabname[$id],'add');
 		}
 
 		print '<td colspan="3" align="right">';
+=======
+			fieldListAccountModel($fieldlist, $obj, $tabname[$id], 'add');
+		}
+
+		print '<td colspan="3" class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';
 		print '</td>';
 		print "</tr>";
 
 		$colspan=count($fieldlist)+3;
 
+<<<<<<< HEAD
 		if (! empty($alabelisused))  // If there is one label among fields, we show legend of *
 		{
 			print '<tr><td colspan="'.$colspan.'">* '.$langs->trans("LabelUsedByDefault").'.</td></tr>';
 		}
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '<tr><td colspan="'.$colspan.'">&nbsp;</td></tr>';	// Keep &nbsp; to have a line with enough height
 	}
 
@@ -656,7 +843,11 @@ if ($id)
 		// There is several pages
 		if ($num > $listlimit)
 		{
+<<<<<<< HEAD
 			print '<tr class="none"><td align="right" colspan="'.(3+count($fieldlist)).'">';
+=======
+			print '<tr class="none"><td class="right" colspan="'.(3+count($fieldlist)).'">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $listlimit), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page+1).'</span></li>');
 			print '</td></tr>';
 		}
@@ -684,7 +875,11 @@ if ($id)
 			}
 		}
 		print '<td class="liste_titre"></td>';
+<<<<<<< HEAD
 		print '<td class="liste_titre" colspan="2" align="right">';
+=======
+		print '<td class="liste_titre right" colspan="2">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$searchpicto=$form->showFilterAndCheckAddButtons(0);
 		print $searchpicto;
 		print '</td>';
@@ -697,7 +892,11 @@ if ($id)
 			// Determine le nom du champ par rapport aux noms possibles
 			// dans les dictionnaires de donnees
 			$showfield=1;							  	// By defaut
+<<<<<<< HEAD
 			$align="left";
+=======
+			$class="left";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$sortable=1;
 			$valuetoshow='';
 			/*
@@ -709,6 +908,7 @@ if ($id)
 			*/
 			$valuetoshow=ucfirst($fieldlist[$field]);   // By defaut
 			$valuetoshow=$langs->trans($valuetoshow);   // try to translate
+<<<<<<< HEAD
 			if ($fieldlist[$field]=='source')          { $valuetoshow=$langs->trans("Contact"); }
 			if ($fieldlist[$field]=='price')           { $valuetoshow=$langs->trans("PriceUHT"); }
 			if ($fieldlist[$field]=='taux')            {
@@ -761,6 +961,30 @@ if ($id)
 			}
 		}
 		print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "active", ($page?'page='.$page.'&':''), $param, 'align="center"', $sortfield, $sortorder);
+=======
+			if ($fieldlist[$field]=='code') {
+                $valuetoshow=$langs->trans("Code");
+            }
+            if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') {
+                $valuetoshow=$langs->trans("Label");
+            }
+            if ($fieldlist[$field]=='country') {
+                $valuetoshow=$langs->trans("Country");
+            }
+            if ($fieldlist[$field]=='country_id') {
+                $showfield=0;
+            }
+            if ($fieldlist[$field]=='fk_pcg_version') {
+                $valuetoshow=$langs->trans("Pcg_version");
+            }
+
+			// Affiche nom du champ
+			if ($showfield) {
+				print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], ($sortable?$fieldlist[$field]:''), ($page?'page='.$page.'&':''), $param, "", $sortfield, $sortorder, $class.' ');
+			}
+		}
+		print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "active", ($page?'page='.$page.'&':''), $param, '', $sortfield, $sortorder, 'center ');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print getTitleFieldOfList('');
 		print getTitleFieldOfList('');
 		print '</tr>';
@@ -782,19 +1006,32 @@ if ($id)
 
 					$tmpaction='edit';
 					$parameters=array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
+<<<<<<< HEAD
 					$reshook=$hookmanager->executeHooks('editDictionaryFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
 					$error=$hookmanager->error; $errors=$hookmanager->errors;
 
 					if (empty($reshook)) fieldListAccountModel($fieldlist,$obj,$tabname[$id],'edit');
 
 					print '<td colspan="3" align="right"><a name="'.(! empty($obj->rowid)?$obj->rowid:$obj->code).'">&nbsp;</a><input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
+=======
+					$reshook=$hookmanager->executeHooks('editDictionaryFieldlist', $parameters, $obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
+					$error=$hookmanager->error; $errors=$hookmanager->errors;
+
+					if (empty($reshook)) fieldListAccountModel($fieldlist, $obj, $tabname[$id], 'edit');
+
+					print '<td colspan="3" class="right"><a name="'.(! empty($obj->rowid)?$obj->rowid:$obj->code).'">&nbsp;</a><input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					print '&nbsp;<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
 				}
 				else
 				{
 				  	$tmpaction = 'view';
 					$parameters=array('var'=>$var, 'fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
+<<<<<<< HEAD
 					$reshook=$hookmanager->executeHooks('viewDictionaryFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
+=======
+					$reshook=$hookmanager->executeHooks('viewDictionaryFieldlist', $parameters, $obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 					$error=$hookmanager->error; $errors=$hookmanager->errors;
 
@@ -804,7 +1041,11 @@ if ($id)
 						{
 
 							$showfield=1;
+<<<<<<< HEAD
 							$align="left";
+=======
+							$class="left";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							$valuetoshow=$obj->{$fieldlist[$field]};
 							if ($value == 'type_template')
 							{
@@ -814,6 +1055,7 @@ if ($id)
 							{
 								$valuetoshow = isset($elementList[$valuetoshow])?$elementList[$valuetoshow]:$valuetoshow;
 							}
+<<<<<<< HEAD
 							else if ($value == 'source')
 							{
 								$valuetoshow = isset($sourceList[$valuetoshow])?$sourceList[$valuetoshow]:$valuetoshow;
@@ -822,6 +1064,16 @@ if ($id)
 								$valuetoshow=$langs->trans('All');
 							}
 							else if ($fieldlist[$field]=='country') {
+=======
+							elseif ($value == 'source')
+							{
+								$valuetoshow = isset($sourceList[$valuetoshow])?$sourceList[$valuetoshow]:$valuetoshow;
+							}
+							elseif ($valuetoshow=='all') {
+								$valuetoshow=$langs->trans('All');
+							}
+							elseif ($fieldlist[$field]=='country') {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 								if (empty($obj->country_code))
 								{
 									$valuetoshow='-';
@@ -832,6 +1084,7 @@ if ($id)
 									$valuetoshow=($key != "Country".strtoupper($obj->country_code)?$obj->country_code." - ".$key:$obj->country);
 								}
 							}
+<<<<<<< HEAD
 							else if ($fieldlist[$field]=='recuperableonly' || $fieldlist[$field]=='type_cdr' || $fieldlist[$field] == 'deductible' || $fieldlist[$field] == 'category_type') {
 								if(empty($valuetoshow)) $valuetoshow = $langs->trans('None');
 								elseif($valuetoshow == 1) $valuetoshow = $langs->trans('AtEndOfMonth');
@@ -946,16 +1199,26 @@ if ($id)
 							else if ($fieldlist[$field]=='accountancy_code' || $fieldlist[$field]=='accountancy_code_sell' || $fieldlist[$field]=='accountancy_code_buy') {
 								$valuetoshow = length_accountg($valuetoshow);
 							}
+=======
+							elseif ($fieldlist[$field]=='country_id') {
+								$showfield=0;
+							}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 							$class='tddict';
 							if ($fieldlist[$field] == 'tracking') $class.=' tdoverflowauto';
 							// Show value for field
+<<<<<<< HEAD
 							if ($showfield) print '<!-- '.$fieldlist[$field].' --><td align="'.$align.'" class="'.$class.'">'.$valuetoshow.'</td>';
+=======
+							if ($showfield) print '<!-- '.$fieldlist[$field].' --><td class="'.$class.'">'.$valuetoshow.'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						}
 					}
 
 					// Can an entry be erased or disabled ?
 					$iserasable=1;$canbedisabled=1;$canbemodified=1;	// true by default
+<<<<<<< HEAD
 					if (isset($obj->code) && $id != 10)
 					{
 						if (($obj->code == '0' || $obj->code == '' || preg_match('/unknown/i',$obj->code))) { $iserasable = 0; $canbedisabled = 0; }
@@ -967,23 +1230,37 @@ if ($id)
 					if (in_array($obj->code, array('AC_OTH','AC_OTH_AUTO')) || in_array($obj->type, array('systemauto'))) { $canbedisabled=0; $canbedisabled = 0; }
 					$canbemodified=$iserasable;
 					if ($obj->code == 'RECEP') $canbemodified=1;
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 					$url = $_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(! empty($obj->rowid)?$obj->rowid:(! empty($obj->code)?$obj->code:'')).'&code='.(! empty($obj->code)?urlencode($obj->code):'');
 					if ($param) $url .= '&'.$param;
 					$url.='&';
 
 					// Active
+<<<<<<< HEAD
 					print '<td align="center" class="nowrap">';
+=======
+					print '<td class="center nowrap">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					if ($canbedisabled) print '<a href="'.$url.'action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
 					else print $langs->trans("AlwaysActive");
 					print "</td>";
 
 					// Modify link
+<<<<<<< HEAD
 					if ($canbemodified) print '<td align="center"><a class="reposition" href="'.$url.'action=edit">'.img_edit().'</a></td>';
 					else print '<td>&nbsp;</td>';
 
 					// Delete link
 					if ($iserasable) print '<td align="center"><a href="'.$url.'action=delete">'.img_delete().'</a></td>';
+=======
+					if ($canbemodified) print '<td class="center"><a class="reposition" href="'.$url.'action=edit">'.img_edit().'</a></td>';
+					else print '<td>&nbsp;</td>';
+
+					// Delete link
+					if ($iserasable) print '<td class="center"><a href="'.$url.'action=delete">'.img_delete().'</a></td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					else print '<td>&nbsp;</td>';
 
 					print "</tr>\n";
@@ -1004,7 +1281,11 @@ if ($id)
 
 print '<br>';
 
+<<<<<<< HEAD
 
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();
 
@@ -1018,7 +1299,11 @@ $db->close();
  *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
  *	@return		void
  */
+<<<<<<< HEAD
 function fieldListAccountModel($fieldlist, $obj='', $tabname='', $context='')
+=======
+function fieldListAccountModel($fieldlist, $obj = '', $tabname = '', $context = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	global $conf,$langs,$db;
 	global $form;
@@ -1033,7 +1318,11 @@ function fieldListAccountModel($fieldlist, $obj='', $tabname='', $context='')
 	{
 		if ($fieldlist[$field] == 'country')
 		{
+<<<<<<< HEAD
 			if (in_array('region_id',$fieldlist))
+=======
+			if (in_array('region_id', $fieldlist))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			{
 				print '<td>';
 				//print join(',',$fieldlist);
@@ -1047,7 +1336,11 @@ function fieldListAccountModel($fieldlist, $obj='', $tabname='', $context='')
 		}
 		elseif ($fieldlist[$field] == 'country_id')
 		{
+<<<<<<< HEAD
 			if (! in_array('country',$fieldlist))	// If there is already a field country, we don't show country_id (avoid duplicate)
+=======
+			if (! in_array('country', $fieldlist))	// If there is already a field country, we don't show country_id (avoid duplicate)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			{
 				$country_id = (! empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]} : 0);
 				print '<td>';
@@ -1055,6 +1348,7 @@ function fieldListAccountModel($fieldlist, $obj='', $tabname='', $context='')
 				print '</td>';
 			}
 		}
+<<<<<<< HEAD
 		elseif ($fieldlist[$field] == 'region')
 		{
 			print '<td>';
@@ -1103,10 +1397,15 @@ function fieldListAccountModel($fieldlist, $obj='', $tabname='', $context='')
 		}
 		elseif ($fieldlist[$field] == 'recuperableonly' || $fieldlist[$field] == 'type_cdr' || $fieldlist[$field] == 'deductible' || $fieldlist[$field] == 'category_type') {
 			if ($fieldlist[$field] == 'type_cdr') print '<td align="center">';
+=======
+		elseif ($fieldlist[$field] == 'type_cdr') {
+			if ($fieldlist[$field] == 'type_cdr') print '<td class="center">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			else print '<td>';
 			if ($fieldlist[$field] == 'type_cdr') {
 				print $form->selectarray($fieldlist[$field], array(0=>$langs->trans('None'), 1=>$langs->trans('AtEndOfMonth'), 2=>$langs->trans('CurrentNext')), (! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''));
 			} else {
+<<<<<<< HEAD
 				print $form->selectyesno($fieldlist[$field],(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''),1);
 			}
 			print '</td>';
@@ -1154,6 +1453,15 @@ function fieldListAccountModel($fieldlist, $obj='', $tabname='', $context='')
 			}
 			print '</td>';
 		}
+=======
+				print $form->selectyesno($fieldlist[$field], (! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''), 1);
+			}
+			print '</td>';
+		}
+		elseif ($fieldlist[$field] == 'code' && isset($obj->{$fieldlist[$field]})) {
+			print '<td><input type="text" class="flat" value="'.(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'" size="10" name="'.$fieldlist[$field].'"></td>';
+		}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		else
 		{
 			print '<td>';
@@ -1161,11 +1469,17 @@ function fieldListAccountModel($fieldlist, $obj='', $tabname='', $context='')
 			if ($fieldlist[$field]=='code') $size='size="8" ';
 			if ($fieldlist[$field]=='position') $size='size="4" ';
 			if ($fieldlist[$field]=='libelle') $size='centpercent';
+<<<<<<< HEAD
 			if ($fieldlist[$field]=='tracking') $class='centpercent';
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if ($fieldlist[$field]=='sortorder' || $fieldlist[$field]=='sens' || $fieldlist[$field]=='category_type') $size='size="2" ';
 			print '<input type="text" '.$size.' class="flat'.($class?' '.$class:'').'" value="'.(isset($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'" name="'.$fieldlist[$field].'">';
 			print '</td>';
 		}
 	}
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

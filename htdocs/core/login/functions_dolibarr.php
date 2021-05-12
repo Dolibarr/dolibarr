@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2007-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2007-2015 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2007-2015 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2010-2011 Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,7 +37,11 @@
  * @param   int		$entitytotest   Number of instance (always 1 if module multicompany not enabled)
  * @return	string					Login if OK, '' if KO
  */
+<<<<<<< HEAD
 function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=1)
+=======
+function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotest = 1)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	global $db,$conf,$langs;
 
@@ -45,7 +53,11 @@ function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=
 
 	if (! empty($usertotest))
 	{
+<<<<<<< HEAD
 		dol_syslog("functions_dolibarr::check_user_password_dolibarr usertotest=".$usertotest." passwordtotest=".preg_replace('/./','*',$passwordtotest)." entitytotest=".$entitytotest);
+=======
+		dol_syslog("functions_dolibarr::check_user_password_dolibarr usertotest=".$usertotest." passwordtotest=".preg_replace('/./', '*', $passwordtotest)." entitytotest=".$entitytotest);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// If test username/password asked, we define $test=false if ko and $login var to login if ok, set also $_SESSION["dol_loginmesg"] if ko
 		$table = MAIN_DB_PREFIX."user";
@@ -56,7 +68,11 @@ function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=
 		$sql ='SELECT rowid, login, entity, pass, pass_crypted';
 		$sql.=' FROM '.$table;
 		$sql.=' WHERE ('.$usernamecol1." = '".$db->escape($usertotest)."'";
+<<<<<<< HEAD
 		if (preg_match('/@/',$usertotest)) $sql.=' OR '.$usernamecol2." = '".$db->escape($usertotest)."'";
+=======
+		if (preg_match('/@/', $usertotest)) $sql.=' OR '.$usernamecol2." = '".$db->escape($usertotest)."'";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql.=') AND '.$entitycol." IN (0," . ($entity ? $entity : 1) . ")";
 		$sql.=' AND statut = 1';
 		// Required to first found the user into entity, then the superadmin.
@@ -80,7 +96,11 @@ function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=
 				if (! empty($conf->global->DATABASE_PWD_ENCRYPTED)) $cryptType=$conf->global->DATABASE_PWD_ENCRYPTED;
 
 				// By default, we used MD5
+<<<<<<< HEAD
 				if (! in_array($cryptType,array('md5'))) $cryptType='md5';
+=======
+				if (! in_array($cryptType, array('md5'))) $cryptType='md5';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				// Check crypted password according to crypt algorithm
 				if ($cryptType == 'md5')
 				{
@@ -109,10 +129,19 @@ function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=
 				}
 				else
 				{
+<<<<<<< HEAD
 					dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ko bad password for '".$usertotest."'");
 					sleep(2);      // Anti brut force protection
 					$langs->load('main');
 					$langs->load('errors');
+=======
+				    sleep(2);      // Anti brut force protection
+				    dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ko bad password for '".$usertotest."', cryptType=".$cryptType);
+
+					// Load translation files required by the page
+                    $langs->loadLangs(array('main', 'errors'));
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
 				}
 
@@ -137,8 +166,15 @@ function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=
 			{
 				dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ko user not found for '".$usertotest."'");
 				sleep(1);
+<<<<<<< HEAD
 				$langs->load('main');
 				$langs->load('errors');
+=======
+
+				// Load translation files required by the page
+                $langs->loadLangs(array('main', 'errors'));
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
 			}
 		}

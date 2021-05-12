@@ -22,12 +22,21 @@
  *       \brief      File to return Ajax response on third parties request
  */
 
+<<<<<<< HEAD
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL',1); // Disables token renewal
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
+=======
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $res=0;
 require '../../main.inc.php';
@@ -44,7 +53,11 @@ $langs->loadlangs(array('errors', 'trips'));
 top_httphead();
 
 
+<<<<<<< HEAD
 dol_syslog(join(',',$_POST));
+=======
+dol_syslog(join(',', $_POST));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $fk_expense = GETPOST('fk_expense');
 $fk_c_exp_tax_cat = GETPOST('fk_c_exp_tax_cat');

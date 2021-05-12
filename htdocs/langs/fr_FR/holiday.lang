@@ -84,7 +84,11 @@ PrevSoldeCP=Précédent Solde
 NewSoldeCP=Nouveau Solde
 alreadyCPexist=Une demande de congés a déjà été faite sur cette période.
 FirstDayOfHoliday=Premier jour de congés
+<<<<<<< HEAD
 LastDayOfHoliday=Dernier jours de congés
+=======
+LastDayOfHoliday=Dernier jour de congés
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BoxTitleLastLeaveRequests=Les %s dernières demandes de congés modifiées
 HolidaysMonthlyUpdate=Mise à jour mensuelle
 ManualUpdate=Mise à jour manuelle
@@ -101,10 +105,17 @@ LEAVE_SICK=Congé maladie
 LEAVE_OTHER=Autre congé
 LEAVE_PAID_FR=Congés payés
 ## Configuration du Module ##
+<<<<<<< HEAD
 LastUpdateCP=Dernière mise à jour automatique de l'allocation des congés
 MonthOfLastMonthlyUpdate=Mois de la dernière mise à jour automatique des attributions de congés
 UpdateConfCPOK=Mise à jour effectuée avec succès.
 Module27130Name= Gestion des demandes de congés
+=======
+LastUpdateCP=Dernière mise à jour automatique de l'attribution des congés
+MonthOfLastMonthlyUpdate=Mois de la dernière mise à jour automatique des attributions de congés
+UpdateConfCPOK=Mise à jour effectuée avec succès.
+Module27130Name= Demandes de congés
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Module27130Desc= Ce module permet de gérer les demandes, approbations de congés.
 ErrorMailNotSend=Une erreur est survenue lors de l'envoi de l'email :
 NoticePeriod=Délai de prévenance
@@ -122,3 +133,12 @@ HolidaysCanceledBody=Votre demande de congés du %s au %s a été annulée.
 FollowedByACounter=1: Ce type de congé doit être suivis par un compteur. Le compteur est incrémenté manuellement ou automatiquement et quand une demande de congé est validée, le compteur est décrémenté.<br>0: Non suivi par un compteur.
 NoLeaveWithCounterDefined=Il n'y a pas de type de congés définis qui requiert un suivi par un compteur
 GoIntoDictionaryHolidayTypes=Aller dans <strong>Accueil - Configuration - Dictionnaires - Type de congés</strong> pour configurer les différents types de congés.
+<<<<<<< HEAD
+=======
+HolidaySetup=Configuration du module Congés
+HolidaysNumberingModules=Modèles de numérotation des demandes de congés
+TemplatePDFHolidays=Modèle de demande de congés PDF
+FreeLegalTextOnHolidays=Texte libre sur PDF
+WatermarkOnDraftHolidayCards=Filigranes sur les demandes de congés brouillons
+HolidaysToApprove=Vacances à approuver
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

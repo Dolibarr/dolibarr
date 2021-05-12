@@ -1,8 +1,12 @@
 # Dolibarr language file - Source file is en_US - mails
 MailCard=EMailings kaart
+<<<<<<< HEAD
 ResultOfMailSending=Resultaat van massa EMail versturen
 NbSelected=Nr geselecteerd
 NbIgnored=Nr genegeerd
 NbSent=Nr verstuurd
+=======
+MailingStatusSentPartialy=Gedeeltelijk verzonden
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SearchAMailing=Zoek een E-mailing
 SendMailing=Verzend E-mailing

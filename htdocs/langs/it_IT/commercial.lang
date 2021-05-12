@@ -52,6 +52,10 @@ ActionAC_TEL=Telefonata
 ActionAC_FAX=Invia fax
 ActionAC_PROP=Invia proposta
 ActionAC_EMAIL=Invia email
+<<<<<<< HEAD
+=======
+ActionAC_EMAIL_IN=Reception of Email
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActionAC_RDV=Riunione
 ActionAC_INT=Intervento presso cliente
 ActionAC_FAC=Invia fattura
@@ -72,8 +76,15 @@ StatusProsp=Stato del cliente potenziale
 DraftPropals=Bozze di proposte commerciali
 NoLimit=Nessun limite
 ToOfferALinkForOnlineSignature=Link per firma online
+<<<<<<< HEAD
 WelcomeOnOnlineSignaturePage=Benvenuti nella pagina per accettare proposte commerciali da %s
 ThisScreenAllowsYouToSignDocFrom=Questa schermata consente di accettare e firmare, o rifiutare, un preventivo/proposta commerciale
 ThisIsInformationOnDocumentToSign=Queste sono informazioni sul documento da accettare o rifiutare
 SignatureProposalRef=Firma del preventivo/proposta commerciale %s
+=======
+WelcomeOnOnlineSignaturePage=Welcome to the page to accept commercial proposals from %s
+ThisScreenAllowsYouToSignDocFrom=Questa schermata consente di accettare e firmare, o rifiutare, un preventivo/proposta commerciale
+ThisIsInformationOnDocumentToSign=Queste sono informazioni sul documento da accettare o rifiutare
+SignatureProposalRef=Signature of quote/commercial proposal %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 FeatureOnlineSignDisabled=Funzionalità per la firma online disattivata o documento generato prima che la funzione fosse abilitata

@@ -4,7 +4,11 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+<<<<<<< HEAD
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2011 	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -39,7 +43,11 @@ if (!$user->admin) accessforbidden();
 
 $def = array();
 $lastexternalrss=0;
+<<<<<<< HEAD
 $action=GETPOST('action','aZ09');
+=======
+$action=GETPOST('action', 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 /*
@@ -55,7 +63,11 @@ if ($result)
 {
     while ($obj = $db->fetch_object($result))
     {
+<<<<<<< HEAD
         preg_match('/([0-9]+)$/i',$obj->name,$reg);
+=======
+        preg_match('/([0-9]+)$/i', $obj->name, $reg);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         if ($reg[1] && $reg[1] > $lastexternalrss) $lastexternalrss = $reg[1];
     }
 }
@@ -66,8 +78,13 @@ else
 
 if ($action == 'add' || GETPOST("modify"))
 {
+<<<<<<< HEAD
     $external_rss_title = "external_rss_title_" . GETPOST("norss");
     $external_rss_urlrss = "external_rss_urlrss_" . GETPOST("norss");
+=======
+    $external_rss_title = "external_rss_title_" . GETPOST("norss", 'int');
+    $external_rss_urlrss = "external_rss_urlrss_" . GETPOST("norss", 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     if (! empty($_POST[$external_rss_urlrss]))
     {
@@ -95,7 +112,11 @@ if ($action == 'add' || GETPOST("modify"))
 		{
 			// Ajoute boite box_external_rss dans definition des boites
 	        $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (file, note)";
+<<<<<<< HEAD
 			$sql.= " VALUES ('box_external_rss.php','".$db->escape(GETPOST("norss").' ('.GETPOST($external_rss_title)).")')";
+=======
+			$sql.= " VALUES ('box_external_rss.php','".$db->escape(GETPOST("norss", 'int').' ('.GETPOST($external_rss_title, 'alpha')).")')";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	        if (! $db->query($sql))
 	        {
 	        	dol_print_error($db);
@@ -103,8 +124,13 @@ if ($action == 'add' || GETPOST("modify"))
 	        }
 		}
 
+<<<<<<< HEAD
 		$result1=dolibarr_set_const($db, "EXTERNAL_RSS_TITLE_" . GETPOST("norss"),GETPOST($external_rss_title),'chaine',0,'',$conf->entity);
 		if ($result1) $result2=dolibarr_set_const($db, "EXTERNAL_RSS_URLRSS_" . GETPOST("norss"),GETPOST($external_rss_urlrss),'chaine',0,'',$conf->entity);
+=======
+		$result1=dolibarr_set_const($db, "EXTERNAL_RSS_TITLE_" . GETPOST("norss", 'int'), GETPOST($external_rss_title, 'alpha'), 'chaine', 0, '', $conf->entity);
+		if ($result1) $result2=dolibarr_set_const($db, "EXTERNAL_RSS_URLRSS_" . GETPOST("norss", 'int'), GETPOST($external_rss_urlrss, 'alpha'), 'chaine', 0, '', $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         if ($result1 && $result2)
         {
@@ -122,13 +148,21 @@ if ($action == 'add' || GETPOST("modify"))
 
 if ($_POST["delete"])
 {
+<<<<<<< HEAD
     if(GETPOST("norss"))
+=======
+    if (GETPOST("norss", 'int'))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $db->begin();
 
 		// Supprime boite box_external_rss de definition des boites
         $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."boxes_def";
+<<<<<<< HEAD
         $sql.= " WHERE file = 'box_external_rss.php' AND note LIKE '".$db->escape(GETPOST("norss"))." %'";
+=======
+        $sql.= " WHERE file = 'box_external_rss.php' AND note LIKE '".$db->escape(GETPOST("norss", 'int'))." %'";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$resql=$db->query($sql);
 		if ($resql)
@@ -151,7 +185,11 @@ if ($_POST["delete"])
 				if (! $resql)
 				{
 					$db->rollback();
+<<<<<<< HEAD
 					dol_print_error($db,"sql=".$sql);
+=======
+					dol_print_error($db, "sql=".$sql);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					exit;
 				}
 
@@ -163,13 +201,22 @@ if ($_POST["delete"])
 		else
 		{
 			$db->rollback();
+<<<<<<< HEAD
 			dol_print_error($db,"sql=".$sql);
+=======
+			dol_print_error($db, "sql=".$sql);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			exit;
         }
 
 
+<<<<<<< HEAD
 		$result1=dolibarr_del_const($db,"EXTERNAL_RSS_TITLE_" . GETPOST("norss"),$conf->entity);
 		if ($result1) $result2=dolibarr_del_const($db,"EXTERNAL_RSS_URLRSS_" . GETPOST("norss"),$conf->entity);
+=======
+		$result1=dolibarr_del_const($db, "EXTERNAL_RSS_TITLE_".GETPOST("norss", 'int'), $conf->entity);
+		if ($result1) $result2=dolibarr_del_const($db, "EXTERNAL_RSS_URLRSS_".GETPOST("norss", 'int'), $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         if ($result1 && $result2)
         {
@@ -190,7 +237,11 @@ if ($_POST["delete"])
  * View
  */
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("ExternalRSSSetup"));
+=======
+llxHeader('', $langs->trans("ExternalRSSSetup"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ExternalRSSSetup"), $linkback, 'title_setup');
@@ -242,7 +293,11 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 
+<<<<<<< HEAD
 		preg_match('/^([0-9]+)/i',$obj->note,$reg);
+=======
+		preg_match('/^([0-9]+)/i', $obj->note, $reg);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$idrss = $reg[1];
 		$keyrsstitle="EXTERNAL_RSS_TITLE_".$idrss;
 		$keyrssurl="EXTERNAL_RSS_URLRSS_".$idrss;
@@ -259,7 +314,11 @@ if ($resql)
 
 		print "<tr class=\"liste_titre\">";
 		print "<td>".$langs->trans("RSS")." ".($i+1)."</td>";
+<<<<<<< HEAD
         print '<td align="right">';
+=======
+        print '<td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         print "<input type=\"submit\" class=\"button\" name=\"modify\" value=\"".$langs->trans("Modify")."\">";
 		print " &nbsp; ";
 		print "<input type=\"submit\" class=\"button\" name=\"delete\" value=\"".$langs->trans("Delete")."\">";
@@ -270,13 +329,21 @@ if ($resql)
 
 		print '<tr class="oddeven">';
 		print "<td width=\"100px\">".$langs->trans("Title")."</td>";
+<<<<<<< HEAD
 		print "<td><input type=\"text\" class=\"flat minwidth300\" name=\"external_rss_title_" . $idrss . "\" value=\"" . $conf->global->$keyrsstitle . "\"></td>";
+=======
+		print "<td><input type=\"text\" class=\"flat minwidth300\" name=\"external_rss_title_" . $idrss . "\" value=\"" . dol_escape_htmltag($conf->global->$keyrsstitle) . "\"></td>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print "</tr>";
 
 
 		print '<tr class="oddeven">';
 		print "<td>".$langs->trans("URL")."</td>";
+<<<<<<< HEAD
 		print "<td><input type=\"text\" class=\"flat minwidth300\" name=\"external_rss_urlrss_" . $idrss . "\" value=\"" . $conf->global->$keyrssurl . "\"></td>";
+=======
+		print "<td><input type=\"text\" class=\"flat minwidth300\" name=\"external_rss_urlrss_" . $idrss . "\" value=\"" . dol_escape_htmltag($conf->global->$keyrssurl) . "\"></td>";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print "</tr>";
 
 
@@ -325,6 +392,10 @@ else
 	dol_print_error($db);
 }
 
+<<<<<<< HEAD
 
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

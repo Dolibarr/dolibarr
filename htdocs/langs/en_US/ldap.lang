@@ -16,7 +16,11 @@ LDAPFieldFirstSubscriptionAmount=First subscription amount
 LDAPFieldLastSubscriptionDate=Latest subscription date
 LDAPFieldLastSubscriptionAmount=Latest subscription amount
 LDAPFieldSkype=Skype id
+<<<<<<< HEAD
 LDAPFieldSkypeExample=Example : skypeName
+=======
+LDAPFieldSkypeExample=Example: skypeName
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 UserSynchronized=User synchronized
 GroupSynchronized=Group synchronized
 MemberSynchronized=Member synchronized
@@ -24,4 +28,8 @@ MemberTypeSynchronized=Member type synchronized
 ContactSynchronized=Contact synchronized
 ForceSynchronize=Force synchronizing Dolibarr -> LDAP
 ErrorFailedToReadLDAP=Failed to read LDAP database. Check LDAP module setup and database accessibility.
+<<<<<<< HEAD
 PasswordOfUserInLDAP=Password of user in LDAP
+=======
+PasswordOfUserInLDAP=Password of user in LDAP
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

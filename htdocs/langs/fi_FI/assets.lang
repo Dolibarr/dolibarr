@@ -1,0 +1,65 @@
+# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+Assets = Varannot
+NewAsset = Lisää varanto
+AccountancyCodeAsset = Kirjanpitokoodi (varanto)
+AccountancyCodeDepreciationAsset = Kirjanpitokoodi (varannon poistot tili)
+AccountancyCodeDepreciationExpense = Kirjanpitokoodi (poistokustannuslaskelma)
+NewAssetType=Uusi varanto tyyppi
+AssetsTypeSetup=Asset type setup
+AssetTypeModified=Asset type modified
+AssetType=Varannon tyyppi
+AssetsLines=Varannot
+DeleteType=Poistaa
+DeleteAnAssetType=Delete an asset type
+ConfirmDeleteAssetType=Are you sure you want to delete this asset type?
+ShowTypeCard=Näytä tyyppi ' %s'
+
+# Module label 'ModuleAssetsName'
+ModuleAssetsName = Varannot
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc = Varannon kuvaus
+
+#
+# Admin page
+#
+AssetsSetup = Varantojen asetukset
+Settings = Asetukset
+AssetsSetupPage = Varantojen asetus sivu
+ExtraFieldsAssetsType = Complementary attributes (Asset type)
+AssetsType=Varannon tyyppi
+AssetsTypeId=Varannon tyypin tunnus
+AssetsTypeLabel=Varannon tyypin nimi
+AssetsTypes=Varantojen tyypit
+
+#
+# Menu
+#
+MenuAssets = Varannot
+MenuNewAsset = Lisää varanto
+MenuTypeAssets = Syötä varannot
+MenuListAssets = Luettelo
+MenuNewTypeAssets = Uusi
+MenuListTypeAssets = Luettelo
+
+#
+# Module
+#
+NewAssetType=Uusi varanto tyyppi
+NewAsset=Lisää varanto

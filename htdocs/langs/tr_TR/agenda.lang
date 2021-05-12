@@ -7,11 +7,16 @@ Agendas=Gündemler
 LocalAgenda=İç takvim
 ActionsOwnedBy=Etkinlik sahibi
 ActionsOwnedByShort=Sahibi
+<<<<<<< HEAD
 AffectedTo=Görevlendirilen
+=======
+AffectedTo=Atanan
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Event=Etkinlik
 Events=Etkinlikler
 EventsNb=Etkinlik sayısı
 ListOfActions=Etkinlik listesi
+<<<<<<< HEAD
 EventReports=Event reports
 Location=Konum
 ToUserOfGroup=Gruptaki herhangi bir kullanıcı için
@@ -101,6 +106,105 @@ AgendaUrlOptionsNotAdmin=Çıktıyı <b>%s</b> kullanıcısına ait olmayan etki
 AgendaUrlOptions4=Çıktıyı <b>%s</b> kullanıcısına (sahip ve diğerleri) atanmış etkinliklere sınırlamak için <b>logint=%s</b>.
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic event.
+=======
+EventReports=Etkinlik raporları
+Location=Konum
+ToUserOfGroup=Gruptaki herhangi bir kullanıcıya
+EventOnFullDay=Tam gün(ler)deki etkinlik
+MenuToDoActions=Sonlandırılmamış tüm etkinlikler
+MenuDoneActions=Sonlandırılmış tüm etkinlikler
+MenuToDoMyActions=Sonlanmamış etkinliklerim
+MenuDoneMyActions=Sonlanmış etkinliklerim
+ListOfEvents=Etkinlik listesi (iç takvim)
+ActionsAskedBy=Etkinliği bildiren
+ActionsToDoBy=Etkinliğe atanan
+ActionsDoneBy=Etkinliği yapan
+ActionAssignedTo=Etkinliğe atanan
+ViewCal=Ay görünümü
+ViewDay=Gün görünümü
+ViewWeek=Hafta görünümü
+ViewPerUser=Kullanıcıya göre görünüm
+ViewPerType=Türe göre görünüm
+AutoActions= Otomatik doldurma
+AgendaAutoActionDesc= Dolibarr'ın Gündem içerisinde otomatik olarak oluşturmasını istediğiniz etkinlikleri burada tanımlayabilirsiniz. Eğer hiçbiri seçilmemişse, kayıtlara sadece manuel eylemler dahil edilecek ve Gündem içerisinde gösterilecektir. Nesneler üzerinde gerçekleştirilen ticari faaliyetlerin (doğrulama, durum değişikliği) otomatik takibi kaydedilmeyecektir.
+AgendaSetupOtherDesc= Bu sayfa, Dolibarr etkinliklerinizi harici bir takvim (Thunderbird, Google Calendar vb...) için dışa aktarmanızı sağlayan seçenekleri sunar
+AgendaExtSitesDesc=Bu sayfa, takvimlerin dış kaynaklarını girmenize ve onları Dolibarr gündemi içerisinde görüntülemenize imkan sağlar.
+ActionsEvents=Dolibarr'ın gündem içerisinde otomatik olarak bir eylem oluşturacağı etkinlikler
+EventRemindersByEmailNotEnabled=%s modül kurulumunda e-posta yoluyla etkinik hatırlatıcı etkinleştirilmedi.
+##### Agenda event labels #####
+NewCompanyToDolibarr=%s adlı üçüncü parti oluşturuldu
+COMPANY_DELETEInDolibarr=%s adlı üçüncü parti silindi
+ContractValidatedInDolibarr=%s referans no'lu sözleşme doğrulandı
+CONTRACT_DELETEInDolibarr=%s referans no'lu sözleşme silindi
+PropalClosedSignedInDolibarr=%s referans no'lu teklif imzalandı
+PropalClosedRefusedInDolibarr=%s referans no'lu teklif reddedildi
+PropalValidatedInDolibarr=%s referans no'lu teklif doğrulandı
+PropalClassifiedBilledInDolibarr=%s referans no'lu teklif faturalandı olarak sınıflandırıldı
+InvoiceValidatedInDolibarr=%s referans no'lu fatura doğrulandı
+InvoiceValidatedInDolibarrFromPos=%s referans no'lu fatura POS'dan doğrulandı
+InvoiceBackToDraftInDolibarr=%s referans no'lu fatura taslak durumuna geri döndürüldü
+InvoiceDeleteDolibarr=%s referans no'lu fatura silindi
+InvoicePaidInDolibarr=%s referans no'lu fatura ödendi olarak değiştirildi
+InvoiceCanceledInDolibarr=%s referans no'lu fatura iptal edildi
+MemberValidatedInDolibarr=%s isimli üye doğrulandı
+MemberModifiedInDolibarr=%s isimli üye değiştirildi 
+MemberResiliatedInDolibarr=%s isimli üye sonlandırıldı
+MemberDeletedInDolibarr=%s isimli üye silindi
+MemberSubscriptionAddedInDolibarr=%s aboneliği %s referans no'lu üye için eklendi
+MemberSubscriptionModifiedInDolibarr=%s aboneliği %s referans no'lu üye için değiştirildi
+MemberSubscriptionDeletedInDolibarr=%s aboneiği %s referans no'lu üye için silindi
+ShipmentValidatedInDolibarr=%s referans no'lu sevkiyat doğrulandı
+ShipmentClassifyClosedInDolibarr=%s referans no'lu sevkiyat faturalandı olarak sınıflandırıldı
+ShipmentUnClassifyCloseddInDolibarr=%s referans no'lu sevkiyat yeniden açıldı olarak sınıflandırıldı
+ShipmentBackToDraftInDolibarr=%s referans no'lu sevkiyat taslak durumuna geri döndürüldü
+ShipmentDeletedInDolibarr=%s referans no'lu sevkiyat silindi
+OrderCreatedInDolibarr=%s referans no'lu sipariş oluşturuldu
+OrderValidatedInDolibarr=%s referans no'lu sipariş doğrulandı
+OrderDeliveredInDolibarr=%s referans no'lu sipariş sevkedildi olarak sınıflandırıldı
+OrderCanceledInDolibarr=%s referans no'lu sipariş iptal edildi
+OrderBilledInDolibarr=%s referans no'lu sipariş faturalandı olarak sınıflandırıldı
+OrderApprovedInDolibarr=%s referans no'lu sipariş onayladı
+OrderRefusedInDolibarr=%s referans no'lu sipariş reddedildi
+OrderBackToDraftInDolibarr=%s referans no'lu sipariş taslak durumuna geri döndürüldü
+ProposalSentByEMail=%s referans no'lu teklif e-posta ile gönderildi
+ContractSentByEMail=%s referans no'lu sözleşme e-posta ile gönderildi
+OrderSentByEMail=%s referans no'lu müşteri siparişi e-posta ile gönderildi
+InvoiceSentByEMail=%s referans no'lu müşteri faturası e-posta ile gönderildi
+SupplierOrderSentByEMail=%s referans no'lu tedarikçi siparişi e-posta ile gönderildi
+SupplierInvoiceSentByEMail=%s referans no'lu tedarikçi faturası e-posta ile gönderildi
+ShippingSentByEMail=%s referans no'lu sevkiyat e-posta ile gönderildi
+ShippingValidated= %s referans no'lu sevkiyat doğrulandı
+InterventionSentByEMail=%s referans no'lu müdahale e-posta ile gönderildi
+ProposalDeleted=Teklif silindi
+OrderDeleted=Sipariş silindi
+InvoiceDeleted=Fatura silindi
+PRODUCT_CREATEInDolibarr=%s kodlu ürün oluşturuldu
+PRODUCT_MODIFYInDolibarr=%s kodlu ürün değiştirildi
+PRODUCT_DELETEInDolibarr=%s kodlu ürün silindi
+EXPENSE_REPORT_CREATEInDolibarr=%s referans no'lu gider raporu oluşturuldu
+EXPENSE_REPORT_VALIDATEInDolibarr= %s referans no'lu gider raporu doğrulandı
+EXPENSE_REPORT_APPROVEInDolibarr=%s referans no'lu gider raporu onaylandı
+EXPENSE_REPORT_DELETEInDolibarr=%s referans no'lu gider raporu silindi
+EXPENSE_REPORT_REFUSEDInDolibarr=%s referans no'lu gider raporu reddedildi
+PROJECT_CREATEInDolibarr=%s referans no'lu proje oluşturuldu
+PROJECT_MODIFYInDolibarr=%s referans no'lu proje değiştirildi
+PROJECT_DELETEInDolibarr=%s referans no'lu proje silindi
+TICKET_CREATEInDolibarr= %s referans no'lu destek bildirimi oluşturuldu
+TICKET_MODIFYInDolibarr=%s referans no'lu destek bildirimi değiştirildi
+TICKET_ASSIGNEDInDolibarr=%s referans no'lu destek bildirimi atandı
+TICKET_CLOSEInDolibarr=%s referans no'lu destek bildirimi kapatıldı
+TICKET_DELETEInDolibarr=%s referans no'lu destek bildirimi silindi
+##### End agenda events #####
+AgendaModelModule=Etkinlik için belge şablonları
+DateActionStart=Başlangıç tarihi
+DateActionEnd=Bitiş tarihi
+AgendaUrlOptions1=Filtreleme çıktısına aşağıdaki parametreleri de ekleyebilirsiniz:
+AgendaUrlOptions3=<b>logina=%s</b>,  <b>%s</b> kullanıcısına ait eylemlerin çıkışlarını sınırlamak içindir.
+AgendaUrlOptionsNotAdmin=<b>logina=!%s</b>, <b>%s</b> kullanıcısına ait olmayan eylemlerin çıkışlarını sınırlamak içindir.
+AgendaUrlOptions4=<b>logint=%s</b>, <b>%s</b> kullanıcısına atanmış eylemlerin çıkışlarını sınırlamak içindir (sahibi ve diğerleri).
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b>, çıkışı <b>__PROJECT_ID__</b> projesine bağlanmış eylemlere sınırlamak için.
+AgendaUrlOptionsNotAutoEvent=Otomatik etkinlikleri hariç tutmak için <b>notactiontype=systemauto</b>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AgendaShowBirthdayEvents=Kişilerin doğum günlerini göster
 AgendaHideBirthdayEvents=Kişilerin doğum günlerini gizle
 Busy=Meşgul
@@ -108,6 +212,7 @@ ExportDataset_event1=Gündem etkinlikleri listesi
 DefaultWorkingDays=Varsayılan haftalık çalışma günleri aralığı (Örnek: 1-5, 1-6)
 DefaultWorkingHours=Varsayılan günlük çalışma saatleri (Örnek: 9-18)
 # External Sites ical
+<<<<<<< HEAD
 ExportCal=Takvim dışaaktar
 ExtSites=Dış takvimleri içeaktar
 ExtSitesEnableThisTool=Gündemde dış takvimleri (genel ayarlarda tanımlanan) göster. Kullanıcılar tarafından tanımlanan dış takvimleri etkilemez.
@@ -115,15 +220,29 @@ ExtSitesNbOfAgenda=Takvimlerin sayısı
 AgendaExtNb=Calendar no. %s
 ExtSiteUrlAgenda=.ical dosyasına erişmek için URL
 ExtSiteNoLabel=Tanımlama yok
+=======
+ExportCal=Takvimi dışa aktar
+ExtSites=Dış takvimleri içe aktar
+ExtSitesEnableThisTool=Gündem içindeki dış takvimleri (genel kurulumda tanımlanan) göster. Kullanıcılar tarafından tanımlanan dış takvimleri etkilemez.
+ExtSitesNbOfAgenda=Takvimlerin sayısı
+AgendaExtNb=Takvim no. %s
+ExtSiteUrlAgenda=.ical dosyasına erişmek için URL
+ExtSiteNoLabel=Açıklama yok
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 VisibleTimeRange=Görünür zaman aralığı
 VisibleDaysRange=Görünür gün aralığı
 AddEvent=Etkinlik oluştur
 MyAvailability=Uygunluğum
 ActionType=Etkinlik türü
 DateActionBegin=Etkinlik başlangıç tarihi
+<<<<<<< HEAD
 CloneAction=Etkinlik kopyala
 ConfirmCloneEvent=<b>%s</b> etkinliğini klonlamak istediğinizden emin misiniz?
 RepeatEvent=Etkinlik tekrarla
+=======
+ConfirmCloneEvent=<b>%s</b> etkinliğini çoğaltmak istediğinizden emin misiniz?
+RepeatEvent=Etkinliği tekrarla
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 EveryWeek=Her hafta
 EveryMonth=Her ay
 DayOfMonth=Ayın günü

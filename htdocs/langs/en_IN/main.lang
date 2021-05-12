@@ -19,9 +19,14 @@ FormatDateHourShort=%d/%m/%Y %I:%M %p
 FormatDateHourSecShort=%d/%m/%Y %I:%M:%S %p
 FormatDateHourTextShort=%b %d, %Y, %I:%M %p
 FormatDateHourText=%B %d, %Y, %I:%M %p
+<<<<<<< HEAD
 TotalHT=Total (excl. GST)
 TotalHTforthispage=Total (excl. GST) for this page
 CommercialProposalsShort=Quotations
 LinkToProposal=Link to quotation
 LinkToSupplierProposal=Link to supplier quotation
+=======
+CommercialProposalsShort=Quotations
+LinkToProposal=Link to quotation
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SearchIntoCustomerProposals=Customer quotations

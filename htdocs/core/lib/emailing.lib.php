@@ -46,10 +46,16 @@ function emailing_prepare_head(Mailing $object)
 		if ($object->nbemail > 0) $head[$h][1].= ' <span class="badge">'.$object->nbemail.'</span>';
     	$head[$h][2] = 'targets';
     	$h++;
+<<<<<<< HEAD
 
 	}
 	
 	if (! empty($conf->global->EMAILING_USE_ADVANCED_SELECTOR)) 
+=======
+	}
+
+	if (! empty($conf->global->EMAILING_USE_ADVANCED_SELECTOR))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$head[$h][0] = DOL_URL_ROOT."/comm/mailing/advtargetemailing.php?id=".$object->id;
 		$head[$h][1] = $langs->trans("MailAdvTargetRecipients");
@@ -62,6 +68,7 @@ function emailing_prepare_head(Mailing $object)
 	$head[$h][2] = 'info';
 	$h++;
 
+<<<<<<< HEAD
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'emailing');
 
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'emailing','remove');
@@ -69,3 +76,11 @@ function emailing_prepare_head(Mailing $object)
 	return $head;
 }
 
+=======
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'emailing');
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'emailing', 'remove');
+
+	return $head;
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -25,7 +25,11 @@ FormatDateHourTextShort=%b %d, %Y, %I:%M %p
 FormatDateHourText=%B %d, %Y, %I:%M %p
 DatabaseConnection=Savienojums ar datubāzi
 NoTemplateDefined=Šim e-pasta veidam nav pieejamas veidnes
+<<<<<<< HEAD
 AvailableVariables=Available substitution variables
+=======
+AvailableVariables=Pieejamie aizstāšanas mainīgie
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoTranslation=Nav iztulkots
 Translation=Tulkošana
 NoRecordFound=Nav atrasti ieraksti
@@ -44,12 +48,17 @@ ErrorConstantNotDefined=Parametrs %s nav definēts
 ErrorUnknown=Nezināma kļūda
 ErrorSQL=SQL kļūda
 ErrorLogoFileNotFound=Logotipa fails '%s' nav atrasts
+<<<<<<< HEAD
 ErrorGoToGlobalSetup=Lai to novērstu, pārejiet uz iestatījumu "Uzņēmums / organizācija"
+=======
+ErrorGoToGlobalSetup=Lai to novērstu, pārejiet uz iestatījumiem "Uzņēmums/organizācija"
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorGoToModuleSetup=Iet uz moduļa uzstādīšanu, lai atrisinātu šo
 ErrorFailedToSendMail=Neizdevās nosūtīt pastu (sūtītājs = %s, saņēmējs = %s)
 ErrorFileNotUploaded=Fails netika augšupielādēts. Pārbaudiet vai izmērs nepārsniedz maksimāli pieļaujamo un, ka brīvas vietas ir pieejama uz diska, un nav jau failu ar tādu pašu nosaukumu šajā direktorijā.
 ErrorInternalErrorDetected=Atklāta kļūda
 ErrorWrongHostParameter=Nepareizs servera parametrs
+<<<<<<< HEAD
 ErrorYourCountryIsNotDefined=Jūsu valsts nav definēta. Ejiet uz Sākums-Iestatījumi-Labot un tad mēģiniet vēlreiz aizpildīt formu.
 ErrorRecordIsUsedByChild=Neizdevās dzēst šo ierakstu. Šis ieraksts tiek izmantots vismaz viena bērna ierakstuam.
 ErrorWrongValue=Nepareizs vērtība
@@ -65,6 +74,23 @@ ErrorNoSocialContributionForSellerCountry=Error, no social/fiscal taxes type def
 ErrorFailedToSaveFile=Kļūda, neizdevās saglabāt failu.
 ErrorCannotAddThisParentWarehouse=Jūs mēģināt pievienot vecāku noliktavu, kas jau ir pašreizējā bērns
 MaxNbOfRecordPerPage=Maksimālais ierakstu skaits lapā
+=======
+ErrorYourCountryIsNotDefined=Jūsu valsts nav definēta. Atveriet Sākums-Iestatījumi-Labot un pēc tam ievadiet valsti.
+ErrorRecordIsUsedByChild=Neizdevās izdzēst šo ierakstu. Šo ierakstu izmanto vismaz viens apakš ieraksts.
+ErrorWrongValue=Nepareizs vērtība
+ErrorWrongValueForParameterX=Nepareiza vērtība parametram %s
+ErrorNoRequestInError=Nav pieprasījums kļūdā
+ErrorServiceUnavailableTryLater=Pakalpojums pašlaik nav pieejams. Pamēģini vēlreiz vēlāk.
+ErrorDuplicateField=Dubulta vērtība unikālā laukā
+ErrorSomeErrorWereFoundRollbackIsDone=Dažas kļūdas tika atrastas. Atgriezām atpakaļ visu sākuma stāvoklī.
+ErrorConfigParameterNotDefined=Parametrs <b>%s</b> nav definēts Dolibarr konfigurācijas failā <b>conf.php</b>.
+ErrorCantLoadUserFromDolibarrDatabase=Neizdevās atrast lietotāju <b>%s</b> Dolibarr datu bāzē.
+ErrorNoVATRateDefinedForSellerCountry=Kļūda, PVN likme nav definēta sekojošai valstij '%s'.
+ErrorNoSocialContributionForSellerCountry=Kļūda, sociālā/fiskālā rakstura nodokļi nav definēti valstī “%s”.
+ErrorFailedToSaveFile=Kļūda, neizdevās saglabāt failu.
+ErrorCannotAddThisParentWarehouse=Jūs mēģināt pievienot vecāku noliktavu, kas jau ir esošās noliktavas bērns
+MaxNbOfRecordPerPage=Maks. ierakstu skaits lapā
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NotAuthorized=Jums nav tiesību, lai veiktu šo darbību.
 SetDate=Iestatīt datumu
 SelectDate=Izvēlēties datumu
@@ -78,14 +104,25 @@ FileRenamed=Fails tika veiksmīgi pārdēvēts
 FileGenerated=Fails tika veiksmīgi ģenerēts
 FileSaved=Fails tika veiksmīgi saglabāts
 FileUploaded=Fails veiksmīgi augšupielādēts
+<<<<<<< HEAD
 FileTransferComplete=Fails(i) tika augšupielādēts veiksmīgi
 FilesDeleted=Fails (-i) ir veiksmīgi dzēsti
 FileWasNotUploaded=Fails ir izvēlēts pielikumam,  bet vēl nav augšupielādēti. Noklikšķiniet uz &quot;Pievienot failu&quot;, lai to pievienotu.
 NbOfEntries=Ierakstu sk
+=======
+FileTransferComplete=Fails(i) tika veiksmīgi augšupielādēti
+FilesDeleted=Fails (-i) ir veiksmīgi dzēsti
+FileWasNotUploaded=Fails ir izvēlēts pielikumam,  bet vēl nav augšupielādēti. Noklikšķiniet uz &quot;Pievienot failu&quot;, lai to pievienotu.
+NbOfEntries=Ierakstu skaits
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 GoToWikiHelpPage=Lasīt tiešsaistes palīdzību (nepieciešams interneta piekļuve)
 GoToHelpPage=Lasīt palīdzību
 RecordSaved=Ieraksts saglabāts
 RecordDeleted=Ieraksts dzēsts
+<<<<<<< HEAD
+=======
+RecordGenerated=Ieraksts izveidots
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LevelOfFeature=Līmeņa funkcijas
 NotDefined=Nav definēts
 DolibarrInHttpAuthenticationSoPasswordUseless=Dolibarr authentication mode is set to <b>%s</b> in configuration file <b>conf.php</b>.<br>This means that the password database is external to Dolibarr, so changing this field may have no effect.
@@ -94,17 +131,28 @@ Undefined=Nav definēts
 PasswordForgotten=Aizmirsāt paroli?
 NoAccount=Nav konts?
 SeeAbove=Skatīt iepriekš
+<<<<<<< HEAD
 HomeArea=Mājas sadaļa
 LastConnexion=Latest connection
 PreviousConnexion=Iepriekšējā pieslēgšanās
+=======
+HomeArea=Mājās
+LastConnexion=Pēdējā pieteikšanās
+PreviousConnexion=Iepriekšējā pieteikšanās
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PreviousValue=Iepriekšējā vērtība
 ConnectedOnMultiCompany=Pieslēgts videi
 ConnectedSince=Pievienots kopš
 AuthenticationMode=Autentifikācija režīms
 RequestedUrl=Pieprasīts URL
 DatabaseTypeManager=Datu bāzes menedžeris
+<<<<<<< HEAD
 RequestLastAccessInError=Latest database access request error
 ReturnCodeLastAccessInError=Return code for latest database access request error
+=======
+RequestLastAccessInError=Jaunākās datubāzes piekļuves pieprasījuma kļūdas
+ReturnCodeLastAccessInError=Atgriešanas kods jaunākās datu bāzes piekļuves pieprasījuma kļūdai
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 InformationLastAccessInError=Information for latest database access request error
 DolibarrHasDetectedError=Dolibarr ir atklājis tehnisku kļūdu
 YouCanSetOptionDolibarrMainProdToZero=Jūs varat izlasīt žurnāla failu vai iestatīt opciju $ dolibarr_main_prod uz '0' savā konfigurācijas failā, lai iegūtu vairāk informācijas.
@@ -118,7 +166,11 @@ PrecisionUnitIsLimitedToXDecimals=Dolibarr iestatīts, lai ierobežotu vienības
 DoTest=Pārbaude
 ToFilter=Filtrs
 NoFilter=Bez filtra
+<<<<<<< HEAD
 WarningYouHaveAtLeastOneTaskLate=Uzmanību, jums ir vismaz viens no elementiem, kas ir pārsniegusi pielaides kavēšanos.
+=======
+WarningYouHaveAtLeastOneTaskLate=Brīdinājums, jums ir vismaz viens elements, kas pārsniedza tolerances laiku.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 yes=jā
 Yes=Jā
 no=nē
@@ -142,6 +194,10 @@ Closed=Slēgts
 Closed2=Slēgts
 NotClosed=Nav slēgts
 Enabled=Atvienots
+<<<<<<< HEAD
+=======
+Enable=Ieslēgt
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Deprecated=Novecojusi
 Disable=Atslēgt
 Disabled=Atslēgts
@@ -153,7 +209,11 @@ Update=Atjaunot
 Close=Aizvērt
 CloseBox=Noņemiet logrīku no sava informācijas paneļa
 Confirm=Apstiprināt
+<<<<<<< HEAD
 ConfirmSendCardByMail=Do you really want to send content of this card by mail to <b>%s</b>?
+=======
+ConfirmSendCardByMail=Vai tiešām vēlaties nosūtīt šīs kartes saturu pa pastu uz <b> %s </b>?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Delete=Izdzēst
 Remove=Noņemt
 Resiliate=Pārtraukt
@@ -161,7 +221,11 @@ Cancel=Atcelt
 Modify=Modificēt
 Edit=Rediģēt
 Validate=Pārbaudīt
+<<<<<<< HEAD
 ValidateAndApprove=Validate and Approve
+=======
+ValidateAndApprove=Pārbaudiet un apstipriniet
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ToValidate=Jāpārbauda
 NotValidated=Nav apstiprināts
 Save=Saglabāt
@@ -181,9 +245,15 @@ Search=Meklēšana
 SearchOf=Meklēšana
 Valid=Derīgs
 Approve=Apstiprināt
+<<<<<<< HEAD
 Disapprove=Disapprove
 ReOpen=Atvērt par jaunu
 Upload=Augšupielādēt failu
+=======
+Disapprove=Noraidīt
+ReOpen=Atvērt pa jaunu
+Upload=Augšupielādēt
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ToLink=Saite
 Select=Atlasīt
 Choose=Izvēlēties
@@ -195,11 +265,19 @@ User=Lietotājs
 Users=Lietotāji
 Group=Grupa
 Groups=Grupas
+<<<<<<< HEAD
 NoUserGroupDefined=No user group defined
+=======
+NoUserGroupDefined=Nav definēta neviena lietotāju grupa
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Password=Parole
 PasswordRetype=PArole atkārtoti
 NoteSomeFeaturesAreDisabled=Ņemiet vērā, ka funkcijas / modules daudz ir invalīdi šajā demonstrācijā.
 Name=Nosaukums
+<<<<<<< HEAD
+=======
+NameSlashCompany=Nosaukums/uzņēmums
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Person=Persona
 Parameter=Parametrs
 Parameters=Parametri
@@ -220,8 +298,16 @@ Info=Pieteikties
 Family=Ģimene
 Description=Apraksts
 Designation=Apraksts
+<<<<<<< HEAD
 Model=Doc template
 DefaultModel=Default doc template
+=======
+DescriptionOfLine=Līnijas apraksts
+DateOfLine=Līnijas datums
+DurationOfLine=Līnijas ilgums
+Model=Doc veidne
+DefaultModel=Noklusējuma doc veidne
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Action=Notikums
 About=Par
 Number=Numurs
@@ -252,7 +338,11 @@ DateCreation=Izveidošanas datums
 DateCreationShort=Izv. datums
 DateModification=Labošanas datums
 DateModificationShort=Modif. datums
+<<<<<<< HEAD
 DateLastModification=Latest modification date
+=======
+DateLastModification=Jaunākais labošanas datums
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DateValidation=Apstiprināšanas datums
 DateClosing=Beigu datums
 DateDue=Izpildes datums
@@ -327,12 +417,21 @@ Copy=Kopēt
 Paste=Ielīmēt
 Default=Noklusējums
 DefaultValue=Noklusējuma vērtība
+<<<<<<< HEAD
 DefaultValues=Noklusējuma vērtības
 Price=Cena
 PriceCurrency=Cena (valūta)
 UnitPrice=Vienības cena
 UnitPriceHT=Vienības cena (neto)
 UnitPriceHTCurrency=Vienības cena (neto) (valūta)
+=======
+DefaultValues=Noklusētās vērtības / filtri / šķirošana
+Price=Cena
+PriceCurrency=Cena (valūta)
+UnitPrice=Vienības cena
+UnitPriceHT=Vienības cena (izņemot)
+UnitPriceHTCurrency=Vienības cena (izņemot) (valūta)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 UnitPriceTTC=Vienības cena
 PriceU=UP
 PriceUHT=UP (neto)
@@ -342,6 +441,7 @@ Amount=Summa
 AmountInvoice=Rēķina summa
 AmountInvoiced=Rēķinā iekļautā summa
 AmountPayment=Maksājuma summa
+<<<<<<< HEAD
 AmountHTShort=Summa (neto)
 AmountTTCShort=Summa (ar PVN)
 AmountHT=Daudzums (neto pēc nodokļiem)
@@ -351,6 +451,17 @@ MulticurrencyAlreadyPaid=Jau samaksāta, oriģināla valūta
 MulticurrencyRemainderToPay=Atlikums, kas jāsamaksā oriģinālā valūtā
 MulticurrencyPaymentAmount=Maksājuma summa, oriģinālajā valūtā
 MulticurrencyAmountHT=Amount (net of tax), original currency
+=======
+AmountHTShort=Summa (izņemot)
+AmountTTCShort=Summa (ar PVN)
+AmountHT=Summa (bez nodokļiem)
+AmountTTC=Summa (ar PVN)
+AmountVAT=Nodokļa summa
+MulticurrencyAlreadyPaid=Jau samaksāta sākotnējā valūta
+MulticurrencyRemainderToPay=Atlikums, kas jāsamaksā oriģinālā valūtā
+MulticurrencyPaymentAmount=Maksājuma summa, oriģinālajā valūtā
+MulticurrencyAmountHT=Summa (bez nodokļa), sākotnējā valūta
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MulticurrencyAmountTTC=Amount (inc. of tax), original currency
 MulticurrencyAmountVAT=Amount tax, original currency
 AmountLT1=Nodokļa summa 2
@@ -359,6 +470,7 @@ AmountLT1ES=Summa RE
 AmountLT2ES=Summa IRPF
 AmountTotal=Kopējā summa
 AmountAverage=Vidējā summa
+<<<<<<< HEAD
 PriceQtyMinHT=Cena daudzumu min. (bez nodokļiem)
 PriceQtyMinHTCurrency=Cenas daudzums min. (bez nodokļiem) (valūta)
 Percentage=Procentuālā attiecība
@@ -369,6 +481,19 @@ TotalHTShortCurrency=Total (net in currency)
 TotalTTCShort=Pavisam (ar PVN)
 TotalHT=Pavisam (bez PVN)
 TotalHTforthispage=Kopā (bez PVN) šajā lapā
+=======
+PriceQtyMinHT=Cenu daudzums min. (bez nodokļiem)
+PriceQtyMinHTCurrency=Cenu daudzums min. (bez nodokļa) (valūta)
+Percentage=Procentuālā attiecība
+Total=Kopsumma
+SubTotal=Starpsumma
+TotalHTShort=Kopā (izņemot)
+TotalHT100Short=Kopā 100%% (izņemot)
+TotalHTShortCurrency=Kopā (izņemot valūtā)
+TotalTTCShort=Pavisam (ar PVN)
+TotalHT=Kopā (bez nodokļiem)
+TotalHTforthispage=Kopā (izņemot nodokli) šai lapai
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Totalforthispage=Kopā par šo lapu
 TotalTTC=Pavisam (ar PVN)
 TotalTTCToYourCredit=Pavisam (ieskaitot nodokli), pie jūsu kredīta
@@ -380,22 +505,38 @@ TotalLT1ES=Kopējais RE
 TotalLT2ES=Kopējais IRPF
 TotalLT1IN=Kopējais CGST
 TotalLT2IN=Kopējais SGST
+<<<<<<< HEAD
 HT=Bez PVN
+=======
+HT=Izņemot. nodoklis
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TTC=Ar PVN
 INCVATONLY=ar PVN
 INCT=Inc visiem nodokļiem
 VAT=PVN
 VATIN=IGST
+<<<<<<< HEAD
 VATs=Sales taxes
+=======
+VATs=Pārdošanas nodokļi
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 VATINs=IGST nodokļi
 LT1=Pārdošanas nodoklis 2
 LT1Type=Pārdošanas nodoklis 2 tips
 LT2=Pārdošanas nodoklis 3
+<<<<<<< HEAD
 LT2Type=3 pārdošanas nodoklis
+=======
+LT2Type=Pārdošanas nodoklis 3 tips
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LT1ES=RE
 LT2ES=IRPF
 LT1IN=CGST
 LT2IN=SGST
+<<<<<<< HEAD
+=======
+LT1GC=Papildu centi
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 VATRate=Nodokļa likme
 VATCode=Nodokļu likmes kods
 VATNPR=Nodokļa likme NPR
@@ -403,7 +544,11 @@ DefaultTaxRate=Noklusētā nodokļa likme
 Average=Vidējais
 Sum=Summa
 Delta=Delta
+<<<<<<< HEAD
 RemainToPay=Paliek maksāt
+=======
+RemainToPay=Vēl jāsamaksā
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Module=Module/Application
 Modules=Moduļi/lietojumprogrammas
 Option=Iespējas
@@ -429,22 +574,37 @@ ActionRunningNotStarted=Jāsāk
 ActionRunningShort=Procesā
 ActionDoneShort=Pabeigts
 ActionUncomplete=Nepabeigts
+<<<<<<< HEAD
 LatestLinkedEvents=Jaunākie %s saistīti notikumi
+=======
+LatestLinkedEvents=Jaunākie %s saistītie notikumi
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CompanyFoundation=Uzņēmums / organizācija
 Accountant=Grāmatvedis
 ContactsForCompany=Šīs trešās personas kontakti
 ContactsAddressesForCompany=Kontakti / adreses par šīs trešās personas
 AddressesForCompany=Šīs trešās puses adreses
+<<<<<<< HEAD
 ActionsOnCompany=Pasākumi par šīs trešās personas
 ActionsOnMember=Pasākumi par šo locekli
 ActionsOnProduct=Notikumi par šo produktu
+=======
+ActionsOnCompany=Notikumi šai trešajai pusei
+ActionsOnContact=Notikumi šim kontaktam / adresei
+ActionsOnMember=Pasākumi par šo locekli
+ActionsOnProduct=Notikumi ar šo produktu
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NActionsLate=%s vēlu
 ToDo=Jāizdara
 Completed=Pabeigts
 Running=Procesā
 RequestAlreadyDone=Request already recorded
 Filter=Filtrs
+<<<<<<< HEAD
 FilterOnInto=Search criteria '<strong>%s</strong>' into fields %s
+=======
+FilterOnInto=Meklēšanas kritēriji '<strong> %s</strong>' laukos %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 RemoveFilter=Noņemt filtru
 ChartGenerated=Grafiks izveidots
 ChartNotGenerated=Diagramma nav izveidota
@@ -453,14 +613,24 @@ Generate=Izveidot
 Duration=Ilgums
 TotalDuration=Kopējais pasākuma ilgums
 Summary=Kopsavilkums
+<<<<<<< HEAD
 DolibarrStateBoard=Database statistics
 DolibarrWorkBoard=Open items dashboard
+=======
+DolibarrStateBoard=Datu bāzes statistika
+DolibarrWorkBoard=Atvērt preces
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoOpenedElementToProcess=Nav atvērts elements apstrādāt
 Available=Pieejams
 NotYetAvailable=Nav vēl pieejams
 NotAvailable=Nav pieejams
+<<<<<<< HEAD
 Categories=Tags/categories
 Category=Tag/category
+=======
+Categories=Atslēgvārdi / sadaļas
+Category=Atslēgvārds / sadaļa
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 By=Līdz
 From=No
 to=līdz
@@ -468,16 +638,25 @@ and=un
 or=vai
 Other=Cits
 Others=Citi
+<<<<<<< HEAD
 OtherInformations=Citas informācija
 Quantity=Daudzums
 Qty=Daudz
 ChangedBy=Labojis
 ApprovedBy=Approved by
+=======
+OtherInformations=Cita informācija
+Quantity=Daudzums
+Qty=Daudz
+ChangedBy=Labojis
+ApprovedBy=Apstiprināja
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ApprovedBy2=Approved by (second approval)
 Approved=Apstiprināts
 Refused=Atteikts
 ReCalculate=Pārrēķināt
 ResultKo=Neveiksme
+<<<<<<< HEAD
 Reporting=Pārskata
 Reportings=Pārskati
 Draft=Melnraksts
@@ -485,6 +664,17 @@ Drafts=Melnraksti
 StatusInterInvoiced=
 Validated=Apstiprināts
 Opened=Atvērts
+=======
+Reporting=Pārskati
+Reportings=Pārskati
+Draft=Melnraksts
+Drafts=Melnraksti
+StatusInterInvoiced=Rēķins
+Validated=Apstiprināts
+Opened=Atvērt
+OpenAll=Atvērti (visi)
+ClosedAll=Slēgti (visi)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 New=Jauns
 Discount=Atlaide
 Unknown=Nezināms
@@ -506,8 +696,13 @@ None=Nav
 NoneF=Nav
 NoneOrSeveral=Neviens vai vairāki
 Late=Vēlu
+<<<<<<< HEAD
 LateDesc=Delay to define if a record is late or not depends on your setup. Ask your admin to change delay from menu Home - Setup - Alerts.
 NoItemLate=No late item
+=======
+LateDesc=Vienums tiek definēts kā aizkavēts, kā norādīts sistēmas konfigurācijā izvēlnē Home - Setup - Alerts.
+NoItemLate=Nav vēlu priekšmetu
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Photo=Attēls
 Photos=Attēli
 AddPhoto=Pievienot attēlu
@@ -530,6 +725,7 @@ September=Septembris
 October=Oktobris
 November=Novembris
 December=Decembris
+<<<<<<< HEAD
 JanuaryMin=Jan
 FebruaryMin=Feb
 MarchMin=Mar
@@ -542,6 +738,8 @@ SeptemberMin=Sep
 OctoberMin=Okt
 NovemberMin=Nov
 DecemberMin=Dec
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Month01=Janvāris
 Month02=Februāris
 Month03=Marts
@@ -567,6 +765,7 @@ MonthShort10=Okt
 MonthShort11=Nov
 MonthShort12=Dec
 MonthVeryShort01=J
+<<<<<<< HEAD
 MonthVeryShort02=P
 MonthVeryShort03=P
 MonthVeryShort04=A
@@ -575,6 +774,16 @@ MonthVeryShort06=J
 MonthVeryShort07=J
 MonthVeryShort08=A
 MonthVeryShort09=Sv
+=======
+MonthVeryShort02=Feb
+MonthVeryShort03=Mar
+MonthVeryShort04=A
+MonthVeryShort05=Mai
+MonthVeryShort06=Jūn
+MonthVeryShort07=Jūl
+MonthVeryShort08=Aug
+MonthVeryShort09=Sep
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MonthVeryShort10=O
 MonthVeryShort11=N
 MonthVeryShort12=D
@@ -611,7 +820,11 @@ DateFromTo=No %s līdz %s
 DateFrom=No %s
 DateUntil=Līdz %s
 Check=Pārbaudīt
+<<<<<<< HEAD
 Uncheck=Uncheck
+=======
+Uncheck=Noņemt atzīmi
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Internal=Iekšējs
 External=Ārējs
 Internals=Iekšējs
@@ -638,6 +851,7 @@ FeatureNotYetSupported=Funkcija netiek atbalstīta
 CloseWindow=Aizvērt logu
 Response=Atbilde
 Priority=Prioritāte
+<<<<<<< HEAD
 SendByMail=Sūtīt pa e-pastu
 MailSentBy=Nosūtīts e-pasts ar
 TextUsedInTheMessageBody=E-pasts ķermeņa
@@ -646,6 +860,17 @@ SendMail=Sūtīt e-pastu
 EMail=E-pasts
 NoEMail=Nav e-pasta
 Email=E-pasts
+=======
+SendByMail=Sūtīt ar e-pastu
+MailSentBy=Nosūtīts e-pasts ar
+TextUsedInTheMessageBody=E-pasta ķermenis
+SendAcknowledgementByMail=Sūtīt apstiprinājuma e-pastu
+SendMail=Sūtīt e-pastu
+Email=E-pasts
+NoEMail=Nav e-pasta
+AlreadyRead=Jau izlasīts
+NotRead=Nav lasīts
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoMobilePhone=Nav mob. tel.
 Owner=Īpašnieks
 FollowingConstantsWillBeSubstituted=Šādas konstantes tiks aizstāts ar atbilstošo vērtību.
@@ -658,8 +883,14 @@ ValueIsValid=Vērtība ir pareizas
 ValueIsNotValid=Vērtība nav pareiza
 RecordCreatedSuccessfully=Ieraksts izveidots veiksmīgi
 RecordModifiedSuccessfully=ieraksts modificēts veiksmīgi
+<<<<<<< HEAD
 RecordsModified=%s ieraksti modificēti
 RecordsDeleted=%s ieraksts dzēsts
+=======
+RecordsModified=%s ieraksts(-i) modificēts(-i)
+RecordsDeleted=%s ieraksts(i) izdzēsts
+RecordsGenerated=izveidots ieraksts (%s)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AutomaticCode=Automātiskās kods
 FeatureDisabled=Funkcija bloķēta
 MoveBox=Pārvietot logrīku
@@ -670,7 +901,10 @@ Method=Metode
 Receive=Saņemt
 CompleteOrNoMoreReceptionExpected=Pabeigts vai nekas vairāk nav gaidīts
 ExpectedValue=Paredzamā vērtība
+<<<<<<< HEAD
 CurrentValue=Pašreizējā vērtība
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PartialWoman=Daļējs
 TotalWoman=Kopsumma
 NeverReceived=Nekad nav saņemts
@@ -682,7 +916,11 @@ Color=Krāsa
 Documents=Piesaistītie faili
 Documents2=Dokumenti
 UploadDisabled=Augšupielāde bloķēta
+<<<<<<< HEAD
 MenuAccountancy=Accounting
+=======
+MenuAccountancy=Grāmatvedība
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MenuECM=Dokumenti
 MenuAWStats=AWStats
 MenuMembers=Dalībnieki
@@ -709,22 +947,37 @@ Notes=Piezīmes
 AddNewLine=Pievienot jaunu līniju
 AddFile=Pievienot failu
 FreeZone=Nav iepriekš definēts produkts / pakalpojums
+<<<<<<< HEAD
 FreeLineOfType=Nav iepriekš definēts tipa ieraksts
 CloneMainAttributes=Klonēt objektu ar tā galvenajiem atribūtiem
+=======
+FreeLineOfType=Brīvā teksta vienums, ierakstiet:
+CloneMainAttributes=Klonēt objektu ar tā galvenajiem atribūtiem
+ReGeneratePDF=Pārveidojiet PDF failu
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PDFMerge=Apvienot PDF
 Merge=Apvienot
 DocumentModelStandardPDF=Standarta PDF veidne
 PrintContentArea=Rādīt lapu drukāt galveno satura jomā
 MenuManager=Izvēlnes iestatīšana
+<<<<<<< HEAD
 WarningYouAreInMaintenanceMode=Uzmanību, jūs esat uzturēšanas režīmā, t.i. tikai pieteikšanās <b>%s</b> ir atļauts lietot programmu.
+=======
+WarningYouAreInMaintenanceMode=Brīdinājums, jūs atrodaties apkopes režīmā: lietojumprogrammu šajā režīmā drīkst izmantot tikai pieteikšanās <b> %s </b>.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CoreErrorTitle=Sistēmas kļūda
 CoreErrorMessage=Sorry, an error occurred. Contact your system administrator to check the logs or disable $dolibarr_main_prod=1 to get more information.
 CreditCard=Kredītkarte
 ValidatePayment=Apstiprināt maksājumu
 CreditOrDebitCard=Kredīta vai debetkarte
 FieldsWithAreMandatory=Lauki ar <b>%s</b> ir obligāti aizpildāmi
+<<<<<<< HEAD
 FieldsWithIsForPublic=Lauki ar <b>%s</b> parāda sabiedrības locekļu sarakstu. Ja jūs nevēlaties to, tad izņemiet ķeksi pie &quot;sabiedrības&quot; lodziņa.
 AccordingToGeoIPDatabase=(Saskaņā ar GeoIP)
+=======
+FieldsWithIsForPublic=Lauki ar <b>%s</b> ir redzami dalībnieku publiskajā sarakstā. Ja jūs to nevēlaties, noņemiet atzīmi no lauka "publisks".
+AccordingToGeoIPDatabase=(saskaņā ar GeoIP konvertēšanu)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Line=Līnija
 NotSupported=Netiek atbalstīts
 RequiredField=Obligāti aizpildāms lauks
@@ -732,6 +985,11 @@ Result=Rezultāts
 ToTest=Pārbaude
 ValidateBefore=Kartiņa ir jāapstiprina, pirms lietojat šo funkciju
 Visibility=Redzamība
+<<<<<<< HEAD
+=======
+Totalizable=Kopējais skaits
+TotalizableDesc=Šis lauks ir totalizable sarakstā
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Private=Privāts
 Hidden=Slēpts
 Resources=Resursi
@@ -750,14 +1008,24 @@ LinkTo=Saite uz
 LinkToProposal=Saite uz priekšlikumu
 LinkToOrder=Link to order
 LinkToInvoice=Saite uz rēķinu
+<<<<<<< HEAD
 LinkToSupplierOrder=Saite uz piegādātāja pasūtījumu
 LinkToSupplierProposal=Saite uz piegādātāja piedāvājumu
+=======
+LinkToTemplateInvoice=Saite uz veidnes rēķinu
+LinkToSupplierOrder=Saite uz pirkuma pasūtījumu
+LinkToSupplierProposal=Saite uz pārdevēja priekšlikumu
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LinkToSupplierInvoice=Saite uz piegādātāja rēķinu
 LinkToContract=Saite uz līgumu
 LinkToIntervention=Saikne ar intervenci
 CreateDraft=Izveidot melnrakstu
 SetToDraft=Atpakaļ uz melnrakstu
 ClickToEdit=Klikšķiniet, lai rediģētu
+<<<<<<< HEAD
+=======
+ClickToRefresh=Noklikšķiniet, lai atsvaidzinātu
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 EditWithEditor=Rediģēt ar CKEditor
 EditWithTextEditor=Rediģēt ar teksta redaktoru
 EditHTMLSource=Rediģēt HTML avotu
@@ -772,14 +1040,24 @@ ByDay=Pēc dienas
 BySalesRepresentative=Pēc tirdzniecības pārstāvja
 LinkedToSpecificUsers=Saistītas ar noteiktu lietotāja kontaktu
 NoResults=Nav rezultātu
+<<<<<<< HEAD
 AdminTools=Administratora rīki
 SystemTools=Sistēmas rīki
 ModulesSystemTools=Moduļi instrumenti
+=======
+AdminTools=Admin Tools
+SystemTools=Sistēmas rīki
+ModulesSystemTools=Moduļu instrumenti
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Test=Pārbaude
 Element=Elements
 NoPhotoYet=Nav bildes
 Dashboard=Informācijas panelis
+<<<<<<< HEAD
 MyDashboard=Informācijas panelis
+=======
+MyDashboard=Mans informācijas panelis
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Deductible=Pašrisks
 from=no
 toward=uz
@@ -802,16 +1080,25 @@ PrintFile=Drukāt failu %s
 ShowTransaction=Rādīt ierakstu bankas kontā
 ShowIntervention=Rādīt iejaukšanās
 ShowContract=Rādīt līgumu
+<<<<<<< HEAD
 GoIntoSetupToChangeLogo=Go into Home - Setup - Company to change logo or go into Home - Setup - Display to hide.
 Deny=Deny
 Denied=Denied
 ListOf=%s saraksts
 ListOfTemplates=List of templates
+=======
+GoIntoSetupToChangeLogo=Iet uz mājas lapu - Uzstādīšana - Uzņēmums mainīs logotipu vai dodieties uz mājām - Iestatīšana - Displejs, lai paslēptu.
+Deny=Aizliegt
+Denied=Aizliegts
+ListOf=%s saraksts
+ListOfTemplates=Saraksts ar veidnēm
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Gender=Dzimums
 Genderman=Vīrietis
 Genderwoman=Sieviete
 ViewList=List view
 Mandatory=Mandatory
+<<<<<<< HEAD
 Hello=Hello
 GoodBye=Uz redzēšanos
 Sincerely=Sincerely
@@ -824,10 +1111,25 @@ MassFilesArea=Area for files built by mass actions
 ShowTempMassFilesArea=Show area of files built by mass actions
 ConfirmMassDeletion=Lielapjoma dzēšanas apstiprinājums
 ConfirmMassDeletionQuestion=Vai tiešām vēlaties dzēst izvēlēto ierakstu %s?
+=======
+Hello=Labdien
+GoodBye=Uz redzēšanos
+Sincerely=Ar cieņu
+DeleteLine=Delete line
+ConfirmDeleteLine=Vai Jūs tiešām vēlaties izdzēst šo līniju?
+NoPDFAvailableForDocGenAmongChecked=No PDF were available for the document generation among checked record
+TooManyRecordForMassAction=Pārāk daudzi ieraksti atlasīti masveida rīcībai. Darbība ir ierobežota ar %s ierakstu sarakstu.
+NoRecordSelected=Nav atlasīts neviens ieraksts
+MassFilesArea=Area for files built by mass actions
+ShowTempMassFilesArea=Show area of files built by mass actions
+ConfirmMassDeletion=Bulk Delete apstiprinājums
+ConfirmMassDeletionQuestion=Vai tiešām vēlaties dzēst atlasīto(-s) ierakstu(-s) %s?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 RelatedObjects=Saistītie objekti
 ClassifyBilled=Klasificēt apmaksāts
 ClassifyUnbilled=Klasificēt neapmaksāts
 Progress=Progress
+<<<<<<< HEAD
 FrontOffice=birojs
 BackOffice=Back office
 View=Izskats
@@ -836,18 +1138,39 @@ Exports=Eksports
 ExportFilteredList=Eksportēt filtrēto sarakstu
 ExportList=Eksporta saraksts
 ExportOptions=Eksportēšanas iespējas
+=======
+ProgressShort=Progr.
+FrontOffice=birojs
+BackOffice=Birojs
+View=Izskats
+Export=Eksportēt
+Exports=Eksports
+ExportFilteredList=Eksportēt atlasīto sarakstu
+ExportList=Eksporta saraksts
+ExportOptions=Eksportēšanas iespējas
+IncludeDocsAlreadyExported=Iekļaut jau eksportētos dokumentus
+ExportOfPiecesAlreadyExportedIsEnable=Eksportēt jau eksportētos gabalus
+ExportOfPiecesAlreadyExportedIsDisable=Eksportēto gabalu eksports ir atspējots
+AllExportedMovementsWereRecordedAsExported=Visas eksportētās kustības tika reģistrētas kā eksportētas
+NotAllExportedMovementsCouldBeRecordedAsExported=Ne visas eksportētās kustības var ierakstīt kā eksportētas
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Miscellaneous=Dažādi
 Calendar=Kalendārs
 GroupBy=Kārtot pēc...
 ViewFlatList=Skatīt plakanu sarakstu
 RemoveString=Noņemt virkni '%s'
+<<<<<<< HEAD
 SomeTranslationAreUncomplete=Dažas valodas var būt daļēji tulkotas vai tām var būt kļūdas. Ja konstatējat dažus, varat iestatīt valodas failus, reģistrējoties <a href="https://transifex.com/projects/p/dolibarr/" target="_blank"> https://transifex.com/projects/p/ dolibarr / </a>.
+=======
+SomeTranslationAreUncomplete=Dažas piedāvātās valodas var būt tikai daļēji tulkotas vai var saturēt kļūdas. Lūdzu, palīdziet labot savu valodu, reģistrējoties <a href="https://transifex.com/projects/p/dolibarr/" target="_blank"> https://transifex.com/projects/p/dolibarr/ </a>, lai pievienotu savus uzlabojumus.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DirectDownloadLink=Tiešā lejupielādes saite (publiska / ārēja)
 DirectDownloadInternalLink=Tiešā lejupielādes saite (ir jāreģistrē un tai ir nepieciešamas atļaujas).
 Download=Lejupielādēt
 DownloadDocument=Lejupielādēt dokumentu
 ActualizeCurrency=Atjaunināt valūtas kursu
 Fiscalyear=Fiskālais gads
+<<<<<<< HEAD
 ModuleBuilder=Moduļu veidotājs
 SetMultiCurrencyCode=Iestatīt valūtu
 BulkActions=Lielapjoma darbības
@@ -855,6 +1178,15 @@ ClickToShowHelp=Noklikšķiniet, lai parādītu rīka padomju palīdzību
 WebSite=Mājas lapa
 WebSites=Tīmekļa vietnes
 WebSiteAccounts=Vietnes konti
+=======
+ModuleBuilder=Modulis un lietojumprogrammu veidotājs
+SetMultiCurrencyCode=Iestatīt valūtu
+BulkActions=Lielapjoma darbības
+ClickToShowHelp=Noklikšķiniet, lai parādītu rīka padomju palīdzību
+WebSite=Tīmekļa vietne
+WebSites=Mājas lapas
+WebSiteAccounts=Tīmekļa vietnes konti
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ExpenseReport=Izdevumu pārskats
 ExpenseReports=Izdevumu atskaites
 HR=HR
@@ -863,6 +1195,7 @@ AutomaticallyCalculated=Automātiski aprēķināts
 TitleSetToDraft=Atgriezties uz melnrakstu
 ConfirmSetToDraft=Vai tiešām vēlaties atgriezties pie melnrakstu statusa?
 ImportId=Importēt ID
+<<<<<<< HEAD
 Events=Pasākumi
 EMailTemplates=E-pastu paraugi
 FileNotShared=Fails nav koplietots ar exernal sabiedrību
@@ -872,6 +1205,25 @@ Rights=Atļaujas
 LineNb=Rinda Nr.
 IncotermLabel=Inkoterms
 # Week day
+=======
+Events=Notikumi
+EMailTemplates=E-pasta veidnes
+FileNotShared=Fails nav kopīgots ārējai publikai
+Project=Projekts
+Projects=Projekti
+LeadOrProject=Svins | Projekts
+LeadsOrProjects=Sasaistes | Projekti
+Lead=Svins
+Leads=Sasaistes
+ListOpenLeads=Sarakstu atklātie vadītāji
+ListOpenProjects=Atvērto projektu saraksts
+NewLeadOrProject=Jauns svins vai projekts
+Rights=Atļaujas
+LineNb=Rinda Nr.
+IncotermLabel=Inkoterms
+TabLetteringCustomer=Klientu apzīmējumi
+TabLetteringSupplier=Pārdevēja burti
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Monday=Pirmdiena
 Tuesday=Otrdiena
 Wednesday=Trešdiena
@@ -905,8 +1257,13 @@ SetRef=Set ref
 Select2ResultFoundUseArrows=Daži rezultāti ir atrasti. Izmantojiet bultiņas, lai izvēlētos.
 Select2NotFound=Rezultāti nav atrasti
 Select2Enter=Ieiet
+<<<<<<< HEAD
 Select2MoreCharacter=vai vairāk rakstzīmes
 Select2MoreCharacters=vai vairāk simbolus
+=======
+Select2MoreCharacter=vai vairāk zīmes
+Select2MoreCharacters=vai vairāk simbolu
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Select2MoreCharactersMore=<strong> Meklēšanas sintakse: </ strong> </ kbd> <strong> * </ strong> </ kbd> <kbd> Jebkurš raksturs </ kbd> (a * b) <br> <kbd> <strong> ^ </ strong> </ kbd> <kbd> Sāciet ar </ kbd> (^ ab) <br> <kbd> <strong> $ </ strong> </ kbd> <kbd> Beigt ar </ kbd> (ab $) <br>
 Select2LoadingMoreResults=Ielādē vairāk rezultātus...
 Select2SearchInProgress=Meklēšana procesā...
@@ -919,7 +1276,11 @@ SearchIntoProjects=Projekti
 SearchIntoTasks=Uzdevumi
 SearchIntoCustomerInvoices=Klienta rēķini
 SearchIntoSupplierInvoices=Piegādātāja rēķini
+<<<<<<< HEAD
 SearchIntoCustomerOrders=Klienta pasūtījumi
+=======
+SearchIntoCustomerOrders=Pārdošanas pasūtījumi
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SearchIntoSupplierOrders=Pirkuma pasūtījumi
 SearchIntoCustomerProposals=Klienta piedāvājumi
 SearchIntoSupplierProposals=Pārdevēja priekšlikumi
@@ -927,12 +1288,18 @@ SearchIntoInterventions=Interventions
 SearchIntoContracts=Līgumi
 SearchIntoCustomerShipments=Klientu sūtījumi
 SearchIntoExpenseReports=Izdevumu atskaites
+<<<<<<< HEAD
 SearchIntoLeaves=Leaves
+=======
+SearchIntoLeaves=Atvaļinājumi
+SearchIntoTickets=Pieteikumi
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CommentLink=Komentāri
 NbComments=Komentāru skaits
 CommentPage=Komentāru telpa
 CommentAdded=Komentārs pievienots
 CommentDeleted=Komentārs dzēsts
+<<<<<<< HEAD
 Everybody=Visi
 PayedBy=Samaksājis
 PayedTo=Samaksāts
@@ -948,3 +1315,31 @@ Deletedraft=Dzēst melnrakstu
 ConfirmMassDraftDeletion=Melnraksta dzēšanas apstiprinājuma projekts
 FileSharedViaALink=Fails koplietots, izmantojot saiti
 
+=======
+Everybody=Ikviens
+PayedBy=Apmaksājis
+PayedTo=Apmaksāts
+Monthly=Katru mēnesi
+Quarterly=Ceturksnis
+Annual=Ikgadējais
+Local=Vietējais
+Remote=Attālinātais
+LocalAndRemote=Vietējais un attālinātais
+KeyboardShortcut=Tastatūras saīsne
+AssignedTo=Piešķirts
+Deletedraft=Dzēst melnrakstu
+ConfirmMassDraftDeletion=Projekta masveida dzēšanas apstiprinājums
+FileSharedViaALink=Fails koplietots, izmantojot saiti
+SelectAThirdPartyFirst=Vispirms izvēlieties trešo pusi ...
+YouAreCurrentlyInSandboxMode=Pašlaik esat %s "smilšu kastes" režīmā
+Inventory=Inventārs
+AnalyticCode=Analītiskais kods
+TMenuMRP=MRP
+ShowMoreInfos=Rādīt vairāk informācijas
+NoFilesUploadedYet=Lūdzu, vispirms augšupielādējiet dokumentu
+SeePrivateNote=Skatīt privāto piezīmi
+PaymentInformation=Informācija par maksājumu
+ValidFrom=Derīgs no
+ValidUntil=Derīgs līdz
+NoRecordedUsers=Nav lietotāju
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

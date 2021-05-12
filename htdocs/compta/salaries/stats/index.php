@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2018      Alexandre Spangaro <aspangaro@zendsi.com>
+=======
+/* Copyright (C) 2018      Alexandre Spangaro <aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2018      Fidesio            <contact@fidesio.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,12 +36,21 @@ $langs->loadLangs(array("salaries","companies"));
 $WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
 
+<<<<<<< HEAD
 $userid=GETPOST('userid','int'); if ($userid < 0) $userid=0;
 $socid=GETPOST('socid','int'); if ($socid < 0) $socid=0;
 $id = GETPOST('id','int');
 
 // Security check
 $socid = GETPOST("socid","int");
+=======
+$userid=GETPOST('userid', 'int'); if ($userid < 0) $userid=0;
+$socid=GETPOST('socid', 'int'); if ($socid < 0) $socid=0;
+$id = GETPOST('id', 'int');
+
+// Security check
+$socid = GETPOST("socid", "int");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'salaries', '', '', '');
 
@@ -72,7 +85,11 @@ $stats = new SalariesStats($db, $socid, $useridtofilter);
 // Build graphic number of object
 // $data = array(array('Lib',val1,val2,val3),...)
 //print "$endyear, $startyear";
+<<<<<<< HEAD
 $data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
+=======
+$data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 //var_dump($data);
 
 $filenamenb = $dir."/salariesnbinyear-".$year.".png";
@@ -83,7 +100,10 @@ $mesg = $px1->isGraphKo();
 if (! $mesg)
 {
 	$px1->SetData($data);
+<<<<<<< HEAD
 	$px1->SetPrecisionY(0);
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$i=$startyear;$legend=array();
 	while ($i <= $endyear)
 	{
@@ -97,6 +117,7 @@ if (! $mesg)
 	$px1->SetYLabel($langs->trans("Number"));
 	$px1->SetShading(3);
 	$px1->SetHorizTickIncrement(1);
+<<<<<<< HEAD
 	$px1->SetPrecisionY(0);
 	$px1->mode='depth';
 	$px1->SetTitle($langs->trans("NumberByMonth"));
@@ -106,6 +127,16 @@ if (! $mesg)
 
 // Build graphic amount of object
 $data = $stats->getAmountByMonthWithPrevYear($endyear,$startyear);
+=======
+	$px1->mode='depth';
+	$px1->SetTitle($langs->trans("NumberByMonth"));
+
+	$px1->draw($filenamenb, $fileurlnb);
+}
+
+// Build graphic amount of object
+$data = $stats->getAmountByMonthWithPrevYear($endyear, $startyear);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 //var_dump($data);
 // $data = array(array('Lib',val1,val2,val3),...)
 
@@ -125,17 +156,28 @@ if (! $mesg)
 	}
 	$px2->SetLegend($legend);
 	$px2->SetMaxValue($px2->GetCeilMaxValue());
+<<<<<<< HEAD
 	$px2->SetMinValue(min(0,$px2->GetFloorMinValue()));
+=======
+	$px2->SetMinValue(min(0, $px2->GetFloorMinValue()));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$px2->SetWidth($WIDTH);
 	$px2->SetHeight($HEIGHT);
 	$px2->SetYLabel($langs->trans("Amount"));
 	$px2->SetShading(3);
 	$px2->SetHorizTickIncrement(1);
+<<<<<<< HEAD
 	$px2->SetPrecisionY(0);
 	$px2->mode='depth';
 	$px2->SetTitle($langs->trans("AmountTotal"));
 
 	$px2->draw($filenameamount,$fileurlamount);
+=======
+	$px2->mode='depth';
+	$px2->SetTitle($langs->trans("AmountTotal"));
+
+	$px2->draw($filenameamount, $fileurlamount);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 
@@ -163,11 +205,18 @@ if (! $mesg)
 	$px3->SetHeight($HEIGHT);
 	$px3->SetShading(3);
 	$px3->SetHorizTickIncrement(1);
+<<<<<<< HEAD
 	$px3->SetPrecisionY(0);
 	$px3->mode='depth';
 	$px3->SetTitle($langs->trans("AmountAverage"));
 
 	$px3->draw($filename_avg,$fileurl_avg);
+=======
+	$px3->mode='depth';
+	$px3->SetTitle($langs->trans("AmountAverage"));
+
+	$px3->draw($filename_avg, $fileurl_avg);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 
@@ -187,7 +236,11 @@ $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
 
+<<<<<<< HEAD
 complete_head_from_modules($conf,$langs,null,$head,$h,'trip_stats');
+=======
+complete_head_from_modules($conf, $langs, null, $head, $h, 'salaries_stats');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 dol_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
 
@@ -197,7 +250,11 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 // Show filter box
 print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+<<<<<<< HEAD
 print '<table class="border" width="100%">';
+=======
+print '<table class="noborder" width="100%">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 // User
 print '<tr><td>'.$langs->trans("User").'</td><td>';
@@ -205,21 +262,37 @@ print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0
 print '</td></tr>';
 // Year
 print '<tr><td>'.$langs->trans("Year").'</td><td>';
+<<<<<<< HEAD
 if (! in_array($year,$arrayyears)) $arrayyears[$year]=$year;
 arsort($arrayyears);
 print $form->selectarray('year',$arrayyears,$year,0);
+=======
+if (! in_array($year, $arrayyears)) $arrayyears[$year]=$year;
+arsort($arrayyears);
+print $form->selectarray('year', $arrayyears, $year, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</td></tr>';
 print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
 print '</table>';
 print '</form>';
 print '<br><br>';
 
+<<<<<<< HEAD
 print '<table class="border" width="100%">';
 print '<tr>';
 print '<td align="center">'.$langs->trans("Year").'</td>';
 print '<td align="right">'.$langs->trans("Number").'</td>';
 print '<td align="right">'.$langs->trans("AmountTotal").'</td>';
 print '<td align="right">'.$langs->trans("AmountAverage").'</td>';
+=======
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre" height="24">';
+print '<td align="center">'.$langs->trans("Year").'</td>';
+print '<td class="right">'.$langs->trans("Number").'</td>';
+print '<td class="right">'.$langs->trans("AmountTotal").'</td>';
+print '<td class="right">'.$langs->trans("AmountAverage").'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</tr>';
 
 $oldyear=0;
@@ -230,6 +303,7 @@ foreach ($data as $val)
 	{
 		// If we have empty year
 		$oldyear--;
+<<<<<<< HEAD
 		print '<tr height="24">';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'">'.$oldyear.'</a></td>';
 		print '<td align="right">0</td>';
@@ -242,11 +316,31 @@ foreach ($data as $val)
 	print '<td align="right">'.$val['nb'].'</td>';
 	print '<td align="right">'.price(price2num($val['total'],'MT'),1).'</td>';
 	print '<td align="right">'.price(price2num($val['avg'],'MT'),1).'</td>';
+=======
+
+		print '<tr class="oddeven" height="24">';
+		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'">'.$oldyear.'</a></td>';
+		print '<td class="right">0</td>';
+		print '<td class="right">0</td>';
+		print '<td class="right">0</td>';
+		print '</tr>';
+	}
+
+	print '<tr class="oddeven" height="24">';
+	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'">'.$year.'</a></td>';
+	print '<td class="right">'.$val['nb'].'</td>';
+	print '<td class="right">'.price(price2num($val['total'], 'MT'), 1).'</td>';
+	print '<td class="right">'.price(price2num($val['avg'], 'MT'), 1).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</tr>';
 	$oldyear=$year;
 }
 
 print '</table>';
+<<<<<<< HEAD
+=======
+print '</div>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
@@ -271,7 +365,12 @@ print '<div style="clear:both"></div>';
 
 dol_fiche_end();
 
+<<<<<<< HEAD
 
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

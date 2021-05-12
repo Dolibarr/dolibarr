@@ -116,7 +116,11 @@ CountryHM=واستمع وجزر ماكدونالد
 CountryVA=الكرسي الرسولي (دولة الفاتيكان)
 CountryHN=هندوراس
 CountryHK=هونج كونج
+<<<<<<< HEAD
 CountryIS=Icelande
+=======
+CountryIS=Iceland
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryIN=الهند
 CountryID=اندونيسيا
 CountryIR=إيران
@@ -131,7 +135,11 @@ CountryKI=كيريباس
 CountryKP=كوريا الشمالية
 CountryKR=كوريا الجنوبية
 CountryKW=الكويت
+<<<<<<< HEAD
 CountryKG=Kyrghyztan
+=======
+CountryKG=Kyrgyzstan
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryLA=لاوس
 CountryLV=لاتفيا
 CountryLB=لبنان
@@ -160,7 +168,11 @@ CountryMD=مولدافيا
 CountryMN=منغوليا
 CountryMS=مونتسرات
 CountryMZ=موزامبيق
+<<<<<<< HEAD
 CountryMM=Birmania (ميانمار)
+=======
+CountryMM=Myanmar (Burma)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryNA=ناميبيا
 CountryNR=ناورو
 CountryNP=نيبال
@@ -223,7 +235,11 @@ CountryTO=تونجا
 CountryTT=ترينيداد وتوباغو
 CountryTR=تركيا
 CountryTM=تركمانستان
+<<<<<<< HEAD
 CountryTC=الأتراك وجزر Cailos
+=======
+CountryTC=Turks and Caicos Islands
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryTV=توفالو
 CountryUG=أوغندا
 CountryUA=أوكرانيا
@@ -277,7 +293,11 @@ CurrencySingMGA=Ariary
 CurrencyMUR=موريشيوس روبية
 CurrencySingMUR=موريشيوس روبية
 CurrencyNOK=النرويجية بالكرون
+<<<<<<< HEAD
 CurrencySingNOK=الكرونة النرويجية
+=======
+CurrencySingNOK=Norwegian kronas
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrencyTND=دينار
 CurrencySingTND=الدينار التونسي
 CurrencyUSD=الدولار الأمريكي
@@ -290,6 +310,10 @@ CurrencyXOF=BCEAO فرنك أفريقي
 CurrencySingXOF=اتفاق وقف إطلاق النار الفرنك تشريعي ملائم
 CurrencyXPF=الحراجية المعتمدة الفرنك
 CurrencySingXPF=الحراجية المعتمدة الفرنك
+<<<<<<< HEAD
+=======
+CurrencyCentEUR=cents
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrencyCentSingEUR=سنت
 CurrencyCentINR=بيزة
 CurrencyCentSingINR=paise
@@ -306,6 +330,10 @@ DemandReasonTypeSRC_WOM=كلمة الفم
 DemandReasonTypeSRC_PARTNER=شريك
 DemandReasonTypeSRC_EMPLOYEE=الموظف
 DemandReasonTypeSRC_SPONSORING=رعاية
+<<<<<<< HEAD
+=======
+DemandReasonTypeSRC_SRC_CUSTOMER=Incoming contact of a customer
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 #### Paper formats ####
 PaperFormatEU4A0=شكل 4A0
 PaperFormatEU2A0=شكل 2A0

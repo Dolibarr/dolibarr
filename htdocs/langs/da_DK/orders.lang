@@ -1,6 +1,10 @@
 # Dolibarr language file - Source file is en_US - orders
 OrdersArea=Kundeordrer
+<<<<<<< HEAD
 SuppliersOrdersArea=Purchase orders area
+=======
+SuppliersOrdersArea=Indkøbsordreområde
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 OrderCard=Ordreside
 OrderId=Ordre-ID
 Order=Ordre
@@ -13,6 +17,7 @@ OrderToProcess=Ordre at behandle
 NewOrder=Ny ordre
 ToOrder=Lav ordre
 MakeOrder=Lav ordre
+<<<<<<< HEAD
 SupplierOrder=Purchase order
 SuppliersOrders=Indkøbsordre
 SuppliersOrdersRunning=Current purchase orders
@@ -25,6 +30,20 @@ OrdersToBill=Kundeordrer leveret
 OrdersInProcess=Kundeordrer under behandling
 OrdersToProcess=Kundeordrer der skal behandles
 SuppliersOrdersToProcess=Purchase orders to process
+=======
+SupplierOrder=Indkøbsordre
+SuppliersOrders=Indkøbsordre
+SuppliersOrdersRunning=Nuværende indkøbsordrer
+CustomerOrder=Sales Order
+CustomersOrders=Salgsordrer
+CustomersOrdersRunning=Current sales orders
+CustomersOrdersAndOrdersLines=Sales orders and order details
+OrdersDeliveredToBill=Sales orders delivered to bill
+OrdersToBill=Sales orders delivered
+OrdersInProcess=Sales orders in process
+OrdersToProcess=Sales orders to process
+SuppliersOrdersToProcess=Indkøbsordrer til behandling
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 StatusOrderCanceledShort=Annulleret
 StatusOrderDraftShort=Udkast
 StatusOrderValidatedShort=Godkendt
@@ -42,10 +61,17 @@ StatusOrderToProcessShort=At behandle
 StatusOrderReceivedPartiallyShort=Delvist modtaget
 StatusOrderReceivedAllShort=Varer modtaget
 StatusOrderCanceled=Annulleret
+<<<<<<< HEAD
 StatusOrderDraft=Udkast (skal valideres)
 StatusOrderValidated=Godkendt
 StatusOrderOnProcess=Bestilt - afventer modtagelse
 StatusOrderOnProcessWithValidation=Bestilt - Standby modtagelse eller validering
+=======
+StatusOrderDraft=Udkast (skal bekræftes)
+StatusOrderValidated=Godkendt
+StatusOrderOnProcess=Bestilt - afventer modtagelse
+StatusOrderOnProcessWithValidation=Bestilt - Standby modtagelse eller bekræftelse
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 StatusOrderProcessed=Behandlet
 StatusOrderToBill=Leveret
 StatusOrderApproved=Godkendt
@@ -64,7 +90,11 @@ CreateOrder=Opret ordre
 RefuseOrder=Afvis ordre
 ApproveOrder=Godkendelse af ordre
 Approve2Order=Godkend ordre (andet niveau)
+<<<<<<< HEAD
 ValidateOrder=Valider orden
+=======
+ValidateOrder=Bekræft orden
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 UnvalidateOrder=Unvalidate rækkefølge
 DeleteOrder=Slet orden
 CancelOrder=Annuller ordre
@@ -75,14 +105,22 @@ ShowOrder=Vis for
 OrdersOpened=Bestiller at behandle
 NoDraftOrders=Intet udkast til ordrer
 NoOrder=Ingen ordre
+<<<<<<< HEAD
 NoSupplierOrder=No purchase order
 LastOrders=Seneste %s kundeordrer
 LastCustomerOrders=Seneste %s kundeordrer
 LastSupplierOrders=Latest %s purchase orders
+=======
+NoSupplierOrder=Ingen indkøbsordre
+LastOrders=Latest %s sales orders
+LastCustomerOrders=Latest %s sales orders
+LastSupplierOrders=Seneste %s indkøbsordrer
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LastModifiedOrders=Seneste %s ændrede ordrer
 AllOrders=Alle ordrer
 NbOfOrders=Antal ordrer
 OrdersStatistics=Orders »statistik
+<<<<<<< HEAD
 OrdersStatisticsSuppliers=Purchase order statistics
 NumberOfOrdersByMonth=Antallet af ordrer efter måned
 AmountOfOrdersByMonthHT=Antal ordrer pr. Måned (ekskl. Skat)
@@ -103,6 +141,28 @@ RefOrder=Ref. rækkefølge
 RefCustomerOrder=Ref. Bestil for kunde
 RefOrderSupplier=Ref. order for vendor
 RefOrderSupplierShort=Ref. order vendor
+=======
+OrdersStatisticsSuppliers=Indkøbsordrestatistik
+NumberOfOrdersByMonth=Antallet af ordrer efter måned
+AmountOfOrdersByMonthHT=Amount of orders by month (excl. tax)
+ListOfOrders=Liste af ordrer
+CloseOrder=Luk for
+ConfirmCloseOrder=Er du sikker på, at du vil indstille denne ordre til levering? Når en ordre er leveret, kan den indstilles til fakturering.
+ConfirmDeleteOrder=Er du sikker på, at du vil slette denne ordre?
+ConfirmValidateOrder=Er du sikker på, at du vil bekræfte denne ordre under navnet <b> %s </b>?
+ConfirmUnvalidateOrder=Er du sikker på, at du vil gendanne rækkefølgen <b> %s </b> til udkastsstatus?
+ConfirmCancelOrder=Er du sikker på, at du vil annullere denne ordre?
+ConfirmMakeOrder=Er du sikker på, at du vil bekræfte, at du har foretaget denne ordre på <b> %s </b>?
+GenerateBill=Generer faktura
+ClassifyShipped=Klassificer leveret
+DraftOrders=Udkast til ordrer
+DraftSuppliersOrders=Udkast til indkøbsordrer
+OnProcessOrders=Den proces ordrer
+RefOrder=Ref. rækkefølge
+RefCustomerOrder=Ref. Bestil for kunde
+RefOrderSupplier=Ref. ordre for sælger
+RefOrderSupplierShort=Ref. ordreleverandør
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SendOrderByMail=Send ordre ved mail
 ActionsOnOrder=Begivenheder for bestilling
 NoArticleOfTypeProduct=Ingen artikel af typen 'vare', så intet artikelnummer for denne ordre, der kan afsendes
@@ -110,6 +170,7 @@ OrderMode=Bestil metode
 AuthorRequest=Anmodning forfatter
 UserWithApproveOrderGrant=Useres ydes med "godkende ordrer" tilladelse.
 PaymentOrderRef=Betaling af for %s
+<<<<<<< HEAD
 CloneOrder=Klon orden
 ConfirmCloneOrder=Er du sikker på, at du vil klone denne ordre <b> %s </ b>?
 DispatchSupplierOrder=Modtagelse leverandør for %s
@@ -121,15 +182,35 @@ SupplierOrderClassifiedBilled=Purchase Order %s set billed
 OtherOrders=Andre kendelser
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Repræsentant opfølgning kundeordre
+=======
+ConfirmCloneOrder=Er du sikker på, at du vil klone denne ordre <b> %s </b>?
+DispatchSupplierOrder=Receiving purchase order %s
+FirstApprovalAlreadyDone=Første godkendelse allerede udført
+SecondApprovalAlreadyDone=Anden godkendelse allerede udført
+SupplierOrderReceivedInDolibarr=Indkøbsordre %s modtaget %s
+SupplierOrderSubmitedInDolibarr=Indkøbsordre %s indsendt
+SupplierOrderClassifiedBilled=Indkøbsordre %s er faktureret
+OtherOrders=Andre ordrer
+##### Types de contacts #####
+TypeContact_commande_internal_SALESREPFOLL=Representative following-up sales order
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TypeContact_commande_internal_SHIPPING=Repræsentant opfølgning shipping
 TypeContact_commande_external_BILLING=Kundefaktura kontakt
 TypeContact_commande_external_SHIPPING=Kunde shipping kontakt
 TypeContact_commande_external_CUSTOMER=Kundekontakt følgende retskendelse
+<<<<<<< HEAD
 TypeContact_order_supplier_internal_SALESREPFOLL=Representative following-up purchase order
 TypeContact_order_supplier_internal_SHIPPING=Repræsentant opfølgning shipping
 TypeContact_order_supplier_external_BILLING=Vendor invoice contact
 TypeContact_order_supplier_external_SHIPPING=Vendor shipping contact
 TypeContact_order_supplier_external_CUSTOMER=Vendor contact following-up order
+=======
+TypeContact_order_supplier_internal_SALESREPFOLL=Repræsentativ opfølgning af købsordre
+TypeContact_order_supplier_internal_SHIPPING=Repræsentant opfølgning shipping
+TypeContact_order_supplier_external_BILLING=Leverandør fakturakontakt
+TypeContact_order_supplier_external_SHIPPING=Leverandør af fragtkontakt
+TypeContact_order_supplier_external_CUSTOMER=Leverandørkontakt efterfølgende ordre
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Konstant COMMANDE_SUPPLIER_ADDON ikke defineret
 Error_COMMANDE_ADDON_NotDefined=Konstant COMMANDE_ADDON ikke defineret
 Error_OrderNotChecked=Ingen ordrer til faktura valgt
@@ -141,6 +222,10 @@ OrderByWWW=Online
 OrderByPhone=Telefon
 # Documents models
 PDFEinsteinDescription=En fuldstændig orden model (logo. ..)
+<<<<<<< HEAD
+=======
+PDFEratostheneDescription=En fuldstændig orden model (logo. ..)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PDFEdisonDescription=En simpel orden model
 PDFProformaDescription=En komplet proformafaktura (logo ...)
 CreateInvoiceForThisCustomer=Bill ordrer
@@ -152,7 +237,12 @@ OrderCreated=Dine ordrer er blevet oprettet
 OrderFail=Der opstod en fejl under ordren oprettelse
 CreateOrders=Opret ordrer
 ToBillSeveralOrderSelectCustomer=For at oprette en faktura for flere ordrer, klik først på kunden, og vælg derefter "%s".
+<<<<<<< HEAD
 OptionToSetOrderBilledNotEnabled=Mulighed (fra modul Workflow) til at indstille ordre til 'Faktureret' automatisk, når fakturaen er valideret, er slukket, så du skal indstille status for 'Faktureret' manuelt.
 IfValidateInvoiceIsNoOrderStayUnbilled=Hvis faktura validering er 'Nej', forbliver ordren til status 'Unbilled' indtil fakturaen er valideret.
+=======
+OptionToSetOrderBilledNotEnabled=Mulighed (fra modul Workflow) til at indstille ordre til 'Faktureret' automatisk, når fakturaen er bekræftet, er slukket, så du skal indstille status for 'Faktureret' manuelt.
+IfValidateInvoiceIsNoOrderStayUnbilled=Hvis faktura bekræftelse er 'Nej', forbliver ordren til status 'Unbilled' indtil fakturaen er bekræftet.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CloseReceivedSupplierOrdersAutomatically=Luk ordre til "%s" automatisk, hvis alle produkter er modtaget.
 SetShippingMode=Indstil shipping mode

@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2005-2009 Laurent Destailleur	<eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005	   Regis Houssin		<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005	   Regis Houssin		<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2015	   Francis Appels		<francis.appels@yahoo.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,16 +35,36 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/barcode.lib.php';	   // This is to inc
  */
 class modTcpdfbarcode extends ModeleBarCode
 {
+<<<<<<< HEAD
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $error='';
 	var $is2d = false;
 	
+=======
+	/**
+     * Dolibarr version of the loaded document
+     * @var string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	public $is2d = false;
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *	Return description of numbering model
 	 *
 	 *	@return		string		Text with description
 	 */
+<<<<<<< HEAD
 	function info()
+=======
+	public function info()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 
@@ -52,17 +76,26 @@ class modTcpdfbarcode extends ModeleBarCode
 	 *
 	 *	@return		boolean		true if module can be used
 	 */
+<<<<<<< HEAD
 	function isEnabled()
 	{
 		return true;
 	}	 
 	
+=======
+	public function isEnabled()
+	{
+		return true;
+	}
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *	Test si les numeros deja en vigueur dans la base ne provoquent pas de
 	 *	de conflits qui empechera cette numerotation de fonctionner.
 	 *
 	 *	@return		boolean		false si conflit, true si ok
 	 */
+<<<<<<< HEAD
 	function canBeActivated()
 	{
 		global $langs;
@@ -70,20 +103,37 @@ class modTcpdfbarcode extends ModeleBarCode
 		return true;
 	}
 	
+=======
+	public function canBeActivated()
+	{
+		global $langs;
+
+		return true;
+	}
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *	Return true if encoding is supported
 	 *
 	 *	@param	string	$encoding		Encoding norm
 	 *	@return	int						>0 if supported, 0 if not
 	 */
+<<<<<<< HEAD
 	function encodingIsSupported($encoding)
+=======
+	public function encodingIsSupported($encoding)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$tcpdfEncoding = $this->getTcpdfEncodingType($encoding);
 		if (empty($tcpdfEncoding)) {
 			return 0;
 		} else {
 			return 1;
+<<<<<<< HEAD
 		}		
+=======
+		}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	/**
@@ -96,6 +146,7 @@ class modTcpdfbarcode extends ModeleBarCode
 	 *  @param     integer      $nooutputiferror  No output if error (not used with this engine)
 	 *	@return	   int			                  <0 if KO, >0 if OK
 	 */
+<<<<<<< HEAD
 	function buildBarCode($code,$encoding,$readable='Y',$scale=1,$nooutputiferror=0)
 	{
 		global $_GET;
@@ -103,13 +154,27 @@ class modTcpdfbarcode extends ModeleBarCode
 		$tcpdfEncoding = $this->getTcpdfEncodingType($encoding);
 		if (empty($tcpdfEncoding)) return -1;
 				
+=======
+	public function buildBarCode($code, $encoding, $readable = 'Y', $scale = 1, $nooutputiferror = 0)
+	{
+		global $_GET;
+
+		$tcpdfEncoding = $this->getTcpdfEncodingType($encoding);
+		if (empty($tcpdfEncoding)) return -1;
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$color = array(0,0,0);
 
 		$_GET["code"]=$code;
 		$_GET["type"]=$encoding;
+<<<<<<< HEAD
 		$_GET["height"]=$height;
 		$_GET["readable"]=$readable;
 		
+=======
+		$_GET["readable"]=$readable;
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if ($code) {
 			// Load the tcpdf barcode class
 			if ($this->is2d) {
@@ -122,6 +187,7 @@ class modTcpdfbarcode extends ModeleBarCode
 				$width = 1;
 				require_once TCPDF_PATH.'tcpdf_barcodes_1d.php';
 				$barcodeobj = new TCPDFBarcode($code, $tcpdfEncoding);
+<<<<<<< HEAD
 			}		
 			
 			dol_syslog("buildBarCode::TCPDF.getBarcodePNG");
@@ -131,6 +197,17 @@ class modTcpdfbarcode extends ModeleBarCode
 		} else {
 			return -2;
 		}		
+=======
+			}
+
+			dol_syslog("buildBarCode::TCPDF.getBarcodePNG");
+			$barcodeobj->getBarcodePNG($width, $height, $color);
+
+			return 1;
+		} else {
+			return -2;
+		}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	/**
@@ -143,7 +220,11 @@ class modTcpdfbarcode extends ModeleBarCode
 	 *  @param     integer      $nooutputiferror  No output if error (not used with this engine)
 	 *	@return	   int			                  <0 if KO, >0 if OK
 	 */
+<<<<<<< HEAD
 	function writeBarCode($code,$encoding,$readable='Y',$scale=1,$nooutputiferror=0)
+=======
+	public function writeBarCode($code, $encoding, $readable = 'Y', $scale = 1, $nooutputiferror = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf,$_GET;
 
@@ -157,7 +238,10 @@ class modTcpdfbarcode extends ModeleBarCode
 
 		$_GET["code"]=$code;
 		$_GET["type"]=$encoding;
+<<<<<<< HEAD
 		$_GET["height"]=$height;
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$_GET["readable"]=$readable;
 
 		if ($code) {
@@ -172,8 +256,13 @@ class modTcpdfbarcode extends ModeleBarCode
 				$width = 1;
 				require_once TCPDF_PATH.'tcpdf_barcodes_1d.php';
 				$barcodeobj = new TCPDFBarcode($code, $tcpdfEncoding);
+<<<<<<< HEAD
 			}		
 			
+=======
+			}
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			dol_syslog("writeBarCode::TCPDF.getBarcodePngData");
 			if ($imageData = $barcodeobj->getBarcodePngData($width, $height, $color)) {
 				if (function_exists('imagecreate')) {
@@ -186,16 +275,28 @@ class modTcpdfbarcode extends ModeleBarCode
 				}
 			} else {
 				return -4;
+<<<<<<< HEAD
 			}			
+=======
+			}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		} else {
 			return -2;
 		}
 	}
+<<<<<<< HEAD
 	
 	/**
 	 *	get available output_modes for tcpdf class wth its translated description
 	 *
 	 * @param	string $dolEncodingType dolibarr barcode encoding type	
+=======
+
+	/**
+	 *	get available output_modes for tcpdf class wth its translated description
+	 *
+	 * @param	string $dolEncodingType dolibarr barcode encoding type
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	 * @return	string tcpdf encoding type
 	 */
 	public function getTcpdfEncodingType($dolEncodingType)
@@ -232,7 +333,11 @@ class modTcpdfbarcode extends ModeleBarCode
 						'PHARMA' => 'PHARMA',
 						'PHARMA2T' => 'PHARMA2T'
 		);
+<<<<<<< HEAD
 		
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$tcpdf2dEncodingTypes = array(
 						'DATAMATRIX' => 'DATAMATRIX',
 						'PDF417' => 'PDF417',
@@ -240,6 +345,7 @@ class modTcpdfbarcode extends ModeleBarCode
 						'QRCODE,L' => 'QRCODE,L',
 						'QRCODE,M' => 'QRCODE,M',
 						'QRCODE,Q' => 'QRCODE,Q',
+<<<<<<< HEAD
 						'QRCODE,H' => 'QRCODE,H'						
 		);
 		
@@ -247,10 +353,23 @@ class modTcpdfbarcode extends ModeleBarCode
 			$this->is2d = false;
 			return $tcpdf1dEncodingTypes[$dolEncodingType];
 		} else if (array_key_exists($dolEncodingType, $tcpdf2dEncodingTypes)) {
+=======
+						'QRCODE,H' => 'QRCODE,H'
+		);
+
+		if (array_key_exists($dolEncodingType, $tcpdf1dEncodingTypes)) {
+			$this->is2d = false;
+			return $tcpdf1dEncodingTypes[$dolEncodingType];
+		} elseif (array_key_exists($dolEncodingType, $tcpdf2dEncodingTypes)) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$this->is2d = true;
 			return $tcpdf2dEncodingTypes[$dolEncodingType];
 		} else {
 			return '';
+<<<<<<< HEAD
 		}		 
+=======
+		}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 }

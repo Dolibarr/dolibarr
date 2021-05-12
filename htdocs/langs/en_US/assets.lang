@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # Copyright (C) 2018      Alexandre Spangaro   <aspangaro@zendsi.com>
+=======
+# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,7 +26,18 @@ AccountancyCodeAsset = Accounting code (asset)
 AccountancyCodeDepreciationAsset = Accounting code (depreciation asset account)
 AccountancyCodeDepreciationExpense = Accounting code (depreciation expense account)
 NewAssetType=New asset type
+<<<<<<< HEAD
 AssetsLines=Assets
+=======
+AssetsTypeSetup=Asset type setup
+AssetTypeModified=Asset type modified
+AssetType=Asset type
+AssetsLines=Assets
+DeleteType=Delete
+DeleteAnAssetType=Delete an asset type
+ConfirmDeleteAssetType=Are you sure you want to delete this asset type?
+ShowTypeCard=Show type '%s'
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 # Module label 'ModuleAssetsName'
 ModuleAssetsName = Assets
@@ -35,7 +50,11 @@ ModuleAssetsDesc = Assets description
 AssetsSetup = Assets setup
 Settings = Settings
 AssetsSetupPage = Assets setup page
+<<<<<<< HEAD
 ExtraFieldsAssetsType = Complementary attributes (Assets type)
+=======
+ExtraFieldsAssetsType = Complementary attributes (Asset type)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AssetsType=Asset type
 AssetsTypeId=Asset type id
 AssetsTypeLabel=Asset type label
@@ -48,5 +67,16 @@ MenuAssets = Assets
 MenuNewAsset = New asset
 MenuTypeAssets = Type assets
 MenuListAssets = List
+<<<<<<< HEAD
 MenuNewTypeAssets = New type
 MenuListTypeAssets = List
+=======
+MenuNewTypeAssets = New
+MenuListTypeAssets = List
+
+#
+# Module
+#
+NewAssetType=New asset type
+NewAsset=New asset
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

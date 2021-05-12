@@ -27,6 +27,7 @@
 //if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
 //if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');		// Not disabled cause need to do translations
+<<<<<<< HEAD
 if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK',1);
 if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL',1);
 //if (! defined('NOLOGIN')) define('NOLOGIN',1);					// Not disabled cause need to load personalized language
@@ -41,6 +42,22 @@ if (! defined('DISABLE_CKEDITOR'))          define('DISABLE_CKEDITOR',1);
 if (! defined('DISABLE_BROWSER_NOTIF'))     define('DISABLE_BROWSER_NOTIF',1);
 if (! defined('DISABLE_DATE_PICKER'))       define('DISABLE_DATE_PICKER',1);
 if (! defined('DISABLE_SELECT2'))           define('DISABLE_SELECT2',1);
+=======
+if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
+if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
+//if (! defined('NOLOGIN')) define('NOLOGIN',1);					// Not disabled cause need to load personalized language
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', 1);
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', 1);
+
+if (! defined('DISABLE_JQUERY_TABLEDND'))   define('DISABLE_JQUERY_TABLEDND', 1);
+if (! defined('DISABLE_JQUERY_JNOTIFY'))    define('DISABLE_JQUERY_JNOTIFY', 1);
+if (! defined('DISABLE_JQUERY_FLOT'))       define('DISABLE_JQUERY_FLOT', 1);
+if (! defined('DISABLE_JQUERY_JEDITABLE'))  define('DISABLE_JQUERY_JEDITABLE', 1);
+if (! defined('DISABLE_CKEDITOR'))          define('DISABLE_CKEDITOR', 1);
+if (! defined('DISABLE_BROWSER_NOTIF'))     define('DISABLE_BROWSER_NOTIF', 1);
+if (! defined('DISABLE_DATE_PICKER'))       define('DISABLE_DATE_PICKER', 1);
+if (! defined('DISABLE_SELECT2'))           define('DISABLE_SELECT2', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 require_once '../main.inc.php';
 
@@ -126,7 +143,11 @@ print '
         display: block;
     }
     li.lilevel3 a {
+<<<<<<< HEAD
         padding: 0.2em 15px 0.2em 60px;
+=======
+        padding: 0.6em 15px 0.6em 60px;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         color: #000;
         cursor: pointer;
         display: block;
@@ -189,7 +210,11 @@ if (GETPOST('menu')) $file_menu=GETPOST('menu');     // example: menu=eldy_menu.
 if (! class_exists('MenuManager'))
 {
 	$menufound=0;
+<<<<<<< HEAD
 	$dirmenus=array_merge(array("/core/menus/"),(array) $conf->modules_parts['menus']);
+=======
+	$dirmenus=array_merge(array("/core/menus/"), (array) $conf->modules_parts['menus']);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	foreach($dirmenus as $dirmenu)
 	{
 		$menufound=dol_include_once($dirmenu."standard/".$file_menu);
@@ -203,7 +228,11 @@ if (! class_exists('MenuManager'))
 	}
 }
 $menumanager = new MenuManager($db, empty($user->societe_id)?0:1);
+<<<<<<< HEAD
 $menumanager->loadMenu('all','all');	// Load this->tabMenu with sql menu entries
+=======
+$menumanager->loadMenu('all', 'all');	// Load this->tabMenu with sql menu entries
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 //var_dump($menumanager);exit;
 $menumanager->showmenu('jmobile');
 

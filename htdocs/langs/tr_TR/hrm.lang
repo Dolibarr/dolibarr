@@ -1,6 +1,10 @@
 # Dolibarr language file - en_US - hrm
 # Admin
+<<<<<<< HEAD
 HRM_EMAIL_EXTERNAL_SERVICE=İK dış hizmeti önlemek için eposta
+=======
+HRM_EMAIL_EXTERNAL_SERVICE=İKY dış hizmetine engel olmak için e-posta
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Establishments=Kuruluşlar
 Establishment=Kuruluş
 NewEstablishment=Yeni kuruluş
@@ -9,9 +13,17 @@ ConfirmDeleteEstablishment=Bu kuruluşu silmek istediğinizden emin misiniz?
 OpenEtablishment=Kuruluş aç
 CloseEtablishment=Kuruluş kapat
 # Dictionary
+<<<<<<< HEAD
 DictionaryDepartment=İK - Bölüm listesi
 DictionaryFunction=İK - İşlev listesi
 # Module
 Employees=Çalışanlar
 Employee=Çalışanlar
+=======
+DictionaryDepartment=İKY - Departman listesi
+DictionaryFunction=İKY - İşlev listesi
+# Module
+Employees=Çalışanlar
+Employee=Çalışan
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NewEmployee=Yeni çalışan

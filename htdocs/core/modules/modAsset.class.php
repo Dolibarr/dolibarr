@@ -1,6 +1,11 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018      Alexandre Spangaro   <aspangaro@zendsi.com>
+=======
+/* Copyright (C) 2004-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,15 +32,21 @@
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
+<<<<<<< HEAD
 // The class name should start with a lower case mod for Dolibarr to pick it up
 // so we ignore the Squiz.Classes.ValidClassName.NotCamelCaps rule.
 // @codingStandardsIgnoreStart
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 /**
  *  Description and activation class for module FixedAssets
  */
 class modAsset extends DolibarrModules
 {
+<<<<<<< HEAD
 	// @codingStandardsIgnoreEnd
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -43,26 +54,41 @@ class modAsset extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
+<<<<<<< HEAD
 		global $langs,$conf;
+=======
+		global $langs, $conf;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$this->db = $db;
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
 		$this->numero = 51000;		// TODO Go on page https://wiki.dolibarr.org/index.php/List_of_modules_id to reserve id number for your module
+<<<<<<< HEAD
 		// Key text used to identify module (for permissions, menus, etc...)
 		$this->rights_class = 'asset';
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','interface','other'
 		// It is used to group modules by family in module setup page
 		$this->family = "financial";
 		// Module position in the family on 2 digits ('01', '10', '20', ...)
+<<<<<<< HEAD
 		$this->module_position = '90';
+=======
+		$this->module_position = '70';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// Gives the possibility to the module, to provide his own family info and position of this family (Overwrite $this->family and $this->module_position. Avoid this)
 		//$this->familyinfo = array('myownfamily' => array('position' => '01', 'label' => $langs->trans("MyOwnFamily")));
 
 		// Module label (no space allowed), used if translation string 'ModuleAssetsName' not found (MyModue is name of module).
+<<<<<<< HEAD
 		$this->name = preg_replace('/^mod/i','',get_class($this));
+=======
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// Module description, used if translation string 'ModuleAssetsDesc' not found (MyModue is name of module).
 		$this->description = "Assets module";
 		// Used only if file README.md and README-LL.md not found.
@@ -96,7 +122,11 @@ class modAsset extends DolibarrModules
 		$this->requiredby = array();	// List of module ids to disable if this one is disabled
 		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
 		$this->langfiles = array("assets");
+<<<<<<< HEAD
 		$this->phpmin = array(5,3);					// Minimum version of PHP required by module
+=======
+		$this->phpmin = array(5,4);					// Minimum version of PHP required by module
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->need_dolibarr_version = array(7,0);	// Minimum version of Dolibarr required by module
 		$this->warnings_activation = array();                     // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
 		$this->warnings_activation_ext = array();                 // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
@@ -151,6 +181,7 @@ class modAsset extends DolibarrModules
 
 		// Dictionaries
 		$this->dictionaries=array();
+<<<<<<< HEAD
 		/* Example:
 		$this->dictionaries=array(
 			'langs'=>'mylangfile@assets',
@@ -165,6 +196,8 @@ class modAsset extends DolibarrModules
 			'tabcond'=>array($conf->assets->enabled,$conf->assets->enabled,$conf->assets->enabled)												// Condition to show each dictionary
 		);
 		*/
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 		// Boxes/Widgets
@@ -178,9 +211,15 @@ class modAsset extends DolibarrModules
 
 		// Cronjobs (List of cron jobs entries to add when module is enabled)
 		// unit_frequency must be 60 for minute, 3600 for hour, 86400 for day, 604800 for week
+<<<<<<< HEAD
 		$this->cronjobs = array(
 			0=>array('label'=>'MyJob label', 'jobtype'=>'method', 'class'=>'/asset/class/asset.class.php', 'objectname'=>'Asset', 'method'=>'doScheduledJob', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>2, 'unitfrequency'=>3600, 'status'=>0, 'test'=>true)
 		);
+=======
+		//$this->cronjobs = array(
+		//	0=>array('label'=>'MyJob label', 'jobtype'=>'method', 'class'=>'/asset/class/asset.class.php', 'objectname'=>'Asset', 'method'=>'doScheduledJob', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>2, 'unitfrequency'=>3600, 'status'=>0, 'test'=>true)
+		//);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// Example: $this->cronjobs=array(0=>array('label'=>'My label', 'jobtype'=>'method', 'class'=>'/dir/class/file.class.php', 'objectname'=>'MyClass', 'method'=>'myMethod', 'parameters'=>'param1, param2', 'comment'=>'Comment', 'frequency'=>2, 'unitfrequency'=>3600, 'status'=>0, 'test'=>true),
 		//                                1=>array('label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'param1, param2', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600*24, 'status'=>0, 'test'=>true)
 		// );
@@ -188,22 +227,41 @@ class modAsset extends DolibarrModules
 
 		// Permissions
 		$this->rights = array();		// Permission array used by this module
+<<<<<<< HEAD
 
 		$r=0;
 		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
 		$this->rights[$r][1] = 'Read assets';		// Permission label
 		$this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
+=======
+        $this->rights_class = 'asset';
+        $r=0;
+
+        $r++;
+        $this->rights[$r][0] = 51001;	            // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Read assets';		// Permission label
+        $this->rights[$r][2] = 'r';
+        $this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->rights[$r][4] = 'read';				// In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
 		$this->rights[$r][5] = '';					// In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
 
 		$r++;
+<<<<<<< HEAD
 		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
 		$this->rights[$r][1] = 'Create/Update assets';	// Permission label
 		$this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
+=======
+		$this->rights[$r][0] = 51002;               // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Create/Update assets';	// Permission label
+        $this->rights[$r][2] = 'w';
+        $this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->rights[$r][4] = 'write';				// In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
 		$this->rights[$r][5] = '';					// In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
 
 		$r++;
+<<<<<<< HEAD
 		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
 		$this->rights[$r][1] = 'Delete assets';		// Permission label
 		$this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
@@ -336,4 +394,43 @@ class modAsset extends DolibarrModules
 		return $this->_init($sql,$options);
 	}
 
+=======
+		$this->rights[$r][0] = 51003;               // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Delete assets';		// Permission label
+        $this->rights[$r][2] = 'd';
+        $this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'delete';			// In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
+		$this->rights[$r][5] = '';					// In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
+
+        $r++;
+        $this->rights[$r][0] = 51005;               // Permission id (must not be already used)
+        $this->rights[$r][1] = 'Setup types of asset';  // Permission label
+        $this->rights[$r][2] = 'w';
+        $this->rights[$r][3] = 0;                   // Permission by default for new user (0/1)
+        $this->rights[$r][4] = 'advanced_configurer';        // In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
+        $this->rights[$r][5] = '';					// In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
+        
+        // Menus
+        //-------
+        $this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+	}
+
+	/**
+	 *  Function called when module is enabled.
+	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *  It also creates data directories
+	 *
+	 *  @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *  @return     int             	1 if OK, 0 if KO
+	 */
+    public function init($options = '')
+    {
+        // Permissions
+        $this->remove($options);
+
+        $sql = array();
+
+        return $this->_init($sql, $options);
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

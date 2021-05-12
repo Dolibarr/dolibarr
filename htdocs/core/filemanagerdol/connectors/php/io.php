@@ -24,12 +24,20 @@
 
 /**
  * CombinePaths
+<<<<<<< HEAD
  * 
+=======
+ *
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * @param   string $sBasePath     sBasePath
  * @param   string $sFolder       sFolder
  * @return  string                Combined path
  */
+<<<<<<< HEAD
 function CombinePaths( $sBasePath, $sFolder )
+=======
+function CombinePaths($sBasePath, $sFolder)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	return RemoveFromEnd($sBasePath, '/') . '/' . RemoveFromStart($sFolder, '/');
 }
@@ -175,14 +183,22 @@ function CreateServerFolder($folderPath, $lastFolder = null)
 		// Enable error tracking to catch the error.
 		ini_set('track_errors', '1');
 
+<<<<<<< HEAD
 		if ( isset( $Config['ChmodOnFolderCreate'] ) && !$Config['ChmodOnFolderCreate'] )
+=======
+		if ( isset($Config['ChmodOnFolderCreate']) && !$Config['ChmodOnFolderCreate'] )
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			mkdir($folderPath);
 		}
 		else
 		{
 			$permissions = '0777';
+<<<<<<< HEAD
 			if ( isset( $Config['ChmodOnFolderCreate'] ) && $Config['ChmodOnFolderCreate'])
+=======
+			if ( isset($Config['ChmodOnFolderCreate']) && $Config['ChmodOnFolderCreate'])
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			{
 				$permissions = (string) $Config['ChmodOnFolderCreate'];
 			}
@@ -219,7 +235,11 @@ function GetRootPath()
     }
     $sRealPath = realpath('./');
     // #2124 ensure that no slash is at the end
+<<<<<<< HEAD
     $sRealPath = rtrim($sRealPath,"\\/");
+=======
+    $sRealPath = rtrim($sRealPath, "\\/");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     $sSelfPath = $_SERVER['PHP_SELF'] ;
     $sSelfPath = substr($sSelfPath, 0, strrpos($sSelfPath, '/'));
@@ -238,7 +258,11 @@ function GetRootPath()
 
 // Emulate the asp Server.mapPath function.
 // given an url path return the physical directory that it corresponds to
+<<<<<<< HEAD
 function Server_MapPath( $path )
+=======
+function Server_MapPath($path)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
     // This function is available only for Apache
     if (function_exists('apache_lookup_uri')) {
@@ -315,7 +339,11 @@ function GetCurrentFolder()
 	if (!isset($_GET)) {
 		global $_GET;
 	}
+<<<<<<< HEAD
 	$sCurrentFolder	= isset( $_GET['CurrentFolder'] ) ? GETPOST('CurrentFolder', '', 1) : '/' ;
+=======
+	$sCurrentFolder	= isset($_GET['CurrentFolder']) ? GETPOST('CurrentFolder', '', 1) : '/' ;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	// Check the current folder syntax (must begin and start with a slash).
 	if (!preg_match('|/$|', $sCurrentFolder))
@@ -339,7 +367,11 @@ function GetCurrentFolder()
 }
 
 // Do a cleanup of the folder name to avoid possible problems
+<<<<<<< HEAD
 function SanitizeFolderName( $sNewFolderName )
+=======
+function SanitizeFolderName($sNewFolderName)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$sNewFolderName = stripslashes($sNewFolderName);
 
@@ -350,7 +382,11 @@ function SanitizeFolderName( $sNewFolderName )
 }
 
 // Do a cleanup of the file name to avoid possible problems
+<<<<<<< HEAD
 function SanitizeFileName( $sNewFileName )
+=======
+function SanitizeFileName($sNewFileName)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	global $Config ;
 
@@ -367,7 +403,11 @@ function SanitizeFileName( $sNewFileName )
 }
 
 // This is the function that sends the results of the uploading process.
+<<<<<<< HEAD
 function SendUploadResults( $errorNumber, $fileUrl = '', $fileName = '', $customMsg = '' )
+=======
+function SendUploadResults($errorNumber, $fileUrl = '', $fileName = '', $customMsg = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	// Minified version of the document.domain automatic fix script (#1919).
 	// The original script can be found at _dev/domain_fix_template.js
@@ -393,13 +433,21 @@ EOF;
 // This is the function that sends the results of the uploading process to CKE.
 /**
  * SendCKEditorResults
+<<<<<<< HEAD
  * 
+=======
+ *
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * @param   string  $callback       callback
  * @param   string  $sFileUrl       sFileUrl
  * @param   string  $customMsg      customMsg
  * @return  void
  */
+<<<<<<< HEAD
 function SendCKEditorResults ($callback, $sFileUrl, $customMsg = '')
+=======
+function SendCKEditorResults($callback, $sFileUrl, $customMsg = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
   echo '<script type="text/javascript">';
 
@@ -409,5 +457,8 @@ function SendCKEditorResults ($callback, $sFileUrl, $customMsg = '')
 
   echo '</script>';
 }
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

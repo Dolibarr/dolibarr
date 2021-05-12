@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,7 +35,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'users', 'other'));
 
+<<<<<<< HEAD
 $action=GETPOST('action','aZ09');
+=======
+$action=GETPOST('action', 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if (!$user->admin) accessforbidden();
 
@@ -43,7 +51,11 @@ if (!$user->admin) accessforbidden();
 if ($action == 'add')
 {
     $sql = "UPDATE ".MAIN_DB_PREFIX."rights_def SET bydefault=1";
+<<<<<<< HEAD
     $sql.= " WHERE id = ".GETPOST("pid",'int');
+=======
+    $sql.= " WHERE id = ".GETPOST("pid", 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $sql.= " AND entity = ".$conf->entity;
     $db->query($sql);
 }
@@ -51,7 +63,11 @@ if ($action == 'add')
 if ($action == 'remove')
 {
     $sql = "UPDATE ".MAIN_DB_PREFIX."rights_def SET bydefault=0";
+<<<<<<< HEAD
     $sql.= " WHERE id = ".GETPOST('pid','int');
+=======
+    $sql.= " WHERE id = ".GETPOST('pid', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $sql.= " AND entity = ".$conf->entity;
     $db->query($sql);
 }
@@ -62,9 +78,15 @@ if ($action == 'remove')
  */
 
 $wikihelp='EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
+<<<<<<< HEAD
 llxHeader('',$langs->trans("DefaultRights"), $wikihelp);
 
 print load_fiche_titre($langs->trans("SecuritySetup"),'','title_setup');
+=======
+llxHeader('', $langs->trans("DefaultRights"), $wikihelp);
+
+print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print $langs->trans("DefaultRightsDesc");
 print " ".$langs->trans("OnlyActiveElementsAreShown")."<br><br>\n";
@@ -187,7 +209,11 @@ if ($result)
 
         print '<tr class="oddeven">';
         print '<td>';
+<<<<<<< HEAD
         print img_object('',$picto,'class="pictoobjectwidth"').' '.$objMod->getName();
+=======
+        print img_object('', $picto, 'class="pictoobjectwidth"').' '.$objMod->getName();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         print '<a name="'.$objMod->getName().'">&nbsp;</a>';
 		print '</td>';
 
@@ -197,7 +223,11 @@ if ($result)
         print '<td align="center">';
         if ($obj->bydefault == 1)
         {
+<<<<<<< HEAD
             print img_picto($langs->trans("Active"),'tick');
+=======
+            print img_picto($langs->trans("Active"), 'tick');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             print '</td><td>';
             print '<a class="reposition" href="perms.php?pid='.$obj->id.'&amp;action=remove">'.img_edit_remove().'</a>';
         }
@@ -218,5 +248,9 @@ print '</div>';
 
 dol_fiche_end();
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

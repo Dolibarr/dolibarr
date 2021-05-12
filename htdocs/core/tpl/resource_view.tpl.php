@@ -13,6 +13,7 @@ $form= new Form($db);
 
 print '<div class="tagtable centpercent noborder allwidth">';
 
+<<<<<<< HEAD
 if($mode == 'edit' )
 {
     print '<form class="tagtr liste_titre">';
@@ -41,11 +42,35 @@ if( (array) $linked_resources && count($linked_resources) > 0)
 	{
 
 		$object_resource = fetchObjectByElement($linked_resource['resource_id'],$linked_resource['resource_type']);
+=======
+print '<form method="POST" class="tagtable centpercent noborder borderbottom allwidth">';
+
+print '<div class="tagtr liste_titre">';
+print '<div class="tagtd liste_titre">'.$langs->trans('Resource').'</div>';
+print '<div class="tagtd liste_titre">'.$langs->trans('Type').'</div>';
+print '<div class="tagtd liste_titre center">'.$langs->trans('Busy').'</div>';
+print '<div class="tagtd liste_titre center">'.$langs->trans('Mandatory').'</div>';
+print '<div class="tagtd liste_titre"></div>';
+print '</div>';
+
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+print '<input type="hidden" name="id" value="'.$element_id.'" />';
+print '<input type="hidden" name="action" value="update_linked_resource" />';
+print '<input type="hidden" name="resource_type" value="'.$resource_type.'" />';
+
+if( (array) $linked_resources && count($linked_resources) > 0)
+{
+	foreach ($linked_resources as $linked_resource)
+	{
+
+		$object_resource = fetchObjectByElement($linked_resource['resource_id'], $linked_resource['resource_type']);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		//$element_id = $linked_resource['rowid'];
 
 		if ($mode == 'edit' && $linked_resource['rowid'] == GETPOST('lineid'))
 		{
+<<<<<<< HEAD
 
 			print '<form class="tagtr oddeven" action="'.$_SERVER["PHP_SELF"].'?element='.$element.'&element_id='.$element_id.'" method="POST">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
@@ -68,6 +93,27 @@ if( (array) $linked_resources && count($linked_resources) > 0)
 				$style='style="background: orange;"';
 
 			print '<form class="tagtr oddeven" '.$style.'>';
+=======
+		    print '<div class="tagtr oddeven">';
+		    print '<input type="hidden" name="lineid" value="'.$linked_resource['rowid'].'" />';
+		    print '<input type="hidden" name="element" value="'.$element.'" />';
+			print '<input type="hidden" name="element_id" value="'.$element_id.'" />';
+
+			print '<div class="tagtd">'.$object_resource->getNomUrl(1).'</div>';
+			print '<div class="tagtd">'.$object_resource->type_label.'</div>';
+			print '<div class="tagtd center">'.$form->selectyesno('busy', $linked_resource['busy']?1:0, 1).'</div>';
+			print '<div class="tagtd center">'.$form->selectyesno('mandatory', $linked_resource['mandatory']?1:0, 1).'</div>';
+			print '<div class="tagtd right"><input type="submit" class="button" value="'.$langs->trans("Update").'"></div>';
+			print '</div>';
+		}
+		else
+		{
+			$class='';
+			if ($linked_resource['rowid'] == GETPOST('lineid'))
+				$class='highlight';
+
+			print '<div class="tagtr oddeven'.($class?' '.$class:'').'">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			print '<div class="tagtd">';
 			print $object_resource->getNomUrl(1);
@@ -77,6 +123,7 @@ if( (array) $linked_resources && count($linked_resources) > 0)
 			print $object_resource->type_label;
 			print '</div>';
 
+<<<<<<< HEAD
 			print '<div class="tagtd" align="center">';
 			print yn($linked_resource['busy']);
 			print '</div>';
@@ -86,11 +133,23 @@ if( (array) $linked_resources && count($linked_resources) > 0)
 			print '</div>';
 
 			print '<div class="tagtd" align="right">';
+=======
+			print '<div class="tagtd center">';
+			print yn($linked_resource['busy']);
+			print '</div>';
+
+			print '<div class="tagtd center">';
+			print yn($linked_resource['mandatory']);
+			print '</div>';
+
+			print '<div class="tagtd right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			print '<a href="'.$_SERVER['PHP_SELF'].'?mode=edit&resource_type='.$linked_resource['resource_type'].'&element='.$element.'&element_id='.$element_id.'&lineid='.$linked_resource['rowid'].'">';
 			print img_edit();
 			print '</a>';
 			print '&nbsp;';
 			print '<a href="'.$_SERVER['PHP_SELF'].'?action=delete_resource&id='.$linked_resource['resource_id'].'&element='.$element.'&element_id='.$element_id.'&lineid='.$linked_resource['rowid'].'">';
+<<<<<<< HEAD
 			print img_delete();
 			print '</a>';
 			print '</div>';
@@ -102,14 +161,34 @@ if( (array) $linked_resources && count($linked_resources) > 0)
 }
 else {
 	print '<form class="tagtr oddeven">';
+=======
+			print img_picto($langs->trans("Unlink"), 'unlink');
+			print '</a>';
+			print '</div>';
+
+			print '</div>';
+		}
+	}
+}
+else {
+	print '<div class="tagtr oddeven">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '<div class="tagtd opacitymedium">'.$langs->trans('NoResourceLinked').'</div>';
 	print '<div class="tagtd opacitymedium"></div>';
 	print '<div class="tagtd opacitymedium"></div>';
 	print '<div class="tagtd opacitymedium"></div>';
 	print '<div class="tagtd opacitymedium"></div>';
+<<<<<<< HEAD
 	print '</form>';
 }
 
+=======
+	print '</div>';
+}
+
+print '</form>';
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</div>';
 
 ?>

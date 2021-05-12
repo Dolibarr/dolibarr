@@ -2,7 +2,11 @@
 /* Copyright (C) 2007-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2011		Dimitri Mouillard	<dmouillard@teclib.com>
  * Copyright (C) 2013		Marcos García		<marcosgdf@gmail.com>
+<<<<<<< HEAD
  * Copyright (C) 2016		Regis Houssin		<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2016		Regis Houssin		<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,24 +30,40 @@
  *		\brief      File that defines the balance of paid holiday of users.
  */
 
+<<<<<<< HEAD
 require('../main.inc.php');
+=======
+require '../main.inc.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
 
 // Load translation files required by the page
 $langs->loadlangs(array('users', 'hrm'));
 
+<<<<<<< HEAD
 $action=GETPOST('action','aZ09');
 $contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'defineholidaylist';
+=======
+$action=GETPOST('action', 'aZ09');
+$contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'defineholidaylist';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $search_name=GETPOST('search_name', 'alpha');
 $search_supervisor=GETPOST('search_supervisor', 'int');
 
 // Load variable for pagination
+<<<<<<< HEAD
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
+=======
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -70,11 +90,19 @@ $holiday = new Holiday($db);
  * Actions
  */
 
+<<<<<<< HEAD
 if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
 if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+=======
+if (GETPOST('cancel', 'alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -83,7 +111,11 @@ if (empty($reshook))
     include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
     // Purge search criteria
+<<<<<<< HEAD
     if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+=======
+    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') ||GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $search_name='';
         $search_supervisor='';
@@ -106,7 +138,11 @@ if (empty($reshook))
     {
     	$error = 0;
 
+<<<<<<< HEAD
     	$typeleaves=$holiday->getTypes(1,1);
+=======
+    	$typeleaves=$holiday->getTypes(1, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         $userID = array_keys($_POST['update_cp']);
         $userID = $userID[0];
@@ -118,7 +154,11 @@ if (empty($reshook))
 
     	    if (!empty($userValue) || (string) $userValue == '0')
     	    {
+<<<<<<< HEAD
     	        $userValue = price2num($userValue,5);
+=======
+    	        $userValue = price2num($userValue, 5);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	    } else {
     	        $userValue = '';
     	    }
@@ -172,7 +212,11 @@ $userstatic=new User($db);
 llxHeader('', $langs->trans('CPTitreMenu'));
 
 
+<<<<<<< HEAD
 $typeleaves=$holiday->getTypes(1,1);
+=======
+$typeleaves=$holiday->getTypes(1, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -193,7 +237,11 @@ if ($lastUpdate)
 {
     $monthLastUpdate = $lastUpdate[4].$lastUpdate[5];
     $yearLastUpdate = $lastUpdate[0].$lastUpdate[1].$lastUpdate[2].$lastUpdate[3];
+<<<<<<< HEAD
     print '<strong>'.dol_print_date($db->jdate($holiday->getConfCP('lastUpdate')),'dayhour','tzuser').'</strong>';
+=======
+    print '<strong>'.dol_print_date($db->jdate($holiday->getConfCP('lastUpdate')), 'dayhour', 'tzuser').'</strong>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print '<br>'.$langs->trans("MonthOfLastMonthlyUpdate").': <strong>'.$yearLastUpdate.'-'.$monthLastUpdate.'</strong>'."\n";
 }
 else print $langs->trans('None');
@@ -212,7 +260,11 @@ $userchilds=array();
 if (empty($user->rights->holiday->read_all))
 {
 	$userchilds=$user->getAllChildIds(1);
+<<<<<<< HEAD
 	$filters.=' AND u.rowid IN ('.join(', ',$userchilds).')';
+=======
+	$filters.=' AND u.rowid IN ('.join(', ', $userchilds).')';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 if (!empty($search_name)) {
 	$filters.=natural_search(array('u.firstname','u.lastname'), $search_name);
@@ -271,7 +323,11 @@ else
     print '<td class="liste_titre"></td>';
 
     // Action column
+<<<<<<< HEAD
     print '<td class="liste_titre" align="right">';
+=======
+    print '<td class="liste_titre maxwidthsearch">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $searchpicto=$form->showFilterButtons();
     print $searchpicto;
     print '</td>';
@@ -286,7 +342,11 @@ else
         foreach($typeleaves as $key => $val)
         {
         	$labeltype = ($langs->trans($val['code'])!=$val['code']) ? $langs->trans($val['code']) : $langs->trans($val['label']);
+<<<<<<< HEAD
         	print_liste_field_titre($labeltype, $_SERVER["PHP_SELF"], '', '', '', 'align="center"');
+=======
+        	print_liste_field_titre($labeltype, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'center ');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
     }
     else
@@ -374,6 +434,11 @@ else
 
 print '</form>';
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

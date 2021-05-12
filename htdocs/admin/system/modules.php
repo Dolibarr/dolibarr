@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2005-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+<<<<<<< HEAD
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +29,14 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
+<<<<<<< HEAD
 $langs->load("admin");
 $langs->load("install");
 $langs->load("other");
+=======
+// Load translation files required by the page
+$langs->loadLangs(array("install","other","admin"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if (! $user->admin)
 	accessforbidden();
@@ -39,7 +48,11 @@ if (! $user->admin)
 
 llxHeader();
 
+<<<<<<< HEAD
 print load_fiche_titre($langs->trans("AvailableModules"),'','title_setup');
+=======
+print load_fiche_titre($langs->trans("AvailableModules"), '', 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print $langs->trans("ToActivateModule").'<br>';
 print "<br>\n";
@@ -79,17 +92,29 @@ foreach($modulesdir as $dir)
 						{
 							try {
 	    						$objMod = new $modName($db);
+<<<<<<< HEAD
 						
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			    				$modules[$objMod->numero]=$objMod;
 			    				$modules_names[$objMod->numero]=$objMod->name;
 	    						$modules_files[$objMod->numero]=$file;
 	    						$modules_fullpath[$file]=$dir.$file;
 	    						$picto[$objMod->numero]=(isset($objMod->picto) && $objMod->picto)?$objMod->picto:'generic';
+<<<<<<< HEAD
 							} 
 							catch(Exception $e)
 							{
 								dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
 							}	
+=======
+							}
+							catch(Exception $e)
+							{
+								dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
+							}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						}
 						else
 						{
@@ -108,7 +133,11 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Modules").'</td>';
 print '<td>'.$langs->trans("Version").'</td>';
+<<<<<<< HEAD
 print '<td align="center">'.$langs->trans("IdModule").'</td>';
+=======
+print '<td class="center">'.$langs->trans("IdModule").'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '<td>'.$langs->trans("IdPermissions").'</td>';
 print '</tr>';
 $var=false;
@@ -123,19 +152,32 @@ foreach($sortorder as $numero=>$name)
 	$alt=$name.' - '.$modules_files[$numero];
     if (! empty($picto[$numero]))
     {
+<<<<<<< HEAD
        	if (preg_match('/^\//',$picto[$numero])) print img_picto($alt,$picto[$numero],'width="14px"',1);
        	else print img_object($alt,$picto[$numero],'width="14px"');
     }
     else
     {
       	print img_object($alt,$picto[$numero],'width="14px"');
+=======
+       	if (preg_match('/^\//', $picto[$numero])) print img_picto($alt, $picto[$numero], 'width="14px"', 1);
+       	else print img_object($alt, $picto[$numero], 'width="14px"');
+    }
+    else
+    {
+      	print img_object($alt, $picto[$numero], 'width="14px"');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 	print ' '.$modules[$numero]->getName();
 	print "</td>";
 	// Version
 	print '<td>'.$modules[$numero]->getVersion().'</td>';
 	// Id
+<<<<<<< HEAD
 	print '<td align="center">'.$numero.'</td>';
+=======
+	print '<td class="center">'.$numero.'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	// Permissions
 	if ($modules[$numero]->rights)
 	{
@@ -159,5 +201,9 @@ foreach($rights_ids as $right_id)
 	$old = $right_id;
 }
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

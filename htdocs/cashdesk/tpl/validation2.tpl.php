@@ -24,9 +24,14 @@ if (empty($langs) || ! is_object($langs))
 	exit;
 }
 
+<<<<<<< HEAD
 
 $langs->load("main");
 $langs->load("bills");
+=======
+// Load translation files required by the page
+$langs->loadLangs(array("main","bills"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 ?>
 
@@ -45,7 +50,11 @@ $langs->load("bills");
 		window.open('validation_ticket.php?facid='+id,name, opt);
 	}
 
+<<<<<<< HEAD
 	popupTicket(<?php echo GETPOST('facid','int'); ?>,'<?php echo $langs->trans('PrintTicket') ?>');
+=======
+	popupTicket(<?php echo GETPOST('facid', 'int'); ?>,'<?php echo $langs->trans('PrintTicket') ?>');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 </script>
 

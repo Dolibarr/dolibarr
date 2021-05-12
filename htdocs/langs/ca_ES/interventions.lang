@@ -4,6 +4,10 @@ Interventions=Intervencions
 InterventionCard=Fitxa intervenció
 NewIntervention=Nova intervenció
 AddIntervention=Crea intervenció
+<<<<<<< HEAD
+=======
+ChangeIntoRepeatableIntervention=Canvia-ho a intervenció repetible
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ListOfInterventions=Llistat d'intervencions
 ActionsOnFicheInter=Esdeveniments sobre l'intervenció
 LastInterventions=Últimes %s intervencions
@@ -14,7 +18,10 @@ DeleteIntervention=Eliminar intervenció
 ValidateIntervention=Validar intervenció
 ModifyIntervention=Modificar intervenció
 DeleteInterventionLine=Eliminar línia d'intervenció
+<<<<<<< HEAD
 CloneIntervention=Clona la intervenció
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmDeleteIntervention=Vols eliminar aquesta intervenció?
 ConfirmValidateIntervention=Vols validar aquesta intervenció amb nom <b>%s</b>?
 ConfirmModifyIntervention=Vols modificar aquesta intervenció?
@@ -35,7 +42,11 @@ InterventionValidatedInDolibarr=Intervenció %s validada
 InterventionModifiedInDolibarr=Intervenció %s modificada
 InterventionClassifiedBilledInDolibarr=Intervenció %s marcada com a facturada
 InterventionClassifiedUnbilledInDolibarr=Intervenció %s marcada com a no facturada
+<<<<<<< HEAD
 InterventionSentByEMail=Intervenció %s enviada per email
+=======
+InterventionSentByEMail=Intervenció %s enviada per e-mail
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 InterventionDeletedInDolibarr=Intevenció %s eliminada
 InterventionsArea=Àrea d'intervencions
 DraftFichinter=Intervencions esborrany
@@ -50,8 +61,13 @@ UseServicesDurationOnFichinter=Utilitza la durada dels serveis en les intervenci
 UseDurationOnFichinter=Oculta el camp de durada dels registres d'intervenció
 UseDateWithoutHourOnFichinter=Oculta hores i minuts del camp de dates dels registres d'intervenció
 InterventionStatistics=Estadístiques de intervencions
+<<<<<<< HEAD
 NbOfinterventions=Nº de fitxes de intervenció
 NumberOfInterventionsByMonth=Nº de fitxes de intervenció per mes (data de validació)
+=======
+NbOfinterventions=Nº de fitxes d'intervenció
+NumberOfInterventionsByMonth=Nº de fitxes d'intervenció per mes (data de validació)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AmountOfInteventionNotIncludedByDefault=La quantitat d'intervenció no s'inclou de manera predeterminada en els beneficis (en la majoria dels casos, els fulls de temps s'utilitzen per comptar el temps dedicat). Per incloure'ls, afegiu la opció  PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT amb el valor 1 a Configuració &rarr; Varis.
 ##### Exports #####
 InterId=Id. d'intervenció

@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2012 Regis Houssin  <regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2012 Regis Houssin  <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +45,11 @@ abstract class CommonOrderLine extends CommonObjectLine
 	 * Product ref
 	 * @var string
 	 * @deprecated Use product_ref
+<<<<<<< HEAD
 	 * @see product_ref
+=======
+	 * @see $product_ref
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	 */
 	public $ref;
 
@@ -55,7 +63,11 @@ abstract class CommonOrderLine extends CommonObjectLine
 	 * Product label
 	 * @var string
 	 * @deprecated Use product_label
+<<<<<<< HEAD
 	 * @see product_label
+=======
+	 * @see $product_label
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	 */
 	public $libelle;
 
@@ -80,9 +92,15 @@ abstract class CommonOrderLine extends CommonObjectLine
 	/**
 	 * Unit price
 	 * @deprecated
+<<<<<<< HEAD
 	 * @see subprice
 	 */
 	var $price;
+=======
+	 * @see $subprice
+	 */
+    public $price;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	/**
 	 * Unit price before taxes
@@ -144,6 +162,10 @@ abstract class CommonOrderLine extends CommonObjectLine
 	public $info_bits = 0;
 
 	public $special_code = 0;
+<<<<<<< HEAD
 
 }
 
+=======
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

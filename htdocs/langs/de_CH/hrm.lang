@@ -1,8 +1,16 @@
 # Dolibarr language file - Source file is en_US - hrm
+<<<<<<< HEAD
+=======
+HRM_EMAIL_EXTERNAL_SERVICE=E-Mail zum Unterdrücken externer HRM Dienste
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Establishments=Betriebe
 Establishment=Betrieb
 NewEstablishment=Neuer Betrieb
 DeleteEstablishment=Betrieb löschen
+<<<<<<< HEAD
+=======
+ConfirmDeleteEstablishment=Willst du diesen Betrieb wirklich löschen?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 OpenEtablishment=Betrieb wählen
 CloseEtablishment=Betrieb schliessen
 DictionaryDepartment=Personalverwaltung - Abteilungsliste

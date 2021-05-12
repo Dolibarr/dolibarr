@@ -1,8 +1,15 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2010-2011      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2010-2014 		Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015           Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+=======
+/* Copyright (C) 2010-2011  Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2014  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2015       Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2018       Frédéric France      <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
  */
 class pdf_canelle extends ModelePDFSuppliersInvoices
 {
+<<<<<<< HEAD
     var $db;
     var $name;
     var $description;
@@ -54,6 +62,81 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	var	$marge_basse;
 
 	var $emetteur;	// Objet societe qui emet
+=======
+    /**
+     * @var DoliDb Database handler
+     */
+    public $db;
+
+	/**
+     * @var string model name
+     */
+    public $name;
+
+	/**
+     * @var string model description (short text)
+     */
+    public $description;
+
+    /**
+     * @var string document type
+     */
+    public $type;
+
+    /**
+     * @var array Minimum version of PHP required by module.
+     * e.g.: PHP ≥ 5.5 = array(5, 5)
+     */
+	public $phpmin = array(5, 5);
+
+	/**
+     * Dolibarr version of the loaded document
+     * @var string
+     */
+	public $version = 'dolibarr';
+
+	/**
+     * @var int page_largeur
+     */
+    public $page_largeur;
+
+	/**
+     * @var int page_hauteur
+     */
+    public $page_hauteur;
+
+	/**
+     * @var array format
+     */
+    public $format;
+
+	/**
+     * @var int marge_gauche
+     */
+	public $marge_gauche;
+
+	/**
+     * @var int marge_droite
+     */
+	public $marge_droite;
+
+	/**
+     * @var int marge_haute
+     */
+	public $marge_haute;
+
+	/**
+     * @var int marge_basse
+     */
+	public $marge_basse;
+
+	/**
+	 * Issuer
+	 * @var Societe object that emits
+	 */
+	public $emetteur;
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	/**
@@ -61,11 +144,19 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 *
 	 *  @param	DoliDB		$db     	Database handler
 	 */
+<<<<<<< HEAD
 	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
 
 		// Translations
+=======
+    public function __construct($db)
+    {
+		global $conf, $langs, $mysoc;
+
+		// Load translation files required by the page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$langs->loadLangs(array("main", "bills"));
 
 		$this->db = $db;
@@ -97,6 +188,10 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$this->posxtva=112;
 		$this->posxup=126;
 		$this->posxqty=145;
+<<<<<<< HEAD
+=======
+		$this->posxunit=162;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->posxdiscount=162;
 		$this->postotalht=174;
 
@@ -124,9 +219,16 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
         $this->localtax2=array();
 		$this->atleastoneratenotnull=0;
 		$this->atleastonediscount=0;
+<<<<<<< HEAD
 	}
 
 
+=======
+    }
+
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
      *  Function to build pdf onto disk
      *
@@ -137,26 +239,43 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
      *  @param		int					$hidedesc			Do not show desc
      *  @param		int					$hideref			Do not show ref
      *  @return		int										1=OK, 0=KO
+<<<<<<< HEAD
 	 */
 	function write_file($object, $outputlangs='', $srctemplatepath='', $hidedetails=0, $hidedesc=0, $hideref=0)
 	{
 		global $user,$langs,$conf,$mysoc,$hookmanager,$nblignes;
+=======
+     */
+    public function write_file($object, $outputlangs = '', $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+    {
+        // phpcs:enable
+		global $user,$langs,$conf,$mysoc,$hookmanager,$nblines;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Get source company
 		if (! is_object($object->thirdparty)) $object->fetch_thirdparty();
 		if (! is_object($object->thirdparty)) $object->thirdparty=$mysoc;	// If fetch_thirdparty fails, object has no socid (specimen)
 		$this->emetteur=$object->thirdparty;
+<<<<<<< HEAD
 		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default, if was not defined
+=======
+		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang, -2);    // By default, if was not defined
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
+<<<<<<< HEAD
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
 		$outputlangs->load("companies");
 		$outputlangs->load("bills");
 		$outputlangs->load("products");
+=======
+		// Load translation files required by the page
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		if ($conf->fournisseur->facture->dir_output)
 		{
@@ -176,7 +295,11 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			{
 				$objectref = dol_sanitizeFileName($object->ref);
 				$objectrefsupplier = dol_sanitizeFileName($object->ref_supplier);
+<<<<<<< HEAD
                 $dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2,0,0,$object,'invoice_supplier').$objectref;
+=======
+                $dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$objectref;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$file = $dir . "/" . $objectref . ".pdf";
 				if (! empty($conf->global->SUPPLIER_REF_IN_NAME)) $file = $dir . "/" . $objectref . ($objectrefsupplier?"_".$objectrefsupplier:"").".pdf";
 			}
@@ -185,10 +308,16 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			{
 				if (dol_mkdir($dir) < 0)
 				{
+<<<<<<< HEAD
 					$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
 					return 0;
 				}
 
+=======
+					$this->error=$langs->transnoentities("ErrorCanNotCreateDir", $dir);
+					return 0;
+				}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 
 			if (file_exists($dir))
@@ -202,9 +331,15 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				$hookmanager->initHooks(array('pdfgeneration'));
 				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
 				global $action;
+<<<<<<< HEAD
 				$reshook=$hookmanager->executeHooks('beforePDFCreation',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
 				$nblignes = count($object->lines);
+=======
+				$reshook=$hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+
+				$nblines = count($object->lines);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
                 $pdf=pdf_getInstance($this->format);
                 $default_font_size = pdf_getPDFFontSize($outputlangs);	// Must be after pdf_getInstance
@@ -212,7 +347,11 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		        $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
 	            $heightforfooter = $this->marge_basse + 8;	// Height reserved to output the footer (value include bottom margin)
 	            if ($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS >0) $heightforfooter+= 6;
+<<<<<<< HEAD
                 $pdf->SetAutoPageBreak(1,0);
+=======
+                $pdf->SetAutoPageBreak(1, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
                 if (class_exists('TCPDF'))
                 {
@@ -229,7 +368,11 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 				$pdf->Open();
 				$pagenb=0;
+<<<<<<< HEAD
 				$pdf->SetDrawColor(128,128,128);
+=======
+				$pdf->SetDrawColor(128, 128, 128);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Invoice"));
@@ -241,13 +384,18 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 
 			    // Positionne $this->atleastonediscount si on a au moins une remise
+<<<<<<< HEAD
                 for ($i = 0 ; $i < $nblignes ; $i++)
+=======
+                for ($i = 0 ; $i < $nblines ; $i++)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 {
                     if ($object->lines[$i]->remise_percent)
                     {
                         $this->atleastonediscount++;
                     }
                 }
+<<<<<<< HEAD
 				if (empty($this->atleastonediscount) && empty($conf->global->PRODUCT_USE_UNITS))
 				{
 					$this->posxpicture+=($this->postotalht - $this->posxdiscount);
@@ -256,6 +404,18 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 					$this->posxqty+=($this->postotalht - $this->posxdiscount);
 					$this->posxdiscount+=($this->postotalht - $this->posxdiscount);
 					//$this->postotalht;
+=======
+				if (empty($this->atleastonediscount))
+				{
+				    $delta = ($this->postotalht - $this->posxdiscount);
+				    $this->posxpicture+=$delta;
+				    $this->posxtva+=$delta;
+				    $this->posxup+=$delta;
+				    $this->posxqty+=$delta;
+				    $this->posxunit+=$delta;
+				    $this->posxdiscount+=$delta;
+				    // post of fields after are not modified, stay at same position
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 
                 // New page
@@ -263,9 +423,15 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 				$pagenb++;
 				$top_shift = $this->_pagehead($pdf, $object, 1, $outputlangs);
+<<<<<<< HEAD
 				$pdf->SetFont('','', $default_font_size - 1);
 				$pdf->MultiCell(0, 3, '');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
+=======
+				$pdf->SetFont('', '', $default_font_size - 1);
+				$pdf->MultiCell(0, 3, '');		// Set interline to 3
+				$pdf->SetTextColor(0, 0, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				$tab_top = 90+$top_shift;
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?42+$top_shift:10);
@@ -278,13 +444,21 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 					{
 						$tab_top -= 2;
 
+<<<<<<< HEAD
 						$pdf->SetFont('','', $default_font_size - 1);
+=======
+						$pdf->SetFont('', '', $default_font_size - 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top-1, dol_htmlentitiesbr($desc_incoterms), 0, 1);
 						$nexY = $pdf->GetY();
 						$height_incoterms=$nexY-$tab_top;
 
 						// Rect prend une longueur en 3eme param
+<<<<<<< HEAD
 						$pdf->SetDrawColor(192,192,192);
+=======
+						$pdf->SetDrawColor(192, 192, 192);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_incoterms+1);
 
 						$tab_top = $nexY+6;
@@ -296,13 +470,21 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				{
 					$tab_top -= 2;
 
+<<<<<<< HEAD
 					$pdf->SetFont('','', $default_font_size - 1);
+=======
+					$pdf->SetFont('', '', $default_font_size - 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top-1, dol_htmlentitiesbr($object->note_public), 0, 1);
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 
 					// Rect prend une longueur en 3eme param
+<<<<<<< HEAD
 					$pdf->SetDrawColor(192,192,192);
+=======
+					$pdf->SetDrawColor(192, 192, 192);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
 
 					$tab_top = $nexY+6;
@@ -313,11 +495,19 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				$nexY = $tab_top + 7;
 
 				// Loop on each lines
+<<<<<<< HEAD
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
 					$curY = $nexY;
 					$pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
 					$pdf->SetTextColor(0,0,0);
+=======
+				for ($i = 0 ; $i < $nblines ; $i++)
+				{
+					$curY = $nexY;
+					$pdf->SetFont('', '', $default_font_size - 1);   // Into loop to work with multipage
+					$pdf->SetTextColor(0, 0, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 					$pdf->setTopMargin($tab_top_newpage);
 					$pdf->setPageOrientation('', 1, $heightforfooter+$heightforfreetext+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
@@ -328,7 +518,11 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 					$showpricebeforepagebreak=1;
 
 					$pdf->startTransaction();
+<<<<<<< HEAD
 					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,3,$curX,$curY,$hideref,$hidedesc,1);
+=======
+					pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->posxtva-$curX, 3, $curX, $curY, $hideref, $hidedesc, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					$pageposafter=$pdf->getPage();
 					if ($pageposafter > $pageposbefore)	// There is a pagebreak
 					{
@@ -336,6 +530,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 						$pageposafter=$pageposbefore;
 						//print $pageposafter.'-'.$pageposbefore;exit;
 						$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
+<<<<<<< HEAD
 						pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,4,$curX,$curY,$hideref,$hidedesc,1);
 						$posyafter=$pdf->GetY();
 						if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
@@ -343,6 +538,15 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 							if ($i == ($nblignes-1))	// No more lines, and no space left to show total, so we create a new page
 							{
 								$pdf->AddPage('','',true);
+=======
+						pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->posxtva-$curX, 4, $curX, $curY, $hideref, $hidedesc, 1);
+						$posyafter=$pdf->GetY();
+						if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
+						{
+							if ($i == ($nblines-1))	// No more lines, and no space left to show total, so we create a new page
+							{
+								$pdf->AddPage('', '', true);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 								if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 								if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 								$pdf->setPage($pageposafter+1);
@@ -370,7 +574,11 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 						$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
 					}
 
+<<<<<<< HEAD
 					$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
+=======
+					$pdf->SetFont('', '', $default_font_size - 1);   // On repositionne la police par defaut
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 					// VAT Rate
                     if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
@@ -393,6 +601,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 					// Quantity
 					$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY($this->posxqty, $curY);
+<<<<<<< HEAD
 					// Enough for 6 chars
 					if($conf->global->PRODUCT_USE_UNITS)
 					{
@@ -402,6 +611,9 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 					{
 						$pdf->MultiCell($this->posxdiscount-$this->posxqty-0.8, 4, $qty, 0, 'R');
 					}
+=======
+					$pdf->MultiCell($this->posxunit-$this->posxqty-0.8, 4, $qty, 0, 'R');  // Enough for 6 chars
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 					// Unit
 					if($conf->global->PRODUCT_USE_UNITS)
@@ -416,7 +628,11 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 					if ($object->lines[$i]->remise_percent)
 					{
 					    $remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails);
+<<<<<<< HEAD
 						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 3, $remise_percent."%", 0, 'R');
+=======
+						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 3, $remise_percent, 0, 'R');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					}
 
 					// Total HT line
@@ -446,7 +662,11 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 					$this->localtax2[$localtax2rate]+=$localtax2ligne;
 
 					// Add line
+<<<<<<< HEAD
 					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
+=======
+					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					{
 						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(80,80,80)));
@@ -455,7 +675,11 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 						$pdf->SetLineStyle(array('dash'=>0));
 					}
 
+<<<<<<< HEAD
 					$nexY+=2;    // Passe espace entre les lignes
+=======
+					$nexY+=2;    // Add space between lines
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 					// Detect if some page were added automatically and output _tableau for past pages
 					while ($pagenb < $pageposafter)
@@ -469,7 +693,11 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 						{
 							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);
 						}
+<<<<<<< HEAD
 						$this->_pagefoot($pdf,$object,$outputlangs,1);
+=======
+						$this->_pagefoot($pdf, $object, $outputlangs, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						$pagenb++;
 						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
@@ -485,7 +713,11 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 						{
 							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);
 						}
+<<<<<<< HEAD
 						$this->_pagefoot($pdf,$object,$outputlangs,1);
+=======
+						$this->_pagefoot($pdf, $object, $outputlangs, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						// New page
 						$pdf->AddPage();
 						if (! empty($tplidx)) $pdf->useTemplate($tplidx);
@@ -519,17 +751,34 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 				// Pied de page
 				$this->_pagefoot($pdf, $object, $outputlangs);
+<<<<<<< HEAD
 				if (method_exists($pdf,'AliasNbPages')) $pdf->AliasNbPages();
 
 				$pdf->Close();
 
 				$pdf->Output($file,'F');
+=======
+				if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
+
+				$pdf->Close();
+
+				$pdf->Output($file, 'F');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				// Add pdfgeneration hook
 				$hookmanager->initHooks(array('pdfgeneration'));
 				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
 				global $action;
+<<<<<<< HEAD
 				$reshook=$hookmanager->executeHooks('afterPDFCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+=======
+				$reshook=$hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+				if ($reshook < 0)
+				{
+				    $this->error = $hookmanager->error;
+				    $this->errors = $hookmanager->errors;
+				}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
@@ -540,17 +789,30 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			}
 			else
 			{
+<<<<<<< HEAD
 				$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+=======
+				$this->error=$langs->trans("ErrorCanNotCreateDir", $dir);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				return 0;
 			}
 		}
 		else
 		{
+<<<<<<< HEAD
 			$this->error=$langs->trans("ErrorConstantNotDefined","SUPPLIER_OUTPUTDIR");
 			return 0;
 		}
 	}
 
+=======
+			$this->error=$langs->trans("ErrorConstantNotDefined", "SUPPLIER_OUTPUTDIR");
+			return 0;
+		}
+    }
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *	Show total to pay
 	 *
@@ -561,15 +823,25 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 *	@param	Translate	$outputlangs	Objet langs
 	 *	@return int							Position pour suite
 	 */
+<<<<<<< HEAD
 	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
+=======
+    private function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf,$mysoc;
 
         $default_font_size = pdf_getPDFFontSize($outputlangs);
 
         $tab2_top = $posy;
 		$tab2_hl = 4;
+<<<<<<< HEAD
 		$pdf->SetFont('','', $default_font_size - 1);
+=======
+		$pdf->SetFont('', '', $default_font_size - 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$pdf->SetXY($this->marge_gauche, $tab2_top + 0);
 		// If France, show VAT mention if not applicable
@@ -589,7 +861,11 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$index=0;
 
 		// Total HT
+<<<<<<< HEAD
 		$pdf->SetFillColor(255,255,255);
+=======
+		$pdf->SetFillColor(255, 255, 255);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$pdf->SetXY($col1x, $tab2_top + 0);
 		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
 
@@ -598,9 +874,15 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$pdf->MultiCell($largcol2, $tab2_hl, price($total_ht + $object->remise), 0, 'R', 1);
 
 		// Show VAT by rates and total
+<<<<<<< HEAD
 		$pdf->SetFillColor(248,248,248);
 
 		foreach( $this->tva as $tvakey => $tvaval )
+=======
+		$pdf->SetFillColor(248, 248, 248);
+
+		foreach($this->tva as $tvakey => $tvaval)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			if ($tvakey > 0)    // On affiche pas taux 0
 			{
@@ -611,6 +893,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 				$tvacompl='';
 
+<<<<<<< HEAD
 				if (preg_match('/\*/',$tvakey))
 				{
 					$tvakey=str_replace('*','',$tvakey);
@@ -619,6 +902,16 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 				$totalvat =$outputlangs->transcountrynoentities("TotalVAT",$mysoc->country_code).' ';
 				$totalvat.=vatrate($tvakey,1).$tvacompl;
+=======
+				if (preg_match('/\*/', $tvakey))
+				{
+					$tvakey=str_replace('*', '', $tvakey);
+					$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
+				}
+
+				$totalvat =$outputlangs->transcountrynoentities("TotalVAT", $mysoc->country_code).' ';
+				$totalvat.=vatrate($tvakey, 1).$tvacompl;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
 				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
@@ -638,7 +931,11 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			{
 				$index++;
 				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+<<<<<<< HEAD
 				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transcountrynoentities("TotalLT1",$mysoc->country_code), 0, 'L', 1);
+=======
+				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transcountrynoentities("TotalLT1", $mysoc->country_code), 0, 'L', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax1), 0, 'R', 1);
 			}
@@ -648,7 +945,11 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			{
 				$index++;
 				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+<<<<<<< HEAD
 				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transcountrynoentities("TotalLT2",$mysoc->country_code), 0, 'L', 1);
+=======
+				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transcountrynoentities("TotalLT2", $mysoc->country_code), 0, 'L', 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax2), 0, 'R', 1);
 			}
@@ -658,7 +959,11 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			//if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
 			//{
 				//Local tax 1
+<<<<<<< HEAD
 				foreach( $this->localtax1 as $tvakey => $tvaval )
+=======
+				foreach($this->localtax1 as $tvakey => $tvaval)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				{
 					if ($tvakey != 0)    // On affiche pas taux 0
 					{
@@ -668,6 +973,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 						$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 
 						$tvacompl='';
+<<<<<<< HEAD
 						if (preg_match('/\*/',$tvakey))
 						{
 							$tvakey=str_replace('*','',$tvakey);
@@ -675,6 +981,15 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 						}
 						$totalvat = $outputlangs->transcountrynoentities("TotalLT1",$mysoc->country_code).' ';
 						$totalvat.= vatrate(abs($tvakey),1).$tvacompl;
+=======
+						if (preg_match('/\*/', $tvakey))
+						{
+							$tvakey=str_replace('*', '', $tvakey);
+							$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
+						}
+						$totalvat = $outputlangs->transcountrynoentities("TotalLT1", $mysoc->country_code).' ';
+						$totalvat.= vatrate(abs($tvakey), 1).$tvacompl;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
 						$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
@@ -686,7 +1001,11 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			//if (! empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
 			//{
 				//Local tax 2
+<<<<<<< HEAD
 				foreach( $this->localtax2 as $tvakey => $tvaval )
+=======
+				foreach($this->localtax2 as $tvakey => $tvaval)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				{
 					if ($tvakey != 0)    // On affiche pas taux 0
 					{
@@ -696,6 +1015,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 						$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 
 						$tvacompl='';
+<<<<<<< HEAD
 						if (preg_match('/\*/',$tvakey))
 						{
 							$tvakey=str_replace('*','',$tvakey);
@@ -703,6 +1023,15 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 						}
 						$totalvat = $outputlangs->transcountrynoentities("TotalLT2",$mysoc->country_code).' ';
 						$totalvat.= vatrate(abs($tvakey),1).$tvacompl;
+=======
+						if (preg_match('/\*/', $tvakey))
+						{
+							$tvakey=str_replace('*', '', $tvakey);
+							$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
+						}
+						$totalvat = $outputlangs->transcountrynoentities("TotalLT2", $mysoc->country_code).' ';
+						$totalvat.= vatrate(abs($tvakey), 1).$tvacompl;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
 						$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
@@ -717,8 +1046,13 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		// Total TTC
 		$index++;
 		$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+<<<<<<< HEAD
 		$pdf->SetTextColor(0,0,60);
 		$pdf->SetFillColor(224,224,224);
+=======
+		$pdf->SetTextColor(0, 0, 60);
+		$pdf->SetFillColor(224, 224, 224);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalTTC"), $useborder, 'L', 1);
 
 		$total_ttc = ($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ttc : $object->total_ttc;
@@ -744,14 +1078,23 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			$pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle), 0, 'R', 0);
 
 			$index++;
+<<<<<<< HEAD
 			$pdf->SetTextColor(0,0,60);
+=======
+			$pdf->SetTextColor(0, 0, 60);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("RemainderToPay"), $useborder, 'L', 1);
 
 			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($largcol2, $tab2_hl, price($resteapayer), $useborder, 'R', 1);
+<<<<<<< HEAD
 			$pdf->SetFont('','', $default_font_size - 1);
 			$pdf->SetTextColor(0,0,0);
+=======
+			$pdf->SetFont('', '', $default_font_size - 1);
+			$pdf->SetTextColor(0, 0, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		$index++;
@@ -771,7 +1114,11 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 *   @param		string		$currency		Currency code
 	 *   @return	void
 	 */
+<<<<<<< HEAD
 	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop=0, $hidebottom=0, $currency='')
+=======
+	private function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf;
 
@@ -783,16 +1130,26 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
         // Amount in (at tab_top - 1)
+<<<<<<< HEAD
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('','',$default_font_size - 2);
 
 		if (empty($hidetop))
 		{
 			$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$currency));
+=======
+		$pdf->SetTextColor(0, 0, 0);
+		$pdf->SetFont('', '', $default_font_size - 2);
+
+		if (empty($hidetop))
+		{
+			$titre = $outputlangs->transnoentities("AmountInCurrency", $outputlangs->transnoentitiesnoconv("Currency".$currency));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top-4);
 			$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
 
 			//$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
+<<<<<<< HEAD
 			if (! empty($conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR)) $pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_droite-$this->marge_gauche, 5, 'F', null, explode(',',$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR));
 		}
 
@@ -801,13 +1158,27 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 		// Output Rect
 		$this->printRect($pdf,$this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect prend une longueur en 3eme param et 4eme param
+=======
+			if (! empty($conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR)) $pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_droite-$this->marge_gauche, 5, 'F', null, explode(',', $conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR));
+		}
+
+		$pdf->SetDrawColor(128, 128, 128);
+		$pdf->SetFont('', '', $default_font_size - 1);
+
+		// Output Rect
+		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect prend une longueur en 3eme param et 4eme param
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		if (empty($hidetop))
 		{
 			$pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);	// line prend une position y en 2eme param et 4eme param
 
 			$pdf->SetXY($this->posxdesc-1, $tab_top+1);
+<<<<<<< HEAD
 			$pdf->MultiCell(108,2, $outputlangs->transnoentities("Designation"),'','L');
+=======
+			$pdf->MultiCell(108, 2, $outputlangs->transnoentities("Designation"), '', 'L');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
         if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
@@ -816,7 +1187,11 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			if (empty($hidetop))
 			{
     			$pdf->SetXY($this->posxtva-3, $tab_top+1);
+<<<<<<< HEAD
     			$pdf->MultiCell($this->posxup-$this->posxtva+3,2, $outputlangs->transnoentities("VAT"),'','C');
+=======
+    			$pdf->MultiCell($this->posxup-$this->posxtva+3, 2, $outputlangs->transnoentities("VAT"), '', 'C');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
         }
 
@@ -824,13 +1199,18 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		if (empty($hidetop))
 		{
 			$pdf->SetXY($this->posxup-1, $tab_top+1);
+<<<<<<< HEAD
 			$pdf->MultiCell($this->posxqty-$this->posxup-1,2, $outputlangs->transnoentities("PriceUHT"),'','C');
+=======
+			$pdf->MultiCell($this->posxqty-$this->posxup-1, 2, $outputlangs->transnoentities("PriceUHT"), '', 'C');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
 		if (empty($hidetop))
 		{
 			$pdf->SetXY($this->posxqty-1, $tab_top+1);
+<<<<<<< HEAD
 			if($conf->global->PRODUCT_USE_UNITS)
 			{
 				$pdf->MultiCell($this->posxunit-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
@@ -839,6 +1219,9 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			{
 				$pdf->MultiCell($this->posxdiscount-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
 			}
+=======
+			$pdf->MultiCell($this->posxunit-$this->posxqty-1, 2, $outputlangs->transnoentities("Qty"), '', 'C');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		if($conf->global->PRODUCT_USE_UNITS) {
@@ -856,7 +1239,11 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			if ($this->atleastonediscount)
 			{
 				$pdf->SetXY($this->posxdiscount-1, $tab_top+1);
+<<<<<<< HEAD
 				$pdf->MultiCell($this->postotalht-$this->posxdiscount+1,2, $outputlangs->transnoentities("ReductionShort"),'','C');
+=======
+				$pdf->MultiCell($this->postotalht-$this->posxdiscount+1, 2, $outputlangs->transnoentities("ReductionShort"), '', 'C');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 		}
 
@@ -867,6 +1254,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		if (empty($hidetop))
 		{
 			$pdf->SetXY($this->postotalht-1, $tab_top+1);
+<<<<<<< HEAD
 			$pdf->MultiCell(30,2, $outputlangs->transnoentities("TotalHTShort"),'','C');
 		}
 
@@ -883,6 +1271,25 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 */
 	function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
+=======
+			$pdf->MultiCell(30, 2, $outputlangs->transnoentities("TotalHTShort"), '', 'C');
+		}
+	}
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Show payments table
+	 *
+	 *  @param  PDF                 $pdf            Object PDF
+	 *  @param  FactureFournisseur  $object         Object invoice
+	 *  @param  int                 $posy           Position y in PDF
+	 *  @param  Translate           $outputlangs    Object langs for output
+	 *  @return int                                 <0 if KO, >0 if OK
+	 */
+	private function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf;
 
 		$sign=1;
@@ -899,13 +1306,21 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
+<<<<<<< HEAD
 		$pdf->SetFont('','', $default_font_size - 3);
+=======
+		$pdf->SetFont('', '', $default_font_size - 3);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$pdf->SetXY($tab3_posx, $tab3_top - 4);
 		$pdf->MultiCell(60, 3, $outputlangs->transnoentities("PaymentsAlreadyDone"), 0, 'L', 0);
 
 		$pdf->line($tab3_posx, $tab3_top, $tab3_posx+$tab3_width, $tab3_top);
 
+<<<<<<< HEAD
 		$pdf->SetFont('','', $default_font_size - 4);
+=======
+		$pdf->SetFont('', '', $default_font_size - 4);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$pdf->SetXY($tab3_posx, $tab3_top);
 		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Payment"), 0, 'L', 0);
 		$pdf->SetXY($tab3_posx+21, $tab3_top);
@@ -919,7 +1334,11 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 		$y=0;
 
+<<<<<<< HEAD
 		$pdf->SetFont('','', $default_font_size - 4);
+=======
+		$pdf->SetFont('', '', $default_font_size - 4);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Loop on each deposits and credit notes included
 		//
@@ -941,7 +1360,11 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				$row = $this->db->fetch_object($resql);
 
 				$pdf->SetXY($tab3_posx, $tab3_top+$y);
+<<<<<<< HEAD
 				$pdf->MultiCell(20, 3, dol_print_date($this->db->jdate($row->date),'day',false,$outputlangs,true), 0, 'L', 0);
+=======
+				$pdf->MultiCell(20, 3, dol_print_date($this->db->jdate($row->date), 'day', false, $outputlangs, true), 0, 'L', 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$pdf->SetXY($tab3_posx+21, $tab3_top+$y);
 				$pdf->MultiCell(20, 3, price($sign * (($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? $row->multicurrency_amount : $row->amount)), 0, 'L', 0);
 				$pdf->SetXY($tab3_posx+40, $tab3_top+$y);
@@ -961,12 +1384,16 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			$this->error=$this->db->lasterror();
 			return -1;
 		}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	/**
 	 *  Show top header of page.
 	 *
+<<<<<<< HEAD
 	 *  @param	PDF			$pdf     		Object PDF
 	 *  @param  FactureFournisseur		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
@@ -981,18 +1408,42 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$outputlangs->load("bills");
 		$outputlangs->load("orders");
 		$outputlangs->load("companies");
+=======
+	 *  @param  PDF                 $pdf            Object PDF
+	 *  @param  FactureFournisseur  $object         Object to show
+	 *  @param  int                 $showaddress    0=no, 1=yes
+	 *  @param  Translate           $outputlangs    Object lang for output
+	 *  @return void
+	 */
+	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
+	{
+		global $langs, $conf, $mysoc;
+
+		// Load translation files required by the page
+		$outputlangs->loadLangs(array("main", "orders", "companies", "bills"));
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		// Do not add the BACKGROUND as this is for suppliers
 		//pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 
+<<<<<<< HEAD
 		$pdf->SetTextColor(0,0,60);
 		$pdf->SetFont('','B', $default_font_size + 3);
+=======
+		$pdf->SetTextColor(0, 0, 60);
+		$pdf->SetFont('', 'B', $default_font_size + 3);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$posy=$this->marge_haute;
 		$posx=$this->page_largeur-$this->marge_droite-100;
 
+<<<<<<< HEAD
 		$pdf->SetXY($this->marge_gauche,$posy);
+=======
+		$pdf->SetXY($this->marge_gauche, $posy);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Logo
 		/*
@@ -1018,23 +1469,39 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 		//}
 
+<<<<<<< HEAD
 		$pdf->SetFont('','B', $default_font_size + 3);
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
+=======
+		$pdf->SetFont('', 'B', $default_font_size + 3);
+		$pdf->SetXY($posx, $posy);
+		$pdf->SetTextColor(0, 0, 60);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("SupplierInvoice")." ".$outputlangs->convToOutputCharset($object->ref), '', 'R');
 		$posy+=1;
 
 		if ($object->ref_supplier)
 		{
     		$posy+=4;
+<<<<<<< HEAD
 			$pdf->SetFont('','B', $default_font_size);
     		$pdf->SetXY($posx,$posy);
 			$pdf->SetTextColor(0,0,60);
+=======
+			$pdf->SetFont('', 'B', $default_font_size);
+    		$pdf->SetXY($posx, $posy);
+			$pdf->SetTextColor(0, 0, 60);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("RefSupplier")." : " . $object->ref_supplier, '', 'R');
 			$posy+=1;
 		}
 
+<<<<<<< HEAD
 		$pdf->SetFont('','', $default_font_size - 1);
+=======
+		$pdf->SetFont('', '', $default_font_size - 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		if (! empty($conf->global->PDF_SHOW_PROJECT))
 		{
@@ -1042,9 +1509,15 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			if (! empty($object->project->ref))
 			{
         		$posy+=4;
+<<<<<<< HEAD
 				$pdf->SetXY($posx,$posy);
         		$langs->load("projects");
 				$pdf->SetTextColor(0,0,60);
+=======
+				$pdf->SetXY($posx, $posy);
+        		$langs->load("projects");
+				$pdf->SetTextColor(0, 0, 60);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Project")." : " . (empty($object->project->ref)?'':$object->projet->ref), '', 'R');
 			}
 		}
@@ -1052,28 +1525,48 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		if ($object->date)
 		{
 			$posy+=4;
+<<<<<<< HEAD
 			$pdf->SetXY($posx,$posy);
 			$pdf->SetTextColor(0,0,60);
 			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->date,"day",false,$outputlangs,true), '', 'R');
+=======
+			$pdf->SetXY($posx, $posy);
+			$pdf->SetTextColor(0, 0, 60);
+			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->date, "day", false, $outputlangs, true), '', 'R');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 		else
 		{
 			$posy+=4;
+<<<<<<< HEAD
 			$pdf->SetXY($posx,$posy);
 			$pdf->SetTextColor(255,0,0);
+=======
+			$pdf->SetXY($posx, $posy);
+			$pdf->SetTextColor(255, 0, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$pdf->MultiCell(100, 4, strtolower($outputlangs->transnoentities("OrderToProcess")), '', 'R');
 		}
 
 		if ($object->thirdparty->code_fournisseur)
 		{
 			$posy+=4;
+<<<<<<< HEAD
 			$pdf->SetXY($posx,$posy);
 			$pdf->SetTextColor(0,0,60);
+=======
+			$pdf->SetXY($posx, $posy);
+			$pdf->SetTextColor(0, 0, 60);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("SupplierCode")." : " . $outputlangs->transnoentities($object->thirdparty->code_fournisseur), '', 'R');
 		}
 
 		$posy+=1;
+<<<<<<< HEAD
 		$pdf->SetTextColor(0,0,60);
+=======
+		$pdf->SetTextColor(0, 0, 60);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		$top_shift = 0;
 		// Show list of linked objects
@@ -1089,7 +1582,11 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			// Sender properties
 		    $carac_emetteur='';
 		    // Add internal contact of proposal if defined
+<<<<<<< HEAD
 		    $arrayidcontact=$object->getIdContact('internal','SALESREPFOLL');
+=======
+		    $arrayidcontact=$object->getIdContact('internal', 'SALESREPFOLL');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		    if (count($arrayidcontact) > 0)
 		    {
 		        $object->fetch_user($arrayidcontact[0]);
@@ -1105,6 +1602,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			$hautcadre=40;
 
 			// Show sender frame
+<<<<<<< HEAD
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('','', $default_font_size - 2);
 			$pdf->SetXY($posx,$posy-5);
@@ -1117,19 +1615,42 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			// Show sender name
 			$pdf->SetXY($posx+2,$posy+3);
 			$pdf->SetFont('','B', $default_font_size);
+=======
+			$pdf->SetTextColor(0, 0, 0);
+			$pdf->SetFont('', '', $default_font_size - 2);
+			$pdf->SetXY($posx, $posy-5);
+			$pdf->MultiCell(66, 5, $outputlangs->transnoentities("BillFrom").":", 0, 'L');
+			$pdf->SetXY($posx, $posy);
+			$pdf->SetFillColor(230, 230, 230);
+			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
+			$pdf->SetTextColor(0, 0, 60);
+
+			// Show sender name
+			$pdf->SetXY($posx+2, $posy+3);
+			$pdf->SetFont('', 'B', $default_font_size);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
 			$posy=$pdf->getY();
 
 			// Show sender information
+<<<<<<< HEAD
 			$pdf->SetXY($posx+2,$posy);
 			$pdf->SetFont('','', $default_font_size - 1);
+=======
+			$pdf->SetXY($posx+2, $posy);
+			$pdf->SetFont('', '', $default_font_size - 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
 
 
 
 			// If BILLING contact defined on invoice, we use it
 			$usecontact=false;
+<<<<<<< HEAD
 			$arrayidcontact=$object->getIdContact('internal','BILLING');
+=======
+			$arrayidcontact=$object->getIdContact('internal', 'BILLING');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if (count($arrayidcontact) > 0)
 			{
 				$usecontact=true;
@@ -1146,7 +1667,11 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 			$carac_client_name= pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
+<<<<<<< HEAD
 			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$mysoc,((!empty($object->contact))?$object->contact:null),$usecontact,'target',$object);
+=======
+			$carac_client=pdf_build_address($outputlangs, $this->emetteur, $mysoc, ((!empty($object->contact))?$object->contact:null), $usecontact, 'target', $object);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			// Show recipient
 			$widthrecbox=100;
@@ -1156,6 +1681,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->marge_gauche;
 
 			// Show recipient frame
+<<<<<<< HEAD
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('','', $default_font_size - 2);
 			$pdf->SetXY($posx+2,$posy-5);
@@ -1165,19 +1691,36 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			// Show recipient name
 			$pdf->SetXY($posx+2,$posy+3);
 			$pdf->SetFont('','B', $default_font_size);
+=======
+			$pdf->SetTextColor(0, 0, 0);
+			$pdf->SetFont('', '', $default_font_size - 2);
+			$pdf->SetXY($posx+2, $posy-5);
+			$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("BillTo").":", 0, 'L');
+			$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
+
+			// Show recipient name
+			$pdf->SetXY($posx+2, $posy+3);
+			$pdf->SetFont('', 'B', $default_font_size);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$pdf->MultiCell($widthrecbox, 4, $carac_client_name, 0, 'L');
 
 			$posy = $pdf->getY();
 
 			// Show recipient information
+<<<<<<< HEAD
 			$pdf->SetFont('','', $default_font_size - 1);
 			$pdf->SetXY($posx+2,$posy);
+=======
+			$pdf->SetFont('', '', $default_font_size - 1);
+			$pdf->SetXY($posx+2, $posy);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, 'L');
 		}
 
 		return $top_shift;
 	}
 
+<<<<<<< HEAD
 	/**
 	 *   	Show footer of page. Need this->emetteur object
      *
@@ -1194,4 +1737,21 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		return pdf_pagefoot($pdf,$outputlangs,'SUPPLIER_INVOICE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
 
+=======
+    /**
+     *  Show footer of page. Need this->emetteur object
+     *
+     *  @param  PDF                 $pdf                PDF
+     *  @param  FactureFournisseur  $object             Object to show
+     *  @param  Translate           $outputlangs        Object lang for output
+     *  @param  int                 $hidefreetext       1=Hide free text
+     *  @return int                                     Return height of bottom margin including footer text
+     */
+    private function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+    {
+        global $conf;
+        $showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+        return pdf_pagefoot($pdf, $outputlangs, 'SUPPLIER_INVOICE_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

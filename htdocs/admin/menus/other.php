@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2010-2012 Regis Houssin  <regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2010-2012 Regis Houssin  <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +28,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
+<<<<<<< HEAD
 $langs->load("users");
 $langs->load("admin");
 $langs->load("other");
@@ -31,6 +36,14 @@ $langs->load("other");
 if (! $user->admin) accessforbidden();
 
 $action=GETPOST('action','alpha');
+=======
+// Load translation files required by the page
+$langs->loadLangs(array("user","other","admin"));
+
+if (! $user->admin) accessforbidden();
+
+$action=GETPOST('action', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 /*
@@ -39,6 +52,7 @@ $action=GETPOST('action','alpha');
 
 if ($action == 'activate_hidemenu')
 {
+<<<<<<< HEAD
 	dolibarr_set_const($db, "MAIN_MENU_HIDE_UNAUTHORIZED", '1','chaine',0,'',$conf->entity);
 	header("Location: ".$_SERVER["PHP_SELF"]);
 	exit;
@@ -46,6 +60,15 @@ if ($action == 'activate_hidemenu')
 else if ($action == 'disable_hidemenu')
 {
 	dolibarr_del_const($db, "MAIN_MENU_HIDE_UNAUTHORIZED",$conf->entity);
+=======
+	dolibarr_set_const($db, "MAIN_MENU_HIDE_UNAUTHORIZED", '1', 'chaine', 0, '', $conf->entity);
+	header("Location: ".$_SERVER["PHP_SELF"]);
+	exit;
+}
+elseif ($action == 'disable_hidemenu')
+{
+	dolibarr_del_const($db, "MAIN_MENU_HIDE_UNAUTHORIZED", $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	header("Location: ".$_SERVER["PHP_SELF"]);
 	exit;
 }
@@ -55,9 +78,15 @@ else if ($action == 'disable_hidemenu')
  * View
  */
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("Setup"));
 
 print load_fiche_titre($langs->trans("Menus"),'','title_setup');
+=======
+llxHeader('', $langs->trans("Setup"));
+
+print load_fiche_titre($langs->trans("Menus"), '', 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 $h = 0;
@@ -85,12 +114,17 @@ dol_fiche_head($head, 'misc', $langs->trans("Menus"), -1);
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Parameters").'</td>';
+<<<<<<< HEAD
 print '<td align="center" width="80">'.$langs->trans("Status").'</td>';
+=======
+print '<td class="center" width="80">'.$langs->trans("Status").'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</tr>';
 
 // Hide unauthorized menu
 print '<tr class="oddeven">';
 print '<td colspan="3">'.$langs->trans("HideUnauthorizedMenu").'</td>';
+<<<<<<< HEAD
 print '<td align="center">';
 if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
 {
@@ -99,12 +133,26 @@ if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
 else
 {
 	print '<a href="'.$_SERVER["PHP_SELF"].'?action=disable_hidemenu">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
+=======
+print '<td class="center">';
+if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
+{
+	print '<a href="'.$_SERVER["PHP_SELF"].'?action=activate_hidemenu">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+}
+else
+{
+	print '<a href="'.$_SERVER["PHP_SELF"].'?action=disable_hidemenu">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 print "</td>";
 print '</tr>';
 
 print '</table>';
 
+<<<<<<< HEAD
 
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

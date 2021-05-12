@@ -116,7 +116,11 @@ CountryHM=Остров Херд и Макдональд
 CountryVA=Папский Престол (Государство-город Ватикан)
 CountryHN=Гондурас
 CountryHK=Гонконг
+<<<<<<< HEAD
 CountryIS=Icelande
+=======
+CountryIS=Iceland
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryIN=Индия
 CountryID=Индонезия
 CountryIR=Иран
@@ -131,7 +135,11 @@ CountryKI=Кирибати
 CountryKP=Северная Корея
 CountryKR=Южная Корея
 CountryKW=Кувейт
+<<<<<<< HEAD
 CountryKG=Kyrghyztan
+=======
+CountryKG=Kyrgyzstan
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryLA=Лаосский
 CountryLV=Латвия
 CountryLB=Ливан
@@ -160,7 +168,11 @@ CountryMD=Молдова
 CountryMN=Монголия
 CountryMS=Монтсеррат
 CountryMZ=Мозамбик
+<<<<<<< HEAD
 CountryMM=Birmania (Мьянма)
+=======
+CountryMM=Myanmar (Burma)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryNA=Намибия
 CountryNR=Науру
 CountryNP=Непал
@@ -223,7 +235,11 @@ CountryTO=Тонга
 CountryTT=Тринидад и Тобаго
 CountryTR=Турция
 CountryTM=Туркменистан
+<<<<<<< HEAD
 CountryTC=Теркс и Cailos острова
+=======
+CountryTC=Turks and Caicos Islands
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryTV=Тувалу
 CountryUG=Уганда
 CountryUA=Украина
@@ -277,7 +293,11 @@ CurrencySingMGA=Ariary
 CurrencyMUR=Маврикий рупий
 CurrencySingMUR=Маврикий рупия
 CurrencyNOK=Норвежских крон
+<<<<<<< HEAD
 CurrencySingNOK=Норвежская крона
+=======
+CurrencySingNOK=Norwegian kronas
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrencyTND=TND
 CurrencySingTND=Тунисский динар
 CurrencyUSD=Доллары США
@@ -290,6 +310,10 @@ CurrencyXOF=Франков КФА ЦБЗАГ
 CurrencySingXOF=Франк КФА ЦБЗАГ
 CurrencyXPF=CFP франков
 CurrencySingXPF=Франк КФП
+<<<<<<< HEAD
+=======
+CurrencyCentEUR=cents
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrencyCentSingEUR=цент
 CurrencyCentINR=paisa
 CurrencyCentSingINR=paise
@@ -306,6 +330,10 @@ DemandReasonTypeSRC_WOM=Из уст в уста
 DemandReasonTypeSRC_PARTNER=Партнер
 DemandReasonTypeSRC_EMPLOYEE=Сотрудник
 DemandReasonTypeSRC_SPONSORING=Спонсорство
+<<<<<<< HEAD
+=======
+DemandReasonTypeSRC_SRC_CUSTOMER=Incoming contact of a customer
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 #### Paper formats ####
 PaperFormatEU4A0=Формат 4A0
 PaperFormatEU2A0=Формат 2A0

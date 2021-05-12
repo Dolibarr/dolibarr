@@ -1,6 +1,10 @@
 -- ============================================================================
 -- Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
+<<<<<<< HEAD
 -- Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
+=======
+-- Copyright (C) 2013-2019 Alexandre Spangaro   <aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,9 +25,16 @@ CREATE TABLE llx_accounting_bookkeeping
 (
   rowid                 integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
   entity                integer DEFAULT 1 NOT NULL,	-- 					| multi company id
+<<<<<<< HEAD
   doc_date              date NOT NULL,				-- FEC:PieceDate
   doc_type              varchar(30) NOT NULL,		-- FEC:PieceRef		| facture_client/reglement_client/facture_fournisseur/reglement_fournisseur
   doc_ref               varchar(300) NOT NULL,		-- 					| facture_client/reglement_client/... reference number
+=======
+  piece_num             integer NOT NULL,			-- FEC:EcritureNum  | accounting transaction id
+  doc_date              date NOT NULL,				-- FEC:PieceDate    | date of source document
+  doc_type              varchar(30) NOT NULL,		-- 					| facture_client/reglement_client/facture_fournisseur/reglement_fournisseur/import
+  doc_ref               varchar(300) NOT NULL,		-- FEC:PieceRef		| facture_client/reglement_client/... reference number
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
   fk_doc                integer NOT NULL,			-- 					| facture_client/reglement_client/... rowid
   fk_docdet             integer NOT NULL,			-- 					| facture_client/reglement_client/... line rowid
   thirdparty_code       varchar(32),                -- Third party code (customer or supplier) when record is saved (may help debug) 
@@ -48,9 +59,16 @@ CREATE TABLE llx_accounting_bookkeeping
   fk_user               integer NULL,               -- The id of user that validate the accounting source document
   code_journal          varchar(32) NOT NULL,		-- FEC:JournalCode
   journal_label         varchar(255),				-- FEC:JournalLib
+<<<<<<< HEAD
   piece_num             integer NOT NULL,			-- FEC:EcritureNum  | accounting source document
   validated             tinyint DEFAULT 0 NOT NULL,	-- 					| 0 line not validated / 1 line validated (No deleting / No modification) 
   date_validated        datetime,					-- FEC:ValidDate
   import_key            varchar(14),
   extraparams	        varchar(255)				-- for other parameters with json format
+=======
+  date_validated        datetime,					-- FEC:ValidDate	| if empty: movement not validated / if not empty: movement validated (No deleting / No modification) 
+  date_export	      		datetime DEFAULT NULL,		--
+  import_key            varchar(14),
+  extraparams	          varchar(255)				-- for other parameters with json format
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ) ENGINE=innodb;

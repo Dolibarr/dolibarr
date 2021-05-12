@@ -23,8 +23,12 @@
  */
 
 require '../../main.inc.php';
+<<<<<<< HEAD
 $langs->load("companies");
 $langs->load("banks");
+=======
+$langs->loadLangs(array("companies", "banks"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // S�curit� acc�s client
 if ($user->societe_id > 0)
@@ -42,7 +46,11 @@ if ($sortfield == "")
   $sortfield="s.nom";
 }
 
+<<<<<<< HEAD
 if ($page == -1 || $page == null) { $page = 0 ; }
+=======
+if (empty($page) || $page == -1) { $page = 0 ; }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
@@ -67,7 +75,11 @@ $sql.= " AND n.fk_soc = s.rowid";
 $sql.= " AND s.entity IN (".getEntity('societe').")";
 if ($socid > 0)	$sql.= " AND s.rowid = " . $user->societe_id;
 
+<<<<<<< HEAD
 $sql.= $db->order($sortfield,$sortorder);
+=======
+$sql.= $db->order($sortfield, $sortorder);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $sql.= $db->plimit($conf->liste_limit, $offset);
 
 $result = $db->query($sql);
@@ -77,6 +89,7 @@ if ($result)
 	$i = 0;
 
 	$paramlist='';
+<<<<<<< HEAD
 	print_barre_liste($langs->trans("ListOfNotificationsDone"), $page, $_SERVER["PHP_SELF"], $paramlist, $sortfield,$sortorder,'',$num);
 
 	print '<table class="noborder" width="100%">';
@@ -84,6 +97,15 @@ if ($result)
 	print_liste_field_titre("Company",$_SERVER["PHP_SELF"],"s.nom","","",'valign="center"',$sortfield,$sortorder);
 	print_liste_field_titre("Contact",$_SERVER["PHP_SELF"],"c.lastname","","",'valign="center"',$sortfield,$sortorder);
 	print_liste_field_titre("Action",$_SERVER["PHP_SELF"],"a.titre","","",'valign="center"',$sortfield,$sortorder);
+=======
+	print_barre_liste($langs->trans("ListOfNotificationsDone"), $page, $_SERVER["PHP_SELF"], $paramlist, $sortfield, $sortorder, '', $num);
+
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", "", "", 'valign="center"', $sortfield, $sortorder);
+	print_liste_field_titre("Contact", $_SERVER["PHP_SELF"], "c.lastname", "", "", 'valign="center"', $sortfield, $sortorder);
+	print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "a.titre", "", "", 'valign="center"', $sortfield, $sortorder);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print "</tr>\n";
 
 	while ($i < $num)
@@ -105,6 +127,10 @@ else
 	dol_print_error($db);
 }
 
+<<<<<<< HEAD
 
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

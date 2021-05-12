@@ -1,5 +1,10 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2015		Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+=======
+/* Copyright (C) 2015		Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class Establishment extends CommonObject
 {
+<<<<<<< HEAD
 	public $element='establishment';
 	public $table_element='establishment';
 	public $table_element_line = '';
@@ -44,6 +50,69 @@ class Establishment extends CommonObject
 	public $zip;
 	public $town;
 	public $status;		// 0=open, 1=closed
+=======
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='establishment';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='establishment';
+
+	/**
+	 * @var int    Name of subtable line
+	 */
+	public $table_element_line = '';
+
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
+	public $fk_element = 'fk_establishment';
+
+	/**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+	public $ismultientitymanaged = 1;
+
+    public $picto='building';
+
+    /**
+	 * @var int ID
+	 */
+	public $id;
+
+    /**
+	 * @var string Ref
+	 */
+	public $ref;
+
+	/**
+	 * @var int ID
+	 */
+	public $rowid;
+
+	public $name;
+
+	/**
+	 * @var string Address
+	 */
+	public $address;
+
+	public $zip;
+	public $town;
+
+	/**
+	 * @var int Status 0=open, 1=closed
+	 */
+	public $status;
+
+	/**
+	 * @var int Entity
+	 */
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	public $entity;
 
 	public $country_id;
@@ -56,14 +125,21 @@ class Establishment extends CommonObject
 	 *
 	 * @param	DoliDB		$db		Database handler
 	 */
+<<<<<<< HEAD
 	function __construct($db)
+=======
+	public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$this->db = $db;
 
 		$this->statuts_short = array(0 => 'Closed', 1 => 'Opened');
         $this->statuts = array(0 => 'Closed', 1 => 'Opened');
+<<<<<<< HEAD
 
 		return 1;
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	/**
@@ -72,7 +148,11 @@ class Establishment extends CommonObject
 	 *	@param		User	$user   User making creation
 	 *	@return 	int				<0 if KO, >0 if OK
 	 */
+<<<<<<< HEAD
 	function create($user)
+=======
+	public function create($user)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf, $langs;
 
@@ -125,7 +205,11 @@ class Establishment extends CommonObject
 
 		// Commit or rollback
 		if ($error) {
+<<<<<<< HEAD
 			foreach ( $this->errors as $errmsg ) {
+=======
+			foreach ($this->errors as $errmsg) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				dol_syslog(get_class($this) . "::create " . $errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
 			}
@@ -143,12 +227,21 @@ class Establishment extends CommonObject
 	 *	@param	User	$user		User making update
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
+<<<<<<< HEAD
 	function update($user)
 	{
 		global $langs;
 
 		// Check parameters
 		if (empty($this->name))
+=======
+	public function update($user)
+	{
+		global $langs;
+
+        // Check parameters
+        if (empty($this->name))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         {
             $this->error='ErrorBadParameter';
             return -1;
@@ -164,6 +257,10 @@ class Establishment extends CommonObject
 		$sql .= ", fk_country = ".($this->country_id > 0 ? $this->country_id : 'null');
 		$sql .= ", status = ".$this->db->escape($this->status);
 		$sql .= ", fk_user_mod = " . $user->id;
+<<<<<<< HEAD
+=======
+		$sql .= ", entity = " . $this->entity;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql .= " WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this) . "::update sql=" . $sql, LOG_DEBUG);
@@ -184,9 +281,15 @@ class Establishment extends CommonObject
 	* @param	int		$id		Id of record to load
 	* @return	int				<0 if KO, >0 if OK
 	*/
+<<<<<<< HEAD
 	function fetch($id)
 	{
 		$sql = "SELECT e.rowid, e.name, e.address, e.zip, e.town, e.status, e.fk_country as country_id,";
+=======
+	public function fetch($id)
+	{
+		$sql = "SELECT e.rowid, e.name, e.address, e.zip, e.town, e.status, e.fk_country as country_id, e.entity,";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql.= ' c.code as country_code, c.label as country';
 		$sql.= " FROM ".MAIN_DB_PREFIX."establishment as e";
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON e.fk_country = c.rowid';
@@ -205,10 +308,18 @@ class Establishment extends CommonObject
 			$this->zip			= $obj->zip;
 			$this->town			= $obj->town;
 			$this->status	    = $obj->status;
+<<<<<<< HEAD
 
             $this->country_id   = $obj->country_id;
             $this->country_code = $obj->country_code;
             $this->country      = $obj->country;			
+=======
+			$this->entity		= $obj->entity;
+
+            $this->country_id   = $obj->country_id;
+            $this->country_code = $obj->country_code;
+            $this->country      = $obj->country;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			return 1;
 		}
@@ -225,7 +336,11 @@ class Establishment extends CommonObject
 	*	@param	int		$id		Id of record to delete
 	*	@return	int				<0 if KO, >0 if OK
 	*/
+<<<<<<< HEAD
 	function delete($id)
+=======
+	public function delete($id)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$this->db->begin();
 
@@ -252,11 +367,20 @@ class Establishment extends CommonObject
 	 * @param	int		$mode   	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 * @return  string   		   	Label
 	 */
+<<<<<<< HEAD
 	function getLibStatut($mode=0)
 	{
 		return $this->LibStatut($this->status,$mode);
 	}
 
+=======
+	public function getLibStatut($mode = 0)
+	{
+		return $this->LibStatut($this->status, $mode);
+	}
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *  Give a label from a status
 	 *
@@ -264,14 +388,21 @@ class Establishment extends CommonObject
 	 *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *  @return string      		Label
 	 */
+<<<<<<< HEAD
 	function LibStatut($status,$mode=0)
 	{
+=======
+	public function LibStatut($status, $mode = 0)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $langs;
 
 		if ($mode == 0)
 		{
 			return $langs->trans($this->statuts[$status]);
 		}
+<<<<<<< HEAD
 		if ($mode == 1)
 		{
 			return $langs->trans($this->statuts_short[$status]);
@@ -295,6 +426,31 @@ class Establishment extends CommonObject
 		{
 			if ($status==0 && ! empty($this->statuts_short[$status])) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut5');
 			if ($status==1 && ! empty($this->statuts_short[$status])) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut4');
+=======
+		elseif ($mode == 1)
+		{
+			return $langs->trans($this->statuts_short[$status]);
+		}
+		elseif ($mode == 2)
+		{
+			if ($status==0) return img_picto($langs->trans($this->statuts_short[$status]), 'statut5').' '.$langs->trans($this->statuts_short[$status]);
+			elseif ($status==1) return img_picto($langs->trans($this->statuts_short[$status]), 'statut4').' '.$langs->trans($this->statuts_short[$status]);
+		}
+		elseif ($mode == 3)
+		{
+			if ($status==0 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]), 'statut5');
+			elseif ($status==1 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]), 'statut4');
+		}
+		elseif ($mode == 4)
+		{
+			if ($status==0 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]), 'statut5').' '.$langs->trans($this->statuts[$status]);
+			elseif ($status==1 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]), 'statut4').' '.$langs->trans($this->statuts[$status]);
+		}
+		elseif ($mode == 5)
+		{
+			if ($status==0 && ! empty($this->statuts_short[$status])) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut5');
+			elseif ($status==1 && ! empty($this->statuts_short[$status])) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut4');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 	}
 
@@ -304,9 +460,15 @@ class Establishment extends CommonObject
 	 * @param	int		$id      Id of record
 	 * @return	void
 	 */
+<<<<<<< HEAD
 	function info($id)
 	{
 		$sql = 'SELECT e.rowid, e.datec, e.fk_user_author, e.tms, e.fk_user_mod';
+=======
+	public function info($id)
+	{
+		$sql = 'SELECT e.rowid, e.datec, e.fk_user_author, e.tms, e.fk_user_mod, e.entity';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'establishment as e';
 		$sql.= ' WHERE e.rowid = '.$id;
 
@@ -320,7 +482,11 @@ class Establishment extends CommonObject
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
 
+<<<<<<< HEAD
 				$this->date_creation     = $this->db->jdate($obj->datec);
+=======
+				$this->date_creation = $this->db->jdate($obj->datec);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				if ($obj->fk_user_author)
 				{
 					$cuser = new User($this->db);
@@ -344,13 +510,51 @@ class Establishment extends CommonObject
 		}
 	}
 
+<<<<<<< HEAD
+=======
+	/**
+	 * Get on record Establishment
+	 *
+	 * @param	int		$id      Id of record
+	 * @return	Object
+	 */
+	public function getEstablishment($id)
+	{
+		$sql = 'SELECT e.rowid, e.name, e.datec, e.fk_user_author, e.tms, e.fk_user_mod, e.entity';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'establishment as e';
+		$sql.= ' WHERE e.rowid = '.$id;
+
+		dol_syslog(get_class($this)."::fetch info", LOG_DEBUG);
+		$result = $this->db->query($sql);
+
+		if ($result)
+		{
+			if ($this->db->num_rows($result))
+			{
+				$obj = $this->db->fetch_object($result);
+			}
+			$this->db->free($result);
+		}
+		else
+		{
+			dol_print_error($this->db);
+		}
+
+		return $obj;
+	}
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     /**
      *  Return clicable name (with picto eventually)
      *
      *  @param      int     $withpicto      0=No picto, 1=Include picto into link, 2=Only picto
      *  @return     string                  String with URL
      */
+<<<<<<< HEAD
     function getNomUrl($withpicto=0)
+=======
+    public function getNomUrl($withpicto = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $langs;
 
@@ -363,18 +567,57 @@ class Establishment extends CommonObject
 
         $label=$langs->trans("Show").': '.$this->name;
 
+<<<<<<< HEAD
         if ($withpicto) $result.=($link.img_object($label,$picto).$linkend);
+=======
+        if ($withpicto) $result.=($link.img_object($label, $picto).$linkend);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         if ($withpicto && $withpicto != 2) $result.=' ';
         if ($withpicto != 2) $result.=$link.$this->name.$linkend;
         return $result;
     }
 
 	/**
+<<<<<<< HEAD
+=======
+     *  Return clicable name (with picto eventually)
+     *
+     *  @param		int		$id				Id of record
+     *  @param      int     $withpicto      0=No picto, 1=Include picto into link, 2=Only picto
+     *  @return     string                  String with URL
+     */
+    public function getNomUrlParent($id = 0, $withpicto = 0)
+    {
+        global $langs, $conf;
+
+        $result='';
+
+        $obj = $this->getEstablishment(($id>0)?$id:$conf->entity);
+
+        $link = '<a href="'.DOL_URL_ROOT.'/hrm/establishment/card.php?id='.$obj->rowid.'">';
+        $linkend='</a>';
+
+        $picto='building';
+
+        $label=$langs->trans("Show").': '.$obj->name;
+
+        if ($withpicto) $result.=($link.img_object($label, $picto).$linkend);
+        if ($withpicto && $withpicto != 2) $result.=' ';
+        if ($withpicto != 2) $result.=$link.$obj->name.$linkend;
+        return $result;
+    }
+
+	/**
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      * 	Return account country code
      *
      *	@return		string		country code
      */
+<<<<<<< HEAD
     function getCountryCode()
+=======
+    public function getCountryCode()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $mysoc;
 
@@ -386,7 +629,11 @@ class Establishment extends CommonObject
 
         return '';
     }
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     /**
      * Initialise object with example values
      * Id must be 0 if object instance is a specimen
@@ -397,5 +644,9 @@ class Establishment extends CommonObject
     {
         $this->id = 0;
         $this->ref = 'DEAAA';
+<<<<<<< HEAD
     }    
+=======
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

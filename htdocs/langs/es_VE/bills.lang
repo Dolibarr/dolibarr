@@ -1,15 +1,23 @@
 # Dolibarr language file - Source file is en_US - bills
 BillsCustomersUnpaid=Facturas a clientes pendientes de cobro
+<<<<<<< HEAD
 BillsSuppliersUnpaid=Facturas de proveedores pendientes de pago
 CreateCreditNote=Crear factura de abono
 BillShortStatusConverted=Pagada
 ErrorVATIntraNotConfigured=IVA aún no configurado
 SupplierBillsToPay=Facturas de proveedores pendientes de pago
+=======
+CreateCreditNote=Crear factura de abono
+BillShortStatusConverted=Pagada
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CustomerBillsUnpaid=Facturas a clientes pendientes de cobro
 Statut=Estatuto
 PaymentConditionShortPT_ORDER=Pedido
 PaymentTypeShortTRA=A validar
+<<<<<<< HEAD
 IntracommunityVATNumber=Número de IVA
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 VATIsNotUsedForInvoice=-
 LawApplicationPart1=-
 situationInvoiceShortcode_S=D

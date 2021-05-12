@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Piegāde
+<<<<<<< HEAD
 DeliveryRef=Ref Delivery
 DeliveryCard=Receipt card
 DeliveryOrder=Piegādes pasūtījums
@@ -11,6 +12,19 @@ ValidateDeliveryReceipt=Apstiprināt piegādes saņemšanu
 ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
 DeleteDeliveryReceipt=Dzēst piegādes saņemšanu
 DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
+=======
+DeliveryRef=Art piegādei
+DeliveryCard=Čeka kartiņa
+DeliveryOrder=Piegādes pasūtījums
+DeliveryDate=Piegādes datums
+CreateDeliveryOrder=Izveidot piegādes kvīti
+DeliveryStateSaved=Piegādes stāvoklis saglabāts
+SetDeliveryDate=Uzstādīt piegādes datumu
+ValidateDeliveryReceipt=Pārbaudiet piegādes kvīti
+ValidateDeliveryReceiptConfirm=Vai tiešām vēlaties apstiprināt piegādes kvīti?
+DeleteDeliveryReceipt=Dzēst piegādes saņemšanu
+DeleteDeliveryReceiptConfirm=Vai tiešām vēlaties dzēst piegādes kvīti <b> %s </b>?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DeliveryMethod=Piegādes metode
 TrackingNumber=Sekošanas numurs
 DeliveryNotValidated=Piegāde nav apstiprināta
@@ -19,12 +33,23 @@ StatusDeliveryDraft=Melnraksts
 StatusDeliveryValidated=Saņemts
 # merou PDF model
 NameAndSignature=Vārds, uzvārds un paraksts:
+<<<<<<< HEAD
 ToAndDate=To___________________________________ uz ____ / _____ / __________
 GoodStatusDeclaration=Ir saņēmuši preces iepriekš labā stāvoklī,
+=======
+ToAndDate=Kam___________________________________ uz ____ / _____ / __________
+GoodStatusDeclaration=Ir saņēmuši iepriekš minētās preces labā stāvoklī,
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Deliverer=Piegādātājs:
 Sender=Nosūtītājs
 Recipient=Saņēmējs
 ErrorStockIsNotEnough=Nav pietiekami daudz krājumu
 Shippable=Shippable
+<<<<<<< HEAD
 NonShippable=Not Shippable
 ShowReceiving=Show delivery receipt
+=======
+NonShippable=Nav nosūtāms
+ShowReceiving=Rādīt piegādes kvīti
+NonExistentOrder=Pasūtījums neeksistē
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

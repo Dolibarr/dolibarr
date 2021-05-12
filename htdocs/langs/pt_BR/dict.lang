@@ -29,16 +29,26 @@ CountryLA=Laos
 CountryMK=Macedônia, antiga República iugoslava da
 CountryMW=Maláui
 CountryML=Máli
+<<<<<<< HEAD
 CountryMM=Birmânia (Myanmar)
 CountryNC=Nova Caledônia
 CountryPS=Território Palestino, Ocupado
 CountryPG=Papua-Nova Guiné
+=======
+CountryMM=Mianmar (Birmânia)
+CountryNC=Nova Caledônia
+CountryPS=Território Palestino, Ocupado
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryPN=Ilhas Picárnia
 CountryKN=São Cristóvão e Nevis
 CountryPM=São Pedro e Miquelon
 CountrySC=Seicheles
 CountryGS=Ilhas Geórgias do Sul e Sandwich do Sul
+<<<<<<< HEAD
 CountryTC=Ilhas Turcas e Caicos
+=======
+CountryTC=Ilhas Turks e Caicos
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryUA=Ucrânia
 CountryUM=Ilhas Menores Distantes dos Estados Unidos
 CountryVN=Vietnã
@@ -64,7 +74,11 @@ CurrencySingMGA=Ariari
 CurrencyMUR=Rupias mauricianas
 CurrencySingMUR=Rupia mauriciana
 CurrencyNOK=Coroas norueguesas
+<<<<<<< HEAD
 CurrencySingNOK=Coroa norueguesa
+=======
+CurrencySingNOK=Coroas norueguesas
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrencyTND=Dinares tunisianos
 CurrencySingTND=Dinar tunisiano
 CurrencyUSD=Dólares americanos
@@ -72,6 +86,10 @@ CurrencySingUSD=Dólar americano
 CurrencyUAH=Grívnias
 CurrencySingUAH=Grívnia
 CurrencyXPF=Francos CFP
+<<<<<<< HEAD
+=======
+CurrencyCentEUR=centavos
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrencyCentSingEUR=centavo
 CurrencyCentINR=paise
 DemandReasonTypeSRC_CAMP_MAIL=Campanha por correspondência
@@ -80,6 +98,10 @@ DemandReasonTypeSRC_CAMP_PHO=Campanha por telefone
 DemandReasonTypeSRC_CAMP_FAX=Campanha por fax
 DemandReasonTypeSRC_SHOP=Contato na loja
 DemandReasonTypeSRC_WOM=Palavra da boca
+<<<<<<< HEAD
+=======
+DemandReasonTypeSRC_SRC_CUSTOMER=Contato entrante de um cliente
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PaperFormatUSLETTER=Formato Carta, EUA
 PaperFormatUSLEGAL=Formato Legal, EUA
 PaperFormatUSEXECUTIVE=Formato Executivo, EUA

@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2010 Regis Houssin  <regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2010 Regis Houssin  <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2012 Philippe Grand <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,11 +34,19 @@ if (empty($conf) || ! is_object($conf))
 <?php
 print load_fiche_titre($this->control->tpl['title']);
 
+<<<<<<< HEAD
 dol_htmloutput_errors((is_numeric($object->error)?'':$object->error),$object->errors);
 
 dol_htmloutput_errors((is_numeric($GLOBALS['error'])?'':$GLOBALS['error']),$GLOBALS['errors']);
 
 dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']);
+=======
+dol_htmloutput_errors((is_numeric($object->error)?'':$object->error), $object->errors);
+
+dol_htmloutput_errors((is_numeric($GLOBALS['error'])?'':$GLOBALS['error']), $GLOBALS['errors']);
+
+dol_htmloutput_errors($this->control->tpl['error'], $this->control->tpl['errors']);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 echo $this->control->tpl['ajax_selectcountry']; ?>
 
@@ -120,7 +132,11 @@ echo $this->control->tpl['ajax_selectcountry']; ?>
 </tr>
 
 <tr>
+<<<<<<< HEAD
 	<td align="center" colspan="4"><input type="submit" class="button" value="<?php echo $langs->trans("Add"); ?>"></td>
+=======
+	<td class="center" colspan="4"><input type="submit" class="button" value="<?php echo $langs->trans("Add"); ?>"></td>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 </tr>
 
 </table><br>

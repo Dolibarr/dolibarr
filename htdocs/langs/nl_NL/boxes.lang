@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - boxes
+<<<<<<< HEAD
 BoxLoginInformation=Login informatie
 BoxLastRssInfos=RSS informatie
 BoxLastProducts=Laatste %s producten/diensten
@@ -8,17 +9,33 @@ BoxLastSupplierBills=Laatste leveranciersfacturen
 BoxLastCustomerBills=Latest customer invoices
 BoxOldestUnpaidCustomerBills=Oldest unpaid customer invoices
 BoxOldestUnpaidSupplierBills=Oldest unpaid supplier invoices
+=======
+BoxLoginInformation=Login Informatie
+BoxLastRssInfos=RSS-informatie
+BoxLastProducts=Nieuwste %s producten / services
+BoxProductsAlertStock=Product voorraad melding
+BoxLastProductsInContract=Laatste %s toegewezen producten/diensten
+BoxLastSupplierBills=Nieuwste leveranciersfacturen
+BoxLastCustomerBills=Nieuwste klantfacturen
+BoxOldestUnpaidCustomerBills=Oudste openstaande klantfacturen
+BoxOldestUnpaidSupplierBills=Oudste onbetaalde leveranciersfacturen
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BoxLastProposals=Laatste offertes
 BoxLastProspects=Laatste bewerkte prospecten
 BoxLastCustomers=Laatste bewerkte klanten
 BoxLastSuppliers=Laatste aangepaste leveranciers
+<<<<<<< HEAD
 BoxLastCustomerOrders=Laatste klantenorders
+=======
+BoxLastCustomerOrders=Nieuwste verkooporders
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BoxLastActions=Laatste acties
 BoxLastContracts=Laatste contracten
 BoxLastContacts=Laatste contactpersonen- / adressenlijst
 BoxLastMembers=Laatste leden
 BoxFicheInter=Laatste interventies
 BoxCurrentAccounts=Saldo van de geopende rekening
+<<<<<<< HEAD
 BoxTitleLastRssInfos=Latest %s news from %s
 BoxTitleLastProducts=Latest %s modified products/services
 BoxTitleProductsAlertStock=Waarschuwing voor producten in voorraad
@@ -47,10 +64,41 @@ BoxGoodCustomers=Goede klanten
 BoxTitleGoodCustomers=%s Good customers
 FailedToRefreshDataInfoNotUpToDate=Failed to refresh RSS flux. Latest successfull refresh date: %s
 LastRefreshDate=Latest refresh date
+=======
+BoxTitleLastRssInfos=Laatste %s nieuws van %s
+BoxTitleLastProducts=Producten / Diensten: laatste %s bewerkt
+BoxTitleProductsAlertStock=Producten: voorraadalarm
+BoxTitleLastSuppliers=Laatste %s opgenomen leveranciers
+BoxTitleLastModifiedSuppliers=Verkopers: laatste %s gewijzigd
+BoxTitleLastModifiedCustomers=Klanten: laatste %s gewijzigd
+BoxTitleLastCustomersOrProspects=Laatste %s klanten of prospects
+BoxTitleLastCustomerBills=Laatste %s Klantfacturen
+BoxTitleLastSupplierBills=Laatste %s Leveranciersfacturen
+BoxTitleLastModifiedProspects=Vooruitzichten: laatste %s gewijzigd
+BoxTitleLastModifiedMembers=Laatste %s leden
+BoxTitleLastFicheInter=Laatste %s aangepaste interventies
+BoxTitleOldestUnpaidCustomerBills=Klantfacturen: oudste %s niet betaald
+BoxTitleOldestUnpaidSupplierBills=Leveranciersfacturen: oudste %s onbetaald
+BoxTitleCurrentAccounts=Open rekeningen: saldi
+BoxTitleLastModifiedContacts=Contacten / Adressen: laatste %s gewijzigd
+BoxMyLastBookmarks=Bookmarks: latest %s
+BoxOldestExpiredServices=Oudste actief verlopen diensten
+BoxLastExpiredServices=Laatste %s oudste contactpersonen met actieve verlopen diensten
+BoxTitleLastActionsToDo=Laatste %s acties om uit te voeren
+BoxTitleLastContracts=Laatste %s gewijzigde contractpersonen
+BoxTitleLastModifiedDonations=Laatste %s aangepaste donaties
+BoxTitleLastModifiedExpenses=Laatste gewijzigde %s onkostendeclaraties
+BoxGlobalActivity=Globale activiteit (facturen, offertes, bestellingen)
+BoxGoodCustomers=Goede klanten
+BoxTitleGoodCustomers=%s Goede klanten
+FailedToRefreshDataInfoNotUpToDate=Vernieuwen van RSS-flux is mislukt. Laatste succesvolle vernieuwingsdatum: %s
+LastRefreshDate=Laatste bijwerkingsdatum
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoRecordedBookmarks=Geen weblinks ingesteld. Klik <a href="%s">weblinks</a> aan om deze toe te voegen.
 ClickToAdd=Klik hier om toe te voegen.
 NoRecordedCustomers=Geen geregistreerde afnemers
 NoRecordedContacts=Geen geregistreerde contacten
+<<<<<<< HEAD
 NoActionsToDo=Geen acties te doen
 NoRecordedOrders=No recorded customer orders
 NoRecordedProposals=Geen geregistreerde offertes
@@ -58,11 +106,21 @@ NoRecordedInvoices=No recorded customer invoices
 NoUnpaidCustomerBills=No unpaid customer invoices
 NoUnpaidSupplierBills=Geen onbetaalde leveranciersfacturen
 NoModifiedSupplierBills=No recorded supplier invoices
+=======
+NoActionsToDo=Geen actie te ondernemen
+NoRecordedOrders=Geen geregistreerde verkooporders
+NoRecordedProposals=Geen geregistreerde offertes
+NoRecordedInvoices=Geen vastgelegde klantfacturen
+NoUnpaidCustomerBills=Geen openstaande klantfacturen
+NoUnpaidSupplierBills=Geen onbetaalde leveranciersfacturen
+NoModifiedSupplierBills=Geen opgenomen leveranciersfacturen
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoRecordedProducts=Geen geregistreerde producten / diensten
 NoRecordedProspects=Geen geregistreerde prospecten
 NoContractedProducts=Geen gecontracteerde producten / diensten
 NoRecordedContracts=Geen geregistreerde contracten
 NoRecordedInterventions=Geen tussenkomsten geregistreerd
+<<<<<<< HEAD
 BoxLatestSupplierOrders=Laatste bestellingen bij leveranciers
 NoSupplierOrder=Geen bestelling bij leverancier geregistreerd
 BoxCustomersInvoicesPerMonth=Klantenfacturatie per maand
@@ -84,3 +142,27 @@ ForProposals=Zakelijke voorstellen / Offertes
 LastXMonthRolling=The latest %s month rolling
 ChooseBoxToAdd=Add widget to your dashboard
 BoxAdded=Widget was added in your dashboard
+=======
+BoxLatestSupplierOrders=Laatste inkooporders
+NoSupplierOrder=Geen geregistreerde bestelling
+BoxCustomersInvoicesPerMonth=Klantfacturen per maand
+BoxSuppliersInvoicesPerMonth=Leveranciersfacturen per maand
+BoxCustomersOrdersPerMonth=Klantorders per maand
+BoxSuppliersOrdersPerMonth=Orders van leveranciers per maand
+BoxProposalsPerMonth=Offertes per maand
+NoTooLowStockProducts=Geen enkel product heeft een lage voorraad-limiet
+BoxProductDistribution=Producten / Diensten Distributie
+ForObject=Op %s
+BoxTitleLastModifiedSupplierBills=Leveranciersfacturen: laatste %s gewijzigd
+BoxTitleLatestModifiedSupplierOrders=Orders van leveranciers: laatste %s gewijzigd
+BoxTitleLastModifiedCustomerBills=Klantfacturen: laatste %s gewijzigd
+BoxTitleLastModifiedCustomerOrders=Klantorders: laatste %s gewijzigd
+BoxTitleLastModifiedPropals=Laatste %s aangepaste offertes
+ForCustomersInvoices=Afnemersfacturen
+ForCustomersOrders=Klantenbestellingen
+ForProposals=Zakelijke voorstellen / Offertes
+LastXMonthRolling=De laatste %s maand overschrijdende
+ChooseBoxToAdd=Voeg widget toe aan uw dashboard
+BoxAdded=Widget is toegevoegd in je dashboard
+BoxTitleUserBirthdaysOfMonth=Verjaardagen van deze maand
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

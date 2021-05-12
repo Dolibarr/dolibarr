@@ -11,7 +11,11 @@ FeatureIsSupportedInInOutModeOnly=Funkcija pieejama tikai kredītpunktu-parādi 
 VATReportBuildWithOptionDefinedInModule=Summas, kas norādītas šeit tiek aprēķinātas, izmantojot noteikumus, kas paredzēti ar nodokli moduļa uzstādīšanas.
 LTReportBuildWithOptionDefinedInModule=Amounts shown here are calculated using rules defined by Company setup.
 Param=Iestatījumi
+<<<<<<< HEAD
 RemainingAmountPayment=Summa maksājums Atlikušo:
+=======
+RemainingAmountPayment=Atlikušais maksājums:
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Account=Konts
 Accountparent=Galvenais konts
 Accountsparent=Galvenie konti
@@ -20,7 +24,11 @@ Outcome=Izdevumi
 MenuReportInOut=Ienākumi / izdevumi
 ReportInOut=Ienākumu un izdevumu bilance
 ReportTurnover=Apgrozījums ir izrakstīts rēķinā
+<<<<<<< HEAD
 ReportTurnoverCollected=Turnover collected
+=======
+ReportTurnoverCollected=Savākto apgrozījumu
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PaymentsNotLinkedToInvoice=Maksājumi, kas nav saistīti ar kādu rēķinu, tāpēc nav saistīts ar trešajām personām
 PaymentsNotLinkedToUser=Maksājumi, kas nav saistīti ar jebkuru lietotāju
 Profit=Peļņa
@@ -78,6 +86,7 @@ MenuNewSocialContribution=New social/fiscal tax
 NewSocialContribution=New social/fiscal tax
 AddSocialContribution=Pievienot sociālo / fiskālo nodokli
 ContributionsToPay=Social/fiscal taxes to pay
+<<<<<<< HEAD
 AccountancyTreasuryArea=Billing and payment area
 NewPayment=Jauns maksājums
 Payments=Maksājumi
@@ -87,6 +96,16 @@ PaymentSocialContribution=Social/fiscal tax payment
 PaymentVat=PVN maksājumi
 ListPayment=Maksājumu saraksts
 ListOfCustomerPayments=Saraksts klientu maksājumu
+=======
+AccountancyTreasuryArea=Norēķinu un maksājumu zona
+NewPayment=Jauns maksājums
+PaymentCustomerInvoice=Klienta rēķina apmaksa
+PaymentSupplierInvoice=pārdevēja rēķina apmaksa
+PaymentSocialContribution=Social/fiscal tax payment
+PaymentVat=PVN maksājumi
+ListPayment=Maksājumu saraksts
+ListOfCustomerPayments=Klientu maksājumu  saraksts
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ListOfSupplierPayments=Pārdevēja maksājumu saraksts
 DateStartPeriod=Sākuma datums periodam
 DateEndPeriod=Datums un periods
@@ -113,8 +132,13 @@ ShowVatPayment=Rādīt PVN maksājumu
 TotalToPay=Summa
 BalanceVisibilityDependsOnSortAndFilters=Bilance ir redzama šajā sarakstā tikai tad, ja tabula ir sakārtota uz augšu %s un tiek filtrēta 1 bankas kontam.
 CustomerAccountancyCode=Klienta grāmatvedības kods
+<<<<<<< HEAD
 SupplierAccountancyCode=Pārdevēja grāmatvedības kods
 CustomerAccountancyCodeShort=Cust. account. code
+=======
+SupplierAccountancyCode=pārdevēja grāmatvedības kods
+CustomerAccountancyCodeShort=Klienta. konta. kods
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SupplierAccountancyCodeShort=Sup. account. code
 AccountNumber=Konta numurs
 NewAccountingAccount=Jauns konts
@@ -126,23 +150,39 @@ ByThirdParties=Trešās personas
 ByUserAuthorOfInvoice=Ar rēķinu autors
 CheckReceipt=Čeka depozīts
 CheckReceiptShort=Pārbaudīt depozītu
+<<<<<<< HEAD
 LastCheckReceiptShort=Jaunākie %s čeku čeki
+=======
+LastCheckReceiptShort=Jaunākie %s čeki
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NewCheckReceipt=Jauna atlaide
 NewCheckDeposit=Jauns pārbaude depozīts
 NewCheckDepositOn=Izveidot kvīti par depozīta kontā: %s
 NoWaitingChecks=No checks awaiting deposit.
 DateChequeReceived=Pārbaudiet uzņemšanas datumu
+<<<<<<< HEAD
 NbOfCheques=Nb Pārbaužu
 PaySocialContribution=Pay a social/fiscal tax
 ConfirmPaySocialContribution=Are you sure you want to classify this social or fiscal tax as paid?
 DeleteSocialContribution=Delete a social or fiscal tax payment
 ConfirmDeleteSocialContribution=Are you sure you want to delete this social/fiscal tax payment?
+=======
+NbOfCheques=Pārbaužu skaits
+PaySocialContribution=Pay a social/fiscal tax
+ConfirmPaySocialContribution=Vai tiešām vēlaties klasificēt šo sociālo vai fiskālo nodokli kā samaksātu?
+DeleteSocialContribution=Dzēst sociālo vai fiskālo nodokļu maksājumu
+ConfirmDeleteSocialContribution=Vai tiešām vēlaties dzēst šo sociālo / fiskālo nodokļu maksājumu?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ExportDataset_tax_1=Social and fiscal taxes and payments
 CalcModeVATDebt=Mode <b>%sVAT par saistību accounting%s.</b>
 CalcModeVATEngagement=Mode <b>%sVAT par ienākumu-expense%sS.</b>
 CalcModeDebt=Zināma reģistrēto rēķinu analīze, pat ja tie vēl nav uzskaitīti virsgrāmatā.
 CalcModeEngagement=Zināma reģistrēto maksājumu analīze, pat ja tie vēl nav uzskaitīti Ledger.
+<<<<<<< HEAD
 CalcModeBookkeeping=Grāmatvedības tabulas tabulā <b> dati tiek analizēti </ b>
+=======
+CalcModeBookkeeping=Grāmatvedības grāmatiņas žurnālā publicēto datu analīze.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CalcModeLT1= Mode <b>%sRE on customer invoices - suppliers invoices%s</b>
 CalcModeLT1Debt=Mode <b>%sRE on customer invoices%s</b>
 CalcModeLT1Rec= Mode <b>%sRE on suppliers invoices%s</b>
@@ -152,14 +192,22 @@ CalcModeLT2Rec= Mode <b>%sIRPF on suppliers invoices%s</b>
 AnnualSummaryDueDebtMode=Līdzsvars ienākumiem un izdevumiem, gada kopsavilkums
 AnnualSummaryInputOutputMode=Līdzsvars ienākumiem un izdevumiem, gada kopsavilkums
 AnnualByCompanies=Ieņēmumu un izdevumu līdzsvars pēc iepriekš definētām kontu grupām
+<<<<<<< HEAD
 AnnualByCompaniesDueDebtMode=Ieņēmumu un izdevumu bilance, detalizēti pēc iepriekš definētām grupām, režīms <b> %sClaims-Debts%s </ b> norādīja <b> Saistību grāmatvedība </ b>.
 AnnualByCompaniesInputOutputMode=Ieņēmumu un izdevumu līdzsvars, detalizēti pēc iepriekš definētām grupām, režīms <b> %sIncomes-Expenses%s </ b> norādīja <b> naudas līdzekļu uzskaiti </ b>.
 SeeReportInInputOutputMode=See %sanalysis of payments%s for a calculation on actual payments made even if they are not yet accounted in Ledger.
 SeeReportInDueDebtMode=See %sanalysis of invoices%s for a calculation based on known recorded invoices even if they are not yet accounted in Ledger.
+=======
+AnnualByCompaniesDueDebtMode=Ieņēmumu un izdevumu bilance, detalizēti pēc iepriekš definētām grupām, režīms <b> %sClaims-Debts%s </b> norādīja <b> Saistību grāmatvedība </b>.
+AnnualByCompaniesInputOutputMode=Ieņēmumu un izdevumu līdzsvars, detalizēti pēc iepriekš definētām grupām, režīms <b> %sIncomes-Expenses%s </b> norādīja <b> naudas līdzekļu uzskaiti </b>.
+SeeReportInInputOutputMode=Skatīt %s maksājumu analīzi %s, lai aprēķinātu veiktos faktiskos maksājumus, pat ja tie vēl nav uzskaitīti Virsgrāmatā.
+SeeReportInDueDebtMode=Skatīt %srēķinu analīzi %s, lai aprēķiniem izmantotu zināmos reģistrētos rēķinus, pat ja tie vēl nav uzskaitīti Virsgrāmatā.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SeeReportInBookkeepingMode=Lai skatītu <b> Grāmatvedības grāmatvedības tabulu </ b>, skatiet <b> %sBookBooking report%s </ b>
 RulesAmountWithTaxIncluded=- Uzrādītas summas ir ar visiem ieskaitot nodokļus
 RulesResultDue=- It includes outstanding invoices, expenses, VAT, donations whether they are paid or not. Is also includes paid salaries.<br>- It is based on the validation date of invoices and VAT and on the due date for expenses. For salaries defined with Salary module, the value date of payment is used.
 RulesResultInOut=- It includes the real payments made on invoices, expenses, VAT and salaries. <br>- It is based on the payment dates of the invoices, expenses, VAT and salaries. The donation date for donation.
+<<<<<<< HEAD
 RulesCADue=- It includes the client's due invoices whether they are paid or not. <br>- It is based on the validation date of these invoices.<br>
 RulesCAIn=- Tas ietver visas efektīvus maksājumus rēķiniem, kas saņemti no klientiem. <br> - Tā ir balstīta uz maksājuma datumu šiem rēķiniem <br>
 RulesCATotalSaleJournal=Tas ietver visas kredītlīnijas no pārdošanas žurnāla.
@@ -168,6 +216,16 @@ RulesResultBookkeepingPredefined=Tas ietver jūsu Ledger ierakstu ar grāmatved�
 RulesResultBookkeepingPersonalized=Tas rāda jūsu grāmatvedībā ierakstu ar grāmatvedības kontiem <b> grupējot pēc personalizētām grupām </ b>
 SeePageForSetup=Lai iestatītu, skatiet sadaļu <a href="%s"> %s </a>
 DepositsAreNotIncluded=- Down payment invoices are nor included
+=======
+RulesCADue=- Tas ietver klienta rēķinus par to, vai tie ir samaksāti vai nē. <br> - Tas ir balstīts uz šo rēķinu apstiprināšanas datumu. <br>
+RulesCAIn=- Tas ietver visus no klientiem saņemto rēķinu faktiskos maksājumus. <br> - Tas ir balstīts uz šo rēķinu apmaksas datumu
+RulesCATotalSaleJournal=Tas ietver visas kredītlīnijas no pārdošanas žurnāla.
+RulesAmountOnInOutBookkeepingRecord=Tas ietver jūsu Ledger ierakstu ar grāmatvedības kontiem, kuriem ir grupa "IZDEVUMS" vai "IENĀKUMS"
+RulesResultBookkeepingPredefined=Tas ietver jūsu Ledger ierakstu ar grāmatvedības kontiem, kuriem ir grupa "IZDEVUMS" vai "IENĀKUMS"
+RulesResultBookkeepingPersonalized=Tas rāda jūsu grāmatvedībā ierakstu ar grāmatvedības kontiem <b>grupējot pēc personalizētām grupām</b>
+SeePageForSetup=Lai iestatītu, skatiet sadaļu <a href="%s"> %s </a>
+DepositsAreNotIncluded=- Sākuma rēķini nav iekļauti
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DepositsAreIncluded=- Down payment invoices are included
 LT1ReportByCustomers=Trešo personu nodokļu pārskats 2
 LT2ReportByCustomers=Ziņojiet par trešās personas nodokli 3
@@ -205,7 +263,10 @@ SellsJournal=Pārdošanas žurnāls
 PurchasesJournal=Pirkšanas žurnāls
 DescSellsJournal=Pārdošanas žurnāls
 DescPurchasesJournal=Pirkšanas žurnāls
+<<<<<<< HEAD
 InvoiceRef=Rēķina ref.
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CodeNotDef=Nav definēts
 WarningDepositsNotIncluded=Down payment invoices are not included in this version with this accountancy module.
 DatePaymentTermCantBeLowerThanObjectDate=Maksājuma termiņš datums nevar būt zemāka par objekta datumu.
@@ -220,7 +281,11 @@ LinkedOrder=Saite uz pasūtījumu
 Mode1=Metode 1
 Mode2=Metode 2
 CalculationRuleDesc=Lai aprēķinātu kopējo PVN, ir divas metodes: <br> 1 metode ir noapaļošanas pvn par katru līniju, tad summējot tos. <br> Metode 2 summējot visu PVN par katru līniju, tad noapaļošanas rezultāts. <br> Gala rezultāts var būt atšķirīgs no dažiem centiem. Noklusētais režīms ir režīms <b>%s.</b>
+<<<<<<< HEAD
 CalculationRuleDescSupplier=According to supplier, choose appropriate method to apply same calculation rule and get same result expected by your supplier.
+=======
+CalculationRuleDescSupplier=Pēc pārdevēja domām, izvēlieties piemērotu metodi, lai piemērotu vienu un to pašu aprēķina noteikumu un iegūtu tādu pašu rezultātu, kādu sagaidīs jūsu pārdevējs.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TurnoverPerProductInCommitmentAccountingNotRelevant=Apgrozījuma pārskats, kas tiek apkopots par katru produktu, nav pieejams. Šis pārskats ir pieejams tikai apgrozījumam rēķinā.
 TurnoverPerSaleTaxRateInCommitmentAccountingNotRelevant=Apgrozījuma pārskats, kas iegūts no pārdošanas nodokļa likmes, nav pieejams. Šis pārskats ir pieejams tikai apgrozījumam rēķinā.
 CalculationMode=Aprēķinu režīms
@@ -229,11 +294,18 @@ ACCOUNTING_VAT_SOLD_ACCOUNT=Grāmatvedības konts pēc noklusējuma par PVN pār
 ACCOUNTING_VAT_BUY_ACCOUNT=Grāmatvedības konts pēc noklusējuma par PVN pirkumiem (tiek izmantots, ja nav definēts, izmantojot PVN vārdnīcas iestatījumus).
 ACCOUNTING_VAT_PAY_ACCOUNT=Grāmatvedības konts pēc noklusējuma PVN maksāšanai
 ACCOUNTING_ACCOUNT_CUSTOMER=Grāmatvedības konts, kas tiek izmantots klientu trešajām pusēm
+<<<<<<< HEAD
 ACCOUNTING_ACCOUNT_CUSTOMER_Desc=Īpašais grāmatvedības konts, kas noteikts trešās personas kartē, tiks izmantots tikai pakārtotā izsaukšanai. Šis viens tiks izmantots General Ledger un kā noklusējuma vērtība Subledged grāmatvedībai, ja trešās puses īpašais klientu piesaistīšanas konts nav definēts.
 ACCOUNTING_ACCOUNT_SUPPLIER=Pārdevēja trešo personu grāmatvedības konts
 ACCOUNTING_ACCOUNT_SUPPLIER_Desc=Īpašais grāmatvedības konts, kas noteikts trešās personas kartē, tiks izmantots tikai pakārtotā izsaukšanai. Šis tiek izmantots General Ledger un noklusējuma vērtība Subledged grāmatvedībai, ja trešās puses īpašā piegādātāja konts nav definēts.
 CloneTax=Clone a social/fiscal tax
 ConfirmCloneTax=Confirm the clone of a social/fiscal tax payment
+=======
+ACCOUNTING_ACCOUNT_CUSTOMER_Desc=Īpašais grāmatvedības konts, kas noteikts trešās personas kartē, tiks izmantots tikai pakārtotajam grāmatvedim. Šis tiek izmantots General Ledger un noklusējuma vērtība Subledged grāmatvedībai, ja trešās personas īpašais klientu grāmatvedības konts nav definēts.
+ACCOUNTING_ACCOUNT_SUPPLIER=Pārdevēja trešo personu grāmatvedības konts
+ACCOUNTING_ACCOUNT_SUPPLIER_Desc=Trešās puses kartē noteiktais īpašais grāmatvedības konts tiks izmantots tikai Subledger grāmatvedībai. Tas tiks izmantots galvenajai grāmatai un Subledger grāmatvedības noklusējuma vērtība, ja nav definēts īpašs pārdevēja grāmatvedības konts trešajā pusē.
+ConfirmCloneTax=Apstipriniet sociālā / fiskālā nodokļa klonu
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CloneTaxForNextMonth=Klonēt nākošam mēnesim
 SimpleReport=Vienkāršs pārskats
 AddExtraReport=Papildu pārskati (pievienojiet ārvalstu un valsts klientu pārskatu)

@@ -10,12 +10,20 @@ modify=Modificar
 Classify=Classificar
 CategoriesArea=Área de etiquetas/categorias
 ProductsCategoriesArea=Área de etiquetas/categorias de produtos/serviços
+<<<<<<< HEAD
 SuppliersCategoriesArea=Área de etiquetas/categorias de fornecedores
+=======
+SuppliersCategoriesArea=Vendors tags/categories area
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CustomersCategoriesArea=Área de etiquetas/categorias de clientes
 MembersCategoriesArea=Área de etiquetas/categorias de membros
 ContactsCategoriesArea=Área de etiquetas/categorias de contactos
 AccountsCategoriesArea=Área de etiquetas/categorias de contas
 ProjectsCategoriesArea=Área de etiquetas/categorias de projetos
+<<<<<<< HEAD
+=======
+UsersCategoriesArea=Users tags/categories area
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SubCats=Subcategorias
 CatList=Lista de etiquetas/categorias
 NewCategory=Nova etiqueta/categoria
@@ -31,7 +39,11 @@ WasAddedSuccessfully=<b>%s</b> foi adicionado com sucesso.
 ObjectAlreadyLinkedToCategory=O elemento já se encontra associado a esta etiqueta/categoria.
 ProductIsInCategories=O produto/serviço está associado às seguintes etiquetas/categorias
 CompanyIsInCustomersCategories=O terceiro está associado às seguintes etiquetas/categorias de clientes/prospecções
+<<<<<<< HEAD
 CompanyIsInSuppliersCategories=O terceiro está associado às seguintes etiquetas/categorias de fornecedores
+=======
+CompanyIsInSuppliersCategories=This third party is linked to following vendors tags/categories
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MemberIsInCategories=O terceiro está associado às seguintes etiquetas/categorias de membros
 ContactIsInCategories=Este contacto está associado às seguintes etiquetas/categorias de contactos
 ProductHasNoCategory=Este produto/serviço não se encontra associado a quaisquer etiquetas/categorias
@@ -47,6 +59,7 @@ ContentsNotVisibleByAllShort=Conteúdo não visível por todos
 DeleteCategory=Eliminar etiqueta/categoria
 ConfirmDeleteCategory=Tem a certeza que quer eliminar esta etiqueta/categoria?
 NoCategoriesDefined=Sem etiqueta/categoria definida
+<<<<<<< HEAD
 SuppliersCategoryShort=Etiquetas/categorias de fornecedores
 CustomersCategoryShort=Etiquetas/categorias de clientes
 ProductsCategoryShort=Etiquetas/categorias de produtos
@@ -55,20 +68,40 @@ SuppliersCategoriesShort=Etiquetas/catego. fornecedores
 CustomersCategoriesShort=Etiquetas/catego. de clientes
 ProspectsCategoriesShort=Etiquetas/categorias de prospecções
 CustomersProspectsCategoriesShort=Eti./cat. clientes/prospecções
+=======
+SuppliersCategoryShort=Vendors tag/category
+CustomersCategoryShort=Etiquetas/categorias de clientes
+ProductsCategoryShort=Etiquetas/categorias de produtos
+MembersCategoryShort=Etiquetas/categorias de membros
+SuppliersCategoriesShort=Vendors tags/categories
+CustomersCategoriesShort=Etiquetas/catego. de clientes
+ProspectsCategoriesShort=Etiquetas/categorias de prospecções
+CustomersProspectsCategoriesShort=Cust./Prosp. tags/categories
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProductsCategoriesShort=Etiquetas/categorias de produtos
 MembersCategoriesShort=Etiquetas/categorias de membros
 ContactCategoriesShort=Etiquetas/Catego. de Contactos
 AccountsCategoriesShort=Etiquetas/Categorias de contas
 ProjectsCategoriesShort=Etiquetas/Categorias de projetos
+<<<<<<< HEAD
 ThisCategoryHasNoProduct=Esta categoria não contem nenhum produto.
 ThisCategoryHasNoSupplier=Esta categoria não contem a nenhum fornecedor.
+=======
+UsersCategoriesShort=Users tags/categories
+ThisCategoryHasNoProduct=Esta categoria não contem nenhum produto.
+ThisCategoryHasNoSupplier=This category does not contain any vendor.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ThisCategoryHasNoCustomer=Esta categoria não contem a nenhum cliente.
 ThisCategoryHasNoMember=Esta categoria não contém nenhum membro.
 ThisCategoryHasNoContact=Esta categoria não contém qualquer contato.
 ThisCategoryHasNoAccount=Esta categoria não contém nenhuma conta.
 ThisCategoryHasNoProject=Esta categoria não contem qualquer projeto.
 CategId=ID de etiqueta/categoria
+<<<<<<< HEAD
 CatSupList=Lista de etiquetas/categorias de fornecedores
+=======
+CatSupList=List of vendor tags/categories
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CatCusList=Lista de etiquetas/categorias de clientes/prospecções
 CatProdList=Lista de etiquetas/categorias de produtos
 CatMemberList=Lista de etiquetas/categorias de membros
@@ -81,7 +114,11 @@ DeleteFromCat=Remover das etiquetas/categoria
 ExtraFieldsCategories=Atributos Complementares
 CategoriesSetup=Configuração de etiquetas/categorias
 CategorieRecursiv=Ligar com a etiqueta/categoria pai automaticamente
+<<<<<<< HEAD
 CategorieRecursivHelp=Se ativado, o produto também irá estar associado à categoria fonte quando adicionar a uma subcategoria
+=======
+CategorieRecursivHelp=If option is on, when you add a product into a subcategory, product will also be added into the parent category.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddProductServiceIntoCategory=Adicioanr o produto/serviço seguinte
 ShowCategory=Mostrar etiqueta/categoria
 ByDefaultInList=Por predefinição na lista

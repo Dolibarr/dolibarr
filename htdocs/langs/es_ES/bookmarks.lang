@@ -6,6 +6,7 @@ ListOfBookmarks=Listado de marcadores
 EditBookmarks=Listar/editar marcadores
 NewBookmark=Nuevo marcador
 ShowBookmark=Mostrar marcadores
+<<<<<<< HEAD
 OpenANewWindow=Abrir una nueva ventana
 ReplaceWindow=Reemplazar la ventana actual
 BookmarkTargetNewWindowShort=Nueva ventana
@@ -17,4 +18,17 @@ CreateBookmark=Crear marcador
 SetHereATitleForLink=Indicar aquí un título para el marcador
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Indicar una URL http externa o una URL Dolibarr relativa
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Elija si debe abrir la página enlazada en una nueva ventana o no
+=======
+OpenANewWindow=Abrir una nueva pestaña
+ReplaceWindow=Reemplazar la pestaña actual
+BookmarkTargetNewWindowShort=Nueva pestaña
+BookmarkTargetReplaceWindowShort=Pestaña actual
+BookmarkTitle=Nombre del marcador
+UrlOrLink=URL
+BehaviourOnClick=Comportamiento al hacer clic en la URL
+CreateBookmark=Crear marcador
+SetHereATitleForLink=Indicar un nombre para el marcador
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Use un enlace externo/absoluto (https://URL) o un enlace interno/relativo (/DOLIBARR_ROOT/htdocs/...)
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Elija si la página enlazada debería abrirse en la pestaña actual o en una nueva pestaña
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BookmarksManagement=Gestión de marcadores

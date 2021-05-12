@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2007-2008 Jeremie Ollivier      <jeremie.o@laposte.net>
  * Copyright (C) 2008-2009 Laurent Destailleur   <eldy@uers.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2009      Regis Houssin         <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2009      Regis Houssin         <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,7 +63,11 @@ exit;*/
 print '<div class="inline-block" style="vertical-align: top">';
 print '<div class="principal">';
 
+<<<<<<< HEAD
 $page=GETPOST('menutpl','alpha');
+=======
+$page=GETPOST('menutpl', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page)) $page='facturation';
 
 if (in_array(
@@ -75,7 +83,11 @@ if (in_array(
 }
 else
 {
+<<<<<<< HEAD
 	dol_print_error('','menu param '.$page.' is not inside allowed list');
+=======
+	dol_print_error('', 'menu param '.$page.' is not inside allowed list');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 print '</div>';
@@ -87,7 +99,11 @@ print '</div>';
 print '<div class="inline-block" style="vertical-align: top">';
 print '<div class="liste_articles">';
 
+<<<<<<< HEAD
 require ('tpl/liste_articles.tpl.php');
+=======
+require 'tpl/liste_articles.tpl.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print '</div>';
 print '</div>';

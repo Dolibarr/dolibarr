@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,6 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
  */
 class box_factures_imp extends ModeleBoxes
 {
+<<<<<<< HEAD
 	var $boxcode="oldestunpaidcustomerbills";
 	var $boximg="object_bill";
 	var $boxlabel="BoxOldestUnpaidCustomerBills";
@@ -43,6 +48,22 @@ class box_factures_imp extends ModeleBoxes
 
 	var $info_box_head = array();
 	var $info_box_contents = array();
+=======
+    public $boxcode="oldestunpaidcustomerbills";
+    public $boximg="object_bill";
+    public $boxlabel="BoxOldestUnpaidCustomerBills";
+    public $depends = array("facture");
+
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    public $param;
+
+    public $info_box_head = array();
+    public $info_box_contents = array();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	/**
@@ -51,7 +72,11 @@ class box_factures_imp extends ModeleBoxes
 	 *  @param  DoliDB  $db         Database handler
 	 *  @param  string  $param      More parameters
 	 */
+<<<<<<< HEAD
 	function __construct($db,$param)
+=======
+	public function __construct($db, $param)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 	    global $user;
 
@@ -66,7 +91,11 @@ class box_factures_imp extends ModeleBoxes
 	 *  @param	int		$max        Maximum number of records to load
      *  @return	void
 	 */
+<<<<<<< HEAD
 	function loadBox($max=5)
+=======
+	public function loadBox($max = 5)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf, $user, $langs, $db;
 
@@ -78,14 +107,22 @@ class box_factures_imp extends ModeleBoxes
         $facturestatic = new Facture($db);
         $societestatic = new Societe($db);
 
+<<<<<<< HEAD
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpaidCustomerBills",$max));
+=======
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpaidCustomerBills", $max));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		if ($user->rights->facture->lire)
 		{
 			$sql = "SELECT s.nom as name, s.rowid as socid, s.email,";
             $sql.= " s.code_client,";
             $sql.= " s.logo,";
+<<<<<<< HEAD
 			$sql.= " f.facnumber, f.date_lim_reglement as datelimite,";
+=======
+			$sql.= " f.ref, f.date_lim_reglement as datelimite,";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $sql.= " f.type,";
 			$sql.= " f.amount, f.datef as df,";
             $sql.= " f.total as total_ht,";
@@ -98,15 +135,26 @@ class box_factures_imp extends ModeleBoxes
 			$sql.= ", ".MAIN_DB_PREFIX."facture as f";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid=pf.fk_facture ";
 			$sql.= " WHERE f.fk_soc = s.rowid";
+<<<<<<< HEAD
 			$sql.= " AND f.entity = ".$conf->entity;
+=======
+			$sql.= " AND f.entity IN (".getEntity('invoice').")";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$sql.= " AND f.paye = 0";
 			$sql.= " AND fk_statut = 1";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
+<<<<<<< HEAD
 			$sql.= " GROUP BY s.nom, s.rowid, s.code_client, s.logo, f.facnumber, f.date_lim_reglement,";
 			$sql.= " f.type, f.amount, f.datef, f.total, f.tva, f.total_ttc, f.paye, f.fk_statut, f.rowid";
 			//$sql.= " ORDER BY f.datef DESC, f.facnumber DESC ";
 			$sql.= " ORDER BY datelimite ASC, f.facnumber ASC ";
+=======
+			$sql.= " GROUP BY s.nom, s.rowid, s.code_client, s.logo, f.ref, f.date_lim_reglement,";
+			$sql.= " f.type, f.amount, f.datef, f.total, f.tva, f.total_ttc, f.paye, f.fk_statut, f.rowid";
+			//$sql.= " ORDER BY f.datef DESC, f.ref DESC ";
+			$sql.= " ORDER BY datelimite ASC, f.ref ASC ";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$sql.= $db->plimit($max, 0);
 
 			$result = $db->query($sql);
@@ -123,7 +171,11 @@ class box_factures_imp extends ModeleBoxes
 					$objp = $db->fetch_object($result);
 					$datelimite=$db->jdate($objp->datelimite);
                     $facturestatic->id = $objp->facid;
+<<<<<<< HEAD
                     $facturestatic->ref = $objp->facnumber;
+=======
+                    $facturestatic->ref = $objp->ref;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                     $facturestatic->type = $objp->type;
                     $facturestatic->total_ht = $objp->total_ht;
                     $facturestatic->total_tva = $objp->total_tva;
@@ -140,7 +192,11 @@ class box_factures_imp extends ModeleBoxes
 
 					$late='';
 					if ($facturestatic->hasDelay()) {
+<<<<<<< HEAD
 						$late = img_warning(sprintf($l_due_date,dol_print_date($datelimite,'day')));
+=======
+						$late = img_warning(sprintf($l_due_date, dol_print_date($datelimite, 'day')));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					}
 
                     $this->info_box_contents[$line][] = array(
@@ -157,24 +213,41 @@ class box_factures_imp extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
+<<<<<<< HEAD
                         'td' => 'class="right"',
+=======
+                        'td' => 'class="nowrap right"',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                         'text' => price($objp->total_ht, 0, $langs, 0, -1, -1, $conf->currency),
                     );
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'class="right"',
+<<<<<<< HEAD
                         'text' => dol_print_date($datelimite,'day'),
                     );
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="right" width="18"',
                         'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3,$objp->am),
+=======
+                        'text' => dol_print_date($datelimite, 'day'),
+                    );
+
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'class="right" width="18"',
+                        'text' => $facturestatic->LibStatut($objp->paye, $objp->fk_statut, 3, $objp->am),
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                     );
 
 					$line++;
 				}
 
+<<<<<<< HEAD
 				if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'align="center"','text'=>$langs->trans("NoUnpaidCustomerBills"));
+=======
+				if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'class="center"','text'=>$langs->trans("NoUnpaidCustomerBills"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				$db->free($result);
 			}
@@ -189,7 +262,11 @@ class box_factures_imp extends ModeleBoxes
 		}
 		else {
             $this->info_box_contents[0][0] = array(
+<<<<<<< HEAD
                 'td' => 'align="left" class="nohover opacitymedium"',
+=======
+                'td' => 'class="nohover opacitymedium left"',
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
 		}
@@ -203,9 +280,16 @@ class box_factures_imp extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
+<<<<<<< HEAD
     function showBox($head = null, $contents = null, $nooutput=0)
     {
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 
+=======
+    public function showBox($head = null, $contents = null, $nooutput = 0)
+    {
+		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+	}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

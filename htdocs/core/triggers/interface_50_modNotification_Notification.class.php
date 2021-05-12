@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2011      Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2011      Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2013-2014 Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,10 +36,27 @@ class InterfaceNotification extends DolibarrTriggers
 {
 	public $family = 'notification';
 	public $description = "Triggers of this module send email notifications according to Notification module setup.";
+<<<<<<< HEAD
 	public $version = self::VERSION_DOLIBARR;
 	public $picto = 'email';
 
 	var $listofmanagedevents=array(
+=======
+
+	/**
+	 * Version of the trigger
+	 * @var string
+	 */
+	public $version = self::VERSION_DOLIBARR;
+
+	/**
+	 * @var string Image of the trigger
+	 */
+	public $picto = 'email';
+
+	// @TODO Defined also into notify.class.php)
+	public $listofmanagedevents=array(
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		'BILL_VALIDATE',
 		'BILL_PAYED',
 		'ORDER_VALIDATE',
@@ -46,8 +67,17 @@ class InterfaceNotification extends DolibarrTriggers
 		'ORDER_SUPPLIER_VALIDATE',
 		'ORDER_SUPPLIER_APPROVE',
 		'ORDER_SUPPLIER_REFUSE',
+<<<<<<< HEAD
 		'SHIPPING_VALIDATE'
    	);
+=======
+		'SHIPPING_VALIDATE',
+		'EXPENSE_REPORT_VALIDATE',
+		'EXPENSE_REPORT_APPROVE',
+		'HOLIDAY_VALIDATE',
+		'HOLIDAY_APPROVE'
+	);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	/**
 	 * Function called when a Dolibarrr business event is done.
@@ -82,7 +112,11 @@ class InterfaceNotification extends DolibarrTriggers
 	 *
 	 * @return      array       Array of events managed by notification module
 	 */
+<<<<<<< HEAD
 	function getListOfManagedEvents()
+=======
+	public function getListOfManagedEvents()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf;
 
@@ -103,7 +137,11 @@ class InterfaceNotification extends DolibarrTriggers
 
 				$qualified=0;
 				// Check is this event is supported by notification module
+<<<<<<< HEAD
 				if (in_array($obj->code,$this->listofmanagedevents)) $qualified=1;
+=======
+				if (in_array($obj->code, $this->listofmanagedevents)) $qualified=1;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				// Check if module for this event is active
 				if ($qualified)
 				{
@@ -116,7 +154,11 @@ class InterfaceNotification extends DolibarrTriggers
 					elseif ($element == 'withdraw' && empty($conf->prelevement->enabled)) $qualified=0;
 					elseif ($element == 'shipping' && empty($conf->expedition->enabled)) $qualified=0;
 					elseif ($element == 'member' && empty($conf->adherent->enabled)) $qualified=0;
+<<<<<<< HEAD
 					elseif (! in_array($element,array('order_supplier','invoice_supplier','withdraw','shipping','member')) && empty($conf->$element->enabled)) $qualified=0;
+=======
+					elseif (! in_array($element, array('order_supplier','invoice_supplier','withdraw','shipping','member','expensereport')) && empty($conf->$element->enabled)) $qualified=0;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 
 				if ($qualified)
@@ -131,5 +173,8 @@ class InterfaceNotification extends DolibarrTriggers
 
 		return $ret;
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

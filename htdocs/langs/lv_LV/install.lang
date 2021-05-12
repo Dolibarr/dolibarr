@@ -2,6 +2,7 @@
 InstallEasy=Sekojiet instrukcijām soli pa solim.
 MiscellaneousChecks=Priekšnoteikumu pārbaude
 ConfFileExists=Konfigurācijas fails <b>%s</b> eksistē.
+<<<<<<< HEAD
 ConfFileDoesNotExistsAndCouldNotBeCreated=Konfigurācijas fails <b>%s</b> nav un nevar tikt izveidots!
 ConfFileCouldBeCreated=Konfigurācijas failu <b>%s</b> var izveidot.
 ConfFileIsNotWritable=Konfigurācijas failam <b>%s</b> nav rakstīšanas tiesības. Pārbaudiet atļaujas. Par pirmo instalēt, jūsu tīmekļa serveris ir jāpiešķir, lai varētu rakstīt šajā failā laikā konfigurācijas process ("chmod 666", piemēram, uz kā OS UNIX).
@@ -23,16 +24,49 @@ ErrorPHPDoesNotSupportCurl=Jūsu PHP instalācija neatbalsta Curl.
 ErrorPHPDoesNotSupportUTF8=PHP instalācija neatbalsta UTF8 funkciju. Dolibarr nevar strādāt pareizi. Atrisiniet šo pirms instalējat Dolibarr.
 ErrorDirDoesNotExists=Katalogs %s neeksistē.
 ErrorGoBackAndCorrectParameters=Atgriezieties un labojiet nepareizos parametrus.
+=======
+ConfFileDoesNotExistsAndCouldNotBeCreated=Konfigurācijas fails <b> %s </b> nepastāv un to nevarēja izveidot!
+ConfFileCouldBeCreated=Konfigurācijas failu <b>%s</b> var izveidot.
+ConfFileIsNotWritable=Konfigurācijas fails <b> %s </ b> nav rakstāms. Pārbaudīt atļaujas. Pirmajai instalēšanai jūsu tīmekļa serverim jāspēj rakstīt šajā failā konfigurācijas procesa laikā ("chmod 666", piemēram, operētājsistēmā Unix, piemēram).
+ConfFileIsWritable=Konfigurācijas failā <b>%s</b> var ierakstīt.
+ConfFileMustBeAFileNotADir=Konfigurācijas failam <b> %s </b> jābūt failam, nevis direktorijai.
+ConfFileReload=Pārsūtot parametrus no konfigurācijas faila.
+PHPSupportSessions=PHP atbalsta sesijas.
+PHPSupportPOSTGETOk=PHP atbalsta mainīgos POST un GET.
+PHPSupportPOSTGETKo=Iespējams, ka jūsu PHP iestatīšana neatbalsta mainīgos POST un / vai GET. Pārbaudiet parametru <b> variables_order </ b> php.ini.
+PHPSupportGD=Šis PHP atbalsta GD grafiskās funkcijas.
+PHPSupportCurl=Šis PHP atbalsta Curl.
+PHPSupportUTF8=Šis PHP atbalsta UTF8 funkcijas.
+PHPSupportIntl=Šī PHP atbalsta Intl funkcijas.
+PHPMemoryOK=Jūsu PHP maksimālā sesijas atmiņa ir iestatīts uz <b>%s.</b> Tas ir pietiekami.
+PHPMemoryTooLow=Jūsu PHP max sesijas atmiņa ir iestatīta uz <b> %s </ b> baitiem. Tas ir pārāk zems. Mainiet <b> php.ini </ b>, lai iestatītu <b> memory_limit </ b> parametru vismaz <b> %s </ b> baitiem.
+Recheck=Noklikšķiniet šeit, lai iegūtu sīkāku pārbaudi
+ErrorPHPDoesNotSupportSessions=Jūsu PHP instalācija neatbalsta sesijas. Šī funkcija ir nepieciešama, lai Dolibarr darbotos. Pārbaudiet sesiju direktorijas PHP iestatījumus un atļaujas.
+ErrorPHPDoesNotSupportGD=Jūsu PHP instalācija neatbalsta GD grafiskās funkcijas. Nav neviena grafika.
+ErrorPHPDoesNotSupportCurl=Jūsu PHP instalācija neatbalsta Curl.
+ErrorPHPDoesNotSupportUTF8=Jūsu PHP instalācija neatbalsta UTF8 funkcijas. Dolibarr nevar darboties pareizi. Atrisiniet to pirms Dolibarr instalēšanas.
+ErrorPHPDoesNotSupportIntl=Jūsu PHP instalācija neatbalsta Intl funkcijas.
+ErrorDirDoesNotExists=Katalogs %s neeksistē.
+ErrorGoBackAndCorrectParameters=Atgriezieties un pārbaudiet / labojiet parametrus.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorWrongValueForParameter=Iespējams, esat ievadījis nepareizu vērtību parametrā '%s'.
 ErrorFailedToCreateDatabase=Neizdevās izveidot datubāzi '%s'.
 ErrorFailedToConnectToDatabase=Neizdevās izveidot savienojumu ar datu bāzi '%s'.
 ErrorDatabaseVersionTooLow=Datu bāzes versija (%s) pārāk veca. Versija %s vai augstāka ir nepieciešama.
 ErrorPHPVersionTooLow=PHP versija ir pārāk veca. Versija %s ir nepieciešama.
+<<<<<<< HEAD
 ErrorConnectedButDatabaseNotFound=Savienojums ar serveri sekmīgi pabeigts, bet datubāze '%s' nav atrasta.
 ErrorDatabaseAlreadyExists=Datubāze '%s' jau eksistē.
 IfDatabaseNotExistsGoBackAndUncheckCreate=Ja datu bāzē neeksistē, dodieties atpakaļ un pārbaudiet opciju "Izveidot datu bāzi".
 IfDatabaseExistsGoBackAndCheckCreate=Ja datu bāze jau pastāv, dodieties atpakaļ un izņemiet ķeksi "Izveidot datu bāzi".
 WarningBrowserTooOld=Pārāk vecs pārlūkprogrammas versija. Pārlūkprogrammu Firefox, Chrome vai Opera jaunāko versiju uzstādīšana  ir ļoti ieteicama.
+=======
+ErrorConnectedButDatabaseNotFound=Savienojums ar serveri ir veiksmīgs, bet datubāze '%s' nav atrasta.
+ErrorDatabaseAlreadyExists=Datubāze '%s' jau eksistē.
+IfDatabaseNotExistsGoBackAndUncheckCreate=Ja datubāze nepastāv, atveriet un atzīmējiet opciju "Izveidot datubāzi".
+IfDatabaseExistsGoBackAndCheckCreate=Ja datu bāze jau pastāv, dodieties atpakaļ un izņemiet ķeksi "Izveidot datu bāzi".
+WarningBrowserTooOld=Pārlūkprogrammas versija ir pārāk veca. Ir ļoti ieteicams jaunināt pārlūku uz jaunāko Firefox, Chrome vai Opera versiju.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PHPVersion=PHP versija
 License=Izmantojot licenci
 ConfigurationFile=Konfigurācijas fails
@@ -45,11 +79,16 @@ DolibarrDatabase=Dolibarr datubāze
 DatabaseType=Datubāzes tips
 DriverType=Draivera veids
 Server=Serveris
+<<<<<<< HEAD
 ServerAddressDescription=Nosaukums vai IP adrese datu bāzes serverim - parasti 'localhost', ja datu bāzes serveris ir izvietots uz tā paša servera uz kura atrodas web serveris
+=======
+ServerAddressDescription=Datu bāzes servera nosaukums vai ip adrese. Parasti "localhost", ja datu bāzes serveris ir izvietots tajā pašā serverī kā tīmekļa serveris.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ServerPortDescription=Datu bāzes servera ports. Atstājiet tukšu, ja nav zināms.
 DatabaseServer=Datubāzes serveris
 DatabaseName=Datubāzes nosaukums
 DatabasePrefix=Datubāzes tabulu prefikss
+<<<<<<< HEAD
 AdminLogin=Dolibarr datu bāzes īpašnieka lietotājvārds
 PasswordAgain=Atkārtot paroli otrreiz
 AdminPassword=Parole Dolibarr datu bāzes īpašniekam.
@@ -61,6 +100,20 @@ CheckToCreateUser=Atzīmējiet izvēles rūtiņu, ja datubāzes īpašnieks neek
 DatabaseRootLoginDescription=Lietotāja vārds, kas var izveidot datubāzes vai jaunos lietotājus. Obligāti jāaizpilda, ja datubāze vai tās īpašnieks jau neeksistē.
 KeepEmptyIfNoPassword=Atstājiet tukšu, ja lietotājam nav vajadzīga parole (izvairieties no bezparoles lietotāja vārda)
 SaveConfigurationFile=Saglabā vērtības
+=======
+DatabasePrefixDescription=Datubāzes galda prefikss. Ja tukšs, noklusējums ir llx_.
+AdminLogin=Dolibarr datu bāzes īpašnieka lietotāja konts.
+PasswordAgain=Atkārtot paroles ievadīšanu
+AdminPassword=Parole Dolibarr datu bāzes īpašniekam.
+CreateDatabase=Izveidot datubāzi
+CreateUser=Izveidojiet lietotāja kontu vai piešķiriet lietotāja konta atļauju Dolibarr datubāzē
+DatabaseSuperUserAccess=Datu bāzes serveris - superlietotājs piekļuve
+CheckToCreateDatabase=Atzīmējiet izvēles rūtiņu, ja datubāze vēl neeksistē, un tā ir jāizveido. <br> Šajā gadījumā arī šīs lapas apakšdaļā ir jāaizpilda lietotāja konta lietotājvārds un parole.
+CheckToCreateUser=Atzīmējiet izvēles rūtiņu, ja: <br> datu bāzes lietotāja kontā vēl nav, un tā ir jāveido vai arī, ja lietotāja konts pastāv, bet datubāze nepastāv un atļaujas ir jāpiešķir. <br> Šajā gadījumā jums jāievada lietotāja konts un parole, kā arī <b> arī </ b> administratora konta nosaukums un parole šīs lapas apakšdaļā. Ja šī rūtiņa nav atzīmēta, datu bāzes īpašniekam un parolei jau ir jābūt.
+DatabaseRootLoginDescription=Superuser konta nosaukums (lai izveidotu jaunas datubāzes vai jaunus lietotājus), obligāti, ja datubāze vai tā īpašnieks vēl nav izveidota.
+KeepEmptyIfNoPassword=Atstājiet tukšu, ja lietotājam nav paroles (neiesaka)
+SaveConfigurationFile=Saglabāt parametrus
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ServerConnection=Servera savienojums
 DatabaseCreation=Datubāzes izveidošana
 CreateDatabaseObjects=Datu bāzes objektu izveide
@@ -71,6 +124,7 @@ CreateOtherKeysForTable=Izveidot ārvalstu atslēgas un indeksi attiecībā uz g
 OtherKeysCreation=Atslēgu un indeksu veidošana
 FunctionsCreation=Funkciju izveide
 AdminAccountCreation=Administratora pieteikšanās izveide
+<<<<<<< HEAD
 PleaseTypePassword=Lūdzu, ievadiet paroli, tukšas paroles ir aizliegtas!
 PleaseTypeALogin=Lūdzu ierakstiet lietotāja vārdu!
 PasswordsMismatch=Paroles atšķiras, lūdzu, mēģiniet vēlreiz!
@@ -91,24 +145,55 @@ AdminLoginAlreadyExists=Dolibarr administratora konts '<b>%s</b>' jau eksistē. 
 FailedToCreateAdminLogin=Neizdevās izveidot Dolibarr administratora kontu.
 WarningRemoveInstallDir=Brīdinājums, drošības apsvērumu dēļ pēc instalēšanas vai atjaunināšanas beigām, lai izvairītos no instalēšanas rīku atkārtotas izmantošanas, Jums jāpievieno failu ar nosaukumu <b>install.lock</b> Dolibarr dokumentu direktorijā, lai novērstu ļaunprātīgu instalācijas izmantošanu.
 FunctionNotAvailableInThisPHP=Nav pieejams šajā PHP versijā
+=======
+PleaseTypePassword=Lūdzu, ierakstiet paroli, tukšas paroles nav atļautas!
+PleaseTypeALogin=Lūdzu, ierakstiet pieteikšanos!
+PasswordsMismatch=Paroles atšķiras, lūdzu, mēģiniet vēlreiz!
+SetupEnd=Iiestatīšanas beigas
+SystemIsInstalled=Instalācija ir pabeigta.
+SystemIsUpgraded=Dolibarr ir atjaunota veiksmīgi.
+YouNeedToPersonalizeSetup=Jums ir jākonfigurēt Dolibarr, lai atbilstu Jūsu vajadzībām (izskats, funkcijas, ...). Lai to izdarītu, lūdzu, sekojiet saitei zemāk:
+AdminLoginCreatedSuccessfuly=Dolibarr administratora pieteikšanās '<b>%s</b>' izveidota veiksmīgi.
+GoToDolibarr=Iet uz Dolibarr
+GoToSetupArea=Iet uz Dolibarr (iestatīšanas apgabalu)
+MigrationNotFinished=Datubāzes versija nav pilnībā atjaunināta: atkārtoti palaidiet jaunināšanas procesu.
+GoToUpgradePage=Iet uz atjaunošanas lapu atkal
+WithNoSlashAtTheEnd=Bez slīpsvītras "/" beigās
+DirectoryRecommendation=Ieteicams izmantot direktoriju ārpus tīmekļa lapām.
+LoginAlreadyExists=Jau eksistē
+DolibarrAdminLogin=Dolibarr administratora lietotāja vārds
+AdminLoginAlreadyExists=Dolibarr administratora konts '<b>%s</b>' jau pastāv. Atgriezieties, ja vēlaties izveidot vēl vienu.
+FailedToCreateAdminLogin=Neizdevās izveidot Dolibarr administratora kontu.
+WarningRemoveInstallDir=Drošības apsvērumu dēļ, instalēšanas vai jaunināšanas pabeigšanas brīdī drošības nolūkos Dolibarr dokumentu direktorijā jāievieto fails <b> install.lock </ b>, lai novērstu nejaušu / ļaunprātīgu instalēšanas rīku lietošanu.
+FunctionNotAvailableInThisPHP=Nav pieejams šajā PHP
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ChoosedMigrateScript=Izvēlieties migrācijas skriptu
 DataMigration=Datubāzes migrācijas (dati)
 DatabaseMigration=Datubāzes migrācija (struktūra + daži dati)
 ProcessMigrateScript=Skripts darbojas
 ChooseYourSetupMode=Izvēlies savu instalācijas režīmu un noklikšķiniet uz "Sākt" ...
 FreshInstall=Svaiga instalēšana
+<<<<<<< HEAD
 FreshInstallDesc=Izmantojiet šo režīmu, ja pirmo reizi instalējat. Ja nē, šis režīms var izlabot nepilnīgu iepriekšējo instalāciju. Ja jūs vēlaties atjaunot versiju, izvēlieties "Atjaunošanas" režīmu.
+=======
+FreshInstallDesc=Izmantojiet šo režīmu, ja šī ir jūsu pirmā instalācija. Ja nē, šis režīms var novērst nepilnīgu iepriekšējo instalēšanu. Ja vēlaties atjaunināt savu versiju, izvēlieties "Upgrade" režīmu.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Upgrade=Atjaunot
 UpgradeDesc=Izmantojiet šo režīmu, ja vēlaties atjaunot veco Dolibarr versiju uz jaunāku. Šis process atjauno datu bāzi un failus.
 Start=Sākt
 InstallNotAllowed=Instalēšana nav atļauta ar <b>conf.php</b> tiesībām
 YouMustCreateWithPermission=Jums ir jāizveido fails %s un jāpiešķir rakstīšanas atļaujas tam, lai web serveris instalēšanas laikā varētu to izmantot.
+<<<<<<< HEAD
 CorrectProblemAndReloadPage=Lūdzu atrisiniet problēmu un nospiediet F5, lai pārlādētu lapu.
+=======
+CorrectProblemAndReloadPage=Lūdzu, novērsiet problēmu un nospiediet F5, lai pārlādētu lapu.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AlreadyDone=Jau pārvietoti
 DatabaseVersion=Datubāzes versija
 ServerVersion=Datubāzes servera versija
 YouMustCreateItAndAllowServerToWrite=Jums ir jāizveido šo direktoriju un jāļauj web serverim tajā rakstīt.
 DBSortingCollation=Rakstzīmju šķirošanas secība
+<<<<<<< HEAD
 YouAskDatabaseCreationSoDolibarrNeedToConnect=Jūs lūdzat, lai izveidotu datu bāzi <b>%s,</b> bet par to, Dolibarr ir nepieciešams, lai izveidotu savienojumu ar serveri <b>%s</b> ar super lietotāja <b>%s</b> atļaujas.
 YouAskLoginCreationSoDolibarrNeedToConnect=Jūs lūdzat, lai izveidotu datu bāzi pieteikšanās <b>%s,</b> bet par to, Dolibarr ir nepieciešams, lai izveidotu savienojumu ar serveri <b>%s</b> ar super lietotāja <b>%s</b> atļaujas.
 BecauseConnectionFailedParametersMayBeWrong=Kā savienojums neizdevās, uzņēmēja vai super lietotāju parametri ir nepareizi.
@@ -140,6 +225,39 @@ KeepDefaultValuesDeb=Jūs izmantojat Dolibarr iestatīšanas vedni no Linux pake
 KeepDefaultValuesMamp=Jūs izmantojat Dolibarr iestatīšanas vedni no DoliMamp, tāpēc vērtības ierosinātās šeit jau ir optimizēta. Mainīt tikai tad, ja jūs zināt, ko jūs darāt.
 KeepDefaultValuesProxmox=Jūs izmantojat Dolibarr iestatīšanas vedni no Proxmox virtuālās ierīces, tāpēc vērtības ierosinātās šeit jau ir optimizēta. Mainīt tikai tad, ja jūs zināt, ko jūs darāt.
 UpgradeExternalModule=Izpildiet īpašu ārējo moduļu jaunināšanas procesu
+=======
+YouAskDatabaseCreationSoDolibarrNeedToConnect=Jūs izvēlējāties izveidot datubāzi <b> %s </ b>, bet šim nolūkam Dolibarr ir nepieciešams savienojums ar serveri <b> %s </ b> ar super lietotāju <b> %s </ b> atļaujām.
+YouAskLoginCreationSoDolibarrNeedToConnect=Jūs izvēlējāties izveidot datubāzes lietotāju <b> %s </ b>, bet šim nolūkam Dolibarr ir nepieciešams savienojums ar serveri <b> %s </ b> ar super lietotāju <b> %s </ b> atļaujām.
+BecauseConnectionFailedParametersMayBeWrong=Datubāzes savienojums neizdevās: uzņēmēja vai super lietotāja parametriem jābūt nepareiziem.
+OrphelinsPaymentsDetectedByMethod=Bāreņi maksājums atklāj metode %s
+RemoveItManuallyAndPressF5ToContinue=Noņemiet to manuāli un nospiediet F5, lai turpinātu.
+FieldRenamed=Lauks pārdēvēts
+IfLoginDoesNotExistsCheckCreateUser=Ja lietotājs vēl neeksistē, jums jāizvēlas opcija "Izveidot lietotāju"
+ErrorConnection=Serveris "<b> %s </ b>", datubāzes nosaukums "<b> %s </ b>", login "<b> %s </ b>" vai datu bāzes parole var būt nepareiza vai arī PHP klienta versija salīdzinot ar datubāzes versiju.
+InstallChoiceRecommanded=Ieteicams izvēlēties, lai instalētu versiju <b>%s</b> no jūsu pašreizējā versijā <b>%s</b>
+InstallChoiceSuggested=<b>Instalācijas sistēmas izvēle.</b>
+MigrateIsDoneStepByStep=Mērķa versijai (%s) ir vairākas versijas. Instalēšanas vednis atgriezīsies, lai ierosinātu turpmāku migrāciju, kad tas būs pabeigts.
+CheckThatDatabasenameIsCorrect=Pārbaudiet, vai datubāzes nosaukums "<b> %s </b>" ir pareizs.
+IfAlreadyExistsCheckOption=Ja šis vārds ir pareizs un ka datu bāze neeksistē vēl, jums ir pārbaudīt opciju "Izveidot datu bāzi".
+OpenBaseDir=PHP openbasedir parametrs
+YouAskToCreateDatabaseSoRootRequired=Jūs atzīmējāt lodziņu "Izveidot datu bāzi". Lai to izdarītu, jums ir jāuzrāda administratora lietotājvārds / parole (veidlapas apakšdaļa).
+YouAskToCreateDatabaseUserSoRootRequired=Jūs atzīmējāt lodziņu "Izveidot datu bāzes īpašnieku". Lai to izdarītu, jums ir jāuzrāda administratora lietotājvārds / parole (veidlapas apakšdaļa).
+NextStepMightLastALongTime=Pašreizējais solis var aizņemt vairākas minūtes. Lūdzu, uzgaidiet, līdz nākamais ekrāns tiek parādīts pilnīgi pirms turpināšanas.
+MigrationCustomerOrderShipping=Pārsūtīt sūtījumus pārdošanas pasūtījumu glabāšanai
+MigrationShippingDelivery=Upgrade uzglabāšanu kuģniecības
+MigrationShippingDelivery2=Upgrade uzglabāšanu 2 kuģniecības
+MigrationFinished=Migrācija pabeigta
+LastStepDesc=<strong> Pēdējais solis </ strong>: šeit norādiet pieteikšanos un paroli, kuru vēlaties izmantot, lai izveidotu savienojumu ar Dolibarr. <b> Nepalaidiet to, jo tas ir galvenais konts, lai pārvaldītu visus pārējos / papildu lietotāju kontus. </ b>
+ActivateModule=Aktivizēt moduli %s
+ShowEditTechnicalParameters=Noklikšķiniet šeit, lai parādītu / rediģēt papildu parametrus (ekspertu režīmā)
+WarningUpgrade=Brīdinājums:\nVai vispirms izmantojāt datu bāzi?\nTas ir ļoti ieteicams. Šajā procesā var būt iespējama datu zudums (piemēram, kļūdas mysql versijā 5.5.40 / 41/42/43), tāpēc pirms migrēšanas sākuma ir svarīgi veikt pilnīgu datplūsmas noņemšanu.\n\nNoklikšķiniet uz OK, lai sāktu migrācijas procesu ...
+ErrorDatabaseVersionForbiddenForMigration=Jūsu datubāzes versija ir %s. Tam ir kritiska kļūda, kas var radīt datu zudumu, ja veicat strukturālas izmaiņas jūsu datubāzē, piemēram, kā to pieprasa migrācijas process. Viņa iemesla dēļ migrācija netiks atļauta, kamēr jūs jaunināt savu datubāzi uz slāņa (ielīmētas) versiju (zināmu buggy versiju saraksts: %s)
+KeepDefaultValuesWamp=Jūs izmantojāt Dolibarr iestatīšanas vedni no DoliWamp, tādēļ šeit piedāvātās vērtības jau ir optimizētas. Mainiet tos tikai tad, ja zināt, ko jūs darāt.
+KeepDefaultValuesDeb=Jūs izmantojāt Dolibarr iestatīšanas vedni no Linux paketes (Ubuntu, Debian, Fedora ...), tāpēc šeit piedāvātās vērtības jau ir optimizētas. Jāievada tikai datu bāzes īpašnieka izveidotā parole. Mainiet citus parametrus tikai tad, ja zināt, ko jūs darāt.
+KeepDefaultValuesMamp=Jūs izmantojāt Dolibarr iestatīšanas vedni no DoliMamp, tāpēc šeit piedāvātās vērtības jau ir optimizētas. Mainiet tos tikai tad, ja zināt, ko jūs darāt.
+KeepDefaultValuesProxmox=Jūs izmantojāt Dolbyarr iestatīšanas vedni no Proxmox virtuālās ierīces, tāpēc šeit piedāvātās vērtības jau ir optimizētas. Mainiet tos tikai tad, ja zināt, ko jūs darāt.
+UpgradeExternalModule=Darbiniet ārējo moduļa ārējo jaunināšanas procesu
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SetAtLeastOneOptionAsUrlParameter=Iestatiet vismaz vienu opciju kā parametru URL. Piemēram: "... repair.php? Standard = apstiprināts"
 NothingToDelete=Nav ko tīrīt / dzēst
 NothingToDo=Nav ko darīt
@@ -153,7 +271,11 @@ MigrationInvoice=Klienta rēķinu datu migrācija
 MigrationContract=Datu migrācija līgumiem
 MigrationSuccessfullUpdate=Atjaunošana veiksmīga
 MigrationUpdateFailed=Neizdevās atjaunināšanas process
+<<<<<<< HEAD
 MigrationRelationshipTables=Datu migrācija uz attiecībām tabulām (%s)
+=======
+MigrationRelationshipTables=Datu migrācija uz attiecīgām tabulām (%s)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MigrationPaymentsUpdate=Maksājumu datu korekcija
 MigrationPaymentsNumberToUpdate=%s maksājums (-iem), lai atjauninātu
 MigrationProcessPaymentUpdate=Atjaunināt maksājumu(-us) %s
@@ -162,20 +284,35 @@ MigrationPaymentsNothingUpdatable=Ne vairāk maksājumus, kas var tikt izlabotas
 MigrationContractsUpdate=Līgumu datu korekcija
 MigrationContractsNumberToUpdate=%s līgumu (-iem), lai atjauninātu
 MigrationContractsLineCreation=Izveidot līgumu līniju līguma ref %s
+<<<<<<< HEAD
 MigrationContractsNothingToUpdate=Nav daudz lietas, kas darīt
 MigrationContractsFieldDontExist=Lauks fk_facture neeksistē vairs. Nav nekas ko darīt.
 MigrationContractsEmptyDatesUpdate=Līgums tukšs datums korekcija
 MigrationContractsEmptyDatesUpdateSuccess=Contract emtpy date correction done successfully
+=======
+MigrationContractsNothingToUpdate=Nav daudz lietu ko darīt
+MigrationContractsFieldDontExist=Lauks fk_facture vairs nepastāv. Nav ko darīt.
+MigrationContractsEmptyDatesUpdate=Līgums tukšs datums korekcija
+MigrationContractsEmptyDatesUpdateSuccess=Veicot veiksmīgu līguma tukšu datuma korekciju
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MigrationContractsEmptyDatesNothingToUpdate=Nav līguma tukša diena, lai labotu
 MigrationContractsEmptyCreationDatesNothingToUpdate=Nav līguma izveides datums, lai labotu
 MigrationContractsInvalidDatesUpdate=Bad valutēšanas datums līgums korekcija
 MigrationContractsInvalidDateFix=Pareizs līgums %s (līguma datumu = %s, sākot izsniegšanas datumu min = %s)
+<<<<<<< HEAD
 MigrationContractsInvalidDatesNumber=%s līgumi modificēts
+=======
+MigrationContractsInvalidDatesNumber=%s līgumi laboti
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MigrationContractsInvalidDatesNothingToUpdate=Nē dienu ar sliktu vērtību, lai labotu
 MigrationContractsIncoherentCreationDateUpdate=Bad vērtība līguma izveides datums korekcija
 MigrationContractsIncoherentCreationDateUpdateSuccess=Bad value contract creation date correction done successfully
 MigrationContractsIncoherentCreationDateNothingToUpdate=Nav slikti vērtība līguma izveidošanas datumu, lai labotu
+<<<<<<< HEAD
 MigrationReopeningContracts=Atvērt līgums slēgts ar kļūda
+=======
+MigrationReopeningContracts=Atvērt līgumu, kas slēgts ar kļūdu
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MigrationReopenThisContract=Atjaunot līgumu %s
 MigrationReopenedContractsNumber=%s līgumi laboti
 MigrationReopeningContractsNothingToUpdate=Nav slēgts līgums, lai atvērtu
@@ -187,6 +324,7 @@ MigrationDeliveryDetail=Piegādes atjaunināšana
 MigrationStockDetail=Atjaunināt noliktavas produktu vērtību
 MigrationMenusDetail=Atjaunināt dinamisks izvēlnes tabulas
 MigrationDeliveryAddress=Atjaunināt piegādes adresi sūtījumiem
+<<<<<<< HEAD
 MigrationProjectTaskActors=Datu migrācija uz llx_projet_task_actors galda
 MigrationProjectUserResp=Datu migrācija jomā fk_user_resp no llx_projet lai llx_element_contact
 MigrationProjectTaskTime=Atjaunināšanas laiks sekundēs
@@ -195,10 +333,21 @@ MigrationPaymentMode=Datu migrācija uz maksājumu režīmā
 MigrationCategorieAssociation=Kategoriju migrācija
 MigrationEvents=Migration of events to add event owner into assignement table
 MigrationEventsContact=Notikumu migrēšana, lai pievienotu notikuma kontaktu nodalīšanas tabulā
+=======
+MigrationProjectTaskActors=Datu migrācija tabulai llx_projet_task_actors
+MigrationProjectUserResp=Datu migrācija jomā fk_user_resp no llx_projet lai llx_element_contact
+MigrationProjectTaskTime=Atjaunināšanas laiks sekundēs
+MigrationActioncommElement=Atjaunināt informāciju par pasākumiem
+MigrationPaymentMode=Datu migrācija maksājumu veidam
+MigrationCategorieAssociation=Kategoriju migrācija
+MigrationEvents=Notikumu migrācija, lai notikuma īpašnieku pievienotu uzdevumu tabulai
+MigrationEventsContact=Notikumu migrācija, lai notikuma kontaktu pievienotu uzdevumu tabulai
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MigrationRemiseEntity=Atjauniniet llx_societe_remise objekta lauka vērtību
 MigrationRemiseExceptEntity=Atjauniniet llx_societe_remise_except objekta lauka vērtību
 MigrationUserRightsEntity=Atjauniniet llx_user_rights objekta lauka vērtību
 MigrationUserGroupRightsEntity=Atjauniniet llx_usergroup_rights objekta lauka vērtību
+<<<<<<< HEAD
 MigrationReloadModule=Reload module %s
 MigrationResetBlockedLog=Atjaunot moduli BlockedLog par v7 algoritmu
 ShowNotAvailableOptions=Rādīt nepieejamās iespējas
@@ -208,3 +357,15 @@ YouTryInstallDisabledByDirLock=Lietojumprogramma mēģina uzlabot versiju, bet i
 YouTryInstallDisabledByFileLock=Lietojumprogramma mēģina uzlabot versiju, bet lapu instalēšana / pilnveidošana lapas drošības apsvērumu dēļ ir atspējotas (ar bloķēšanas failu <strong> install.lock </ strong> iekļauta Dolibarr dokumentu direktorijā). <br>
 ClickHereToGoToApp=Noklikšķiniet šeit, lai pārietu uz savu pieteikumu
 ClickOnLinkOrRemoveManualy=Noklikšķiniet uz šādas saites un, ja jūs vienmēr sasniedzat šo lapu, jums manuāli jāinstalē faila installock
+=======
+MigrationUserPhotoPath=Lietotāju fotoattēlu migrēšana
+MigrationReloadModule=Reload module %s
+MigrationResetBlockedLog=Atjaunot moduli BlockedLog par v7 algoritmu
+ShowNotAvailableOptions=Parādīt nepieejamās iespējas
+HideNotAvailableOptions=Slēpt nepieejamās iespējas
+ErrorFoundDuringMigration=Migrēšanas laikā tika ziņots par kļūdu (-ēm), tāpēc nākamais solis nav pieejams. Lai ignorētu kļūdas, varat <a href="%s"> noklikšķināt šeit </a>, bet lietojumprogramma vai dažas funkcijas var nedarboties pareizi, līdz kļūdas nav atrisinātas.
+YouTryInstallDisabledByDirLock=Pieteikums mēģināja pašupjaunināt, bet instalēšanas / jaunināšanas lapas tika atspējotas drošībai (direktorija nosaukums tika pārdēvēts ar .lock sufiksu). <br>
+YouTryInstallDisabledByFileLock=Lietojumprogramma mēģināja pašatjaunināties, bet instalēšanas/atjaunināšanas lapas tika bloķētas drošībai (ar bloķēšanas failu <strong>install.lock</strong> Dolibarr dokumentu direktorijā). <br>
+ClickHereToGoToApp=Noklikšķiniet šeit, lai pārietu uz savu pieteikumu
+ClickOnLinkOrRemoveManualy=Noklikšķiniet uz šīs saites. Ja jūs vienmēr redzat šo pašu lapu, dokumenta direktorijā ir jāizņem / jānomaina faila instal.lock.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

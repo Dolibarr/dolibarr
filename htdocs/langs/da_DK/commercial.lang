@@ -3,8 +3,13 @@ Commercial=Tilbud
 CommercialArea=Tilbudsområde
 Customer=Kunde
 Customers=Kunder
+<<<<<<< HEAD
 Prospect=Emne
 Prospects=Emner
+=======
+Prospect=Potentiel kunde
+Prospects=Potentielle kunder
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DeleteAction=Slet en begivenhed
 NewAction=Ny begivenhed
 AddAction=Opret begivenhed
@@ -26,8 +31,13 @@ SalesRepresentativeFollowUp=Salg repræsentant (opfølgning)
 SalesRepresentativeSignature=Salgsrepræsentant (underskrift)
 NoSalesRepresentativeAffected=Ingen specifik salgsrepræsentant tildelt
 ShowCustomer=Vis kunde
+<<<<<<< HEAD
 ShowProspect=Vis emne
 ListOfProspects=Liste over emner
+=======
+ShowProspect=Vis potentiel kunde
+ListOfProspects=Liste over potentielle kunder
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ListOfCustomers=Liste over kunder
 LastDoneTasks=Senest %s gennemførte opgaver
 LastActionsToDo=Ældste %s udestående opgaver
@@ -52,22 +62,34 @@ ActionAC_TEL=Telefonopkald
 ActionAC_FAX=Send fax
 ActionAC_PROP=Send tilbud via e-mail
 ActionAC_EMAIL=Send e-mail
+<<<<<<< HEAD
+=======
+ActionAC_EMAIL_IN=Reception of Email
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActionAC_RDV=Møder
 ActionAC_INT=Fremmøde på stedet
 ActionAC_FAC=Send kundefaktura via e-mail
 ActionAC_REL=Send kundefaktura via e-mail (påmindelse)
 ActionAC_CLO=Luk
 ActionAC_EMAILING=Send masse e-mail
+<<<<<<< HEAD
 ActionAC_COM=Send kundeordre med posten
 ActionAC_SHIP=Send forsendelse med posten
 ActionAC_SUP_ORD=Send purchase order by mail
 ActionAC_SUP_INV=Send vendor invoice by mail
+=======
+ActionAC_COM=Send sales order by mail
+ActionAC_SHIP=Send forsendelse med posten
+ActionAC_SUP_ORD=Send indkøbsordre via post
+ActionAC_SUP_INV=Send sælgerfaktura pr. Post
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActionAC_OTH=Andet
 ActionAC_OTH_AUTO=Automatisk oprettede begivenheder
 ActionAC_MANUAL=Manuelt oprettede begivenheder
 ActionAC_AUTO=Automatisk oprettede begivenheder
 ActionAC_OTH_AUTOShort=Auto
 Stats=Salgsstatistik
+<<<<<<< HEAD
 StatusProsp=Status for emne
 DraftPropals=Udkast for tilbud
 NoLimit=Ingen grænse
@@ -76,4 +98,14 @@ WelcomeOnOnlineSignaturePage=Velkommen på siden for at acceptere kommercielle f
 ThisScreenAllowsYouToSignDocFrom=Denne skærm giver dig mulighed for at acceptere og underskrive eller nægte et tilbud / kommercielt forslag
 ThisIsInformationOnDocumentToSign=Dette er oplysninger om dokumentet for at acceptere eller afvise
 SignatureProposalRef=Undertegnelse af tilbud / kommercielt forslag %s
+=======
+StatusProsp=Status på tredjepart
+DraftPropals=Udkast for tilbud
+NoLimit=Ingen grænse
+ToOfferALinkForOnlineSignature=Link til online signatur
+WelcomeOnOnlineSignaturePage=Velkommen til siden for at acceptere kommercielle forslag fra %s
+ThisScreenAllowsYouToSignDocFrom=Denne skærm giver dig mulighed for at acceptere og underskrive eller nægte et tilbud / kommercielt forslag
+ThisIsInformationOnDocumentToSign=Dette er oplysninger om dokumentet for at acceptere eller afvise
+SignatureProposalRef=Underskrift af tilbud / kommercielt forslag %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 FeatureOnlineSignDisabled=Funktion til online-signering deaktiveret eller dokument genereret, før funktionen blev aktiveret

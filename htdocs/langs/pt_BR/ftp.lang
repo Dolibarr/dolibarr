@@ -2,12 +2,22 @@
 FTPClientSetup=Configuração do módulo cliente FTP
 NewFTPClient=Nova configuração da conexão FTP
 FTPArea=Área FTP
+<<<<<<< HEAD
 FTPAreaDesc=Esta tela mostrar o conteúdo do servidor FTP
 SetupOfFTPClientModuleNotComplete=A configuração do módulo cliente FTP parece não estar completa
+=======
+FTPAreaDesc=Esta tela mostra uma visão de um servidor FTP.
+SetupOfFTPClientModuleNotComplete=A configuração do módulo do cliente FTP parece estar incompleta
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 FTPFeatureNotSupportedByYourPHP=Seu PHP não suporta as funções de FTP
 FailedToConnectToFTPServer=Falha na conexão ao servidor FTP (server% s, porta% s)
 FailedToConnectToFTPServerWithCredentials=Falha ao efetuar login no servidor FTP com login/senha
 FTPFailedToRemoveFile=Falha ao remover o arquivo <b>%s</ b>.
+<<<<<<< HEAD
 FTPFailedToRemoveDir=Falha ao remover diretório <b>%s</ b> (verifique as permissões e se o diretório está vazio).
 ChooseAFTPEntryIntoMenu=Escolha uma entrada de FTP em menu ...
+=======
+FTPFailedToRemoveDir=Falha ao remover a pasta <b>%s </b>: Verifique as permissões e que a pasta está vazia
+ChooseAFTPEntryIntoMenu=Escolha um Site FTP do menu ...
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 FailedToGetFile=Falha ao obter arquivos %s

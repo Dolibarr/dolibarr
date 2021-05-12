@@ -25,7 +25,11 @@
  */
 
 // Put here all includes required by your class file
+<<<<<<< HEAD
 require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
+=======
+//require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
@@ -38,18 +42,26 @@ class Cchargesociales
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'cchargesociales';
+<<<<<<< HEAD
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'c_chargesociales';
 
+<<<<<<< HEAD
 	/**
 	 */
 	
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	public $libelle;
 	public $deductible;
 	public $active;
 	public $code;
+<<<<<<< HEAD
 	public $fk_pays;
 	public $module;
 	public $accountancy_code;
@@ -57,6 +69,17 @@ class Cchargesociales
 	/**
 	 */
 	
+=======
+
+	/**
+     * @var int ID
+     */
+	public $fk_pays;
+
+	public $module;
+	public $accountancy_code;
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	/**
 	 * Constructor
@@ -82,6 +105,7 @@ class Cchargesociales
 
 		$error = 0;
 
+<<<<<<< HEAD
 		// Clean parameters
 		
 		if (isset($this->libelle)) {
@@ -107,13 +131,31 @@ class Cchargesociales
 		}
 
 		
+=======
+        // Clean parameters
+        $this->trimParameters(
+            array(
+                'libelle',
+                'deductible',
+                'active',
+                'code',
+                'fk_pays',
+                'module',
+                'accountancy_code',
+            )
+        );
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Check parameters
 		// Put here code to add control on parameters values
 
 		// Insert request
 		$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element . '(';
+<<<<<<< HEAD
 		
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql.= 'libelle,';
 		$sql.= 'deductible,';
 		$sql.= 'active,';
@@ -122,9 +164,15 @@ class Cchargesociales
 		$sql.= 'module';
 		$sql.= 'accountancy_code';
 
+<<<<<<< HEAD
 		
 		$sql .= ') VALUES (';
 		
+=======
+
+		$sql .= ') VALUES (';
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql .= ' '.(! isset($this->libelle)?'NULL':"'".$this->db->escape($this->libelle)."'").',';
 		$sql .= ' '.(! isset($this->deductible)?'NULL':$this->deductible).',';
 		$sql .= ' '.(! isset($this->active)?'NULL':$this->active).',';
@@ -133,7 +181,11 @@ class Cchargesociales
 		$sql .= ' '.(! isset($this->module)?'NULL':"'".$this->db->escape($this->module)."'").',';
 		$sql .= ' '.(! isset($this->accountancy_code)?'NULL':"'".$this->db->escape($this->accountancy_code)."'");
 
+<<<<<<< HEAD
 		
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql .= ')';
 
 		$this->db->begin();
@@ -148,7 +200,11 @@ class Cchargesociales
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
 
+<<<<<<< HEAD
 			if (!$notrigger) {
+=======
+			//if (!$notrigger) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action to call a trigger.
 
@@ -156,7 +212,11 @@ class Cchargesociales
 				//$result=$this->call_trigger('MYOBJECT_CREATE',$user);
 				//if ($result < 0) $error++;
 				//// End call triggers
+<<<<<<< HEAD
 			}
+=======
+			//}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		// Commit or rollback
@@ -206,7 +266,11 @@ class Cchargesociales
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->id;
+<<<<<<< HEAD
 				
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$this->libelle = $obj->libelle;
 				$this->deductible = $obj->deductible;
 				$this->active = $obj->active;
@@ -214,8 +278,11 @@ class Cchargesociales
 				$this->fk_pays = $obj->fk_pays;
 				$this->module = $obj->module;
 				$this->accountancy_code = $obj->accountancy_code;
+<<<<<<< HEAD
 
 				
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 			$this->db->free($resql);
 
@@ -247,6 +314,7 @@ class Cchargesociales
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		// Clean parameters
+<<<<<<< HEAD
 		
 		if (isset($this->libelle)) {
 			 $this->libelle = trim($this->libelle);
@@ -271,6 +339,21 @@ class Cchargesociales
 		}
 
 		
+=======
+
+        $this->trimParameters(
+            array(
+                'libelle',
+                'deductible',
+                'active',
+                'code',
+                'fk_pays',
+                'module',
+                'accountancy_code',
+            )
+        );
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Check parameters
 		// Put here code to add a control on parameters values
@@ -295,7 +378,11 @@ class Cchargesociales
 			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 		}
 
+<<<<<<< HEAD
 		if (!$error && !$notrigger) {
+=======
+		//if (!$error && !$notrigger) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			// Uncomment this and change MYOBJECT to your own tag if you
 			// want this action calls a trigger.
 
@@ -303,7 +390,11 @@ class Cchargesociales
 			//$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
 			//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
 			//// End call triggers
+<<<<<<< HEAD
 		}
+=======
+		//}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Commit or rollback
 		if ($error) {
@@ -333,8 +424,13 @@ class Cchargesociales
 
 		$this->db->begin();
 
+<<<<<<< HEAD
 		if (!$error) {
 			if (!$notrigger) {
+=======
+		//if (!$error) {
+			//if (!$notrigger) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action calls a trigger.
 
@@ -342,8 +438,13 @@ class Cchargesociales
 				//$result=$this->call_trigger('MYOBJECT_DELETE',$user);
 				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
 				//// End call triggers
+<<<<<<< HEAD
 			}
 		}
+=======
+			//}
+		//}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		if (!$error) {
 			$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . $this->table_element;
@@ -372,6 +473,7 @@ class Cchargesociales
 	/**
 	 * Load an object from its id and create a new one in database
 	 *
+<<<<<<< HEAD
 	 * @param int $fromid Id of object to clone
 	 *
 	 * @return int New id of clone
@@ -381,6 +483,16 @@ class Cchargesociales
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		global $user;
+=======
+	 * @param	User	$user		User making the clone
+	 * @param   int     $fromid     Id of object to clone
+	 * @return  int                 New id of clone
+	 */
+	public function createFromClone(User $user, $fromid)
+	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$error = 0;
 		$object = new Cchargesociales($this->db);
 
@@ -395,6 +507,10 @@ class Cchargesociales
 		// ...
 
 		// Create clone
+<<<<<<< HEAD
+=======
+		$this->context['createfromclone'] = 'createfromclone';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$result = $object->create($user);
 
 		// Other options
@@ -404,6 +520,11 @@ class Cchargesociales
 			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 		}
 
+<<<<<<< HEAD
+=======
+		unset($this->context['createfromclone']);
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// End
 		if (!$error) {
 			$this->db->commit();
@@ -412,7 +533,11 @@ class Cchargesociales
 		} else {
 			$this->db->rollback();
 
+<<<<<<< HEAD
 			return - 1;
+=======
+			return -1;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 	}
 
@@ -427,7 +552,11 @@ class Cchargesociales
      *  @param  string  $morecss            Add more css on link
 	 *	@return	string						String with URL
 	 */
+<<<<<<< HEAD
 	function getNomUrl($withpicto=0, $option='', $notooltip=0, $maxlen=24, $morecss='')
+=======
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $maxlen = 24, $morecss = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs, $conf, $db;
         global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -454,18 +583,31 @@ class Cchargesociales
 		$result.= $link . $this->ref . $linkend;
 		return $result;
 	}
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *  Retourne le libelle du status d'un user (actif, inactif)
 	 *
 	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return	string 			       Label of status
 	 */
+<<<<<<< HEAD
 	function getLibStatut($mode=0)
 	{
 		return $this->LibStatut($this->status,$mode);
 	}
 
+=======
+	public function getLibStatut($mode = 0)
+	{
+		return $this->LibStatut($this->status, $mode);
+	}
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *  Renvoi le libelle d'un status donne
 	 *
@@ -473,12 +615,19 @@ class Cchargesociales
 	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string 			       	Label of status
 	 */
+<<<<<<< HEAD
 	function LibStatut($status,$mode=0)
 	{
+=======
+	public function LibStatut($status, $mode = 0)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $langs;
 
 		if ($mode == 0)
 		{
+<<<<<<< HEAD
 			$prefix='';
 			if ($status == 1) return $langs->trans('Enabled');
 			if ($status == 0) return $langs->trans('Disabled');
@@ -511,6 +660,39 @@ class Cchargesociales
 	}
 	
 	
+=======
+			if ($status == 1) return $langs->trans('Enabled');
+			elseif ($status == 0) return $langs->trans('Disabled');
+		}
+		elseif ($mode == 1)
+		{
+			if ($status == 1) return $langs->trans('Enabled');
+			elseif ($status == 0) return $langs->trans('Disabled');
+		}
+		elseif ($mode == 2)
+		{
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
+		}
+		elseif ($mode == 3)
+		{
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5');
+		}
+		elseif ($mode == 4)
+		{
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
+		}
+		elseif ($mode == 5)
+		{
+			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
+			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
+		}
+	}
+
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
@@ -520,7 +702,11 @@ class Cchargesociales
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
+<<<<<<< HEAD
 		
+=======
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->libelle = '';
 		$this->deductible = '';
 		$this->active = '';
@@ -528,8 +714,28 @@ class Cchargesociales
 		$this->fk_pays = '';
 		$this->module = '';
 		$this->accountancy_code = '';
+<<<<<<< HEAD
 
 		
 	}
 
+=======
+	}
+
+    /**
+     * Trim object parameters
+     * @param string[] $parameters array of parameters to trim
+     *
+     * @return void
+     */
+    private function trimParameters($parameters)
+    {
+        if (!is_array($parameters)) return;
+        foreach ($parameters as $parameter) {
+            if (isset($this->$parameter)) {
+                $this->$parameter = trim($this->$parameter);
+            }
+        }
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

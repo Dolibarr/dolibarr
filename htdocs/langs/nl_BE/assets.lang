@@ -1,0 +1,19 @@
+# Dolibarr language file - Source file is en_US - assets
+Assets =Middelen
+AccountancyCodeAsset =Boekhoudcode (activum)
+AccountancyCodeDepreciationAsset =Boekhoudcode (afschrijvingsrekening)
+AccountancyCodeDepreciationExpense =Boekhoudcode (afschrijvingskostenrekening)
+NewAssetType=Nieuw activumtype
+AssetType=Activa type
+AssetsLines=Middelen
+ModuleAssetsName =Middelen
+ModuleAssetsDesc =Activabeschrijving
+AssetsSetup =Activa instellen
+AssetsSetupPage =Activa-instellingenpagina
+AssetsType=Activa type
+AssetsTypeId=Activa type id
+AssetsTypeLabel=Label van het activatype
+AssetsTypes=Activa types
+MenuAssets =Middelen
+MenuTypeAssets =Type activa
+MenuListAssets =Lijst

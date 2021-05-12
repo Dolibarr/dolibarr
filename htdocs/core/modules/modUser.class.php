@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +42,11 @@ class modUser extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
+<<<<<<< HEAD
 	function __construct($db)
+=======
+	public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf;
 
@@ -46,9 +54,15 @@ class modUser extends DolibarrModules
 		$this->numero = 0;
 
 		$this->family = "hr";		// Family for module (or "base" if core module)
+<<<<<<< HEAD
 		$this->module_position = 10;
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
+=======
+		$this->module_position = '05';
+		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->description = "Gestion des utilisateurs (requis)";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -63,9 +77,18 @@ class modUser extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array("user.php");
 
+<<<<<<< HEAD
 		// Dependancies
 		$this->depends = array();
 		$this->requiredby = array();
+=======
+		// Dependencies
+		$this->hidden = false;			// A condition to hide module
+		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->langfiles = array("main","users","companies","members",'salaries');
 		$this->always_enabled = true;	// Can't be disabled
 
@@ -75,6 +98,10 @@ class modUser extends DolibarrModules
 		// Boxes
 		$this->boxes = array(
 		    0=>array('file'=>'box_lastlogin.php','enabledbydefaulton'=>'Home'),
+<<<<<<< HEAD
+=======
+            1=>array('file'=>'box_birthdays.php','enabledbydefaulton'=>'Home')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		);
 
 		// Permissions
@@ -205,17 +232,24 @@ class modUser extends DolibarrModules
 
 
         // Menus
+<<<<<<< HEAD
         //-------
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $this->menu = 1;        // This module add menu entries. They are coded into menu manager.
 
 
 		// Exports
+<<<<<<< HEAD
 		//--------
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$r=0;
 
 		$r++;
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
+<<<<<<< HEAD
 		$this->export_label[$r]='Liste des utilisateurs Dolibarr et attributs';
 		$this->export_permission[$r]=array(array("user","user","export"));
 		$this->export_fields_array[$r]=array(
@@ -233,6 +267,45 @@ class modUser extends DolibarrModules
 			'u.rowid'=>"user",'u.login'=>"user",'u.lastname'=>"user",'u.firstname'=>"user",'u.accountancy_code'=>'user','u.office_phone'=>'user',
 			'u.office_fax'=>'user','u.email'=>'user','u.datec'=>"user",'u.tms'=>"user",'u.admin'=>"user",'u.statut'=>'user','u.note'=>"user",
 			'u.datelastlogin'=>'user','u.datepreviouslogin'=>'user','u.fk_socpeople'=>"contact",'u.fk_soc'=>"company",'u.fk_member'=>"member"
+=======
+		$this->export_label[$r]='List of users and attributes';
+		$this->export_permission[$r]=array(array("user","user","export"));
+		$this->export_fields_array[$r]=array(
+		    'u.rowid'=>"Id",'u.login'=>"Login",'u.lastname'=>"Lastname",'u.firstname'=>"Firstname",'u.employee'=>"Employee",'u.job'=>"PostOrFunction",'u.gender'=>"Gender",
+		    'u.accountancy_code'=>"UserAccountancyCode",
+		    'u.address'=>"Address",'u.zip'=>"Zip",'u.town'=>"Town",
+		    'u.office_phone'=>'Phone','u.user_mobile'=>"Mobile",'u.office_fax'=>'Fax',
+		    'u.email'=>"Email",'u.note'=>"Note",'u.signature'=>'Signature',
+		    'u.fk_user'=>'Supervisor','u.thm'=>'THM','u.tjm'=>'TJM','u.weeklyhours'=>'WeeklyHours',
+		    'u.dateemployment'=>'DateEmployment','u.salary'=>'Salary','u.color'=>'Color','u.api_key'=>'ApiKey',
+		    'u.birth'=>'BirthdayDate',
+		    'u.datec'=>"DateCreation",'u.tms'=>"DateLastModification",
+			'u.admin'=>"Administrator",'u.statut'=>'Status','u.datelastlogin'=>'LastConnexion','u.datepreviouslogin'=>'PreviousConnexion',
+			'u.fk_socpeople'=>"IdContact",'u.fk_soc'=>"IdCompany",'u.fk_member'=>"MemberId"
+		);
+		$this->export_TypeFields_array[$r]=array(
+			'u.login'=>"Text",'u.lastname'=>"Text",'u.firstname'=>"Text",'u.employee'=>'Boolean','u.job'=>'Text',
+		    'u.accountancy_code'=>'Text',
+		    'u.address'=>"Text",'u.zip'=>"Text",'u.town'=>"Text",
+		    'u.office_phone'=>'Text','u.user_mobile'=>'Text','u.office_fax'=>'Text',
+			'u.email'=>'Text','u.datec'=>"Date",'u.tms'=>"Date",'u.admin'=>"Boolean",'u.statut'=>'Status','u.note'=>"Text",'u.datelastlogin'=>'Date',
+		    'u.fk_user'=>"List:user:login",
+		    'u.birth'=>'Date',
+		    'u.datepreviouslogin'=>'Date','u.fk_soc'=>"List:societe:nom:rowid",'u.fk_member'=>"List:adherent:firstname"
+		);
+		$this->export_entities_array[$r]=array(
+			'u.rowid'=>"user",'u.login'=>"user",'u.lastname'=>"user",'u.firstname'=>"user",'u.employee'=>'user','u.job'=>'user','u.gender'=>'user',
+		    'u.accountancy_code'=>'user',
+		    'u.address'=>"user",'u.zip'=>"user",'u.town'=>"user",
+		    'u.office_phone'=>'user','u.user_mobile'=>'user','u.office_fax'=>'user',
+		    'u.email'=>'user','u.note'=>"user",'u.signature'=>'user',
+		    'u.fk_user'=>'user','u.thm'=>'user','u.tjm'=>'user','u.weeklyhours'=>'user',
+		    'u.dateemployment'=>'user','u.salary'=>'user','u.color'=>'user','u.api_key'=>'user',
+		    'u.birth'=>'user',
+		    'u.datec'=>"user",'u.tms'=>"user",
+		    'u.admin'=>"user",'u.statut'=>'user','u.datelastlogin'=>'user','u.datepreviouslogin'=>'user',
+		    'u.fk_socpeople'=>"contact",'u.fk_soc'=>"company",'u.fk_member'=>"member"
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		);
         if (empty($conf->adherent->enabled))
         {
@@ -244,7 +317,10 @@ class modUser extends DolibarrModules
 		$this->export_sql_end[$r] .=' WHERE u.entity IN ('.getEntity('user').')';
 
 		// Imports
+<<<<<<< HEAD
 		//--------
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$r=0;
 
 		// Import list of users attributes
@@ -255,11 +331,25 @@ class modUser extends DolibarrModules
 		$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r]=array('u'=>MAIN_DB_PREFIX.'user','extra'=>MAIN_DB_PREFIX.'user_extrafields');	// List of tables to insert into (insert done in same order)
 		$this->import_fields_array[$r]=array(
+<<<<<<< HEAD
 			'u.lastname'=>"Name*",'u.firstname'=>"Firstname",'u.employee'=>"Employee*",'u.job'=>"Job",'u.gender'=>"Gender",'u.login'=>"Login*",
 			'u.pass_crypted'=>"Password",'u.admin'=>"Administrator",'u.fk_soc'=>"Company*",'u.address'=>"Address",'u.zip'=>"Zip",'u.town'=>"Town",
 			'u.fk_state'=>"StateId",'u.fk_country'=>"CountryCode",'u.office_phone'=>"Phone",'u.user_mobile'=>"Mobile",'u.office_fax'=>"Fax",
 			'u.email'=>"Email",'u.note'=>"Note",'u.signature'=>'Signature','u.fk_user'=>'Supervisor','u.thm'=>'THM','u.tjm'=>'TJM',
 			'u.dateemployment'=>'DateEmployment','u.salary'=>'Salary','u.color'=>'Color','u.api_key'=>'ApiKey','u.datec'=>"DateCreation"
+=======
+		    'u.login'=>"Login*",'u.lastname'=>"Name*",'u.firstname'=>"Firstname",'u.employee'=>"Employee*",'u.job'=>"PostOrFunction",'u.gender'=>"Gender",
+		    'u.accountancy_code'=>"UserAccountancyCode",
+			'u.pass_crypted'=>"Password",'u.admin'=>"Administrator",'u.fk_soc'=>"Company*",'u.address'=>"Address",'u.zip'=>"Zip",'u.town'=>"Town",
+			'u.fk_state'=>"StateId",'u.fk_country'=>"CountryCode",
+		    'u.office_phone'=>"Phone",'u.user_mobile'=>"Mobile",'u.office_fax'=>"Fax",
+		    'u.email'=>"Email",'u.note'=>"Note",'u.signature'=>'Signature',
+		    'u.fk_user'=>'Supervisor','u.thm'=>'THM','u.tjm'=>'TJM','u.weeklyhours'=>'WeeklyHours',
+			'u.dateemployment'=>'DateEmployment','u.salary'=>'Salary','u.color'=>'Color','u.api_key'=>'ApiKey',
+		    'u.birth'=>'BirthdayDate',
+		    'u.datec'=>"DateCreation",
+		    'u.statut'=>'Status'
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		);
 		// Add extra fields
 		$sql="SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'user' AND entity IN (0,".$conf->entity.")";
@@ -283,6 +373,7 @@ class modUser extends DolibarrModules
 		//$this->import_convertvalue_array[$r]=array('s.fk_soc'=>array('rule'=>'lastrowid',table='t');
 		$this->import_regex_array[$r]=array(
 			'u.employee'=>'^[0|1]',
+<<<<<<< HEAD
 			'u.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]( [0-9][0-9]:[0-9][0-9]:[0-9][0-9])?$'
 		);
 		$this->import_examplevalues_array[$r]=array(
@@ -293,6 +384,20 @@ class modUser extends DolibarrModules
 		);
 		$this->import_updatekeys_array[$r]=array('u.lastname'=>'Lastname','u.firstname'=>'Firstname','u.login'=>'Login');
 
+=======
+			'u.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]( [0-9][0-9]:[0-9][0-9]:[0-9][0-9])?$',
+            'u.dateemployment'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$',
+            'u.birth'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$'
+		);
+		$this->import_examplevalues_array[$r]=array(
+			'u.lastname'=>"Doe", 'u.firstname'=>'John', 'u.login'=>'jdoe', 'u.employee'=>'0 or 1',
+			'u.fk_soc'=>'0 (internal user) or company name (external user)', 'u.datec'=>dol_print_date(dol_now(), '%Y-%m-%d'), 'u.address'=>"61 jump street",
+			'u.zip'=>"123456",'u.town'=>"Big town",'u.fk_country'=>'US, FR, DE...','u.office_phone'=>"0101010101",'u.office_fax'=>"0101010102",
+			'u.email'=>"test@mycompany.com",'u.salary'=>"10000",'u.note'=>"This is an example of note for record",'u.datec'=>"2015-01-01 or 2015-01-01 12:30:00",
+		    'u.statut'=>"0 (closed) or 1 (active)",
+		);
+		$this->import_updatekeys_array[$r]=array('u.lastname'=>'Lastname','u.firstname'=>'Firstname','u.login'=>'Login');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 
@@ -304,8 +409,13 @@ class modUser extends DolibarrModules
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
      */
+<<<<<<< HEAD
 	function init($options='')
 	{
+=======
+    public function init($options = '')
+    {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf;
 
 		// Permissions
@@ -313,6 +423,11 @@ class modUser extends DolibarrModules
 
 		$sql = array();
 
+<<<<<<< HEAD
 		return $this->_init($sql,$options);
 	}
+=======
+		return $this->_init($sql, $options);
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

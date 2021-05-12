@@ -2,7 +2,11 @@
 -- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
 -- Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
 -- Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+-- Copyright (C) 2009      Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by

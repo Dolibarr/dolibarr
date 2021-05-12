@@ -19,6 +19,10 @@
  * $action
  * $conf
  * $langs
+<<<<<<< HEAD
+=======
+ * $form
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  */
 
 // Protection to avoid direct call of template
@@ -39,7 +43,11 @@ foreach($object->fields as $key => $val)
 	// Discard if extrafield is a hidden field on form
 	if (abs($val['visible']) != 1) continue;
 
+<<<<<<< HEAD
 	if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! $val['enabled']) continue;	// We don't want this field
+=======
+	if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! verifCond($val['enabled'])) continue;	// We don't want this field
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	print '<tr id="field_'.$key.'">';
 	print '<td';
@@ -48,7 +56,12 @@ foreach($object->fields as $key => $val)
 	if ($val['type'] == 'text' || $val['type'] == 'html') print ' tdtop';
 	print '"';
 	print '>';
+<<<<<<< HEAD
 	print $langs->trans($val['label']);
+=======
+	if (! empty($val['help'])) print $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
+	else print $langs->trans($val['label']);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</td>';
 	print '<td>';
 	if (in_array($val['type'], array('int', 'integer'))) $value = GETPOST($key, 'int');
@@ -60,4 +73,8 @@ foreach($object->fields as $key => $val)
 }
 
 ?>
+<<<<<<< HEAD
 <!-- END PHP TEMPLATE commonfields_add.tpl.php -->
+=======
+<!-- END PHP TEMPLATE commonfields_add.tpl.php -->
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

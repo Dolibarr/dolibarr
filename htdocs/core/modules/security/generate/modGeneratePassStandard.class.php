@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/security/generate/modules_genpass
  */
 class modGeneratePassStandard extends ModeleGenPassword
 {
+<<<<<<< HEAD
 	var $id;
 	var $length;
 
@@ -38,6 +39,23 @@ class modGeneratePassStandard extends ModeleGenPassword
 	var $conf;
 	var $lang;
 	var $user;
+=======
+	/**
+	 * @var int ID
+	 */
+	public $id;
+
+	public $length;
+
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+	public $conf;
+	public $lang;
+	public $user;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	/**
@@ -48,7 +66,11 @@ class modGeneratePassStandard extends ModeleGenPassword
 	 *	@param		Translate	$langs		Handler de langue
 	 *	@param		User		$user		Handler du user connecte
 	 */
+<<<<<<< HEAD
 	function __construct($db, $conf, $langs, $user)
+=======
+	public function __construct($db, $conf, $langs, $user)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$this->id = "standard";
 		$this->length = 8;
@@ -64,7 +86,11 @@ class modGeneratePassStandard extends ModeleGenPassword
 	 *
  	 *      @return     string      Description of module
 	 */
+<<<<<<< HEAD
 	function getDescription()
+=======
+	public function getDescription()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 		return $langs->trans("PasswordGenerationStandard");
@@ -75,7 +101,11 @@ class modGeneratePassStandard extends ModeleGenPassword
 	 *
  	 *      @return     string      Example of password
 	 */
+<<<<<<< HEAD
 	function getExample()
+=======
+	public function getExample()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return $this->getNewGeneratedPassword();
 	}
@@ -85,7 +115,11 @@ class modGeneratePassStandard extends ModeleGenPassword
 	 *
  	 *      @return     string      Return a new generated password
 	 */
+<<<<<<< HEAD
 	function getNewGeneratedPassword()
+=======
+	public function getNewGeneratedPassword()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		// start with a blank password
 		$password = "";
@@ -109,13 +143,17 @@ class modGeneratePassStandard extends ModeleGenPassword
 				$password .= $char;
 				$i++;
 			}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		// done!
 		return $password;
 	}
 
+<<<<<<< HEAD
 	/**
 	 * 		Validate a password
 	 *
@@ -129,3 +167,17 @@ class modGeneratePassStandard extends ModeleGenPassword
 	}
 }
 
+=======
+    /**
+     *  Validate a password
+     *
+     *  @param      string  $password   Password to check
+     *  @return     int                 0 if KO, >0 if OK
+     */
+    public function validatePassword($password)
+    {
+        if (dol_strlen($password) < $this->length) return 0;
+        return 1;
+    }
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

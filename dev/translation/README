@@ -4,7 +4,11 @@ This directory contains tools to generate translation files for a new
 languages or to update translation files for existing languages.
 See Dolibarr Wiki page:
 http://wiki.dolibarr.org/index.php/Translator_documentation
+<<<<<<< HEAD
 For more informations on how to use them.
+=======
+For more information on how to use them.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 To install transifex client:
 sudo pip install --upgrade transifex-client

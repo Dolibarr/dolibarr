@@ -92,7 +92,11 @@ class Swift_Mime_SimpleMimeEntity implements Swift_Mime_CharsetObserver, Swift_M
      */
     public function __construct(Swift_Mime_SimpleHeaderSet $headers, Swift_Mime_ContentEncoder $encoder, Swift_KeyCache $cache, Swift_IdGenerator $idGenerator)
     {
+<<<<<<< HEAD
         $this->cacheKey = bin2hex(random_bytes(16)); // set 32 hex values
+=======
+        $this->cacheKey = md5(getmypid().'.'.time().'.'.uniqid(mt_rand(), true));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $this->cache = $cache;
         $this->headers = $headers;
         $this->idGenerator = $idGenerator;
@@ -293,7 +297,11 @@ class Swift_Mime_SimpleMimeEntity implements Swift_Mime_CharsetObserver, Swift_M
     public function setChildren(array $children, $compoundLevel = null)
     {
         // TODO: Try to refactor this logic
+<<<<<<< HEAD
         $compoundLevel = $compoundLevel ?? $this->getCompoundLevel($children);
+=======
+        $compoundLevel = isset($compoundLevel) ? $compoundLevel : $this->getCompoundLevel($children);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $immediateChildren = array();
         $grandchildren = array();
         $newContentType = $this->userContentType;
@@ -420,7 +428,11 @@ class Swift_Mime_SimpleMimeEntity implements Swift_Mime_CharsetObserver, Swift_M
     public function getBoundary()
     {
         if (!isset($this->boundary)) {
+<<<<<<< HEAD
             $this->boundary = '_=_swift_'.time().'_'.bin2hex(random_bytes(16)).'_=_';
+=======
+            $this->boundary = '_=_swift_'.time().'_'.md5(getmypid().'.'.time().'.'.uniqid(mt_rand(), true)).'_=_';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
 
         return $this->boundary;
@@ -813,7 +825,11 @@ class Swift_Mime_SimpleMimeEntity implements Swift_Mime_CharsetObserver, Swift_M
     {
         $this->headers = clone $this->headers;
         $this->encoder = clone $this->encoder;
+<<<<<<< HEAD
         $this->cacheKey = bin2hex(random_bytes(16)); // set 32 hex values
+=======
+        $this->cacheKey = md5(getmypid().'.'.time().'.'.uniqid(mt_rand(), true));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $children = array();
         foreach ($this->children as $pos => $child) {
             $children[$pos] = clone $child;

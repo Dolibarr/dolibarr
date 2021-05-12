@@ -8,10 +8,17 @@ ConfirmDeleteContact=Deseja eliminar este contacto e toda a sua informação?
 MenuNewThirdParty=Novo Terceiro
 MenuNewCustomer=Novo Cliente
 MenuNewProspect=Novo Potencial Cliente
+<<<<<<< HEAD
 MenuNewSupplier=Novo fornecedor
 MenuNewPrivateIndividual=Novo Particular
 NewCompany=Nova empresa (cliente potencial, cliente, fornecedor)
 NewThirdParty=Novo terceiro (prospeto, cliente, fornecedor)
+=======
+MenuNewSupplier=Novo Fornecedor
+MenuNewPrivateIndividual=Novo Particular
+NewCompany=Nova empresa (potencial cliente, cliente, fornecedor)
+NewThirdParty=Novo Terceiro (potencial cliente, cliente, fornecedor)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CreateDolibarrThirdPartySupplier=Criar um terceiro (fornecedor)
 CreateThirdPartyOnly=Criar terceiro
 CreateThirdPartyAndContact=Criar um terceiro e um dos seus contactos
@@ -20,6 +27,7 @@ IdThirdParty=ID Terceiro
 IdCompany=Id Empresa
 IdContact=Id Contacto
 Contacts=Contactos
+<<<<<<< HEAD
 ThirdPartyContacts=Contactos de Terceiros
 ThirdPartyContact=Contacto de Terceiro
 Company=Empresa
@@ -32,15 +40,36 @@ ThirdPartyName=Nome de terceiros
 ThirdPartyEmail=Email do terceiro
 ThirdParty=Terceiro
 ThirdParties=Terceiros
+=======
+ThirdPartyContacts=Third-party contacts
+ThirdPartyContact=Third-party contact/address
+Company=Empresa
+CompanyName=Razão social
+AliasNames=Pseudónimo (comercial, marca registada, ...)
+AliasNameShort=Nome do alias
+Companies=Empresas
+CountryIsInEEC=País faz parte da Comunidade Económica Europeia
+PriceFormatInCurrentLanguage=Price format in current language
+ThirdPartyName=Third-party name
+ThirdPartyEmail=Third-party email
+ThirdParty=Third-party
+ThirdParties=Third-parties
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ThirdPartyProspects=Clientes Potenciais
 ThirdPartyProspectsStats=Clientes Potenciais
 ThirdPartyCustomers=Clientes
 ThirdPartyCustomersStats=Clientes
 ThirdPartyCustomersWithIdProf12=Clientes com %s ó %s
 ThirdPartySuppliers=Fornecedores
+<<<<<<< HEAD
 ThirdPartyType=Tipo de Terceiro
 Individual=Particular
 ToCreateContactWithSameName=Isto irá criar automaticamente um contacto/morada com a mesma informação do terceiro. Na maioria dos casos, mesmo que o terceiro seja uma pessoa física, criar um terceiro apenas é suficiente.
+=======
+ThirdPartyType=Third-party type
+Individual=Particular
+ToCreateContactWithSameName=Will automatically create a contact/address with same information as the third party under the third party. In most cases, even if your third party is a physical person, creating a third party alone is enough.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ParentCompany=Empresa-mãe
 Subsidiaries=Subsidiárias
 ReportByMonth=Relatório por mês
@@ -50,7 +79,11 @@ CivilityCode=Código cortesía
 RegisteredOffice=Domicilio social
 Lastname=Apelidos
 Firstname=Primeiro Nome
+<<<<<<< HEAD
 PostOrFunction=Posto de trabalho
+=======
+PostOrFunction=Posição da tarefa
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 UserTitle=Título
 NatureOfThirdParty=Natureza do terceiro
 Address=Direcção
@@ -69,12 +102,17 @@ Chat=Chat
 PhonePro=Telef. Profissional
 PhonePerso=Telef. particular
 PhoneMobile=Telemovel
+<<<<<<< HEAD
 No_Email=Recusar e-mails em massa.
+=======
+No_Email=Refuse bulk emailings
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Fax=Fax
 Zip=Código postal
 Town=Localidade
 Web=Web
 Poste= Posição
+<<<<<<< HEAD
 DefaultLang=Língua por omissão
 VATIsUsed=Sujeito a IVA
 VATIsUsedWhenSelling=Isto define se este terceiro inclui um imposto sobre vendas, ou não, quando faz uma fatura para seus próprios clientes
@@ -82,6 +120,15 @@ VATIsNotUsed=Não sujeito a IVA
 CopyAddressFromSoc=Preencha a morada com a morada do terceiro
 ThirdpartyNotCustomerNotSupplierSoNoRef=O terceiro não é cliente nem fornecedor, não contém qualquer objeto de referência
 ThirdpartyIsNeitherCustomerNorClientSoCannotHaveDiscounts=O terceiro não é cliente nem fornecedor, descontos não estão disponíveis
+=======
+DefaultLang=Idioma predefinido
+VATIsUsed=Imposto sobre vendas usado
+VATIsUsedWhenSelling=Isso define se esse terceiro inclui um imposto de venda ou não quando faz uma fatura para seus próprios clientes
+VATIsNotUsed=Não sujeito a IVA
+CopyAddressFromSoc=Copy address from third-party details
+ThirdpartyNotCustomerNotSupplierSoNoRef=Terceiros nem cliente nem fornecedor, nenhum objeto de referência disponível
+ThirdpartyIsNeitherCustomerNorClientSoCannotHaveDiscounts=Third party neither customer nor vendor, discounts are not available
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PaymentBankAccount=Conta bancária de pagamentos
 OverAllProposals=Orçamentos
 OverAllOrders=Encomendas
@@ -96,10 +143,15 @@ LocalTax2IsUsedES= IRPF é usado
 LocalTax2IsNotUsedES= IRPF não é usada
 LocalTax1ES=RE
 LocalTax2ES=IRPF
+<<<<<<< HEAD
 TypeLocaltax1ES=Tipo RE
 TypeLocaltax2ES=Tipo IRPF
 WrongCustomerCode=Código cliente incorrecto
 WrongSupplierCode=Código do fornecedor inválido
+=======
+WrongCustomerCode=Código cliente incorrecto
+WrongSupplierCode=Código de fornecedor inválido
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CustomerCodeModel=Modelo de código cliente
 SupplierCodeModel=Modelo de código de fornecedor
 Gencod=Código de barras
@@ -258,8 +310,13 @@ ProfId1DZ=RC
 ProfId2DZ=Art.
 ProfId3DZ=NIF
 ProfId4DZ=NIS
+<<<<<<< HEAD
 VATIntra=Número de identificação para efeitos de IVA (VIES)
 VATIntraShort=Número de identificação para efeitos de IVA
+=======
+VATIntra=VAT ID
+VATIntraShort=VAT ID
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 VATIntraSyntaxIsValid=Sintaxe Válida
 VATReturn=Retorno do IVA
 ProspectCustomer=Cliente Potencial/Cliente
@@ -269,6 +326,7 @@ Customer=Cliente
 CustomerRelativeDiscount=Desconto Cliente Relativo
 SupplierRelativeDiscount=Desconto relativo do fornecedor
 CustomerRelativeDiscountShort=Desconto Relativo
+<<<<<<< HEAD
 CustomerAbsoluteDiscountShort=Desconto Fixo
 CompanyHasRelativeDiscount=Este cliente tem um desconto por defeito de <b>%s%%</b>
 CompanyHasNoRelativeDiscount=Este cliente não tem descontos relativos por defeito
@@ -288,6 +346,27 @@ SupplierAbsoluteDiscountAllUsers=Descontos absolutos do fornecedor (introduzidos
 SupplierAbsoluteDiscountMy=Descontos absolutos de fornecedores (introduzidos por si)
 DiscountNone=Nenhuma
 Supplier=Fornecedor
+=======
+CustomerAbsoluteDiscountShort=Desconto fixo
+CompanyHasRelativeDiscount=Este cliente tem um desconto por defeito de <b>%s%%</b>
+CompanyHasNoRelativeDiscount=Este cliente não tem descontos relativos por defeito
+HasRelativeDiscountFromSupplier=You have a default discount of <b>%s%%</b> from this vendor
+HasNoRelativeDiscountFromSupplier=You have no default relative discount from this vendor
+CompanyHasAbsoluteDiscount=Este cliente tem descontos disponíveis (notas de créditos ou adiantamentos) para <b> %s </ b> %s
+CompanyHasDownPaymentOrCommercialDiscount=Este cliente tem descontos disponíveis (comerciais, adiantamentos) para <b> %s </ b> %s
+CompanyHasCreditNote=Este cliente ainda tem notas de crédito para <b>%s</b> %s
+HasNoAbsoluteDiscountFromSupplier=You have no discount credit available from this vendor
+HasAbsoluteDiscountFromSupplier=You have discounts available (credits notes or down payments) for <b>%s</b> %s from this vendor
+HasDownPaymentOrCommercialDiscountFromSupplier=You have discounts available (commercial, down payments) for <b>%s</b> %s from this vendor
+HasCreditNoteFromSupplier=You have credit notes for <b>%s</b> %s from this vendor
+CompanyHasNoAbsoluteDiscount=Este cliente não tem mas descontos fixos disponiveis
+CustomerAbsoluteDiscountAllUsers=Descontos de cliente fixos (concedidos por todos os utilizadores)
+CustomerAbsoluteDiscountMy=Descontos de cliente fixos (concedidos por si)
+SupplierAbsoluteDiscountAllUsers=Descontos de fornecedor fixos (inseridos por todos os utilizadores)
+SupplierAbsoluteDiscountMy=Descontos de fornecedor fixos (inseridos por si)
+DiscountNone=Nenhuma
+Vendor=Fornecedor
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddContact=Criar contacto
 AddContactAddress=Novo contacto/morada
 EditContact=Editar contato / endereço
@@ -303,6 +382,7 @@ AddThirdParty=Criar terceiro
 DeleteACompany=Eliminar uma Empresa
 PersonalInformations=Informação Pessoal
 AccountancyCode=Conta contabilistica
+<<<<<<< HEAD
 CustomerCode=Código Cliente
 SupplierCode=Código do fornecedor
 CustomerCodeShort=Código Cliente
@@ -317,6 +397,22 @@ ProspectToContact=Cliente Potencial a Contactar
 CompanyDeleted=A Empresa "%s" foi Eliminada
 ListOfContacts=Lista de Contactos
 ListOfContactsAddresses=Lista de contactos/endereços
+=======
+CustomerCode=Código do Consumidor
+SupplierCode=Código de Fornecedor
+CustomerCodeShort=Código do Consumidor
+SupplierCodeShort=Código de Fornecedor
+CustomerCodeDesc=Código do cliente, exclusivo para todos os clientes
+SupplierCodeDesc=Código de Fornecedor, exclusivo para todos os fornecedores
+RequiredIfCustomer=Requerida se o Terceiro for Cliente ou Cliente Potencial
+RequiredIfSupplier=Obrigatório se os terceiros forem fornecedores
+ValidityControledByModule=Validade controlada pelo módulo
+ThisIsModuleRules=Regras para este módulo
+ProspectToContact=Cliente Potencial a Contactar
+CompanyDeleted=A Empresa "%s" foi Eliminada
+ListOfContacts=Lista de Contactos
+ListOfContactsAddresses=Lista de Contactos
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ListOfThirdParties=Lista de Terceiros
 ShowCompany=Mostrar terceiros
 ShowContact=Mostrar Contacto
@@ -332,12 +428,18 @@ NoContactForAnyOrderOrShipments=Este contacto não é um contacto para qualquer 
 NoContactForAnyProposal=Este contacto não é um contacto para qualquer orçamento
 NoContactForAnyContract=Este contacto não é contacto de nenhum contrato
 NoContactForAnyInvoice=Este contacto não é contacto de nenhuma fatura
+<<<<<<< HEAD
 NewContact=Novo Contacto
 NewContactAddress=Novo Contato/Morada
+=======
+NewContact=Novo contacto
+NewContactAddress=Novo Contacto/Morada
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MyContacts=Os Meus Contactos
 Capital=Capital
 CapitalOf=Capital Social de %s
 EditCompany=Modificar Empresa
+<<<<<<< HEAD
 ThisUserIsNot=Este utilizador não é um cliente potencial, cliente ou fornecedor
 VATIntraCheck=Verificar
 VATIntraCheckDesc=o link <b>%s</b> permite consultar à serviço europeu de control de números de IVA intracomunitario. Requer acesso á internet para que o serviço funcione
@@ -348,6 +450,18 @@ ErrorVATCheckMS_UNAVAILABLE=Verificação Impossivel. O serviço de verificaçã
 NorProspectNorCustomer=Nem Cliente, Nem Cliente Potencial
 JuridicalStatus=Forma jurídica
 Staff=Empregados
+=======
+ThisUserIsNot=Este utilizador não é um potencial cliente, cliente nem fornecedor
+VATIntraCheck=Verificar
+VATIntraCheckDesc=The VAT ID must include the country prefix. The link <b>%s</b> uses the European VAT checker service (VIES) which requires internet access from the Dolibarr server.
+VATIntraCheckURL=http://ec.europa.eu/taxation_customs/vies/vieshome.do
+VATIntraCheckableOnEUSite=Check the intra-Community VAT ID on the European Commission website
+VATIntraManualCheck=Você também pode verificar manualmente no site da Comissão Europeia <a href="%s" target="_blank"> %s </a>
+ErrorVATCheckMS_UNAVAILABLE=Verificação Impossivel. O serviço de verificação não é prestado pelo país membro (%s).
+NorProspectNorCustomer=Not prospect, nor customer
+JuridicalStatus=Tipo de Entidade Legal
+Staff=Funcionários
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProspectLevelShort=Cli. Potenc.
 ProspectLevel=Cliente Potencial
 ContactPrivate=Privado
@@ -368,7 +482,11 @@ TE_MEDIUM=Media
 TE_ADMIN=Administração Pública
 TE_SMALL=Pequena
 TE_RETAIL=Retalhista
+<<<<<<< HEAD
 TE_WHOLE=Grossista
+=======
+TE_WHOLE=Wholesaler
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TE_PRIVATE=Indivíduo particular
 TE_OTHER=Outro
 StatusProspect-1=Não contactar
@@ -387,6 +505,7 @@ ExportCardToFormat=Exportar ficha para o formato
 ContactNotLinkedToCompany=Contacto não vinculado a um Terceiro
 DolibarrLogin=Dolibarr - Iniciar Sessão
 NoDolibarrAccess=Sem Acesso
+<<<<<<< HEAD
 ExportDataset_company_1=Terceiros (empresas/fundações/pessoas físicas) e propriedades
 ExportDataset_company_2=Contactos de Terceiro e Atributos
 ImportDataset_company_1=Terceiros (empresas/fundações/pessoas físicas) e propriedades
@@ -394,6 +513,16 @@ ImportDataset_company_2=Contactos/Endereços (de terceiros ou não) e atributos
 ImportDataset_company_3=Contas bancárias de terceiros
 ImportDataset_company_4=Terceiros/Representantes de vendas (atribuir utilizadores representantes de vendas a terceiros)
 PriceLevel=Nível de preços
+=======
+ExportDataset_company_1=Third-parties (companies/foundations/physical people) and their properties
+ExportDataset_company_2=Contatos e suas propriedades
+ImportDataset_company_1=Third-parties and their properties
+ImportDataset_company_2=Third-parties additional contacts/addresses and attributes
+ImportDataset_company_3=Third-parties Bank accounts
+ImportDataset_company_4=Third-parties Sales representatives (assign sales representatives/users to companies)
+PriceLevel=Price Level
+PriceLevelLabels=Price Level Labels
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DeliveryAddress=Direcção de Envío
 AddAddress=Adicionar Direcção
 SupplierCategory=Categoria do fornecedor
@@ -402,6 +531,7 @@ DeleteFile=Eliminar ficheiro
 ConfirmDeleteFile=Tem a certeza que quer eliminar este ficheiro?
 AllocateCommercial=Atribuído a representante de vendas
 Organization=Organismo
+<<<<<<< HEAD
 FiscalYearInformation=Informação do Ano Fiscal
 FiscalMonthStart=Mês de Inicio do Exercício
 YouMustAssignUserMailFirst=Você deve adicionar um e-mail a este utilizador de forma a permitir que este receba notificações por e-mail.
@@ -412,6 +542,18 @@ ListCustomersShort=Lista de clientes
 ThirdPartiesArea=Área de Terceiros e Contactos
 LastModifiedThirdParties=Últimos %s terceiros modificados
 UniqueThirdParties=Total de originais terceiros
+=======
+FiscalYearInformation=Ano fiscal
+FiscalMonthStart=Mês de Inicio do Exercício
+YouMustAssignUserMailFirst=Você deve criar um email para esse usuário antes de poder adicionar uma notificação por email.
+YouMustCreateContactFirst=Para adicionar a funcionalidade de notificações por e-mail, você deve definir contactos com e-mails válidos para o terceiro.
+ListSuppliersShort=Lista de Fornecedores
+ListProspectsShort=Lista de Perspectivas
+ListCustomersShort=Lista de Clientes
+ThirdPartiesArea=Terceiros / Contatos
+LastModifiedThirdParties=Última %s modificado Terceiros
+UniqueThirdParties=Total de Terceiros
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 InActivity=Aberto
 ActivityCeased=Fechado
 ThirdPartyIsClosed=O terceiro encontra-se fechado
@@ -420,15 +562,34 @@ CurrentOutstandingBill=Risco alcançado
 OutstandingBill=Montante máximo para faturas pendentes
 OutstandingBillReached=Montante máximo para faturas pendente foi alcançado
 OrderMinAmount=Quantidade mínima para encomenda
+<<<<<<< HEAD
 MonkeyNumRefModelDesc=Devolve um número com formato %syymm-nnnn para os códigos clientes e %syymm-nnnn para os códigos de fornecedores, onde yy representa o ano, mm o mês e nnnn um contador sequencial que não quebra e não regressa a 0.
+=======
+MonkeyNumRefModelDesc=Retorna um número com o formato %syymm-nnnn para o código do cliente e %syymm-nnnn para o código do fornecedor, onde yy é year, mm é month e nnnn é uma sequência sem quebra e sem retorno para 0.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LeopardNumRefModelDesc=Código de cliente/fornecedor livre sem verificação. pode ser modificado em qualquer momento.
 ManagingDirectors=Nome Diretor(es) (DE, diretor, presidente ...)
 MergeOriginThirdparty=Terceiro duplicado (terceiro que deseja eliminar)
 MergeThirdparties=Gerir terceiros
+<<<<<<< HEAD
 ConfirmMergeThirdparties=Tem a certeza que pretende fundir este terceiro com o atual? Todos os objetos ligados a este serão movidos para o terceiro atual e depois o anterior será eliminado.
+=======
+ConfirmMergeThirdparties=Tem certeza de que deseja mesclar esse terceiro no atual? Todos os objetos vinculados (faturas, pedidos, ...) serão movidos para o terceiro atual e, em seguida, o terceiro será excluído.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ThirdpartiesMergeSuccess=Os terceiros foram fundidos
 SaleRepresentativeLogin=Nome de utilizador do representante de vendas
 SaleRepresentativeFirstname=Primeiro nome do representante de vendas
 SaleRepresentativeLastname=Último nome do representante de vendas
 ErrorThirdpartiesMerge=Houve um erro ao eliminar os terceiros. Por favor, verifique o registo. As alterações foram revertidas.
+<<<<<<< HEAD
 NewCustomerSupplierCodeProposed=O código do cliente ou fornecedor sugerido encontra-se duplicado
+=======
+NewCustomerSupplierCodeProposed=Customer or Vendor code already used, a new code is suggested
+#Imports
+PaymentTypeCustomer=Payment Type - Customer
+PaymentTermsCustomer=Payment Terms - Customer
+PaymentTypeSupplier=Payment Type - Vendor
+PaymentTermsSupplier=Payment Term - Vendor
+MulticurrencyUsed=Use Multicurrency
+MulticurrencyCurrency=Moeda
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

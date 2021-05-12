@@ -52,6 +52,10 @@ ActionAC_TEL=Puhelinsoitto
 ActionAC_FAX=Lähetä faksi
 ActionAC_PROP=Lähetä tarjous sähköpostilla
 ActionAC_EMAIL=Lähetä sähköpostiviesti
+<<<<<<< HEAD
+=======
+ActionAC_EMAIL_IN=Reception of Email
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ActionAC_RDV=Kokoukset
 ActionAC_INT=Väliintulo paikanpäällä
 ActionAC_FAC=Lähetä laskutustietosi
@@ -72,8 +76,15 @@ StatusProsp=Mahdollisuuden tila
 DraftPropals=Tarjousluonnos
 NoLimit=Rajoittamaton
 ToOfferALinkForOnlineSignature=Linkki sähköiseen allekirjoitukseen
+<<<<<<< HEAD
 WelcomeOnOnlineSignaturePage=Tervetuloa tarjouspyyntö hyväksymis sivulle %s
 ThisScreenAllowsYouToSignDocFrom=Tämä näyttö sallii sinun hyväksyvän ja allekirjoittavan, tai hylkäävän, lainauksen/tarjouspyynnön
 ThisIsInformationOnDocumentToSign=Tämä on informaatiota dokumentistä hyväksymiseksi tai hylkäämiseksi
 SignatureProposalRef=Tarjouksen/ehdotuksen %s allekirjoitus
+=======
+WelcomeOnOnlineSignaturePage=Welcome to the page to accept commercial proposals from %s
+ThisScreenAllowsYouToSignDocFrom=Tämä näyttö sallii sinun hyväksyvän ja allekirjoittavan, tai hylkäävän, lainauksen/tarjouspyynnön
+ThisIsInformationOnDocumentToSign=Tämä on informaatiota dokumentistä hyväksymiseksi tai hylkäämiseksi
+SignatureProposalRef=Signature of quote/commercial proposal %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 FeatureOnlineSignDisabled=Sähköinen allekirjoitus on poissa käytöstä tai dokumentti on luotu ennen sen käyttöönottoa

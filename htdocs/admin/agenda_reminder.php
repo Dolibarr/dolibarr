@@ -32,11 +32,19 @@ if (!$user->admin)
 // Load translation files required by the page
 $langs->loadLangs(array("admin","other","agenda"));
 
+<<<<<<< HEAD
 $action = GETPOST('action','alpha');
 $value = GETPOST('value','alpha');
 $param = GETPOST('param','alpha');
 $cancel = GETPOST('cancel','alpha');
 $scandir = GETPOST('scandir','alpha');
+=======
+$action = GETPOST('action', 'alpha');
+$value = GETPOST('value', 'alpha');
+$param = GETPOST('param', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
+$scandir = GETPOST('scandir', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $type = 'action';
 
 
@@ -46,7 +54,11 @@ $type = 'action';
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
+<<<<<<< HEAD
 if (preg_match('/set_([a-z0-9_\-]+)/i',$action,$reg))
+=======
+if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$code=$reg[1];
 	$value=(GETPOST($code, 'alpha') ? GETPOST($code, 'alpha') : 1);
@@ -61,7 +73,11 @@ if (preg_match('/set_([a-z0-9_\-]+)/i',$action,$reg))
 	}
 }
 
+<<<<<<< HEAD
 if (preg_match('/del_([a-z0-9_\-]+)/i',$action,$reg))
+=======
+if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$code=$reg[1];
 	if (dolibarr_del_const($db, $code, $conf->entity) > 0)
@@ -81,9 +97,15 @@ if ($action == 'set')
     dolibarr_set_const($db, 'AGENDA_DEFAULT_FILTER_STATUS', GETPOST('AGENDA_DEFAULT_FILTER_STATUS'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, 'AGENDA_DEFAULT_VIEW', GETPOST('AGENDA_DEFAULT_VIEW'), 'chaine', 0, '', $conf->entity);
 }
+<<<<<<< HEAD
 else if ($action == 'specimen')  // For orders
 {
     $modele=GETPOST('module','alpha');
+=======
+elseif ($action == 'specimen')  // For orders
+{
+    $modele=GETPOST('module', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     $commande = new CommandeFournisseur($db);
     $commande->initAsSpecimen();
@@ -91,10 +113,17 @@ else if ($action == 'specimen')  // For orders
 
     // Search template files
     $file=''; $classname=''; $filefound=0;
+<<<<<<< HEAD
     $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
     foreach($dirmodels as $reldir)
     {
     	$file=dol_buildpath($reldir."core/modules/action/doc/pdf_".$modele.".modules.php",0);
+=======
+    $dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
+    foreach($dirmodels as $reldir)
+    {
+    	$file=dol_buildpath($reldir."core/modules/action/doc/pdf_".$modele.".modules.php", 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	if (file_exists($file))
     	{
     		$filefound=1;
@@ -107,9 +136,15 @@ else if ($action == 'specimen')  // For orders
     {
     	require_once $file;
 
+<<<<<<< HEAD
     	$module = new $classname($db,$commande);
 
     	if ($module->write_file($commande,$langs) > 0)
+=======
+    	$module = new $classname($db, $commande);
+
+    	if ($module->write_file($commande, $langs) > 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	{
     		header("Location: ".DOL_URL_ROOT."/document.php?modulepart=action&file=SPECIMEN.pdf");
     		return;
@@ -128,25 +163,43 @@ else if ($action == 'specimen')  // For orders
 }
 
 // Activate a model
+<<<<<<< HEAD
 else if ($action == 'setmodel')
+=======
+elseif ($action == 'setmodel')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	//print "sssd".$value;
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 }
 
+<<<<<<< HEAD
 else if ($action == 'del')
+=======
+elseif ($action == 'del')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
 	{
+<<<<<<< HEAD
         if ($conf->global->ACTION_EVENT_ADDON_PDF == "$value") dolibarr_del_const($db, 'ACTION_EVENT_ADDON_PDF',$conf->entity);
+=======
+        if ($conf->global->ACTION_EVENT_ADDON_PDF == "$value") dolibarr_del_const($db, 'ACTION_EVENT_ADDON_PDF', $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 }
 
 // Set default model
+<<<<<<< HEAD
 else if ($action == 'setdoc')
 {
 	if (dolibarr_set_const($db, "ACTION_EVENT_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
+=======
+elseif ($action == 'setdoc')
+{
+	if (dolibarr_set_const($db, "ACTION_EVENT_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		// La constante qui a ete lue en avant du nouveau set
 		// on passe donc par une variable pour avoir un affichage coherent
@@ -167,11 +220,19 @@ else if ($action == 'setdoc')
  */
 
 $formactions=new FormActions($db);
+<<<<<<< HEAD
 $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 llxHeader();
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("AgendaSetup"),$linkback,'title_setup');
+=======
+$dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
+llxHeader();
+
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+print load_fiche_titre($langs->trans("AgendaSetup"), $linkback, 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 
@@ -185,12 +246,18 @@ print '<input type="hidden" name="action" value="set">';
 print '<table class="noborder allwidth">'."\n";
 print '<tr class="liste_titre">'."\n";
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
+<<<<<<< HEAD
 print '<td align="center">&nbsp;</td>'."\n";
 print '<td align="right">'.$langs->trans("Value").'</td>'."\n";
+=======
+print '<td class="center">&nbsp;</td>'."\n";
+print '<td class="right">'.$langs->trans("Value").'</td>'."\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</tr>'."\n";
 
 
 // AGENDA REMINDER EMAIL
+<<<<<<< HEAD
 if ($conf->global->MAIN_FEATURES_LEVEL > 0)
 {
 	print '<tr class="oddeven">'."\n";
@@ -203,11 +270,26 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0)
 		print '</td></tr>'."\n";
 	} else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_EMAIL">'.img_picto($langs->trans('Enabled'),'switch_on').'</a>';
+=======
+if ($conf->global->MAIN_FEATURES_LEVEL == 2)
+{
+	print '<tr class="oddeven">'."\n";
+	print '<td>'.$langs->trans('AGENDA_REMINDER_EMAIL', $langs->transnoentities("Module2300Name")).'</td>'."\n";
+	print '<td class="center">&nbsp;</td>'."\n";
+	print '<td class="right">'."\n";
+
+	if (empty($conf->global->AGENDA_REMINDER_EMAIL)) {
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_EMAIL">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
+		print '</td></tr>'."\n";
+	} else {
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_EMAIL">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</td></tr>'."\n";
 	}
 }
 
 // AGENDA REMINDER BROWSER
+<<<<<<< HEAD
 if ($conf->global->MAIN_FEATURES_LEVEL > 0)
 {
     print '<tr class="oddeven">'."\n";
@@ -220,10 +302,25 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0)
         print '</td></tr>'."\n";
     } else {
         print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_BROWSER">'.img_picto($langs->trans('Enabled'),'switch_on').'</a>';
+=======
+if ($conf->global->MAIN_FEATURES_LEVEL == 2)
+{
+    print '<tr class="oddeven">'."\n";
+    print '<td>'.$langs->trans('AGENDA_REMINDER_BROWSER').'</td>'."\n";
+    print '<td class="center">&nbsp;</td>'."\n";
+    print '<td class="right">'."\n";
+
+    if (empty($conf->global->AGENDA_REMINDER_BROWSER)) {
+        print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_BROWSER">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
+        print '</td></tr>'."\n";
+    } else {
+        print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_BROWSER">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         print '</td></tr>'."\n";
 
         print '<tr class="oddeven">'."\n";
         print '<td>'.$langs->trans('AGENDA_REMINDER_BROWSER_SOUND').'</td>'."\n";
+<<<<<<< HEAD
         print '<td align="center">&nbsp;</td>'."\n";
         print '<td align="right">'."\n";
 
@@ -231,6 +328,15 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0)
             print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_BROWSER_SOUND">'.img_picto($langs->trans('Disabled'),'switch_off').'</a>';
         } else {
             print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_BROWSER_SOUND">'.img_picto($langs->trans('Enabled'),'switch_on').'</a>';
+=======
+        print '<td class="center">&nbsp;</td>'."\n";
+        print '<td class="right">'."\n";
+
+        if (empty($conf->global->AGENDA_REMINDER_BROWSER_SOUND)) {
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_BROWSER_SOUND">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
+        } else {
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_BROWSER_SOUND">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
 
         print '</td></tr>'."\n";
@@ -247,6 +353,11 @@ print '</form>';
 
 print "<br>";
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

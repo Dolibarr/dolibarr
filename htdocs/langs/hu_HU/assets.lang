@@ -1,0 +1,65 @@
+# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+Assets = Eszközök
+NewAsset = Új eszköz
+AccountancyCodeAsset = Számviteli kód (eszköz)
+AccountancyCodeDepreciationAsset = Számviteli kód (értékcsökkenési eszköz számla)
+AccountancyCodeDepreciationExpense = Számviteli kód (értékcsökkenési leírás)
+NewAssetType=Új eszköztípus
+AssetsTypeSetup=Eszköztípus beállítás
+AssetTypeModified=Eszköz típus módosítva
+AssetType=Eszköz típusa
+AssetsLines=Eszközök
+DeleteType=Törlés
+DeleteAnAssetType=Eszköztípus törlése
+ConfirmDeleteAssetType=Biztosan törölni szeretné ezt az eszköztípust?
+ShowTypeCard=Mutasd a '%s' típust
+
+# Module label 'ModuleAssetsName'
+ModuleAssetsName = Eszközök
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc = Eszközök leírása
+
+#
+# Admin page
+#
+AssetsSetup = Eszközök beállítása
+Settings = Beállítások
+AssetsSetupPage = Eszközök beállító oldala
+ExtraFieldsAssetsType = Kiegészítő attribútumok (eszköztípus)
+AssetsType=Eszköz típusa
+AssetsTypeId=Eszköztípus azonosító
+AssetsTypeLabel=Eszköztípus címke
+AssetsTypes=Eszköztípusok
+
+#
+# Menu
+#
+MenuAssets = Eszközök
+MenuNewAsset = Új eszköz
+MenuTypeAssets = Írja be az eszközöket
+MenuListAssets = Lista
+MenuNewTypeAssets = Új
+MenuListTypeAssets = Lista
+
+#
+# Module
+#
+NewAssetType=Új eszköztípus
+NewAsset=Új eszköz

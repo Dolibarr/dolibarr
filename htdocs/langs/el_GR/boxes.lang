@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - boxes
+<<<<<<< HEAD
 BoxLoginInformation=Login information
 BoxLastRssInfos=Πληροφορίες Rss
 BoxLastProducts=Latest %s products/services
@@ -8,11 +9,26 @@ BoxLastSupplierBills=Latest supplier invoices
 BoxLastCustomerBills=Latest customer invoices
 BoxOldestUnpaidCustomerBills=Oldest unpaid customer invoices
 BoxOldestUnpaidSupplierBills=Oldest unpaid supplier invoices
+=======
+BoxLoginInformation=Login Information
+BoxLastRssInfos=RSS Information
+BoxLastProducts=Latest %s Products/Services
+BoxProductsAlertStock=Stock alerts for products
+BoxLastProductsInContract=Latest %s contracted products/services
+BoxLastSupplierBills=Latest Vendor invoices
+BoxLastCustomerBills=Latest Customer invoices
+BoxOldestUnpaidCustomerBills=Oldest unpaid customer invoices
+BoxOldestUnpaidSupplierBills=Oldest unpaid vendor invoices
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BoxLastProposals=Latest commercial proposals
 BoxLastProspects=Latest modified prospects
 BoxLastCustomers=Πρόσφατα τροποποιημένοι πελάτες
 BoxLastSuppliers=Πρόσφατα τροποποιημένοι προμηθευτές
+<<<<<<< HEAD
 BoxLastCustomerOrders=Latest customer orders
+=======
+BoxLastCustomerOrders=Latest sales orders
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BoxLastActions=Τελευταίες ενέργειες
 BoxLastContracts=Τελευταία συμβόλαια
 BoxLastContacts=Τελευταίες επαφές/διευθύνσεις
@@ -20,6 +36,7 @@ BoxLastMembers=Τελευταία μέλη
 BoxFicheInter=Τελευταίες παρεμβάσεις
 BoxCurrentAccounts=Άνοιξε το ισοζύγιο των λογαριασμών
 BoxTitleLastRssInfos=Τα %s πιο πρόσφατα νέα από %s
+<<<<<<< HEAD
 BoxTitleLastProducts=%s τελευταία τροποποιημένα Προϊόντα/Υπηρεσίες
 BoxTitleProductsAlertStock=Προειδοποίηση προϊόντων σε απόθεμα
 BoxTitleLastSuppliers=Latest %s recorded suppliers
@@ -36,6 +53,24 @@ BoxTitleOldestUnpaidSupplierBills=Παλαιότερα %s ανεξόφλητα �
 BoxTitleCurrentAccounts=Άνοιξε το ισοζύγια των λογαριασμών
 BoxTitleLastModifiedContacts=Latest %s modified contacts/addresses
 BoxMyLastBookmarks=My latest %s bookmarks
+=======
+BoxTitleLastProducts=Products/Services: last %s modified
+BoxTitleProductsAlertStock=Products: stock alert
+BoxTitleLastSuppliers=Latest %s recorded suppliers
+BoxTitleLastModifiedSuppliers=Vendors: last %s modified
+BoxTitleLastModifiedCustomers=Customers: last %s modified
+BoxTitleLastCustomersOrProspects=Τελευταίοι %s πελάτες ή προοπτικές
+BoxTitleLastCustomerBills=Latest %s Customer invoices
+BoxTitleLastSupplierBills=Latest %s Vendor invoices
+BoxTitleLastModifiedProspects=Prospects: last %s modified
+BoxTitleLastModifiedMembers=Τελευταία %s Μέλη
+BoxTitleLastFicheInter=Latest %s modified interventions
+BoxTitleOldestUnpaidCustomerBills=Customer Invoices: oldest %s unpaid
+BoxTitleOldestUnpaidSupplierBills=Vendor Invoices: oldest %s unpaid
+BoxTitleCurrentAccounts=Open Accounts: balances
+BoxTitleLastModifiedContacts=Contacts/Addresses: last %s modified
+BoxMyLastBookmarks=Bookmarks: latest %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BoxOldestExpiredServices=Παλαιότερες ενεργές υπηρεσίες που έχουν λήξει
 BoxLastExpiredServices=Latest %s oldest contacts with active expired services
 BoxTitleLastActionsToDo=Τελευταίες %s ενέργειες προς πραγμαοποίηση
@@ -45,24 +80,38 @@ BoxTitleLastModifiedExpenses=Latest %s modified expense reports
 BoxGlobalActivity=Η γενική δραστηριότητα για (τιμολόγια, προσφορές, παραγγελίες)
 BoxGoodCustomers=Καλοί πελάτες
 BoxTitleGoodCustomers=%s καλών πελατών
+<<<<<<< HEAD
 FailedToRefreshDataInfoNotUpToDate=Failed to refresh RSS flux. Latest successfull refresh date: %s
+=======
+FailedToRefreshDataInfoNotUpToDate=Failed to refresh RSS flux. Latest successful refresh date: %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LastRefreshDate=Ημερομηνία τελευταίας ανανέωσης
 NoRecordedBookmarks=Δεν υπάρχουν σελιδοδείκτες που ορίζονται. Κάντε κλικ <a href="%s">εδώ</a> για να προσθέσετε σελιδοδείκτες.
 ClickToAdd=Πατήστε εδώ για προσθήκη.
 NoRecordedCustomers=Δεν υπάρχουν καταχωρημένοι πελάτες
 NoRecordedContacts=Δεν υπάρχουν καταγεγραμμένες επαφές
 NoActionsToDo=Δεν υπάρχουν ενέργειες που πρέπει να γίνουν
+<<<<<<< HEAD
 NoRecordedOrders=No recorded customer orders
 NoRecordedProposals=Δεν υπάρχουν καταχωρημένες προσφορές
 NoRecordedInvoices=No recorded customer invoices
 NoUnpaidCustomerBills=No unpaid customer invoices
 NoUnpaidSupplierBills=No unpaid supplier invoices
 NoModifiedSupplierBills=No recorded supplier invoices
+=======
+NoRecordedOrders=No recorded sales orders
+NoRecordedProposals=Δεν υπάρχουν καταχωρημένες προσφορές
+NoRecordedInvoices=No recorded customer invoices
+NoUnpaidCustomerBills=No unpaid customer invoices
+NoUnpaidSupplierBills=No unpaid vendor invoices
+NoModifiedSupplierBills=No recorded vendor invoices
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NoRecordedProducts=Δεν υπάρχουν καταχωρημένα προϊόντα/υπηρεσίες
 NoRecordedProspects=Δεν υπάρχουν προσφορές
 NoContractedProducts=Δεν υπάρχουν καταχωρημένα συμβόλαια με προϊόντα/υπηρεσίες
 NoRecordedContracts=Δεν υπάρχουν καταχωρημένα συμβόλαια
 NoRecordedInterventions=Δεν καταγράφονται παρεμβάσεις
+<<<<<<< HEAD
 BoxLatestSupplierOrders=Τελευταίες παραγγελίες προμηθευτών
 NoSupplierOrder=Δεν υπάρχουν καταχωρημένες παραγγελίες προμηθευτών
 BoxCustomersInvoicesPerMonth=Τιμολόγια πελατών ανά μήνα
@@ -77,6 +126,22 @@ BoxTitleLastModifiedSupplierBills=Latest %s modified supplier bills
 BoxTitleLatestModifiedSupplierOrders=Latest %s modified supplier orders
 BoxTitleLastModifiedCustomerBills=Latest %s modified customer bills
 BoxTitleLastModifiedCustomerOrders=Latest %s modified customer orders
+=======
+BoxLatestSupplierOrders=Latest purchase orders
+NoSupplierOrder=No recorded purchase order
+BoxCustomersInvoicesPerMonth=Customer Invoices per month
+BoxSuppliersInvoicesPerMonth=Vendor Invoices per month
+BoxCustomersOrdersPerMonth=Sales Orders per month
+BoxSuppliersOrdersPerMonth=Vendor Orders per month
+BoxProposalsPerMonth=Προσφορές ανά μήνα
+NoTooLowStockProducts=No products are under the low stock limit
+BoxProductDistribution=Products/Services Distribution
+ForObject=On %s
+BoxTitleLastModifiedSupplierBills=Vendor Invoices: last %s modified
+BoxTitleLatestModifiedSupplierOrders=Vendor Orders: last %s modified
+BoxTitleLastModifiedCustomerBills=Customer Invoices: last %s modified
+BoxTitleLastModifiedCustomerOrders=Sales Orders: last %s modified
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BoxTitleLastModifiedPropals=Latest %s modified proposals
 ForCustomersInvoices=Τιμολόγια Πελάτη
 ForCustomersOrders=Παραγγελίες πελατών
@@ -84,3 +149,7 @@ ForProposals=Προσφορές
 LastXMonthRolling=The latest %s month rolling
 ChooseBoxToAdd=Add widget to your dashboard
 BoxAdded=Widget was added in your dashboard
+<<<<<<< HEAD
+=======
+BoxTitleUserBirthdaysOfMonth=Birthdays of this month
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

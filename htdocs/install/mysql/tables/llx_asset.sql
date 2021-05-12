@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 -- Copyright (C) 2018      Alexandre Spangaro   <aspangaro@zendsi.com>
+=======
+-- Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -26,7 +30,11 @@ CREATE TABLE llx_asset(
 	note_public text,
 	note_private text,
 	date_creation datetime NOT NULL,
+<<<<<<< HEAD
 	tms timestamp NOT NULL,
+=======
+	tms timestamp,
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	fk_user_creat integer NOT NULL,
 	fk_user_modif integer,
 	import_key varchar(14),

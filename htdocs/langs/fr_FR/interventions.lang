@@ -4,6 +4,10 @@ Interventions=Interventions
 InterventionCard=Fiche intervention
 NewIntervention=Nouvelle intervention
 AddIntervention=Créer intervention
+<<<<<<< HEAD
+=======
+ChangeIntoRepeatableIntervention=Convertir en intervention récurrente
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ListOfInterventions=Liste des interventions
 ActionsOnFicheInter=Événements sur l'intervention
 LastInterventions=Les %s dernières interventions
@@ -14,7 +18,10 @@ DeleteIntervention=Supprimer intervention
 ValidateIntervention=Valider intervention
 ModifyIntervention=Modifier intervention
 DeleteInterventionLine=Supprimer ligne d'intervention
+<<<<<<< HEAD
 CloneIntervention=Cloner intervention
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmDeleteIntervention=Êtes-vous sûr de vouloir effacer cette intervention ?
 ConfirmValidateIntervention=Êtes-vous sûr de vouloir valider cette intervention sous la référence <b>%s</b> ?
 ConfirmModifyIntervention=Êtes-vous sûr de vouloir modifier cette intervention ?

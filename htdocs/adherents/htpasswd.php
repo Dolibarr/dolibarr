@@ -43,13 +43,22 @@ if (empty($sortorder)) {  $sortorder="ASC"; }
 if (empty($sortfield)) {  $sortfield="d.login"; }
 if (! isset($statut))
 {
+<<<<<<< HEAD
   $statut = 1 ;
+=======
+	$statut = 1 ;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 if (! isset($cotis))
 {
+<<<<<<< HEAD
   // by default, members must be up to date of subscription
   $cotis=1;
+=======
+	// by default, members must be up to date of subscription
+	$cotis=1;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 
@@ -60,7 +69,11 @@ if ($cotis==1)
 {
 	$sql .= " AND datefin > '".$db->idate($now)."'";
 }
+<<<<<<< HEAD
 $sql.= $db->order($sortfield,$sortorder);
+=======
+$sql.= $db->order($sortfield, $sortorder);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 //$sql.=$db->plimit($conf->liste_limit, $offset);
 
 $resql = $db->query($sql);
@@ -69,13 +82,21 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
+<<<<<<< HEAD
 	print_barre_liste($langs->trans("HTPasswordExport"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',0);
+=======
+	print_barre_liste($langs->trans("HTPasswordExport"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	print "<hr>\n";
 	while ($i < $num)
 	{
 		$objp = $db->fetch_object($result);
+<<<<<<< HEAD
 		$htpass=crypt($objp->pass,makesalt());
+=======
+		$htpass=crypt($objp->pass, makesalt());
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print $objp->login.":".$htpass."<br>\n";
 		$i++;
 	}
@@ -86,7 +107,12 @@ else
 	dol_print_error($db);
 }
 
+<<<<<<< HEAD
 
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

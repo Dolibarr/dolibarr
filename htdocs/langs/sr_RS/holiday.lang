@@ -1,10 +1,18 @@
 # Dolibarr language file - Source file is en_US - holiday
 HRM=HRM
+<<<<<<< HEAD
 Holidays=Odsustva
 CPTitreMenu=Odsustva
 MenuReportMonth=Mesečna promena
 MenuAddCP=Novi zahtev za odsustvo
 NotActiveModCP=Morate aktivirati modul Odsustva da biste videli ovu stranu.
+=======
+Holidays=Leave
+CPTitreMenu=Leave
+MenuReportMonth=Mesečna promena
+MenuAddCP=Novi zahtev za odsustvo
+NotActiveModCP=You must enable the module Leave to view this page.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddCP=Zatraži odsustvo
 DateDebCP=Početak
 DateFinCP=Kraj
@@ -15,6 +23,7 @@ ApprovedCP=Odobren
 CancelCP=Otkazan
 RefuseCP=Odbijen
 ValidatorCP=Odobrava
+<<<<<<< HEAD
 ListeCP=Lista odsustva
 ReviewedByCP=Will be approved by
 DescCP=Opis
@@ -22,6 +31,20 @@ SendRequestCP=Kreiraj zahtev za odsustvo
 DelayToRequestCP=Zahtevi za odsustvo moraju biti kreirani makar <b>%s dan(a)</b> pre odsustva.
 MenuConfCP=Balans odsustva
 SoldeCPUser=Broj slobodnih dana je <b>%s</b>.
+=======
+ListeCP=List of leave
+LeaveId=Leave ID
+ReviewedByCP=Will be approved by
+UserForApprovalID=User for approval ID
+UserForApprovalFirstname=First name of approval user
+UserForApprovalLastname=Last name of approval user
+UserForApprovalLogin=Login of approval user
+DescCP=Opis
+SendRequestCP=Kreiraj zahtev za odsustvo
+DelayToRequestCP=Zahtevi za odsustvo moraju biti kreirani makar <b>%s dan(a)</b> pre odsustva.
+MenuConfCP=Balance of leave
+SoldeCPUser=Leave balance is <b>%s</b> days.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorEndDateCP=Morate selektovati kraj posle početka.
 ErrorSQLCreateCP=Došlo je do SQL greške prilikom kreacije:
 ErrorIDFicheCP=Došlo je do greške, zahtev za odsustvo ne postoji.
@@ -30,7 +53,18 @@ ErrorUserViewCP=Nemate prava da vidite ovaj zahtev za odsustvo.
 InfosWorkflowCP=Tok informacija
 RequestByCP=Zatražio
 TitreRequestCP=Zahtev za odsustvo
+<<<<<<< HEAD
 NbUseDaysCP=Broj potrošenih dana od odmora
+=======
+TypeOfLeaveId=Type of leave ID
+TypeOfLeaveCode=Type of leave code
+TypeOfLeaveLabel=Type of leave label
+NbUseDaysCP=Broj potrošenih dana od odmora
+NbUseDaysCPShort=Days consumed
+NbUseDaysCPShortInMonth=Days consumed in month
+DateStartInMonth=Start date in month
+DateEndInMonth=End date in month
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 EditCP=Izmeni
 DeleteCP=Obriši
 ActionRefuseCP=Odbij
@@ -59,6 +93,10 @@ DateRefusCP=Datum odbijanja
 DateCancelCP=Datum otkazivanja
 DefineEventUserCP=Dodeli vanredno odsustvo za korisnika
 addEventToUserCP=Dodeli odsustvo
+<<<<<<< HEAD
+=======
+NotTheAssignedApprover=You are not the assigned approver
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MotifCP=Razlog
 UserCP=Korisnik
 ErrorAddEventToUserCP=Greška prilikom kreiranja vanrednog odsustva.
@@ -81,10 +119,22 @@ EmployeeFirstname=Employee first name
 TypeWasDisabledOrRemoved=Leave type (id %s) was disabled or removed
 LastHolidays=Latest %s leave requests
 AllHolidays=All leave requests
+<<<<<<< HEAD
 
 ## Configuration du Module ##
 LastUpdateCP=Latest automatic update of leaves allocation
 MonthOfLastMonthlyUpdate=Month of latest automatic update of leaves allocation
+=======
+HalfDay=Half day
+NotTheAssignedApprover=You are not the assigned approver
+LEAVE_PAID=Paid vacation
+LEAVE_SICK=Sick leave
+LEAVE_OTHER=Other leave
+LEAVE_PAID_FR=Paid vacation
+## Configuration du Module ##
+LastUpdateCP=Latest automatic update of leave allocation
+MonthOfLastMonthlyUpdate=Month of latest automatic update of leave allocation
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 UpdateConfCPOK=Uspešno ažurirano
 Module27130Name= Upravljanje zahtevima za odsustvo
 Module27130Desc= Upravljanje zahtevima za odsustvo
@@ -94,13 +144,31 @@ NoticePeriod=Rok za obaveštenje
 HolidaysToValidate=Odobri zahteve za odsustva
 HolidaysToValidateBody=Ispod je zahtev za odobrenje
 HolidaysToValidateDelay=Ovaj zahtev se odnosi na period manji od %s dana
+<<<<<<< HEAD
 HolidaysToValidateAlertSolde=Korisnik koji je napravio zahtev nema dovoljno slobodnih dana.
 HolidaysValidated=Odobreni zahtevi za odsustva
 HolidaysValidatedBody=Vaš zahtev za odsustvo %s do %s je potvrđen.
 HolidaysRefused=Zahtev odbijen
 HolidaysRefusedBody=Vaš zahtev za odsustvo %s do %s je odbijen sa sledećim obrazloženjem :
+=======
+HolidaysToValidateAlertSolde=The user who made this leave request does not have enough available days.
+HolidaysValidated=Odobreni zahtevi za odsustva
+HolidaysValidatedBody=Vaš zahtev za odsustvo %s do %s je potvrđen.
+HolidaysRefused=Zahtev odbijen
+HolidaysRefusedBody=Your leave request for %s to %s has been denied for the following reason:
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 HolidaysCanceled=Otkazan zahtev za odsustvo
 HolidaysCanceledBody=Vaš zahtev za odsustvo %s do %s je otkazan.
 FollowedByACounter=1: Ovaj tip odsustva treba da se prati brojačem. Brojač se povećava ručno ili automatski i kada je odsustvo potvrđeno, brojač se smanjuje. <br> 0: Ne prati se brojačem.
 NoLeaveWithCounterDefined=Ne postoje definisana odsustva koja treba da se prate brojačem
+<<<<<<< HEAD
 GoIntoDictionaryHolidayTypes=Idite na <strong>Home - Podešavanja - Rečnik - Tip odsustva</strong> da biste podesili različite tipove odsustva.
+=======
+GoIntoDictionaryHolidayTypes=Go into <strong>Home - Setup - Dictionaries - Type of leave</strong> to setup the different types of leaves.
+HolidaySetup=Setup of module Holiday
+HolidaysNumberingModules=Leave requests numbering models
+TemplatePDFHolidays=Template for leave requests PDF
+FreeLegalTextOnHolidays=Free text on PDF
+WatermarkOnDraftHolidayCards=Watermarks on draft leave requests
+HolidaysToApprove=Holidays to approve
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

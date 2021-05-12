@@ -17,14 +17,26 @@ DeliveryNotValidated=Delivery not validated
 StatusDeliveryCanceled=Canceled
 StatusDeliveryDraft=Draft
 StatusDeliveryValidated=Received
+<<<<<<< HEAD
 # merou PDF model						   
 NameAndSignature=Name and Signature : 
 ToAndDate=To___________________________________ on ____/_____/__________
 GoodStatusDeclaration=Have received the goods above in good condition,
 Deliverer=Deliverer : 
+=======
+# merou PDF model
+NameAndSignature=Name and Signature:
+ToAndDate=To___________________________________ on ____/_____/__________
+GoodStatusDeclaration=Have received the goods above in good condition,
+Deliverer=Deliverer:
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Sender=Sender
 Recipient=Recipient
 ErrorStockIsNotEnough=There's not enough stock
 Shippable=Shippable
 NonShippable=Not Shippable
 ShowReceiving=Show delivery receipt
+<<<<<<< HEAD
+=======
+NonExistentOrder=Nonexistent order
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

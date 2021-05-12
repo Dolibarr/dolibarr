@@ -44,10 +44,17 @@ class SupplierOrders extends DolibarrApi
     /**
      * Constructor
      */
+<<<<<<< HEAD
     function __construct()
     {
 		global $db, $conf;
 		$this->db = $db;
+=======
+    public function __construct()
+    {
+        global $db, $conf;
+        $this->db = $db;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $this->order = new CommandeFournisseur($this->db);
     }
 
@@ -61,6 +68,7 @@ class SupplierOrders extends DolibarrApi
      *
      * @throws 	RestException
      */
+<<<<<<< HEAD
     function get($id)
     {
 		if(! DolibarrApiAccess::$user->rights->fournisseur->commande->lire) {
@@ -78,6 +86,25 @@ class SupplierOrders extends DolibarrApi
 
 		$this->order->fetchObjectLinked();
 		return $this->_cleanObjectDatas($this->order);
+=======
+    public function get($id)
+    {
+        if(! DolibarrApiAccess::$user->rights->fournisseur->commande->lire) {
+            throw new RestException(401);
+        }
+
+        $result = $this->order->fetch($id);
+        if ( ! $result ) {
+            throw new RestException(404, 'Supplier order not found');
+        }
+
+        if ( ! DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, '', 'commande')) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        $this->order->fetchObjectLinked();
+        return $this->_cleanObjectDatas($this->order);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
     /**
@@ -94,9 +121,16 @@ class SupplierOrders extends DolibarrApi
      * @param string    $sqlfilters       Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.datec:<:'20160101')"
      * @return array                      Array of order objects
      *
+<<<<<<< HEAD
 	 * @throws RestException
      */
     function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids='', $status='', $sqlfilters = '') {
+=======
+     * @throws RestException
+     */
+    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $status = '', $sqlfilters = '')
+    {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         global $db, $conf;
 
         $obj_ret = array();
@@ -119,7 +153,11 @@ class SupplierOrders extends DolibarrApi
         if ($socids) $sql.= " AND t.fk_soc IN (".$socids.")";
         if ($search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
 
+<<<<<<< HEAD
 		// Filter by status
+=======
+        // Filter by status
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         if ($status == 'draft')     $sql.= " AND t.fk_statut IN (0)";
         if ($status == 'validated') $sql.= " AND t.fk_statut IN (1)";
         if ($status == 'approved')  $sql.= " AND t.fk_statut IN (2)";
@@ -140,7 +178,11 @@ class SupplierOrders extends DolibarrApi
             {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
+<<<<<<< HEAD
 	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+=======
+            $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
@@ -177,7 +219,11 @@ class SupplierOrders extends DolibarrApi
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No supplier order found');
         }
+<<<<<<< HEAD
 		return $obj_ret;
+=======
+        return $obj_ret;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
     /**
@@ -186,18 +232,30 @@ class SupplierOrders extends DolibarrApi
      * @param array $request_data   Request datas
      * @return int  ID of supplier order
      */
+<<<<<<< HEAD
     function post($request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->fournisseur->commande->creer) {
 			throw new RestException(401, "Insuffisant rights");
 		}
+=======
+    public function post($request_data = null)
+    {
+        if(! DolibarrApiAccess::$user->rights->fournisseur->commande->creer) {
+            throw new RestException(401, "Insuffisant rights");
+        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         // Check mandatory fields
         $result = $this->_validate($request_data);
 
         foreach($request_data as $field => $value) {
             $this->order->$field = $value;
         }
+<<<<<<< HEAD
         if(! array_keys($request_data,'date')) {
+=======
+        if(! array_keys($request_data, 'date')) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $this->order->date = dol_now();
         }
         /* We keep lines as an array
@@ -222,20 +280,34 @@ class SupplierOrders extends DolibarrApi
      * @param array $request_data   Datas
      * @return int
      */
+<<<<<<< HEAD
     function put($id, $request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->fournisseur->commande->creer) {
 			throw new RestException(401);
 		}
+=======
+    public function put($id, $request_data = null)
+    {
+        if(! DolibarrApiAccess::$user->rights->fournisseur->commande->creer) {
+            throw new RestException(401);
+        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         $result = $this->order->fetch($id);
         if( ! $result ) {
             throw new RestException(404, 'Supplier order not found');
         }
 
+<<<<<<< HEAD
 		if( ! DolibarrApi::_checkAccessToResource('fournisseur',$this->order->id,'','commande')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+=======
+        if( ! DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, '', 'commande')) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         foreach($request_data as $field => $value) {
             if ($field == 'id') continue;
@@ -243,7 +315,11 @@ class SupplierOrders extends DolibarrApi
         }
 
         if($this->order->update($id, DolibarrApiAccess::$user))
+<<<<<<< HEAD
             return $this->get ($id);
+=======
+            return $this->get($id);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         return false;
     }
@@ -254,6 +330,7 @@ class SupplierOrders extends DolibarrApi
      * @param int   $id Supplier order ID
      * @return type
      */
+<<<<<<< HEAD
     function delete($id)
     {
         if(! DolibarrApiAccess::$user->rights->fournisseur->commande->supprimer) {
@@ -270,6 +347,23 @@ class SupplierOrders extends DolibarrApi
 
         if( $this->order->delete(DolibarrApiAccess::$user) < 0)
         {
+=======
+    public function delete($id)
+    {
+        if (! DolibarrApiAccess::$user->rights->fournisseur->commande->supprimer) {
+            throw new RestException(401);
+        }
+        $result = $this->order->fetch($id);
+        if ( ! $result) {
+            throw new RestException(404, 'Supplier order not found');
+        }
+
+        if ( ! DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, '', 'commande')) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        if ( $this->order->delete(DolibarrApiAccess::$user) < 0) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             throw new RestException(500);
         }
 
@@ -300,6 +394,7 @@ class SupplierOrders extends DolibarrApi
      *   "notrigger": 0
      * }
      */
+<<<<<<< HEAD
     function validate($id, $idwarehouse=0, $notrigger=0)
     {
     	if(! DolibarrApiAccess::$user->rights->fournisseur->commande->creer) {
@@ -330,14 +425,53 @@ class SupplierOrders extends DolibarrApi
     	);
     }
 
+=======
+    public function validate($id, $idwarehouse = 0, $notrigger = 0)
+    {
+        if(! DolibarrApiAccess::$user->rights->fournisseur->commande->creer) {
+            throw new RestException(401);
+        }
+        $result = $this->order->fetch($id);
+        if( ! $result ) {
+            throw new RestException(404, 'Order not found');
+        }
+
+        if( ! DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, '', 'commande')) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        $result = $this->order->valid(DolibarrApiAccess::$user, $idwarehouse, $notrigger);
+        if ($result == 0) {
+            throw new RestException(304, 'Error nothing done. May be object is already validated');
+        }
+        if ($result < 0) {
+            throw new RestException(500, 'Error when validating Order: '.$this->order->error);
+        }
+
+        return array(
+            'success' => array(
+                'code' => 200,
+                'message' => 'Order validated (Ref='.$this->order->ref.')'
+            )
+        );
+    }
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     /**
      * Clean sensible object datas
      *
      * @param   Object  $object    Object to clean
      * @return  array              Array of cleaned object properties
      */
+<<<<<<< HEAD
     function _cleanObjectDatas($object) {
 
+=======
+    protected function _cleanObjectDatas($object)
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $object = parent::_cleanObjectDatas($object);
 
         unset($object->rowid);
@@ -357,7 +491,11 @@ class SupplierOrders extends DolibarrApi
      *
      * @throws RestException
      */
+<<<<<<< HEAD
     function _validate($data)
+=======
+    private function _validate($data)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $order = array();
         foreach (SupplierOrders::$FIELDS as $field) {

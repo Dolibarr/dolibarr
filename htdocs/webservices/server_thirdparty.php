@@ -20,7 +20,11 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
+<<<<<<< HEAD
 if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK",'1');
+=======
+if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK", '1');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 require_once '../master.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php';        // Include SOAP
@@ -40,7 +44,11 @@ if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
 {
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
+<<<<<<< HEAD
 	print $langs->trans("WarningModuleNotActive",'WebServices').'.<br><br>';
+=======
+	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print $langs->trans("ToActivateModule");
 	exit;
 }
@@ -50,7 +58,11 @@ $server = new nusoap_server();
 $server->soap_defencoding='UTF-8';
 $server->decode_utf8=false;
 $ns='http://www.dolibarr.org/ns/';
+<<<<<<< HEAD
 $server->configureWSDL('WebServicesDolibarrThirdParty',$ns);
+=======
+$server->configureWSDL('WebServicesDolibarrThirdParty', $ns);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $server->wsdl->schemaTargetNamespace=$ns;
 
 
@@ -123,7 +135,11 @@ $thirdparty_fields= array(
 // Retrieve all extrafields for thirdsparty
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
+<<<<<<< HEAD
 $extralabels=$extrafields->fetch_name_optionals_label('societe',true);
+=======
+$extralabels=$extrafields->fetch_name_optionals_label('societe', true);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $extrafield_array=null;
 if (is_array($extrafields) && count($extrafields)>0) {
 	$extrafield_array = array();
@@ -138,7 +154,11 @@ foreach($extrafields->attribute_label as $key=>$label)
 	$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
 }
 
+<<<<<<< HEAD
 if (is_array($extrafield_array)) $thirdparty_fields=array_merge($thirdparty_fields,$extrafield_array);
+=======
+if (is_array($extrafield_array)) $thirdparty_fields=array_merge($thirdparty_fields, $extrafield_array);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Define other specific objects
 $server->wsdl->addComplexType(
@@ -283,7 +303,11 @@ $server->register(
  * @param	string		$ref_ext	   		external reference
  * @return	array							Array result
  */
+<<<<<<< HEAD
 function getThirdParty($authentication,$id='',$ref='',$ref_ext='')
+=======
+function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	global $db,$conf,$langs;
 
@@ -295,7 +319,11 @@ function getThirdParty($authentication,$id='',$ref='',$ref_ext='')
     $objectresp=array();
     $errorcode='';$errorlabel='';
     $error=0;
+<<<<<<< HEAD
     $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+=======
+    $fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     // Check parameters
 	if (! $error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext)))
 	{
@@ -310,7 +338,11 @@ function getThirdParty($authentication,$id='',$ref='',$ref_ext='')
 		if ($fuser->rights->societe->lire)
 		{
 			$thirdparty=new Societe($db);
+<<<<<<< HEAD
 			$result=$thirdparty->fetch($id,$ref,$ref_ext);
+=======
+			$result=$thirdparty->fetch($id, $ref, $ref_ext);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if ($result > 0)
 			{
 
@@ -326,8 +358,13 @@ function getThirdParty($authentication,$id='',$ref='',$ref_ext='')
 				        'customer_code_accountancy' => $thirdparty->code_compta,
 			            'supplier_code_accountancy' => $thirdparty->code_compta_fournisseur,
 			            'fk_user_author' => $thirdparty->fk_user_author,
+<<<<<<< HEAD
 			    		'date_creation' => dol_print_date($thirdparty->date_creation,'dayhourrfc'),
 			    		'date_modification' => dol_print_date($thirdparty->date_modification,'dayhourrfc'),
+=======
+			    		'date_creation' => dol_print_date($thirdparty->date_creation, 'dayhourrfc'),
+			    		'date_modification' => dol_print_date($thirdparty->date_modification, 'dayhourrfc'),
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			            'address' => $thirdparty->address,
 				        'zip' => $thirdparty->zip,
 				        'town' => $thirdparty->town,
@@ -355,13 +392,21 @@ function getThirdParty($authentication,$id='',$ref='',$ref_ext='')
 				// Retrieve all extrafields for thirdsparty
 				// fetch optionals attributes and labels
 				$extrafields=new ExtraFields($db);
+<<<<<<< HEAD
 				$extralabels=$extrafields->fetch_name_optionals_label('societe',true);
+=======
+				$extralabels=$extrafields->fetch_name_optionals_label('societe', true);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				//Get extrafield values
 				$thirdparty->fetch_optionals();
 
 				foreach($extrafields->attribute_label as $key=>$label)
 				{
+<<<<<<< HEAD
 					$thirdparty_result_fields=array_merge($thirdparty_result_fields,array('options_'.$key => $thirdparty->array_options['options_'.$key]));
+=======
+					$thirdparty_result_fields=array_merge($thirdparty_result_fields, array('options_'.$key => $thirdparty->array_options['options_'.$key]));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 
 			    // Create
@@ -399,7 +444,11 @@ function getThirdParty($authentication,$id='',$ref='',$ref_ext='')
  * @param	Societe		$thirdparty		    Thirdparty
  * @return	array							Array result
  */
+<<<<<<< HEAD
 function createThirdParty($authentication,$thirdparty)
+=======
+function createThirdParty($authentication, $thirdparty)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
     global $db,$conf,$langs;
 
@@ -413,7 +462,11 @@ function createThirdParty($authentication,$thirdparty)
     $objectresp=array();
     $errorcode='';$errorlabel='';
     $error=0;
+<<<<<<< HEAD
     $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+=======
+    $fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     // Check parameters
     if (empty($thirdparty['ref']))
     {
@@ -444,7 +497,11 @@ function createThirdParty($authentication,$thirdparty)
         $newobject->town=$thirdparty['town'];
 
         $newobject->country_id=$thirdparty['country_id'];
+<<<<<<< HEAD
         if ($thirdparty['country_code']) $newobject->country_id=getCountry($thirdparty['country_code'],3);
+=======
+        if ($thirdparty['country_code']) $newobject->country_id=getCountry($thirdparty['country_code'], 3);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $newobject->province_id=$thirdparty['province_id'];
         //if ($thirdparty['province_code']) $newobject->province_code=getCountry($thirdparty['province_code'],3);
 
@@ -471,7 +528,11 @@ function createThirdParty($authentication,$thirdparty)
         // Retrieve all extrafields for thirdsparty
         // fetch optionals attributes and labels
         $extrafields=new ExtraFields($db);
+<<<<<<< HEAD
         $extralabels=$extrafields->fetch_name_optionals_label('societe',true);
+=======
+        $extralabels=$extrafields->fetch_name_optionals_label('societe', true);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         foreach($extrafields->attribute_label as $key=>$label)
         {
         	$key='options_'.$key;
@@ -525,7 +586,11 @@ function createThirdParty($authentication,$thirdparty)
  * @param	Societe		$thirdparty		    Thirdparty
  * @return	array							Array result
  */
+<<<<<<< HEAD
 function updateThirdParty($authentication,$thirdparty)
+=======
+function updateThirdParty($authentication, $thirdparty)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	global $db,$conf,$langs;
 
@@ -539,7 +604,11 @@ function updateThirdParty($authentication,$thirdparty)
 	$objectresp=array();
 	$errorcode='';$errorlabel='';
 	$error=0;
+<<<<<<< HEAD
 	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+=======
+	$fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	// Check parameters
 	if (empty($thirdparty['id']))	{
 		$error++; $errorcode='KO'; $errorlabel="Thirdparty id is mandatory.";
@@ -576,7 +645,11 @@ function updateThirdParty($authentication,$thirdparty)
 			$object->town=$thirdparty['town'];
 
 			$object->country_id=$thirdparty['country_id'];
+<<<<<<< HEAD
 			if ($thirdparty['country_code']) $object->country_id=getCountry($thirdparty['country_code'],3);
+=======
+			if ($thirdparty['country_code']) $object->country_id=getCountry($thirdparty['country_code'], 3);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$object->province_id=$thirdparty['province_id'];
 			//if ($thirdparty['province_code']) $newobject->province_code=getCountry($thirdparty['province_code'],3);
 
@@ -602,7 +675,11 @@ function updateThirdParty($authentication,$thirdparty)
 			// Retrieve all extrafields for thirdsparty
 			// fetch optionals attributes and labels
 			$extrafields=new ExtraFields($db);
+<<<<<<< HEAD
 			$extralabels=$extrafields->fetch_name_optionals_label('societe',true);
+=======
+			$extralabels=$extrafields->fetch_name_optionals_label('societe', true);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			foreach($extrafields->attribute_label as $key=>$label)
 			{
 				$key='options_'.$key;
@@ -611,7 +688,11 @@ function updateThirdParty($authentication,$thirdparty)
 
 			$db->begin();
 
+<<<<<<< HEAD
 			$result=$object->update($thirdparty['id'],$fuser);
+=======
+			$result=$object->update($thirdparty['id'], $fuser);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			if ($result <= 0) {
 				$error++;
 			}
@@ -655,7 +736,11 @@ function updateThirdParty($authentication,$thirdparty)
  * @param	array		$filterthirdparty	Filter fields (key=>value to filer on. For example 'client'=>2, 'supplier'=>1, 'category'=>idcateg, 'name'=>'searchstring', ...)
  * @return	array							Array result
  */
+<<<<<<< HEAD
 function getListOfThirdParties($authentication,$filterthirdparty)
+=======
+function getListOfThirdParties($authentication, $filterthirdparty)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
     global $db,$conf,$langs;
 
@@ -671,7 +756,11 @@ function getListOfThirdParties($authentication,$filterthirdparty)
 
     $errorcode='';$errorlabel='';
     $error=0;
+<<<<<<< HEAD
     $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+=======
+    $fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     // Check parameters
 
     if (! $error)
@@ -692,7 +781,11 @@ function getListOfThirdParties($authentication,$filterthirdparty)
         dol_syslog("Function: getListOfThirdParties", LOG_DEBUG);
 
         $extrafields=new ExtraFields($db);
+<<<<<<< HEAD
         $extralabels=$extrafields->fetch_name_optionals_label('societe',true);
+=======
+        $extralabels=$extrafields->fetch_name_optionals_label('societe', true);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
         $resql=$db->query($sql);
@@ -720,7 +813,11 @@ function getListOfThirdParties($authentication,$filterthirdparty)
                     'fax'=>$obj->fax,
                     'url'=>$obj->url
                 );
+<<<<<<< HEAD
                 $arraythirdparties[$i] = array_merge($arraythirdparties[$i],$extrafieldsOptions);
+=======
+                $arraythirdparties[$i] = array_merge($arraythirdparties[$i], $extrafieldsOptions);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
                 $i++;
             }
@@ -760,7 +857,11 @@ function getListOfThirdParties($authentication,$filterthirdparty)
  * @param	string		$ref_ext	   		external reference
  * @return	array							Array result
  */
+<<<<<<< HEAD
 function deleteThirdParty($authentication,$id='',$ref='',$ref_ext='')
+=======
+function deleteThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	global $db,$conf,$langs;
 
@@ -772,7 +873,11 @@ function deleteThirdParty($authentication,$id='',$ref='',$ref_ext='')
 	$objectresp=array();
 	$errorcode='';$errorlabel='';
 	$error=0;
+<<<<<<< HEAD
 	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+=======
+	$fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	// Check parameters
 	if (! $error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext)))
 	{
@@ -789,7 +894,11 @@ function deleteThirdParty($authentication,$id='',$ref='',$ref_ext='')
 		if ($fuser->rights->societe->lire && $fuser->rights->societe->supprimer)
 		{
 			$thirdparty=new Societe($db);
+<<<<<<< HEAD
 			$result=$thirdparty->fetch($id,$ref,$ref_ext);
+=======
+			$result=$thirdparty->fetch($id, $ref, $ref_ext);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 			if ($result > 0)
 			{
@@ -816,7 +925,10 @@ function deleteThirdParty($authentication,$id='',$ref='',$ref_ext='')
 			{
 				$error++;
 				$errorcode='NOT_FOUND'; $errorlabel='Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 		}
 		else

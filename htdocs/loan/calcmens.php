@@ -42,14 +42,21 @@ $output=array();
 $object = new LoanSchedule($db);
 
 $int = ($capital*($rate/12));
+<<<<<<< HEAD
 $int = round($int,2,PHP_ROUND_HALF_UP);
 $cap_rest = round($capital - ($mens-$int),2,PHP_ROUND_HALF_UP);
 $output[$echance]=array('cap_rest'=>$cap_rest,'cap_rest_str'=>price($cap_rest),'interet'=>$int,'interet_str'=>price($int,0,'',1),'mens'=>$mens);
+=======
+$int = round($int, 2, PHP_ROUND_HALF_UP);
+$cap_rest = round($capital - ($mens-$int), 2, PHP_ROUND_HALF_UP);
+$output[$echance]=array('cap_rest'=>$cap_rest,'cap_rest_str'=>price($cap_rest),'interet'=>$int,'interet_str'=>price($int, 0, '', 1),'mens'=>$mens);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $echance++;
 $capital=$cap_rest;
 while ($echance<=$nbterm) {
 
+<<<<<<< HEAD
 	$mens = round($object->calc_mens($capital,$rate,$nbterm-$echance+1),2,PHP_ROUND_HALF_UP);
 
 	$int = ($capital*($rate/12));
@@ -57,10 +64,22 @@ while ($echance<=$nbterm) {
 	$cap_rest = round($capital - ($mens-$int),2,PHP_ROUND_HALF_UP);
 
 	$output[$echance]=array('cap_rest'=>$cap_rest,'cap_rest_str'=>price($cap_rest),'interet'=>$int,'interet_str'=>price($int,0,'',1),'mens'=>$mens);
+=======
+	$mens = round($object->calcMonthlyPayments($capital, $rate, $nbterm-$echance+1), 2, PHP_ROUND_HALF_UP);
+
+	$int = ($capital*($rate/12));
+	$int = round($int, 2, PHP_ROUND_HALF_UP);
+	$cap_rest = round($capital - ($mens-$int), 2, PHP_ROUND_HALF_UP);
+
+	$output[$echance]=array('cap_rest'=>$cap_rest,'cap_rest_str'=>price($cap_rest),'interet'=>$int,'interet_str'=>price($int, 0, '', 1),'mens'=>$mens);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	$capital=$cap_rest;
 	$echance++;
 }
 
 echo json_encode($output);
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

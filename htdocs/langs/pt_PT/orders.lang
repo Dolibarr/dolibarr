@@ -16,6 +16,7 @@ MakeOrder=Efetuar encomenda
 SupplierOrder=Ordem de compra
 SuppliersOrders=Ordens de compra
 SuppliersOrdersRunning=Ordens de compra atuais
+<<<<<<< HEAD
 CustomerOrder=Encomenda de cliente
 CustomersOrders=Encomendas de clientes
 CustomersOrdersRunning=Encomendas de clientes atuais
@@ -24,6 +25,16 @@ OrdersDeliveredToBill=Encomendas de clientes entregues por faturar
 OrdersToBill=Encomendas de clientes entregues
 OrdersInProcess=Encomendas de clientes em processo
 OrdersToProcess=Encomendas de clientes por processar
+=======
+CustomerOrder=Sales Order
+CustomersOrders=Sales Orders
+CustomersOrdersRunning=Current sales orders
+CustomersOrdersAndOrdersLines=Sales orders and order details
+OrdersDeliveredToBill=Sales orders delivered to bill
+OrdersToBill=Sales orders delivered
+OrdersInProcess=Sales orders in process
+OrdersToProcess=Sales orders to process
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SuppliersOrdersToProcess=Encomendas a fornecedores por processar
 StatusOrderCanceledShort=Anulado
 StatusOrderDraftShort=Rascunho
@@ -76,8 +87,13 @@ OrdersOpened=Encomendas por processar
 NoDraftOrders=Sem encomendas rascunho
 NoOrder=Sem encomenda
 NoSupplierOrder=Sem encomenda a fornecedor
+<<<<<<< HEAD
 LastOrders=%s últimas encomendas de clientes
 LastCustomerOrders=%s últimas encomendas de clientes
+=======
+LastOrders=Latest %s sales orders
+LastCustomerOrders=Latest %s sales orders
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LastSupplierOrders=%s últimas encomendas a fornecedores
 LastModifiedOrders=Últimas %s encomendas de clientes modificadas
 AllOrders=Todos as encomendas
@@ -85,10 +101,17 @@ NbOfOrders=Número de encomendas
 OrdersStatistics=Estatísticas de encomendas
 OrdersStatisticsSuppliers=Estatísticas de encomendas a fornecedores
 NumberOfOrdersByMonth=Número de encomendas por mês
+<<<<<<< HEAD
 AmountOfOrdersByMonthHT=Quantia originada de encomendas, por mês (sem IVA)
 ListOfOrders=Lista de encomendas
 CloseOrder=Fechar encomenda
 ConfirmCloseOrder=Tem a certeza que quer sinalizar esta encomenda como entregue? Assim que uma encomenda foi entregue pode ser sinalizada com faturada.
+=======
+AmountOfOrdersByMonthHT=Amount of orders by month (excl. tax)
+ListOfOrders=Lista de encomendas
+CloseOrder=Fechar encomenda
+ConfirmCloseOrder=Are you sure you want to set this order to delivered? Once an order is delivered, it can be set to billed.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmDeleteOrder=Tem a certeza que deseja eliminar esta encomenda?
 ConfirmValidateOrder=Tem a certeza que pretende validar esta encomenda sob o nome <b>%s</b>?
 ConfirmUnvalidateOrder=Tem a certeza que quer restaurar a encomenda <b>%s</b> para estado de rascunho?
@@ -110,6 +133,7 @@ OrderMode=Método de encomenda
 AuthorRequest=Autor/Solicitante
 UserWithApproveOrderGrant=Utilizadores autorizados a aprovar os pedidos.
 PaymentOrderRef=Pagamento da encomenda %s
+<<<<<<< HEAD
 CloneOrder=Clonar encomenda
 ConfirmCloneOrder=Tem a certeza que pretende clonar a encomenda <b>%s</b>?
 DispatchSupplierOrder=A receber a encomenda a fornecedor, %s
@@ -121,6 +145,18 @@ SupplierOrderClassifiedBilled=A encomenda a fornecedor, %s, foi faturada
 OtherOrders=Outros Pedidos
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Representante que está a dar seguimento à encomenda do cliente
+=======
+ConfirmCloneOrder=Tem a certeza que pretende clonar a encomenda <b>%s</b>?
+DispatchSupplierOrder=Receiving purchase order %s
+FirstApprovalAlreadyDone=A primeira aprovação já foi efetuada
+SecondApprovalAlreadyDone=A segunda aprovação já foi efetuada
+SupplierOrderReceivedInDolibarr=A encomenda a fornecedor, %s, foi recebida %s
+SupplierOrderSubmitedInDolibarr=Purchase Order %s submitted
+SupplierOrderClassifiedBilled=A encomenda a fornecedor, %s, foi faturada
+OtherOrders=Outros Pedidos
+##### Types de contacts #####
+TypeContact_commande_internal_SALESREPFOLL=Representative following-up sales order
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TypeContact_commande_internal_SHIPPING=Representante transporte seguimento
 TypeContact_commande_external_BILLING=Contacto da fatura do cliente
 TypeContact_commande_external_SHIPPING=Contato com o transporte do cliente
@@ -136,11 +172,19 @@ Error_OrderNotChecked=Nenhuma encomenda para faturar selecionada
 # Order modes (how we receive order). Not the "why" are keys stored into dict.lang
 OrderByMail=Correio
 OrderByFax=Fax
+<<<<<<< HEAD
 OrderByEMail=EMail
+=======
+OrderByEMail=Email
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 OrderByWWW=On-line
 OrderByPhone=Telefone
 # Documents models
 PDFEinsteinDescription=Modelo de encomenda completo (logo...)
+<<<<<<< HEAD
+=======
+PDFEratostheneDescription=Modelo de encomenda completo (logo...)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PDFEdisonDescription=Um modelo simples de encomenda
 PDFProformaDescription=Uma fatura proforma completa (logo…)
 CreateInvoiceForThisCustomer=Faturar encomendas

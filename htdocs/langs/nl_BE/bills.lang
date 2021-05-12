@@ -3,11 +3,15 @@ BillsCustomers=Klantfacturen
 BillsCustomer=Klantfactuur
 BillsCustomersUnpaid=Onbetaalde klantfacturen
 BillsCustomersUnpaidForCompany=Onbetaalde afnemersfacturen voor %s
+<<<<<<< HEAD
 BillsSuppliersUnpaidForCompany=Onbetaalde leveranciersfacturen voor %s
 DisabledBecauseNotErasable=Niet mogelijk omdat het niet kan worden gewist
 IdPaymentMode=Betalingsmanier (id)
 LabelPaymentMode=Betalingsmanier (label)
 PaymentModeShort=Betalingsmanier
+=======
+DisabledBecauseNotErasable=Niet mogelijk omdat het niet kan worden gewist
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CreateCreditNote=Aanmaak krediet nota
 DoPayment=Doe een betaling
 DoPaymentBack=Doe een terugbetaling
@@ -20,7 +24,10 @@ ShowInvoiceSituation=Toon situatie factuur
 RemainderToBill=Nog te factureren
 GlobalDiscount=Globale korting
 PaymentRef=Betalingsref.
+<<<<<<< HEAD
 CloneInvoice=Kopieer factuur
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PaymentNote=Betalingsnota
 ListOfPreviousSituationInvoices=Lijst van de vorige facturen
 ListOfNextSituationInvoices=Lijst van de volgende facturen
@@ -36,6 +43,7 @@ PaymentCondition60DENDMONTH=Binnen 60 dagen volgend op einde maand
 PaymentTypeVIR=Bank overboeking
 PaymentTypeShortVIR=Bank overboeking
 PaymentTypeTRA=Bank cheque
+<<<<<<< HEAD
 Residence=incasso
 ChequeMaker=Cheque / Transfer uitvoerder
 DepositId=Id storting
@@ -45,3 +53,11 @@ TypeContact_facture_external_BILLING=Klant contact
 NotLastInCycle=Deze factuur is niet de laatste in de rij en mag niet worden aangepast.
 PDFCrevetteSituationInvoiceLineDecompte=Situatie factuur - AANTAL
 updatePriceNextInvoiceErrorUpdateline=Fout : pas de prijs aan op factuurlijn : %s
+=======
+ChequeMaker=Cheque / Transfer uitvoerder
+DepositId=Id storting
+ShowUnpaidAll=Bekijk alle onbetaalde facturen
+TypeContact_facture_external_BILLING=Klant contact
+NotLastInCycle=Deze factuur is niet de laatste in de rij en mag niet worden aangepast.
+PDFCrevetteSituationInvoiceLineDecompte=Situatie factuur - AANTAL
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

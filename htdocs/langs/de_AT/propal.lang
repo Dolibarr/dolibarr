@@ -7,10 +7,17 @@ DatePropal=Datum des Angebots
 DateEndPropal=Ablauf der Bindefrist
 ValidityDuration=Bindefrist
 CopyPropalFrom=Erstelle neues Angebot durch Duplikation
+<<<<<<< HEAD
 CreateEmptyPropal=Erstelle leeres Angebot oder aus der Produkt-/Dienstleistungsliste
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DefaultProposalDurationValidity=Standardmäßige Bindefrist (Tage)
 AvailabilityTypeAV_NOW=Prompt nach Rechnungserhalt
 TypeContact_propal_internal_SALESREPFOLL=Angebotsnachverfolgung durch Vertreter
 TypeContact_propal_external_BILLING=Debitorenrechnung Kontakt
 TypeContact_propal_external_CUSTOMER=Angebots-Nachverfolgung durch Partnerkontakt
 DocModelAzurDescription=Eine vollständige Angebotsvorlage (Logo, ...)
+<<<<<<< HEAD
+=======
+DocModelCyanDescription=Eine vollständige Angebotsvorlage (Logo, ...)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -1,7 +1,11 @@
 CKEditor 4
 ==========
 
+<<<<<<< HEAD
 Copyright (c) 2003-2017, CKSource - Frederico Knabben. All rights reserved.
+=======
+Copyright (c) 2003-2019, CKSource - Frederico Knabben. All rights reserved.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 http://ckeditor.com - See LICENSE.md for license information.
 
 CKEditor is a text editor to be used inside web pages. It's not a replacement

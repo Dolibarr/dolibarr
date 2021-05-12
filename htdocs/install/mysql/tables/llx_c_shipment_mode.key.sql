@@ -16,5 +16,9 @@
 --
 -- ===================================================================
 
+<<<<<<< HEAD
 ALTER TABLE llx_c_shipment_mode ADD UNIQUE INDEX uk_c_shipment_mode (code);
+=======
+ALTER TABLE llx_c_shipment_mode ADD UNIQUE INDEX uk_c_shipment_mode (code, entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 

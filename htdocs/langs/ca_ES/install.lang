@@ -6,6 +6,7 @@ ConfFileDoesNotExistsAndCouldNotBeCreated=El fitxer de configuració <b>%s</b> n
 ConfFileCouldBeCreated=L'arxiu de configuració <b>%s</b> s'ha creat.
 ConfFileIsNotWritable=L'arxiu de configuració <b>%s</b> no és modificable. Comprova els permisos. Per a una primera instal·lació, el servidor web ha de tenir el dret a modificar aquest fitxer durant el procés de configuració (per exemple "chmod 666" sobre un SO compatible UNIX).
 ConfFileIsWritable=L'arxiu <b>%s</b> és modificable.
+<<<<<<< HEAD
 ConfFileMustBeAFileNotADir=Configuration file <b>%s</b> must be a file, not a directory.
 ConfFileReload=Recarregar tota la informació de l'arxiu de configuració.
 PHPSupportSessions=Aquest PHP suporta sessions
@@ -23,16 +24,45 @@ ErrorPHPDoesNotSupportCurl=La teva instal·lació PHP no soporta Curl.
 ErrorPHPDoesNotSupportUTF8=Aquest PHP no suporta les funcions UTF8. Resolgui el problema abans d'instal lar Dolibarr ja que no funcionarà correctamete.
 ErrorDirDoesNotExists=La carpeta <b>%s</b> no existeix o no és accessible.
 ErrorGoBackAndCorrectParameters=Torna enrera i corregeix els paràmetres incorrectes.
+=======
+ConfFileMustBeAFileNotADir=El fitxer de configuració <b> %s</b> ha de ser un fitxer, no un directori.
+ConfFileReload=Actualització dels paràmetres del fitxer de configuració.
+PHPSupportSessions=Aquest PHP suporta sessions
+PHPSupportPOSTGETOk=Aquest PHP suporta bé les variables POST i GET.
+PHPSupportPOSTGETKo=És possible que aquest PHP no suport les variables POST i/o GET. Comproveu el paràmetre <b>variables_order</b> del php.ini.
+PHPSupportGD=Aquest PHP és compatible amb les funcions gràfiques GD.
+PHPSupportCurl=Aquest PHP suporta Curl.
+PHPSupportUTF8=Aquest PHP és compatible amb les funcions UTF8.
+PHPSupportIntl=This PHP supports Intl functions.
+PHPMemoryOK=La seva memòria màxima de sessió PHP està definida a <b>%s</b>. Això hauria de ser suficient.
+PHPMemoryTooLow=La seva memòria màxima de sessió PHP està definida a <b>%s</b> bytes. Això és molt poc. Es recomana modificar el paràmetre <b>memory_limit</b> del seu arxiu <b> php.ini</b> a almenys <b>%s</b> octets.
+Recheck=Faci clic aquí per realitzar un test més exhaustiu
+ErrorPHPDoesNotSupportSessions=La vostra instal·lació de PHP no suporta sessions. Aquesta característica és necessària per permetre que Dolibarr funcioni. Comproveu la configuració de PHP i els permisos del directori de sessions.
+ErrorPHPDoesNotSupportGD=La vostra instal·lació de PHP no és compatible amb les funcions gràfiques de GD. No hi haurà gràfics disponibles.
+ErrorPHPDoesNotSupportCurl=La teva instal·lació PHP no soporta Curl.
+ErrorPHPDoesNotSupportUTF8=Aquest PHP no suporta les funcions UTF8. Resolgui el problema abans d'instal lar Dolibarr ja que no funcionarà correctamete.
+ErrorPHPDoesNotSupportIntl=Your PHP installation does not support Intl functions.
+ErrorDirDoesNotExists=La carpeta <b>%s</b> no existeix o no és accessible.
+ErrorGoBackAndCorrectParameters=Torneu enrere i verifiqueu / corregiu els paràmetres.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ErrorWrongValueForParameter=Ha indicat potser un valor incorrecte per al paràmetre '%s'.
 ErrorFailedToCreateDatabase=Error en crear la base de dades '%s'.
 ErrorFailedToConnectToDatabase=Error de connexió a la base de dades '%s'.
 ErrorDatabaseVersionTooLow=Versió de la base de dades (%s) demasiado antigua. massa antiga. Es requereix versió %s o superior.
 ErrorPHPVersionTooLow=Versió del PHP massa antiga. Es requereix versió %s o superior.
+<<<<<<< HEAD
 ErrorConnectedButDatabaseNotFound=La connexió al servidor és correcta però no es troba la base de dades '%s'
 ErrorDatabaseAlreadyExists=La base de dades '%s' ja existeix.
 IfDatabaseNotExistsGoBackAndUncheckCreate=Si la base de dades no existeix, torna enrera i activa l'opció "Crear base de dades"
 IfDatabaseExistsGoBackAndCheckCreate=Si la base de dades ja existeix, torna enrera i desactiva l'opció "Crear base de dades".
 WarningBrowserTooOld=El seu navegador és molt antic. Es recomana que actualitzeu a una versió recent de Firefox, Chrome o Opera.
+=======
+ErrorConnectedButDatabaseNotFound=S'ha trobat una connexió amb el servidor però la base de dades '%s' no s'ha trobat.
+ErrorDatabaseAlreadyExists=La base de dades '%s' ja existeix.
+IfDatabaseNotExistsGoBackAndUncheckCreate=Si la base de dades no existeix, torna enrera i activa l'opció "Crear base de dades"
+IfDatabaseExistsGoBackAndCheckCreate=Si la base de dades ja existeix, torna enrera i desactiva l'opció "Crear base de dades".
+WarningBrowserTooOld=La versió del navegador és massa antiga. És molt recomanable actualitzar el vostre navegador a una versió recent de Firefox, Chrome o Opera.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PHPVersion=Versió PHP
 License=Llicència d'ús
 ConfigurationFile=Arxiu de configuració
@@ -45,6 +75,7 @@ DolibarrDatabase=Base de dades Dolibarr
 DatabaseType=Tipus de la base de dades
 DriverType=Tipus del driver
 Server=Servidor
+<<<<<<< HEAD
 ServerAddressDescription=Nom o adreça IP del servidor de base de dades, generalment 'localhost' quan el servidor es troba en la mateixa màquina que el lloc web
 ServerPortDescription=Port del servidor de la base de dades. Deixa-ho en blanc si ho desconeixes.
 DatabaseServer=Servidor de la base de dades
@@ -61,6 +92,25 @@ CheckToCreateUser=Marca la casella de verificació si el propietari de la base d
 DatabaseRootLoginDescription=Usuari de la base que té els drets de creació de bases de dades o compte per a la base de dades, inútil si la base de dades i el seu usuari ja existeixen (com quan estan en un amfitrió).
 KeepEmptyIfNoPassword=Deixa-ho en blanc si l'usuari no té contrasenya (evita-ho)
 SaveConfigurationFile=Gravació del fitxer de configuració
+=======
+ServerAddressDescription=Nom o adreça IP del servidor de bases de dades. Normalment 'localhost' quan el servidor de base de dades està allotjat en el mateix servidor que el servidor web.
+ServerPortDescription=Port del servidor de la base de dades. Deixa-ho en blanc si ho desconeixes.
+DatabaseServer=Servidor de la base de dades
+DatabaseName=Nom de la base de dades
+DatabasePrefix=Prefix en les taules de base de dades
+DatabasePrefixDescription=Prefix de la taula de base de dades. Si està buit, per defecte a llx_.
+AdminLogin=Compte d'usuari del propietari de la base de dades Dolibarr.
+PasswordAgain=Torna a escriure la confirmació de la contrasenya
+AdminPassword=Contrasenya de l'administrador de la base de dades Dolibarr.
+CreateDatabase=Crear la base de dades
+CreateUser=Crea un compte d'usuari o concedeix el permís del compte d'usuari a la base de dades Dolibarr
+DatabaseSuperUserAccess=Base de dades - Accés super usuari
+CheckToCreateDatabase=Marqueu la casella si la base de dades encara no existeix i cal crear-la. <br> En aquest cas, també heu d'omplir el nom d'usuari i la contrasenya del compte de superusuari al final d'aquesta pàgina.
+CheckToCreateUser=Marqueu la casella si: el compte d'usuari de la base de dades <br> encara no existeix, per la qual cosa s'ha de crear o <br> si el compte d'usuari existeix, però la base de dades no existeix i els permisos s'han de concedir. <br>En aquest cas, heu d'introduir el compte d'usuari i la contrasenya i <b> també </b> el nom del compte superusuari i la contrasenya al final d'aquesta pàgina. Si aquesta casella no està activada, el propietari i la contrasenya de la base de dades ja han d'existir.
+DatabaseRootLoginDescription=Nom del compte de superusuari (per crear noves bases de dades o usuaris nous), obligatori si la base de dades o el seu propietari ja no existeixen.
+KeepEmptyIfNoPassword=Deixeu-lo buit si el superusuari no té contrasenya (NO es recomana)
+SaveConfigurationFile=S'estan desant els paràmetres a
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ServerConnection=Connexió al servidor
 DatabaseCreation=Creació de la base de dades
 CreateDatabaseObjects=Creació dels objectes de la base de dades
@@ -71,7 +121,11 @@ CreateOtherKeysForTable=Creació de les claus i índexs de la taula %s
 OtherKeysCreation=Creació de les claus i índexs
 FunctionsCreation=Creació de funcions
 AdminAccountCreation=Creació del compte administrador
+<<<<<<< HEAD
 PleaseTypePassword=Indiqui una contrasenya, no s'accepten les contrasenyes buides!
+=======
+PleaseTypePassword=Escriviu una contrasenya, les contrasenyes buides no estan permeses.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PleaseTypeALogin=Indiqui un usuari!
 PasswordsMismatch=Les contrasenyes no coincideixen, torni a intentar-ho!
 SetupEnd=Fi de la configuració
@@ -81,6 +135,7 @@ YouNeedToPersonalizeSetup=Ara ha de configurar Dolibarr segons les seves necessi
 AdminLoginCreatedSuccessfuly=El codi d'usuari administrador de Dolibar '<b>%s</b>' s'ha creat correctament.
 GoToDolibarr=Ves a Dolibarr
 GoToSetupArea=Ves a Dolibarr (àrea de configuració)
+<<<<<<< HEAD
 MigrationNotFinished=La versió de la base de dades encara no està completament a nivell, per la qual cosa haureu de reiniciar una migració.
 GoToUpgradePage=Ves de nou a la pàgina d'actualització
 WithNoSlashAtTheEnd=Sense el signe "/" al final
@@ -91,24 +146,45 @@ AdminLoginAlreadyExists=El compte d'administrador Dolibarr '<b>%s</b>' ja existe
 FailedToCreateAdminLogin=No s'ha pogut crear el compte d'administrador de Dolibarr.
 WarningRemoveInstallDir=Atenció, per raons de seguretat, amb la finalitat de bloquejar un nou ús de les eines d'instal·lació/actualització, és aconsellable crear en el directori arrel de Dolibarr un arxiu anomenat <b>install.lock </b> en només lectura.
 FunctionNotAvailableInThisPHP=No disponible en aquest PHP
+=======
+MigrationNotFinished=La versió de la base de dades no està completament actualitzada: torneu a executar el procés d'actualització.
+GoToUpgradePage=Ves de nou a la pàgina d'actualització
+WithNoSlashAtTheEnd=Sense el signe "/" al final
+DirectoryRecommendation=Es recomana utilitzar un directori fora de les pàgines web.
+LoginAlreadyExists=Ja existeix
+DolibarrAdminLogin=Login de l'usuari administrador de Dolibarr
+AdminLoginAlreadyExists=El compte d'administrador de Dolibarr '<b> %s </b>' ja existeix. Torneu enrere si voleu crear un altre.
+FailedToCreateAdminLogin=No s'ha pogut crear el compte d'administrador de Dolibarr.
+WarningRemoveInstallDir=Avís, per motius de seguretat, un cop finalitzada la instal·lació o l'actualització, heu d'afegir un fitxer anomenat <b> install.lock </b> al directori del document Dolibarr per evitar l'ús accidental / maliciós de les eines d'instal·lació de nou.
+FunctionNotAvailableInThisPHP=No està disponible en aquest PHP
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ChoosedMigrateScript=Elecció de l'script de migració
 DataMigration=Migració de la base de dades (dades)
 DatabaseMigration=Migració de la base de dades (estructura + algunes dades)
 ProcessMigrateScript=Execució del script
 ChooseYourSetupMode=Tria el teu mètode d'instal·lació i fes clic a "Començar"
 FreshInstall=Nova instal·lació
+<<<<<<< HEAD
 FreshInstallDesc=Utilitza aquest mètode si és la teva primera instal·lació. Si no és el cas, aquest mètode pot reparar una instal·lació anterior incompleta, però si vols actualitzar la teva versió anterior, tria el mètode "Actualització"
+=======
+FreshInstallDesc=Utilitzeu aquest mode si aquesta és la vostra primera instal·lació. Si no, aquest mode pot reparar una instal·lació prèvia incompleta. Si voleu actualitzar la vostra versió, seleccioneu "Actualitzar".
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Upgrade=Actualització
 UpgradeDesc=Utilitzeu aquest mètode després d'haver actualitzat els fitxers d'una instal·lació Dolibarr antiga pels d'una versió més recent. Aquesta elecció permet posar al dia la base de dades i les seves dades per a aquesta nova versió.
 Start=Començar
 InstallNotAllowed=Instal·lació no autoritzada per els permisos de l'arxiu <b>conf.php</b>
 YouMustCreateWithPermission=Ha de crear un fitxer %s i donar-li els drets d'escriptura al servidor web durant el procés d'instal·lació.
+<<<<<<< HEAD
 CorrectProblemAndReloadPage=Corregiu el problema i <a href="%s"> recarregi la pàgina </a> (Tecla F5).
+=======
+CorrectProblemAndReloadPage=Corregiu el problema i premeu F5 per tornar a carregar la pàgina.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AlreadyDone=Ja migrada
 DatabaseVersion=Versió de la base de dades
 ServerVersion=Versió del servidor de la base de dades
 YouMustCreateItAndAllowServerToWrite=Cal crear aquest expedient i permetre al servidor web escriure en ell
 DBSortingCollation=Ordre de selecció utilitzat per la base de dades
+<<<<<<< HEAD
 YouAskDatabaseCreationSoDolibarrNeedToConnect=Ha vollgut crear la base de dades <b>%s</b>, però per a això Dolibarr ha de connectar amb el servidor <b>%s</b> via el superusuari <b>%s</b>.
 YouAskLoginCreationSoDolibarrNeedToConnect=Ha vollgut crear el login d'accés a la base de dades <b>%s</b>, però per a això Dolibarr ha de connectar amb el servidor <b>%s</b> via el superusuari <b>%s</b>.
 BecauseConnectionFailedParametersMayBeWrong=La connexió falla, els paràmetres del servidor o el superusuari poden ser incorrectes.
@@ -125,11 +201,30 @@ IfAlreadyExistsCheckOption=Si el nom és correcte i la base de dades no existeix
 OpenBaseDir=Paràmetre php openbasedir
 YouAskToCreateDatabaseSoRootRequired=Ha marcat la casella "Crear la base de dades". Per això, l'usuari/contrasenya del superusuari (al final del formulari) són obligatoris.
 YouAskToCreateDatabaseUserSoRootRequired=Ha marcat la casella "Crear l'usuari propietari" de la base de dades. Per això, l'usuari/contrasenya del superusuari (al final del formulari) són obligatoris.
+=======
+YouAskDatabaseCreationSoDolibarrNeedToConnect=Heu seleccionat crear una base de dades <b> %s </b>, però per això, Dolibarr necessita connectar-se al servidor <b> %s </b> amb permisos de superusuari <b> %s </b>.
+YouAskLoginCreationSoDolibarrNeedToConnect=Heu seleccionat crear un usuari de base de dades <b> %s </b>, però per això, Dolibarr necessita connectar-se al servidor <b> %s </b> amb permisos de superusuari <b> %s </b>.
+BecauseConnectionFailedParametersMayBeWrong=La connexió a la base de dades ha fallat: els paràmetres de l'amfitrió o superusuari han de ser incorrectes.
+OrphelinsPaymentsDetectedByMethod=Pagaments orfes detectats pel mètode %s
+RemoveItManuallyAndPressF5ToContinue=Esborreu manualment i premeu F5 per continuar.
+FieldRenamed=Camp renombrat
+IfLoginDoesNotExistsCheckCreateUser=Si l'usuari encara no existeix, heu de marcar l'opció "Crear usuari"
+ErrorConnection=El servidor "<b> %s </b>", el nom de la base de dades "<b> %s </b>", inici de sessió "<b> %s </b>" o la contrasenya de la base de dades pot ser incorrecte o la versió del client PHP pot ser massa antiga en comparació amb la versió de la base de dades.
+InstallChoiceRecommanded=Opció recomanada per a instal·lar la versió <b>%s</b> sobre la seva actual versió <b>%s</b>
+InstallChoiceSuggested=<b>Opció suggerida per l'instal·lador</b>.
+MigrateIsDoneStepByStep=La versió específica (%s) té un buit de diverses versions. L'assistent d'instal·lació tornarà a suggerir una migració addicional una vegada que aquesta s'hagi completat.
+CheckThatDatabasenameIsCorrect=Comproveu que el nom de la base de dades "<b> %s </b>" sigui correcte.
+IfAlreadyExistsCheckOption=Si el nom és correcte i la base de dades no existeix, heu de seleccionar l'opció "Crear la base de dades"
+OpenBaseDir=Paràmetre php openbasedir
+YouAskToCreateDatabaseSoRootRequired=Heu marcat el quadre "Crea una base de dades". Per això, heu de proporcionar el login / contrasenya del superusuari (part inferior del formulari).
+YouAskToCreateDatabaseUserSoRootRequired=Heu marcat el quadre "Crea propietari de la base de dades". Per això, heu de proporcionar el login / contrasenya del superusuari (part inferior del formulari).
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NextStepMightLastALongTime=El següent pas pot trigar diversos minuts. Després d'haver validat, li agraïm esperi a la completa visualització de la pàgina següent per continuar.
 MigrationCustomerOrderShipping=Actualització de les dades de expedicions de comandes de clients
 MigrationShippingDelivery=Actualització de les dades de expedicions
 MigrationShippingDelivery2=Actualització de les dades expedicions 2
 MigrationFinished=Acabada l'actualització
+<<<<<<< HEAD
 LastStepDesc=<strong>Últim pas</strong>: Indiqueu aquí el compte i la contrasenya del primer usuari que fareu servir per connectar-se a l'aplicació. No perdi aquests identificadors, és el compte que permet administrar la resta.
 ActivateModule=Activació del mòdul %s
 ShowEditTechnicalParameters=Premi aquí per veure/editar els paràmetres tècnics (mode expert)
@@ -140,6 +235,18 @@ KeepDefaultValuesDeb=Estàs utilitzant l'assistent d'instal·lació Dolibarr d'u
 KeepDefaultValuesMamp=Estàs utilitzant l'assistent d'instal·lació de DoliMamp amb els valors proposats més òptims. Canvia'ls només si estàs segur del que estàs fent.
 KeepDefaultValuesProxmox=Estàs utilitzant l'assistent d'instal·lació de Dolibarr des d'una màquina virtual Proxmox amb els valors proposats més òptims. Canvia'ls només si estàs segur del que estàs fent.
 UpgradeExternalModule=Executa el procés d'actualització dedicat de mòduls externs
+=======
+LastStepDesc=<strong> Darrer pas </strong>: definiu aquí l'inici de sessió i la contrasenya que voleu utilitzar per connectar-se a Dolibarr. <b> No perdis això, ja que és el compte mestre per administrar tots els altres / comptes d'usuari addicionals.</b>
+ActivateModule=Activació del mòdul %s
+ShowEditTechnicalParameters=Premi aquí per veure/editar els paràmetres tècnics (mode expert)
+WarningUpgrade=Advertència:\nHas realitzat una còpia de seguretat de la base de dades primer?\nAixò és molt recomanable. La pèrdua de dades (per exemple, errors en mysql versió 5.5.40 / 41/42/43) pot ser possible durant aquest procés, per la qual cosa és essencial fer un abocament complet de la vostra base de dades abans de començar qualsevol migració.\n\nFeu clic a Accepta per iniciar el procés de migració ...
+ErrorDatabaseVersionForbiddenForMigration=La versió de la vostra base de dades és %s. Té un error crític, fent possible la pèrdua de dades si realitzeu canvis estructurals a la vostra base de dades, tal com ho requereix el procés de migració. Per la seva raó, la migració no es permetrà fins que actualitzeu la vostra base de dades a una versió de capa (parcheada) (llista de versions de buggy conegudes: %s)
+KeepDefaultValuesWamp=Heu utilitzat l'assistent de configuració Dolibarr de DoliWamp, de manera que els valors proposats aquí ja estan optimitzats. Canvieu-los només si saps el que estàs fent.
+KeepDefaultValuesDeb=Heu utilitzat l'assistent de configuració Dolibarr des d'un paquet Linux (Ubuntu, Debian, Fedora ...), de manera que els valors proposats aquí ja estan optimitzats. Només s'ha d'introduir la contrasenya del propietari de la base de dades per crear. Canvieu altres paràmetres només si saps el que estàs fent.
+KeepDefaultValuesMamp=Heu utilitzat l'assistent de configuració Dolibarr de DoliMamp, de manera que els valors proposats aquí ja estan optimitzats. Canvieu-los només si saps el que estàs fent.
+KeepDefaultValuesProxmox=Heu utilitzat l'assistent de configuració de Dolibarr des d'un dispositiu virtual Proxmox, de manera que els valors proposats aquí ja estan optimitzats. Canvieu-los només si saps el que estàs fent.
+UpgradeExternalModule=Executeu el procés d'actualització dedicat del mòdul extern
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SetAtLeastOneOptionAsUrlParameter=Estableix com a mínim una opció com a paràmetre a l'URL. Per exemple: '... repair.php?standard=confirmed'
 NothingToDelete=Res per netejar / esborrar
 NothingToDo=No hi ha res a fer
@@ -147,11 +254,19 @@ NothingToDo=No hi ha res a fer
 # upgrade
 MigrationFixData=Correcció de dades desnormalitzades
 MigrationOrder=Migració de dades de les comandes clients
+<<<<<<< HEAD
 MigrationSupplierOrder=Data migration for vendor's orders
 MigrationProposal=Migració de dades de pressupostos
 MigrationInvoice=Migració de dades de les factures a clients
 MigrationContract=Migració de dades dels contractes
 MigrationSuccessfullUpdate=Actualització correcta
+=======
+MigrationSupplierOrder=Migració de dades per a comandes de proveïdors
+MigrationProposal=Migració de dades de pressupostos
+MigrationInvoice=Migració de dades de les factures a clients
+MigrationContract=Migració de dades dels contractes
+MigrationSuccessfullUpdate=Actualització finalitzada
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MigrationUpdateFailed=L'actualització ha fallat
 MigrationRelationshipTables=Migració de les taules de relació (%s)
 MigrationPaymentsUpdate=Actualització dels pagaments (vincle nn pagaments-factures)
@@ -163,9 +278,15 @@ MigrationContractsUpdate=Actualització dels contractes sense detalls (gestió d
 MigrationContractsNumberToUpdate=%s contracte(s) a actualitzar
 MigrationContractsLineCreation=Creació linia contracte per contracte Ref. %s
 MigrationContractsNothingToUpdate=No hi ha més contractes (vinculats a un producte) sense línies de detalls que hagin de corregir.
+<<<<<<< HEAD
 MigrationContractsFieldDontExist=Els camps fk_facture no existeixen ja. No hi ha operació pendent.
 MigrationContractsEmptyDatesUpdate=Actualització de les dades de contractes no indicades
 MigrationContractsEmptyDatesUpdateSuccess=S'ha fet correctament la correcció de la data buida de contracte
+=======
+MigrationContractsFieldDontExist=El camp fk_facture ja no existeix. Res a fer.
+MigrationContractsEmptyDatesUpdate=Actualització de les dades de contractes no indicades
+MigrationContractsEmptyDatesUpdateSuccess=La correcció de la data buida del contracte s'ha realitzat correctament
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MigrationContractsEmptyDatesNothingToUpdate=No hi ha més properes dates de contractes.
 MigrationContractsEmptyCreationDatesNothingToUpdate=No hi ha més properes dates de creació.
 MigrationContractsInvalidDatesUpdate=Actualització dades contracte incorrectes (per contractes amb detall en servei)
@@ -187,6 +308,7 @@ MigrationDeliveryDetail=Actualitzar recepcions
 MigrationStockDetail=Actualitzar valor en stock dels productes
 MigrationMenusDetail=Actualització de la taula de menús dinàmics
 MigrationDeliveryAddress=Actualització de les adreces d'enviament en les notes de lliurament
+<<<<<<< HEAD
 MigrationProjectTaskActors=Migració de la taula llx_projet_task_actors
 MigrationProjectUserResp=Migració del camp fk_user_resp de llx_projet a llx_element_contact
 MigrationProjectTaskTime=Actualitza el temps dedicat en segons
@@ -194,11 +316,21 @@ MigrationActioncommElement=Actualització de les dades de accions sobre elements
 MigrationPaymentMode=Actualització de les formes de pagament
 MigrationCategorieAssociation=Actualització de les categories
 MigrationEvents=Migració d'esdeveniments per afegir propietari a la taula d'asignació
+=======
+MigrationProjectTaskActors=Migració de dades per a la taula llx_projet_task_actors
+MigrationProjectUserResp=Migració del camp fk_user_resp de llx_projet a llx_element_contact
+MigrationProjectTaskTime=Actualitza el temps dedicat en segons
+MigrationActioncommElement=Actualització de les dades de accions sobre elements
+MigrationPaymentMode=Migració de dades per tipus de pagament
+MigrationCategorieAssociation=Actualització de les categories
+MigrationEvents=Migració d'esdeveniments per afegir el propietari de l'esdeveniment a la taula d'assignacions
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MigrationEventsContact=Migració d'esdeveniments per afegir contacte d'esdeveniments a la taula d'assignacions
 MigrationRemiseEntity=Actualitza el valor del camp entity de llx_societe_remise
 MigrationRemiseExceptEntity=Actualitza el valor del camp entity de llx_societe_remise_except
 MigrationUserRightsEntity=Actualitza el valor del camp de l'entitat llx_user_rights
 MigrationUserGroupRightsEntity=Actualitza el valor del camp de l'entitat llx_usergroup_rights
+<<<<<<< HEAD
 MigrationReloadModule=Recarrega el mòdul %s
 MigrationResetBlockedLog=Restablir el mòdul BlockedLog per l'algoritme v7
 ShowNotAvailableOptions=Mostra opcions no disponibles
@@ -208,3 +340,15 @@ YouTryInstallDisabledByDirLock=The application try to sefl upgrade, but install/
 YouTryInstallDisabledByFileLock=The application try to sefl upgrade, but install/upgrade pages pages have been disabled for security reason (by lock file <strong>install.lock</strong> into dolibarr documents directory).<br>
 ClickHereToGoToApp=Fes clic aquí per anar a la teva aplicació
 ClickOnLinkOrRemoveManualy=Click on following link and if you always reach this page, you must remove the file install.lock into documents directory manually
+=======
+MigrationUserPhotoPath=Migració de rutes per les fotos dels usuaris
+MigrationReloadModule=Recarrega el mòdul %s
+MigrationResetBlockedLog=Restablir el mòdul BlockedLog per l'algoritme v7
+ShowNotAvailableOptions=Mostra les opcions no disponibles
+HideNotAvailableOptions=Amaga les opcions no disponibles
+ErrorFoundDuringMigration=S'han reportat error(s) durant el procés de migració, de manera que el següent pas no està disponible. Per ignorar els errors, podeu <a href="%s"> fer clic aquí </a>, però l'aplicació o algunes funcions no funcionen correctament fins que es resolen els errors.
+YouTryInstallDisabledByDirLock=L'aplicació ha intentat actualitzar-se automàticament, però les pàgines d'instal·lació / actualització s'han desactivat per a la seguretat (el directori rep el nom amb el sufix .lock). <br>
+YouTryInstallDisabledByFileLock=L'aplicació s'ha intentat actualitzar automàticament, però les pàgines d'instal·lació / actualització s'han desactivat per a la seguretat (per l'existència d'un fitxer de bloqueig <strong> install.lock </strong> al directori de documents del dolibarr). <br>
+ClickHereToGoToApp=Fes clic aquí per anar a la teva aplicació
+ClickOnLinkOrRemoveManualy=Feu clic al següent enllaç. Si sempre veieu aquesta mateixa pàgina, heu d'eliminar / canviar el nom del fitxer install.lock al directori de documents.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

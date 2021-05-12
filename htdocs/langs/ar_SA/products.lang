@@ -1,9 +1,17 @@
 # Dolibarr language file - Source file is en_US - products
+<<<<<<< HEAD
 ProductRef=المرجع المنتج.
 ProductLabel=وصف المنتج
 ProductLabelTranslated=تسمية المنتج مترجمة
 ProductDescriptionTranslated=ترجم وصف المنتج
 ProductNoteTranslated=ترجم مذكرة المنتج
+=======
+ProductRef=مرجع المنتج
+ProductLabel=وصف المنتج
+ProductLabelTranslated=تسمية المنتج مترجمة
+ProductDescriptionTranslated=ترجمة وصف المنتج
+ProductNoteTranslated=ترجمة مذكرة المنتج
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProductServiceCard=منتجات / بطاقة الخدمات
 TMenuProducts=المنتجات
 TMenuServices=الخدمات
@@ -16,13 +24,22 @@ Create=إنشاء
 Reference=المرجع
 NewProduct=منتج جديد
 NewService=خدمة جديدة
+<<<<<<< HEAD
 ProductVatMassChange=تغيير جماعي لضريبة القيمة المضافة
 ProductVatMassChangeDesc=هذه الصفحة يمكن استخدامها لتعديل نسبة الضريبة على القيمة المضافة المحددة على المنتجات أو الخدمات من قيمة إلى أخرى. تحذير، يتم هذا التغيير على كل قاعدة البيانات.
+=======
+ProductVatMassChange=Global VAT Update
+ProductVatMassChangeDesc=This tool updates the VAT rate defined on <b><u>ALL</u></b> products and services!
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MassBarcodeInit=الحرف الأول الباركود الشامل
 MassBarcodeInitDesc=هذه الصفحة يمكن استخدامها لتهيئة الباركود على الكائنات التي لا يكون الباركود تعريف. تحقق قبل أن الإعداد وحدة الباركود كاملة.
 ProductAccountancyBuyCode=كود المحاسبة (شراء)
 ProductAccountancySellCode=كود المحاسبة (بيع)
+<<<<<<< HEAD
 ProductAccountancySellIntraCode=Accounting code (sale intra-community)
+=======
+ProductAccountancySellIntraCode=Accounting code (sale intra-Community)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProductAccountancySellExportCode=Accounting code (sale export)
 ProductOrService=المنتج أو الخدمة
 ProductsAndServices=المنتجات والخدمات
@@ -36,6 +53,7 @@ ServicesOnSaleOnly=Services for sale only
 ServicesOnPurchaseOnly=Services for purchase only
 ServicesNotOnSell=خدمات ليست للبيع ولا الشراء
 ServicesOnSellAndOnBuy=خدمات للبيع والشراء
+<<<<<<< HEAD
 LastModifiedProductsAndServices=Latest %s modified products/services
 LastRecordedProducts=Latest %s recorded products
 LastRecordedServices=Latest %s recorded services
@@ -46,6 +64,19 @@ Stocks=المخزون
 Movements=حركات
 Sell=مبيعات
 Buy=مشتريات
+=======
+LastModifiedProductsAndServices=أخر %s تعديلات على المنتجات / الخدمات
+LastRecordedProducts=Latest %s recorded products
+LastRecordedServices=Latest %s recorded services
+CardProduct0=المنتج
+CardProduct1=الخدمة
+Stock=المخزون
+MenuStocks=المخزون
+Stocks=Stocks and location (warehouse) of products
+Movements=حركات
+Sell=يبيع
+Buy=Purchase
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 OnSell=متاح للبيع
 OnBuy=للشراء
 NotOnSell=ليس للبيع
@@ -60,16 +91,29 @@ ProductStatusNotOnBuyShort=ليس للشراء
 UpdateVAT=تحديث الضريبة على القيمة المضافة
 UpdateDefaultPrice=تحديث السعر الافتراضي
 UpdateLevelPrices=أسعار التحديث لكل مستوى
+<<<<<<< HEAD
 AppliedPricesFrom=تطبق الأسعار من
 SellingPrice=سعر البيع
 SellingPriceHT=سعر البيع (صافي الضرائب)
 SellingPriceTTC=سعر البيع (شامل الضريبية)
 CostPriceDescription=هذا السعر (صافية من الضرائب) يمكن استخدامها لتخزين متوسط ​​كمية هذا تكلفة المنتج لشركتك. قد يكون بأي ثمن على حساب نفسك، على سبيل المثال من متوسط ​​سعر الشراء بالإضافة إلى متوسط ​​إنتاج وتوزيع التكاليف.
+=======
+AppliedPricesFrom=Applied from
+SellingPrice=سعر البيع
+SellingPriceHT=Selling price (excl. tax)
+SellingPriceTTC=سعر البيع (شامل الضريبية)
+SellingMinPriceTTC=Minimum Selling price (inc. tax)
+CostPriceDescription=This price field (excl. tax) can be used to store the average amount this product costs to your company. It may be any price you calculate yourself, for example from the average buying price plus average production and distribution cost.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CostPriceUsage=This value could be used for margin calculation.
 SoldAmount=Sold amount
 PurchasedAmount=Purchased amount
 NewPrice=السعر الجديد
+<<<<<<< HEAD
 MinPrice=سعر البيع
+=======
+MinPrice=Min. sell price
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 EditSellingPriceLabel=Edit selling price label
 CantBeLessThanMinPrice=سعر البيع لا يمكن أن يكون أقل من الحد الأدنى المسموح لهذا المنتج (٪ ق بدون الضرائب)
 ContractStatusClosed=مغلق
@@ -77,8 +121,13 @@ ErrorProductAlreadyExists=المنتج ذو المرجع %sموجود بالفع
 ErrorProductBadRefOrLabel=قيمة خاطئة لـ مرجع  أو ملصق.
 ErrorProductClone=كان هناك مشكلة أثناء محاولة استنساخ المنتج أو الخدمة.
 ErrorPriceCantBeLowerThanMinPrice=خطأ، سعر لا يمكن أن يكون أقل من الحد الأدنى السعر.
+<<<<<<< HEAD
 Suppliers=الموردين
 SupplierRef=مرجع مورد المنتجات.
+=======
+Suppliers=Vendors
+SupplierRef=Vendor SKU
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShowProduct=عرض المنتج
 ShowService=عرض الخدمة
 ProductsAndServicesArea=منطقة المنتجات والخدمات
@@ -87,7 +136,11 @@ ServicesArea=منطقة الخدمات
 ListOfStockMovements=قائمة الحركات المخزون
 BuyingPrice=سعر الشراء
 PriceForEachProduct=المنتجات بأسعار محددة
+<<<<<<< HEAD
 SupplierCard=بطاقة المورد
+=======
+SupplierCard=Vendor card
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PriceRemoved=تمت إزالة السعر
 BarCode=الباركود
 BarcodeType=نوع الباركود
@@ -95,10 +148,17 @@ SetDefaultBarcodeType=حدد نوع الباركود
 BarcodeValue=قيمة الباركود
 NoteNotVisibleOnBill=ملحوظة(غيرمرئية على الفواتير والعروض...)
 ServiceLimitedDuration=إذا كان المنتج هو خدمة لفترة محدودة :
+<<<<<<< HEAD
 MultiPricesAbility=عدة شرائح من أسعار لكل منتج / خدمة (كل عميل في شريحة واحدة)
 MultiPricesNumPrices=عدد من السعر
 AssociatedProductsAbility=تنشيط ميزة إدارة المنتجات الإفتراضية
 AssociatedProducts=المنتجات الإفتراضية
+=======
+MultiPricesAbility=Multiple price segments per product/service (each customer is in one price segment)
+MultiPricesNumPrices=عدد من السعر
+AssociatedProductsAbility=Activate virtual products (kits)
+AssociatedProducts=Virtual products
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AssociatedProductsNumber=عدد المنتجات التي تنتج هذا المنتج الإفتراضي
 ParentProductsNumber=عدد منتج التعبئة الاب
 ParentProducts=Parent products
@@ -109,7 +169,11 @@ CategoryFilter=فلتر التصنيف
 ProductToAddSearch= إبحث عن منتج لإضافتة
 NoMatchFound=لا يوجد نتائج متطابقة
 ListOfProductsServices=List of products/services
+<<<<<<< HEAD
 ProductAssociationList=قائمة المنتجات / الخدمات التي هي مكون من مكونات هذا المنتج/ الحزمة الإفتراضية
+=======
+ProductAssociationList=List of products/services that are component(s) of this virtual product/kit
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProductParentList=قائمة من المنتجات / الخدمات الإفتراضية مع هذا المنتج كعنصر مكون
 ErrorAssociationIsFatherOfThis=واحد من اختيار المنتج الأم الحالية المنتج
 DeleteProduct=حذف منتج / خدمة
@@ -122,6 +186,7 @@ ImportDataset_service_1=الخدمات
 DeleteProductLine=حذف خط الإنتاج
 ConfirmDeleteProductLine=هل أنت متأكد من أنك تريد حذف خط الإنتاج؟
 ProductSpecial=خاص
+<<<<<<< HEAD
 QtyMin=الحد الأدنى من الكمية
 PriceQtyMin=ثمن هذا الحد الادنى (ث / س الخصم)
 PriceQtyMinCurrency=Price for this min. qty (w/o discount) (currency)
@@ -135,6 +200,21 @@ PredefinedProductsAndServicesToSell=منتجات محددة مسبقا / خدم�
 PredefinedProductsToPurchase=المنتج مسبقا لشراء
 PredefinedServicesToPurchase=خدمات محددة مسبقا لشراء
 PredefinedProductsAndServicesToPurchase=منتجات محددة مسبقا / خدمات أن puchase
+=======
+QtyMin=Min. purchase quantity
+PriceQtyMin=Price quantity min.
+PriceQtyMinCurrency=Price (currency) for this qty. (no discount)
+VATRateForSupplierProduct=VAT Rate (for this vendor/product)
+DiscountQtyMin=Discount for this qty.
+NoPriceDefinedForThisSupplier=No price/qty defined for this vendor/product
+NoSupplierPriceDefinedForThisProduct=No vendor price/qty defined for this product
+PredefinedProductsToSell=Predefined Product
+PredefinedServicesToSell=Predefined Service
+PredefinedProductsAndServicesToSell=منتجات محددة مسبقا / خدمات للبيع
+PredefinedProductsToPurchase=المنتج مسبقا لشراء
+PredefinedServicesToPurchase=خدمات محددة مسبقا لشراء
+PredefinedProductsAndServicesToPurchase=Predefined products/services to purchase
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NotPredefinedProducts=Not predefined products/services
 GenerateThumb=توليد صورة مصغرة
 ServiceNb=خدمة #%s
@@ -143,22 +223,37 @@ ListProductByPopularity=قائمة المنتجات / الخدمات بحسب ا
 ListServiceByPopularity=قائمة الخدمات بحسب الشهرة
 Finished=المنتجات المصنعة
 RowMaterial=المادة الخام
+<<<<<<< HEAD
 CloneProduct=استنساخ المنتجات أو الخدمات
 ConfirmCloneProduct=هل انت متأكد انك ترغب في استنساخ المنتج/الخدمة <b>%s</b>؟
 CloneContentProduct=استنساخ جميع المعلومات الرئيسية لـ المنتج / الخدمة
 ClonePricesProduct=Clone prices
 CloneCompositionProduct=استنساخ منتج / خدمة معبئة
+=======
+ConfirmCloneProduct=هل انت متأكد انك ترغب في استنساخ المنتج/الخدمة <b>%s</b>؟
+CloneContentProduct=Clone all main information of product/service
+ClonePricesProduct=Clone prices
+CloneCompositionProduct=Clone virtual product/service
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CloneCombinationsProduct=Clone product variants
 ProductIsUsed=هذا المنتج يتم استخدامة
 NewRefForClone=مرجع. المنتج/ الخدمة الجديدة 
 SellingPrices=أسعار بيع
 BuyingPrices=شراء أسعار
 CustomerPrices=أسعار العميل
+<<<<<<< HEAD
 SuppliersPrices=أسعار المورد
 SuppliersPricesOfProductsOrServices=أسعار المورد (منتجات أو خدمات)
 CustomCode=Customs / Commodity / HS code
 CountryOrigin=بلد المنشأ
 Nature=طبيعة
+=======
+SuppliersPrices=Vendor prices
+SuppliersPricesOfProductsOrServices=Vendor prices (of products or services)
+CustomCode=Customs / Commodity / HS code
+CountryOrigin=بلد المنشأ
+Nature=Nature of produt (material/finished)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShortLabel=التسمية قصيرة
 Unit=وحدة
 p=ش.
@@ -202,7 +297,11 @@ PriceByQuantity=أسعار مختلفة حسب الكمية
 DisablePriceByQty=Disable prices by quantity
 PriceByQuantityRange=مدى الكمية
 MultipriceRules=Price segment rules
+<<<<<<< HEAD
 UseMultipriceRules=Use price segment rules (defined into product module setup) to autocalculate prices of all other segment according to first segment
+=======
+UseMultipriceRules=Use price segment rules (defined into product module setup) to auto calculate prices of all other segments according to first segment
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PercentVariationOver=٪٪ الاختلاف على الصورة٪
 PercentDiscountOver=٪٪ خصم أكثر من٪ الصورة
 KeepEmptyForAutoCalculation=Keep empty to have this calculated automatically from weight or volume of products
@@ -219,13 +318,18 @@ Quarter2=الربع الثاني
 Quarter3=الربع الثالث
 Quarter4=الربع الرابع
 BarCodePrintsheet=طباعة الباركود
+<<<<<<< HEAD
 PageToGenerateBarCodeSheets=مع هذه الأداة، يمكنك طباعة أوراق من الباركود. اختار نوع صفحة الملصقات، ونوع وقيمة  الباركود، ثم انقر على زر <b>%s</b>
+=======
+PageToGenerateBarCodeSheets=With this tool, you can print sheets of barcode stickers. Choose format of your sticker page, type of barcode and value of barcode, then click on button <b>%s</b>.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NumberOfStickers=عدد من الملصقات للطباعة على الصفحة
 PrintsheetForOneBarCode=طباعة عدة ملصقات لالباركود واحد
 BuildPageToPrint=توليد صفحة للطباعة
 FillBarCodeTypeAndValueManually=ملء نوع وقيمة الباركود  يدويا.
 FillBarCodeTypeAndValueFromProduct=ملء نوع وقيمة الباركود من باركود المنتج.
 FillBarCodeTypeAndValueFromThirdParty=ملء نوع وقيمة الباركود من باركود طرف ثالت.
+<<<<<<< HEAD
 DefinitionOfBarCodeForProductNotComplete=تعريف نوع أو قيمة الباركود ليس كامل للمنتج%s.
 DefinitionOfBarCodeForThirdpartyNotComplete=تعريف نوع أو قيمة الباركود ليس كامل للطرف الثالث %s
 BarCodeDataForProduct=معلومات الباركود للمنتج%s :
@@ -234,32 +338,63 @@ ResetBarcodeForAllRecords=Define barcode value for all record (this will also re
 PriceByCustomer=Different prices for each customer
 PriceCatalogue=A single sell price per product/service
 PricingRule=Rules for sell prices
+=======
+DefinitionOfBarCodeForProductNotComplete=Definition of type or value of barcode not complete for product %s.
+DefinitionOfBarCodeForThirdpartyNotComplete=Definition of type or value of barcode non complete for third party %s.
+BarCodeDataForProduct=Barcode information of product %s:
+BarCodeDataForThirdparty=Barcode information of third party %s:
+ResetBarcodeForAllRecords=Define barcode value for all record (this will also reset barcode value already defined with new values)
+PriceByCustomer=Different prices for each customer
+PriceCatalogue=A single sell price per product/service
+PricingRule=Rules for selling prices
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddCustomerPrice=إضافة السعر من قبل العملاء
 ForceUpdateChildPriceSoc=تعيين نفس السعر على الشركات التابعة العملاء
 PriceByCustomerLog=سجل الأسعار العملاء السابقة
 MinimumPriceLimit=سعر الحد الأدنى لا يمكن أن يكون أقل ثم٪ الصورة
+<<<<<<< HEAD
 MinimumRecommendedPrice=سعر الحد الأدنى الموصى به هو:٪ الصورة
+=======
+MinimumRecommendedPrice=Minimum recommended price is: %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PriceExpressionEditor=محرر السعر التعبير
 PriceExpressionSelected=اختيار التعبير السعر
 PriceExpressionEditorHelp1="السعر = 2 + 2" أو "2 + 2" لتحديد السعر. استخدام ؛ لفصل التعبيرات
 PriceExpressionEditorHelp2=يمكنك الوصول إلى ExtraFields مع المتغيرات <b>مثل</b> # <b># extrafield_myextrafieldkey</b> والمتغيرات العالمية مع <b># global_mycode #</b>
+<<<<<<< HEAD
 PriceExpressionEditorHelp3=أسعار المنتج / الخدمة والموردين على حد سواء هناك هذه المتغيرات المتاحة: <br> <b># # # localtax1_tx tva_tx # # # # localtax2_tx الوزن # # # # طول سطح # # # price_min</b>
 PriceExpressionEditorHelp4=في المنتج / الخدمة فقط <b>السعر:</b> # <b>supplier_min_price #</b> <br> أسعار المورد <b>فقط:</b> # <b>supplier_quantity # و # supplier_tva_tx #</b>
+=======
+PriceExpressionEditorHelp3=In both product/service and vendor prices there are these variables available:<br><b>#tva_tx# #localtax1_tx# #localtax2_tx# #weight# #length# #surface# #price_min#</b>
+PriceExpressionEditorHelp4=In product/service price only: <b>#supplier_min_price#</b><br>In vendor prices only: <b>#supplier_quantity# and #supplier_tva_tx#</b>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PriceExpressionEditorHelp5=القيم العالمية المتاحة:
 PriceMode=وضع السعر
 PriceNumeric=عدد
 DefaultPrice=سعر افتراضي
 ComposedProductIncDecStock=زيادة / نقصان الأسهم على التغيير الأم
+<<<<<<< HEAD
 ComposedProduct=المنتج الفرعي
 MinSupplierPrice=الحد الأدنى من سعر الشراء
 MinCustomerPrice=Minimum selling price
 DynamicPriceConfiguration=التكوين سعر ديناميكي
 DynamicPriceDesc=On product card, with this module enabled, you should be able to set mathematic functions to calculate Customer or Supplier prices. Such function can use all mathematic operators, some constants and variables. You can set here the variables you want to be able to use and if the variable need an automatic update, the external URL to use to ask Dolibarr to update automaticaly the value.
+=======
+ComposedProduct=Child products
+MinSupplierPrice=الحد الأدنى من سعر الشراء
+MinCustomerPrice=Minimum selling price
+DynamicPriceConfiguration=التكوين سعر ديناميكي
+DynamicPriceDesc=You may define mathematical formulae to calculate Customer or Vendor prices. Such formulas can use all mathematical operators, some constants and variables. You can define here the variables you wish to use. If the variable needs an automatic update, you may define the external URL to allow Dolibarr to update the value automatically.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddVariable=Add Variable
 AddUpdater=Add Updater
 GlobalVariables=المتغيرات العالمية
 VariableToUpdate=Variable to update
+<<<<<<< HEAD
 GlobalVariableUpdaters=updaters متغير العالمية
+=======
+GlobalVariableUpdaters=External updaters for variables
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 GlobalVariableUpdaterType0=البيانات JSON
 GlobalVariableUpdaterHelp0=يوزع البيانات JSON من URL محددة، تحدد قيمة الموقع من القيمة ذات الصلة،
 GlobalVariableUpdaterHelpFormat0=Format for request {"URL": "http://example.com/urlofjson", "VALUE": "array1,array2,targetvalue"}
@@ -277,7 +412,11 @@ WarningSelectOneDocument=يرجى تحديد وثيقة واحدة على الأ
 DefaultUnitToShow=وحدة
 NbOfQtyInProposals=Qty in proposals
 ClinkOnALinkOfColumn=Click on a link of column %s to get a detailed view...
+<<<<<<< HEAD
 ProductsOrServicesTranslations=Products or services translation
+=======
+ProductsOrServicesTranslations=Products/Services translations
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 TranslatedLabel=Translated label
 TranslatedDescription=Translated description
 TranslatedNote=Translated notes
@@ -293,7 +432,12 @@ ProductSheet=Product sheet
 ServiceSheet=Service sheet
 PossibleValues=Possible values
 GoOnMenuToCreateVairants=Go on menu %s - %s to prepare attribute variants (like colors, size, ...)
+<<<<<<< HEAD
 
+=======
+UseProductFournDesc=Add a feature to define the descriptions of products defined by the vendors in addition to descriptions for customers
+ProductSupplierDescription=Vendor description for the product
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 #Attributes
 VariantAttributes=Variant attributes
 ProductAttributes=Variant attributes for products
@@ -325,12 +469,26 @@ DoNotRemovePreviousCombinations=Do not remove previous variants
 UsePercentageVariations=Use percentage variations
 PercentageVariation=Percentage variation
 ErrorDeletingGeneratedProducts=There was an error while trying to delete existing product variants
+<<<<<<< HEAD
 NbOfDifferentValues=Nb of different values
 NbProducts=Nb. of products
 ParentProduct=Parent product
 HideChildProducts=Hide variant products
+=======
+NbOfDifferentValues=No. of different values
+NbProducts=No. of products
+ParentProduct=Parent product
+HideChildProducts=Hide variant products
+ShowChildProducts=Show variant products
+NoEditVariants=Go to Parent product card and edit variants price impact in the variants tab
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmCloneProductCombinations=Would you like to copy all the product variants to the other parent product with the given reference?
 CloneDestinationReference=Destination product reference
 ErrorCopyProductCombinations=There was an error while copying the product variants
 ErrorDestinationProductNotFound=Destination product not found
 ErrorProductCombinationNotFound=Product variant not found
+<<<<<<< HEAD
+=======
+ActionAvailableOnVariantProductOnly=Action only available on the variant of product
+ProductsPricePerCustomer=Product prices per customers
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

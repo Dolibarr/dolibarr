@@ -1,4 +1,14 @@
 # Dolibarr language file - Source file is en_US - holiday
+<<<<<<< HEAD
 CancelCP=Cancelado
+=======
+Holidays=Salir
+CPTitreMenu=Salir
+DateDebCP=Fecha de inicio
+DateFinCP=Fecha final
+ApprovedCP=Aprobado
+CancelCP=Cancelado
+RefuseCP=Rechazado
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 EditCP=Editar
 MotifCP=Razón

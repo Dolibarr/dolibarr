@@ -2,7 +2,11 @@
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
  */
 abstract class ModeleThirdPartyDoc extends CommonDocGenerator
 {
+<<<<<<< HEAD
     var $error='';
 
     /**
@@ -44,17 +49,42 @@ abstract class ModeleThirdPartyDoc extends CommonDocGenerator
      */
     static function liste_modeles($db,$maxfilenamelength=0)
     {
+=======
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
+     *  Return list of active generation modules
+     *
+     * 	@param	DoliDB		$db					Database handler
+     *  @param	integer		$maxfilenamelength  Max length of value to show
+     * 	@return	array							List of templates
+     */
+    public static function liste_modeles($db, $maxfilenamelength = 0)
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         global $conf;
 
         $type='company';
         $liste=array();
 
         include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+<<<<<<< HEAD
         $liste=getListOfModels($db,$type,$maxfilenamelength);
 
         return $liste;
     }
 
+=======
+        $liste = getListOfModels($db, $type, $maxfilenamelength);
+
+        return $liste;
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 /**
@@ -63,14 +93,25 @@ abstract class ModeleThirdPartyDoc extends CommonDocGenerator
  */
 abstract class ModeleThirdPartyCode
 {
+<<<<<<< HEAD
     var $error='';
+=======
+    /**
+     * @var string Error code (or message)
+	 */
+	public $error='';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     /**     Renvoi la description par defaut du modele de numerotation
      *
      *		@param	Translate	$langs		Object langs
      *      @return string      			Texte descripif
      */
+<<<<<<< HEAD
     function info($langs)
+=======
+    public function info($langs)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $langs->load("bills");
         return $langs->trans("NoDescription");
@@ -81,7 +122,11 @@ abstract class ModeleThirdPartyCode
      *		@param	Translate	$langs		Object langs
      *      @return string      			Nom du module
      */
+<<<<<<< HEAD
     function getNom($langs)
+=======
+    public function getNom($langs)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         return $this->nom;
     }
@@ -92,7 +137,11 @@ abstract class ModeleThirdPartyCode
      *		@param	Translate	$langs		Object langs
      *      @return string      			Example
      */
+<<<<<<< HEAD
     function getExample($langs)
+=======
+    public function getExample($langs)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $langs->load("bills");
         return $langs->trans("NoExample");
@@ -103,7 +152,11 @@ abstract class ModeleThirdPartyCode
      *
      *      @return     boolean     false si conflit, true si ok
      */
+<<<<<<< HEAD
     function canBeActivated()
+=======
+    public function canBeActivated()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         return true;
     }
@@ -115,18 +168,31 @@ abstract class ModeleThirdPartyCode
      *	@param	int			$type		Type
      *  @return string      			Value
      */
+<<<<<<< HEAD
     function getNextValue($objsoc=0,$type=-1)
+=======
+    public function getNextValue($objsoc = 0, $type = -1)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $langs;
         return $langs->trans("Function_getNextValue_InModuleNotWorking");
     }
 
 
+<<<<<<< HEAD
     /**     Return version of module
      *
      *      @return     string      Version
      */
     function getVersion()
+=======
+    /**
+     *  Return version of module
+     *
+     *  @return     string      Version
+     */
+    public function getVersion()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $langs;
         $langs->load("admin");
@@ -138,15 +204,27 @@ abstract class ModeleThirdPartyCode
         return $langs->trans("NotAvailable");
     }
 
+<<<<<<< HEAD
     /**
      *  Renvoi la liste des modeles de numéroation
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
+     *  Renvoie la liste des modeles de numérotation
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
      *
      *  @param	DoliDB	$db     			Database handler
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of numbers
      */
+<<<<<<< HEAD
     static function liste_modeles($db,$maxfilenamelength=0)
     {
+=======
+    public static function liste_modeles($db, $maxfilenamelength = 0)
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         $liste=array();
         $sql ="";
 
@@ -170,6 +248,7 @@ abstract class ModeleThirdPartyCode
     }
 
     /**
+<<<<<<< HEAD
      *      Return description of module parameters
      *
      *      @param	Translate	$langs      Output language
@@ -178,6 +257,16 @@ abstract class ModeleThirdPartyCode
      *		@return	string					HTML translated description
      */
     function getToolTip($langs,$soc,$type)
+=======
+     *  Return description of module parameters
+     *
+     *  @param	Translate	$langs      Output language
+     *  @param	Societe		$soc		Third party object
+     *  @param	int			$type		-1=Nothing, 0=Customer, 1=Supplier
+     *  @return	string					HTML translated description
+     */
+    public function getToolTip($langs, $soc, $type)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $conf;
 
@@ -195,22 +284,33 @@ abstract class ModeleThirdPartyCode
         {
             $s.=$langs->trans("RequiredIfCustomer").': ';
             if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='<strike>';
+<<<<<<< HEAD
             $s.=yn(!$this->code_null,1,2);
             if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1,1,2).' ('.$langs->trans("ForcedToByAModule",$langs->transnoentities("yes")).')';
+=======
+            $s.=yn(!$this->code_null, 1, 2);
+            if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $s.='<br>';
         }
         if ($type == 1)
         {
             $s.=$langs->trans("RequiredIfSupplier").': ';
             if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='<strike>';
+<<<<<<< HEAD
             $s.=yn(!$this->code_null,1,2);
             if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1,1,2).' ('.$langs->trans("ForcedToByAModule",$langs->transnoentities("yes")).')';
+=======
+            $s.=yn(!$this->code_null, 1, 2);
+            if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $s.='<br>';
         }
         if ($type == -1)
         {
             $s.=$langs->trans("Required").': ';
             if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='<strike>';
+<<<<<<< HEAD
             $s.=yn(!$this->code_null,1,2);
             if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1,1,2).' ('.$langs->trans("ForcedToByAModule",$langs->transnoentities("yes")).')';
             $s.='<br>';
@@ -224,18 +324,38 @@ abstract class ModeleThirdPartyCode
         if ($type == 0 || $type == -1)
         {
             $nextval=$this->getNextValue($soc,0);
+=======
+            $s.=yn(!$this->code_null, 1, 2);
+            if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
+            $s.='<br>';
+        }
+        $s.=$langs->trans("CanBeModifiedIfOk").': ';
+        $s.=yn($this->code_modifiable, 1, 2);
+        $s.='<br>';
+        $s.=$langs->trans("CanBeModifiedIfKo").': '.yn($this->code_modifiable_invalide, 1, 2).'<br>';
+        $s.=$langs->trans("AutomaticCode").': '.yn($this->code_auto, 1, 2).'<br>';
+        $s.='<br>';
+        if ($type == 0 || $type == -1)
+        {
+            $nextval=$this->getNextValue($soc, 0);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             if (empty($nextval)) $nextval=$langs->trans("Undefined");
             $s.=$langs->trans("NextValue").($type == -1?' ('.$langs->trans("Customer").')':'').': <b>'.$nextval.'</b><br>';
         }
         if ($type == 1 || $type == -1)
         {
+<<<<<<< HEAD
             $nextval=$this->getNextValue($soc,1);
+=======
+            $nextval=$this->getNextValue($soc, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             if (empty($nextval)) $nextval=$langs->trans("Undefined");
             $s.=$langs->trans("NextValue").($type == -1?' ('.$langs->trans("Supplier").')':'').': <b>'.$nextval.'</b>';
         }
         return $s;
     }
 
+<<<<<<< HEAD
 	/**
 	 *   Check if mask/numbering use prefix
 	 *
@@ -246,6 +366,19 @@ abstract class ModeleThirdPartyCode
         return 0;
     }
 
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *   Check if mask/numbering use prefix
+	 *
+	 *   @return    int	    0=no, 1=yes
+     */
+    public function verif_prefixIsUsed()
+    {
+        // phpcs:enable
+        return 0;
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 
@@ -255,6 +388,7 @@ abstract class ModeleThirdPartyCode
  */
 abstract class ModeleAccountancyCode
 {
+<<<<<<< HEAD
     var $error='';
 
 
@@ -264,11 +398,27 @@ abstract class ModeleAccountancyCode
      * 		@return string      			Description of module
      */
     function info($langs)
+=======
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+
+    /**
+     *  Return description of module
+     *
+     *  @param	Translate	$langs		Object langs
+     *  @return string      			Description of module
+     */
+    public function info($langs)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $langs->load("bills");
         return $langs->trans("NoDescription");
     }
 
+<<<<<<< HEAD
     /**		Return an example of result returned by getNextValue
      *
      *      @param	Translate	$langs		Object langs
@@ -277,6 +427,17 @@ abstract class ModeleAccountancyCode
      *      @return	string					Example
      */
     function getExample($langs,$objsoc=0,$type=-1)
+=======
+    /**
+     *  Return an example of result returned by getNextValue
+     *
+     *  @param	Translate	$langs		Object langs
+     *  @param	societe		$objsoc		Object thirdparty
+     *  @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+     *  @return	string					Example
+     */
+    public function getExample($langs, $objsoc = 0, $type = -1)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $langs->load("bills");
         return $langs->trans("NoExample");
@@ -287,16 +448,29 @@ abstract class ModeleAccountancyCode
      *
      *      @return     boolean     false si conflit, true si ok
      */
+<<<<<<< HEAD
     function canBeActivated()
+=======
+    public function canBeActivated()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         return true;
     }
 
+<<<<<<< HEAD
     /**     Return version of module
      *
      *      @return     string      Version
      */
     function getVersion()
+=======
+    /**
+     *  Return version of module
+     *
+     *  @return     string      Version
+     */
+    public function getVersion()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $langs;
         $langs->load("admin");
@@ -309,6 +483,7 @@ abstract class ModeleAccountancyCode
     }
 
     /**
+<<<<<<< HEAD
      *      Return description of module parameters
      *
      *      @param	Translate	$langs      Output language
@@ -317,6 +492,16 @@ abstract class ModeleAccountancyCode
      *		@return	string					HTML translated description
      */
     function getToolTip($langs,$soc,$type)
+=======
+     *  Return description of module parameters
+     *
+     *  @param	Translate	$langs      Output language
+     *  @param	Societe		$soc		Third party object
+     *  @param	int			$type		-1=Nothing, 0=Customer, 1=Supplier
+     *  @return	string					HTML translated description
+     */
+    public function getToolTip($langs, $soc, $type)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $conf,$db;
 
@@ -330,14 +515,22 @@ abstract class ModeleAccountancyCode
         $s.='<br>';
         if ($type == 0 || $type == -1)
         {
+<<<<<<< HEAD
             $result=$this->get_code($db,$soc,'customer');
+=======
+            $result=$this->get_code($db, $soc, 'customer');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $nextval=$this->code;
             if (empty($nextval)) $nextval=$langs->trans("Undefined");
             $s.=$langs->trans("NextValue").($type == -1?' ('.$langs->trans("Customer").')':'').': <b>'.$nextval.'</b><br>';
         }
         if ($type == 1 || $type == -1)
         {
+<<<<<<< HEAD
             $result=$this->get_code($db,$soc,'supplier');
+=======
+            $result=$this->get_code($db, $soc, 'supplier');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $nextval=$this->code;
             if (empty($nextval)) $nextval=$langs->trans("Undefined");
             $s.=$langs->trans("NextValue").($type == -1?' ('.$langs->trans("Supplier").')':'').': <b>'.$nextval.'</b>';
@@ -345,6 +538,10 @@ abstract class ModeleAccountancyCode
         return $s;
     }
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     /**
      *  Set accountancy account code for a third party into this->code
      *
@@ -353,16 +550,26 @@ abstract class ModeleAccountancyCode
      *  @param  int		$type			'customer' or 'supplier'
      *  @return	int						>=0 if OK, <0 if KO
      */
+<<<<<<< HEAD
     function get_code($db, $societe, $type='')
     {
 	    global $langs;
+=======
+    public function get_code($db, $societe, $type = '')
+    {
+        // phpcs:enable
+        global $langs;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         return $langs->trans("NotAvailable");
     }
 }
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 /**
  *  Create a document onto disk according to template module.
  *
@@ -378,9 +585,17 @@ abstract class ModeleAccountancyCode
  *  @deprecated Use the new function generateDocument of Facture class
  *  @see Societe::generateDocument()
  */
+<<<<<<< HEAD
 function thirdparty_doc_create(DoliDB $db, Societe $object, $message, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 {
 	dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
 
 	return $object->generateDocument($modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+=======
+function thirdparty_doc_create(DoliDB $db, Societe $object, $message, $modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+{
+    dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
+
+    return $object->generateDocument($modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

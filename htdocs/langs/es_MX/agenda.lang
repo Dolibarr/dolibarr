@@ -14,7 +14,10 @@ ViewCal=Vista del mes
 ViewDay=Vista de día
 ViewWeek=Vista de la semana
 AutoActions=Llenado automático
+<<<<<<< HEAD
 AgendaSetupOtherDesc=Esta página contiene opciones para permitir la exportación de sus eventos de Dolibarr en un calendario externo (Thunderbird, Google Calendar, ...)
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AgendaExtSitesDesc=Esta página permite declarar las fuentes externas de calendarios para ver sus eventos en la agenda de Dolibarr.
 ActionsEvents=Eventos para los que Dolibarr creará una acción en la agenda de forma automática
 PropalValidatedInDolibarr=Propuesta %s validada
@@ -28,6 +31,7 @@ OrderBilledInDolibarr=Orden %s clasificada como facturada
 OrderApprovedInDolibarr=Orden %s aprovada
 OrderRefusedInDolibarr=Orden %s rechazada
 OrderBackToDraftInDolibarr=Regresar orden %s al estado de borrador
+<<<<<<< HEAD
 ProposalSentByEMail=Propuesta comercial %s enviada por correo electrónico
 OrderSentByEMail=Orden de cliente %s enviada por correo electrónico
 InvoiceSentByEMail=Factura de cliente %s enviada por correo electrónico
@@ -36,6 +40,9 @@ SupplierInvoiceSentByEMail=Factura de proveedor %s enviada por correo electróni
 ShippingSentByEMail=Envío %s enviado por correo electrónico
 ShippingValidated=Envío %s validado
 InterventionSentByEMail=Intervención %s enviada por correo electrónico
+=======
+ShippingValidated=Envío %s validado
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DateActionEnd=Fecha de finalización
 AgendaUrlOptions1=También puede agregar los siguientes parámetros para filtrar la salida:
 AgendaUrlOptions3=<b>logina=%s</b> para restringir la salida a las acciones propiedad del usuario <b>%s</b>.
@@ -45,7 +52,10 @@ ExportDataset_event1=Lista de eventos de la agenda
 DefaultWorkingDays=Rango de días laborales por defecto en una semana (Example: 1-5, 1-6)
 DefaultWorkingHours=Horas laborales por defecto en un día (Ejemplo: 9-18)
 ExtSites=Importar calendarios externos
+<<<<<<< HEAD
 ExtSitesEnableThisTool=Mostrar calendarios externos (definidos en la configuración global) en la agenda. No afecta a los calendarios externos definidos por los usuarios.
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ExtSiteUrlAgenda=URL para acceder al archivo .iCal
 DateActionBegin=Fecha inicial del evento
 DateStartPlusOne=Fecha de inicio + 1 hr

@@ -22,7 +22,11 @@ SearchAProposal=Εύρεση Προσφοράς
 NoProposal=No proposal
 ProposalsStatistics=Στατιστικά Προσφοράς
 NumberOfProposalsByMonth=Αριθμός ανά μήνα
+<<<<<<< HEAD
 AmountOfProposalsByMonthHT=Ποσό ανά μήνα (μετά από φόρους)
+=======
+AmountOfProposalsByMonthHT=Amount by month (excl. tax)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NbOfProposals=Αριθμός Προσφορών
 ShowPropal=Εμφάνιση Προσφοράς
 PropalsDraft=Σχέδιο
@@ -33,7 +37,11 @@ PropalStatusSigned=Υπογραφή (ανάγκες χρέωσης)
 PropalStatusNotSigned=Δεν έχει υπογραφεί (κλειστό)
 PropalStatusBilled=Χρεώνεται
 PropalStatusDraftShort=Προσχέδιο
+<<<<<<< HEAD
 PropalStatusValidatedShort=Επικυρώθηκε
+=======
+PropalStatusValidatedShort=Validated (open)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PropalStatusClosedShort=Κλειστό
 PropalStatusSignedShort=Υπογραφή
 PropalStatusNotSignedShort=Δεν έχει υπογραφεί
@@ -53,10 +61,16 @@ ErrorPropalNotFound=Η Προσφορά %s δεν βρέθηκε
 AddToDraftProposals=Προσθήκη στο σχέδιο Προσφοράς
 NoDraftProposals=Δεν υπάρχουν σχέδια Προσφορών
 CopyPropalFrom=Δημιουργία Προσφοράς με την αντιγραφή υφιστάμενης Προσφοράς
+<<<<<<< HEAD
 CreateEmptyPropal=Δημιουργία κενών Προσφορών ή από την λίστα των προϊόντων / υπηρεσιών
 DefaultProposalDurationValidity=Προεπιλογή διάρκεια Προσφοράς ισχύος (σε ημέρες)
 UseCustomerContactAsPropalRecipientIfExist=Χρησιμοποιήστε διεύθυνση επικοινωνίας του πελάτη, εάν αυτή ορίζεται αντί του ΠΕΛ./ΠΡΟΜ. διεύθυνση ως διεύθυνση παραλήπτη Προσφοράς
 ClonePropal=Κλώνος Προσφοράς
+=======
+CreateEmptyPropal=Create empty commercial proposal or from list of products/services
+DefaultProposalDurationValidity=Προεπιλογή διάρκεια Προσφοράς ισχύος (σε ημέρες)
+UseCustomerContactAsPropalRecipientIfExist=Use contact/address with type 'Contact following-up proposal' if defined instead of third party address as proposal recipient address
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmClonePropal=Are you sure you want to clone the commercial proposal <b>%s</b>?
 ConfirmReOpenProp=Are you sure you want to open back the commercial proposal <b>%s</b>?
 ProposalsAndProposalsLines=Προσφορές και γραμμές
@@ -78,8 +92,16 @@ TypeContact_propal_external_CUSTOMER=Πελάτης επαφή που παρακ
 TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
 DocModelAzurDescription=Ένα πλήρες μοντέλο Προσφοράς (logo. ..)
+<<<<<<< HEAD
+=======
+DocModelCyanDescription=Ένα πλήρες μοντέλο Προσφοράς (logo. ..)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DefaultModelPropalCreate=Δημιουργία προεπιλεγμένων μοντέλων
 DefaultModelPropalToBill=Προεπιλεγμένο πρότυπο όταν κλείνει μια Προσφορά (να τιμολογηθεί)
 DefaultModelPropalClosed=Προεπιλεγμένο πρότυπο όταν κλείνει μια Προσφορά (ατιμολόγητη)
 ProposalCustomerSignature=Written acceptance, company stamp, date and signature
+<<<<<<< HEAD
 ProposalsStatisticsSuppliers=Supplier proposals statistics
+=======
+ProposalsStatisticsSuppliers=Vendor proposals statistics
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

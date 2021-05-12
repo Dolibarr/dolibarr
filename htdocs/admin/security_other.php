@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2013      Juanjo Menent 		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,7 +38,11 @@ $langs->loadLangs(array("users","admin","other"));
 if (! $user->admin)
 	accessforbidden();
 
+<<<<<<< HEAD
 $action=GETPOST('action','alpha');
+=======
+$action=GETPOST('action', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 
@@ -42,7 +50,11 @@ $action=GETPOST('action','alpha');
  * Actions
  */
 
+<<<<<<< HEAD
 if (preg_match('/set_([a-z0-9_\-]+)/i',$action,$reg))
+=======
+if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$code=$reg[1];
 	$value=(GETPOST($code, 'alpha') ? GETPOST($code, 'alpha') : 1);
@@ -55,10 +67,14 @@ if (preg_match('/set_([a-z0-9_\-]+)/i',$action,$reg))
 	{
 		dol_print_error($db);
 	}
+<<<<<<< HEAD
 }
 
 else if (preg_match('/del_([a-z0-9_\-]+)/i',$action,$reg))
 {
+=======
+} elseif (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg)) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$code=$reg[1];
 	if (dolibarr_del_const($db, $code, $conf->entity) > 0)
 	{
@@ -71,10 +87,17 @@ else if (preg_match('/del_([a-z0-9_\-]+)/i',$action,$reg))
 	}
 }
 
+<<<<<<< HEAD
 else if ($action == 'updateform')
 {
 	$res1=dolibarr_set_const($db, "MAIN_APPLICATION_TITLE", $_POST["MAIN_APPLICATION_TITLE"],'chaine',0,'',$conf->entity);
     $res2=dolibarr_set_const($db, "MAIN_SESSION_TIMEOUT", $_POST["MAIN_SESSION_TIMEOUT"],'chaine',0,'',$conf->entity);
+=======
+elseif ($action == 'updateform')
+{
+	$res1=dolibarr_set_const($db, "MAIN_APPLICATION_TITLE", $_POST["MAIN_APPLICATION_TITLE"], 'chaine', 0, '', $conf->entity);
+    $res2=dolibarr_set_const($db, "MAIN_SESSION_TIMEOUT", $_POST["MAIN_SESSION_TIMEOUT"], 'chaine', 0, '', $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if ($res1 && $res2) setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 }
 
@@ -87,9 +110,15 @@ else if ($action == 'updateform')
 $form = new Form($db);
 
 $wikihelp='EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
+<<<<<<< HEAD
 llxHeader('',$langs->trans("Miscellaneous"),$wikihelp);
 
 print load_fiche_titre($langs->trans("SecuritySetup"),'','title_setup');
+=======
+llxHeader('', $langs->trans("Miscellaneous"), $wikihelp);
+
+print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print $langs->trans("MiscellaneousDesc")."<br>\n";
 print "<br>\n";
@@ -109,13 +138,21 @@ dol_fiche_head($head, 'misc', $langs->trans("Security"), -1);
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Parameters").'</td>';
+<<<<<<< HEAD
 print '<td align="right" width="100">'.$langs->trans("Status").'</td>';
+=======
+print '<td class="right" width="100">'.$langs->trans("Status").'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</tr>';
 
 // Enable Captcha code
 print '<tr class="oddeven">';
 print '<td colspan="3">'.$langs->trans("UseCaptchaCode").'</td>';
+<<<<<<< HEAD
 print '<td align="right">';
+=======
+print '<td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (function_exists("imagecreatefrompng"))
 {
 	if (! empty($conf->use_javascript_ajax))
@@ -126,17 +163,29 @@ if (function_exists("imagecreatefrompng"))
 	{
 		if (empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA))
 		{
+<<<<<<< HEAD
 			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_SECURITY_ENABLECAPTCHA">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 		}
 		else
 		{
 			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_SECURITY_ENABLECAPTCHA">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+=======
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_SECURITY_ENABLECAPTCHA">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		}
+		else
+		{
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_SECURITY_ENABLECAPTCHA">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 	}
 }
 else
 {
+<<<<<<< HEAD
     $desc = $form->textwithpicto('',$langs->transnoentities("EnableGDLibraryDesc"),1,'warning');
+=======
+    $desc = $form->textwithpicto('', $langs->transnoentities("EnableGDLibraryDesc"), 1, 'warning');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print $desc;
 }
 print '</td></tr>';
@@ -144,7 +193,11 @@ print '</td></tr>';
 // Enable advanced perms
 print '<tr class="oddeven">';
 print '<td colspan="3">'.$langs->trans("UseAdvancedPerms").'</td>';
+<<<<<<< HEAD
 print '<td align="right">';
+=======
+print '<td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (! empty($conf->use_javascript_ajax))
 {
 	print ajax_constantonoff('MAIN_USE_ADVANCED_PERMS');
@@ -153,11 +206,19 @@ else
 {
 	if (empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 	{
+<<<<<<< HEAD
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_USE_ADVANCED_PERMS">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 	}
 	else
 	{
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_USE_ADVANCED_PERMS">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+=======
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_USE_ADVANCED_PERMS">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+	}
+	else
+	{
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_USE_ADVANCED_PERMS">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 }
 print "</td></tr>";
@@ -179,8 +240,13 @@ print "</tr>\n";
 $sessiontimeout=ini_get("session.gc_maxlifetime");
 if (empty($conf->global->MAIN_SESSION_TIMEOUT)) $conf->global->MAIN_SESSION_TIMEOUT=$sessiontimeout;
 print '<tr class="oddeven">';
+<<<<<<< HEAD
 print '<td>'.$langs->trans("SessionTimeOut").'</td><td align="right">';
 print $form->textwithpicto('',$langs->trans("SessionExplanation",ini_get("session.gc_probability"),ini_get("session.gc_divisor")));
+=======
+print '<td>'.$langs->trans("SessionTimeOut").'</td><td class="right">';
+print $form->textwithpicto('', $langs->trans("SessionExplanation", ini_get("session.gc_probability"), ini_get("session.gc_divisor")));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</td>';
 print '<td class="nowrap">';
 print '<input class="flat" name="MAIN_SESSION_TIMEOUT" type="text" size="6" value="'.htmlentities($conf->global->MAIN_SESSION_TIMEOUT).'"> '.strtolower($langs->trans("Seconds"));
@@ -191,7 +257,11 @@ print '</tr>';
 $sessiontimeout=ini_get("session.gc_maxlifetime");
 if (empty($conf->global->MAIN_APPLICATION_TITLE)) $conf->global->MAIN_APPLICATION_TITLE="";
 print '<tr class="oddeven">';
+<<<<<<< HEAD
 print '<td>'.$langs->trans("MAIN_APPLICATION_TITLE").'</td><td align="right">';
+=======
+print '<td>'.$langs->trans("MAIN_APPLICATION_TITLE").'</td><td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</td>';
 print '<td class="nowrap">';
 print '<input class="flat" name="MAIN_APPLICATION_TITLE" type="text" size="20" value="'.htmlentities($conf->global->MAIN_APPLICATION_TITLE).'"> ';
@@ -206,6 +276,10 @@ print '<div class="center"><input type="submit" class="button" name="button" val
 
 print '</form>';
 
+<<<<<<< HEAD
 
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

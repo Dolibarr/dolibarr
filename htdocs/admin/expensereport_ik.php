@@ -39,10 +39,17 @@ if (!$user->admin) accessforbidden();
 $error = false;
 $message = false;
 
+<<<<<<< HEAD
 $action = GETPOST('action','alpha');
 $id = GETPOST('id','int');
 $offset = GETPOST('offset','int');
 $coef = GETPOST('coef','int');
+=======
+$action = GETPOST('action', 'alpha');
+$id = GETPOST('id', 'int');
+$offset = GETPOST('offset', 'int');
+$coef = GETPOST('coef', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $fk_c_exp_tax_cat = GETPOST('fk_c_exp_tax_cat');
 $fk_range = GETPOST('fk_range');
@@ -86,12 +93,20 @@ $rangesbycateg = ExpenseReportIk::getAllRanges();
  * View
  */
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("ExpenseReportsSetup"));
+=======
+llxHeader('', $langs->trans("ExpenseReportsSetup"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+<<<<<<< HEAD
 print load_fiche_titre($langs->trans("ExpenseReportsIkSetup"),$linkback,'title_setup');
+=======
+print load_fiche_titre($langs->trans("ExpenseReportsIkSetup"), $linkback, 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $head=expensereport_admin_prepare_head();
 dol_fiche_head($head, 'expenseik', $langs->trans("ExpenseReportsIk"), -1, 'trip');
@@ -154,7 +169,11 @@ foreach ($rangesbycateg as $fk_c_exp_tax_cat => $Tab)
 		echo '<td width="30%">'.$langs->trans('expenseReportPrintExample', price($range->ik->offset + 5 * $range->ik->coef)).'</td>';
 
 		// Action
+<<<<<<< HEAD
 		echo '<td align="right">';
+=======
+		echo '<td class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if ($range->range_active == 1)
 		{
 			if ($action == 'edit' && $range->ik->id == $id && $range->rowid == $fk_range && $range->fk_c_exp_tax_cat == $fk_c_exp_tax_cat)
@@ -179,6 +198,12 @@ echo '</table>';
 echo '</form>';
 
 dol_fiche_end();
+<<<<<<< HEAD
 llxFooter();
 
+=======
+
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

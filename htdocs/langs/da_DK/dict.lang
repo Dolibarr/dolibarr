@@ -116,7 +116,11 @@ CountryHM=Heard-og McDonald
 CountryVA=Pavestolen (Vatikanstaten)
 CountryHN=Honduras
 CountryHK=Hong Kong
+<<<<<<< HEAD
 CountryIS=Icelande
+=======
+CountryIS=Island
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryIN=Indien
 CountryID=Indonesien
 CountryIR=Iran
@@ -131,7 +135,11 @@ CountryKI=Kiribati
 CountryKP=Nordkorea
 CountryKR=Sydkorea
 CountryKW=Kuwait
+<<<<<<< HEAD
 CountryKG=Kyrghyztan
+=======
+CountryKG=Kirgisistan
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryLA=Lao
 CountryLV=Letland
 CountryLB=Libanon
@@ -160,7 +168,11 @@ CountryMD=Moldova
 CountryMN=Mongoliet
 CountryMS=Montserrat
 CountryMZ=Mozambique
+<<<<<<< HEAD
 CountryMM=Birmania (Myanmar)
+=======
+CountryMM=Myanmar (Burma)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryNA=Namibia
 CountryNR=Nauru
 CountryNP=Nepal
@@ -223,7 +235,11 @@ CountryTO=Tonga
 CountryTT=Trinidad og Tobago
 CountryTR=Tyrkiet
 CountryTM=Turkmenistan
+<<<<<<< HEAD
 CountryTC=Turks-og Cailos Øer
+=======
+CountryTC=Turks og Caicosøerne
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CountryTV=Tuvalu
 CountryUG=Uganda
 CountryUA=Ukraine
@@ -290,6 +306,10 @@ CurrencyXOF=CFA-franc BCEAO
 CurrencySingXOF=CFA Franc BCEAO
 CurrencyXPF=FFP franc
 CurrencySingXPF=FFP Franc
+<<<<<<< HEAD
+=======
+CurrencyCentEUR=cents
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CurrencyCentSingEUR=cent
 CurrencyCentINR=paisa
 CurrencyCentSingINR=paise
@@ -306,6 +326,10 @@ DemandReasonTypeSRC_WOM=Word of mouth
 DemandReasonTypeSRC_PARTNER=Partner
 DemandReasonTypeSRC_EMPLOYEE=Employee
 DemandReasonTypeSRC_SPONSORING=Sponsorship
+<<<<<<< HEAD
+=======
+DemandReasonTypeSRC_SRC_CUSTOMER=Incoming contact of a customer
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 #### Paper formats ####
 PaperFormatEU4A0=Format 4A0
 PaperFormatEU2A0=Format 2A0

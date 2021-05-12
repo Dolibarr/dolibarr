@@ -1,6 +1,10 @@
 # Dolibarr language file - Source file is en_US - categories
 Rubrique=Tag/Catégorie
+<<<<<<< HEAD
 Rubriques=Tags/Catégories
+=======
+Rubriques=Tags/catégories
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 RubriquesTransactions=Tags/catégories des transactions
 categories=tags/catégories
 NoCategoryYet=Aucun tag/catégorie de ce type n'a été créé
@@ -16,6 +20,10 @@ MembersCategoriesArea=Espace tags/catégories adhérents
 ContactsCategoriesArea=Espace tags/catégories de contacts
 AccountsCategoriesArea=Espace des tags/categories
 ProjectsCategoriesArea=Zone des tags/catégories des projets
+<<<<<<< HEAD
+=======
+UsersCategoriesArea=Espace tags/catégories des utlisateurs
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SubCats=Sous-catégories
 CatList=Liste des tags/catégories
 NewCategory=Nouveau tag/catégorie
@@ -47,6 +55,7 @@ ContentsNotVisibleByAllShort=Contenu non visible par tous
 DeleteCategory=Effacer le(a) libellé/catégorie
 ConfirmDeleteCategory=Êtes-vous sûr de vouloir supprimer ce tag/catégorie ?
 NoCategoriesDefined=Aucun(e) tag/catégorie défini(e)
+<<<<<<< HEAD
 SuppliersCategoryShort=Tags/catégories de fournisseurs
 CustomersCategoryShort=Tags/catégories de clients
 ProductsCategoryShort=Tags/catégories de produits
@@ -60,6 +69,22 @@ MembersCategoriesShort=Tags/catégories de membres
 ContactCategoriesShort=Tags de contacts
 AccountsCategoriesShort=Tag/catégorie des comptes
 ProjectsCategoriesShort=Tags/catégories de projets
+=======
+SuppliersCategoryShort=Tag/catégorie de fournisseurs
+CustomersCategoryShort=Tag/catégorie de clients
+ProductsCategoryShort=Tag/catégorie de produits
+MembersCategoryShort=Tag/catégorie adhérents
+SuppliersCategoriesShort=Tags fournisseurs
+CustomersCategoriesShort=Tags clients
+ProspectsCategoriesShort=Tags prospects
+CustomersProspectsCategoriesShort=Tags clients/prosp.
+ProductsCategoriesShort=Tags de produits
+MembersCategoriesShort=Tags des adhérents
+ContactCategoriesShort=Tags de contacts
+AccountsCategoriesShort=Tags des comptes
+ProjectsCategoriesShort=Tags de projets
+UsersCategoriesShort=Tags utlisateurs
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ThisCategoryHasNoProduct=Ce tag/catégorie ne contient aucun produit.
 ThisCategoryHasNoSupplier=Ce tag/catégorie ne contient aucun fournisseur.
 ThisCategoryHasNoCustomer=Ce tag/catégorie ne contient aucun client.
@@ -81,7 +106,11 @@ DeleteFromCat=Enlever des tags/catégories
 ExtraFieldsCategories=Attributs supplémentaires
 CategoriesSetup=Configuration des tags/catégories
 CategorieRecursiv=Lier automatiquement avec le(a) tag/catégorie parent(e)
+<<<<<<< HEAD
 CategorieRecursivHelp=Si activé : quand un élément est ajouté dans une catégorie, l'ajouter aussi dans toutes les catégories parentes
+=======
+CategorieRecursivHelp=Si l'option est activé, quand un produit est ajouté dans une sous-catégorie, le produit sera ajouté aussi dans la catégorie parente.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddProductServiceIntoCategory=Ajouter le produit/service suivant
 ShowCategory=Afficher tag/catégorie
 ByDefaultInList=Par défaut dans la liste

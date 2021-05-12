@@ -1,8 +1,13 @@
 # Dolibarr language file - Source file is en_US - mails
 Mailing=E-post
 EMailing=E-post
+<<<<<<< HEAD
 EMailings=EMailings
 AllEMailings=Alla eMailings
+=======
+EMailings=E-post
+AllEMailings=Alla e-post
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MailCard=E-post kort
 MailRecipients=Mottagare
 MailRecipient=Mottagare
@@ -11,6 +16,7 @@ MailFrom=Avsändare
 MailErrorsTo=Fel på
 MailReply=Svara
 MailTo=Mottagare (s)
+<<<<<<< HEAD
 MailToUsers=To user(s)
 MailCC=Kopiera till
 MailToCCUsers=Copy to users(s)
@@ -19,6 +25,18 @@ MailTopic=E-post ämne
 MailText=Meddelande
 MailFile=Bifogade filer
 MailMessage=E-post huvuddel
+=======
+MailToUsers=Till användare
+MailCC=Kopiera till
+MailToCCUsers=Kopiera till användare (er)
+MailCCC=Cachad kopia till
+MailTopic=E-postämne
+MailText=Meddelande
+MailFile=Bifogade filer
+MailMessage=E-organ
+SubjectNotIn=Not in Subject
+BodyNotIn=Not in Body
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShowEMailing=Visa e-post
 ListOfEMailings=Lista över emailings
 NewMailing=Ny e-post
@@ -31,6 +49,7 @@ CreateMailing=Skapa e-post
 TestMailing=Testa e-post
 ValidMailing=Gäller e-post
 MailingStatusDraft=Förslag
+<<<<<<< HEAD
 MailingStatusValidated=Validerad
 MailingStatusSent=Skickat
 MailingStatusSentPartialy=Skickat delvis
@@ -52,12 +71,36 @@ NbOfEMails=Antal e-post
 TotalNbOfDistinctRecipients=Antal skilda mottagare
 NoTargetYet=Inga stödmottagare ännu (Gå på fliken "mottagare" )
 NoRecipientEmail=No recipient email for %s
+=======
+MailingStatusValidated=Bekräftat
+MailingStatusSent=Skickat
+MailingStatusSentPartialy=Skickas partiellt
+MailingStatusSentCompletely=Skickade helt
+MailingStatusError=Fel
+MailingStatusNotSent=Skickas inte
+MailSuccessfulySent=E-post (från %s till %s) godkänd för leverans
+MailingSuccessfullyValidated=E-post bekräftades
+MailUnsubcribe=Avanmälan
+MailingStatusNotContact=Kontakta inte längre
+MailingStatusReadAndUnsubscribe=Läs och avsluta prenumerationen
+ErrorMailRecipientIsEmpty=E-postmottagare är tom
+WarningNoEMailsAdded=Inga nya E-posta lägga till mottagarens lista.
+ConfirmValidMailing=Är du säker på att du vill bekräfta den här e-posten?
+ConfirmResetMailing=Varning, genom att återinitiera e-post <b> %s </b>, tillåter du att sända det här mejlet i en bulkutskick. Är du säker på att du vill göra det här?
+ConfirmDeleteMailing=Är du säker på att du vill radera den här e-posten?
+NbOfUniqueEMails=Antal unika e-postmeddelanden
+NbOfEMails=Antal e-postmeddelanden
+TotalNbOfDistinctRecipients=Antal skilda mottagare
+NoTargetYet=Inga stödmottagare ännu (Gå på fliken "mottagare" )
+NoRecipientEmail=Ingen mottagare email för %s
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 RemoveRecipient=Ta bort mottagare
 YouCanAddYourOwnPredefindedListHere=Om du vill skapa din modul e väljare, se htdocs / includes / modules / utskick / README.
 EMailTestSubstitutionReplacedByGenericValues=När du använder testläge är substitutioner variabler ersättas med allmänna värden
 MailingAddFile=Bifoga filen
 NoAttachedFiles=Inga bifogade filer
 BadEMail=Dåligt värde för e-post
+<<<<<<< HEAD
 CloneEMailing=Klon Email
 ConfirmCloneEMailing=Are you sure you want to clone this emailing?
 CloneContent=Klona meddelande
@@ -91,12 +134,47 @@ MailingModuleDescEmailsFromUser=Emails input by user
 MailingModuleDescDolibarrUsers=Users with Emails
 MailingModuleDescThirdPartiesByCategories=Third parties (by categories)
 SendingFromWebInterfaceIsNotAllowed=Sending from web interface is not allowed.
+=======
+ConfirmCloneEMailing=Är du säker på att du vill klona den här e-posten?
+CloneContent=Klona meddelande
+CloneReceivers=Cloner mottagare
+DateLastSend=Datum för senaste sändning
+DateSending=Datum skicka
+SentTo=Skickat till <b>%s</b>
+MailingStatusRead=Läsa
+YourMailUnsubcribeOK=E-postmeddelandet <b> %s </b> är korrekt avstängt från mailinglistan
+ActivateCheckReadKey=Nyckeln används för att kryptera webbadressen som används för "Read Receipt" och "Unsubscribe" -funktionen
+EMailSentToNRecipients=E-post skickad till %s mottagare.
+EMailSentForNElements=E-post skickad för %s-element.
+XTargetsAdded=<b>% s</b> mottagare läggs in i målet listan
+OnlyPDFattachmentSupported=Om PDF-dokumenten redan genererades för att objekten ska skickas, bifogas de till e-post. Om inte, kommer ingen e-post att skickas (även notera att endast pdf-dokument stöds som bilagor i massan som skickas i den här versionen).
+AllRecipientSelected=Mottagarna av %s-posten vald (om deras email är känt).
+GroupEmails=Grupp e-postmeddelanden
+OneEmailPerRecipient=Ett e-postmeddelande per mottagare (som standard, en e-post per post vald)
+WarningIfYouCheckOneRecipientPerEmail=Varning! Om du markerar den här rutan betyder det att endast ett e-postmeddelande skickas för flera olika poster, så om ditt meddelande innehåller substitutionsvariabler som refererar till data i en post, blir det inte möjligt att ersätta dem.
+ResultOfMailSending=Resultat av massleverans av e-post
+NbSelected=Number selected
+NbIgnored=Number ignored
+NbSent=Number sent
+SentXXXmessages=%s meddelande (s) skickade.
+ConfirmUnvalidateEmailing=Är du säker på att du vill ändra e-post <b> %s </b> till utkastsstatus?
+MailingModuleDescContactsWithThirdpartyFilter=Kontakt med kundfilter
+MailingModuleDescContactsByCompanyCategory=Kontakter av tredje parts kategori
+MailingModuleDescContactsByCategory=Kontakter efter kategorier
+MailingModuleDescContactsByFunction=Kontakter efter position
+MailingModuleDescEmailsFromFile=E-post från fil
+MailingModuleDescEmailsFromUser=E-postmeddelanden inskrivna av användaren
+MailingModuleDescDolibarrUsers=Användare med e-post
+MailingModuleDescThirdPartiesByCategories=Tredje part (enligt kategorier)
+SendingFromWebInterfaceIsNotAllowed=Skicka från webbgränssnitt är inte tillåtet.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=Line %s i filen
 RecipientSelectionModules=Definierade krav på mottagarens val
 MailSelectedRecipients=Valda mottagare
 MailingArea=EMailings område
+<<<<<<< HEAD
 LastMailings=Latest %s emailings
 TargetsStatistics=Mål statistik
 NbOfCompaniesContacts=Unika kontakter av företag
@@ -107,6 +185,18 @@ SentBy=Skickat av
 MailingNeedCommand=Sending an emailing can be performed from command line. Ask your server administrator to launch the following command to send the emailing to all recipients:
 MailingNeedCommand2=Du kan dock skicka dem online genom att lägga till parametern MAILING_LIMIT_SENDBYWEB med värde av maximalt antal e-postmeddelanden du vill skicka genom sessionen. För detta, gå hem - Setup - Annat.
 ConfirmSendingEmailing=If you want to send emailing directly from this screen, please confirm you are sure you want to send emailing now from your browser ?
+=======
+LastMailings=Senaste %s e-postmeddelanden
+TargetsStatistics=Mål statistik
+NbOfCompaniesContacts=Unika kontakter av företag
+MailNoChangePossible=Mottagare för bekräftades e-post kan inte ändras
+SearchAMailing=Sök utskick
+SendMailing=Skicka e-post
+SentBy=Skickat av
+MailingNeedCommand=Skicka en e-post kan utföras från kommandoraden. Be din serveradministratör att starta följande kommando för att skicka e-postmeddelandet till alla mottagare:
+MailingNeedCommand2=Du kan dock skicka dem online genom att lägga till parametern MAILING_LIMIT_SENDBYWEB med värde av maximalt antal e-postmeddelanden du vill skicka genom sessionen. För detta, gå hem - Setup - Annat.
+ConfirmSendingEmailing=Om du vill skicka e-post direkt från den här skärmen, vänligen bekräfta att du är säker på att du vill skicka e-post nu från din webbläsare?
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 LimitSendingEmailing=Obs: Sänder av email från webbgränssnitt sker i flera gånger för säkerhets- och timeout <b>skäl,% s</b> mottagare i taget för varje sändning session.
 TargetsReset=Rensa lista
 ToClearAllRecipientsClickHere=Klicka här för att rensa listor över mottagare av detta e-post
@@ -114,6 +204,7 @@ ToAddRecipientsChooseHere=Lägg till mottagare genom att välja från listorna
 NbOfEMailingsReceived=Massa emailings fått
 NbOfEMailingsSend=Massemail skickas
 IdRecord=ID rekord
+<<<<<<< HEAD
 DeliveryReceipt=Delivery Ack.
 YouCanUseCommaSeparatorForSeveralRecipients=Du kan använda <b>kommateckenavgränsare</b> att ange flera mottagare.
 TagCheckMail=Spår post öppning
@@ -122,17 +213,33 @@ TagSignature=Signature of sending user
 EMailRecipient=Mottagarens EMail
 TagMailtoEmail=Recipient EMail (including html "mailto:" link)
 NoEmailSentBadSenderOrRecipientEmail=No email sent. Bad sender or recipient email. Verify user profile.
+=======
+DeliveryReceipt=Leverans Ack.
+YouCanUseCommaSeparatorForSeveralRecipients=Du kan använda <b>kommateckenavgränsare</b> att ange flera mottagare.
+TagCheckMail=Spår post öppning
+TagUnsubscribe=Avanmälan länk
+TagSignature=Signatur för avsändande användare
+EMailRecipient=Mottagarens E-post
+TagMailtoEmail=Mottagar Email (inklusive html "mailto:" länk)
+NoEmailSentBadSenderOrRecipientEmail=Ingen email skickad. Dålig avsändare eller mottagarens e-postadress. Verifiera användarprofil.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 # Module Notifications
 Notifications=Anmälningar
 NoNotificationsWillBeSent=Inga e-postmeddelanden planeras för detta evenemang och företag
 ANotificationsWillBeSent=En anmälan kommer att skickas via e-post
 SomeNotificationsWillBeSent=%s anmälningar kommer att skickas via e-post
+<<<<<<< HEAD
 AddNewNotification=Activate a new email notification target/event
 ListOfActiveNotifications=List all active targets/events for email notification
+=======
+AddNewNotification=Aktivera ett nytt e-postmeddelandemål / -händelse
+ListOfActiveNotifications=Lista alla aktiva mål / händelser för e-postmeddelande
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ListOfNotificationsDone=Lista alla e-postmeddelanden skickas
 MailSendSetupIs=Konfiguration av e-post att skicka har ställts in till "% s". Detta läge kan inte användas för att skicka massutskick.
 MailSendSetupIs2=Du måste först gå, med ett administratörskonto, i meny% Shome - Setup - e-post% s för att ändra parameter <strong>'% s'</strong> för att använda läget "% s". Med det här läget kan du ange inställningar för SMTP-servern från din internetleverantör och använda Mass mejla funktionen.
 MailSendSetupIs3=Om du har några frågor om hur man ställer in din SMTP-server, kan du be att% s.
+<<<<<<< HEAD
 YouCanAlsoUseSupervisorKeyword=You can also add the keyword <strong>__SUPERVISOREMAIL__</strong> to have email being sent to the supervisor of user (works only if an email is defined for this supervisor)
 NbOfTargetedContacts=Current number of targeted contact emails
 UseFormatFileEmailToTarget=Imported file must have format <strong>email;name;firstname;other</strong>
@@ -167,3 +274,39 @@ OutGoingEmailSetupForEmailing=Outgoing email setup (for mass emailing)
 DefaultOutgoingEmailSetup=Default outgoing email setup
 Information=Information
 ContactsWithThirdpartyFilter=Contacts avec filtre client
+=======
+YouCanAlsoUseSupervisorKeyword=Du kan också lägga till sökordet <strong> __SUPERVISOREMAIL__ </strong> för att få mail skickad till handledaren av användaren (fungerar endast om ett email är definierat för denna handledare)
+NbOfTargetedContacts=Nuvarande antal riktade kontaktmail
+UseFormatFileEmailToTarget=Importerad fil måste ha format <strong> email, namn, förnamn; annan </strong>
+UseFormatInputEmailToTarget=Ange en sträng med format <strong> email, namn, förnamn, annat </strong>
+MailAdvTargetRecipients=Mottagare (avancerat urval)
+AdvTgtTitle=Fyll i inmatningsfält för att välja tredjepart eller kontakter / adresser som ska riktas in
+AdvTgtSearchTextHelp=Använd %% som jokertecken. Till exempel för att hitta alla objekt som <b> jean, joe, jim </b>, kan du skriva <b> j%% </b>, du kan också använda; som separator för värde och använd! för utom detta värde. Till exempel <b> jean; joe; jim%%;! Jimo;! Jima% </b> kommer att rikta alla jean, joe, börja med jim men inte jimo och inte allt som börjar med jima
+AdvTgtSearchIntHelp=Använd intervall för att välja int eller float värde
+AdvTgtMinVal=Minsta värde
+AdvTgtMaxVal=Maximalt värde
+AdvTgtSearchDtHelp=Använd intervall för att välja datumvärde
+AdvTgtStartDt=Börja dt.
+AdvTgtEndDt=Slut dt.
+AdvTgtTypeOfIncudeHelp=Måladress för tredje part och e-postadress för tredje parts kontakt, eller bara tredje parts e-post eller bara kontakta e-post
+AdvTgtTypeOfIncude=Typ av riktade e-postadresser
+AdvTgtContactHelp=Använd bara om du riktar in kontakt med "Typ av riktade e-postmeddelanden"
+AddAll=Lägg till alla
+RemoveAll=Ta bort alla
+ItemsCount=Produkt (er)
+AdvTgtNameTemplate=Filternamn
+AdvTgtAddContact=Lägg till e-post enligt kriterierna
+AdvTgtLoadFilter=Ladda filter
+AdvTgtDeleteFilter=Radera filter
+AdvTgtSaveFilter=Spara filter
+AdvTgtCreateFilter=Skapa filter
+AdvTgtOrCreateNewFilter=Namn på nytt filter
+NoContactWithCategoryFound=Ingen kontakt / adress med en kategori hittad
+NoContactLinkedToThirdpartieWithCategoryFound=Ingen kontakt / adress med en kategori hittad
+OutGoingEmailSetup=Utgående e-postinstallation
+InGoingEmailSetup=Inkommande e-postinstallation
+OutGoingEmailSetupForEmailing=Utgående e-postuppsättning (för massmailing)
+DefaultOutgoingEmailSetup=Standard utgående e-postinstallation
+Information=Information
+ContactsWithThirdpartyFilter=Kontakter med filter från tredje part
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

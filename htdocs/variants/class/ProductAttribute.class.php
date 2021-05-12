@@ -53,6 +53,14 @@ class ProductAttribute
 	 */
 	public $rang;
 
+<<<<<<< HEAD
+=======
+    /**
+     * Constructor
+     *
+     * @param   DoliDB $db     Database handler
+     */
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	public function __construct(DoliDB $db)
 	{
 		global $conf;
@@ -341,4 +349,8 @@ class ProductAttribute
 
 		return 1;
 	}
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

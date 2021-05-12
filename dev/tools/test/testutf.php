@@ -47,8 +47,13 @@ print 'Files has been created. Check its name from your explorer'."\n";
  * @since 2008-09-15
  */
 
+<<<<<<< HEAD
 require_once('../../htdocs/includes/tecnickcom/tcpdf/config/tcpdf_config.php');
 require_once('../../htdocs/includes/tecnickcom/tcpdf/tcpdf.php');
+=======
+require_once '../../htdocs/includes/tecnickcom/tcpdf/config/tcpdf_config.php';
+require_once '../../htdocs/includes/tecnickcom/tcpdf/tcpdf.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // create new PDF document
 $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);

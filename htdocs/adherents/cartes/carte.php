@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
+<<<<<<< HEAD
  * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+=======
+ * Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +37,7 @@ $langs->loadLangs(array("members","errors"));
 
 // Choix de l'annee d'impression ou annee courante.
 $now = dol_now();
+<<<<<<< HEAD
 $year=dol_print_date($now,'%Y');
 $month=dol_print_date($now,'%m');
 $day=dol_print_date($now,'%d');
@@ -41,6 +46,16 @@ $foruserlogin=GETPOST('foruserlogin','alphanohtml');
 $mode=GETPOST('mode','aZ09');
 $model=GETPOST("model",'aZ09');				// Doc template to use for business cards
 $modellabel=GETPOST("modellabel",'aZ09');	// Doc template to use for address sheet
+=======
+$year=dol_print_date($now, '%Y');
+$month=dol_print_date($now, '%m');
+$day=dol_print_date($now, '%d');
+$foruserid=GETPOST('foruserid', 'alphanohtml');
+$foruserlogin=GETPOST('foruserlogin', 'alphanohtml');
+$mode=GETPOST('mode', 'aZ09');
+$model=GETPOST("model", 'aZ09');				// Doc template to use for business cards
+$modellabel=GETPOST("modellabel", 'aZ09');	// Doc template to use for address sheet
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $mesg='';
 
 $adherentstatic=new Adherent($db);
@@ -57,7 +72,11 @@ $extralabels = $extrafields->fetch_name_optionals_label('adherent');
 
 if ($mode == 'cardlogin' && empty($foruserlogin))
 {
+<<<<<<< HEAD
     $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Login"));
+=======
+    $mesg=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Login"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg)
@@ -128,7 +147,11 @@ if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg
                 '__COUNTRY__'=>$objp->country,
                 '__COUNTRY_CODE__'=>$objp->country_code,
                 '__EMAIL__'=>$objp->email,
+<<<<<<< HEAD
                 '__BIRTH__'=>dol_print_date($objp->birth,'day'),
+=======
+                '__BIRTH__'=>dol_print_date($objp->birth, 'day'),
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                 '__TYPE__'=>$objp->type,
                 '__YEAR__'=>$year,
                 '__MONTH__'=>$month,
@@ -205,10 +228,16 @@ if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg
             }
             if (empty($model) || $model == '-1')
             {
+<<<<<<< HEAD
             	$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DescADHERENT_CARD_TYPE"));
             }
             if (! $mesg) $result=members_card_pdf_create($db, $arrayofmembers, $model, $outputlangs);
 
+=======
+            	$mesg=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DescADHERENT_CARD_TYPE"));
+            }
+            if (! $mesg) $result=members_card_pdf_create($db, $arrayofmembers, $model, $outputlangs);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
         elseif ($mode == 'label')
         {
@@ -218,14 +247,22 @@ if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg
             }
         	if (empty($modellabel) || $modellabel == '-1')
     		{
+<<<<<<< HEAD
     			$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DescADHERENT_ETIQUETTE_TYPE"));
+=======
+    			$mesg=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DescADHERENT_ETIQUETTE_TYPE"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     		}
         	if (! $mesg) $result=doc_label_pdf_create($db, $arrayofmembers, $modellabel, $outputlangs);
         }
 
     	if ($result <= 0)
     	{
+<<<<<<< HEAD
     		dol_print_error('',$result);
+=======
+    		dol_print_error('', $result);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     	}
     }
     else
@@ -247,17 +284,31 @@ if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg
 
 $form=new Form($db);
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("MembersCards"));
 
 print load_fiche_titre($langs->trans("LinkToGeneratedPages"));
 print '<br>';
 
 print $langs->trans("LinkToGeneratedPagesDesc").'<br>';
+=======
+llxHeader('', $langs->trans("MembersCards"));
+
+print load_fiche_titre($langs->trans("LinkToGeneratedPages"));
+
+print '<span class="opacitymedium">'.$langs->trans("LinkToGeneratedPagesDesc").'</span><br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '<br>';
 
 dol_htmloutput_errors($mesg);
 
+<<<<<<< HEAD
 print img_picto('','puce').' '.$langs->trans("DocForAllMembersCards",($conf->global->ADHERENT_CARD_TYPE?$conf->global->ADHERENT_CARD_TYPE:$langs->transnoentitiesnoconv("None"))).' ';
+=======
+print '<br>';
+
+print img_picto('', 'puce').' '.$langs->trans("DocForAllMembersCards", ($conf->global->ADHERENT_CARD_TYPE?$conf->global->ADHERENT_CARD_TYPE:$langs->transnoentitiesnoconv("None"))).' ';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="foruserid" value="all">';
 print '<input type="hidden" name="mode" value="card">';
@@ -273,9 +324,16 @@ asort($arrayoflabels);
 print $form->selectarray('model', $arrayoflabels, (GETPOST('model')?GETPOST('model'):$conf->global->ADHERENT_CARD_TYPE), 1, 0, 0, '', 0, 0, 0, '', '', 1);
 print '<br><input class="button" type="submit" value="'.$langs->trans("BuildDoc").'">';
 print '</form>';
+<<<<<<< HEAD
 print '<br>';
 
 print img_picto('','puce').' '.$langs->trans("DocForOneMemberCards",($conf->global->ADHERENT_CARD_TYPE?$conf->global->ADHERENT_CARD_TYPE:$langs->transnoentitiesnoconv("None"))).' ';
+=======
+
+print '<br><br>';
+
+print img_picto('', 'puce').' '.$langs->trans("DocForOneMemberCards", ($conf->global->ADHERENT_CARD_TYPE?$conf->global->ADHERENT_CARD_TYPE:$langs->transnoentitiesnoconv("None"))).' ';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="mode" value="cardlogin">';
 print '<input type="hidden" name="action" value="builddoc">';
@@ -287,6 +345,7 @@ foreach(array_keys($_Avery_Labels) as $codecards)
 	$arrayoflabels[$codecards]=$_Avery_Labels[$codecards]['name'];
 }
 asort($arrayoflabels);
+<<<<<<< HEAD
 print $form->selectarray('model',$arrayoflabels,(GETPOST('model')?GETPOST('model'):$conf->global->ADHERENT_CARD_TYPE), 1, 0, 0, '', 0, 0, 0, '', '', 1);
 print '<br>'.$langs->trans("Login").': <input size="10" type="text" name="foruserlogin" value="'.GETPOST('foruserlogin').'">';
 print '<br><input class="button" type="submit" value="'.$langs->trans("BuildDoc").'">';
@@ -294,6 +353,16 @@ print '</form>';
 print '<br>';
 
 print img_picto('','puce').' '.$langs->trans("DocForLabels",$conf->global->ADHERENT_ETIQUETTE_TYPE).' ';
+=======
+print $form->selectarray('model', $arrayoflabels, (GETPOST('model')?GETPOST('model'):$conf->global->ADHERENT_CARD_TYPE), 1, 0, 0, '', 0, 0, 0, '', '', 1);
+print '<br>'.$langs->trans("Login").': <input size="10" type="text" name="foruserlogin" value="'.GETPOST('foruserlogin').'">';
+print '<br><input class="button" type="submit" value="'.$langs->trans("BuildDoc").'">';
+print '</form>';
+
+print '<br><br>';
+
+print img_picto('', 'puce').' '.$langs->trans("DocForLabels", $conf->global->ADHERENT_ETIQUETTE_TYPE).' ';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="mode" value="label">';
 print '<input type="hidden" name="action" value="builddoc">';
@@ -305,6 +374,7 @@ foreach(array_keys($_Avery_Labels) as $codecards)
 	$arrayoflabels[$codecards]=$_Avery_Labels[$codecards]['name'];
 }
 asort($arrayoflabels);
+<<<<<<< HEAD
 print $form->selectarray('modellabel',$arrayoflabels,(GETPOST('modellabel')?GETPOST('modellabel'):$conf->global->ADHERENT_ETIQUETTE_TYPE), 1, 0, 0, '', 0, 0, 0, '', '', 1);
 print '<br><input class="button" type="submit" value="'.$langs->trans("BuildDoc").'">';
 print '</form>';
@@ -312,4 +382,12 @@ print '<br>';
 
 llxFooter();
 
+=======
+print $form->selectarray('modellabel', $arrayoflabels, (GETPOST('modellabel')?GETPOST('modellabel'):$conf->global->ADHERENT_ETIQUETTE_TYPE), 1, 0, 0, '', 0, 0, 0, '', '', 1);
+print '<br><input class="button" type="submit" value="'.$langs->trans("BuildDoc").'">';
+print '</form>';
+
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

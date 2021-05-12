@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2015-2017  Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
+=======
+/* Copyright (C) 2015-2017  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2018       Nicolas ZABOURI  <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class PaymentExpenseReport extends CommonObject
 {
+<<<<<<< HEAD
 	public $element='payment_expensereport';			//!< Id that identify managed objects
 	public $table_element='payment_expensereport';	//!< Name of table without prefix where object is stored
     public $picto = 'payment';
@@ -50,13 +55,75 @@ class PaymentExpenseReport extends CommonObject
         //Unknow field
         var $chid;
         var $total;
+=======
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='payment_expensereport';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='payment_expensereport';
+
+    /**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto = 'payment';
+
+	/**
+	 * @var int ID
+	 */
+	public $rowid;
+
+	/**
+     * @var int ID
+     */
+	public $fk_expensereport;
+
+	public $datec='';
+	public $tms='';
+	public $datep='';
+    public $amount;            // Total amount of payment
+    public $amounts=array();   // Array of amounts
+
+    /**
+     * @var int ID
+     */
+	public $fk_typepayment;
+
+	public $num_payment;
+
+	/**
+     * @var int ID
+     */
+	public $fk_bank;
+
+	/**
+     * @var int ID
+     */
+	public $fk_user_creat;
+
+	/**
+     * @var int ID
+     */
+	public $fk_user_modif;
+
+    //Unknow field
+    public $chid;
+    public $total;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
+<<<<<<< HEAD
 	function __construct($db)
+=======
+	public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$this->db = $db;
 	}
@@ -68,7 +135,11 @@ class PaymentExpenseReport extends CommonObject
 	 *  @param      User		$user   User making payment
 	 *  @return     int     			<0 if KO, id of payment if OK
 	 */
+<<<<<<< HEAD
 	function create($user)
+=======
+	public function create($user)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf, $langs;
 
@@ -77,8 +148,12 @@ class PaymentExpenseReport extends CommonObject
         $now=dol_now();
 
         // Validate parameters
+<<<<<<< HEAD
 		if (! $this->datepaid)
 		{
+=======
+		if (! $this->datepaid) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$this->error='ErrorBadValueForParameterCreatePaymentExpenseReport';
 			return -1;
 		}
@@ -97,7 +172,11 @@ class PaymentExpenseReport extends CommonObject
         $totalamount = 0;
         foreach ($this->amounts as $key => $value)  // How payment is dispatch
         {
+<<<<<<< HEAD
             $newvalue = price2num($value,'MT');
+=======
+            $newvalue = price2num($value, 'MT');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $this->amounts[$key] = $newvalue;
             $totalamount += $newvalue;
         }
@@ -129,7 +208,10 @@ class PaymentExpenseReport extends CommonObject
 			{
 				$error++;
 			}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		if ($totalamount != 0 && ! $error)
@@ -149,10 +231,17 @@ class PaymentExpenseReport extends CommonObject
 	/**
 	 *  Load object in memory from database
 	 *
+<<<<<<< HEAD
 	 *  @param	int		$id         Id object
 	 *  @return int         		<0 if KO, >0 if OK
 	 */
 	function fetch($id)
+=======
+	 *  @param  int		$id         Id object
+	 *  @return int         		<0 if KO, >0 if OK
+	 */
+	public function fetch($id)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 		$sql = "SELECT";
@@ -215,7 +304,11 @@ class PaymentExpenseReport extends CommonObject
 		}
 	}
 
+<<<<<<< HEAD
 
+=======
+    // phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *  Update database
 	 *
@@ -223,14 +316,24 @@ class PaymentExpenseReport extends CommonObject
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *  @return int         			<0 if KO, >0 if OK
 	 */
+<<<<<<< HEAD
 	function update($user=null, $notrigger=0)
 	{
+=======
+	public function update($user = null, $notrigger = 0)
+	{
+		// phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf, $langs;
 		$error=0;
 
 		// Clean parameters
 
+<<<<<<< HEAD
 		if (isset($this->fk_expensereport))	$this->fk_expensereport=trim($this->fk_expensereport);
+=======
+		if (isset($this->fk_expensereport)) $this->fk_expensereport=trim($this->fk_expensereport);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if (isset($this->amount))			$this->amount=trim($this->amount);
 		if (isset($this->fk_typepayment))	$this->fk_typepayment=trim($this->fk_typepayment);
 		if (isset($this->num_payment))		$this->num_payment=trim($this->num_payment);
@@ -240,7 +343,10 @@ class PaymentExpenseReport extends CommonObject
 		if (isset($this->fk_user_modif))	$this->fk_user_modif=trim($this->fk_user_modif);
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		// Check parameters
 		// Put here code to add control on parameters values
 
@@ -302,6 +408,7 @@ class PaymentExpenseReport extends CommonObject
 		}
 	}
 
+<<<<<<< HEAD
 
 	/**
 	 *  Delete object in database
@@ -312,6 +419,19 @@ class PaymentExpenseReport extends CommonObject
 	 */
 	function delete($user, $notrigger=0)
 	{
+=======
+    // phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
+	/**
+	 *  Delete object in database
+	 *
+	 *  @param  User	$user        	User that delete
+	 *  @param  int		$notrigger		0=launch triggers after, 1=disable triggers
+	 *  @return int						<0 if KO, >0 if OK
+	 */
+	public function delete($user, $notrigger = 0)
+	{
+		// phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf, $langs;
 		$error=0;
 
@@ -334,6 +454,7 @@ class PaymentExpenseReport extends CommonObject
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
+<<<<<<< HEAD
 			if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 		}
 
@@ -341,6 +462,18 @@ class PaymentExpenseReport extends CommonObject
 		{
 			if (! $notrigger)
 			{
+=======
+			if (! $resql) {
+                $error++;
+                $this->errors[]="Error ".$this->db->lasterror();
+            }
+		}
+
+		//if (! $error)
+		//{
+		//	if (! $notrigger)
+		//	{
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action call a trigger.
 
@@ -350,8 +483,13 @@ class PaymentExpenseReport extends CommonObject
 				//$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
 				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				//// End call triggers
+<<<<<<< HEAD
 			}
 		}
+=======
+		//	}
+		//}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// Commit or rollback
 		if ($error)
@@ -376,6 +514,7 @@ class PaymentExpenseReport extends CommonObject
 	/**
 	 *	Load an object from its id and create a new one in database
 	 *
+<<<<<<< HEAD
 	 *	@param	int		$fromid     	Id of object to clone
 	 * 	@return	int						New id of clone
 	 */
@@ -383,12 +522,23 @@ class PaymentExpenseReport extends CommonObject
 	{
 		global $user,$langs;
 
+=======
+	 *  @param	User	$user		    User making the clone
+	 *	@param	int		$fromid     	Id of object to clone
+	 * 	@return	int						New id of clone
+	 */
+	public function createFromClone(User $user, $fromid)
+	{
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$error=0;
 
 		$object=new PaymentExpenseReport($this->db);
 
+<<<<<<< HEAD
 		$object->context['createfromclone'] = 'createfromclone';
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->db->begin();
 
 		// Load source object
@@ -400,6 +550,10 @@ class PaymentExpenseReport extends CommonObject
 		// ...
 
 		// Create clone
+<<<<<<< HEAD
+=======
+		$object->context['createfromclone'] = 'createfromclone';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$result=$object->create($user);
 
 		// Other options
@@ -409,6 +563,7 @@ class PaymentExpenseReport extends CommonObject
 			$error++;
 		}
 
+<<<<<<< HEAD
 		if (! $error)
 		{
 
@@ -417,6 +572,9 @@ class PaymentExpenseReport extends CommonObject
 		}
 
 		unset($this->context['createfromclone']);
+=======
+		unset($object->context['createfromclone']);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		// End
 		if (! $error)
@@ -438,11 +596,16 @@ class PaymentExpenseReport extends CommonObject
 	 *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
 	 *  @return string        		Libelle
 	 */
+<<<<<<< HEAD
 	function getLibStatut($mode=0)
+=======
+	public function getLibStatut($mode = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 	    return '';
 	}
 
+<<<<<<< HEAD
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
@@ -456,6 +619,23 @@ class PaymentExpenseReport extends CommonObject
 
 	    return '';
 	}
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Renvoi le libelle d'un statut donne
+	 *
+	 *  @param  int		$statut        	Id statut
+	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @return string 			       	Libelle du statut
+	 */
+    public function LibStatut($statut, $mode = 0)
+    {
+        // phpcs:enable
+        global $langs;
+
+        return '';
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 	/**
@@ -465,7 +645,11 @@ class PaymentExpenseReport extends CommonObject
      *
      *  @return	void
 	 */
+<<<<<<< HEAD
 	function initAsSpecimen()
+=======
+	public function initAsSpecimen()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$this->id=0;
 
@@ -480,8 +664,11 @@ class PaymentExpenseReport extends CommonObject
 		$this->fk_bank='';
 		$this->fk_user_creat='';
 		$this->fk_user_modif='';
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 
@@ -497,7 +684,11 @@ class PaymentExpenseReport extends CommonObject
      *      @param  string	$emetteur_banque    Name of bank
      *      @return int                 		<0 if KO, >0 if OK
      */
+<<<<<<< HEAD
     function addPaymentToBank($user,$mode,$label,$accountid,$emetteur_nom,$emetteur_banque)
+=======
+    public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         global $langs,$conf;
 
@@ -505,7 +696,11 @@ class PaymentExpenseReport extends CommonObject
 
         if (! empty($conf->banque->enabled))
         {
+<<<<<<< HEAD
             require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+=======
+            include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
             $acc = new Account($this->db);
             $acc->fetch($accountid);
@@ -598,14 +793,24 @@ class PaymentExpenseReport extends CommonObject
     }
 
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *  Update link between the expense report payment and the generated line in llx_bank
 	 *
 	 *  @param	int		$id_bank         Id if bank
 	 *  @return	int			             >0 if OK, <=0 if KO
 	 */
+<<<<<<< HEAD
 	function update_fk_bank($id_bank)
 	{
+=======
+	public function update_fk_bank($id_bank)
+	{
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_expensereport SET fk_bank = ".$id_bank." WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update_fk_bank", LOG_DEBUG);
@@ -624,11 +829,19 @@ class PaymentExpenseReport extends CommonObject
 	/**
 	 *  Return clicable name (with picto eventually)
 	 *
+<<<<<<< HEAD
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 * 	@param	int		$maxlen			Longueur max libelle
 	 *	@return	string					Chaine avec URL
 	 */
 	function getNomUrl($withpicto=0,$maxlen=0)
+=======
+	 *  @param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
+	 *  @param	int		$maxlen			Longueur max libelle
+	 *  @return	string					Chaine avec URL
+	 */
+	public function getNomUrl($withpicto = 0, $maxlen = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 
@@ -644,7 +857,11 @@ class PaymentExpenseReport extends CommonObject
 
             if ($withpicto) $result.=($link.img_object($label, 'payment', 'class="classfortooltip"').$linkend.' ');
 			if ($withpicto && $withpicto != 2) $result.=' ';
+<<<<<<< HEAD
 			if ($withpicto != 2) $result.=$link.($maxlen?dol_trunc($this->ref,$maxlen):$this->ref).$linkend;
+=======
+			if ($withpicto != 2) $result.=$link.($maxlen?dol_trunc($this->ref, $maxlen):$this->ref).$linkend;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		}
 
 		return $result;
@@ -656,8 +873,13 @@ class PaymentExpenseReport extends CommonObject
 	 *    @param   int     $id      Payment id
 	 *    @return  void
 	 */
+<<<<<<< HEAD
 	function info($id)
 	{
+=======
+    public function info($id)
+    {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sql = 'SELECT e.rowid, e.datec, e.fk_user_creat, e.fk_user_modif, e.tms';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'payment_expensereport as e';
 		$sql.= ' WHERE e.rowid = '.$id;
@@ -683,7 +905,11 @@ class PaymentExpenseReport extends CommonObject
 					$muser->fetch($obj->fk_user_modif);
 					$this->user_modification = $muser;
 				}
+<<<<<<< HEAD
 				$this->date_creation     = $this->db->jdate($obj->datec);
+=======
+				$this->date_creation = $this->db->jdate($obj->datec);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				$this->date_modification = $this->db->jdate($obj->tms);
 			}
 			$this->db->free($result);
@@ -692,5 +918,9 @@ class PaymentExpenseReport extends CommonObject
 		{
 			dol_print_error($this->db);
 		}
+<<<<<<< HEAD
 	}
+=======
+    }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

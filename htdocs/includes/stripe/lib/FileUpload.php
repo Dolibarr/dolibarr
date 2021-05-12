@@ -2,6 +2,7 @@
 
 namespace Stripe;
 
+<<<<<<< HEAD
 /**
  * Class FileUpload
  *
@@ -30,3 +31,7 @@ class FileUpload extends ApiResource
         return 'file';
     }
 }
+=======
+// For backwards compatibility, the `File` class is aliased to `FileUpload`.
+class_alias('Stripe\\File', 'Stripe\\FileUpload');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

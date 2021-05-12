@@ -5,6 +5,7 @@ Bookmarks=Yer imleri
 ListOfBookmarks=Yer imi listesi
 EditBookmarks=Yer imlerini listele/düzenle
 NewBookmark=Yeni yer imi
+<<<<<<< HEAD
 ShowBookmark=Yer imine bakın
 OpenANewWindow=Yeni bir pencere açılsın
 ReplaceWindow=Geçerli pencerede görüntülensin
@@ -17,4 +18,18 @@ CreateBookmark=Yer imi ekleyin
 SetHereATitleForLink=Yer iminin başlığını yazın
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Dış http ya da bağıl Dolibarr İnternet adresi kullanın
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Bağlantılı sayfanın yeni bir pencerede açılıp açılmayacağını seçin
+=======
+ShowBookmark=Yer imini göster
+OpenANewWindow=Yeni bir sekme aç
+ReplaceWindow=Mevcut sekmeyi değiştir
+BookmarkTargetNewWindowShort=Yeni sekme
+BookmarkTargetReplaceWindowShort=Mevcut sekme
+BookmarkTitle=Yer imi adı
+UrlOrLink=URL
+BehaviourOnClick=Bir yer imi URL'si seçildiğindeki davranış
+CreateBookmark=Yer imi oluştur
+SetHereATitleForLink=Yer imi için bir ad belirleyin
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Harici/mutlak bir bağlantı (https://URL) veya dahili/göreceli bir bağlantı (/DOLIBARR_ROOT/htdocs/...) kullanın
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Bağlantı verilen sayfanın mevcut sekmede mi yoksa yeni sekmede mi açılacağını seçin
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 BookmarksManagement=Yer imi yönetimi

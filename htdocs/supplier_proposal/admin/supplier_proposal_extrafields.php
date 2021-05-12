@@ -2,7 +2,11 @@
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,19 +59,34 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
 $textobject=$langs->transnoentitiesnoconv("CommRequests");
 
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("SupplierProposalSetup"));
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("SupplierProposalSetup"),$linkback,'title_setup');
+=======
+llxHeader('', $langs->trans("SupplierProposalSetup"));
+
+
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+print load_fiche_titre($langs->trans("SupplierProposalSetup"), $linkback, 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 $head = supplier_proposal_admin_prepare_head();
 
+<<<<<<< HEAD
 dol_fiche_head($head, 'attributes', $langs->trans("CommRequests"), 0, 'supplier_proposal');
 
 
 print $langs->trans("DefineHereComplementaryAttributes",$textobject).'<br>'."\n";
+=======
+dol_fiche_head($head, 'attributes', $langs->trans("CommRequests"), -1, 'supplier_proposal');
+
+
+print $langs->trans("DefineHereComplementaryAttributes", $textobject).'<br>'."\n";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '<br>';
 
 // Load attribute_label
@@ -76,6 +95,7 @@ $extrafields->fetch_name_optionals_label($elementtype);
 print "<table summary=\"listofattributes\" class=\"noborder\" width=\"100%\">";
 
 print '<tr class="liste_titre">';
+<<<<<<< HEAD
 print '<td align="center">'.$langs->trans("Position").'</td>';
 print '<td>'.$langs->trans("Label").'</td>';
 print '<td>'.$langs->trans("AttributeCode").'</td>';
@@ -83,6 +103,15 @@ print '<td>'.$langs->trans("Type").'</td>';
 print '<td align="right">'.$langs->trans("Size").'</td>';
 print '<td align="center">'.$langs->trans("Unique").'</td>';
 print '<td align="center">'.$langs->trans("Required").'</td>';
+=======
+print '<td class="center">'.$langs->trans("Position").'</td>';
+print '<td>'.$langs->trans("Label").'</td>';
+print '<td>'.$langs->trans("AttributeCode").'</td>';
+print '<td>'.$langs->trans("Type").'</td>';
+print '<td class="right">'.$langs->trans("Size").'</td>';
+print '<td class="center">'.$langs->trans("Unique").'</td>';
+print '<td class="center">'.$langs->trans("Required").'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
@@ -93,10 +122,17 @@ foreach($extrafields->attribute_type as $key => $value)
     print "<td>".$extrafields->attribute_label[$key]."</td>\n";
     print "<td>".$key."</td>\n";
     print "<td>".$type2label[$extrafields->attribute_type[$key]]."</td>\n";
+<<<<<<< HEAD
     print '<td align="right">'.$extrafields->attribute_size[$key]."</td>\n";
     print '<td align="center">'.yn($extrafields->attribute_unique[$key])."</td>\n";
     print '<td align="center">'.yn($extrafields->attribute_required[$key])."</td>\n";
     print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&attrname='.$key.'">'.img_edit().'</a>';
+=======
+    print '<td class="right">'.$extrafields->attribute_size[$key]."</td>\n";
+    print '<td class="center">'.yn($extrafields->attribute_unique[$key])."</td>\n";
+    print '<td class="center">'.yn($extrafields->attribute_required[$key])."</td>\n";
+    print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&attrname='.$key.'">'.img_edit().'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print "&nbsp; <a href=\"".$_SERVER["PHP_SELF"]."?action=delete&attrname=$key\">".img_delete()."</a></td>\n";
     print "</tr>";
     //      $i++;
@@ -143,6 +179,11 @@ if ($action == 'edit' && ! empty($attrname))
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';
 }
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

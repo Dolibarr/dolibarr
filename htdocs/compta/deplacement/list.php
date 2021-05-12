@@ -2,8 +2,14 @@
 /* Copyright (C) 2003		Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004		Eric Seigne          <eric.seigne@ryxeo.com>
+<<<<<<< HEAD
  * Copyright (C) 2005-2011	Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012		Juanjo Menent        <jmenent@2byte.es>
+=======
+ * Copyright (C) 2005-2011	Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2012		Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2018           charlene Benke	     <charlie@patas-monkey.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 $langs->loadLangs(array('companies', 'users', 'trips'));
 
 // Security check
+<<<<<<< HEAD
 $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'deplacement','','');
@@ -46,6 +53,20 @@ $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+=======
+$socid = GETPOST('socid', 'int');
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'deplacement', '', '');
+
+$search_ref=GETPOST('search_ref', 'int');
+$search_name=GETPOST('search_name', 'alpha');
+$search_company=GETPOST('search_company', 'alpha');
+// $search_amount=GETPOST('search_amount','alpha');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -55,8 +76,14 @@ if (! $sortfield) $sortfield="d.dated";
 
 $year=GETPOST("year");
 $month=GETPOST("month");
+<<<<<<< HEAD
 
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter','alpha')) // Both test are required to be compatible with all browsers
+=======
+$day=GETPOST("day");
+
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$search_ref="";
 	$search_name="";
@@ -64,6 +91,10 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter','a
 	// $search_amount="";
 	$year="";
 	$month="";
+<<<<<<< HEAD
+=======
+	$day="";
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 /*
@@ -89,7 +120,11 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON d.fk_soc = s.rowid";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 $sql.= " WHERE d.fk_user = u.rowid";
 $sql.= " AND d.entity = ".$conf->entity;
+<<<<<<< HEAD
 if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) $sql.=' AND d.fk_user IN ('.join(',',$childids).')';
+=======
+if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) $sql.=' AND d.fk_user IN ('.join(',', $childids).')';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND (sc.fk_user = " .$user->id." OR d.fk_soc IS NULL) ";
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 
@@ -102,6 +137,7 @@ if ($search_company)
 {
     $sql .= natural_search('s.nom', $search_company);
 }
+<<<<<<< HEAD
 // if ($search_amount)		$sql.=" AND d.km='".$db->escape(price2num(trim($search_amount)))."'";
 if ($month > 0)
 {
@@ -118,6 +154,11 @@ else if ($year > 0)
 }
 
 $sql.= $db->order($sortfield,$sortorder);
+=======
+$sql.= dolSqlDateFilter("d.dated", $day, $month, $year);
+
+$sql.= $db->order($sortfield, $sortorder);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $sql.= $db->plimit($limit + 1, $offset);
 
 //print $sql;
@@ -126,18 +167,31 @@ if ($resql)
 {
     $num = $db->num_rows($resql);
 
+<<<<<<< HEAD
     print_barre_liste($langs->trans("ListOfFees"), $page, $_SERVER["PHP_SELF"],"&socid=$socid",$sortfield,$sortorder,'',$num);
+=======
+    print_barre_liste($langs->trans("ListOfFees"), $page, $_SERVER["PHP_SELF"], "&socid=$socid", $sortfield, $sortorder, '', $num);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     $i = 0;
     print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     print '<table class="noborder" width="100%">';
     print "<tr class=\"liste_titre\">";
+<<<<<<< HEAD
     print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"d.rowid","","&socid=$socid",'',$sortfield,$sortorder);
     print_liste_field_titre("Type",$_SERVER["PHP_SELF"],"d.type","","&socid=$socid",'',$sortfield,$sortorder);
     print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"d.dated","","&socid=$socid",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre("Person",$_SERVER["PHP_SELF"],"u.lastname","","&socid=$socid",'',$sortfield,$sortorder);
     print_liste_field_titre("Company",$_SERVER["PHP_SELF"],"s.nom","","&socid=$socid",'',$sortfield,$sortorder);
     print_liste_field_titre("FeesKilometersOrAmout",$_SERVER["PHP_SELF"],"d.km","","&socid=$socid",'align="right"',$sortfield,$sortorder);
+=======
+    print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "d.rowid", "", "&socid=$socid", '', $sortfield, $sortorder);
+    print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "d.type", "", "&socid=$socid", '', $sortfield, $sortorder);
+    print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "d.dated", "", "&socid=$socid", 'align="center"', $sortfield, $sortorder);
+    print_liste_field_titre("Person", $_SERVER["PHP_SELF"], "u.lastname", "", "&socid=$socid", '', $sortfield, $sortorder);
+    print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", "", "&socid=$socid", '', $sortfield, $sortorder);
+    print_liste_field_titre("FeesKilometersOrAmout", $_SERVER["PHP_SELF"], "d.km", "", "&socid=$socid", 'class="right"', $sortfield, $sortorder);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print_liste_field_titre('');
     print "</tr>\n";
 
@@ -152,7 +206,11 @@ if ($resql)
     print '<td class="liste_titre" align="center">';
     if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
     print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
+<<<<<<< HEAD
     $formother->select_year($year?$year:-1,'year',1, 20, 5);
+=======
+    $formother->select_year($year?$year:-1, 'year', 1, 20, 5);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     print '</td>';
     print '<td class="liste_titre">';
     print '<input class="flat" size="10" type="text" name="search_name" value="'.$search_name.'">';
@@ -160,16 +218,27 @@ if ($resql)
     print '<td class="liste_titre">';
     print '<input class="flat" size="10" type="text" name="search_company" value="'.$search_company.'">';
     print '</td>';
+<<<<<<< HEAD
     print '<td class="liste_titre" align="right">';
     // print '<input class="flat" size="10" type="text" name="search_amount" value="'.$search_amount.'">';
     print '</td>';
     print '<td class="liste_titre" align="right">';
+=======
+    print '<td class="liste_titre right">';
+    // print '<input class="flat" size="10" type="text" name="search_amount" value="'.$search_amount.'">';
+    print '</td>';
+    print '<td class="liste_titre maxwidthsearch">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     $searchpicto=$form->showFilterAndCheckAddButtons(0);
     print $searchpicto;
     print '</td>';
     print "</tr>\n";
 
+<<<<<<< HEAD
     while ($i < min($num,$limit))
+=======
+    while ($i < min($num, $limit))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
         $obj = $db->fetch_object($resql);
 
@@ -178,11 +247,19 @@ if ($resql)
 
         print '<tr class="oddeven">';
         // Id
+<<<<<<< HEAD
         print '<td><a href="card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowTrip"),"trip").' '.$obj->rowid.'</a></td>';
         // Type
         print '<td>'.$langs->trans($obj->type).'</td>';
         // Date
         print '<td align="center">'.dol_print_date($db->jdate($obj->dd),'day').'</td>';
+=======
+        print '<td><a href="card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowTrip"), "trip").' '.$obj->rowid.'</a></td>';
+        // Type
+        print '<td>'.$langs->trans($obj->type).'</td>';
+        // Date
+        print '<td align="center">'.dol_print_date($db->jdate($obj->dd), 'day').'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         // User
         print '<td>';
         $userstatic->id = $obj->fk_user;
@@ -194,10 +271,17 @@ if ($resql)
         if ($obj->socid) print '<td>'.$soc->getNomUrl(1).'</td>';
         else print '<td>&nbsp;</td>';
 
+<<<<<<< HEAD
         print '<td align="right">'.$obj->km.'</td>';
 
         $tripandexpense_static->statut=$obj->fk_statut;
         print '<td align="right">'.$tripandexpense_static->getLibStatut(5).'</td>';
+=======
+        print '<td class="right">'.$obj->km.'</td>';
+
+        $tripandexpense_static->statut=$obj->fk_statut;
+        print '<td class="right">'.$tripandexpense_static->getLibStatut(5).'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         print "</tr>\n";
 
         $i++;
@@ -212,6 +296,11 @@ else
     dol_print_error($db);
 }
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

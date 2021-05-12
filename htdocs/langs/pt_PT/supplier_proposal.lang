@@ -1,6 +1,10 @@
 # Dolibarr language file - Source file is en_US - supplier_proposal
 SupplierProposal=Orçamentos de fornecedor
+<<<<<<< HEAD
 supplier_proposalDESC=Gerir pedidos de preço aos vendedores
+=======
+supplier_proposalDESC=Gerir pedidos de preço aos fornecedores
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 SupplierProposalNew=Novo pedido de preço
 CommRequest=Preço solicitado
 CommRequests=Preços solicitados
@@ -34,7 +38,10 @@ SupplierProposalStatusSignedShort=Aceite
 SupplierProposalStatusNotSignedShort=Recusado
 CopyAskFrom=Criar orçamento de fornecedor copiando um orçamento existente
 CreateEmptyAsk=Criar pedido em branco
+<<<<<<< HEAD
 CloneAsk=Clonar pedido de preço
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmCloneAsk=Tem certeza que deseja clonar o orçamento do fornecedor, <b>%s</b>?
 ConfirmReOpenAsk=Tem certeza que deseja reabrir o orçamento do fornecedor, <b>%s</b>?
 SendAskByMail=Enviar orçamento do fornecedor por email

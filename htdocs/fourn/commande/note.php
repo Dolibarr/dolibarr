@@ -1,9 +1,15 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
+=======
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2017      Ferran Marcet       	<fmarcet@2byte.es>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +38,7 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
+<<<<<<< HEAD
 $langs->load("orders");
 $langs->load("suppliers");
 $langs->load("companies");
@@ -40,6 +47,14 @@ $langs->load('stocks');
 $id = GETPOST('facid','int')?GETPOST('facid','int'):GETPOST('id','int');
 $ref = GETPOST('ref');
 $action = GETPOST('action','aZ09');
+=======
+// Load translation files required by the page
+$langs->loadLangs(array("suppliers", "orders", "companies", "stocks"));
+
+$id = GETPOST('facid', 'int')?GETPOST('facid', 'int'):GETPOST('id', 'int');
+$ref = GETPOST('ref');
+$action = GETPOST('action', 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -62,7 +77,11 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, 
  * View
  */
 $help_url='EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
+<<<<<<< HEAD
 llxHeader('',$langs->trans("Order"),$help_url);
+=======
+llxHeader('', $langs->trans("Order"), $help_url);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $form = new Form($db);
 
@@ -155,7 +174,12 @@ if ($id > 0 || ! empty($ref))
     }
 }
 
+<<<<<<< HEAD
 
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

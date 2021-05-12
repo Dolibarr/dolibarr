@@ -38,14 +38,22 @@ class modBookmark extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
+<<<<<<< HEAD
 	function __construct($db)
+=======
+	public function __construct($db)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$this->db = $db;
 		$this->numero = 330;
 
 		$this->family = "technic";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+<<<<<<< HEAD
 		$this->name = preg_replace('/^mod/i','',get_class($this));
+=======
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->description = "Gestion des Bookmarks";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -93,14 +101,22 @@ class modBookmark extends DolibarrModules
 		$r++;
 		$this->rights[$r][0] = 333; // id de la permission
 		$this->rights[$r][1] = 'Supprimer les bookmarks'; // libelle de la permission
+<<<<<<< HEAD
 		$this->rights[$r][2] = 'r'; // type de la permission (d�pr�ci� � ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par d�faut
+=======
+		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$this->rights[$r][4] = 'supprimer';
 
 
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 }

@@ -208,7 +208,11 @@ class Swift_Transport_EsmtpTransport extends Swift_Transport_AbstractSmtpTranspo
      */
     public function getSourceIp()
     {
+<<<<<<< HEAD
         return $this->params['sourceIp'] ?? null;
+=======
+        return isset($this->params['sourceIp']) ? $this->params['sourceIp'] : null;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
     /**

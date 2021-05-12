@@ -42,9 +42,15 @@ ALTER TABLE llx_product_customer_price_log ADD COLUMN localtax2_type varchar(10)
 UPDATE llx_user set api_key = null where api_key = '';
 
 
+<<<<<<< HEAD
 ALTER TABLE llx_actioncomm ADD COLUMN email_subject varchar(256) after email_msgid;
 ALTER TABLE llx_actioncomm ADD COLUMN email_tocc varchar(256) after email_to;
 ALTER TABLE llx_actioncomm ADD COLUMN email_tobcc varchar(256) after email_tocc;
+=======
+ALTER TABLE llx_actioncomm ADD COLUMN email_subject varchar(255) after email_msgid;
+ALTER TABLE llx_actioncomm ADD COLUMN email_tocc varchar(255) after email_to;
+ALTER TABLE llx_actioncomm ADD COLUMN email_tobcc varchar(255) after email_tocc;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 ALTER TABLE llx_user MODIFY COLUMN pass varchar(128);
@@ -66,6 +72,10 @@ INSERT INTO llx_const (name, value, type, note, visible) values (__ENCRYPT('MAIN
 ALTER TABLE llx_accounting_system MODIFY COLUMN pcg_version varchar(32);
 ALTER TABLE llx_accountingaccount MODIFY COLUMN fk_pcg_version varchar(32);
 ALTER TABLE llx_accountingaccount RENAME TO llx_accounting_account;
+<<<<<<< HEAD
+=======
+--VPGSQL8.2 ALTER SEQUENCE llx_accountingaccount_rowid_seq RENAME TO llx_accounting_account_rowid_seq;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ALTER TABLE llx_accounting_account ADD INDEX idx_accounting_account_account_number (account_number);
 
 UPDATE llx_const SET name = __ENCRYPT('ACCOUNTING_EXPORT_PREFIX_SPEC')__ WHERE __DECRYPT('name')__ = 'EXPORT_PREFIX_SPEC';

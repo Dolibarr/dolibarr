@@ -1,0 +1,14 @@
+# Dolibarr language file - Source file is en_US - mrp
+MRPArea=Area MRP
+MenuBOM=Lista de materiais
+LatestBOMModified=Última BOM modificada %s
+BillOfMaterials=Lista de materiais
+BOMsSetup=Configuração do módulo BOM
+ListOfBOMs=Lista de BOMs
+NewBOM=Nova Lista de Materiais
+ProductBOMHelp=Produto a ser criado com esta BOM
+BOMsNumberingModules=Modelos de numeração para BOM
+BOMsModelModule=Modelo de Documento BOM
+FreeLegalTextOnBOMs=Texto livre para documentação da BOM
+WatermarkOnDraftBOMs=Marca d'agua no rascunho da BOM
+ConfirmCloneBillOfMaterials=Tem certeza que voce quer clonar esta BOM

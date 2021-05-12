@@ -31,7 +31,11 @@ $langs->loadLangs(array('products', 'stocks', 'companies'));
 $mesg = '';
 
 // Security check
+<<<<<<< HEAD
 $result=restrictedArea($user,'stock');
+=======
+$result=restrictedArea($user, 'stock');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 /*
@@ -41,7 +45,11 @@ $result=restrictedArea($user,'stock');
 $form=new Form($db);
 
 $help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
+<<<<<<< HEAD
 llxHeader("",$langs->trans("WarehouseCard"),$help_url);
+=======
+llxHeader("", $langs->trans("WarehouseCard"), $help_url);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if ($_GET["id"])
 {
@@ -64,7 +72,11 @@ if ($_GET["id"])
 
 	// Ref
 	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
+<<<<<<< HEAD
 	print $form->showrefnav($entrepot,'id','',1,'rowid','libelle');
+=======
+	print $form->showrefnav($entrepot, 'id', '', 1, 'rowid', 'libelle');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</td>';
 
 	print '<tr><td>'.$langs->trans("LocationSummary").'</td><td colspan="3">'.$entrepot->lieu.'</td></tr>';
@@ -109,7 +121,11 @@ if ($_GET["id"])
 	/* ************************************************************************** */
 
 	print "<div class=\"graph\">\n";
+<<<<<<< HEAD
 	$year = strftime("%Y",time());
+=======
+	$year = strftime("%Y", time());
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	$file=$conf->stock->dir_temp.'/entrepot-'.$entrepot->id.'-'.($year).'.png';
 
@@ -140,5 +156,9 @@ if ($_GET["id"])
 	print "</div>";
 }
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

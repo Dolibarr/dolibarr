@@ -16,6 +16,7 @@ Create=创建
 Reference=编号
 NewProduct=新建产品
 NewService=新建服务
+<<<<<<< HEAD
 ProductVatMassChange=批量 VAT 变更
 ProductVatMassChangeDesc=此页面可用来修改产品或服务的增值税(VAT)。警告，此操作将影响整个数据库。
 MassBarcodeInit=批量条码初始化
@@ -46,6 +47,39 @@ Stocks=库存
 Movements=库间调拨
 Sell=销售
 Buy=采购
+=======
+ProductVatMassChange=Global VAT Update
+ProductVatMassChangeDesc=This tool updates the VAT rate defined on <b><u>ALL</u></b> products and services!
+MassBarcodeInit=批量条码初始化
+MassBarcodeInitDesc=此页面可用于初始化未定义条形码的对象上的条形码。在模块条形码设置完成之前检查。
+ProductAccountancyBuyCode=科目代码（采购）
+ProductAccountancySellCode=科目代码（销售）
+ProductAccountancySellIntraCode=Accounting code (sale intra-Community)
+ProductAccountancySellExportCode=科目代码（销售导出）
+ProductOrService=产品或服务
+ProductsAndServices=产品和服务
+ProductsOrServices=产品或服务
+ProductsPipeServices=产品|服务
+ProductsOnSaleOnly=产品（仅出售）
+ProductsOnPurchaseOnly=产品（仅购买）
+ProductsNotOnSell=产品（不出售也不采购）
+ProductsOnSellAndOnBuy=产品（可销售、可采购）
+ServicesOnSaleOnly=服务（仅销售）
+ServicesOnPurchaseOnly=服务（仅采购）
+ServicesNotOnSell=服务（非出售也非采购）
+ServicesOnSellAndOnBuy=可销售的服务与可采购的服务
+LastModifiedProductsAndServices=最近更新的 %s 项产品/服务
+LastRecordedProducts=最近登记的 %s 产品
+LastRecordedServices=最后 %s 已记录服务
+CardProduct0=产品
+CardProduct1=服务
+Stock=库存
+MenuStocks=库存
+Stocks=Stocks and location (warehouse) of products
+Movements=库间调拨
+Sell=销售
+Buy=Purchase
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 OnSell=可销售
 OnBuy=可采购
 NotOnSell=不可销售
@@ -60,6 +94,7 @@ ProductStatusNotOnBuyShort=不可采购
 UpdateVAT=更新VAT
 UpdateDefaultPrice=更新默认价格
 UpdateLevelPrices=更新各级价格
+<<<<<<< HEAD
 AppliedPricesFrom=价格起始时间
 SellingPrice=售价
 SellingPriceHT=售价(税前)
@@ -71,14 +106,34 @@ PurchasedAmount=采购总额
 NewPrice=新增价格
 MinPrice=最低销售价
 EditSellingPriceLabel=Edit selling price label
+=======
+AppliedPricesFrom=Applied from
+SellingPrice=售价
+SellingPriceHT=Selling price (excl. tax)
+SellingPriceTTC=售价(税后)
+SellingMinPriceTTC=Minimum Selling price (inc. tax)
+CostPriceDescription=This price field (excl. tax) can be used to store the average amount this product costs to your company. It may be any price you calculate yourself, for example from the average buying price plus average production and distribution cost.
+CostPriceUsage=该值可用于保证金计算。
+SoldAmount=销售总额
+PurchasedAmount=采购总额
+NewPrice=新增价格
+MinPrice=Min. sell price
+EditSellingPriceLabel=编辑销售价格标签
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CantBeLessThanMinPrice=售价不能低于此产品的最低价格 (%s 税前)。此消息也可能在您输入折扣巨大时出现
 ContractStatusClosed=已禁用
 ErrorProductAlreadyExists=编号为 %s 的产品已存在。
 ErrorProductBadRefOrLabel=输入的编号或标签无效，请输入符合要求的编号或标签。
 ErrorProductClone=试图同时复制该产品或服务会有一个问题。
+<<<<<<< HEAD
 ErrorPriceCantBeLowerThanMinPrice=Error, price can't be lower than minimum price.
 Suppliers=供应商
 SupplierRef=供应商产品编码
+=======
+ErrorPriceCantBeLowerThanMinPrice=错误，价格不能低于最低价格。
+Suppliers=供应商
+SupplierRef=Vendor SKU
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ShowProduct=显示产品
 ShowService=显示服务
 ProductsAndServicesArea=产品和服务区
@@ -87,7 +142,11 @@ ServicesArea=服务区
 ListOfStockMovements=库存移动清单
 BuyingPrice=买价
 PriceForEachProduct=产品明码标价
+<<<<<<< HEAD
 SupplierCard=供应商 信息卡
+=======
+SupplierCard=Vendor card
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PriceRemoved=价格已删除
 BarCode=条码
 BarcodeType=条码类型
@@ -95,10 +154,17 @@ SetDefaultBarcodeType=设置条码类型
 BarcodeValue=条码值
 NoteNotVisibleOnBill=备注 (账单、报价...中不可见)
 ServiceLimitedDuration=如果产品是有限期的服务：
+<<<<<<< HEAD
 MultiPricesAbility=每部分价格产品/服务(每位客户的一部分)
 MultiPricesNumPrices=价格个数
 AssociatedProductsAbility=Activate the feature to manage virtual products
 AssociatedProducts=虚拟产品
+=======
+MultiPricesAbility=Multiple price segments per product/service (each customer is in one price segment)
+MultiPricesNumPrices=价格个数
+AssociatedProductsAbility=Activate virtual products (kits)
+AssociatedProducts=Virtual products
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AssociatedProductsNumber=组成此虚拟产品的产品数量
 ParentProductsNumber=父级包装产品的数量
 ParentProducts=父产品
@@ -108,8 +174,13 @@ KeywordFilter=关键词筛选
 CategoryFilter=分类筛选
 ProductToAddSearch=搜索要添加的产品
 NoMatchFound=未发现匹配项目
+<<<<<<< HEAD
 ListOfProductsServices=List of products/services
 ProductAssociationList=组成此虚拟产品/包装的产品/服务列表
+=======
+ListOfProductsServices=产品/服务清单
+ProductAssociationList=List of products/services that are component(s) of this virtual product/kit
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProductParentList=由此产品组成的虚拟产品或服务
 ErrorAssociationIsFatherOfThis=所选产品中有当前产品的父级产品
 DeleteProduct=删除产品/服务
@@ -122,6 +193,7 @@ ImportDataset_service_1=服务
 DeleteProductLine=删除产品文字行
 ConfirmDeleteProductLine=您确定要删除这行产品吗？
 ProductSpecial=Special
+<<<<<<< HEAD
 QtyMin=起订量
 PriceQtyMin=最小数量价格 (w/o 折扣)
 PriceQtyMinCurrency=Price for this min. qty (w/o discount) (currency)
@@ -135,6 +207,21 @@ PredefinedProductsAndServicesToSell=预定产品/服务到销售
 PredefinedProductsToPurchase=预定产品到采购
 PredefinedServicesToPurchase=预定服务到采购
 PredefinedProductsAndServicesToPurchase=预定产品/服务到采购
+=======
+QtyMin=Min. purchase quantity
+PriceQtyMin=Price quantity min.
+PriceQtyMinCurrency=Price (currency) for this qty. (no discount)
+VATRateForSupplierProduct=VAT Rate (for this vendor/product)
+DiscountQtyMin=Discount for this qty.
+NoPriceDefinedForThisSupplier=No price/qty defined for this vendor/product
+NoSupplierPriceDefinedForThisProduct=No vendor price/qty defined for this product
+PredefinedProductsToSell=Predefined Product
+PredefinedServicesToSell=Predefined Service
+PredefinedProductsAndServicesToSell=预定产品/服务到销售
+PredefinedProductsToPurchase=预定产品到采购
+PredefinedServicesToPurchase=预定服务到采购
+PredefinedProductsAndServicesToPurchase=Predefined products/services to purchase
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 NotPredefinedProducts=没有预定产品/服务
 GenerateThumb=生成 缩略图
 ServiceNb=服务 #%s
@@ -143,18 +230,27 @@ ListProductByPopularity=产品列表(按人气)
 ListServiceByPopularity=服务列表(按人气)
 Finished=成品
 RowMaterial=原料
+<<<<<<< HEAD
 CloneProduct=复制产品或服务
 ConfirmCloneProduct=Are you sure you want to clone product or service <b>%s</b>?
 CloneContentProduct=复制产品/服务的所有主要信息
 ClonePricesProduct=Clone prices
 CloneCompositionProduct=复制已打包包装的产品/服务
 CloneCombinationsProduct=Clone product variants
+=======
+ConfirmCloneProduct=您确定要克隆产品或服务<b> %s </b>吗？
+CloneContentProduct=Clone all main information of product/service
+ClonePricesProduct=克隆价格
+CloneCompositionProduct=Clone virtual product/service
+CloneCombinationsProduct=复制产品变体
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProductIsUsed=此产品已使用
 NewRefForClone=新产品/服务的编号
 SellingPrices=售价
 BuyingPrices=买价
 CustomerPrices=客户价格
 SuppliersPrices=供应商价格
+<<<<<<< HEAD
 SuppliersPricesOfProductsOrServices=供应商价格(产品或服务)
 CustomCode=Customs / Commodity / HS code
 CountryOrigin=产地国
@@ -164,6 +260,17 @@ Unit=单位
 p=u.
 set=设置
 se=设置
+=======
+SuppliersPricesOfProductsOrServices=Vendor prices (of products or services)
+CustomCode=海关/商品/ HS编码
+CountryOrigin=产地国
+Nature=Nature of produt (material/finished)
+ShortLabel=标签别名
+Unit=单位
+p=u.
+set=套
+se=套
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 second=秒
 s=s
 hour=小时
@@ -181,6 +288,7 @@ m2=m²
 m3=m³
 liter=升
 l=L
+<<<<<<< HEAD
 unitP=Piece
 unitSET=Set
 unitS=第二
@@ -193,12 +301,27 @@ unitLM=Linear meter
 unitM2=Square meter
 unitM3=Cubic meter
 unitL=Liter
+=======
+unitP=片
+unitSET=组
+unitS=第二
+unitH=小时
+unitD=天
+unitKG=公斤
+unitG=公克
+unitM=仪表
+unitLM=线性仪表
+unitM2=平方米
+unitM3=立方米
+unitL=升
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ProductCodeModel=产品编号模板
 ServiceCodeModel=服务编号模板
 CurrentProductPrice=当前价格
 AlwaysUseNewPrice=始终使用产品/服务的当前价格
 AlwaysUseFixedPrice=使用固定价格
 PriceByQuantity=不同数量价格
+<<<<<<< HEAD
 DisablePriceByQty=Disable prices by quantity
 PriceByQuantityRange=定量范围
 MultipriceRules=市场价格规则
@@ -214,10 +337,28 @@ ProductsMultiPrice=Products and prices for each price segment
 ProductsOrServiceMultiPrice=客户价格(产品或服务,多价格)
 ProductSellByQuarterHT=产品税前季度营业额
 ServiceSellByQuarterHT=Services turnover quarterly before tax
+=======
+DisablePriceByQty=按数量禁用价格
+PriceByQuantityRange=定量范围
+MultipriceRules=市场价格规则
+UseMultipriceRules=Use price segment rules (defined into product module setup) to auto calculate prices of all other segments according to first segment
+PercentVariationOver=%% 变化 %s
+PercentDiscountOver=%%折扣超过%s
+KeepEmptyForAutoCalculation=保持空白，以便根据产品的重量或体积自动计算
+VariantRefExample=示例：COL
+VariantLabelExample=示例：颜色
+### composition fabrication
+Build=生产
+ProductsMultiPrice=每个价格段的产品和价格
+ProductsOrServiceMultiPrice=客户价格(产品或服务,多价格)
+ProductSellByQuarterHT=产品税前季度营业额
+ServiceSellByQuarterHT=服务周转税前季度
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 Quarter1=一季度
 Quarter2=二季度
 Quarter3=三季度
 Quarter4=四季度
+<<<<<<< HEAD
 BarCodePrintsheet=条码打印
 PageToGenerateBarCodeSheets=有了这个工具，你就可以在标签纸上打印条码啦。首先选择标签纸的条码格式,输入条码参数值, 最后点击这个按钮 <b>%s</b>。
 NumberOfStickers=要打印的标签数量
@@ -245,20 +386,58 @@ PriceExpressionEditorHelp1="price = 2 + 2" 或 "2 + 2" 价格设置. 使用 ; �
 PriceExpressionEditorHelp2=You can access ExtraFields with variables like <b>#extrafield_myextrafieldkey#</b> and global variables with <b>#global_mycode#</b>
 PriceExpressionEditorHelp3=In both product/service and supplier prices there are these variables available:<br><b>#tva_tx# #localtax1_tx# #localtax2_tx# #weight# #length# #surface# #price_min#</b>
 PriceExpressionEditorHelp4=In product/service price only: <b>#supplier_min_price#</b><br>In supplier prices only: <b>#supplier_quantity# and #supplier_tva_tx#</b>
+=======
+BarCodePrintsheet=打印条码
+PageToGenerateBarCodeSheets=With this tool, you can print sheets of barcode stickers. Choose format of your sticker page, type of barcode and value of barcode, then click on button <b>%s</b>.
+NumberOfStickers=要打印的标签数量
+PrintsheetForOneBarCode=为一个条形码打印几个贴纸
+BuildPageToPrint=生成打印页面
+FillBarCodeTypeAndValueManually=填入所要打印的条码类型和常规参数值
+FillBarCodeTypeAndValueFromProduct=将产品的条码值填入所要打印的条码类型和参数值
+FillBarCodeTypeAndValueFromThirdParty=填写条形码类型和合作方条形码的值。
+DefinitionOfBarCodeForProductNotComplete=Definition of type or value of barcode not complete for product %s.
+DefinitionOfBarCodeForThirdpartyNotComplete=Definition of type or value of barcode non complete for third party %s.
+BarCodeDataForProduct=Barcode information of product %s:
+BarCodeDataForThirdparty=Barcode information of third party %s:
+ResetBarcodeForAllRecords=为所有记录定义条形码值（这也将重置已使用新值定义的条形码值）
+PriceByCustomer=每位客户不同价格
+PriceCatalogue=每产品/服务单独销售价
+PricingRule=Rules for selling prices
+AddCustomerPrice=为客户添加价格
+ForceUpdateChildPriceSoc=在客户子公司设置相同的价格
+PriceByCustomerLog=记录以前的客户价格
+MinimumPriceLimit=最低价格不允许低于 %s
+MinimumRecommendedPrice=Minimum recommended price is: %s
+PriceExpressionEditor=价格表达式编辑器
+PriceExpressionSelected=选择价格表达式
+PriceExpressionEditorHelp1="price = 2 + 2" 或 "2 + 2" 价格设置. 使用 ; 单独的表达式
+PriceExpressionEditorHelp2=您可以使用<b> #extrafield_myextrafieldkey＃</b>等变量访问ExtraFields，使用<b> #global_mycode＃</b>访问全局变量
+PriceExpressionEditorHelp3=In both product/service and vendor prices there are these variables available:<br><b>#tva_tx# #localtax1_tx# #localtax2_tx# #weight# #length# #surface# #price_min#</b>
+PriceExpressionEditorHelp4=In product/service price only: <b>#supplier_min_price#</b><br>In vendor prices only: <b>#supplier_quantity# and #supplier_tva_tx#</b>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PriceExpressionEditorHelp5=全局变量值:
 PriceMode=价格模式
 PriceNumeric=数字
 DefaultPrice=默认价格
 ComposedProductIncDecStock=增加/减少父库存变化
+<<<<<<< HEAD
 ComposedProduct=子产品
 MinSupplierPrice=最低购买价格
 MinCustomerPrice=Minimum selling price
 DynamicPriceConfiguration=动态价格配置
 DynamicPriceDesc=On product card, with this module enabled, you should be able to set mathematic functions to calculate Customer or Supplier prices. Such function can use all mathematic operators, some constants and variables. You can set here the variables you want to be able to use and if the variable need an automatic update, the external URL to use to ask Dolibarr to update automaticaly the value.
+=======
+ComposedProduct=Child products
+MinSupplierPrice=最低购买价格
+MinCustomerPrice=最低售价
+DynamicPriceConfiguration=动态价格配置
+DynamicPriceDesc=You may define mathematical formulae to calculate Customer or Vendor prices. Such formulas can use all mathematical operators, some constants and variables. You can define here the variables you wish to use. If the variable needs an automatic update, you may define the external URL to allow Dolibarr to update the value automatically.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 AddVariable=添加变量
 AddUpdater=添加更新
 GlobalVariables=全局变量
 VariableToUpdate=变量到更新
+<<<<<<< HEAD
 GlobalVariableUpdaters=全局变量更新
 GlobalVariableUpdaterType0=JSON data
 GlobalVariableUpdaterHelp0=Parses JSON data from specified URL, VALUE specifies the location of relevant value,
@@ -268,10 +447,22 @@ GlobalVariableUpdaterHelp1=Parses WebService data from specified URL, NS specifi
 GlobalVariableUpdaterHelpFormat1=Format for request is {"URL": "http://example.com/urlofws", "VALUE": "array,targetvalue", "NS": "http://example.com/urlofns", "METHOD": "myWSMethod", "DATA": {"your": "data", "to": "send"}}
 UpdateInterval=升级更新间隔(分钟)
 LastUpdated=Latest update
+=======
+GlobalVariableUpdaters=External updaters for variables
+GlobalVariableUpdaterType0=JSON数据
+GlobalVariableUpdaterHelp0=从指定的URL解析JSON数据，VALUE指定相关值的位置，
+GlobalVariableUpdaterHelpFormat0=请求格式{“URL”：“http://example.com/urlofjson”，“VALUE”：“array1，array2，targetvalue”}
+GlobalVariableUpdaterType1=WebService数据
+GlobalVariableUpdaterHelp1=从指定的URL解析WebService数据，NS指定命名空间，VALUE指定相关值的位置，DATA应包含要发送的数据，METHOD是调用WS方法
+GlobalVariableUpdaterHelpFormat1=请求格式为{“URL”：“http://example.com/urlofws”，“VALUE”：“array，targetvalue”，“NS”：“http://example.com/urlofns”，“METHOD” ：“myWSMethod”，“DATA”：{“your”：“data”，“to”：“send”}}
+UpdateInterval=升级更新间隔(分钟)
+LastUpdated=最新更新
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 CorrectlyUpdated=当前更新
 PropalMergePdfProductActualFile=文件添加到 PDF Azur are/is
 PropalMergePdfProductChooseFile=选择PDF文件
 IncludingProductWithTag=包括产品/服务标签
+<<<<<<< HEAD
 DefaultPriceRealPriceMayDependOnCustomer=Default price, real price may depend on customer
 WarningSelectOneDocument=Please select at least one document
 DefaultUnitToShow=单位
@@ -283,11 +474,25 @@ TranslatedDescription=翻译描述
 TranslatedNote=翻译备注
 ProductWeight=Weight for 1 product
 ProductVolume=产品 1 参数值
+=======
+DefaultPriceRealPriceMayDependOnCustomer=默认价格，实际价格可能取决于客户
+WarningSelectOneDocument=请至少选择一个文档
+DefaultUnitToShow=单位
+NbOfQtyInProposals=报价数
+ClinkOnALinkOfColumn=单击%s列的链接以获取详细视图...
+ProductsOrServicesTranslations=Products/Services translations
+TranslatedLabel=翻译标签
+TranslatedDescription=翻译描述
+TranslatedNote=翻译备注
+ProductWeight=1个产品的重量
+ProductVolume=1个产品的体积
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 WeightUnits=重量单位
 VolumeUnits=体积单位
 SizeUnits=大小单位
 DeleteProductBuyPrice=删除买价
 ConfirmDeleteProductBuyPrice=您确定想要删除买价吗？
+<<<<<<< HEAD
 SubProduct=Sub product
 ProductSheet=Product sheet
 ServiceSheet=Service sheet
@@ -334,3 +539,56 @@ CloneDestinationReference=Destination product reference
 ErrorCopyProductCombinations=There was an error while copying the product variants
 ErrorDestinationProductNotFound=Destination product not found
 ErrorProductCombinationNotFound=Product variant not found
+=======
+SubProduct=子产品
+ProductSheet=产品表
+ServiceSheet=服务单
+PossibleValues=可能的值
+GoOnMenuToCreateVairants=继续菜单%s  -  %s准备属性变体（如颜色，大小......）
+UseProductFournDesc=Add a feature to define the descriptions of products defined by the vendors in addition to descriptions for customers
+ProductSupplierDescription=Vendor description for the product
+#Attributes
+VariantAttributes=变体属性
+ProductAttributes=产品的变体属性
+ProductAttributeName=变体属性%s
+ProductAttribute=变体属性
+ProductAttributeDeleteDialog=您确定要删除此属性吗？所有值都将被删除
+ProductAttributeValueDeleteDialog=您确定要删除该属性的引用“%s”的值“%s”吗？
+ProductCombinationDeleteDialog=您确定要删除产品“<strong> %s </strong>”的变体吗？
+ProductCombinationAlreadyUsed=删除变体时出错。请检查它是否在任何物体中使用
+ProductCombinations=变种
+PropagateVariant=传播变种
+HideProductCombinations=隐藏产品选择器中的产品变体
+ProductCombination=变种
+NewProductCombination=新变种
+EditProductCombination=编辑变体
+NewProductCombinations=新变种
+EditProductCombinations=编辑变体
+SelectCombination=选择组合
+ProductCombinationGenerator=变种发电机
+Features=特征
+PriceImpact=价格影响
+WeightImpact=重量影响
+NewProductAttribute=新建属性
+NewProductAttributeValue=新属性值
+ErrorCreatingProductAttributeValue=创建属性值时出错。可能是因为该引用已存在现有值
+ProductCombinationGeneratorWarning=如果继续，在生成新变体之前，所有先前的变体都将被删除。现有的将使用新值更新
+TooMuchCombinationsWarning=生成大量变体可能会导致高CPU，内存使用率，Dolibarr无法创建它们。启用选项“%s”可能有助于减少内存使用量。
+DoNotRemovePreviousCombinations=不要删除以前的变种
+UsePercentageVariations=使用百分比变化
+PercentageVariation=百分率变化
+ErrorDeletingGeneratedProducts=尝试删除现有产品变体时出错
+NbOfDifferentValues=No. of different values
+NbProducts=No. of products
+ParentProduct=父产品
+HideChildProducts=隐藏变体产品
+ShowChildProducts=Show variant products
+NoEditVariants=Go to Parent product card and edit variants price impact in the variants tab
+ConfirmCloneProductCombinations=您是否要将所有产品变体复制到具有给定参考的其他父产品？
+CloneDestinationReference=目的地产品参考
+ErrorCopyProductCombinations=复制产品变体时出错
+ErrorDestinationProductNotFound=找不到目的地产品
+ErrorProductCombinationNotFound=未找到产品变体
+ActionAvailableOnVariantProductOnly=Action only available on the variant of product
+ProductsPricePerCustomer=Product prices per customers
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

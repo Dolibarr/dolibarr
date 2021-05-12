@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2005-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2017	Regis Houssin		<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2017	Regis Houssin		<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,7 +37,20 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 {
 	public $family = 'ldap';
 	public $description = "Triggers of this module allows to synchronize Dolibarr toward a LDAP database.";
+<<<<<<< HEAD
 	public $version = self::VERSION_DOLIBARR;
+=======
+
+	/**
+	 * Version of the trigger
+	 * @var string
+	 */
+	public $version = self::VERSION_DOLIBARR;
+
+	/**
+	 * @var string Image of the trigger
+	 */
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	public $picto = 'technic';
 
 	/**
@@ -77,7 +94,11 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$info=$object->_load_ldap_info();
 					$dn=$object->_load_ldap_dn($info);
 
+<<<<<<< HEAD
 					$result=$ldap->add($dn,$info,$user);
+=======
+					$result=$ldap->add($dn, $info, $user);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 
 				if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
@@ -103,9 +124,15 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$olddn=$object->oldcopy->_load_ldap_dn($oldinfo);
 
 					// Verify if entry exist
+<<<<<<< HEAD
 					$container=$object->oldcopy->_load_ldap_dn($oldinfo,1);
 					$search = "(".$object->oldcopy->_load_ldap_dn($oldinfo,2).")";
 					$records=$ldap->search($container,$search);
+=======
+					$container=$object->oldcopy->_load_ldap_dn($oldinfo, 1);
+					$search = "(".$object->oldcopy->_load_ldap_dn($oldinfo, 2).")";
+					$records=$ldap->search($container, $search);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					if (count($records) && $records['count'] == 0)
 					{
 						$olddn = '';
@@ -113,10 +140,17 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 
 					$info=$object->_load_ldap_info();
 					$dn=$object->_load_ldap_dn($info);
+<<<<<<< HEAD
 					$newrdn=$object->_load_ldap_dn($info,2);
 					$newparent=$object->_load_ldap_dn($info,1);
 
 					$result=$ldap->update($dn,$info,$user,$olddn,$newrdn,$newparent);
+=======
+					$newrdn=$object->_load_ldap_dn($info, 2);
+					$newparent=$object->_load_ldap_dn($info, 1);
+
+					$result=$ldap->update($dn, $info, $user, $olddn, $newrdn, $newparent);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 
 				if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
@@ -142,9 +176,15 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$olddn=$object->oldcopy->_load_ldap_dn($oldinfo);
 
 					// Verify if entry exist
+<<<<<<< HEAD
 					$container=$object->oldcopy->_load_ldap_dn($oldinfo,1);
 					$search = "(".$object->oldcopy->_load_ldap_dn($oldinfo,2).")";
 					$records=$ldap->search($container,$search);
+=======
+					$container=$object->oldcopy->_load_ldap_dn($oldinfo, 1);
+					$search = "(".$object->oldcopy->_load_ldap_dn($oldinfo, 2).")";
+					$records=$ldap->search($container, $search);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					if (count($records) && $records['count'] == 0)
 					{
 						$olddn = '';
@@ -153,7 +193,11 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$info=$object->_load_ldap_info();
 					$dn=$object->_load_ldap_dn($info);
 
+<<<<<<< HEAD
 					$result=$ldap->update($dn,$info,$user,$olddn);
+=======
+					$result=$ldap->update($dn, $info, $user, $olddn);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 
 				if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
@@ -202,9 +246,15 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 						$olddn=$usergroup->_load_ldap_dn($oldinfo);
 
 						// Verify if entry exist
+<<<<<<< HEAD
 						$container=$usergroup->_load_ldap_dn($oldinfo,1);
 						$search = "(".$usergroup->_load_ldap_dn($oldinfo,2).")";
 						$records=$ldap->search($container,$search);
+=======
+						$container=$usergroup->_load_ldap_dn($oldinfo, 1);
+						$search = "(".$usergroup->_load_ldap_dn($oldinfo, 2).")";
+						$records=$ldap->search($container, $search);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						if (count($records) && $records['count'] == 0)
 						{
 							$olddn = '';
@@ -213,7 +263,11 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 						$info=$usergroup->_load_ldap_info();    // Contains all members, included the new one (insert already done before trigger call)
 						$dn=$usergroup->_load_ldap_dn($info);
 
+<<<<<<< HEAD
 						$result=$ldap->update($dn,$info,$user,$olddn);
+=======
+						$result=$ldap->update($dn, $info, $user, $olddn);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					}
 				}
 
@@ -240,9 +294,15 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 						$olddn=$usergroup->_load_ldap_dn($oldinfo);
 
 						// Verify if entry exist
+<<<<<<< HEAD
 						$container=$usergroup->_load_ldap_dn($oldinfo,1);
 						$search = "(".$usergroup->_load_ldap_dn($oldinfo,2).")";
 						$records=$ldap->search($container,$search);
+=======
+						$container=$usergroup->_load_ldap_dn($oldinfo, 1);
+						$search = "(".$usergroup->_load_ldap_dn($oldinfo, 2).")";
+						$records=$ldap->search($container, $search);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						if (count($records) && $records['count'] == 0)
 						{
 							$olddn = '';
@@ -251,7 +311,11 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 						$info=$usergroup->_load_ldap_info();    // Contains all members, included the new one (insert already done before trigger call)
 						$dn=$usergroup->_load_ldap_dn($info);
 
+<<<<<<< HEAD
 						$result=$ldap->update($dn,$info,$user,$olddn);
+=======
+						$result=$ldap->update($dn, $info, $user, $olddn);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					}
 				}
 
@@ -274,11 +338,19 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$dn=$object->_load_ldap_dn($info);
 
 					// Get a gid number for objectclass PosixGroup
+<<<<<<< HEAD
 					if (in_array('posixGroup',$info['objectclass'])) {
 						$info['gidNumber'] = $ldap->getNextGroupGid('LDAP_KEY_GROUPS');
 					}
 
 					$result=$ldap->add($dn,$info,$user);
+=======
+					if (in_array('posixGroup', $info['objectclass'])) {
+						$info['gidNumber'] = $ldap->getNextGroupGid('LDAP_KEY_GROUPS');
+					}
+
+					$result=$ldap->add($dn, $info, $user);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 
 				if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
@@ -304,9 +376,15 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$olddn=$object->oldcopy->_load_ldap_dn($oldinfo);
 
 					// Verify if entry exist
+<<<<<<< HEAD
 					$container=$object->oldcopy->_load_ldap_dn($oldinfo,1);
 					$search = "(".$object->oldcopy->_load_ldap_dn($oldinfo,2).")";
 					$records=$ldap->search($container,$search);
+=======
+					$container=$object->oldcopy->_load_ldap_dn($oldinfo, 1);
+					$search = "(".$object->oldcopy->_load_ldap_dn($oldinfo, 2).")";
+					$records=$ldap->search($container, $search);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					if (count($records) && $records['count'] == 0)
 					{
 						$olddn = '';
@@ -315,7 +393,11 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$info=$object->_load_ldap_info();
 					$dn=$object->_load_ldap_dn($info);
 
+<<<<<<< HEAD
 					$result=$ldap->update($dn,$info,$user,$olddn);
+=======
+					$result=$ldap->update($dn, $info, $user, $olddn);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 
 				if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
@@ -355,7 +437,11 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$info=$object->_load_ldap_info();
 					$dn=$object->_load_ldap_dn($info);
 
+<<<<<<< HEAD
 					$result=$ldap->add($dn,$info,$user);
+=======
+					$result=$ldap->add($dn, $info, $user);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 
 				if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
@@ -381,9 +467,15 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$olddn=$object->oldcopy->_load_ldap_dn($oldinfo);
 
 					// Verify if entry exist
+<<<<<<< HEAD
 					$container=$object->oldcopy->_load_ldap_dn($oldinfo,1);
 					$search = "(".$object->oldcopy->_load_ldap_dn($oldinfo,2).")";
 					$records=$ldap->search($container,$search);
+=======
+					$container=$object->oldcopy->_load_ldap_dn($oldinfo, 1);
+					$search = "(".$object->oldcopy->_load_ldap_dn($oldinfo, 2).")";
+					$records=$ldap->search($container, $search);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					if (count($records) && $records['count'] == 0)
 					{
 						$olddn = '';
@@ -392,7 +484,11 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$info=$object->_load_ldap_info();
 					$dn=$object->_load_ldap_dn($info);
 
+<<<<<<< HEAD
 					$result=$ldap->update($dn,$info,$user,$olddn);
+=======
+					$result=$ldap->update($dn, $info, $user, $olddn);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 
 				if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
@@ -432,7 +528,11 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$info=$object->_load_ldap_info();
 					$dn=$object->_load_ldap_dn($info);
 
+<<<<<<< HEAD
 					$result=$ldap->add($dn,$info,$user);
+=======
+					$result=$ldap->add($dn, $info, $user);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 					// For member type
 					if (! empty($conf->global->LDAP_MEMBER_TYPE_ACTIVE) && (string) $conf->global->LDAP_MEMBER_TYPE_ACTIVE == '1')
@@ -448,9 +548,15 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 							$olddn=$membertype->_load_ldap_dn($oldinfo);
 
 							// Verify if entry exist
+<<<<<<< HEAD
 							$container=$membertype->_load_ldap_dn($oldinfo,1);
 							$search = "(".$membertype->_load_ldap_dn($oldinfo,2).")";
 							$records=$ldap->search($container,$search);
+=======
+							$container=$membertype->_load_ldap_dn($oldinfo, 1);
+							$search = "(".$membertype->_load_ldap_dn($oldinfo, 2).")";
+							$records=$ldap->search($container, $search);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							if (count($records) && $records['count'] == 0)
 							{
 								$olddn = '';
@@ -459,7 +565,11 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 							$info=$membertype->_load_ldap_info();    // Contains all members, included the new one (insert already done before trigger call)
 							$dn=$membertype->_load_ldap_dn($info);
 
+<<<<<<< HEAD
 							$result=$ldap->update($dn,$info,$user,$olddn);
+=======
+							$result=$ldap->update($dn, $info, $user, $olddn);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						}
 					}
 				}
@@ -484,7 +594,11 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 						$dn=$object->_load_ldap_dn($info);
 						$olddn=$dn;	// We know olddn=dn as we change only status
 
+<<<<<<< HEAD
 						$result=$ldap->update($dn,$info,$user,$olddn);
+=======
+						$result=$ldap->update($dn, $info, $user, $olddn);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					}
 
 					if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
@@ -512,7 +626,11 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 						$dn=$object->_load_ldap_dn($info);
 						$olddn=$dn;	// We know olddn=dn as we change only subscriptions
 
+<<<<<<< HEAD
 						$result=$ldap->update($dn,$info,$user,$olddn);
+=======
+						$result=$ldap->update($dn, $info, $user, $olddn);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					}
 
 					if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
@@ -539,9 +657,15 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$olddn=$object->oldcopy->_load_ldap_dn($oldinfo);
 
 					// Verify if entry exist
+<<<<<<< HEAD
 					$container=$object->oldcopy->_load_ldap_dn($oldinfo,1);
 					$search = "(".$object->oldcopy->_load_ldap_dn($oldinfo,2).")";
 					$records=$ldap->search($container,$search);
+=======
+					$container=$object->oldcopy->_load_ldap_dn($oldinfo, 1);
+					$search = "(".$object->oldcopy->_load_ldap_dn($oldinfo, 2).")";
+					$records=$ldap->search($container, $search);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					if (count($records) && $records['count'] == 0)
 					{
 						$olddn = '';
@@ -549,10 +673,17 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 
 					$info=$object->_load_ldap_info();
 					$dn=$object->_load_ldap_dn($info);
+<<<<<<< HEAD
 					$newrdn=$object->_load_ldap_dn($info,2);
 					$newparent=$object->_load_ldap_dn($info,1);
 
 					$result=$ldap->update($dn,$info,$user,$olddn,$newrdn,$newparent);
+=======
+					$newrdn=$object->_load_ldap_dn($info, 2);
+					$newparent=$object->_load_ldap_dn($info, 1);
+
+					$result=$ldap->update($dn, $info, $user, $olddn, $newrdn, $newparent);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 					// For member type
 					if (! empty($conf->global->LDAP_MEMBER_TYPE_ACTIVE) && (string) $conf->global->LDAP_MEMBER_TYPE_ACTIVE == '1')
@@ -570,9 +701,15 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 						$olddn=$newmembertype->_load_ldap_dn($oldinfo);
 
 						// Verify if entry exist
+<<<<<<< HEAD
 						$container=$newmembertype->_load_ldap_dn($oldinfo,1);
 						$search = "(".$newmembertype->_load_ldap_dn($oldinfo,2).")";
 						$records=$ldap->search($container,$search);
+=======
+						$container=$newmembertype->_load_ldap_dn($oldinfo, 1);
+						$search = "(".$newmembertype->_load_ldap_dn($oldinfo, 2).")";
+						$records=$ldap->search($container, $search);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						if (count($records) && $records['count'] == 0)
 						{
 							$olddn = '';
@@ -581,7 +718,11 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 						$info=$newmembertype->_load_ldap_info();    // Contains all members, included the new one (insert already done before trigger call)
 						$dn=$newmembertype->_load_ldap_dn($info);
 
+<<<<<<< HEAD
 						$result=$ldap->update($dn,$info,$user,$olddn);
+=======
+						$result=$ldap->update($dn, $info, $user, $olddn);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 						if ($object->oldcopy->typeid != $object->typeid)
 						{
@@ -596,9 +737,15 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 							$olddn=$oldmembertype->_load_ldap_dn($oldinfo);
 
 							// Verify if entry exist
+<<<<<<< HEAD
 							$container=$oldmembertype->_load_ldap_dn($oldinfo,1);
 							$search = "(".$oldmembertype->_load_ldap_dn($oldinfo,2).")";
 							$records=$ldap->search($container,$search);
+=======
+							$container=$oldmembertype->_load_ldap_dn($oldinfo, 1);
+							$search = "(".$oldmembertype->_load_ldap_dn($oldinfo, 2).")";
+							$records=$ldap->search($container, $search);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							if (count($records) && $records['count'] == 0)
 							{
 								$olddn = '';
@@ -607,7 +754,11 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 							$info=$oldmembertype->_load_ldap_info();    // Contains all members, included the new one (insert already done before trigger call)
 							$dn=$oldmembertype->_load_ldap_dn($info);
 
+<<<<<<< HEAD
 							$result=$ldap->update($dn,$info,$user,$olddn);
+=======
+							$result=$ldap->update($dn, $info, $user, $olddn);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						}
 					}
 				}
@@ -632,7 +783,11 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 						$dn=$object->_load_ldap_dn($info);
 						$olddn=$dn;	// We know olddn=dn as we change only password
 
+<<<<<<< HEAD
 						$result=$ldap->update($dn,$info,$user,$olddn);
+=======
+						$result=$ldap->update($dn, $info, $user, $olddn);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					}
 
 					if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
@@ -656,7 +811,11 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 						$dn=$object->_load_ldap_dn($info);
 						$olddn=$dn;	// We know olddn=dn as we change only status
 
+<<<<<<< HEAD
 						$result=$ldap->update($dn,$info,$user,$olddn);
+=======
+						$result=$ldap->update($dn, $info, $user, $olddn);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					}
 
 					if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
@@ -696,9 +855,15 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 							$olddn=$membertype->_load_ldap_dn($oldinfo);
 
 							// Verify if entry exist
+<<<<<<< HEAD
 							$container=$membertype->_load_ldap_dn($oldinfo,1);
 							$search = "(".$membertype->_load_ldap_dn($oldinfo,2).")";
 							$records=$ldap->search($container,$search);
+=======
+							$container=$membertype->_load_ldap_dn($oldinfo, 1);
+							$search = "(".$membertype->_load_ldap_dn($oldinfo, 2).")";
+							$records=$ldap->search($container, $search);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 							if (count($records) && $records['count'] == 0)
 							{
 								$olddn = '';
@@ -707,7 +872,11 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 							$info=$membertype->_load_ldap_info();    // Contains all members, included the new one (insert already done before trigger call)
 							$dn=$membertype->_load_ldap_dn($info);
 
+<<<<<<< HEAD
 							$result=$ldap->update($dn,$info,$user,$olddn);
+=======
+							$result=$ldap->update($dn, $info, $user, $olddn);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 						}
 					}
 				}
@@ -731,11 +900,19 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$dn=$object->_load_ldap_dn($info);
 
 					// Get a gid number for objectclass PosixGroup
+<<<<<<< HEAD
 					if (in_array('posixGroup',$info['objectclass'])) {
 						$info['gidNumber'] = $ldap->getNextGroupGid('LDAP_KEY_MEMBERS_TYPE');
 					}
 
 					$result=$ldap->add($dn,$info,$user);
+=======
+					if (in_array('posixGroup', $info['objectclass'])) {
+						$info['gidNumber'] = $ldap->getNextGroupGid('LDAP_KEY_MEMBERS_TYPE');
+					}
+
+					$result=$ldap->add($dn, $info, $user);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 
 				if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
@@ -763,9 +940,15 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$olddn=$object->oldcopy->_load_ldap_dn($oldinfo);
 
 					// Verify if entry exist
+<<<<<<< HEAD
 					$container=$object->oldcopy->_load_ldap_dn($oldinfo,1);
 					$search = "(".$object->oldcopy->_load_ldap_dn($oldinfo,2).")";
 					$records=$ldap->search($container,$search);
+=======
+					$container=$object->oldcopy->_load_ldap_dn($oldinfo, 1);
+					$search = "(".$object->oldcopy->_load_ldap_dn($oldinfo, 2).")";
+					$records=$ldap->search($container, $search);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 					if (count($records) && $records['count'] == 0)
 					{
 						$olddn = '';
@@ -776,7 +959,11 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$info=$object->_load_ldap_info();
 					$dn=$object->_load_ldap_dn($info);
 
+<<<<<<< HEAD
 					$result=$ldap->update($dn,$info,$user,$olddn);
+=======
+					$result=$ldap->update($dn, $info, $user, $olddn);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				}
 
 				if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
@@ -804,5 +991,8 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 
 		return $result;
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

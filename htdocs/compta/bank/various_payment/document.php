@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2017       Alexandre Spangaro  <aspangaro@zendsi.com>
+=======
+/* Copyright (C) 2017       Alexandre Spangaro  <aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,10 +31,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
+<<<<<<< HEAD
+=======
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "banks", "bills", "users", "accountancy"));
 
+<<<<<<< HEAD
 $id = GETPOST('id','int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action','alpha');
@@ -38,13 +47,28 @@ $confirm = GETPOST('confirm','alpha');
 
 // Security check
 $socid = GETPOST("socid","int");
+=======
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
+$action = GETPOST('action', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
+
+// Security check
+$socid = GETPOST("socid", "int");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'banque', '', '', '');
 
 // Get parameters
+<<<<<<< HEAD
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
+=======
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -56,7 +80,11 @@ if (! $sortfield) $sortfield="name";
 $object = new PaymentVarious($db);
 $object->fetch($id, $ref);
 
+<<<<<<< HEAD
 $upload_dir = $conf->banque->dir_output.'/'.dol_sanitizeFileName($object->id);
+=======
+$upload_dir = $conf->bank->dir_output.'/'.dol_sanitizeFileName($object->id);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $modulepart='banque';
 
 
@@ -75,21 +103,34 @@ $form = new Form($db);
 
 $title = $langs->trans("VariousPayment") . ' - ' . $langs->trans("Documents");
 $help_url = '';
+<<<<<<< HEAD
 llxHeader("",$title,$help_url);
+=======
+llxHeader("", $title, $help_url);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if ($object->id)
 {
 	$head=various_payment_prepare_head($object);
 
+<<<<<<< HEAD
 	dol_fiche_head($head, 'documents',  $langs->trans("VariousPayment"), 0, 'payment');
+=======
+	dol_fiche_head($head, 'documents', $langs->trans("VariousPayment"), -1, $object->picto);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	$morehtmlref='<div class="refidno">';
 	// Project
 	if (! empty($conf->projet->enabled))
 	{
 		$langs->load("projects");
+<<<<<<< HEAD
 		$morehtmlref.=$langs->trans('Project') . ' ';
 		if ($user->rights->tax->charges->creer)
+=======
+		$morehtmlref.=$langs->trans('Project') . ' : ';
+		if ($user->rights->banque->modifier && 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			if ($action != 'classify')
 				$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
@@ -108,31 +149,48 @@ if ($object->id)
 			if (! empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
+<<<<<<< HEAD
 				$morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
 				$morehtmlref.=$proj->ref;
 				$morehtmlref.='</a>';
+=======
+				$morehtmlref.=$proj->getNomUrl(1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			} else {
 				$morehtmlref.='';
 			}
 		}
 	}
 	$morehtmlref.='</div>';
+<<<<<<< HEAD
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/various_payment/index.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+=======
+	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/various_payment/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
+<<<<<<< HEAD
 	// Construit liste des fichiers
 	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+=======
+	// Build file list
+	$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$totalsize=0;
 	foreach($filearray as $key => $file)
 	{
 		$totalsize+=$file['size'];
 	}
 
+<<<<<<< HEAD
 	print '<table class="border" width="100%">';
+=======
+	print '<table class="border tableforfield centpercent">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
 	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
@@ -154,6 +212,11 @@ else
 	print $langs->trans("ErrorUnknown");
 }
 
+<<<<<<< HEAD
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

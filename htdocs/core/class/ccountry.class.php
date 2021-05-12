@@ -32,6 +32,7 @@
  */
 class Ccountry // extends CommonObject
 {
+<<<<<<< HEAD
 	var $db;							//!< To store db handler
 	var $error;							//!< To return error code (or message)
 	var $errors=array();				//!< To return several error codes (or messages)
@@ -45,6 +46,44 @@ class Ccountry // extends CommonObject
 	var $active;
 
 
+=======
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+
+	public $element='ccountry';			//!< Id that identify managed objects
+	public $table_element='c_country';	//!< Name of table without prefix where object is stored
+
+    /**
+	 * @var int ID
+	 */
+	public $id;
+
+	public $code;
+	public $code_iso;
+
+	/**
+     * @var string Countries label
+     */
+    public $label;
+
+	public $active;
+
+	public $fields=array(
+		'label' => array('type'=>'varchar(250)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>15, 'notnull'=>-1, 'showoncombobox'=>'1')
+	);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
     /**
@@ -52,10 +91,16 @@ class Ccountry // extends CommonObject
      *
      *  @param      DoliDb		$db      Database handler
      */
+<<<<<<< HEAD
     function __construct($db)
     {
         $this->db = $db;
         return 1;
+=======
+    public function __construct($db)
+    {
+        $this->db = $db;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
 
@@ -66,7 +111,11 @@ class Ccountry // extends CommonObject
      *  @param      int		$notrigger   0=launch triggers after, 1=disable triggers
      *  @return     int      		   	 <0 if KO, Id of created object if OK
      */
+<<<<<<< HEAD
     function create($user, $notrigger=0)
+=======
+    public function create($user, $notrigger = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
     	global $conf, $langs;
 		$error=0;
@@ -145,7 +194,11 @@ class Ccountry // extends CommonObject
      *  @param		string	$code	Code
      *  @return     int          	>0 if OK, 0 if not found, <0 if KO
      */
+<<<<<<< HEAD
     function fetch($id,$code='')
+=======
+    public function fetch($id, $code = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
     	global $langs;
         $sql = "SELECT";
@@ -194,7 +247,11 @@ class Ccountry // extends CommonObject
      *  @param      int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return     int     		   	 <0 if KO, >0 if OK
      */
+<<<<<<< HEAD
     function update($user=null, $notrigger=0)
+=======
+    public function update($user = null, $notrigger = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     {
     	global $conf, $langs;
 		$error=0;
@@ -265,7 +322,11 @@ class Ccountry // extends CommonObject
      *  @param	int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return	int					 <0 if KO, >0 if OK
 	 */
+<<<<<<< HEAD
 	function delete($user, $notrigger=0)
+=======
+	public function delete($user, $notrigger = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf, $langs;
 		$error=0;
@@ -312,5 +373,8 @@ class Ccountry // extends CommonObject
 			return 1;
 		}
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

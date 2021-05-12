@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2005-2013	Laurent Destailleur		<eldy@users.sourceforge.org>
+<<<<<<< HEAD
  * Copyright (C) 2011-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2011-2012	Regis Houssin			<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2011-2012  Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -37,12 +41,17 @@ $langs->loadLangs(array('admin', 'other', 'paypal', 'paybox'));
 
 if (! $user->admin) accessforbidden();
 
+<<<<<<< HEAD
 $action = GETPOST('action','alpha');
+=======
+$action = GETPOST('action', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if ($action == 'setvalue' && $user->admin)
 {
 	$db->begin();
 
+<<<<<<< HEAD
     $result=dolibarr_set_const($db, "PAYPAL_API_USER",GETPOST('PAYPAL_API_USER','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "PAYPAL_API_PASSWORD",GETPOST('PAYPAL_API_PASSWORD','alpha'),'chaine',0,'',$conf->entity);
@@ -73,6 +82,38 @@ if ($action == 'setvalue' && $user->admin)
 	$result=dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN",GETPOST('PAYMENT_SECURITY_TOKEN','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
 	$result=dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN_UNIQUE",GETPOST('PAYMENT_SECURITY_TOKEN_UNIQUE','alpha'),'chaine',0,'',$conf->entity);
+=======
+    $result=dolibarr_set_const($db, "PAYPAL_API_USER", GETPOST('PAYPAL_API_USER', 'alpha'), 'chaine', 0, '', $conf->entity);
+    if (! $result > 0) $error++;
+    $result=dolibarr_set_const($db, "PAYPAL_API_PASSWORD", GETPOST('PAYPAL_API_PASSWORD', 'alpha'), 'chaine', 0, '', $conf->entity);
+    if (! $result > 0) $error++;
+    $result=dolibarr_set_const($db, "PAYPAL_API_SIGNATURE", GETPOST('PAYPAL_API_SIGNATURE', 'alpha'), 'chaine', 0, '', $conf->entity);
+    if (! $result > 0) $error++;
+    $result=dolibarr_set_const($db, "PAYPAL_SSLVERSION", GETPOST('PAYPAL_SSLVERSION', 'alpha'), 'chaine', 0, '', $conf->entity);
+    if (! $result > 0) $error++;
+    $result=dolibarr_set_const($db, "ONLINE_PAYMENT_CREDITOR", GETPOST('ONLINE_PAYMENT_CREDITOR', 'alpha'), 'chaine', 0, '', $conf->entity);
+    if (! $result > 0) $error++;
+    $result=dolibarr_set_const($db, "PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS", GETPOST('PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS', 'int'), 'chaine', 0, '', $conf->entity);
+    if (! $result > 0) $error++;
+    $result=dolibarr_set_const($db, "PAYPAL_API_INTEGRAL_OR_PAYPALONLY", GETPOST('PAYPAL_API_INTEGRAL_OR_PAYPALONLY', 'alpha'), 'chaine', 0, '', $conf->entity);
+    if (! $result > 0) $error++;
+    $result=dolibarr_set_const($db, "ONLINE_PAYMENT_CSS_URL", GETPOST('ONLINE_PAYMENT_CSS_URL', 'alpha'), 'chaine', 0, '', $conf->entity);
+    if (! $result > 0) $error++;
+    $result=dolibarr_set_const($db, "PAYPAL_ADD_PAYMENT_URL", GETPOST('PAYPAL_ADD_PAYMENT_URL', 'alpha'), 'chaine', 0, '', $conf->entity);
+    if (! $result > 0) $error++;
+    $result=dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_FORM", GETPOST('ONLINE_PAYMENT_MESSAGE_FORM'), 'chaine', 0, '', $conf->entity);
+    if (! $result > 0) $error++;
+    $result=dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_OK", GETPOST('ONLINE_PAYMENT_MESSAGE_OK'), 'chaine', 0, '', $conf->entity);
+    if (! $result > 0) $error++;
+    $result=dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_KO", GETPOST('ONLINE_PAYMENT_MESSAGE_KO'), 'chaine', 0, '', $conf->entity);
+	if (! $result > 0) $error++;
+	$result=dolibarr_set_const($db, "ONLINE_PAYMENT_SENDEMAIL", GETPOST('ONLINE_PAYMENT_SENDEMAIL'), 'chaine', 0, '', $conf->entity);
+	if (! $result > 0) $error++;
+	// Payment token for URL
+	$result=dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN", GETPOST('PAYMENT_SECURITY_TOKEN', 'alpha'), 'chaine', 0, '', $conf->entity);
+	if (! $result > 0) $error++;
+	$result=dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN_UNIQUE", GETPOST('PAYMENT_SECURITY_TOKEN_UNIQUE', 'alpha'), 'chaine', 0, '', $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	if (! $result > 0) $error++;
 
 	if (! $error)
@@ -89,8 +130,13 @@ if ($action == 'setvalue' && $user->admin)
 
 if ($action=="setlive")
 {
+<<<<<<< HEAD
     $liveenable = GETPOST('value','int')?0:1;
     $res = dolibarr_set_const($db, "PAYPAL_API_SANDBOX", $liveenable,'yesno',0,'',$conf->entity);
+=======
+    $liveenable = GETPOST('value', 'int')?0:1;
+    $res = dolibarr_set_const($db, "PAYPAL_API_SANDBOX", $liveenable, 'yesno', 0, '', $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     if (! $res > 0) $error++;
     if (! $error)
     {
@@ -109,11 +155,19 @@ if ($action=="setlive")
 
 $form=new Form($db);
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("PaypalSetup"));
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ModuleSetup").' PayPal',$linkback);
+=======
+llxHeader('', $langs->trans("PaypalSetup"));
+
+
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+print load_fiche_titre($langs->trans("ModuleSetup").' PayPal', $linkback);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $head=paypaladmin_prepare_head();
 
@@ -149,6 +203,7 @@ print '<td class="titlefield">';
 print $langs->trans("PaypalLiveEnabled").'</td><td>';
 if (empty($conf->global->PAYPAL_API_SANDBOX))
 {
+<<<<<<< HEAD
     print '<a href="'.$_SERVER['PHP_SELF'].'?action=setlive&value=0">';
     print img_picto($langs->trans("Activated"),'switch_on');
 }
@@ -156,6 +211,15 @@ else
 {
     print '<a href="'.$_SERVER['PHP_SELF'].'?action=setlive&value=1">';
     print img_picto($langs->trans("Disabled"),'switch_off');
+=======
+    print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setlive&value=0">';
+    print img_picto($langs->trans("Activated"), 'switch_on');
+}
+else
+{
+    print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setlive&value=1">';
+    print img_picto($langs->trans("Disabled"), 'switch_off');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 print '</td></tr>';
 
@@ -181,7 +245,11 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("PAYPAL_SSLVERSION").'</td><td>';
+<<<<<<< HEAD
 print $form->selectarray("PAYPAL_SSLVERSION",array('1'=> $langs->trans('TLSv1'),'6'=> $langs->trans('TLSv1.2')),$conf->global->PAYPAL_SSLVERSION);
+=======
+print $form->selectarray("PAYPAL_SSLVERSION", array('1'=> $langs->trans('TLSv1'),'6'=> $langs->trans('TLSv1.2')), $conf->global->PAYPAL_SSLVERSION);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</td></tr>';
 
 // Usage Parameters
@@ -193,7 +261,11 @@ print "</tr>\n";
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("PAYPAL_API_INTEGRAL_OR_PAYPALONLY").'</td><td>';
+<<<<<<< HEAD
 print $form->selectarray("PAYPAL_API_INTEGRAL_OR_PAYPALONLY",array('integral'=> $langs->trans('PaypalModeIntegral'),'paypalonly'=> $langs->trans('PaypalModeOnlyPaypal')),$conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY);
+=======
+print $form->selectarray("PAYPAL_API_INTEGRAL_OR_PAYPALONLY", array('integral'=> $langs->trans('PaypalModeIntegral'),'paypalonly'=> $langs->trans('PaypalModeOnlyPaypal')), $conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</td></tr>';
 
 /*
@@ -227,27 +299,43 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("PAYPAL_ADD_PAYMENT_URL").'</td><td>';
+<<<<<<< HEAD
 print $form->selectyesno("PAYPAL_ADD_PAYMENT_URL",$conf->global->PAYPAL_ADD_PAYMENT_URL,1);
+=======
+print $form->selectyesno("PAYPAL_ADD_PAYMENT_URL", $conf->global->PAYPAL_ADD_PAYMENT_URL, 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</td></tr>';
 
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("MessageForm").'</td><td>';
+<<<<<<< HEAD
 $doleditor=new DolEditor('ONLINE_PAYMENT_MESSAGE_FORM',$conf->global->ONLINE_PAYMENT_MESSAGE_FORM,'',100,'dolibarr_details','In',false,true,true,ROWS_4,'90%');
+=======
+$doleditor=new DolEditor('ONLINE_PAYMENT_MESSAGE_FORM', $conf->global->ONLINE_PAYMENT_MESSAGE_FORM, '', 100, 'dolibarr_details', 'In', false, true, true, ROWS_4, '90%');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $doleditor->Create();
 print '</td></tr>';
 
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("MessageOK").'</td><td>';
+<<<<<<< HEAD
 $doleditor=new DolEditor('ONLINE_PAYMENT_MESSAGE_OK',$conf->global->ONLINE_PAYMENT_MESSAGE_OK,'',100,'dolibarr_details','In',false,true,true,ROWS_4,'90%');
+=======
+$doleditor=new DolEditor('ONLINE_PAYMENT_MESSAGE_OK', $conf->global->ONLINE_PAYMENT_MESSAGE_OK, '', 100, 'dolibarr_details', 'In', false, true, true, ROWS_4, '90%');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $doleditor->Create();
 print '</td></tr>';
 
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("MessageKO").'</td><td>';
+<<<<<<< HEAD
 $doleditor=new DolEditor('ONLINE_PAYMENT_MESSAGE_KO',$conf->global->ONLINE_PAYMENT_MESSAGE_KO,'',100,'dolibarr_details','In',false,true,true,ROWS_4,'90%');
+=======
+$doleditor=new DolEditor('ONLINE_PAYMENT_MESSAGE_KO', $conf->global->ONLINE_PAYMENT_MESSAGE_KO, '', 100, 'dolibarr_details', 'In', false, true, true, ROWS_4, '90%');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $doleditor->Create();
 print '</td></tr>';
 
@@ -273,7 +361,11 @@ if (! empty($conf->use_javascript_ajax))
 
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("SecurityTokenIsUnique").'</td><td>';
+<<<<<<< HEAD
 	print $form->selectyesno("PAYMENT_SECURITY_TOKEN_UNIQUE",(empty($conf->global->PAYMENT_SECURITY_TOKEN)?0:$conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE),1);
+=======
+	print $form->selectyesno("PAYMENT_SECURITY_TOKEN_UNIQUE", (empty($conf->global->PAYMENT_SECURITY_TOKEN)?0:$conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE), 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '</td></tr>';
 
 print '</table>';
@@ -287,7 +379,11 @@ print '</form>';
 print '<br><br>';
 
 // Help doc
+<<<<<<< HEAD
 print '<u>'.$langs->trans("InformationToFindParameters","Paypal").'</u>:<br>';
+=======
+print '<u>'.$langs->trans("InformationToFindParameters", "Paypal").'</u>:<br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (! empty($conf->use_javascript_ajax))
 	print '<a href="#" class="reposition" id="apidoca">'.$langs->trans("ClickHere").'...</a>';
 
@@ -326,5 +422,9 @@ $token='';
 
 include DOL_DOCUMENT_ROOT.'/core/tpl/onlinepaymentlinks.tpl.php';
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

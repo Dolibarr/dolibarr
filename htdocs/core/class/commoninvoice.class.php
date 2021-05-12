@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2012       Regis Houssin       <regis.houssin@capnetworks.com>
+=======
+/* Copyright (C) 2012       Regis Houssin       <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
@@ -62,7 +66,11 @@ abstract class CommonInvoice extends CommonObject
     const TYPE_SITUATION = 5;
 
 	/**
+<<<<<<< HEAD
 	 * Draft
+=======
+	 * Draft status
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	 */
 	const STATUS_DRAFT = 0;
 
@@ -97,7 +105,11 @@ abstract class CommonInvoice extends CommonObject
 	 *  @param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
 	 *	@return		double						Remain of amount to pay
 	 */
+<<<<<<< HEAD
 	function getRemainToPay($multicurrency=0)
+=======
+	public function getRemainToPay($multicurrency = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 	    $alreadypaid=0;
 	    $alreadypaid+=$this->getSommePaiement($multicurrency);
@@ -112,7 +124,11 @@ abstract class CommonInvoice extends CommonObject
 	 *  @param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
 	 *	@return		int						Amount of payment already done, <0 if KO
 	 */
+<<<<<<< HEAD
 	function getSommePaiement($multicurrency=0)
+=======
+	public function getSommePaiement($multicurrency = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$table='paiement_facture';
 		$field='fk_facture';
@@ -149,7 +165,11 @@ abstract class CommonInvoice extends CommonObject
 	 * 		@param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
 	 *		@return		int						<0 if KO, Sum of deposits amount otherwise
 	 */
+<<<<<<< HEAD
 	function getSumDepositsUsed($multicurrency=0)
+=======
+	public function getSumDepositsUsed($multicurrency = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier')
 	    {
@@ -178,7 +198,11 @@ abstract class CommonInvoice extends CommonObject
 	 * 		@param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
 	 *		@return		int						<0 if KO, Sum of credit notes and deposits amount otherwise
 	 */
+<<<<<<< HEAD
 	function getSumCreditNotesUsed($multicurrency=0)
+=======
+	public function getSumCreditNotesUsed($multicurrency = 0)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 	    require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
@@ -200,7 +224,11 @@ abstract class CommonInvoice extends CommonObject
 	 *
 	 *	@return		array		Tableau d'id de factures avoirs
 	 */
+<<<<<<< HEAD
 	function getListIdAvoirFromInvoice()
+=======
+	public function getListIdAvoirFromInvoice()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$idarray=array();
 
@@ -233,7 +261,11 @@ abstract class CommonInvoice extends CommonObject
 	 *	@param		string	$option		filtre sur statut ('', 'validated', ...)
 	 *	@return		int					<0 si KO, 0 si aucune facture ne remplace, id facture sinon
 	 */
+<<<<<<< HEAD
 	function getIdReplacingInvoice($option='')
+=======
+	public function getIdReplacingInvoice($option = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$sql = 'SELECT rowid';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element;
@@ -274,7 +306,11 @@ abstract class CommonInvoice extends CommonObject
 	 *	@param		string	$filtertype		1 to filter on type of payment == 'PRE'
 	 *  @return     array					Array with list of payments
 	 */
+<<<<<<< HEAD
 	function getListOfPayments($filtertype='')
+=======
+	public function getListOfPayments($filtertype = '')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$retarray=array();
 
@@ -325,6 +361,10 @@ abstract class CommonInvoice extends CommonObject
 	}
 
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *  Return if an invoice can be deleted
 	 *	Rule is:
@@ -338,8 +378,14 @@ abstract class CommonInvoice extends CommonObject
 	 *
 	 *  @return    int         <=0 if no, >0 if yes
 	 */
+<<<<<<< HEAD
 	function is_erasable()
 	{
+=======
+    public function is_erasable()
+    {
+        // phpcs:enable
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		global $conf;
 
 		// We check if invoice is a temporary number (PROVxxxx)
@@ -362,11 +408,19 @@ abstract class CommonInvoice extends CommonObject
 			if ($this->element != 'invoice_supplier')
 			{
 				if (empty($this->thirdparty)) $this->fetch_thirdparty();	// We need to have this->thirdparty defined, in case of numbering rule use tags that depend on thirdparty (like {t} tag).
+<<<<<<< HEAD
 				$maxfacnumber = $this->getNextNumRef($this->thirdparty,'last');
 
 				// If there is no invoice into the reset range and not already dispatched, we can delete
 				// If invoice to delete is last one and not already dispatched, we can delete
 				if (empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED) && $maxfacnumber != '' && $maxfacnumber != $this->ref) return -2;
+=======
+				$maxref = $this->getNextNumRef($this->thirdparty, 'last');
+
+				// If there is no invoice into the reset range and not already dispatched, we can delete
+				// If invoice to delete is last one and not already dispatched, we can delete
+				if (empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED) && $maxref != '' && $maxref != $this->ref) return -2;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				// TODO If there is payment in bookkeeping, check payment is not dispatched in accounting
 				// ...
@@ -426,6 +480,7 @@ abstract class CommonInvoice extends CommonObject
 	 *
 	 *	@return     string        Label of type of invoice
 	 */
+<<<<<<< HEAD
 	function getLibType()
 	{
 		global $langs;
@@ -435,6 +490,17 @@ abstract class CommonInvoice extends CommonObject
         if ($this->type == CommonInvoice::TYPE_DEPOSIT) return $langs->trans("InvoiceDeposit");
         if ($this->type == CommonInvoice::TYPE_PROFORMA) return $langs->trans("InvoiceProForma");           // Not used.
         if ($this->type == CommonInvoice::TYPE_SITUATION) return $langs->trans("InvoiceSituation");
+=======
+    public function getLibType()
+	{
+		global $langs;
+        if ($this->type == CommonInvoice::TYPE_STANDARD) return $langs->trans("InvoiceStandard");
+        elseif ($this->type == CommonInvoice::TYPE_REPLACEMENT) return $langs->trans("InvoiceReplacement");
+        elseif ($this->type == CommonInvoice::TYPE_CREDIT_NOTE) return $langs->trans("InvoiceAvoir");
+        elseif ($this->type == CommonInvoice::TYPE_DEPOSIT) return $langs->trans("InvoiceDeposit");
+        elseif ($this->type == CommonInvoice::TYPE_PROFORMA) return $langs->trans("InvoiceProForma");           // Not used.
+        elseif ($this->type == CommonInvoice::TYPE_SITUATION) return $langs->trans("InvoiceSituation");
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		return $langs->trans("Unknown");
 	}
 
@@ -445,11 +511,19 @@ abstract class CommonInvoice extends CommonObject
 	 *  @param      integer	$alreadypaid    0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
 	 *  @return     string			        Label of status
 	 */
+<<<<<<< HEAD
 	function getLibStatut($mode=0, $alreadypaid=-1)
+=======
+	public function getLibStatut($mode = 0, $alreadypaid = -1)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return $this->LibStatut($this->paye, $this->statut, $mode, $alreadypaid, $this->type);
 	}
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *	Return label of a status
 	 *
@@ -460,6 +534,7 @@ abstract class CommonInvoice extends CommonObject
 	 *	@param		int		$type			Type invoice
 	 *	@return     string        			Label of status
 	 */
+<<<<<<< HEAD
 	function LibStatut($paye, $status, $mode=0, $alreadypaid=-1, $type=0)
 	{
 		global $langs;
@@ -596,6 +671,83 @@ abstract class CommonInvoice extends CommonObject
 		$cdr_nbjour=0; $cdr_type=0; $cdr_decalage=0;
 
 		$sqltemp = 'SELECT c.type_cdr,c.nbjour,c.decalage';
+=======
+	public function LibStatut($paye, $status, $mode = 0, $alreadypaid = -1, $type = 0)
+	{
+        // phpcs:enable
+		global $langs;
+		$langs->load('bills');
+
+		$statusType='status0';
+		$prefix='Short';
+		if (! $paye){
+		    if ($status == 0) {
+		        $labelstatut = $langs->trans('BillStatusDraft');
+		        $labelstatutShort = $langs->trans('Bill'.$prefix.'StatusDraft');
+		    }
+		    elseif (($status == 3 || $status == 2) && $alreadypaid <= 0) {
+		        $labelstatut = $langs->trans('BillStatusClosedUnpaid');
+		        $labelstatutShort = $langs->trans('Bill'.$prefix.'StatusClosedUnpaid');
+		        $statusType='status5';
+		    }
+		    elseif (($status == 3 || $status == 2) && $alreadypaid > 0) {
+		        $labelstatut = $langs->trans('BillStatusClosedPaidPartially');
+		        $labelstatutShort = $langs->trans('Bill'.$prefix.'StatusClosedPaidPartially');
+		        $statusType='status9';
+		    }
+		    elseif ($alreadypaid <= 0) {
+		        $labelstatut = $langs->trans('BillStatusNotPaid');
+		        $labelstatutShort = $langs->trans('Bill'.$prefix.'StatusNotPaid');
+		        $statusType='status1';
+		    }
+		    else {
+		        $labelstatut = $langs->trans('BillStatusStarted');
+		        $labelstatutShort = $langs->trans('Bill'.$prefix.'StatusStarted');
+		        $statusType='status3';
+		    }
+		}
+		else
+		{
+		    $statusType='status6';
+
+		    if ($type == self::TYPE_CREDIT_NOTE){
+		        $labelstatut = $langs->trans('BillStatusPaidBackOrConverted');       // credit note
+		        $labelstatutShort = $langs->trans('Bill'.$prefix.'StatusPaidBackOrConverted');       // credit note
+		    }
+		    elseif ($type == self::TYPE_DEPOSIT){
+		        $labelstatut = $langs->trans('BillStatusConverted');             // deposit invoice
+		        $labelstatutShort = $langs->trans('Bill'.$prefix.'StatusConverted');             // deposit invoice
+		    }
+		    else{
+		        $labelstatut = $langs->trans('BillStatusPaid');
+		        $labelstatutShort = $langs->trans('Bill'.$prefix.'StatusPaid');
+		    }
+		}
+
+
+		return dolGetStatus($labelstatut, $labelstatutShort, '', $statusType, $mode);
+	}
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *	Renvoi une date limite de reglement de facture en fonction des
+	 *	conditions de reglements de la facture et date de facturation.
+	 *
+	 *	@param      integer	$cond_reglement   	Condition of payment (code or id) to use. If 0, we use current condition.
+	 *  @return     integer    			       	Date limite de reglement si ok, <0 si ko
+	 */
+    public function calculate_date_lim_reglement($cond_reglement = 0)
+	{
+        // phpcs:enable
+		if (! $cond_reglement) $cond_reglement=$this->cond_reglement_code;
+		if (! $cond_reglement) $cond_reglement=$this->cond_reglement_id;
+
+		$cdr_nbjour=0;
+        $cdr_type=0;
+        $cdr_decalage=0;
+
+		$sqltemp = 'SELECT c.type_cdr, c.nbjour, c.decalage';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		$sqltemp.= ' FROM '.MAIN_DB_PREFIX.'c_payment_term as c';
 		if (is_numeric($cond_reglement)) $sqltemp.= " WHERE c.rowid=".$cond_reglement;
 		else {
@@ -624,12 +776,27 @@ abstract class CommonInvoice extends CommonObject
 
 		/* Definition de la date limite */
 
+<<<<<<< HEAD
 		// 1 : ajout du nombre de jours
 		$datelim = $this->date + ($cdr_nbjour * 3600 * 24);
 
 		// 2 : application de la regle "fin de mois"
 		if ($cdr_type == 1)
 		{
+=======
+		// 0 : ajout du nombre de jours
+		if ($cdr_type == 0)
+		{
+			$datelim = $this->date + ($cdr_nbjour * 3600 * 24);
+
+			$datelim += ($cdr_decalage * 3600 * 24);
+		}
+		// 1 : application de la regle "fin de mois"
+		elseif ($cdr_type == 1)
+		{
+			$datelim = $this->date + ($cdr_nbjour * 3600 * 24);
+
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$mois=date('m', $datelim);
 			$annee=date('Y', $datelim);
 			if ($mois == 12)
@@ -642,6 +809,7 @@ abstract class CommonInvoice extends CommonObject
 				$mois += 1;
 			}
 			// On se deplace au debut du mois suivant, et on retire un jour
+<<<<<<< HEAD
 			$datelim=dol_mktime(12,0,0,$mois,1,$annee);
 			$datelim -= (3600 * 24);
 		}
@@ -661,6 +829,29 @@ abstract class CommonInvoice extends CommonObject
 
 		// 3 : application du decalage
 		$datelim += ($cdr_decalage * 3600 * 24);
+=======
+			$datelim=dol_mktime(12, 0, 0, $mois, 1, $annee);
+			$datelim -= (3600 * 24);
+
+			$datelim += ($cdr_decalage * 3600 * 24);
+		}
+		// 2 : application de la règle, le N du mois courant ou suivant
+		elseif ($cdr_type == 2 && !empty($cdr_decalage))
+		{
+		    include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+			$datelim = $this->date + ($cdr_nbjour * 3600 * 24);
+
+			$date_piece = dol_mktime(0, 0, 0, date('m', $datelim), date('d', $datelim), date('Y', $datelim)); // Sans les heures minutes et secondes
+			$date_lim_current = dol_mktime(0, 0, 0, date('m', $datelim), $cdr_decalage, date('Y', $datelim)); // Sans les heures minutes et secondes
+			$date_lim_next = dol_time_plus_duree($date_lim_current, 1, 'm');	// Add 1 month
+
+			$diff = $date_piece - $date_lim_current;
+
+			if ($diff < 0) $datelim = $date_lim_current;
+			else $datelim = $date_lim_next;
+		}
+		else return 'Bad value for type_cdr in database for record cond_reglement = '.$cond_reglement;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		return $datelim;
 	}
@@ -777,4 +968,7 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 		$this->db = $db;
 	}
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

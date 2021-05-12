@@ -1,8 +1,13 @@
 # Dolibarr language file - Source file is en_US - printing
 Module64000Name=Tiešā drukāšana
 Module64000Desc=Iespējot tiešās drukāšanas sistēmu
+<<<<<<< HEAD
 PrintingSetup=Setup of Direct Printing System
 PrintingDesc=This module adds a Print button to send documents directly to a printer (without opening document into an application) with various module.
+=======
+PrintingSetup=Tiešās drukāšanas sistēmas iestatīšana
+PrintingDesc=Šis modulis pievieno pogai Print (Drukāt) dažādiem moduļiem, lai ļautu dokumentus iespiest tieši uz printeri, neizmantojot dokumentu citā lietojumprogrammā.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 MenuDirectPrinting=Tiešās drukāšanas darbi
 DirectPrint=Tiešā druka
 PrintingDriverDesc=Configuration variables for printing driver.
@@ -19,7 +24,11 @@ UserConf=Iestatījumi katram lietotājam
 PRINTGCP_INFO=Google OAuth API setup
 PRINTGCP_AUTHLINK=Autentifikācija
 PRINTGCP_TOKEN_ACCESS=Google mākoņdrukas OAuth marķieris
+<<<<<<< HEAD
 PrintGCPDesc=This driver allow to send documents directly to a printer with Google Cloud Print.
+=======
+PrintGCPDesc=Šis draiveris ļauj sūtīt dokumentus tieši printerim, izmantojot Google mākoņdruku.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 GCP_Name=Nosaukums
 GCP_displayName=Nosaukums
 GCP_Id=Printera Id
@@ -27,7 +36,11 @@ GCP_OwnerName=Īpašnieka nosaukums
 GCP_State=Printera statuss
 GCP_connectionStatus=Statuss
 GCP_Type=Printera tips
+<<<<<<< HEAD
 PrintIPPDesc=This driver allow to send documents directly to a printer. It requires a Linux system with CUPS installed.
+=======
+PrintIPPDesc=Šis draiveris ļauj nosūtīt dokumentus tieši printerim. Tam nepieciešama Linux sistēma ar instalētu CUPS.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 PRINTIPP_HOST=Drukas serveris
 PRINTIPP_PORT=Ports
 PRINTIPP_USER=Pieslēgties
@@ -38,8 +51,13 @@ Printer=Printeris
 IPP_Uri=Printera Uri
 IPP_Name=Printera nosaukums
 IPP_State=Printera statuss
+<<<<<<< HEAD
 IPP_State_reason=State reason
 IPP_State_reason1=State reason1
+=======
+IPP_State_reason=Statuss, iemesls
+IPP_State_reason1=Statuss, iemesls1
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 IPP_BW=Melnbalts
 IPP_Color=Krāsainais
 IPP_Device=Ierīce
@@ -51,4 +69,8 @@ GoogleAuthConfigured=Google OAuth akreditācijas dati tika atrasti moduļa OAuth
 PrintingDriverDescprintgcp=Configuration variables for printing driver Google Cloud Print.
 PrintingDriverDescprintipp=Konfigurācijas mainīgie drukāšanas vadītāja krūzes.
 PrintTestDescprintgcp=List of Printers for Google Cloud Print.
+<<<<<<< HEAD
 PrintTestDescprintipp=Krūzīšu printeru saraksts.
+=======
+PrintTestDescprintipp=CUPS printeru saraksts.
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

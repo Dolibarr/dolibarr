@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 /* Copyright (C) 2014-2018  Alexandre Spangaro  <aspangaro@zendsi.com>
+=======
+/* Copyright (C) 2014-2018  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2017       Ferran Marcet       <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,6 +37,7 @@ if (! empty($conf->projet->enabled)) {
 // Load translation files required by the page
 $langs->loadLangs(array("compta","bills","loan"));
 
+<<<<<<< HEAD
 $id=GETPOST('id','int');
 $action=GETPOST('action','aZ09');
 
@@ -40,6 +45,15 @@ $action=GETPOST('action','aZ09');
 $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'loan', $id, '','');
+=======
+$id=GETPOST('id', 'int');
+$action=GETPOST('action', 'aZ09');
+
+// Security check
+$socid = GETPOST('socid', 'int');
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'loan', $id, '', '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 /*
@@ -50,7 +64,11 @@ $form = new Form($db);
 
 $title = $langs->trans("Loan") . ' - ' . $langs->trans("Info");
 $help_url = 'EN:Module_Loan|FR:Module_Emprunt';
+<<<<<<< HEAD
 llxHeader("",$title,$help_url);
+=======
+llxHeader("", $title, $help_url);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $object = new Loan($db);
 $object->fetch($id);
@@ -96,7 +114,11 @@ if (! empty($conf->projet->enabled)) {
 }
 $morehtmlref.='</div>';
 
+<<<<<<< HEAD
 $linkback = '<a href="' . DOL_URL_ROOT . '/loan/index.php">' . $langs->trans("BackToList") . '</a>';
+=======
+$linkback = '<a href="' . DOL_URL_ROOT . '/loan/list.php">' . $langs->trans("BackToList") . '</a>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $object->totalpaid = $totalpaid;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
@@ -113,5 +135,9 @@ print '</td></tr></table>';
 
 print '</div>';
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

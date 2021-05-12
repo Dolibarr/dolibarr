@@ -25,6 +25,7 @@
 require_once DOL_DOCUMENT_ROOT .'/core/modules/cheque/modules_chequereceipts.php';
 
 /**
+<<<<<<< HEAD
  *	Class to manage cheque receipts numbering rules Mint
  */
 class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
@@ -33,6 +34,26 @@ class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
 	var $prefix='CHK';
 	var $error='';
 	var $name='Mint';
+=======
+ *  Class to manage cheque receipts numbering rules Mint
+ */
+class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
+{
+	/**
+     * Dolibarr version of the loaded document
+     * @var string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	public $prefix='CHK';
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	public $name='Mint';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
     /**
@@ -40,10 +61,17 @@ class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
      *
      *  @return     string      Text with description
      */
+<<<<<<< HEAD
     function info()
     {
     	global $langs;
       	return $langs->trans("SimpleNumRefModelDesc",$this->prefix);
+=======
+    public function info()
+    {
+    	global $langs;
+      	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 
 
@@ -52,7 +80,11 @@ class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
 	 *
 	 *  @return     string      Example
 	 */
+<<<<<<< HEAD
 	function getExample()
+=======
+	public function getExample()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return $this->prefix."0501-0001";
 	}
@@ -64,7 +96,11 @@ class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
 	 *
 	 *  @return     boolean     false si conflit, true si ok
 	 */
+<<<<<<< HEAD
 	function canBeActivated()
+=======
+	public function canBeActivated()
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf,$langs,$db;
 
@@ -80,9 +116,15 @@ class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
 		if ($resql)
 		{
 			$row = $db->fetch_row($resql);
+<<<<<<< HEAD
 			if ($row) { $payyymm = substr($row[0],0,6); $max=$row[0]; }
 		}
 		if ($payyymm && ! preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i',$payyymm))
+=======
+			if ($row) { $payyymm = substr($row[0], 0, 6); $max=$row[0]; }
+		}
+		if ($payyymm && ! preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $payyymm))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		{
 			$langs->load("errors");
 			$this->error=$langs->trans('ErrorNumRefModel', $max);
@@ -99,7 +141,11 @@ class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
 	 *  @param  Object		$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
+<<<<<<< HEAD
 	function getNextValue($objsoc,$object)
+=======
+	public function getNextValue($objsoc, $object)
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $db,$conf;
 
@@ -125,16 +171,27 @@ class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
 
 		//$date=time();
 		$date=$object->date_bordereau;
+<<<<<<< HEAD
 		$yymm = strftime("%y%m",$date);
 
     	if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
     	else $num = sprintf("%04s",$max+1);
+=======
+		$yymm = strftime("%y%m", $date);
+
+    	if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
+    	else $num = sprintf("%04s", $max+1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		dol_syslog(__METHOD__." return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;
 	}
 
 
+<<<<<<< HEAD
+=======
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/**
 	 *  Return next free value
 	 *
@@ -142,9 +199,17 @@ class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
 	 * 	@param	string		$objforref	Object for number to search
 	 *  @return string      			Next free value
 	 */
+<<<<<<< HEAD
 	function chequereceipt_get_num($objsoc,$objforref)
 	{
 		return $this->getNextValue($objsoc,$objforref);
 	}
 
+=======
+	public function chequereceipt_get_num($objsoc, $objforref)
+	{
+        // phpcs:enable
+		return $this->getNextValue($objsoc, $objforref);
+	}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

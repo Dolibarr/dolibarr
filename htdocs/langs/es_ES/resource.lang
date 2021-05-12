@@ -5,7 +5,11 @@ DeleteResource=Eliminar recurso
 ConfirmDeleteResourceElement=¿Está seguro de querer eliminar el recurso de este elemento?
 NoResourceInDatabase=Sin recursos en la base de datos.
 NoResourceLinked=Sin recursos enlazados
+<<<<<<< HEAD
 
+=======
+ActionsOnResource=Eventos sobre este recurso
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ResourcePageIndex=Listado de recursos
 ResourceSingular=Recurso
 ResourceCard=Ficha recurso

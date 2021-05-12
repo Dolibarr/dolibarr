@@ -4,7 +4,11 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2011-2012 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012      J. Fernando Lagrange <fernando@demo-tic.org>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
@@ -33,15 +37,24 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 
+<<<<<<< HEAD
 $langs->load("admin");
 $langs->load("members");
+=======
+// Load translation files required by the page
+$langs->loadLangs(array("admin","members"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 if (! $user->admin) accessforbidden();
 
 
 $type=array('yesno','texte','chaine');
 
+<<<<<<< HEAD
 $action = GETPOST('action','alpha');
+=======
+$action = GETPOST('action', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 /*
@@ -82,7 +95,11 @@ if ($action == 'updateall')
 // Action mise a jour ou ajout d'une constante
 if ($action == 'update' || $action == 'add')
 {
+<<<<<<< HEAD
 	$constname=GETPOST('constname','alpha');
+=======
+	$constname=GETPOST('constname', 'alpha');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$constvalue=(GETPOST('constvalue_'.$constname) ? GETPOST('constvalue_'.$constname) : GETPOST('constvalue'));
 
 	if (($constname=='ADHERENT_CARD_TYPE' || $constname=='ADHERENT_ETIQUETTE_TYPE' || $constname=='ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS') && $constvalue == -1) $constvalue='';
@@ -92,9 +109,15 @@ if ($action == 'update' || $action == 'add')
 		else $constvalue=1;
 	}
 
+<<<<<<< HEAD
 	$consttype=GETPOST('consttype','alpha');
 	$constnote=GETPOST('constnote');
 	$res=dolibarr_set_const($db,$constname,$constvalue,$type[$consttype],0,$constnote,$conf->entity);
+=======
+	$consttype=GETPOST('consttype', 'alpha');
+	$constnote=GETPOST('constnote');
+	$res=dolibarr_set_const($db, $constname, $constvalue, $type[$consttype], 0, $constnote, $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	if (! $res > 0) $error++;
 
@@ -111,7 +134,11 @@ if ($action == 'update' || $action == 'add')
 // Action activation d'un sous module du module adherent
 if ($action == 'set')
 {
+<<<<<<< HEAD
     $result=dolibarr_set_const($db, GETPOST('name','alpha'),GETPOST('value'),'',0,'',$conf->entity);
+=======
+    $result=dolibarr_set_const($db, GETPOST('name', 'alpha'), GETPOST('value'), '', 0, '', $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     if ($result < 0)
     {
         print $db->error();
@@ -121,7 +148,11 @@ if ($action == 'set')
 // Action desactivation d'un sous module du module adherent
 if ($action == 'unset')
 {
+<<<<<<< HEAD
     $result=dolibarr_del_const($db,GETPOST('name','alpha'),$conf->entity);
+=======
+    $result=dolibarr_del_const($db, GETPOST('name', 'alpha'), $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     if ($result < 0)
     {
         print $db->error();
@@ -138,11 +169,19 @@ $form = new Form($db);
 
 $help_url='EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
 
+<<<<<<< HEAD
 llxHeader('',$langs->trans("MembersSetup"),$help_url);
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("MembersSetup"),$linkback,'title_setup');
+=======
+llxHeader('', $langs->trans("MembersSetup"), $help_url);
+
+
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+print load_fiche_titre($langs->trans("MembersSetup"), $linkback, 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 
 $head = member_admin_prepare_head();
@@ -153,7 +192,11 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="updateall">';
 
+<<<<<<< HEAD
 print load_fiche_titre($langs->trans("MemberMainOptions"),'','');
+=======
+print load_fiche_titre($langs->trans("MemberMainOptions"), '', '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -167,12 +210,20 @@ print "</td></tr>\n";
 
 // Mail required for members
 print '<tr class="oddeven"><td>'.$langs->trans("AdherentMailRequired").'</td><td>';
+<<<<<<< HEAD
 print $form->selectyesno('ADHERENT_MAIL_REQUIRED',(! empty($conf->global->ADHERENT_MAIL_REQUIRED)?$conf->global->ADHERENT_MAIL_REQUIRED:0),1);
+=======
+print $form->selectyesno('ADHERENT_MAIL_REQUIRED', (! empty($conf->global->ADHERENT_MAIL_REQUIRED)?$conf->global->ADHERENT_MAIL_REQUIRED:0), 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print "</td></tr>\n";
 
 // Send mail information is on by default
 print '<tr class="oddeven"><td>'.$langs->trans("MemberSendInformationByMailByDefault").'</td><td>';
+<<<<<<< HEAD
 print $form->selectyesno('ADHERENT_DEFAULT_SENDINFOBYMAIL',(! empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL)?$conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL:0),1);
+=======
+print $form->selectyesno('ADHERENT_DEFAULT_SENDINFOBYMAIL', (! empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL)?$conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL:0), 1);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print "</td></tr>\n";
 
 // Insert subscription into bank account
@@ -182,7 +233,15 @@ if (! empty($conf->banque->enabled)) $arraychoices['bankdirect']=$langs->trans("
 if (! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled)) $arraychoices['invoiceonly']=$langs->trans("MoreActionInvoiceOnly");
 if (! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled)) $arraychoices['bankviainvoice']=$langs->trans("MoreActionBankViaInvoice");
 print '<td>';
+<<<<<<< HEAD
 print $form->selectarray('ADHERENT_BANK_USE',$arraychoices,$conf->global->ADHERENT_BANK_USE,0);
+=======
+print $form->selectarray('ADHERENT_BANK_USE', $arraychoices, $conf->global->ADHERENT_BANK_USE, 0);
+if ($conf->global->ADHERENT_BANK_USE == 'bankdirect' || $conf->global->ADHERENT_BANK_USE == 'bankviainvoice')
+{
+    print '<br><div style="padding-top: 5px;"><span class="opacitymedium">'.$langs->trans("ABankAccountMustBeDefinedOnPaymentModeSetup").'</span></div>';
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '</td>';
 print "</tr>\n";
 
@@ -198,8 +257,13 @@ if ($conf->facture->enabled)
 	}
 	else
 	{
+<<<<<<< HEAD
 		print '<td align="right">';
 		print $langs->trans("WarningModuleNotActive",$langs->transnoentities("Module85Name"));
+=======
+		print '<td class="right">';
+		print $langs->trans("WarningModuleNotActive", $langs->transnoentities("Module85Name"));
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		print '</td>';
 	}
 	print "</tr>\n";
@@ -237,7 +301,11 @@ $constantes=array(
 		'ADHERENT_CARD_FOOTER_TEXT'
 		);
 
+<<<<<<< HEAD
 print load_fiche_titre($langs->trans("MembersCards"),'','');
+=======
+print load_fiche_titre($langs->trans("MembersCards"), '', '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $helptext='*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
 $helptext.='__DOL_MAIN_URL_ROOT__, __ID__, __FIRSTNAME__, __LASTNAME__, __FULLNAME__, __LOGIN__, __PASSWORD__, ';
@@ -254,7 +322,11 @@ print '<br>';
  */
 $constantes=array('ADHERENT_ETIQUETTE_TYPE','ADHERENT_ETIQUETTE_TEXT');
 
+<<<<<<< HEAD
 print load_fiche_titre($langs->trans("MembersTickets"),'','');
+=======
+print load_fiche_titre($langs->trans("MembersTickets"), '', '');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 $helptext='*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
 $helptext.='__DOL_MAIN_URL_ROOT__, __ID__, __FIRSTNAME__, __LASTNAME__, __FULLNAME__, __LOGIN__, __PASSWORD__, ';
@@ -265,7 +337,12 @@ form_constantes($constantes, 0, $helptext);
 
 dol_fiche_end();
 
+<<<<<<< HEAD
 
 llxFooter();
 
+=======
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();

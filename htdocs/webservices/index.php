@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2006-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2011		Regis Houssin		<regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2011		Regis Houssin		<regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +46,11 @@ if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
 {
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
+<<<<<<< HEAD
 	print $langs->trans("WarningModuleNotActive",'WebServices').'.<br><br>';
+=======
+	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print $langs->trans("ToActivateModule");
 	exit;
 }
@@ -54,4 +62,7 @@ print 'List of available SOAP Web services is visible on the setup area, setup p
 
 
 $db->close();
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

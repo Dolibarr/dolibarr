@@ -1,7 +1,11 @@
 <?php
 /* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -49,10 +53,17 @@ $hookmanager->initHooks(array ('productstatspropal'));
 $mesg = '';
 
 // Load variable for pagination
+<<<<<<< HEAD
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
+=======
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -63,7 +74,11 @@ if (! $sortfield) $sortfield = "p.datep";
 $search_month = GETPOST('search_month', 'aplha');
 $search_year = GETPOST('search_year', 'int');
 
+<<<<<<< HEAD
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter','alpha')) {
+=======
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$search_month = '';
 	$search_year = '';
 }
@@ -105,7 +120,11 @@ if ($id > 0 || ! empty($ref))
         $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
         $shownav = 1;
+<<<<<<< HEAD
         if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+=======
+        if ($user->societe_id && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
         dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 
@@ -242,8 +261,13 @@ if ($id > 0 || ! empty($ref))
 				}
 
         		print '<tr class="liste_total">';
+<<<<<<< HEAD
         		if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
         		else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
+=======
+        		if ($num < $limit) print '<td class="left">'.$langs->trans("Total").'</td>';
+        		else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         		print '<td colspan="2"></td>';
         		print '<td align="center">' . $total_qty . '</td>';
         		print '<td align="right">' . price($total_ht) . '</td>';
@@ -261,5 +285,9 @@ if ($id > 0 || ! empty($ref))
 	dol_print_error();
 }
 
+<<<<<<< HEAD
+=======
+// End of page
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 llxFooter();
 $db->close();

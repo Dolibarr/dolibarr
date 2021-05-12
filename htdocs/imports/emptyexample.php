@@ -21,10 +21,34 @@
  *      \brief      Show example of import file
  */
 
+<<<<<<< HEAD
 // This file is a wrapper, so empty header
 function llxHeader() { print '<html><title>Build an import example file</title><body>'; }
 // This file is a wrapper, so empty footer
 function llxFooter() { print '</body></html>'; }
+=======
+/**
+ * This file is a wrapper, so empty header
+ *
+ * @ignore
+ * @return	void
+ */
+function llxHeader()
+{
+    print '<html><title>Build an import example file</title><body>';
+}
+
+/**
+ * This file is a wrapper, so empty footer
+ *
+ * @ignore
+ * @return	void
+ */
+function llxFooter()
+{
+    print '</body></html>';
+}
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -52,7 +76,11 @@ if (empty($datatoimport))
 $filename=$langs->trans("ExampleOfImportFile").'_'.$datatoimport.'.'.$format;
 
 $objimport=new Import($db);
+<<<<<<< HEAD
 $objimport->load_arrays($user,$datatoimport);
+=======
+$objimport->load_arrays($user, $datatoimport);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 // Load arrays from descriptor module
 $entity=$objimport->array_import_entities[0][$code];
 $entityicon=$entitytoicon[$entity]?$entitytoicon[$entity]:$entity;
@@ -78,12 +106,20 @@ $contentlinevalues=array();
 $i = 0;
 foreach($fieldstarget as $code=>$label)
 {
+<<<<<<< HEAD
 	$withoutstar=preg_replace('/\*/','',$fieldstarget[$code]);
+=======
+	$withoutstar=preg_replace('/\*/', '', $fieldstarget[$code]);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$headerlinefields[]=$langs->transnoentities($withoutstar).($withoutstar != $fieldstarget[$code]?'*':'').' ('.$code.')';
 	$contentlinevalues[]=$valuestarget[$code];
 }
 //var_dump($headerlinefields);
 //var_dump($contentlinevalues);
 
+<<<<<<< HEAD
 print $objimport->build_example_file($format,$headerlinefields,$contentlinevalues,$datatoimport);
 
+=======
+print $objimport->build_example_file($format, $headerlinefields, $contentlinevalues, $datatoimport);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

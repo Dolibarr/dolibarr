@@ -7,6 +7,7 @@ TripCard=Rapportage onkosten
 AddTrip=Maak rapportage onkosten
 ListOfTrips=Onkostenrapportages
 ListOfFees=Vergoedingenlijst
+<<<<<<< HEAD
 TypeFees=Types of fees
 ShowTrip=Onkostenrapport
 NewTrip=New expense report
@@ -20,17 +21,40 @@ ListTripsAndExpenses=Onkostenrapportages
 ListToApprove=Wachten op goedkeuring
 ExpensesArea=Expense reports area
 ClassifyRefunded=Classify 'Refunded'
+=======
+TypeFees=Soorten vergoedingen
+ShowTrip=Onkostenrapport
+NewTrip=Nieuw kostenoverzicht
+LastExpenseReports=Laatste %s onkostenoverzichten
+AllExpenseReports=Alle declaraties
+CompanyVisited=Bedrijf/organisatie bezocht
+FeesKilometersOrAmout=Kilometerskosten
+DeleteTrip=Kostenrapport verwijderen
+ConfirmDeleteTrip=Weet u zeker dat u deze onkostendeclaratie wilt verwijderen?
+ListTripsAndExpenses=Onkostenrapportages
+ListToApprove=Wachten op goedkeuring
+ExpensesArea=Kosten-rapport omgeving
+ClassifyRefunded=Classificeer 'Terugbetaald'
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ExpenseReportWaitingForApproval=Een nieuwe onkostendeclaratie is ingediend voor goedkeuring
 ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.<br> - User: %s<br> - Period: %s<br>Click here to validate: %s
 ExpenseReportWaitingForReApproval=An expense report has been submitted for re-approval
 ExpenseReportWaitingForReApprovalMessage=An expense report has been submitted and is waiting for re-approval.<br>The %s, you refused to approve the expense report for this reason: %s.<br>A new version has been proposed and waiting for your approval.<br> - User: %s<br> - Period: %s<br>Click here to validate: %s
 ExpenseReportApproved=An expense report was approved
 ExpenseReportApprovedMessage=The expense report %s was approved.<br> - User: %s<br> - Approved by: %s<br>Click here to show the expense report: %s
+<<<<<<< HEAD
 ExpenseReportRefused=An expense report was refused
 ExpenseReportRefusedMessage=The expense report %s was refused.<br> - User: %s<br> - Refused by: %s<br> - Motive for refusal: %s<br>Click here to show the expense report: %s
 ExpenseReportCanceled=An expense report was canceled
 ExpenseReportCanceledMessage=The expense report %s was canceled.<br> - User: %s<br> - Canceled by: %s<br> - Motive for cancellation: %s<br>Click here to show the expense report: %s
 ExpenseReportPaid=An expense report was paid
+=======
+ExpenseReportRefused=Een onkostendeclaratie werd geweigerd
+ExpenseReportRefusedMessage=The expense report %s was refused.<br> - User: %s<br> - Refused by: %s<br> - Motive for refusal: %s<br>Click here to show the expense report: %s
+ExpenseReportCanceled=An expense report was canceled
+ExpenseReportCanceledMessage=The expense report %s was canceled.<br> - User: %s<br> - Canceled by: %s<br> - Motive for cancellation: %s<br>Click here to show the expense report: %s
+ExpenseReportPaid=Een onkostendeclaratie is betaald
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ExpenseReportPaidMessage=The expense report %s was paid.<br> - User: %s<br> - Paid by: %s<br>Click here to show the expense report: %s
 TripId=Id onkostenoverzicht
 AnyOtherInThisListCanValidate=Person to inform for validation.
@@ -73,6 +97,7 @@ EX_PAR_VP=Parkeerkosten privé auto
 EX_CAM_VP=Privé auto onderhoud en reparatie
 DefaultCategoryCar=Default transportation mode
 DefaultRangeNumber=Default range number
+<<<<<<< HEAD
 
 Error_EXPENSEREPORT_ADDON_NotDefined=Error, the rule for expense report numbering ref was not defined into setup of module 'Expense Report'
 ErrorDoubleDeclaration=You have declared another expense report into a similar date range.
@@ -80,16 +105,28 @@ AucuneLigne=There is no expense report declared yet
 
 ModePaiement=Payment mode
 
+=======
+UploadANewFileNow=Upload a new document now
+Error_EXPENSEREPORT_ADDON_NotDefined=Error, the rule for expense report numbering ref was not defined into setup of module 'Expense Report'
+ErrorDoubleDeclaration=You have declared another expense report into a similar date range.
+AucuneLigne=There is no expense report declared yet
+ModePaiement=Payment mode
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 VALIDATOR=Gebruiker is verantwoordelijk voor goedkeuring
 VALIDOR=Goedgekeurd door
 AUTHOR=Recorded by
 AUTHORPAIEMENT=Betaald door
 REFUSEUR=Geweigerd door
 CANCEL_USER=Verwijderd door
+<<<<<<< HEAD
 
 MOTIF_REFUS=Reden
 MOTIF_CANCEL=Reden
 
+=======
+MOTIF_REFUS=Reden
+MOTIF_CANCEL=Reden
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 DATE_REFUS=Weiger datum
 DATE_SAVE=Validatiedatum
 DATE_CANCEL=Annuleringsdatum
@@ -113,7 +150,10 @@ NoTripsToExportCSV=Geen kosten-rapport voor deze periode om te exporteren.
 ExpenseReportPayment=Onkostendeclaratie
 ExpenseReportsToApprove=Onkostendeclaraties te accorderen
 ExpenseReportsToPay=Declaraties te betalen
+<<<<<<< HEAD
 CloneExpenseReport=Kloon onkostenrapportage
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ConfirmCloneExpenseReport=Are you sure you want to clone this expense report ?
 ExpenseReportsIk=Onkostendeclaratie kilometrage index
 ExpenseReportsRules=Expense report rules
@@ -140,7 +180,10 @@ OnExpense=Expense line
 ExpenseReportRuleSave=Expense report rule saved
 ExpenseReportRuleErrorOnSave=Fout: %s
 RangeNum=Bereik %d
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 ExpenseReportConstraintViolationError=Beperking overtreding id [%s]: %s is superieur aan %s %s
 byEX_DAY=by day (limitation to %s)
 byEX_MON=by month (limitation to %s)
@@ -151,7 +194,14 @@ nolimitbyEX_DAY=per dag (geen beperking)
 nolimitbyEX_MON=by month (no limitation)
 nolimitbyEX_YEA=by year (no limitation)
 nolimitbyEX_EXP=by line (no limitation)
+<<<<<<< HEAD
 
 CarCategory=Auto categorie
 ExpenseRangeOffset=Offset amount: %s
 RangeIk=Afstand in km.
+=======
+CarCategory=Auto categorie
+ExpenseRangeOffset=Offset amount: %s
+RangeIk=Afstand in km.
+AttachTheNewLineToTheDocument=Attach the new line to an existing document
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - languages
+<<<<<<< HEAD
 LinkANewFile=Verknüpfe eine neue Datei /Dokument
 LinkedFiles=Verknüpfte Dateien und Dokumente
 NoLinkFound=Keine  verknüpften Links
@@ -8,3 +9,14 @@ LinkRemoved=Der Link %s wurde entfernt
 ErrorFailedToDeleteLink= Fehler beim entfernen des Links  '<b>%s</b>'
 ErrorFailedToUpdateLink= Fehler beim aktualisieren des Link  '<b>%s</b>'
 URLToLink=URL zum Verlinken
+=======
+LinkANewFile=Verknüpfe eine neue Datei / ein Dokument
+LinkedFiles=Verknüpfte Dateien und Dokumente
+NoLinkFound=Keine  verknüpften Links
+LinkComplete=Die Datei wurde erfolgreich verlinkt.
+ErrorFileNotLinked=Die Datei konnte nicht verlinkt werden.
+LinkRemoved=Der Link %s wurde entfernt
+ErrorFailedToDeleteLink= Fehler beim entfernen des Links  '<b>%s</b>'
+ErrorFailedToUpdateLink= Fehler beim aktualisieren des Link  '<b>%s</b>'
+URLToLink=URL zum verlinken
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9

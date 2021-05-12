@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+<<<<<<< HEAD
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@capnetworks.com>
+=======
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2013-2015 Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,7 +31,11 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
+<<<<<<< HEAD
 $action=GETPOST('action','aZ09');
+=======
+$action=GETPOST('action', 'aZ09');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 // Load translation files required by the page
 $langs->loadLangs(array("users","admin","other"));
@@ -42,7 +50,11 @@ $allow_disable_encryption=true;
  */
 if ($action == 'setgeneraterule')
 {
+<<<<<<< HEAD
 	if (! dolibarr_set_const($db, 'USER_PASSWORD_GENERATED',$_GET["value"],'chaine',0,'',$conf->entity))
+=======
+	if (! dolibarr_set_const($db, 'USER_PASSWORD_GENERATED', $_GET["value"], 'chaine', 0, '', $conf->entity))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		dol_print_error($db);
 	}
@@ -59,7 +71,11 @@ if ($action == 'activate_encrypt')
 
 	$db->begin();
 
+<<<<<<< HEAD
     dolibarr_set_const($db, "DATABASE_PWD_ENCRYPTED", "1",'chaine',0,'',$conf->entity);
+=======
+    dolibarr_set_const($db, "DATABASE_PWD_ENCRYPTED", "1", 'chaine', 0, '', $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
     $sql = "SELECT u.rowid, u.pass, u.pass_crypted";
     $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
@@ -105,16 +121,27 @@ if ($action == 'activate_encrypt')
 	else
 	{
 		$db->rollback();
+<<<<<<< HEAD
 		dol_print_error($db,'');
 	}
 }
 else if ($action == 'disable_encrypt')
+=======
+		dol_print_error($db, '');
+	}
+}
+elseif ($action == 'disable_encrypt')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	//On n'autorise pas l'annulation de l'encryption car les mots de passe ne peuvent pas etre decodes
 	//Do not allow "disable encryption" as passwords cannot be decrypted
 	if ($allow_disable_encryption)
 	{
+<<<<<<< HEAD
 		dolibarr_del_const($db, "DATABASE_PWD_ENCRYPTED",$conf->entity);
+=======
+		dolibarr_del_const($db, "DATABASE_PWD_ENCRYPTED", $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     }
 	header("Location: security.php");
     exit;
@@ -134,10 +161,17 @@ if ($action == 'activate_encryptdbpassconf')
 	}
 	else
 	{
+<<<<<<< HEAD
 		setEventMessages($langs->trans('InstrucToEncodePass',dol_encode($dolibarr_main_db_pass)), null, 'warnings');
 	}
 }
 else if ($action == 'disable_encryptdbpassconf')
+=======
+		setEventMessages($langs->trans('InstrucToEncodePass', dol_encode($dolibarr_main_db_pass)), null, 'warnings');
+	}
+}
+elseif ($action == 'disable_encryptdbpassconf')
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$result = encodedecode_dbpassconf(0);
 	if ($result > 0)
@@ -151,12 +185,17 @@ else if ($action == 'disable_encryptdbpassconf')
 	}
 	else
 	{
+<<<<<<< HEAD
 		setEventMessages($langs->trans('InstrucToClearPass',$dolibarr_main_db_pass), null, 'warnings');
+=======
+		setEventMessages($langs->trans('InstrucToClearPass', $dolibarr_main_db_pass), null, 'warnings');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 }
 
 if ($action == 'activate_MAIN_SECURITY_DISABLEFORGETPASSLINK')
 {
+<<<<<<< HEAD
 	dolibarr_set_const($db, "MAIN_SECURITY_DISABLEFORGETPASSLINK", '1','chaine',0,'',$conf->entity);
 	header("Location: security.php");
 	exit;
@@ -164,13 +203,26 @@ if ($action == 'activate_MAIN_SECURITY_DISABLEFORGETPASSLINK')
 else if ($action == 'disable_MAIN_SECURITY_DISABLEFORGETPASSLINK')
 {
 	dolibarr_del_const($db, "MAIN_SECURITY_DISABLEFORGETPASSLINK",$conf->entity);
+=======
+	dolibarr_set_const($db, "MAIN_SECURITY_DISABLEFORGETPASSLINK", '1', 'chaine', 0, '', $conf->entity);
+	header("Location: security.php");
+	exit;
+}
+elseif ($action == 'disable_MAIN_SECURITY_DISABLEFORGETPASSLINK')
+{
+	dolibarr_del_const($db, "MAIN_SECURITY_DISABLEFORGETPASSLINK", $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	header("Location: security.php");
 	exit;
 }
 
 if ($action == 'maj_pattern')
 {
+<<<<<<< HEAD
 	dolibarr_set_const($db, "USER_PASSWORD_PATTERN", GETPOST("pattern"),'chaine',0,'',$conf->entity);
+=======
+	dolibarr_set_const($db, "USER_PASSWORD_PATTERN", GETPOST("pattern"), 'chaine', 0, '', $conf->entity);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	header("Location: security.php");
 	exit;
 }
@@ -183,9 +235,15 @@ if ($action == 'maj_pattern')
 $form = new Form($db);
 
 $wikihelp='EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
+<<<<<<< HEAD
 llxHeader('',$langs->trans("Passwords"),$wikihelp);
 
 print load_fiche_titre($langs->trans("SecuritySetup"),'','title_setup');
+=======
+llxHeader('', $langs->trans("Passwords"), $wikihelp);
+
+print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 print $langs->trans("GeneratedPasswordDesc")."<br>\n";
 print "<br>\n";
@@ -212,13 +270,21 @@ if (is_resource($handle))
 {
     while (($file = readdir($handle))!==false)
     {
+<<<<<<< HEAD
         if (preg_match('/(modGeneratePass[a-z]+)\.class\.php/i',$file,$reg))
+=======
+        if (preg_match('/(modGeneratePass[a-z]+)\.class\.php$/i', $file, $reg))
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         {
             // Charging the numbering class
             $classname = $reg[1];
             require_once $dir.'/'.$file;
 
+<<<<<<< HEAD
             $obj = new $classname($db,$conf,$langs,$user);
+=======
+            $obj = new $classname($db, $conf, $langs, $user);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
             $arrayhandler[$obj->id]=$obj;
     		$i++;
         }
@@ -252,7 +318,11 @@ foreach ($arrayhandler as $key => $module)
         // Show example of numbering module
         print '<td class="nowrap">';
         $tmp=$module->getExample();
+<<<<<<< HEAD
         if (preg_match('/^Error/',$tmp)) { $langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>'; }
+=======
+        if (preg_match('/^Error/', $tmp)) { $langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>'; }
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         elseif ($tmp=='NotConfigured') print $langs->trans($tmp);
         else print $tmp;
         print '</td>'."\n";
@@ -260,7 +330,11 @@ foreach ($arrayhandler as $key => $module)
         print '<td width="100" align="center">';
         if ($conf->global->USER_PASSWORD_GENERATED == $key)
         {
+<<<<<<< HEAD
             print img_picto('','tick');
+=======
+            print img_picto('', 'tick');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
         else
         {
@@ -277,7 +351,11 @@ print '</form>';
 if ($conf->global->USER_PASSWORD_GENERATED == "Perso"){
 
 
+<<<<<<< HEAD
 	$tabConf = explode(";",$conf->global->USER_PASSWORD_PATTERN);
+=======
+	$tabConf = explode(";", $conf->global->USER_PASSWORD_PATTERN);
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	/*$this->length2 = $tabConf[0];
 	$this->NbMaj = $tabConf[1];
 	$this->NbNum = $tabConf[2];
@@ -330,7 +408,11 @@ if ($conf->global->USER_PASSWORD_GENERATED == "Perso"){
 	print '</table>';
 
 	print '<br>';
+<<<<<<< HEAD
 	print '<table align="right">';
+=======
+	print '<table class="right">';
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	print '<tr><td>';
 	print '<a class="button" id="linkChangePattern">'.$langs->trans("Save").'</a>';
 	print '</td></tr>';
@@ -398,13 +480,20 @@ print '<td align="center">'.$langs->trans("Action").'</td>';
 print '</tr>';
 
 // Disable clear password in database
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 print '<tr class="oddeven">';
 print '<td colspan="3">'.$langs->trans("DoNotStoreClearPassword").'</td>';
 print '<td align="center" width="60">';
 if (! empty($conf->global->DATABASE_PWD_ENCRYPTED))
 {
+<<<<<<< HEAD
 	print img_picto($langs->trans("Active"),'tick');
+=======
+	print img_picto($langs->trans("Active"), 'tick');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 print '</td>';
 if (! $conf->global->DATABASE_PWD_ENCRYPTED)
@@ -413,6 +502,11 @@ if (! $conf->global->DATABASE_PWD_ENCRYPTED)
 	print '<a href="security.php?action=activate_encrypt">'.$langs->trans("Activate").'</a>';
 	print "</td>";
 }
+<<<<<<< HEAD
+=======
+
+// Database conf file encryption
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 if (! empty($conf->global->DATABASE_PWD_ENCRYPTED))
 {
 	print '<td align="center" width="100">';
@@ -436,9 +530,15 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td colspan="3">'.$langs->trans("MainDbPasswordFileConfEncrypted").'</td>';
 print '<td align="center" width="60">';
+<<<<<<< HEAD
 if (preg_match('/crypted:/i',$dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
 {
 	print img_picto($langs->trans("Active"),'tick');
+=======
+if (preg_match('/crypted:/i', $dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
+{
+	print img_picto($langs->trans("Active"), 'tick');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 print '</td>';
@@ -473,7 +573,11 @@ print '<td colspan="3">'.$langs->trans("DisableForgetPasswordLinkOnLogonPage").'
 print '<td align="center" width="60">';
 if(! empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK))
 {
+<<<<<<< HEAD
 	print img_picto($langs->trans("Active"),'tick');
+=======
+	print img_picto($langs->trans("Active"), 'tick');
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 print '</td>';
 if (empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK))
@@ -494,6 +598,7 @@ print '</tr>';
 
 print '</table>';
 print '</form>';
+<<<<<<< HEAD
 
 
 //print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
@@ -503,4 +608,26 @@ print '</div>';
 
 llxFooter();
 
+=======
+print '<br>';
+
+if (GETPOST('info', 'int') > 0)
+{
+    if (function_exists('password_hash'))
+    {
+        print $langs->trans("Note: The function password_hash exists on your PHP")."<br>\n";
+    }
+    else
+    {
+        print $langs->trans("Note: The function password_hash does not exists on your PHP")."<br>\n";
+    }
+    print 'MAIN_SECURITY_HASH_ALGO = '.$conf->global->MAIN_SECURITY_HASH_ALGO."<br>\n";
+    print 'MAIN_SECURITY_SALT = '.$conf->global->MAIN_SECURITY_SALT."<br>\n";
+}
+
+print '</div>';
+
+// End of page
+llxFooter();
+>>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $db->close();
