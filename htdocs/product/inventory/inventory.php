@@ -524,35 +524,9 @@ if ($object->id > 0) {
 
 	// Popup for mass barcode scanning
 	if ($action == 'updatebyscaning') {
-		print '<form name="barcodescanner" method="POST">';
-		print '<!-- Popup for mass barcode scanning -->'."\n";
-		print '<div class="div-for-modal-topright" style="padding: 15px">';
-		print '<center><strong>Barcode scanner tool...</strong></center><br>';
-
-		print '<input type="checkbox" name="barcodeforautodetect" checked="checked"> Autodetect if we scan a product barcode or a lot/serial barcode<br>';
-		print '<input type="checkbox" name="barcodeforproduct"> Scan a product barcode<br>';
-		print '<input type="checkbox" name="barcodeforlotserial"> Scan a product lot or serial number<br>';
-
-		print $langs->trans("QtyToAddAfterBarcodeScan").' <input type="text" name="barcodeproductqty" class="width50 right" value="1"><br>';
-		print '<textarea type="text" name="barcodelist" class="centpercent" autofocus rows="'.ROWS_3.'"></textarea>';
-
-		/*print '<br>'.$langs->trans("or").'<br>';
-
-		print '<br>';
-
-		print '<input type="text" name="barcodelotserial" class="width200"> &nbsp; &nbsp; Qty <input type="text" name="barcodelotserialqty" class="width50 right" value="1"><br>';
-		*/
-		print '<br>';
-		print '<center>';
-		print '<input type="submit" class="button" value="'.$langs->trans("Add").'"><br>';
-
-		print '<span class="opacitymedium">'.$langs->trans("FeatureNotYetAvailable").'</span>';
-
-		// TODO Add javascript so each scan will add qty into the inventory page + an ajax save.
-
-		print '</center>';
-		print '</div>';
-		print '</form>';
+		include DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+		$formother = new FormOther($db);
+		print $formother->getHTMLScannerForm();
 	}
 
 
