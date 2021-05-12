@@ -99,6 +99,10 @@ $now = dol_now();
  * Actions
  */
 
+if ($cancel) {
+	$action = '';
+}
+
 if ($action == 'cancel_record' && $permissiontoadd) {
 	$object->setCanceled($user);
 }

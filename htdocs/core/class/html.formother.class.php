@@ -57,7 +57,8 @@ class FormOther
 	}
 
 	/**
-	 * Return HTML code for scanner tool
+	 * Return HTML code for scanner tool.
+	 * This must be called into an existing <form>
 	 *
 	 * @param	string	$jstoexecuteonadd		Name of javascript function to call
 	 * @return	string						HTML component
@@ -68,7 +69,6 @@ class FormOther
 
 		$out = '';
 
-		$out .= '<form name="barcodescanner" method="POST">';
 		$out .= '<!-- Popup for mass barcode scanning -->'."\n";
 		$out .= '<div class="div-for-modal-topright" style="padding: 15px">';
 		$out .= '<center><strong>Barcode scanner tool...</strong></center><br>';
@@ -98,7 +98,6 @@ class FormOther
 
 		$out .= '</center>';
 		$out .= '</div>';
-		$out .= '</form>';
 
 		return $out;
 	}
