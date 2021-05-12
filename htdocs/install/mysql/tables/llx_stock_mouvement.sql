@@ -37,6 +37,5 @@ create table llx_stock_mouvement
   fk_origin       integer,
   origintype      varchar(32),
   model_pdf       varchar(255),
-  fk_projet       integer NOT NULL DEFAULT 0,
-  fk_qcstatus     VARCHAR(16)
+  fk_projet       integer NOT NULL DEFAULT 0
 )ENGINE=innodb;
