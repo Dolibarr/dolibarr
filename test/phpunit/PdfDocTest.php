@@ -144,7 +144,7 @@ class PdfDocTest extends PHPUnit\Framework\TestCase
 		$localproduct->fetch(0, 'PIDRESS');
 		$product_id=$localproduct->id;
 		if ($product_id <= 0) {
-			print "\n".__METHOD__." A product with ref PIDRESS must exists into database"; die();
+			print "\n".__METHOD__." A product with ref PIDRESS must exists into database"; die(1);
 		}
 
 		$localobject=new Facture($this->savdb);
