@@ -1211,6 +1211,8 @@ class pdf_gme extends ModelePDFPropales
 	 *  @return	void
 	 */
 	private function totOffre(&$pdf, $object, $outputlangs){
+		global $langs;
+
 		//Couleur de fond cellule
 		$pdf->SetFillColor(153,204,102);
 
@@ -1231,18 +1233,18 @@ class pdf_gme extends ModelePDFPropales
 		//tot HT
 		$pdf->SetFont('Helvetica','',10);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell (85,7, "{__(gme_total_hvat)__}",1,'L',0,0,20, $pdf->GetY(),true, 0, false, true, 7, 'M');
+		$pdf->MultiCell (85,7,$langs->trans('TotalHT'),1,'L',0,0,20, $pdf->GetY(),true, 0, false, true, 7, 'M');
 		$pdf->MultiCell (85,7, number_format($object->total_ht,2,',',' ').'€',1,'R',0,1,105,$pdf->GetY(),true, 0, false, true, 7, 'M');
 
 		//tva
-		$pdf->MultiCell (85,7, "{__(gme_vat)__}",1,'L',0,0,20,$pdf->GetY(),true, 0, false, true, 7, 'M');
+		$pdf->MultiCell (85,7,$langs->trans('TotalVAT'),1,'L',0,0,20,$pdf->GetY(),true, 0, false, true, 7, 'M');
 		//tva obtenu en faisant une soustraction (tot_vat-tot_ht)
 		$pdf->MultiCell (85,7, number_format(($object->total_ttc-$object->total_ht),2,',',' ').'€',1,'R',0,1,105,$pdf->GetY(),true, 0, false, true, 7, 'M');
 
 		//tot ttc
 		$pdf->SetFont('Helvetica','B',14);
 		$pdf->SetTextColor(153,204,102);
-		$pdf->MultiCell (85,7, "{__(GME_TOTAL_VAT)__}",1,'L',0,0,20,$pdf->GetY(),true, 0, false, true, 7, 'M');
+		$pdf->MultiCell (85,7,$langs->trans('TotalTTC'),1,'L',0,0,20,$pdf->GetY(),true, 0, false, true, 7, 'M');
 		$pdf->MultiCell (85,7, number_format($object->total_ttc,2,',',' ').'€',1,'R',0,1,105,$pdf->GetY(),true, 0, false, true, 7, 'M');
 
 	}
