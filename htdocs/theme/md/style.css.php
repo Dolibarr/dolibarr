@@ -369,7 +369,7 @@ select.vmenusearchselectcombo {
 	background-color: unset;
 }
 
-textarea:focus, button:focus {
+textarea:focus {
 	/* v6 box-shadow: 0 0 4px #8091BF; */
 	border: 1px solid #aaa !important;
 }
@@ -738,6 +738,9 @@ div.floatright
 .largenumber {
 	font-size: 1.4em;
 }
+button:focus {
+	outline: none;
+}
 
 th .button {
 	-webkit-box-shadow: none !important;
@@ -790,9 +793,18 @@ textarea.centpercent {
 	color: #777;
 }
 
+.flip {
+	transform: scaleX(-1) translate(2px, 0);
+}
+.rotate90 {
+	transform: rotate(90deg) translate(0, 2px);
+}
 .center {
 	text-align: center;
 	margin: 0px auto;
+}
+.alignstart {
+	text-align: start;
 }
 .left {
 	text-align: <?php print $left; ?>;
@@ -3833,7 +3845,7 @@ tr.liste_titre_sel th, th.liste_titre_sel, tr.liste_titre_sel td, td.liste_titre
 	font-family: <?php print $fontlist ?>;
 	font-weight: normal;
 	border-bottom: 1px solid #FDFFFF;
-	text-decoration: underline;
+	/* text-decoration: underline; */
 }
 input.liste_titre {
 	background: transparent;
@@ -4278,10 +4290,10 @@ div.divphotoref > a > .photowithmargin {		/* Margin right for photo not inside a
 .photowithborder {
 	border: 1px solid #f0f0f0;
 }
-.photointoolitp {
+.photointooltip {
 	margin-top: 8px;
 	margin-bottom: 6px;
-	text-align: center;
+	text-align: center !important;
 }
 .photodelete {
 	margin-top: 6px !important;
