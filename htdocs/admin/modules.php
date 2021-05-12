@@ -29,7 +29,7 @@
  */
 
 if (!defined('CSRFCHECK_WITH_TOKEN')) {
-	define('CSRFCHECK_WITH_TOKEN', '1'); // Force use of CSRF protection with tokens even for GET
+	define('CSRFCHECK_WITH_TOKEN', '0'); // Force use of CSRF protection with tokens even for GET
 }
 
 require '../main.inc.php';
