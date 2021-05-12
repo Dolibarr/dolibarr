@@ -425,6 +425,17 @@ if (!defined('NOTOKENRENEWAL'))
 }
 
 dol_syslog("aaaa - ".defined('CSRFCHECK_WITH_TOKEN')." - ".defined('NOCSRFCHECK')." - ".$dolibarr_nocsrfcheck." - ".$conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN." - ".$_SERVER['REQUEST_METHOD']." - ".GETPOST('token', 'alpha').' '.$_SESSION['token']);
+
+if(defined('CSRFCHECK_WITH_TOKEN'))
+{
+	dol_syslog("bbbb - CSRFCHECK_WITH_TOKEN TRUE");
+}
+
+if((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN))
+{
+	dol_syslog("cccc - NOCSRFCHECK etc.");
+}
+
 //$dolibarr_nocsrfcheck=1;
 // Check token
 if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN))
