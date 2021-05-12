@@ -48,6 +48,7 @@ CardBill=Карта
 PredefinedInvoices=Предварително дефинирани фактури
 Invoice=Фактура
 PdfInvoiceTitle=Фактура
+PdfInvoiceCopyTitle=Фактура КОПИЕ
 Invoices=Фактури
 InvoiceLine=Фактурен ред
 InvoiceCustomer=Фактура за продажба
