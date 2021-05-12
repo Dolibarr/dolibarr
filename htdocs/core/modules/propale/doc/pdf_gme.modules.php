@@ -159,11 +159,11 @@ class pdf_gme extends ModelePDFPropales
 		global $conf,$langs,$mysoc;
 
 		//Variable Image
-		$this->urlImageCom = DOL_DATA_ROOT.'/image/commercial.png';
-		$this->urlImageGmeHeader = DOL_DATA_ROOT.'/image/gme_header.png';
-		$this->urlImageGme = DOL_DATA_ROOT.'/image/gme.jpg';
-		$this->urlPictoMail = DOL_DATA_ROOT.'/image/mail.png';
-		$this->urlPictoPhone = DOL_DATA_ROOT.'/image/phone.png';
+		$this->urlImageCom = DOL_DATA_ROOT.'/images/commercial.png';
+		$this->urlImageGmeHeader = DOL_DATA_ROOT.'/images/gme_header.png';
+		$this->urlImageGme = DOL_DATA_ROOT.'/images/gme.jpg';
+		$this->urlPictoMail = DOL_DATA_ROOT.'/images/mail.png';
+		$this->urlPictoPhone = DOL_DATA_ROOT.'/images/phone.png';
 
 		// Translations
 		$langs->loadLangs(array("main", "bills"));
