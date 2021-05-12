@@ -424,8 +424,8 @@ if (!defined('NOTOKENRENEWAL'))
 	dol_syslog("NEW TOKEN reclaimed by : " . $_SERVER['PHP_SELF'], LOG_DEBUG);
 }
 
-dol_syslog("aaaa - ".defined('CSRFCHECK_WITH_TOKEN')." - ".defined('NOCSRFCHECK')." - ".$dolibarr_nocsrfcheck." - ".$conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN." - ".$_SERVER['REQUEST_METHOD']." - ".GETPOST('token', 'alpha').' '.$_SESSION['token']);
-
+//dol_syslog("aaaa - ".defined('CSRFCHECK_WITH_TOKEN')." - ".defined('NOCSRFCHECK')." - ".$dolibarr_nocsrfcheck." - ".$conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN." - ".$_SERVER['REQUEST_METHOD']." - ".GETPOST('token', 'alpha').' '.$_SESSION['token']);
+/*
 if(defined('CSRFCHECK_WITH_TOKEN'))
 {
 	dol_syslog("bbbb - CSRFCHECK_WITH_TOKEN TRUE");
@@ -434,12 +434,13 @@ if(defined('CSRFCHECK_WITH_TOKEN'))
 if((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN)))
 {
 	dol_syslog("cccc - NOCSRFCHECK etc.");
-}
+}*/
 
 //$dolibarr_nocsrfcheck=1;
 // Check token
-if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN))
-	|| defined('CSRFCHECK_WITH_TOKEN'))	// Check validity of token, only if option MAIN_SECURITY_CSRF_WITH_TOKEN enabled or if constant CSRFCHECK_WITH_TOKEN is set into page
+if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN)))
+	// DEBUG FROM GME 12/05/2021 UNTIL THIS BUG IS SOLVED CORRECTLY BY THE COMMUNITY
+	//|| defined('CSRFCHECK_WITH_TOKEN'))	// Check validity of token, only if option MAIN_SECURITY_CSRF_WITH_TOKEN enabled or if constant CSRFCHECK_WITH_TOKEN is set into page
 {
 	// Check all cases that need a token (all POST actions, all actions and mass actions on pages with CSRFCHECK_WITH_TOKEN set, all sensitive GET actions)
 	if ($_SERVER['REQUEST_METHOD'] == 'POST' ||
