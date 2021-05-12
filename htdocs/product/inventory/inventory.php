@@ -642,7 +642,7 @@ if ($object->id > 0) {
 			} else {
 				$product_static = new Product($db);
 				$result = $product_static->fetch($obj->fk_product, '', '', '', 1, 1, 1);
-var_dump($result);
+
 				$option = 'nobatch';
 				$option .= ',novirtual';
 				$product_static->load_stock($option); // Load stock_reel + stock_warehouse. This can also call load_virtual_stock()
