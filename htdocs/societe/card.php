@@ -1354,7 +1354,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
 		// Phone / Fax
 		print '<tr><td>'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td>';
-		print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.img_picto('', 'object_phoning').' <input type="text" name="phone" id="phone" class="maxwidth200 widthcentpercentminusx" value="+32'.(GETPOSTISSET('phone') ?GETPOST('phone', 'alpha') : $object->phone).'"></td>';
+		print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.img_picto('', 'object_phoning').' <input type="text" name="phone" id="phone" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('phone') ?GETPOST('phone', 'alpha') : $object->phone).'"></td>';
 		if ($conf->browser->layout == 'phone') print '</tr><tr>';
 		print '<td>'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
 		print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.img_picto('', 'object_phoning_fax').' <input type="text" name="fax" id="fax" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('fax') ?GETPOST('fax', 'alpha') : $object->fax).'"></td></tr>';
