@@ -88,8 +88,8 @@ class FormOther
 		*/
 		$out .= '<br>';
 		$out .= '<center>';
-		$out .= '<input type="submit" class="button paddingleftonly paddingrightonly" name="addscan" value="'.$langs->trans("Add").'">';
-		$out .= '<input type="submit" class="button paddingleftonly paddingrightonly" name="cancel" value="'.$langs->trans("Cancel").'">';
+		$out .= '<input type="submit" class="button marginleftonly marginrightonly" name="addscan" value="'.$langs->trans("Add").'">';
+		$out .= '<input type="submit" class="button marginleftonly marginrightonly" name="cancel" value="'.$langs->trans("Cancel").'">';
 		$out .= '<br>';
 
 		$out .= '<span class="opacitymedium">'.$langs->trans("FeatureNotYetAvailable").'</span>';
