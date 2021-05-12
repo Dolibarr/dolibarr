@@ -4,11 +4,7 @@
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
-<<<<<<< HEAD
- * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@capnetworks.com>
-=======
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2005		Simon Tosser			<simon@kornog-computing.com>
  * Copyright (C) 2006		Andre Cianfarani		<andre.cianfarani@acdeveloppement.net>
  * Copyright (C) 2010		Juanjo Menent			<jmenent@2byte.es>
@@ -69,28 +65,12 @@ $conf->file->mailing_limit_sendbycli	= $dolibarr_mailing_limit_sendbycli;
 $conf->file->main_authentication		= empty($dolibarr_main_authentication)?'':$dolibarr_main_authentication;	// Identification mode
 $conf->file->main_force_https			= empty($dolibarr_main_force_https)?'':$dolibarr_main_force_https;			// Force https
 $conf->file->strict_mode 				= empty($dolibarr_strict_mode)?'':$dolibarr_strict_mode;					// Force php strict mode (for debug)
-<<<<<<< HEAD
-$conf->file->cookie_cryptkey			= empty($dolibarr_main_cookie_cryptkey)?'':$dolibarr_main_cookie_cryptkey;	// Cookie cryptkey
-=======
 $conf->file->instance_unique_id     	= empty($dolibarr_main_instance_unique_id)?(empty($dolibarr_main_cookie_cryptkey)?'':$dolibarr_main_cookie_cryptkey):$dolibarr_main_instance_unique_id;	// Unique id of instance
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 $conf->file->dol_document_root			= array('main' => (string) DOL_DOCUMENT_ROOT);								// Define array of document root directories ('/home/htdocs')
 $conf->file->dol_url_root				= array('main' => (string) DOL_URL_ROOT);									// Define array of url root path ('' or '/dolibarr')
 if (! empty($dolibarr_main_document_root_alt))
 {
 	// dolibarr_main_document_root_alt can contains several directories
-<<<<<<< HEAD
-	$values=preg_split('/[;,]/',$dolibarr_main_document_root_alt);
-	$i=0;
-	foreach($values as $value) $conf->file->dol_document_root['alt'.($i++)]=(string) $value;
-	$values=preg_split('/[;,]/',$dolibarr_main_url_root_alt);
-	$i=0;
-	foreach($values as $value)
-	{
-		if (preg_match('/^http(s)?:/',$value))
-		{
-			// TODO: Make this a warning rather than an error since the correct value can be derived in most cases
-=======
 	$values=preg_split('/[;,]/', $dolibarr_main_document_root_alt);
 	$i=0;
 	foreach($values as $value) $conf->file->dol_document_root['alt'.($i++)]=(string) $value;
@@ -101,7 +81,6 @@ if (! empty($dolibarr_main_document_root_alt))
 		if (preg_match('/^http(s)?:/', $value))
 		{
 			// Show error message
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$correct_value = str_replace($dolibarr_main_url_root, '', $value);
 			print '<b>Error:</b><br>'."\n";
 			print 'Wrong <b>$dolibarr_main_url_root_alt</b> value in <b>conf.php</b> file.<br>'."\n";
@@ -130,11 +109,7 @@ if (! defined('NOREQUIRESOC'))  require_once DOL_DOCUMENT_ROOT .'/societe/class/
  */
 if (! defined('NOREQUIRETRAN'))
 {
-<<<<<<< HEAD
-	$langs = new Translate('',$conf);	// Must be after reading conf
-=======
 	$langs = new Translate('', $conf);	// Must be after reading conf
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }
 
 /*
@@ -142,19 +117,11 @@ if (! defined('NOREQUIRETRAN'))
  */
 if (! defined('NOREQUIREDB'))
 {
-<<<<<<< HEAD
-    $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
-
-	if ($db->error)
-	{
-		dol_print_error($db,"host=".$conf->db->host.", port=".$conf->db->port.", user=".$conf->db->user.", databasename=".$conf->db->name.", ".$db->error);
-=======
     $db=getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, $conf->db->port);
 
 	if ($db->error)
 	{
 		dol_print_error($db, "host=".$conf->db->host.", port=".$conf->db->port.", user=".$conf->db->user.", databasename=".$conf->db->name.", ".$db->error);
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		exit;
 	}
 }
@@ -166,12 +133,7 @@ unset($conf->db->pass);				// This is to avoid password to be shown in memory/sw
 /*
  * Object $user
  */
-<<<<<<< HEAD
-if (! defined('NOREQUIREUSER'))
-{
-=======
 if (! defined('NOREQUIREUSER')) {
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	$user = new User($db);
 }
 
@@ -185,17 +147,6 @@ if (session_id() && ! empty($_SESSION["dol_entity"]))			// Entity inside an open
 {
 	$conf->entity = $_SESSION["dol_entity"];
 }
-<<<<<<< HEAD
-else if (! empty($_ENV["dol_entity"]))							// Entity inside a CLI script
-{
-	$conf->entity = $_ENV["dol_entity"];
-}
-else if (isset($_POST["loginfunction"]) && GETPOST("entity",'int'))	// Just after a login page
-{
-	$conf->entity = GETPOST("entity",'int');
-}
-else if (defined('DOLENTITY') && is_numeric(DOLENTITY))			// For public page with MultiCompany module
-=======
 elseif (! empty($_ENV["dol_entity"]))							// Entity inside a CLI script
 {
 	$conf->entity = $_ENV["dol_entity"];
@@ -205,7 +156,6 @@ elseif (isset($_POST["loginfunction"]) && GETPOST("entity", 'int'))	// Just afte
 	$conf->entity = GETPOST("entity", 'int');
 }
 elseif (defined('DOLENTITY') && is_numeric(DOLENTITY))			// For public page with MultiCompany module
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 {
 	$conf->entity = DOLENTITY;
 }
@@ -283,11 +233,7 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 // Set default language (must be after the setValues setting global $conf->global->MAIN_LANG_DEFAULT. Page main.inc.php will overwrite langs->defaultlang with user value later)
 if (! defined('NOREQUIRETRAN'))
 {
-<<<<<<< HEAD
-    $langcode=(GETPOST('lang','aZ09')?GETPOST('lang','aZ09',1):(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT));
-=======
     $langcode=(GETPOST('lang', 'aZ09')?GETPOST('lang', 'aZ09', 1):(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT));
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
     if (defined('MAIN_LANG_DEFAULT')) $langcode=constant('MAIN_LANG_DEFAULT');
     $langs->setDefaultLang($langcode);
 }
@@ -298,9 +244,4 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 $hookmanager=new HookManager($db);
 
 
-<<<<<<< HEAD
-if (! defined('MAIN_LABEL_MENTION_NPR') ) define('MAIN_LABEL_MENTION_NPR','NPR');
-
-=======
 if (! defined('MAIN_LABEL_MENTION_NPR') ) define('MAIN_LABEL_MENTION_NPR', 'NPR');
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9

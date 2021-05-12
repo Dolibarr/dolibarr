@@ -1,10 +1,6 @@
 <?php
 /* Copyright (C) 2010-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
-<<<<<<< HEAD
- * Copyright (C) 2010-2014 Regis Houssin        <regis.houssin@capnetworks.com>
-=======
  * Copyright (C) 2010-2014 Regis Houssin        <regis.houssin@inodbox.com>
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,24 +29,6 @@
  */
 class HookManager
 {
-<<<<<<< HEAD
-	var $db;
-	var $error;
-	var $errors=array();
-
-    // Context hookmanager was created for ('thirdpartycard', 'thirdpartydao', ...)
-    var $contextarray=array();
-
-	// Array with instantiated classes
-	var $hooks=array();
-
-	// Array result
-	var $resArray=array();
-	// Printable result
-	var $resPrint='';
-	// Nb of qualified hook ran
-	var $resNbOfHooks=0;
-=======
 	/**
      * @var DoliDB Database handler.
      */
@@ -78,18 +56,13 @@ class HookManager
     public $resPrint='';
 	// Nb of qualified hook ran
     public $resNbOfHooks=0;
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 	/**
 	 * Constructor
 	 *
 	 * @param	DoliDB		$db		Database handler
 	 */
-<<<<<<< HEAD
-	function __construct($db)
-=======
 	public function __construct($db)
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		$this->db = $db;
 	}
@@ -106,11 +79,7 @@ class HookManager
 	 *	@param	string[]	$arraycontext	    Array list of searched hooks tab/features. For example: 'thirdpartycard' (for hook methods into page card thirdparty), 'thirdpartydao' (for hook methods into Societe), ...
 	 *	@return	int							    Always 1
 	 */
-<<<<<<< HEAD
-	function initHooks($arraycontext)
-=======
 	public function initHooks($arraycontext)
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf;
 
@@ -120,11 +89,7 @@ class HookManager
         // For backward compatibility
 		if (! is_array($arraycontext)) $arraycontext=array($arraycontext);
 
-<<<<<<< HEAD
-		$this->contextarray=array_unique(array_merge($arraycontext,$this->contextarray));    // All contexts are concatenated
-=======
 		$this->contextarray=array_unique(array_merge($arraycontext, $this->contextarray));    // All contexts are concatenated
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 		foreach($conf->modules_parts['hooks'] as $module => $hooks)	// Loop on each module that brings hooks
 		{
@@ -134,11 +99,7 @@ class HookManager
 			foreach($arraycontext as $context)
 			{
 				if (is_array($hooks)) $arrayhooks=$hooks;    // New system
-<<<<<<< HEAD
-				else $arrayhooks=explode(':',$hooks);        // Old system (for backward compatibility)
-=======
 				else $arrayhooks=explode(':', $hooks);        // Old system (for backward compatibility)
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				if (in_array($context, $arrayhooks) || in_array('all', $arrayhooks))    // We instantiate action class only if initialized hook is handled by module
 				{
@@ -164,24 +125,6 @@ class HookManager
 	}
 
     /**
-<<<<<<< HEAD
-     * 		Execute hooks (if they were initialized) for the given method
-     *
-     * 		@param		string	$method			Name of method hooked ('doActions', 'printSearchForm', 'showInputField', ...)
-     * 	    @param		array	$parameters		Array of parameters
-     * 		@param		Object	$object			Object to use hooks on
-     * 	    @param		string	$action			Action code on calling page ('create', 'edit', 'view', 'add', 'update', 'delete'...)
-     * 		@return		mixed					For 'addreplace' hooks (doActions,formObjectOptions,pdf_xxx,...):  					Return 0 if we want to keep standard actions, >0 if we want to stop/replace standard actions, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
-     * 											For 'output' hooks (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...):	Return 0, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
-     *                                          All types can also return some values into an array ->results that will be finaly merged into this->resArray for caller.
-     * 											$this->error or this->errors are also defined by class called by this function if error.
-     */
-	function executeHooks($method, $parameters=array(), &$object='', &$action='')
-	{
-        if (! is_array($this->hooks) || empty($this->hooks)) return '';
-
-        $parameters['context']=join(':',$this->contextarray);
-=======
      *  Execute hooks (if they were initialized) for the given method
      *
      *  @param		string	$method			Name of method hooked ('doActions', 'printSearchForm', 'showInputField', ...)
@@ -198,16 +141,11 @@ class HookManager
         if (! is_array($this->hooks) || empty($this->hooks)) return '';
 
         $parameters['context']=join(':', $this->contextarray);
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         //dol_syslog(get_class($this).'::executeHooks method='.$method." action=".$action." context=".$parameters['context']);
 
         // Define type of hook ('output' or 'addreplace'. 'returnvalue' is deprecated because a 'addreplace' hook can also return resPrint and resArray).
         $hooktype='output';
-<<<<<<< HEAD
-		if (in_array(
-=======
         if (in_array(
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$method,
 			array(
 				'addCalendarChoice',
@@ -227,18 +165,12 @@ class HookManager
 				'formattachOptions',
 				'formBuilddocLineOptions',
 				'formatNotificationMessage',
-<<<<<<< HEAD
-				'getFormMail',
-				'getIdProfUrl',
-				'getDirList',
-=======
 				'getAccessForbiddenMessage',
 				'getDirList',
 				'getFormMail',
 				'getFormatedCustomerRef',
 			    'getFormatedSupplierRef',
 				'getIdProfUrl',
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				'moveUploadedFile',
 				'moreHtmlStatus',
 				'pdf_build_address',
@@ -273,16 +205,9 @@ class HookManager
 				)
 			)) $hooktype='addreplace';
 
-<<<<<<< HEAD
-        if ($method == 'insertExtraFields')
-        {
-        	$hooktype='returnvalue';	// @deprecated. TODO Remove all code with "executeHooks('insertExtraFields'" as soon as there is a trigger available.
-        	dol_syslog("Warning: The hook 'insertExtraFields' is deprecated and must not be used. Use instead trigger on CRUD event (ask it to dev team if not implemented)", LOG_WARNING);
-=======
         if ($method == 'insertExtraFields') {
             $hooktype='returnvalue';	// @deprecated. TODO Remove all code with "executeHooks('insertExtraFields'" as soon as there is a trigger available.
             dol_syslog("Warning: The hook 'insertExtraFields' is deprecated and must not be used. Use instead trigger on CRUD event (ask it to dev team if not implemented)", LOG_WARNING);
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
         }
 
         // Init return properties
@@ -300,17 +225,10 @@ class HookManager
                 	//print "Before hook ".get_class($actionclassinstance)." method=".$method." hooktype=".$hooktype." results=".count($actionclassinstance->results)." resprints=".count($actionclassinstance->resprints)." resaction=".$resaction." result=".$result."<br>\n";
 
                     // test to avoid running twice a hook, when a module implements several active contexts
-<<<<<<< HEAD
-                    if (in_array($module,$modulealreadyexecuted)) continue;
-
-                	// jump to next module/class if method does not exist
-                    if (! method_exists($actionclassinstance,$method)) continue;
-=======
                     if (in_array($module, $modulealreadyexecuted)) continue;
 
                 	// jump to next module/class if method does not exist
                     if (! method_exists($actionclassinstance, $method)) continue;
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
                     $this->resNbOfHooks++;
 
@@ -332,11 +250,7 @@ class HookManager
                     	{
                     		$error++;
                     		$this->error=$actionclassinstance->error; $this->errors=array_merge($this->errors, (array) $actionclassinstance->errors);
-<<<<<<< HEAD
-                    		dol_syslog("Error on hook module=".$module.", method ".$method.", class ".get_class($actionclassinstance).", hooktype=".$hooktype.(empty($this->error)?'':" ".$this->error).(empty($this->errors)?'':" ".join(",",$this->errors)), LOG_ERR);
-=======
                     		dol_syslog("Error on hook module=".$module.", method ".$method.", class ".get_class($actionclassinstance).", hooktype=".$hooktype.(empty($this->error)?'':" ".$this->error).(empty($this->errors)?'':" ".join(",", $this->errors)), LOG_ERR);
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                     	}
 
                     	if (isset($actionclassinstance->results) && is_array($actionclassinstance->results))  $this->resArray =array_merge($this->resArray, $actionclassinstance->results);
@@ -351,10 +265,6 @@ class HookManager
                     	//dol_syslog("Call method ".$method." of class ".get_class($actionclassinstance).", module=".$module.", hooktype=".$hooktype, LOG_DEBUG);
                     	$resaction = $actionclassinstance->$method($parameters, $object, $action, $this); // $object and $action can be changed by method ($object->id during creation for example or $action to go back to other action for example)
 
-<<<<<<< HEAD
-                    	if (! empty($actionclassinstance->results) && is_array($actionclassinstance->results)) $this->resArray =array_merge($this->resArray, $actionclassinstance->results);
-                    	if (! empty($actionclassinstance->resprints)) $this->resPrint.=$actionclassinstance->resprints;
-=======
                     	if (! empty($actionclassinstance->results) && is_array($actionclassinstance->results)) $this->resArray=array_merge($this->resArray, $actionclassinstance->results);
                     	if (! empty($actionclassinstance->resprints)) $this->resPrint.=$actionclassinstance->resprints;
                     	if (is_numeric($resaction) && $resaction < 0)
@@ -363,7 +273,6 @@ class HookManager
                     	    $this->error=$actionclassinstance->error; $this->errors=array_merge($this->errors, (array) $actionclassinstance->errors);
                     	    dol_syslog("Error on hook module=".$module.", method ".$method.", class ".get_class($actionclassinstance).", hooktype=".$hooktype.(empty($this->error)?'':" ".$this->error).(empty($this->errors)?'':" ".join(",", $this->errors)), LOG_ERR);
                     	}
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
                     	// TODO dead code to remove (do not enable this, but fix hook instead): result must not be a string but an int. you must use $actionclassinstance->resprints to return a string
                     	if (! is_array($resaction) && ! is_numeric($resaction))
                     	{
@@ -382,8 +291,4 @@ class HookManager
 
         return ($error?-1:$resaction);
 	}
-<<<<<<< HEAD
-
-=======
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 }

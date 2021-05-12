@@ -39,11 +39,7 @@ abstract class CommonObjectLine extends CommonObject
 	 * Id of the line
 	 * @var int
 	 * @deprecated Try to use id property as possible (even if field into database is still rowid)
-<<<<<<< HEAD
-	 * @see id
-=======
 	 * @see $id
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	 */
 	public $rowid;
 
@@ -57,19 +53,11 @@ abstract class CommonObjectLine extends CommonObject
     /**
      *	Returns the translation key from units dictionary.
      *  A langs->trans() must be called on result to get translated value.
-<<<<<<< HEAD
-     *  
-     * 	@param	string $type Label type (long or short)
-     *	@return	string|int <0 if ko, label if ok
-     */
-	public function getLabelOfUnit($type='long')
-=======
      *
      * 	@param	string $type Label type (long or short)
      *	@return	string|int <0 if ko, label if ok
      */
 	public function getLabelOfUnit($type = 'long')
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $langs;
 
@@ -106,7 +94,3 @@ abstract class CommonObjectLine extends CommonObject
 
 	// For the moment we use the extends on CommonObject until PHP min is 5.4 so use Traits.
 }
-<<<<<<< HEAD
-
-=======
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9

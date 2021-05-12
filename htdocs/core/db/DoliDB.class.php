@@ -75,11 +75,7 @@ abstract class DoliDB implements Database
 	 *	@param	string	$resko          resultat si test non egal
 	 *	@return	string          		SQL string
 	 */
-<<<<<<< HEAD
-	function ifsql($test,$resok,$resko)
-=======
     public function ifsql($test, $resok, $resko)
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return 'IF('.$test.','.$resok.','.$resko.')';
 	}
@@ -91,17 +87,10 @@ abstract class DoliDB implements Database
 	 *   @param	    int		$param      	Date TMS to convert
 	 *   @return	string      			Date in a string YYYY-MM-DD HH:MM:SS
 	 */
-<<<<<<< HEAD
-	function idate($param)
-	{
-		// TODO GMT $param should be gmt, so we should add tzouptut to 'gmt'
-		return dol_print_date($param,"%Y-%m-%d %H:%M:%S");
-=======
     public function idate($param)
 	{
 		// TODO GMT $param should be gmt, so we should add tzouptut to 'gmt'
 		return dol_print_date($param, "%Y-%m-%d %H:%M:%S");
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	/**
@@ -109,11 +98,7 @@ abstract class DoliDB implements Database
 	 *
 	 *	@return	    string	lasterrno
 	 */
-<<<<<<< HEAD
-	function lasterrno()
-=======
     public function lasterrno()
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return $this->lasterrno;
 	}
@@ -123,11 +108,7 @@ abstract class DoliDB implements Database
 	 *
 	 * @return	    int         1 if transaction successfuly opened or already opened, 0 if error
 	 */
-<<<<<<< HEAD
-	function begin()
-=======
     public function begin()
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		if (! $this->transaction_opened)
 		{
@@ -135,24 +116,15 @@ abstract class DoliDB implements Database
 			if ($ret)
 			{
 				$this->transaction_opened++;
-<<<<<<< HEAD
-				dol_syslog("BEGIN Transaction",LOG_DEBUG);
-				dol_syslog('',0,1);
-=======
 				dol_syslog("BEGIN Transaction", LOG_DEBUG);
 				dol_syslog('', 0, 1);
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			}
 			return $ret;
 		}
 		else
 		{
 			$this->transaction_opened++;
-<<<<<<< HEAD
-			dol_syslog('',0,1);
-=======
 			dol_syslog('', 0, 1);
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			return 1;
 		}
 	}
@@ -163,26 +135,16 @@ abstract class DoliDB implements Database
 	 * @param	string	$log		Add more log to default log line
 	 * @return	int         		1 if validation is OK or transaction level no started, 0 if ERROR
 	 */
-<<<<<<< HEAD
-	function commit($log='')
-	{
-		dol_syslog('',0,-1);
-=======
     public function commit($log = '')
 	{
 		dol_syslog('', 0, -1);
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if ($this->transaction_opened<=1)
 		{
 			$ret=$this->query("COMMIT");
 			if ($ret)
 			{
 				$this->transaction_opened=0;
-<<<<<<< HEAD
-				dol_syslog("COMMIT Transaction".($log?' '.$log:''),LOG_DEBUG);
-=======
 				dol_syslog("COMMIT Transaction".($log?' '.$log:''), LOG_DEBUG);
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 				return 1;
 			}
 			else
@@ -198,16 +160,6 @@ abstract class DoliDB implements Database
 	}
 
 	/**
-<<<<<<< HEAD
-	 *	Annulation d'une transaction et retour aux anciennes valeurs
-	 *
-	 * 	@param	string			$log		Add more log to default log line
-	 * 	@return	resource|int         		1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
-	 */
-	function rollback($log='')
-	{
-		dol_syslog('',0,-1);
-=======
 	 *	Cancel a transaction and go back to initial data values
 	 *
 	 * 	@param	string			$log		Add more log to default log line
@@ -216,16 +168,11 @@ abstract class DoliDB implements Database
     public function rollback($log = '')
 	{
 		dol_syslog('', 0, -1);
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		if ($this->transaction_opened<=1)
 		{
 			$ret=$this->query("ROLLBACK");
 			$this->transaction_opened=0;
-<<<<<<< HEAD
-			dol_syslog("ROLLBACK Transaction".($log?' '.$log:''),LOG_DEBUG);
-=======
 			dol_syslog("ROLLBACK Transaction".($log?' '.$log:''), LOG_DEBUG);
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			return $ret;
 		}
 		else
@@ -242,11 +189,7 @@ abstract class DoliDB implements Database
 	 *	@param	int		$offset     Numero of line from where starting fetch
 	 *	@return	string      		String with SQL syntax to add a limit and offset
 	 */
-<<<<<<< HEAD
-	function plimit($limit=0,$offset=0)
-=======
     public function plimit($limit = 0, $offset = 0)
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		global $conf;
 		if (empty($limit)) return "";
@@ -260,15 +203,9 @@ abstract class DoliDB implements Database
 	 *
 	 *	@return	        array  		Version array
 	 */
-<<<<<<< HEAD
-	function getVersionArray()
-	{
-		return preg_split("/[\.,-]/",$this->getVersion());
-=======
     public function getVersionArray()
 	{
 		return preg_split("/[\.,-]/", $this->getVersion());
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	}
 
 	/**
@@ -276,11 +213,7 @@ abstract class DoliDB implements Database
 	 *
 	 *	@return	string					Last query
 	 */
-<<<<<<< HEAD
-	function lastquery()
-=======
     public function lastquery()
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return $this->lastquery;
 	}
@@ -292,33 +225,20 @@ abstract class DoliDB implements Database
 	 * @param	string		$sortorder		Sort order, separated by comma. Example: 'ASC,DESC';
 	 * @return	string						String to provide syntax of a sort sql string
 	 */
-<<<<<<< HEAD
-	function order($sortfield=null,$sortorder=null)
-=======
     public function order($sortfield = null, $sortorder = null)
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		if (! empty($sortfield))
 		{
 			$return='';
-<<<<<<< HEAD
-			$fields=explode(',',$sortfield);
-			$orders=explode(',',$sortorder);
-=======
 			$fields=explode(',', $sortfield);
 			$orders=explode(',', $sortorder);
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 			$i=0;
 			foreach($fields as $val)
 			{
 				if (! $return) $return.=' ORDER BY ';
 				else $return.=', ';
 
-<<<<<<< HEAD
-				$return.=preg_replace('/[^0-9a-z_\.]/i','',$val);
-=======
 				$return.=preg_replace('/[^0-9a-z_\.]/i', '', $val);
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 
 				$tmpsortorder = trim($orders[$i]);
 
@@ -344,11 +264,7 @@ abstract class DoliDB implements Database
 	 *
 	 *	@return	    string		Last error
 	 */
-<<<<<<< HEAD
-	function lasterror()
-=======
     public function lasterror()
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return $this->lasterror;
 	}
@@ -362,15 +278,6 @@ abstract class DoliDB implements Database
 	 *	@param	bool				$gm			1=Input informations are GMT values, otherwise local to server TZ
 	 *	@return	int|string						Date TMS or ''
 	 */
-<<<<<<< HEAD
-	function jdate($string, $gm=false)
-	{
-		// TODO GMT must set param gm to true by default
-		if ($string==0 || $string=="0000-00-00 00:00:00") return '';
-		$string=preg_replace('/([^0-9])/i','',$string);
-		$tmp=$string.'000000';
-		$date=dol_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4),$gm);
-=======
     public function jdate($string, $gm = false)
 	{
 		// TODO GMT must set param gm to true by default
@@ -378,7 +285,6 @@ abstract class DoliDB implements Database
 		$string=preg_replace('/([^0-9])/i', '', $string);
 		$tmp=$string.'000000';
 		$date=dol_mktime((int) substr($tmp, 8, 2), (int) substr($tmp, 10, 2), (int) substr($tmp, 12, 2), (int) substr($tmp, 4, 2), (int) substr($tmp, 6, 2), (int) substr($tmp, 0, 4), $gm);
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 		return $date;
 	}
 
@@ -387,16 +293,8 @@ abstract class DoliDB implements Database
 	 *
 	 *	@return	    string	lastqueryerror
 	 */
-<<<<<<< HEAD
-	function lastqueryerror()
-=======
     public function lastqueryerror()
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9
 	{
 		return $this->lastqueryerror;
 	}
 }
-<<<<<<< HEAD
-
-=======
->>>>>>> fed598236c185406f59a504ed57181464c26b1b9

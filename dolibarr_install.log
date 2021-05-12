@@ -13474,3 +13474,17 @@ ENGINE=InnoDB;
 2019-07-16 16:07:10 DEBUG   ::1             sql=INSERT INTO llx_const(name,value,type,visible,note,entity) VALUES ('MAIN_LANG_DEFAULT','en_US','chaine',0,'Default language',1)
 2019-07-16 16:07:10 DEBUG   ::1             Exit 0
 2019-07-16 16:07:10 DEBUG   ::1             --- step5: Dolibarr setup finished
+2021-05-12 05:19:09 DEBUG   ::1             - check: Dolibarr install/upgrade process started
+2021-05-12 05:19:10 DEBUG   ::1             check: conf file '../conf/conf.php' already defined
+2021-05-12 05:19:10 DEBUG   ::1             DoliDBMysqli::connect host=localhost, port=3306, login=root, passwd=--hidden--, name=
+2021-05-12 05:19:10 DEBUG   ::1             DoliDBMysqli::select_db database=erp
+2021-05-12 05:19:10 DEBUG   ::1             Conf::setValues
+2021-05-12 05:19:10 DEBUG   ::1             sql=SELECT name as name, value as value, entity FROM llx_const WHERE entity IN (0,1) ORDER BY entity
+2021-05-12 05:19:10 DEBUG   ::1             - check: end
+2021-05-12 05:19:25 DEBUG   ::1             - check: Dolibarr install/upgrade process started
+2021-05-12 05:19:25 DEBUG   ::1             check: conf file '../conf/conf.php' already defined
+2021-05-12 05:19:25 DEBUG   ::1             DoliDBMysqli::connect host=localhost, port=3306, login=root, passwd=--hidden--, name=
+2021-05-12 05:19:25 DEBUG   ::1             DoliDBMysqli::select_db database=erp
+2021-05-12 05:19:25 DEBUG   ::1             Conf::setValues
+2021-05-12 05:19:25 DEBUG   ::1             sql=SELECT name as name, value as value, entity FROM llx_const WHERE entity IN (0,1) ORDER BY entity
+2021-05-12 05:19:25 DEBUG   ::1             - check: end
