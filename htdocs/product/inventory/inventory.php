@@ -524,35 +524,9 @@ if ($object->id > 0) {
 
 	// Popup for mass barcode scanning
 	if ($action == 'updatebyscaning') {
-		print '<form name="barcodescanner" method="POST">';
-		print '<!-- Popup for mass barcode scanning -->'."\n";
-		print '<div class="div-for-modal-topright" style="padding: 15px">';
-		print '<center><strong>Barcode scanner tool...</strong></center><br>';
-
-		print '<input type="checkbox" name="barcodeforautodetect" checked="checked"> Autodetect if we scan a product barcode or a lot/serial barcode<br>';
-		print '<input type="checkbox" name="barcodeforproduct"> Scan a product barcode<br>';
-		print '<input type="checkbox" name="barcodeforlotserial"> Scan a product lot or serial number<br>';
-
-		print $langs->trans("QtyToAddAfterBarcodeScan").' <input type="text" name="barcodeproductqty" class="width50 right" value="1"><br>';
-		print '<textarea type="text" name="barcodelist" class="centpercent" autofocus rows="'.ROWS_3.'"></textarea>';
-
-		/*print '<br>'.$langs->trans("or").'<br>';
-
-		print '<br>';
-
-		print '<input type="text" name="barcodelotserial" class="width200"> &nbsp; &nbsp; Qty <input type="text" name="barcodelotserialqty" class="width50 right" value="1"><br>';
-		*/
-		print '<br>';
-		print '<center>';
-		print '<input type="submit" class="button" value="'.$langs->trans("Add").'"><br>';
-
-		print '<span class="opacitymedium">'.$langs->trans("FeatureNotYetAvailable").'</span>';
-
-		// TODO Add javascript so each scan will add qty into the inventory page + an ajax save.
-
-		print '</center>';
-		print '</div>';
-		print '</form>';
+		include DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+		$formother = new FormOther($db);
+		print $formother->getHTMLScannerForm();
 	}
 
 
@@ -609,7 +583,7 @@ if ($object->id > 0) {
 		print '</tr>';
 	}
 
-	// Request to show lines of inventory (prefilled during creation)
+	// Request to show lines of inventory (prefilled after start/validate step)
 	$sql = 'SELECT id.rowid, id.datec as date_creation, id.tms as date_modification, id.fk_inventory, id.fk_warehouse,';
 	$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
@@ -641,7 +615,7 @@ if ($object->id > 0) {
 				$product_static = $cacheOfProducts[$obj->fk_product];
 			} else {
 				$product_static = new Product($db);
-				$product_static->fetch($obj->fk_product);
+				$result = $product_static->fetch($obj->fk_product, '', '', '', 1, 1, 1);
 
 				$option = 'nobatch';
 				$option .= ',novirtual';
