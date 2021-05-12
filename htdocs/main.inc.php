@@ -431,7 +431,7 @@ if(defined('CSRFCHECK_WITH_TOKEN'))
 	dol_syslog("bbbb - CSRFCHECK_WITH_TOKEN TRUE");
 }
 
-if((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN))
+if((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN)))
 {
 	dol_syslog("cccc - NOCSRFCHECK etc.");
 }
