@@ -103,7 +103,7 @@ if ($action == 'cancel_record' && $permissiontoadd) {
 	$object->setCanceled($user);
 }
 
-if ($action == 'update' && $user->rights->stock->mouvement->creer) {
+if ($action == 'update' && !empty($user->rights->stock->mouvement->creer)) {
 	$stockmovment = new MouvementStock($db);
 	$stockmovment->origin = $object;
 
@@ -160,7 +160,7 @@ if ($action == 'update' && $user->rights->stock->mouvement->creer) {
 	}
 }
 
-if (($action == 'record' || $action =='updateinventorylines') && $permissiontoadd) {
+if ($action =='updateinventorylines' && $permissiontoadd) {
 	$sql = 'SELECT id.rowid, id.datec as date_creation, id.tms as date_modification, id.fk_inventory, id.fk_warehouse,';
 	$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
@@ -301,16 +301,19 @@ llxHeader('', $langs->trans('Inventory'), $help_url);
 
 // Disable button Generate movement if data were not saved
 print '<script type="text/javascript" language="javascript">
+function disablebuttonmakemovementandclose() {
+	console.log("Disable button idbuttonmakemovementandclose until we save");
+	jQuery("#idbuttonmakemovementandclose").attr(\'disabled\',\'disabled\');
+	jQuery("#idbuttonmakemovementandclose").attr(\'class\',\'butActionRefused\');
+};
+
 jQuery(document).ready(function() {
+
 	jQuery(".realqty").keyup(function() {
-		console.log("Disable button idbuttonmakemovementandclose until we save");
-		jQuery("#idbuttonmakemovementandclose").attr(\'disabled\',\'disabled\');
-		jQuery("#idbuttonmakemovementandclose").attr(\'class\',\'butActionRefused\');
+		disablebuttonmakemovementandclose();
 	});
 	jQuery(".realqty").change(function() {
-		console.log("Disable button idbuttonmakemovementandclose until we save");
-		jQuery("#idbuttonmakemovementandclose").attr(\'disabled\',\'disabled\');
-		jQuery("#idbuttonmakemovementandclose").attr(\'class\',\'butActionRefused\');
+		disablebuttonmakemovementandclose();
 	});
 });
 </script>';
@@ -466,7 +469,7 @@ if ($object->id > 0) {
 			// Save
 			if ($object->status == $object::STATUS_VALIDATED) {
 				if ($permissiontoadd) {
-					print '<a class="butAction" id="idbuttonmakemovementandclose" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=record&token='.newToken().'">'.$langs->trans("MakeMovementsAndClose").'</a>'."\n";
+					print '<a class="butAction" id="idbuttonmakemovementandclose" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=record&token='.newToken().'" title="'.dol_escape_htmltag("SaveQtyFirst").'">'.$langs->trans("MakeMovementsAndClose").'</a>'."\n";
 				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('MakeMovementsAndClose').'</a>'."\n";
 				}
@@ -598,6 +601,7 @@ if ($object->id > 0) {
 		$num = $db->num_rows($resql);
 
 		$i = 0;
+		$totalfound = 0;
 		$totalarray = array();
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
@@ -647,6 +651,7 @@ if ($object->id > 0) {
 			print '<td class="center">';
 			if ($object->status == $object::STATUS_VALIDATED) {
 				$qty_view = GETPOST("id_".$obj->rowid) ? GETPOST("id_".$obj->rowid) : $obj->qty_view;
+				$totalfound += price2num($qty_view, 'MS');
 				print '<input type="text" class="maxwidth75 right realqty" name="id_'.$obj->rowid.'" id="id_'.$obj->rowid.'_input" value="'.$qty_view.'">';
 				print '</td>';
 				print '<td class="right">';
@@ -654,6 +659,7 @@ if ($object->id > 0) {
 				print '</td>';
 			} else {
 				print $obj->qty_view;
+				$totalfound += $obj->qty_view;
 				print '</td>';
 			}
 			print '</tr>';
@@ -674,6 +680,14 @@ if ($object->id > 0) {
 
 	print '</div>';
 
+	// Call method to disable the button if no qty entered yet for inventory
+	if ($object->status != $object::STATUS_VALIDATED || $totalfound == 0) {
+		print '<script type="text/javascript" language="javascript">
+					jQuery(document).ready(function() {
+						disablebuttonmakemovementandclose();
+					});
+				</script>';
+	}
 	print '</form>';
 }
 
