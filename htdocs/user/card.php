@@ -240,10 +240,12 @@ if (empty($reshook)) {
 			//$object->twitter = GETPOST("twitter", 'alphanohtml');
 			//$object->facebook = GETPOST("facebook", 'alphanohtml');
 			//$object->linkedin = GETPOST("linkedin", 'alphanohtml');
-			$object->socialnetworks = array();
 			if (!empty($conf->socialnetworks->enabled)) {
+				$object->socialnetworks = array();
 				foreach ($socialnetworks as $key => $value) {
-					$object->socialnetworks[$key] = GETPOST($key, 'alphanohtml');
+					if (GETPOST($key, 'alphanohtml')) {
+						$object->socialnetworks[$key] = GETPOST($key, 'alphanohtml');
+					}
 				}
 			}
 
@@ -400,10 +402,12 @@ if (empty($reshook)) {
 				//$object->twitter = GETPOST("twitter", 'alphanohtml');
 				//$object->facebook = GETPOST("facebook", 'alphanohtml');
 				//$object->linkedin = GETPOST("linkedin", 'alphanohtml');
-				$object->socialnetworks = array();
 				if (!empty($conf->socialnetworks->enabled)) {
+					$object->socialnetworks = array();
 					foreach ($socialnetworks as $key => $value) {
-						$object->socialnetworks[$key] = GETPOST($key, 'alphanohtml');
+						if (GETPOST($key, 'alphanohtml')) {
+							$object->socialnetworks[$key] = GETPOST($key, 'alphanohtml');
+						}
 					}
 				}
 				$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alphanohtml'));
