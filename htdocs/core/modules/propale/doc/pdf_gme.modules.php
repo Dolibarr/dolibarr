@@ -1092,7 +1092,6 @@ class pdf_gme extends ModelePDFPropales
 
 		//Image en-tête (modifier le chemin de l'image en fonction de la photo souhaitée)
 		$pdf->Image($this->urlImageGmeHeader,0,0,210,50);
-		$pdf->SetFont('','B',7);
 
 		//Données
 		$pdf->SetFont('','I',7);
@@ -1107,6 +1106,7 @@ class pdf_gme extends ModelePDFPropales
 		$pdf->MultiCell(0,4,$object->thirdparty->tva_intra,0,'L',0,1,152,$lastY);
 
 		//Titre
+		$pdf->SetFont('','B',7);
 		$pdf->MultiCell(40,4,$outputlangs->transnoentities('Lastname').' : ',0,'L',0,1,125,15);
 		$pdf->MultiCell(40,4,$outputlangs->transnoentities('Customer').' n° :',0,'L',0,1,125,$pdf->GetY());
 		$pdf->MultiCell(40,4,$outputlangs->transnoentities('ContactDefault_propal').' n° :',0,'L',0,1,125,$pdf->GetY());
