@@ -40,7 +40,7 @@ PageForCreateEditView=PHP lapa, lai izveidotu / rediģētu / skatītu ierakstu
 PageForAgendaTab=PHP lappuse notikumu cilnē
 PageForDocumentTab=PHP lapas cilnei
 PageForNoteTab=PHP lapa piezīmju cilnē
-PageForContactTab=PHP page for contact tab
+PageForContactTab=PHP lapa kontaktu cilnei
 PathToModulePackage=Ceļš uz moduļa / pieteikuma pakotnes rāvienu
 PathToModuleDocumentation=Ceļš uz moduļa / lietojumprogrammas dokumentācijas failu (%s)
 SpaceOrSpecialCharAreNotAllowed=Spaces vai speciālās rakstzīmes nav atļautas.
@@ -85,7 +85,7 @@ ListOfPermissionsDefined=Noteikto atļauju saraksts
 SeeExamples=Skatiet piemērus šeit
 EnabledDesc=Nosacījums, lai šis lauks būtu aktīvs (piemēri: 1 vai $ conf-> globāla-> MYMODULE_MYOPTION)
 VisibleDesc=Vai lauks ir redzams? (Piemēri: 0 = nekad nav redzams, 1 = redzams sarakstā un izveidojiet / atjauniniet / skatiet veidlapas, 2 = ir redzams tikai sarakstā, 3 = ir redzams tikai izveides / atjaunināšanas / skata formā (nav sarakstā), 4 = ir redzams sarakstā un tikai atjaunināt / skatīt formu (neveidot), 5 = redzama tikai saraksta beigu skata formā (neveidot, ne atjaunināt). <br> <br> Negatīvas vērtības līdzekļu izmantošana lauka pēc noklusējuma netiek parādīta, bet to var atlasīt apskatei). <br> <br> Tas var būt izteiciens, piemēram: <br> preg_match ('/ public /', $ _SERVER ['PHP_SELF'])? 0: 1 <br> ($ user-> rights-> rights-
-DisplayOnPdfDesc=Parādiet šo lauku saderīgos PDF dokumentos. Varat pārvaldīt pozīciju ar lauku "Position". <br/> Pašlaik zināms savietojamie PDF modeļi ir: Eratostens (rīkojums), Espadon (kuģis), sūkli (rēķini), ciāna (propal / citāts), Cornas (piegādātājs rīkojums) <br/> <br/> <strong> Par dokumenta: </strong> <br/> 0 = nav redzams <br/> 1 = displejs <br/> 2 = parādīt tikai tad, ja nav iztukšot <br/> <br/> <strong> dokumentu līnijas: </strong> <br/> 0 = nav redzama <br/> 1 = parādīti kolonnā <br/> 3 = displeja līnija apraksta slejā pēc apraksta <br/> 4 = displeja apraksta ailē pēc tam, kad apraksts tikai tad, ja nav tukšs
+DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br>Currently, known compatibles PDF models are : eratosthene (order), espadon (ship), sponge (invoices), cyan (propal/quotation), cornas (supplier order)<br><br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
 DisplayOnPdf=Displejs PDF formātā
 IsAMeasureDesc=Vai lauka vērtību var uzkrāties, lai kopsumma tiktu iekļauta sarakstā? (Piemēri: 1 vai 0)
 SearchAllDesc=Vai laukums tiek izmantots, lai veiktu meklēšanu no ātrās meklēšanas rīka? (Piemēri: 1 vai 0)
@@ -106,7 +106,7 @@ TryToUseTheModuleBuilder=Ja jums ir zināšanas par SQL un PHP, jūs varat izman
 SeeTopRightMenu=Augšējā labajā izvēlnē skatiet <span class="fa fa-bug"></span>
 AddLanguageFile=Pievienot valodas failu
 YouCanUseTranslationKey=Šeit varat izmantot atslēgu, kas ir tulkošanas atslēga, kas tiek atrasta valodas failā (sk. Cilni "Valodas").
-DropTableIfEmpty=(Destroy table if empty)
+DropTableIfEmpty=(Iznīcināt tabulu, ja tā ir tukša)
 TableDoesNotExists=Tabula %s neeksistē
 TableDropped=Tabula %s dzēsta
 InitStructureFromExistingTable=Veidojiet esošās tabulas struktūras masīva virkni
@@ -133,11 +133,13 @@ IncludeDocGeneration=Es gribu no objekta ģenerēt dažus dokumentus
 IncludeDocGenerationHelp=Ja to atzīmēsit, tiks izveidots kāds kods, lai ierakstam pievienotu rūtiņu “Ģenerēt dokumentu”.
 ShowOnCombobox=Rādīt vērtību kombinētajā lodziņā
 KeyForTooltip=Rīka padoma atslēga
-CSSClass=CSS klase
+CSSClass=CSS for edit/create form
+CSSViewClass=CSS for read form
+CSSListClass=CSS for list
 NotEditable=Nav rediģējams
 ForeignKey=Sveša atslēga
 TypeOfFieldsHelp=Lauku tips: <br> varchar (99), double (24,8), real, text, html, datetime, timestamp, integer, integer: ClassName: reliapath / to / classfile.class.php [: 1 [: filter]] ('1' nozīmē mēs pievienojam pogu + pēc kombināta, lai izveidotu ierakstu; “filtrs” var būt “status = 1 UN fk_user = __USER_ID UN entītija (piemēram, __SHARED_ENTITIES__)”.
 AsciiToHtmlConverter=Ascii uz HTML pārveidotāju
 AsciiToPdfConverter=Ascii uz PDF pārveidotāju
 TableNotEmptyDropCanceled=Tabula nav tukša. Dzēšana tika atcelta.
-ModuleBuilderNotAllowed=The module builder is available but not allowed to your user.
+ModuleBuilderNotAllowed=Moduļu veidotājs ir pieejams, bet nav atļauts jūsu lietotājam.

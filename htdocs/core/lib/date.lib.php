@@ -547,12 +547,12 @@ function dol_get_last_day($year, $month = 12, $gm = false)
  *
  *	@param		int			$date		Date GMT
  * 	@param		mixed		$gm			False or 0 or 'tzserver' = Return date to compare with server TZ,
- * 										True or 1 or 'gmt' to compare with GMT date.
+ * 										'gmt' to compare with GMT date.
  *  @return		int						Date for last hour of a given date
  */
 function dol_get_last_hour($date, $gm = 'tzserver')
 {
-	$tmparray = dol_getdate($date);
+	$tmparray = dol_getdate($date, false, ($gm == 'gmt' ? 'gmt' : ''));
 	return dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['year'], $gm);
 }
 
@@ -561,12 +561,12 @@ function dol_get_last_hour($date, $gm = 'tzserver')
  *
  *	@param		int			$date		Date GMT
  * 	@param		mixed		$gm			False or 0 or 'tzserver' = Return date to compare with server TZ,
- * 										True or 1 or 'gmt' to compare with GMT date.
+ * 										'gmt' to compare with GMT date.
  *  @return		int						Date for last hour of a given date
  */
 function dol_get_first_hour($date, $gm = 'tzserver')
 {
-	$tmparray = dol_getdate($date);
+	$tmparray = dol_getdate($date, false, ($gm == 'gmt' ? 'gmt' : ''));
 	return dol_mktime(0, 0, 0, $tmparray['mon'], $tmparray['mday'], $tmparray['year'], $gm);
 }
 

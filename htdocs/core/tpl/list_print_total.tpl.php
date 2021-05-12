@@ -1,6 +1,6 @@
 <?php
 // Move fields of totalizable into the common array pos and val
-if (is_array($totalarray['totalizable'])) {
+if (!empty($totalarray['totalizable']) && is_array($totalarray['totalizable'])) {
 	foreach ($totalarray['totalizable'] as $keytotalizable => $valtotalizable) {
 		$totalarray['pos'][$valtotalizable['pos']] = $keytotalizable;
 		$totalarray['val'][$keytotalizable] = $valtotalizable['total'];

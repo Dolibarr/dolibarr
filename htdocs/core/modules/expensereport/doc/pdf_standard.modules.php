@@ -796,7 +796,7 @@ class pdf_standard extends ModeleExpenseReport
 			$pdf->SetTextColor(0, 0, 0);
 			$pdf->SetFont('', 'B', $default_font_size - 2);
 			$pdf->SetXY($posx, $posy - 5);
-			$pdf->MultiCell(66, 5, $outputlangs->transnoentities("TripSociete")." :", '', 'L');
+			$pdf->MultiCell(80, 5, $outputlangs->transnoentities("TripSociete"), '', 'L');
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetFillColor(224, 224, 224);
 			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);

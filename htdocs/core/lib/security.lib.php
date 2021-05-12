@@ -467,6 +467,10 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 				if (!$user->rights->fournisseur->commande->supprimer) {
 					$deleteok = 0;
 				}
+			} elseif ($feature == 'payment_supplier') {
+				if (!$user->rights->fournisseur->facture->creer) {
+					$deleteok = 0;
+				}
 			} elseif ($feature == 'banque') {
 				if (!$user->rights->banque->modifier) {
 					$deleteok = 0;
@@ -526,6 +530,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 	if (!empty($objectid) && $objectid > 0) {
 		$ok = checkUserAccessToObject($user, $featuresarray, $objectid, $tableandshare, $feature2, $dbt_keyfield, $dbt_select, $parentfortableentity);
 		$params = array('objectid' => $objectid, 'features' => join(',', $featuresarray), 'features2' => $feature2);
+		//print 'checkUserAccessToObject ok='.$ok;
 		return $ok ? 1 : accessforbidden('', 1, 1, 0, $params);
 	}
 

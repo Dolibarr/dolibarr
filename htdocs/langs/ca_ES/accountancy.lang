@@ -131,7 +131,7 @@ InvoiceLinesDone=Línies de factura comptabilitzades
 ExpenseReportLines=Línies d'informes de despeses a comptabilitzar
 ExpenseReportLinesDone=Línies comptabilitzades d'informes de despeses
 IntoAccount=Línia comptabilitzada amb el compte comptable
-TotalForAccount=Total per compte comptable
+TotalForAccount=Total accounting account
 
 
 Ventilate=Comptabilitza
@@ -202,14 +202,14 @@ Docref=Referència
 LabelAccount=Etiqueta de compte
 LabelOperation=Etiqueta de l'operació
 Sens=Direcció
-AccountingDirectionHelp=Per a un compte comptable d'un client, utilitzeu Crèdit per a registrar un pagament que heu rebut <br> Per a un compte comptable d'un proveïdor, utilitzeu Dèbit per a registrar un pagament que feu
+AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you have received<br>For an accounting account of a supplier, use Debit to record a payment you made
 LetteringCode=Codi de retolació
 Lettering=Lletres
 Codejournal=Diari
 JournalLabel=Títol de Diari
 NumPiece=Número de peça
 TransactionNumShort=Número de transacció
-AccountingCategory=Grups personalitzats
+AccountingCategory=Grup personalitzat
 GroupByAccountAccounting=Agrupa per compte major
 GroupBySubAccountAccounting=Agrupa per subcompte comptable
 AccountingAccountGroupsDesc=Podeu definir aquí alguns grups de comptes comptables. S'utilitzaran per a informes comptables personalitzats.
@@ -297,7 +297,7 @@ NoNewRecordSaved=No hi ha més registres pel diari
 ListOfProductsWithoutAccountingAccount=Llista de productes no comptabilitzats en cap compte comptable
 ChangeBinding=Canvia la comptabilització
 Accounted=Comptabilitzat en el llibre major
-NotYetAccounted=Encara no comptabilitzat en el llibre major
+NotYetAccounted=Not yet accounted in the ledger
 ShowTutorial=Mostrar Tutorial
 NotReconciled=No conciliat
 WarningRecordWithoutSubledgerAreExcluded=Advertiment: totes les operacions sense subcompte comptable definit es filtren i s'exclouen d'aquesta vista
@@ -402,7 +402,29 @@ UseMenuToSetBindindManualy=Línies encara no enllaçades, utilitzeu el menú <a 
 
 ## Import
 ImportAccountingEntries=Entrades de comptabilitat
+ImportAccountingEntriesFECFormat=Accounting entries - FEC format
+FECFormatJournalCode=Code journal (JournalCode)
+FECFormatJournalLabel=Label journal (JournalLib)
+FECFormatEntryNum=Piece number (EcritureNum)
+FECFormatEntryDate=Piece date (EcritureDate)
+FECFormatGeneralAccountNumber=General account number (CompteNum)
+FECFormatGeneralAccountLabel=General account label (CompteLib)
+FECFormatSubledgerAccountNumber=Subledger account number (CompAuxNum)
+FECFormatSubledgerAccountLabel=Subledger account number (CompAuxLib)
+FECFormatPieceRef=Piece ref (PieceRef)
+FECFormatPieceDate=Piece date creation (PieceDate)
+FECFormatLabelOperation=Label operation (EcritureLib)
+FECFormatDebit=Debit (Debit)
+FECFormatCredit=Credit (Credit)
+FECFormatReconcilableCode=Reconcilable code (EcritureLet)
+FECFormatReconcilableDate=Reconcilable date (DateLet)
+FECFormatValidateDate=Piece date validated (ValidDate)
+FECFormatMulticurrencyAmount=Multicurrency amount (Montantdevise)
+FECFormatMulticurrencyCode=Multicurrency code (Idevise)
+
 DateExport=Data d'exportació
 WarningReportNotReliable=Avís, aquest informe no està basat en el Llibre Major, de manera que no conté assentaments modificats manualment en el Llibre Major. Si el registre diari està actualitzat, la vista de comptes és més precisa.
 ExpenseReportJournal=Diari d'informe de despeses
 InventoryJournal=Diari d'inventari
+
+NAccounts=%s accounts

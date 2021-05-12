@@ -384,7 +384,7 @@ class Reception extends CommonObject
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON e.fk_incoterms = i.rowid';
 		$sql .= " WHERE e.entity IN (".getEntity('reception').")";
 		if ($id) {
-			$sql .= " AND e.rowid=".$id;
+			$sql .= " AND e.rowid=".((int) $id);
 		}
 		if ($ref) {
 			$sql .= " AND e.ref='".$this->db->escape($ref)."'";
@@ -1043,13 +1043,15 @@ class Reception extends CommonObject
 				$line = new CommandeFournisseurDispatch($this->db);
 				$line->fetch($obj->rowid);
 				$line->fetch_product();
-				$sql_commfourndet = 'SELECT qty, ref,  label, tva_tx, vat_src_code, subprice, multicurrency_subprice, remise_percent FROM llx_commande_fournisseurdet WHERE rowid='.$line->fk_commandefourndet;
+				$sql_commfourndet = 'SELECT qty, ref,  label, description, tva_tx, vat_src_code, subprice, multicurrency_subprice, remise_percent';
+				$sql_commfourndet .= ' FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet';
+				$sql_commfourndet .= ' WHERE rowid = '.((int) $line->fk_commandefourndet);
 				$resql_commfourndet = $this->db->query($sql_commfourndet);
 				if (!empty($resql_commfourndet)) {
 					$obj = $this->db->fetch_object($resql_commfourndet);
 					$line->qty_asked = $obj->qty;
-					$line->description = $line->comment;
-					$line->desc = $line->comment;
+					$line->description = $obj->description;
+					$line->desc = $obj->description;
 					$line->tva_tx = $obj->tva_tx;
 					$line->vat_src_code = $obj->vat_src_code;
 					$line->subprice = $obj->subprice;
@@ -1060,6 +1062,7 @@ class Reception extends CommonObject
 				} else {
 					$line->qty_asked = 0;
 					$line->description = '';
+					$line->desc = '';
 					$line->label = $obj->label;
 				}
 
@@ -1317,7 +1320,7 @@ class Reception extends CommonObject
 		$sql = "SELECT em.rowid, em.code, em.libelle, em.description, em.tracking, em.active";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
 		if ($id != '') {
-			$sql .= " WHERE em.rowid=".$id;
+			$sql .= " WHERE em.rowid = ".((int) $id);
 		}
 
 		$resql = $this->db->query($sql);
@@ -1356,7 +1359,7 @@ class Reception extends CommonObject
 			$sql .= ",libelle='".$this->db->escape($this->update['libelle'])."'";
 			$sql .= ",description='".$this->db->escape($this->update['description'])."'";
 			$sql .= ",tracking='".$this->db->escape($this->update['tracking'])."'";
-			$sql .= " WHERE rowid=".$id;
+			$sql .= " WHERE rowid=".((int) $id);
 			$resql = $this->db->query($sql);
 		}
 		if ($resql < 0) {

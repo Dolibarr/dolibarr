@@ -519,7 +519,7 @@ function dolibarr_del_const($db, $name, $entity = 1)
 	}
 	$sql .= ")";
 	if ($entity >= 0) {
-		$sql .= " AND entity = ".$entity;
+		$sql .= " AND entity = ".((int) $entity);
 	}
 
 	dol_syslog("admin.lib::dolibarr_del_const", LOG_DEBUG);
@@ -1189,10 +1189,10 @@ function unActivateModule($value, $requiredby = 1)
  * 	@param		array		$tabrowid			Tabrowid
  * 	@param		array		$tabcond			Tabcond
  * 	@param		array		$tabhelp			Tabhelp
- *  @param		array		$tabfieldcheck		Tabfieldcheck
+ *  @param		array		$tabcomplete   		Tab complete (will replace all other in future). Key is table name.
  * 	@return		int			1
  */
-function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tabsql, &$tabsqlsort, &$tabfield, &$tabfieldvalue, &$tabfieldinsert, &$tabrowid, &$tabcond, &$tabhelp, &$tabfieldcheck)
+function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tabsql, &$tabsqlsort, &$tabfield, &$tabfieldvalue, &$tabfieldinsert, &$tabrowid, &$tabcond, &$tabhelp, &$tabcomplete)
 {
 	global $db, $modules, $conf, $langs;
 
@@ -1228,14 +1228,14 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
 
 						// We discard modules according to features level (PS: if module is activated we always show it)
 						$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
-						if ($objMod->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2 && !$conf->global->$const_name) {
+						if ($objMod->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2 && empty(getDolGlobalString($const_name))) {
 							$modulequalified = 0;
 						}
-						if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && !$conf->global->$const_name) {
+						if ($objMod->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1 && empty(getDolGlobalString($const_name))) {
 							$modulequalified = 0;
 						}
 						//If module is not activated disqualified
-						if (empty($conf->global->$const_name)) {
+						if (empty(getDolGlobalString($const_name))) {
 							$modulequalified = 0;
 						}
 
@@ -1255,53 +1255,76 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
 							if (!empty($objMod->dictionaries)) {
 								//var_dump($objMod->dictionaries['tabname']);
 								$nbtabname = $nbtablib = $nbtabsql = $nbtabsqlsort = $nbtabfield = $nbtabfieldvalue = $nbtabfieldinsert = $nbtabrowid = $nbtabcond = $nbtabfieldcheck = $nbtabhelp = 0;
-								foreach ($objMod->dictionaries['tabname'] as $val) {
+								$tabnamerelwithkey = array();
+								foreach ($objMod->dictionaries['tabname'] as $key => $val) {
+									$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $val);
 									$nbtabname++;
 									$taborder[] = max($taborder) + 1;
 									$tabname[] = $val;
+									$tabnamerelwithkey[$key] = $val;
+									$tabcomplete[$tmptablename]['picto'] = $objMod->picto;
 								}		// Position
-								foreach ($objMod->dictionaries['tablib'] as $val) {
+								foreach ($objMod->dictionaries['tablib'] as $key => $val) {
+									$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabnamerelwithkey[$key]);
 									$nbtablib++;
 									$tablib[] = $val;
+									$tabcomplete[$tmptablename]['lib'] = $val;
 								}
-								foreach ($objMod->dictionaries['tabsql'] as $val) {
+								foreach ($objMod->dictionaries['tabsql'] as $key => $val) {
+									$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabnamerelwithkey[$key]);
 									$nbtabsql++;
 									$tabsql[] = $val;
+									$tabcomplete[$tmptablename]['sql'] = $val;
 								}
-								foreach ($objMod->dictionaries['tabsqlsort'] as $val) {
+								foreach ($objMod->dictionaries['tabsqlsort'] as $key => $val) {
+									$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabnamerelwithkey[$key]);
 									$nbtabsqlsort++;
 									$tabsqlsort[] = $val;
+									$tabcomplete[$tmptablename]['sqlsort'] = $val;
 								}
-								foreach ($objMod->dictionaries['tabfield'] as $val) {
+								foreach ($objMod->dictionaries['tabfield'] as $key => $val) {
+									$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabnamerelwithkey[$key]);
 									$nbtabfield++;
 									$tabfield[] = $val;
+									$tabcomplete[$tmptablename]['field'] = $val;
 								}
-								foreach ($objMod->dictionaries['tabfieldvalue'] as $val) {
+								foreach ($objMod->dictionaries['tabfieldvalue'] as $key => $val) {
+									$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabnamerelwithkey[$key]);
 									$nbtabfieldvalue++;
 									$tabfieldvalue[] = $val;
+									$tabcomplete[$tmptablename]['value'] = $val;
 								}
-								foreach ($objMod->dictionaries['tabfieldinsert'] as $val) {
+								foreach ($objMod->dictionaries['tabfieldinsert'] as $key => $val) {
+									$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabnamerelwithkey[$key]);
 									$nbtabfieldinsert++;
 									$tabfieldinsert[] = $val;
+									$tabcomplete[$tmptablename]['fieldinsert'] = $val;
 								}
-								foreach ($objMod->dictionaries['tabrowid'] as $val) {
+								foreach ($objMod->dictionaries['tabrowid'] as $key => $val) {
+									$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabnamerelwithkey[$key]);
 									$nbtabrowid++;
 									$tabrowid[] = $val;
+									$tabcomplete[$tmptablename]['rowid'] = $val;
 								}
-								foreach ($objMod->dictionaries['tabcond'] as $val) {
+								foreach ($objMod->dictionaries['tabcond'] as $key => $val) {
+									$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabnamerelwithkey[$key]);
 									$nbtabcond++;
 									$tabcond[] = $val;
+									$tabcomplete[$tmptablename]['rowid'] = $val;
 								}
 								if (!empty($objMod->dictionaries['tabhelp'])) {
-									foreach ($objMod->dictionaries['tabhelp'] as $val) {
+									foreach ($objMod->dictionaries['tabhelp'] as $key => $val) {
+										$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabnamerelwithkey[$key]);
 										$nbtabhelp++;
 										$tabhelp[] = $val;
+										$tabcomplete[$tmptablename]['help'] = $val;
 									}
 								}
 								if (!empty($objMod->dictionaries['tabfieldcheck'])) {
-									foreach ($objMod->dictionaries['tabfieldcheck'] as $val) {
+									foreach ($objMod->dictionaries['tabfieldcheck'] as $key => $val) {
+										$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabnamerelwithkey[$key]);
 										$nbtabfieldcheck++;
-										$tabfieldcheck[] = $val;
+										$tabcomplete[$tmptablename]['fieldcheck'] = $val;
 									}
 								}
 
@@ -1524,7 +1547,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
 
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td class="titlefieldcreate">'.$langs->trans("Description").'</td>';
+	print '<td class="">'.$langs->trans("Description").'</td>';
 	print '<td>';
 	$text = $langs->trans("Value");
 	print $form->textwithpicto($text, $helptext, 1, 'help', '', 0, 2, 'idhelptext');
@@ -1669,17 +1692,21 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
 					//var_dump($arraydefaultmessage);
 					//var_dump($arrayofmessagename);
 					print $form->selectarray('constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')), $arrayofmessagename, $obj->value.':'.$tmp[1], 'None', 0, 0, '', 0, 0, 0, '', '', 1);
+				} elseif (preg_match('/MAIL_FROM$/i', $const)) {
+					print img_picto('', 'email', 'class="pictofixedwidth"').'<input type="text" class="flat minwidth300" name="constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')).'" value="'.dol_escape_htmltag($obj->value).'">';
 				} else { // type = 'string' ou 'chaine'
 					print '<input type="text" class="flat minwidth300" name="constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')).'" value="'.dol_escape_htmltag($obj->value).'">';
 				}
 				print '</td>';
 			}
+
 			// Submit
 			if (empty($strictw3c)) {
 				print '<td class="center">';
 				print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
 				print "</td>";
 			}
+
 			print "</tr>\n";
 
 			if (empty($strictw3c)) {
@@ -1884,14 +1911,14 @@ function email_admin_prepare_head()
 		$head[$h][2] = 'common';
 		$h++;
 
-		if ($conf->mailing->enabled) {
+		if (!empty($conf->mailing->enabled)) {
 			$head[$h][0] = DOL_URL_ROOT."/admin/mails_emailing.php";
 			$head[$h][1] = $langs->trans("OutGoingEmailSetupForEmailing", $langs->transnoentitiesnoconv("EMailing"));
 			$head[$h][2] = 'common_emailing';
 			$h++;
 		}
 
-		if ($conf->ticket->enabled) {
+		if (!empty($conf->ticket->enabled)) {
 			$head[$h][0] = DOL_URL_ROOT."/admin/mails_ticket.php";
 			$head[$h][1] = $langs->trans("OutGoingEmailSetupForEmailing", $langs->transnoentitiesnoconv("Ticket"));
 			$head[$h][2] = 'common_ticket';

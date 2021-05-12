@@ -131,7 +131,7 @@ InvoiceLinesDone=Righe di fatture bloccate
 ExpenseReportLines=Linee di note spese da associare
 ExpenseReportLinesDone=Linee vincolate di note spese
 IntoAccount=Collega linee con il piano dei conti
-TotalForAccount=Totale per conto contabile
+TotalForAccount=Total accounting account
 
 
 Ventilate=Associa
@@ -202,14 +202,14 @@ Docref=Riferimento
 LabelAccount=Etichetta conto
 LabelOperation=Etichetta operazione
 Sens=Direction
-AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you received<br>For an accounting account of a supplier, use Debit to record a payment you make
+AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you have received<br>For an accounting account of a supplier, use Debit to record a payment you made
 LetteringCode=Codice impressioni
 Lettering=Impressioni
 Codejournal=Giornale
 JournalLabel=Etichetta del giornale
 NumPiece=Numero del pezzo
 TransactionNumShort=Num. transazione
-AccountingCategory=Gruppi personalizzati
+AccountingCategory=Custom group
 GroupByAccountAccounting=Group by general ledger account
 GroupBySubAccountAccounting=Group by subledger account
 AccountingAccountGroupsDesc=Qui puoi definire alcuni gruppi di conti contabili. Saranno utilizzati per rapporti contabili personalizzati.
@@ -297,7 +297,7 @@ NoNewRecordSaved=No more record to journalize
 ListOfProductsWithoutAccountingAccount=Lista di prodotti non collegati a nessun piano dei conti
 ChangeBinding=Cambia il piano dei conti
 Accounted=Accounted in ledger
-NotYetAccounted=Not yet accounted in ledger
+NotYetAccounted=Not yet accounted in the ledger
 ShowTutorial=Mostra tutorial
 NotReconciled=Non conciliata
 WarningRecordWithoutSubledgerAreExcluded=Warning, all operations without subledger account defined are filtered and excluded from this view
@@ -402,7 +402,29 @@ UseMenuToSetBindindManualy=Lines not yet bound, use menu <a href="%s">%s</a> to 
 
 ## Import
 ImportAccountingEntries=Accounting entries
+ImportAccountingEntriesFECFormat=Accounting entries - FEC format
+FECFormatJournalCode=Code journal (JournalCode)
+FECFormatJournalLabel=Label journal (JournalLib)
+FECFormatEntryNum=Piece number (EcritureNum)
+FECFormatEntryDate=Piece date (EcritureDate)
+FECFormatGeneralAccountNumber=General account number (CompteNum)
+FECFormatGeneralAccountLabel=General account label (CompteLib)
+FECFormatSubledgerAccountNumber=Subledger account number (CompAuxNum)
+FECFormatSubledgerAccountLabel=Subledger account number (CompAuxLib)
+FECFormatPieceRef=Piece ref (PieceRef)
+FECFormatPieceDate=Piece date creation (PieceDate)
+FECFormatLabelOperation=Label operation (EcritureLib)
+FECFormatDebit=Debit (Debit)
+FECFormatCredit=Credit (Credit)
+FECFormatReconcilableCode=Reconcilable code (EcritureLet)
+FECFormatReconcilableDate=Reconcilable date (DateLet)
+FECFormatValidateDate=Piece date validated (ValidDate)
+FECFormatMulticurrencyAmount=Multicurrency amount (Montantdevise)
+FECFormatMulticurrencyCode=Multicurrency code (Idevise)
+
 DateExport=Date export
 WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
 ExpenseReportJournal=Expense Report Journal
 InventoryJournal=Inventory Journal
+
+NAccounts=%s accounts

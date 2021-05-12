@@ -114,8 +114,8 @@ if ($action == 'add') {
 						if (empty($arrayofexistingboxid[$boxid['value']])) {
 							$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (";
 							$sql .= "box_id, position, box_order, fk_user, entity";
-							$sql .= ") values (";
-							$sql .= $boxid['value'].", ".$pos.", '".(($nbboxonleft > $nbboxonright) ? 'B01' : 'A01')."', ".$fk_user.", ".$conf->entity;
+							$sql .= ") VALUES (";
+							$sql .= $boxid['value'].", ".((int) $pos).", '".(($nbboxonleft > $nbboxonright) ? 'B01' : 'A01')."', ".$fk_user.", ".$conf->entity;
 							$sql .= ")";
 
 							dol_syslog("boxes.php activate box", LOG_DEBUG);
@@ -156,7 +156,7 @@ if ($action == 'delete') {
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes";
 		$sql .= " WHERE entity = ".$conf->entity;
-		$sql .= " AND box_id=".$obj->box_id;
+		$sql .= " AND box_id=".((int) $obj->box_id);
 
 		$resql = $db->query($sql);
 
@@ -255,7 +255,7 @@ if ($resql) {
 		// We renumber the order of the boxes if one of them is in ''
 		// This occurs just after an insert.
 		if ($decalage) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX."boxes SET box_order='".$db->escape($decalage)."' WHERE rowid=".$obj->rowid;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."boxes SET box_order='".$db->escape($decalage)."' WHERE rowid=".((int) $obj->rowid);
 			$db->query($sql);
 		}
 	}
@@ -316,9 +316,9 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="tagtable liste centpercent">'."\n";
 
 print '<tr class="liste_titre">';
-print '<td width="300">'.$langs->trans("Box").'</td>';
+print '<td>'.$langs->trans("Box").'</td>';
 print '<td>'.$langs->trans("Note").'/'.$langs->trans("Parameters").'</td>';
-print '<td>'.$langs->trans("SourceFile").'</td>';
+print '<td></td>';
 print '<td width="160" class="center">'.$langs->trans("ActivatableOn").'</td>';
 print "</tr>\n";
 
@@ -333,7 +333,14 @@ foreach ($boxtoadd as $box) {
 	print '<tr class="oddeven">'."\n";
 	print '<td>'.img_object("", $logo, 'height="14px"').' '.$langs->transnoentitiesnoconv($box->boxlabel);
 	if (!empty($box->class) && preg_match('/graph_/', $box->class)) {
-		print ' ('.$langs->trans("Graph").')';
+		print img_picto('', 'graph', 'class="paddingleft"');
+	}
+	if (!empty($box->version)) {
+		if ($box->version == 'experimental') {
+			print ' <span class="opacitymedium">('.$langs->trans("Experimental").')</span>';
+		} elseif ($box->version == 'development') {
+			print ' <span class="opacitymedium">('.$langs->trans("Development").')</span>';
+		}
 	}
 	print '</td>'."\n";
 	print '<td>';
@@ -344,7 +351,9 @@ foreach ($boxtoadd as $box) {
 		print ($box->note ? $box->note : '&nbsp;');
 	}
 	print '</td>'."\n";
-	print '<td>'.$box->sourcefile.'</td>'."\n";
+	print '<td>';
+	print $form->textwithpicto('', $langs->trans("SourceFile").' : '.$box->sourcefile);
+	print '</td>'."\n";
 
 	// For each possible position, an activation link is displayed if the box is not already active for that position
 	print '<td class="center">';
@@ -375,7 +384,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="tagtable liste">'."\n";
 
 print '<tr class="liste_titre">';
-print '<td width="300">'.$langs->trans("Box").'</td>';
+print '<td>'.$langs->trans("Box").'</td>';
 print '<td>'.$langs->trans("Note").'/'.$langs->trans("Parameters").'</td>';
 print '<td class="center" width="160">'.$langs->trans("ActivatableOn").'</td>';
 print '<td class="center" width="60" colspan="2">'.$langs->trans("PositionByDefault").'</td>';
@@ -395,7 +404,14 @@ foreach ($boxactivated as $key => $box) {
 	print '<tr class="oddeven">';
 	print '<td>'.img_object("", $logo, 'height="14px"').' '.$langs->transnoentitiesnoconv($box->boxlabel);
 	if (!empty($box->class) && preg_match('/graph_/', $box->class)) {
-		print ' ('.$langs->trans("Graph").')';
+		print img_picto('', 'graph', 'class="paddingleft"');
+	}
+	if (!empty($box->version)) {
+		if ($box->version == 'experimental') {
+			print ' <span class="opacitymedium">('.$langs->trans("Experimental").')</span>';
+		} elseif ($box->version == 'development') {
+			print ' <span class="opacitymedium">('.$langs->trans("Development").')</span>';
+		}
 	}
 	print '</td>';
 	print '<td>';

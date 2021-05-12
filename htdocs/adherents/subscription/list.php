@@ -170,7 +170,7 @@ if (isset($date_select) && $date_select != '') {
 }
 if ($search_ref) {
 	if (is_numeric($search_ref)) {
-		$sql .= " AND (c.rowid = ".$db->escape($search_ref).")";
+		$sql .= " AND c.rowid = ".((int) $search_ref);
 	} else {
 		$sql .= " AND 1 = 2"; // Always wrong
 	}
@@ -287,10 +287,10 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 // List of mass actions available
 $arrayofmassactions = array(
-	//'presend'=>$langs->trans("SendByMail"),
-	//'builddoc'=>$langs->trans("PDFMerge"),
+	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
+	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 );
-//if ($user->rights->adherent->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+//if ($user->rights->adherent->supprimer) $arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 if (in_array($massaction, array('presend', 'predelete'))) {
 	$arrayofmassactions = array();
 }

@@ -1,8 +1,10 @@
 # ProductBATCH language file - en_US - ProductBATCH
 ManageLotSerial=Използване на партиден / сериен №
-ProductStatusOnBatch=Да (изисква се партиден / сериен №)
+ProductStatusOnBatch=Yes (lot required)
+ProductStatusOnSerial=Да (уникалният сериен номер е задължителен)
 ProductStatusNotOnBatch=Не (не се изисква партиден / сериен №)
-ProductStatusOnBatchShort=Да
+ProductStatusOnBatchShort=Партиден
+ProductStatusOnSerialShort=Сериен
 ProductStatusNotOnBatchShort=Не
 Batch=Партиден / Сериен №
 atleast1batchfield=Дата на годност, дата на продажба или партиден / сериен №
@@ -22,3 +24,12 @@ ProductLotSetup=Настройка на модул партиден / серие
 ShowCurrentStockOfLot=Показване на текуща наличност за продукт / партида
 ShowLogOfMovementIfLot=Показване на движения за продукт / партида
 StockDetailPerBatch=Наличност по партида
+SerialNumberAlreadyInUse=Сериен номер %s е вече използван от друг продукт %s
+TooManyQtyForSerialNumber=You can only have one product %s for serial number %s
+BatchLotNumberingModules=Options for automatic generation of batch products managed by lots
+BatchSerialNumberingModules=Options for automatic generation of batch products managed by serial numbers
+ManageLotMask=Custom mask
+CustomMasks=Adds an option to define mask in the product card
+LotProductTooltip=Adds an option in the product card to define a dedicated batch number mask
+SNProductTooltip=Adds an option in the product card to define a dedicated serial number mask
+QtyToAddAfterBarcodeScan=Qty to add for each barcode/lot/serial scanned

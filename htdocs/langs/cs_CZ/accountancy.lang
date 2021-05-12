@@ -131,7 +131,7 @@ InvoiceLinesDone=Prověřené řádky faktury
 ExpenseReportLines=Řádky výkazů výdajů navázat
 ExpenseReportLinesDone=Vázané linie vyúčtování výdajů
 IntoAccount=Prověřit řádky v účetním účtu
-TotalForAccount=Celkem za účetní účet
+TotalForAccount=Total accounting account
 
 
 Ventilate=Prověřit
@@ -202,14 +202,14 @@ Docref=Reference
 LabelAccount=Štítek účtu
 LabelOperation=Operace štítků
 Sens=Direction
-AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you received<br>For an accounting account of a supplier, use Debit to record a payment you make
+AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you have received<br>For an accounting account of a supplier, use Debit to record a payment you made
 LetteringCode=Písmenový kód
 Lettering=Nápis
 Codejournal=Deník
 JournalLabel=Označení časopisu
 NumPiece=počet kusů
 TransactionNumShort=Num. transakce
-AccountingCategory=Personalizované skupiny
+AccountingCategory=Custom group
 GroupByAccountAccounting=Group by general ledger account
 GroupBySubAccountAccounting=Group by subledger account
 AccountingAccountGroupsDesc=Zde můžete definovat některé skupiny účetních účtů. Budou se používat pro personalizované účetní výkazy.
@@ -297,7 +297,7 @@ NoNewRecordSaved=Žádný další záznam, který by se publikoval
 ListOfProductsWithoutAccountingAccount=Seznam výrobků, které nejsou vázány na kterémkoli účetním účtu
 ChangeBinding=Změnit vazby
 Accounted=Účtováno v knize
-NotYetAccounted=Zatím nebyl zaznamenán v knize
+NotYetAccounted=Not yet accounted in the ledger
 ShowTutorial=Zobrazit výuku
 NotReconciled=Nesladěno
 WarningRecordWithoutSubledgerAreExcluded=Warning, all operations without subledger account defined are filtered and excluded from this view
@@ -402,7 +402,29 @@ UseMenuToSetBindindManualy=Řádky, které ještě nejsou vázány, použijte na
 
 ## Import
 ImportAccountingEntries=Účetní zápisy
+ImportAccountingEntriesFECFormat=Accounting entries - FEC format
+FECFormatJournalCode=Code journal (JournalCode)
+FECFormatJournalLabel=Label journal (JournalLib)
+FECFormatEntryNum=Piece number (EcritureNum)
+FECFormatEntryDate=Piece date (EcritureDate)
+FECFormatGeneralAccountNumber=General account number (CompteNum)
+FECFormatGeneralAccountLabel=General account label (CompteLib)
+FECFormatSubledgerAccountNumber=Subledger account number (CompAuxNum)
+FECFormatSubledgerAccountLabel=Subledger account number (CompAuxLib)
+FECFormatPieceRef=Piece ref (PieceRef)
+FECFormatPieceDate=Piece date creation (PieceDate)
+FECFormatLabelOperation=Label operation (EcritureLib)
+FECFormatDebit=Debit (Debit)
+FECFormatCredit=Credit (Credit)
+FECFormatReconcilableCode=Reconcilable code (EcritureLet)
+FECFormatReconcilableDate=Reconcilable date (DateLet)
+FECFormatValidateDate=Piece date validated (ValidDate)
+FECFormatMulticurrencyAmount=Multicurrency amount (Montantdevise)
+FECFormatMulticurrencyCode=Multicurrency code (Idevise)
+
 DateExport=Datum exportu
 WarningReportNotReliable=Upozornění: Tento přehled není založen na záznamníku, takže neobsahuje transakci upravenou ručně v Knihovně. Je-li vaše deník aktuální, zobrazení účetnictví je přesnější.
 ExpenseReportJournal=Účet výkazů výdajů
 InventoryJournal=Inventářový věstník
+
+NAccounts=%s accounts

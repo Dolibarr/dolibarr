@@ -96,6 +96,8 @@ create table llx_product
   fk_default_warehouse          integer      DEFAULT NULL,
   canvas                        varchar(32)  DEFAULT NULL,
   finished                      tinyint      DEFAULT NULL,          -- see dictionnary c_product_nature
+  lifetime                      integer      DEFAULT NULL,
+  qc_frequency 					integer 	 DEFAULT NULL,
   hidden                        tinyint      DEFAULT 0,             -- Not used. Deprecated.
   import_key                    varchar(14),                        -- Import key
   model_pdf                     varchar(255),                       -- model save dodument used

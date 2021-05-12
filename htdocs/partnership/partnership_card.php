@@ -81,7 +81,7 @@ dol_include_once('/partnership/class/partnership.class.php');
 dol_include_once('/partnership/lib/partnership.lib.php');
 
 // Load translation files required by the page
-$langs->loadLangs(array("partnership@partnership", "other"));
+$langs->loadLangs(array("partnership", "other"));
 
 // Get parameters
 $id = GETPOST('id', 'int');
@@ -108,9 +108,7 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 // Initialize array of search criterias
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
-if ($conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member')
-	unset($object->fields['fk_soc']);
-else unset($object->fields['fk_member']);
+
 foreach ($object->fields as $key => $val) {
 	if (GETPOST('search_'.$key, 'alpha')) {
 		$search[$key] = GETPOST('search_'.$key, 'alpha');
@@ -125,21 +123,18 @@ if (empty($action) && empty($id) && empty($ref)) {
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
 
-$permissiontoread = $user->rights->partnership->read;
-$permissiontoadd = $user->rights->partnership->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->rights->partnership->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
-$permissionnote = $user->rights->partnership->write; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->partnership->write; // Used by the include of actions_dellink.inc.php
-$upload_dir = $conf->partnership->multidir_output[isset($object->entity) ? $object->entity : 1];
+$permissiontoread 		= $user->rights->partnership->read;
+$permissiontoadd 		= $user->rights->partnership->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontodelete 	= $user->rights->partnership->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$permissionnote 		= $user->rights->partnership->write; // Used by the include of actions_setnotes.inc.php
+$permissiondellink 		= $user->rights->partnership->write; // Used by the include of actions_dellink.inc.php
+$upload_dir 			= $conf->partnership->multidir_output[isset($object->entity) ? $object->entity : 1];
+$managedfor 			= $conf->global->PARTNERSHIP_IS_MANAGED_FOR;
 
-// Security check - Protection if external user
-//if ($user->socid > 0) accessforbidden();
-//if ($user->socid > 0) $socid = $user->socid;
-//$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
-//restrictedArea($user, $object->element, $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
-//if (empty($conf->partnership->enabled)) accessforbidden();
-//if (empty($permissiontoread)) accessforbidden();
-
+if (empty($conf->partnership->enabled)) accessforbidden();
+if (empty($permissiontoread)) accessforbidden();
+if ($object->id > 0 && $object->fk_member > 0 && $managedfor != 'member') accessforbidden();
+if ($object->id > 0 && $object->fk_soc > 0 && $managedfor != 'thirdparty') accessforbidden();
 
 /*
  * Actions
@@ -163,6 +158,19 @@ if (empty($reshook)) {
 			} else {
 				$backtopage = dol_buildpath('/partnership/partnership_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
 			}
+		}
+	}
+
+	$fk_partner 	= ($managedfor == 'member') ? GETPOST('fk_member', 'int') : GETPOST('fk_soc', 'int');
+	$obj_partner 	= ($managedfor == 'member') ? $object->fk_member : $object->fk_soc;
+
+	if ($action == 'add' || ($action == 'update' && $obj_partner != $fk_partner)) {
+		$fpartnership = new Partnership($db);
+
+		$partnershipid = $fpartnership->fetch(0, "", $fk_partner);
+		if ($partnershipid > 0) {
+			setEventMessages($langs->trans('PartnershipAlreadyExist').' : '.$fpartnership->getNomUrl(0, '', 1), '', 'errors');
+			$action = ($action == 'add') ? 'create' : 'edit';
 		}
 	}
 
@@ -214,10 +222,12 @@ if (empty($reshook)) {
 			if ($object->statut != $object::STATUS_REFUSED) {
 				$db->begin();
 
-				$result = $object->refused($user, GETPOST('reason_decline_or_cancel', 'alpha'));
+				$result = $object->refused($user, GETPOST('reason_decline_or_cancel', 'restricthtml'));
 				if ($result < 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
+				} else {
+					$object->reason_decline_or_cancel = GETPOST('reason_decline_or_cancel', 'restricthtml');
 				}
 
 				if (!$error) {
@@ -252,8 +262,14 @@ if (empty($reshook)) {
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_PARTNERSHIP_TO';
 	$trackid = 'partnership'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
+
+	if (!empty($id) && !empty(GETPOST('confirm'))) {
+		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+		exit;
+	}
 }
 
+if ($object->id > 0 && $object->status == $object::STATUS_REFUSED) $object->fields['reason_decline_or_cancel']['visible'] = 3;
 
 
 
@@ -392,7 +408,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($action == 'close') {
 		// Create an array for form
 		$formquestion = array();
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClose'), $langs->trans('ConfirmCloseAsk', $object->ref), 'confirm_close', $formquestion, 'yes', 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClose'), $langs->trans('ConfirmClosePartnershipAsk', $object->ref), 'confirm_close', $formquestion, 'yes', 1);
 	}
 	// Reopon confirmation
 	if ($action == 'reopen') {
@@ -405,7 +421,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($action == 'refuse') {
 		//Form to close proposal (signed or not)
 		$formquestion = array(
-			array('type' => 'text', 'name' => 'reason_decline_or_cancel', 'label' => $langs->trans("Note"), 'morecss' => 'reason_decline_or_cancel', 'value' => '')				// Field to complete private note (not replace)
+			array('type' => 'text', 'name' => 'reason_decline_or_cancel', 'label' => $langs->trans("Note"), 'morecss' => 'reason_decline_or_cancel minwidth400', 'value' => '')				// Field to complete private note (not replace)
 		);
 
 		// if (!empty($conf->notification->enabled)) {
@@ -416,7 +432,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// 	));
 		// }
 
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ReasonDecline'), $text, 'confirm_refuse', $formquestion, '', 1, 250);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToRefuse'), $text, 'confirm_refuse', $formquestion, '', 1, 250);
 	}
 
 	// Confirmation of action xxxx
@@ -489,6 +505,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 }*/
 	$morehtmlref .= '</div>';
 
+	if ($managedfor == 'member') $npfilter .= " AND te.fk_member > 0 "; else $npfilter .= " AND te.fk_soc > 0 ";
+	$object->next_prev_filter = $npfilter;
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
@@ -503,6 +521,32 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	//unset($object->fields['fk_project']);				// Hide field already shown in banner
 	//unset($object->fields['fk_soc']);					// Hide field already shown in banner
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
+
+	// End of subscription date
+	if ($managedfor == 'member') {
+		$fadherent = new Adherent($db);
+		$fadherent->fetch($object->fk_member);
+		print '<tr><td>'.$langs->trans("SubscriptionEndDate").'</td><td class="valeur">';
+		if ($fadherent->datefin) {
+			print dol_print_date($fadherent->datefin, 'day');
+			if ($fadherent->hasDelay()) {
+				print " ".img_warning($langs->trans("Late"));
+			}
+		} else {
+			if (!$adht->subscription) {
+				print $langs->trans("SubscriptionNotRecorded");
+				if ($fadherent->statut > 0) {
+					print " ".img_warning($langs->trans("Late")); // Display a delay picto only if it is not a draft and is not canceled
+				}
+			} else {
+				print $langs->trans("SubscriptionNotReceived");
+				if ($fadherent->statut > 0) {
+					print " ".img_warning($langs->trans("Late")); // Display a delay picto only if it is not a draft and is not canceled
+				}
+			}
+		}
+		print '</td></tr>';
+	}
 
 	// Other attributes. Fields from hook formObjectOptions and Extrafields.
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
@@ -548,10 +592,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if ($object->status == 0 && $permissiontoadd && $action != 'selectlines') {
 			if ($action != 'editline') {
 				// Add products/services form
-				$object->formAddObjectLine(1, $mysoc, $soc);
 
 				$parameters = array();
 				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+				if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				if (empty($reshook))
+					$object->formAddObjectLine(1, $mysoc, $soc);
 			}
 		}
 
@@ -581,7 +627,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 
 			// Back to draft
-			if ($object->status == $object::STATUS_ACCEPTED) {
+			if ($object->status != $object::STATUS_DRAFT) {
 				print dolGetButtonAction($langs->trans('SetToDraft'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes', '', $permissiontoadd);
 			}
 
@@ -590,31 +636,19 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Accept
 			if ($object->status == $object::STATUS_DRAFT) {
 				if (empty($object->table_element_line) || (is_array($object->lines) && count($object->lines) > 0)) {
-					print dolGetButtonAction($langs->trans('Accept'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_accept&confirm=yes', '', $permissiontoadd);
+					print dolGetButtonAction($langs->trans('Validate'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_accept&confirm=yes', '', $permissiontoadd);
 				} else {
 					$langs->load("errors");
 					//print dolGetButtonAction($langs->trans('Accept'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_accept&confirm=yes', '', 0);
-					print '<a class="butActionRefused" href="" title="'.$langs->trans("ErrorAddAtLeastOneLineFirst").'">'.$langs->trans("Accept").'</a>';
+					print '<a class="butActionRefused" href="" title="'.$langs->trans("ErrorAddAtLeastOneLineFirst").'">'.$langs->trans("Validate").'</a>';
 				}
 			}
-
-			// Clone
-			// print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&object=scrumsprint', '', $permissiontoadd);
-
-
-			// if ($permissiontoadd) {
-			// 	if ($object->status == $object::STATUS_ENABLED) {
-			// 		print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=disable&token='.newToken().'">'.$langs->trans("Disable").'</a>'."\n";
-			// 	} else {
-			// 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=enable&token='.newToken().'">'.$langs->trans("Enable").'</a>'."\n";
-			// 	}
-			// }
 
 			// Cancel
 			if ($permissiontoadd) {
 				if ($object->status == $object::STATUS_ACCEPTED) {
-					print dolGetButtonAction($langs->trans('Cancel'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_close&confirm=yes&token='.newToken(), '', $permissiontoadd);
-				} elseif ($object->status == $object::STATUS_CANCELED) {
+					print dolGetButtonAction($langs->trans('Cancel'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=close&token='.newToken(), '', $permissiontoadd);
+				} elseif ($object->status > $object::STATUS_ACCEPTED) {
 					// print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans("Re-Open").'</a>'."\n";
 					print dolGetButtonAction($langs->trans('Re-Open'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_reopen&confirm=yes&token='.newToken(), '', $permissiontoadd);
 				}
@@ -622,13 +656,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Refuse
 			if ($permissiontoadd) {
-				if ($object->status != $object::STATUS_CANCELED) {
+				if ($object->status != $object::STATUS_CANCELED && $object->status != $object::STATUS_REFUSED) {
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=refuse&token='.newToken().'">'.$langs->trans("Refuse").'</a>'."\n";
 				}
 			}
 
 			// Delete (need delete permission, or if draft, just need create/modify permission)
-			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete', '', $permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd));
+			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken(), '', $permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd));
 		}
 		print '</div>'."\n";
 	}
@@ -683,7 +717,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 	// Presend form
-	$modelmail = 'partnership';
+	$modelmail = 'partnership_send';
 	$defaulttopic = 'InformationMessage';
 	$diroutput = $conf->partnership->dir_output;
 	$trackid = 'partnership'.$object->id;

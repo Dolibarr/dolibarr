@@ -2,9 +2,9 @@
 ErrorCompanyNameAlreadyExists=نام شرکت %s از قبل، وجود داشته است. لطفا نام دیگری برگزینید.
 ErrorSetACountryFirst=ابتدا کشور را تعیین کنید
 SelectThirdParty=انتخاب شخص‌سوم
-ConfirmDeleteCompany=آیا مطمئن هستید که می‌خواهید این شرکت و همۀ اطلاعات مربوطه را حذف کنید؟
+ConfirmDeleteCompany=Are you sure you want to delete this company and all related information?
 DeleteContact=حذف یک طرف‌تماس/نشانی
-ConfirmDeleteContact=آیا مطمئن هستید که می‌خواهید این طرف‌تماس و همۀ اطلاعات مربوطه را حذف کنید؟
+ConfirmDeleteContact=Are you sure you want to delete this contact and all related information?
 MenuNewThirdParty=شخص‌سوم جدید
 MenuNewCustomer=مشتری جدید
 MenuNewProspect=مشتری‌احتمالی جدید
@@ -43,9 +43,10 @@ Individual=فرد خصوصی
 ToCreateContactWithSameName=به طور خودکار با همین اطلاعات یک طرف/تماس نشانی شبیه به شخص‌سوم در ذیل این شخص‌سوم خواهد ساخت. در اکثر موارد، حتی در صورتی‌که که شخص‌سوم، یک شخص فیزیکی باشد، ساختن یک شخص‌سوم، کافی است. 
 ParentCompany=شرکت والد
 Subsidiaries=شرکتهای تابعه
-ReportByMonth=گزارش ماهانه
-ReportByCustomers=گزارش مشتری
-ReportByQuarter=گزارش بر اساس نرخ
+ReportByMonth=Report per month
+ReportByCustomers=Report per customer
+ReportByThirdparties=Report per thirdparty
+ReportByQuarter=Report per rate
 CivilityCode=کد ملی
 RegisteredOffice=دفتر ثبتی
 Lastname=نام خانوادگی
@@ -68,7 +69,7 @@ PhoneShort=تلفن
 Skype=اسکایپ
 Call=تماس
 Chat=گفتگوی اینترنتی
-PhonePro=تلفن کاری
+PhonePro=Bus. phone
 PhonePerso=تلفن شخصی
 PhoneMobile=تلفن همراه
 No_Email=عدم تمایل به دریافت رایانامه‌های جمعی
@@ -172,14 +173,20 @@ ProfId1ES=شناسۀ کاری 1 (CIF/NIF)
 ProfId2ES=شناسۀ کاری 2 (شمارۀ امنیت اجتماعی)
 ProfId3ES=شناسۀ کاری 3 (CNAE)
 ProfId4ES=شناسۀ کاری 4 (Collegiate number)
-ProfId5ES=EORI number
+ProfId5ES=Prof Id 5 (EORI number)
 ProfId6ES=-
 ProfId1FR=شناسۀ کاری 1 (SIREN)
 ProfId2FR=شناسۀ کاری 2 (SIRET)
 ProfId3FR=شناسۀ کاری 3 (NAF, old APE)
 ProfId4FR=شناسۀ کاری 4 (RCS/RM)
-ProfId5FR=EORI number
+ProfId5FR=Prof Id 5 (numéro EORI)
 ProfId6FR=-
+ProfId1ShortFR=SIREN
+ProfId2ShortFR=SIRET
+ProfId3ShortFR=NAF
+ProfId4ShortFR=RCS
+ProfId5ShortFR=EORI
+ProfId6ShortFR=-
 ProfId1GB=شمارۀ ثبت
 ProfId2GB=-
 ProfId3GB=SIC
@@ -203,6 +210,7 @@ ProfId2IT=-
 ProfId3IT=-
 ProfId4IT=-
 ProfId5IT=EORI number
+ProfId6IT=-
 ProfId1LU=شناسۀ کاری 1 (R.C.S. Luxembourg)
 ProfId2LU=شناسۀ کاری 2 (Business permit)
 ProfId3LU=-
@@ -231,7 +239,7 @@ ProfId1PT=شناسۀ کاری 1 (NIPC)
 ProfId2PT=شناسۀ کاری 2 (شمارۀ تامین اجتماعی)
 ProfId3PT=شناسۀ کاری 3 (Commercial Record number)
 ProfId4PT=شناسۀ کاری 4 (Conservatory)
-ProfId5PT=EORI number
+ProfId5PT=Prof Id 5 (EORI number)
 ProfId6PT=-
 ProfId1SN=RC
 ProfId2SN=NINEA
@@ -255,7 +263,7 @@ ProfId1RO=Prof Id 1 (CUI)
 ProfId2RO=Prof Id 2 (Nr. Înmatriculare)
 ProfId3RO=Prof Id 3 (CAEN)
 ProfId4RO=Prof Id 5 (EUID)
-ProfId5RO=EORI number
+ProfId5RO=Prof Id 5 (EORI number)
 ProfId6RO=-
 ProfId1RU=شناسۀ کاری 1 (OGRN)
 ProfId2RU=شناسۀ کاری 2 (INN)
@@ -323,7 +331,7 @@ CustomerCodeDesc=کد مشتری، منحصربه‌فرد برای همۀ مش�
 SupplierCodeDesc=کد فروشنده، منحصر‌به‌فرد برای همۀ فروشندگان
 RequiredIfCustomer=در صورتی‌که شخص‌سوم یک مشتری یا مشتری‌احتمالی است، الزامی است
 RequiredIfSupplier=در صورتی که شخص‌سوم، فروشنده است، الزامی است
-ValidityControledByModule=اعتبار توسط واحد مربوطه مورد بررسی قرار می‌گیرد
+ValidityControledByModule=Validity controlled by the module
 ThisIsModuleRules=مقررات این واحد
 ProspectToContact=مشتری‌احتمالی به طرف‌تماس
 CompanyDeleted= شرکت "%s" از پایگاه داده حذف شد.
@@ -431,22 +439,22 @@ ListSuppliersShort=فهرست فروشندگان
 ListProspectsShort=فهرست مشتریان احتمالی
 ListCustomersShort=فهرست مشتریان
 ThirdPartiesArea=شخص‌های سوم/طرف‌های تماس
-LastModifiedThirdParties=Latest %s modified Third Parties
-UniqueThirdParties=تعداد کل شخص‌سوم‌ها
+LastModifiedThirdParties=Latest %s Third Parties which were modified
+UniqueThirdParties=Total number of Third Parties
 InActivity=باز
 ActivityCeased=بسته
 ThirdPartyIsClosed=شخص‌سوم بسته شده است
-ProductsIntoElements=فهرست محصولات/خدمات به %s
+ProductsIntoElements=List of products/services mapped to %s
 CurrentOutstandingBill=صورت‌حساب‌های درانتظار کنونی
 OutstandingBill=حداکثر تعداد صورت‌حساب‌های درانتظار
 OutstandingBillReached=حداکثر تعداد رسیدن به صورت‌حساب‌های درانتظار
 OrderMinAmount=حداقل مقدار سفارش
-MonkeyNumRefModelDesc=یک عدد به شکل %s yymm-nnnn برای این کد مشتری و %s yymm-nnnn برای فروشنده باز می‌گرداند که yy برابر با سال، mm برابر با ماه و nnnn یک سریال بدون توقف و بدون بازگشت به 0 است.
+MonkeyNumRefModelDesc=Return a number in the format %syymm-nnnn for the customer code and %syymm-nnnn for the vendor code where yy is year, mm is month and nnnn is a sequencial auto-incrementing number with no break and no return to 0.
 LeopardNumRefModelDesc=این کد آزاد است و می‌تواند در هر زمانی ویرایش شود.
 ManagingDirectors=نام مدیر (مدیرعامل، مدیر، رئیس...)()
 MergeOriginThirdparty=نسخه‌برداری از شخص سوم (شخص‌سومی که می‌خواهید حذف کنید)
 MergeThirdparties=ادغام شخص‌سوم‌ها
-ConfirmMergeThirdparties=آیا مطمئن هستید می‌خواهید این شخص سوم را با مورد موجود ادغام کنید؟ همۀ اشیاء پیوند شده (صورت‌حساب، سفارش، ...) به شخص سوم کنونی منتقل خواهد شد و سپس این شخص سوم حذف خواهد شد
+ConfirmMergeThirdparties=Are you sure you want to merge the chosen third party with the current one? All linked objects (invoices, orders, ...) will be moved to the current third party, after which the chosen third party will be deleted.
 ThirdpartiesMergeSuccess=شخص‌سوم‌ها با هم ادغام شدند
 SaleRepresentativeLogin=مشخصات‌ورود نماینده فروش
 SaleRepresentativeFirstname=نام نمایندۀ فروش

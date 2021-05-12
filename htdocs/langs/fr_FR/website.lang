@@ -46,12 +46,12 @@ SetHereVirtualHost=<u> Utilisation avec Apache/NGinx/...</u> <br> Créez sur vot
 ExampleToUseInApacheVirtualHostConfig=Exemple à utiliser dans la configuration de l'hôte virtuel Apache:
 YouCanAlsoTestWithPHPS=<u> Utilisation avec un serveur PHP incorporé </u> <br> Sous environnement de développement, vous pouvez préférer tester le site avec le serveur Web PHP intégré (PHP 5.5 requis) en exécutant <br> <strong> php -S 0.0.0.0:8080 -t %s </strong>
 YouCanAlsoDeployToAnotherWHP=<u>Exécutez votre site Web avec un autre fournisseur d'hébergement Dolibarr</u> <br> Si vous ne disposez pas d'un serveur Web tel qu'Apache ou NGinx sur Internet, vous pouvez exporter et importer votre site Web vers une autre instance de Dolibarr fournie par un autre fournisseur d'hébergement Dolibarr offrant une intégration complète avec le module de site Web. Vous pouvez trouver une liste de certains hébergeurs Dolibarr sur <a href="https://saas.dolibarr.org" target="_blank">https://saas.dolibarr.org</a>
-CheckVirtualHostPerms=Vérifiez également que le virtual host a la permission <strong> %s </strong> sur les fichiers dans <strong> %s </strong>
+CheckVirtualHostPerms=Vérifiez également que l'utilisateur du virtual host (par exemple www-data) a la permission <strong> %s </strong> sur les fichiers dans<br><strong> %s </strong>
 ReadPerm=Lire
 WritePerm=Écrire
 TestDeployOnWeb=Tester/déployer sur le web
 PreviewSiteServedByWebServer=<u>Prévisualiser %s dans un nouvel onglet.</u><br><br>. Le %s sera servi par un serveur web externe (comme Apache, Nginx, IIS). Vous pouvez installer et configurer ce serveur auparavant pour pointer sur le répertoire : <br><strong>%s</strong><br> URL servie par un serveur externe: <br><strong>%s</strong>
-PreviewSiteServedByDolibarr=<u>Aperçu %s dans un nouvel onglet.</u><br><br>Le %s sera servi par le serveur Dolibarr donc aucun serveur Web supplémentaire (comme Apache, Nginx, IIS) n'est nécessaire.<br>L'inconvénient est que l'URL des pages ne sont pas sexy et commencent par un chemin de votre Dolibarr.<br>URL servie par Dolibarr:<br><strong>%s</strong><br><br>Pour utiliser votre propre serveur web externe pour servir ce site web, créez un virtual host sur vote serveur web qui pointe sur le répertoire<br><strong>%s</strong><br> ensuite entrez le nom de ce virtual host et cliquer sur le bouton d'affichage de l'aperçu.
+PreviewSiteServedByDolibarr=<u>Aperçu %s dans un nouvel onglet.</u><br><br>Le %s sera servi par le serveur Dolibarr aussi aucun serveur Web supplémentaire (comme Apache, Nginx, IIS) n'est nécessaire.<br>L'inconvénient est que l'URL des pages ne sont pas sexy et commencent par un chemin de votre Dolibarr.<br>URL servie par Dolibarr:<br><strong>%s</strong><br><br>Pour utiliser votre propre serveur web externe pour servir ce site web, créez un virtual host sur votre serveur web qui pointe sur le répertoire<br><strong>%s</strong><br> ensuite entrez le nom de ce virtual host dans les propriétés de ce site web et  cliquer sur le lien "Tester/Déployer sur le web".
 VirtualHostUrlNotDefined=URL du virtual host servit par le serveur web externe non défini
 NoPageYet=Pas de page pour l'instant
 YouCanCreatePageOrImportTemplate=Vous pouvez créer une nouvelle page ou importer un modèle de site Web complet.
@@ -115,7 +115,7 @@ MyWebsitePages=Mes pages de site web
 SearchReplaceInto=Rechercher | Remplacer dans
 ReplaceString=Nouvelle chaîne
 CSSContentTooltipHelp=Entrez ici le contenu CSS. Pour éviter tout conflit avec le CSS de l'application, veillez à ajouter toutes les déclarations avec la classe .bodywebsite. Par exemple: <br><br> #mycssselector, input.myclass: survol {...} <br> doit être <br> .bodywebsite #mycssselector, .bodywebsite input.myclass: hover {...} <br><br> Remarque: Si vous avez un fichier volumineux sans ce préfixe, vous pouvez utiliser 'lessc' pour le convertir afin d'ajouter le préfixe .bodywebsite partout.
-LinkAndScriptsHereAreNotLoadedInEditor=Avertissement: Ce contenu est affiché uniquement lorsque le site est accessible depuis un serveur. Il n'est pas utilisé en mode édition. Par conséquent, si vous devez charger des fichiers javascript également en mode édition, ajoutez simplement la balise 'script src=...' dans la page.
+LinkAndScriptsHereAreNotLoadedInEditor=Avertissement: Ce contenu est affiché uniquement lorsque le site est accéder depuis un serveur. Il n'est pas pris en compte en mode édition. Par conséquent, si vous devez charger des fichiers javascript également en mode édition, ajoutez simplement la balise 'script src=...' dans la page.
 Dynamiccontent=Exemple de page à contenu dynamique
 ImportSite=Importer modèle de site web
 EditInLineOnOff=Mode 'Modifier en ligne' est %s
@@ -137,3 +137,11 @@ PagesRegenerated=%s page(s)/conteneur(s) régénéré(s)
 RegenerateWebsiteContent=Régénérer les fichiers de cache du site Web
 AllowedInFrames=Autorisé dans les Frames
 DefineListOfAltLanguagesInWebsiteProperties=Définir la liste des langues disponibles dans les propriétés du site web.
+GenerateSitemaps=Générer un fichier de plan du site
+ConfirmGenerateSitemaps=Si vous confirmez, vous effacerez le fichier de plan du site existant...
+ConfirmSitemapsCreation=Confirmer la génération du plan du site
+SitemapGenerated=Sitemap file <b>%s</b> generated
+ImportFavicon=Favicon
+ErrorFaviconType=Le Favicon doit être en png
+ErrorFaviconSize=Le Favicon doit être de taille 16x16, 32x32 ou 64x64
+FaviconTooltip=Téléverser une image qui doit être au format png (16x16, 32x32 ou 64x64)
