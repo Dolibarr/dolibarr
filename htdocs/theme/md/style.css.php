@@ -369,7 +369,7 @@ select.vmenusearchselectcombo {
 	background-color: unset;
 }
 
-textarea:focus, button:focus {
+textarea:focus {
 	/* v6 box-shadow: 0 0 4px #8091BF; */
 	border: 1px solid #aaa !important;
 }
@@ -737,6 +737,9 @@ div.floatright
 }
 .largenumber {
 	font-size: 1.4em;
+}
+button:focus {
+	outline: none;
 }
 
 th .button {
