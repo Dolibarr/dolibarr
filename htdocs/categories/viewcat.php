@@ -769,7 +769,7 @@ if ($type == Categorie::TYPE_CONTACT) {
 				}
 
 				$objsoc->fetch($contact->socid);
-				
+
 				print "\t".'<tr class="oddeven">'."\n";
 				print '<td class="nowrap" valign="top">';
 				print $contact->getNomUrl(1, 'category');
