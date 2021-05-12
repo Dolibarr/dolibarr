@@ -48,7 +48,7 @@ if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array('orders', "companies", "bills", 'propal', 'deliveries', 'stocks', "productbatch", 'incoterm', 'other'));
+$langs->loadLangs(array('orders', 'sendings', 'companies', 'bills', 'propal', 'deliveries', 'stocks', 'productbatch', 'incoterm', 'other'));
 
 $id     = GETPOST('id', 'int'); // id of order
 $ref    = GETPOST('ref', 'alpha');
@@ -232,7 +232,9 @@ if (!empty($conf->projet->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
-llxHeader('', $langs->trans('OrderCard'), '');
+$title = $langs->trans('Order')." - ".$langs->trans('Shipments');
+$help_url = 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes|DE:Modul_Kundenaufträge';
+llxHeader('', $title, $help_url);
 
 
 if ($id > 0 || !empty($ref)) {

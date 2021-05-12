@@ -4956,7 +4956,11 @@ class Facture extends CommonInvoice
 		$resql = $this->db->query($sql);
 
 		$stmpidate = dol_print_date($tmpidate, 'day', 'gmt');
-		$this->output .= $langs->trans("SearchUnpaidInvoicesWithDueDate", $stmpidate).'<br>';
+		$this->output .= $langs->transnoentitiesnoconv("SearchUnpaidInvoicesWithDueDate", $stmpidate);
+		if (!empty($paymentmode) && $paymentmode != 'all') {
+			$this->output .= ' ('.$langs->transnoentitiesnoconv("PaymentMode").' '.$paymentmode.')';
+		}
+		$this->output .= '<br>';
 
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
