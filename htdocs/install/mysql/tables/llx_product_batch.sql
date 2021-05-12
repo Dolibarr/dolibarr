@@ -26,6 +26,6 @@ CREATE TABLE llx_product_batch (
   sellby datetime DEFAULT NULL,			-- deprecated. should not be used here but should be stored into a table llx_product_lot
   batch varchar(128) NOT NULL,
   qty double NOT NULL DEFAULT 0,
-  import_key varchar(14) DEFAULT NULL,
+  import_key varchar(14) DEFAULT NULL
 ) ENGINE=innodb;
 
