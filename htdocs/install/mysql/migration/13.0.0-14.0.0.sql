@@ -373,8 +373,8 @@ UPDATE llx_propal SET date_signature = date_cloture WHERE date_signature IS NULL
 
 
 ALTER TABLE llx_product ADD COLUMN batch_mask VARCHAR(32) NULL;
-ALTER TABLE llx_product ADD COLUMN lifetime VARCHAR(6);
-ALTER TABLE llx_product ADD COLUMN qc_frequency INT;
+ALTER TABLE llx_product ADD COLUMN lifetime INTEGER NULL;
+ALTER TABLE llx_product ADD COLUMN qc_frequency INTEGER NULL;
 
 ALTER TABLE llx_product_lot ADD COLUMN eol_date datetime;
 ALTER TABLE llx_product_lot ADD COLUMN manufacturing_date datetime;
