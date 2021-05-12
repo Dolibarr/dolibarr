@@ -271,9 +271,8 @@ if ($resql) {
 
 						$moreinheader = '';
 						if (preg_match('/__UNSUBSCRIBE__/', $message)) {
-							$moreinheader = make_substitutions('__UNSUBSCRIBE__', $substitutionarray);
-							$moreinheader = explode('"', $moreinheader);
-							$moreinheader = "List-Unsubscribe: <".$moreinheader[1].">\n";
+							$moreinheader = "List-Unsubscribe: <__UNSUBSCRIBE_URL__>\n";
+							$moreinheader = make_substitutions($moreinheader, $substitutionarray);
 						}
 
 						$arr_file = array();
