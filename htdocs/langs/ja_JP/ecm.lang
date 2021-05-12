@@ -41,3 +41,7 @@ FileNotYetIndexedInDatabase=ファイルはまだデータベースにインデ�
 ExtraFieldsEcmFiles=ExtrafieldsEcmファイル
 ExtraFieldsEcmDirectories=ExtrafieldsEcmディレクトリ
 ECMSetup=ECMセットアップ
+GenerateImgWebp=すべての画像を.webp形式の別のバージョンで複製する
+ConfirmGenerateImgWebp=If you confirm, you will generate an image in .webp format for all images currently into this folder (subfolders are not included)...
+ConfirmImgWebpCreation=すべての画像の重複を確認する
+SucessConvertImgWebp=画像が正常に複製された

@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/workstation/lib/workstation_workstation.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("workstation@workstation", "companies", "other", "mails"));
+$langs->loadLangs(array("workstation", "companies", "other", "mails"));
 
 
 $action = GETPOST('action', 'aZ09');
@@ -77,7 +77,8 @@ if ($id > 0 || !empty($ref)) {
 $permissiontoadd = $user->rights->workstation->workstation->write; // Used by the include of actions_addupdatedelete.inc.php
 
 // Security check
-restrictedArea($user, $object->element, $object->id, '', 'workstation');
+$isdraft = 0;
+restrictedArea($user, $object->element, $object->id, $object->table_element, 'workstation', 'fk_soc', 'rowid', $isdraft);
 
 
 /*

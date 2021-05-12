@@ -70,6 +70,8 @@ Deleted=Eliminado
 # Dict
 Type=Tipo
 Severity=Gravidade
+TicketGroupIsPublic=O grupo é público
+TicketGroupIsPublicDesc=Se un grupo de tickets é público, será visible no formulario cando se crea un ticket desde a interface pública
 
 # Email templates
 MailToSendTicketMessage=Enviar correo electrónico dende ticket
@@ -114,8 +116,8 @@ TicketsShowModuleLogo=Amosar o logotipo do módulo na interfaz pública
 TicketsShowModuleLogoHelp=Active esta opción para ocultar o logotipo nas páxinas da interfaz pública
 TicketsShowCompanyLogo=Amosar o logotipo da empresa na interfaz pública
 TicketsShowCompanyLogoHelp=Active esta opción para ocultar o logotipo da empresa principal nas páxinas da interfaz pública
-TicketsEmailAlsoSendToMainAddress=Envíe tamén notificacións a enderezo de correo electrónico principal
-TicketsEmailAlsoSendToMainAddressHelp=Active esta opción para enviar un correo electrónico ao enderezo "Notificación de correo electrónico desde" (ver configuración a continuación)
+TicketsEmailAlsoSendToMainAddress=Envíe tamén unha notificación ao enderezo de correo electrónico principal
+TicketsEmailAlsoSendToMainAddressHelp=Active esta opción para enviar tamén un correo electrónico ao enderezo definido na configuración "%s" (ver lapela "%s")
 TicketsLimitViewAssignedOnly=Restrinxir a visualización aos tickets asignados ao usuario actual (non é efectivo para usuarios externos, limítase sempre ao terceiro do que dependen)
 TicketsLimitViewAssignedOnlyHelp=Só serán visibles os tickets asignados ao usuario actual. Non se aplica a un usuario con dereitos de xestión de tickets.
 TicketsActivatePublicInterface=Activar a interface pública
@@ -126,10 +128,10 @@ TicketNumberingModules=Módulo de numeración de entradas
 TicketsModelModule=Modelos de documentos para os tickets
 TicketNotifyTiersAtCreation=Notificar a terceiros a creación
 TicketsDisableCustomerEmail=Desactiva sempre os correos electrónicos cando se crea un ticket desde a interface pública
-TicketsPublicNotificationNewMessage=Enviar correo electrónico cando se engada unha nova mensaxe
+TicketsPublicNotificationNewMessage=Envíe correo(s) electrónico(s) cando se engada unha nova mensaxe/comentario a un ticket
 TicketsPublicNotificationNewMessageHelp=Enviar correo electrónico cando se engada unha nova mensaxe desde a interface pública (ao usuario asignado ou ao correo electrónico de notificacións a (actualizar) e/ou ao correo electrónico de notificacións a)
 TicketPublicNotificationNewMessageDefaultEmail=Correo electrónico de notificacións a (actualizar)
-TicketPublicNotificationNewMessageDefaultEmailHelp=Envía por correo electrónico novas mensaxes a este enderezo se o ticket non ten asignado un usuario ou o usuario non ten un correo electrónico.
+TicketPublicNotificationNewMessageDefaultEmailHelp=Envía un correo electrónico a este enderezo para cada nova mensaxe de notificación se o ticket non ten un usuario asignado ou se o usuario non ten ningún correo electrónico coñecido.
 #
 # Index & list page
 #
@@ -302,3 +304,13 @@ BoxLastModifiedTicket=Últimos tickets modificados
 BoxLastModifiedTicketDescription=Últimos %s tickets modificados
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=Non hai tickets modificados recentemente
+BoxTicketType=Número de tickets abertos por tipo
+BoxTicketSeverity=Número de tickets abertos por gravidade
+BoxNoTicketSeverity=Número de tickets abertos
+BoxTicketLastXDays=Número de tickets abertos por días nos últimos %s días
+BoxTicketLastXDayswidget = Número de novos tickets por días nos últimos X días
+BoxNoTicketLastXDays=Sen novos tickets nos últimos %s días
+BoxNumberOfTicketByDay=Número de novos tickets por día
+BoxNewTicketVSClose=Número de novos tickets hoxe fronte a tickets pechados hoxe
+TicketCreatedToday=Ticket creado hoxe
+TicketClosedToday=Ticket pechado hoxe

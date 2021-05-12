@@ -1,8 +1,6 @@
 # Dolibarr language file - Source file is en_US - errors
 NoErrorCommitIsDone=Sin error, nos comprometemos
 ErrorButCommitIsDone=Errores encontrados pero validamos a pesar de esto
-ErrorBadEMail=Correo electrónico %s es incorrecto
-ErrorBadUrl=Url %s está mal
 ErrorBadValueForParamNotAString=Mal valor para su parámetro En general, se agrega cuando falta la traducción.
 ErrorLoginAlreadyExists=Login %s ya existe.
 ErrorRecordNotFound=Registro no encontrado.
@@ -34,8 +32,6 @@ ErrorBadDateFormat=El valor '%s' tiene formato de fecha incorrecto
 ErrorFailedToWriteInDir=Error al escribir en el directorio %s
 ErrorFoundBadEmailInFile=Se encontró una sintaxis de correo electrónico incorrecta para %s líneas en el archivo (línea de ejemplo %s con correo electrónico = %s)
 ErrorUserCannotBeDelete=El usuario no puede ser eliminado. Tal vez esté asociado a entidades dolibarr.
-ErrorFieldsRequired=Algunos campos requeridos no fueron completados.
-ErrorSubjectIsRequired=El tema del correo electrónico es obligatorio
 ErrorFailedToCreateDir=Error al crear un directorio. Compruebe que el usuario del servidor web tenga permisos para escribir en el directorio de documentos de Dolibarr. Si el parámetro <b> safe_mode </ b> está habilitado en este PHP, verifique que los archivos php de Dolibarr sean propiedad del usuario (o grupo) del servidor web.
 ErrorNoMailDefinedForThisUser=Sin correo definido para este usuario
 ErrorFeatureNeedJavascript=Esta característica necesita javascript para activarse para funcionar. Cambie esto en la configuración - visualización.

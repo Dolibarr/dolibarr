@@ -12,6 +12,7 @@
  * Copyright (C) 2015-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2019       Lenin Rivas           	<lenin.rivas@servcom-it.com>
  * Copyright (C) 2020       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2021		Anthony Berton       	<bertonanthony@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +34,42 @@
  *	\brief      Set of functions used for PDF generation
  *	\ingroup    core
  */
+
+
+/**
+ *  Return array head with list of tabs to view object informations.
+ *
+ *  @return	array   	        head array with tabs
+ */
+function pdf_admin_prepare_head()
+{
+	global $langs, $conf, $user;
+
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT.'/admin/pdf.php';
+	$head[$h][1] = $langs->trans("Common");
+	$head[$h][2] = 'general';
+	$h++;
+
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'pdf_admin');
+
+	if (!empty($conf->propal->enabled)) {
+		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_other.php';
+		$head[$h][1] = $langs->trans("Other");
+		$head[$h][2] = 'other';
+		$h++;
+	}
+
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'pdf_admin', 'remove');
+
+	return $head;
+}
 
 
 /**
@@ -1196,7 +1233,7 @@ function pdf_writeLinkedObjects(&$pdf, $object, $outputlangs, $posx, $posy, $w, 
 /**
  *	Output line description into PDF
  *
- *  @param  TCPDF				$pdf               PDF object
+ *  @param  TCPDF			$pdf               	PDF object
  *	@param	Object			$object				Object
  *	@param	int				$i					Current line number
  *  @param  Translate		$outputlangs		Object lang for output

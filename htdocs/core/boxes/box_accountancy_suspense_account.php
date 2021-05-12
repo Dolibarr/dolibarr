@@ -33,7 +33,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 class box_accountancy_suspense_account extends ModeleBoxes
 {
 	public $boxcode = "accountancy_suspense_account";
-	public $boximg = "object_invoice";
+	public $boximg = "accounting";
 	public $boxlabel = "BoxSuspenseAccount";
 	public $depends = array("accounting");
 

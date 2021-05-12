@@ -18,59 +18,59 @@
 #
 
 # Module label 'ModuleRecruitmentName'
-ModuleRecruitmentName = Recruitment
+ModuleRecruitmentName = Rekrutacja
 # Module description 'ModuleRecruitmentDesc'
-ModuleRecruitmentDesc = Manage and follow recruitment campaigns for new job positions
+ModuleRecruitmentDesc = Zarządzaj i śledź kampanie rekrutacyjne na nowe stanowiska pracy
 
 #
 # Admin page
 #
-RecruitmentSetup = Recruitment setup
+RecruitmentSetup = Konfiguracja rekrutacji
 Settings = Ustawienia
-RecruitmentSetupPage = Enter here the setup of main options for the recruitment module
-RecruitmentArea=Recruitement area
-PublicInterfaceRecruitmentDesc=Public pages of jobs are public URLs to show and answer to open jobs. There is one different link for each open job, found on each job record.
-EnablePublicRecruitmentPages=Enable public pages of open jobs
+RecruitmentSetupPage = Wpisz tutaj ustawienia głównych opcji modułu rekrutacyjnego
+RecruitmentArea=Obszar rekrutacji
+PublicInterfaceRecruitmentDesc=Publiczne strony ofert pracy to publiczne adresy URL służące do wyświetlania otwartych ofert pracy i odpowiadania na nie. Dla każdego otwartego stanowiska istnieje jeden link, znajdujący się w każdym rekordzie pracy.
+EnablePublicRecruitmentPages=Włącz publiczne strony otwartych ofert pracy
 
 #
 # About page
 #
 About = O
-RecruitmentAbout = About Recruitment
-RecruitmentAboutPage = Recruitment about page
-NbOfEmployeesExpected=Expected nb of employees
-JobLabel=Label of job position
-WorkPlace=Work place
-DateExpected=Expected date
-FutureManager=Future manager
-ResponsibleOfRecruitement=Responsible of recruitment
-IfJobIsLocatedAtAPartner=If job is located at a partner place
+RecruitmentAbout = O rekrutacji
+RecruitmentAboutPage = Rekrutacja o stronie
+NbOfEmployeesExpected=Oczekiwana liczba pracowników
+JobLabel=Etykieta stanowiska pracy
+WorkPlace=Miejsce pracy
+DateExpected=Oczekiwana data
+FutureManager=Przyszły menedżer
+ResponsibleOfRecruitement=Odpowiedzialny za rekrutację
+IfJobIsLocatedAtAPartner=Jeśli praca jest zlokalizowana w miejscu partnerskim
 PositionToBeFilled=Stanowisko
-PositionsToBeFilled=Job positions
-ListOfPositionsToBeFilled=List of job positions
-NewPositionToBeFilled=New job positions
+PositionsToBeFilled=Stanowiska pracy
+ListOfPositionsToBeFilled=Lista stanowisk pracy
+NewPositionToBeFilled=Nowe stanowiska pracy
 
-JobOfferToBeFilled=Job position to be filled
-ThisIsInformationOnJobPosition=Information of the job position to be filled
-ContactForRecruitment=Contact for recruitment
-EmailRecruiter=Email recruiter
-ToUseAGenericEmail=To use a generic email. If not defined, the email of the responsible of recruitment will be used
-NewCandidature=New application
-ListOfCandidatures=List of applications
-RequestedRemuneration=Requested remuneration
-ProposedRemuneration=Proposed remuneration
-ContractProposed=Contract proposed
-ContractSigned=Contract signed
-ContractRefused=Contract refused
-RecruitmentCandidature=Application
-JobPositions=Job positions
-RecruitmentCandidatures=Applications
-InterviewToDo=Interview to do
-AnswerCandidature=Application answer
-YourCandidature=Your application
-YourCandidatureAnswerMessage=Thanks you for your application.<br>...
-JobClosedTextCandidateFound=The job position is closed. The position has been filled.
-JobClosedTextCanceled=The job position is closed.
-ExtrafieldsJobPosition=Complementary attributes (job positions)
-ExtrafieldsCandidatures=Complementary attributes (job applications)
-MakeOffer=Make an offer
+JobOfferToBeFilled=Stanowisko do obsadzenia
+ThisIsInformationOnJobPosition=Informacje o stanowisku do obsadzenia
+ContactForRecruitment=Kontakt w sprawie rekrutacji
+EmailRecruiter=Rekruter e-mailowy
+ToUseAGenericEmail=Aby użyć ogólnej wiadomości e-mail. Jeśli nie zostanie zdefiniowany, zostanie użyty adres e-mail osoby odpowiedzialnej za rekrutację
+NewCandidature=Nowa aplikacja
+ListOfCandidatures=Lista aplikacji
+RequestedRemuneration=Żądane wynagrodzenie
+ProposedRemuneration=Proponowane wynagrodzenie
+ContractProposed=Proponowana umowa
+ContractSigned=Umowa podpisana
+ContractRefused=Umowa została odrzucona
+RecruitmentCandidature=Podanie
+JobPositions=Stanowiska pracy
+RecruitmentCandidatures=Aplikacje
+InterviewToDo=Wywiad do zrobienia
+AnswerCandidature=Odpowiedź aplikacji
+YourCandidature=Twoje zgłoszenie
+YourCandidatureAnswerMessage=Dziękuję za zgłoszenie. <br> ...
+JobClosedTextCandidateFound=Stanowisko jest zamknięte. Stanowisko zostało obsadzone.
+JobClosedTextCanceled=Stanowisko jest zamknięte.
+ExtrafieldsJobPosition=Atrybuty uzupełniające (stanowiska pracy)
+ExtrafieldsApplication=Complementary attributes (job applications)
+MakeOffer=Złożyć ofertę

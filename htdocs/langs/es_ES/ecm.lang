@@ -41,3 +41,7 @@ FileNotYetIndexedInDatabase=Archivo aún no indexado en la base de datos (intent
 ExtraFieldsEcmFiles=campos adicionales de archivos GED
 ExtraFieldsEcmDirectories=Campos adicionales de Directorios GED
 ECMSetup=Configuración de GED
+GenerateImgWebp=Duplica todas las imágenes con otra versión con formato .webp
+ConfirmGenerateImgWebp=Si confirma, generará una imagen en formato .webp para todas las imágenes que se encuentran actualmente en esta carpeta (las subcarpetas no están incluidas) ...
+ConfirmImgWebpCreation=Confirmar la duplicación de todas las imágenes
+SucessConvertImgWebp=Imágenes duplicadas correctamente

@@ -110,7 +110,7 @@ $actiondone = 0;
 if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ09'))) {
 	$actiondone = 1;
 
-	print '<h3><img class="valigntextbottom inline-block" src="../theme/common/octicons/build/svg/database.svg" width="20" alt="Database"> ';
+	print '<h3><img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/database.svg" width="20" alt="Database"> ';
 	print '<span class="inline-block">'.$langs->trans("DatabaseMigration").'</span></h3>';
 
 	print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';

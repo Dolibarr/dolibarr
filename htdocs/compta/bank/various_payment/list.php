@@ -226,7 +226,7 @@ $sql .= " WHERE v.entity IN (".getEntity('payment_various').")";
 
 // Search criteria
 if ($search_ref) {
-	$sql .= " AND v.rowid=".$db->escape($search_ref);
+	$sql .= " AND v.rowid = ".((int) $search_ref);
 }
 if ($search_label) {
 	$sql .= natural_search(array('v.label'), $search_label);

@@ -37,6 +37,8 @@ require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager = new HookManager($db);
@@ -65,6 +67,8 @@ if ($user->socid > 0) {
 	$id = $user->socid;
 }
 restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);
+
+$maxofloop = (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD);
 
 
 /*
@@ -100,6 +104,11 @@ print load_fiche_titre($langs->trans("CommercialArea"), '', 'commercial');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
+print getCustomerProposalPieChart($socid);
+print '<br>';
+print getCustomerOrderPieChart($socid);
+print '<br>';
+
 /*
  * Draft customer proposals
  */
@@ -129,14 +138,14 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 	if ($resql) {
 		$total = 0;
 		$num = $db->num_rows($resql);
-		$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
+		$nbofloop = min($num, $maxofloop);
 		startSimpleTable("ProposalsDraft", "comm/propal/list.php", "search_status=".Propal::STATUS_DRAFT, 2, $num);
 
 		if ($num > 0) {
 			$i = 0;
 			$othernb = 0;
 
-			while ($i < $num && $i < $conf->liste_limit) {
+			while ($i < $nbofloop) {
 				$obj = $db->fetch_object($resql);
 
 				if ($i >= $max) {
@@ -181,7 +190,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 			if ($othernb) {
 				print '<tr class="oddeven">';
 				print '<td class="nowrap" colspan="5">';
-				print '<span class="opacitymedium">'.$langs->trans("More").'... ('.$othernb.')</span>';
+				print '<span class="opacitymedium">'.$langs->trans("More").'...'.($othernb < $maxofloop ? ' ('.$othernb.')' : '').'</span>';
 				print '</td>';
 				print "</tr>\n";
 			}
@@ -219,21 +228,21 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	}
 	if ($socid) {
-		$sql .= " AND s.rowid = ".$socid;
+		$sql .= " AND s.rowid = ".((int) $socid);
 	}
 
 	$resql = $db->query($sql);
 	if ($resql) {
 		$total = 0;
 		$num = $db->num_rows($resql);
-		$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
+		$nbofloop = min($num, $maxofloop);
 		startSimpleTable("SupplierProposalsDraft", "supplier_proposal/list.php", "search_status=".SupplierProposal::STATUS_DRAFT, 2, $num);
 
 		if ($num > 0) {
 			$i = 0;
 			$othernb = 0;
 
-			while ($i < $num && $i < $conf->liste_limit) {
+			while ($i < $nbofloop) {
 				$obj = $db->fetch_object($resql);
 
 				if ($i >= $max) {
@@ -277,7 +286,7 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
 			if ($othernb) {
 				print '<tr class="oddeven">';
 				print '<td class="nowrap" colspan="5">';
-				print '<span class="opacitymedium">'.$langs->trans("More").'... ('.$othernb.')</span>';
+				print '<span class="opacitymedium">'.$langs->trans("More").'...'.($othernb < $maxofloop ? ' ('.$othernb.')' : '').'</span>';
 				print '</td>';
 				print "</tr>\n";
 			}
@@ -315,21 +324,21 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	}
 	if ($socid) {
-		$sql .= " AND c.fk_soc = ".$socid;
+		$sql .= " AND c.fk_soc = ".((int) $socid);
 	}
 
 	$resql = $db->query($sql);
 	if ($resql) {
 		$total = 0;
 		$num = $db->num_rows($resql);
-		$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
+		$nbofloop = min($num, $maxofloop);
 		startSimpleTable("DraftOrders", "commande/list.php", "search_status=".Commande::STATUS_DRAFT, 2, $num);
 
 		if ($num > 0) {
 			$i = 0;
 			$othernb = 0;
 
-			while ($i < $num && $i < $conf->liste_limit) {
+			while ($i < $nbofloop) {
 				$obj = $db->fetch_object($resql);
 
 				if ($i >= $max) {
@@ -374,7 +383,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 			if ($othernb) {
 				print '<tr class="oddeven">';
 				print '<td class="nowrap" colspan="5">';
-				print '<span class="opacitymedium">'.$langs->trans("More").'... ('.$othernb.')</span>';
+				print '<span class="opacitymedium">'.$langs->trans("More").'...'.($othernb < $maxofloop ? ' ('.$othernb.')' : '').'</span>';
 				print '</td>';
 				print "</tr>\n";
 			}
@@ -419,14 +428,14 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 	if ($resql) {
 		$total = 0;
 		$num = $db->num_rows($resql);
-		$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
+		$nbofloop = min($num, $maxofloop);
 		startSimpleTable("DraftSuppliersOrders", "fourn/commande/list.php", "search_status=".CommandeFournisseur::STATUS_DRAFT, 2, $num);
 
 		if ($num > 0) {
 			$i = 0;
 			$othernb = 0;
 
-			while ($i < $num && $i < $conf->liste_limit) {
+			while ($i < $nbofloop) {
 				$obj = $db->fetch_object($resql);
 
 				if ($i >= $max) {
@@ -471,7 +480,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 			if ($othernb) {
 				print '<tr class="oddeven">';
 				print '<td class="nowrap" colspan="5">';
-				print '<span class="opacitymedium">'.$langs->trans("More").'... ('.$othernb.')</span>';
+				print '<span class="opacitymedium">'.$langs->trans("More").'...'.($othernb < $maxofloop ? ' ('.$othernb.')' : '').'</span>';
 				print '</td>';
 				print "</tr>\n";
 			}
@@ -605,7 +614,7 @@ if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_S
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	}
 	if ($socid) {
-		$sql .= " AND s.rowid = ".$socid;
+		$sql .= " AND s.rowid = ".((int) $socid);
 	}
 	$sql .= " ORDER BY s.datec DESC";
 	$sql .= $db->plimit($max, 0);
@@ -711,7 +720,7 @@ if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) { // T
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	}
 	if ($socid) {
-		$sql .= " AND s.rowid = ".$socid;
+		$sql .= " AND s.rowid = ".((int) $socid);
 	}
 	$sql .= " ORDER BY c.tms DESC";
 	$sql .= $db->plimit($max + 1, 0);
@@ -786,7 +795,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	}
 	if ($socid) {
-		$sql .= " AND s.rowid = ".$socid;
+		$sql .= " AND s.rowid = ".((int) $socid);
 	}
 	$sql .= " ORDER BY p.rowid DESC";
 
@@ -902,7 +911,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	}
 	if ($socid) {
-		$sql .= " AND s.rowid = ".$socid;
+		$sql .= " AND s.rowid = ".((int) $socid);
 	}
 	$sql .= " ORDER BY c.rowid DESC";
 

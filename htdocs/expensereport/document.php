@@ -110,8 +110,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 $form = new Form($db);
 
 $title = $langs->trans("ExpenseReport")." - ".$langs->trans("Documents");
-$helpurl = "EN:Module_Expense_Reports";
-llxHeader("", $title, $helpurl);
+$help_url = "EN:Module_Expense_Reports|FR:Module_Notes_de_frais";
+
+llxHeader("", $title, $help_url);
 
 if ($object->id) {
 	$object->fetch_thirdparty();

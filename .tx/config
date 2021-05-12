@@ -128,6 +128,12 @@ source_file = htdocs/langs/en_US/errors.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
+[dolibarr.eventorganization]
+file_filter = htdocs/langs/<lang>/eventorganization.lang
+source_file = htdocs/langs/en_US/eventorganization.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
 [dolibarr.exports]
 file_filter = htdocs/langs/<lang>/exports.lang
 source_file = htdocs/langs/en_US/exports.lang
@@ -179,6 +185,12 @@ type = MOZILLAPROPERTIES
 [dolibarr.interventions]
 file_filter = htdocs/langs/<lang>/interventions.lang
 source_file = htdocs/langs/en_US/interventions.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
+[dolibarr.knowledgemanagement]
+file_filter = htdocs/langs/<lang>/knowledgemanagement.lang
+source_file = htdocs/langs/en_US/knowledgemanagement.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
@@ -275,6 +287,12 @@ type = MOZILLAPROPERTIES
 [dolibarr.other]
 file_filter = htdocs/langs/<lang>/other.lang
 source_file = htdocs/langs/en_US/other.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
+[dolibarr.partnership]
+file_filter = htdocs/langs/<lang>/partnership.lang
+source_file = htdocs/langs/en_US/partnership.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 

@@ -513,7 +513,7 @@ if ($type == "o") {        // filtre sur type
 	$sql .= " AND s.client IN (2, 3)";
 }
 if (!empty($socid)) {
-	$sql .= " AND s.rowid = ".$socid;
+	$sql .= " AND s.rowid = ".((int) $socid);
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -653,8 +653,8 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 // List of mass actions available
 $arrayofmassactions = array(
-//    'presend'=>img_picto('', 'email').$langs->trans("SendByMail"),
-//    'builddoc'=>img_picto('', 'pdf').$langs->trans("PDFMerge"),
+//    'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
+//    'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 );
 //if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
 if ($user->rights->societe->supprimer) {
@@ -722,7 +722,8 @@ if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
 		$moreforfilter .= $formother->select_categories(Categorie::TYPE_CUSTOMER, $search_categ_thirdparty, 'search_categ_thirdparty', 1, $tmptitle);
 		$moreforfilter .= '</div>';
 	}
-	if (empty($type) || $type == 'f') {
+
+	if (!empty($conf->fournisseur->enabled) && (empty($type) || $type == 'f')) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('SuppliersCategoriesShort');
 		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');

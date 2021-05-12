@@ -296,7 +296,7 @@ if (!empty($search_town)) {
 	$sql .= natural_search('s.town', $search_town);
 }
 if ($search_country > 0) {
-	$sql .= ' AND s.fk_pays = '.$search_country.'';
+	$sql .= ' AND s.fk_pays = '.((int) $search_country);
 }
 $sql .= " AND f.entity IN (".getEntity('supplier_invoice').")";
 if ($socid) {

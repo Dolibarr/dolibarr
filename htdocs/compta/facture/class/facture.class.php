@@ -279,7 +279,7 @@ class Facture extends CommonInvoice
 	 *  'help' is a string visible as a tooltip on field
 	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
 	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
-	 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
+	 *  'arrayofkeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
 	 *
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
@@ -1604,7 +1604,7 @@ class Facture extends CommonInvoice
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON f.fk_incoterms = i.rowid';
 
 		if ($rowid) {
-			$sql .= " WHERE f.rowid=".$rowid;
+			$sql .= " WHERE f.rowid=".((int) $rowid);
 		} else {
 			$sql .= ' WHERE f.entity IN ('.getEntity('invoice').')'; // Dont't use entity if you use rowid
 			if ($ref) {
@@ -3657,7 +3657,7 @@ class Facture extends CommonInvoice
 	{
 		global $user;
 
-		dol_syslog(get_class($this)."::deleteline rowid=".$rowid, LOG_DEBUG);
+		dol_syslog(get_class($this)."::deleteline rowid=".((int) $rowid), LOG_DEBUG);
 
 		if ($this->statut != self::STATUS_DRAFT) {
 			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
@@ -4891,6 +4891,179 @@ class Facture extends CommonInvoice
 			return -2;
 		}
 	}
+
+
+	/**
+	 *  Send reminders by emails for ivoices that are due
+	 *  CAN BE A CRON TASK
+	 *
+	 *  @param	int			$nbdays			Delay after due date (or before if delay is negative)
+	 *  @param	string		$paymentmode	'' or 'all' by default (no filter), or 'LIQ', 'CHQ', CB', ...
+	 *  @param	int|string	$template		Name (or id) of email template (Must be a template of type 'facture_send')
+	 *  @return int         				0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 */
+	public function sendEmailsRemindersOnInvoiceDueDate($nbdays = 0, $paymentmode = 'all', $template = '')
+	{
+		global $conf, $langs, $user;
+
+		$error = 0;
+		$this->output = '';
+		$this->error = '';
+		$nbMailSend = 0;
+		$errorsMsg = array();
+
+		$langs->load("bills");
+
+		if (empty($conf->facture->enabled)) {	// Should not happen. If module disabled, cron job should not be visible.
+			$this->output .= $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Facture"));
+			return 0;
+		}
+		/*if (empty($conf->global->FACTURE_REMINDER_EMAIL)) {
+			$langs->load("bills");
+			$this->output .= $langs->trans('EventRemindersByEmailNotEnabled', $langs->transnoentitiesnoconv("Facture"));
+			return 0;
+		}
+		*/
+
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+		$formmail = new FormMail($this->db);
+
+		$now = dol_now();
+		$tmpidate = dol_get_first_hour(dol_time_plus_duree($now, $nbdays, 'd'), 'gmt');
+
+		$tmpinvoice = new Facture($this->db);
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		$this->db->begin();
+
+		//Select all action comm reminder
+		$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."facture as f";
+		if (!empty($paymentmode) && $paymentmode != 'all') {
+			$sql .= ", ".MAIN_DB_PREFIX."c_paiement as cp";
+		}
+		$sql .= " WHERE f.paye = 0";
+		$sql .= " AND f.date_lim_reglement = '".$this->db->idate($tmpidate, 'gmt')."'";
+		$sql .= " AND f.entity IN (".getEntity('facture').")";
+		if (!empty($paymentmode) && $paymentmode != 'all') {
+			$sql .= " AND f.fk_mode_reglement = cp.id AND cp.code = '".$this->db->escape($paymentmode)."'";
+		}
+		// TODO Add filter to check there is no payment started
+		$sql .= $this->db->order("date_lim_reglement", "ASC");
+
+		$resql = $this->db->query($sql);
+
+		$stmpidate = dol_print_date($tmpidate, 'day', 'gmt');
+		$this->output .= $langs->transnoentitiesnoconv("SearchUnpaidInvoicesWithDueDate", $stmpidate);
+		if (!empty($paymentmode) && $paymentmode != 'all') {
+			$this->output .= ' ('.$langs->transnoentitiesnoconv("PaymentMode").' '.$paymentmode.')';
+		}
+		$this->output .= '<br>';
+
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				if (!$error) {
+					// Load event
+					$res = $tmpinvoice->fetch($obj->id);
+					if ($res > 0) {
+						$tmpinvoice->fetch_thirdparty();
+
+						$outputlangs = new Translate('', $conf);
+						if ($tmpinvoice->thirdparty->default_lang) {
+							$outputlangs->setDefaultLang($tmpinvoice->thirdparty->default_lang);
+							$outputlangs->loadLangs(array("main", "bills"));
+						} else {
+							$outputlangs = $langs;
+						}
+
+						// Select email template
+						$arraymessage = $formmail->getEMailTemplate($this->db, 'facture_send', $user, $outputlangs, (is_numeric($template) ? $template : 0), 1, (is_numeric($template) ? '' : $template));
+						if (is_numeric($arraymessage) && $arraymessage <= 0) {
+							$langs->load("errors");
+							$this->output .= $langs->trans('ErrorFailedToFindEmailTemplate', $template);
+							return 0;
+						}
+
+						// PREPARE EMAIL
+						$errormesg = '';
+
+						// Make substitution in email content
+						$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, '', $tmpinvoice);
+
+						complete_substitutions_array($substitutionarray, $outputlangs, $tmpinvoice);
+
+						// Topic
+						$sendTopic = make_substitutions(empty($arraymessage->topic) ? $outputlangs->transnoentitiesnoconv('InformationMessage') : $arraymessage->topic, $substitutionarray, $outputlangs, 1);
+
+						// Content
+						$content = $outputlangs->transnoentitiesnoconv($arraymessage->content);
+
+						$sendContent = make_substitutions($content, $substitutionarray, $outputlangs, 1);
+
+						// Recipient
+						$res = $tmpinvoice->fetch_thirdparty();
+						$recipient = $tmpinvoice->thirdparty;
+						if ($res > 0) {
+							if (!empty($recipient->email)) {
+								$to = $recipient->email;
+							} else {
+								$errormesg = "Failed to send remind to thirdparty id=".$tmpinvoice->fk_soc.". No email defined for user.";
+								$error++;
+							}
+						} else {
+							$errormesg = "Failed to load recipient with thirdparty id=".$tmpinvoice->fk_soc;
+							$error++;
+						}
+
+						// Sender
+						$from = $conf->global->MAIN_MAIL_EMAIL_FROM;
+						if (empty($from)) {
+							$errormesg = "Failed to get sender into global setup MAIN_MAIL_EMAIL_FROM";
+							$error++;
+						}
+
+						if (!$error) {
+							// Errors Recipient
+							$errors_to = $conf->global->MAIN_MAIL_ERRORS_TO;
+
+							$trackid = 'inv'.$tmpinvoice->id;
+							// Mail Creation
+							$cMailFile = new CMailFile($sendTopic, $to, $from, $sendContent, array(), array(), array(), '', "", 0, 1, $errors_to, '', $trackid, '', '', '');
+
+							// Sending Mail
+							if ($cMailFile->sendfile()) {
+								$nbMailSend++;
+							} else {
+								$errormesg = $cMailFile->error.' : '.$to;
+								$error++;
+							}
+						}
+
+						if ($errormesg) {
+							$errorsMsg[] = $errormesg;
+						}
+					} else {
+						$errorsMsg[] = 'Failed to fetch record invoice with ID = '.$obj->id;
+						$error++;
+					}
+				}
+			}
+		} else {
+			$error++;
+		}
+
+		if (!$error) {
+			$this->output .= 'Nb of emails sent : '.$nbMailSend;
+			$this->db->commit();
+			return 0;
+		} else {
+			$this->db->commit(); // We commit also on error, to have the error message recorded.
+			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(!empty($errorsMsg)) ? join(', ', $errorsMsg) : $error;
+			return $error;
+		}
+	}
 }
 
 /**
@@ -5581,8 +5754,8 @@ class FactureLigne extends CommonInvoiceLine
 				if ($include_credit_note) {
 					$sql = 'SELECT fd.situation_percent FROM '.MAIN_DB_PREFIX.'facturedet fd';
 					$sql .= ' JOIN '.MAIN_DB_PREFIX.'facture f ON (f.rowid = fd.fk_facture) ';
-					$sql .= ' WHERE fd.fk_prev_id ='.$this->fk_prev_id;
-					$sql .= ' AND f.situation_cycle_ref = '.$invoicecache[$invoiceid]->situation_cycle_ref; // Prevent cycle outed
+					$sql .= ' WHERE fd.fk_prev_id = '.((int) $this->fk_prev_id);
+					$sql .= ' AND f.situation_cycle_ref = '.((int) $invoicecache[$invoiceid]->situation_cycle_ref); // Prevent cycle outed
 					$sql .= ' AND f.type = '.Facture::TYPE_CREDIT_NOTE;
 
 					$res = $this->db->query($sql);

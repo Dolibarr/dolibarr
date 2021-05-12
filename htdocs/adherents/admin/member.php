@@ -9,7 +9,6 @@
  * Copyright (C) 2012      J. Fernando Lagrange <fernando@demo-tic.org>
  * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
  * Copyright (C) 2020-2021 Frédéric France      <frederic.france@netlogic.fr>
- * Copyright (C) 2021      Waël Almoman         <info@almoman.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +33,6 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "members"));
@@ -74,12 +72,12 @@ if ($action == 'set_default') {
 } elseif ($action == 'setdoc') {
 	// Set default model
 	if (dolibarr_set_const($db, "MEMBER_ADDON_PDF_ODT", $value, 'chaine', 0, '', $conf->entity)) {
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
+		// The constant that was read ahead of the new set
+		// we therefore go through a variable to have a consistent display
 		$conf->global->MEMBER_ADDON_PDF_ODT = $value;
 	}
 
-	// On active le modele
+	// We activate the model
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
 		$ret = addDocumentModel($value, $type, $label, $scandir);
@@ -107,8 +105,8 @@ if ($action == 'set_default') {
 	$res1 = dolibarr_set_const($db, 'ADHERENT_LOGIN_NOT_REQUIRED', GETPOST('ADHERENT_LOGIN_NOT_REQUIRED', 'alpha') ? 0 : 1, 'chaine', 0, '', $conf->entity);
 	$res2 = dolibarr_set_const($db, 'ADHERENT_MAIL_REQUIRED', GETPOST('ADHERENT_MAIL_REQUIRED', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res3 = dolibarr_set_const($db, 'ADHERENT_DEFAULT_SENDINFOBYMAIL', GETPOST('ADHERENT_DEFAULT_SENDINFOBYMAIL', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res3 = dolibarr_set_const($db, 'ADHERENT_CREATE_EXTERNAL_USER_LOGIN', GETPOST('ADHERENT_CREATE_EXTERNAL_USER_LOGIN', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res4 = dolibarr_set_const($db, 'ADHERENT_BANK_USE', GETPOST('ADHERENT_BANK_USE', 'alpha'), 'chaine', 0, '', $conf->entity);
-	$res7 = dolibarr_set_const($db, "MEMBER_SUBSCRIPTION_AMOUNT_BY_TYPE", json_encode(GETPOST('MEMBER_SUBSCRIPTION_AMOUNT_BY_TYPE')), 'array', 0, '', $conf->entity);
 	// Use vat for invoice creation
 	if ($conf->facture->enabled) {
 		$res4 = dolibarr_set_const($db, 'ADHERENT_VAT_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_VAT_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
@@ -220,16 +218,9 @@ print '<tr class="oddeven"><td>'.$langs->trans("MemberSendInformationByMailByDef
 print $form->selectyesno('ADHERENT_DEFAULT_SENDINFOBYMAIL', (!empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL) ? $conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL : 0), 1);
 print "</td></tr>\n";
 
-
-// Amount by member type
-$adht = new AdherentType($db);
-$amountbytype = empty($conf->global->MEMBER_SUBSCRIPTION_AMOUNT_BY_TYPE) ? -1 : json_decode($conf->global->MEMBER_SUBSCRIPTION_AMOUNT_BY_TYPE, true);
-print '<tr class="oddeven"><td>'.$langs->trans("DefineAmountMemberType").'</td><td>';
-foreach ($adht->liste_array(1) as $typeid => $type) {
-	print $type .' : ';
-	print '<input type="text" id="MEMBER_SUBSCRIPTION_AMOUNT_BY_TYPE['.$typeid.']" name="MEMBER_SUBSCRIPTION_AMOUNT_BY_TYPE['.$typeid.']" " size="5" value="'.(!empty($amountbytype[$typeid]) ? $amountbytype[$typeid] : '').'">';
-	print '<br>';
-}
+// Create an external user login for each new member subscription validated
+print '<tr class="oddeven"><td>'.$langs->trans("MemberCreateAnExternalUserForSubscriptionValidated").'</td><td>';
+print $form->selectyesno('ADHERENT_CREATE_EXTERNAL_USER_LOGIN', (!empty($conf->global->ADHERENT_CREATE_EXTERNAL_USER_LOGIN) ? $conf->global->ADHERENT_CREATE_EXTERNAL_USER_LOGIN : 0), 1);
 print "</td></tr>\n";
 
 // Insert subscription into bank account
@@ -326,7 +317,7 @@ $helptext .= '__YEAR__, __MONTH__, __DAY__';
 form_constantes($constantes, 0, $helptext);
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-// Defini tableau def des modeles
+// Defined model definition table
 $def = array();
 $sql = "SELECT nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."document_model";

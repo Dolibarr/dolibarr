@@ -85,7 +85,7 @@ ListOfPermissionsDefined=Daftar izin yang ditentukan
 SeeExamples=Lihat contoh di sini
 EnabledDesc=Ketentuan untuk mengaktifkan bidang ini (Contoh: 1 atau $ conf-> global-> MYMODULE_MYOPTION)
 VisibleDesc=Apakah bidangnya terlihat? (Contoh: 0 = Tidak pernah terlihat, 1 = Terlihat pada daftar dan membuat / memperbarui / melihat formulir, 2 = Terlihat hanya pada daftar, 3 = Hanya terlihat pada formulir buat / perbarui / lihat (bukan daftar), 4 = Terlihat pada daftar dan perbarui / lihat saja form (bukan buat), 5 = Terlihat hanya pada form tampilan akhir daftar (bukan buat, bukan perbarui). <br> <br> Menggunakan nilai negatif berarti bidang tidak ditampilkan secara default pada daftar tetapi dapat dipilih untuk dilihat). <br> <br> Ini bisa berupa ekspresi, misalnya: <br> preg_match ('/ publik /', $ _SERVER ['PHP_SELF'])? 0: 1 <br> (hak liburan-> mendefinisikan liburan-> hak):
-DisplayOnPdfDesc=Tampilkan bidang ini pada dokumen PDF yang kompatibel, Anda dapat mengelola posisi dengan bidang "Posisi". <br/> Saat ini, dikenal model kompatibel PDF adalah: Eratosthenes (order), espadon (kapal), spons (faktur), cyan (propal / kutip), Cornas (order pemasok) <br/> <br/><strong>Untuk dokumen: </strong> <br/> 0 = tidak ditampilkan <br/> 1 = display <br/> 2 = menampilkan hanya jika tidak kosong <br/> <br/><strong>Untuk lini dokumen: </strong> <br/> 0 = tidak ditampilkan <br/> 1 = ditampilkan dalam kolom <br/> 3 = display di kolom deskripsi baris setelah deskripsi <br/> 4 = display di kolom deskripsi setelah deskripsi hanya jika tidak kosong
+DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br>Currently, known compatibles PDF models are : eratosthene (order), espadon (ship), sponge (invoices), cyan (propal/quotation), cornas (supplier order)<br><br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
 DisplayOnPdf=Tampilan di PDF
 IsAMeasureDesc=Bisakah nilai bidang diakumulasikan untuk mendapatkan total ke dalam daftar? (Contoh: 1 atau 0)
 SearchAllDesc=Apakah bidang yang digunakan untuk melakukan pencarian dari alat pencarian cepat? (Contoh: 1 atau 0)
@@ -133,7 +133,9 @@ IncludeDocGeneration=Saya ingin menghasilkan beberapa dokumen dari objek
 IncludeDocGenerationHelp=Jika Anda mencentang ini, beberapa kode akan dibuat untuk menambahkan kotak "Hasilkan dokumen" pada catatan.
 ShowOnCombobox=Tunjukkan nilai ke dalam kotak kombo
 KeyForTooltip=Kunci untuk tooltip
-CSSClass=Kelas CSS
+CSSClass=CSS for edit/create form
+CSSViewClass=CSS for read form
+CSSListClass=CSS for list
 NotEditable=Tidak dapat diedit
 ForeignKey=Kunci asing
 TypeOfFieldsHelp=Jenis bidang: <br> varchar (99), ganda (24,8), real, teks, html, datetime, timestamp, integer, integer: ClassName: relativepath / to / classfile.class.php [: 1 [: filter]] ('1' berarti kita menambahkan tombol + setelah kombo untuk membuat catatan, 'filter' dapat berupa 'status = 1 DAN fk_user = __USER_ID DAN entitas IN (__SHARED_ENTITIES__)' misalnya)

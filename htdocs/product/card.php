@@ -307,6 +307,7 @@ if (empty($reshook)) {
 			$object->status             	 = GETPOST('statut');
 			$object->status_buy            = GETPOST('statut_buy');
 			$object->status_batch = GETPOST('status_batch');
+			$object->batch_mask = GETPOST('batch_mask');
 
 			$object->barcode_type          = GETPOST('fk_barcode_type');
 			$object->barcode = GETPOST('barcode');
@@ -331,6 +332,8 @@ if (empty($reshook)) {
 			$object->customcode              = GETPOST('customcode', 'alphanohtml');
 			$object->country_id = GETPOST('country_id', 'int');
 			$object->state_id = GETPOST('state_id', 'int');
+			$object->lifetime               = GETPOST('lifetime', 'int');
+			$object->qc_frequency           = GETPOST('qc_frequency', 'int');
 			$object->duration_value     	 = $duration_value;
 			$object->duration_unit      	 = $duration_unit;
 			$object->fk_default_warehouse	 = GETPOST('fk_default_warehouse');
@@ -472,9 +475,12 @@ if (empty($reshook)) {
 				$object->customcode             = GETPOST('customcode', 'alpha');
 				$object->country_id = GETPOST('country_id', 'int');
 				$object->state_id = GETPOST('state_id', 'int');
+				$object->lifetime               = GETPOST('lifetime', 'int');
+				$object->qc_frequency           = GETPOST('qc_frequency', 'int');
 				$object->status                 = GETPOST('statut', 'int');
 				$object->status_buy             = GETPOST('statut_buy', 'int');
 				$object->status_batch = GETPOST('status_batch', 'aZ09');
+				$object->batch_mask = GETPOST('batch_mask', 'alpha');
 				$object->fk_default_warehouse   = GETPOST('fk_default_warehouse');
 				// removed from update view so GETPOST always empty
 				/*
@@ -894,7 +900,7 @@ if (empty($reshook)) {
 				$result = $facture->addline(
 					$desc,
 					$pu_ht,
-					price2nm(GETPOST('qty'), 'MS'),
+					price2num(GETPOST('qty'), 'MS'),
 					$tva_tx,
 					$localtax1_tx,
 					$localtax2_tx,
@@ -1083,10 +1089,50 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Batch number management
 		if (!empty($conf->productbatch->enabled)) {
-			print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="3">';
+			print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
 			$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"), '2' => $langs->trans("ProductStatusOnSerial"));
 			print $form->selectarray('status_batch', $statutarray, GETPOST('status_batch'));
-			print '</td></tr>';
+			print '</td>';
+			// Product specific batch number management
+			$status_batch = GETPOST('status_batch');
+			if ($status_batch !== '0') {
+				$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
+				$tooltip .= $langs->trans("GenericMaskCodes2");
+				$tooltip .= $langs->trans("GenericMaskCodes3");
+				$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
+				$tooltip .= $langs->trans("GenericMaskCodes5");
+				print '<td id="mask_option">'.$langs->trans("ManageLotMask").'</td>';
+				if (($conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced') || ($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced')) {
+					$inherited_mask_lot = $conf->global->LOT_ADVANCED_MASK;
+					$inherited_mask_sn = $conf->global->SN_ADVANCED_MASK;
+					print '<td id="field_mask">';
+					print $form->textwithpicto('<input type="text" class="flat" size="24" name="batch_mask" id="batch_mask_input">', $tooltip, 1, 1);
+					print '</td>';
+					print '<script type="text/javascript">
+								$(document).ready(function() {
+									$("#field_mask, #mask_option").addClass("hideobject");
+									$("#status_batch").on("change", function () {
+										var optionSelected = $("option:selected", this);
+										var valueSelected = this.value;
+										$("#field_mask, #mask_option").addClass("hideobject");
+										if (this.value == 1) {
+											$("#field_mask, #mask_option").toggleClass("hideobject");
+											$("#batch_mask_input").val("'.$inherited_mask_lot.'");
+										}
+										if (this.value == 2) {
+											$("#field_mask, #mask_option").toggleClass("hideobject");
+											$("#batch_mask_input").val("'.$inherited_mask_sn.'");
+										}
+									})
+								})
+							</script>';
+				} else {
+					print '<td></td>';
+				}
+			} else {
+				print '<td colspan="2"></td>';
+			}
+			print '</tr>';
 		}
 
 		$showbarcode = empty($conf->barcode->enabled) ? 0 : 1;
@@ -1251,6 +1297,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			print '</tr>';
+		}
+
+		// Quality control
+		if (!empty($conf->global->PRODUCT_LOT_ENABLE_QUALITY_CONTROL)) {
+			print '<tr><td>'.$langs->trans("LifeTime").'</td><td><input name="lifetime" class="maxwidth100onsmartphone" value="'.GETPOST('lifetime').'"></td></tr>';
+			print '<tr><td>'.$langs->trans("QCFrequency").'</td><td><input name="qc_frequency" class="maxwidth100onsmartphone" value="'.GETPOST('qc_frequency').'"></td></tr>';
 		}
 
 		// Other attributes
@@ -1488,7 +1540,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$object->country = $tmparray['label'];
 			}
 
-
 			$type = $langs->trans('Product');
 			if ($object->isService()) {
 				$type = $langs->trans('Service');
@@ -1545,10 +1596,55 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Batch number managment
 			if ($conf->productbatch->enabled) {
 				if ($object->isProduct() || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
-					print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="3">';
+					print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
 					$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"), '2' => $langs->trans("ProductStatusOnSerial"));
 					print $form->selectarray('status_batch', $statutarray, $object->status_batch);
-					print '</td></tr>';
+					print '</td>';
+					if ($object->status_batch !== '0') {
+						$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
+						$tooltip .= $langs->trans("GenericMaskCodes2");
+						$tooltip .= $langs->trans("GenericMaskCodes3");
+						$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
+						$tooltip .= $langs->trans("GenericMaskCodes5");
+						print '<td id="mask_option">'.$langs->trans("ManageLotMask").'</td>';
+						if ($object->status_batch == '1' && $conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced') {
+							$mask = ! empty($object->batch_mask) ? $object->batch_mask : $conf->global->LOT_ADVANCED_MASK;
+						}
+						if ($object->status_batch == '2' && $conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced') {
+							$mask = ! empty($object->batch_mask) ? $object->batch_mask : $conf->global->SN_ADVANCED_MASK;
+						}
+						$inherited_mask_lot = $conf->global->LOT_ADVANCED_MASK;
+						$inherited_mask_sn = $conf->global->SN_ADVANCED_MASK;
+						print '<td id="field_mask">';
+						print $form->textwithpicto('<input type="text" class="flat" size="24" name="batch_mask" id="batch_mask_input" value="'.$mask.'">', $tooltip, 1, 1);
+						print '</td>';
+
+						print '<script type="text/javascript">
+						$(document).ready(function() {
+							$("#field_mask, #mask_option").addClass("hideobject");
+							var preselect = $("#status_batch option:selected");
+							if (preselect !== "0") {
+								$("#field_mask, #mask_option").toggleClass("hideobject");
+							}
+							$("#status_batch").on("change", function () {
+								var optionSelected = $("option:selected", this);
+								var valueSelected = this.value;
+								$("#field_mask, #mask_option").addClass("hideobject");
+								if (this.value == 1) {
+									$("#field_mask, #mask_option").toggleClass("hideobject");
+									$("#batch_mask_input").val("'.$inherited_mask_lot.'");
+								}
+								if (this.value == 2) {
+									$("#field_mask, #mask_option").toggleClass("hideobject");
+									$("#batch_mask_input").val("'.$inherited_mask_sn.'");
+								}
+							})
+						})
+					</script>';
+					} else {
+						print '<td colspan="2"></td>';
+					}
+					print '</tr>';
 				}
 			}
 
@@ -1704,6 +1800,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '</td>';
 				}
 				print '</tr>';
+			}
+
+			// Quality control
+			if (!empty($conf->global->PRODUCT_LOT_ENABLE_QUALITY_CONTROL)) {
+				print '<tr><td>'.$langs->trans("LifeTime").'</td><td><input name="lifetime" class="maxwidth100onsmartphone" value="'.$object->lifetime.'"></td></tr>';
+				print '<tr><td>'.$langs->trans("QCFrequency").'</td><td><input name="qc_frequency" class="maxwidth100onsmartphone" value="'.$object->qc_frequency.'"></td></tr>';
 			}
 
 			// Other attributes
@@ -2036,6 +2138,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="2">';
 					print $object->getLibStatut(0, 2);
 					print '</td></tr>';
+					if ((($object->status_batch == '1' &&$conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced')
+					|| ($object->status_batch == '2' && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced' && $conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS))) {
+						print '<tr><td>'.$langs->trans("ManageLotMask").'</td><td colspan="2">';
+						print $object->batch_mask;
+						print '</td></tr>';
+					}
 				}
 			}
 
@@ -2175,6 +2283,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print ' - '.getState($object->state_id, 0, $db);
 				}
 				print '</td>';
+			}
+
+			// Quality Control
+			if (!empty($conf->global->PRODUCT_LOT_ENABLE_QUALITY_CONTROL)) {
+				print '<tr><td>'.$langs->trans("LifeTime").'</td><td colspan="2">'.$object->lifetime.'</td></tr>';
+				print '<tr><td>'.$langs->trans("QCFrequency").'</td><td colspan="2">'.$object->qc_frequency.'</td></tr>';
 			}
 
 			// Other attributes

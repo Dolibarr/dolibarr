@@ -315,7 +315,8 @@ function getCustomerInvoicePieChart($socid = 0)
 		$dolgraph->setShowLegend(2);
 		$dolgraph->setShowPercent(1);
 		$dolgraph->SetType(['pie']);
-		$dolgraph->setHeight('200');
+		$dolgraph->setHeight('150');
+		$dolgraph->setWidth('300');
 		$dolgraph->draw('idgraphcustomerinvoices');
 
 		$result .= '<tr>';
@@ -435,7 +436,8 @@ function getPurchaseInvoicePieChart($socid = 0)
 		$dolgraph->setShowLegend(2);
 		$dolgraph->setShowPercent(1);
 		$dolgraph->SetType(['pie']);
-		$dolgraph->setHeight('200');
+		$dolgraph->setHeight('150');
+		$dolgraph->setWidth('300');
 		$dolgraph->draw('idgraphpurchaseinvoices');
 
 		$result .= '<tr>';
@@ -455,6 +457,105 @@ function getPurchaseInvoicePieChart($socid = 0)
 }
 
 /**
+ * Return an HTML table that contains a pie chart of the number of customers or supplier invoices
+ * @param string $mode Can be customer or fourn
+ * @return string A HTML table that contains a pie chart of customers or supplier invoices
+ */
+function getNumberInvoicesPieChart($mode)
+{
+	global $conf, $db, $langs, $user;
+	if (!empty($conf->facture->enabled) && !empty($user->rights->facture->lire)) {
+		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+
+		$now = date_create(date('Y-m-d', dol_now()));
+		$datenowsub30 = date_create(date('Y-m-d', dol_now()));
+		$datenowsub15 = date_create(date('Y-m-d', dol_now()));
+		$datenowadd30 = date_create(date('Y-m-d', dol_now()));
+		$datenowadd15 = date_create(date('Y-m-d', dol_now()));
+		$interval30days = date_interval_create_from_date_string('30 days');
+		$interval15days = date_interval_create_from_date_string('15 days');
+		date_sub($datenowsub30, $interval30days);
+		date_sub($datenowsub15, $interval15days);
+		date_add($datenowadd30, $interval30days);
+		date_add($datenowadd15, $interval15days);
+
+		$sql = "SELECT sum(".$db->ifsql("f.date_lim_reglement < '".date_format($datenowsub30, 'Y-m-d')."'", 1, 0).") as nblate30";
+		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement < '".date_format($datenowsub15, 'Y-m-d')."'", 1, 0).") as nblate15";
+		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement < '".date_format($now, 'Y-m-d')."'", 1, 0).") as nblatenow";
+		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement > '".date_format($datenowadd30, 'Y-m-d')."'", 1, 0).") as nbnotlate30";
+		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement > '".date_format($datenowadd15, 'Y-m-d')."'", 1, 0).") as nbnotlate15";
+		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement >= '".date_format($now, 'Y-m-d')."'", 1, 0).") as nbnotlatenow";
+		if ($mode == 'customers') {
+			$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
+		} elseif ($mode == 'fourn') {
+			$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
+		} else {
+			return '';
+		}
+		$sql .= " WHERE f.type <> 2";
+		$sql .= " AND f.fk_statut = 1";
+		$resql = $db->query($sql);
+		if ($resql) {
+			$num = $db->num_rows($resql);
+			$i = 0;
+			$total = 0;
+			$dataseries = array();
+			while ($i < $num) {
+				$obj = $db->fetch_object($resql);
+				$dataseries = array(array($langs->trans('InvoiceLate30Days'),$obj->nblate30)
+									,array($langs->trans('InvoiceLate15Days'),$obj->nblate15-$obj->nblate30)
+									,array($langs->trans('InvoiceLateMinus15Days'),$obj->nblatenow-$obj->nblate15)
+									,array($langs->trans('InvoiceNotLate'),$obj->nbnotlatenow-$obj->nbnotlate15)
+									,array($langs->trans('InvoiceNotLate15Days'),$obj->nbnotlate15-$obj->nbnotlate30)
+									,array($langs->trans('InvoiceNotLate30Days'),$obj->nbnotlate30));
+				$i++;
+			}
+			foreach ($dataseries as $key=>$value) {
+				$total+=$value[1];
+			}
+			$colorseries = array($badgeStatus8, $badgeStatus1, $badgeStatus3, $badgeStatus2, $badgeStatus4, $badgeStatus11);
+			if ($conf->use_javascript_ajax) {
+				$result = '<div class="div-table-responsive-no-min">';
+				$result .= '<table class="noborder nohover centpercent">';
+				$result .= '<tr class="liste_titre">';
+				$result .= '<td colspan="2">'.$langs->trans("Statistics").' - ';
+				if ($mode == 'customers') {
+					$result .= $langs->trans("CustomerInvoice").'</td>';
+				} elseif ($mode == 'fourn') {
+					$result .= $langs->trans("SupplierInvoice").'</td>';
+				} else {
+					return '';
+				}
+				$result .= '</tr>';
+
+				$dolgraph = new DolGraph();
+				$dolgraph->SetData($dataseries);
+				$dolgraph->SetDataColor(array_values($colorseries));
+				$dolgraph->setShowLegend(2);
+				$dolgraph->setShowPercent(1);
+				$dolgraph->SetType(['pie']);
+				$dolgraph->setHeight('150');
+				$dolgraph->setWidth('300');
+				if ($mode == 'customers') {
+					$dolgraph->draw('idgraphcustomerinvoices');
+				} elseif ($mode == 'fourn') {
+					$dolgraph->draw('idgraphfourninvoices');
+				} else {
+					return '';
+				}
+				$result .= '<tr maxwidth="255">';
+				$result .= '<td align="center" colspan="2">'.$dolgraph->show($total ? 0 : 1).'</td>';
+				$result .= '</tr>';
+				$result .= '</table>';
+				$result .= '</div>';
+			}
+			return $result;
+		} else {
+			dol_print_error($db);
+		}
+	}
+}
+/**
  * Return a HTML table that contains a list with customer invoice drafts
  *
  * @param	int		$maxCount	(Optional) The maximum count of elements inside the table
@@ -464,6 +565,8 @@ function getPurchaseInvoicePieChart($socid = 0)
 function getCustomerInvoiceDraftTable($maxCount = 500, $socid = 0)
 {
 	global $conf, $db, $langs, $user, $hookmanager;
+
+	$maxofloop = (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD);
 
 	$result = '';
 	$tmpinvoice = new Facture($db);
@@ -488,7 +591,7 @@ function getCustomerInvoiceDraftTable($maxCount = 500, $socid = 0)
 	}
 
 	if ($socid) {
-		$sql .= " AND f.fk_soc = $socid";
+		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 	// Add where from hooks
 	$parameters = array();
@@ -511,6 +614,7 @@ function getCustomerInvoiceDraftTable($maxCount = 500, $socid = 0)
 
 	if ($resql) {
 		$num = $db->num_rows($resql);
+		$nbofloop = min($num, $maxofloop);
 
 		$result .= '<div class="div-table-responsive-no-min">';
 		$result .= '<table class="noborder centpercent">';
@@ -530,7 +634,7 @@ function getCustomerInvoiceDraftTable($maxCount = 500, $socid = 0)
 			$i = 0;
 			$othernb = 0;
 			$tot_ttc = 0;
-			while ($i < $num) {
+			while ($i < $nbofloop) {
 				$obj = $db->fetch_object($resql);
 
 				if ($i >= $maxCount) {
@@ -577,7 +681,7 @@ function getCustomerInvoiceDraftTable($maxCount = 500, $socid = 0)
 			if ($othernb) {
 				$result .= '<tr class="oddeven">';
 				$result .= '<td class="nowrap" colspan="3">';
-				$result .= '<span class="opacitymedium">'.$langs->trans("More").'... ('.$othernb.')</span>';
+				$result .= '<span class="opacitymedium">'.$langs->trans("More").'...'.($othernb < $maxofloop ? ' ('.$othernb.')' : '').'</span>';
 				$result .= '</td>';
 				$result .= "</tr>\n";
 			}
@@ -608,6 +712,8 @@ function getDraftSupplierTable($maxCount = 500, $socid = 0)
 {
 	global $conf, $db, $langs, $user, $hookmanager;
 
+	$maxofloop = (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD);
+
 	$result = '';
 	$facturesupplierstatic = new FactureFournisseur($db);
 
@@ -637,6 +743,7 @@ function getDraftSupplierTable($maxCount = 500, $socid = 0)
 
 	if ($resql) {
 		$num = $db->num_rows($resql);
+		$nbofloop = min($num, $maxofloop);
 
 		$result .= '<div class="div-table-responsive-no-min">';
 		$result .= '<table class="noborder centpercent">';
@@ -656,7 +763,7 @@ function getDraftSupplierTable($maxCount = 500, $socid = 0)
 			$i = 0;
 			$othernb = 0;
 			$tot_ttc = 0;
-			while ($i < $num) {
+			while ($i < $nbofloop) {
 				$obj = $db->fetch_object($resql);
 
 				if ($i >= $maxCount) {
@@ -702,7 +809,7 @@ function getDraftSupplierTable($maxCount = 500, $socid = 0)
 			if ($othernb) {
 				$result .= '<tr class="oddeven">';
 				$result .= '<td class="nowrap" colspan="3">';
-				$result .= '<span class="opacitymedium">'.$langs->trans("More").'... ('.$othernb.')</span>';
+				$result .= '<span class="opacitymedium">'.$langs->trans("More").'...'.($othernb < $maxofloop ? ' ('.$othernb.')' : '').'</span>';
 				$result .= '</td>';
 				$result .= "</tr>\n";
 			}

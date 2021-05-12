@@ -1579,7 +1579,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 				print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 			}
 			// Chart
-			if (empty($conf->global->MAIN_JS_GRAPH) || $conf->global->MAIN_JS_GRAPH == 'chart') {
+			if ((empty($conf->global->MAIN_JS_GRAPH) || $conf->global->MAIN_JS_GRAPH == 'chart') && !defined('DISABLE_JS_GRAPH')) {
 				print '<script src="'.DOL_URL_ROOT.'/includes/nnnick/chartjs/dist/Chart.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 			}
 
@@ -1960,7 +1960,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
  */
 function top_menu_user($hideloginname = 0, $urllogout = '')
 {
-	global $langs, $conf, $db, $hookmanager, $user;
+	global $langs, $conf, $db, $hookmanager, $user, $mysoc;
 	global $dolibarr_main_authentication, $dolibarr_main_demo;
 	global $menumanager;
 
@@ -1985,13 +1985,27 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	$dropdownBody .= '<span id="topmenulogincompanyinfo-btn"><i class="fa fa-caret-right"></i> '.$langs->trans("ShowCompanyInfos").'</span>';
 	$dropdownBody .= '<div id="topmenulogincompanyinfo" >';
 
-	if (!empty($conf->global->MAIN_INFO_SIREN))      $dropdownBody .= '<br><b>'.$langs->transcountry("ProfId1Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_SIREN).'</span>';
-	if (!empty($conf->global->MAIN_INFO_SIRET))      $dropdownBody .= '<br><b>'.$langs->transcountry("ProfId2Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_SIRET).'</span>';
-	if (!empty($conf->global->MAIN_INFO_APE))        $dropdownBody .= '<br><b>'.$langs->transcountry("ProfId3Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_APE).'</span>';
-	if (!empty($conf->global->MAIN_INFO_RCS))        $dropdownBody .= '<br><b>'.$langs->transcountry("ProfId4Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_RCS).'</span>';
-	if (!empty($conf->global->MAIN_INFO_PROFID5))    $dropdownBody .= '<br><b>'.$langs->transcountry("ProfId5Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_PROFID5).'</span>';
-	if (!empty($conf->global->MAIN_INFO_PROFID6))    $dropdownBody .= '<br><b>'.$langs->transcountry("ProfId6Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_PROFID6).'</span>';
-	if (!empty($conf->global->MAIN_INFO_TVAINTRA))   $dropdownBody .= '<br><b>'.$langs->trans("VATIntraShort").'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_TVAINTRA).'</span>';
+	if (!empty($conf->global->MAIN_INFO_SIREN)) {
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId1Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_SIREN).'</span>';
+	}
+	if (!empty($conf->global->MAIN_INFO_SIRET)) {
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId2Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_SIRET).'</span>';
+	}
+	if (!empty($conf->global->MAIN_INFO_APE)) {
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId3Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_APE).'</span>';
+	}
+	if (!empty($conf->global->MAIN_INFO_RCS)) {
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId4Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_RCS).'</span>';
+	}
+	if (!empty($conf->global->MAIN_INFO_PROFID5)) {
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId5Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_PROFID5).'</span>';
+	}
+	if (!empty($conf->global->MAIN_INFO_PROFID6)) {
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId6Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_PROFID6).'</span>';
+	}
+	if (!empty($conf->global->MAIN_INFO_TVAINTRA)) {
+		$dropdownBody .= '<br><b>'.$langs->trans("VATIntraShort").'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_TVAINTRA).'</span>';
+	}
 
 	$dropdownBody .= '</div>';
 
@@ -2743,41 +2757,49 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 		if (!empty($conf->global->MAIN_BUGTRACK_ENABLELINK)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-			$bugbaseurl = 'https://github.com/Dolibarr/dolibarr/issues/new?labels=Bug';
-			$bugbaseurl .= '&title=';
-			$bugbaseurl .= urlencode("Bug: ");
-			$bugbaseurl .= '&body=';
-			$bugbaseurl .= urlencode("# Instructions\n");
-			$bugbaseurl .= urlencode("*This is a template to help you report good issues. You may use [Github Markdown](https://help.github.com/articles/getting-started-with-writing-and-formatting-on-github/) syntax to format your issue report.*\n");
-			$bugbaseurl .= urlencode("*Please:*\n");
-			$bugbaseurl .= urlencode("- *replace the bracket enclosed texts with meaningful information*\n");
-			$bugbaseurl .= urlencode("- *remove any unused sub-section*\n");
-			$bugbaseurl .= urlencode("\n");
-			$bugbaseurl .= urlencode("\n");
-			$bugbaseurl .= urlencode("# Bug\n");
-			$bugbaseurl .= urlencode("[*Short description*]\n");
-			$bugbaseurl .= urlencode("\n");
-			$bugbaseurl .= urlencode("## Environment\n");
-			$bugbaseurl .= urlencode("- **Version**: ".DOL_VERSION."\n");
-			$bugbaseurl .= urlencode("- **OS**: ".php_uname('s')."\n");
-			$bugbaseurl .= urlencode("- **Web server**: ".$_SERVER["SERVER_SOFTWARE"]."\n");
-			$bugbaseurl .= urlencode("- **PHP**: ".php_sapi_name().' '.phpversion()."\n");
-			$bugbaseurl .= urlencode("- **Database**: ".$db::LABEL.' '.$db->getVersion()."\n");
-			$bugbaseurl .= urlencode("- **URL(s)**: ".$_SERVER["REQUEST_URI"]."\n");
-			$bugbaseurl .= urlencode("\n");
-			$bugbaseurl .= urlencode("## Expected and actual behavior\n");
-			$bugbaseurl .= urlencode("[*Verbose description*]\n");
-			$bugbaseurl .= urlencode("\n");
-			$bugbaseurl .= urlencode("## Steps to reproduce the behavior\n");
-			$bugbaseurl .= urlencode("[*Verbose description*]\n");
-			$bugbaseurl .= urlencode("\n");
-			$bugbaseurl .= urlencode("## [Attached files](https://help.github.com/articles/issue-attachments) (Screenshots, screencasts, dolibarr.log, debugging informations…)\n");
-			$bugbaseurl .= urlencode("[*Files*]\n");
-			$bugbaseurl .= urlencode("\n");
+			if ($conf->global->MAIN_BUGTRACK_ENABLELINK == 'github') {
+				$bugbaseurl = 'https://github.com/Dolibarr/dolibarr/issues/new?labels=Bug';
+				$bugbaseurl .= '&title=';
+				$bugbaseurl .= urlencode("Bug: ");
+				$bugbaseurl .= '&body=';
+				$bugbaseurl .= urlencode("# Instructions\n");
+				$bugbaseurl .= urlencode("*This is a template to help you report good issues. You may use [Github Markdown](https://help.github.com/articles/getting-started-with-writing-and-formatting-on-github/) syntax to format your issue report.*\n");
+				$bugbaseurl .= urlencode("*Please:*\n");
+				$bugbaseurl .= urlencode("- *replace the bracket enclosed texts with meaningful information*\n");
+				$bugbaseurl .= urlencode("- *remove any unused sub-section*\n");
+				$bugbaseurl .= urlencode("\n");
+				$bugbaseurl .= urlencode("\n");
+				$bugbaseurl .= urlencode("# Bug\n");
+				$bugbaseurl .= urlencode("[*Short description*]\n");
+				$bugbaseurl .= urlencode("\n");
+				$bugbaseurl .= urlencode("## Environment\n");
+				$bugbaseurl .= urlencode("- **Version**: " . DOL_VERSION . "\n");
+				$bugbaseurl .= urlencode("- **OS**: " . php_uname('s') . "\n");
+				$bugbaseurl .= urlencode("- **Web server**: " . $_SERVER["SERVER_SOFTWARE"] . "\n");
+				$bugbaseurl .= urlencode("- **PHP**: " . php_sapi_name() . ' ' . phpversion() . "\n");
+				$bugbaseurl .= urlencode("- **Database**: " . $db::LABEL . ' ' . $db->getVersion() . "\n");
+				$bugbaseurl .= urlencode("- **URL(s)**: " . $_SERVER["REQUEST_URI"] . "\n");
+				$bugbaseurl .= urlencode("\n");
+				$bugbaseurl .= urlencode("## Expected and actual behavior\n");
+				$bugbaseurl .= urlencode("[*Verbose description*]\n");
+				$bugbaseurl .= urlencode("\n");
+				$bugbaseurl .= urlencode("## Steps to reproduce the behavior\n");
+				$bugbaseurl .= urlencode("[*Verbose description*]\n");
+				$bugbaseurl .= urlencode("\n");
+				$bugbaseurl .= urlencode("## [Attached files](https://help.github.com/articles/issue-attachments) (Screenshots, screencasts, dolibarr.log, debugging informations…)\n");
+				$bugbaseurl .= urlencode("[*Files*]\n");
+				$bugbaseurl .= urlencode("\n");
 
+				$bugbaseurl .= urlencode("\n");
+				$bugbaseurl .= urlencode("## Report\n");
+			} elseif (!empty($conf->global->MAIN_BUGTRACK_ENABLELINK)) {
+				$bugbaseurl = $conf->global->MAIN_BUGTRACK_ENABLELINK;
+			} else {
+				$bugbaseurl = "";
+			}
 
 			// Execute hook printBugtrackInfo
-			$parameters = array('bugbaseurl'=>$bugbaseurl);
+			$parameters = array('bugbaseurl' => $bugbaseurl);
 			$reshook = $hookmanager->executeHooks('printBugtrackInfo', $parameters); // Note that $action and $object may have been modified by some hooks
 			if (empty($reshook)) {
 				$bugbaseurl .= $hookmanager->resPrint;
@@ -2785,8 +2807,6 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 				$bugbaseurl = $hookmanager->resPrint;
 			}
 
-			$bugbaseurl .= urlencode("\n");
-			$bugbaseurl .= urlencode("## Report\n");
 			print '<div id="blockvmenuhelpbugreport" class="blockvmenuhelp">';
 			print '<a class="help" target="_blank" rel="noopener" href="'.$bugbaseurl.'">'.$langs->trans("FindBug").'</a>';
 			print '</div>';

@@ -1,8 +1,10 @@
 # ProductBATCH language file - en_US - ProductBATCH
 ManageLotSerial=Χρήση παρτίδας/σειριακού αριθμού
-ProductStatusOnBatch=Ναι (απαιτείται παρτίδα/σειριακός αριθμός)
+ProductStatusOnBatch=Yes (lot required)
+ProductStatusOnSerial=Yes (unique serial number required)
 ProductStatusNotOnBatch=Όχι (δεν χρειάζεται παρτίδα/σειριακός αριθμός)
-ProductStatusOnBatchShort=Ναι
+ProductStatusOnBatchShort=Lot
+ProductStatusOnSerialShort=Serial
 ProductStatusNotOnBatchShort=Όχι
 Batch=Παρτίδα/Σειριακός αριθμός
 atleast1batchfield=Ημερομηνία προθεσμίας Ανάλωσης ή Πώλησης ή Παρτίδα/Σειριακός αριθμός
@@ -22,3 +24,12 @@ ProductLotSetup=Ρύθμιση του module παρτίδας / σειριακο
 ShowCurrentStockOfLot=Εμφάνιση παρόντος αποθέματος για ζεύγος προϊόν/παρτίδα
 ShowLogOfMovementIfLot=Εμφάνιση αρχείου κινήσεων για ζεύγος προϊόν/παρτίδα
 StockDetailPerBatch=Ανάλυση αποθέματος ανά παρτίδα
+SerialNumberAlreadyInUse=Serial number %s is already used for product %s
+TooManyQtyForSerialNumber=You can only have one product %s for serial number %s
+BatchLotNumberingModules=Options for automatic generation of batch products managed by lots
+BatchSerialNumberingModules=Options for automatic generation of batch products managed by serial numbers
+ManageLotMask=Custom mask
+CustomMasks=Adds an option to define mask in the product card
+LotProductTooltip=Adds an option in the product card to define a dedicated batch number mask
+SNProductTooltip=Adds an option in the product card to define a dedicated serial number mask
+QtyToAddAfterBarcodeScan=Qty to add for each barcode/lot/serial scanned

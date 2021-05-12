@@ -70,6 +70,8 @@ Deleted=Slettede
 # Dict
 Type=Type
 Severity=Alvorlighetsgrad
+TicketGroupIsPublic=Gruppen er offentlig
+TicketGroupIsPublicDesc=If a ticket group is public, it will be visible in the form when creating a ticket from the public interface
 
 # Email templates
 MailToSendTicketMessage=Å sende epost fra supportseddel-melding
@@ -114,8 +116,8 @@ TicketsShowModuleLogo=Vis modulens logo i det offentlige grensesnittet
 TicketsShowModuleLogoHelp=Aktiver dette alternativet for å skjule modullogoen på sidene i det offentlige grensesnittet
 TicketsShowCompanyLogo=Vis logoen til firmaet i det offentlige grensesnittet
 TicketsShowCompanyLogoHelp=Aktiver dette alternativet for å skjule logoen til hovedselskapet på sidene i det offentlige grensesnittet
-TicketsEmailAlsoSendToMainAddress=Send også melding til hovedadressen
-TicketsEmailAlsoSendToMainAddressHelp=Aktiver dette alternativet for å sende en epost til "Varslings-epost" -adresse (se oppsett under)
+TicketsEmailAlsoSendToMainAddress=Also send a notification to the main email address
+TicketsEmailAlsoSendToMainAddressHelp=Enable this option to also send an email to the address defined into setup "%s" (see tab "%s")
 TicketsLimitViewAssignedOnly=Begrens visningen til supportsedler tildelt den nåværende brukeren (ikke effektiv for eksterne brukere, alltid begrenset til den tredjepart de er avhengige av)
 TicketsLimitViewAssignedOnlyHelp=Bare supportsedler som er tildelt den nåværende brukeren, vil være synlige. Gjelder ikke for en bruker med administrasjonsrettigheter.
 TicketsActivatePublicInterface=Aktiver det offentlige grensesnittet
@@ -126,10 +128,10 @@ TicketNumberingModules=Supportseddel nummereringsmodul
 TicketsModelModule=Dokumentmaler for billetter
 TicketNotifyTiersAtCreation=Varsle tredjepart ved opprettelse
 TicketsDisableCustomerEmail=Slå alltid av e-post når en billett er opprettet fra det offentlige grensesnittet
-TicketsPublicNotificationNewMessage=Send e-post(er) når en ny melding legges til
+TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is added to a ticket
 TicketsPublicNotificationNewMessageHelp=Send epost(er) når en ny melding legges til fra det offentlige grensesnittet (til tildelt bruker eller varslings-eposten til (oppdatering) og/eller varslings-eposten til)
 TicketPublicNotificationNewMessageDefaultEmail=E-postvarsler til (oppdatere)
-TicketPublicNotificationNewMessageDefaultEmailHelp=Send epost med ny melding til denne adressen hvis billetten ikke er tildelt en bruker eller brukeren ikke har epost.
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
 #
 # Index & list page
 #
@@ -302,3 +304,13 @@ BoxLastModifiedTicket=Siste endrede supportsedler
 BoxLastModifiedTicketDescription=Siste %s endrede supportsedler
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=Ingen nylig endrede supportsedler
+BoxTicketType=Number of open tickets by type
+BoxTicketSeverity=Number of open tickets by severity
+BoxNoTicketSeverity=No tickets opened
+BoxTicketLastXDays=Number of new tickets by days the last %s days
+BoxTicketLastXDayswidget = Number of new tickets by days the last X days
+BoxNoTicketLastXDays=No new tickets the last %s days
+BoxNumberOfTicketByDay=Number of new tickets by day
+BoxNewTicketVSClose=Number of today's new tickets versus today's closed tickets
+TicketCreatedToday=Billett opprettet i dag
+TicketClosedToday=Ticket closed today
