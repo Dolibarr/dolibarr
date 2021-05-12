@@ -4674,7 +4674,7 @@ table.dp {
 
 
 /* ============================================================================== */
-/*  Afficher/cacher                                                               */
+/*  Show/Hide                                                                     */
 /* ============================================================================== */
 
 div.visible {
@@ -6763,8 +6763,14 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 
 
 /* ============================================================================== */
-/* For copypaste feature                                                          */
+/* For copy-paste feature                                                         */
 /* ============================================================================== */
+
+span.clipboardCPValue.hidewithsize {
+    width: 0 !important;
+    display: inline-block;
+    color: transparent;
+}
 
 .clipboardCPShowOnHover .clipboardCPButton {
 	display: none;

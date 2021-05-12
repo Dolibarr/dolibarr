@@ -4583,7 +4583,7 @@ table.dp {
 
 
 /* ============================================================================== */
-/*  Afficher/cacher                                                               */
+/*  Show/Hide                                                                     */
 /* ============================================================================== */
 
 div.visible {
@@ -6603,6 +6603,21 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 	font-weight: 400;
 	writing-mode: vertical-rl;
 	white-space: nowrap;
+}
+
+
+/* ============================================================================== */
+/* For copy-paste feature                                                         */
+/* ============================================================================== */
+
+span.clipboardCPValue.hidewithsize {
+    width: 0 !important;
+    display: inline-block;
+    color: transparent;
+}
+
+.clipboardCPShowOnHover .clipboardCPButton {
+	display: none;
 }
 
 
