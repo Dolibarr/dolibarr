@@ -793,9 +793,18 @@ textarea.centpercent {
 	color: #777;
 }
 
+.flip {
+	transform: scaleX(-1) translate(2px, 0);
+}
+.rotate90 {
+	transform: rotate(90deg) translate(0, 2px);
+}
 .center {
 	text-align: center;
 	margin: 0px auto;
+}
+.alignstart {
+	text-align: start;
 }
 .left {
 	text-align: <?php print $left; ?>;
