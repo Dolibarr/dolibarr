@@ -438,9 +438,9 @@ if((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->glo
 
 //$dolibarr_nocsrfcheck=1;
 // Check token
-if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN)))
+if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN))
 	// DEBUG FROM GME 12/05/2021 UNTIL THIS BUG IS SOLVED CORRECTLY BY THE COMMUNITY
-	//|| defined('CSRFCHECK_WITH_TOKEN'))	// Check validity of token, only if option MAIN_SECURITY_CSRF_WITH_TOKEN enabled or if constant CSRFCHECK_WITH_TOKEN is set into page
+	|| defined('CSRFCHECK_WITH_TOKEN'))	// Check validity of token, only if option MAIN_SECURITY_CSRF_WITH_TOKEN enabled or if constant CSRFCHECK_WITH_TOKEN is set into page
 {
 	// Check all cases that need a token (all POST actions, all actions and mass actions on pages with CSRFCHECK_WITH_TOKEN set, all sensitive GET actions)
 	if ($_SERVER['REQUEST_METHOD'] == 'POST' ||
