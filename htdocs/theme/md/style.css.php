@@ -6611,9 +6611,9 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 /* ============================================================================== */
 
 span.clipboardCPValue.hidewithsize {
-    width: 0 !important;
-    display: inline-block;
-    color: transparent;
+	width: 0 !important;
+	display: inline-block;
+	color: transparent;
 }
 
 .clipboardCPShowOnHover .clipboardCPButton {
