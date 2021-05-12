@@ -4290,10 +4290,10 @@ div.divphotoref > a > .photowithmargin {		/* Margin right for photo not inside a
 .photowithborder {
 	border: 1px solid #f0f0f0;
 }
-.photointoolitp {
+.photointooltip {
 	margin-top: 8px;
 	margin-bottom: 6px;
-	text-align: center;
+	text-align: center !important;
 }
 .photodelete {
 	margin-top: 6px !important;
