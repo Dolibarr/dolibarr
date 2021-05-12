@@ -1107,12 +1107,12 @@ class pdf_gme extends ModelePDFPropales
 		$pdf->MultiCell(0,4,$object->thirdparty->tva_intra,0,'L',0,1,152,$lastY);
 
 		//Titre
-		$pdf->MultiCell(40,4,'Nom : ',0,'L',0,1,125,15);
-		$pdf->MultiCell(40,4,'Numéro de client : ',0,'L',0,1,125,$pdf->GetY());
-		$pdf->MultiCell(40,4,"Numéro de l'offre: ",0,'L',0,1,125,$pdf->GetY());
-		$pdf->MultiCell(40,4,"Date de l'offre: ",0,'L',0,1,125,$pdf->GetY());
-		$pdf->MultiCell(40,4,'Adresse : ',0,'L',0,1,125,$pdf->GetY());
-		$pdf->MultiCell(40,4,'Numéro de TVA : ',0,'L',0,1,125,$lastY);
+		$pdf->MultiCell(40,4,$outputlangs->transnoentities('Lastname').' : ',0,'L',0,1,125,15);
+		$pdf->MultiCell(40,4,$outputlangs->transnoentities('Customer').' n° :',0,'L',0,1,125,$pdf->GetY());
+		$pdf->MultiCell(40,4,$outputlangs->transnoentities('ContactDefault_propal').' n° :',0,'L',0,1,125,$pdf->GetY());
+		$pdf->MultiCell(40,4,$outputlangs->transnoentities('DatePropal').' :',0,'L',0,1,125,$pdf->GetY());
+		$pdf->MultiCell(40,4,$outputlangs->transnoentities('Address').' : ',0,'L',0,1,125,$pdf->GetY());
+		$pdf->MultiCell(40,4,$outputlangs->transnoentities('VATIntra').' : ',0,'L',0,1,125,$lastY);
 
 
 
@@ -1233,18 +1233,18 @@ class pdf_gme extends ModelePDFPropales
 		//tot HT
 		$pdf->SetFont('Helvetica','',10);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell (85,7,$langs->trans('TotalHT'),1,'L',0,0,20, $pdf->GetY(),true, 0, false, true, 7, 'M');
+		$pdf->MultiCell (85,7,$outputlangs->transnoentities('TotalHT'),1,'L',0,0,20, $pdf->GetY(),true, 0, false, true, 7, 'M');
 		$pdf->MultiCell (85,7, number_format($object->total_ht,2,',',' ').'€',1,'R',0,1,105,$pdf->GetY(),true, 0, false, true, 7, 'M');
 
 		//tva
-		$pdf->MultiCell (85,7,$langs->trans('TotalVAT'),1,'L',0,0,20,$pdf->GetY(),true, 0, false, true, 7, 'M');
+		$pdf->MultiCell (85,7,$outputlangs->transnoentities('TotalVAT'),1,'L',0,0,20,$pdf->GetY(),true, 0, false, true, 7, 'M');
 		//tva obtenu en faisant une soustraction (tot_vat-tot_ht)
 		$pdf->MultiCell (85,7, number_format(($object->total_ttc-$object->total_ht),2,',',' ').'€',1,'R',0,1,105,$pdf->GetY(),true, 0, false, true, 7, 'M');
 
 		//tot ttc
 		$pdf->SetFont('Helvetica','B',14);
 		$pdf->SetTextColor(153,204,102);
-		$pdf->MultiCell (85,7,$langs->trans('TotalTTC'),1,'L',0,0,20,$pdf->GetY(),true, 0, false, true, 7, 'M');
+		$pdf->MultiCell (85,7,$outputlangs->transnoentities('TotalTTC'),1,'L',0,0,20,$pdf->GetY(),true, 0, false, true, 7, 'M');
 		$pdf->MultiCell (85,7, number_format($object->total_ttc,2,',',' ').'€',1,'R',0,1,105,$pdf->GetY(),true, 0, false, true, 7, 'M');
 
 	}
@@ -1277,16 +1277,16 @@ class pdf_gme extends ModelePDFPropales
 		$Y=$pdf->GetY();
 
 		//Client
-		$pdf->MultiCell (85,7, 'Pour '.$object->thirdparty->name,0,'L',0,1,20,$pdf->GetY());
+		$pdf->MultiCell (85,7,'Pour '.$object->thirdparty->name,0,'L',0,1,20,$pdf->GetY());
 		$pdf->MultiCell (85,7,$object->contact->firstname.' '.$object->contact->lastname,0,'L',0,1,20,$pdf->GetY());
-		$pdf->MultiCell (85,7, 'En sa qualité de '.$object->contact->poste,0,'L',0,1,20,$pdf->GetY());
-		$pdf->MultiCell (85,7, 'Date & Signature',0,'L',0,0,20,$pdf->GetY());
+		$pdf->MultiCell (85,7,'En sa qualité de '.$object->contact->poste,0,'L',0,1,20,$pdf->GetY());
+		$pdf->MultiCell (85,7,$outputlangs->transnoentities('DateOfSignature'),0,'L',0,0,20,$pdf->GetY());
 
 		//GME
-		$pdf->MultiCell (85,7, 'POUR G.M.ELECTRONICS',0,'R',0,1,105,$Y);
-		$pdf->MultiCell (85,7, 'Yannick Heselmans',0,'R',0,1,105,$pdf->GetY());
-		$pdf->MultiCell (85,7, 'Responsable Commercial',0,'R',0,1,105,$pdf->GetY());
-		$pdf->MultiCell (85,7, 'Date & Signature',0,'R',0,1,105,$pdf->GetY());
+		$pdf->MultiCell (85,7,'POUR G.M.ELECTRONICS',0,'R',0,1,105,$Y);
+		$pdf->MultiCell (85,7,'Yannick Heselmans',0,'R',0,1,105,$pdf->GetY());
+		$pdf->MultiCell (85,7,'Responsable Commercial',0,'R',0,1,105,$pdf->GetY());
+		$pdf->MultiCell (85,7,$outputlangs->transnoentities('DateOfSignature'),0,'R',0,1,105,$pdf->GetY());
 	}
 
 	/**
@@ -1304,7 +1304,7 @@ class pdf_gme extends ModelePDFPropales
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 
 		//Commercial
-		$this->_pagefootsignature($pdf, $object);
+		$this->_pagefootsignature($pdf, $object, $outputlangs);
 
 		//Donnée GME + num Page
 		$pdf->SetFontSize(7);
@@ -1319,7 +1319,7 @@ class pdf_gme extends ModelePDFPropales
 	 * 		@param	Object		$object				Object to show
 	 */
 
-	private function _pagefootsignature(&$pdf, $object)
+	private function _pagefootsignature(&$pdf, $object, $outputlangs)
 	{
 		$tmpuser=new User($this->db);
 		$tmpuser->fetch($object->user_author_id);
@@ -1332,7 +1332,7 @@ class pdf_gme extends ModelePDFPropales
 		$pdf->SetDrawColor(153,204,102);
 
 		//$pdf->MultiCell(0,20,'','LT','L',0,0,108,258);
-		$pdf->MultiCell(0,4,'Votre Commercial','B','L',0,1,120,265);
+		$pdf->MultiCell(0,4,$outputlangs->transnoentities('DemandReasonTypeSRC_COMM'),'B','L',0,1,120,265);
 		$pdf->MultiCell(60,4,$tmpuser->lastname.' '.$tmpuser->firstname,0,'L',0,1,120,$pdf->GetY()+1);
 
 		$pdf->Image($this->urlPictoMail,121,$pdf->GetY()+1,4,4);
