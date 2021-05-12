@@ -248,22 +248,22 @@ if (!empty($result)) {
 	if (!empty($optioncss) && $optioncss != '') {
 		$param .= '&optioncss='.urlencode($optioncss);
 	}
-	if (!empty($search_code)) {
+	if ($search_code) {
 		$param .= '&search_code='.urlencode($search_code);
 	}
-	if (!empty($search_ip)) {
+	if ($search_ip) {
 		$param .= '&search_ip='.urlencode($search_ip);
 	}
-	if (!empty($search_user)) {
+	if ($search_user) {
 		$param .= '&search_user='.urlencode($search_user);
 	}
-	if (!empty($search_desc)) {
+	if ($search_desc) {
 		$param .= '&search_desc='.urlencode($search_desc);
 	}
-	if (!empty($search_ua)) {
+	if ($search_ua) {
 		$param .= '&search_ua='.urlencode($search_ua);
 	}
-	if (!empty($search_prefix_session)) {
+	if ($search_prefix_session) {
 		$param .= '&search_prefix_session='.urlencode($search_prefix_session);
 	}
 	if (!empty($date_startmonth)) {
