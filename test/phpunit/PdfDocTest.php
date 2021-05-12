@@ -141,8 +141,11 @@ class PdfDocTest extends PHPUnit\Framework\TestCase
 		$db=$this->savdb;
 
 		$localproduct=new Product($this->savdb);
-		$localproduct->fetch(0, 'PIDRESS');
-		$product_id=$localproduct->id;
+		$result = $localproduct->fetch(0, 'PIDRESS');
+		if ($result < 0) {
+			print "\n".__METHOD__." Failed to make the fetch of product PIDRESS. ".$localproduct->error; die(1);
+		}
+		$product_id = $localproduct->id;
 		if ($product_id <= 0) {
 			print "\n".__METHOD__." A product with ref PIDRESS must exists into database"; die(1);
 		}

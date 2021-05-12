@@ -609,7 +609,7 @@ if ($object->id > 0) {
 		print '</tr>';
 	}
 
-	// Request to show lines of inventory (prefilled during creation)
+	// Request to show lines of inventory (prefilled after start/validate step)
 	$sql = 'SELECT id.rowid, id.datec as date_creation, id.tms as date_modification, id.fk_inventory, id.fk_warehouse,';
 	$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
@@ -641,8 +641,8 @@ if ($object->id > 0) {
 				$product_static = $cacheOfProducts[$obj->fk_product];
 			} else {
 				$product_static = new Product($db);
-				$product_static->fetch($obj->fk_product);
-
+				$result = $product_static->fetch($obj->fk_product, '', '', '', 1, 1, 1);
+var_dump($result);
 				$option = 'nobatch';
 				$option .= ',novirtual';
 				$product_static->load_stock($option); // Load stock_reel + stock_warehouse. This can also call load_virtual_stock()
