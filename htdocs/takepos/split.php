@@ -77,8 +77,8 @@ if ($action=="split") {
 				if ($placeid < 0) {
 					dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
 				}
-			$sql = "UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-SPLIT)' where rowid=".$placeid;
-			$db->query($sql);
+				$sql = "UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-SPLIT)' where rowid=".$placeid;
+				$db->query($sql);
 			}
 		}
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set fk_facture=".$placeid." where rowid=".$line;
@@ -114,7 +114,6 @@ if ($action=="split") {
 		echo $sql;
 		$db->query($sql);
 	}
-	
 	$invoice->fetch('', '(PROV-POS'.$_SESSION["takeposterminal"].'-SPLIT)');
 	$invoice->update_price();
 	$invoice->fetch('', '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')');
