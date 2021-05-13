@@ -139,6 +139,17 @@ class pdf_gme extends ModelePDFPropales
 	public $urlImageCom;
 
 	/**
+	 * @var Logo mail
+	 */
+	public $urlPictoMail;
+
+	/**
+	 * @var Logo phone
+	 */
+	public $urlPictoPhone;
+
+
+	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler
@@ -148,9 +159,11 @@ class pdf_gme extends ModelePDFPropales
 		global $conf,$langs,$mysoc;
 
 		//Variable Image
-		$this->urlImageCom = DOL_DATA_ROOT.'/image/az.png';
-		$this->urlImageGmeHeader = DOL_DATA_ROOT.'/image/gme_header.png';
-		$this->urlImageGme = DOL_DATA_ROOT.'/image/gme.jpg';
+		$this->urlImageCom = DOL_DATA_ROOT.'/images/commercial.png';
+		$this->urlImageGmeHeader = DOL_DATA_ROOT.'/images/gme_header.png';
+		$this->urlImageGme = DOL_DATA_ROOT.'/images/gme.jpg';
+		$this->urlPictoMail = DOL_DATA_ROOT.'/images/mail.png';
+		$this->urlPictoPhone = DOL_DATA_ROOT.'/images/phone.png';
 
 		// Translations
 		$langs->loadLangs(array("main", "bills"));
@@ -194,14 +207,14 @@ class pdf_gme extends ModelePDFPropales
 		{
 			$this->posxtva=99;
 			$this->posxup=113;
-			$this->posxqty=130;
+			$this->posxqty=129;
 			$this->posxunit=141;
 		}
 		else
 		{
 			$this->posxtva=108;
 			$this->posxup=121;
-			$this->posxqty=140;
+			$this->posxqty=139;
 			$this->posxunit=152;
 		}
 		$this->posxdiscount=152;
@@ -1079,27 +1092,28 @@ class pdf_gme extends ModelePDFPropales
 
 		//Image en-tête (modifier le chemin de l'image en fonction de la photo souhaitée)
 		$pdf->Image($this->urlImageGmeHeader,0,0,210,50);
-		$pdf->SetFont('','B',7);
-
-		//Titre
-		$pdf->MultiCell(40,4,'Nom : ',0,'L',0,1,128,15);
-		$pdf->MultiCell(40,4,'Numéro de client : ',0,'L',0,1,128,$pdf->GetY());
-		$pdf->MultiCell(40,4,"Numéro de l'offre: ",0,'L',0,1,128,$pdf->GetY());
-		$pdf->MultiCell(40,4,"Date de l'offre: ",0,'L',0,1,128,$pdf->GetY());
-		$pdf->MultiCell(40,4,'Adresse : ',0,'L',0,1,128,$pdf->GetY());
-		$lastY = $pdf->GetY()+3;
-		$pdf->MultiCell(40,4,'Numéro de TVA : ',0,'L',0,1,128,$lastY);
 
 		//Données
 		$pdf->SetFont('','I',7);
-		$pdf->MultiCell(0,4,$object->thirdparty->name,0,'L',0,1,155,15);
-		$pdf->MultiCell(0,4,$object->thirdparty->code_client,0,'L',0,1,155,$pdf->GetY());
-		$pdf->MultiCell(0,4,$object->ref,0,'L',0,1,155,$pdf->GetY());
+		$pdf->MultiCell(0,4,$object->thirdparty->name,0,'L',0,1,152,15);
+		$pdf->MultiCell(0,4,$object->thirdparty->code_client,0,'L',0,1,152,$pdf->GetY());
+		$pdf->MultiCell(0,4,$object->ref,0,'L',0,1,152,$pdf->GetY());
 		$pdf->MultiCell (0,4,dol_print_date($object->date,"day",
-				false,$outputlangs,true),0,'L',0,1,155,$pdf->GetY());
-		$pdf->writeHTMLCell(50,4,155,$pdf->GetY(),$object->thirdparty->address.'<br/>'
-			.$object->thirdparty->zip.' '.$object->thirdparty->town,0,2);
-		$pdf->MultiCell(0,4,$object->thirdparty->tva_intra,0,'L',0,1,155,$lastY);
+				false,$outputlangs,true),0,'L',0,1,152,$pdf->GetY());
+		$pdf->writeHTMLCell(50,4,152,$pdf->GetY(),$object->thirdparty->address.'<br/>'
+			.$object->thirdparty->zip.' '.$object->thirdparty->town,0,1);
+		$lastY = $pdf->GetY();
+		$pdf->MultiCell(0,4,$object->thirdparty->tva_intra,0,'L',0,1,152,$lastY);
+
+		//Titre
+		$pdf->SetFont('','B',7);
+		$pdf->MultiCell(40,4,$outputlangs->transnoentities('Lastname').' : ',0,'L',0,1,125,15);
+		$pdf->MultiCell(40,4,$outputlangs->transnoentities('Customer').' n° :',0,'L',0,1,125,$pdf->GetY());
+		$pdf->MultiCell(40,4,$outputlangs->transnoentities('ContactDefault_propal').' n° :',0,'L',0,1,125,$pdf->GetY());
+		$pdf->MultiCell(40,4,$outputlangs->transnoentities('DatePropal').' :',0,'L',0,1,125,$pdf->GetY());
+		$pdf->MultiCell(40,4,$outputlangs->transnoentities('Address').' : ',0,'L',0,1,125,$pdf->GetY());
+		$pdf->MultiCell(40,4,$outputlangs->transnoentities('VATIntra').' : ',0,'L',0,1,125,$lastY);
+
 
 
 
@@ -1197,6 +1211,8 @@ class pdf_gme extends ModelePDFPropales
 	 *  @return	void
 	 */
 	private function totOffre(&$pdf, $object, $outputlangs){
+		global $langs;
+
 		//Couleur de fond cellule
 		$pdf->SetFillColor(153,204,102);
 
@@ -1207,7 +1223,7 @@ class pdf_gme extends ModelePDFPropales
 		//remtotal
 		$pdf->SetFont('Helvetica','',10);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell (0,5, $outputlangs->convToOutputCharset($object->array_options ['options_remtotal']),0,'L',0,1,20,$pdf->GetY()+10);
+		$pdf->writeHTMLCell(0,5,20,$pdf->GetY()+10,$outputlangs->convToOutputCharset($object->array_options ['options_remtotal']),0,1);
 
 		//Tableau récap totaux
 		$pdf->SetFont('Helvetica','B',10);
@@ -1217,18 +1233,18 @@ class pdf_gme extends ModelePDFPropales
 		//tot HT
 		$pdf->SetFont('Helvetica','',10);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell (85,7, "{__(gme_total_hvat)__}",1,'L',0,0,20, $pdf->GetY(),true, 0, false, true, 7, 'M');
+		$pdf->MultiCell (85,7,$outputlangs->transnoentities('TotalHT'),1,'L',0,0,20, $pdf->GetY(),true, 0, false, true, 7, 'M');
 		$pdf->MultiCell (85,7, number_format($object->total_ht,2,',',' ').'€',1,'R',0,1,105,$pdf->GetY(),true, 0, false, true, 7, 'M');
 
 		//tva
-		$pdf->MultiCell (85,7, "{__(gme_vat)__}",1,'L',0,0,20,$pdf->GetY(),true, 0, false, true, 7, 'M');
+		$pdf->MultiCell (85,7,$outputlangs->transnoentities('TotalVAT'),1,'L',0,0,20,$pdf->GetY(),true, 0, false, true, 7, 'M');
 		//tva obtenu en faisant une soustraction (tot_vat-tot_ht)
 		$pdf->MultiCell (85,7, number_format(($object->total_ttc-$object->total_ht),2,',',' ').'€',1,'R',0,1,105,$pdf->GetY(),true, 0, false, true, 7, 'M');
 
 		//tot ttc
 		$pdf->SetFont('Helvetica','B',14);
 		$pdf->SetTextColor(153,204,102);
-		$pdf->MultiCell (85,7, "{__(GME_TOTAL_VAT)__}",1,'L',0,0,20,$pdf->GetY(),true, 0, false, true, 7, 'M');
+		$pdf->MultiCell (85,7,$outputlangs->transnoentities('TotalTTC'),1,'L',0,0,20,$pdf->GetY(),true, 0, false, true, 7, 'M');
 		$pdf->MultiCell (85,7, number_format($object->total_ttc,2,',',' ').'€',1,'R',0,1,105,$pdf->GetY(),true, 0, false, true, 7, 'M');
 
 	}
@@ -1256,21 +1272,21 @@ class pdf_gme extends ModelePDFPropales
 		$pdf->SetTextColor(0,0,0);
 
 		//vdl
-		$pdf->MultiCell (0,7, $outputlangs->convToOutputCharset($object->array_options ['options_vdl']),0,'L',0,1,20,$pdf->GetY()+10);
+		$pdf->writeHTMLCell(0,7,20,$pdf->GetY()+10,$outputlangs->convToOutputCharset($object->array_options ['options_vdl']),0,1);
 
 		$Y=$pdf->GetY();
 
 		//Client
-		$pdf->MultiCell (85,7, 'Pour '.$object->thirdparty->name,0,'L',0,1,20,$pdf->GetY());
+		$pdf->MultiCell (85,7,'Pour '.$object->thirdparty->name,0,'L',0,1,20,$pdf->GetY());
 		$pdf->MultiCell (85,7,$object->contact->firstname.' '.$object->contact->lastname,0,'L',0,1,20,$pdf->GetY());
-		$pdf->MultiCell (85,7, 'En sa qualité de '.$object->contact->poste,0,'L',0,1,20,$pdf->GetY());
-		$pdf->MultiCell (85,7, 'Date & Signature',0,'L',0,0,20,$pdf->GetY());
+		$pdf->MultiCell (85,7,'En sa qualité de '.$object->contact->poste,0,'L',0,1,20,$pdf->GetY());
+		$pdf->MultiCell (85,7,$outputlangs->transnoentities('DateOfSignature'),0,'L',0,0,20,$pdf->GetY());
 
 		//GME
-		$pdf->MultiCell (85,7, 'POUR G.M.ELECTRONICS',0,'R',0,1,105,$Y);
-		$pdf->MultiCell (85,7, 'Yannick Heselmans',0,'R',0,1,105,$pdf->GetY());
-		$pdf->MultiCell (85,7, 'Responsable Commercial',0,'R',0,1,105,$pdf->GetY());
-		$pdf->MultiCell (85,7, 'Date & Signature',0,'R',0,1,105,$pdf->GetY());
+		$pdf->MultiCell (85,7,'POUR G.M.ELECTRONICS',0,'R',0,1,105,$Y);
+		$pdf->MultiCell (85,7,'Yannick Heselmans',0,'R',0,1,105,$pdf->GetY());
+		$pdf->MultiCell (85,7,'Responsable Commercial',0,'R',0,1,105,$pdf->GetY());
+		$pdf->MultiCell (85,7,$outputlangs->transnoentities('DateOfSignature'),0,'R',0,1,105,$pdf->GetY());
 	}
 
 	/**
@@ -1288,7 +1304,7 @@ class pdf_gme extends ModelePDFPropales
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 
 		//Commercial
-		$this->_pagefootsignature($pdf, $object);
+		$this->_pagefootsignature($pdf, $object, $outputlangs);
 
 		//Donnée GME + num Page
 		$pdf->SetFontSize(7);
@@ -1303,23 +1319,27 @@ class pdf_gme extends ModelePDFPropales
 	 * 		@param	Object		$object				Object to show
 	 */
 
-	private function _pagefootsignature(&$pdf, $object)
+	private function _pagefootsignature(&$pdf, $object, $outputlangs)
 	{
 		$tmpuser=new User($this->db);
 		$tmpuser->fetch($object->user_author_id);
 
 		//Image Com (modifier le chemin de l'image en fonction de la photo souhaitée)
-		$pdf->Image($this->urlImageCom,100,263,22,22);
+		$pdf->Image($this->urlImageCom,90,263,22,22);
 
 		$pdf->SetFont('Helvetica','', 9);
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetDrawColor(153,204,102);
 
 		//$pdf->MultiCell(0,20,'','LT','L',0,0,108,258);
-		$pdf->MultiCell(0,4,'Votre Commercial','B','L',0,1,130,265);
-		$pdf->MultiCell(60,4,$tmpuser->lastname.' '.$tmpuser->firstname,0,'L',0,1,130,$pdf->GetY()+1);
-		$pdf->MultiCell(60,4,'MAIL : '.$tmpuser->email,0,'L',0,1,130,$pdf->GetY()+1);
-		$pdf->MultiCell(60,4,'GSM : '.$tmpuser->office_phone,0,'L',0,1,130,$pdf->GetY()+1);
+		$pdf->MultiCell(0,4,$outputlangs->transnoentities('DemandReasonTypeSRC_COMM'),'B','L',0,1,120,265);
+		$pdf->MultiCell(60,4,$tmpuser->lastname.' '.$tmpuser->firstname,0,'L',0,1,120,$pdf->GetY()+1);
+
+		$pdf->Image($this->urlPictoMail,121,$pdf->GetY()+1,4,4);
+		$pdf->MultiCell(60,4,' '.$tmpuser->email,0,'L',0,1,125,$pdf->GetY()+1);
+
+		$pdf->Image($this->urlPictoPhone,121,$pdf->GetY()+1,4,4);
+		$pdf->MultiCell(60,4,' '.$tmpuser->office_phone,0,'L',0,1,125,$pdf->GetY()+1);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
