@@ -183,8 +183,8 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
     margin-left: 80px;
 }
 .info-box-sm .info-box-module-enabled {
-    /* background: linear-gradient(0.35turn, #fff, #fff, #f6faf8, #e4efe8) */
-    background: linear-gradient(0.4turn, #fff, #fff, #fff, #e4efe8);
+    /* background: linear-gradient(0.35turn, #fff, #fff, #f6faf8, #e4efe8) */ 
+	background: var(--infoboxmoduleenabledbgcolor);
 }
 .info-box-content-warning span.font-status4 {
 	color: #bc9526 !important;
