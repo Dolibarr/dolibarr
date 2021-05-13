@@ -61,7 +61,6 @@ if ($action=="split") {
 		$ret = $invoice->fetch('', '(PROV-POS'.$_SESSION["takeposterminal"].'-SPLIT)');
 		if ($ret > 0) {
 			$placeid = $invoice->id;
-		
 		}
 		else {
 			$constforcompanyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
@@ -90,7 +89,6 @@ if ($action=="split") {
 		$ret = $invoice->fetch('', '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')');
 		if ($ret > 0) {
 			$placeid = $invoice->id;
-		
 		}
 		else {
 			$constforcompanyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
@@ -107,9 +105,9 @@ if ($action=="split") {
 				if ($placeid < 0) {
 					dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
 				}
-			$sql = "UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' where rowid=".$placeid;
-			echo $sql;
-			$db->query($sql);
+				$sql = "UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' where rowid=".$placeid;
+				echo $sql;
+				$db->query($sql);
 			}
 		}
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set fk_facture=".$placeid." where rowid=".$line;
