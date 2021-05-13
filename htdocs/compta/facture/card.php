@@ -1093,6 +1093,19 @@ if (empty($reshook)) {
 					}
 				}
 				$id = $object->create($user);
+        if ($id < 0) {
+			$error++;
+		} else {
+			// copy internal contacts
+			if ($object->copy_linked_contact($facture_source, 'internal') < 0) {
+				$error++;
+			} elseif ($facture_source->socid == $object->socid) {
+				// copy external contacts if same company
+				if ($object->copy_linked_contact($facture_source, 'external') < 0) {
+					$error++;
+				}
+			}
+		}
 
 				// NOTE: Pb with situation invoice
 				// NOTE: fields total on situation invoice are stored as cumulative values on total of lines (bad) but delta on invoice total
