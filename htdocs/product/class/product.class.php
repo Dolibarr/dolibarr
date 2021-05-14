@@ -190,6 +190,10 @@ class Product extends CommonObject
 	public $localtax1_type;
 	public $localtax2_type;
 
+	public $lifetime;
+
+	public $qc_frequency;
+
 	/**
 	 * Stock real
 	 *
@@ -329,13 +333,6 @@ class Product extends CommonObject
 	 * @var string
 	 */
 	public $barcode_type_code;
-
-	/**
-	 * Additional barcodes (Some products have different barcodes according to the country of origin of manufacture)
-	 *
-	 * @var array
-	 */
-	public $barcodes_extra = array();
 
 	public $stats_propale = array();
 	public $stats_commande = array();
@@ -2237,7 +2234,7 @@ class Product extends CommonObject
 		if ($separatedStock) {
 			$sql .= " AND sp.fk_entrepot IN (
 				SELECT rowid
-				FROM ".MAIN_DB_PREFIX."entrepot	WHERE entity IN (" . $this->db->sanitize($visibleWarehousesEntities)	."))";
+				FROM ".MAIN_DB_PREFIX."entrepot	WHERE entity IN (".$this->db->sanitize($visibleWarehousesEntities)."))";
 		}
 
 
@@ -2336,11 +2333,10 @@ class Product extends CommonObject
 
 				$this->db->free($resql);
 
-				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 
-				// multilangs
+				// Multilangs
 				if (!empty($conf->global->MAIN_MULTILANGS) && empty($ignore_lang_load)) {
 					$this->getMultiLangs();
 				}
