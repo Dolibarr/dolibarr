@@ -340,10 +340,10 @@ if ($resql)
 	if ($search_town)      $param .= '&search_town='.urlencode($search_town);
 	if ($search_zip)       $param .= '&search_zip='.urlencode($search_zip);
 
-	if ($search_datedelivery_start)	$param .= '&search_datedelivery_startday='.urlencode(dol_print_date($search_datedelivery_start,'%d')).'&search_datedelivery_startmonth='.urlencode(dol_print_date($search_datedelivery_start,'%m')).'&search_datedelivery_startyear='.urlencode(dol_print_date($search_datedelivery_start,'%Y'));
-	if ($search_datedelivery_end)	$param .= '&search_datedelivery_endday='.urlencode(dol_print_date($search_datedelivery_end,'%d')).'&search_datedelivery_endmonth='.urlencode(dol_print_date($search_datedelivery_end,'%m')).'&search_datedelivery_endyear='.urlencode(dol_print_date($search_datedelivery_end,'%Y'));
-	if ($search_datereceipt_start)	$param .= '&search_datereceipt_startday='.urlencode(dol_print_date($search_datereceipt_start,'%d')).'&search_datereceipt_startmonth='.urlencode(dol_print_date($search_datereceipt_start,'%m')).'&search_datereceipt_startyear='.urlencode(dol_print_date($search_datereceipt_start,'%Y'));
-	if ($search_datereceipt_end)	$param .= '&search_datereceipt_endday='.urlencode(dol_print_date($search_datereceipt_end,'%d')).'&search_datereceipt_endmonth='.urlencode(dol_print_date($search_datereceipt_end,'%m')).'&search_datereceipt_endyear='.urlencode(dol_print_date($search_datereceipt_end,'%Y'));
+	if ($search_datedelivery_start)	$param .= '&search_datedelivery_startday='.urlencode(dol_print_date($search_datedelivery_start, '%d')).'&search_datedelivery_startmonth='.urlencode(dol_print_date($search_datedelivery_start, '%m')).'&search_datedelivery_startyear='.urlencode(dol_print_date($search_datedelivery_start, '%Y'));
+	if ($search_datedelivery_end)	$param .= '&search_datedelivery_endday='.urlencode(dol_print_date($search_datedelivery_end, '%d')).'&search_datedelivery_endmonth='.urlencode(dol_print_date($search_datedelivery_end, '%m')).'&search_datedelivery_endyear='.urlencode(dol_print_date($search_datedelivery_end, '%Y'));
+	if ($search_datereceipt_start)	$param .= '&search_datereceipt_startday='.urlencode(dol_print_date($search_datereceipt_start, '%d')).'&search_datereceipt_startmonth='.urlencode(dol_print_date($search_datereceipt_start, '%m')).'&search_datereceipt_startyear='.urlencode(dol_print_date($search_datereceipt_start, '%Y'));
+	if ($search_datereceipt_end)	$param .= '&search_datereceipt_endday='.urlencode(dol_print_date($search_datereceipt_end, '%d')).'&search_datereceipt_endmonth='.urlencode(dol_print_date($search_datereceipt_end, '%m')).'&search_datereceipt_endyear='.urlencode(dol_print_date($search_datereceipt_end, '%Y'));
 
 	if ($search_product_category != '') $param .= '&search_product_category='.urlencode($search_product_category);
 	if ($search_categ_cus > 0)      $param .= '&search_categ_cus='.urlencode($search_categ_cus);
