@@ -211,7 +211,9 @@ if ($action == 'order' && isset($_POST['valid']))
             if ($resql && $db->num_rows($resql) > 0) {
                 $obj = $db->fetch_object($resql);
                 $order->fetch($obj->rowid);
+				$order->fetch_thirdparty();
                 foreach ($supplier['lines'] as $line) {
+                	if(empty($line->remise_percent)) $line->remise_percent = $order->thirdparty->remise_supplier_percent;
                     $result = $order->addline(
                         $line->desc,
                         $line->subprice,
@@ -248,6 +250,7 @@ if ($action == 'order' && isset($_POST['valid']))
                 //trick to know which orders have been generated this way
                 $order->source = 42;
                 foreach ($supplier['lines'] as $line) {
+					if(empty($line->remise_percent)) $line->remise_percent = $order->thirdparty->remise_supplier_percent;
                     $order->lines[] = $line;
                 }
                 $order->cond_reglement_id = $order->thirdparty->cond_reglement_supplier_id;
