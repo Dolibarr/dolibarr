@@ -31,52 +31,50 @@ class mailing_mailinglist_leavelist_myobject extends MailingTargets
 
 
 	/**
-     *	Constructor
-     *
-     * 	@param	DoliDB	$db		Database handler
-     */
+	 *	Constructor
+	 *
+	 * 	@param	DoliDB	$db		Database handler
+	 */
 	function __construct($db)
 	{
 		global $conf;
 
 		$this->db=$db;
-		if (is_array($conf->modules))
-		{
-			$this->enabled=in_array('leavelist',$conf->modules)?1:0;
+		if (is_array($conf->modules)) {
+			$this->enabled=in_array('leavelist', $conf->modules)?1:0;
 		}
 	}
 
 
-    /**
-     *   Affiche formulaire de filtre qui apparait dans page de selection des destinataires de mailings
-     *
-     *   @return     string      Retourne zone select
-     */
-    function formFilter()
-    {
-        global $langs;
-        $langs->load("members");
+	/**
+	 *   Affiche formulaire de filtre qui apparait dans page de selection des destinataires de mailings
+	 *
+	 *   @return     string      Retourne zone select
+	 */
+	function formFilter()
+	{
+		global $langs;
+		$langs->load("members");
 
-        $form=new Form($this->db);
+		$form=new Form($this->db);
 
-        $arraystatus=array(1=>'Option 1', 2=>'Option 2');
+		$arraystatus=array(1=>'Option 1', 2=>'Option 2');
 
-        $s='';
-        $s.=$langs->trans("Status").': ';
-        $s.='<select name="filter" class="flat">';
-        $s.='<option value="none">&nbsp;</option>';
-        foreach($arraystatus as $status)
-        {
-	        $s.='<option value="'.$status.'">'.$status.'</option>';
-        }
-        $s.='</select>';
-        $s.='<br>';
+		$s='';
+		$s.=$langs->trans("Status").': ';
+		$s.='<select name="filter" class="flat">';
+		$s.='<option value="none">&nbsp;</option>';
+		foreach ($arraystatus as $status) {
+			$s.='<option value="'.$status.'">'.$status.'</option>';
+		}
+		$s.='</select>';
+		$s.='<br>';
 
-        return $s;
-    }
+		return $s;
+	}
 
 
-    /**
+	/**
 	 *  Renvoie url lien vers fiche de la source du destinataire du mailing
 	 *
 	 *  @param		int			$id		ID
@@ -84,7 +82,7 @@ class mailing_mailinglist_leavelist_myobject extends MailingTargets
 	 */
 	function url($id)
 	{
-		return '<a href="'.dol_buildpath('/leavelist/myobject_card.php',1).'?id='.$id.'">'.img_object('',"generic").'</a>';
+		return '<a href="'.dol_buildpath('/leavelist/myobject_card.php', 1).'?id='.$id.'">'.img_object('', "generic").'</a>';
 	}
 
 
@@ -95,7 +93,7 @@ class mailing_mailinglist_leavelist_myobject extends MailingTargets
 	 *  @param	array	$filtersarray   Requete sql de selection des destinataires
 	 *  @return int           			<0 if error, number of emails added if ok
 	 */
-	function add_to_target($mailing_id,$filtersarray=array())
+	function add_to_target($mailing_id, $filtersarray = array())
 	{
 		$target = array();
 		$cibles = array();
@@ -110,19 +108,16 @@ class mailing_mailinglist_leavelist_myobject extends MailingTargets
 
 		// Stocke destinataires dans cibles
 		$result=$this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			$num = $this->db->num_rows($result);
 			$i = 0;
 
 			dol_syslog("mailinglist_leavelist_myobject.modules.php: mailing ".$num." targets found");
 
 			$old = '';
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
-				if ($old <> $obj->email)
-				{
+				if ($old <> $obj->email) {
 					$cibles[$j] = array(
 						'email' => $obj->email,
 						'name' => $obj->lastname,
@@ -139,9 +134,7 @@ class mailing_mailinglist_leavelist_myobject extends MailingTargets
 
 				$i++;
 			}
-		}
-		else
-		{
+		} else {
 			dol_syslog($this->db->error());
 			$this->error=$this->db->error();
 			return -1;
@@ -188,13 +181,11 @@ class mailing_mailinglist_leavelist_myobject extends MailingTargets
 	 *	@param	string	$option		Options
 	 *	@return	int					Nb of recipients or -1 if KO
 	 */
-	function getNbOfRecipients($filter=1,$option='')
+	function getNbOfRecipients($filter = 1, $option = '')
 	{
 		$a=parent::getNbOfRecipients("select count(distinct(email)) as nb from ".MAIN_DB_PREFIX."myobject as p where email IS NOT NULL AND email != ''");
 
 		if ($a < 0) return -1;
 		return $a;
 	}
-
 }
-

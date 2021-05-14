@@ -44,9 +44,9 @@ class modLeaveList extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-        global $langs,$conf;
+		global $langs,$conf;
 
-        $this->db = $db;
+		$this->db = $db;
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
@@ -63,7 +63,7 @@ class modLeaveList extends DolibarrModules
 		//$this->familyinfo = array('myownfamily' => array('position' => '01', 'label' => $langs->trans("MyOwnFamily")));
 
 		// Module label (no space allowed), used if translation string 'ModuleLeaveListName' not found (MyModue is name of module).
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		// Module description, used if translation string 'ModuleLeaveListDesc' not found (MyModue is name of module).
 		$this->description = "LeaveListDescription";
 		// Used only if file README.md and README-LL.md not found.
@@ -86,19 +86,19 @@ class modLeaveList extends DolibarrModules
 		// for specific path of parts (eg: /leavelist/core/modules/barcode)
 		// for specific css file (eg: /leavelist/css/leavelist.css.php)
 		$this->module_parts = array(
-		                        	'triggers' => 1,                                 	// Set this to 1 if module has its own trigger directory (core/triggers)
+									'triggers' => 1,                                 	// Set this to 1 if module has its own trigger directory (core/triggers)
 									'login' => 0,                                    	// Set this to 1 if module has its own login method file (core/login)
 									'substitutions' => 1,                            	// Set this to 1 if module has its own substitution function file (core/substitutions)
 									'menus' => 0,                                    	// Set this to 1 if module has its own menus handler directory (core/menus)
 									'theme' => 0,                                    	// Set this to 1 if module has its own theme directory (theme)
-		                        	'tpl' => 0,                                      	// Set this to 1 if module overwrite template dir (core/tpl)
+									'tpl' => 0,                                      	// Set this to 1 if module overwrite template dir (core/tpl)
 									'barcode' => 0,                                  	// Set this to 1 if module has its own barcode directory (core/modules/barcode)
 									'models' => 0,                                   	// Set this to 1 if module has its own models directory (core/modules/xxx)
 									'css' => array('/leavelist/css/leavelist.css.php'),	// Set this to relative path of css file if module has its own css file
-	 								'js' => array('/leavelist/js/leavelist.js.php'),          // Set this to relative path of js file if module must load a js on all pages
+									'js' => array('/leavelist/js/leavelist.js.php'),          // Set this to relative path of js file if module must load a js on all pages
 									'hooks' => array('data'=>array('hookcontext1','hookcontext2'), 'entity'=>'0'), 	// Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context 'all'
 									'moduleforexternal' => 0							// Set this to 1 if feature of module are opened to external users
-		                        );
+								);
 
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/leavelist/temp","/leavelist/subdir");
@@ -135,21 +135,20 @@ class modLeaveList extends DolibarrModules
 			'fr_FR:ParentCompany'=>'Maison mère ou revendeur'
 		)*/
 
-		if (! isset($conf->leavelist) || ! isset($conf->leavelist->enabled))
-		{
+		if (! isset($conf->leavelist) || ! isset($conf->leavelist->enabled)) {
 			$conf->leavelist=new stdClass();
 			$conf->leavelist->enabled=0;
 		}
 
 
 		// Array to add new pages in new tabs
-        $this->tabs = array();
+		$this->tabs = array();
 		// Example:
 		// $this->tabs[] = array('data'=>'objecttype:+tabname1:Title1:mylangfile@leavelist:$user->rights->leavelist->read:/leavelist/mynewtab1.php?id=__ID__');  					// To add a new tab identified by code tabname1
-        // $this->tabs[] = array('data'=>'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@leavelist:$user->rights->othermodule->read:/leavelist/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
-        // $this->tabs[] = array('data'=>'objecttype:-tabname:NU:conditiontoremove');                                                     										// To remove an existing tab identified by code tabname
-        //
-        // Where objecttype can be
+		// $this->tabs[] = array('data'=>'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@leavelist:$user->rights->othermodule->read:/leavelist/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
+		// $this->tabs[] = array('data'=>'objecttype:-tabname:NU:conditiontoremove');                                                     										// To remove an existing tab identified by code tabname
+		//
+		// Where objecttype can be
 		// 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
 		// 'contact'          to add a tab in contact view
 		// 'contract'         to add a tab in contract view
@@ -171,31 +170,31 @@ class modLeaveList extends DolibarrModules
 		// 'user'             to add a tab in user view
 
 
-        // Dictionaries
+		// Dictionaries
 		$this->dictionaries=array();
-        /* Example:
-        $this->dictionaries=array(
-            'langs'=>'mylangfile@leavelist',
-            'tabname'=>array(MAIN_DB_PREFIX."table1",MAIN_DB_PREFIX."table2",MAIN_DB_PREFIX."table3"),		// List of tables we want to see into dictonnary editor
-            'tablib'=>array("Table1","Table2","Table3"),													// Label of tables
-            'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table1 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table2 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table3 as f'),	// Request to select fields
-            'tabsqlsort'=>array("label ASC","label ASC","label ASC"),																					// Sort order
-            'tabfield'=>array("code,label","code,label","code,label"),																					// List of fields (result of select to show dictionary)
-            'tabfieldvalue'=>array("code,label","code,label","code,label"),																				// List of fields (list of fields to edit a record)
-            'tabfieldinsert'=>array("code,label","code,label","code,label"),																			// List of fields (list of fields for insert)
-            'tabrowid'=>array("rowid","rowid","rowid"),																									// Name of columns with primary key (try to always name it 'rowid')
-            'tabcond'=>array($conf->leavelist->enabled,$conf->leavelist->enabled,$conf->leavelist->enabled)												// Condition to show each dictionary
-        );
-        */
+		/* Example:
+		$this->dictionaries=array(
+			'langs'=>'mylangfile@leavelist',
+			'tabname'=>array(MAIN_DB_PREFIX."table1",MAIN_DB_PREFIX."table2",MAIN_DB_PREFIX."table3"),		// List of tables we want to see into dictonnary editor
+			'tablib'=>array("Table1","Table2","Table3"),													// Label of tables
+			'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table1 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table2 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table3 as f'),	// Request to select fields
+			'tabsqlsort'=>array("label ASC","label ASC","label ASC"),																					// Sort order
+			'tabfield'=>array("code,label","code,label","code,label"),																					// List of fields (result of select to show dictionary)
+			'tabfieldvalue'=>array("code,label","code,label","code,label"),																				// List of fields (list of fields to edit a record)
+			'tabfieldinsert'=>array("code,label","code,label","code,label"),																			// List of fields (list of fields for insert)
+			'tabrowid'=>array("rowid","rowid","rowid"),																									// Name of columns with primary key (try to always name it 'rowid')
+			'tabcond'=>array($conf->leavelist->enabled,$conf->leavelist->enabled,$conf->leavelist->enabled)												// Condition to show each dictionary
+		);
+		*/
 
 
-        // Boxes/Widgets
+		// Boxes/Widgets
 		// Add here list of php file(s) stored in leavelist/core/boxes that contains class to show a widget.
-        $this->boxes = array(
-        	0=>array('file'=>'leavelistwidget1.php@leavelist','note'=>'Widget provided by LeaveList','enabledbydefaulton'=>'Home'),
-        	//1=>array('file'=>'leavelistwidget2.php@leavelist','note'=>'Widget provided by LeaveList'),
-        	//2=>array('file'=>'leavelistwidget3.php@leavelist','note'=>'Widget provided by LeaveList')
-        );
+		$this->boxes = array(
+			0=>array('file'=>'leavelistwidget1.php@leavelist','note'=>'Widget provided by LeaveList','enabledbydefaulton'=>'Home'),
+			//1=>array('file'=>'leavelistwidget2.php@leavelist','note'=>'Widget provided by LeaveList'),
+			//2=>array('file'=>'leavelistwidget3.php@leavelist','note'=>'Widget provided by LeaveList')
+		);
 
 
 		// Cronjobs (List of cron jobs entries to add when module is enabled)
@@ -310,10 +309,10 @@ class modLeaveList extends DolibarrModules
 	 *	The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *	It also creates data directories
 	 *
-     *	@param      string	$options    Options when enabling module ('', 'noboxes')
+	 *	@param      string	$options    Options when enabling module ('', 'noboxes')
 	 *	@return     int             	1 if OK, 0 if KO
 	 */
-	public function init($options='')
+	public function init($options = '')
 	{
 		$result=$this->_load_tables('/leavelist/sql/');
 		if ($result < 0) return -1; // Do not activate module if not allowed errors found on module SQL queries (the _load_table run sql with run_sql with error allowed parameter to 'default')
@@ -347,6 +346,4 @@ class modLeaveList extends DolibarrModules
 
 		return $this->_remove($sql, $options);
 	}
-
 }
-

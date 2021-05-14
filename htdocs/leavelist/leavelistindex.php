@@ -30,16 +30,16 @@
 // Load Dolibarr environment
 $res=0;
 // Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
-if (! $res && ! empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) $res=@include($_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php");
+if (! $res && ! empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) $res=@include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
 // Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
 $tmp=empty($_SERVER['SCRIPT_FILENAME'])?'':$_SERVER['SCRIPT_FILENAME'];$tmp2=realpath(__FILE__); $i=strlen($tmp)-1; $j=strlen($tmp2)-1;
-while($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i]==$tmp2[$j]) { $i--; $j--; }
-if (! $res && $i > 0 && file_exists(substr($tmp, 0, ($i+1))."/main.inc.php")) $res=@include(substr($tmp, 0, ($i+1))."/main.inc.php");
-if (! $res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i+1)))."/main.inc.php")) $res=@include(dirname(substr($tmp, 0, ($i+1)))."/main.inc.php");
+while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i]==$tmp2[$j]) { $i--; $j--; }
+if (! $res && $i > 0 && file_exists(substr($tmp, 0, ($i+1))."/main.inc.php")) $res=@include substr($tmp, 0, ($i+1))."/main.inc.php";
+if (! $res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i+1)))."/main.inc.php")) $res=@include dirname(substr($tmp, 0, ($i+1)))."/main.inc.php";
 // Try main.inc.php using relative path
-if (! $res && file_exists("../main.inc.php")) $res=@include("../main.inc.php");
-if (! $res && file_exists("../../main.inc.php")) $res=@include("../../main.inc.php");
-if (! $res && file_exists("../../../main.inc.php")) $res=@include("../../../main.inc.php");
+if (! $res && file_exists("../main.inc.php")) $res=@include "../main.inc.php";
+if (! $res && file_exists("../../main.inc.php")) $res=@include "../../main.inc.php";
+if (! $res && file_exists("../../../main.inc.php")) $res=@include "../../../main.inc.php";
 if (! $res) die("Include of main fails");
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -59,9 +59,8 @@ $action=GETPOST('action', 'alpha');
 // path to the general css style
 
 if (! $user->rights->leavelist->read) accessforbidden();
-$socid=GETPOST('socid','int');
-if (isset($user->societe_id) && $user->societe_id > 0)
-{
+$socid=GETPOST('socid', 'int');
+if (isset($user->societe_id) && $user->societe_id > 0) {
 	$action = '';
 	$socid = $user->societe_id;
 }
@@ -72,7 +71,7 @@ $now=dol_now();
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-llxHeader("",$langs->trans("LeaveListArea"));
+llxHeader("", $langs->trans("LeaveListArea"));
 // print load_fiche_titre($langs->trans("LeaveListArea"),'','leavelist.png@leavelist');
 //
 //
@@ -121,22 +120,17 @@ if ($req) {
 		while ($j < $k) {
 			$db_var = $db->fetch_object($req);
 			if ($db_var) {    // You can use here results
-                // search if the current element has the admin permission or it is in the array of hr team
-				if ((($db_var->fk_id) == 20007 || ($db_var->fk_id) == 20004)&&(!in_array($db_var->ref,$array_of_hr_workers))) {
-
+				// search if the current element has the admin permission or it is in the array of hr team
+				if ((($db_var->fk_id) == 20007 || ($db_var->fk_id) == 20004)&&(!in_array($db_var->ref, $array_of_hr_workers))) {
 					$array_of_hr_workers[$hr_array_index] = ($db_var->ref); // insert hr team in array
 					$hr_array_index++; // incrementing index of array
-
 				}
 			}
 
 			$j++;
 		}
 		$db->free($req);
-
 	}
-
-
 }
 if (isset($_POST['button1'])) { // could be placed here to change session after first submit for placeholder
 	$_SESSION['button1'] = $_POST['button1'];
@@ -156,9 +150,7 @@ if (isset($_POST['button1'])) { // could be placed here to change session after 
   			'.$langs->trans("Employeename").' 
   			<select placeholder="Yours Placeholder" id="employee" multiple="multiple" style="width:80%" name="employee[]" class="select2-multi-col" required>'; // select employee premiére valeur par défaut vide
 // condition on permissions
-if($user->rights->holiday->read_all||$user->rights->holiday->approve) // condition on permissions
-{
-
+if ($user->rights->holiday->read_all||$user->rights->holiday->approve) { // condition on permissions
 	if ($resql) {
 		$userstatic = new User($db);
 		$num = $db->num_rows($resql);
@@ -175,19 +167,16 @@ if($user->rights->holiday->read_all||$user->rights->holiday->approve) // conditi
 						print '<option value="' . $obj->uid . '" ';
 						echo (in_array($obj->uid, $_SESSION['employee'])) ? ' selected' : '';
 						echo '>' . $obj->firstname . ' ' . $obj->lastname . '</option>';  // display employee first and last name in options
-					}
-					else {
+					} else {
 						print '<option value="' . $obj->uid . '" >' . $obj->firstname . ' ' . $obj->lastname . '</option>';
 					}
 				}
 				$i++;
-
 			}
 			$db->free($resql);
 		}
 	}
-}
-else{
+} else {
 	if ($resql) {
 		$userstatic = new User($db);
 		$num = $db->num_rows($resql);
@@ -206,15 +195,12 @@ else{
 							print '<option value="' . $obj->uid . '" ';
 							echo (in_array($obj->uid, $_SESSION['employee'])) ? ' selected' : '';
 							echo '>' . $obj->firstname . ' ' . $obj->lastname . '</option>'; // display employee first and last name in options
-
-						}
-						else{
+						} else {
 							print '<option value="' . $obj->uid . '" >' . $obj->firstname . ' ' . $obj->lastname . '</option>';
 						}
 					}
 				}
 				$i++;
-
 			}
 			$db->free($resql);
 		}
@@ -236,8 +222,8 @@ if ($resql)
 	$text = $langs->trans("ListOfGroups");
 	$grouptemp = new UserGroup($db);
 	print'<span class="search-f" id="search-f-group" style="display:none;">
-	Group name : 
-  	<select  id="group" name="group" ><option value="">None</option>';
+	Group name :
+	  <select  id="group" name="group" ><option value="">None</option>';
 	while ($i < $num) {
 		$obj = $db->fetch_object($resql);
 		$grouptemp->id = $obj->rowid;
@@ -250,7 +236,7 @@ if ($resql)
 	$db->free($resql);
 }
 print '	</select>
-  		</span>';*/
+		  </span>';*/
 // date inputs :  //'; echo empty($_SESSION['start']) ? '' : 'placeholder="'.$_SESSION['start'].'"'; echo '
 print'  <!-- date inputs -->';
 
@@ -266,11 +252,11 @@ print'  <!-- date inputs -->';
 		</span>
   </div>
  		<span class="search-f required" > '.$langs->trans("Searchfor:").'  <!-- requests filter using checkbox-->
- 			 <input type="checkbox" class="filter_for_req" class="checkbox_option" name="checkbox_option[]"  value="3" onchange="conditionOnCheckbox();" '; if (isset($_SESSION['checkbox_option'])) {print (in_array(3,$_SESSION['checkbox_option'])) ? ' checked' : '';} print ' required> '.$langs->trans("Approved").'
- 			 <input type="checkbox" class="filter_for_req" class="checkbox_option" name="checkbox_option[]" value="2" onchange="conditionOnCheckbox();"  '; if (isset($_SESSION['checkbox_option'])) {print (in_array(2,$_SESSION['checkbox_option'])) ? ' checked' : '';} print ' required> '.$langs->trans("Awaitingforapproval").'
- 			 <input type="checkbox" class="filter_for_req" class="checkbox_option" name="checkbox_option[]" value="1" onchange="conditionOnCheckbox();"  '; if (isset($_SESSION['checkbox_option'])) {print (in_array(1,$_SESSION['checkbox_option'])) ? ' checked' : '';} print ' required> '.$langs->trans("Draft").'
+ 			 <input type="checkbox" class="filter_for_req" class="checkbox_option" name="checkbox_option[]"  value="3" onchange="conditionOnCheckbox();" '; if (isset($_SESSION['checkbox_option'])) {print (in_array(3, $_SESSION['checkbox_option'])) ? ' checked' : '';} print ' required> '.$langs->trans("Approved").'
+ 			 <input type="checkbox" class="filter_for_req" class="checkbox_option" name="checkbox_option[]" value="2" onchange="conditionOnCheckbox();"  '; if (isset($_SESSION['checkbox_option'])) {print (in_array(2, $_SESSION['checkbox_option'])) ? ' checked' : '';} print ' required> '.$langs->trans("Awaitingforapproval").'
+ 			 <input type="checkbox" class="filter_for_req" class="checkbox_option" name="checkbox_option[]" value="1" onchange="conditionOnCheckbox();"  '; if (isset($_SESSION['checkbox_option'])) {print (in_array(1, $_SESSION['checkbox_option'])) ? ' checked' : '';} print ' required> '.$langs->trans("Draft").'
  		</span></br>
-			<input type="hidden" name="k" value="'; echo htmlentities($_GET['k']) ; echo '" >
+			<input type="hidden" name="k" value="'; echo htmlentities($_GET['k']); echo '" >
 			<input type="submit" class="button" id="search_button" name="button1" value="'.$langs->trans("Search").'"  required> 
 	
 ​​	</form> 
@@ -287,8 +273,8 @@ print'  <!-- date inputs -->';
 // calendars
 //
 //
-if (isset($_SESSION['button1'])) // can't insert condition on k variable here coz it may make a displaying error
-{       $holidaystatic = new Holiday($db); // for the types of leaves with icons on the head of calendars
+if (isset($_SESSION['button1'])) { // can't insert condition on k variable here coz it may make a displaying error
+	   $holidaystatic = new Holiday($db); // for the types of leaves with icons on the head of calendars
 		// calendars displaying
 		print '<div class="search-header">
 		<table class="noborder boxtable boxtablenobottom boxworkingboard">
@@ -396,11 +382,9 @@ integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0
      
        ';
 // condition and date and display calendars with filter
-if (isset($_SESSION['button1'])/*&&(isset($_POST['k'])||isset($_GET['k']))*/)
-//	if ($_POST['k']==1||$_GET['k']==1)
-{
-	if(($_SESSION['start'])>($_SESSION['end'])) // if starting date entered is higher than ending date
-	{
+if (isset($_SESSION['button1'])/*&&(isset($_POST['k'])||isset($_GET['k']))*/) {
+	//  if ($_POST['k']==1||$_GET['k']==1)
+	if (($_SESSION['start'])>($_SESSION['end'])) { // if starting date entered is higher than ending date
 		print '<div class="isa_warning">
      	<i class="fa fa-warning"></i>
      	'.$langs->trans("Enddateshouldbehigherthanstartdate").'
@@ -433,95 +417,84 @@ if (isset($_SESSION['button1'])/*&&(isset($_POST['k'])||isset($_GET['k']))*/)
 			$sql .= " WHERE (g.rowid = " . $group_id . ") AND (ugu.fk_usergroup = g.rowid) AND (ugu.fk_user = x.fk_user) AND (x.statut IN (" . implode(',', $array_of_leave_status_filter) . "))";
 		}*/
 			$resql = $db->query($sql);
-			if ($resql) {
-				$holidaystatic = new Holiday($db);
-				$userstatic = new User($db);
-				$num = $db->num_rows($resql);
-				$typeleaves = $holidaystatic->getTypes(1, -1);
-				$i = 0;
-				$array_index = 0; // cannot use $i for index because it can't be reached
-				if ($num) {
-
-					while ($i < $num) {
-
-						$obj = $db->fetch_object($resql);
-						if ($obj) {
-							// You can use here results
-							$date_start = date('Y-m-d', strtotime($obj->date_start));
-							$date_end = date('Y-m-d', strtotime($obj->date_end));
-							if ((($date_start <= $end) && ($date_start >= $start)) && ((($date_end <= $end) && ($date_end >= $start)))) {
+		if ($resql) {
+			$holidaystatic = new Holiday($db);
+			$userstatic = new User($db);
+			$num = $db->num_rows($resql);
+			$typeleaves = $holidaystatic->getTypes(1, -1);
+			$i = 0;
+			$array_index = 0; // cannot use $i for index because it can't be reached
+			if ($num) {
+				while ($i < $num) {
+					$obj = $db->fetch_object($resql);
+					if ($obj) {
+						// You can use here results
+						$date_start = date('Y-m-d', strtotime($obj->date_start));
+						$date_end = date('Y-m-d', strtotime($obj->date_end));
+						if ((($date_start <= $end) && ($date_start >= $start)) && ((($date_end <= $end) && ($date_end >= $start)))) {
+							$array_of_searched_dates[$array_index][0] = $obj->date_start;
+							$array_of_searched_dates[$array_index][1] = $obj->date_end;
+							$array_of_searched_dates[$array_index][2] = $obj->status;
+							$array_of_searched_dates[$array_index][3] = $obj->firstname.' '.$obj->lastname;
+							$array_index++;
+						} elseif ((($date_start <= $end) && ($date_start >= $start)) && !((($date_end <= $end) && ($date_end >= $start)))) {
+							$date1 = date_parse_from_format("Y-m-d", $date_end);
+							$date2 = date_parse_from_format("Y-m-d", $end);
+							if ($date1["month"] == $date2["month"]) {
 								$array_of_searched_dates[$array_index][0] = $obj->date_start;
 								$array_of_searched_dates[$array_index][1] = $obj->date_end;
 								$array_of_searched_dates[$array_index][2] = $obj->status;
 								$array_of_searched_dates[$array_index][3] = $obj->firstname.' '.$obj->lastname;
 								$array_index++;
-							} else if ((($date_start <= $end) && ($date_start >= $start)) && !((($date_end <= $end) && ($date_end >= $start)))) {
-								$date1 = date_parse_from_format("Y-m-d", $date_end);
-								$date2 = date_parse_from_format("Y-m-d", $end);
-								if ($date1["month"] == $date2["month"]) {
-									$array_of_searched_dates[$array_index][0] = $obj->date_start;
-									$array_of_searched_dates[$array_index][1] = $obj->date_end;
-									$array_of_searched_dates[$array_index][2] = $obj->status;
-									$array_of_searched_dates[$array_index][3] = $obj->firstname.' '.$obj->lastname;
-									$array_index++;
-								} else {
-									$date_end = date("Y-m-t", strtotime($end_string));
-									// last takes last day of month if not same month with end
-									//$array_of_searched_dates[$array_index][1]=month and last day of last
-									$array_of_searched_dates[$array_index][0] = $obj->date_start;
-									$array_of_searched_dates[$array_index][1] = $date_end;
-									$array_of_searched_dates[$array_index][2] = $obj->status;
-									$array_of_searched_dates[$array_index][3] = $obj->firstname.' '.$obj->lastname;
-									$array_index++;
-								}
-
-
-							} else if ((!(($date_start <= $end) && ($date_start >= $start)) && ((($date_end <= $end) && ($date_end >= $start)))) || (((($date_start < $end) && ($date_start < $start)) && ((($date_end > $end) && ($date_end > $start)))))) {
-								$date1 = date_parse_from_format("Y-m-d", $date_start);
-								$date2 = date_parse_from_format("Y-m-d", $start);
-								if ($date1["month"] == $date2["month"]) {
-									$array_of_searched_dates[$array_index][0] = $obj->date_start;
-									$array_of_searched_dates[$array_index][1] = $obj->date_end;
-									$array_of_searched_dates[$array_index][2] = $obj->status;
-									$array_of_searched_dates[$array_index][3] = $obj->firstname.' '.$obj->lastname;
-									$array_index++;
-								} else {
-									$date_start = date("Y-m-01", strtotime($start_string));
-									$array_of_searched_dates[$array_index][0] = $date_start;
-									// first takes first date of month if not same month with last date
-									//$array_of_searched_dates[$array_index][0]=month and first day of start
-									$array_of_searched_dates[$array_index][1] = $obj->date_end;
-									$array_of_searched_dates[$array_index][2] = $obj->status;
-									$array_of_searched_dates[$array_index][3] = $obj->firstname.' '.$obj->lastname;
-									$array_index++;
-								}
-
+							} else {
+								$date_end = date("Y-m-t", strtotime($end_string));
+								// last takes last day of month if not same month with end
+								//$array_of_searched_dates[$array_index][1]=month and last day of last
+								$array_of_searched_dates[$array_index][0] = $obj->date_start;
+								$array_of_searched_dates[$array_index][1] = $date_end;
+								$array_of_searched_dates[$array_index][2] = $obj->status;
+								$array_of_searched_dates[$array_index][3] = $obj->firstname.' '.$obj->lastname;
+								$array_index++;
 							}
-
+						} elseif ((!(($date_start <= $end) && ($date_start >= $start)) && ((($date_end <= $end) && ($date_end >= $start)))) || (((($date_start < $end) && ($date_start < $start)) && ((($date_end > $end) && ($date_end > $start)))))) {
+							$date1 = date_parse_from_format("Y-m-d", $date_start);
+							$date2 = date_parse_from_format("Y-m-d", $start);
+							if ($date1["month"] == $date2["month"]) {
+								$array_of_searched_dates[$array_index][0] = $obj->date_start;
+								$array_of_searched_dates[$array_index][1] = $obj->date_end;
+								$array_of_searched_dates[$array_index][2] = $obj->status;
+								$array_of_searched_dates[$array_index][3] = $obj->firstname.' '.$obj->lastname;
+								$array_index++;
+							} else {
+								$date_start = date("Y-m-01", strtotime($start_string));
+								$array_of_searched_dates[$array_index][0] = $date_start;
+								// first takes first date of month if not same month with last date
+								//$array_of_searched_dates[$array_index][0]=month and first day of start
+								$array_of_searched_dates[$array_index][1] = $obj->date_end;
+								$array_of_searched_dates[$array_index][2] = $obj->status;
+								$array_of_searched_dates[$array_index][3] = $obj->firstname.' '.$obj->lastname;
+								$array_index++;
+							}
 						}
-						$i++;
 					}
+					$i++;
 				}
-				if ((($array_of_searched_dates[0][0] == null) && ($array_of_searched_dates[0][1] == null))) { // display info message on no results
-					echo '<div class="isa_info">
+			}
+			if ((($array_of_searched_dates[0][0] == null) && ($array_of_searched_dates[0][1] == null))) { // display info message on no results
+				echo '<div class="isa_info">
     						<i class="fa fa-info-circle"></i>
     						'.$langs->trans("Noelementsrelatedtoyoursearch").'
 							</div>';
-				}
+			}
 
-					$days_array_json = json_encode($array_of_searched_dates); // to send array to javascript using *json*
-					$db->free($resql);
-					if (($_GET['k'] == 1) || (($_GET['k'] == null) && ($_POST['k'] == null)) || ($_POST['k'] == 1)) { // display only calendars for value of k
-						echo '<script type="text/javascript">',
-							'jumpToLeaveDate(' . $days_array_json . ');',
-						'</script>';
-
-					}
-
-
+				$days_array_json = json_encode($array_of_searched_dates); // to send array to javascript using *json*
+				$db->free($resql);
+			if (($_GET['k'] == 1) || (($_GET['k'] == null) && ($_POST['k'] == null)) || ($_POST['k'] == 1)) { // display only calendars for value of k
+				echo '<script type="text/javascript">',
+					'jumpToLeaveDate(' . $days_array_json . ');',
+				'</script>';
+			}
 		}
-
-
 	}
 }
 //
@@ -563,36 +536,34 @@ print "<div id='dashboard'></div>";
 			$sql .= " WHERE (u.rowid = x.fk_user) AND (u.rowid IN (" . implode(',', $array_of_employee_id) . ")) AND (x.statut IN (" . implode(',', $array_of_leave_status_filter) . "))";
 			$sql .= " AND x.entity = " . $conf->entity;
 			$resql = $db->query($sql);
-			if ($resql) {
-			$holidaystatic = new Holiday($db);
-			$userstatic = new User($db);
-			$num = $db->num_rows($resql);
-			$typeleaves = $holidaystatic->getTypes(1, -1);
-			$i = 0;
-			$table_index = 0;
-			if ($num) {
-
-				while ($i < $num) {
-
-					$obj = $db->fetch_object($resql);
-					if ($obj) {
-						$userstatic->id = $obj->uid;
-						$userstatic->lastname = $obj->lastname;
-						$userstatic->firstname = $obj->firstname;
-						$userstatic->login = $obj->login;
-						$userstatic->photo = $obj->photo;
-						$userstatic->email = $obj->email;
-						$userstatic->statut = $obj->status;
-						$userstatic->start_date = $obj->date_start;
-						$userstatic->end_date = $obj->date_end;
-						$date_start = date('Y-m-d', strtotime($obj->date_start));
-						$date_end = date('Y-m-d', strtotime($obj->date_end));
-						$dateDiff = (int)date_diff(date_create($date_end), date_create($date_start))->format('%a') ;
-						$dateDiff++ ;
-						if ((($date_start <= $end) && ($date_start >= $start)) || ((($date_end <= $end) && ($date_end >= $start))) || (((($date_start < $end) && ($date_start < $start)) && ((($date_end > $end) && ($date_end > $start)))))) { // create new table cell
-							echo '    <tr ';
-							if ($table_index % 2 == 0) echo ' class="pair" '; else echo ' class="impair" ';
-							echo '>
+if ($resql) {
+	$holidaystatic = new Holiday($db);
+	$userstatic = new User($db);
+	$num = $db->num_rows($resql);
+	$typeleaves = $holidaystatic->getTypes(1, -1);
+	$i = 0;
+	$table_index = 0;
+	if ($num) {
+		while ($i < $num) {
+			$obj = $db->fetch_object($resql);
+			if ($obj) {
+				$userstatic->id = $obj->uid;
+				$userstatic->lastname = $obj->lastname;
+				$userstatic->firstname = $obj->firstname;
+				$userstatic->login = $obj->login;
+				$userstatic->photo = $obj->photo;
+				$userstatic->email = $obj->email;
+				$userstatic->statut = $obj->status;
+				$userstatic->start_date = $obj->date_start;
+				$userstatic->end_date = $obj->date_end;
+				$date_start = date('Y-m-d', strtotime($obj->date_start));
+				$date_end = date('Y-m-d', strtotime($obj->date_end));
+				$dateDiff = (int) date_diff(date_create($date_end), date_create($date_start))->format('%a');
+				$dateDiff++ ;
+				if ((($date_start <= $end) && ($date_start >= $start)) || ((($date_end <= $end) && ($date_end >= $start))) || (((($date_start < $end) && ($date_start < $start)) && ((($date_end > $end) && ($date_end > $start)))))) { // create new table cell
+					echo '    <tr ';
+					if ($table_index % 2 == 0) echo ' class="pair" '; else echo ' class="impair" ';
+					echo '>
         			   		<td>' . $userstatic->getNomUrl(-1, 'leave') . '</td>
       			  	   		<td>' . $typeleaves[$obj->fk_type]['label'] . '</td>
         			   		<td>' . $obj->date_start . '</td>
@@ -600,16 +571,15 @@ print "<div id='dashboard'></div>";
            					<td>' . $holidaystatic->LibStatut($obj->status, 5) . '</td>
            					<td>' . $dateDiff. '</td>
        						</tr> ';
-							$sum_of_columns = $dateDiff + $sum_of_columns;
-							$table_index++;
-						}
-					}
-					$i++;
-
+					$sum_of_columns = $dateDiff + $sum_of_columns;
+					$table_index++;
 				}
-				$db->free($resql);
 			}
+			$i++;
 		}
+				$db->free($resql);
+	}
+}
 		echo '<tr class="pair">   <!-- dsiplay total -->
 		<td></td>
 		<td></td>
@@ -628,30 +598,30 @@ print "<div id='dashboard'></div>";
 //
 //if (isset($_GET['k'])||isset($_POST['k']))
 {
-	if (!(($array_of_searched_dates[0][0] == null) && ($array_of_searched_dates[0][1] == null))) { // to call displaying functions only if there is results
-		if (($_GET['k'] == 1) || (($_GET['k'] == null) && ($_POST['k'] == null)) || ($_POST['k'] == 1)) { // $_GET['k']==null)&&($_POST['k']==null on first page loading only
-			// display calendars
-			$k = 1;
-			echo '<script type="text/javascript">',
-				'switchMenu(' . $k . ');',
-			'</script>';
-		} else if (($_GET['k'] == 2) || ($_POST['k'] == 2)) {
-			// display table
-			$k = 2;
-			echo '<script type="text/javascript">',
-				'switchMenu(' . $k . ');',
-			'</script>';
-		} else if (($_GET['k'] == 3) || ($_POST['k'] == 3)) {
-			// display charts
-			$k = 3;
-			echo '<script type="text/javascript">',
-				'switchMenu(' . $k . ');',
-			'</script>';
-			echo '<script type="text/javascript">',
-				'countStatusPerMonth(' . $days_array_json . ');',
-			'</script>';
-		}
+if (!(($array_of_searched_dates[0][0] == null) && ($array_of_searched_dates[0][1] == null))) { // to call displaying functions only if there is results
+	if (($_GET['k'] == 1) || (($_GET['k'] == null) && ($_POST['k'] == null)) || ($_POST['k'] == 1)) { // $_GET['k']==null)&&($_POST['k']==null on first page loading only
+		// display calendars
+		$k = 1;
+		echo '<script type="text/javascript">',
+			'switchMenu(' . $k . ');',
+		'</script>';
+	} elseif (($_GET['k'] == 2) || ($_POST['k'] == 2)) {
+		// display table
+		$k = 2;
+		echo '<script type="text/javascript">',
+			'switchMenu(' . $k . ');',
+		'</script>';
+	} elseif (($_GET['k'] == 3) || ($_POST['k'] == 3)) {
+		// display charts
+		$k = 3;
+		echo '<script type="text/javascript">',
+			'switchMenu(' . $k . ');',
+		'</script>';
+		echo '<script type="text/javascript">',
+			'countStatusPerMonth(' . $days_array_json . ');',
+		'</script>';
 	}
+}
 }
 
 // les numeros correspondants au demande de congé
