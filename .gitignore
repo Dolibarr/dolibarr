@@ -47,6 +47,3 @@ htdocs/.well-known/apple-developer-merchantid-domain-association
 build/yarn-error.log
 build/node_modules/
 node_modules/
-
-#yarn
-yarn.lock
