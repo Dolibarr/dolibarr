@@ -325,7 +325,7 @@ if (empty($reshook))
 		$duration = GETPOST('duree_validite', 'int');
 
 		if (empty($datep)) {
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DatePropal")), null, 'errors');
 			$action = 'create';
 			$error++;
 		}
@@ -1614,7 +1614,7 @@ if ($action == 'create')
 	}
 
 	// Date
-	print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td>';
+	print '<tr><td class="fieldrequired">'.$langs->trans('DatePropal').'</td><td>';
 	print $form->selectDate('', '', '', '', '', "addprop", 1, 1);
 	print '</td></tr>';
 
@@ -2044,7 +2044,7 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
-	print $langs->trans('Date');
+	print $langs->trans('DatePropal');
 	print '</td>';
 	if ($action != 'editdate' && $object->statut == Propal::STATUS_DRAFT && $usercancreate)
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
