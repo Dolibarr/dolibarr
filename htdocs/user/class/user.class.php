@@ -2678,10 +2678,10 @@ class User extends CommonObject
 		}
 
         if (!empty($conf->global->LDAP_FIELD_USERID))$info[$conf->global->LDAP_FIELD_USERID] = $this->id;
-        if (!empty($info[$conf->global->LDAP_FIELD_GROUPID])) {
+        if (!empty($conf->global->LDAP_FIELD_GROUPID)) {
             $usergroup = new UserGroup($this->db);
             $groupslist = $usergroup->listGroupsForUser($this->id);
-            $info[$conf->global->LDAP_FIELD_GROUPID] = '1';
+            $info[$conf->global->LDAP_FIELD_GROUPID] = '65534';
             if (!empty($groupslist)) {
                 foreach ($groupslist as $groupforuser) {
                     $info[$conf->global->LDAP_FIELD_GROUPID] = $groupforuser->id; //Select first group in list
