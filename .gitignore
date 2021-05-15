@@ -43,6 +43,13 @@ htdocs/includes/squizlabs/
 htdocs/includes/webmozart/
 htdocs/.well-known/apple-developer-merchantid-domain-association
 
+#yarn
+yarn.lock
+
+#package-lock
+package-lock.json
+
+doc/install.lock
 # Node Modules
 build/yarn-error.log
 build/node_modules/
