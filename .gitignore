@@ -50,9 +50,3 @@ node_modules/
 
 #yarn
 yarn.lock
-
-#package-lock
-package-lock.json
-
-doc/install.lock
-desktop.ini
