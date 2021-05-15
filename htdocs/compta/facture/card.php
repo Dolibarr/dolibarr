@@ -4157,7 +4157,6 @@ if ($action == 'create') {
 	$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'customer');
 	if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
 		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)';
-		$morehtmlref .= '<br>'.$langs->trans("Phone").' : '.dol_print_phone($object->thirdparty->phone, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone');
 	}
 	// Project
 	if (!empty($conf->projet->enabled)) {
