@@ -138,7 +138,7 @@ if (empty($reshook)) {
 				if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 					$object->entity = 0;
 				} else {
-					$object->entity = GETPOST("entity");
+					$object->entity = GETPOSTISSET("entity") ? GETPOST("entity") : $conf->entity;
 				}
 
 				$db->begin();
