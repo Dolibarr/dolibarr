@@ -64,6 +64,10 @@ ALTER TABLE llx_export_model MODIFY COLUMN type varchar(64);
 
 -- For v14
 
+ALTER TABLE llx_product_lot ADD COLUMN eol_date datetime NULL;
+ALTER TABLE llx_product_lot ADD COLUMN manufacturing_date datetime NULL;
+ALTER TABLE llx_product_lot ADD COLUMN scrapping_date datetime NULL;
+
 create table llx_accounting_groups_account
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
@@ -403,6 +407,8 @@ UPDATE llx_propal SET date_signature = date_cloture WHERE date_signature IS NULL
 
 
 ALTER TABLE llx_product ADD COLUMN batch_mask VARCHAR(32) NULL;
+ALTER TABLE llx_product ADD COLUMN lifetime INTEGER NULL;
+ALTER TABLE llx_product ADD COLUMN qc_frequency INTEGER NULL;
 
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (210, 'conferenceorbooth', 'internal', 'MANAGER',  'Conference or Booth manager', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (211, 'conferenceorbooth', 'external', 'SPEAKER',   'Conference Speaker', 1);

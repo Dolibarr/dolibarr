@@ -124,6 +124,16 @@ class DolibarrApi
 		unset($object->ref_previous);
 		unset($object->ref_next);
 		unset($object->ref_int);
+		unset($object->imgWidth);
+		unset($object->imgHeight);
+		unset($object->barcode_type_code);
+		unset($object->barcode_type_label);
+
+		unset($object->mode_reglement);		// We use mode_reglement_id now
+		unset($object->cond_reglement);		// We use cond_reglement_id now
+		unset($object->note);				// We use note_public or note_private now
+		unset($object->contact);			// We use contact_id now
+		unset($object->thirdparty);			// We use thirdparty_id or fk_soc or socid now
 
 		unset($object->projet); // Should be fk_project
 		unset($object->project); // Should be fk_project
@@ -137,6 +147,12 @@ class DolibarrApi
 		unset($object->timespent_fk_user);
 		unset($object->timespent_note);
 		unset($object->fk_delivery_address);
+		unset($object->modelpdf);
+		unset($object->sendtoid);
+		unset($object->name_bis);
+		unset($object->newref);
+		unset($object->alreadypaid);
+		unset($object->openid);
 
 		unset($object->statuts);
 		unset($object->statuts_short);
@@ -169,15 +185,16 @@ class DolibarrApi
 
 		unset($object->region);
 		unset($object->region_code);
+		unset($object->country);
+		unset($object->state);
+		unset($object->state_code);
+		unset($object->departement);
+		unset($object->departement_code);
 
 		unset($object->libelle_statut);
 		unset($object->libelle_paiement);
 
 		unset($object->prefix_comm);
-
-		unset($object->sendtoid);
-		unset($object->name_bis);
-		unset($object->newref);
 
 		if (!isset($object->table_element) || $object->table_element != 'ticket') {
 			unset($object->comments);

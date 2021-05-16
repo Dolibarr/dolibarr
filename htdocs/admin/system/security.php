@@ -40,6 +40,8 @@ if (GETPOST('action', 'aZ09') == 'donothing') {
 	exit;
 }
 
+$execmethod = empty($conf->global->MAIN_EXEC_USE_POPEN) ? 1 : $conf->global->MAIN_EXEC_USE_POPEN;
+
 
 /*
  * View
@@ -74,7 +76,13 @@ print "<strong>PHP allow_url_include</strong> = ".(ini_get('allow_url_include') 
 print "<strong>PHP disable_functions</strong> = ";
 $arrayoffunctionsdisabled = explode(',', ini_get('disable_functions'));
 $arrayoffunctionstodisable = explode(',', 'pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,pcntl_wifexited,pcntl_wifstopped,pcntl_wifsignaled,pcntl_wifcontinued,pcntl_wexitstatus,pcntl_wtermsig,pcntl_wstopsig,pcntl_signal,pcntl_signal_get_handler,pcntl_signal_dispatch,pcntl_get_last_error,pcntl_strerror,pcntl_sigprocmask,pcntl_sigwaitinfo,pcntl_sigtimedwait,pcntl_exec,pcntl_getpriority,pcntl_setpriority,pcntl_async_signals');
-$arrayoffunctionstodisable2 = explode(',', 'exec,passthru,shell_exec,system,proc_open,popen');
+if ($execmethod == 1) {
+	$arrayoffunctionstodisable2 = explode(',', 'passthru,shell_exec,system,proc_open,popen');
+	$functiontokeep = 'exec';
+} else {
+	$arrayoffunctionstodisable2 = explode(',', 'exec,passthru,shell_exec,system,proc_open');
+	$functiontokeep = 'popen';
+}
 $i = 0;
 foreach ($arrayoffunctionsdisabled as $functionkey) {
 	if ($i > 0) {
@@ -114,6 +122,13 @@ if ($todisabletext) {
 	print $langs->trans("IfCLINotRequiredYouShouldDisablePHPFunctions").': '.$todisabletext;
 	print '<br>';
 }
+
+print $langs->trans("PHPFunctionsRequiredForCLI").': ';
+if (in_array($functiontokeep, $arrayoffunctionsdisabled)) {
+	print img_picto($langs->trans("PHPFunctionsRequiredForCLI"), 'warning');
+}
+print '<span class="opacitymedium">'.$functiontokeep.'</span>';
+print '<br>';
 
 print '<br>';
 
@@ -242,6 +257,22 @@ print '<br>';
 
 
 print '<strong>MAIN_SECURITY_ANTI_SSRF_SERVER_IP</strong> = '.(empty($conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP)."<br>";
+print '<br>';
+
+
+print '<strong>MAIN_EXEC_USE_POPEN</strong> = ';
+if (empty($conf->global->MAIN_EXEC_USE_POPEN)) {
+	print '<span class="opacitymedium">'.$langs->trans("Undefined").'</span> &nbsp; ';
+} else {
+	print $conf->global->MAIN_EXEC_USE_POPEN.' &nbsp; ';
+}
+if ($execmethod == 1) {
+	print ' --> "exec" PHP method will be used for shell commands.';
+}
+if ($execmethod == 2) {
+	print ' --> "popen" PHP method will be used for shell commands.';
+}
+print "<br>";
 print '<br>';
 
 

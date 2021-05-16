@@ -240,10 +240,12 @@ if (empty($reshook)) {
 			//$object->twitter = GETPOST("twitter", 'alphanohtml');
 			//$object->facebook = GETPOST("facebook", 'alphanohtml');
 			//$object->linkedin = GETPOST("linkedin", 'alphanohtml');
-			$object->socialnetworks = array();
 			if (!empty($conf->socialnetworks->enabled)) {
+				$object->socialnetworks = array();
 				foreach ($socialnetworks as $key => $value) {
-					$object->socialnetworks[$key] = GETPOST($key, 'alphanohtml');
+					if (GETPOST($key, 'alphanohtml')) {
+						$object->socialnetworks[$key] = GETPOST($key, 'alphanohtml');
+					}
 				}
 			}
 
@@ -400,10 +402,12 @@ if (empty($reshook)) {
 				//$object->twitter = GETPOST("twitter", 'alphanohtml');
 				//$object->facebook = GETPOST("facebook", 'alphanohtml');
 				//$object->linkedin = GETPOST("linkedin", 'alphanohtml');
-				$object->socialnetworks = array();
 				if (!empty($conf->socialnetworks->enabled)) {
+					$object->socialnetworks = array();
 					foreach ($socialnetworks as $key => $value) {
-						$object->socialnetworks[$key] = GETPOST($key, 'alphanohtml');
+						if (GETPOST($key, 'alphanohtml')) {
+							$object->socialnetworks[$key] = GETPOST($key, 'alphanohtml');
+						}
 					}
 				}
 				$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alphanohtml'));
@@ -1569,7 +1573,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Color user
 			if (!empty($conf->agenda->enabled)) {
-				print '<tr><td>'.$langs->trans("ColorUser").'</td>';
+				print '<tr><td class="titlefield">'.$langs->trans("ColorUser").'</td>';
 				print '<td>';
 				print $formother->showColor($object->color, '');
 				print '</td>';
@@ -1578,7 +1582,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Categories
 			if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
-				print '<tr><td>'.$langs->trans("Categories").'</td>';
+				print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td>';
 				print '<td colspan="3">';
 				print $form->showCategories($object->id, Categorie::TYPE_USER, 1);
 				print '</td></tr>';
@@ -1587,7 +1591,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Default language
 			if (!empty($conf->global->MAIN_MULTILANGS)) {
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-				print '<tr><td>'.$langs->trans("DefaultLang").'</td><td>';
+				print '<tr><td class="titlefield">'.$langs->trans("DefaultLang").'</td><td>';
 				//$s=picto_from_langcode($object->default_lang);
 				//print ($s?$s.' ':'');
 				$langs->load("languages");
@@ -1601,14 +1605,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '<td>'.$object->openid.'</td>';
 				print "</tr>\n";
 			}
-
-			print '<tr><td class="titlefield">'.$langs->trans("LastConnexion").'</td>';
-			print '<td>'.dol_print_date($object->datelastlogin, "dayhour").'</td>';
-			print "</tr>\n";
-
-			print '<tr><td>'.$langs->trans("PreviousConnexion").'</td>';
-			print '<td>'.dol_print_date($object->datepreviouslogin, "dayhour").'</td>';
-			print "</tr>\n";
 
 			// Multicompany
 			if (!empty($conf->multicompany->enabled) && is_object($mc)) {
@@ -1694,13 +1690,13 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			print "</table>\n";
 
-
+			// Credentials
 			print '<div class="div-table-responsive-no-min">';
-			print '<table class="border tableforfield centpercent">';
+			print '<table class="border tableforfield margintable centpercent">';
 			print '<tr class="liste_titre"><td class="liste_titre">';
-			print $langs->trans("Credentials");
+			print img_picto('', 'security', 'class="paddingleft pictofixedwidth"').$langs->trans("Credentials");
 			print '</td>';
-			print '<td></td>';
+			print '<td class="liste_titre"></td>';
 			print '</tr>';
 
 			// Date login validity
@@ -1775,13 +1771,25 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '<tr><td>'.$langs->trans("ApiKey").'</td>';
 				print '<td>';
 				if (!empty($object->api_key)) {
-					print '<span class="opacitymedium">'.preg_replace('/./', '*', $object->api_key).'</span>';
+					print '<span class="opacitymedium">';
+					print showValueWithClipboardCPButton($object->api_key, 1, $langs->trans("Hidden"));
+					print '</span>';
 				}
 				if ($user->admin || $user->id == $object->id) {
 					// TODO Add a feature to reveal the hash
 				}
 				print '</td></tr>';
 			}
+
+			print '<tr><td class="titlefield">'.$langs->trans("LastConnexion").'</td>';
+			print '<td>';
+			if ($object->datepreviouslogin) {
+				print dol_print_date($object->datepreviouslogin, "dayhour").' <span class="opacitymedium">('.$langs->trans("Previous").')</span>, ';
+			}
+			print dol_print_date($object->datelastlogin, "dayhour").' <span class="opacitymedium">('.$langs->trans("Current").')</span>';
+			print '</td>';
+			print "</tr>\n";
+
 			print '</table></div>';
 
 			print '</div>';
