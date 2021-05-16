@@ -1297,13 +1297,23 @@ elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action =
 		// add a message
 		if ($action == 'presend' || $action == 'presend_addmessage')
 		{
+			$outputlangs = $langs;
+			$newlang = '';
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && !empty($_REQUEST['lang_id'])) {
+				$newlang = $_REQUEST['lang_id'];
+			}
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+				$newlang = $object->thirdparty->default_lang;
+			}
+			$arrayoffamiliestoexclude = array('objectamount');
+
 			$action = 'add_message'; // action to use to post the message
 			$modelmail = 'ticket_send';
 
 			// Substitution array
 			$morehtmlright = '';
 			$help = "";
-			$substitutionarray = array();
+			$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, $arrayoffamiliestoexclude, $object);
 			if ($object->fk_soc > 0) {
 				$object->fetch_thirdparty();
 				$substitutionarray['__THIRDPARTY_NAME__'] = $object->thirdparty->name;
