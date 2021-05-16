@@ -2354,6 +2354,28 @@ function top_menu_quickadd()
                 ';
 	}
 
+	if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->creer) {
+		$langs->load("trips");
+		$dropDownQuickAddHtml .= '
+                <!-- Expense report link -->
+                <div class="quickaddblock center">
+                    <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/expensereport/card.php?action=create&fk_user_author='.$user->id.'" title="'.$langs->trans("AddTrip").'">
+                    '. img_picto('', 'object_trip') .'<br>'. $langs->trans("ExpenseReport") .'</a>
+                </div>
+                ';
+	}
+
+	if (!empty($conf->holiday->enabled) && $user->rights->holiday->write) {
+		$langs->load("holiday");
+		$dropDownQuickAddHtml .= '
+                <!-- Holiday link -->
+                <div class="quickaddblock center">
+                    <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/holiday/card.php?action=create&fuserid='.$user->id.'" title="'.$langs->trans("AddCP").'">
+                    '. img_picto('', 'object_holiday') .'<br>'. $langs->trans("Holidays") .'</a>
+                </div>
+                ';
+	}
+
 	// Execute hook printTopRightMenu (hooks should output string like '<div class="login"><a href="">mylink</a></div>')
 	$parameters = array();
 	$result = $hookmanager->executeHooks('printQuickAddBlock', $parameters); // Note that $action and $object may have been modified by some hooks
