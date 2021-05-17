@@ -1299,8 +1299,8 @@ elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action =
 		{
 			$outputlangs = $langs;
 			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && !empty($_REQUEST['lang_id'])) {
-				$newlang = $_REQUEST['lang_id'];
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				$newlang = GETPOST('lang_id', 'aZ09');
 			}
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
 				$newlang = $object->thirdparty->default_lang;
