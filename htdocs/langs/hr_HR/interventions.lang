@@ -33,17 +33,15 @@ SendInterventionByMail=Send intervention by email
 InterventionCreatedInDolibarr=Intervencija %s kreirana
 InterventionValidatedInDolibarr=Intervencija %s ovjerena
 InterventionModifiedInDolibarr=Intervencija %s promjenjena
-InterventionClassifiedBilledInDolibarr=Intervencija %s je postavljena "Naplačena"
-InterventionClassifiedUnbilledInDolibarr=Intervencija %s je postavljena "Nenaplačena"
+InterventionClassifiedBilledInDolibarr=Intervencija %s je postavljena "Naplaćena"
+InterventionClassifiedUnbilledInDolibarr=Intervencija %s je postavljena "Nenaplaćena"
 InterventionSentByEMail=Intervention %s sent by email
 InterventionDeletedInDolibarr=Intervencija %s obrisana
 InterventionsArea=Sučelje intervencija
 DraftFichinter=Skica intervencija
 LastModifiedInterventions=Zadnje %s izmijenjene intervencije
 FichinterToProcess=Interventions to process
-##### Types de contacts #####
 TypeContact_fichinter_external_CUSTOMER=Sljedeći kontakt kupca
-# Modele numérotation
 PrintProductsOnFichinter=Ispiši također stavke tipa "proizvod" (ne samo usluge) na kartici intervencija
 PrintProductsOnFichinterDetails=intervencije generirane iz narudžbi
 UseServicesDurationOnFichinter=Koristi trajanje usluge za intervencije generirane iz narudžbi
@@ -53,7 +51,6 @@ InterventionStatistics=Statistika intervencija
 NbOfinterventions=No. of intervention cards
 NumberOfInterventionsByMonth=No. of intervention cards by month (date of validation)
 AmountOfInteventionNotIncludedByDefault=Amount of intervention is not included by default into profit (in most cases, timesheets are used to count time spent). Add option PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT to 1 into home-setup-other to include them.
-##### Exports #####
 InterId=ID Intervencije
 InterRef=Ref. Intervencije
 InterDateCreation=Datum kreiranja
@@ -65,3 +62,7 @@ InterLineId=Stavka ID
 InterLineDate=Stavka datuma
 InterLineDuration=Stavka trajanja
 InterLineDesc=Stavka opisa
+RepeatableIntervention=Template of intervention
+ToCreateAPredefinedIntervention=To create a predefined or recurring intervention, create a common intervention and convert it into intervention template
+Reopen=Ponovo otvori
+ConfirmReopenIntervention=Are you sure you want to open back the intervention <b>%s</b>?

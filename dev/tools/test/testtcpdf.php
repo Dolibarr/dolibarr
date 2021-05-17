@@ -38,25 +38,25 @@ $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8',
 
 /*
   The permission array is composed of values taken from the following ones (specify the ones you want to block):
-    - print : Print the document;
-    - modify : Modify the contents of the document by operations other than those controlled by 'fill-forms', 'extract' and 'assemble';
-    - copy : Copy or otherwise extract text and graphics from the document;
-    - annot-forms : Add or modify text annotations, fill in interactive form fields, and, if 'modify' is also set, create or modify interactive form fields (including signature fields);
-    - fill-forms : Fill in existing interactive form fields (including signature fields), even if 'annot-forms' is not specified;
-    - extract : Extract text and graphics (in support of accessibility to users with disabilities or for other purposes);
-    - assemble : Assemble the document (insert, rotate, or delete pages and create bookmarks or thumbnail images), even if 'modify' is not set;
-    - print-high : Print the document to a representation from which a faithful digital copy of the PDF content could be generated. When this is not set, printing is limited to a low-level representation of the appearance, possibly of degraded quality.
-    - owner : (inverted logic - only for public-key) when set permits change of encryption and enables all other permissions.
+	- print : Print the document;
+	- modify : Modify the contents of the document by operations other than those controlled by 'fill-forms', 'extract' and 'assemble';
+	- copy : Copy or otherwise extract text and graphics from the document;
+	- annot-forms : Add or modify text annotations, fill in interactive form fields, and, if 'modify' is also set, create or modify interactive form fields (including signature fields);
+	- fill-forms : Fill in existing interactive form fields (including signature fields), even if 'annot-forms' is not specified;
+	- extract : Extract text and graphics (in support of accessibility to users with disabilities or for other purposes);
+	- assemble : Assemble the document (insert, rotate, or delete pages and create bookmarks or thumbnail images), even if 'modify' is not set;
+	- print-high : Print the document to a representation from which a faithful digital copy of the PDF content could be generated. When this is not set, printing is limited to a low-level representation of the appearance, possibly of degraded quality.
+	- owner : (inverted logic - only for public-key) when set permits change of encryption and enables all other permissions.
 
  If you don't set any password, the document will open as usual.
  If you set a user password, the PDF viewer will ask for it before displaying the document.
  The master (owner) password, if different from the user one, can be used to get full document access.
 
  Possible encryption modes are:
-     0 = RSA 40 bit
-     1 = RSA 128 bit
-     2 = AES 128 bit
-     3 = AES 256 bit
+	 0 = RSA 40 bit
+	 1 = RSA 128 bit
+	 2 = AES 128 bit
+	 3 = AES 256 bit
 
  NOTES:
  - To create self-signed signature: openssl req -x509 -nodes -days 365000 -newkey rsa:1024 -keyout tcpdf.crt -out tcpdf.crt
@@ -89,8 +89,8 @@ $pdf->SetKeywords('TCPDF, PDF, example, test, guide');
 $pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, PDF_HEADER_TITLE.' 016', PDF_HEADER_STRING);
 
 // set header and footer fonts
-$pdf->setHeaderFont(Array('helvetica', '', PDF_FONT_SIZE_MAIN));
-$pdf->setFooterFont(Array('helvetica', '', PDF_FONT_SIZE_DATA));
+$pdf->setHeaderFont(array('helvetica', '', PDF_FONT_SIZE_MAIN));
+$pdf->setFooterFont(array('helvetica', '', PDF_FONT_SIZE_DATA));
 
 // set default monospaced font
 $pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);

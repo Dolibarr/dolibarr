@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -32,78 +32,75 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_accountancy_suspense_account extends ModeleBoxes
 {
-    public $boxcode = "accountancy_suspense_account";
-    public $boximg = "object_invoice";
-    public $boxlabel = "BoxSuspenseAccount";
-    public $depends = array("accounting");
+	public $boxcode = "accountancy_suspense_account";
+	public $boximg = "accounting";
+	public $boxlabel = "BoxSuspenseAccount";
+	public $depends = array("accounting");
 
-    /**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
-    public $param;
+	public $param;
 
-    public $info_box_head = array();
-    public $info_box_contents = array();
+	public $info_box_head = array();
+	public $info_box_contents = array();
 
 
-    /**
-     *  Constructor
-     *
-     *  @param  DoliDB  $db         Database handler
-     *  @param  string  $param      More parameters
-     */
-    public function __construct($db, $param)
-    {
-        global $user;
+	/**
+	 *  Constructor
+	 *
+	 *  @param  DoliDB  $db         Database handler
+	 *  @param  string  $param      More parameters
+	 */
+	public function __construct($db, $param)
+	{
+		global $user;
 
-        $this->db = $db;
+		$this->db = $db;
 
-        $this->hidden = !($user->rights->accounting->mouvements->lire);
-    }
+		$this->hidden = !($user->rights->accounting->mouvements->lire);
+	}
 
-    /**
-     *  Load data for box to show them later
-     *
-     *  @return	void
-     */
-    public function loadBox()
-    {
-        global $user, $langs, $conf;
+	/**
+	 *  Load data for box to show them later
+	 *
+	 *  @return	void
+	 */
+	public function loadBox()
+	{
+		global $user, $langs, $conf;
 
-        include_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 
-        //$bookkeepingstatic = new BookKeeping($this->db);
+		//$bookkeepingstatic = new BookKeeping($this->db);
 
-        $this->info_box_head = array('text' => $langs->trans("BoxTitleSuspenseAccount"));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleSuspenseAccount"));
 
-        if ($user->rights->accounting->mouvements->lire)
-        {
+		if ($user->rights->accounting->mouvements->lire) {
 			$suspenseAccount = $conf->global->ACCOUNTING_ACCOUNT_SUSPENSE;
-        	if (! empty($suspenseAccount) && $suspenseAccount > 0)
-        	{
+			if (!empty($suspenseAccount) && $suspenseAccount > 0) {
 				$sql = "SELECT COUNT(*) as nb_suspense_account";
-				$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as b";
-				$sql .= " WHERE b.numero_compte = ". $suspenseAccount;
-				$sql .= " AND b.entity = " . $conf->entity;
+				$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b";
+				$sql .= " WHERE b.numero_compte = '".$this->db->escape($suspenseAccount)."'";
+				$sql .= " AND b.entity = ".$conf->entity;
 
 				$result = $this->db->query($sql);
 				$nbSuspenseAccount = 0;
-				if ($result)
-				{
-					$obj=$this->db->fetch_object($result);
+				if ($result) {
+					$obj = $this->db->fetch_object($result);
 					$nbSuspenseAccount = $obj->nb_suspense_account;
 				}
 
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
-					'text' => $langs->trans("NumberOfLinesInSuspenseAccount") . ':'
+					'text' => $langs->trans("NumberOfLinesInSuspenseAccount").':'
 				);
 
 				$this->info_box_contents[0][1] = array(
 					'td' => 'class="right"',
-					'text' => '<a href="' . DOL_URL_ROOT . '/accountancy/bookkeeping/list.php?search_accountancy_code_start='.urlencode($suspenseAccount).'&search_accountancy_code_end='.urlencode($suspenseAccount).'">' . $nbSuspenseAccount . '</a>',
+					'text' => '<a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?search_accountancy_code_start='.urlencode($suspenseAccount).'&search_accountancy_code_end='.urlencode($suspenseAccount).'">'.$nbSuspenseAccount.'</a>',
 					'asis' => 1
 				);
 			} else {
@@ -112,13 +109,13 @@ class box_accountancy_suspense_account extends ModeleBoxes
 					'text' => '<span class="opacitymedium">'.$langs->trans("SuspenseAccountNotDefined").'</span>'
 				);
 			}
-        } else {
-            $this->info_box_contents[0][0] = array(
-                'td' => 'class="nohover"',
-            	'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
-            );
-        }
-    }
+		} else {
+			$this->info_box_contents[0][0] = array(
+				'td' => 'class="nohover"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
+			);
+		}
+	}
 
 	/**
 	 *	Method to show box
@@ -128,8 +125,8 @@ class box_accountancy_suspense_account extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    public function showBox($head = null, $contents = null, $nooutput = 0)
-    {
-        return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
-    }
+	public function showBox($head = null, $contents = null, $nooutput = 0)
+	{
+		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+	}
 }

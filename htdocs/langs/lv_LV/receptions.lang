@@ -39,7 +39,9 @@ ActionsOnReception=Notikumi reģistratūrā
 ReceptionCreationIsDoneFromOrder=Patlaban jaunas pasūtījuma izveide tiek veikta no pasūtījuma kartes.
 ReceptionLine=Uzņemšanas līnija
 ProductQtyInReceptionAlreadySent=Produkta daudzums no jau nosūtīta pasūtījuma
-ProductQtyInSuppliersReceptionAlreadyRecevied=Produkta daudzums no jau saņemta pasūtījuma
+ProductQtyInSuppliersReceptionAlreadyRecevied=Produkta daudzums no jau saņemtā pasūtījuma
 ValidateOrderFirstBeforeReception=Vispirms jums ir jāapstiprina pasūtījums, lai varētu pieņemt pieņemšanas.
 ReceptionsNumberingModules=Pieņemšanas numurēšanas modulis
 ReceptionsReceiptModel=Pieņemšanas dokumentu veidnes
+NoMorePredefinedProductToDispatch=Vairs nav iepriekš nosūtītu produktu
+

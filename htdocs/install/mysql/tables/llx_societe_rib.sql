@@ -27,8 +27,8 @@ create table llx_societe_rib
   label          varchar(200),
   fk_soc         integer NOT NULL,
   datec          datetime,
-  tms            timestamp,
-  
+  tms            timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
   -- For BAN
   bank           varchar(255),  -- bank name
   code_banque    varchar(128),  -- bank code
@@ -66,6 +66,7 @@ create table llx_societe_rib
   
   --For Stripe
   stripe_card_ref varchar(128),								-- 'card_...'
+  stripe_account varchar(128),								-- 'pk_live_...'
 
   comment        varchar(255),
   ipaddress      varchar(68),

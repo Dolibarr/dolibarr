@@ -24,6 +24,8 @@
  * $backtopage				URL to come back to from discount modification pages
  */
 
+print '<!-- BEGIN object_discounts.tpl.php -->'."\n";
+
 $objclassname = get_class($object);
 $isInvoice = in_array($object->element, array('facture', 'invoice', 'facture_fourn', 'invoice_supplier'));
 $isNewObject = empty($object->id) && empty($object->rowid);
@@ -38,17 +40,16 @@ if (!empty($discount_type)) {
 	$fixedDiscount = $thirdparty->remise_supplier_percent;
 }
 
-if ($fixedDiscount > 0)
-{
+if ($fixedDiscount > 0) {
 	$translationKey = (!empty($discount_type)) ? 'HasRelativeDiscountFromSupplier' : 'CompanyHasRelativeDiscount';
 	print $langs->trans($translationKey, $fixedDiscount).'.';
-}
-else
-{
+} else {
 	$translationKey = (!empty($discount_type)) ? 'HasNoRelativeDiscountFromSupplier' : 'CompanyHasNoRelativeDiscount';
-	print $langs->trans($translationKey).'.';
+	print '<span class="opacitymedium">'.$langs->trans($translationKey).'.</span>';
 }
-if ($isNewObject) print ' ('.$addrelativediscount.')';
+if ($isNewObject) {
+	print ' ('.$addrelativediscount.')';
+}
 
 // Is there is commercial discount or down payment available ?
 if ($absolute_discount > 0) {
@@ -64,7 +65,11 @@ if ($absolute_discount > 0) {
 			$text .= ' ('.$addabsolutediscount.')';
 		}
 
-		print '<br>'.$text;
+		if ($isNewObject) {
+			print '<br>'.$text;
+		} else {
+			print '<div class="inline-block clearboth">'.$text.'</div>';
+		}
 	} else {
 		// Discount available of type fixed amount (not credit note)
 		$more = '('.$addabsolutediscount.')';
@@ -84,10 +89,14 @@ if ($absolute_creditnote > 0) {
 		}
 
 		if ($absolute_discount <= 0 || $isNewObject) {
-			$text .= '('.$addabsolutediscount.')';
+			$text .= ' ('.$addabsolutediscount.')';
 		}
 
-		print '<br>'.$text;
+		if ($isNewObject) {
+			print '<br>'.$text;
+		} else {
+			print '<div class="inline-block clearboth">'.$text.'</div>';
+		}
 	} else {  // We can add a credit note on a down payment or standard invoice or situation invoice
 		// There is credit notes discounts available
 		$more = $isInvoice && !$isNewObject ? ' ('.$viewabsolutediscount.')' : '';
@@ -97,9 +106,11 @@ if ($absolute_creditnote > 0) {
 
 if ($absolute_discount <= 0 && $absolute_creditnote <= 0) {
 	$translationKey = !empty($discount_type) ? 'HasNoAbsoluteDiscountFromSupplier' : 'CompanyHasNoAbsoluteDiscount';
-	print '<br>'.$langs->trans($translationKey).'.';
+	print '<br><span class="opacitymedium">'.$langs->trans($translationKey).'.</span>';
 
 	if ($isInvoice && $object->statut == $objclassname::STATUS_DRAFT && $object->type != $objclassname::TYPE_CREDIT_NOTE && $object->type != $objclassname::TYPE_DEPOSIT) {
 		print ' ('.$addabsolutediscount.')';
 	}
 }
+
+print '<!-- END template -->';

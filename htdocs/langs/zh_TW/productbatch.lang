@@ -1,8 +1,10 @@
 # ProductBATCH language file - en_US - ProductBATCH
 ManageLotSerial=使用批次/序號數字
-ProductStatusOnBatch=是的(需要批次/序號)
+ProductStatusOnBatch=Yes (lot required)
+ProductStatusOnSerial=Yes (unique serial number required)
 ProductStatusNotOnBatch=不是(不使用批次/序號)
-ProductStatusOnBatchShort=Yes
+ProductStatusOnBatchShort=Lot
+ProductStatusOnSerialShort=Serial
 ProductStatusNotOnBatchShort=No
 Batch=批次/序號
 atleast1batchfield=有效日期或銷售日期或批次/序號
@@ -22,3 +24,12 @@ ProductLotSetup=批次/序號模組的設定
 ShowCurrentStockOfLot=顯示關聯產品/批次的目前庫存
 ShowLogOfMovementIfLot=顯示產品/批次的移動記錄
 StockDetailPerBatch=每批次的庫存詳細資料
+SerialNumberAlreadyInUse=Serial number %s is already used for product %s
+TooManyQtyForSerialNumber=You can only have one product %s for serial number %s
+BatchLotNumberingModules=Options for automatic generation of batch products managed by lots
+BatchSerialNumberingModules=Options for automatic generation of batch products managed by serial numbers
+ManageLotMask=Custom mask
+CustomMasks=Adds an option to define mask in the product card
+LotProductTooltip=Adds an option in the product card to define a dedicated batch number mask
+SNProductTooltip=Adds an option in the product card to define a dedicated serial number mask
+QtyToAddAfterBarcodeScan=Qty to add for each barcode/lot/serial scanned

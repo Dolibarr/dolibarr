@@ -1,20 +1,25 @@
 # Dolibarr language file - Source file is en_US - workflow
-WorkflowSetup=ワークフローモジュールのセットアップ
-WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is open (you can do things in the order you want). You can activate the automatic actions you are interested in.
-ThereIsNoWorkflowToModify=There is no workflow modifications available with the activated modules.
+WorkflowSetup=ワークフローモジュールの設定
+WorkflowDesc=このモジュールは、いくつかの自動アクションを提供する。デフォルトでは、ワークフローは開いている(必要な順序で実行できる)が、ここでいくつかの自動アクションをアクティブ化できる。
+ThereIsNoWorkflowToModify=アクティブ化されたモジュールで使用できるワークフローの変更はない。
 # Autocreate
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a customer order after a commercial proposal is signed (new order will have same amount than proposal)
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatically create a customer invoice after a commercial proposal is signed (new invoice will have same amount than proposal)
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Automatically create a customer invoice after a contract is validated
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automatically create a customer invoice after a customer order is closed (new invoice will have same amount than order)
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=売買契約提案書が署名された後、自動的に販売注文を作成する(新規注文は提案と同じ金額になる)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=売買契約提案書書に署名した後、顧客の請求書を自動的に作成する(新規請求書は提案書と同じ金額になる)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=契約が検証された後、顧客の請求書を自動的に作成する
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=受注がクローズされた後、顧客の請求書を自動的に作成する(新規請求書は注文と同じ金額になる)
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal(s) to billed when customer order is set to billed (and if amount of the order is same than total amount of signed linked proposals)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal(s) to billed when customer invoice is validated (and if amount of the invoice is same than total amount of signed linked proposals)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated (and if amount of the invoice is same than total amount of linked orders)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid (and if amount of the invoice is same than total amount of linked orders)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source customer order to shipped when a shipment is validated (and if quantity shipped by all shipments is the same as in the order to update)
-# Autoclassify supplier order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked proposals)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked orders)
-AutomaticCreation=Automatic creation
-AutomaticClassification=Automatic classification
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=販売注文が請求済みに設定されている場合(および注文の金額が署名されたリンクされた提案の合計金額と同じ場合)、リンクされたソース提案を請求済みとして分類する。
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=リンクされたソースプロポーザルを、顧客の請求書が検証されたときに請求済みとして分類する(また、請求書の金額が署名されたリンクされたプロポーザルの合計金額と同じである場合)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=顧客の請求書が検証されたときに請求済みとしてリンクされたソース販売注文を分類する(請求書の金額がリンクされた注文の合計金額と同じである場合)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=顧客の請求書が支払い済みに設定されている場合(および請求書の金額がリンクされた注文の合計金額と同じである場合)、リンクされたソース販売注文を請求済みとして分類する。
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=リンクされたソース販売注文を、出荷が検証されたときに出荷されたものとして分類する(また、すべての出荷によって出荷された数量が更新する注文と同じである場合)
+# Autoclassify purchase order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=リンクされたソースベンダーの提案を、ベンダーの請求書が検証されたときに請求済みとして分類する(また、請求書の金額がリンクされた提案の合計金額と同じである場合)。
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=ベンダーの請求書が検証されたときに請求済みとしてリンクされたソース発注書を分類する(請求書の金額がリンクされた注文の合計金額と同じである場合)
+descWORKFLOW_BILL_ON_RECEPTION=リンクされたサプライヤの注文が検証されたときに、受信を「請求済み」に分類する
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=チケットが閉じられたら、チケットにリンクされているすべての介入を閉じる
+AutomaticCreation=自動作成
+AutomaticClassification=自動分類
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=顧客の請求書が検証されたときに、リンクされたソース出荷をクローズとして分類する

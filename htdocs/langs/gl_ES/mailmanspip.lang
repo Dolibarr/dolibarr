@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - mailmanspip
+MailmanSpipSetup=Configuración do módulo Mailman e SPIP
+MailmanTitle=Sistema de listaxes de correo Mailman
+TestSubscribe=Para comprobar a subscrición a listas Mailman
+TestUnSubscribe=Para comprobar a cancelación de subscricións a listas Mailman
+MailmanCreationSuccess=Subscrición de proba executada correctamente
+MailmanDeletionSuccess=Cancelación de subscrición de proba foi executada correctamente
+SynchroMailManEnabled=Unha actualización de Mailman será realizada
+SynchroSpipEnabled=Unha actualización de Spip será realizada
+DescADHERENT_MAILMAN_ADMINPW=Contrasinal de administrador Mailman
+DescADHERENT_MAILMAN_URL=URL para as subscricións Mailman
+DescADHERENT_MAILMAN_UNSUB_URL=URL para a cancelación de subscripcións Mailman
+DescADHERENT_MAILMAN_LISTS=Lista(s) para a subscripción automática dos novos membros (separados por comas)
+SPIPTitle=Sistema de xestión de contidos SPIP
+DescADHERENT_SPIP_SERVEUR=Servidor SPIP
+DescADHERENT_SPIP_DB=Nome da base de datos de SPIP
+DescADHERENT_SPIP_USER=Usuario da base de datos de SPIP
+DescADHERENT_SPIP_PASS=Contrasinal da base de datos de SPIP
+AddIntoSpip=Engadir a SPIP
+AddIntoSpipConfirmation=¿Está certo de querer engadir este membro a SPIP?
+AddIntoSpipError=Aconteceu un erro ao engadir o membro a SPIP
+DeleteIntoSpip=Eliminar de SPIP
+DeleteIntoSpipConfirmation=¿Está certo de querer eliminar este membro de SPIP?
+DeleteIntoSpipError=Aconteceu un erro ao eliminar o membro de SPIP
+SPIPConnectionFailed=Erro ao conectar con SPIP
+SuccessToAddToMailmanList=%s agregado con éxito a listaxe de mailman %s ou base de datos SPIP
+SuccessToRemoveToMailmanList=%s eliminado con éxito da listaxe de mailman %s ou base de datos SPIP

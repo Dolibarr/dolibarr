@@ -15,6 +15,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
+-- llx_product_attribute_value is table for different available values of a product variants attributes.
+-- For example BLUE, GREEN, ... for the product attribute COLOR.
 -- ============================================================================
 
 CREATE TABLE llx_product_attribute_value

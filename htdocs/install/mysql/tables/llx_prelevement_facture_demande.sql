@@ -21,7 +21,8 @@ create table llx_prelevement_facture_demande
 (
   rowid               integer AUTO_INCREMENT PRIMARY KEY,
   entity              integer DEFAULT 1 NOT NULL,
-  fk_facture          integer NOT NULL,
+  fk_facture          integer NULL,
+  fk_facture_fourn    integer NULL,
   sourcetype          varchar(32),
   amount              double(24,8) NOT NULL,
   date_demande        datetime NOT NULL,

@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - agenda
 EventReports=Gebeurtenisrapporten
-ToUserOfGroup=Aan elke gebruiker in groep
 ViewPerType=Overzicht per type
 AgendaAutoActionDesc=Hier kunt u gebeurtenissen definiëren die u Dolibarr automatisch in Agenda wilt laten maken. Als er niets wordt gecontroleerd, worden alleen handmatige acties opgenomen in logboeken en weergegeven in Agenda. Automatisch bijhouden van zakelijke acties die worden uitgevoerd op objecten (validatie, statuswijziging), wordt niet opgeslagen.
 AgendaSetupOtherDesc=Deze pagina biedt opties voor het exporteren van uw Dolibarr-evenementen naar een externe agenda (Thunderbird, Google Agenda, enz.)
@@ -25,7 +24,6 @@ ProposalDeleted=Offerte verwijderd
 HOLIDAY_CREATEInDolibarr=Verzoek om verlof %s gemaakt
 HOLIDAY_MODIFYInDolibarr=Verzoek om verlof %s gewijzigd
 HOLIDAY_APPROVEInDolibarr=Verzoek om verlof %s goedgekeurd
-HOLIDAY_VALIDATEDInDolibarr=Verzoek om verlof %s gevalideerd
 HOLIDAY_DELETEInDolibarr=Verzoek om verlof %s verwijderd
 EXPENSE_REPORT_CREATEInDolibarr=Onkostenrapport %s aangemaakt
 EXPENSE_REPORT_VALIDATEInDolibarr=Onkostenrapport %s gevalideerd

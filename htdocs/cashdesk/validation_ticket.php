@@ -26,16 +26,24 @@ require_once DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php';
 require_once DOL_DOCUMENT_ROOT.'/cashdesk/class/Facturation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 
+if (empty($user->rights->cashdesk->run)) {
+	accessforbidden();
+}
+
+
+/*
+ * Actions
+ */
+
 $obj_facturation = unserialize($_SESSION['serObjFacturation']);
 unset($_SESSION['serObjFacturation']);
 
 $hookmanager->initHooks(array('cashdeskTplTicket'));
 
-$parameters=array();
-$reshook=$hookmanager->executeHooks('doActions', $parameters, $obj_facturation);
-if (empty($reshook))
-{
-    require 'tpl/ticket.tpl.php';
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $obj_facturation);
+if (empty($reshook)) {
+	require 'tpl/ticket.tpl.php';
 }
 
 

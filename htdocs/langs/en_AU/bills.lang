@@ -1,19 +1,12 @@
 # Dolibarr language file - Source file is en_US - bills
-PaymentBack=Refund
-CustomerInvoicePaymentBack=Refund
-ConfirmConvertToReduc=Do you want to convert this %s into an available credit?
-ConfirmConvertToReducSupplier=Do you want to convert this %s into an available credit?
 PaymentTypeCHQ=Cheque
 PaymentTypeShortCHQ=Cheque
 BankCode=BSB
 ChequeNumber=Cheque N°
 ChequeOrTransferNumber=Cheque/Transfer N°
-ChequeMaker=Cheque/Transfer transmitter
 ChequeBank=Bank of Cheque
 CheckBank=Cheque
 MenuCheques=Cheques
 NewChequeDeposit=New Cheque deposit
 Cheques=Cheques
 NbCheque=Number of cheques
-RevenueStamp=Tax stamp
-PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template 

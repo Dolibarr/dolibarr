@@ -17,8 +17,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
-{
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -34,7 +33,9 @@ $contact = $GLOBALS['objcanvas']->control->object;
 <?php echo $this->control->tpl['error']; ?>
 
 <?php echo $this->control->tpl['ajax_selectcountry']; ?>
-<?php if ($this->control->tpl['js_checkVatPopup']) echo $this->control->tpl['js_checkVatPopup']; ?>
+<?php if ($this->control->tpl['js_checkVatPopup']) {
+	echo $this->control->tpl['js_checkVatPopup'];
+} ?>
 
 <form action="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id']; ?>" method="POST" name="formsoc">
 <input type="hidden" name="canvas" value="<?php echo $canvas ?>">
@@ -52,7 +53,7 @@ $contact = $GLOBALS['objcanvas']->control->object;
 	<td colspan="3"><input type="text" size="40" maxlength="60" name="nom" value="<?php echo $this->control->tpl['nom']; ?>"></td>
 </tr>
 
-<?php if (! empty($conf->global->SOCIETE_USEPREFIX)) { ?>
+<?php if (!empty($conf->global->SOCIETE_USEPREFIX)) { ?>
 <tr>
 	<td><?php echo $langs->trans("Prefix"); ?></td>
 	<td colspan="3">
@@ -75,7 +76,7 @@ $contact = $GLOBALS['objcanvas']->control->object;
 			<tr>
 				<td>
 				<?php if ($this->control->tpl['ismodifiable_customercode']) { ?>
-				<input type="text" name="code_client" size="16" value="<?php echo $this->control->tpl['customercode']; ?>" maxlength="15">
+				<input type="text" name="code_client" size="16" value="<?php echo $this->control->tpl['customercode']; ?>" maxlength="24">
 				<?php } else { ?>
 					<?php echo $this->control->tpl['customercode']; ?>
 				<input type="hidden" name="code_client" value="<?php echo $this->control->tpl['customercode']; ?>">
@@ -96,7 +97,7 @@ $contact = $GLOBALS['objcanvas']->control->object;
 			<tr>
 				<td>
 				<?php if ($this->control->tpl['ismodifiable_suppliercode']) { ?>
-				<input type="text" name="code_fournisseur" size="16" value="<?php echo $this->control->tpl['suppliercode']; ?>" maxlength="15">
+				<input type="text" name="code_fournisseur" size="16" value="<?php echo $this->control->tpl['suppliercode']; ?>" maxlength="24">
 				<?php } else { ?>
 					<?php echo $this->control->tpl['suppliercode']; ?>
 				<input type="hidden" name="code_fournisseur" value="<?php echo $this->control->tpl['suppliercode']; ?>">
@@ -116,10 +117,10 @@ if ($this->control->tpl['fournisseur']) {
 	<td colspan="3"><?php echo $this->control->tpl['select_suppliercategory']; ?></td>
 </tr>
 		<?php
-    }
+	}
 }
 
-if (! empty($conf->barcode->enabled)) { ?>
+if (!empty($conf->barcode->enabled)) { ?>
 <tr>
 	<td><?php echo $langs->trans('Gencod'); ?></td>
 	<td colspan="3"><input type="text" name="barcode" value="<?php echo $this->control->tpl['barcode']; ?>"></td>
@@ -156,24 +157,32 @@ if (! empty($conf->barcode->enabled)) { ?>
 </tr>
 
 <tr>
-	<td><?php echo $langs->trans('EMail').($conf->global->SOCIETE_EMAIL_MANDATORY?'*':''); ?></td>
+	<td><?php echo $langs->trans('EMail').($conf->global->SOCIETE_EMAIL_MANDATORY ? '*' : ''); ?></td>
 	<td><input type="text" name="email" size="32" value="<?php echo $this->control->tpl['email']; ?>"></td>
 	<td><?php echo $langs->trans('Web'); ?></td>
 	<td><input type="text" name="url" size="32" value="<?php echo $this->control->tpl['url']; ?>"></td>
 </tr>
 
 <?php
-for ($i=1; $i<=4; $i++) {
-	if ($this->control->tpl['langprofid'.$i]!='-') {
-		if ($i==1 || $i==3) echo '<tr>';
+for ($i = 1; $i <= 4; $i++) {
+	if ($this->control->tpl['langprofid'.$i] != '-') {
+		if ($i == 1 || $i == 3) {
+			echo '<tr>';
+		}
 		echo '<td>'.$this->control->tpl['langprofid'.$i].'</td>';
 		echo '<td>'.$this->control->tpl['showprofid'.$i].'</td>';
-		if ($i==2 || $i==4) echo '</tr>';
+		if ($i == 2 || $i == 4) {
+			echo '</tr>';
+		}
 	} else {
-		if ($i==1 || $i==3) echo '<tr>';
+		if ($i == 1 || $i == 3) {
+			echo '<tr>';
+		}
 		echo '<td>&nbsp;</td>';
 		echo '<td>&nbsp;</td>';
-		if ($i==2 || $i==4) echo '</tr>';
+		if ($i == 2 || $i == 4) {
+			echo '</tr>';
+		}
 	}
 }
 ?>
@@ -202,22 +211,24 @@ for ($i=1; $i<=4; $i++) {
 	<td><?php echo $this->control->tpl['select_workforce']; echo $this->control->tpl['info_admin']; ?></td>
 </tr>
 
-<?php if (! empty($conf->global->MAIN_MULTILANGS)) { ?>
+<?php if (!empty($conf->global->MAIN_MULTILANGS)) { ?>
 <tr>
 	<td><?php echo $langs->trans("DefaultLang"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['select_lang']; ?></td>
 </tr>
 <?php }
 
-if(!empty($this->control->tpl['localtax'])) echo $this->control->tpl['localtax']; ?>
+if (!empty($this->control->tpl['localtax'])) {
+	echo $this->control->tpl['localtax'];
+} ?>
 
 </table>
 <br>
 
 <div class="center">
-<input type="submit" class="button" name="save" value="<?php echo $langs->trans("Save"); ?>">
+<input type="submit" class="button button-save" name="save" value="<?php echo $langs->trans("Save"); ?>">
 &nbsp; &nbsp;
-<input type="submit" class="button" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
+<input type="submit" class="button button-cancel" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
 </div>
 
 </form>
