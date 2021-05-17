@@ -7317,7 +7317,6 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 			} else {
 				$value = dol_nl2br("$value");
 			}
-
 			$text = str_replace("$key", "$value", $text); // We must keep the " to work when value is 123.5 for example
 		}
 	}

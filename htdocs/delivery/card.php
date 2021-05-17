@@ -542,8 +542,8 @@ if ($action == 'create') {    // Create. Seems to no be used
 						if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
 							$outputlangs = $langs;
 							$newlang = '';
-							if (empty($newlang) && !empty($_REQUEST['lang_id'])) {
-								$newlang = $_REQUEST['lang_id'];
+							if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+								$newlang = GETPOST('lang_id', 'aZ09');
 							}
 							if (empty($newlang)) {
 								$newlang = $object->thirdparty->default_lang;

@@ -2917,7 +2917,7 @@ class Ticket extends CommonObject
 
 		$sql = "SELECT p.rowid, p.ref, p.datec as datec";
 		$sql .= " FROM ".MAIN_DB_PREFIX."ticket as p";
-		if (!$user->rights->societe->client->voir && !$user->socid) {
+		if ($conf->societe->enabled && !$user->rights->societe->client->voir && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".$user->id;
 			$clause = " AND";

@@ -2070,6 +2070,18 @@ class CommandeFournisseur extends CommonOrder
 			// End call triggers
 		}
 
+		// Test we can delete
+		$this->fetchObjectLinked(null, 'order_supplier');
+		if (!empty($this->linkedObjects)) {
+			foreach ($this->linkedObjects['reception'] as $element) {
+				if ($element->statut >= 0) {
+					$this->errors[] = $langs->trans('ReceptionExist');
+					$error++;
+					break;
+				}
+			}
+		}
+
 		$main = MAIN_DB_PREFIX.'commande_fournisseurdet';
 		$ef = $main."_extrafields";
 		$sql = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_commande = ".$this->id.")";
