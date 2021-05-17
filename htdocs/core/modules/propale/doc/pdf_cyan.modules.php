@@ -424,7 +424,7 @@ class pdf_cyan extends ModelePDFPropales
 						$salereparray = $object->thirdparty->getSalesRepresentatives($user);
 						$salerepobj = new User($this->db);
 						$salerepobj->fetch($salereparray[0]['id']);
-						if (!empty($salerepobj->signature)) $notetoshow .= dol_concatdesc($notetoshow, $salerepobj->signature);
+						if (!empty($salerepobj->signature)) $notetoshow = dol_concatdesc($notetoshow, $salerepobj->signature);
 					}
 				}
 
@@ -438,9 +438,11 @@ class pdf_cyan extends ModelePDFPropales
 				{
 					$tmpuser = new User($this->db);
 					$tmpuser->fetch($object->user_author_id);
-					$notetoshow .= $langs->trans("CaseFollowedBy").' '.$tmpuser->getFullName($langs);
-					if ($tmpuser->email) $notetoshow .= ',  Mail: '.$tmpuser->email;
-					if ($tmpuser->office_phone) $notetoshow .= ', Tel: '.$tmpuser->office_phone;
+					$creator_info = $langs->trans("CaseFollowedBy").' '.$tmpuser->getFullName($langs);
+					if ($tmpuser->email) $creator_info .= ',  Mail: '.$tmpuser->email;
+					if ($tmpuser->office_phone) $creator_info .= ', Tel: '.$tmpuser->office_phone;
+
+					$notetoshow = dol_concatdesc($notetoshow, $creator_info);
 				}
 
 				$tab_height = $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforsignature - $heightforfooter;
