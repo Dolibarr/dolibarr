@@ -294,7 +294,7 @@ function dol_shutdown()
 }
 
 /**
- * Return true if we are in a context of submitting the parameter $paramname
+ * Return true if we are in a context of submitting the parameter $paramname from a POST of a form.
  *
  * @param 	string	$paramname		Name or parameter to test
  * @return 	boolean					True if we have just submit a POST or GET request with the parameter provided (even if param is empty)
@@ -1386,7 +1386,9 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 			return;
 		}
 
-		$message = preg_replace('/password=\'[^\']*\'/', 'password=\'hidden\'', $message); // protection to avoid to have value of password in log
+		if (empty($conf->global->MAIN_SHOW_PASSWORD_INTO_LOG)) {
+			$message = preg_replace('/password=\'[^\']*\'/', 'password=\'hidden\'', $message); // protection to avoid to have value of password in log
+		}
 
 		// If adding log inside HTML page is required
 		if ((!empty($_REQUEST['logtohtml']) && !empty($conf->global->MAIN_ENABLE_LOG_TO_HTML))
@@ -3503,14 +3505,14 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'margin', 'map-marker-alt', 'member', 'meeting', 'money-bill-alt', 'movement', 'mrp', 'note', 'next',
 				'off', 'on', 'order',
 				'paiment', 'paragraph', 'play', 'pdf', 'phone', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'stock', 'resize', 'service', 'stats', 'trip',
-				'setup', 'share-alt', 'sign-out', 'split', 'stripe', 'stripe-s', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'vcard', 'wrench',
+				'security', 'setup', 'share-alt', 'sign-out', 'split', 'stripe', 'stripe-s', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'vcard', 'wrench',
 				'github', 'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top', 'commercial', 'companies',
 				'generic', 'home', 'hrm', 'members', 'products', 'invoicing',
 				'partnership', 'payment', 'pencil-ruler', 'preview', 'project', 'projectpub', 'projecttask', 'refresh', 'salary', 'shipment', 'supplier_invoice', 'technic', 'ticket',
 				'error', 'warning',
-				'recruitmentcandidature', 'recruitmentjobposition', 'resource',
-				'shapes', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
+				'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'resource',
+				'shapes', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
 				'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
 				'uncheck', 'user-cog', 'website', 'workstation',
 				'conferenceorbooth', 'eventorganization'
@@ -3554,7 +3556,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'reception'=>'dolly', 'recruitmentjobposition'=>'id-card-alt', 'recruitmentcandidature'=>'id-badge',
 				'resize'=>'crop', 'supplier_order'=>'dol-order_supplier', 'supplier_proposal'=>'file-signature',
 				'refresh'=>'redo', 'resource'=>'laptop-house',
-				'salary'=>'wallet', 'shipment'=>'dolly', 'stock'=>'box-open', 'stats' => 'chart-bar', 'split'=>'code-branch', 'stripe'=>'stripe-s', 'supplier_invoice'=>'file-invoice-dollar', 'technic'=>'cogs', 'ticket'=>'ticket-alt',
+				'security'=>'key', 'salary'=>'wallet', 'shipment'=>'dolly', 'stock'=>'box-open', 'stats' => 'chart-bar', 'split'=>'code-branch', 'stripe'=>'stripe-s',
+				'supplier'=>'building', 'supplier_invoice'=>'file-invoice-dollar', 'technic'=>'cogs', 'ticket'=>'ticket-alt',
 				'timespent'=>'clock', 'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach',
 				'title_agenda'=>'calendar-alt',
 				'uncheck'=>'times', 'uparrow'=>'share', 'vcard'=>'address-card',
@@ -3596,7 +3599,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			if (in_array($pictowithouttext, array('conferenceorbooth', 'collab', 'eventorganization', 'holiday', 'info', 'project', 'workstation'))) {
 				$morecss = 'em088';
 			}
-			if (in_array($pictowithouttext, array('intervention', 'payment', 'loan', 'partnership', 'stock', 'technic'))) {
+			if (in_array($pictowithouttext, array('asset', 'intervention', 'payment', 'loan', 'partnership', 'stock', 'technic'))) {
 				$morecss = 'em080';
 			}
 
@@ -3632,7 +3635,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'reception'=>'flip', 'recruitmentjobposition'=>'infobox-adherent', 'recruitmentcandidature'=>'infobox-adherent',
 				'resource'=>'infobox-action',
 				'salary'=>'infobox-bank_account', 'shipment'=>'infobox-commande', 'supplier_invoice'=>'infobox-order_supplier', 'supplier_invoicea'=>'infobox-order_supplier', 'supplier_invoiced'=>'infobox-order_supplier',
-				'supplier_order'=>'infobox-order_supplier', 'supplier_proposal'=>'infobox-supplier_proposal',
+				'supplier'=>'infobox-order_supplier', 'supplier_order'=>'infobox-order_supplier', 'supplier_proposal'=>'infobox-supplier_proposal',
 				'ticket'=>'infobox-contrat', 'title_accountancy'=>'infobox-bank_account', 'title_hrm'=>'infobox-holiday', 'expensereport'=>'infobox-expensereport', 'trip'=>'infobox-expensereport', 'title_agenda'=>'infobox-action',
 				//'title_setup'=>'infobox-action', 'tools'=>'infobox-action',
 				'list-alt'=>'imgforviewmode', 'calendar'=>'imgforviewmode', 'calendarweek'=>'imgforviewmode', 'calendarmonth'=>'imgforviewmode', 'calendarday'=>'imgforviewmode', 'calendarperuser'=>'imgforviewmode'
@@ -3653,7 +3656,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'other'=>'#ddd',
 				'partnership'=>'#6c6aa8', 'playdisabled'=>'#ccc', 'printer'=>'#444', 'projectpub'=>'#986c6a', 'reception'=>'#a69944', 'resize'=>'#444', 'rss'=>'#cba',
 				//'shipment'=>'#a69944',
-				'stats'=>'#444', 'switch_off'=>'#999', 'technic'=>'#999', 'timespent'=>'#555',
+				'security'=>'#999', 'stats'=>'#444', 'switch_off'=>'#999', 'technic'=>'#999', 'timespent'=>'#555',
 				'uncheck'=>'#800', 'uparrow'=>'#555', 'user-cog'=>'#999', 'country'=>'#aaa', 'globe-americas'=>'#aaa',
 				'website'=>'#304', 'workstation'=>'#a69944'
 			);
@@ -10229,14 +10232,20 @@ function readfileLowMemory($fullpath_original_file_osencoded, $method = -1)
 }
 
 /**
- * Create a button to copy $valuetoprint in the clipboard
+ * Create a button to copy $valuetocopy in the clipboard
  *
- * @param 	string 	$valuetoprint 		The value to print
- * @param	int		$showonlyonhover	Show the copypaste button only on hover
+ * @param 	string 	$valuetocopy 		The value to print
+ * @param	int		$showonlyonhover	Show the copy-paste button only on hover
+ * @param	string	$texttoshow			Replace the value to show with this text
  * @return 	string 						The string to print for the button
  */
-function showValueWithClipboardCPButton($valuetoprint, $showonlyonhover = 1)
+function showValueWithClipboardCPButton($valuetocopy, $showonlyonhover = 1, $texttoshow = '')
 {
-	$result = '<span class="clipboardCP'.($showonlyonhover ? ' clipboardCPShowOnHover' : '').'"><span class="clipboardCPValue">'.$valuetoprint.'</span><span class="clipboardCPButton far fa-clipboard opacitymedium paddingleft paddingright"></span><span class="clipboardCPText opacitymedium"></span></span>';
+	if ($texttoshow) {
+		$result = '<span class="clipboardCP'.($showonlyonhover ? ' clipboardCPShowOnHover' : '').'"><span class="clipboardCPValue hidewithsize">'.$valuetocopy.'</span><span class="clipboardCPValueToPrint">'.$texttoshow.'</span><span class="clipboardCPButton far fa-clipboard opacitymedium paddingleft paddingright"></span><span class="clipboardCPText opacitymedium"></span></span>';
+	} else {
+		$result = '<span class="clipboardCP'.($showonlyonhover ? ' clipboardCPShowOnHover' : '').'"><span class="clipboardCPValue">'.$valuetocopy.'</span><span class="clipboardCPButton far fa-clipboard opacitymedium paddingleft paddingright"></span><span class="clipboardCPText opacitymedium"></span></span>';
+	}
+
 	return $result;
 }

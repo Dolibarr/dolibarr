@@ -822,7 +822,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			$pdf->SetTextColor(0, 0, 0);
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($posx, $posy - 5);
-			$pdf->MultiCell(66, 5, $outputlangs->transnoentities("BillFrom").":", 0, 'L');
+			$pdf->MultiCell(80, 5, $outputlangs->transnoentities("BillFrom"), 0, 'L');
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetFillColor(230, 230, 230);
 			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
@@ -848,7 +848,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			$pdf->SetTextColor(0, 0, 0);
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($posx, $posy - 5);
-			$pdf->MultiCell(80, 5, $outputlangs->transnoentities("DeliveryAddress").":", 0, 'L');
+			$pdf->MultiCell(80, 5, $outputlangs->transnoentities("DeliveryAddress"), 0, 'L');
 
 			// If SHIPPING contact defined on order, we use it
 			$usecontact = false;

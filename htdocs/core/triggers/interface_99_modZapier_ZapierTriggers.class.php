@@ -111,13 +111,9 @@ class InterfaceZapierTriggers extends DolibarrTriggers
 			//case 'USER_NEW_PASSWORD':
 			//case 'USER_ENABLEDISABLE':
 			//case 'USER_DELETE':
-			//case 'USER_SETINGROUP':
-			//case 'USER_REMOVEFROMGROUP':
-			// case 'USER_LOGIN':
-			// case 'USER_LOGIN_FAILED':
-			// case 'USER_LOGOUT':
-			// Warning: To increase performances, this action is triggered only if constant MAIN_ACTIVATE_UPDATESESSIONTRIGGER is set to 1.
-			// // case 'USER_UPDATE_SESSION':
+			//case 'USER_LOGIN':
+			//case 'USER_LOGIN_FAILED':
+			//case 'USER_LOGOUT':
 
 			// Actions
 			case 'ACTION_MODIFY':

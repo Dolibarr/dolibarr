@@ -37,7 +37,7 @@ if (!empty($conf->projet->enabled)) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array('compta', 'other', 'companies'));
+$langs->loadLangs(array('propal', 'compta', 'other', 'companies'));
 
 $action = GETPOST('action', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
@@ -102,8 +102,9 @@ if ($object->id > 0) {
 /*
  * View
  */
-
-llxHeader('', $langs->trans('Proposal'), 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
+$title = $langs->trans('Proposal')." - ".$langs->trans('Documents');
+$help_url = 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos';
+llxHeader('', $title, $help_url);
 
 $form = new Form($db);
 

@@ -10,7 +10,7 @@
  * Copyright (C) 2012      Christophe Battarel		<christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Cédric Salvador			<csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Jean-François Ferry		<jfefe@aternatik.fr>
- * Copyright (C) 2016-2018 Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2016-2021 Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2017-2018 Charlene Benke			<charlie@patas-monkey.com>
  * Copyright (C) 2018	   Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2019	   Alexandre Spangaro		<aspangaro@open-dsi.fr>
@@ -182,7 +182,7 @@ $arrayfields = array(
 	'state.nom'=>array('label'=>"StateShort", 'checked'=>0),
 	'country.code_iso'=>array('label'=>"Country", 'checked'=>0),
 	'typent.code'=>array('label'=>"ThirdPartyType", 'checked'=>$checkedtypetiers),
-	'p.date'=>array('label'=>"Date", 'checked'=>1),
+	'p.date'=>array('label'=>"DatePropal", 'checked'=>1),
 	'p.fin_validite'=>array('label'=>"DateEnd", 'checked'=>1),
 	'p.date_livraison'=>array('label'=>"DeliveryDate", 'checked'=>0),
 	'ava.rowid'=>array('label'=>"AvailabilityPeriod", 'checked'=>0),
@@ -711,24 +711,12 @@ if ($resql) {
 	if ($sall) {
 		$param .= '&sall='.urlencode($sall);
 	}
-	if ($search_date_start) {
-		$param .= '&search_date_start='.urlencode($search_date_start);
-	}
-	if ($search_date_end) {
-		$param .= '&search_date_end='.urlencode($search_date_end);
-	}
-	if ($search_dateend_start) {
-		$param .= '&search_dateend_start='.urlencode($search_dateend_start);
-	}
-	if ($search_dateend_end) {
-		$param .= '&search_dateend_end='.urlencode($search_dateend_end);
-	}
-	if ($search_datedelivery_start) {
-		$param .= '&search_datedelivery_start='.urlencode($search_datedelivery_start);
-	}
-	if ($search_datedelivery_end) {
-		$param .= '&search_datedelivery_end='.urlencode($search_datedelivery_end);
-	}
+	if ($search_date_start)				$param .= '&search_date_startday='.urlencode(dol_print_date($search_date_start, '%d')).'&search_date_startmonth='.urlencode(dol_print_date($search_date_start, '%m')).'&search_date_startyear='.urlencode(dol_print_date($search_date_start, '%Y'));
+	if ($search_date_end)				$param .= '&search_date_endday='.urlencode(dol_print_date($search_date_end, '%d')).'&search_date_endmonth='.urlencode(dol_print_date($search_date_end, '%m')).'&search_date_endyear='.urlencode(dol_print_date($search_date_end, '%Y'));
+	if ($search_dateend_start)			$param .= '&search_dateend_startday='.urlencode(dol_print_date($search_dateend_start, '%d')).'&search_dateend_startmonth='.urlencode(dol_print_date($search_dateend_start, '%m')).'&search_dateend_startyear='.urlencode(dol_print_date($search_dateend_start, '%Y'));
+	if ($search_dateend_end)			$param .= '&search_dateend_endday='.urlencode(dol_print_date($search_dateend_end, '%d')).'&search_dateend_endmonth='.urlencode(dol_print_date($search_dateend_end, '%m')).'&search_dateend_endyear='.urlencode(dol_print_date($search_dateend_end, '%Y'));
+	if ($search_datedelivery_start)		$param .= '&search_datedelivery_startday='.urlencode(dol_print_date($search_datedelivery_start, '%d')).'&search_datedelivery_startmonth='.urlencode(dol_print_date($search_datedelivery_start, '%m')).'&search_datedelivery_startyear='.urlencode(dol_print_date($search_datedelivery_start, '%Y'));
+	if ($search_datedelivery_end)		$param .= '&search_datedelivery_endday='.urlencode(dol_print_date($search_datedelivery_end, '%d')).'&search_datedelivery_endmonth='.urlencode(dol_print_date($search_datedelivery_end, '%m')).'&search_datedelivery_endyear='.urlencode(dol_print_date($search_datedelivery_end, '%Y'));
 	if ($search_ref) {
 		$param .= '&search_ref='.urlencode($search_ref);
 	}
@@ -787,37 +775,37 @@ if ($resql) {
 		$param .= '&search_categ_cus='.urlencode($search_categ_cus);
 	}
 	if ($search_product_category != '') {
-		$param .= '&search_product_category='.$search_product_category;
+		$param .= '&search_product_category='.urlencode($search_product_category);
 	}
 	if ($search_fk_cond_reglement > 0) {
-		$param .= '&search_fk_cond_reglement='.$search_fk_cond_reglement;
+		$param .= '&search_fk_cond_reglement='.urlencode($search_fk_cond_reglement);
 	}
 	if ($search_fk_shipping_method > 0) {
-		$param .= '&search_fk_shipping_method='.$search_fk_shipping_method;
+		$param .= '&search_fk_shipping_method='.urlencode($search_fk_shipping_method);
 	}
 	if ($search_fk_input_reason > 0) {
-		$param .= '&search_fk_input_reason='.$search_fk_input_reason;
+		$param .= '&search_fk_input_reason='.urlencode($search_fk_input_reason);
 	}
 	if ($search_fk_mode_reglement > 0) {
-		$param .= '&search_fk_mode_reglement='.$search_fk_mode_reglement;
+		$param .= '&search_fk_mode_reglement='.urlencode($search_fk_mode_reglement);
 	}
 	if ($search_type_thirdparty > 0) {
-		$param .= '&search_type_thirdparty='.$search_type_thirdparty;
+		$param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
 	}
 	if ($search_town) {
-		$param .= '&search_town='.$search_town;
+		$param .= '&search_town='.urlencode($search_town);
 	}
 	if ($search_zip) {
-		$param .= '&search_zip='.$search_zip;
+		$param .= '&search_zip='.urlencode($search_zip);
 	}
 	if ($search_state) {
-		$param .= '&search_state='.$search_state;
+		$param .= '&search_state='.urlencode($search_state);
 	}
 	if ($search_town) {
-		$param .= '&search_town='.$search_town;
+		$param .= '&search_town='.urlencode($search_town);
 	}
 	if ($search_country) {
-		$param .= '&search_country='.$search_country;
+		$param .= '&search_country='.urlencode($search_country);
 	}
 
 	// Add $param from extra fields
@@ -825,23 +813,22 @@ if ($resql) {
 
 	// List of mass actions available
 	$arrayofmassactions = array(
-		'generate_doc'=>img_picto('', 'pdf').'&ensp;'.$langs->trans("ReGeneratePDF"),
-		'builddoc'=>img_picto('', 'pdf').'&ensp;'.$langs->trans("PDFMerge"),
-
+		'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
+		'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	);
 	if ($permissiontosendbymail) {
-		$arrayofmassactions['presend']=img_picto('', 'email').'&ensp;'.$langs->trans("SendByMail");
+		$arrayofmassactions['presend']=img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail");
 	}
 	if ($permissiontovalidate) {
-		$arrayofmassactions['prevalidate']=img_picto('', 'check').'&ensp;'.$langs->trans("Validate");
+		$arrayofmassactions['prevalidate']=img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate");
 	}
 	if ($permissiontoclose) {
-		$arrayofmassactions['presign']=img_picto('', 'propal').'&ensp;'.$langs->trans("Sign");
-		$arrayofmassactions['nopresign']=img_picto('', 'propal').'&ensp;'.$langs->trans("NoSign");
-		$arrayofmassactions['setbilled'] =img_picto('', 'bill').'&ensp;'.$langs->trans("ClassifyBilled");
+		$arrayofmassactions['presign']=img_picto('', 'propal', 'class="pictofixedwidth"').$langs->trans("Sign");
+		$arrayofmassactions['nopresign']=img_picto('', 'propal', 'class="pictofixedwidth"').$langs->trans("NoSign");
+		$arrayofmassactions['setbilled'] =img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("ClassifyBilled");
 	}
 	if ($permissiontodelete) {
-		$arrayofmassactions['predelete'] = img_picto('', 'delete').'&ensp;'.$langs->trans("Delete");
+		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	}
 
 	if (in_array($massaction, array('presend', 'predelete', 'closed'))) {
@@ -929,7 +916,7 @@ if ($resql) {
 		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1, $tmptitle);
 		$moreforfilter .= '</div>';
 	}
-	if (!empty($conf->expedition->enabled) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL)) {
+	if (!empty($conf->stock->enabled) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL)) {
 		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 		$formproduct = new FormProduct($db);
 		$moreforfilter .= '<div class="divsearchfield">';

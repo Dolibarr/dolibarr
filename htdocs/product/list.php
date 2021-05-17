@@ -586,7 +586,8 @@ if ($resql) {
 		$paramsCat .= "&search_category_product_list[]=".urlencode($searchCategoryProduct);
 	}
 
-	llxHeader('', $title, $helpurl, '', 0, 0, array(), array(), $paramsCat, 'classforhorizontalscrolloftabs');
+	//llxHeader('', $title, $helpurl, '', 0, 0, array(), array(), $paramsCat, 'classforhorizontalscrolloftabs');
+	llxHeader('', $title, $helpurl, '', 0, 0, array(), array(), $paramsCat, '');
 
 	// Displays product removal confirmation
 	if (GETPOST('delprod')) {
