@@ -183,7 +183,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$this->error = "ErrorLDAP ".$ldap->error;
 				}
 			}
-		/*} elseif ($action == 'USER_SETINGROUP') {
+			/*} elseif ($action == 'USER_SETINGROUP') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (!empty($conf->global->LDAP_SYNCHRO_ACTIVE) && $conf->global->LDAP_SYNCHRO_ACTIVE === 'dolibarr2ldap') {
 				$ldap = new Ldap();
@@ -217,7 +217,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$this->error = "ErrorLDAP ".$ldap->error;
 				}
 			}
-		} elseif ($action == 'USER_REMOVEFROMGROUP') {
+			} elseif ($action == 'USER_REMOVEFROMGROUP') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (!empty($conf->global->LDAP_SYNCHRO_ACTIVE) && $conf->global->LDAP_SYNCHRO_ACTIVE === 'dolibarr2ldap') {
 				$ldap = new Ldap();
