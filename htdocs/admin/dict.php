@@ -869,13 +869,13 @@ if (GETPOST('actionadd') || GETPOST('actionmodify')) {
 				$keycode = $value;
 			}
 
-			if ($value == 'price' || preg_match('/^amount/i', $value)) {
-				$_POST[$keycode] = price2num(GETPOST($keycode), 'MU');
-			} elseif ($value == 'taux' || $value == 'localtax1' || $value == 'localtax2') {
-				$_POST[$keycode] = price2num(GETPOST($keycode), 8);
-			} elseif ($value == 'entity') {
-				$_POST[$keycode] = getEntity($tabname[$id]);
-			}
+            if ($value == 'price' || preg_match('/^amount/i', $value)) {
+            	$_POST[$keycode] = price2num(GETPOST($keycode), 'MU');
+            } elseif ($value == 'taux' || $value == 'localtax1') {
+            	$_POST[$keycode] = price2num(GETPOST($keycode), 8);	// Note that localtax2 can be a list of rates separated by coma like X:Y:Z
+            } elseif ($value == 'entity') {
+            	$_POST[$keycode] = getEntity($tabname[$id]);
+            }
 
 			if ($i) {
 				$sql .= ",";
@@ -938,13 +938,13 @@ if (GETPOST('actionadd') || GETPOST('actionmodify')) {
 				$keycode = $field;
 			}
 
-			if ($field == 'price' || preg_match('/^amount/i', $field)) {
-				$_POST[$keycode] = price2num(GETPOST($keycode), 'MU');
-			} elseif ($field == 'taux' || $field == 'localtax1' || $field == 'localtax2') {
-				$_POST[$keycode] = price2num(GETPOST($keycode), 8);
-			} elseif ($field == 'entity') {
-				$_POST[$keycode] = getEntity($tabname[$id]);
-			}
+            if ($field == 'price' || preg_match('/^amount/i', $field)) {
+            	$_POST[$keycode] = price2num(GETPOST($keycode), 'MU');
+            } elseif ($field == 'taux' || $field == 'localtax1') {
+            	$_POST[$keycode] = price2num(GETPOST($keycode), 8);	// Note that localtax2 can be a list of rates separated by coma like X:Y:Z
+            } elseif ($field == 'entity') {
+            	$_POST[$keycode] = getEntity($tabname[$id]);
+            }
 
 			if ($i) {
 				$sql .= ",";
@@ -1254,13 +1254,13 @@ if ($id) {
 				$valuetoshow = $langs->trans("UseLocalTax")." 2"; $class = "center"; $sortable = 0;
 			}
 			if ($value == 'localtax1') {
-				$valuetoshow = $langs->trans("Rate")." 2"; $class = "center";
+				$valuetoshow = $langs->trans("RateOfTaxN", '2'); $class = "center";
 			}
 			if ($value == 'localtax2_type') {
 				$valuetoshow = $langs->trans("UseLocalTax")." 3"; $class = "center"; $sortable = 0;
 			}
 			if ($value == 'localtax2') {
-				$valuetoshow = $langs->trans("Rate")." 3"; $class = "center";
+				$valuetoshow = $langs->trans("RateOfTaxN", '3'); $class = "center";
 			}
 			if ($value == 'organization') {
 				$valuetoshow = $langs->trans("Organization");
@@ -1598,17 +1598,18 @@ if ($id) {
 				}
 				$cssprefix = 'center ';
 			}
+
 			if ($value == 'localtax1_type') {
 				$valuetoshow = $langs->trans("UseLocalTax")." 2"; $cssprefix = "center "; $sortable = 0;
 			}
 			if ($value == 'localtax1') {
-				$valuetoshow = $langs->trans("Rate")." 2"; $cssprefix = "center "; $sortable = 0;
+				$valuetoshow = $langs->trans("RateOfTaxN", '2'); $cssprefix = "center "; $sortable = 0;
 			}
 			if ($value == 'localtax2_type') {
 				$valuetoshow = $langs->trans("UseLocalTax")." 3"; $cssprefix = "center "; $sortable = 0;
 			}
 			if ($value == 'localtax2') {
-				$valuetoshow = $langs->trans("Rate")." 3"; $cssprefix = "center "; $sortable = 0;
+				$valuetoshow = $langs->trans("RateOfTaxN", '3'); $cssprefix = "center "; $sortable = 0;
 			}
 			if ($value == 'organization') {
 				$valuetoshow = $langs->trans("Organization");

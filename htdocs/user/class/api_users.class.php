@@ -21,6 +21,7 @@ use Luracast\Restler\RestException;
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 
+
 /**
  * API class for users
  *
@@ -47,6 +48,7 @@ class Users extends DolibarrApi
 	public function __construct()
 	{
 		global $db, $conf;
+		
 		$this->db = $db;
 		$this->useraccount = new User($this->db);
 	}
@@ -68,11 +70,11 @@ class Users extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = 0, $category = 0, $sqlfilters = '')
 	{
-		global $db, $conf;
+		global $conf;
 
-		if (!DolibarrApiAccess::$user->rights->user->user->lire && empty(DolibarrApiAccess::$user->admin)) {
-			throw new RestException(401, "You are not allowed to read list of users");
-		}
+		if (empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin)) {
+	        throw new RestException(401, "You are not allowed to read list of users");
+	    }
 
 		$obj_ret = array();
 
@@ -423,11 +425,11 @@ class Users extends DolibarrApi
 	 */
 	public function getGroups($id)
 	{
-		$obj_ret = array();
-		
 		if (empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin)) {
 			throw new RestException(403);
 		}
+
+		$obj_ret = array();
 
 		$user = new User($this->db);
 		$result = $user->fetch($id);
@@ -512,13 +514,13 @@ class Users extends DolibarrApi
 	 */
 	public function listGroups($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $group_ids = 0, $sqlfilters = '')
 	{
-		global $db, $conf;
+		global $conf;
 
 		$obj_ret = array();
 
 		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin)) ||
 			!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty(DolibarrApiAccess::$user->rights->user->group_advance->read) && empty(DolibarrApiAccess::$user->admin)) {
-				throw new RestException(401, "You are not allowed to read groups");
+			throw new RestException(401, "You are not allowed to read groups");
 		}
 
 		// case of external user, $societe param is ignored and replaced by user's socid
