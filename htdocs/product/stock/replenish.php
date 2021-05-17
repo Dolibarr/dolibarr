@@ -205,17 +205,24 @@ if ($action == 'order' && GETPOST('valid'))
 		foreach ($suppliers as $supplier)
 		{
 			$order = new CommandeFournisseur($db);
+
 			// Check if an order for the supplier exists
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande_fournisseur";
-			$sql .= " WHERE fk_soc = ".$suppliersid[$i];
-			$sql .= " AND source = 42 AND fk_statut = 0";
+			$sql .= " WHERE fk_soc = ".((int) $suppliersid[$i]);
+			$sql .= " AND source = ".((int) $order::SOURCE_ID_REPLENISHMENT)." AND fk_statut = ".$order::STATUS_DRAFT;
 			$sql .= " AND entity IN (".getEntity('commande_fournisseur').")";
 			$sql .= " ORDER BY date_creation DESC";
 			$resql = $db->query($sql);
 			if ($resql && $db->num_rows($resql) > 0) {
 				$obj = $db->fetch_object($resql);
+
 				$order->fetch($obj->rowid);
+				$order->fetch_thirdparty();
+
 				foreach ($supplier['lines'] as $line) {
+					if (empty($line->remise_percent)) {
+						$line->remise_percent = $order->thirdparty->remise_supplier_percent;
+					}
 					$result = $order->addline(
 						$line->desc,
 						$line->subprice,
@@ -249,13 +256,19 @@ if ($action == 'order' && GETPOST('valid'))
 			} else {
 				$order->socid = $suppliersid[$i];
 				$order->fetch_thirdparty();
-				//trick to know which orders have been generated this way
-				$order->source = 42;
+
+				// Trick to know which orders have been generated using the replenishment feature
+				$order->source = $order::SOURCE_ID_REPLENISHMENT;
+
 				foreach ($supplier['lines'] as $line) {
+					if (empty($line->remise_percent)) {
+						$line->remise_percent = $order->thirdparty->remise_supplier_percent;
+					}
 					$order->lines[] = $line;
 				}
 				$order->cond_reglement_id = $order->thirdparty->cond_reglement_supplier_id;
 				$order->mode_reglement_id = $order->thirdparty->mode_reglement_supplier_id;
+
 				$id = $order->create($user);
 				if ($id < 0) {
 					$fail++;
