@@ -1503,7 +1503,7 @@ class FormMail extends Form
 			// For mass emailing, we have different keys
 			$tmparray['__ID__'] = 'IdRecord';
 			$tmparray['__THIRDPARTY_CUSTOMER_CODE__'] = 'CustomerCode';
-			$tmparray['__THIRDPARTY_CUSTOMER_CODE_WITHOUT_PREFIX__'] = 'CustomerCodeWithoutPrefix';
+			//$tmparray['__THIRDPARTY_CUSTOMER_CODE_WITHOUT_PREFIX__'] = 'CustomerCodeWithoutPrefix';	// Not yet working
 			$tmparray['__EMAIL__'] = 'EMailRecipient';
 			$tmparray['__LASTNAME__'] = 'Lastname';
 			$tmparray['__FIRSTNAME__'] = 'Firstname';
