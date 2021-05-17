@@ -502,7 +502,7 @@ function includeContainer($containerref)
 	}
 	$includehtmlcontentopened++;
 	if ($includehtmlcontentopened > $MAXLEVEL) {
-		print 'ERROR: RECURSIVE CONTENT LEVEL. Depth of recursive call is more than the limit of '.$MAXLEVEL.".\n";
+		print 'ERROR: RECURSIVE CONTENT LEVEL. Depth of recursive call is more than the limit of '.((int) $MAXLEVEL).".\n";
 		return;
 	}
 
@@ -549,20 +549,20 @@ function getStructuredData($type, $data = array())
 			"@type": "SoftwareApplication",
 			"name": "'.dol_escape_json($data['name']).'",
 			"operatingSystem": "'.dol_escape_json($data['os']).'",
-			"applicationCategory": "https://schema.org/'.$data['applicationCategory'].'",';
+			"applicationCategory": "https://schema.org/'.dol_escape_json($data['applicationCategory']).'",';
 		if (!empty($data['ratingcount'])) {
 			$ret .= '
 				"aggregateRating": {
 					"@type": "AggregateRating",
-					"ratingValue": "'.$data['ratingvalue'].'",
-					"ratingCount": "'.$data['ratingcount'].'"
+					"ratingValue": "'.dol_escape_json($data['ratingvalue']).'",
+					"ratingCount": "'.dol_escape_json($data['ratingcount']).'"
 				},';
 		}
 		$ret .= '
 			"offers": {
 				"@type": "Offer",
-				"price": "'.$data['price'].'",
-				"priceCurrency": "'.($data['currency'] ? $data['currency'] : $conf->currency).'"
+				"price": "'.dol_escape_json($data['price']).'",
+				"priceCurrency": "'.dol_escape_json($data['currency'] ? $data['currency'] : $conf->currency).'"
 			}
 		}'."\n";
 		$ret .= '</script>'."\n";
@@ -693,8 +693,8 @@ function getStructuredData($type, $data = array())
 				"offers": {
 					"@type": "Offer",
 					"url": "https://example.com/anvil",
-					"priceCurrency": "'.($data['currency'] ? $data['currency'] : $conf->currency).'",
-					"price": "'.$data['price'].'",
+					"priceCurrency": "'.dol_escape_json($data['currency'] ? $data['currency'] : $conf->currency).'",
+					"price": "'.dol_escape_json($data['price']).'",
 					"itemCondition": "https://schema.org/UsedCondition",
 					"availability": "https://schema.org/InStock",
 					"seller": {
