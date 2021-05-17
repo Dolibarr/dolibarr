@@ -1964,8 +1964,6 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	global $dolibarr_main_authentication, $dolibarr_main_demo;
 	global $menumanager;
 
-	$langs->loadLangs(array('companies'));
-
 	$userImage = $userDropDownImage = '';
 	if (!empty($user->photo)) {
 		$userImage          = Form::showphoto('userphoto', $user, 0, 0, 0, 'photouserphoto userphoto', 'small', 0, 1);
@@ -2203,6 +2201,7 @@ function top_menu_quickadd()
 {
 	global $langs, $conf, $db, $hookmanager, $user;
 	global $menumanager;
+	
 	$html = '';
 	// Define $dropDownQuickAddHtml
 	$dropDownQuickAddHtml = '<div class="dropdown-header bookmark-header center">';
