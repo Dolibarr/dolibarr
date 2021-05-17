@@ -666,6 +666,8 @@ function getStructuredData($type, $data = array())
 			$ret .= '"description": "'.dol_escape_json($description).'"';
 			$ret .= "\n".'}'."\n";
 			$ret .= '</script>'."\n";
+		} else {
+			$ret .= '<!-- no structured data inserted inline inside blogpost because no author_alias defined -->'."\n";
 		}
 	} elseif ($type == 'product') {
 		$ret = '<!-- Add structured data for product -->'."\n";
