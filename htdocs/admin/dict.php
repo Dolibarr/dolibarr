@@ -1076,7 +1076,7 @@ if ($id)
 	$sql = $tabsql[$id];
 
 	if (!preg_match('/ WHERE /', $sql)) $sql .= " WHERE 1 = 1";
-	if ($search_country_id > 0) $sql .= " AND c.rowid = ".$search_country_id;
+	if ($search_country_id > 0) $sql .= " AND c.rowid = ".((int) $search_country_id);
 	if ($search_code != '' && $id == 9)     $sql .= natural_search("code_iso", $search_code);
 	elseif ($search_code != '' && $id == 28)    $sql .= natural_search("h.code", $search_code);
 	elseif ($search_code != '' && $id == 32)    $sql .= natural_search("a.code", $search_code);
@@ -1150,9 +1150,9 @@ if ($id)
 				$class = 'center';
 			}
 			if ($fieldlist[$field] == 'localtax1_type') { $valuetoshow = $langs->trans("UseLocalTax")." 2"; $class = "center"; $sortable = 0; }
-			if ($fieldlist[$field] == 'localtax1') { $valuetoshow = $langs->trans("Rate")." 2"; $class = "center"; }
+			if ($fieldlist[$field] == 'localtax1') { $valuetoshow = $langs->trans("RateOfTaxN", '2'); $class = "center"; }
 			if ($fieldlist[$field] == 'localtax2_type') { $valuetoshow = $langs->trans("UseLocalTax")." 3"; $class = "center"; $sortable = 0; }
-			if ($fieldlist[$field] == 'localtax2') { $valuetoshow = $langs->trans("Rate")." 3"; $class = "center"; }
+			if ($fieldlist[$field] == 'localtax2') { $valuetoshow = $langs->trans("RateOfTaxN", '3'); $class = "center"; }
 			if ($fieldlist[$field] == 'organization') { $valuetoshow = $langs->trans("Organization"); }
 			if ($fieldlist[$field] == 'lang') { $valuetoshow = $langs->trans("Language"); }
 			if ($fieldlist[$field] == 'type') {
@@ -1380,9 +1380,9 @@ if ($id)
 				$cssprefix = 'center ';
 			}
 			if ($fieldlist[$field] == 'localtax1_type') { $valuetoshow = $langs->trans("UseLocalTax")." 2"; $cssprefix = "center "; $sortable = 0; }
-			if ($fieldlist[$field] == 'localtax1') { $valuetoshow = $langs->trans("Rate")." 2"; $cssprefix = "center "; $sortable = 0; }
+			if ($fieldlist[$field] == 'localtax1') { $valuetoshow = $langs->trans("RateOfTaxN", '2'); $cssprefix = "center "; $sortable = 0; }
 			if ($fieldlist[$field] == 'localtax2_type') { $valuetoshow = $langs->trans("UseLocalTax")." 3"; $cssprefix = "center "; $sortable = 0; }
-			if ($fieldlist[$field] == 'localtax2') { $valuetoshow = $langs->trans("Rate")." 3"; $cssprefix = "center "; $sortable = 0; }
+			if ($fieldlist[$field] == 'localtax2') { $valuetoshow = $langs->trans("RateOfTaxN", '3'); $cssprefix = "center "; $sortable = 0; }
 			if ($fieldlist[$field] == 'organization') { $valuetoshow = $langs->trans("Organization"); }
 			if ($fieldlist[$field] == 'lang') { $valuetoshow = $langs->trans("Language"); }
 			if ($fieldlist[$field] == 'type') { $valuetoshow = $langs->trans("Type"); }
