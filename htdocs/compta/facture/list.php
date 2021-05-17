@@ -228,7 +228,7 @@ $arrayfields = array(
 	'dynamount_payed'=>array('label'=>"Received", 'checked'=>0, 'position'=>140),
 	'rtp'=>array('label'=>"Rest", 'checked'=>0, 'position'=>150), // Not enabled by default because slow
 	'u.login'=>array('label'=>"Author", 'checked'=>1, 'position'=>165),
-	'sale_representative'=>array('label'=>"SaleRepresentativesOfThirdParty", 'checked'=>1),
+	'sale_representative'=>array('label'=>"SaleRepresentativesOfThirdParty", 'position'=>166),
 	'f.multicurrency_code'=>array('label'=>'Currency', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>170),
 	'f.multicurrency_tx'=>array('label'=>'CurrencyRate', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>171),
 	'f.multicurrency_total_ht'=>array('label'=>'MulticurrencyAmountHT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>180),

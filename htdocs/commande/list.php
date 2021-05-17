@@ -187,7 +187,7 @@ $arrayfields = array(
 	'c.multicurrency_total_vat'=>array('label'=>'MulticurrencyAmountVAT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>105),
 	'c.multicurrency_total_ttc'=>array('label'=>'MulticurrencyAmountTTC', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>110),
 	'u.login'=>array('label'=>"Author", 'checked'=>1, 'position'=>115),
-	'sale_representative'=>array('label'=>"SaleRepresentativesOfThirdParty", 'checked'=>1),
+	'sale_representative'=>array('label'=>"SaleRepresentativesOfThirdParty", 'position'=>116),
 	'c.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>120),
 	'c.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>125),
 	'c.date_cloture'=>array('label'=>"DateClosing", 'checked'=>0, 'position'=>130),
