@@ -330,9 +330,9 @@ class modProjet extends DolibarrModules
 	{
 		global $conf, $langs;
 
-        if (dolibarr_del_const($this->db, 'EXPENSEREPORT_PROJECT_IS_REQUIRED', $conf->entity) < 0) {
-            return 0;
-        }
+		if (dolibarr_del_const($this->db, 'EXPENSEREPORT_PROJECT_IS_REQUIRED', $conf->entity) < 0) {
+			return 0;
+		}
 
 		// Permissions
 		$this->remove($options);
