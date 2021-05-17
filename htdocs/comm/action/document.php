@@ -88,6 +88,8 @@ if ($user->socid && $socid) {
 	$result = restrictedArea($user, 'societe', $socid);
 }
 
+$permissiontoadd = $user->rights->agenda->myactions->read; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
+
 
 /*
  * Actions

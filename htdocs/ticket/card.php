@@ -112,8 +112,8 @@ if ($id || $track_id || $ref) {
 $url_page_current = DOL_URL_ROOT.'/ticket/card.php';
 
 // Security check - Protection if external user
-//if ($user->socid > 0) accessforbidden();
-//if ($user->socid > 0) $socid = $user->socid;
+$socid = 0;
+if ($user->socid > 0) $socid = $user->socid;
 $result = restrictedArea($user, 'ticket', $object->id);
 
 $triggermodname = 'TICKET_MODIFY';
