@@ -286,7 +286,7 @@ if (!empty($result)) {
 	}
 
 	$center = '';
-	if (!empty($num)) {
+	if ($num) {
 		$center = '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=purge">'.$langs->trans("Purge").'</a>';
 	}
 
