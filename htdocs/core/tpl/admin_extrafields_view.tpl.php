@@ -120,7 +120,7 @@ if (is_array($extrafields->attributes[$elementtype]['type']) && count($extrafiel
 }
 else
 {
-	$colspan = 13;
+	$colspan = 14;
 	if (!empty($conf->multicompany->enabled))  $colspan++;
 
 	print '<tr class="oddeven">';
