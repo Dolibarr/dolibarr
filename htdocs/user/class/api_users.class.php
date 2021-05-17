@@ -48,7 +48,7 @@ class Users extends DolibarrApi
 	public function __construct()
 	{
 		global $db, $conf;
-		
+
 		$this->db = $db;
 		$this->useraccount = new User($this->db);
 	}
@@ -73,8 +73,8 @@ class Users extends DolibarrApi
 		global $conf;
 
 		if (empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin)) {
-	        throw new RestException(401, "You are not allowed to read list of users");
-	    }
+			throw new RestException(401, "You are not allowed to read list of users");
+		}
 
 		$obj_ret = array();
 
