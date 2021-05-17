@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2016-2018 Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2016-2021 Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2020      Thibault FOUCART     <support@ptibogxiv.net>
  *
@@ -340,10 +340,10 @@ if ($resql)
 	if ($search_town)      $param .= '&search_town='.urlencode($search_town);
 	if ($search_zip)       $param .= '&search_zip='.urlencode($search_zip);
 
-	if ($search_datedelivery_start)	$param .= '&search_datedelivery_start='.urlencode($search_datedelivery_start);
-	if ($search_datedelivery_end)	$param .= '&search_datedelivery_end='.urlencode($search_datedelivery_end);
-	if ($search_datereceipt_start)	$param .= '&search_datereceipt_start='.urlencode($search_datereceipt_start);
-	if ($search_datereceipt_end)	$param .= '&search_datereceipt_end='.urlencode($search_datereceipt_end);
+	if ($search_datedelivery_start)	$param .= '&search_datedelivery_startday='.urlencode(dol_print_date($search_datedelivery_start, '%d')).'&search_datedelivery_startmonth='.urlencode(dol_print_date($search_datedelivery_start, '%m')).'&search_datedelivery_startyear='.urlencode(dol_print_date($search_datedelivery_start, '%Y'));
+	if ($search_datedelivery_end)	$param .= '&search_datedelivery_endday='.urlencode(dol_print_date($search_datedelivery_end, '%d')).'&search_datedelivery_endmonth='.urlencode(dol_print_date($search_datedelivery_end, '%m')).'&search_datedelivery_endyear='.urlencode(dol_print_date($search_datedelivery_end, '%Y'));
+	if ($search_datereceipt_start)	$param .= '&search_datereceipt_startday='.urlencode(dol_print_date($search_datereceipt_start, '%d')).'&search_datereceipt_startmonth='.urlencode(dol_print_date($search_datereceipt_start, '%m')).'&search_datereceipt_startyear='.urlencode(dol_print_date($search_datereceipt_start, '%Y'));
+	if ($search_datereceipt_end)	$param .= '&search_datereceipt_endday='.urlencode(dol_print_date($search_datereceipt_end, '%d')).'&search_datereceipt_endmonth='.urlencode(dol_print_date($search_datereceipt_end, '%m')).'&search_datereceipt_endyear='.urlencode(dol_print_date($search_datereceipt_end, '%Y'));
 
 	if ($search_product_category != '') $param .= '&search_product_category='.urlencode($search_product_category);
 	if ($search_categ_cus > 0)      $param .= '&search_categ_cus='.urlencode($search_categ_cus);
@@ -506,11 +506,11 @@ if ($resql)
 		print '<td class="liste_titre center">';
 		print '<div class="nowrap">';
 		print $langs->trans('From').' ';
-		print $form->selectDate($search_delivery_start ? $search_delivery_start : -1, 'search_delivery_start', 0, 0, 1);
+		print $form->selectDate($search_datedelivery_start ? $search_datedelivery_start : -1, 'search_datedelivery_start', 0, 0, 1);
 		print '</div>';
 		print '<div class="nowrap">';
 		print $langs->trans('to').' ';
-		print $form->selectDate($search_delivery_end ? $search_delivery_end : -1, 'search_delivery_end', 0, 0, 1);
+		print $form->selectDate($search_datedelivery_end ? $search_datedelivery_end : -1, 'search_datedelivery_end', 0, 0, 1);
 		print '</div>';
 		print '</td>';
 	}

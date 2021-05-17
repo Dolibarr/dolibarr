@@ -10,7 +10,7 @@
  * Copyright (C) 2013      Florian Henry         <florian.henry@open-concept.pro>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Jean-François Ferry   <jfefe@aternatik.fr>
- * Copyright (C) 2015-2016 Ferran Marcet         <fmarcet@2byte.es>
+ * Copyright (C) 2015-2021 Ferran Marcet         <fmarcet@2byte.es>
  * Copyright (C) 2017      Josep Lluís Amador    <joseplluis@lliuretic.cat>
  * Copyright (C) 2018      Charlene Benke        <charlie@patas-monkey.com>
  * Copyright (C) 2019	   Alexandre Spangaro	 <aspangaro@open-dsi.fr>
@@ -616,12 +616,12 @@ if ($resql)
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
 	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 	if ($sall)				 $param .= '&sall='.urlencode($sall);
-	if ($search_date_start)				$param .= '&search_date_start='.urlencode($search_date_start);
-	if ($search_date_end)				$param .= '&search_date_end='.urlencode($search_date_end);
-	if ($search_date_valid_start)		$param .= '&search_date_valid_start='.urlencode($search_date_valid_start);
-	if ($search_date_valid_end)			$param .= '&search_date_valid_end='.urlencode($search_date_valid_end);
-	if ($search_datelimit_start)		$param .= '&search_datelimit_start='.urlencode($search_datelimit_start);
-	if ($search_datelimit_end)			$param .= '&search_datelimit_end='.urlencode($search_datelimit_end);
+	if ($search_date_start)				$param .= '&search_date_startday='.urlencode(dol_print_date($search_date_start, '%d')).'&search_date_startmonth='.urlencode(dol_print_date($search_date_start, '%m')).'&search_date_startyear='.urlencode(dol_print_date($search_date_start, '%Y'));
+	if ($search_date_end)				$param .= '&search_date_endday='.urlencode(dol_print_date($search_date_end, '%d')).'&search_date_endmonth='.urlencode(dol_print_date($search_date_end, '%m')).'&search_date_endyear='.urlencode(dol_print_date($search_date_end, '%Y'));
+	if ($search_date_valid_start)		$param .= '&search_date_valid_startday='.urlencode(dol_print_date($search_date_valid_start, '%d')).'&search_date_valid_startmonth='.urlencode(dol_print_date($search_date_valid_start, '%m')).'&search_date_valid_startyear='.urlencode(dol_print_date($search_date_valid_start, '%Y'));
+	if ($search_date_valid_end)			$param .= '&search_date_valid_endday='.urlencode(dol_print_date($search_date_valid_end, '%d')).'&search_date_valid_endmonth='.urlencode(dol_print_date($search_date_valid_end, '%m')).'&search_date_valid_endyear='.urlencode(dol_print_date($search_date_valid_end, '%Y'));
+	if ($search_datelimit_start)		$param .= '&search_datelimit_startday='.urlencode(dol_print_date($search_datelimit_start, '%d')).'&search_datelimit_startmonth='.urlencode(dol_print_date($search_datelimit_start, '%m')).'&search_datelimit_startyear='.urlencode(dol_print_date($search_datelimit_start, '%Y'));
+	if ($search_datelimit_end)			$param .= '&search_datelimit_endday='.urlencode(dol_print_date($search_datelimit_end, '%d')).'&search_datelimit_endmonth='.urlencode(dol_print_date($search_datelimit_end, '%m')).'&search_datelimit_endyear='.urlencode(dol_print_date($search_datelimit_end, '%Y'));
 	if ($search_ref)         $param .= '&search_ref='.urlencode($search_ref);
 	if ($search_refcustomer) $param .= '&search_refcustomer='.urlencode($search_refcustomer);
 	if ($search_project_ref) $param .= '&search_project_ref='.urlencode($search_project_ref);
