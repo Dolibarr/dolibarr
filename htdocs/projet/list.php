@@ -1041,7 +1041,9 @@ while ($i < min($num, $limit)) {
 						$userstatic->entity = $val['entity'];
 						$userstatic->photo = $val['photo'];
 						$userstatic->login = $val['login'];
-						$userstatic->phone = $val['phone'];
+						$userstatic->office_phone = $val['office_phone'];
+						$userstatic->office_fax = $val['office_fax'];
+						$userstatic->user_mobile = $val['user_mobile'];
 						$userstatic->job = $val['job'];
 						$userstatic->gender = $val['gender'];
 						print ($nbofsalesrepresentative < 2) ? $userstatic->getNomUrl(-1, '', 0, 0, 12) : $userstatic->getNomUrl(-2);

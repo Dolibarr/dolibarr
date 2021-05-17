@@ -1705,14 +1705,13 @@ if ($resql) {
 			}
 		}
 
-		$userstatic->id = $obj->fk_user_author;
-		$userstatic->login = $obj->login;
+		$userstatic->fetch($obj->fk_user_author);
 
 		// Author
 		if (!empty($arrayfields['u.login']['checked'])) {
-			print '<td class="center nowraponall">';
+			print '<td>';
 			if ($userstatic->id) {
-				print $userstatic->getLoginUrl(1);
+				print $userstatic->getNomUrl(-1);
 			}
 			print "</td>\n";
 			if (!$i) {
@@ -1744,7 +1743,8 @@ if ($resql) {
 						$userstatic->entity = $val['entity'];
 						$userstatic->photo = $val['photo'];
 						$userstatic->login = $val['login'];
-						$userstatic->phone = $val['phone'];
+						$userstatic->user_mobile = $val['user_mobile'];
+						$userstatic->user_mobile = $val['user_mobile'];
 						$userstatic->job = $val['job'];
 						$userstatic->gender = $val['gender'];
 						//print '<div class="float">':

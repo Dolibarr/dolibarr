@@ -1880,11 +1880,10 @@ if ($resql) {
 
 			// Author
 			if (!empty($arrayfields['u.login']['checked'])) {
-				$userstatic->id = $obj->fk_user_author;
-				$userstatic->login = $obj->login;
-				print '<td class="center tdoverflowmax100">';
+				$userstatic->fetch($obj->fk_user_author);
+				print '<td>';
 				if ($userstatic->id) {
-					print $userstatic->getLoginUrl(1);
+					print $userstatic->getNomUrl(-1);
 				} else {
 					print '&nbsp;';
 				}
