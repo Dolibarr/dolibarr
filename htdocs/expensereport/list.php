@@ -80,10 +80,10 @@ $diroutputmassaction = $conf->expensereport->dir_output.'/temp/massgeneration/'.
 
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'aZ09comma');
-$sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$limit 		= GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$sortfield	= GETPOST('sortfield', 'aZ09comma');
+$sortorder	= GETPOST('sortorder', 'aZ09comma');
+$page 		= GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -98,19 +98,22 @@ if (!$sortfield) {
 }
 
 
-$sall         = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
-$search_ref   = GETPOST('search_ref', 'alpha');
-$search_user  = GETPOST('search_user', 'int');
-$search_amount_ht = GETPOST('search_amount_ht', 'alpha');
-$search_amount_vat = GETPOST('search_amount_vat', 'alpha');
-$search_amount_ttc = GETPOST('search_amount_ttc', 'alpha');
-$search_status = (GETPOST('search_status', 'intcomma') != '' ?GETPOST('search_status', 'intcomma') : GETPOST('statut', 'intcomma'));
-$month_start  = GETPOST("month_start", "int");
-$year_start   = GETPOST("year_start", "int");
-$day_start    = GETPOST("day_start", "int");
-$day_end      = GETPOST("day_end", "int");
-$month_end    = GETPOST("month_end", "int");
-$year_end     = GETPOST("year_end", "int");
+$sall			= trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+
+$search_ref			= GETPOST('search_ref', 'alpha');
+$search_user		= GETPOST('search_user', 'int');
+$search_amount_ht	= GETPOST('search_amount_ht', 'alpha');
+$search_amount_vat	= GETPOST('search_amount_vat', 'alpha');
+$search_amount_ttc	= GETPOST('search_amount_ttc', 'alpha');
+$search_status		= (GETPOST('search_status', 'intcomma') != '' ?GETPOST('search_status', 'intcomma') : GETPOST('statut', 'intcomma'));
+
+$year_start   = GETPOST('year_start', 'int');
+$month_start  = GETPOST('month_start', 'int');
+$day_start    = GETPOST('day_start', 'int');
+$year_end     = GETPOST('year_end', 'int');
+$month_end    = GETPOST('month_end', 'int');
+$day_end      = GETPOST('day_end', 'int');
+
 $optioncss    = GETPOST('optioncss', 'alpha');
 
 if ($search_status == '') {
@@ -135,8 +138,8 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 $fieldstosearchall = array(
 	'd.ref'=>'Ref',
 	'd.note_public'=>"NotePublic",
-	'u.lastname'=>'Lastname',
-	'u.firstname'=>"Firstname",
+	'u.lastname'=>'EmployeeLastname',
+	'u.firstname'=>"EmployeeFirstname",
 	'u.login'=>"Login",
 );
 if (empty($user->socid)) {

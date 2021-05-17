@@ -31,8 +31,13 @@ class Login
 	 */
 	public function __construct()
 	{
-		global $db;
+		global $conf, $db;
 		$this->db = $db;
+
+		//$conf->global->MAIN_MODULE_API_LOGIN_DISABLED = 1;
+		if (!empty($conf->global->MAIN_MODULE_API_LOGIN_DISABLED)) {
+			throw new RestException(403, "Error login APIs are disabled. You must get the token from backoffice to be able to use APIs");
+		}
 	}
 
 	/**
@@ -52,6 +57,28 @@ class Login
 	 * @throws RestException 500 System error
 	 *
 	 * @url GET /
+	 */
+	public function loginUnsecured($login, $password, $entity = '', $reset = 0)
+	{
+		return $this->index($login, $password, $entity, $reset);
+	}
+
+	/**
+	 * Login
+	 *
+	 * Request the API token for a couple username / password.
+	 * Using method POST is recommanded for security reasons (method GET is often logged by default by web servers with parameters so with login and pass into server log file).
+	 * Both methods are provided for developer conveniance. Best is to not use at all the login API method and enter directly the "DOLAPIKEY" into field at the top right of page. Note: The API token (DOLAPIKEY) can be found/set on the user page.
+	 *
+	 * @param   string  $login			User login
+	 * @param   string  $password		User password
+	 * @param   string  $entity			Entity (when multicompany module is used). '' means 1=first company.
+	 * @param   int     $reset          Reset token (0=get current token, 1=ask a new token and canceled old token. This means access using current existing API token of user will fails: new token will be required for new access)
+	 * @return  array                   Response status and user token
+	 *
+	 * @throws RestException 403 Access denied
+	 * @throws RestException 500 System error
+	 *
 	 * @url POST /
 	 */
 	public function index($login, $password, $entity = '', $reset = 0)

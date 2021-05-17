@@ -217,7 +217,7 @@ class ActionsCardService
 	 *
 	 *  @return	void
 	 */
-	private function getFieldList()
+	private function getFieldListCanvas()
 	{
 		global $conf, $langs;
 
@@ -276,7 +276,7 @@ class ActionsCardService
 		global $conf;
 		global $search_categ, $sall, $sref, $search_barcode, $snom, $catid;
 
-		$this->getFieldList();
+		$this->getFieldListCanvas();
 
 		$sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,';
 		$sql .= ' p.fk_product_type, p.tms as datem,';

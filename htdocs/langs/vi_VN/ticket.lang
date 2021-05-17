@@ -70,6 +70,8 @@ Deleted=Đã xóa
 # Dict
 Type=Loại
 Severity=Mức độ nghiêm trọng
+TicketGroupIsPublic=Group is public
+TicketGroupIsPublicDesc=If a ticket group is public, it will be visible in the form when creating a ticket from the public interface
 
 # Email templates
 MailToSendTicketMessage=Để gửi email từ tin nhắn vé
@@ -114,8 +116,8 @@ TicketsShowModuleLogo=Hiển thị logo của mô-đun trong giao diện công c
 TicketsShowModuleLogoHelp=Cho phép tùy chọn này để ẩn mô-đun logo trong các trang của giao diện công cộng
 TicketsShowCompanyLogo=Hiển thị logo của công ty trong giao diện công cộng
 TicketsShowCompanyLogoHelp=Cho phép tùy chọn này để ẩn logo của công ty chính trong các trang của giao diện công cộng
-TicketsEmailAlsoSendToMainAddress=Đồng thời gửi thông báo đến địa chỉ email chính
-TicketsEmailAlsoSendToMainAddressHelp=Cho phép tùy chọn này để gửi email đến địa chỉ "Thông báo email từ" (xem thiết lập bên dưới)
+TicketsEmailAlsoSendToMainAddress=Also send a notification to the main email address
+TicketsEmailAlsoSendToMainAddressHelp=Enable this option to also send an email to the address defined into setup "%s" (see tab "%s")
 TicketsLimitViewAssignedOnly=Hạn chế hiển thị đối với vé được chỉ định cho người dùng hiện tại (không hiệu quả đối với người dùng bên ngoài, luôn bị giới hạn ở bên thứ ba mà họ phụ thuộc)
 TicketsLimitViewAssignedOnlyHelp=Chỉ có vé được chỉ định cho người dùng hiện tại sẽ hiển thị. Không áp dụng cho người dùng có quyền quản lý vé.
 TicketsActivatePublicInterface=Kích hoạt giao diện công cộng
@@ -126,10 +128,10 @@ TicketNumberingModules=Mô-đun đánh số vé
 TicketsModelModule=Document templates for tickets
 TicketNotifyTiersAtCreation=Thông báo cho bên thứ ba khi tạo
 TicketsDisableCustomerEmail=Luôn vô hiệu hóa email khi vé được tạo từ giao diện công cộng
-TicketsPublicNotificationNewMessage=Send email(s) when a new message is added
+TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is added to a ticket
 TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
 TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
-TicketPublicNotificationNewMessageDefaultEmailHelp=Send email new message notifications to this address if the ticket don't have a user assigned or the user don't have a email.
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
 #
 # Index & list page
 #
@@ -302,3 +304,13 @@ BoxLastModifiedTicket=Vé sửa đổi mới nhất
 BoxLastModifiedTicketDescription=Vé sửa đổi mới nhất %s
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=Không có vé sửa đổi gần đây
+BoxTicketType=Number of open tickets by type
+BoxTicketSeverity=Number of open tickets by severity
+BoxNoTicketSeverity=No tickets opened
+BoxTicketLastXDays=Number of new tickets by days the last %s days
+BoxTicketLastXDayswidget = Number of new tickets by days the last X days
+BoxNoTicketLastXDays=No new tickets the last %s days
+BoxNumberOfTicketByDay=Number of new tickets by day
+BoxNewTicketVSClose=Number of today's new tickets versus today's closed tickets
+TicketCreatedToday=Ticket created today
+TicketClosedToday=Ticket closed today

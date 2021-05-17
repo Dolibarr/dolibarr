@@ -1,8 +1,10 @@
 # ProductBATCH language file - en_US - ProductBATCH
 ManageLotSerial=Gunakan lot / nomor seri
-ProductStatusOnBatch=Ya (diperlukan banyak seri)
+ProductStatusOnBatch=Yes (lot required)
+ProductStatusOnSerial=Yes (unique serial number required)
 ProductStatusNotOnBatch=Tidak (banyak / serial tidak digunakan)
-ProductStatusOnBatchShort=Ya
+ProductStatusOnBatchShort=Lot
+ProductStatusOnSerialShort=Serial
 ProductStatusNotOnBatchShort=Tidak
 Batch=Lot / Serial
 atleast1batchfield=Makan-menurut tanggal atau Jual-menurut tanggal atau Lot / nomor seri
@@ -22,3 +24,12 @@ ProductLotSetup=Pengaturan lot modul / serial
 ShowCurrentStockOfLot=Tampilkan stok saat ini untuk produk / lot pasangan
 ShowLogOfMovementIfLot=Tampilkan log pergerakan untuk produk / lot pasangan
 StockDetailPerBatch=Detail stok per lot
+SerialNumberAlreadyInUse=Serial number %s is already used for product %s
+TooManyQtyForSerialNumber=You can only have one product %s for serial number %s
+BatchLotNumberingModules=Options for automatic generation of batch products managed by lots
+BatchSerialNumberingModules=Options for automatic generation of batch products managed by serial numbers
+ManageLotMask=Custom mask
+CustomMasks=Adds an option to define mask in the product card
+LotProductTooltip=Adds an option in the product card to define a dedicated batch number mask
+SNProductTooltip=Adds an option in the product card to define a dedicated serial number mask
+QtyToAddAfterBarcodeScan=Qty to add for each barcode/lot/serial scanned

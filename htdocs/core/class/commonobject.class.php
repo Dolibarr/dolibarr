@@ -3117,7 +3117,7 @@ abstract class CommonObject
 	public function getRangOfLine($rowid)
 	{
 		$sql = 'SELECT rang FROM '.MAIN_DB_PREFIX.$this->table_element_line;
-		$sql .= ' WHERE rowid ='.$rowid;
+		$sql .= ' WHERE rowid ='.((int) $rowid);
 
 		dol_syslog(get_class($this)."::getRangOfLine", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -3137,7 +3137,7 @@ abstract class CommonObject
 	{
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 		$sql .= ' WHERE '.$this->fk_element.' = '.$this->id;
-		$sql .= ' AND rang = '.$rang;
+		$sql .= ' AND rang = '.((int) $rang);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$row = $this->db->fetch_row($resql);
@@ -3820,6 +3820,11 @@ abstract class CommonObject
 						$classpath = 'projet/class';
 						$classfile = 'project';
 						$classname = 'Project';
+					} elseif ($objecttype == 'conferenceorboothattendee') {
+						$classpath = 'eventorganization/class';
+						$classfile = 'conferenceorboothattendee';
+						$classname = 'ConferenceOrBoothAttendee';
+						$module = 'eventorganization';
 					}
 
 					// Here $module, $classfile and $classname are set
@@ -3969,7 +3974,7 @@ abstract class CommonObject
 			$sql = "DELETE FROM " . MAIN_DB_PREFIX . "element_element";
 			$sql .= " WHERE";
 			if ($rowid > 0) {
-				$sql .= " rowid = " . $rowid;
+				$sql .= " rowid = " . ((int) $rowid);
 			} else {
 				if ($deletesource) {
 					$sql .= " fk_source = " . $sourceid . " AND sourcetype = '" . $this->db->escape($sourcetype) . "'";
@@ -5012,7 +5017,7 @@ abstract class CommonObject
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_resources";
-		$sql .= " WHERE rowid=".$rowid;
+		$sql .= " WHERE rowid = ".((int) $rowid);
 
 		dol_syslog(get_class($this)."::delete_resource", LOG_DEBUG);
 
@@ -5236,6 +5241,9 @@ abstract class CommonObject
 								$setsharekey = true;
 							}
 							if ($this->element == 'contrat' && !empty($conf->global->CONTRACT_ALLOW_EXTERNAL_DOWNLOAD)) {
+								$setsharekey = true;
+							}
+							if ($this->element == 'supplier_proposal' && !empty($conf->global->SUPPLIER_PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD)) {
 								$setsharekey = true;
 							}
 
@@ -6416,14 +6424,16 @@ abstract class CommonObject
 		} elseif (preg_match('/varchar/', $val['type'])) {
 			$param['options'] = array();
 			$type = 'varchar';
-		} elseif (is_array($this->fields[$key]['arrayofkeyval'])) {
-			$param['options'] = $this->fields[$key]['arrayofkeyval'];
-			$type = 'select';
 		} else {
 			$param['options'] = array();
 			$type = $this->fields[$key]['type'];
 		}
 
+		// Special case that force options and type ($type can be integer, varchar, ...)
+		if (is_array($this->fields[$key]['arrayofkeyval'])) {
+			$param['options'] = $this->fields[$key]['arrayofkeyval'];
+			$type = 'select';
+		}
 
 		$label = $this->fields[$key]['label'];
 		//$elementtype=$this->fields[$key]['elementtype'];	// Seems not used
@@ -8893,7 +8903,7 @@ abstract class CommonObject
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element_line;
-		$sql .= " WHERE rowid=".$idline;
+		$sql .= " WHERE rowid = ".((int) $idline);
 
 		dol_syslog(get_class($this)."::deleteLineCommon", LOG_DEBUG);
 		$resql = $this->db->query($sql);

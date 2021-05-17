@@ -121,7 +121,7 @@ class modFacture extends DolibarrModules
 		$datestart = dol_mktime(23, 0, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);
 		$this->cronjobs = array(
 			0=>array('label'=>'RecurringInvoices', 'jobtype'=>'method', 'class'=>'compta/facture/class/facture-rec.class.php', 'objectname'=>'FactureRec', 'method'=>'createRecurringInvoices', 'parameters'=>'', 'comment'=>'Generate recurring invoices', 'frequency'=>1, 'unitfrequency'=>3600 * 24, 'priority'=>50, 'status'=>1, 'test'=>'$conf->facture->enabled', 'datestart'=>$datestart),
-			1=>array('label'=>'SendEmailsRemindersOnDueDate', 'jobtype'=>'method', 'class'=>'compta/facture/class/facture.class.php', 'objectname'=>'Facture', 'method'=>'sendEmailsReminderOnDueDate', 'parameters'=>"10,all,EmailTemplateCode", 'comment'=>'Send an emails when the unpaid invoices reach a due date + n days (an email template with EmailTemplateCode must exists. the version in the language of the thirdparty will be used in priority)', 'frequency'=>1, 'unitfrequency'=>3600 * 24, 'priority'=>50, 'status'=>0, 'test'=>'$conf->facture->enabled', 'datestart'=>$datestart),
+			1=>array('label'=>'SendEmailsRemindersOnInvoiceDueDate', 'jobtype'=>'method', 'class'=>'compta/facture/class/facture.class.php', 'objectname'=>'Facture', 'method'=>'sendEmailsRemindersOnInvoiceDueDate', 'parameters'=>"10,all,EmailTemplateCode", 'comment'=>'Send an emails when the unpaid invoices reach a due date + n days = today. First param is the offset n of days, second parameter is "all" or a payment mode code, last paramater is the code of email template to use (an email template with EmailTemplateCode must exists. the version in the language of the thirdparty will be used in priority).', 'frequency'=>1, 'unitfrequency'=>3600 * 24, 'priority'=>50, 'status'=>0, 'test'=>'$conf->facture->enabled', 'datestart'=>$datestart),
 		);
 
 		// Permissions
@@ -208,7 +208,7 @@ class modFacture extends DolibarrModules
 		//--------
 		$r = 1;
 
-		$alias_product_perentity = empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "p" : "pa";
+		$alias_product_perentity = empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "p" : "ppe";
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = 'CustomersInvoicesAndInvoiceLines'; // Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_icon[$r] = 'invoice';
@@ -297,7 +297,7 @@ class modFacture extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facturedet_extrafields as extra2 on fd.rowid = extra2.fk_object';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (fd.fk_product = p.rowid)';
 		if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
-			$this->export_sql_end[$r] .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as pa ON pa.fk_product = p.rowid AND pa.entity = " . ((int) $conf->entity);
+			$this->export_sql_end[$r] .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
 		}
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields as extra3 on p.rowid = extra3.fk_object';
 		$this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture';

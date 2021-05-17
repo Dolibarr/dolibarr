@@ -225,7 +225,7 @@ class Form
 				$ret .= '<input type="hidden" name="token" value="'.newToken().'">';
 				$ret .= '<input type="hidden" name="'.$paramid.'" value="'.$object->id.'">';
 				if (empty($notabletag)) {
-					$ret .= '<table class="nobordernopadding centpercent" cellpadding="0" cellspacing="0">';
+					$ret .= '<table class="nobordernopadding centpercent">';
 				}
 				if (empty($notabletag)) {
 					$ret .= '<tr><td>';
@@ -868,9 +868,10 @@ class Form
 	 *  @param	int		$disablefavorites		1=Disable favorites,
 	 *  @param	int		$addspecialentries		1=Add dedicated entries for group of countries (like 'European Economic Community', ...)
 	 *  @param	array	$exclude_country_code	Array of country code (iso2) to exclude
+	 *  @param	int		$hideflags				Hide flags
 	 *  @return string           				HTML string with select
 	 */
-	public function select_country($selected = '', $htmlname = 'country_id', $htmloption = '', $maxlength = 0, $morecss = 'minwidth300', $usecodeaskey = '', $showempty = 1, $disablefavorites = 0, $addspecialentries = 0, $exclude_country_code = array())
+	public function select_country($selected = '', $htmlname = 'country_id', $htmloption = '', $maxlength = 0, $morecss = 'minwidth300', $usecodeaskey = '', $showempty = 1, $disablefavorites = 0, $addspecialentries = 0, $exclude_country_code = array(), $hideflags = 0)
 	{
 		// phpcs:enable
 		global $conf, $langs, $mysoc;
@@ -955,8 +956,10 @@ class Form
 					}
 					if ($row['code_iso']) {
 						$labeltoshow .= ' <span class="opacitymedium">('.$row['code_iso'].')</span>';
-						$tmpflag = picto_from_langcode($row['code_iso'], 'class="saturatemedium marginrightonly"');
-						$labeltoshow = $tmpflag.' '.$labeltoshow;
+						if (empty($hideflags)) {
+							$tmpflag = picto_from_langcode($row['code_iso'], 'class="saturatemedium marginrightonly"');
+							$labeltoshow = $tmpflag.' '.$labeltoshow;
+						}
 					}
 
 					if ($selected && $selected != '-1' && ($selected == $row['rowid'] || $selected == $row['code_iso'] || $selected == $row['code_iso3'] || $selected == $row['label'])) {
@@ -5171,7 +5174,7 @@ class Form
 			$ret .= '<form method="post" action="'.$page.'" name="form'.$htmlname.'">';
 			$ret .= '<input type="hidden" name="action" value="set'.$htmlname.'">';
 			$ret .= '<input type="hidden" name="token" value="'.newToken().'">';
-			$ret .= '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+			$ret .= '<table class="nobordernopadding">';
 			$ret .= '<tr><td>';
 			$ret .= $this->selectDate($selected, $htmlname, $displayhour, $displaymin, 1, 'form'.$htmlname, 1, 0);
 			$ret .= '</td>';
@@ -5475,7 +5478,7 @@ class Form
 			print '<form method="post" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="set_contact">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+			print '<table class="nobordernopadding">';
 			print '<tr><td>';
 			print $this->selectcontacts($societe->id, $selected, $htmlname);
 			$num = $this->num;
@@ -6791,7 +6794,7 @@ class Form
 				{
 					throw new RestException(503, 'Error when validating parameter sqlfilters '.$objecttmp->filter);
 				}*/
-				$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+				$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 				$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'Form::forgeCriteriaCallback', $objecttmp->filter).")";
 			}
 		}
@@ -7689,8 +7692,12 @@ class Form
 				'order'=>array('enabled'=>$conf->commande->enabled, 'perms'=>1, 'label'=>'LinkToOrder', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('commande').')'),
 				'invoice'=>array('enabled'=>$conf->facture->enabled, 'perms'=>1, 'label'=>'LinkToInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('invoice').')'),
 				'invoice_template'=>array('enabled'=>$conf->facture->enabled, 'perms'=>1, 'label'=>'LinkToTemplateInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.titre as ref, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_rec as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('invoice').')'),
-				'contrat'=>array('enabled'=>$conf->contrat->enabled, 'perms'=>1, 'label'=>'LinkToContract',
-								'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_customer as ref_client, t.ref_supplier, SUM(td.total_ht) as total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as t, ".MAIN_DB_PREFIX."contratdet as td WHERE t.fk_soc = s.rowid AND td.fk_contrat = t.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('contract').')'),
+				'contrat'=>array(
+					'enabled'=>$conf->contrat->enabled,
+					'perms'=>1,
+					'label'=>'LinkToContract',
+					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_customer as ref_client, t.ref_supplier, SUM(td.total_ht) as total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as t, ".MAIN_DB_PREFIX."contratdet as td WHERE t.fk_soc = s.rowid AND td.fk_contrat = t.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('contract').') GROUP BY s.rowid, s.nom, s.client, t.rowid, t.ref, t.ref_customer, t.ref_supplier'
+				),
 				'fichinter'=>array('enabled'=>$conf->ficheinter->enabled, 'perms'=>1, 'label'=>'LinkToIntervention', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('intervention').')'),
 				'supplier_proposal'=>array('enabled'=>$conf->supplier_proposal->enabled, 'perms'=>1, 'label'=>'LinkToSupplierProposal', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, '' as ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."supplier_proposal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('supplier_proposal').')'),
 				'order_supplier'=>array('enabled'=>$conf->supplier_order->enabled, 'perms'=>1, 'label'=>'LinkToSupplierOrder', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande_fournisseur as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('commande_fournisseur').')'),

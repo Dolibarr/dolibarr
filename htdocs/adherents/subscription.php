@@ -590,7 +590,7 @@ if ($rowid > 0) {
 			print '<input type="hidden" name="rowid" value="'.$object->id.'">';
 			print '<input type="hidden" name="action" value="set'.$htmlname.'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+			print '<table class="nobordernopadding">';
 			print '<tr><td>';
 			print $form->select_company($object->fk_soc, 'socid', '', 1);
 			print '</td>';
@@ -677,7 +677,7 @@ if ($rowid > 0) {
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."subscription as c";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON c.fk_bank = b.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
-		$sql .= " WHERE d.rowid = c.fk_adherent AND d.rowid=".$rowid;
+		$sql .= " WHERE d.rowid = c.fk_adherent AND d.rowid=".((int) $rowid);
 		$sql .= $db->order($sortfield, $sortorder);
 
 		$result = $db->query($sql);

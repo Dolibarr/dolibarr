@@ -1170,6 +1170,7 @@ if ($action == 'create') {
 		if (GETPOST('contactid', 'int')) {
 			$preselectedids[GETPOST('contactid', 'int')] = GETPOST('contactid', 'int');
 		}
+		if ($origin=='contact') $preselectedids[GETPOST('originid', 'int')] = GETPOST('originid', 'int');
 		print img_picto('', 'contact', 'class="paddingrightonly"');
 		print $form->selectcontacts(GETPOST('socid', 'int'), $preselectedids, 'socpeopleassigned[]', 1, '', '', 0, 'minwidth300 quatrevingtpercent', false, 0, array(), false, 'multiple', 'contactid');
 		print '</td></tr>';
@@ -1395,7 +1396,7 @@ if ($id > 0) {
 
 	// Confirmation suppression action
 	if ($action == 'delete') {
-		print $form->formconfirm("card.php?id=".$id, $langs->trans("DeleteAction"), $langs->trans("ConfirmDeleteAction"), "confirm_delete", '', '', 1);
+		print $form->formconfirm("card.php?id=".urlencode($id), $langs->trans("DeleteAction"), $langs->trans("ConfirmDeleteAction"), "confirm_delete", '', '', 1);
 	}
 
 	if ($action == 'edit') {

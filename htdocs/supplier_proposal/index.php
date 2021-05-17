@@ -315,7 +315,7 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	}
 	if ($socid) {
-		$sql .= " AND s.rowid = ".$socid;
+		$sql .= " AND s.rowid = ".((int) $socid);
 	}
 	$sql .= " ORDER BY p.rowid DESC";
 

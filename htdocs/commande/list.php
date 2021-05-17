@@ -9,8 +9,9 @@
  * Copyright (C) 2015-2018  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2016       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2016-2021  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Charlene Benke	        <charlie@patas-monkey.com>
+ * Copyright (C) 2021	   	Anthony Berton			<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,6 +104,7 @@ $search_shippable = GETPOST('search_shippable', 'aZ09');
 $search_fk_cond_reglement = GETPOST("search_fk_cond_reglement", 'int');
 $search_fk_shipping_method = GETPOST("search_fk_shipping_method", 'int');
 $search_fk_mode_reglement = GETPOST("search_fk_mode_reglement", 'int');
+$search_fk_input_reason = GETPOST("search_fk_input_reason", 'int');
 
 // Security check
 $id = (GETPOST('orderid') ?GETPOST('orderid', 'int') : GETPOST('id', 'int'));
@@ -161,20 +163,21 @@ $checkedtypetiers = 0;
 $arrayfields = array(
 	'c.ref'=>array('label'=>"Ref", 'checked'=>1, 'position'=>5),
 	'c.ref_client'=>array('label'=>"RefCustomerOrder", 'checked'=>-1, 'position'=>10),
-	'p.ref'=>array('label'=>"ProjectRef", 'checked'=>1, 'enabled'=>(empty($conf->projet->enabled) ? 0 : 1), 'position'=>20),
+	'p.ref'=>array('label'=>"ProjectRef", 'checked'=>-1, 'enabled'=>(empty($conf->projet->enabled) ? 0 : 1), 'position'=>20),
 	'p.title'=>array('label'=>"ProjectLabel", 'checked'=>0, 'enabled'=>(empty($conf->projet->enabled) ? 0 : 1), 'position'=>25),
 	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1, 'position'=>30),
-	's.name_alias'=>array('label'=>"AliasNameShort", 'checked'=>1, 'position'=>31),
-	's.town'=>array('label'=>"Town", 'checked'=>1, 'position'=>35),
-	's.zip'=>array('label'=>"Zip", 'checked'=>1, 'position'=>40),
+	's.name_alias'=>array('label'=>"AliasNameShort", 'checked'=>-1, 'position'=>31),
+	's.town'=>array('label'=>"Town", 'checked'=>-1, 'position'=>35),
+	's.zip'=>array('label'=>"Zip", 'checked'=>-1, 'position'=>40),
 	'state.nom'=>array('label'=>"StateShort", 'checked'=>0, 'position'=>45),
 	'country.code_iso'=>array('label'=>"Country", 'checked'=>0, 'position'=>50),
 	'typent.code'=>array('label'=>"ThirdPartyType", 'checked'=>$checkedtypetiers, 'position'=>55),
 	'c.date_commande'=>array('label'=>"OrderDateShort", 'checked'=>1, 'position'=>60),
 	'c.date_delivery'=>array('label'=>"DateDeliveryPlanned", 'checked'=>1, 'enabled'=>empty($conf->global->ORDER_DISABLE_DELIVERY_DATE), 'position'=>65),
-	'c.fk_shipping_method'=>array('label'=>"SendingMethod", 'checked'=>0, 'position'=>66 , 'enabled'=>!empty($conf->expedition->enabled)),
-	'c.fk_cond_reglement'=>array('label'=>"PaymentConditionsShort", 'checked'=>0, 'position'=>67),
-	'c.fk_mode_reglement'=>array('label'=>"PaymentMode", 'checked'=>0, 'position'=>68),
+	'c.fk_shipping_method'=>array('label'=>"SendingMethod", 'checked'=>-1, 'position'=>66 , 'enabled'=>!empty($conf->expedition->enabled)),
+	'c.fk_cond_reglement'=>array('label'=>"PaymentConditionsShort", 'checked'=>-1, 'position'=>67),
+	'c.fk_mode_reglement'=>array('label'=>"PaymentMode", 'checked'=>-1, 'position'=>68),
+	'c.fk_input_reason'=>array('label'=>"Channel", 'checked'=>-1, 'position'=>69),
 	'c.total_ht'=>array('label'=>"AmountHT", 'checked'=>1, 'position'=>75),
 	'c.total_vat'=>array('label'=>"AmountVAT", 'checked'=>0, 'position'=>80),
 	'c.total_ttc'=>array('label'=>"AmountTTC", 'checked'=>0, 'position'=>85),
@@ -183,15 +186,15 @@ $arrayfields = array(
 	'c.multicurrency_total_ht'=>array('label'=>'MulticurrencyAmountHT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>100),
 	'c.multicurrency_total_vat'=>array('label'=>'MulticurrencyAmountVAT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>105),
 	'c.multicurrency_total_ttc'=>array('label'=>'MulticurrencyAmountTTC', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>110),
-	'u.login'=>array('label'=>"Author", 'checked'=>1, 'position'=>10, 'position'=>115),
-	'c.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500, 'position'=>120),
-	'c.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500, 'position'=>125),
-	'c.date_cloture'=>array('label'=>"DateClosing", 'checked'=>0, 'position'=>500, 'position'=>130),
-	'c.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'position'=>510, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PUBLIC_NOTES)), 'position'=>135),
-	'c.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'position'=>511, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PRIVATE_NOTES)), 'position'=>140),
-	'c.facture'=>array('label'=>"Billed", 'checked'=>1, 'position'=>990, 'enabled'=>(empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)), 'position'=>145),
-	'shippable'=>array('label'=>"Shippable", 'checked'=>1, 'position'=>995, 'enabled'=>(!empty($conf->expedition->enabled)), 'position'=>150),
-	'c.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000, 'position'=>155)
+	'u.login'=>array('label'=>"Author", 'checked'=>1, 'position'=>115),
+	'c.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>120),
+	'c.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>125),
+	'c.date_cloture'=>array('label'=>"DateClosing", 'checked'=>0, 'position'=>130),
+	'c.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PUBLIC_NOTES)), 'position'=>135),
+	'c.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PRIVATE_NOTES)), 'position'=>140),
+	'shippable'=>array('label'=>"Shippable", 'checked'=>1,'enabled'=>(!empty($conf->expedition->enabled)), 'position'=>990),
+	'c.facture'=>array('label'=>"Billed", 'checked'=>1, 'enabled'=>(empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)), 'position'=>995),
+	'c.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000)
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -264,6 +267,7 @@ if (empty($reshook)) {
 		$search_fk_cond_reglement = '';
 		$search_fk_shipping_method = '';
 		$search_fk_mode_reglement = '';
+		$search_fk_input_reason = '';
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
 	 || GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha')) {
@@ -274,12 +278,123 @@ if (empty($reshook)) {
 	$objectclass = 'Commande';
 	$objectlabel = 'Orders';
 	$permissiontoread = $user->rights->commande->lire;
+	$permissiontoadd = $user->rights->commande->creer;
 	$permissiontodelete = $user->rights->commande->supprimer;
+	if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+		$permissiontovalidate = $user->rights->commande->order_advance->validate;
+		$permissiontoclose = $user->rights->commande->order_advance->close;
+		$permissiontocancel = $user->rights->commande->order_advance->annuler;
+		$permissiontosendbymail = $user->rights->commande->order_advance->send;
+	} else {
+		$permissiontovalidate = $user->rights->commande->creer;
+		$permissiontoclose = $user->rights->commande->creer;
+		$permissiontocancel = $user->rights->commande->creer;
+		$permissiontosendbymail = $user->rights->commande->creer;
+	}
 	$uploaddir = $conf->commande->multidir_output[$conf->entity];
 	$triggersendname = 'ORDER_SENTBYMAIL';
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
+if ($action == 'validate' && $permissiontoadd) {
+	if (GETPOST('confirm') == 'yes') {
+		$objecttmp = new $objectclass($db);
+		$db->begin();
+		$error = 0;
+		foreach ($toselect as $checked) {
+			if ($objecttmp->fetch($checked)) {
+				if ($objecttmp->statut == 0) {
+					if (!empty($objecttmp->fk_warehouse)) {
+						$idwarehouse = $objecttmp->fk_warehouse;
+					} else {
+						$idwarehouse = 0;
+					}
+					if ($objecttmp->valid($user, $idwarehouse)) {
+						setEventMessage($objecttmp->ref." ".$langs->trans('PassedInOpenStatus'), 'mesgs');
+					} else {
+						setEventMessage($langs->trans('CantBeValidated'), 'errors');
+						$error++;
+					}
+				} else {
+					setEventMessage($objecttmp->ref." ".$langs->trans('IsNotADraft'), 'errors');
+					$error++;
+				}
+			} else {
+				dol_print_error($db);
+				$error++;
+			}
+		}
+		if ($error) {
+			$db->rollback();
+		} else {
+			$db->commit();
+		}
+	}
+}
+if ($action == 'shipped' && $permissiontoadd) {
+	if (GETPOST('confirm') == 'yes') {
+		$objecttmp = new $objectclass($db);
+		$db->begin();
+		$error = 0;
+		foreach ($toselect as $checked) {
+			if ($objecttmp->fetch($checked)) {
+				if ($objecttmp->statut == 1) {
+					if ($objecttmp->cloture($user)) {
+						setEventMessage($objecttmp->ref." ".$langs->trans('PassedInOpenStatus'), 'mesgs');
+					} else {
+						setEventMessage($langs->trans('CantBeValidated'), 'errors');
+						$error++;
+					}
+				} else {
+					setEventMessage($objecttmp->ref." ".$langs->trans('IsNotADraft'), 'errors');
+					$error++;
+				}
+			} else {
+				dol_print_error($db);
+				$error++;
+			}
+		}
+		if ($error) {
+			$db->rollback();
+		} else {
+			$db->commit();
+		}
+	}
+}
+// Closed records
+if (!$error && $massaction === 'setbilled' && $permissiontoclose) {
+	$db->begin();
 
+	$objecttmp = new $objectclass($db);
+	$nbok = 0;
+	foreach ($toselect as $toselectid) {
+		$result = $objecttmp->fetch($toselectid);
+		if ($result > 0) {
+			$result = $objecttmp->classifyBilled($user, 0);
+			if ($result <= 0) {
+				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+				$error++;
+				break;
+			} else {
+				$nbok++;
+			}
+		} else {
+			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+			$error++;
+			break;
+		}
+	}
+
+	if (!$error) {
+		if ($nbok > 1) {
+			setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+		}
+		$db->commit();
+	} else {
+		$db->rollback();
+	}
+}
 
 /*
  * View
@@ -312,6 +427,7 @@ $sql .= ' c.date_creation as date_creation, c.tms as date_update, c.date_cloture
 $sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label,";
 $sql .= " u.login,";
 $sql .= ' c.fk_cond_reglement,c.fk_mode_reglement,c.fk_shipping_method';
+$sql .= ' ,c.fk_input_reason';
 if ($search_categ_cus) {
 	$sql .= ", cc.fk_categorie, cc.fk_soc";
 }
@@ -359,7 +475,7 @@ if ($search_product_category > 0) {
 	$sql .= " AND cp.fk_categorie = ".$search_product_category;
 }
 if ($socid > 0) {
-	$sql .= ' AND s.rowid = '.$socid;
+	$sql .= ' AND s.rowid = '.((int) $socid);
 }
 if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
@@ -374,7 +490,7 @@ if ($sall) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
 if ($search_billed != '' && $search_billed >= 0) {
-	$sql .= ' AND c.facture = '.$search_billed;
+	$sql .= ' AND c.facture = '.((int) $search_billed);
 }
 if ($search_status <> '') {
 	if ($search_status < 4 && $search_status > -3) {
@@ -438,7 +554,7 @@ if ($search_company_alias) {
 	$sql .= natural_search('s.name_alias', $search_company_alias);
 }
 if ($search_sale > 0) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$search_sale;
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $search_sale);
 }
 if ($search_user > 0) {
 	$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".$search_user;
@@ -480,19 +596,22 @@ if ($search_project != '') {
 	$sql .= natural_search("p.title", $search_project);
 }
 if ($search_categ_cus > 0) {
-	$sql .= " AND cc.fk_categorie = ".$db->escape($search_categ_cus);
+	$sql .= " AND cc.fk_categorie = ".((int) $search_categ_cus);
 }
 if ($search_categ_cus == -2) {
 	$sql .= " AND cc.fk_categorie IS NULL";
 }
 if ($search_fk_cond_reglement > 0) {
-	$sql .= " AND c.fk_cond_reglement = ".$db->escape($search_fk_cond_reglement);
+	$sql .= " AND c.fk_cond_reglement = ".((int) $search_fk_cond_reglement);
 }
 if ($search_fk_shipping_method > 0) {
-	$sql .= " AND c.fk_shipping_method = ".$db->escape($search_fk_shipping_method);
+	$sql .= " AND c.fk_shipping_method = ".((int) $search_fk_shipping_method);
 }
 if ($search_fk_mode_reglement > 0) {
-	$sql .= " AND c.fk_mode_reglement = ".$db->escape($search_fk_mode_reglement);
+	$sql .= " AND c.fk_mode_reglement = ".((int) $search_fk_mode_reglement);
+}
+if ($search_fk_input_reason > 0) {
+	$sql .= " AND c.fk_input_reason = ".((int) $search_fk_input_reason);
 }
 
 // Add where from extra fields
@@ -587,10 +706,10 @@ if ($resql) {
 		$param .= '&search_status='.urlencode($search_status);
 	}
 	if ($search_datecloture_start) {
-		$param .= '&search_datecloture_start='.urlencode($search_datecloture_start);
+		$param .= '&search_datecloture_startday='.dol_print_date($search_datecloture_start, '%d').'&search_datecloture_startmonth='.dol_print_date($search_datecloture_start, '%m').'&search_datecloture_startyear='.dol_print_date($search_datecloture_start, '%Y');
 	}
 	if ($search_datecloture_end) {
-		$param .= '&search_datecloture_end='.urlencode($search_datecloture_end);
+		$param .= '&search_datecloture_endday='.dol_print_date($search_datecloture_end, '%d').'&search_datecloture_endmonth='.dol_print_date($search_datecloture_end, '%m').'&search_datecloture_endyear='.dol_print_date($search_datecloture_end, '%Y');
 	}
 	if ($search_dateorder_start) {
 		$param .= '&search_dateorder_start_day='.dol_print_date($search_dateorder_start, '%d').'&search_dateorder_start_month='.dol_print_date($search_dateorder_start, '%m').'&search_dateorder_start_year='.dol_print_date($search_dateorder_start, '%Y');
@@ -686,13 +805,16 @@ if ($resql) {
 		$param .= '&search_billed='.urlencode($search_billed);
 	}
 	if ($search_fk_cond_reglement > 0) {
-		$param .= '&search_fk_cond_reglement='.$search_fk_cond_reglement;
+		$param .= '&search_fk_cond_reglement='.urlencode($search_fk_cond_reglement);
 	}
 	if ($search_fk_shipping_method > 0) {
-		$param .= '&search_fk_shipping_method='.$search_fk_shipping_method;
+		$param .= '&search_fk_shipping_method='.urlencode($search_fk_shipping_method);
 	}
 	if ($search_fk_mode_reglement > 0) {
-		$param .= '&search_fk_mode_reglement='.$search_fk_mode_reglement;
+		$param .= '&search_fk_mode_reglement='.urlencode($search_fk_mode_reglement);
+	}
+	if ($search_fk_input_reason > 0) {
+		$param .= '&search_fk_input_reason='.urlencode($search_fk_input_reason);
 	}
 
 	// Add $param from extra fields
@@ -700,16 +822,29 @@ if ($resql) {
 
 	// List of mass actions available
 	$arrayofmassactions = array(
-		'generate_doc'=>$langs->trans("ReGeneratePDF"),
-		'builddoc'=>$langs->trans("PDFMerge"),
-		'cancelorders'=>$langs->trans("Cancel"),
-		'presend'=>$langs->trans("SendByMail"),
+		'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
+		'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	);
-	if ($user->rights->facture->creer) {
-		$arrayofmassactions['createbills'] = $langs->trans("CreateInvoiceForThisCustomer");
+	if ($permissiontovalidate) {
+		$arrayofmassactions['prevalidate'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate");
 	}
-	if ($user->rights->commande->supprimer) {
-		$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+	if ($permissiontosendbymail) {
+		$arrayofmassactions['presend'] = img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail");
+	}
+	if ($permissiontoclose) {
+		$arrayofmassactions['preshipped'] = img_picto('', 'dollyrevert', 'class="pictofixedwidth"').$langs->trans("ClassifyShipped");
+	}
+	if ($permissiontocancel) {
+		$arrayofmassactions['cancelorders'] = img_picto('', 'close_title', 'class="pictofixedwidth"').$langs->trans("Cancel");
+	}
+	if ($user->rights->facture->creer) {
+		$arrayofmassactions['createbills'] = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("CreateInvoiceForThisCustomer");
+	}
+	if ($permissiontoclose) {
+		$arrayofmassactions['setbilled'] = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("ClassifyBilled");
+	}
+	if ($permissiontodelete) {
+		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	}
 	if (in_array($massaction, array('presend', 'predelete', 'createbills'))) {
 		$arrayofmassactions = array();
@@ -720,7 +855,7 @@ if ($resql) {
 	if (!empty($socid)) {
 		$url .= '&socid='.$socid;
 	}
-	$newcardbutton = dolGetButtonTitle($langs->trans('NewOrder'), '', 'fa fa-plus-circle', $url, '', $contextpage == 'orderlist' && $user->rights->commande->creer);
+	$newcardbutton = dolGetButtonTitle($langs->trans('NewOrder'), '', 'fa fa-plus-circle', $url, '', $contextpage == 'orderlist' && $permissiontoadd);
 
 	// Lines of title fields
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -744,8 +879,14 @@ if ($resql) {
 	$trackid = 'ord'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
+	if ($massaction == 'prevalidate') {
+		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassValidation"), $langs->trans("ConfirmMassValidationQuestion"), "validate", null, '', 0, 200, 500, 1);
+	}
+	if ($massaction == 'preshipped') {
+		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("CloseOrder"), $langs->trans("ConfirmCloseOrder"), "shipped", null, '', 0, 200, 500, 1);
+	}
+
 	if ($massaction == 'createbills') {
-		//var_dump($_REQUEST);
 		print '<input type="hidden" name="massaction" value="confirm_createbills">';
 
 		print '<table class="noborder" width="100%" >';
@@ -833,7 +974,7 @@ if ($resql) {
 		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1, $tmptitle);
 		$moreforfilter .= '</div>';
 	}
-	if (!empty($conf->expedition->enabled) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
+	if (!empty($conf->stock->enabled) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
 		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 		$formproduct = new FormProduct($db);
 		$moreforfilter .= '<div class="divsearchfield">';
@@ -968,6 +1109,12 @@ if ($resql) {
 	if (!empty($arrayfields['c.fk_mode_reglement']['checked'])) {
 		print '<td class="liste_titre">';
 		$form->select_types_paiements($search_fk_mode_reglement, 'search_fk_mode_reglement', '', 0, 1, 1, 0, -1);
+		print '</td>';
+	}
+	// Channel
+	if (!empty($arrayfields['c.fk_input_reason']['checked'])) {
+		print '<td class="liste_titre">';
+		$form->selectInputReason($search_fk_input_reason, 'search_fk_input_reason', '', 1, '', 1);
 		print '</td>';
 	}
 	if (!empty($arrayfields['c.total_ht']['checked'])) {
@@ -1150,6 +1297,9 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['c.fk_mode_reglement']['checked'])) {
 		print_liste_field_titre($arrayfields['c.fk_mode_reglement']['label'], $_SERVER["PHP_SELF"], "c.fk_mode_reglement", "", $param, '', $sortfield, $sortorder);
+	}
+	if (!empty($arrayfields['c.fk_input_reason']['checked'])) {
+		print_liste_field_titre($arrayfields['c.fk_input_reason']['label'], $_SERVER["PHP_SELF"], "c.fk_input_reason", "", $param, '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['c.total_ht']['checked'])) {
 		print_liste_field_titre($arrayfields['c.total_ht']['label'], $_SERVER["PHP_SELF"], 'c.total_ht', '', $param, '', $sortfield, $sortorder, 'right ');
@@ -1435,6 +1585,15 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Channel
+		if (!empty($arrayfields['c.fk_input_reason']['checked'])) {
+			print '<td>';
+			$form->formInputReason($_SERVER['PHP_SELF'], $obj->fk_input_reason, 'none', '');
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
 		// Amount HT
 		if (!empty($arrayfields['c.total_ht']['checked'])) {
 			  print '<td class="nowrap right"><span class="amount">'.price($obj->total_ht)."</span></td>\n";
@@ -1678,6 +1837,9 @@ if ($resql) {
 				}
 			}
 			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 
 		// Billed
@@ -1740,8 +1902,8 @@ if ($resql) {
 	$urlsource .= str_replace('&amp;', '&', $param);
 
 	$filedir = $diroutputmassaction;
-	$genallowed = $user->rights->commande->lire;
-	$delallowed = $user->rights->commande->creer;
+	$genallowed = $permissiontoread;
+	$delallowed = $permissiontoadd;
 
 	print $formfile->showdocuments('massfilesarea_orders', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 } else {

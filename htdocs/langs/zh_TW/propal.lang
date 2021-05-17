@@ -45,9 +45,8 @@ ActionsOnPropal=提案/建議書上的事件
 RefProposal=商業提案/建議書參考
 SendPropalByMail=透過郵件發送商業提案/建議書
 DatePropal=提案/建議書日期
-DateEndPropal=有效期結束日期
+DateEndPropal=有效期
 ValidityDuration=有效期
-CloseAs=將狀態設定為
 SetAcceptedRefused=設定為已接受/已拒絕
 ErrorPropalNotFound=找不到提案/建議書 %s
 AddToDraftProposals=加入到提案/建議書草稿
@@ -60,8 +59,9 @@ ConfirmClonePropal=您確定您要完整複製商業提案/建議書<b>%s</b>？
 ConfirmReOpenProp=您確定要再打開商業提案/建議書<b>%s</b>嗎？
 ProposalsAndProposalsLines=商業提案/建議書和行
 ProposalLine=提案/建議書行
-AvailabilityPeriod=有效期展延
-SetAvailability=設定有效期展延
+ProposalLines=Proposal lines
+AvailabilityPeriod=交貨期
+SetAvailability=設定交貨期
 AfterOrder=訂單後
 OtherProposals=其他提案/建議書
 ##### Availability #####
@@ -71,9 +71,9 @@ AvailabilityTypeAV_2W=2個星期
 AvailabilityTypeAV_3W=3個星期
 AvailabilityTypeAV_1M=1個月
 ##### Types de contacts #####
-TypeContact_propal_internal_SALESREPFOLL=代表性的後續提案/建議書
+TypeContact_propal_internal_SALESREPFOLL=提案/建議書聯絡人
 TypeContact_propal_external_BILLING=客戶發票聯絡人
-TypeContact_propal_external_CUSTOMER=後續提案/建議書的客戶聯絡人
+TypeContact_propal_external_CUSTOMER=提案/建議書客戶聯絡人
 TypeContact_propal_external_SHIPPING=客戶交貨聯絡人
 # Document models
 DocModelAzurDescription=完整的提案/建議書模型（Cyan範本的舊範本）
@@ -84,4 +84,9 @@ DefaultModelPropalClosed=當關閉企業提案/建議書時使用的預設範本
 ProposalCustomerSignature=書面驗收，公司印章，日期和簽名
 ProposalsStatisticsSuppliers=供應商提案/建議書統計
 CaseFollowedBy=案件追蹤者
-SignedOnly=Signed only
+SignedOnly=僅簽名
+IdProposal=方案/提案編號
+IdProduct=產品編號
+PrParentLine=方案/提案主行
+LineBuyPriceHT=購買價格扣除稅額
+

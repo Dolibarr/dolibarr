@@ -154,6 +154,7 @@ $search_email = GETPOST('search_email', 'alpha');
 $search_api_key = GETPOST('search_api_key', 'alphanohtml');
 $search_statut = GETPOST('search_statut', 'intcomma');
 $search_thirdparty = GETPOST('search_thirdparty', 'alpha');
+$search_warehouse = GETPOST('search_warehouse', 'alpha');
 $search_supervisor = GETPOST('search_supervisor', 'intcomma');
 $optioncss = GETPOST('optioncss', 'alpha');
 $search_categ = GETPOST("search_categ", 'int');
@@ -181,8 +182,15 @@ if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 
 $error = 0;
 
-if (!$user->rights->user->user->lire && !$user->admin) {
-	accessforbidden();
+// Permission to list
+if ($mode == 'employee') {
+	if (empty($user->rights->salaries->read)) {
+		accessforbidden();
+	}
+} else {
+	if (!$user->rights->user->user->lire && !$user->admin) {
+		accessforbidden();
+	}
 }
 
 $childids = $user->getAllChildIds(1);
@@ -223,6 +231,7 @@ if (empty($reshook)) {
 		$search_email = "";
 		$search_statut = "";
 		$search_thirdparty = "";
+		$search_warehouse = "";
 		$search_supervisor = "";
 		$search_api_key = "";
 		$search_datelastlogin = "";
@@ -362,6 +371,9 @@ if ($search_supervisor > 0) {
 if ($search_thirdparty != '') {
 	$sql .= natural_search(array('s.nom'), $search_thirdparty);
 }
+if ($search_warehouse != '') {
+	$sql .= natural_search(array('u.fk_warehouse'), $search_warehouse);
+}
 if ($search_login != '') {
 	$sql .= natural_search("u.login", $search_login);
 }
@@ -405,13 +417,16 @@ if ($catid == -2) {
 	$sql .= " AND cu.fk_categorie IS NULL";
 }
 if ($search_categ > 0) {
-	$sql .= " AND cu.fk_categorie = ".$db->escape($search_categ);
+	$sql .= " AND cu.fk_categorie = ".((int) $search_categ);
 }
 if ($search_categ == -2) {
 	$sql .= " AND cu.fk_categorie IS NULL";
 }
+if ($search_warehouse > 0) {
+	$sql .= " AND u.fk_warehouse = ".$db->escape($search_warehouse);
+}
 if ($mode == 'employee' && empty($user->rights->salaries->readall)) {
-	$sql .= " AND u.fk_user IN (".$db->sanitize(join(',', $childids)).")";
+	$sql .= " AND u.rowid IN (".$db->sanitize(join(',', $childids)).")";
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -517,7 +532,10 @@ if ($mode != '') {
 	$param .= '&amp;mode='.urlencode($mode);
 }
 if ($search_categ > 0) {
-	$param .= "&amp;search_categ=".urlencode($search_categ);
+	$param .= '&amp;search_categ='.urlencode($search_categ);
+}
+if ($search_warehouse > 0) {
+	$param .= '&amp;search_warehouse='.urlencode($search_warehouse);
 }
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -595,8 +613,17 @@ $moreforfilter = '';
 // Filter on categories
 if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
 	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= img_picto($langs->trans("Category"), 'category', 'class="paddingright"');
-	$moreforfilter .= $formother->select_categories(Categorie::TYPE_USER, $search_categ, 'search_categ', 1);
+	$tmptitle = $langs->trans('Category');
+	$moreforfilter .= img_picto($langs->trans("Category"), 'category', 'class="pictofixedwidth"').$formother->select_categories(Categorie::TYPE_USER, $search_categ, 'search_categ', 1, $tmptitle);
+	$moreforfilter .= '</div>';
+}
+// Filter on warehouse
+if (!empty($conf->stock->enabled) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) {
+	require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+	$formproduct = new FormProduct($db);
+	$moreforfilter .= '<div class="divsearchfield">';
+	$tmptitle = $langs->trans('Warehouse');
+	$moreforfilter .= img_picto($tmptitle, 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', $tmptitle, 0, 0, $tmptitle);
 	$moreforfilter .= '</div>';
 }
 

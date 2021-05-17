@@ -220,7 +220,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 			$sql .= ', f.fk_statut, s.nom as name, s.rowid as socid';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf,'.MAIN_DB_PREFIX.'facture_fourn as f,'.MAIN_DB_PREFIX.'societe as s';
 			$sql .= ' WHERE pf.fk_facturefourn = f.rowid AND f.fk_soc = s.rowid';
-			$sql .= ' AND pf.fk_paiementfourn = '.$object->id;
+			$sql .= ' AND pf.fk_paiementfourn = '.((int) $object->id);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				if ($this->db->num_rows($resql) > 0) {
@@ -757,7 +757,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 			$pdf->SetTextColor(0, 0, 0);
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($posx, $posy - 5);
-			$pdf->MultiCell(66, 5, $outputlangs->transnoentities("PayedBy").":", 0, 'L');
+			$pdf->MultiCell(80, 5, $outputlangs->transnoentities("PayedBy"), 0, 'L');
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetFillColor(230, 230, 230);
 			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
@@ -798,7 +798,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 			$pdf->SetTextColor(0, 0, 0);
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($posx + 2, $posy - 5);
-			$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("PayedTo").":", 0, 'L');
+			$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("PayedTo"), 0, 'L');
 			$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
 
 			// Show recipient name

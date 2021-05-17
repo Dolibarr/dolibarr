@@ -82,10 +82,13 @@ $arrayofparameters = array(
 	//'MYMODULE_MYPARAM5'=>array('type'=>'yesno', 'enabled'=>1),
 	//'MYMODULE_MYPARAM5'=>array('type'=>'thirdparty_type', 'enabled'=>1),
 	//'MYMODULE_MYPARAM6'=>array('type'=>'securekey', 'enabled'=>1),
+	//'MYMODULE_MYPARAM7'=>array('type'=>'product', 'enabled'=>1),
 );
 
 $error = 0;
 $setupnotempty = 0;
+
+$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 
 /*
@@ -201,19 +204,19 @@ if ($action == 'updateMask') {
 
 $form = new Form($db);
 
-$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-
+$help_url = '';
 $page_name = "MyModuleSetup";
-llxHeader('', $langs->trans($page_name));
+
+llxHeader('', $langs->trans($page_name), $help_url);
 
 // Subheader
 $linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
 
-print load_fiche_titre($langs->trans($page_name), $linkback, 'object_mymodule@mymodule');
+print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
 // Configuration header
 $head = mymoduleAdminPrepareHead();
-print dol_get_fiche_head($head, 'settings', '', -1, "mymodule@mymodule");
+print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, "mymodule@mymodule");
 
 // Setup page goes here
 echo '<span class="opacitymedium">'.$langs->trans("MyModuleSetupPage").'</span><br><br>';
@@ -297,6 +300,11 @@ if ($action == 'edit') {
                     });';
 					print '</script>';
 				}
+			} elseif ($val['type'] == 'product') {
+				if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+					$selected = (empty($conf->global->$constname) ? '' : $conf->global->$constname);
+					$form->select_produits($selected, $constname, '', 0);
+				}
 			} else {
 				print '<input name="'.$constname.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->{$constname}.'">';
 			}
@@ -363,8 +371,16 @@ if ($action == 'edit') {
 					} elseif ($conf->global->{$constname}==0) {
 						print $langs->trans("NorProspectNorCustomer");
 					}
+				} elseif ($val['type'] == 'product') {
+					$product = new Product($db);
+					$resprod = $product->fetch($conf->global->{$constname});
+					if ($resprod > 0) {
+						print $product->ref;
+					} elseif ($resprod < 0) {
+						setEventMessages(null, $object->errors, "errors");
+					}
 				} else {
-					print  $conf->global->{$constname};
+					print $conf->global->{$constname};
 				}
 				print '</td></tr>';
 			}

@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - externalsite
 ExternalSiteSetup=Atur tautan ke situs web eksternal
-ExternalSiteURL=URL Situs Eksternal
+ExternalSiteURL=External Site URL of HTML iframe content
 ExternalSiteModuleNotComplete=Modul ExternalSite tidak dikonfigurasi dengan benar.
 ExampleMyMenuEntry=Entri menu saya

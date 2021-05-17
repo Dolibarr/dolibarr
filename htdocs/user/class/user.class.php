@@ -2366,7 +2366,7 @@ class User extends CommonObject
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
 	 *	@param	int		$withpictoimg				Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
-	 *	@param	string	$option						On what the link point to ('leave', 'nolink', )
+	 *	@param	string	$option						On what the link point to ('leave', 'accountancy', 'nolink', )
 	 *  @param  integer $infologin      			0=Add default info tooltip, 1=Add complete info tooltip, -1=No info tooltip
 	 *  @param	integer	$notooltip					1=Disable tooltip on picto and name
 	 *  @param	int		$maxlen						Max length of visible user name
@@ -2416,6 +2416,9 @@ class User extends CommonObject
 		}
 		if (!empty($this->admin)) {
 			$label .= '<br><b>'.$langs->trans("Administrator").'</b>: '.yn($this->admin);
+		}
+		if (!empty($this->accountancy_code) || $option == 'accountancy') {
+			$label .= '<br><b>'.$langs->trans("AccountancyCode").'</b>: '.$this->accountancy_code;
 		}
 		$company = '';
 		if (!empty($this->socid)) {	// Add thirdparty for external users
@@ -2792,10 +2795,10 @@ class User extends CommonObject
 		if (!empty($conf->global->LDAP_FIELD_USERID)) {
 			$info[$conf->global->LDAP_FIELD_USERID] = $this->id;
 		}
-		if (!empty($info[$conf->global->LDAP_FIELD_GROUPID])) {
+		if (!empty($conf->global->LDAP_FIELD_GROUPID)) {
 			$usergroup = new UserGroup($this->db);
 			$groupslist = $usergroup->listGroupsForUser($this->id);
-			$info[$conf->global->LDAP_FIELD_GROUPID] = '1';
+			$info[$conf->global->LDAP_FIELD_GROUPID] = '65534';
 			if (!empty($groupslist)) {
 				foreach ($groupslist as $groupforuser) {
 					$info[$conf->global->LDAP_FIELD_GROUPID] = $groupforuser->id; //Select first group in list
@@ -2803,8 +2806,8 @@ class User extends CommonObject
 				}
 			}
 		}
-		if (!empty($this->firstname) && !empty($conf->global->LDAP_FIELD_HOMEDIRECTORY) && !empty($conf->global->LDAP_FIELD_HOMEDIRECTORYPREFIX)) {
-			$info[$conf->global->LDAP_FIELD_HOMEDIRECTORY] = "{$conf->global->LDAP_FIELD_HOMEDIRECTORYPREFIX}/$this->firstname";
+		if (!empty($conf->global->LDAP_FIELD_HOMEDIRECTORY) && !empty($conf->global->LDAP_FIELD_HOMEDIRECTORYPREFIX)) {
+			$info[$conf->global->LDAP_FIELD_HOMEDIRECTORY] = "{$conf->global->LDAP_FIELD_HOMEDIRECTORYPREFIX}/$this->login";
 		}
 
 		return $info;
@@ -3396,7 +3399,7 @@ class User extends CommonObject
 				$sql .= " WHERE t.entity IN (".getEntity('user').")";
 			}
 		} else {
-			$sql .= " WHERE 1";
+			$sql .= " WHERE 1 = 1";
 		}
 
 		// Manage filter

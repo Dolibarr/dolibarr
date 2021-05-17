@@ -85,7 +85,7 @@ ListOfPermissionsDefined=Listado de permisos definidos
 SeeExamples=Vea ejemplos aquí
 EnabledDesc=Condición para tener este campo activo (Ejemplos: 1 o $conf->global->MYMODULE_MYOPTION)
 VisibleDesc=¿Es visible el campo? (Ejemplos: 0 = Nunca visible, 1 = Visible en la lista y crear/actualizar/ver formularios, 2 = Visible solo en la lista, 3 = Visible solo en el formulario crear/actualizar/ver (no en la lista), 4 = Visible en la lista y solo actualizar/ver formulario (no crear), 5 = Visible solo en el formulario de vista final de la lista (no crear, no actualizar)<br><br>El uso de un valor negativo significa que el campo no se muestra de forma predeterminada en la lista, pero se puede seleccionar para verlo).<br><br>Puede ser una expresión, por ejemplo:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
-DisplayOnPdfDesc=Muestre este campo en documentos PDF compatibles, puede administrar la posición con el campo "Posición". <br/> Actualmente, conocidos modelos compatibles PDF son: eratosthene (pedidos), espadon (notas de envios), sponge (facturas), cyan (presupuesto), cornas (pedido a proveedor) <br/> <br/> <strong> Para documento: </strong> <br/> 0 = No se ven las <br/> 1 = mostrar <br/> 2 = mostrar sólo si no está vacío <br/> <br/> <strong> Para las líneas de documentos: </strong> <br/> 0 = no mostradas <br/> 1 =  se muestran en una columna <br/> 3 = se muestra en la columna de descripción de línea después de la descripción <br/> 4 = se muestra en la columna de descripción después de la descripción solo si no está vacía
+DisplayOnPdfDesc=Muestre este campo en documentos PDF compatibles, puede administrar la posición con el campo "Posición". <br> Actualmente, los modelos PDF compatibles conocidos son: eratosthene (pedido), espadon (envíos), esponja (facturas), cyan (propal / presupuesto), cornas (pedido del proveedor) <br> <br> <strong>Para el documento :</strong><br> 0= no mostrar <br>1= mostrar<br>  2 = mostrar sólo si no está vacío<br><br><strong>  Para las líneas de documentos: </strong><br>0 = no mostrar <br>1 = mostrar en una columna<br>3 = mostrar en la columna de descripción de línea después de la descripción<br>4 = mostrar en la columna de descripción después de la descripción solo si no está vacía
 DisplayOnPdf=Mostrar en PDF
 IsAMeasureDesc=¿Se puede acumular el valor del campo para obtener un total en el listado? (Ejemplos: 1 o 0)
 SearchAllDesc=¿El campo se usa para realizar una búsqueda desde la herramienta de búsqueda rápida? (Ejemplos: 1 o 0)
@@ -133,7 +133,9 @@ IncludeDocGeneration=Quiero generar algunos documentos del objeto.
 IncludeDocGenerationHelp=Si marca esto, se generará código para agregar  un panel "Generar documento" en el registro.
 ShowOnCombobox=Mostrar valor en el combobox
 KeyForTooltip=Clave para tooltip
-CSSClass=Clase CSS
+CSSClass=CSS para editar / crear formulario
+CSSViewClass=CSS para formulario de lectura
+CSSListClass=CSS para lista
 NotEditable=No editable
 ForeignKey=Foreign key
 TypeOfFieldsHelp=Tipo de campos: <br> varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] ('1' significa que agregamos un botón + después del combo para crear el registro, 'filtro' puede ser 'status=1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTITIES__)' por ejemplo)

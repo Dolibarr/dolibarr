@@ -348,6 +348,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		if ($soc->id > 0) {
 			$sql .= " AND rowid <> ".$soc->id;
 		}
+		$sql .= " AND entity IN (".getEntity('societe').")";
 
 		$resql = $db->query($sql);
 		if ($resql) {

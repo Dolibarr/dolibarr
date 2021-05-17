@@ -207,7 +207,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 			if (!isset($conf->global->COMPANY_DIGITARIA_UNIQUE_CODE) || !empty($conf->global->COMPANY_DIGITARIA_UNIQUE_CODE)) {
 				$disponibility = $this->checkIfAccountancyCodeIsAlreadyUsed($db, $this->code, $type);
 
-				while ($disponibility <> 0 && $i < 100) {
+				while ($disponibility <> 0 && $i < 1000) {
 					$widthsupplier = $this->supplieraccountancycodecharacternumber;
 					$widthcustomer = $this->customeraccountancycodecharacternumber;
 
@@ -216,6 +216,9 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 					}
 					if ($i >= 10 && $i <= 99) {
 						$a = 2;
+					}
+					if ($i >= 100 && $i <= 999) {
+						$a = 3;
 					}
 
 					if ($type == 'supplier') {

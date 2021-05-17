@@ -77,6 +77,7 @@ if (!$res) {
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
 // load partnership libraries
 require_once __DIR__.'/class/partnership.class.php';
@@ -85,7 +86,7 @@ require_once __DIR__.'/class/partnership.class.php';
 //dol_include_once('/othermodule/class/otherobject.class.php');
 
 // Load translation files required by the page
-$langs->loadLangs(array("partnership@partnership", "other"));
+$langs->loadLangs(array("partnership", "members", "other"));
 
 $action     = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
@@ -112,8 +113,9 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 // Initialize technical objects
-$object = new Partnership($db);
-$extrafields = new ExtraFields($db);
+$object 		= new Partnership($db);
+$extrafields 	= new ExtraFields($db);
+$adherent 		= new Adherent($db);
 $diroutputmassaction = $conf->partnership->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('partnershiplist')); // Note that conf->hooks_modules contains array
 
@@ -123,9 +125,9 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-if ($conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member')
-	unset($object->fields['fk_soc']);
-else unset($object->fields['fk_member']);
+$managedfor = $conf->global->PARTNERSHIP_IS_MANAGED_FOR;
+
+if ($managedfor != 'member' && $sortfield == 'd.datefin') $sortfield = '';
 
 // Default sort order (if not yet defined by previous GETPOST)
 if (!$sortfield) {
@@ -147,6 +149,11 @@ foreach ($object->fields as $key => $val) {
 		$search[$key.'_dtstart'] = dol_mktime(0, 0, 0, GETPOST('search_'.$key.'_dtstartmonth', 'int'), GETPOST('search_'.$key.'_dtstartday', 'int'), GETPOST('search_'.$key.'_dtstartyear', 'int'));
 		$search[$key.'_dtend'] = dol_mktime(23, 59, 59, GETPOST('search_'.$key.'_dtendmonth', 'int'), GETPOST('search_'.$key.'_dtendday', 'int'), GETPOST('search_'.$key.'_dtendyear', 'int'));
 	}
+}
+$search_filter = GETPOST("search_filter", 'alpha');
+$filter = GETPOST("filter", 'alpha');
+if ($filter) {
+	$search_filter = $filter; // For backward compatibility
 }
 
 // List of fields to search into when doing a "search in all"
@@ -178,8 +185,8 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = $user->rights->partnership->read;
-$permissiontoadd = $user->rights->partnership->write;
+$permissiontoread 	= $user->rights->partnership->read;
+$permissiontoadd 	= $user->rights->partnership->write;
 $permissiontodelete = $user->rights->partnership->delete;
 
 // Security check
@@ -229,6 +236,7 @@ if (empty($reshook)) {
 		}
 		$toselect = '';
 		$search_array_options = array();
+		$search_filter = "";
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
 		|| GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha')) {
@@ -240,6 +248,38 @@ if (empty($reshook)) {
 	$objectlabel = 'Partnership';
 	$uploaddir = $conf->partnership->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+
+	// Cancel partnership
+	if ($massaction == 'cancel' && $permissiontoadd) {
+		$db->begin();
+
+		$objecttmp = new $objectclass($db);
+		$nbok = 0;
+		foreach ($toselect as $toselectid) {
+			$result = $objecttmp->fetch($toselectid);
+			if ($result > 0) {
+				$result = $objecttmp->cancel($user, 3);
+				if ($result <= 0) {
+					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+					$error++;
+					break;
+				} else {
+					$nbok++;
+				}
+			} else {
+				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+				$error++;
+				break;
+			}
+		}
+
+		if (!$error) {
+			setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+			$db->commit();
+		} else {
+			$db->rollback();
+		}
+	}
 }
 
 
@@ -263,10 +303,13 @@ $morecss = array();
 // --------------------------------------------------------------------
 $sql = 'SELECT ';
 $sql .= $object->getFieldList('t');
+if ($managedfor == 'member') {
+	$sql .= ', d.datefin, d.fk_adherent_type, dty.subscription';
+}
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.' as options_'.$key.', ' : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
 	}
 }
 // Add fields from hooks
@@ -278,6 +321,10 @@ $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 }
+if ($managedfor == 'member') {
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as d on (d.rowid = t.fk_member)";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent_type as dty on (dty.rowid = d.fk_adherent_type)";
+}
 // Add table from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -287,6 +334,9 @@ if ($object->ismultientitymanaged == 1) {
 } else {
 	$sql .= " WHERE 1 = 1";
 }
+if ($managedfor == 'member')
+	$sql .= " AND fk_member > 0";
+else $sql .= " AND fk_soc > 0";
 foreach ($search as $key => $val) {
 	if (array_key_exists($key, $object->fields)) {
 		if ($key == 'status' && $search[$key] == -1) {
@@ -314,6 +364,17 @@ foreach ($search as $key => $val) {
 				}
 			}
 		}
+	}
+}
+if ($managedfor == 'member') {
+	if ($search_filter == 'withoutsubscription') {
+		$sql .= " AND (d.datefin IS NULL OR dty.subscription = 0)";
+	}
+	if ($search_filter == 'uptodate') {
+		$sql .= " AND (d.datefin >= '".$db->idate($now)."' OR dty.subscription = 0)";
+	}
+	if ($search_filter == 'outofdate') {
+		$sql .= " AND (d.datefin < '".$db->idate($now)."' AND dty.subscription = 1)";
 	}
 }
 if ($search_all) {
@@ -422,6 +483,9 @@ foreach ($search as $key => $val) {
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
+if ($search_filter && $search_filter != '-1') {
+	$param .= "&search_filter=".urlencode($search_filter);
+}
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
@@ -431,10 +495,10 @@ $param .= $hookmanager->resPrint;
 
 // List of mass actions available
 $arrayofmassactions = array(
-	'cancel'=>img_picto('', 'close_title', 'class="pictofixedwidth"').$langs->trans("Cancel"),
-	//'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
-	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
-	'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
+'cancel'=>img_picto('', 'close_title', 'class="pictofixedwidth"').$langs->trans("Cancel"),
+	//'generate_doc'=>img_picto('', 'pdf').$langs->trans("ReGeneratePDF"),
+	//'builddoc'=>img_picto('', 'pdf').$langs->trans("PDFMerge"),
+	'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendMail"),
 );
 if ($permissiontodelete) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
@@ -461,9 +525,9 @@ print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sort
 
 // Add code for pre mass action (confirmation or email presend form)
 $topicmail = "SendPartnershipRef";
-$modelmail = "partnership";
+$modelmail = "partnership_send";
 $objecttmp = new Partnership($db);
-$trackid = 'xxxx'.$object->id;
+$trackid = 'partnership'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($search_all) {
@@ -500,6 +564,11 @@ print '<div class="div-table-responsive">'; // You can use div-table-responsive-
 print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 
+if ($managedfor == 'member') {
+	$arrayfields['t.fk_member']['checked'] = 1;
+} else {
+	$arrayfields['t.fk_soc']['checked'] = 1;
+}
 // Fields title search
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
@@ -533,6 +602,13 @@ foreach ($object->fields as $key => $val) {
 		print '</td>';
 	}
 }
+// End of subscription date
+if ($managedfor == 'member') {
+	print '<td class="liste_titre center">';
+	$selectarray = array('-1'=>'', 'withoutsubscription'=>$langs->trans("WithoutSubscription"), 'uptodate'=>$langs->trans("UpToDate"), 'outofdate'=>$langs->trans("OutOfDate"));
+	print $form->selectarray('search_filter', $selectarray, $search_filter);
+	print '</td>';
+}
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
@@ -565,6 +641,12 @@ foreach ($object->fields as $key => $val) {
 	if (!empty($arrayfields['t.'.$key]['checked'])) {
 		print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($cssforfield ? 'class="'.$cssforfield.'"' : ''), $sortfield, $sortorder, ($cssforfield ? $cssforfield.' ' : ''))."\n";
 	}
+}
+// End of subscription date
+if ($managedfor == 'member') {
+	$key = 'datefin';
+	$cssforfield = 'center';
+	print getTitleFieldOfList('SubscriptionEndDate', 0, $_SERVER['PHP_SELF'], 'd.'.$key, '', $param, ($cssforfield ? 'class="'.$cssforfield.'"' : ''), $sortfield, $sortorder, ($cssforfield ? $cssforfield.' ' : ''))."\n";
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -641,6 +723,31 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			}
 		}
 	}
+	// End of subscription date
+	if ($managedfor == 'member') {
+		print '<td class="nowrap center endofsubscriptiondate">';
+		$result = $adherent->fetch($object->fk_member);
+		if ($result) {
+			$datefin = $adherent->datefin;
+			if ($datefin) {
+				print dol_print_date($datefin, 'day');
+				if ($adherent->hasDelay()) {
+					$textlate .= ' ('.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($conf->adherent->subscription->warning_delay / 60 / 60 / 24) >= 0 ? '+' : '').ceil($conf->adherent->subscription->warning_delay / 60 / 60 / 24).' '.$langs->trans("days").')';
+					print " ".img_warning($langs->trans("SubscriptionLate").$textlate);
+				}
+			} else {
+				if ($adherent->subscription == 'yes') {
+					print $langs->trans("SubscriptionNotReceived");
+					if ($adherent->statut > 0) {
+						print " ".img_warning();
+					}
+				} else {
+					print '&nbsp;';
+				}
+			}
+		}
+		print '</td>';
+	}
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 	// Fields from hook
@@ -665,6 +772,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 	$i++;
 }
+if ($managedfor != 'member') $totalarray['nbfield']++; // End of subscription date
 
 // Show total line
 include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
@@ -677,6 +785,7 @@ if ($num == 0) {
 			$colspan++;
 		}
 	}
+	if ($managedfor != 'member') $colspan++; // End of subscription date
 	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 }
 

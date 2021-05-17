@@ -71,7 +71,7 @@ if ($action == 'activate_encrypt') {
 			if (dol_hash($obj->pass)) {
 				$sql = "UPDATE ".MAIN_DB_PREFIX."user";
 				$sql .= " SET pass_crypted = '".dol_hash($obj->pass)."', pass = NULL";
-				$sql .= " WHERE rowid=".$obj->rowid;
+				$sql .= " WHERE rowid=".((int) $obj->rowid);
 				//print $sql;
 
 				$resql2 = $db->query($sql);

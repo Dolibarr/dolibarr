@@ -2,7 +2,6 @@
 ShowAllTimeBalance=Toon saldo sinds begin
 LabelBankCashAccount=label van bank of kas
 TransferTo=Aan
-CheckTransmitter=Overboeker
 BankChecksToReceipt=Te innen cheques
 BankChecksToReceiptShort=Te innen cheques
 InputReceiptNumber=Kies het bankafschrift in verband met de bemiddeling. Gebruik een sorteerbaar numerieke waarde: YYYYMM of YYYYMMDD

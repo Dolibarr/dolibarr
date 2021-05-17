@@ -103,11 +103,13 @@ class FormTicket
 	 */
 	public function __construct($db)
 	{
+		global $conf;
+
 		$this->db = $db;
 
 		$this->action = 'add';
 
-		$this->withcompany = 1;
+		$this->withcompany = $conf->societe->enabled ? 1 : 0;
 		$this->withfromsocid = 0;
 		$this->withfromcontactid = 0;
 		//$this->withthreadid=0;
@@ -169,13 +171,15 @@ class FormTicket
 		if ($this->withref) {
 			// Ref
 			$defaultref = $ticketstat->getDefaultRef();
-			print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td><input size="18" type="text" name="ref" value="'.(GETPOST("ref", 'alpha') ? GETPOST("ref", 'alpha') : $defaultref).'"></td></tr>';
+			print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td>';
+			print '<input type="text" name="ref" value="'.dol_escape_htmltag(GETPOST("ref", 'alpha') ? GETPOST("ref", 'alpha') : $defaultref).'">';
+			print '</td></tr>';
 		}
 
 		// TITLE
 		if ($this->withemail) {
 			print '<tr><td class="titlefield"><label for="email"><span class="fieldrequired">'.$langs->trans("Email").'</span></label></td><td>';
-			print '<input  class="text minwidth200" id="email" name="email" value="'.(GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : $subject).'" />';
+			print '<input  class="text minwidth200" id="email" name="email" value="'.(GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : $subject).'" autofocus>';
 			print '</td></tr>';
 		}
 
@@ -313,7 +317,7 @@ class FormTicket
 			if ($this->withfile == 2) { // Can add other files
 				$out .= '<input type="file" class="flat" id="addedfile" name="addedfile" value="'.$langs->trans("Upload").'" />';
 				$out .= ' ';
-				$out .= '<input type="submit" class="button smallpaddingimp" id="addfile" name="addfile" value="'.$langs->trans("MailingAddFile").'" />';
+				$out .= '<input type="submit" class="button smallpaddingimp reposition" id="addfile" name="addfile" value="'.$langs->trans("MailingAddFile").'" />';
 			}
 			$out .= "</td></tr>\n";
 
@@ -452,6 +456,8 @@ class FormTicket
 			print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 		}
 		print '</div>';
+
+		print '<input type="hidden" name="page_y">'."\n";
 
 		print "</form>\n";
 		print "<!-- End form TICKET -->\n";
@@ -1083,7 +1089,7 @@ class FormTicket
 			if ($this->withfile == 2) { // Can add other files
 				$out .= '<input type="file" class="flat" id="addedfile" name="addedfile" value="'.$langs->trans("Upload").'" />';
 				$out .= ' ';
-				$out .= '<input type="submit" class="button smallpaddingimp" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
+				$out .= '<input type="submit" class="button smallpaddingimp reposition" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
 			}
 			$out .= "</td></tr>\n";
 
@@ -1099,6 +1105,8 @@ class FormTicket
 			print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 		}
 		print "</center>\n";
+
+		print '<input type="hidden" name="page_y">'."\n";
 
 		print "</form>\n";
 		print "<!-- End form TICKET -->\n";

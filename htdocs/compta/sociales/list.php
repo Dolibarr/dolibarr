@@ -195,7 +195,7 @@ $sql .= " WHERE cs.fk_type = c.id";
 $sql .= " AND cs.entity = ".$conf->entity;
 // Search criteria
 if ($search_ref) {
-	$sql .= " AND cs.rowid=".$db->escape($search_ref);
+	$sql .= " AND cs.ref = '".$db->escape($search_ref)."'";
 }
 if ($search_label) {
 	$sql .= natural_search("cs.libelle", $search_label);

@@ -54,8 +54,8 @@ $code = GETPOST('code', 'alpha');
 
 $acts[0] = "activate";
 $acts[1] = "disable";
-$actl[0] = img_picto($langs->trans("Disabled"), 'switch_off');
-$actl[1] = img_picto($langs->trans("Activated"), 'switch_on');
+$actl[0] = img_picto($langs->trans("Disabled"), 'switch_off', 'class="size15x"');
+$actl[1] = img_picto($langs->trans("Activated"), 'switch_on', 'class="size15x"');
 
 $listoffset = GETPOST('listoffset', 'alpha');
 $listlimit = GETPOST('listlimit', 'int') > 0 ?GETPOST('listlimit', 'int') : 1000;
@@ -442,7 +442,7 @@ if ($id) {
 		} else {
 			$sql .= " WHERE ";
 		}
-		$sql .= " c.rowid = ".$search_country_id;
+		$sql .= " c.rowid = ".((int) $search_country_id);
 	}
 
 	// If sort order is "country", we use country_code instead

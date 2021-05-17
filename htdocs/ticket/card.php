@@ -2,6 +2,7 @@
 /* Copyright (C) 2013-2016 Jean-François FERRY <hello@librethic.io>
  * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
  * Copyright (C) 2018      Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2021		Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -211,14 +212,14 @@ if (empty($reshook)) {
 				}
 
 				// Auto assign user
-				if ($conf->global->TICKET_AUTO_ASSIGN_USER_CREATE) {
+				if (!empty($conf->global->TICKET_AUTO_ASSIGN_USER_CREATE)) {
 					$result = $object->assignUser($user, $user->id, 1);
 					$object->add_contact($user->id, "SUPPORTTEC", 'internal');
 				}
 
 				// Auto assign contrat
 				$contractid = 0;
-				if ($conf->global->TICKET_AUTO_ASSIGN_CONTRACT_CREATE) {
+				if (!empty($conf->global->TICKET_AUTO_ASSIGN_CONTRACT_CREATE)) {
 					$contrat = new Contrat($db);
 					$contrat->socid = $object->fk_soc;
 					$list = $contrat->getListOfContracts();
@@ -233,7 +234,7 @@ if (empty($reshook)) {
 				}
 
 				// Auto create fiche intervention
-				if ($conf->global->TICKET_AUTO_CREATE_FICHINTER_CREATE) {
+				if (!empty($conf->global->TICKET_AUTO_CREATE_FICHINTER_CREATE)) {
 					$fichinter = new Fichinter($db);
 					$fichinter->socid = $object->fk_soc;
 					$fichinter->fk_project = $projectid;
@@ -751,7 +752,7 @@ if ($action == 'create' || $action == 'presend') {
 	|| $action == 'editsubject' || $action == 'edit_extras' || $action == 'update_extras' || $action == 'edit_extrafields' || $action == 'set_extrafields' || $action == 'classify' || $action == 'sel_contract' || $action == 'edit_message_init' || $action == 'set_status' || $action == 'dellink') {
 	if ($res > 0) {
 		// or for unauthorized internals users
-		if (!$user->socid && ($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY && $object->fk_user_assign != $user->id) && !$user->rights->ticket->manage) {
+		if (!$user->socid && (!empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) && $object->fk_user_assign != $user->id) && !$user->rights->ticket->manage) {
 			accessforbidden('', 0, 1);
 		}
 
@@ -853,7 +854,7 @@ if ($action == 'create' || $action == 'presend') {
 			print dol_get_fiche_end();
 		}
 
-		if (!$user->socid && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) {
+		if (!$user->socid && !empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY)) {
 			$object->next_prev_filter = "te.fk_user_assign = '".$user->id."'";
 		} elseif ($user->socid > 0) {
 			$object->next_prev_filter = "te.fk_soc = '".$user->socid."'";
@@ -1030,7 +1031,7 @@ if ($action == 'create' || $action == 'presend') {
 		print '</tr>';
 
 		// Timing (Duration sum of linked fichinter)
-		if ($conf->fichinter->enabled) {
+		if ($conf->ficheinter->enabled) {
 			$object->fetchObjectLinked();
 			$num = count($object->linkedObjects);
 			$timing = 0;
@@ -1363,8 +1364,8 @@ if ($action == 'create' || $action == 'presend') {
 			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && !empty($_REQUEST['lang_id'])) {
-				$newlang = $_REQUEST['lang_id'];
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				$newlang = GETPOST('lang_id', 'aZ09');
 			}
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
 				$newlang = $object->default_lang;

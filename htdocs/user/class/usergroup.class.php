@@ -504,7 +504,7 @@ class UserGroup extends CommonObject
 					}
 
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_rights";
-					$sql .= " WHERE fk_usergroup = $this->id AND fk_id=".$nid;
+					$sql .= " WHERE fk_usergroup = $this->id AND fk_id=".((int) $nid);
 					$sql .= " AND entity = ".$entity;
 					if (!$this->db->query($sql)) {
 						$error++;
@@ -856,7 +856,7 @@ class UserGroup extends CommonObject
 			}
 			$info[$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS] = (!empty($valueofldapfield) ? $valueofldapfield : '');
 		}
-		if (!empty($info[$conf->global->LDAP_GROUP_FIELD_GROUPID])) {
+		if (!empty($conf->global->LDAP_GROUP_FIELD_GROUPID)) {
 			$info[$conf->global->LDAP_GROUP_FIELD_GROUPID] = $this->id;
 		}
 		return $info;

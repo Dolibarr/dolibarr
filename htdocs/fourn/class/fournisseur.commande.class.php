@@ -331,7 +331,7 @@ class CommandeFournisseur extends CommonOrder
 		if (empty($id)) {
 			$sql .= " WHERE c.entity IN (".getEntity('supplier_order').")";
 		} else {
-			$sql .= " WHERE c.rowid=".$id;
+			$sql .= " WHERE c.rowid=".((int) $id);
 		}
 
 		if ($ref) {
@@ -2068,6 +2068,18 @@ class CommandeFournisseur extends CommonOrder
 				return -1;
 			}
 			// End call triggers
+		}
+
+		// Test we can delete
+		$this->fetchObjectLinked(null, 'order_supplier');
+		if (!empty($this->linkedObjects)) {
+			foreach ($this->linkedObjects['reception'] as $element) {
+				if ($element->statut >= 0) {
+					$this->errors[] = $langs->trans('ReceptionExist');
+					$error++;
+					break;
+				}
+			}
 		}
 
 		$main = MAIN_DB_PREFIX.'commande_fournisseurdet';

@@ -677,6 +677,11 @@ $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
 
+$title = $langs->trans("ThirdParty");
+if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+	$title = $object->name." - ".$langs->trans('PaymentInformation');
+}
+
 llxHeader();
 
 $head = societe_prepare_head($object);

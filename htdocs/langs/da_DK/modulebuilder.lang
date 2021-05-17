@@ -85,7 +85,7 @@ ListOfPermissionsDefined=Liste over definerede tilladelser
 SeeExamples=Se eksempler her
 EnabledDesc=Tilstand at have dette felt aktivt (Eksempler: 1 eller $ conf-> global-> MYMODULE_MYOPTION)
 VisibleDesc=Er feltet synligt? (Eksempler: 0 = Aldrig synlig, 1 = Synlig på listen og opret / opdater / vis formularer, 2 = Kun synlig på listen, 3 = Synlig kun på oprettelse / opdatering / visningsformular (ikke liste), 4 = Synlig på listen og 3 opdaterings- / visningsformular kun (ikke oprettes), 5 = Synlig på formularen for slut visningsvisning (ikke opretning, ikke opdatering).<br><br> Brug af en negativ værdi betyder felt vises ikke som standard på listen, men kan vælges til visning).<br><br> Det kan være et udtryk, for eksempel:<br>preg_match ('/ public /', $ _SERVER ['PHP_SELF'])? 0: 1<br> ($ bruger-> rettigheder-> ferie-> definere_ferie? 1: 0)
-DisplayOnPdfDesc=Vis dette felt på kompatible PDF-dokumenter, kan du styre positionen med "Position" field.<br/>Currently, kendte kompatible PDF modeller er: Eratosthenes (rækkefølge), espadon (skib), svamp (fakturaer), cyan (propal / citat), Cornas ( leverandør rækkefølge) <br/><br/><strong>for dokument: </strong><br/>0 = ikke vises <br/>1 = displayet <br/>2 = display, hvis ikke empty<br/><br/><strong>For dokumentlinjer: </strong><br/>0 = ikke vises <br/>1 = vises i en kolonne <br/>3 = display på linje beskrivelse kolonne efter beskrivelse <br/>4 = display i beskrivelsen søjlen efter beskrivelsen kun hvis ikke tom
+DisplayOnPdfDesc=Vis dette felt på kompatible PDF-dokumenter, du kan administrere position med "Position" -feltet. <br> I øjeblikket er kendte kompatible PDF-modeller: eratosthene (ordre), espadon (skib), svamp (fakturaer), cyan (propal / tilbud), cornas (leverandørbestilling) <br> <br> a0e7843947c06f0a0f6a0 = display <br> 2 = vise, hvis ikke tømmes <br> <br> <strong> for dokumentlinjer: </strong> <br> 0 = ikke vises <br> 1 = vises i en kolonne <br> 3 = display på linje beskrivelse søjlen efter beskrivelsen <br> 4 = display i beskrivelsen kolonne efter beskrivelse kun hvis den ikke er tom
 DisplayOnPdf=Vis på PDF
 IsAMeasureDesc=Kan værdien af ​​feltet akkumuleres for at få en samlet liste? (Eksempler: 1 eller 0)
 SearchAllDesc=Er feltet brugt til at foretage en søgning fra hurtigsøgningsværktøjet? (Eksempler: 1 eller 0)
@@ -133,7 +133,9 @@ IncludeDocGeneration=Jeg vil generere nogle dokumenter fra objektet
 IncludeDocGenerationHelp=Hvis du markerer dette, vil nogle koder genereres for at tilføje en kasse "Generer dokument" på posten.
 ShowOnCombobox=Vis værdi til combobox
 KeyForTooltip=Nøgle til værktøjstip
-CSSClass=CSS Class
+CSSClass=CSS til redigering / oprettelse af formular
+CSSViewClass=CSS til læst form
+CSSListClass=CSS til liste
 NotEditable=Ikke redigerbar
 ForeignKey=Fremmed nøgle
 TypeOfFieldsHelp=Felttype:<br> varchar (99), dobbelt (24,8), reel, tekst, html, datetime, tidsstempel, heltal, heltal: ClassName: relative path / to / classfile.class.php [: 1 [: filter]] ( '1' betyder, at vi tilføjer en + knap efter kombinationsboksen for at oprette posten, 'filter' kan være 'status = 1 OG fk_user = __USER_ID OG enhed IN (__SHARED_ENTITIES__)' for eksempel)
