@@ -750,7 +750,7 @@ class CommandeFournisseur extends CommonOrder
 		$statusShort = $langs->transnoentitiesnoconv($this->statutshort[$status]);
 
 		$parameters = array('status' => $status, 'mode' => $mode, 'billed' => $billed, 'obj'=>$this);
-		$reshook = $hookmanager->executeHooks('diffHtmlStatus', $parameters, $object); // Note that $action and $object may have been modified by hook
+		$reshook = $hookmanager->executeHooks('LibStatut', $parameters, $object); // Note that $action and $object may have been modified by hook
 		if ($reshook > 0) {
 			return $hookmanager->resPrint;
 		}
@@ -779,15 +779,7 @@ class CommandeFournisseur extends CommonOrder
 		if ($user->rights->fournisseur->commande->lire) {
 			$label = '<u class="paddingrightonly">'.$langs->trans("SupplierOrder").'</u>';
 			if (isset($this->statut)) {
-				$statusText = ' '.$this->getLibStatut(5);
-				$parameters = array('obj' => $this);
-				$reshook = $hookmanager->executeHooks('moreHtmlStatus', $parameters, $object); // Note that $action and $object may have been modified by hook
-				if (empty($reshook)) {
-					$statusText .= $hookmanager->resPrint;
-				} else {
-					$statusText = $hookmanager->resPrint;
-				}
-				$label .= $statusText;
+				$label = ' '.$this->getLibStatut(5);
 			}
 			if (!empty($this->ref)) {
 				$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
