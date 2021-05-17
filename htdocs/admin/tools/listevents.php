@@ -42,7 +42,7 @@ if ($user->socid > 0) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies", "admin", "users", "other"));
+$langs->loadLangs(array("companies", "admin", "users", "other","withdrawals"));
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -285,7 +285,7 @@ if (!empty($result)) {
 		$param .= "&date_endyear=".urlencode($date_endyear);
 	}
 
-	$langs->load('withdrawals');
+	$center = '';
 	if (!empty($num)) {
 		$center = '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=purge">'.$langs->trans("Purge").'</a>';
 	}
@@ -293,7 +293,7 @@ if (!empty($result)) {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 
-	print_barre_liste($langs->trans("ListOfSecurityEvents"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, empty($center) ? '' : $center, $num, $nbtotalofrecords, 'setup', 0, '', '', $limit);
+	print_barre_liste($langs->trans("ListOfSecurityEvents"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $nbtotalofrecords, 'setup', 0, '', '', $limit);
 
 	if ($action == 'purge') {
 		$formquestion = array();
