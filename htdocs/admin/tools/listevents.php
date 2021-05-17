@@ -42,7 +42,7 @@ if ($user->socid > 0) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies", "admin", "users", "other"));
+$langs->loadLangs(array("companies", "admin", "users", "other","withdrawals"));
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -285,7 +285,7 @@ if ($result) {
 		$param .= "&date_endyear=".urlencode($date_endyear);
 	}
 
-	$langs->load('withdrawals');
+	$center = '';
 	if ($num) {
 		$center = '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=purge">'.$langs->trans("Purge").'</a>';
 	}
