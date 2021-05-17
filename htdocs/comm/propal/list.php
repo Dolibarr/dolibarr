@@ -1743,7 +1743,8 @@ if ($resql) {
 						$userstatic->entity = $val['entity'];
 						$userstatic->photo = $val['photo'];
 						$userstatic->login = $val['login'];
-						$userstatic->user_mobile = $val['user_mobile'];
+						$userstatic->office_phone = $val['office_phone'];
+						$userstatic->office_fax = $val['office_fax'];
 						$userstatic->user_mobile = $val['user_mobile'];
 						$userstatic->job = $val['job'];
 						$userstatic->gender = $val['gender'];
