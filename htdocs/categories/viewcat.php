@@ -768,12 +768,11 @@ if ($type == Categorie::TYPE_CONTACT) {
 					break;
 				}
 
-				$objsoc->fetch($contact->socid);
-
 				print "\t".'<tr class="oddeven">'."\n";
 				print '<td class="nowrap" valign="top">';
 				print $contact->getNomUrl(1, 'category');
-				if ($objsoc->id > 0) {
+				if ($contact->socid > 0) {
+					$objsoc->fetch($contact->socid);
 					print ' - ';
 					print $objsoc->getNomUrl(1, 'contact');
 				}
