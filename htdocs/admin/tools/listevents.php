@@ -245,7 +245,7 @@ if ($result) {
 	if ($limit > 0 && $limit != $conf->liste_limit) {
 		$param .= '&limit='.urlencode($limit);
 	}
-	if ($optioncss != '') {
+	if (!empty($optioncss)) {
 		$param .= '&optioncss='.urlencode($optioncss);
 	}
 	if ($search_code) {
