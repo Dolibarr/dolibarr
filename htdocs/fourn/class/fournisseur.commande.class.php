@@ -770,7 +770,7 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = 0)
 	{
-		global $langs, $conf, $user, $hookmanager;
+		global $langs, $conf, $user;
 
 		$result = '';
 
@@ -779,7 +779,7 @@ class CommandeFournisseur extends CommonOrder
 		if ($user->rights->fournisseur->commande->lire) {
 			$label = '<u class="paddingrightonly">'.$langs->trans("SupplierOrder").'</u>';
 			if (isset($this->statut)) {
-				$label = ' '.$this->getLibStatut(5);
+				$label .= ' '.$this->getLibStatut(5);
 			}
 			if (!empty($this->ref)) {
 				$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
