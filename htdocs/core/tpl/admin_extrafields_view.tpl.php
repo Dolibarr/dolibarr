@@ -117,13 +117,17 @@ if (is_array($extrafields->attributes[$elementtype]['type']) && count($extrafiel
 			}
 			print '</td>';
 		}
-		print '<td class="right nowraponall"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&attrname='.$key.'#formeditextrafield">'.img_edit().'</a>';
-		print '&nbsp; <a class="paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&attrname='.$key.'">'.img_delete().'</a></td>'."\n";
+		print '<td class="right nowraponall">';
+		print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&attrname='.$key.'#formeditextrafield">'.img_edit().'</a>';
+		print '&nbsp; <a class="paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&attrname='.$key.'">'.img_delete().'</a>';
+		print '</td>'."\n";
 		print "</tr>";
 	}
 } else {
-	$colspan = 13;
-	if (!empty($conf->multicompany->enabled))  $colspan++;
+	$colspan = 14;
+	if (!empty($conf->multicompany->enabled)) {
+		$colspan++;
+	}
 
 	print '<tr class="oddeven">';
 	print '<td class="opacitymedium" colspan="'.$colspan.'">';
