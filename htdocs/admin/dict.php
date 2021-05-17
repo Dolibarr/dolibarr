@@ -802,8 +802,8 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
             if ($value == 'price' || preg_match('/^amount/i', $value)) {
             	$_POST[$keycode] = price2num(GETPOST($keycode), 'MU');
             }
-            elseif ($value == 'taux' || $value == 'localtax1' || $value == 'localtax2') {
-            	$_POST[$keycode] = price2num(GETPOST($keycode), 8);
+            elseif ($value == 'taux' || $value == 'localtax1') {
+            	$_POST[$keycode] = price2num(GETPOST($keycode), 8);	// Note that localtax2 can be a list of rates separated by coma like X:Y:Z
             }
             elseif ($value == 'entity') {
             	$_POST[$keycode] = getEntity($tabname[$id]);
@@ -871,8 +871,8 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
             if ($field == 'price' || preg_match('/^amount/i', $field)) {
             	$_POST[$keycode] = price2num(GETPOST($keycode), 'MU');
             }
-            elseif ($field == 'taux' || $field == 'localtax1' || $field == 'localtax2') {
-            	$_POST[$keycode] = price2num(GETPOST($keycode), 8);
+            elseif ($field == 'taux' || $field == 'localtax1') {
+            	$_POST[$keycode] = price2num(GETPOST($keycode), 8);	// Note that localtax2 can be a list of rates separated by coma like X:Y:Z
             }
             elseif ($field == 'entity') {
             	$_POST[$keycode] = getEntity($tabname[$id]);
