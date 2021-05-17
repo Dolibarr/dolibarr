@@ -2201,7 +2201,7 @@ function top_menu_quickadd()
 {
 	global $langs, $conf, $db, $hookmanager, $user;
 	global $menumanager;
-	
+
 	$html = '';
 	// Define $dropDownQuickAddHtml
 	$dropDownQuickAddHtml = '<div class="dropdown-header bookmark-header center">';
