@@ -138,7 +138,11 @@ if (empty($reshook)) {
 				if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 					$object->entity = 0;
 				} else {
-					$object->entity = GETPOST("entity");
+					if ($conf->entity == 1 && $user->admin && !$user->entity) {		// Same permissions test than the one used to show the combo of entities into the form
+						$object->entity = GETPOSTISSET("entity") ? GETPOST("entity") : $conf->entity;
+					} else {
+						$object->entity = $conf->entity;
+					}
 				}
 
 				$db->begin();

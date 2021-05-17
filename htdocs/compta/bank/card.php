@@ -829,7 +829,7 @@ if ($action == 'create') {
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post" name="formsoc">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="update">';
-		print '<input type="hidden" name="id" value="'.$_REQUEST["id"].'">'."\n\n";
+		print '<input type="hidden" name="id" value="'.GETPOST("id", 'int').'">'."\n\n";
 
 		print dol_get_fiche_head(array(), 0, '', 0);
 

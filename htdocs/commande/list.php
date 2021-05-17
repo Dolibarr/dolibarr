@@ -9,7 +9,7 @@
  * Copyright (C) 2015-2018  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2016       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2016-2021  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Charlene Benke	        <charlie@patas-monkey.com>
  * Copyright (C) 2021	   	Anthony Berton			<anthony.berton@bb2a.fr>
  *
@@ -707,10 +707,10 @@ if ($resql) {
 		$param .= '&search_status='.urlencode($search_status);
 	}
 	if ($search_datecloture_start) {
-		$param .= '&search_datecloture_start='.urlencode($search_datecloture_start);
+		$param .= '&search_datecloture_startday='.dol_print_date($search_datecloture_start, '%d').'&search_datecloture_startmonth='.dol_print_date($search_datecloture_start, '%m').'&search_datecloture_startyear='.dol_print_date($search_datecloture_start, '%Y');
 	}
 	if ($search_datecloture_end) {
-		$param .= '&search_datecloture_end='.urlencode($search_datecloture_end);
+		$param .= '&search_datecloture_endday='.dol_print_date($search_datecloture_end, '%d').'&search_datecloture_endmonth='.dol_print_date($search_datecloture_end, '%m').'&search_datecloture_endyear='.dol_print_date($search_datecloture_end, '%Y');
 	}
 	if ($search_dateorder_start) {
 		$param .= '&search_dateorder_start_day='.dol_print_date($search_dateorder_start, '%d').'&search_dateorder_start_month='.dol_print_date($search_dateorder_start, '%m').'&search_dateorder_start_year='.dol_print_date($search_dateorder_start, '%Y');
@@ -806,16 +806,16 @@ if ($resql) {
 		$param .= '&search_billed='.urlencode($search_billed);
 	}
 	if ($search_fk_cond_reglement > 0) {
-		$param .= '&search_fk_cond_reglement='.$search_fk_cond_reglement;
+		$param .= '&search_fk_cond_reglement='.urlencode($search_fk_cond_reglement);
 	}
 	if ($search_fk_shipping_method > 0) {
-		$param .= '&search_fk_shipping_method='.$search_fk_shipping_method;
+		$param .= '&search_fk_shipping_method='.urlencode($search_fk_shipping_method);
 	}
 	if ($search_fk_mode_reglement > 0) {
-		$param .= '&search_fk_mode_reglement='.$search_fk_mode_reglement;
+		$param .= '&search_fk_mode_reglement='.urlencode($search_fk_mode_reglement);
 	}
 	if ($search_fk_input_reason > 0) {
-		$param .= '&search_fk_input_reason='.$search_fk_input_reason;
+		$param .= '&search_fk_input_reason='.urlencode($search_fk_input_reason);
 	}
 
 	// Add $param from extra fields
@@ -888,7 +888,6 @@ if ($resql) {
 	}
 
 	if ($massaction == 'createbills') {
-		//var_dump($_REQUEST);
 		print '<input type="hidden" name="massaction" value="confirm_createbills">';
 
 		print '<table class="noborder" width="100%" >';

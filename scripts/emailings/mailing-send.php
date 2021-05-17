@@ -269,6 +269,12 @@ if ($resql) {
 
 						$substitutionisok = true;
 
+						$moreinheader = '';
+						if (preg_match('/__UNSUBSCRIBE__/', $message)) {
+							$moreinheader = "List-Unsubscribe: <__UNSUBSCRIBE_URL__>\n";
+							$moreinheader = make_substitutions($moreinheader, $substitutionarray);
+						}
+
 						$arr_file = array();
 						$arr_mime = array();
 						$arr_name = array();
@@ -285,7 +291,7 @@ if ($resql) {
 						}
 						// Fabrication du mail
 						$trackid = 'emailing-'.$obj->fk_mailing.'-'.$obj->rowid;
-						$mail = new CMailFile($newsubject, $sendto, $from, $newmessage, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $errorsto, $arr_css, $trackid, '', 'emailing');
+						$mail = new CMailFile($newsubject, $sendto, $from, $newmessage, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $errorsto, $arr_css, $trackid, $moreinheader, 'emailing');
 
 						if ($mail->error) {
 							$res = 0;
