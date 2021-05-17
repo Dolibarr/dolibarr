@@ -245,7 +245,7 @@ if (!empty($result)) {
 	if ($limit > 0 && $limit != $conf->liste_limit) {
 		$param .= '&limit='.urlencode($limit);
 	}
-	if (!empty($optioncss) && $optioncss != '') {
+	if ($optioncss != '') {
 		$param .= '&optioncss='.urlencode($optioncss);
 	}
 	if ($search_code) {
@@ -266,22 +266,22 @@ if (!empty($result)) {
 	if ($search_prefix_session) {
 		$param .= '&search_prefix_session='.urlencode($search_prefix_session);
 	}
-	if (!empty($date_startmonth)) {
+	if ($date_startmonth) {
 		$param .= "&date_startmonth=".urlencode($date_startmonth);
 	}
-	if (!empty($date_startday)) {
+	if ($date_startday) {
 		$param .= "&date_startday=".urlencode($date_startday);
 	}
-	if (!empty($date_startyear)) {
+	if ($date_startyear) {
 		$param .= "&date_startyear=".urlencode($date_startyear);
 	}
-	if (!empty($date_endmonth)) {
+	if ($date_endmonth) {
 		$param .= "&date_endmonth=".urlencode($date_endmonth);
 	}
-	if (!empty($date_endday)) {
+	if ($date_endday) {
 		$param .= "&date_endday=".urlencode($date_endday);
 	}
-	if (!empty($date_endyear)) {
+	if ($date_endyear) {
 		$param .= "&date_endyear=".urlencode($date_endyear);
 	}
 
