@@ -2560,14 +2560,16 @@ class Societe extends CommonObject
 			}
 		}
 		$label .= '<br><b>'.$langs->trans('Email').':</b> '.$this->email;
-		$phonelist = array();
-		if ($this->phone) {
-			$phonelist[] = dol_print_phone($this->phone, $this->country_code, $this->id, 0, '', '&nbsp', 'phone');
+		if (!empty($this->phone) || !empty($this->fax)) {
+			$phonelist = array();
+			if ($this->phone) {
+				$phonelist[] = dol_print_phone($this->phone, $this->country_code, $this->id, 0, '', '&nbsp', 'phone');
+			}
+			if ($this->fax) {
+				$phonelist[] = dol_print_phone($this->fax, $this->country_code, $this->id, 0, '', '&nbsp', 'fax');
+			}
+			$label .= '<br><b>'.$langs->trans('Phone').':</b> '.implode('&nbsp;', $phonelist);
 		}
-		if ($this->fax) {
-			$phonelist[] = dol_print_phone($this->fax, $this->country_code, $this->id, 0, '', '&nbsp', 'fax');
-		}
-		$label .= '<br><b>'.$langs->trans('Phone').':</b> '.implode('&nbsp;', $phonelist);
 		if (!empty($this->address)) {
 			$label .= '<br><b>'.$langs->trans("Address").':</b> '.dol_format_address($this, 1, ' ', $langs);
 		}
