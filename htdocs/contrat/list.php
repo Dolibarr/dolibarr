@@ -274,6 +274,10 @@ if ($search_dfyear > 0 && $search_op2df)
 	elseif ($search_op2df == '>=') $sql .= " HAVING MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") >= '".$db->idate(dol_get_first_day($search_dfyear, $search_dfmonth, false))."'";
 	else $sql .= " HAVING MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") <= '".$db->idate(dol_get_last_day($search_dfyear, $search_dfmonth, false))."' AND MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") >= '".$db->idate(dol_get_first_day($search_dfyear, $search_dfmonth, false))."'";
 }
+// Add HAVING from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= $search_dfyear > 0 && $search_op2df ? $hookmanager->resPrint : (' HAVING 1=1 ' . $hookmanager->resPrint);
 $sql .= $db->order($sortfield, $sortorder);
 //print $sql;
 
