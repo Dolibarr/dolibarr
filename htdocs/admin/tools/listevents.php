@@ -234,7 +234,7 @@ $nbtotalofrecords = '';
 $sql .= $db->plimit($conf->liste_limit + 1, $offset);
 //print $sql;
 $result = $db->query($sql);
-if (!empty($result)) {
+if ($result) {
 	$num = $db->num_rows($result);
 	$i = 0;
 
