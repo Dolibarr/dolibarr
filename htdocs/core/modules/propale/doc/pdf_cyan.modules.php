@@ -424,7 +424,7 @@ class pdf_cyan extends ModelePDFPropales
 						$salereparray = $object->thirdparty->getSalesRepresentatives($user);
 						$salerepobj = new User($this->db);
 						$salerepobj->fetch($salereparray[0]['id']);
-						if (!empty($salerepobj->signature)) $notetoshow = dol_concatdesc($notetoshow, $salerepobj->signature);
+						if (!empty($salerepobj->signature)) $notetoshow .= dol_concatdesc($notetoshow, $salerepobj->signature);
 					}
 				}
 
