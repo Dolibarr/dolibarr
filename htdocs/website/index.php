@@ -2390,6 +2390,18 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 					}
 				}
 
+				// Now add sitempas extension for news
+				// TODO When adding and when not ?
+				/*<news:news>
+				   <news:publication>
+					 <news:name>The Example Times</news:name>
+					 <news:language>en</news:language>
+				   </news:publication>
+				   <news:publication_date>2008-12-23</news:publication_date>
+					 <news:title>Companies A, B in Merger Talks</news:title>
+					</news:news>
+				*/
+
 				$root->appendChild($url);
 				$i++;
 			}

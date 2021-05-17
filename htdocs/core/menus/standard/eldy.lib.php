@@ -227,6 +227,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	$tmpentry = array(
 		'enabled'=>(!empty($conf->propal->enabled)
 			|| !empty($conf->commande->enabled)
+			|| !empty($conf->fournisseur->enabled)
 			|| !empty($conf->supplier_proposal->enabled)
 			|| !empty($conf->supplier_order->enabled)
 			|| !empty($conf->contrat->enabled)
@@ -235,6 +236,8 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'perms'=>(!empty($user->rights->propal->lire)
 			|| !empty($user->rights->commande->lire)
 			|| !empty($user->rights->supplier_proposal->lire)
+			|| !empty($user->rights->fournisseur->lire)
+			|| !empty($user->rights->fournisseur->commande->lire)
 			|| !empty($user->rights->supplier_order->lire)
 			|| !empty($user->rights->contrat->lire)
 			|| !empty($user->rights->ficheinter->lire)
