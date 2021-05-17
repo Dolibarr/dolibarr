@@ -71,7 +71,7 @@ class Users extends DolibarrApi
 
 	    $obj_ret = array();
 
-		if (!DolibarrApiAccess::$user->rights->user->user->lire) {
+		if (!DolibarrApiAccess::$user->rights->user->user->lire && !DolibarrApiAccess::$user->admin) {
 	        throw new RestException(401, "You are not allowed to read list of users");
 	    }
 
@@ -142,9 +142,9 @@ class Users extends DolibarrApi
 	 */
     public function get($id, $includepermissions = 0)
     {
-		//if (!DolibarrApiAccess::$user->rights->user->user->lire) {
-			//throw new RestException(401);
-		//}
+		if (!DolibarrApiAccess::$user->rights->user->user->lire  && !DolibarrApiAccess::$user->admin) {
+			throw new RestException(401);
+		}
 
 		$result = $this->useraccount->fetch($id);
 		if (!$result)
@@ -208,9 +208,9 @@ class Users extends DolibarrApi
     public function post($request_data = null)
     {
 	    // check user authorization
-	    //if(! DolibarrApiAccess::$user->rights->user->creer) {
-	    //   throw new RestException(401, "User creation not allowed");
-	    //}
+	    if(! DolibarrApiAccess::$user->rights->user->creer && !DolibarrApiAccess::$user->admin) {
+			throw new RestException(401, "User creation not allowed");
+	    }
 	    // check mandatory fields
 	    /*if (!isset($request_data["login"]))
 	        throw new RestException(400, "login field missing");
@@ -242,9 +242,9 @@ class Users extends DolibarrApi
 	 */
     public function put($id, $request_data = null)
     {
-		//if (!DolibarrApiAccess::$user->rights->user->user->creer) {
-			//throw new RestException(401);
-		//}
+		if (!DolibarrApiAccess::$user->rights->user->user->creer && !DolibarrApiAccess::$user->admin) {
+			throw new RestException(401);
+		}
 
 		$result = $this->useraccount->fetch($id);
 		if (!$result)
@@ -299,7 +299,7 @@ class Users extends DolibarrApi
 	{
 		$obj_ret = array();
 
-		if (!DolibarrApiAccess::$user->rights->user->user->lire) {
+		if (!DolibarrApiAccess::$user->rights->user->user->lire && !DolibarrApiAccess::$user->admin) {
 			throw new RestException(401);
 		}
 
@@ -334,9 +334,9 @@ class Users extends DolibarrApi
 
 		global $conf;
 
-		//if (!DolibarrApiAccess::$user->rights->user->user->supprimer) {
-			//throw new RestException(401);
-		//}
+		if (!DolibarrApiAccess::$user->rights->user->user->supprimer && !DolibarrApiAccess::$user->admin) {
+			throw new RestException(401);
+		}
 		$result = $this->useraccount->fetch($id);
 		if (!$result)
 		{
@@ -389,7 +389,7 @@ class Users extends DolibarrApi
 
 	    $obj_ret = array();
 
-		if (!DolibarrApiAccess::$user->rights->user->group_advance->read) {
+		if (!DolibarrApiAccess::$user->rights->user->group_advance->read && !DolibarrApiAccess::$user->admin) {
 	        throw new RestException(401, "You are not allowed to read list of groups");
 	    }
 
@@ -463,7 +463,7 @@ class Users extends DolibarrApi
     {
 	    global $db, $conf;
 
-		if (!DolibarrApiAccess::$user->rights->user->group_advance->read) {
+		if (!DolibarrApiAccess::$user->rights->user->group_advance->read && !DolibarrApiAccess::$user->admin) {
 	        throw new RestException(401, "You are not allowed to read groups");
 	    }
 
@@ -486,9 +486,9 @@ class Users extends DolibarrApi
 	 */
     public function delete($id)
     {
-		//if (!DolibarrApiAccess::$user->rights->user->user->supprimer) {
-			//throw new RestException(401);
-		//}
+		if (!DolibarrApiAccess::$user->rights->user->user->supprimer && !DolibarrApiAccess::$user->admin) {
+			throw new RestException(401);
+		}
 		$result = $this->useraccount->fetch($id);
 		if (!$result)
 		{
