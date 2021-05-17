@@ -157,7 +157,7 @@ $arrayfields = array(
 	'state.nom'=>array('label'=>"StateShort", 'checked'=>0),
 	'country.code_iso'=>array('label'=>"Country", 'checked'=>0),
 	'typent.code'=>array('label'=>"ThirdPartyType", 'checked'=>$checkedtypetiers),
-	'p.date'=>array('label'=>"Date", 'checked'=>1),
+	'p.date'=>array('label'=>"DatePropal", 'checked'=>1),
 	'p.fin_validite'=>array('label'=>"DateEnd", 'checked'=>1),
 	'p.date_livraison'=>array('label'=>"DeliveryDate", 'checked'=>0),
 	'ava.rowid'=>array('label'=>"AvailabilityPeriod", 'checked'=>0),
