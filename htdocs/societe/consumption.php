@@ -254,7 +254,7 @@ if ($type_element == 'propal') {
 	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND d.fk_propal = c.rowid";
 	$where .= " AND c.entity = ".$conf->entity;
-	$datePrint = 'c.datep';
+	$dateprint = 'c.datep';
 	$doc_number = 'c.ref';
 	$thirdTypeSelect = 'customer';
 }
@@ -352,7 +352,7 @@ if (!empty($sql_select)) {
 		$sql .= " AND ".$doc_number." LIKE '%".$db->escape($sref)."%'";
 	}
 	if ($sprod_fulldescr) {
-		$sql .= " AND (d.description LIKE '%".$db->escape($sprod_fulldescr)."%'";
+		$sql .= " AND (d.description LIKE '%".$db->escape($sprod_fulldescr)."%' OR d.description LIKE '%".$db->escape(dol_htmlentities($sprod_fulldescr))."%'";
 		if (GETPOST('type_element') != 'fichinter') {
 			$sql .= " OR p.ref LIKE '%".$db->escape($sprod_fulldescr)."%'";
 		}

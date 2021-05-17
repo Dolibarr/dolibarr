@@ -69,7 +69,6 @@ DontDowngradeSuperAdmin=Solo un superadministrador puede degradar a un superadmi
 UseTypeFieldToChange=Use el campo Tipo para cambiar
 OpenIDURL=URL de OpenID
 LoginUsingOpenID=Utilizar OpenID para ingresar
-ExpectedWorkedHours=Horas trabajadas previstas por semana
 ColorUser=Color del usuario
 DisabledInMonoUserMode=Deshabilitado en modo mantenimiento
 UserAccountancyCode=Código contable del usuario

@@ -103,11 +103,13 @@ class FormTicket
 	 */
 	public function __construct($db)
 	{
+		global $conf;
+
 		$this->db = $db;
 
 		$this->action = 'add';
 
-		$this->withcompany = 1;
+		$this->withcompany = $conf->societe->enabled ? 1 : 0;
 		$this->withfromsocid = 0;
 		$this->withfromcontactid = 0;
 		//$this->withthreadid=0;

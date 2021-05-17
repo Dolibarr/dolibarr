@@ -48,6 +48,7 @@
 	--amountremaintopaybackcolor:none;
 	--productlinestockod: #002200;
 	--productlinestocktoolow: #884400;
+	--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #fff, #fff, #fff, #e4efe8);
 }
 
 <?php
@@ -93,6 +94,7 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 	            --amountremaintopaycolor:rgb(252,84,91);
 	            --amountpaymentcomplete:rgb(101,184,77);
 	            --amountremaintopaybackcolor:rbg(245,130,46);
+				--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #000, #000, #000, #274231);
 	      }
 
 		body, button {
@@ -3217,6 +3219,8 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 
 .smallpaddingimp {
 	padding: 4px !important;
+	padding-left: 7px !important;
+	padding-right: 7px !important;
 }
 input.button[name="upload"] {
 	padding: 4px !important;
@@ -4421,7 +4425,12 @@ div.backgreypublicpayment { background-color: #f0f0f0; padding: 20px; border-bot
 	opacity: 0.3;
 }
 #dolpaymenttable { min-width: 320px; font-size: 16px; }	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */
-#tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; padding: 20px; }
+#tablepublicpayment {
+	border: 1px solid #CCCCCC !important;
+	width: 100%;
+	padding: 20px;
+	margin-bottom: 25px;
+}
 #tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
 #tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }
 #tablepublicpayment tr.liste_total td { border-top: none; }
@@ -4665,7 +4674,7 @@ table.dp {
 
 
 /* ============================================================================== */
-/*  Afficher/cacher                                                               */
+/*  Show/Hide                                                                     */
 /* ============================================================================== */
 
 div.visible {
@@ -4781,7 +4790,6 @@ span.websitebuttonsitepreviewdisabled img, a.websitebuttonsitepreviewdisabled im
 #divbodywebsite section p {
 	margin: unset;
 }
-
 
 
 /* ============================================================================== */
@@ -6755,8 +6763,14 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 
 
 /* ============================================================================== */
-/* For copypaste feature                                                          */
+/* For copy-paste feature                                                         */
 /* ============================================================================== */
+
+span.clipboardCPValue.hidewithsize {
+	width: 0 !important;
+	display: inline-block;
+	color: transparent;
+}
 
 .clipboardCPShowOnHover .clipboardCPButton {
 	display: none;
@@ -6983,6 +6997,10 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 
 	input#addedfile {
 		width: 95%;
+	}
+
+	#divbodywebsite {
+		word-break: break-all;
 	}
 }
 

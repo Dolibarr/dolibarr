@@ -110,7 +110,6 @@ NewCheckReceipt=Nuevo descuento
 NewCheckDeposit=Nuevo depósito de cheques
 NewCheckDepositOn=Crear recibo para depósito en cuenta:%s
 NoWaitingChecks=No hay cheques a la espera de depósito.
-DateChequeReceived=Consultar fecha de recepción
 NbOfCheques=No. de cheques
 PaySocialContribution=Pagar un impuesto social/fiscal
 DeleteSocialContribution=Eliminar un pago de impuestos sociales o fiscales

@@ -11,7 +11,7 @@
  * Copyright (C) 2011-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -160,18 +160,14 @@ if (empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) {
 
 $tabhelp = array();
 $tabhelp[25] = array(
-	'topic'=>$helpsubstit,
+	'topic'=>'<span class="small">'.$helpsubstit.'</span>',
 	'joinfiles'=>$langs->trans('AttachMainDocByDefault'),
-	'content'=>$helpsubstit,
-	'content_lines'=>$helpsubstitforlines,
+	'content'=>'<span class="small">'.$helpsubstit.'</span>',
+	'content_lines'=>'<span class="small">'.$helpsubstitforlines.'</span>',
 	'type_template'=>$langs->trans("TemplateForElement"),
 	'private'=>$langs->trans("TemplateIsVisibleByOwnerOnly"),
 	'position'=>$langs->trans("PositionIntoComboList")
 );
-
-// List of check for fields (NOT USED YET)
-$tabfieldcheck = array();
-$tabfieldcheck[25] = array();
 
 
 $elementList = array();
@@ -337,13 +333,13 @@ if (empty($reshook)) {
 			}
 		}
 
-		// Si verif ok et action add, on ajoute la ligne
+		// If previous test is ok action is add, we add the line
 		if ($ok && GETPOST('actionadd')) {
 			// Add new entry
 			$sql = "INSERT INTO ".$tabname[$id]." (";
 			// List of fields
 			$sql .= $tabfieldinsert[$id];
-			$sql .= ",active)";
+			$sql .= ", active, enabled)";
 			$sql .= " VALUES(";
 
 			// List of values
@@ -394,7 +390,7 @@ if (empty($reshook)) {
 				}
 				$i++;
 			}
-			$sql .= ", 1)";
+			$sql .= ", 1, 1)";
 
 			dol_syslog("actionadd", LOG_DEBUG);
 			$result = $db->query($sql);

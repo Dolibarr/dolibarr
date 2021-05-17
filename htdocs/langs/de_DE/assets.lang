@@ -61,5 +61,7 @@ MenuListTypeAssets = Liste
 #
 # Module
 #
+Asset=Anlagegut
 NewAssetType=neue Anlagenart
 NewAsset=neue Anlage
+ConfirmDeleteAsset=Möchten Sie dieses Asset wirklich löschen?

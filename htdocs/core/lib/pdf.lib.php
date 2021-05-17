@@ -1231,7 +1231,7 @@ function pdf_writeLinkedObjects(&$pdf, $object, $outputlangs, $posx, $posy, $w, 
 /**
  *	Output line description into PDF
  *
- *  @param  TCPDF				$pdf               PDF object
+ *  @param  TCPDF			$pdf               	PDF object
  *	@param	Object			$object				Object
  *	@param	int				$i					Current line number
  *  @param  Translate		$outputlangs		Object lang for output

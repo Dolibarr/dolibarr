@@ -388,6 +388,18 @@ class pdf_squille extends ModelePdfReception
 					// Description of product line
 					$curX = $this->posxdesc - 1;
 
+					// The desc of line is not store into reception, so we force it to the value of product.
+					/*
+					if (empty($object->lines[0]->desc)) {
+						// TODO We must get value from fk_commendefourndet
+						$sqldesc = 'SELECT description FROM '.MAIN_DB_PREFIX.' WHERE rowid = '.((int) $object->lines[0]->fk_commandefourndet);
+						$resqldesc = $this->db->query($sqldesc);
+						if ($resqldesc) {
+							$objdesc = $this->db->fetch_object($resqldesc);
+							$object->lines[0]->desc = $objdesc->description;
+						}
+					}*/
+
 					$pdf->startTransaction();
 					pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->posxpicture - $curX, 3, $curX, $curY, $hideref, $hidedesc);
 
@@ -934,7 +946,7 @@ class pdf_squille extends ModelePdfReception
 			$pdf->SetTextColor(0, 0, 0);
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($posx, $posy - 5);
-			$pdf->MultiCell(66, 5, $outputlangs->transnoentities("Sender").":", 0, 'L');
+			$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("Sender"), 0, 'L');
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetFillColor(230, 230, 230);
 			$pdf->MultiCell($widthrecbox, $hautcadre, "", 0, 'R', 1);
@@ -988,7 +1000,7 @@ class pdf_squille extends ModelePdfReception
 			$pdf->SetTextColor(0, 0, 0);
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($posx + 2, $posy - 5);
-			$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("Recipient").":", 0, 'L');
+			$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("Recipient"), 0, 'L');
 			$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
 
 

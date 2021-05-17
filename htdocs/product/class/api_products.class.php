@@ -73,15 +73,16 @@ class Products extends DolibarrApi
 	 * @param  int    $includestockdata    Load also information about stock (slower)
 	 * @param  bool   $includesubproducts  Load information about subproducts
 	 * @param  bool   $includeparentid     Load also ID of parent product (if product is a variant of a parent product)
+	 * @param  bool   $includetrans		   Load also the translations of product label and description
 	 * @return array|mixed                 Data without useless information
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 403
 	 * @throws RestException 404
 	 */
-	public function get($id, $includestockdata = 0, $includesubproducts = false, $includeparentid = false)
+	public function get($id, $includestockdata = 0, $includesubproducts = false, $includeparentid = false, $includetrans = false)
 	{
-		return $this->_fetch($id, '', '', '', $includestockdata, $includesubproducts, $includeparentid);
+		return $this->_fetch($id, '', '', '', $includestockdata, $includesubproducts, $includeparentid, false, $includetrans);
 	}
 
 	/**
@@ -93,6 +94,7 @@ class Products extends DolibarrApi
 	 * @param  int    $includestockdata   Load also information about stock (slower)
 	 * @param  bool   $includesubproducts Load information about subproducts
 	 * @param  bool   $includeparentid    Load also ID of parent product (if product is a variant of a parent product)
+	 * @param  bool   $includetrans		  Load also the translations of product label and description
 	 *
 	 * @return array|mixed                 Data without useless information
 	 *
@@ -102,9 +104,9 @@ class Products extends DolibarrApi
 	 * @throws RestException 403
 	 * @throws RestException 404
 	 */
-	public function getByRef($ref, $includestockdata = 0, $includesubproducts = false, $includeparentid = false)
+	public function getByRef($ref, $includestockdata = 0, $includesubproducts = false, $includeparentid = false, $includetrans = false)
 	{
-		return $this->_fetch('', $ref, '', '', $includestockdata, $includesubproducts, $includeparentid);
+		return $this->_fetch('', $ref, '', '', $includestockdata, $includesubproducts, $includeparentid, false, $includetrans);
 	}
 
 	/**
@@ -116,6 +118,7 @@ class Products extends DolibarrApi
 	 * @param  int    $includestockdata   Load also information about stock (slower)
 	 * @param  bool   $includesubproducts Load information about subproducts
 	 * @param  bool   $includeparentid    Load also ID of parent product (if product is a variant of a parent product)
+	 * @param  bool   $includetrans		  Load also the translations of product label and description
 	 *
 	 * @return array|mixed Data without useless information
 	 *
@@ -125,9 +128,9 @@ class Products extends DolibarrApi
 	 * @throws RestException 403
 	 * @throws RestException 404
 	 */
-	public function getByRefExt($ref_ext, $includestockdata = 0, $includesubproducts = false, $includeparentid = false)
+	public function getByRefExt($ref_ext, $includestockdata = 0, $includesubproducts = false, $includeparentid = false, $includetrans = false)
 	{
-		return $this->_fetch('', '', $ref_ext, '', $includestockdata, $includesubproducts, $includeparentid);
+		return $this->_fetch('', '', $ref_ext, '', $includestockdata, $includesubproducts, $includeparentid, false, $includetrans);
 	}
 
 	/**
@@ -139,6 +142,7 @@ class Products extends DolibarrApi
 	 * @param  int    $includestockdata   Load also information about stock (slower)
 	 * @param  bool   $includesubproducts Load information about subproducts
 	 * @param  bool   $includeparentid    Load also ID of parent product (if product is a variant of a parent product)
+	 * @param  bool   $includetrans		  Load also the translations of product label and description
 	 *
 	 * @return array|mixed Data without useless information
 	 *
@@ -148,9 +152,9 @@ class Products extends DolibarrApi
 	 * @throws RestException 403
 	 * @throws RestException 404
 	 */
-	public function getByBarcode($barcode, $includestockdata = 0, $includesubproducts = false, $includeparentid = false)
+	public function getByBarcode($barcode, $includestockdata = 0, $includesubproducts = false, $includeparentid = false, $includetrans = false)
 	{
-		return $this->_fetch('', '', '', $barcode, $includestockdata, $includesubproducts, $includeparentid);
+		return $this->_fetch('', '', '', $barcode, $includestockdata, $includesubproducts, $includeparentid, false, $includetrans);
 	}
 
 	/**
@@ -167,9 +171,10 @@ class Products extends DolibarrApi
 	 * @param  string $sqlfilters 			Other criteria to filter answers separated by a comma. Syntax example "(t.tobuy:=:0) and (t.tosell:=:1)"
 	 * @param  bool   $ids_only   			Return only IDs of product instead of all properties (faster, above all if list is long)
 	 * @param  int    $variant_filter   	Use this param to filter list (0 = all, 1=products without variants, 2=parent of variants, 3=variants only)
+	 * @param  bool   $pagination_data   	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0
 	 * @return array                		Array of product objects
 	 */
-	public function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $ids_only = false, $variant_filter = 0)
+	public function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $ids_only = false, $variant_filter = 0, $pagination_data = false)
 	{
 		global $db, $conf;
 
@@ -221,6 +226,9 @@ class Products extends DolibarrApi
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
+		//this query will return total products with the filters given
+		$sqlTotals =  str_replace('SELECT t.rowid, t.ref, t.ref_ext', 'SELECT count(t.rowid) as total', $sql);
+
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
 			if ($page < 0) {
@@ -254,6 +262,24 @@ class Products extends DolibarrApi
 		if (!count($obj_ret)) {
 			throw new RestException(404, 'No product found');
 		}
+
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total/$limit),
+				'limit' => $limit
+			];
+		}
+
 		return $obj_ret;
 	}
 
@@ -1873,6 +1899,8 @@ class Products extends DolibarrApi
 		// phpcs:enable
 		$object = parent::_cleanObjectDatas($object);
 
+		unset($object->statut);
+
 		unset($object->regeximgext);
 		unset($object->price_by_qty);
 		unset($object->prices_by_qty_id);
@@ -1884,8 +1912,39 @@ class Products extends DolibarrApi
 		unset($object->firstname);
 		unset($object->lastname);
 		unset($object->civility_id);
+		unset($object->contact);
+		unset($object->contact_id);
+		unset($object->thirdparty);
+		unset($object->user);
+		unset($object->origin);
+		unset($object->origin_id);
+		unset($object->fourn_pu);
+		unset($object->fourn_price_base_type);
+		unset($object->fourn_socid);
+		unset($object->ref_fourn);
+		unset($object->ref_supplier);
+		unset($object->product_fourn_id);
+		unset($object->fk_project);
 
+		unset($object->mode_reglement_id);
+		unset($object->cond_reglement_id);
+		unset($object->demand_reason_id);
+		unset($object->transport_mode_id);
+		unset($object->cond_reglement);
+		unset($object->shipping_method_id);
+		unset($object->model_pdf);
+		unset($object->note);
+
+		unset($object->nbphoto);
 		unset($object->recuperableonly);
+		unset($object->multiprices_recuperableonly);
+		unset($object->tva_npr);
+		unset($object->lines);
+		unset($object->fk_bank);
+		unset($object->fk_account);
+
+		unset($object->supplierprices);	// Mut use another API to get them
+
 
 		return $object;
 	}
@@ -1920,14 +1979,15 @@ class Products extends DolibarrApi
 	 * @param  int    $includestockdata   		Load also information about stock (slower)
 	 * @param  bool   $includesubproducts 		Load information about subproducts (if product is a virtual product)
 	 * @param  bool   $includeparentid    		Load also ID of parent product (if product is a variant of a parent product)
-	 * @param  bool   $includeifobjectisused	Check if product object is used and set is_object_used with result.
+	 * @param  bool   $includeifobjectisused	Check if product object is used and set property 'is_object_used' with result.
+	 * @param  bool   $includetrans				Load also the translations of product label and description
 	 * @return array|mixed                		Data without useless information
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 403
 	 * @throws RestException 404
 	 */
-	private function _fetch($id, $ref = '', $ref_ext = '', $barcode = '', $includestockdata = 0, $includesubproducts = false, $includeparentid = false, $includeifobjectisused = false)
+	private function _fetch($id, $ref = '', $ref_ext = '', $barcode = '', $includestockdata = 0, $includesubproducts = false, $includeparentid = false, $includeifobjectisused = false, $includetrans = false)
 	{
 		if (empty($id) && empty($ref) && empty($ref_ext) && empty($barcode)) {
 			throw new RestException(400, 'bad value for parameter id, ref, ref_ext or barcode');
@@ -1939,7 +1999,7 @@ class Products extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$result = $this->product->fetch($id, $ref, $ref_ext, $barcode);
+		$result = $this->product->fetch($id, $ref, $ref_ext, $barcode, 0, 0, ($includetrans ? 0 : 1));
 		if (!$result) {
 			throw new RestException(404, 'Product not found');
 		}

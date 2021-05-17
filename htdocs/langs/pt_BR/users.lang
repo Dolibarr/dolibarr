@@ -88,7 +88,6 @@ UseTypeFieldToChange=Use campo Tipo para mudar
 OpenIDURL=URL do OpenID
 LoginUsingOpenID=Usar o OpenID para efetuar o login
 WeeklyHours=Horas trabalhadas (por semana)
-ExpectedWorkedHours=Horas trabalhadas esperadas por semana
 ColorUser=Cor do usuario
 UserAccountancyCode=Código de contabilidade do usuário
 UserLogoff=Usuário desconetado

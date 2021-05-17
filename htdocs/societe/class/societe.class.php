@@ -480,6 +480,7 @@ class Societe extends CommonObject
 
 	public $remise_percent;
 	public $remise_supplier_percent;
+
 	public $mode_reglement_supplier_id;
 	public $cond_reglement_supplier_id;
 	public $transport_mode_supplier_id;
@@ -1636,14 +1637,14 @@ class Societe extends CommonObject
 		$sql .= ', s.fk_typent as typent_id';
 		$sql .= ', s.fk_effectif as effectif_id';
 		$sql .= ', s.fk_forme_juridique as forme_juridique_code';
-		$sql .= ', s.webservices_url, s.webservices_key';
+		$sql .= ', s.webservices_url, s.webservices_key, s.model_pdf';
 		if (empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
 			$sql .= ', s.accountancy_code_buy, s.accountancy_code_sell';
 		} else {
 			$sql .= ', spe.accountancy_code_buy, spe.accountancy_code_sell';
 		}
 		$sql .= ', s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.parent, s.barcode';
-		$sql .= ', s.fk_departement as state_id, s.fk_pays as country_id, s.fk_stcomm, s.remise_supplier, s.mode_reglement, s.cond_reglement, s.transport_mode';
+		$sql .= ', s.fk_departement as state_id, s.fk_pays as country_id, s.fk_stcomm, s.mode_reglement, s.cond_reglement, s.transport_mode';
 		$sql .= ', s.fk_account, s.tva_assuj';
 		$sql .= ', s.mode_reglement_supplier, s.cond_reglement_supplier, s.transport_mode_supplier';
 		$sql .= ', s.localtax1_assuj, s.localtax1_value, s.localtax2_assuj, s.localtax2_value, s.fk_prospectlevel, s.default_lang, s.logo, s.logo_squarred';
@@ -1659,7 +1660,11 @@ class Societe extends CommonObject
 		$sql .= ', st.libelle as stcomm, st.picto as stcomm_picto';
 		$sql .= ', te.code as typent_code';
 		$sql .= ', i.libelle as label_incoterms';
-		$sql .= ', sr.remise_client, model_pdf';
+		if (empty($conf->multicompany->enabled)) {
+			$sql .= ', s.remise_client, s.remise_supplier';
+		} else {
+			$sql .= ', sr.remise_client, sr2.remise_supplier';
+		}
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 		if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
@@ -1672,8 +1677,12 @@ class Societe extends CommonObject
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_regions as r ON d.fk_region = r.code_region ';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as te ON s.fk_typent = te.id';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON s.fk_incoterms = i.rowid';
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_remise as sr ON sr.rowid = (SELECT MAX(rowid) FROM '.MAIN_DB_PREFIX.'societe_remise WHERE fk_soc = s.rowid AND entity IN ('.getEntity('discount').'))';
-
+		// With default setup, llx_societe_remise is a history table in default setup and current value is in llx_societe.
+		// We use it for real value when multicompany is on. A better place would be into llx_societe_perentity.
+		if (!empty($conf->multicompany->enabled)) {
+			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_remise as sr ON sr.rowid = (SELECT MAX(rowid) FROM '.MAIN_DB_PREFIX.'societe_remise WHERE fk_soc = s.rowid AND entity IN ('.getEntity('discount').'))';
+			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_remise_supplier as sr2 ON sr2.rowid = (SELECT MAX(rowid) FROM '.MAIN_DB_PREFIX.'societe_remise_supplier WHERE fk_soc = s.rowid AND entity IN ('.getEntity('discount').'))';
+		}
 		$sql .= ' WHERE s.entity IN ('.getEntity($this->element).')';
 		if ($rowid) {
 			$sql .= ' AND s.rowid = '.((int) $rowid);
@@ -1809,6 +1818,7 @@ class Societe extends CommonObject
 
 				$this->remise_percent = $obj->remise_client ? price2num($obj->remise_client) : 0; // 0.000000 must be 0
 				$this->remise_supplier_percent = $obj->remise_supplier;
+
 				$this->mode_reglement_id 	= $obj->mode_reglement;
 				$this->cond_reglement_id 	= $obj->cond_reglement;
 				$this->transport_mode_id 	= $obj->transport_mode;
@@ -2560,7 +2570,19 @@ class Societe extends CommonObject
 			}
 		}
 		$label .= '<br><b>'.$langs->trans('Email').':</b> '.$this->email;
-		if (!empty($this->country_code)) {
+		if (!empty($this->phone) || !empty($this->fax)) {
+			$phonelist = array();
+			if ($this->phone) {
+				$phonelist[] = dol_print_phone($this->phone, $this->country_code, $this->id, 0, '', '&nbsp', 'phone');
+			}
+			if ($this->fax) {
+				$phonelist[] = dol_print_phone($this->fax, $this->country_code, $this->id, 0, '', '&nbsp', 'fax');
+			}
+			$label .= '<br><b>'.$langs->trans('Phone').':</b> '.implode('&nbsp;', $phonelist);
+		}
+		if (!empty($this->address)) {
+			$label .= '<br><b>'.$langs->trans("Address").':</b> '.dol_format_address($this, 1, ' ', $langs);	// Address + country
+		} elseif (!empty($this->country_code)) {
 			$label .= '<br><b>'.$langs->trans('Country').':</b> '.$this->country_code;
 		}
 		if (!empty($this->tva_intra) || (!empty($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP) && strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'vatnumber') !== false)) {
@@ -4396,12 +4418,8 @@ class Societe extends CommonObject
 		 $alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
 		 $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
 		 */
-		if ($mode == 'supplier') {
-			$sql = "SELECT rowid, total_ht as total_ht, total_ttc, paye, type, fk_statut as status, close_code FROM ".MAIN_DB_PREFIX.$table." as f";
-		} else {
-			$sql = "SELECT rowid, total as total_ht, total_ttc, paye, fk_statut as status, close_code FROM ".MAIN_DB_PREFIX.$table." as f";
-		}
-		$sql .= " WHERE fk_soc = ".$this->id;
+		$sql = "SELECT rowid, total_ht, total_ttc, paye, type, fk_statut as status, close_code FROM ".MAIN_DB_PREFIX.$table." as f";
+		$sql .= " WHERE fk_soc = ".((int) $this->id);
 		if (!empty($late)) {
 			$sql .= " AND date_lim_reglement < '".$this->db->idate(dol_now())."'";
 		}
@@ -4453,6 +4471,7 @@ class Societe extends CommonObject
 			}
 			return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax); // 'opened' is 'incl taxes'
 		} else {
+			dol_syslog("Sql error ".$this->db->lasterror, LOG_ERR);
 			return array();
 		}
 	}

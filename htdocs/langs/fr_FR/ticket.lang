@@ -70,8 +70,8 @@ Deleted=Supprimé
 # Dict
 Type=Type
 Severity=Sévérité
-TicketGroupIsPublic=Group is public
-TicketGroupIsPublicDesc=If a ticket group is public, it will be visible in the form when creating a ticket from the public interface
+TicketGroupIsPublic=Le groupe est public
+TicketGroupIsPublicDesc=Si un groupe de tickets est public, il sera visible dans le formulaire lors de la création d’un ticket à partir de l’interface publique
 
 # Email templates
 MailToSendTicketMessage=Pour envoyer un e-mail depuis un ticket
@@ -304,13 +304,13 @@ BoxLastModifiedTicket=Derniers tickets modifiés
 BoxLastModifiedTicketDescription=Les %s derniers tickets modifiés
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=Pas de tickets modifiés récemment
-BoxTicketType=Number of open tickets by type
-BoxTicketSeverity=Number of open tickets by severity
-BoxNoTicketSeverity=No tickets opened
-BoxTicketLastXDays=Number of new tickets by days the last %s days
-BoxTicketLastXDayswidget = Number of new tickets by days the last X days
-BoxNoTicketLastXDays=No new tickets the last %s days
-BoxNumberOfTicketByDay=Number of new tickets by day
-BoxNewTicketVSClose=Number of today's new tickets versus today's closed tickets
-TicketCreatedToday=Ticket created today
-TicketClosedToday=Ticket closed today
+BoxTicketType=Nombre de tickets ouverts par type
+BoxTicketSeverity=Nombre de tickets ouverts par sévérité
+BoxNoTicketSeverity=Aucun ticket ouvert
+BoxTicketLastXDays=Nombre de nouveaux tickets par jour ces %s derniers jours
+BoxTicketLastXDayswidget = Nombre de nouveaux tickets par jour ces X derniers jours
+BoxNoTicketLastXDays=Aucun nouveau ticket ces %s derniers jours
+BoxNumberOfTicketByDay=Nombre de nouveaux tickets par jour
+BoxNewTicketVSClose=Nombre de nouveaux tickets aujourd’hui par rapport aux tickets fermés aujourd’hui
+TicketCreatedToday=Ticket créé aujourd'hui
+TicketClosedToday=Ticket fermé aujourd'hui

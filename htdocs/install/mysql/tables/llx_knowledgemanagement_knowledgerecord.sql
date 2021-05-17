@@ -27,7 +27,8 @@ CREATE TABLE llx_knowledgemanagement_knowledgerecord(
 	import_key varchar(14), 
 	model_pdf varchar(255), 
 	question text NOT NULL, 
-	answer text, 
+	answer text,
+	fk_ticket integer,
 	status integer NOT NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;

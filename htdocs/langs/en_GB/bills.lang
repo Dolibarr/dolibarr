@@ -13,7 +13,6 @@ PaymentTypeCHQ=Cheque
 PaymentTypeShortCHQ=Cheque
 ChequeNumber=Cheque N°
 ChequeOrTransferNumber=Cheque/Transfer N°
-ChequeMaker=Cheque/Transfer drawer
 ChequeBank=Bank of Cheque
 CheckBank=Cheque
 PrettyLittleSentence=Accept the amount of payments due by cheques issued in my name as a Member of an accounting association approved by the Fiscal Administration.
