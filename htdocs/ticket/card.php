@@ -1317,7 +1317,7 @@ elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action =
 			// Substitution array
 			$morehtmlright = '';
 			$help = "";
-			$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, $arrayoffamiliestoexclude, $object);
+			$substitutionarray = getCommonSubstitutionArray($newlang, 0, $arrayoffamiliestoexclude, $object);
 			if ($object->fk_soc > 0) {
 				$substitutionarray['__THIRDPARTY_NAME__'] = $object->thirdparty->name;
 			}
@@ -1350,16 +1350,6 @@ elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action =
 			print load_fiche_titre($langs->trans('TicketAddMessage'), $morehtmlright, 'messages@ticket');
 
 			print '<hr>';
-
-			// Define output language
-			$outputlangs = $langs;
-			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && !empty($_REQUEST['lang_id'])) {
-				$newlang = $_REQUEST['lang_id'];
-			}
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
-				$newlang = $object->default_lang;
-			}
 
 			$formticket = new FormTicket($db);
 
