@@ -887,7 +887,6 @@ if ($resql) {
 	}
 
 	if ($massaction == 'createbills') {
-		//var_dump($_REQUEST);
 		print '<input type="hidden" name="massaction" value="confirm_createbills">';
 
 		print '<table class="noborder" width="100%" >';
