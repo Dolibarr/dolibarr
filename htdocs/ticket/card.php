@@ -1297,12 +1297,16 @@ elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action =
 		// add a message
 		if ($action == 'presend' || $action == 'presend_addmessage')
 		{
+			if ($object->fk_soc > 0) {
+				$object->fetch_thirdparty();
+			}
+			
 			$outputlangs = $langs;
 			$newlang = '';
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 				$newlang = GETPOST('lang_id', 'aZ09');
 			}
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && is_object($object->thirdparty)) {
 				$newlang = $object->thirdparty->default_lang;
 			}
 			$arrayoffamiliestoexclude = array('objectamount');
@@ -1315,7 +1319,6 @@ elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action =
 			$help = "";
 			$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, $arrayoffamiliestoexclude, $object);
 			if ($object->fk_soc > 0) {
-				$object->fetch_thirdparty();
 				$substitutionarray['__THIRDPARTY_NAME__'] = $object->thirdparty->name;
 			}
 			$substitutionarray['__USER_SIGNATURE__'] = $user->signature;
