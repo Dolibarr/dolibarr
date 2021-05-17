@@ -207,7 +207,6 @@ if (empty($reshook))
 
 							if ($result > 0) {
 								$substitutionarray['__THIRDPARTY_CUSTOMER_CODE__'] = $thirdpartystatic->code_client;
-								$substitutionarray['__THIRDPARTY_CUSTOMER_CODE_WITHOUT_PREFIX__'] = substr($thirdpartystatic->code_client, 1);
 							}
 						}
 						$substitutionarray['__EMAIL__'] = $obj->email;
