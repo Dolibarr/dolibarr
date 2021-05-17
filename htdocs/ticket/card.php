@@ -1300,7 +1300,7 @@ elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action =
 			if ($object->fk_soc > 0) {
 				$object->fetch_thirdparty();
 			}
-			
+
 			$outputlangs = $langs;
 			$newlang = '';
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
