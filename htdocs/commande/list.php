@@ -417,9 +417,10 @@ $sql = 'SELECT';
 if ($sall || $search_product_category > 0 || $search_user > 0) {
 	$sql = 'SELECT DISTINCT';
 }
-$sql .= ' s.rowid as socid, s.nom as name, s.name_alias as name_alias, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
+$sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
+$sql .= " country.code as country_code,";
 $sql .= ' c.rowid, c.ref, c.total_ht, c.total_tva, c.total_ttc, c.ref_client, c.fk_user_author,';
 $sql .= ' c.fk_multicurrency, c.multicurrency_code, c.multicurrency_tx, c.multicurrency_total_ht, c.multicurrency_total_tva as multicurrency_total_vat, c.multicurrency_total_ttc,';
 $sql .= ' c.date_valid, c.date_commande, c.note_public, c.note_private, c.date_livraison as date_delivery, c.fk_statut, c.facture as billed,';
@@ -1383,10 +1384,16 @@ if ($resql) {
 		$nbprod = 0;
 
 		$companystatic->id = $obj->socid;
-		$companystatic->code_client = $obj->code_client;
 		$companystatic->name = $obj->name;
+		$companystatic->name_alias = $obj->alias;
 		$companystatic->client = $obj->client;
+		$companystatic->code_client = $obj->code_client;
 		$companystatic->email = $obj->email;
+		$companystatic->phone = $obj->phone;
+		$companystatic->address = $obj->address;
+		$companystatic->zip = $obj->zip;
+		$companystatic->town = $obj->town;
+		$companystatic->country_code = $obj->country_code;
 		if (!isset($getNomUrl_cache[$obj->socid])) {
 			$getNomUrl_cache[$obj->socid] = $companystatic->getNomUrl(1, 'customer');
 		}
