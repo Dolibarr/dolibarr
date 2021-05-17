@@ -180,7 +180,7 @@ class Users extends DolibarrApi
     	if (empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin)) {
     		throw new RestException(401, 'Not allowed');
     	}
-    	
+
     	$apiUser = DolibarrApiAccess::$user;
 
         $result = $this->useraccount->fetch($apiUser->id);
