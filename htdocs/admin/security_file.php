@@ -66,7 +66,7 @@ if ($action == 'updateform') {
 } elseif ($action == 'delete') {
 	// Delete file
 	$langs->load("other");
-	$file = $conf->admin->dir_temp.'/'.GETPOST('urlfile', 'alpha'); // Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+	$file = $conf->admin->dir_temp.'/'.GETPOST('urlfile', 'alpha');
 	$ret = dol_delete_file($file);
 	if ($ret) {
 		setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile', 'alpha')), null, 'mesgs');

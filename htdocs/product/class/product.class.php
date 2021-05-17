@@ -190,6 +190,10 @@ class Product extends CommonObject
 	public $localtax1_type;
 	public $localtax2_type;
 
+	public $lifetime;
+
+	public $qc_frequency;
+
 	/**
 	 * Stock real
 	 *
