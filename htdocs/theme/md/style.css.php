@@ -1495,6 +1495,17 @@ table[summary="list_of_modules"] .fa-cog {
 	div.divphotoref {
 		padding-right: 10px !important;
 	}
+	
+	.poweredbyimg {
+		width: 48px;
+	}
+	input.buttonpayment, button.buttonpayment, div.buttonpayment {
+		min-width: 270px;
+	}
+
+	.smallonsmartphone {
+		font-size: 0.8em;
+	}
 }
 
 /* Force values for small screen 570 */
@@ -4849,9 +4860,10 @@ td.gtaskname {
 /* ============================================================================== */
 
 /* CSS for treeview */
-.treeview ul { background-color: transparent !important; margin-top: 0; }
-.treeview li { background-color: transparent !important; padding: 0 0 0 16px !important; min-height: 20px; }
-.treeview .hover { color: rgb(<?php print $colortextlink; ?>) !important; text-decoration: underline !important; }
+.treeview ul { background-color: transparent !important; margin-bottom: 4px !important; margin-top: 0 !important; padding-top: 8px !important; }
+.treeview li { background-color: transparent !important; padding: 0 0 0 16px !important; min-height: 30px; }
+.treeview .hover { color: var(--colortextlink) !important; text-decoration: underline !important; }
+.treeview .hitarea { margin-top: 3px; }
 
 
 

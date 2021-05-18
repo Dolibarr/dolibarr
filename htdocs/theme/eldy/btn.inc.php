@@ -50,7 +50,8 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 	margin-bottom: 1.4em;
 }*/
 div.tabsAction > a.butAction, div.tabsAction > a.butActionRefused, div.tabsAction > a.butActionDelete,
-div.tabsAction > span.butAction, div.tabsAction > span.butActionRefused, div.tabsAction > span.butActionDelete {
+div.tabsAction > span.butAction, div.tabsAction > span.butActionRefused, div.tabsAction > span.butActionDelete,
+div.tabsAction > div.divButAction > span.butAction {
 	margin-bottom: 1.4em !important;
 	margin-right: 0px !important;
 }

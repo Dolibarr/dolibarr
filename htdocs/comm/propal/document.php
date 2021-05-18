@@ -80,6 +80,8 @@ if (!$sortfield) {
 $object = new Propal($db);
 $object->fetch($id, $ref);
 
+$permissiontoadd = $user->rights->propale->creer;
+
 // Security check
 if (!empty($user->socid)) {
 	$socid = $user->socid;

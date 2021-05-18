@@ -417,17 +417,18 @@ $sql = 'SELECT';
 if ($sall || $search_product_category > 0 || $search_user > 0) {
 	$sql = 'SELECT DISTINCT';
 }
-$sql .= ' s.rowid as socid, s.nom as name, s.name_alias as name_alias, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
+$sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
+$sql .= " country.code as country_code,";
 $sql .= ' c.rowid, c.ref, c.total_ht, c.total_tva, c.total_ttc, c.ref_client, c.fk_user_author,';
 $sql .= ' c.fk_multicurrency, c.multicurrency_code, c.multicurrency_tx, c.multicurrency_total_ht, c.multicurrency_total_tva as multicurrency_total_vat, c.multicurrency_total_ttc,';
 $sql .= ' c.date_valid, c.date_commande, c.note_public, c.note_private, c.date_livraison as date_delivery, c.fk_statut, c.facture as billed,';
 $sql .= ' c.date_creation as date_creation, c.tms as date_update, c.date_cloture as date_cloture,';
-$sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label,";
-$sql .= " u.login,";
-$sql .= ' c.fk_cond_reglement,c.fk_mode_reglement,c.fk_shipping_method';
-$sql .= ' ,c.fk_input_reason';
+$sql .= ' p.rowid as project_id, p.ref as project_ref, p.title as project_label,';
+$sql .= ' u.login, u.lastname, u.firstname, u.email, u.statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender,';
+$sql .= ' c.fk_cond_reglement,c.fk_mode_reglement,c.fk_shipping_method,';
+$sql .= ' c.fk_input_reason';
 if ($search_categ_cus) {
 	$sql .= ", cc.fk_categorie, cc.fk_soc";
 }
@@ -587,7 +588,7 @@ if ($search_multicurrency_montant_ttc != '') {
 	$sql .= natural_search('c.multicurrency_total_ttc', $search_multicurrency_montant_ttc, 1);
 }
 if ($search_login) {
-	$sql .= natural_search("u.login", $search_login);
+	$sql .= natural_search(array("u.login", "u.firstname", "u.lastname"), $search_login);
 }
 if ($search_project_ref != '') {
 	$sql .= natural_search("p.ref", $search_project_ref);
@@ -1383,10 +1384,16 @@ if ($resql) {
 		$nbprod = 0;
 
 		$companystatic->id = $obj->socid;
-		$companystatic->code_client = $obj->code_client;
 		$companystatic->name = $obj->name;
+		$companystatic->name_alias = $obj->alias;
 		$companystatic->client = $obj->client;
+		$companystatic->code_client = $obj->code_client;
 		$companystatic->email = $obj->email;
+		$companystatic->phone = $obj->phone;
+		$companystatic->address = $obj->address;
+		$companystatic->zip = $obj->zip;
+		$companystatic->town = $obj->town;
+		$companystatic->country_code = $obj->country_code;
 		if (!isset($getNomUrl_cache[$obj->socid])) {
 			$getNomUrl_cache[$obj->socid] = $companystatic->getNomUrl(1, 'customer');
 		}
@@ -1483,7 +1490,7 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
-		// Town
+		// Alias name
 		if (!empty($arrayfields['s.name_alias']['checked'])) {
 			print '<td class="nocellnopadd">';
 			print $obj->alias;
@@ -1558,7 +1565,7 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
-		//Shipping Method
+		// Shipping Method
 		if (!empty($arrayfields['c.fk_shipping_method']['checked'])) {
 			print '<td>';
 			$form->formSelectShippingMethod('', $obj->fk_shipping_method, 'none', 1);
@@ -1669,12 +1676,23 @@ if ($resql) {
 
 		$userstatic->id = $obj->fk_user_author;
 		$userstatic->login = $obj->login;
+		$userstatic->lastname = $obj->lastname;
+		$userstatic->firstname = $obj->firstname;
+		$userstatic->email = $obj->email;
+		$userstatic->statut = $obj->statut;
+		$userstatic->entity = $obj->entity;
+		$userstatic->photo = $obj->photo;
+		$userstatic->office_phone = $obj->office_phone;
+		$userstatic->office_fax = $obj->office_fax;
+		$userstatic->user_mobile = $obj->user_mobile;
+		$userstatic->job = $obj->job;
+		$userstatic->gender = $obj->gender;
 
 		// Author
 		if (!empty($arrayfields['u.login']['checked'])) {
-			print '<td align="center">';
+			print '<td class="tdoverflowmax200">';
 			if ($userstatic->id) {
-				print $userstatic->getLoginUrl(1);
+				print $userstatic->getNomUrl(-1);
 			} else {
 				print '&nbsp;';
 			}
