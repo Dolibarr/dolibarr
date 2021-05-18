@@ -1495,6 +1495,17 @@ table[summary="list_of_modules"] .fa-cog {
 	div.divphotoref {
 		padding-right: 10px !important;
 	}
+	
+	.poweredbyimg {
+		width: 48px;
+	}
+	input.buttonpayment, button.buttonpayment, div.buttonpayment {
+		min-width: 270px;
+	}
+
+	.smallonsmartphone {
+    	font-size: 0.8em;
+	}
 }
 
 /* Force values for small screen 570 */
