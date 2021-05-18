@@ -288,7 +288,7 @@ if (!$user->rights->societe->client->voir && empty($socid)) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 }
 if ($socid) {
-	$sql .= " AND s.rowid = ".$socid;
+	$sql .= " AND s.rowid = ".((int) $socid);
 }
 if ($sall) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
