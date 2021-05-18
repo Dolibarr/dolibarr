@@ -48,7 +48,7 @@ $hookmanager->initHooks(array('stockreplenishlist'));
 
 //checks if a product has been ordered
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $sref = GETPOST('sref', 'alpha');
 $snom = GETPOST('snom', 'alpha');
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
@@ -308,7 +308,7 @@ if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entre
 
 
 $sql = 'SELECT p.rowid, p.ref, p.label, p.description, p.price,';
-$sql .= ' p.price_ttc, p.price_base_type,p.fk_product_type,';
+$sql .= ' p.price_ttc, p.price_base_type, p.fk_product_type,';
 $sql .= ' p.tms as datem, p.duration, p.tobuy,';
 $sql .= ' p.desiredstock, p.seuil_stock_alerte,';
 if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0) {
@@ -326,11 +326,8 @@ $sql .= $hookmanager->resPrint;
 $sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as s ON p.rowid = s.fk_product';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot AS ent ON s.fk_entrepot = ent.rowid AND ent.entity IN('.getEntity('stock').')';
-if ($fk_supplier > 0) {
-	$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'product_fournisseur_price pfp ON (pfp.fk_product = p.rowid AND pfp.fk_soc = '.$fk_supplier.')';
-}
 if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0) {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_warehouse_properties AS pse ON (p.rowid = pse.fk_product AND pse.fk_entrepot = '.$fk_entrepot.')';
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_warehouse_properties AS pse ON (p.rowid = pse.fk_product AND pse.fk_entrepot = '.((int) $fk_entrepot).')';
 }
 
 // Add fields from hooks
@@ -352,6 +349,9 @@ if ($sref) $sql .= natural_search('p.ref', $sref);
 if ($snom) $sql .= natural_search('p.label', $snom);
 $sql .= ' AND p.tobuy = 1';
 if (!empty($canvas)) $sql .= ' AND p.canvas = "'.$db->escape($canvas).'"';
+if ($fk_supplier > 0) {
+	$sql .= ' AND EXISTS (SELECT pfp.rowid FROM '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp WHERE pfp.fk_product = p.rowid AND pfp.fk_soc = '.((int) $fk_supplier).' AND pfp.entity IN ('.getEntity('product_fournisseur_price').'))';
+}
 $sql .= ' GROUP BY p.rowid, p.ref, p.label, p.description, p.price';
 $sql .= ', p.price_ttc, p.price_base_type,p.fk_product_type, p.tms';
 $sql .= ', p.duration, p.tobuy';
@@ -762,7 +762,9 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		print '<td class="right">'.$alertstock.'</td>';
 
 		// Current stock (all warehouses)
-		print '<td class="right">'.$warning.$stock.'</td>';
+		print '<td class="right">'.$warning.$stock;
+		print '<!-- stock returned by main sql is '.$objp->stock_physique.' -->';
+		print '</td>';
 
 		// Already ordered
 		print '<td class="right"><a href="replenishorders.php?sproduct='.$prod->id.'">'.$ordered.'</a> '.$picto.'</td>';
