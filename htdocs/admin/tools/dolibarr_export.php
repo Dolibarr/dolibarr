@@ -157,7 +157,7 @@ $title = $langs->trans("BackupDumpWizard");
 
 print load_fiche_titre($title);
 
-print '<table width="100%" class="'.($useinecm ? 'nobordernopadding' : 'liste').' nohover">';
+print '<table width="100%" class="'.(!empty($useinecm) ? 'nobordernopadding' : 'liste').' nohover">';
 print '<tr class="liste_titre">';
 print '<td class="liste_titre">';
 print $langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b><br>';

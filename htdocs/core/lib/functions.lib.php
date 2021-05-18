@@ -634,17 +634,17 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 		$out = checkVal($out, $check, $filter, $options);
 	}
 
-	// Sanitizing for special parameters. There is no reason to allow the backtopage, backtolist or backtourl parameter to contains an external URL.
+	// Sanitizing for special parameters.
+	// Note: There is no reason to allow the backtopage, backtolist or backtourl parameter to contains an external URL.
 	if ($paramname == 'backtopage' || $paramname == 'backtolist' || $paramname == 'backtourl') {
-		$out = str_replace('\\', '/', $out);
-		$out = str_replace(array(':', ';', '@'), '', $out);
-
+		$out = str_replace('\\', '/', $out);					// Can be before the loop because only 1 char is replaced. No risk to get it after other replacements.
+		$out = str_replace(array(':', ';', '@'), '', $out);		// Can be before the loop because only 1 char is replaced. No risk to get it after other replacements.
 		do {
 			$oldstringtoclean = $out;
 			$out = str_ireplace(array('javascript', 'vbscript', '&colon', '&#'), '', $out);
 		} while ($oldstringtoclean != $out);
 
-		$out = preg_replace(array('/^[a-z]*\/\/+/i'), '', $out);
+		$out = preg_replace(array('/^[a-z]*\/\/+/i'), '', $out);	// We remove schema*// to remove external URL
 	}
 
 	// Code for search criteria persistence.
@@ -684,7 +684,7 @@ function GETPOSTINT($paramname, $method = 0, $filter = null, $options = null, $n
 }
 
 /**
- *  Return a value after checking on a rule.
+ *  Return a value after checking on a rule. A sanitization may also have been done.
  *
  *  @param  string  $out	     Value to check/clear.
  *  @param  string  $check	     Type of check/sanitizing
@@ -777,6 +777,11 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 		case 'restricthtml':		// Recommended for most html textarea
 			do {
 				$oldstringtoclean = $out;
+
+				// We replace chars encoded with numeric HTML entities with real char (to avoid to have numeric entities used for obfuscation of injections)
+				$out = preg_replace_callback('/&#(x?[0-9][0-9a-f]+);/i', 'realCharForNumericEntities', $out);
+				$out = preg_replace('/&#x?[0-9]+/i', '', $out);	// For example if we have j&#x61vascript with an entities without the ; to hide the 'a' of 'javascript'.
+
 				$out = dol_string_onlythesehtmltags($out, 0, 1, 1);
 
 				// We should also exclude non expected attributes
@@ -795,7 +800,6 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 
 	return $out;
 }
-
 
 
 if (!function_exists('dol_getprefix')) {
@@ -3494,6 +3498,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
 				'accountancy', 'account', 'accountline', 'action', 'add', 'address', 'angle-double-down', 'angle-double-up', 'asset',
 				'bank_account', 'barcode', 'bank', 'bill', 'billa', 'billr', 'billd', 'bookmark', 'bom', 'bug', 'building',
+				'calendar', 'calendarmonth', 'calendarweek', 'calendarday', 'calendarperuser', 'calendarpertype',
 				'cash-register', 'category', 'chart', 'check', 'clock', 'close_title', 'cog', 'collab', 'company', 'contact', 'country', 'contract', 'cron', 'cubes', 'multicurrency',
 				'delete', 'dolly', 'dollyrevert', 'donation', 'download', 'dynamicprice',
 				'edit', 'ellipsis-h', 'email', 'eraser', 'establishment', 'expensereport', 'external-link-alt', 'external-link-square-alt',
@@ -3501,7 +3506,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'generate', 'globe', 'globe-americas', 'graph', 'grip', 'grip_title', 'group',
 				'help', 'holiday',
 				'images', 'incoterm', 'info', 'intervention', 'inventory', 'intracommreport', 'knowledgemanagement',
-				'label', 'language', 'link', 'list', 'listlight', 'loan', 'lot', 'long-arrow-alt-right',
+				'label', 'language', 'link', 'list', 'list-alt', 'listlight', 'loan', 'lot', 'long-arrow-alt-right',
 				'margin', 'map-marker-alt', 'member', 'meeting', 'money-bill-alt', 'movement', 'mrp', 'note', 'next',
 				'off', 'on', 'order',
 				'paiment', 'paragraph', 'play', 'pdf', 'phone', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'stock', 'resize', 'service', 'stats', 'trip',
@@ -3547,7 +3552,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'sign-out'=>'sign-out-alt',
 				'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'check'=>'check', 'bookmark'=>'star', 'bookmark'=>'star',
 				'bank'=>'university', 'close_title'=>'times', 'delete'=>'trash', 'edit'=>'pencil-alt', 'filter'=>'filter',
-				'list-alt'=>'list-alt', 'calendar'=>'calendar-alt', 'calendarweek'=>'calendar-week', 'calendarmonth'=>'calendar-alt', 'calendarday'=>'calendar-day', 'calendarperuser'=>'table',
+				'list-alt'=>'list-alt', 'calendar'=>'calendar-alt', 'calendarmonth'=>'calendar-alt', 'calendarweek'=>'calendar-week', 'calendarmonth'=>'calendar-alt', 'calendarday'=>'calendar-day', 'calendarperuser'=>'table',
 				'intervention'=>'ambulance', 'invoice'=>'file-invoice-dollar', 'multicurrency'=>'dollar-sign', 'order'=>'file-invoice',
 				'error'=>'exclamation-triangle', 'warning'=>'exclamation-triangle',
 				'other'=>'square',
@@ -9738,8 +9743,8 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 /**
  * Add space between dolGetButtonTitle
  *
- * @param string $moreClass more css class label
- * @return string html of title separator
+ * @param  string $moreClass 	more css class label
+ * @return string 				html of title separator
  */
 function dolGetButtonTitleSeparator($moreClass = "")
 {

@@ -50,9 +50,33 @@ if (!empty($_SERVER['MAIN_SHOW_TUNING_INFO'])) {
 	}
 }
 
+
+/**
+ * Return the real char for a numeric entities.
+ * This function is required by testSqlAndScriptInject().
+ *
+ * @param	string		$matches			String of numeric entity
+ * @return	string							New value
+ */
+function realCharForNumericEntities($matches)
+{
+	$newstringnumentity = $matches[1];
+
+	if (preg_match('/^x/i', $newstringnumentity)) {
+		$newstringnumentity = hexdec(preg_replace('/^x/i', '', $newstringnumentity));
+	}
+
+	// The numeric value we don't want as entities
+	if (($newstringnumentity >= 65 && $newstringnumentity <= 90) || ($newstringnumentity >= 97 && $newstringnumentity <= 122)) {
+		return chr((int) $newstringnumentity);
+	}
+
+	return '&#'.$matches[1];
+}
+
 /**
  * Security: WAF layer for SQL Injection and XSS Injection (scripts) protection (Filters on GET, POST, PHP_SELF).
- * Warning: Such a protection can't be enough. It is not reliable as it will alwyas be possible to bypass this. Good protection can
+ * Warning: Such a protection can't be enough. It is not reliable as it will always be possible to bypass this. Good protection can
  * only be guaranted by escaping data during output.
  *
  * @param		string		$val		Value brut found int $_GET, $_POST or PHP_SELF
@@ -61,7 +85,7 @@ if (!empty($_SERVER['MAIN_SHOW_TUNING_INFO'])) {
  */
 function testSqlAndScriptInject($val, $type)
 {
-	// Decode string first bcause a lot of things are obfuscated by encoding or multiple encoding.
+	// Decode string first because a lot of things are obfuscated by encoding or multiple encoding.
 	// So <svg o&#110;load='console.log(&quot;123&quot;)' become <svg onload='console.log(&quot;123&quot;)'
 	// So "&colon;&apos;" become ":'" (due to ENT_HTML5)
 	// Loop to decode until no more thing to decode.
@@ -69,6 +93,7 @@ function testSqlAndScriptInject($val, $type)
 	do {
 		$oldval = $val;
 		$val = html_entity_decode($val, ENT_QUOTES | ENT_HTML5);
+		$val = preg_replace_callback('/&#(x?[0-9][0-9a-f]+)/i', 'realCharForNumericEntities', $val);	// Sometimes we have entities without the ; at end so html_entity_decode does not work but entities is still interpreted by browser.
 	} while ($oldval != $val);
 	//print "after  decoding $val\n";
 

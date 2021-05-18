@@ -113,7 +113,7 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	// Delete line if product propal merge is linked to a file
 	if (!empty($conf->global->PRODUIT_PDF_MERGE_PROPAL)) {
-		if ($action == 'confirm_deletefile' && $confirm == 'yes') {
+		if ($action == 'confirm_deletefile' && $confirm == 'yes' && $permissiontoadd) {
 			//extract file name
 			$urlfile = GETPOST('urlfile', 'alpha');
 			$filename = basename($urlfile);
@@ -131,7 +131,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 }
 
-if ($action == 'filemerge') {
+if ($action == 'filemerge' && $permissiontoadd) {
 	$is_refresh = GETPOST('refresh');
 	if (empty($is_refresh)) {
 		$filetomerge_file_array = GETPOST('filetoadd');

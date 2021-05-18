@@ -198,20 +198,29 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$result=testSqlAndScriptInject($test, 0);
 		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject expected 0b');
 
-		// Should detect XSS
+
+		// Should detect attack
 		$expectedresult=1;
 
 		$_SERVER["PHP_SELF"]='/DIR WITH SPACE/htdocs/admin/index.php/<svg>';
 		$result=testSqlAndScriptInject($_SERVER["PHP_SELF"], 2);
 		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject for PHP_SELF that should detect XSS');
 
+		$test = 'j&#x61;vascript:';
+		$result=testSqlAndScriptInject($test, 0);
+		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject for javascript1. Should find an attack and did not.');
+
+		$test = 'j&#x61vascript:';
+		$result=testSqlAndScriptInject($test, 0);
+		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject for javascript2. Should find an attack and did not.');
+
 		$test = 'javascript&colon&#x3B;alert(1)';
 		$result=testSqlAndScriptInject($test, 0);
-		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject expected 1a');
+		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject for javascript2');
 
 		$test="<img src='1.jpg' onerror =javascript:alert('XSS')>";
 		$result=testSqlAndScriptInject($test, 0);
-		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject aaa');
+		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject aaa1');
 
 		$test="<img src='1.jpg' onerror =javascript:alert('XSS')>";
 		$result=testSqlAndScriptInject($test, 2);
@@ -328,8 +337,11 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$_POST["param10"]='is_object($object) ? ($object->id < 10 ? round($object->id / 2, 2) : (2 * $user->id) * (int) substr($mysoc->zip, 1, 2)) : \'<abc>objnotdefined\'';
 		$_POST["param11"]=' Name <email@email.com> ';
 		$_POST["param12"]='<!DOCTYPE html><html>aaa</html>';
+		$_POST["param13"]='&#110; &#x6E; &gt; &lt; &quot; <a href=\"j&#x61;vascript:alert(document.domain)\">XSS</a>';
+		$_POST["param13b"]='&#110; &#x6E; &gt; &lt; &quot; <a href=\"j&#x61vascript:alert(document.domain)\">XSS</a>';
 		//$_POST["param13"]='javascript%26colon%26%23x3B%3Balert(1)';
 		//$_POST["param14"]='javascripT&javascript#x3a alert(1)';
+
 
 		$result=GETPOST('id', 'int');              // Must return nothing
 		print __METHOD__." result=".$result."\n";
@@ -343,7 +355,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, 333, 'Test on param1 with 3rd param = 2');
 
-		// Test alpha
+		// Test with alpha
 
 		$result=GETPOST("param2", 'alpha');
 		print __METHOD__." result=".$result."\n";
@@ -357,7 +369,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, 'dir');
 
-		// Test aZ09
+		// Test with aZ09
 
 		$result=GETPOST("param1", 'aZ09');
 		print __METHOD__." result=".$result."\n";
@@ -379,25 +391,22 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($_GET["param5"], $result);
 
-		$result=GETPOST("param6", 'alpha');
-		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('>', $result);
+		// Test with nohtml
 
 		$result=GETPOST("param6", 'nohtml');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('">', $result);
 
-		$result=GETPOST("param6b");
+		// Test with alpha = alphanohtml. We must convert the html entities like &#110; and disable all entities
+
+		$result=GETPOST("param6", 'alphanohtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('>', $result);
+
+		$result=GETPOST("param6b", 'alphanohtml');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('abc', $result);
 
-		// With restricthtml we must remove html open/close tag and content but not htmlentities like &#110;
-
-		$result=GETPOST("param7", 'restricthtml');
-		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('"c:\this is a path~1\aaa&#110;" abcdef', $result);
-
-		// With alphanohtml, we must convert the html entities like &#110; and disable all entities
 		$result=GETPOST("param8a", 'alphanohtml');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals("Hackersvg onload='console.log(123)'", $result);
@@ -434,24 +443,39 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals("Name", $result, 'Test an email string with alphanohtml');
 
+		$result=GETPOST("param13", 'alphanohtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('n n > <  XSS', $result, 'Test that html entities are decoded with alpha');
+
+		// Test with alphawithlgt
+
 		$result=GETPOST("param11", 'alphawithlgt');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(trim($_POST["param11"]), $result, 'Test an email string with alphawithlgt');
+
+		// Test with restricthtml we must remove html open/close tag and content but not htmlentities (we can decode html entities for ascii chars like &#110;)
+
+		$result=GETPOST("param6", 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('&quot;&gt;', $result);
+
+		$result=GETPOST("param7", 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('"c:\this is a path~1\aaan" abcdef', $result);
 
 		$result=GETPOST("param12", 'restricthtml');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(trim($_POST["param12"]), $result, 'Test a string with DOCTYPE and restricthtml');
 
-		/*$result=GETPOST("param13", 'alphanohtml');
+		$result=GETPOST("param13", 'restricthtml');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals(trim($_POST["param13"]), $result, 'Test a string and alphanohtml');
+		$this->assertEquals('n n &gt; &lt; &quot; <a href=\"alert(document.domain)\">XSS</a>', $result, 'Test that HTML entities are decoded with restricthtml, but only for common alpha chars');
 
-		$result=GETPOST("param14", 'alphanohtml');
+		$result=GETPOST("param13b", 'restricthtml');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals(trim($_POST["param14"]), $result, 'Test a string and alphanohtml');
-		*/
+		$this->assertEquals('n n &gt; &lt; &quot; <a href=\"jvascript:alert(document.domain)\">XSS</a>', $result, 'Test that HTML entities are decoded with restricthtml, but only for common alpha chars');
 
-		// Special test for GETPOST of backtopage or backtolist parameter
+		// Special test for GETPOST of backtopage, backtolist or backtourl parameter
 
 		$_POST["backtopage"]='//www.google.com';
 		$result=GETPOST("backtopage");

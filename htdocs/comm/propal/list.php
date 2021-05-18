@@ -460,9 +460,10 @@ $sql = 'SELECT';
 if ($sall || $search_product_category > 0 || $search_user > 0) {
 	$sql = 'SELECT DISTINCT';
 }
-$sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client, ';
+$sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax , s.address, s.town, s.zip, s.fk_pays, s.client, s.code_client, ';
 $sql .= " typent.code as typent_code,";
 $sql .= " ava.rowid as availability,";
+$sql .= " country.code as country_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= ' p.rowid, p.entity, p.note_private, p.total_ht, p.total_tva, p.total_ttc, p.localtax1, p.localtax2, p.ref, p.ref_client, p.fk_statut as status, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,p.date_livraison as ddelivery,';
 $sql .= ' p.fk_multicurrency, p.multicurrency_code, p.multicurrency_tx, p.multicurrency_total_ht, p.multicurrency_total_tva, p.multicurrency_total_ttc,';
@@ -470,7 +471,7 @@ $sql .= ' p.datec as date_creation, p.tms as date_update, p.date_cloture as date
 $sql .= ' p.note_public, p.note_private,';
 $sql .= ' p.fk_cond_reglement,p.fk_mode_reglement,p.fk_shipping_method,p.fk_input_reason,';
 $sql .= " pr.rowid as project_id, pr.ref as project_ref, pr.title as project_label,";
-$sql .= ' u.login';
+$sql .= ' u.login, u.lastname, u.firstname, u.email, u.statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender';
 if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= ", sc.fk_soc, sc.fk_user";
 }
@@ -1335,9 +1336,15 @@ if ($resql) {
 
 		$companystatic->id = $obj->socid;
 		$companystatic->name = $obj->name;
+		$companystatic->name_alias = $obj->alias;
 		$companystatic->client = $obj->client;
 		$companystatic->code_client = $obj->code_client;
 		$companystatic->email = $obj->email;
+		$companystatic->phone = $obj->phone;
+		$companystatic->address = $obj->address;
+		$companystatic->zip = $obj->zip;
+		$companystatic->town = $obj->town;
+		$companystatic->country_code = $obj->country_code;
 
 		$projectstatic->id = $obj->project_id;
 		$projectstatic->ref = $obj->project_ref;
@@ -1694,12 +1701,23 @@ if ($resql) {
 
 		$userstatic->id = $obj->fk_user_author;
 		$userstatic->login = $obj->login;
+		$userstatic->lastname = $obj->lastname;
+		$userstatic->firstname = $obj->firstname;
+		$userstatic->email = $obj->email;
+		$userstatic->statut = $obj->statut;
+		$userstatic->entity = $obj->entity;
+		$userstatic->photo = $obj->photo;
+		$userstatic->office_phone = $obj->office_phone;
+		$userstatic->office_fax = $obj->office_fax;
+		$userstatic->user_mobile = $obj->user_mobile;
+		$userstatic->job = $obj->job;
+		$userstatic->gender = $obj->gender;
 
 		// Author
 		if (!empty($arrayfields['u.login']['checked'])) {
-			print '<td class="center nowraponall">';
+			print '<td>';
 			if ($userstatic->id) {
-				print $userstatic->getLoginUrl(1);
+				print $userstatic->getNomUrl(-1);
 			}
 			print "</td>\n";
 			if (!$i) {
@@ -1731,7 +1749,9 @@ if ($resql) {
 						$userstatic->entity = $val['entity'];
 						$userstatic->photo = $val['photo'];
 						$userstatic->login = $val['login'];
-						$userstatic->phone = $val['phone'];
+						$userstatic->office_phone = $val['office_phone'];
+						$userstatic->office_fax = $val['office_fax'];
+						$userstatic->user_mobile = $val['user_mobile'];
 						$userstatic->job = $val['job'];
 						$userstatic->gender = $val['gender'];
 						//print '<div class="float">':
