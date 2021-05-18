@@ -181,7 +181,6 @@ NoNewRecordSaved=Não há mais registro para lançar
 ListOfProductsWithoutAccountingAccount=Lista de produtos não vinculados a qualquer conta da Contabilidade
 ChangeBinding=Alterar a vinculação
 Accounted=Contas no livro de contas
-NotYetAccounted=Ainda não contabilizado no Livro de Registro
 ShowTutorial=Mostrar tutorial
 NotReconciled=Não conciliada
 AddAccountFromBookKeepingWithNoCategories=Conta disponível porém ainda não no grupo personalizado

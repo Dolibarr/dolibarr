@@ -56,6 +56,51 @@ class FormOther
 		$this->db = $db;
 	}
 
+	/**
+	 * Return HTML code for scanner tool.
+	 * This must be called into an existing <form>
+	 *
+	 * @param	string	$jstoexecuteonadd		Name of javascript function to call
+	 * @return	string						HTML component
+	 */
+	public function getHTMLScannerForm($jstoexecuteonadd = 'barcodscannerjs')
+	{
+		global $langs;
+
+		$out = '';
+
+		$out .= '<!-- Popup for mass barcode scanning -->'."\n";
+		$out .= '<div class="div-for-modal-topright" style="padding: 15px">';
+		$out .= '<center><strong>Barcode scanner tool...</strong></center><br>';
+
+		$out .= '<input type="checkbox" name="barcodeforautodetect" checked="checked"> Autodetect if we scan a product barcode or a lot/serial barcode<br>';
+		$out .= '<input type="checkbox" name="barcodeforproduct"> Scan a product barcode<br>';
+		$out .= '<input type="checkbox" name="barcodeforlotserial"> Scan a product lot or serial number<br>';
+
+		$out .= $langs->trans("QtyToAddAfterBarcodeScan").' <input type="text" name="barcodeproductqty" class="width50 right" value="1"><br>';
+		$out .= '<textarea type="text" name="barcodelist" class="centpercent" autofocus rows="'.ROWS_3.'"></textarea>';
+
+		/*print '<br>'.$langs->trans("or").'<br>';
+
+		print '<br>';
+
+		print '<input type="text" name="barcodelotserial" class="width200"> &nbsp; &nbsp; Qty <input type="text" name="barcodelotserialqty" class="width50 right" value="1"><br>';
+		*/
+		$out .= '<br>';
+		$out .= '<center>';
+		$out .= '<input type="submit" class="button marginleftonly marginrightonly" name="addscan" value="'.$langs->trans("Add").'">';
+		$out .= '<input type="submit" class="button marginleftonly marginrightonly" name="cancel" value="'.$langs->trans("Cancel").'">';
+		$out .= '<br>';
+
+		$out .= '<span class="opacitymedium">'.$langs->trans("FeatureNotYetAvailable").'</span>';
+
+		// TODO Add call of javascript $jstoexecuteonadd so each scan will add qty into the inventory page + an ajax save.
+
+		$out .= '</center>';
+		$out .= '</div>';
+
+		return $out;
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -1174,14 +1219,15 @@ class FormOther
 	        	jQuery("#boxcombo").change(function() {
 	        	var boxid=jQuery("#boxcombo").val();
 	        		if (boxid > 0) {
+						console.log("A box widget has been selected for addition, we call ajax page to add it.")
 	            		var left_list = cleanSerialize(jQuery("#boxhalfleft").sortable("serialize"));
 	            		var right_list = cleanSerialize(jQuery("#boxhalfright").sortable("serialize"));
 	            		var boxorder = \'A:\' + left_list + \'-B:\' + right_list;
 	    				jQuery.ajax({
-	    					url: \''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&boxid=\'+boxid+\'&zone='.$areacode.'&userid='.$user->id.'\',
-	    			        async: false
-	    		        });
-	        			window.location.search=\'mainmenu='.GETPOST("mainmenu", "aZ09").'&leftmenu='.GETPOST('leftmenu', "aZ09").'&action=addbox&boxid=\'+boxid;
+	    					url: \''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&boxid=\'+boxid+\'&zone='.$areacode.'&userid='.$user->id.'\'
+	    		        }).done(function() {
+	        				window.location.search=\'mainmenu='.GETPOST("mainmenu", "aZ09").'&leftmenu='.GETPOST('leftmenu', "aZ09").'\';
+						});
 	                }
 	        	});';
 			if (!count($arrayboxtoactivatelabel)) {

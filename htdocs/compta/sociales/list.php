@@ -38,7 +38,7 @@ if (!empty($conf->projet->enabled)) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array('compta', 'banks', 'bills', 'hrm'));
+$langs->loadLangs(array('compta', 'banks', 'bills', 'hrm', 'projects'));
 
 $action				= GETPOST('action', 'aZ09');
 $massaction			= GETPOST('massaction', 'alpha');
@@ -195,7 +195,7 @@ $sql .= " WHERE cs.fk_type = c.id";
 $sql .= " AND cs.entity = ".$conf->entity;
 // Search criteria
 if ($search_ref) {
-	$sql .= " AND cs.rowid=".$db->escape($search_ref);
+	$sql .= " AND cs.ref = '".$db->escape($search_ref)."'";
 }
 if ($search_label) {
 	$sql .= natural_search("cs.libelle", $search_label);

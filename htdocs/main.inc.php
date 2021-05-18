@@ -50,9 +50,33 @@ if (!empty($_SERVER['MAIN_SHOW_TUNING_INFO'])) {
 	}
 }
 
+
+/**
+ * Return the real char for a numeric entities.
+ * This function is required by testSqlAndScriptInject().
+ *
+ * @param	string		$matches			String of numeric entity
+ * @return	string							New value
+ */
+function realCharForNumericEntities($matches)
+{
+	$newstringnumentity = $matches[1];
+
+	if (preg_match('/^x/i', $newstringnumentity)) {
+		$newstringnumentity = hexdec(preg_replace('/^x/i', '', $newstringnumentity));
+	}
+
+	// The numeric value we don't want as entities
+	if (($newstringnumentity >= 65 && $newstringnumentity <= 90) || ($newstringnumentity >= 97 && $newstringnumentity <= 122)) {
+		return chr((int) $newstringnumentity);
+	}
+
+	return '&#'.$matches[1];
+}
+
 /**
  * Security: WAF layer for SQL Injection and XSS Injection (scripts) protection (Filters on GET, POST, PHP_SELF).
- * Warning: Such a protection can't be enough. It is not reliable as it will alwyas be possible to bypass this. Good protection can
+ * Warning: Such a protection can't be enough. It is not reliable as it will always be possible to bypass this. Good protection can
  * only be guaranted by escaping data during output.
  *
  * @param		string		$val		Value brut found int $_GET, $_POST or PHP_SELF
@@ -61,7 +85,7 @@ if (!empty($_SERVER['MAIN_SHOW_TUNING_INFO'])) {
  */
 function testSqlAndScriptInject($val, $type)
 {
-	// Decode string first bcause a lot of things are obfuscated by encoding or multiple encoding.
+	// Decode string first because a lot of things are obfuscated by encoding or multiple encoding.
 	// So <svg o&#110;load='console.log(&quot;123&quot;)' become <svg onload='console.log(&quot;123&quot;)'
 	// So "&colon;&apos;" become ":'" (due to ENT_HTML5)
 	// Loop to decode until no more thing to decode.
@@ -69,6 +93,7 @@ function testSqlAndScriptInject($val, $type)
 	do {
 		$oldval = $val;
 		$val = html_entity_decode($val, ENT_QUOTES | ENT_HTML5);
+		$val = preg_replace_callback('/&#(x?[0-9][0-9a-f]+)/i', 'realCharForNumericEntities', $val);	// Sometimes we have entities without the ; at end so html_entity_decode does not work but entities is still interpreted by browser.
 	} while ($oldval != $val);
 	//print "after  decoding $val\n";
 
@@ -1579,7 +1604,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 				print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 			}
 			// Chart
-			if (empty($conf->global->MAIN_JS_GRAPH) || $conf->global->MAIN_JS_GRAPH == 'chart') {
+			if ((empty($conf->global->MAIN_JS_GRAPH) || $conf->global->MAIN_JS_GRAPH == 'chart') && !defined('DISABLE_JS_GRAPH')) {
 				print '<script src="'.DOL_URL_ROOT.'/includes/nnnick/chartjs/dist/Chart.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 			}
 
@@ -1960,7 +1985,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
  */
 function top_menu_user($hideloginname = 0, $urllogout = '')
 {
-	global $langs, $conf, $db, $hookmanager, $user;
+	global $langs, $conf, $db, $hookmanager, $user, $mysoc;
 	global $dolibarr_main_authentication, $dolibarr_main_demo;
 	global $menumanager;
 
@@ -1985,13 +2010,27 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	$dropdownBody .= '<span id="topmenulogincompanyinfo-btn"><i class="fa fa-caret-right"></i> '.$langs->trans("ShowCompanyInfos").'</span>';
 	$dropdownBody .= '<div id="topmenulogincompanyinfo" >';
 
-	if (!empty($conf->global->MAIN_INFO_SIREN))      $dropdownBody .= '<br><b>'.$langs->transcountry("ProfId1Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_SIREN).'</span>';
-	if (!empty($conf->global->MAIN_INFO_SIRET))      $dropdownBody .= '<br><b>'.$langs->transcountry("ProfId2Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_SIRET).'</span>';
-	if (!empty($conf->global->MAIN_INFO_APE))        $dropdownBody .= '<br><b>'.$langs->transcountry("ProfId3Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_APE).'</span>';
-	if (!empty($conf->global->MAIN_INFO_RCS))        $dropdownBody .= '<br><b>'.$langs->transcountry("ProfId4Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_RCS).'</span>';
-	if (!empty($conf->global->MAIN_INFO_PROFID5))    $dropdownBody .= '<br><b>'.$langs->transcountry("ProfId5Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_PROFID5).'</span>';
-	if (!empty($conf->global->MAIN_INFO_PROFID6))    $dropdownBody .= '<br><b>'.$langs->transcountry("ProfId6Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_PROFID6).'</span>';
-	if (!empty($conf->global->MAIN_INFO_TVAINTRA))   $dropdownBody .= '<br><b>'.$langs->trans("VATIntraShort").'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_TVAINTRA).'</span>';
+	if (!empty($conf->global->MAIN_INFO_SIREN)) {
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId1Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_SIREN).'</span>';
+	}
+	if (!empty($conf->global->MAIN_INFO_SIRET)) {
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId2Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_SIRET).'</span>';
+	}
+	if (!empty($conf->global->MAIN_INFO_APE)) {
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId3Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_APE).'</span>';
+	}
+	if (!empty($conf->global->MAIN_INFO_RCS)) {
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId4Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_RCS).'</span>';
+	}
+	if (!empty($conf->global->MAIN_INFO_PROFID5)) {
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId5Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_PROFID5).'</span>';
+	}
+	if (!empty($conf->global->MAIN_INFO_PROFID6)) {
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId6Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_PROFID6).'</span>';
+	}
+	if (!empty($conf->global->MAIN_INFO_TVAINTRA)) {
+		$dropdownBody .= '<br><b>'.$langs->trans("VATIntraShort").'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_TVAINTRA).'</span>';
+	}
 
 	$dropdownBody .= '</div>';
 
@@ -2187,6 +2226,7 @@ function top_menu_quickadd()
 {
 	global $langs, $conf, $db, $hookmanager, $user;
 	global $menumanager;
+
 	$html = '';
 	// Define $dropDownQuickAddHtml
 	$dropDownQuickAddHtml = '<div class="dropdown-header bookmark-header center">';
@@ -2201,9 +2241,7 @@ function top_menu_quickadd()
                 <!-- Thirdparty link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/societe/card.php?action=create" title="'.$langs->trans("MenuNewThirdParty").'">
-                        <i class="fa fa-building"></i><br>
-                        '.$langs->trans("ThirdParty").'
-                    </a>
+                    '. img_picto('', 'object_company') .'<br>'. $langs->trans("ThirdParty") .'</a>
                 </div>
                 ';
 	}
@@ -2214,9 +2252,7 @@ function top_menu_quickadd()
                 <!-- Contact link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/contact/card.php?action=create" title="'.$langs->trans("NewContactAddress").'">
-                        <i class="fa fa-address-book"></i><br>
-                        '.$langs->trans("Contact").'
-                    </a>
+                    '. img_picto('', 'object_contact') .'<br>'. $langs->trans("Contact") .'</a>
                 </div>
                 ';
 	}
@@ -2227,9 +2263,7 @@ function top_menu_quickadd()
                 <!-- Propal link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/comm/propal/card.php?action=create" title="'.$langs->trans("NewPropal").'">
-                        <i class="fa fa-suitcase"></i><br>
-                        '.$langs->trans("Proposal").'
-                    </a>
+                    '. img_picto('', 'object_propal') .'<br>'. $langs->trans("Proposal") .'</a>
                 </div>
                 ';
 	}
@@ -2240,9 +2274,7 @@ function top_menu_quickadd()
                 <!-- Order link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/commande/card.php?action=create" title="'.$langs->trans("NewOrder").'">
-                        <i class="fa fa-file-alt"></i><br>
-                        '.$langs->trans("Order").'
-                    </a>
+                    '. img_picto('', 'object_order') .'<br>'. $langs->trans("Order") .'</a>
                 </div>
                 ';
 	}
@@ -2253,9 +2285,7 @@ function top_menu_quickadd()
                 <!-- Invoice link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create" title="'.$langs->trans("NewBill").'">
-                        <i class="fa fa-coins"></i><br>
-                        '.$langs->trans("Bill").'
-                    </a>
+                    '. img_picto('', 'object_bill') .'<br>'. $langs->trans("Bill") .'</a>
                 </div>
                 ';
 	}
@@ -2266,9 +2296,7 @@ function top_menu_quickadd()
                 <!-- Contract link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create" title="'.$langs->trans("NewContractSubscription").'">
-                        <i class="fa fa-file-contract"></i><br>
-                        '.$langs->trans("Contract").'
-                    </a>
+                    '. img_picto('', 'object_contract') .'<br>'. $langs->trans("Contract") .'</a>
                 </div>
                 ';
 	}
@@ -2279,9 +2307,7 @@ function top_menu_quickadd()
                 <!-- Supplier proposal link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?action=create" title="'.$langs->trans("NewAskPrice").'">
-                        <i class="fa fa-suitcase"></i><br>
-                        '.$langs->trans("AskPrice").'
-                    </a>
+                    '. img_picto('', 'object_propal') .'<br>'. $langs->trans("AskPrice") .'</a>
                 </div>
                 ';
 	}
@@ -2292,9 +2318,7 @@ function top_menu_quickadd()
                 <!-- Supplier order link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create" title="'.$langs->trans("NewOrder").'">
-                        <i class="fa fa-file-alt"></i><br>
-                        '.$langs->trans("SupplierOrder").'
-                    </a>
+                    '. img_picto('', 'object_order') .'<br>'. $langs->trans("SupplierOrder") .'</a>
                 </div>
                 ';
 	}
@@ -2305,9 +2329,7 @@ function top_menu_quickadd()
                 <!-- Supplier invoice link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create" title="'.$langs->trans("NewBill").'">
-                        <i class="fa fa-coins"></i><br>
-                        '.$langs->trans("SupplierBill").'
-                    </a>
+                    '. img_picto('', 'object_bill') .'<br>'. $langs->trans("SupplierBill") .'</a>
                 </div>
                 ';
 	}
@@ -2318,9 +2340,7 @@ function top_menu_quickadd()
                 <!-- Product link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/product/card.php?action=create&amp;type=0" title="'.$langs->trans("NewProduct").'">
-                        <i class="fa fa-cube"></i><br>
-                        '.$langs->trans("Product").'
-                    </a>
+                    '. img_picto('', 'object_product') .'<br>'. $langs->trans("Product") .'</a>
                 </div>
                 ';
 	}
@@ -2331,9 +2351,29 @@ function top_menu_quickadd()
                 <!-- Service link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/product/card.php?action=create&amp;type=1" title="'.$langs->trans("NewService").'">
-                        <i class="fa fa-concierge-bell"></i><br>
-                        '.$langs->trans("Service").'
-                    </a>
+                    '. img_picto('', 'object_service') .'<br>'. $langs->trans("Service") .'</a>
+                </div>
+                ';
+	}
+
+	if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->creer) {
+		$langs->load("trips");
+		$dropDownQuickAddHtml .= '
+                <!-- Expense report link -->
+                <div class="quickaddblock center">
+                    <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/expensereport/card.php?action=create&fk_user_author='.$user->id.'" title="'.$langs->trans("AddTrip").'">
+                    '. img_picto('', 'object_trip') .'<br>'. $langs->trans("ExpenseReport") .'</a>
+                </div>
+                ';
+	}
+
+	if (!empty($conf->holiday->enabled) && $user->rights->holiday->write) {
+		$langs->load("holiday");
+		$dropDownQuickAddHtml .= '
+                <!-- Holiday link -->
+                <div class="quickaddblock center">
+                    <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/holiday/card.php?action=create&fuserid='.$user->id.'" title="'.$langs->trans("AddCP").'">
+                    '. img_picto('', 'object_holiday') .'<br>'. $langs->trans("Holidays") .'</a>
                 </div>
                 ';
 	}

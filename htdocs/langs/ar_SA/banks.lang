@@ -109,13 +109,13 @@ SocialContributionPayment=مدفوعات الضرائب الاجتماعية / �
 BankTransfer=تحويل الرصيد
 BankTransfers=تحويلات الرصيد
 MenuBankInternalTransfer=حوالة داخلية
-TransferDesc=التحويل من حساب إلى آخر ، ستكتب Dolibarr سجلين (خصم في حساب المصدر وائتمان في الحساب الهدف). سيتم استخدام نفس المبلغ (باستثناء العلامة) والملصق والتاريخ لهذه المعاملة)
+TransferDesc=Use internal transfer to transfer from one account to another, the application will write two records: a debit in the source account and a credit in the target account. The same amount, label and date will be used for this transaction.
 TransferFrom=من
 TransferTo=إلى
 TransferFromToDone=التحويل من <b>%s</b>إلى <b>%s</b>من <b>%s</b>%s قد تم تسجيلة.
-CheckTransmitter=المرسل
+CheckTransmitter=مرسل
 ValidateCheckReceipt=تأكيد صحة الشيك المستلم؟
-ConfirmValidateCheckReceipt=هل تريد تأكيد هذا الشيك ، لن يكون من الممكن إجراء أي تغيير بعد الانتهاء من ذلك؟
+ConfirmValidateCheckReceipt=Are you sure that you want to submit this check receipt for validation? No changes are possible it's done.
 DeleteCheckReceipt=حذف هذا الشيك ؟
 ConfirmDeleteCheckReceipt=هل انت متأكد أنك تريد حذف هذا الشيك؟
 BankChecks=الشيكات المصرفية
@@ -128,7 +128,7 @@ ConfirmDeleteTransaction=هل تريد بالتأكيد حذف هذه المعا
 ThisWillAlsoDeleteBankRecord=سيؤدي هذا أيضا إلى حذف القيد البنكي الذي تم إنشاؤه
 BankMovements=حركات
 PlannedTransactions=المعاملات المخططة
-Graph=الرسومات
+Graph=Graphs
 ExportDataset_banque_1=القيود البنكية وكشف الحساب
 ExportDataset_banque_2=قسيمة الإيداع
 TransactionOnTheOtherAccount=معاملة على الحساب الآخر
@@ -142,7 +142,7 @@ AllAccounts=جميع الحسابات المصرفية والنقدية
 BackToAccount=عودة إلى الحساب
 ShowAllAccounts=عرض لجميع الحسابات
 FutureTransaction=الصفقة المستقبلية. غير قادر على التسوية.
-SelectChequeTransactionAndGenerate=حدد / تصفية الشيكات لتضمينها في إيصال إيداع الشيك وانقر على "إنشاء".
+SelectChequeTransactionAndGenerate=Select/filter the checks which are to be included in the check deposit receipt. Then, click on "Create".
 InputReceiptNumber=اختيار كشف الحساب البنكي ذات الصلة مع التسوية. استخدام قيمة رقمية للفرز: شهر سنة أو يوم شهر سنة
 EventualyAddCategory=في نهاية المطاف، حدد الفئة التي لتصنيف السجلات
 ToConciliate=للتسوية؟

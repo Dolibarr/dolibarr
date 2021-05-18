@@ -70,7 +70,7 @@ Deleted=Esborrat
 # Dict
 Type=Tipus
 Severity=Gravetat
-TicketGroupIsPublic=Group is public
+TicketGroupIsPublic=El grup és públic
 TicketGroupIsPublicDesc=If a ticket group is public, it will be visible in the form when creating a ticket from the public interface
 
 # Email templates

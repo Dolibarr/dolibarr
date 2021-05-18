@@ -553,11 +553,11 @@ class Cronjob extends CommonObject
 		} elseif ($status == 2) {
 			$sql .= " AND t.status = 2";
 		}
-		//Manage filter
+		// Manage filter
 		if (is_array($filter) && count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
-					$sql .= ' AND '.$key.' = '.$this->db->escape($value);
+					$sql .= ' AND '.$key.' = '.((int) $value);
 				} else {
 					$sql .= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				}
@@ -859,6 +859,8 @@ class Cronjob extends CommonObject
 	 */
 	public function createFromClone(User $user, $fromid)
 	{
+		global $langs;
+
 		$error = 0;
 
 		$object = new Cronjob($this->db);
@@ -868,10 +870,10 @@ class Cronjob extends CommonObject
 		// Load source object
 		$object->fetch($fromid);
 		$object->id = 0;
-		$object->statut = 0;
 
 		// Clear fields
-		// ...
+		$object->status = self::STATUS_DISABLED;
+		$object->label = $langs->trans("CopyOf").' '.$object->label;
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
@@ -882,11 +884,6 @@ class Cronjob extends CommonObject
 			$this->error = $object->error;
 			$error++;
 		}
-
-		//if (! $error)
-		//{
-
-		//}
 
 		unset($object->context['createfromclone']);
 

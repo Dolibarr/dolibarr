@@ -182,7 +182,7 @@ if (!$user->rights->societe->client->voir) {
 	$sql .= ' AND s.rowid = sc.fk_soc AND sc.fk_user = '.$user->id;
 }
 if ($socid > 0) {
-	$sql .= ' AND f.fk_soc = '.$socid;
+	$sql .= ' AND f.fk_soc = '.((int) $socid);
 }
 if ($search_ref) {
 	$sql .= natural_search('p.ref', $search_ref);

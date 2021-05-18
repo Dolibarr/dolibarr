@@ -75,7 +75,6 @@ PaymentTypeTIP=CONSEIL (Documents contre paiement)
 PaymentTypeShortTIP=PAIEMENT Paiement
 PaymentTypeTRA=Procédure bancaire
 PaymentTypeShortTRA=Brouillon
-ChequeMaker=Émetteur du chèque/transfert
 DepositId=Identifiant de dépot
 CreditNoteConvertedIntoDiscount=Ce %s a été converti en %s
 YouMustCreateStandardInvoiceFirstDesc=Vous devez d'abord créer une facture standard et la convertir en «modèle» pour créer une nouvelle facture modèle

@@ -129,13 +129,13 @@ class BookKeeping extends CommonObject
 
 	/**
 	 * @var float FEC:Amount (Not necessary)
-	 * @deprecated Use $amount
+	 * @deprecated No more used (we have info into debit/credit and sens)
 	 */
 	public $montant;
 
 	/**
 	 * @var float FEC:Amount (Not necessary)
-	 * @deprecated No more used
+	 * @deprecated No more used (we have info into debit/credit and sens)
 	 */
 	public $amount;
 
@@ -287,34 +287,38 @@ class BookKeeping extends CommonObject
 		$this->piece_num = 0;
 
 		// First check if line not yet already in bookkeeping.
-		// Note that we must include doc_type - fk_doc - numero_compte - label to be sure to have unicity of line (we may have several lines
+		// Note that we must include 'doc_type - fk_doc - numero_compte - label' to be sure to have unicity of line (because we may have several lines
 		// with same doc_type, fk_doc, numero_compte for 1 invoice line when using localtaxes with same account)
 		// WARNING: This is not reliable, label may have been modified. This is just a small protection.
-		// The page to make journalization make the test on couple doc_type - fk_doc only.
+		// The page that make transfer make the test on couple (doc_type - fk_doc) only.
 		$sql = "SELECT count(*) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " WHERE doc_type = '".$this->db->escape($this->doc_type)."'";
 		$sql .= " AND fk_doc = ".$this->fk_doc;
 		if (!empty($conf->global->ACCOUNTANCY_ENABLE_FKDOCDET)) {
-			// DO NOT USE THIS IN PRPDUCTION. This will generate a lot of trouble into reports and will corrupt database (by generating duplicate entries.
-			$sql .= " AND fk_docdet = " . $this->fk_docdet;					// This field can be 0 if record is for several lines
+			// DO NOT USE THIS IN PRODUCTION. This will generate a lot of trouble into reports and will corrupt database (by generating duplicate entries.
+			$sql .= " AND fk_docdet = " . $this->fk_docdet;			// This field can be 0 if record is for several lines
 		}
 		$sql .= " AND numero_compte = '".$this->db->escape($this->numero_compte)."'";
 		$sql .= " AND label_operation = '".$this->db->escape($this->label_operation)."'";
-		$sql .= " AND entity IN (".getEntity('accountancy').")";
+		$sql .= " AND entity = ".$conf->entity;	// Do not use getEntity for accounting features
 
 		$resql = $this->db->query($sql);
 
 		if ($resql) {
 			$row = $this->db->fetch_object($resql);
-			if ($row->nb == 0) {
-				// Determine piece_num
+			if ($row->nb == 0) {	// Not already into bookkeeping
+				// Check to know if piece_num already exists for data we try to insert to reuse the same value
 				$sqlnum = "SELECT piece_num";
 				$sqlnum .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
 				$sqlnum .= " WHERE doc_type = '".$this->db->escape($this->doc_type)."'"; // For example doc_type = 'bank'
-				$sqlnum .= " AND fk_docdet = ".$this->db->escape($this->fk_docdet); // fk_docdet is rowid into llx_bank or llx_facturedet or llx_facturefourndet, or ...
+				$sqlnum .= " AND fk_doc = ".$this->fk_doc;
+				if (!empty($conf->global->ACCOUNTANCY_ENABLE_FKDOCDET)) {
+					// fk_docdet is rowid into llx_bank or llx_facturedet or llx_facturefourndet, or ...
+					$sqlnum .= " AND fk_docdet = ".((int) $this->fk_docdet);
+				}
 				$sqlnum .= " AND doc_ref = '".$this->db->escape($this->doc_ref)."'"; // ref of source object
-				$sqlnum .= " AND entity IN (".getEntity('accountancy').")";
+				$sqlnum .= " AND entity = ".$conf->entity;	// Do not use getEntity for accounting features
 
 				dol_syslog(get_class($this).":: create sqlnum=".$sqlnum, LOG_DEBUG);
 				$resqlnum = $this->db->query($sqlnum);
@@ -327,15 +331,14 @@ class BookKeeping extends CommonObject
 				if (empty($this->piece_num)) {
 					$sqlnum = "SELECT MAX(piece_num)+1 as maxpiecenum";
 					$sqlnum .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
-					$sqlnum .= " WHERE entity IN (".getEntity('accountancy').")";
+					$sqlnum .= " WHERE entity = ".$conf->entity;	// Do not use getEntity for accounting features
 
-					dol_syslog(get_class($this).":: create sqlnum=".$sqlnum, LOG_DEBUG);
 					$resqlnum = $this->db->query($sqlnum);
 					if ($resqlnum) {
 						$objnum = $this->db->fetch_object($resqlnum);
 						$this->piece_num = $objnum->maxpiecenum;
 					}
-					dol_syslog(get_class($this).":: create this->piece_num=".$this->piece_num, LOG_DEBUG);
+					dol_syslog(get_class($this).":: create now this->piece_num=".$this->piece_num, LOG_DEBUG);
 				}
 				if (empty($this->piece_num)) {
 					$this->piece_num = 1;
@@ -371,8 +374,8 @@ class BookKeeping extends CommonObject
 				$sql .= ", ".(!isset($this->date_lim_reglement) || dol_strlen($this->date_lim_reglement) == 0 ? 'NULL' : "'".$this->db->idate($this->date_lim_reglement)."'");
 				$sql .= ", '".$this->db->escape($this->doc_type)."'";
 				$sql .= ", '".$this->db->escape($this->doc_ref)."'";
-				$sql .= ", ".$this->fk_doc;
-				$sql .= ", ".$this->fk_docdet;
+				$sql .= ", ".((int) $this->fk_doc);
+				$sql .= ", ".((int) $this->fk_docdet);
 				$sql .= ", ".(!empty($this->thirdparty_code) ? ("'".$this->db->escape($this->thirdparty_code)."'") : "NULL");
 				$sql .= ", ".(!empty($this->subledger_account) ? ("'".$this->db->escape($this->subledger_account)."'") : "NULL");
 				$sql .= ", ".(!empty($this->subledger_label) ? ("'".$this->db->escape($this->subledger_label)."'") : "NULL");
@@ -632,8 +635,8 @@ class BookKeeping extends CommonObject
 		$sql .= ' '.(!isset($this->date_lim_reglement) || dol_strlen($this->date_lim_reglement) == 0 ? 'NULL' : "'".$this->db->idate($this->date_lim_reglement)."'").',';
 		$sql .= ' '.(!isset($this->doc_type) ? 'NULL' : "'".$this->db->escape($this->doc_type)."'").',';
 		$sql .= ' '.(!isset($this->doc_ref) ? 'NULL' : "'".$this->db->escape($this->doc_ref)."'").',';
-		$sql .= ' '.(empty($this->fk_doc) ? '0' : $this->fk_doc).',';
-		$sql .= ' '.(empty($this->fk_docdet) ? '0' : $this->fk_docdet).',';
+		$sql .= ' '.(empty($this->fk_doc) ? '0' : (int) $this->fk_doc).',';
+		$sql .= ' '.(empty($this->fk_docdet) ? '0' : (int) $this->fk_docdet).',';
 		$sql .= ' '.(!isset($this->thirdparty_code) ? 'NULL' : "'".$this->db->escape($this->thirdparty_code)."'").',';
 		$sql .= ' '.(!isset($this->subledger_account) ? 'NULL' : "'".$this->db->escape($this->subledger_account)."'").',';
 		$sql .= ' '.(!isset($this->subledger_label) ? 'NULL' : "'".$this->db->escape($this->subledger_label)."'").',';
@@ -1121,6 +1124,12 @@ class BookKeeping extends CommonObject
 					$sqlwhere[] = $key.' LIKE \''.$this->db->escape($value).'%\'';
 				} elseif ($key == 't.subledger_label') {
 					$sqlwhere[] = $key.' LIKE \''.$this->db->escape($value).'%\'';
+				} elseif ($key == 't.code_journal' && !empty($value)) {
+					if (is_array($value)) {
+						$sqlwhere[] = natural_search("t.code_journal", join(',', $value), 3, 1);
+					} else {
+						$sqlwhere[] = natural_search("t.code_journal", $value, 3, 1);
+					}
 				} else {
 					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				}
@@ -1860,7 +1869,7 @@ class BookKeeping extends CommonObject
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.account_number = ab.numero_compte";
 		$sql .= " AND aa.active = 1";
 		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
-		$sql .= " AND asy.rowid = " . $pcgver;
+		$sql .= " AND asy.rowid = " . ((int) $pcgver);
 		$sql .= " AND ab.entity IN (" . getEntity('accountancy') . ")";
 		$sql .= " ORDER BY account_number ASC";
 		*/
@@ -1893,7 +1902,7 @@ class BookKeeping extends CommonObject
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.account_number = ab.numero_compte";
 		$sql .= " AND aa.active = 1";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
-		$sql .= " AND asy.rowid = ".$pcgver;
+		$sql .= " AND asy.rowid = ".((int) $pcgver);
 		$sql .= " AND ab.entity IN (".getEntity('accountancy').")";
 		$sql .= " ORDER BY account_number ASC";
 

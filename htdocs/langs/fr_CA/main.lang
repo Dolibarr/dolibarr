@@ -102,7 +102,6 @@ CoreErrorMessage=Désolé, une erreur s'est produite. Contactez votre administra
 LinkToProposal=Lier à une proposition
 SelectAction=Sélectionnez l'action
 SelectTargetUser=Sélectionnez l'utilisateur / employé cible
-SelectElementAndClick=Sélectionnez un élément et cliquez sur %s
 ShowTransaction=Afficher l'entrée sur le compte bancaire
 DeleteLine=Suppression de ligne
 ConfirmDeleteLine=Êtes-vous sûr de vouloir supprimer cette ligne?

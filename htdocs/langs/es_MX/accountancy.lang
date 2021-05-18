@@ -82,6 +82,7 @@ XLineFailedToBeBinded=%s productos / servicios no estaban vinculados a ninguna c
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Comience la ordenación de la página "Enlazar para hacer" por los elementos más recientes
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Comience la ordenación de la página "Enlace realizado" por los elementos más recientes
 BANK_DISABLE_DIRECT_INPUT=Deshabilitar el registro directo de la transacción en la cuenta bancaria
+ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties)
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Diario de varios
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Diario de reporte de gastos
 ACCOUNTING_SOCIAL_JOURNAL=Diario Social

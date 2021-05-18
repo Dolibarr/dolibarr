@@ -42,6 +42,6 @@ ExtraFieldsEcmFiles=Extrafelder Ecm-Dateien
 ExtraFieldsEcmDirectories=Extrafelder Ecm-Verzeichnisse
 ECMSetup=DMS Einstellungen
 GenerateImgWebp=Duplicate all images with another version with .webp format
-ConfirmGenerateImgWebp=If you confirm, you will generate an image in .webp format for all images currently into this folder and its subfolder...
+ConfirmGenerateImgWebp=If you confirm, you will generate an image in .webp format for all images currently into this folder (subfolders are not included)...
 ConfirmImgWebpCreation=Confirm all images duplication
 SucessConvertImgWebp=Images successfully duplicated

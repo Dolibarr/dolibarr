@@ -312,8 +312,9 @@ print '<br>';
 
 // Other
 print '<div class="div-table-responsive-no-min">';
-print '<table summary="otherparameters" class="noborder centpercent editmode">';
-print '<tr class="liste_titre"><th>'.$langs->trans("Miscellaneous").'</th><th></th>';
+print '<table summary="otherparameters" class="noborder centpercent editmode tableforfield">';
+print '<tr class="liste_titre"><th class="titlefieldmiddle">'.$langs->trans("Miscellaneous").'</th>';
+print '<th></th>';
 print '<th width="20">&nbsp;</tg>';
 print '</tr>';
 
@@ -402,7 +403,7 @@ print '</tr>';
 
 // Show bugtrack link
 print '<tr class="oddeven"><td>'.$langs->trans("ShowBugTrackLink", $langs->transnoentitiesnoconv("FindBug")).'</td><td>';
-print '<input type="text" name="MAIN_BUGTRACK_ENABLELINK" size="32" value="'.(isset($conf->global->MAIN_BUGTRACK_ENABLELINK) ? $conf->global->MAIN_BUGTRACK_ENABLELINK : '').'">';
+print '<input type="text" name="MAIN_BUGTRACK_ENABLELINK" value="'.(empty($conf->global->MAIN_BUGTRACK_ENABLELINK) ? '' : $conf->global->MAIN_BUGTRACK_ENABLELINK).'">';
 print '</td>';
 print '<td width="20">&nbsp;</td>';
 print '</tr>';
@@ -441,8 +442,9 @@ print '<br>';
 
 // Other
 print '<div class="div-table-responsive-no-min">';
-print '<table summary="edit" class="noborder centpercent editmode">';
-print '<tr class="liste_titre"><th>'.$langs->trans("LoginPage").'</th><th></th>';
+print '<table summary="edit" class="noborder centpercent editmode tableforfield">';
+print '<tr class="liste_titre"><th class="titlefieldmiddle">'.$langs->trans("LoginPage").'</th>';
+print '<th></th>';
 print '<th width="20">&nbsp;</th>';
 print '</tr>';
 

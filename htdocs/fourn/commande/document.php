@@ -70,6 +70,7 @@ if (!$sortfield) {
 	$sortfield = "name";
 }
 
+$hookmanager->initHooks(array('ordersuppliercarddocument'));
 
 $object = new CommandeFournisseur($db);
 if ($object->fetch($id, $ref) < 0) {
@@ -94,10 +95,11 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 $form = new	Form($db);
 
-if ($object->id > 0) {
-	$help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
-	llxHeader('', $langs->trans("Order"), $help_url);
+$title = $langs->trans('SupplierOrder')." - ".$langs->trans('Documents');
+$help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
+llxHeader('', $title, $help_url);
 
+if ($object->id > 0) {
 	$object->fetch_thirdparty();
 
 	$author = new User($db);

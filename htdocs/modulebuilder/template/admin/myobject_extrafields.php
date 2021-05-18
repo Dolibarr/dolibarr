@@ -91,17 +91,19 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  * View
  */
 
+$help_url = '';
+$page_name = "MyModuleSetup";
 
 llxHeader('', $langs->trans("MyModuleSetup"), $help_url);
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("MyModuleSetup"), $linkback, 'title_setup');
+print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
 
 $head = mymoduleAdminPrepareHead();
 
-print dol_get_fiche_head($head, 'myobject_extrafields', $langs->trans("MyObjectExtraFields"), -1, 'account');
+print dol_get_fiche_head($head, 'myobject_extrafields', $langs->trans($page_name), -1, 'mymodule@mymodule');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

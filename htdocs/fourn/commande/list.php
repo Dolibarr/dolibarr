@@ -91,8 +91,8 @@ $search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
 
-if (is_array(GETPOST('search_status', 'intcomma'))) {
-	$search_status = join(',', GETPOST('search_status', 'intcomma'));
+if (is_array(GETPOST('search_status', 'none'))) {	// 'none' because we want to know type before sanitizing
+	$search_status = join(',', GETPOST('search_status', 'array:intcomma'));
 } else {
 	$search_status = (GETPOST('search_status', 'intcomma') != '' ? GETPOST('search_status', 'intcomma') : GETPOST('statut', 'intcomma'));
 }
@@ -1284,6 +1284,7 @@ if ($resql) {
 		$objectstatic->id = $obj->rowid;
 		$objectstatic->ref = $obj->ref;
 		$objectstatic->ref_supplier = $obj->ref_supplier;
+		$objectstatic->socid = $obj->socid;
 		$objectstatic->total_ht = $obj->total_ht;
 		$objectstatic->total_tva = $obj->total_tva;
 		$objectstatic->total_ttc = $obj->total_ttc;

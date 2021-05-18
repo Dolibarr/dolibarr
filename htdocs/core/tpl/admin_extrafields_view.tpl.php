@@ -115,12 +115,14 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 			}
 			print '</td>';
 		}
-		print '<td class="right nowraponall"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&attrname='.$key.'#formeditextrafield">'.img_edit().'</a>';
-		print '&nbsp; <a class="paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&attrname='.$key.'">'.img_delete().'</a></td>'."\n";
+		print '<td class="right nowraponall">';
+		print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&attrname='.$key.'#formeditextrafield">'.img_edit().'</a>';
+		print '&nbsp; <a class="paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&attrname='.$key.'">'.img_delete().'</a>';
+		print '</td>'."\n";
 		print "</tr>";
 	}
 } else {
-	$colspan = 13;
+	$colspan = 14;
 	if (!empty($conf->multicompany->enabled)) {
 		$colspan++;
 	}
