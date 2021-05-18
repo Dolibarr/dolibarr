@@ -38,7 +38,7 @@ if (!empty($conf->projet->enabled)) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array('compta', 'banks', 'bills', 'hrm'));
+$langs->loadLangs(array('compta', 'banks', 'bills', 'hrm', 'projects'));
 
 $action				= GETPOST('action', 'aZ09');
 $massaction			= GETPOST('massaction', 'alpha');
