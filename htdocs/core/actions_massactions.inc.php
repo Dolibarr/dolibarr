@@ -559,8 +559,10 @@ if (!$error && $massaction == 'confirm_presend')
 							{
 								$resaction .= $langs->trans('ErrorFailedToSendMail', $from, $sendto);
 								$resaction .= '<br><div class="error">'.$mailfile->error.'</div>';
-							} else {
+							} elseif (!empty($conf->global->MAIN_DISABLE_ALL_MAILS)) {
 								$resaction .= '<div class="warning">No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS</div>';
+							} else {
+								$resaction .= $langs->trans('ErrorFailedToSendMail', $from, $sendto) . '<br><div class="error">(unhandled error)</div>';
 							}
 						}
 					}
