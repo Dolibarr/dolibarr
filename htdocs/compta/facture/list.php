@@ -467,7 +467,7 @@ if (!empty($conf->margin->enabled)) {
 $bankaccountstatic = new Account($db);
 $facturestatic = new Facture($db);
 $formcompany = new FormCompany($db);
-$thirdpartystatic = new Societe($db);
+$companystatic = new Societe($db);
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0 || $search_user > 0) {
@@ -481,7 +481,7 @@ $sql .= ' f.datef, f.date_valid, f.date_lim_reglement as datelimite, f.module_so
 $sql .= ' f.paye as paye, f.fk_statut, f.close_code,';
 $sql .= ' f.datec as date_creation, f.tms as date_update, f.date_closing as date_closing,';
 $sql .= ' f.retained_warranty, f.retained_warranty_date_limit, f.situation_final, f.situation_cycle_ref, f.situation_counter,';
-$sql .= ' s.rowid as socid, s.nom as name, s.name_alias as name_alias, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,';
+$sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,';
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " country.code as country_code,";
@@ -714,7 +714,7 @@ if (!$sall) {
 	$sql .= ' f.retained_warranty, f.retained_warranty_date_limit, f.situation_final, f.situation_cycle_ref, f.situation_counter,';
 	$sql .= ' f.fk_user_author, f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva,';
 	$sql .= ' f.multicurrency_total_tva, f.multicurrency_total_ttc,';
-	$sql .= ' s.rowid, s.nom, s.name_alias, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,';
+	$sql .= ' s.rowid, s.nom, s.name_alias, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,';
 	$sql .= ' typent.code,';
 	$sql .= ' state.code_departement, state.nom,';
 	$sql .= ' country.code,';
@@ -1539,16 +1539,22 @@ if ($resql) {
 				 $facturestatic->situation_cycle_ref = $obj->situation_cycle_ref;
 				 $facturestatic->situation_counter = $obj->situation_counter;
 			}
-			$thirdpartystatic->id = $obj->socid;
-			$thirdpartystatic->name = $obj->name;
-			$thirdpartystatic->client = $obj->client;
-			$thirdpartystatic->fournisseur = $obj->fournisseur;
-			$thirdpartystatic->code_client = $obj->code_client;
-			$thirdpartystatic->code_compta_client = $obj->code_compta_client;
-			$thirdpartystatic->code_fournisseur = $obj->code_fournisseur;
-			$thirdpartystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
-			$thirdpartystatic->email = $obj->email;
-			$thirdpartystatic->country_code = $obj->country_code;
+			$companystatic->id = $obj->socid;
+			$companystatic->name = $obj->name;
+			$companystatic->name_alias = $obj->alias;
+			$companystatic->client = $obj->client;
+			$companystatic->fournisseur = $obj->fournisseur;
+			$companystatic->code_client = $obj->code_client;
+			$companystatic->code_compta_client = $obj->code_compta_client;
+			$companystatic->code_fournisseur = $obj->code_fournisseur;
+			$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
+			$companystatic->email = $obj->email;
+			$companystatic->phone = $obj->phone;
+			$companystatic->fax = $obj->fax;
+			$companystatic->address = $obj->address;
+			$companystatic->zip = $obj->zip;
+			$companystatic->town = $obj->town;
+			$companystatic->country_code = $obj->country_code;
 
 			$projectstatic->id = $obj->project_id;
 			$projectstatic->ref = $obj->project_ref;
@@ -1570,10 +1576,10 @@ if ($resql) {
 				$multicurrency_remaintopay = 0;
 			}
 			if ($facturestatic->type == Facture::TYPE_CREDIT_NOTE && $obj->paye == 1) {		// If credit note closed, we take into account the amount not yet consummed
-				$remaincreditnote = $discount->getAvailableDiscounts($thirdpartystatic, '', 'rc.fk_facture_source='.$facturestatic->id);
+				$remaincreditnote = $discount->getAvailableDiscounts($companystatic, '', 'rc.fk_facture_source='.$facturestatic->id);
 				$remaintopay = -$remaincreditnote;
 				$totalpay = price2num($facturestatic->total_ttc - $remaintopay);
-				$multicurrency_remaincreditnote = $discount->getAvailableDiscounts($thirdpartystatic, '', 'rc.fk_facture_source='.$facturestatic->id, 0, 0, 1);
+				$multicurrency_remaincreditnote = $discount->getAvailableDiscounts($companystatic, '', 'rc.fk_facture_source='.$facturestatic->id, 0, 0, 1);
 				$multicurrency_remaintopay = -$multicurrency_remaincreditnote;
 				$multicurrency_totalpay = price2num($facturestatic->multicurrency_total_ttc - $multicurrency_remaintopay);
 			}
@@ -1704,9 +1710,9 @@ if ($resql) {
 			if (!empty($arrayfields['s.nom']['checked'])) {
 				print '<td class="tdoverflowmax200">';
 				if ($contextpage == 'poslist') {
-					print $thirdpartystatic->name;
+					print $companystatic->name;
 				} else {
-					print $thirdpartystatic->getNomUrl(1, 'customer');
+					print $companystatic->getNomUrl(1, 'customer');
 				}
 				print '</td>';
 				if (!$i) {
