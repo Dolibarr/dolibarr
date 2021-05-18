@@ -327,7 +327,7 @@ $sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as s ON p.rowid = s.fk_product';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot AS ent ON s.fk_entrepot = ent.rowid AND ent.entity IN('.getEntity('stock').')';
 if ($fk_supplier > 0) {
-	$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'product_fournisseur_price pfp ON (pfp.fk_product = p.rowid AND pfp.fk_soc = '.$fk_supplier.')';
+	$sql .= ' INNER JOIN '. MAIN_DB_PREFIX . 'product_fournisseur_price pfp ON pfp.rowid = (SELECT pfp1.rowid FROM llx_product_fournisseur_price pfp1 WHERE pfp1.fk_product = p.rowid AND pfp1.fk_soc = ' . $fk_supplier . ' ORDER BY pfp1.rowid LIMIT 1)';
 }
 if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_warehouse_properties AS pse ON (p.rowid = pse.fk_product AND pse.fk_entrepot = '.$fk_entrepot.')';
