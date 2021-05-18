@@ -8129,7 +8129,7 @@ class Form
 		//if ($projectsListId) $sql.= " AND p.rowid IN (".$projectsListId.")";
 		//if ($socid == 0) $sql.= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
 		//if ($socid > 0)  $sql.= " AND (p.fk_soc=".$socid." OR p.fk_soc IS NULL)";
-		$sql .= " GROUP BY f.ref, f.rowid, flabel,pid, p.title, p.fk_soc, p.fk_statut, p.public, name ORDER BY p.ref, f.ref ASC";
+		$sql .= "ORDER BY p.ref, f.ref ASC";
 
 		$resql = $this->db->query($sql);
 		if ($resql)
