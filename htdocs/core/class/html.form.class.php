@@ -8754,8 +8754,8 @@ class Form
 		}
 
 		// Search all projects
-		$sql = 'SELECT f.rowid, f.ref as fref, "nolabel" as flabel, p.rowid as pid, f.ref,
-            p.title, p.fk_soc, p.fk_statut, p.public,';
+		$sql = "SELECT f.rowid, f.ref as fref, 'nolabel' as flabel, p.rowid as pid, f.ref,
+            p.title, p.fk_soc, p.fk_statut, p.public,";
 		$sql .= ' s.nom as name';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'projet as p';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON s.rowid = p.fk_soc,';
@@ -8765,7 +8765,7 @@ class Form
 		//if ($projectsListId) $sql.= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")";
 		//if ($socid == 0) $sql.= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
 		//if ($socid > 0)  $sql.= " AND (p.fk_soc=".$socid." OR p.fk_soc IS NULL)";
-		$sql .= " GROUP BY f.ref ORDER BY p.ref, f.ref ASC";
+		$sql .= "ORDER BY p.ref, f.ref ASC";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
