@@ -72,6 +72,8 @@ if ($object->fetch($id, $ref)) {
 	$upload_dir = $conf->facture->dir_output."/".dol_sanitizeFileName($object->ref);
 }
 
+$permissiontoadd = $user->rights->facture->creer;
+
 // Security check
 if ($user->socid) {
 	$socid = $user->socid;
