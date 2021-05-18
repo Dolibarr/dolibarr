@@ -719,7 +719,7 @@ if (!$sall) {
 	$sql .= ' state.code_departement, state.nom,';
 	$sql .= ' country.code,';
 	$sql .= " p.rowid, p.ref, p.title,";
-	$sql .= " u.login";
+	$sql .= " u.login, u.lastname, u.firstname, u.email, u.statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender";
 	if ($search_categ_cus) {
 		$sql .= ", cc.fk_categorie, cc.fk_soc";
 	}
