@@ -66,7 +66,7 @@ $fourn_id = GETPOST('fourn_id', 'int');
 $fk_supplier = GETPOST('fk_supplier', 'int');
 $fk_entrepot = GETPOST('fk_entrepot', 'int');
 
-//List all visible warehouses
+// List all visible warehouses
 $resWar = $db->query("SELECT rowid FROM " . MAIN_DB_PREFIX . "entrepot WHERE entity IN (" . $db->sanitize(getEntity('stock')) .")");
 $listofqualifiedwarehousesid = "";
 $count = 0;
@@ -103,6 +103,7 @@ if (!$sortorder) {
 	$sortorder = 'ASC';
 }
 
+// Define virtualdiffersfromphysical
 $virtualdiffersfromphysical = 0;
 if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
 	|| !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)
