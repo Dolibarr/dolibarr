@@ -8123,13 +8123,14 @@ class Form
 
 
 	/**
-	 *    	Return HTML code to output a barcode
+	 *  Return HTML code to output a barcode
 	 *
-	 *     	@param	Object	$object		Object containing data to retrieve file name
-	 * 		@param	int		$width			Width of photo
-	 * 	  	@return string    				HTML code to output barcode
+	 *  @param	Object	$object			Object containing data to retrieve file name
+	 * 	@param	int		$width			Width of photo
+	 * 	@param	string	$morecss		More CSS on img of barcode
+	 * 	@return string    				HTML code to output barcode
 	 */
-	public function showbarcode(&$object, $width = 100)
+	public function showbarcode(&$object, $width = 100, $morecss = '')
 	{
 		global $conf;
 
@@ -8150,7 +8151,7 @@ class Form
 		// Barcode image
 		$url = DOL_URL_ROOT.'/viewimage.php?modulepart=barcode&generator='.urlencode($object->barcode_type_coder).'&code='.urlencode($object->barcode).'&encoding='.urlencode($object->barcode_type_code);
 		$out = '<!-- url barcode = '.$url.' -->';
-		$out .= '<img src="'.$url.'">';
+		$out .= '<img src="'.$url.'"'.($morecss ? ' class="'.$morecss.'"' : '').'>';
 		return $out;
 	}
 
