@@ -221,7 +221,7 @@ foreach ($fulltree as $key => $val) {
 $nbofentries = (count($data) - 1);
 
 $morethan1level = 0;
-foreach($data as $record) {
+foreach ($data as $record) {
 	if (!empty($record['fk_menu']) && $record['fk_menu'] > 0) {
 		$morethan1level = 1;
 	}

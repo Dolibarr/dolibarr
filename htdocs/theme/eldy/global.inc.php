@@ -1493,7 +1493,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	}
 
 	.smallonsmartphone {
-    	font-size: 0.8em;
+		font-size: 0.8em;
 	}
 }
 
