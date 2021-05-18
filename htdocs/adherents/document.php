@@ -93,6 +93,8 @@ if ($id) {
 	$caneditfieldmember = $user->rights->adherent->creer;
 }
 
+$permissiontoadd = $canaddmember;
+
 // Security check
 $result = restrictedArea($user, 'adherent', $object->id, '', '', 'socid', 'rowid', 0);
 
