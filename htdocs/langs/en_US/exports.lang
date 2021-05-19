@@ -78,6 +78,7 @@ InformationOnSourceFile=Information on source file
 InformationOnTargetTables=Information on target fields
 SelectAtLeastOneField=Switch at least one source field in the column of fields to export
 SelectFormat=Choose this import file format
+RunImportForce=Force import data
 RunImportFile=Import Data
 NowClickToRunTheImport=Check the results of the import simulation. Correct any errors and re-test.<br>When the simulation reports no errors you may proceed to import the data into the database.
 DataLoadedWithId=The imported data will have an additional field in each database table with this import id: <b>%s</b>, to allow it to be searchable in the case of investigating a problem related to this import.
