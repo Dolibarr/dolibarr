@@ -2030,7 +2030,7 @@ if ($step == 6 && $datatoimport) {
 		print $langs->trans("ErrorFailedToOpenFile", $pathfile);
 	}
 
-	if (count($arrayoferrors) > 0) {
+	if (count($arrayoferrors) > 0 && empty($import_force)) {
 		$db->rollback(); // We force rollback because this was errors.
 	} else {
 		$error = 0;
