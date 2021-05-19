@@ -902,8 +902,8 @@ span.fa.fa-plus-circle.paddingleft {
 	height: 28px;
 	vertical-align: middle;
 }
-.divsocialnetwork:not(:first-child) {
-	padding-left: 20px;
+.divsocialnetwork:not(:last-child) {
+	padding-<?php print $right; ?>: 20px;
 }
 div.divsearchfield {
 	float: <?php print $left; ?>;
