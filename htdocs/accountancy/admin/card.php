@@ -257,7 +257,16 @@ if ($action == 'create') {
 	print $form->textwithpicto($langs->trans("Pcgtype"), $langs->transnoentitiesnoconv("PcgtypeDesc"));
 	print '</td>';
 	print '<td>';
-	print '<input type="text" name="pcg_type" value="'.dol_escape_htmltag(GETPOSTISSET('pcg_type') ? GETPOST('pcg_type', 'alpha') : $object->pcg_type).'">';
+	print '<input type="text" name="pcg_type" list="pcg_type_datalist" value="'.dol_escape_htmltag(GETPOSTISSET('pcg_type') ? GETPOST('pcg_type', 'alpha') : $object->pcg_type).'">';
+	print '<datalist id="pcg_type_datalist">';
+	$sql = 'SELECT a.rowid as rowid, a.code as code, a.label FROM '.MAIN_DB_PREFIX.'c_accounting_category as a WHERE a.active=1';
+	$resql = $db->query($sql);
+	if ($resql) {
+		while ($obj = $db->fetch_object($resql)) {
+			print '<option value="' . dol_escape_htmltag($obj->code) . '">';
+		}
+	}
+	print '</datalist>';
 	print '</td></tr>';
 
 	// Category
