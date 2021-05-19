@@ -74,6 +74,7 @@ function llxFooter()
 require 'main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
 $encoding = '';
 $action = GETPOST('action', 'alpha');
@@ -269,6 +270,10 @@ if (!$attachment && !empty($conf->global->MAIN_USE_EXIF_ROTATION) && image_forma
 if ($readfile) {
 	header('Content-Length: '.dol_filesize($fullpath_original_file));
 	readfile($fullpath_original_file_osencoded);
+
+	// Random object instanciation to use call_trigger() of common object
+	$obj = new Facture($db);
+	$obj->call_trigger('EXPORT_FILE_'.(strtoupper(strtr($original_file, array('export_'=>'', '.csv'=>'')))), $user);
 }
 
 if (is_object($db)) $db->close();
