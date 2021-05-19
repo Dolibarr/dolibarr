@@ -1239,6 +1239,8 @@ if (empty($reshook))
 									$tva_tx = get_default_tva($soc, $mysoc, $lines[$i]->fk_product, $product_fourn_price_id);
 								}
 
+								$object->special_code = $lines[$i]->special_code;
+
 								$result = $object->addline(
 									$desc,
 									$lines[$i]->subprice,
