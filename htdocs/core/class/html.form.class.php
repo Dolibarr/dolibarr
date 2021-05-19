@@ -1025,7 +1025,7 @@ class Form
 				$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 			}
 
-			$out .= '<select id="'.$htmlname.'" class="flat selectincoterm minwidth100imp noenlargeonsmartphone" name="'.$htmlname.'" '.$htmloption.'>';
+			$out .= '<select id="'.$htmlname.'" class="flat selectincoterm width75" name="'.$htmlname.'" '.$htmloption.'>';
 			$out .= '<option value="0">&nbsp;</option>';
 			$num = $this->db->num_rows($resql);
 			$i = 0;
@@ -3670,13 +3670,14 @@ class Form
 	/**
 	 *      Retourne la liste des types de delais de livraison possibles
 	 *
-	 *      @param	int		$selected        Id du type de delais pre-selectionne
-	 *      @param  string	$htmlname        Nom de la zone select
-	 *      @param  string	$filtertype      To add a filter
+	 *      @param	int		$selected       Id du type de delais pre-selectionne
+	 *      @param  string	$htmlname       Nom de la zone select
+	 *      @param  string	$filtertype     To add a filter
 	 *		@param	int		$addempty		Add empty entry
+	 * 		@param	string	$morecss		More CSS
 	 *		@return	void
 	 */
-	public function selectAvailabilityDelay($selected = '', $htmlname = 'availid', $filtertype = '', $addempty = 0)
+	public function selectAvailabilityDelay($selected = '', $htmlname = 'availid', $filtertype = '', $addempty = 0, $morecss = '')
 	{
 		global $langs, $user;
 
@@ -3684,7 +3685,7 @@ class Form
 
 		dol_syslog(__METHOD__." selected=".$selected.", htmlname=".$htmlname, LOG_DEBUG);
 
-		print '<select id="'.$htmlname.'" class="flat" name="'.$htmlname.'">';
+		print '<select id="'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
 		if ($addempty) {
 			print '<option value="0">&nbsp;</option>';
 		}
@@ -3694,7 +3695,7 @@ class Form
 			} else {
 				print '<option value="'.$id.'">';
 			}
-			print $arrayavailability['label'];
+			print dol_escape_htmltag($arrayavailability['label']);
 			print '</option>';
 		}
 		print '</select>';
@@ -4154,15 +4155,16 @@ class Form
 	/**
 	 *  Return a HTML select list of shipping mode
 	 *
-	 *  @param	string	$selected          Id shipping mode pre-selected
-	 *  @param  string	$htmlname          Name of select zone
-	 *  @param  string	$filtre            To filter list. This parameter must not come from input of users
-	 *  @param  int		$useempty          1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
-	 *  @param  string	$moreattrib        To add more attribute on select
+	 *  @param	string	$selected           Id shipping mode pre-selected
+	 *  @param  string	$htmlname           Name of select zone
+	 *  @param  string	$filtre             To filter list. This parameter must not come from input of users
+	 *  @param  int		$useempty           1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
+	 *  @param  string	$moreattrib         To add more attribute on select
 	 *	@param	int		$noinfoadmin		0=Add admin info, 1=Disable admin info
+	 *  @param	string	$morecss			More CSS
 	 * 	@return	void
 	 */
-	public function selectShippingMethod($selected = '', $htmlname = 'shipping_method_id', $filtre = '', $useempty = 0, $moreattrib = '', $noinfoadmin = 0)
+	public function selectShippingMethod($selected = '', $htmlname = 'shipping_method_id', $filtre = '', $useempty = 0, $moreattrib = '', $noinfoadmin = 0, $morecss = '')
 	{
 		global $langs, $conf, $user;
 
@@ -4183,7 +4185,7 @@ class Form
 			$num = $this->db->num_rows($result);
 			$i = 0;
 			if ($num) {
-				print '<select id="select'.$htmlname.'" class="flat selectshippingmethod" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
+				print '<select id="select'.$htmlname.'" class="flat selectshippingmethod'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
 				if ($useempty == 1 || ($useempty == 2 && $num > 1)) {
 					print '<option value="-1">&nbsp;</option>';
 				}
