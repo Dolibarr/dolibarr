@@ -3112,20 +3112,55 @@ class Societe extends CommonObject
 	{
 		// phpcs:enable
 		if ($this->id) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX."societe";
-			$sql .= " SET parent = ".($id > 0 ? $id : "null");
-			$sql .= " WHERE rowid = ".$this->id;
-			dol_syslog(get_class($this).'::set_parent', LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				$this->parent = $id;
-				return 1;
-			} else {
+			// InfraS change (to avoid infinite loop)
+			$sameparent				= $this->get_parents($id, $this->id);
+			if ($sameparent < 0)	return -1;
+			elseif ($sameparent == 1)
+			{
+				setEventMessages('la maison mère choisie est déjà filiale de ce tiers', null, 'warnings');
 				return -1;
-			}
-		} else {
-			return -1;
-		}
+			}	// elseif ($sameparent == 1)
+			else
+			{
+				$sql	= 'UPDATE '.MAIN_DB_PREFIX.'societe SET parent = '.($id > 0 ? $id : 'null').' WHERE rowid = '.$this->id;
+				dol_syslog(get_class($this).'::set_parent', LOG_DEBUG);
+				$resql	= $this->db->query($sql);
+				if ($resql)
+				{
+					$this->parent	= $id;
+					return 1;
+				}	// if ($resql)
+				else	return -1;
+			}	// else	// elseif ($sameparent == 1)
+		}	// if ($this->id)
+		else return -1;
+	}
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *    Search parent commany of current company
+	 *
+	 *    @param	int		$idparent	Id of thirdparty to check
+	 *    @param	int		$idchild	Id of thirdparty to compare to
+	 *    @return	int     		<0 if KO, 0 if OK or 1 if at some level a parent company was the child to compare to
+	 */
+    public function get_parents($idparent, $idchild)
+	{
+        // phpcs:enable
+		$sql	= 'SELECT s.parent';
+		$sql	.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
+		$sql	.= ' WHERE rowid = '.$idparent;
+		$resql	= $this->db->query($sql);
+		if ($resql)
+		{
+			$obj	= $this->db->fetch_object($resql);
+
+			if ($obj->parent == '')				return 0;
+			elseif ($obj->parent == $idchild)	return 1;
+			else								$sameparent	= $this->get_parents($obj->parent, $idchild);
+			return $sameparent;
+		}	// if ($resql)
+		else	return -1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
