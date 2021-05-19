@@ -1496,6 +1496,18 @@ table[summary="list_of_modules"] .fa-cog {
 		padding-right: 10px !important;
 	}
 	
+	.hideonsmartphone { display: none; }
+	.hideonsmartphoneimp { display: none !important; }
+	
+	select.minwidth100imp, select.minwidth100, select.minwidth200, select.minwidth200imp, select.minwidth300 {
+		width: calc(100% - 40px) !important;
+		display: inline-block;
+	}
+	select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-selection), input.widthcentpercentminusxx {
+		width: calc(100% - 70px) !important;
+		display: inline-block;
+	}
+	
 	.poweredbyimg {
 		width: 48px;
 	}
@@ -1580,8 +1592,6 @@ table[summary="list_of_modules"] .fa-cog {
 		line-height: 1.4em;
 	 }
 
-	.hideonsmartphone { display: none; }
-	.hideonsmartphoneimp { display: none !important; }
 	.noenlargeonsmartphone { width : 50px !important; display: inline !important; }
 	.maxwidthonsmartphone, #search_newcompany.ui-autocomplete-input { max-width: 100px; }
 	.maxwidth50onsmartphone { max-width: 40px; }
