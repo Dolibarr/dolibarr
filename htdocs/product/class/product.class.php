@@ -1534,7 +1534,6 @@ class Product extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  check if price have really change to avoid log pollution
 	 *
@@ -1543,7 +1542,6 @@ class Product extends CommonObject
 	 */
 	private function getArrayForPriceCompare($level = 0)
 	{
-		// phpcs:enable
 
 		$testExit = array('multiprices','multiprices_ttc','multiprices_base_type','multiprices_min','multiprices_min_ttc','multiprices_tva_tx','multiprices_recuperableonly');
 
