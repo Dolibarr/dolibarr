@@ -422,7 +422,7 @@ $sql .= ' f.datef as df, f.date_valid, f.date_lim_reglement as datelimite, f.mod
 $sql .= ' f.paye as paye, f.fk_statut, f.close_code,';
 $sql .= ' f.datec as date_creation, f.tms as date_update, f.date_closing as date_closing,';
 $sql .= ' f.retained_warranty, f.retained_warranty_date_limit, f.situation_final, f.situation_cycle_ref, f.situation_counter,';
-$sql .= ' s.rowid as socid, s.nom as name, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,';
+$sql .= ' s.rowid as socid, s.nom as name, s.name_alias, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,';	// InfraS change
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " country.code as country_code,";
@@ -1193,6 +1193,7 @@ if ($resql)
 			}
 			$thirdpartystatic->id = $obj->socid;
 			$thirdpartystatic->name = $obj->name;
+			$thirdpartystatic->name_alias = $obj->name_alias;	// InfraS add
 			$thirdpartystatic->client = $obj->client;
 			$thirdpartystatic->fournisseur = $obj->fournisseur;
 			$thirdpartystatic->code_client = $obj->code_client;

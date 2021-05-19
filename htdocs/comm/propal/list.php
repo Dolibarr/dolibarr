@@ -349,7 +349,7 @@ $help_url = 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos'
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0 || $search_user > 0) $sql = 'SELECT DISTINCT';
-$sql .= ' s.rowid as socid, s.nom as name, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client, ';
+$sql .= ' s.rowid as socid, s.nom as name, s.name_alias, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client, ';	// InfraS change
 $sql .= " typent.code as typent_code,";
 $sql .= " ava.rowid as availability,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
@@ -949,6 +949,7 @@ if ($resql)
 
 		$companystatic->id = $obj->socid;
 		$companystatic->name = $obj->name;
+		$companystatic->name_alias = $obj->name_alias;	// InfraS add
 		$companystatic->client = $obj->client;
 		$companystatic->code_client = $obj->code_client;
 		$companystatic->email = $obj->email;
