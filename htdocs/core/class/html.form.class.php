@@ -4946,16 +4946,16 @@ class Form
 			$formconfirm .= '<table class="valid centpercent">'."\n";
 
 			// Line title
-			$formconfirm .= '<tr class="validtitre"><td class="validtitre" colspan="3">'.img_picto('', 'recent').' '.$title.'</td></tr>'."\n";
+			$formconfirm .= '<tr class="validtitre"><td class="validtitre" colspan="2">'.img_picto('', 'recent').' '.$title.'</td></tr>'."\n";
 
 			// Line text
 			if (is_array($formquestion) && !empty($formquestion['text'])) {
-				$formconfirm .= '<tr class="valid"><td class="valid" colspan="3">'.$formquestion['text'].'</td></tr>'."\n";
+				$formconfirm .= '<tr class="valid"><td class="valid" colspan="2">'.$formquestion['text'].'</td></tr>'."\n";
 			}
 
 			// Line form fields
 			if ($more) {
-				$formconfirm .= '<tr class="valid"><td class="valid" colspan="3">'."\n";
+				$formconfirm .= '<tr class="valid"><td class="valid" colspan="2">'."\n";
 				$formconfirm .= $more;
 				$formconfirm .= '</td></tr>'."\n";
 			}
@@ -4963,10 +4963,10 @@ class Form
 			// Line with question
 			$formconfirm .= '<tr class="valid">';
 			$formconfirm .= '<td class="valid">'.$question.'</td>';
-			$formconfirm .= '<td class="valid">';
+			$formconfirm .= '<td class="valid center">';
 			$formconfirm .= $this->selectyesno("confirm", $newselectedchoice);
+			$formconfirm .= '<input class="button valignmiddle confirmvalidatebutton" type="submit" value="'.$langs->trans("Validate").'">';
 			$formconfirm .= '</td>';
-			$formconfirm .= '<td class="valid center"><input class="button valignmiddle confirmvalidatebutton" type="submit" value="'.$langs->trans("Validate").'"></td>';
 			$formconfirm .= '</tr>'."\n";
 
 			$formconfirm .= '</table>'."\n";
