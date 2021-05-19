@@ -3120,8 +3120,7 @@ class Societe extends CommonObject
 				setEventMessages('la maison mère choisie est déjà filiale de ce tiers', null, 'warnings');
 				return -1;
 			}	// elseif ($sameparent == 1)
-			else
-			{
+			else {
 				$sql	= 'UPDATE '.MAIN_DB_PREFIX.'societe SET parent = '.($id > 0 ? $id : 'null').' WHERE rowid = '.$this->id;
 				dol_syslog(get_class($this).'::set_parent', LOG_DEBUG);
 				$resql	= $this->db->query($sql);
@@ -3130,7 +3129,7 @@ class Societe extends CommonObject
 					$this->parent	= $id;
 					return 1;
 				}	// if ($resql)
-				else	return -1;
+				else return -1;
 			}	// else	// elseif ($sameparent == 1)
 		}	// if ($this->id)
 		else return -1;
@@ -3157,10 +3156,10 @@ class Societe extends CommonObject
 
 			if ($obj->parent == '')				return 0;
 			elseif ($obj->parent == $idchild)	return 1;
-			else								$sameparent	= $this->get_parents($obj->parent, $idchild);
+			else $sameparent	= $this->get_parents($obj->parent, $idchild);
 			return $sameparent;
 		}	// if ($resql)
-		else	return -1;
+		else return -1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
