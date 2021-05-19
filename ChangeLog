@@ -15,7 +15,8 @@ NEW: Add a performance center page with all information and advices related to t
 NEW: A lot of fix into english text after a small proofreading campaign (still not perfect, but really better)
 NEW: All main menu entries are using the picto of the module
 NEW: Add a copy to clipboard button on some fields 
-NEW: Add an example of scheduled job to send email reminder for unpayed invoices 
+NEW: Add an example of scheduled job to send email reminder for unpayed invoices
+NEW: Can make massive stock transfers from a CSV file.
 NEW: Accountancy - Add FEC import
 NEW: Accountancy - Add a confirmation form with options on export
 NEW: Accountancy - Add select date from/to in already bind customer and supplier list

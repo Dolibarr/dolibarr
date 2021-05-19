@@ -311,21 +311,33 @@ if ($result) {
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
 
-		// If line is for a module that doe snot existe anymore (absent of includes/module), we ignore it
+		// If line is for a module that does not exist anymore (absent of includes/module), we ignore it
 		if (empty($modules[$obj->module])) {
 			$i++;
 			continue;
 		}
 
-		// Save field module_position in database if value is still zero
-		if (empty($obj->module_position)) {
+		$objMod = $modules[$obj->module];
+
+		// Save field module_position in database if value is wrong
+		if (empty($obj->module_position) || (is_object($objMod) && $objMod->isCoreOrExternalModule() == 'external' && $obj->module_position < 100000)) {
 			if (is_object($modules[$obj->module]) && ($modules[$obj->module]->module_position > 0)) {
 				// TODO Define familyposition
-				$family = $modules[$obj->module]->family_position;
+				//$familyposition = $modules[$obj->module]->family_position;
 				$familyposition = 0;
-				$sqlupdate = 'UPDATE '.MAIN_DB_PREFIX."rights_def SET module_position = ".((int) $modules[$obj->module]->module_position).",";
+
+				$newmoduleposition = $modules[$obj->module]->module_position;
+
+				// Correct $newmoduleposition position for external modules
+				$objMod = $modules[$obj->module];
+				if (is_object($objMod) && $objMod->isCoreOrExternalModule() == 'external' && $newmoduleposition < 100000) {
+					$newmoduleposition += 100000;
+				}
+
+				$sqlupdate = 'UPDATE '.MAIN_DB_PREFIX."rights_def SET module_position = ".((int) $newmoduleposition).",";
 				$sqlupdate .= " family_position = ".((int) $familyposition);
-				$sqlupdate .= " WHERE module_position = 0 AND module = '".$db->escape($obj->module)."'";
+				$sqlupdate .= " WHERE module_position = ".((int) $obj->module_position)." AND module = '".$db->escape($obj->module)."'";
+
 				$db->query($sqlupdate);
 			}
 		}
@@ -334,7 +346,6 @@ if ($result) {
 			$oldmod = $obj->module;
 
 			// Break detected, we get objMod
-			$objMod = $modules[$obj->module];
 			$picto = ($objMod->picto ? $objMod->picto : 'generic');
 
 			// Show break line
@@ -425,9 +436,9 @@ if ($result) {
 			print '<td>&nbsp;</td>';
 		}
 
-		// Label of permission
+		// Descrption of permission
 		$permlabel = (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ($langs->trans("PermissionAdvanced".$obj->id) != ("PermissionAdvanced".$obj->id)) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != ("Permission".$obj->id)) ? $langs->trans("Permission".$obj->id) : $langs->trans($obj->label)));
-		print '<td class="maxwidthonsmartphone">';
+		print '<td class="">';
 		print $permlabel;
 		if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 			if (preg_match('/_advance$/', $obj->perms)) {

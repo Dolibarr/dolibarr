@@ -372,7 +372,7 @@ if ($result) {
 		print_liste_field_titre("UserAgent", $_SERVER["PHP_SELF"], "e.user_agent", "", $param, '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['e.prefix_session']['checked'])) {
-		print_liste_field_titre("PrefixSession", $_SERVER["PHP_SELF"], "e.prefix_session", "", $param, '', $sortfield, $sortorder);
+		print_liste_field_titre("SuffixSessionName", $_SERVER["PHP_SELF"], "e.prefix_session", "", $param, '', $sortfield, $sortorder);
 	}
 	print_liste_field_titre('');
 	print "</tr>\n";
