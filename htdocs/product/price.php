@@ -1477,7 +1477,7 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action == 'showlog_defaul
 			}
 
 			print '<td class="center">'.$langs->trans("PriceBase").'</td>';
-			print $conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL;
+
 			if (empty($conf->global->PRODUIT_MULTIPRICES) && empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) print '<td class="right">'.$langs->trans("DefaultTaxRate").'</td>';
 			print '<td class="right">'.$langs->trans("HT").'</td>';
 			print '<td class="right">'.$langs->trans("TTC").'</td>';
