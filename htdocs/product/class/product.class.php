@@ -1535,10 +1535,10 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *  check if price have really change to avoid log pollution
+	 *  used to check if price have really change to avoid log pollution
 	 *
 	 * @param  int  $level price level to change
-	 * @return int                    <0 if KO, >0 if OK
+	 * @return array
 	 */
 	private function getArrayForPriceCompare($level = 0)
 	{
