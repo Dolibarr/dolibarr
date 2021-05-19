@@ -6634,10 +6634,14 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 /* For copy-paste feature                                                         */
 /* ============================================================================== */
 
+span.clipboardCPValueToPrint {
+	display: inline-block;
+}
 span.clipboardCPValue.hidewithsize {
 	width: 0 !important;
 	display: inline-block;
 	color: transparent;
+	white-space: nowrap;
 }
 
 .clipboardCPShowOnHover .clipboardCPButton {

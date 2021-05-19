@@ -10236,7 +10236,8 @@ function readfileLowMemory($fullpath_original_file_osencoded, $method = -1)
 }
 
 /**
- * Create a button to copy $valuetocopy in the clipboard
+ * Create a button to copy $valuetocopy in the clipboard.
+ * Code that handle the click is inside lib_foot.jsp.php
  *
  * @param 	string 	$valuetocopy 		The value to print
  * @param	int		$showonlyonhover	Show the copy-paste button only on hover
@@ -10245,6 +10246,12 @@ function readfileLowMemory($fullpath_original_file_osencoded, $method = -1)
  */
 function showValueWithClipboardCPButton($valuetocopy, $showonlyonhover = 1, $texttoshow = '')
 {
+	global $conf;
+
+	/*if (!empty($conf->dol_no_mouse_hover)) {
+		$showonlyonhover = 0;
+	}*/
+
 	if ($texttoshow) {
 		$result = '<span class="clipboardCP'.($showonlyonhover ? ' clipboardCPShowOnHover' : '').'"><span class="clipboardCPValue hidewithsize">'.$valuetocopy.'</span><span class="clipboardCPValueToPrint">'.$texttoshow.'</span><span class="clipboardCPButton far fa-clipboard opacitymedium paddingleft paddingright"></span><span class="clipboardCPText opacitymedium"></span></span>';
 	} else {

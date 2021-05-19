@@ -51,7 +51,12 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 }*/
 div.tabsAction > a.butAction, div.tabsAction > a.butActionRefused, div.tabsAction > a.butActionDelete,
 div.tabsAction > span.butAction, div.tabsAction > span.butActionRefused, div.tabsAction > span.butActionDelete,
-div.tabsAction > div.divButAction > span.butAction {
+div.tabsAction > div.divButAction > span.butAction,
+div.tabsAction > div.divButAction > span.butActionDelete,
+div.tabsAction > div.divButAction > span.butActionRefused,
+div.tabsAction > div.divButAction > a.butAction,
+div.tabsAction > div.divButAction > a.butActionDelete,
+div.tabsAction > div.divButAction > a.butActionRefused {
 	margin-bottom: 1.4em !important;
 	margin-right: 0px !important;
 }
