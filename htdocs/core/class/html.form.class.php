@@ -4946,7 +4946,9 @@ class Form
 			$formconfirm .= '<table class="valid centpercent">'."\n";
 
 			// Line title
-			$formconfirm .= '<tr class="validtitre"><td class="validtitre" colspan="2">'.img_picto('', 'recent').' '.$title.'</td></tr>'."\n";
+			$formconfirm .= '<tr class="validtitre"><td class="validtitre" colspan="2">';
+			$formconfirm .= img_picto('', 'recent').' '.$title;
+			$formconfirm .= '</td></tr>'."\n";
 
 			// Line text
 			if (is_array($formquestion) && !empty($formquestion['text'])) {
@@ -4964,7 +4966,7 @@ class Form
 			$formconfirm .= '<tr class="valid">';
 			$formconfirm .= '<td class="valid">'.$question.'</td>';
 			$formconfirm .= '<td class="valid center">';
-			$formconfirm .= $this->selectyesno("confirm", $newselectedchoice);
+			$formconfirm .= $this->selectyesno("confirm", $newselectedchoice, 0, false, 0, 0, 'marginleftonly marginrightonly');
 			$formconfirm .= '<input class="button valignmiddle confirmvalidatebutton" type="submit" value="'.$langs->trans("Validate").'">';
 			$formconfirm .= '</td>';
 			$formconfirm .= '</tr>'."\n";
@@ -7837,9 +7839,10 @@ class Form
 	 *	@param	bool		$disabled		true or false
 	 *  @param	int      	$useempty		1=Add empty line
 	 *  @param	int			$addjscombo		1=Add js beautifier on combo box
+	 *  @param	string		$morecss		More CSS
 	 *	@return	string						See option
 	 */
-	public function selectyesno($htmlname, $value = '', $option = 0, $disabled = false, $useempty = 0, $addjscombo = 0)
+	public function selectyesno($htmlname, $value = '', $option = 0, $disabled = false, $useempty = 0, $addjscombo = 0, $morecss = '')
 	{
 		global $langs;
 
@@ -7852,7 +7855,7 @@ class Form
 
 		$disabled = ($disabled ? ' disabled' : '');
 
-		$resultyesno = '<select class="flat width75" id="'.$htmlname.'" name="'.$htmlname.'"'.$disabled.'>'."\n";
+		$resultyesno = '<select class="flat width75'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.'"'.$disabled.'>'."\n";
 		if ($useempty) {
 			$resultyesno .= '<option value="-1"'.(($value < 0) ? ' selected' : '').'>&nbsp;</option>'."\n";
 		}
