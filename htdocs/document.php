@@ -321,5 +321,4 @@ if ($readfile) {
 	// Random object instanciation to use call_trigger() of common object
 	$obj = new Facture($db);
 	$obj->call_trigger('EXPORT_FILE_'.(strtoupper(strtr($original_file, array('export_'=>'', '.csv'=>'')))), $user);
-
 }
