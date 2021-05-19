@@ -129,6 +129,7 @@ ClosedByLogin=User login who closed
 FileWasRemoved=File %s was removed
 DirWasRemoved=Directory %s was removed
 FeatureNotYetAvailable=Feature not yet available in the current version
+FeatureNotAvailableOnDevicesWithoutMouse=Feature not available on devices without mouse
 FeaturesSupported=Supported features
 Width=Width
 Height=Height
