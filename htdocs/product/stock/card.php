@@ -786,6 +786,7 @@ if ($action == 'create') {
 				}
 				print '<td class="liste_total">&nbsp;</td>';
 				print '<td class="liste_total">&nbsp;</td>';
+				print '<td class="liste_total">&nbsp;</td>';
 				print '</tr>';
 			} else {
 				dol_print_error($db);
