@@ -454,15 +454,8 @@ class pdf_gme extends ModelePDFPropales
                 $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
 	            $heightforfooter = $this->marge_basse + 30;	// Height reserved to output the footer (value include bottom margin)
 				if ($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS >0) $heightforfooter+= 20;
-                //print $heightforinfotot + $heightforsignature + $heightforfreetext + $heightforfooter;exit;
 
-				// contact
-	/*			$top_shift = $this->_pagehead($pdf, $object, 1, $outputlangs);
-				$pdf->SetFont('', '', $default_font_size - 1);
-				$pdf->MultiCell(0, 3, '');		// Set interline to 3
-				$pdf->SetTextColor(0, 0, 0);
-	*/
-	            $tab_top = 50;
+	            $tab_top = 55;
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?42+$top_shift:10);
 
 				// Incoterm
@@ -1170,59 +1163,20 @@ class pdf_gme extends ModelePDFPropales
 	 */
 	private function conditionOffre(&$pdf, $object, $outputlangs){
 
-		$contenu = array();
-		$titre = array();
-		$n = 0;
-
 		$ddo = dol_htmlentitiesbr($outputlangs->convToOutputCharset($object->array_options ['options_ddo'])) ;
-		if(!empty($ddo)){
-			array_push($contenu, $ddo);
-			array_push($titre, "Descriptif de l'offre");
-			$n++;
-		}
-
-		$dded = dol_htmlentitiesbr($outputlangs->convToOutputCharset($object->array_options ['options_dded']));
-		if(!empty($dded)){
-			array_push($contenu, $dded);
-			array_push($titre, "Descriptif des services disponibles");
-			$n++;
-		}
-
 		$vdo = dol_print_date($object->fin_validite,"day",false,$outputlangs,true);
 		$dded = dol_htmlentitiesbr($outputlangs->convToOutputCharset($object->array_options ['options_dded']));
-		if(!empty($vdo)){
-			array_push($contenu, $vdo);
-			array_push($titre, "Validité de l'offre");
-			$n++;
-		}
-
 		$cdp = $outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code);
-		if(!empty($cdp)){
-			array_push($contenu, $cdp);
-			array_push($titre, "Conditions de paiement");
-			$n++;
-		}
-
 		$cg = dol_htmlentitiesbr($outputlangs->convToOutputCharset($object->array_options ['options_cg']));
-		if(!empty($cg)){
-			array_push($contenu, $cg);
-			array_push($titre, "Conditions générales");
-			$n++;
-		}
-
 		if (!empty($object->delivery_date)){
 			$ddl = dol_print_date($object->delivery_date, "daytext", false, $outputlangs, true);
-		} else if(!empty($object->availability_code)){
+		} else {
 			$ddl = $outputlangs->transnoentities("AvailabilityType".$object->availability_code);
 		}
 
-		if(!empty($ddl)){
-			array_push($contenu, $ddl);
-			array_push($titre, "Délais de livraison");
-			$n++;
-		}
 
-		/*
+		$contenu = array($ddo, $dded, $vdo, $cdp, $cg, $ddl);
+
 		$titre = array("Descriptif de l'offre",
 			"Descriptif des services disponibles",
 			"Validité de l'offre",
@@ -1230,9 +1184,6 @@ class pdf_gme extends ModelePDFPropales
 			"Conditions générales",
 			"Délais de livraison");
 
-
-		$contenu = array($ddo, $dded, $vdo, $cdp, $cg, $ddl);
-		*/
 
 		//Titre
 		$pdf->SetFont('Helvetica','B',14);
@@ -1242,16 +1193,18 @@ class pdf_gme extends ModelePDFPropales
 
 		$j = 1;
 
-		for ($i=0; $i<$n; $i++) {
-			$pdf->SetFont('Helvetica','B',11);
-			$pdf->SetTextColor(153,204,102);
-			$pdf->Text(30,$pdf->GetY()+5,$j.'. '.$titre[$i]);
+		for ($i=0; $i<6; $i++) {
+			if(!empty($contenu[$i])){
+				$pdf->SetFont('Helvetica','B',11);
+				$pdf->SetTextColor(153,204,102);
+				$pdf->Text(30,$pdf->GetY()+5,$j.'. '.$titre[$i]);
 
-			$pdf->SetFont('Helvetica','',10);
-			$pdf->SetTextColor(0,0,0);
-			$pdf->writeHTMLCell(0,5,40,$pdf->GetY()+10,$contenu[$i],0,2);
+				$pdf->SetFont('Helvetica','',10);
+				$pdf->SetTextColor(0,0,0);
+				$pdf->writeHTMLCell(0,5,40,$pdf->GetY()+10,$contenu[$i],0,2);
 
-			$j++;
+				$j++;
+			}
 		}
 	}
 
