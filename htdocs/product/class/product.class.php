@@ -1534,6 +1534,36 @@ class Product extends CommonObject
 		}
 	}
 
+	/**
+	 *  used to check if price have really change to avoid log pollution
+	 *
+	 * @param  int  $level price level to change
+	 * @return array
+	 */
+	private function getArrayForPriceCompare($level = 0)
+	{
+
+		$testExit = array('multiprices','multiprices_ttc','multiprices_base_type','multiprices_min','multiprices_min_ttc','multiprices_tva_tx','multiprices_recuperableonly');
+
+		foreach ($testExit as $field){
+			if (!isset($this->$field[$level])) {
+				return array();
+			}
+		}
+
+		$lastPrice = array(
+			'level' => $level ? $level : 1,
+			'multiprices' => doubleval($this->multiprices[$level]),
+			'multiprices_ttc' => doubleval($this->multiprices_ttc[$level]),
+			'multiprices_base_type' => $this->multiprices_base_type[$level],
+			'multiprices_min' => doubleval($this->multiprices_min[$level]),
+			'multiprices_min_ttc' => doubleval($this->multiprices_min_ttc[$level]),
+			'multiprices_tva_tx' => doubleval($this->multiprices_tva_tx[$level]),
+			'multiprices_recuperableonly' => doubleval($this->multiprices_recuperableonly[$level]),
+		);
+
+		return $lastPrice;
+	}
 
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1862,6 +1892,8 @@ class Product extends CommonObject
 	{
 		global $conf, $langs;
 
+		$lastPriceData = $this->getArrayForPriceCompare($level); // temporary store current price before update
+
 		$id = $this->id;
 
 		dol_syslog(get_class($this)."::update_price id=".$id." newprice=".$newprice." newpricebase=".$newpricebase." newminprice=".$newminprice." level=".$level." npr=".$newnpr." newdefaultvatcode=".$newdefaultvatcode);
@@ -1994,7 +2026,11 @@ class Product extends CommonObject
 				// Price by quantity
 				$this->price_by_qty = $newpbq;
 
-				$this->_log_price($user, $level); // Save price for level into table product_price
+				// check if price have really change before log
+				$newPriceData = $this->getArrayForPriceCompare($level);
+				if (!empty(array_diff_assoc($newPriceData, $lastPriceData)) || empty($conf->global->PRODUIT_MULTIPRICES)) {
+					$this->_log_price($user, $level); // Save price for level into table product_price
+				}
 
 				$this->level = $level; // Store level of price edited for trigger
 
