@@ -96,9 +96,9 @@ if (!isset($conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY)) {
 $format = 'ical';
 $type = 'event';
 if (GETPOST("format", 'alpha')) {
-	$format = GETPOST("format", 'apha');
+	$format = GETPOST("format", 'alpha');
 }
-if (GETPOST("type", 'apha')) {
+if (GETPOST("type", 'alpha')) {
 	$type = GETPOST("type", 'alpha');
 }
 
@@ -115,20 +115,20 @@ if (GETPOST("idfrom", 'int')) {
 if (GETPOST("idto", 'int')) {
 	$filters['idto'] = GETPOST("idto", 'int');
 }
-if (GETPOST("project", 'apha')) {
-	$filters['project'] = GETPOST("project", 'apha');
+if (GETPOST("project", 'alpha')) {
+	$filters['project'] = GETPOST("project", 'alpha');
 }
-if (GETPOST("logina", 'apha')) {
-	$filters['logina'] = GETPOST("logina", 'apha');
+if (GETPOST("logina", 'alpha')) {
+	$filters['logina'] = GETPOST("logina", 'alpha');
 }
-if (GETPOST("logint", 'apha')) {
-	$filters['logint'] = GETPOST("logint", 'apha');
+if (GETPOST("logint", 'alpha')) {
+	$filters['logint'] = GETPOST("logint", 'alpha');
 }
-if (GETPOST("notactiontype", 'apha')) {
-	$filters['notactiontype'] = GETPOST("notactiontype", 'apha');
+if (GETPOST("notactiontype", 'alpha')) {
+	$filters['notactiontype'] = GETPOST("notactiontype", 'alpha');
 }
-if (GETPOST("actiontype", 'apha')) {
-	$filters['actiontype'] = GETPOST("actiontype", 'apha');
+if (GETPOST("actiontype", 'alpha')) {
+	$filters['actiontype'] = GETPOST("actiontype", 'alpha');
 }
 if (GETPOST("notolderthan", 'int')) {
 	$filters['notolderthan'] = GETPOST("notolderthan", "int");
