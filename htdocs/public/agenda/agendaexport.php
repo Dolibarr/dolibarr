@@ -138,7 +138,9 @@ if (GETPOST("notolderthan", 'int')) {
 if (GETPOST("author", 'apha')) {
 	$filters['author'] = GETPOST("author", 'apha');
 }
-
+if (GETPOST("module", 'apha')) {
+	$filters['module'] = GETPOST("module", 'apha');
+}
 // Check config
 if (empty($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY)) {
 	$user->getrights();
