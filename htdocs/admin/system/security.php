@@ -155,7 +155,7 @@ print '<strong>'.$langs->trans("PermissionsOnFilesInWebRoot").'</strong>: ';
 $arrayoffilesinroot = dol_dir_list(DOL_DOCUMENT_ROOT, 'all', 1, '', array('\/custom'), 'name', SORT_ASC, 4, 1, '', 1);
 $fileswithwritepermission = array();
 foreach ($arrayoffilesinroot as $fileinroot) {
-	// Test permission on file
+	// Test if there is at least one write permission file. If yes, add the entry into array $fileswithwritepermission
 	if ($fileinroot['perm'] & 0222) {
 		$fileswithwritepermission[] = $fileinroot['relativename'];
 	}
