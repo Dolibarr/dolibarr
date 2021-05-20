@@ -829,12 +829,14 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		break; // Should not happen
 	}
 
+	if (empty($obj->country_code)) $obj->country_code = '';		// TODO Add join in select with country table to get country_code
+
 	// Store properties in $object
 	$object->setVarsFromFetchObj($obj);
 
 	$userstatic->id = $obj->rowid;
 	$userstatic->admin = $obj->admin;
-	$userstatic->ref = empty($obj->label) ? '' : $obj->label;
+	$userstatic->ref = $obj->rowid;
 	$userstatic->login = $obj->login;
 	$userstatic->statut = $obj->statut;
 	$userstatic->office_phone = $obj->office_phone;
@@ -929,7 +931,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			$totalarray['nbfield']++;
 		}
 	}
-	if (empty($obj->country_code)) $obj->country_code = '';
+	
 	if (!empty($arrayfields['u.office_phone']['checked'])) {
 		print "<td>".dol_print_phone($obj->office_phone, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone')."</td>\n";
 		if (!$i) {
