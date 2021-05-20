@@ -26,6 +26,7 @@ define('NOSCANPOSTFORINJECTION', 1);
 define('NOSTYLECHECK', 1);
 define('USEDOLIBARREDITOR', 1);
 define('FORCE_CKEDITOR', 1); // We need CKEditor, even if module is off.
+if (!defined('DISABLE_JS_GRAHP')) define('DISABLE_JS_GRAPH', 1);
 
 //header('X-XSS-Protection:0');	// Disable XSS filtering protection of some browsers (note: use of Content-Security-Policy is more efficient). Disabled as deprecated.
 
@@ -1082,7 +1083,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 			} else {
 				$filetpl = $pathofwebsite.'/page'.$pageid.'.tpl.php';
 
-				// Generate the index.php page (to be the home page) and wrapper.php file
+				// Generate the index.php page (to be the home page) and the wrapper.php file
 				$result = dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper);
 
 				if ($result <= 0) {
@@ -1314,7 +1315,7 @@ if (!GETPOSTISSET('pageid')) {
 	}
 }
 
-// Update css Update site properties
+// Update css site properties. Re-generates also the wrapper.
 if ($action == 'updatecss' && $usercanedit) {
 	// If we tried to reload another site/page, we stay on editcss mode.
 	if (GETPOST('refreshsite') || GETPOST('refreshsite_x') || GETPOST('refreshsite.x') || GETPOST('refreshpage') || GETPOST('refreshpage_x') || GETPOST('refreshpage.x')) {
@@ -2389,6 +2390,18 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 					}
 				}
 
+				// Now add sitempas extension for news
+				// TODO When adding and when not ?
+				/*<news:news>
+				   <news:publication>
+					 <news:name>The Example Times</news:name>
+					 <news:language>en</news:language>
+				   </news:publication>
+				   <news:publication_date>2008-12-23</news:publication_date>
+					 <news:title>Companies A, B in Merger Talks</news:title>
+					</news:news>
+				*/
+
 				$root->appendChild($url);
 				$i++;
 			}
@@ -2744,7 +2757,7 @@ if (!GETPOST('hide_websitemenu')) {
 
 	if (in_array($action, array('editcss', 'editmenu', 'file_manager', 'replacesite', 'replacesiteconfirm'))) {
 		if ($action == 'editcss') {
-			print '<input type="submit" id="savefilean stay" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("SaveAndStay")).'" name="updateandstay">';
+			print '<input type="submit" id="savefileandstay" class="button buttonforacesave hideonsmartphone" value="'.dol_escape_htmltag($langs->trans("SaveAndStay")).'" name="updateandstay">';
 		}
 		if (preg_match('/^create/', $action) && $action != 'file_manager' && $action != 'replacesite' && $action != 'replacesiteconfirm') {
 			print '<input type="submit" id="savefile" class="button buttonforacesave button-save" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
@@ -3074,7 +3087,7 @@ if (!GETPOST('hide_websitemenu')) {
 		}
 		if (!in_array($action, array('editcss', 'editmenu', 'file_manager', 'replacesite', 'replacesiteconfirm', 'createsite', 'createcontainer', 'createfromclone', 'createpagefromclone', 'deletesite'))) {
 			if ($action == 'editsource' || $action == 'editmeta') {
-				print '<input type="submit" id="savefilean stay" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("SaveAndStay")).'" name="updateandstay">';
+				print '<input type="submit" id="savefileandstay" class="button buttonforacesave hideonsmartphone" value="'.dol_escape_htmltag($langs->trans("SaveAndStay")).'" name="updateandstay">';
 			}
 			if (preg_match('/^create/', $action)) {
 				print '<input type="submit" id="savefile" class="button buttonforacesave button-save" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';

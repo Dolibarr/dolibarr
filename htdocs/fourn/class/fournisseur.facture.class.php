@@ -1955,7 +1955,7 @@ class FactureFournisseur extends CommonInvoice
 			$this->line->remise_percent = $remise_percent;
 			$this->line->date_start = $date_start;
 			$this->line->date_end = $date_end;
-			$this->line->ventil = $ventil;
+			$this->line->fk_code_ventilation = $ventil;
 			$this->line->rang = $rang;
 			$this->line->info_bits = $info_bits;
 			$this->line->fk_remise_except = $fk_remise_except;
@@ -2501,6 +2501,10 @@ class FactureFournisseur extends CommonInvoice
 		}
 		if (isset($this->status)) {
 			$alreadypaid = -1;
+			if (isset($this->alreadypaid)) {
+				$alreadypaid = $this->alreadypaid;
+			}
+
 			$label .= ' '.$this->getLibStatut(5, $alreadypaid);
 		}
 		if (!empty($this->ref)) {
@@ -2526,9 +2530,6 @@ class FactureFournisseur extends CommonInvoice
 		}
 		if ($moretitle) {
 			$label .= ' - '.$moretitle;
-		}
-		if (isset($this->statut) && isset($this->alreadypaid)) {
-			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5, $this->alreadypaid);
 		}
 
 		$ref = $this->ref;
@@ -2567,8 +2568,6 @@ class FactureFournisseur extends CommonInvoice
 				$result .= '<a href="'.DOL_URL_ROOT.'/fourn/facture/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow).'">';
 				$result .= img_picto('', 'note');
 				$result .= '</a>';
-				//$result.=img_picto($langs->trans("ViewNote"),'object_generic');
-				//$result.='</a>';
 				$result .= '</span>';
 			}
 		}

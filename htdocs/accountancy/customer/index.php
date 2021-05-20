@@ -170,7 +170,7 @@ if ($action == 'validatehistory') {
 		while ($i < min($num_lines, 10000)) {	// No more than 10000 at once
 			$objp = $db->fetch_object($result);
 
-			$isBuyerInEEC = isInEEC($objp);
+			$isBuyerInEEC = isInEEC($objp);	// This make a database request but there is a cache into $conf->cache['country_code_in_EEC']
 
 			// Level 2: Search suggested account for product/service (similar code exists in page list.php to make manual binding)
 			$suggestedaccountingaccountfor = '';

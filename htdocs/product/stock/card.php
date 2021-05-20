@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2016	    Francis Appels       	<francis.appels@yahoo.com>
  * Copyright (C) 2021		Noé Cendrier			<noe.cendrier@altairis.fr>
+ * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -605,7 +606,26 @@ if ($action == 'create') {
 			$totalunit = 0;
 			$totalvalue = $totalvaluesell = 0;
 
-			$sql = "SELECT p.rowid as rowid, p.ref, p.label as produit, p.tobatch, p.fk_product_type as type, p.pmp as ppmp, p.price, p.price_ttc, p.entity,";
+			//For MultiCompany PMP per entity
+			$separatedPMP = false;
+			if (!empty($conf->global->MULTICOMPANY_PRODUCT_SHARING_ENABLED) && !empty($conf->global->MULTICOMPANY_PMP_PER_ENTITY_ENABLED)) {
+				$separatedPMP = true;
+			}
+
+			$sql = "SELECT p.rowid as rowid, p.ref, p.label as produit, p.tobatch, p.fk_product_type as type, p.price, p.price_ttc, p.entity,";
+			$sql .= "p.tosell, p.tobuy,";
+			$sql .= "p.accountancy_code_sell,";
+			$sql .= "p.accountancy_code_sell_intra,";
+			$sql .= "p.accountancy_code_sell_export,";
+			$sql .= "p.accountancy_code_buy,";
+			$sql .= "p.accountancy_code_buy_intra,";
+			$sql .= "p.accountancy_code_buy_export,";
+			$sql .= 'p.barcode,';
+			if ($separatedPMP) {
+				$sql .= " pa.pmp as ppmp,";
+			} else {
+				$sql .= " p.pmp as ppmp,";
+			}
 			$sql .= " ps.reel as value";
 			if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 				$sql .= ",fk_unit";
@@ -618,9 +638,19 @@ if ($action == 'create') {
 			}
 			$sql .= $hookmanager->resPrint;
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."product as p";
+
+			if ($separatedPMP) {
+				$sql .= ", ".MAIN_DB_PREFIX."product_perentity as pa";
+			}
+
 			$sql .= " WHERE ps.fk_product = p.rowid";
 			$sql .= " AND ps.reel <> 0"; // We do not show if stock is 0 (no product in this warehouse)
 			$sql .= " AND ps.fk_entrepot = ".$object->id;
+
+			if ($separatedPMP) {
+				$sql .= " AND pa.fk_product = p.rowid AND pa.entity = ". (int) $conf->entity;
+			}
+
 			$sql .= $db->order($sortfield, $sortorder);
 
 			dol_syslog('List products', LOG_DEBUG);
@@ -662,6 +692,15 @@ if ($action == 'create') {
 					$productstatic->entity = $objp->entity;
 					$productstatic->status_batch = $objp->tobatch;
 					$productstatic->fk_unit = $objp->fk_unit;
+					$productstatic->status = $objp->tosell;
+					$productstatic->status_buy = $objp->tobuy;
+					$productstatic->barcode = $objp->barcode;
+					$productstatic->accountancy_code_sell = $objp->accountancy_code_sell;
+					$productstatic->accountancy_code_sell_intra = $objp->accountancy_code_sell_intra;
+					$productstatic->accountancy_code_sell_export = $objp->accountancy_code_sell_export;
+					$productstatic->accountancy_code_buy = $objp->accountancy_code_buy;
+					$productstatic->accountancy_code_buy_intra = $objp->accountancy_code_buy_intra;
+					$productstatic->accountancy_code_buy_export = $objp->accountancy_code_buy_export;
 					print $productstatic->getNomUrl(1, 'stock', 16);
 					print '</td>';
 
@@ -745,6 +784,7 @@ if ($action == 'create') {
 					print '<td class="liste_total">&nbsp;</td>';
 					print '<td class="liste_total right">'.price(price2num($totalvaluesell, 'MT')).'</td>';
 				}
+				print '<td class="liste_total">&nbsp;</td>';
 				print '<td class="liste_total">&nbsp;</td>';
 				print '<td class="liste_total">&nbsp;</td>';
 				print '</tr>';

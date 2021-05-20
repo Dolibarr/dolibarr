@@ -76,25 +76,22 @@ if (!$action) {
 	$action = 'view';
 }
 
+$permissiontoadd = $user->rights->ticket->write;
 
 // Security check
 $id = GETPOST("id", 'int');
 $socid = 0;
-//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
-$result = restrictedArea($user, 'ticket', $id, '');
+if ($user->socid > 0) $socid = $user->socid;
+$result = restrictedArea($user, 'ticket', $object->id, '');
 
-if (!$user->rights->ticket->read) {
-	accessforbidden();
-}
 // restrict access for externals users
 if ($user->socid > 0 && ($object->fk_soc != $user->socid)) {
 	accessforbidden();
 }
 // or for unauthorized internals users
-if (!$user->socid && ($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY && $object->fk_user_assign != $user->id) && !$user->rights->ticket->manage) {
+if (!$user->socid && (!empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) && $object->fk_user_assign != $user->id) && !$user->rights->ticket->manage) {
 	accessforbidden();
 }
-
 
 
 /*
@@ -146,7 +143,7 @@ if ($socid > 0) {
 	print dol_get_fiche_end();
 }
 
-if (!$user->socid && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) {
+if (!$user->socid && !empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY)) {
 	$object->next_prev_filter = "te.fk_user_assign = '".$user->id."'";
 } elseif ($user->socid > 0) {
 	$object->next_prev_filter = "te.fk_soc = '".$user->socid."'";

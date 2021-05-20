@@ -1464,8 +1464,9 @@ if (!empty($conf->projet->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
+$title = $langs->trans('SupplierOrder')." - ".$langs->trans('Card');
 $help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
-llxHeader('', $langs->trans("Order"), $help_url);
+llxHeader('', $title, $help_url);
 
 $now = dol_now();
 
@@ -2309,10 +2310,12 @@ if ($action == 'create') {
 	if ($object->statut == CommandeFournisseur::STATUS_DRAFT && $usercancreate) {
 		if ($action != 'editline') {
 			// Add free products/services
-			$object->formAddObjectLine(1, $societe, $mysoc);
 
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			if (empty($reshook))
+				$object->formAddObjectLine(1, $societe, $mysoc);
 		}
 	}
 	print '</table>';
@@ -2322,7 +2325,7 @@ if ($action == 'create') {
 	print dol_get_fiche_end();
 
 	/**
-	 * Boutons actions
+	 * Buttons for actions
 	 */
 
 	if ($user->socid == 0 && $action != 'editline' && $action != 'delete') {
@@ -2430,11 +2433,19 @@ if ($action == 'create') {
 			}
 
 			// Ship
-
+			$hasreception = 0;
 			if (!empty($conf->stock->enabled) && (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE))) {
 				$labelofbutton = $langs->trans('ReceiveProducts');
 				if ($conf->reception->enabled) {
 					$labelofbutton = $langs->trans("CreateReception");
+					if (!empty($object->linkedObjects)) {
+						foreach ($object->linkedObjects['reception'] as $element) {
+							if ($element->statut >= 0) {
+								$hasreception = 1;
+								break;
+							}
+						}
+					}
 				}
 
 				if (in_array($object->statut, array(3, 4, 5))) {
@@ -2505,7 +2516,11 @@ if ($action == 'create') {
 
 			// Delete
 			if (!empty($usercandelete) || ($object->statut == CommandeFournisseur::STATUS_DRAFT && !empty($usercancreate))) {
-				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans("Delete").'</a>';
+				if ($hasreception) {
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ReceptionExist").'">'.$langs->trans("Delete").'</a>';
+				} else {
+					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans("Delete").'</a>';
+				}
 			}
 		}
 

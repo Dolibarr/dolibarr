@@ -85,6 +85,8 @@ if ($id > 0 || !empty($ref)) {
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 restrictedArea($user, 'bom', $object->id, 'bom_bom', '', '', 'rowid', $isdraft);
 
+$permissiontoadd = $user->rights->bom->write; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
+
 
 /*
  * Actions

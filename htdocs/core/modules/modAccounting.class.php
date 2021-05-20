@@ -54,7 +54,7 @@ class modAccounting extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->picto = 'accounting';
+		$this->picto = 'accountancy';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array('/accounting/temp');

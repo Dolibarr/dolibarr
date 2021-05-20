@@ -28,8 +28,8 @@ SerialNumberAlreadyInUse=O número de serie %s xa é usado para o produto %s
 TooManyQtyForSerialNumber=Só pode ter un produto %s para o número de serie %s
 BatchLotNumberingModules=Opcións para a xeración automática de lotes de produtos  xestionados por lotes
 BatchSerialNumberingModules=Opcións para a xeración automática de lotes de produtos xestionados por números de serie 
+ManageLotMask=Máscara personalizada
 CustomMasks=Engada unha opción para definir a máscara na tarxeta do produto 
 LotProductTooltip=Engada unha opción na tarxeta do produto para definir unha máscara de número de lote dedicada 
 SNProductTooltip=Engada unha opción na tarxeta do produto para definir unha máscara de número de serie dedicada 
 QtyToAddAfterBarcodeScan=Cant. a engadir por cada código de barras/lote/serie escaneado
-

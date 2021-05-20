@@ -1,14 +1,14 @@
 # Dolibarr language file - Source file is en_US - ftp
-FTPClientSetup=Настройка модуля FTP-клиента
-NewFTPClient=Настройка нового соединения FTP
-FTPArea=Раздел FTP
-FTPAreaDesc=На этом экране вам показано представление содержимого FTP-сервера
-SetupOfFTPClientModuleNotComplete=Настройка модуля FTP-клиента, по-видимому, не завершена
-FTPFeatureNotSupportedByYourPHP=Ваша версия PHP не поддерживает функции FTP
-FailedToConnectToFTPServer=Не удалось подключиться к FTP-серверу (сервер %s, порт %s)
-FailedToConnectToFTPServerWithCredentials=Не удалось войти на FTP-сервер с указанными логином и паролем
+FTPClientSetup=Настройка модуля FTP или SFTP-клиента
+NewFTPClient=Настройка нового соединения FTP / FTPS
+FTPArea=Область FTP/FTPS 
+FTPAreaDesc=This screen shows a view of an FTP et SFTP server.
+SetupOfFTPClientModuleNotComplete=The setup of the FTP or SFTP client module seems to be incomplete
+FTPFeatureNotSupportedByYourPHP=Your PHP does not support FTP or SFTP functions
+FailedToConnectToFTPServer=Failed to connect to server (server %s, port %s)
+FailedToConnectToFTPServerWithCredentials=Failed to login to server with defined login/password
 FTPFailedToRemoveFile=Не удалось удалить файл <b>%s</b>.
-FTPFailedToRemoveDir=Не удалось удалить каталог <b>%s</b> (Проверьте права доступа и убедитесь, что каталог пуст).
+FTPFailedToRemoveDir=Failed to remove directory <b>%s</b>: check permissions and that the directory is empty.
 FTPPassiveMode=Пассивный режим
-ChooseAFTPEntryIntoMenu=Выберите в меню пункт "FTP"
+ChooseAFTPEntryIntoMenu=Choose a FTP/SFTP site from the menu...
 FailedToGetFile=Не удалось получить файлы %s

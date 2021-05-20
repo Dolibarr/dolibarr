@@ -138,8 +138,8 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 $fieldstosearchall = array(
 	'd.ref'=>'Ref',
 	'd.note_public'=>"NotePublic",
-	'u.lastname'=>'Lastname',
-	'u.firstname'=>"Firstname",
+	'u.lastname'=>'EmployeeLastname',
+	'u.firstname'=>"EmployeeFirstname",
 	'u.login'=>"Login",
 );
 if (empty($user->socid)) {

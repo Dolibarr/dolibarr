@@ -75,6 +75,7 @@ $lineid		= GETPOST('lineid', 'int');
 $projectid = GETPOST('projectid', 'int');
 $origin		= GETPOST('origin', 'alpha');
 $originid = GETPOST('originid', 'int');
+$fac_rec = GETPOST('fac_rec', 'int');
 
 // PDF
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
@@ -2211,13 +2212,14 @@ if ($action == 'create') {
 
 	// Payment mode
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
-	$form->select_types_paiements(GETPOSTISSET('mode_reglement_id') ?GETPOST('mode_reglement_id', 'int') : $mode_reglement_id, 'mode_reglement_id', 'DBIT');
+	print img_picto('', 'bank', 'class="pictofixedwidth"');
+	$form->select_types_paiements(GETPOSTISSET('mode_reglement_id') ?GETPOST('mode_reglement_id', 'int') : $mode_reglement_id, 'mode_reglement_id', 'DBIT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx');
 	print '</td></tr>';
 
 	// Bank Account
 	if (!empty($conf->banque->enabled)) {
 		print '<tr><td>'.$langs->trans('BankAccount').'</td><td>';
-		print img_picto('', 'bank_account').$form->select_comptes((GETPOSTISSET('fk_account') ?GETPOST('fk_account', 'alpha') : $fk_account), 'fk_account', 0, '', 1, '', 0, '', 1);
+		print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes((GETPOSTISSET('fk_account') ?GETPOST('fk_account', 'alpha') : $fk_account), 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
 		print '</td></tr>';
 	}
 
@@ -2227,7 +2229,8 @@ if ($action == 'create') {
 
 		$langs->load('projects');
 		print '<tr><td>'.$langs->trans('Project').'</td><td>';
-		print img_picto('', 'project').$formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $societe->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
+		print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $societe->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
+		print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id.($fac_rec ? '&fac_rec='.$fac_rec : '')).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
 		print '</td></tr>';
 	}
 
@@ -2257,6 +2260,10 @@ if ($action == 'create') {
 		print '</td></tr>';
 	}
 
+	if (empty($reshook)) {
+		print $object->showOptionals($extrafields, 'edit');
+	}
+
 	// Public note
 	print '<tr><td>'.$langs->trans('NotePublic').'</td>';
 	print '<td>';
@@ -2275,9 +2282,6 @@ if ($action == 'create') {
 	// print '<td><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
 	print '</tr>';
 
-	if (empty($reshook)) {
-		print $object->showOptionals($extrafields, 'edit');
-	}
 
 	if (is_object($objectsrc)) {
 		print "\n<!-- ".$classname." info -->";
@@ -2694,19 +2698,13 @@ if ($action == 'create') {
 
 		$facidavoir = $object->getListIdAvoirFromInvoice();
 		if (count($facidavoir) > 0) {
-			print ' ('.$langs->transnoentities("InvoiceHasAvoir");
-			$i = 0;
+			$invoicecredits = array();
 			foreach ($facidavoir as $id) {
-				if ($i == 0) {
-					print ' ';
-				} else {
-					print ',';
-				}
 				$facavoir = new FactureFournisseur($db);
 				$facavoir->fetch($id);
-				print $facavoir->getNomUrl(1);
+				$invoicecredits[] = $facavoir->getNomUrl(1);
 			}
-			print ')';
+			print ' ('.$langs->transnoentities("InvoiceHasAvoir") . (count($invoicecredits) ? ' ' : '') . implode(',', $invoicecredits) . ')';
 		}
 		if (isset($facidnext) && $facidnext > 0) {
 			$facthatreplace = new FactureFournisseur($db);
@@ -3327,10 +3325,12 @@ if ($action == 'create') {
 		if ($object->statut == FactureFournisseur::STATUS_DRAFT && $usercancreate) {
 			if ($action != 'editline') {
 				// Add free products/services
-				$object->formAddObjectLine(1, $societe, $mysoc);
 
 				$parameters = array();
 				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+				if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				if (empty($reshook))
+					$object->formAddObjectLine(1, $societe, $mysoc);
 			}
 		}
 

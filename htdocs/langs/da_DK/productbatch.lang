@@ -28,8 +28,8 @@ SerialNumberAlreadyInUse=Serienummer %s bruges allerede til produkt %s
 TooManyQtyForSerialNumber=Du kan kun have et produkt %s til serienummer %s
 BatchLotNumberingModules=Valgmuligheder til automatisk generering af batchprodukter, der administreres af partier
 BatchSerialNumberingModules=Valgmuligheder til automatisk generering af batchprodukter styret af serienumre
+ManageLotMask=Brugerdefineret maske
 CustomMasks=Tilføjer en mulighed for at definere maske på produktkortet
 LotProductTooltip=Tilføjer en mulighed på produktkortet for at definere en dedikeret batchnummermaske
 SNProductTooltip=Tilføjer en mulighed på produktkortet for at definere en dedikeret serienummermaske
 QtyToAddAfterBarcodeScan=Mængde, der skal tilføjes for hver stregkode / parti / seriel scannet
-

@@ -339,11 +339,11 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 
 	$thumbsbyrow = 6;
 	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder centpercent'.($edit ? ' editmode' : '').' tableforfield">';
+	print '<table class="noborder centpercent'.($edit ? ' editmode' : '').'">';
 
 	// Title
 	if ($foruserprofile) {
-		print '<tr class="liste_titre"><th class="titlefieldcreate">'.$langs->trans("Parameter").'</th><th>'.$langs->trans("DefaultValue").'</th>';
+		print '<tr class="liste_titre"><th class="titlefieldmiddle">'.$langs->trans("Parameter").'</th><th>'.$langs->trans("DefaultValue").'</th>';
 		print '<th colspan="2">&nbsp;</th>';
 		print '</tr>';
 
@@ -359,7 +359,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 			$dirthemestring .= '"'.$dirtheme.'" ';
 		}
 
-		print '<tr class="liste_titre"><th class="titlefieldcreate">';
+		print '<tr class="liste_titre"><th class="titlefieldmiddle">';
 		print $form->textwithpicto($langs->trans("DefaultSkin"), $langs->trans("ThemeDir").' : '.$dirthemestring);
 		print '</th>';
 		print '<th class="right">';
@@ -448,7 +448,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		// Nothing
 	} else {
 		// Show logo
-		print '<tr class="oddeven"><td class="titlefieldcreate">'.$langs->trans("EnableShowLogo").'</td><td>';
+		print '<tr class="oddeven"><td class="titlefieldmiddle">'.$langs->trans("EnableShowLogo").'</td><td>';
 		if ($edit) {
 			print ajax_constantonoff('MAIN_SHOW_LOGO', array(), null, 0, 0, 1);
 			//print $form->selectyesno('MAIN_SHOW_LOGO', $conf->global->MAIN_SHOW_LOGO, 1);

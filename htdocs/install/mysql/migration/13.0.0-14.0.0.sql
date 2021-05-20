@@ -32,6 +32,16 @@
 
 -- Missing in v13 or lower
 
+ALTER TABLE llx_accounting_bookkeeping DROP INDEX idx_accounting_bookkeeping_numero_compte;
+ALTER TABLE llx_accounting_bookkeeping DROP INDEX idx_accounting_bookkeeping_code_journal;
+
+ALTER TABLE llx_accounting_bookkeeping ADD INDEX idx_accounting_bookkeeping_fk_docdet (fk_docdet);
+ALTER TABLE llx_accounting_bookkeeping ADD INDEX idx_accounting_bookkeeping_doc_date (doc_date);
+ALTER TABLE llx_accounting_bookkeeping ADD INDEX idx_accounting_bookkeeping_numero_compte (numero_compte, entity);
+ALTER TABLE llx_accounting_bookkeeping ADD INDEX idx_accounting_bookkeeping_code_journal (code_journal, entity);
+
+ALTER TABLE llx_accounting_bookkeeping ADD INDEX idx_accounting_bookkeeping_piece_num (piece_num, entity);
+
 ALTER TABLE llx_recruitment_recruitmentcandidature MODIFY COLUMN email_msgid VARCHAR(175);
 
 ALTER TABLE llx_asset CHANGE COLUMN amount amount_ht double(24,8) DEFAULT NULL;
@@ -49,10 +59,14 @@ insert into llx_c_actioncomm (id, code, type, libelle, module, active, position)
 
 UPDATE llx_c_country SET eec = 1 WHERE code IN ('AT','BE','BG','CY','CZ','DE','DK','EE','ES','FI','FR','GR','HR','NL','HU','IE','IM','IT','LT','LU','LV','MC','MT','PL','PT','RO','SE','SK','SI');
 
+ALTER TABLE llx_export_model MODIFY COLUMN type varchar(64);
+
 
 -- For v14
 
-ALTER TABLE llx_export_model MODIFY COLUMN type varchar(64);
+ALTER TABLE llx_product_lot ADD COLUMN eol_date datetime NULL;
+ALTER TABLE llx_product_lot ADD COLUMN manufacturing_date datetime NULL;
+ALTER TABLE llx_product_lot ADD COLUMN scrapping_date datetime NULL;
 
 create table llx_accounting_groups_account
 (
@@ -147,6 +161,18 @@ CREATE TABLE llx_workstation_workstation_usergroup(
 	fk_workstation integer
 ) ENGINE=innodb;
 
+CREATE TABLE llx_c_producbatch_qcstatus(
+  rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+  entity   integer NOT NULL DEFAULT 1,
+  code     varchar(16)        NOT NULL,
+  label    varchar(50)        NOT NULL,
+  active   integer  DEFAULT 1 NOT NULL
+) ENGINE=innodb;
+
+ALTER TABLE llx_c_productbatch_qcstatus ADD UNIQUE INDEX uk_c_productbatch_qcstatus(code, entity);
+
+INSERT INTO llx_c_productbatch_qcstatus (code, label, active) VALUES ('OK', 'InWorkingOrder', 1);
+INSERT INTO llx_c_productbatch_qcstatus (code, label, active) VALUES ('KO', 'OutOfOrder', 1);
 
 ALTER TABLE llx_product_customer_price ADD COLUMN ref_customer varchar(30);
 ALTER TABLE llx_product_customer_price_log ADD COLUMN ref_customer varchar(30);
@@ -177,6 +203,7 @@ ALTER TABLE llx_mrp_production ADD COLUMN origin_type varchar(10) AFTER origin_i
 
 ALTER TABLE llx_fichinter ADD COLUMN last_main_doc varchar(255) AFTER model_pdf;
 ALTER TABLE llx_projet ADD COLUMN last_main_doc varchar(255) AFTER model_pdf;
+ALTER TABLE llx_expensereport ADD COLUMN last_main_doc varchar(255) DEFAULT NULL AFTER model_pdf;
 
 create table llx_payment_vat
 (
@@ -307,7 +334,8 @@ create table llx_product_perentity
     accountancy_code_sell_export  varchar(32),                        -- Selling accountancy code for vat export
     accountancy_code_buy          varchar(32),                        -- Buying accountancy code
     accountancy_code_buy_intra    varchar(32),                        -- Buying accountancy code for vat intracommunity
-    accountancy_code_buy_export   varchar(32)                  		-- Buying accountancy code for vat import
+    accountancy_code_buy_export   varchar(32),                     	  -- Buying accountancy code for vat import
+    pmp double(24,8)
 )ENGINE=innodb;
 
 ALTER TABLE llx_product_perentity ADD INDEX idx_product_perentity_fk_product (fk_product);
@@ -379,6 +407,8 @@ UPDATE llx_propal SET date_signature = date_cloture WHERE date_signature IS NULL
 
 
 ALTER TABLE llx_product ADD COLUMN batch_mask VARCHAR(32) NULL;
+ALTER TABLE llx_product ADD COLUMN lifetime INTEGER NULL;
+ALTER TABLE llx_product ADD COLUMN qc_frequency INTEGER NULL;
 
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (210, 'conferenceorbooth', 'internal', 'MANAGER',  'Conference or Booth manager', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (211, 'conferenceorbooth', 'external', 'SPEAKER',   'Conference Speaker', 1);
@@ -402,8 +432,9 @@ CREATE TABLE llx_partnership(
 	note_private text, 
 	note_public text, 
 	last_main_doc varchar(255), 
-	count_last_url_check_error integer DEFAULT '0', 
-	import_key varchar(14), 
+	count_last_url_check_error integer DEFAULT '0',
+	last_check_backlink datetime NULL,
+	import_key varchar(14),
 	model_pdf varchar(255)
 ) ENGINE=innodb;
 
@@ -424,21 +455,66 @@ create table llx_partnership_extrafields
 
 ALTER TABLE llx_partnership_extrafields ADD INDEX idx_partnership_fk_object(fk_object);
 
-INSERT INTO llx_c_email_templates (entity,module,type_template,label,lang,position,topic,joinfiles,content) VALUES (0, 'partnership', 'member', '(AlertStatusPartnershipExpiration)', NULL, 100, '[__[MAIN_INFO_SOCIETE_NOM]__] - __(YourMembershipWillSoonExpireTopic)__', 0, '<body>\n <p>Dear __MEMBER_FULLNAME__,<br><br>\n__(YourMembershipWillSoonExpireContent)__</p>\n<br />\n\n            __(Sincerely)__ <br />\n            __[PARTNERSHIP_SOCIETE_NOM]__ <br />\n </body>\n');
+INSERT INTO llx_c_email_templates (entity,module,type_template,label,lang,position,topic,joinfiles,content) VALUES (0, 'partnership', 'partnership_send', '(SendingEmailOnPartnershipWillSoonBeCanceled)', '', 100, '[__[MAIN_INFO_SOCIETE_NOM]__] - __(YourPartnershipWillSoonBeCanceledTopic)__', 0, '<body>\n <p>Hello,<br><br>\n__(YourPartnershipWillSoonBeCanceledContent)__</p>\n<br />\n\n<br />\n\n            __(Sincerely)__ <br />\n            __[MAIN_INFO_SOCIETE_NOM]__ <br />\n </body>\n');
+INSERT INTO llx_c_email_templates (entity,module,type_template,label,lang,position,topic,joinfiles,content) VALUES (0, 'partnership', 'partnership_send', '(SendingEmailOnPartnershipCanceled)', '', 100, '[__[MAIN_INFO_SOCIETE_NOM]__] - __(YourPartnershipCanceledTopic)__', 0, '<body>\n <p>Hello,<br><br>\n__(YourPartnershipCanceledContent)__</p>\n<br />\n\n<br />\n\n            __(Sincerely)__ <br />\n            __[MAIN_INFO_SOCIETE_NOM]__ <br />\n </body>\n');
+INSERT INTO llx_c_email_templates (entity,module,type_template,label,lang,position,topic,joinfiles,content) VALUES (0, 'partnership', 'partnership_send', '(SendingEmailOnPartnershipRefused)', '', 100, '[__[MAIN_INFO_SOCIETE_NOM]__] - __(YourPartnershipRefusedTopic)__', 0, '<body>\n <p>Hello,<br><br>\n__(YourPartnershipRefusedContent)__</p>\n<br />\n\n<br />\n\n            __(Sincerely)__ <br />\n            __[MAIN_INFO_SOCIETE_NOM]__ <br />\n </body>\n');
+INSERT INTO llx_c_email_templates (entity,module,type_template,label,lang,position,topic,joinfiles,content) VALUES (0, 'partnership', 'partnership_send', '(SendingEmailOnPartnershipAccepted)', '', 100, '[__[MAIN_INFO_SOCIETE_NOM]__] - __(YourPartnershipAcceptedTopic)__', 0, '<body>\n <p>Hello,<br><br>\n__(YourPartnershipAcceptedContent)__</p>\n<br />\n\n<br />\n\n            __(Sincerely)__ <br />\n            __[MAIN_INFO_SOCIETE_NOM]__ <br />\n </body>\n');
+ALTER TABLE llx_adherent ADD COLUMN url varchar(255) NULL AFTER email;
 ALTER TABLE llx_facture_fourn ADD COLUMN date_closing datetime DEFAULT NULL after date_valid;
 
 ALTER TABLE llx_facture_fourn ADD COLUMN fk_user_closing integer DEFAULT NULL after fk_user_valid;
 
 ALTER TABLE llx_entrepot ADD COLUMN fk_project INTEGER DEFAULT NULL AFTER entity; -- project associated to warehouse if any
 
--- Add external payement suport for donation
+-- Add external payment support for donation
 ALTER TABLE llx_payment_donation ADD COLUMN ext_payment_site  varchar(128) AFTER note;
 ALTER TABLE llx_payment_donation ADD COLUMN ext_payment_id  varchar(128) AFTER note;
 
 -- Rebuild sequence for postgres only after query INSERT INTO llx_salary(rowid, ...
 -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
-UPDATE llx_const SET value = 'github' WHERE __DECRYPT('name')__ = 'MAIN_BUGTRACK_ENABLELINK' AND __DECRYPT('value')__ = 1;
+UPDATE llx_const SET type = 'chaine', value = __ENCRYPT('github')__ WHERE __DECRYPT('name')__ = 'MAIN_BUGTRACK_ENABLELINK' AND __DECRYPT('value')__ = 1;
 
 ALTER TABLE llx_facture_fourn_det ADD COLUMN fk_remise_except integer DEFAULT NULL after remise_percent;
 ALTER TABLE llx_facture_fourn_det ADD UNIQUE INDEX uk_fk_remise_except (fk_remise_except, fk_facture_fourn);
+
+CREATE TABLE llx_knowledgemanagement_knowledgerecord(
+	-- BEGIN MODULEBUILDER FIELDS
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
+	ref varchar(128) NOT NULL, 
+	date_creation datetime NOT NULL, 
+	tms timestamp, 
+	last_main_doc varchar(255), 
+	fk_user_creat integer NOT NULL, 
+	fk_user_modif integer, 
+	fk_user_valid integer, 
+	import_key varchar(14), 
+	model_pdf varchar(255), 
+	question text NOT NULL, 
+	answer text,
+	url varchar(255),
+	fk_ticket integer,
+	status integer NOT NULL
+	-- END MODULEBUILDER FIELDS
+) ENGINE=innodb;
+
+ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD COLUMN fk_ticket integer;
+ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD COLUMN url varchar(255);
+
+
+create table llx_knowledgemanagement_knowledgerecord_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+-- add default amount by member type
+ALTER TABLE llx_adherent_type ADD COLUMN amount DOUBLE(24,8) NULL DEFAULT NULL AFTER subscription;
+
+-- add action trigger
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('COMPANY_MODIFY','Third party update','Executed when you update third party','societe',1);
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('CONTACT_MODIFY','Contact address update','Executed when a contact is updated','contact',51);
+
+

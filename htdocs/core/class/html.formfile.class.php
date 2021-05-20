@@ -851,7 +851,7 @@ class FormFile
 
 					// Show file size
 					$size = (!empty($file['size']) ? $file['size'] : dol_filesize($filedir."/".$file["name"]));
-					$out .= '<td class="nowrap right">'.dol_print_size($size, 1, 1).'</td>';
+					$out .= '<td class="nowraponall right">'.dol_print_size($size, 1, 1).'</td>';
 
 					// Show file date
 					$date = (!empty($file['date']) ? $file['date'] : dol_filemtime($filedir."/".$file["name"]));
@@ -2029,7 +2029,7 @@ class FormFile
 				print '<td class="center">'.dol_print_date($link->datea, "dayhour", "tzuser").'</td>';
 				print '<td class="center"></td>';
 				print '<td class="right">';
-				print '<a href="'.$_SERVER['PHP_SELF'].'?action=update&linkid='.$link->id.$param.'" class="editfilelink editfielda reposition" >'.img_edit().'</a>'; // id= is included into $param
+				print '<a href="'.$_SERVER['PHP_SELF'].'?action=update&linkid='.$link->id.$param.'&token='.newToken().'" class="editfilelink editfielda reposition" >'.img_edit().'</a>'; // id= is included into $param
 				if ($permissiontodelete) {
 					print ' &nbsp; <a class="deletefilelink" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&linkid='.$link->id.$param.'">'.img_delete().'</a>'; // id= is included into $param
 				} else {

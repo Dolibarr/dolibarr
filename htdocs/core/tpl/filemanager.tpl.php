@@ -71,44 +71,56 @@ print '<div class="inline-block toolbarbutton centpercent">';
 
 // Toolbar
 if ($permtoadd) {
-	$websitekeyandpageid = (!empty($websitekey) ? '&website='.$websitekey : '').(!empty($pageid) ? '&pageid='.$pageid : '');
-	print '<a href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php?action=create&module='.urlencode($module).$websitekeyandpageid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1'.$websitekeyandpageid).'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans('ECMAddSection')).'">';
+	$websitekeyandpageid = (!empty($websitekey) ? '&website='.urlencode($websitekey) : '').(!empty($pageid) ? '&pageid='.urlencode($pageid) : '');
+	print '<a id="acreatedir" href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php?action=create&module='.urlencode($module).$websitekeyandpageid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1'.$websitekeyandpageid).'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans('ECMAddSection')).'">';
 	print img_picto('', 'folder-plus', '', false, 0, 0, '', 'size15x marginrightonly');
 	print '</a>';
 } else {
-	print '<a href="#" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.$langs->trans("NotAllowed").'">';
+	print '<a id="acreatedir" href="#" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.$langs->trans("NotAllowed").'">';
 	print img_picto('', 'folder-plus', 'disabled', false, 0, 0, '', 'size15x marginrightonly');
 	print '</a>';
 }
 if ($module == 'ecm') {
 	$tmpurl = ((!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) ? '#' : ($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module ? '&amp;module='.$module : '').($section ? '&amp;section='.$section : '')));
-	print '<a href="'.$tmpurl.'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans('ReSyncListOfDir')).'">';
+	print '<a id="arefreshbutton" href="'.$tmpurl.'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans('ReSyncListOfDir')).'">';
 	print img_picto('', 'refresh', 'id="refreshbutton"', false, 0, 0, '', 'size15x marginrightonly');
 	print '</a>';
 }
 if ($permtoadd && GETPOSTISSET('website')) {	// If on file manager to manage medias of a web site
-	print '<a id="generateimgwebp" href="'.$_SERVER["PHP_SELF"].'?action=confirmconvertimgwebp&website='.$website->ref.'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
+	print '<a id="agenerateimgwebp" href="'.$_SERVER["PHP_SELF"].'?action=confirmconvertimgwebp&website='.$website->ref.'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
+	print img_picto('', 'images', '', false, 0, 0, '', 'size15x flip marginrightonly');
+	print '</a>';
+} elseif ($permtoadd && $module == 'ecm') {	// If on file manager medias in ecm
+	print '<a id="agenerateimgwebp" href="'.$_SERVER["PHP_SELF"].'?action=confirmconvertimgwebp" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
 	print img_picto('', 'images', '', false, 0, 0, '', 'size15x flip marginrightonly');
 	print '</a>';
 }
-if ($permtoadd && $module == 'ecm') {	// If on file manager medias in ecm
-	print '<a id="generateimgwebp" href="'.$_SERVER["PHP_SELF"].'?action=confirmconvertimgwebp" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
-	print img_picto('', 'images', '', false, 0, 0, '', 'size15x flip marginrightonly');
-	print '</a>';
-}
+
 print "<script>
-$(\"#generateimgwebp\").on(\"click\",function(){
+$('#acreatedir').on('click', function() {
 	try{
-		console.log(\"We click to generate webp image, we set current dir into hidden vars\");
-		section_dir = $(\".directory.expanded\")[$(\".directory.expanded\").length-1].children[0].rel
-		section=$(\".directory.expanded\")[$(\".directory.expanded\").length-1].children[0].id.split('_')[2]
-	}catch{
-		section_dir = '/'
-		section=0
+		section_dir = $('.directory.expanded')[$('.directory.expanded').length-1].children[0].rel;
+		section = $('.directory.expanded')[$('.directory.expanded').length-1].children[0].id.split('_')[2];
+	} catch{
+		section_dir = '/';
+		section = 0;
 	}
-	console.log(\"We add hiden vars in href of button to create webp \");
-	$(\"#generateimgwebp\").attr(\"href\",$(\"#generateimgwebp\").attr(\"href\")+'&section_dir='+section_dir+'&section='+section)
-  })
+	console.log('We click to create a new directory, we set current section_dir='+section_dir+' into href url of button acreatedir');
+	$('#acreatedir').attr('href', $('#acreatedir').attr('href')+'&section_dir='+encodeURI(section_dir)+'&section='+encodeURI(section));
+	console.log($('#acreatedir').attr('href'));
+});
+$('#agenerateimgwebp').on('click', function() {
+	try{
+		section_dir = $('.directory.expanded')[$('.directory.expanded').length-1].children[0].rel;
+		section = $('.directory.expanded')[$('.directory.expanded').length-1].children[0].id.split('_')[2];
+	} catch{
+		section_dir = '/';
+		section = 0;
+	}
+	console.log('We click to generate webp image, we set current section_dir='+section_dir+' into href url of button agenerateimgwebp');
+	$('#agenerateimgwebp').attr('href', $('#agenerateimgwebp').attr('href')+'&section_dir='+encodeURI(section_dir)+'&section='+encodeURI(section));
+	console.log($('#agenerateimgwebp').attr('href'));
+});
 </script>";
 
 // Start "Add new file" area
@@ -157,7 +169,10 @@ if ($action == 'delete_section') {
 }
 // End confirm
 
+// Ask confirmation to build webp images
 if ($action == 'confirmconvertimgwebp') {
+	$langs->load("ecm");
+
 	$section_dir=GETPOST('section_dir', 'alpha');
 	$section=GETPOST('section', 'alpha');
 	$form = new Form($db);
@@ -170,9 +185,10 @@ if ($action == 'confirmconvertimgwebp') {
 	$action = 'file_manager';
 }
 
+// Duplicate images into .webp
 if ($action == 'convertimgwebp' && $permtoadd) {
 	if ($module == 'medias') {
-		$imagefolder = $conf->website->dir_output.'/'.$websitekey.'/medias/'.dol_sanitizeFileName(GETPOST('section_dir', 'alpha'));
+		$imagefolder = $conf->website->dir_output.'/'.$websitekey.'/medias/'.dol_sanitizePathName(GETPOST('section_dir', 'alpha'));
 	} else {
 		$imagefolder = $conf->ecm->dir_output.'/'.dol_sanitizePathName(GETPOST('section_dir', 'alpha'));
 	}
@@ -181,17 +197,24 @@ if ($action == 'convertimgwebp' && $permtoadd) {
 
 	$regeximgext = getListOfPossibleImageExt();
 
-	$filelist = dol_dir_list($imagefolder, "all", 0, $regeximgext);
+	$filelist = dol_dir_list($imagefolder, "files", 0, $regeximgext);
+
+	$nbconverted = 0;
 
 	foreach ($filelist as $filename) {
 		$filepath = $filename['fullname'];
 		if (!(substr_compare($filepath, 'webp', -strlen('webp')) === 0)) {
 			if (image_format_supported($filepath) == 1) {
-				$filepathnoext = preg_replace("/\..*/", "", $filepath);
-				$result = dol_imageResizeOrCrop($filepath, 0, 0, 0, 0, 0, $filepathnoext.'.webp');
-				if (!dol_is_file($result)) {
-					$error++;
-					setEventMessages($result, null, 'errors');
+				$filepathnoext = preg_replace("/\.[a-z0-9]+$/i", "", $filepath);
+
+				if (! dol_is_file($filepathnoext.'.webp')) {	// If file does not exists yet
+					$result = dol_imageResizeOrCrop($filepath, 0, 0, 0, 0, 0, $filepathnoext.'.webp', 90);
+					if (!dol_is_file($result)) {
+						$error++;
+						setEventMessages($result, null, 'errors');
+					} else {
+						$nbconverted++;
+					}
 				}
 			}
 		}
@@ -213,7 +236,7 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 	print '<!-- Title for manual directories -->'."\n";
 	print '<tr class="liste_titre">'."\n";
 	print '<th class="liste_titre left">';
-	print '&nbsp;'.$langs->trans("ECMSections");
+	print '<span style="padding-left: 5px; padding-right: 5px;">'.$langs->trans("ECMSections").'</span>';
 	print '</th></tr>';
 
 	$showonrightsize = '';
@@ -224,7 +247,7 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 	if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) {
 		// Show the link to "Root"
 		if ($showroot) {
-			print '<tr><td><div style="padding-left: 5px; padding-right: 5px;"><a href="'.$_SERVER["PHP_SELF"].'?file_manager=1&pageid='.$pageid.'">';
+			print '<tr><td><div style="padding-left: 5px; padding-right: 5px;"><a href="'.$_SERVER["PHP_SELF"].'?file_manager=1'.(!empty($websitekey) ? '&website='.urlencode($websitekey) : '').'&pageid='.urlencode($pageid).'">';
 			if ($module == 'medias') {
 				print $langs->trans("RootOfMedias");
 			} else {
