@@ -3113,7 +3113,7 @@ class Societe extends CommonObject
 		// phpcs:enable
 		if ($this->id) {
 			// InfraS change (to avoid infinite loop)
-			$sameparent	= $this->get_parents($id, $this->id);
+			$sameparent	= $this->validateFamilyTree($id, $this->id, 0);
 			if ($sameparent < 0) {
 				return -1;
 			} elseif ($sameparent == 1) {
@@ -3135,17 +3135,20 @@ class Societe extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Search parent commany of current company
+	 *    Check if a thirdparty $idchild is or not inside the parents (or grand parents) of another thirdparty id $idparent.
 	 *
 	 *    @param	int		$idparent	Id of thirdparty to check
 	 *    @param	int		$idchild	Id of thirdparty to compare to
-	 *    @return	int     		<0 if KO, 0 if OK or 1 if at some level a parent company was the child to compare to
+	 *    @param    int     $counter    Counter to protect against infinite loops
+	 *    @return	int     			<0 if KO, 0 if OK or 1 if at some level a parent company was the child to compare to
 	 */
-    public function get_parents($idparent, $idchild)
+    public function validateFamilyTree($idparent, $idchild, $counter = 0)
 	{
-        // phpcs:enable
+		if ($counter > 100) {
+			dol_syslog("Too high level of parent - child for company. May be an infinite loop ?", LOG_WARNING);
+		}
+		
 		$sql	= 'SELECT s.parent';
 		$sql	.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 		$sql	.= ' WHERE rowid = '.$idparent;
@@ -3158,7 +3161,7 @@ class Societe extends CommonObject
 			} elseif ($obj->parent == $idchild)	{
 				return 1;
 			} else {
-				$sameparent	= $this->get_parents($obj->parent, $idchild);
+				$sameparent	= $this->validateFamilyTree($obj->parent, $idchild, ($counter + 1));
 			}
 			return $sameparent;
 		} else {
