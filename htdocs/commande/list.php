@@ -270,7 +270,7 @@ $help_url = "EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_P
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0 || $search_user > 0) $sql = 'SELECT DISTINCT';
-$sql .= ' s.rowid as socid, s.nom as name, s.name_alias, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client,';	// InfraS change
+$sql .= ' s.rowid as socid, s.nom as name, s.name_alias, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= ' c.rowid, c.ref, c.total_ht, c.tva as total_tva, c.total_ttc, c.ref_client, c.fk_user_author,';
@@ -937,7 +937,7 @@ if ($resql)
 		$companystatic->id = $obj->socid;
 		$companystatic->code_client = $obj->code_client;
 		$companystatic->name = $obj->name;
-		$companystatic->name_alias = $obj->name_alias;	// InfraS add
+		$companystatic->name_alias = $obj->name_alias;
 		$companystatic->client = $obj->client;
 		$companystatic->email = $obj->email;
 		if (!isset($getNomUrl_cache[$obj->socid])) {
