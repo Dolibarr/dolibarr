@@ -68,7 +68,7 @@ $pagenext = $page + 1;
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new User($db);
 $extrafields = new ExtraFields($db);
-$diroutputmassaction = empty($conf->mymodule->dir_output) ? '' : $conf->mymodule->dir_output.'/temp/massgeneration/'.$user->id;
+$diroutputmassaction = $conf->user->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('userlist'));
 
 // Fetch optionals attributes and labels
