@@ -571,7 +571,7 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 $url = DOL_URL_ROOT.'/user/card.php?action=create'.($mode == 'employee' ? '&employee=1' : '').'&leftmenu=';
 if (!empty($socid)) {
-	$url .= '&socid='.$socid;
+	$url .= '&socid='.urlencode($socid);
 }
 
 $newcardbutton = dolGetButtonTitle($langs->trans('NewUser'), '', 'fa fa-plus-circle', $url, '', $permissiontoadd);
@@ -942,9 +942,8 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			$totalarray['nbfield']++;
 		}
 	}
-	if (empty($obj->socid)) $obj->socid = 0;
 	if (!empty($arrayfields['u.email']['checked'])) {
-		print '<td class="tdoverflowmax150">'.dol_print_email($obj->email, $obj->rowid, $obj->socid, 'AC_EMAIL', 0, 0, 1)."</td>\n";
+		print '<td class="tdoverflowmax150">'.dol_print_email($obj->email, $obj->rowid, $obj->fk_soc, 'AC_EMAIL', 0, 0, 1)."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
