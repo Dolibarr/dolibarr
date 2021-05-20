@@ -1036,7 +1036,7 @@ if ($resql) {
 	}
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-	if (!in_array($massaction, array('presend', 'predelete' ,'makepayment'))) {
+	if (!in_array($massaction, array('makepayment'))) {
 		print '<input type="hidden" name="action" value="list">';
 	}
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
