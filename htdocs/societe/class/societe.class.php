@@ -3363,7 +3363,7 @@ class Societe extends CommonObject
 	 *    @param    int     $counter    Counter to protect against infinite loops
 	 *    @return	int     			<0 if KO, 0 if OK or 1 if at some level a parent company was the child to compare to
 	 */
-    public function validateFamilyTree($idparent, $idchild, $counter = 0)
+	public function validateFamilyTree($idparent, $idchild, $counter = 0)
 	{
 		if ($counter > 100) {
 			dol_syslog("Too high level of parent - child for company. May be an infinite loop ?", LOG_WARNING);

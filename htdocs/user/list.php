@@ -931,7 +931,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			$totalarray['nbfield']++;
 		}
 	}
-	
+
 	if (!empty($arrayfields['u.office_phone']['checked'])) {
 		print "<td>".dol_print_phone($obj->office_phone, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone')."</td>\n";
 		if (!$i) {
