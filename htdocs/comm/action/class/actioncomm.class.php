@@ -1901,8 +1901,11 @@ class ActionComm extends CommonObject
 						$sql .= " AND ar.fk_element = 0";
 					}
 				}
-				if ($key == 'author') {
-					$sql .= " AND u.lastname = '".$this->db->escape($value)."'";
+				if ($key == 'module') {
+					$sql .= " AND c.module LIKE '%".$value."'";
+				}
+				if ($key == 'status') {
+					$sql .= " AND a.status =".$value;
 				}
 			}
 

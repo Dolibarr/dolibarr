@@ -134,6 +134,8 @@ class ConferenceOrBooth extends ActionComm
 	public $status;
 	// END MODULEBUILDER PROPERTIES
 
+	public $pubregister;
+
 	/**
 	 * Constructor
 	 *
