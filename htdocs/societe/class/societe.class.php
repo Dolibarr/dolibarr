@@ -3113,26 +3113,26 @@ class Societe extends CommonObject
 		// phpcs:enable
 		if ($this->id) {
 			// InfraS change (to avoid infinite loop)
-			$sameparent				= $this->get_parents($id, $this->id);
-			if ($sameparent < 0)	return -1;
-			elseif ($sameparent == 1)
-			{
-				setEventMessages('la maison mère choisie est déjà filiale de ce tiers', null, 'warnings');
+			$sameparent	= $this->get_parents($id, $this->id);
+			if ($sameparent < 0) {
 				return -1;
-			}	// elseif ($sameparent == 1)
-			else {
+			} elseif ($sameparent == 1) {
+				setEventMessages('ParentCompanyIsAlreadyAChild', null, 'warnings');
+				return -1;
+			} else {
 				$sql	= 'UPDATE '.MAIN_DB_PREFIX.'societe SET parent = '.($id > 0 ? $id : 'null').' WHERE rowid = '.$this->id;
 				dol_syslog(get_class($this).'::set_parent', LOG_DEBUG);
 				$resql	= $this->db->query($sql);
-				if ($resql)
-				{
+				if ($resql) {
 					$this->parent	= $id;
 					return 1;
-				}	// if ($resql)
-				else return -1;
-			}	// else	// elseif ($sameparent == 1)
-		}	// if ($this->id)
-		else return -1;
+				} else {
+					return -1;
+				}
+			}
+		} else {
+			return -1;
+		}
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -3150,16 +3150,20 @@ class Societe extends CommonObject
 		$sql	.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 		$sql	.= ' WHERE rowid = '.$idparent;
 		$resql	= $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$obj	= $this->db->fetch_object($resql);
 
-			if ($obj->parent == '')				return 0;
-			elseif ($obj->parent == $idchild)	return 1;
-			else $sameparent	= $this->get_parents($obj->parent, $idchild);
+			if ($obj->parent == '')	{
+				return 0;
+			} elseif ($obj->parent == $idchild)	{
+				return 1;
+			} else {
+				$sameparent	= $this->get_parents($obj->parent, $idchild);
+			}
 			return $sameparent;
-		}	// if ($resql)
-		else return -1;
+		} else {
+			return -1;
+		}
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
