@@ -492,12 +492,14 @@ CREATE TABLE llx_knowledgemanagement_knowledgerecord(
 	model_pdf varchar(255), 
 	question text NOT NULL, 
 	answer text,
+	url varchar(255),
 	fk_ticket integer,
 	status integer NOT NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
 
 ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD COLUMN fk_ticket integer;
+ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD COLUMN url varchar(255);
 
 
 create table llx_knowledgemanagement_knowledgerecord_extrafields

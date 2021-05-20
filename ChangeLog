@@ -15,7 +15,8 @@ NEW: Add a performance center page with all information and advices related to t
 NEW: A lot of fix into english text after a small proofreading campaign (still not perfect, but really better)
 NEW: All main menu entries are using the picto of the module
 NEW: Add a copy to clipboard button on some fields 
-NEW: Add an example of scheduled job to send email reminder for unpayed invoices 
+NEW: Add an example of scheduled job to send email reminder for unpayed invoices
+NEW: Can make massive stock transfers from a CSV file.
 NEW: Accountancy - Add FEC import
 NEW: Accountancy - Add a confirmation form with options on export
 NEW: Accountancy - Add select date from/to in already bind customer and supplier list
@@ -159,6 +160,7 @@ NEW: #13739 #17390 Product API route added to get product stock and product with
 WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* Module SimplePOS is deprecated. If you need a POS module, please use the module TakePOS.
 * The ICS value for direct debit or credit transfer is now store on each bank account instead of into the global setup.
 * API /setup/shipment_methods has been replaced with API /setup/shipping_methods
 * Field "total" renamed into to "total_ht" for table llx_facture, llx_facture_rec for better field name consistency

@@ -902,8 +902,8 @@ span.fa.fa-plus-circle.paddingleft {
 	height: 28px;
 	vertical-align: middle;
 }
-.divsocialnetwork:not(:first-child) {
-	padding-left: 20px;
+.divsocialnetwork:not(:last-child) {
+	padding-<?php print $right; ?>: 20px;
 }
 div.divsearchfield {
 	float: <?php print $left; ?>;
@@ -1027,6 +1027,7 @@ ul.attendees li {
 	list-style-type: none;
 	padding-top:1px;
 	padding-bottom:1px;
+	line-height: 1.6em;
 }
 .googlerefreshcal {
 	padding-top: 4px;
@@ -1470,6 +1471,10 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 
 	select.minwidth100imp, select.minwidth100, select.minwidth200, select.minwidth200imp, select.minwidth300 {
 		width: calc(100% - 40px) !important;
+		display: inline-block;
+	}
+	select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-selection), input.widthcentpercentminusxx {
+		width: calc(100% - 70px) !important;
 		display: inline-block;
 	}
 
@@ -6770,10 +6775,14 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 /* For copy-paste feature                                                         */
 /* ============================================================================== */
 
+span.clipboardCPValueToPrint {
+	display: inline-block;
+}
 span.clipboardCPValue.hidewithsize {
 	width: 0 !important;
 	display: inline-block;
 	color: transparent;
+	white-space: nowrap;
 }
 
 .clipboardCPShowOnHover .clipboardCPButton {

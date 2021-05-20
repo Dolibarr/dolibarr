@@ -2718,9 +2718,8 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 		if ($action != 'edit' && $action != 'presend') {
 			print '<div class="fichecenter"><div class="fichehalfleft">';
-			/*
-			 * Generated documents
-			 */
+
+			// Generated documents
 			$filename = dol_sanitizeFileName($object->ref);
 			$filedir = $conf->user->dir_output."/".dol_sanitizeFileName($object->ref);
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
@@ -2740,7 +2739,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
 			$somethingshown = $formactions->showactions($object, 'user', $socid, 1);
-
 
 			print '</div></div></div>';
 		}

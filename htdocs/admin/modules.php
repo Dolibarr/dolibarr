@@ -386,7 +386,8 @@ foreach ($modulesdir as $dir) {
 									}
 
 									$moduleposition = ($objMod->module_position ? $objMod->module_position : '50');
-									if ($moduleposition == '50' && ($objMod->isCoreOrExternalModule() == 'external')) {
+									if ($objMod->isCoreOrExternalModule() == 'external' && $moduleposition < 100000) {
+										// an external module should never return a value lower than '80'.
 										$moduleposition = '80'; // External modules at end by default
 									}
 
