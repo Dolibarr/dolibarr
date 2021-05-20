@@ -3368,7 +3368,7 @@ class Societe extends CommonObject
 		if ($counter > 100) {
 			dol_syslog("Too high level of parent - child for company. May be an infinite loop ?", LOG_WARNING);
 		}
-		
+
 		$sql	= 'SELECT s.parent';
 		$sql	.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 		$sql	.= ' WHERE rowid = '.$idparent;
