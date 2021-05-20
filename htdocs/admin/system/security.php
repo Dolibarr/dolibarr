@@ -156,7 +156,7 @@ $arrayoffilesinroot = dol_dir_list(DOL_DOCUMENT_ROOT, 'all', 1, '', array('\/cus
 $fileswithwritepermission = array();
 foreach ($arrayoffilesinroot as $fileinroot) {
 	// Test permission on file
-	if ($fileinroot['perm'] & 0222) {
+	if (isset($fileinroot['perm']) && ($fileinroot['perm'] & 0222)) {
 		$fileswithwritepermission[] = $fileinroot['relativename'];
 	}
 }
@@ -278,7 +278,7 @@ print '<br>';
 
 print '<strong>'.$langs->trans("AntivirusEnabledOnUpload").'</strong>: ';
 print empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ? '' : img_picto('', 'tick').' ';
-print yn($conf->global->MAIN_ANTIVIRUS_COMMAND ? 1 : 0);
+print yn(!empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ? 1 : 0);
 if (!empty($conf->global->MAIN_ANTIVIRUS_COMMAND)) {
 	print ' &nbsp; - '.$conf->global->MAIN_ANTIVIRUS_COMMAND;
 	if (defined('MAIN_ANTIVIRUS_COMMAND')) {
