@@ -3112,15 +3112,15 @@ class Societe extends CommonObject
 	{
 		// phpcs:enable
 		if ($this->id) {
-			// InfraS change (to avoid infinite loop)
+			// Check if the id we want to add as parent has not already one parent that is the current id we try to update
 			$sameparent	= $this->validateFamilyTree($id, $this->id, 0);
 			if ($sameparent < 0) {
 				return -1;
 			} elseif ($sameparent == 1) {
-				setEventMessages('ParentCompanyIsAlreadyAChild', null, 'warnings');
+				setEventMessages('ParentCompanyToAddIsAlreadyAChildOfModifiedCompany', null, 'warnings');
 				return -1;
 			} else {
-				$sql	= 'UPDATE '.MAIN_DB_PREFIX.'societe SET parent = '.($id > 0 ? $id : 'null').' WHERE rowid = '.$this->id;
+				$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe SET parent = '.($id > 0 ? $id : 'null').' WHERE rowid = '.((int) $this->id);
 				dol_syslog(get_class($this).'::set_parent', LOG_DEBUG);
 				$resql	= $this->db->query($sql);
 				if ($resql) {
@@ -3148,7 +3148,7 @@ class Societe extends CommonObject
 		if ($counter > 100) {
 			dol_syslog("Too high level of parent - child for company. May be an infinite loop ?", LOG_WARNING);
 		}
-
+		
 		$sql	= 'SELECT s.parent';
 		$sql	.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 		$sql	.= ' WHERE rowid = '.$idparent;
