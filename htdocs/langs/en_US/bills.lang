@@ -590,4 +590,6 @@ SituationTotalRayToRest=Remainder to pay without taxe
 PDFSituationTitle=Situation n° %d
 SituationTotalProgress=Total progress %d %%
 SearchUnpaidInvoicesWithDueDate=Search unpaid invoices with a due date = %s
-RegisterPaymentAndClasiffiedPayed=Enter payment and Classify 'Paid'
+RegisterPaymentAndClasiffiedPayed=Enter payment and classify 'Paid'
+NoPaymentAvailable=No payment available for %s
+RegisterPaymentAndClasiffiedPayedDone=Payment registered and classify 'Paid' done for invoice %s
