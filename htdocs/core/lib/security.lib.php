@@ -173,10 +173,13 @@ function dol_verifyHash($chain, $hash, $type = '0')
  *  This method check permission on module then call checkUserAccessToObject() for permission on object (according to entity and socid of user).
  *
  *	@param	User	$user      	  	User to check
- *	@param  string	$features	    Features to check (it must be module $object->element. Examples: 'societe', 'contact', 'produit&service', 'produit|service', ...)
+ *	@param  string	$features	    Features to check (it must be module $object->element. Can be a 'or' check with 'levela|levelb'.
+ *									Examples: 'societe', 'contact', 'produit&service', 'produit|service', ...)
+ *									This is used to check permission $user->rights->features->...
  *	@param  int		$objectid      	Object ID if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
  *	@param  string	$tableandshare  'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity for multicompany module. Param not used if objectid is null (optional).
  *	@param  string	$feature2		Feature to check, second level of permission (optional). Can be a 'or' check with 'sublevela|sublevelb'.
+ *									This is used to check permission $user->rights->features->feature2...
  *  @param  string	$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
  *  @param  string	$dbt_select     Field name for select if not rowid. Not used if objectid is null (optional)
  *  @param	int		$isdraft		1=The object with id=$objectid is a draft
