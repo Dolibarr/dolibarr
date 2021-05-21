@@ -61,7 +61,8 @@ $permissionnote = $user->rights->workstation->workstation->write; // Used by the
 $permissiontoadd = $user->rights->workstation->workstation->write; // Used by the include of actions_addupdatedelete.inc.php
 
 // Security check
-restrictedArea($user, $object->element, $object->id, '', 'workstation');
+$isdraft = 0;
+restrictedArea($user, $object->element, $object->id, $object->table_element, 'workstation', 'fk_soc', 'rowid', $isdraft);
 
 
 /*

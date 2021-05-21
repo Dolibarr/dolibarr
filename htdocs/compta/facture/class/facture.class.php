@@ -279,7 +279,7 @@ class Facture extends CommonInvoice
 	 *  'help' is a string visible as a tooltip on field
 	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
 	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
-	 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
+	 *  'arrayofkeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
 	 *
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
@@ -301,7 +301,7 @@ class Facture extends CommonInvoice
 		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>50),
 		'datef' =>array('type'=>'date', 'label'=>'DateInvoice', 'enabled'=>1, 'visible'=>1, 'position'=>20),
 		'date_valid' =>array('type'=>'date', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>22),
-		'date_lim_reglement' =>array('type'=>'date', 'label'=>'DateDue', 'enabled'=>1, 'visible'=>-1, 'position'=>25),
+		'date_lim_reglement' =>array('type'=>'date', 'label'=>'DateDue', 'enabled'=>1, 'visible'=>1, 'position'=>25),
 		'date_closing' =>array('type'=>'datetime', 'label'=>'Date closing', 'enabled'=>1, 'visible'=>-1, 'position'=>30),
 		'paye' =>array('type'=>'smallint(6)', 'label'=>'InvoicePaidCompletely', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>80),
 		//'amount' =>array('type'=>'double(24,8)', 'label'=>'Amount', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>85),
@@ -310,7 +310,7 @@ class Facture extends CommonInvoice
 		//'remise' =>array('type'=>'double', 'label'=>'Remise', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
 		'close_code' =>array('type'=>'varchar(16)', 'label'=>'EarlyClosingReason', 'enabled'=>1, 'visible'=>-1, 'position'=>92),
 		'close_note' =>array('type'=>'varchar(128)', 'label'=>'EarlyClosingComment', 'enabled'=>1, 'visible'=>-1, 'position'=>93),
-		'total_ht' =>array('type'=>'double(24,8)', 'label'=>'AmountHT', 'enabled'=>1, 'visible'=>-1, 'position'=>95, 'isameasure'=>1),
+		'total_ht' =>array('type'=>'double(24,8)', 'label'=>'AmountHT', 'enabled'=>1, 'visible'=>1, 'position'=>95, 'isameasure'=>1),
 		'total_tva' =>array('type'=>'double(24,8)', 'label'=>'AmountVAT', 'enabled'=>1, 'visible'=>-1, 'position'=>100, 'isameasure'=>1),
 		'localtax1' =>array('type'=>'double(24,8)', 'label'=>'LT1', 'enabled'=>1, 'visible'=>-1, 'position'=>110, 'isameasure'=>1),
 		'localtax2' =>array('type'=>'double(24,8)', 'label'=>'LT2', 'enabled'=>1, 'visible'=>-1, 'position'=>120, 'isameasure'=>1),
@@ -3657,7 +3657,7 @@ class Facture extends CommonInvoice
 	{
 		global $user;
 
-		dol_syslog(get_class($this)."::deleteline rowid=".$rowid, LOG_DEBUG);
+		dol_syslog(get_class($this)."::deleteline rowid=".((int) $rowid), LOG_DEBUG);
 
 		if ($this->statut != self::STATUS_DRAFT) {
 			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
@@ -4902,7 +4902,7 @@ class Facture extends CommonInvoice
 	 *  @param	int|string	$template		Name (or id) of email template (Must be a template of type 'facture_send')
 	 *  @return int         				0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	public function sendEmailsReminderOnDueDate($nbdays = 0, $paymentmode = 'all', $template = '')
+	public function sendEmailsRemindersOnInvoiceDueDate($nbdays = 0, $paymentmode = 'all', $template = '')
 	{
 		global $conf, $langs, $user;
 
@@ -4912,23 +4912,27 @@ class Facture extends CommonInvoice
 		$nbMailSend = 0;
 		$errorsMsg = array();
 
+		$langs->load("bills");
+
 		if (empty($conf->facture->enabled)) {	// Should not happen. If module disabled, cron job should not be visible.
-			$langs->load("bills");
-			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Facture"));
+			$this->output .= $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Facture"));
 			return 0;
 		}
 		/*if (empty($conf->global->FACTURE_REMINDER_EMAIL)) {
 			$langs->load("bills");
-			$this->output = $langs->trans('EventRemindersByEmailNotEnabled', $langs->transnoentitiesnoconv("Facture"));
+			$this->output .= $langs->trans('EventRemindersByEmailNotEnabled', $langs->transnoentitiesnoconv("Facture"));
 			return 0;
 		}
 		*/
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 		$formmail = new FormMail($this->db);
 
 		$now = dol_now();
+		$tmpidate = dol_get_first_hour(dol_time_plus_duree($now, $nbdays, 'd'), 'gmt');
+
 		$tmpinvoice = new Facture($this->db);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -4941,14 +4945,22 @@ class Facture extends CommonInvoice
 			$sql .= ", ".MAIN_DB_PREFIX."c_paiement as cp";
 		}
 		$sql .= " WHERE f.paye = 0";
-		$sql .= " AND f.date_lim_reglement = '".$this->db->idate(dol_get_first_hour(dol_time_plus_duree(dol_now(), -1 * $nbdays, 'd'), 'gmt'), 'gmt')."'";
+		$sql .= " AND f.date_lim_reglement = '".$this->db->idate($tmpidate, 'gmt')."'";
 		$sql .= " AND f.entity IN (".getEntity('facture').")";
 		if (!empty($paymentmode) && $paymentmode != 'all') {
 			$sql .= " AND f.fk_mode_reglement = cp.id AND cp.code = '".$this->db->escape($paymentmode)."'";
 		}
 		// TODO Add filter to check there is no payment started
 		$sql .= $this->db->order("date_lim_reglement", "ASC");
+
 		$resql = $this->db->query($sql);
+
+		$stmpidate = dol_print_date($tmpidate, 'day', 'gmt');
+		$this->output .= $langs->transnoentitiesnoconv("SearchUnpaidInvoicesWithDueDate", $stmpidate);
+		if (!empty($paymentmode) && $paymentmode != 'all') {
+			$this->output .= ' ('.$langs->transnoentitiesnoconv("PaymentMode").' '.$paymentmode.')';
+		}
+		$this->output .= '<br>';
 
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -4961,6 +4973,7 @@ class Facture extends CommonInvoice
 						$outputlangs = new Translate('', $conf);
 						if ($tmpinvoice->thirdparty->default_lang) {
 							$outputlangs->setDefaultLang($tmpinvoice->thirdparty->default_lang);
+							$outputlangs->loadLangs(array("main", "bills"));
 						} else {
 							$outputlangs = $langs;
 						}
@@ -4968,8 +4981,8 @@ class Facture extends CommonInvoice
 						// Select email template
 						$arraymessage = $formmail->getEMailTemplate($this->db, 'facture_send', $user, $outputlangs, (is_numeric($template) ? $template : 0), 1, (is_numeric($template) ? '' : $template));
 						if (is_numeric($arraymessage) && $arraymessage <= 0) {
-							$langs->load("bills");
-							$this->output = $langs->trans('FailedToFindEmailTemplate', $template);
+							$langs->load("errors");
+							$this->output .= $langs->trans('ErrorFailedToFindEmailTemplate', $template);
 							return 0;
 						}
 
@@ -4977,15 +4990,17 @@ class Facture extends CommonInvoice
 						$errormesg = '';
 
 						// Make substitution in email content
-						$substitutionarray = getCommonSubstitutionArray($langs, 0, '', $this);
+						$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, '', $tmpinvoice);
 
-						complete_substitutions_array($substitutionarray, $langs, $this);
+						complete_substitutions_array($substitutionarray, $outputlangs, $tmpinvoice);
+
+						// Topic
+						$sendTopic = make_substitutions(empty($arraymessage->topic) ? $outputlangs->transnoentitiesnoconv('InformationMessage') : $arraymessage->topic, $substitutionarray, $outputlangs, 1);
 
 						// Content
-						$sendContent = make_substitutions($langs->trans($arraymessage->content), $substitutionarray);
+						$content = $outputlangs->transnoentitiesnoconv($arraymessage->content);
 
-						//Topic
-						$sendTopic = (!empty($arraymessage->topic)) ? $arraymessage->topic : html_entity_decode($langs->trans('EventReminder'));
+						$sendContent = make_substitutions($content, $substitutionarray, $outputlangs, 1);
 
 						// Recipient
 						$res = $tmpinvoice->fetch_thirdparty();
@@ -5040,7 +5055,7 @@ class Facture extends CommonInvoice
 		}
 
 		if (!$error) {
-			$this->output = 'Nb of emails sent : '.$nbMailSend;
+			$this->output .= 'Nb of emails sent : '.$nbMailSend;
 			$this->db->commit();
 			return 0;
 		} else {
@@ -5739,8 +5754,8 @@ class FactureLigne extends CommonInvoiceLine
 				if ($include_credit_note) {
 					$sql = 'SELECT fd.situation_percent FROM '.MAIN_DB_PREFIX.'facturedet fd';
 					$sql .= ' JOIN '.MAIN_DB_PREFIX.'facture f ON (f.rowid = fd.fk_facture) ';
-					$sql .= ' WHERE fd.fk_prev_id ='.$this->fk_prev_id;
-					$sql .= ' AND f.situation_cycle_ref = '.$invoicecache[$invoiceid]->situation_cycle_ref; // Prevent cycle outed
+					$sql .= ' WHERE fd.fk_prev_id = '.((int) $this->fk_prev_id);
+					$sql .= ' AND f.situation_cycle_ref = '.((int) $invoicecache[$invoiceid]->situation_cycle_ref); // Prevent cycle outed
 					$sql .= ' AND f.type = '.Facture::TYPE_CREDIT_NOTE;
 
 					$res = $this->db->query($sql);

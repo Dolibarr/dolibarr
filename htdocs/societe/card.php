@@ -48,13 +48,13 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 if (!empty($conf->adherent->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 }
-if (! empty($conf->accounting->enabled)) {
+if (!empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 }
-if (! empty($conf->accounting->enabled)) {
+if (!empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 }
-if (! empty($conf->accounting->enabled)) {
+if (!empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 }
 
@@ -270,7 +270,8 @@ if (empty($reshook)) {
 						'Product' => '/product/class/product.class.php',
 						'Project' => '/projet/class/project.class.php',
 						'Ticket' => '/ticket/class/ticket.class.php',
-						'User' => '/user/class/user.class.php'
+						'User' => '/user/class/user.class.php',
+						'Account' => '/compta/bank/class/account.class.php',
 					);
 
 					//First, all core objects must update their tables
@@ -609,7 +610,7 @@ if (empty($reshook)) {
 					}
 
 					// Logo/Photo save
-					$dir     = $conf->societe->multidir_output[$conf->entity]."/".$object->id."/logos/";
+					$dir = $conf->societe->multidir_output[$conf->entity]."/".$object->id."/logos/";
 					$file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
 					if ($file_OK) {
 						if (image_format_supported($_FILES['photo']['name'])) {
@@ -891,7 +892,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formadmin = new FormAdmin($db);
 $formcompany = new FormCompany($db);
-if (! empty($conf->accounting->enabled)) {
+if (!empty($conf->accounting->enabled)) {
 	$formaccounting = new FormAccounting($db);
 }
 
@@ -1510,20 +1511,24 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		// Type - Workforce/Staff
-		print '<tr><td>'.$form->editfieldkey('ThirdPartyType', 'typent_id', '', $object, 0).'</td><td class="maxwidthonsmartphone"'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'."\n";
+		print '<tr><td>'.$form->editfieldkey('ThirdPartyType', 'typent_id', '', $object, 0).'</td><td class="maxwidthonsmartphone"'.( ($conf->browser->layout == 'phone' || !empty($conf->global->SOCIETE_DISABLE_WORKFORCE)) ? ' colspan="3"' : '').'>'."\n";
 		$sortparam = (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
 		print $form->selectarray("typent_id", $formcompany->typent_array(0), $object->typent_id, 1, 0, 0, '', 0, 0, 0, $sortparam, '', 1);
 		if ($user->admin) {
 			print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
-		print '</td>';
-		if ($conf->browser->layout == 'phone') {
-			print '</tr><tr>';
-		}
-		print '<td>'.$form->editfieldkey('Workforce', 'effectif_id', '', $object, 0).'</td><td class="maxwidthonsmartphone"'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>';
-		print $form->selectarray("effectif_id", $formcompany->effectif_array(0), $object->effectif_id, 0, 0, 0, '', 0, 0, 0, '', '', 1);
-		if ($user->admin) {
-			print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+		if (empty($conf->global->SOCIETE_DISABLE_WORKFORCE)) {
+			print '</td>';
+			if ($conf->browser->layout == 'phone') {
+				print '</tr><tr>';
+			}
+			print '<td>'.$form->editfieldkey('Workforce', 'effectif_id', '', $object, 0).'</td><td class="maxwidthonsmartphone"'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>';
+			print $form->selectarray("effectif_id", $formcompany->effectif_array(0), $object->effectif_id, 0, 0, 0, '', 0, 0, 0, '', '', 1);
+			if ($user->admin) {
+				print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+			}
+		} else {
+			print '<input type="hidden" name="effectif_id" id="effectif_id" value="'.$object->effectif_id.'">';
 		}
 		print '</td></tr>';
 
@@ -2196,19 +2201,23 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</tr>';
 
 			// Type - Workforce/Staff
-			print '<tr><td>'.$form->editfieldkey('ThirdPartyType', 'typent_id', '', $object, 0).'</td><td class="maxwidthonsmartphone">';
+			print '<tr><td>'.$form->editfieldkey('ThirdPartyType', 'typent_id', '', $object, 0).'</td><td class="maxwidthonsmartphone"'.( ($conf->browser->layout == 'phone' || !empty($conf->global->SOCIETE_DISABLE_WORKFORCE)) ? ' colspan="3"' : '').'>';
 			print $form->selectarray("typent_id", $formcompany->typent_array(0), $object->typent_id, 1, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
 			if ($user->admin) {
 				print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 			}
-			print '</td>';
-			if ($conf->browser->layout == 'phone') {
-				print '</tr><tr>';
-			}
-			print '<td>'.$form->editfieldkey('Workforce', 'effectif_id', '', $object, 0).'</td><td class="maxwidthonsmartphone">';
-			print $form->selectarray("effectif_id", $formcompany->effectif_array(0), $object->effectif_id, 0, 0, 0, '', 0, 0, 0, '', '', 1);
-			if ($user->admin) {
-				print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+			if (empty($conf->global->SOCIETE_DISABLE_WORKFORCE)) {
+				print '</td>';
+				if ($conf->browser->layout == 'phone') {
+					print '</tr><tr>';
+				}
+				print '<td>'.$form->editfieldkey('Workforce', 'effectif_id', '', $object, 0).'</td><td class="maxwidthonsmartphone">';
+				print $form->selectarray("effectif_id", $formcompany->effectif_array(0), $object->effectif_id, 0, 0, 0, '', 0, 0, 0, '', '', 1);
+				if ($user->admin) {
+					print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+				}
+			} else {
+				print '<input type="hidden" name="effectif_id" id="effectif_id" value="'.$object->effectif_id.'">';
 			}
 			print '</td></tr>';
 
@@ -2646,7 +2655,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</td></tr>';
 
 		// Workforce/Staff
-		print '<tr><td>'.$langs->trans("Workforce").'</td><td>'.$object->effectif.'</td></tr>';
+		if (empty($conf->global->SOCIETE_DISABLE_WORKFORCE)) {
+			print '<tr><td>'.$langs->trans("Workforce").'</td><td>'.$object->effectif.'</td></tr>';
+		}
 
 		print '</table>';
 		print '</div>';
@@ -2833,10 +2844,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				if (empty($user->socid)) {
 					if (!empty($object->email) || $at_least_one_email_contact) {
 						$langs->load("mails");
-						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
+						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>'."\n";
 					} else {
 						$langs->load("mails");
-						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a>';
+						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a>'."\n";
 					}
 				}
 
@@ -2848,12 +2859,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					$adh = new Adherent($db);
 					$result = $adh->fetch('', '', $object->id);
 					if ($result == 0 && ($object->client == 1 || $object->client == 3) && !empty($conf->global->MEMBER_CAN_CONVERT_CUSTOMERS_TO_MEMBERS)) {
-						print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/card.php?&action=create&socid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("NewMember")).'">'.$langs->trans("NewMember").'</a>';
+						print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/card.php?&action=create&socid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("NewMember")).'">'.$langs->trans("NewMember").'</a>'."\n";
 					}
 				}
 
 				if ($user->rights->societe->supprimer) {
-					print '<a class="butActionDelete" href="card.php?action=merge&socid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("MergeThirdparties")).'">'.$langs->trans('Merge').'</a>';
+					print '<a class="butActionDelete" href="card.php?action=merge&socid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("MergeThirdparties")).'">'.$langs->trans('Merge').'</a>'."\n";
 				}
 
 				if ($user->rights->societe->supprimer) {

@@ -59,7 +59,9 @@ restrictedArea($user, 'propal', $object->id);
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans('Proposal'), 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
+$title = $langs->trans('Proposal')." - ".$langs->trans('Info');
+$help_url = 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos';
+llxHeader('', $title, $help_url);
 
 $object->fetch_thirdparty();
 

@@ -21,13 +21,14 @@
 // Variable $upload_dir must be defined when entering here.
 // Variable $upload_dirold may also exists.
 // Variable $confirm must be defined.
+// If variable $permissiontoadd is defined, we check it is true. Note: A test on permission should already have been done into the restrictedArea() method called by parent page.
 
 //var_dump($upload_dir);
 //var_dump($upload_dirold);
 
 
 // Submit file/link
-if (GETPOST('sendit', 'alpha') && !empty($conf->global->MAIN_UPLOAD_DOC)) {
+if (GETPOST('sendit', 'alpha') && !empty($conf->global->MAIN_UPLOAD_DOC) && (!isset($permissiontoadd) || $permissiontoadd)) {
 	if (!empty($_FILES)) {
 		if (is_array($_FILES['userfile']['tmp_name'])) {
 			$userfiles = $_FILES['userfile']['tmp_name'];
@@ -43,6 +44,10 @@ if (GETPOST('sendit', 'alpha') && !empty($conf->global->MAIN_UPLOAD_DOC)) {
 				} else {
 					setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
 				}
+			}
+			if (preg_match('/__.*__/', $_FILES['userfile']['name'][$key])) {
+				$error++;
+				setEventMessages($langs->trans('ErrorWrongFileName'), null, 'errors');
 			}
 		}
 
@@ -61,10 +66,10 @@ if (GETPOST('sendit', 'alpha') && !empty($conf->global->MAIN_UPLOAD_DOC)) {
 			}
 		}
 	}
-} elseif (GETPOST('linkit', 'restricthtml') && !empty($conf->global->MAIN_UPLOAD_DOC)) {
+} elseif (GETPOST('linkit', 'restricthtml') && !empty($conf->global->MAIN_UPLOAD_DOC) && (!isset($permissiontoadd) || $permissiontoadd)) {
 	$link = GETPOST('link', 'alpha');
 	if ($link) {
-		if (substr($link, 0, 7) != 'http://' && substr($link, 0, 8) != 'https://' && substr($link, 0, 7) != 'file://') {
+		if (substr($link, 0, 7) != 'http://' && substr($link, 0, 8) != 'https://' && substr($link, 0, 7) != 'file://' && substr($link, 0, 7) != 'davs://') {
 			$link = 'http://'.$link;
 		}
 		dol_add_file_process($upload_dir, 0, 1, 'userfile', null, $link, '', 0);
@@ -73,7 +78,7 @@ if (GETPOST('sendit', 'alpha') && !empty($conf->global->MAIN_UPLOAD_DOC)) {
 
 
 // Delete file/link
-if ($action == 'confirm_deletefile' && $confirm == 'yes') {
+if ($action == 'confirm_deletefile' && $confirm == 'yes' && (!isset($permissiontoadd) || $permissiontoadd)) {
 	$urlfile = GETPOST('urlfile', 'alpha', 0, null, null, 1); // Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 	if (GETPOST('section', 'alpha')) {
 		// For a delete from the ECM module, upload_dir is ECM root dir and urlfile contains relative path from upload_dir
@@ -145,7 +150,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes') {
 			exit;
 		}
 	}
-} elseif ($action == 'confirm_updateline' && GETPOST('save', 'alpha') && GETPOST('link', 'alpha')) {
+} elseif ($action == 'confirm_updateline' && GETPOST('save', 'alpha') && GETPOST('link', 'alpha') && (!isset($permissiontoadd) || $permissiontoadd)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$langs->load('link');
 	$link = new Link($db);
@@ -163,7 +168,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes') {
 	} else {
 		//error fetching
 	}
-} elseif ($action == 'renamefile' && GETPOST('renamefilesave', 'alpha')) {
+} elseif ($action == 'renamefile' && GETPOST('renamefilesave', 'alpha') && (!isset($permissiontoadd) || $permissiontoadd)) {
 	// For documents pages, upload_dir contains already path to file from module dir, so we clean path into urlfile.
 	if (!empty($upload_dir)) {
 		$filenamefrom = dol_sanitizeFileName(GETPOST('renamefilefrom', 'alpha'), '_', 0); // Do not remove accents
@@ -172,8 +177,11 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes') {
 		// We apply dol_string_nohtmltag also to clean file names (this remove duplicate spaces) because
 		// this function is also applied when we upload and when we make try to download file (by the GETPOST(filename, 'alphanohtml') call).
 		$filenameto = dol_string_nohtmltag($filenameto);
-
-		if ($filenamefrom != $filenameto) {
+		if (preg_match('/__.*__/', $filenameto)) {
+			$error++;
+			setEventMessages($langs->trans('ErrorWrongFileName'), null, 'errors');
+		}
+		if (!$error && $filenamefrom != $filenameto) {
 			// Security:
 			// Disallow file with some extensions. We rename them.
 			// Because if we put the documents directory into a directory inside web root (very bad), this allows to execute on demand arbitrary code.

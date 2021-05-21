@@ -4,9 +4,9 @@
 NoErrorCommitIsDone=Sen erro,  é válido
 # Errors
 ErrorButCommitIsDone=Atopáronse erros pero validamos a pesar diso
-ErrorBadEMail=Correo electrónico %s incorrecto
-ErrorBadMXDomain=Correo electrónico %s parece incorrecto (o dominio non ten un rexistro MX válido)
-ErrorBadUrl=Url %s incorrecta
+ErrorBadEMail=O correo electrónico %s é incorrecto
+ErrorBadMXDomain=O correo electrónico %s parece incorrecto (O dominio non ten un rexistro MX válido)
+ErrorBadUrl=URL %s é incorrecta
 ErrorBadValueForParamNotAString=Valor incorrecto para o seu parámetro. Xeralmente aparece cando falta a tradución
 ErrorRefAlreadyExists=A referencia <b>%s</b> xa existe
 ErrorLoginAlreadyExists=O login %s xa existe.
@@ -46,8 +46,8 @@ ErrorWrongDate=A data non correcta!
 ErrorFailedToWriteInDir=Erro ao escribir no directorio %s
 ErrorFoundBadEmailInFile=Atopouse unha sintaxe de correo electrónico incorrecta para  %s liñas no ficheiro (exemplo liña %s con correo electrónico=%s)
 ErrorUserCannotBeDelete=Non pode eliminarse o usuario. É posible que esté asociado a entidades do Dolibarr
-ErrorFieldsRequired=Non se completaron algúns campos obrigatorios
-ErrorSubjectIsRequired=O asunto do correo electrónico é  obligatorio
+ErrorFieldsRequired=Algúns campos obrigatorios están baleiros
+ErrorSubjectIsRequired=O asunto do correo electrónico é obrigatorio
 ErrorFailedToCreateDir=Fallou a creación dun directorio. Comprobe que o usuario do servidor web ten permisos para escribir no directorio de documentos Dolibarr. Se o parámetro <b>safe_mode</b> está activado neste PHP, comprobe que os ficheiros php Dolibarr son propiedade do usuario (ou grupo) do servidor web.
 ErrorNoMailDefinedForThisUser=Non existe enderezo de correo electrónico asignado a este usuario
 ErrorSetupOfEmailsNotComplete=A configuración do correo electrónico non está rematada
@@ -226,6 +226,7 @@ ErrorAPageWithThisNameOrAliasAlreadyExists=A páxina/contedor <strong>%s</strong
 ErrorDuringChartLoad=Erro ao cargar o plan de contabilidade. Se non se cargaron algunhas contas, aínda pode introducilas manualmente.
 ErrorBadSyntaxForParamKeyForContent=Sintaxe incorrecta para o parémetro keyforcontent. Debe ter un valor que comece por %s ou %s
 ErrorVariableKeyForContentMustBeSet=Erro, debe establecerse a constante co nome %s (con contido de texto para amosar) ou %s (con URL externo para amosar).
+ErrorURLMustEndWith=URL %s debe rematar %s
 ErrorURLMustStartWithHttp=O URL %s debe comezar con http:// ou https://
 ErrorHostMustNotStartWithHttp=O nome do host %s NON debe comezar con http:// ou https://
 ErrorNewRefIsAlreadyUsed=Erro, a nova referencia xa está empregada
@@ -296,3 +297,4 @@ WarningAvailableOnlyForHTTPSServers=Dispoñible só se usa conexión segura HTTP
 WarningModuleXDisabledSoYouMayMissEventHere=Non foi activado o módulo %s . Pode que perda moitos eventos aquí
 ErrorActionCommPropertyUserowneridNotDefined=É preciso o supervisor do usuario
 ErrorActionCommBadType=O tipo de evento seleccionado (id: %n, código: %s) non existe no diccionario Tipo de Evento
+CheckVersionFail=Fallou a comprobación da versión

@@ -85,6 +85,8 @@ if ($id > 0 || !empty($ref)) {
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 restrictedArea($user, 'bom', $object->id, 'bom_bom', '', '', 'rowid', $isdraft);
 
+$permissiontoadd = $user->rights->bom->write; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
+
 
 /*
  * Actions
@@ -100,8 +102,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 $form = new Form($db);
 
 $title = $langs->trans("BillOfMaterials").' - '.$langs->trans("Files");
-$help_url = '';
-//$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+
+$help_url = 'EN:Module_BOM';
+
 llxHeader('', $title, $help_url);
 
 if ($object->id) {

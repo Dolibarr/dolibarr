@@ -340,7 +340,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_head('');
 
-	print '<table class="border centpercent">';
+	print '<table class="border centpercent tableforfieldcreate">';
 
 	// Ref
 	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Ref").'</td>';
@@ -829,13 +829,13 @@ if ($action == 'create') {
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post" name="formsoc">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="update">';
-		print '<input type="hidden" name="id" value="'.$_REQUEST["id"].'">'."\n\n";
+		print '<input type="hidden" name="id" value="'.GETPOST("id", 'int').'">'."\n\n";
 
 		print dol_get_fiche_head(array(), 0, '', 0);
 
 		//print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border centpercent">';
+		print '<table class="border centpercent tableforfieldcreate">';
 
 		// Ref
 		print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Ref").'</td>';
@@ -925,7 +925,7 @@ if ($action == 'create') {
 
 		// Tags-Categories
 		if ($conf->categorie->enabled) {
-			print '<tr><td class="tdtop">'.$langs->trans("Categories").'</td><td>';
+			print '<tr><td>'.$langs->trans("Categories").'</td><td>';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACCOUNT, '', 'parent', 64, 0, 1);
 			$c = new Categorie($db);
 			$cats = $c->containing($object->id, Categorie::TYPE_ACCOUNT);

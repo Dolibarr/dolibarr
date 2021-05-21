@@ -14,7 +14,7 @@
  * Copyright (C) 2014		Ion agorria			    <ion@agorria.com>
  * Copyright (C) 2016-2018	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2017		Gustavo Novaro
- * Copyright (C) 2019-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -190,6 +190,10 @@ class Product extends CommonObject
 	public $localtax1_type;
 	public $localtax2_type;
 
+	public $lifetime;
+
+	public $qc_frequency;
+
 	/**
 	 * Stock real
 	 *
@@ -330,13 +334,6 @@ class Product extends CommonObject
 	 */
 	public $barcode_type_code;
 
-	/**
-	 * Additional barcodes (Some products have different barcodes according to the country of origin of manufacture)
-	 *
-	 * @var array
-	 */
-	public $barcodes_extra = array();
-
 	public $stats_propale = array();
 	public $stats_commande = array();
 	public $stats_contrat = array();
@@ -375,6 +372,9 @@ class Product extends CommonObject
 
 	public $oldcopy;
 
+	/**
+	 * @var int Default warehouse Id
+	 */
 	public $fk_default_warehouse;
 	/**
 	 * @var int ID
@@ -391,6 +391,10 @@ class Product extends CommonObject
 	 * @see        $ref_supplier
 	 */
 	public $ref_fourn;
+
+	/**
+	 * @var string ref supplier
+	 */
 	public $ref_supplier;
 
 	/**
@@ -734,6 +738,8 @@ class Product extends CommonObject
 
 							// update accountancy for this entity
 							if (!$error && !empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+								$this->db->query("DELETE FROM " . MAIN_DB_PREFIX . "product_perentity WHERE fk_product = " . $this->id . " AND entity = " . $conf->entity);
+
 								$sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_perentity (";
 								$sql .= " fk_product";
 								$sql .= ", entity";
@@ -1092,6 +1098,8 @@ class Product extends CommonObject
 			$sql .= ", customcode = '".$this->db->escape($this->customcode)."'";
 			$sql .= ", fk_country = ".($this->country_id > 0 ? (int) $this->country_id : 'null');
 			$sql .= ", fk_state = ".($this->state_id > 0 ? (int) $this->state_id : 'null');
+			$sql .= ", lifetime = ".($this->lifetime > 0 ? (int) $this->lifetime : 'null');
+			$sql .= ", qc_frequency = ".($this->qc_frequency > 0 ? (int) $this->qc_frequency : 'null');
 			$sql .= ", note = ".(isset($this->note) ? "'".$this->db->escape($this->note)."'" : 'null');
 			$sql .= ", duration = '".$this->db->escape($this->duration_value.$this->duration_unit)."'";
 			if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
@@ -1626,6 +1634,36 @@ class Product extends CommonObject
 		}
 	}
 
+	/**
+	 *  used to check if price have really change to avoid log pollution
+	 *
+	 * @param  int  $level price level to change
+	 * @return array
+	 */
+	private function getArrayForPriceCompare($level = 0)
+	{
+
+		$testExit = array('multiprices','multiprices_ttc','multiprices_base_type','multiprices_min','multiprices_min_ttc','multiprices_tva_tx','multiprices_recuperableonly');
+
+		foreach ($testExit as $field) {
+			if (!isset($this->$field[$level])) {
+				return array();
+			}
+		}
+
+		$lastPrice = array(
+			'level' => $level ? $level : 1,
+			'multiprices' => doubleval($this->multiprices[$level]),
+			'multiprices_ttc' => doubleval($this->multiprices_ttc[$level]),
+			'multiprices_base_type' => $this->multiprices_base_type[$level],
+			'multiprices_min' => doubleval($this->multiprices_min[$level]),
+			'multiprices_min_ttc' => doubleval($this->multiprices_min_ttc[$level]),
+			'multiprices_tva_tx' => doubleval($this->multiprices_tva_tx[$level]),
+			'multiprices_recuperableonly' => doubleval($this->multiprices_recuperableonly[$level]),
+		);
+
+		return $lastPrice;
+	}
 
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1974,6 +2012,8 @@ class Product extends CommonObject
 	{
 		global $conf, $langs;
 
+		$lastPriceData = $this->getArrayForPriceCompare($level); // temporary store current price before update
+
 		$id = $this->id;
 
 		dol_syslog(get_class($this)."::update_price id=".$id." newprice=".$newprice." newpricebase=".$newpricebase." newminprice=".$newminprice." level=".$level." npr=".$newnpr." newdefaultvatcode=".$newdefaultvatcode);
@@ -2106,7 +2146,11 @@ class Product extends CommonObject
 				// Price by quantity
 				$this->price_by_qty = $newpbq;
 
-				$this->_log_price($user, $level); // Save price for level into table product_price
+				// check if price have really change before log
+				$newPriceData = $this->getArrayForPriceCompare($level);
+				if (!empty(array_diff_assoc($newPriceData, $lastPriceData)) || empty($conf->global->PRODUIT_MULTIPRICES)) {
+					$this->_log_price($user, $level); // Save price for level into table product_price
+				}
 
 				$this->level = $level; // Store level of price edited for trigger
 
@@ -2171,7 +2215,7 @@ class Product extends CommonObject
 			return -1;
 		}
 
-		$sql = "SELECT p.rowid, p.ref, p.ref_ext, p.label, p.description, p.url, p.note_public, p.note as note_private, p.customcode, p.fk_country, p.fk_state, p.price, p.price_ttc,";
+		$sql = "SELECT p.rowid, p.ref, p.ref_ext, p.label, p.description, p.url, p.note_public, p.note as note_private, p.customcode, p.fk_country, p.fk_state, p.lifetime, p.qc_frequency, p.price, p.price_ttc,";
 		$sql .= " p.price_min, p.price_min_ttc, p.price_base_type, p.cost_price, p.default_vat_code, p.tva_tx, p.recuperableonly as tva_npr, p.localtax1_tx, p.localtax2_tx, p.localtax1_type, p.localtax2_type, p.tosell,";
 		$sql .= " p.tobuy, p.fk_product_type, p.duration, p.fk_default_warehouse, p.seuil_stock_alerte, p.canvas, p.net_measure, p.net_measure_units, p.weight, p.weight_units,";
 		$sql .= " p.length, p.length_units, p.width, p.width_units, p.height, p.height_units,";
@@ -2179,13 +2223,44 @@ class Product extends CommonObject
 		if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 			$sql .= " p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,";
 		} else {
-			$sql .= " pa.accountancy_code_buy, pa.accountancy_code_buy_intra, pa.accountancy_code_buy_export, pa.accountancy_code_sell, pa.accountancy_code_sell_intra, pa.accountancy_code_sell_export,";
+			$sql .= " ppe.accountancy_code_buy, ppe.accountancy_code_buy_intra, ppe.accountancy_code_buy_export, ppe.accountancy_code_sell, ppe.accountancy_code_sell_intra, ppe.accountancy_code_sell_export,";
 		}
-		$sql .= " p.stock,p.pmp, p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.batch_mask, p.fk_unit,";
+
+		//For MultiCompany
+		//PMP per entity & Stocks Sharings stock_reel includes only stocks shared with this entity
+		$separatedEntityPMP = false;
+		$separatedStock = false;
+		if (!empty($conf->global->MULTICOMPANY_PRODUCT_SHARING_ENABLED)) {
+			if (!empty($conf->global->MULTICOMPANY_PMP_PER_ENTITY_ENABLED)) {
+				$checkPMPPerEntity = $this->db->query("SELECT pmp FROM " . MAIN_DB_PREFIX . "product_perentity WHERE fk_product  = ".((int) $id)." AND entity = ".(int) $conf->entity);
+				if ($this->db->num_rows($checkPMPPerEntity)>0) {
+					$separatedEntityPMP = true;
+				}
+			}
+			global $mc;
+			$separatedStock = true;
+			$visibleWarehousesEntities = $conf->entity;
+			if (isset($mc->sharings['stock']) && !empty($mc->sharings['stock'])) {
+				$visibleWarehousesEntities .= "," . implode(",", $mc->sharings['stock']);
+			}
+		}
+		if ($separatedStock) {
+			$sql .= " SUM(sp.reel) as stock,";
+		} else {
+			$sql .= " p.stock,";
+		}
+		if ($separatedEntityPMP) {
+			$sql .= " ppe.pmp, p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.batch_mask, p.fk_unit,";
+		} else {
+			$sql .= " p.pmp, p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.batch_mask, p.fk_unit,";
+		}
 		$sql .= " p.fk_price_expression, p.price_autogen, p.model_pdf";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
-		if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
-			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as pa ON pa.fk_product = p.rowid AND pa.entity = " . ((int) $conf->entity);
+		if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) || $separatedEntityPMP) {
+			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
+		}
+		if ($separatedStock) {
+			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_stock as sp ON sp.fk_product = p.rowid";
 		}
 		if ($id) {
 			$sql .= " WHERE p.rowid = ".((int) $id);
@@ -2199,6 +2274,12 @@ class Product extends CommonObject
 				$sql .= " AND p.barcode = '".$this->db->escape($barcode)."'";
 			}
 		}
+		if ($separatedStock) {
+			$sql .= " AND sp.fk_entrepot IN (
+				SELECT rowid
+				FROM ".MAIN_DB_PREFIX."entrepot	WHERE entity IN (".$this->db->sanitize($visibleWarehousesEntities)."))";
+		}
+
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -2227,6 +2308,8 @@ class Product extends CommonObject
 				$this->country_id                    = $obj->fk_country;
 				$this->country_code = getCountry($this->country_id, 2, $this->db);
 				$this->state_id = $obj->fk_state;
+				$this->lifetime                     = $obj->lifetime;
+				$this->qc_frequency                 = $obj->qc_frequency;
 				$this->price                        = $obj->price;
 				$this->price_ttc                    = $obj->price_ttc;
 				$this->price_min                    = $obj->price_min;
@@ -2268,7 +2351,7 @@ class Product extends CommonObject
 				$this->barcode_type                    = $obj->fk_barcode_type;
 
 				$this->accountancy_code_buy				= $obj->accountancy_code_buy;
-				$this->accountancy_code_buy_intra = $obj->accountancy_code_buy_intra;
+				$this->accountancy_code_buy_intra		= $obj->accountancy_code_buy_intra;
 				$this->accountancy_code_buy_export		= $obj->accountancy_code_buy_export;
 				$this->accountancy_code_sell			= $obj->accountancy_code_sell;
 				$this->accountancy_code_sell_intra		= $obj->accountancy_code_sell_intra;
@@ -2293,11 +2376,10 @@ class Product extends CommonObject
 
 				$this->db->free($resql);
 
-				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 
-				// multilangs
+				// Multilangs
 				if (!empty($conf->global->MAIN_MULTILANGS) && empty($ignore_lang_load)) {
 					$this->getMultiLangs();
 				}
@@ -4535,8 +4617,8 @@ class Product extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."product as p,";
 		$sql .= " ".MAIN_DB_PREFIX."product_association as pa";
 		$sql .= " WHERE p.rowid = pa.fk_product_fils";
-		$sql .= " AND pa.fk_product_pere = ".$id;
-		$sql .= " AND pa.fk_product_fils != ".$id; // This should not happens, it is to avoid infinite loop if it happens
+		$sql .= " AND pa.fk_product_pere = ".((int) $id);
+		$sql .= " AND pa.fk_product_fils <> ".((int) $id); // This should not happens, it is to avoid infinite loop if it happens
 
 		dol_syslog(get_class($this).'::getChildsArbo id='.$id.' level='.$level, LOG_DEBUG);
 

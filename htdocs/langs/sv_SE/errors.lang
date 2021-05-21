@@ -4,9 +4,9 @@
 NoErrorCommitIsDone=Inget fel
 # Errors
 ErrorButCommitIsDone=Fel hittades men vi bekräfta trots detta
-ErrorBadEMail=E-post %s är fel
-ErrorBadMXDomain=Email %s seems wrong (domain has no valid MX record)
-ErrorBadUrl=Url %s är fel
+ErrorBadEMail=Email %s is incorrect
+ErrorBadMXDomain=Email %s seems incorrect (domain has no valid MX record)
+ErrorBadUrl=Url %s is incorrect
 ErrorBadValueForParamNotAString=Dåligt värde för din parameter. Det lägger till i allmänhet när översättning saknas.
 ErrorRefAlreadyExists=Reference <b>%s</b> already exists.
 ErrorLoginAlreadyExists=Logga %s finns redan.
@@ -46,8 +46,8 @@ ErrorWrongDate=Datum är inte korrekt!
 ErrorFailedToWriteInDir=Misslyckades med att skriva i katalogen %s
 ErrorFoundBadEmailInFile=Hittade felaktig e-syntax för %s rader i filen (t.ex. linje %s med email = %s)
 ErrorUserCannotBeDelete=Användaren kan inte raderas. Kanske är det associerat med Dolibarr-enheter.
-ErrorFieldsRequired=Vissa obligatoriska fält inte fylls.
-ErrorSubjectIsRequired=E-postämnet krävs
+ErrorFieldsRequired=Some required fields have been left blank.
+ErrorSubjectIsRequired=The email subject is required
 ErrorFailedToCreateDir=Misslyckades med att skapa en katalog. Kontrollera att webbservern användaren har rättigheter att skriva till Dolibarr dokument katalogen. Om parametern <b>safe_mode</b> är aktiv på PHP, kontrollera att Dolibarr php-filer äger till webbserver användare (eller grupp).
 ErrorNoMailDefinedForThisUser=Ingen post definierats för denna användare
 ErrorSetupOfEmailsNotComplete=Setup of emails is not complete
@@ -226,6 +226,7 @@ ErrorAPageWithThisNameOrAliasAlreadyExists=Sidan / behållaren <strong> %s </str
 ErrorDuringChartLoad=Fel vid inmatning av kontoplan. Om några konton inte laddades, kan du fortfarande skriva in dem manuellt.
 ErrorBadSyntaxForParamKeyForContent=Dålig syntax för param keyforcontent. Måste ha ett värde som börjar med %s eller %s
 ErrorVariableKeyForContentMustBeSet=Fel, konstanten med namnet %s (med textinnehåll som ska visas) eller %s (med extern webbadress för att visa) måste ställas in.
+ErrorURLMustEndWith=URL %s must end %s
 ErrorURLMustStartWithHttp=URL %s måste börja med http: // eller https: //
 ErrorHostMustNotStartWithHttp=Host name %s must NOT start with http:// or https://
 ErrorNewRefIsAlreadyUsed=Fel, den nya referensen används redan
@@ -296,3 +297,4 @@ WarningAvailableOnlyForHTTPSServers=Available only if using HTTPS secured connec
 WarningModuleXDisabledSoYouMayMissEventHere=Module %s has not been enabled. So you may miss a lot of event here.
 ErrorActionCommPropertyUserowneridNotDefined=User's owner is required
 ErrorActionCommBadType=Selected event type (id: %n, code: %s) do not exist in Event Type dictionary
+CheckVersionFail=Version check fail

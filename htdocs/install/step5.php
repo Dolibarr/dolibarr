@@ -404,7 +404,7 @@ if ($action == "set" && $success) {
 	// If upgrade
 	if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE) || ($conf->global->MAIN_VERSION_LAST_UPGRADE == DOL_VERSION)) {
 		// Upgrade is finished
-		print $langs->trans("SystemIsUpgraded")."<br>";
+		print '<img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/checklist.svg" width="20" alt="Configuration"> '.$langs->trans("SystemIsUpgraded")."<br>";
 
 		$createlock = 0;
 

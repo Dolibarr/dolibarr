@@ -55,7 +55,6 @@ StockDiffPhysicTeoric=Explicación de la diferencia entre stock físico y virtua
 NoPredefinedProductToDispatch=No hay productos predefinidos para este objeto. Por lo tanto, no se requiere envío en stock.
 DispatchVerb=Envío
 StockLimit=Límite de existencias para alerta
-StockLimitDesc=(vacío) significa que no hay advertencia. <br> 0 se puede utilizar como advertencia tan pronto como el stock esté vacío.
 PhysicalStock=Inventario FISICO
 RealStockDesc=El stock físico / real es el stock actualmente en los almacenes.
 RealStockWillAutomaticallyWhen=El stock real se modificará de acuerdo con esta regla (como se define en el módulo de Stock):

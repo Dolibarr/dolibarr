@@ -189,7 +189,7 @@ foreach ($dirmodels as $reldir) {
 							if ($conf->global->PAYMENT_ADDON == $file || $conf->global->PAYMENT_ADDON.'.php' == $file) {
 								print img_picto($langs->trans("Activated"), 'switch_on');
 							} else {
-								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmo&token='.newToken().'&value='.preg_replace('/\.php$/', '', $file).'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.preg_replace('/\.php$/', '', $file).'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 							}
 							print '</td>';
 

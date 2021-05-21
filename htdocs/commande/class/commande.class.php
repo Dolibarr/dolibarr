@@ -280,7 +280,7 @@ class Commande extends CommonOrder
 	 *  'help' is a string visible as a tooltip on field
 	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
 	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
-	 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
+	 *  'arrayofkeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
 	 *
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
@@ -344,8 +344,8 @@ class Commande extends CommonOrder
 		'last_main_doc' =>array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>1, 'visible'=>-1, 'position'=>270),
 		'module_source' =>array('type'=>'varchar(32)', 'label'=>'POSModule', 'enabled'=>1, 'visible'=>-1, 'position'=>275),
 		'pos_source' =>array('type'=>'varchar(32)', 'label'=>'POSTerminal', 'enabled'=>1, 'visible'=>-1, 'position'=>280),
+		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>400),
 		'fk_statut' =>array('type'=>'smallint(6)', 'label'=>'Status', 'enabled'=>1, 'visible'=>-1, 'position'=>500),
-		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>900),
 	);
 	// END MODULEBUILDER PROPERTIES
 
@@ -2397,9 +2397,9 @@ class Commande extends CommonOrder
 	}
 
 	/**
-	 * 	Applique une remise relative
+	 * 	Set a percentage discount
 	 *
-	 * 	@param     	User		$user		User qui positionne la remise
+	 * 	@param     	User		$user		User setting the discount
 	 * 	@param     	float		$remise		Discount (percent)
 	 * 	@param     	int			$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int 					<0 if KO, >0 if OK
@@ -2458,7 +2458,7 @@ class Commande extends CommonOrder
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * 		Applique une remise absolue
+	 * 		Set a fixed amount discount
 	 *
 	 * 		@param     	User		$user 		User qui positionne la remise
 	 * 		@param     	float		$remise		Discount
@@ -3156,7 +3156,9 @@ class Commande extends CommonOrder
 					$langs->load("errors");
 					$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnOrder', $product->ref);
 					$this->errors[] = $this->error;
+
 					dol_syslog(get_class($this)."::addline error=Product ".$product->ref.": ".$this->error, LOG_ERR);
+
 					$this->db->rollback();
 					return self::STOCK_NOT_ENOUGH_FOR_ORDER;
 				}
@@ -4206,11 +4208,15 @@ class OrderLine extends CommonOrderLine
 
 		$error = 0;
 
+		if (empty($this->id) && !empty($this->rowid)) {		// For backward compatibility
+			$this->id = $this->rowid;
+		}
+
 		// check if order line is not in a shipment line before deleting
 		$sqlCheckShipmentLine  = "SELECT";
 		$sqlCheckShipmentLine .= " ed.rowid";
 		$sqlCheckShipmentLine .= " FROM ".MAIN_DB_PREFIX."expeditiondet ed";
-		$sqlCheckShipmentLine .= " WHERE ed.fk_origin_line = ".$this->rowid;
+		$sqlCheckShipmentLine .= " WHERE ed.fk_origin_line = ".((int) $this->id);
 
 		$resqlCheckShipmentLine = $this->db->query($sqlCheckShipmentLine);
 		if (!$resqlCheckShipmentLine) {
@@ -4235,7 +4241,7 @@ class OrderLine extends CommonOrderLine
 
 		$this->db->begin();
 
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE rowid=".$this->rowid;
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE rowid = ".((int) $this->id);
 
 		dol_syslog("OrderLine::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);

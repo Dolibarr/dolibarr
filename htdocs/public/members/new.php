@@ -6,6 +6,7 @@
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
  * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -222,10 +223,13 @@ if (empty($reshook) && $action == 'add') {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Firstname"))."<br>\n";
 	}
-	if (GETPOST('email') && !isValidEmail(GETPOST('email'))) {
+	if (!empty($conf->global->ADHERENT_MAIL_REQUIRED) && empty(GETPOST('email'))) {
 		$error++;
-		$langs->load("errors");
-		$errmsg .= $langs->trans("ErrorBadEMail", GETPOST('email'))."<br>\n";
+		$errmsg .= $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Email'))."<br>\n";
+	} elseif (GETPOST("email") && !isValidEmail(GETPOST("email"))) {
+		$langs->load('errors');
+		$error++;
+		$errmsg .= $langs->trans("ErrorBadEMail", GETPOST("email"))."<br>\n";
 	}
 	$birthday = dol_mktime(GETPOST("birthhour", 'int'), GETPOST("birthmin", 'int'), GETPOST("birthsec", 'int'), GETPOST("birthmonth", 'int'), GETPOST("birthday", 'int'), GETPOST("birthyear", 'int'));
 	if (GETPOST("birthmonth") && empty($birthday)) {
@@ -540,6 +544,10 @@ jQuery(document).ready(function () {
            document.newmember.action.value="create";
            document.newmember.submit();
         });
+        jQuery("#typeid").change(function() {
+           document.newmember.action.value="create";
+           document.newmember.submit();
+        });
     });
 });
 </script>';
@@ -558,7 +566,7 @@ if (empty($conf->global->MEMBER_NEWFORM_FORCETYPE)) {
 		$isempty = 0;
 	}
 	print '<tr><td class="titlefield">'.$langs->trans("Type").' <FONT COLOR="red">*</FONT></td><td>';
-	print $form->selectarray("typeid", $adht->liste_array(), GETPOST('typeid') ? GETPOST('typeid') : $defaulttype, $isempty);
+	print $form->selectarray("typeid", $adht->liste_array(1), GETPOST('typeid') ? GETPOST('typeid') : $defaulttype, $isempty);
 	print '</td></tr>'."\n";
 } else {
 	$adht->fetch($conf->global->MEMBER_NEWFORM_FORCETYPE);
@@ -630,7 +638,7 @@ if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
 	print '</td></tr>';
 }
 // EMail
-print '<tr><td>'.$langs->trans("Email").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Email").($conf->global->ADHERENT_MAIL_REQUIRED ? ' <span style="color:red;">*</span>' : '').'</td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
 // Login
 if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
 	print '<tr><td>'.$langs->trans("Login").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="login" maxlength="50" class="minwidth100"value="'.dol_escape_htmltag(GETPOST('login')).'"></td></tr>'."\n";
@@ -701,7 +709,8 @@ if (!empty($conf->global->MEMBER_NEWFORM_AMOUNT) || !empty($conf->global->MEMBER
 	// $conf->global->MEMBER_NEWFORM_SHOWAMOUNT is an amount
 
 	// Set amount for the subscription
-	$amount = isset($amount) ? $amount : 0;
+	$amountbytype = $adht->amountByType(1);
+	$amount = !empty($amountbytype[GETPOST('typeid', 'int')]) ? $amountbytype[GETPOST('typeid', 'int')] : (isset($amount) ? $amount : 0);
 
 	if (!empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
 		$amount = $conf->global->MEMBER_NEWFORM_AMOUNT;
@@ -710,6 +719,9 @@ if (!empty($conf->global->MEMBER_NEWFORM_AMOUNT) || !empty($conf->global->MEMBER
 	if (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE)) {
 		$amount = $amount ? $amount : (GETPOST('amount') ? GETPOST('amount') : $conf->global->MEMBER_NEWFORM_AMOUNT);
 	}
+
+	$amount = price2num($amount);
+
 	// $conf->global->MEMBER_NEWFORM_PAYONLINE is 'paypal', 'paybox' or 'stripe'
 	print '<tr><td>'.$langs->trans("Subscription").'</td><td class="nowrap">';
 	if (!empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {

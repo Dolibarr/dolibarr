@@ -568,7 +568,7 @@ if (empty($reshook)) {
 
 	if ($action == 'delete_customer_price' && ($user->rights->produit->supprimer || $user->rights->service->supprimer)) {
 		// Delete price by customer
-		$prodcustprice->id = GETPOST('lineid');
+		$prodcustprice->id = GETPOST('lineid', 'int');
 		$result = $prodcustprice->delete($user);
 
 		if ($result < 0) {
@@ -1470,7 +1470,6 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action == 'showlog_defaul
 			}
 
 			print '<td class="center">'.$langs->trans("PriceBase").'</td>';
-			print $conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL;
 			if (empty($conf->global->PRODUIT_MULTIPRICES) && empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
 				print '<td class="right">'.$langs->trans("DefaultTaxRate").'</td>';
 			}

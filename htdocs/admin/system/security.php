@@ -40,6 +40,8 @@ if (GETPOST('action', 'aZ09') == 'donothing') {
 	exit;
 }
 
+$execmethod = empty($conf->global->MAIN_EXEC_USE_POPEN) ? 1 : $conf->global->MAIN_EXEC_USE_POPEN;
+
 
 /*
  * View
@@ -74,7 +76,13 @@ print "<strong>PHP allow_url_include</strong> = ".(ini_get('allow_url_include') 
 print "<strong>PHP disable_functions</strong> = ";
 $arrayoffunctionsdisabled = explode(',', ini_get('disable_functions'));
 $arrayoffunctionstodisable = explode(',', 'pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,pcntl_wifexited,pcntl_wifstopped,pcntl_wifsignaled,pcntl_wifcontinued,pcntl_wexitstatus,pcntl_wtermsig,pcntl_wstopsig,pcntl_signal,pcntl_signal_get_handler,pcntl_signal_dispatch,pcntl_get_last_error,pcntl_strerror,pcntl_sigprocmask,pcntl_sigwaitinfo,pcntl_sigtimedwait,pcntl_exec,pcntl_getpriority,pcntl_setpriority,pcntl_async_signals');
-$arrayoffunctionstodisable2 = explode(',', 'exec,passthru,shell_exec,system,proc_open,popen');
+if ($execmethod == 1) {
+	$arrayoffunctionstodisable2 = explode(',', 'passthru,shell_exec,system,proc_open,popen');
+	$functiontokeep = 'exec';
+} else {
+	$arrayoffunctionstodisable2 = explode(',', 'exec,passthru,shell_exec,system,proc_open');
+	$functiontokeep = 'popen';
+}
 $i = 0;
 foreach ($arrayoffunctionsdisabled as $functionkey) {
 	if ($i > 0) {
@@ -115,6 +123,13 @@ if ($todisabletext) {
 	print '<br>';
 }
 
+print $langs->trans("PHPFunctionsRequiredForCLI").': ';
+if (in_array($functiontokeep, $arrayoffunctionsdisabled)) {
+	print img_picto($langs->trans("PHPFunctionsRequiredForCLI"), 'warning');
+}
+print '<span class="opacitymedium">'.$functiontokeep.'</span>';
+print '<br>';
+
 print '<br>';
 
 // XDebug
@@ -128,38 +143,19 @@ if ($test) {
 }
 print '<br>';
 
-print '<br>';
-print '<br>';
-print load_fiche_titre($langs->trans("ConfigurationFile").' ('.$conffile.')', '', 'folder');
 
-print '<strong>'.$langs->trans("dolibarr_main_prod").'</strong>: '.$dolibarr_main_prod;
-if (empty($dolibarr_main_prod)) {
-	print ' &nbsp; '.img_picto('', 'warning').' '.$langs->trans("IfYouAreOnAProductionSetThis", 1);
-}
-print '<br>';
-
-print '<strong>'.$langs->trans("dolibarr_nocsrfcheck").'</strong>: '.$dolibarr_nocsrfcheck;
-if (!empty($dolibarr_nocsrfcheck)) {
-	print img_picto('', 'warning').' &nbsp;  '.$langs->trans("IfYouAreOnAProductionSetThis", 0);
-}
-print '<br>';
-
-print '<strong>'.$langs->trans("dolibarr_main_restrict_ip").'</strong>: '.$dolibarr_main_restrict_ip;
-/*if (empty($dolibarr_main_restrict_ip)) {
-	print ' &nbsp; '.img_picto('', 'warning').' '.$langs->trans("IfYouAreOnAProductionSetThis", 1);
-}*/
-print '<br>';
+// OS Permissions
 
 print '<br>';
 print '<br>';
 print '<br>';
-print load_fiche_titre($langs->trans("PermissionsOnFiles"), '', 'folder');
+print load_fiche_titre($langs->trans("OSSetup").' - '.$langs->trans("PermissionsOnFiles"), '', 'folder');
 
 print '<strong>'.$langs->trans("PermissionsOnFilesInWebRoot").'</strong>: ';
 $arrayoffilesinroot = dol_dir_list(DOL_DOCUMENT_ROOT, 'all', 1, '', array('\/custom'), 'name', SORT_ASC, 4, 1, '', 1);
 $fileswithwritepermission = array();
 foreach ($arrayoffilesinroot as $fileinroot) {
-	// Test permission on file
+	// Test if there is at least one write permission file. If yes, add the entry into array $fileswithwritepermission
 	if ($fileinroot['perm'] & 0222) {
 		$fileswithwritepermission[] = $fileinroot['relativename'];
 	}
@@ -205,37 +201,35 @@ if ($perms) {
 }
 print '<br>';
 
-print '<br>';
+
+// File conf.php
 
 print '<br>';
 print '<br>';
-print load_fiche_titre($langs->trans("Modules"), '', 'folder');
+print '<br>';
+print load_fiche_titre($langs->trans("ConfigurationFile").' ('.$conffile.')', '', 'folder');
 
-// Module log
-print '<strong>'.$langs->trans("Syslog").'</strong>: ';
-$test = empty($conf->syslog->enabled);
-if ($test) {
-	print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotRiskOfLeakWithThis");
-} else {
-	if ($conf->global->SYSLOG_LEVEL > LOG_NOTICE) {
-		print img_picto('', 'warning').' '.$langs->trans("ModuleActivatedMayExposeInformation", $langs->transnoentities("Syslog"));
-	} else {
-		print img_picto('', 'tick.png').' '.$langs->trans("ModuleSyslogActivatedButLevelNotTooVerbose", $langs->transnoentities("Syslog"), $conf->global->SYSLOG_LEVEL);
-	}
-	//print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
+print '<strong>$dolibarr_main_prod</strong>: '.$dolibarr_main_prod;
+if (empty($dolibarr_main_prod)) {
+	print ' &nbsp; '.img_picto('', 'warning').' '.$langs->trans("IfYouAreOnAProductionSetThis", 1);
 }
 print '<br>';
 
-// Module debugbar
-print '<strong>'.$langs->trans("DebugBar").'</strong>: ';
-$test = empty($conf->debugbar->enabled);
-if ($test) {
-	print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotRiskOfLeakWithThis");
-} else {
-	print img_picto('', 'error').' '.$langs->trans("ModuleActivatedDoNotUseInProduction", $langs->transnoentities("DebugBar"));
-	//print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
+print '<strong>$dolibarr_nocsrfcheck</strong>: '.$dolibarr_nocsrfcheck;
+if (!empty($dolibarr_nocsrfcheck)) {
+	print img_picto('', 'warning').' &nbsp;  '.$langs->trans("IfYouAreOnAProductionSetThis", 0);
 }
 print '<br>';
+
+print '<strong>$dolibarr_main_restrict_ip</strong>: ';
+if (empty($dolibarr_main_restrict_ip)) {
+	print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
+	//print ' <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("IPsOfUsers")).')</span>';
+}
+print '<br>';
+
+
+// Menu security
 
 print '<br>';
 print '<br>';
@@ -266,6 +260,22 @@ print '<strong>MAIN_SECURITY_ANTI_SSRF_SERVER_IP</strong> = '.(empty($conf->glob
 print '<br>';
 
 
+print '<strong>MAIN_EXEC_USE_POPEN</strong> = ';
+if (empty($conf->global->MAIN_EXEC_USE_POPEN)) {
+	print '<span class="opacitymedium">'.$langs->trans("Undefined").'</span> &nbsp; ';
+} else {
+	print $conf->global->MAIN_EXEC_USE_POPEN.' &nbsp; ';
+}
+if ($execmethod == 1) {
+	print ' --> "exec" PHP method will be used for shell commands.';
+}
+if ($execmethod == 2) {
+	print ' --> "popen" PHP method will be used for shell commands.';
+}
+print "<br>";
+print '<br>';
+
+
 print '<strong>'.$langs->trans("AntivirusEnabledOnUpload").'</strong>: ';
 print empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ? '' : img_picto('', 'tick').' ';
 print yn($conf->global->MAIN_ANTIVIRUS_COMMAND ? 1 : 0);
@@ -276,7 +286,6 @@ if (!empty($conf->global->MAIN_ANTIVIRUS_COMMAND)) {
 	}
 }
 print '<br>';
-
 print '<br>';
 
 $securityevent = new Events($db);
@@ -299,9 +308,66 @@ if (!empty($eventstolog) && is_array($eventstolog)) {
 			}
 		}
 	}
+	print '<br>';
 } else {
 	print img_warning().' '.$langs->trans("NoSecurityEventsAreAduited", $langs->transnoentities("Home").' - '.$langs->transnoentities("Setup").' - '.$langs->transnoentities("Audit")).'<br>';
 }
+
+
+// Modules/Applications
+
+print '<br>';
+print '<br>';
+print '<br>';
+print load_fiche_titre($langs->trans("Modules"), '', 'folder');
+
+// Module log
+print '<strong>'.$langs->trans("Syslog").'</strong>: ';
+$test = empty($conf->syslog->enabled);
+if ($test) {
+	print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotRiskOfLeakWithThis");
+} else {
+	if ($conf->global->SYSLOG_LEVEL > LOG_NOTICE) {
+		print img_picto('', 'warning').' '.$langs->trans("ModuleActivatedWithTooHighLogLevel", $langs->transnoentities("Syslog"));
+	} else {
+		print img_picto('', 'tick.png').' '.$langs->trans("ModuleSyslogActivatedButLevelNotTooVerbose", $langs->transnoentities("Syslog"), $conf->global->SYSLOG_LEVEL);
+	}
+	//print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
+}
+print '<br>';
+
+// Module debugbar
+print '<strong>'.$langs->trans("DebugBar").'</strong>: ';
+$test = empty($conf->debugbar->enabled);
+if ($test) {
+	print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotRiskOfLeakWithThis");
+} else {
+	print img_picto('', 'error').' '.$langs->trans("ModuleActivatedDoNotUseInProduction", $langs->transnoentities("DebugBar"));
+	//print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
+}
+print '<br>';
+
+
+// APIs
+
+print '<br>';
+print '<br>';
+print '<br>';
+print load_fiche_titre($langs->trans("API"), '', 'folder');
+
+if (empty($conf->api->enabled) && empty($conf->webservices->enabled)) {
+	print $langs->trans("APIsAreNotEnabled");
+} else {
+	if (!empty($conf->webservices->enabled)) {
+		print $langs->trans('YouEnableDeprecatedWSAPIsUseRESTAPIsInstead')."<br>\n";
+		print '<br>';
+	}
+	if (!empty($conf->api->enabled)) {
+		print '<strong>API_ENDPOINT_RULES</strong> = '.(empty($conf->global->API_ENDPOINT_RULES) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->API_ENDPOINT_RULES)."<br>\n";
+		print '<br>';
+	}
+}
+
 
 print '<br><br>';
 

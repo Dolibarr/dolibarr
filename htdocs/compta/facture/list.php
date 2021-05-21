@@ -10,7 +10,7 @@
  * Copyright (C) 2013      Florian Henry         <florian.henry@open-concept.pro>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Jean-François Ferry   <jfefe@aternatik.fr>
- * Copyright (C) 2015-2016 Ferran Marcet         <fmarcet@2byte.es>
+ * Copyright (C) 2015-2021 Ferran Marcet         <fmarcet@2byte.es>
  * Copyright (C) 2017      Josep Lluís Amador    <joseplluis@lliuretic.cat>
  * Copyright (C) 2018      Charlene Benke        <charlie@patas-monkey.com>
  * Copyright (C) 2019-2021 Alexandre Spangaro    <aspangaro@open-dsi.fr>
@@ -85,8 +85,8 @@ $search_refcustomer = GETPOST('search_refcustomer', 'alpha');
 $search_type = GETPOST('search_type', 'int');
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_project = GETPOST('search_project', 'alpha');
-$search_societe = GETPOST('search_societe', 'alpha');
-$search_societe_alias = GETPOST('search_societe_alias', 'alpha');
+$search_company = GETPOST('search_company', 'alpha');
+$search_company_alias = GETPOST('search_company_alias', 'alpha');
 $search_montant_ht = GETPOST('search_montant_ht', 'alpha');
 $search_montant_vat = GETPOST('search_montant_vat', 'alpha');
 $search_montant_localtax1 = GETPOST('search_montant_localtax1', 'alpha');
@@ -304,8 +304,8 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_type = '';
 	$search_project_ref = '';
 	$search_project = '';
-	$search_societe = '';
-	$search_societe_alias = '';
+	$search_company = '';
+	$search_company_alias = '';
 	$search_montant_ht = '';
 	$search_montant_vat = '';
 	$search_montant_localtax1 = '';
@@ -363,7 +363,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
-if ($massaction == 'makepayment') {
+if ($massaction == 'makepayment_confirm') {
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 
 	$loc = dol_buildpath('/compta/paiement.php', 2).'?action=create&facids='.implode(',', $arrayofselected);
@@ -467,7 +467,7 @@ if (!empty($conf->margin->enabled)) {
 $bankaccountstatic = new Account($db);
 $facturestatic = new Facture($db);
 $formcompany = new FormCompany($db);
-$thirdpartystatic = new Societe($db);
+$companystatic = new Societe($db);
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0 || $search_user > 0) {
@@ -481,18 +481,18 @@ $sql .= ' f.datef, f.date_valid, f.date_lim_reglement as datelimite, f.module_so
 $sql .= ' f.paye as paye, f.fk_statut, f.close_code,';
 $sql .= ' f.datec as date_creation, f.tms as date_update, f.date_closing as date_closing,';
 $sql .= ' f.retained_warranty, f.retained_warranty_date_limit, f.situation_final, f.situation_cycle_ref, f.situation_counter,';
-$sql .= ' s.rowid as socid, s.nom as name, s.name_alias as name_alias, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,';
-$sql .= " typent.code as typent_code,";
-$sql .= " state.code_departement as state_code, state.nom as state_name,";
-$sql .= " country.code as country_code,";
-$sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label,";
-$sql .= " u.login";
+$sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,';
+$sql .= ' typent.code as typent_code,';
+$sql .= ' state.code_departement as state_code, state.nom as state_name,';
+$sql .= ' country.code as country_code,';
+$sql .= ' p.rowid as project_id, p.ref as project_ref, p.title as project_label,';
+$sql .= ' u.login, u.lastname, u.firstname, u.email, u.statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender';
 // We need dynamount_payed to be able to sort on status (value is surely wrong because we can count several lines several times due to other left join or link with contacts. But what we need is just 0 or > 0)
 // TODO Better solution to be able to sort on already payed or remain to pay is to store amount_payed in a denormalized field.
 if (!$sall) {
 	$sql .= ', SUM(pf.amount) as dynamount_payed, SUM(pf.multicurrency_amount) as multicurrency_dynamount_payed';
 }
-if ($search_categ_cus) {
+if ($search_categ_cus && $search_categ_cus!=-1) {
 	$sql .= ", cc.fk_categorie, cc.fk_soc";
 }
 // Add fields from extrafields
@@ -509,7 +509,7 @@ $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
-if (!empty($search_categ_cus)) {
+if (!empty($search_categ_cus) && $search_categ_cus!=-1) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cc ON s.rowid = cc.fk_soc"; // We'll need this table joined to the select in order to filter by categ
 }
 
@@ -550,7 +550,7 @@ if ($search_product_category > 0) {
 	$sql .= " AND cp.fk_categorie = ".$db->escape($search_product_category);
 }
 if ($socid > 0) {
-	$sql .= ' AND s.rowid = '.$socid;
+	$sql .= ' AND s.rowid = '.((int) $socid);
 }
 if ($userid) {
 	if ($userid == -1) {
@@ -574,11 +574,11 @@ if ($search_project_ref) {
 if ($search_project) {
 	$sql .= natural_search('p.title', $search_project);
 }
-if ($search_societe) {
-	$sql .= natural_search('s.nom', $search_societe);
+if ($search_company) {
+	$sql .= natural_search('s.nom', $search_company);
 }
-if ($search_societe_alias) {
-	$sql .= natural_search('s.name_alias', $search_societe_alias);
+if ($search_company_alias) {
+	$sql .= natural_search('s.name_alias', $search_company_alias);
 }
 if ($search_town) {
 	$sql .= natural_search('s.town', $search_town);
@@ -632,7 +632,7 @@ if ($search_multicurrency_montant_ttc != '') {
 	$sql .= natural_search('f.multicurrency_total_ttc', $search_multicurrency_montant_ttc, 1);
 }
 if ($search_login) {
-	$sql .= natural_search('u.login', $search_login);
+	$sql .= natural_search(array('u.login', 'u.firstname', 'u.lastname'), $search_login);
 }
 if ($search_categ_cus > 0) {
 	$sql .= " AND cc.fk_categorie = ".$db->escape($search_categ_cus);
@@ -714,13 +714,13 @@ if (!$sall) {
 	$sql .= ' f.retained_warranty, f.retained_warranty_date_limit, f.situation_final, f.situation_cycle_ref, f.situation_counter,';
 	$sql .= ' f.fk_user_author, f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva,';
 	$sql .= ' f.multicurrency_total_tva, f.multicurrency_total_ttc,';
-	$sql .= ' s.rowid, s.nom, s.name_alias, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,';
+	$sql .= ' s.rowid, s.nom, s.name_alias, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,';
 	$sql .= ' typent.code,';
 	$sql .= ' state.code_departement, state.nom,';
 	$sql .= ' country.code,';
 	$sql .= " p.rowid, p.ref, p.title,";
-	$sql .= " u.login";
-	if ($search_categ_cus) {
+	$sql .= " u.login, u.lastname, u.firstname, u.email, u.statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender";
+	if ($search_categ_cus && $search_categ_cus!=-1) {
 		$sql .= ", cc.fk_categorie, cc.fk_soc";
 	}
 	// Add fields from extrafields
@@ -782,8 +782,8 @@ if ($resql) {
 	if ($socid) {
 		$soc = new Societe($db);
 		$soc->fetch($socid);
-		if (empty($search_societe)) {
-			$search_societe = $soc->name;
+		if (empty($search_company)) {
+			$search_company = $soc->name;
 		}
 	}
 
@@ -854,11 +854,11 @@ if ($resql) {
 	if ($search_type != '') {
 		$param .= '&search_type='.urlencode($search_type);
 	}
-	if ($search_societe) {
-		$param .= '&search_societe='.urlencode($search_societe);
+	if ($search_company) {
+		$param .= '&search_societe='.urlencode($search_company);
 	}
-	if ($search_societe_alias) {
-		$param .= '&search_societe_alias='.urlencode($search_societe_alias);
+	if ($search_company_alias) {
+		$param .= '&search_societe_alias='.urlencode($search_company_alias);
 	}
 	if ($search_town) {
 		$param .= '&search_town='.urlencode($search_town);
@@ -948,7 +948,7 @@ if ($resql) {
 		'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
 		'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 		'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
-		//'makepayment'=>$langs->trans("InvoicePaymentsLimits"),   TODO Blank page when using this
+		//'makepayment'=>$langs->trans("InvoicePaymentsLimits"),
 	);
 	if ($conf->prelevement->enabled && !empty($user->rights->prelevement->bons->creer)) {
 			$langs->load("withdrawals");
@@ -1142,11 +1142,11 @@ if ($resql) {
 	}
 	// Thirdparty
 	if (!empty($arrayfields['s.nom']['checked'])) {
-		print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_societe" value="'.$search_societe.'"></td>';
+		print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_company" value="'.$search_company.'"></td>';
 	}
 	// Alias
 	if (!empty($arrayfields['s.name_alias']['checked'])) {
-		print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_societe_alias" value="'.$search_societe_alias.'"></td>';
+		print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_company_alias" value="'.$search_company_alias.'"></td>';
 	}
 	// Town
 	if (!empty($arrayfields['s.town']['checked'])) {
@@ -1539,16 +1539,22 @@ if ($resql) {
 				 $facturestatic->situation_cycle_ref = $obj->situation_cycle_ref;
 				 $facturestatic->situation_counter = $obj->situation_counter;
 			}
-			$thirdpartystatic->id = $obj->socid;
-			$thirdpartystatic->name = $obj->name;
-			$thirdpartystatic->client = $obj->client;
-			$thirdpartystatic->fournisseur = $obj->fournisseur;
-			$thirdpartystatic->code_client = $obj->code_client;
-			$thirdpartystatic->code_compta_client = $obj->code_compta_client;
-			$thirdpartystatic->code_fournisseur = $obj->code_fournisseur;
-			$thirdpartystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
-			$thirdpartystatic->email = $obj->email;
-			$thirdpartystatic->country_code = $obj->country_code;
+			$companystatic->id = $obj->socid;
+			$companystatic->name = $obj->name;
+			$companystatic->name_alias = $obj->alias;
+			$companystatic->client = $obj->client;
+			$companystatic->fournisseur = $obj->fournisseur;
+			$companystatic->code_client = $obj->code_client;
+			$companystatic->code_compta_client = $obj->code_compta_client;
+			$companystatic->code_fournisseur = $obj->code_fournisseur;
+			$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
+			$companystatic->email = $obj->email;
+			$companystatic->phone = $obj->phone;
+			$companystatic->fax = $obj->fax;
+			$companystatic->address = $obj->address;
+			$companystatic->zip = $obj->zip;
+			$companystatic->town = $obj->town;
+			$companystatic->country_code = $obj->country_code;
 
 			$projectstatic->id = $obj->project_id;
 			$projectstatic->ref = $obj->project_ref;
@@ -1570,10 +1576,10 @@ if ($resql) {
 				$multicurrency_remaintopay = 0;
 			}
 			if ($facturestatic->type == Facture::TYPE_CREDIT_NOTE && $obj->paye == 1) {		// If credit note closed, we take into account the amount not yet consummed
-				$remaincreditnote = $discount->getAvailableDiscounts($thirdpartystatic, '', 'rc.fk_facture_source='.$facturestatic->id);
+				$remaincreditnote = $discount->getAvailableDiscounts($companystatic, '', 'rc.fk_facture_source='.$facturestatic->id);
 				$remaintopay = -$remaincreditnote;
 				$totalpay = price2num($facturestatic->total_ttc - $remaintopay);
-				$multicurrency_remaincreditnote = $discount->getAvailableDiscounts($thirdpartystatic, '', 'rc.fk_facture_source='.$facturestatic->id, 0, 0, 1);
+				$multicurrency_remaincreditnote = $discount->getAvailableDiscounts($companystatic, '', 'rc.fk_facture_source='.$facturestatic->id, 0, 0, 1);
 				$multicurrency_remaintopay = -$multicurrency_remaincreditnote;
 				$multicurrency_totalpay = price2num($facturestatic->multicurrency_total_ttc - $multicurrency_remaintopay);
 			}
@@ -1704,9 +1710,9 @@ if ($resql) {
 			if (!empty($arrayfields['s.nom']['checked'])) {
 				print '<td class="tdoverflowmax200">';
 				if ($contextpage == 'poslist') {
-					print $thirdpartystatic->name;
+					print $companystatic->name;
 				} else {
-					print $thirdpartystatic->getNomUrl(1, 'customer');
+					print $companystatic->getNomUrl(1, 'customer');
 				}
 				print '</td>';
 				if (!$i) {
@@ -1878,13 +1884,25 @@ if ($resql) {
 				$totalarray['val']['f.total_ttc'] += $obj->total_ttc;
 			}
 
+			$userstatic->id = $obj->fk_user_author;
+			$userstatic->login = $obj->login;
+			$userstatic->lastname = $obj->lastname;
+			$userstatic->firstname = $obj->firstname;
+			$userstatic->email = $obj->email;
+			$userstatic->statut = $obj->statut;
+			$userstatic->entity = $obj->entity;
+			$userstatic->photo = $obj->photo;
+			$userstatic->office_phone = $obj->office_phone;
+			$userstatic->office_fax = $obj->office_fax;
+			$userstatic->user_mobile = $obj->user_mobile;
+			$userstatic->job = $obj->job;
+			$userstatic->gender = $obj->gender;
+
 			// Author
 			if (!empty($arrayfields['u.login']['checked'])) {
-				$userstatic->id = $obj->fk_user_author;
-				$userstatic->login = $obj->login;
-				print '<td class="center tdoverflowmax100">';
+				print '<td class="tdoverflowmax200">';
 				if ($userstatic->id) {
-					print $userstatic->getLoginUrl(1);
+					print $userstatic->getNomUrl(-1);
 				} else {
 					print '&nbsp;';
 				}

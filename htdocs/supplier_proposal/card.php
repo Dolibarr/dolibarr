@@ -1035,10 +1035,9 @@ if (empty($reshook)) {
 /*
  * View
  */
-
+$title = $langs->trans('CommRequest')." - ".$langs->trans('Card');
 $help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
-
-llxHeader('', $langs->trans('CommRequests'), $help_url);
+llxHeader('', $title, $help_url);
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -1743,7 +1742,7 @@ if ($action == 'create') {
 	// Show object lines
 	$result = $object->getLinesArray();
 
-	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#add' : '#line_'.GETPOST('lineid')).'" method="POST">
+	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#add' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
 	<input type="hidden" name="token" value="' . newToken().'">
 	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
 	<input type="hidden" name="mode" value="">
@@ -1773,10 +1772,12 @@ if ($action == 'create') {
 	if ($object->statut == SupplierProposal::STATUS_DRAFT && $usercancreate) {
 		if ($action != 'editline') {
 			// Add products/services form
-			$object->formAddObjectLine($dateSelector, $soc, $mysoc);
 
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			if (empty($reshook))
+				$object->formAddObjectLine($dateSelector, $soc, $mysoc);
 		}
 	}
 

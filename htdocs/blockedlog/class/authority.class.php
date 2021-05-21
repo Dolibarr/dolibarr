@@ -71,8 +71,10 @@ class BlockedLogAuthority
 
 		$this->blockchain = '';
 
-		foreach ($blocks as &$b) {
-			$this->blockchain .= $b->signature;
+		if (is_array($bocks)) {
+			foreach ($blocks as &$b) {
+				$this->blockchain .= $b->signature;
+			}
 		}
 
 		return $this->blockchain;

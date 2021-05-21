@@ -32,3 +32,6 @@ FileNotYetIndexedInDatabase=Arquivo ainda não indexado no banco de dados (tente
 ExtraFieldsEcmFiles=Campos extras Arquivos Ecm
 ExtraFieldsEcmDirectories=Campos extras Diretórios Ecm
 ECMSetup=Configuração ECM
+GenerateImgWebp=Duplique todas as imagens com outra versão em formato .webp
+ConfirmImgWebpCreation=Confirmar duplicação de todas as imagens
+SucessConvertImgWebp=Imagens duplicadas com sucesso

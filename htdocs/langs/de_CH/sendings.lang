@@ -8,7 +8,6 @@ StatusSendingProcessed=Verarbeitete
 StatusSendingProcessedShort=Fertig
 SendingSheet=Auslieferungen
 WarningNoQtyLeftToSend=Achtung, keine Produkte für den Versand
-StatsOnShipmentsOnlyValidated=Versandstatistik (nur Freigegebene). Das Datum ist das der Freigabe (geplantes Lieferdatum ist nicht immer bekannt).
 ClassifyReception=Lieferung klassifizieren
 ProductQtyInShipmentAlreadySent=Bereits verschickte Artikel dieser Bestellung
 DocumentModelTyphon=Vollständig Dokumentvorlage für die Lieferungscheine (Logo, ...)

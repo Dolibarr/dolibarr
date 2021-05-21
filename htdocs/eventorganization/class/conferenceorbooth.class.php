@@ -91,7 +91,7 @@ class ConferenceOrBooth extends ActionComm
 	 *  'help' is a 'TranslationString' to use to show a tooltip on field. You can also use 'TranslationString:keyfortooltiponlick' for a tooltip on click.
 	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
 	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
-	 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
+	 *  'arrayofkeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
 	 *  'autofocusoncreate' to have field having the focus on a create form. Only 1 field should have this property set to 1.
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
 	 *
@@ -237,7 +237,18 @@ class ConferenceOrBooth extends ActionComm
 	 */
 	public function fetch($id, $ref = null, $ref_ext = '', $email_msgid = '')
 	{
+		global $dolibarr_main_url_root, $dolibarr_main_instance_unique_id, $conf, $langs;
+
 		$result = parent::fetch($id, $ref, $ref_ext, $email_msgid);
+
+		$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_subscription.php?id='.$id;
+
+		$encodedsecurekey = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
+		$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
+
+		$this->fields['pubregister'] = array('type'=>'url', 'label'=>$langs->trans("PublicAttendeeSubscriptionPage"), 'enabled'=>'1', 'position'=>72, 'notnull'=>0, 'visible'=>1);
+		$this->pubregister = $link_subscription;
+
 		$this->getActionCommFields();
 		return $result;
 	}

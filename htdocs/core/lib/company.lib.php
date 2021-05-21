@@ -571,7 +571,7 @@ function getState($id, $withcode = '', $dbtouse = 0, $withregion = 0, $outputlan
 
 	$sql = "SELECT d.rowid as id, d.code_departement as code, d.nom as name, d.active, c.label as country, c.code as country_code, r.code_region as region_code, r.nom as region_name FROM";
 	$sql .= " ".MAIN_DB_PREFIX."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r,".MAIN_DB_PREFIX."c_country as c";
-	$sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid and d.rowid=".$id;
+	$sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid and d.rowid=".((int) $id);
 	$sql .= " AND d.active = 1 AND r.active = 1 AND c.active = 1";
 	$sql .= " ORDER BY c.code, d.code_departement";
 
@@ -754,7 +754,7 @@ function isInEEC($object)
 		return false;
 	}
 
-	$country_code_in_EEC = getCountriesInEEC();
+	$country_code_in_EEC = getCountriesInEEC();		// This make a database call but there is a cache done into $conf->cache['country_code_in_EEC']
 
 	//print "dd".$object->country_code;
 	return in_array($object->country_code, $country_code_in_EEC);
@@ -939,11 +939,11 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 		't.email',
 	);
 	//Social media
-	foreach ($socialnetworks as $key => $value) {
-		if ($value['active']) {
-			$searchAddressPhoneDBFields['t.'.$key] = "t.socialnetworks->'$.".$key."'";
-		}
-	}
+	//    foreach ($socialnetworks as $key => $value) {
+	//        if ($value['active']) {
+	//            $searchAddressPhoneDBFields['t.'.$key] = "t.socialnetworks->'$.".$key."'";
+	//        }
+	//    }
 
 	if (!$sortorder) {
 		$sortorder = "ASC";
