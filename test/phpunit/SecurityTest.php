@@ -302,6 +302,10 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$test="<img src=x one<a>rror=alert(document.location)";
 		$result=testSqlAndScriptInject($test, 0);
 		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject kkk');
+
+		$test="<a onpointerdown=alert(document.domain)>XSS</a>";
+		$result=testSqlAndScriptInject($test, 0);
+		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject lll');
 	}
 
 	/**
