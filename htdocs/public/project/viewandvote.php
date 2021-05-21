@@ -181,9 +181,9 @@ if (strlen($idvote)) {
 	}
 	if ($votestatus=="ok") {
 		setEventMessage($langs->trans("VoteOk"), 'mesgs');
-	} else if ($votestatus=="ko") {
+	} elseif ($votestatus=="ko") {
 		setEventMessage($langs->trans("AlreadyVoted"), 'warnings');
-	} else if ($votestatus=="err") {
+	} elseif ($votestatus=="err") {
 		setEventMessage($langs->trans("VoteError"), 'warnings');
 	}
 	header("Refresh:0;url=".dol_buildpath('/public/project/viewandvote.php?id='.$id.'&securekey=', 1).$securekeyreceived);
