@@ -215,6 +215,7 @@ class ConferenceOrBooth extends ActionComm
 		$this->socid=$this->fk_soc;
 		$this->datef=$this->datep2;
 		$this->note_private=$this->note;
+		$this->fk_user_author=$this->fk_user_author;
 	}
 
 	/**

@@ -225,7 +225,11 @@ if (empty($reshook) && $action == 'add') {
 	}
 	if (!GETPOST("lastname")) {
 		$error++;
-		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Name"))."<br>\n";
+			$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Lastname"))."<br>\n";
+	}
+	if (!GETPOST("firstname")) {
+		$error++;
+		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Firstname"))."<br>\n";
 	}
 	if (!GETPOST("societe")) {
 		$error++;
@@ -297,7 +301,6 @@ if (empty($reshook) && $action == 'add') {
 				$contact->state_id = (int) GETPOST("state_id", 'int');
 				$contact->email = $email;
 				$contact->statut = 1; //Default status to Actif
-
 				$resultcreatecontact = $contact->create($user);
 				if ($resultcreatecontact<0) {
 					$error++;
@@ -362,6 +365,8 @@ if (empty($reshook) && $action == 'add') {
 			$conforbooth->datep2 = $dateend;
 			$conforbooth->datec = dol_now();
 			$conforbooth->tms = dol_now();
+			$conforbooth->firstname = $contact->firstname;
+			$conforbooth->lastname = $contact->lastname;
 			$resultconforbooth = $conforbooth->create($user);
 			if ($resultconforbooth<=0) {
 				$error++;
@@ -488,9 +493,13 @@ jQuery(document).ready(function () {
 
 print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."\n";
 
-// Name
+// Last Name
 print '<tr><td><label for="lastname">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'<FONT COLOR="red">*</FONT></label></td>';
 print '<td colspan="3"><input name="lastname" id="lastname" type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("lastname", 'alpha') ?GETPOST("lastname", 'alpha') : $object->lastname).'" autofocus="autofocus"></td>';
+print '</tr>';
+// First Name
+print '<tr><td><label for="firstname">'.$langs->trans("Firstname").' / '.$langs->trans("Label").'<FONT COLOR="red">*</FONT></label></td>';
+print '<td colspan="3"><input name="firstname" id="firstname" type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("firstname", 'alpha') ?GETPOST("firstname", 'alpha') : $object->firstname).'" autofocus="autofocus"></td>';
 print '</tr>';
 // Email
 print '<tr><td>'.$langs->trans("Email").'<FONT COLOR="red">*</FONT></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
