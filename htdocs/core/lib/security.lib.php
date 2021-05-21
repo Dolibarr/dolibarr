@@ -183,10 +183,11 @@ function dol_verifyHash($chain, $hash, $type = '0')
  *  @param  string	$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
  *  @param  string	$dbt_select     Field name for select if not rowid. Not used if objectid is null (optional)
  *  @param	int		$isdraft		1=The object with id=$objectid is a draft
- * 	@return	int						Always 1, die process if not allowed
+ *  @param	int		$mode			Mode (0=default, 1=return with not die)
+ * 	@return	int						If mode = 0 (default): Always 1, die process if not allowed. If mode = 1: Return 0 if access not allowed.
  *  @see dol_check_secure_access_document(), checkUserAccessToObject()
  */
-function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid', $isdraft = 0)
+function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid', $isdraft = 0, $mode = 0)
 {
 	global $db, $conf;
 	global $hookmanager;
@@ -231,7 +232,11 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 
 	if (isset($hookmanager->resArray['result'])) {
 		if ($hookmanager->resArray['result'] == 0) {
-			accessforbidden(); // Module returns 0, so access forbidden
+			if ($mode) {
+				return 0;
+			} else {
+				accessforbidden(); // Module returns 0, so access forbidden
+			}
 		}
 	}
 	if ($reshook > 0) {		// No other test done.
@@ -346,7 +351,11 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 	}
 
 	if (!$readok) {
-		accessforbidden();
+		if ($mode) {
+			return 0;
+		} else {
+			accessforbidden();
+		}
 	}
 	//print "Read access is ok";
 
@@ -435,7 +444,11 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 		}
 
 		if ($wemustcheckpermissionforcreate && !$createok) {
-			accessforbidden();
+			if ($mode) {
+				return 0;
+			} else {
+				accessforbidden();
+			}
 		}
 		//print "Write access is ok";
 	}
@@ -448,7 +461,11 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 		}
 
 		if (!$createuserok) {
-			accessforbidden();
+			if ($mode) {
+				return 0;
+			} else {
+				accessforbidden();
+			}
 		}
 		//print "Create user access is ok";
 	}
@@ -523,26 +540,34 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 		}
 
 		if (!$deleteok && !($isdraft && $createok)) {
-			accessforbidden();
+			if ($mode) {
+				return 0;
+			} else {
+				accessforbidden();
+			}
 		}
 		//print "Delete access is ok";
 	}
 
-	// If we have a particular object to check permissions on, we check this object
-	// is linked to a company allowed to $user.
+	// If we have a particular object to check permissions on, we check if $user has permission
+	// for this given object (link to company, is contact for project, ...)
 	if (!empty($objectid) && $objectid > 0) {
 		$ok = checkUserAccessToObject($user, $featuresarray, $objectid, $tableandshare, $feature2, $dbt_keyfield, $dbt_select, $parentfortableentity);
 		$params = array('objectid' => $objectid, 'features' => join(',', $featuresarray), 'features2' => $feature2);
 		//print 'checkUserAccessToObject ok='.$ok;
-		return $ok ? 1 : accessforbidden('', 1, 1, 0, $params);
+		if ($mode) {
+			return $ok ? 1 : 0;
+		} else {
+			return $ok ? 1 : accessforbidden('', 1, 1, 0, $params);
+		}
 	}
 
 	return 1;
 }
 
 /**
- * Check access by user to object.
- * This function is also called by restrictedArea that check before if module is enabled and permissions of user compared to $action.
+ * Check access by user to object is ok.
+ * This function is also called by restrictedArea that check before if module is enabled and if permission of user for $action is ok.
  *
  * @param User			$user					User to check
  * @param array			$featuresarray			Features/modules to check. Example: ('user','service','member','project','task',...)
@@ -555,7 +580,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
  * @return	bool								True if user has access, False otherwise
  * @see restrictedArea()
  */
-function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableandshare = '', $feature2 = '', $dbt_keyfield = '', $dbt_select = 'rowid', $parenttableforentity = '')
+function checkUserAccessToObject($user, array $featuresarray, $objectid = 0, $tableandshare = '', $feature2 = '', $dbt_keyfield = '', $dbt_select = 'rowid', $parenttableforentity = '')
 {
 	global $db, $conf;
 
@@ -689,6 +714,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 				include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 				$projectstatic = new Project($db);
 				$tmps = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, 0);
+
 				$tmparray = explode(',', $tmps);
 				if (!in_array($objectid, $tmparray)) {
 					return false;
