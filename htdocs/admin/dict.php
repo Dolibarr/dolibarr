@@ -2015,7 +2015,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			print '<td class="'.$classtd.'">';
 			$transfound = 0;
 			$transkey = '';
-			if (in_array($fieldlist[$field], array('label', 'libelle')))		// For label
+			if (in_array($fieldlist[$field], array('label', 'libelle')) and !empty($obj->code))		// For label
 			{
 				// Special case for labels
 				if ($tabname == MAIN_DB_PREFIX.'c_civility') {
