@@ -9,6 +9,7 @@
  * Copyright (C) 2014       Teddy Andreotti         <125155@supinfo.com>
  * Copyright (C) 2015       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2021       Charlene Benke          <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -456,12 +457,15 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		print '<input type="hidden" name="type" id="invoice_type" value="'.$facture->type.'">';
 		print '<input type="hidden" name="thirdpartylabel" id="thirdpartylabel" value="'.dol_escape_htmltag($facture->thirdparty->name).'">';
 
-		print dol_get_fiche_head();
 
-		print '<table class="border centpercent">';
+		print '<div class="fichecenter">';
+		print '<div class="fichehalfleft">';
+		print '<div class="underbanner clearboth"></div>';
+
+		print '<table class="noborder tableforfield" centpercent>';
 
 		// Third party
-		print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans('Company').'</span></td><td>'.$facture->thirdparty->getNomUrl(4)."</td></tr>\n";
+		print '<tr><td class="width25p fieldrequired">'.$langs->trans('Company').'</td><td>'.$facture->thirdparty->getNomUrl(4)."</td></tr>\n";
 
 		// Date payment
 		print '<tr><td><span class="fieldrequired">'.$langs->trans('Date').'</span></td><td>';
@@ -493,8 +497,16 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		}
 		print "</tr>\n";
 
+		print '</table>';
+
+		print '</div>';
+		print '<div class="fichehalfright"><div class="ficheaddleft">';
+		print '<div class="underbanner clearboth"></div>';
+
+		print '<table class="noborder tableforfield" width="100%">';
+
 		// Bank check number
-		print '<tr><td>'.$langs->trans('Numero');
+		print '<tr><td class="width40p">'.$langs->trans('Numero');
 		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
 		print '</td>';
 		print '<td><input name="num_paiement" type="text" class="maxwidth200" value="'.$paymentnum.'"></td></tr>';
@@ -518,8 +530,9 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 		print '</table>';
 
-		print dol_get_fiche_end();
-
+		print '</div>';
+		print '</div></div>';
+		print '<div style="clear:both"></div>';
 
 		/*
 		 * List of unpaid invoices
