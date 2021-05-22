@@ -1645,6 +1645,7 @@ class ExpenseReport extends CommonObject
 	 *  Return clicable name (with picto eventually)
 	 *
 	 *	@param		int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
+	 *  @param  	string 	$option                		Where point the link ('', 'document', ..)
 	 *	@param		int		$max						Max length of shown ref
 	 *	@param		int		$short						1=Return just URL
 	 *	@param		string	$moretitle					Add more text to title tooltip
@@ -1652,7 +1653,7 @@ class ExpenseReport extends CommonObject
 	 *  @param  	int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return		string								String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $max = 0, $short = 0, $moretitle = '', $notooltip = 0, $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '', $notooltip = 0, $save_lastsearch_value = -1)
 	{
 		global $langs, $conf;
 
@@ -1684,17 +1685,16 @@ class ExpenseReport extends CommonObject
 			$label .= ' - '.$moretitle;
 		}
 
-		//if ($option != 'nolink')
-		//{
-		// Add param to save lastsearch_values or not
+		if ($option != 'nolink') {
+			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-		if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
-			$add_save_lastsearch_values = 1;
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
 		}
-		if ($add_save_lastsearch_values) {
-			$url .= '&save_lastsearch_values=1';
-		}
-		//}
 
 		$ref = $this->ref;
 		if (empty($ref)) {
@@ -1720,7 +1720,7 @@ class ExpenseReport extends CommonObject
 			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
-			$result .= ($max ?dol_trunc($ref, $max) : $ref);
+			$result .= ($max ? dol_trunc($ref, $max) : $ref);
 		}
 		$result .= $linkend;
 

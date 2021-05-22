@@ -340,7 +340,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_head('');
 
-	print '<table class="border centpercent">';
+	print '<table class="border centpercent tableforfieldcreate">';
 
 	// Ref
 	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Ref").'</td>';
@@ -835,7 +835,7 @@ if ($action == 'create') {
 
 		//print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border centpercent">';
+		print '<table class="border centpercent tableforfieldcreate">';
 
 		// Ref
 		print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Ref").'</td>';
@@ -925,7 +925,7 @@ if ($action == 'create') {
 
 		// Tags-Categories
 		if ($conf->categorie->enabled) {
-			print '<tr><td class="tdtop">'.$langs->trans("Categories").'</td><td>';
+			print '<tr><td>'.$langs->trans("Categories").'</td><td>';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACCOUNT, '', 'parent', 64, 0, 1);
 			$c = new Categorie($db);
 			$cats = $c->containing($object->id, Categorie::TYPE_ACCOUNT);

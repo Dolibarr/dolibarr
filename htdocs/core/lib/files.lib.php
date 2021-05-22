@@ -2232,7 +2232,8 @@ function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(
 }
 
 /**
- * Security check when accessing to a document (used by document.php, viewimage.php and webservices)
+ * Security check when accessing to a document (used by document.php, viewimage.php and webservices to get documents).
+ * TODO Replace code that set $accesallowed by a call to restrictedArea()
  *
  * @param	string	$modulepart			Module of document ('module', 'module_user_temp', 'module_user' or 'module_temp')
  * @param	string	$original_file		Relative path with filename, relative to modulepart.
@@ -2612,12 +2613,26 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		// Wrapping pour les projets
 		if ($fuser->rights->projet->{$lire} || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
+			// If we known $id of project, call checkUserAccessToObject to check permission on properties and contact of project
+			if ($refname && !preg_match('/^specimen/i', $original_file)) {
+				include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+				$tmpproject = new Project($db);
+				$tmpproject->fetch('', $refname);
+				$accessallowed = checkUserAccessToObject($user, array('projet'), $tmpproject->id, 'projet&project', '', '', 'rowid', '');
+			}
 		}
 		$original_file = $conf->projet->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."projet WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('project').")";
 	} elseif ($modulepart == 'project_task' && !empty($conf->projet->dir_output)) {
 		if ($fuser->rights->projet->{$lire} || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
+			// If we known $id of project, call checkUserAccessToObject to check permission on properties and contact of project
+			if ($refname && !preg_match('/^specimen/i', $original_file)) {
+				include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+				$tmptask = new Task($db);
+				$tmptask->fetch('', $refname);
+				$accessallowed = checkUserAccessToObject($user, array('projet_task'), $tmptask->id, 'projet&project', '', '', 'rowid', '');
+			}
 		}
 		$original_file = $conf->projet->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."projet WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('project').")";
