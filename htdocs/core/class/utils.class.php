@@ -287,7 +287,7 @@ class Utils
 			{
 				$param .= " -d"; // No row information (no data)
 			}
-			$param .= " --default-character-set=utf8"; // We always save output into utf8 charset
+			$param .= " --default-character-set=utf8 --no-tablespaces"; // We always save output into utf8 charset
 			$paramcrypted = $param;
 			$paramclear = $param;
 			if (!empty($dolibarr_main_db_pass))
