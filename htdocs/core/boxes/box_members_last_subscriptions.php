@@ -158,7 +158,7 @@ class box_members_last_subscriptions extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right tdoverflowmax150 maxwidth150onsmartphone"',
-						'text' => dol_print_date($this->db->jdate($obj->datem ? $obj->datem : $obj->datec), 'dayhour'),
+						'text' => dol_print_date($this->db->jdate($obj->datem ? $obj->datem : $obj->datec), 'dayhour', 'tzuserrel'),
 					);
 
 					$line++;
