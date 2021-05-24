@@ -188,7 +188,7 @@ if ($mode == 'employee') {
 		accessforbidden();
 	}
 } else {
-	if (!$user->rights->user->user->lire && !$user->admin) {
+	if (empty($user->rights->user->user->lire) && empty($user->admin)) {
 		accessforbidden();
 	}
 }
