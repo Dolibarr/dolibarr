@@ -68,6 +68,8 @@ $modulesdir = dolGetModulesDirs('/mailings');
 $object = new Mailing($db);
 $result = $object->fetch($id);
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('ciblescard', 'globalcard'));
 
 // Security check
 if (!$user->rights->mailing->lire || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->socid > 0)) {
@@ -437,6 +439,10 @@ if ($object->fetch($id) >= 0) {
 				}
 			}
 		}	// End foreach dir
+
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
 
 		print '</div>';
 
