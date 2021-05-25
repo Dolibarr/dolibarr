@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2016	    Francis Appels       	<francis.appels@yahoo.com>
  * Copyright (C) 2021		Noé Cendrier			<noe.cendrier@altairis.fr>
+ * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -612,6 +613,14 @@ if ($action == 'create') {
 			}
 
 			$sql = "SELECT p.rowid as rowid, p.ref, p.label as produit, p.tobatch, p.fk_product_type as type, p.price, p.price_ttc, p.entity,";
+			$sql .= "p.tosell, p.tobuy,";
+			$sql .= "p.accountancy_code_sell,";
+			$sql .= "p.accountancy_code_sell_intra,";
+			$sql .= "p.accountancy_code_sell_export,";
+			$sql .= "p.accountancy_code_buy,";
+			$sql .= "p.accountancy_code_buy_intra,";
+			$sql .= "p.accountancy_code_buy_export,";
+			$sql .= 'p.barcode,';
 			if ($separatedPMP) {
 				$sql .= " pa.pmp as ppmp,";
 			} else {
@@ -683,6 +692,15 @@ if ($action == 'create') {
 					$productstatic->entity = $objp->entity;
 					$productstatic->status_batch = $objp->tobatch;
 					$productstatic->fk_unit = $objp->fk_unit;
+					$productstatic->status = $objp->tosell;
+					$productstatic->status_buy = $objp->tobuy;
+					$productstatic->barcode = $objp->barcode;
+					$productstatic->accountancy_code_sell = $objp->accountancy_code_sell;
+					$productstatic->accountancy_code_sell_intra = $objp->accountancy_code_sell_intra;
+					$productstatic->accountancy_code_sell_export = $objp->accountancy_code_sell_export;
+					$productstatic->accountancy_code_buy = $objp->accountancy_code_buy;
+					$productstatic->accountancy_code_buy_intra = $objp->accountancy_code_buy_intra;
+					$productstatic->accountancy_code_buy_export = $objp->accountancy_code_buy_export;
 					print $productstatic->getNomUrl(1, 'stock', 16);
 					print '</td>';
 
@@ -766,6 +784,7 @@ if ($action == 'create') {
 					print '<td class="liste_total">&nbsp;</td>';
 					print '<td class="liste_total right">'.price(price2num($totalvaluesell, 'MT')).'</td>';
 				}
+				print '<td class="liste_total">&nbsp;</td>';
 				print '<td class="liste_total">&nbsp;</td>';
 				print '<td class="liste_total">&nbsp;</td>';
 				print '</tr>';

@@ -51,7 +51,6 @@ $delete_product = GETPOST('delete_product', 'alpha');
 // Security check
 $fieldvalue = (!empty($id) ? $id : $ref);
 $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
-$result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 $prodstatic = new Product($db);
 $prodattr = new ProductAttribute($db);
@@ -64,8 +63,6 @@ if ($id > 0 || $ref) {
 
 $selectedvariant = $_SESSION['addvariant_'.$object->id];
 
-$permissiontoread = $user->rights->produit->lire || $user->rights->service->lire;
-
 // Security check
 if (empty($conf->variants->enabled)) {
 	accessforbidden('Module not enabled');
@@ -73,8 +70,17 @@ if (empty($conf->variants->enabled)) {
 if ($user->socid > 0) { // Protection if external user
 	accessforbidden();
 }
-//$result = restrictedArea($user, 'variant');
-if (!$permissiontoread) accessforbidden();
+
+if ($object->id > 0) {
+	if ($object->type == $object::TYPE_PRODUCT) {
+		restrictedArea($user, 'produit', $object->id, 'product&product', '', '');
+	}
+	if ($object->type == $object::TYPE_SERVICE) {
+		restrictedArea($user, 'service', $object->id, 'product&product', '', '');
+	}
+} else {
+	restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
+}
 
 
 /*

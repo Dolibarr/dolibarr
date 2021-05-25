@@ -339,7 +339,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 
 	$thumbsbyrow = 6;
 	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder centpercent'.($edit ? ' editmode' : '').' tableforfield">';
+	print '<table class="noborder centpercent'.($edit ? ' editmode' : '').'">';
 
 	// Title
 	if ($foruserprofile) {

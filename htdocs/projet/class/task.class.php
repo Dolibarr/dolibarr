@@ -274,7 +274,8 @@ class Task extends CommonObject
 		}
 		$sql .= " WHERE ";
 		if (!empty($ref)) {
-			$sql .= "t.ref = '".$this->db->escape($ref)."'";
+			$sql .= "entity IN (".getEntity('project').")";
+			$sql .= " AND t.ref = '".$this->db->escape($ref)."'";
 		} else {
 			$sql .= "t.rowid = ".((int) $id);
 		}
@@ -1351,9 +1352,9 @@ class Task extends CommonObject
 	}
 
 	/**
-	 *  Load one record of time spent
+	 *  Load properties of timespent of a task from the time spent ID.
 	 *
-	 *  @param	int		$id 	Id object
+	 *  @param	int		$id 	Id in time spent table
 	 *  @return int		        <0 if KO, >0 if OK
 	 */
 	public function fetchTimeSpent($id)

@@ -149,7 +149,7 @@ if ($massaction == 'presend') {
 	$formmail->withtofree = empty($liste) ? 1 : 0;
 	$formmail->withtocc = 1;
 	$formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;
-	$formmail->withtopic = $langs->transnoentities($topicmail, '__REF__', '__REFCLIENT__');
+	$formmail->withtopic = $langs->transnoentities($topicmail, '__REF__', '__REF_CLIENT__');
 	$formmail->withfile = 1;
 	// $formmail->withfile = 2; Not yet supported in mass action
 	$formmail->withmaindocfile = 1; // Add a checkbox "Attach also main document"

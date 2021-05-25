@@ -192,10 +192,10 @@ if ($action == 'addtimespent' && $user->rights->projet->lire) {
 				$object->timespent_duration = GETPOSTINT("timespent_durationhour") * 60 * 60; // We store duration in seconds
 				$object->timespent_duration += (GETPOSTINT('timespent_durationmin') ? GETPOSTINT('timespent_durationmin') : 0) * 60; // We store duration in seconds
 				if (GETPOST("timehour") != '' && GETPOST("timehour") >= 0) {	// If hour was entered
-					$object->timespent_date = dol_mktime(GETPOST("timehour"), GETPOST("timemin"), 0, GETPOST("timemonth"), GETPOST("timeday"), GETPOST("timeyear"));
+					$object->timespent_date = dol_mktime(GETPOST("timehour", 'int'), GETPOST("timemin", 'int'), 0, GETPOST("timemonth", 'int'), GETPOST("timeday", 'int'), GETPOST("timeyear", 'int'));
 					$object->timespent_withhour = 1;
 				} else {
-					$object->timespent_date = dol_mktime(12, 0, 0, GETPOST("timemonth"), GETPOST("timeday"), GETPOST("timeyear"));
+					$object->timespent_date = dol_mktime(12, 0, 0, GETPOST("timemonth", 'int'), GETPOST("timeday", 'int'), GETPOST("timeyear", 'int'));
 				}
 				$object->timespent_fk_user = GETPOST("userid", 'int');
 				$result = $object->addTimeSpent($user);
@@ -402,7 +402,7 @@ if ($action == 'confirm_generateinvoice') {
 
 		if (!$error) {
 			if ($generateinvoicemode == 'onelineperuser') {
-					$arrayoftasks = array();
+				$arrayoftasks = array();
 				foreach ($toselect as $key => $value) {
 					// Get userid, timepent
 					$object->fetchTimeSpent($value);
@@ -437,22 +437,27 @@ if ($action == 'confirm_generateinvoice') {
 						break;
 					}
 				}
-			} elseif ($generateinvoicemode == 'onelineperperiod') {
-					$arrayoftasks = array();
+			} elseif ($generateinvoicemode == 'onelineperperiod') {	// One line for each time spent line
+				$arrayoftasks = array();
 				foreach ($toselect as $key => $value) {
 					// Get userid, timepent
 					$object->fetchTimeSpent($value);
+					// $object->id is the task id
+					$ftask = new Task($db);
+					$ftask->fetch($object->id);
+
+					$fuser->fetch($object->timespent_fk_user);
+					$username = $fuser->getFullName($langs);
+
 					$arrayoftasks[$object->timespent_id]['timespent'] = $object->timespent_duration;
 					$arrayoftasks[$object->timespent_id]['totalvaluetodivideby3600'] = $object->timespent_duration * $object->timespent_thm;
-					$arrayoftasks[$object->timespent_id]['note'] = $object->timespent_note;
+					$arrayoftasks[$object->timespent_id]['note'] = $ftask->ref.' - '.$ftask->label.' - '.$username.($object->timespent_note ? ' - '.$object->timespent_note : '');		// TODO Add user name in note
 					$arrayoftasks[$object->timespent_id]['user'] = $object->timespent_fk_user;
 				}
 
 				foreach ($arrayoftasks as $timespent_id => $value) {
 					$userid = $value['user'];
-					$fuser->fetch($userid);
 					//$pu_ht = $value['timespent'] * $fuser->thm;
-					$username = $fuser->getFullName($langs);
 
 					// Define qty per hour
 					$qtyhour = $value['timespent'] / 3600;
@@ -465,6 +470,7 @@ if ($action == 'confirm_generateinvoice') {
 
 					// Add lines
 					$lineid = $tmpinvoice->addline($value['note'], $pu_ht, round($qtyhour / $prodDurationHours, 2), $txtva, $localtax1, $localtax2, ($idprod > 0 ? $idprod : 0));
+					//var_dump($lineid);exit;
 
 					// Update lineid into line of timespent
 					$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET invoice_line_id = '.((int) $lineid).', invoice_id = '.((int) $tmpinvoice->id);
@@ -477,7 +483,7 @@ if ($action == 'confirm_generateinvoice') {
 					}
 				}
 			} elseif ($generateinvoicemode == 'onelinepertask') {
-					$arrayoftasks = array();
+				$arrayoftasks = array();
 				foreach ($toselect as $key => $value) {
 					// Get userid, timepent
 					$object->fetchTimeSpent($value);
@@ -517,7 +523,10 @@ if ($action == 'confirm_generateinvoice') {
 
 		if (!$error) {
 			$urltoinvoice = $tmpinvoice->getNomUrl(0);
-			setEventMessages($langs->trans("InvoiceGeneratedFromTimeSpent", $urltoinvoice), null, 'mesgs');
+			$mesg = $langs->trans("InvoiceGeneratedFromTimeSpent", '{s1}');
+			$mesg = str_replace('{s1}', $urltoinvoice, $mesg);
+			setEventMessages($mesg, null, 'mesgs');
+
 			//var_dump($tmpinvoice);
 
 			$db->commit();
@@ -969,7 +978,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 				$tmparray = array(
 					'onelineperuser'=>'OneLinePerUser',
 					'onelinepertask'=>'OneLinePerTask',
-					'onelineperperiod'=>'OneLinePerPeriod',
+					'onelineperperiod'=>'OneLinePerTimeSpentLine',
 				);
 				print $form->selectarray('generateinvoicemode', $tmparray, 'onelineperuser', 0, 0, 0, '', 1);
 				print '</td>';
@@ -1315,7 +1324,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 			print_liste_field_titre($arrayfields['value']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'right ');
 		}
 		if (!empty($arrayfields['valuebilled']['checked'])) {
-			print_liste_field_titre($arrayfields['valuebilled']['label'], $_SERVER['PHP_SELF'], 'il.total_ht', '', $param, '', $sortfield, $sortorder, 'center ');
+			print_liste_field_titre($arrayfields['valuebilled']['label'], $_SERVER['PHP_SELF'], 'il.total_ht', '', $param, '', $sortfield, $sortorder, 'center ', $langs->trans("SelectLinesOfTimeSpentToInvoice"));
 		}
 		/*
 		// Extra fields

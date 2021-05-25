@@ -149,8 +149,10 @@ if ($rss) {
 	}
 
 	if ($buildfile) {
-		$langs->load("other");
-		$title = $desc = $langs->transnoentities('LatestBlogPosts');
+		$outputlangs = new Translate('', $conf);
+		$outputlangs->setDefaultLang($l);
+		$outputlangs->loadLangs(array("main", "other"));
+		$title = $desc = $outputlangs->transnoentities('LatestBlogPosts');
 
 		// Create temp file
 		$outputfiletmp = tempnam($dir_temp, 'tmp'); // Temporary file (allow call of function by different threads

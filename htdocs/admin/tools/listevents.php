@@ -42,7 +42,7 @@ if ($user->socid > 0) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies", "admin", "users", "other"));
+$langs->loadLangs(array("companies", "admin", "users", "other","withdrawals"));
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -285,7 +285,7 @@ if ($result) {
 		$param .= "&date_endyear=".urlencode($date_endyear);
 	}
 
-	$langs->load('withdrawals');
+	$center = '';
 	if ($num) {
 		$center = '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=purge">'.$langs->trans("Purge").'</a>';
 	}
@@ -372,7 +372,7 @@ if ($result) {
 		print_liste_field_titre("UserAgent", $_SERVER["PHP_SELF"], "e.user_agent", "", $param, '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['e.prefix_session']['checked'])) {
-		print_liste_field_titre("PrefixSession", $_SERVER["PHP_SELF"], "e.prefix_session", "", $param, '', $sortfield, $sortorder);
+		print_liste_field_titre("SuffixSessionName", $_SERVER["PHP_SELF"], "e.prefix_session", "", $param, '', $sortfield, $sortorder);
 	}
 	print_liste_field_titre('');
 	print "</tr>\n";

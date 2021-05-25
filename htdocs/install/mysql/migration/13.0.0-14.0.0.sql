@@ -64,6 +64,10 @@ ALTER TABLE llx_export_model MODIFY COLUMN type varchar(64);
 
 -- For v14
 
+ALTER TABLE llx_product_lot ADD COLUMN eol_date datetime NULL;
+ALTER TABLE llx_product_lot ADD COLUMN manufacturing_date datetime NULL;
+ALTER TABLE llx_product_lot ADD COLUMN scrapping_date datetime NULL;
+
 create table llx_accounting_groups_account
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
@@ -493,10 +497,16 @@ CREATE TABLE llx_knowledgemanagement_knowledgerecord(
 	import_key varchar(14), 
 	model_pdf varchar(255), 
 	question text NOT NULL, 
-	answer text, 
+	answer text,
+	url varchar(255),
+	fk_ticket integer,
 	status integer NOT NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
+
+ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD COLUMN fk_ticket integer;
+ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD COLUMN url varchar(255);
+
 
 create table llx_knowledgemanagement_knowledgerecord_extrafields
 (
