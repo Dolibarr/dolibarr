@@ -141,13 +141,14 @@ class PdfDocTest extends PHPUnit\Framework\TestCase
 		$db=$this->savdb;
 
 		$localproduct=new Product($this->savdb);
-		$result = $localproduct->fetch(0, 'PIDRESS');
+		$localproduct->initAsSpecimen();
+		$result = $localproduct->fetch(0, 'PRODUCT_SPEC');
 		if ($result < 0) {
-			print "\n".__METHOD__." Failed to make the fetch of product PIDRESS. ".$localproduct->error; die(1);
+			print "\n".__METHOD__." Failed to make the fetch of product PRODUCT_SPEC. ".$localproduct->error; die(1);
 		}
 		$product_id = $localproduct->id;
-		if ($product_id <= 0) {
-			print "\n".__METHOD__." A product with ref PIDRESS must exists into database"; die(1);
+		if ($product_id < 0) {
+			print "\n".__METHOD__." A product with ref PRODUCT_SPEC must exists into database"; die(1);
 		}
 
 		$localobject=new Facture($this->savdb);
@@ -160,11 +161,11 @@ class PdfDocTest extends PHPUnit\Framework\TestCase
 
 		$result=pdf_getlinedesc($localobject, 0, $langs);
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals($result, "PIDRESS - Label 1<br>This is a description with a &eacute; accent<br>(Country of origin: France)");
+		$this->assertEquals($result, "Label 1<br>This is a description with a &eacute; accent<br>(Country of origin: France)");
 
 		$result=doc_getlinedesc($localobject->lines[0], $langs);
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals($result, "PIDRESS - Label 1\nThis is a description with a é accent\n(Country of origin: France)");
+		$this->assertEquals($result, "Label 1\nThis is a description with a é accent\n(Country of origin: France)");
 	}
 
 	/**
