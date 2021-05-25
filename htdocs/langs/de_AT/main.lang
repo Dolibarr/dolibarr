@@ -81,5 +81,7 @@ ViewList=Liste anzeigen
 RelatedObjects=Ähnliche Dokumente
 Calendar=Kalender
 Events=Termine
+SearchIntoContacts=Kontakt
 SearchIntoInterventions=Eingriffe
 AssignedTo=zugewisen an
+DateOfBirth=Geburtstdatum

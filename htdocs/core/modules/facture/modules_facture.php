@@ -29,7 +29,7 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';   // Required because used in classes that inherit
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // Required because used in classes that inherit
 
 
 /**
@@ -40,28 +40,32 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	public $atleastonediscount = 0;
+	public $atleastoneratenotnull = 0;
+
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of active generation modules
 	 *
-     *  @param	DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of templates
+	 *  @param	DoliDB	$db     			Database handler
+	 *  @param  integer	$maxfilenamelength  Max length of value to show
+	 *  @return	array						List of templates
 	 */
-    public static function liste_modeles($db, $maxfilenamelength = 0)
+	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
-		$type='invoice';
-		$liste=array();
+		$type = 'invoice';
+		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db, $type, $maxfilenamelength);
+		$list = getListOfModels($db, $type, $maxfilenamelength);
 
-		return $liste;
+		return $list;
 	}
 }
 
@@ -73,7 +77,7 @@ abstract class ModeleNumRefFactures
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 	/**
 	 * Return if a module can be used or not
@@ -110,8 +114,8 @@ abstract class ModeleNumRefFactures
 	}
 
 	/**
-     *  Checks if the numbers already in force in the data base do not
-     *  cause conflicts that would prevent this numbering from working.
+	 *  Checks if the numbers already in the database do not
+	 *  cause conflicts that would prevent this numbering working.
 	 *
 	 * @return	boolean     false if conflict, true if ok
 	 */
@@ -143,10 +147,16 @@ abstract class ModeleNumRefFactures
 		global $langs;
 		$langs->load("admin");
 
-		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		elseif ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		elseif ($this->version == 'dolibarr') return DOL_VERSION;
-		elseif ($this->version) return $this->version;
-		else return $langs->trans("NotAvailable");
+		if ($this->version == 'development') {
+			return $langs->trans("VersionDevelopment");
+		} elseif ($this->version == 'experimental') {
+			return $langs->trans("VersionExperimental");
+		} elseif ($this->version == 'dolibarr') {
+			return DOL_VERSION;
+		} elseif ($this->version) {
+			return $this->version;
+		} else {
+			return $langs->trans("NotAvailable");
+		}
 	}
 }

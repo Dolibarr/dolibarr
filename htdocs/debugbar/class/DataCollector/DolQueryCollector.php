@@ -52,7 +52,7 @@ class DolQueryCollector extends DataCollector implements Renderable, AssetProvid
 			);
 			$totalExecTime += $query['duration'];
 			$totalMemoryUsage += $query['memory_usage'];
-			if (! $query['is_success']) {
+			if (!$query['is_success']) {
 				$totalFailed += 1;
 			}
 		}

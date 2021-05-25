@@ -1,0 +1,2 @@
+# Dolibarr language file - Source file is en_US - admin
+EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing thirdparty in your database. The found (or created) thirdparty will be used for following actions that need it. In the parameter field you can use for example 'EXTRACT:BODY:Name:\\s([^\\s]*)' if you want to extract the name of the thirdparty from a string 'Name: name to find' found into the body.

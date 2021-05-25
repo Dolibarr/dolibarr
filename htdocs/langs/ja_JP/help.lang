@@ -1,23 +1,23 @@
 # Dolibarr language file - Source file is en_US - help
-CommunitySupport=フォーラム/ Wikiのサポート
-EMailSupport=電子メールをサポート
-RemoteControlSupport=オンラインリアルタイム/リモートサポート
-OtherSupport=その他のサポート
-ToSeeListOfAvailableRessources=利用可能なリソースに連絡する/表示するには：
+CommunitySupport=フォーラム/ Wiki サポート
+EMailSupport=メール サポート
+RemoteControlSupport=オンライン 即時 / 遠隔 サポート
+OtherSupport=その他 サポート
+ToSeeListOfAvailableRessources=利用可能なリソースへの 連絡/表示：
 HelpCenter=ヘルプセンター
-DolibarrHelpCenter=Dolibarr Help and Support Center
-ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
-TypeOfSupport=Type of support
-TypeSupportCommunauty=コミュニティ（無料）
+DolibarrHelpCenter=Dolibarrヘルプとサポートセンター
+ToGoBackToDolibarr=それ以外の場合、<a href="%s">ここをクリックしてDolibarrを引き続き使用</a>
+TypeOfSupport=サポートの種類
+TypeSupportCommunauty=コミュニティ(無料)
 TypeSupportCommercial=コマーシャル
 TypeOfHelp=タイプ
 NeedHelpCenter=ヘルプやサポートが必要ですか？
 Efficiency=効率性
-TypeHelpOnly=唯一の助け
-TypeHelpDev=+の開発を支援
-TypeHelpDevForm=Help+Development+Training
-BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
-LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
+TypeHelpOnly=ヘルプのみ
+TypeHelpDev=ヘルプ+開発
+TypeHelpDevForm=ヘルプ+開発+トレーニング
+BackToHelpCenter=それ以外の場合、<a href="%s">ヘルプセンターのホームページに戻る</a>
+LinkToGoldMember=彼らのウィジェットをクリックすると(状態と最高価格は自動更新され)、Dolibarrによって事前選択されたトレーナーの1人と自分の言語 (%s) で電話できるよ。
 PossibleLanguages=サポートされる言語
-SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
+SubscribeToFoundation=Dolibarrプロジェクトを支援し、財団に登録
 SeeOfficalSupport=お使いの言語での公式Dolibarrサポート: <br><b><a href="%s" target="_blank">%s</a></b>

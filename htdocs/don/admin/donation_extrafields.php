@@ -33,15 +33,19 @@ $extrafields = new ExtraFields($db);
 $form = new Form($db);
 
 // List of supported format
-$tmptype2label=ExtraFields::$type2label;
-$type2label=array('');
-foreach ($tmptype2label as $key => $val) $type2label[$key]=$langs->transnoentitiesnoconv($val);
+$tmptype2label = ExtraFields::$type2label;
+$type2label = array('');
+foreach ($tmptype2label as $key => $val) {
+	$type2label[$key] = $langs->transnoentitiesnoconv($val);
+}
 
-$action=GETPOST('action', 'alpha');
-$attrname=GETPOST('attrname', 'alpha');
-$elementtype='don'; //Must be the $table_element of the class that manage extrafield
+$action = GETPOST('action', 'aZ09');
+$attrname = GETPOST('attrname', 'alpha');
+$elementtype = 'don'; //Must be the $table_element of the class that manage extrafield
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 
 /*
@@ -56,29 +60,28 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  * View
  */
 
-$textobject=$langs->transnoentitiesnoconv("Donations");
+$textobject = $langs->transnoentitiesnoconv("Donations");
 
 llxHeader('', $langs->trans("DonationsSetup"));
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("DonationsSetup"), $linkback, 'title_setup');
 
 
 $head = donation_admin_prepare_head();
 
-dol_fiche_head($head, 'attributes', $langs->trans("Donations"), -1, 'payment');
+print dol_get_fiche_head($head, 'attributes', $langs->trans("Donations"), -1, 'payment');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 // Buttons
-if ($action != 'create' && $action != 'edit')
-{
-    print '<div class="tabsAction">';
-    print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=create">'.$langs->trans("NewAttribute").'</a></div>';
-    print "</div>";
+if ($action != 'create' && $action != 'edit') {
+	print '<div class="tabsAction">';
+	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=create">'.$langs->trans("NewAttribute").'</a></div>';
+	print "</div>";
 }
 
 
@@ -88,12 +91,11 @@ if ($action != 'create' && $action != 'edit')
 /*                                                                            */
 /* ************************************************************************** */
 
-if ($action == 'create')
-{
-    print "<br>";
-    print load_fiche_titre($langs->trans('NewAttribute'));
+if ($action == 'create') {
+	print "<br>";
+	print load_fiche_titre($langs->trans('NewAttribute'));
 
-    require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';
+	require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';
 }
 
 /* ************************************************************************** */
@@ -101,12 +103,11 @@ if ($action == 'create')
 /* Edit optional field                                                        */
 /*                                                                            */
 /* ************************************************************************** */
-if ($action == 'edit' && ! empty($attrname))
-{
-    print "<br>";
-    print load_fiche_titre($langs->trans("FieldEdition", $attrname));
+if ($action == 'edit' && !empty($attrname)) {
+	print "<br>";
+	print load_fiche_titre($langs->trans("FieldEdition", $attrname));
 
-    require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';
+	require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';
 }
 
 llxFooter();

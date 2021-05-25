@@ -9,8 +9,7 @@ ACCOUNTING_EXPORT_DEVISE=Moneda de exportación
 ACCOUNTING_EXPORT_PREFIX_SPEC=Especifique el prefijo del nombre del fichero
 DefaultForService=Servicio por defecto
 DefaultForProduct=Producto por defecto
-ConfigAccountingExpert=Configuración del módulo experto en contabilidad
-Journaux=Revistas
+Journals=Revistas
 JournalFinancial=Revistas financieras
 BackToChartofaccounts=Retornar gráfico de cuentas
 Selectchartofaccounts=Seleccione el plan de cuentas activo
@@ -33,13 +32,13 @@ ACCOUNTING_LIST_SORT_VENTILATION_DONE=Comienza la clasificación de la página "
 ACCOUNTING_LENGTH_DESCRIPTION=Truncar la descripción de los productos y servicios en los listados después de los caracteres x (mejor = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Truncar el formulario de descripción de la cuenta de producto y servicios en los listados después de los caracteres x (mejor = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Longitud de las cuentas de contabilidad general (si establece el valor a 6 aquí, la cuenta '706' aparecerá como '706000' en la pantalla)
+ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties)
 ACCOUNTING_SELL_JOURNAL=Diario de Venta
 ACCOUNTING_PURCHASE_JOURNAL=Diario de Compra
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Diario diverso
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Informe de Gastos Diario
 ACCOUNTING_SOCIAL_JOURNAL=Diario Social
 ACCOUNTING_ACCOUNT_SUSPENSE=Cuenta contable de espera
-Sens=Significado
 Codejournal=Periódico
 FinanceJournal=Periodo Financiero
 TotalMarge=Margen total de ventas

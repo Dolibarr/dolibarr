@@ -11,6 +11,7 @@ CKEDITOR.editorConfig = function( config )
 	config.enterMode = CKEDITOR.ENTER_BR;
 	//config.forceSimpleAmpersand = true;	// When you put a <img src="x?a=a&b=b"> into the textarea, and go into "source", then ckeditor change the & into &amp;. We don't want this. But this option does not fix this.
 	//config.entities = false;			// When you put a <img src="x?a=a&b=b"> into the textarea, and go into "source", then ckeditor change the & into &amp;. We don't want this. But this option does not fix this.
+	//config.entities_greek = false;
 	config.resize_enabled = false;
 	//config.resize_maxHeight = 3000;
 	//config.resize_maxWidth = 3000;
@@ -73,7 +74,7 @@ CKEDITOR.editorConfig = function( config )
 	 	['Maximize'],
 	 	['SpellChecker', 'Scayt'],		// 'Cut','Copy','Paste','-', are useless, can be done with right click, even on smarpthone
 	 	['Undo','Redo','-','Find','Replace'],
-	    ['Format','Font','FontSize'],
+	    ['Font','FontSize'],
 	 	['Bold','Italic','Underline','Strike','Superscript','-','TextColor','RemoveFormat'],
 	 	['NumberedList','BulletedList','Outdent','Indent'],
 	 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],

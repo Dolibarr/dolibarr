@@ -16,50 +16,50 @@
 #
 # Generic
 #
-Assets = Assets
-NewAsset = New asset
-AccountancyCodeAsset = Accounting code (asset)
-AccountancyCodeDepreciationAsset = Accounting code (depreciation asset account)
-AccountancyCodeDepreciationExpense = Accounting code (depreciation expense account)
-NewAssetType=New asset type
-AssetsTypeSetup=Asset type setup
-AssetTypeModified=Asset type modified
-AssetType=Asset type
-AssetsLines=Assets
-DeleteType=削除する
-DeleteAnAssetType=Delete an asset type
-ConfirmDeleteAssetType=Are you sure you want to delete this asset type?
-ShowTypeCard=タイプ &quot;%s&quot;を表示
+Assets = 資産
+NewAsset = 新規資産
+AccountancyCodeAsset = 会計コード(資産)
+AccountancyCodeDepreciationAsset = 会計コード(減価償却資産勘定)
+AccountancyCodeDepreciationExpense = 会計コード(減価償却費勘定)
+NewAssetType=新規資産種別
+AssetsTypeSetup=資産種別の設定
+AssetTypeModified=資産種別変更済
+AssetType=資産種別
+AssetsLines=資産
+DeleteType=削除
+DeleteAnAssetType=資産種別を削除
+ConfirmDeleteAssetType=この資産種別を削除したいのね、いいよね？
+ShowTypeCard=種別 ’%s' を表示
 
 # Module label 'ModuleAssetsName'
-ModuleAssetsName = Assets
+ModuleAssetsName = 資産
 # Module description 'ModuleAssetsDesc'
-ModuleAssetsDesc = Assets description
+ModuleAssetsDesc = 資産の説明
 
 #
 # Admin page
 #
-AssetsSetup = Assets setup
-Settings = Settings
-AssetsSetupPage = Assets setup page
-ExtraFieldsAssetsType = Complementary attributes (Asset type)
-AssetsType=Asset type
-AssetsTypeId=Asset type id
-AssetsTypeLabel=Asset type label
-AssetsTypes=Assets types
+AssetsSetup = 資産s設定
+Settings = 設定
+AssetsSetupPage = 資産s設定ページ
+ExtraFieldsAssetsType = 補完属性(資産種別)
+AssetsType=資産種別
+AssetsTypeId=資産種別 ID
+AssetsTypeLabel=資産種別ラベル
+AssetsTypes=資産種別
 
 #
 # Menu
 #
-MenuAssets = Assets
-MenuNewAsset = New asset
-MenuTypeAssets = Type assets
-MenuListAssets = リスト
-MenuNewTypeAssets = 新しい
-MenuListTypeAssets = リスト
+MenuAssets = 資産
+MenuNewAsset = 新規資産
+MenuTypeAssets = 種別 資産s
+MenuListAssets = 一覧
+MenuNewTypeAssets = 新規
+MenuListTypeAssets = 一覧
 
 #
 # Module
 #
-NewAssetType=New asset type
-NewAsset=New asset
+NewAssetType=新規資産種別
+NewAsset=新規資産

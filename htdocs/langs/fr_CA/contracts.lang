@@ -42,7 +42,6 @@ DateStartRealShort=Date de début de réalisation réelle
 DateEndReal=Date de fin de réalisation réelle
 DateEndRealShort=Date de fin de réalisation réelle
 CloseService=Fermer le service
-BoardRunningServices=Services d'exploitation périmés
 DraftContracts=Contrats réduits
 CloseAllContracts=Fermer toutes les lignes de contrat
 DeleteContractLine=Supprimer une ligne de contrat

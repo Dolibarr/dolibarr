@@ -7,13 +7,14 @@ Permission23103 = Supprimer une tâche planifiée
 Permission23104 = Exécuter une tâche planifiée
 # Admin
 CronSetup=Page de configuration du module - Gestion des travaux programmés
-URLToLaunchCronJobs=URL pour vérifier ou lancer les travaux planifiés qualifiés
-OrToLaunchASpecificJob=Ou pour vérifier et lancer un travail programmé spécifique
+URLToLaunchCronJobs=URL pour vérifier et lancer les travaux planifiés qualifiés depuis un navigateur
+OrToLaunchASpecificJob=Ou pour vérifier et lancer une tâche planifiée spécifique depuis un navigateur
 KeyForCronAccess=Clé de sécurité pour l'URL de lancement des travaux programmés
 FileToLaunchCronJobs=Ligne de commande pour vérifier et lancer les travaux programmés qualifiés
 CronExplainHowToRunUnix=Sur un environnement Unix vous pouvez utiliser l'entrée suivante en crontab pour exécuter la ligne de commande toutes les 5 minutes
 CronExplainHowToRunWin=Sous Microsoft (tm) Windows, vous pouvez utiliser les outils Tâches programmées pour exécuter la ligne de commande toutes les 5 minutes.
 CronMethodDoesNotExists=La classe %s ne contient aucune méthode %s
+CronMethodNotAllowed=La méthode %s de la classe %s est dans la liste noire des méthodes interdites
 CronJobDefDesc=Les travaux planifiés sont définis dans le fichier descripteur de module. Lorsque le module est activé, ils sont chargés et disponibles afin que vous puissiez administrer les travaux à partir du menu des outils d'administration %s.
 CronJobProfiles=Liste des profils de travaux planifiés prédéfinis
 # Menu
@@ -46,6 +47,7 @@ CronNbRun=Nb. de lancements
 CronMaxRun=Nb max de lancement
 CronEach=Tous les
 JobFinished=Travail lancé et terminé
+Scheduled=Programmé
 #Page card
 CronAdd= Ajoutez des travaux
 CronEvery=Exécuter chaque tâche
@@ -56,7 +58,7 @@ CronNote=Commentaire
 CronFieldMandatory=Le champ %s est obligatoire
 CronErrEndDateStartDt=La date de fin ne peux être avant la date de début
 StatusAtInstall=Statut lors de l'installation du module
-CronStatusActiveBtn=Activer
+CronStatusActiveBtn=Planifier
 CronStatusInactiveBtn=Désactiver
 CronTaskInactive=Cette tâche est désactivée
 CronId=Id
@@ -81,3 +83,9 @@ JobDisabled=Travail désactivé
 MakeLocalDatabaseDumpShort=Sauvegarde locale de base
 MakeLocalDatabaseDump=Créez un fichier dump de base local. Les paramètres sont: compression ('gz' ou 'bz' ou 'none'), type de sauvegarde ('mysql', 'pgsql', 'auto'), 1, 'auto' ou nom du fichier à générer, nombre de fichiers de sauvegarde à garder
 WarningCronDelayed=Attention, à des fins de performance, quelle que soit la prochaine date d'exécution des travaux activés, vos travaux peuvent être retardés jusqu'à %s heures avant d'être exécutés.
+DATAPOLICYJob=Nettoyeur de données et anonymiseur
+JobXMustBeEnabled=La tâche planifiée %s doit être activée
+# Cron Boxes
+LastExecutedScheduledJob=Dernier travail planifié exécuté
+NextScheduledJobExecute=Prochaine travail planifié à exécuter
+NumberScheduledJobError=Nombre de travaux planifiées en erreur

@@ -1,8 +1,10 @@
 # ProductBATCH language file - en_US - ProductBATCH
 ManageLotSerial=생산일련번호 사용
-ProductStatusOnBatch=예(생산일련번호필요)
+ProductStatusOnBatch=Yes (lot required)
+ProductStatusOnSerial=Yes (unique serial number required)
 ProductStatusNotOnBatch=아니오(생산일련번호사용안함)
-ProductStatusOnBatchShort=예
+ProductStatusOnBatchShort=Lot
+ProductStatusOnSerialShort=Serial
 ProductStatusNotOnBatchShort=아니
 Batch=생산일련번호
 atleast1batchfield=소비기한 날짜 또는 판매기한 날짜 또는 일련번호
@@ -22,3 +24,12 @@ ProductLotSetup=일련번호 모듈 설정
 ShowCurrentStockOfLot=묶음제품 또는 일련번호별제품 현 재고보기
 ShowLogOfMovementIfLot=묶음제품 또는 일련번호별제품 이동기록 보기
 StockDetailPerBatch=일련번호별 재고내역
+SerialNumberAlreadyInUse=Serial number %s is already used for product %s
+TooManyQtyForSerialNumber=You can only have one product %s for serial number %s
+BatchLotNumberingModules=Options for automatic generation of batch products managed by lots
+BatchSerialNumberingModules=Options for automatic generation of batch products managed by serial numbers
+ManageLotMask=Custom mask
+CustomMasks=Adds an option to define mask in the product card
+LotProductTooltip=Adds an option in the product card to define a dedicated batch number mask
+SNProductTooltip=Adds an option in the product card to define a dedicated serial number mask
+QtyToAddAfterBarcodeScan=Qty to add for each barcode/lot/serial scanned

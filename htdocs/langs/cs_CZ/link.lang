@@ -8,4 +8,4 @@ LinkRemoved=Odkaz %s byl odstraněn
 ErrorFailedToDeleteLink= Nepodařilo se odstranit odkaz '<b>%s</b>'
 ErrorFailedToUpdateLink= Nepodařilo se aktualizovat odkaz '<b>%s</b>'
 URLToLink=Připojit URL
-OverwriteIfExists=Overwrite file if exists
+OverwriteIfExists=Pokud existuje, přepište soubor

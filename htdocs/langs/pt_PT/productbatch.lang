@@ -1,8 +1,10 @@
 # ProductBATCH language file - en_US - ProductBATCH
 ManageLotSerial=Utilizar lote/número de série
-ProductStatusOnBatch=Sim (lote/número de série obrigatório)
+ProductStatusOnBatch=Yes (lot required)
+ProductStatusOnSerial=Yes (unique serial number required)
 ProductStatusNotOnBatch=Não (não é necessário lote/número de série)
-ProductStatusOnBatchShort=Sim
+ProductStatusOnBatchShort=Lot
+ProductStatusOnSerialShort=Serial
 ProductStatusNotOnBatchShort=Não
 Batch=Lote/Nr. de Série
 atleast1batchfield=Data de validade ou Data de venda ou Lote/Número de Série
@@ -22,3 +24,12 @@ ProductLotSetup=Configuração do módulo Lote/Número de Série
 ShowCurrentStockOfLot=Mostrar o stock atual para o par produto/lote
 ShowLogOfMovementIfLot=Mostrar registo de movimentos para cada par produto/lote
 StockDetailPerBatch=Detalhes do estoque por lote
+SerialNumberAlreadyInUse=Serial number %s is already used for product %s
+TooManyQtyForSerialNumber=You can only have one product %s for serial number %s
+BatchLotNumberingModules=Options for automatic generation of batch products managed by lots
+BatchSerialNumberingModules=Options for automatic generation of batch products managed by serial numbers
+ManageLotMask=Custom mask
+CustomMasks=Adds an option to define mask in the product card
+LotProductTooltip=Adds an option in the product card to define a dedicated batch number mask
+SNProductTooltip=Adds an option in the product card to define a dedicated serial number mask
+QtyToAddAfterBarcodeScan=Qty to add for each barcode/lot/serial scanned
