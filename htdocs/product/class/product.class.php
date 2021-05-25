@@ -5184,7 +5184,7 @@ class Product extends CommonObject
 	 *  Load value ->stock_theorique of a product. Property this->id must be defined.
 	 *  This function need a lot of load. If you use it on list, use a cache to execute it one for each product id.
 	 *
-	 * 	@param	int		$includedraftpoforvirtual	Include draft status of PO for virtual stock calculation
+	 * 	@param	int		$includedraftpoforvirtual	Include draft status and not yet approved Purchase Orders for virtual stock calculation
 	 *  @return int     							< 0 if KO, > 0 if OK
 	 *  @see	load_stock(), loadBatchInfo()
 	 */
@@ -5223,9 +5223,9 @@ class Product extends CommonObject
 			$stock_sending_client = $this->stats_expedition['qty'];
 		}
 		if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) {
-			$filterStatus = '1,2,3,4';
+			$filterStatus = empty($conf->global->SUPPLIER_ORDER_STATUS_FOR_VIRTUAL_STOCK) ? '2,3,4' : $conf->global->SUPPLIER_ORDER_STATUS_FOR_VIRTUAL_STOCK;
 			if (isset($includedraftpoforvirtual)) {
-				$filterStatus = '0,'.$filterStatus;
+				$filterStatus = '0,1,2,'.$filterStatus;	// 1,2 may have already been inside $filterStatus but it is better to have twice than missing $filterStatus does not include them
 			}
 			$result = $this->load_stats_commande_fournisseur(0, $filterStatus, 1);
 			if ($result < 0) {
