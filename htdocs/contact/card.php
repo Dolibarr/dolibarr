@@ -67,6 +67,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $socialnetworks = getArrayOfSocialNetworks();
 
+$permissiontoadd = $user->rights->societe->contact->creer;
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $object->getCanvas($id);
 $objcanvas = null;
@@ -105,6 +106,8 @@ $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
+// Actions cancel, add, update, delete or clone
+include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
 if (empty($reshook)) {
 	// Cancel
@@ -214,12 +217,12 @@ if (empty($reshook)) {
 		$object->birthday = dol_mktime(0, 0, 0, GETPOST("birthdaymonth", 'int'), GETPOST("birthdayday", 'int'), GETPOST("birthdayyear", 'int'));
 		$object->birthday_alert = GETPOST("birthday_alert", 'alpha');
 
-		// Fill array 'array_options' with data from add form
+		/*// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0) {
 			$error++;
 			$action = 'create';
-		}
+		}*/
 
 		if (!empty($conf->mailing->enabled) && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS==-1 && $object->no_email==-1 && !empty($object->email)) {
 			$error++;
@@ -415,11 +418,11 @@ if (empty($reshook)) {
 
 			$object->roles = GETPOST("roles", 'array');		// Note GETPOSTISSET("role") is null when combo is empty
 
-			// Fill array 'array_options' with data from add form
+			/*// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object);
 			if ($ret < 0) {
 				$error++;
-			}
+			}*/
 
 			if (!$error) {
 				$result = $object->update($contactid, $user);
@@ -820,12 +823,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Other attributes
-			$parameters = array('socid' => $socid, 'objsoc' => $objsoc, 'colspan' => ' colspan="3"', 'cols' => 3);
-			$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-			print $hookmanager->resPrint;
-			if (empty($reshook)) {
-				print $object->showOptionals($extrafields, 'edit', $parameters);
-			}
+			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
 			print "</table><br>";
 
@@ -1132,12 +1130,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Other attributes
-			$parameters = array('colspan' => ' colspan="3"', 'cols'=> '3');
-			$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-			print $hookmanager->resPrint;
-			if (empty($reshook)) {
-				print $object->showOptionals($extrafields, 'edit', $parameters);
-			}
+			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
 
 			$object->load_ref_elements();
 
