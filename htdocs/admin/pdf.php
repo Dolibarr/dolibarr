@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2107 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2019	   Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2021	   Anthony Berton		<bertonanthony@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -327,6 +328,11 @@ print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width=
 
 print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DOCUMENTS_LOGO_HEIGHT").'</td><td>';
 print '<input type="text" class="maxwidth50" name="MAIN_DOCUMENTS_LOGO_HEIGHT" value="'.(!empty($conf->global->MAIN_DOCUMENTS_LOGO_HEIGHT) ? $conf->global->MAIN_DOCUMENTS_LOGO_HEIGHT : 20).'">';
+print '</td></tr>';
+
+// Width of picture product lign
+print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DOCUMENTS_WITH_PICTURE_WIDTH").'</td><td>';
+print '<input type="text" class="maxwidth50" name="MAIN_DOCUMENTS_WITH_PICTURE_WIDTH" value="'.(!empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH) ? $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH : 20).'">';
 print '</td></tr>';
 
 // Show project
