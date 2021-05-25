@@ -274,7 +274,8 @@ class Task extends CommonObject
 		}
 		$sql .= " WHERE ";
 		if (!empty($ref)) {
-			$sql .= "t.ref = '".$this->db->escape($ref)."'";
+			$sql .= "entity IN (".getEntity('project').")";
+			$sql .= " AND t.ref = '".$this->db->escape($ref)."'";
 		} else {
 			$sql .= "t.rowid = ".((int) $id);
 		}

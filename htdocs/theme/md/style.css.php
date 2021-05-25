@@ -780,6 +780,9 @@ th .button {
 textarea.centpercent {
 	width: 96%;
 }
+.quatrevingtpercentminusx {
+	width: calc(80% - 52px);
+}
 .small, small {
 	font-size: 85%;
 }

@@ -615,8 +615,8 @@ if (empty($reshook)) {
 	}
 
 	// Action initialisation donnees depuis record LDAP
-	if ($action == 'adduserldap') {
-		$selecteduser = $_POST['users'];
+	if ($action == 'adduserldap' && $canadduser) {
+		$selecteduser = GETPOST('users');
 
 		$required_fields = array(
 			$conf->global->LDAP_KEY_USERS,

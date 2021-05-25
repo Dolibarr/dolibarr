@@ -1774,11 +1774,16 @@ class FormFile
 					continue; // We do not show orphelins files
 				}
 
-				print '<!-- Line list_of_autoecmfiles '.$key.' -->'."\n";
+				print '<!-- Line list_of_autoecmfiles key='.$key.' -->'."\n";
 				print '<tr class="oddeven">';
 				print '<td>';
 				if ($found > 0 && is_object($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) {
-					print $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]->getNomUrl(1, 'document');
+					$tmpobject = $this->cache_objects[$modulepart.'_'.$id.'_'.$ref];
+					//if (! in_array($tmpobject->element, array('expensereport'))) {
+					print $tmpobject->getNomUrl(1, 'document');
+					//} else {
+					//	print $tmpobject->getNomUrl(1);
+					//}
 				} else {
 					print $langs->trans("ObjectDeleted", ($id ? $id : $ref));
 				}
