@@ -744,6 +744,7 @@ if ($conf->use_javascript_ajax) {
 print "</td>\n";
 print "</tr>\n";
 
+/* Disabled. Would be better to be managed with a user cookie
 if (!empty($conf->productbatch->enabled)) {
 	print '<tr class="oddeven">';
 	print '<td>' . $langs->trans("ShowAllBatchByDefault") . '</td>';
@@ -757,6 +758,7 @@ if (!empty($conf->productbatch->enabled)) {
 	print "</td>\n";
 	print "</tr>\n";
 }
+*/
 
 print '</table>';
 
