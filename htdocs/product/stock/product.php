@@ -531,43 +531,43 @@ if ($id > 0 || $ref) {
 
 	llxHeader('', $title, $helpurl);
 
-	if (! empty($conf->use_javascript_ajax)) {
-	?>
-	<script type="text/javascript" language="javascript">
-		$(document).ready(function() {
-			$(".collapse_batch").click(function() {
-				console.log("We click on collapse_batch");
-				var id_entrepot = $(this).attr('id').replace('ent', '');
+	if (!empty($conf->use_javascript_ajax)) {
+		?>
+		<script type="text/javascript" language="javascript">
+			$(document).ready(function() {
+				$(".collapse_batch").click(function() {
+					console.log("We click on collapse_batch");
+					var id_entrepot = $(this).attr('id').replace('ent', '');
 
-				if($(this).text().indexOf('+') > 0) {
-					$(".batch_warehouse" + id_entrepot).show();
-					$(this).html('(-)');
-				}
-				else {
-					$(".batch_warehouse" + id_entrepot).hide();
-					$(this).html('(+)');
-				}
+					if($(this).text().indexOf('+') > 0) {
+						$(".batch_warehouse" + id_entrepot).show();
+						$(this).html('(-)');
+					}
+					else {
+						$(".batch_warehouse" + id_entrepot).hide();
+						$(this).html('(+)');
+					}
 
-				return false;
+					return false;
+				});
+
+				$("#show_all").click(function() {
+					console.log("We click on show_all");
+					$("[class^=batch_warehouse]").show();
+					$("[class^=collapse_batch]").html('(-)');
+					return false;
+				});
+
+				$("#hide_all").click(function() {
+					console.log("We click on hide_all");
+					$("[class^=batch_warehouse]").hide();
+					$("[class^=collapse_batch]").html('(+)');
+					return false;
+				});
+
 			});
-
-			$("#show_all").click(function() {
-				console.log("We click on show_all");
-				$("[class^=batch_warehouse]").show();
-				$("[class^=collapse_batch]").html('(-)');
-				return false;
-			});
-
-			$("#hide_all").click(function() {
-				console.log("We click on hide_all");
-				$("[class^=batch_warehouse]").hide();
-				$("[class^=collapse_batch]").html('(+)');
-				return false;
-			});
-
-		});
-	</script>
-	<?php
+		</script>
+		<?php
 	}
 
 	if ($result > 0) {
@@ -909,9 +909,11 @@ if (!$variants) {
 	if ((!empty($conf->productbatch->enabled)) && $object->hasbatch()) {
 		$colspan = 3;
 		print '<tr class="liste_titre"><td width="14%">';
-		print '<a id="show_all" href="#">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ExpandAll").'</a> &nbsp; ';
-		print '<a id="hide_all" href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("UndoExpandAll").'</a>';
-		//print '&nbsp;'.$form->textwithpicto('', $langs->trans('CollapseBatchDetailHelp'), 1, 'help', '');
+		if (!empty($conf->use_javascript_ajax)) {
+			print '<a id="show_all" href="#">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ExpandAll").'</a> &nbsp; ';
+			print '<a id="hide_all" href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("UndoExpandAll").'</a>';
+			//print '&nbsp;'.$form->textwithpicto('', $langs->trans('CollapseBatchDetailHelp'), 1, 'help', '');
+		}
 		print '</td>';
 		print '<td class="right">'.$langs->trans("batch_number").'</td>';
 		if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
@@ -969,7 +971,7 @@ if (!$variants) {
 			print '<tr class="oddeven">';
 			print '<td colspan="4">';
 			print $entrepotstatic->getNomUrl(1);
-			if (!empty($conf->productbatch->enabled) && $object->hasbatch()) {
+			if (!empty($conf->use_javascript_ajax) && !empty($conf->productbatch->enabled) && $object->hasbatch()) {
 				print '<a class="collapse_batch marginleftonly" id="ent' . $entrepotstatic->id . '" href="#">';
 				print (empty($conf->global->STOCK_SHOW_ALL_BATCH_BY_DEFAULT) ? '(+)' : '(-)');
 				print '</a>';
