@@ -300,16 +300,15 @@ if (empty($reshook)) {
 					$totalcreditnotes = $objecttmp->getSumCreditNotesUsed();
 					$totaldeposits = $objecttmp->getSumDepositsUsed();
 					$objecttmp->resteapayer = price2num($objecttmp->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
-					if ($objecttmp->paye || $objecttmp->resteapayer == 0) {
+					if ($objecttmp->statut == FactureFournisseur::STATUS_DRAFT) {
+						$error++;
+						setEventMessages($objecttmp->ref.' '.$langs->trans("Draft"), $objecttmp->errors, 'errors');
+					} elseif ($objecttmp->paye || $objecttmp->resteapayer == 0) {
 						$error++;
 						setEventMessages($objecttmp->ref.' '.$langs->trans("AlreadyPaid"), $objecttmp->errors, 'errors');
 					} elseif ($objecttmp->resteapayer < 0) {
 						$error++;
 						setEventMessages($objecttmp->ref.' '.$langs->trans("AmountMustBePositive"), $objecttmp->errors, 'errors');
-					}
-					if (!($objecttmp->statut > FactureFournisseur::STATUS_DRAFT)) {
-						$error++;
-						setEventMessages($objecttmp->ref.' '.$langs->trans("Draft"), $objecttmp->errors, 'errors');
 					}
 
 					$rsql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande";
@@ -340,7 +339,7 @@ if (empty($reshook)) {
 				}
 			}
 
-			//Massive withdraw request for request with no errors
+			// Massive withdraw request for request with no errors
 			if (!empty($listofbills)) {
 				$nbwithdrawrequestok = 0;
 				foreach ($listofbills as $aBill) {
@@ -357,88 +356,6 @@ if (empty($reshook)) {
 				if ($nbwithdrawrequestok > 0) {
 					setEventMessages($langs->trans("WithdrawRequestsDone", $nbwithdrawrequestok), null, 'mesgs');
 				}
-			}
-		}
-	}
-}
-
-
-if ($massaction == 'transfer_request') {
-	$langs->load("withdrawals");
-
-	if (!$user->rights->paymentbybanktransfer->create) {
-		$error++;
-		setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
-	} else {
-		//Checking error
-		$error = 0;
-
-		$arrayofselected = is_array($toselect) ? $toselect : array();
-		$listofbills = array();
-		foreach ($arrayofselected as $toselectid) {
-			$objecttmp = new FactureFournisseur($db);
-			$result = $objecttmp->fetch($toselectid);
-			if ($result > 0) {
-				$totalpaye = $objecttmp->getSommePaiement();
-				$totalcreditnotes = $objecttmp->getSumCreditNotesUsed();
-				$totaldeposits = $objecttmp->getSumDepositsUsed();
-				$objecttmp->resteapayer = price2num($objecttmp->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
-				if ($objecttmp->paye || $objecttmp->resteapayer == 0) {
-					$error++;
-					setEventMessages($objecttmp->ref.' '.$langs->trans("AlreadyPaid"), $objecttmp->errors, 'errors');
-				} elseif ($objecttmp->resteapayer < 0) {
-					$error++;
-					setEventMessages($objecttmp->ref.' '.$langs->trans("AmountMustBePositive"), $objecttmp->errors, 'errors');
-				}
-				if (!($objecttmp->statut > FactureFournisseur::STATUS_DRAFT)) {
-					$error++;
-					setEventMessages($objecttmp->ref.' '.$langs->trans("Draft"), $objecttmp->errors, 'errors');
-				}
-
-				$rsql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande";
-				$rsql .= " , pfd.date_traite as date_traite";
-				$rsql .= " , pfd.amount";
-				$rsql .= " , u.rowid as user_id, u.lastname, u.firstname, u.login";
-				$rsql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-				$rsql .= " , ".MAIN_DB_PREFIX."user as u";
-				$rsql .= " WHERE fk_facture_fourn = ".$objecttmp->id;
-				$rsql .= " AND pfd.fk_user_demande = u.rowid";
-				$rsql .= " AND pfd.traite = 0";
-				$rsql .= " ORDER BY pfd.date_demande DESC";
-
-				$result_sql = $db->query($rsql);
-				if ($result_sql) {
-					$numprlv = $db->num_rows($result_sql);
-				}
-
-				if ($numprlv > 0) {
-					$error++;
-					setEventMessages($objecttmp->ref.' '.$langs->trans("RequestAlreadyDone"), $objecttmp->errors, 'warnings');
-				} elseif (!empty($objecttmp->mode_reglement_code) && $objecttmp->mode_reglement_code != 'VIR') {
-					$error++;
-					setEventMessages($objecttmp->ref.' '.$langs->trans("BadPaymentMethod"), $objecttmp->errors, 'errors');
-				} else {
-					$listofbills[] = $objecttmp; // $listofbills will only contains invoices with good payment method and no request already done
-				}
-			}
-		}
-
-		//Massive withdraw request for request with no errors
-		if (!empty($listofbills)) {
-			$nbwithdrawrequestok = 0;
-			foreach ($listofbills as $aBill) {
-				$db->begin();
-				$result = $aBill->demande_prelevement($user, $aBill->resteapayer, 'bank-transfer', 'supplier_invoice');
-				if ($result > 0) {
-					$db->commit();
-					$nbwithdrawrequestok++;
-				} else {
-					$db->rollback();
-					setEventMessages($aBill->error, $aBill->errors, 'errors');
-				}
-			}
-			if ($nbwithdrawrequestok > 0) {
-				setEventMessages($langs->trans("BankTransferRequestsDone", $nbwithdrawrequestok), null, 'mesgs');
 			}
 		}
 	}
@@ -623,7 +540,7 @@ if ($search_login) {
 	$sql .= natural_search('u.login', $search_login);
 }
 if ($search_status != '' && $search_status >= 0) {
-	$sql .= " AND f.fk_statut = ".$db->escape($search_status);
+	$sql .= " AND f.fk_statut = ".((int) $search_status);
 }
 if ($search_paymentmode > 0) {
 	$sql .= " AND f.fk_mode_reglement = ".((int) $search_paymentmode);
@@ -646,7 +563,7 @@ if ($search_categ_sup == -2) {
 	$sql .= " AND cs.fk_categorie IS NULL";
 }
 if ($search_status != '' && $search_status >= 0) {
-	$sql .= " AND f.fk_statut = ".$search_status;
+	$sql .= " AND f.fk_statut = ".((int) $search_status);
 }
 if ($filter && $filter != -1) {
 	$aFilter = explode(',', $filter);
@@ -857,14 +774,10 @@ if ($resql) {
 		//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 		//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	);
-	if ($conf->paymentbybanktransfer->enabled) {
-			$langs->load("withdrawals");
-			$arrayofmassactions['transfer_request'] = $langs->trans("MakeBankTransferOrder");
-	}
 	//if($user->rights->fournisseur->facture->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
 	if (!empty($conf->paymentbybanktransfer->enabled) && !empty($user->rights->paymentbybanktransfer->create)) {
 		$langs->load('withdrawals');
-		$arrayofmassactions['banktransfertrequest'] = $langs->trans("MakeBankTransferOrder");
+		$arrayofmassactions['banktransfertrequest'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakeBankTransferOrder");
 	}
 	if ($user->rights->fournisseur->facture->supprimer) {
 		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
@@ -876,7 +789,7 @@ if ($resql) {
 
 	$url = DOL_URL_ROOT.'/fourn/facture/card.php?action=create';
 	if (!empty($socid)) {
-		$url .= '&socid='.$socid;
+		$url .= '&socid='.urlencode($socid);
 	}
 	$newcardbutton = dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', $url, '', ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer));
 
