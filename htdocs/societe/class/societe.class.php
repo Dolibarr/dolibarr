@@ -3329,6 +3329,8 @@ class Societe extends CommonObject
 	 */
 	public function setParent($id)
 	{
+		dol_syslog(get_class($this).'::setParent', LOG_DEBUG);
+
 		if ($this->id) {
 			// Check if the id we want to add as parent has not already one parent that is the current id we try to update
 			if ($id > 0) {
@@ -3341,8 +3343,6 @@ class Societe extends CommonObject
 					return -1;
 				}
 			}
-
-			dol_syslog(get_class($this).'::setParent', LOG_DEBUG);
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe SET parent = '.($id > 0 ? $id : 'null').' WHERE rowid = '.((int) $this->id);
 
