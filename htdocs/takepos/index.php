@@ -566,7 +566,7 @@ function Search2(keyCodeForEnter) {
 				$("#prodesc" + i).text(data[i]['label']);
 				$("#prodivdesc" + i).show();
 				$("#probutton" + i).text(data[i]['label']);
-				$("#probutton" + i).show();;
+				$("#probutton" + i).show();
 				if (data[i]['price_formated']) {
 					$("#proprice" + i).attr("class", "productprice");
 					$("#proprice" + i).html(data[i]['price_formated']);
