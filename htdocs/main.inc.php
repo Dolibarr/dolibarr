@@ -2313,7 +2313,7 @@ function top_menu_quickadd()
 		$dropDownQuickAddHtml .= '
                 <!-- Supplier order link -->
                 <div class="quickaddblock center">
-                    <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create" title="'.$langs->trans("NewOrder").'">
+                    <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create" title="'.$langs->trans("NewSupplierOrderShort").'">
                     '. img_picto('', 'object_order') .'<br>'. $langs->trans("SupplierOrder") .'</a>
                 </div>
                 ';
