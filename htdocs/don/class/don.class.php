@@ -390,7 +390,7 @@ class Don extends CommonObject
 		$sql .= ", phone";
 		$sql .= ", phone_mobile";
 		$sql .= ") VALUES (";
-		$sql .= "'".$this->db->idate($now)."'";
+		$sql .= "'".$this->db->idate($this->date ? $this->date : $now)."'";
 		$sql .= ", ".$conf->entity;
 		$sql .= ", ".price2num($this->amount);
 		$sql .= ", ".($this->modepaymentid ? $this->modepaymentid : "null");

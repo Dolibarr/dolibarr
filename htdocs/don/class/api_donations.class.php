@@ -33,7 +33,7 @@ class Donations extends DolibarrApi
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
 	static $FIELDS = array(
-		'socid'
+		'amount'
 	);
 
 	/**
@@ -193,7 +193,7 @@ class Donations extends DolibarrApi
         }*/
 
 		if ($this->don->create(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500, "Error creating order", array_merge(array($this->don->error), $this->don->errors));
+			throw new RestException(500, "Error creating donation", array_merge(array($this->don->error), $this->don->errors));
 		}
 
 		return $this->don->id;
@@ -302,7 +302,7 @@ class Donations extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->don->valid(DolibarrApiAccess::$user, $idwarehouse, $notrigger);
+		$result = $this->don->valid_promesse($id, DolibarrApiAccess::$user->id, $notrigger);
 		if ($result == 0) {
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
@@ -355,7 +355,7 @@ class Donations extends DolibarrApi
 	private function _validate($data)
 	{
 		$don = array();
-		foreach (Orders::$FIELDS as $field) {
+		foreach (Donations::$FIELDS as $field) {
 			if (!isset($data[$field]))
 				throw new RestException(400, $field." field missing");
 			$don[$field] = $data[$field];
