@@ -969,7 +969,7 @@ if (!$variants) {
 			print '<tr class="oddeven">';
 			print '<td colspan="4">';
 			print $entrepotstatic->getNomUrl(1);
-			if (!empty($conf->productbatch->enabled)) {
+			if (!empty($conf->productbatch->enabled) && $object->hasbatch()) {
 				print '<a class="collapse_batch marginleftonly" id="ent' . $entrepotstatic->id . '" href="#">';
 				print (empty($conf->global->STOCK_SHOW_ALL_BATCH_BY_DEFAULT) ? '(+)' : '(-)');
 				print '</a>';
