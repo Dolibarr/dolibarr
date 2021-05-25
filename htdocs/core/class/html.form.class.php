@@ -8208,7 +8208,7 @@ class Form
 		} elseif ($modulepart == 'contact')	{
 			$dir = $conf->societe->multidir_output[$entity].'/contact';
 			if (!empty($object->photo)) {
-				if (dolIsAllowedForPreview($object->logo)) {
+				if (dolIsAllowedForPreview($object->photo)) {
 					if ((string) $imagesize == 'mini') {
 						$file = get_exdir(0, 0, 0, 0, $object, 'contact').'photos/'.getImageFileNameForSize($object->photo, '_mini');
 					} elseif ((string) $imagesize == 'small') {
@@ -8224,7 +8224,7 @@ class Form
 		} elseif ($modulepart == 'userphoto') {
 			$dir = $conf->user->dir_output;
 			if (!empty($object->photo)) {
-				if (dolIsAllowedForPreview($object->logo)) {
+				if (dolIsAllowedForPreview($object->photo)) {
 					if ((string) $imagesize == 'mini') {
 						$file = get_exdir(0, 0, 0, 0, $object, 'user').getImageFileNameForSize($object->photo, '_mini');
 					} elseif ((string) $imagesize == 'small') {
@@ -8243,7 +8243,7 @@ class Form
 		} elseif ($modulepart == 'memberphoto')	{
 			$dir = $conf->adherent->dir_output;
 			if (!empty($object->photo)) {
-				if (dolIsAllowedForPreview($object->logo)) {
+				if (dolIsAllowedForPreview($object->photo)) {
 					if ((string) $imagesize == 'mini') {
 						$file = get_exdir(0, 0, 0, 0, $object, 'member').'photos/'.getImageFileNameForSize($object->photo, '_mini');
 					} elseif ((string) $imagesize == 'small') {
@@ -8263,7 +8263,7 @@ class Form
 			// Generic case to show photos
 			$dir = $conf->$modulepart->dir_output;
 			if (!empty($object->photo)) {
-				if (dolIsAllowedForPreview($object->logo)) {
+				if (dolIsAllowedForPreview($object->photo)) {
 					if ((string) $imagesize == 'mini') {
 						$file = get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.getImageFileNameForSize($object->photo, '_mini');
 					} elseif ((string) $imagesize == 'small') {
