@@ -1986,7 +1986,7 @@ if ($id > 0) {
 		print '	</td></tr>';
 
 		// Done by
-		if ($conf->global->AGENDA_ENABLE_DONEBY) {
+		if (!empty($conf->global->AGENDA_ENABLE_DONEBY)) {
 			print '<tr><td class="nowrap">'.$langs->trans("ActionDoneBy").'</td><td>';
 			if ($object->userdoneid > 0) {
 				$tmpuser = new User($db);
@@ -2080,10 +2080,10 @@ if ($id > 0) {
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 		// Reminders
-		if ($conf->global->AGENDA_REMINDER_EMAIL || $conf->global->AGENDA_REMINDER_BROWSER) {
-			$filtreuserid = $user->id;
+		if (!empty($conf->global->AGENDA_REMINDER_EMAIL) || !empty($conf->global->AGENDA_REMINDER_BROWSER)) {
+			$filteruserid = $user->id;
 			if ($user->rights->agenda->allactions->read) {
-				$filtreuserid = 0;
+				$filteruserid = 0;
 			}
 			$object->loadReminders('', $filteruserid, false);
 
