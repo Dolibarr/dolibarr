@@ -852,7 +852,7 @@ if (empty($reshook)) {
 	// Set parent company
 	if ($action == 'set_thirdparty' && $user->rights->societe->creer) {
 		$object->fetch($socid);
-		$result = $object->set_parent(GETPOST('parent_id', 'int'));
+		$result = $object->setParent(GETPOST('parent_id', 'int'));
 	}
 
 	// Set sales representatives
