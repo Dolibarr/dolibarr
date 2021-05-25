@@ -1006,7 +1006,7 @@ if ($resql) {
 		}
 		if (!empty($arrayfields['a.percent']['checked'])) {
 			// Status/Percent
-			$datep = $db->jdate($obj->datep);
+			$datep = $db->jdate($obj->dp);
 			print '<td align="center" class="nowrap">'.$actionstatic->LibStatut($obj->percent, 5, 0, $datep).'</td>';
 		}
 		// Action column
