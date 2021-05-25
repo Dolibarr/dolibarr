@@ -6924,7 +6924,7 @@ class Form
 		if ($addjscombo && $jsbeautify) {
 			// Enhance with select2
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-			$out .= ajax_combobox($htmlname);
+			$out .= ajax_combobox($htmlname, array(), 0, 0, 'resolve', $show_empty < 0 ? (string) $show_empty : '-1');
 		}
 
 		$out .= '<select id="'.preg_replace('/^\./', '', $htmlname).'" '.($disabled ? 'disabled="disabled" ' : '').'class="flat '.(preg_replace('/^\./', '', $htmlname)).($morecss ? ' '.$morecss : '').'"';
