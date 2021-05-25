@@ -3111,24 +3111,29 @@ class Societe extends CommonObject
 	public function set_parent($id)
 	{
 		// phpcs:enable
+		dol_syslog(get_class($this).'::set_parent', LOG_DEBUG);
+
 		if ($this->id) {
 			// Check if the id we want to add as parent has not already one parent that is the current id we try to update
-			$sameparent	= $this->validateFamilyTree($id, $this->id, 0);
-			if ($sameparent < 0) {
-				return -1;
-			} elseif ($sameparent == 1) {
-				setEventMessages('ParentCompanyToAddIsAlreadyAChildOfModifiedCompany', null, 'warnings');
-				return -1;
-			} else {
-				$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe SET parent = '.($id > 0 ? $id : 'null').' WHERE rowid = '.((int) $this->id);
-				dol_syslog(get_class($this).'::set_parent', LOG_DEBUG);
-				$resql	= $this->db->query($sql);
-				if ($resql) {
-					$this->parent	= $id;
-					return 1;
-				} else {
+			if ($id > 0) {
+				$sameparent	= $this->validateFamilyTree($id, $this->id, 0);
+				if ($sameparent < 0) {
 					return -1;
 				}
+				if ($sameparent == 1) {
+					setEventMessages('ParentCompanyToAddIsAlreadyAChildOfModifiedCompany', null, 'warnings');
+					return -1;
+				}
+			}
+
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe SET parent = '.($id > 0 ? $id : 'null').' WHERE rowid = '.((int) $this->id);
+
+			$resql	= $this->db->query($sql);
+			if ($resql) {
+				$this->parent = $id;
+				return 1;
+			} else {
+				return -1;
 			}
 		} else {
 			return -1;
