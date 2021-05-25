@@ -159,11 +159,11 @@ if ($action == 'export_csv')
 
 	foreach ($object->lines as $line)
 	{
-		print length_accountg($line->numero_compte).$sep;
-		print $object->get_compte_desc($line->numero_compte).$sep;
-		print price($line->debit).$sep;
-		print price($line->credit).$sep;
-		print price($line->debit - $line->credit).$sep;
+		print '"'.length_accountg($line->numero_compte).'"'.$sep;
+		print '"'.$object->get_compte_desc($line->numero_compte).'"'.$sep;
+		print '"'.price($line->debit).'"'.$sep;
+		print '"'.price($line->credit).'"'.$sep;
+		print '"'.price($line->debit - $line->credit).'"'.$sep;
 		print "\n";
 	}
 
