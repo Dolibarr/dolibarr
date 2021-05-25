@@ -82,7 +82,16 @@ if ((!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('productpricecard', 'globalcard'));
 
-$result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
+if ($object->id > 0) {
+	if ($object->type == $object::TYPE_PRODUCT) {
+		restrictedArea($user, 'produit', $object->id, 'product&product', '', '');
+	}
+	if ($object->type == $object::TYPE_SERVICE) {
+		restrictedArea($user, 'service', $object->id, 'product&product', '', '');
+	}
+} else {
+	restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
+}
 
 
 /*
@@ -1470,7 +1479,6 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action == 'showlog_defaul
 			}
 
 			print '<td class="center">'.$langs->trans("PriceBase").'</td>';
-			print $conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL;
 			if (empty($conf->global->PRODUIT_MULTIPRICES) && empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
 				print '<td class="right">'.$langs->trans("DefaultTaxRate").'</td>';
 			}

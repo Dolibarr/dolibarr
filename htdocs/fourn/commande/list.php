@@ -1284,6 +1284,7 @@ if ($resql) {
 		$objectstatic->id = $obj->rowid;
 		$objectstatic->ref = $obj->ref;
 		$objectstatic->ref_supplier = $obj->ref_supplier;
+		$objectstatic->socid = $obj->socid;
 		$objectstatic->total_ht = $obj->total_ht;
 		$objectstatic->total_tva = $obj->total_tva;
 		$objectstatic->total_ttc = $obj->total_ttc;

@@ -50,7 +50,13 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 	margin-bottom: 1.4em;
 }*/
 div.tabsAction > a.butAction, div.tabsAction > a.butActionRefused, div.tabsAction > a.butActionDelete,
-div.tabsAction > span.butAction, div.tabsAction > span.butActionRefused, div.tabsAction > span.butActionDelete {
+div.tabsAction > span.butAction, div.tabsAction > span.butActionRefused, div.tabsAction > span.butActionDelete,
+div.tabsAction > div.divButAction > span.butAction,
+div.tabsAction > div.divButAction > span.butActionDelete,
+div.tabsAction > div.divButAction > span.butActionRefused,
+div.tabsAction > div.divButAction > a.butAction,
+div.tabsAction > div.divButAction > a.butActionDelete,
+div.tabsAction > div.divButAction > a.butActionRefused {
 	margin-bottom: 1.4em !important;
 	margin-right: 0px !important;
 }
@@ -301,6 +307,23 @@ div.pagination li:first-child a.btnTitle{
 		min-width: unset;
 	}
 }
+
+/* rule to reduce top menu - 3rd reduction: The menu for user is on left */
+@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
+{
+	.butAction, .butActionRefused, .butActionDelete {
+		font-size: 0.9em;
+	}
+}
+
+/* smartphone */
+@media only screen and (max-width: 767px)
+{
+	.butAction, .butActionRefused, .butActionDelete {
+		font-size: 0.85em;
+	}
+}
+
 
 <?php if (!empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED) && (!$user->admin)) { ?>
 .butActionRefused, .butActionNewRefused, .btnTitle.refused {

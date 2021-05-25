@@ -66,22 +66,18 @@ class FormProduct
 	 *                      				    'warehouseclosed' = select products from closed warehouses,
 	 *                      				    'warehouseinternal' = select products from warehouses for internal correct/transfer only
 	 * @param	boolean	    $sumStock		    sum total stock of a warehouse, default true
-	 * @param	string      $exclude            warehouses ids to exclude
+	 * @param	array       $exclude            warehouses ids to exclude
 	 * @param   bool|int    $stockMin           [=false] Value of minimum stock to filter or false not not filter by minimum stock
 	 * @param   string      $orderBy            [='e.ref'] Order by
 	 * @return  int                             Nb of loaded lines, 0 if already loaded, <0 if KO
 	 * @throws  Exception
 	 */
-	public function loadWarehouses($fk_product = 0, $batch = '', $status = '', $sumStock = true, $exclude = '', $stockMin = false, $orderBy = 'e.ref')
+	public function loadWarehouses($fk_product = 0, $batch = '', $status = '', $sumStock = true, $exclude = array(), $stockMin = false, $orderBy = 'e.ref')
 	{
 		global $conf, $langs;
 
 		if (empty($fk_product) && count($this->cache_warehouses)) {
 			return 0; // Cache already loaded and we do not want a list with information specific to a product
-		}
-
-		if (is_array($exclude)) {
-			$excludeGroups = implode("','", $exclude);
 		}
 
 		$warehouseStatus = array();
@@ -121,7 +117,7 @@ class FormProduct
 			$sql .= " AND e.statut = 1";
 		}
 
-		if (!empty($exclude)) {
+		if (is_array($exclude) && !empty($exclude)) {
 			$sql .= ' AND e.rowid NOT IN('.$this->db->sanitize(implode(',', $exclude)).')';
 		}
 
@@ -220,7 +216,7 @@ class FormProduct
 	 *  @param	int	    	$forcecombo		    1=Force combo iso ajax select2
 	 *  @param	array	    $events			            Events to add to select2
 	 *  @param  string      $morecss                    Add more css classes to HTML select
-	 *  @param	string	    $exclude            Warehouses ids to exclude
+	 *  @param	array	    $exclude            Warehouses ids to exclude
 	 *  @param  int         $showfullpath       1=Show full path of name (parent ref into label), 0=Show only ref of current warehouse
 	 *  @param  bool|int    $stockMin           [=false] Value of minimum stock to filter or false not not filter by minimum stock
 	 *  @param  string      $orderBy            [='e.ref'] Order by
@@ -228,7 +224,7 @@ class FormProduct
 	 *
 	 *  @throws Exception
 	 */
-	public function selectWarehouses($selected = '', $htmlname = 'idwarehouse', $filterstatus = '', $empty = 0, $disabled = 0, $fk_product = 0, $empty_label = '', $showstock = 0, $forcecombo = 0, $events = array(), $morecss = 'minwidth200', $exclude = '', $showfullpath = 1, $stockMin = false, $orderBy = 'e.ref')
+	public function selectWarehouses($selected = '', $htmlname = 'idwarehouse', $filterstatus = '', $empty = 0, $disabled = 0, $fk_product = 0, $empty_label = '', $showstock = 0, $forcecombo = 0, $events = array(), $morecss = 'minwidth200', $exclude = array(), $showfullpath = 1, $stockMin = false, $orderBy = 'e.ref')
 	{
 		global $conf, $langs, $user, $hookmanager;
 

@@ -152,7 +152,17 @@ if (!empty($canvas)) {
 // Security check
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
 $fieldtype = (!empty($id) ? 'rowid' : 'ref');
-$result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
+
+if ($object->id > 0) {
+	if ($object->type == $object::TYPE_PRODUCT) {
+		restrictedArea($user, 'produit', $object->id, 'product&product', '', '');
+	}
+	if ($object->type == $object::TYPE_SERVICE) {
+		restrictedArea($user, 'service', $object->id, 'product&product', '', '');
+	}
+} else {
+	restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
+}
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('productcard', 'globalcard'));
@@ -332,6 +342,8 @@ if (empty($reshook)) {
 			$object->customcode              = GETPOST('customcode', 'alphanohtml');
 			$object->country_id = GETPOST('country_id', 'int');
 			$object->state_id = GETPOST('state_id', 'int');
+			$object->lifetime               = GETPOST('lifetime', 'int');
+			$object->qc_frequency           = GETPOST('qc_frequency', 'int');
 			$object->duration_value     	 = $duration_value;
 			$object->duration_unit      	 = $duration_unit;
 			$object->fk_default_warehouse	 = GETPOST('fk_default_warehouse');
@@ -473,6 +485,8 @@ if (empty($reshook)) {
 				$object->customcode             = GETPOST('customcode', 'alpha');
 				$object->country_id = GETPOST('country_id', 'int');
 				$object->state_id = GETPOST('state_id', 'int');
+				$object->lifetime               = GETPOST('lifetime', 'int');
+				$object->qc_frequency           = GETPOST('qc_frequency', 'int');
 				$object->status                 = GETPOST('statut', 'int');
 				$object->status_buy             = GETPOST('statut_buy', 'int');
 				$object->status_batch = GETPOST('status_batch', 'aZ09');
@@ -1177,7 +1191,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if ($type != 1 && !empty($conf->stock->enabled)) {
 			// Default warehouse
 			print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
-			print img_picto($langs->trans("DefaultWarehouse"), 'stock', 'pictofixedwidth');
+			print img_picto($langs->trans("DefaultWarehouse"), 'stock', 'class="pictofixedwidth"');
 			print $formproduct->selectWarehouses(GETPOST('fk_default_warehouse'), 'fk_default_warehouse', 'warehouseopen', 1);
 			print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit').'">';
 			print '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span>';
@@ -1293,6 +1307,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			print '</tr>';
+		}
+
+		// Quality control
+		if (!empty($conf->global->PRODUCT_LOT_ENABLE_QUALITY_CONTROL)) {
+			print '<tr><td>'.$langs->trans("LifeTime").'</td><td><input name="lifetime" class="maxwidth100onsmartphone" value="'.GETPOST('lifetime').'"></td></tr>';
+			print '<tr><td>'.$langs->trans("QCFrequency").'</td><td><input name="qc_frequency" class="maxwidth100onsmartphone" value="'.GETPOST('qc_frequency').'"></td></tr>';
 		}
 
 		// Other attributes
@@ -1530,7 +1550,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$object->country = $tmparray['label'];
 			}
 
-
 			$type = $langs->trans('Product');
 			if ($object->isService()) {
 				$type = $langs->trans('Service');
@@ -1599,10 +1618,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						$tooltip .= $langs->trans("GenericMaskCodes5");
 						print '<td id="mask_option">'.$langs->trans("ManageLotMask").'</td>';
 						if ($object->status_batch == '1' && $conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced') {
-							$mask = !is_empty($object->batch_mask) ? $object->batch_mask : $conf->global->LOT_ADVANCED_MASK;
+							$mask = ! empty($object->batch_mask) ? $object->batch_mask : $conf->global->LOT_ADVANCED_MASK;
 						}
 						if ($object->status_batch == '2' && $conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced') {
-							$mask = !is_empty($object->batch_mask) ? $object->batch_mask : $conf->global->SN_ADVANCED_MASK;
+							$mask = ! empty($object->batch_mask) ? $object->batch_mask : $conf->global->SN_ADVANCED_MASK;
 						}
 						$inherited_mask_lot = $conf->global->LOT_ADVANCED_MASK;
 						$inherited_mask_sn = $conf->global->SN_ADVANCED_MASK;
@@ -1791,6 +1810,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '</td>';
 				}
 				print '</tr>';
+			}
+
+			// Quality control
+			if (!empty($conf->global->PRODUCT_LOT_ENABLE_QUALITY_CONTROL)) {
+				print '<tr><td>'.$langs->trans("LifeTime").'</td><td><input name="lifetime" class="maxwidth100onsmartphone" value="'.$object->lifetime.'"></td></tr>';
+				print '<tr><td>'.$langs->trans("QCFrequency").'</td><td><input name="qc_frequency" class="maxwidth100onsmartphone" value="'.$object->qc_frequency.'"></td></tr>';
 			}
 
 			// Other attributes
@@ -2268,6 +2293,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print ' - '.getState($object->state_id, 0, $db);
 				}
 				print '</td>';
+			}
+
+			// Quality Control
+			if (!empty($conf->global->PRODUCT_LOT_ENABLE_QUALITY_CONTROL)) {
+				print '<tr><td>'.$langs->trans("LifeTime").'</td><td colspan="2">'.$object->lifetime.'</td></tr>';
+				print '<tr><td>'.$langs->trans("QCFrequency").'</td><td colspan="2">'.$object->qc_frequency.'</td></tr>';
 			}
 
 			// Other attributes

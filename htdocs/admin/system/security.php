@@ -40,6 +40,8 @@ if (GETPOST('action', 'aZ09') == 'donothing') {
 	exit;
 }
 
+$execmethod = empty($conf->global->MAIN_EXEC_USE_POPEN) ? 1 : $conf->global->MAIN_EXEC_USE_POPEN;
+
 
 /*
  * View
@@ -74,7 +76,13 @@ print "<strong>PHP allow_url_include</strong> = ".(ini_get('allow_url_include') 
 print "<strong>PHP disable_functions</strong> = ";
 $arrayoffunctionsdisabled = explode(',', ini_get('disable_functions'));
 $arrayoffunctionstodisable = explode(',', 'pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,pcntl_wifexited,pcntl_wifstopped,pcntl_wifsignaled,pcntl_wifcontinued,pcntl_wexitstatus,pcntl_wtermsig,pcntl_wstopsig,pcntl_signal,pcntl_signal_get_handler,pcntl_signal_dispatch,pcntl_get_last_error,pcntl_strerror,pcntl_sigprocmask,pcntl_sigwaitinfo,pcntl_sigtimedwait,pcntl_exec,pcntl_getpriority,pcntl_setpriority,pcntl_async_signals');
-$arrayoffunctionstodisable2 = explode(',', 'exec,passthru,shell_exec,system,proc_open,popen');
+if ($execmethod == 1) {
+	$arrayoffunctionstodisable2 = explode(',', 'passthru,shell_exec,system,proc_open,popen');
+	$functiontokeep = 'exec';
+} else {
+	$arrayoffunctionstodisable2 = explode(',', 'exec,passthru,shell_exec,system,proc_open');
+	$functiontokeep = 'popen';
+}
 $i = 0;
 foreach ($arrayoffunctionsdisabled as $functionkey) {
 	if ($i > 0) {
@@ -115,6 +123,13 @@ if ($todisabletext) {
 	print '<br>';
 }
 
+print $langs->trans("PHPFunctionsRequiredForCLI").': ';
+if (in_array($functiontokeep, $arrayoffunctionsdisabled)) {
+	print img_picto($langs->trans("PHPFunctionsRequiredForCLI"), 'warning');
+}
+print '<span class="opacitymedium">'.$functiontokeep.'</span>';
+print '<br>';
+
 print '<br>';
 
 // XDebug
@@ -140,7 +155,7 @@ print '<strong>'.$langs->trans("PermissionsOnFilesInWebRoot").'</strong>: ';
 $arrayoffilesinroot = dol_dir_list(DOL_DOCUMENT_ROOT, 'all', 1, '', array('\/custom'), 'name', SORT_ASC, 4, 1, '', 1);
 $fileswithwritepermission = array();
 foreach ($arrayoffilesinroot as $fileinroot) {
-	// Test permission on file
+	// Test if there is at least one write permission file. If yes, add the entry into array $fileswithwritepermission
 	if ($fileinroot['perm'] & 0222) {
 		$fileswithwritepermission[] = $fileinroot['relativename'];
 	}
@@ -202,7 +217,7 @@ print '<br>';
 
 print '<strong>$dolibarr_nocsrfcheck</strong>: '.$dolibarr_nocsrfcheck;
 if (!empty($dolibarr_nocsrfcheck)) {
-	print img_picto('', 'warning').' &nbsp;  '.$langs->trans("IfYouAreOnAProductionSetThis", 0);
+	print ' &nbsp; '.img_picto('', 'warning').' '.$langs->trans("IfYouAreOnAProductionSetThis", 0);
 }
 print '<br>';
 
@@ -219,16 +234,18 @@ print '<br>';
 print '<br>';
 print '<br>';
 print '<br>';
-print load_fiche_titre($langs->trans("Menu").' '.$langs->trans("SecuritySetup"), '', 'folder');
+print load_fiche_titre($langs->trans("Menu").' '.$langs->trans("SecuritySetup").' + '.$langs->trans("OtherSetup"), '', 'folder');
 
 //print '<strong>'.$langs->trans("PasswordEncryption").'</strong>: ';
 print '<strong>MAIN_SECURITY_HASH_ALGO</strong> = '.(empty($conf->global->MAIN_SECURITY_HASH_ALGO) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_HASH_ALGO)." &nbsp; ";
 if (empty($conf->global->MAIN_SECURITY_HASH_ALGO)) {
 	print '<span class="opacitymedium"> &nbsp; &nbsp; If unset: \'md5\'</span>';
 }
-print '<br>';
 if ($conf->global->MAIN_SECURITY_HASH_ALGO != 'password_hash') {
-	print '<strong>MAIN_SECURITY_SALT</strong> = '.(empty($conf->global->MAIN_SECURITY_SALT) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_SALT).'<br>';
+	print '<br><strong>MAIN_SECURITY_SALT</strong> = '.(empty($conf->global->MAIN_SECURITY_SALT) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_SALT).'<br>';
+} else {
+	print '<span class="opacitymedium">('.$langs->trans("Recommanded").': password_hash)</span>';
+	print '<br>';
 }
 if ($conf->global->MAIN_SECURITY_HASH_ALGO != 'password_hash') {
 	print '<div class="info">The recommanded value for MAIN_SECURITY_HASH_ALGO is now \'password_hash\' but setting it now will make ALL existing passwords of all users not valid, so update is not possible.<br>';
@@ -242,6 +259,24 @@ print '<br>';
 
 
 print '<strong>MAIN_SECURITY_ANTI_SSRF_SERVER_IP</strong> = '.(empty($conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP)."<br>";
+print '<br>';
+
+print '<strong>MAIN_ALLOW_SVG_FILES_AS_IMAGES</strong> = '.(empty($conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES) ? '0 &nbsp; <span class="opacitymedium">('.$langs->trans("Recommanded").': 0)</span>' : $conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES)."<br>";
+print '<br>';
+
+print '<strong>MAIN_EXEC_USE_POPEN</strong> = ';
+if (empty($conf->global->MAIN_EXEC_USE_POPEN)) {
+	print '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>';
+} else {
+	print $conf->global->MAIN_EXEC_USE_POPEN;
+}
+if ($execmethod == 1) {
+	print ' &nbsp; <span class="opacitymedium">("exec" PHP method will be used for shell commands)</span>';
+}
+if ($execmethod == 2) {
+	print ' &nbsp; <span class="opacitymedium">("popen" PHP method will be used for shell commands)</span>';
+}
+print "<br>";
 print '<br>';
 
 

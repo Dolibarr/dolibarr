@@ -454,7 +454,7 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 					templateResult: function (data, container) {	/* Format visible output into combo list */
 	 					/* Code to add class of origin OPTION propagated to the new select2 <li> tag */
 						if (data.element) { $(container).addClass($(data.element).attr("class")); }
-					    console.log($(data.element).attr("data-html"));
+					    //console.log($(data.element).attr("data-html"));
 					    if (data.id == -1 && $(data.element).attr("data-html") == undefined) {
 							return \'&nbsp;\';
 						}

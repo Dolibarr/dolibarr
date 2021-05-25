@@ -1083,7 +1083,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 			} else {
 				$filetpl = $pathofwebsite.'/page'.$pageid.'.tpl.php';
 
-				// Generate the index.php page (to be the home page) and wrapper.php file
+				// Generate the index.php page (to be the home page) and the wrapper.php file
 				$result = dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper);
 
 				if ($result <= 0) {
@@ -1315,7 +1315,7 @@ if (!GETPOSTISSET('pageid')) {
 	}
 }
 
-// Update css Update site properties
+// Update css site properties. Re-generates also the wrapper.
 if ($action == 'updatecss' && $usercanedit) {
 	// If we tried to reload another site/page, we stay on editcss mode.
 	if (GETPOST('refreshsite') || GETPOST('refreshsite_x') || GETPOST('refreshsite.x') || GETPOST('refreshpage') || GETPOST('refreshpage_x') || GETPOST('refreshpage.x')) {
@@ -2389,6 +2389,18 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 						$url->appendChild($xhtmllink);
 					}
 				}
+
+				// Now add sitempas extension for news
+				// TODO When adding and when not ?
+				/*<news:news>
+				   <news:publication>
+					 <news:name>The Example Times</news:name>
+					 <news:language>en</news:language>
+				   </news:publication>
+				   <news:publication_date>2008-12-23</news:publication_date>
+					 <news:title>Companies A, B in Merger Talks</news:title>
+					</news:news>
+				*/
 
 				$root->appendChild($url);
 				$i++;

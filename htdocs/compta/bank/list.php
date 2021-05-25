@@ -503,6 +503,7 @@ print "</tr>\n";
 
 
 $totalarray = array();
+$totalarray['nbfield'] = 0;
 $found = 0;
 $i = 0;
 $lastcurrencycode = '';

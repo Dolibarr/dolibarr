@@ -81,8 +81,6 @@ if (!empty($batchnumber)) {
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'produit&stock', $id, 'product&product', '', '', $fieldid);
-
 
 $object = new Product($db);
 $extrafields = new ExtraFields($db);
@@ -113,6 +111,17 @@ if (!empty($canvas)) {
 $hookmanager->initHooks(array('stockproductcard', 'globalcard'));
 
 $error = 0;
+
+if ($object->id > 0) {
+	if ($object->type == $object::TYPE_PRODUCT) {
+		restrictedArea($user, 'produit', $object->id, 'product&product', '', '');
+	}
+	if ($object->type == $object::TYPE_SERVICE) {
+		restrictedArea($user, 'service', $object->id, 'product&product', '', '');
+	}
+} else {
+	restrictedArea($user, 'produit|service', $id, 'product&product', '', '', $fieldid);
+}
 
 
 /*

@@ -410,7 +410,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->fourn
 		$error++;
 	} else {
 		// If module stock is enabled and the stock increase is done on purchase order dispatching
-		if ($entrepot > 0 && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
+		if ($entrepot > 0 && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) && empty($supplierorderdispatch->fk_reception)) {
 			$mouv = new MouvementStock($db);
 			if ($product > 0) {
 				$mouv->origin = &$object;
@@ -1235,7 +1235,7 @@ if ($id > 0 || !empty($ref)) {
 					}
 				} else {
 					$warehouse_static->id = $objp->warehouse_id;
-					$warehouse_static->libelle = $objp->entrepot;
+					$warehouse_static->label = $objp->entrepot;
 					print $warehouse_static->getNomUrl(1);
 				}
 				print '</td>';
@@ -1287,19 +1287,22 @@ if ($id > 0 || !empty($ref)) {
 					}
 					print '</td>';
 				}
-
 				if ($action != 'editline' || $lineid != $objp->dispatchlineid) {
-					print '<td class="linecoledit center">';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;lineid='.$objp->dispatchlineid.'#line_'.$objp->dispatchlineid.'">';
-					print img_edit();
-					print '</a>';
-					print '</td>';
+					if (empty($reception->id) || ($reception->statut == Reception::STATUS_DRAFT)) { // only allow edit on draft reception
+						print '<td class="linecoledit center">';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;lineid='.$objp->dispatchlineid.'#line_'.$objp->dispatchlineid.'">';
+						print img_edit();
+						print '</a>';
+						print '</td>';
 
-					print '<td class="linecoldelete center">';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=ask_deleteline&amp;lineid='.$objp->dispatchlineid.'#dispatch_received_products">';
-					print img_delete();
-					print '</a>';
-					print '</td>';
+						print '<td class="linecoldelete center">';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=ask_deleteline&amp;lineid='.$objp->dispatchlineid.'#dispatch_received_products">';
+						print img_delete();
+						print '</a>';
+						print '</td>';
+					} else {
+						print '<td></td><td></td>';
+					}
 				} else {
 					print '<td class="center valignmiddle">';
 					print '<input type="submit" class="button button-save" id="savelinebutton" name="save" value="'.$langs->trans("Save").'" />';

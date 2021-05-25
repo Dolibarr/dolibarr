@@ -1955,7 +1955,7 @@ class FactureFournisseur extends CommonInvoice
 			$this->line->remise_percent = $remise_percent;
 			$this->line->date_start = $date_start;
 			$this->line->date_end = $date_end;
-			$this->line->ventil = $ventil;
+			$this->line->fk_code_ventilation = $ventil;
 			$this->line->rang = $rang;
 			$this->line->info_bits = $info_bits;
 			$this->line->fk_remise_except = $fk_remise_except;

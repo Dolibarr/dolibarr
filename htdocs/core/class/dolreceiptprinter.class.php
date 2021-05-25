@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015-2019  Frédéric France     <frederic.france@netlogic.fr>
+/* Copyright (C) 2015-2021  Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Andreu Bisquerra    <jove@bisquerra.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -224,6 +224,7 @@ class dolReceiptPrinter extends Printer
 			'dol_value_vendor_lastname' => 'VendorLastname',
 			'dol_value_vendor_firstname' => 'VendorFirstname',
 			'dol_value_vendor_mail' => 'VendorEmail',
+			'dol_value_place' => 'DOL_VALUE_PLACE',
 		);
 	}
 
@@ -825,6 +826,14 @@ class dolReceiptPrinter extends Printer
 								}
 								$i++;
 							}
+						}
+						break;
+					case 'DOL_VALUE_PLACE':
+							$sql = "SELECT floor, label FROM ".MAIN_DB_PREFIX."takepos_floor_tables where rowid=".((int) str_replace(")", "", str_replace("(PROV-POS".$_SESSION["takeposterminal"]."-", "", $object->ref)));
+							$resql = $this->db->query($sql);
+							$obj = $this->db->fetch_object($resql);
+						if ($obj) {
+							$this->printer->text($obj->label);
 						}
 						break;
 					default:

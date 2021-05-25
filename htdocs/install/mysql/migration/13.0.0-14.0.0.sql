@@ -64,6 +64,10 @@ ALTER TABLE llx_export_model MODIFY COLUMN type varchar(64);
 
 -- For v14
 
+ALTER TABLE llx_product_lot ADD COLUMN eol_date datetime NULL;
+ALTER TABLE llx_product_lot ADD COLUMN manufacturing_date datetime NULL;
+ALTER TABLE llx_product_lot ADD COLUMN scrapping_date datetime NULL;
+
 create table llx_accounting_groups_account
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
@@ -403,6 +407,8 @@ UPDATE llx_propal SET date_signature = date_cloture WHERE date_signature IS NULL
 
 
 ALTER TABLE llx_product ADD COLUMN batch_mask VARCHAR(32) NULL;
+ALTER TABLE llx_product ADD COLUMN lifetime INTEGER NULL;
+ALTER TABLE llx_product ADD COLUMN qc_frequency INTEGER NULL;
 
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (210, 'conferenceorbooth', 'internal', 'MANAGER',  'Conference or Booth manager', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (211, 'conferenceorbooth', 'external', 'SPEAKER',   'Conference Speaker', 1);
@@ -460,14 +466,14 @@ ALTER TABLE llx_facture_fourn ADD COLUMN fk_user_closing integer DEFAULT NULL af
 
 ALTER TABLE llx_entrepot ADD COLUMN fk_project INTEGER DEFAULT NULL AFTER entity; -- project associated to warehouse if any
 
--- Add external payement suport for donation
+-- Add external payment support for donation
 ALTER TABLE llx_payment_donation ADD COLUMN ext_payment_site  varchar(128) AFTER note;
 ALTER TABLE llx_payment_donation ADD COLUMN ext_payment_id  varchar(128) AFTER note;
 
 -- Rebuild sequence for postgres only after query INSERT INTO llx_salary(rowid, ...
 -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
-UPDATE llx_const SET value = 'github' WHERE __DECRYPT('name')__ = 'MAIN_BUGTRACK_ENABLELINK' AND __DECRYPT('value')__ = 1;
+UPDATE llx_const SET type = 'chaine', value = __ENCRYPT('github')__ WHERE __DECRYPT('name')__ = 'MAIN_BUGTRACK_ENABLELINK' AND __DECRYPT('value')__ = 1;
 
 ALTER TABLE llx_facture_fourn_det ADD COLUMN fk_remise_except integer DEFAULT NULL after remise_percent;
 ALTER TABLE llx_facture_fourn_det ADD UNIQUE INDEX uk_fk_remise_except (fk_remise_except, fk_facture_fourn);
@@ -485,10 +491,16 @@ CREATE TABLE llx_knowledgemanagement_knowledgerecord(
 	import_key varchar(14), 
 	model_pdf varchar(255), 
 	question text NOT NULL, 
-	answer text, 
+	answer text,
+	url varchar(255),
+	fk_ticket integer,
 	status integer NOT NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
+
+ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD COLUMN fk_ticket integer;
+ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD COLUMN url varchar(255);
+
 
 create table llx_knowledgemanagement_knowledgerecord_extrafields
 (

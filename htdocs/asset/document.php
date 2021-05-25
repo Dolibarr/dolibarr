@@ -40,12 +40,6 @@ $socid = GETPOST('socid', 'int');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result=restrictedArea($user, 'asset', $id, '');
-
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -68,6 +62,14 @@ $object = new Asset($db);
 if ($object->fetch($id)) {
 	$upload_dir = $conf->asset->dir_output."/".dol_sanitizeFileName($object->ref);
 }
+
+$permissiontoadd = $user->rights->asset->write; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
+
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result=restrictedArea($user, 'asset', $id, '');
 
 
 /*

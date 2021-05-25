@@ -482,9 +482,9 @@ function getNumberInvoicesPieChart($mode)
 		$sql = "SELECT sum(".$db->ifsql("f.date_lim_reglement < '".date_format($datenowsub30, 'Y-m-d')."'", 1, 0).") as nblate30";
 		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement < '".date_format($datenowsub15, 'Y-m-d')."'", 1, 0).") as nblate15";
 		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement < '".date_format($now, 'Y-m-d')."'", 1, 0).") as nblatenow";
-		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement > '".date_format($datenowadd30, 'Y-m-d')."'", 1, 0).") as nbnotlate30";
-		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement > '".date_format($datenowadd15, 'Y-m-d')."'", 1, 0).") as nbnotlate15";
 		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement >= '".date_format($now, 'Y-m-d')."'", 1, 0).") as nbnotlatenow";
+		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement > '".date_format($datenowadd15, 'Y-m-d')."'", 1, 0).") as nbnotlate15";
+		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement > '".date_format($datenowadd30, 'Y-m-d')."'", 1, 0).") as nbnotlate30";
 		if ($mode == 'customers') {
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 		} elseif ($mode == 'fourn') {
@@ -513,7 +513,8 @@ function getNumberInvoicesPieChart($mode)
 			foreach ($dataseries as $key=>$value) {
 				$total+=$value[1];
 			}
-			$colorseries = array($badgeStatus8, $badgeStatus1, $badgeStatus3, $badgeStatus2, $badgeStatus4, $badgeStatus11);
+
+			$colorseries = array($badgeStatus8, $badgeStatus1, $badgeStatus3, $badgeStatus4, $badgeStatus11, '-'.$badgeStatus11);
 			if ($conf->use_javascript_ajax) {
 				$result = '<div class="div-table-responsive-no-min">';
 				$result .= '<table class="noborder nohover centpercent">';

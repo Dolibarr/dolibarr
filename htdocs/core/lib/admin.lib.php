@@ -906,7 +906,7 @@ function listOfSessions()
 
 					if (preg_match('/dol_login/i', $sessValues) && // limit to dolibarr session
 						(preg_match('/dol_entity\|i:'.$conf->entity.';/i', $sessValues) || preg_match('/dol_entity\|s:([0-9]+):"'.$conf->entity.'"/i', $sessValues)) && // limit to current entity
-					preg_match('/dol_company\|s:([0-9]+):"('.$conf->global->MAIN_INFO_SOCIETE_NOM.')"/i', $sessValues)) { // limit to company name
+					preg_match('/dol_company\|s:([0-9]+):"('.getDolGlobalString('MAIN_INFO_SOCIETE_NOM').')"/i', $sessValues)) { // limit to company name
 						$tmp = explode('_', $file);
 						$idsess = $tmp[1];
 						$regs = array();
@@ -1545,6 +1545,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
 		print '<input type="hidden" name="action" value="updateall">';
 	}
 
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td class="">'.$langs->trans("Description").'</td>';
@@ -1715,6 +1716,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
 		}
 	}
 	print '</table>';
+	print '</div>';
 
 	if (!empty($strictw3c) && $strictw3c == 1) {
 		print '<div align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
