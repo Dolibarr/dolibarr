@@ -450,8 +450,6 @@ if (empty($reshook)) {
 		$object->fetch(GETPOST('id', 'int'));
 
 		foreach ($object->array_options as $attributekey => $value) {
-			$attributekeylong = 'options_'.$attributekey;
-
 			if (GETPOSTISSET($attributekey.'day') && GETPOSTISSET($attributekey.'month') && GETPOSTISSET($attributekey.'year')) {
 				// This is properties of a date
 				$object->array_options[$attributekey] = dol_mktime(GETPOST($attributekey.'hour', 'int'), GETPOST($attributekey.'min', 'int'), GETPOST($attributekey.'sec', 'int'), GETPOST($attributekey.'month', 'int'), GETPOST($attributekey.'day', 'int'), GETPOST($attributekey.'year', 'int'));
