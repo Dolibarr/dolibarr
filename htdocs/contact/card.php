@@ -77,12 +77,6 @@ if (!empty($canvas)) {
 	$objcanvas->getCanvas('contact', 'contactcard', $canvas);
 }
 
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', 0); // If we create a contact with no company (shared contacts), no check on write permission
-
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('contactcard', 'globalcard'));
 
@@ -95,6 +89,16 @@ if (!($object->id > 0) && $action == 'view') {
 	print($langs->trans('ErrorRecordNotFound'));
 	exit;
 }
+
+$triggermodname = 'CONTACT_MODIFY';
+$permissiontoadd = $user->rights->societe->contact->creer;
+
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', 0); // If we create a contact with no company (shared contacts), no check on write permission
+
 
 /*
  *	Actions
@@ -144,7 +148,7 @@ if (empty($reshook)) {
 
 
 	// Confirmation desactivation
-	if ($action == 'disable') {
+	if ($action == 'disable' && !empty($permissiontoadd)) {
 		$object->fetch($id);
 		if ($object->setstatus(0) < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -155,7 +159,7 @@ if (empty($reshook)) {
 	}
 
 	// Confirmation activation
-	if ($action == 'enable') {
+	if ($action == 'enable' && !empty($permissiontoadd)) {
 		$object->fetch($id);
 		if ($object->setstatus(1) < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -166,7 +170,7 @@ if (empty($reshook)) {
 	}
 
 	// Add contact
-	if ($action == 'add' && $user->rights->societe->contact->creer) {
+	if ($action == 'add' && !empty($permissiontoadd)) {
 		$db->begin();
 
 		if ($canvas) {
@@ -307,7 +311,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update' && empty($cancel) && $user->rights->societe->contact->creer) {
+	if ($action == 'update' && empty($cancel) && !empty($permissiontoadd)) {
 		if (!GETPOST("lastname", 'alpha')) {
 			$error++; $errors = array($langs->trans("ErrorFieldRequired", $langs->transnoentities("Name").' / '.$langs->transnoentities("Label")));
 			$action = 'edit';
@@ -457,7 +461,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'setprospectcontactlevel' && $user->rights->societe->contact->creer) {
+	if ($action == 'setprospectcontactlevel' && !empty($permissiontoadd)) {
 		$object->fetch($id);
 		$object->fk_prospectlevel = GETPOST('prospect_contact_level_id', 'alpha');
 		$result = $object->update($object->id, $user);
@@ -467,12 +471,37 @@ if (empty($reshook)) {
 	}
 
 	// set communication status
-	if ($action == 'setstcomm') {
+	if ($action == 'setstcomm' && !empty($permissiontoadd)) {
 		$object->fetch($id);
 		$object->stcomm_id = dol_getIdFromCode($db, GETPOST('stcomm', 'alpha'), 'c_stcommcontact');
 		$result = $object->update($object->id, $user);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+
+	// Update extrafields
+	if ($action == "update_extras" && !empty($permissiontoadd)) {
+		$object->fetch(GETPOST('id', 'int'));
+
+		$attributekey = GETPOST('attribute', 'alpha');
+		$attributekeylong = 'options_'.$attributekey;
+
+		if (GETPOSTISSET($attributekeylong.'day') && GETPOSTISSET($attributekeylong.'month') && GETPOSTISSET($attributekeylong.'year')) {
+			// This is properties of a date
+			$object->array_options['options_'.$attributekey] = dol_mktime(GETPOST($attributekeylong.'hour', 'int'), GETPOST($attributekeylong.'min', 'int'), GETPOST($attributekeylong.'sec', 'int'), GETPOST($attributekeylong.'month', 'int'), GETPOST($attributekeylong.'day', 'int'), GETPOST($attributekeylong.'year', 'int'));
+			//var_dump(dol_print_date($object->array_options['options_'.$attributekey]));exit;
+		} else {
+			$object->array_options['options_'.$attributekey] = GETPOST($attributekeylong, 'alpha');
+		}
+
+		$result = $object->insertExtraFields(empty($triggermodname) ? '' : $triggermodname, $user);
+		if ($result > 0) {
+			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+			$action = 'view';
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = 'edit_extras';
 		}
 	}
 
@@ -821,11 +850,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Other attributes
 			$parameters = array('socid' => $socid, 'objsoc' => $objsoc, 'colspan' => ' colspan="3"', 'cols' => 3);
-			$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-			print $hookmanager->resPrint;
-			if (empty($reshook)) {
-				print $object->showOptionals($extrafields, 'edit', $parameters);
-			}
+			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
 			print "</table><br>";
 
@@ -1133,11 +1158,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Other attributes
 			$parameters = array('colspan' => ' colspan="3"', 'cols'=> '3');
-			$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-			print $hookmanager->resPrint;
-			if (empty($reshook)) {
-				print $object->showOptionals($extrafields, 'edit', $parameters);
-			}
+			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
 
 			$object->load_ref_elements();
 
