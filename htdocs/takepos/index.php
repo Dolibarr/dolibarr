@@ -289,6 +289,8 @@ function LoadProducts(position, issubcat) {
 		if (currentcat==val.fk_parent) {
 			$("#prodivdesc"+ishow).show();
 			$("#prodesc"+ishow).text(val.label);
+			$("#probutton"+ishow).text(val.label);
+			$("#probutton"+ishow).show();
 			$("#proprice"+ishow).attr("class", "hidden");
 			$("#proprice"+ishow).html("");
 			$("#proimg"+ishow).attr("src","genimg/index.php?query=cat&id="+val.rowid);
@@ -386,6 +388,8 @@ function MoreProducts(moreorless) {
 			if (typeof (data[idata]) == "undefined") {
 				$("#prodivdesc"+ishow).hide();
 				$("#prodesc"+ishow).text("");
+				$("#probutton"+ishow).text("");
+				$("#probutton"+ishow).hide();
 				$("#proprice"+ishow).attr("class", "");
 				$("#proprice"+ishow).html("");
 				$("#proimg"+ishow).attr("src","genimg/empty.png");
@@ -396,6 +400,8 @@ function MoreProducts(moreorless) {
 				//Only show products with status=1 (for sell)
 				$("#prodivdesc"+ishow).show();
 				$("#prodesc"+ishow).text(data[parseInt(idata)]['label']);
+				$("#probutton"+ishow).text(data[parseInt(idata)]['label']);
+				$("#probutton"+ishow).show();
 				if (data[parseInt(idata)]['price_formated']) {
 					$("#proprice"+ishow).attr("class", "productprice");
 					$("#proprice"+ishow).html(data[parseInt(idata)]['price_formated']);
@@ -544,6 +550,8 @@ function Search2(keyCodeForEnter) {
 			for (i = 0; i < <?php echo $MAXPRODUCT ?>; i++) {
 				if (typeof (data[i]) == "undefined") {
 					$("#prodesc" + i).text("");
+					$("#probutton" + i).text("");
+					$("#probutton" + i).hide();
 					$("#proprice" + i).attr("class", "hidden");
 					$("#proprice" + i).html("");
 					$("#proimg" + i).attr("src", "genimg/empty.png");
@@ -557,6 +565,8 @@ function Search2(keyCodeForEnter) {
 				var titlestring = <?php echo $titlestring; ?>;
 				$("#prodesc" + i).text(data[i]['label']);
 				$("#prodivdesc" + i).show();
+				$("#probutton" + i).text(data[i]['label']);
+				$("#probutton" + i).show();
 				if (data[i]['price_formated']) {
 					$("#proprice" + i).attr("class", "productprice");
 					$("#proprice" + i).html(data[i]['price_formated']);

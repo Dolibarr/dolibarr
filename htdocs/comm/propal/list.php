@@ -176,8 +176,8 @@ $arrayfields = array(
 	'pr.ref'=>array('label'=>"ProjectRef", 'checked'=>1, 'enabled'=>(empty($conf->projet->enabled) ? 0 : 1)),
 	'pr.title'=>array('label'=>"ProjectLabel", 'checked'=>0, 'enabled'=>(empty($conf->projet->enabled) ? 0 : 1)),
 	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1),
-	's.name_alias'=>array('label'=>"AliasNameShort", 'checked'=>1),
-	's.town'=>array('label'=>"Town", 'checked'=>1),
+	's.name_alias'=>array('label'=>"AliasNameShort", 'checked'=>-1),
+	's.town'=>array('label'=>"Town", 'checked'=>-1),
 	's.zip'=>array('label'=>"Zip", 'checked'=>1),
 	'state.nom'=>array('label'=>"StateShort", 'checked'=>0),
 	'country.code_iso'=>array('label'=>"Country", 'checked'=>0),
@@ -203,7 +203,7 @@ $arrayfields = array(
 	'p.multicurrency_total_ht_invoiced'=>array('label'=>'MulticurrencyAmountInvoicedHT', 'checked'=>0, 'enabled'=>!empty($conf->multicurrency->enabled) && !empty($conf->global->PROPOSAL_SHOW_INVOICED_AMOUNT)),
 	'p.multicurrency_total_invoiced'=>array('label'=>'MulticurrencyAmountInvoicedTTC', 'checked'=>0, 'enabled'=>!empty($conf->multicurrency->enabled) && !empty($conf->global->PROPOSAL_SHOW_INVOICED_AMOUNT)),
 	'u.login'=>array('label'=>"Author", 'checked'=>1, 'position'=>10),
-	'sale_representative'=>array('label'=>"SaleRepresentativesOfThirdParty", 'checked'=>1),
+	'sale_representative'=>array('label'=>"SaleRepresentativesOfThirdParty", 'checked'=>-1),
 	'p.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
 	'p.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
 	'p.date_cloture'=>array('label'=>"DateClosing", 'checked'=>0, 'position'=>500),
@@ -560,7 +560,7 @@ if ($search_societe_alias) {
 	$sql .= natural_search('s.name_alias', $search_societe_alias);
 }
 if ($search_login) {
-	$sql .= natural_search("u.login", $search_login);
+	$sql .= natural_search(array("u.login", "u.firstname", "u.lastname"), $search_login);
 }
 if ($search_montant_ht != '') {
 	$sql .= natural_search("p.total_ht", $search_montant_ht, 1);
@@ -616,7 +616,7 @@ if ($search_product_category > 0) {
 	$sql .= " AND cp.fk_categorie = ".$db->escape($search_product_category);
 }
 if ($socid > 0) {
-	$sql .= ' AND s.rowid = '.$socid;
+	$sql .= ' AND s.rowid = '.((int) $socid);
 }
 if ($search_status != '' && $search_status != '-1') {
 	$sql .= ' AND p.fk_statut IN ('.$db->sanitize($search_status).')';
@@ -640,10 +640,10 @@ if ($search_datedelivery_end) {
 	$sql .= " AND p.date_livraison <= '".$db->idate($search_datedelivery_end)."'";
 }
 if ($search_sale > 0) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$db->escape($search_sale);
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $search_sale);
 }
 if ($search_user > 0) {
-	$sql .= " AND c.fk_c_type_contact = tc.rowid AND tc.element='propal' AND tc.source='internal' AND c.element_id = p.rowid AND c.fk_socpeople = ".$db->escape($search_user);
+	$sql .= " AND c.fk_c_type_contact = tc.rowid AND tc.element='propal' AND tc.source='internal' AND c.element_id = p.rowid AND c.fk_socpeople = ".((int) $search_user);
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -907,14 +907,14 @@ if ($resql) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('IncludingProductWithTag');
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
-		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
+		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, (empty($conf->dol_optimize_smallscreen) ? 'maxwidth300' : 'maxwidth250'), 1);
 		$moreforfilter .= '</div>';
 	}
 	if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('CustomersProspectsCategoriesShort');
-		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1, $tmptitle);
+		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1, $tmptitle, (empty($conf->dol_optimize_smallscreen) ? 'maxwidth300' : 'maxwidth250'));
 		$moreforfilter .= '</div>';
 	}
 	if (!empty($conf->stock->enabled) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL)) {
@@ -1715,7 +1715,7 @@ if ($resql) {
 
 		// Author
 		if (!empty($arrayfields['u.login']['checked'])) {
-			print '<td>';
+			print '<td class="tdoverflowmax200">';
 			if ($userstatic->id) {
 				print $userstatic->getNomUrl(-1);
 			}
@@ -1727,7 +1727,7 @@ if ($resql) {
 
 		if (!empty($arrayfields['sale_representative']['checked'])) {
 			// Sales representatives
-			print '<td>';
+			print '<td class="tdoverflowmax200">';
 			if ($obj->socid > 0) {
 				$listsalesrepresentatives = $companystatic->getSalesRepresentatives($user);
 				if ($listsalesrepresentatives < 0) {

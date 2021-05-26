@@ -28,6 +28,7 @@ CREATE TABLE llx_knowledgemanagement_knowledgerecord(
 	model_pdf varchar(255), 
 	question text NOT NULL, 
 	answer text,
+	url varchar(255),
 	fk_ticket integer,
 	status integer NOT NULL
 	-- END MODULEBUILDER FIELDS

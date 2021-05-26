@@ -1662,7 +1662,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 			$tabsname = str_replace("@", "", $picto);
 		}
 		$out .= '<div id="moretabs'.$tabsname.'" class="inline-block tabsElem">';
-		$out .= '<a href="#" class="tab moretab inline-block tabunactive">'.$langs->trans("More").'... ('.$nbintab.')</a>'; // Do not use "reposition" class in the "More".
+		$out .= '<a href="#" class="tab moretab inline-block tabunactive"><span class="hideonsmartphone">'.$langs->trans("More").'</span>... ('.$nbintab.')</a>'; // Do not use "reposition" class in the "More".
 		$out .= '<div id="moretabsList'.$tabsname.'" style="width: '.$widthofpopup.'px; position: absolute; '.$left.': -999em; text-align: '.$left.'; margin:0px; padding:2px; z-index:10;">';
 		$out .= $outmore;
 		$out .= '</div>';
@@ -1923,7 +1923,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	}
 
 	if ($showbarcode) {
-		$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showbarcode($object).'</div>';
+		$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showbarcode($object, 100, 'photoref').'</div>';
 	}
 
 	if ($object->element == 'societe') {
@@ -3514,9 +3514,9 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'github', 'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top', 'commercial', 'companies',
 				'generic', 'home', 'hrm', 'members', 'products', 'invoicing',
-				'partnership', 'payment', 'pencil-ruler', 'preview', 'project', 'projectpub', 'projecttask', 'refresh', 'salary', 'shipment', 'supplier_invoice', 'technic', 'ticket',
+				'partnership', 'payment', 'pencil-ruler', 'preview', 'project', 'projectpub', 'projecttask', 'question', 'refresh', 'salary', 'shipment', 'supplier_invoice', 'technic', 'ticket',
 				'error', 'warning',
-				'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'resource',
+				'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'resource',
 				'shapes', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
 				'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
 				'uncheck', 'user-cog', 'website', 'workstation',
@@ -3558,7 +3558,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'other'=>'square',
 				'playdisabled'=>'play', 'pdf'=>'file-pdf',  'poll'=>'check-double', 'pos'=>'cash-register', 'preview'=>'binoculars', 'project'=>'project-diagram', 'projectpub'=>'project-diagram', 'projecttask'=>'tasks', 'propal'=>'file-signature',
 				'partnership'=>'handshake', 'payment'=>'money-check-alt', 'phoning'=>'phone', 'phoning_mobile'=>'mobile-alt', 'phoning_fax'=>'fax', 'previous'=>'arrow-alt-circle-left', 'printer'=>'print', 'product'=>'cube', 'service'=>'concierge-bell',
-				'reception'=>'dolly', 'recruitmentjobposition'=>'id-card-alt', 'recruitmentcandidature'=>'id-badge',
+				'recent' => 'question', 'reception'=>'dolly', 'recruitmentjobposition'=>'id-card-alt', 'recruitmentcandidature'=>'id-badge',
 				'resize'=>'crop', 'supplier_order'=>'dol-order_supplier', 'supplier_proposal'=>'file-signature',
 				'refresh'=>'redo', 'resource'=>'laptop-house',
 				'security'=>'key', 'salary'=>'wallet', 'shipment'=>'dolly', 'stock'=>'box-open', 'stats' => 'chart-bar', 'split'=>'code-branch', 'stripe'=>'stripe-s',
@@ -6877,8 +6877,6 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__DATE_DELIVERY_SS__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, "%S") : '');
 
 			// For backward compatibility
-			$substitutionarray['__REFCLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : null));
-			$substitutionarray['__REFSUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
 			$substitutionarray['__REFCLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : null));
 			$substitutionarray['__REFSUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
 			$substitutionarray['__SUPPLIER_ORDER_DATE_DELIVERY__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, 'day', 0, $outputlangs) : '');
@@ -10236,7 +10234,8 @@ function readfileLowMemory($fullpath_original_file_osencoded, $method = -1)
 }
 
 /**
- * Create a button to copy $valuetocopy in the clipboard
+ * Create a button to copy $valuetocopy in the clipboard.
+ * Code that handle the click is inside lib_foot.jsp.php
  *
  * @param 	string 	$valuetocopy 		The value to print
  * @param	int		$showonlyonhover	Show the copy-paste button only on hover
@@ -10245,6 +10244,12 @@ function readfileLowMemory($fullpath_original_file_osencoded, $method = -1)
  */
 function showValueWithClipboardCPButton($valuetocopy, $showonlyonhover = 1, $texttoshow = '')
 {
+	global $conf;
+
+	/*if (!empty($conf->dol_no_mouse_hover)) {
+		$showonlyonhover = 0;
+	}*/
+
 	if ($texttoshow) {
 		$result = '<span class="clipboardCP'.($showonlyonhover ? ' clipboardCPShowOnHover' : '').'"><span class="clipboardCPValue hidewithsize">'.$valuetocopy.'</span><span class="clipboardCPValueToPrint">'.$texttoshow.'</span><span class="clipboardCPButton far fa-clipboard opacitymedium paddingleft paddingright"></span><span class="clipboardCPText opacitymedium"></span></span>';
 	} else {

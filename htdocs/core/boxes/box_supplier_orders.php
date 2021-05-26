@@ -153,7 +153,7 @@ class box_supplier_orders extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => dol_print_date($date, 'day'),
+						'text' => dol_print_date($date, 'day', 'tzuserrel'),
 					);
 
 					$this->info_box_contents[$line][] = array(

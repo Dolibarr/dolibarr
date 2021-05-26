@@ -44,7 +44,6 @@ $socid = '';
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('productstatsinvoice'));
@@ -77,6 +76,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_year = '';
 }
 
+$result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 
 /*

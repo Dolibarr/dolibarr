@@ -40,12 +40,9 @@ $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('productstatscontract'));
-
-$mesg = '';
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -64,6 +61,8 @@ if (!$sortorder) {
 if (!$sortfield) {
 	$sortfield = "c.date_valid";
 }
+
+$result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 
 /*

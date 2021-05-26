@@ -304,7 +304,7 @@ class FormActions
 					print '<td>'.$label.'</td>';
 
 					// Date
-					print '<td class="center">'.dol_print_date($actioncomm->datep, 'dayhour', 'tzuserrel');
+					print '<td class="center nowraponall">'.dol_print_date($actioncomm->datep, 'dayhour', 'tzuserrel');
 					if ($actioncomm->datef) {
 						$tmpa = dol_getdate($actioncomm->datep);
 						$tmpb = dol_getdate($actioncomm->datef);

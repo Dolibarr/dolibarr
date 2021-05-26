@@ -62,6 +62,11 @@ UPDATE llx_c_country SET eec = 1 WHERE code IN ('AT','BE','BG','CY','CZ','DE','D
 ALTER TABLE llx_export_model MODIFY COLUMN type varchar(64);
 
 
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  11, 'US-BASE', 'USA basic chart of accounts', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 14, 'CA-ENG-BASE', 'Canadian basic chart of accounts - English', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 154, 'SAT/24-2019', 'Catalogo y codigo agrupador fiscal del 2019', 1);
+
+
 -- For v14
 
 ALTER TABLE llx_product_lot ADD COLUMN eol_date datetime NULL;
@@ -492,12 +497,14 @@ CREATE TABLE llx_knowledgemanagement_knowledgerecord(
 	model_pdf varchar(255), 
 	question text NOT NULL, 
 	answer text,
+	url varchar(255),
 	fk_ticket integer,
 	status integer NOT NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
 
 ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD COLUMN fk_ticket integer;
+ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD COLUMN url varchar(255);
 
 
 create table llx_knowledgemanagement_knowledgerecord_extrafields

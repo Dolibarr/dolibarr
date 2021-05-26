@@ -68,7 +68,9 @@ if ($search_accountancy_code_end == - 1) {
 	$search_accountancy_code_end = '';
 }
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new BookKeeping($db);
+$hookmanager->initHooks(array('balancelist'));  // Note that conf->hooks_modules contains array
 
 $formaccounting = new FormAccounting($db);
 $formother = new FormOther($db);
@@ -155,16 +157,23 @@ if (empty($user->rights->accounting->mouvements->lire)) {
  * Action
  */
 
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
-	$show_subgroup = '';
-	$search_date_start = '';
-	$search_date_end = '';
-	$search_accountancy_code_start = '';
-	$search_accountancy_code_end = '';
-	$search_ledger_code = array();
-	$filter = array();
+$parameters = array('socid'=>$socid);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
+if (empty($reshook)) {
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
+		$show_subgroup = '';
+		$search_date_start = '';
+		$search_date_end = '';
+		$search_accountancy_code_start = '';
+		$search_accountancy_code_end = '';
+		$search_ledger_code = array();
+		$filter = array();
+	}
+}
 
 /*
  * View
@@ -183,11 +192,11 @@ if ($action == 'export_csv') {
 	}
 
 	foreach ($object->lines as $line) {
-		print length_accountg($line->numero_compte).$sep;
-		print $object->get_compte_desc($line->numero_compte).$sep;
-		print price($line->debit).$sep;
-		print price($line->credit).$sep;
-		print price($line->debit - $line->credit).$sep;
+		print '"'.length_accountg($line->numero_compte).'"'.$sep;
+		print '"'.$object->get_compte_desc($line->numero_compte).'"'.$sep;
+		print '"'.price($line->debit).'"'.$sep;
+		print '"'.price($line->credit).'"'.$sep;
+		print '"'.price($line->debit - $line->credit).'"'.$sep;
 		print "\n";
 	}
 
@@ -226,21 +235,27 @@ if ($action != 'export_csv') {
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
-	$button = '<input type="button" id="exportcsvbutton" name="exportcsvbutton" class="butAction" value="'.$langs->trans("Export").' ('.$conf->global->ACCOUNTING_EXPORT_FORMAT.')" />';
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	if (empty($reshook)) {
+		$button = '<input type="button" id="exportcsvbutton" name="exportcsvbutton" class="butAction" value="'.$langs->trans("Export").' ('.$conf->global->ACCOUNTING_EXPORT_FORMAT.')" />';
 
-	print '<script type="text/javascript" language="javascript">
-	jQuery(document).ready(function() {
-		jQuery("#exportcsvbutton").click(function() {
-			event.preventDefault();
-			console.log("Set action to export_csv");
-			jQuery("#action").val("export_csv");
-			jQuery("#searchFormList").submit();
-			jQuery("#action").val("list");
+		print '<script type="text/javascript" language="javascript">
+		jQuery(document).ready(function() {
+			jQuery("#exportcsvbutton").click(function() {
+				event.preventDefault();
+				console.log("Set action to export_csv");
+				jQuery("#action").val("export_csv");
+				jQuery("#searchFormList").submit();
+				jQuery("#action").val("list");
+			});
 		});
-	});
-	</script>';
+		</script>';
+	}
 
 	print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $button, $result, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
+
+	$selectedfields = '';
 
 	$moreforfilter = '';
 
@@ -283,12 +298,18 @@ if ($action != 'export_csv') {
 	print ' ';
 	print $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', $langs->trans('to'), array(), 1, 1, '', 'accounts');
 	print '</td>';
-	print '<td class="liste_titre center">';
+
+	// Fields from hook
+	$parameters = array('arrayfields'=>$arrayfields);
+	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+
+	// Action column
+	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
-
-	print '</tr>';
+	print '</tr>'."\n";
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("AccountAccounting", $_SERVER['PHP_SELF'], "t.numero_compte", "", $param, "", $sortfield, $sortorder);
@@ -298,8 +319,14 @@ if ($action != 'export_csv') {
 	print_liste_field_titre("Debit", $_SERVER['PHP_SELF'], "t.debit", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre("Credit", $_SERVER['PHP_SELF'], "t.credit", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre("Balance", $_SERVER["PHP_SELF"], "", $param, "", 'class="right"', $sortfield, $sortorder);
-	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", $param, "", 'width="60" class="center"', $sortfield, $sortorder);
-	print "</tr>\n";
+
+	// Hook fields
+	$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+	// Action column
+	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+	print '</tr>'."\n";
 
 	$total_debit = 0;
 	$total_credit = 0;

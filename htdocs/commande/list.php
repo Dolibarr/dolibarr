@@ -588,7 +588,7 @@ if ($search_multicurrency_montant_ttc != '') {
 	$sql .= natural_search('c.multicurrency_total_ttc', $search_multicurrency_montant_ttc, 1);
 }
 if ($search_login) {
-	$sql .= natural_search("u.login", $search_login);
+	$sql .= natural_search(array("u.login", "u.firstname", "u.lastname"), $search_login);
 }
 if ($search_project_ref != '') {
 	$sql .= natural_search("p.ref", $search_project_ref);
@@ -1490,7 +1490,7 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
-		// Town
+		// Alias name
 		if (!empty($arrayfields['s.name_alias']['checked'])) {
 			print '<td class="nocellnopadd">';
 			print $obj->alias;
@@ -1565,7 +1565,7 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
-		//Shipping Method
+		// Shipping Method
 		if (!empty($arrayfields['c.fk_shipping_method']['checked'])) {
 			print '<td>';
 			$form->formSelectShippingMethod('', $obj->fk_shipping_method, 'none', 1);
@@ -1690,7 +1690,7 @@ if ($resql) {
 
 		// Author
 		if (!empty($arrayfields['u.login']['checked'])) {
-			print '<td>';
+			print '<td class="tdoverflowmax200">';
 			if ($userstatic->id) {
 				print $userstatic->getNomUrl(-1);
 			} else {

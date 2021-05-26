@@ -633,6 +633,9 @@ th .button {
 .quatrevingtquinzepercent {
 	width: 95%;
 }
+.quatrevingtpercentminusx {
+	width: calc(80% - 52px);
+}
 textarea.centpercent {
 	width: 96%;
 }
@@ -902,8 +905,8 @@ span.fa.fa-plus-circle.paddingleft {
 	height: 28px;
 	vertical-align: middle;
 }
-.divsocialnetwork:not(:first-child) {
-	padding-left: 20px;
+.divsocialnetwork:not(:last-child) {
+	padding-<?php print $right; ?>: 20px;
 }
 div.divsearchfield {
 	float: <?php print $left; ?>;
@@ -1027,6 +1030,7 @@ ul.attendees li {
 	list-style-type: none;
 	padding-top:1px;
 	padding-bottom:1px;
+	line-height: 1.6em;
 }
 .googlerefreshcal {
 	padding-top: 4px;
@@ -1472,6 +1476,10 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 		width: calc(100% - 40px) !important;
 		display: inline-block;
 	}
+	select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-selection), input.widthcentpercentminusxx {
+		width: calc(100% - 70px) !important;
+		display: inline-block;
+	}
 
 	.logopublicpayment #dolpaymentlogo {
 		max-width: 260px;
@@ -1490,6 +1498,10 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	}
 	input.buttonpayment, button.buttonpayment, div.buttonpayment {
 		min-width: 270px;
+	}
+
+	.smallonsmartphone {
+		font-size: 0.8em;
 	}
 }
 
@@ -6766,10 +6778,14 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 /* For copy-paste feature                                                         */
 /* ============================================================================== */
 
+span.clipboardCPValueToPrint {
+	display: inline-block;
+}
 span.clipboardCPValue.hidewithsize {
 	width: 0 !important;
 	display: inline-block;
 	color: transparent;
+	white-space: nowrap;
 }
 
 .clipboardCPShowOnHover .clipboardCPButton {
