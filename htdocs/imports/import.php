@@ -2062,12 +2062,12 @@ if ($step == 6 && $datatoimport) {
 					}
 					$resqlafterimport = $db->query($sqlafterimport);
 					if ($import_force == 1) {
-                        if (!$resqlafterimport) {
+						if (!$resqlafterimport) {
 							$db->rollback();
 						} else {
 							$db->commit();
 						}
-                    }
+					}
 
 					if (!$resqlafterimport) {
 						$arrayoferrors['none'][] = array('lib' => $langs->trans("Error running final request: " . $sqlafterimport));
