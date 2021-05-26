@@ -623,8 +623,8 @@ function pdf_pagehead(&$pdf, $outputlangs, $page_height)
 {
 	global $conf;
 
-	// Add a background image on document
-	if (!empty($conf->global->MAIN_USE_BACKGROUND_ON_PDF))		// Warning, this option make TCPDF generation being crazy and some content disappeared behind the image
+	// Add a background image on document only if good setup of const
+	if (!empty($conf->global->MAIN_USE_BACKGROUND_ON_PDF) && ($conf->global->MAIN_USE_BACKGROUND_ON_PDF != '-1'))		// Warning, this option make TCPDF generation being crazy and some content disappeared behind the image
 	{
 		$pdf->SetAutoPageBreak(0, 0); // Disable auto pagebreak before adding image
 		$pdf->Image($conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_USE_BACKGROUND_ON_PDF, (isset($conf->global->MAIN_USE_BACKGROUND_ON_PDF_X) ? $conf->global->MAIN_USE_BACKGROUND_ON_PDF_X : 0), (isset($conf->global->MAIN_USE_BACKGROUND_ON_PDF_Y) ? $conf->global->MAIN_USE_BACKGROUND_ON_PDF_Y : 0), 0, $page_height);
