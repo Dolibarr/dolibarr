@@ -141,7 +141,6 @@ class PdfDocTest extends PHPUnit\Framework\TestCase
 		$db=$this->savdb;
 
 		$localproduct=new Product($this->savdb);
-		$localproduct->initAsSpecimen();
 		$result = $localproduct->fetch(0, 'PRODUCT_SPEC');
 		if ($result < 0) {
 			print "\n".__METHOD__." Failed to make the fetch of product PRODUCT_SPEC. ".$localproduct->error; die(1);
