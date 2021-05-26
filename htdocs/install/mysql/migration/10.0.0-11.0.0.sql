@@ -572,9 +572,3 @@ ALTER TABLE llx_emailcollector_emailcollector ADD UNIQUE INDEX uk_emailcollector
 ALTER TABLE llx_website ADD COLUMN use_manifest integer;
 
 ALTER TABLE llx_facture_rec MODIFY COLUMN fk_cond_reglement integer NOT NULL DEFAULT 1;
-
-
--- DO NOT ADD ANYTHING BELOW THIS LINE
-
--- PostgreSQL only: recalculate sequences for data INSERTed with forced auto_increment/serial primary key
--- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
