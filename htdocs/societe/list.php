@@ -942,7 +942,7 @@ if (empty($type) || $type == 'c' || $type == 'p') {
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('Categories');
-		$moreforfilter .= img_picto($tmptile, 'category', 'class="pictofixedwidth"');
+		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
 		$moreforfilter .= $formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1, $langs->trans('CustomersProspectsCategoriesShort'));
 		$moreforfilter .= '</div>';
 	}
@@ -953,7 +953,7 @@ if (empty($type) || $type == 'f') {
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('Categories');
-		$moreforfilter .= img_picto($tmptilte, 'category', 'class="pictofixedwidth"');
+		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
 		$moreforfilter .= $formother->select_categories('supplier', $search_categ_sup, 'search_categ_sup', 1, $langs->trans('SuppliersCategoriesShort'));
 		$moreforfilter .= '</div>';
 	}
@@ -962,8 +962,8 @@ if (empty($type) || $type == 'f') {
 // If the user can view prospects other than his'
 if ($user->rights->societe->client->voir || $socid) {
 	$moreforfilter .= '<div class="divsearchfield">';
-	$tmptile = $langs->trans('SalesRepresentatives');
-	$moreforfilter .= img_picto($tmptile, 'user', 'class="pictofixedwidth"');
+	$tmptitle = $langs->trans('SalesRepresentatives');
+	$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"');
 	$moreforfilter .= $formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, $langs->trans('SalesRepresentatives'), ($conf->dol_optimize_smallscreen ? 'maxwidth200' : 'maxwidth300'), 1);
 	$moreforfilter .= '</div>';
 }
