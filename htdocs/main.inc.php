@@ -949,7 +949,7 @@ if (!defined('NOLOGIN')) {
 		$_SESSION["dol_dst_second"] = isset($dol_dst_second) ? $dol_dst_second : '';
 		$_SESSION["dol_screenwidth"] = isset($dol_screenwidth) ? $dol_screenwidth : '';
 		$_SESSION["dol_screenheight"] = isset($dol_screenheight) ? $dol_screenheight : '';
-		$_SESSION["dol_company"] = $conf->global->MAIN_INFO_SOCIETE_NOM;
+		$_SESSION["dol_company"] = getDolGlobalString("MAIN_INFO_SOCIETE_NOM");
 		$_SESSION["dol_entity"] = $conf->entity;
 		// Store value into session (values stored only if defined)
 		if (!empty($dol_hide_topmenu)) {
