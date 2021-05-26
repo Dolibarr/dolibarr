@@ -3025,7 +3025,7 @@ class Form
 		global $langs, $conf;
 		global $price_level, $status, $finished;
 
-		if(empty($status)){
+		if (empty($status)) {
 			$status = 1;
 		}
 
@@ -3058,7 +3058,7 @@ class Form
 	 *  @param	string	$filtertype     Filter on product type (''=nofilter, 0=product, 1=service)
 	 *	@param  string	$filtre         Pour filtre sql
 	 *	@param  string	$filterkey      Filtre des produits
-	 *  @param  int		$statut         -1=Return all products, 0=Products not on buy, 1=Products on buy 
+	 *  @param  int		$statut         -1=Return all products, 0=Products not on buy, 1=Products on buy
 	 *  @param  int		$outputmode     0=HTML select string, 1=Array
 	 *  @param  int     $limit          Limit of line number
 	 *  @param  int     $alsoproductwithnosupplierprice    1=Add also product without supplier prices
@@ -3111,7 +3111,7 @@ class Form
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_units u ON u.rowid = p.fk_unit";
 		}
 		$sql .= " WHERE p.entity IN (".getEntity('product').")";
-		if($statut != -1){
+		if ($statut != -1) {
 			$sql .= " AND p.tobuy = ".$statut;
 		}
 		if (strval($filtertype) != '') {
