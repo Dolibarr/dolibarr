@@ -3112,7 +3112,7 @@ class Form
 		}
 		$sql .= " WHERE p.entity IN (".getEntity('product').")";
 		if ($statut != -1) {
-			$sql .= " AND p.tobuy = ".$statut;
+			$sql .= " AND p.tobuy = ".((int) $statut);
 		}
 		if (strval($filtertype) != '') {
 			$sql .= " AND p.fk_product_type=".$this->db->escape($filtertype);
