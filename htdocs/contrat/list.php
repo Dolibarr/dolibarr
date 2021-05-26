@@ -706,6 +706,7 @@ print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $
 print "</tr>\n";
 
 $totalarray = array();
+$totalarray['nbfield'] = 0;
 $typenArray = array();
 $cacheCountryIDCode = array();
 
