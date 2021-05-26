@@ -301,6 +301,38 @@ if (empty($reshook)) {
 		}
 	}
 
+	// Update extrafields
+	if ($action == "update_extras" && !empty($permissiontoadd) || $action == 'update' && empty($cancel) && $user->rights->societe->contact->creer) {
+		$object->fetch(GETPOST('id', 'int'));
+
+		foreach ($object->array_options as $attributekey => $value) {
+			if (GETPOSTISSET($attributekey)) {
+				if (GETPOSTISSET($attributekey.'day') && GETPOSTISSET($attributekey.'month') && GETPOSTISSET($attributekey.'year')) {
+					// This is properties of a date
+					$object->array_options[$attributekey] = dol_mktime(GETPOST($attributekey.'hour', 'int'), GETPOST($attributekey.'min', 'int'), GETPOST($attributekey.'sec', 'int'), GETPOST($attributekey.'month', 'int'), GETPOST($attributekey.'day', 'int'), GETPOST($attributekey.'year', 'int'));
+					//var_dump(dol_print_date($object->array_options['options_'.$attributekey]));exit;
+				} else {
+					$object->array_options[$attributekey] = GETPOST($attributekey, 'alpha');
+				}
+			}
+		}
+
+		$result = $object->insertExtraFields(empty($triggermodname) ? '' : $triggermodname, $user);
+		if ($action == 'update') {
+			if ($result <= 0) {
+				$error++;
+			}
+		} else {
+			if ($result > 0) {
+				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+				$action = 'view';
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$action = 'edit_extras';
+			}
+		}
+	}
+
 	if ($action == 'update' && empty($cancel) && $user->rights->societe->contact->creer) {
 		if (!GETPOST("lastname", 'alpha')) {
 			$error++; $errors = array($langs->trans("ErrorFieldRequired", $langs->transnoentities("Name").' / '.$langs->transnoentities("Label")));
@@ -429,7 +461,7 @@ if (empty($reshook)) {
 
 					$object->old_lastname = '';
 					$object->old_firstname = '';
-					$action = 'update_extras';
+					$action = 'view';
 				} else {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$action = 'edit';
@@ -445,31 +477,6 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Update extrafields
-	if ($action == "update_extras" && !empty($permissiontoadd)) {
-		$object->fetch(GETPOST('id', 'int'));
-
-		foreach ($object->array_options as $attributekey => $value) {
-			if (GETPOSTISSET($attributekey)) {
-				if (GETPOSTISSET($attributekey.'day') && GETPOSTISSET($attributekey.'month') && GETPOSTISSET($attributekey.'year')) {
-					// This is properties of a date
-					$object->array_options[$attributekey] = dol_mktime(GETPOST($attributekey.'hour', 'int'), GETPOST($attributekey.'min', 'int'), GETPOST($attributekey.'sec', 'int'), GETPOST($attributekey.'month', 'int'), GETPOST($attributekey.'day', 'int'), GETPOST($attributekey.'year', 'int'));
-					//var_dump(dol_print_date($object->array_options['options_'.$attributekey]));exit;
-				} else {
-					$object->array_options[$attributekey] = GETPOST($attributekey, 'alpha');
-				}
-			}
-		}
-
-		$result = $object->insertExtraFields(empty($triggermodname) ? '' : $triggermodname, $user);
-		if ($result > 0) {
-			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-			$action = 'view';
-		} else {
-			setEventMessages($object->error, $object->errors, 'errors');
-			$action = 'edit_extras';
-		}
-	}
 
 	if ($action == 'setprospectcontactlevel' && $user->rights->societe->contact->creer) {
 		$object->fetch($id);
