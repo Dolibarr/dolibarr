@@ -3025,7 +3025,7 @@ class Form
 		global $langs, $conf;
 		global $price_level, $status, $finished;
 
-		if (empty($status)) {
+		if (!isset($status)) {
 			$status = 1;
 		}
 
