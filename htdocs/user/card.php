@@ -615,8 +615,8 @@ if (empty($reshook)) {
 	}
 
 	// Action initialisation donnees depuis record LDAP
-	if ($action == 'adduserldap') {
-		$selecteduser = $_POST['users'];
+	if ($action == 'adduserldap' && $canadduser) {
+		$selecteduser = GETPOST('users');
 
 		$required_fields = array(
 			$conf->global->LDAP_KEY_USERS,
@@ -1557,7 +1557,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print "</tr>\n";
 
 			// Accountancy code
-			if ($conf->accounting->enabled) {
+			if (!empty($conf->accounting->enabled)) {
 				print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
 				print '<td>'.$object->accountancy_code.'</td></tr>';
 			}
@@ -2445,7 +2445,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</table><hr><table class="border centpercent">';
 
 			// Accountancy code
-			if ($conf->accounting->enabled) {
+			if (!empty($conf->accounting->enabled)) {
 				print "<tr>";
 				print '<td class="titlefieldcreate">'.$langs->trans("AccountancyCode").'</td>';
 				print '<td>';
@@ -2726,7 +2726,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			$genallowed = $user->rights->user->user->lire;
 			$delallowed = $user->rights->user->user->creer;
 
-			print $formfile->showdocuments('user', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
+			print $formfile->showdocuments('user', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', empty($soc->default_lang) ? '' : $soc->default_lang);
 			$somethingshown = $formfile->numoffiles;
 
 			// Show links to link elements

@@ -708,7 +708,7 @@ if (!empty($arrayfields['d.morphy']['checked'])) {
 if (!empty($arrayfields['t.libelle']['checked'])) {
 	print '<td class="liste_titre">';
 	$listetype = $membertypestatic->liste_array();
-	print $form->selectarray("search_type", $listetype, $type, 1, 0, 0, '', 0, 32);
+	print $form->selectarray("search_type", $listetype, $search_type, 1, 0, 0, '', 0, 32);
 	print '</td>';
 }
 
@@ -792,8 +792,8 @@ if (!empty($arrayfields['d.statut']['checked'])) {
 	$liststatus = array(
 		'-1'=>$langs->trans("Draft"),
 		'1'=>$langs->trans("Validated"),
-		'0'=>$langs->trans("Resiliated"),
-		'-2'=>$langs->trans("Excluded")
+		'0'=>$langs->trans("MemberStatusResiliatedShort"),
+		'-2'=>$langs->trans("MemberStatusExcludedShort")
 	);
 	print $form->selectarray('search_status', $liststatus, $search_status, -3);
 	print '</td>';
@@ -891,6 +891,7 @@ print "</tr>\n";
 
 $i = 0;
 $totalarray = array();
+$totalarray['nbfield'] = 0;
 while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($resql);
 

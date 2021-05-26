@@ -169,7 +169,7 @@ Following changes may create regressions for some external modules, but were nec
 * If your database is PostgreSql, you must use version 9.1.0 or more (Dolibarr need the SQL function CONCAT)
 * If your database is MySql or MariaDB, you need at least version 5.1
 * Function set_price_level() has been renamed into setPriceLevel() to follow camelcase rules
-
+* Remove deprecated subtituion key __REFCLIENT__ (Replaced with __REF_CLIENT__)
 
 ***** ChangeLog for 13.0.3 compared to 13.0.2 *****
 

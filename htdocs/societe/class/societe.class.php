@@ -3321,34 +3321,37 @@ class Societe extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Define parent commany of current company
 	 *
 	 *    @param	int		$id     Id of thirdparty to set or '' to remove
 	 *    @return	int     		<0 if KO, >0 if OK
 	 */
-	public function set_parent($id)
+	public function setParent($id)
 	{
-		// phpcs:enable
+		dol_syslog(get_class($this).'::setParent', LOG_DEBUG);
+
 		if ($this->id) {
 			// Check if the id we want to add as parent has not already one parent that is the current id we try to update
-			$sameparent	= $this->validateFamilyTree($id, $this->id, 0);
-			if ($sameparent < 0) {
-				return -1;
-			} elseif ($sameparent == 1) {
-				setEventMessages('ParentCompanyToAddIsAlreadyAChildOfModifiedCompany', null, 'warnings');
-				return -1;
-			} else {
-				$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe SET parent = '.($id > 0 ? $id : 'null').' WHERE rowid = '.((int) $this->id);
-				dol_syslog(get_class($this).'::set_parent', LOG_DEBUG);
-				$resql	= $this->db->query($sql);
-				if ($resql) {
-					$this->parent	= $id;
-					return 1;
-				} else {
+			if ($id > 0) {
+				$sameparent	= $this->validateFamilyTree($id, $this->id, 0);
+				if ($sameparent < 0) {
 					return -1;
 				}
+				if ($sameparent == 1) {
+					setEventMessages('ParentCompanyToAddIsAlreadyAChildOfModifiedCompany', null, 'warnings');
+					return -1;
+				}
+			}
+
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe SET parent = '.($id > 0 ? $id : 'null').' WHERE rowid = '.((int) $this->id);
+
+			$resql	= $this->db->query($sql);
+			if ($resql) {
+				$this->parent = $id;
+				return 1;
+			} else {
+				return -1;
 			}
 		} else {
 			return -1;
@@ -3369,9 +3372,9 @@ class Societe extends CommonObject
 			dol_syslog("Too high level of parent - child for company. May be an infinite loop ?", LOG_WARNING);
 		}
 
-		$sql	= 'SELECT s.parent';
-		$sql	.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
-		$sql	.= ' WHERE rowid = '.$idparent;
+		$sql = 'SELECT s.parent';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
+		$sql .= ' WHERE rowid = '.$idparent;
 		$resql	= $this->db->query($sql);
 		if ($resql) {
 			$obj	= $this->db->fetch_object($resql);

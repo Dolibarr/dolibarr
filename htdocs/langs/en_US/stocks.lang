@@ -253,3 +253,5 @@ ConfirmFinish=Do you confirm the closing of the inventory ? This will generate a
 ObjectNotFound=%s not found
 MakeMovementsAndClose=Generate movements and close
 AutofillWithExpected=Fill real quantity with expected quantity
+ShowAllBatchByDefault=By default, show batch details on product "stock" tab
+CollapseBatchDetailHelp=You can set batch detail default display in stocks module configuration
