@@ -106,8 +106,6 @@ $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
-// Actions cancel, add, update, delete or clone
-include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
 if (empty($reshook)) {
 	// Cancel
@@ -216,13 +214,6 @@ if (empty($reshook)) {
 		// Note: Correct date should be completed with location to have exact GM time of birth.
 		$object->birthday = dol_mktime(0, 0, 0, GETPOST("birthdaymonth", 'int'), GETPOST("birthdayday", 'int'), GETPOST("birthdayyear", 'int'));
 		$object->birthday_alert = GETPOST("birthday_alert", 'alpha');
-
-		/*// Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost(null, $object);
-		if ($ret < 0) {
-			$error++;
-			$action = 'create';
-		}*/
 
 		if (!empty($conf->mailing->enabled) && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS==-1 && $object->no_email==-1 && !empty($object->email)) {
 			$error++;
@@ -418,12 +409,6 @@ if (empty($reshook)) {
 
 			$object->roles = GETPOST("roles", 'array');		// Note GETPOSTISSET("role") is null when combo is empty
 
-			/*// Fill array 'array_options' with data from add form
-			$ret = $extrafields->setOptionalsFromPost(null, $object);
-			if ($ret < 0) {
-				$error++;
-			}*/
-
 			if (!$error) {
 				$result = $object->update($contactid, $user);
 
@@ -444,7 +429,7 @@ if (empty($reshook)) {
 
 					$object->old_lastname = '';
 					$object->old_firstname = '';
-					$action = 'view';
+					$action = 'update_extras';
 				} else {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$action = 'edit';
@@ -457,6 +442,32 @@ if (empty($reshook)) {
 				header("Location: ".$backtopage);
 				exit;
 			}
+		}
+	}
+
+	// Update extrafields
+	if ($action == "update_extras" && !empty($permissiontoadd)) {
+		$object->fetch(GETPOST('id', 'int'));
+
+		foreach ($object->array_options as $attributekey => $value) {
+			$attributekeylong = 'options_'.$attributekey;
+
+			if (GETPOSTISSET($attributekey.'day') && GETPOSTISSET($attributekey.'month') && GETPOSTISSET($attributekey.'year')) {
+				// This is properties of a date
+				$object->array_options[$attributekey] = dol_mktime(GETPOST($attributekey.'hour', 'int'), GETPOST($attributekey.'min', 'int'), GETPOST($attributekey.'sec', 'int'), GETPOST($attributekey.'month', 'int'), GETPOST($attributekey.'day', 'int'), GETPOST($attributekey.'year', 'int'));
+				//var_dump(dol_print_date($object->array_options['options_'.$attributekey]));exit;
+			} else {
+				$object->array_options[$attributekey] = GETPOST($attributekey, 'alpha');
+			}
+		}
+
+		$result = $object->insertExtraFields(empty($triggermodname) ? '' : $triggermodname, $user);
+		if ($result > 0) {
+			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+			$action = 'view';
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = 'edit_extras';
 		}
 	}
 
