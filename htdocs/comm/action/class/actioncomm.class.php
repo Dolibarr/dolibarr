@@ -1902,10 +1902,10 @@ class ActionComm extends CommonObject
 					}
 				}
 				if ($key == 'module') {
-					$sql .= " AND c.module LIKE '%".$value."'";
+					$sql .= " AND c.module LIKE '%".$this->db->escape($value)."'";
 				}
 				if ($key == 'status') {
-					$sql .= " AND a.status =".$value;
+					$sql .= " AND a.status =".((int) $value);
 				}
 			}
 
