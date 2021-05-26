@@ -2047,10 +2047,6 @@ if ($step == 6 && $datatoimport) {
 	if (count($arrayoferrors) > 0 && empty($import_force)) {
 		$db->rollback(); // We force rollback because this was errors.
 	} else {
-		if ($run_after_import && $import_force == 1) {
-			$db->begin();
-		}
-
 		if ($run_after_import) {
 			$error = 0;
 
@@ -2060,7 +2056,19 @@ if ($step == 6 && $datatoimport) {
 				$i = 0;
 				foreach ($objimport->array_import_run_sql_after[0] as $sqlafterimport) {
 					$i++;
+
+					if ($import_force == 1) {
+						$db->begin();
+					}
 					$resqlafterimport = $db->query($sqlafterimport);
+					if ($import_force == 1) {
+                        if (!$resqlafterimport) {
+							$db->rollback();
+						} else {
+							$db->commit();
+						}
+                    }
+
 					if (!$resqlafterimport) {
 						$arrayoferrors['none'][] = array('lib' => $langs->trans("Error running final request: " . $sqlafterimport));
 						$error++;
@@ -2068,10 +2076,12 @@ if ($step == 6 && $datatoimport) {
 				}
 			}
 
-			if (!$error) {
-				$db->commit(); // We can commit if no errors.
-			} else {
-				$db->rollback();
+			if (empty($import_force)) {
+				if (!$error) {
+					$db->commit(); // We can commit if no errors.
+				} else {
+					$db->rollback();
+				}
 			}
 		}
 	}
