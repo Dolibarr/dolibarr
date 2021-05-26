@@ -555,6 +555,33 @@ if ($action == "set")
                     $buffer = trim($buffer);
                     if ($buffer)
                     {
+                        // Special case of lines allowed for some version only
+                        if ($choix == 1 && preg_match('/^--\sV([0-9\.]+)/i', $buffer, $reg))
+                        {
+                            $versioncommande=explode('.', $reg[1]);
+                            //print var_dump($versioncommande);
+                            //print var_dump($versionarray);
+                            if (count($versioncommande) && count($versionarray)
+                            && versioncompare($versioncommande, $versionarray) <= 0)
+                            {
+                                // Version qualified, delete SQL comments
+                                $buffer=preg_replace('/^--\sV([0-9\.]+)/i', '', $buffer);
+                                //print "Ligne $i qualifiee par version: ".$buf.'<br>';
+                            }
+                        }
+                        if ($choix == 2 && preg_match('/^--\sPOSTGRESQL\sV([0-9\.]+)/i', $buffer, $reg))
+                        {
+                            $versioncommande=explode('.', $reg[1]);
+                            //print var_dump($versioncommande);
+                            //print var_dump($versionarray);
+                            if (count($versioncommande) && count($versionarray)
+                            && versioncompare($versioncommande, $versionarray) <= 0)
+                            {
+                                // Version qualified, delete SQL comments
+                                $buffer=preg_replace('/^--\sPOSTGRESQL\sV([0-9\.]+)/i', '', $buffer);
+                                //print "Ligne $i qualifiee par version: ".$buf.'<br>';
+                            }
+                        }
                         if (substr($buffer, 0, 2) == '--') continue;
 
                         if ($linefound && ($linefound % $sizeofgroup) == 0)

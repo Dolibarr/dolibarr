@@ -524,3 +524,7 @@ UPDATE llx_facturedet SET situation_percent = 100 WHERE situation_percent IS NUL
 --ALTER TABLE llx_tablename ROW_FORMAT=DYNAMIC;
 
 
+-- DO NOT ADD ANYTHING BELOW THIS LINE
+
+-- PostgreSQL only: recalculate sequences for data INSERTed with forced auto_increment/serial primary key
+-- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
