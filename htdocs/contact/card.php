@@ -450,12 +450,14 @@ if (empty($reshook)) {
 		$object->fetch(GETPOST('id', 'int'));
 
 		foreach ($object->array_options as $attributekey => $value) {
-			if (GETPOSTISSET($attributekey.'day') && GETPOSTISSET($attributekey.'month') && GETPOSTISSET($attributekey.'year')) {
-				// This is properties of a date
-				$object->array_options[$attributekey] = dol_mktime(GETPOST($attributekey.'hour', 'int'), GETPOST($attributekey.'min', 'int'), GETPOST($attributekey.'sec', 'int'), GETPOST($attributekey.'month', 'int'), GETPOST($attributekey.'day', 'int'), GETPOST($attributekey.'year', 'int'));
-				//var_dump(dol_print_date($object->array_options['options_'.$attributekey]));exit;
-			} else {
-				$object->array_options[$attributekey] = GETPOST($attributekey, 'alpha');
+			if (GETPOSTISSET($attributekey)) {
+				if (GETPOSTISSET($attributekey.'day') && GETPOSTISSET($attributekey.'month') && GETPOSTISSET($attributekey.'year')) {
+					// This is properties of a date
+					$object->array_options[$attributekey] = dol_mktime(GETPOST($attributekey.'hour', 'int'), GETPOST($attributekey.'min', 'int'), GETPOST($attributekey.'sec', 'int'), GETPOST($attributekey.'month', 'int'), GETPOST($attributekey.'day', 'int'), GETPOST($attributekey.'year', 'int'));
+					//var_dump(dol_print_date($object->array_options['options_'.$attributekey]));exit;
+				} else {
+					$object->array_options[$attributekey] = GETPOST($attributekey, 'alpha');
+				}
 			}
 		}
 
