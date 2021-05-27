@@ -722,6 +722,7 @@ if ($resql) {
 
 		$i = 0;
 		$totalarray = array();
+		$totalarray['nbfield'] = 0;
 		while ($i < min($num, $limit)) {
 			$obj = $db->fetch_object($resql);
 
