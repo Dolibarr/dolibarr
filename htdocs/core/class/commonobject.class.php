@@ -6397,7 +6397,7 @@ abstract class CommonObject
 		$param = array();
 		$param['options'] = array();
 		$reg = array();
-		$size = $this->fields[$key]['size'];
+		$size = !empty($this->fields[$key]['size']) ? $this->fields[$key]['size'] : 0;
 		// Because we work on extrafields
 		if (preg_match('/^(integer|link):(.*):(.*):(.*):(.*)/i', $val['type'], $reg)) {
 			$param['options'] = array($reg[2].':'.$reg[3].':'.$reg[4].':'.$reg[5] => 'N');
@@ -6430,21 +6430,21 @@ abstract class CommonObject
 		}
 
 		// Special case that force options and type ($type can be integer, varchar, ...)
-		if (is_array($this->fields[$key]['arrayofkeyval'])) {
+		if (!empty($this->fields[$key]['arrayofkeyval']) && is_array($this->fields[$key]['arrayofkeyval'])) {
 			$param['options'] = $this->fields[$key]['arrayofkeyval'];
 			$type = 'select';
 		}
 
 		$label = $this->fields[$key]['label'];
 		//$elementtype=$this->fields[$key]['elementtype'];	// Seems not used
-		$default = $this->fields[$key]['default'];
-		$computed = $this->fields[$key]['computed'];
-		$unique = $this->fields[$key]['unique'];
-		$required = $this->fields[$key]['required'];
-		$autofocusoncreate = $this->fields[$key]['autofocusoncreate'];
+		$default = (!empty($this->fields[$key]['default']) ? $this->fields[$key]['default'] : '');
+		$computed = (!empty($this->fields[$key]['computed']) ? $this->fields[$key]['computed'] : '');
+		$unique = (!empty($this->fields[$key]['unique']) ? $this->fields[$key]['unique'] : 0);
+		$required = (!empty($this->fields[$key]['required']) ? $this->fields[$key]['required'] : 0);
+		$autofocusoncreate = (!empty($this->fields[$key]['autofocusoncreate']) ? $this->fields[$key]['autofocusoncreate'] : 0);
 
-		$langfile = $this->fields[$key]['langfile'];
-		$list = $this->fields[$key]['list'];
+		$langfile = (!empty($this->fields[$key]['langfile']) ? $this->fields[$key]['langfile'] : '');
+		$list = (!empty($this->fields[$key]['list']) ? $this->fields[$key]['list'] : 0);
 		$hidden = (in_array(abs($this->fields[$key]['visible']), array(0, 2)) ? 1 : 0);
 
 		$objectid = $this->id;
