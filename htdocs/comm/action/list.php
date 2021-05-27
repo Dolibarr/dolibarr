@@ -320,7 +320,7 @@ if ($search_title != '') {
 	$param .= '&search_title='.urlencode($search_title);
 }
 if ($search_note != '') {
-	$param .= '&search_note='.$search_note;
+	$param .= '&search_note='.urlencode($search_note);
 }
 if (GETPOST('datestartday', 'int')) {
 	$param .= '&datestartday='.GETPOST('datestartday', 'int');
@@ -829,7 +829,11 @@ if ($resql) {
 		$actionstatic->location = $obj->location;
 		$actionstatic->note_private = dol_htmlentitiesbr($obj->note);
 
-		$actionstatic->fetchResources();
+		// Initialize $this->userassigned && this->socpeopleassigned array && this->userownerid
+		// but only if we need it
+		if (!empty($arrayfields['a.fk_contact']['checked'])) {
+			$actionstatic->fetchResources();
+		}
 
 		print '<tr class="oddeven">';
 
