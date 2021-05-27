@@ -949,7 +949,7 @@ while ($i < min($num, $limit)) {
 	}
 	// Firstname
 	if (!empty($arrayfields['d.firstname']['checked'])) {
-		print "<td>";
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->firstname).'">';
 		print $obj->firstname;
 		print "</td>\n";
 		if (!$i) {
@@ -958,7 +958,7 @@ while ($i < min($num, $limit)) {
 	}
 	// Lastname
 	if (!empty($arrayfields['d.lastname']['checked'])) {
-		print "<td>";
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->lastname).'">';
 		print $obj->lastname;
 		print "</td>\n";
 		if (!$i) {
@@ -978,13 +978,13 @@ while ($i < min($num, $limit)) {
 	}
 	// Company
 	if (!empty($arrayfields['d.company']['checked'])) {
-		print "<td>";
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companyname).'">';
 		print $companyname;
 		print "</td>\n";
 	}
 	// Login
 	if (!empty($arrayfields['d.login']['checked'])) {
-		print "<td>".$obj->login."</td>\n";
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->login).'">'.$obj->login."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -1009,7 +1009,7 @@ while ($i < min($num, $limit)) {
 	if (!empty($arrayfields['t.libelle']['checked'])) {
 		$membertypestatic->id = $obj->type_id;
 		$membertypestatic->label = $obj->type;
-		print '<td class="nowrap">';
+		print '<td class="nowraponall">';
 		print $membertypestatic->getNomUrl(1, 32);
 		print '</td>';
 		if (!$i) {
@@ -1018,7 +1018,7 @@ while ($i < min($num, $limit)) {
 	}
 	// Address
 	if (!empty($arrayfields['d.address']['checked'])) {
-		print '<td class="nocellnopadd">';
+		print '<td class="nocellnopadd tdoverflowmax200" title="'.dol_escape_htmltag($obj->address).'">';
 		print $obj->address;
 		print '</td>';
 		if (!$i) {
