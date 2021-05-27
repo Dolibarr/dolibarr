@@ -72,6 +72,8 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 ALTER TABLE llx_product_lot ADD COLUMN eol_date datetime NULL;
 ALTER TABLE llx_product_lot ADD COLUMN manufacturing_date datetime NULL;
 ALTER TABLE llx_product_lot ADD COLUMN scrapping_date datetime NULL;
+ALTER TABLE llx_product_lot ADD COLUMN commissionning_date datetime NULL;
+ALTER TABLE llx_product_lot ADD COLUMN qc_frequency int;
 
 create table llx_accounting_groups_account
 (
@@ -412,14 +414,6 @@ UPDATE llx_propal SET date_signature = date_cloture WHERE date_signature IS NULL
 
 
 ALTER TABLE llx_product ADD COLUMN batch_mask VARCHAR(32) NULL;
-ALTER TABLE llx_product ADD COLUMN lifetime INTEGER NULL;
-ALTER TABLE llx_product ADD COLUMN qc_frequency INTEGER NULL;
-
-ALTER TABLE llx_product_lot ADD COLUMN eol_date datetime;
-ALTER TABLE llx_product_lot ADD COLUMN manufacturing_date datetime;
-ALTER TABLE llx_product_lot ADD COLUMN scrapping_date datetime;
-ALTER TABLE llx_product_lot ADD COLUMN commissionning_date datetime;
-ALTER TABLE llx_product_lot ADD COLUMN qc_frequency INT;
 
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (210, 'conferenceorbooth', 'internal', 'MANAGER',  'Conference or Booth manager', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (211, 'conferenceorbooth', 'external', 'SPEAKER',   'Conference Speaker', 1);

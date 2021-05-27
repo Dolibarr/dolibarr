@@ -61,9 +61,7 @@ create table llx_product
   tobatch                       tinyint      DEFAULT 0 NOT NULL,    -- Is it a product that need a batch management (eat-by or lot management)
   batch_mask			              varchar(32),                        -- If the product has batch feature, you may want to use a batch mask per product
   fk_product_type               integer      DEFAULT 0,             -- Type of product: 0 for regular product, 1 for service, 9 for other (used by external module)
-  duration                      varchar(6),
-  lifetime                      int,
-  qc_frequency                  int,                                -- Quality control periodicity
+  duration                      varchar(6),                             -- Quality control periodicity
   seuil_stock_alerte            float      DEFAULT NULL,
   url                           varchar(255),
   barcode                       varchar(180) DEFAULT NULL,          -- barcode
