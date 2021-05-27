@@ -3,7 +3,7 @@
  * Copyright (C) 2015 		Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2015 		Alexandre Spangaro  	<aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (c) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (c) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2016-2020 	Ferran Marcet       	<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -2478,9 +2478,9 @@ class ExpenseReport extends CommonObject
 
 		$now = dol_now();
 		if ($option == 'toapprove') {
-			return ($this->datevalid ? $this->datevalid : $this->date_valid) < ($now - $conf->expensereport->approve->warning_delay);
+			return (!empty($this->datevalid) ? $this->datevalid : $this->date_valid) < ($now - $conf->expensereport->approve->warning_delay);
 		} else {
-			return ($this->datevalid ? $this->datevalid : $this->date_valid) < ($now - $conf->expensereport->payment->warning_delay);
+			return (!empty($this->datevalid) ? $this->datevalid : $this->date_valid) < ($now - $conf->expensereport->payment->warning_delay);
 		}
 	}
 
