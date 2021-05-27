@@ -528,7 +528,7 @@ while ($i < min($num, $limit)) {
 
 	// Lastname
 	if (!empty($arrayfields['d.lastname']['checked'])) {
-		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($adherent->lastname).'">'.$adherent->getNomUrl(-1, 0, 'card', 'lastname').'</td>';
+		print '<td class="tdoverflowmax150">'.$adherent->getNomUrl(-1, 0, 'card', 'lastname').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
