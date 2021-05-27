@@ -254,11 +254,15 @@ $parameters = [
 $reshook = $hookmanager->executeHooks('doValidatePayment', $parameters, $object, $action);
 
 // Check security token
+$tmpsource = $source;
+if ($tmpsource == 'membersubscription') {
+	$tmpsource = 'member';
+}
 $valid = true;
 if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 	if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-		if ($source && $REF) {
-			$token = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.$source.$REF, 2); // Use the source in the hash to avoid duplicates if the references are identical
+		if ($tmpsource && $REF) {
+			$token = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.$tmpsource.$REF, 2); // Use the source in the hash to avoid duplicates if the references are identical
 		} else {
 			$token = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
 		}
@@ -770,7 +774,7 @@ $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
 llxHeader($head, $langs->trans("PaymentForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea);
 
 // Check link validity
-if ($source && in_array($ref, array('member_ref', 'contractline_ref', 'invoice_ref', 'order_ref', ''))) {
+if ($source && in_array($ref, array('member_ref', 'contractline_ref', 'invoice_ref', 'order_ref', 'donation_ref', ''))) {
 	$langs->load("errors");
 	dol_print_error_email('BADREFINPAYMENTFORM', $langs->trans("ErrorBadLinkSourceSetButBadValueForRef", $source, $ref));
 	// End of page
