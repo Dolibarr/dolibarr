@@ -306,7 +306,12 @@ $memberstatic = new Adherent($db);
 
 $now = dol_now();
 
-$sql = "SELECT d.rowid, d.ref, d.login, d.lastname, d.firstname, d.gender, d.societe as company, d.fk_soc,";
+if (!empty($search_categ) || !empty($catid)) {
+	$sql = "SELECT DISTINCT";
+} else {
+	$sql = "SELECT";
+}
+$sql .= " d.rowid, d.ref, d.login, d.lastname, d.firstname, d.gender, d.societe as company, d.fk_soc,";
 $sql .= " d.civility, d.datefin, d.address, d.zip, d.town, d.state_id, d.country,";
 $sql .= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.skype, d.birth, d.public, d.photo,";
 $sql .= " d.fk_adherent_type as type_id, d.morphy, d.statut, d.datec as date_creation, d.tms as date_update,";
@@ -337,7 +342,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = d
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = d.state_id)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on (s.rowid = d.fk_soc)";
 $sql .= ", ".MAIN_DB_PREFIX."adherent_type as t";
-$sql .= " WHERE d.fk_adherent_type = t.rowid ";
+$sql .= " WHERE d.fk_adherent_type = t.rowid";
 if ($catid > 0) {
 	$sql .= " AND cm.fk_categorie = ".((int) $catid);
 }
