@@ -2232,15 +2232,14 @@ if (empty($reshook)) {
 				$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency));
 				setEventMessages($mesg, null, 'errors');
 			} else {
-				
 				// Add batchinfo if the detailline has batchinfo
-									
-				if (!empty($lines[$i]->detail_batch) && ! empty($conf->global->INCUDE_BATCHINFO_ON_INVOICE)){
-						foreach ($lines[$i]->detail_batch as $batchline){
-									$desc .= ' Batch: '.$batchline->batch.' aantal: '.$batchline->qty;
-						}
+
+				if (!empty($lines[$i]->detail_batch) && ! empty($conf->global->INCUDE_BATCHINFO_ON_INVOICE)) {
+					foreach ($lines[$i]->detail_batch as $batchline) {
+								$desc .= ' Batch: '.$batchline->batch.' aantal: '.$batchline->qty;
+					}
 				}
-				
+
 				// Insert line
 				$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $date_start, $date_end, 0, $info_bits, '', $price_base_type, $pu_ttc, $type, - 1, $special_code, '', 0, GETPOST('fk_parent_line'), $fournprice, $buyingprice, $label, $array_options, $_POST['progress'], '', $fk_unit, $pu_ht_devise);
 
