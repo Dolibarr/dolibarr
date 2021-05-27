@@ -8325,10 +8325,10 @@ class Form
 						$nophoto = 'company';
 					} else {
 						$nophoto = '/public/theme/common/user_anonymous.png';
-						if ($object->gender == 'man') {
+						if (!empty($object->gender) && $object->gender == 'man') {
 							$nophoto = '/public/theme/common/user_man.png';
 						}
-						if ($object->gender == 'woman') {
+						if (!empty($object->gender) && $object->gender == 'woman') {
 							$nophoto = '/public/theme/common/user_woman.png';
 						}
 					}
