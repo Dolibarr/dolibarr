@@ -551,7 +551,7 @@ while ($i < min($num, $limit)) {
 
 	// Label
 	if (!empty($arrayfields['t.libelle']['checked'])) {
-		print '<td class="tdoverflowmax500" title="'.dol_escape_htmltag($obj->note).'">';
+		print '<td class="tdoverflowmax400" title="'.dol_escape_htmltag($obj->note).'">';
 		print $obj->note;
 		print '</td>';
 		if (!$i) {
