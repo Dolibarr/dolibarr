@@ -2236,8 +2236,7 @@ if (empty($reshook)) {
 
 				if (!empty($lines[$i]->detail_batch) && ! empty($conf->global->INCUDE_BATCHINFO_ON_INVOICE)) {
 					foreach ($lines[$i]->detail_batch as $batchline) {
-								$desc .= ' '.$langs->trans('Batch').' '.$batchline->batch.' '.$langs->trans('printQty',$batchline->qty).' ';
-							
+								$desc .= ' '.$langs->trans('Batch').' '.$batchline->batch.' '.$langs->trans('printQty', $batchline->qty).' ';
 					}
 				}
 
