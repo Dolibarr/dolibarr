@@ -477,6 +477,7 @@ print "</tr>\n";
 
 
 $totalarray = array();
+$totalarray['nbfield'] = 0;
 while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($result);
 

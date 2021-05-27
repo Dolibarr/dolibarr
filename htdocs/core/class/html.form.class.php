@@ -3025,6 +3025,10 @@ class Form
 		global $langs, $conf;
 		global $price_level, $status, $finished;
 
+		if (!isset($status)) {
+			$status = 1;
+		}
+
 		$selected_input_value = '';
 		if (!empty($conf->use_javascript_ajax) && !empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) {
 			if ($selected > 0) {
@@ -3040,7 +3044,7 @@ class Form
 			print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
 			print ($hidelabel ? '' : $langs->trans("RefOrLabel").' : ').'<input type="text" class="minwidth300" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.($placeholder ? ' placeholder="'.$placeholder.'"' : '').'>';
 		} else {
-			print $this->select_produits_fournisseurs_list($socid, $selected, $htmlname, $filtertype, $filtre, '', -1, 0, 0, $alsoproductwithnosupplierprice, $morecss, 0, $placeholder);
+			print $this->select_produits_fournisseurs_list($socid, $selected, $htmlname, $filtertype, $filtre, '', $status, 0, 0, $alsoproductwithnosupplierprice, $morecss, 0, $placeholder);
 		}
 	}
 
@@ -3054,7 +3058,7 @@ class Form
 	 *  @param	string	$filtertype     Filter on product type (''=nofilter, 0=product, 1=service)
 	 *	@param  string	$filtre         Pour filtre sql
 	 *	@param  string	$filterkey      Filtre des produits
-	 *  @param  int		$statut         -1=Return all products, 0=Products not on sell, 1=Products on sell (not used here, a filter on tobuy is already hard coded in request)
+	 *  @param  int		$statut         -1=Return all products, 0=Products not on buy, 1=Products on buy
 	 *  @param  int		$outputmode     0=HTML select string, 1=Array
 	 *  @param  int     $limit          Limit of line number
 	 *  @param  int     $alsoproductwithnosupplierprice    1=Add also product without supplier prices
@@ -3107,7 +3111,9 @@ class Form
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_units u ON u.rowid = p.fk_unit";
 		}
 		$sql .= " WHERE p.entity IN (".getEntity('product').")";
-		$sql .= " AND p.tobuy = 1";
+		if ($statut != -1) {
+			$sql .= " AND p.tobuy = ".((int) $statut);
+		}
 		if (strval($filtertype) != '') {
 			$sql .= " AND p.fk_product_type=".$this->db->escape($filtertype);
 		}
@@ -4889,7 +4895,7 @@ class Form
                          			var more = "";
 									var inputvalue;
                          			if ($("input[name=\'" + inputname + "\']").attr("type") == "radio") {
-										inputvalue = $("input[name=\'" + inputname + "\']").val();
+										inputvalue = $("input[name=\'" + inputname + "\']:checked").val();
 									} else {
                          		    	if ($("#" + inputname).attr("type") == "checkbox") { more = ":checked"; }
                          				inputvalue = $("#" + inputname + more).val();
@@ -6924,7 +6930,7 @@ class Form
 		if ($addjscombo && $jsbeautify) {
 			// Enhance with select2
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-			$out .= ajax_combobox($htmlname);
+			$out .= ajax_combobox($htmlname, array(), 0, 0, 'resolve', $show_empty < 0 ? (string) $show_empty : '-1');
 		}
 
 		$out .= '<select id="'.preg_replace('/^\./', '', $htmlname).'" '.($disabled ? 'disabled="disabled" ' : '').'class="flat '.(preg_replace('/^\./', '', $htmlname)).($morecss ? ' '.$morecss : '').'"';
@@ -8208,7 +8214,7 @@ class Form
 		} elseif ($modulepart == 'contact')	{
 			$dir = $conf->societe->multidir_output[$entity].'/contact';
 			if (!empty($object->photo)) {
-				if (dolIsAllowedForPreview($object->logo)) {
+				if (dolIsAllowedForPreview($object->photo)) {
 					if ((string) $imagesize == 'mini') {
 						$file = get_exdir(0, 0, 0, 0, $object, 'contact').'photos/'.getImageFileNameForSize($object->photo, '_mini');
 					} elseif ((string) $imagesize == 'small') {
@@ -8224,7 +8230,7 @@ class Form
 		} elseif ($modulepart == 'userphoto') {
 			$dir = $conf->user->dir_output;
 			if (!empty($object->photo)) {
-				if (dolIsAllowedForPreview($object->logo)) {
+				if (dolIsAllowedForPreview($object->photo)) {
 					if ((string) $imagesize == 'mini') {
 						$file = get_exdir(0, 0, 0, 0, $object, 'user').getImageFileNameForSize($object->photo, '_mini');
 					} elseif ((string) $imagesize == 'small') {
@@ -8243,7 +8249,7 @@ class Form
 		} elseif ($modulepart == 'memberphoto')	{
 			$dir = $conf->adherent->dir_output;
 			if (!empty($object->photo)) {
-				if (dolIsAllowedForPreview($object->logo)) {
+				if (dolIsAllowedForPreview($object->photo)) {
 					if ((string) $imagesize == 'mini') {
 						$file = get_exdir(0, 0, 0, 0, $object, 'member').'photos/'.getImageFileNameForSize($object->photo, '_mini');
 					} elseif ((string) $imagesize == 'small') {
@@ -8263,7 +8269,7 @@ class Form
 			// Generic case to show photos
 			$dir = $conf->$modulepart->dir_output;
 			if (!empty($object->photo)) {
-				if (dolIsAllowedForPreview($object->logo)) {
+				if (dolIsAllowedForPreview($object->photo)) {
 					if ((string) $imagesize == 'mini') {
 						$file = get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.getImageFileNameForSize($object->photo, '_mini');
 					} elseif ((string) $imagesize == 'small') {

@@ -390,16 +390,15 @@ if ($massaction == 'makepayment_confirm') {
 				$totalcreditnotes = $objecttmp->getSumCreditNotesUsed();
 				$totaldeposits = $objecttmp->getSumDepositsUsed();
 				$objecttmp->resteapayer = price2num($objecttmp->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
-				if ($objecttmp->paye || $objecttmp->resteapayer == 0) {
+				if ($objecttmp->statut == Facture::STATUS_DRAFT) {
+					$error++;
+					setEventMessages($objecttmp->ref.' '.$langs->trans("Draft"), $objecttmp->errors, 'errors');
+				} elseif ($objecttmp->paye || $objecttmp->resteapayer == 0) {
 					$error++;
 					setEventMessages($objecttmp->ref.' '.$langs->trans("AlreadyPaid"), $objecttmp->errors, 'errors');
 				} elseif ($objecttmp->resteapayer < 0) {
 					$error++;
 					setEventMessages($objecttmp->ref.' '.$langs->trans("AmountMustBePositive"), $objecttmp->errors, 'errors');
-				}
-				if (!($objecttmp->statut > Facture::STATUS_DRAFT)) {
-					$error++;
-					setEventMessages($objecttmp->ref.' '.$langs->trans("Draft"), $objecttmp->errors, 'errors');
 				}
 
 				$rsql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande";
@@ -952,7 +951,7 @@ if ($resql) {
 	);
 	if ($conf->prelevement->enabled && !empty($user->rights->prelevement->bons->creer)) {
 			$langs->load("withdrawals");
-			$arrayofmassactions['withdrawrequest'] = $langs->trans("MakeWithdrawRequest");
+			$arrayofmassactions['withdrawrequest'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakeWithdrawRequest");
 	}
 	if ($user->rights->facture->supprimer) {
 		if (!empty($conf->global->INVOICE_CAN_REMOVE_DRAFT_ONLY)) {

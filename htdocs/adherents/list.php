@@ -5,6 +5,7 @@
  * Copyright (C) 2013-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014-2016  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -325,7 +326,7 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // N
 $sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
 $sql = preg_replace('/,\s*$/', '', $sql);
 $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (!empty($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (d.rowid = ef.fk_object)";
 }
 if (!empty($search_categ) || !empty($catid)) {
@@ -708,7 +709,7 @@ if (!empty($arrayfields['d.morphy']['checked'])) {
 if (!empty($arrayfields['t.libelle']['checked'])) {
 	print '<td class="liste_titre">';
 	$listetype = $membertypestatic->liste_array();
-	print $form->selectarray("search_type", $listetype, $type, 1, 0, 0, '', 0, 32);
+	print $form->selectarray("search_type", $listetype, $search_type, 1, 0, 0, '', 0, 32);
 	print '</td>';
 }
 
@@ -792,8 +793,8 @@ if (!empty($arrayfields['d.statut']['checked'])) {
 	$liststatus = array(
 		'-1'=>$langs->trans("Draft"),
 		'1'=>$langs->trans("Validated"),
-		'0'=>$langs->trans("Resiliated"),
-		'-2'=>$langs->trans("Excluded")
+		'0'=>$langs->trans("MemberStatusResiliatedShort"),
+		'-2'=>$langs->trans("MemberStatusExcludedShort")
 	);
 	print $form->selectarray('search_status', $liststatus, $search_status, -3);
 	print '</td>';
@@ -891,6 +892,7 @@ print "</tr>\n";
 
 $i = 0;
 $totalarray = array();
+$totalarray['nbfield'] = 0;
 while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($resql);
 
@@ -1096,7 +1098,7 @@ while ($i < min($num, $limit)) {
 			print '<td class="nowrap center">';
 			print dol_print_date($datefin, 'day');
 			if ($memberstatic->hasDelay()) {
-				$textlate .= ' ('.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($conf->adherent->subscription->warning_delay / 60 / 60 / 24) >= 0 ? '+' : '').ceil($conf->adherent->subscription->warning_delay / 60 / 60 / 24).' '.$langs->trans("days").')';
+				$textlate = ' ('.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($conf->adherent->subscription->warning_delay / 60 / 60 / 24) >= 0 ? '+' : '').ceil($conf->adherent->subscription->warning_delay / 60 / 60 / 24).' '.$langs->trans("days").')';
 				print " ".img_warning($langs->trans("SubscriptionLate").$textlate);
 			}
 			print '</td>';

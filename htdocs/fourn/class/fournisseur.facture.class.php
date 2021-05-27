@@ -1361,7 +1361,7 @@ class FactureFournisseur extends CommonInvoice
 			}
 			$sql .= ', fk_user_closing = '.$user->id;
 			$sql .= ", date_closing = '".$this->db->idate($now)."'";
-			$sql .= ' WHERE rowid = '.$this->id;
+			$sql .= ' WHERE rowid = '.((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -1417,18 +1417,17 @@ class FactureFournisseur extends CommonInvoice
 	 */
 	public function setUnpaid($user)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		$this->db->begin();
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn';
-		$sql .= ' SET paye=0, fk_statut='.self::STATUS_VALIDATED.', close_code=null, close_note=null';
+		$sql .= ' SET paye=0, fk_statut='.self::STATUS_VALIDATED.', close_code=null, close_note=null,';
 		$sql .= ' date_closing=null,';
 		$sql .= ' fk_user_closing=null';
-		$sql .= ' WHERE rowid = '.$this->id;
+		$sql .= ' WHERE rowid = '.((int) $this->id);
 
-		dol_syslog("FactureFournisseur::set_unpaid", LOG_DEBUG);
+		dol_syslog(get_class($this)."::set_unpaid", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			// Call trigger

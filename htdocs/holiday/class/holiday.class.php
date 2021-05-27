@@ -1992,8 +1992,6 @@ class Holiday extends CommonObject
 	 */
 	public function fetchLog($order, $filter)
 	{
-		global $langs;
-
 		$sql = "SELECT";
 		$sql .= " cpl.rowid,";
 		$sql .= " cpl.date_action,";
