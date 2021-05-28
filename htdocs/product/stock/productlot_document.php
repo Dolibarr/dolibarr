@@ -94,7 +94,9 @@ $usercanread = $user->rights->produit->lire;
 $usercancreate = $user->rights->produit->creer;
 $usercandelete = $user->rights->produit->supprimer;
 
-$upload_dir = $conf->productbatch->multidir_output[$conf->entity];
+if (empty($upload_dir)) {
+	$upload_dir = $conf->productbatch->multidir_output[$conf->entity];
+}
 
 $permissiontoread = $usercanread;
 $permissiontoadd = $usercancreate;
