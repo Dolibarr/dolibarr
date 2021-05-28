@@ -5208,11 +5208,11 @@ class Product extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Retourne tableau de toutes les photos du produit
+	 * Return an array with all photos of product found on disk. There is no sorting criteria.
 	 *
-	 * @param  string $dir   Repertoire a scanner
-	 * @param  int    $nbmax Nombre maximum de photos (0=pas de max)
-	 * @return array                   Tableau de photos
+	 * @param  string $dir   	Directory to scan
+	 * @param  int    $nbmax 	Number maxium of photos (0=no maximum)
+	 * @return array            Array of photos
 	 */
 	public function liste_photos($dir, $nbmax = 0)
 	{
@@ -5226,16 +5226,17 @@ class Product extends CommonObject
 		$dir_osencoded = dol_osencode($dir);
 		$handle = @opendir($dir_osencoded);
 		if (is_resource($handle)) {
-			while (($file = readdir($handle)) !== false)
-			{
-				if (!utf8_check($file)) { $file = utf8_encode($file); // readdir returns ISO
+			while (($file = readdir($handle)) !== false) {
+				if (!utf8_check($file)) {
+					$file = utf8_encode($file); // readdir returns ISO
 				}
 				if (dol_is_file($dir.$file) && image_format_supported($file) >= 0) {
 					$nbphoto++;
 
-					// On determine nom du fichier vignette
+					// We forge name of thumb.
 					$photo = $file;
 					$photo_vignette = '';
+					$regs = array();
 					if (preg_match('/('.$this->regeximgext.')$/i', $photo, $regs)) {
 						$photo_vignette = preg_replace('/'.$regs[0].'/i', '', $photo).'_small'.$regs[0];
 					}
@@ -5245,14 +5246,17 @@ class Product extends CommonObject
 					// Objet
 					$obj = array();
 					$obj['photo'] = $photo;
-					if ($photo_vignette && dol_is_file($dirthumb.$photo_vignette)) { $obj['photo_vignette'] = 'thumbs/'.$photo_vignette;
-					} else { $obj['photo_vignette'] = "";
+					if ($photo_vignette && dol_is_file($dirthumb.$photo_vignette)) {
+						$obj['photo_vignette'] = 'thumbs/'.$photo_vignette;
+					} else {
+						$obj['photo_vignette'] = "";
 					}
 
 					$tabobj[$nbphoto - 1] = $obj;
 
-					// On continue ou on arrete de boucler ?
-					if ($nbmax && $nbphoto >= $nbmax) { break;
+					// Do we have to continue with next photo ?
+					if ($nbmax && $nbphoto >= $nbmax) {
+						break;
 					}
 				}
 			}
@@ -5265,9 +5269,9 @@ class Product extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Efface la photo du produit et sa vignette
+	 *  Delete a photo and its thumbs
 	 *
-	 * @param  string $file Chemin de l'image
+	 * @param  string $file 	Path to image file
 	 * @return void
 	 */
 	public function delete_photo($file)
