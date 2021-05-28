@@ -150,7 +150,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 
 					$late = '';
 					if ($facturestatic->hasDelay()) {
-						$late = img_warning(sprintf($l_due_date, dol_print_date($datelimite, 'day')));
+						$late = img_warning(sprintf($l_due_date, dol_print_date($datelimite, 'day', 'tzuserrel')));
 					}
 
 					$tooltip = $langs->trans('SupplierInvoice').': '.($objp->ref ? $objp->ref : $objp->facid).'<br>'.$langs->trans('RefSupplier').': '.$objp->ref_supplier;
@@ -175,7 +175,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => dol_print_date($datelimite, 'day'),
+						'text' => dol_print_date($datelimite, 'day', 'tzuserrel'),
 					);
 
 					$this->info_box_contents[$line][] = array(

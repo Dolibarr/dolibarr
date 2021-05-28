@@ -60,9 +60,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$staticproduct = new Product($db);
-
-$result = restrictedArea($user, 'produit|service', 0, 'product&product');
+restrictedArea($user, 'produit|service', 0, 'product&product', '', '');
 
 
 /*

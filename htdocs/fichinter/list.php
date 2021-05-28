@@ -244,21 +244,21 @@ if (!empty($conf->projet->enabled)) {
 if (!empty($conf->contrat->enabled)) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."contrat as c on f.fk_contrat = c.rowid";
 }
-
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (f.rowid = ef.fk_object)";
 }
 if (empty($conf->global->FICHINTER_DISABLE_DETAILS) && $atleastonefieldinlines) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."fichinterdet as fd ON fd.fk_fichinter = f.rowid";
 }
+
 // Add table from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
+
 if (!$user->rights->societe->client->voir && empty($socid)) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
-
 $sql .= ", ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE f.entity IN (".getEntity('intervention').")";
 $sql .= " AND f.fk_soc = s.rowid";
@@ -572,6 +572,7 @@ if ($resql) {
 	$total = 0;
 	$i = 0;
 	$totalarray = array();
+	$totalarray['nbfield'] = 0;
 	while ($i < min($num, $limit)) {
 		$obj = $db->fetch_object($resql);
 

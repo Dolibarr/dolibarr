@@ -319,9 +319,9 @@ class Utils
 			}
 			if ($dolibarr_main_db_character_set == 'utf8mb4') {
 				// We save output into utf8mb4 charset
-				$param .= " --default-character-set=utf8mb4";
+				$param .= " --default-character-set=utf8mb4 --no-tablespaces";
 			} else {
-				$param .= " --default-character-set=utf8"; // We always save output into utf8 charset
+				$param .= " --default-character-set=utf8 --no-tablespaces"; // We always save output into utf8 charset
 			}
 			$paramcrypted = $param;
 			$paramclear = $param;

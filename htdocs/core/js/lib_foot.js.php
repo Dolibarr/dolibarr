@@ -214,17 +214,17 @@ print '
 print "\n/* JS CODE TO ENABLE ClipBoard copy paste*/\n";
 print 'jQuery(\'.clipboardCPShowOnHover\').hover(
 			function() {
-			console.log("We hover a value with a copy paste feature");
+				console.log("We hover a value with a copy paste feature");
 				$(this).children(".clipboardCPButton, .clipboardCPText").show();
 			},
 			function() {
-			console.log("We hover out the value with a copy paste feature");
+				console.log("We hover out the value with a copy paste feature");
 				$(this).children(".clipboardCPButton, .clipboardCPText").hide();
 			}
 		);';
-print 'jQuery(\'.clipboardCPButton\').click(function() {
+print 'jQuery(\'.clipboardCPButton, .clipboardCPValueToPrint\').click(function() {
 		/* console.log(this.parentNode); */
-		console.log("We click on a clipboardCPButton tag");
+		console.log("We click on a clipboardCPButton or clipboardCPValueToPrint class");
 		if (window.getSelection) {
 			selection = window.getSelection();
 

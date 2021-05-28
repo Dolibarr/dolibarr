@@ -1025,7 +1025,7 @@ class Form
 				$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 			}
 
-			$out .= '<select id="'.$htmlname.'" class="flat selectincoterm minwidth100imp noenlargeonsmartphone" name="'.$htmlname.'" '.$htmloption.'>';
+			$out .= '<select id="'.$htmlname.'" class="flat selectincoterm width75" name="'.$htmlname.'" '.$htmloption.'>';
 			$out .= '<option value="0">&nbsp;</option>';
 			$num = $this->db->num_rows($resql);
 			$i = 0;
@@ -2131,7 +2131,7 @@ class Form
 				$out .= ' ('.$langs->trans("Owner").')';
 			}
 			if ($nbassignetouser > 1 && $action != 'view') {
-				$out .= ' <input type="image" style="border: 0px;" src="'.img_picto($langs->trans("Remove"), 'delete', '', 0, 1).'" value="'.$userstatic->id.'" class="removedassigned" id="removedassigned_'.$userstatic->id.'" name="removedassigned_'.$userstatic->id.'">';
+				$out .= ' <input type="image" style="border: 0px;" src="'.img_picto($langs->trans("Remove"), 'delete', '', 0, 1).'" value="'.$userstatic->id.'" class="removedassigned reposition" id="removedassigned_'.$userstatic->id.'" name="removedassigned_'.$userstatic->id.'">';
 			}
 			// Show my availability
 			if ($showproperties) {
@@ -2162,7 +2162,7 @@ class Form
 			$out .= '});';
 			$out .= '})</script>';
 			$out .= $this->select_dolusers('', $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity, $maxlength, $showstatus, $morefilter);
-			$out .= ' <input type="submit" disabled class="button valignmiddle smallpaddingimp" id="'.$action.'assignedtouser" name="'.$action.'assignedtouser" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
+			$out .= ' <input type="submit" disabled class="button valignmiddle smallpaddingimp reposition" id="'.$action.'assignedtouser" name="'.$action.'assignedtouser" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
 			$out .= '<br>';
 		}
 
@@ -3025,6 +3025,10 @@ class Form
 		global $langs, $conf;
 		global $price_level, $status, $finished;
 
+		if (!isset($status)) {
+			$status = 1;
+		}
+
 		$selected_input_value = '';
 		if (!empty($conf->use_javascript_ajax) && !empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) {
 			if ($selected > 0) {
@@ -3040,7 +3044,7 @@ class Form
 			print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
 			print ($hidelabel ? '' : $langs->trans("RefOrLabel").' : ').'<input type="text" class="minwidth300" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.($placeholder ? ' placeholder="'.$placeholder.'"' : '').'>';
 		} else {
-			print $this->select_produits_fournisseurs_list($socid, $selected, $htmlname, $filtertype, $filtre, '', -1, 0, 0, $alsoproductwithnosupplierprice, $morecss, 0, $placeholder);
+			print $this->select_produits_fournisseurs_list($socid, $selected, $htmlname, $filtertype, $filtre, '', $status, 0, 0, $alsoproductwithnosupplierprice, $morecss, 0, $placeholder);
 		}
 	}
 
@@ -3054,7 +3058,7 @@ class Form
 	 *  @param	string	$filtertype     Filter on product type (''=nofilter, 0=product, 1=service)
 	 *	@param  string	$filtre         Pour filtre sql
 	 *	@param  string	$filterkey      Filtre des produits
-	 *  @param  int		$statut         -1=Return all products, 0=Products not on sell, 1=Products on sell (not used here, a filter on tobuy is already hard coded in request)
+	 *  @param  int		$statut         -1=Return all products, 0=Products not on buy, 1=Products on buy
 	 *  @param  int		$outputmode     0=HTML select string, 1=Array
 	 *  @param  int     $limit          Limit of line number
 	 *  @param  int     $alsoproductwithnosupplierprice    1=Add also product without supplier prices
@@ -3107,7 +3111,9 @@ class Form
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_units u ON u.rowid = p.fk_unit";
 		}
 		$sql .= " WHERE p.entity IN (".getEntity('product').")";
-		$sql .= " AND p.tobuy = 1";
+		if ($statut != -1) {
+			$sql .= " AND p.tobuy = ".((int) $statut);
+		}
 		if (strval($filtertype) != '') {
 			$sql .= " AND p.fk_product_type=".$this->db->escape($filtertype);
 		}
@@ -3670,13 +3676,14 @@ class Form
 	/**
 	 *      Retourne la liste des types de delais de livraison possibles
 	 *
-	 *      @param	int		$selected        Id du type de delais pre-selectionne
-	 *      @param  string	$htmlname        Nom de la zone select
-	 *      @param  string	$filtertype      To add a filter
+	 *      @param	int		$selected       Id du type de delais pre-selectionne
+	 *      @param  string	$htmlname       Nom de la zone select
+	 *      @param  string	$filtertype     To add a filter
 	 *		@param	int		$addempty		Add empty entry
+	 * 		@param	string	$morecss		More CSS
 	 *		@return	void
 	 */
-	public function selectAvailabilityDelay($selected = '', $htmlname = 'availid', $filtertype = '', $addempty = 0)
+	public function selectAvailabilityDelay($selected = '', $htmlname = 'availid', $filtertype = '', $addempty = 0, $morecss = '')
 	{
 		global $langs, $user;
 
@@ -3684,7 +3691,7 @@ class Form
 
 		dol_syslog(__METHOD__." selected=".$selected.", htmlname=".$htmlname, LOG_DEBUG);
 
-		print '<select id="'.$htmlname.'" class="flat" name="'.$htmlname.'">';
+		print '<select id="'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
 		if ($addempty) {
 			print '<option value="0">&nbsp;</option>';
 		}
@@ -3694,7 +3701,7 @@ class Form
 			} else {
 				print '<option value="'.$id.'">';
 			}
-			print $arrayavailability['label'];
+			print dol_escape_htmltag($arrayavailability['label']);
 			print '</option>';
 		}
 		print '</select>';
@@ -4154,15 +4161,16 @@ class Form
 	/**
 	 *  Return a HTML select list of shipping mode
 	 *
-	 *  @param	string	$selected          Id shipping mode pre-selected
-	 *  @param  string	$htmlname          Name of select zone
-	 *  @param  string	$filtre            To filter list. This parameter must not come from input of users
-	 *  @param  int		$useempty          1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
-	 *  @param  string	$moreattrib        To add more attribute on select
+	 *  @param	string	$selected           Id shipping mode pre-selected
+	 *  @param  string	$htmlname           Name of select zone
+	 *  @param  string	$filtre             To filter list. This parameter must not come from input of users
+	 *  @param  int		$useempty           1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
+	 *  @param  string	$moreattrib         To add more attribute on select
 	 *	@param	int		$noinfoadmin		0=Add admin info, 1=Disable admin info
+	 *  @param	string	$morecss			More CSS
 	 * 	@return	void
 	 */
-	public function selectShippingMethod($selected = '', $htmlname = 'shipping_method_id', $filtre = '', $useempty = 0, $moreattrib = '', $noinfoadmin = 0)
+	public function selectShippingMethod($selected = '', $htmlname = 'shipping_method_id', $filtre = '', $useempty = 0, $moreattrib = '', $noinfoadmin = 0, $morecss = '')
 	{
 		global $langs, $conf, $user;
 
@@ -4183,7 +4191,7 @@ class Form
 			$num = $this->db->num_rows($result);
 			$i = 0;
 			if ($num) {
-				print '<select id="select'.$htmlname.'" class="flat selectshippingmethod" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
+				print '<select id="select'.$htmlname.'" class="flat selectshippingmethod'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
 				if ($useempty == 1 || ($useempty == 2 && $num > 1)) {
 					print '<option value="-1">&nbsp;</option>';
 				}
@@ -4887,7 +4895,7 @@ class Form
                          			var more = "";
 									var inputvalue;
                          			if ($("input[name=\'" + inputname + "\']").attr("type") == "radio") {
-										inputvalue = $("input[name=\'" + inputname + "\']").val();
+										inputvalue = $("input[name=\'" + inputname + "\']:checked").val();
 									} else {
                          		    	if ($("#" + inputname).attr("type") == "checkbox") { more = ":checked"; }
                          				inputvalue = $("#" + inputname + more).val();
@@ -4946,16 +4954,18 @@ class Form
 			$formconfirm .= '<table class="valid centpercent">'."\n";
 
 			// Line title
-			$formconfirm .= '<tr class="validtitre"><td class="validtitre" colspan="3">'.img_picto('', 'recent').' '.$title.'</td></tr>'."\n";
+			$formconfirm .= '<tr class="validtitre"><td class="validtitre" colspan="2">';
+			$formconfirm .= img_picto('', 'recent').' '.$title;
+			$formconfirm .= '</td></tr>'."\n";
 
 			// Line text
 			if (is_array($formquestion) && !empty($formquestion['text'])) {
-				$formconfirm .= '<tr class="valid"><td class="valid" colspan="3">'.$formquestion['text'].'</td></tr>'."\n";
+				$formconfirm .= '<tr class="valid"><td class="valid" colspan="2">'.$formquestion['text'].'</td></tr>'."\n";
 			}
 
 			// Line form fields
 			if ($more) {
-				$formconfirm .= '<tr class="valid"><td class="valid" colspan="3">'."\n";
+				$formconfirm .= '<tr class="valid"><td class="valid" colspan="2">'."\n";
 				$formconfirm .= $more;
 				$formconfirm .= '</td></tr>'."\n";
 			}
@@ -4963,10 +4973,10 @@ class Form
 			// Line with question
 			$formconfirm .= '<tr class="valid">';
 			$formconfirm .= '<td class="valid">'.$question.'</td>';
-			$formconfirm .= '<td class="valid">';
-			$formconfirm .= $this->selectyesno("confirm", $newselectedchoice);
+			$formconfirm .= '<td class="valid center">';
+			$formconfirm .= $this->selectyesno("confirm", $newselectedchoice, 0, false, 0, 0, 'marginleftonly marginrightonly');
+			$formconfirm .= '<input class="button valignmiddle confirmvalidatebutton" type="submit" value="'.$langs->trans("Validate").'">';
 			$formconfirm .= '</td>';
-			$formconfirm .= '<td class="valid center"><input class="button valignmiddle confirmvalidatebutton" type="submit" value="'.$langs->trans("Validate").'"></td>';
 			$formconfirm .= '</tr>'."\n";
 
 			$formconfirm .= '</table>'."\n";
@@ -6920,7 +6930,7 @@ class Form
 		if ($addjscombo && $jsbeautify) {
 			// Enhance with select2
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-			$out .= ajax_combobox($htmlname);
+			$out .= ajax_combobox($htmlname, array(), 0, 0, 'resolve', $show_empty < 0 ? (string) $show_empty : '-1');
 		}
 
 		$out .= '<select id="'.preg_replace('/^\./', '', $htmlname).'" '.($disabled ? 'disabled="disabled" ' : '').'class="flat '.(preg_replace('/^\./', '', $htmlname)).($morecss ? ' '.$morecss : '').'"';
@@ -7837,9 +7847,10 @@ class Form
 	 *	@param	bool		$disabled		true or false
 	 *  @param	int      	$useempty		1=Add empty line
 	 *  @param	int			$addjscombo		1=Add js beautifier on combo box
+	 *  @param	string		$morecss		More CSS
 	 *	@return	string						See option
 	 */
-	public function selectyesno($htmlname, $value = '', $option = 0, $disabled = false, $useempty = 0, $addjscombo = 0)
+	public function selectyesno($htmlname, $value = '', $option = 0, $disabled = false, $useempty = 0, $addjscombo = 0, $morecss = '')
 	{
 		global $langs;
 
@@ -7852,7 +7863,7 @@ class Form
 
 		$disabled = ($disabled ? ' disabled' : '');
 
-		$resultyesno = '<select class="flat width75" id="'.$htmlname.'" name="'.$htmlname.'"'.$disabled.'>'."\n";
+		$resultyesno = '<select class="flat width75'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.'"'.$disabled.'>'."\n";
 		if ($useempty) {
 			$resultyesno .= '<option value="-1"'.(($value < 0) ? ' selected' : '').'>&nbsp;</option>'."\n";
 		}
@@ -8188,41 +8199,47 @@ class Form
 		if ($modulepart == 'societe') {
 			$dir = $conf->societe->multidir_output[$entity];
 			if (!empty($object->logo)) {
-				if ((string) $imagesize == 'mini') {
-					$file = get_exdir(0, 0, 0, 0, $object, 'thirdparty').'logos/'.getImageFileNameForSize($object->logo, '_mini'); // getImageFileNameForSize include the thumbs
-				} elseif ((string) $imagesize == 'small') {
-					$file = get_exdir(0, 0, 0, 0, $object, 'thirdparty').'logos/'.getImageFileNameForSize($object->logo, '_small');
-				} else {
-					$file = get_exdir(0, 0, 0, 0, $object, 'thirdparty').'logos/'.$object->logo;
+				if (dolIsAllowedForPreview($object->logo)) {
+					if ((string) $imagesize == 'mini') {
+						$file = get_exdir(0, 0, 0, 0, $object, 'thirdparty').'logos/'.getImageFileNameForSize($object->logo, '_mini'); // getImageFileNameForSize include the thumbs
+					} elseif ((string) $imagesize == 'small') {
+						$file = get_exdir(0, 0, 0, 0, $object, 'thirdparty').'logos/'.getImageFileNameForSize($object->logo, '_small');
+					} else {
+						$file = get_exdir(0, 0, 0, 0, $object, 'thirdparty').'logos/'.$object->logo;
+					}
+					$originalfile = get_exdir(0, 0, 0, 0, $object, 'thirdparty').'logos/'.$object->logo;
 				}
-				$originalfile = get_exdir(0, 0, 0, 0, $object, 'thirdparty').'logos/'.$object->logo;
 			}
 			$email = $object->email;
 		} elseif ($modulepart == 'contact')	{
 			$dir = $conf->societe->multidir_output[$entity].'/contact';
 			if (!empty($object->photo)) {
-				if ((string) $imagesize == 'mini') {
-					$file = get_exdir(0, 0, 0, 0, $object, 'contact').'photos/'.getImageFileNameForSize($object->photo, '_mini');
-				} elseif ((string) $imagesize == 'small') {
-					$file = get_exdir(0, 0, 0, 0, $object, 'contact').'photos/'.getImageFileNameForSize($object->photo, '_small');
-				} else {
-					$file = get_exdir(0, 0, 0, 0, $object, 'contact').'photos/'.$object->photo;
+				if (dolIsAllowedForPreview($object->photo)) {
+					if ((string) $imagesize == 'mini') {
+						$file = get_exdir(0, 0, 0, 0, $object, 'contact').'photos/'.getImageFileNameForSize($object->photo, '_mini');
+					} elseif ((string) $imagesize == 'small') {
+						$file = get_exdir(0, 0, 0, 0, $object, 'contact').'photos/'.getImageFileNameForSize($object->photo, '_small');
+					} else {
+						$file = get_exdir(0, 0, 0, 0, $object, 'contact').'photos/'.$object->photo;
+					}
+					$originalfile = get_exdir(0, 0, 0, 0, $object, 'contact').'photos/'.$object->photo;
 				}
-				$originalfile = get_exdir(0, 0, 0, 0, $object, 'contact').'photos/'.$object->photo;
 			}
 			$email = $object->email;
 			$capture = 'user';
 		} elseif ($modulepart == 'userphoto') {
 			$dir = $conf->user->dir_output;
 			if (!empty($object->photo)) {
-				if ((string) $imagesize == 'mini') {
-					$file = get_exdir(0, 0, 0, 0, $object, 'user').getImageFileNameForSize($object->photo, '_mini');
-				} elseif ((string) $imagesize == 'small') {
-					$file = get_exdir(0, 0, 0, 0, $object, 'user').getImageFileNameForSize($object->photo, '_small');
-				} else {
-					$file = get_exdir(0, 0, 0, 0, $object, 'user').$object->photo;
+				if (dolIsAllowedForPreview($object->photo)) {
+					if ((string) $imagesize == 'mini') {
+						$file = get_exdir(0, 0, 0, 0, $object, 'user').getImageFileNameForSize($object->photo, '_mini');
+					} elseif ((string) $imagesize == 'small') {
+						$file = get_exdir(0, 0, 0, 0, $object, 'user').getImageFileNameForSize($object->photo, '_small');
+					} else {
+						$file = get_exdir(0, 0, 0, 0, $object, 'user').$object->photo;
+					}
+					$originalfile = get_exdir(0, 0, 0, 0, $object, 'user').$object->photo;
 				}
-				$originalfile = get_exdir(0, 0, 0, 0, $object, 'user').$object->photo;
 			}
 			if (!empty($conf->global->MAIN_OLD_IMAGE_LINKS)) {
 				$altfile = $object->id.".jpg"; // For backward compatibility
@@ -8232,14 +8249,16 @@ class Form
 		} elseif ($modulepart == 'memberphoto')	{
 			$dir = $conf->adherent->dir_output;
 			if (!empty($object->photo)) {
-				if ((string) $imagesize == 'mini') {
-					$file = get_exdir(0, 0, 0, 0, $object, 'member').'photos/'.getImageFileNameForSize($object->photo, '_mini');
-				} elseif ((string) $imagesize == 'small') {
-					$file = get_exdir(0, 0, 0, 0, $object, 'member').'photos/'.getImageFileNameForSize($object->photo, '_small');
-				} else {
-					$file = get_exdir(0, 0, 0, 0, $object, 'member').'photos/'.$object->photo;
+				if (dolIsAllowedForPreview($object->photo)) {
+					if ((string) $imagesize == 'mini') {
+						$file = get_exdir(0, 0, 0, 0, $object, 'member').'photos/'.getImageFileNameForSize($object->photo, '_mini');
+					} elseif ((string) $imagesize == 'small') {
+						$file = get_exdir(0, 0, 0, 0, $object, 'member').'photos/'.getImageFileNameForSize($object->photo, '_small');
+					} else {
+						$file = get_exdir(0, 0, 0, 0, $object, 'member').'photos/'.$object->photo;
+					}
+					$originalfile = get_exdir(0, 0, 0, 0, $object, 'member').'photos/'.$object->photo;
 				}
-				$originalfile = get_exdir(0, 0, 0, 0, $object, 'member').'photos/'.$object->photo;
 			}
 			if (!empty($conf->global->MAIN_OLD_IMAGE_LINKS)) {
 				$altfile = $object->id.".jpg"; // For backward compatibility
@@ -8250,14 +8269,16 @@ class Form
 			// Generic case to show photos
 			$dir = $conf->$modulepart->dir_output;
 			if (!empty($object->photo)) {
-				if ((string) $imagesize == 'mini') {
-					$file = get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.getImageFileNameForSize($object->photo, '_mini');
-				} elseif ((string) $imagesize == 'small') {
-					$file = get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.getImageFileNameForSize($object->photo, '_small');
-				} else {
-					$file = get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.$object->photo;
+				if (dolIsAllowedForPreview($object->photo)) {
+					if ((string) $imagesize == 'mini') {
+						$file = get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.getImageFileNameForSize($object->photo, '_mini');
+					} elseif ((string) $imagesize == 'small') {
+						$file = get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.getImageFileNameForSize($object->photo, '_small');
+					} else {
+						$file = get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.$object->photo;
+					}
+					$originalfile = get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.$object->photo;
 				}
-				$originalfile = get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.$object->photo;
 			}
 			if (!empty($conf->global->MAIN_OLD_IMAGE_LINKS)) {
 				$altfile = $object->id.".jpg"; // For backward compatibility
