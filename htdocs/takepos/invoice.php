@@ -502,6 +502,9 @@ if ($action == "addline") {
 	// Local Taxes
 	$localtax1_tx = get_localtax($tva_tx, 1, $customer, $mysoc, $tva_npr);
 	$localtax2_tx = get_localtax($tva_tx, 2, $customer, $mysoc, $tva_npr);
+	
+	// Customer without VAT
+	if ($customer->tva_assuj==0) $tva_tx=0;
 
 	if (!empty($conf->global->TAKEPOS_SUPPLEMENTS)) {
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
