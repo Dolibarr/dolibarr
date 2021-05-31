@@ -355,7 +355,7 @@ class MouvementStock extends CommonObject
 				$qtyisnotenough = 0;
 				foreach ($product->stock_warehouse[$entrepot_id]->detail_batch as $batchcursor => $prodbatch)
 				{
-					if ($batch != $batchcursor) continue;
+					if ($batch !== $batchcursor) continue; // Do a strict comparison because $batchcursar can be an integer
 					$foundforbatch = 1;
 					if ($prodbatch->qty < abs($qty)) $qtyisnotenough = $prodbatch->qty;
 					break;
