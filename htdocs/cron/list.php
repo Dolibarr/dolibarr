@@ -600,7 +600,7 @@ if ($num > 0) {
 		print '</td>';
 
 		// Output of last run
-		print '<td>';
+		print '<td class="small">';
 		if (!empty($obj->lastoutput)) {
 			print dol_trunc(nl2br($obj->lastoutput), 50);
 		}
