@@ -70,8 +70,6 @@ $socid = GETPOST('socid', 'int');
 $projectid = GETPOST('projectid', 'int');
 $cancel         = GETPOST('cancel', 'alpha');
 $lineid         = GETPOST('lineid', 'int');
-
-$lineid = GETPOST('lineid', 'int');
 $origin = GETPOST('origin', 'alpha');
 $originid = (GETPOST('originid', 'int') ? GETPOST('originid', 'int') : GETPOST('origin_id', 'int')); // For backward compatibility
 
