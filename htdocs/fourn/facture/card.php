@@ -1791,8 +1791,8 @@ if (!empty($conf->projet->enabled)) {
 $now = dol_now();
 
 $title = $langs->trans('SupplierInvoice')." - ".$langs->trans('Card');
-$helpurl = "EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores";
-llxHeader('', $title, $helpurl);
+$help_url = 'EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores|DE:Modul_Lieferantenrechnungen';
+llxHeader('', $title, $help_url);
 
 // Mode creation
 if ($action == 'create') {
