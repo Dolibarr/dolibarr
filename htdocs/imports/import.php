@@ -1707,11 +1707,28 @@ if ($step == 5 && $datatoimport) {
 
 		print '<br>';
 
-		if ($user->rights->import->run && !empty($nboferrors)) {
+		if ($user->rights->import->run && !empty($nboferrors) && empty($objimport->array_import_run_sql_after[0])) {
 			print '<div class="center">';
 			print '<input type="checkbox" class="valignmiddle" id="import_force" name="import_force" value="1" /> <label for="import_force">' . $langs->trans('RunImportForce') . '</label>';
 			print '</div>';
 			print '<br>';
+
+			$outJS  = '<script type="text/javascript">';
+			$outJS .= 'jQuery(document).ready(function(){';
+			$outJS .= ' jQuery("#import_force").click(function(){';
+			$outJS .= '     if (jQuery(this).is(":checked")) {';
+			$outJS .= '         jQuery("#btn_run_import_file").prop("disabled", false);';
+			$outJS .= '         jQuery("#btn_run_import_file").removeClass("butActionRefused");';
+			$outJS .= '         jQuery("#btn_run_import_file").addClass("butAction");';
+			$outJS .= '     } else {';
+			$outJS .= '         jQuery("#btn_run_import_file").prop("disabled", true);';
+			$outJS .= '         jQuery("#btn_run_import_file").removeClass("butAction");';
+			$outJS .= '         jQuery("#btn_run_import_file").addClass("butActionRefused");';
+			$outJS .= '     }';
+			$outJS .= ' });';
+			$outJS .= '});';
+			$outJS .= '</script>';
+			print $outJS;
 		}
 
 		// Actions
@@ -1732,23 +1749,6 @@ if ($step == 5 && $datatoimport) {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("RunImportFile").'</a>';
 		}
 		print '</div>';
-
-		$outJS  = '<script type="text/javascript">';
-		$outJS .= 'jQuery(document).ready(function(){';
-		$outJS .= ' jQuery("#import_force").click(function(){';
-		$outJS .= '     if (jQuery(this).is(":checked")) {';
-		$outJS .= '         jQuery("#btn_run_import_file").prop("disabled", false);';
-		$outJS .= '         jQuery("#btn_run_import_file").removeClass("butActionRefused");';
-		$outJS .= '         jQuery("#btn_run_import_file").addClass("butAction");';
-		$outJS .= '     } else {';
-		$outJS .= '         jQuery("#btn_run_import_file").prop("disabled", true);';
-		$outJS .= '         jQuery("#btn_run_import_file").removeClass("butAction");';
-		$outJS .= '         jQuery("#btn_run_import_file").addClass("butActionRefused");';
-		$outJS .= '     }';
-		$outJS .= ' });';
-		$outJS .= '});';
-		$outJS .= '</script>';
-		print $outJS;
 	}
 
 	print '</form>';
@@ -1985,10 +1985,7 @@ if ($step == 6 && $datatoimport) {
 
 	//var_dump($array_match_file_to_database);
 
-	$run_after_import = true;
-	if (empty($import_force)) {
-		$db->begin();
-	}
+	$db->begin();
 
 	// Open input file
 	$nbok = 0;
@@ -2014,19 +2011,8 @@ if ($step == 6 && $datatoimport) {
 				break;
 			}
 
-			if ($import_force == 1) {
-				$db->begin();
-			}
 			// Run import
 			$result = $obj->import_insert($arrayrecord, $array_match_file_to_database, $objimport, count($fieldssource), $importid, $updatekeys);
-			if ($import_force == 1) {
-				if (!empty($obj->errors) || !empty($obj->warnings)) {
-					$run_after_import = false;
-					$db->rollback();
-				} else {
-					$db->commit();
-				}
-			}
 
 			if (count($obj->errors)) {
 				$arrayoferrors[$sourcelinenb] = $obj->errors;
@@ -2047,42 +2033,28 @@ if ($step == 6 && $datatoimport) {
 	if (count($arrayoferrors) > 0 && empty($import_force)) {
 		$db->rollback(); // We force rollback because this was errors.
 	} else {
-		if ($run_after_import) {
-			$error = 0;
+		$error = 0;
 
-			// Run the sql after import if defined
-			//var_dump($objimport->array_import_run_sql_after[0]);
-			if (!empty($objimport->array_import_run_sql_after[0]) && is_array($objimport->array_import_run_sql_after[0])) {
-				$i = 0;
-				foreach ($objimport->array_import_run_sql_after[0] as $sqlafterimport) {
-					$i++;
+		// Run the sql after import if defined
+		//var_dump($objimport->array_import_run_sql_after[0]);
+		if (!empty($objimport->array_import_run_sql_after[0]) && is_array($objimport->array_import_run_sql_after[0])) {
+			$i = 0;
+			foreach ($objimport->array_import_run_sql_after[0] as $sqlafterimport) {
+				$i++;
 
-					if ($import_force == 1) {
-						$db->begin();
-					}
-					$resqlafterimport = $db->query($sqlafterimport);
-					if ($import_force == 1) {
-						if (!$resqlafterimport) {
-							$db->rollback();
-						} else {
-							$db->commit();
-						}
-					}
+				$resqlafterimport = $db->query($sqlafterimport);
 
-					if (!$resqlafterimport) {
-						$arrayoferrors['none'][] = array('lib' => $langs->trans("Error running final request: " . $sqlafterimport));
-						$error++;
-					}
+				if (!$resqlafterimport) {
+					$arrayoferrors['none'][] = array('lib' => $langs->trans("Error running final request: " . $sqlafterimport));
+					$error++;
 				}
 			}
+		}
 
-			if (empty($import_force)) {
-				if (!$error) {
-					$db->commit(); // We can commit if no errors.
-				} else {
-					$db->rollback();
-				}
-			}
+		if (!$error) {
+			$db->commit(); // We can commit if no errors.
+		} else {
+			$db->rollback();
 		}
 	}
 
