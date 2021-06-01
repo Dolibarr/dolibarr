@@ -1305,11 +1305,6 @@ if ($action == 'create') {
 							// Define nb of lines suggested for this order line
 							$nbofsuggested = 0;
 
-							uasort( $product->stock_warehouse, function ($a, $b) {
-								if ($a->real == $b->real) { return 0; }
-								return ($a->real < $b->real) ? -1 : 1;
-							});
-
 							foreach ($product->stock_warehouse as $warehouse_id => $stock_warehouse) {
 								if ($stock_warehouse->real > 0) {
 									$nbofsuggested++;
@@ -1413,42 +1408,11 @@ if ($action == 'create') {
 							$tmpwarehouseObject = new Entrepot($db);
 							$productlotObject = new Productlot($db);
 
-							uasort( $product->stock_warehouse, function ($a, $b) {
-								if ($a->real == $b->real) { return 0; }
-								return ($a->real < $b->real) ? -1 : 1;
-							});
-
 							// Define nb of lines suggested for this order line
 							$nbofsuggested = 0;
 							foreach ($product->stock_warehouse as $warehouse_id => $stock_warehouse) {
 								if (($stock_warehouse->real > 0) && (count($stock_warehouse->detail_batch))) {
-									foreach ($stock_warehouse->detail_batch as $dbatch) {
-										$nbofsuggested++;
-									}
-
-									// Sort Batch priority
-									uasort($stock_warehouse->detail_batch, function ($a, $b) {
-										$compare = 0;
-										$multiplePow = 0;
-										// The comparison function must return an integer less than, equal to, or greater than zero if the first argument is considered to be respectively less than, equal to, or greater than the second.
-
-										// PRIORITY FOR QTY : Eliminate place with small qty first
-										$multiplePow++;
-										$multiple = pow(10, $multiplePow);
-										$compare += (($a->qty < $b->qty) ? -1 : 1) * $multiple;
-
-										// PRIORITY FOR SELL EXPIRATION DATE
-										$multiplePow++;
-										$multiple = pow(10, $multiplePow);
-										$compare += (($a->sellby < $b->sellby) ? -1 : 1) * $multiple;
-
-										// PRIORITY FOR CONSUMPTION EXPIRATION DATE
-										$multiplePow++;
-										$multiple = pow(10, $multiplePow);
-										$compare += (($a->eatby < $b->eatby) ? -1 : 1) * $multiple;
-
-										return $compare;
-									});
+									$nbofsuggested+=count($stock_warehouse->detail_batch);
 								}
 							}
 
@@ -1478,15 +1442,15 @@ if ($action == 'create') {
 											$deliverableQty = GETPOST($inputName, 'int');
 										}
 
-										$tooltip = '';
+										$tooltipClass = $tooltipTitle = '';
 										if (!empty($alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)])) {
-											$tooltip = ' class="classfortooltip" title="'.$langs->trans('StockQuantitiesAlreadyAllocatedOnPreviousLines').' : '.$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)].'" ';
+											$tooltipClass = ' classfortooltip';
+											$tooltipTitle = $langs->trans('StockQuantitiesAlreadyAllocatedOnPreviousLines').' : '.$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)];
 										}
-
 										$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)] = $deliverableQty + $alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)];
 
 										print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested) ? $bc[$var] : '').'><td colspan="3"></td><td class="center">';
-										print '<input class="qtyl" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.$deliverableQty.'">';
+										print '<input class="qtyl '.$tooltipClass.'" title="'.$tooltipTitle.'" name="'.$inputName.'" id="'.$inputName.'" type="text" size="4" value="'.$deliverableQty.'">';
 										print '</td>';
 
 										print '<td class="left">';

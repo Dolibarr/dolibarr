@@ -436,7 +436,7 @@ class Productbatch extends CommonObject
 	 */
 	public static function findAll($db, $fk_product_stock, $with_qty = 0, $fk_product = 0)
 	{
-		global $langs;
+		global $langs, $conf;
 		$ret = array();
 
 		$sql = "SELECT";
@@ -461,6 +461,12 @@ class Productbatch extends CommonObject
 		if ($with_qty) {
 			$sql .= " AND t.qty <> 0";
 		}
+
+		$sql .= " ORDER BY ";
+		// TODO : use product lifo and fifo when product will implement it
+		if ($fk_product > 0) { $sql .= "pl.eatby ASC, pl.sellby ASC, "; }
+		$sql .= "t.eatby ASC, t.sellby ASC ";
+		$sql .= ", t.qty ".(!empty($conf->global->DO_NOT_TRY_TO_DEFRAGMENT_STOCKS_WAREHOUSE)?'DESC':'ASC'); // Note : qty ASC is important for expedition card, to avoid stock fragmentation
 
 		dol_syslog("productbatch::findAll", LOG_DEBUG);
 		$resql = $db->query($sql);
