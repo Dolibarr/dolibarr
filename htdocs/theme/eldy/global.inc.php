@@ -1248,6 +1248,8 @@ table.paymenttable td.amountpaymentcomplete, table.paymenttable td.amountremaint
 .div-table-responsive, .div-table-responsive-no-min {
 	overflow-x: auto;
 	min-height: 0.01%;
+	border-radius: 5px;
+	box-shadow: 1px 1px 12px #555;
 }
 .div-table-responsive {
 	line-height: 120%;
@@ -3037,6 +3039,8 @@ div.tabBar {
 	/* border-bottom: 1px solid #AAA; */
 	width: auto;
 	background: var(--colorbacktabcard1);
+	box-shadow: 1px 1px 12px #555;
+	border-radius: 5px;
 }
 div.tabBar tr.titre td {
 	padding-top: 20px;
@@ -3054,6 +3058,8 @@ div.tabBar.tabBarNoTop {
 div.tabBarWithBottom {
 	padding-bottom: 18px;
 	border-bottom: 1px solid #bbb;
+	box-shadow: 1px 1px 12px #555;
+	border-radius: 5px;
 }
 div.tabBarWithBottom tr {
 	background: unset !important;
@@ -3353,7 +3359,7 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-top-width: <?php echo $borderwidth ?>px;
 	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
 	border-top-style: solid;
-	margin: 0px 0px 5px 0px;
+	margin: 0px 0px 0px 0px;
 
 	/*width: calc(100% - 7px);
 	border-collapse: separate !important;
@@ -3371,9 +3377,7 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-bottom-style: solid;
 }
 table.liste tr:last-of-type td, table.noborder:not(#tablelines) tr:last-of-type td, table.formdoc tr:last-of-type td, div.noborder tr:last-of-type td {
-	border-bottom-width: 1px;
-	border-bottom-color: rgb(<?php echo $colortopbordertitle1 ?>);
-	border-bottom-style: solid;
+
 }
 div.tabBar div.fichehalfright table.noborder:not(.margintable):not(.paymenttable):not(.lastrecordtable):last-of-type {
 	border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>);
@@ -3429,6 +3433,7 @@ tr#trlinefordates td {
 table.liste tr, table.noborder tr, div.noborder form {
 	border-top-color: #FEFEFE;
 	min-height: 20px;
+	border-radius: 5px;
 }
 table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.noborder tr.box_titre td {
 	padding: 7px 8px 7px 8px;			/* t r b l */
@@ -3768,10 +3773,6 @@ div.liste_titre {
 	padding-bottom: 2px;
 }
 div.liste_titre_bydiv {
-	border-top-width: <?php echo $borderwidth ?>px;
-	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
-	border-top-style: solid;
-
 	border-collapse: collapse;
 	display: table;
 	padding: 2px 0px 2px 0;
@@ -3798,6 +3799,8 @@ div.liste_titre_bydiv, .liste_titre div.tagtr, tr.liste_titre, tr.liste_titre_se
 	color: var(--colortexttitle);
 	font-family: <?php print $fontlist ?>;
 	text-align: <?php echo $left; ?>;
+	border-radius: 5px;
+	box-shadow: 1px 1px 12px #555;
 }
 tr.liste_titre th, tr.liste_titre td, th.liste_titre
 {
