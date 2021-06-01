@@ -36,6 +36,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'banks', 'compta'));
@@ -48,9 +49,8 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 've
 $socid = GETPOST('socid', 'int');
 
 $search_ref				= GETPOST('search_ref', 'alpha');
-$search_day				= GETPOST('search_day', 'int');
-$search_month = GETPOST('search_month', 'int');
-$search_year			= GETPOST('search_year', 'int');
+$search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
+$search_date_end = dol_mktime(23, 59, 59, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
 $search_company = GETPOST('search_company', 'alpha');
 $search_payment_type	= GETPOST('search_payment_type');
 $search_cheque_num = GETPOST('search_cheque_num', 'alpha');
@@ -135,9 +135,8 @@ if (empty($reshook)) {
 
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {	// All tests are required to be compatible with all browsers
 		$search_ref = '';
-		$search_day = '';
-		$search_month = '';
-		$search_year = '';
+		$search_date_start = '';
+		$search_date_end = '';
 		$search_company = '';
 		$search_payment_type = '';
 		$search_cheque_num = '';
@@ -187,7 +186,13 @@ if ($socid > 0) {
 if ($search_ref) {
 	$sql .= natural_search('p.ref', $search_ref);
 }
-$sql .= dolSqlDateFilter('p.datep', $search_day, $search_month, $search_year);
+if ($search_date_start) {
+	$sql .= " AND p.datep >= '" . $db->idate($search_date_start) . "'";
+}
+if ($search_date_end) {
+	$sql .=" AND p.datep <= '" . $db->idate($search_date_end) . "'";
+}
+
 if ($search_company) {
 	$sql .= natural_search('s.nom', $search_company);
 }
@@ -254,14 +259,11 @@ if ($optioncss != '') {
 if ($search_ref) {
 	$param .= '&search_ref='.urlencode($search_ref);
 }
-if ($saerch_day) {
-	$param .= '&search_day='.urlencode($search_day);
+if ($search_date_start) {
+	$param.= '&search_date_start='.urlencode($search_date_start);
 }
-if ($saerch_month) {
-	$param .= '&search_month='.urlencode($search_month);
-}
-if ($search_year) {
-	$param .= '&search_year='.urlencode($search_year);
+if ($search_date_end) {
+	$param.= '&search_date_end='.urlencode($search_date_end);
 }
 if ($search_company) {
 	$param .= '&search_company='.urlencode($search_company);
@@ -336,11 +338,12 @@ if (!empty($arrayfields['p.ref']['checked'])) {
 // Filter: Date
 if (!empty($arrayfields['p.datep']['checked'])) {
 	print '<td class="liste_titre center">';
-	if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
-		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="search_day" value="'.dol_escape_htmltag($search_day).'">';
-	}
-	print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="search_month" value="'.dol_escape_htmltag($search_month).'">';
-	$formother->select_year($search_year ? $search_year : -1, 'search_year', 1, 20, 5);
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
 	print '</td>';
 }
 
