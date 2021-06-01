@@ -56,11 +56,10 @@ $contextpage		= GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'p
 $facid				= GETPOST('facid', 'int');
 $socid				= GETPOST('socid', 'int');
 $userid = GETPOST('userid', 'int');
-$day = GETPOST('day', 'int');
-$month				= GETPOST('month', 'int');
-$year = GETPOST('year', 'int');
 
 $search_ref = GETPOST("search_ref", "alpha");
+$search_date_start	= dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
+$search_date_end	= dol_mktime(23, 59, 59, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
 $search_company		= GETPOST("search_company", 'alpha');
 $search_paymenttype	= GETPOST("search_paymenttype");
 $search_account		= GETPOST("search_account", "int");
@@ -130,14 +129,13 @@ if (empty($reshook)) {
 	// All tests are required to be compatible with all browsers
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 		$search_ref = '';
+		$search_date_start = '';
+		$search_date_end = '';
 		$search_account = '';
 		$search_amount = '';
 		$search_paymenttype = '';
 		$search_payment_num = '';
 		$search_company = '';
-		$day = '';
-		$year = '';
-		$month = '';
 		$option = '';
 		$toselect = '';
 		$search_array_options = array();
@@ -211,9 +209,14 @@ if (GETPOST("orphelins", "alpha")) {
 	}
 
 	// Search criteria
-	$sql .= dolSqlDateFilter("p.datep", $day, $month, $year);
 	if ($search_ref) {
 		$sql .= natural_search('p.ref', $search_ref);
+	}
+	if ($search_date_start) {
+		$sql .= " AND p.datep >= '" . $db->idate($search_date_start) . "'";
+	}
+	if ($search_date_end) {
+		$sql .= " AND p.datep <= '" . $db->idate($search_date_end) . "'";
 	}
 	if ($search_account > 0) {
 		$sql .= " AND b.fk_account=".((int) $search_account);
@@ -275,6 +278,8 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 }
 $param .= (GETPOST("orphelins") ? "&orphelins=1" : '');
 $param .= ($search_ref ? "&search_ref=".urlencode($search_ref) : '');
+$param .= ($search_date_start ? "&search_date_start=".urlencode($search_date_start) : '');
+$param .= ($search_date_end ? "&search_date_end=".urlencode($search_date_end) : '');
 $param .= ($search_company ? "&search_company=".urlencode($search_company) : '');
 $param .= ($search_amount ? "&search_amount=".urlencode($search_amount) : '');
 $param .= ($search_payment_num ? "&search_payment_num=".urlencode($search_payment_num) : '');
@@ -331,11 +336,14 @@ if (!empty($arrayfields['p.ref']['checked'])) {
 // Filter: Date
 if (!empty($arrayfields['p.datep']['checked'])) {
 	print '<td class="liste_titre center">';
-	if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
-		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="day" value="'.dol_escape_htmltag($day).'">';
-	}
-	print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="month" value="'.dol_escape_htmltag($month).'">';
-	$formother->select_year($year ? $year : -1, 'year', 1, 20, 5);
+	print '<div class="nowrap">';
+	print $langs->trans('From') . ' ';
+	print $form->selectDate($search_date_start?$search_date_start:-1, 'search_date_start', 0, 0, 1);
+	print '</div>';
+	print '<div class="nowrap">';
+	print $langs->trans('to') . ' ';
+	print $form->selectDate($search_date_end?$search_date_end:-1, 'search_date_end', 0, 0, 1);
+	print '</div>';
 	print '</td>';
 }
 
