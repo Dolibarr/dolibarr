@@ -1789,7 +1789,9 @@ if ($action == 'create' || $action == 'adduserldap') {
 			if ($object->datepreviouslogin) {
 				print dol_print_date($object->datepreviouslogin, "dayhour").' <span class="opacitymedium">('.$langs->trans("Previous").')</span>, ';
 			}
-			print dol_print_date($object->datelastlogin, "dayhour").' <span class="opacitymedium">('.$langs->trans("Current").')</span>';
+			if ($object->datelastlogin) {
+				print dol_print_date($object->datelastlogin, "dayhour").' <span class="opacitymedium">('.$langs->trans("Current").')</span>';
+			}
 			print '</td>';
 			print "</tr>\n";
 
