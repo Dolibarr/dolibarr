@@ -1020,7 +1020,11 @@ if ($action == 'create') {
 			// Load shipments already done for same order
 			$object->loadExpeditions();
 
-			if ($numAsked) {
+
+            $alreadyQtyBatchSetted = $alreadyQtySetted = array();
+
+            if ($numAsked)
+            {
 				print '<tr class="liste_titre">';
 				print '<td>'.$langs->trans("Description").'</td>';
 				print '<td class="center">'.$langs->trans("QtyOrdered").'</td>';
@@ -1042,6 +1046,15 @@ if ($action == 'create') {
 					}
 				}
 				print "</tr>\n";
+			}
+
+			$warehouse_id = GETPOST('entrepot_id', 'int');
+            $warehousePicking = array();
+            // get all warehouse children for picking
+			if($warehouse_id > 0){
+				$warehousePicking[] = $warehouse_id;
+				$warehouseObj = new Entrepot($db);
+				$warehouseObj->get_children_warehouses($warehouse_id,$warehousePicking);
 			}
 
 			$indiceAsked = 0;
@@ -1293,6 +1306,12 @@ if ($action == 'create') {
 							$subj = 0;
 							// Define nb of lines suggested for this order line
 							$nbofsuggested = 0;
+
+							uasort ( $product->stock_warehouse , function ($a, $b){
+								if ($a->real == $b->real) { return 0; }
+								return ($a->real < $b->real) ? -1 : 1;
+							});
+
 							foreach ($product->stock_warehouse as $warehouse_id => $stock_warehouse) {
 								if ($stock_warehouse->real > 0) {
 									$nbofsuggested++;
@@ -1300,6 +1319,12 @@ if ($action == 'create') {
 							}
 							$tmpwarehouseObject = new Entrepot($db);
 							foreach ($product->stock_warehouse as $warehouse_id => $stock_warehouse) {    // $stock_warehouse is product_stock
+
+								if(!empty($warehousePicking) && !in_array($warehouse_id, $warehousePicking)){
+									// if a warehouse was selected by user, picking is limited to this warehouse and his children
+									continue;
+								}
+
 								$tmpwarehouseObject->fetch($warehouse_id);
 								if ($stock_warehouse->real > 0) {
 									$stock = + $stock_warehouse->real; // Convert it to number
@@ -1309,7 +1334,32 @@ if ($action == 'create') {
 									print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested) ? $bc[$var] : '').'>';
 									print '<td colspan="3" ></td><td class="center"><!-- qty to ship (no lot management for product line indiceAsked='.$indiceAsked.') -->';
 									if ($line->product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
-										print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
+										if(isset($alreadyQtySetted[$line->fk_product][intval($warehouse_id)])){
+											$deliverableQty = min($quantityToBeDelivered, $stock - $alreadyQtySetted[$line->fk_product][intval($warehouse_id)]);
+										}
+										else{
+											if(!isset($alreadyQtySetted[$line->fk_product])){
+												$alreadyQtySetted[$line->fk_product] = array();
+											}
+
+											$deliverableQty = min($quantityToBeDelivered, $stock);
+										}
+
+										if ($deliverableQty < 0) $deliverableQty = 0;
+
+										$tooltip = '';
+										if(!empty($alreadyQtySetted[$line->fk_product][intval($warehouse_id)])){
+											$tooltip = ' class="classfortooltip" title="'.$langs->trans('StockQuantitiesAlreadyAllocatedOnPreviousLines').' : '.$alreadyQtySetted[$line->fk_product][intval($warehouse_id)].'" ';
+										}
+
+										$alreadyQtySetted[$line->fk_product][intval($warehouse_id)] = $deliverableQty + $alreadyQtySetted[$line->fk_product][intval($warehouse_id)];
+
+										$inputName = 'qtyl'.$indiceAsked.'_'.$subj;
+										if(GETPOSTISSET($inputName)){
+											$deliverableQty = GETPOST($inputName, 'int');
+										}
+
+										print '<input '.$tooltip.' name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
 										print '<input name="ent1'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$warehouse_id.'">';
 									} else {
 										print $langs->trans("NA");
@@ -1366,6 +1416,12 @@ if ($action == 'create') {
 
 							$tmpwarehouseObject = new Entrepot($db);
 							$productlotObject = new Productlot($db);
+
+							uasort ( $product->stock_warehouse , function ($a, $b){
+								if ($a->real == $b->real) { return 0; }
+								return ($a->real < $b->real) ? -1 : 1;
+							});
+
 							// Define nb of lines suggested for this order line
 							$nbofsuggested = 0;
 							foreach ($product->stock_warehouse as $warehouse_id => $stock_warehouse) {
@@ -1373,18 +1429,68 @@ if ($action == 'create') {
 									foreach ($stock_warehouse->detail_batch as $dbatch) {
 										$nbofsuggested++;
 									}
+
+									// Sort Batch priority
+									uasort($stock_warehouse->detail_batch, function ($a, $b) {
+										$compare = 0;
+										$multiplePow = 0;
+										// The comparison function must return an integer less than, equal to, or greater than zero if the first argument is considered to be respectively less than, equal to, or greater than the second.
+
+										// PRIORITY FOR QTY : Eliminate place with small qty first
+										$multiplePow++;
+										$multiple = pow(10, $multiplePow);
+										$compare += (($a->qty < $b->qty) ? -1 : 1) * $multiple;
+
+										// PRIORITY FOR SELL EXPIRATION DATE
+										$multiplePow++;
+										$multiple = pow(10, $multiplePow);
+										$compare += (($a->sellby < $b->sellby) ? -1 : 1) * $multiple;
+
+										// PRIORITY FOR CONSUMPTION EXPIRATION DATE
+										$multiplePow++;
+										$multiple = pow(10, $multiplePow);
+										$compare += (($a->eatby < $b->eatby) ? -1 : 1) * $multiple;
+
+										return $compare;
+									});
 								}
 							}
+
 							foreach ($product->stock_warehouse as $warehouse_id => $stock_warehouse) {
 								$tmpwarehouseObject->fetch($warehouse_id);
 								if (($stock_warehouse->real > 0) && (count($stock_warehouse->detail_batch))) {
 									foreach ($stock_warehouse->detail_batch as $dbatch) {
-										//var_dump($dbatch);
+
 										$batchStock = + $dbatch->qty; // To get a numeric
-										$deliverableQty = min($quantityToBeDelivered, $batchStock);
-										if ($deliverableQty < 0) {
-											$deliverableQty = 0;
+										if(isset($alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)])){
+											$deliverableQty = min($quantityToBeDelivered, $batchStock - $alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)]);
 										}
+										else{
+											if(!isset($alreadyQtyBatchSetted[$line->fk_product])){
+												$alreadyQtyBatchSetted[$line->fk_product] = array();
+											}
+
+											if(!isset($alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch])){
+												$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch] = array();
+											}
+
+											$deliverableQty = min($quantityToBeDelivered, $batchStock);
+										}
+
+										if ($deliverableQty < 0) $deliverableQty = 0;
+
+										$inputName = 'qtyl'.$indiceAsked.'_'.$subj;
+										if(GETPOSTISSET($inputName)){
+											$deliverableQty = GETPOST($inputName, 'int');
+										}
+
+										$tooltip = '';
+										if(!empty($alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)])){
+											$tooltip = ' class="classfortooltip" title="'.$langs->trans('StockQuantitiesAlreadyAllocatedOnPreviousLines').' : '.$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)].'" ';
+										}
+
+										$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)] = $deliverableQty + $alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)];
+
 										print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested) ? $bc[$var] : '').'><td colspan="3"></td><td class="center">';
 										print '<input class="qtyl" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.$deliverableQty.'">';
 										print '</td>';
