@@ -1155,10 +1155,9 @@ if ($action == 'create') {
 					} else {
 						$quantityToBeDelivered = $quantityAsked - $quantityDelivered;
 					}
-					$warehouse_id = GETPOST('entrepot_id', 'int');
 
 					$warehouseObject = null;
-					if ($warehouse_id > 0 || !($line->fk_product > 0) || empty($conf->stock->enabled)) {     // If warehouse was already selected or if product is not a predefined, we go into this part with no multiwarehouse selection
+					if (count($warehousePicking) == 1 || !($line->fk_product > 0) || empty($conf->stock->enabled)) {     // If warehouse was already selected or if product is not a predefined, we go into this part with no multiwarehouse selection
 						print '<!-- Case warehouse already known or product not a predefined product -->';
 						//ship from preselected location
 						$stock = + $product->stock_warehouse[$warehouse_id]->real; // Convert to number
