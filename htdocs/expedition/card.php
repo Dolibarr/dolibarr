@@ -1021,10 +1021,9 @@ if ($action == 'create') {
 			$object->loadExpeditions();
 
 
-            $alreadyQtyBatchSetted = $alreadyQtySetted = array();
+			$alreadyQtyBatchSetted = $alreadyQtySetted = array();
 
-            if ($numAsked)
-            {
+			if ($numAsked) {
 				print '<tr class="liste_titre">';
 				print '<td>'.$langs->trans("Description").'</td>';
 				print '<td class="center">'.$langs->trans("QtyOrdered").'</td>';
@@ -1049,12 +1048,12 @@ if ($action == 'create') {
 			}
 
 			$warehouse_id = GETPOST('entrepot_id', 'int');
-            $warehousePicking = array();
-            // get all warehouse children for picking
-			if($warehouse_id > 0){
+			$warehousePicking = array();
+			// get all warehouse children for picking
+			if ($warehouse_id > 0) {
 				$warehousePicking[] = $warehouse_id;
 				$warehouseObj = new Entrepot($db);
-				$warehouseObj->get_children_warehouses($warehouse_id,$warehousePicking);
+				$warehouseObj->get_children_warehouses($warehouse_id, $warehousePicking);
 			}
 
 			$indiceAsked = 0;
@@ -1306,7 +1305,7 @@ if ($action == 'create') {
 							// Define nb of lines suggested for this order line
 							$nbofsuggested = 0;
 
-							uasort ( $product->stock_warehouse , function ($a, $b){
+							uasort( $product->stock_warehouse, function ($a, $b) {
 								if ($a->real == $b->real) { return 0; }
 								return ($a->real < $b->real) ? -1 : 1;
 							});
@@ -1318,8 +1317,7 @@ if ($action == 'create') {
 							}
 							$tmpwarehouseObject = new Entrepot($db);
 							foreach ($product->stock_warehouse as $warehouse_id => $stock_warehouse) {    // $stock_warehouse is product_stock
-
-								if(!empty($warehousePicking) && !in_array($warehouse_id, $warehousePicking)){
+								if (!empty($warehousePicking) && !in_array($warehouse_id, $warehousePicking)) {
 									// if a warehouse was selected by user, picking is limited to this warehouse and his children
 									continue;
 								}
@@ -1333,11 +1331,10 @@ if ($action == 'create') {
 									print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested) ? $bc[$var] : '').'>';
 									print '<td colspan="3" ></td><td class="center"><!-- qty to ship (no lot management for product line indiceAsked='.$indiceAsked.') -->';
 									if ($line->product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
-										if(isset($alreadyQtySetted[$line->fk_product][intval($warehouse_id)])){
+										if (isset($alreadyQtySetted[$line->fk_product][intval($warehouse_id)])) {
 											$deliverableQty = min($quantityToBeDelivered, $stock - $alreadyQtySetted[$line->fk_product][intval($warehouse_id)]);
-										}
-										else{
-											if(!isset($alreadyQtySetted[$line->fk_product])){
+										} else {
+											if (!isset($alreadyQtySetted[$line->fk_product])) {
 												$alreadyQtySetted[$line->fk_product] = array();
 											}
 
@@ -1347,14 +1344,14 @@ if ($action == 'create') {
 										if ($deliverableQty < 0) $deliverableQty = 0;
 
 										$tooltip = '';
-										if(!empty($alreadyQtySetted[$line->fk_product][intval($warehouse_id)])){
+										if (!empty($alreadyQtySetted[$line->fk_product][intval($warehouse_id)])) {
 											$tooltip = ' class="classfortooltip" title="'.$langs->trans('StockQuantitiesAlreadyAllocatedOnPreviousLines').' : '.$alreadyQtySetted[$line->fk_product][intval($warehouse_id)].'" ';
 										}
 
 										$alreadyQtySetted[$line->fk_product][intval($warehouse_id)] = $deliverableQty + $alreadyQtySetted[$line->fk_product][intval($warehouse_id)];
 
 										$inputName = 'qtyl'.$indiceAsked.'_'.$subj;
-										if(GETPOSTISSET($inputName)){
+										if (GETPOSTISSET($inputName)) {
 											$deliverableQty = GETPOST($inputName, 'int');
 										}
 
@@ -1416,7 +1413,7 @@ if ($action == 'create') {
 							$tmpwarehouseObject = new Entrepot($db);
 							$productlotObject = new Productlot($db);
 
-							uasort ( $product->stock_warehouse , function ($a, $b){
+							uasort( $product->stock_warehouse, function ($a, $b) {
 								if ($a->real == $b->real) { return 0; }
 								return ($a->real < $b->real) ? -1 : 1;
 							});
@@ -1459,17 +1456,15 @@ if ($action == 'create') {
 								$tmpwarehouseObject->fetch($warehouse_id);
 								if (($stock_warehouse->real > 0) && (count($stock_warehouse->detail_batch))) {
 									foreach ($stock_warehouse->detail_batch as $dbatch) {
-
 										$batchStock = + $dbatch->qty; // To get a numeric
-										if(isset($alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)])){
+										if (isset($alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)])) {
 											$deliverableQty = min($quantityToBeDelivered, $batchStock - $alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)]);
-										}
-										else{
-											if(!isset($alreadyQtyBatchSetted[$line->fk_product])){
+										} else {
+											if (!isset($alreadyQtyBatchSetted[$line->fk_product])) {
 												$alreadyQtyBatchSetted[$line->fk_product] = array();
 											}
 
-											if(!isset($alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch])){
+											if (!isset($alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch])) {
 												$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch] = array();
 											}
 
@@ -1479,12 +1474,12 @@ if ($action == 'create') {
 										if ($deliverableQty < 0) $deliverableQty = 0;
 
 										$inputName = 'qtyl'.$indiceAsked.'_'.$subj;
-										if(GETPOSTISSET($inputName)){
+										if (GETPOSTISSET($inputName)) {
 											$deliverableQty = GETPOST($inputName, 'int');
 										}
 
 										$tooltip = '';
-										if(!empty($alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)])){
+										if (!empty($alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)])) {
 											$tooltip = ' class="classfortooltip" title="'.$langs->trans('StockQuantitiesAlreadyAllocatedOnPreviousLines').' : '.$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)].'" ';
 										}
 
