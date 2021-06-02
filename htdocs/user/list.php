@@ -992,7 +992,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 	// Salary
 	if (!empty($arrayfields['u.salary']['checked'])) {
-		print '<td class="nowraponall right">'.($obj->salary ? price($obj->salary) : '').'</td>';
+		print '<td class="nowraponall right amount">'.($obj->salary ? price($obj->salary) : '').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
