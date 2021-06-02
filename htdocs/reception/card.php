@@ -1027,10 +1027,7 @@ if ($action == 'create')
 					print '<input type="hidden" name="productid'.$indiceAsked.'" value="'.$line->fk_product.'">';
 
 					// Show product and description
-					$product_static->type = $line->fk_product_type;
-					$product_static->id = $line->fk_product;
-					$product_static->ref = $line->ref;
-					$product_static->status_batch = $line->product_tobatch;
+					$product_static = $product;
 
 					$text = $product_static->getNomUrl(1);
 					$text .= ' - '.(!empty($line->label) ? $line->label : $line->product_label);
