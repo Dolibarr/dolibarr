@@ -2211,7 +2211,8 @@ if ($action == 'create')
 								// only show lot numbers from src warehouse when shipping from multiple warehouses
 								$line->fetch($detail_batch->fk_expeditiondet);
 							}
-							print '<td>'.$formproduct->selectLotStock($detail_batch->fk_origin_stock, 'batchl'.$detail_batch->fk_expeditiondet.'_'.$detail_batch->fk_origin_stock, '', 1, 0, $lines[$i]->fk_product, $line->entrepot_id).'</td>';
+							$entrepot_id = !empty($detail_batch->entrepot_id)?$detail_batch->entrepot_id:$lines[$i]->entrepot_id;
+							print '<td>'.$formproduct->selectLotStock($detail_batch->fk_origin_stock, 'batchl'.$detail_batch->fk_expeditiondet.'_'.$detail_batch->fk_origin_stock, '', 1, 0, $lines[$i]->fk_product, $entrepot_id).'</td>';
 							print '</tr>';
 						}
 						// add a 0 qty lot row to be able to add a lot
