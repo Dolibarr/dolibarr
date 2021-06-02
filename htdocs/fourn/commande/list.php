@@ -737,6 +737,14 @@ if ($resql)
 		print $form->selectyesno('validate_invoices', 1, 1);
 		print '</td>';
 		print '</tr>';
+		print '<tr>';
+		print '<td>';
+		print $langs->trans('RefSupplier');
+		print '</td>';
+		print '<td>';
+		print '<input name="refsupplier" type="text">';
+		print '</td>';
+		print '</tr>';
 		print '</table>';
 
 		print '<br>';
