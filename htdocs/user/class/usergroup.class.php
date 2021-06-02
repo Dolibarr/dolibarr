@@ -675,7 +675,7 @@ class UserGroup extends CommonObject
 	{
 		global $user, $conf;
 
-		if (empty($this->nom) && !empty($this->name)) {
+		if ((empty($this->nom) || $this->nom != $this->name) && !empty($this->name)) {
 			$this->nom = $this->name;
 		}
 
