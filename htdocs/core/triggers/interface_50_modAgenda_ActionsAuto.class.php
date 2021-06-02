@@ -552,7 +552,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$object->actionmsg = $langs->transnoentities("OrderRefusedInDolibarr", $object->ref);
 
 			if (!empty($object->refuse_note)) {
-				$object->actionmsg .= '<br />';
+				$object->actionmsg .= '<br>';
 				$object->actionmsg .= $langs->trans("Reason") . ': '.$object->refuse_note;
 			}
 
