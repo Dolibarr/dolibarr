@@ -134,6 +134,7 @@ TypeContact_order_supplier_external_CUSTOMER=Contact fournisseur suivi commande
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constante COMMANDE_SUPPLIER_ADDON non définie
 Error_COMMANDE_ADDON_NotDefined=Constante COMMANDE_ADDON non définie
 Error_OrderNotChecked=Pas de commandes à facturer sélectionnées
+Error_RefSupplierRequired = Le champs Ref. fournisseur est requis
 # Order modes (how we receive order). Not the "why" are keys stored into dict.lang
 OrderByMail=Courrier
 OrderByFax=Fax

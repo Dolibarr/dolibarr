@@ -90,6 +90,7 @@ $search_billed = GETPOST('search_billed', 'int');
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
+$ref_supplier = GETPOST('refsupplier', 'alpha');
 
 if (is_array(GETPOST('search_status', 'intcomma'))) {
 	$search_status = join(',', GETPOST('search_status', 'intcomma'));
@@ -182,7 +183,11 @@ $error = 0;
 
 if (GETPOST('cancel', 'alpha')) { $action = 'list'; $massaction = ''; }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createsupplierbills') { $massaction = ''; }
-
+if(empty($ref_supplier) && $massaction == 'confirm_createsupplierbills')
+{
+	setEventMessage($langs->trans("Error_RefSupplierRequired"), 'errors');
+	$massaction = 'createbills';
+}
 $parameters = array('socid'=>$socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -737,16 +742,27 @@ if ($resql)
 		print $form->selectyesno('validate_invoices', 1, 1);
 		print '</td>';
 		print '</tr>';
-		print '<tr>';
+		print '<tr class="fieldrequired" style="display:none">';
 		print '<td>';
 		print $langs->trans('RefSupplier');
 		print '</td>';
 		print '<td>';
-		print '<input name="refsupplier" type="text">';
+		print '<input name="refsupplier" type="text" id="refsupplier">';
 		print '</td>';
 		print '</tr>';
 		print '</table>';
-
+?>
+		<script>
+			window.addEventListener('load', function () {
+				$('select#createbills_onebythird').on('change', function (e) {
+					if ($(this).val() === '1')
+						$('#refsupplier').parent().parent().show();
+					else
+						$('#refsupplier').parent().parent().hide();
+				});
+			});
+		</script>
+<?php
 		print '<br>';
 		print '<div class="center">';
 		print '<input type="submit" class="button" id="createbills" name="createbills" value="'.$langs->trans('CreateInvoiceForThisCustomer').'">  ';
