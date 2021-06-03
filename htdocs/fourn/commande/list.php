@@ -183,7 +183,7 @@ $error = 0;
 
 if (GETPOST('cancel', 'alpha')) { $action = 'list'; $massaction = ''; }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createsupplierbills') { $massaction = ''; }
-if(empty($ref_supplier) && $massaction == 'confirm_createsupplierbills')
+if (empty($ref_supplier) && $massaction == 'confirm_createsupplierbills')
 {
 	setEventMessage($langs->trans("Error_RefSupplierRequired"), 'errors');
 	$massaction = 'createbills';
@@ -752,7 +752,7 @@ if ($resql)
 		print '</td>';
 		print '</tr>';
 		print '</table>';
-?>
+		?>
 		<script>
 			window.addEventListener('load', function () {
 				$('select#createbills_onebythird').on('change', function (e) {
@@ -763,7 +763,7 @@ if ($resql)
 				});
 			});
 		</script>
-<?php
+		<?php
 		print '<br>';
 		print '<div class="center">';
 		print '<input type="submit" class="button" id="createbills" name="createbills" value="'.$langs->trans('CreateInvoiceForThisCustomer').'">  ';
