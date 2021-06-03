@@ -7285,6 +7285,195 @@ abstract class CommonObject
 		return $out;
 	}
 
+	/**
+	 * Return validation test for a field
+	 *
+	 * @param  array   $val		       Array of properties of field to show
+	 * @param  string  $key            Key of attribute
+	 * @return   int				  >0 if OK, <0 if KO , 0 no test available.
+	 */
+	public function validateField($val, $fieldKey, $fieldValue)
+	{
+		global $langs;
+
+		if(!class_exists('Validate')){ require_once DOL_DOCUMENT_ROOT . '/core/class/validate.class.php'; }
+
+		// TODO : ask @eldy to know if need to use another error field to separate error msg
+		$this->error = ''; // error will be use for form error display so must be clear before
+
+		if(!isset($val[$fieldKey])){
+			return false;
+		}
+
+		$param = array();
+		$param['options'] = array();
+		$type  = $val[$fieldKey]['type'];
+
+		$required = false;
+		if(isset($val[$fieldKey]['notnull']) && $val[$fieldKey]['notnull'] === 1){
+			// 'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
+			$required = true;
+		}
+
+		$maxSize = 0;
+
+
+		//
+		// PREPARE Elements
+		//
+
+		// Convert var to be able to share same code than showOutputField of extrafields
+		if (preg_match('/varchar\((\d+)\)/', $type, $reg)) {
+			$type = 'varchar'; // convert varchar(xx) int varchar
+			$maxSize = $reg[1];
+		} elseif (preg_match('/varchar/', $type)) {
+			$type = 'varchar'; // convert varchar(xx) int varchar
+		}
+
+		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
+			$type = 'select';
+		}
+
+		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) {
+			$type = 'link';
+		}
+
+		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
+			$param['options'] = $val['arrayofkeyval'];
+		}
+
+		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) {
+			$type = 'link';
+			$param['options'] = array($reg[1].':'.$reg[2]=>$reg[1].':'.$reg[2]);
+		} elseif (preg_match('/^sellist:(.*):(.*):(.*):(.*)/i', $val['type'], $reg)) {
+			$param['options'] = array($reg[1].':'.$reg[2].':'.$reg[3].':'.$reg[4] => 'N');
+			$type = 'sellist';
+		} elseif (preg_match('/^sellist:(.*):(.*):(.*)/i', $val['type'], $reg)) {
+			$param['options'] = array($reg[1].':'.$reg[2].':'.$reg[3] => 'N');
+			$type = 'sellist';
+		} elseif (preg_match('/^sellist:(.*):(.*)/i', $val['type'], $reg)) {
+			$param['options'] = array($reg[1].':'.$reg[2] => 'N');
+			$type = 'sellist';
+		}
+
+		//
+		// TEST Value
+		//
+
+		// Use Validate class to allow external Modules to use data validation part instead of concentrate all test here (factoring)
+		$validate = new Validate($this->db, $langs);
+
+
+		if($required && !$validate->isNotEmptyString($fieldValue)){
+			$this->error = $validate->error;
+			return -1;
+		}
+
+
+		if(!empty($maxSize) && !$validate->isMaxLength($fieldValue, $maxSize)){
+			$this->error = $validate->error;
+			return -1;
+		}
+
+
+
+		if (in_array($type, array('date', 'datetime', 'timestamp'))) {
+			if(!$validate->isTimestamp($fieldValue)){
+				$this->error = $validate->error;
+				return -1;
+			}
+		} elseif ($type == 'duration') {
+			// int
+		} elseif (in_array($type, array('double', 'real', 'price'))) {
+			// is numeric
+		} elseif ($type == 'boolean') {
+			// is bool
+		} elseif ($type == 'mail') {
+			if(!$validate->isEmail($fieldValue)){
+				$this->error = $validate->error;
+				return -1;
+			}
+		} elseif ($type == 'url') {
+			if(!$validate->isUrl($fieldValue)){
+				$this->error = $validate->error;
+				return -1;
+			}
+		} elseif ($type == 'phone') {
+
+		} elseif ($type == 'select' || $type == 'radio') {
+			// isset in list
+			if(!isset($param['options'][$fieldValue])){
+
+			}
+		} elseif ($type == 'sellist' || $type == 'chkbxlst') {
+			$param_list = array_keys($param['options']);
+			$InfoFieldList = explode(":", $param_list[0]);
+			$value_arr = explode(',', $fieldValue);
+			$value_arr = array_map(array($this->db, 'escape'), $value_arr);
+
+			$selectkey = "rowid";
+			if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4])) {
+				$selectkey = $InfoFieldList[2];
+			}
+
+			// TODO tester toute les valeur du tableau séparement
+
+			$sql = 'SELECT '.$selectkey;
+			$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[0];
+			if ($selectkey == 'rowid' && empty($value)) {
+				$sql .= " WHERE ".$selectkey."=0";
+			} else {
+				$sql .= " WHERE ".$selectkey." IN ('".implode(',',$value_arr)."')";
+			}
+
+			dol_syslog(get_class($this).':validateField:$type=sellist', LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$num = $this->db->num_rows($resql);
+				if (empty($num)) {
+					// error value not found
+					$this->error = 'error msg';
+					return false;
+				} else {
+					return true;
+				}
+
+			} else {
+				dol_syslog(get_class($this).'::validateField error '.$this->db->lasterror(), LOG_WARNING);
+				return false;
+			}
+		} elseif ($type == 'link') {
+
+			// only if something to display (perf)
+			if (!empty($fieldValue)) {
+				$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath'
+				$InfoFieldList = explode(":", $param_list[0]);
+				$classname = $InfoFieldList[0];
+				$classpath = $InfoFieldList[1];
+				if (!empty($classpath)) {
+					dol_include_once($InfoFieldList[1]);
+					if ($classname && class_exists($classname)) {
+						$object = new $classname($this->db);
+						if($object->fetch($fieldValue)>0){
+							return true;
+						}
+						$this->error = 'class not found for validation';
+					} else {
+						$this->error = 'Error bad setup of extrafield';
+					}
+					return false;
+				} else {
+					$this->error = 'Error bad setup of extrafield';
+					return false;
+				}
+			}
+			else {
+				// TODO vérifier si requis
+			}
+		}
+
+		return 0;
+	}
 
 	/**
 	 * Function to show lines of extrafields with output datas.
