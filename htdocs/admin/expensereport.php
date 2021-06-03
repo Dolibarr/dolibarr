@@ -145,9 +145,19 @@ if ($action == 'updateMask') {
 	$draft = GETPOST('EXPENSEREPORT_DRAFT_WATERMARK', 'alpha');
 	$res2 = dolibarr_set_const($db, "EXPENSEREPORT_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
 
-	if (!$res1 > 0 || !$res2 > 0) {
-		$error++;
+	$amounts = GETPOST('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY', 'int');
+	$res3 = dolibarr_set_const($db, 'EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY', intval($amounts), 'chaine', 0, '', $conf->entity);
+
+	if ($conf->projet->enabled) {
+		$projects = GETPOST('EXPENSEREPORT_PROJECT_IS_REQUIRED', 'int');
+		$res4 = dolibarr_set_const($db, 'EXPENSEREPORT_PROJECT_IS_REQUIRED', intval($projects), 'chaine', 0, '', $conf->entity);
+	} else {
+		$res4 = dolibarr_del_const($this->db, 'EXPENSEREPORT_PROJECT_IS_REQUIRED', $conf->entity);
 	}
+	$dates = GETPOST('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH', 'int');
+	$res5 = dolibarr_set_const($db, 'EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH', intval($dates), 'chaine', 0, '', $conf->entity);
+
+	if (!$res1 > 0 || !$res2 > 0 || !$res3 > 0 || !$res4 > 0 || !$res5 > 0) $error++;
 
 	if (!$error) {
 		$db->commit();
@@ -457,6 +467,25 @@ print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftExpenseReports"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
 print '<input size="50" class="flat" type="text" name="EXPENSEREPORT_DRAFT_WATERMARK" value="'.$conf->global->EXPENSEREPORT_DRAFT_WATERMARK.'">';
 print '</td></tr>'."\n";
+print '<tr class="oddeven"><td>';
+print $langs->trans('ForceExpenseReportsLineAmountsIncludingTaxesOnly');
+print '</td><td class="right">';
+print $form->selectyesno('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY', empty($conf->global->EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY) ? 0 : 1, 1);
+print '</td></tr>';
+
+if ($conf->projet->enabled) {
+	print '<tr class="oddeven"><td>';
+	print $langs->trans('ProjectIsRequiredOnExpenseReports');
+	print '</td><td class="right">';
+	print $form->selectyesno('EXPENSEREPORT_PROJECT_IS_REQUIRED', empty($conf->global->EXPENSEREPORT_PROJECT_IS_REQUIRED) ? 0 : 1, 1);
+	print '</td></tr>';
+}
+
+print '<tr class="oddeven"><td>';
+print $langs->trans('PrefillExpenseReportDatesWithCurrentMonth');
+print '</td><td class="right">';
+print $form->selectyesno('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH', empty($conf->global->EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH) ? 0 : 1, 1);
+print '</td></tr>';
 
 print '</table>';
 

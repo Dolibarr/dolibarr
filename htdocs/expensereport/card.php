@@ -68,6 +68,17 @@ $socid = GETPOST('socid', 'int') ?GETPOST('socid', 'int') : GETPOST('socid_id', 
 
 $childids = $user->getAllChildIds(1);
 
+if (! empty($conf->global->EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH)) {
+	if (empty($date_start)) {
+		$date_start = dol_mktime(0, 0, 0, (int) dol_print_date(dol_now(), '%m'),  1, (int) dol_print_date(dol_now(), '%Y'));
+	}
+
+	if (empty($date_end)) {
+		// date('t') => number of days in the month, so last day of the month too
+		$date_end = dol_mktime(0, 0, 0, (int) dol_print_date(dol_now(), '%m'), (int) date('t'), (int) dol_print_date(dol_now(), '%Y'));
+	}
+}
+
 // Hack to use expensereport dir
 $rootfordata = DOL_DATA_ROOT;
 $rootforuser = DOL_DATA_ROOT;
@@ -105,6 +116,8 @@ $permissiondellink = $user->rights->expensereport->creer; // Used by the include
 $permissiontoadd = $user->rights->expensereport->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
 $upload_dir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($object->ref);
+
+$projectRequired = $conf->projet->enabled && ! empty($conf->global->EXPENSEREPORT_PROJECT_IS_REQUIRED);
 
 if ($object->id > 0) {
 	// Check current user can read this expense report
@@ -251,10 +264,14 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (!$error && empty($conf->global->EXPENSEREPORT_ALLOW_OVERLAPPING_PERIODS) && $object->periode_existe($fuser, $object->date_debut, $object->date_fin)) {
-			$error++;
-			setEventMessages($langs->trans("ErrorDoubleDeclaration"), null, 'errors');
-			$action = 'create';
+		if (!$error && empty($conf->global->EXPENSEREPORT_ALLOW_OVERLAPPING_PERIODS)) {
+			$overlappingExpenseReportID = $object->periode_existe($fuser, $object->date_debut, $object->date_fin, true);
+
+			if ($overlappingExpenseReportID > 0) {
+				$error++;
+				setEventMessages($langs->trans("ErrorDoubleDeclaration").' <a href="'.$_SERVER['PHP_SELF'].'?id='.$overlappingExpenseReportID.'">'. $langs->trans('ShowTrip').'</a>', null, 'errors');
+				$action = 'create';
+			}
 		}
 
 		if (!$error) {
@@ -1117,6 +1134,11 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("WarningDateOfLineMustBeInExpenseReportRange"), null, 'warnings');
 		}
 
+		if ($projectRequired && $fk_project <= 0) {
+			$error++;
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Project")), null, 'errors');
+		}
+
 		if (!$error) {
 			$type = 0; // TODO What if service ? We should take the type product/service from the type of expense report llx_c_type_fees
 
@@ -1249,6 +1271,11 @@ if (empty($reshook)) {
 		if ($date < $object->date_debut || $date > ($object->date_fin + (24 * 3600 - 1))) {
 			$langs->load("errors");
 			setEventMessages($langs->trans("WarningDateOfLineMustBeInExpenseReportRange"), null, 'warnings');
+		}
+
+		if ($projectRequired && $projet_id <= 0) {
+			$error++;
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Project")), null, 'errors');
 		}
 
 		if (!$error) {
@@ -1562,6 +1589,8 @@ if ($action == 'create') {
 
 				print '</form>';
 			} else {
+				$taxlessUnitPriceDisabled = ! empty($conf->global->EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY) ? ' disabled' : '';
+
 				print dol_get_fiche_head($head, 'card', $langs->trans("ExpenseReport"), -1, 'trip');
 
 				// Clone confirmation
@@ -2062,7 +2091,7 @@ if ($action == 'create') {
 							} else {
 								$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $line->vatrate));
 								$pricenettoshow = price2num($line->value_unit / (1 + $tmpvat / 100), 'MU');
-								print $pricenettoshow;
+								print price($pricenettoshow);
 							}
 							print '</td>';
 
@@ -2231,7 +2260,7 @@ if ($action == 'create') {
 							// Select project
 							if (!empty($conf->projet->enabled)) {
 								print '<td>';
-								$formproject->select_projects(-1, $line->fk_project, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth300');
+								$formproject->select_projects(-1, $line->fk_project, 'fk_project', 0, 0, $projectRequired ? 0 : 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth300');
 								print '</td>';
 							}
 
@@ -2259,7 +2288,7 @@ if ($action == 'create') {
 
 							// Unit price
 							print '<td class="right">';
-							print '<input type="text" min="0" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag(price2num($line->value_unit_ht)).'" />';
+							print '<input type="text" min="0" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag(price2num($line->value_unit_ht)).'"'.$taxlessUnitPriceDisabled.' />';
 							print '</td>';
 
 							// Unit price with tax
@@ -2390,7 +2419,7 @@ if ($action == 'create') {
 					// Select project
 					if (!empty($conf->projet->enabled)) {
 						print '<td>';
-						$formproject->select_projects(-1, $fk_project, 'fk_project', 0, 0, 1, -1, 0, 0, 0, '', 0, 0, 'maxwidth300');
+						$formproject->select_projects(-1, $fk_project, 'fk_project', 0, 0, $projectRequired ? 0 : 1, -1, 0, 0, 0, '', 0, 0, 'maxwidth300');
 						print '</td>';
 					}
 
@@ -2422,7 +2451,7 @@ if ($action == 'create') {
 
 					// Unit price net
 					print '<td class="right">';
-					print '<input type="text" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag($value_unit_ht).'">';
+					print '<input type="text" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag($value_unit_ht).'"'.$taxlessUnitPriceDisabled.'>';
 					print '</td>';
 
 					// Unit price with tax
