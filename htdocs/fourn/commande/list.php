@@ -473,6 +473,7 @@ if (empty($reshook))
 			if ($search_project_ref >= 0)  	$param .= "&search_project_ref=".urlencode($search_project_ref);
 			if ($show_files)            $param .= '&show_files='.urlencode($show_files);
 			if ($optioncss != '')       $param .= '&optioncss='.urlencode($optioncss);
+			if ($search_billed != '')   $param .= "&search_billed=".urlencode($search_billed);
 			if ($billed != '')			$param .= '&billed='.urlencode($billed);
 
 			header("Location: ".$_SERVER['PHP_SELF'].'?'.$param);
