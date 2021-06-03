@@ -22,7 +22,7 @@
 -- Descriptif des plans comptables autrichiens standard
 -- ADD 4100000 to rowid # Do no remove this comment --
 
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1, 'AT-BASE','0','GROUP0','110','0','Patentrechte');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1, 'AT-BASE','GROUP0','110','0','Patentrechte');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2, 'AT-BASE','GROUP0','120','0','Software');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3, 'AT-BASE','GROUP0','121','0','ERP System');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 4, 'AT-BASE','GROUP0','122','0','Homepage');
