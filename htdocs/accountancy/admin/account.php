@@ -165,7 +165,7 @@ if (empty($reshook)) {
 				}
 				$offsetforchartofaccount += ($conf->entity * 100000000);
 
-				$result = run_sql($sqlfile, 1, $conf->entity, 1, '', 'default', 32768, 0, $offsetforchartofaccount);
+				$result = run_sql($sqlfile, 0, $conf->entity, 1, '', 'default', 32768, 0, $offsetforchartofaccount);
 
 				if ($result > 0) {
 					setEventMessages($langs->trans("ChartLoaded"), null, 'mesgs');
