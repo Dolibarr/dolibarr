@@ -138,8 +138,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 						$container = $usergroup->_load_ldap_dn($oldinfo, 1);
 						$search = "(".$usergroup->_load_ldap_dn($oldinfo, 2).")";
 						$records = $ldap->search($container, $search);
-						if (count($records) && $records['count'] == 0)
-						{
+						if (count($records) && $records['count'] == 0) {
 							$olddn = '';
 						}
 
@@ -157,12 +156,11 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 						$oldinfo = $usergroup->_load_ldap_info();
 						$olddn = $usergroup->_load_ldap_dn($oldinfo);
 
-						// Verify if entry exist
+						// Verify if an entry exists
 						$container = $usergroup->_load_ldap_dn($oldinfo, 1);
 						$search = "(".$usergroup->_load_ldap_dn($oldinfo, 2).")";
 						$records = $ldap->search($container, $search);
-						if (count($records) && $records['count'] == 0)
-						{
+						if (count($records) && $records['count'] == 0) {
 							$olddn = '';
 						}
 
