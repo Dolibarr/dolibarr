@@ -56,6 +56,12 @@ const getThirdparty = (z, bundle) => {
         fournisseur: bundle.cleanedRequest.fournisseur,
         code_client: bundle.cleanedRequest.code_client,
         code_fournisseur: bundle.cleanedRequest.code_fournisseur,
+        idprof1: bundle.cleanedRequest.idprof1,
+        idprof2: bundle.cleanedRequest.idprof2,
+        idprof3: bundle.cleanedRequest.idprof3,
+        idprof4: bundle.cleanedRequest.idprof4,
+        idprof5: bundle.cleanedRequest.idprof5,
+        idprof6: bundle.cleanedRequest.idprof6,
         authorId: bundle.cleanedRequest.authorId,
         createdAt: bundle.cleanedRequest.createdAt,
         action: bundle.cleanedRequest.action
@@ -170,7 +176,13 @@ module.exports = {
             {key: 'client', label: 'Customer/Prospect 0/1/2/3'},
             {key: 'fournisseur', label: 'Supplier 0/1'},
             {key: 'code_client', label: 'Customer code'},
-            {key: 'code_fournisseur', label: 'Supplier code'}
+            {key: 'code_fournisseur', label: 'Supplier code'},
+            {key: 'idprof1', label: 'Id Prof 1'},
+            {key: 'idprof2', label: 'Id Prof 2'},
+            {key: 'idprof3', label: 'Id Prof 3'},
+            {key: 'idprof4', label: 'Id Prof 4'},
+            {key: 'idprof5', label: 'Id Prof 5'},
+            {key: 'idprof6', label: 'Id Prof 6'}
         ]
     }
 };
