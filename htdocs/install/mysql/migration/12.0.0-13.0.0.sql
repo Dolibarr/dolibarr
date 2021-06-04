@@ -586,4 +586,4 @@ insert into llx_c_actioncomm (id, code, type, libelle, module, active, position)
 ALTER TABLE llx_export_model MODIFY COLUMN type varchar(64);
 
 
-ALTER TABLE llx_facture_fourn CHANGE ref_supplier ref_supplier VARCHAR(180) NULL;
+ALTER TABLE llx_facture_fourn MODIFY COLUMN ref_supplier VARCHAR(180) NOT NULL;

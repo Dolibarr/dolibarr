@@ -398,7 +398,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= ")";
 		$sql .= " VALUES (";
 		$sql .= "'(PROV)'";
-		$sql .= ", ".($this->ref_supplier ? "'".$this->db->escape($this->ref_supplier)."'" : "null");
+		$sql .= ", '".$this->db->escape($this->ref_supplier)."'";
 		$sql .= ", ".$conf->entity;
 		$sql .= ", '".$this->db->escape($this->type)."'";
 		$sql .= ", '".$this->db->escape(isset($this->label) ? $this->label : (isset($this->libelle) ? $this->libelle : ''))."'";
