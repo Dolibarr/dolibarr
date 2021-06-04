@@ -800,19 +800,19 @@ class AccountingAccount extends CommonObject
 					$suggestedid = $this->accountingaccount_codetotid_cache[$code_sell_l];
 				}
 			}
+			return array(
+				'suggestedaccountingaccountbydefaultfor' => $suggestedaccountingaccountbydefaultfor,
+				'suggestedaccountingaccountfor' => $suggestedaccountingaccountfor,
+				'suggestedid' => $suggestedid,
+				'code_sell_l' => $code_sell_l,
+				'code_sell_p' => $code_sell_p,
+				'code_sell_t' => $code_sell_t,
+			);
 		} else {
 			if (is_array($hookmanager->resArray) && !empty($hookmanager->resArray)) {
 				return $hookmanager->resArray;
 			}
 		}
-		return array(
-			'suggestedaccountingaccountbydefaultfor' => $suggestedaccountingaccountbydefaultfor,
-			'suggestedaccountingaccountfor' => $suggestedaccountingaccountfor,
-			'suggestedid' => $suggestedid,
-			'code_sell_l' => $code_sell_l,
-			'code_sell_p' => $code_sell_p,
-			'code_sell_t' => $code_sell_t,
-		);
 	}
 
 	/**
