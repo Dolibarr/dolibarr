@@ -752,6 +752,8 @@ if ($resql)
 		print '</td>';
 		print '</tr>';
 		print '</table>';
+		if (!empty($conf->use_javascript_ajax)) {
+			// TODO Replace this with jquery code
 		?>
 		<script>
 			window.addEventListener('load', function () {
@@ -764,6 +766,7 @@ if ($resql)
 			});
 		</script>
 		<?php
+		}
 		print '<br>';
 		print '<div class="center">';
 		print '<input type="submit" class="button" id="createbills" name="createbills" value="'.$langs->trans('CreateInvoiceForThisCustomer').'">  ';
