@@ -5289,9 +5289,9 @@ class Form
 		global $langs;
 		if ($htmlname != "none") {
 			print '<form method="POST" action="'.$page.'">';
-			print '<input type="hidden" name="action" value="setmode">';
+			print '<input type="hidden" name="action" value="settransportmode">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
-			$this->selectTransportMode($selected, $htmlname, 2, $addempty, 0, 0, $active);
+			$this->selectTransportMode($selected, $htmlname, 0, $addempty, 0, 0, $active);
 			print '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
 			print '</form>';
 		} else {
