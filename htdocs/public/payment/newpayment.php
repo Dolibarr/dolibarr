@@ -292,7 +292,7 @@ if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 	} else {
 		$token = $conf->global->PAYMENT_SECURITY_TOKEN;
 	}
-	if ($SECUREKEY != $token && $SECUREKEY != $tokenoldcompat) {
+	if ($SECUREKEY != $token && (empty($tokenoldcompat) || $SECUREKEY != $tokenoldcompat)) {
 		if (empty($conf->global->PAYMENT_SECURITY_ACCEPT_ANY_TOKEN)) {
 			$valid = false; // PAYMENT_SECURITY_ACCEPT_ANY_TOKEN is for backward compatibility
 		} else {
