@@ -408,7 +408,7 @@ if (empty($reshook)) {
 				dol_syslog($db->error());
 				dol_print_error($db);
 			}
-
+			$object->fetch($id);
 			$action = '';
 		}
 	}
@@ -677,7 +677,6 @@ if (empty($reshook)) {
 $form = new Form($db);
 $htmlother = new FormOther($db);
 
-$object->fetch($id);
 $help_url = 'EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing';
 llxHeader(
 	'',
