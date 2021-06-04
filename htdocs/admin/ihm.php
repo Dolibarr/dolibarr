@@ -200,6 +200,13 @@ if ($action == 'update') {
 		dolibarr_set_const($db, "THEME_ELDY_USE_CHECKED", $val, 'chaine', 0, '', $conf->entity);
 	}
 
+	$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_SHADOW'), array()))));
+	if ($val == '') {
+		dolibarr_del_const($db, 'THEME_ELDY_SHADOW', $conf->entity);
+	} else {
+		dolibarr_set_const($db, 'THEME_ELDY_SHADOW', $val, 'chaine', 0, '', $conf->entity);
+	}
+
 	dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT", GETPOST("main_size_liste_limit", 'int'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_SIZE_SHORTLIST_LIMIT", GETPOST("main_size_shortliste_limit", 'int'), 'chaine', 0, '', $conf->entity);
 

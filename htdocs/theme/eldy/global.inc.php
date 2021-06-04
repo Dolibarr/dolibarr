@@ -48,6 +48,7 @@
 	--amountremaintopaybackcolor:none;
 	--productlinestockod: #002200;
 	--productlinestocktoolow: #884400;
+	--colorshadow: rgb(<?php print $colorshadow; ?>);
 	--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #fff, #fff, #fff, #e4efe8);
 }
 
@@ -94,6 +95,7 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 	            --amountremaintopaycolor:rgb(252,84,91);
 	            --amountpaymentcomplete:rgb(101,184,77);
 	            --amountremaintopaybackcolor:rbg(245,130,46);
+				--colorshadow: #fff;
 				--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #000, #000, #000, #274231);
 	      }
 
@@ -1249,7 +1251,7 @@ table.paymenttable td.amountpaymentcomplete, table.paymenttable td.amountremaint
 	overflow-x: auto;
 	min-height: 0.01%;
 	border-radius: 5px;
-	box-shadow: 1px 1px 12px #555;
+	box-shadow: 1px 1px 12px var(--colorshadow);
 }
 .div-table-responsive {
 	line-height: 120%;
@@ -3039,7 +3041,7 @@ div.tabBar {
 	/* border-bottom: 1px solid #AAA; */
 	width: auto;
 	background: var(--colorbacktabcard1);
-	box-shadow: 1px 1px 12px #555;
+	box-shadow: 1px 1px 12px var(--colorshadow);
 	border-radius: 5px;
 }
 div.tabBar tr.titre td {
@@ -3058,7 +3060,7 @@ div.tabBar.tabBarNoTop {
 div.tabBarWithBottom {
 	padding-bottom: 18px;
 	border-bottom: 1px solid #bbb;
-	box-shadow: 1px 1px 12px #555;
+	box-shadow: 1px 1px 12px var(--colorshadow);
 	border-radius: 5px;
 }
 div.tabBarWithBottom tr {
@@ -3800,7 +3802,7 @@ div.liste_titre_bydiv, .liste_titre div.tagtr, tr.liste_titre, tr.liste_titre_se
 	font-family: <?php print $fontlist ?>;
 	text-align: <?php echo $left; ?>;
 	border-radius: 5px;
-	box-shadow: 1px 1px 12px #555;
+	box-shadow: 1px 1px 12px  var(--colorshadow);
 }
 tr.liste_titre th, tr.liste_titre td, th.liste_titre
 {
