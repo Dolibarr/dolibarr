@@ -905,6 +905,27 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		print '</tr>';
 	}
 
+	// Shadow color
+	if ($foruserprofile) {
+	} else {
+		$default = (empty($colorshadow) ? $langs->trans("Unknown") : colorArrayToHex(colorStringToArray($colorshadow)));
+
+		print '<tr class="oddeven">';
+		print '<td>'.$langs->trans("ShadowColor").'</td>';
+		print '<td colspan="'.($colspan - 1).'">';
+		if ($edit) {
+			print $formother->selectColor(colorArrayToHex(colorStringToArray((!empty($conf->global->THEME_ELDY_SHADOW) ? $conf->global->THEME_ELDY_SHADOW : ''), array()), ''), 'THEME_ELDY_SHADOW', '', 1, '', '', 'colortexttitlelink').' ';
+		} else {
+			print $formother->showColor($conf->global->THEME_ELDY_SHADOW, $langs->trans("Default"));
+		}
+		print ' &nbsp; <span class="nowraponall opacitymedium">'.$langs->trans("Default").'</span>: <strong><span style="color: #'.$default.'">'.$default.'</span></strong> ';
+		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
+		print '</span>';
+		print '</td>';
+
+		print '</tr>';
+	}
+
 	// Use MAIN_OPTIMIZEFORTEXTBROWSER
 	if ($foruserprofile) {
 		//$default=yn($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER);
