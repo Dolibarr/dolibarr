@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2018	   Nicolas ZABOURI	<info@inovea-conseil.com>
+ * Copyright (C) 2018-2021 Nicolas ZABOURI	<info@inovea-conseil.com>
  * Copyright (C) 2018 	   Juanjo Menent  <jmenent@2byte.es>
  * Copyright (C) 2019 	   Ferran Marcet  <fmarcet@2byte.es>
  * Copyright (C) 2019-2021 Frédéric France <frederic.france@netlogic.fr>
@@ -1241,8 +1241,13 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 			}
 
 			if (in_array($objecttmp->element, array('societe', 'member'))) $result = $objecttmp->delete($objecttmp->id, $user, 1);
-			else $result = $objecttmp->delete($user);
-
+			else {
+				if (get_class($objecttmp) === "ActionComm") {
+					$result = $objecttmp->delete();
+				} else {
+					$result = $objecttmp->delete($user);
+				}
+			}
 			if ($result <= 0)
 			{
 				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
