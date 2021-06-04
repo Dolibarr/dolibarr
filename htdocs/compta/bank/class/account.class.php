@@ -177,6 +177,10 @@ class Account extends CommonObject
 	 * @var int ID
 	 */
 	public $fk_accountancy_journal;
+	/**
+	 * @var string	Label of journal
+	 */
+	public $accountancy_journal;
 
 	/**
 	 * Currency code
@@ -281,6 +285,7 @@ class Account extends CommonObject
 		'rappro' =>array('type'=>'smallint(6)', 'label'=>'Rappro', 'enabled'=>1, 'visible'=>-1, 'position'=>120),
 		'url' =>array('type'=>'varchar(128)', 'label'=>'Url', 'enabled'=>1, 'visible'=>-1, 'position'=>125),
 		'account_number' =>array('type'=>'varchar(32)', 'label'=>'Account number', 'enabled'=>1, 'visible'=>-1, 'position'=>130),
+		'fk_accountancy_journal' =>array('type'=>'integer', 'label'=>'Accountancy journal ID', 'enabled'=>1, 'visible'=>-1, 'position'=>132),
 		'accountancy_journal' =>array('type'=>'varchar(20)', 'label'=>'Accountancy journal', 'enabled'=>1, 'visible'=>-1, 'position'=>135),
 		'currency_code' =>array('type'=>'varchar(3)', 'label'=>'Currency code', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>140),
 		'min_allowed' =>array('type'=>'integer', 'label'=>'Min allowed', 'enabled'=>1, 'visible'=>-1, 'position'=>145),
@@ -294,7 +299,6 @@ class Account extends CommonObject
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>175),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>180),
 		'extraparams' =>array('type'=>'varchar(255)', 'label'=>'Extraparams', 'enabled'=>1, 'visible'=>-1, 'position'=>185),
-		'fk_accountancy_journal' =>array('type'=>'integer', 'label'=>'Fk accountancy journal', 'enabled'=>1, 'visible'=>-1, 'position'=>190),
 	);
 	// END MODULEBUILDER PROPERTIES
 
@@ -311,8 +315,10 @@ class Account extends CommonObject
 	 */
 	const TYPE_SAVINGS = 0;
 
+
 	const STATUS_OPEN = 0;
 	const STATUS_CLOSED = 1;
+
 
 	/**
 	 *  Constructor
