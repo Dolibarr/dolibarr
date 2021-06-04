@@ -409,7 +409,7 @@ if (empty($reshook)) {
 				dol_syslog($db->error());
 				dol_print_error($db);
 			}
-
+			$object->fetch($id);
 			$action = '';
 		}
 	}
