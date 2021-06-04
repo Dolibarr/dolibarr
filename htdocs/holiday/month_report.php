@@ -154,7 +154,7 @@ if (!empty($search_employee) && $search_employee > 0) {
 	$sql .= " AND cp.fk_user = ".((int) $search_employee);
 }
 if (!empty($search_type) && $search_type != '-1') {
-	$sql .= ' AND cp.fk_type IN ('.$db->escape($search_type).')';
+	$sql .= ' AND cp.fk_type IN ('.$db->sanitize($search_type).')';
 }
 if (!empty($search_description)) {
 	$sql .= natural_search('cp.description', $search_description);
