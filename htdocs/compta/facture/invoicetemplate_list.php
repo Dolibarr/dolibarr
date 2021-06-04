@@ -50,8 +50,7 @@ $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'alpha');
 $toselect   = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'invoicetemplatelist'; // To manage different context of search
-
-$socid = GETPOST('socid', 'int');
+$optioncss = GETPOST('optioncss', 'alpha');
 
 $socid = GETPOST('socid', 'int');
 
@@ -394,7 +393,7 @@ if ($resql) {
 	if ($search_payment_term != '') {
 		$param .= '&search_payment_term='.urlencode($search_payment_term);
 	}
-	if ($search_recurring != '' && $search_recurrning != '-1') {
+	if ($search_recurring != '' && $search_recurring != '-1') {
 		$param .= '&search_recurring='.urlencode($search_recurring);
 	}
 	if ($search_frequency > 0) {
@@ -570,7 +569,7 @@ if ($resql) {
 	if (!empty($arrayfields['s.nom']['checked'])) {
 		print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER['PHP_SELF'], "s.nom", "", $param, "", $sortfield, $sortorder);
 	}
-	if (!empty($arrayfields['f.total_total']['checked'])) {
+	if (!empty($arrayfields['f.total_ht']['checked'])) {
 		print_liste_field_titre($arrayfields['f.total_ht']['label'], $_SERVER['PHP_SELF'], "f.total_ht", "", $param, 'class="right"', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['f.total_tva']['checked'])) {
@@ -789,12 +788,13 @@ if ($resql) {
 				}
 			}
 			// Action column
-			print '<td class="center">';
+			print '<td class="center tdoverflowmax125">';
 			if ($user->rights->facture->creer && empty($invoicerectmp->suspended)) {
 				if ($invoicerectmp->isMaxNbGenReached()) {
 					print $langs->trans("MaxNumberOfGenerationReached");
 				} elseif (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today) {
 					print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;socid='.$objp->socid.'&amp;fac_rec='.$objp->facid.'">';
+					print img_picto($langs->trans("CreateBill"), 'add', 'class="paddingrightonly"');
 					print $langs->trans("CreateBill").'</a>';
 				} else {
 					print $form->textwithpicto('', $langs->trans("DateIsNotEnough"));
