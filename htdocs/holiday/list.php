@@ -202,6 +202,54 @@ if (empty($reshook))
 	$permissiontodelete = $user->rights->holiday->delete;
 	$uploaddir = $conf->holiday->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+
+	// Mass action sign (after a confirmation question, it is $action that is used).
+	if ($action == 'confirm_approve' && ! empty($user->rights->holiday->approve)) {
+		if (GETPOST('confirm') == 'yes') {
+			$tmpholiday = new Holiday($db);
+
+			$db->begin();
+			$error = 0;
+
+			foreach ($toselect as $checked) {
+				$res1 = $tmpholiday->fetch($checked);
+
+				if ($res1 <= 0) {
+					if ($res1 < 0) {
+						dol_print_error($db);
+						$error++;
+					}
+
+					setEventMessage($langs->trans('MassHolidayApprovalKO', '', $langs->transnoentitiesnoconv('HolidayNotFound', $checked)), 'errors');
+					continue;
+				}
+
+				$tmpholiday->statut = Holiday::STATUS_APPROVED;
+				$res2 = $tmpholiday->approve($user);
+
+				if ($res2 < 0) {
+					dol_print_error($db);
+					$error++;
+					continue;
+				}
+
+				if (empty($res2)) {
+					setEventMessage($langs->trans('MassHolidayApprovalKO', $tmpholiday->ref, $langs->transnoentitiesnoconv($tmpholiday->error)), 'warnings');
+					continue;
+				}
+
+				setEventMessage($langs->trans('MassHolidayApprovalOK', $tmpholiday->ref));
+			}
+
+			if ($error) {
+				$db->rollback();
+				$action = '';
+				$massaction = 'approve';
+			} else {
+				$db->commit();
+			}
+		}
+	}
 }
 
 
@@ -383,6 +431,7 @@ if ($resql)
 		//'builddoc'=>$langs->trans("PDFMerge"),
 		//'presend'=>$langs->trans("SendByMail"),
 	);
+	if ($user->rights->holiday->approve) $arrayofmassactions['approve'] = '<span class="fa fa-check paddingrightonly"></span>'.$langs->trans('Approve');
 	if ($user->rights->holiday->supprimer) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 	if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -443,7 +492,13 @@ if ($resql)
 	$modelmail = "leaverequest";
 	$objecttmp = new Holiday($db);
 	$trackid = 'leav'.$object->id;
-	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php'; // This reassigns $reshook
+
+	if (empty($reshook)) {
+		if ($massaction == 'approve') {
+			print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans('ConfirmExpenseReportMassApprove'), $langs->trans('ConfirmExpenseReportMassApproveQuestion'), 'confirm_approve', null, '', 0, 200, 500, 1);
+		}
+	}
 
 	if ($sall)
 	{
