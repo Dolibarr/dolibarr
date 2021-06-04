@@ -254,7 +254,7 @@ if (empty($reshook)) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), null, 'errors');
 		}
-		if (GETPOST('qtytoadd') < 0) {
+		if (price2num(GETPOST('qtytoadd'), 'MS') < 0) {
 			$error++;
 			setEventMessages($langs->trans("FieldCannotBeNegative", $langs->transnoentitiesnoconv("RealQty")), null, 'errors');
 		}
