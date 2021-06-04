@@ -13,7 +13,7 @@ You can freely use, study, modify or distribute it according to its licence.
 
 You can use it as a standalone application or as a web application to access it from the Internet or a LAN.
 
-Dolibarr has a large community ready to help you, free forums and [officially preferred partners ready to offer commercial support should you need it](https://partners.dolibarr.org)
+Dolibarr has a large community ready to help you, free forums and [preferred partners ready to offer commercial support should you need it](https://partners.dolibarr.org)
 
 ![ScreenShot](https://www.dolibarr.org/medias/dolibarr_screenshot1_1920x1080.jpg)
 
@@ -122,7 +122,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Electronic Document Management (EDM)
 - Foundations members management
 - Point of Sale (POS)
-- … (around 100 modules available by default, + 1000 on the addon market place)
+- … (around 100 modules available by default, 1000+ on the addon market place)
 
 ### Other application/modules
 
