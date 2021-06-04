@@ -933,13 +933,13 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	}
 
 	if (!empty($arrayfields['u.office_phone']['checked'])) {
-		print "<td>".dol_print_phone($obj->office_phone, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone')."</td>\n";
+		print '<td>'.dol_print_phone($obj->office_phone, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone')."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	if (!empty($arrayfields['u.user_mobile']['checked'])) {
-		print "<td>".dol_print_phone($obj->user_mobile, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'mobile')."</td>\n";
+		print '<td>'.dol_print_phone($obj->user_mobile, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'mobile')."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -992,7 +992,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 	// Salary
 	if (!empty($arrayfields['u.salary']['checked'])) {
-		print '<td class="nowraponall right">'.($obj->salary ? price($obj->salary) : '').'</td>';
+		print '<td class="nowraponall right amount">'.($obj->salary ? price($obj->salary) : '').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

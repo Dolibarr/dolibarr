@@ -8068,7 +8068,7 @@ function picto_from_langcode($codelang, $moreatt = '')
  * Return default language from country code.
  * Return null if not found.
  *
- * @param 	string 	$countrycode	Country code like 'US', 'FR', 'CA', ...
+ * @param 	string 	$countrycode	Country code like 'US', 'FR', 'CA', 'ES', 'MX', ...
  * @return	string					Value of locale like 'en_US', 'fr_FR', ...
  */
 function getLanguageCodeFromCountryCode($countrycode)
@@ -8091,6 +8091,9 @@ function getLanguageCodeFromCountryCode($countrycode)
 		}
 		if ($mysoc->country_code == 'DE') {
 			return 'de_CH';
+		}
+		if ($mysoc->country_code == 'IT') {
+			return 'it_CH';
 		}
 	}
 
@@ -8232,6 +8235,7 @@ function getLanguageCodeFromCountryCode($countrycode)
 		'pt-BR',
 		'pt-PT',
 		'rm-CH',
+		'ro-MD',
 		'ro-RO',
 		'ru-RU',
 		'rw-RW',

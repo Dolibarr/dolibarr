@@ -66,6 +66,10 @@ class box_graph_nb_tickets_type extends ModeleBoxes
 	public function loadBox($max = 5)
 	{
 		global $conf, $user, $langs;
+		global $theme_datacolor, $badgeStatus8;
+
+		require_once DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php";
+
 
 		$badgeStatus0 = '#cbd3d3'; // draft
 		$badgeStatus1 = '#bc9526'; // validated
@@ -98,29 +102,22 @@ class box_graph_nb_tickets_type extends ModeleBoxes
 			if ($resql) {
 				$num = $this->db->num_rows($resql);
 				$i = 0;
+				$newcolorkey = 0;
+				$colorused = array();
 				while ($i < $num) {
 					$objp = $this->db->fetch_object($resql);
 					$listofoppcode[$objp->rowid] = $objp->code;
 					$listofopplabel[$objp->rowid] = $objp->label;
-					switch ($objp->code) {
-						case 'COM':
-							$colorseriesstat[$objp->rowid] = $badgeStatus1;
-							break;
-						case 'HELP':
-							$colorseriesstat[$objp->rowid] = $badgeStatus2;
-							break;
-						case 'ISSUE':
-							$colorseriesstat[$objp->rowid] = $badgeStatus3;
-							break;
-						case 'REQUEST':
-							$colorseriesstat[$objp->rowid] = $badgeStatus4;
-							break;
-						case 'OTHER':
-							$colorseriesstat[$objp->rowid] = $badgeStatus5;
-							break;
-						default:
-							break;
+					if (empty($colorused[$objp->code])) {
+						if ($objp->code == 'ISSUE') {
+							$colorused[$objp->code] = $badgeStatus8;
+						} else {
+							$colorused[$objp->code] = colorArrayToHex($theme_datacolor[$newcolorkey]);
+							$newcolorkey++;
+						}
 					}
+					$colorseriesstat[$objp->rowid] = $colorused[$objp->code];
+
 					$i++;
 				}
 			} else {

@@ -212,9 +212,7 @@ if ($format == 'ical') {
 if ($format == 'rss') {
 	$shortfilename .= '.rss'; $filename .= '.rss';
 }
-
 if ($shortfilename == 'dolibarrcalendar') {
-	$langs->load("main");
 	$langs->load("errors");
 	llxHeaderVierge();
 	print '<div class="error">'.$langs->trans("ErrorWrongValueForParameterX", 'format').'</div>';

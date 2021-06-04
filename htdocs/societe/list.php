@@ -508,6 +508,10 @@ if ($search_sale == -2) {
 } elseif (!empty($search_sale) && $search_sale != '-1' || (empty($user->rights->societe->client->voir) && !$socid)) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " WHERE s.entity IN (".getEntity('societe').")";
 //if (empty($user->rights->societe->client->voir) && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->societe->client->readallthirdparties_advance)) && !$socid)	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 if (empty($user->rights->societe->client->voir) && !$socid) {
@@ -666,6 +670,10 @@ if (empty($reshook)) {
 		$sql .= " AND s.rowid = ".$socid;
 	}
 }
+$sql .= $hookmanager->resPrint;
+// Add GroupBy from hooks
+$parameters = array('all' => $all, 'fieldstosearchall' => $fieldstosearchall);
+$reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
 $sql .= $db->order($sortfield, $sortorder);
@@ -1405,7 +1413,7 @@ while ($i < min($num, $limit)) {
 	}
 	if (!empty($arrayfields['s.name_alias']['checked'])) {
 		print '<td class="tdoverflowmax200">';
-		print $companystatic->name_alias;
+		print dol_escape_htmltag($companystatic->name_alias);
 		print "</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -1413,70 +1421,70 @@ while ($i < min($num, $limit)) {
 	}
 	// Barcode
 	if (!empty($arrayfields['s.barcode']['checked'])) {
-		print '<td>'.$obj->barcode.'</td>';
+		print '<td>'.dol_escape_htmltag($obj->barcode).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Customer code
 	if (!empty($arrayfields['s.code_client']['checked'])) {
-		print '<td class="nowraponall">'.$obj->code_client.'</td>';
+		print '<td class="nowraponall">'.dol_escape_htmltag($obj->code_client).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Supplier code
 	if (!empty($arrayfields['s.code_fournisseur']['checked'])) {
-		print '<td class="nowraponall">'.$obj->code_fournisseur.'</td>';
+		print '<td class="nowraponall">'.dol_escape_htmltag($obj->code_fournisseur).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Account customer code
 	if (!empty($arrayfields['s.code_compta']['checked'])) {
-		print '<td>'.$obj->code_compta.'</td>';
+		print '<td>'.dol_escape_htmltag($obj->code_compta).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Account supplier code
 	if (!empty($arrayfields['s.code_compta_fournisseur']['checked'])) {
-		print '<td>'.$obj->code_compta_fournisseur.'</td>';
+		print '<td>'.dol_escape_htmltag($obj->code_compta_fournisseur).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Address
 	if (!empty($arrayfields['s.address']['checked'])) {
-		print '<td>'.$obj->address.'</td>';
+		print '<td>'.dol_escape_htmltag($obj->address).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Zip
 	if (!empty($arrayfields['s.zip']['checked'])) {
-		print "<td>".$obj->zip."</td>\n";
+		print "<td>".dol_escape_htmltag($obj->zip)."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Town
 	if (!empty($arrayfields['s.town']['checked'])) {
-		print "<td>".$obj->town."</td>\n";
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->town).'">'.dol_escape_htmltag($obj->town)."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// State
 	if (!empty($arrayfields['state.nom']['checked'])) {
-		print "<td>".$obj->state_name."</td>\n";
+		print "<td>".dol_escape_htmltag($obj->state_name)."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Region
 	if (!empty($arrayfields['region.nom']['checked'])) {
-		print "<td>".$obj->region_name."</td>\n";
+		print "<td>".dol_escape_htmltag($obj->region_name)."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
