@@ -960,6 +960,9 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'confirm_refuse' && $confirm == 'yes' && $usercanapprove) {
+		if (GETPOST('refuse_note')) {
+			$object->refuse_note = GETPOST('refuse_note');
+		}
 		$result = $object->refuse($user);
 		if ($result > 0) {
 			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
@@ -1875,7 +1878,16 @@ if ($action == 'create') {
 
 	// Confirmation de la desapprobation
 	if ($action == 'refuse') {
-		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("DenyingThisOrder"), $langs->trans("ConfirmDenyingThisOrder", $object->ref), "confirm_refuse", '', 0, 1);
+		$formquestion = array(
+			array(
+				'type' => 'text',
+				'name' => 'refuse_note',
+				'label' => $langs->trans("MotifCP"),
+				'value' => '',
+				'morecss' => 'minwidth300'
+			)
+		);
+		$formconfirm  = $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("DenyingThisOrder"), $langs->trans("ConfirmDenyingThisOrder", $object->ref), "confirm_refuse", $formquestion, 0, 1);
 	}
 
 	// Confirmation de l'annulation
