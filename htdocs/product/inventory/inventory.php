@@ -160,7 +160,7 @@ if ($action == 'update' && !empty($user->rights->stock->mouvement->creer)) {
 	if (! $error) {
 		$db->commit();
 	} else {
-		$db->rollbak();
+		$db->rollback();
 	}
 }
 
