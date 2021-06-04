@@ -2232,11 +2232,10 @@ if (empty($reshook)) {
 				$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency));
 				setEventMessages($mesg, null, 'errors');
 			} else {
-				// Add batchinfo if the detailline has batchinfo
-
-				if (!empty($lines[$i]->detail_batch) && ! empty($conf->global->INCUDE_BATCHINFO_ON_INVOICE)) {
+				// Add batchinfo if the detail_batch array is defined
+				if (!empty($lines[$i]->detail_batch) && is_array($lines[$i]->detail_batch) && !empty($conf->global->INVOICE_INCUDE_DETAILS_OF_LOTS_SERIALS)) {
 					foreach ($lines[$i]->detail_batch as $batchline) {
-								$desc .= ' '.$langs->trans('Batch').' '.$batchline->batch.' '.$langs->trans('printQty', $batchline->qty).' ';
+						$desc .= ' '.$langs->trans('Batch').' '.$batchline->batch.' '.$langs->trans('printQty', $batchline->qty).' ';
 					}
 				}
 
