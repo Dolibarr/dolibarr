@@ -2,7 +2,7 @@
 /* Copyright (C) 2010-2011  Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2010-2014  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018       Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1062,7 +1062,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 *  @param  FactureFournisseur  $object         Object to show
 	 *  @param  int                 $showaddress    0=no, 1=yes
 	 *  @param  Translate           $outputlangs    Object lang for output
-	 *  @return void
+	 *  @return int
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
