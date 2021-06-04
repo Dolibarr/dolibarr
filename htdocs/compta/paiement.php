@@ -598,7 +598,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 				print '<td align="right">&nbsp;</td>';
 				print "</tr>\n";
 
-				$total = 0;
+				$total_ttc = 0;
 				$totalrecu = 0;
 				$totalrecucreditnote = 0;
 				$totalrecudeposits = 0;
@@ -754,15 +754,14 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 					// Warning
 					print '<td align="center" width="16">';
 					//print "xx".$amounts[$invoice->id]."-".$amountsresttopay[$invoice->id]."<br>";
-					if ($amounts[$invoice->id] && (abs($amounts[$invoice->id]) > abs($amountsresttopay[$invoice->id]))
-						|| $multicurrency_amounts[$invoice->id] && (abs($multicurrency_amounts[$invoice->id]) > abs($multicurrency_amountsresttopay[$invoice->id]))) {
+					if (!empty($amounts[$invoice->id]) && (abs($amounts[$invoice->id]) > abs($amountsresttopay[$invoice->id]))
+						|| !empty($multicurrency_amounts[$invoice->id]) && (abs($multicurrency_amounts[$invoice->id]) > abs($multicurrency_amountsresttopay[$invoice->id]))) {
 						print ' '.img_warning($langs->trans("PaymentHigherThanReminderToPay"));
 					}
 					print '</td>';
 
 					print "</tr>\n";
 
-					$total += $objp->total;
 					$total_ttc += $objp->total_ttc;
 					$totalrecu += $paiement;
 					$totalrecucreditnote += $creditnotes;
