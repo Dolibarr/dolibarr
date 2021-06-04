@@ -281,6 +281,9 @@ if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 	if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
 		if ($tmpsource && $REF) {
 			$token = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.$tmpsource.$REF, 2); // Use the source in the hash to avoid duplicates if the references are identical
+			if ($SECUREKEY != $token) {
+				$token = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.$source.$REF, 2); // for retro-compatibility (token may have been hashed with membersubscription in external module)
+			}
 		} else {
 			$token = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
 		}
