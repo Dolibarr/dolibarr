@@ -67,7 +67,7 @@ if (!empty($conf->accounting->enabled)) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array('bills', 'companies', 'compta', 'products', 'banks', 'main', 'withdrawals','productbatch'));
+$langs->loadLangs(array('bills', 'companies', 'compta', 'products', 'banks', 'main', 'withdrawals'));
 if (!empty($conf->incoterm->enabled)) {
 	$langs->load('incoterm');
 }
@@ -2234,6 +2234,7 @@ if (empty($reshook)) {
 			} else {
 				// Add batchinfo if the detail_batch array is defined
 				if (!empty($lines[$i]->detail_batch) && is_array($lines[$i]->detail_batch) && !empty($conf->global->INVOICE_INCUDE_DETAILS_OF_LOTS_SERIALS)) {
+					$langs->load('productbatch');
 					foreach ($lines[$i]->detail_batch as $batchline) {
 						$desc .= ' '.$langs->trans('Batch').' '.$batchline->batch.' '.$langs->trans('printQty', $batchline->qty).' ';
 					}
