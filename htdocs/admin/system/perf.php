@@ -75,7 +75,7 @@ print '<br>';
 print '<strong>'.$langs->trans("Syslog").'</strong>: ';
 $test = empty($conf->syslog->enabled);
 if ($test) {
-	print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotSlowedDownByThis");
+	print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").'  <span class="opacitymedium">'.$langs->trans("NotSlowedDownByThis").'</span>';
 } else {
 	if ($conf->global->SYSLOG_LEVEL > LOG_NOTICE) {
 		print img_picto('', 'warning').' '.$langs->trans("ModuleActivatedWithTooHighLogLevel", $langs->transnoentities("Syslog"));
@@ -91,7 +91,7 @@ print '<br>';
 print '<strong>'.$langs->trans("DebugBar").'</strong>: ';
 $test = empty($conf->debugbar->enabled);
 if ($test) {
-	print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotSlowedDownByThis");
+	print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' <span class="opacitymedium">'.$langs->trans("NotSlowedDownByThis").'</span>';
 } else {
 	print img_picto('', 'warning').' '.$langs->trans("ModuleActivated", $langs->transnoentities("DebugBar"));
 	//print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
@@ -111,7 +111,7 @@ if ($test) {
 		print ' <a href="'.dol_buildpath('/memcached/admin/memcached.php', 1).'">Memcached module admin page</a>';
 	}
 } else {
-	print img_picto('', 'warning').' '.$langs->trans("MemcachedNotAvailable");
+	print $langs->trans("MemcachedNotAvailable");
 }
 print '</br>';
 
@@ -464,11 +464,99 @@ if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli') {
 	print '<br>';
 }
 
-// Product search
+print '<br>';
+print '<strong>'.$langs->trans("ComboListOptim").'</strong>: ';
+print '<br>';
+// Product combo list
+$sql = "SELECT COUNT(*) as nb";
+$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
+$resql = $db->query($sql);
+if ($resql) {
+	$limitforoptim = 5000;
+	$num = $db->num_rows($resql);
+	$obj = $db->fetch_object($resql);
+	$nb = $obj->nb;
+	if ($nb > $limitforoptim) {
+		if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) {
+			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXObjectUseComboOptim", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"), 'PRODUIT_USE_SEARCH_TO_SELECT');
+		} else {
+			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"), 'PRODUIT_USE_SEARCH_TO_SELECT', $conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
+		}
+	} else {
+		print img_picto('', 'tick.png').' '.$langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"));
+	}
+	print '<br>';
+	$db->free($resql);
+}
+// Thirdparty combo list
+$sql = "SELECT COUNT(*) as nb";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+$resql = $db->query($sql);
+if ($resql) {
+	$limitforoptim = 5000;
+	$num = $db->num_rows($resql);
+	$obj = $db->fetch_object($resql);
+	$nb = $obj->nb;
+	if ($nb > $limitforoptim) {
+		if (empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) {
+			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXObjectUseComboOptim", $nb, $langs->transnoentitiesnoconv("ThirdParties"), 'COMPANY_USE_SEARCH_TO_SELECT');
+		} else {
+			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("ThirdParties"), 'COMPANY_USE_SEARCH_TO_SELECT', $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
+		}
+	} else {
+		print img_picto('', 'tick.png').' '.$langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("ThirdParties"));
+	}
+	print '<br>';
+	$db->free($resql);
+}
+// Contact combo list
+$sql = "SELECT COUNT(*) as nb";
+$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as s";
+$resql = $db->query($sql);
+if ($resql) {
+	$limitforoptim = 5000;
+	$num = $db->num_rows($resql);
+	$obj = $db->fetch_object($resql);
+	$nb = $obj->nb;
+	if ($nb > $limitforoptim) {
+		if (empty($conf->global->CONTACT_USE_SEARCH_TO_SELECT)) {
+			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXObjectUseComboOptim", $nb, $langs->transnoentitiesnoconv("Contacts"), 'CONTACT_USE_SEARCH_TO_SELECT');
+		} else {
+			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("Contacts"), 'CONTACT_USE_SEARCH_TO_SELECT', $conf->global->CONTACT_USE_SEARCH_TO_SELECT);
+		}
+	} else {
+		print img_picto('', 'tick.png').' '.$langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("Contacts"));
+	}
+	print '<br>';
+	$db->free($resql);
+}
+// Contact combo list
+$sql = "SELECT COUNT(*) as nb";
+$sql .= " FROM ".MAIN_DB_PREFIX."projet as s";
+$resql = $db->query($sql);
+if ($resql) {
+	$limitforoptim = 5000;
+	$num = $db->num_rows($resql);
+	$obj = $db->fetch_object($resql);
+	$nb = $obj->nb;
+	if ($nb > $limitforoptim) {
+		if (empty($conf->global->PROJECT_USE_SEARCH_TO_SELECT)) {
+			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXObjectUseComboOptim", $nb, $langs->transnoentitiesnoconv("Projects"), 'PROJECT_USE_SEARCH_TO_SELECT');
+		} else {
+			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("Projects"), 'PROJECT_USE_SEARCH_TO_SELECT', $conf->global->PROJECT_USE_SEARCH_TO_SELECT);
+		}
+	} else {
+		print img_picto('', 'tick.png').' '.$langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("Projects"));
+	}
+	print '<br>';
+	$db->free($resql);
+}
+
+
 print '<br>';
 print '<strong>'.$langs->trans("SearchOptim").'</strong>: ';
 print '<br>';
-$tab = array();
+// Product search
 $sql = "SELECT COUNT(*) as nb";
 $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 $resql = $db->query($sql);
@@ -480,8 +568,9 @@ if ($resql) {
 	if ($nb > $limitforoptim) {
 		if (empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE)) {
 			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXObjectUseSearchOptim", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"), 'PRODUCT_DONOTSEARCH_ANYWHERE');
+			print $langs->trans("YouHaveXObjectUseSearchOptimDesc");
 		} else {
-			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"));
+			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"), 'PRODUCT_DONOTSEARCH_ANYWHERE', $conf->global->PRODUCT_DONOTSEARCH_ANYWHERE);
 		}
 	} else {
 		print img_picto('', 'tick.png').' '.$langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"));
@@ -491,20 +580,20 @@ if ($resql) {
 }
 
 // Thirdparty search
-$tab = array();
 $sql = "SELECT COUNT(*) as nb";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $resql = $db->query($sql);
 if ($resql) {
-	$limitforoptim = 10000;
+	$limitforoptim = 100000;
 	$num = $db->num_rows($resql);
 	$obj = $db->fetch_object($resql);
 	$nb = $obj->nb;
 	if ($nb > $limitforoptim) {
 		if (empty($conf->global->COMPANY_DONOTSEARCH_ANYWHERE)) {
 			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXObjectUseSearchOptim", $nb, $langs->transnoentitiesnoconv("ThirdParties"), 'COMPANY_DONOTSEARCH_ANYWHERE');
+			print $langs->trans("YouHaveXObjectUseSearchOptimDesc");
 		} else {
-			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("ThirdParties"));
+			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("ThirdParties"), 'COMPANY_DONOTSEARCH_ANYWHERE', $conf->global->COMPANY_DONOTSEARCH_ANYWHERE);
 		}
 	} else {
 		print img_picto('', 'tick.png').' '.$langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("ThirdParties"));

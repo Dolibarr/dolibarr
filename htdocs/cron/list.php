@@ -202,7 +202,7 @@ if (empty($reshook)) {
 	$permissiontodelete = $user->rights->cron->delete;
 	$uploaddir = $conf->cron->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
-	if ($permissiontoadd) {
+	if ($massaction && $permissiontoadd) {
 		$tmpcron = new Cronjob($db);
 		foreach ($toselect as $id) {
 			$result = $tmpcron->fetch($id);
@@ -600,7 +600,7 @@ if ($num > 0) {
 		print '</td>';
 
 		// Output of last run
-		print '<td>';
+		print '<td class="small">';
 		if (!empty($obj->lastoutput)) {
 			print dol_trunc(nl2br($obj->lastoutput), 50);
 		}

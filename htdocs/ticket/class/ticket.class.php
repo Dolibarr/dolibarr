@@ -1112,10 +1112,10 @@ class Ticket extends CommonObject
 	}
 
 	/**
-	 * print selected status
+	 * Print selected status
 	 *
-	 * @param string    $selected   selected status
-	 * @return void
+	 * @param 	string    $selected   	Selected status
+	 * @return 	void
 	 */
 	public function printSelectStatus($selected = "")
 	{
@@ -1124,9 +1124,9 @@ class Ticket extends CommonObject
 
 
 	/**
-	 *      Charge dans cache la liste des types de tickets (paramétrable dans dictionnaire)
+	 * Load into a cache the types of tickets (setup done into dictionaries)
 	 *
-	 *      @return int             Number of lines loaded, 0 if already loaded, <0 if KO
+	 * @return 	int       Number of lines loaded, 0 if already loaded, <0 if KO
 	 */
 	public function loadCacheTypesTickets()
 	{

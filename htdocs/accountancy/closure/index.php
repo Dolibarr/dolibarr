@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("compta", "bills", "other", "main", "accountancy"));
+$langs->loadLangs(array("compta", "bills", "other", "accountancy"));
 
 $socid = GETPOST('socid', 'int');
 

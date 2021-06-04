@@ -2566,7 +2566,7 @@ abstract class CommonObject
 	/**
 	 *  Change the transport mode methods
 	 *
-	 *  @param		int		$id		Id of new payment method
+	 *  @param		int		$id		Id of transport mode
 	 *  @return		int				>0 if OK, <0 if KO
 	 */
 	public function setTransportMode($id)
