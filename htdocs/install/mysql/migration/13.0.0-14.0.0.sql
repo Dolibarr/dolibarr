@@ -418,7 +418,7 @@ UPDATE llx_propal SET fk_user_signature = fk_user_cloture WHERE fk_user_signatur
 UPDATE llx_propal SET date_signature = date_cloture WHERE date_signature IS NULL AND date_cloture IS NOT NULL;
 
 
-ALTER TABLE llx_product ADD COLUMN batch_mask VARCHAR(32) NULL;
+ALTER TABLE llx_product ADD COLUMN batch_mask VARCHAR(32) DEFAULT NULL;
 ALTER TABLE llx_product ADD COLUMN lifetime INTEGER NULL;
 ALTER TABLE llx_product ADD COLUMN qc_frequency INTEGER NULL;
 
