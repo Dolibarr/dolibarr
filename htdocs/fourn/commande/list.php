@@ -754,7 +754,7 @@ if ($resql)
 		print '</table>';
 		if (!empty($conf->use_javascript_ajax)) {
 			// TODO Replace this with jquery code
-		?>
+			?>
 		<script>
 			window.addEventListener('load', function () {
 				$('select#createbills_onebythird').on('change', function (e) {
@@ -765,7 +765,7 @@ if ($resql)
 				});
 			});
 		</script>
-		<?php
+			<?php
 		}
 		print '<br>';
 		print '<div class="center">';
