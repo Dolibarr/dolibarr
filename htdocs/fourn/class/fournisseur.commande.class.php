@@ -749,8 +749,8 @@ class CommandeFournisseur extends CommonOrder
 		$statusLong = $langs->transnoentitiesnoconv($this->statuts[$status]).$billedtext;
 		$statusShort = $langs->transnoentitiesnoconv($this->statutshort[$status]);
 
-		$parameters = array('status' => $status, 'mode' => $mode, 'billed' => $billed, 'obj'=>$this);
-		$reshook = $hookmanager->executeHooks('LibStatut', $parameters, $object); // Note that $action and $object may have been modified by hook
+		$parameters = array('status' => $status, 'mode' => $mode, 'billed' => $billed);
+		$reshook = $hookmanager->executeHooks('LibStatut', $parameters, $this); // Note that $action and $object may have been modified by hook
 		if ($reshook > 0) {
 			return $hookmanager->resPrint;
 		}
