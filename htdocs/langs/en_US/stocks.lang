@@ -255,3 +255,4 @@ MakeMovementsAndClose=Generate movements and close
 AutofillWithExpected=Fill real quantity with expected quantity
 ShowAllBatchByDefault=By default, show batch details on product "stock" tab
 CollapseBatchDetailHelp=You can set batch detail default display in stocks module configuration
+FieldCannotBeNegative=Field "%s" cannot be negative

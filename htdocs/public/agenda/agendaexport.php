@@ -135,7 +135,12 @@ if (GETPOST("notolderthan", 'int')) {
 } else {
 	$filters['notolderthan'] = $conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY;
 }
-
+if (GETPOST("module", 'alpha')) {
+	$filters['module'] = GETPOST("module", 'alpha');
+}
+if (GETPOST("status", 'int')) {
+	$filters['status'] = GETPOST("status", 'int');
+}
 // Check config
 if (empty($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY)) {
 	$user->getrights();
@@ -201,6 +206,15 @@ foreach ($filters as $key => $value) {
 	if ($key == 'notactiontype') {
 		$filename .= '-notactiontype'.$value;
 	}
+	if ($key == 'actiontype') {
+		$filename .= '-actiontype'.$value;
+	}
+	if ($key == 'module') {
+		$filename .= '-module'.$value;
+	}
+	if ($key == 'status') {
+		$filename .= '-status'.$value;
+	}
 }
 // Add extension
 if ($format == 'vcal') {
@@ -212,9 +226,7 @@ if ($format == 'ical') {
 if ($format == 'rss') {
 	$shortfilename .= '.rss'; $filename .= '.rss';
 }
-
 if ($shortfilename == 'dolibarrcalendar') {
-	$langs->load("main");
 	$langs->load("errors");
 	llxHeaderVierge();
 	print '<div class="error">'.$langs->trans("ErrorWrongValueForParameterX", 'format').'</div>';

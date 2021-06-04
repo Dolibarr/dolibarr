@@ -13,15 +13,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * For Paypal test: https://developer.paypal.com/
- * For Paybox test: ???
- * For Stripe test: Use credit card 4242424242424242 .More example on https://stripe.com/docs/testing
- *
- * Variants:
- * - When option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION is on, we use the new PaymentIntent API
- * - When option STRIPE_USE_NEW_CHECKOUT is on, we use the new checkout API
- * - If no option set, we use old APIS (charge)
  */
 
 /**
@@ -58,16 +49,17 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
 // Hook to be used by external payment modules (ie Payzen, ...)
 include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 $hookmanager = new HookManager($db);
 $hookmanager->initHooks(array('newpayment'));
 
 // For encryption
-global $dolibarr_main_instance_unique_id;
+global $dolibarr_main_instance_unique_id, $dolibarr_main_url_root;
 
 // Load translation files
-$langs->loadLangs(array("other", "dict", "bills", "companies", "errors", "paybox", "paypal", "stripe")); // File with generic data
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "paybox", "paypal", "stripe")); // File with generic data
 
 // Security check
 // No check on module enabled. Done later according to $validpaymentmethod
@@ -81,6 +73,9 @@ if ($securekeytocompare != $securekeyreceived) {
 	print $langs->trans('MissingOrBadSecureKey');
 	exit;
 }
+
+$listofvotes = explode(',', $_SESSION["savevotes"]);
+
 
 // Define $urlwithroot
 //$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
@@ -97,23 +92,103 @@ if ($resultproject < 0) {
 /*
  * Actions
  */
+$tmpthirdparty = new Societe($db);
 
-if (GETPOST('suggestbooth')) {
-	header("Location: ".dol_buildpath('/public/project/suggestbooth.php', 1).'?id='.$id."&securekey=".$securekeyreceived);
-	exit;
+$listOfConferences = $listOfBooths = '<tr><td>'.$langs->trans('Label').'</td>
+										  <td>'.$langs->trans('Type').'</td>
+										  <td>'.$langs->trans('DateStart').'</td>
+									      <td>'.$langs->trans('DateEnd').'</td>
+									      <td>'.$langs->trans('Thirdparty').'</td>
+									      <td>'.$langs->trans('Note').'</td></tr>';
+
+$sql = "SELECT a.id, a.fk_action, a.datep, a.datep2, a.label, a.fk_soc, a.note, ca.libelle
+		FROM ".MAIN_DB_PREFIX."actioncomm as a
+		INNER JOIN ".MAIN_DB_PREFIX."c_actioncomm as ca ON (a.fk_action=ca.id)
+		WHERE a.status<2";
+
+$sqlforconf = $sql." AND ca.module='conference@eventorganization'";
+$sqlforbooth = $sql." AND ca.module='booth@eventorganization'";
+
+// For conferences
+$result = $db->query($sqlforconf);
+$i = 0;
+while ($i < $db->num_rows($result)) {
+	$obj = $db->fetch_object($result);
+	if (!empty($obj->fk_soc)) {
+		$resultthirdparty = $tmpthirdparty->fetch($obj->fk_soc);
+		if ($resultthirdparty) {
+			$thirdpartyname = $tmpthirdparty->name;
+		} else {
+			$thirdpartyname = '';
+		}
+	} else {
+		$thirdpartyname = '';
+	}
+
+	$listOfConferences .= '<tr><td>'.$obj->label.'</td><td>'.$obj->libelle.'</td><td>'.$obj->datep.'</td><td>'.$obj->datep2.'</td><td>'.$thirdpartyname.'</td><td>'.$obj->note.'</td>';
+	$listOfConferences .= '<td><button type="submit" name="vote" value="'.$obj->id.'" class="button">'.$langs->trans("Vote").'</button></td></tr>';
+	$i++;
 }
 
-if (GETPOST('suggestconference')) {
-	header("Location: ".dol_buildpath('/public/project/suggestconference.php', 1).'?id='.$id."&securekey=".$securekeyreceived);
-	exit;
+// For booths
+$result = $db->query($sqlforbooth);
+$i = 0;
+while ($i < $db->num_rows($result)) {
+	$obj = $db->fetch_object($result);
+	if (!empty($obj->fk_soc)) {
+		$resultthirdparty = $tmpthirdparty->fetch($obj->fk_soc);
+		if ($resultthirdparty) {
+			$thirdpartyname = $tmpthirdparty->name;
+		} else {
+			$thirdpartyname = '';
+		}
+	} else {
+		$thirdpartyname = '';
+	}
+
+	$listOfBooths .= '<tr><td>'.$obj->label.'</td><td>'.$obj->libelle.'</td><td>'.$obj->datep.'</td><td>'.$obj->datep2.'</td><td>'.$thirdpartyname.'</td><td>'.$obj->note.'</td>';
+	$listOfBooths .= '<td><button type="submit" name="vote" value="'.$obj->id.'" class="button">'.$langs->trans("Vote").'</button></td></tr>';
+	$i++;
 }
 
-if (GETPOST('viewandvote')) {
-	header("Location: ".dol_buildpath('/public/project/viewandvote.php', 1).'?id='.$id."&securekey=".$securekeyreceived);
+// Get vote result
+$idvote = GETPOST("vote");
+$hashedvote = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'vote'.$idvote);
+
+if (strlen($idvote)) {
+	if (in_array($hashedvote, $listofvotes)) {
+		// Has already voted
+		$votestatus = 'ko';
+	} else {
+		// Has not already voted
+		$conforbooth = new ActionComm($db);
+		$resultconforbooth = $conforbooth->fetch($idvote);
+		if ($resultconforbooth<=0) {
+			$error++;
+			$errmsg .= $conforbooth->error;
+		} else {
+			// Process to vote
+			$conforbooth->num_vote++;
+			$resupdate = $conforbooth->update($user);
+			if ($resupdate) {
+				$votestatus = 'ok';
+				$_SESSION["savevotes"] = $hashedvote.','.(empty($_SESSION["savevotes"]) ? '' : $_SESSION["savevotes"]); // Save voter
+			} else {
+				//Error during update
+				$votestatus = 'err';
+			}
+		}
+	}
+	if ($votestatus=="ok") {
+		setEventMessage($langs->trans("VoteOk"), 'mesgs');
+	} elseif ($votestatus=="ko") {
+		setEventMessage($langs->trans("AlreadyVoted"), 'warnings');
+	} elseif ($votestatus=="err") {
+		setEventMessage($langs->trans("VoteError"), 'warnings');
+	}
+	header("Refresh:0;url=".dol_buildpath('/public/project/viewandvote.php?id='.$id.'&securekey=', 1).$securekeyreceived);
 	exit;
 }
-
-
 
 
 /*
@@ -179,51 +254,28 @@ if ($urllogo) {
 	}
 	print '</div>';
 }
-
-print '<table id="dolpaymenttable" summary="Payment form" class="center">'."\n";
-
+print '<table id="welcome" class="center">'."\n";
 $text  = '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("EvntOrgRegistrationWelcomeMessage").'</strong></td></tr>'."\n";
-$text .= '<tr><td class="textpublicpayment">'.$langs->trans("EvntOrgRegistrationHelpMessage").' '.$id.'.<br><br></td></tr>'."\n";
-$text .= '<tr><td class="textpublicpayment">'.$project->note_public.'<br><br></td></tr>'."\n";;
-
+$text .= '<tr><td class="textpublicpayment">'.$langs->trans("EvntOrgVoteHelpMessage").' : "'.$project->title.'".<br><br></td></tr>'."\n";
+$text .= '<tr><td class="textpublicpayment">'.$project->note_public.'</td></tr>'."\n";;
 print $text;
-
-// Output payment summary form
-print '<tr><td align="center">';
-
-$found = false;
-$error = 0;
-$var = false;
-
-$object = null;
-
-print "\n";
-
-
-// Show all action buttons
-print '<br>';
-// Output introduction text
-if ($project->accept_booth_suggestions) {
-	print '<input type="submit" value="'.$langs->trans("SuggestBooth").'" id="suggestbooth" name="suggestbooth" class="button">';
-	print '<br><br>';
-}
-if ($project->accept_conference_suggestions) {
-	print '<input type="submit" value="'.$langs->trans("SuggestConference").'" id="suggestconference" name="suggestconference" class="button">';
-	print '<br><br>';
-}
-print '<input type="submit" value="'.$langs->trans("ViewAndVote").'" id="viewandvote" name="viewandvote" class="button">';
-
-
-
-
-print '</td></tr>'."\n";
-
 print '</table>'."\n";
 
-print '</form>'."\n";
-print '</div>'."\n";
-print '<br>';
+print dol_get_fiche_head('');
 
+print '<table border=1  cellpadding="10" id="conferences" class="center">'."\n";
+print '<th colspan="7">'.$langs->trans("ListOfSuggestedConferences").'</th>';
+print $listOfConferences.'</br>';
+print '</table>'."\n";
+
+print '</br>';
+
+print '<table border=1  cellpadding="10" id="conferences" class="center">'."\n";
+print '<th colspan="7">'.$langs->trans("ListOfSuggestedBooths").'</th>';
+print $listOfBooths.'</br>';
+print '</table>'."\n";
+
+$object = null;
 
 htmlPrintOnlinePaymentFooter($mysoc, $langs, 1, $suffix, $object);
 

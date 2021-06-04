@@ -561,9 +561,9 @@ class AccountancyExport
 			$Tab['contrepartie'] = str_repeat(' ', 8);
 
 			// Force date format : %d%m%y
-			if (!empty($data->date_echeance)) {
-				//$Tab['date_echeance'] = dol_print_date($data->date_echeance, $conf->global->ACCOUNTING_EXPORT_DATE);
-				$Tab['date_echeance'] = dol_print_date($data->date_echeance, '%d%m%y'); // Format must be ddmmyy
+			if (!empty($data->date_lim_reglement)) {
+				//$Tab['date_echeance'] = dol_print_date($data->date_lim_reglement, $conf->global->ACCOUNTING_EXPORT_DATE);
+				$Tab['date_echeance'] = dol_print_date($data->date_lim_reglement, '%d%m%y'); // Format must be ddmmyy
 			} else {
 				$Tab['date_echeance'] = '000000';
 			}
@@ -660,9 +660,9 @@ class AccountancyExport
 
 			$Tab['code_stat'] = str_repeat(' ', 4);
 
-			if (!empty($data->date_echeance)) {
-				//$Tab['date_echeance'] = dol_print_date($data->date_echeance, $conf->global->ACCOUNTING_EXPORT_DATE);
-				$Tab['date_echeance'] = dol_print_date($data->date_echeance, '%d%m%Y');
+			if (!empty($data->date_lim_reglement)) {
+				//$Tab['date_echeance'] = dol_print_date($data->date_lim_reglement, $conf->global->ACCOUNTING_EXPORT_DATE);
+				$Tab['date_echeance'] = dol_print_date($data->date_lim_reglement, '%d%m%Y');
 			} else {
 				$Tab['date_echeance'] = dol_print_date($data->doc_date, '%d%m%Y');
 			}

@@ -5289,9 +5289,9 @@ class Form
 		global $langs;
 		if ($htmlname != "none") {
 			print '<form method="POST" action="'.$page.'">';
-			print '<input type="hidden" name="action" value="setmode">';
+			print '<input type="hidden" name="action" value="settransportmode">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
-			$this->selectTransportMode($selected, $htmlname, 2, $addempty, 0, 0, $active);
+			$this->selectTransportMode($selected, $htmlname, 0, $addempty, 0, 0, $active);
 			print '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
 			print '</form>';
 		} else {
@@ -8325,10 +8325,10 @@ class Form
 						$nophoto = 'company';
 					} else {
 						$nophoto = '/public/theme/common/user_anonymous.png';
-						if ($object->gender == 'man') {
+						if (!empty($object->gender) && $object->gender == 'man') {
 							$nophoto = '/public/theme/common/user_man.png';
 						}
-						if ($object->gender == 'woman') {
+						if (!empty($object->gender) && $object->gender == 'woman') {
 							$nophoto = '/public/theme/common/user_woman.png';
 						}
 					}

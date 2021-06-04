@@ -881,10 +881,10 @@ if ($resql) {
 		'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	);
 	if ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer) {
-		$arrayofmassactions['createbills'] = $langs->trans("CreateInvoiceForThisSupplier");
+		$arrayofmassactions['createbills'] = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("CreateInvoiceForThisSupplier");
 	}
 	if ($user->rights->fournisseur->commande->supprimer) {
-		$arrayofmassactions['predelete'] = img_picto('', 'delete').$langs->trans("Delete");
+		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	}
 	if (in_array($massaction, array('presend', 'predelete', 'createbills'))) {
 		$arrayofmassactions = array();
