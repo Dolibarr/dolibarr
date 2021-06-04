@@ -278,16 +278,21 @@ if ($tmpsource == 'membersubscription') {
 }
 $valid = true;
 if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
+	$token = '';
+	$tokenoldcompat = '';
 	if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
 		if ($tmpsource && $REF) {
 			$token = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.$tmpsource.$REF, 2); // Use the source in the hash to avoid duplicates if the references are identical
+			if ($tmpsource != $source) {
+				$tokenoldcompat = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.$source.$REF, 2); // for retro-compatibility (token may have been hashed with membersubscription in external module)
+			}
 		} else {
 			$token = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
 		}
 	} else {
 		$token = $conf->global->PAYMENT_SECURITY_TOKEN;
 	}
-	if ($SECUREKEY != $token) {
+	if ($SECUREKEY != $token && (empty($tokenoldcompat) || $SECUREKEY != $tokenoldcompat)) {
 		if (empty($conf->global->PAYMENT_SECURITY_ACCEPT_ANY_TOKEN)) {
 			$valid = false; // PAYMENT_SECURITY_ACCEPT_ANY_TOKEN is for backward compatibility
 		} else {
