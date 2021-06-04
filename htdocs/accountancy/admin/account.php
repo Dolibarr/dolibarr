@@ -195,7 +195,7 @@ if (empty($reshook)) {
 	} elseif ($action == 'enable' && $permissiontoadd) {
 		if ($accounting->fetch($id)) {
 			$mode = GETPOST('mode', 'int');
-			$result = $accounting->account_activate($id, $mode);
+			$result = $accounting->accountActivate($id, $mode);
 		}
 		$action = 'update';
 		if ($result < 0) {

@@ -26,6 +26,9 @@
  *  \brief      File of class to manage accounting accounts
  */
 
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 /**
  * Class to manage accounting accounts
  */
@@ -141,6 +144,11 @@ class AccountingAccount extends CommonObject
 	public $reconcilable;
 
 	/**
+	 * @var array cache array
+	 */
+	private $accountingaccount_codetotid_cache = array();
+
+	/**
 	 * Constructor
 	 *
 	 * @param DoliDB $db Database handle
@@ -150,83 +158,14 @@ class AccountingAccount extends CommonObject
 		global $conf;
 
 		$this->db = $db;
-		$this->next_prev_filter = 'fk_pcg_version IN (SELECT pcg_version FROM '.MAIN_DB_PREFIX.'accounting_system WHERE rowid='.$conf->global->CHARTOFACCOUNTS.')'; // Used to add a filter in Form::showrefnav method
-	}
-
-	/**
-	 * Load record in memory
-	 *
-	 * @param 	int 	       $rowid 				    Id
-	 * @param 	string 	       $account_number 	        Account number
-	 * @param 	int|boolean    $limittocurrentchart     1 or true=Load record only if it is into current active char of account
-	 * @param   string         $limittoachartaccount    'ABC'=Load record only if it is into chart account with code 'ABC' (better and faster than previous parameter if you have chart of account code).
-	 * @return 	int                                     <0 if KO, 0 if not found, Id of record if OK and found
-	 */
-	public function fetch($rowid = null, $account_number = null, $limittocurrentchart = 0, $limittoachartaccount = '')
-	{
-		global $conf;
-
-		if ($rowid || $account_number) {
-			$sql  = "SELECT a.rowid as rowid, a.datec, a.tms, a.fk_pcg_version, a.pcg_type, a.account_number, a.account_parent, a.label, a.labelshort, a.fk_accounting_category, a.fk_user_author, a.fk_user_modif, a.active, a.reconcilable";
-			$sql .= ", ca.label as category_label";
-			$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as a";
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_accounting_category as ca ON a.fk_accounting_category = ca.rowid";
-			$sql .= " WHERE";
-			if ($rowid) {
-				$sql .= " a.rowid = ".(int) $rowid;
-			} elseif ($account_number) {
-				$sql .= " a.account_number = '".$this->db->escape($account_number)."'";
-				$sql .= " AND a.entity = ".$conf->entity;
-			}
-			if (!empty($limittocurrentchart)) {
-				$sql .= ' AND a.fk_pcg_version IN (SELECT pcg_version FROM '.MAIN_DB_PREFIX.'accounting_system WHERE rowid='.$this->db->escape($conf->global->CHARTOFACCOUNTS).')';
-			}
-			if (!empty($limittoachartaccount)) {
-				$sql .= " AND a.fk_pcg_version = '".$this->db->escape($limittoachartaccount)."'";
-			}
-
-			dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
-			$result = $this->db->query($sql);
-			if ($result) {
-				$obj = $this->db->fetch_object($result);
-
-				if ($obj) {
-					$this->id = $obj->rowid;
-					$this->rowid = $obj->rowid;
-					$this->ref = $obj->account_number;
-					$this->datec = $obj->datec;
-					$this->tms = $obj->tms;
-					$this->fk_pcg_version = $obj->fk_pcg_version;
-					$this->pcg_type = $obj->pcg_type;
-					$this->account_number = $obj->account_number;
-					$this->account_parent = $obj->account_parent;
-					$this->label = $obj->label;
-					$this->labelshort = $obj->labelshort;
-					$this->account_category = $obj->fk_accounting_category;
-					$this->account_category_label = $obj->category_label;
-					$this->fk_user_author = $obj->fk_user_author;
-					$this->fk_user_modif = $obj->fk_user_modif;
-					$this->active = $obj->active;
-					$this->status = $obj->active;
-					$this->reconcilable = $obj->reconcilable;
-
-					return $this->id;
-				} else {
-					return 0;
-				}
-			} else {
-				$this->error = "Error ".$this->db->lasterror();
-				$this->errors[] = "Error ".$this->db->lasterror();
-			}
-		}
-		return -1;
+		$this->next_prev_filter = 'fk_pcg_version IN (SELECT pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system WHERE rowid=' . $conf->global->CHARTOFACCOUNTS . ')'; // Used to add a filter in Form::showrefnav method
 	}
 
 	/**
 	 * Insert new accounting account in chart of accounts
 	 *
-	 * @param  User    $user       User making action
-	 * @param  int     $notrigger  Disable triggers
+	 * @param User $user User making action
+	 * @param int $notrigger Disable triggers
 	 * @return int                 <0 if KO, >0 if OK
 	 */
 	public function create($user, $notrigger = 0)
@@ -259,7 +198,7 @@ class AccountingAccount extends CommonObject
 		// Put here code to add control on parameters values
 
 		// Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."accounting_account(";
+		$sql = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_account(";
 		$sql .= "datec";
 		$sql .= ", entity";
 		$sql .= ", fk_pcg_version";
@@ -273,31 +212,31 @@ class AccountingAccount extends CommonObject
 		$sql .= ", active";
 		$sql .= ", reconcilable";
 		$sql .= ") VALUES (";
-		$sql .= " '".$this->db->idate($now)."'";
-		$sql .= ", ".$conf->entity;
-		$sql .= ", ".(empty($this->fk_pcg_version) ? 'NULL' : "'".$this->db->escape($this->fk_pcg_version)."'");
-		$sql .= ", ".(empty($this->pcg_type) ? 'NULL' : "'".$this->db->escape($this->pcg_type)."'");
-		$sql .= ", ".(empty($this->account_number) ? 'NULL' : "'".$this->db->escape($this->account_number)."'");
-		$sql .= ", ".(empty($this->account_parent) ? 0 : (int) $this->account_parent);
-		$sql .= ", ".(empty($this->label) ? "''" : "'".$this->db->escape($this->label)."'");
-		$sql .= ", ".(empty($this->labelshort) ? "''" : "'".$this->db->escape($this->labelshort)."'");
-		$sql .= ", ".(empty($this->account_category) ? 0 : (int) $this->account_category);
-		$sql .= ", ".$user->id;
-		$sql .= ", ".(int) $this->active;
-		$sql .= ", ".(int) $this->reconcilable;
+		$sql .= " '" . $this->db->idate($now) . "'";
+		$sql .= ", " . $conf->entity;
+		$sql .= ", " . (empty($this->fk_pcg_version) ? 'NULL' : "'" . $this->db->escape($this->fk_pcg_version) . "'");
+		$sql .= ", " . (empty($this->pcg_type) ? 'NULL' : "'" . $this->db->escape($this->pcg_type) . "'");
+		$sql .= ", " . (empty($this->account_number) ? 'NULL' : "'" . $this->db->escape($this->account_number) . "'");
+		$sql .= ", " . (empty($this->account_parent) ? 0 : (int) $this->account_parent);
+		$sql .= ", " . (empty($this->label) ? "''" : "'" . $this->db->escape($this->label) . "'");
+		$sql .= ", " . (empty($this->labelshort) ? "''" : "'" . $this->db->escape($this->labelshort) . "'");
+		$sql .= ", " . (empty($this->account_category) ? 0 : (int) $this->account_category);
+		$sql .= ", " . $user->id;
+		$sql .= ", " . (int) $this->active;
+		$sql .= ", " . (int) $this->reconcilable;
 		$sql .= ")";
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this) . "::create sql=" . $sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$error++;
-			$this->errors[] = "Error ".$this->db->lasterror();
+			$this->errors[] = "Error " . $this->db->lasterror();
 		}
 
 		if (!$error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."accounting_account");
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . "accounting_account");
 
 			// Uncomment this and change MYOBJECT to your own tag if you
 			// want this action to call a trigger.
@@ -313,8 +252,8 @@ class AccountingAccount extends CommonObject
 		// Commit or rollback
 		if ($error) {
 			foreach ($this->errors as $errmsg) {
-				dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
-				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+				dol_syslog(get_class($this) . "::create " . $errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
 			}
 			$this->db->rollback();
 			return -1 * $error;
@@ -327,7 +266,7 @@ class AccountingAccount extends CommonObject
 	/**
 	 * Update record
 	 *
-	 * @param  User $user      Use making update
+	 * @param User $user Use making update
 	 * @return int             <0 if KO, >0 if OK
 	 */
 	public function update($user)
@@ -339,20 +278,20 @@ class AccountingAccount extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_account ";
-		$sql .= " SET fk_pcg_version = ".($this->fk_pcg_version ? "'".$this->db->escape($this->fk_pcg_version)."'" : "null");
-		$sql .= " , pcg_type = ".($this->pcg_type ? "'".$this->db->escape($this->pcg_type)."'" : "null");
-		$sql .= " , account_number = '".$this->db->escape($this->account_number)."'";
-		$sql .= " , account_parent = ".(int) $this->account_parent;
-		$sql .= " , label = ".($this->label ? "'".$this->db->escape($this->label)."'" : "''");
-		$sql .= " , labelshort = ".($this->labelshort ? "'".$this->db->escape($this->labelshort)."'" : "''");
-		$sql .= " , fk_accounting_category = ".(empty($this->account_category) ? 0 : (int) $this->account_category);
-		$sql .= " , fk_user_modif = ".((int) $user->id);
-		$sql .= " , active = ".(int) $this->active;
-		$sql .= " , reconcilable = ".(int) $this->reconcilable;
-		$sql .= " WHERE rowid = ".((int) $this->id);
+		$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_account ";
+		$sql .= " SET fk_pcg_version = " . ($this->fk_pcg_version ? "'" . $this->db->escape($this->fk_pcg_version) . "'" : "null");
+		$sql .= " , pcg_type = " . ($this->pcg_type ? "'" . $this->db->escape($this->pcg_type) . "'" : "null");
+		$sql .= " , account_number = '" . $this->db->escape($this->account_number) . "'";
+		$sql .= " , account_parent = " . (int) $this->account_parent;
+		$sql .= " , label = " . ($this->label ? "'" . $this->db->escape($this->label) . "'" : "''");
+		$sql .= " , labelshort = " . ($this->labelshort ? "'" . $this->db->escape($this->labelshort) . "'" : "''");
+		$sql .= " , fk_accounting_category = " . (empty($this->account_category) ? 0 : (int) $this->account_category);
+		$sql .= " , fk_user_modif = " . ((int) $user->id);
+		$sql .= " , active = " . (int) $this->active;
+		$sql .= " , reconcilable = " . (int) $this->reconcilable;
+		$sql .= " WHERE rowid = " . ((int) $this->id);
 
-		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this) . "::update sql=" . $sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$this->db->commit();
@@ -360,38 +299,6 @@ class AccountingAccount extends CommonObject
 		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
-			return -1;
-		}
-	}
-
-	/**
-	 * Check usage of accounting code
-	 *
-	 * @return int <0 if KO, >0 if OK
-	 */
-	public function checkUsage()
-	{
-		global $langs;
-
-		$sql = "(SELECT fk_code_ventilation FROM ".MAIN_DB_PREFIX."facturedet";
-		$sql .= " WHERE fk_code_ventilation=".$this->id.")";
-		$sql .= "UNION";
-		$sql .= " (SELECT fk_code_ventilation FROM ".MAIN_DB_PREFIX."facture_fourn_det";
-		$sql .= " WHERE fk_code_ventilation=".$this->id.")";
-
-		dol_syslog(get_class($this)."::checkUsage sql=".$sql, LOG_DEBUG);
-		$resql = $this->db->query($sql);
-
-		if ($resql) {
-			$num = $this->db->num_rows($resql);
-			if ($num > 0) {
-				$this->error = $langs->trans('ErrorAccountancyCodeIsAlreadyUse');
-				return 0;
-			} else {
-				return 1;
-			}
-		} else {
-			$this->error = $this->db->lasterror();
 			return -1;
 		}
 	}
@@ -413,22 +320,22 @@ class AccountingAccount extends CommonObject
 			$this->db->begin();
 
 			if (!$error) {
-				$sql = "DELETE FROM ".MAIN_DB_PREFIX."accounting_account";
-				$sql .= " WHERE rowid=".((int) $this->id);
+				$sql = "DELETE FROM " . MAIN_DB_PREFIX . "accounting_account";
+				$sql .= " WHERE rowid=" . ((int) $this->id);
 
-				dol_syslog(get_class($this)."::delete sql=".$sql);
+				dol_syslog(get_class($this) . "::delete sql=" . $sql);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
-					$this->errors[] = "Error ".$this->db->lasterror();
+					$this->errors[] = "Error " . $this->db->lasterror();
 				}
 			}
 
 			// Commit or rollback
 			if ($error) {
 				foreach ($this->errors as $errmsg) {
-					dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
-					$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+					dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
+					$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
 				}
 				$this->db->rollback();
 				return -1 * $error;
@@ -442,22 +349,54 @@ class AccountingAccount extends CommonObject
 	}
 
 	/**
+	 * Check usage of accounting code
+	 *
+	 * @return int <0 if KO, >0 if OK
+	 */
+	public function checkUsage()
+	{
+		global $langs;
+
+		$sql = "(SELECT fk_code_ventilation FROM " . MAIN_DB_PREFIX . "facturedet";
+		$sql .= " WHERE fk_code_ventilation=" . $this->id . ")";
+		$sql .= "UNION";
+		$sql .= " (SELECT fk_code_ventilation FROM " . MAIN_DB_PREFIX . "facture_fourn_det";
+		$sql .= " WHERE fk_code_ventilation=" . $this->id . ")";
+
+		dol_syslog(get_class($this) . "::checkUsage sql=" . $sql, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			if ($num > 0) {
+				$this->error = $langs->trans('ErrorAccountancyCodeIsAlreadyUse');
+				return 0;
+			} else {
+				return 1;
+			}
+		} else {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+	}
+
+	/**
 	 * Return clicable name (with picto eventually)
 	 *
-	 * @param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
-	 * @param	int		$withlabel					0=No label, 1=Include label of account
-	 * @param	int  	$nourl						1=Disable url
-	 * @param	string  $moretitle					Add more text to title tooltip
-	 * @param	int  	$notooltip					1=Disable tooltip
-	 * @param	int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 * @param	int     $withcompletelabel		    0=Short label (field short label), 1=Complete label (field label)
-	 * @param	string	$option						'ledger', 'journals', 'accountcard'
-	 * @return  string	String with URL
+	 * @param int $withpicto 0=No picto, 1=Include picto into link, 2=Only picto
+	 * @param int $withlabel 0=No label, 1=Include label of account
+	 * @param int $nourl 1=Disable url
+	 * @param string $moretitle Add more text to title tooltip
+	 * @param int $notooltip 1=Disable tooltip
+	 * @param int $save_lastsearch_value -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 * @param int $withcompletelabel 0=Short label (field short label), 1=Complete label (field label)
+	 * @param string $option 'ledger', 'journals', 'accountcard'
+	 * @return  string    String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $withlabel = 0, $nourl = 0, $moretitle = '', $notooltip = 0, $save_lastsearch_value = -1, $withcompletelabel = 0, $option = '')
 	{
 		global $langs, $conf;
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -465,15 +404,16 @@ class AccountingAccount extends CommonObject
 
 		$result = '';
 
-		$url = ''; $labelurl = '';
+		$url = '';
+		$labelurl = '';
 		if (empty($option) || $option == 'ledger') {
-			$url = DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?search_accountancy_code_start='.urlencode($this->account_number).'&search_accountancy_code_end='.urlencode($this->account_number);
+			$url = DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?search_accountancy_code_start=' . urlencode($this->account_number) . '&search_accountancy_code_end=' . urlencode($this->account_number);
 			$labelurl = $langs->trans("ShowAccountingAccountInLedger");
 		} elseif ($option == 'journals') {
-			$url = DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?search_accountancy_code_start='.urlencode($this->account_number).'&search_accountancy_code_end='.urlencode($this->account_number);
+			$url = DOL_URL_ROOT . '/accountancy/bookkeeping/list.php?search_accountancy_code_start=' . urlencode($this->account_number) . '&search_accountancy_code_end=' . urlencode($this->account_number);
 			$labelurl = $langs->trans("ShowAccountingAccountInJournals");
 		} elseif ($option == 'accountcard') {
-			$url = DOL_URL_ROOT.'/accountancy/admin/card.php?id='.urlencode($this->id);
+			$url = DOL_URL_ROOT . '/accountancy/admin/card.php?id=' . urlencode($this->id);
 			$labelurl = $langs->trans("ShowAccountingAccount");
 		}
 
@@ -495,29 +435,29 @@ class AccountingAccount extends CommonObject
 			$labeltoshow = $this->labelshort;
 		}
 
-		$label = '<u>'.$labelurl.'</u>';
+		$label = '<u>' . $labelurl . '</u>';
 		if (!empty($this->account_number)) {
-			$label .= '<br><b>'.$langs->trans('AccountAccounting').':</b> '.length_accountg($this->account_number);
+			$label .= '<br><b>' . $langs->trans('AccountAccounting') . ':</b> ' . length_accountg($this->account_number);
 		}
 		if (!empty($labeltoshow)) {
-			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$labeltoshow;
+			$label .= '<br><b>' . $langs->trans('Label') . ':</b> ' . $labeltoshow;
 		}
 		if ($moretitle) {
-			$label .= ' - '.$moretitle;
+			$label .= ' - ' . $moretitle;
 		}
 
 		$linkclose = '';
 		if (empty($notooltip)) {
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $labelurl;
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="' . dol_escape_htmltag($label, 1) . '"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' title="' . dol_escape_htmltag($label, 1) . '"';
 			$linkclose .= ' class="classfortooltip"';
 		}
 
-		$linkstart = '<a href="'.$url.'"';
-		$linkstart .= $linkclose.'>';
+		$linkstart = '<a href="' . $url . '"';
+		$linkstart .= $linkclose . '>';
 		$linkend = '</a>';
 
 		if ($nourl) {
@@ -528,17 +468,17 @@ class AccountingAccount extends CommonObject
 
 		$label_link = length_accountg($this->account_number);
 		if ($withlabel) {
-			$label_link .= ' - '.($nourl ? '<span class="opacitymedium">' : '').$labeltoshow.($nourl ? '</span>' : '');
+			$label_link .= ' - ' . ($nourl ? '<span class="opacitymedium">' : '') . $labeltoshow . ($nourl ? '</span>' : '');
 		}
 
 		if ($withpicto) {
-			$result .= ($linkstart.img_object(($notooltip ? '' : $label), $picto, ($notooltip ? '' : 'class="classfortooltip"'), 0, 0, $notooltip ? 0 : 1).$linkend);
+			$result .= ($linkstart . img_object(($notooltip ? '' : $label), $picto, ($notooltip ? '' : 'class="classfortooltip"'), 0, 0, $notooltip ? 0 : 1) . $linkend);
 		}
 		if ($withpicto && $withpicto != 2) {
 			$result .= ' ';
 		}
 		if ($withpicto != 2) {
-			$result .= $linkstart.$label_link.$linkend;
+			$result .= $linkstart . $label_link . $linkend;
 		}
 		return $result;
 	}
@@ -552,10 +492,10 @@ class AccountingAccount extends CommonObject
 	public function info($id)
 	{
 		$sql = 'SELECT a.rowid, a.datec, a.fk_user_author, a.fk_user_modif, a.tms';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'accounting_account as a';
-		$sql .= ' WHERE a.rowid = '.((int) $id);
+		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'accounting_account as a';
+		$sql .= ' WHERE a.rowid = ' . ((int) $id);
 
-		dol_syslog(get_class($this).'::info sql='.$sql);
+		dol_syslog(get_class($this) . '::info sql=' . $sql);
 		$result = $this->db->query($sql);
 
 		if ($result) {
@@ -584,8 +524,8 @@ class AccountingAccount extends CommonObject
 	/**
 	 * Deactivate an account (for status active or status reconcilable)
 	 *
-	 * @param  int  $id         Id
-	 * @param  int  $mode       0=field active, 1=field reconcilable
+	 * @param int $id Id
+	 * @param int $mode 0=field active, 1=field reconcilable
 	 * @return int              <0 if KO, >0 if OK
 	 */
 	public function accountDeactivate($id, $mode = 0)
@@ -600,11 +540,11 @@ class AccountingAccount extends CommonObject
 		if ($result > 0) {
 			$this->db->begin();
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_account ";
-			$sql .= "SET ".$fieldtouse." = '0'";
-			$sql .= " WHERE rowid = ".$this->db->escape($id);
+			$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_account ";
+			$sql .= "SET " . $fieldtouse . " = '0'";
+			$sql .= " WHERE rowid = " . $this->db->escape($id);
 
-			dol_syslog(get_class($this)."::accountDeactivate ".$fieldtouse." sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this) . "::accountDeactivate " . $fieldtouse . " sql=" . $sql, LOG_DEBUG);
 			$result = $this->db->query($sql);
 
 			if ($result) {
@@ -620,15 +560,15 @@ class AccountingAccount extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+
 	/**
 	 * Account activated
 	 *
-	 * @param  int  $id         Id
-	 * @param  int  $mode       0=field active, 1=field reconcilable
+	 * @param int $id Id
+	 * @param int $mode 0=field active, 1=field reconcilable
 	 * @return int              <0 if KO, >0 if OK
 	 */
-	public function account_activate($id, $mode = 0)
+	public function accountActivate($id, $mode = 0)
 	{
 		// phpcs:enable
 		$this->db->begin();
@@ -638,11 +578,11 @@ class AccountingAccount extends CommonObject
 			$fieldtouse = 'reconcilable';
 		}
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_account";
-		$sql .= " SET ".$fieldtouse." = '1'";
-		$sql .= " WHERE rowid = ".$this->db->escape($id);
+		$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_account";
+		$sql .= " SET " . $fieldtouse . " = '1'";
+		$sql .= " WHERE rowid = " . $this->db->escape($id);
 
-		dol_syslog(get_class($this)."::account_activate ".$fieldtouse." sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this) . "::accountActivate " . $fieldtouse . " sql=" . $sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$this->db->commit();
@@ -654,12 +594,11 @@ class AccountingAccount extends CommonObject
 		}
 	}
 
-
 	/**
 	 *  Retourne le libelle du statut d'un user (actif, inactif)
 	 *
-	 *  @param  int     $mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return string              Label of status
+	 * @param int $mode 0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 * @return string              Label of status
 	 */
 	public function getLibStatut($mode = 0)
 	{
@@ -670,9 +609,9 @@ class AccountingAccount extends CommonObject
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
-	 *  @param  int     $status     Id status
-	 *  @param  int     $mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return string              Label of status
+	 * @param int $status Id status
+	 * @param int $mode 0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 * @return string              Label of status
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
@@ -694,9 +633,9 @@ class AccountingAccount extends CommonObject
 			}
 		} elseif ($mode == 2) {
 			if ($status == 1) {
-				return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+				return img_picto($langs->trans('Enabled'), 'statut4') . ' ' . $langs->trans('Enabled');
 			} elseif ($status == 0) {
-				return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
+				return img_picto($langs->trans('Disabled'), 'statut5') . ' ' . $langs->trans('Disabled');
 			}
 		} elseif ($mode == 3) {
 			if ($status == 1) {
@@ -706,16 +645,241 @@ class AccountingAccount extends CommonObject
 			}
 		} elseif ($mode == 4) {
 			if ($status == 1) {
-				return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+				return img_picto($langs->trans('Enabled'), 'statut4') . ' ' . $langs->trans('Enabled');
 			} elseif ($status == 0) {
-				return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
+				return img_picto($langs->trans('Disabled'), 'statut5') . ' ' . $langs->trans('Disabled');
 			}
 		} elseif ($mode == 5) {
 			if ($status == 1) {
-				return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
+				return $langs->trans('Enabled') . ' ' . img_picto($langs->trans('Enabled'), 'statut4');
 			} elseif ($status == 0) {
-				return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
+				return $langs->trans('Disabled') . ' ' . img_picto($langs->trans('Disabled'), 'statut5');
 			}
 		}
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+
+	/**
+	 * Return Suggest accounting accounts to bind
+	 *
+	 * @param Societe $thirdparty Societe Object seller or Buyers
+	 * @param Product $product Product object sell or buy
+	 * @param Facture $facture Facture
+	 * @param FactureLigne $factureDet Facture Det
+	 * @param array $accountingAccount array of Account account
+	 *
+	 * @return    array        Accounting accounts suggested
+	 */
+	public function getAccountingCodeToBind(Societe $thirdparty, Product $product, Facture $facture, FactureLigne $factureDet, $accountingAccount = array())
+	{
+		global $mysoc, $conf;
+		global $hookmanager;
+
+		// Instantiate hooks for external modules
+		$hookmanager->initHooks(array('accoutancyBindingCalculation'));
+
+		// Execute hook accoutancyBindingCalculation
+		$parameters = array('thirdparty' => $thirdparty, 'product' => $product, 'facture' => $facture, 'factureDet' => $factureDet ,'accountingAccount'=>$accountingAccount);
+		$reshook = $hookmanager->executeHooks('accoutancyBindingCalculation', $parameters); // Note that $action and $object may have been modified by some hooks
+
+		if (empty($reshook)) {
+			require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
+			$isBuyerInEEC = isInEEC($thirdparty);
+			$isSellerInEEC = isInEEC($mysoc);
+			$code_sell_l = '';
+			$code_sell_p = '';
+			$code_sell_t = '';
+			$suggestedid = '';
+
+			// Level 1: Search suggested default account for product/service
+			$suggestedaccountingaccountbydefaultfor = '';
+			if ($factureDet->product_type == 1) {
+				if ($thirdparty->country_code == $mysoc->country_code || empty($thirdparty->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
+					$code_sell_l = (!empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : '');
+					$suggestedaccountingaccountbydefaultfor = '';
+				} else {
+					if ($isSellerInEEC && $isBuyerInEEC && $factureDet->tva_tx != 0) {    // European intravat sale, but with a VAT
+						$code_sell_l = (!empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : '');
+						$suggestedaccountingaccountbydefaultfor = 'eecwithvat';
+					} elseif ($isSellerInEEC && $isBuyerInEEC && empty($thirdparty->tva_intra)) {    // European intravat sale, without VAT intra community number
+						$code_sell_l = (!empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : '');
+						$suggestedaccountingaccountbydefaultfor = 'eecwithoutvatnumber';
+					} elseif ($isSellerInEEC && $isBuyerInEEC) {    // European intravat sale
+						$code_sell_l = (!empty($conf->global->ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT : '');
+						$suggestedaccountingaccountbydefaultfor = 'eec';
+					} else {                                        // Foreign sale
+						$code_sell_l = (!empty($conf->global->ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT : '');
+						$suggestedaccountingaccountbydefaultfor = 'export';
+					}
+				}
+			} elseif ($factureDet->product_type == 0) {
+				if ($thirdparty->country_code == $mysoc->country_code || empty($thirdparty->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
+					$code_sell_l = (!empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : '');
+					$suggestedaccountingaccountbydefaultfor = '';
+				} else {
+					if ($isSellerInEEC && $isBuyerInEEC && $factureDet->tva_tx != 0) {    // European intravat sale, but with a VAT
+						$code_sell_l = (!empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : '');
+						$suggestedaccountingaccountbydefaultfor = 'eecwithvat';
+					} elseif ($isSellerInEEC && $isBuyerInEEC && empty($thirdparty->tva_intra)) {    // European intravat sale, without VAT intra community number
+						$code_sell_l = (!empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : '');
+						$suggestedaccountingaccountbydefaultfor = 'eecwithoutvatnumber';
+					} elseif ($isSellerInEEC && $isBuyerInEEC) {    // European intravat sale
+						$code_sell_l = (!empty($conf->global->ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT : '');
+						$suggestedaccountingaccountbydefaultfor = 'eec';
+					} else {
+						$code_sell_l = (!empty($conf->global->ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT : '');
+						$suggestedaccountingaccountbydefaultfor = 'export';
+					}
+				}
+			}
+			if ($code_sell_l == -1) {
+				$code_sell_l = '';
+			}
+
+			// Level 2: Search suggested account for product/service (similar code exists in page index.php to make automatic binding)
+			$suggestedaccountingaccountfor = '';
+			if (($thirdparty->country_code == $mysoc->country_code) || empty($thirdparty->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
+				$code_sell_p = $product->accountancy_code_sell;
+				$suggestedid = $accountingAccount['dom'];
+				$suggestedaccountingaccountfor = '';
+			} else {
+				if ($isSellerInEEC && $isBuyerInEEC && $factureDet->tva_tx != 0) {    // European intravat sale, but with VAT
+					$code_sell_p = $product->accountancy_code_sell;
+					$suggestedid = $accountingAccount['dom'];
+					$suggestedaccountingaccountfor = 'eecwithvat';
+				} elseif ($isSellerInEEC && $isBuyerInEEC && empty($thirdparty->tva_intra)) {    // European intravat sale, without VAT intra community number
+					$code_sell_p = $product->accountancy_code_sell;
+					$suggestedid = $accountingAccount['dom']; // There is a doubt for this case. Is it an error on vat or we just forgot to fill vat number ?
+					$suggestedaccountingaccountfor = 'eecwithoutvatnumber';
+				} elseif ($isSellerInEEC && $isBuyerInEEC) {          // European intravat sale
+					$code_sell_p = $product->accountancy_code_sell_intra;
+					$suggestedid = $accountingAccount['intra'];
+					$suggestedaccountingaccountfor = 'eec';
+				} else {                                        // Foreign sale
+					$code_sell_p = $product->accountancy_code_sell_export;
+					$suggestedid = $accountingAccount['export'];
+					$suggestedaccountingaccountfor = 'export';
+				}
+			}
+
+			// Level 3: Search suggested account for this thirdparty (similar code exists in page index.php to make automatic binding)
+			if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
+				if (!empty($thirdparty->code_compta)) {
+					$code_sell_t = $thirdparty->code_compta;
+					$suggestedid = $accountingAccount['thirdparty'];
+					$suggestedaccountingaccountfor = '';
+				}
+			}
+
+			// Manage Deposit
+			if ($factureDet->desc == "(DEPOSIT)") {
+				$accountdeposittoventilated = new self($this->db);
+				$result = $accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT, 1);
+				if ($result < 0) {
+					return -1;
+				}
+
+				$code_sell_l = $accountdeposittoventilated->ref;
+				$suggestedid = $accountdeposittoventilated->rowid;
+			}
+
+			if (empty($suggestedid) && empty($code_sell_p) && !empty($code_sell_l) && empty($conf->global->ACCOUNTANCY_DO_NOT_AUTOFILL_ACCOUNT_WITH_GENERIC)) {
+				if (empty($this->accountingaccount_codetotid_cache[$code_sell_l])) {
+					$tmpaccount = new self($this->db);
+					$result = $tmpaccount->fetch(0, $code_sell_l, 1);
+					if ($result < 0) {
+						return -1;
+					}
+					if ($tmpaccount->id > 0) {
+						$suggestedid = $tmpaccount->id;
+					}
+					$this->accountingaccount_codetotid_cache[$code_sell_l] = $tmpaccount->id;
+				} else {
+					$suggestedid = $this->accountingaccount_codetotid_cache[$code_sell_l];
+				}
+			}
+		} else {
+			if (is_array($hookmanager->resArray) && !empty($hookmanager->resArray)) {
+				return $hookmanager->resArray;
+			}
+		}
+		return array(
+			'suggestedaccountingaccountbydefaultfor' => $suggestedaccountingaccountbydefaultfor,
+			'suggestedaccountingaccountfor' => $suggestedaccountingaccountfor,
+			'suggestedid' => $suggestedid,
+			'code_sell_l' => $code_sell_l,
+			'code_sell_p' => $code_sell_p,
+			'code_sell_t' => $code_sell_t,
+		);
+	}
+
+	/**
+	 * Load record in memory
+	 *
+	 * @param int $rowid Id
+	 * @param string $account_number Account number
+	 * @param int|boolean $limittocurrentchart 1 or true=Load record only if it is into current active char of account
+	 * @param string $limittoachartaccount 'ABC'=Load record only if it is into chart account with code 'ABC' (better and faster than previous parameter if you have chart of account code).
+	 * @return    int                                     <0 if KO, 0 if not found, Id of record if OK and found
+	 */
+	public function fetch($rowid = null, $account_number = null, $limittocurrentchart = 0, $limittoachartaccount = '')
+	{
+		global $conf;
+
+		if ($rowid || $account_number) {
+			$sql = "SELECT a.rowid as rowid, a.datec, a.tms, a.fk_pcg_version, a.pcg_type, a.account_number, a.account_parent, a.label, a.labelshort, a.fk_accounting_category, a.fk_user_author, a.fk_user_modif, a.active, a.reconcilable";
+			$sql .= ", ca.label as category_label";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as a";
+			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_accounting_category as ca ON a.fk_accounting_category = ca.rowid";
+			$sql .= " WHERE";
+			if ($rowid) {
+				$sql .= " a.rowid = " . (int) $rowid;
+			} elseif ($account_number) {
+				$sql .= " a.account_number = '" . $this->db->escape($account_number) . "'";
+				$sql .= " AND a.entity = " . $conf->entity;
+			}
+			if (!empty($limittocurrentchart)) {
+				$sql .= ' AND a.fk_pcg_version IN (SELECT pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system WHERE rowid=' . $this->db->escape($conf->global->CHARTOFACCOUNTS) . ')';
+			}
+			if (!empty($limittoachartaccount)) {
+				$sql .= " AND a.fk_pcg_version = '" . $this->db->escape($limittoachartaccount) . "'";
+			}
+
+			dol_syslog(get_class($this) . "::fetch sql=" . $sql, LOG_DEBUG);
+			$result = $this->db->query($sql);
+			if ($result) {
+				$obj = $this->db->fetch_object($result);
+
+				if ($obj) {
+					$this->id = $obj->rowid;
+					$this->rowid = $obj->rowid;
+					$this->ref = $obj->account_number;
+					$this->datec = $obj->datec;
+					$this->tms = $obj->tms;
+					$this->fk_pcg_version = $obj->fk_pcg_version;
+					$this->pcg_type = $obj->pcg_type;
+					$this->account_number = $obj->account_number;
+					$this->account_parent = $obj->account_parent;
+					$this->label = $obj->label;
+					$this->labelshort = $obj->labelshort;
+					$this->account_category = $obj->fk_accounting_category;
+					$this->account_category_label = $obj->category_label;
+					$this->fk_user_author = $obj->fk_user_author;
+					$this->fk_user_modif = $obj->fk_user_modif;
+					$this->active = $obj->active;
+					$this->status = $obj->active;
+					$this->reconcilable = $obj->reconcilable;
+
+					return $this->id;
+				} else {
+					return 0;
+				}
+			} else {
+				$this->error = "Error " . $this->db->lasterror();
+				$this->errors[] = "Error " . $this->db->lasterror();
+			}
+		}
+		return -1;
 	}
 }
