@@ -753,10 +753,9 @@ if ($resql)
 		print '</tr>';
 		print '</table>';
 		if (!empty($conf->use_javascript_ajax)) {
-			// TODO Replace this with jquery code
 			?>
 		<script>
-			window.addEventListener('load', function () {
+			$( document ).ready(function () {
 				$('select#createbills_onebythird').on('change', function (e) {
 					if ($(this).val() === '1')
 						$('#refsupplier').parent().parent().show();
