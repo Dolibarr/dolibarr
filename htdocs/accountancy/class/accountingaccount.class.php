@@ -739,24 +739,24 @@ class AccountingAccount extends CommonObject
 
 			// Level 2: Search suggested account for product/service (similar code exists in page index.php to make automatic binding)
 			$suggestedaccountingaccountfor = '';
-			if (($thirdparty->country_code == $mysoc->country_code) || empty($thirdparty->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
+			if ((($thirdparty->country_code == $mysoc->country_code) || empty($thirdparty->country_code)) && !empty($product->accountancy_code_sell)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
 				$code_sell_p = $product->accountancy_code_sell;
 				$suggestedid = $accountingAccount['dom'];
-				$suggestedaccountingaccountfor = '';
+				$suggestedaccountingaccountfor = 'prodserv';
 			} else {
-				if ($isSellerInEEC && $isBuyerInEEC && $factureDet->tva_tx != 0) {    // European intravat sale, but with VAT
+				if ($isSellerInEEC && $isBuyerInEEC && $factureDet->tva_tx != 0 && !empty($product->accountancy_code_sell)) {    // European intravat sale, but with VAT
 					$code_sell_p = $product->accountancy_code_sell;
 					$suggestedid = $accountingAccount['dom'];
 					$suggestedaccountingaccountfor = 'eecwithvat';
-				} elseif ($isSellerInEEC && $isBuyerInEEC && empty($thirdparty->tva_intra)) {    // European intravat sale, without VAT intra community number
+				} elseif ($isSellerInEEC && $isBuyerInEEC && empty($thirdparty->tva_intra) && !empty($product->accountancy_code_sell)) {    // European intravat sale, without VAT intra community number
 					$code_sell_p = $product->accountancy_code_sell;
 					$suggestedid = $accountingAccount['dom']; // There is a doubt for this case. Is it an error on vat or we just forgot to fill vat number ?
 					$suggestedaccountingaccountfor = 'eecwithoutvatnumber';
-				} elseif ($isSellerInEEC && $isBuyerInEEC) {          // European intravat sale
+				} elseif ($isSellerInEEC && $isBuyerInEEC && !empty($product->accountancy_code_sell_intra)) {          // European intravat sale
 					$code_sell_p = $product->accountancy_code_sell_intra;
 					$suggestedid = $accountingAccount['intra'];
 					$suggestedaccountingaccountfor = 'eec';
-				} else {                                        // Foreign sale
+				} elseif (!empty($product->accountancy_code_sell_export)) {                                        // Foreign sale
 					$code_sell_p = $product->accountancy_code_sell_export;
 					$suggestedid = $accountingAccount['export'];
 					$suggestedaccountingaccountfor = 'export';
@@ -768,7 +768,7 @@ class AccountingAccount extends CommonObject
 				if (!empty($thirdparty->code_compta)) {
 					$code_sell_t = $thirdparty->code_compta;
 					$suggestedid = $accountingAccount['thirdparty'];
-					$suggestedaccountingaccountfor = '';
+					$suggestedaccountingaccountfor = 'thridparty';
 				}
 			}
 
@@ -782,6 +782,7 @@ class AccountingAccount extends CommonObject
 
 				$code_sell_l = $accountdeposittoventilated->ref;
 				$suggestedid = $accountdeposittoventilated->rowid;
+				$suggestedaccountingaccountfor = 'deposit';
 			}
 
 			if (empty($suggestedid) && empty($code_sell_p) && !empty($code_sell_l) && empty($conf->global->ACCOUNTANCY_DO_NOT_AUTOFILL_ACCOUNT_WITH_GENERIC)) {

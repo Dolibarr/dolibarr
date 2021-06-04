@@ -490,10 +490,18 @@ if (empty($reshook)) {
 			$object->webservices_key		= GETPOST('webservices_key', 'san_alpha');
 
 			if (GETPOSTISSET('accountancy_code_sell')) {
-				$object->accountancy_code_sell  = GETPOST('accountancy_code_sell', 'alpha');
+				if (GETPOST('accountancy_code_sell', 'int')==-1) {
+					$object->accountancy_code_sell  = 0;
+				} else {
+					$object->accountancy_code_sell  = GETPOST('accountancy_code_sell', 'int');
+				}
 			}
 			if (GETPOSTISSET('accountancy_code_buy')) {
-				$object->accountancy_code_buy   = GETPOST('accountancy_code_buy', 'alpha');
+				if (GETPOST('accountancy_code_buy', 'int')==-1) {
+					$object->accountancy_code_buy  = 0;
+				} else {
+					$object->accountancy_code_buy  = GETPOST('accountancy_code_buy', 'int');
+				}
 			}
 
 			// Incoterms

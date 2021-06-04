@@ -584,6 +584,7 @@ if ($result) {
 			$code_sell_p=$return['code_sell_p'];
 			$code_sell_t=$return['code_sell_t'];
 		}
+		//var_dump($return);
 
 		if (!empty($code_sell_p)) {
 			// Value was defined previously
@@ -705,8 +706,9 @@ if ($result) {
 
 		// Column with checkbox
 		print '<td class="center">';
-		$ischecked = $objp->aarowid_suggest;
-		if ($suggestedaccountingaccountfor == 'eecwithoutvatnumber') {
+		if (!empty($suggestedid) && $suggestedaccountingaccountfor<>'') {
+			$ischecked=1;
+		} elseif ($suggestedaccountingaccountfor == 'eecwithoutvatnumber') {
 			$ischecked = 0;
 		}
 		print '<input type="checkbox" class="flat checkforselect checkforselect'.$facture_static_det->id.'" name="toselect[]" value="'.$facture_static_det->id."_".$i.'"'.($ischecked ? "checked" : "").'/>';
