@@ -91,7 +91,9 @@ print '<div class="div-table-responsive-no-min">';
 print '<table summary="more" class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
-print '<tr class="oddeven"><td>'.$langs->trans("MAIN_GENERATE_PROPOSALS_WITH_PICTURE").'</td><td>';
+print '<tr class="oddeven"><td>'.$langs->trans("MAIN_GENERATE_PROPOSALS_WITH_PICTURE");
+print ' <span class="opacitymedium">('.$langs->trans("RandomlySelectedIfSeveral").')</span>';
+print '</td><td>';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_GENERATE_PROPOSALS_WITH_PICTURE');
 } else {
