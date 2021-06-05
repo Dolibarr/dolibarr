@@ -1250,7 +1250,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			// ($textwasmodified is replaced with $textwasmodifiedorcompleted and we add completion).
 
 			// Set label
-			// If we want another language, and if label is same than default language (we did force it to a specific value), we can use translation.
+			// If we want another language, and if label is same than default language (we did not force it to a specific value), we can use translation.
 			//var_dump($outputlangs->defaultlang.' - '.$langs->defaultlang.' - '.$label.' - '.$prodser->label);exit;
 			$textwasmodified = ($label == $prodser->label);
 			if (!empty($prodser->multilangs[$outputlangs->defaultlang]["label"]) && ($textwasmodified || $translatealsoifmodified)) {
