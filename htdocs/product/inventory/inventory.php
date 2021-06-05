@@ -160,7 +160,7 @@ if ($action == 'update' && !empty($user->rights->stock->mouvement->creer)) {
 	if (! $error) {
 		$db->commit();
 	} else {
-		$db->rollbak();
+		$db->rollback();
 	}
 }
 
@@ -185,8 +185,11 @@ if ($action =='updateinventorylines' && $permissiontoadd) {
 
 			if (GETPOST("id_".$lineid, 'alpha') != '') {		// If a value was set ('0' or something else)
 				$qtytoupdate = price2num(GETPOST("id_".$lineid, 'alpha'), 'MS');
-
 				$result = $inventoryline->fetch($lineid);
+				if ($qtytoupdate < 0) {
+					$result = -1;
+					setEventMessages($langs->trans("FieldCannotBeNegative", $langs->transnoentitiesnoconv("RealQty")), null, 'errors');
+				}
 				if ($result > 0) {
 					$inventoryline->qty_view = $qtytoupdate;
 					$resultupdate = $inventoryline->update($user);
@@ -251,7 +254,10 @@ if (empty($reshook)) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), null, 'errors');
 		}
-
+		if (price2num(GETPOST('qtytoadd'), 'MS') < 0) {
+			$error++;
+			setEventMessages($langs->trans("FieldCannotBeNegative", $langs->transnoentitiesnoconv("RealQty")), null, 'errors');
+		}
 		if (!$error && !empty($conf->productbatch->enabled)) {
 			$tmpproduct = new Product($db);
 			$result = $tmpproduct->fetch($fk_product);
@@ -654,7 +660,7 @@ if ($object->id > 0) {
 			// Real quantity
 			print '<td class="center">';
 			if ($object->status == $object::STATUS_VALIDATED) {
-				$qty_view = GETPOST("id_".$obj->rowid) ? GETPOST("id_".$obj->rowid) : $obj->qty_view;
+				$qty_view = GETPOST("id_".$obj->rowid) && price2num(GETPOST("id_".$obj->rowid), 'MS') >= 0 ? GETPOST("id_".$obj->rowid) : $obj->qty_view;
 				$totalfound += price2num($qty_view, 'MS');
 				print '<input type="text" class="maxwidth75 right realqty" name="id_'.$obj->rowid.'" id="id_'.$obj->rowid.'_input" value="'.$qty_view.'">';
 				print '</td>';

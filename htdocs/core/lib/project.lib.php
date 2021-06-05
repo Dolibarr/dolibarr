@@ -2693,6 +2693,7 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
 
 	// define progress color according to time spend vs workload
 	$progressBarClass = 'progress-bar-info';
+	$progressCalculated = 0;
 	if ($task->planned_workload) {
 		$progressCalculated = round(100 * floatval($task->duration_effective) / floatval($task->planned_workload), 2);
 
