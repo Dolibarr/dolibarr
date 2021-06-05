@@ -1325,32 +1325,32 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			$translatealsoifmodified = (!empty($conf->global->MAIN_MULTILANG_TRANSLATE_EVEN_IF_MODIFIED)); // By default if value was modified manually, we keep it (no translation because we don't have it)
 
 			// TODO Instead of making a compare to see if param was modified, check that content contains reference translation. If yes, add the added part to the new translation
-			// ($textwasmodified is replaced with $textwasmodifiedorcompleted and we add completion).
+			// ($textwasnotmodified is replaced with $textwasmodifiedorcompleted and we add completion).
 
 			// Set label
 			// If we want another language, and if label is same than default language (we did force it to a specific value), we can use translation.
 			//var_dump($outputlangs->defaultlang.' - '.$langs->defaultlang.' - '.$label.' - '.$prodser->label);exit;
-			$textwasmodified = ($label == $prodser->label);
-			if (!empty($prodser->multilangs[$outputlangs->defaultlang]["label"]) && ($textwasmodified || $translatealsoifmodified)) {
+			$textwasnotmodified = ($label == $prodser->label);
+			if (!empty($prodser->multilangs[$outputlangs->defaultlang]["label"]) && ($textwasnotmodified || $translatealsoifmodified)) {
 				$label = $prodser->multilangs[$outputlangs->defaultlang]["label"];
 			}
 
 			// Set desc
 			// Manage HTML entities description test because $prodser->description is store with htmlentities but $desc no
-			$textwasmodified = false;
+			$textwasnotmodified = false;
 			if (!empty($desc) && dol_textishtml($desc) && !empty($prodser->description) && dol_textishtml($prodser->description)) {
-				$textwasmodified = (strpos(dol_html_entity_decode($desc, ENT_QUOTES | ENT_HTML5), dol_html_entity_decode($prodser->description, ENT_QUOTES | ENT_HTML5)) !== false);
+				$textwasnotmodified = (strpos(dol_html_entity_decode($desc, ENT_QUOTES | ENT_HTML5), dol_html_entity_decode($prodser->description, ENT_QUOTES | ENT_HTML5)) !== false);
 			} else {
-				$textwasmodified = ($desc == $prodser->description);
+				$textwasnotmodified = ($desc == $prodser->description);
 			}
-			if (!empty($prodser->multilangs[$outputlangs->defaultlang]["description"]) && ($textwasmodified || $translatealsoifmodified)) {
+			if (!empty($prodser->multilangs[$outputlangs->defaultlang]["description"]) && ($textwasnotmodified || $translatealsoifmodified)) {
 				$desc = $prodser->multilangs[$outputlangs->defaultlang]["description"];
 			}
 
 			// Set note
-			$textwasmodified = ($note == $prodser->note);
-			if (!empty($prodser->multilangs[$outputlangs->defaultlang]["note"]) && ($textwasmodified || $translatealsoifmodified)) {
-				$note = $prodser->multilangs[$outputlangs->defaultlang]["note"];
+			$textwasnotmodified = ($note == $prodser->note_public);
+			if (!empty($prodser->multilangs[$outputlangs->defaultlang]["other"]) && ($textwasnotmodified || $translatealsoifmodified)) {
+				$note = $prodser->multilangs[$outputlangs->defaultlang]["other"];
 			}
 		}
 	} elseif ($object->element == 'facture' || $object->element == 'facturefourn') {

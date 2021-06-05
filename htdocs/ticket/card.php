@@ -53,6 +53,7 @@ $ref       = GETPOST('ref', 'alpha');
 $projectid = GETPOST('projectid', 'int');
 $cancel    = GETPOST('cancel', 'alpha');
 $action    = GETPOST('action', 'aZ09');
+$backtopage = GETPOST('$backtopage', 'alpha');
 
 $notifyTiers = GETPOST("notify_tiers_at_create", 'alpha');
 
@@ -152,7 +153,7 @@ if (empty($reshook)) {
 	}
 
 	// Action to add an action (not a message)
-	if (GETPOST('add', 'alpha') && $user->rights->ticket->write) {
+	if (GETPOST('add', 'alpha') && !empty($user->rights->ticket->write)) {
 		$error = 0;
 
 		if (!GETPOST("subject", 'alphanohtml')) {

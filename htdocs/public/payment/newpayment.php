@@ -5,6 +5,7 @@
  * Copyright (C) 2018	    Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018-2019	Thibault FOUCART	    <support@ptibogxiv.net>
  * Copyright (C) 2021		Waël Almoman	    	<info@almoman.com>
+ * Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -142,6 +143,23 @@ if ($source == 'conferencesubscription') {
 			}
 		}
 	}
+} elseif ($source == 'boothlocation') {
+	// Getting the amount to pay, the invoice, finding the thirdparty
+	$invoiceid = GETPOST('ref');
+	$invoice = new Facture($db);
+	$resultinvoice = $invoice->fetch($invoiceid);
+	if ($resultinvoice <= 0) {
+		setEventMessages(null, $invoice->errors, "errors");
+	} else {
+		$amount = price2num($invoice->total_ttc);
+		// Finding the associated thirdparty
+		$thirdparty = new Societe($db);
+		$resultthirdparty = $thirdparty->fetch($invoice->socid);
+		if ($resultthirdparty <= 0) {
+			setEventMessages(null, $thirdparty->errors, "errors");
+		}
+		$object = $thirdparty;
+	}
 }
 
 
@@ -260,16 +278,21 @@ if ($tmpsource == 'membersubscription') {
 }
 $valid = true;
 if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
+	$token = '';
+	$tokenoldcompat = '';
 	if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
 		if ($tmpsource && $REF) {
 			$token = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.$tmpsource.$REF, 2); // Use the source in the hash to avoid duplicates if the references are identical
+			if ($tmpsource != $source) {
+				$tokenoldcompat = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.$source.$REF, 2); // for retro-compatibility (token may have been hashed with membersubscription in external module)
+			}
 		} else {
 			$token = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
 		}
 	} else {
 		$token = $conf->global->PAYMENT_SECURITY_TOKEN;
 	}
-	if ($SECUREKEY != $token) {
+	if ($SECUREKEY != $token && (empty($tokenoldcompat) || $SECUREKEY != $tokenoldcompat)) {
 		if (empty($conf->global->PAYMENT_SECURITY_ACCEPT_ANY_TOKEN)) {
 			$valid = false; // PAYMENT_SECURITY_ACCEPT_ANY_TOKEN is for backward compatibility
 		} else {
@@ -889,7 +912,6 @@ print '<tr><td align="left" colspan="2" class="opacitymedium">'.$langs->trans("T
 
 $found = false;
 $error = 0;
-$var = false;
 
 $object = null;
 
@@ -905,17 +927,17 @@ if (!$source) {
 	}
 
 	// Creditor
-	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Creditor");
-	print '</td><td class="CTableRow'.($var ? '1' : '2').'"><b>'.$creditor.'</b>';
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Creditor");
+	print '</td><td class="CTableRow2"><b>'.$creditor.'</b>';
 	print '<input type="hidden" name="creditor" value="'.$creditor.'">';
 	print '</td></tr>'."\n";
 
 	// Amount
-	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Amount");
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Amount");
 	if (empty($amount)) {
 		print ' ('.$langs->trans("ToComplete").')';
 	}
-	print '</td><td class="CTableRow'.($var ? '1' : '2').'">';
+	print '</td><td class="CTableRow2">';
 	if (empty($amount) || !is_numeric($amount)) {
 		print '<input type="hidden" name="amount" value="'.price2num(GETPOST("amount", 'alpha'), 'MT').'">';
 		print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price2num(GETPOST("newamount", "alpha"), 'MT').'">';
@@ -930,8 +952,8 @@ if (!$source) {
 	print '</td></tr>'."\n";
 
 	// Tag
-	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var ? '1' : '2').'"><b style="word-break: break-all;">'.$fulltag.'</b>';
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("PaymentCode");
+	print '</td><td class="CTableRow2"><b style="word-break: break-all;">'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
@@ -977,14 +999,14 @@ if ($source == 'order') {
 	$fulltag = dol_string_unaccent($fulltag);
 
 	// Creditor
-	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Creditor");
-	print '</td><td class="CTableRow'.($var ? '1' : '2').'"><b>'.$creditor.'</b>';
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Creditor");
+	print '</td><td class="CTableRow2"><b>'.$creditor.'</b>';
 	print '<input type="hidden" name="creditor" value="'.$creditor.'">';
 	print '</td></tr>'."\n";
 
 	// Debitor
-	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("ThirdParty");
-	print '</td><td class="CTableRow'.($var ? '1' : '2').'"><b>'.$order->thirdparty->name.'</b>';
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("ThirdParty");
+	print '</td><td class="CTableRow2"><b>'.$order->thirdparty->name.'</b>';
 	print '</td></tr>'."\n";
 
 	// Object
@@ -992,8 +1014,8 @@ if ($source == 'order') {
 	if (GETPOST('desc', 'alpha')) {
 		$text = '<b>'.$langs->trans(GETPOST('desc', 'alpha')).'</b>';
 	}
-	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Designation");
-	print '</td><td class="CTableRow'.($var ? '1' : '2').'">'.$text;
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Designation");
+	print '</td><td class="CTableRow2">'.$text;
 	print '<input type="hidden" name="s" value="'.dol_escape_htmltag($source).'">';
 	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($order->ref).'">';
 	print '<input type="hidden" name="dol_id" value="'.dol_escape_htmltag($order->id).'">';
@@ -1006,11 +1028,11 @@ if ($source == 'order') {
 	print '</td></tr>'."\n";
 
 	// Amount
-	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Amount");
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Amount");
 	if (empty($amount)) {
 		print ' ('.$langs->trans("ToComplete").')';
 	}
-	print '</td><td class="CTableRow'.($var ? '1' : '2').'">';
+	print '</td><td class="CTableRow2">';
 	if (empty($amount) || !is_numeric($amount)) {
 		print '<input type="hidden" name="amount" value="'.price2num(GETPOST("amount", 'alpha'), 'MT').'">';
 		print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price2num(GETPOST("newamount", "alpha"), 'MT').'">';
@@ -1025,8 +1047,8 @@ if ($source == 'order') {
 	print '</td></tr>'."\n";
 
 	// Tag
-	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var ? '1' : '2').'"><b style="word-break: break-all;">'.$fulltag.'</b>';
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("PaymentCode");
+	print '</td><td class="CTableRow2"><b style="word-break: break-all;">'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.dol_escape_htmltag($tag).'">';
 	print '<input type="hidden" name="fulltag" value="'.dol_escape_htmltag($fulltag).'">';
 	print '</td></tr>'."\n";
@@ -1101,14 +1123,14 @@ if ($source == 'invoice') {
 	$fulltag = dol_string_unaccent($fulltag);
 
 	// Creditor
-	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Creditor");
-	print '</td><td class="CTableRow'.($var ? '1' : '2').'"><b>'.$creditor.'</b>';
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Creditor");
+	print '</td><td class="CTableRow2"><b>'.$creditor.'</b>';
 	print '<input type="hidden" name="creditor" value="'.dol_escape_htmltag($creditor).'">';
 	print '</td></tr>'."\n";
 
 	// Debitor
-	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("ThirdParty");
-	print '</td><td class="CTableRow'.($var ? '1' : '2').'"><b>'.$invoice->thirdparty->name.'</b>';
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("ThirdParty");
+	print '</td><td class="CTableRow2"><b>'.$invoice->thirdparty->name.'</b>';
 	print '</td></tr>'."\n";
 
 	// Object
@@ -1116,8 +1138,8 @@ if ($source == 'invoice') {
 	if (GETPOST('desc', 'alpha')) {
 		$text = '<b>'.$langs->trans(GETPOST('desc', 'alpha')).'</b>';
 	}
-	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Designation");
-	print '</td><td class="CTableRow'.($var ? '1' : '2').'">'.$text;
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Designation");
+	print '</td><td class="CTableRow2">'.$text;
 	print '<input type="hidden" name="s" value="'.dol_escape_htmltag($source).'">';
 	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($invoice->ref).'">';
 	print '<input type="hidden" name="dol_id" value="'.dol_escape_htmltag($invoice->id).'">';
@@ -1130,11 +1152,11 @@ if ($source == 'invoice') {
 	print '</td></tr>'."\n";
 
 	// Amount
-	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("PaymentAmount");
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("PaymentAmount");
 	if (empty($amount) && empty($object->paye)) {
 		print ' ('.$langs->trans("ToComplete").')';
 	}
-	print '</td><td class="CTableRow'.($var ? '1' : '2').'">';
+	print '</td><td class="CTableRow2">';
 	if ($object->type == $object::TYPE_CREDIT_NOTE) {
 		print '<b>'.$langs->trans("CreditNote").'</b>';
 	} elseif (empty($object->paye)) {
@@ -1156,8 +1178,8 @@ if ($source == 'invoice') {
 	print '</td></tr>'."\n";
 
 	// Tag
-	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var ? '1' : '2').'"><b style="word-break: break-all;">'.$fulltag.'</b>';
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("PaymentCode");
+	print '</td><td class="CTableRow2"><b style="word-break: break-all;">'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
@@ -1272,14 +1294,14 @@ if ($source == 'contractline') {
 	}
 
 	// Creditor
-	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Creditor");
-	print '</td><td class="CTableRow'.($var ? '1' : '2').'"><b>'.$creditor.'</b>';
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Creditor");
+	print '</td><td class="CTableRow2"><b>'.$creditor.'</b>';
 	print '<input type="hidden" name="creditor" value="'.$creditor.'">';
 	print '</td></tr>'."\n";
 
 	// Debitor
-	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("ThirdParty");
-	print '</td><td class="CTableRow'.($var ? '1' : '2').'"><b>'.$contract->thirdparty->name.'</b>';
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("ThirdParty");
+	print '</td><td class="CTableRow2"><b>'.$contract->thirdparty->name.'</b>';
 	print '</td></tr>'."\n";
 
 	// Object
@@ -1301,8 +1323,8 @@ if ($source == 'contractline') {
 	if (GETPOST('desc', 'alpha')) {
 		$text = '<b>'.$langs->trans(GETPOST('desc', 'alpha')).'</b>';
 	}
-	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Designation");
-	print '</td><td class="CTableRow'.($var ? '1' : '2').'">'.$text;
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Designation");
+	print '</td><td class="CTableRow2">'.$text;
 	print '<input type="hidden" name="source" value="'.dol_escape_htmltag($source).'">';
 	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($contractline->ref).'">';
 	print '<input type="hidden" name="dol_id" value="'.dol_escape_htmltag($contractline->id).'">';
@@ -1331,17 +1353,17 @@ if ($source == 'contractline') {
 			$duration = $contractline->product->duration_value.' '.$dur[$contractline->product->duration_unit];
 		}
 	}
-	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$label.'</td>';
-	print '<td class="CTableRow'.($var ? '1' : '2').'"><b>'.($duration ? $duration : $qty).'</b>';
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$label.'</td>';
+	print '<td class="CTableRow2"><b>'.($duration ? $duration : $qty).'</b>';
 	print '<input type="hidden" name="newqty" value="'.dol_escape_htmltag($qty).'">';
 	print '</b></td></tr>'."\n";
 
 	// Amount
-	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Amount");
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Amount");
 	if (empty($amount)) {
 		print ' ('.$langs->trans("ToComplete").')';
 	}
-	print '</td><td class="CTableRow'.($var ? '1' : '2').'">';
+	print '</td><td class="CTableRow2">';
 	if (empty($amount) || !is_numeric($amount)) {
 		print '<input type="hidden" name="amount" value="'.price2num(GETPOST("amount", 'alpha'), 'MT').'">';
 		print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price2num(GETPOST("newamount", "alpha"), 'MT').'">';
@@ -1356,8 +1378,8 @@ if ($source == 'contractline') {
 	print '</td></tr>'."\n";
 
 	// Tag
-	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var ? '1' : '2').'"><b style="word-break: break-all;">'.$fulltag.'</b>';
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("PaymentCode");
+	print '</td><td class="CTableRow2"><b style="word-break: break-all;">'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
@@ -1433,14 +1455,14 @@ if ($source == 'member' || $source == 'membersubscription') {
 	$fulltag = dol_string_unaccent($fulltag);
 
 	// Creditor
-	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Creditor");
-	print '</td><td class="CTableRow'.($var ? '1' : '2').'"><b>'.$creditor.'</b>';
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Creditor");
+	print '</td><td class="CTableRow2"><b>'.$creditor.'</b>';
 	print '<input type="hidden" name="creditor" value="'.$creditor.'">';
 	print '</td></tr>'."\n";
 
 	// Debitor
-	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Member");
-	print '</td><td class="CTableRow'.($var ? '1' : '2').'"><b>';
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Member");
+	print '</td><td class="CTableRow2"><b>';
 	if ($member->morphy == 'mor' && !empty($member->societe)) {
 		print $member->societe;
 	} else {
@@ -1454,29 +1476,29 @@ if ($source == 'member' || $source == 'membersubscription') {
 	if (GETPOST('desc', 'alpha')) {
 		$text = '<b>'.$langs->trans(GETPOST('desc', 'alpha')).'</b>';
 	}
-	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Designation");
-	print '</td><td class="CTableRow'.($var ? '1' : '2').'">'.$text;
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Designation");
+	print '</td><td class="CTableRow2">'.$text;
 	print '<input type="hidden" name="source" value="'.dol_escape_htmltag($source).'">';
 	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($member->ref).'">';
 	print '</td></tr>'."\n";
 
 	if ($object->datefin > 0) {
-		print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("DateEndSubscription");
-		print '</td><td class="CTableRow'.($var ? '1' : '2').'">'.dol_print_date($member->datefin, 'day');
+		print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("DateEndSubscription");
+		print '</td><td class="CTableRow2">'.dol_print_date($member->datefin, 'day');
 		print '</td></tr>'."\n";
 	}
 
 	if ($member->last_subscription_date || $member->last_subscription_amount) {
 		// Last subscription date
 
-		print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("LastSubscriptionDate");
-		print '</td><td class="CTableRow'.($var ? '1' : '2').'">'.dol_print_date($member->last_subscription_date, 'day');
+		print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("LastSubscriptionDate");
+		print '</td><td class="CTableRow2">'.dol_print_date($member->last_subscription_date, 'day');
 		print '</td></tr>'."\n";
 
 		// Last subscription amount
 
-		print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("LastSubscriptionAmount");
-		print '</td><td class="CTableRow'.($var ? '1' : '2').'">'.price($member->last_subscription_amount);
+		print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("LastSubscriptionAmount");
+		print '</td><td class="CTableRow2">'.price($member->last_subscription_amount);
 		print '</td></tr>'."\n";
 
 		if (empty($amount) && !GETPOST('newamount', 'alpha')) {
@@ -1495,8 +1517,8 @@ if ($source == 'member' || $source == 'membersubscription') {
 			$amountbytype = $adht->amountByType(1);
 
 			// Last member type
-			print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("LastMemberType");
-			print '</td><td class="CTableRow'.($var ? '1' : '2').'">'.dol_escape_htmltag($member->type);
+			print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("LastMemberType");
+			print '</td><td class="CTableRow2">'.dol_escape_htmltag($member->type);
 			print "</td></tr>\n";
 
 			// Set the new member type
@@ -1508,25 +1530,25 @@ if ($source == 'member' || $source == 'membersubscription') {
 				// Set amount for the subscription
 				$amount = (!empty($amountbytype[$member->typeid])) ? $amountbytype[$member->typeid]  : $member->last_subscription_amount;
 
-				print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("NewSubscription");
-				print '</td><td class="CTableRow'.($var ? '1' : '2').'">';
+				print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("NewSubscription");
+				print '</td><td class="CTableRow2">';
 				print $form->selectarray("typeid", $adht->liste_array(1), $member->typeid, 0, 0, 0, 'onchange="window.location.replace(\''.$urlwithroot.'/public/payment/newpayment.php?source='.urlencode($source).'&ref='.urlencode($ref).'&amount='.urlencode($amount).'&typeid=\' + this.value + \'&securekey='.urlencode($SECUREKEY).'\');"', 0, 0, 0, '', '', 1);
 				print "</td></tr>\n";
 			} elseif ($action == dopayment) {
-				print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("NewMemberType");
-				print '</td><td class="CTableRow'.($var ? '1' : '2').'">'.dol_escape_htmltag($member->type);
+				print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("NewMemberType");
+				print '</td><td class="CTableRow2">'.dol_escape_htmltag($member->type);
 				print '<input type="hidden" name="membertypeid" value="'.$member->typeid.'">';
 				print "</td></tr>\n";
 			}
 		} else {
-			print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("MemberType");
-			print '</td><td class="CTableRow'.($var ? '1' : '2').'">'.dol_escape_htmltag($member->type);
+			print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("MemberType");
+			print '</td><td class="CTableRow2">'.dol_escape_htmltag($member->type);
 			print "</td></tr>\n";
 		}
 	}
 
 	// Amount
-	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Amount");
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Amount");
 	if (empty($amount)) {
 		if (empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
 			print ' ('.$langs->trans("ToComplete");
@@ -1538,7 +1560,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 			print ')';
 		}
 	}
-	print '</td><td class="CTableRow'.($var ? '1' : '2').'">';
+	print '</td><td class="CTableRow2">';
 	$valtoshow = '';
 	if (empty($amount) || !is_numeric($amount)) {
 		$valtoshow = price2num(GETPOST("newamount", 'alpha'), 'MT');
@@ -1583,8 +1605,8 @@ if ($source == 'member' || $source == 'membersubscription') {
 	print '</td></tr>'."\n";
 
 	// Tag
-	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var ? '1' : '2').'"><b style="word-break: break-all;">'.$fulltag.'</b>';
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("PaymentCode");
+	print '</td><td class="CTableRow2"><b style="word-break: break-all;">'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
@@ -1659,14 +1681,14 @@ if ($source == 'donation') {
 	$fulltag = dol_string_unaccent($fulltag);
 
 	// Creditor
-	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Creditor");
-	print '</td><td class="CTableRow'.($var ? '1' : '2').'"><b>'.$creditor.'</b>';
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Creditor");
+	print '</td><td class="CTableRow2"><b>'.$creditor.'</b>';
 	print '<input type="hidden" name="creditor" value="'.$creditor.'">';
 	print '</td></tr>'."\n";
 
 	// Debitor
-	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("ThirdParty");
-	print '</td><td class="CTableRow'.($var ? '1' : '2').'"><b>';
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("ThirdParty");
+	print '</td><td class="CTableRow2"><b>';
 	if ($don->morphy == 'mor' && !empty($don->societe)) {
 		print $don->societe;
 	} else {
@@ -1680,14 +1702,14 @@ if ($source == 'donation') {
 	if (GETPOST('desc', 'alpha')) {
 		$text = '<b>'.$langs->trans(GETPOST('desc', 'alpha')).'</b>';
 	}
-	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Designation");
-	print '</td><td class="CTableRow'.($var ? '1' : '2').'">'.$text;
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Designation");
+	print '</td><td class="CTableRow2">'.$text;
 	print '<input type="hidden" name="source" value="'.dol_escape_htmltag($source).'">';
 	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($don->ref).'">';
 	print '</td></tr>'."\n";
 
 	// Amount
-	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Amount");
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Amount");
 	if (empty($amount)) {
 		if (empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
 			print ' ('.$langs->trans("ToComplete");
@@ -1699,7 +1721,7 @@ if ($source == 'donation') {
 			print ')';
 		}
 	}
-	print '</td><td class="CTableRow'.($var ? '1' : '2').'">';
+	print '</td><td class="CTableRow2">';
 	$valtoshow = '';
 	if (empty($amount) || !is_numeric($amount)) {
 		$valtoshow = price2num(GETPOST("newamount", 'alpha'), 'MT');
@@ -1739,8 +1761,8 @@ if ($source == 'donation') {
 	print '</td></tr>'."\n";
 
 	// Tag
-	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var ? '1' : '2').'"><b style="word-break: break-all;">'.$fulltag.'</b>';
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("PaymentCode");
+	print '</td><td class="CTableRow2"><b style="word-break: break-all;">'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
@@ -1793,32 +1815,29 @@ if ($source == 'conferencesubscription') {
 	$fulltag = dol_string_unaccent($fulltag);
 
 	// Creditor
-	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Creditor");
-	print '</td><td class="CTableRow'.($var ? '1' : '2').'"><b>'.$creditor.'</b>';
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Creditor");
+	print '</td><td class="CTableRow2"><b>'.$creditor.'</b>';
 	print '<input type="hidden" name="creditor" value="'.$creditor.'">';
 	print '</td></tr>'."\n";
 
 	// Debitor
-	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Attendee");
-	print '</td><td class="CTableRow'.($var ? '1' : '2').'"><b>';
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Attendee");
+	print '</td><td class="CTableRow2"><b>';
 	print $thirdparty->name;
 	print '</b>';
 	print '</td></tr>'."\n";
 
 	// Object
 	$text = '<b>'.$langs->trans("PaymentConferenceAttendee").'</b>';
-	if (GETPOST('desc', 'alpha')) {
-		$text = '<b>'.$langs->trans(GETPOST('desc', 'alpha')).'</b>';
-	}
-	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Designation");
-	print '</td><td class="CTableRow'.($var ? '1' : '2').'">'.$text;
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Designation");
+	print '</td><td class="CTableRow2">'.$text;
 	print '<input type="hidden" name="source" value="'.dol_escape_htmltag($source).'">';
 	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($invoice->id).'">';
 	print '</td></tr>'."\n";
 
 	// Amount
-	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Amount");
-	print '</td><td class="CTableRow'.($var ? '1' : '2').'">';
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Amount");
+	print '</td><td class="CTableRow2">';
 	$valtoshow = $amount;
 	print '<b>'.price($valtoshow).'</b>';
 	print '<input type="hidden" name="amount" value="'.$valtoshow.'">';
@@ -1830,8 +1849,94 @@ if ($source == 'conferencesubscription') {
 	print '</td></tr>'."\n";
 
 	// Tag
-	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var ? '1' : '2').'"><b style="word-break: break-all;">'.$fulltag.'</b>';
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("PaymentCode");
+	print '</td><td class="CTableRow2"><b style="word-break: break-all;">'.$fulltag.'</b>';
+	print '<input type="hidden" name="tag" value="'.$tag.'">';
+	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
+	print '</td></tr>'."\n";
+
+	// Shipping address
+	$shipToName = $thirdparty->getFullName($langs);
+	$shipToStreet = $thirdparty->address;
+	$shipToCity = $thirdparty->town;
+	$shipToState = $thirdparty->state_code;
+	$shipToCountryCode = $thirdparty->country_code;
+	$shipToZip = $thirdparty->zip;
+	$shipToStreet2 = '';
+	$phoneNum = $thirdparty->phone;
+	if ($shipToName && $shipToStreet && $shipToCity && $shipToCountryCode && $shipToZip) {
+		print '<!-- Shipping address information -->';
+		print '<input type="hidden" name="shipToName" value="'.$shipToName.'">'."\n";
+		print '<input type="hidden" name="shipToStreet" value="'.$shipToStreet.'">'."\n";
+		print '<input type="hidden" name="shipToCity" value="'.$shipToCity.'">'."\n";
+		print '<input type="hidden" name="shipToState" value="'.$shipToState.'">'."\n";
+		print '<input type="hidden" name="shipToCountryCode" value="'.$shipToCountryCode.'">'."\n";
+		print '<input type="hidden" name="shipToZip" value="'.$shipToZip.'">'."\n";
+		print '<input type="hidden" name="shipToStreet2" value="'.$shipToStreet2.'">'."\n";
+		print '<input type="hidden" name="phoneNum" value="'.$phoneNum.'">'."\n";
+	} else {
+		print '<!-- Shipping address not complete, so we don t use it -->'."\n";
+	}
+	print '<input type="hidden" name="thirdparty_id" value="'.$thirdparty->id.'">'."\n";
+	print '<input type="hidden" name="email" value="'.$thirdparty->email.'">'."\n";
+	$labeldesc = $langs->trans("PaymentSubscription");
+	if (GETPOST('desc', 'alpha')) {
+		$labeldesc = GETPOST('desc', 'alpha');
+	}
+	print '<input type="hidden" name="desc" value="'.dol_escape_htmltag($labeldesc).'">'."\n";
+}
+
+if ($source == 'boothlocation') {
+	$found = true;
+	$langs->load("members");
+
+	if (GETPOST('fulltag', 'alpha')) {
+		$fulltag = GETPOST('fulltag', 'alpha');
+	} else {
+		$fulltag = 'BOO='.GETPOST("booth").'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+		if (!empty($TAG)) {
+			$tag = $TAG; $fulltag .= '.TAG='.$TAG;
+		}
+	}
+	$fulltag = dol_string_unaccent($fulltag);
+
+	// Creditor
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Creditor");
+	print '</td><td class="CTableRow2"><b>'.$creditor.'</b>';
+	print '<input type="hidden" name="creditor" value="'.$creditor.'">';
+	print '</td></tr>'."\n";
+
+	// Debitor
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Attendee");
+	print '</td><td class="CTableRow2"><b>';
+	print $thirdparty->name;
+	print '</b>';
+	print '</td></tr>'."\n";
+
+	// Object
+	$text = '<b>'.$langs->trans("PaymentBoothLocation").'</b>';
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Designation");
+	print '</td><td class="CTableRow2">'.$text;
+	print '<input type="hidden" name="source" value="'.dol_escape_htmltag($source).'">';
+	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($invoice->id).'">';
+	print '</td></tr>'."\n";
+
+	// Amount
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Amount");
+	print '</td><td class="CTableRow2">';
+	$valtoshow = $amount;
+	print '<b>'.price($valtoshow).'</b>';
+	print '<input type="hidden" name="amount" value="'.$valtoshow.'">';
+	print '<input type="hidden" name="newamount" value="'.$valtoshow.'">';
+
+	// Currency
+	print ' <b>'.$langs->trans("Currency".$currency).'</b>';
+	print '<input type="hidden" name="currency" value="'.$currency.'">';
+	print '</td></tr>'."\n";
+
+	// Tag
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("PaymentCode");
+	print '</td><td class="CTableRow2"><b style="word-break: break-all;">'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";

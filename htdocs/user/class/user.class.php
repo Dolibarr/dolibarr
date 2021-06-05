@@ -300,6 +300,11 @@ class User extends CommonObject
 	public $nb_rights;
 
 	/**
+	 * @var array	To store list of groups of user (used by API /info for example)
+	 */
+	public $user_group_list;
+
+	/**
 	 * @var array Cache array of already loaded permissions
 	 */
 	private $_tab_loaded = array();
