@@ -174,8 +174,27 @@ class InterfaceZapierTriggers extends DolibarrTriggers
 
 			// Contacts
 			case 'CONTACT_CREATE':
+				$resql = $this->db->query($sql);
+				while ($resql && $obj = $this->db->fetch_array($resql)) {
+					$cleaned = cleanObjectDatas(dol_clone($object));
+					$json = json_encode($cleaned);
+					// call the zapierPostWebhook() function
+					zapierPostWebhook($obj['url'], $json);
+				}
+				$logtriggeraction = true;
+				break;
 			case 'CONTACT_MODIFY':
+				$resql = $this->db->query($sql);
+				while ($resql && $obj = $this->db->fetch_array($resql)) {
+					$cleaned = cleanObjectDatas(dol_clone($object));
+					$json = json_encode($cleaned);
+					// call the zapierPostWebhook() function
+					zapierPostWebhook($obj['url'], $json);
+				}
+				$logtriggeraction = true;
+				break;
 			case 'CONTACT_DELETE':
+				break;
 			case 'CONTACT_ENABLEDISABLE':
 				break;
 			// Products

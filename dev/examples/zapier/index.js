@@ -2,6 +2,7 @@
 const triggerAction = require('./triggers/action');
 const triggerOrder = require('./triggers/order');
 const triggerThirdparty = require('./triggers/thirdparty');
+const triggerContact = require('./triggers/contact');
 const triggerTicket = require('./triggers/ticket');
 const triggerUser = require('./triggers/user');
 
@@ -62,6 +63,7 @@ const App = {
         [triggerAction.key]: triggerAction,
         [triggerOrder.key]: triggerOrder,
         [triggerThirdparty.key]: triggerThirdparty,
+        [triggerContact.key]: triggerContact,
         [triggerTicket.key]: triggerTicket,
         [triggerUser.key]: triggerUser,
     },
