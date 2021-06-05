@@ -5,7 +5,7 @@
  * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2015		Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2017		Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2017-2021	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2018		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018		Charlene Benke			<charlie@patas-monkey.com>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
@@ -58,12 +58,18 @@ $socid				= GETPOST('socid', 'int');
 $userid = GETPOST('userid', 'int');
 
 $search_ref = GETPOST("search_ref", "alpha");
-$search_date_start	= dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
-$search_date_end	= dol_mktime(23, 59, 59, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
-$search_company		= GETPOST("search_company", 'alpha');
-$search_paymenttype	= GETPOST("search_paymenttype");
-$search_account		= GETPOST("search_account", "int");
-$search_payment_num	= GETPOST('search_payment_num', 'alpha');
+$search_date_startday = GETPOST('search_date_startday', 'int');
+$search_date_startmonth = GETPOST('search_date_startmonth', 'int');
+$search_date_startyear = GETPOST('search_date_startyear', 'int');
+$search_date_endday = GETPOST('search_date_endday', 'int');
+$search_date_endmonth = GETPOST('search_date_endmonth', 'int');
+$search_date_endyear = GETPOST('search_date_endyear', 'int');
+$search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
+$search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
+$search_company = GETPOST("search_company", 'alpha');
+$search_paymenttype = GETPOST("search_paymenttype");
+$search_account = GETPOST("search_account", "int");
+$search_payment_num = GETPOST('search_payment_num', 'alpha');
 $search_amount = GETPOST("search_amount", 'alpha'); // alpha because we must be able to search on "< x"
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -129,8 +135,13 @@ if (empty($reshook)) {
 	// All tests are required to be compatible with all browsers
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 		$search_ref = '';
+		$search_date_startday = '';
+		$search_date_startmonth = '';
+		$search_date_startyear = '';
+		$search_date_endday = '';
+		$search_date_endmonth = '';
+		$search_date_endyear = '';
 		$search_date_start = '';
-		$search_date_end = '';
 		$search_account = '';
 		$search_amount = '';
 		$search_paymenttype = '';
@@ -276,13 +287,40 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.urlencode($limit);
 }
-$param .= (GETPOST("orphelins") ? "&orphelins=1" : '');
-$param .= ($search_ref ? "&search_ref=".urlencode($search_ref) : '');
-$param .= ($search_date_start ? "&search_date_start=".urlencode($search_date_start) : '');
-$param .= ($search_date_end ? "&search_date_end=".urlencode($search_date_end) : '');
-$param .= ($search_company ? "&search_company=".urlencode($search_company) : '');
-$param .= ($search_amount ? "&search_amount=".urlencode($search_amount) : '');
-$param .= ($search_payment_num ? "&search_payment_num=".urlencode($search_payment_num) : '');
+
+if (GETPOST("orphelins")) {
+	$param .= '&orphelins=1';
+}
+if ($search_ref) {
+	$param .= '&search_ref='.urlencode($search_ref);
+}
+if ($search_date_startday) {
+	$param .= '&search_date_startday='.urlencode($search_date_startday);
+}
+if ($search_date_startmonth) {
+	$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
+}
+if ($search_date_startyear) {
+	$param .= '&search_date_startyear='.urlencode($search_date_startyear);
+}
+if ($search_date_endday) {
+	$param .= '&search_date_endday='.urlencode($search_date_endday);
+}
+if ($search_date_endmonth) {
+	$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
+}
+if ($search_date_endyear) {
+	$param .= '&search_date_endyear='.urlencode($search_date_endyear);
+}
+if ($search_company) {
+	$param .= '&search_company='.urlencode($search_company);
+}
+if ($search_amount != '') {
+	$param .= '&search_amount='.urlencode($search_amount);
+}
+if ($search_payment_num) {
+	$param .= '&search_payment_num='.urlencode($search_payment_num);
+}
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
