@@ -510,20 +510,22 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		if (empty($reshook)) {
 			if ($object->status == $object::STATUS_DRAFT) {
-				print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"].'?rowid='.$memberid.'&action=edit', '', $permissiontoadd);
+				print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"].'?rowid='.$memberid.'&action=edit&token='.newToken(), '', $permissiontoadd);
 			}
 
 			// Show
 			if ($permissiontoadd) {
-				print dolGetButtonAction($langs->trans('ShowPartnership'), '', 'default', dol_buildpath('/partnership/partnership_card.php', 1).'?id='.$object->id, '', $permissiontoadd);
+				print dolGetButtonAction($langs->trans('ManagePartnership'), '', 'default', dol_buildpath('/partnership/partnership_card.php', 1).'?id='.$object->id, '', $permissiontoadd);
 			}
 
 			// Cancel
+			/*
 			if ($permissiontoadd) {
 				if ($object->status == $object::STATUS_ACCEPTED) {
 					print dolGetButtonAction($langs->trans('Cancel'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=close&token='.newToken(), '', $permissiontoadd);
 				}
 			}
+			*/
 		}
 		print '</div>'."\n";
 	}
