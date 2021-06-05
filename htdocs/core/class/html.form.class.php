@@ -6840,9 +6840,12 @@ class Form
 					$obj = $this->db->fetch_object($resql);
 					$label = '';
 					$tmparray = explode(',', $fieldstoshow);
+					$oldvalueforshowoncombobox = 0;
 					foreach ($tmparray as $key => $val) {
 						$val = preg_replace('/t\./', '', $val);
-						$label .= (($label && $obj->$val) ? ' - ' : '').$obj->$val;
+						$label .= (($label && $obj->$val) ? ($oldvalueforshowoncombobox != $objecttmp->fields[$val]['showoncombobox'] ? ' - ' : ' ') : '');
+						$label .= $obj->$val;
+						$oldvalueforshowoncombobox = $objecttmp->fields[$val]['showoncombobox'];
 					}
 					if (empty($outputmode)) {
 						if ($preselectedvalue > 0 && $preselectedvalue == $obj->rowid) {
