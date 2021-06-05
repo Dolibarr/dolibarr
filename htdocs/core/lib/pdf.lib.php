@@ -1349,8 +1349,8 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 
 			// Set note
 			$textwasnotmodified = ($note == $prodser->note_public);
-			if (!empty($prodser->multilangs[$outputlangs->defaultlang]["note"]) && ($textwasnotmodified || $translatealsoifmodified)) {
-				$note = $prodser->multilangs[$outputlangs->defaultlang]["note"];
+			if (!empty($prodser->multilangs[$outputlangs->defaultlang]["other"]) && ($textwasnotmodified || $translatealsoifmodified)) {
+				$note = $prodser->multilangs[$outputlangs->defaultlang]["other"];
 			}
 		}
 	} elseif ($object->element == 'facture' || $object->element == 'facturefourn') {
