@@ -9,6 +9,8 @@ const triggerUser = require('./triggers/user');
 const searchThirdparty = require('./searches/thirdparty');
 
 const createThirdparty = require('./creates/thirdparty');
+const createContact = require('./creates/contact');
+const createMember = require('./creates/member');
 
 const {
     config: authentication,
@@ -76,6 +78,8 @@ const App = {
     // If you want your creates to show up, you better include it here!
     creates: {
         [createThirdparty.key]: createThirdparty,
+        [createContact.key]: createContact,
+        [createMember.key]: createMember,
     }
 };
 
