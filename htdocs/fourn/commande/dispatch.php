@@ -443,7 +443,7 @@ if ($action == 'updateline' && $user->rights->fournisseur->commande->receptionne
 		$product = $supplierorderdispatch->fk_product;
 		$price = price2num(GETPOST('price'), '', 2);
 		$comment = $supplierorderdispatch->comment;
-		$eatby = $supplierorderdispatch->fk_product;
+		$eatby = $supplierorderdispatch->eatby;
 		$sellby = $supplierorderdispatch->sellby;
 		$batch = $supplierorderdispatch->batch;
 
