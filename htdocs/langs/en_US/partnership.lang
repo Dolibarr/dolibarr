@@ -32,10 +32,12 @@ ListOfPartnerships=List of partnership
 PartnershipSetup=Partnership setup
 PartnershipAbout=About Partnership
 PartnershipAboutPage=Partnership about page
-partnershipforthirdpartyormember=Partnership is for a 'thirdparty' or for a 'member'
+partnershipforthirdpartyormember=Partner status must be set on a 'thirdparty' or a 'member'
 PARTNERSHIP_IS_MANAGED_FOR=Partnership managed for
 PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks to check
 PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before cancel status of partnership when subscription is expired
+ReferingWebsiteCheck=Check of website referring
+ReferingWebsiteCheckDesc=You can enable a feature to check that your partners has added a backlink to your website domains on their own website.
 
 #
 # Object
