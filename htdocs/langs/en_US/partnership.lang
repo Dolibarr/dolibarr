@@ -35,7 +35,7 @@ PartnershipAboutPage=Partnership about page
 partnershipforthirdpartyormember=Partner status must be set on a 'thirdparty' or a 'member'
 PARTNERSHIP_IS_MANAGED_FOR=Partnership managed for
 PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks to check
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before cancel status of partnership when subscription is expired
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before cancelling status of a partnership when a subscription has expired
 ReferingWebsiteCheck=Check of website referring
 ReferingWebsiteCheckDesc=You can enable a feature to check that your partners has added a backlink to your website domains on their own website.
 
