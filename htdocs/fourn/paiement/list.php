@@ -49,13 +49,19 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 've
 $socid = GETPOST('socid', 'int');
 
 $search_ref				= GETPOST('search_ref', 'alpha');
-$search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
-$search_date_end = dol_mktime(23, 59, 59, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
-$search_company = GETPOST('search_company', 'alpha');
+$search_date_startday	= GETPOST('search_date_startday', 'int');
+$search_date_startmonth	= GETPOST('search_date_startmonth', 'int');
+$search_date_startyear	= GETPOST('search_date_startyear', 'int');
+$search_date_endday		= GETPOST('search_date_endday', 'int');
+$search_date_endmonth	= GETPOST('search_date_endmonth', 'int');
+$search_date_endyear	= GETPOST('search_date_endyear', 'int');
+$search_date_start		= dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
+$search_date_end		= dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
+$search_company			= GETPOST('search_company', 'alpha');
 $search_payment_type	= GETPOST('search_payment_type');
-$search_cheque_num = GETPOST('search_cheque_num', 'alpha');
+$search_cheque_num		= GETPOST('search_cheque_num', 'alpha');
 $search_bank_account	= GETPOST('search_bank_account', 'int');
-$search_amount = GETPOST('search_amount', 'alpha'); // alpha because we must be able to search on '< x'
+$search_amount			= GETPOST('search_amount', 'alpha'); // alpha because we must be able to search on '< x'
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield				= GETPOST('sortfield', 'alpha');
@@ -135,6 +141,12 @@ if (empty($reshook)) {
 
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {	// All tests are required to be compatible with all browsers
 		$search_ref = '';
+		$search_date_startday = '';
+		$search_date_startmonth = '';
+		$search_date_startyear = '';
+		$search_date_endday = '';
+		$search_date_endmonth = '';
+		$search_date_endyear = '';
 		$search_date_start = '';
 		$search_date_end = '';
 		$search_company = '';
@@ -259,11 +271,23 @@ if ($optioncss != '') {
 if ($search_ref) {
 	$param .= '&search_ref='.urlencode($search_ref);
 }
-if ($search_date_start) {
-	$param.= '&search_date_start='.urlencode($search_date_start);
+if ($search_date_startday) {
+	$param .= '&search_date_startday='.urlencode($search_date_startday);
 }
-if ($search_date_end) {
-	$param.= '&search_date_end='.urlencode($search_date_end);
+if ($search_date_startmonth) {
+	$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
+}
+if ($search_date_startyear) {
+	$param .= '&search_date_startyear='.urlencode($search_date_startyear);
+}
+if ($search_date_endday) {
+	$param .= '&search_date_endday='.urlencode($search_date_endday);
+}
+if ($search_date_endmonth) {
+	$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
+}
+if ($search_date_endyear) {
+	$param .= '&search_date_endyear='.urlencode($search_date_endyear);
 }
 if ($search_company) {
 	$param .= '&search_company='.urlencode($search_company);
