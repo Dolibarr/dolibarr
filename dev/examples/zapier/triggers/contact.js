@@ -52,16 +52,6 @@ const getContact = (z, bundle) => {
         zip: bundle.cleanedRequest.zip,
         town: bundle.cleanedRequest.town,
         email: bundle.cleanedRequest.email,
-        client: bundle.cleanedRequest.client,
-        fournisseur: bundle.cleanedRequest.fournisseur,
-        code_client: bundle.cleanedRequest.code_client,
-        code_fournisseur: bundle.cleanedRequest.code_fournisseur,
-        idprof1: bundle.cleanedRequest.idprof1,
-        idprof2: bundle.cleanedRequest.idprof2,
-        idprof3: bundle.cleanedRequest.idprof3,
-        idprof4: bundle.cleanedRequest.idprof4,
-        idprof5: bundle.cleanedRequest.idprof5,
-        idprof6: bundle.cleanedRequest.idprof6,
         authorId: bundle.cleanedRequest.authorId,
         createdAt: bundle.cleanedRequest.createdAt,
         action: bundle.cleanedRequest.action
@@ -117,7 +107,7 @@ module.exports = {
     noun: 'Contact',
     display: {
         label: 'New Contact',
-        description: 'Triggers when a new thirdpaty action is done in Dolibarr.'
+        description: 'Triggers when a new contact action is done in Dolibarr.'
     },
 
     // `operation` is where the business logic goes.
