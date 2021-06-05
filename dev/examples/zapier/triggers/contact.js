@@ -52,6 +52,9 @@ const getContact = (z, bundle) => {
         zip: bundle.cleanedRequest.zip,
         town: bundle.cleanedRequest.town,
         email: bundle.cleanedRequest.email,
+        phone_pro: bundle.cleanedRequest.phone_pro,
+        phone_perso: bundle.cleanedRequest.phone_perso,
+        phone_mobile: bundle.cleanedRequest.phone_mobile,
         authorId: bundle.cleanedRequest.authorId,
         createdAt: bundle.cleanedRequest.createdAt,
         action: bundle.cleanedRequest.action
@@ -158,6 +161,9 @@ module.exports = {
             {key: 'createdAt', label: 'Created At'},
             {key: 'lastname', label: 'Lastname'},
             {key: 'firstname', label: 'Firstname'},
+            {key: 'phone', label: 'Phone pro'},
+            {key: 'phone_perso', label: 'Phone perso'},
+            {key: 'phone_mobile', label: 'Phone mobile'},
             {key: 'authorId', type: "integer", label: 'Author ID'},
             {key: 'action', label: 'Action'}
         ]
