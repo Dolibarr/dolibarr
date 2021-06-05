@@ -1901,6 +1901,12 @@ class ActionComm extends CommonObject
 						$sql .= " AND ar.fk_element = 0";
 					}
 				}
+				if ($key == 'module') {
+					$sql .= " AND c.module LIKE '%".$this->db->escape($value)."'";
+				}
+				if ($key == 'status') {
+					$sql .= " AND a.status =".((int) $value);
+				}
 			}
 
 			$sql .= " AND a.datep IS NOT NULL"; // To exclude corrupted events and avoid errors in lightning/sunbird import
@@ -1938,6 +1944,7 @@ class ActionComm extends CommonObject
 
 					$duration = ($datestart && $dateend) ? ($dateend - $datestart) : 0;
 					$event['summary'] = $obj->label.($obj->socname ? " (".$obj->socname.")" : "");
+
 					$event['desc'] = $obj->note;
 					$event['startdate'] = $datestart;
 					$event['enddate'] = $dateend; // Not required with type 'journal'

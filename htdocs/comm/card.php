@@ -184,6 +184,15 @@ if (empty($reshook)) {
 		}
 	}
 
+	// transport mode
+	if ($action == 'settransportmode' && $user->rights->societe->creer) {
+		$object->fetch($id);
+		$result = $object->setTransportMode(GETPOST('transport_mode_id', 'alpha'));
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+
 	// Bank account
 	if ($action == 'setbankaccount' && $user->rights->societe->creer) {
 		$object->fetch($id);
@@ -580,9 +589,9 @@ if ($object->id > 0) {
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'edittransportmode') {
-			$form->formSelectTransportMode($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->fk_transport_mode, 'fk_transport_mode', 1);
+			$form->formSelectTransportMode($_SERVER['PHP_SELF'].'?socid='.$object->id, (!empty($object->transport_mode_id) ? $object->transport_mode_id : ''), 'transport_mode_id', 1);
 		} else {
-			$form->formSelectTransportMode($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->fk_transport_mode, 'none');
+			$form->formSelectTransportMode($_SERVER['PHP_SELF'].'?socid='.$object->id, (!empty($object->transport_mode_id) ? $object->transport_mode_id : ''), 'none');
 		}
 		print "</td>";
 		print '</tr>';
@@ -874,6 +883,7 @@ if ($object->id > 0) {
 		$sql .= ", c.total_ttc";
 		$sql .= ", c.ref, c.ref_client, c.fk_statut, c.facture";
 		$sql .= ", c.date_commande as dc";
+		$sql .= ", c.facture as billed";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
 		$sql .= " WHERE c.fk_soc = s.rowid ";
 		$sql .= " AND s.rowid = ".$object->id;

@@ -67,6 +67,13 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 154, 'SAT/24-2019', 'Catalogo y codigo agrupador fiscal del 2019', 1);
 
 
+UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'auguria';
+UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'bureau2crea';
+UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'amarok';
+UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'cameleo';
+DELETE FROM llx_user_param where param = 'MAIN_THEME' and value in ('auguria', 'amarok', 'cameleo');
+
+
 -- For v14
 
 ALTER TABLE llx_product_lot ADD COLUMN eol_date datetime NULL;
@@ -411,7 +418,7 @@ UPDATE llx_propal SET fk_user_signature = fk_user_cloture WHERE fk_user_signatur
 UPDATE llx_propal SET date_signature = date_cloture WHERE date_signature IS NULL AND date_cloture IS NOT NULL;
 
 
-ALTER TABLE llx_product ADD COLUMN batch_mask VARCHAR(32) NULL;
+ALTER TABLE llx_product ADD COLUMN batch_mask VARCHAR(32) DEFAULT NULL;
 ALTER TABLE llx_product ADD COLUMN lifetime INTEGER NULL;
 ALTER TABLE llx_product ADD COLUMN qc_frequency INTEGER NULL;
 

@@ -121,7 +121,7 @@ $form = new Form($db);
 $productstatic = new Product($db);
 $companystatic = new Societe($db);
 
-$title = $langs->trans("ProductsAndServices");
+$title = $langs->trans('Supplier')." - ".$langs->trans('ProductsAndServices');
 
 if ($fourn_id) {
 	$supplier = new Fournisseur($db);

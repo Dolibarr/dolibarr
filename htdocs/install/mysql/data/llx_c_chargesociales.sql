@@ -50,10 +50,10 @@ insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays
 --
 -- Belgique
 --
-insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (201, 'ONSS',						1,1,'TAXBEONSS'   ,'2');
-insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (210, 'Precompte professionnel', 	1,1,'TAXBEPREPRO' ,'2');
-insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (220, 'Prime existence',    		1,1,'TAXBEPRIEXI' ,'2');
-insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (230, 'Precompte immobilier',      1,1,'TAXBEPREIMMO','2');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values ('2', 201, 'ONSS',						1,1,'TAXBEONSS');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values ('2', 210, 'Precompte professionnel', 	1,1,'TAXBEPREPRO');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values ('2', 220, 'Prime existence',    		1,1,'TAXBEPRIEXI');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values ('2', 230, 'Precompte immobilier',      1,1,'TAXBEPREIMMO');
 
 --
 -- Austria

@@ -59,8 +59,9 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
-require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/paymentterm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -75,31 +76,27 @@ $error = 0;
 $backtopage = GETPOST('backtopage', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
+$eventtype = GETPOST("eventtype");
 $email = GETPOST("email");
 $societe = GETPOST("societe");
+$label = GETPOST("label");
+$note = GETPOST("note");
+$datestart = GETPOST("datestart");
+$dateend = GETPOST("dateend");
 
-// Getting id from Post and decoding it
 $id = GETPOST('id');
 
-$conference = new ConferenceOrBooth($db);
-$resultconf = $conference->fetch($id);
-if ($resultconf < 0) {
-	setEventMessages(null, $conference->errors, "errors");
-}
-
 $project = new Project($db);
-$resultproject = $project->fetch($conference->fk_project);
+$resultproject = $project->fetch($id);
 if ($resultproject < 0) {
 	$error++;
 	$errmsg .= $project->error;
 }
 
-
 // Security check
-$securekeyreceived = GETPOST('securekey', 'alpha');
+$securekeyreceived = GETPOST("securekey");
 $securekeytocompare = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
 
-// We check if the securekey collected is OK
 if ($securekeytocompare != $securekeyreceived) {
 	print $langs->trans('MissingOrBadSecureKey');
 	exit;
@@ -115,6 +112,8 @@ $extrafields = new ExtraFields($db);
 
 $user->loadDefaultValues();
 
+$cactioncomm = new CActionComm($db);
+$arrayofeventtype = $cactioncomm->liste_array('', 'id', '', 0, 'module=\'conference@eventorganization\'');
 
 /**
  * Show header for new member
@@ -204,8 +203,35 @@ if (empty($reshook) && $action == 'add') {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Email"))."<br>\n";
 	}
-	// If the price has been set, name is required for the invoice
-	if (!GETPOST("societe") && !empty(floatval($project->price_registration))) {
+	if (!GETPOST("label")) {
+		$error++;
+		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label"))."<br>\n";
+	}
+	if (!GETPOST("note")) {
+		$error++;
+		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Note"))."<br>\n";
+	}
+	if (!GETPOST("datestart")) {
+		$error++;
+		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateStart"))."<br>\n";
+	}
+	if (!GETPOST("dateend")) {
+		$error++;
+		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateEnd"))."<br>\n";
+	}
+	if (!GETPOST("email")) {
+		$error++;
+		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Email"))."<br>\n";
+	}
+	if (!GETPOST("lastname")) {
+		$error++;
+			$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Lastname"))."<br>\n";
+	}
+	if (!GETPOST("firstname")) {
+		$error++;
+		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Firstname"))."<br>\n";
+	}
+	if (!GETPOST("societe")) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Societe"))."<br>\n";
 	}
@@ -214,70 +240,15 @@ if (empty($reshook) && $action == 'add') {
 		$langs->load("errors");
 		$errmsg .= $langs->trans("ErrorBadEMail", GETPOST("email"))."<br>\n";
 	}
-	if (!GETPOST("country_id")) {
-		$error++;
-		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Country"))."<br>\n";
-	}
 
 	if (!$error) {
-		// Check if attendee already exists (by email and for this event)
-		$confattendee = new ConferenceOrBoothAttendee($db);
-		$resultfetchconfattendee = $confattendee->fetchAll('', '', 0, 0, array('t.fk_actioncomm'=>$id, 'customsql'=>'t.email="'.$email.'"'));
-		if ($resultfetchconfattendee > 0 && count($resultfetchconfattendee)>0) {
-			// Found confattendee
-			$confattendee = array_shift($resultfetchconfattendee);
-		} else {
-			// Need to create a confattendee
-			$confattendee->date_subscription = dol_now();
-			$confattendee->email = $email;
-			$confattendee->fk_actioncomm = $id;
-			$resultconfattendee = $confattendee->create($user);
-			if ($resultconfattendee < 0) {
-				$error++;
-				$errmsg .= $confattendee->error;
-			}
-		}
-		// At this point, we have an attendee. It may not be linked to a thirdparty if we just created it
-
-		// If the attendee has already paid
-		if ($confattendee->status == 1) {
-			$securekeyurl = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
-			$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.$id.'&securekey='.$securekeyurl;
-			Header("Location: ".$redirection);
-			exit;
-		}
 		// Getting the thirdparty or creating it
 		$thirdparty = new Societe($db);
-		// Fetch using fk_soc if the attendee was already existing
-		if (!empty($confattendee->fk_soc)) {
-			$resultfetchthirdparty = $thirdparty->fetch($confattendee->fk_soc);
-		} else {
-			// Fetch using the input field by user if we just created the attendee
-			if (!empty($societe)) {
-				$resultfetchthirdparty = $thirdparty->fetch('', $societe);
-				if ($resultfetchthirdparty<=0) {
-					// Need to create a new one (not found or multiple with the same name)
-					$resultfetchthirdparty = 0;
-				} else {
-					// We found an unique result with that name, so we put in in fk_soc of attendee
-					$confattendee->fk_soc = $thirdparty->id;
-					$confattendee->update($user);
-				}
-			} else {
-				// Need to create a thirdparty (put number>0 if we do not want to create a thirdparty for free-conferences)
-				$resultfetchthirdparty = 0;
-			}
-		}
-		if ($resultfetchthirdparty<0) {
-			$error++;
-			$errmsg .= $thirdparty->error;
-		} elseif ($resultfetchthirdparty==0) {
-			// creation of a new thirdparty
-			if (!empty($societe)) {
-				$thirdparty->name     = $societe;
-			} else {
-				$thirdparty->name     = $email;
-			}
+		$resultfetchthirdparty = $thirdparty->fetch('', $societe);
+
+		if ($resultfetchthirdparty<=0) {
+			// Need to create a new one (not found or multiple with the same name)
+			$thirdparty->name     = $societe;
 			$thirdparty->address      = GETPOST("address");
 			$thirdparty->zip          = GETPOST("zipcode");
 			$thirdparty->town         = GETPOST("town");
@@ -312,127 +283,156 @@ if (empty($reshook) && $action == 'add') {
 			} else {
 				$thirdparty->country_code = getCountry($thirdparty->country_id, 2, $db, $langs);
 				$thirdparty->country      = getCountry($thirdparty->country_code, 0, $db, $langs);
-				$confattendee->fk_soc     = $thirdparty->id;
-				$confattendee->update($user);
+			}
+		}
+		// From there we have a thirdparty, now looking for the contact
+		if (!$error) {
+			$contact = new Contact($db);
+			$resultcontact = $contact->fetch('', '', '', $email);
+			if ($resultcontact<=0) {
+				// Need to create a contact
+				$contact->socid = $thirdparty->id;
+				$contact->lastname = (string) GETPOST("lastname", 'alpha');
+				$contact->firstname = (string) GETPOST("firstname", 'alpha');
+				$contact->address = (string) GETPOST("address", 'alpha');
+				$contact->zip = (string) GETPOST("zipcode", 'alpha');
+				$contact->town = (string) GETPOST("town", 'alpha');
+				$contact->country_id = (int) GETPOST("country_id", 'int');
+				$contact->state_id = (int) GETPOST("state_id", 'int');
+				$contact->email = $email;
+				$contact->statut = 1; //Default status to Actif
+				$resultcreatecontact = $contact->create($user);
+				if ($resultcreatecontact<0) {
+					$error++;
+					$errmsg .= $contact->error;
+				}
+			}
+		}
+
+		if (!$error) {
+			// Adding supplier tag and tag from setup to thirdparty
+			$category = new Categorie($db);
+
+			$resultcategory = $category->fetch($conf->global->EVENTORGANIZATION_CATEG_THIRDPARTY_CONF);
+
+			if ($resultcategory<=0) {
+				$error++;
+				$errmsg .= $category->error;
+			} else {
+				$resultsetcategory = $thirdparty->setCategoriesCommon(array($category->id), CATEGORIE::TYPE_CUSTOMER, false);
+				if ($resultsetcategory < 0) {
+					$error++;
+					$errmsg .= $thirdparty->error;
+				} else {
+					$thirdparty->fournisseur = 1;
+
+					// Load object modCodeFournisseur
+					$module = (!empty($conf->global->SOCIETE_CODECLIENT_ADDON) ? $conf->global->SOCIETE_CODECLIENT_ADDON : 'mod_codeclient_leopard');
+					if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php') {
+						$module = substr($module, 0, dol_strlen($module) - 4);
+					}
+					$dirsociete = array_merge(array('/core/modules/societe/'), $conf->modules_parts['societe']);
+					foreach ($dirsociete as $dirroot) {
+						$res = dol_include_once($dirroot.$module.'.php');
+						if ($res) {
+							break;
+						}
+					}
+					$modCodeFournisseur = new $module;
+					if (empty($tmpcode) && !empty($modCodeFournisseur->code_auto)) {
+						$tmpcode = $modCodeFournisseur->getNextValue($thirdparty, 1);
+					}
+					$thirdparty->code_fournisseur = $tmpcode;
+
+					$res = $thirdparty->update(0, $user, 1, 1, 1);
+
+					if ($res <= 0) {
+						$error++;
+					}
+				}
+			}
+		}
+
+		if (!$error) {
+			// We have the contact and the thirdparty
+			$conforbooth = new ConferenceOrBooth($db);
+			$conforbooth->label = $label;
+			$conforbooth->fk_soc = $thirdparty->id;
+			$conforbooth->fk_project = $project->id;
+			$conforbooth->note = $note;
+			$conforbooth->fk_action = $eventtype;
+			$conforbooth->datep =$datestart;
+			$conforbooth->datep2 = $dateend;
+			$conforbooth->datec = dol_now();
+			$conforbooth->tms = dol_now();
+			$conforbooth->firstname = $contact->firstname;
+			$conforbooth->lastname = $contact->lastname;
+			$resultconforbooth = $conforbooth->create($user);
+			if ($resultconforbooth<=0) {
+				$error++;
+				$errmsg .= $conforbooth->error;
+			} else {
+				// Adding the contact to the project
+				$resultaddcontact = $conforbooth->add_contact($contact->id, 'SPEAKER');
+				if ($resultaddcontact<0) {
+					$error++;
+					$errmsg .= $conforbooth->error;
+				} else {
+					$conforbooth->status = ConferenceOrBooth::STATUS_SUGGESTED;
+					$conforbooth->update($user);
+
+					// Sending mail
+					require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+					$formmail = new FormMail($db);
+					// Set output language
+					$outputlangs = new Translate('', $conf);
+					$outputlangs->setDefaultLang(empty($thirdparty->default_lang) ? $mysoc->default_lang : $thirdparty->default_lang);
+					// Load traductions files required by page
+					$outputlangs->loadLangs(array("main", "members"));
+					// Get email content from template
+					$arraydefaultmessage = null;
+
+					$labeltouse = $conf->global->EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF;
+					if (!empty($labeltouse)) {
+						$arraydefaultmessage = $formmail->getEMailTemplate($db, 'eventorganization_send', $user, $outputlangs, $labeltouse, 1, '');
+					}
+
+					if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+						$subject = $arraydefaultmessage->topic;
+						$msg     = $arraydefaultmessage->content;
+					}
+
+					$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $thirdparty);
+					complete_substitutions_array($substitutionarray, $outputlangs, $object);
+
+					$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
+					$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
+
+					$sendto = $thirdparty->email;
+					$from = $conf->global->MAILING_EMAIL_FROM;
+					$urlback = $_SERVER["REQUEST_URI"];
+
+					$ishtml = dol_textishtml($texttosend); // May contain urls
+
+					$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, $ishtml);
+
+					$result = $mailfile->sendfile();
+					if ($result) {
+						dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_payment');
+					} else {
+						dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
+					}
+				}
 			}
 		}
 	}
-
 	if (!$error) {
 		$db->commit();
-		if (!empty(floatval($project->price_registration))) {
-			$productforinvoicerow = new Product($db);
-			$resultprod = $productforinvoicerow->fetch($conf->global->SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION);
-			if ($resultprod < 0) {
-				$error++;
-				$errmsg .= $productforinvoicerow->error;
-			} else {
-				$facture = new Facture($db);
-				$facture->type = Facture::TYPE_STANDARD;
-				$facture->socid = $thirdparty->id;
-				$facture->paye = 0;
-				$facture->date = dol_now();
-				$facture->cond_reglement_id = $confattendee->cond_reglement_id;
-				$facture->fk_project = $project->id;
-				if (empty($facture->cond_reglement_id)) {
-					$paymenttermstatic = new PaymentTerm($confattendee->db);
-					$facture->cond_reglement_id = $paymenttermstatic->getDefaultId();
-					if (empty($facture->cond_reglement_id)) {
-						$error++;
-						$confattendee->error = 'ErrorNoPaymentTermRECEPFound';
-						$confattendee->errors[] = $confattendee->error;
-					}
-				}
-				$resultfacture = $facture->create($user);
-				if ($resultfacture <= 0) {
-					$confattendee->error = $facture->error;
-					$confattendee->errors = $facture->errors;
-					$error++;
-				} else {
-					$facture->add_object_linked($confattendee->element, $confattendee->id);
-				}
-			}
-
-			if (!$error) {
-				// Add line to draft invoice
-				$vattouse = get_default_tva($mysoc, $thirdparty, $productforinvoicerow->id);
-				$result = $facture->addline($langs->trans("ConferenceAttendeeFee", $conference->label, dol_print_date($conference->datep, '%d/%m/%y %H:%M:%S'), dol_print_date($conference->datep2, '%d/%m/%y %H:%M:%S')), floatval($project->price_registration), 1, $vattouse, 0, 0, $productforinvoicerow->id, 0, dol_now(), '', 0, 0, '', 'HT', 0, 1);
-				if ($result <= 0) {
-					$confattendee->error = $facture->error;
-					$confattendee->errors = $facture->errors;
-					$error++;
-				}
-				if (!$error) {
-					$valid = true;
-					$sourcetouse = 'conferencesubscription';
-					$reftouse = $facture->id;
-					$redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php?source='.$sourcetouse.'&ref='.$reftouse;
-					if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
-						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-							$redirection .= '&securekey='.dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . $sourcetouse . $reftouse, 2); // Use the source in the hash to avoid duplicates if the references are identical
-						} else {
-							$redirection .= '&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
-						}
-					}
-					Header("Location: ".$redirection);
-					exit;
-				}
-			}
-		} else {
-			// No price has been set
-			// Validating the subscription
-			$confattendee->setStatut(1);
-
-			// Sending mail
-			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-			$formmail = new FormMail($db);
-			// Set output language
-			$outputlangs = new Translate('', $conf);
-			$outputlangs->setDefaultLang(empty($thirdparty->default_lang) ? $mysoc->default_lang : $thirdparty->default_lang);
-			// Load traductions files required by page
-			$outputlangs->loadLangs(array("main", "members"));
-			// Get email content from template
-			$arraydefaultmessage = null;
-
-			$labeltouse = $conf->global->EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT;
-			if (!empty($labeltouse)) {
-				$arraydefaultmessage = $formmail->getEMailTemplate($db, 'eventorganization_send', $user, $outputlangs, $labeltouse, 1, '');
-			}
-
-			if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
-				$subject = $arraydefaultmessage->topic;
-				$msg     = $arraydefaultmessage->content;
-			}
-
-			$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $thirdparty);
-			complete_substitutions_array($substitutionarray, $outputlangs, $object);
-
-			$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
-			$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
-
-			$sendto = $thirdparty->email;
-			$from = $conf->global->MAILING_EMAIL_FROM;
-			$urlback = $_SERVER["REQUEST_URI"];
-
-			$ishtml = dol_textishtml($texttosend); // May contain urls
-
-			$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, $ishtml);
-
-			$result = $mailfile->sendfile();
-			if ($result) {
-				dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_payment');
-			} else {
-				dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
-			}
-
-			$securekeyurl = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
-			$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.$id.'&securekey='.$securekeyurl;
-			Header("Location: ".$redirection);
-			exit;
-		}
-		//Header("Location: ".$urlback);
-		//exit;
+		$securekeyurl = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
+		$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.$id.'&securekey='.$securekeyurl;
+		Header("Location: ".$redirection);
+		exit;
 	} else {
 		$db->rollback();
 	}
@@ -446,10 +446,10 @@ if (empty($reshook) && $action == 'add') {
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 
-llxHeaderVierge($langs->trans("NewSubscription"));
+llxHeaderVierge($langs->trans("NewSuggestion"));
 
 
-print load_fiche_titre($langs->trans("NewSubscription"), '', '', 0, 0, 'center');
+print load_fiche_titre($langs->trans("NewSuggestion"), '', '', 0, 0, 'center');
 
 
 print '<div align="center">';
@@ -457,9 +457,10 @@ print '<div id="divsubscribe">';
 print '<div class="center subscriptionformhelptext justify">';
 
 // Welcome message
-print $langs->trans("EvntOrgWelcomeMessage", $conference->label);
-print '<br>';
-print $langs->trans("EvntOrgDuration", dol_print_date($conference->datep), dol_print_date($conference->datef));
+$text  = '<tr><td class="textpublicpayment"><strong>'.$langs->trans("EvntOrgRegistrationConfWelcomeMessage").'</strong></td></tr></br>';
+$text .= '<tr><td class="textpublicpayment">'.$langs->trans("EvntOrgRegistrationConfHelpMessage").' '.$id.'.<br><br></td></tr>'."\n";
+$text .= '<tr><td class="textpublicpayment">'.$project->note_public.'</td></tr>'."\n";;
+print $text;
 print '</div>';
 
 dol_htmloutput_errors($errmsg);
@@ -492,14 +493,34 @@ jQuery(document).ready(function () {
 
 print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."\n";
 
+// Last Name
+print '<tr><td><label for="lastname">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'<FONT COLOR="red">*</FONT></label></td>';
+print '<td colspan="3"><input name="lastname" id="lastname" type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("lastname", 'alpha') ?GETPOST("lastname", 'alpha') : $object->lastname).'" autofocus="autofocus"></td>';
+print '</tr>';
+// First Name
+print '<tr><td><label for="firstname">'.$langs->trans("Firstname").' / '.$langs->trans("Label").'<FONT COLOR="red">*</FONT></label></td>';
+print '<td colspan="3"><input name="firstname" id="firstname" type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("firstname", 'alpha') ?GETPOST("firstname", 'alpha') : $object->firstname).'" autofocus="autofocus"></td>';
+print '</tr>';
 // Email
 print '<tr><td>'.$langs->trans("Email").'<FONT COLOR="red">*</FONT></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
 // Company
-print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company");
-if (!empty(floatval($project->price_registration))) {
-	print '<FONT COLOR="red">*</FONT>';
-}
+print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").'<FONT COLOR="red">*</FONT>';
 print ' </td><td><input type="text" name="societe" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
+// Type of event
+print '<tr><td>'.$langs->trans("EventType").'<FONT COLOR="red">*</FONT></td>'."\n";
+print '<td>'.FORM::selectarray('eventtype', $arrayofeventtype, $eventtype).'</td>';
+// Label
+print '<tr><td>'.$langs->trans("Label").'<FONT COLOR="red">*</FONT></td>'."\n";
+print '</td><td><input type="text" name="label" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('label')).'"></td></tr>'."\n";
+// Note
+print '<tr><td>'.$langs->trans("Note").'<FONT COLOR="red">*</FONT></td>'."\n";
+print '<td><input type="text" name="note" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('note')).'"></td></tr>'."\n";
+// Start Date
+print '<tr><td>'.$langs->trans("DateStart").'</td>'."\n";
+print '<td><input type="date" name="datestart" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('datestart')).'"></td></tr>'."\n";
+// End Date
+print '<tr><td>'.$langs->trans("DateEnd").'</td>'."\n";
+print '<td><input type="date" name="dateend" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('dateend')).'"></td></tr>'."\n";
 // Address
 print '<tr><td>'.$langs->trans("Address").'</td><td>'."\n";
 print '<textarea name="address" id="address" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('address', 'restricthtml'), 0, 1).'</textarea></td></tr>'."\n";
@@ -510,7 +531,7 @@ print ' / ';
 print $formcompany->select_ziptown(GETPOST('town'), 'town', array('zipcode', 'selectcountry_id', 'state_id'), 0, 1);
 print '</td></tr>';
 // Country
-print '<tr><td>'.$langs->trans('Country').'<FONT COLOR="red">*</FONT></td><td>';
+print '<tr><td>'.$langs->trans('Country').'</td><td>';
 $country_id = GETPOST('country_id');
 if (!$country_id && !empty($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE)) {
 	$country_id = getCountry($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE, 2, $db, $langs);
@@ -544,13 +565,14 @@ print "</table>\n";
 
 print dol_get_fiche_end();
 
-// Save
+
+// Show all action buttons
 print '<div class="center">';
-print '<input type="submit" value="'.$langs->trans("Submit").'" id="submitsave" class="button">';
-if (!empty($backtopage)) {
-	print ' &nbsp; &nbsp; <input type="submit" value="'.$langs->trans("Cancel").'" id="submitcancel" class="button button-cancel">';
-}
-print '</div>';
+print '<br>';
+print '<input type="submit" value="'.$langs->trans("SuggestConference").'" name="suggestconference"  id="suggestconference" class="button">';
+print '<br><br>';
+
+
 
 
 print "</form>\n";

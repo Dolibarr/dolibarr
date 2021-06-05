@@ -48,6 +48,7 @@ $confirm = GETPOST('confirm', 'alpha');
 $urlfrom = GETPOST('urlfrom');
 
 $object = new Mailing($db);
+
 $result = $object->fetch($id);
 
 $extrafields = new ExtraFields($db);
@@ -78,7 +79,7 @@ $listofmethods['mail'] = 'PHP mail function';
 $listofmethods['smtps'] = 'SMTP/SMTPS socket library';
 
 // Security check
-if (!$user->rights->mailing->lire || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->socid > 0)) {
+if (empty($user->rights->mailing->lire) || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->socid > 0)) {
 	accessforbidden();
 }
 
@@ -408,7 +409,7 @@ if (empty($reshook)) {
 				dol_syslog($db->error());
 				dol_print_error($db);
 			}
-
+			$object->fetch($id);
 			$action = '';
 		}
 	}
