@@ -450,6 +450,8 @@ CREATE TABLE llx_partnership(
 	model_pdf varchar(255)
 ) ENGINE=innodb;
 
+ALTER TABLE llx_partnership ADD COLUMN last_check_backlink datetime NULL;
+
 ALTER TABLE llx_partnership ADD INDEX idx_partnership_rowid (rowid);
 ALTER TABLE llx_partnership ADD INDEX idx_partnership_ref (ref);
 ALTER TABLE llx_partnership ADD INDEX idx_partnership_fk_soc (fk_soc);
