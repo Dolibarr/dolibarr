@@ -7,6 +7,7 @@ const triggerTicket = require('./triggers/ticket');
 const triggerUser = require('./triggers/user');
 
 const searchThirdparty = require('./searches/thirdparty');
+const searchContact = require('./searches/contact');
 
 const createThirdparty = require('./creates/thirdparty');
 const createContact = require('./creates/contact');
@@ -73,6 +74,7 @@ const App = {
     // If you want your searches to show up, you better include it here!
     searches: {
         [searchThirdparty.key]: searchThirdparty,
+        [searchContact.key]: searchContact,
     },
 
     // If you want your creates to show up, you better include it here!
