@@ -122,7 +122,22 @@ class Validate
 	public function isTimestamp($stamp)
 	{
 		if (!is_numeric($stamp) && (int)$stamp == $stamp) {
-			$this->error = $this->outputLang->trans('RequireValideDate');
+			$this->error = $this->outputLang->trans('RequireValidDate');
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Check for phone validity
+	 *
+	 * @param string $phone Phone string to validate
+	 * @return boolean Validity is ok or not
+	 */
+	public function isPhone($phone)
+	{
+		if (!preg_match('/^[+0-9. ()-]*$/ui', $phone)) {
+			$this->error = $this->outputLang->trans('RequireValidPhone');
 			return false;
 		}
 		return true;
@@ -191,4 +206,101 @@ class Validate
 		return true;
 	}
 
+	/**
+	 * Check Duration validity
+	 *
+	 * @param string $duration to validate
+	 * @return boolean Validity is ok or not
+	 */
+	public function isDuration($duration)
+	{
+		if (!is_int($duration) && $duration >= 0) {
+			$this->error = $this->outputLang->trans('RequireValidDuration');
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Check for boolean validity
+	 *
+	 * @param boolean $bool Boolean to validate
+	 * @return boolean Validity is ok or not
+	 */
+	public function isBool($bool)
+	{
+		if(!(is_null($bool) || is_bool($bool) || preg_match('/^[0|1]{1}$/ui', $bool))){
+			$this->error = $this->outputLang->trans('RequireValidBool');
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Check for all values in db
+	 *
+	 * @param array  $values Boolean to validate
+	 * @param string $table  the db table name without MAIN_DB_PREFIX
+	 * @param string $col    the target col
+	 * @return boolean Validity is ok or not
+	 * @throws Exception
+	 */
+	public function isInDb($values, $table, $col)
+	{
+		if (!is_array($values)) {
+			$value_arr = array($values);
+		} else {
+			$value_arr = $values;
+		}
+
+		if (!count($value_arr)) {
+			$this->error = $this->outputLang->trans('RequireValue');
+			return false;
+		}
+
+		foreach ($value_arr as $val){
+			$val = $this->db->escape($val);
+			$sql = 'SELECT ' . $col . ' FROM ' . MAIN_DB_PREFIX . $table . " WHERE " . $col ." = '" . $val . "'"; // nore quick than count(*) to check existing of a row
+			$resql = $this->db->getRow($sql);
+			if ($resql) {
+				continue;
+			} else {
+				$this->error = $this->outputLang->trans('RequireValidExistingElement');
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Check for all values in db
+	 *
+	 * @param array  $values    Boolean to validate
+	 * @param string $classname the class name
+	 * @param string $classpath the class path
+	 * @return boolean Validity is ok or not
+	 * @throws Exception
+	 */
+	public function isFetchable($values, $classname, $classpath)
+	{
+		if (!empty($classpath)) {
+			if (dol_include_once($classpath)) {
+				if ($classname && class_exists($classname)) {
+					/** @var CommonObject $object */
+					$object = new $classname($this->db);
+
+					if (!is_callable(array($object, 'fetch')) || !is_callable(array($object, 'isExistingObject'))) {
+						$this->error = $this->outputLang->trans('BadSetupOfFieldFetchNotCallable');
+						return false;
+					}
+
+					if (!empty($object->table_element) && $object->isExistingObject($object->table_element, $values)) {
+						return true;
+					} else { $this->error = $this->outputLang->trans('RequireValidExistingElement'); }
+				} else { $this->error = $this->outputLang->trans('BadSetupOfFieldClassNotFoundForValidation'); }
+			} else { $this->error = $this->outputLang->trans('BadSetupOfFieldFileNotFound'); }
+		} else { $this->error = $this->outputLang->trans('BadSetupOfField'); }
+		return false;
+	}
 }

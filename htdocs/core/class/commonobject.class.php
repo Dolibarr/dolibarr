@@ -7286,11 +7286,12 @@ abstract class CommonObject
 	}
 
 	/**
-	 * Return validation test for a field
+	 * Return validation test result for a field
 	 *
-	 * @param  array   $val		       Array of properties of field to show
-	 * @param  string  $key            Key of attribute
-	 * @return   int				  >0 if OK, <0 if KO , 0 no test available.
+	 * @param  array   $val		       		Array of properties of field to show
+	 * @param  string  $fieldKey            Key of attribute
+	 * @param  string  $fieldValue          value of attribute
+	 * @return bool return false if fail true on success, see $this->error for error message
 	 */
 	public function validateField($val, $fieldKey, $fieldValue)
 	{
@@ -7301,7 +7302,7 @@ abstract class CommonObject
 		// TODO : ask @eldy to know if need to use another error field to separate error msg
 		$this->error = ''; // error will be use for form error display so must be clear before
 
-		if(!isset($val[$fieldKey])){
+		if (!isset($val[$fieldKey])) {
 			return false;
 		}
 
@@ -7310,13 +7311,13 @@ abstract class CommonObject
 		$type  = $val[$fieldKey]['type'];
 
 		$required = false;
-		if(isset($val[$fieldKey]['notnull']) && $val[$fieldKey]['notnull'] === 1){
+		if (isset($val[$fieldKey]['notnull']) && $val[$fieldKey]['notnull'] === 1) {
 			// 'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 			$required = true;
 		}
 
 		$maxSize = 0;
-
+		$minSize = 0;
 
 		//
 		// PREPARE Elements
@@ -7360,52 +7361,98 @@ abstract class CommonObject
 		// TEST Value
 		//
 
-		// Use Validate class to allow external Modules to use data validation part instead of concentrate all test here (factoring)
+		// Use Validate class to allow external Modules to use data validation part instead of concentrate all test here (factoring) or just for reuse
 		$validate = new Validate($this->db, $langs);
 
 
+		// little trick : to perform tests with good performances sort tests by quick to low
+
+		//
+		// COMMON TESTS
+		//
+
+		// Required test and empty value
 		if($required && !$validate->isNotEmptyString($fieldValue)){
 			$this->error = $validate->error;
-			return -1;
+			return false;
+		}
+		elseif (!$required && !$validate->isNotEmptyString($fieldValue)) {
+			// if no value sent and the field is not mandatory, no need to perform tests
+			return true;
 		}
 
-
+		// MAX Size test
 		if(!empty($maxSize) && !$validate->isMaxLength($fieldValue, $maxSize)){
 			$this->error = $validate->error;
-			return -1;
+			return false;
 		}
 
+		// MIN Size test
+		if(!empty($minSize) && !$validate->isMinLength($fieldValue, $minSize)){
+			$this->error = $validate->error;
+			return false;
+		}
 
+		//
+		// TESTS for TYPE
+		//
 
 		if (in_array($type, array('date', 'datetime', 'timestamp'))) {
-			if(!$validate->isTimestamp($fieldValue)){
+			if (!$validate->isTimestamp($fieldValue)) {
 				$this->error = $validate->error;
-				return -1;
-			}
+				return false;
+			} else { return true; }
 		} elseif ($type == 'duration') {
-			// int
-		} elseif (in_array($type, array('double', 'real', 'price'))) {
+			if(!$validate->isDuration($fieldValue)){
+				$this->error = $validate->error;
+				return false;
+			} else { return true; }
+		}
+		elseif (in_array($type, array('double', 'real', 'price')))
+		{
 			// is numeric
-		} elseif ($type == 'boolean') {
-			// is bool
-		} elseif ($type == 'mail') {
+			if(!$validate->isDuration($fieldValue)){
+				$this->error = $validate->error;
+				return false;
+			} else { return true; }
+		}
+		elseif ($type == 'boolean')
+		{
+			if(!$validate->isBool($fieldValue)){
+				$this->error = $validate->error;
+				return false;
+			} else { return true; }
+		}
+		elseif ($type == 'mail')
+		{
 			if(!$validate->isEmail($fieldValue)){
 				$this->error = $validate->error;
-				return -1;
+				return false;
 			}
-		} elseif ($type == 'url') {
+		}
+		elseif ($type == 'url')
+		{
 			if(!$validate->isUrl($fieldValue)){
 				$this->error = $validate->error;
-				return -1;
-			}
-		} elseif ($type == 'phone') {
-
-		} elseif ($type == 'select' || $type == 'radio') {
-			// isset in list
-			if(!isset($param['options'][$fieldValue])){
-
-			}
-		} elseif ($type == 'sellist' || $type == 'chkbxlst') {
+				return false;
+			} else { return true; }
+		}
+		elseif ($type == 'phone')
+		{
+			if (!$validate->isPhone($fieldValue)) {
+				$this->error = $validate->error;
+				return false;
+			} else { return true; }
+		}
+		elseif ($type == 'select' || $type == 'radio')
+		{
+			if (!isset($param['options'][$fieldValue])) {
+				$this->error = $langs->trans('RequireValidValue');
+				return false;
+			} else { return true; }
+		}
+		elseif ($type == 'sellist' || $type == 'chkbxlst')
+		{
 			$param_list = array_keys($param['options']);
 			$InfoFieldList = explode(":", $param_list[0]);
 			$value_arr = explode(',', $fieldValue);
@@ -7416,63 +7463,25 @@ abstract class CommonObject
 				$selectkey = $InfoFieldList[2];
 			}
 
-			// TODO tester toute les valeur du tableau séparement
-
-			$sql = 'SELECT '.$selectkey;
-			$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[0];
-			if ($selectkey == 'rowid' && empty($value)) {
-				$sql .= " WHERE ".$selectkey."=0";
-			} else {
-				$sql .= " WHERE ".$selectkey." IN ('".implode(',',$value_arr)."')";
-			}
-
-			dol_syslog(get_class($this).':validateField:$type=sellist', LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				$num = $this->db->num_rows($resql);
-				if (empty($num)) {
-					// error value not found
-					$this->error = 'error msg';
-					return false;
-				} else {
-					return true;
-				}
-
-			} else {
-				dol_syslog(get_class($this).'::validateField error '.$this->db->lasterror(), LOG_WARNING);
+			if(!isInDb($value_arr, $InfoFieldList[0], $selectkey)){
+				$this->error = $validate->error;
 				return false;
-			}
-		} elseif ($type == 'link') {
-
-			// only if something to display (perf)
-			if (!empty($fieldValue)) {
-				$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath'
-				$InfoFieldList = explode(":", $param_list[0]);
-				$classname = $InfoFieldList[0];
-				$classpath = $InfoFieldList[1];
-				if (!empty($classpath)) {
-					dol_include_once($InfoFieldList[1]);
-					if ($classname && class_exists($classname)) {
-						$object = new $classname($this->db);
-						if($object->fetch($fieldValue)>0){
-							return true;
-						}
-						$this->error = 'class not found for validation';
-					} else {
-						$this->error = 'Error bad setup of extrafield';
-					}
-					return false;
-				} else {
-					$this->error = 'Error bad setup of extrafield';
-					return false;
-				}
-			}
-			else {
-				// TODO vérifier si requis
-			}
+			} else { return true; }
+		}
+		elseif ($type == 'link')
+		{
+			$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath'
+			$InfoFieldList = explode(":", $param_list[0]);
+			$classname = $InfoFieldList[0];
+			$classpath = $InfoFieldList[1];
+			if(!$validate->isFetchable($fieldValue, $classname, $classpath)){
+				$this->error = $validate->error;
+				return false;
+			} else { return true; }
 		}
 
-		return 0;
+		// if no test failled all is ok
+		return true;
 	}
 
 	/**
