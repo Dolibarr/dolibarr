@@ -34,6 +34,7 @@ module.exports = {
             };
             const response = await z.request({
                 url: url,
+                // this parameter avoid throwing errors and let us manage them
                 skipThrowForStatus: true,
                 params: {
                     sqlfilters: "t.nom like \'%"+bundle.inputData.name+"%\'"
