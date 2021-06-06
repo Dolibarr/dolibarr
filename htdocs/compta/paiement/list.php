@@ -71,6 +71,7 @@ $search_paymenttype = GETPOST("search_paymenttype");
 $search_account = GETPOST("search_account", "int");
 $search_payment_num = GETPOST('search_payment_num', 'alpha');
 $search_amount = GETPOST("search_amount", 'alpha'); // alpha because we must be able to search on "< x"
+$search_status = GETPOST('search_status', 'intcomma');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield			= GETPOST("sortfield", 'alpha');
@@ -142,11 +143,13 @@ if (empty($reshook)) {
 		$search_date_endmonth = '';
 		$search_date_endyear = '';
 		$search_date_start = '';
+		$search_date_end = '';
 		$search_account = '';
 		$search_amount = '';
 		$search_paymenttype = '';
 		$search_payment_num = '';
 		$search_company = '';
+		$search_status = '';
 		$option = '';
 		$toselect = '';
 		$search_array_options = array();
@@ -348,10 +351,12 @@ if ($search_all) {
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+$massactionbutton = '';
 if ($massactionbutton) {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 }
 
+$moreforfilter = '';
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : '').'">';
 
