@@ -9671,7 +9671,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 /**
  * Function dolGetButtonAction
  *
- * @param string    $label      label of button no html : use in alt attribute for accessibility $html is not empty
+ * @param string    $label      label of button without HTML : use in alt attribute for accessibility $html is not empty
  * @param string    $html       optional : content with html
  * @param string    $actionType default, delete, danger
  * @param string    $url        the url for link
@@ -9689,8 +9689,9 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 	}
 
 	$attr = array(
-		'class' => $class
-		,'href' => empty($url) ? '' : $url
+		'class' => $class,
+		'href' => empty($url) ? '' : $url,
+		'title' => $label
 	);
 
 	if (empty($html)) {

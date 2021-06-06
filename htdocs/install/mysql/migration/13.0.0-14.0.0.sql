@@ -173,7 +173,9 @@ CREATE TABLE llx_workstation_workstation_usergroup(
 	fk_workstation integer
 ) ENGINE=innodb;
 
-CREATE TABLE llx_c_producbatch_qcstatus(
+DROP TABLE llx_c_producbatch_qcstatus;		-- delete table with bad name
+
+CREATE TABLE llx_c_productbatch_qcstatus(
   rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
   entity   integer NOT NULL DEFAULT 1,
   code     varchar(16)        NOT NULL,
@@ -450,6 +452,8 @@ CREATE TABLE llx_partnership(
 	model_pdf varchar(255)
 ) ENGINE=innodb;
 
+ALTER TABLE llx_partnership ADD COLUMN last_check_backlink datetime NULL;
+
 ALTER TABLE llx_partnership ADD INDEX idx_partnership_rowid (rowid);
 ALTER TABLE llx_partnership ADD INDEX idx_partnership_ref (ref);
 ALTER TABLE llx_partnership ADD INDEX idx_partnership_fk_soc (fk_soc);
@@ -528,5 +532,15 @@ ALTER TABLE llx_adherent_type ADD COLUMN amount DOUBLE(24,8) NULL DEFAULT NULL A
 -- add action trigger
 INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('COMPANY_MODIFY','Third party update','Executed when you update third party','societe',1);
 INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('CONTACT_MODIFY','Contact address update','Executed when a contact is updated','contact',51);
+
+
+create table llx_c_partnership_type
+(
+  rowid      	integer AUTO_INCREMENT PRIMARY KEY,
+  entity        integer DEFAULT 1 NOT NULL,
+  code          varchar(32) NOT NULL,
+  label 	    varchar(64)	NOT NULL,
+  active  	    tinyint DEFAULT 1  NOT NULL
+)ENGINE=innodb;
 
 
