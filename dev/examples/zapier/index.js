@@ -5,6 +5,7 @@ const triggerThirdparty = require('./triggers/thirdparty');
 const triggerContact = require('./triggers/contact');
 const triggerTicket = require('./triggers/ticket');
 const triggerUser = require('./triggers/user');
+const triggerMember = require('./triggers/member');
 
 const searchThirdparty = require('./searches/thirdparty');
 const searchContact = require('./searches/contact');
@@ -70,6 +71,7 @@ const App = {
         [triggerContact.key]: triggerContact,
         [triggerTicket.key]: triggerTicket,
         [triggerUser.key]: triggerUser,
+        [triggerMember.key]: triggerMember,
     },
 
     // If you want your searches to show up, you better include it here!
