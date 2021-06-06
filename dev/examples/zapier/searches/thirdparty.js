@@ -19,6 +19,12 @@ module.exports = {
                 type: 'string',
                 label: 'Name',
                 helpText: 'Name to limit to the search to (i.e. The company or %company%).'
+            },
+            {
+                key: 'email',
+                type: 'string',
+                label: 'Email',
+                helpText: 'Email to limit to the search to.'
             }
         ],
 
@@ -32,12 +38,22 @@ module.exports = {
                     sqlfilters: "t.nom like \'%"+bundle.inputData.name+"%\'"
                 }
             };
+            let filter = '';
+            if (bundle.inputData.name) {
+                filter = "t.nom like \'%"+bundle.inputData.name+"%\'";
+            }
+            if (bundle.inputData.email) {
+                if (bundle.inputData.name) {
+                    filter += " and ";
+                }
+                filter += "t.email like \'"+bundle.inputData.email+"\'";
+            }
             const response = await z.request({
                 url: url,
                 // this parameter avoid throwing errors and let us manage them
                 skipThrowForStatus: true,
                 params: {
-                    sqlfilters: "t.nom like \'%"+bundle.inputData.name+"%\'"
+                    sqlfilters: filter
                 }
             });
             //z.console.log(response);
