@@ -22,7 +22,7 @@ module.exports = {
             }
         ],
 
-        perform: (z, bundle) => {
+        perform: async (z, bundle) => {
             const url = bundle.authData.url  + '/api/index.php/thirdparties/';
 
             // Put the search value in a query param. The details of how to build
@@ -32,8 +32,18 @@ module.exports = {
                     sqlfilters: "t.nom like \'%"+bundle.inputData.name+"%\'"
                 }
             };
-
-            return z.request(url, options).then(response => JSON.parse(response.content));
+            const response = await z.request({
+                url: url,
+                skipThrowForStatus: true,
+                params: {
+                    sqlfilters: "t.nom like \'%"+bundle.inputData.name+"%\'"
+                }
+            });
+            //z.console.log(response);
+            if (response.status != 200) {
+                return [];
+            }
+            return response.json;
         },
 
         // In cases where Zapier needs to show an example record to the user, but we are unable to get a live example
