@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2012      Nicolas Villa aka Boyquotes http://informetic.fr
  * Copyright (C) 2013      Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2019 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2013-2021 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2019      Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,6 @@
  *  \ingroup    cron
  *  \brief      Lists Jobs
  */
-
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';

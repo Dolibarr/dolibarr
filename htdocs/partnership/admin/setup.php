@@ -139,15 +139,14 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setting">';
 print '<input type="hidden" name="page_y" value="">';
 
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 print '<table class="noborder centpercent">';
 
-
 print '<tr class="liste_titre">';
-print '<td class="titlefield">'.$langs->trans("Setting").'</td>';
-print '<td class="left">'.$langs->trans("Value").'</td>';
-print '<td class="left">'.$langs->trans("Examples").'</td>';
+print '<td>'.$langs->trans("Setting").'</td>';
+print '<td>'.$langs->trans("Value").'</td>';
+print '<td>'.$langs->trans("Examples").'</td>';
 print '</tr>';
-
 
 print '<tr class="oddeven"><td>'.$langs->trans("PARTNERSHIP_IS_MANAGED_FOR").'</td>';
 print '<td>';
@@ -155,6 +154,7 @@ print '<select class="flat minwidth100" id="select_PARTNERSHIP_IS_MANAGED_FOR" n
 print '<option value="thirdparty" '.(($conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'thirdparty') ? 'selected' : '').'>'.$langs->trans("ThirdParty").'</option>';
 print '<option value="member" '.(($conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') ? 'selected' : '').'>'.$langs->trans("Members").'</option>';
 print '</select>';
+print ajax_combobox('select_PARTNERSHIP_IS_MANAGED_FOR');
 print '</td>';
 print '<td><span class="opacitymedium">'.$langs->trans("partnershipforthirdpartyormember").'</span></td>';
 print '</tr>';
@@ -163,7 +163,7 @@ print '</tr>';
 if ($conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
 	print '<tr class="oddeven"><td>'.$langs->trans("PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL").'</td>';
 	print '<td>';
-	$dnbdays 	= '7';
+	$dnbdays 	= '15';
 	$backlinks 	= (!empty($conf->global->PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL)) ? $conf->global->PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL : $dnbdays;
 	print '<input class="maxwidth50" type="text" name="PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL" value="'.$backlinks.'">';
 	print '</td>';
@@ -171,18 +171,38 @@ if ($conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
 	print '</tr>';
 }
 
+print '</table>';
+print '</div>';
+
+print '<br>';
+
+
+print_fiche_titre($langs->trans("ReferingWebsiteCheck"), '', '');
+
+print '<span class="opacitymedium">'.$langs->trans("ReferingWebsiteCheckDesc").'</span><br>';
+print '<br>';
+
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<table class="noborder centpercent">';
+
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Setting").'</td>';
+print '<td>'.$langs->trans("Value").'</td>';
+print '<td>'.$langs->trans("Examples").'</td>';
+print '</tr>';
 
 print '<tr class="oddeven"><td>'.$langs->trans("PARTNERSHIP_BACKLINKS_TO_CHECK").'</td>';
 print '<td>';
-$dbacklinks = 'dolibarr.org|dolibarr.fr|dolibarr.es';
-$backlinks 	= (!empty($conf->global->PARTNERSHIP_BACKLINKS_TO_CHECK)) ? $conf->global->PARTNERSHIP_BACKLINKS_TO_CHECK : $dbacklinks;
+$backlinks 	= (empty($conf->global->PARTNERSHIP_BACKLINKS_TO_CHECK) ? '' : $conf->global->PARTNERSHIP_BACKLINKS_TO_CHECK);
 print '<input class="minwidth400" type="text" name="PARTNERSHIP_BACKLINKS_TO_CHECK" value="'.$backlinks.'">';
 print '</td>';
-print '<td><span class="opacitymedium">'.$dbacklinks.'</span></td>';
+print '<td><span class="opacitymedium">dolibarr.org|dolibarr.fr|dolibarr.es</span></td>';
 print '</tr>';
 
-
 print '</table>';
+print '</div>';
+
+
 print '<div class="center">';
 print '<input type="submit" class="button reposition" value="'.$langs->trans("Modify").'">';
 print '</div>';

@@ -57,6 +57,10 @@ if (!empty($conf->accounting->enabled)) {
 if (!empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 }
+if (! empty($conf->eventorganization->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
+}
+
 
 $langs->loadLangs(array("companies", "commercial", "bills", "banks", "users"));
 if (!empty($conf->adherent->enabled)) {
@@ -272,6 +276,7 @@ if (empty($reshook)) {
 						'Ticket' => '/ticket/class/ticket.class.php',
 						'User' => '/user/class/user.class.php',
 						'Account' => '/compta/bank/class/account.class.php',
+						'ConferenceOrBoothAttendee' => '/eventorganization/class/conferenceorboothattendee.class.php'
 					);
 
 					//First, all core objects must update their tables

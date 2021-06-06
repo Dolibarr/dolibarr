@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("compta", "bills", "other", "main", "accountancy"));
+$langs->loadLangs(array("compta", "bills", "other", "accountancy"));
 
 // Security check
 if (empty($conf->accounting->enabled)) {

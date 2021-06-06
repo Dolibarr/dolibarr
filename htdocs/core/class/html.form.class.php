@@ -6840,9 +6840,12 @@ class Form
 					$obj = $this->db->fetch_object($resql);
 					$label = '';
 					$tmparray = explode(',', $fieldstoshow);
+					$oldvalueforshowoncombobox = 0;
 					foreach ($tmparray as $key => $val) {
 						$val = preg_replace('/t\./', '', $val);
-						$label .= (($label && $obj->$val) ? ' - ' : '').$obj->$val;
+						$label .= (($label && $obj->$val) ? ($oldvalueforshowoncombobox != $objecttmp->fields[$val]['showoncombobox'] ? ' - ' : ' ') : '');
+						$label .= $obj->$val;
+						$oldvalueforshowoncombobox = $objecttmp->fields[$val]['showoncombobox'];
 					}
 					if (empty($outputmode)) {
 						if ($preselectedvalue > 0 && $preselectedvalue == $obj->rowid) {
@@ -8325,10 +8328,10 @@ class Form
 						$nophoto = 'company';
 					} else {
 						$nophoto = '/public/theme/common/user_anonymous.png';
-						if ($object->gender == 'man') {
+						if (!empty($object->gender) && $object->gender == 'man') {
 							$nophoto = '/public/theme/common/user_man.png';
 						}
-						if ($object->gender == 'woman') {
+						if (!empty($object->gender) && $object->gender == 'woman') {
 							$nophoto = '/public/theme/common/user_woman.png';
 						}
 					}

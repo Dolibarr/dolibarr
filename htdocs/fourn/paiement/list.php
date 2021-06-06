@@ -254,10 +254,10 @@ if ($optioncss != '') {
 if ($search_ref) {
 	$param .= '&search_ref='.urlencode($search_ref);
 }
-if ($saerch_day) {
+if ($search_day) {
 	$param .= '&search_day='.urlencode($search_day);
 }
-if ($saerch_month) {
+if ($search_month) {
 	$param .= '&search_month='.urlencode($search_month);
 }
 if ($search_year) {
