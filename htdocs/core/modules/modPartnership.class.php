@@ -180,10 +180,8 @@ class modPartnership extends DolibarrModules
 		$tabtoadd = (!empty(getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR')) && getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') ? 'member' : 'thirdparty';
 
 		if ($tabtoadd == 'member') {
-			$this->tabs[] = array('data'=>'member:+partnership:Partnership:partnership@partnership:$user->rights->partnership->read:/adherents/partnership.php?rowid=__ID__');
 			$fk_mainmenu = "members";
 		} else {
-			$this->tabs[] = array('data'=>'thirdparty:+partnership:Partnership:partnership@partnership:$user->rights->partnership->read:/societe/partnership.php?socid=__ID__');
 			$fk_mainmenu = "companies";
 		}
 
@@ -258,7 +256,7 @@ class modPartnership extends DolibarrModules
 
 		$this->cronjobs = array(
 			0	=> array('priority'=>60, 'label'=>'CancelPartnershipForExpiredMembers', 'jobtype'=>'method', 'class'=>'/partnership/class/partnershiputils.class.php', 'objectname'=>'PartnershipUtils', 'method'=>'doCancelStatusOfMemberPartnership', 'parameters'=>'',      'comment'=>'Cancel status of partnership when subscription is expired + x days.', 'frequency'=>1, 'unitfrequency'=>86400, 'status'=>1, 'test'=>'$conf->partnership->enabled', 'datestart'=>$datestart),
-			1	=> array('priority'=>61, 'label'=>'CheckDolibarrBacklink', 'jobtype'=>'method', 'class'=>'/partnership/class/partnershiputils.class.php', 'objectname'=>'PartnershipUtils', 'method'=>'doWarningOfPartnershipIfDolibarrBacklinkNotfound', 'parameters'=>'',      'comment'=>'Warning of partnership if Dolibarr backlink not found on partner website.', 'frequency'=>1, 'unitfrequency'=>86400, 'status'=>0, 'test'=>'$conf->partnership->enabled', 'datestart'=>$datestart),
+			1	=> array('priority'=>61, 'label'=>'PartnershipCheckBacklink', 'jobtype'=>'method', 'class'=>'/partnership/class/partnershiputils.class.php', 'objectname'=>'PartnershipUtils', 'method'=>'doWarningOfPartnershipIfDolibarrBacklinkNotfound', 'parameters'=>'',      'comment'=>'Warning of partnership if Dolibarr backlink not found on partner website.', 'frequency'=>1, 'unitfrequency'=>86400, 'status'=>0, 'test'=>'$conf->partnership->enabled', 'datestart'=>$datestart),
 		);
 
 		// Permissions provided by this module

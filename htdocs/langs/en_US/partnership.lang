@@ -20,6 +20,9 @@ ModulePartnershipName=Partnership management
 PartnershipDescription=Module Partnership management
 PartnershipDescriptionLong= Module Partnership management
 
+CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
+PartnershipCheckBacklink=Partnership: Check referring backlink
+
 #
 # Menu
 #

@@ -449,6 +449,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print $formconfirm;
 
 
+	// TODO Replace this card into a list of all partnerships.
+
+
 	// Object card
 	// ------------------------------------------------------------
 	$linkback = '<a href="'.dol_buildpath('/partnership/partnership_list.php', 1).'?restore_lastsearch_values=1'.(!empty($memberid) ? '&rowid='.$memberid : '').'">'.$langs->trans("BackToList").'</a>';
@@ -498,6 +501,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print dol_get_fiche_end();
 
+
+
+
 	// Buttons for actions
 
 	if ($action != 'presend') {
@@ -509,10 +515,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		if (empty($reshook)) {
-			if ($object->status == $object::STATUS_DRAFT) {
-				print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"].'?rowid='.$memberid.'&action=edit&token='.newToken(), '', $permissiontoadd);
-			}
-
 			// Show
 			if ($permissiontoadd) {
 				print dolGetButtonAction($langs->trans('ManagePartnership'), '', 'default', dol_buildpath('/partnership/partnership_card.php', 1).'?id='.$object->id, '', $permissiontoadd);
