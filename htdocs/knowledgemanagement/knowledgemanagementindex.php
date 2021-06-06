@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       knowledgemanagement/knowledgemanagementindex.php
+ *	\file       htdocs/knowledgemanagement/knowledgemanagementindex.php
  *	\ingroup    knowledgemanagement
  *	\brief      Home page of knowledgemanagement top menu
  */
@@ -148,13 +148,12 @@ END MODULEBUILDER DRAFT MYOBJECT */
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
-$NBMAX = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
-$max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
+$NBMAX = (empty($conf->global->MAIN_SIZE_SHORTLIST_LIMIT) ? 25 : $conf->global->MAIN_SIZE_SHORTLIST_LIMIT);
+$max = $NBMAX;
 
 /* BEGIN MODULEBUILDER LASTMODIFIED MYOBJECT
 // Last modified myobject
-if (! empty($conf->knowledgemanagement->enabled) && $user->rights->knowledgemanagement->read)
-{
+if (! empty($conf->knowledgemanagement->enabled) && $user->rights->knowledgemanagement->read) {
 	$sql = "SELECT s.rowid, s.ref, s.label, s.date_creation, s.tms";
 	$sql.= " FROM ".MAIN_DB_PREFIX."knowledgemanagement_myobject as s";
 	//if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -165,8 +164,7 @@ if (! empty($conf->knowledgemanagement->enabled) && $user->rights->knowledgemana
 	$sql .= $db->plimit($max, 0);
 
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$num = $db->num_rows($resql);
 		$i = 0;
 
@@ -177,10 +175,8 @@ if (! empty($conf->knowledgemanagement->enabled) && $user->rights->knowledgemana
 		print '</th>';
 		print '<th class="right">'.$langs->trans("DateModificationShort").'</th>';
 		print '</tr>';
-		if ($num)
-		{
-			while ($i < $num)
-			{
+		if ($num) {
+			while ($i < $num) {
 				$objp = $db->fetch_object($resql);
 
 				$myobjectstatic->id=$objp->rowid;

@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file       knowledgerecord_note.php
+ *  \file       htdocs/knowledgemanagement/knowledgerecord_note.php
  *  \ingroup    knowledgemanagement
  *  \brief      Tab for notes on KnowledgeRecord
  */
@@ -33,9 +33,9 @@ $langs->loadLangs(array("knowledgemanagement", "companies"));
 
 // Get parameters
 $id = GETPOST('id', 'int');
-$ref        = GETPOST('ref', 'alpha');
+$ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
-$cancel     = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 // Initialize technical objects

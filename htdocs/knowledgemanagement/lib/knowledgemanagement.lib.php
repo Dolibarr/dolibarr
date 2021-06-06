@@ -16,7 +16,7 @@
  */
 
 /**
- * \file    knowledgemanagement/lib/knowledgemanagement.lib.php
+ * \file    htdocs/knowledgemanagement/lib/knowledgemanagement.lib.php
  * \ingroup knowledgemanagement
  * \brief   Library files with common functions for KnowledgeManagement
  */
