@@ -8,6 +8,7 @@ const triggerUser = require('./triggers/user');
 
 const searchThirdparty = require('./searches/thirdparty');
 const searchContact = require('./searches/contact');
+const searchMember = require('./searches/member');
 
 const createThirdparty = require('./creates/thirdparty');
 const createContact = require('./creates/contact');
@@ -75,6 +76,7 @@ const App = {
     searches: {
         [searchThirdparty.key]: searchThirdparty,
         [searchContact.key]: searchContact,
+        [searchMember.key]: searchMember,
     },
 
     // If you want your creates to show up, you better include it here!
