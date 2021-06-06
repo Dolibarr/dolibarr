@@ -6376,9 +6376,10 @@ abstract class CommonObject
 	 * @param  string  		$keyprefix     Suffix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param  string|int	$morecss       Value for css to define style/length of field. May also be a numeric.
 	 * @param  int			$nonewbutton   Force to not show the new button on field that are links to object
+	 * @param  bool         $displayValidationResult Display validation results messages for fields, set it to true after form sended to display user mistakes
 	 * @return string
 	 */
-	public function showInputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = 0, $nonewbutton = 0)
+	public function showInputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = 0, $nonewbutton = 0, $displayValidationResult = false)
 	{
 		global $conf, $langs, $form;
 
@@ -6390,6 +6391,25 @@ abstract class CommonObject
 		if (!empty($this->fields)) {
 			$val = $this->fields[$key];
 		}
+
+		// This is en experimental validation output TODO : remove this deactivation line
+		if ($conf->global->MAIN_FEATURES_LEVEL < 2 && empty($conf->global->MAIN_ACTIVATE_VALIDATION_RESULT)) { $displayValidationResult = false; }
+
+		// Validation tests and output
+		$fieldValidation = 0; // 0 not tested, -1 error, 1 success
+		$fieldValidationErrorMesg = '';
+		$validationClass = '';
+		if ($displayValidationResult) {
+			if (!$this->validateField($val, $key, $value)) {
+				$validationClass = ' --error'; // the -- is use as class state in css :  .--error can't be be defined alone it must be define with another class like .my-class.--error or input.--error
+				$fieldValidation = -1;
+				$fieldValidationErrorMesg = $this->error;
+			} else {
+				$validationClass = ' --success'; // the -- is use as class state in css :  .--success can't be be defined alone it must be define with another class like .my-class.--success or input.--success
+				$fieldValidation = 1;
+			}
+		}
+
 
 		$out = '';
 		$type = '';
