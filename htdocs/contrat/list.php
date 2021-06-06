@@ -250,6 +250,8 @@ if ($search_email) $sql .= natural_search('s.email', $search_email);
 if ($search_contract) $sql .= natural_search(array('c.rowid', 'c.ref'), $search_contract);
 if (!empty($search_ref_customer)) $sql .= natural_search(array('c.ref_customer'), $search_ref_customer);
 if (!empty($search_ref_supplier)) $sql .= natural_search(array('c.ref_supplier'), $search_ref_supplier);
+if ($search_zip) $sql .= natural_search(array('s.zip'), $search_zip);
+if ($search_town) $sql .= natural_search(array('s.town'), $search_town);
 if ($search_sale > 0)
 {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$search_sale;
