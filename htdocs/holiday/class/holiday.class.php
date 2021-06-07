@@ -803,7 +803,7 @@ class Holiday extends CommonObject
 			$error++;
 		}
 		if (!empty($this->date_valid)) {
-			$sql .= " date_valid = '".$this->db->idate($this->date_valid)."',";
+			$sql .= " date_valid = '".$this->db->idate($now)."',";
 		} else {
 			$sql .= " date_valid = NULL,";
 		}
