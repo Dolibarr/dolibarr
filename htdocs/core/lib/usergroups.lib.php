@@ -917,7 +917,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 			print $form->selectyesno('MAIN_OPTIMIZEFORTEXTBROWSER', $fuser->conf->MAIN_OPTIMIZEFORTEXTBROWSER, 1);
 		} else {
 			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
-				print yn($fuser->conf->MAIN_OPTIMIZEFORTEXTBROWSER);
+				print yn(empty($fuser->conf->MAIN_OPTIMIZEFORTEXTBROWSER) ? 0 : $fuser->conf->MAIN_OPTIMIZEFORTEXTBROWSER);
 			} else {
 				print yn(1);
 				if (empty($fuser->conf->MAIN_OPTIMIZEFORTEXTBROWSER)) {
