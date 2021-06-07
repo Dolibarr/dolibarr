@@ -224,7 +224,7 @@ if (empty($reshook))
 					continue;
 				}
 
-				$res2 = $tmpholiday->setApproved($user);
+				$res2 = $tmpholiday->approve($user);
 
 				if ($res2 < 0) {
 					dol_print_error($db);
