@@ -3499,7 +3499,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'accountancy', 'account', 'accountline', 'action', 'add', 'address', 'angle-double-down', 'angle-double-up', 'asset',
 				'bank_account', 'barcode', 'bank', 'bill', 'billa', 'billr', 'billd', 'bookmark', 'bom', 'bug', 'building',
 				'calendar', 'calendarmonth', 'calendarweek', 'calendarday', 'calendarperuser', 'calendarpertype',
-				'cash-register', 'category', 'chart', 'check', 'clock', 'close_title', 'cog', 'collab', 'company', 'contact', 'country', 'contract', 'cron', 'cubes', 'multicurrency',
+				'cash-register', 'category', 'chart', 'check', 'clock', 'close_title', 'cog', 'collab', 'company', 'contact', 'country', 'contract', 'conversation', 'cron', 'cubes',
+				'multicurrency',
 				'delete', 'dolly', 'dollyrevert', 'donation', 'download', 'dynamicprice',
 				'edit', 'ellipsis-h', 'email', 'eraser', 'establishment', 'expensereport', 'external-link-alt', 'external-link-square-alt',
 				'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'autofill', 'folder', 'folder-open', 'folder-plus',
@@ -9671,7 +9672,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 /**
  * Function dolGetButtonAction
  *
- * @param string    $label      label of button no html : use in alt attribute for accessibility $html is not empty
+ * @param string    $label      label of button without HTML : use in alt attribute for accessibility $html is not empty
  * @param string    $html       optional : content with html
  * @param string    $actionType default, delete, danger
  * @param string    $url        the url for link
@@ -9689,8 +9690,9 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 	}
 
 	$attr = array(
-		'class' => $class
-		,'href' => empty($url) ? '' : $url
+		'class' => $class,
+		'href' => empty($url) ? '' : $url,
+		'title' => $label
 	);
 
 	if (empty($html)) {

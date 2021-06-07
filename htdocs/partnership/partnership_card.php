@@ -44,41 +44,12 @@
 //if (! defined('NOBROWSERNOTIF'))     		 define('NOBROWSERNOTIF', '1');				// Disable browser notification
 
 // Load Dolibarr environment
-$res = 0;
-// Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
-if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) {
-	$res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
-}
-// Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
-$tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME']; $tmp2 = realpath(__FILE__); $i = strlen($tmp) - 1; $j = strlen($tmp2) - 1;
-while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) {
-	$i--; $j--;
-}
-if (!$res && $i > 0 && file_exists(substr($tmp, 0, ($i + 1))."/main.inc.php")) {
-	$res = @include substr($tmp, 0, ($i + 1))."/main.inc.php";
-}
-if (!$res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php")) {
-	$res = @include dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php";
-}
-// Try main.inc.php using relative path
-if (!$res && file_exists("../main.inc.php")) {
-	$res = @include "../main.inc.php";
-}
-if (!$res && file_exists("../../main.inc.php")) {
-	$res = @include "../../main.inc.php";
-}
-if (!$res && file_exists("../../../main.inc.php")) {
-	$res = @include "../../../main.inc.php";
-}
-if (!$res) {
-	die("Include of main fails");
-}
-
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-dol_include_once('/partnership/class/partnership.class.php');
-dol_include_once('/partnership/lib/partnership.lib.php');
+require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
+require_once DOL_DOCUMENT_ROOT.'/partnership/lib/partnership.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("partnership", "other"));
@@ -164,20 +135,10 @@ if (empty($reshook)) {
 	$fk_partner 	= ($managedfor == 'member') ? GETPOST('fk_member', 'int') : GETPOST('fk_soc', 'int');
 	$obj_partner 	= ($managedfor == 'member') ? $object->fk_member : $object->fk_soc;
 
-	if ($action == 'add' || ($action == 'update' && $obj_partner != $fk_partner)) {
-		$fpartnership = new Partnership($db);
-
-		$partnershipid = $fpartnership->fetch(0, "", $fk_partner);
-		if ($partnershipid > 0) {
-			setEventMessages($langs->trans('PartnershipAlreadyExist').' : '.$fpartnership->getNomUrl(0, '', 1), '', 'errors');
-			$action = ($action == 'add') ? 'create' : 'edit';
-		}
-	}
-
-	$triggermodname = 'PARTNERSHIP_MODIFY'; // Name of trigger action code to execute when we modify record
-
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
+
+	$triggermodname = 'PARTNERSHIP_MODIFY'; // Name of trigger action code to execute when we modify record
 
 	// Action accept object
 	if ($action == 'confirm_accept' && $confirm == 'yes' && $permissiontoadd) {
@@ -275,8 +236,6 @@ if ($object->id > 0 && $object->status == $object::STATUS_REFUSED) $object->fiel
 
 /*
  * View
- *
- * Put here all code to build page
  */
 
 $form = new Form($db);
@@ -623,24 +582,23 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (empty($reshook)) {
 			// Send
 			if (empty($user->socid)) {
-				print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle');
+				print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init&token='.newToken().'#formmailbeforetitle');
 			}
 
 			// Back to draft
 			if ($object->status != $object::STATUS_DRAFT) {
-				print dolGetButtonAction($langs->trans('SetToDraft'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes', '', $permissiontoadd);
+				print dolGetButtonAction($langs->trans('SetToDraft'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes&token='.newToken(), '', $permissiontoadd);
 			}
 
-			print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit', '', $permissiontoadd);
+			print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken(), '', $permissiontoadd);
 
 			// Accept
 			if ($object->status == $object::STATUS_DRAFT) {
 				if (empty($object->table_element_line) || (is_array($object->lines) && count($object->lines) > 0)) {
-					print dolGetButtonAction($langs->trans('Validate'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_accept&confirm=yes', '', $permissiontoadd);
+					print dolGetButtonAction($langs->trans('Validate'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_accept&confirm=yes&token='.newToken(), '', $permissiontoadd);
 				} else {
 					$langs->load("errors");
-					//print dolGetButtonAction($langs->trans('Accept'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_accept&confirm=yes', '', 0);
-					print '<a class="butActionRefused" href="" title="'.$langs->trans("ErrorAddAtLeastOneLineFirst").'">'.$langs->trans("Validate").'</a>';
+					print dolGetButtonAction($langs->trans("ErrorAddAtLeastOneLineFirst"), $langs->trans("Validate"), 'default', '#', '', 0);
 				}
 			}
 
@@ -656,8 +614,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Refuse
 			if ($permissiontoadd) {
-				if ($object->status != $object::STATUS_CANCELED && $object->status != $object::STATUS_REFUSED) {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=refuse&token='.newToken().'">'.$langs->trans("Refuse").'</a>'."\n";
+				if ($object->status != $object::STATUS_ACCEPTED && $object->status != $object::STATUS_CANCELED && $object->status != $object::STATUS_REFUSED) {
+					print dolGetButtonAction($langs->trans('Refuse'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=refuse&token='.newToken(), '', $permissiontoadd);
 				}
 			}
 

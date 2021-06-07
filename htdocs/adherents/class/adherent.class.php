@@ -260,9 +260,9 @@ class Adherent extends CommonObject
 
 	public $datefin;
 
-	// From member table
 
-	// Fields loaded by fetch_subscriptions()
+	// Fields loaded by fetch_subscriptions() from member table
+
 	public $first_subscription_date;
 
 	public $first_subscription_amount;
@@ -276,6 +276,12 @@ class Adherent extends CommonObject
 	public $last_subscription_amount;
 
 	public $subscriptions = array();
+
+
+	// Fields loaded by fetchPartnerships() from partnership table
+
+	public $partnerships = array();
+
 
 	/**
 	 * @var Adherent To contains a clone of this when we need to save old properties of object
@@ -1439,11 +1445,12 @@ class Adherent extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Function to get member subscriptions data
-	 *				first_subscription_date, first_subscription_date_start, first_subscription_date_end, first_subscription_amount
-	 *				last_subscription_date, last_subscription_date_start, last_subscription_date_end, last_subscription_amount
+	 *	Function to get member subscriptions data:
+	 *  subscriptions,
+	 *	first_subscription_date, first_subscription_date_start, first_subscription_date_end, first_subscription_amount
+	 *	last_subscription_date, last_subscription_date_start, last_subscription_date_end, last_subscription_amount
 	 *
-	 *	@return		int			<0 si KO, >0 si OK
+	 *	@return		int			<0 if KO, >0 if OK
 	 */
 	public function fetch_subscriptions()
 	{
@@ -1500,6 +1507,27 @@ class Adherent extends CommonObject
 			$this->error = $this->db->error().' sql='.$sql;
 			return -1;
 		}
+	}
+
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *	Function to get partnerships array
+	 *
+	 *  @param		string		$mode		'member' or 'thirdparty'
+	 *	@return		int						<0 if KO, >0 if OK
+	 */
+	public function fetchPartnerships($mode)
+	{
+		// phpcs:enable
+		global $langs;
+
+		require_once DOL_DOCUMENT_ROOT.'/parntership/class/partnership.class.php';
+
+
+		$this->partnerships[] = array();
+
+		return 1;
 	}
 
 
