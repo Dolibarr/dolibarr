@@ -2160,7 +2160,7 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
                     $object->note_public .= dol_print_date($elementobject->date, 'day', '', $outputlangs);
                     $object->note_public .= '<br/>';
                 }
-            } else if(count($objects) == 1) {
+            } elseif(count($objects) == 1) {
 			    $elementobject = array_shift($objects);
 			    $linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder");
 				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref).($elementobject->ref_client ? ' ('.$elementobject->ref_client.')' : '').($elementobject->ref_supplier ? ' ('.$elementobject->ref_supplier.')' : '');
@@ -2195,7 +2195,6 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
             $outputlangs->loadLangs(array("orders", "sendings"));
 
             if(count($objects) > 1) {
-
                 $order = null;
                 if(empty($object->linkedObjects['commande']) && $object->element != 'commande') $object->note_public .= '<br/>'.$outputlangs->transnoentities("RefOrder").' / '.$outputlangs->transnoentities("RefSending").' : <br/>';
                 else $object->note_public .= '<br/>'.$outputlangs->transnoentities("RefSending").' : <br/>';
@@ -2215,20 +2214,18 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
                     }
 
                     if(! is_object($order)) {
-
                         $object->note_public .= $outputlangs->transnoentities($elementobject->ref);
                         $object->note_public .= '<br/>';
                     }
 
                     else {
-
                         $object->note_public .= $outputlangs->convToOutputCharset($order->ref).($order->ref_client ? ' ('.$order->ref_client.')' : '');
                         $object->note_public .= ' / '.$outputlangs->transnoentities($elementobject->ref);
                         $object->note_public .= '<br/>';
                     }
                 }
             }
-            else if(count($objects) == 1) {
+            elseif(count($objects) == 1) {
                 $elementobject = array_shift($objects);
                 $order = null;
                 // We concat this record info into fields xxx_value. title is overwrote.
