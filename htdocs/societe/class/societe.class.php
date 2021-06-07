@@ -162,7 +162,7 @@ class Societe extends CommonObject
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>25),
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>30),
 		'nom' =>array('type'=>'varchar(128)', 'label'=>'Nom', 'enabled'=>1, 'visible'=>-1, 'position'=>35, 'showoncombobox'=>1),
-		'name_alias' =>array('type'=>'varchar(128)', 'label'=>'Name alias', 'enabled'=>1, 'visible'=>-1, 'position'=>36, 'showoncombobox'=>1),
+		'name_alias' =>array('type'=>'varchar(128)', 'label'=>'Name alias', 'enabled'=>1, 'visible'=>-1, 'position'=>36, 'showoncombobox'=>2),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>40, 'index'=>1),
 		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'RefExt', 'enabled'=>1, 'visible'=>0, 'position'=>45),
 		'code_client' =>array('type'=>'varchar(24)', 'label'=>'CustomerCode', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
@@ -3321,28 +3321,72 @@ class Societe extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Define parent commany of current company
 	 *
 	 *    @param	int		$id     Id of thirdparty to set or '' to remove
 	 *    @return	int     		<0 if KO, >0 if OK
 	 */
-	public function set_parent($id)
+	public function setParent($id)
 	{
-		// phpcs:enable
+		dol_syslog(get_class($this).'::setParent', LOG_DEBUG);
+
 		if ($this->id) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX."societe";
-			$sql .= " SET parent = ".($id > 0 ? $id : "null");
-			$sql .= " WHERE rowid = ".$this->id;
-			dol_syslog(get_class($this).'::set_parent', LOG_DEBUG);
-			$resql = $this->db->query($sql);
+			// Check if the id we want to add as parent has not already one parent that is the current id we try to update
+			if ($id > 0) {
+				$sameparent	= $this->validateFamilyTree($id, $this->id, 0);
+				if ($sameparent < 0) {
+					return -1;
+				}
+				if ($sameparent == 1) {
+					setEventMessages('ParentCompanyToAddIsAlreadyAChildOfModifiedCompany', null, 'warnings');
+					return -1;
+				}
+			}
+
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe SET parent = '.($id > 0 ? $id : 'null').' WHERE rowid = '.((int) $this->id);
+
+			$resql	= $this->db->query($sql);
 			if ($resql) {
 				$this->parent = $id;
 				return 1;
 			} else {
 				return -1;
 			}
+		} else {
+			return -1;
+		}
+	}
+
+	/**
+	 *    Check if a thirdparty $idchild is or not inside the parents (or grand parents) of another thirdparty id $idparent.
+	 *
+	 *    @param	int		$idparent	Id of thirdparty to check
+	 *    @param	int		$idchild	Id of thirdparty to compare to
+	 *    @param    int     $counter    Counter to protect against infinite loops
+	 *    @return	int     			<0 if KO, 0 if OK or 1 if at some level a parent company was the child to compare to
+	 */
+	public function validateFamilyTree($idparent, $idchild, $counter = 0)
+	{
+		if ($counter > 100) {
+			dol_syslog("Too high level of parent - child for company. May be an infinite loop ?", LOG_WARNING);
+		}
+
+		$sql = 'SELECT s.parent';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
+		$sql .= ' WHERE rowid = '.$idparent;
+		$resql	= $this->db->query($sql);
+		if ($resql) {
+			$obj	= $this->db->fetch_object($resql);
+
+			if ($obj->parent == '')	{
+				return 0;
+			} elseif ($obj->parent == $idchild)	{
+				return 1;
+			} else {
+				$sameparent	= $this->validateFamilyTree($obj->parent, $idchild, ($counter + 1));
+			}
+			return $sameparent;
 		} else {
 			return -1;
 		}

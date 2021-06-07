@@ -65,12 +65,31 @@ if (function_exists('php_ini_loaded_file')) {
 }
 print "<br>\n";
 
-// Get versionof web server
-print "<br><strong>Web server</strong> - ".$langs->trans("Version").": ".$_SERVER["SERVER_SOFTWARE"]."<br>\n";
+// Get version of web server
+print "<br><strong>Web server - ".$langs->trans("Version")."</strong>: ".$_SERVER["SERVER_SOFTWARE"]."<br>\n";
+print '<strong>'.$langs->trans("DataRootServer")."</strong>: ".DOL_DATA_ROOT."<br>\n";
+// Web user group by default
+$labeluser = dol_getwebuser('user');
+$labelgroup = dol_getwebuser('group');
+if ($labeluser && $labelgroup) {
+	print '<strong>'.$langs->trans("WebUserGroup")." (env vars)</strong> : ".$labeluser.':'.$labelgroup;
+	if (function_exists('posix_geteuid') && function_exists('posix_getpwuid')) {
+		$arrayofinfoofuser = posix_getpwuid(posix_geteuid());
+		print ' <span class="opacitymedium">(POSIX '.$arrayofinfoofuser['name'].':'.$arrayofinfoofuser['gecos'].':'.$arrayofinfoofuser['dir'].':'.$arrayofinfoofuser['shell'].')</span><br>'."\n";
+	}
+}
+// Web user group real (detected by 'id' external command)
+if (function_exists('exec')) {
+	$arrayout = array(); $varout = 0;
+	exec('id', $arrayout, $varout);
+	if (empty($varout)) {	// Test command is ok. Work only on Linux OS.
+		print '<strong>'.$langs->trans("WebUserGroup")." (real, 'id' command)</strong> : ".join(',', $arrayout)."<br>\n";
+	}
+}
 print '<br>';
 
 print "<strong>PHP safe_mode</strong> = ".(ini_get('safe_mode') ? ini_get('safe_mode') : yn(0)).' &nbsp; <span class="opacitymedium">'.$langs->trans("Deprecated")." (removed in PHP 5.4)</span><br>\n";
-print "<strong>PHP open_basedir</strong> = ".(ini_get('open_basedir') ? ini_get('open_basedir') : yn(0).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("ARestrictedPath")).')</span>')."<br>\n";
+print "<strong>PHP open_basedir</strong> = ".(ini_get('open_basedir') ? ini_get('open_basedir') : yn(0).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("ARestrictedPath").', '.$langs->transnoentitiesnoconv("Example").' '.$_SERVER["DOCUMENT_ROOT"]).')</span>')."<br>\n";
 print "<strong>PHP allow_url_fopen</strong> = ".(ini_get('allow_url_fopen') ? img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' '.ini_get('allow_url_fopen') : yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("No")).")</span><br>\n";
 print "<strong>PHP allow_url_include</strong> = ".(ini_get('allow_url_include') ? img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' '.ini_get('allow_url_include') : yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("No")).")</span><br>\n";
 print "<strong>PHP disable_functions</strong> = ";
@@ -155,8 +174,8 @@ print '<strong>'.$langs->trans("PermissionsOnFilesInWebRoot").'</strong>: ';
 $arrayoffilesinroot = dol_dir_list(DOL_DOCUMENT_ROOT, 'all', 1, '', array('\/custom'), 'name', SORT_ASC, 4, 1, '', 1);
 $fileswithwritepermission = array();
 foreach ($arrayoffilesinroot as $fileinroot) {
-	// Test permission on file
-	if ($fileinroot['perm'] & 0222) {
+	// Test if there is at least one write permission file. If yes, add the entry into array $fileswithwritepermission
+	if (isset($fileinroot['perm']) && ($fileinroot['perm'] & 0222)) {
 		$fileswithwritepermission[] = $fileinroot['relativename'];
 	}
 }
@@ -217,7 +236,7 @@ print '<br>';
 
 print '<strong>$dolibarr_nocsrfcheck</strong>: '.$dolibarr_nocsrfcheck;
 if (!empty($dolibarr_nocsrfcheck)) {
-	print img_picto('', 'warning').' &nbsp;  '.$langs->trans("IfYouAreOnAProductionSetThis", 0);
+	print ' &nbsp; '.img_picto('', 'warning').' '.$langs->trans("IfYouAreOnAProductionSetThis", 0);
 }
 print '<br>';
 
@@ -234,16 +253,18 @@ print '<br>';
 print '<br>';
 print '<br>';
 print '<br>';
-print load_fiche_titre($langs->trans("Menu").' '.$langs->trans("SecuritySetup"), '', 'folder');
+print load_fiche_titre($langs->trans("Menu").' '.$langs->trans("SecuritySetup").' + '.$langs->trans("OtherSetup"), '', 'folder');
 
 //print '<strong>'.$langs->trans("PasswordEncryption").'</strong>: ';
 print '<strong>MAIN_SECURITY_HASH_ALGO</strong> = '.(empty($conf->global->MAIN_SECURITY_HASH_ALGO) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_HASH_ALGO)." &nbsp; ";
 if (empty($conf->global->MAIN_SECURITY_HASH_ALGO)) {
 	print '<span class="opacitymedium"> &nbsp; &nbsp; If unset: \'md5\'</span>';
 }
-print '<br>';
 if ($conf->global->MAIN_SECURITY_HASH_ALGO != 'password_hash') {
-	print '<strong>MAIN_SECURITY_SALT</strong> = '.(empty($conf->global->MAIN_SECURITY_SALT) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_SALT).'<br>';
+	print '<br><strong>MAIN_SECURITY_SALT</strong> = '.(empty($conf->global->MAIN_SECURITY_SALT) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_SALT).'<br>';
+} else {
+	print '<span class="opacitymedium">('.$langs->trans("Recommanded").': password_hash)</span>';
+	print '<br>';
 }
 if ($conf->global->MAIN_SECURITY_HASH_ALGO != 'password_hash') {
 	print '<div class="info">The recommanded value for MAIN_SECURITY_HASH_ALGO is now \'password_hash\' but setting it now will make ALL existing passwords of all users not valid, so update is not possible.<br>';
@@ -259,18 +280,20 @@ print '<br>';
 print '<strong>MAIN_SECURITY_ANTI_SSRF_SERVER_IP</strong> = '.(empty($conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP)."<br>";
 print '<br>';
 
+print '<strong>MAIN_ALLOW_SVG_FILES_AS_IMAGES</strong> = '.(empty($conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES) ? '0 &nbsp; <span class="opacitymedium">('.$langs->trans("Recommanded").': 0)</span>' : $conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES)."<br>";
+print '<br>';
 
 print '<strong>MAIN_EXEC_USE_POPEN</strong> = ';
 if (empty($conf->global->MAIN_EXEC_USE_POPEN)) {
-	print '<span class="opacitymedium">'.$langs->trans("Undefined").'</span> &nbsp; ';
+	print '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>';
 } else {
-	print $conf->global->MAIN_EXEC_USE_POPEN.' &nbsp; ';
+	print $conf->global->MAIN_EXEC_USE_POPEN;
 }
 if ($execmethod == 1) {
-	print ' --> "exec" PHP method will be used for shell commands.';
+	print ' &nbsp; <span class="opacitymedium">("exec" PHP method will be used for shell commands)</span>';
 }
 if ($execmethod == 2) {
-	print ' --> "popen" PHP method will be used for shell commands.';
+	print ' &nbsp; <span class="opacitymedium">("popen" PHP method will be used for shell commands)</span>';
 }
 print "<br>";
 print '<br>';
@@ -278,7 +301,7 @@ print '<br>';
 
 print '<strong>'.$langs->trans("AntivirusEnabledOnUpload").'</strong>: ';
 print empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ? '' : img_picto('', 'tick').' ';
-print yn($conf->global->MAIN_ANTIVIRUS_COMMAND ? 1 : 0);
+print yn(empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ? 0 : 1);
 if (!empty($conf->global->MAIN_ANTIVIRUS_COMMAND)) {
 	print ' &nbsp; - '.$conf->global->MAIN_ANTIVIRUS_COMMAND;
 	if (defined('MAIN_ANTIVIRUS_COMMAND')) {

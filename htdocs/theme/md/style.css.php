@@ -780,6 +780,9 @@ th .button {
 textarea.centpercent {
 	width: 96%;
 }
+.quatrevingtpercentminusx {
+	width: calc(80% - 52px);
+}
 .small, small {
 	font-size: 85%;
 }
@@ -1002,8 +1005,8 @@ body[class*="colorblind-"] .text-success{
 	height: 28px;
 	vertical-align: middle;
 }
-.divsocialnetwork:not(:first-child) {
-	padding-left: 20px;
+.divsocialnetwork:not(:last-child) {
+	padding-<?php print $right; ?>: 20px;
 }
 div.divsearchfield {
 	float: <?php print $left; ?>;
@@ -1495,6 +1498,29 @@ table[summary="list_of_modules"] .fa-cog {
 	div.divphotoref {
 		padding-right: 10px !important;
 	}
+	
+	.hideonsmartphone { display: none; }
+	.hideonsmartphoneimp { display: none !important; }
+	
+	select.minwidth100imp, select.minwidth100, select.minwidth200, select.minwidth200imp, select.minwidth300 {
+		width: calc(100% - 40px) !important;
+		display: inline-block;
+	}
+	select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-selection), input.widthcentpercentminusxx {
+		width: calc(100% - 70px) !important;
+		display: inline-block;
+	}
+	
+	.poweredbyimg {
+		width: 48px;
+	}
+	input.buttonpayment, button.buttonpayment, div.buttonpayment {
+		min-width: 270px;
+	}
+
+	.smallonsmartphone {
+		font-size: 0.8em;
+	}
 }
 
 /* Force values for small screen 570 */
@@ -1569,8 +1595,6 @@ table[summary="list_of_modules"] .fa-cog {
 		line-height: 1.4em;
 	 }
 
-	.hideonsmartphone { display: none; }
-	.hideonsmartphoneimp { display: none !important; }
 	.noenlargeonsmartphone { width : 50px !important; display: inline !important; }
 	.maxwidthonsmartphone, #search_newcompany.ui-autocomplete-input { max-width: 100px; }
 	.maxwidth50onsmartphone { max-width: 40px; }
@@ -3878,14 +3902,19 @@ tr.liste_sub_total, tr.liste_sub_total td {
 }
 
 .paymenttable, .margintable {
+	margin: 0px 0px 0px 0px !important;
+}
+.paymenttable, .margintable:not(.margintablenotop) {
 	border-top-width: <?php echo $borderwidth ?>px !important;
 	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>) !important;
 	border-top-style: solid !important;
-	margin: 0px 0px 0px 0px !important;
+}
+.margintable.margintablenotop {
+	border-top-width: 0;
 }
 .paymenttable tr td:first-child, .margintable tr td:first-child
 {
-	padding-left: 2px;
+	//padding-left: 2px;
 }
 .paymenttable, .margintable tr td {
 	height: 22px;
@@ -4849,9 +4878,10 @@ td.gtaskname {
 /* ============================================================================== */
 
 /* CSS for treeview */
-.treeview ul { background-color: transparent !important; margin-top: 0; }
-.treeview li { background-color: transparent !important; padding: 0 0 0 16px !important; min-height: 20px; }
-.treeview .hover { color: rgb(<?php print $colortextlink; ?>) !important; text-decoration: underline !important; }
+.treeview ul { background-color: transparent !important; margin-bottom: 4px !important; margin-top: 0 !important; padding-top: 8px !important; }
+.treeview li { background-color: transparent !important; padding: 0 0 0 16px !important; min-height: 30px; }
+.treeview .hover { color: var(--colortextlink) !important; text-decoration: underline !important; }
+.treeview .hitarea { margin-top: 3px; }
 
 
 
@@ -6622,10 +6652,14 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 /* For copy-paste feature                                                         */
 /* ============================================================================== */
 
+span.clipboardCPValueToPrint {
+	display: inline-block;
+}
 span.clipboardCPValue.hidewithsize {
 	width: 0 !important;
 	display: inline-block;
 	color: transparent;
+	white-space: nowrap;
 }
 
 .clipboardCPShowOnHover .clipboardCPButton {

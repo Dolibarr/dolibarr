@@ -163,19 +163,23 @@ if (empty($reshook)) {
 			$description = trim(GETPOST('description', 'restricthtml'));
 
 			// Check that leave is for a user inside the hierarchy or advanced permission for all is set
-			if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->holiday->write))
-				|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->id == $fuserid && empty($user->rights->holiday->write))
-				|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->id != $fuserid && empty($user->rights->holiday->writeall_advance))
-				) {
-				$error++;
-				setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
+			if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+				if (empty($user->rights->holiday->write)) {
+					$error++;
+					setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
+				} elseif (!in_array($fuserid, $childids)) {
+					$error++;
+					setEventMessages($langs->trans("UserNotInHierachy"), null, 'errors');
+					$action = 'create';
+				}
 			} else {
-				if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->holiday->writeall_advance)) {
-					if (!in_array($fuserid, $childids)) {
-						$error++;
-						setEventMessages($langs->trans("UserNotInHierachy"), null, 'errors');
-						$action = 'create';
-					}
+				if (empty($user->rights->holiday->write) && empty($user->rights->holiday->writeall_advance)) {
+					$error++;
+					setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
+				} elseif (empty($user->rights->holiday->writeall_advance) && !in_array($fuserid, $childids)) {
+					$error++;
+					setEventMessages($langs->trans("UserNotInHierachy"), null, 'errors');
+					$action = 'create';
 				}
 			}
 
@@ -1136,7 +1140,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			}
 
 			// On vérifie si l'utilisateur à le droit de lire cette demande
-			if ($cancreate) {
+			if ($canread) {
 				$head = holiday_prepare_head($object);
 
 				if (($action == 'edit' && $object->statut == Holiday::STATUS_DRAFT) || ($action == 'editvalidator')) {

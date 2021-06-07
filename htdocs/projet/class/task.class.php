@@ -274,7 +274,8 @@ class Task extends CommonObject
 		}
 		$sql .= " WHERE ";
 		if (!empty($ref)) {
-			$sql .= "t.ref = '".$this->db->escape($ref)."'";
+			$sql .= "entity IN (".getEntity('project').")";
+			$sql .= " AND t.ref = '".$this->db->escape($ref)."'";
 		} else {
 			$sql .= "t.rowid = ".((int) $id);
 		}
@@ -1351,9 +1352,9 @@ class Task extends CommonObject
 	}
 
 	/**
-	 *  Load one record of time spent
+	 *  Load properties of timespent of a task from the time spent ID.
 	 *
-	 *  @param	int		$id 	Id object
+	 *  @param	int		$id 	Id in time spent table
 	 *  @return int		        <0 if KO, >0 if OK
 	 */
 	public function fetchTimeSpent($id)
@@ -1986,7 +1987,8 @@ class Task extends CommonObject
 		global $conf, $langs;
 
 		// For external user, no check is done on company because readability is managed by public status of project and assignement.
-		//$socid=$user->socid;
+		//$socid = $user->socid;
+		$socid = 0;
 
 		$projectstatic = new Project($this->db);
 		$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
@@ -2007,10 +2009,7 @@ class Task extends CommonObject
 			$sql .= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")";
 		}
 		// No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
-		//if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
-		if ($socid) {
-			$sql .= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
-		}
+		//if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
 		// No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
 		// if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";
 

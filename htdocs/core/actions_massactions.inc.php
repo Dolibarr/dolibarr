@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2018	   Nicolas ZABOURI	<info@inovea-conseil.com>
+ * Copyright (C) 2018-2021 Nicolas ZABOURI	<info@inovea-conseil.com>
  * Copyright (C) 2018 	   Juanjo Menent  <jmenent@2byte.es>
  * Copyright (C) 2019 	   Ferran Marcet  <fmarcet@2byte.es>
  * Copyright (C) 2019-2021 Frédéric France <frederic.france@netlogic.fr>
@@ -593,8 +593,10 @@ if (!$error && $massaction == 'confirm_presend') {
 							if ($mailfile->error) {
 								$resaction .= $langs->trans('ErrorFailedToSendMail', $from, $sendto);
 								$resaction .= '<br><div class="error">'.$mailfile->error.'</div>';
-							} else {
+							} elseif (!empty($conf->global->MAIN_DISABLE_ALL_MAILS)) {
 								$resaction .= '<div class="warning">No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS</div>';
+							} else {
+								$resaction .= $langs->trans('ErrorFailedToSendMail', $from, $sendto) . '<br><div class="error">(unhandled error)</div>';
 							}
 						}
 					}
@@ -1265,7 +1267,7 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 			if ($nbok > 1) {
 				setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
 			} else {
-				setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+				setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 			}
 			$db->commit();
 		} else {
@@ -1328,7 +1330,7 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 		if ($nbok > 1) {
 			setEventMessages($langs->trans("RecordsDeleted", $nbok), null, 'mesgs');
 		} else {
-			setEventMessages($langs->trans("RecordDeleted", $nbok), null, 'mesgs');
+			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 		}
 		$db->commit();
 	} else {

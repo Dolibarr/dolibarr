@@ -39,10 +39,6 @@ $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
-if (empty($user->rights->margins->liretous)) {
-	accessforbidden();
-}
 
 $object = new Product($db);
 
@@ -61,6 +57,12 @@ if (!$sortorder) {
 }
 if (!$sortfield) {
 	$sortfield = "f.datef";
+}
+
+$result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
+
+if (empty($user->rights->margins->liretous)) {
+	accessforbidden();
 }
 
 

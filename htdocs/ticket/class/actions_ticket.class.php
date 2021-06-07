@@ -192,7 +192,7 @@ class ActionsTicket
 		// Initial message
 		print '<div class="underbanner clearboth"></div>';
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
-		print '<table class="noborder centpercent margintable">';
+		print '<table class="noborder centpercent margintable margintablenotop">';
 		print '<tr class="liste_titre trforfield"><td class="nowrap titlefield">';
 		print $langs->trans("InitialMessage");
 		print '</td><td>';
@@ -391,7 +391,7 @@ class ActionsTicket
 	{
 		global $langs;
 
-		print '<div class="div-table-responsive-no-min margintoponly">';
+		print '<div class="div-table-responsive-no-min margintoponly navBarForStatus">';
 		print '<div class="centpercent right">';
 		// Exclude status which requires specific method
 		$exclude_status = array(Ticket::STATUS_CLOSED, Ticket::STATUS_CANCELED);
@@ -419,7 +419,9 @@ class ActionsTicket
 				print '</div>';
 			}
 		}
-		print '</div></div><br>';
+		print '</div>';
+		print '</div>';
+		print '<br>';
 	}
 
 	/**

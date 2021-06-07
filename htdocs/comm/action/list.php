@@ -320,7 +320,7 @@ if ($search_title != '') {
 	$param .= '&search_title='.urlencode($search_title);
 }
 if ($search_note != '') {
-	$param .= '&search_note='.$search_note;
+	$param .= '&search_note='.urlencode($search_note);
 }
 if (GETPOST('datestartday', 'int')) {
 	$param .= '&datestartday='.GETPOST('datestartday', 'int');
@@ -520,6 +520,7 @@ $sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+	// TODO Set and use an optimized request in $sqlforcount with no fields and no useless join to caluclate nb of records
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
@@ -606,13 +607,13 @@ if ($resql) {
 	$viewmode = '';
 	$viewmode .= '<a class="btnTitle btnTitleSelected reposition" href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list&restore_lastsearch_values=1'.$paramnoactionodate.'">';
 	//$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
-	$viewmode .= img_picto($langs->trans("List"), 'object_list-alt', 'class="pictoactionview block"');
+	$viewmode .= img_picto($langs->trans("List"), 'object_list', 'class="pictoactionview block"');
 	//$viewmode .= '</span>';
 	$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewList").'</span></a>';
 
 	$viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_month&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').$paramnoactionodate.'">';
 	//$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
-	$viewmode .= img_picto($langs->trans("ViewCal"), 'object_calendar', 'class="pictoactionview block"');
+	$viewmode .= img_picto($langs->trans("ViewCal"), 'object_calendarmonth', 'class="pictoactionview block"');
 	//$viewmode .= '</span>';
 	$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewCal").'</span></a>';
 
@@ -829,7 +830,11 @@ if ($resql) {
 		$actionstatic->location = $obj->location;
 		$actionstatic->note_private = dol_htmlentitiesbr($obj->note);
 
-		$actionstatic->fetchResources();
+		// Initialize $this->userassigned && this->socpeopleassigned array && this->userownerid
+		// but only if we need it
+		if (!empty($arrayfields['a.fk_contact']['checked'])) {
+			$actionstatic->fetchResources();
+		}
 
 		print '<tr class="oddeven">';
 
@@ -1006,7 +1011,7 @@ if ($resql) {
 		}
 		if (!empty($arrayfields['a.percent']['checked'])) {
 			// Status/Percent
-			$datep = $db->jdate($obj->datep);
+			$datep = $db->jdate($obj->dp);
 			print '<td align="center" class="nowrap">'.$actionstatic->LibStatut($obj->percent, 5, 0, $datep).'</td>';
 		}
 		// Action column

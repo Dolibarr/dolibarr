@@ -188,7 +188,7 @@ if ($action == 'delete') {
 $form = new Form($db);
 $formadmin = new FormAdmin($db);
 
-$wikihelp = 'EN:Setup Translation|FR:Paramétrage traduction|ES:Configuración';
+$wikihelp = 'EN:Setup_Translation|FR:Paramétrage_Traduction|ES:Configuración_Traducción';
 llxHeader('', $langs->trans("Setup"), $wikihelp);
 
 $param = '&mode='.urlencode($mode);
@@ -563,6 +563,21 @@ if ($mode == 'searchkey') {
 				print ' &nbsp; <a href="'.$transifexurl.'" target="transifex">'.img_picto($langs->trans('FixOnTransifex'), 'globe').'</a>';
 			}
 		} else {
+			// retrieve rowid
+			$sql = "SELECT rowid";
+			$sql .= " FROM ".MAIN_DB_PREFIX."overwrite_trans";
+			$sql .= " WHERE entity IN (".getEntity('overwrite_trans').")";
+			$sql .= " AND transkey = '".$db->escape($key)."'";
+			dol_syslog("translation::select from table", LOG_DEBUG);
+			$result = $db->query($sql);
+			if ($result) {
+				$obj = $db->fetch_object($result);
+			}
+			print '<a class="editfielda reposition marginrightonly" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$conf->entity.'&mode=overwrite&action=edit">'.img_edit().'</a>';
+			print ' ';
+			print '<a class="marginleftonly marginrightonly" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$conf->entity.'&mode='.urlencode($mode).'&action=delete&mode='.urlencode($mode).'&token='.newToken().'">'.img_delete().'</a>';
+			print '&nbsp;&nbsp;';
+
 			$htmltext = $langs->trans("TransKeyWithoutOriginalValue", $key);
 			print $form->textwithpicto('', $htmltext, 1, 'warning');
 		}

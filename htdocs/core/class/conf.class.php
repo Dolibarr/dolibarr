@@ -533,6 +533,10 @@ class Conf
 			}
 		}
 
+		if (!isset($this->global->STOCK_SHOW_ALL_BATCH_BY_DEFAULT)) {
+			$this->global->STOCK_SHOW_ALL_BATCH_BY_DEFAULT = 1;
+		}
+
 		// conf->currency
 		if (empty($this->global->MAIN_MONNAIE)) {
 			$this->global->MAIN_MONNAIE = 'EUR';

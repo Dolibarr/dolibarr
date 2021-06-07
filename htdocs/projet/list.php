@@ -297,7 +297,7 @@ if (empty($reshook)) {
  * View
  */
 
-$socstatic = new Societe($db);
+$companystatic = new Societe($db);
 $form = new Form($db);
 $formother = new FormOther($db);
 $formproject = new FormProjets($db);
@@ -330,12 +330,13 @@ if (count($listofprojectcontacttype) == 0) {
 }
 
 $distinct = 'DISTINCT'; // We add distinct until we are added a protection to be sure a contact of a project and task is only once.
-$sql = "SELECT ".$distinct." p.rowid as id, p.ref, p.title, p.fk_statut as status, p.fk_opp_status, p.public, p.fk_user_creat";
-$sql .= ", p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, (p.opp_amount*p.opp_percent/100) as opp_weighted_amount, p.tms as date_update, p.budget_amount ";
-$sql .= ",  p.usage_opportunity, p.usage_task, p.usage_bill_time, p.usage_organize_event";
-$sql .= ", accept_conference_suggestions, accept_booth_suggestions, price_registration, price_booth";
-$sql .= ", s.rowid as socid, s.nom as name, s.email";
-$sql .= ", cls.code as opp_status_code";
+$sql = "SELECT ".$distinct." p.rowid as id, p.ref, p.title, p.fk_statut as status, p.fk_opp_status, p.public, p.fk_user_creat,";
+$sql .= " p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, (p.opp_amount*p.opp_percent/100) as opp_weighted_amount, p.tms as date_update, p.budget_amount,";
+$sql .= " p.usage_opportunity, p.usage_task, p.usage_bill_time, p.usage_organize_event,";
+$sql .= " accept_conference_suggestions, accept_booth_suggestions, price_registration, price_booth,";
+$sql .= " s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.code_client,";
+$sql .= " country.code as country_code,";
+$sql .= " cls.code as opp_status_code";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -355,6 +356,7 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (p.rowid = ef.fk_object)";
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_lead_status as cls on p.fk_opp_status = cls.rowid";
 // We'll need this table joined to the select in order to filter by sale
 // No check is done on company permission because readability is managed by public status of project and assignement.
@@ -978,9 +980,17 @@ while ($i < min($num, $limit)) {
 
 	$userAccess = $object->restrictedProjectArea($user); // why this ?
 	if ($userAccess >= 0) {
-		$socstatic->id = $obj->socid;
-		$socstatic->name = $obj->name;
-		$socstatic->email = $obj->email;
+		$companystatic->id = $obj->socid;
+		$companystatic->name = $obj->name;
+		$companystatic->name_alias = $obj->alias;
+		$companystatic->client = $obj->client;
+		$companystatic->code_client = $obj->code_client;
+		$companystatic->email = $obj->email;
+		$companystatic->phone = $obj->phone;
+		$companystatic->address = $obj->address;
+		$companystatic->zip = $obj->zip;
+		$companystatic->town = $obj->town;
+		$companystatic->country_code = $obj->country_code;
 
 		print '<tr class="oddeven">';
 
@@ -1009,7 +1019,7 @@ while ($i < min($num, $limit)) {
 		if (!empty($arrayfields['s.nom']['checked'])) {
 			print '<td class="tdoverflowmax100">';
 			if ($obj->socid) {
-				print $socstatic->getNomUrl(1);
+				print $companystatic->getNomUrl(1);
 			} else {
 				print '&nbsp;';
 			}
@@ -1022,9 +1032,9 @@ while ($i < min($num, $limit)) {
 		if (!empty($arrayfields['commercial']['checked'])) {
 			print '<td>';
 			if ($obj->socid) {
-				$socstatic->id = $obj->socid;
-				$socstatic->name = $obj->name;
-				$listsalesrepresentatives = $socstatic->getSalesRepresentatives($user);
+				$companystatic->id = $obj->socid;
+				$companystatic->name = $obj->name;
+				$listsalesrepresentatives = $companystatic->getSalesRepresentatives($user);
 				$nbofsalesrepresentative = count($listsalesrepresentatives);
 				if ($nbofsalesrepresentative > 6) {
 					// We print only number
@@ -1041,7 +1051,9 @@ while ($i < min($num, $limit)) {
 						$userstatic->entity = $val['entity'];
 						$userstatic->photo = $val['photo'];
 						$userstatic->login = $val['login'];
-						$userstatic->phone = $val['phone'];
+						$userstatic->office_phone = $val['office_phone'];
+						$userstatic->office_fax = $val['office_fax'];
+						$userstatic->user_mobile = $val['user_mobile'];
 						$userstatic->job = $val['job'];
 						$userstatic->gender = $val['gender'];
 						print ($nbofsalesrepresentative < 2) ? $userstatic->getNomUrl(-1, '', 0, 0, 12) : $userstatic->getNomUrl(-2);

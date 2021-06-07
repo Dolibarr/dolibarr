@@ -62,6 +62,18 @@ UPDATE llx_c_country SET eec = 1 WHERE code IN ('AT','BE','BG','CY','CZ','DE','D
 ALTER TABLE llx_export_model MODIFY COLUMN type varchar(64);
 
 
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  11, 'US-BASE', 'USA basic chart of accounts', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 14, 'CA-ENG-BASE', 'Canadian basic chart of accounts - English', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 154, 'SAT/24-2019', 'Catalogo y codigo agrupador fiscal del 2019', 1);
+
+
+UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'auguria';
+UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'bureau2crea';
+UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'amarok';
+UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'cameleo';
+DELETE FROM llx_user_param where param = 'MAIN_THEME' and value in ('auguria', 'amarok', 'cameleo');
+
+
 -- For v14
 
 ALTER TABLE llx_product_lot ADD COLUMN eol_date datetime NULL;
@@ -161,7 +173,9 @@ CREATE TABLE llx_workstation_workstation_usergroup(
 	fk_workstation integer
 ) ENGINE=innodb;
 
-CREATE TABLE llx_c_producbatch_qcstatus(
+DROP TABLE llx_c_producbatch_qcstatus;		-- delete table with bad name
+
+CREATE TABLE llx_c_productbatch_qcstatus(
   rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
   entity   integer NOT NULL DEFAULT 1,
   code     varchar(16)        NOT NULL,
@@ -406,7 +420,7 @@ UPDATE llx_propal SET fk_user_signature = fk_user_cloture WHERE fk_user_signatur
 UPDATE llx_propal SET date_signature = date_cloture WHERE date_signature IS NULL AND date_cloture IS NOT NULL;
 
 
-ALTER TABLE llx_product ADD COLUMN batch_mask VARCHAR(32) NULL;
+ALTER TABLE llx_product ADD COLUMN batch_mask VARCHAR(32) DEFAULT NULL;
 ALTER TABLE llx_product ADD COLUMN lifetime INTEGER NULL;
 ALTER TABLE llx_product ADD COLUMN qc_frequency INTEGER NULL;
 
@@ -437,6 +451,8 @@ CREATE TABLE llx_partnership(
 	import_key varchar(14),
 	model_pdf varchar(255)
 ) ENGINE=innodb;
+
+ALTER TABLE llx_partnership ADD COLUMN last_check_backlink datetime NULL;
 
 ALTER TABLE llx_partnership ADD INDEX idx_partnership_rowid (rowid);
 ALTER TABLE llx_partnership ADD INDEX idx_partnership_ref (ref);
@@ -492,12 +508,14 @@ CREATE TABLE llx_knowledgemanagement_knowledgerecord(
 	model_pdf varchar(255), 
 	question text NOT NULL, 
 	answer text,
+	url varchar(255),
 	fk_ticket integer,
 	status integer NOT NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
 
 ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD COLUMN fk_ticket integer;
+ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD COLUMN url varchar(255);
 
 
 create table llx_knowledgemanagement_knowledgerecord_extrafields
@@ -514,5 +532,15 @@ ALTER TABLE llx_adherent_type ADD COLUMN amount DOUBLE(24,8) NULL DEFAULT NULL A
 -- add action trigger
 INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('COMPANY_MODIFY','Third party update','Executed when you update third party','societe',1);
 INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('CONTACT_MODIFY','Contact address update','Executed when a contact is updated','contact',51);
+
+
+create table llx_c_partnership_type
+(
+  rowid      	integer AUTO_INCREMENT PRIMARY KEY,
+  entity        integer DEFAULT 1 NOT NULL,
+  code          varchar(32) NOT NULL,
+  label 	    varchar(64)	NOT NULL,
+  active  	    tinyint DEFAULT 1  NOT NULL
+)ENGINE=innodb;
 
 

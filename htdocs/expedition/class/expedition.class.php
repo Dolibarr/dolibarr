@@ -468,11 +468,11 @@ class Expedition extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Create the detail (eat-by date) of the expedition line
+	 * Create the detail of the expedition line. Create 1 record into expeditiondet for each warehouse and n record for each lot in this warehouse into expeditiondet_batch.
 	 *
-	 * @param 	object		$line_ext		full line informations
+	 * @param 	object		$line_ext			Objet with full information of line. $line_ext->detail_batch must be an array of ExpeditionLineBatch
 	 * @param	array		$array_options		extrafields array
-	 * @return	int							<0 if KO, >0 if OK
+	 * @return	int								<0 if KO, >0 if OK
 	 */
 	public function create_line_batch($line_ext, $array_options = 0)
 	{
@@ -496,7 +496,7 @@ class Expedition extends CommonObject
 				// create shipment batch lines for stockLocation
 				foreach ($tab as $detbatch) {
 					if ($detbatch->entrepot_id == $stockLocation) {
-						if (!($detbatch->create($line_id) > 0)) {		// Create an expeditionlinebatch
+						if (!($detbatch->create($line_id) > 0)) {		// Create an ExpeditionLineBatch
 							$error++;
 						}
 					}

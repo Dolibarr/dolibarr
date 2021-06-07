@@ -300,6 +300,11 @@ class User extends CommonObject
 	public $nb_rights;
 
 	/**
+	 * @var array	To store list of groups of user (used by API /info for example)
+	 */
+	public $user_group_list;
+
+	/**
 	 * @var array Cache array of already loaded permissions
 	 */
 	private $_tab_loaded = array();
@@ -2558,11 +2563,13 @@ class User extends CommonObject
 	/**
 	 *  Return clickable link of login (eventualy with picto)
 	 *
-	 *	@param	int		$withpicto		Include picto into link
-	 *	@param	string	$option			Sur quoi pointe le lien
-	 *	@return	string					Chaine avec URL
+	 *	@param	int		$withpictoimg		Include picto into link
+	 *	@param	string	$option				On what the link point to ('leave', 'accountancy', 'nolink', )
+	 *  @param	integer	$notooltip			1=Disable tooltip on picto and name
+	 *  @param  string  $morecss       		Add more css on link
+	 *	@return	string						String with URL
 	 */
-	public function getLoginUrl($withpicto = 0, $option = '')
+	public function getLoginUrl($withpictoimg = 0, $option = '', $notooltip = 0, $morecss = '')
 	{
 		global $langs, $user;
 
@@ -2587,11 +2594,23 @@ class User extends CommonObject
 		}
 
 		$result .= $linkstart;
-		if ($withpicto) {
-			$result .= img_object($langs->trans("ShowUser"), 'user', 'class="paddingright"');
+		if ($withpictoimg) {
+			$paddafterimage = '';
+			if (abs($withpictoimg) == 1) {
+				$paddafterimage = 'style="margin-'.($langs->trans("DIRECTION") == 'rtl' ? 'left' : 'right').': 3px;"';
+			}
+			// Only picto
+			if ($withpictoimg > 0) {
+				$picto = '<!-- picto user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'">'.img_object('', 'user', $paddafterimage.' '.($notooltip ? '' : 'class="paddingright classfortooltip"'), 0, 0, $notooltip ? 0 : 1).'</span>';
+			} else {
+				// Picto must be a photo
+				$picto = '<!-- picto photo user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'"'.($paddafterimage ? ' '.$paddafterimage : '').'>'.Form::showphoto('userphoto', $this, 0, 0, 0, 'userphoto'.($withpictoimg == -3 ? 'small' : ''), 'mini', 0, 1).'</span>';
+			}
+			$result .= $picto;
 		}
 		$result .= $this->login;
 		$result .= $linkend;
+
 		return $result;
 	}
 

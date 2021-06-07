@@ -62,6 +62,7 @@
 -- Slovenia (need to check code SI-Id)
 -- Taiwan
 -- Tunisia
+-- United States of America 
 
 
 
@@ -1120,6 +1121,60 @@ INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1001, 'TN24', '', 0, '', 'Zaghouan');
 
 
+-- USA States (id country=11)
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'AL', '', 0, 'ALABAMA', 'Alabama');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'AK', '', 0, 'ALASKA', 'Alaska');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'AZ', '', 0, 'ARIZONA', 'Arizona');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'AR', '', 0, 'ARKANSAS', 'Arkansas');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'CA', '', 0, 'CALIFORNIA', 'California');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'CO', '', 0, 'COLORADO', 'Colorado');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'CT', '', 0, 'CONNECTICUT', 'Connecticut');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'DE', '', 0, 'DELAWARE', 'Delaware');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'FL', '', 0, 'FLORIDA', 'Florida');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'GA', '', 0, 'GEORGIA', 'Georgia');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'HI', '', 0, 'HAWAII', 'Hawaii');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'ID', '', 0, 'IDAHO', 'Idaho');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'IL', '', 0, 'ILLINOIS','Illinois');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'IN', '', 0, 'INDIANA', 'Indiana');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'IA', '', 0, 'IOWA', 'Iowa');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'KS', '', 0, 'KANSAS', 'Kansas');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'KY', '', 0, 'KENTUCKY', 'Kentucky');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'LA', '', 0, 'LOUISIANA', 'Louisiana');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'ME', '', 0, 'MAINE', 'Maine');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'MD', '', 0, 'MARYLAND', 'Maryland');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'MA', '', 0, 'MASSACHUSSETTS', 'Massachusetts');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'MI', '', 0, 'MICHIGAN', 'Michigan');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'MN', '', 0, 'MINNESOTA', 'Minnesota');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'MS', '', 0, 'MISSISSIPPI', 'Mississippi');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'MO', '', 0, 'MISSOURI', 'Missouri');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'MT', '', 0, 'MONTANA', 'Montana');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'NE', '', 0, 'NEBRASKA', 'Nebraska');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'NV', '', 0, 'NEVADA', 'Nevada');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'NH', '', 0, 'NEW HAMPSHIRE', 'New Hampshire');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'NJ', '', 0, 'NEW JERSEY', 'New Jersey');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'NM', '', 0, 'NEW MEXICO', 'New Mexico');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'NY', '', 0, 'NEW YORK', 'New York');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'NC', '', 0, 'NORTH CAROLINA', 'North Carolina');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'ND', '', 0, 'NORTH DAKOTA', 'North Dakota');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'OH', '', 0, 'OHIO', 'Ohio');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'OK', '', 0, 'OKLAHOMA', 'Oklahoma');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'OR', '', 0, 'OREGON', 'Oregon');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'PA', '', 0, 'PENNSYLVANIA', 'Pennsylvania');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'RI', '', 0, 'RHODE ISLAND', 'Rhode Island');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'SC', '', 0, 'SOUTH CAROLINA', 'South Carolina');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'SD', '', 0, 'SOUTH DAKOTA', 'South Dakota');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'TN', '', 0, 'TENNESSEE', 'Tennessee');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'TX', '', 0, 'TEXAS', 'Texas');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'UT', '', 0, 'UTAH', 'Utah');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'VT', '', 0, 'VERMONT', 'Vermont');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'VA', '', 0, 'VIRGINIA', 'Virginia');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'WA', '', 0, 'WASHINGTON', 'Washington');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'WV', '', 0, 'WEST VIRGINIA', 'West Virginia');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'WI', '', 0, 'WISCONSIN', 'Wisconsin');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1101, 'WY', '', 0, 'WYOMING', 'Wyoming');
+
+
+
 
 
 -- Provinces Bolivia (id country=52)
@@ -1511,59 +1566,6 @@ INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc
 INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('814', 704, NULL, 0,NULL, 'Co. Fermanagh', 1);
 INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('815', 704, NULL, 0,NULL, 'Co. Londonderry', 1);
 
-
-
--- Provinces US (id country=11)
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('AL', 1101, '', 0, 'ALABAMA', 'Alabama', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('AK', 1101, '', 0, 'ALASKA', 'Alaska', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('AZ', 1101, '', 0, 'ARIZONA', 'Arizona', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('AR', 1101, '', 0, 'ARKANSAS', 'Arkansas', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('CA', 1101, '', 0, 'CALIFORNIA', 'California', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('CO', 1101, '', 0, 'COLORADO', 'Colorado', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('CT', 1101, '', 0, 'CONNECTICUT', 'Connecticut', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('DE', 1101, '', 0, 'DELAWARE', 'Delaware', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('FL', 1101, '', 0, 'FLORIDA', 'Florida', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('GA', 1101, '', 0, 'GEORGIA', 'Georgia', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('HI', 1101, '', 0, 'HAWAII', 'Hawaii', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('ID', 1101, '', 0, 'IDAHO', 'Idaho', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('IL', 1101, '', 0, 'ILLINOIS','Illinois', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('IN', 1101, '', 0, 'INDIANA', 'Indiana', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('IA', 1101, '', 0, 'IOWA', 'Iowa', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('KS', 1101, '', 0, 'KANSAS', 'Kansas', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('KY', 1101, '', 0, 'KENTUCKY', 'Kentucky', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('LA', 1101, '', 0, 'LOUISIANA', 'Louisiana', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('ME', 1101, '', 0, 'MAINE', 'Maine', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('MD', 1101, '', 0, 'MARYLAND', 'Maryland', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('MA', 1101, '', 0, 'MASSACHUSSETTS', 'Massachusetts', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('MI', 1101, '', 0, 'MICHIGAN', 'Michigan', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('MN', 1101, '', 0, 'MINNESOTA', 'Minnesota', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('MS', 1101, '', 0, 'MISSISSIPPI', 'Mississippi', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('MO', 1101, '', 0, 'MISSOURI', 'Missouri', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('MT', 1101, '', 0, 'MONTANA', 'Montana', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('NE', 1101, '', 0, 'NEBRASKA', 'Nebraska', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('NV', 1101, '', 0, 'NEVADA', 'Nevada', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('NH', 1101, '', 0, 'NEW HAMPSHIRE', 'New Hampshire', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('NJ', 1101, '', 0, 'NEW JERSEY', 'New Jersey', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('NM', 1101, '', 0, 'NEW MEXICO', 'New Mexico', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('NY', 1101, '', 0, 'NEW YORK', 'New York', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('NC', 1101, '', 0, 'NORTH CAROLINA', 'North Carolina', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('ND', 1101, '', 0, 'NORTH DAKOTA', 'North Dakota', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('OH', 1101, '', 0, 'OHIO', 'Ohio', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('OK', 1101, '', 0, 'OKLAHOMA', 'Oklahoma', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('OR', 1101, '', 0, 'OREGON', 'Oregon', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('PA', 1101, '', 0, 'PENNSYLVANIA', 'Pennsylvania', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('RI', 1101, '', 0, 'RHODE ISLAND', 'Rhode Island', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('SC', 1101, '', 0, 'SOUTH CAROLINA', 'South Carolina', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('SD', 1101, '', 0, 'SOUTH DAKOTA', 'South Dakota', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('TN', 1101, '', 0, 'TENNESSEE', 'Tennessee', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('TX', 1101, '', 0, 'TEXAS', 'Texas', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('UT', 1101, '', 0, 'UTAH', 'Utah', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('VT', 1101, '', 0, 'VERMONT', 'Vermont', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('VA', 1101, '', 0, 'VIRGINIA', 'Virginia', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('WA', 1101, '', 0, 'WASHINGTON', 'Washington', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('WV', 1101, '', 0, 'WEST VIRGINIA', 'West Virginia', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('WI', 1101, '', 0, 'WISCONSIN', 'Wisconsin', 1);
-insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('WY', 1101, '', 0, 'WYOMING', 'Wyoming', 1);
 
 
 -- San Salvador (id country=86)
