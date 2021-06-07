@@ -263,8 +263,6 @@ if ($modecompta == 'CREANCES-DETTES')
 
 		$sql .= " AND (p.rowid IN ";
 		$sql .= " (SELECT fk_product FROM ".MAIN_DB_PREFIX."categorie_product cp WHERE ";
-		$sql .= " AND ";
-
 		if ($subcat) $sql .= "cp.fk_categorie IN (".$listofcatsql.")";
 		else $sql .= "cp.fk_categorie = ".$selected_cat;
 		$sql .= "))";
