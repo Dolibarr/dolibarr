@@ -224,8 +224,7 @@ if (empty($reshook))
 					continue;
 				}
 
-				$tmpholiday->statut = Holiday::STATUS_APPROVED;
-				$res2 = $tmpholiday->approve($user);
+				$res2 = $tmpholiday->setApproved($user);
 
 				if ($res2 < 0) {
 					dol_print_error($db);

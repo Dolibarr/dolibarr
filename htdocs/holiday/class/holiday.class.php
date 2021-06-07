@@ -2267,4 +2267,65 @@ class Holiday extends CommonObject
 			return -1;
 		}
 	}
+
+	/**
+	 * Set status to approved
+	 *
+	 * @param   User    $fuser      User
+	 * @param   int     $notrigger  Disable triggers
+	 * @return  int                 <0 if KO, 0 if nothing done, >0 if OK
+	 */
+	public function setApproved($fuser, $notrigger = 0)
+	{
+		if ($this->statut != self::STATUS_VALIDATED) {
+			$this->error = 'HolidayApprovalBadStatus';
+			dol_syslog(get_class($this)."::setApproved holiday already with approve status", LOG_WARNING);
+			return 0;
+		}
+
+		if (! empty($this->fk_validator) && $fuser->id != $this->fk_validator) {
+			$this->error = 'HolidayNotApprobator';
+			return 0;
+		}
+
+		if (empty($fuser->rights->holiday->approve)) {
+			$this->error = 'HolidayNoRightForApproval';
+			return 0;
+		}
+
+		$now = dol_now();
+
+		$this->db->begin();
+
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " SET ref = '".$this->db->escape($this->ref)."', statut = ".self::STATUS_APPROVED.", fk_user_valid = ".$fuser->id.",";
+		$sql .= " date_valid='".$this->db->idate($now)."'";
+		$sql .= ' WHERE rowid = '.$this->id;
+
+		$resql = $this->db->query($sql);
+
+		if (!$resql) {
+			$this->db->rollback();
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		if (!$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('EXPENSE_REPORT_APPROVE', $fuser);
+
+			if ($result < 0) {
+				$this->db->rollback();
+				return -2;
+			}
+			// End call triggers
+		}
+
+		// date approval
+		$this->date_valid = $now;
+		$this->fk_user_valid = $fuser->id;
+
+		$this->db->commit();
+		return 1;
+	}
 }
