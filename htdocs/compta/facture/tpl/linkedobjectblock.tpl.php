@@ -85,7 +85,7 @@ foreach ($linkedObjectBlock as $key => $objectlink)
     	}
 	}
     print '</td>';
-    print '<td class="linkedcol-statut right">'.$objectlink->getLibStatut(3).'</td>';
+    print '<td class="linkedcol-statut right">'.$objectlink->getLibStatut(3, $objectlink->getSommePaiement()).'</td>';
     print '<td class="linkedcol-action right"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key.'">'.img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink').'</a></td>';
     print "</tr>\n";
 }
