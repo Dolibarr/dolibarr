@@ -242,6 +242,11 @@ elseif ($action == 'setdoc')
 		$projectToSelect = GETPOST('projectToSelect', 'alpha');
 		dolibarr_set_const($db, 'PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY', $projectToSelect, 'chaine', 0, '', $conf->entity); //Allow to disable this configuration if empty value
 	}
+	if (GETPOST('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'))
+	{
+		$timesheetFreezeDuration = GETPOST('timesheetFreezeDuration', 'alpha');
+		dolibarr_set_const($db, 'PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS', intval($timesheetFreezeDuration), 'chaine', 0, '', $conf->entity); //Allow to disable this configuration if empty value
+	}
 }
 
 
@@ -839,6 +844,16 @@ print '<input type="text" id="projectToSelect" name="projectToSelect" value="'.$
 print $form->textwithpicto('', $langs->trans('AllowToLinkFromOtherCompany'));
 print '<input type="submit" class="button" name="PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY" value="'.$langs->trans("Modify").'">';
 print '</td>';
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("TimesheetPreventAfterFollowingMonths").'</td>';
+
+print '<td class="right" width="60" colspan="2">';
+print '<input type="number" id="timesheetFreezeDuration" name="timesheetFreezeDuration" min="0" step="1" value="'.$conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS.'"/>&nbsp;';
+print '<input type="submit" class="button" name="PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS" value="'.$langs->trans("Modify").'">';
+print '</td>';
+print '</tr>';
 
 print '</table>';
 
