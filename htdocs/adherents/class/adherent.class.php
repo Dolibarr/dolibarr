@@ -1740,7 +1740,8 @@ class Adherent extends CommonObject
 					}
 				}
 				$invoice->socid = $this->fk_soc;
-				$invoice->date = $datesubscription;
+				//$invoice->date = $datesubscription;
+				$invoice->date = dol_now();
 
 				// Possibility to add external linked objects with hooks
 				$invoice->linked_objects['subscription'] = $subscriptionid;
