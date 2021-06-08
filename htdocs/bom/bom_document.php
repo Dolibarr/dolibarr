@@ -147,7 +147,7 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'bom';
-	$permission = $user->rights->bom->write;
+	$permissiontoadd = $user->rights->bom->write;
 	$permtoedit = $user->rights->bom->write;
 	$param = '&id='.$object->id;
 

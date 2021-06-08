@@ -181,7 +181,7 @@ if ($id > 0 || !empty($ref)) {
 		print dol_get_fiche_end();
 
 		$modulepart = 'facture';
-		$permission = $user->rights->facture->creer;
+		$permissiontoadd = $user->rights->facture->creer;
 		$permtoedit = $user->rights->facture->creer;
 		$param = '&id='.$object->id;
 		include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';

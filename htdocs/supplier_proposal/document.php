@@ -163,7 +163,7 @@ if ($object->id > 0) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'supplier_proposal';
-	$permission = $user->rights->supplier_proposal->creer;
+	$permissiontoadd = $user->rights->supplier_proposal->creer;
 	$permtoedit = $user->rights->supplier_proposal->creer;
 	$param = '&id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
