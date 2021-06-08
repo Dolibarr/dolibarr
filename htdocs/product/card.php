@@ -1974,14 +1974,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<div class="fichehalfleft">';
 
 			print '<div class="underbanner clearboth"></div>';
-			print '<table class="border tableforfield" width="100%">';
+			print '<table class="border tableforfield centpercent">';
 
 			// Type
 			if (!empty($conf->product->enabled) && !empty($conf->service->enabled)) {
 				$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
 				print '<tr><td class="titlefield">';
 				print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat) : $langs->trans('Type');
-				print '</td><td colspan="2">';
+				print '</td><td>';
 				print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat);
 				print '</td></tr>';
 			}
@@ -1996,7 +1996,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbarcodetype&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'), 1).'</a></td>';
 				}
 				print '</tr></table>';
-				print '</td><td colspan="2">';
+				print '</td><td>';
 				if ($action == 'editbarcodetype' || $action == 'editbarcode') {
 					require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
 					$formbarcode = new FormBarCode($db);
@@ -2022,7 +2022,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbarcode&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'), 1).'</a></td>';
 				}
 				print '</tr></table>';
-				print '</td><td colspan="2">';
+				print '</td><td>';
 				if ($action == 'editbarcode') {
 					$tmpcode = GETPOSTISSET('barcode') ? GETPOST('barcode') : $object->barcode;
 					if (empty($tmpcode) && !empty($modBarCodeProduct->code_auto)) {
@@ -2042,10 +2042,25 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</td></tr>'."\n";
 			}
 
+			// Batch number management (to batch)
+			if (!empty($conf->productbatch->enabled)) {
+				if ($object->isProduct() || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+					print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
+					print $object->getLibStatut(0, 2);
+					print '</td></tr>';
+					if ((($object->status_batch == '1' &&$conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced')
+						|| ($object->status_batch == '2' && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced' && $conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS))) {
+							print '<tr><td>'.$langs->trans("ManageLotMask").'</td><td>';
+							print $object->batch_mask;
+							print '</td></tr>';
+						}
+				}
+			}
+
 			// Accountancy sell code
 			print '<tr><td class="nowrap">';
 			print $langs->trans("ProductAccountancySellCode");
-			print '</td><td colspan="2">';
+			print '</td><td>';
 			if (!empty($conf->accounting->enabled)) {
 				if (!empty($object->accountancy_code_sell)) {
 					$accountingaccount = new AccountingAccount($db);
@@ -2062,7 +2077,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if ($mysoc->isInEEC()) {
 				print '<tr><td class="nowrap">';
 				print $langs->trans("ProductAccountancySellIntraCode");
-				print '</td><td colspan="2">';
+				print '</td><td>';
 				if (!empty($conf->accounting->enabled)) {
 					if (!empty($object->accountancy_code_sell_intra)) {
 						$accountingaccount2 = new AccountingAccount($db);
@@ -2079,7 +2094,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Accountancy sell code export
 			print '<tr><td class="nowrap">';
 			print $langs->trans("ProductAccountancySellExportCode");
-			print '</td><td colspan="2">';
+			print '</td><td>';
 			if (!empty($conf->accounting->enabled)) {
 				if (!empty($object->accountancy_code_sell_export)) {
 					$accountingaccount3 = new AccountingAccount($db);
@@ -2095,7 +2110,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Accountancy buy code
 			print '<tr><td class="nowrap">';
 			print $langs->trans("ProductAccountancyBuyCode");
-			print '</td><td colspan="2">';
+			print '</td><td>';
 			if (!empty($conf->accounting->enabled)) {
 				if (!empty($object->accountancy_code_buy)) {
 					$accountingaccount4 = new AccountingAccount($db);
@@ -2112,7 +2127,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if ($mysoc->isInEEC()) {
 				print '<tr><td class="nowrap">';
 				print $langs->trans("ProductAccountancyBuyIntraCode");
-				print '</td><td colspan="2">';
+				print '</td><td>';
 				if (!empty($conf->accounting->enabled)) {
 					if (!empty($object->accountancy_code_buy_intra)) {
 						$accountingaccount5 = new AccountingAccount($db);
@@ -2129,7 +2144,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Accountancy buy code export
 			print '<tr><td class="nowrap">';
 			print $langs->trans("ProductAccountancyBuyExportCode");
-			print '</td><td colspan="2">';
+			print '</td><td>';
 			if (!empty($conf->accounting->enabled)) {
 				if (!empty($object->accountancy_code_buy_export)) {
 					$accountingaccount6 = new AccountingAccount($db);
@@ -2142,26 +2157,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 			print '</td></tr>';
 
-			// Batch number management (to batch)
-			if (!empty($conf->productbatch->enabled)) {
-				if ($object->isProduct() || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
-					print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="2">';
-					print $object->getLibStatut(0, 2);
-					print '</td></tr>';
-					if ((($object->status_batch == '1' &&$conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced')
-					|| ($object->status_batch == '2' && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced' && $conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS))) {
-						print '<tr><td>'.$langs->trans("ManageLotMask").'</td><td colspan="2">';
-						print $object->batch_mask;
-						print '</td></tr>';
-					}
-				}
-			}
-
 			// Description
-			print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td colspan="2">'.(dol_textishtml($object->description) ? $object->description : dol_nl2br($object->description, 1, true)).'</td></tr>';
+			print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>'.(dol_textishtml($object->description) ? $object->description : dol_nl2br($object->description, 1, true)).'</td></tr>';
 
 			// Public URL
-			print '<tr><td>'.$langs->trans("PublicUrl").'</td><td colspan="2">';
+			print '<tr><td>'.$langs->trans("PublicUrl").'</td><td>';
 			print dol_print_url($object->url);
 			print '</td></tr>';
 
@@ -2184,7 +2184,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					$prodstatic->fetch($combination->fk_product_parent);
 
 					// Parent product
-					print '<tr><td>'.$langs->trans("ParentProduct").'</td><td colspan="2">';
+					print '<tr><td>'.$langs->trans("ParentProduct").'</td><td>';
 					print $prodstatic->getNomUrl(1);
 					print '</td></tr>';
 				}
@@ -2195,11 +2195,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<div class="fichehalfright"><div class="ficheaddleft">';
 
 			print '<div class="underbanner clearboth"></div>';
-			print '<table class="border tableforfield" width="100%">';
+			print '<table class="border tableforfield centpercent">';
 
 			if ($object->isService()) {
 				// Duration
-				print '<tr><td class="titlefield">'.$langs->trans("Duration").'</td><td colspan="2">'.$object->duration_value.'&nbsp;';
+				print '<tr><td class="titlefield">'.$langs->trans("Duration").'</td><td>'.$object->duration_value.'&nbsp;';
 				if ($object->duration_value > 1) {
 					$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hours"), "d"=>$langs->trans("Days"), "w"=>$langs->trans("Weeks"), "m"=>$langs->trans("Months"), "y"=>$langs->trans("Years"));
 				} elseif ($object->duration_value > 0) {
@@ -2210,12 +2210,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</td></tr>';
 			} else {
 				// Nature
-				print '<tr><td class="titlefield">'.$form->textwithpicto($langs->trans("NatureOfProductShort"), $langs->trans("NatureOfProductDesc")).'</td><td colspan="2">';
+				print '<tr><td class="titlefield">'.$form->textwithpicto($langs->trans("NatureOfProductShort"), $langs->trans("NatureOfProductDesc")).'</td><td>';
 				print $object->getLibFinished();
 				print '</td></tr>';
 
 				// Brut Weight
-				print '<tr><td class="titlefield">'.$langs->trans("Weight").'</td><td colspan="2">';
+				print '<tr><td class="titlefield">'.$langs->trans("Weight").'</td><td>';
 				if ($object->weight != '') {
 					print $object->weight." ".measuringUnitString(0, "weight", $object->weight_units);
 				} else {
@@ -2225,7 +2225,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 				if (empty($conf->global->PRODUCT_DISABLE_SIZE)) {
 					// Brut Length
-					print '<tr><td>'.$langs->trans("Length").' x '.$langs->trans("Width").' x '.$langs->trans("Height").'</td><td colspan="2">';
+					print '<tr><td>'.$langs->trans("Length").' x '.$langs->trans("Width").' x '.$langs->trans("Height").'</td><td>';
 					if ($object->length != '' || $object->width != '' || $object->height != '') {
 						print $object->length;
 						if ($object->width) {
@@ -2242,7 +2242,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 				if (empty($conf->global->PRODUCT_DISABLE_SURFACE)) {
 					// Brut Surface
-					print '<tr><td>'.$langs->trans("Surface").'</td><td colspan="2">';
+					print '<tr><td>'.$langs->trans("Surface").'</td><td>';
 					if ($object->surface != '') {
 						print $object->surface." ".measuringUnitString(0, "surface", $object->surface_units);
 					} else {
@@ -2252,7 +2252,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 				if (empty($conf->global->PRODUCT_DISABLE_VOLUME)) {
 					// Brut Volume
-					print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="2">';
+					print '<tr><td>'.$langs->trans("Volume").'</td><td>';
 					if ($object->volume != '') {
 						print $object->volume." ".measuringUnitString(0, "volume", $object->volume_units);
 					} else {
@@ -2263,12 +2263,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 				if (!empty($conf->global->PRODUCT_ADD_NET_MEASURE)) {
 					// Net Measure
-					print '<tr><td class="titlefield">'.$langs->trans("NetMeasure").'</td><td colspan="2">';
+					print '<tr><td class="titlefield">'.$langs->trans("NetMeasure").'</td><td>';
 					if ($object->net_measure != '') {
 						print $object->net_measure." ".measuringUnitString($object->net_measure_units);
 					} else {
 						print '&nbsp;';
 					}
+					print '</td></tr>';
 				}
 			}
 
@@ -2285,10 +2286,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Custom code
 			if (!$object->isService() && empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO)) {
-				print '<tr><td>'.$langs->trans("CustomCode").'</td><td colspan="2">'.$object->customcode.'</td>';
+				print '<tr><td>'.$langs->trans("CustomCode").'</td><td>'.$object->customcode.'</td>';
 
 				// Origin country code
-				print '<tr><td>'.$langs->trans("Origin").'</td><td colspan="2">'.getCountry($object->country_id, 0, $db);
+				print '<tr><td>'.$langs->trans("Origin").'</td><td>'.getCountry($object->country_id, 0, $db);
 				if (!empty($object->state_id)) {
 					print ' - '.getState($object->state_id, 0, $db);
 				}
@@ -2297,17 +2298,17 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Quality Control
 			if (!empty($conf->global->PRODUCT_LOT_ENABLE_QUALITY_CONTROL)) {
-				print '<tr><td>'.$langs->trans("LifeTime").'</td><td colspan="2">'.$object->lifetime.'</td></tr>';
-				print '<tr><td>'.$langs->trans("QCFrequency").'</td><td colspan="2">'.$object->qc_frequency.'</td></tr>';
+				print '<tr><td>'.$langs->trans("LifeTime").'</td><td">'.$object->lifetime.'</td></tr>';
+				print '<tr><td>'.$langs->trans("QCFrequency").'</td><td>'.$object->qc_frequency.'</td></tr>';
 			}
 
 			// Other attributes
-			$parameters = array('colspan' => ' colspan="'.(2 + (($showphoto || $showbarcode) ? 1 : 0)).'"', 'cols' => (2 + (($showphoto || $showbarcode) ? 1 : 0)));
+			$parameters = array();
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 			// Categories
 			if ($conf->categorie->enabled) {
-				print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td colspan="3">';
+				print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 				print $form->showCategories($object->id, Categorie::TYPE_PRODUCT, 1);
 				print "</td></tr>";
 			}
@@ -2315,7 +2316,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Note private
 			if (!empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
 				print '<!-- show Note --> '."\n";
-				print '<tr><td class="tdtop">'.$langs->trans("NotePrivate").'</td><td colspan="'.(2 + (($showphoto || $showbarcode) ? 1 : 0)).'">'.(dol_textishtml($object->note_private) ? $object->note_private : dol_nl2br($object->note_private, 1, true)).'</td></tr>'."\n";
+				print '<tr><td class="tdtop">'.$langs->trans("NotePrivate").'</td><td>'.(dol_textishtml($object->note_private) ? $object->note_private : dol_nl2br($object->note_private, 1, true)).'</td></tr>'."\n";
 				print '<!-- End show Note --> '."\n";
 			}
 

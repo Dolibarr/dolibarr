@@ -200,7 +200,7 @@ print dol_get_fiche_head($head, 'subproduct', $titre, -1, $picto);
 
 if ($id > 0 || !empty($ref)) {
 	/*
-	 * Fiche en mode edition
+	 * Product card
 	 */
 	if ($user->rights->produit->lire || $user->rights->service->lire) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
@@ -217,6 +217,16 @@ if ($id > 0 || !empty($ref)) {
 			print '<div class="underbanner clearboth"></div>';
 
 			print '<table class="border centpercent tableforfield">';
+
+			// Type
+			if (!empty($conf->product->enabled) && !empty($conf->service->enabled)) {
+				$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
+				print '<tr><td class="titlefieldcreate">';
+				print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat) : $langs->trans('Type');
+				print '</td><td>';
+				print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat);
+				print '</td></tr>';
+			}
 
 			// Nature
 			if ($object->type != Product::TYPE_SERVICE) {
