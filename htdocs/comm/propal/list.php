@@ -1419,7 +1419,7 @@ if ($resql) {
 
 		if (!empty($arrayfields['pr.ref']['checked'])) {
 			// Project ref
-			print '<td class="nowrap">';
+			print '<td class="nowraponall">';
 			if ($obj->project_id > 0) {
 				print $projectstatic->getNomUrl(1);
 			}
