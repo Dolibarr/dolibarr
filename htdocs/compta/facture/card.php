@@ -3123,7 +3123,7 @@ if ($action == 'create')
 			// Type de facture
 			$facids = $facturestatic->list_replacable_invoices($soc->id);
 			if ($facids < 0) {
-				dol_print_error($db, $facturestatic);
+				dol_print_error($db, $facturestatic->error, $facturestatic->errors);
 				exit();
 			}
 			$options = "";
