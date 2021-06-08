@@ -362,7 +362,7 @@ function show_stats_for_company($product, $socid)
 {
 	global $conf, $langs, $user, $db;
 	$form = new Form($db);
-
+	$hookmanager->initHooks(array('productstats'));
 	$nblines = 0;
 
 	print '<tr class="liste_titre">';
@@ -558,6 +558,10 @@ function show_stats_for_company($product, $socid)
 		print '</td>';
 		print '</tr>';
 	}
+	$reshook = $hookmanager->executeHooks('addmoreproductstat', $parameters, $product); // Note that $action and $object may have been modified by some hooks
+	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+	print $hookmanager->resPrint;
 
 	return $nblines++;
 }
