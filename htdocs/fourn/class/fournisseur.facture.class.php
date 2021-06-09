@@ -3417,7 +3417,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql .= ", fk_product = ".((int) $fk_product);
 		$sql .= ", product_type = ".((int) $this->product_type);
 		$sql .= ", info_bits = ".((int) $this->info_bits);
-		$sql .= ", fk_unit = ".((int) $fk_unit);
+		$sql .= ", fk_unit = ".($fk_unit > 0 ? (int) $fk_unit : 'null');
 
 		// Multicurrency
 		$sql .= " , multicurrency_subprice=".price2num($this->multicurrency_subprice)."";
