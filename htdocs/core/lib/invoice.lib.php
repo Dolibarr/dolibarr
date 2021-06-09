@@ -854,8 +854,8 @@ function getCustomerInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 {
 	global $conf, $db, $langs, $user;
 
-	$sql = "SELECT f.rowid, f.entity, f.ref, f.fk_statut as status, f.paye, s.nom as socname, s.rowid as socid, s.canvas, s.client,";
-	$sql .= " f.datec";
+	$sql = "SELECT f.rowid, f.entity, f.ref, f.fk_statut as status, f.paye, f.type, f.total_ht, f.total_tva, f.total_ttc, f.datec,";
+	$sql .= " s.nom as socname, s.rowid as socid, s.canvas, s.client";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) {
@@ -904,6 +904,10 @@ function getCustomerInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 		$objectstatic->ref = $obj->ref;
 		$objectstatic->paye = $obj->paye;
 		$objectstatic->statut = $obj->status;
+		$objectstatic->total_ht = $obj->total_ht;
+		$objectstatic->total_tva = $obj->total_tva;
+		$objectstatic->total_ttc = $obj->total_ttc;
+		$objectstatic->type = $obj->type;
 
 		$companystatic->id = $obj->socid;
 		$companystatic->name = $obj->socname;
@@ -952,8 +956,8 @@ function getPurchaseInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 {
 	global $conf, $db, $langs, $user;
 
-	$sql = "SELECT f.rowid, f.entity, f.ref, f.fk_statut as status, f.paye, s.nom as socname, s.rowid as socid, s.canvas, s.client,";
-	$sql .= " f.datec";
+	$sql = "SELECT f.rowid, f.entity, f.ref, f.fk_statut as status, f.paye, f.total_ht, f.total_tva, f.total_ttc, f.type, f.ref_supplier, f.datec,";
+	$sql .= " s.nom as socname, s.rowid as socid, s.canvas, s.client";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) {
@@ -1002,6 +1006,10 @@ function getPurchaseInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 		$objectstatic->ref = $obj->ref;
 		$objectstatic->paye = $obj->paye;
 		$objectstatic->statut = $obj->status;
+		$objectstatic->total_ht = $obj->total_ht;
+		$objectstatic->total_tva = $obj->total_tva;
+		$objectstatic->total_ttc = $obj->total_ttc;
+		$objectstatic->type = $obj->type;
 
 		$companystatic->id = $obj->socid;
 		$companystatic->name = $obj->socname;

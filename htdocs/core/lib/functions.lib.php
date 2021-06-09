@@ -3515,7 +3515,9 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'github', 'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top', 'commercial', 'companies',
 				'generic', 'home', 'hrm', 'members', 'products', 'invoicing',
-				'partnership', 'payment', 'pencil-ruler', 'preview', 'project', 'projectpub', 'projecttask', 'question', 'refresh', 'salary', 'shipment', 'supplier_invoice', 'technic', 'ticket',
+				'partnership', 'payment', 'pencil-ruler', 'preview', 'project', 'projectpub', 'projecttask', 'question', 'refresh', 'salary', 'shipment',
+				'supplier_invoice', 'supplier_invoicea', 'supplier_invoicer', 'supplier_invoiced',
+				'technic', 'ticket',
 				'error', 'warning',
 				'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'resource',
 				'shapes', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
@@ -3536,7 +3538,9 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
 			$arrayconvpictotofa = array(
 				'account'=>'university', 'accountline'=>'receipt', 'accountancy'=>'search-dollar', 'action'=>'calendar-alt', 'add'=>'plus-circle', 'address'=> 'address-book', 'asset'=>'money-check-alt', 'autofill'=>'fill',
-				'bank_account'=>'university', 'bill'=>'file-invoice-dollar', 'billa'=>'file-excel', 'billr'=>'file-invoice-dollar', 'supplier_invoicea'=>'file-excel', 'billd'=>'file-medical', 'supplier_invoiced'=>'file-medical',
+				'bank_account'=>'university',
+				'bill'=>'file-invoice-dollar', 'billa'=>'file-excel', 'billr'=>'file-invoice-dollar', 'billd'=>'file-medical',
+				'supplier_invoice'=>'file-invoice-dollar', 'supplier_invoicea'=>'file-excel', 'supplier_invoicer'=>'file-invoice-dollar', 'supplier_invoiced'=>'file-medical',
 				'bom'=>'shapes',
 				'chart'=>'chart-line', 'company'=>'building', 'contact'=>'address-book', 'contract'=>'suitcase', 'collab'=>'people-arrows', 'conversation'=>'comments', 'country'=>'globe-americas', 'cron'=>'business-time',
 				'donation'=>'file-alt', 'dynamicprice'=>'hand-holding-usd',
