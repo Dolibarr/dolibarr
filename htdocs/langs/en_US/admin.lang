@@ -1191,7 +1191,7 @@ SetupDescription4=<a href="%s">%s -> %s</a><br><br>This software is a suite of m
 SetupDescription5=Other Setup menu entries manage optional parameters.
 AuditedSecurityEvents=Security events that are audited
 NoSecurityEventsAreAduited=No security events are audited. You can enable them from menu %s
-Audit=Audit
+Audit=Security events
 InfoDolibarr=About Dolibarr
 InfoBrowser=About Browser
 InfoOS=About OS
