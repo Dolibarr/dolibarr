@@ -505,6 +505,7 @@ function getNumberInvoicesPieChart($mode)
 			$i = 0;
 			$total = 0;
 			$dataseries = array();
+
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
 				$dataseries = array(array($langs->trans('InvoiceLate30Days'),$obj->nblate30)
@@ -520,21 +521,22 @@ function getNumberInvoicesPieChart($mode)
 			}
 
 			$colorseries = array($badgeStatus8, $badgeStatus1, $badgeStatus3, $badgeStatus4, $badgeStatus11, '-'.$badgeStatus11);
-			if ($conf->use_javascript_ajax) {
-				$result = '<div class="div-table-responsive-no-min">';
-				$result .= '<table class="noborder nohover centpercent">';
-				$result .= '<tr class="liste_titre">';
-				$result .= '<td>'.$langs->trans("Statistics").' - ';
-				if ($mode == 'customers') {
-					$result .= $langs->trans("CustomerInvoice");
-				} elseif ($mode == 'fourn' || $mode == 'suppliers') {
-					$result .= $langs->trans("SupplierInvoice");
-				} else {
-					return '';
-				}
-				$result .= '</td>';
-				$result .= '</tr>';
 
+			$result = '<div class="div-table-responsive-no-min">';
+			$result .= '<table class="noborder nohover centpercent">';
+			$result .= '<tr class="liste_titre">';
+			$result .= '<td>'.$langs->trans("Statistics").' - ';
+			if ($mode == 'customers') {
+				$result .= $langs->trans("CustomerInvoice");
+			} elseif ($mode == 'fourn' || $mode == 'suppliers') {
+				$result .= $langs->trans("SupplierInvoice");
+			} else {
+				return '';
+			}
+			$result .= '</td>';
+			$result .= '</tr>';
+
+			if ($conf->use_javascript_ajax) {
 				$dolgraph = new DolGraph();
 				$dolgraph->SetData($dataseries);
 				$dolgraph->SetDataColor(array_values($colorseries));
@@ -551,11 +553,15 @@ function getNumberInvoicesPieChart($mode)
 					return '';
 				}
 				$result .= '<tr maxwidth="255">';
-				$result .= '<td class="center">'.$dolgraph->show($total ? 0 : 1).'</td>';
+				$result .= '<td class="center">'.$dolgraph->show($total ? 0 : $langs->trans("NoOpenInvoice")).'</td>';
 				$result .= '</tr>';
-				$result .= '</table>';
-				$result .= '</div>';
+			} else {
+				// Print text lines
 			}
+
+			$result .= '</table>';
+			$result .= '</div>';
+
 			return $result;
 		} else {
 			dol_print_error($db);
