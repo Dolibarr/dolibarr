@@ -120,9 +120,10 @@ $sql.=" OR b.fk_account=".$conf->global->CASHDESK_ID_BANKACCOUNT_CB;
 $sql.=" OR b.fk_account=".$conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE;
 $sql.=")";
 */
-$sql = "SELECT f.rowid as facid, f.ref, f.datef as do, pf.amount as amount, b.fk_account as bankid, cp.code";
-$sql .= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as cp, ".MAIN_DB_PREFIX."bank as b";
-$sql .= " WHERE pf.fk_facture = f.rowid AND p.rowid = pf.fk_paiement AND cp.id = p.fk_paiement AND p.fk_bank = b.rowid";
+$sql = "SELECT f.rowid as facid, f.ref, f.datef as do, pf.amount as amount, b.fk_account as bankid, cp.code, SUM(fd.qty) as qty";
+$sql .= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as cp, ".MAIN_DB_PREFIX."bank as b,";
+$sql .= " ".MAIN_DB_PREFIX."facturedet as fd";
+$sql .= " WHERE pf.fk_facture = f.rowid AND p.rowid = pf.fk_paiement AND cp.id = p.fk_paiement AND p.fk_bank = b.rowid AND fd.fk_facture = f.rowid";
 $sql .= " AND f.module_source = '".$db->escape($posmodule)."'";
 $sql .= " AND f.pos_source = '".$db->escape($terminalid)."'";
 $sql .= " AND f.paye = 1";
@@ -144,6 +145,7 @@ if ($syear && !$smonth) {
 } else {
 	dol_print_error('', 'Year not defined');
 }
+$sql .= " GROUP BY f.rowid, f.ref, f.datef, pf.amount, b.fk_account, cp.code";
 
 $resql = $db->query($sql);
 if ($resql) {
@@ -196,14 +198,19 @@ if ($resql) {
 	print "</tr>\n";
 
 	// Loop on each record
-	$sign = 1;
 	$cash = $bank = $cheque = $other = 0;
 
-	$totalarray = array();
+	$totalqty = 0;
 	$cachebankaccount = array();
+	$transactionspertype = array();
 	$amountpertype = array();
+
+	$totalarray = array();
 	while ($i < $num) {
 		$objp = $db->fetch_object($resql);
+
+		$totalqty += $objp->qty;
+
 
 		if (empty($cachebankaccount[$objp->bankid])) {
 			$bankaccounttmp = new Account($db);
@@ -243,25 +250,42 @@ if ($resql) {
 			$totalarray['nbfield']++;
 		}
 
-		// Bank account
-		print '<td class="nowrap right">';
-		print $bankaccount->getNomUrl(1);
 		if ($object->posmodule == "takepos") {
 			$var1 = 'CASHDESK_ID_BANKACCOUNT_CASH'.$object->posnumber;
 		} else {
 			$var1 = 'CASHDESK_ID_BANKACCOUNT_CASH';
 		}
+
+		// Bank account
+		print '<td class="nowrap right">';
+		print $bankaccount->getNomUrl(1);
 		if ($objp->code == 'CHQ') {
 			$cheque += $objp->amount;
+			if (empty($transactionspertype[$objp->code])) {
+				$transactionspertype[$objp->code] = 0;
+			}
+			$transactionspertype[$objp->code] += 1;
 		} elseif ($objp->code == 'CB') {
 			$bank += $objp->amount;
+			if (empty($transactionspertype[$objp->code])) {
+				$transactionspertype[$objp->code] = 0;
+			}
+			$transactionspertype[$objp->code] += 1;
 		} else {
 			if ($conf->global->$var1 == $bankaccount->id) {
 				$cash += $objp->amount;
 				// } elseif ($conf->global->$var2 == $bankaccount->id) $bank+=$objp->amount;
 				//elseif ($conf->global->$var3 == $bankaccount->id) $cheque+=$objp->amount;
+				if (empty($transactionspertype['CASH'])) {
+					$transactionspertype['CASH'] = 0;
+				}
+				$transactionspertype['CASH'] += 1;
 			} else {
 				$other += $objp->amount;
+				if (empty($transactionspertype['OTHER'])) {
+					$transactionspertype['OTHER'] = 0;
+				}
+				$transactionspertype['OTHER'] += 1;
 			}
 		}
 		print "</td>\n";
@@ -327,21 +351,21 @@ if ($resql) {
 	print '<div style="text-align: right">';
 	print '<h2>';
 
-	print $langs->trans("Cash").': <span class="amount">'.price($cash).'</span>';
+	print $langs->trans("Cash").' '.($transactionspertype['CASH']?'('.$transactionspertype['CASH'].')':'').': <span class="amount">'.price($cash).'</span>';
 	if ($object->status == $object::STATUS_VALIDATED && $cash != $object->cash) {
 		print ' <> <span class="amountremaintopay">'.$langs->trans("Declared").': '.price($object->cash).'</span>';
 	}
 	print "<br>";
 
 	//print '<br>';
-	print $langs->trans("PaymentTypeCHQ").': <span class="amount">'.price($cheque).'</span>';
+	print $langs->trans("PaymentTypeCHQ").' '.($transactionspertype['CHQ']?'('.$transactionspertype['CHQ'].')':'').': <span class="amount">'.price($cheque).'</span>';
 	if ($object->status == $object::STATUS_VALIDATED && $cheque != $object->cheque) {
 		print ' <> <span class="amountremaintopay">'.$langs->trans("Declared").': '.price($object->cheque).'</span>';
 	}
 	print "<br>";
 
 	//print '<br>';
-	print $langs->trans("PaymentTypeCB").': <span class="amount">'.price($bank).'</span>';
+	print $langs->trans("PaymentTypeCB").' '.($transactionspertype['CB']?'('.$transactionspertype['CB'].')':'').': <span class="amount">'.price($bank).'</span>';
 	if ($object->status == $object::STATUS_VALIDATED && $bank != $object->card) {
 		print ' <> <span class="amountremaintopay">'.$langs->trans("Declared").': '.price($object->card).'</span>';
 	}
@@ -349,11 +373,11 @@ if ($resql) {
 
 	// print '<br>';
 	if ($other) {
-		print ''.$langs->trans("Other").': <span class="amount">'.price($other)."</span>";
+		print ''.$langs->trans("Other").' '.($transactionspertype['OTHER']?'('.$transactionspertype['OTHER'].')':'').': <span class="amount">'.price($other)."</span>";
 		print '<br>';
 	}
 
-	print $langs->trans("Total").': <span class="amount">'.price($cash + $cheque + $bank + $other).'</span>';
+	print $langs->trans("Total").' ('.$totalqty.' '.$langs->trans("Articles").') : <span class="amount">'.price($cash + $cheque + $bank + $other).'</span>';
 
 	print '</h2>';
 	print '</div>';
