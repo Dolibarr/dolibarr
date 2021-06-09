@@ -27,12 +27,11 @@ require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-
-dol_include_once('partnership/lib/partnership.lib.php');
-dol_include_once('/partnership/class/partnership.class.php');
-
-require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
+require_once DOL_DOCUMENT_ROOT.'/partnership/lib/partnership.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+
 /**
  *	Class with cron tasks of Partnership module
  */
@@ -273,6 +272,7 @@ class PartnershipUtils
 			$numofexpiredmembers 		= $this->db->num_rows($resql);
 			$somethingdoneonpartnership = 0;
 			$ifetchpartner 				= 0;
+			$websitenotfound = '';
 			while ($ifetchpartner < $numofexpiredmembers) {
 				$ifetchpartner++;
 
@@ -393,11 +393,10 @@ class PartnershipUtils
 	/**
 	 * Action to check if Dolibarr backlink not found on partner website
 	 *
-	 * CAN BE A CRON TASK
-	 * @param  $website      Partner's website
-	 * @return  int                 0 if KO, 1 if OK
+	 * @param  $website      Website	Partner's website
+	 * @return  int                 	0 if KO, 1 if OK
 	 */
-	public function checkDolibarrBacklink($website = null)
+	private function checkDolibarrBacklink($website = null)
 	{
 		global $conf, $langs, $user;
 
@@ -406,7 +405,7 @@ class PartnershipUtils
 		$webcontent = '';
 
 		// $website = 'https://nextgestion.com/'; // For Test
-		$tmpgeturl = getURLContent($website);
+		$tmpgeturl = getURLContent($website, 'GET', '', 1, array(), array('http', 'https'), 0);
 		if ($tmpgeturl['curl_error_no']) {
 			$error++;
 			dol_syslog('Error getting '.$website.': '.$tmpgeturl['curl_error_msg']);
