@@ -120,10 +120,9 @@ $sql.=" OR b.fk_account=".$conf->global->CASHDESK_ID_BANKACCOUNT_CB;
 $sql.=" OR b.fk_account=".$conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE;
 $sql.=")";
 */
-$sql = "SELECT f.rowid as facid, f.ref, f.datef as do, pf.amount as amount, b.fk_account as bankid, cp.code, SUM(fd.qty) as qty";
-$sql .= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as cp, ".MAIN_DB_PREFIX."bank as b,";
-$sql .= " ".MAIN_DB_PREFIX."facturedet as fd";
-$sql .= " WHERE pf.fk_facture = f.rowid AND p.rowid = pf.fk_paiement AND cp.id = p.fk_paiement AND p.fk_bank = b.rowid AND fd.fk_facture = f.rowid";
+$sql = "SELECT f.rowid as facid, f.ref, f.datef as do, pf.amount as amount, b.fk_account as bankid, cp.code";
+$sql .= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as cp, ".MAIN_DB_PREFIX."bank as b";
+$sql .= " WHERE pf.fk_facture = f.rowid AND p.rowid = pf.fk_paiement AND cp.id = p.fk_paiement AND p.fk_bank = b.rowid";
 $sql .= " AND f.module_source = '".$db->escape($posmodule)."'";
 $sql .= " AND f.pos_source = '".$db->escape($terminalid)."'";
 $sql .= " AND f.paye = 1";
@@ -145,7 +144,6 @@ if ($syear && !$smonth) {
 } else {
 	dol_print_error('', 'Year not defined');
 }
-$sql .= " GROUP BY f.rowid, f.ref, f.datef, pf.amount, b.fk_account, cp.code";
 
 $resql = $db->query($sql);
 if ($resql) {
@@ -161,8 +159,8 @@ if ($resql) {
 		print $langs->trans("CashControl")." - ".$langs->trans("Draft");
 	}
 	print "</h2>";
-	print $langs->trans("DateCreationShort").": ".dol_print_date($object->date_creation, 'dayhour');
-	print '<br>'.$mysoc->name;
+	print $mysoc->name;
+	print '<br>'.$langs->trans("DateCreationShort").": ".dol_print_date($object->date_creation, 'dayhour');
 	$userauthor = $object->fk_user_valid;
 	if (empty($userauthor)) {
 		$userauthor = $object->fk_user_creat;
@@ -201,7 +199,9 @@ if ($resql) {
 	$cash = $bank = $cheque = $other = 0;
 
 	$totalqty = 0;
+	$totalvat = 0;
 	$cachebankaccount = array();
+	$cacheinvoiceid = array();
 	$transactionspertype = array();
 	$amountpertype = array();
 
@@ -209,9 +209,7 @@ if ($resql) {
 	while ($i < $num) {
 		$objp = $db->fetch_object($resql);
 
-		$totalqty += $objp->qty;
-
-
+		// Load bankaccount
 		if (empty($cachebankaccount[$objp->bankid])) {
 			$bankaccounttmp = new Account($db);
 			$bankaccounttmp->fetch($objp->bankid);
@@ -223,14 +221,13 @@ if ($resql) {
 
 		$invoicetmp->fetch($objp->facid);
 
-		/*if ($first == "yes")
-		{
-			print '<tr class="oddeven">';
-			print '<td>'.$langs->trans("InitialBankBalance").' - '.$langs->trans("Cash").'</td>';
-			print '<td></td><td></td><td></td><td class="right"><span class="amount">'.price($object->opening).'</span></td>';
-			print '</tr>';
-			$first = "no";
-		}*/
+		if (empty($cacheinvoiceid[$objp->facid])) {
+			$cacheinvoiceid[$objp->facid] = $objp->facid;	// First time this invoice is found into list of invoice x payments
+			foreach($invoicetmp->lines as $line) {
+				$totalqty += $line->qty;
+				$totalvat += $line->total_tva;
+			}
+		}
 
 		print '<tr class="oddeven">';
 
@@ -378,6 +375,8 @@ if ($resql) {
 	}
 
 	print $langs->trans("Total").' ('.$totalqty.' '.$langs->trans("Articles").') : <span class="amount">'.price($cash + $cheque + $bank + $other).'</span>';
+	print '<br>'.$langs->trans("TotalVAT").' : <span class="amount">'.price($totalvat).'</span>';
+	// TODO Add total localtaxes.
 
 	print '</h2>';
 	print '</div>';
