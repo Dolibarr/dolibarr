@@ -228,7 +228,7 @@ print '<br>';
 print '<br>';
 print load_fiche_titre($langs->trans("ConfigurationFile").' ('.$conffile.')', '', 'folder');
 
-print '<strong>$dolibarr_main_prod</strong>: '.$dolibarr_main_prod;
+print '<strong>$dolibarr_main_prod</strong>: '.($dolibarr_main_prod ? $dolibarr_main_prod : '0');
 if (empty($dolibarr_main_prod)) {
 	print ' &nbsp; '.img_picto('', 'warning').' '.$langs->trans("IfYouAreOnAProductionSetThis", 1);
 }
