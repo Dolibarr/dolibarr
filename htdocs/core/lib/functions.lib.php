@@ -7995,6 +7995,25 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1)
 	global $obj; // To get $obj used into list when dol_eval is used for computed fields and $obj is not yet $object
 	global $soc; // For backward compatibility
 
+	// Replace dangerous char (used for RCE), we allow only PHP variable testing.
+	if (strpos($s, '`') !== false) {
+		return 'Bad string syntax to evaluate: '.$s;
+	}
+
+	// We block using of php exec or php file functions
+	$forbiddenphpcommands = array("exec(", "passthru(", "shell_exec(", "system(", "proc_open(", "popen(", "eval(", "dol_eval(", "executeCLI(");
+	$forbiddenphpcommands = array_merge($forbiddenphpcommands, array("fopen(", "file_put_contents(", "fputs(", "fputscsv(", "fwrite(", "fpassthru(", "unlink(", "mkdir(", "rmdir(", "symlink(", "touch(", "umask("));
+	$forbiddenphpcommands = array_merge($forbiddenphpcommands, array('function(', '$$', 'call_user_func(', '_SESSION', '_COOKIE'));
+	do {
+		$oldstringtoclean = $s;
+		$s = str_ireplace($forbiddenphpcommands, '__forbiddenstring__', $s);
+		//$s = preg_replace('/\$[a-zA-Z0-9_\->\$]+\(/i', '', $s);	// Remove $function( call and $mycall->mymethod(
+	} while ($oldstringtoclean != $s);
+
+	if (strpos($s, '__forbiddenstring__') !== false) {
+		return 'Bad string syntax to evaluate: '.$s;
+	}
+
 	//print $s."<br>\n";
 	if ($returnvalue) {
 		if ($hideerrors) {

@@ -777,4 +777,48 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$result=dol_sanitizeFileName('bad file --evilparam');
 		$this->assertEquals('bad file _evilparam', $result);
 	}
+
+	/**
+	 * testDolEval
+	 *
+	 * @return void
+	 */
+	public function testDolEval()
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		$result=dol_eval('1==1', 1, 0);
+		print "result = ".$result."\n";
+		$this->assertTrue($result);
+
+		$result=dol_eval('1==2', 1, 0);
+		print "result = ".$result."\n";
+		$this->assertFalse($result);
+
+		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+		$result=dol_eval('(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref: "Parent project not found"', 1, 1);
+		print "result = ".$result."\n";
+		$this->assertEquals('Parent project not found', $result);
+
+		$result=dol_eval('$a=function() { }; $a;', 1, 1);
+		print "result = ".$result."\n";
+		$this->assertContains('Bad string syntax to evaluate', $result);
+
+		$result=dol_eval('$a=exec("ls");', 1, 1);
+		print "result = ".$result."\n";
+		$this->assertContains('Bad string syntax to evaluate', $result);
+
+		$result=dol_eval('$a="test"; $$a;', 1, 0);
+		print "result = ".$result."\n";
+		$this->assertContains('Bad string syntax to evaluate', $result);
+
+		$result=dol_eval('`ls`', 1, 0);
+		print "result = ".$result."\n";
+		$this->assertContains('Bad string syntax to evaluate', $result);
+	}
 }
