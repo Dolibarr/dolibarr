@@ -545,8 +545,6 @@ class Contact extends CommonObject
 		$this->phone_pro = trim($this->phone_pro);
 		$this->phone_perso = trim($this->phone_perso);
 		$this->phone_mobile = trim($this->phone_mobile);
-		$this->jabberid = trim($this->jabberid);
-		$this->skype = trim($this->skype);
 		$this->photo = trim($this->photo);
 		$this->fax = trim($this->fax);
 		$this->zip = (empty($this->zip) ? '' : trim($this->zip));
@@ -1190,10 +1188,11 @@ class Contact extends CommonObject
 	}
 
 	/**
-	 *   	Efface le contact de la base
+	 *	Delete a contact from database
+	 *  // TODO Add $user as first param
 	 *
-	 *   	@param		int		$notrigger		Disable all trigger
-	 *		@return		int						<0 if KO, >0 if OK
+	 *  @param		int		$notrigger		Disable all trigger
+	 *	@return		int						<0 if KO, >0 if OK
 	 */
 	public function delete($notrigger = 0)
 	{

@@ -4710,7 +4710,7 @@ function migrate_contacts_socialnetworks()
 	$db->begin();
 	print '<tr><td colspan="4">';
 	$sql = 'SELECT rowid, socialnetworks';
-	$sql .= ', jabberid, skype, twitter, facebook, linkedin, instagram, snapchat, googleplus, youtube, whatsapp FROM '.MAIN_DB_PREFIX.'socpeople WHERE ';
+	$sql .= ', jabberid, skype, twitter, facebook, linkedin, instagram, snapchat, googleplus, youtube, whatsapp FROM '.MAIN_DB_PREFIX.'socpeople WHERE';
 	$sql .= " jabberid IS NOT NULL OR jabberid <> ''";
 	$sql .= " OR skype IS NOT NULL OR skype <> ''";
 	$sql .= " OR twitter IS NOT NULL OR twitter <> ''";
