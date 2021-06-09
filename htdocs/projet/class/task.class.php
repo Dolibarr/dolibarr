@@ -1158,16 +1158,16 @@ class Task extends CommonObject
 			$this->timespent_datehour = $this->timespent_date;
 		}
 
-        if (! empty($conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS)) {
-            require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-            $restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
+		if (! empty($conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
 
-            if ($this->timespent_date < $restrictBefore) {
-                $this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS);
-                $this->errors[] = $this->error;
-                return -1;
-            }
-        }
+			if ($this->timespent_date < $restrictBefore) {
+				$this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS);
+				$this->errors[] = $this->error;
+				return -1;
+			}
+		}
 
 
 		$this->db->begin();
@@ -1531,16 +1531,16 @@ class Task extends CommonObject
 			$this->timespent_note = trim($this->timespent_note);
 		}
 
-        if (! empty($conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS)) {
-            require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-            $restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
+		if (! empty($conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
 
-            if ($this->timespent_date < $restrictBefore) {
-                $this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS);
-                $this->errors[] = $this->error;
-                return -1;
-            }
-        }
+			if ($this->timespent_date < $restrictBefore) {
+				$this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS);
+				$this->errors[] = $this->error;
+				return -1;
+			}
+		}
 
 		$this->db->begin();
 
@@ -1608,16 +1608,16 @@ class Task extends CommonObject
 
 		$error = 0;
 
-        if (! empty($conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS)) {
-            require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-            $restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
+		if (! empty($conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
 
-            if ($this->timespent_date < $restrictBefore) {
-                $this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS);
-                $this->errors[] = $this->error;
-                return -1;
-            }
-        }
+			if ($this->timespent_date < $restrictBefore) {
+				$this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS);
+				$this->errors[] = $this->error;
+				return -1;
+			}
+		}
 
 		$this->db->begin();
 
