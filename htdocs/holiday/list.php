@@ -431,7 +431,7 @@ if ($resql)
 		//'presend'=>$langs->trans("SendByMail"),
 	);
 	if ($user->rights->holiday->approve) $arrayofmassactions['approve'] = '<span class="fa fa-check paddingrightonly"></span>'.$langs->trans('Approve');
-	if ($user->rights->holiday->supprimer) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+	if ($user->rights->holiday->delete) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 	if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
@@ -495,7 +495,7 @@ if ($resql)
 
 	if (empty($reshook)) {
 		if ($massaction == 'approve') {
-			print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans('ConfirmExpenseReportMassApprove'), $langs->trans('ConfirmExpenseReportMassApproveQuestion'), 'confirm_approve', null, '', 0, 200, 500, 1);
+			print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans('ConfirmHolidayMassApprove'), $langs->trans('ConfirmHolidayMassApproveQuestion'), 'confirm_approve', null, '', 0, 200, 500, 1);
 		}
 	}
 
