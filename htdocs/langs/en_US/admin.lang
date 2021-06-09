@@ -221,8 +221,8 @@ NotCompatible=This module does not seem compatible with your Dolibarr %s (Min %s
 CompatibleAfterUpdate=This module requires an update to your Dolibarr %s (Min %s - Max %s).
 SeeInMarkerPlace=See in Market place
 SeeSetupOfModule=See setup of module %s
+SetOptionTo=Set option <b>%s</b> to %s
 Updated=Updated
-Nouveauté=Novelty
 AchatTelechargement=Buy / Download
 GoModuleSetupArea=To deploy/install a new module, go to the Module setup area: <a href="%s">%s</a>.
 DoliStoreDesc=DoliStore, the official market place for Dolibarr ERP/CRM external modules
@@ -2142,3 +2142,5 @@ NoExternalModuleWithUpdate=No updates found for external modules
 SwaggerDescriptionFile=Swagger API description file (for use with redoc for example)
 YouEnableDeprecatedWSAPIsUseRESTAPIsInstead=You enabled deprecated WS API. You should use REST API instead.
 RandomlySelectedIfSeveral=Randomly selected if several pictures are available
+DatabasePasswordObfuscated=Database password obfucated in conf file
+DatabasePasswordNotObfuscated=Database password obfucated in conf file

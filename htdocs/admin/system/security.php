@@ -245,7 +245,21 @@ if (empty($dolibarr_main_restrict_ip)) {
 	print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
 	//print ' <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("IPsOfUsers")).')</span>';
 }
+
 print '<br>';
+
+if (empty($conf->global->SECURITY_DISABLE_TEST_ON_OBFUSCATED_CONF)) {
+	print '<strong>$dolibarr_main_db_pass</strong>: ';
+	if (!empty($dolibarr_main_db_pass) && !preg_match('/^crypted:/', $dolibarr_main_db_pass)) {
+		print img_picto('', 'warning').' '.$langs->trans("DatabasePasswordNotObfuscated").' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommanded").': '.$langs->trans("SetOptionTo", $langs->transnoentitiesnoconv("MainDbPasswordFileConfEncrypted"), yn(1)).')</span>';
+		//print ' <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("IPsOfUsers")).')</span>';
+	} else {
+		print img_picto('', 'tick').' '.$langs->trans("");
+	}
+
+	print '<br>';
+}
+
 
 
 // Menu security
