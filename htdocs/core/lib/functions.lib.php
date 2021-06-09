@@ -8003,7 +8003,8 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1)
 	// We block using of php exec or php file functions
 	$forbiddenphpcommands = array("exec(", "passthru(", "shell_exec(", "system(", "proc_open(", "popen(", "eval(", "dol_eval(", "executeCLI(");
 	$forbiddenphpcommands = array_merge($forbiddenphpcommands, array("fopen(", "file_put_contents(", "fputs(", "fputscsv(", "fwrite(", "fpassthru(", "unlink(", "mkdir(", "rmdir(", "symlink(", "touch(", "umask("));
-	$forbiddenphpcommands = array_merge($forbiddenphpcommands, array('function(', '$$', 'call_user_func(', '_SESSION', '_COOKIE'));
+	$forbiddenphpcommands = array_merge($forbiddenphpcommands, array('function(', '$$', 'call_user_func('));
+	$forbiddenphpcommands = array_merge($forbiddenphpcommands, array('global', '_ENV', '_SESSION', '_COOKIE', '_GET', '_POST', '_REQUEST'));
 	do {
 		$oldstringtoclean = $s;
 		$s = str_ireplace($forbiddenphpcommands, '__forbiddenstring__', $s);
