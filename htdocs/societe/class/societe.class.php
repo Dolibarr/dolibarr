@@ -740,6 +740,12 @@ class Societe extends CommonObject
 	public $multicurrency_code;
 
 
+	// Fields loaded by fetchPartnerships()
+
+	public $partnerships = array();
+
+
+
 	/**
 	 * @var Account|string Default BAN account
 	 */
@@ -4805,5 +4811,23 @@ class Societe extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
+	}
+
+	/**
+	 *	Function to get partnerships array
+	 *
+	 *  @param		string		$mode		'member' or 'thirdparty'
+	 *	@return		int						<0 if KO, >0 if OK
+	 */
+	public function fetchPartnerships($mode)
+	{
+		global $langs;
+
+		require_once DOL_DOCUMENT_ROOT.'/parntership/class/partnership.class.php';
+
+
+		$this->partnerships[] = array();
+
+		return 1;
 	}
 }

@@ -1510,7 +1510,6 @@ class Adherent extends CommonObject
 	}
 
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Function to get partnerships array
 	 *
@@ -1519,7 +1518,6 @@ class Adherent extends CommonObject
 	 */
 	public function fetchPartnerships($mode)
 	{
-		// phpcs:enable
 		global $langs;
 
 		require_once DOL_DOCUMENT_ROOT.'/parntership/class/partnership.class.php';
