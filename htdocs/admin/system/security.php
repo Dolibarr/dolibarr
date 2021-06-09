@@ -277,7 +277,7 @@ if ($conf->global->MAIN_SECURITY_HASH_ALGO != 'password_hash') {
 print '<br>';
 
 
-print '<strong>MAIN_SECURITY_ANTI_SSRF_SERVER_IP</strong> = '.(empty($conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP)."<br>";
+print '<strong>MAIN_SECURITY_ANTI_SSRF_SERVER_IP</strong> = '.(empty($conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span> &nbsp; <span class="opacitymedium">('.$langs->trans("Example").': static-ips-of-server - '.$langs->trans("Note").': common loopback ip like 127.*.*.*, [::1] are already added)</span>' : $conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP)."<br>";
 print '<br>';
 
 print '<strong>MAIN_ALLOW_SVG_FILES_AS_IMAGES</strong> = '.(empty($conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES) ? '0 &nbsp; <span class="opacitymedium">('.$langs->trans("Recommanded").': 0)</span>' : $conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES)."<br>";

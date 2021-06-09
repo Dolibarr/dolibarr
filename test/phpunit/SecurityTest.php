@@ -703,17 +703,22 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$url = 'http://127.0.0.1';
 		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
 		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(400, $tmp['http_code'], 'GET url to '.$url.' that is a local URL');	// Test we receive an error because localtest.me is not an external URL
+		$this->assertEquals(400, $tmp['http_code'], 'GET url to '.$url.' that is a local URL');	// Test we receive an error because 127.0.0.1 is not an external URL
+
+		$url = 'http://127.0.2.1';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+		print __METHOD__." url=".$url."\n";
+		$this->assertEquals(400, $tmp['http_code'], 'GET url to '.$url.' that is a local URL');	// Test we receive an error because 127.0.2.1 is not an external URL
 
 		$url = 'https://169.254.0.1';
 		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
 		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(400, $tmp['http_code'], 'GET url to '.$url.' that is a local URL');	// Test we receive an error because localtest.me is not an external URL
+		$this->assertEquals(400, $tmp['http_code'], 'GET url to '.$url.' that is a local URL');	// Test we receive an error because 169.254.0.1 is not an external URL
 
 		$url = 'http://[::1]';
 		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
 		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(400, $tmp['http_code'], 'GET url to '.$url.' that is a local URL');	// Test we receive an error because localtest.me is not an external URL
+		$this->assertEquals(400, $tmp['http_code'], 'GET url to '.$url.' that is a local URL');	// Test we receive an error because [::1] is not an external URL
 
 		/*$url = 'localtest.me';
 		 $tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
