@@ -171,7 +171,7 @@ class mailing_pomme extends MailingTargets
 		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 		$sql .= " WHERE u.email <> ''"; // u.email IS NOT NULL est implicite dans ce test
 		$sql .= " AND u.entity IN (0,".$conf->entity.")";
-		$sql .= " AND u.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
+		$sql .= " AND u.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
 		if (GETPOSTISSET("filter") && GETPOST("filter") == '1') {
 			$sql .= " AND u.statut=1";
 		}

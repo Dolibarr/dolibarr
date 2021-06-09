@@ -681,7 +681,7 @@ print '</div>';
  AND p.facture =0";
  if ($socid)
  {
- $sql .= " AND f.fk_soc = ".$socid;
+ $sql .= " AND f.fk_soc = ".((int) $socid);
  }
  $sql .= " GROUP BY p.rowid";
 

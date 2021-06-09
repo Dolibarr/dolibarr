@@ -3401,7 +3401,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql .= ", pu_ttc = ".price2num($this->pu_ttc);
 		$sql .= ", qty = ".price2num($this->qty);
 		$sql .= ", remise_percent = ".price2num($this->remise_percent);
-		if ($this->fk_remise_except) $sql.= ", fk_remise_except=".$this->fk_remise_except;
+		if ($this->fk_remise_except) $sql.= ", fk_remise_except=".((int) $this->fk_remise_except);
 		else $sql.= ", fk_remise_except=null";
 		$sql .= ", vat_src_code = '".$this->db->escape(empty($this->vat_src_code) ? '' : $this->vat_src_code)."'";
 		$sql .= ", tva_tx = ".price2num($this->tva_tx);
@@ -3414,10 +3414,10 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql .= ", total_localtax1= ".price2num($this->total_localtax1);
 		$sql .= ", total_localtax2= ".price2num($this->total_localtax2);
 		$sql .= ", total_ttc = ".price2num($this->total_ttc);
-		$sql .= ", fk_product = ".$fk_product;
-		$sql .= ", product_type = ".$this->product_type;
-		$sql .= ", info_bits = ".$this->info_bits;
-		$sql .= ", fk_unit = ".$fk_unit;
+		$sql .= ", fk_product = ".((int) $fk_product);
+		$sql .= ", product_type = ".((int) $this->product_type);
+		$sql .= ", info_bits = ".((int) $this->info_bits);
+		$sql .= ", fk_unit = ".((int) $fk_unit);
 
 		// Multicurrency
 		$sql .= " , multicurrency_subprice=".price2num($this->multicurrency_subprice)."";
@@ -3425,7 +3425,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql .= " , multicurrency_total_tva=".price2num($this->multicurrency_total_tva)."";
 		$sql .= " , multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc)."";
 
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);

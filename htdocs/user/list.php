@@ -423,7 +423,7 @@ if ($search_categ == -2) {
 	$sql .= " AND cu.fk_categorie IS NULL";
 }
 if ($search_warehouse > 0) {
-	$sql .= " AND u.fk_warehouse = ".$db->escape($search_warehouse);
+	$sql .= " AND u.fk_warehouse = ".((int) $search_warehouse);
 }
 if ($mode == 'employee' && empty($user->rights->salaries->readall)) {
 	$sql .= " AND u.rowid IN (".$db->sanitize(join(',', $childids)).")";

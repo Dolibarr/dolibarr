@@ -173,7 +173,7 @@ if ($user->rights->banque->modifier && $action == "update") {
 				$sql .= " datev = '".$db->idate($dateval)."',";
 			}
 		}
-		$sql .= " fk_account = ".$actarget->id;
+		$sql .= " fk_account = ".((int) $actarget->id);
 		$sql .= " WHERE rowid = ".((int) $acline->id);
 
 		$result = $db->query($sql);

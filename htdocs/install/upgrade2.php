@@ -1183,7 +1183,7 @@ function migrate_contracts_date2($db, $langs, $conf)
 					print $langs->trans('MigrationContractsInvalidDateFix', $obj->cref, $obj->date_contrat, $obj->datemin)."<br>\n";
 					$sql = "UPDATE ".MAIN_DB_PREFIX."contrat";
 					$sql .= " SET date_contrat='".$db->idate($datemin)."'";
-					$sql .= " WHERE rowid=".$obj->cref;
+					$sql .= " WHERE rowid = ".((int) $obj->cref);
 					$resql2 = $db->query($sql);
 					if (!$resql2) {
 						dol_print_error($db);
@@ -1275,8 +1275,8 @@ function migrate_contracts_open($db, $langs, $conf)
 
 				print $langs->trans('MigrationReopenThisContract', $obj->cref)."<br>\n";
 				$sql = "UPDATE ".MAIN_DB_PREFIX."contrat";
-				$sql .= " SET statut=1";
-				$sql .= " WHERE rowid=".$obj->cref;
+				$sql .= " SET statut = 1";
+				$sql .= " WHERE rowid = ".((int) $obj->cref);
 				$resql2 = $db->query($sql);
 				if (!$resql2) {
 					dol_print_error($db);
@@ -2835,8 +2835,8 @@ function migrate_project_task_time($db, $langs, $conf)
 					$newtime = $hour + $min;
 
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."projet_task_time SET";
-					$sql2 .= " task_duration = ".$newtime;
-					$sql2 .= " WHERE rowid = ".$obj->rowid;
+					$sql2 .= " task_duration = ".((int) $newtime);
+					$sql2 .= " WHERE rowid = ".((int) $obj->rowid);
 
 					$resql2 = $db->query($sql2);
 					if (!$resql2) {
@@ -2865,7 +2865,7 @@ function migrate_project_task_time($db, $langs, $conf)
 				if ($oldtime > 0) {
 					foreach ($totaltime as $taskid => $total_duration) {
 						$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task SET";
-						$sql .= " duration_effective = ".$total_duration;
+						$sql .= " duration_effective = ".((int) $total_duration);
 						$sql .= " WHERE rowid = ".((int) $taskid);
 
 						$resql = $db->query($sql);
@@ -2945,7 +2945,7 @@ function migrate_customerorder_shipping($db, $langs, $conf)
 						$sqlUpdate = "UPDATE ".MAIN_DB_PREFIX."expedition SET";
 						$sqlUpdate .= " ref_customer = '".$db->escape($obj->ref_client)."'";
 						$sqlUpdate .= ", date_delivery = '".$db->escape($obj->delivery_date ? $obj->delivery_date : 'null')."'";
-						$sqlUpdate .= " WHERE rowid = ".$obj->shipping_id;
+						$sqlUpdate .= " WHERE rowid = ".((int) $obj->shipping_id);
 
 						$result = $db->query($sqlUpdate);
 						if (!$result) {
@@ -3407,8 +3407,8 @@ function migrate_categorie_association($db, $langs, $conf)
 					$obj = $db->fetch_object($resql);
 
 					$sqlUpdate = "UPDATE ".MAIN_DB_PREFIX."categorie SET ";
-					$sqlUpdate .= "fk_parent = ".$obj->fk_categorie_mere;
-					$sqlUpdate .= " WHERE rowid = ".$obj->fk_categorie_fille;
+					$sqlUpdate .= "fk_parent = ".((int) $obj->fk_categorie_mere);
+					$sqlUpdate .= " WHERE rowid = ".((int) $obj->fk_categorie_fille);
 
 					$result = $db->query($sqlUpdate);
 					if (!$result) {

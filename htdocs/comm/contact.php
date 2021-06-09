@@ -104,23 +104,15 @@ if ($type == "f") {
 if ($socid) {
 	$sql .= " AND s.rowid = ".((int) $socid);
 }
-
-if (dol_strlen($stcomm)) {
-	$sql .= " AND s.fk_stcomm=".$db->escape($stcomm);
-}
-
 if (!empty($search_lastname)) {
 	$sql .= " AND p.name LIKE '%".$db->escape($search_lastname)."%'";
 }
-
 if (!empty($search_firstname)) {
 	$sql .= " AND p.firstname LIKE '%".$db->escape($search_firstname)."%'";
 }
-
 if (!empty($search_company)) {
 	$sql .= " AND s.nom LIKE '%".$db->escape($search_company)."%'";
 }
-
 if (!empty($contactname)) { // acces a partir du module de recherche
 	$sql .= " AND (p.name LIKE '%".$db->escape($contactname)."%' OR lower(p.firstname) LIKE '%".$db->escape($contactname)."%') ";
 	$sortfield = "p.name";

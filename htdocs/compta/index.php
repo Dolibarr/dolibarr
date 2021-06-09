@@ -138,7 +138,7 @@ if (!empty($conf->facture->enabled) && !empty($user->rights->facture->lire)) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	}
 	if ($socid) {
-		$sql .= " AND f.fk_soc = ".$socid;
+		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 	// Add where from hooks
 	$parameters = array();
@@ -283,7 +283,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	}
 	if ($socid) {
-		$sql .= " AND ff.fk_soc = ".$socid;
+		$sql .= " AND ff.fk_soc = ".((int) $socid);
 	}
 	// Add where from hooks
 	$parameters = array();
@@ -593,7 +593,7 @@ if (!empty($conf->facture->enabled) && !empty($conf->commande->enabled) && $user
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	}
 	if ($socid) {
-		$sql .= " AND c.fk_soc = ".$socid;
+		$sql .= " AND c.fk_soc = ".((int) $socid);
 	}
 	$sql .= " AND c.fk_statut = ".Commande::STATUS_CLOSED;
 	$sql .= " AND c.facture = 0";

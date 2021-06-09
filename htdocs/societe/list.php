@@ -288,7 +288,7 @@ if ($action == "change") {	// Change customer for TakePOS
 		$invoice->module_source = 'takepos';
 		$invoice->pos_source = $_SESSION["takeposterminal"];
 		$placeid = $invoice->create($user);
-		$sql = "UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' where rowid=".$placeid;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' where rowid = ".((int) $placeid);
 		$db->query($sql);
 	}
 
@@ -526,13 +526,13 @@ if (!$user->rights->fournisseur->lire) {
 if ($search_sale == -2) {
 	$sql .= " AND sc.fk_user IS NULL";
 } elseif ($search_sale > 0) {
-	$sql .= " AND sc.fk_user = ".$db->escape($search_sale);
+	$sql .= " AND sc.fk_user = ".((int) $search_sale);
 }
 if ($search_categ_cus > 0) {
-	$sql .= " AND cc.fk_categorie = ".$db->escape($search_categ_cus);
+	$sql .= " AND cc.fk_categorie = ".((int) $search_categ_cus);
 }
 if ($search_categ_sup > 0) {
-	$sql .= " AND cs.fk_categorie = ".$db->escape($search_categ_sup);
+	$sql .= " AND cs.fk_categorie = ".((int) $search_categ_sup);
 }
 if ($search_categ_cus == -2) {
 	$sql .= " AND cc.fk_categorie IS NULL";
@@ -667,7 +667,7 @@ $parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
 	if ($socid) {
-		$sql .= " AND s.rowid = ".$socid;
+		$sql .= " AND s.rowid = ".((int) $socid);
 	}
 }
 $sql .= $hookmanager->resPrint;

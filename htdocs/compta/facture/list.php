@@ -546,7 +546,7 @@ if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 }
 if ($search_product_category > 0) {
-	$sql .= " AND cp.fk_categorie = ".$db->escape($search_product_category);
+	$sql .= " AND cp.fk_categorie = ".((int) $search_product_category);
 }
 if ($socid > 0) {
 	$sql .= ' AND s.rowid = '.((int) $socid);
@@ -634,7 +634,7 @@ if ($search_login) {
 	$sql .= natural_search(array('u.login', 'u.firstname', 'u.lastname'), $search_login);
 }
 if ($search_categ_cus > 0) {
-	$sql .= " AND cc.fk_categorie = ".$db->escape($search_categ_cus);
+	$sql .= " AND cc.fk_categorie = ".((int) $search_categ_cus);
 }
 if ($search_categ_cus == -2) {
 	$sql .= " AND cc.fk_categorie IS NULL";
@@ -659,10 +659,10 @@ if ($search_status != '-1' && $search_status != '') {
 }
 
 if ($search_paymentmode > 0) {
-	$sql .= " AND f.fk_mode_reglement = ".$db->escape($search_paymentmode);
+	$sql .= " AND f.fk_mode_reglement = ".((int) $search_paymentmode);
 }
 if ($search_paymentterms > 0) {
-	$sql .= " AND f.fk_cond_reglement = ".$db->escape($search_paymentterms);
+	$sql .= " AND f.fk_cond_reglement = ".((int) $search_paymentterms);
 }
 if ($search_module_source) {
 	$sql .= natural_search("f.module_source", $search_module_source);
@@ -692,10 +692,10 @@ if ($option == 'late') {
 	$sql .= " AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->client->warning_delay)."'";
 }
 if ($search_sale > 0) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".(int) $search_sale;
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $search_sale);
 }
 if ($search_user > 0) {
-	$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='facture' AND tc.source='internal' AND ec.element_id = f.rowid AND ec.fk_socpeople = ".$search_user;
+	$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='facture' AND tc.source='internal' AND ec.element_id = f.rowid AND ec.fk_socpeople = ".((int) $search_user);
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';

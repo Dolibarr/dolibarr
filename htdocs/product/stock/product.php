@@ -951,7 +951,7 @@ if (!$variants) {
 	$sql .= " WHERE ps.reel != 0";
 	$sql .= " AND ps.fk_entrepot = e.rowid";
 	$sql .= " AND e.entity IN (".getEntity('stock').")";
-	$sql .= " AND ps.fk_product = ".$object->id;
+	$sql .= " AND ps.fk_product = ".((int) $object->id);
 	$sql .= " ORDER BY e.ref";
 
 	$entrepotstatic = new Entrepot($db);

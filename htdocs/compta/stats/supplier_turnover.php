@@ -197,7 +197,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= " AND f.type IN (0,2)";
 	$sql .= " AND f.entity IN (".getEntity('supplier_invoice').")";
 	if ($socid) {
-		$sql .= " AND f.fk_soc = ".$socid;
+		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 } elseif ($modecompta == "RECETTES-DEPENSES") {
 	$sql = "SELECT date_format(p.datep,'%Y-%m') as dm, sum(pf.amount) as amount_ttc";
@@ -208,7 +208,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= " AND pf.fk_facturefourn = f.rowid";
 	$sql .= " AND f.entity IN (".getEntity('supplier_invoice').")";
 	if ($socid) {
-		$sql .= " AND f.fk_soc = ".$socid;
+		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 } elseif ($modecompta == "BOOKKEEPING") {
 	$pcgverid = $conf->global->CHARTOFACCOUNTS;

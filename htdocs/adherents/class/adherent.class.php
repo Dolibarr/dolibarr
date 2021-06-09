@@ -598,8 +598,8 @@ class Adherent extends CommonObject
 				if ($this->user_id) {
 					// Add link to user
 					$sql = "UPDATE ".MAIN_DB_PREFIX."user SET";
-					$sql .= " fk_member = ".$this->id;
-					$sql .= " WHERE rowid = ".$this->user_id;
+					$sql .= " fk_member = ".((int) $this->id);
+					$sql .= " WHERE rowid = ".((int) $this->user_id);
 					dol_syslog(get_class($this)."::create", LOG_DEBUG);
 					$resql = $this->db->query($sql);
 					if (!$resql) {
@@ -728,7 +728,7 @@ class Adherent extends CommonObject
 		if (!empty($this->oldcopy) && $this->typeid != $this->oldcopy->typeid) {
 			$sql2 = "SELECT libelle as label";
 			$sql2 .= " FROM ".MAIN_DB_PREFIX."adherent_type";
-			$sql2 .= " WHERE rowid = ".$this->typeid;
+			$sql2 .= " WHERE rowid = ".((int) $this->typeid);
 			$resql2 = $this->db->query($sql2);
 			if ($resql2) {
 				while ($obj = $this->db->fetch_object($resql2)) {

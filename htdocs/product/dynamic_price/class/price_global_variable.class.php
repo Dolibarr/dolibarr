@@ -182,7 +182,7 @@ class PriceGlobalVariable
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
 		$sql .= " code = ".(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "''").",";
 		$sql .= " description = ".(isset($this->description) ? "'".$this->db->escape($this->description)."'" : "''").",";
-		$sql .= " value = ".$this->value;
+		$sql .= " value = ".((float) $this->value);
 		$sql .= " WHERE rowid = ".$this->id;
 
 		$this->db->begin();

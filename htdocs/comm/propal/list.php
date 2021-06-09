@@ -593,27 +593,27 @@ if ($sall) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
 if ($search_categ_cus > 0) {
-	$sql .= " AND cc.fk_categorie = ".$db->escape($search_categ_cus);
+	$sql .= " AND cc.fk_categorie = ".((int) $search_categ_cus);
 }
 if ($search_categ_cus == -2) {
 	$sql .= " AND cc.fk_categorie IS NULL";
 }
 
 if ($search_fk_cond_reglement > 0) {
-	$sql .= " AND p.fk_cond_reglement = ".$db->escape($search_fk_cond_reglement);
+	$sql .= " AND p.fk_cond_reglement = ".((int) $search_fk_cond_reglement);
 }
 if ($search_fk_shipping_method > 0) {
-	$sql .= " AND p.fk_shipping_method = ".$db->escape($search_fk_shipping_method);
+	$sql .= " AND p.fk_shipping_method = ".((int) $search_fk_shipping_method);
 }
 if ($search_fk_input_reason > 0) {
-	$sql .= " AND p.fk_input_reason = ".$db->escape($search_fk_input_reason);
+	$sql .= " AND p.fk_input_reason = ".((int) $search_fk_input_reason);
 }
 if ($search_fk_mode_reglement > 0) {
-	$sql .= " AND p.fk_mode_reglement = ".$db->escape($search_fk_mode_reglement);
+	$sql .= " AND p.fk_mode_reglement = ".((int) $search_fk_mode_reglement);
 }
 
 if ($search_product_category > 0) {
-	$sql .= " AND cp.fk_categorie = ".$db->escape($search_product_category);
+	$sql .= " AND cp.fk_categorie = ".((int) $search_product_category);
 }
 if ($socid > 0) {
 	$sql .= ' AND s.rowid = '.((int) $socid);

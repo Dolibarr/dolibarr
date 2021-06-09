@@ -206,8 +206,8 @@ class Products extends DolibarrApi
 
 		// Select products of given category
 		if ($category > 0) {
-			$sql .= " AND c.fk_categorie = ".$this->db->escape($category);
-			$sql .= " AND c.fk_product = t.rowid ";
+			$sql .= " AND c.fk_categorie = ".((int) $category);
+			$sql .= " AND c.fk_product = t.rowid";
 		}
 		if ($mode == 1) {
 			// Show only products

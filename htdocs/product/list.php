@@ -451,7 +451,7 @@ if (dol_strlen($canvas) > 0) {
 	$sql .= " AND p.canvas = '".$db->escape($canvas)."'";
 }
 if ($catid > 0) {
-	$sql .= " AND cp.fk_categorie = ".$catid;
+	$sql .= " AND cp.fk_categorie = ".((int) $catid);
 }
 if ($catid == -2) {
 	$sql .= " AND cp.fk_categorie IS NULL";
