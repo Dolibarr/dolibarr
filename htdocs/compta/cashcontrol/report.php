@@ -26,7 +26,7 @@
 /**
  *	\file       htdocs/compta/cashcontrol/report.php
  *	\ingroup    cashdesk|takepos
- *	\brief      List of bank transactions
+ *	\brief      List of sales from POS
  */
 
 if (!defined('NOREQUIREMENU')) {
@@ -35,6 +35,8 @@ if (!defined('NOREQUIREMENU')) {
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1'); // Disable browser notification
 }
+
+$_GET['optioncss'] = "print";
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
@@ -48,10 +50,8 @@ $langs->loadLangs(array("bills", "banks"));
 
 $id = GETPOST('id', 'int');
 
-$_GET['optioncss'] = "print";
-
-$cashcontrol = new CashControl($db);
-$cashcontrol->fetch($id);
+$object = new CashControl($db);
+$object->fetch($id);
 
 //$limit = GETPOST('limit')?GETPOST('limit', 'int'):$conf->liste_limit;
 $sortorder = 'ASC';
@@ -67,19 +67,19 @@ $arrayfields = array(
 	'b.credit'=>array('label'=>$langs->trans("Credit"), 'checked'=>1, 'position'=>605),
 );
 
-$syear  = $cashcontrol->year_close;
-$smonth = $cashcontrol->month_close;
-$sday   = $cashcontrol->day_close;
+$syear  = $object->year_close;
+$smonth = $object->month_close;
+$sday   = $object->day_close;
 
-$posmodule = $cashcontrol->posmodule;
-$terminalid = $cashcontrol->posnumber;
+$posmodule = $object->posmodule;
+$terminalid = $object->posnumber;
 
 // Security check
 if ($user->socid > 0) {	// Protection if external user
 	//$socid = $user->socid;
 	accessforbidden();
 }
-if (!$user->rights->cashdesk->run && !$user->rights->takepos->run) {
+if (empty($user->rights->cashdesk->run) && empty($user->rights->takepos->run)) {
 	accessforbidden();
 }
 
@@ -106,8 +106,8 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu ON bu.fk_bank = b.rowid AND 
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON bu.url_id = f.rowid";
 $sql.= " WHERE b.fk_account = ba.rowid";
 // Define filter on invoice
-$sql.= " AND f.module_source = '".$db->escape($cashcontrol->posmodule)."'";
-$sql.= " AND f.pos_source = '".$db->escape($cashcontrol->posnumber)."'";
+$sql.= " AND f.module_source = '".$db->escape($object->posmodule)."'";
+$sql.= " AND f.pos_source = '".$db->escape($object->posnumber)."'";
 $sql.= " AND f.entity IN (".getEntity('facture').")";
 // Define filter on data
 if ($syear && ! $smonth)              $sql.= " AND dateo BETWEEN '".$db->idate(dol_get_first_day($syear, 1))."' AND '".$db->idate(dol_get_last_day($syear, 12))."'";
@@ -151,19 +151,33 @@ if ($resql) {
 	$i = 0;
 
 	print "<!-- title of cash fence -->\n";
-	print "<center><h2>";
-	if ($cashcontrol->status != $cashcontrol::STATUS_DRAFT) {
-		print $langs->trans("CashControl")." ".$cashcontrol->id;
+	print '<center>';
+	print '<h2>';
+	if ($object->status != $object::STATUS_DRAFT) {
+		print $langs->trans("CashControl")." ".$object->id;
 	} else {
 		print $langs->trans("CashControl")." - ".$langs->trans("Draft");
 	}
-	print "<br>".$langs->trans("DateCreationShort").": ".dol_print_date($cashcontrol->date_creation, 'dayhour');
-	print "</h2></center>";
+	print "</h2>";
+	print $langs->trans("DateCreationShort").": ".dol_print_date($object->date_creation, 'dayhour');
+	print '<br>'.$mysoc->name;
+	$userauthor = $object->fk_user_valid;
+	if (empty($userauthor)) {
+		$userauthor = $object->fk_user_creat;
+	}
+
+	$uservalid = new User($db);
+	if ($userauthor > 0) {
+		$uservalid->fetch($userauthor);
+		print '<br>'.$langs->trans("Author").': '.$uservalid->getFullName($langs);
+	}
+	print '<br>'.$langs->trans("Period").': '.$object->year_close.($object->month_close ? '-'.$object->month_close : '').($object->day_close ? '-'.$object->day_close : '');
+	print '</center>';
 
 	$invoicetmp = new Facture($db);
 
 	print "<div style='text-align: right'><h2>";
-	print $langs->trans("InitialBankBalance").' - '.$langs->trans("Cash")." : ".price($cashcontrol->opening);
+	print $langs->trans("InitialBankBalance").' - '.$langs->trans("Cash").' : <span class="amount">'.price($object->opening).'</span>';
 	print "</h2></div>";
 
 	print '<div class="div-table-responsive">';
@@ -206,7 +220,7 @@ if ($resql) {
 		{
 			print '<tr class="oddeven">';
 			print '<td>'.$langs->trans("InitialBankBalance").' - '.$langs->trans("Cash").'</td>';
-			print '<td></td><td></td><td></td><td class="right"><span class="amount">'.price($cashcontrol->opening).'</span></td>';
+			print '<td></td><td></td><td></td><td class="right"><span class="amount">'.price($object->opening).'</span></td>';
 			print '</tr>';
 			$first = "no";
 		}*/
@@ -232,8 +246,8 @@ if ($resql) {
 		// Bank account
 		print '<td class="nowrap right">';
 		print $bankaccount->getNomUrl(1);
-		if ($cashcontrol->posmodule == "takepos") {
-			$var1 = 'CASHDESK_ID_BANKACCOUNT_CASH'.$cashcontrol->posnumber;
+		if ($object->posmodule == "takepos") {
+			$var1 = 'CASHDESK_ID_BANKACCOUNT_CASH'.$object->posnumber;
 		} else {
 			$var1 = 'CASHDESK_ID_BANKACCOUNT_CASH';
 		}
@@ -305,48 +319,44 @@ if ($resql) {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
 	print "</table>";
+	print "</div>";
 
-	//$cash = $amountpertype['LIQ'] + $cashcontrol->opening;
-	$cash = price2num($cash + $cashcontrol->opening, 'MT');
+	//$cash = $amountpertype['LIQ'] + $object->opening;
+	$cash = price2num($cash + $object->opening, 'MT');
 
-	print '<div style="text-align: right"><h2>';
-	print $langs->trans("Cash").": ".price($cash);
-	if ($cashcontrol->status == $cashcontrol::STATUS_VALIDATED && $cash != $cashcontrol->cash) {
-		print ' <> <span class="amountremaintopay">'.$langs->trans("Declared").': '.price($cashcontrol->cash).'</span>';
+	print '<div style="text-align: right">';
+	print '<h2>';
+
+	print $langs->trans("Cash").': <span class="amount">'.price($cash).'</span>';
+	if ($object->status == $object::STATUS_VALIDATED && $cash != $object->cash) {
+		print ' <> <span class="amountremaintopay">'.$langs->trans("Declared").': '.price($object->cash).'</span>';
 	}
-	print "<br><br>";
+	print "<br>";
 
 	//print '<br>';
-	print $langs->trans("PaymentTypeCHQ").": ".price($cheque);
-	if ($cashcontrol->status == $cashcontrol::STATUS_VALIDATED && $cheque != $cashcontrol->cheque) {
-		print ' <> <span class="amountremaintopay">'.$langs->trans("Declared").': '.price($cashcontrol->cheque).'</span>';
+	print $langs->trans("PaymentTypeCHQ").': <span class="amount">'.price($cheque).'</span>';
+	if ($object->status == $object::STATUS_VALIDATED && $cheque != $object->cheque) {
+		print ' <> <span class="amountremaintopay">'.$langs->trans("Declared").': '.price($object->cheque).'</span>';
 	}
-	print "<br><br>";
+	print "<br>";
 
 	//print '<br>';
-	print $langs->trans("PaymentTypeCB").": ".price($bank);
-	if ($cashcontrol->status == $cashcontrol::STATUS_VALIDATED && $bank != $cashcontrol->card) {
-		print ' <> <span class="amountremaintopay">'.$langs->trans("Declared").': '.price($cashcontrol->card).'</span>';
+	print $langs->trans("PaymentTypeCB").': <span class="amount">'.price($bank).'</span>';
+	if ($object->status == $object::STATUS_VALIDATED && $bank != $object->card) {
+		print ' <> <span class="amountremaintopay">'.$langs->trans("Declared").': '.price($object->card).'</span>';
 	}
-	print "<br><br>";
+	print "<br>";
 
 	// print '<br>';
 	if ($other) {
-		print '<br>'.$langs->trans("Other").": ".price($other)."<br><br>";
+		print ''.$langs->trans("Other").': <span class="amount">'.price($other)."</span>";
+		print '<br>';
 	}
-	print "</h2></div>";
 
-	//save totals to DB
-	/*
-	$sql = "UPDATE ".MAIN_DB_PREFIX."pos_cash_fence ";
-	$sql .= "SET";
-	$sql .= " cash='".$db->escape($cash)."'";
-	$sql .= ", card='".$db->escape($bank)."'";
-	$sql .= " where rowid = ".((int) $id);
-	$db->query($sql);
-	*/
+	print $langs->trans("Total").': <span class="amount">'.price($cash + $cheque + $bank + $other).'</span>';
 
-	print "</div>";
+	print '</h2>';
+	print '</div>';
 
 	print '</form>';
 
