@@ -458,8 +458,9 @@ function getPurchaseInvoicePieChart($socid = 0)
 
 /**
  * Return an HTML table that contains a pie chart of the number of customers or supplier invoices
- * @param string $mode Can be customer or fourn
- * @return string A HTML table that contains a pie chart of customers or supplier invoices
+ *
+ * @param 	string 	$mode 		Can be 'customers' or 'suppliers'
+ * @return 	string 				A HTML table that contains a pie chart of customers or supplier invoices
  */
 function getNumberInvoicesPieChart($mode)
 {
@@ -487,13 +488,17 @@ function getNumberInvoicesPieChart($mode)
 		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement > '".date_format($datenowadd30, 'Y-m-d')."'", 1, 0).") as nbnotlate30";
 		if ($mode == 'customers') {
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-		} elseif ($mode == 'fourn') {
+		} elseif ($mode == 'fourn' || $mode == 'suppliers') {
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 		} else {
 			return '';
 		}
 		$sql .= " WHERE f.type <> 2";
 		$sql .= " AND f.fk_statut = 1";
+		if (isset($user->socid) && $user->socid > 0) {
+			$sql .= " AND f.fk_soc = ".((int) $user->socid);
+		}
+
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num = $db->num_rows($resql);
@@ -519,14 +524,15 @@ function getNumberInvoicesPieChart($mode)
 				$result = '<div class="div-table-responsive-no-min">';
 				$result .= '<table class="noborder nohover centpercent">';
 				$result .= '<tr class="liste_titre">';
-				$result .= '<td colspan="2">'.$langs->trans("Statistics").' - ';
+				$result .= '<td>'.$langs->trans("Statistics").' - ';
 				if ($mode == 'customers') {
-					$result .= $langs->trans("CustomerInvoice").'</td>';
-				} elseif ($mode == 'fourn') {
-					$result .= $langs->trans("SupplierInvoice").'</td>';
+					$result .= $langs->trans("CustomerInvoice");
+				} elseif ($mode == 'fourn' || $mode == 'suppliers') {
+					$result .= $langs->trans("SupplierInvoice");
 				} else {
 					return '';
 				}
+				$result .= '</td>';
 				$result .= '</tr>';
 
 				$dolgraph = new DolGraph();
@@ -539,13 +545,13 @@ function getNumberInvoicesPieChart($mode)
 				$dolgraph->setWidth('300');
 				if ($mode == 'customers') {
 					$dolgraph->draw('idgraphcustomerinvoices');
-				} elseif ($mode == 'fourn') {
+				} elseif ($mode == 'fourn' || $mode == 'suppliers') {
 					$dolgraph->draw('idgraphfourninvoices');
 				} else {
 					return '';
 				}
 				$result .= '<tr maxwidth="255">';
-				$result .= '<td align="center" colspan="2">'.$dolgraph->show($total ? 0 : 1).'</td>';
+				$result .= '<td class="center">'.$dolgraph->show($total ? 0 : 1).'</td>';
 				$result .= '</tr>';
 				$result .= '</table>';
 				$result .= '</div>';
