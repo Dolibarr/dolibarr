@@ -354,8 +354,8 @@ class Partnership extends CommonObject
 	 *
 	 *	@param      int			$id       				Id of object to load
 	 * 	@param		string		$ref					Ref of object
-	 * 	@param 		int 		$fk_soc			  		fk_soc
 	 * 	@param 		int 		$fk_member		  		fk_member
+	 * 	@param 		int 		$fk_soc			  		fk_soc
 	 *	@return     int         						>0 if OK, <0 if KO, 0 if not found
 	 */
 	public function fetch($id, $ref = null, $fk_member = null, $fk_soc = null)

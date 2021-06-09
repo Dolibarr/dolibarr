@@ -1702,7 +1702,7 @@ if ($action == 'create') {
 			$sql .= " AND obj.fk_commande = ".((int) $origin_id);
 			$sql .= " AND obj.rowid = ed.fk_commandefourndet";
 			$sql .= " AND ed.fk_reception = e.rowid";
-			$sql .= " AND ed.fk_reception !=".(int) $object->id);
+			$sql .= " AND ed.fk_reception !=".((int) $object->id);
 			//if ($filter) $sql.= $filter;
 			$sql .= " ORDER BY obj.fk_product";
 

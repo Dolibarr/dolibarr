@@ -223,7 +223,7 @@ if ($resql) {
 
 		if (empty($cacheinvoiceid[$objp->facid])) {
 			$cacheinvoiceid[$objp->facid] = $objp->facid;	// First time this invoice is found into list of invoice x payments
-			foreach($invoicetmp->lines as $line) {
+			foreach ($invoicetmp->lines as $line) {
 				$totalqty += $line->qty;
 				$totalvat += $line->total_tva;
 			}
