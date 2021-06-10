@@ -712,7 +712,7 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 
 				for ($i = 0; $i < $num; $i++) {
 					$desc = ($lines[$i]->desc ? $lines[$i]->desc : '');
-					// If we build one invoice for several order, we must put the invoice of order on the line
+					// If we build one invoice for several orders, we must put the ref of order on the invoice line
 					if (!empty($createbills_onebythird)) {
 						$desc = dol_concatdesc($desc, $langs->trans("Order").' '.$cmd->ref.' - '.dol_print_date($cmd->date, 'day'));
 					}
@@ -771,6 +771,8 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 							$lines[$i]->fetch_optionals();
 							$array_options = $lines[$i]->array_options;
 						}
+
+						$objecttmp->context['createfromclone'];
 
 						$result = $objecttmp->addline(
 							$desc,
