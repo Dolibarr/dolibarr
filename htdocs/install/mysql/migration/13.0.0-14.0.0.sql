@@ -79,6 +79,7 @@ DELETE FROM llx_user_param where param = 'MAIN_THEME' and value in ('auguria', '
 ALTER TABLE llx_product_lot ADD COLUMN eol_date datetime NULL;
 ALTER TABLE llx_product_lot ADD COLUMN manufacturing_date datetime NULL;
 ALTER TABLE llx_product_lot ADD COLUMN scrapping_date datetime NULL;
+ALTER TABLE llx_product_lot ADD COLUMN qc_frequency integer DEFAULT NULL;
 
 create table llx_accounting_groups_account
 (
