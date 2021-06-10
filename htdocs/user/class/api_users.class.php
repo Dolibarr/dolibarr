@@ -73,9 +73,9 @@ class Users extends DolibarrApi
 
 		$obj_ret = array();
 
-		if (!DolibarrApiAccess::$user->rights->user->user->lire) {
-			throw new RestException(401, "You are not allowed to read list of users");
-		}
+		if (empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin)) {
+	        throw new RestException(401, "You are not allowed to read list of users");
+	    }
 
 		// case of external user, $societe param is ignored and replaced by user's socid
 		//$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $societe;
@@ -150,9 +150,10 @@ class Users extends DolibarrApi
 	 */
 	public function get($id, $includepermissions = 0)
 	{
-		//if (!DolibarrApiAccess::$user->rights->user->user->lire) {
-			//throw new RestException(401);
-		//}
+		if (empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin)) {
+			throw new RestException(401);
+		}
+
 		if ($id == 0) {
 			$result = $this->useraccount->initAsSpecimen();
 		} else {
@@ -187,9 +188,9 @@ class Users extends DolibarrApi
 	 */
 	public function getByLogin($login, $includepermissions = 0)
 	{
-		//if (!DolibarrApiAccess::$user->rights->user->user->lire) {
-			//throw new RestException(401);
-		//}
+		if (empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin)) {
+			throw new RestException(401, 'Not allowed');
+		}
 
 		$result = $this->useraccount->fetch('', $login);
 		if (!$result) {
@@ -221,9 +222,9 @@ class Users extends DolibarrApi
 	 */
 	public function getByEmail($email, $includepermissions = 0)
 	{
-		//if (!DolibarrApiAccess::$user->rights->user->user->lire) {
-			//throw new RestException(401);
-		//}
+		if (empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin)) {
+			throw new RestException(401, 'Not allowed');
+		}
 
 		$result = $this->useraccount->fetch('', '', '', 0, -1, $email);
 		if (!$result) {
@@ -254,6 +255,10 @@ class Users extends DolibarrApi
 	 */
 	public function getInfo($includepermissions = 0)
 	{
+		if (empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin)) {
+			throw new RestException(401, 'Not allowed');
+		}
+
 		$apiUser = DolibarrApiAccess::$user;
 
 		$result = $this->useraccount->fetch($apiUser->id);
@@ -289,9 +294,10 @@ class Users extends DolibarrApi
 	public function post($request_data = null)
 	{
 		// check user authorization
-		//if(! DolibarrApiAccess::$user->rights->user->creer) {
-		//   throw new RestException(401, "User creation not allowed");
-		//}
+		if (empty(DolibarrApiAccess::$user->rights->user->creer) && empty(DolibarrApiAccess::$user->admin)) {
+			throw new RestException(401, "User creation not allowed");
+		}
+
 		// check mandatory fields
 		/*if (!isset($request_data["login"]))
 			throw new RestException(400, "login field missing");
@@ -322,11 +328,11 @@ class Users extends DolibarrApi
 	 * @throws RestException 404 Not found
 	 * @throws RestException 500 System error
 	 */
-	public function put($id, $request_data = null)
-	{
-		//if (!DolibarrApiAccess::$user->rights->user->user->creer) {
-			//throw new RestException(401);
-		//}
+    public function put($id, $request_data = null)
+    {
+		if (empty(DolibarrApiAccess::$user->rights->user->user->creer) && empty(DolibarrApiAccess::$user->admin)) {
+			throw new RestException(401);
+		}
 
 		$result = $this->useraccount->fetch($id);
 		if (!$result) {
@@ -378,7 +384,7 @@ class Users extends DolibarrApi
 	{
 		$obj_ret = array();
 
-		if (!DolibarrApiAccess::$user->rights->user->user->lire) {
+		if (empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin)) {
 			throw new RestException(403);
 		}
 
@@ -413,9 +419,9 @@ class Users extends DolibarrApi
 
 		global $conf;
 
-		//if (!DolibarrApiAccess::$user->rights->user->user->supprimer) {
-			//throw new RestException(401);
-		//}
+		if (empty(DolibarrApiAccess::$user->rights->user->user->creer) && empty(DolibarrApiAccess::$user->admin)) {
+			throw new RestException(401);
+		}
 		$result = $this->useraccount->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'User not found');
@@ -462,9 +468,10 @@ class Users extends DolibarrApi
 
 		$obj_ret = array();
 
-		if (!DolibarrApiAccess::$user->rights->user->group_advance->read) {
-			throw new RestException(401, "You are not allowed to read list of groups");
-		}
+	    if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin)) ||
+	    	!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty(DolibarrApiAccess::$user->rights->user->group_advance->read) && empty(DolibarrApiAccess::$user->admin)) {
+    		throw new RestException(401, "You are not allowed to read groups");
+    	}
 
 		// case of external user, $societe param is ignored and replaced by user's socid
 		//$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $societe;
@@ -532,9 +539,10 @@ class Users extends DolibarrApi
 	{
 		global $db, $conf;
 
-		if (!DolibarrApiAccess::$user->rights->user->group_advance->read) {
-			throw new RestException(401, "You are not allowed to read groups");
-		}
+	    if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty(DolibarrApiAccess::$user->rights->user->user->lire) && empty(DolibarrApiAccess::$user->admin)) ||
+	    	!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty(DolibarrApiAccess::$user->rights->user->group_advance->read) && empty(DolibarrApiAccess::$user->admin)) {
+	        throw new RestException(401, "You are not allowed to read groups");
+	    }
 
 		$group_static = new UserGroup($this->db);
 		$result = $group_static->fetch($group, '', $load_members);
@@ -552,11 +560,11 @@ class Users extends DolibarrApi
 	 * @param   int     $id Account ID
 	 * @return  array
 	 */
-	public function delete($id)
-	{
-		//if (!DolibarrApiAccess::$user->rights->user->user->supprimer) {
-			//throw new RestException(401);
-		//}
+    public function delete($id)
+    {
+		if (empty(DolibarrApiAccess::$user->rights->user->user->supprimer) && empty(DolibarrApiAccess::$user->admin)) {
+			throw new RestException(401);
+		}
 		$result = $this->useraccount->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'User not found');

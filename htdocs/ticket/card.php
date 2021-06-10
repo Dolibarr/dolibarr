@@ -1297,15 +1297,28 @@ elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action =
 		// add a message
 		if ($action == 'presend' || $action == 'presend_addmessage')
 		{
+			if ($object->fk_soc > 0) {
+				$object->fetch_thirdparty();
+			}
+
+			$outputlangs = $langs;
+			$newlang = '';
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				$newlang = GETPOST('lang_id', 'aZ09');
+			}
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && is_object($object->thirdparty)) {
+				$newlang = $object->thirdparty->default_lang;
+			}
+			$arrayoffamiliestoexclude = array('objectamount');
+
 			$action = 'add_message'; // action to use to post the message
 			$modelmail = 'ticket_send';
 
 			// Substitution array
 			$morehtmlright = '';
 			$help = "";
-			$substitutionarray = array();
+			$substitutionarray = getCommonSubstitutionArray($newlang, 0, $arrayoffamiliestoexclude, $object);
 			if ($object->fk_soc > 0) {
-				$object->fetch_thirdparty();
 				$substitutionarray['__THIRDPARTY_NAME__'] = $object->thirdparty->name;
 			}
 			$substitutionarray['__USER_SIGNATURE__'] = $user->signature;
@@ -1337,16 +1350,6 @@ elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action =
 			print load_fiche_titre($langs->trans('TicketAddMessage'), $morehtmlright, 'messages@ticket');
 
 			print '<hr>';
-
-			// Define output language
-			$outputlangs = $langs;
-			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && !empty($_REQUEST['lang_id'])) {
-				$newlang = $_REQUEST['lang_id'];
-			}
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
-				$newlang = $object->default_lang;
-			}
 
 			$formticket = new FormTicket($db);
 

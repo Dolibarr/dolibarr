@@ -10,7 +10,7 @@
  * Copyright (C) 2013      Florian Henry         <florian.henry@open-concept.pro>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Jean-François Ferry   <jfefe@aternatik.fr>
- * Copyright (C) 2015-2016 Ferran Marcet         <fmarcet@2byte.es>
+ * Copyright (C) 2015-2021 Ferran Marcet         <fmarcet@2byte.es>
  * Copyright (C) 2017      Josep Lluís Amador    <joseplluis@lliuretic.cat>
  * Copyright (C) 2018      Charlene Benke        <charlie@patas-monkey.com>
  * Copyright (C) 2019	   Alexandre Spangaro	 <aspangaro@open-dsi.fr>
@@ -422,7 +422,7 @@ $sql .= ' f.datef as df, f.date_valid, f.date_lim_reglement as datelimite, f.mod
 $sql .= ' f.paye as paye, f.fk_statut, f.close_code,';
 $sql .= ' f.datec as date_creation, f.tms as date_update, f.date_closing as date_closing,';
 $sql .= ' f.retained_warranty, f.retained_warranty_date_limit, f.situation_final, f.situation_cycle_ref, f.situation_counter,';
-$sql .= ' s.rowid as socid, s.nom as name, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,';
+$sql .= ' s.rowid as socid, s.nom as name, s.name_alias, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,';
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " country.code as country_code,";
@@ -551,7 +551,7 @@ if (!$sall)
 	$sql .= ' f.retained_warranty, f.retained_warranty_date_limit, f.situation_final, f.situation_cycle_ref, f.situation_counter,';
 	$sql .= ' f.fk_user_author, f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva,';
 	$sql .= ' f.multicurrency_total_tva, f.multicurrency_total_ttc,';
-	$sql .= ' s.rowid, s.nom, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,';
+	$sql .= ' s.rowid, s.nom, s.name_alias, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,';
 	$sql .= ' typent.code,';
 	$sql .= ' state.code_departement, state.nom,';
 	$sql .= ' country.code,';
@@ -616,12 +616,12 @@ if ($resql)
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
 	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 	if ($sall)				 $param .= '&sall='.urlencode($sall);
-	if ($search_date_start)				$param .= '&search_date_start='.urlencode($search_date_start);
-	if ($search_date_end)				$param .= '&search_date_end='.urlencode($search_date_end);
-	if ($search_date_valid_start)		$param .= '&search_date_valid_start='.urlencode($search_date_valid_start);
-	if ($search_date_valid_end)			$param .= '&search_date_valid_end='.urlencode($search_date_valid_end);
-	if ($search_datelimit_start)		$param .= '&search_datelimit_start='.urlencode($search_datelimit_start);
-	if ($search_datelimit_end)			$param .= '&search_datelimit_end='.urlencode($search_datelimit_end);
+	if ($search_date_start)				$param .= '&search_date_startday='.urlencode(dol_print_date($search_date_start, '%d')).'&search_date_startmonth='.urlencode(dol_print_date($search_date_start, '%m')).'&search_date_startyear='.urlencode(dol_print_date($search_date_start, '%Y'));
+	if ($search_date_end)				$param .= '&search_date_endday='.urlencode(dol_print_date($search_date_end, '%d')).'&search_date_endmonth='.urlencode(dol_print_date($search_date_end, '%m')).'&search_date_endyear='.urlencode(dol_print_date($search_date_end, '%Y'));
+	if ($search_date_valid_start)		$param .= '&search_date_valid_startday='.urlencode(dol_print_date($search_date_valid_start, '%d')).'&search_date_valid_startmonth='.urlencode(dol_print_date($search_date_valid_start, '%m')).'&search_date_valid_startyear='.urlencode(dol_print_date($search_date_valid_start, '%Y'));
+	if ($search_date_valid_end)			$param .= '&search_date_valid_endday='.urlencode(dol_print_date($search_date_valid_end, '%d')).'&search_date_valid_endmonth='.urlencode(dol_print_date($search_date_valid_end, '%m')).'&search_date_valid_endyear='.urlencode(dol_print_date($search_date_valid_end, '%Y'));
+	if ($search_datelimit_start)		$param .= '&search_datelimit_startday='.urlencode(dol_print_date($search_datelimit_start, '%d')).'&search_datelimit_startmonth='.urlencode(dol_print_date($search_datelimit_start, '%m')).'&search_datelimit_startyear='.urlencode(dol_print_date($search_datelimit_start, '%Y'));
+	if ($search_datelimit_end)			$param .= '&search_datelimit_endday='.urlencode(dol_print_date($search_datelimit_end, '%d')).'&search_datelimit_endmonth='.urlencode(dol_print_date($search_datelimit_end, '%m')).'&search_datelimit_endyear='.urlencode(dol_print_date($search_datelimit_end, '%Y'));
 	if ($search_ref)         $param .= '&search_ref='.urlencode($search_ref);
 	if ($search_refcustomer) $param .= '&search_refcustomer='.urlencode($search_refcustomer);
 	if ($search_project_ref) $param .= '&search_project_ref='.urlencode($search_project_ref);
@@ -1193,6 +1193,7 @@ if ($resql)
 			}
 			$thirdpartystatic->id = $obj->socid;
 			$thirdpartystatic->name = $obj->name;
+			$thirdpartystatic->name_alias = $obj->name_alias;
 			$thirdpartystatic->client = $obj->client;
 			$thirdpartystatic->fournisseur = $obj->fournisseur;
 			$thirdpartystatic->code_client = $obj->code_client;

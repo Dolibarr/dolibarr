@@ -138,13 +138,21 @@ $sql .= " FROM ".MAIN_DB_PREFIX."holiday cp";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user u ON cp.fk_user = u.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_holiday_types ct ON cp.fk_type = ct.rowid";
 $sql .= " WHERE cp.rowid > 0";
-$sql .= " AND cp.statut = 3"; // 3 = Approved
+$sql .= " AND cp.statut = ".Holiday::STATUS_APPROVED;
 $sql .= " AND (date_format(cp.date_debut, '%Y-%m') = '".$db->escape($year_month)."' OR date_format(cp.date_fin, '%Y-%m') = '".$db->escape($year_month)."')";
 
-if (!empty($search_ref))            $sql .= natural_search('cp.ref', $search_ref);
-if (!empty($search_employee))       $sql .= " AND cp.fk_user = '".$db->escape($search_employee)."'";
-if (!empty($search_type))           $sql .= ' AND cp.fk_type IN ('.$db->escape($search_type).')';
-if (!empty($search_description))    $sql .= natural_search('cp.description', $search_description);
+if (!empty($search_ref)) {
+	$sql .= natural_search('cp.ref', $search_ref);
+}
+if (!empty($search_employee) && $search_employee > 0) {
+	$sql .= " AND cp.fk_user = ".((int) $search_employee);
+}
+if (!empty($search_type) && $search_type != '-1') {
+	$sql .= ' AND cp.fk_type IN ('.$db->escape($search_type).')';
+}
+if (!empty($search_description)) {
+	$sql .= natural_search('cp.description', $search_description);
+}
 
 $sql .= $db->order($sortfield, $sortorder);
 

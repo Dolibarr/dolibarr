@@ -10,7 +10,7 @@
  * Copyright (C) 2012      Christophe Battarel		<christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Cédric Salvador			<csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Jean-François Ferry		<jfefe@aternatik.fr>
- * Copyright (C) 2016-2018 Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2016-2021 Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2017-2018 Charlene Benke			<charlie@patas-monkey.com>
  * Copyright (C) 2018	   Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2019	   Alexandre Spangaro		<aspangaro@open-dsi.fr>
@@ -167,7 +167,7 @@ $arrayfields = array(
 	'state.nom'=>array('label'=>"StateShort", 'checked'=>0),
 	'country.code_iso'=>array('label'=>"Country", 'checked'=>0),
 	'typent.code'=>array('label'=>"ThirdPartyType", 'checked'=>$checkedtypetiers),
-	'p.date'=>array('label'=>"Date", 'checked'=>1),
+	'p.date'=>array('label'=>"DatePropal", 'checked'=>1),
 	'p.fin_validite'=>array('label'=>"DateEnd", 'checked'=>1),
 	'p.date_livraison'=>array('label'=>"DeliveryDate", 'checked'=>0),
 	'ava.rowid'=>array('label'=>"AvailabilityPeriod", 'checked'=>0),
@@ -349,7 +349,7 @@ $help_url = 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos'
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0 || $search_user > 0) $sql = 'SELECT DISTINCT';
-$sql .= ' s.rowid as socid, s.nom as name, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client, ';
+$sql .= ' s.rowid as socid, s.nom as name, s.name_alias, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client, ';
 $sql .= " typent.code as typent_code,";
 $sql .= " ava.rowid as availability,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
@@ -504,12 +504,12 @@ if ($resql)
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
 	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 	if ($sall)				 			$param .= '&sall='.urlencode($sall);
-	if ($search_date_start)				$param .= '&search_date_start='.urlencode($search_date_start);
-	if ($search_date_end)				$param .= '&search_date_end='.urlencode($search_date_end);
-	if ($search_dateend_start)			$param .= '&search_dateend_start='.urlencode($search_dateend_start);
-	if ($search_dateend_end)			$param .= '&search_dateend_end='.urlencode($search_dateend_end);
-	if ($search_datedelivery_start)		$param .= '&search_datedelivery_start='.urlencode($search_datedelivery_start);
-	if ($search_datedelivery_end)		$param .= '&search_datedelivery_end='.urlencode($search_datedelivery_end);
+	if ($search_date_start)				$param .= '&search_date_startday='.urlencode(dol_print_date($search_date_start, '%d')).'&search_date_startmonth='.urlencode(dol_print_date($search_date_start, '%m')).'&search_date_startyear='.urlencode(dol_print_date($search_date_start, '%Y'));
+	if ($search_date_end)				$param .= '&search_date_endday='.urlencode(dol_print_date($search_date_end, '%d')).'&search_date_endmonth='.urlencode(dol_print_date($search_date_end, '%m')).'&search_date_endyear='.urlencode(dol_print_date($search_date_end, '%Y'));
+	if ($search_dateend_start)			$param .= '&search_dateend_startday='.urlencode(dol_print_date($search_dateend_start, '%d')).'&search_dateend_startmonth='.urlencode(dol_print_date($search_dateend_start, '%m')).'&search_dateend_startyear='.urlencode(dol_print_date($search_dateend_start, '%Y'));
+	if ($search_dateend_end)			$param .= '&search_dateend_endday='.urlencode(dol_print_date($search_dateend_end, '%d')).'&search_dateend_endmonth='.urlencode(dol_print_date($search_dateend_end, '%m')).'&search_dateend_endyear='.urlencode(dol_print_date($search_dateend_end, '%Y'));
+	if ($search_datedelivery_start)		$param .= '&search_datedelivery_startday='.urlencode(dol_print_date($search_datedelivery_start, '%d')).'&search_datedelivery_startmonth='.urlencode(dol_print_date($search_datedelivery_start, '%m')).'&search_datedelivery_startyear='.urlencode(dol_print_date($search_datedelivery_start, '%Y'));
+	if ($search_datedelivery_end)		$param .= '&search_datedelivery_endday='.urlencode(dol_print_date($search_datedelivery_end, '%d')).'&search_datedelivery_endmonth='.urlencode(dol_print_date($search_datedelivery_end, '%m')).'&search_datedelivery_endyear='.urlencode(dol_print_date($search_datedelivery_end, '%Y'));
 	if ($search_ref)         			$param .= '&search_ref='.urlencode($search_ref);
 	if ($search_refcustomer) 			$param .= '&search_refcustomer='.urlencode($search_refcustomer);
 	if ($search_refproject)  			$param .= '&search_refproject='.urlencode($search_refproject);
@@ -949,6 +949,7 @@ if ($resql)
 
 		$companystatic->id = $obj->socid;
 		$companystatic->name = $obj->name;
+		$companystatic->name_alias = $obj->name_alias;
 		$companystatic->client = $obj->client;
 		$companystatic->code_client = $obj->code_client;
 		$companystatic->email = $obj->email;
