@@ -402,12 +402,12 @@ if ($search_status >= 0) {
 	if ($search_status == 99) {
 		$sql .= " AND p.fk_statut <> 2";
 	} else {
-		$sql .= " AND p.fk_statut = ".$db->escape($search_status);
+		$sql .= " AND p.fk_statut = ".((int) $search_status);
 	}
 }
 if ($search_opp_status) {
 	if (is_numeric($search_opp_status) && $search_opp_status > 0) {
-		$sql .= " AND p.fk_opp_status = ".$db->escape($search_opp_status);
+		$sql .= " AND p.fk_opp_status = ".((int) $search_opp_status);
 	}
 	if ($search_opp_status == 'all') {
 		$sql .= " AND (p.fk_opp_status IS NOT NULL AND p.fk_opp_status <> -1)";
@@ -423,7 +423,7 @@ if ($search_opp_status) {
 	}
 }
 if ($search_public != '') {
-	$sql .= " AND p.public = ".$db->escape($search_public);
+	$sql .= " AND p.public = ".((int) $search_public);
 }
 // For external user, no check is done on company permission because readability is managed by public status of project and assignement.
 //if ($socid > 0) $sql.= " AND s.rowid = ".((int) $socid);

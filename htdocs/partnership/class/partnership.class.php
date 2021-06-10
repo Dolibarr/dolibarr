@@ -105,7 +105,7 @@ class Partnership extends CommonObject
 	/**
 	 * @var int rowid
 	 * @deprecated
-	 * @see id
+	 * @see $id
 	 */
 	public $rowid;
 
@@ -180,6 +180,7 @@ class Partnership extends CommonObject
 			'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
 			'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
 			'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => 1, 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 15, 'index' => 1),
+			//'fk_type' => array('type' => 'integer:PartnershipType:partnership/class/partnershiptype.class.php', 'label' => 'Type', 'default' => 1, 'enabled' => 1, 'visible' => 1, 'position' => 20),
 			'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>61, 'notnull'=>0, 'visible'=>0,),
 			'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>62, 'notnull'=>0, 'visible'=>0,),
 			'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
@@ -197,10 +198,10 @@ class Partnership extends CommonObject
 			'reason_decline_or_cancel' => array('type'=>'text', 'label'=>'ReasonDeclineOrCancel', 'enabled'=>'1', 'position'=>64, 'notnull'=>0, 'visible'=>-2,),
 		);
 
-		if ($conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
-			$this->fields['fk_member'] = array('type'=>'integer:Adherent:adherents/class/adherent.class.php:1', 'label'=>'Member', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1,);
+		if (!empty($conf->global->PARTNERSHIP_IS_MANAGED_FOR) && $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
+			$this->fields['fk_member'] = array('type'=>'integer:Adherent:adherents/class/adherent.class.php:1', 'label'=>'Member', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'picto'=>'member');
 		} else {
-			$this->fields['fk_soc'] = array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'ThirdParty', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1,);
+			$this->fields['fk_soc'] = array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'ThirdParty', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'picto'=>'societe');
 		}
 
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
@@ -353,15 +354,16 @@ class Partnership extends CommonObject
 	 *
 	 *	@param      int			$id       				Id of object to load
 	 * 	@param		string		$ref					Ref of object
-	 * 	@param 		int 		$fk_soc_or_member  		fk_soc or fk_member
+	 * 	@param 		int 		$fk_member		  		fk_member
+	 * 	@param 		int 		$fk_soc			  		fk_soc
 	 *	@return     int         						>0 if OK, <0 if KO, 0 if not found
 	 */
-	public function fetch($id, $ref = null, $fk_soc_or_member = null)
+	public function fetch($id, $ref = null, $fk_member = null, $fk_soc = null)
 	{
 		global $conf;
 
 		// Check parameters
-		if (empty($id) && empty($ref) && empty($fk_soc_or_member)) {
+		if (empty($id) && empty($ref) && empty($fk_member) && empty($fk_soc)) {
 			return -1;
 		}
 
@@ -375,7 +377,7 @@ class Partnership extends CommonObject
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'partnership as p';
 
 		if ($id) {
-			$sql .= " WHERE p.rowid=".$id;
+			$sql .= " WHERE p.rowid=".((int) $id);
 		} else {
 			$sql .= " WHERE p.entity IN (0,".getEntity('partnership').")"; // Dont't use entity if you use rowid
 		}
@@ -384,14 +386,13 @@ class Partnership extends CommonObject
 			$sql .= " AND p.ref='".$this->db->escape($ref)."'";
 		}
 
-		if ($fk_soc_or_member) {
-			$sql .= ' AND';
-			if ($conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member')
-				$sql .= ' p.fk_member = ';
-			else $sql .= ' p.fk_soc = ';
-			$sql .= $fk_soc_or_member;
-			$sql .= ' ORDER BY p.date_partnership_end DESC';
+		if ($fk_member > 0) {
+			$sql .= ' AND p.fk_member = '.((int) $fk_member);
 		}
+		if ($fk_soc > 0) {
+			$sql .= ' AND p.fk_soc = '.((int) $fk_soc);
+		}
+		$sql .= ' ORDER BY p.date_partnership_end DESC';
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -419,8 +420,6 @@ class Partnership extends CommonObject
 				$this->reason_decline_or_cancel 	= $obj->reason_decline_or_cancel;
 				$this->import_key 					= $obj->import_key;
 				$this->model_pdf 					= $obj->model_pdf;
-
-				$this->lines = array();
 
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels

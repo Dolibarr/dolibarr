@@ -13,7 +13,7 @@ You can freely use, study, modify or distribute it according to its licence.
 
 You can use it as a standalone application or as a web application to access it from the Internet or a LAN.
 
-Dolibarr has a large community ready to help you, free forums and [officially preferred partners ready to offer commercial support should you need it](https://partners.dolibarr.org)
+Dolibarr has a large community ready to help you, free forums and [preferred partners ready to offer commercial support should you need it](https://partners.dolibarr.org)
 
 ![ScreenShot](https://www.dolibarr.org/medias/dolibarr_screenshot1_1920x1080.jpg)
 
@@ -97,41 +97,68 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 
 ### Main application/modules (all optional)
 
-- Customers, Prospects (Leads) and/or Suppliers directory + Contacts
-- Members/Membership management 
-- Products and/or Services catalog
-- Commercial proposals management
-- Customer & Supplier Orders management
-- Invoices and payment management
-- Shipping management
-- Warehouse/Stock management/Inventory
-- Manufacturing Orders
-- Bank accounts management
-- Direct debit orders management (European SEPA)
-- Accounting management
-- Shared calendar/agenda (with ical and vcal export for third party tools integration)
-- Opportunities or Leads management
-- Projects & Tasks management
-- Ticket System
-- Contracts management
-- Interventions management
-- Employee's leave requests management
-- Expense reports
-- Recruitment management
-- Timesheets
-- Electronic Document Management (EDM)
-- Foundations members management
-- Point of Sale (POS)
-- … (around 100 modules available by default, + 1000 on the addon market place)
+- Third-Parties Management: Customers, Prospects (Leads) and/or Suppliers + Contacts 
+- Members/Membership/Foundation management 
+
+ Product Management 
+- Products and/or Services catalog 
+- Stock / Warehouse management + Inventory 
+- Barcodes 
+- Batches / Lots / Serials 
+- Product Variants 
+- Bill of Materials 
+- Manufacturing Orders 
+
+ Customer/Sales Management 
+- Customers/Prospects + Contacts management 
+- Opportunities or Leads management 
+- Commercial proposals management 
+- Customer Orders management 
+- Contracts/Subscription management 
+- Interventions management 
+- Ticket System 
+- Shipping management 
+- Customer Invoices/Credit notes and payment management 
+- Point of Sale (POS) 
+
+ Supplier/Purchase Management 
+- Suppliers/Vendors + Contacts 
+- Supplier (price) requests 
+- Purchase Order management 
+- Delivery/Receiption 
+- Supplier Invoices/credit notes and payment management 
+
+ Finance / Accounting 
+- Invoices / Payments 
+- Bank accounts management 
+- Direct debit orders management (European SEPA) 
+- Accounting management 
+- Donations management 
+- Loan management 
+- Margins 
+- Reports 
+
+ 
+- Shared calendar/agenda (with ical and vcal export for third party tools integration) 
+- Projects & Tasks management 
+- Ticket System 
+
+- Employee's leave requests management 
+- Expense reports 
+- Recruitment management 
+- Timesheets 
+
+- (around 100 modules available by default, 1000+ on the addon market place)
+
 
 ### Other application/modules
 
+- Electronic Document Management (EDM) 
 - Bookmarks management
-- Donations management
 - Reporting
 - Surveys
 - Data export/import
-- Barcodes support
+- Barcodes 
 - Margin calculations
 - LDAP connectivity
 - ClickToDial integration
@@ -139,7 +166,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - RSS integration
 - Skype integration
 - Payment platforms integration (PayPal, Stripe, Paybox...)
-- …
+- 
 
 ### Other general features
 

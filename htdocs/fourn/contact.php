@@ -94,7 +94,7 @@ if ($contactname) {
 }
 
 if ($socid) {
-	$sql .= " AND s.rowid = ".$socid;
+	$sql .= " AND s.rowid = ".((int) $socid);
 }
 
 $sql .= " ORDER BY $sortfield $sortorder ";

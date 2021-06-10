@@ -433,8 +433,8 @@ class Product extends CommonObject
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
 		'ref'           =>array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
 		'entity'        =>array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'notnull'=>1, 'index'=>1, 'position'=>5),
-		'label'         =>array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'position'=>15),
-		'barcode'       =>array('type'=>'varchar(255)', 'label'=>'Barcode', 'enabled'=>'!empty($conf->barcode->enabled)', 'position'=>20, 'visible'=>-1, 'showoncombobox'=>1),
+		'label'         =>array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>2, 'position'=>15),
+		'barcode'       =>array('type'=>'varchar(255)', 'label'=>'Barcode', 'enabled'=>'!empty($conf->barcode->enabled)', 'position'=>20, 'visible'=>-1, 'showoncombobox'=>3),
 		'fk_barcode_type' => array('type'=>'integer', 'label'=>'BarcodeType', 'enabled'=>'1', 'position'=>21, 'notnull'=>0, 'visible'=>-1,),
 		'note_public'   =>array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>61),
 		'note'          =>array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>62),
@@ -1055,16 +1055,16 @@ class Product extends CommonObject
 			$sql .= " SET label = '".$this->db->escape($this->label)."'";
 
 			if ($updatetype && ($this->isProduct() || $this->isService())) {
-				$sql .= ", fk_product_type = ".$this->type;
+				$sql .= ", fk_product_type = ".((int) $this->type);
 			}
 
 			$sql .= ", ref = '".$this->db->escape($this->ref)."'";
 			$sql .= ", ref_ext = ".(!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null");
 			$sql .= ", default_vat_code = ".($this->default_vat_code ? "'".$this->db->escape($this->default_vat_code)."'" : "null");
-			$sql .= ", tva_tx = ".$this->tva_tx;
-			$sql .= ", recuperableonly = ".$this->tva_npr;
-			$sql .= ", localtax1_tx = ".$this->localtax1_tx;
-			$sql .= ", localtax2_tx = ".$this->localtax2_tx;
+			$sql .= ", tva_tx = ".((float) $this->tva_tx);
+			$sql .= ", recuperableonly = ".((int) $this->tva_npr);
+			$sql .= ", localtax1_tx = ".((float) $this->localtax1_tx);
+			$sql .= ", localtax2_tx = ".((float) $this->localtax2_tx);
 			$sql .= ", localtax1_type = ".($this->localtax1_type != '' ? "'".$this->db->escape($this->localtax1_type)."'" : "'0'");
 			$sql .= ", localtax2_type = ".($this->localtax2_type != '' ? "'".$this->db->escape($this->localtax2_type)."'" : "'0'");
 
@@ -2391,8 +2391,8 @@ class Product extends CommonObject
 						$sql .= " price_base_type, tva_tx, default_vat_code, tosell, price_by_qty, rowid, recuperableonly";
 						$sql .= " FROM ".MAIN_DB_PREFIX."product_price";
 						$sql .= " WHERE entity IN (".getEntity('productprice').")";
-						$sql .= " AND price_level=".$i;
-						$sql .= " AND fk_product = ".$this->id;
+						$sql .= " AND price_level=".((int) $i);
+						$sql .= " AND fk_product = ".((int) $this->id);
 						$sql .= " ORDER BY date_price DESC, rowid DESC";
 						$sql .= " LIMIT 1";
 						$resql = $this->db->query($sql);
@@ -2501,7 +2501,7 @@ class Product extends CommonObject
 						$sql .= " price_base_type, tva_tx, default_vat_code, tosell, price_by_qty, rowid, recuperableonly";
 						$sql .= " FROM ".MAIN_DB_PREFIX."product_price";
 						$sql .= " WHERE entity IN (".getEntity('productprice').")";
-						$sql .= " AND price_level=".$i;
+						$sql .= " AND price_level=".((int) $i);
 						$sql .= " AND fk_product = ".$this->id;
 						$sql .= " ORDER BY date_price DESC, rowid DESC";
 						$sql .= " LIMIT 1";
@@ -2613,7 +2613,7 @@ class Product extends CommonObject
 			$sql .= " AND mp.fk_product =".$this->id;
 			$sql .= " AND mp.role ='".$this->db->escape($role)."'";
 			if ($socid > 0) {
-				$sql .= " AND c.fk_soc = ".$socid;
+				$sql .= " AND c.fk_soc = ".((int) $socid);
 			}
 
 			$result = $this->db->query($sql);
@@ -2739,7 +2739,7 @@ class Product extends CommonObject
 		}
 		//$sql.= " AND pr.fk_statut != 0";
 		if ($socid > 0) {
-			$sql .= " AND p.fk_soc = ".$socid;
+			$sql .= " AND p.fk_soc = ".((int) $socid);
 		}
 
 		$result = $this->db->query($sql);
@@ -2814,7 +2814,7 @@ class Product extends CommonObject
 		}
 		//$sql.= " AND pr.fk_statut != 0";
 		if ($socid > 0) {
-			$sql .= " AND p.fk_soc = ".$socid;
+			$sql .= " AND p.fk_soc = ".((int) $socid);
 		}
 
 		$result = $this->db->query($sql);
@@ -2869,7 +2869,7 @@ class Product extends CommonObject
 			$sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
 		}
 		if ($socid > 0) {
-			$sql .= " AND c.fk_soc = ".$socid;
+			$sql .= " AND c.fk_soc = ".((int) $socid);
 		}
 		if ($filtrestatut <> '') {
 			$sql .= " AND c.fk_statut in (".$this->db->sanitize($filtrestatut).")";
@@ -2971,7 +2971,7 @@ class Product extends CommonObject
 			$sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
 		}
 		if ($socid > 0) {
-			$sql .= " AND c.fk_soc = ".$socid;
+			$sql .= " AND c.fk_soc = ".((int) $socid);
 		}
 		if ($filtrestatut != '') {
 			$sql .= " AND c.fk_statut in (".$this->db->sanitize($filtrestatut).")"; // Peut valoir 0
@@ -3033,7 +3033,7 @@ class Product extends CommonObject
 			$sql .= " AND e.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
 		}
 		if ($socid > 0) {
-			$sql .= " AND e.fk_soc = ".$socid;
+			$sql .= " AND e.fk_soc = ".((int) $socid);
 		}
 		if ($filtrestatut <> '') {
 			$sql .= " AND c.fk_statut IN (".$this->db->sanitize($filtrestatut).")";
@@ -3114,7 +3114,7 @@ class Product extends CommonObject
 			$sql .= " AND cf.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
 		}
 		if ($socid > 0) {
-			$sql .= " AND cf.fk_soc = ".$socid;
+			$sql .= " AND cf.fk_soc = ".((int) $socid);
 		}
 		if ($filtrestatut <> '') {
 			$sql .= " AND cf.fk_statut IN (".$this->db->sanitize($filtrestatut).")";
@@ -3170,7 +3170,7 @@ class Product extends CommonObject
 			$sql .= " AND m.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
 		}
 		if ($socid > 0) {
-			$sql .= " AND m.fk_soc = ".$socid;
+			$sql .= " AND m.fk_soc = ".((int) $socid);
 		}
 		if ($filtrestatut <> '') {
 			$sql .= " AND m.status IN (".$this->db->sanitize($filtrestatut).")";
@@ -3265,7 +3265,7 @@ class Product extends CommonObject
 		}
 		//$sql.= " AND c.statut != 0";
 		if ($socid > 0) {
-			$sql .= " AND c.fk_soc = ".$socid;
+			$sql .= " AND c.fk_soc = ".((int) $socid);
 		}
 
 		$result = $this->db->query($sql);
@@ -3339,7 +3339,7 @@ class Product extends CommonObject
 		}
 		//$sql.= " AND f.fk_statut != 0";
 		if ($socid > 0) {
-			$sql .= " AND f.fk_soc = ".$socid;
+			$sql .= " AND f.fk_soc = ".((int) $socid);
 		}
 
 		$result = $this->db->query($sql);
@@ -3413,7 +3413,7 @@ class Product extends CommonObject
 		}
 		//$sql.= " AND f.fk_statut != 0";
 		if ($socid > 0) {
-			$sql .= " AND f.fk_soc = ".$socid;
+			$sql .= " AND f.fk_soc = ".((int) $socid);
 		}
 
 		$result = $this->db->query($sql);
@@ -3655,7 +3655,7 @@ class Product extends CommonObject
 			$sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
 		}
 		if ($socid > 0) {
-			$sql .= " AND p.fk_soc = ".$socid;
+			$sql .= " AND p.fk_soc = ".((int) $socid);
 		}
 		$sql .= $morefilter;
 		$sql .= " GROUP BY date_format(p.datep,'%Y%m')";
@@ -3758,7 +3758,7 @@ class Product extends CommonObject
 			$sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
 		}
 		if ($socid > 0) {
-			$sql .= " AND c.fk_soc = ".$socid;
+			$sql .= " AND c.fk_soc = ".((int) $socid);
 		}
 		$sql .= $morefilter;
 		$sql .= " GROUP BY date_format(c.date_commande,'%Y%m')";
@@ -3809,7 +3809,7 @@ class Product extends CommonObject
 			$sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
 		}
 		if ($socid > 0) {
-			$sql .= " AND c.fk_soc = ".$socid;
+			$sql .= " AND c.fk_soc = ".((int) $socid);
 		}
 		$sql .= $morefilter;
 		$sql .= " GROUP BY date_format(c.date_commande,'%Y%m')";
@@ -3863,7 +3863,7 @@ class Product extends CommonObject
 			$sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
 		}
 		if ($socid > 0) {
-			$sql .= " AND c.fk_soc = ".$socid;
+			$sql .= " AND c.fk_soc = ".((int) $socid);
 		}
 		$sql .= $morefilter;
 		$sql .= " GROUP BY date_format(c.date_contrat,'%Y%m')";
@@ -3916,7 +3916,7 @@ class Product extends CommonObject
 			$sql .= " AND d.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
 		}
 		if ($socid > 0) {
-			$sql .= " AND d.fk_soc = ".$socid;
+			$sql .= " AND d.fk_soc = ".((int) $socid);
 		}
 		$sql .= $morefilter;
 		$sql .= " GROUP BY date_format(d.date_valid,'%Y%m')";

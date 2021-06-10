@@ -128,7 +128,7 @@ if ($id > 0 || !empty($ref)) {
 		print dol_get_fiche_end();
 
 		$modulepart = 'asset';
-		$permission = $user->rights->asset->write;
+		$permissiontoadd = $user->rights->asset->write;
 		$permtoedit = $user->rights->asset->write;
 		$param = '&id='.$object->id;
 		include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';

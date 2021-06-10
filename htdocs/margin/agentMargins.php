@@ -171,9 +171,9 @@ $sql .= ' AND s.entity IN ('.getEntity('societe').')';
 $sql .= " AND d.fk_facture = f.rowid";
 if ($agentid > 0) {
 	if (!empty($conf->global->AGENT_CONTACT_TYPE)) {
-		$sql .= " AND ((e.fk_socpeople IS NULL AND sc.fk_user = ".$agentid.") OR (e.fk_socpeople IS NOT NULL AND e.fk_socpeople = ".$agentid."))";
+		$sql .= " AND ((e.fk_socpeople IS NULL AND sc.fk_user = ".((int) $agentid).") OR (e.fk_socpeople IS NOT NULL AND e.fk_socpeople = ".((int) $agentid)."))";
 	} else {
-		$sql .= " AND sc.fk_user = ".$agentid;
+		$sql .= " AND sc.fk_user = ".((int) $agentid);
 	}
 }
 if (!empty($startdate)) {

@@ -329,7 +329,7 @@ class RejetPrelevement
 
 		$sql = "SELECT pr.date_rejet as dr, motif, afacturer";
 		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_rejet as pr";
-		$sql .= " WHERE pr.fk_prelevement_lignes =".$rowid;
+		$sql .= " WHERE pr.fk_prelevement_lignes =".((int) $rowid);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -345,11 +345,11 @@ class RejetPrelevement
 
 				return 0;
 			} else {
-				dol_syslog("RejetPrelevement::Fetch Erreur rowid=$rowid numrows=0");
+				dol_syslog("RejetPrelevement::Fetch Erreur rowid=".$rowid." numrows=0");
 				return -1;
 			}
 		} else {
-			dol_syslog("RejetPrelevement::Fetch Erreur rowid=$rowid");
+			dol_syslog("RejetPrelevement::Fetch Erreur rowid=".$rowid);
 			return -2;
 		}
 	}

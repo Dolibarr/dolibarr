@@ -3066,9 +3066,9 @@ class ContratLigne extends CommonObjectLine
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET";
-		$sql .= " fk_contrat=".$this->fk_contrat.",";
+		$sql .= " fk_contrat=".((int) $this->fk_contrat).",";
 		$sql .= " fk_product=".($this->fk_product ? "'".$this->db->escape($this->fk_product)."'" : 'null').",";
-		$sql .= " statut=".$this->statut.",";
+		$sql .= " statut=".((int) $this->statut).",";
 		$sql .= " label='".$this->db->escape($this->label)."',";
 		$sql .= " description='".$this->db->escape($this->description)."',";
 		$sql .= " date_commande=".($this->date_commande != '' ? "'".$this->db->idate($this->date_commande)."'" : "null").",";
@@ -3373,11 +3373,11 @@ class ContratLigne extends CommonObjectLine
 
 		$this->db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET statut = ".ContratLigne::STATUS_CLOSED.",";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET statut = ".((int) ContratLigne::STATUS_CLOSED).",";
 		$sql .= " date_cloture = '".$this->db->idate($date_end)."',";
 		$sql .= " fk_user_cloture = ".$user->id.",";
 		$sql .= " commentaire = '".$this->db->escape($comment)."'";
-		$sql .= " WHERE rowid = ".$this->id." AND statut = ".ContratLigne::STATUS_OPEN;
+		$sql .= " WHERE rowid = ".$this->id." AND statut = ".((int) ContratLigne::STATUS_OPEN);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

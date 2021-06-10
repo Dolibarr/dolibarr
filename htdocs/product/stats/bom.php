@@ -138,7 +138,7 @@ if ($id > 0 || !empty($ref)) {
 		$sql .= " FROM ".MAIN_DB_PREFIX."bom_bom as b";
 		$sql .= " WHERE ";
 		$sql .= " b.entity IN (".getEntity('bom').")";
-		$sql .= " AND b.fk_product =".$product->id;
+		$sql .= " AND b.fk_product = ".((int) $product->id);
 		$sql .= $db->order($sortfield, $sortorder);
 
 		// Count total nb of records
@@ -184,9 +184,8 @@ if ($id > 0 || !empty($ref)) {
 		$sql .= " SUM(bl.qty) as qty_toconsume";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bom_bom as b";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."bom_bomline as bl ON bl.fk_bom=b.rowid";
-		$sql .= " WHERE ";
-		$sql .= " b.entity IN (".getEntity('bom').")";
-		$sql .= " AND bl.fk_product=".$product->id;
+		$sql .= " WHERE b.entity IN (".getEntity('bom').")";
+		$sql .= " AND bl.fk_product = ".((int) $product->id);
 		$sql .= " GROUP BY b.rowid, b.ref, b.date_valid, b.status";
 		$sql .= $db->order($sortfield, $sortorder);
 

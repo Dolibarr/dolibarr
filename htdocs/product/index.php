@@ -287,7 +287,7 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 	$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 	$sql .= " WHERE p.entity IN (".getEntity($product_static->element, 1).")";
 	if ($type != '') {
-		$sql .= " AND p.fk_product_type = ".$type;
+		$sql .= " AND p.fk_product_type = ".((int) $type);
 	}
 	// Add where from hooks
 	$parameters = array();
@@ -445,8 +445,8 @@ function activitytrim($product_type)
 	$sql .= " WHERE f.entity IN (".getEntity('invoice').")";
 	$sql .= " AND f.rowid = fd.fk_facture";
 	$sql .= " AND pf.fk_facture = f.rowid";
-	$sql .= " AND pf.fk_paiement= p.rowid";
-	$sql .= " AND fd.product_type=".$product_type;
+	$sql .= " AND pf.fk_paiement = p.rowid";
+	$sql .= " AND fd.product_type = ".((int) $product_type);
 	$sql .= " AND p.datep >= '".$db->idate(dol_get_first_day($yearofbegindate), 1)."'";
 	$sql .= " GROUP BY annee, mois ";
 	$sql .= " ORDER BY annee, mois ";

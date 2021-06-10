@@ -388,7 +388,7 @@ if ($action == 'create') {
 
 		$sql = 'SELECT l.rowid, l.description, l.duree';
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinterdet as l";
-		$sql .= " WHERE l.fk_fichinter= ".$object->id;
+		$sql .= " WHERE l.fk_fichinter= ".((int) $object->id);
 		//$sql.= " AND l.fk_product is null ";
 		$sql .= " ORDER BY l.rang";
 

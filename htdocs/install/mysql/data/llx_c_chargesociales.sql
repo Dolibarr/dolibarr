@@ -50,20 +50,20 @@ insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays
 --
 -- Belgique
 --
-insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values ('2', 201, 'ONSS',						1,1,'TAXBEONSS');
-insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values ('2', 210, 'Precompte professionnel', 	1,1,'TAXBEPREPRO');
-insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values ('2', 220, 'Prime existence',    		1,1,'TAXBEPRIEXI');
-insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values ('2', 230, 'Precompte immobilier',      1,1,'TAXBEPREIMMO');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (2, 201, 'ONSS',						1,1,'TAXBEONSS');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (2, 210, 'Precompte professionnel', 	1,1,'TAXBEPREPRO');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (2, 220, 'Prime existence',    		1,1,'TAXBEPRIEXI');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (2, 230, 'Precompte immobilier',      1,1,'TAXBEPREIMMO');
 
 --
 -- Austria
 --
-insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (4101, 'Krankenversicherung',				1,1,'TAXATKV'   ,'41');
-insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (4102, 'Unfallversicherung',				1,1,'TAXATUV'   ,'41');
-insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (4103, 'Pensionsversicherung',				1,1,'TAXATPV'   ,'41');
-insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (4104, 'Arbeitslosenversicherung',			1,1,'TAXATAV'   ,'41');
-insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (4105, 'Insolvenzentgeltsicherungsfond',   1,1,'TAXATIESG' ,'41');
-insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (4106, 'Wohnbauförderung',					1,1,'TAXATWF'   ,'41');
-insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (4107, 'Arbeiterkammerumlage',				1,1,'TAXATAK'   ,'41');
-insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (4108, 'Mitarbeitervorsorgekasse',			1,1,'TAXATMVK'  ,'41');
-insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (4109, 'Familienlastenausgleichsfond',		1,1,'TAXATFLAF' ,'41');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (41, 4101, 'Krankenversicherung',				1,1,'TAXATKV');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (41, 4102, 'Unfallversicherung',				1,1,'TAXATUV');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (41, 4103, 'Pensionsversicherung',				1,1,'TAXATPV');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (41, 4104, 'Arbeitslosenversicherung',			1,1,'TAXATAV');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (41, 4105, 'Insolvenzentgeltsicherungsfond',   1,1,'TAXATIESG');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (41, 4106, 'Wohnbauförderung',					1,1,'TAXATWF');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (41, 4107, 'Arbeiterkammerumlage',				1,1,'TAXATAK');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (41, 4108, 'Mitarbeitervorsorgekasse',			1,1,'TAXATMVK');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (41, 4109, 'Familienlastenausgleichsfond',		1,1,'TAXATFLAF');
