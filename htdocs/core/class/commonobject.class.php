@@ -450,8 +450,8 @@ abstract class CommonObject
 
 	/**
 	 * @var array    List of child tables. To know object to delete on cascade.
-	 *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
-	 *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
+	 *               If name is like '@ClassName:FilePathClass:ParentFkFieldName', it will
+	 *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object.
 	 */
 	protected $childtablesoncascade = array();
 
