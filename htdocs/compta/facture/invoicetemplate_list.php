@@ -654,6 +654,9 @@ if ($resql) {
 			$invoicerectmp->nb_gen_max = $objp->nb_gen_max;
 			$invoicerectmp->nb_gen_done = $objp->nb_gen_done;
 			$invoicerectmp->ref = $objp->title;
+			$invoicerectmp->total_ht = $objp->total_ht;
+			$invoicerectmp->total_tva = $objp->total_tva;
+			$invoicerectmp->total_ttc = $objp->total_ttc;
 
 			print '<tr class="oddeven">';
 
@@ -673,7 +676,7 @@ if ($resql) {
 				}
 			}
 			if (!empty($arrayfields['f.total_ht']['checked'])) {
-				print '<td class="nowrap right amount">'.price($objp->total).'</td>'."\n";
+				print '<td class="nowrap right amount">'.price($objp->total_ht).'</td>'."\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
