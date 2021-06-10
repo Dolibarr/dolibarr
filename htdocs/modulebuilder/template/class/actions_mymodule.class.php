@@ -99,8 +99,7 @@ class ActionsMyModule
 		$error = 0; // Error counter
 
 		/* print_r($parameters); print_r($object); echo "action: " . $action; */
-		if (in_array($parameters['currentcontext'], array('somecontext1', 'somecontext2')))	    // do something only for the context 'somecontext1' or 'somecontext2'
-		{
+		if (in_array($parameters['currentcontext'], array('somecontext1', 'somecontext2'))) {	    // do something only for the context 'somecontext1' or 'somecontext2'
 			// Do what you want here...
 			// You can for example call global vars like $fieldstosearchall to overwrite them, or update database depending on $action and $_POST values.
 		}
@@ -132,10 +131,8 @@ class ActionsMyModule
 		$error = 0; // Error counter
 
 		/* print_r($parameters); print_r($object); echo "action: " . $action; */
-		if (in_array($parameters['currentcontext'], array('somecontext1', 'somecontext2')))		// do something only for the context 'somecontext1' or 'somecontext2'
-		{
-			foreach ($parameters['toselect'] as $objectid)
-			{
+		if (in_array($parameters['currentcontext'], array('somecontext1', 'somecontext2'))) {		// do something only for the context 'somecontext1' or 'somecontext2'
+			foreach ($parameters['toselect'] as $objectid) {
 				// Do action on each object id
 			}
 		}
@@ -165,10 +162,10 @@ class ActionsMyModule
 		global $conf, $user, $langs;
 
 		$error = 0; // Error counter
+		$disabled = 1;
 
 		/* print_r($parameters); print_r($object); echo "action: " . $action; */
-		if (in_array($parameters['currentcontext'], array('somecontext1', 'somecontext2')))		// do something only for the context 'somecontext1' or 'somecontext2'
-		{
+		if (in_array($parameters['currentcontext'], array('somecontext1', 'somecontext2'))) {		// do something only for the context 'somecontext1' or 'somecontext2'
 			$this->resprints = '<option value="0"'.($disabled ? ' disabled="disabled"' : '').'>'.$langs->trans("MyModuleMassAction").'</option>';
 		}
 
@@ -203,8 +200,7 @@ class ActionsMyModule
 		dol_syslog(get_class($this).'::executeHooks action='.$action);
 
 		/* print_r($parameters); print_r($object); echo "action: " . $action; */
-		if (in_array($parameters['currentcontext'], array('somecontext1', 'somecontext2')))		// do something only for the context 'somecontext1' or 'somecontext2'
-		{
+		if (in_array($parameters['currentcontext'], array('somecontext1', 'somecontext2'))) {		// do something only for the context 'somecontext1' or 'somecontext2'
 		}
 
 		return $ret;
@@ -231,8 +227,8 @@ class ActionsMyModule
 		dol_syslog(get_class($this).'::executeHooks action='.$action);
 
 		/* print_r($parameters); print_r($object); echo "action: " . $action; */
-		if (in_array($parameters['currentcontext'], array('somecontext1', 'somecontext2')))		// do something only for the context 'somecontext1' or 'somecontext2'
-		{
+		if (in_array($parameters['currentcontext'], array('somecontext1', 'somecontext2'))) {
+			// do something only for the context 'somecontext1' or 'somecontext2'
 		}
 
 		return $ret;
@@ -305,6 +301,57 @@ class ActionsMyModule
 		}
 
 		return 0;
+	}
+
+	/**
+	 * Execute action completeTabsHead
+	 *
+	 * @param   array           $parameters     Array of parameters
+	 * @param   CommonObject    $object         The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
+	 * @param   string          $action         'add', 'update', 'view'
+	 * @param   Hookmanager     $hookmanager    hookmanager
+	 * @return  int                             <0 if KO,
+	 *                                          =0 if OK but we want to process standard actions too,
+	 *                                          >0 if OK and we want to replace standard actions.
+	 */
+	public function completeTabsHead(&$parameters, &$object, &$action, $hookmanager)
+	{
+		global $langs, $conf, $user;
+
+		if (!isset($parameters['object']->element)) {
+			return 0;
+		}
+		if ($parameters['mode'] == 'remove') {
+			// utilisé si on veut faire disparaitre des onglets.
+			return 0;
+		} elseif ($parameters['mode'] == 'add') {
+			$langs->load('mymodule@mymodule');
+			// utilisé si on veut ajouter des onglets.
+			$counter = count($parameters['head']);
+			$element = $parameters['object']->element;
+			$id = $parameters['object']->id;
+			// verifier le type d'onglet comme member_stats où ça ne doit pas apparaitre
+			// if (in_array($element, ['societe', 'member', 'contrat', 'fichinter', 'project', 'propal', 'commande', 'facture', 'order_supplier', 'invoice_supplier'])) {
+			if (in_array($element, ['context1', 'context2'])) {
+				$datacount = 0;
+
+				$parameters['head'][$counter][0] = dol_buildpath('/mymodule/mymodule_tab.php', 1) . '?id=' . $id . '&amp;module='.$element;
+				$parameters['head'][$counter][1] = $langs->trans('MyModuleTab');
+				if ($datacount > 0) {
+					$parameters['head'][$counter][1] .= '<span class="badge marginleftonlyshort">' . $datacount . '</span>';
+				}
+				$parameters['head'][$counter][2] = 'mymoduleemails';
+				$counter++;
+			}
+			if ($counter > 0 && (int) DOL_VERSION < 14) {
+				$this->results = $parameters['head'];
+				// return 1 to replace standard code
+				return 1;
+			} else {
+				// en V14 et + $parameters['head'] est modifiable par référence
+				return 0;
+			}
+		}
 	}
 
 	/* Add here any other hooked methods... */

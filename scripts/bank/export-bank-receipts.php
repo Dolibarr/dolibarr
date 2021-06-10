@@ -22,6 +22,11 @@
  * \ingroup bank
  * \brief Script file to export bank receipts into Excel files
  */
+
+if (!defined('NOSESSION')) {
+	define('NOSESSION', '1');
+}
+
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
 $path = __DIR__.'/';
@@ -151,8 +156,9 @@ if (!empty($num) && $num != "all") {
 	$listofnum .= "'";
 	$arraynum = explode(',', $num);
 	foreach ($arraynum as $val) {
-		if ($listofnum != "'")
+		if ($listofnum != "'") {
 			$listofnum .= "','";
+		}
 		$listofnum .= $val;
 	}
 	$listofnum .= "'";
@@ -162,14 +168,16 @@ $sql .= " b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type,";
 $sql .= " ba.rowid as bankid, ba.ref as bankref, ba.label as banklabel";
 $sql .= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
 $sql .= ", ".MAIN_DB_PREFIX."bank as b";
-$sql .= " WHERE b.fk_account = ".$acct->id;
-if ($listofnum)
-	$sql .= " AND b.num_releve IN (".$listofnum.")";
-if (!isset($num))
+$sql .= " WHERE b.fk_account = ".((int) $acct->id);
+if ($listofnum) {
+	$sql .= " AND b.num_releve IN (".$db->sanitize($listofnum, 1).")";
+}
+if (!isset($num)) {
 	$sql .= " OR b.num_releve is null";
+}
 $sql .= " AND b.fk_account = ba.rowid";
 $sql .= $db->order("b.num_releve, b.datev, b.datec", "ASC"); // We add date of creation to have correct order when everything is done the same day
-                                                             // print $sql;
+															 // print $sql;
 
 $resql = $db->query($sql);
 if ($resql) {
@@ -239,10 +247,11 @@ if ($resql) {
 		// Libelle
 		$reg = array();
 		preg_match('/\((.+)\)/i', $objp->label, $reg); // Si texte entoure de parenthese on tente recherche de traduction
-		if ($reg[1] && $langs->transnoentitiesnoconv($reg[1]) != $reg[1])
+		if ($reg[1] && $langs->transnoentitiesnoconv($reg[1]) != $reg[1]) {
 			$description = $langs->transnoentitiesnoconv($reg[1]);
-		else
+		} else {
 			$description = $objp->label;
+		}
 
 		/*
 		 * Ajout les liens (societe, company...)
@@ -257,7 +266,7 @@ if ($resql) {
 						$invoicestatic->fetch($tmpval);
 						if ($accountelem) {
 							$accountelem .= ', ';
-                        }
+						}
 						$accountelem .= $invoicestatic->ref;
 					}
 				}
@@ -269,7 +278,7 @@ if ($resql) {
 						$invoicesupplierstatic->fetch($tmpval);
 						if ($accountelem) {
 							$accountelem .= ', ';
-                        }
+						}
 						$accountelem .= $invoicesupplierstatic->ref;
 					}
 				}
@@ -277,20 +286,20 @@ if ($resql) {
 				$paymentsocialcontributionstatic->fetch($links[$key]['url_id']);
 				if ($accountelem) {
 					$accountelem .= ', ';
-                }
+				}
 				$accountelem .= $langs->transnoentitiesnoconv("SocialContribution").' '.$paymentsocialcontributionstatic->ref;
 			} elseif ($links[$key]['type'] == 'payment_vat') {
 				$paymentvatstatic->fetch($links[$key]['url_id']);
 				if ($accountelem) {
 					$accountelem .= ', ';
-                }
+				}
 				$accountelem .= $langs->transnoentitiesnoconv("VATPayments").' '.$paymentvatstatic->ref;
 			} elseif ($links[$key]['type'] == 'banktransfert') {
 				$comment = $outputlangs->transnoentitiesnoconv("Transfer");
 				if ($objp->amount > 0) {
 					if ($comment) {
 						$comment .= ' ';
-                    }
+					}
 					$banklinestatic->fetch($links[$key]['url_id']);
 					$bankstatic->id = $banklinestatic->fk_account;
 					$bankstatic->label = $banklinestatic->bank_account_label;
@@ -304,7 +313,7 @@ if ($resql) {
 				} else {
 					if ($comment) {
 						$comment .= ' ';
-                    }
+					}
 					$bankstatic->id = $objp->bankid;
 					$bankstatic->label = $objp->bankref;
 					$comment .= ' ('.$langs->transnoentitiesnoconv("from").' ';
@@ -319,13 +328,13 @@ if ($resql) {
 			} elseif ($links[$key]['type'] == 'company') {
 				if ($thirdparty) {
 					$thirdparty .= ', ';
-                }
+				}
 				$thirdparty .= dol_trunc($links[$key]['label'], 24);
 				$newline = 0;
 			} elseif ($links[$key]['type'] == 'member') {
 				if ($thirdparty) {
 					$accountelem .= ', ';
-                }
+				}
 				$thirdparty .= $links[$key]['label'];
 				$newline = 0;
 			}

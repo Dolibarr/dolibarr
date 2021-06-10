@@ -26,7 +26,8 @@ create table llx_product_customer_price_log
   entity				integer DEFAULT 1 NOT NULL,	   -- multi company id
   datec                       datetime,
   fk_product			integer NOT NULL,
-  fk_soc				integer DEFAULT 0 NOT NULL,	
+  fk_soc				integer DEFAULT 0 NOT NULL,
+  ref_customer			varchar(30),
   price						double(24,8) DEFAULT 0,
   price_ttc					double(24,8) DEFAULT 0,
   price_min					double(24,8) DEFAULT 0,

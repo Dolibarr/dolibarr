@@ -44,7 +44,9 @@ $id = GETPOST('id', 'int');
 $result = restrictedArea($user, 'loan', $id, '&loan');
 
 $object = new Loan($db);
-if ($id > 0) $object->fetch($id);
+if ($id > 0) {
+	$object->fetch($id);
+}
 
 $permissionnote = $user->rights->loan->write; // Used by the include of actions_setnotes.inc.php
 
@@ -66,16 +68,15 @@ $title = $langs->trans("Loan").' - '.$langs->trans("Notes");
 $help_url = 'EN:Module_Loan|FR:Module_Emprunt';
 llxHeader("", $title, $help_url);
 
-if ($id > 0)
-{
-    /*
-     * Affichage onglets
-     */
+if ($id > 0) {
+	/*
+	 * Affichage onglets
+	 */
 	$totalpaid = $object->getSumPayment();
 
-    $head = loan_prepare_head($object);
+	$head = loan_prepare_head($object);
 
-    dol_fiche_head($head, 'note', $langs->trans("Loan"), -1, 'bill');
+	print dol_get_fiche_head($head, 'note', $langs->trans("Loan"), -1, 'bill');
 
 	$morehtmlref = '<div class="refidno">';
 	// Ref loan
@@ -122,11 +123,11 @@ if ($id > 0)
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-    $cssclass = 'titlefield';
-    $permission = $user->rights->loan->write; // Used by the include of notes.tpl.php
-    include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
+	$cssclass = 'titlefield';
+	$permission = $user->rights->loan->write; // Used by the include of notes.tpl.php
+	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
-    dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 // End of page

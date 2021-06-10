@@ -32,17 +32,15 @@ class FormCategory extends Form
 	/**
 	 * Return a HTML filter box for a list filter view
 	 *
-	 * @param string $type			The categorie type (e.g Categorie::TYPE_WAREHOUSE)
-	 * @param Array $preSelected	A list with the elements that should pre-selected
-	 * @return string				A HTML filter box (Note: selected results can get with GETPOST("search_category_".$type."_list"))
+	 * @param string	$type			The categorie type (e.g Categorie::TYPE_WAREHOUSE)
+	 * @param Array		$preSelected	A list with the elements that should pre-selected
+	 * @return string					A HTML filter box (Note: selected results can get with GETPOST("search_category_".$type."_list"))
 	 */
-	public function getFilterBox($type, $preSelected)
+	public function getFilterBox($type, array $preSelected)
 	{
-		// phpcs:enable
 		global $langs;
 
-		if (empty($preSelected) || !is_array($preSelected))
-		{
+		if (empty($preSelected) || !is_array($preSelected)) {
 			$preSelected = array();
 		}
 
@@ -51,10 +49,13 @@ class FormCategory extends Form
 		$categoryArray = $this->select_all_categories($type, "", "", 64, 0, 1);
 		$categoryArray[-2] = "- ".$langs->trans('NotCategorized')." -";
 
+		$tmptitle = $langs->trans("Category");
+
 		$filter = '';
 		$filter .= '<div class="divsearchfield">';
-		$filter .= $langs->trans('Categories').": ";
-		$filter .= Form::multiselectarray($htmlName, $categoryArray, $preSelected, 0, 0, "minwidth300");
+		$filter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
+		//$filter .= $langs->trans('Categories').": ";
+		$filter .= Form::multiselectarray($htmlName, $categoryArray, $preSelected, 0, 0, "minwidth300", 0, 0, '', '', $tmptitle);
 		$filter .= "</div>";
 
 		return $filter;

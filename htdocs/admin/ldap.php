@@ -34,8 +34,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 // Load translation files required by the page
 $langs->load("admin");
 
-if (!$user->admin)
+if (!$user->admin) {
 	accessforbidden();
+}
 
 $action = GETPOST('action', 'aZ09');
 
@@ -48,37 +49,60 @@ $hookmanager->initHooks(array('adminldap', 'globaladmin'));
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-if (empty($reshook))
-{
-	if ($action == 'setvalue' && $user->admin)
-	{
+if (empty($reshook)) {
+	if ($action == 'setvalue' && $user->admin) {
 		$error = 0;
 
 		$db->begin();
 
-		if (!dolibarr_set_const($db, 'LDAP_SERVER_TYPE', GETPOST("type", 'aZ09'), 'chaine', 0, '', $conf->entity)) $error++;
-		if (!dolibarr_set_const($db, 'LDAP_SERVER_PROTOCOLVERSION', GETPOST("LDAP_SERVER_PROTOCOLVERSION", 'aZ09'), 'chaine', 0, '', $conf->entity)) $error++;
-		if (!dolibarr_set_const($db, 'LDAP_SERVER_HOST', GETPOST("host", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) $error++;
-		if (!dolibarr_set_const($db, 'LDAP_SERVER_HOST_SLAVE', GETPOST("slave", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) $error++;
-		if (!dolibarr_set_const($db, 'LDAP_SERVER_PORT', GETPOST("port", 'int'), 'chaine', 0, '', $conf->entity)) $error++;
-		if (!dolibarr_set_const($db, 'LDAP_SERVER_DN', GETPOST("dn", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) $error++;
-		if (!dolibarr_set_const($db, 'LDAP_ADMIN_DN', GETPOST("admin", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) $error++;
-		if (!dolibarr_set_const($db, 'LDAP_ADMIN_PASS', GETPOST("pass", 'none'), 'chaine', 0, '', $conf->entity)) $error++;
-		if (!dolibarr_set_const($db, 'LDAP_SERVER_USE_TLS', GETPOST("usetls", 'aZ09'), 'chaine', 0, '', $conf->entity)) $error++;
-		if (!dolibarr_set_const($db, 'LDAP_SYNCHRO_ACTIVE', GETPOST("activesynchro", 'aZ09'), 'chaine', 0, '', $conf->entity)) $error++;
-		if (!dolibarr_set_const($db, 'LDAP_CONTACT_ACTIVE', GETPOST("activecontact", 'aZ09'), 'chaine', 0, '', $conf->entity)) $error++;
-		if (!dolibarr_set_const($db, 'LDAP_MEMBER_ACTIVE', GETPOST("activemembers", 'aZ09'), 'chaine', 0, '', $conf->entity)) $error++;
-		if (!dolibarr_set_const($db, 'LDAP_MEMBER_TYPE_ACTIVE', GETPOST("activememberstypes", 'aZ09'), 'chaine', 0, '', $conf->entity)) $error++;
+		if (!dolibarr_set_const($db, 'LDAP_SERVER_TYPE', GETPOST("type", 'aZ09'), 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+		if (!dolibarr_set_const($db, 'LDAP_SERVER_PROTOCOLVERSION', GETPOST("LDAP_SERVER_PROTOCOLVERSION", 'aZ09'), 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+		if (!dolibarr_set_const($db, 'LDAP_SERVER_HOST', GETPOST("host", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+		if (!dolibarr_set_const($db, 'LDAP_SERVER_HOST_SLAVE', GETPOST("slave", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+		if (!dolibarr_set_const($db, 'LDAP_SERVER_PORT', GETPOST("port", 'int'), 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+		if (!dolibarr_set_const($db, 'LDAP_SERVER_DN', GETPOST("dn", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+		if (!dolibarr_set_const($db, 'LDAP_ADMIN_DN', GETPOST("admin", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+		if (!dolibarr_set_const($db, 'LDAP_ADMIN_PASS', GETPOST("pass", 'none'), 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+		if (!dolibarr_set_const($db, 'LDAP_SERVER_USE_TLS', GETPOST("usetls", 'aZ09'), 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+		if (!dolibarr_set_const($db, 'LDAP_SYNCHRO_ACTIVE', GETPOST("activesynchro", 'aZ09'), 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+		if (!dolibarr_set_const($db, 'LDAP_CONTACT_ACTIVE', GETPOST("activecontact", 'aZ09'), 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+		if (!dolibarr_set_const($db, 'LDAP_MEMBER_ACTIVE', GETPOST("activemembers", 'aZ09'), 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+		if (!dolibarr_set_const($db, 'LDAP_MEMBER_TYPE_ACTIVE', GETPOST("activememberstypes", 'aZ09'), 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$db->commit();
 			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-		}
-		else
-		{
+		} else {
 			$db->rollback();
 			dol_print_error($db);
 		}
@@ -98,8 +122,7 @@ print load_fiche_titre($langs->trans("LDAPSetup"), $linkback, 'title_setup');
 $head = ldap_prepare_head();
 
 // Test si fonction LDAP actives
-if (!function_exists("ldap_connect"))
-{
+if (!function_exists("ldap_connect")) {
 	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
 
@@ -110,7 +133,7 @@ $form = new Form($db);
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
-dol_fiche_head($head, 'ldap', $langs->trans("LDAPSetup"), -1);
+print dol_get_fiche_head($head, 'ldap', $langs->trans("LDAPSetup"), -1);
 
 print '<table class="noborder centpercent">';
 
@@ -128,15 +151,13 @@ $arraylist['ldap2dolibarr'] = $langs->trans("LDAPToDolibarr");
 $arraylist['dolibarr2ldap'] = $langs->trans("DolibarrToLDAP");
 print $form->selectarray('activesynchro', $arraylist, $conf->global->LDAP_SYNCHRO_ACTIVE);
 print '</td><td>'.$langs->trans("LDAPDnSynchroActiveExample");
-if ($conf->global->LDAP_SYNCHRO_ACTIVE && !$conf->global->LDAP_USER_DN)
-{
+if ($conf->global->LDAP_SYNCHRO_ACTIVE && !$conf->global->LDAP_USER_DN) {
 	print '<br><font class="error">'.$langs->trans("LDAPSetupNotComplete").'</font>';
 }
 print '</td></tr>';
 
 // Synchro contact active
-if (!empty($conf->societe->enabled))
-{
+if (!empty($conf->societe->enabled)) {
 	print '<tr class="oddeven"><td>'.$langs->trans("LDAPDnContactActive").'</td><td>';
 	$arraylist = array();
 	$arraylist['0'] = $langs->trans("No");
@@ -146,8 +167,7 @@ if (!empty($conf->societe->enabled))
 }
 
 // Synchro member active
-if (!empty($conf->adherent->enabled))
-{
+if (!empty($conf->adherent->enabled)) {
 	print '<tr class="oddeven"><td>'.$langs->trans("LDAPDnMemberActive").'</td><td>';
 	$arraylist = array();
 	$arraylist['0'] = $langs->trans("No");
@@ -158,8 +178,7 @@ if (!empty($conf->adherent->enabled))
 }
 
 // Synchro member type active
-if (!empty($conf->adherent->enabled))
-{
+if (!empty($conf->adherent->enabled)) {
 	print '<tr class="oddeven"><td>'.$langs->trans("LDAPDnMemberTypeActive").'</td><td>';
 	$arraylist = array();
 	$arraylist['0'] = $langs->trans("No");
@@ -211,12 +230,9 @@ print '</td><td>'.$langs->trans("LDAPServerExample").'</td></tr>';
 
 // Port
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPServerPort").'</td><td>';
-if (!empty($conf->global->LDAP_SERVER_PORT))
-{
+if (!empty($conf->global->LDAP_SERVER_PORT)) {
 	print '<input size="25" type="text" name="port" value="'.$conf->global->LDAP_SERVER_PORT.'">';
-}
-else
-{
+} else {
 	print '<input size="25" type="text" name="port" value="389">';
 }
 print '</td><td>'.$langs->trans("LDAPServerPortExample").'</td></tr>';
@@ -245,19 +261,16 @@ print '</td><td>'.$langs->trans("LDAPAdminDnExample").'</td></tr>';
 
 // Pass
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPPassword").'</td><td>';
-if (!empty($conf->global->LDAP_ADMIN_PASS))
-{
+if (!empty($conf->global->LDAP_ADMIN_PASS)) {
 	print '<input size="25" type="password" name="pass" value="'.$conf->global->LDAP_ADMIN_PASS.'">'; // je le met en visible pour test
-}
-else
-{
+} else {
 	print '<input size="25" type="text" name="pass" value="'.$conf->global->LDAP_ADMIN_PASS.'">';
 }
 print '</td><td>'.$langs->trans('Password').' (ex: secret)</td></tr>';
 
 print '</table>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
 
@@ -269,44 +282,34 @@ print '<br>';
 /*
  * Test de la connexion
  */
-if (function_exists("ldap_connect"))
-{
-	if (!empty($conf->global->LDAP_SERVER_HOST))
-	{
+if (function_exists("ldap_connect")) {
+	if (!empty($conf->global->LDAP_SERVER_HOST)) {
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test">'.$langs->trans("LDAPTestConnect").'</a><br><br>';
 	}
 
-	if ($_GET["action"] == 'test')
-	{
+	if ($_GET["action"] == 'test') {
 		$ldap = new Ldap(); // Les parametres sont passes et recuperes via $conf
 
 		$result = $ldap->connect_bind();
-		if ($result > 0)
-		{
+		if ($result > 0) {
 			// Test ldap connect and bind
 			print img_picto('', 'info').' ';
 			print '<font class="ok">'.$langs->trans("LDAPTCPConnectOK", $conf->global->LDAP_SERVER_HOST, $conf->global->LDAP_SERVER_PORT).'</font>';
 			print '<br>';
 
-			if ($conf->global->LDAP_ADMIN_DN && !empty($conf->global->LDAP_ADMIN_PASS))
-			{
-				if ($result == 2)
-				{
+			if ($conf->global->LDAP_ADMIN_DN && !empty($conf->global->LDAP_ADMIN_PASS)) {
+				if ($result == 2) {
 					print img_picto('', 'info').' ';
 					print '<font class="ok">'.$langs->trans("LDAPBindOK", $conf->global->LDAP_SERVER_HOST, $conf->global->LDAP_SERVER_PORT, $conf->global->LDAP_ADMIN_DN, preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)).'</font>';
 					print '<br>';
-				}
-				else
-				{
+				} else {
 					print img_picto('', 'error').' ';
 					print '<font class="error">'.$langs->trans("LDAPBindKO", $conf->global->LDAP_SERVER_HOST, $conf->global->LDAP_SERVER_PORT, $conf->global->LDAP_ADMIN_DN, preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)).'</font>';
 					print '<br>';
 					print $langs->trans("Error").' '.$ldap->error;
 					print '<br>';
 				}
-			}
-			else
-			{
+			} else {
 				print img_picto('', 'warning').' ';
 				print '<font class="warning">'.$langs->trans("LDAPNoUserOrPasswordProvidedAccessIsReadOnly").'</font>';
 				print '<br>';
@@ -314,23 +317,18 @@ if (function_exists("ldap_connect"))
 
 
 			// Test ldap_getversion
-			if (($ldap->getVersion() == 3))
-			{
+			if (($ldap->getVersion() == 3)) {
 				print img_picto('', 'info').' ';
 				print '<font class="ok">'.$langs->trans("LDAPSetupForVersion3").'</font>';
 				print '<br>';
-			}
-			else
-			{
+			} else {
 				print img_picto('', 'info').' ';
 				print '<font class="ok">'.$langs->trans("LDAPSetupForVersion2").'</font>';
 				print '<br>';
 			}
 
 			$unbind = $ldap->unbind();
-		}
-		else
-		{
+		} else {
 			print img_picto('', 'error').' ';
 			print '<font class="error">'.$langs->trans("LDAPTCPConnectKO", $conf->global->LDAP_SERVER_HOST, $conf->global->LDAP_SERVER_PORT).'</font>';
 			print '<br>';

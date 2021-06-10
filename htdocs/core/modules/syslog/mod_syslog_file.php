@@ -7,8 +7,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/syslog/logHandler.php';
  */
 class mod_syslog_file extends LogHandler implements LogHandlerInterface
 {
-    public $code = 'file';
-    public $lastTime = 0;
+	public $code = 'file';
+	public $lastTime = 0;
 
 	/**
 	 * 	Return name of logger
@@ -51,7 +51,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	 */
 	public function isActive()
 	{
-	    global $conf;
+		global $conf;
 		return empty($conf->global->SYSLOG_DISABLE_LOGHANDLER_FILE) ? 1 : 0; // Set SYSLOG_DISABLE_LOGHANDLER_FILE to 1 to disable this loghandler
 	}
 
@@ -87,11 +87,11 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 
 		$filename = $this->getFilename();
 
-		if (file_exists($filename) && is_writable($filename))
-		{
+		if (file_exists($filename) && is_writable($filename)) {
 			dol_syslog('admin/syslog: file '.$filename);
+		} else {
+			$errors[] = $langs->trans("ErrorFailedToOpenFile", $filename);
 		}
-		else $errors[] = $langs->trans("ErrorFailedToOpenFile", $filename);
 
 		return $errors;
 	}
@@ -104,24 +104,24 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	 */
 	private function getFilename($suffixinfilename = '')
 	{
-	    global $conf;
+		global $conf;
 
-	    if (empty($conf->global->SYSLOG_FILE)) $tmp = DOL_DATA_ROOT.'/dolibarr.log';
-	    else $tmp = str_replace('DOL_DATA_ROOT', DOL_DATA_ROOT, $conf->global->SYSLOG_FILE);
+		if (empty($conf->global->SYSLOG_FILE)) {
+			$tmp = DOL_DATA_ROOT.'/dolibarr.log';
+		} else {
+			$tmp = str_replace('DOL_DATA_ROOT', DOL_DATA_ROOT, $conf->global->SYSLOG_FILE);
+		}
 
-	    if (!empty($conf->global->SYSLOG_FILE_ONEPERSESSION))
-	    {
-	    	if ($conf->global->SYSLOG_FILE_ONEPERSESSION == 1)	// file depend on session key name (Note that session name is same for all users and is not a per user value)
-	    	{
-	        	$suffixinfilename .= '_'.session_name();
-	    	}
-	    	if ($conf->global->SYSLOG_FILE_ONEPERSESSION == 2)	// file depend on session value sor per user
-	    	{
-	    		$suffixinfilename .= '_'.session_name().'_'.$_SERVER["REMOTE_ADDR"];
-	    	}
-	    }
+		if (!empty($conf->global->SYSLOG_FILE_ONEPERSESSION)) {
+			if ($conf->global->SYSLOG_FILE_ONEPERSESSION == 1) {	// file depend on session key name (Note that session name is same for all users and is not a per user value)
+				$suffixinfilename .= '_'.session_name();
+			}
+			if ($conf->global->SYSLOG_FILE_ONEPERSESSION == 2) {	// file depend on session value sor per user
+				$suffixinfilename .= '_'.session_name().'_'.$_SERVER["REMOTE_ADDR"];
+			}
+		}
 
-	    return $suffixinfilename ?preg_replace('/\.log$/i', $suffixinfilename.'.log', $tmp) : $tmp;
+		return $suffixinfilename ?preg_replace('/\.log$/i', $suffixinfilename.'.log', $tmp) : $tmp;
 	}
 
 	/**
@@ -135,25 +135,26 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	{
 		global $conf, $dolibarr_main_prod;
 
-		if (!empty($conf->global->MAIN_SYSLOG_DISABLE_FILE)) return; // Global option to disable output of this handler
+		if (!empty($conf->global->MAIN_SYSLOG_DISABLE_FILE)) {
+			return; // Global option to disable output of this handler
+		}
 
 		$logfile = $this->getFilename($suffixinfilename);
 
 		// Test constant SYSLOG_FILE_NO_ERROR (should stay a constant defined with define('SYSLOG_FILE_NO_ERROR',1);
-		if (defined('SYSLOG_FILE_NO_ERROR')) $filefd = @fopen($logfile, 'a+');
-		else $filefd = fopen($logfile, 'a+');
+		if (defined('SYSLOG_FILE_NO_ERROR')) {
+			$filefd = @fopen($logfile, 'a+');
+		} else {
+			$filefd = fopen($logfile, 'a+');
+		}
 
-		if (!$filefd)
-		{
-			if (!defined('SYSLOG_FILE_NO_ERROR') || !constant('SYSLOG_FILE_NO_ERROR'))
-			{
+		if (!$filefd) {
+			if (!defined('SYSLOG_FILE_NO_ERROR') || !constant('SYSLOG_FILE_NO_ERROR')) {
 				// Do not break dolibarr usage if log fails
 				//throw new Exception('Failed to open log file '.basename($logfile));
 				print 'Failed to open log file '.($dolibarr_main_prod ?basename($logfile) : $logfile);
 			}
-		}
-		else
-		{
+		} else {
 			$logLevels = array(
 				LOG_EMERG => 'EMERG',
 				LOG_ALERT => 'ALERT',
@@ -166,8 +167,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 			);
 
 			$delay = "";
-			if (!empty($conf->global->MAIN_SYSLOG_SHOW_DELAY))
-			{
+			if (!empty($conf->global->MAIN_SYSLOG_SHOW_DELAY)) {
 				$now = microtime(true);
 				$delay = " ".sprintf("%05.3f", $this->lastTime != 0 ? $now - $this->lastTime : 0);
 				$this->lastTime = $now;

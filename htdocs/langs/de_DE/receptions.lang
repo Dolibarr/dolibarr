@@ -43,5 +43,5 @@ ProductQtyInSuppliersReceptionAlreadyRecevied=Bereits erhaltene Produktmenge aus
 ValidateOrderFirstBeforeReception=Sie müssen zunächst die order validate validieren, bevor Sie Empfänge erstellen können.
 ReceptionsNumberingModules=Nummerierungsmodul für Empfänge
 ReceptionsReceiptModel=Dokumentvorlagen für Empfänge
-NoMorePredefinedProductToDispatch=No more predefined products to dispatch
+NoMorePredefinedProductToDispatch=Keine vordefinierten Produkte mehr zum Versand
 

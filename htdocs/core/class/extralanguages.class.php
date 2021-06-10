@@ -28,13 +28,13 @@
 class ExtraLanguages
 {
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
 	/**
-     * @var array New array to store extralanguages definition
-     */
+	 * @var array New array to store extralanguages definition
+	 */
 	public $attributes;
 
 	/**
@@ -47,7 +47,7 @@ class ExtraLanguages
 	 */
 	public $errors = array();
 
-    /**
+	/**
 	 * @var string DB Error number
 	 */
 	public $errno;
@@ -57,7 +57,7 @@ class ExtraLanguages
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler
-	*/
+	 */
 	public function __construct($db)
 	{
 		$this->db = $db;
@@ -67,7 +67,7 @@ class ExtraLanguages
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Load array this->attributes with list of fields per object that need an alternate translation. The object and field must be managed with
 	 *  the widgetForTranslation() method.
@@ -80,14 +80,22 @@ class ExtraLanguages
 	 */
 	public function fetch_name_extralanguages($elementtype, $forceload = false)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
-		if (empty($elementtype)) return array();
+		if (empty($elementtype)) {
+			return array();
+		}
 
-		if ($elementtype == 'thirdparty')     $elementtype = 'societe';
-		if ($elementtype == 'contact')        $elementtype = 'socpeople';
-		if ($elementtype == 'order_supplier') $elementtype = 'commande_fournisseur';
+		if ($elementtype == 'thirdparty') {
+			$elementtype = 'societe';
+		}
+		if ($elementtype == 'contact') {
+			$elementtype = 'socpeople';
+		}
+		if ($elementtype == 'order_supplier') {
+			$elementtype = 'commande_fournisseur';
+		}
 
 
 		$array_name_label = array();
@@ -133,19 +141,16 @@ class ExtraLanguages
 	{
 		global $conf, $langs, $form;
 
-		if (!is_object($form))
-		{
+		if (!is_object($form)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 			$form = new Form($this->db);
 		}
 
 		$out = '';
 
-		if (!preg_match('/options_$/', $keyprefix))	// Because we work on extrafields, we add 'options_' to prefix if not already added
-		{
+		if (!preg_match('/options_$/', $keyprefix)) {	// Because we work on extrafields, we add 'options_' to prefix if not already added
 			$keyprefix = $keyprefix.'options_';
 		}
-
 
 		return $out;
 	}

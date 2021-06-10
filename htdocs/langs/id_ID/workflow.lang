@@ -16,5 +16,10 @@ descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Klasifikasi sumber pesanan penjuala
 # Autoclassify purchase order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Klasifikasi sumber proposal vendor tautan sebagai tertagih ketika faktur vendor divalidasi (dan jika jumlah faktur sama dengan jumlah total proposal tautan)
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Klasifikasi sumber pesanan pembelian tautan sebagai tertagih saat faktur vendor divalidasi (dan jika jumlah faktur sama dengan jumlah total pesanan tautan)
+descWORKFLOW_BILL_ON_RECEPTION=Classify receptions to "billed" when a linked supplier order is validated
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Close all interventions linked to the ticket when a ticket is closed
 AutomaticCreation=Pembuatan Otomatis
 AutomaticClassification=Pengklasifikasian Otomatis
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated

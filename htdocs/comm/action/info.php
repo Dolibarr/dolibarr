@@ -29,8 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 if (!empty($conf->projet->enabled)) {
-    require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-    require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
 // Load translation files required by the page
@@ -39,13 +39,15 @@ $langs->load("commercial");
 $id = GETPOST('id', 'int');
 
 // Security check
-if ($user->socid > 0)
-{
-    $action = '';
-    $socid = $user->socid;
+if ($user->socid > 0) {
+	$action = '';
+	$socid = $user->socid;
 }
 
 $result = restrictedArea($user, 'agenda', $id, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id');
+if ($user->socid && $socid) {
+	$result = restrictedArea($user, 'societe', $socid);
+}
 
 
 /*
@@ -62,7 +64,7 @@ $object->fetch($id);
 $object->info($object->id);
 
 $head = actions_prepare_head($object);
-dol_fiche_head($head, 'info', $langs->trans("Action"), -1, 'action');
+print dol_get_fiche_head($head, 'info', $langs->trans("Action"), -1, 'action');
 
 $linkback = img_picto($langs->trans("BackToList"), 'object_list', 'class="hideonsmartphone pictoactionview"');
 $linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php">'.$langs->trans("BackToList").'</a>';
@@ -71,7 +73,7 @@ $linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php">'.$langs->trans("
 $out = '';
 $out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewPerUser"), 'object_calendarperuser', 'class="hideonsmartphone pictoactionview"');
 $out .= '<a href="'.DOL_URL_ROOT.'/comm/action/peruser.php?action=show_peruser&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewPerUser").'</a>';
-$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewCal"), 'object_calendar', 'class="hideonsmartphone pictoactionview"');
+$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewCal"), 'object_calendarmonth', 'class="hideonsmartphone pictoactionview"');
 $out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_month&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewCal").'</a>';
 $out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewWeek"), 'object_calendarweek', 'class="hideonsmartphone pictoactionview"');
 $out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewWeek").'</a>';
@@ -84,21 +86,22 @@ $morehtmlref = '<div class="refidno">';
 // Thirdparty
 //$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
 // Project
-if (!empty($conf->projet->enabled))
-{
-    $langs->load("projects");
-    //$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-    $morehtmlref .= $langs->trans('Project').': ';
-    if (!empty($object->fk_project)) {
-        $proj = new Project($db);
-        $proj->fetch($object->fk_project);
-        $morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-        $morehtmlref .= $proj->ref;
-        $morehtmlref .= '</a>';
-        if ($proj->title) $morehtmlref .= ' - '.$proj->title;
-    } else {
-        $morehtmlref .= '';
-    }
+if (!empty($conf->projet->enabled)) {
+	$langs->load("projects");
+	//$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+	$morehtmlref .= $langs->trans('Project').': ';
+	if (!empty($object->fk_project)) {
+		$proj = new Project($db);
+		$proj->fetch($object->fk_project);
+		$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
+		$morehtmlref .= $proj->ref;
+		$morehtmlref .= '</a>';
+		if ($proj->title) {
+			$morehtmlref .= ' - '.$proj->title;
+		}
+	} else {
+		$morehtmlref .= '';
+	}
 }
 $morehtmlref .= '</div>';
 
@@ -112,7 +115,7 @@ print '<table width="100%"><tr><td>';
 dol_print_object_info($object);
 print '</td></tr></table>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

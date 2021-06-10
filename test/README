@@ -71,7 +71,7 @@ PHPDEPEND
 
 * Launch PDepend analysis:
 > cd test
-> pdepend --debug -d memory_limit=-1 --configuration=./phpunit/phpunittest.xml --phpunit-xml=./report/logs/pdepend.xml --summary-xml=./report/logs/summary.xml --jdepend-chart=./report/logs/jdepend.svg --overview-pyramid=./report/logs/pyramid.svg --ignore=custom,custom2,adodbtime,artichow,ckeditor,efc_xfss,fckeditor,fpdf,geoip,magpierss,nusoap,odtphp,phpexcel,php_writeexcel,smarty,smtps,tcpdf,vcard ../htdocs
+> pdepend --debug -d memory_limit=-1 --configuration=./phpunit/phpunittest.xml --phpunit-xml=./report/logs/pdepend.xml --summary-xml=./report/logs/summary.xml --jdepend-chart=./report/logs/jdepend.svg --overview-pyramid=./report/logs/pyramid.svg --ignore=custom,custom2,adodbtime,artichow,ckeditor,efc_xfss,fckeditor,fpdf,geoip,magpierss,nusoap,odtphp,php_writeexcel,smarty,smtps,tcpdf,vcard ../htdocs
 
 * To clean pdepend cache files
 > rm -fr ~/.pdepend/* 

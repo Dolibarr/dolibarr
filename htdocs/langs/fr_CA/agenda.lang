@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - agenda
-ToUserOfGroup=À n'importe quel utilisateur du groupe
 NewCompanyToDolibarr=Le tiers %s a été créé
 PropalClassifiedBilledInDolibarr=Proposition %s classée facturée
 InvoicePaidInDolibarr=La facture %s a changé en payé
@@ -13,6 +12,7 @@ OrderCreatedInDolibarr=L'ordre %s a été créé
 OrderDeliveredInDolibarr=Commande %s classée Délivrée
 ProposalDeleted=Proposition supprimée
 AgendaModelModule=Modèles de document pour l'événement
+AgendaUrlOptions1=Vous pouvez aussi ajouter les paramètres suivants pour filtrer les réponses :
 AgendaShowBirthdayEvents=Afficher les dates d'anniversaire des contacts
 AgendaHideBirthdayEvents=Cacher les dates d'anniversaire des contacts
 ExportDataset_event1=Liste évênements de l'agenda

@@ -14,7 +14,6 @@ WarningModuleNotActive=Le module <b>%s</b> doit être activé
 WarningOnlyPermissionOfActivatedModules=Seules les permissions liées à des modules activés sont montrées ici. Vous pouvez activer d'autres modules sur la page Accueil->Configuration->Modules.
 FormToTestFileUploadForm=Formulaire pour tester l'upload de fichiers (selon la configuration)
 IfModuleEnabled=Note: oui ne fonctionne que si le module <b>%s</b> est activé
-DoliPartnersDesc=List of companies providing custom-developed modules or features.<br>Note: since Dolibarr is an open source application, <i>anyone</i> experienced in PHP programming should be able to develop a module.
 Module20Name=Propales
 Module30Name=Factures
 Target=Objectif

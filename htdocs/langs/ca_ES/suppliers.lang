@@ -1,8 +1,9 @@
 # Dolibarr language file - Source file is en_US - vendors
 Suppliers=Proveïdors
 SuppliersInvoice=Factura del proveïdor
+SupplierInvoices=Factures de proveïdor
 ShowSupplierInvoice=Mostra la factura del proveïdor
-NewSupplier=Nou proveïdor
+NewSupplier=Proveïdor nou
 History=Històric
 ListOfSuppliers=Llista de proveïdors
 ShowSupplier=Mostra el proveïdor
@@ -38,10 +39,11 @@ MenuOrdersSupplierToBill=Comandes de compra a facturar
 NbDaysToDelivery=Retard de lliurament (dies)
 DescNbDaysToDelivery=El retard de lliurament més llarg dels productes d'aquesta comanda
 SupplierReputation=Reputació del proveïdor
+ReferenceReputation=Reputació de referència
 DoNotOrderThisProductToThisSupplier=No demanar
 NotTheGoodQualitySupplier=Baixa qualitat
 ReputationForThisProduct=Reputació
 BuyerName=Nom del comprador
 AllProductServicePrices=Tots els preus de producte / servei
-AllProductReferencesOfSupplier=Totes les referències de producte / servei del proveïdor
+AllProductReferencesOfSupplier=Totes les referències del proveïdor
 BuyingPriceNumShort=Preus del proveïdor

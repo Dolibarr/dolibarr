@@ -1,8 +1,10 @@
 # ProductBATCH language file - en_US - ProductBATCH
 ManageLotSerial=Sử dụng số lô / số sê-ri
-ProductStatusOnBatch=Có (lô/ sê-ri được yêu cầu)
+ProductStatusOnBatch=Yes (lot required)
+ProductStatusOnSerial=Yes (unique serial number required)
 ProductStatusNotOnBatch=Không (lô/ sê-ri không sử dụng)
-ProductStatusOnBatchShort=Có
+ProductStatusOnBatchShort=Lot
+ProductStatusOnSerialShort=Serial
 ProductStatusNotOnBatchShort=Không
 Batch=Lô/ Sê-ri
 atleast1batchfield=Hạn sử dụng hoặc Hạn bán hoặc Lô / Số sê-ri
@@ -22,3 +24,12 @@ ProductLotSetup=Thiết lập mô-đun Lô/ Sê-ri
 ShowCurrentStockOfLot=Hiển thị tồn kho hiện tại cho cặp sản phẩm/ lô
 ShowLogOfMovementIfLot=Hiển thị nhật ký biến động kho cho cặp sản phẩm/ lô
 StockDetailPerBatch=Chi tiết tồn kho trên mỗi lô
+SerialNumberAlreadyInUse=Serial number %s is already used for product %s
+TooManyQtyForSerialNumber=You can only have one product %s for serial number %s
+BatchLotNumberingModules=Options for automatic generation of batch products managed by lots
+BatchSerialNumberingModules=Options for automatic generation of batch products managed by serial numbers
+ManageLotMask=Custom mask
+CustomMasks=Adds an option to define mask in the product card
+LotProductTooltip=Adds an option in the product card to define a dedicated batch number mask
+SNProductTooltip=Adds an option in the product card to define a dedicated serial number mask
+QtyToAddAfterBarcodeScan=Qty to add for each barcode/lot/serial scanned

@@ -1,21 +1,21 @@
 # Dolibarr language file - Source file is en_US - salaries
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Grootboekrekening voor medewerker derde partij
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=De specifieke account die op de gebruikerskaart is gedefinieerd, wordt alleen voor de boekhouding van subgrootboek gebruikt. Deze wordt gebruikt voor grootboek en als standaardwaarde voor subgrootboek-boekhouding als specifieke gebruikersaccount voor de account op gebruiker niet is gedefinieerd.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=De boekhoudrekening die in het gebruikersbestand is gedefinieerd, wordt alleen gebruikt voor aanvullende boekhouding. Deze wordt gebruikt voor het grootboek en als standaardwaarde voor aanvullende boekhouding als de speciale rekening van de gebruiker niet is gedefinieerd.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Standaard grootboekrekening voor salaris betalingen
 Salary=Salaris
 Salaries=Salarissen
 NewSalaryPayment=Nieuwe salarisbetaling
 AddSalaryPayment=Salarisbetaling toevoegen
 SalaryPayment=Salarisbetaling
-SalariesPayments=Salarissen betalingen
+SalariesPayments=Salarisbetalingen
 ShowSalaryPayment=Toon salarisbetaling
 THM=Gemiddeld uurtarief
 TJM=Gemiddeld dagtarief
 CurrentSalary=Huidig salaris
-THMDescription=Deze waarde kan worden gebruikt om de kosten te berekenen van de tijd die wordt besteed aan een project dat door gebruikers is ingevoerd als het moduleproject wordt gebruikt
+THMDescription=Deze waarde kan worden gebruikt om de kosten te berekenen van de tijd die wordt besteed aan een project dat door gebruikers is ingevoerd als de module Project wordt gebruikt
 TJMDescription=Deze waarde is momenteel alleen ter informatie en wordt niet gebruikt voor enige berekening
-LastSalaries=Laatste %s salaris betalingen
+LastSalaries=Laatste %s salarisbetalingen
 AllSalaries=Alle salarisbetalingen
-SalariesStatistics=Salarisstatistieken
+SalariesStatistics=Salaris statistieken
 # Export
-SalariesAndPayments=Lonen en betalingen
+SalariesAndPayments=Salarissen en betalingen

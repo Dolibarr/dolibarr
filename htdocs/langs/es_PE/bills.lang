@@ -5,6 +5,7 @@ InvoiceAvoir=Nota de crédito
 InvoiceAvoirAsk=Nota de crédito para corregir factura
 InvoiceCustomer=Factura de cliente
 CustomerInvoice=Factura de cliente
+CustomersInvoices=Facturas de clientes
 BillShortStatusClosedUnpaid=Cerrado
 ConfirmClassifyPaidPartiallyReasonDiscountNoVat=El resto a pagar <b>(%s %s)</b> es un descuento acordado después de la factura. Acepto perder el IGV de este descuento
 AmountOfBillsByMonthHT=Importe de las facturas por mes (Sin IGV)

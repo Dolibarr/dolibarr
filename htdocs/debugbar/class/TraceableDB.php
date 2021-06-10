@@ -46,7 +46,7 @@ class TraceableDB extends DoliDB
 	public function __construct($db)
 	{
 		$this->db      = $db;
-		$this->type    = $db->type;
+		$this->type    = $this->db->type;
 		$this->queries = array();
 	}
 
@@ -72,7 +72,7 @@ class TraceableDB extends DoliDB
 	 */
 	public function fetch_row($resultset)
 	{
-	    // phpcs:enable
+		// phpcs:enable
 		return $this->db->fetch_row($resultset);
 	}
 
@@ -80,12 +80,13 @@ class TraceableDB extends DoliDB
 	 * Convert (by PHP) a GM Timestamp date into a string date with PHP server TZ to insert into a date field.
 	 * Function to use to build INSERT, UPDATE or WHERE predica
 	 *
-	 * @param   int		$param 		Date TMS to convert
-	 * @return  string            	Date in a string YYYYMMDDHHMMSS
+	 *   @param	    int		$param      Date TMS to convert
+	 *	 @param		mixed	$gm			'gmt'=Input informations are GMT values, 'tzserver'=Local to server TZ
+	 *   @return	string      		Date in a string YYYY-MM-DD HH:MM:SS
 	 */
-	public function idate($param)
+	public function idate($param, $gm = 'tzserver')
 	{
-		return $this->db->idate($param);
+		return $this->db->idate($param, $gm);
 	}
 
 	/**
@@ -156,7 +157,7 @@ class TraceableDB extends DoliDB
 	 */
 	public function affected_rows($resultset)
 	{
-	    // phpcs:enable
+		// phpcs:enable
 		return $this->db->affected_rows($resultset);
 	}
 
@@ -224,7 +225,7 @@ class TraceableDB extends DoliDB
 	 */
 	public function fetch_array($resultset)
 	{
-	    // phpcs:enable
+		// phpcs:enable
 		return $this->db->fetch_array($resultset);
 	}
 
@@ -259,8 +260,8 @@ class TraceableDB extends DoliDB
 	 */
 	public function last_insert_id($tab, $fieldid = 'rowid')
 	{
-	    // phpcs:enable
-	    return $this->db->last_insert_id($tab, $fieldid);
+		// phpcs:enable
+		return $this->db->last_insert_id($tab, $fieldid);
 	}
 
 	/**
@@ -409,7 +410,7 @@ class TraceableDB extends DoliDB
 	 */
 	public function num_rows($resultset)
 	{
-	    // phpcs:enable
+		// phpcs:enable
 		return $this->db->num_rows($resultset);
 	}
 
@@ -588,7 +589,7 @@ class TraceableDB extends DoliDB
 	 */
 	public function jdate($string, $gm = false)
 	{
-	    // phpcs:enable
+		// phpcs:enable
 		return $this->db->jdate($string, $gm);
 	}
 
@@ -678,7 +679,7 @@ class TraceableDB extends DoliDB
 	 */
 	public function fetch_object($resultset)
 	{
-	    // phpcs:enable
+		// phpcs:enable
 		return $this->db->fetch_object($resultset);
 	}
 
@@ -691,7 +692,7 @@ class TraceableDB extends DoliDB
 	 */
 	public function select_db($database)
 	{
-	    // phpcs:enable
+		// phpcs:enable
 		return $this->db->select_db($database);
 	}
 }
