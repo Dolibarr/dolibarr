@@ -2221,7 +2221,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 
 	foreach ($fieldlist as $field => $value) {
 		if ($value == 'entity') {
-			$withentity = empty($obj->{$value}) ? '' : $obj->{$value};
+			$withentity = isset($obj->{$value}) ? $obj->{$value} : '';
 			continue;
 		}
 
