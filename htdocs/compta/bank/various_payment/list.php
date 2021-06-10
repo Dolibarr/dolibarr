@@ -250,19 +250,19 @@ if ($search_amount_cred) {
 	$sql .= natural_search("v.amount", $search_amount_cred, 1);
 }
 if ($search_bank_account > 0) {
-	$sql .= " AND b.fk_account=".$db->escape($search_bank_account);
+	$sql .= " AND b.fk_account = ".((int) $search_bank_account);
 }
 if ($search_bank_entry > 0) {
-	$sql .= " AND b.fk_account=".$db->escape($search_bank_account);
+	$sql .= " AND b.fk_account = ".((int) $search_bank_account);
 }
 if ($search_accountancy_account > 0) {
-	$sql .= " AND v.accountancy_code=".$db->escape($search_accountancy_account);
+	$sql .= " AND v.accountancy_code = ".((int) $search_accountancy_account);
 }
 if ($search_accountancy_subledger > 0) {
-	$sql .= " AND v.subledger_account=".$db->escape($search_accountancy_subledger);
+	$sql .= " AND v.subledger_account = ".((int) $search_accountancy_subledger);
 }
 if ($typeid > 0) {
-	$sql .= " AND v.fk_typepayment=".$typeid;
+	$sql .= " AND v.fk_typepayment=".((int) $typeid);
 }
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);

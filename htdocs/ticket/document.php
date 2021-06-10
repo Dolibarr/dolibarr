@@ -203,7 +203,7 @@ if ($object->id) {
 
 	//$object->ref = $object->track_id;	// For compatibility we use track ID for directory
 	$modulepart = 'ticket';
-	$permission = $user->rights->ticket->write;
+	$permissiontoadd = $user->rights->ticket->write;
 	$permtoedit = $user->rights->ticket->write;
 	$param = '&id='.$object->id;
 

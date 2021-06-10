@@ -200,12 +200,12 @@ class PriceGlobalVariableUpdater
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-		$sql .= " type = ".$this->type.",";
+		$sql .= " type = ".((int) $this->type).",";
 		$sql .= " description = ".(isset($this->description) ? "'".$this->db->escape($this->description)."'" : "''").",";
 		$sql .= " parameters = ".(isset($this->parameters) ? "'".$this->db->escape($this->parameters)."'" : "''").",";
-		$sql .= " fk_variable = ".$this->fk_variable.",";
-		$sql .= " update_interval = ".$this->update_interval.",";
-		$sql .= " next_update = ".$this->next_update.",";
+		$sql .= " fk_variable = ".((int) $this->fk_variable).",";
+		$sql .= " update_interval = ".((int) $this->update_interval).",";
+		$sql .= " next_update = ".((int) $this->next_update).",";
 		$sql .= " last_status = ".(isset($this->last_status) ? "'".$this->db->escape($this->last_status)."'" : "''");
 		$sql .= " WHERE rowid = ".$this->id;
 

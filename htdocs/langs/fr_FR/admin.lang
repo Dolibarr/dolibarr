@@ -1584,7 +1584,7 @@ NotInstalled=Non installé.
 NotSlowedDownByThis=Non ralenti par cela.
 NotRiskOfLeakWithThis=Pas de risque de fuite de données avec cela.
 ApplicativeCache=Cache applicatif
-MemcachedNotAvailable=Aucun cache applicatif trouvé. Vous pouvez accélérer les performances de Dolibarr en installant un serveur de cache Memcached et un module de cache applicatif exploitant ce serveur.<br>Plus d'info ici<a href="http://wiki.dolibarr.org/index.php/Module_MemCached_EN">https://wiki.dolibarr.org/index.php/Module_MemCached</a>.<br>Notez que de nombreux hébergeurs low-cost ne fournissent pas de tels serveurs de cache dans leur infrastructure.
+MemcachedNotAvailable=Aucun cache applicatif trouvé. Vous pouvez accélérer les performances de Dolibarr en installant un serveur de cache Memcached et un module de cache applicatif exploitant ce serveur.<br>Plus d'info ici <a href="http://wiki.dolibarr.org/index.php/Module_MemCached_EN">https://wiki.dolibarr.org/index.php/Module_MemCached</a>.<br>Notez que de nombreux hébergeurs low-cost ne fournissent pas de tels serveurs de cache dans leur infrastructure.
 MemcachedModuleAvailableButNotSetup=Le module memcached pour le cache applicatif a été trouvé mais la configuration de ce module n'est pas complète.
 MemcachedAvailableAndSetup=Le module memcached dédié à l'utilisation du serveur de cache memcached est activé.
 OPCodeCache=Cache OPCode

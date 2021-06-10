@@ -174,10 +174,10 @@ if ($snom) {
 	$sql .= natural_search('p.label', $snom);
 }
 if ($catid) {
-	$sql .= " AND cp.fk_categorie = ".$catid;
+	$sql .= " AND cp.fk_categorie = ".((int) $catid);
 }
 if ($fourn_id > 0) {
-	$sql .= " AND ppf.fk_soc = ".$fourn_id;
+	$sql .= " AND ppf.fk_soc = ".((int) $fourn_id);
 }
 
 // Add WHERE filters from hooks

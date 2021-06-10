@@ -200,7 +200,7 @@ class Setup extends DolibarrApi
 		$sql = "SELECT id, code, type, libelle as label, module";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_paiement as t";
 		$sql .= " WHERE t.entity IN (".getEntity('c_paiement').")";
-		$sql .= " AND t.active = ".$active;
+		$sql .= " AND t.active = ".((int) $active);
 		// Add sql filters
 		if ($sqlfilters) {
 			if (!DolibarrApi::_checkFilters($sqlfilters)) {
@@ -1055,7 +1055,7 @@ class Setup extends DolibarrApi
 
 		$sql = "SELECT rowid AS id, zip, town, fk_county, fk_pays AS fk_country";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ziptown as t";
-		$sql .= " AND t.active = ".$active;
+		$sql .= " AND t.active = ".((int) $active);
 		if ($zipcode) {
 			$sql .= " AND t.zip LIKE '%".$this->db->escape($zipcode)."%'";
 		}
@@ -1125,7 +1125,7 @@ class Setup extends DolibarrApi
 		$sql = "SELECT rowid as id, code, sortorder, libelle as label, libelle_facture as descr, type_cdr, nbjour, decalage, module";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_payment_term as t";
 		$sql .= " WHERE t.entity IN (".getEntity('c_payment_term').")";
-		$sql .= " AND t.active = ".$active;
+		$sql .= " AND t.active = ".((int) $active);
 		// Add sql filters
 		if ($sqlfilters) {
 			if (!DolibarrApi::_checkFilters($sqlfilters)) {
@@ -1183,7 +1183,7 @@ class Setup extends DolibarrApi
 		$sql = "SELECT rowid as id, code, libelle as label, description, tracking, module";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as t";
 		$sql .= " WHERE t.entity IN (".getEntity('c_shipment_mode').")";
-		$sql .= " AND t.active = ".$active;
+		$sql .= " AND t.active = ".((int) $active);
 		// Add sql filters
 		if ($sqlfilters) {
 			if (!DolibarrApi::_checkFilters($sqlfilters)) {
@@ -1307,7 +1307,7 @@ class Setup extends DolibarrApi
 		$sql = "SELECT t.rowid, t.entity, t.code, t.label, t.url, t.icon, t.active";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_socialnetworks as t";
 		$sql .= " WHERE t.entity IN (".getEntity('c_socialnetworks').")";
-		$sql .= " AND t.active = ".$active;
+		$sql .= " AND t.active = ".((int) $active);
 		// Add sql filters
 		if ($sqlfilters) {
 			if (!DolibarrApi::_checkFilters($sqlfilters)) {

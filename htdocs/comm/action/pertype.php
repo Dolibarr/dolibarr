@@ -616,7 +616,7 @@ if ($filtert > 0 || $usergroup > 0) {
 		$sql .= "ar.fk_element = ".$filtert;
 	}
 	if ($usergroup > 0) {
-		$sql .= ($filtert > 0 ? " OR " : "")." ugu.fk_usergroup = ".$usergroup;
+		$sql .= ($filtert > 0 ? " OR " : "")." ugu.fk_usergroup = ".((int) $usergroup);
 	}
 	$sql .= ")";
 }

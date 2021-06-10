@@ -540,9 +540,9 @@ class AccountingAccount extends CommonObject
 		if ($result > 0) {
 			$this->db->begin();
 
-			$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_account ";
-			$sql .= "SET " . $fieldtouse . " = '0'";
-			$sql .= " WHERE rowid = " . $this->db->escape($id);
+			$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_account ";
+			$sql .= "SET ".$fieldtouse." = '0'";
+			$sql .= " WHERE rowid = ".((int) $id);
 
 			dol_syslog(get_class($this) . "::accountDeactivate " . $fieldtouse . " sql=" . $sql, LOG_DEBUG);
 			$result = $this->db->query($sql);
@@ -578,9 +578,9 @@ class AccountingAccount extends CommonObject
 			$fieldtouse = 'reconcilable';
 		}
 
-		$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_account";
-		$sql .= " SET " . $fieldtouse . " = '1'";
-		$sql .= " WHERE rowid = " . $this->db->escape($id);
+		$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_account";
+		$sql .= " SET ".$fieldtouse." = '1'";
+		$sql .= " WHERE rowid = ".((int) $id);
 
 		dol_syslog(get_class($this) . "::accountActivate " . $fieldtouse . " sql=" . $sql, LOG_DEBUG);
 		$result = $this->db->query($sql);

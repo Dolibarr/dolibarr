@@ -741,10 +741,10 @@ if ($status == 'todo') {
 if ($filtert > 0 || $usergroup > 0) {
 	$sql .= " AND (";
 	if ($filtert > 0) {
-		$sql .= "ar.fk_element = ".$filtert;
+		$sql .= "ar.fk_element = ".((int) $filtert);
 	}
 	if ($usergroup > 0) {
-		$sql .= ($filtert > 0 ? " OR " : "")." ugu.fk_usergroup = ".$usergroup;
+		$sql .= ($filtert > 0 ? " OR " : "")." ugu.fk_usergroup = ".((int) $usergroup);
 	}
 	$sql .= ")";
 }

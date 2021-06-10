@@ -1418,10 +1418,10 @@ class User extends CommonObject
 		$result = $this->create($user, 1);
 		if ($result > 0) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user";
-			$sql .= " SET fk_socpeople=".$contact->id;
+			$sql .= " SET fk_socpeople=".((int) $contact->id);
 			$sql .= ", civility='".$this->db->escape($contact->civility_code)."'";
 			if ($contact->socid > 0) {
-				$sql .= ", fk_soc=".$contact->socid;
+				$sql .= ", fk_soc=".((int) $contact->socid);
 			}
 			$sql .= " WHERE rowid=".((int) $this->id);
 
@@ -1517,7 +1517,7 @@ class User extends CommonObject
 
 			if ($result > 0 && $member->fk_soc) {	// If member is linked to a thirdparty
 				$sql = "UPDATE ".MAIN_DB_PREFIX."user";
-				$sql .= " SET fk_soc=".$member->fk_soc;
+				$sql .= " SET fk_soc=".((int) $member->fk_soc);
 				$sql .= " WHERE rowid=".((int) $this->id);
 
 				dol_syslog(get_class($this)."::create_from_member", LOG_DEBUG);

@@ -149,7 +149,7 @@ class box_graph_new_vs_close_ticket extends ModeleBoxes
 				}
 				$stringtoprint .= '</div>';
 				$this->info_box_contents[][]=array(
-					'td' => 'center',
+					'td' => 'class="center"',
 					'text' => $stringtoprint
 				);
 			} else {

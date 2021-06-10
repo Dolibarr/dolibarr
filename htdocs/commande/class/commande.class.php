@@ -2539,7 +2539,7 @@ class Commande extends CommonOrder
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."commande";
 			$sql .= " SET date_commande = ".($date ? "'".$this->db->idate($date)."'" : 'null');
-			$sql .= " WHERE rowid = ".$this->id." AND fk_statut = ".self::STATUS_DRAFT;
+			$sql .= " WHERE rowid = ".$this->id." AND fk_statut = ".((int) self::STATUS_DRAFT);
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -4559,14 +4559,14 @@ class OrderLine extends CommonOrderLine
 		}
 		$sql .= " , fk_product_fournisseur_price=".(!empty($this->fk_fournprice) ? $this->fk_fournprice : "null");
 		$sql .= " , buy_price_ht='".price2num($this->pa_ht)."'";
-		$sql .= " , info_bits=".$this->info_bits;
-		$sql .= " , special_code=".$this->special_code;
+		$sql .= " , info_bits=".((int) $this->info_bits);
+		$sql .= " , special_code=".((int) $this->special_code);
 		$sql .= " , date_start=".(!empty($this->date_start) ? "'".$this->db->idate($this->date_start)."'" : "null");
 		$sql .= " , date_end=".(!empty($this->date_end) ? "'".$this->db->idate($this->date_end)."'" : "null");
 		$sql .= " , product_type=".$this->product_type;
 		$sql .= " , fk_parent_line=".(!empty($this->fk_parent_line) ? $this->fk_parent_line : "null");
 		if (!empty($this->rang)) {
-			$sql .= ", rang=".$this->rang;
+			$sql .= ", rang=".((int) $this->rang);
 		}
 		$sql .= " , fk_unit=".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
 
@@ -4576,7 +4576,7 @@ class OrderLine extends CommonOrderLine
 		$sql .= " , multicurrency_total_tva=".price2num($this->multicurrency_total_tva)."";
 		$sql .= " , multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc)."";
 
-		$sql .= " WHERE rowid = ".$this->rowid;
+		$sql .= " WHERE rowid = ".((int) $this->rowid);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);

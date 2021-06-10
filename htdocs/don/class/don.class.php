@@ -476,8 +476,8 @@ class Don extends CommonObject
 		$sql .= ",address='".$this->db->escape($this->address)."'";
 		$sql .= ",zip='".$this->db->escape($this->zip)."'";
 		$sql .= ",town='".$this->db->escape($this->town)."'";
-		$sql .= ",fk_country = ".($this->country_id > 0 ? $this->country_id : '0');
-		$sql .= ",public=".$this->public;
+		$sql .= ",fk_country = ".($this->country_id > 0 ? ((int) $this->country_id) : '0');
+		$sql .= ",public=".((int) $this->public);
 		$sql .= ",fk_projet=".($this->fk_project > 0 ? $this->fk_project : 'null');
 		$sql .= ",note_private=".(!empty($this->note_private) ? ("'".$this->db->escape($this->note_private)."'") : "NULL");
 		$sql .= ",note_public=".(!empty($this->note_public) ? ("'".$this->db->escape($this->note_public)."'") : "NULL");
@@ -486,8 +486,8 @@ class Don extends CommonObject
 		$sql .= ",email='".$this->db->escape(trim($this->email))."'";
 		$sql .= ",phone='".$this->db->escape(trim($this->phone))."'";
 		$sql .= ",phone_mobile='".$this->db->escape(trim($this->phone_mobile))."'";
-		$sql .= ",fk_statut=".$this->statut;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= ",fk_statut=".((int) $this->statut);
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::Update", LOG_DEBUG);
 		$resql = $this->db->query($sql);

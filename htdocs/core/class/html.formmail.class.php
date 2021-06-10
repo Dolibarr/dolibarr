@@ -1275,10 +1275,10 @@ class FormMail extends Form
 		$sql .= " AND entity IN (".getEntity('c_email_templates').")";
 		$sql .= " AND (private = 0 OR fk_user = ".$user->id.")"; // Get all public or private owned
 		if ($active >= 0) {
-			$sql .= " AND active = ".$active;
+			$sql .= " AND active = ".((int) $active);
 		}
 		if ($label) {
-			$sql .= " AND label ='".$db->escape($label)."'";
+			$sql .= " AND label = '".$db->escape($label)."'";
 		}
 		if (!($id > 0) && $languagetosearch) {
 			$sql .= " AND (lang = '".$db->escape($languagetosearch)."'".($languagetosearchmain ? " OR lang = '".$db->escape($languagetosearchmain)."'" : "")." OR lang IS NULL OR lang = '')";
@@ -1434,7 +1434,7 @@ class FormMail extends Form
 		$sql .= " AND entity IN (".getEntity('c_email_templates').")";
 		$sql .= " AND (private = 0 OR fk_user = ".$user->id.")"; // See all public templates or templates I own.
 		if ($active >= 0) {
-			$sql .= " AND active = ".$active;
+			$sql .= " AND active = ".((int) $active);
 		}
 		//if (is_object($outputlangs)) $sql.= " AND (lang = '".$this->db->escape($outputlangs->defaultlang)."' OR lang IS NULL OR lang = '')";	// Return all languages
 		$sql .= $this->db->order("position,lang,label", "ASC");

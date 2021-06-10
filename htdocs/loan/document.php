@@ -160,7 +160,7 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'loan';
-	$permission = $user->rights->loan->write;
+	$permissiontoadd = $user->rights->loan->write;
 	$permtoedit = $user->rights->loan->write;
 	$param = '&id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';

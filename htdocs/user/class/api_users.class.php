@@ -93,7 +93,7 @@ class Users extends DolibarrApi
 
 		// Select products of given category
 		if ($category > 0) {
-			$sql .= " AND c.fk_categorie = ".$this->db->escape($category);
+			$sql .= " AND c.fk_categorie = ".((int) $category);
 			$sql .= " AND c.fk_user = t.rowid";
 		}
 

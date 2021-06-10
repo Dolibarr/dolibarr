@@ -529,8 +529,8 @@ class pdf_stdandard extends ModelePDFMovement
 						if (!empty($conf->global->MAIN_MULTILANGS)) { // si l'option est active
 							$sql = "SELECT label";
 							$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
-							$sql .= " WHERE fk_product=".$objp->rowid;
-							$sql .= " AND lang='".$this->db->escape($langs->getDefaultLang())."'";
+							$sql .= " WHERE fk_product = ".((int) $objp->rowid);
+							$sql .= " AND lang = '".$this->db->escape($langs->getDefaultLang())."'";
 							$sql .= " LIMIT 1";
 
 							$result = $this->db->query($sql);

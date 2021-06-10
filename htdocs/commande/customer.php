@@ -89,9 +89,6 @@ $sql .= " AND s.entity IN (".getEntity('societe').")";
 if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 }
-if (dol_strlen($stcomm)) {
-	$sql .= " AND s.fk_stcomm=".$stcomm;
-}
 if (GETPOST("search_nom")) {
 	$sql .= natural_search("s.nom", GETPOST("search_nom"));
 }

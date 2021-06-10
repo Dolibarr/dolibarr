@@ -384,7 +384,7 @@ class Productbatch extends CommonObject
 		$sql .= " t.qty,";
 		$sql .= " t.import_key";
 		$sql .= " FROM ".MAIN_DB_PREFIX.self::$_table_element." as t";
-		$sql .= " WHERE fk_product_stock=".$fk_product_stock;
+		$sql .= " WHERE fk_product_stock=".((int) $fk_product_stock);
 
 		if (!empty($eatby)) {
 			array_push($where, " eatby = '".$this->db->idate($eatby)."'"); // deprecated
@@ -454,10 +454,10 @@ class Productbatch extends CommonObject
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_batch as t";
 		if ($fk_product > 0) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl ON pl.fk_product = ".$fk_product." AND pl.batch = t.batch";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl ON pl.fk_product = ".((int) $fk_product)." AND pl.batch = t.batch";
 			// TODO May add extrafields to ?
 		}
-		$sql .= " WHERE fk_product_stock=".$fk_product_stock;
+		$sql .= " WHERE fk_product_stock=".((int) $fk_product_stock);
 		if ($with_qty) {
 			$sql .= " AND t.qty <> 0";
 		}

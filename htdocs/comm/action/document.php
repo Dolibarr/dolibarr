@@ -287,7 +287,7 @@ if ($object->id > 0) {
 
 
 	$modulepart = 'actions';
-	$permission = $user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create;
+	$permissiontoadd = $user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create;
 	$param = '&id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {

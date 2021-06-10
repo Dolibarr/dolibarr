@@ -183,7 +183,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 	$sql .= " AND c.entity IN (".getEntity("supplier_order").")"; // Thirdparty sharing is mandatory with supplier order sharing
 	$sql .= " AND c.fk_statut = 0";
 	if (!empty($socid)) {
-		$sql .= " AND c.fk_soc = ".$socid;
+		$sql .= " AND c.fk_soc = ".((int) $socid);
 	}
 	if (!$user->rights->societe->client->voir && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
@@ -290,7 +290,7 @@ $sql .= " WHERE c.fk_soc = s.rowid";
 $sql .= " AND c.entity = ".$conf->entity;
 //$sql.= " AND c.fk_statut > 2";
 if (!empty($socid)) {
-	$sql .= " AND c.fk_soc = ".$socid;
+	$sql .= " AND c.fk_soc = ".((int) $socid);
 }
 if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
@@ -359,7 +359,7 @@ if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX
 $sql.= " WHERE c.fk_soc = s.rowid";
 $sql.= " AND c.entity = ".$conf->entity;
 $sql.= " AND c.fk_statut = 1";
-if ($socid) $sql.= " AND c.fk_soc = ".$socid;
+if ($socid) $sql.= " AND c.fk_soc = ".((int) $socid);
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " ORDER BY c.rowid DESC";
 
