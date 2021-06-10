@@ -530,7 +530,6 @@ if ($search_zip)   $sql .= natural_search("s.zip", $search_zip);
 if ($search_state) $sql .= natural_search("state.nom", $search_state);
 if ($search_country) $sql .= " AND s.fk_pays IN (".$db->escape($search_country).')';
 if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$db->escape($search_type_thirdparty).')';
-if ($search_company) $sql .= natural_search('s.nom', $search_company);
 if ($search_montant_ht != '') $sql .= natural_search('f.total', $search_montant_ht, 1);
 if ($search_montant_vat != '') $sql .= natural_search('f.tva', $search_montant_vat, 1);
 if ($search_montant_localtax1 != '') $sql .= natural_search('f.localtax1', $search_montant_localtax1, 1);
