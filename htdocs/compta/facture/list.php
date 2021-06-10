@@ -131,7 +131,7 @@ $search_datelimit_end = dol_mktime(23, 59, 59, GETPOST('search_datelimit_endmont
 $search_categ_cus = GETPOST("search_categ_cus", 'int');
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
-
+$optioncss = GETPOST('optioncss', 'alpha');
 
 
 $option = GETPOST('search_option');
@@ -262,7 +262,7 @@ foreach ($object->fields as $key => $val) {
 				'checked'=>(($visible < 0) ? 0 : 1),
 				'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
 				'position'=>$val['position'],
-				'help'=>$val['help']
+				'help' => empty($val['help']) ? '' : $val['help'],
 			);
 		}
 	}
@@ -472,7 +472,7 @@ $sql = 'SELECT';
 if ($sall || $search_product_category > 0 || $search_user > 0) {
 	$sql = 'SELECT DISTINCT';
 }
-$sql .= ' f.rowid as id, f.ref, f.ref_client, f.type, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.fk_cond_reglement, f.total_ht, f.total_tva, f.total_ttc,';
+$sql .= ' f.rowid as id, f.ref, f.ref_client, f.fk_soc, f.type, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.fk_cond_reglement, f.total_ht, f.total_tva, f.total_ttc,';
 $sql .= ' f.localtax1 as total_localtax1, f.localtax2 as total_localtax2,';
 $sql .= ' f.fk_user_author,';
 $sql .= ' f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva as multicurrency_total_vat, f.multicurrency_total_ttc,';
