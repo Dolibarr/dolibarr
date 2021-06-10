@@ -227,7 +227,7 @@ class Holiday extends CommonObject
 
 		if ($result >= 0) {
 			$this->db->commit();
-			return 1;
+			return 0; // for cronjob use (0 is OK, any other value is an error code)
 		} else {
 			$this->db->rollback();
 			return -1;

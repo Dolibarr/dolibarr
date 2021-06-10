@@ -231,9 +231,6 @@ $formfile = new FormFile($db);
 $fuser = new User($db);
 $holidaystatic = new Holiday($db);
 
-// Update sold
-$result = $object->updateBalance();
-
 $title = $langs->trans('CPTitreMenu');
 llxHeader('', $title);
 
