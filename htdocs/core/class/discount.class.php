@@ -519,7 +519,7 @@ class DiscountAbsolute
 			//}
 			if ($multicurrency)
 			{
-				return $obj->amount_multicurrency;
+				return $obj->multicurrency_amount;
 			}
 
 			return $obj->amount;
