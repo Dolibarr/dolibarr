@@ -1070,7 +1070,7 @@ class Account extends CommonObject
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_account";
-			$sql .= " WHERE rowid = ".$this->rowid;
+			$sql .= " WHERE rowid = ".((int) $this->rowid);
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$result = $this->db->query($sql);
@@ -2090,7 +2090,7 @@ class AccountLine extends CommonObject
 		$sql .= " amount = ".price2num($this->amount).",";
 		$sql .= " datev='".$this->db->idate($this->datev)."',";
 		$sql .= " dateo='".$this->db->idate($this->dateo)."'";
-		$sql .= " WHERE rowid = ".$this->rowid;
+		$sql .= " WHERE rowid = ".((int) $this->rowid);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);

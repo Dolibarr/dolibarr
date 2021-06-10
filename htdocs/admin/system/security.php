@@ -228,7 +228,7 @@ print '<br>';
 print '<br>';
 print load_fiche_titre($langs->trans("ConfigurationFile").' ('.$conffile.')', '', 'folder');
 
-print '<strong>$dolibarr_main_prod</strong>: '.$dolibarr_main_prod;
+print '<strong>$dolibarr_main_prod</strong>: '.($dolibarr_main_prod ? $dolibarr_main_prod : '0');
 if (empty($dolibarr_main_prod)) {
 	print ' &nbsp; '.img_picto('', 'warning').' '.$langs->trans("IfYouAreOnAProductionSetThis", 1);
 }
@@ -245,7 +245,21 @@ if (empty($dolibarr_main_restrict_ip)) {
 	print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
 	//print ' <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("IPsOfUsers")).')</span>';
 }
+
 print '<br>';
+
+if (empty($conf->global->SECURITY_DISABLE_TEST_ON_OBFUSCATED_CONF)) {
+	print '<strong>$dolibarr_main_db_pass</strong>: ';
+	if (!empty($dolibarr_main_db_pass) && empty($dolibarr_main_db_encrypted_pass)) {
+		print img_picto('', 'warning').' '.$langs->trans("DatabasePasswordNotObfuscated").' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommanded").': '.$langs->trans("SetOptionTo", $langs->transnoentitiesnoconv("MainDbPasswordFileConfEncrypted"), yn(1)).')</span>';
+		//print ' <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("IPsOfUsers")).')</span>';
+	} else {
+		print img_picto('', 'tick').' '.$langs->trans("DatabasePasswordObfuscated");
+	}
+
+	print '<br>';
+}
+
 
 
 // Menu security
@@ -277,7 +291,7 @@ if ($conf->global->MAIN_SECURITY_HASH_ALGO != 'password_hash') {
 print '<br>';
 
 
-print '<strong>MAIN_SECURITY_ANTI_SSRF_SERVER_IP</strong> = '.(empty($conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP)."<br>";
+print '<strong>MAIN_SECURITY_ANTI_SSRF_SERVER_IP</strong> = '.(empty($conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span> &nbsp; <span class="opacitymedium">('.$langs->trans("Example").': static-ips-of-server - '.$langs->trans("Note").': common loopback ip like 127.*.*.*, [::1] are already added)</span>' : $conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP)."<br>";
 print '<br>';
 
 print '<strong>MAIN_ALLOW_SVG_FILES_AS_IMAGES</strong> = '.(empty($conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES) ? '0 &nbsp; <span class="opacitymedium">('.$langs->trans("Recommanded").': 0)</span>' : $conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES)."<br>";

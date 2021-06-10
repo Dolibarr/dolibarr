@@ -273,10 +273,10 @@ if ($search_account > 0) {
 	$sql .= " AND s.fk_account=".((int) $search_account);
 }
 if ($search_status != '' && $search_status >= 0) {
-	$sql .= " AND s.paye = ".$db->escape($search_status);
+	$sql .= " AND s.paye = ".((int) $search_status);
 }
 if ($search_type_id) {
-	$sql .= " AND s.fk_typepayment=".$search_type_id;
+	$sql .= " AND s.fk_typepayment=".((int) $search_type_id);
 }
 $sql .= " GROUP BY u.rowid, u.lastname, u.firstname, u.login, u.email, u.admin, u.salary, u.fk_soc, u.statut,";
 $sql .= " s.rowid, s.fk_account, s.paye, s.fk_user, s.amount, s.salary, s.label, s.datesp, s.dateep, s.fk_typepayment, s.fk_bank,";

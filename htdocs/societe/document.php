@@ -176,7 +176,7 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'societe';
-	$permission = $user->rights->societe->creer;
+	$permissiontoadd = $user->rights->societe->creer;
 	$permtoedit = $user->rights->societe->creer;
 	$param = '&id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';

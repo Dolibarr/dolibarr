@@ -71,7 +71,7 @@ llxHeader();
 $thirdpartystatic = new Societe($db);
 
 if ($action == 'note') {
-	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET note='".$db->escape($note)."' WHERE rowid=".$socid;
+	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET note='".$db->escape($note)."' WHERE rowid=".((int) $socid);
 	$result = $db->query($sql);
 }
 
@@ -107,29 +107,21 @@ if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 }
 if (dol_strlen($stcomm)) {
-	$sql .= " AND s.fk_stcomm=".$stcomm;
+	$sql .= " AND s.fk_stcomm=".((int) $stcomm);
 }
-if ($socname) {
-	$sql .= natural_search("s.nom", $socname);
-	$sortfield = "s.nom";
-	$sortorder = "ASC";
-}
-if ($_GET["search_nom"]) {
+if (GETPOST("search_nom")) {
 	$sql .= natural_search("s.nom", GETPOST("search_nom"));
 }
-if ($_GET["search_compta"]) {
+if (GETPOST("search_compta")) {
 	$sql .= natural_search("s.code_compta", GETPOST("search_compta"));
 }
-if ($_GET["search_code_client"]) {
+if (GETPOST("search_code_client")) {
 	$sql .= natural_search("s.code_client", GETPOST("search_code_client"));
-}
-if (dol_strlen($begin)) {
-	$sql .= natural_search("s.nom", $begin);
 }
 if ($socid) {
 	$sql .= " AND s.rowid = ".((int) $socid);
 }
-$sql .= " ORDER BY $sortfield $sortorder ";
+$sql .= " ORDER BY $sortfield $sortorder";
 $sql .= $db->plimit($conf->liste_limit + 1, $offset);
 //print $sql;
 

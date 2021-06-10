@@ -2497,18 +2497,18 @@ class Form
 		}
 
 		if ($finished == 0) {
-			$sql .= " AND p.finished = ".$finished;
+			$sql .= " AND p.finished = ".((int) $finished);
 		} elseif ($finished == 1) {
-			$sql .= " AND p.finished = ".$finished;
+			$sql .= " AND p.finished = ".((int) $finished);
 			if ($status >= 0) {
-				$sql .= " AND p.tosell = ".$status;
+				$sql .= " AND p.tosell = ".((int) $status);
 			}
 		} elseif ($status >= 0) {
-			$sql .= " AND p.tosell = ".$status;
+			$sql .= " AND p.tosell = ".((int) $status);
 		}
 		// Filter by product type
 		if (strval($filtertype) != '') {
-			$sql .= " AND p.fk_product_type = ".$filtertype;
+			$sql .= " AND p.fk_product_type = ".((int) $filtertype);
 		} elseif (empty($conf->product->enabled)) { // when product module is disabled, show services only
 			$sql .= " AND p.fk_product_type = 1";
 		} elseif (empty($conf->service->enabled)) { // when service module is disabled, show products only
@@ -3828,7 +3828,6 @@ class Form
 		$sql = "SELECT id, code, libelle as label, type, active";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_paiement";
 		$sql .= " WHERE entity IN (".getEntity('c_paiement').")";
-		//if ($active >= 0) $sql.= " AND active = ".$active;
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -4061,7 +4060,6 @@ class Form
 		$sql = "SELECT rowid, code, label, active";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_transport_mode";
 		$sql .= " WHERE entity IN (".getEntity('c_transport_mode').")";
-		//if ($active >= 0) $sql.= " AND active = ".$active;
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

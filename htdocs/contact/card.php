@@ -297,7 +297,7 @@ if (empty($reshook)) {
 		$object->old_lastname = (string) GETPOST("old_lastname", 'alpha');
 		$object->old_firstname = (string) GETPOST("old_firstname", 'alpha');
 
-		$result = $object->delete();
+		$result = $object->delete();	// TODO Add $user as first param
 		if ($result > 0) {
 			if ($backtopage) {
 				header("Location: ".$backtopage);
@@ -443,8 +443,6 @@ if (empty($reshook)) {
 						}
 					}
 
-					$object->old_lastname = '';
-					$object->old_firstname = '';
 					$action = 'view';
 				} else {
 					setEventMessages($object->error, $object->errors, 'errors');

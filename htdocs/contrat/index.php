@@ -250,7 +250,7 @@ if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	}
 	if ($socid) {
-		$sql .= " AND c.fk_soc = ".$socid;
+		$sql .= " AND c.fk_soc = ".((int) $socid);
 	}
 
 	$resql = $db->query($sql);

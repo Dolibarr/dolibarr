@@ -332,7 +332,7 @@ class AssetType extends CommonObject
 	/**
 	 * 	Return array of Asset objects for asset type this->id (or all if this->id not defined)
 	 *
-	 * 	@param	string	$excludefilter		Filter to exclude. This parameter must not be provided by input of users
+	 * 	@param	string	$excludefilter		Filter string to exclude. This parameter must not be provided by input of users
 	 *  @param	int		$mode				0=Return array of asset instance
 	 *  									1=Return array of asset instance without extra data
 	 *  									2=Return array of asset id only
@@ -347,7 +347,7 @@ class AssetType extends CommonObject
 		$sql = "SELECT a.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."asset as a";
 		$sql .= " WHERE a.entity IN (".getEntity('asset').")";
-		$sql .= " AND a.fk_asset_type = ".$this->id;
+		$sql .= " AND a.fk_asset_type = ".((int) $this->id);
 		if (!empty($excludefilter)) {
 			$sql .= ' AND ('.$excludefilter.')';
 		}

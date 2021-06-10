@@ -1043,7 +1043,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 		$sql .= " ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."user as u";
 		$sql .= " WHERE t.fk_user = u.rowid AND t.fk_task = pt.rowid";
 		if (empty($projectidforalltimes)) {
-			$sql .= " AND t.fk_task =".$object->id;
+			$sql .= " AND t.fk_task =".((int) $object->id);
 		} else {
 			$sql .= " AND pt.fk_projet IN (".$db->sanitize($projectidforalltimes).")";
 		}

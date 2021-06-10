@@ -105,7 +105,7 @@ class InfoBox
 			$sql .= " WHERE b.box_id = d.rowid";
 			$sql .= " AND b.entity IN (0,".$conf->entity.")";
 			if ($zone >= 0) {
-				$sql .= " AND b.position = ".$zone;
+				$sql .= " AND b.position = ".((int) $zone);
 			}
 			if (is_object($user)) {
 				$sql .= " AND b.fk_user IN (0,".$user->id.")";
@@ -116,7 +116,7 @@ class InfoBox
 		} else { // available
 			$sql = "SELECT d.rowid as box_id, d.file, d.note, d.tms";
 			$sql .= " FROM ".MAIN_DB_PREFIX."boxes_def as d";
-			$sql .= " WHERE d.entity IN (0,".$conf->entity.")";
+			$sql .= " WHERE d.entity IN (0, ".$conf->entity.")";
 		}
 
 		dol_syslog(get_class()."::listBoxes get default box list for mode=".$mode." userid=".(is_object($user) ? $user->id : '')."", LOG_DEBUG);
@@ -254,8 +254,8 @@ class InfoBox
 		// Delete all lines
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes";
 		$sql .= " WHERE entity = ".$conf->entity;
-		$sql .= " AND fk_user = ".$userid;
-		$sql .= " AND position = ".$zone;
+		$sql .= " AND fk_user = ".((int) $userid);
+		$sql .= " AND position = ".((int) $zone);
 
 		dol_syslog(get_class()."::saveboxorder", LOG_DEBUG);
 		$result = $db->query($sql);

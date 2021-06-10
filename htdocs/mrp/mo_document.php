@@ -179,7 +179,7 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'mrp';
-	$permission = $user->rights->mrp->write;
+	$permissiontoadd = $user->rights->mrp->write;
 	$permtoedit = $user->rights->mrp->write;
 	$param = '&id='.$object->id;
 

@@ -152,7 +152,7 @@ print '</div>';
 print '<br>';
 
 
-print_fiche_titre($langs->trans("ReferingWebsiteCheck"), '', '');
+print load_fiche_titre($langs->trans("ReferingWebsiteCheck"), '', '');
 
 print '<span class="opacitymedium">'.$langs->trans("ReferingWebsiteCheckDesc").'</span><br>';
 print '<br>';

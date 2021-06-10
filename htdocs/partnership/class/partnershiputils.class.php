@@ -27,12 +27,11 @@ require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-
 require_once DOL_DOCUMENT_ROOT.'/partnership/lib/partnership.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
-
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+
 /**
  *	Class with cron tasks of Partnership module
  */
@@ -102,7 +101,7 @@ class PartnershipUtils
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent_type as dty on (dty.rowid = d.fk_adherent_type)";
 		$sql .= " WHERE fk_member > 0";
 		$sql .= " AND (d.datefin < '".$this->db->idate($datetotest)."' AND dty.subscription = 1)";
-		$sql .= " AND p.status = ".$partnership::STATUS_ACCEPTED; // Only accepted not yet canceled
+		$sql .= " AND p.status = ".((int) $partnership::STATUS_ACCEPTED); // Only accepted not yet canceled
 		$sql .= $this->db->order('d.rowid', 'ASC');
 		// Limit is managed into loop later
 
@@ -263,7 +262,7 @@ class PartnershipUtils
 
 		$sql .= " WHERE 1 = 1";
 		$sql .= " AND p.".$fk_partner." > 0";
-		$sql .= " AND p.status = ".$partnership::STATUS_ACCEPTED; // Only accepted not yet canceled
+		$sql .= " AND p.status = ".((int) $partnership::STATUS_ACCEPTED); // Only accepted not yet canceled
 		$sql .= " AND (p.last_check_backlink IS NULL OR p.last_check_backlink <= '".$this->db->idate($now - 7 * 24 * 3600)."')"; // Every week, check that website contains a link to dolibarr.
 		$sql .= $this->db->order('p.rowid', 'ASC');
 		// Limit is managed into loop later
@@ -273,6 +272,7 @@ class PartnershipUtils
 			$numofexpiredmembers 		= $this->db->num_rows($resql);
 			$somethingdoneonpartnership = 0;
 			$ifetchpartner 				= 0;
+			$websitenotfound = '';
 			while ($ifetchpartner < $numofexpiredmembers) {
 				$ifetchpartner++;
 
@@ -393,11 +393,10 @@ class PartnershipUtils
 	/**
 	 * Action to check if Dolibarr backlink not found on partner website
 	 *
-	 * CAN BE A CRON TASK
-	 * @param  $website      Partner's website
-	 * @return  int                 0 if KO, 1 if OK
+	 * @param  $website      Website	Partner's website
+	 * @return  int                 	0 if KO, 1 if OK
 	 */
-	public function checkDolibarrBacklink($website = null)
+	private function checkDolibarrBacklink($website = null)
 	{
 		global $conf, $langs, $user;
 
@@ -406,7 +405,7 @@ class PartnershipUtils
 		$webcontent = '';
 
 		// $website = 'https://nextgestion.com/'; // For Test
-		$tmpgeturl = getURLContent($website);
+		$tmpgeturl = getURLContent($website, 'GET', '', 1, array(), array('http', 'https'), 0);
 		if ($tmpgeturl['curl_error_no']) {
 			$error++;
 			dol_syslog('Error getting '.$website.': '.$tmpgeturl['curl_error_msg']);
