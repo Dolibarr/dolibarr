@@ -2262,7 +2262,7 @@ function pdf_getTotalQty($object, $type, $outputlangs)
  * 	@param	Translate	$outputlangs	Object lang for output
  * 	@return	array                       Linked objects
  */
-function pdf_getLinkedObjects($object, $outputlangs)
+function pdf_getLinkedObjects(&$object, $outputlangs)
 {
 	global $db, $hookmanager;
 
