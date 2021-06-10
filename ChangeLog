@@ -15,7 +15,7 @@ NEW: Add a performance center page with all information and advices related to t
 NEW: A lot of fix into english text after a small proofreading campaign (still not perfect, but really better)
 NEW: All main menu entries are using the picto of the module
 NEW: Add a copy to clipboard button on some fields 
-NEW: Add an example of scheduled job to send email reminder for unpayed invoices
+NEW: Add an example of scheduled job to send email reminder for unpaid invoices
 NEW: Can make massive stock transfers from a CSV file.
 NEW: Accountancy - Add FEC import
 NEW: Accountancy - Add a confirmation form with options on export
@@ -34,7 +34,7 @@ NEW: Add some company information in the dropdown login menu
 NEW: Add constant MAIN_BUGTRACK_URL to set a custom url to redirect to when clicking on link "declare a bug"
 NEW: Add contact tag and bulk email status on the thirparty+contact create form
 NEW: Add db fields note_public and note_private for ECM module
-NEW: Manage deposit on supplier invoice (& somes ajustments)
+NEW: Support down payment on supplier invoice (& somes ajustments)
 NEW: Add edit/delete action icons on categories list pages
 NEW: Add hidden option to auto load input line extrafield into new lines
 NEW: Add import profile to import BOM
@@ -73,8 +73,8 @@ NEW: Can toggle FCKeditor on public/private notes
 NEW: Can use captcha on public page to create a ticket
 NEW: Check update availability for externals modules using a button on module page
 NEW: Choose lines to use while creating intervention card from origin
-NEW: Column shippement method, payment mode, payment term in proposal and order list
-NEW: Conf for default actiomm status
+NEW: Column shipment method, payment mode, payment term in proposal and order list
+NEW: Conf for default actioncomm status
 NEW: customer ref for product customer prices
 NEW: date and user signature on proposal (Issue 16062)
 NEW: Dictionary for availability - Add a column position
