@@ -543,4 +543,4 @@ create table llx_c_partnership_type
   active  	    tinyint DEFAULT 1  NOT NULL
 )ENGINE=innodb;
 
-
+ALTER TABLE llx_c_holiday_types ADD COLUMN block_if_negative integer NOT NULL DEFAULT 0 AFTER fk_country;
