@@ -17,7 +17,7 @@
  */
 
 /**
- * \file        class/knowledgerecord.class.php
+ * \file        htdocs/knowledgemanagement/class/knowledgerecord.class.php
  * \ingroup     knowledgemanagement
  * \brief       This file is a CRUD class file for KnowledgeRecord (Create/Read/Update/Delete)
  */
