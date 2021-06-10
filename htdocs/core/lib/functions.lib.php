@@ -8005,17 +8005,20 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1)
 	}
 
 	// We block using of php exec or php file functions
-	$forbiddenphpcommands = array("exec(", "passthru(", "shell_exec(", "system(", "proc_open(", "popen(", "eval(", "dol_eval(", "executeCLI(");
-	$forbiddenphpcommands = array_merge($forbiddenphpcommands, array("fopen(", "file_put_contents(", "fputs(", "fputscsv(", "fwrite(", "fpassthru(", "unlink(", "mkdir(", "rmdir(", "symlink(", "touch(", "umask("));
-	$forbiddenphpcommands = array_merge($forbiddenphpcommands, array('function(', '$$', 'call_user_func('));
-	$forbiddenphpcommands = array_merge($forbiddenphpcommands, array('global', '_ENV', '_SESSION', '_COOKIE', '_GET', '_POST', '_REQUEST'));
+	$forbiddenphpstrings = array("exec(", "passthru(", "shell_exec(", "system(", "proc_open(", "popen(", "eval(", "dol_eval(", "executeCLI(");
+	$forbiddenphpstrings = array_merge($forbiddenphpstrings, array("fopen(", "file_put_contents(", "fputs(", "fputscsv(", "fwrite(", "fpassthru(", "unlink(", "mkdir(", "rmdir(", "symlink(", "touch(", "umask("));
+	$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('function(', '$$', 'call_user_func('));
+	$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', '_SESSION', '_COOKIE', '_GET', '_POST', '_REQUEST'));
+	$forbiddenphpregex = array('global\s+\$');
 	do {
 		$oldstringtoclean = $s;
-		$s = str_ireplace($forbiddenphpcommands, '__forbiddenstring__', $s);
+		$s = str_ireplace($forbiddenphpstrings, '__forbiddenstring__', $s);
+		$s = preg_replace('/'.$forbiddenphpregex.'/', '__forbiddenstring__', $s);
 		//$s = preg_replace('/\$[a-zA-Z0-9_\->\$]+\(/i', '', $s);	// Remove $function( call and $mycall->mymethod(
 	} while ($oldstringtoclean != $s);
 
 	if (strpos($s, '__forbiddenstring__') !== false) {
+		dol_syslog('Bad string syntax to evaluate: '.$s, LOG_WARNING);
 		return 'Bad string syntax to evaluate: '.$s;
 	}
 
