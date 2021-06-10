@@ -686,7 +686,7 @@ if ($resql) {
 				$totalarray['val']['f.total_ht'] += $objp->total_ht;
 			}
 			if (!empty($arrayfields['f.total_tva']['checked'])) {
-				print '<td class="nowrap right amount">'.price($objp->total_vat).'</td>'."\n";
+				print '<td class="nowrap right amount">'.price($objp->total_tva).'</td>'."\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
