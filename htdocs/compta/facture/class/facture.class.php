@@ -4153,20 +4153,23 @@ class Facture extends CommonInvoice
 		//	$sql.= " AND (f.paye = 1";				// Classee payee completement
 		//	$sql.= " OR f.close_code IS NOT NULL)";	// Classee payee partiellement
 		$sql .= " AND ff.type IS NULL"; // Renvoi vrai si pas facture de remplacement
-		$sql .= " AND f.type != ".self::TYPE_CREDIT_NOTE; // Type non 2 si facture non avoir
+		$sql .= " AND f.type <> ".self::TYPE_CREDIT_NOTE; // Exclude credit note invoices from selection
 
 		if (!empty($conf->global->INVOICE_USE_SITUATION_CREDIT_NOTE)) {
-			// Select the last situation invoice
-			$sqlSit = 'SELECT MAX(fs.rowid)';
-			$sqlSit .= " FROM ".MAIN_DB_PREFIX."facture as fs";
-			$sqlSit .= " WHERE fs.entity IN (".getEntity('invoice').")";
-			$sqlSit .= " AND fs.type = ".self::TYPE_SITUATION;
-			$sqlSit .= " AND fs.fk_statut in (".self::STATUS_VALIDATED.",".self::STATUS_CLOSED.")";
-			$sqlSit .= " GROUP BY fs.situation_cycle_ref";
-			$sqlSit .= " ORDER BY fs.situation_counter";
-			$sql .= " AND ( f.type != ".self::TYPE_SITUATION." OR f.rowid IN (".$this->db->sanitize($sqlSit).") )"; // Type non 5 si facture non avoir
+			// Keep invoices that are not situation invoices or that are the last in serie if it is a situation invoice
+			$sql .= " AND (f.type <> ".self::TYPE_SITUATION." OR f.rowid IN ";
+			$sql .= '(SELECT MAX(fs.rowid)';	// This select returns several ID becasue of the group by later
+			$sql .= " FROM ".MAIN_DB_PREFIX."facture as fs";
+			$sql .= " WHERE fs.entity IN (".getEntity('invoice').")";
+			$sql .= " AND fs.type = ".self::TYPE_SITUATION;
+			$sql .= " AND fs.fk_statut IN (".self::STATUS_VALIDATED.",".self::STATUS_CLOSED.")";
+			if ($socid > 0) {
+				$sql .= " AND f.fk_soc = ".((int) $socid);
+			}
+			$sql .= " GROUP BY fs.situation_cycle_ref)";		// For each situation_cycle_ref, we take the higher rowid
+			$sql .= ")";
 		} else {
-			$sql .= " AND f.type != ".self::TYPE_SITUATION; // Type non 5 si facture non avoir
+			$sql .= " AND f.type <> ".self::TYPE_SITUATION; // Keep invoices that are not situation invoices
 		}
 
 		if ($socid > 0) {
