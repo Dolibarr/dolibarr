@@ -586,7 +586,7 @@ class FormMail extends Form
 						// Add also email aliases if there is some
 						$listaliases = array(
 							'user_aliases' => (empty($user->email_aliases) ? '' : $user->email_aliases),
-							'global_aliases' => getDolGlobalString('$conf->global->MAIN_INFO_SOCIETE_MAIL_ALIASES'),
+							'global_aliases' => getDolGlobalString('MAIN_INFO_SOCIETE_MAIL_ALIASES'),
 						);
 
 						// Also add robot email
