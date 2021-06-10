@@ -4164,7 +4164,7 @@ class Facture extends CommonInvoice
 			$sql .= " AND fs.type = ".self::TYPE_SITUATION;
 			$sql .= " AND fs.fk_statut IN (".self::STATUS_VALIDATED.",".self::STATUS_CLOSED.")";
 			if ($socid > 0) {
-				$sql .= " AND f.fk_soc = ".((int) $socid);
+				$sql .= " AND fs.fk_soc = ".((int) $socid);
 			}
 			$sql .= " GROUP BY fs.situation_cycle_ref)";		// For each situation_cycle_ref, we take the higher rowid
 			$sql .= ")";
