@@ -2285,24 +2285,22 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 		} elseif ($objecttype == 'commande' || $objecttype == 'supplier_order') {
 			$outputlangs->load('orders');
 
-			if(count($objects) > 1) {
-			    $object->note_public .= '<br/>'.$outputlangs->transnoentities("RefOrder").' : <br/>';
-                foreach($objects as $elementobject) {
-                    $object->note_public .= $outputlangs->transnoentities($elementobject->ref).($elementobject->ref_client ? ' ('.$elementobject->ref_client.')' : '').($elementobject->ref_supplier ? ' ('.$elementobject->ref_supplier.')' : '').' ';
-                    $object->note_public .= $outputlangs->transnoentities("OrderDate").' : ';
-                    $object->note_public .= dol_print_date($elementobject->date, 'day', '', $outputlangs);
-                    $object->note_public .= '<br/>';
-                }
-            } elseif(count($objects) == 1) {
-			    $elementobject = array_shift($objects);
-			    $linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder");
+			if (count($objects) > 1) {
+				$object->note_public .= '<br/>'.$outputlangs->transnoentities("RefOrder").' : <br/>';
+				foreach ($objects as $elementobject) {
+					$object->note_public .= $outputlangs->transnoentities($elementobject->ref).($elementobject->ref_client ? ' ('.$elementobject->ref_client.')' : '').($elementobject->ref_supplier ? ' ('.$elementobject->ref_supplier.')' : '').' ';
+					$object->note_public .= $outputlangs->transnoentities("OrderDate").' : ';
+					$object->note_public .= dol_print_date($elementobject->date, 'day', '', $outputlangs);
+					$object->note_public .= '<br/>';
+				}
+			} elseif (count($objects) == 1) {
+				$elementobject = array_shift($objects);
+				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder");
 				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref).($elementobject->ref_client ? ' ('.$elementobject->ref_client.')' : '').($elementobject->ref_supplier ? ' ('.$elementobject->ref_supplier.')' : '');
 				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("OrderDate");
 				$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->date, 'day', '', $outputlangs);
-            }
-		}
-		elseif ($objecttype == 'contrat')
-		{
+			}
+		} elseif ($objecttype == 'contrat') {
 			$outputlangs->load('contracts');
 			foreach ($objects as $elementobject) {
 				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefContract");
@@ -2321,67 +2319,61 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 		} elseif ($objecttype == 'shipping') {
 			$outputlangs->loadLangs(array("orders", "sendings"));
 
-            if(count($objects) > 1) {
-                $order = null;
-                if(empty($object->linkedObjects['commande']) && $object->element != 'commande') $object->note_public .= '<br/>'.$outputlangs->transnoentities("RefOrder").' / '.$outputlangs->transnoentities("RefSending").' : <br/>';
-                else $object->note_public .= '<br/>'.$outputlangs->transnoentities("RefSending").' : <br/>';
-                // We concat this record info into fields xxx_value. title is overwrote.
-                foreach($objects as $elementobject) {
-                    if(empty($object->linkedObjects['commande']) && $object->element != 'commande')    // There is not already a link to order and object is not the order, so we show also info with order
-                    {
-                        $elementobject->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 0);
-                        if(! empty($elementobject->linkedObjectsIds['commande'])) {
-                            include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-                            $order = new Commande($db);
-                            $ret = $order->fetch(reset($elementobject->linkedObjectsIds['commande']));
-                            if($ret < 1) {
-                                $order = null;
-                            }
-                        }
-                    }
+			if (count($objects) > 1) {
+				$order = null;
+				if (empty($object->linkedObjects['commande']) && $object->element != 'commande') $object->note_public .= '<br/>'.$outputlangs->transnoentities("RefOrder").' / '.$outputlangs->transnoentities("RefSending").' : <br/>';
+				else $object->note_public .= '<br/>'.$outputlangs->transnoentities("RefSending").' : <br/>';
+				// We concat this record info into fields xxx_value. title is overwrote.
+				foreach ($objects as $elementobject) {
+					if (empty($object->linkedObjects['commande']) && $object->element != 'commande') {    // There is not already a link to order and object is not the order, so we show also info with order
+						$elementobject->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 0);
+						if (! empty($elementobject->linkedObjectsIds['commande'])) {
+							include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+							$order = new Commande($db);
+							$ret = $order->fetch(reset($elementobject->linkedObjectsIds['commande']));
+							if ($ret < 1) {
+								$order = null;
+							}
+						}
+					}
 
-                    if(! is_object($order)) {
-                        $object->note_public .= $outputlangs->transnoentities($elementobject->ref);
-                        $object->note_public .= '<br/>';
-                    }
+					if (! is_object($order)) {
+						$object->note_public .= $outputlangs->transnoentities($elementobject->ref);
+						$object->note_public .= '<br/>';
+					} else {
+						$object->note_public .= $outputlangs->convToOutputCharset($order->ref).($order->ref_client ? ' ('.$order->ref_client.')' : '');
+						$object->note_public .= ' / '.$outputlangs->transnoentities($elementobject->ref);
+						$object->note_public .= '<br/>';
+					}
+				}
+			} elseif (count($objects) == 1) {
+				$elementobject = array_shift($objects);
+				$order = null;
+				// We concat this record info into fields xxx_value. title is overwrote.
+				if (empty($object->linkedObjects['commande']) && $object->element != 'commande') {    // There is not already a link to order and object is not the order, so we show also info with order
+					$elementobject->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 0);
+					if (! empty($elementobject->linkedObjectsIds['commande'])) {
+						include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+						$order = new Commande($db);
+						$ret = $order->fetch(reset($elementobject->linkedObjectsIds['commande']));
+						if ($ret < 1) {
+							$order = null;
+						}
+					}
+				}
 
-                    else {
-                        $object->note_public .= $outputlangs->convToOutputCharset($order->ref).($order->ref_client ? ' ('.$order->ref_client.')' : '');
-                        $object->note_public .= ' / '.$outputlangs->transnoentities($elementobject->ref);
-                        $object->note_public .= '<br/>';
-                    }
-                }
-            }
-            elseif(count($objects) == 1) {
-                $elementobject = array_shift($objects);
-                $order = null;
-                // We concat this record info into fields xxx_value. title is overwrote.
-                if(empty($object->linkedObjects['commande']) && $object->element != 'commande')    // There is not already a link to order and object is not the order, so we show also info with order
-                {
-                    $elementobject->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 0);
-                    if(! empty($elementobject->linkedObjectsIds['commande'])) {
-                        include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-                        $order = new Commande($db);
-                        $ret = $order->fetch(reset($elementobject->linkedObjectsIds['commande']));
-                        if($ret < 1) {
-                            $order = null;
-                        }
-                    }
-                }
-
-                if(! is_object($order)) {
-                    $linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefSending");
-                    if(! empty($linkedobjects[$objecttype]['ref_value'])) $linkedobjects[$objecttype]['ref_value'] .= ' / ';
-                    $linkedobjects[$objecttype]['ref_value'] .= $outputlangs->transnoentities($elementobject->ref);
-                }
-                else {
-                    $linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder").' / '.$outputlangs->transnoentities("RefSending");
-                    if(empty($linkedobjects[$objecttype]['ref_value'])) $linkedobjects[$objecttype]['ref_value'] = $outputlangs->convToOutputCharset($order->ref).($order->ref_client ? ' ('.$order->ref_client.')' : '');
-                    $linkedobjects[$objecttype]['ref_value'] .= ' / '.$outputlangs->transnoentities($elementobject->ref);
-                }
-            }
-        }
-    }
+				if (! is_object($order)) {
+					$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefSending");
+					if (! empty($linkedobjects[$objecttype]['ref_value'])) $linkedobjects[$objecttype]['ref_value'] .= ' / ';
+					$linkedobjects[$objecttype]['ref_value'] .= $outputlangs->transnoentities($elementobject->ref);
+				} else {
+					$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder").' / '.$outputlangs->transnoentities("RefSending");
+					if (empty($linkedobjects[$objecttype]['ref_value'])) $linkedobjects[$objecttype]['ref_value'] = $outputlangs->convToOutputCharset($order->ref).($order->ref_client ? ' ('.$order->ref_client.')' : '');
+					$linkedobjects[$objecttype]['ref_value'] .= ' / '.$outputlangs->transnoentities($elementobject->ref);
+				}
+			}
+		}
+	}
 
 	// For add external linked objects
 	if (is_object($hookmanager)) {
