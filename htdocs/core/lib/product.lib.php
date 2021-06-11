@@ -560,7 +560,7 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 	$parameters = array('socid'=>$socid);
-	$reshook = $hookmanager->executeHooks('addmoreproductstat', $parameters, $product, $nblines); // Note that $action and $object may have been modified by some hooks
+	$reshook = $hookmanager->executeHooks('addMoreProductStat', $parameters, $product, $nblines); // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 	print $hookmanager->resPrint;
