@@ -6,7 +6,7 @@ const subscribeHook = (z, bundle) => {
     const data = {
         url: bundle.targetUrl,
         event: bundle.event,
-        module: 'company',
+        module: 'contact',
         action: bundle.inputData.action
     };
 
@@ -40,10 +40,10 @@ const unsubscribeHook = (z, bundle) => {
     return z.request(options).then((response) => JSON.parse(response.content));
 };
 
-const getThirdparty = (z, bundle) => {
+const getContact = (z, bundle) => {
     // bundle.cleanedRequest will include the parsed JSON object (if it's not a
     // test poll) and also a .querystring property with the URL's query string.
-    const thirdparty = {
+    const contact = {
         id: bundle.cleanedRequest.id,
         name: bundle.cleanedRequest.name,
         name_alias: bundle.cleanedRequest.name_alias,
@@ -52,29 +52,22 @@ const getThirdparty = (z, bundle) => {
         zip: bundle.cleanedRequest.zip,
         town: bundle.cleanedRequest.town,
         email: bundle.cleanedRequest.email,
-        client: bundle.cleanedRequest.client,
-        fournisseur: bundle.cleanedRequest.fournisseur,
-        code_client: bundle.cleanedRequest.code_client,
-        code_fournisseur: bundle.cleanedRequest.code_fournisseur,
-        idprof1: bundle.cleanedRequest.idprof1,
-        idprof2: bundle.cleanedRequest.idprof2,
-        idprof3: bundle.cleanedRequest.idprof3,
-        idprof4: bundle.cleanedRequest.idprof4,
-        idprof5: bundle.cleanedRequest.idprof5,
-        idprof6: bundle.cleanedRequest.idprof6,
+        phone_pro: bundle.cleanedRequest.phone_pro,
+        phone_perso: bundle.cleanedRequest.phone_perso,
+        phone_mobile: bundle.cleanedRequest.phone_mobile,
         authorId: bundle.cleanedRequest.authorId,
         createdAt: bundle.cleanedRequest.createdAt,
         action: bundle.cleanedRequest.action
     };
 
-    return [thirdparty];
+    return [contact];
 };
 
-const getFallbackRealThirdparty = (z, bundle) => {
+const getFallbackRealContact = (z, bundle) => {
     // For the test poll, you should get some real data, to aid the setup process.
     const module = bundle.inputData.module;
     const options = {
-        url: bundle.authData.url + '/api/index.php/thirdparties/0',
+        url: bundle.authData.url + '/api/index.php/contacts/0',
     };
 
     return z.request(options).then((response) => [JSON.parse(response.content)]);
@@ -89,11 +82,10 @@ const getFallbackRealThirdparty = (z, bundle) => {
 //     return z.request(options).then((response) => JSON.parse(response.content));
 // };
 // const getModulesChoices = () => {
-
 //     return {
 //         orders: "Order",
 //         invoices: "Invoice",
-//         thirdparties: "Thirdparty",
+//         contacts: "Contact",
 //         contacts: "Contacts"
 //     };
 // };
@@ -111,14 +103,14 @@ const getFallbackRealThirdparty = (z, bundle) => {
 // We recommend writing your triggers separate like this and rolling them
 // into the App definition at the end.
 module.exports = {
-    key: 'thirdparty',
+    key: 'contact',
 
     // You'll want to provide some helpful display labels and descriptions
     // for users. Zapier will put them into the UX.
-    noun: 'Thirdparty',
+    noun: 'Contact',
     display: {
-        label: 'New Thirdparty',
-        description: 'Triggers when a new thirdparty action is done in Dolibarr.'
+        label: 'New Contact',
+        description: 'Triggers when a new contact action is done in Dolibarr.'
     },
 
     // `operation` is where the business logic goes.
@@ -131,7 +123,7 @@ module.exports = {
                 key: 'action',
                 required: true,
                 type: 'string',
-                helpText: 'Which action of thirdparty this should trigger on.',
+                helpText: 'Which action of contact this should trigger on.',
                 choices: {
                     create: "Create",
                     modify: "Modify",
@@ -145,8 +137,8 @@ module.exports = {
         performSubscribe: subscribeHook,
         performUnsubscribe: unsubscribeHook,
 
-        perform: getThirdparty,
-        performList: getFallbackRealThirdparty,
+        perform: getContact,
+        performList: getFallbackRealContact,
 
         // In cases where Zapier needs to show an example record to the user, but we are unable to get a live example
         // from the API, Zapier will fallback to this hard-coded sample. It should reflect the data structure of
@@ -154,8 +146,7 @@ module.exports = {
         sample: {
             id: 1,
             createdAt: 1472069465,
-            name: 'DOE',
-            name_alias: 'DOE Ltd',
+            lastname: 'DOE',
             firstname: 'John',
             authorId: 1,
             action: 'create'
@@ -168,21 +159,13 @@ module.exports = {
         outputFields: [
             {key: 'id', type: "integer", label: 'ID'},
             {key: 'createdAt', label: 'Created At'},
-            {key: 'name', label: 'Name'},
-            {key: 'name_alias', label: 'Name alias'},
+            {key: 'lastname', label: 'Lastname'},
             {key: 'firstname', label: 'Firstname'},
+            {key: 'phone', label: 'Phone pro'},
+            {key: 'phone_perso', label: 'Phone perso'},
+            {key: 'phone_mobile', label: 'Phone mobile'},
             {key: 'authorId', type: "integer", label: 'Author ID'},
-            {key: 'action', label: 'Action'},
-            {key: 'client', label: 'Customer/Prospect 0/1/2/3'},
-            {key: 'fournisseur', label: 'Supplier 0/1'},
-            {key: 'code_client', label: 'Customer code'},
-            {key: 'code_fournisseur', label: 'Supplier code'},
-            {key: 'idprof1', label: 'Id Prof 1'},
-            {key: 'idprof2', label: 'Id Prof 2'},
-            {key: 'idprof3', label: 'Id Prof 3'},
-            {key: 'idprof4', label: 'Id Prof 4'},
-            {key: 'idprof5', label: 'Id Prof 5'},
-            {key: 'idprof6', label: 'Id Prof 6'}
+            {key: 'action', label: 'Action'}
         ]
     }
 };

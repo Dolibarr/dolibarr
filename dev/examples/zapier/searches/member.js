@@ -1,12 +1,12 @@
 module.exports = {
-    key: 'thirdparty',
+    key: 'member',
 
     // You'll want to provide some helpful display labels and descriptions
     // for users. Zapier will put them into the UX.
-    noun: 'Thirdparty',
+    noun: 'Member',
     display: {
-        label: 'Find a Thirdparty',
-        description: 'Search for thirdparty.'
+        label: 'Find a Member',
+        description: 'Search for member.'
     },
 
     // `operation` is where we make the call to your API to do the search
@@ -15,10 +15,10 @@ module.exports = {
         // search fields.
         inputFields: [
             {
-                key: 'name',
+                key: 'lastname',
                 type: 'string',
-                label: 'Name',
-                helpText: 'Name to limit to the search to (i.e. The company or %company%).'
+                label: 'Lastname',
+                helpText: 'Lastname to limit to the search to (i.e. The company or %company%).'
             },
             {
                 key: 'email',
@@ -29,19 +29,19 @@ module.exports = {
         ],
 
         perform: async (z, bundle) => {
-            const url = bundle.authData.url  + '/api/index.php/thirdparties/';
+            const url = bundle.authData.url + '/api/index.php/members/';
 
             // Put the search value in a query param. The details of how to build
             // a search URL will depend on how your API works.
             let filter = '';
-            if (bundle.inputData.name) {
-                filter = "t.nom like \'%"+bundle.inputData.name+"%\'";
+            if (bundle.inputData.lastname) {
+                filter = "t.lastname like \'%" + bundle.inputData.name + "%\'";
             }
             if (bundle.inputData.email) {
-                if (bundle.inputData.name) {
+                if (bundle.inputData.lastname) {
                     filter += " and ";
                 }
-                filter += "t.email like \'"+bundle.inputData.email+"\'";
+                filter += "t.email like \'" + bundle.inputData.email + "\'";
             }
             const response = await z.request({
                 url: url,
@@ -67,8 +67,6 @@ module.exports = {
             name: 'DOE',
             firstname: 'John',
             authorId: 1,
-            directions: '1. Boil Noodles\n2.Serve with sauce',
-            style: 'italian'
         },
 
         // If the resource can have fields that are custom on a per-user basis, define a function to fetch the custom
@@ -81,15 +79,10 @@ module.exports = {
                 type: "integer",
                 label: 'ID'
             },
-            {key: 'createdAt', type: "integer", label: 'Created At'},
-            {key: 'name', label: 'Name'},
-            {key: 'firstname', label: 'Firstname'},
-            {key: 'directions', label: 'Directions'},
-            {key: 'authorId', type: "integer", label: 'Author ID'},
-            {
-                key: 'style',
-                label: 'Style'
-            }
+            { key: 'createdAt', type: "integer", label: 'Created At' },
+            { key: 'name', label: 'Name' },
+            { key: 'firstname', label: 'Firstname' },
+            { key: 'authorId', type: "integer", label: 'Author ID' },
         ]
     }
 };

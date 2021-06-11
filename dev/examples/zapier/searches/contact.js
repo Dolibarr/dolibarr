@@ -1,12 +1,12 @@
 module.exports = {
-    key: 'thirdparty',
+    key: 'contact',
 
     // You'll want to provide some helpful display labels and descriptions
     // for users. Zapier will put them into the UX.
-    noun: 'Thirdparty',
+    noun: 'Contact',
     display: {
-        label: 'Find a Thirdparty',
-        description: 'Search for thirdparty.'
+        label: 'Find a Contact',
+        description: 'Search for contact.'
     },
 
     // `operation` is where we make the call to your API to do the search
@@ -15,10 +15,10 @@ module.exports = {
         // search fields.
         inputFields: [
             {
-                key: 'name',
+                key: 'lastname',
                 type: 'string',
-                label: 'Name',
-                helpText: 'Name to limit to the search to (i.e. The company or %company%).'
+                label: 'Lastname',
+                helpText: 'Lastname to limit to the search to (i.e. The company or %company%).'
             },
             {
                 key: 'email',
@@ -29,16 +29,16 @@ module.exports = {
         ],
 
         perform: async (z, bundle) => {
-            const url = bundle.authData.url  + '/api/index.php/thirdparties/';
+            const url = bundle.authData.url  + '/api/index.php/contacts/';
 
             // Put the search value in a query param. The details of how to build
             // a search URL will depend on how your API works.
             let filter = '';
-            if (bundle.inputData.name) {
-                filter = "t.nom like \'%"+bundle.inputData.name+"%\'";
+            if (bundle.inputData.lastname) {
+                filter = "t.lastname like \'%"+bundle.inputData.name+"%\'";
             }
             if (bundle.inputData.email) {
-                if (bundle.inputData.name) {
+                if (bundle.inputData.lastname) {
                     filter += " and ";
                 }
                 filter += "t.email like \'"+bundle.inputData.email+"\'";
