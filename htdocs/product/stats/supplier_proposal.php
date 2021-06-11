@@ -45,7 +45,7 @@ if (!empty($user->socid)) {
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('productstatspropal'));
+$hookmanager->initHooks(array('productstatssupplierpropal'));
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
