@@ -329,7 +329,7 @@ class modWorkstation extends DolibarrModules
 			'fk_menu'=>'fk_mainmenu=mrp',
 			// This is a Left menu entry
 			'type'=>'left',
-			'titre'=>$langs->trans('Workstations'),
+			'titre'=>'Workstations',
 			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
 			'mainmenu'=>'mrp',
 			'leftmenu'=>'workstation_workstation',
@@ -350,7 +350,7 @@ class modWorkstation extends DolibarrModules
 			'fk_menu'=>'fk_mainmenu=mrp,fk_leftmenu=workstation_workstation',
 			// This is a Left menu entry
 			'type'=>'left',
-			'titre'=>$langs->trans('WorkstationCreate'),
+			'titre'=>'WorkstationCreate',
 			'mainmenu'=>'mrp',
 			'leftmenu'=>'workstation_workstation_left_create',
 			'url'=>'/workstation/workstation_card.php?action=create',
@@ -370,7 +370,7 @@ class modWorkstation extends DolibarrModules
 			'fk_menu'=>'fk_mainmenu=mrp,fk_leftmenu=workstation_workstation',
 			// This is a Left menu entry
 			'type'=>'left',
-			'titre'=>$langs->trans('List'),
+			'titre'=>'List',
 			'mainmenu'=>'mrp',
 			'leftmenu'=>'workstation_workstation_left_list',
 			'url'=>'/workstation/workstation_list.php',
