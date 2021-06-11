@@ -2215,7 +2215,7 @@ class ExtraFields
 						continue; // Value was not provided, we should not set it.
 					}
 					$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
-//					$value_key = price2num($value_arr); issue #17649 to keep possibility of advanced filtering on extrafields
+					//                  $value_key = price2num($value_arr); issue #17649 to keep possibility of advanced filtering on extrafields
 				} else {
 					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {
 						continue; // Value was not provided, we should not set it.
