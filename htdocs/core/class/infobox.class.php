@@ -97,7 +97,6 @@ class InfoBox
 
 		$boxes = array();
 
-		$confuserzone = 'MAIN_BOXES_'.$zone;
 		if ($mode == 'activated') {	// activated
 			$sql = "SELECT b.rowid, b.position, b.box_order, b.fk_user,";
 			$sql .= " d.rowid as box_id, d.file, d.note, d.tms";
@@ -278,14 +277,13 @@ class InfoBox
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes";
 						$sql .= "(box_id, position, box_order, fk_user, entity)";
 						$sql .= " values (";
-						$sql .= " ".$id.",";
-						$sql .= " ".$zone.",";
+						$sql .= " ".((int) $id).",";
+						$sql .= " ".((int) $zone).",";
 						$sql .= " '".$db->escape($colonne.$ii)."',";
-						$sql .= " ".$userid.",";
-						$sql .= " ".$conf->entity;
+						$sql .= " ".((int) $userid).",";
+						$sql .= " ".((int) $conf->entity);
 						$sql .= ")";
 
-						dol_syslog(get_class()."::saveboxorder", LOG_DEBUG);
 						$result = $db->query($sql);
 						if ($result < 0) {
 							$error++;

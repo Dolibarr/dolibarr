@@ -115,7 +115,7 @@ if ($action == 'add') {
 							$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (";
 							$sql .= "box_id, position, box_order, fk_user, entity";
 							$sql .= ") VALUES (";
-							$sql .= $boxid['value'].", ".((int) $pos).", '".(($nbboxonleft > $nbboxonright) ? 'B01' : 'A01')."', ".$fk_user.", ".$conf->entity;
+							$sql .= ((int) $boxid['value']).", ".((int) $pos).", '".(($nbboxonleft > $nbboxonright) ? 'B01' : 'A01')."', ".((int) $fk_user).", ".$conf->entity;
 							$sql .= ")";
 
 							dol_syslog("boxes.php activate box", LOG_DEBUG);
@@ -149,11 +149,6 @@ if ($action == 'delete') {
 	if (!empty($obj->box_id)) {
 		$db->begin();
 
-		// Remove all personalized setup when a box is activated or disabled (why removing all ? We removed only removed boxes)
-		//	$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param";
-		//	$sql.= " WHERE param LIKE 'MAIN_BOXES_%'";
-		//	$resql = $db->query($sql);
-
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes";
 		$sql .= " WHERE entity = ".$conf->entity;
 		$sql .= " AND box_id=".((int) $obj->box_id);
@@ -184,6 +179,7 @@ if ($action == 'switch') {
 			 $newsecondnum = preg_replace('/[a-zA-Z]+/', '', $newsecond);
 			 $newsecond = sprintf("%s%02d", $newsecondchar ? $newsecondchar : 'A', $newsecondnum + 1);
 		}
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."boxes SET box_order='".$db->escape($newfirst)."' WHERE rowid=".((int) $objfrom->rowid);
 		dol_syslog($sql);
 		$resultupdatefrom = $db->query($sql);
