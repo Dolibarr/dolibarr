@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - receptions
-ReceptionsSetup=Product Reception setup
+ReceptionsSetup=Opsætning af produktmodtagelse
 RefReception=Modtager Ref.
 Reception=Den proces
 Receptions=Modtagelse
@@ -41,5 +41,7 @@ ReceptionLine=Modtagelse linje
 ProductQtyInReceptionAlreadySent=Produkt mængde fra åben salgsordre allerede sendt
 ProductQtyInSuppliersReceptionAlreadyRecevied=Produkt mængde fra åben leverandør ordre allerede modtaget
 ValidateOrderFirstBeforeReception=Du skal først validere ordren, før du kan lave modtagelse.
-ReceptionsNumberingModules=Numbering module for receptions
-ReceptionsReceiptModel=Document templates for receptions
+ReceptionsNumberingModules=Nummerering modul til receptioner
+ReceptionsReceiptModel=Dokumentskabeloner til modtagelser
+NoMorePredefinedProductToDispatch=Ikke flere foruddefinerede produkter, der skal sendes
+

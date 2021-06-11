@@ -1,23 +1,23 @@
 # Dolibarr language file - Source file is en_US - help
-CommunitySupport=Форум/Wiki поддръжка
-EMailSupport=Поддръжка по имейл
+CommunitySupport=Форум / Wiki поддръжка
+EMailSupport=Имейл поддръжка
 RemoteControlSupport=Онлайн в реално време / дистанционна поддръжка
 OtherSupport=Друга поддръжка
-ToSeeListOfAvailableRessources=За да се свържете/вижте наличните ресурси:
-HelpCenter=Помощен център
-DolibarrHelpCenter=Dolibarr център за помощ и поддръжка
-ToGoBackToDolibarr=В противен случай, <a href="%s">кликнете тук, за да продължите да използвате Dolibarr</a>.
-TypeOfSupport=Тип поддръжка
-TypeSupportCommunauty=Общност (безплатно)
-TypeSupportCommercial=Търговски
-TypeOfHelp=Тип
+ToSeeListOfAvailableRessources=За да осъществите контакт или видите наличните ресурси:
+HelpCenter=Център за помощ
+DolibarrHelpCenter=Център за помощ и поддръжка на Dolibarr
+ToGoBackToDolibarr=В противен случай, <a href="%s">кликнете тук, за да продължите да използвате Dolibarr</a>
+TypeOfSupport=Вид поддръжка
+TypeSupportCommunauty=Общностна (безплатна)
+TypeSupportCommercial=Комерсиална
+TypeOfHelp=Вид
 NeedHelpCenter=Нуждаете се от помощ или поддръжка?
 Efficiency=Ефективност
 TypeHelpOnly=Само помощ
-TypeHelpDev=Помощ + развитие
-TypeHelpDevForm=Помощ + развитие + обучение
-BackToHelpCenter=В противен случай <a href="%s">се върнете в началната страница на помощния център</a>.
-LinkToGoldMember=Можете да се обадите на някой от обучаващите, предварително избрани от Dolibarr за вашия език (%s), като кликнете върху тяхната джаджа (статуса и максималната цена са автоматично актуализирани):
+TypeHelpDev=Помощ + разработка
+TypeHelpDevForm=Помощ + разработка + обучение
+BackToHelpCenter=В противен случай <a href="%s">се върнете в началната страница на центърът за помощ</a>.
+LinkToGoldMember=Може да се обадите на някой от обучаващите, предварително посочени от Dolibarr за вашия език (%s), като кликнете върху тяхната джаджа (статуса и максималната цена са автоматично актуализирани):
 PossibleLanguages=Поддържани езици
-SubscribeToFoundation=Помогнете на проекта Dolibarr, като се присъедините към фондацията
-SeeOfficalSupport=За официална поддръжка на Dolibarr за Вашият език: <br><b><a href="%s" target="_blank">%s</a></b>
+SubscribeToFoundation=Помогнете на проекта Dolibarr, като се присъедините към фондацията.
+SeeOfficalSupport=За официална поддръжка на Dolibarr на вашия език: <br><b><a href="%s" target="_blank">%s</a></b>

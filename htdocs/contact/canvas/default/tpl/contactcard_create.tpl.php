@@ -16,8 +16,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
-{
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -29,9 +28,9 @@ if (empty($conf) || ! is_object($conf))
 <?php
 print load_fiche_titre($this->control->tpl['title']);
 
-dol_htmloutput_errors((is_numeric($object->error)?'':$object->error), $object->errors);
+dol_htmloutput_errors((is_numeric($object->error) ? '' : $object->error), $object->errors);
 
-dol_htmloutput_errors((is_numeric($GLOBALS['error'])?'':$GLOBALS['error']), $GLOBALS['errors']);
+dol_htmloutput_errors((is_numeric($GLOBALS['error']) ? '' : $GLOBALS['error']), $GLOBALS['errors']);
 
 dol_htmloutput_errors($this->control->tpl['error'], $this->control->tpl['errors']);
 
@@ -108,11 +107,6 @@ echo $this->control->tpl['ajax_selectcountry']; ?>
 <tr>
 	<td><?php echo $langs->trans("Email"); ?></td>
 	<td colspan="3"><input name="email" type="text" size="50" maxlength="80" value="<?php echo $this->control->tpl['email']; ?>"></td>
-</tr>
-
-<tr>
-	<td><?php echo $langs->trans("IM"); ?></td>
-	<td colspan="3"><input name="jabberid" type="text" size="50" maxlength="80" value="<?php echo $this->control->tpl['jabberid']; ?>"></td>
 </tr>
 
 <tr>

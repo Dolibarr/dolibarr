@@ -7,13 +7,14 @@ Permission23103 = Smazat naplánovanou úlohu
 Permission23104 = Provést naplánovanou úlohu
 # Admin
 CronSetup=Nastavení naplánovaných úloh
-URLToLaunchCronJobs=URL ke kontrole a spuštění úlohy v případě potřeby
-OrToLaunchASpecificJob=Nebo zkontrolovat a zahájit konkrétní práci
+URLToLaunchCronJobs=URL to check and launch qualified cron jobs from a browser
+OrToLaunchASpecificJob=Or to check and launch a specific job from a browser
 KeyForCronAccess=Bezpečnostní klíč URL spuštění úlohy
 FileToLaunchCronJobs=Příkazový řádek pro kontrolu a spuštění kvalifikovaných úloh v cronu
 CronExplainHowToRunUnix=Na Unixových systémech by jste měli použít následující položku crontab ke spuštění příkazového řádku každých 5 minut
 CronExplainHowToRunWin=V prostředí Microsoft  Windows můžete pomocí nástrojů Naplánované úlohy spustit příkazový řádek každých 5 minut
 CronMethodDoesNotExists=Třída %s neobsahuje žádné metody %s
+CronMethodNotAllowed=Method %s of class %s is in blacklist of forbidden methods
 CronJobDefDesc=Profily úloh Cron jsou definovány do souboru deskriptoru modulu. Když je modul aktivován, jsou načteny a dostupné, takže můžete spravovat úlohy z nabídky nástrojů admin %s.
 CronJobProfiles=Seznam předdefinovaných úloh profilu cron
 # Menu
@@ -46,6 +47,7 @@ CronNbRun=Počet spuštění
 CronMaxRun=Maximální počet spuštění
 CronEach=Každý
 JobFinished=Práce zahájena a dokončena
+Scheduled=Scheduled
 #Page card
 CronAdd= Přidat práci
 CronEvery=Vykonat práci každý
@@ -56,7 +58,7 @@ CronNote=Komentář
 CronFieldMandatory=Pole %s je povinné
 CronErrEndDateStartDt=Datum ukončení nemůže být před datem zahájení
 StatusAtInstall=Stav při instalaci modulu
-CronStatusActiveBtn=Umožnit
+CronStatusActiveBtn=Schedule
 CronStatusInactiveBtn=Zakázat
 CronTaskInactive=Tato úloha je zakázána
 CronId=Id
@@ -82,3 +84,8 @@ MakeLocalDatabaseDumpShort=Záloha lokální databáze
 MakeLocalDatabaseDump=Vytvoření výpisu místní databáze. Parametry jsou: komprese ('gz' nebo 'bz' nebo 'none'), zálohovací typ ('mysql', 'pgsql', 'auto'),
 WarningCronDelayed=Pozor, pokud jde o výkonnost, bez ohledu na to, co je příštím datem provedení povolených úloh, mohou být vaše úlohy zpožděny maximálně do %s hodin, než budou spuštěny.
 DATAPOLICYJob=Čistič dat a anonymizér
+JobXMustBeEnabled=Job %s must be enabled
+# Cron Boxes
+LastExecutedScheduledJob=Last executed scheduled job
+NextScheduledJobExecute=Next scheduled job to execute
+NumberScheduledJobError=Number of scheduled jobs in error

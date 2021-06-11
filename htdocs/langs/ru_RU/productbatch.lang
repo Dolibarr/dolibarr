@@ -1,8 +1,10 @@
 # ProductBATCH language file - en_US - ProductBATCH
 ManageLotSerial=Использовать номер партии/серийный номер
-ProductStatusOnBatch=Да (требуется серийный номер/номер партии)
+ProductStatusOnBatch=Да (требуется лот) 
+ProductStatusOnSerial=Да (требуется уникальный серийный номер)
 ProductStatusNotOnBatch=Нет (серийный номер/номер партии не используется)
-ProductStatusOnBatchShort=Да
+ProductStatusOnBatchShort=Лот
+ProductStatusOnSerialShort=Серийный
 ProductStatusNotOnBatchShort=Нет
 Batch=Партии/серийный номер
 atleast1batchfield=Дата уплаты или дата продажи или Лот / Серийный номер
@@ -22,3 +24,12 @@ ProductLotSetup=Настройка лота / серийного модуля
 ShowCurrentStockOfLot=Показать текущий запас для пары товара / лота
 ShowLogOfMovementIfLot=Показать журнал движений для пары product / lot
 StockDetailPerBatch=Детальная информация о лоте
+SerialNumberAlreadyInUse=Серийный номер %s уже используется для продукта %s
+TooManyQtyForSerialNumber=У вас может быть только один продукт %s для серийного номера %s
+BatchLotNumberingModules=Опции для автоматического создания серийной продукции по партиям 
+BatchSerialNumberingModules=Опции для автоматического создания серийной продукции по серийным номерам 
+ManageLotMask=Пользовательская маска
+CustomMasks=Добавляет возможность определения маски в карточке товара
+LotProductTooltip=Adds an option in the product card to define a dedicated batch number mask
+SNProductTooltip=Adds an option in the product card to define a dedicated serial number mask
+QtyToAddAfterBarcodeScan=Кол-во для добавления для каждого отсканированного штрих-кода / партии / серийного номера 

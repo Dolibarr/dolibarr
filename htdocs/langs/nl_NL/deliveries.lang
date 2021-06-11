@@ -27,5 +27,6 @@ Recipient=Ontvanger
 ErrorStockIsNotEnough=Er is niet genoeg voorraad
 Shippable=Zendklaar
 NonShippable=Niet verzendbaar
+ShowShippableStatus=Toon verzendstatus
 ShowReceiving=Toon afleverbon
 NonExistentOrder=Niet bestaande order

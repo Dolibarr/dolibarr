@@ -22,7 +22,7 @@ create table llx_loan_schedule
   rowid				integer AUTO_INCREMENT PRIMARY KEY,
   fk_loan			integer,
   datec				datetime,         -- creation date
-  tms				timestamp,
+  tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datep				datetime,         -- payment date
   amount_capital	double(24,8) DEFAULT 0,
   amount_insurance	double(24,8) DEFAULT 0,
@@ -32,6 +32,7 @@ create table llx_loan_schedule
   note_private      text,
   note_public       text,
   fk_bank			integer NOT NULL,
+  fk_payment_loan     integer,
   fk_user_creat		integer,          -- creation user
   fk_user_modif		integer           -- last modification user
 )ENGINE=innodb;

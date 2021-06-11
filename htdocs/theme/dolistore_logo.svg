@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="260"
+   height="70"
+   id="svg3450"
+   version="1.1"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="dolistore_logo.svg"
+   inkscape:export-filename="/home/ldestailleur/git/dolibarr-foundation/logo-cliparts/dolistore_logo.png"
+   inkscape:export-xdpi="192"
+   inkscape:export-ydpi="192">
+  <title
+     id="title3072">Logo Dolibarr ERP-CRM</title>
+  <defs
+     id="defs3452">
+    <linearGradient
+       id="linearGradient3734">
+      <stop
+         style="stop-color:#a1590c;stop-opacity:1;"
+         offset="0"
+         id="stop3736" />
+      <stop
+         style="stop-color:#d3a768;stop-opacity:1;"
+         offset="1"
+         id="stop3738" />
+    </linearGradient>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="2.8284271"
+     inkscape:cx="43.791163"
+     inkscape:cy="30.424404"
+     inkscape:current-layer="layer1"
+     inkscape:document-units="px"
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1023"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:showpageshadow="false"
+     showborder="true"
+     borderlayer="false" />
+  <metadata
+     id="metadata3455">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Logo Dolibarr ERP-CRM</dc:title>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Laurent Destailleur</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title>Laurent Destailleur</dc:title>
+          </cc:Agent>
+        </dc:rights>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Notice" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Attribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     style="display:inline"
+     transform="translate(0,-530)">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#525252;fill-opacity:1;stroke:none"
+       x="188.29013"
+       y="440.52631"
+       id="text3763"
+       transform="scale(0.74258923,1.3466395)"><tspan
+         sodipodi:role="line"
+         id="tspan3765"
+         x="188.29013"
+         y="440.52631"
+         style="font-size:58.11785507px;line-height:1.25;font-family:sans-serif">Store</tspan></text>
+    <path
+       sodipodi:nodetypes="cccccscsssccsssc"
+       d="m 24.436019,555.72292 v 38.45934 l -14.106106,-0.15741 v 0.15741 -53.89033 h 18.379631 c 8.060629,0 14.372471,2.07321 18.93553,6.21963 5.420081,4.95996 8.130122,11.69133 8.130122,20.19412 0,8.13538 -2.316275,14.77491 -6.948822,19.91857 -4.632547,5.14366 -10.476609,7.5929 -17.772872,7.5929 -0.857021,0 -2.402771,-0.028 -4.324371,-0.0348 v -15.78527 l 3.885273,-0.0213 c 8.222652,-0.045 10.707244,-3.87586 10.707244,-11.67008 0,-7.32185 -4.041895,-10.98277 -12.125687,-10.98277 z"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:194.85823059px;line-height:125%;font-family:'Bauhaus 93';-inkscape-font-specification:'Bauhaus 93';text-align:start;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#a05a2c;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.66361171;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.18431373"
+       id="path8463"
+       inkscape:connector-curvature="0" />
+    <path
+       d="m 77.907188,553.35652 q 7.365748,0 12.612105,6.02282 5.281101,5.98343 5.281101,14.36813 0,8.50278 -5.350592,14.48624 -5.315846,5.98344 -12.855317,5.98344 -7.539464,0 -12.890055,-5.98344 -5.350596,-6.02281 -5.350596,-14.48624 0,-8.62088 5.350596,-14.48624 5.350591,-5.90471 13.202758,-5.90471 z m -0.347444,14.5256 q -2.084646,0 -3.543897,1.73205 -1.459254,1.69269 -1.459254,4.17266 0,2.44062 1.459254,4.17267 1.493996,1.73205 3.543897,1.73205 2.084649,0 3.5439,-1.73205 1.493991,-1.73205 1.493991,-4.17267 0,-2.47997 -1.459246,-4.17266 -1.459254,-1.73205 -3.578645,-1.73205 z"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:194.85823059px;line-height:125%;font-family:'Bauhaus 93';-inkscape-font-specification:'Bauhaus 93';text-align:start;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#a05a2c;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.66361171;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.18431373"
+       id="path8465"
+       inkscape:connector-curvature="0" />
+    <path
+       sodipodi:nodetypes="ccccc"
+       d="m 114.21477,540.32682 v 53.89033 h -12.99429 v -53.89033 z"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:194.85823059px;line-height:125%;font-family:'Bauhaus 93';-inkscape-font-specification:'Bauhaus 93';text-align:start;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#a05a2c;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.66361171;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.18431373"
+       id="path8467"
+       inkscape:connector-curvature="0" />
+    <path
+       sodipodi:nodetypes="ccccc"
+       d="m 134.79383,554.19861 v 40.01854 h -12.9943 v -40.01854 z"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:194.85823059px;line-height:125%;font-family:'Bauhaus 93';-inkscape-font-specification:'Bauhaus 93';text-align:start;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#a05a2c;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.57185936;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.18431373"
+       id="path8467-5"
+       inkscape:connector-curvature="0" />
+    <ellipse
+       style="display:inline;fill:#a05a2c;fill-opacity:1;stroke:none;stroke-width:0.40034935;stroke-opacity:1"
+       id="path957"
+       cx="128.25832"
+       cy="542.88831"
+       rx="6.7222133"
+       ry="7.1090221" />
+  </g>
+</svg>

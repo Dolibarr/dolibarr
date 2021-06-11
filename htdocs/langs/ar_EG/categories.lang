@@ -1,0 +1,9 @@
+# Dolibarr language file - Source file is en_US - categories
+Rubrique=الوسام/التصنيف
+Rubriques=الأوسمة/التصنيفات
+categories=الأوسمة/التصنيفات
+CreateCat=إنشاء وسام/تصنيف
+CreateThisCat=إنشاء هذا الوسام/التصنيف
+NoSubCat=لايوجد تصنيف فرعي
+SubCatOf=تصنيف فرعي
+FoundCats=تم العثور علي تصنيفات/أوسمة

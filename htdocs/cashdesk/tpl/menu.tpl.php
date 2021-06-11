@@ -20,8 +20,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($langs) || ! is_object($langs))
-{
+if (empty($langs) || !is_object($langs)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -37,34 +36,30 @@ include_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 	$company->fetch($_SESSION["CASHDESK_ID_THIRDPARTY"]);
 	$companyLink = $company->getNomUrl(1);
 }*/
-if (!empty($_SESSION["CASHDESK_ID_BANKACCOUNT_CASH"]))
-{
-	$bankcash=new Account($db);
+if (!empty($_SESSION["CASHDESK_ID_BANKACCOUNT_CASH"])) {
+	$bankcash = new Account($db);
 	$bankcash->fetch($_SESSION["CASHDESK_ID_BANKACCOUNT_CASH"]);
-	$bankcash->label=$bankcash->ref;
+	$bankcash->label = $bankcash->ref;
 	$bankcashLink = $bankcash->getNomUrl(1);
 }
-if (!empty($_SESSION["CASHDESK_ID_BANKACCOUNT_CB"]))
-{
-	$bankcb=new Account($db);
+if (!empty($_SESSION["CASHDESK_ID_BANKACCOUNT_CB"])) {
+	$bankcb = new Account($db);
 	$bankcb->fetch($_SESSION["CASHDESK_ID_BANKACCOUNT_CB"]);
 	$bankcbLink = $bankcb->getNomUrl(1);
 }
-if (!empty($_SESSION["CASHDESK_ID_BANKACCOUNT_CHEQUE"]))
-{
-	$bankcheque=new Account($db);
+if (!empty($_SESSION["CASHDESK_ID_BANKACCOUNT_CHEQUE"])) {
+	$bankcheque = new Account($db);
 	$bankcheque->fetch($_SESSION["CASHDESK_ID_BANKACCOUNT_CHEQUE"]);
 	$bankchequeLink = $bankcheque->getNomUrl(1);
 }
-if (!empty($_SESSION["CASHDESK_ID_WAREHOUSE"]) && ! empty($conf->stock->enabled))
-{
-	$warehouse=new Entrepot($db);
+if (!empty($_SESSION["CASHDESK_ID_WAREHOUSE"]) && !empty($conf->stock->enabled)) {
+	$warehouse = new Entrepot($db);
 	$warehouse->fetch($_SESSION["CASHDESK_ID_WAREHOUSE"]);
 	$warehouseLink = $warehouse->getNomUrl(1);
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("main","cashdesk"));
+$langs->loadLangs(array("main", "cashdesk"));
 
 print "\n".'<!-- menu.tpl.php -->'."\n";
 print '<div class="menu_bloc">';
@@ -87,8 +82,7 @@ print '</form>';
 print $langs->trans("CashDeskBankCB").': '.$bankcbLink.'<br>';
 print $langs->trans("CashDeskBankCheque").': '.$bankchequeLink.'<br>';*/
 print '<div class="clearboth">';
-if (!empty($_SESSION["CASHDESK_ID_WAREHOUSE"]) && ! empty($conf->stock->enabled) && empty($conf->global->CASHDESK_NO_DECREASE_STOCK))
-{
+if (!empty($_SESSION["CASHDESK_ID_WAREHOUSE"]) && !empty($conf->stock->enabled) && empty($conf->global->CASHDESK_NO_DECREASE_STOCK)) {
 	print $langs->trans("CashDeskWarehouse").': '.$warehouseLink;
 }
 print '</div></li></ul>';

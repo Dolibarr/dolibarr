@@ -21,10 +21,10 @@
  *	\brief      Module pour gerer l'appel automatique
  *	\file       htdocs/core/modules/modClickToDial.class.php
  *	\ingroup    clicktodial
- *	\brief      Fichier de description et activation du module de click to Dial
+ *	\brief      Description and activation file for the module Click to Dial
  */
 
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -48,10 +48,10 @@ class modClickToDial extends DolibarrModules
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Gestion du Click To Dial";
 
-		$this->version = 'dolibarr';		// 'development' or 'experimental' or 'dolibarr' or version
+		$this->version = 'dolibarr'; // 'development' or 'experimental' or 'dolibarr' or version
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->picto='phoning';
+		$this->picto = 'phoning';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array();

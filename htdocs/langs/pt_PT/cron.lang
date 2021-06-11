@@ -1,19 +1,20 @@
 # Dolibarr language file - Source file is en_US - cron
 # About page
 # Right
-Permission23101 = Ler trabalho 'Agendado'
-Permission23102 = Criar/atualizar trabalho agendado
-Permission23103 = Eliminar trabalho agendado
-Permission23104 = Executar Trabalho Agendado
+Permission23101 = Ler tarefa 'Agendada'
+Permission23102 = Criar/atualizar tarefa 'Agendada'
+Permission23103 = Eliminar tarefa 'Agendada'
+Permission23104 = Executar tarefa 'Agendada'
 # Admin
-CronSetup= Configuração da gestão de tarefas agendadas
-URLToLaunchCronJobs=URL to check and launch qualified cron jobs
-OrToLaunchASpecificJob=Or to check and launch a specific job
-KeyForCronAccess=Security key for URL to launch cron jobs
+CronSetup=Configuração da gestão de tarefas agendadas
+URLToLaunchCronJobs=URL to check and launch qualified cron jobs from a browser
+OrToLaunchASpecificJob=Or to check and launch a specific job from a browser
+KeyForCronAccess=Código de segurança para URL para iniciar tarefas qualificadas
 FileToLaunchCronJobs=Command line to check and launch qualified cron jobs
 CronExplainHowToRunUnix=On Unix environment you should use the following crontab entry to run the command line each 5 minutes
-CronExplainHowToRunWin=On Microsoft(tm) Windows environement you can use Scheduled task tools to run the command line each 5 minutes
+CronExplainHowToRunWin=On Microsoft(tm) Windows environment you can use Scheduled Task tools to run the command line each 5 minutes
 CronMethodDoesNotExists=Class %s does not contains any method %s
+CronMethodNotAllowed=Method %s of class %s is in blacklist of forbidden methods
 CronJobDefDesc=Cron job profiles are defined into the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=List of predefined cron job profiles
 # Menu
@@ -22,12 +23,12 @@ EnabledAndDisabled=Ativado e desativado
 CronLastOutput=Latest run output
 CronLastResult=Latest result code
 CronCommand=Comando
-CronList=Tarefas agendadas
-CronDelete=Delete scheduled jobs
-CronConfirmDelete=Tem certeza de que deseja eliminar estes trabalhos agendados?
-CronExecute=Launch scheduled job
-CronConfirmExecute=Tem certeza de que deseja executar esses trabalhos agendados agora?
-CronInfo=Módulo de trabalhos agendados permite agendar trabalhos para executá-los automaticamente. Os trabalhos também podem ser iniciados manualmente.
+CronList=Trabalhos agendadas
+CronDelete=Eliminar tarefas agendadas
+CronConfirmDelete=Tem a certeza que deseja eliminar estas tarefas agendadas?
+CronExecute=Iniciar tarefa agendada
+CronConfirmExecute=Tem a certeza de que deseja executar agora estas tarefas agendadas?
+CronInfo=O módulo de tarefas agendadas permite agendar tarefas para executá-las automaticamente. As tarefas também podem ser iniciadas manualmente.
 CronTask=Tarefa
 CronNone=Nenhuma
 CronDtStart=Não antes
@@ -39,16 +40,17 @@ CronFrequency=Frequência
 CronClass=Classe
 CronMethod=Método
 CronModule=Módulo
-CronNoJobs=Nenhumas tarefas registadas
+CronNoJobs=Sem tarefas registadas
 CronPriority=Prioridade
 CronLabel=Etiqueta
-CronNbRun=N.º de Execução
-CronMaxRun=Max number launch
+CronNbRun=Number of launches
+CronMaxRun=Maximum number of launches
 CronEach=Cada
-JobFinished=Terafa lançada e concluída
+JobFinished=Tarefa iniciada e concluída
+Scheduled=Scheduled
 #Page card
 CronAdd= Adicionar tarefas
-CronEvery=Executar cada trabalho
+CronEvery=Executar cada tarefa
 CronObject=Instância/Objeto para criar
 CronArgs=Parâmetros
 CronSaveSucess=Guardado com sucesso
@@ -56,28 +58,34 @@ CronNote=Comentário
 CronFieldMandatory=Os campos %s são obrigatórios
 CronErrEndDateStartDt=A data de fim não pode ser anterior à data de início
 StatusAtInstall=Estado da instalação do módulo
-CronStatusActiveBtn=Ativar
+CronStatusActiveBtn=Schedule
 CronStatusInactiveBtn=Desativar
-CronTaskInactive=Esta tarefa está desactivada
+CronTaskInactive=Esta tarefa está desativada
 CronId=Id
 CronClassFile=Filename with class
-CronModuleHelp=Name of Dolibarr module directory (also work with external Dolibarr module). <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/<u>product</u>/class/product.class.php, the value for module is<br><i>product</i>
-CronClassFileHelp=The relative path and file name to load (path is relative to web server root directory). <BR> For exemple to call the fetch method of Dolibarr Product object htdocs/product/class/<u>product.class.php</u>, the value for class file name is<br><i>product/class/product.class.php</i>
-CronObjectHelp=The object name to load. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for class file name is<br><i>Product</i>
-CronMethodHelp=The object method to launch. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for method is<br><i>fetch</i>
-CronArgsHelp=The method arguments. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for paramters can be<br><i>0, ProductRef</i>
+CronModuleHelp=Name of Dolibarr module directory (also work with external Dolibarr module). <BR> For example to call the fetch method of Dolibarr Product object /htdocs/<u>product</u>/class/product.class.php, the value for module is<br><i>product</i>
+CronClassFileHelp=The relative path and file name to load (path is relative to web server root directory). <BR> For example to call the fetch method of Dolibarr Product object htdocs/product/class/<u>product.class.php</u>, the value for class file name is<br><i>product/class/product.class.php</i>
+CronObjectHelp=The object name to load. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for class file name is<br><i>Product</i>
+CronMethodHelp=The object method to launch. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for method is<br><i>fetch</i>
+CronArgsHelp=The method arguments. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for paramters can be<br><i>0, ProductRef</i>
 CronCommandHelp=The system command line to execute.
-CronCreateJob=Create new Scheduled Job
+CronCreateJob=Criar nova 'Tarefa Agendada'
 CronFrom=De
 # Info
 # Common
-CronType=Tipo de trabalho
+CronType=Tipo de tarefa
 CronType_method=Call method of a PHP Class
 CronType_command=Shell command
 CronCannotLoadClass=Cannot load class file %s (to use class %s)
 CronCannotLoadObject=Class file %s was loaded, but object %s was not found into it
-UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Admin tools - Scheduled jobs" to see and edit scheduled jobs.
+UseMenuModuleToolsToAddCronJobs=Go into menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=Job disabled
 MakeLocalDatabaseDumpShort=Local database backup
-MakeLocalDatabaseDump=Create a local database dump. Parameters are: compression ('gz' or 'bz' or 'none'), backup type ('mysql' or 'pgsql'), 1, 'auto' or filename to build, number of backup files to keep
+MakeLocalDatabaseDump=Create a local database dump. Parameters are: compression ('gz' or 'bz' or 'none'), backup type ('mysql', 'pgsql', 'auto'), 1, 'auto' or filename to build, number of backup files to keep
 WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of enabled jobs, your jobs may be delayed to a maximum of %s hours, before being run.
+DATAPOLICYJob=Data cleaner and anonymizer
+JobXMustBeEnabled=Job %s must be enabled
+# Cron Boxes
+LastExecutedScheduledJob=Last executed scheduled job
+NextScheduledJobExecute=Next scheduled job to execute
+NumberScheduledJobError=Number of scheduled jobs in error

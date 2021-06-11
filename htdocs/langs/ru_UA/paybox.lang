@@ -1,5 +1,0 @@
-# Dolibarr language file - Source file is en_US - paybox
-ThisScreenAllowsYouToPay=Этот экран позволит вам сделать онлайн платеж %s.
-ThisIsInformationOnPayment=Это информация об оплате делать
-YourEMail=Email для получения подтверждения оплаты
-SetupPayBoxToHavePaymentCreatedAutomatically=Настройте PayBox с URL <b>%s</b> иметь оплаты создается автоматически при подтверждены PayBox.

@@ -1,8 +1,10 @@
 # ProductBATCH language file - en_US - ProductBATCH
 ManageLotSerial=Käytä erää / sarjanumeroa
-ProductStatusOnBatch=Kyllä (erä / sarja käytössä)
+ProductStatusOnBatch=Yes (lot required)
+ProductStatusOnSerial=Yes (unique serial number required)
 ProductStatusNotOnBatch=Ei (erä / sarja ei ole käytössä)
-ProductStatusOnBatchShort=Kyllä
+ProductStatusOnBatchShort=Lot
+ProductStatusOnSerialShort=Serial
 ProductStatusNotOnBatchShort=Ei
 Batch=Erä/Sarjanumero
 atleast1batchfield=Eat-by date or Sell-by date or Lot/Serial number
@@ -22,3 +24,12 @@ ProductLotSetup=Moduulin erän / sarjan asetukset
 ShowCurrentStockOfLot=Näytä nykyinen varasto pari tuotetta / erää kohti
 ShowLogOfMovementIfLot=Näytä siirto lokit pari tuotetta / erää kohti
 StockDetailPerBatch=Varastotiedot erää kohden
+SerialNumberAlreadyInUse=Serial number %s is already used for product %s
+TooManyQtyForSerialNumber=You can only have one product %s for serial number %s
+BatchLotNumberingModules=Options for automatic generation of batch products managed by lots
+BatchSerialNumberingModules=Options for automatic generation of batch products managed by serial numbers
+ManageLotMask=Custom mask
+CustomMasks=Adds an option to define mask in the product card
+LotProductTooltip=Adds an option in the product card to define a dedicated batch number mask
+SNProductTooltip=Adds an option in the product card to define a dedicated serial number mask
+QtyToAddAfterBarcodeScan=Qty to add for each barcode/lot/serial scanned

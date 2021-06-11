@@ -18,21 +18,24 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($blocname))
-{
+if (empty($blocname)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
 
-$hide = true;	// Hide by default
-if (isset($parameters['showblocbydefault'])) $hide=(empty($parameters['showblocbydefault']) ? true : false);
-if (isset($object->extraparams[$blocname]['showhide'])) $hide = (empty($object->extraparams[$blocname]['showhide']) ? true : false);
+$hide = true; // Hide by default
+if (isset($parameters['showblocbydefault'])) {
+	$hide = (empty($parameters['showblocbydefault']) ? true : false);
+}
+if (isset($object->extraparams[$blocname]['showhide'])) {
+	$hide = (empty($object->extraparams[$blocname]['showhide']) ? true : false);
+}
 
 ?>
 <!-- BEGIN PHP TEMPLATE bloc_showhide.tpl.php -->
 
 <?php
-print '<script type="text/javascript">'."\n";
+print '<script>'."\n";
 print '$(document).ready(function() {'."\n";
 print '$("#hide-'.$blocname.'").click(function(){'."\n";
 print '		setShowHide(0);'."\n";
