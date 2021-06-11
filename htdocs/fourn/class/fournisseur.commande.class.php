@@ -3058,7 +3058,7 @@ class CommandeFournisseur extends CommonOrder
 		if ($this->methode_commande_id > 0) {
 			$sql = "SELECT rowid, code, libelle as label";
 			$sql .= " FROM ".MAIN_DB_PREFIX.'c_input_method';
-			$sql .= " WHERE active=1 AND rowid = ".$this->db->escape($this->methode_commande_id);
+			$sql .= " WHERE active=1 AND rowid = ".((int) $this->methode_commande_id);
 
 			$resql = $this->db->query($sql);
 			if ($resql) {

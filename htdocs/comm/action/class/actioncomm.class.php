@@ -1896,7 +1896,7 @@ class ActionComm extends CommonObject
 					$userforfilter = new User($this->db);
 					$result = $userforfilter->fetch('', $logint);
 					if ($result > 0) {
-						$sql .= " AND ar.fk_element = ".$userforfilter->id;
+						$sql .= " AND ar.fk_element = ".((int) $userforfilter->id);
 					} elseif ($result < 0 || $condition == '=') {
 						$sql .= " AND ar.fk_element = 0";
 					}
@@ -2410,7 +2410,7 @@ class ActionComm extends CommonObject
 			// Delete also very old past events (we do not keep more than 1 month record in past)
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
 			$sql .= " WHERE dateremind < '".$this->db->idate($now - (3600 * 24 * 32))."'";
-			$sql .= " AND status = ".$actionCommReminder::STATUS_DONE;
+			$sql .= " AND status = ".((int) $actionCommReminder::STATUS_DONE);
 			$resql = $this->db->query($sql);
 
 			if (!$resql) {

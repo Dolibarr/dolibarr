@@ -218,7 +218,7 @@ if ($search_amount) {
 	$sql .= natural_search("cs.amount", $search_amount, 1);
 }
 if ($search_status != '' && $search_status >= 0) {
-	$sql .= " AND cs.paye = ".$db->escape($search_status);
+	$sql .= " AND cs.paye = ".((int) $search_status);
 }
 $sql .= dolSqlDateFilter("cs.periode", $search_day_lim, $search_month_lim, $search_year_lim);
 //$sql.= dolSqlDateFilter("cs.periode", 0, 0, $year);
@@ -230,8 +230,8 @@ if ($year > 0) {
 	$sql .= "OR (cs.periode IS NULL AND date_format(cs.date_ech, '%Y') = '".$db->escape($year)."')";
 	$sql .= ")";
 }
-if ($search_typeid) {
-	$sql .= " AND cs.fk_type=".$db->escape($search_typeid);
+if ($search_typeid > 0) {
+	$sql .= " AND cs.fk_type = ".((int) $search_typeid);
 }
 $sql .= " GROUP BY cs.rowid, cs.fk_type, cs.fk_user, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, c.libelle, cs.fk_account, ba.label, ba.ref, ba.number, ba.account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.clos, pay.code, u.lastname";
 if (!empty($conf->projet->enabled)) {

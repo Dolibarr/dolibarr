@@ -2391,10 +2391,10 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			$transkey = '';
 			if (in_array($fieldlist[$field], array('label', 'libelle'))) {		// For label
 				// Special case for labels
-				if ($tabname == MAIN_DB_PREFIX.'c_civility') {
-					$transkey = "Civility".strtoupper(empty($obj->code) ? '' : $obj->code);
+				if ($tabname == MAIN_DB_PREFIX.'c_civility' && !empty($obj->code)) {
+					$transkey = "Civility".strtoupper($obj->code);
 				}
-				if ($tabname == MAIN_DB_PREFIX.'c_payment_term') {
+				if ($tabname == MAIN_DB_PREFIX.'c_payment_term' && !empty($obj->code)) {
 					$langs->load("bills");
 					$transkey = "PaymentConditionShort".strtoupper(empty($obj->code) ? '' : $obj->code);
 				}

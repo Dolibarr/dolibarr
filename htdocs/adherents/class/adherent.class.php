@@ -598,8 +598,8 @@ class Adherent extends CommonObject
 				if ($this->user_id) {
 					// Add link to user
 					$sql = "UPDATE ".MAIN_DB_PREFIX."user SET";
-					$sql .= " fk_member = ".$this->id;
-					$sql .= " WHERE rowid = ".$this->user_id;
+					$sql .= " fk_member = ".((int) $this->id);
+					$sql .= " WHERE rowid = ".((int) $this->user_id);
 					dol_syslog(get_class($this)."::create", LOG_DEBUG);
 					$resql = $this->db->query($sql);
 					if (!$resql) {
@@ -728,7 +728,7 @@ class Adherent extends CommonObject
 		if (!empty($this->oldcopy) && $this->typeid != $this->oldcopy->typeid) {
 			$sql2 = "SELECT libelle as label";
 			$sql2 .= " FROM ".MAIN_DB_PREFIX."adherent_type";
-			$sql2 .= " WHERE rowid = ".$this->typeid;
+			$sql2 .= " WHERE rowid = ".((int) $this->typeid);
 			$resql2 = $this->db->query($sql2);
 			if ($resql2) {
 				while ($obj = $this->db->fetch_object($resql2)) {
@@ -1482,7 +1482,7 @@ class Adherent extends CommonObject
 					$this->first_subscription_amount = $obj->subscription;
 				}
 				$this->last_subscription_date = $this->db->jdate($obj->datec);
-				$this->last_subscription_date_start = $this->db->jdate($obj->datef);
+				$this->last_subscription_date_start = $this->db->jdate($obj->dateh);
 				$this->last_subscription_date_end = $this->db->jdate($obj->datef);
 				$this->last_subscription_amount = $obj->subscription;
 
@@ -1510,7 +1510,6 @@ class Adherent extends CommonObject
 	}
 
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Function to get partnerships array
 	 *
@@ -1519,7 +1518,6 @@ class Adherent extends CommonObject
 	 */
 	public function fetchPartnerships($mode)
 	{
-		// phpcs:enable
 		global $langs;
 
 		require_once DOL_DOCUMENT_ROOT.'/parntership/class/partnership.class.php';
@@ -1740,7 +1738,8 @@ class Adherent extends CommonObject
 					}
 				}
 				$invoice->socid = $this->fk_soc;
-				$invoice->date = $datesubscription;
+				//$invoice->date = $datesubscription;
+				$invoice->date = dol_now();
 
 				// Possibility to add external linked objects with hooks
 				$invoice->linked_objects['subscription'] = $subscriptionid;

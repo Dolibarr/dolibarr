@@ -110,7 +110,7 @@ function user_prepare_head($object)
 		$nbNote = 0;
 		$sql = "SELECT COUNT(n.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."notify_def as n";
-		$sql .= " WHERE fk_user = ".$object->id;
+		$sql .= " WHERE fk_user = ".((int) $object->id);
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num = $db->num_rows($resql);

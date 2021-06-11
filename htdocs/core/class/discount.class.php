@@ -292,7 +292,7 @@ class DiscountAbsolute
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except";
 			$sql .= " WHERE (fk_facture_line IS NOT NULL"; // Not used as absolute simple discount
 			$sql .= " OR fk_facture IS NOT NULL)"; // Not used as credit note and not used as deposit
-			$sql .= " AND fk_facture_source = ".$this->fk_facture_source;
+			$sql .= " AND fk_facture_source = ".((int) $this->fk_facture_source);
 			//$sql.=" AND rowid != ".$this->id;
 
 			dol_syslog(get_class($this)."::delete Check if we can remove discount", LOG_DEBUG);
@@ -531,7 +531,7 @@ class DiscountAbsolute
 			//$obj = $this->db->fetch_object($resql);
 			//}
 			if ($multicurrency) {
-				return $obj->amount_multicurrency;
+				return $obj->multicurrency_amount;
 			}
 
 			return $obj->amount;

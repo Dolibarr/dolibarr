@@ -382,11 +382,13 @@ class FormProduct
 	 *  @param  string		$default             Preselected value
 	 *  @param  int|string	$adddefault			 1=Add empty unit called "Default", ''=Add empty value
 	 *  @param  int         $mode                1=Use short label as value, 0=Use rowid, 2=Use scale (power)
+	 *  @param	string		$morecss			 More CSS
 	 *  @return string
 	 */
-	public function selectMeasuringUnits($name = 'measuring_units', $measuring_style = '', $default = '0', $adddefault = 0, $mode = 0)
+	public function selectMeasuringUnits($name = 'measuring_units', $measuring_style = '', $default = '0', $adddefault = 0, $mode = 0, $morecss = 'maxwidth125')
 	{
 		global $langs, $conf, $mysoc, $db;
+
 		$langs->load("other");
 
 		$return = '';
@@ -412,7 +414,7 @@ class FormProduct
 			dol_print_error($db);
 			return -1;
 		} else {
-			$return .= '<select class="flat" name="'.$name.'">';
+			$return .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$name.'">';
 			if ($adddefault || $adddefault === '') {
 				$return .= '<option value="0">'.($adddefault ? $langs->trans("Default") : '').'</option>';
 			}

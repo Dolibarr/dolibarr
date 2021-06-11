@@ -505,8 +505,8 @@ abstract class CommonObject
 
 	/**
 	 * @var array    List of child tables. To know object to delete on cascade.
-	 *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
-	 *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
+	 *               If name is like '@ClassName:FilePathClass:ParentFkFieldName', it will
+	 *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object.
 	 */
 	protected $childtablesoncascade = array();
 
@@ -531,7 +531,7 @@ abstract class CommonObject
 		$sql .= " WHERE entity IN (".getEntity($element).")";
 
 		if ($id > 0) {
-			$sql .= " AND rowid = ".$db->escape($id);
+			$sql .= " AND rowid = ".((int) $id);
 		} elseif ($ref) {
 			$sql .= " AND ref = '".$db->escape($ref)."'";
 		} elseif ($ref_ext) {
@@ -542,7 +542,7 @@ abstract class CommonObject
 			return -1;
 		}
 		if ($ref || $ref_ext) {
-			$sql .= " AND entity = ".$conf->entity;
+			$sql .= " AND entity = ".((int) $conf->entity);
 		}
 
 		dol_syslog(get_class()."::isExistingObject", LOG_DEBUG);
@@ -1278,7 +1278,7 @@ abstract class CommonObject
 		}
 		$sql .= " AND tc.active=1";
 		if ($status >= 0) {
-			$sql .= " AND ec.statut = ".$status;
+			$sql .= " AND ec.statut = ".((int) $status);
 		}
 		$sql .= " ORDER BY t.lastname ASC";
 
@@ -1926,7 +1926,7 @@ abstract class CommonObject
 		if ($format == 'text') {
 			$sql .= $field." = '".$this->db->escape($value)."'";
 		} elseif ($format == 'int') {
-			$sql .= $field." = ".$this->db->escape($value);
+			$sql .= $field." = ".((int) $value);
 		} elseif ($format == 'date') {
 			$sql .= $field." = ".($value ? "'".$this->db->idate($value)."'" : "null");
 		}
@@ -3709,19 +3709,19 @@ abstract class CommonObject
 		$sql .= " WHERE ";
 		if ($justsource || $justtarget) {
 			if ($justsource) {
-				$sql .= "fk_source = ".$sourceid." AND sourcetype = '".$this->db->escape($sourcetype)."'";
+				$sql .= "fk_source = ".((int) $sourceid)." AND sourcetype = '".$this->db->escape($sourcetype)."'";
 				if ($withtargettype) {
 					$sql .= " AND targettype = '".$this->db->escape($targettype)."'";
 				}
 			} elseif ($justtarget) {
-				$sql .= "fk_target = ".$targetid." AND targettype = '".$this->db->escape($targettype)."'";
+				$sql .= "fk_target = ".((int) $targetid)." AND targettype = '".$this->db->escape($targettype)."'";
 				if ($withsourcetype) {
 					$sql .= " AND sourcetype = '".$this->db->escape($sourcetype)."'";
 				}
 			}
 		} else {
-			$sql .= "(fk_source = ".$sourceid." AND sourcetype = '".$this->db->escape($sourcetype)."')";
-			$sql .= " ".$clause." (fk_target = ".$targetid." AND targettype = '".$this->db->escape($targettype)."')";
+			$sql .= "(fk_source = ".((int) $sourceid)." AND sourcetype = '".$this->db->escape($sourcetype)."')";
+			$sql .= " ".$clause." (fk_target = ".((int) $targetid)." AND targettype = '".$this->db->escape($targettype)."')";
 		}
 		$sql .= ' ORDER BY '.$orderby;
 
@@ -4106,12 +4106,12 @@ abstract class CommonObject
 		}
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$elementTable;
-		$sql .= " SET ".$fieldstatus." = ".$status;
+		$sql .= " SET ".$fieldstatus." = ".((int) $status);
 		// If status = 1 = validated, update also fk_user_valid
 		if ($status == 1 && $elementTable == 'expensereport') {
 			$sql .= ", fk_user_valid = ".$user->id;
 		}
-		$sql .= " WHERE rowid=".$elementId;
+		$sql .= " WHERE rowid=".((int) $elementId);
 
 		dol_syslog(get_class($this)."::setStatut", LOG_DEBUG);
 		if ($this->db->query($sql)) {
@@ -7122,11 +7122,11 @@ abstract class CommonObject
 				$sql .= ' as main';
 			}
 			if ($selectkey == 'rowid' && empty($value)) {
-				$sql .= " WHERE ".$selectkey."=0";
+				$sql .= " WHERE ".$selectkey." = 0";
 			} elseif ($selectkey == 'rowid') {
-				$sql .= " WHERE ".$selectkey."=".$this->db->escape($value);
+				$sql .= " WHERE ".$selectkey." = ".((int) $value);
 			} else {
-				$sql .= " WHERE ".$selectkey."='".$this->db->escape($value)."'";
+				$sql .= " WHERE ".$selectkey." = '".$this->db->escape($value)."'";
 			}
 
 			//$sql.= ' AND entity = '.$conf->entity;

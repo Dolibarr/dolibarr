@@ -742,7 +742,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 						$sql .= ", u.lastname, u.firstname, t.thm";
 						$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
 						$sql .= " , ".MAIN_DB_PREFIX."user as u";
-						$sql .= " WHERE t.fk_task =".$task->id;
+						$sql .= " WHERE t.fk_task =".((int) $task->id);
 						$sql .= " AND t.fk_user = u.rowid";
 						$sql .= " ORDER BY t.task_date DESC";
 

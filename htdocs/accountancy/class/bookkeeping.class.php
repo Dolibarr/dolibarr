@@ -294,7 +294,7 @@ class BookKeeping extends CommonObject
 		$sql = "SELECT count(*) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " WHERE doc_type = '".$this->db->escape($this->doc_type)."'";
-		$sql .= " AND fk_doc = ".$this->fk_doc;
+		$sql .= " AND fk_doc = ".((int) $this->fk_doc);
 		if (!empty($conf->global->ACCOUNTANCY_ENABLE_FKDOCDET)) {
 			// DO NOT USE THIS IN PRODUCTION. This will generate a lot of trouble into reports and will corrupt database (by generating duplicate entries.
 			$sql .= " AND fk_docdet = " . $this->fk_docdet;			// This field can be 0 if record is for several lines
@@ -312,7 +312,7 @@ class BookKeeping extends CommonObject
 				$sqlnum = "SELECT piece_num";
 				$sqlnum .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
 				$sqlnum .= " WHERE doc_type = '".$this->db->escape($this->doc_type)."'"; // For example doc_type = 'bank'
-				$sqlnum .= " AND fk_doc = ".$this->fk_doc;
+				$sqlnum .= " AND fk_doc = ".((int) $this->fk_doc);
 				if (!empty($conf->global->ACCOUNTANCY_ENABLE_FKDOCDET)) {
 					// fk_docdet is rowid into llx_bank or llx_facturedet or llx_facturefourndet, or ...
 					$sqlnum .= " AND fk_docdet = ".((int) $this->fk_docdet);
