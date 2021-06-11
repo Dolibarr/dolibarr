@@ -85,7 +85,7 @@ class InfoBox
 	 *
 	 *  @param	DoliDB		$db				Database handler
 	 *  @param	string		$mode			'available' or 'activated'
-	 *  @param	string		$zone			Name or area (-1 for all, 0 for Homepage, 1 for Accountancy, 2 for xxx, ...)
+	 *  @param	int			$zone			Name or area (-1 for all, 0 for Homepage, 1 for Accountancy, 2 for xxx, ...)
 	 *  @param  User|null   $user	  		Object user to filter
 	 *  @param	array		$excludelist	Array of box id (box.box_id = boxes_def.rowid) to exclude
 	 *  @param  int         $includehidden  Include also hidden boxes
@@ -216,7 +216,7 @@ class InfoBox
 	 *  Save order of boxes for area and user
 	 *
 	 *  @param	DoliDB	$db				Database handler
-	 *  @param	string	$zone       	Name of area (0 for Homepage, ...)
+	 *  @param	int		$zone       	Name of area (0 for Homepage, ...)
 	 *  @param  string  $boxorder   	List of boxes with correct order 'A:123,456,...-B:789,321...'
 	 *  @param  int     $userid     	Id of user
 	 *  @return int                   	<0 if KO, 0=Nothing done, > 0 if OK
