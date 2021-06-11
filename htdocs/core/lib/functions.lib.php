@@ -8009,7 +8009,7 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1)
 	$forbiddenphpstrings = array_merge($forbiddenphpstrings, array("fopen(", "file_put_contents(", "fputs(", "fputscsv(", "fwrite(", "fpassthru(", "unlink(", "mkdir(", "rmdir(", "symlink(", "touch(", "umask("));
 	$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('function(', '$$', 'call_user_func('));
 	$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', '_SESSION', '_COOKIE', '_GET', '_POST', '_REQUEST'));
-	$forbiddenphpregex = array('global\s+\$');
+	$forbiddenphpregex = 'global\s+\$';
 	do {
 		$oldstringtoclean = $s;
 		$s = str_ireplace($forbiddenphpstrings, '__forbiddenstring__', $s);
