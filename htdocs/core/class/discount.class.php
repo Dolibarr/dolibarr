@@ -531,7 +531,7 @@ class DiscountAbsolute
 			//$obj = $this->db->fetch_object($resql);
 			//}
 			if ($multicurrency) {
-				return $obj->amount_multicurrency;
+				return $obj->multicurrency_amount;
 			}
 
 			return $obj->amount;

@@ -124,11 +124,25 @@ $search_date_valid_startyear = GETPOST('search_date_valid_startyear', 'int');
 $search_date_valid_endday = GETPOST('search_date_valid_endday', 'int');
 $search_date_valid_endmonth = GETPOST('search_date_valid_endmonth', 'int');
 $search_date_valid_endyear = GETPOST('search_date_valid_endyear', 'int');
+<<<<<<< HEAD
 $search_date_valid_start = dol_mktime(0, 0, 0, $search_date_valid_startmonth, $search_date_valid_startday, $search_date_valid_startyear);	// Use tzserver
 $search_date_valid_end = dol_mktime(23, 59, 59, $search_date_valid_endmonth, $search_date_valid_endday, $search_date_valid_endyear);
 $search_datelimit_start = dol_mktime(0, 0, 0, GETPOST('search_datelimit_startmonth', 'int'), GETPOST('search_datelimit_startday', 'int'), GETPOST('search_datelimit_startyear', 'int'));
 $search_datelimit_end = dol_mktime(23, 59, 59, GETPOST('search_datelimit_endmonth', 'int'), GETPOST('search_datelimit_endday', 'int'), GETPOST('search_datelimit_endyear', 'int'));
 $search_categ_cus = GETPOST("search_categ_cus", 'int');
+=======
+$search_date_valid_start = dol_mktime(0, 0, 0, $search_date_valid_startmonth, $search_date_valid_startday, $search_date_valid_startyear);
+$search_date_valid_end = dol_mktime(23, 59, 59, $search_date_valid_endmonth, $search_date_valid_endday, $search_date_valid_endyear);
+$search_datelimit_startday = GETPOST('search_datelimit_startday', 'int');
+$search_datelimit_startmonth = GETPOST('search_datelimit_startmonth', 'int');
+$search_datelimit_startyear = GETPOST('search_datelimit_startyear', 'int');
+$search_datelimit_endday = GETPOST('search_datelimit_endday', 'int');
+$search_datelimit_endmonth = GETPOST('search_datelimit_endmonth', 'int');
+$search_datelimit_endyear = GETPOST('search_datelimit_endyear', 'int');
+$search_datelimit_start = dol_mktime(0, 0, 0, $search_datelimit_startmonth, $search_datelimit_startday, $search_datelimit_startyear);
+$search_datelimit_end = dol_mktime(23, 59, 59, $search_datelimit_endmonth, $search_datelimit_endday, $search_datelimit_endyear);
+$search_categ_cus = trim(GETPOST("search_categ_cus", 'int'));
+>>>>>>> branch '13.0' of git@github.com:Dolibarr/dolibarr.git
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
@@ -344,6 +358,12 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_date_valid_endyear = '';
 	$search_date_valid_start = '';
 	$search_date_valid_end = '';
+	$search_datelimit_startday = '';
+	$search_datelimit_startmonth = '';
+	$search_datelimit_startyear = '';
+	$search_datelimit_endday = '';
+	$search_datelimit_endmonth = '';
+	$search_datelimit_endyear = '';
 	$search_datelimit_start = '';
 	$search_datelimit_end = '';
 	$option = '';
@@ -558,6 +578,7 @@ if ($userid) {
 		$sql .= ' AND f.fk_user_author = '.((int) $userid);
 	}
 }
+<<<<<<< HEAD
 if ($search_ref) {
 	$sql .= natural_search('f.ref', $search_ref);
 }
@@ -653,6 +674,40 @@ if ($search_status != '-1' && $search_status != '') {
 		if ($search_status == '3') {
 			$sql .= " AND f.fk_statut = 3"; // abandonned
 		}
+=======
+if ($search_ref) $sql .= natural_search('f.ref', $search_ref);
+if ($search_refcustomer) $sql .= natural_search('f.ref_client', $search_refcustomer);
+if ($search_type != '' && $search_type != '-1') $sql .= " AND f.type IN (".$db->sanitize($db->escape($search_type)).")";
+if ($search_project_ref) $sql .= natural_search('p.ref', $search_project_ref);
+if ($search_project) $sql .= natural_search('p.title', $search_project);
+if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
+if ($search_town)  $sql .= natural_search('s.town', $search_town);
+if ($search_zip)   $sql .= natural_search("s.zip", $search_zip);
+if ($search_state) $sql .= natural_search("state.nom", $search_state);
+if ($search_country) $sql .= " AND s.fk_pays IN (".$db->sanitize($db->escape($search_country)).')';
+if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$db->sanitize($db->escape($search_type_thirdparty)).')';
+if ($search_montant_ht != '') $sql .= natural_search('f.total', $search_montant_ht, 1);
+if ($search_montant_vat != '') $sql .= natural_search('f.tva', $search_montant_vat, 1);
+if ($search_montant_localtax1 != '') $sql .= natural_search('f.localtax1', $search_montant_localtax1, 1);
+if ($search_montant_localtax2 != '') $sql .= natural_search('f.localtax2', $search_montant_localtax2, 1);
+if ($search_montant_ttc != '') $sql .= natural_search('f.total_ttc', $search_montant_ttc, 1);
+if ($search_multicurrency_code != '') $sql .= ' AND f.multicurrency_code = "'.$db->escape($search_multicurrency_code).'"';
+if ($search_multicurrency_tx != '') $sql .= natural_search('f.multicurrency_tx', $search_multicurrency_tx, 1);
+if ($search_multicurrency_montant_ht != '') $sql .= natural_search('f.multicurrency_total_ht', $search_multicurrency_montant_ht, 1);
+if ($search_multicurrency_montant_vat != '') $sql .= natural_search('f.multicurrency_total_tva', $search_multicurrency_montant_vat, 1);
+if ($search_multicurrency_montant_ttc != '') $sql .= natural_search('f.multicurrency_total_ttc', $search_multicurrency_montant_ttc, 1);
+if ($search_login) $sql .= natural_search('u.login', $search_login);
+if ($search_categ_cus > 0) $sql .= " AND cc.fk_categorie = ".$db->escape($search_categ_cus);
+if ($search_categ_cus == -2)   $sql .= " AND cc.fk_categorie IS NULL";
+if ($search_status != '-1' && $search_status != '')
+{
+	if (is_numeric($search_status) && $search_status >= 0)
+	{
+		if ($search_status == '0') $sql .= " AND f.fk_statut = 0"; // draft
+		if ($search_status == '1') $sql .= " AND f.fk_statut = 1"; // unpayed
+		if ($search_status == '2') $sql .= " AND f.fk_statut = 2"; // payed     Not that some corrupted data may contains f.fk_statut = 1 AND f.paye = 1 (it means payed too but should not happend. If yes, reopen and reclassify billed)
+		if ($search_status == '3') $sql .= " AND f.fk_statut = 3"; // abandonned
+>>>>>>> branch '13.0' of git@github.com:Dolibarr/dolibarr.git
 	} else {
 		$sql .= " AND f.fk_statut IN (".$db->sanitize($db->escape($search_status)).")"; // When search_status is '1,2' for example
 	}
@@ -713,7 +768,11 @@ if (!$sall) {
 	$sql .= ' f.retained_warranty, f.retained_warranty_date_limit, f.situation_final, f.situation_cycle_ref, f.situation_counter,';
 	$sql .= ' f.fk_user_author, f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva,';
 	$sql .= ' f.multicurrency_total_tva, f.multicurrency_total_ttc,';
+<<<<<<< HEAD
 	$sql .= ' s.rowid, s.nom, s.name_alias, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,';
+=======
+	$sql .= ' s.rowid, s.nom, s.name_alias, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,';
+>>>>>>> branch '13.0' of git@github.com:Dolibarr/dolibarr.git
 	$sql .= ' typent.code,';
 	$sql .= ' state.code_departement, state.nom,';
 	$sql .= ' country.code,';
@@ -786,6 +845,7 @@ if ($resql) {
 		}
 	}
 
+<<<<<<< HEAD
 	$param = '&socid='.urlencode($socid);
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
@@ -934,6 +994,61 @@ if ($resql) {
 	if ($search_categ_cus > 0) {
 		$param .= '&search_categ_cus='.urlencode($search_categ_cus);
 	}
+=======
+	$param = '&socid='.$socid;
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+	if ($sall)				 $param .= '&sall='.urlencode($sall);
+	if ($search_date_startday)		$param .= '&search_date_startday='.urlencode($search_date_startday);
+	if ($search_date_startmonth)	$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
+	if ($search_date_startyear)		$param .= '&search_date_startyear='.urlencode($search_date_startyear);
+	if ($search_date_endday)		$param .= '&search_date_endday='.urlencode($search_date_endday);
+	if ($search_date_endmonth)		$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
+	if ($search_date_endyear)		$param .= '&search_date_endyear='.urlencode($search_date_endyear);
+	if ($search_date_valid_startday)		$param .= '&search_date_valid_startday='.urlencode($search_date_valid_startday);
+	if ($search_date_valid_startmonth)		$param .= '&search_date_valid_startmonth='.urlencode($search_date_valid_startmonth);
+	if ($search_date_valid_startyear)		$param .= '&search_date_valid_startyear='.urlencode($search_date_valid_startyear);
+	if ($search_date_valid_endday)			$param .= '&search_date_valid_endday='.urlencode($search_date_valid_endday);
+	if ($search_date_valid_endmonth)		$param .= '&search_date_valid_endmonth='.urlencode($search_date_valid_endmonth);
+	if ($search_date_valid_endyear)			$param .= '&search_date_valid_endyear='.urlencode($search_date_valid_endyear);
+	if ($search_datelimit_startday)		$param .= '&search_datelimit_startday='.urlencode($search_datelimit_startday);
+	if ($search_datelimit_startmonth)	$param .= '&search_datelimit_startmonth='.urlencode($search_datelimit_startmonth);
+	if ($search_datelimit_startyear)	$param .= '&search_datelimit_startyear='.urlencode($search_datelimit_startyear);
+	if ($search_datelimit_endday)		$param .= '&search_datelimit_endday='.urlencode($search_datelimit_endday);
+	if ($search_datelimit_endmonth)		$param .= '&search_datelimit_endmonth='.urlencode($search_datelimit_endmonth);
+	if ($search_datelimit_endyear)		$param .= '&search_datelimit_endyear='.urlencode($search_datelimit_endyear);
+	if ($search_ref)         $param .= '&search_ref='.urlencode($search_ref);
+	if ($search_refcustomer) $param .= '&search_refcustomer='.urlencode($search_refcustomer);
+	if ($search_project_ref) $param .= '&search_project_ref='.urlencode($search_project_ref);
+	if ($search_project)     $param .= '&search_project='.urlencode($search_project);
+	if ($search_type != '')  $param .= '&search_type='.urlencode($search_type);
+	if ($search_societe)     $param .= '&search_societe='.urlencode($search_societe);
+	if ($search_town)        $param .= '&search_town='.urlencode($search_town);
+	if ($search_zip)         $param .= '&search_zip='.urlencode($search_zip);
+	if ($search_sale > 0)    $param .= '&search_sale='.urlencode($search_sale);
+	if ($search_user > 0)    $param .= '&search_user='.urlencode($search_user);
+	if ($search_login)       $param .= '&search_login='.urlencode($search_login);
+	if ($search_product_category > 0)   $param .= '&search_product_category='.urlencode($search_product_category);
+	if ($search_montant_ht != '')  $param .= '&search_montant_ht='.urlencode($search_montant_ht);
+	if ($search_montant_vat != '')  $param .= '&search_montant_vat='.urlencode($search_montant_vat);
+	if ($search_montant_localtax1 != '')  $param .= '&search_montant_localtax1='.urlencode($search_montant_localtax1);
+	if ($search_montant_localtax2 != '')  $param .= '&search_montant_localtax2='.urlencode($search_montant_localtax2);
+	if ($search_montant_ttc != '') $param .= '&search_montant_ttc='.urlencode($search_montant_ttc);
+	if ($search_multicurrency_code != '')  $param .= '&search_multicurrency_code='.urlencode($search_multicurrency_code);
+	if ($search_multicurrency_tx != '')  $param .= '&search_multicurrency_tx='.urlencode($search_multicurrency_tx);
+	if ($search_multicurrency_montant_ht != '')  $param .= '&search_multicurrency_montant_ht='.urlencode($search_multicurrency_montant_ht);
+	if ($search_multicurrency_montant_vat != '')  $param .= '&search_multicurrency_montant_vat='.urlencode($search_multicurrency_montant_vat);
+	if ($search_multicurrency_montant_ttc != '') $param .= '&search_multicurrency_montant_ttc='.urlencode($search_multicurrency_montant_ttc);
+	if ($search_status != '') $param .= '&search_status='.urlencode($search_status);
+	if ($search_paymentmode > 0) $param .= '&search_paymentmode='.urlencode($search_paymentmode);
+	if ($search_paymentterms > 0) $param .= '&search_paymentterms='.urlencode($search_paymentterms);
+	if ($search_module_source)  $param .= '&search_module_source='.urlencode($search_module_source);
+	if ($search_pos_source)  $param .= '&search_pos_source='.urlencode($search_pos_source);
+	if ($show_files)         $param .= '&show_files='.urlencode($show_files);
+	if ($option)             $param .= "&search_option=".urlencode($option);
+	if ($optioncss != '')    $param .= '&optioncss='.urlencode($optioncss);
+	if ($search_categ_cus > 0) $param .= '&search_categ_cus='.urlencode($search_categ_cus);
+>>>>>>> branch '13.0' of git@github.com:Dolibarr/dolibarr.git
 
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
