@@ -1292,7 +1292,7 @@ class ExtraFields
 					dol_syslog(get_class($this).'::showInputField type=sellist', LOG_DEBUG);
 					$resql = $this->db->query($sql);
 					if ($resql) {
-						$out .= '<option value="0">&nbsp;</option>';
+						if (!$required) $out .= '<option value="0">&nbsp;</option>';
 						$num = $this->db->num_rows($resql);
 						$i = 0;
 						while ($i < $num) {
@@ -1348,7 +1348,7 @@ class ExtraFields
 				} else {
 					require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 					$data = $form->select_all_categories(Categorie::$MAP_ID_TO_CODE[$InfoFieldList[5]], '', 'parent', 64, $InfoFieldList[6], 1, 1);
-					$out .= '<option value="0">&nbsp;</option>';
+					if ($required) $out .= '<option value="0">&nbsp;</option>';
 					foreach ($data as $data_key => $data_value) {
 						$out .= '<option value="'.$data_key.'"';
 						$out .= ($value == $data_key ? ' selected' : '');
@@ -2215,7 +2215,7 @@ class ExtraFields
 						continue; // Value was not provided, we should not set it.
 					}
 					$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
-					$value_key = price2num($value_arr);
+//					$value_key = price2num($value_arr); issue #17649 to keep possibility of advanced filtering on extrafields
 				} else {
 					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {
 						continue; // Value was not provided, we should not set it.
