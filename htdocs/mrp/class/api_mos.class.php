@@ -278,6 +278,71 @@ class Mos extends DolibarrApi
 	}
 
 
+	/**
+	 * Produce and consume
+	 *
+	 * Example:
+	 * {
+	 *   "inventorylabel": "Produce and consume using API",
+	 *   "inventorycode": "PRODUCEAPI-YY-MM-DD",
+	 *   "autoclose": 1,
+	 *   "arraytoconsume": [],
+	 *   "arraytoproduce": []
+	 * }
+	 *
+	 * @param int       $id        		ID of state
+	 * @param array 	$request_data   Request datas
+	 *
+	 * @url     POST {id}/produceandconsume
+	 *
+	 * @return int  ID of MO
+	 */
+	public function produceAndConsume($id, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->rights->mrp->write) {
+			throw new RestException(401, 'Not enough permission');
+		}
+		$result = $this->mo->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'MO not found');
+		}
+
+		if ($this->mo->status != Mo::STATUS_VALIDATED && $this->mo->status != Mo::STATUS_INPROGRESS) {
+			throw new RestException(401, 'Error bad status of MO');
+		}
+
+		$labelmovement = '';
+		$codemovement = '';
+		$autoclose = 1;
+		$arraytoconsume = array();
+		$arraytoproduce = array();
+
+		foreach ($request_data as $field => $value) {
+			if ($field == 'inventorylabel') {
+				$labelmovement = $value;
+			}
+			if ($field == 'inventorycode') {
+				$codemovement = $value;
+			}
+			if ($field == 'autoclose') {
+				$autoclose = $value;
+			}
+		}
+
+		if (empty($labelmovement)) {
+			throw new RestException(500, "Field inventorylabel not prodivded");
+		}
+		if (empty($codemovement)) {
+			throw new RestException(500, "Field inventorycode not prodivded");
+		}
+
+		// TODO Add code for consume and produce...
+		throw new RestException(500, "Feature not yet available");
+
+		return $this->mo->id;
+	}
+
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas

@@ -2215,7 +2215,11 @@ class ExtraFields
 						continue; // Value was not provided, we should not set it.
 					}
 					$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
-					$value_key = price2num($value_arr);
+					if ($keysuffix != 'search_') {	// If value is for a search, we must keep complex string like '>100 <=150'
+						$value_key = price2num($value_arr);
+					} else {
+						$value_key = $value_arr;
+					}
 				} else {
 					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {
 						continue; // Value was not provided, we should not set it.
