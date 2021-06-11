@@ -551,7 +551,7 @@ if (!empty($search_batch)) {
 if (!empty($product_id)) {
 	$sql .= natural_search('p.rowid', $product_id);
 }
-if (!empty($search_fk_projet)) {
+if (!empty($search_fk_projet) && $search_fk_projet != '-1') {
 	$sql .= natural_search('m.fk_projet', $search_fk_projet);
 }
 if ($search_qty != '') {
