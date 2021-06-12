@@ -363,7 +363,7 @@ function show_stats_for_company($product, $socid)
 	global $conf, $langs, $user, $db, $hookmanager;
 
 	$form = new Form($db);
-	
+
 	$nblines = 0;
 
 	print '<tr class="liste_titre">';
