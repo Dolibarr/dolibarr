@@ -527,8 +527,6 @@ if ($action == 'export_fileconfirm' && $user->rights->accounting->mouvements->ex
 		$notifiedexportdate = GETPOST('notifiedexportdate', 'alpha');
 		$notifiedvalidationdate = GETPOST('notifiedvalidationdate', 'alpha');
 
-		dol_syslog("date_export/date_validated=".$notifiedexportdate.'/'.$notifiedvalidationdate, LOG_DEBUG);
-
 		if (!empty($accountancyexport->errors)) {
 			setEventMessages('', $accountancyexport->errors, 'errors');
 		} elseif (!$notifiedexportdate || !$notifiedvalidationdate) {
