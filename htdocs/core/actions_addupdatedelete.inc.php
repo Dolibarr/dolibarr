@@ -105,6 +105,15 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val['label'])), null, 'errors');
 		}
+
+		// Validation of fields values
+		if ($conf->global->MAIN_FEATURE_LEVEL >= 2 || !empty($conf->global->MAIN_USE_COMMON_VALIDATION)) {
+			if (!$error && !empty($val['validate']) && is_callable(array($object, 'validateField'))) {
+				if (!$object->validateField($object->fields, $key, $value)) {
+					$error++;
+				}
+			}
+		}
 	}
 
 	// Fill array 'array_options' with data from add form

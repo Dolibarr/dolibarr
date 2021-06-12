@@ -123,6 +123,10 @@ abstract class CommonObject
 	 */
 	protected $table_ref_field = '';
 
+	/**
+	 * @var array $validateFieldsErrors to store error results of ->validateField()
+	 */
+	public $validateFieldsErrors = array();
 
 
 	// Following vars are used by some objects only. We keep this property here in CommonObject to be able to provide common method using them.
@@ -7306,6 +7310,40 @@ abstract class CommonObject
 	}
 
 	/**
+	 * clear validation message result for a field
+	 *
+	 * @param string $fieldKey Key of attribute to clear
+	 */
+	public function clearFieldError($fieldKey)
+	{
+		$this->error = '';
+		unset($this->validateFieldsErrors[$fieldKey]);
+	}
+
+	/**
+	 * set validation error message a field
+	 *
+	 * @param  string  $fieldKey            Key of attribute
+	 */
+	public function setFieldError($fieldKey, $msg = '')
+	{
+		$this->error = $this->validateFieldsErrors[$fieldKey] = $msg;
+	}
+
+	/**
+	 * get field error message
+	 *
+	 * @param  string  $fieldKey            Key of attribute
+	 */
+	public function getFieldError($fieldKey)
+	{
+		if (!empty($this->validateFieldsErrors[$fieldKey])) {
+			return $this->validateFieldsErrors[$fieldKey];
+		}
+		return '';
+	}
+
+	/**
 	 * Return validation test result for a field
 	 *
 	 * @param  array   $val		       		Array of properties of field to show
@@ -7319,8 +7357,7 @@ abstract class CommonObject
 
 		if(!class_exists('Validate')){ require_once DOL_DOCUMENT_ROOT . '/core/class/validate.class.php'; }
 
-		// TODO : ask @eldy to know if need to use another error field to separate error msg
-		$this->error = ''; // error will be use for form error display so must be clear before
+		$this->clearFieldError($fieldKey);
 
 		if (!isset($val[$fieldKey])) {
 			return false;
@@ -7393,7 +7430,7 @@ abstract class CommonObject
 
 		// Required test and empty value
 		if($required && !$validate->isNotEmptyString($fieldValue)){
-			$this->error = $validate->error;
+			$this->setFieldError($fieldKey, $validate->error);
 			return false;
 		}
 		elseif (!$required && !$validate->isNotEmptyString($fieldValue)) {
@@ -7403,13 +7440,13 @@ abstract class CommonObject
 
 		// MAX Size test
 		if(!empty($maxSize) && !$validate->isMaxLength($fieldValue, $maxSize)){
-			$this->error = $validate->error;
+			$this->setFieldError($fieldKey, $validate->error);
 			return false;
 		}
 
 		// MIN Size test
 		if(!empty($minSize) && !$validate->isMinLength($fieldValue, $minSize)){
-			$this->error = $validate->error;
+			$this->setFieldError($fieldKey, $validate->error);
 			return false;
 		}
 
@@ -7419,12 +7456,12 @@ abstract class CommonObject
 
 		if (in_array($type, array('date', 'datetime', 'timestamp'))) {
 			if (!$validate->isTimestamp($fieldValue)) {
-				$this->error = $validate->error;
+				$this->setFieldError($fieldKey, $validate->error);
 				return false;
 			} else { return true; }
 		} elseif ($type == 'duration') {
 			if(!$validate->isDuration($fieldValue)){
-				$this->error = $validate->error;
+				$this->setFieldError($fieldKey, $validate->error);
 				return false;
 			} else { return true; }
 		}
@@ -7432,35 +7469,35 @@ abstract class CommonObject
 		{
 			// is numeric
 			if(!$validate->isDuration($fieldValue)){
-				$this->error = $validate->error;
+				$this->setFieldError($fieldKey, $validate->error);
 				return false;
 			} else { return true; }
 		}
 		elseif ($type == 'boolean')
 		{
 			if(!$validate->isBool($fieldValue)){
-				$this->error = $validate->error;
+				$this->setFieldError($fieldKey, $validate->error);
 				return false;
 			} else { return true; }
 		}
 		elseif ($type == 'mail')
 		{
 			if(!$validate->isEmail($fieldValue)){
-				$this->error = $validate->error;
+				$this->setFieldError($fieldKey, $validate->error);
 				return false;
 			}
 		}
 		elseif ($type == 'url')
 		{
 			if(!$validate->isUrl($fieldValue)){
-				$this->error = $validate->error;
+				$this->setFieldError($fieldKey, $validate->error);
 				return false;
 			} else { return true; }
 		}
 		elseif ($type == 'phone')
 		{
 			if (!$validate->isPhone($fieldValue)) {
-				$this->error = $validate->error;
+				$this->setFieldError($fieldKey, $validate->error);
 				return false;
 			} else { return true; }
 		}
@@ -7484,7 +7521,7 @@ abstract class CommonObject
 			}
 
 			if(!isInDb($value_arr, $InfoFieldList[0], $selectkey)){
-				$this->error = $validate->error;
+				$this->setFieldError($fieldKey, $validate->error);
 				return false;
 			} else { return true; }
 		}
@@ -7495,7 +7532,7 @@ abstract class CommonObject
 			$classname = $InfoFieldList[0];
 			$classpath = $InfoFieldList[1];
 			if(!$validate->isFetchable($fieldValue, $classname, $classpath)){
-				$this->error = $validate->error;
+				$this->setFieldError($fieldKey, $validate->error);
 				return false;
 			} else { return true; }
 		}
