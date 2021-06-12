@@ -1236,8 +1236,8 @@ if ($resql) {
 
 		$product_static->id = $obj->rowid;
 		$product_static->ref = $obj->ref;
-		$product_static->ref_fourn = $obj->ref_supplier; // deprecated
-		$product_static->ref_supplier = $obj->ref_supplier;
+		$product_static->ref_fourn = empty($obj->ref_supplier) ? '' : $obj->ref_supplier; // deprecated
+		$product_static->ref_supplier = empty($obj->ref_supplier) ? '' : $obj->ref_supplier;
 		$product_static->label = $obj->label;
 		$product_static->finished = $obj->finished;
 		$product_static->type = $obj->fk_product_type;
