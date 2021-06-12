@@ -36,11 +36,11 @@ if (!$user->admin) {
 
 $id = GETPOST('rowid', 'int');
 $action = GETPOST('action', 'aZ09');
+$optioncss = GETPOST('optionscss', 'aZ09');
 
 $langcode = GETPOST('langcode', 'alphanohtml');
 $transkey = GETPOST('transkey', 'alphanohtml');
 $transvalue = GETPOST('transvalue', 'restricthtml');
-
 
 $mode = GETPOST('mode', 'aZ09') ? GETPOST('mode', 'aZ09') : 'searchkey';
 
@@ -188,7 +188,7 @@ if ($action == 'delete') {
 $form = new Form($db);
 $formadmin = new FormAdmin($db);
 
-$wikihelp = 'EN:Setup Translation|FR:Paramétrage traduction|ES:Configuración';
+$wikihelp = 'EN:Setup_Translation|FR:Paramétrage_Traduction|ES:Configuración_Traducción';
 llxHeader('', $langs->trans("Setup"), $wikihelp);
 
 $param = '&mode='.urlencode($mode);
@@ -289,7 +289,7 @@ if ($mode == 'overwrite') {
 	print "\n";
 
 	print '<tr class="oddeven"><td>';
-	print $formadmin->select_language(GETPOST('langcode'), 'langcode', 0, null, 1, 0, $disablededit ? 1 : 0, 'maxwidthonsmartphone', 1);
+	print $formadmin->select_language(GETPOST('langcode'), 'langcode', 0, null, 1, 0, $disablededit ? 1 : 0, 'maxwidth250', 1);
 	print '</td>'."\n";
 	print '<td>';
 	print '<input type="text" class="flat maxwidthonsmartphone"'.$disablededit.' name="transkey" id="transkey" value="'.(!empty($transkey) ? $transkey : "").'">';
@@ -338,7 +338,7 @@ if ($mode == 'overwrite') {
 			print '<td>'.$obj->transkey.'</td>'."\n";
 
 			// Value
-			print '<td>';
+			print '<td class="small">';
 			/*print '<input type="hidden" name="const['.$i.'][rowid]" value="'.$obj->rowid.'">';
 			print '<input type="hidden" name="const['.$i.'][lang]" value="'.$obj->lang.'">';
 			print '<input type="hidden" name="const['.$i.'][name]" value="'.$obj->transkey.'">';
@@ -482,7 +482,7 @@ if ($mode == 'searchkey') {
 
 	print '<tr class="oddeven"><td>';
 	//print $formadmin->select_language($langcode,'langcode',0,null,$langs->trans("All"),0,0,'',1);
-	print $formadmin->select_language($langcode, 'langcode', 0, null, 0, 0, 0, 'maxwidthonsmartphone', 1);
+	print $formadmin->select_language($langcode, 'langcode', 0, null, 0, 0, 0, 'maxwidth250', 1);
 	print '</td>'."\n";
 	print '<td>';
 	print '<input type="text" class="flat maxwidthonsmartphone" name="transkey" value="'.$transkey.'">';
@@ -529,7 +529,7 @@ if ($mode == 'searchkey') {
 		if ($i > ($offset + $limit)) {
 			break;
 		}
-		print '<tr class="oddeven"><td>'.$langcode.'</td><td>'.$key.'</td><td>';
+		print '<tr class="oddeven"><td>'.$langcode.'</td><td>'.$key.'</td><td class="small">';
 		print dol_escape_htmltag($val);
 		print '</td><td class="right nowraponall">';
 		if (!empty($newlangfileonly->tab_translate[$key])) {
@@ -537,8 +537,8 @@ if ($mode == 'searchkey') {
 				// retrieve rowid
 				$sql = "SELECT rowid";
 				$sql .= " FROM ".MAIN_DB_PREFIX."overwrite_trans";
-				$sql .= " WHERE transkey = '".$db->escape($key)."'";
-				$sql .= " AND entity IN (".getEntity('overwrite_trans').")";
+				$sql .= " WHERE entity IN (".getEntity('overwrite_trans').")";
+				$sql .= " AND transkey = '".$db->escape($key)."'";
 				dol_syslog("translation::select from table", LOG_DEBUG);
 				$result = $db->query($sql);
 				if ($result) {
@@ -563,6 +563,21 @@ if ($mode == 'searchkey') {
 				print ' &nbsp; <a href="'.$transifexurl.'" target="transifex">'.img_picto($langs->trans('FixOnTransifex'), 'globe').'</a>';
 			}
 		} else {
+			// retrieve rowid
+			$sql = "SELECT rowid";
+			$sql .= " FROM ".MAIN_DB_PREFIX."overwrite_trans";
+			$sql .= " WHERE entity IN (".getEntity('overwrite_trans').")";
+			$sql .= " AND transkey = '".$db->escape($key)."'";
+			dol_syslog("translation::select from table", LOG_DEBUG);
+			$result = $db->query($sql);
+			if ($result) {
+				$obj = $db->fetch_object($result);
+			}
+			print '<a class="editfielda reposition marginrightonly" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$conf->entity.'&mode=overwrite&action=edit">'.img_edit().'</a>';
+			print ' ';
+			print '<a class="marginleftonly marginrightonly" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$conf->entity.'&mode='.urlencode($mode).'&action=delete&mode='.urlencode($mode).'&token='.newToken().'">'.img_delete().'</a>';
+			print '&nbsp;&nbsp;';
+
 			$htmltext = $langs->trans("TransKeyWithoutOriginalValue", $key);
 			print $form->textwithpicto('', $htmltext, 1, 'warning');
 		}

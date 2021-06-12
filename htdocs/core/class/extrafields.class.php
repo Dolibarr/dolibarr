@@ -9,7 +9,7 @@
  * Copyright (C) 2015       Charles-Fr BENKE        <charles.fr@benke.fr>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -629,6 +629,8 @@ class ExtraFields
 	 */
 	public function update($attrname, $label, $type, $length, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0)
 	{
+		global $hookmanager;
+
 		if ($elementtype == 'thirdparty') {
 			$elementtype = 'societe';
 		}
@@ -673,6 +675,17 @@ class ExtraFields
 				$lengthdb = $length;
 			}
 			$field_desc = array('type'=>$typedb, 'value'=>$lengthdb, 'null'=>($required ? 'NOT NULL' : 'NULL'), 'default'=>$default);
+
+			if (is_object($hookmanager)) {
+				$hookmanager->initHooks(array('extrafieldsdao'));
+				$parameters = array('field_desc'=>&$field_desc, 'table'=>$table, 'attr_name'=>$attrname, 'label'=>$label, 'type'=>$type, 'length'=>$length, 'unique'=>$unique, 'required'=>$required, 'pos'=>$pos, 'param'=>$param, 'alwayseditable'=>$alwayseditable, 'perms'=>$perms, 'list'=>$list, 'help'=>$help, 'default'=>$default, 'computed'=>$computed, 'entity'=>$entity, 'langfile'=>$langfile, 'enabled'=>$enabled, 'totalizable'=>$totalizable, 'printable'=>$printable);
+				$reshook = $hookmanager->executeHooks('updateExtrafields', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+
+				if ($reshook < 0) {
+					$this->error = $this->db->lasterror();
+					return -1;
+				}
+			}
 
 			if ($type != 'separate') { // No table update when separate type
 				$result = $this->db->DDLUpdateField(MAIN_DB_PREFIX.$table, $attrname, $field_desc);
@@ -1345,7 +1358,10 @@ class ExtraFields
 			}
 			$out .= '</select>';
 		} elseif ($type == 'checkbox') {
-			$value_arr = explode(',', $value);
+			$value_arr = $value;
+			if (!is_array($value)) {
+				$value_arr = explode(',', $value);
+			}
 			$out = $form->multiselectarray($keyprefix.$key.$keysuffix, (empty($param['options']) ?null:$param['options']), $value_arr, '', 0, '', 0, '100%');
 		} elseif ($type == 'radio') {
 			$out = '';
@@ -1706,11 +1722,11 @@ class ExtraFields
 				$sql .= ' as main';
 			}
 			if ($selectkey == 'rowid' && empty($value)) {
-				$sql .= " WHERE ".$selectkey."=0";
+				$sql .= " WHERE ".$selectkey." = 0";
 			} elseif ($selectkey == 'rowid') {
-				$sql .= " WHERE ".$selectkey."=".$this->db->escape($value);
+				$sql .= " WHERE ".$selectkey." = ".((int) $value);
 			} else {
-				$sql .= " WHERE ".$selectkey."='".$this->db->escape($value)."'";
+				$sql .= " WHERE ".$selectkey." = '".$this->db->escape($value)."'";
 			}
 
 			//$sql.= ' AND entity = '.$conf->entity;
@@ -2199,7 +2215,11 @@ class ExtraFields
 						continue; // Value was not provided, we should not set it.
 					}
 					$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
-					$value_key = price2num($value_arr);
+					if ($keysuffix != 'search_') {	// If value is for a search, we must keep complex string like '>100 <=150'
+						$value_key = price2num($value_arr);
+					} else {
+						$value_key = $value_arr;
+					}
 				} else {
 					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {
 						continue; // Value was not provided, we should not set it.

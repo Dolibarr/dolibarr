@@ -67,8 +67,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, 
 /*
  * View
  */
-
-llxHeader('', $langs->trans('Order'), 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
+$title = $langs->trans('Order')." - ".$langs->trans('Notes');
+$help_url = 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes|DE:Modul_Kundenaufträge';
+llxHeader('', $title, $help_url);
 
 $form = new Form($db);
 

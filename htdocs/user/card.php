@@ -109,7 +109,7 @@ if ($user->id <> $id && !$canreaduser) {
 }
 
 // Load translation files required by page
-$langs->loadLangs(array('users', 'companies', 'ldap', 'admin', 'hrm', 'stocks'));
+$langs->loadLangs(array('users', 'companies', 'ldap', 'admin', 'hrm', 'stocks', 'other'));
 
 $object = new User($db);
 $extrafields = new ExtraFields($db);
@@ -240,10 +240,12 @@ if (empty($reshook)) {
 			//$object->twitter = GETPOST("twitter", 'alphanohtml');
 			//$object->facebook = GETPOST("facebook", 'alphanohtml');
 			//$object->linkedin = GETPOST("linkedin", 'alphanohtml');
-			$object->socialnetworks = array();
 			if (!empty($conf->socialnetworks->enabled)) {
+				$object->socialnetworks = array();
 				foreach ($socialnetworks as $key => $value) {
-					$object->socialnetworks[$key] = GETPOST($key, 'alphanohtml');
+					if (GETPOST($key, 'alphanohtml')) {
+						$object->socialnetworks[$key] = GETPOST($key, 'alphanohtml');
+					}
 				}
 			}
 
@@ -400,10 +402,12 @@ if (empty($reshook)) {
 				//$object->twitter = GETPOST("twitter", 'alphanohtml');
 				//$object->facebook = GETPOST("facebook", 'alphanohtml');
 				//$object->linkedin = GETPOST("linkedin", 'alphanohtml');
-				$object->socialnetworks = array();
 				if (!empty($conf->socialnetworks->enabled)) {
+					$object->socialnetworks = array();
 					foreach ($socialnetworks as $key => $value) {
-						$object->socialnetworks[$key] = GETPOST($key, 'alphanohtml');
+						if (GETPOST($key, 'alphanohtml')) {
+							$object->socialnetworks[$key] = GETPOST($key, 'alphanohtml');
+						}
 					}
 				}
 				$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alphanohtml'));
@@ -611,8 +615,8 @@ if (empty($reshook)) {
 	}
 
 	// Action initialisation donnees depuis record LDAP
-	if ($action == 'adduserldap') {
-		$selecteduser = $_POST['users'];
+	if ($action == 'adduserldap' && $canadduser) {
+		$selecteduser = GETPOST('users');
 
 		$required_fields = array(
 			$conf->global->LDAP_KEY_USERS,
@@ -839,54 +843,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 	}
 	$password = (GETPOSTISSET('password') ?GETPOST('password') : $generated_password);
 
-	// Password
-	print '<tr><td class="fieldrequired">'.$langs->trans("Password").'</td>';
-	print '<td>';
-	$valuetoshow = '';
-	if (preg_match('/ldap/', $dolibarr_main_authentication)) {
-		$valuetoshow .= ($valuetoshow ? ', ' : '').$langs->trans("PasswordOfUserInLDAP");
-	}
-	if (preg_match('/http/', $dolibarr_main_authentication)) {
-		$valuetoshow .= ($valuetoshow ? ', ' : '').$langs->trans("HTTPBasicPassword");
-	}
-	if (preg_match('/dolibarr/', $dolibarr_main_authentication)) {
-		if (!empty($ldap_pass)) {	// For very old system comaptibilty. Now clear password can't be viewed from LDAP read
-			$valuetoshow .= ($valuetoshow ? ', ' : '').'<input type="hidden" name="password" value="'.$ldap_pass.'">'; // Dolibarr password is preffiled with LDAP known password
-			$valuetoshow .= preg_replace('/./i', '*', $ldap_pass);
-		} else {
-			// We do not use a field password but a field text to show new password to use.
-			$valuetoshow .= ($valuetoshow ? ', ' : '').'<input size="30" maxsize="32" type="text" name="password" value="'.$password.'" autocomplete="new-password">';
-		}
-	}
-
-	// Other form for user password
-	$parameters = array('valuetoshow' => $valuetoshow, 'password' => $password);
-	$reshook = $hookmanager->executeHooks('printUserPasswordField', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	if ($reshook > 0) {
-		$valuetoshow = $hookmanager->resPrint; // to replace
-	} else {
-		$valuetoshow .= $hookmanager->resPrint; // to add
-	}
-
-	print $valuetoshow;
-	print '</td></tr>';
-
-	if (!empty($conf->api->enabled)) {
-		// API key
-		//$generated_password = getRandomPassword(false);
-		print '<tr><td>'.$langs->trans("ApiKey").'</td>';
-		print '<td>';
-		print '<input size="30" maxsize="32" type="text" id="api_key" name="api_key" value="'.GETPOST('api_key', 'alphanohtml').'" autocomplete="off">';
-		if (!empty($conf->use_javascript_ajax)) {
-			print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_api_key" class="linkobject"');
-		}
-		print '</td></tr>';
-	} else {
-		// PARTIAL WORKAROUND
-		$generated_fake_api_key = getRandomPassword(false);
-		print '<input type="hidden" name="api_key" value="'.$generated_fake_api_key.'">';
-	}
-
 	// Administrator
 	if (!empty($user->admin)) {
 		print '<tr><td>'.$langs->trans("Administrator").'</td>';
@@ -936,10 +892,11 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print '</td></tr>';
 
 	// Employee
-	$defaultemployee = 1;
+	$defaultemployee = '1';
 	print '<tr>';
 	print '<td>'.$langs->trans('Employee').'</td><td>';
-	print $form->selectyesno("employee", (GETPOST('employee') != '' ?GETPOST('employee') : $defaultemployee), 1);
+	print '<input type="checkbox" name="employee" value="1"'.(GETPOST('employee') == '1' ? ' checked="checked"' : ($defaultemployee ? ' checked="checked"' : '')).'>';
+	//print $form->selectyesno("employee", (GETPOST('employee') != '' ?GETPOST('employee') : $defaultemployee), 1);
 	print '</td></tr>';
 
 	// Hierarchy
@@ -978,6 +935,70 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print '<td>';
 	print $form->textwithpicto($langs->trans("Internal"), $langs->trans("InternalExternalDesc"), 1, 'help', '', 0, 2);
 	print '</td></tr>';
+
+
+	print '</table><hr><table class="border centpercent">';
+
+
+	// Date validity
+	print '<tr><td class="titlefieldcreate">'.$langs->trans("RangeOfLoginValidity").'</td>';
+	print '<td>';
+	print $form->selectDate($datestartvalidity, 'datestartvalidity', 0, 0, 1, 'formdatestartvalidity', 1, 1);
+
+	print ' &nbsp; ';
+
+	print $form->selectDate($dateendvalidity, 'dateendvalidity', 0, 0, 1, 'formdateendvalidity', 1, 0);
+	print '</td>';
+	print "</tr>\n";
+
+	// Password
+	print '<tr><td class="fieldrequired">'.$langs->trans("Password").'</td>';
+	print '<td>';
+	$valuetoshow = '';
+	if (preg_match('/ldap/', $dolibarr_main_authentication)) {
+		$valuetoshow .= ($valuetoshow ? ', ' : '').$langs->trans("PasswordOfUserInLDAP");
+	}
+	if (preg_match('/http/', $dolibarr_main_authentication)) {
+		$valuetoshow .= ($valuetoshow ? ', ' : '').$langs->trans("HTTPBasicPassword");
+	}
+	if (preg_match('/dolibarr/', $dolibarr_main_authentication)) {
+		if (!empty($ldap_pass)) {	// For very old system comaptibilty. Now clear password can't be viewed from LDAP read
+			$valuetoshow .= ($valuetoshow ? ', ' : '').'<input type="hidden" name="password" value="'.$ldap_pass.'">'; // Dolibarr password is preffiled with LDAP known password
+			$valuetoshow .= preg_replace('/./i', '*', $ldap_pass);
+		} else {
+			// We do not use a field password but a field text to show new password to use.
+			$valuetoshow .= ($valuetoshow ? ', ' : '').'<input size="30" maxsize="32" type="text" name="password" value="'.$password.'" autocomplete="new-password">';
+		}
+	}
+
+	// Other form for user password
+	$parameters = array('valuetoshow' => $valuetoshow, 'password' => $password);
+	$reshook = $hookmanager->executeHooks('printUserPasswordField', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	if ($reshook > 0) {
+		$valuetoshow = $hookmanager->resPrint; // to replace
+	} else {
+		$valuetoshow .= $hookmanager->resPrint; // to add
+	}
+
+	print $valuetoshow;
+	print '</td></tr>';
+
+	if (!empty($conf->api->enabled)) {
+		// API key
+		//$generated_password = getRandomPassword(false);
+		print '<tr><td>'.$langs->trans("ApiKey").'</td>';
+		print '<td>';
+		print '<input class="minwidth300" maxsize="32" type="text" id="api_key" name="api_key" value="'.GETPOST('api_key', 'alphanohtml').'" autocomplete="off">';
+		if (!empty($conf->use_javascript_ajax)) {
+			print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_api_key" class="linkobject"');
+		}
+		print '</td></tr>';
+	} else {
+		// PARTIAL WORKAROUND
+		$generated_fake_api_key = getRandomPassword(false);
+		print '<input type="hidden" name="api_key" value="'.$generated_fake_api_key.'">';
+	}
+
 
 	print '</table><hr><table class="border centpercent">';
 
@@ -1089,7 +1110,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	}
 
 	// Accountancy code
-	if ($conf->accounting->enabled) {
+	if (!empty($conf->accounting->enabled)) {
 		print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
 		print '<td>';
 		print '<input type="text" name="accountancy_code" value="'.dol_escape_htmltag(GETPOST('accountancy_code', 'alphanohtml')).'">';
@@ -1113,7 +1134,8 @@ if ($action == 'create' || $action == 'adduserldap') {
 	}
 
 	if (!empty($conf->global->MAIN_MULTILANGS)) {
-		print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">'."\n";
+		print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0, 'string', '', 0, 0, 'id', $langs->trans("WarningNotLangOfInterface", $langs->transnoentitiesnoconv("UserGUISetup"))).'</td>';
+		print '<td colspan="3" class="maxwidthonsmartphone">'."\n";
 		print img_picto('', 'language').$formadmin->select_language(GETPOST('default_lang', 'alpha') ?GETPOST('default_lang', 'alpha') : ($object->lang ? $object->lang : ''), 'default_lang', 0, 0, 1, 0, 0, 'maxwidth200onsmartphone');
 		print '</td>';
 		print '</tr>';
@@ -1142,13 +1164,13 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print $langs->trans("Note");
 	print '</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('note', GETPOSTISSET('note') ? GETPOST('note', 'restricthtml') : '', '', 120, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_3, '90%');
+	$doleditor = new DolEditor('note', GETPOSTISSET('note') ? GETPOST('note', 'restricthtml') : '', '', 120, 'dolibarr_notes', '', false, true, getDolGlobalString('FCKEDITOR_ENABLE_SOCIETE'), ROWS_3, '90%');
 	$doleditor->Create();
 	print "</td></tr>\n";
 
 	// Signature
 	print '<tr><td class="tdtop">'.$langs->trans("Signature").'</td>';
-	print '<td>';
+	print '<td class="wordbreak">';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 	$doleditor = new DolEditor('signature', GETPOST('signature', 'restricthtml'), '', 138, 'dolibarr_notes', 'In', true, true, empty($conf->global->FCKEDITOR_ENABLE_USERSIGN) ? 0 : 1, ROWS_4, '90%');
 	print $doleditor->Create(1);
@@ -1220,17 +1242,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print ' - ';
 
 	print $form->selectDate($dateemploymentend, 'dateemploymentend', 0, 0, 1, 'formdateemploymentend', 1, 0);
-	print '</td>';
-	print "</tr>\n";
-
-	// Date validity
-	print '<tr><td>'.$langs->trans("RangeOfLoginValidity").'</td>';
-	print '<td>';
-	print $form->selectDate($datestartvalidity, 'datestartvalidity', 0, 0, 1, 'formdatestartvalidity', 1, 1);
-
-	print ' - ';
-
-	print $form->selectDate($dateendvalidity, 'dateendvalidity', 0, 0, 1, 'formdateendvalidity', 1, 0);
 	print '</td>';
 	print "</tr>\n";
 
@@ -1371,79 +1382,13 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '<table class="border tableforfield" width="100%">';
 
 			// Login
-			print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
+			print '<tr><td class="titlefieldmiddle">'.$langs->trans("Login").'</td>';
 			if (!empty($object->ldap_sid) && $object->statut == 0) {
 				print '<td class="error">'.$langs->trans("LoginAccountDisableInDolibarr").'</td>';
 			} else {
 				print '<td>'.$object->login.'</td>';
 			}
 			print '</tr>'."\n";
-
-			// Password
-			print '<tr><td>'.$langs->trans("Password").'</td>';
-
-			print '<td class="wordbreak">';
-			$valuetoshow = '';
-			if (preg_match('/ldap/', $dolibarr_main_authentication)) {
-				if (!empty($object->ldap_sid)) {
-					if ($passDoNotExpire) {
-						$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').$langs->trans("LdapUacf_".$statutUACF);
-					} elseif ($userChangePassNextLogon) {
-						$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').'<span class="warning">'.$langs->trans("UserMustChangePassNextLogon", $ldap->domainFQDN).'</span>';
-					} elseif ($userDisabled) {
-						$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').'<span class="warning">'.$langs->trans("LdapUacf_".$statutUACF, $ldap->domainFQDN).'</span>';
-					} else {
-						$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').$langs->trans("PasswordOfUserInLDAP");
-					}
-				} else {
-					$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').$langs->trans("PasswordOfUserInLDAP");
-				}
-			}
-			if (preg_match('/http/', $dolibarr_main_authentication)) {
-				$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').$langs->trans("HTTPBasicPassword");
-			}
-			if (preg_match('/dolibarr/', $dolibarr_main_authentication)) {
-				if ($object->pass) {
-					$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '');
-					$valuetoshow .= '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
-				} else {
-					if ($user->admin && $user->id == $object->id) {
-						$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '');
-						//$valuetoshow .= '<span class="opacitymedium">'.$langs->trans("Crypted").' - </span>';
-						$valuetoshow .= '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
-						// TODO Add a feature to reveal the hash
-						$valuetoshow .= '<!-- Crypted into '.$object->pass_indatabase_crypted.' -->';
-					} else {
-						$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').'<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
-					}
-				}
-			}
-
-			// Other form for user password
-			$parameters = array('valuetoshow' => $valuetoshow);
-			$reshook = $hookmanager->executeHooks('printUserPasswordField', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-			if ($reshook > 0) {
-				$valuetoshow = $hookmanager->resPrint; // to replace
-			} else {
-				$valuetoshow .= $hookmanager->resPrint; // to add
-			}
-
-			print $valuetoshow;
-			print "</td>";
-			print '</tr>'."\n";
-
-			// API key
-			if (!empty($conf->api->enabled) && $user->admin) {
-				print '<tr><td>'.$langs->trans("ApiKey").'</td>';
-				print '<td>';
-				if (!empty($object->api_key)) {
-					print '<span class="opacitymedium">'.preg_replace('/./', '*', $object->api_key).'</span>';
-				}
-				if ($user->admin || $user->id == $object->id) {
-					// TODO Add a feature to reveal the hash
-				}
-				print '</td></tr>';
-			}
 
 			// Administrator
 			print '<tr><td>'.$langs->trans("Administrator").'</td><td>';
@@ -1480,7 +1425,8 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Employee
 			print '<tr><td>'.$langs->trans("Employee").'</td><td colspan="2">';
-			print yn($object->employee);
+			print '<input type="checkbox" disabled name="employee" value="1"'.($object->employee ? ' checked="checked"' : '').'>';
+			//print yn($object->employee);
 			print '</td></tr>'."\n";
 
 			// TODO Move this into tab RH, visible when salarie or RH is visible (HierarchicalResponsible must be on both tab)
@@ -1604,20 +1550,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</td>';
 			print "</tr>\n";
 
-			// Date login validity
-			print '<tr><td>'.$langs->trans("RangeOfLoginValidity").'</td>';
-			print '<td>';
-			if ($object->datestartvalidity) {
-				print '<span class="opacitymedium">'.$langs->trans("FromDate").'</span> ';
-				print dol_print_date($object->datestartvalidity, 'day');
-			}
-			if ($object->dateendvalidity) {
-				print '<span class="opacitymedium"> - '.$langs->trans("To").'</span> ';
-				print dol_print_date($object->dateendvalidity, 'day');
-			}
-			print '</td>';
-			print "</tr>\n";
-
 			// Date of birth
 			print '<tr><td>'.$langs->trans("DateOfBirth").'</td>';
 			print '<td>';
@@ -1626,7 +1558,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print "</tr>\n";
 
 			// Accountancy code
-			if ($conf->accounting->enabled) {
+			if (!empty($conf->accounting->enabled)) {
 				print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
 				print '<td>'.$object->accountancy_code.'</td></tr>';
 			}
@@ -1637,11 +1569,12 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '<div class="fichehalfright"><div class="ficheaddleft">';
 
 			print '<div class="underbanner clearboth"></div>';
+
 			print '<table class="border tableforfield centpercent">';
 
 			// Color user
 			if (!empty($conf->agenda->enabled)) {
-				print '<tr><td>'.$langs->trans("ColorUser").'</td>';
+				print '<tr><td class="titlefield">'.$langs->trans("ColorUser").'</td>';
 				print '<td>';
 				print $formother->showColor($object->color, '');
 				print '</td>';
@@ -1650,7 +1583,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Categories
 			if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
-				print '<tr><td>'.$langs->trans("Categories").'</td>';
+				print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td>';
 				print '<td colspan="3">';
 				print $form->showCategories($object->id, Categorie::TYPE_USER, 1);
 				print '</td></tr>';
@@ -1658,13 +1591,15 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Default language
 			if (!empty($conf->global->MAIN_MULTILANGS)) {
+				$langs->load("languages");
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-				print '<tr><td>'.$langs->trans("DefaultLang").'</td><td>';
+				print '<tr><td class="titlefield">';
+				print $form->textwithpicto($langs->trans("DefaultLang"), $langs->trans("WarningNotLangOfInterface", $langs->transnoentitiesnoconv("UserGUISetup")));
+				print '</td><td>';
 				//$s=picto_from_langcode($object->default_lang);
 				//print ($s?$s.' ':'');
-				$langs->load("languages");
 				$labellang = ($object->lang ? $langs->trans('Language_'.$object->lang) : '');
-				print $form->textwithpicto($labellang, $langs->trans("WarningNotLangOfInterface", $langs->transnoentitiesnoconv("UserGUISetup")));
+				print $labellang;
 				print '</td></tr>';
 			}
 
@@ -1673,14 +1608,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '<td>'.$object->openid.'</td>';
 				print "</tr>\n";
 			}
-
-			print '<tr><td class="titlefield">'.$langs->trans("LastConnexion").'</td>';
-			print '<td>'.dol_print_date($object->datelastlogin, "dayhour").'</td>';
-			print "</tr>\n";
-
-			print '<tr><td>'.$langs->trans("PreviousConnexion").'</td>';
-			print '<td>'.dol_print_date($object->datepreviouslogin, "dayhour").'</td>';
-			print "</tr>\n";
 
 			// Multicompany
 			if (!empty($conf->multicompany->enabled) && is_object($mc)) {
@@ -1751,11 +1678,11 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			// Signature
-			print '<tr><td class="tdtop">'.$langs->trans('Signature').'</td><td>';
+			print '<tr><td class="tdtop">'.$langs->trans('Signature').'</td><td class="wordbreak">';
 			print dol_htmlentitiesbr($object->signature);
 			print "</td></tr>\n";
 
-			//VCard
+			// VCard
 			print '<tr><td class="tdtop">'.$langs->trans("VCard").'</td>';
 			print '<td>';
 			print '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'">';
@@ -1765,6 +1692,111 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print "</td></tr>\n";
 
 			print "</table>\n";
+
+			// Credentials
+			print '<div class="div-table-responsive-no-min">';
+			print '<table class="border tableforfield margintable centpercent">';
+			print '<tr class="liste_titre"><td class="liste_titre">';
+			print img_picto('', 'security', 'class="paddingleft pictofixedwidth"').$langs->trans("Credentials");
+			print '</td>';
+			print '<td class="liste_titre"></td>';
+			print '</tr>';
+
+			// Date login validity
+			print '<tr><td>'.$langs->trans("RangeOfLoginValidity").'</td>';
+			print '<td>';
+			if ($object->datestartvalidity) {
+				print '<span class="opacitymedium">'.$langs->trans("FromDate").'</span> ';
+				print dol_print_date($object->datestartvalidity, 'day');
+			}
+			if ($object->dateendvalidity) {
+				print '<span class="opacitymedium"> - '.$langs->trans("To").'</span> ';
+				print dol_print_date($object->dateendvalidity, 'day');
+			}
+			print '</td>';
+			print "</tr>\n";
+
+			// Password
+			print '<tr><td class="titlefield">'.$langs->trans("Password").'</td>';
+
+			print '<td class="wordbreak">';
+			$valuetoshow = '';
+			if (preg_match('/ldap/', $dolibarr_main_authentication)) {
+				if (!empty($object->ldap_sid)) {
+					if ($passDoNotExpire) {
+						$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').$langs->trans("LdapUacf_".$statutUACF);
+					} elseif ($userChangePassNextLogon) {
+						$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').'<span class="warning">'.$langs->trans("UserMustChangePassNextLogon", $ldap->domainFQDN).'</span>';
+					} elseif ($userDisabled) {
+						$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').'<span class="warning">'.$langs->trans("LdapUacf_".$statutUACF, $ldap->domainFQDN).'</span>';
+					} else {
+						$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').$langs->trans("PasswordOfUserInLDAP");
+					}
+				} else {
+					$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').$langs->trans("PasswordOfUserInLDAP");
+				}
+			}
+			if (preg_match('/http/', $dolibarr_main_authentication)) {
+				$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').$langs->trans("HTTPBasicPassword");
+			}
+			if (preg_match('/dolibarr/', $dolibarr_main_authentication)) {
+				if ($object->pass) {
+					$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '');
+					$valuetoshow .= '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
+				} else {
+					if ($user->admin && $user->id == $object->id) {
+						$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '');
+						//$valuetoshow .= '<span class="opacitymedium">'.$langs->trans("Crypted").' - </span>';
+						$valuetoshow .= '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
+						// TODO Add a feature to reveal the hash
+						$valuetoshow .= '<!-- Crypted into '.$object->pass_indatabase_crypted.' -->';
+					} else {
+						$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').'<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
+					}
+				}
+			}
+
+			// Other form for user password
+			$parameters = array('valuetoshow' => $valuetoshow);
+			$reshook = $hookmanager->executeHooks('printUserPasswordField', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			if ($reshook > 0) {
+				$valuetoshow = $hookmanager->resPrint; // to replace
+			} else {
+				$valuetoshow .= $hookmanager->resPrint; // to add
+			}
+
+			print $valuetoshow;
+			print "</td>";
+			print '</tr>'."\n";
+
+			// API key
+			if (!empty($conf->api->enabled) && $user->admin) {
+				print '<tr><td>'.$langs->trans("ApiKey").'</td>';
+				print '<td>';
+				if (!empty($object->api_key)) {
+					print '<span class="opacitymedium">';
+					print showValueWithClipboardCPButton($object->api_key, 1, $langs->trans("Hidden"));
+					print '</span>';
+				}
+				if ($user->admin || $user->id == $object->id) {
+					// TODO Add a feature to reveal the hash
+				}
+				print '</td></tr>';
+			}
+
+			print '<tr><td class="titlefield">'.$langs->trans("LastConnexion").'</td>';
+			print '<td>';
+			if ($object->datepreviouslogin) {
+				print dol_print_date($object->datepreviouslogin, "dayhour").' <span class="opacitymedium">('.$langs->trans("Previous").')</span>, ';
+			}
+			if ($object->datelastlogin) {
+				print dol_print_date($object->datelastlogin, "dayhour").' <span class="opacitymedium">('.$langs->trans("Current").')</span>';
+			}
+			print '</td>';
+			print "</tr>\n";
+
+			print '</table></div>';
+
 			print '</div>';
 
 			print '</div></div>';
@@ -2011,47 +2043,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</td>';
 			print '</tr>';
 
-			// Pass
-			print '<tr><td>'.$langs->trans("Password").'</td>';
-			print '<td>';
-			$valuetoshow = '';
-			if (preg_match('/ldap/', $dolibarr_main_authentication)) {
-				$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').$langs->trans("PasswordOfUserInLDAP");
-			}
-			if (preg_match('/http/', $dolibarr_main_authentication)) {
-				$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').$form->textwithpicto($text, $langs->trans("DolibarrInHttpAuthenticationSoPasswordUseless", $dolibarr_main_authentication), 1, 'warning');
-			}
-			if (preg_match('/dolibarr/', $dolibarr_main_authentication)) {
-				if ($caneditpassword) {
-					$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').'<input maxlength="32" type="password" class="flat" name="password" value="'.$object->pass.'" autocomplete="new-password">';
-				} else {
-					$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').preg_replace('/./i', '*', $object->pass);
-				}
-			}
-
-			// Other form for user password
-			$parameters = array('valuetoshow' => $valuetoshow, 'caneditpassword' => $caneditpassword);
-			$reshook = $hookmanager->executeHooks('printUserPasswordField', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-			if ($reshook > 0) {
-				$valuetoshow = $hookmanager->resPrint; // to replace
-			} else {
-				$valuetoshow .= $hookmanager->resPrint; // to add
-			}
-
-			print $valuetoshow;
-			print "</td></tr>\n";
-
-			// API key
-			if (!empty($conf->api->enabled) && $user->admin) {
-				print '<tr><td>'.$langs->trans("ApiKey").'</td>';
-				print '<td>';
-				print '<input class="minwidth300" maxsize="32" type="text" id="api_key" name="api_key" value="'.$object->api_key.'" autocomplete="off">';
-				if (!empty($conf->use_javascript_ajax)) {
-					print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_api_key" class="linkobject"');
-				}
-				print '</td></tr>';
-			}
-
 			// Administrator
 			print '<tr><td>'.$langs->trans("Administrator").'</td>';
 			if ($object->socid > 0) {
@@ -2145,13 +2136,15 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '<tr>';
 			print '<td>'.$form->editfieldkey('Employee', 'employee', '', $object, 0).'</td><td>';
 			if ($caneditfield) {
-				 print $form->selectyesno("employee", $object->employee, 1);
+				print '<input type="checkbox" name="employee" value="1"'.($object->employee ? ' checked="checked"' : '').'>';
+				//print $form->selectyesno("employee", $object->employee, 1);
 			} else {
-				if ($object->employee) {
+				print '<input type="checkbox" name="employee" disabled value="1"'.($object->employee ? ' checked="checked"' : '').'>';
+				/*if ($object->employee) {
 					print $langs->trans("Yes");
 				} else {
 					print $langs->trans("No");
-				}
+				}*/
 			}
 			print '</td></tr>';
 
@@ -2245,6 +2238,74 @@ if ($action == 'create' || $action == 'adduserldap') {
 				}
 			}
 			print '</td></tr>';
+
+
+			print '</table><hr><table class="border centpercent">';
+
+
+			// Date access validity
+			print '<tr><td>'.$langs->trans("RangeOfLoginValidity").'</td>';
+			print '<td>';
+			if ($caneditfield) {
+				print $form->selectDate($datestartvalidity ? $datestartvalidity : $object->datestartvalidity, 'datestartvalidity', 0, 0, 1, 'formdatestartvalidity', 1, 1, 0, '', '', '', '', 1, '', '');
+			} else {
+				print dol_print_date($object->datestartvalidity, 'day');
+			}
+
+			/*if ($datestartvalidity && $dateendvalidity) {
+				print ' - ';
+			}*/
+			print ' &nbsp; ';
+
+			if ($caneditfield) {
+				print $form->selectDate($dateendvalidity ? $datendevalidity : $object->dateendvalidity, 'dateendvalidity', 0, 0, 1, 'formdateendvalidity', 1, 0, 0, '', '', '', '', 1, '', '');
+			} else {
+				print dol_print_date($object->dateendvalidity, 'day');
+			}
+			print '</td>';
+			print "</tr>\n";
+
+			// Pass
+			print '<tr><td class="titlefieldcreate">'.$langs->trans("Password").'</td>';
+			print '<td>';
+			$valuetoshow = '';
+			if (preg_match('/ldap/', $dolibarr_main_authentication)) {
+				$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').$langs->trans("PasswordOfUserInLDAP");
+			}
+			if (preg_match('/http/', $dolibarr_main_authentication)) {
+				$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').$form->textwithpicto($text, $langs->trans("DolibarrInHttpAuthenticationSoPasswordUseless", $dolibarr_main_authentication), 1, 'warning');
+			}
+			if (preg_match('/dolibarr/', $dolibarr_main_authentication)) {
+				if ($caneditpassword) {
+					$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').'<input maxlength="32" type="password" class="flat" name="password" value="'.$object->pass.'" autocomplete="new-password">';
+				} else {
+					$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').preg_replace('/./i', '*', $object->pass);
+				}
+			}
+
+			// Other form for user password
+			$parameters = array('valuetoshow' => $valuetoshow, 'caneditpassword' => $caneditpassword);
+			$reshook = $hookmanager->executeHooks('printUserPasswordField', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			if ($reshook > 0) {
+				$valuetoshow = $hookmanager->resPrint; // to replace
+			} else {
+				$valuetoshow .= $hookmanager->resPrint; // to add
+			}
+
+			print $valuetoshow;
+			print "</td></tr>\n";
+
+			// API key
+			if (!empty($conf->api->enabled) && $user->admin) {
+				print '<tr><td>'.$langs->trans("ApiKey").'</td>';
+				print '<td>';
+				print '<input class="minwidth300" maxsize="32" type="text" id="api_key" name="api_key" value="'.$object->api_key.'" autocomplete="off">';
+				if (!empty($conf->use_javascript_ajax)) {
+					print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_api_key" class="linkobject"');
+				}
+				print '</td></tr>';
+			}
+
 
 			print '</table><hr><table class="border centpercent">';
 
@@ -2389,7 +2450,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</table><hr><table class="border centpercent">';
 
 			// Accountancy code
-			if ($conf->accounting->enabled) {
+			if (!empty($conf->accounting->enabled)) {
 				print "<tr>";
 				print '<td class="titlefieldcreate">'.$langs->trans("AccountancyCode").'</td>';
 				print '<td>';
@@ -2444,7 +2505,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Default language
 			if (!empty($conf->global->MAIN_MULTILANGS)) {
-				print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3">'."\n";
+				print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0, 'string', '', 0, 0, 'id', $langs->trans("WarningNotLangOfInterface", $langs->transnoentitiesnoconv("UserGUISetup"))).'</td><td colspan="3">'."\n";
 				print img_picto('', 'language').$formadmin->select_language($object->lang, 'default_lang', 0, 0, 1);
 				print '</td>';
 				print '</tr>';
@@ -2636,29 +2697,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</td>';
 			print "</tr>\n";
 
-
-			// Date login validity
-			print '<tr><td>'.$langs->trans("RangeOfLoginValidity").'</td>';
-			print '<td>';
-			if ($caneditfield) {
-				print $form->selectDate($datestartvalidity ? $datestartvalidity : $object->datestartvalidity, 'datestartvalidity', 0, 0, 1, 'formdatestartvalidity', 1, 1);
-			} else {
-				print dol_print_date($object->datestartvalidity, 'day');
-			}
-
-			if ($datestartvalidity && $dateendvalidity) {
-				print ' - ';
-			}
-
-			if ($caneditfield) {
-				print $form->selectDate($dateendvalidity ? $datendevalidity : $object->dateendvalidity, 'dateendvalidity', 0, 0, 1, 'formdateendvalidity', 1, 0);
-			} else {
-				print dol_print_date($object->dateendvalidity, 'day');
-			}
-			print '</td>';
-			print "</tr>\n";
-
-
 			// Date birth
 			print '<tr><td>'.$langs->trans("DateOfBirth").'</td>';
 			print '<td>';
@@ -2685,16 +2723,15 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 		if ($action != 'edit' && $action != 'presend') {
 			print '<div class="fichecenter"><div class="fichehalfleft">';
-			/*
-			 * Generated documents
-			 */
+
+			// Generated documents
 			$filename = dol_sanitizeFileName($object->ref);
 			$filedir = $conf->user->dir_output."/".dol_sanitizeFileName($object->ref);
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 			$genallowed = $user->rights->user->user->lire;
 			$delallowed = $user->rights->user->user->creer;
 
-			print $formfile->showdocuments('user', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
+			print $formfile->showdocuments('user', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', empty($soc->default_lang) ? '' : $soc->default_lang);
 			$somethingshown = $formfile->numoffiles;
 
 			// Show links to link elements
@@ -2707,7 +2744,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
 			$somethingshown = $formactions->showactions($object, 'user', $socid, 1);
-
 
 			print '</div></div></div>';
 		}

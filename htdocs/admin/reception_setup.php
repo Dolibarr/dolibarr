@@ -172,12 +172,13 @@ print load_fiche_titre($langs->trans("ReceptionsSetup"), $linkback, 'title_setup
 print '<br>';
 $head = reception_admin_prepare_head();
 
-print dol_get_fiche_head($head, 'reception', $langs->trans("Receptions"), -1, 'sending');
+print dol_get_fiche_head($head, 'reception', $langs->trans("Receptions"), -1, 'reception');
 
 // Reception numbering model
 
 print load_fiche_titre($langs->trans("ReceptionsNumberingModules"));
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width="100">'.$langs->trans("Name").'</td>';
@@ -272,8 +273,10 @@ foreach ($dirmodels as $reldir) {
 	}
 }
 
-print '</table><br>';
+print '</table>';
+print '</div>';
 
+print '<br>';
 
 /*
  *  Documents models for Receptions Receipt
@@ -302,6 +305,7 @@ if ($resql) {
 	dol_print_error($db);
 }
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width="140">'.$langs->trans("Name").'</td>';
@@ -417,6 +421,8 @@ foreach ($dirmodels as $reldir) {
 }
 
 print '</table>';
+print '</div>';
+
 print '<br>';
 
 

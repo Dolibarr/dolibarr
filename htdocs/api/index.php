@@ -119,7 +119,7 @@ if (preg_match('/api\/index\.php\/explorer/', $url) && !empty($conf->global->API
 
 // Analyze URLs
 // index.php/explorer                           do a redirect to index.php/explorer/
-// index.php/explorer/                          called by swagger to build explorer page
+// index.php/explorer/                          called by swagger to build explorer page index.php/explorer/index.html
 // index.php/explorer/.../....png|.css|.js      called by swagger for resources to build explorer page
 // index.php/explorer/resources.json            called by swagger to get list of all services
 // index.php/explorer/resources.json/xxx        called by swagger to get detail of services xxx
@@ -218,6 +218,11 @@ if (!empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $
 									continue;
 								}
 
+								//$conf->global->MAIN_MODULE_API_LOGIN_DISABLED = 1;
+								if ($file_searched == 'api_login.class.php' && !empty($conf->global->MAIN_MODULE_API_LOGIN_DISABLED)) {
+									continue;
+								}
+
 								$regapi = array();
 								if (is_readable($dir_part.$file_searched) && preg_match("/^api_(.*)\.class\.php$/i", $file_searched, $regapi)) {
 									$classname = ucwords($regapi[1]);
@@ -291,6 +296,29 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 
 	$classname = ucwords($moduleobject);
 
+	// Test rules on endpoints. For example:
+	// $conf->global->API_ENDPOINT_RULES = 'endpoint1:1,endpoint2:1,...'
+	if (!empty($conf->global->API_ENDPOINT_RULES)) {
+		$listofendpoints = explode(',', $conf->global->API_ENDPOINT_RULES);
+		$endpointisallowed = false;
+
+		foreach ($listofendpoints as $endpointrule) {
+			$tmparray = explode(':', $endpointrule);
+			if ($classfile == $tmparray[0] && $tmparray[1] == 1) {
+				$endpointisallowed = true;
+				break;
+			}
+		}
+
+		if (! $endpointisallowed) {
+			dol_syslog('The API with endpoint /'.$classfile.' is forbidden by config API_ENDPOINT_RULES', LOG_WARNING);
+			print 'The API with endpoint /'.$classfile.' is forbidden by config API_ENDPOINT_RULES';
+			header('HTTP/1.1 501 API is forbidden by API_ENDPOINT_RULES');
+			//session_destroy();
+			exit(0);
+		}
+	}
+
 	dol_syslog('Search api file /'.$moduledirforclass.'/class/api_'.$classfile.'.class.php => dir_part_file='.$dir_part_file.' classname='.$classname);
 
 	$res = false;
@@ -314,7 +342,7 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 //var_dump($api->r->apiVersionMap);
 //exit;
 
-// We do not want that restler output data if we use native compression (default behaviour) but we want to have it returned into a string.
+// We do not want that restler outputs data if we use native compression (default behaviour) but we want to have it returned into a string.
 Luracast\Restler\Defaults::$returnResponse = (empty($conf->global->API_DISABLE_COMPRESSION) && !empty($_SERVER['HTTP_ACCEPT_ENCODING']));
 
 // Call API (we suppose we found it).

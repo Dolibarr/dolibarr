@@ -127,7 +127,7 @@ class Entrepot extends CommonObject
 		'ref' =>array('type'=>'varchar(255)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'showoncombobox'=>1, 'position'=>25, 'searchall'=>1),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>30),
 		'description' =>array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>-2, 'position'=>35, 'searchall'=>1),
-		'lieu' =>array('type'=>'varchar(64)', 'label'=>'LocationSummary', 'enabled'=>1, 'visible'=>1, 'position'=>40, 'showoncombobox'=>1, 'searchall'=>1),
+		'lieu' =>array('type'=>'varchar(64)', 'label'=>'LocationSummary', 'enabled'=>1, 'visible'=>1, 'position'=>40, 'showoncombobox'=>2, 'searchall'=>1),
 		'fk_parent' =>array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php:1:statut=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'ParentWarehouse', 'enabled'=>1, 'visible'=>-2, 'position'=>41),
 		'fk_project' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>1, 'visible'=>-1, 'position'=>25),
 		'address' =>array('type'=>'varchar(255)', 'label'=>'Address', 'enabled'=>1, 'visible'=>-2, 'position'=>45, 'searchall'=>1),
@@ -293,17 +293,17 @@ class Entrepot extends CommonObject
 		$this->town = trim($this->town);
 		$this->country_id = ($this->country_id > 0 ? $this->country_id : 0);
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."entrepot ";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."entrepot";
 		$sql .= " SET ref = '".$this->db->escape($this->label)."'";
 		$sql .= ", fk_parent = ".(($this->fk_parent > 0) ? $this->fk_parent : "NULL");
 		$sql .= ", fk_project = ".(($this->fk_project > 0) ? $this->fk_project : "NULL");
 		$sql .= ", description = '".$this->db->escape($this->description)."'";
-		$sql .= ", statut = ".$this->statut;
+		$sql .= ", statut = ".((int) $this->statut);
 		$sql .= ", lieu = '".$this->db->escape($this->lieu)."'";
 		$sql .= ", address = '".$this->db->escape($this->address)."'";
 		$sql .= ", zip = '".$this->db->escape($this->zip)."'";
 		$sql .= ", town = '".$this->db->escape($this->town)."'";
-		$sql .= ", fk_pays = ".$this->country_id;
+		$sql .= ", fk_pays = ".((int) $this->country_id);
 		$sql .= ", phone = '".$this->db->escape($this->phone)."'";
 		$sql .= ", fax = '".$this->db->escape($this->fax)."'";
 		$sql .= " WHERE rowid = ".((int) $id);
@@ -610,15 +610,31 @@ class Entrepot extends CommonObject
 	 */
 	public function nb_products()
 	{
+		global $conf;
 		// phpcs:enable
 		$ret = array();
 
-		$sql = "SELECT sum(ps.reel) as nb, sum(ps.reel * p.pmp) as value";
+		//For MultiCompany PMP per entity
+		$separatedPMP = false;
+		if (!empty($conf->global->MULTICOMPANY_PRODUCT_SHARING_ENABLED) && !empty($conf->global->MULTICOMPANY_PMP_PER_ENTITY_ENABLED)) {
+			$separatedPMP = true;
+		}
+
+		if ($separatedPMP) {
+			$sql = "SELECT sum(ps.reel) as nb, sum(ps.reel * pa.pmp) as value";
+		} else {
+			$sql = "SELECT sum(ps.reel) as nb, sum(ps.reel * p.pmp) as value";
+		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
 		$sql .= ", ".MAIN_DB_PREFIX."product as p";
+		if ($separatedPMP) {
+			$sql .= ", ".MAIN_DB_PREFIX."product_perentity as pa";
+		}
 		$sql .= " WHERE ps.fk_entrepot = ".$this->id;
+		if ($separatedPMP) {
+			$sql .= " AND pa.fk_product = p.rowid AND pa.entity = ". (int) $conf->entity;
+		}
 		$sql .= " AND ps.fk_product = p.rowid";
-
 		//print $sql;
 		$result = $this->db->query($sql);
 		if ($result) {

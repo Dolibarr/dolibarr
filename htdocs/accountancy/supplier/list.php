@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014	Olivier Geffroy			<jeff@jeffinfo.com>
- * Copyright (C) 2013-2020	Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2021	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2014-2015	Ari Elbaz (elarifr)		<github@accedinfo.com>
  * Copyright (C) 2013-2014	Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>s
@@ -60,9 +60,14 @@ $search_desc = GETPOST('search_desc', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 $search_account = GETPOST('search_account', 'alpha');
 $search_vat = GETPOST('search_vat', 'alpha');
-$search_day = GETPOST("search_day", "int");
-$search_month = GETPOST("search_month", "int");
-$search_year = GETPOST("search_year", "int");
+$search_date_startday = GETPOST('search_date_startday', 'int');
+$search_date_startmonth = GETPOST('search_date_startmonth', 'int');
+$search_date_startyear = GETPOST('search_date_startyear', 'int');
+$search_date_endday = GETPOST('search_date_endday', 'int');
+$search_date_endmonth = GETPOST('search_date_endmonth', 'int');
+$search_date_endyear = GETPOST('search_date_endyear', 'int');
+$search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
+$search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
 $search_country = GETPOST('search_country', 'alpha');
 $search_tvaintra = GETPOST('search_tvaintra', 'alpha');
 
@@ -140,9 +145,14 @@ if (empty($reshook)) {
 		$search_amount = '';
 		$search_account = '';
 		$search_vat = '';
-		$search_day = '';
-		$search_month = '';
-		$search_year = '';
+		$search_date_startday = '';
+		$search_date_startmonth = '';
+		$search_date_startyear = '';
+		$search_date_endday = '';
+		$search_date_endmonth = '';
+		$search_date_endyear = '';
+		$search_date_start = '';
+		$search_date_end = '';
 		$search_country = '';
 		$search_tvaintra = '';
 	}
@@ -188,7 +198,7 @@ if ($massaction == 'ventil' && $user->rights->accounting->bind->write) {
 					$msg .= '<div><span style="color:green">'.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("VentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'</span></div>';
 					$ok++;
 				} else {
-					$msg .= '<div><span style="color:red">'.$langs->trans("ErrorDB").' : '.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NotVentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'<br/> <pre>'.$sql.'</pre></span></div>';
+					$msg .= '<div><span style="color:red">'.$langs->trans("ErrorDB").' : '.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NotVentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'<br> <pre>'.$sql.'</pre></span></div>';
 					$ko++;
 				}
 			}
@@ -224,8 +234,8 @@ $sql = "SELECT f.rowid as facid, f.ref, f.ref_supplier, f.libelle as invoice_lab
 $sql .= " l.rowid, l.fk_product, l.description, l.total_ht, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, l.vat_src_code,";
 $sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.tva_tx as tva_tx_prod,";
 if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
-	$sql .= " pa.accountancy_code_sell as code_sell, pa.accountancy_code_sell_intra as code_sell_intra, pa.accountancy_code_sell_export as code_sell_export,";
-	$sql .= " pa.accountancy_code_buy as code_buy, pa.accountancy_code_buy_intra as code_buy_intra, pa.accountancy_code_buy_export as code_buy_export,";
+	$sql .= " ppe.accountancy_code_sell as code_sell, ppe.accountancy_code_sell_intra as code_sell_intra, ppe.accountancy_code_sell_export as code_sell_export,";
+	$sql .= " ppe.accountancy_code_buy as code_buy, ppe.accountancy_code_buy_intra as code_buy_intra, ppe.accountancy_code_buy_export as code_buy_export,";
 } else {
 	$sql .= " p.accountancy_code_sell as code_sell, p.accountancy_code_sell_intra as code_sell_intra, p.accountancy_code_sell_export as code_sell_export,";
 	$sql .= " p.accountancy_code_buy as code_buy, p.accountancy_code_buy_intra as code_buy_intra, p.accountancy_code_buy_export as code_buy_export,";
@@ -235,7 +245,7 @@ $sql .= " aa.rowid as aarowid, aa2.rowid as aarowid_intra, aa3.rowid as aarowid_
 $sql .= " co.code as country_code, co.label as country_label,";
 $sql .= " s.rowid as socid, s.nom as name, s.tva_intra, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,";
 if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
-	$sql .= " sa.accountancy_code_buy as company_code_buy";
+	$sql .= " spe.accountancy_code_buy as company_code_buy";
 } else {
 	$sql .= " s.accountancy_code_buy as company_code_buy";
 }
@@ -245,16 +255,16 @@ $sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
 if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
-	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as sa ON sa.fk_soc = s.rowid AND sa.entity = " . ((int) $conf->entity);
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = s.fk_pays ";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."facture_fourn_det as l ON f.rowid = l.fk_facture_fourn";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = l.fk_product";
 if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
-	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as pa ON pa.fk_product = p.rowid AND pa.entity = " . ((int) $conf->entity);
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
 }
-$alias_societe_perentity = empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED) ? "s" : "sa";
-$alias_product_perentity = empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "p" : "pa";
+$alias_societe_perentity = empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED) ? "s" : "spe";
+$alias_product_perentity = empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "p" : "ppe";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa  ON " . $alias_product_perentity . ".accountancy_code_buy = aa.account_number         AND aa.active = 1  AND aa.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa.entity = ".$conf->entity;
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa2 ON " . $alias_product_perentity . ".accountancy_code_buy_intra = aa2.account_number  AND aa2.active = 1 AND aa2.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa2.entity = ".$conf->entity;
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa3 ON " . $alias_product_perentity . ".accountancy_code_buy_export = aa3.account_number AND aa3.active = 1 AND aa3.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa3.entity = ".$conf->entity;
@@ -293,7 +303,12 @@ if (strlen(trim($search_account))) {
 if (strlen(trim($search_vat))) {
 	$sql .= natural_search("l.tva_tx", price2num($search_vat), 1);
 }
-$sql .= dolSqlDateFilter('f.datef', $search_day, $search_month, $search_year);
+if ($search_date_start) {
+	$sql .= " AND f.datef >= '".$db->idate($search_date_start)."'";
+}
+if ($search_date_end) {
+	$sql .= " AND f.datef <= '".$db->idate($search_date_end)."'";
+}
 if (strlen(trim($search_country))) {
 	$arrayofcode = getCountriesInEEC();
 	$country_code_in_EEC = $country_code_in_EEC_without_me = '';
@@ -372,14 +387,23 @@ if ($result) {
 	if ($search_lineid) {
 		$param .= '&search_lineid='.urlencode($search_lineid);
 	}
-	if ($search_day) {
-		$param .= '&search_day='.urlencode($search_day);
+	if ($search_date_startday) {
+		$param .= '&search_date_startday='.urlencode($search_date_startday);
 	}
-	if ($search_month) {
-		$param .= '&search_month='.urlencode($search_month);
+	if ($search_date_startmonth) {
+		$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
 	}
-	if ($search_year) {
-		$param .= '&search_year='.urlencode($search_year);
+	if ($search_date_startyear) {
+		$param .= '&search_date_startyear='.urlencode($search_date_startyear);
+	}
+	if ($search_date_endday) {
+		$param .= '&search_date_endday='.urlencode($search_date_endday);
+	}
+	if ($search_date_endmonth) {
+		$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
+	}
+	if ($search_date_endyear) {
+		$param .= '&search_date_endyear='.urlencode($search_date_endyear);
 	}
 	if ($search_invoice) {
 		$param .= '&search_invoice='.urlencode($search_invoice);
@@ -444,12 +468,13 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth25" name="search_lineid" value="'.dol_escape_htmltag($search_lineid).'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_invoice" value="'.dol_escape_htmltag($search_invoice).'"></td>';
 	//print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
-	print '<td class="liste_titre center nowraponall minwidth100imp">';
-	if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
-		print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_day" value="'.$search_day.'">';
-	}
-	print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month" value="'.$search_month.'">';
-	$formother->select_year($search_year, 'search_year', 1, 20, 5);
+	print '<td class="liste_titre center">';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
 	print '</td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_desc" value="'.dol_escape_htmltag($search_desc).'"></td>';
@@ -671,8 +696,8 @@ if ($result) {
 		print '<td>'.$objp->tva_intra.'</td>';
 
 		// Found accounts
-		print '<td>';
-		$s = '<span class="small">1. '.(($objp->type_l == 1) ? $langs->trans("DefaultForService") : $langs->trans("DefaultForProduct")).': </span>';
+		print '<td class="small">';
+		$s = '1. '.(($objp->type_l == 1) ? $langs->trans("DefaultForService") : $langs->trans("DefaultForProduct")).': ';
 		$shelp = '';
 		if ($suggestedaccountingaccountbydefaultfor == 'eec') {
 			$shelp .= $langs->trans("SaleEEC");
@@ -683,7 +708,7 @@ if ($result) {
 		print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
 		if ($objp->product_id > 0) {
 			print '<br>';
-			$s = '<span class="small">2. '.(($objp->type_l == 1) ? $langs->trans("ThisService") : $langs->trans("ThisProduct")).': </span>';
+			$s = '2. '.(($objp->type_l == 1) ? $langs->trans("ThisService") : $langs->trans("ThisProduct")).': ';
 			$shelp = '';
 			if ($suggestedaccountingaccountfor == 'eec') {
 				$shelp = $langs->trans("SaleEEC");
@@ -694,13 +719,13 @@ if ($result) {
 			print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
 		} else {
 			print '<br>';
-			$s = '<span class="small">2. '.(($objp->type_l == 1) ? $langs->trans("ThisService") : $langs->trans("ThisProduct")).': </span>';
+			$s = '2. '.(($objp->type_l == 1) ? $langs->trans("ThisService") : $langs->trans("ThisProduct")).': ';
 			$shelp = '';
 			$s .= $langs->trans("NotDefined");
 			print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
 		}
 		print '<br>';
-		$s = '<span class="small">3. '.(($objp->type_l == 1) ? $langs->trans("ServiceForThisThirdparty") : $langs->trans("ProductForThisThirdparty")).': </span>';
+		$s = '3. '.(($objp->type_l == 1) ? $langs->trans("ServiceForThisThirdparty") : $langs->trans("ProductForThisThirdparty")).': ';
 		$shelp = '';
 		$s .= ($objp->code_buy_t > 0 ? length_accountg($objp->code_buy_t) : '<span style="'.$code_buy_t_notset.'">'.$langs->trans("NotDefined").'</span>');
 		print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);

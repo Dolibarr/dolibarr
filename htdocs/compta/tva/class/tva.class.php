@@ -144,7 +144,7 @@ class Tva extends CommonObject
 		$sql .= " '".$this->db->escape($this->note)."',";
 		$sql .= " '".$this->db->escape($this->fk_account)."',";
 		$sql .= " '".$this->db->escape($this->type_payment)."',";
-		$sql .= " '".$this->db->escape($this->fk_user_creat)."',";
+		$sql .= " '".($this->fk_user_creat > 0 ? (int) $this->fk_user_creat : (int) $user->id)."',";
 		$sql .= " '".$this->db->escape($this->fk_user_modif)."'";
 		$sql .= ")";
 
@@ -207,7 +207,7 @@ class Tva extends CommonObject
 		$sql .= " amount=".price2num($this->amount).",";
 		$sql .= " label='".$this->db->escape($this->label)."',";
 		$sql .= " note='".$this->db->escape($this->note)."',";
-		$sql .= " fk_user_creat=".$this->fk_user_creat.",";
+		$sql .= " fk_user_creat=".((int) $this->fk_user_creat).",";
 		$sql .= " fk_user_modif=".($this->fk_user_modif > 0 ? $this->fk_user_modif : $user->id)."";
 		$sql .= " WHERE rowid=".((int) $this->id);
 
@@ -585,7 +585,7 @@ class Tva extends CommonObject
 		$sql .= " '".$this->db->idate($this->datec)."'";
 		$sql .= ", '".$this->db->idate($this->datep)."'";
 		$sql .= ", '".$this->db->idate($this->datev)."'";
-		$sql .= ", ".$this->amount;
+		$sql .= ", ".((float) $this->amount);
 		$sql .= ", '".$this->db->escape($this->type_payment)."'";
 		$sql .= ", '".$this->db->escape($this->num_payment)."'";
 		if ($this->note) {

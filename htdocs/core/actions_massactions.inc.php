@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2018	   Nicolas ZABOURI	<info@inovea-conseil.com>
+ * Copyright (C) 2018-2021 Nicolas ZABOURI	<info@inovea-conseil.com>
  * Copyright (C) 2018 	   Juanjo Menent  <jmenent@2byte.es>
  * Copyright (C) 2019 	   Ferran Marcet  <fmarcet@2byte.es>
  * Copyright (C) 2019-2021 Frédéric France <frederic.france@netlogic.fr>
@@ -90,6 +90,9 @@ if (!$error && $massaction == 'confirm_presend') {
 		if ($objecttmp->element == 'expensereport') {
 			$thirdparty = new User($db);
 		}
+		if ($objecttmp->element == 'partnership' && $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
+			$thirdparty = new Adherent($db);
+		}
 		if ($objecttmp->element == 'holiday') {
 			$thirdparty = new User($db);
 		}
@@ -106,6 +109,9 @@ if (!$error && $massaction == 'confirm_presend') {
 				}
 				if ($objecttmp->element == 'expensereport') {
 					$thirdpartyid = $objecttmp->fk_user_author;
+				}
+				if ($objecttmp->element == 'partnership' && $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
+					$thirdpartyid = $objecttmp->fk_member;
 				}
 				if ($objecttmp->element == 'holiday') {
 					$thirdpartyid = $objecttmp->fk_user;
@@ -250,6 +256,10 @@ if (!$error && $massaction == 'confirm_presend') {
 						$fuser = new User($db);
 						$fuser->fetch($objectobj->fk_user_author);
 						$sendto = $fuser->email;
+					} elseif ($objectobj->element == 'partnership' && $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
+						$fadherent = new Adherent($db);
+						$fadherent->fetch($objectobj->fk_member);
+						$sendto = $fadherent->email;
 					} elseif ($objectobj->element == 'holiday') {
 						$fuser = new User($db);
 						$fuser->fetch($objectobj->fk_user);
@@ -409,7 +419,7 @@ if (!$error && $massaction == 'confirm_presend') {
 					$substitutionarray['__ID__']    = ($oneemailperrecipient ? join(', ', array_keys($listofqualifiedobj)) : $objecttmp->id);
 					$substitutionarray['__REF__']   = ($oneemailperrecipient ? join(', ', $listofqualifiedref) : $objecttmp->ref);
 					$substitutionarray['__EMAIL__'] = $thirdparty->email;
-					$substitutionarray['__CHECK_READ__'] = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$thirdparty->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>';
+					$substitutionarray['__CHECK_READ__'] = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.urlencode($thirdparty->tag).'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>';
 
 					$parameters = array('mode'=>'formemail');
 
@@ -583,8 +593,10 @@ if (!$error && $massaction == 'confirm_presend') {
 							if ($mailfile->error) {
 								$resaction .= $langs->trans('ErrorFailedToSendMail', $from, $sendto);
 								$resaction .= '<br><div class="error">'.$mailfile->error.'</div>';
-							} else {
+							} elseif (!empty($conf->global->MAIN_DISABLE_ALL_MAILS)) {
 								$resaction .= '<div class="warning">No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS</div>';
+							} else {
+								$resaction .= $langs->trans('ErrorFailedToSendMail', $from, $sendto) . '<br><div class="error">(unhandled error)</div>';
 							}
 						}
 					}
@@ -700,7 +712,7 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 
 				for ($i = 0; $i < $num; $i++) {
 					$desc = ($lines[$i]->desc ? $lines[$i]->desc : '');
-					// If we build one invoice for several order, we must put the invoice of order on the line
+					// If we build one invoice for several orders, we must put the ref of order on the invoice line
 					if (!empty($createbills_onebythird)) {
 						$desc = dol_concatdesc($desc, $langs->trans("Order").' '.$cmd->ref.' - '.dol_print_date($cmd->date, 'day'));
 					}
@@ -759,6 +771,8 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 							$lines[$i]->fetch_optionals();
 							$array_options = $lines[$i]->array_options;
 						}
+
+						$objecttmp->context['createfromclone'];
 
 						$result = $objecttmp->addline(
 							$desc,
@@ -1255,7 +1269,7 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 			if ($nbok > 1) {
 				setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
 			} else {
-				setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+				setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 			}
 			$db->commit();
 		} else {
@@ -1318,7 +1332,7 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 		if ($nbok > 1) {
 			setEventMessages($langs->trans("RecordsDeleted", $nbok), null, 'mesgs');
 		} else {
-			setEventMessages($langs->trans("RecordDeleted", $nbok), null, 'mesgs');
+			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 		}
 		$db->commit();
 	} else {

@@ -24,7 +24,9 @@
 /**
  * Function to get a content from an URL (use proxy if proxy defined).
  * Support Dolibarr setup for timeout and proxy.
- * Enhancement of CURL to add an anti SSRF protection.
+ * Enhancement of CURL to add an anti SSRF protection:
+ * - you can set MAIN_SECURITY_ANTI_SSRF_SERVER_IP to set static ip of server
+ * - common local lookup ips like 127.*.*.* are automatically added
  *
  * @param	string	  $url 				    URL to call.
  * @param	string    $postorget		    'POST', 'GET', 'HEAD', 'PUT', 'PUTALREADYFORMATED', 'POSTALREADYFORMATED', 'DELETE'
@@ -155,7 +157,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		// Deny some reserved host names
 		if (in_array($hosttocheck, array('metadata.google.internal'))) {
 			$info['http_code'] = 400;
-			$info['content'] = 'Error bad hostname (Used by Google metadata). This value for hostname is not allowed.';
+			$info['content'] = 'Error bad hostname '.$hosttocheck.' (Used by Google metadata). This value for hostname is not allowed.';
 			break;
 		}
 
@@ -165,11 +167,17 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		} elseif (in_array($hosttocheck, array('ip6-localhost', 'ip6-loopback'))) {
 			$iptocheck = '::1';
 		} else {
-			// TODO Resolve $hosttocheck to get the IP $iptocheck and set CURLOPT_CONNECT_TO to use this ip
-			$iptocheck = $hosttocheck;
+			// Resolve $hosttocheck to get the IP $iptocheck and set CURLOPT_CONNECT_TO to use this ip so curl will not try another resolution that may give a different result
+			if (function_exists('gethostbyname')) {
+				$iptocheck = gethostbyname($hosttocheck);
+			} else {
+				$iptocheck = $hosttocheck;
+			}
+			// TODO Resolve ip v6
 		}
 
-		if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6)) {	// This is not an IP
+		// Check $iptocheck is an IP (v4 or v6), if not clear value.
+		if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6)) {	// This is not an IP, we clean data
 			$iptocheck = '0'; //
 		}
 
@@ -181,18 +189,44 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 					$info['content'] = 'Error bad hostname IP (private or reserved range). Must be an external URL.';
 					break;
 				}
-				if (in_array($iptocheck, array('100.100.100.200'))) {
+				if (!empty($_SERVER["SERVER_ADDR"]) && $iptocheck == $_SERVER["SERVER_ADDR"]) {
 					$info['http_code'] = 400;
-					$info['content'] = 'Error bad hostname IP (Used by Alibaba metadata). Must be an external URL.';
+					$info['content'] = 'Error bad hostname IP (IP is a local IP). Must be an external URL.';
+					break;
+				}
+				if (!empty($conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP) && in_array($iptocheck, explode(',', $conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP))) {
+					$info['http_code'] = 400;
+					$info['content'] = 'Error bad hostname IP (IP is a local IP defined into MAIN_SECURITY_SERVER_IP). Must be an external URL.';
 					break;
 				}
 			}
 			if ($localurl == 1) {	// Only local url allowed (dangerous, may allow to get metadata on server or make internal port scanning)
+				// Deny ips NOT like 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 0.0.0.0/8, 169.254.0.0/16, 127.0.0.0/8 et 240.0.0.0/4, ::1/128, ::/128, ::ffff:0:0/96, fe80::/10...
 				if (filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
 					$info['http_code'] = 400;
-					$info['content'] = 'Error bad hostname. Must be a local URL.';
+					$info['content'] = 'Error bad hostname '.$iptocheck.'. Must be a local URL.';
 					break;
 				}
+				if (!empty($conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP) && !in_array($iptocheck, explode(',', $conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP))) {
+					$info['http_code'] = 400;
+					$info['content'] = 'Error bad hostname IP (IP is not a local IP defined into list MAIN_SECURITY_SERVER_IP). Must be a local URL in allowed list.';
+					break;
+				}
+			}
+
+			// Common check (local and external)
+			if (in_array($iptocheck, array('100.100.100.200'))) {
+				$info['http_code'] = 400;
+				$info['content'] = 'Error bad hostname IP (Used by Alibaba metadata). Must be an external URL.';
+				break;
+			}
+
+			// Set CURLOPT_CONNECT_TO so curl will not try another resolution that may give a different result. Possible only on PHP v7+
+			if (defined('CURLOPT_CONNECT_TO')) {
+				$connect_to = array(sprintf("%s:%d:%s:%d", $newUrlArray['host'], $newUrlArray['port'], $iptocheck, $newUrlArray['port']));
+				//var_dump($newUrlArray);
+				//var_dump($connect_to);
+				curl_setopt($ch, CURLOPT_CONNECT_TO, $connect_to);
 			}
 		}
 
@@ -220,7 +254,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 	$rep = array();
 	if (curl_errno($ch)) {
-		// Ad keys to $rep
+		// Add keys to $rep
 		$rep['content'] = $response;
 
 		// moving to display page to display curl errors
@@ -231,14 +265,16 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	} else {
 		//$info = curl_getinfo($ch);
 
-		// Ad keys to $rep
+		// Add keys to $rep
 		$rep = $info;
 		//$rep['header_size']=$info['header_size'];
 		//$rep['http_code']=$info['http_code'];
 		dol_syslog("getURLContent http_code=".$rep['http_code']);
 
 		// Add more keys to $rep
-		$rep['content'] = $response;
+		if ($response) {
+			$rep['content'] = $response;
+		}
 		$rep['curl_error_no'] = '';
 		$rep['curl_error_msg'] = '';
 	}

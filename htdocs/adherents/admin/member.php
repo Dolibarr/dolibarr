@@ -9,7 +9,6 @@
  * Copyright (C) 2012      J. Fernando Lagrange <fernando@demo-tic.org>
  * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
  * Copyright (C) 2020-2021 Frédéric France      <frederic.france@netlogic.fr>
- * Copyright (C) 2021      Waël Almoman         <info@almoman.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +33,6 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "members"));
@@ -74,12 +72,12 @@ if ($action == 'set_default') {
 } elseif ($action == 'setdoc') {
 	// Set default model
 	if (dolibarr_set_const($db, "MEMBER_ADDON_PDF_ODT", $value, 'chaine', 0, '', $conf->entity)) {
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
+		// The constant that was read ahead of the new set
+		// we therefore go through a variable to have a consistent display
 		$conf->global->MEMBER_ADDON_PDF_ODT = $value;
 	}
 
-	// On active le modele
+	// We activate the model
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
 		$ret = addDocumentModel($value, $type, $label, $scandir);
@@ -107,6 +105,7 @@ if ($action == 'set_default') {
 	$res1 = dolibarr_set_const($db, 'ADHERENT_LOGIN_NOT_REQUIRED', GETPOST('ADHERENT_LOGIN_NOT_REQUIRED', 'alpha') ? 0 : 1, 'chaine', 0, '', $conf->entity);
 	$res2 = dolibarr_set_const($db, 'ADHERENT_MAIL_REQUIRED', GETPOST('ADHERENT_MAIL_REQUIRED', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res3 = dolibarr_set_const($db, 'ADHERENT_DEFAULT_SENDINFOBYMAIL', GETPOST('ADHERENT_DEFAULT_SENDINFOBYMAIL', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res3 = dolibarr_set_const($db, 'ADHERENT_CREATE_EXTERNAL_USER_LOGIN', GETPOST('ADHERENT_CREATE_EXTERNAL_USER_LOGIN', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res4 = dolibarr_set_const($db, 'ADHERENT_BANK_USE', GETPOST('ADHERENT_BANK_USE', 'alpha'), 'chaine', 0, '', $conf->entity);
 	// Use vat for invoice creation
 	if ($conf->facture->enabled) {
@@ -198,6 +197,8 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updateall">';
 
 print load_fiche_titre($langs->trans("MemberMainOptions"), '', '');
+
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -217,6 +218,11 @@ print "</td></tr>\n";
 // Send mail information is on by default
 print '<tr class="oddeven"><td>'.$langs->trans("MemberSendInformationByMailByDefault").'</td><td>';
 print $form->selectyesno('ADHERENT_DEFAULT_SENDINFOBYMAIL', (!empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL) ? $conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL : 0), 1);
+print "</td></tr>\n";
+
+// Create an external user login for each new member subscription validated
+print '<tr class="oddeven"><td>'.$langs->trans("MemberCreateAnExternalUserForSubscriptionValidated").'</td><td>';
+print $form->selectyesno('ADHERENT_CREATE_EXTERNAL_USER_LOGIN', (!empty($conf->global->ADHERENT_CREATE_EXTERNAL_USER_LOGIN) ? $conf->global->ADHERENT_CREATE_EXTERNAL_USER_LOGIN : 0), 1);
 print "</td></tr>\n";
 
 // Insert subscription into bank account
@@ -264,6 +270,7 @@ if ($conf->facture->enabled) {
 }
 
 print '</table>';
+print '</div>';
 
 print '<div class="center">';
 print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
@@ -313,7 +320,7 @@ $helptext .= '__YEAR__, __MONTH__, __DAY__';
 form_constantes($constantes, 0, $helptext);
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-// Defini tableau def des modeles
+// Defined model definition table
 $def = array();
 $sql = "SELECT nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
@@ -334,6 +341,7 @@ if ($resql) {
 
 print load_fiche_titre($langs->trans("MembersDocModules"), '', '');
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
@@ -442,6 +450,8 @@ foreach ($dirmodels as $reldir) {
 }
 
 print '</table>';
+print '</div>';
+
 print "<br>";
 
 print dol_get_fiche_end();

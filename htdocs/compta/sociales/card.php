@@ -134,12 +134,17 @@ if ($action == 'setbankaccount' && $user->rights->tax->charges->creer) {
 // Delete social contribution
 if ($action == 'confirm_delete' && $confirm == 'yes') {
 	$object->fetch($id);
-	$result = $object->delete($user);
-	if ($result > 0) {
-		header("Location: list.php");
-		exit;
+	$totalpaye = $object->getSommePaiement();
+	if (empty($totalpaye)) {
+		$result = $object->delete($user);
+		if ($result > 0) {
+			header("Location: list.php");
+			exit;
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	} else {
-		setEventMessages($object->error, $object->errors, 'errors');
+		setEventMessages($langs->trans('DisabledBecausePayments'), null, 'errors');
 	}
 }
 
@@ -771,8 +776,10 @@ if ($id > 0) {
 			}
 
 			// Delete
-			if ($user->rights->tax->charges->supprimer) {
+			if ($user->rights->tax->charges->supprimer && empty($totalpaye)) {
 				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans("Delete").'</a></div>';
+			} else {
+				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("DisabledBecausePayments"))).'">'.$langs->trans("Delete").'</a></div>';
 			}
 
 			print "</div>";

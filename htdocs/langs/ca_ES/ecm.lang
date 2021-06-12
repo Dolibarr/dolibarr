@@ -41,3 +41,7 @@ FileNotYetIndexedInDatabase=Fitxer encara no indexat a la base de dades (intente
 ExtraFieldsEcmFiles=Atributs addicionals dels fitxers ECM
 ExtraFieldsEcmDirectories=Atributs addicionals dels directoris ECM
 ECMSetup=Configuració de l'ECM
+GenerateImgWebp=Duplica totes les imatges amb una altra versió amb format .webp
+ConfirmGenerateImgWebp=If you confirm, you will generate an image in .webp format for all images currently into this folder (subfolders are not included)...
+ConfirmImgWebpCreation=Confirmeu la duplicació de totes les imatges
+SucessConvertImgWebp=Les imatges s'han duplicat correctament

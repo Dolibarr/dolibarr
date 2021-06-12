@@ -1,8 +1,10 @@
 # ProductBATCH language file - en_US - ProductBATCH
 ManageLotSerial=Brug parti serie / serienummer
-ProductStatusOnBatch=Ja (parti serie/serienr. påkrævet)
+ProductStatusOnBatch=Ja (krævet parti)
+ProductStatusOnSerial=Ja (unikt serienummer krævet)
 ProductStatusNotOnBatch=Nej (parti serie/serienr. ikke brugt)
-ProductStatusOnBatchShort=Ja
+ProductStatusOnBatchShort=Batch
+ProductStatusOnSerialShort=Seriel
 ProductStatusNotOnBatchShort=Nej
 Batch=Parti serie / Serienr.
 atleast1batchfield=Pluk dato eller Salgs dato eller Parti serie / Serienummer
@@ -22,3 +24,12 @@ ProductLotSetup=Opsætning af modul partiSerie / serieNr
 ShowCurrentStockOfLot=Vis nuværende lager for par produkt / partiSerie
 ShowLogOfMovementIfLot=Vis log af bevægelser for par produkt / partiSerie
 StockDetailPerBatch=Lager detaljer pr. Parti Serie
+SerialNumberAlreadyInUse=Serienummer %s bruges allerede til produkt %s
+TooManyQtyForSerialNumber=Du kan kun have et produkt %s til serienummer %s
+BatchLotNumberingModules=Valgmuligheder til automatisk generering af batchprodukter, der administreres af partier
+BatchSerialNumberingModules=Valgmuligheder til automatisk generering af batchprodukter styret af serienumre
+ManageLotMask=Brugerdefineret maske
+CustomMasks=Tilføjer en mulighed for at definere maske på produktkortet
+LotProductTooltip=Tilføjer en mulighed på produktkortet for at definere en dedikeret batchnummermaske
+SNProductTooltip=Tilføjer en mulighed på produktkortet for at definere en dedikeret serienummermaske
+QtyToAddAfterBarcodeScan=Mængde, der skal tilføjes for hver stregkode / parti / seriel scannet

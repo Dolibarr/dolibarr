@@ -141,7 +141,7 @@ class DiscountAbsolute
 		$sql .= " fsup.ref as ref_invoice_supplier_source, fsup.type as type_invoice_supplier_source";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as sr";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON sr.fk_facture_source = f.rowid";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as fsup ON sr.fk_invoice_supplier_source = fsup.rowid";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as fsup ON sr.fk_invoice_supplier_source = fsup.rowid";
 		$sql .= " WHERE sr.entity IN (".getEntity('invoice').")";
 		if ($rowid) {
 			$sql .= " AND sr.rowid=".((int) $rowid);
@@ -292,7 +292,7 @@ class DiscountAbsolute
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except";
 			$sql .= " WHERE (fk_facture_line IS NOT NULL"; // Not used as absolute simple discount
 			$sql .= " OR fk_facture IS NOT NULL)"; // Not used as credit note and not used as deposit
-			$sql .= " AND fk_facture_source = ".$this->fk_facture_source;
+			$sql .= " AND fk_facture_source = ".((int) $this->fk_facture_source);
 			//$sql.=" AND rowid != ".$this->id;
 
 			dol_syslog(get_class($this)."::delete Check if we can remove discount", LOG_DEBUG);
@@ -531,7 +531,7 @@ class DiscountAbsolute
 			//$obj = $this->db->fetch_object($resql);
 			//}
 			if ($multicurrency) {
-				return $obj->amount_multicurrency;
+				return $obj->multicurrency_amount;
 			}
 
 			return $obj->amount;

@@ -103,17 +103,16 @@ if ($id > 0 || $ref) {
 	$object->fetch($id, $ref);
 }
 
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
-
-if (!$sortfield) {
-	$sortfield = "s.nom";
+if ($object->id > 0) {
+	if ($object->type == $object::TYPE_PRODUCT) {
+		restrictedArea($user, 'produit', $object->id, 'product&product', '', '');
+	}
+	if ($object->type == $object::TYPE_SERVICE) {
+		restrictedArea($user, 'service', $object->id, 'product&product', '', '');
+	}
+} else {
+	restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 }
-if (!$sortorder) {
-	$sortorder = "ASC";
-}
-
-$result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 
 /*
@@ -383,7 +382,7 @@ if ($id > 0 || $ref) {
 			echo $formconfirm;
 		}
 
-		if ($action <> 'edit' && $action <> 're-edit') {
+		if ($action != 'edit' && $action != 're-edit') {
 			$head = product_prepare_head($object);
 			$titre = $langs->trans("CardProduct".$object->type);
 			$picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
@@ -836,12 +835,13 @@ END;
 				print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 				print '</div>';
 
-				print '</form>';
+				print '</form>'."\n";
 			}
+
 
 			// Actions buttons
 
-			print "\n<div class=\"tabsAction\">\n";
+			print '<div class="tabsAction">'."\n";
 
 			if ($action != 'add_price' && $action != 'update_price') {
 				$parameters = array();
@@ -854,8 +854,7 @@ END;
 				}
 			}
 
-			print "\n</div>\n";
-			print '<br>';
+			print "</div>\n";
 
 			if ($user->rights->fournisseur->lire) { // Duplicate ? this check is already in the head of this file
 				$param = '';
@@ -1017,14 +1016,14 @@ END;
 
 						// Supplier
 						if (!empty($arrayfields['s.nom']['checked'])) {
-							print '<td class="tdoverflowmax200">'.$productfourn->getSocNomUrl(1, 'supplier').'</td>';
+							print '<td class="tdoverflowmax150">'.$productfourn->getSocNomUrl(1, 'supplier').'</td>';
 						}
 
 						// Supplier ref
 						if ($usercancreate) { // change required right here
-							print '<td class="left">'.$productfourn->getNomUrl().'</td>';
+							print '<td>'.$productfourn->getNomUrl().'</td>';
 						} else {
-							print '<td class="left">'.$productfourn->fourn_ref.'</td>';
+							print '<td>'.$productfourn->fourn_ref.'</td>';
 						}
 
 						// Availability

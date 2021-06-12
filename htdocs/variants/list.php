@@ -16,12 +16,15 @@
  */
 
 require '../main.inc.php';
+require DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
 
 $action = GETPOST('action', 'aZ09');
 $object = new ProductAttribute($db);
+$rowid = GETPOST('rowid', 'int');		// Id of line for up / down when no javascript available
 
 $permissiontoread = $user->rights->produit->lire || $user->rights->service->lire;
+$permissiontoadd = $user->rights->produit->creer || $user->rights->service->creer;
 
 // Security check
 if (empty($conf->variants->enabled)) {
@@ -30,6 +33,8 @@ if (empty($conf->variants->enabled)) {
 if ($user->socid > 0) { // Protection if external user
 	accessforbidden();
 }
+
+
 //$result = restrictedArea($user, 'variant');
 if (!$permissiontoread) accessforbidden();
 
@@ -39,13 +44,13 @@ if (!$permissiontoread) accessforbidden();
  * Actions
  */
 
-if ($action == 'up') {
+if ($action == 'up' && $permissiontoadd) {
 	$object->fetch($rowid);
 	$object->moveUp();
 
 	header('Location: '.$_SERVER['PHP_SELF']);
 	exit();
-} elseif ($action == 'down') {
+} elseif ($action == 'down' && $permissiontoadd) {
 	$object->fetch($rowid);
 	$object->moveDown();
 

@@ -88,7 +88,7 @@ class box_birthdays_members extends ModeleBoxes
 			$sql = "SELECT u.rowid, u.firstname, u.lastname, u.birth";
 			$sql .= " FROM ".MAIN_DB_PREFIX."adherent as u";
 			$sql .= " WHERE u.entity IN (".getEntity('adherent').")";
-			$sql .= " AND u.statut = 1";
+			$sql .= " AND u.statut = ".Adherent::STATUS_VALIDATED;
 			$sql .= dolSqlDateFilter('u.birth', 0, $tmparray['mon'], 0);
 			$sql .= " ORDER BY DAY(u.birth) ASC";
 			$sql .= $this->db->plimit($max, 0);
@@ -115,8 +115,8 @@ class box_birthdays_members extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right"',
-						'text' => dol_print_date($dateb, "day").' - '.$age.' '.$langs->trans('DurationYears')
+						'td' => 'class="center nowraponall"',
+						'text' => dol_print_date($dateb, "day", 'gmt').' - '.$age.' '.$langs->trans('DurationYears')
 					);
 
 					/*$this->info_box_contents[$line][] = array(

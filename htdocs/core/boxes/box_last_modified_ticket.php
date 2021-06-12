@@ -2,7 +2,7 @@
 /* Module descriptor for ticket system
  * Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
  *               2016       Christophe Battarel     <christophe@altairis.fr>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,9 +113,6 @@ class box_last_modified_ticket extends ModeleBoxes
 				while ($i < $num) {
 					$objp = $this->db->fetch_object($resql);
 					$datec = $this->db->jdate($objp->datec);
-					$dateterm = $this->db->jdate($objp->fin_validite);
-					$dateclose = $this->db->jdate($objp->date_cloture);
-					$late = '';
 
 					$ticket = new Ticket($this->db);
 					$ticket->id = $objp->id;
@@ -162,11 +159,10 @@ class box_last_modified_ticket extends ModeleBoxes
 					);
 					$r++;
 
-
 					// Date creation
 					$this->info_box_contents[$i][$r] = array(
 						'td' => 'class="right"',
-						'text' => dol_print_date($datec, 'dayhour')
+						'text' => dol_print_date($datec, 'dayhour', 'tzuserrel')
 					);
 					$r++;
 

@@ -359,7 +359,9 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->salaries-
  *	View
  */
 
-llxHeader("", $langs->trans("Salary"));
+$title = $langs->trans('Salary')." - ".$langs->trans('Card');
+$help_url = "";
+llxHeader("", $title, $help_url);
 
 $form = new Form($db);
 if (!empty($conf->projet->enabled)) $formproject = new FormProjets($db);
@@ -525,10 +527,12 @@ if ($action == 'create') {
 	}
 
 	// Bouton Save payment
-/*	print '<tr class="hide_if_no_auto_create_payment"><td>';
+	/*
+	print '<tr class="hide_if_no_auto_create_payment"><td>';
 	print $langs->trans("ClosePaidSalaryAutomatically");
 	print '</td><td><input type="checkbox" checked value="1" name="closepaidsalary"></td></tr>';
-*/
+	*/
+
 	// Other attributes
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook

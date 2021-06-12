@@ -117,7 +117,7 @@ $search_month_end    = GETPOST('search_month_end', 'int');
 $search_year_end     = GETPOST('search_year_end', 'int');
 $search_employee     = GETPOST('search_employee', 'int');
 $search_valideur     = GETPOST('search_valideur', 'int');
-$search_status       = GETPOST('search_statut', 'int');
+$search_status       = GETPOST('search_status', 'int');
 $search_type         = GETPOST('search_type', 'int');
 
 // Initialize technical objects
@@ -722,6 +722,7 @@ if ($resql) {
 
 		$i = 0;
 		$totalarray = array();
+		$totalarray['nbfield'] = 0;
 		while ($i < min($num, $limit)) {
 			$obj = $db->fetch_object($resql);
 

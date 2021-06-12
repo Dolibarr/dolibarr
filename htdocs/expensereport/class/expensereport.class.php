@@ -3,7 +3,7 @@
  * Copyright (C) 2015 		Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2015 		Alexandre Spangaro  	<aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (c) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (c) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2016-2020 	Ferran Marcet       	<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -990,9 +990,9 @@ class ExpenseReport extends CommonObject
 
 			$total_ttc = $total_ht + $total_tva;
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-			$sql .= " total_ht = ".$total_ht;
-			$sql .= " , total_ttc = ".$total_ttc;
-			$sql .= " , total_tva = ".$total_tva;
+			$sql .= " total_ht = ".price2num($total_ht, 'MT');
+			$sql .= " , total_ttc = ".price2num($total_ttc, 'MT');
+			$sql .= " , total_tva = ".price2num($total_tva, 'MT');
 			$sql .= " WHERE rowid = ".((int) $id);
 			$result = $this->db->query($sql);
 			if ($result) :
@@ -1645,6 +1645,7 @@ class ExpenseReport extends CommonObject
 	 *  Return clicable name (with picto eventually)
 	 *
 	 *	@param		int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
+	 *  @param  	string 	$option                		Where point the link ('', 'document', ..)
 	 *	@param		int		$max						Max length of shown ref
 	 *	@param		int		$short						1=Return just URL
 	 *	@param		string	$moretitle					Add more text to title tooltip
@@ -1652,7 +1653,7 @@ class ExpenseReport extends CommonObject
 	 *  @param  	int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return		string								String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $max = 0, $short = 0, $moretitle = '', $notooltip = 0, $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '', $notooltip = 0, $save_lastsearch_value = -1)
 	{
 		global $langs, $conf;
 
@@ -1684,17 +1685,16 @@ class ExpenseReport extends CommonObject
 			$label .= ' - '.$moretitle;
 		}
 
-		//if ($option != 'nolink')
-		//{
-		// Add param to save lastsearch_values or not
+		if ($option != 'nolink') {
+			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-		if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
-			$add_save_lastsearch_values = 1;
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
 		}
-		if ($add_save_lastsearch_values) {
-			$url .= '&save_lastsearch_values=1';
-		}
-		//}
 
 		$ref = $this->ref;
 		if (empty($ref)) {
@@ -1720,7 +1720,7 @@ class ExpenseReport extends CommonObject
 			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
-			$result .= ($max ?dol_trunc($ref, $max) : $ref);
+			$result .= ($max ? dol_trunc($ref, $max) : $ref);
 		}
 		$result .= $linkend;
 
@@ -2478,9 +2478,9 @@ class ExpenseReport extends CommonObject
 
 		$now = dol_now();
 		if ($option == 'toapprove') {
-			return ($this->datevalid ? $this->datevalid : $this->date_valid) < ($now - $conf->expensereport->approve->warning_delay);
+			return (!empty($this->datevalid) ? $this->datevalid : $this->date_valid) < ($now - $conf->expensereport->approve->warning_delay);
 		} else {
-			return ($this->datevalid ? $this->datevalid : $this->date_valid) < ($now - $conf->expensereport->payment->warning_delay);
+			return (!empty($this->datevalid) ? $this->datevalid : $this->date_valid) < ($now - $conf->expensereport->payment->warning_delay);
 		}
 	}
 
@@ -2761,9 +2761,9 @@ class ExpenseReportLine
 		if (!empty($this->id)) {
 			$sql .= ' AND d.rowid <> '.$this->id;
 		}
-		$sql .= ' AND d.fk_c_type_fees = '.$rule->fk_c_type_fees;
+		$sql .= ' AND d.fk_c_type_fees = '.((int) $rule->fk_c_type_fees);
 		if ($mode == 'day' || $mode == 'EX_DAY') {
-			$sql .= ' AND d.date = \''.dol_print_date($this->date, '%Y-%m-%d').'\'';
+			$sql .= " AND d.date = '".dol_print_date($this->date, '%Y-%m-%d')."'";
 		} elseif ($mode == 'mon' || $mode == 'EX_MON') {
 			$sql .= ' AND DATE_FORMAT(d.date, \'%Y-%m\') = \''.dol_print_date($this->date, '%Y-%m').'\''; // @todo DATE_FORMAT is forbidden
 		} elseif ($mode == 'year' || $mode == 'EX_YEA') {
@@ -2811,30 +2811,30 @@ class ExpenseReportLine
 		// Update line in database
 		$sql = "UPDATE ".MAIN_DB_PREFIX."expensereport_det SET";
 		$sql .= " comments='".$this->db->escape($this->comments)."'";
-		$sql .= ",value_unit=".$this->db->escape($this->value_unit);
-		$sql .= ",qty=".$this->db->escape($this->qty);
+		$sql .= ",value_unit = ".((float) $this->value_unit);
+		$sql .= ",qty=".((float) $this->qty);
 		$sql .= ",date='".$this->db->idate($this->date)."'";
-		$sql .= ",total_ht=".$this->db->escape($this->total_ht)."";
-		$sql .= ",total_tva=".$this->db->escape($this->total_tva)."";
-		$sql .= ",total_ttc=".$this->db->escape($this->total_ttc)."";
-		$sql .= ",tva_tx=".$this->db->escape($this->vatrate);
+		$sql .= ",total_ht=".((float) price2num($this->total_ht, 'MT'))."";
+		$sql .= ",total_tva=".((float) price2num($this->total_tva, 'MT'))."";
+		$sql .= ",total_ttc=".((float) price2num($this->total_ttc, 'MT'))."";
+		$sql .= ",tva_tx=".((float) $this->vatrate);
 		$sql .= ",vat_src_code='".$this->db->escape($this->vat_src_code)."'";
 		$sql .= ",rule_warning_message='".$this->db->escape($this->rule_warning_message)."'";
 		$sql .= ",fk_c_exp_tax_cat=".$this->db->escape($this->fk_c_exp_tax_cat);
-		$sql .= ",fk_ecm_files=".($this->fk_ecm_files > 0 ? $this->fk_ecm_files : 'null');
+		$sql .= ",fk_ecm_files=".($this->fk_ecm_files > 0 ? ((int) $this->fk_ecm_files) : 'null');
 		if ($this->fk_c_type_fees) {
-			$sql .= ",fk_c_type_fees=".$this->db->escape($this->fk_c_type_fees);
+			$sql .= ",fk_c_type_fees = ".((int) $this->fk_c_type_fees);
 		} else {
 			$sql .= ",fk_c_type_fees=null";
 		}
 		if ($this->fk_project > 0) {
-			$sql .= ",fk_projet=".$this->db->escape($this->fk_project);
+			$sql .= ",fk_projet=".((int) $this->fk_project);
 		} else {
 			$sql .= ",fk_projet=null";
 		}
-		$sql .= " WHERE rowid = ".$this->db->escape($this->rowid ? $this->rowid : $this->id);
+		$sql .= " WHERE rowid = ".((int) ($this->rowid ? $this->rowid : $this->id));
 
-		dol_syslog("ExpenseReportLine::update sql=".$sql);
+		dol_syslog("ExpenseReportLine::update");
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

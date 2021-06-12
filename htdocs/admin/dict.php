@@ -70,8 +70,8 @@ if (!$allowed) {
 $acts = array(); $actl = array();
 $acts[0] = "activate";
 $acts[1] = "disable";
-$actl[0] = img_picto($langs->trans("Disabled"), 'switch_off');
-$actl[1] = img_picto($langs->trans("Activated"), 'switch_on');
+$actl[0] = img_picto($langs->trans("Disabled"), 'switch_off', 'class="size15x"');
+$actl[1] = img_picto($langs->trans("Activated"), 'switch_on', 'class="size15x"');
 
 $listoffset = GETPOST('listoffset');
 $listlimit = GETPOST('listlimit') > 0 ?GETPOST('listlimit') : 1000; // To avoid too long dictionaries
@@ -100,7 +100,7 @@ $hookmanager->initHooks(array('admin'));
 // Put here declaration of dictionaries properties
 
 // Sort order to show dictionary (0 is space). All other dictionaries (added by modules) will be at end of this.
-$taborder = array(9, 0, 4, 3, 2, 0, 1, 8, 19, 16, 39, 27, 40, 38, 0, 5, 11, 0, 32, 33, 34, 0, 6, 0, 29, 0, 7, 24, 28, 17, 35, 36, 0, 10, 23, 12, 13, 0, 14, 0, 22, 20, 18, 21, 41, 0, 15, 30, 0, 37, 42, 0, 25, 0);
+$taborder = array(9, 0, 4, 3, 2, 0, 1, 8, 19, 16, 39, 27, 40, 38, 0, 5, 11, 0, 6, 0, 29, 0, 33, 34, 32, 24, 28, 17, 35, 36, 0, 10, 23, 12, 13, 7, 0, 14, 0, 22, 20, 18, 21, 41, 0, 15, 30, 0, 37, 42, 0, 43, 0, 25, 0);
 
 // Name of SQL tables of dictionaries
 $tabname = array();
@@ -146,6 +146,7 @@ $tabname[39] = MAIN_DB_PREFIX."c_prospectcontactlevel";
 $tabname[40] = MAIN_DB_PREFIX."c_stcommcontact";
 $tabname[41] = MAIN_DB_PREFIX."c_transport_mode";
 $tabname[42] = MAIN_DB_PREFIX."c_product_nature";
+$tabname[43] = MAIN_DB_PREFIX."c_productbatch_qcstatus";
 
 // Dictionary labels
 $tablib = array();
@@ -191,6 +192,7 @@ $tablib[39] = "DictionaryProspectContactLevel";
 $tablib[40] = "DictionaryProspectContactStatus";
 $tablib[41] = "DictionaryTransportMode";
 $tablib[42] = "DictionaryProductNature";
+$tablib[43] = "DictionaryBatchStatus";
 
 // Requests to extract data
 $tabsql = array();
@@ -236,6 +238,7 @@ $tabsql[39] = "SELECT code, label as libelle, sortorder, active FROM ".MAIN_DB_P
 $tabsql[40] = "SELECT id      as rowid, code, libelle, picto, active FROM ".MAIN_DB_PREFIX."c_stcommcontact";
 $tabsql[41] = "SELECT rowid as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_transport_mode";
 $tabsql[42] = "SELECT rowid as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_product_nature";
+$tabsql[43] = "SELECT rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_productbatch_qcstatus";
 
 // Criteria to sort dictionaries
 $tabsqlsort = array();
@@ -281,6 +284,7 @@ $tabsqlsort[39] = "sortorder ASC";
 $tabsqlsort[40] = "code ASC";
 $tabsqlsort[41] = "code ASC";
 $tabsqlsort[42] = "code ASC";
+$tabsqlsort[43] = "code ASC";
 
 // Field names in select result for dictionary display
 $tabfield = array();
@@ -326,6 +330,7 @@ $tabfield[39] = "code,libelle,sortorder";
 $tabfield[40] = "code,libelle,picto";
 $tabfield[41] = "code,label";
 $tabfield[42] = "code,label";
+$tabfield[43] = "code,label";
 
 // Edit field names for editing a record
 $tabfieldvalue = array();
@@ -371,6 +376,7 @@ $tabfieldvalue[39] = "code,libelle,sortorder";
 $tabfieldvalue[40] = "code,libelle,picto";
 $tabfieldvalue[41] = "code,label";
 $tabfieldvalue[42] = "code,label";
+$tabfieldvalue[43] = "code,label";
 
 // Field names in the table for inserting a record
 $tabfieldinsert = array();
@@ -417,6 +423,7 @@ $tabfieldinsert[39] = "code,label,sortorder";
 $tabfieldinsert[40] = "code,libelle,picto";
 $tabfieldinsert[41] = "code,label";
 $tabfieldinsert[42] = "code,label";
+$tabfieldinsert[43] = "code,label";
 
 // Rowid name of field depending if field is autoincrement on or off..
 // Use "" if id field is "rowid" and has autoincrement on
@@ -464,6 +471,7 @@ $tabrowid[39] = "code";
 $tabrowid[40] = "id";
 $tabrowid[41] = "";
 $tabrowid[42] = "rowid";
+$tabrowid[43] = "rowid";
 
 // Condition to show dictionary in setup page
 $tabcond = array();
@@ -509,6 +517,7 @@ $tabcond[39] = (!empty($conf->societe->enabled) && empty($conf->global->SOCIETE_
 $tabcond[40] = (!empty($conf->societe->enabled) && !empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES));
 $tabcond[41] = !empty($conf->intracommreport->enabled);
 $tabcond[42] = !empty($conf->product->enabled);
+$tabcond[43] = !empty($conf->product->enabled) && !empty($conf->productbatch->enabled) && $conf->global->MAIN_FEATURES_LEVEL >= 2;
 
 // List of help for fields
 $tabhelp = array();
@@ -554,55 +563,58 @@ $tabhelp[39] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[40] = array('code'=>$langs->trans("EnterAnyCode"), 'picto'=>$langs->trans("PictoHelp"));
 $tabhelp[41] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[42] = array('code'=>$langs->trans("EnterAnyCode"));
+$tabhelp[43] = array('code'=>$langs->trans("EnterAnyCode"));
 
-// List of check for fields (NOT USED YET)
-$tabfieldcheck = array();
-$tabfieldcheck[1]  = array();
-$tabfieldcheck[2]  = array();
-$tabfieldcheck[3]  = array();
-$tabfieldcheck[4]  = array();
-$tabfieldcheck[5]  = array();
-$tabfieldcheck[6]  = array();
-$tabfieldcheck[7]  = array();
-$tabfieldcheck[8]  = array();
-$tabfieldcheck[9]  = array();
-$tabfieldcheck[10] = array();
-$tabfieldcheck[11] = array();
-$tabfieldcheck[12] = array();
-$tabfieldcheck[13] = array();
-$tabfieldcheck[14] = array();
-$tabfieldcheck[15] = array();
-$tabfieldcheck[16] = array();
-$tabfieldcheck[17] = array();
-$tabfieldcheck[18] = array();
-$tabfieldcheck[19] = array();
-$tabfieldcheck[20] = array();
-$tabfieldcheck[21] = array();
-$tabfieldcheck[22] = array();
-$tabfieldcheck[23] = array();
-$tabfieldcheck[24] = array();
-$tabfieldcheck[25] = array();
-//$tabfieldcheck[26] = array();
-$tabfieldcheck[27] = array();
-$tabfieldcheck[28] = array();
-$tabfieldcheck[29] = array();
-$tabfieldcheck[30] = array();
-//$tabfieldcheck[31] = array();
-$tabfieldcheck[32] = array();
-$tabfieldcheck[33] = array();
-$tabfieldcheck[34] = array();
-$tabfieldcheck[35] = array();
-$tabfieldcheck[36] = array();
-$tabfieldcheck[37] = array();
-$tabfieldcheck[38] = array();
-$tabfieldcheck[39] = array();
-$tabfieldcheck[40] = array();
-$tabfieldcheck[41] = array();
-$tabfieldcheck[42] = array();
+// Table to store complete informations (will replace all other table). Key is table name.
+$tabcomplete = array(
+	'c_forme_juridique'=>array('picto'=>'company'),
+	'c_departements'=>array('picto'=>'country'),
+	'c_regions'=>array('picto'=>'country'),
+	'c_country'=>array('picto'=>'country'),
+	'c_civility'=>array('picto'=>'contact'),
+	'c_actioncomm'=>array('picto'=>'action'),
+	'c_chargesociales'=>array('picto'=>'bill'),
+	'c_typent'=>array('picto'=>'company'),
+	'c_currencies'=>array('picto'=>'multicurrency'),
+	'c_tva'=>array('picto'=>'bill'),
+	'c_type_contact'=>array('picto'=>'contact'),
+	'c_payment_term'=>array('picto'=>'bill'),
+	'c_paiement'=>array('picto'=>'bill'),
+	'c_ecotaxe'=>array('picto'=>'bill'),
+	'c_paper_format'=>array('picto'=>'generic'),
+	'c_prospectlevel'=>array('picto'=>'company'),
+	'c_type_fees'=>array('picto'=>'trip'),
+	'c_effectif'=>array('picto'=>'company'),
+	'c_input_method'=>array('picto'=>'order'),
+	'c_input_reason'=>array('picto'=>'order'),
+	'c_availability'=>array('picto'=>'shipment'),
+	'c_shipment_mode'=>array('picto'=>'shipment'),
+	'c_revenuestamp'=>array('picto'=>'bill'),
+	'c_type_resource'=>array('picto'=>'resource'),
+	'c_type_container'=>array('picto'=>'website'),
+	'c_stcomm'=>array('picto'=>'company'),
+	'c_holiday_types'=>array('picto'=>'holiday'),
+	'c_lead_status'=>array('picto'=>'project'),
+	'c_format_cards'=>array('picto'=>'generic'),
+	'c_hrm_public_holiday'=>array('picto'=>'holiday'),
+	'c_hrm_department'=>array('picto'=>'hrm'),
+	'c_hrm_function'=>array('picto'=>'hrm'),
+	'c_exp_tax_cat'=>array('picto'=>'expensereport'),
+	'c_exp_tax_range'=>array('picto'=>'expensereport'),
+	'c_units'=>array('picto'=>'product'),
+	'c_socialnetworks'=>array('picto'=>'share-alt'),
+	'c_product_nature'=>array('picto'=>'product'),
+	'c_transport_mode'=>array('picto'=>'incoterm'),
+	'c_prospectcontactlevel'=>array('picto'=>'company'),
+	'c_stcommcontact'=>array('picto'=>'company'),
+	'c_product_nature'=>array('picto'=>'product'),
+	'c_productbatch_qcstatus'=>array('picto'=>'lot'),
+
+);
+
 
 // Complete all arrays with entries found into modules
-complete_dictionary_with_modules($taborder, $tabname, $tablib, $tabsql, $tabsqlsort, $tabfield, $tabfieldvalue, $tabfieldinsert, $tabrowid, $tabcond, $tabhelp, $tabfieldcheck);
-
+complete_dictionary_with_modules($taborder, $tabname, $tablib, $tabsql, $tabsqlsort, $tabfield, $tabfieldvalue, $tabfieldinsert, $tabrowid, $tabcond, $tabhelp, $tabcomplete);
 
 // Defaut sortorder
 if (empty($sortfield)) {
@@ -859,8 +871,8 @@ if (GETPOST('actionadd') || GETPOST('actionmodify')) {
 
 			if ($value == 'price' || preg_match('/^amount/i', $value)) {
 				$_POST[$keycode] = price2num(GETPOST($keycode), 'MU');
-			} elseif ($value == 'taux' || $value == 'localtax1' || $value == 'localtax2') {
-				$_POST[$keycode] = price2num(GETPOST($keycode), 8);
+			} elseif ($value == 'taux' || $value == 'localtax1') {
+				$_POST[$keycode] = price2num(GETPOST($keycode), 8);	// Note that localtax2 can be a list of rates separated by coma like X:Y:Z
 			} elseif ($value == 'entity') {
 				$_POST[$keycode] = getEntity($tabname[$id]);
 			}
@@ -928,8 +940,8 @@ if (GETPOST('actionadd') || GETPOST('actionmodify')) {
 
 			if ($field == 'price' || preg_match('/^amount/i', $field)) {
 				$_POST[$keycode] = price2num(GETPOST($keycode), 'MU');
-			} elseif ($field == 'taux' || $field == 'localtax1' || $field == 'localtax2') {
-				$_POST[$keycode] = price2num(GETPOST($keycode), 8);
+			} elseif ($field == 'taux' || $field == 'localtax1') {
+				$_POST[$keycode] = price2num(GETPOST($keycode), 8);	// Note that localtax2 can be a list of rates separated by coma like X:Y:Z
 			} elseif ($field == 'entity') {
 				$_POST[$keycode] = getEntity($tabname[$id]);
 			}
@@ -1151,7 +1163,7 @@ if ($id) {
 		$sql .= " WHERE 1 = 1";
 	}
 	if ($search_country_id > 0) {
-		$sql .= " AND c.rowid = ".$search_country_id;
+		$sql .= " AND c.rowid = ".((int) $search_country_id);
 	}
 	if ($search_code != '' && $id == 9) {
 		$sql .= natural_search("code_iso", $search_code);
@@ -1242,13 +1254,13 @@ if ($id) {
 				$valuetoshow = $langs->trans("UseLocalTax")." 2"; $class = "center"; $sortable = 0;
 			}
 			if ($value == 'localtax1') {
-				$valuetoshow = $langs->trans("Rate")." 2"; $class = "center";
+				$valuetoshow = $langs->trans("RateOfTaxN", '2'); $class = "center";
 			}
 			if ($value == 'localtax2_type') {
 				$valuetoshow = $langs->trans("UseLocalTax")." 3"; $class = "center"; $sortable = 0;
 			}
 			if ($value == 'localtax2') {
-				$valuetoshow = $langs->trans("Rate")." 3"; $class = "center";
+				$valuetoshow = $langs->trans("RateOfTaxN", '3'); $class = "center";
 			}
 			if ($value == 'organization') {
 				$valuetoshow = $langs->trans("Organization");
@@ -1586,17 +1598,18 @@ if ($id) {
 				}
 				$cssprefix = 'center ';
 			}
+
 			if ($value == 'localtax1_type') {
 				$valuetoshow = $langs->trans("UseLocalTax")." 2"; $cssprefix = "center "; $sortable = 0;
 			}
 			if ($value == 'localtax1') {
-				$valuetoshow = $langs->trans("Rate")." 2"; $cssprefix = "center "; $sortable = 0;
+				$valuetoshow = $langs->trans("RateOfTaxN", '2'); $cssprefix = "center "; $sortable = 0;
 			}
 			if ($value == 'localtax2_type') {
 				$valuetoshow = $langs->trans("UseLocalTax")." 3"; $cssprefix = "center "; $sortable = 0;
 			}
 			if ($value == 'localtax2') {
-				$valuetoshow = $langs->trans("Rate")." 3"; $cssprefix = "center "; $sortable = 0;
+				$valuetoshow = $langs->trans("RateOfTaxN", '3'); $cssprefix = "center "; $sortable = 0;
 			}
 			if ($value == 'organization') {
 				$valuetoshow = $langs->trans("Organization");
@@ -1968,6 +1981,9 @@ if ($id) {
 							} elseif ($value == 'label' && $tabname[$id] == MAIN_DB_PREFIX.'c_product_nature') {
 								$langs->load("products");
 								$valuetoshow = $langs->trans($obj->{$value});
+							} elseif ($fieldlist[$field] == 'label' && $tabname[$id] == MAIN_DB_PREFIX.'c_productbatch_qcstatus') {
+								$langs->load("productbatch");
+								$valuetoshow = $langs->trans($obj->{$value});
 							}
 							$class .= ($class ? ' ' : '').'tddict';
 							if ($value == 'note' && $id == 10) {
@@ -2123,7 +2139,7 @@ if ($id) {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td colspan="2">'.$langs->trans("Dictionary").'</td>';
-	print '<td>'.$langs->trans("Table").'</td>';
+	print '<td></td>';
 	print '</tr>';
 
 	$showemptyline = '';
@@ -2142,18 +2158,26 @@ if ($id) {
 			$value = $tabname[$i];
 			print '<tr class="oddeven"><td width="50%">';
 			if (!empty($tabcond[$i])) {
-				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$i.'">'.$langs->trans($tablib[$i]).'</a>';
+				$tabnamenoprefix = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabname[$i]);
+				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$i.'">';
+				if (!empty($tabcomplete[$tabnamenoprefix]['picto'])) {
+					print img_picto('', $tabcomplete[$tabnamenoprefix]['picto'], 'class="pictofixedwidth paddingrightonly"');
+				}
+				print $langs->trans($tablib[$i]);
+				print '</a>';
 			} else {
 				print $langs->trans($tablib[$i]);
 			}
 			print '</td>';
 			print '<td>';
-			/*if (empty($tabcond[$i]))
-			 {
-			 print info_admin($langs->trans("DictionaryDisabledSinceNoModuleNeedIt"),1);
-			 }*/
+			print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$i.'">';
+			print img_picto('Edit', 'edit', '');
+			print '</a>';
 			print '</td>';
-			print '<td>'.$tabname[$i].'</td></tr>';
+			print '<td class="right">';
+			print $form->textwithpicto('', $langs->trans("Table").': '.$tabname[$i]);
+			print '</td>';
+			print '</tr>';
 			$lastlineisempty = false;
 		} else {
 			if (!$lastlineisempty) {
@@ -2367,10 +2391,10 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			$transkey = '';
 			if (in_array($fieldlist[$field], array('label', 'libelle'))) {		// For label
 				// Special case for labels
-				if ($tabname == MAIN_DB_PREFIX.'c_civility') {
+				if ($tabname == MAIN_DB_PREFIX.'c_civility' && !empty($obj->code)) {
 					$transkey = "Civility".strtoupper($obj->code);
 				}
-				if ($tabname == MAIN_DB_PREFIX.'c_payment_term') {
+				if ($tabname == MAIN_DB_PREFIX.'c_payment_term' && !empty($obj->code)) {
 					$langs->load("bills");
 					$transkey = "PaymentConditionShort".strtoupper($obj->code);
 				}

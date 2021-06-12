@@ -132,22 +132,20 @@ class Salary extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."salary SET";
-
 		$sql .= " tms='".$this->db->idate(dol_now())."',";
-		$sql .= " fk_user=".$this->fk_user.",";
+		$sql .= " fk_user=".((int) $this->fk_user).",";
 		/*$sql .= " datep='".$this->db->idate($this->datep)."',";
 		$sql .= " datev='".$this->db->idate($this->datev)."',";*/
 		$sql .= " amount=".price2num($this->amount).",";
 		$sql .= " fk_projet=".((int) $this->fk_project).",";
-		$sql .= " fk_typepayment=".$this->type_payment.",";
+		$sql .= " fk_typepayment=".((int) $this->type_payment).",";
 		$sql .= " label='".$this->db->escape($this->label)."',";
 		$sql .= " datesp='".$this->db->idate($this->datesp)."',";
 		$sql .= " dateep='".$this->db->idate($this->dateep)."',";
 		$sql .= " note='".$this->db->escape($this->note)."',";
 		$sql .= " fk_bank=".($this->fk_bank > 0 ? (int) $this->fk_bank : "null").",";
 		$sql .= " fk_user_author=".((int) $this->fk_user_author).",";
-		$sql .= " fk_user_modif=".($this->fk_user_modif > 0 ? (int) $this->fk_user_modif : 'null');
-
+		$sql .= " fk_user_modif=".($this->fk_user_modif > 0 ? (int) $this->fk_user_modif : (int) $user->id);
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -589,7 +587,7 @@ class Salary extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT ps.rowid, ps.datec, ps.fk_user_author';
+		$sql = 'SELECT ps.rowid, ps.datec, ps.tms, ps.fk_user_author, ps.fk_user_modif';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'salary as ps';
 		$sql .= ' WHERE ps.rowid = '.((int) $id);
 
@@ -605,7 +603,14 @@ class Salary extends CommonObject
 					$cuser->fetch($obj->fk_user_author);
 					$this->user_creation = $cuser;
 				}
+
+				if ($obj->fk_user_modif) {
+					$muser = new User($this->db);
+					$muser->fetch($obj->fk_user_modif);
+					$this->user_modification = $muser;
+				}
 				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_modification = $this->db->jdate($obj->tms);
 			}
 			$this->db->free($result);
 		} else {

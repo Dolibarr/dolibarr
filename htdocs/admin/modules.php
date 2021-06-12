@@ -8,6 +8,7 @@
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018		Nicolas ZABOURI 		<info@inovea-conseil.com>
+ * Copyright (C) 2021       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -246,6 +247,7 @@ if ($action == 'install') {
 
 if ($action == 'set' && $user->admin) {
 	$resarray = activateModule($value);
+	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
 	if (!empty($resarray['errors'])) {
 		setEventMessages('', $resarray['errors'], 'errors');
 	} else {
@@ -269,6 +271,7 @@ if ($action == 'set' && $user->admin) {
 	exit;
 } elseif ($action == 'reset' && $user->admin && GETPOST('confirm') == 'yes') {
 	$result = unActivateModule($value);
+	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
 	if ($result) {
 		setEventMessages($result, null, 'errors');
 	}
@@ -386,7 +389,8 @@ foreach ($modulesdir as $dir) {
 									}
 
 									$moduleposition = ($objMod->module_position ? $objMod->module_position : '50');
-									if ($moduleposition == '50' && ($objMod->isCoreOrExternalModule() == 'external')) {
+									if ($objMod->isCoreOrExternalModule() == 'external' && $moduleposition < 100000) {
+										// an external module should never return a value lower than '80'.
 										$moduleposition = '80'; // External modules at end by default
 									}
 
@@ -520,9 +524,11 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 	$moreforfilter = '<div class="valignmiddle">';
 
-	$moreforfilter .= '<div class="floatright right pagination"><ul><li>';
-	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=commonkanban'.$param, '', 1, array('morecss'=>'reposition'.($mode == 'common' ? '' : ' btnTitleSelected')));
-	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-list-alt imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.$param, '', 1, array('morecss'=>'reposition'.($mode == 'commonkanban' ? '' : ' btnTitleSelected')));
+	$moreforfilter .= '<div class="floatright right pagination --module-list"><ul><li>';
+	$moreforfilter .= dolGetButtonTitle($langs->trans('CheckForModuleUpdate'), $langs->trans('CheckForModuleUpdate').'<br>'.$langs->trans('CheckForModuleUpdateHelp'), 'fa fa-sync', $_SERVER["PHP_SELF"].'?action=checklastversion&token='.newToken().'&mode='.$mode.$param, '', 1, array('morecss'=>'reposition'));
+	$moreforfilter .= dolGetButtonTitleSeparator();
+	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=commonkanban'.$param, '', ($mode == 'commonkanban' ? 2 : 1), array('morecss'=>'reposition'));
+	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-list-alt imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.$param, '', ($mode == 'common' ? 2 : 1), array('morecss'=>'reposition'));
 	$moreforfilter .= '</li></ul></div>';
 
 	//$moreforfilter .= '<div class="floatright center marginrightonly hideonsmartphone" style="padding-top: 3px"><span class="paddingright">'.$moreinfo.'</span> '.$moreinfo2.'</div>';
@@ -582,8 +588,8 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 	// Show list of modules
 	$oldfamily = '';
+	$foundoneexternalmodulewithupdate = 0;
 	$linenum = 0;
-
 	foreach ($orders as $key => $value) {
 		$linenum++;
 		$tab = explode('_', $value);
@@ -591,6 +597,8 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		$module_position = $tab[2];
 
 		$modName = $filename[$key];
+
+		/** @var DolibarrModules $objMod */
 		$objMod = $modules[$modName];
 
 		//print $objMod->name." - ".$key." - ".$objMod->version."<br>";
@@ -717,6 +725,22 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		}
 		if ($objMod->isCoreOrExternalModule() == 'external' || preg_match('/development|experimental|deprecated/i', $version)) {
 			$versiontrans .= $objMod->getVersion(1);
+		}
+
+		if ($objMod->isCoreOrExternalModule() == 'external'
+			&& (
+				$action == 'checklastversion'
+				// This is a bad practice to activate a synch external access during building of a page. 1 external module can hang the application.
+				// Adding a cron job could be a good idea see DolibarrModules::checkForUpdate()
+				|| 	!empty($conf->global->CHECKLASTVERSION_EXTERNALMODULE)
+			)
+		) {
+			$checkRes = $objMod->checkForUpdate();
+			if ($checkRes > 0) {
+				setEventMessage($objMod->getName().' : '.$versiontrans.' -> '.$objMod->lastVersion);
+			} elseif ($checkRes < 0) {
+				setEventMessage($objMod->getName().' '.$langs->trans('CheckVersionFail'), 'warnings');
+			}
 		}
 
 		// Define imginfo
@@ -893,17 +917,12 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 			// Version
 			print '<td class="center nowrap" width="120px">';
-			print $versiontrans;
-			if (!empty($conf->global->CHECKLASTVERSION_EXTERNALMODULE)) {	// This is a bad practice to activate a synch external access during building of a page. 1 external module can hang the application.
-				require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-				if (!empty($objMod->url_last_version)) {
-					$newversion = getURLContent($objMod->url_last_version, 'GET', '', 1, array(), array('http', 'https'), 0);	// Accept http or https links on external remote server only
-					if (isset($newversion['content'])) {
-						if (version_compare($newversion['content'], $versiontrans) > 0) {
-							print "&nbsp;<span class='butAction' title='".$langs->trans('LastStableVersion')."'>".$newversion['content']."</span>";
-						}
-					}
-				}
+			if ($objMod->needUpdate) {
+				$versionTitle = $langs->trans('ModuleUpdateAvailable').' : '.$objMod->lastVersion;
+				print '<span class="badge badge-warning classfortooltip" title="'.dol_escape_htmltag($versionTitle).'">'.$versiontrans.'</span>';
+				$foundoneexternalmodulewithupdate++;
+			} else {
+				print $versiontrans;
 			}
 			print "</td>\n";
 
@@ -918,6 +937,14 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			print '</td>';
 
 			print "</tr>\n";
+		}
+	}
+
+	if ($action == 'checklastversion') {
+		if ($foundoneexternalmodulewithupdate) {
+			setEventMessages($langs->trans("ModuleUpdateAvailable"), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("NoExternalModuleWithUpdate"), null, 'mesgs');
 		}
 	}
 

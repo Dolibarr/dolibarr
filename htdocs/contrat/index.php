@@ -250,7 +250,7 @@ if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	}
 	if ($socid) {
-		$sql .= " AND c.fk_soc = ".$socid;
+		$sql .= " AND c.fk_soc = ".((int) $socid);
 	}
 
 	$resql = $db->query($sql);
@@ -323,11 +323,11 @@ if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 }
 if ($socid) {
-	$sql .= " AND s.rowid = ".$socid;
+	$sql .= " AND s.rowid = ".((int) $socid);
 }
 $sql .= " GROUP BY c.rowid, c.ref, c.datec, c.tms, c.statut, s.nom, s.rowid";
 $sql .= " ORDER BY c.tms DESC";
-$sql .= " LIMIT ".$max;
+$sql .= $db->plimit($max);
 
 dol_syslog("contrat/index.php", LOG_DEBUG);
 $result = $db->query($sql);
@@ -398,7 +398,7 @@ if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 }
 if ($socid) {
-	$sql .= " AND s.rowid = ".$socid;
+	$sql .= " AND s.rowid = ".((int) $socid);
 }
 $sql .= " ORDER BY cd.tms DESC";
 
@@ -480,7 +480,7 @@ if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 }
 if ($socid) {
-	$sql .= " AND s.rowid = ".$socid;
+	$sql .= " AND s.rowid = ".((int) $socid);
 }
 $sql .= " ORDER BY cd.tms DESC";
 
@@ -562,7 +562,7 @@ if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 }
 if ($socid) {
-	$sql .= " AND s.rowid = ".$socid;
+	$sql .= " AND s.rowid = ".((int) $socid);
 }
 $sql .= " ORDER BY cd.tms DESC";
 

@@ -579,7 +579,7 @@ if ($action == 'create') {
 		{
 		 $sqlmid = 'SELECT rowid as ref';
 			$sqlmid .= " FROM ".MAIN_DB_PREFIX."facture as fac";
-			$sqlmid .= " WHERE fac.rowid=" . $object->fk_doc;
+			$sqlmid .= " WHERE fac.rowid=" . ((int) $object->fk_doc);
 			dol_syslog("accountancy/bookkeeping/card.php::sqlmid=" . $sqlmid, LOG_DEBUG);
 			$resultmid = $db->query($sqlmid);
 			if ($resultmid) {

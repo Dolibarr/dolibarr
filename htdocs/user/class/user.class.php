@@ -300,6 +300,11 @@ class User extends CommonObject
 	public $nb_rights;
 
 	/**
+	 * @var array	To store list of groups of user (used by API /info for example)
+	 */
+	public $user_group_list;
+
+	/**
 	 * @var array Cache array of already loaded permissions
 	 */
 	private $_tab_loaded = array();
@@ -1413,10 +1418,10 @@ class User extends CommonObject
 		$result = $this->create($user, 1);
 		if ($result > 0) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user";
-			$sql .= " SET fk_socpeople=".$contact->id;
+			$sql .= " SET fk_socpeople=".((int) $contact->id);
 			$sql .= ", civility='".$this->db->escape($contact->civility_code)."'";
 			if ($contact->socid > 0) {
-				$sql .= ", fk_soc=".$contact->socid;
+				$sql .= ", fk_soc=".((int) $contact->socid);
 			}
 			$sql .= " WHERE rowid=".((int) $this->id);
 
@@ -1512,7 +1517,7 @@ class User extends CommonObject
 
 			if ($result > 0 && $member->fk_soc) {	// If member is linked to a thirdparty
 				$sql = "UPDATE ".MAIN_DB_PREFIX."user";
-				$sql .= " SET fk_soc=".$member->fk_soc;
+				$sql .= " SET fk_soc=".((int) $member->fk_soc);
 				$sql .= " WHERE rowid=".((int) $this->id);
 
 				dol_syslog(get_class($this)."::create_from_member", LOG_DEBUG);
@@ -2366,7 +2371,7 @@ class User extends CommonObject
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
 	 *	@param	int		$withpictoimg				Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
-	 *	@param	string	$option						On what the link point to ('leave', 'nolink', )
+	 *	@param	string	$option						On what the link point to ('leave', 'accountancy', 'nolink', )
 	 *  @param  integer $infologin      			0=Add default info tooltip, 1=Add complete info tooltip, -1=No info tooltip
 	 *  @param	integer	$notooltip					1=Disable tooltip on picto and name
 	 *  @param	int		$maxlen						Max length of visible user name
@@ -2411,11 +2416,24 @@ class User extends CommonObject
 			$label .= '<br><b>'.$langs->trans("Job").':</b> '.dol_string_nohtmltag($this->job);
 		}
 		$label .= '<br><b>'.$langs->trans("Email").':</b> '.dol_string_nohtmltag($this->email);
-		if (!empty($this->phone)) {
-			$label .= '<br><b>'.$langs->trans("Phone").':</b> '.dol_string_nohtmltag($this->phone);
+		if (!empty($this->office_phone) || !empty($this->office_fax) || !empty($this->fax)) {
+			$phonelist = array();
+			if ($this->office_phone) {
+				$phonelist[] = dol_print_phone($this->office_phone, $this->country_code, $this->id, 0, '', '&nbsp', 'phone');
+			}
+			if ($this->office_fax) {
+				$phonelist[] = dol_print_phone($this->office_fax, $this->country_code, $this->id, 0, '', '&nbsp', 'fax');
+			}
+			if ($this->user_mobile) {
+				$phonelist[] = dol_print_phone($this->user_mobile, $this->country_code, $this->id, 0, '', '&nbsp', 'mobile');
+			}
+			$label .= '<br><b>'.$langs->trans('Phone').':</b> '.implode('&nbsp;', $phonelist);
 		}
 		if (!empty($this->admin)) {
 			$label .= '<br><b>'.$langs->trans("Administrator").'</b>: '.yn($this->admin);
+		}
+		if (!empty($this->accountancy_code) || $option == 'accountancy') {
+			$label .= '<br><b>'.$langs->trans("AccountancyCode").'</b>: '.$this->accountancy_code;
 		}
 		$company = '';
 		if (!empty($this->socid)) {	// Add thirdparty for external users
@@ -2545,11 +2563,13 @@ class User extends CommonObject
 	/**
 	 *  Return clickable link of login (eventualy with picto)
 	 *
-	 *	@param	int		$withpicto		Include picto into link
-	 *	@param	string	$option			Sur quoi pointe le lien
-	 *	@return	string					Chaine avec URL
+	 *	@param	int		$withpictoimg		Include picto into link
+	 *	@param	string	$option				On what the link point to ('leave', 'accountancy', 'nolink', )
+	 *  @param	integer	$notooltip			1=Disable tooltip on picto and name
+	 *  @param  string  $morecss       		Add more css on link
+	 *	@return	string						String with URL
 	 */
-	public function getLoginUrl($withpicto = 0, $option = '')
+	public function getLoginUrl($withpictoimg = 0, $option = '', $notooltip = 0, $morecss = '')
 	{
 		global $langs, $user;
 
@@ -2574,11 +2594,23 @@ class User extends CommonObject
 		}
 
 		$result .= $linkstart;
-		if ($withpicto) {
-			$result .= img_object($langs->trans("ShowUser"), 'user', 'class="paddingright"');
+		if ($withpictoimg) {
+			$paddafterimage = '';
+			if (abs($withpictoimg) == 1) {
+				$paddafterimage = 'style="margin-'.($langs->trans("DIRECTION") == 'rtl' ? 'left' : 'right').': 3px;"';
+			}
+			// Only picto
+			if ($withpictoimg > 0) {
+				$picto = '<!-- picto user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'">'.img_object('', 'user', $paddafterimage.' '.($notooltip ? '' : 'class="paddingright classfortooltip"'), 0, 0, $notooltip ? 0 : 1).'</span>';
+			} else {
+				// Picto must be a photo
+				$picto = '<!-- picto photo user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'"'.($paddafterimage ? ' '.$paddafterimage : '').'>'.Form::showphoto('userphoto', $this, 0, 0, 0, 'userphoto'.($withpictoimg == -3 ? 'small' : ''), 'mini', 0, 1).'</span>';
+			}
+			$result .= $picto;
 		}
 		$result .= $this->login;
 		$result .= $linkend;
+
 		return $result;
 	}
 
@@ -2792,10 +2824,10 @@ class User extends CommonObject
 		if (!empty($conf->global->LDAP_FIELD_USERID)) {
 			$info[$conf->global->LDAP_FIELD_USERID] = $this->id;
 		}
-		if (!empty($info[$conf->global->LDAP_FIELD_GROUPID])) {
+		if (!empty($conf->global->LDAP_FIELD_GROUPID)) {
 			$usergroup = new UserGroup($this->db);
 			$groupslist = $usergroup->listGroupsForUser($this->id);
-			$info[$conf->global->LDAP_FIELD_GROUPID] = '1';
+			$info[$conf->global->LDAP_FIELD_GROUPID] = '65534';
 			if (!empty($groupslist)) {
 				foreach ($groupslist as $groupforuser) {
 					$info[$conf->global->LDAP_FIELD_GROUPID] = $groupforuser->id; //Select first group in list
@@ -2803,8 +2835,8 @@ class User extends CommonObject
 				}
 			}
 		}
-		if (!empty($this->firstname) && !empty($conf->global->LDAP_FIELD_HOMEDIRECTORY) && !empty($conf->global->LDAP_FIELD_HOMEDIRECTORYPREFIX)) {
-			$info[$conf->global->LDAP_FIELD_HOMEDIRECTORY] = "{$conf->global->LDAP_FIELD_HOMEDIRECTORYPREFIX}/$this->firstname";
+		if (!empty($conf->global->LDAP_FIELD_HOMEDIRECTORY) && !empty($conf->global->LDAP_FIELD_HOMEDIRECTORYPREFIX)) {
+			$info[$conf->global->LDAP_FIELD_HOMEDIRECTORY] = "{$conf->global->LDAP_FIELD_HOMEDIRECTORYPREFIX}/$this->login";
 		}
 
 		return $info;
@@ -3396,7 +3428,7 @@ class User extends CommonObject
 				$sql .= " WHERE t.entity IN (".getEntity('user').")";
 			}
 		} else {
-			$sql .= " WHERE 1";
+			$sql .= " WHERE 1 = 1";
 		}
 
 		// Manage filter

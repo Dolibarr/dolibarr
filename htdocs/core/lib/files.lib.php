@@ -62,8 +62,10 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 	global $db, $hookmanager;
 	global $object;
 
-	dol_syslog("files.lib.php::dol_dir_list path=".$path." types=".$types." recursive=".$recursive." filter=".$filter." excludefilter=".json_encode($excludefilter));
-	//print 'xxx'."files.lib.php::dol_dir_list path=".$path." types=".$types." recursive=".$recursive." filter=".$filter." excludefilter=".json_encode($excludefilter);
+	if ($recursive <= 1) {	// Avoid too verbose log
+		dol_syslog("files.lib.php::dol_dir_list path=".$path." types=".$types." recursive=".$recursive." filter=".$filter." excludefilter=".json_encode($excludefilter));
+		//print 'xxx'."files.lib.php::dol_dir_list path=".$path." types=".$types." recursive=".$recursive." filter=".$filter." excludefilter=".json_encode($excludefilter);
+	}
 
 	$loaddate = ($mode == 1 || $mode == 2) ?true:false;
 	$loadsize = ($mode == 1 || $mode == 3) ?true:false;
@@ -133,7 +135,7 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 				if ($qualified) {
 					$isdir = is_dir(dol_osencode($path."/".$file));
 					// Check whether this is a file or directory and whether we're interested in that type
-					if ($isdir && (($types == "directories") || ($types == "all") || $recursive)) {
+					if ($isdir && (($types == "directories") || ($types == "all") || $recursive > 0)) {
 						// Add entry into file_list array
 						if (($types == "directories") || ($types == "all")) {
 							if ($loaddate || $sortcriteria == 'date') {
@@ -165,10 +167,10 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 						}
 
 						// if we're in a directory and we want recursive behavior, call this function again
-						if ($recursive) {
+						if ($recursive > 0) {
 							if (empty($donotfollowsymlinks) || !is_link($path."/".$file)) {
 								//var_dump('eee '. $path."/".$file. ' '.is_dir($path."/".$file).' '.is_link($path."/".$file));
-								$file_list = array_merge($file_list, dol_dir_list($path."/".$file, $types, $recursive, $filter, $excludefilter, $sortcriteria, $sortorder, $mode, $nohook, ($relativename != '' ? $relativename.'/' : '').$file, $donotfollowsymlinks));
+								$file_list = array_merge($file_list, dol_dir_list($path."/".$file, $types, $recursive + 1, $filter, $excludefilter, $sortcriteria, $sortorder, $mode, $nohook, ($relativename != '' ? $relativename.'/' : '').$file, $donotfollowsymlinks));
 							}
 						}
 					} elseif (!$isdir && (($types == "files") || ($types == "all"))) {
@@ -2230,7 +2232,8 @@ function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(
 }
 
 /**
- * Security check when accessing to a document (used by document.php, viewimage.php and webservices)
+ * Security check when accessing to a document (used by document.php, viewimage.php and webservices to get documents).
+ * TODO Replace code that set $accesallowed by a call to restrictedArea()
  *
  * @param	string	$modulepart			Module of document ('module', 'module_user_temp', 'module_user' or 'module_temp')
  * @param	string	$original_file		Relative path with filename, relative to modulepart.
@@ -2444,6 +2447,16 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		// Wrapping for events
 		if ($fuser->rights->agenda->myactions->{$read}) {
 			$accessallowed = 1;
+			// If we known $id of project, call checkUserAccessToObject to check permission on the given agenda event on properties and assigned users
+			if ($refname && !preg_match('/^specimen/i', $original_file)) {
+				include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+				$tmpobject = new ActionComm($db);
+				$tmpobject->fetch((int) $refname);
+				$accessallowed = checkUserAccessToObject($user, array('agenda'), $tmpobject->id, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id', '');
+				if ($user->socid && $tmpobject->socid) {
+					$accessallowed = checkUserAccessToObject($user, array('societe'), $tmpobject->socid);
+				}
+			}
 		}
 		$original_file = $conf->agenda->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'category' && !empty($conf->categorie->multidir_output[$entity])) {
@@ -2610,12 +2623,26 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		// Wrapping pour les projets
 		if ($fuser->rights->projet->{$lire} || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
+			// If we known $id of project, call checkUserAccessToObject to check permission on properties and contact of project
+			if ($refname && !preg_match('/^specimen/i', $original_file)) {
+				include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+				$tmpproject = new Project($db);
+				$tmpproject->fetch('', $refname);
+				$accessallowed = checkUserAccessToObject($user, array('projet'), $tmpproject->id, 'projet&project', '', '', 'rowid', '');
+			}
 		}
 		$original_file = $conf->projet->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."projet WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('project').")";
 	} elseif ($modulepart == 'project_task' && !empty($conf->projet->dir_output)) {
 		if ($fuser->rights->projet->{$lire} || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
+			// If we known $id of project, call checkUserAccessToObject to check permission on properties and contact of project
+			if ($refname && !preg_match('/^specimen/i', $original_file)) {
+				include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+				$tmptask = new Task($db);
+				$tmptask->fetch('', $refname);
+				$accessallowed = checkUserAccessToObject($user, array('projet_task'), $tmptask->id, 'projet&project', '', '', 'rowid', '');
+			}
 		}
 		$original_file = $conf->projet->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."projet WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('project').")";

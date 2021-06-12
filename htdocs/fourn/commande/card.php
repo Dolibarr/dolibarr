@@ -70,8 +70,6 @@ $socid = GETPOST('socid', 'int');
 $projectid = GETPOST('projectid', 'int');
 $cancel         = GETPOST('cancel', 'alpha');
 $lineid         = GETPOST('lineid', 'int');
-
-$lineid = GETPOST('lineid', 'int');
 $origin = GETPOST('origin', 'alpha');
 $originid = (GETPOST('originid', 'int') ? GETPOST('originid', 'int') : GETPOST('origin_id', 'int')); // For backward compatibility
 
@@ -960,6 +958,9 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'confirm_refuse' && $confirm == 'yes' && $usercanapprove) {
+		if (GETPOST('refuse_note')) {
+			$object->refuse_note = GETPOST('refuse_note');
+		}
 		$result = $object->refuse($user);
 		if ($result > 0) {
 			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
@@ -1256,6 +1257,8 @@ if (empty($reshook)) {
 									$tva_tx = get_default_tva($soc, $mysoc, $lines[$i]->fk_product, $product_fourn_price_id);
 								}
 
+								$object->special_code = $lines[$i]->special_code;
+
 								$result = $object->addline(
 									$desc,
 									$lines[$i]->subprice,
@@ -1326,7 +1329,7 @@ if (empty($reshook)) {
 				$_GET['socid'] = $_POST['socid'];
 			} else {
 				$db->commit();
-				header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+				header("Location: ".$_SERVER['PHP_SELF']."?id=".urlencode($id));
 				exit;
 			}
 		}
@@ -1464,8 +1467,9 @@ if (!empty($conf->projet->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
+$title = $langs->trans('SupplierOrder')." - ".$langs->trans('Card');
 $help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
-llxHeader('', $langs->trans("Order"), $help_url);
+llxHeader('', $title, $help_url);
 
 $now = dol_now();
 
@@ -1872,7 +1876,16 @@ if ($action == 'create') {
 
 	// Confirmation de la desapprobation
 	if ($action == 'refuse') {
-		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("DenyingThisOrder"), $langs->trans("ConfirmDenyingThisOrder", $object->ref), "confirm_refuse", '', 0, 1);
+		$formquestion = array(
+			array(
+				'type' => 'text',
+				'name' => 'refuse_note',
+				'label' => $langs->trans("MotifCP"),
+				'value' => '',
+				'morecss' => 'minwidth300'
+			)
+		);
+		$formconfirm  = $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("DenyingThisOrder"), $langs->trans("ConfirmDenyingThisOrder", $object->ref), "confirm_refuse", $formquestion, 0, 1);
 	}
 
 	// Confirmation de l'annulation
@@ -2275,7 +2288,7 @@ if ($action == 'create') {
 	//$result = $object->getLinesArray();
 
 
-	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#addline' : '#line_'.GETPOST('lineid')).'" method="POST">
+	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#addline' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
 	<input type="hidden" name="token" value="'.newToken().'">
 	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
 	<input type="hidden" name="mode" value="">
@@ -2309,10 +2322,12 @@ if ($action == 'create') {
 	if ($object->statut == CommandeFournisseur::STATUS_DRAFT && $usercancreate) {
 		if ($action != 'editline') {
 			// Add free products/services
-			$object->formAddObjectLine(1, $societe, $mysoc);
 
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			if (empty($reshook))
+				$object->formAddObjectLine(1, $societe, $mysoc);
 		}
 	}
 	print '</table>';
@@ -2322,7 +2337,7 @@ if ($action == 'create') {
 	print dol_get_fiche_end();
 
 	/**
-	 * Boutons actions
+	 * Buttons for actions
 	 */
 
 	if ($user->socid == 0 && $action != 'editline' && $action != 'delete') {
@@ -2430,11 +2445,19 @@ if ($action == 'create') {
 			}
 
 			// Ship
-
+			$hasreception = 0;
 			if (!empty($conf->stock->enabled) && (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE))) {
 				$labelofbutton = $langs->trans('ReceiveProducts');
 				if ($conf->reception->enabled) {
 					$labelofbutton = $langs->trans("CreateReception");
+					if (!empty($object->linkedObjects)) {
+						foreach ($object->linkedObjects['reception'] as $element) {
+							if ($element->statut >= 0) {
+								$hasreception = 1;
+								break;
+							}
+						}
+					}
 				}
 
 				if (in_array($object->statut, array(3, 4, 5))) {
@@ -2505,7 +2528,11 @@ if ($action == 'create') {
 
 			// Delete
 			if (!empty($usercandelete) || ($object->statut == CommandeFournisseur::STATUS_DRAFT && !empty($usercancreate))) {
-				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans("Delete").'</a>';
+				if ($hasreception) {
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ReceptionExist").'">'.$langs->trans("Delete").'</a>';
+				} else {
+					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans("Delete").'</a>';
+				}
 			}
 		}
 

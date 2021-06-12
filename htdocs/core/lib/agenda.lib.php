@@ -168,7 +168,7 @@ function show_array_actions_to_do($max = 5)
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	}
 	if ($socid) {
-		$sql .= " AND s.rowid = ".$socid;
+		$sql .= " AND s.rowid = ".((int) $socid);
 	}
 	$sql .= " ORDER BY a.datep DESC, a.id DESC";
 	$sql .= $db->plimit($max, 0);
@@ -284,7 +284,7 @@ function show_array_last_actions_done($max = 5)
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	}
 	if ($socid) {
-		$sql .= " AND s.rowid = ".$socid;
+		$sql .= " AND s.rowid = ".((int) $socid);
 	}
 	$sql .= " ORDER BY a.datep2 DESC";
 	$sql .= $db->plimit($max, 0);

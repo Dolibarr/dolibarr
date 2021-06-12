@@ -206,7 +206,7 @@ class Contrat extends CommonObject
 	 *  'help' is a string visible as a tooltip on field
 	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
 	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
-	 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
+	 *  'arrayofkeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
 	 *
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
@@ -1832,7 +1832,7 @@ class Contrat extends CommonObject
 			$this->db->begin();
 
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element_line;
-			$sql .= " WHERE rowid=".$idline;
+			$sql .= " WHERE rowid = ".((int) $idline);
 
 			dol_syslog(get_class($this)."::deleteline", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -3066,9 +3066,9 @@ class ContratLigne extends CommonObjectLine
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET";
-		$sql .= " fk_contrat=".$this->fk_contrat.",";
+		$sql .= " fk_contrat=".((int) $this->fk_contrat).",";
 		$sql .= " fk_product=".($this->fk_product ? "'".$this->db->escape($this->fk_product)."'" : 'null').",";
-		$sql .= " statut=".$this->statut.",";
+		$sql .= " statut=".((int) $this->statut).",";
 		$sql .= " label='".$this->db->escape($this->label)."',";
 		$sql .= " description='".$this->db->escape($this->description)."',";
 		$sql .= " date_commande=".($this->date_commande != '' ? "'".$this->db->idate($this->date_commande)."'" : "null").",";
@@ -3373,11 +3373,11 @@ class ContratLigne extends CommonObjectLine
 
 		$this->db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET statut = ".ContratLigne::STATUS_CLOSED.",";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET statut = ".((int) ContratLigne::STATUS_CLOSED).",";
 		$sql .= " date_cloture = '".$this->db->idate($date_end)."',";
 		$sql .= " fk_user_cloture = ".$user->id.",";
 		$sql .= " commentaire = '".$this->db->escape($comment)."'";
-		$sql .= " WHERE rowid = ".$this->id." AND statut = ".ContratLigne::STATUS_OPEN;
+		$sql .= " WHERE rowid = ".$this->id." AND statut = ".((int) ContratLigne::STATUS_OPEN);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

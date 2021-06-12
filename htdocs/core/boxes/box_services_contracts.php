@@ -200,8 +200,8 @@ class box_services_contracts extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$i][] = array(
-						'td' => '',
-						'text' => dol_print_date($datem, 'day'),
+						'td' => 'class="center nowraponall"',
+						'text' => dol_print_date($datem, 'day', 'tzuserrel'),
 						'text2'=> $late,
 					);
 

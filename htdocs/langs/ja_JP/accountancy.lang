@@ -131,7 +131,7 @@ InvoiceLinesDone=請求書の境界線
 ExpenseReportLines=紐付けする経費報告書の行
 ExpenseReportLinesDone=経費報告書の境界線
 IntoAccount=会計科目との紐付け行
-TotalForAccount=会計科目の合計
+TotalForAccount=総会計勘定
 
 
 Ventilate=紐付
@@ -202,14 +202,14 @@ Docref=参照
 LabelAccount=ラベル科目
 LabelOperation=ラベル操作
 Sens=方向
-AccountingDirectionHelp=顧客の会計科目の場合、貸方を使用して受け取った支払いを記録する。<br>仕入先の会計科目の場合、借方を使用して支払いを記録する。
+AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you have received<br>For an accounting account of a supplier, use Debit to record a payment you made
 LetteringCode=レタリングコード
 Lettering=レタリング
 Codejournal=仕訳帳
 JournalLabel=仕訳帳ラベル
 NumPiece=個数番号
 TransactionNumShort=数トランザクション
-AccountingCategory=パーソナライズされたグループ
+AccountingCategory=カスタムグループ
 GroupByAccountAccounting=総勘定元帳勘定によるグループ化
 GroupBySubAccountAccounting=補助元帳アカウントでグループ化
 AccountingAccountGroupsDesc=ここで、会計科目のいくつかのグループを定義できる。それらは、パーソナライズされた会計レポートに使用される。
@@ -279,8 +279,8 @@ DescVentilDoneExpenseReport=経費報告書の行とその手数料会計科目�
 Closure=年次閉鎖
 DescClosure=検証されていない月ごとの動きの数とすでに開いている会計年度をここで参照すること
 OverviewOfMovementsNotValidated=ステップ1 /検証されていない動きの概要。 (決算期に必要)
-AllMovementsWereRecordedAsValidated=すべての動きは検証済みとして記録された
-NotAllMovementsCouldBeRecordedAsValidated=すべての動きを検証済みとして記録できるわけではない
+AllMovementsWereRecordedAsValidated=すべての動きは検証済として記録された
+NotAllMovementsCouldBeRecordedAsValidated=すべての動きを検証済として記録できるわけではない
 ValidateMovements=動きを検証する
 DescValidateMovements=書き込み、レタリング、削除の変更または削除は禁止される。演習のすべてのエントリを検証する必要がある。検証しないと、閉じることができない。
 
@@ -297,7 +297,7 @@ NoNewRecordSaved=仕訳帳化するレコードはもうない
 ListOfProductsWithoutAccountingAccount=会計科目にバインドされていない製品のリスト
 ChangeBinding=紐付を変更する
 Accounted=元帳に計上
-NotYetAccounted=元帳にはまだ計上されていない
+NotYetAccounted=Not yet accounted in the ledger
 ShowTutorial=チュートリアルを表示
 NotReconciled=調整されていない
 WarningRecordWithoutSubledgerAreExcluded=警告、補助元帳アカウントが定義されていないすべての操作はフィルタリングされ、このビューから除外される
@@ -385,7 +385,7 @@ SaleEECWithoutVATNumber=VATなしのEECでの販売ですが、取引先のVATID
 
 ## Dictionary
 Range=会計科目の範囲
-Calculated=計算済み
+Calculated=計算済
 Formula=式
 
 ## Error
@@ -402,7 +402,29 @@ UseMenuToSetBindindManualy=まだ紐付けされていない行。メニュー<a
 
 ## Import
 ImportAccountingEntries=会計仕訳
+ImportAccountingEntriesFECFormat=会計項目 - FEC形式
+FECFormatJournalCode=コード 日記帳 (JournalCode)
+FECFormatJournalLabel=ラベル 日記帳 (JournalLib)
+FECFormatEntryNum=単体番号 (EcritureNum)
+FECFormatEntryDate=単体日付 (EcritureDate)
+FECFormatGeneralAccountNumber=一般勘定番号 (CompteNum)
+FECFormatGeneralAccountLabel=一般勘定ラベル (CompteLib)
+FECFormatSubledgerAccountNumber=補助元帳勘定番号 (CompAuxNum)
+FECFormatSubledgerAccountLabel=補助元帳勘定番号 (CompAuxLib)
+FECFormatPieceRef=単体識別符号 (PieceRef)
+FECFormatPieceDate=単体日付作成 (PieceDate)
+FECFormatLabelOperation=ラベル 運用 (EcritureLib)
+FECFormatDebit=借方 (Debit)
+FECFormatCredit=貸方(Credit)
+FECFormatReconcilableCode=調整可能なコード (EcritureLet)
+FECFormatReconcilableDate=調整可能日付 (DateLet)
+FECFormatValidateDate=検証された単体日付 (ValidDate)
+FECFormatMulticurrencyAmount=多通貨額 (Montantdevise)
+FECFormatMulticurrencyCode=他通貨 コード (Idevise)
+
 DateExport=日付のエクスポート
 WarningReportNotReliable=警告、このレポートは元帳に基づいていないため、元帳で手動で変更されたトランザクションは含まれていない。仕訳帳化が最新の場合、簿記ビューはより正確です。
 ExpenseReportJournal=経費報告仕訳帳
 InventoryJournal=在庫仕訳帳
+
+NAccounts=%sアカウント

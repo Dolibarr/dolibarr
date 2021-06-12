@@ -131,7 +131,7 @@ InvoiceLinesDone=Свързани редове на фактури
 ExpenseReportLines=Редове на разходни отчети за свързване
 ExpenseReportLinesDone=Свързани редове на разходни отчети
 IntoAccount=Свързване на ред със счетоводна сметка
-TotalForAccount=Общо за счетоводна сметка
+TotalForAccount=Total accounting account
 
 
 Ventilate=Свързване
@@ -202,14 +202,14 @@ Docref=Референция
 LabelAccount=Име на сметка
 LabelOperation=Име на операция
 Sens=Direction
-AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you received<br>For an accounting account of a supplier, use Debit to record a payment you make
+AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you have received<br>For an accounting account of a supplier, use Debit to record a payment you made
 LetteringCode=Буквен код
 Lettering=Означение
 Codejournal=Журнал
 JournalLabel=Име на журнал
 NumPiece=Пореден номер
 TransactionNumShort=Транзакция №
-AccountingCategory=Персонализирани групи
+AccountingCategory=Custom group
 GroupByAccountAccounting=Group by general ledger account
 GroupBySubAccountAccounting=Group by subledger account
 AccountingAccountGroupsDesc=Тук може да определите някои групи счетоводни сметки. Те ще бъдат използвани за персонализирани счетоводни отчети.
@@ -297,7 +297,7 @@ NoNewRecordSaved=Няма повече записи за осчетоводяв�
 ListOfProductsWithoutAccountingAccount=Списък на продукти, които не са свързани с нито една счетоводна сметка
 ChangeBinding=Промяна на свързване
 Accounted=Осчетоводено в книгата
-NotYetAccounted=Все още не е осчетоводено в книгата
+NotYetAccounted=Not yet accounted in the ledger
 ShowTutorial=Показване на урок
 NotReconciled=Не е съгласувано
 WarningRecordWithoutSubledgerAreExcluded=Warning, all operations without subledger account defined are filtered and excluded from this view
@@ -402,7 +402,29 @@ UseMenuToSetBindindManualy=Редовете все още не са свърза
 
 ## Import
 ImportAccountingEntries=Счетоводни записи
+ImportAccountingEntriesFECFormat=Accounting entries - FEC format
+FECFormatJournalCode=Code journal (JournalCode)
+FECFormatJournalLabel=Label journal (JournalLib)
+FECFormatEntryNum=Piece number (EcritureNum)
+FECFormatEntryDate=Piece date (EcritureDate)
+FECFormatGeneralAccountNumber=General account number (CompteNum)
+FECFormatGeneralAccountLabel=General account label (CompteLib)
+FECFormatSubledgerAccountNumber=Subledger account number (CompAuxNum)
+FECFormatSubledgerAccountLabel=Subledger account number (CompAuxLib)
+FECFormatPieceRef=Piece ref (PieceRef)
+FECFormatPieceDate=Piece date creation (PieceDate)
+FECFormatLabelOperation=Label operation (EcritureLib)
+FECFormatDebit=Debit (Debit)
+FECFormatCredit=Credit (Credit)
+FECFormatReconcilableCode=Reconcilable code (EcritureLet)
+FECFormatReconcilableDate=Reconcilable date (DateLet)
+FECFormatValidateDate=Piece date validated (ValidDate)
+FECFormatMulticurrencyAmount=Multicurrency amount (Montantdevise)
+FECFormatMulticurrencyCode=Multicurrency code (Idevise)
+
 DateExport=Дата на експортиране
 WarningReportNotReliable=Внимание, тази справка не се основава на главната счетоводна книга, така че не съдържа транзакция, ръчно променена в книгата. Ако осчетоводяването ви е актуално, то прегледът на счетоводството е по-точен.
 ExpenseReportJournal=Журнал за разходни отчети
 InventoryJournal=Журнал за инвентар
+
+NAccounts=%s accounts

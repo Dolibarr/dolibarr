@@ -39,6 +39,7 @@ $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
+$optioncss = GETPOST('optioncss', 'aZ09');
 
 $id = GETPOST('id', 'int');
 
@@ -382,11 +383,8 @@ if ($search_projectstatus >= 0) {
 	if ($search_projectstatus == 99) {
 		$sql .= " AND p.fk_statut <> 2";
 	} else {
-		$sql .= " AND p.fk_statut = ".$db->escape($search_projectstatus);
+		$sql .= " AND p.fk_statut = ".((int) $search_projectstatus);
 	}
-}
-if ($search_public != '') {
-	$sql .= " AND p.public = ".$db->escape($search_public);
 }
 if ($search_project_user > 0) {
 	$sql .= " AND ecp.fk_c_type_contact IN (".$db->sanitize(join(',', array_keys($listofprojectcontacttype))).") AND ecp.element_id = p.rowid AND ecp.fk_socpeople = ".$search_project_user;
@@ -511,9 +509,6 @@ if ($search_projectstatus != '') {
 }
 if ((is_numeric($search_opp_status) && $search_opp_status >= 0) || in_array($search_opp_status, array('all', 'none'))) {
 	$param .= '&search_opp_status='.urlencode($search_opp_status);
-}
-if ($search_public != '') {
-	$param .= '&search_public='.urlencode($search_public);
 }
 if ($search_project_user != '') {
 	$param .= '&search_project_user='.urlencode($search_project_user);

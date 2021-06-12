@@ -74,7 +74,7 @@ if ($search_accountancy_code_end == - 1) {
 	$search_accountancy_code_end = '';
 }
 
-$search_accountancy_aux_code = GETPOST("search_accountancy_aux_code");
+$search_accountancy_aux_code = GETPOST("search_accountancy_aux_code", 'alpha');
 $search_accountancy_aux_code_start = GETPOST('search_accountancy_aux_code_start', 'alpha');
 if ($search_accountancy_aux_code_start == - 1) {
 	$search_accountancy_aux_code_start = '';
@@ -473,12 +473,14 @@ if (count($filter) > 0) {
 			$sqlwhere[] = $key.'=\''.$db->idate($value).'\'';
 		} elseif ($key == 't.doc_date>=' || $key == 't.doc_date<=') {
 			$sqlwhere[] = $key.'\''.$db->idate($value).'\'';
-		} elseif ($key == 't.numero_compte>=' || $key == 't.numero_compte<=' || $key == 't.subledger_account>=' || $key == 't.subledger_account<=') {
+		} elseif ($key == 't.numero_compte>=' || $key == 't.numero_compte<=') {
 			$sqlwhere[] = $key.'\''.$db->escape($value).'\'';
 		} elseif ($key == 't.fk_doc' || $key == 't.fk_docdet' || $key == 't.piece_num') {
 			$sqlwhere[] = $key.'='.$value;
-		} elseif ($key == 't.subledger_account' || $key == 't.numero_compte') {
+		} elseif ($key == 't.numero_compte') {
 			$sqlwhere[] = $key.' LIKE \''.$db->escape($value).'%\'';
+		} elseif ($key == 't.subledger_account') {
+			$sqlwhere[] = natural_search($key, $value, 0, 1);
 		} elseif ($key == 't.date_creation>=' || $key == 't.date_creation<=') {
 			$sqlwhere[] = $key.'\''.$db->idate($value).'\'';
 		} elseif ($key == 't.tms>=' || $key == 't.tms<=') {
@@ -780,36 +782,29 @@ if (!empty($arrayfields['t.doc_ref']['checked'])) {
 if (!empty($arrayfields['t.numero_compte']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<div class="nowrap">';
-	print $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', $langs->trans('From'), array(), 1, 1, 'maxwidth200', 1);
+	print $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', $langs->trans('From'), array(), 1, 1, 'maxwidth200', 'account');
 	print '</div>';
 	print '<div class="nowrap">';
-	print $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', $langs->trans('to'), array(), 1, 1, 'maxwidth200', 1);
+	print $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', $langs->trans('to'), array(), 1, 1, 'maxwidth200', 'account');
 	print '</div>';
 	print '</td>';
 }
 // Subledger account
 if (!empty($arrayfields['t.subledger_account']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<div class="nowrap">';
 	// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because it does not
 	// use setup of keypress to select thirdparty and this hang browser on large database.
 	if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
-		print $langs->trans('From').' ';
-		print $formaccounting->select_auxaccount($search_accountancy_aux_code_start, 'search_accountancy_aux_code_start', 1);
+		print '<div class="nowrap">';
+		//print $langs->trans('From').' ';
+		print $formaccounting->select_auxaccount($search_accountancy_aux_code_start, 'search_accountancy_aux_code_start', $langs->trans('From'), 'maxwidth250', 'subledgeraccount');
+		print '</div>';
+		print '<div class="nowrap">';
+		print $formaccounting->select_auxaccount($search_accountancy_aux_code_end, 'search_accountancy_aux_code_end', $langs->trans('to'), 'maxwidth250', 'subledgeraccount');
+		print '</div>';
 	} else {
-		print '<input type="text" class="maxwidth100" name="search_accountancy_aux_code_start" value="'.$search_accountancy_aux_code_start.'" placeholder="'.$langs->trans("From").'">';
+		print '<input type="text" class="maxwidth100" name="search_accountancy_aux_code" value="'.$search_accountancy_aux_code.'">';
 	}
-	print '</div>';
-	print '<div class="nowrap">';
-	// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because it does not
-	// use setup of keypress to select thirdparty and this hang browser on large database.
-	if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
-		print $langs->trans('to').' ';
-		print $formaccounting->select_auxaccount($search_accountancy_aux_code_end, 'search_accountancy_aux_code_end', 1);
-	} else {
-		print '<input type="text" class="maxwidth100" name="search_accountancy_aux_code_end" value="'.$search_accountancy_aux_code_end.'" placeholder="'.$langs->trans("to").'">';
-	}
-	print '</div>';
 	print '</td>';
 }
 // Label operation

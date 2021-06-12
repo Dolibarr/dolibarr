@@ -131,7 +131,7 @@ InvoiceLinesDone=سطور بند شدۀ صورت‌حساب‌ها
 ExpenseReportLines=سطور گزارش هزینه‌ها که باید بند شوند
 ExpenseReportLinesDone=سطور بندشدۀ گزارش هزینه‌ها
 IntoAccount=بندکردن سطر به حساب حسابداری
-TotalForAccount=Total for accounting account
+TotalForAccount=Total accounting account
 
 
 Ventilate=بندکردن
@@ -202,14 +202,14 @@ Docref=مرجع
 LabelAccount=برچسب حساب
 LabelOperation=عملیات برچسب
 Sens=Direction
-AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you received<br>For an accounting account of a supplier, use Debit to record a payment you make
+AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you have received<br>For an accounting account of a supplier, use Debit to record a payment you made
 LetteringCode=کد حروف‌بندی
 Lettering=حروف‌بندی
 Codejournal=دفتر
 JournalLabel=برچسب دفتر
 NumPiece=شمارۀ بخش
 TransactionNumShort=تعداد تراکنش‌ها
-AccountingCategory=گروه‌های دل‌خواه
+AccountingCategory=Custom group
 GroupByAccountAccounting=Group by general ledger account
 GroupBySubAccountAccounting=Group by subledger account
 AccountingAccountGroupsDesc=در این قسمت می‌توانید گروه‌های متشکل از حساب‌حساب‌داری بسازید. این گروه‌ها برای گزارش‌های دل‌خواه حساب‌داری استفاده می‌شود.
@@ -297,7 +297,7 @@ NoNewRecordSaved=ردیف دیگری برای دفترنویسی وجود ندا
 ListOfProductsWithoutAccountingAccount=فهرست محصولاتی که به هیچ حساب حساب‌داری بند نشده‌اند
 ChangeBinding=تغییر بند‌شدن‌ها
 Accounted=در دفترکل حساب‌شده است
-NotYetAccounted=هنوز در دفترکل حساب نشده‌است
+NotYetAccounted=Not yet accounted in the ledger
 ShowTutorial=Show Tutorial
 NotReconciled=وفق داده نشده
 WarningRecordWithoutSubledgerAreExcluded=Warning, all operations without subledger account defined are filtered and excluded from this view
@@ -402,7 +402,29 @@ UseMenuToSetBindindManualy=سطوری که هنوز بند نشده‌اند، �
 
 ## Import
 ImportAccountingEntries=ورودی‌های حساب‌داری
+ImportAccountingEntriesFECFormat=Accounting entries - FEC format
+FECFormatJournalCode=Code journal (JournalCode)
+FECFormatJournalLabel=Label journal (JournalLib)
+FECFormatEntryNum=Piece number (EcritureNum)
+FECFormatEntryDate=Piece date (EcritureDate)
+FECFormatGeneralAccountNumber=General account number (CompteNum)
+FECFormatGeneralAccountLabel=General account label (CompteLib)
+FECFormatSubledgerAccountNumber=Subledger account number (CompAuxNum)
+FECFormatSubledgerAccountLabel=Subledger account number (CompAuxLib)
+FECFormatPieceRef=Piece ref (PieceRef)
+FECFormatPieceDate=Piece date creation (PieceDate)
+FECFormatLabelOperation=Label operation (EcritureLib)
+FECFormatDebit=Debit (Debit)
+FECFormatCredit=Credit (Credit)
+FECFormatReconcilableCode=Reconcilable code (EcritureLet)
+FECFormatReconcilableDate=Reconcilable date (DateLet)
+FECFormatValidateDate=Piece date validated (ValidDate)
+FECFormatMulticurrencyAmount=Multicurrency amount (Montantdevise)
+FECFormatMulticurrencyCode=Multicurrency code (Idevise)
+
 DateExport=Date export
 WarningReportNotReliable=هشدار! این گزارش بر مبنای دفتر کل نمی‌باشد، بنابراین دربردارندۀ تراکنش‌هائی که به شکل دستی در دفترکل ویرایش شده‌اند نیست. در صورتی که دفترنویسی شما روزآمد باشد، نمای «دفترنویسی» دقیق‌تر است.
 ExpenseReportJournal=دفتر گزارش هزینه‌ها
 InventoryJournal=دفتر انبار
+
+NAccounts=%s accounts

@@ -28,7 +28,6 @@
  */
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncommreminder.class.php';
 
@@ -1897,10 +1896,16 @@ class ActionComm extends CommonObject
 					$userforfilter = new User($this->db);
 					$result = $userforfilter->fetch('', $logint);
 					if ($result > 0) {
-						$sql .= " AND ar.fk_element = ".$userforfilter->id;
+						$sql .= " AND ar.fk_element = ".((int) $userforfilter->id);
 					} elseif ($result < 0 || $condition == '=') {
 						$sql .= " AND ar.fk_element = 0";
 					}
+				}
+				if ($key == 'module') {
+					$sql .= " AND c.module LIKE '%".$this->db->escape($value)."'";
+				}
+				if ($key == 'status') {
+					$sql .= " AND a.status =".((int) $value);
 				}
 			}
 
@@ -1939,6 +1944,7 @@ class ActionComm extends CommonObject
 
 					$duration = ($datestart && $dateend) ? ($dateend - $datestart) : 0;
 					$event['summary'] = $obj->label.($obj->socname ? " (".$obj->socname.")" : "");
+
 					$event['desc'] = $obj->note;
 					$event['startdate'] = $datestart;
 					$event['enddate'] = $dateend; // Not required with type 'journal'
@@ -2290,14 +2296,16 @@ class ActionComm extends CommonObject
 
 		$this->db->begin();
 
-		//Select all action comm reminder
+		//Select all action comm reminders
 		$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
 		$sql .= " WHERE typeremind = 'email' AND status = 0";
-		$sql .= " AND dateremind <= '".$this->db->idate(dol_now())."'";
+		$sql .= " AND dateremind <= '".$this->db->idate($now)."'";
+		$sql .= " AND entity IN (".getEntity('actioncomm').")";
 		$sql .= $this->db->order("dateremind", "ASC");
 		$resql = $this->db->query($sql);
 
 		if ($resql) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 			$formmail = new FormMail($this->db);
 
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -2402,7 +2410,7 @@ class ActionComm extends CommonObject
 			// Delete also very old past events (we do not keep more than 1 month record in past)
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
 			$sql .= " WHERE dateremind < '".$this->db->idate($now - (3600 * 24 * 32))."'";
-			$sql .= " AND status = ".$actionCommReminder::STATUS_DONE;
+			$sql .= " AND status = ".((int) $actionCommReminder::STATUS_DONE);
 			$resql = $this->db->query($sql);
 
 			if (!$resql) {
@@ -2435,7 +2443,7 @@ class ActionComm extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm ";
 		$sql .= " SET percent = ".(int) $percent;
-		$sql .= " WHERE id=".$id;
+		$sql .= " WHERE id = ".((int) $id);
 
 		if ($this->db->query($sql)) {
 			$this->db->commit();

@@ -52,7 +52,7 @@ if (count($conf->modules) <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FO
 }
 if (GETPOST('addbox')) {	// Add box (when submit is done from a form when ajax disabled)
 	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
-	$zone = GETPOST('areacode', 'aZ09');
+	$zone = GETPOST('areacode', 'int');
 	$userid = GETPOST('userid', 'int');
 	$boxorder = GETPOST('boxorder', 'aZ09');
 	$boxorder .= GETPOST('boxcombo', 'aZ09');
@@ -415,7 +415,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 
 	$boxwork = '';
 	$boxwork .= '<div class="box">';
-	$boxwork .= '<table summary="'.dol_escape_htmltag($langs->trans("WorkingBoard")).'" class="noborder boxtable boxtablenobottom boxworkingboard" width="100%">'."\n";
+	$boxwork .= '<table summary="'.dol_escape_htmltag($langs->trans("WorkingBoard")).'" class="noborder boxtable boxtablenobottom boxworkingboard centpercent">'."\n";
 	$boxwork .= '<tr class="liste_titre">';
 	$boxwork .= '<th class="liste_titre"><div class="inline-block valignmiddle">'.$langs->trans("DolibarrWorkBoard").'</div>';
 	if ($showweather) {
@@ -472,7 +472,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 						$classe = (!empty($classes[$keyIndex]) ? $classes[$keyIndex] : '');
 						if (isset($boardloaded[$classe]) && is_object($boardloaded[$classe])) {
 							$groupElement['globalStats']['total'] = $boardloaded[$classe]->nb[$globalStatsKey] ? $boardloaded[$classe]->nb[$globalStatsKey] : 0;
-							$nbTotal = doubleval($groupElement['globalStats']['total']);
+							$nbTotal = floatval($groupElement['globalStats']['total']);
 							if ($nbTotal >= 10000) {
 								$nbTotal = round($nbTotal / 1000, 2).'k';
 							}
@@ -797,7 +797,7 @@ function getWeatherStatus($totallate)
 	$offset = 0;
 	$factor = 10; // By default
 
-	$used_conf = !empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? 'MAIN_METEO_PERCENTAGE_LEVEL' : 'MAIN_METEO_LEVEL';
+	$used_conf = empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? 'MAIN_METEO_LEVEL' : 'MAIN_METEO_PERCENTAGE_LEVEL';
 
 	$level0 = $offset;
 	$weather->level = 0;

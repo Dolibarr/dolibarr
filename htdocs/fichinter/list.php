@@ -250,6 +250,12 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 if (empty($conf->global->FICHINTER_DISABLE_DETAILS) && $atleastonefieldinlines) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."fichinterdet as fd ON fd.fk_fichinter = f.rowid";
 }
+
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+
 if (!$user->rights->societe->client->voir && empty($socid)) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
@@ -282,7 +288,7 @@ if (!$user->rights->societe->client->voir && empty($socid)) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 }
 if ($socid) {
-	$sql .= " AND s.rowid = ".$socid;
+	$sql .= " AND s.rowid = ".((int) $socid);
 }
 if ($sall) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
@@ -292,6 +298,10 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+// Add GroupBy from hooks
+$parameters = array('all' => $all, 'fieldstosearchall' => $fieldstosearchall);
+$reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= $db->order($sortfield, $sortorder);
 
@@ -562,6 +572,7 @@ if ($resql) {
 	$total = 0;
 	$i = 0;
 	$totalarray = array();
+	$totalarray['nbfield'] = 0;
 	while ($i < min($num, $limit)) {
 		$obj = $db->fetch_object($resql);
 

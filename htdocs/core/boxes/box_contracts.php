@@ -156,7 +156,7 @@ class box_contracts extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => dol_print_date($datec, 'day'),
+						'text' => dol_print_date($datec, 'day', 'tzuserrel'),
 					);
 
 					$this->info_box_contents[$line][] = array(

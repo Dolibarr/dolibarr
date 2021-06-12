@@ -322,7 +322,7 @@ class Dolistore
 			$html .= '<tr class="app oddeven '.$compatible.'">
                 <td class="center" width="210"><div class="newAppParent">'.$newapp.$images.'</div></td>
                 <td class="margeCote"><h2 class="appTitle">'.$product->name->language[$this->lang - 1]
-						.'<br/><small>'.$version.'</small></h2>
+						.'<br><small>'.$version.'</small></h2>
                     <small> '.dol_print_date(dol_stringtotime($product->date_upd), 'dayhour').' - '.$langs->trans('Ref').': '.$product->reference.' - '.$langs->trans('Id').': '.$product->id.'</small><br><br>'.$product->description_short->language[$this->lang - 1].'</td>';
 			// do not load if display none
 			//$html .= '<td style="display:none;" class="long_description">'.$product->description->language[$this->lang - 1].'</td>';

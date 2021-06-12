@@ -182,7 +182,7 @@ if (!$user->rights->societe->client->voir) {
 	$sql .= ' AND s.rowid = sc.fk_soc AND sc.fk_user = '.$user->id;
 }
 if ($socid > 0) {
-	$sql .= ' AND f.fk_soc = '.$socid;
+	$sql .= ' AND f.fk_soc = '.((int) $socid);
 }
 if ($search_ref) {
 	$sql .= natural_search('p.ref', $search_ref);
@@ -254,10 +254,10 @@ if ($optioncss != '') {
 if ($search_ref) {
 	$param .= '&search_ref='.urlencode($search_ref);
 }
-if ($saerch_day) {
+if ($search_day) {
 	$param .= '&search_day='.urlencode($search_day);
 }
-if ($saerch_month) {
+if ($search_month) {
 	$param .= '&search_month='.urlencode($search_month);
 }
 if ($search_year) {

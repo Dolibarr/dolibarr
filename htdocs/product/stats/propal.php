@@ -48,8 +48,6 @@ $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('productstatspropal'));
 
-$mesg = '';
-
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -75,6 +73,9 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_month = '';
 	$search_year = '';
 }
+
+$result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
+
 
 /*
  * View
@@ -152,7 +153,7 @@ if ($id > 0 || !empty($ref)) {
 			$sql .= " WHERE p.fk_soc = s.rowid";
 			$sql .= " AND p.entity IN (".getEntity('propal').")";
 			$sql .= " AND d.fk_propal = p.rowid";
-			$sql .= " AND d.fk_product =".$product->id;
+			$sql .= " AND d.fk_product = ".((int) $product->id);
 			if (!empty($search_month)) {
 				$sql .= ' AND MONTH(p.datep) IN ('.$db->sanitize($search_month).')';
 			}

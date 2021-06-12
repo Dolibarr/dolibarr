@@ -154,7 +154,7 @@ class FactureRec extends CommonInvoice
 	 *  'help' is a string visible as a tooltip on field
 	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
 	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
-	 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
+	 *  'arrayofkeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
 	 *
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
@@ -470,9 +470,9 @@ class FactureRec extends CommonInvoice
 		$error = 0;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_rec SET";
-		$sql .= " fk_soc = ".$this->fk_soc;
+		$sql .= " fk_soc = ".((int) $this->fk_soc);
 		// TODO Add missing fields
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -765,7 +765,7 @@ class FactureRec extends CommonInvoice
 	{
 		$rowid = $this->id;
 
-		dol_syslog(get_class($this)."::delete rowid=".$rowid, LOG_DEBUG);
+		dol_syslog(get_class($this)."::delete rowid=".((int) $rowid), LOG_DEBUG);
 
 		$error = 0;
 		$this->db->begin();
@@ -1136,12 +1136,12 @@ class FactureRec extends CommonInvoice
 			$sql .= ", qty=".price2num($qty);
 			$sql .= ", tva_tx=".price2num($txtva);
 			$sql .= ", vat_src_code='".$this->db->escape($vat_src_code)."'";
-			$sql .= ", localtax1_tx=".$txlocaltax1;
+			$sql .= ", localtax1_tx=".((float) $txlocaltax1);
 			$sql .= ", localtax1_type='".$this->db->escape($localtaxes_type[0])."'";
-			$sql .= ", localtax2_tx=".$txlocaltax2;
+			$sql .= ", localtax2_tx=".((float) $txlocaltax2);
 			$sql .= ", localtax2_type='".$this->db->escape($localtaxes_type[2])."'";
 			$sql .= ", fk_product=".(!empty($fk_product) ? "'".$this->db->escape($fk_product)."'" : "null");
-			$sql .= ", product_type=".$product_type;
+			$sql .= ", product_type=".((int) $product_type);
 			$sql .= ", remise_percent='".price2num($remise_percent)."'";
 			$sql .= ", subprice='".price2num($pu_ht)."'";
 			$sql .= ", total_ht='".price2num($total_ht)."'";
@@ -1153,14 +1153,14 @@ class FactureRec extends CommonInvoice
 			$sql .= ", date_end_fill=".((int) $date_end_fill);
 			$sql .= ", fk_product_fournisseur_price=".($fk_fournprice > 0 ? $fk_fournprice : 'null');
 			$sql .= ", buy_price_ht=".($pa_ht ? price2num($pa_ht) : 0);
-			$sql .= ", info_bits=".$info_bits;
-			$sql .= ", rang=".$rang;
-			$sql .= ", special_code=".$special_code;
+			$sql .= ", info_bits=".((int) $info_bits);
+			$sql .= ", rang=".((int) $rang);
+			$sql .= ", special_code=".((int) $special_code);
 			$sql .= ", fk_unit=".($fk_unit ? "'".$this->db->escape($fk_unit)."'" : "null");
-			$sql .= ', multicurrency_subprice = '.$pu_ht_devise;
-			$sql .= ', multicurrency_total_ht = '.$multicurrency_total_ht;
-			$sql .= ', multicurrency_total_tva = '.$multicurrency_total_tva;
-			$sql .= ', multicurrency_total_ttc = '.$multicurrency_total_ttc;
+			$sql .= ', multicurrency_subprice = '.price2num($pu_ht_devise);
+			$sql .= ', multicurrency_total_ht = '.price2num($multicurrency_total_ht);
+			$sql .= ', multicurrency_total_tva = '.price2num($multicurrency_total_tva);
+			$sql .= ', multicurrency_total_ttc = '.price2num($multicurrency_total_ttc);
 			$sql .= " WHERE rowid = ".((int) $rowid);
 
 			dol_syslog(get_class($this)."::updateline", LOG_DEBUG);
@@ -1248,7 +1248,7 @@ class FactureRec extends CommonInvoice
 		$sql .= ' AND suspended = 0';
 		$sql .= ' AND entity = '.$conf->entity; // MUST STAY = $conf->entity here
 		if ($restrictioninvoiceid > 0) {
-			$sql .= ' AND rowid = '.$restrictioninvoiceid;
+			$sql .= ' AND rowid = '.((int) $restrictioninvoiceid);
 		}
 		$sql .= $this->db->order('entity', 'ASC');
 		//print $sql;exit;
@@ -2124,11 +2124,11 @@ class FactureLigneRec extends CommonInvoiceLine
 			$sql .= ", total_localtax2=".price2num($this->total_localtax2);
 			$sql .= ", total_ttc=".price2num($this->total_ttc);
 		}
-		$sql .= ", rang=".$this->rang;
-		$sql .= ", special_code=".$this->special_code;
+		$sql .= ", rang=".((int) $this->rang);
+		$sql .= ", special_code=".((int) $this->special_code);
 		$sql .= ", fk_unit=".($this->fk_unit ? "'".$this->db->escape($this->fk_unit)."'" : "null");
 		$sql .= ", fk_contract_line=".($this->fk_contract_line ? $this->fk_contract_line : "null");
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
 

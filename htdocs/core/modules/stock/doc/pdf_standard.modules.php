@@ -315,7 +315,7 @@ class pdf_standard extends ModelePDFStock
 				$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."product as p";
 				$sql .= " WHERE ps.fk_product = p.rowid";
 				$sql .= " AND ps.reel <> 0"; // We do not show if stock is 0 (no product in this warehouse)
-				$sql .= " AND ps.fk_entrepot = ".$object->id;
+				$sql .= " AND ps.fk_entrepot = ".((int) $object->id);
 				$sql .= $this->db->order($sortfield, $sortorder);
 
 				//dol_syslog('List products', LOG_DEBUG);

@@ -238,16 +238,16 @@ foreach ($data as $val) {
 		print '<tr class="oddeven" height="24">';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'">'.$oldyear.'</a></td>';
 		print '<td class="right">0</td>';
-		print '<td class="right">0</td>';
-		print '<td class="right">0</td>';
+		print '<td class="right"><span class="amount">0</span></td>';
+		print '<td class="right"><span class="amount">0</span></td>';
 		print '</tr>';
 	}
 
 	print '<tr class="oddeven" height="24">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'">'.$year.'</a></td>';
 	print '<td class="right">'.$val['nb'].'</td>';
-	print '<td class="right">'.price(price2num($val['total'], 'MT'), 1).'</td>';
-	print '<td class="right">'.price(price2num($val['avg'], 'MT'), 1).'</td>';
+	print '<td class="right"><span class="amount">'.price(price2num($val['total'], 'MT'), 1).'</span></td>';
+	print '<td class="right"><span class="amount">'.price(price2num($val['avg'], 'MT'), 1).'</span></td>';
 	print '</tr>';
 	$oldyear = $year;
 }

@@ -10,7 +10,7 @@
  * Copyright (C) 2013      Florian Henry         <florian.henry@open-concept.pro>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Jean-François Ferry   <jfefe@aternatik.fr>
- * Copyright (C) 2015-2016 Ferran Marcet         <fmarcet@2byte.es>
+ * Copyright (C) 2015-2021 Ferran Marcet         <fmarcet@2byte.es>
  * Copyright (C) 2017      Josep Lluís Amador    <joseplluis@lliuretic.cat>
  * Copyright (C) 2018      Charlene Benke        <charlie@patas-monkey.com>
  * Copyright (C) 2019-2021 Alexandre Spangaro    <aspangaro@open-dsi.fr>
@@ -85,8 +85,8 @@ $search_refcustomer = GETPOST('search_refcustomer', 'alpha');
 $search_type = GETPOST('search_type', 'int');
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_project = GETPOST('search_project', 'alpha');
-$search_societe = GETPOST('search_societe', 'alpha');
-$search_societe_alias = GETPOST('search_societe_alias', 'alpha');
+$search_company = GETPOST('search_company', 'alpha');
+$search_company_alias = GETPOST('search_company_alias', 'alpha');
 $search_montant_ht = GETPOST('search_montant_ht', 'alpha');
 $search_montant_vat = GETPOST('search_montant_vat', 'alpha');
 $search_montant_localtax1 = GETPOST('search_montant_localtax1', 'alpha');
@@ -124,14 +124,28 @@ $search_date_valid_startyear = GETPOST('search_date_valid_startyear', 'int');
 $search_date_valid_endday = GETPOST('search_date_valid_endday', 'int');
 $search_date_valid_endmonth = GETPOST('search_date_valid_endmonth', 'int');
 $search_date_valid_endyear = GETPOST('search_date_valid_endyear', 'int');
+<<<<<<< HEAD
 $search_date_valid_start = dol_mktime(0, 0, 0, $search_date_valid_startmonth, $search_date_valid_startday, $search_date_valid_startyear);	// Use tzserver
 $search_date_valid_end = dol_mktime(23, 59, 59, $search_date_valid_endmonth, $search_date_valid_endday, $search_date_valid_endyear);
 $search_datelimit_start = dol_mktime(0, 0, 0, GETPOST('search_datelimit_startmonth', 'int'), GETPOST('search_datelimit_startday', 'int'), GETPOST('search_datelimit_startyear', 'int'));
 $search_datelimit_end = dol_mktime(23, 59, 59, GETPOST('search_datelimit_endmonth', 'int'), GETPOST('search_datelimit_endday', 'int'), GETPOST('search_datelimit_endyear', 'int'));
 $search_categ_cus = GETPOST("search_categ_cus", 'int');
+=======
+$search_date_valid_start = dol_mktime(0, 0, 0, $search_date_valid_startmonth, $search_date_valid_startday, $search_date_valid_startyear);
+$search_date_valid_end = dol_mktime(23, 59, 59, $search_date_valid_endmonth, $search_date_valid_endday, $search_date_valid_endyear);
+$search_datelimit_startday = GETPOST('search_datelimit_startday', 'int');
+$search_datelimit_startmonth = GETPOST('search_datelimit_startmonth', 'int');
+$search_datelimit_startyear = GETPOST('search_datelimit_startyear', 'int');
+$search_datelimit_endday = GETPOST('search_datelimit_endday', 'int');
+$search_datelimit_endmonth = GETPOST('search_datelimit_endmonth', 'int');
+$search_datelimit_endyear = GETPOST('search_datelimit_endyear', 'int');
+$search_datelimit_start = dol_mktime(0, 0, 0, $search_datelimit_startmonth, $search_datelimit_startday, $search_datelimit_startyear);
+$search_datelimit_end = dol_mktime(23, 59, 59, $search_datelimit_endmonth, $search_datelimit_endday, $search_datelimit_endyear);
+$search_categ_cus = trim(GETPOST("search_categ_cus", 'int'));
+>>>>>>> branch '13.0' of git@github.com:Dolibarr/dolibarr.git
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
-
+$optioncss = GETPOST('optioncss', 'alpha');
 
 
 $option = GETPOST('search_option');
@@ -240,7 +254,7 @@ $arrayfields = array(
 	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous || empty($conf->global->DISPLAY_MARGIN_RATES) ? 0 : 1)),
 	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous || empty($conf->global->DISPLAY_MARK_RATES) ? 0 : 1)),
 	'f.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
-	'f.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
+	'f.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>502),
 	'f.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'position'=>510, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PUBLIC_NOTES))),
 	'f.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'position'=>511, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PRIVATE_NOTES))),
 	'f.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
@@ -262,7 +276,7 @@ foreach ($object->fields as $key => $val) {
 				'checked'=>(($visible < 0) ? 0 : 1),
 				'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
 				'position'=>$val['position'],
-				'help'=>$val['help']
+				'help' => empty($val['help']) ? '' : $val['help'],
 			);
 		}
 	}
@@ -304,8 +318,8 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_type = '';
 	$search_project_ref = '';
 	$search_project = '';
-	$search_societe = '';
-	$search_societe_alias = '';
+	$search_company = '';
+	$search_company_alias = '';
 	$search_montant_ht = '';
 	$search_montant_vat = '';
 	$search_montant_localtax1 = '';
@@ -344,6 +358,12 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_date_valid_endyear = '';
 	$search_date_valid_start = '';
 	$search_date_valid_end = '';
+	$search_datelimit_startday = '';
+	$search_datelimit_startmonth = '';
+	$search_datelimit_startyear = '';
+	$search_datelimit_endday = '';
+	$search_datelimit_endmonth = '';
+	$search_datelimit_endyear = '';
 	$search_datelimit_start = '';
 	$search_datelimit_end = '';
 	$option = '';
@@ -363,7 +383,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
-if ($massaction == 'makepayment') {
+if ($massaction == 'makepayment_confirm') {
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 
 	$loc = dol_buildpath('/compta/paiement.php', 2).'?action=create&facids='.implode(',', $arrayofselected);
@@ -390,16 +410,15 @@ if ($massaction == 'makepayment') {
 				$totalcreditnotes = $objecttmp->getSumCreditNotesUsed();
 				$totaldeposits = $objecttmp->getSumDepositsUsed();
 				$objecttmp->resteapayer = price2num($objecttmp->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
-				if ($objecttmp->paye || $objecttmp->resteapayer == 0) {
+				if ($objecttmp->statut == Facture::STATUS_DRAFT) {
+					$error++;
+					setEventMessages($objecttmp->ref.' '.$langs->trans("Draft"), $objecttmp->errors, 'errors');
+				} elseif ($objecttmp->paye || $objecttmp->resteapayer == 0) {
 					$error++;
 					setEventMessages($objecttmp->ref.' '.$langs->trans("AlreadyPaid"), $objecttmp->errors, 'errors');
 				} elseif ($objecttmp->resteapayer < 0) {
 					$error++;
 					setEventMessages($objecttmp->ref.' '.$langs->trans("AmountMustBePositive"), $objecttmp->errors, 'errors');
-				}
-				if (!($objecttmp->statut > Facture::STATUS_DRAFT)) {
-					$error++;
-					setEventMessages($objecttmp->ref.' '.$langs->trans("Draft"), $objecttmp->errors, 'errors');
 				}
 
 				$rsql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande";
@@ -467,13 +486,13 @@ if (!empty($conf->margin->enabled)) {
 $bankaccountstatic = new Account($db);
 $facturestatic = new Facture($db);
 $formcompany = new FormCompany($db);
-$thirdpartystatic = new Societe($db);
+$companystatic = new Societe($db);
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0 || $search_user > 0) {
 	$sql = 'SELECT DISTINCT';
 }
-$sql .= ' f.rowid as id, f.ref, f.ref_client, f.type, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.fk_cond_reglement, f.total_ht, f.total_tva, f.total_ttc,';
+$sql .= ' f.rowid as id, f.ref, f.ref_client, f.fk_soc, f.type, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.fk_cond_reglement, f.total_ht, f.total_tva, f.total_ttc,';
 $sql .= ' f.localtax1 as total_localtax1, f.localtax2 as total_localtax2,';
 $sql .= ' f.fk_user_author,';
 $sql .= ' f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva as multicurrency_total_vat, f.multicurrency_total_ttc,';
@@ -481,18 +500,18 @@ $sql .= ' f.datef, f.date_valid, f.date_lim_reglement as datelimite, f.module_so
 $sql .= ' f.paye as paye, f.fk_statut, f.close_code,';
 $sql .= ' f.datec as date_creation, f.tms as date_update, f.date_closing as date_closing,';
 $sql .= ' f.retained_warranty, f.retained_warranty_date_limit, f.situation_final, f.situation_cycle_ref, f.situation_counter,';
-$sql .= ' s.rowid as socid, s.nom as name, s.name_alias as name_alias, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,';
-$sql .= " typent.code as typent_code,";
-$sql .= " state.code_departement as state_code, state.nom as state_name,";
-$sql .= " country.code as country_code,";
-$sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label,";
-$sql .= " u.login";
+$sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,';
+$sql .= ' typent.code as typent_code,';
+$sql .= ' state.code_departement as state_code, state.nom as state_name,';
+$sql .= ' country.code as country_code,';
+$sql .= ' p.rowid as project_id, p.ref as project_ref, p.title as project_label,';
+$sql .= ' u.login, u.lastname, u.firstname, u.email, u.statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender';
 // We need dynamount_payed to be able to sort on status (value is surely wrong because we can count several lines several times due to other left join or link with contacts. But what we need is just 0 or > 0)
 // TODO Better solution to be able to sort on already payed or remain to pay is to store amount_payed in a denormalized field.
 if (!$sall) {
 	$sql .= ', SUM(pf.amount) as dynamount_payed, SUM(pf.multicurrency_amount) as multicurrency_dynamount_payed';
 }
-if ($search_categ_cus) {
+if ($search_categ_cus && $search_categ_cus!=-1) {
 	$sql .= ", cc.fk_categorie, cc.fk_soc";
 }
 // Add fields from extrafields
@@ -509,7 +528,7 @@ $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
-if (!empty($search_categ_cus)) {
+if (!empty($search_categ_cus) && $search_categ_cus!=-1) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cc ON s.rowid = cc.fk_soc"; // We'll need this table joined to the select in order to filter by categ
 }
 
@@ -547,10 +566,10 @@ if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 }
 if ($search_product_category > 0) {
-	$sql .= " AND cp.fk_categorie = ".$db->escape($search_product_category);
+	$sql .= " AND cp.fk_categorie = ".((int) $search_product_category);
 }
 if ($socid > 0) {
-	$sql .= ' AND s.rowid = '.$socid;
+	$sql .= ' AND s.rowid = '.((int) $socid);
 }
 if ($userid) {
 	if ($userid == -1) {
@@ -559,6 +578,7 @@ if ($userid) {
 		$sql .= ' AND f.fk_user_author = '.((int) $userid);
 	}
 }
+<<<<<<< HEAD
 if ($search_ref) {
 	$sql .= natural_search('f.ref', $search_ref);
 }
@@ -574,11 +594,11 @@ if ($search_project_ref) {
 if ($search_project) {
 	$sql .= natural_search('p.title', $search_project);
 }
-if ($search_societe) {
-	$sql .= natural_search('s.nom', $search_societe);
+if ($search_company) {
+	$sql .= natural_search('s.nom', $search_company);
 }
-if ($search_societe_alias) {
-	$sql .= natural_search('s.name_alias', $search_societe_alias);
+if ($search_company_alias) {
+	$sql .= natural_search('s.name_alias', $search_company_alias);
 }
 if ($search_town) {
 	$sql .= natural_search('s.town', $search_town);
@@ -632,10 +652,10 @@ if ($search_multicurrency_montant_ttc != '') {
 	$sql .= natural_search('f.multicurrency_total_ttc', $search_multicurrency_montant_ttc, 1);
 }
 if ($search_login) {
-	$sql .= natural_search('u.login', $search_login);
+	$sql .= natural_search(array('u.login', 'u.firstname', 'u.lastname'), $search_login);
 }
 if ($search_categ_cus > 0) {
-	$sql .= " AND cc.fk_categorie = ".$db->escape($search_categ_cus);
+	$sql .= " AND cc.fk_categorie = ".((int) $search_categ_cus);
 }
 if ($search_categ_cus == -2) {
 	$sql .= " AND cc.fk_categorie IS NULL";
@@ -654,16 +674,50 @@ if ($search_status != '-1' && $search_status != '') {
 		if ($search_status == '3') {
 			$sql .= " AND f.fk_statut = 3"; // abandonned
 		}
+=======
+if ($search_ref) $sql .= natural_search('f.ref', $search_ref);
+if ($search_refcustomer) $sql .= natural_search('f.ref_client', $search_refcustomer);
+if ($search_type != '' && $search_type != '-1') $sql .= " AND f.type IN (".$db->sanitize($db->escape($search_type)).")";
+if ($search_project_ref) $sql .= natural_search('p.ref', $search_project_ref);
+if ($search_project) $sql .= natural_search('p.title', $search_project);
+if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
+if ($search_town)  $sql .= natural_search('s.town', $search_town);
+if ($search_zip)   $sql .= natural_search("s.zip", $search_zip);
+if ($search_state) $sql .= natural_search("state.nom", $search_state);
+if ($search_country) $sql .= " AND s.fk_pays IN (".$db->sanitize($db->escape($search_country)).')';
+if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$db->sanitize($db->escape($search_type_thirdparty)).')';
+if ($search_montant_ht != '') $sql .= natural_search('f.total', $search_montant_ht, 1);
+if ($search_montant_vat != '') $sql .= natural_search('f.tva', $search_montant_vat, 1);
+if ($search_montant_localtax1 != '') $sql .= natural_search('f.localtax1', $search_montant_localtax1, 1);
+if ($search_montant_localtax2 != '') $sql .= natural_search('f.localtax2', $search_montant_localtax2, 1);
+if ($search_montant_ttc != '') $sql .= natural_search('f.total_ttc', $search_montant_ttc, 1);
+if ($search_multicurrency_code != '') $sql .= ' AND f.multicurrency_code = "'.$db->escape($search_multicurrency_code).'"';
+if ($search_multicurrency_tx != '') $sql .= natural_search('f.multicurrency_tx', $search_multicurrency_tx, 1);
+if ($search_multicurrency_montant_ht != '') $sql .= natural_search('f.multicurrency_total_ht', $search_multicurrency_montant_ht, 1);
+if ($search_multicurrency_montant_vat != '') $sql .= natural_search('f.multicurrency_total_tva', $search_multicurrency_montant_vat, 1);
+if ($search_multicurrency_montant_ttc != '') $sql .= natural_search('f.multicurrency_total_ttc', $search_multicurrency_montant_ttc, 1);
+if ($search_login) $sql .= natural_search('u.login', $search_login);
+if ($search_categ_cus > 0) $sql .= " AND cc.fk_categorie = ".$db->escape($search_categ_cus);
+if ($search_categ_cus == -2)   $sql .= " AND cc.fk_categorie IS NULL";
+if ($search_status != '-1' && $search_status != '')
+{
+	if (is_numeric($search_status) && $search_status >= 0)
+	{
+		if ($search_status == '0') $sql .= " AND f.fk_statut = 0"; // draft
+		if ($search_status == '1') $sql .= " AND f.fk_statut = 1"; // unpayed
+		if ($search_status == '2') $sql .= " AND f.fk_statut = 2"; // payed     Not that some corrupted data may contains f.fk_statut = 1 AND f.paye = 1 (it means payed too but should not happend. If yes, reopen and reclassify billed)
+		if ($search_status == '3') $sql .= " AND f.fk_statut = 3"; // abandonned
+>>>>>>> branch '13.0' of git@github.com:Dolibarr/dolibarr.git
 	} else {
 		$sql .= " AND f.fk_statut IN (".$db->sanitize($db->escape($search_status)).")"; // When search_status is '1,2' for example
 	}
 }
 
 if ($search_paymentmode > 0) {
-	$sql .= " AND f.fk_mode_reglement = ".$db->escape($search_paymentmode);
+	$sql .= " AND f.fk_mode_reglement = ".((int) $search_paymentmode);
 }
 if ($search_paymentterms > 0) {
-	$sql .= " AND f.fk_cond_reglement = ".$db->escape($search_paymentterms);
+	$sql .= " AND f.fk_cond_reglement = ".((int) $search_paymentterms);
 }
 if ($search_module_source) {
 	$sql .= natural_search("f.module_source", $search_module_source);
@@ -693,10 +747,10 @@ if ($option == 'late') {
 	$sql .= " AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->client->warning_delay)."'";
 }
 if ($search_sale > 0) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".(int) $search_sale;
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $search_sale);
 }
 if ($search_user > 0) {
-	$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='facture' AND tc.source='internal' AND ec.element_id = f.rowid AND ec.fk_socpeople = ".$search_user;
+	$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='facture' AND tc.source='internal' AND ec.element_id = f.rowid AND ec.fk_socpeople = ".((int) $search_user);
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -714,13 +768,17 @@ if (!$sall) {
 	$sql .= ' f.retained_warranty, f.retained_warranty_date_limit, f.situation_final, f.situation_cycle_ref, f.situation_counter,';
 	$sql .= ' f.fk_user_author, f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva,';
 	$sql .= ' f.multicurrency_total_tva, f.multicurrency_total_ttc,';
+<<<<<<< HEAD
+	$sql .= ' s.rowid, s.nom, s.name_alias, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,';
+=======
 	$sql .= ' s.rowid, s.nom, s.name_alias, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,';
+>>>>>>> branch '13.0' of git@github.com:Dolibarr/dolibarr.git
 	$sql .= ' typent.code,';
 	$sql .= ' state.code_departement, state.nom,';
 	$sql .= ' country.code,';
 	$sql .= " p.rowid, p.ref, p.title,";
-	$sql .= " u.login";
-	if ($search_categ_cus) {
+	$sql .= " u.login, u.lastname, u.firstname, u.email, u.statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender";
+	if ($search_categ_cus && $search_categ_cus!=-1) {
 		$sql .= ", cc.fk_categorie, cc.fk_soc";
 	}
 	// Add fields from extrafields
@@ -782,11 +840,12 @@ if ($resql) {
 	if ($socid) {
 		$soc = new Societe($db);
 		$soc->fetch($socid);
-		if (empty($search_societe)) {
-			$search_societe = $soc->name;
+		if (empty($search_company)) {
+			$search_company = $soc->name;
 		}
 	}
 
+<<<<<<< HEAD
 	$param = '&socid='.urlencode($socid);
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
@@ -854,11 +913,11 @@ if ($resql) {
 	if ($search_type != '') {
 		$param .= '&search_type='.urlencode($search_type);
 	}
-	if ($search_societe) {
-		$param .= '&search_societe='.urlencode($search_societe);
+	if ($search_company) {
+		$param .= '&search_societe='.urlencode($search_company);
 	}
-	if ($search_societe_alias) {
-		$param .= '&search_societe_alias='.urlencode($search_societe_alias);
+	if ($search_company_alias) {
+		$param .= '&search_societe_alias='.urlencode($search_company_alias);
 	}
 	if ($search_town) {
 		$param .= '&search_town='.urlencode($search_town);
@@ -935,6 +994,61 @@ if ($resql) {
 	if ($search_categ_cus > 0) {
 		$param .= '&search_categ_cus='.urlencode($search_categ_cus);
 	}
+=======
+	$param = '&socid='.$socid;
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+	if ($sall)				 $param .= '&sall='.urlencode($sall);
+	if ($search_date_startday)		$param .= '&search_date_startday='.urlencode($search_date_startday);
+	if ($search_date_startmonth)	$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
+	if ($search_date_startyear)		$param .= '&search_date_startyear='.urlencode($search_date_startyear);
+	if ($search_date_endday)		$param .= '&search_date_endday='.urlencode($search_date_endday);
+	if ($search_date_endmonth)		$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
+	if ($search_date_endyear)		$param .= '&search_date_endyear='.urlencode($search_date_endyear);
+	if ($search_date_valid_startday)		$param .= '&search_date_valid_startday='.urlencode($search_date_valid_startday);
+	if ($search_date_valid_startmonth)		$param .= '&search_date_valid_startmonth='.urlencode($search_date_valid_startmonth);
+	if ($search_date_valid_startyear)		$param .= '&search_date_valid_startyear='.urlencode($search_date_valid_startyear);
+	if ($search_date_valid_endday)			$param .= '&search_date_valid_endday='.urlencode($search_date_valid_endday);
+	if ($search_date_valid_endmonth)		$param .= '&search_date_valid_endmonth='.urlencode($search_date_valid_endmonth);
+	if ($search_date_valid_endyear)			$param .= '&search_date_valid_endyear='.urlencode($search_date_valid_endyear);
+	if ($search_datelimit_startday)		$param .= '&search_datelimit_startday='.urlencode($search_datelimit_startday);
+	if ($search_datelimit_startmonth)	$param .= '&search_datelimit_startmonth='.urlencode($search_datelimit_startmonth);
+	if ($search_datelimit_startyear)	$param .= '&search_datelimit_startyear='.urlencode($search_datelimit_startyear);
+	if ($search_datelimit_endday)		$param .= '&search_datelimit_endday='.urlencode($search_datelimit_endday);
+	if ($search_datelimit_endmonth)		$param .= '&search_datelimit_endmonth='.urlencode($search_datelimit_endmonth);
+	if ($search_datelimit_endyear)		$param .= '&search_datelimit_endyear='.urlencode($search_datelimit_endyear);
+	if ($search_ref)         $param .= '&search_ref='.urlencode($search_ref);
+	if ($search_refcustomer) $param .= '&search_refcustomer='.urlencode($search_refcustomer);
+	if ($search_project_ref) $param .= '&search_project_ref='.urlencode($search_project_ref);
+	if ($search_project)     $param .= '&search_project='.urlencode($search_project);
+	if ($search_type != '')  $param .= '&search_type='.urlencode($search_type);
+	if ($search_societe)     $param .= '&search_societe='.urlencode($search_societe);
+	if ($search_town)        $param .= '&search_town='.urlencode($search_town);
+	if ($search_zip)         $param .= '&search_zip='.urlencode($search_zip);
+	if ($search_sale > 0)    $param .= '&search_sale='.urlencode($search_sale);
+	if ($search_user > 0)    $param .= '&search_user='.urlencode($search_user);
+	if ($search_login)       $param .= '&search_login='.urlencode($search_login);
+	if ($search_product_category > 0)   $param .= '&search_product_category='.urlencode($search_product_category);
+	if ($search_montant_ht != '')  $param .= '&search_montant_ht='.urlencode($search_montant_ht);
+	if ($search_montant_vat != '')  $param .= '&search_montant_vat='.urlencode($search_montant_vat);
+	if ($search_montant_localtax1 != '')  $param .= '&search_montant_localtax1='.urlencode($search_montant_localtax1);
+	if ($search_montant_localtax2 != '')  $param .= '&search_montant_localtax2='.urlencode($search_montant_localtax2);
+	if ($search_montant_ttc != '') $param .= '&search_montant_ttc='.urlencode($search_montant_ttc);
+	if ($search_multicurrency_code != '')  $param .= '&search_multicurrency_code='.urlencode($search_multicurrency_code);
+	if ($search_multicurrency_tx != '')  $param .= '&search_multicurrency_tx='.urlencode($search_multicurrency_tx);
+	if ($search_multicurrency_montant_ht != '')  $param .= '&search_multicurrency_montant_ht='.urlencode($search_multicurrency_montant_ht);
+	if ($search_multicurrency_montant_vat != '')  $param .= '&search_multicurrency_montant_vat='.urlencode($search_multicurrency_montant_vat);
+	if ($search_multicurrency_montant_ttc != '') $param .= '&search_multicurrency_montant_ttc='.urlencode($search_multicurrency_montant_ttc);
+	if ($search_status != '') $param .= '&search_status='.urlencode($search_status);
+	if ($search_paymentmode > 0) $param .= '&search_paymentmode='.urlencode($search_paymentmode);
+	if ($search_paymentterms > 0) $param .= '&search_paymentterms='.urlencode($search_paymentterms);
+	if ($search_module_source)  $param .= '&search_module_source='.urlencode($search_module_source);
+	if ($search_pos_source)  $param .= '&search_pos_source='.urlencode($search_pos_source);
+	if ($show_files)         $param .= '&show_files='.urlencode($show_files);
+	if ($option)             $param .= "&search_option=".urlencode($option);
+	if ($optioncss != '')    $param .= '&optioncss='.urlencode($optioncss);
+	if ($search_categ_cus > 0) $param .= '&search_categ_cus='.urlencode($search_categ_cus);
+>>>>>>> branch '13.0' of git@github.com:Dolibarr/dolibarr.git
 
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -948,11 +1062,11 @@ if ($resql) {
 		'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
 		'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 		'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
-		//'makepayment'=>$langs->trans("InvoicePaymentsLimits"),   TODO Blank page when using this
+		//'makepayment'=>$langs->trans("InvoicePaymentsLimits"),
 	);
 	if ($conf->prelevement->enabled && !empty($user->rights->prelevement->bons->creer)) {
 			$langs->load("withdrawals");
-			$arrayofmassactions['withdrawrequest'] = $langs->trans("MakeWithdrawRequest");
+			$arrayofmassactions['withdrawrequest'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakeWithdrawRequest");
 	}
 	if ($user->rights->facture->supprimer) {
 		if (!empty($conf->global->INVOICE_CAN_REMOVE_DRAFT_ONLY)) {
@@ -1142,11 +1256,11 @@ if ($resql) {
 	}
 	// Thirdparty
 	if (!empty($arrayfields['s.nom']['checked'])) {
-		print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_societe" value="'.$search_societe.'"></td>';
+		print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_company" value="'.$search_company.'"></td>';
 	}
 	// Alias
 	if (!empty($arrayfields['s.name_alias']['checked'])) {
-		print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_societe_alias" value="'.$search_societe_alias.'"></td>';
+		print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_company_alias" value="'.$search_company_alias.'"></td>';
 	}
 	// Town
 	if (!empty($arrayfields['s.town']['checked'])) {
@@ -1502,6 +1616,10 @@ if ($resql) {
 	if ($num > 0) {
 		$i = 0;
 		$totalarray = array();
+		$totalarray['nbfield'] = 0;
+		$totalarray['val'] = array();
+		$totalarray['val']['f.total_ht'] = 0;
+		$totalarray['val']['f.total_ttc'] = 0;
 		while ($i < min($num, $limit)) {
 			$obj = $db->fetch_object($resql);
 
@@ -1539,16 +1657,22 @@ if ($resql) {
 				 $facturestatic->situation_cycle_ref = $obj->situation_cycle_ref;
 				 $facturestatic->situation_counter = $obj->situation_counter;
 			}
-			$thirdpartystatic->id = $obj->socid;
-			$thirdpartystatic->name = $obj->name;
-			$thirdpartystatic->client = $obj->client;
-			$thirdpartystatic->fournisseur = $obj->fournisseur;
-			$thirdpartystatic->code_client = $obj->code_client;
-			$thirdpartystatic->code_compta_client = $obj->code_compta_client;
-			$thirdpartystatic->code_fournisseur = $obj->code_fournisseur;
-			$thirdpartystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
-			$thirdpartystatic->email = $obj->email;
-			$thirdpartystatic->country_code = $obj->country_code;
+			$companystatic->id = $obj->socid;
+			$companystatic->name = $obj->name;
+			$companystatic->name_alias = $obj->alias;
+			$companystatic->client = $obj->client;
+			$companystatic->fournisseur = $obj->fournisseur;
+			$companystatic->code_client = $obj->code_client;
+			$companystatic->code_compta_client = $obj->code_compta_client;
+			$companystatic->code_fournisseur = $obj->code_fournisseur;
+			$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
+			$companystatic->email = $obj->email;
+			$companystatic->phone = $obj->phone;
+			$companystatic->fax = $obj->fax;
+			$companystatic->address = $obj->address;
+			$companystatic->zip = $obj->zip;
+			$companystatic->town = $obj->town;
+			$companystatic->country_code = $obj->country_code;
 
 			$projectstatic->id = $obj->project_id;
 			$projectstatic->ref = $obj->project_ref;
@@ -1570,10 +1694,10 @@ if ($resql) {
 				$multicurrency_remaintopay = 0;
 			}
 			if ($facturestatic->type == Facture::TYPE_CREDIT_NOTE && $obj->paye == 1) {		// If credit note closed, we take into account the amount not yet consummed
-				$remaincreditnote = $discount->getAvailableDiscounts($thirdpartystatic, '', 'rc.fk_facture_source='.$facturestatic->id);
+				$remaincreditnote = $discount->getAvailableDiscounts($companystatic, '', 'rc.fk_facture_source='.$facturestatic->id);
 				$remaintopay = -$remaincreditnote;
 				$totalpay = price2num($facturestatic->total_ttc - $remaintopay);
-				$multicurrency_remaincreditnote = $discount->getAvailableDiscounts($thirdpartystatic, '', 'rc.fk_facture_source='.$facturestatic->id, 0, 0, 1);
+				$multicurrency_remaincreditnote = $discount->getAvailableDiscounts($companystatic, '', 'rc.fk_facture_source='.$facturestatic->id, 0, 0, 1);
 				$multicurrency_remaintopay = -$multicurrency_remaincreditnote;
 				$multicurrency_totalpay = price2num($facturestatic->multicurrency_total_ttc - $multicurrency_remaintopay);
 			}
@@ -1704,9 +1828,9 @@ if ($resql) {
 			if (!empty($arrayfields['s.nom']['checked'])) {
 				print '<td class="tdoverflowmax200">';
 				if ($contextpage == 'poslist') {
-					print $thirdpartystatic->name;
+					print $companystatic->name;
 				} else {
-					print $thirdpartystatic->getNomUrl(1, 'customer');
+					print $companystatic->getNomUrl(1, 'customer');
 				}
 				print '</td>';
 				if (!$i) {
@@ -1878,13 +2002,25 @@ if ($resql) {
 				$totalarray['val']['f.total_ttc'] += $obj->total_ttc;
 			}
 
+			$userstatic->id = $obj->fk_user_author;
+			$userstatic->login = $obj->login;
+			$userstatic->lastname = $obj->lastname;
+			$userstatic->firstname = $obj->firstname;
+			$userstatic->email = $obj->email;
+			$userstatic->statut = $obj->statut;
+			$userstatic->entity = $obj->entity;
+			$userstatic->photo = $obj->photo;
+			$userstatic->office_phone = $obj->office_phone;
+			$userstatic->office_fax = $obj->office_fax;
+			$userstatic->user_mobile = $obj->user_mobile;
+			$userstatic->job = $obj->job;
+			$userstatic->gender = $obj->gender;
+
 			// Author
 			if (!empty($arrayfields['u.login']['checked'])) {
-				$userstatic->id = $obj->fk_user_author;
-				$userstatic->login = $obj->login;
-				print '<td class="center tdoverflowmax100">';
+				print '<td class="tdoverflowmax200">';
 				if ($userstatic->id) {
-					print $userstatic->getLoginUrl(1);
+					print $userstatic->getNomUrl(-1);
 				} else {
 					print '&nbsp;';
 				}

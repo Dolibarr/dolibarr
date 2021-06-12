@@ -774,7 +774,7 @@ class Categorie extends CommonObject
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_".(empty($this->MAP_CAT_TABLE[$type]) ? $type : $this->MAP_CAT_TABLE[$type]);
 		$sql .= " WHERE fk_categorie = ".$this->id;
-		$sql .= " AND fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = ".$obj->id;
+		$sql .= " AND fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = ".((int) $obj->id);
 
 		dol_syslog(get_class($this).'::del_type', LOG_DEBUG);
 		if ($this->db->query($sql)) {
@@ -897,6 +897,8 @@ class Categorie extends CommonObject
 
 		$categories = array();
 
+		$type = checkVal($type, 'aZ09');
+
 		$sub_type = $type;
 		$subcol_name = "fk_".$type;
 		if ($type == "customer") {
@@ -917,9 +919,9 @@ class Categorie extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie as s";
 		$sql .= " , ".MAIN_DB_PREFIX."categorie_".$sub_type." as sub ";
 		$sql .= ' WHERE s.entity IN ('.getEntity('category').')';
-		$sql .= ' AND s.type='.$idoftype;
+		$sql .= ' AND s.type='.((int) $idoftype);
 		$sql .= ' AND s.rowid = sub.fk_categorie';
-		$sql .= ' AND sub.'.$subcol_name.' = '.$id;
+		$sql .= ' AND sub.'.$subcol_name.' = '.((int) $id);
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 
@@ -1301,7 +1303,7 @@ class Categorie extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie as c ";
 		$sql .= " WHERE c.entity IN (".getEntity('category').")";
 		$sql .= " AND c.type = ".((int) $type);
-		$sql .= " AND c.fk_parent = ".$this->fk_parent;
+		$sql .= " AND c.fk_parent = ".((int) $this->fk_parent);
 		$sql .= " AND c.label = '".$this->db->escape($this->label)."'";
 
 		dol_syslog(get_class($this)."::already_exists", LOG_DEBUG);
@@ -1470,7 +1472,7 @@ class Categorie extends CommonObject
 			// Load bank categories
 			$sql = "SELECT c.label, c.rowid";
 			$sql .= " FROM ".MAIN_DB_PREFIX."bank_class as a, ".MAIN_DB_PREFIX."bank_categ as c";
-			$sql .= " WHERE a.lineid=".$id." AND a.fk_categ = c.rowid";
+			$sql .= " WHERE a.lineid=".((int) $id)." AND a.fk_categ = c.rowid";
 			$sql .= " AND c.entity IN (".getEntity('category').")";
 			$sql .= " ORDER BY c.label";
 
@@ -1550,7 +1552,7 @@ class Categorie extends CommonObject
 
 		// Generation requete recherche
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."categorie";
-		$sql .= " WHERE type = ".$this->MAP_ID[$type];
+		$sql .= " WHERE type = ".((int) $this->MAP_ID[$type]);
 		$sql .= " AND entity IN (".getEntity('category').")";
 		if ($nom) {
 			if (!$exact) {

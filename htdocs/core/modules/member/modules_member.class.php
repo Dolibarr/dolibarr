@@ -20,10 +20,6 @@
  */
 
 
-/**
- *	    \class      ModeleProductCode
- *		\brief  	Parent class for product code generators
- */
 
 /**
  *  \file       htdocs/core/modules/member/modules_member.class.php
