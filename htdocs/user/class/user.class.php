@@ -1662,6 +1662,32 @@ class User extends CommonObject
 
 		$this->db->begin();
 
+		// Check if login already exists in same entity or into entity 0.
+		if ($this->oldcopy->login != $this->login) {
+			$sqltochecklogin = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."user WHERE entity IN (".((int) $this->entity).", 0) AND login = '".$this->db->escape($this->login)."'";
+			$resqltochecklogin = $this->db->query($sqltochecklogin);
+			if ($resqltochecklogin) {
+				$objtochecklogin = $this->db->fetch_object($resqltochecklogin);
+				if ($objtochecklogin && $objtochecklogin->nb > 0) {
+					$langs->load("errors");
+					$this->error = $langs->trans("ErrorLoginAlreadyExists", $this->login);
+					return -1;
+				}
+			}
+		}
+		if ($this->email !== '' && $this->oldcopy->email != $this->email) {
+			$sqltochecklogin = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."user WHERE entity IN (".((int) $this->entity).", 0) AND email = '".$this->db->escape($this->email)."'";
+			$resqltochecklogin = $this->db->query($sqltochecklogin);
+			if ($resqltochecklogin) {
+				$objtochecklogin = $this->db->fetch_object($resqltochecklogin);
+				if ($objtochecklogin && $objtochecklogin->nb > 0) {
+					$langs->load("errors");
+					$this->error = $langs->trans("ErrorEmailAlreadyExists", $this->email);
+					return -1;
+				}
+			}
+		}
+
 		// Update datas
 		$sql = "UPDATE ".MAIN_DB_PREFIX."user SET";
 		$sql .= " civility = '".$this->db->escape($this->civility_code)."'";
@@ -1715,7 +1741,7 @@ class User extends CommonObject
 			$sql .= ", salaryextra= ".($this->salaryextra != '' ? "'".$this->db->escape($this->salaryextra)."'" : "null");
 		}
 		$sql .= ", weeklyhours= ".($this->weeklyhours != '' ? "'".$this->db->escape($this->weeklyhours)."'" : "null");
-		$sql .= ", entity = '".$this->db->escape($this->entity)."'";
+		$sql .= ", entity = ".((int) $this->entity);
 		$sql .= ", default_range = ".($this->default_range > 0 ? $this->default_range : 'null');
 		$sql .= ", default_c_exp_tax_cat = ".($this->default_c_exp_tax_cat > 0 ? $this->default_c_exp_tax_cat : 'null');
 		$sql .= ", fk_warehouse = ".($this->fk_warehouse > 0 ? $this->fk_warehouse : "null");

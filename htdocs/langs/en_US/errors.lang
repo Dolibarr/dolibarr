@@ -11,6 +11,7 @@ ErrorBadValueForParamNotAString=Bad value for your parameter. It appends general
 ErrorRefAlreadyExists=Reference <b>%s</b> already exists.
 ErrorLoginAlreadyExists=Login %s already exists.
 ErrorGroupAlreadyExists=Group %s already exists.
+ErrorEmailAlreadyExists=Email %s already exists.
 ErrorRecordNotFound=Record not found.
 ErrorFailToCopyFile=Failed to copy file '<b>%s</b>' into '<b>%s</b>'.
 ErrorFailToCopyDir=Failed to copy directory '<b>%s</b>' into '<b>%s</b>'.
