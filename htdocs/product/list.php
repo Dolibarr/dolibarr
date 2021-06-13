@@ -724,7 +724,6 @@ if ($resql) {
 		$perm = $user->rights->service->creer;
 	} elseif ($type == Product::TYPE_PRODUCT) {
 		$perm = $user->rights->produit->creer;
-
 	}
 	$oldtype = $type;
 	$params = array();

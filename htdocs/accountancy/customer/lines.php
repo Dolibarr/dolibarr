@@ -492,7 +492,7 @@ if ($result) {
 		print $form->textwithtooltip(dol_trunc($text, $trunclength), $objp->description);
 		print '</td>';
 
-		print '<td class="nowrap right">'.price($objp->total_ht).'</td>';
+		print '<td class="right nowraponall amount">'.price($objp->total_ht).'</td>';
 
 		print '<td class="right">'.vatrate($objp->tva_tx.($objp->vat_src_code ? ' ('.$objp->vat_src_code.')' : '')).'</td>';
 
