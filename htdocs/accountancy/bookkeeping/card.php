@@ -680,8 +680,8 @@ if ($action == 'create') {
 						}
 						print '</td>';
 						print '<td>'.$line->label_operation.'</td>';
-						print '<td class="nowrap right">'.price($line->debit).'</td>';
-						print '<td class="nowrap right">'.price($line->credit).'</td>';
+						print '<td class="right nowraponall amount">'.price($line->debit).'</td>';
+						print '<td class="right nowraponall amount">'.price($line->credit).'</td>';
 
 						if (empty($line->date_export) || empty($line->date_validation)) {
 							print '<td class="center">';
