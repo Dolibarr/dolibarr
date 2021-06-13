@@ -67,11 +67,6 @@ $action = GETPOST('action', 'aZ09');
 // Load translation files
 $langs->loadLangs(array("members", "companies", "install", "other"));
 
-// Security check
-if (empty($conf->projet->enabled)) {
-	accessforbidden('', 0, 0, 1);
-}
-
 if (empty($conf->global->PROJECT_ENABLE_PUBLIC)) {
 	print $langs->trans("Form for public lead registration has not been enabled");
 	exit;
@@ -85,6 +80,11 @@ $extrafields = new ExtraFields($db);
 $object = new Project($db);
 
 $user->loadDefaultValues();
+
+// Security check
+if (empty($conf->projet->enabled)) {
+	accessforbidden('', 0, 0, 1);
+}
 
 
 /**
