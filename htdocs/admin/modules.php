@@ -535,7 +535,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 	$moreforfilter .= '<div class="colorbacktimesheet float valignmiddle">';
 	$moreforfilter .= '<div class="divsearchfield paddingtop">';
-	$moreforfilter .= img_picto($langs->trans("Filter"), 'filter', 'class="paddingright opacityhigh"').'<input type="text" id="search_keyword" name="search_keyword" class="maxwidth125" value="'.dol_escape_htmltag($search_keyword).'" placeholder="'.dol_escape_htmltag($langs->trans('Keyword')).'">';
+	$moreforfilter .= img_picto($langs->trans("Filter"), 'filter', 'class="paddingright opacityhigh hideonsmartphone"').'<input type="text" id="search_keyword" name="search_keyword" class="maxwidth125" value="'.dol_escape_htmltag($search_keyword).'" placeholder="'.dol_escape_htmltag($langs->trans('Keyword')).'">';
 	$moreforfilter .= '</div>';
 	$moreforfilter .= '<div class="divsearchfield paddingtop">';
 	$moreforfilter .= $form->selectarray('search_nature', $arrayofnatures, dol_escape_htmltag($search_nature), $langs->trans('Origin'), 0, 0, '', 0, 0, 0, '', 'maxwidth200', 1);
@@ -826,8 +826,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			} else {
 				$codetoconfig .= img_picto($langs->trans("NothingToSetup"), "setup", 'class="opacitytransp" style="padding-right: 6px"', false, 0, 0, '', 'fa-15');
 			}
-		} else // Module not yet activated
-		{
+		} else { // Module not yet activated
 			// Set $codeenabledisable
 			if (!empty($objMod->always_enabled)) {
 				// Should never happened
@@ -884,11 +883,11 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		} else {
 			print '<tr class="oddeven">'."\n";
 			if (!empty($conf->global->MAIN_MODULES_SHOW_LINENUMBERS)) {
-				print '<td width="20px">'.$linenum.'</td>';
+				print '<td class="width50">'.$linenum.'</td>';
 			}
 
 			// Picto + Name of module
-			print '  <td width="200px">';
+			print '  <td class="tdoverflowmax300" title="'.dol_escape_htmltag($objMod->getName()).'">';
 			$alttext = '';
 			//if (is_array($objMod->need_dolibarr_version)) $alttext.=($alttext?' - ':'').'Dolibarr >= '.join('.',$objMod->need_dolibarr_version);
 			//if (is_array($objMod->phpmin)) $alttext.=($alttext?' - ':'').'PHP >= '.join('.',$objMod->phpmin);
@@ -1015,7 +1014,7 @@ if ($mode == 'marketplace') {
 					<input type="hidden" name="token" value="<?php echo newToken(); ?>">
 					<input type="hidden" name="mode" value="marketplace">
 					<div class="divsearchfield">
-						<input name="search_keyword" placeholder="<?php echo $langs->trans('Keyword') ?>" id="search_keyword" type="text" size="50" value="<?php echo $options['search'] ?>"><br>
+						<input name="search_keyword" placeholder="<?php echo $langs->trans('Keyword') ?>" id="search_keyword" type="text" class="minwidth200" value="<?php echo $options['search'] ?>"><br>
 					</div>
 					<div class="divsearchfield">
 						<input class="button buttongen" value="<?php echo $langs->trans('Rechercher') ?>" type="submit">
