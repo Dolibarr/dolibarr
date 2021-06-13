@@ -1117,7 +1117,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					$inherited_mask_lot = $conf->global->LOT_ADVANCED_MASK;
 					$inherited_mask_sn = $conf->global->SN_ADVANCED_MASK;
 					print '<td id="field_mask">';
-					print $form->textwithpicto('<input type="text" class="flat" size="24" name="batch_mask" id="batch_mask_input">', $tooltip, 1, 1);
+					print $form->textwithpicto('<input type="text" class="flat minwidth175" name="batch_mask" id="batch_mask_input">', $tooltip, 1, 1);
 					print '<script type="text/javascript">
 								$(document).ready(function() {
 									$("#field_mask, #mask_option").addClass("hideobject");
@@ -1628,7 +1628,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						$inherited_mask_lot = $conf->global->LOT_ADVANCED_MASK;
 						$inherited_mask_sn = $conf->global->SN_ADVANCED_MASK;
 						print '<td id="field_mask">';
-						print $form->textwithpicto('<input type="text" class="flat" size="24" name="batch_mask" id="batch_mask_input" value="'.$mask.'">', $tooltip, 1, 1);
+						print $form->textwithpicto('<input type="text" class="flat minwidth175" name="batch_mask" id="batch_mask_input" value="'.$mask.'">', $tooltip, 1, 1);
 
 						print '<script type="text/javascript">
 						$(document).ready(function() {

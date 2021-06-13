@@ -161,7 +161,7 @@ class doc_generic_product_odt extends ModelePDFProduct
 		$texte .= $conf->global->PRODUCT_ADDON_PDF_ODT_PATH;
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button">';
+		$texte .= '<input type="submit" class="button small" value="'.$langs->trans("Modify").'" name="Button">';
 		$texte .= '<br></div></div>';
 
 		// Scan directories
