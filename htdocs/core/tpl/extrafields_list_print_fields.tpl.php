@@ -66,6 +66,12 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 					if (!$i) {
 						$totalarray['pos'][$totalarray['nbfield']] = $extrafieldsobjectprefix.$tmpkey;
 					}
+					if (!isset($totalarray['val'])) {
+						$totalarray['val'] = array();
+					}
+					if (!isset($totalarray['val'][$extrafieldsobjectprefix.$tmpkey])) {
+						$totalarray['val'][$extrafieldsobjectprefix.$tmpkey] = 0;
+					}
 					$totalarray['val'][$extrafieldsobjectprefix.$tmpkey] += $obj->$tmpkey;
 				}
 			}

@@ -6625,6 +6625,7 @@ abstract class CommonObject
 					} else {
 						$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
 					}
+
 					//We have to join on extrafield table
 					if (strpos($InfoFieldList[4], 'extra') !== false) {
 						$sql .= ' as main, '.MAIN_DB_PREFIX.$InfoFieldList[0].'_extrafields as extra';
@@ -6971,11 +6972,12 @@ abstract class CommonObject
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 			$form = new Form($this->db);
 		}
-var_dump($val);
-		$objectid = $this->id;
-		$label = $val['label'];
-		$type  = $val['type'];
-		$size  = $val['css'];
+
+		$objectid = $this->id;	// Not used ???
+
+		$label = empty($val['label']) ? '' : $val['label'];
+		$type  = empty($val['type']) ? '' : $val['type'];
+		$size  = empty($val['css']) ? '' : $val['css'];
 		$reg = array();
 
 		// Convert var to be able to share same code than showOutputField of extrafields
@@ -6992,10 +6994,10 @@ var_dump($val);
 			$type = 'link';
 		}
 
-		$default = $val['default'];
-		$computed = $val['computed'];
-		$unique = $val['unique'];
-		$required = $val['required'];
+		$default = empty($val['default']) ? '' : $val['default'];
+		$computed = empty($val['computed']) ? '' : $val['computed'];
+		$unique = empty($val['unique']) ? '' : $val['unique'];
+		$required = empty($val['required']) ? '' : $val['required'];
 		$param = array();
 		$param['options'] = array();
 
@@ -7016,8 +7018,8 @@ var_dump($val);
 			$type = 'sellist';
 		}
 
-		$langfile = $val['langfile'];
-		$list = $val['list'];
+		$langfile = empty($val['langfile']) ? '' : $val['langfile'];
+		$list = (empty($val['list']) ? '' : $val['list']);
 		$help = (empty($val['help']) ? '' : $val['help']);
 		$hidden = (($val['visible'] == 0) ? 1 : 0); // If zero, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 
