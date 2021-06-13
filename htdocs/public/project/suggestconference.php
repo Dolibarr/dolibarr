@@ -115,6 +115,11 @@ $user->loadDefaultValues();
 $cactioncomm = new CActionComm($db);
 $arrayofeventtype = $cactioncomm->liste_array('', 'id', '', 0, 'module=\'conference@eventorganization\'');
 
+// Security check
+if (empty($conf->eventorganization->enabled)) {
+	accessforbidden('', 0, 0, 1);
+}
+
 
 /**
  * Show header for new member
