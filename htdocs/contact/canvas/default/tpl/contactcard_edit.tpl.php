@@ -76,7 +76,7 @@ echo $this->control->tpl['ajax_selectcountry'];
 
 <tr>
 	<td><?php echo $langs->trans("PostOrFunction"); ?></td>
-	<td colspan="3"><input name="poste" type="text" size="50" maxlength="80" value="<?php echo $this->control->tpl['poste']; ?>"></td>
+	<td colspan="3"><input name="poste" type="text" class="minwidth200" maxlength="80" value="<?php echo $this->control->tpl['poste']; ?>"></td>
 </tr>
 
 <tr>
@@ -115,7 +115,7 @@ echo $this->control->tpl['ajax_selectcountry'];
 
 <tr>
 	<td><?php echo $langs->trans("Email"); ?></td>
-	<td><input name="email" type="text" size="50" maxlength="80" value="<?php echo $this->control->tpl['email']; ?>"></td>
+	<td><input name="email" type="text" class="minwidth200" maxlength="80" value="<?php echo $this->control->tpl['email']; ?>"></td>
 	<?php if ($this->control->tpl['nb_emailing']) { ?>
 	<td class="nowrap"><?php echo $langs->trans("NbOfEMailingsReceived"); ?></td>
 	<td><?php echo $this->control->tpl['nb_emailing']; ?></td>
