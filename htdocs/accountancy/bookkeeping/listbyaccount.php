@@ -55,7 +55,7 @@ $search_date_export_endyear =  GETPOST('search_date_export_endyear', 'int');
 $search_date_export_endmonth =  GETPOST('search_date_export_endmonth', 'int');
 $search_date_export_endday =  GETPOST('search_date_export_endday', 'int');
 $search_date_export_start = dol_mktime(0, 0, 0, $search_date_export_startmonth, $search_date_export_startday, $search_date_export_startyear);
-$search_date_export_end = dol_mktime(0, 0, 0, $search_date_export_endmonth, $search_date_export_endday, $search_date_export_endyear);
+$search_date_export_end = dol_mktime(23, 59, 59, $search_date_export_endmonth, $search_date_export_endday, $search_date_export_endyear);
 
 $search_accountancy_code = GETPOST("search_accountancy_code");
 $search_accountancy_code_start = GETPOST('search_accountancy_code_start', 'alpha');

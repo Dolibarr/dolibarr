@@ -44,17 +44,47 @@ $action = GETPOST('action', 'aZ09');
 $search_mvt_num = GETPOST('search_mvt_num', 'int');
 $search_doc_type = GETPOST("search_doc_type", 'alpha');
 $search_doc_ref = GETPOST("search_doc_ref", 'alpha');
-$search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
-$search_date_end = dol_mktime(23, 59, 59, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
+$search_date_startyear =  GETPOST('search_date_startyear', 'int');
+$search_date_startmonth =  GETPOST('search_date_startmonth', 'int');
+$search_date_startday =  GETPOST('search_date_startday', 'int');
+$search_date_endyear =  GETPOST('search_date_endyear', 'int');
+$search_date_endmonth =  GETPOST('search_date_endmonth', 'int');
+$search_date_endday =  GETPOST('search_date_endday', 'int');
+$search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);
+$search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
 $search_doc_date = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
-$search_date_creation_start = dol_mktime(0, 0, 0, GETPOST('date_creation_startmonth', 'int'), GETPOST('date_creation_startday', 'int'), GETPOST('date_creation_startyear', 'int'));
-$search_date_creation_end = dol_mktime(23, 59, 59, GETPOST('date_creation_endmonth', 'int'), GETPOST('date_creation_endday', 'int'), GETPOST('date_creation_endyear', 'int'));
-$search_date_modification_start = dol_mktime(0, 0, 0, GETPOST('date_modification_startmonth', 'int'), GETPOST('date_modification_startday', 'int'), GETPOST('date_modification_startyear', 'int'));
-$search_date_modification_end = dol_mktime(23, 59, 59, GETPOST('date_modification_endmonth', 'int'), GETPOST('date_modification_endday', 'int'), GETPOST('date_modification_endyear', 'int'));
-$search_date_export_start = dol_mktime(0, 0, 0, GETPOST('date_export_startmonth', 'int'), GETPOST('date_export_startday', 'int'), GETPOST('date_export_startyear', 'int'));
-$search_date_export_end = dol_mktime(0, 0, 0, GETPOST('date_export_endmonth', 'int'), GETPOST('date_export_endday', 'int'), GETPOST('date_export_endyear', 'int'));
-$search_date_validation_start = dol_mktime(0, 0, 0, GETPOST('date_validation_startmonth', 'int'), GETPOST('date_validation_startday', 'int'), GETPOST('date_validation_startyear', 'int'));
-$search_date_validation_end = dol_mktime(0, 0, 0, GETPOST('date_validation_endmonth', 'int'), GETPOST('date_validation_endday', 'int'), GETPOST('date_validation_endyear', 'int'));
+$search_date_creation_startyear =  GETPOST('search_date_creation_startyear', 'int');
+$search_date_creation_startmonth =  GETPOST('search_date_creation_startmonth', 'int');
+$search_date_creation_startday =  GETPOST('search_date_creation_startday', 'int');
+$search_date_creation_endyear =  GETPOST('search_date_creation_endyear', 'int');
+$search_date_creation_endmonth =  GETPOST('search_date_creation_endmonth', 'int');
+$search_date_creation_endday =  GETPOST('search_date_creation_endday', 'int');
+$search_date_creation_start = dol_mktime(0, 0, 0, $search_date_creation_startmonth, $search_date_creation_startday, $search_date_creation_startyear);
+$search_date_creation_end = dol_mktime(23, 59, 59, $search_date_creation_endmonth, $search_date_creation_endday, $search_date_creation_endyear);
+$search_date_modification_startyear =  GETPOST('search_date_modification_startyear', 'int');
+$search_date_modification_startmonth =  GETPOST('search_date_modification_startmonth', 'int');
+$search_date_modification_startday =  GETPOST('search_date_modification_startday', 'int');
+$search_date_modification_endyear =  GETPOST('search_date_modification_endyear', 'int');
+$search_date_modification_endmonth =  GETPOST('search_date_modification_endmonth', 'int');
+$search_date_modification_endday =  GETPOST('search_date_modification_endday', 'int');
+$search_date_modification_start = dol_mktime(0, 0, 0, $search_date_modification_startmonth, $search_date_modification_startday, $search_date_modification_startyear);
+$search_date_modification_end = dol_mktime(23, 59, 59, $search_date_modification_endmonth, $search_date_modification_endday, $search_date_modification_endyear);
+$search_date_export_startyear =  GETPOST('search_date_export_startyear', 'int');
+$search_date_export_startmonth =  GETPOST('search_date_export_startmonth', 'int');
+$search_date_export_startday =  GETPOST('search_date_export_startday', 'int');
+$search_date_export_endyear =  GETPOST('search_date_export_endyear', 'int');
+$search_date_export_endmonth =  GETPOST('search_date_export_endmonth', 'int');
+$search_date_export_endday =  GETPOST('search_date_export_endday', 'int');
+$search_date_export_start = dol_mktime(0, 0, 0, $search_date_export_startmonth, $search_date_export_startday, $search_date_export_startyear);
+$search_date_export_end = dol_mktime(23, 59, 59, $search_date_export_endmonth, $search_date_export_endday, $search_date_export_endyear);
+$search_date_validation_startyear =  GETPOST('search_date_validation_startyear', 'int');
+$search_date_validation_startmonth =  GETPOST('search_date_validation_startmonth', 'int');
+$search_date_validation_startday =  GETPOST('search_date_validation_startday', 'int');
+$search_date_validation_endyear =  GETPOST('search_date_validation_endyear', 'int');
+$search_date_validation_endmonth =  GETPOST('search_date_validation_endmonth', 'int');
+$search_date_validation_endday =  GETPOST('search_date_validation_endday', 'int');
+$search_date_validation_start = dol_mktime(0, 0, 0, $search_date_validation_startmonth, $search_date_validation_startday, $search_date_validation_startyear);
+$search_date_validation_end = dol_mktime(23, 59, 59, $search_date_validation_endmonth, $search_date_validation_endday, $search_date_validation_endyear);
 
 //var_dump($search_date_start);exit;
 if (GETPOST("button_delmvt_x") || GETPOST("button_delmvt.x") || GETPOST("button_delmvt")) {
@@ -219,14 +249,44 @@ if (empty($reshook)) {
 		$search_mvt_label = '';
 		$search_direction = '';
 		$search_ledger_code = array();
+		$search_date_startyear = '';
+		$search_date_startmonth = '';
+		$search_date_startday = '';
+		$search_date_endyear = '';
+		$search_date_endmonth = '';
+		$search_date_endday = '';
 		$search_date_start = '';
 		$search_date_end = '';
+		$search_date_creation_startyear = '';
+		$search_date_creation_startmonth = '';
+		$search_date_creation_startday = '';
+		$search_date_creation_endyear = '';
+		$search_date_creation_endmonth = '';
+		$search_date_creation_endday = '';
 		$search_date_creation_start = '';
 		$search_date_creation_end = '';
+		$search_date_modification_startyear = '';
+		$search_date_modification_startmonth = '';
+		$search_date_modification_startday = '';
+		$search_date_modification_endyear = '';
+		$search_date_modification_endmonth = '';
+		$search_date_modification_endday = '';
 		$search_date_modification_start = '';
 		$search_date_modification_end = '';
+		$search_date_export_startyear = '';
+		$search_date_export_startmonth = '';
+		$search_date_export_startday = '';
+		$search_date_export_endyear = '';
+		$search_date_export_endmonth = '';
+		$search_date_export_endday = '';
 		$search_date_export_start = '';
 		$search_date_export_end = '';
+		$search_date_validation_startyear = '';
+		$search_date_validation_startmonth = '';
+		$search_date_validation_startday = '';
+		$search_date_validation_endyear = '';
+		$search_date_validation_endmonth = '';
+		$search_date_validation_endday = '';
 		$search_date_validation_start = '';
 		$search_date_validation_end = '';
 		$search_debit = '';
@@ -699,6 +759,8 @@ print '<input type="hidden" name="formfilteraction" id="formfilteraction" value=
 print '<input type="hidden" name="sortfield" value="'.urlencode($sortfield).'">';
 print '<input type="hidden" name="sortorder" value="'.urlencode($sortorder).'">';
 
+$massactionbutton = '';
+
 if (count($filter)) {
 	$buttonLabel = $langs->trans("ExportFilteredList");
 } else {
@@ -731,7 +793,7 @@ if (empty($reshook)) {
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', $url, '', $user->rights->accounting->mouvements->creer);
 }
 
-print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
