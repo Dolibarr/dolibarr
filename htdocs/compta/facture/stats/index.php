@@ -288,7 +288,7 @@ if ($mode == 'supplier') {
 	$filter = 's.fournisseur = 1';
 }
 print img_picto('', 'company', 'class="pictofixedwidth"');
-print $form->selectarray('socid', $companies, $socid, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth250', 1);
+print $form->selectarray('socid', $companies, $socid, 1, 0, 0, '', 0, 0, 0, '', 'widthcentpercentminusx maxwidth300', 1);
 print '</td></tr>';
 
 // ThirdParty Type
