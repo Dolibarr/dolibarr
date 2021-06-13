@@ -970,7 +970,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify')) {
 			$sql .= " WHERE ".$rowidcol." = ".((int) $rowid);
 		}
 		if (in_array('entity', $listfieldmodify)) {
-			$sql .= " AND entity = '".getEntity($tabname[$id])."'";
+			$sql .= " AND entity = ".((int) getEntity($tabname[$id], 0));
 		}
 
 		dol_syslog("actionmodify", LOG_DEBUG);
