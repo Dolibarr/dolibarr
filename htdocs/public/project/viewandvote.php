@@ -89,9 +89,11 @@ if ($resultproject < 0) {
 	$errmsg .= $project->error;
 }
 
+
 /*
  * Actions
  */
+
 $tmpthirdparty = new Societe($db);
 
 $listOfConferences = $listOfBooths = '<tr><td>'.$langs->trans('Label').'</td>

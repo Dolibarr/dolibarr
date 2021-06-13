@@ -115,6 +115,7 @@ $user->loadDefaultValues();
 $cactioncomm = new CActionComm($db);
 $arrayofeventtype = $cactioncomm->liste_array('', 'id', '', 0, 'module=\'booth@eventorganization\'');
 
+
 /**
  * Show header for new member
  *
@@ -183,10 +184,10 @@ function llxFooterVierge()
 /*
  * Actions
  */
-global $mysoc;
+
 $parameters = array();
 // Note that $action and $object may have been modified by some hooks
-$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $project, $action);
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
