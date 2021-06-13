@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2015 Florian HENRY       <florian.henry@open-concept.pro>
- * Copyright (C) 2015      Laurent Destailleur <ldestailleur@users.sourceforge.net>
+ * Copyright (C) 2015-2021 Laurent Destailleur <ldestailleur@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -325,12 +325,12 @@ foreach ($data_all_year as $val) {
 
 		print '<tr class="oddeven" height="24">';
 		print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$oldyear.'</a></td>';
-		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
-			print '<td class="right">0</td>';
-			print '<td class="right">0</td>';
-			print '<td class="right">0</td>';
-		}
 		print '<td class="right">0</td>';
+		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+			print '<td class="right amount nowraponall">0</td>';
+			print '<td class="right amount nowraponall">0</td>';
+			print '<td class="right amount nowraponall">0</td>';
+		}
 		print '</tr>';
 	}
 
@@ -338,9 +338,9 @@ foreach ($data_all_year as $val) {
 	print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$year.'</a></td>';
 	print '<td class="right">'.$val['nb'].'</td>';
 	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
-		print '<td class="right">'.($val['total'] ? price(price2num($val['total'], 'MT'), 1) : '0').'</td>';
-		print '<td class="right">'.($val['avg'] ? price(price2num($val['avg'], 'MT'), 1) : '0').'</td>';
-		print '<td class="right">'.(isset($val['weighted']) ? price(price2num($val['weighted'], 'MT'), 1) : '0').'</td>';
+		print '<td class="right amount nowraponall">'.($val['total'] ? price(price2num($val['total'], 'MT'), 1) : '0').'</td>';
+		print '<td class="right amount nowraponall">'.($val['avg'] ? price(price2num($val['avg'], 'MT'), 1) : '0').'</td>';
+		print '<td class="right amount nowraponall">'.(isset($val['weighted']) ? price(price2num($val['weighted'], 'MT'), 1) : '0').'</td>';
 	}
 	print '</tr>';
 	$oldyear = $year;

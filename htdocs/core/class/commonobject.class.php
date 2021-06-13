@@ -6971,7 +6971,7 @@ abstract class CommonObject
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 			$form = new Form($this->db);
 		}
-
+var_dump($val);
 		$objectid = $this->id;
 		$label = $val['label'];
 		$type  = $val['type'];
@@ -7018,7 +7018,7 @@ abstract class CommonObject
 
 		$langfile = $val['langfile'];
 		$list = $val['list'];
-		$help = $val['help'];
+		$help = (empty($val['help']) ? '' : $val['help']);
 		$hidden = (($val['visible'] == 0) ? 1 : 0); // If zero, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 
 		if ($hidden) {
@@ -7044,9 +7044,9 @@ abstract class CommonObject
 			} elseif ($type == 'boolean') {
 				$morecss = '';
 			} else {
-				if (round($size) < 12) {
+				if (is_numeric($size) && round($size) < 12) {
 					$morecss = 'minwidth100';
-				} elseif (round($size) <= 48) {
+				} elseif (is_numeric($size) && round($size) <= 48) {
 					$morecss = 'minwidth200';
 				} else {
 					$morecss = 'minwidth400';

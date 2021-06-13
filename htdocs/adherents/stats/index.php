@@ -189,8 +189,8 @@ foreach ($data as $val) {
 		//print '</a>';
 		print '</td>';
 		print '<td class="right">0</td>';
-		print '<td class="right">0</td>';
-		print '<td class="right">0</td>';
+		print '<td class="right amount nowraponall">0</td>';
+		print '<td class="right amount nowraponall">0</td>';
 		print '</tr>';
 	}
 	print '<tr class="oddeven" height="24">';
@@ -200,8 +200,8 @@ foreach ($data as $val) {
 	//print '</a>';
 	print '</td>';
 	print '<td class="right">'.$val['nb'].'</td>';
-	print '<td class="right"><span class="amount">'.price(price2num($val['total'], 'MT'), 1).'</span></td>';
-	print '<td class="right"><span class="amount">'.price(price2num($val['avg'], 'MT'), 1).'</span></td>';
+	print '<td class="right amount nowraponall"><span class="amount">'.price(price2num($val['total'], 'MT'), 1).'</span></td>';
+	print '<td class="right amount nowraponall"><span class="amount">'.price(price2num($val['avg'], 'MT'), 1).'</span></td>';
 	print '</tr>';
 	$oldyear = $year;
 }
