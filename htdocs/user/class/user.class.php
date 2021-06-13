@@ -1287,86 +1287,97 @@ class User extends CommonObject
 		$error = 0;
 		$this->db->begin();
 
-		$sql = "SELECT login FROM ".MAIN_DB_PREFIX."user";
-		$sql .= " WHERE login ='".$this->db->escape($this->login)."'";
-		$sql .= " AND entity IN (0, ".$this->db->escape($conf->entity).")";
+		// Check if login already exists in same entity or into entity 0.
+		if ($this->login) {
+			$sqltochecklogin = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."user WHERE entity IN (".$this->db->sanitize((int) $this->entity).", 0) AND login = '".$this->db->escape($this->login)."'";
+			$resqltochecklogin = $this->db->query($sqltochecklogin);
+			if ($resqltochecklogin) {
+				$objtochecklogin = $this->db->fetch_object($resqltochecklogin);
+				if ($objtochecklogin && $objtochecklogin->nb > 0) {
+					$langs->load("errors");
+					$this->error = $langs->trans("ErrorLoginAlreadyExists", $this->login);
+					dol_syslog(get_class($this)."::create ".$this->error, LOG_DEBUG);
+					$this->db->rollback();
+					return -6;
+				}
+				$this->db->free($resqltochecklogin);
+			}
+		}
+		if ($this->email !== '') {
+			$sqltochecklogin = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."user WHERE entity IN (".$this->db->sanitize((int) $this->entity).", 0) AND email = '".$this->db->escape($this->email)."'";
+			$resqltochecklogin = $this->db->query($sqltochecklogin);
+			if ($resqltochecklogin) {
+				$objtochecklogin = $this->db->fetch_object($resqltochecklogin);
+				if ($objtochecklogin && $objtochecklogin->nb > 0) {
+					$langs->load("errors");
+					$this->error = $langs->trans("ErrorEmailAlreadyExists", $this->email);
+					dol_syslog(get_class($this)."::create ".$this->error, LOG_DEBUG);
+					$this->db->rollback();
+					return -6;
+				}
+				$this->db->free($resqltochecklogin);
+			}
+		}
+
+		// Insert into database
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec, login, ldap_sid, entity)";
+		$sql .= " VALUES('".$this->db->idate($this->datec)."','".$this->db->escape($this->login)."','".$this->db->escape($this->ldap_sid)."',".$this->db->escape($this->entity).")";
+		$result = $this->db->query($sql);
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$num = $this->db->num_rows($resql);
-			$this->db->free($resql);
+		if ($result) {
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."user");
 
-			if ($num) {
-				$this->error = 'ErrorLoginAlreadyExists';
-				dol_syslog(get_class($this)."::create ".$this->error, LOG_WARNING);
+			// Set default rights
+			if ($this->set_default_rights() < 0) {
+				$this->error = 'ErrorFailedToSetDefaultRightOfUser';
 				$this->db->rollback();
-				return -6;
-			} else {
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec,login,ldap_sid,entity)";
-				$sql .= " VALUES('".$this->db->idate($this->datec)."','".$this->db->escape($this->login)."','".$this->db->escape($this->ldap_sid)."',".$this->db->escape($this->entity).")";
-				$result = $this->db->query($sql);
+				return -5;
+			}
 
-				dol_syslog(get_class($this)."::create", LOG_DEBUG);
-				if ($result) {
-					$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."user");
+			if (!empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER) && !empty($conf->global->STOCK_USERSTOCK_AUTOCREATE)) {
+				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+				$langs->load("stocks");
+				$entrepot = new Entrepot($this->db);
+				$entrepot->label = $langs->trans("PersonalStock", $this->getFullName($langs));
+				$entrepot->libelle = $entrepot->label; // For backward compatibility
+				$entrepot->description = $langs->trans("ThisWarehouseIsPersonalStock", $this->getFullName($langs));
+				$entrepot->statut = 1;
+				$entrepot->country_id = $mysoc->country_id;
+				$warehouseid = $entrepot->create($user);
 
-					// Set default rights
-					if ($this->set_default_rights() < 0) {
-						$this->error = 'ErrorFailedToSetDefaultRightOfUser';
-						$this->db->rollback();
-						return -5;
-					}
+				$this->fk_warehouse = $warehouseid;
+			}
 
-					if (!empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER) && !empty($conf->global->STOCK_USERSTOCK_AUTOCREATE)) {
-						require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
-						$langs->load("stocks");
-						$entrepot = new Entrepot($this->db);
-						$entrepot->label = $langs->trans("PersonalStock", $this->getFullName($langs));
-						$entrepot->libelle = $entrepot->label; // For backward compatibility
-						$entrepot->description = $langs->trans("ThisWarehouseIsPersonalStock", $this->getFullName($langs));
-						$entrepot->statut = 1;
-						$entrepot->country_id = $mysoc->country_id;
-						$warehouseid = $entrepot->create($user);
+			// Update minor fields
+			$result = $this->update($user, 1, 1);
+			if ($result < 0) {
+				$this->db->rollback();
+				return -4;
+			}
 
-						$this->fk_warehouse = $warehouseid;
-					}
-
-					// Update minor fields
-					$result = $this->update($user, 1, 1);
-					if ($result < 0) {
-						$this->db->rollback();
-						return -4;
-					}
-
-					if (!$notrigger) {
-						// Call trigger
-						$result = $this->call_trigger('USER_CREATE', $user);
-						if ($result < 0) {
-							$error++;
-						}
-						// End call triggers
-					}
-
-					if (!$error) {
-						$this->db->commit();
-						return $this->id;
-					} else {
-						//$this->error=$interface->error;
-						dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
-						$this->db->rollback();
-						return -3;
-					}
-				} else {
-					$this->error = $this->db->lasterror();
-					$this->db->rollback();
-					return -2;
+			if (!$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('USER_CREATE', $user);
+				if ($result < 0) {
+					$error++;
 				}
+				// End call triggers
+			}
+
+			if (!$error) {
+				$this->db->commit();
+				return $this->id;
+			} else {
+				//$this->error=$interface->error;
+				dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
+				$this->db->rollback();
+				return -3;
 			}
 		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
-			return -1;
+			return -2;
 		}
 	}
 
@@ -1591,12 +1602,12 @@ class User extends CommonObject
 	/**
 	 *  	Update a user into database (and also password if this->pass is defined)
 	 *
-	 *		@param	User	$user				User qui fait la mise a jour
-	 *    	@param  int		$notrigger			1 ne declenche pas les triggers, 0 sinon
+	 *		@param	User	$user				User making update
+	 *    	@param  int		$notrigger			1=do not execute triggers, 0 by default
 	 *		@param	int		$nosyncmember		0=Synchronize linked member (standard info), 1=Do not synchronize linked member
 	 *		@param	int		$nosyncmemberpass	0=Synchronize linked member (password), 1=Do not synchronize linked member
 	 *		@param	int		$nosynccontact		0=Synchronize linked contact, 1=Do not synchronize linked contact
-	 *    	@return int 		        		<0 si KO, >=0 si OK
+	 *    	@return int 		        		<0 if KO, >=0 if OK
 	 */
 	public function update($user, $notrigger = 0, $nosyncmember = 0, $nosyncmemberpass = 0, $nosynccontact = 0)
 	{
@@ -1663,7 +1674,7 @@ class User extends CommonObject
 		$this->db->begin();
 
 		// Check if login already exists in same entity or into entity 0.
-		if ($this->oldcopy->login != $this->login) {
+		if (!empty($this->oldcopy) && $this->oldcopy->login != $this->login) {
 			$sqltochecklogin = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."user WHERE entity IN (".$this->db->sanitize((int) $this->entity).", 0) AND login = '".$this->db->escape($this->login)."'";
 			$resqltochecklogin = $this->db->query($sqltochecklogin);
 			if ($resqltochecklogin) {
@@ -1671,11 +1682,13 @@ class User extends CommonObject
 				if ($objtochecklogin && $objtochecklogin->nb > 0) {
 					$langs->load("errors");
 					$this->error = $langs->trans("ErrorLoginAlreadyExists", $this->login);
+					dol_syslog(get_class($this)."::create ".$this->error, LOG_DEBUG);
+					$this->db->rollback();
 					return -1;
 				}
 			}
 		}
-		if ($this->email !== '' && $this->oldcopy->email != $this->email) {
+		if (!empty($this->oldcopy) && $this->email !== '' && $this->oldcopy->email != $this->email) {
 			$sqltochecklogin = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."user WHERE entity IN (".$this->db->sanitize((int) $this->entity).", 0) AND email = '".$this->db->escape($this->email)."'";
 			$resqltochecklogin = $this->db->query($sqltochecklogin);
 			if ($resqltochecklogin) {
@@ -1683,6 +1696,8 @@ class User extends CommonObject
 				if ($objtochecklogin && $objtochecklogin->nb > 0) {
 					$langs->load("errors");
 					$this->error = $langs->trans("ErrorEmailAlreadyExists", $this->email);
+					dol_syslog(get_class($this)."::create ".$this->error, LOG_DEBUG);
+					$this->db->rollback();
 					return -1;
 				}
 			}
