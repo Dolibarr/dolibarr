@@ -142,7 +142,7 @@ if ($mode) {
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c on d.country = c.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.rowid";
 		$sql .= " WHERE d.entity IN (".getEntity('adherent').")";
-		$sql .= " AND d.statut <> "Adherent::STATUS_DRAFT;
+		$sql .= " AND d.statut <> ".Adherent::STATUS_DRAFT;
 		$sql .= " GROUP BY c.label, c.code, d.town";
 		//print $sql;
 	}
