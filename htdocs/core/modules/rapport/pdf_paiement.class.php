@@ -209,7 +209,7 @@ class pdf_paiement
 					$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 				}
 				if (!empty($socid)) {
-					$sql .= " AND s.rowid = ".$socid;
+					$sql .= " AND s.rowid = ".((int) $socid);
 				}
 				// If global param PAYMENTS_REPORT_GROUP_BY_MOD is set, payement are ordered by paiement_code
 				if (!empty($conf->global->PAYMENTS_REPORT_GROUP_BY_MOD)) {

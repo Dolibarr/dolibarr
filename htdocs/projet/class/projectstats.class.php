@@ -68,7 +68,7 @@ class ProjectStats extends Stats
 		$sql .= ", ".MAIN_DB_PREFIX."c_lead_status as cls";
 		$sql .= $this->buildWhere();
 		// For external user, no check is done on company permission because readability is managed by public status of project and assignement.
-		//if ($socid > 0) $sql.= " AND t.fk_soc = ".$socid;
+		//if ($socid > 0) $sql.= " AND t.fk_soc = ".((int) $socid);
 		// No check is done on company permission because readability is managed by public status of project and assignement.
 		//if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";
 		$sql .= " AND t.fk_opp_status = cls.rowid";
@@ -133,7 +133,7 @@ class ProjectStats extends Stats
 		//	$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "societe_commerciaux as sc ON sc.fk_soc=t.fk_soc AND sc.fk_user=" . $user->id;
 		$sql .= $this->buildWhere();
 		// For external user, no check is done on company permission because readability is managed by public status of project and assignement.
-		//if ($socid > 0) $sql.= " AND t.fk_soc = ".$socid;
+		//if ($socid > 0) $sql.= " AND t.fk_soc = ".((int) $socid);
 		// No check is done on company permission because readability is managed by public status of project and assignement.
 		//if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";
 		$sql .= " GROUP BY year";

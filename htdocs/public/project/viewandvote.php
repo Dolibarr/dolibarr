@@ -89,9 +89,16 @@ if ($resultproject < 0) {
 	$errmsg .= $project->error;
 }
 
+// Security check
+if (empty($conf->eventorganization->enabled)) {
+	accessforbidden('', 0, 0, 1);
+}
+
+
 /*
  * Actions
  */
+
 $tmpthirdparty = new Societe($db);
 
 $listOfConferences = $listOfBooths = '<tr><td>'.$langs->trans('Label').'</td>

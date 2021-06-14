@@ -136,10 +136,10 @@ if ($date && $dateIsValid) {	// Avoid heavy sql if mandatory date is not defined
 		$sql .= " AND w.statut IN (".$db->sanitize(implode(',', $warehouseStatus)).")";
 	}
 	if ($productid > 0) {
-		$sql .= " AND ps.fk_product = ".$productid;
+		$sql .= " AND ps.fk_product = ".((int) $productid);
 	}
 	if ($fk_warehouse > 0) {
-		$sql .= " AND ps.fk_entrepot = ".$fk_warehouse;
+		$sql .= " AND ps.fk_entrepot = ".((int) $fk_warehouse);
 	}
 	$sql .= " GROUP BY fk_product, fk_entrepot";
 	//print $sql;

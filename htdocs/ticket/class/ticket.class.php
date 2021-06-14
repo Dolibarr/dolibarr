@@ -1829,19 +1829,22 @@ class Ticket extends CommonObject
 	public function searchSocidByEmail($email, $type = '0', $filters = array(), $clause = 'AND')
 	{
 		$thirdparties = array();
+		$case = 0;
+		$exact = 0;
 
 		// Generation requete recherche
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe";
 		$sql .= " WHERE entity IN (".getEntity('ticket', 1).")";
 		if (!empty($type)) {
 			if ($type == 1 || $type == 2) {
-				$sql .= " AND client = ".$type;
+				$sql .= " AND client = ".((int) $type);
 			} elseif ($type == 3) {
 				$sql .= " AND fournisseur = 1";
 			}
 		}
 		if (!empty($email)) {
 			if (!$exact) {
+				$regs = array();
 				if (preg_match('/^([\*])?[^*]+([\*])?$/', $email, $regs) && count($regs) > 1) {
 					$email = str_replace('*', '%', $email);
 				} else {

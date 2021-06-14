@@ -109,7 +109,7 @@ if ($user->id <> $id && !$canreaduser) {
 }
 
 // Load translation files required by page
-$langs->loadLangs(array('users', 'companies', 'ldap', 'admin', 'hrm', 'stocks'));
+$langs->loadLangs(array('users', 'companies', 'ldap', 'admin', 'hrm', 'stocks', 'other'));
 
 $object = new User($db);
 $extrafields = new ExtraFields($db);
@@ -444,16 +444,22 @@ if (empty($reshook)) {
 
 				$object->lang = GETPOST('default_lang', 'aZ09');
 
-				if (!empty($conf->multicompany->enabled)) {
-					if (GETPOST("superadmin")) {
-						$object->entity = 0;
-					} elseif (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-						$object->entity = 1; // all users in master entity
+				// Do we update also ->entity ?
+				if (!empty($conf->multicompany->enabled)) {	// If multicompany is not enabled, we never update the entity of a user.
+					if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+						$object->entity = 1; // all users are in master entity
 					} else {
-						$object->entity = (!GETPOST('entity', 'int') ? 0 : GETPOST('entity', 'int'));
+						// A user should not be able to move a user into another entity. Only superadmin should be able to do this.
+						if ($user->entity == 0 && $user->admin) {
+							if (GETPOST("superadmin")) {
+								// We try to set the user as superadmin.
+								$object->entity = 0;
+							} else {
+								// We try to change the entity of user
+								$object->entity = (GETPOSTISSET('entity') ? GETPOSTINT('entity') : $object->entity);
+							}
+						}
 					}
-				} else {
-					$object->entity = (!GETPOST('entity', 'int') ? 0 : GETPOST('entity', 'int'));
 				}
 
 				// Fill array 'array_options' with data from add form

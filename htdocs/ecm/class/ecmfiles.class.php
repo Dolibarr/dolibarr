@@ -425,7 +425,7 @@ class EcmFiles extends CommonObject
 			//$sql .= " AND t.entity = ".$conf->entity;							// hashforshare already unique
 		} elseif ($src_object_type && $src_object_id) {
 			// Warning: May return several record, and only first one is returned !
-			$sql .= " AND t.src_object_type ='".$this->db->escape($src_object_type)."' AND t.src_object_id = ".$this->db->escape($src_object_id);
+			$sql .= " AND t.src_object_type = '".$this->db->escape($src_object_type)."' AND t.src_object_id = ".((int) $src_object_id);
 			$sql .= " AND t.entity = ".$conf->entity;
 		} else {
 			$sql .= ' AND t.rowid = '.((int) $id); // rowid already unique

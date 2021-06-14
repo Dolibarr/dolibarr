@@ -263,7 +263,7 @@ class AccountancyCategory // extends CommonObject
 		if ($id) {
 			$sql .= " WHERE t.rowid = ".((int) $id);
 		} else {
-			$sql .= " WHERE t.entity IN (".getEntity('c_accounting_category').")"; // Dont't use entity if you use rowid
+			$sql .= " WHERE t.entity IN (".getEntity('c_accounting_category').")"; // Don't use entity if you use rowid
 			if ($code) {
 				$sql .= " AND t.code = '".$this->db->escape($code)."'";
 			} elseif ($label) {
@@ -675,7 +675,7 @@ class AccountancyCategory // extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_accounting_category as c";
 		$sql .= " WHERE c.active = 1";
 		$sql .= " AND c.entity = ".$conf->entity;
-		$sql .= " AND (c.fk_country = ".$mysoc->country_id." OR c.fk_country = 0)";
+		$sql .= " AND (c.fk_country = ".((int) $mysoc->country_id)." OR c.fk_country = 0)";
 		$sql .= " AND cat.rowid = t.fk_accounting_category";
 		$sql .= " AND t.entity = ".$conf->entity;
 		$sql .= " ORDER BY cat.position ASC";
@@ -806,7 +806,7 @@ class AccountancyCategory // extends CommonObject
 		if ($categorytype >= 0) {
 			$sql .= " AND c.category_type = 1";
 		}
-		$sql .= " AND (c.fk_country = ".$mysoc->country_id." OR c.fk_country = 0)";
+		$sql .= " AND (c.fk_country = ".((int) $mysoc->country_id)." OR c.fk_country = 0)";
 		$sql .= " ORDER BY c.position ASC";
 
 		$resql = $this->db->query($sql);

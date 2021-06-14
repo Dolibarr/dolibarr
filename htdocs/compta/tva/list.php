@@ -171,16 +171,16 @@ if (!empty($search_datepayment_end)) {
 	$sql .= ' AND t.datep <= "'.$db->idate($search_datepayment_end).'"';
 }
 if (!empty($search_type) && $search_type > 0) {
-	$sql .= ' AND t.fk_typepayment='.$search_type;
+	$sql .= ' AND t.fk_typepayment = '.((int) $search_type);
 }
 if (!empty($search_account) && $search_account > 0) {
-	$sql .= ' AND t.fk_account='.$search_account;
+	$sql .= ' AND t.fk_account = '.((int) $search_account);
 }
 if (!empty($search_amount)) {
 	$sql .= natural_search('t.amount', price2num(trim($search_amount)), 1);
 }
 if ($search_status != '' && $search_status >= 0) {
-	$sql .= " AND t.paye = ".$db->escape($search_status);
+	$sql .= " AND t.paye = ".((int) $search_status);
 }
 
 $sql .= " GROUP BY t.rowid, t.amount, t.label, t.datev, t.datep, t.paye, t.fk_typepayment, t.fk_account, ba.label, ba.ref, ba.number, ba.account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.clos, t.num_payment, pst.code";

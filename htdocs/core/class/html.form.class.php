@@ -2497,18 +2497,18 @@ class Form
 		}
 
 		if ($finished == 0) {
-			$sql .= " AND p.finished = ".$finished;
+			$sql .= " AND p.finished = ".((int) $finished);
 		} elseif ($finished == 1) {
-			$sql .= " AND p.finished = ".$finished;
+			$sql .= " AND p.finished = ".((int) $finished);
 			if ($status >= 0) {
-				$sql .= " AND p.tosell = ".$status;
+				$sql .= " AND p.tosell = ".((int) $status);
 			}
 		} elseif ($status >= 0) {
-			$sql .= " AND p.tosell = ".$status;
+			$sql .= " AND p.tosell = ".((int) $status);
 		}
 		// Filter by product type
 		if (strval($filtertype) != '') {
-			$sql .= " AND p.fk_product_type = ".$filtertype;
+			$sql .= " AND p.fk_product_type = ".((int) $filtertype);
 		} elseif (empty($conf->product->enabled)) { // when product module is disabled, show services only
 			$sql .= " AND p.fk_product_type = 1";
 		} elseif (empty($conf->service->enabled)) { // when service module is disabled, show products only
@@ -3828,7 +3828,6 @@ class Form
 		$sql = "SELECT id, code, libelle as label, type, active";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_paiement";
 		$sql .= " WHERE entity IN (".getEntity('c_paiement').")";
-		//if ($active >= 0) $sql.= " AND active = ".$active;
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -4061,7 +4060,6 @@ class Form
 		$sql = "SELECT rowid, code, label, active";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_transport_mode";
 		$sql .= " WHERE entity IN (".getEntity('c_transport_mode').")";
-		//if ($active >= 0) $sql.= " AND active = ".$active;
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -7410,7 +7408,7 @@ class Form
 			}
 		}
 
-		$lis = '';
+		$listoffieldsforselection = '';
 		$listcheckedstring = '';
 
 		foreach ($array as $key => $val) {
@@ -7421,13 +7419,18 @@ class Form
 				unset($array[$key]); // We don't want this field
 				continue;
 			}
+			if (!empty($val['type']) && $val['type'] == 'separate') {
+				// Field remains in array but we don't add it into $listoffieldsforselection
+				//$listoffieldsforselection .= '<li>-----</li>';
+				continue;
+			}
 			if ($val['label']) {
 				if (!empty($val['langfile']) && is_object($langs)) {
 					$langs->load($val['langfile']);
 				}
 
 				// Note: $val['checked'] <> 0 means we must show the field into the combo list
-				$lis .= '<li><input type="checkbox" id="checkbox'.$key.'" value="'.$key.'"'.((empty($val['checked']) && $val['checked'] != '-1') ? '' : ' checked="checked"').'/><label for="checkbox'.$key.'">'.dol_escape_htmltag($langs->trans($val['label'])).'</label></li>';
+				$listoffieldsforselection .= '<li><input type="checkbox" id="checkbox'.$key.'" value="'.$key.'"'.((empty($val['checked']) && $val['checked'] != '-1') ? '' : ' checked="checked"').'/><label for="checkbox'.$key.'">'.dol_escape_htmltag($langs->trans($val['label'])).'</label></li>';
 				$listcheckedstring .= (empty($val['checked']) ? '' : $key.',');
 			}
 		}
@@ -7444,7 +7447,7 @@ class Form
             <dd class="dropdowndd">
                 <div class="multiselectcheckbox'.$htmlname.'">
                     <ul class="ul'.$htmlname.'">
-                    '.$lis.'
+                    '.$listoffieldsforselection.'
                     </ul>
                 </div>
             </dd>

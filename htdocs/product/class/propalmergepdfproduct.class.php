@@ -408,10 +408,10 @@ class Propalmergepdfproduct extends CommonObject
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."propal_merge_pdf_product";
-			$sql .= " WHERE fk_product=".$product_id;
+			$sql .= " WHERE fk_product = ".((int) $product_id);
 
 			if ($conf->global->MAIN_MULTILANGS && !empty($lang_id)) {
-				$sql .= " AND lang='".$this->db->escape($lang_id)."'";
+				$sql .= " AND lang = '".$this->db->escape($lang_id)."'";
 			}
 
 			dol_syslog(__METHOD__, LOG_DEBUG);

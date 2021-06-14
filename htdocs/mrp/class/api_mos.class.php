@@ -137,14 +137,14 @@ class Mos extends DolibarrApi
 			$sql .= " AND t.fk_soc = sc.fk_soc";
 		}
 		if ($restrictonsocid && $socid) {
-			$sql .= " AND t.fk_soc = ".$socid;
+			$sql .= " AND t.fk_soc = ".((int) $socid);
 		}
 		if ($restrictonsocid && $search_sale > 0) {
 			$sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
 		}
 		// Insert sale filter
 		if ($restrictonsocid && $search_sale > 0) {
-			$sql .= " AND sc.fk_user = ".$search_sale;
+			$sql .= " AND sc.fk_user = ".((int) $search_sale);
 		}
 		if ($sqlfilters) {
 			if (!DolibarrApi::_checkFilters($sqlfilters)) {
@@ -275,6 +275,71 @@ class Mos extends DolibarrApi
 				'message' => 'MO deleted'
 			)
 		);
+	}
+
+
+	/**
+	 * Produce and consume
+	 *
+	 * Example:
+	 * {
+	 *   "inventorylabel": "Produce and consume using API",
+	 *   "inventorycode": "PRODUCEAPI-YY-MM-DD",
+	 *   "autoclose": 1,
+	 *   "arraytoconsume": [],
+	 *   "arraytoproduce": []
+	 * }
+	 *
+	 * @param int       $id        		ID of state
+	 * @param array 	$request_data   Request datas
+	 *
+	 * @url     POST {id}/produceandconsume
+	 *
+	 * @return int  ID of MO
+	 */
+	public function produceAndConsume($id, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->rights->mrp->write) {
+			throw new RestException(401, 'Not enough permission');
+		}
+		$result = $this->mo->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'MO not found');
+		}
+
+		if ($this->mo->status != Mo::STATUS_VALIDATED && $this->mo->status != Mo::STATUS_INPROGRESS) {
+			throw new RestException(401, 'Error bad status of MO');
+		}
+
+		$labelmovement = '';
+		$codemovement = '';
+		$autoclose = 1;
+		$arraytoconsume = array();
+		$arraytoproduce = array();
+
+		foreach ($request_data as $field => $value) {
+			if ($field == 'inventorylabel') {
+				$labelmovement = $value;
+			}
+			if ($field == 'inventorycode') {
+				$codemovement = $value;
+			}
+			if ($field == 'autoclose') {
+				$autoclose = $value;
+			}
+		}
+
+		if (empty($labelmovement)) {
+			throw new RestException(500, "Field inventorylabel not prodivded");
+		}
+		if (empty($codemovement)) {
+			throw new RestException(500, "Field inventorycode not prodivded");
+		}
+
+		// TODO Add code for consume and produce...
+		throw new RestException(500, "Feature not yet available");
+
+		return $this->mo->id;
 	}
 
 

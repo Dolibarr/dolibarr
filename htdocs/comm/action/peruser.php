@@ -637,7 +637,7 @@ if ($filtert > 0 || $usergroup > 0) {
 		$sql .= "ar.fk_element = ".$filtert;
 	}
 	if ($usergroup > 0) {
-		$sql .= ($filtert > 0 ? " OR " : "")." ugu.fk_usergroup = ".$usergroup;
+		$sql .= ($filtert > 0 ? " OR " : "")." ugu.fk_usergroup = ".((int) $usergroup);
 	}
 	$sql .= ")";
 }
@@ -899,7 +899,7 @@ while ($currentdaytoshow < $lastdaytoshow) {
 		}
 		$sql .= " WHERE u.statut = 1 AND u.entity IN (".getEntity('user').")";
 		if ($usergroup > 0) {
-			$sql .= " AND ug.fk_usergroup = ".$usergroup;
+			$sql .= " AND ug.fk_usergroup = ".((int) $usergroup);
 		}
 		//print $sql;
 		$resql = $db->query($sql);

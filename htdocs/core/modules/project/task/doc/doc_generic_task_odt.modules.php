@@ -416,7 +416,7 @@ class doc_generic_task_odt extends ModelePDFTask
 		$texte .= $conf->global->PROJECT_TASK_ADDON_PDF_ODT_PATH;
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button">';
+		$texte .= '<input type="submit" class="button small" value="'.$langs->trans("Modify").'" name="Button">';
 		$texte .= '<br></div></div>';
 
 		// Scan directories
@@ -657,7 +657,7 @@ class doc_generic_task_odt extends ModelePDFTask
 					$sql .= ", u.lastname, u.firstname";
 					$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
 					$sql .= " , ".MAIN_DB_PREFIX."user as u";
-					$sql .= " WHERE t.fk_task =".$object->id;
+					$sql .= " WHERE t.fk_task =".((int) $object->id);
 					$sql .= " AND t.fk_user = u.rowid";
 					$sql .= " ORDER BY t.task_date DESC";
 

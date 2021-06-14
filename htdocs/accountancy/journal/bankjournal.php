@@ -1108,8 +1108,8 @@ if (empty($action) || $action == 'view') {
 				print $reflabel;
 				print "</td>";
 				print '<td class="center">'.$val["type_payment"]."</td>";
-				print '<td class="right nowraponall">'.($mt >= 0 ? price($mt) : '')."</td>";
-				print '<td class="right nowraponall">'.($mt < 0 ? price(-$mt) : '')."</td>";
+				print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
+				print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
 				print "</tr>";
 			}
 		}
@@ -1222,8 +1222,8 @@ if (empty($action) || $action == 'view') {
 					print "</td>";
 					print "<td>".$reflabel."</td>";
 					print '<td class="center">'.$val["type_payment"]."</td>";
-					print '<td class="right nowraponall">'.($mt < 0 ? price(-$mt) : '')."</td>";
-					print '<td class="right nowraponall">'.($mt >= 0 ? price($mt) : '')."</td>";
+					print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
+					print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
 					print "</tr>";
 				}
 			}
@@ -1259,8 +1259,8 @@ if (empty($action) || $action == 'view') {
 					print "</td>";
 					print "<td>".$reflabel."</td>";
 					print '<td class="center">'.$val["type_payment"]."</td>";
-					print '<td class="right nowraponall">'.($mt < 0 ? price(-$mt) : '')."</td>";
-					print '<td class="right nowraponall">'.($mt >= 0 ? price($mt) : '')."</td>";
+					print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
+					print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
 					print "</tr>";
 				}
 			}
@@ -1320,7 +1320,7 @@ function getSourceDocRef($val, $typerecord)
 	if ($typerecord == 'payment') {
 		$sqlmid = 'SELECT payfac.fk_facture as id, f.ref as ref';
 		$sqlmid .= " FROM ".MAIN_DB_PREFIX."paiement_facture as payfac, ".MAIN_DB_PREFIX."facture as f";
-		$sqlmid .= " WHERE payfac.fk_facture = f.rowid AND payfac.fk_paiement=".$val["paymentid"];
+		$sqlmid .= " WHERE payfac.fk_facture = f.rowid AND payfac.fk_paiement=".((int) $val["paymentid"]);
 		$ref = $langs->transnoentitiesnoconv("Invoice");
 	} elseif ($typerecord == 'payment_supplier') {
 		$sqlmid = 'SELECT payfac.fk_facturefourn as id, f.ref';

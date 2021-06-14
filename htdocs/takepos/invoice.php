@@ -478,7 +478,7 @@ if (($action == "addline" || $action == "freezone") && $placeid == 0) {
 		if ($placeid < 0) {
 			dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
 		}
-		$sql = "UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' where rowid=".$placeid;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' where rowid = ".((int) $placeid);
 		$db->query($sql);
 	}
 }
