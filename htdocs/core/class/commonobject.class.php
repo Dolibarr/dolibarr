@@ -6399,7 +6399,7 @@ abstract class CommonObject
 		// Validation tests and output
 		$fieldValidationErrorMsg = '';
 		$validationClass = '';
-		if($mode == 0){
+		if ($mode == 0) {
 			$fieldValidationErrorMsg = $this->getFieldError($key);
 			if (!empty($fieldValidationErrorMsg)) {
 				$validationClass = ' --error'; // the -- is use as class state in css :  .--error can't be be defined alone it must be define with another class like .my-class.--error or input.--error
@@ -7318,6 +7318,7 @@ abstract class CommonObject
 	 * clear validation message result for a field
 	 *
 	 * @param string $fieldKey Key of attribute to clear
+	 * @return null
 	 */
 	public function clearFieldError($fieldKey)
 	{
@@ -7328,7 +7329,9 @@ abstract class CommonObject
 	/**
 	 * set validation error message a field
 	 *
-	 * @param  string  $fieldKey            Key of attribute
+	 * @param string $fieldKey Key of attribute
+	 * @param string $msg the field error message
+	 * @return null
 	 */
 	public function setFieldError($fieldKey, $msg = '')
 	{
@@ -7339,6 +7342,7 @@ abstract class CommonObject
 	 * get field error message
 	 *
 	 * @param  string  $fieldKey            Key of attribute
+	 * @return string
 	 */
 	public function getFieldError($fieldKey)
 	{
@@ -7360,7 +7364,7 @@ abstract class CommonObject
 	{
 		global $langs;
 
-		if(!class_exists('Validate')){ require_once DOL_DOCUMENT_ROOT . '/core/class/validate.class.php'; }
+		if (!class_exists('Validate')) { require_once DOL_DOCUMENT_ROOT . '/core/class/validate.class.php'; }
 
 		$this->clearFieldError($fieldKey);
 
@@ -7434,23 +7438,22 @@ abstract class CommonObject
 		//
 
 		// Required test and empty value
-		if($required && !$validate->isNotEmptyString($fieldValue)){
+		if ($required && !$validate->isNotEmptyString($fieldValue)) {
 			$this->setFieldError($fieldKey, $validate->error);
 			return false;
-		}
-		elseif (!$required && !$validate->isNotEmptyString($fieldValue)) {
+		} elseif (!$required && !$validate->isNotEmptyString($fieldValue)) {
 			// if no value sent and the field is not mandatory, no need to perform tests
 			return true;
 		}
 
 		// MAX Size test
-		if(!empty($maxSize) && !$validate->isMaxLength($fieldValue, $maxSize)){
+		if (!empty($maxSize) && !$validate->isMaxLength($fieldValue, $maxSize)) {
 			$this->setFieldError($fieldKey, $validate->error);
 			return false;
 		}
 
 		// MIN Size test
-		if(!empty($minSize) && !$validate->isMinLength($fieldValue, $minSize)){
+		if (!empty($minSize) && !$validate->isMinLength($fieldValue, $minSize)) {
 			$this->setFieldError($fieldKey, $validate->error);
 			return false;
 		}
@@ -7465,56 +7468,42 @@ abstract class CommonObject
 				return false;
 			} else { return true; }
 		} elseif ($type == 'duration') {
-			if(!$validate->isDuration($fieldValue)){
+			if (!$validate->isDuration($fieldValue)) {
 				$this->setFieldError($fieldKey, $validate->error);
 				return false;
 			} else { return true; }
-		}
-		elseif (in_array($type, array('double', 'real', 'price')))
-		{
+		} elseif (in_array($type, array('double', 'real', 'price'))) {
 			// is numeric
-			if(!$validate->isDuration($fieldValue)){
+			if (!$validate->isDuration($fieldValue)) {
 				$this->setFieldError($fieldKey, $validate->error);
 				return false;
 			} else { return true; }
-		}
-		elseif ($type == 'boolean')
-		{
-			if(!$validate->isBool($fieldValue)){
+		} elseif ($type == 'boolean') {
+			if (!$validate->isBool($fieldValue)) {
 				$this->setFieldError($fieldKey, $validate->error);
 				return false;
 			} else { return true; }
-		}
-		elseif ($type == 'mail')
-		{
-			if(!$validate->isEmail($fieldValue)){
+		} elseif ($type == 'mail') {
+			if (!$validate->isEmail($fieldValue)) {
 				$this->setFieldError($fieldKey, $validate->error);
 				return false;
 			}
-		}
-		elseif ($type == 'url')
-		{
-			if(!$validate->isUrl($fieldValue)){
+		} elseif ($type == 'url') {
+			if (!$validate->isUrl($fieldValue)) {
 				$this->setFieldError($fieldKey, $validate->error);
 				return false;
 			} else { return true; }
-		}
-		elseif ($type == 'phone')
-		{
+		} elseif ($type == 'phone') {
 			if (!$validate->isPhone($fieldValue)) {
 				$this->setFieldError($fieldKey, $validate->error);
 				return false;
 			} else { return true; }
-		}
-		elseif ($type == 'select' || $type == 'radio')
-		{
+		} elseif ($type == 'select' || $type == 'radio') {
 			if (!isset($param['options'][$fieldValue])) {
 				$this->error = $langs->trans('RequireValidValue');
 				return false;
 			} else { return true; }
-		}
-		elseif ($type == 'sellist' || $type == 'chkbxlst')
-		{
+		} elseif ($type == 'sellist' || $type == 'chkbxlst') {
 			$param_list = array_keys($param['options']);
 			$InfoFieldList = explode(":", $param_list[0]);
 			$value_arr = explode(',', $fieldValue);
@@ -7525,18 +7514,16 @@ abstract class CommonObject
 				$selectkey = $InfoFieldList[2];
 			}
 
-			if(!isInDb($value_arr, $InfoFieldList[0], $selectkey)){
+			if (!isInDb($value_arr, $InfoFieldList[0], $selectkey)) {
 				$this->setFieldError($fieldKey, $validate->error);
 				return false;
 			} else { return true; }
-		}
-		elseif ($type == 'link')
-		{
+		} elseif ($type == 'link') {
 			$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath'
 			$InfoFieldList = explode(":", $param_list[0]);
 			$classname = $InfoFieldList[0];
 			$classpath = $InfoFieldList[1];
-			if(!$validate->isFetchable($fieldValue, $classname, $classpath)){
+			if (!$validate->isFetchable($fieldValue, $classname, $classpath)) {
 				$this->setFieldError($fieldKey, $validate->error);
 				return false;
 			} else { return true; }
