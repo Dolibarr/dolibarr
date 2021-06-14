@@ -683,6 +683,10 @@ class ActionComm extends CommonObject
 	{
 		global $langs;
 
+		if (empty($id) && empty($ref) && empty($ref_ext) && empty($email_msgid)) {
+			return -1;
+		}
+
 		$sql = "SELECT a.id,";
 		$sql .= " a.id as ref,";
 		$sql .= " a.entity,";

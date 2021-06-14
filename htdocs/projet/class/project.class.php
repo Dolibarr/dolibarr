@@ -526,7 +526,9 @@ class Project extends CommonObject
 	{
 		global $conf;
 
-		if (empty($id) && empty($ref)) return -1;
+		if (empty($id) && empty($ref) && empty($ref_ext) && empty($email_msgid)) {
+			return -1;
+		}
 
 		$sql = "SELECT rowid, entity, ref, title, description, public, datec, opp_amount, budget_amount,";
 		$sql .= " tms, dateo, datee, date_close, fk_soc, fk_user_creat, fk_user_modif, fk_user_close, fk_statut as status, fk_opp_status, opp_percent,";
