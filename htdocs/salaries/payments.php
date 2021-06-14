@@ -550,9 +550,9 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 	// Date end period
 	print '<td class="center">'.dol_print_date($db->jdate($obj->dateep), 'day')."</td>\n";
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
 
 	// Date payment
 	print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
@@ -668,7 +668,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 if ($num == 0) {
 	$colspan = 1;
 	foreach ($arrayfields as $key => $val) { if (!empty($val['checked'])) {
-		$colspan++;
+			$colspan++;
 	}
 	}
 	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
