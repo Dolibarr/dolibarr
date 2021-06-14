@@ -765,19 +765,19 @@ foreach ($object->fields as $key => $val) {
 	if (!empty($arrayfields['t.'.$key]['checked'])) {
 		if ($key == 'type_code') {
 			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
-			$formTicket->selectTypesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 2, 1, 1, 0, ($val['css'] ? $val['css'] : 'maxwidth150'));
+			$formTicket->selectTypesTickets(dol_escape_htmltag(empty($search[$key]) ? '' : $search[$key]), 'search_'.$key.'', '', 2, 1, 1, 0, ($val['css'] ? $val['css'] : 'maxwidth150'));
 			print '</td>';
 		} elseif ($key == 'category_code') {
 			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
-			$formTicket->selectGroupTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 2, 1, 1, 0, ($val['css'] ? $val['css'] : 'maxwidth150'));
+			$formTicket->selectGroupTickets(dol_escape_htmltag(empty($search[$key]) ? '' : $search[$key]), 'search_'.$key.'', '', 2, 1, 1, 0, ($val['css'] ? $val['css'] : 'maxwidth150'));
 			print '</td>';
 		} elseif ($key == 'severity_code') {
 			print '<td class="liste_titre center'.($cssforfield ? ' '.$cssforfield : '').'">';
-			$formTicket->selectSeveritiesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 2, 1, 1, 0, ($val['css'] ? $val['css'] : 'maxwidth150'));
+			$formTicket->selectSeveritiesTickets(dol_escape_htmltag(empty($search[$key]) ? '' : $search[$key]), 'search_'.$key.'', '', 2, 1, 1, 0, ($val['css'] ? $val['css'] : 'maxwidth150'));
 			print '</td>';
 		} elseif ($key == 'fk_user_assign' || $key == 'fk_user_create') {
 			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
-			print $form->select_dolusers($search[$key], 'search_'.$key, 1, null, 0, '', '', '0', 0, 0, '', 0, '', ($val['css'] ? $val['css'] : 'maxwidth125'));
+			print $form->select_dolusers((empty($search[$key]) ? '' : $search[$key]), 'search_'.$key, 1, null, 0, '', '', '0', 0, 0, '', 0, '', ($val['css'] ? $val['css'] : 'maxwidth125'));
 			print '</td>';
 		} elseif ($key == 'fk_statut') {
 			$arrayofstatus = array();
@@ -791,7 +791,7 @@ foreach ($object->fields as $key => $val) {
 			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
 			//var_dump($arrayofstatus);var_dump($search['fk_statut']);var_dump(array_values($search[$key]));
 			$selectedarray = null;
-			if ($search[$key]) {
+			if (!empty($search[$key])) {
 				$selectedarray = array_values($search[$key]);
 			}
 			print Form::multiselectarray('search_fk_statut', $arrayofstatus, $selectedarray, 0, 0, 'minwidth100 maxwidth150', 1, 0, '', '', '');
@@ -832,7 +832,7 @@ foreach ($object->fields as $key => $val) {
 			} elseif (strpos($val['type'], 'integer:') === 0) {
 				print $object->showInputField($val, $key, $search[$key], '', '', 'search_', 'maxwidth150', 1);
 			} elseif (!preg_match('/^(date|timestamp)/', $val['type'])) {
-				print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
+				print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag(empty($search[$key]) ? '' : $search[$key]).'">';
 			}
 			print '</td>';
 		}
@@ -997,6 +997,12 @@ while ($i < min($num, $limit)) {
 			if (!empty($val['isameasure'])) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 't.'.$key;
+				}
+				if (!isset($totalarray['val'])) {
+					$totalarray['val'] = array();
+				}
+				if (!isset($totalarray['val']['t.'.$key])) {
+					$totalarray['val']['t.'.$key] = 0;
 				}
 				$totalarray['val']['t.'.$key] += $obj->$key;
 			}

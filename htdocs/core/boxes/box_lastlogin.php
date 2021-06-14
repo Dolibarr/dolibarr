@@ -93,7 +93,7 @@ class box_lastlogin extends ModeleBoxes
 			'text' => $langs->trans("PreviousConnexion"),
 		);
 		if ($user->datepreviouslogin) {
-			$tmp = dol_print_date($user->datepreviouslogin, "dayhour", 'tzuser');
+			$tmp = dol_print_date($user->datepreviouslogin, "dayhour", 'tzuserrel');
 		} else {
 			$tmp = $langs->trans("Unknown");
 		}

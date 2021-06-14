@@ -189,8 +189,8 @@ class PaymentDonation extends CommonObject
 			$sql .= " fk_user_creat, fk_bank)";
 			$sql .= " VALUES ($this->chid, '".$this->db->idate($now)."',";
 			$sql .= " '".$this->db->idate($this->datepaid)."',";
-			$sql .= " ".$totalamount.",";
-			$sql .= " ".$this->paymenttype.", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_public)."', ";
+			$sql .= " ".price2num($totalamount).",";
+			$sql .= " ".((int) $this->paymenttype).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_public)."', ";
 			$sql .= " ".($this->ext_payment_id ? "'".$this->db->escape($this->ext_payment_id)."'" : "null").", ".($this->ext_payment_site ? "'".$this->db->escape($this->ext_payment_site)."'" : "null").",";
 			$sql .= " ".$user->id.", 0)";
 

@@ -94,7 +94,7 @@ if (!$user->rights->societe->client->voir && !$socid) {
 $sql .= $clause." e.fk_statut = 0";
 $sql .= " AND e.entity IN (".getEntity('reception').")";
 if ($socid) {
-	$sql .= " AND c.fk_soc = ".$socid;
+	$sql .= " AND c.fk_soc = ".((int) $socid);
 }
 
 $resql = $db->query($sql);
@@ -160,7 +160,7 @@ if (!$user->rights->societe->client->voir && !$socid) {
 }
 $sql .= " AND e.fk_statut = 1";
 if ($socid) {
-	$sql .= " AND c.fk_soc = ".$socid;
+	$sql .= " AND c.fk_soc = ".((int) $socid);
 }
 $sql .= " ORDER BY e.date_delivery DESC";
 $sql .= $db->plimit($max, 0);
@@ -219,7 +219,7 @@ $sql .= " WHERE c.fk_soc = s.rowid";
 $sql .= " AND c.entity IN (".getEntity('supplier_order').")";
 $sql .= " AND c.fk_statut IN (".CommandeFournisseur::STATUS_ORDERSENT.", ".CommandeFournisseur::STATUS_RECEIVED_PARTIALLY.")";
 if ($socid > 0) {
-	$sql .= " AND c.fk_soc = ".$socid;
+	$sql .= " AND c.fk_soc = ".((int) $socid);
 }
 if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;

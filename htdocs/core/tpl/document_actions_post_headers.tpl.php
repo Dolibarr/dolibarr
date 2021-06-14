@@ -112,7 +112,7 @@ if (!isset($savingdocmask) || !empty($conf->global->MAIN_DISABLE_SUGGEST_REF_AS_
 	}
 }
 
-if (!is_object($formfile)) {
+if (empty($formfile) || !is_object($formfile)) {
 	$formfile = new FormFile($db);
 }
 

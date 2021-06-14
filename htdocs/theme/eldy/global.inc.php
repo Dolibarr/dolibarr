@@ -348,7 +348,7 @@ a.butStatus {
 	padding-right: 5px;
 	background-color: transparent;
 	color: var(--colortext) !important;
-	border: 2px solid var( --butactionbg);
+	border: 2px solid var( --butactionbg) !important;
 	margin: 0 0.45em !important;
 }
 
@@ -632,6 +632,9 @@ th .button {
 }
 .quatrevingtquinzepercent {
 	width: 95%;
+}
+.quatrevingtpercentminusx {
+	width: calc(80% - 52px);
 }
 textarea.centpercent {
 	width: 96%;
@@ -3891,7 +3894,7 @@ table.noborder.paymenttable {
 }
 .paymenttable tr td:first-child, .margintable tr td:first-child
 {
-	padding-left: 2px;
+	//padding-left: 2px;
 }
 .paymenttable, .margintable tr td {
 	height: 22px;

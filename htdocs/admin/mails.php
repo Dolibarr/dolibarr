@@ -302,7 +302,7 @@ if ($action == 'edit') {
 
 	// Disable
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_MAILS").'</td><td>';
-	print $form->selectyesno('MAIN_DISABLE_ALL_MAILS', $conf->global->MAIN_DISABLE_ALL_MAILS, 1);
+	print $form->selectyesno('MAIN_DISABLE_ALL_MAILS', getDolGlobalString('MAIN_DISABLE_ALL_MAILS'), 1);
 	print '</td></tr>';
 
 	// Force e-mail recipient
@@ -514,7 +514,7 @@ if ($action == 'edit') {
 	$liste['company'] = $langs->trans('CompanyEmail').' ('.(empty($conf->global->MAIN_INFO_SOCIETE_MAIL) ? $langs->trans("NotDefined") : $conf->global->MAIN_INFO_SOCIETE_MAIL).')';
 
 	print '<tr class="oddeven"><td>'.$langs->trans('MAIN_MAIL_DEFAULT_FROMTYPE').'</td><td>';
-	print $form->selectarray('MAIN_MAIL_DEFAULT_FROMTYPE', $liste, $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE, 0);
+	print $form->selectarray('MAIN_MAIL_DEFAULT_FROMTYPE', $liste, getDolGlobalString('MAIN_MAIL_DEFAULT_FROMTYPE'), 0);
 	print '</td></tr>';
 
 	// From
@@ -529,7 +529,7 @@ if ($action == 'edit') {
 
 	// Add user to select destinaries list
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ENABLED_USER_DEST_SELECT").'</td><td>';
-	print $form->selectyesno('MAIN_MAIL_ENABLED_USER_DEST_SELECT', $conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT, 1);
+	print $form->selectyesno('MAIN_MAIL_ENABLED_USER_DEST_SELECT', getDolGlobalString('MAIN_MAIL_ENABLED_USER_DEST_SELECT'), 1);
 	print '</td></tr>';
 
 	print '</table>';

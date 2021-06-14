@@ -606,7 +606,7 @@ if (empty($numref)) {
 				$sql .= ", ".MAIN_DB_PREFIX."bank_class as cl";
 				$sql .= " WHERE ct.rowid = cl.fk_categ";
 				$sql .= " AND ct.entity = ".$conf->entity;
-				$sql .= " AND cl.lineid = ".$objp->rowid;
+				$sql .= " AND cl.lineid = ".((int) $objp->rowid);
 
 				$resc = $db->query($sql);
 				if ($resc) {

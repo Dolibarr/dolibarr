@@ -645,7 +645,7 @@ if ($action == 'create') {
 
 			$sql .= " WHERE ps.fk_product = p.rowid";
 			$sql .= " AND ps.reel <> 0"; // We do not show if stock is 0 (no product in this warehouse)
-			$sql .= " AND ps.fk_entrepot = ".$object->id;
+			$sql .= " AND ps.fk_entrepot = ".((int) $object->id);
 
 			if ($separatedPMP) {
 				$sql .= " AND pa.fk_product = p.rowid AND pa.entity = ". (int) $conf->entity;

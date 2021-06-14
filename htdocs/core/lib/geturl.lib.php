@@ -24,7 +24,9 @@
 /**
  * Function to get a content from an URL (use proxy if proxy defined).
  * Support Dolibarr setup for timeout and proxy.
- * Enhancement of CURL to add an anti SSRF protection.
+ * Enhancement of CURL to add an anti SSRF protection:
+ * - you can set MAIN_SECURITY_ANTI_SSRF_SERVER_IP to set static ip of server
+ * - common local lookup ips like 127.*.*.* are automatically added
  *
  * @param	string	  $url 				    URL to call.
  * @param	string    $postorget		    'POST', 'GET', 'HEAD', 'PUT', 'PUTALREADYFORMATED', 'POSTALREADYFORMATED', 'DELETE'
@@ -199,12 +201,13 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 				}
 			}
 			if ($localurl == 1) {	// Only local url allowed (dangerous, may allow to get metadata on server or make internal port scanning)
+				// Deny ips NOT like 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 0.0.0.0/8, 169.254.0.0/16, 127.0.0.0/8 et 240.0.0.0/4, ::1/128, ::/128, ::ffff:0:0/96, fe80::/10...
 				if (filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
 					$info['http_code'] = 400;
 					$info['content'] = 'Error bad hostname '.$iptocheck.'. Must be a local URL.';
 					break;
 				}
-				if (!empty($conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP) && !in_array($iptocheck, explode(',', '127.0.0.1,::1,'.$conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP))) {
+				if (!empty($conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP) && !in_array($iptocheck, explode(',', $conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP))) {
 					$info['http_code'] = 400;
 					$info['content'] = 'Error bad hostname IP (IP is not a local IP defined into list MAIN_SECURITY_SERVER_IP). Must be a local URL in allowed list.';
 					break;

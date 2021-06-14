@@ -134,8 +134,8 @@ class box_clients extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right"',
-						'text' => dol_print_date($datem, "day")
+						'td' => 'class="center nowraponall"',
+						'text' => dol_print_date($datem, "day", 'tzuserrel')
 					);
 
 					$this->info_box_contents[$line][] = array(

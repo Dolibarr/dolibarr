@@ -3,6 +3,7 @@
  * Copyright (C) 2006-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2021		Waël Almoman			<info@almoman.com>
+ * Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +66,7 @@ $object = new stdClass(); // For triggers
 $error = 0;
 
 // Security check
-$id = GETPOST("id");
+$id = GETPOST("id", 'int');
 $securekeyreceived = GETPOST("securekey");
 $securekeytocompare = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
 
@@ -73,6 +74,12 @@ if ($securekeyreceived != $securekeytocompare) {
 	print $langs->trans('MissingOrBadSecureKey');
 	exit;
 }
+
+// Security check
+if (empty($conf->eventorganization->enabled)) {
+	accessforbidden('', 0, 0, 1);
+}
+
 
 /*
  * Actions

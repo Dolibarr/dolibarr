@@ -76,7 +76,7 @@ if ($action == 'presend') {
 	if (empty($object->ref_client)) {
 		$topicmail = $outputlangs->trans($defaulttopic, '__REF__');
 	} elseif (!empty($object->ref_client)) {
-		$topicmail = $outputlangs->trans($defaulttopic, '__REF__ (__REFCLIENT__)');
+		$topicmail = $outputlangs->trans($defaulttopic, '__REF__ (__REF_CLIENT__)');
 	}
 
 	// Build document if it not exists
@@ -194,7 +194,7 @@ if ($action == 'presend') {
 	$formmail->withto = $liste;
 	$formmail->withtofree = (GETPOSTISSET('sendto') ? (GETPOST('sendto', 'alphawithlgt') ? GETPOST('sendto', 'alphawithlgt') : '1') : '1');
 	$formmail->withtocc = $liste;
-	$formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;
+	$formmail->withtoccc = getDolGlobalString('MAIN_EMAIL_USECCC');
 	$formmail->withtopic = $topicmail;
 	$formmail->withfile = 2;
 	$formmail->withbody = 1;

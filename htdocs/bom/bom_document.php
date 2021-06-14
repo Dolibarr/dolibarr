@@ -76,7 +76,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 
 if ($id > 0 || !empty($ref)) {
-	$upload_dir = $conf->bom->multidir_output[$object->entity ? $object->entity : 1]."/bom/".get_exdir(0, 0, 0, 1, $object);
+	$upload_dir = $conf->bom->multidir_output[$object->entity ? $object->entity : 1]."/".get_exdir(0, 0, 0, 1, $object);
 }
 
 // Security check - Protection if external user
@@ -147,12 +147,12 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'bom';
-	$permission = $user->rights->bom->write;
+	$permissiontoadd = $user->rights->bom->write;
 	$permtoedit = $user->rights->bom->write;
 	$param = '&id='.$object->id;
 
 	//$relativepathwithnofile='bom/' . dol_sanitizeFileName($object->id).'/';
-	$relativepathwithnofile = 'bom/'.dol_sanitizeFileName($object->ref).'/';
+	$relativepathwithnofile = dol_sanitizeFileName($object->ref).'/';
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {

@@ -22,57 +22,8 @@
  *		\brief      List page for partnership
  */
 
-//if (! defined('NOREQUIREDB'))              define('NOREQUIREDB', '1');				// Do not create database handler $db
-//if (! defined('NOREQUIREUSER'))            define('NOREQUIREUSER', '1');				// Do not load object $user
-//if (! defined('NOREQUIRESOC'))             define('NOREQUIRESOC', '1');				// Do not load object $mysoc
-//if (! defined('NOREQUIRETRAN'))            define('NOREQUIRETRAN', '1');				// Do not load object $langs
-//if (! defined('NOSCANGETFORINJECTION'))    define('NOSCANGETFORINJECTION', '1');		// Do not check injection attack on GET parameters
-//if (! defined('NOSCANPOSTFORINJECTION'))   define('NOSCANPOSTFORINJECTION', '1');		// Do not check injection attack on POST parameters
-//if (! defined('NOCSRFCHECK'))              define('NOCSRFCHECK', '1');				// Do not check CSRF attack (test on referer + on token if option MAIN_SECURITY_CSRF_WITH_TOKEN is on).
-//if (! defined('NOTOKENRENEWAL'))           define('NOTOKENRENEWAL', '1');				// Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)
-//if (! defined('NOSTYLECHECK'))             define('NOSTYLECHECK', '1');				// Do not check style html tag into posted data
-//if (! defined('NOREQUIREMENU'))            define('NOREQUIREMENU', '1');				// If there is no need to load and show top and left menu
-//if (! defined('NOREQUIREHTML'))            define('NOREQUIREHTML', '1');				// If we don't need to load the html.form.class.php
-//if (! defined('NOREQUIREAJAX'))            define('NOREQUIREAJAX', '1');       	  	// Do not load ajax.lib.php library
-//if (! defined("NOLOGIN"))                  define("NOLOGIN", '1');					// If this page is public (can be called outside logged session). This include the NOIPCHECK too.
-//if (! defined('NOIPCHECK'))                define('NOIPCHECK', '1');					// Do not check IP defined into conf $dolibarr_main_restrict_ip
-//if (! defined("MAIN_LANG_DEFAULT"))        define('MAIN_LANG_DEFAULT', 'auto');					// Force lang to a particular value
-//if (! defined("MAIN_AUTHENTICATION_MODE")) define('MAIN_AUTHENTICATION_MODE', 'aloginmodule');	// Force authentication handler
-//if (! defined("NOREDIRECTBYMAINTOLOGIN"))  define('NOREDIRECTBYMAINTOLOGIN', 1);		// The main.inc.php does not make a redirect if not logged, instead show simple error message
-//if (! defined("FORCECSP"))                 define('FORCECSP', 'none');				// Disable all Content Security Policies
-//if (! defined('CSRFCHECK_WITH_TOKEN'))     define('CSRFCHECK_WITH_TOKEN', '1');		// Force use of CSRF protection with tokens even for GET
-//if (! defined('NOBROWSERNOTIF'))     		 define('NOBROWSERNOTIF', '1');				// Disable browser notification
-
 // Load Dolibarr environment
-$res = 0;
-// Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
-if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) {
-	$res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
-}
-// Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
-$tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME']; $tmp2 = realpath(__FILE__); $i = strlen($tmp) - 1; $j = strlen($tmp2) - 1;
-while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) {
-	$i--; $j--;
-}
-if (!$res && $i > 0 && file_exists(substr($tmp, 0, ($i + 1))."/main.inc.php")) {
-	$res = @include substr($tmp, 0, ($i + 1))."/main.inc.php";
-}
-if (!$res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php")) {
-	$res = @include dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php";
-}
-// Try main.inc.php using relative path
-if (!$res && file_exists("../main.inc.php")) {
-	$res = @include "../main.inc.php";
-}
-if (!$res && file_exists("../../main.inc.php")) {
-	$res = @include "../../main.inc.php";
-}
-if (!$res && file_exists("../../../main.inc.php")) {
-	$res = @include "../../../main.inc.php";
-}
-if (!$res) {
-	die("Include of main fails");
-}
+require '../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -80,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
 // load partnership libraries
-require_once __DIR__.'/class/partnership.class.php';
+require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
 
 // for other modules
 //dol_include_once('/othermodule/class/otherobject.class.php');
@@ -88,12 +39,12 @@ require_once __DIR__.'/class/partnership.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("partnership", "members", "other"));
 
-$action     = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
+$action = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $show_files = GETPOST('show_files', 'int'); // Show files area generated by bulk actions ?
-$confirm    = GETPOST('confirm', 'alpha'); // Result of a confirmation
-$cancel     = GETPOST('cancel', 'alpha'); // We click on a Cancel button
-$toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
+$confirm = GETPOST('confirm', 'alpha'); // Result of a confirmation
+$cancel = GETPOST('cancel', 'alpha'); // We click on a Cancel button
+$toselect = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'partnershiplist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
@@ -113,9 +64,9 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 // Initialize technical objects
-$object 		= new Partnership($db);
-$extrafields 	= new ExtraFields($db);
-$adherent 		= new Adherent($db);
+$object = new Partnership($db);
+$extrafields = new ExtraFields($db);
+$adherent = new Adherent($db);
 $diroutputmassaction = $conf->partnership->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('partnershiplist')); // Note that conf->hooks_modules contains array
 
@@ -159,7 +110,7 @@ if ($filter) {
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array();
 foreach ($object->fields as $key => $val) {
-	if ($val['searchall']) {
+	if (!empty($val['searchall'])) {
 		$fieldstosearchall['t.'.$key] = $val['label'];
 	}
 }
@@ -718,6 +669,12 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			if (!empty($val['isameasure'])) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 't.'.$key;
+				}
+				if (!isset($totalarray['val'])) {
+					$totalarray['val'] = array();
+				}
+				if (!isset($totalarray['val']['t.'.$key])) {
+					$totalarray['val']['t.'.$key] = 0;
 				}
 				$totalarray['val']['t.'.$key] += $object->$key;
 			}

@@ -1998,8 +1998,12 @@ if ($usercanedit && (($action == 'updatesource' || $action == 'updatecontent' ||
 
 			// Security analysis
 			$phpfullcodestring = dolKeepOnlyPhpCode($objectpage->content);
-			//print dol_escape_htmltag($phpfullcodestring);exit;
-			$forbiddenphpcommands = array("exec", "passthru", "system", "shell_exec", "proc_open", "eval", "dol_eval");
+
+			// First check forbidden commands
+			$forbiddenphpcommands = array();
+			if (empty($conf->global->WEBSITE_PHP_ALLOW_EXEC)) {    // If option is not on, we disallow functions to execute commands
+				$forbiddenphpcommands = array("exec", "passthru", "shell_exec", "system", "proc_open", "popen", "eval", "dol_eval", "executeCLI");
+			}
 			if (empty($conf->global->WEBSITE_PHP_ALLOW_WRITE)) {    // If option is not on, we disallow functions to write files
 				$forbiddenphpcommands = array_merge($forbiddenphpcommands, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "unlink", "mkdir", "rmdir", "symlink", "touch", "umask"));
 			}
@@ -2007,6 +2011,23 @@ if ($usercanedit && (($action == 'updatesource' || $action == 'updatecontent' ||
 				if (preg_match('/'.$forbiddenphpcommand.'\s*\(/ms', $phpfullcodestring)) {
 					$error++;
 					setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpcommand), null, 'errors');
+					if ($action == 'updatesource') {
+						$action = 'editsource';
+					}
+					if ($action == 'updatecontent') {
+						$action = 'editcontent';
+					}
+				}
+			}
+			// This char can be used to execute RCE for example using with echo `ls`
+			$forbiddenphpchars = array();
+			if (empty($conf->global->WEBSITE_PHP_ALLOW_DANGEROUS_CHARS)) {    // If option is not on, we disallow functions to execute commands
+				$forbiddenphpchars = array("`");
+			}
+			foreach ($forbiddenphpchars as $forbiddenphpchar) {
+				if (preg_match('/'.$forbiddenphpchar.'/ms', $phpfullcodestring)) {
+					$error++;
+					setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpchar), null, 'errors');
 					if ($action == 'updatesource') {
 						$action = 'editsource';
 					}
@@ -4098,9 +4119,9 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 	print $langs->trans("SearchReplaceInto");
 	print '</div>';
 	print '<div class="tagtd">';
-	print '<input type="checkbox" class="marginleftonly" name="optioncontent" value="content"'.((!GETPOSTISSET('buttonreplacesitesearch') || GETPOST('optioncontent', 'aZ09')) ? ' checked' : '').'> '.$langs->trans("Content").'<br>';
-	print '<input type="checkbox" class="marginleftonly" name="optionmeta" value="meta"'.(GETPOST('optionmeta', 'aZ09') ? ' checked' : '').'> '.$langs->trans("Title").' | '.$langs->trans("Description").' | '.$langs->trans("Keywords").'<br>';
-	print '<input type="checkbox" class="marginleftonly" name="optionsitefiles" value="sitefiles"'.(GETPOST('optionsitefiles', 'aZ09') ? ' checked' : '').'> '.$langs->trans("GlobalCSSorJS").'<br>';
+	print '<input type="checkbox" class="marginleftonly" id="checkboxoptioncontent" name="optioncontent" value="content"'.((!GETPOSTISSET('buttonreplacesitesearch') || GETPOST('optioncontent', 'aZ09')) ? ' checked' : '').'> <label for="checkboxoptioncontent">'.$langs->trans("Content").'</label><br>';
+	print '<input type="checkbox" class="marginleftonly" id="checkboxoptionmeta" name="optionmeta" value="meta"'.(GETPOST('optionmeta', 'aZ09') ? ' checked' : '').'> <label for="checkboxoptionmeta">'.$langs->trans("Title").' | '.$langs->trans("Description").' | '.$langs->trans("Keywords").'</label><br>';
+	print '<input type="checkbox" class="marginleftonly" id="checkboxoptionsitefiles" name="optionsitefiles" value="sitefiles"'.(GETPOST('optionsitefiles', 'aZ09') ? ' checked' : '').'> <label for="checkboxoptionsitefiles">'.$langs->trans("GlobalCSSorJS").'</label><br>';
 	print '</div>';
 	print '</div>';
 

@@ -70,7 +70,7 @@ if (empty($user->rights->takepos->run)) {
  */
 
 if ($action == "getTables") {
-	$sql = "SELECT rowid, entity, label, leftpos, toppos, floor FROM ".MAIN_DB_PREFIX."takepos_floor_tables where floor=".$floor;
+	$sql = "SELECT rowid, entity, label, leftpos, toppos, floor FROM ".MAIN_DB_PREFIX."takepos_floor_tables where floor = ".((int) $floor);
 	$resql = $db->query($sql);
 	$rows = array();
 	while ($row = $db->fetch_array($resql)) {

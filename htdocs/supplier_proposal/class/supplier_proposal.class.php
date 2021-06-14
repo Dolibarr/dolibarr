@@ -3211,7 +3211,7 @@ class SupplierProposalLine extends CommonObjectLine
 		$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposaldet SET";
 		$sql .= " description='".$this->db->escape($this->desc)."'";
 		$sql .= " , label=".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null");
-		$sql .= " , product_type=".$this->product_type;
+		$sql .= " , product_type=".((int) $this->product_type);
 		$sql .= " , date_start=".($this->date_start ? "'".$this->db->idate($this->date_start)."'" : "null");
 		$sql .= " , date_end=".($this->date_end ? "'".$this->db->idate($this->date_end)."'" : "null");
 		$sql .= " , tva_tx='".price2num($this->tva_tx)."'";
@@ -3233,11 +3233,11 @@ class SupplierProposalLine extends CommonObjectLine
 		$sql .= " , fk_product_fournisseur_price=".(!empty($this->fk_fournprice) ? "'".$this->db->escape($this->fk_fournprice)."'" : "null");
 		$sql .= " , buy_price_ht=".price2num($this->pa_ht);
 		if (strlen($this->special_code)) {
-			$sql .= " , special_code=".$this->special_code;
+			$sql .= " , special_code=".((int) $this->special_code);
 		}
 		$sql .= " , fk_parent_line=".($this->fk_parent_line > 0 ? $this->fk_parent_line : "null");
 		if (!empty($this->rang)) {
-			$sql .= ", rang=".$this->rang;
+			$sql .= ", rang=".((int) $this->rang);
 		}
 		$sql .= " , ref_fourn=".(!empty($this->ref_fourn) ? "'".$this->db->escape($this->ref_fourn)."'" : "null");
 		$sql .= " , fk_unit=".($this->fk_unit ? $this->fk_unit : 'null');

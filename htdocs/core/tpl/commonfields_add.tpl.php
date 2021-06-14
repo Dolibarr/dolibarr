@@ -82,7 +82,7 @@ foreach ($object->fields as $key => $val) {
 	} else {
 		$value = GETPOST($key, 'alphanohtml');
 	}
-	if ($val['noteditable']) {
+	if (!empty($val['noteditable'])) {
 		print $object->showOutputField($val, $key, $value, '', '', '', 0);
 	} else {
 		print $object->showInputField($val, $key, $value, '', '', '', 0);

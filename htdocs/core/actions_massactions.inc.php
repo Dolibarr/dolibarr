@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2018	   Nicolas ZABOURI	<info@inovea-conseil.com>
+ * Copyright (C) 2018-2021 Nicolas ZABOURI	<info@inovea-conseil.com>
  * Copyright (C) 2018 	   Juanjo Menent  <jmenent@2byte.es>
  * Copyright (C) 2019 	   Ferran Marcet  <fmarcet@2byte.es>
  * Copyright (C) 2019-2021 Frédéric France <frederic.france@netlogic.fr>
@@ -712,7 +712,7 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 
 				for ($i = 0; $i < $num; $i++) {
 					$desc = ($lines[$i]->desc ? $lines[$i]->desc : '');
-					// If we build one invoice for several order, we must put the invoice of order on the line
+					// If we build one invoice for several orders, we must put the ref of order on the invoice line
 					if (!empty($createbills_onebythird)) {
 						$desc = dol_concatdesc($desc, $langs->trans("Order").' '.$cmd->ref.' - '.dol_print_date($cmd->date, 'day'));
 					}
@@ -771,6 +771,8 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 							$lines[$i]->fetch_optionals();
 							$array_options = $lines[$i]->array_options;
 						}
+
+						$objecttmp->context['createfromclone'];
 
 						$result = $objecttmp->addline(
 							$desc,
@@ -1267,7 +1269,7 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 			if ($nbok > 1) {
 				setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
 			} else {
-				setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+				setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 			}
 			$db->commit();
 		} else {
@@ -1330,7 +1332,7 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 		if ($nbok > 1) {
 			setEventMessages($langs->trans("RecordsDeleted", $nbok), null, 'mesgs');
 		} else {
-			setEventMessages($langs->trans("RecordDeleted", $nbok), null, 'mesgs');
+			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 		}
 		$db->commit();
 	} else {

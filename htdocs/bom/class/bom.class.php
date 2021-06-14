@@ -96,7 +96,7 @@ class BOM extends CommonObject
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>"Id",),
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'notnull'=> 1, 'default'=>1, 'index'=>1, 'position'=>5),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'noteditable'=>1, 'visible'=>4, 'position'=>10, 'notnull'=>1, 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of BOM", 'showoncombobox'=>'1',),
-		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'notnull'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'autofocusoncreate'=>1),
+		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'notnull'=>1, 'searchall'=>1, 'showoncombobox'=>'2', 'autofocusoncreate'=>1),
 		'bomtype' => array('type'=>'integer', 'label'=>'Type', 'enabled'=>1, 'visible'=>1, 'position'=>33, 'notnull'=>1, 'default'=>'0', 'arrayofkeyval'=>array(0=>'Manufacturing', 1=>'Disassemble'), 'css'=>'minwidth150', 'csslist'=>'minwidth150 center'),
 		//'bomtype' => array('type'=>'integer', 'label'=>'Type', 'enabled'=>1, 'visible'=>-1, 'position'=>32, 'notnull'=>1, 'default'=>'0', 'arrayofkeyval'=>array(0=>'Manufacturing')),
 		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php:1:(finished IS NULL or finished <> 0)', 'label'=>'Product', 'picto'=>'product', 'enabled'=>1, 'visible'=>1, 'position'=>35, 'notnull'=>1, 'index'=>1, 'help'=>'ProductBOMHelp', 'css'=>'maxwidth500'),
@@ -614,8 +614,8 @@ class BOM extends CommonObject
 		$sql .= " SET ref = '".$this->db->escape($num)."',";
 		$sql .= " status = ".self::STATUS_VALIDATED.",";
 		$sql .= " date_valid='".$this->db->idate($now)."',";
-		$sql .= " fk_user_valid = ".$user->id;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " fk_user_valid = ".((int) $user->id);
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::validate()", LOG_DEBUG);
 		$resql = $this->db->query($sql);

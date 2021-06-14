@@ -110,8 +110,8 @@ class ConferenceOrBooth extends ActionComm
 		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1::eventorganization', 'label'=>'Project', 'enabled'=>'1', 'position'=>52, 'notnull'=>-1, 'visible'=>-1, 'index'=>1,),
 		'note' => array('type'=>'text', 'label'=>'Description', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>1,),
 		'fk_action' => array('type'=>'sellist:c_actioncomm:libelle:id::module LIKE (\'%@eventorganization\')', 'label'=>'Format', 'enabled'=>'1', 'position'=>60, 'notnull'=>1, 'visible'=>1,),
-		'datep' => array('type'=>'datetime', 'label'=>'DateStart', 'enabled'=>'1', 'position'=>70, 'notnull'=>0, 'visible'=>1, 'showoncombobox'=>'1',),
-		'datep2' => array('type'=>'datetime', 'label'=>'DateEnd', 'enabled'=>'1', 'position'=>71, 'notnull'=>0, 'visible'=>1, 'showoncombobox'=>'1',),
+		'datep' => array('type'=>'datetime', 'label'=>'DateStart', 'enabled'=>'1', 'position'=>70, 'notnull'=>0, 'visible'=>1, 'showoncombobox'=>'2',),
+		'datep2' => array('type'=>'datetime', 'label'=>'DateEnd', 'enabled'=>'1', 'position'=>71, 'notnull'=>0, 'visible'=>1, 'showoncombobox'=>'3',),
 		'datec' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
 		'fk_user_author' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
@@ -133,6 +133,8 @@ class ConferenceOrBooth extends ActionComm
 	public $import_key;
 	public $status;
 	// END MODULEBUILDER PROPERTIES
+
+	public $pubregister;
 
 	/**
 	 * Constructor
@@ -212,6 +214,8 @@ class ConferenceOrBooth extends ActionComm
 		$this->type_id=$this->fk_action;
 		$this->socid=$this->fk_soc;
 		$this->datef=$this->datep2;
+		$this->note_private=$this->note;
+		$this->fk_user_author=$this->fk_user_author;
 	}
 
 	/**

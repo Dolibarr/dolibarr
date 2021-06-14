@@ -109,7 +109,7 @@ if ($user->id <> $id && !$canreaduser) {
 }
 
 // Load translation files required by page
-$langs->loadLangs(array('users', 'companies', 'ldap', 'admin', 'hrm', 'stocks'));
+$langs->loadLangs(array('users', 'companies', 'ldap', 'admin', 'hrm', 'stocks', 'other'));
 
 $object = new User($db);
 $extrafields = new ExtraFields($db);
@@ -444,16 +444,22 @@ if (empty($reshook)) {
 
 				$object->lang = GETPOST('default_lang', 'aZ09');
 
-				if (!empty($conf->multicompany->enabled)) {
-					if (GETPOST("superadmin")) {
-						$object->entity = 0;
-					} elseif (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-						$object->entity = 1; // all users in master entity
+				// Do we update also ->entity ?
+				if (!empty($conf->multicompany->enabled)) {	// If multicompany is not enabled, we never update the entity of a user.
+					if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+						$object->entity = 1; // all users are in master entity
 					} else {
-						$object->entity = (!GETPOST('entity', 'int') ? 0 : GETPOST('entity', 'int'));
+						// A user should not be able to move a user into another entity. Only superadmin should be able to do this.
+						if ($user->entity == 0 && $user->admin) {
+							if (GETPOST("superadmin")) {
+								// We try to set the user as superadmin.
+								$object->entity = 0;
+							} else {
+								// We try to change the entity of user
+								$object->entity = (GETPOSTISSET('entity') ? GETPOSTINT('entity') : $object->entity);
+							}
+						}
 					}
-				} else {
-					$object->entity = (!GETPOST('entity', 'int') ? 0 : GETPOST('entity', 'int'));
 				}
 
 				// Fill array 'array_options' with data from add form
@@ -615,8 +621,8 @@ if (empty($reshook)) {
 	}
 
 	// Action initialisation donnees depuis record LDAP
-	if ($action == 'adduserldap') {
-		$selecteduser = $_POST['users'];
+	if ($action == 'adduserldap' && $canadduser) {
+		$selecteduser = GETPOST('users');
 
 		$required_fields = array(
 			$conf->global->LDAP_KEY_USERS,
@@ -1134,7 +1140,8 @@ if ($action == 'create' || $action == 'adduserldap') {
 	}
 
 	if (!empty($conf->global->MAIN_MULTILANGS)) {
-		print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">'."\n";
+		print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0, 'string', '', 0, 0, 'id', $langs->trans("WarningNotLangOfInterface", $langs->transnoentitiesnoconv("UserGUISetup"))).'</td>';
+		print '<td colspan="3" class="maxwidthonsmartphone">'."\n";
 		print img_picto('', 'language').$formadmin->select_language(GETPOST('default_lang', 'alpha') ?GETPOST('default_lang', 'alpha') : ($object->lang ? $object->lang : ''), 'default_lang', 0, 0, 1, 0, 0, 'maxwidth200onsmartphone');
 		print '</td>';
 		print '</tr>';
@@ -1557,7 +1564,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print "</tr>\n";
 
 			// Accountancy code
-			if ($conf->accounting->enabled) {
+			if (!empty($conf->accounting->enabled)) {
 				print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
 				print '<td>'.$object->accountancy_code.'</td></tr>';
 			}
@@ -1590,13 +1597,15 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Default language
 			if (!empty($conf->global->MAIN_MULTILANGS)) {
+				$langs->load("languages");
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-				print '<tr><td class="titlefield">'.$langs->trans("DefaultLang").'</td><td>';
+				print '<tr><td class="titlefield">';
+				print $form->textwithpicto($langs->trans("DefaultLang"), $langs->trans("WarningNotLangOfInterface", $langs->transnoentitiesnoconv("UserGUISetup")));
+				print '</td><td>';
 				//$s=picto_from_langcode($object->default_lang);
 				//print ($s?$s.' ':'');
-				$langs->load("languages");
 				$labellang = ($object->lang ? $langs->trans('Language_'.$object->lang) : '');
-				print $form->textwithpicto($labellang, $langs->trans("WarningNotLangOfInterface", $langs->transnoentitiesnoconv("UserGUISetup")));
+				print $labellang;
 				print '</td></tr>';
 			}
 
@@ -1786,7 +1795,9 @@ if ($action == 'create' || $action == 'adduserldap') {
 			if ($object->datepreviouslogin) {
 				print dol_print_date($object->datepreviouslogin, "dayhour").' <span class="opacitymedium">('.$langs->trans("Previous").')</span>, ';
 			}
-			print dol_print_date($object->datelastlogin, "dayhour").' <span class="opacitymedium">('.$langs->trans("Current").')</span>';
+			if ($object->datelastlogin) {
+				print dol_print_date($object->datelastlogin, "dayhour").' <span class="opacitymedium">('.$langs->trans("Current").')</span>';
+			}
 			print '</td>';
 			print "</tr>\n";
 
@@ -2445,7 +2456,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</table><hr><table class="border centpercent">';
 
 			// Accountancy code
-			if ($conf->accounting->enabled) {
+			if (!empty($conf->accounting->enabled)) {
 				print "<tr>";
 				print '<td class="titlefieldcreate">'.$langs->trans("AccountancyCode").'</td>';
 				print '<td>';
@@ -2500,7 +2511,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Default language
 			if (!empty($conf->global->MAIN_MULTILANGS)) {
-				print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3">'."\n";
+				print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0, 'string', '', 0, 0, 'id', $langs->trans("WarningNotLangOfInterface", $langs->transnoentitiesnoconv("UserGUISetup"))).'</td><td colspan="3">'."\n";
 				print img_picto('', 'language').$formadmin->select_language($object->lang, 'default_lang', 0, 0, 1);
 				print '</td>';
 				print '</tr>';
@@ -2726,7 +2737,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			$genallowed = $user->rights->user->user->lire;
 			$delallowed = $user->rights->user->user->creer;
 
-			print $formfile->showdocuments('user', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
+			print $formfile->showdocuments('user', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', empty($soc->default_lang) ? '' : $soc->default_lang);
 			$somethingshown = $formfile->numoffiles;
 
 			// Show links to link elements

@@ -82,12 +82,9 @@ class InterfaceContactRoles extends DolibarrTriggers
 
 				if (is_array($TContact) && !empty($TContact)) {
 					$TContactAlreadyLinked = array();
-					if ($object->id > 0) {
-						$cloneFrom = dol_clone($object, 1);
 
-						if (!empty($cloneFrom->id)) {
-							$TContactAlreadyLinked = array_merge($cloneFrom->liste_contact(-1, 'external'), $cloneFrom->liste_contact(-1, 'internal'));
-						}
+					if ($object->id > 0) {
+						$TContactAlreadyLinked = array_merge($object->liste_contact(-1, 'external'), $object->liste_contact(-1, 'internal'));
 					}
 
 					foreach ($TContact as $i => $infos) {

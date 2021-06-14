@@ -726,7 +726,7 @@ class FormFile
 			}
 
 			// Language code (if multilang)
-			if (($allowgenifempty || (is_array($modellist) && count($modellist) > 0)) && $conf->global->MAIN_MULTILANGS && !$forcenomultilang && (!empty($modellist) || $showempty)) {
+			if (($allowgenifempty || (is_array($modellist) && count($modellist) > 0)) && !empty($conf->global->MAIN_MULTILANGS) && !$forcenomultilang && (!empty($modellist) || $showempty)) {
 				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 				$formadmin = new FormAdmin($this->db);
 				$defaultlang = $codelang ? $codelang : $langs->getDefaultLang();
@@ -812,7 +812,7 @@ class FormFile
 					completeFileArrayWithDatabaseInfo($file_list, $relativedir);
 
 					//var_dump($sortfield.' - '.$sortorder);
-					if ($sortfield && $sortorder) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
+					if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
 						$file_list = dol_sort_array($file_list, $sortfield, $sortorder);
 					}
 				}
@@ -1774,11 +1774,16 @@ class FormFile
 					continue; // We do not show orphelins files
 				}
 
-				print '<!-- Line list_of_autoecmfiles '.$key.' -->'."\n";
+				print '<!-- Line list_of_autoecmfiles key='.$key.' -->'."\n";
 				print '<tr class="oddeven">';
 				print '<td>';
 				if ($found > 0 && is_object($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) {
-					print $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]->getNomUrl(1, 'document');
+					$tmpobject = $this->cache_objects[$modulepart.'_'.$id.'_'.$ref];
+					//if (! in_array($tmpobject->element, array('expensereport'))) {
+					print $tmpobject->getNomUrl(1, 'document');
+					//} else {
+					//	print $tmpobject->getNomUrl(1);
+					//}
 				} else {
 					print $langs->trans("ObjectDeleted", ($id ? $id : $ref));
 				}

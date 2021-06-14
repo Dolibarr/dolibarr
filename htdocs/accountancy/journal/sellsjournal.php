@@ -851,8 +851,8 @@ if (empty($action) || $action == 'view') {
 			}
 			print '</td>';
 			print "<td>".$companystatic->getNomUrl(0, 'customer', 16).' - '.$invoicestatic->ref.' - '.$langs->trans("SubledgerAccount")."</td>";
-			print '<td class="right nowraponall">'.($mt >= 0 ? price($mt) : '')."</td>";
-			print '<td class="right nowraponall">'.($mt < 0 ? price(-$mt) : '')."</td>";
+			print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
+			print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
 			print "</tr>";
 		}
 
@@ -880,8 +880,8 @@ if (empty($action) || $action == 'view') {
 			$companystatic->id = $tabcompany[$key]['id'];
 			$companystatic->name = $tabcompany[$key]['name'];
 			print "<td>".$companystatic->getNomUrl(0, 'customer', 16).' - '.$invoicestatic->ref.' - '.$accountingaccount->label."</td>";
-			print '<td class="right nowraponall">'.($mt < 0 ? price(-$mt) : '')."</td>";
-			print '<td class="right nowraponall">'.($mt >= 0 ? price($mt) : '')."</td>";
+			print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
+			print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
 			print "</tr>";
 		}
 
@@ -916,8 +916,8 @@ if (empty($action) || $action == 'view') {
 					print '</td>';
 					print "<td>".$companystatic->getNomUrl(0, 'customer', 16).' - '.$invoicestatic->ref.' - '.$langs->trans("VAT").' '.join(', ', $def_tva[$key][$k]).' %'.($numtax ? ' - Localtax '.$numtax : '');
 					print "</td>";
-					print '<td class="right nowraponall">'.($mt < 0 ? price(-$mt) : '')."</td>";
-					print '<td class="right nowraponall">'.($mt >= 0 ? price($mt) : '')."</td>";
+					print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
+					print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
 					print "</tr>";
 				}
 			}

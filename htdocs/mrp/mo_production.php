@@ -145,11 +145,11 @@ if (empty($reshook)) {
 		$object->setProject(GETPOST('projectid', 'int'));
 	}
 
-	if ($action == 'confirm_reopen') {
+	if ($action == 'confirm_reopen' && $permissiontoadd) {
 		$result = $object->setStatut($object::STATUS_INPROGRESS, 0, '', 'MRP_REOPEN');
 	}
 
-	if ($action == 'confirm_addconsumeline' && GETPOST('addconsumelinebutton')) {
+	if ($action == 'confirm_addconsumeline' && GETPOST('addconsumelinebutton') && $permissiontoadd) {
 		$moline = new MoLine($db);
 
 		// Line to produce
@@ -169,7 +169,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if (in_array($action, array('confirm_consumeorproduce', 'confirm_consumeandproduceall'))) {
+	if (in_array($action, array('confirm_consumeorproduce', 'confirm_consumeandproduceall')) && $permissiontoproduce) {
 		$stockmove = new MouvementStock($db);
 
 		$labelmovement = GETPOST('inventorylabel', 'alphanohtml');

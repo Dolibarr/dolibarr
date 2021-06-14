@@ -1,10 +1,5 @@
 <?php
-/* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2018	    Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2018-2019	Thibault FOUCART	    <support@ptibogxiv.net>
- * Copyright (C) 2021		Waël Almoman	    	<info@almoman.com>
+/* Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,7 +67,7 @@ $hookmanager->initHooks(array('newpayment'));
 global $dolibarr_main_instance_unique_id;
 
 // Load translation files
-$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "paybox", "paypal", "stripe")); // File with generic data
+$langs->loadLangs(array("other", "dict", "bills", "companies", "errors", "paybox", "paypal", "stripe")); // File with generic data
 
 // Security check
 // No check on module enabled. Done later according to $validpaymentmethod
@@ -99,9 +94,32 @@ if ($resultproject < 0) {
 	$errmsg .= $project->error;
 }
 
+// Security check
+if (empty($conf->projet->enabled)) {
+	accessforbidden('', 0, 0, 1);
+}
+
+
 /*
  * Actions
  */
+
+if (GETPOST('suggestbooth')) {
+	header("Location: ".dol_buildpath('/public/project/suggestbooth.php', 1).'?id='.$id."&securekey=".$securekeyreceived);
+	exit;
+}
+
+if (GETPOST('suggestconference')) {
+	header("Location: ".dol_buildpath('/public/project/suggestconference.php', 1).'?id='.$id."&securekey=".$securekeyreceived);
+	exit;
+}
+
+if (GETPOST('viewandvote')) {
+	header("Location: ".dol_buildpath('/public/project/viewandvote.php', 1).'?id='.$id."&securekey=".$securekeyreceived);
+	exit;
+}
+
+
 
 
 /*
@@ -117,17 +135,7 @@ $conf->dol_hide_topmenu = 1;
 $conf->dol_hide_leftmenu = 1;
 
 $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
-llxHeader($head, $langs->trans("PaymentForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea);
-
-
-// Show sandbox warning
-if ((empty($paymentmethod) || $paymentmethod == 'paypal') && !empty($conf->paypal->enabled) && (!empty($conf->global->PAYPAL_API_SANDBOX) || GETPOST('forcesandbox', 'int'))) {		// We can force sand box with param 'forcesandbox'
-	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Paypal'), '', 'warning');
-}
-if ((empty($paymentmethod) || $paymentmethod == 'stripe') && !empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'int'))) {
-	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
-}
-
+llxHeader($head, $langs->trans("SuggestForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea);
 
 print '<span id="dolpaymentspan"></span>'."\n";
 print '<div class="center">'."\n";
@@ -135,8 +143,9 @@ print '<form id="dolpaymentform" class="center" name="paymentform" action="'.$_S
 print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 print '<input type="hidden" name="action" value="dopayment">'."\n";
 print '<input type="hidden" name="tag" value="'.GETPOST("tag", 'alpha').'">'."\n";
-print '<input type="hidden" name="suffix" value="'.dol_escape_htmltag($suffix).'">'."\n";
-print '<input type="hidden" name="securekey" value="'.dol_escape_htmltag($SECUREKEY).'">'."\n";
+//print '<input type="hidden" name="suffix" value="'.dol_escape_htmltag($suffix).'">'."\n";
+print '<input type="hidden" name="id" value="'.dol_escape_htmltag($id).'">'."\n";
+print '<input type="hidden" name="securekey" value="'.dol_escape_htmltag($securekeyreceived).'">'."\n";
 print '<input type="hidden" name="e" value="'.$entity.'" />';
 print '<input type="hidden" name="forcesandbox" value="'.GETPOST('forcesandbox', 'int').'" />';
 print "\n";
@@ -200,15 +209,16 @@ print "\n";
 // Show all action buttons
 print '<br>';
 // Output introduction text
-if ($project->accept_conference_suggestions) {
-	print '<input type="submit" value="'.$langs->trans("SuggestConference").'" id="suggestconference" class="button">';
+if ($project->accept_booth_suggestions) {
+	print '<input type="submit" value="'.$langs->trans("SuggestBooth").'" id="suggestbooth" name="suggestbooth" class="button">';
 	print '<br><br>';
 }
-print '<input type="submit" value="'.$langs->trans("ViewAndVote").'" id="viewandvote" class="button">';
-print '<br><br>';
-if ($project->accept_booth_suggestions) {
-	print '<input type="submit" value="'.$langs->trans("SuggestBooth").'" id="suggestbooth" class="button">';
+if ($project->accept_conference_suggestions) {
+	print '<input type="submit" value="'.$langs->trans("SuggestConference").'" id="suggestconference" name="suggestconference" class="button">';
+	print '<br><br>';
 }
+print '<input type="submit" value="'.$langs->trans("ViewAndVote").'" id="viewandvote" name="viewandvote" class="button">';
+
 
 
 

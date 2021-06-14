@@ -127,7 +127,7 @@ $permissiontoadd = $user->rights->mymodule->myobject->write; // Used by the incl
 $permissiontodelete = $user->rights->mymodule->myobject->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 $permissionnote = $user->rights->mymodule->myobject->write; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->rights->mymodule->myobject->write; // Used by the include of actions_dellink.inc.php
-$upload_dir = $conf->mymodule->multidir_output[isset($object->entity) ? $object->entity : 1];
+$upload_dir = $conf->mymodule->multidir_output[isset($object->entity) ? $object->entity : 1].'/myobject';
 
 // Security check (enable the most restrictive one)
 //if ($user->socid > 0) accessforbidden();
@@ -489,7 +489,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (empty($reshook)) {
 			// Send
 			if (empty($user->socid)) {
-				print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle');
+				print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init&token='.newToken().'#formmailbeforetitle');
 			}
 
 			// Back to draft
@@ -502,11 +502,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Validate
 			if ($object->status == $object::STATUS_DRAFT) {
 				if (empty($object->table_element_line) || (is_array($object->lines) && count($object->lines) > 0)) {
-					print dolGetButtonAction($langs->trans('Validate'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes', '', $permissiontoadd);
+					print dolGetButtonAction($langs->trans('Validate'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes&token='.newToken(), '', $permissiontoadd);
 				} else {
 					$langs->load("errors");
-					//print dolGetButtonAction($langs->trans('Validate'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes', '', 0);
-					print '<a class="butActionRefused" href="" title="'.dol_escape_htmltag($langs->trans("ErrorAddAtLeastOneLineFirst")).'">'.$langs->trans("Validate").'</a>';
+					print dolGetButtonAction($langs->trans("ErrorAddAtLeastOneLineFirst"), $langs->trans("Validate"), 'default', '#', '', 0);
 				}
 			}
 

@@ -165,8 +165,8 @@ class box_propales extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right"',
-						'text' => dol_print_date($date, 'day'),
+						'td' => 'class="center nowraponall"',
+						'text' => dol_print_date($date, 'day', 'tzuserrel'),
 					);
 
 					$this->info_box_contents[$line][] = array(

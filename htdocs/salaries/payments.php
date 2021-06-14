@@ -107,7 +107,9 @@ foreach ($object->fields as $key => $val) {
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array();
 foreach ($object->fields as $key => $val) {
-	if ($val['searchall']) $fieldstosearchall['t.'.$key] = $val['label'];
+	if (!empty($val['searchall'])) {
+		$fieldstosearchall['t.'.$key] = $val['label'];
+	}
 }
 
 $permissiontoread = $user->rights->salaries->read;
@@ -218,7 +220,7 @@ if ($search_fk_bank)			$sql .= " AND s.fk_bank=".((int) $search_fk_bank);
 if ($search_chq_number)		$sql .= natural_search(array('s.num_payment'), $search_chq_number);
 
 if ($search_type_id > 0) {
-	$sql .= " AND s.fk_typepayment=".$search_type_id;
+	$sql .= " AND s.fk_typepayment=".((int) $search_type_id);
 }
 $sql .= $db->order($sortfield, $sortorder);
 

@@ -181,8 +181,8 @@ class PaymentSocialContribution extends CommonObject
 			$sql .= " fk_typepaiement, num_paiement, note, fk_user_creat, fk_bank)";
 			$sql .= " VALUES ($this->chid, '".$this->db->idate($now)."',";
 			$sql .= " '".$this->db->idate($this->datepaye)."',";
-			$sql .= " ".$totalamount.",";
-			$sql .= " ".$this->paiementtype.", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note)."', ".$user->id.",";
+			$sql .= " ".((float) $totalamount).",";
+			$sql .= " ".((int) $this->paiementtype).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note)."', ".$user->id.",";
 			$sql .= " 0)";
 
 			$resql = $this->db->query($sql);

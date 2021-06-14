@@ -203,7 +203,7 @@ class BonPrelevement extends CommonObject
 			$sql = "SELECT rowid";
 			$sql .= " FROM  ".MAIN_DB_PREFIX."prelevement_lignes";
 			$sql .= " WHERE fk_prelevement_bons = ".$this->id;
-			$sql .= " AND fk_soc =".$client_id;
+			$sql .= " AND fk_soc =".((int) $client_id);
 			$sql .= " AND code_banque = '".$this->db->escape($code_banque)."'";
 			$sql .= " AND code_guichet = '".$this->db->escape($code_guichet)."'";
 			$sql .= " AND number = '".$this->db->escape($number)."'";

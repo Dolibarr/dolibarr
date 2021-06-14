@@ -1791,8 +1791,8 @@ if (!empty($conf->projet->enabled)) {
 $now = dol_now();
 
 $title = $langs->trans('SupplierInvoice')." - ".$langs->trans('Card');
-$helpurl = "EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores";
-llxHeader('', $title, $helpurl);
+$help_url = 'EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores|DE:Modul_Lieferantenrechnungen';
+llxHeader('', $title, $help_url);
 
 // Mode creation
 if ($action == 'create') {
@@ -1875,10 +1875,10 @@ if ($action == 'create') {
 		$objectsrc->fetch_optionals();
 		$object->array_options = $objectsrc->array_options;
 	} else {
-		$cond_reglement_id 	= $societe->cond_reglement_supplier_id;
-		$mode_reglement_id 	= $societe->mode_reglement_supplier_id;
+		$cond_reglement_id = $societe->cond_reglement_supplier_id;
+		$mode_reglement_id = $societe->mode_reglement_supplier_id;
 		$transport_mode_id = $societe->transport_mode_supplier_id;
-		$fk_account         = $societe->fk_account;
+		$fk_account = $societe->fk_account;
 		$datetmp = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 		$dateinvoice = ($datetmp == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '') : $datetmp);
 		$datetmp = dol_mktime(12, 0, 0, $_POST['echmonth'], $_POST['echday'], $_POST['echyear']);
@@ -1930,7 +1930,7 @@ if ($action == 'create') {
 		print $societe->getNomUrl(1);
 		print '<input type="hidden" name="socid" value="'.$societe->id.'">';
 	} else {
-		print img_picto('', 'company').$form->select_company($societe->id, 'socid', 's.fournisseur=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
+		print img_picto('', 'company').$form->select_company($societe->id, 'socid', 's.fournisseur=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300 widthcentpercentminusxx');
 		// reload page to retrieve supplier informations
 		if (!empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE)) {
 			print '<script type="text/javascript">
@@ -2034,7 +2034,7 @@ if ($action == 'create') {
 			// Type invoice
 			$facids = $facturestatic->list_replacable_supplier_invoices($societe->id);
 			if ($facids < 0) {
-				dol_print_error($db, $facturestatic);
+				dol_print_error($db, $facturestatic->error, $facturestatic->errors);
 				exit();
 			}
 			$options = "";
@@ -2096,7 +2096,7 @@ if ($action == 'create') {
 				// Show link for credit note
 				$facids = $facturestatic->list_qualified_avoir_supplier_invoices($societe->id);
 				if ($facids < 0) {
-					dol_print_error($db, $facturestatic);
+					dol_print_error($db, $facturestatic->error, $facturestatic->errors);
 					exit;
 				}
 				$optionsav = "";
@@ -2889,12 +2889,12 @@ if ($action == 'create') {
 		// Intracomm report
 		if (!empty($conf->intracommreport->enabled)) {
 			$langs->loadLangs(array("intracommreport"));
-			print '<tr><td class="nowrap">';
-			print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+			print '<tr><td>';
+			print '<table width="100%" class="nobordernopadding"><tr><td>';
 			print $langs->trans('IntracommReportTransportMode');
 			print '</td>';
 			if ($action != 'editmode' && ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer)) {
-				print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
+				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit().'</a></td>';
 			}
 			print '</tr></table>';
 			print '</td>';

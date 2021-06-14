@@ -88,7 +88,7 @@ class Societe extends CommonObject
 
 	/**
 	 * @var array    List of child tables. To know object to delete on cascade.
-	 *               if name like with @ClassNAme:FilePathClass;ParentFkFieldName' it will call method deleteByParentField (with parentId as parameters) and FieldName to fetch and delete child object
+	 *               if name like with @ClassName:FilePathClass:ParentFkFieldName' it will call method deleteByParentField (with parentId as parameters) and FieldName to fetch and delete child object
 	 */
 	protected $childtablesoncascade = array(
 		"societe_prices",
@@ -162,7 +162,7 @@ class Societe extends CommonObject
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>25),
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>30),
 		'nom' =>array('type'=>'varchar(128)', 'label'=>'Nom', 'enabled'=>1, 'visible'=>-1, 'position'=>35, 'showoncombobox'=>1),
-		'name_alias' =>array('type'=>'varchar(128)', 'label'=>'Name alias', 'enabled'=>1, 'visible'=>-1, 'position'=>36, 'showoncombobox'=>1),
+		'name_alias' =>array('type'=>'varchar(128)', 'label'=>'Name alias', 'enabled'=>1, 'visible'=>-1, 'position'=>36, 'showoncombobox'=>2),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>40, 'index'=>1),
 		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'RefExt', 'enabled'=>1, 'visible'=>0, 'position'=>45),
 		'code_client' =>array('type'=>'varchar(24)', 'label'=>'CustomerCode', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
@@ -738,6 +738,12 @@ class Societe extends CommonObject
 	 * @var string Multicurrency code
 	 */
 	public $multicurrency_code;
+
+
+	// Fields loaded by fetchPartnerships()
+
+	public $partnerships = array();
+
 
 
 	/**
@@ -1386,7 +1392,7 @@ class Societe extends CommonObject
 
 			$sql .= ",tva_assuj = ".($this->tva_assuj != '' ? "'".$this->db->escape($this->tva_assuj)."'" : "null");
 			$sql .= ",tva_intra = '".$this->db->escape($this->tva_intra)."'";
-			$sql .= ",status = ".$this->status;
+			$sql .= ",status = ".((int) $this->status);
 
 			// Local taxes
 			$sql .= ",localtax1_assuj = ".($this->localtax1_assuj != '' ? "'".$this->db->escape($this->localtax1_assuj)."'" : "null");
@@ -1449,7 +1455,7 @@ class Societe extends CommonObject
 			$sql .= ",webservices_key = ".(!empty($this->webservices_key) ? "'".$this->db->escape($this->webservices_key)."'" : "null");
 
 			//Incoterms
-			$sql .= ", fk_incoterms = ".$this->fk_incoterms;
+			$sql .= ", fk_incoterms = ".((int) $this->fk_incoterms);
 			$sql .= ", location_incoterms = ".(!empty($this->location_incoterms) ? "'".$this->db->escape($this->location_incoterms)."'" : "null");
 
 			if ($customer) {
@@ -2106,9 +2112,9 @@ class Societe extends CommonObject
 			// Writes trace in discount history
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise";
 			$sql .= " (entity, datec, fk_soc, remise_client, note, fk_user_author)";
-			$sql .= " VALUES (".$conf->entity.", '".$this->db->idate($now)."', ".$this->id.", '".$this->db->escape($remise)."',";
+			$sql .= " VALUES (".$conf->entity.", '".$this->db->idate($now)."', ".((int) $this->id).", '".$this->db->escape($remise)."',";
 			$sql .= " '".$this->db->escape($note)."',";
-			$sql .= " ".$user->id;
+			$sql .= " ".((int) $user->id);
 			$sql .= ")";
 
 			$resql = $this->db->query($sql);
@@ -2165,9 +2171,9 @@ class Societe extends CommonObject
 			// Writes trace in discount history
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise_supplier";
 			$sql .= " (entity, datec, fk_soc, remise_supplier, note, fk_user_author)";
-			$sql .= " VALUES (".$conf->entity.", '".$this->db->idate($now)."', ".$this->id.", '".$this->db->escape($remise)."',";
+			$sql .= " VALUES (".$conf->entity.", '".$this->db->idate($now)."', ".((int) $this->id).", '".$this->db->escape($remise)."',";
 			$sql .= " '".$this->db->escape($note)."',";
-			$sql .= " ".$user->id;
+			$sql .= " ".((int) $user->id);
 			$sql .= ")";
 
 			$resql = $this->db->query($sql);
@@ -3321,34 +3327,37 @@ class Societe extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Define parent commany of current company
 	 *
 	 *    @param	int		$id     Id of thirdparty to set or '' to remove
 	 *    @return	int     		<0 if KO, >0 if OK
 	 */
-	public function set_parent($id)
+	public function setParent($id)
 	{
-		// phpcs:enable
+		dol_syslog(get_class($this).'::setParent', LOG_DEBUG);
+
 		if ($this->id) {
 			// Check if the id we want to add as parent has not already one parent that is the current id we try to update
-			$sameparent	= $this->validateFamilyTree($id, $this->id, 0);
-			if ($sameparent < 0) {
-				return -1;
-			} elseif ($sameparent == 1) {
-				setEventMessages('ParentCompanyToAddIsAlreadyAChildOfModifiedCompany', null, 'warnings');
-				return -1;
-			} else {
-				$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe SET parent = '.($id > 0 ? $id : 'null').' WHERE rowid = '.((int) $this->id);
-				dol_syslog(get_class($this).'::set_parent', LOG_DEBUG);
-				$resql	= $this->db->query($sql);
-				if ($resql) {
-					$this->parent	= $id;
-					return 1;
-				} else {
+			if ($id > 0) {
+				$sameparent	= $this->validateFamilyTree($id, $this->id, 0);
+				if ($sameparent < 0) {
 					return -1;
 				}
+				if ($sameparent == 1) {
+					setEventMessages('ParentCompanyToAddIsAlreadyAChildOfModifiedCompany', null, 'warnings');
+					return -1;
+				}
+			}
+
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe SET parent = '.($id > 0 ? $id : 'null').' WHERE rowid = '.((int) $this->id);
+
+			$resql	= $this->db->query($sql);
+			if ($resql) {
+				$this->parent = $id;
+				return 1;
+			} else {
+				return -1;
 			}
 		} else {
 			return -1;
@@ -3369,9 +3378,9 @@ class Societe extends CommonObject
 			dol_syslog("Too high level of parent - child for company. May be an infinite loop ?", LOG_WARNING);
 		}
 
-		$sql	= 'SELECT s.parent';
-		$sql	.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
-		$sql	.= ' WHERE rowid = '.$idparent;
+		$sql = 'SELECT s.parent';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
+		$sql .= ' WHERE rowid = '.$idparent;
 		$resql	= $this->db->query($sql);
 		if ($resql) {
 			$obj	= $this->db->fetch_object($resql);
@@ -3938,8 +3947,8 @@ class Societe extends CommonObject
 			}
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
-			$sql .= " SET fk_soc=".$this->id;
-			$sql .= " WHERE rowid=".$member->id;
+			$sql .= " SET fk_soc = ".((int) $this->id);
+			$sql .= " WHERE rowid = ".((int) $member->id);
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -4802,5 +4811,23 @@ class Societe extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
+	}
+
+	/**
+	 *	Function to get partnerships array
+	 *
+	 *  @param		string		$mode		'member' or 'thirdparty'
+	 *	@return		int						<0 if KO, >0 if OK
+	 */
+	public function fetchPartnerships($mode)
+	{
+		global $langs;
+
+		require_once DOL_DOCUMENT_ROOT.'/parntership/class/partnership.class.php';
+
+
+		$this->partnerships[] = array();
+
+		return 1;
 	}
 }

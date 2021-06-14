@@ -76,7 +76,7 @@ class FormSocialContrib
 			$sql = "SELECT c.id, c.libelle as type";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
 			$sql .= " WHERE c.active = 1";
-			$sql .= " AND c.fk_pays = ".$mysoc->country_id;
+			$sql .= " AND c.fk_pays = ".((int) $mysoc->country_id);
 			$sql .= " ORDER BY c.libelle ASC";
 		} else {
 			$sql = "SELECT c.id, c.libelle as type";

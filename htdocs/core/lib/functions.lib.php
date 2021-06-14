@@ -3499,7 +3499,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'accountancy', 'account', 'accountline', 'action', 'add', 'address', 'angle-double-down', 'angle-double-up', 'asset',
 				'bank_account', 'barcode', 'bank', 'bill', 'billa', 'billr', 'billd', 'bookmark', 'bom', 'bug', 'building',
 				'calendar', 'calendarmonth', 'calendarweek', 'calendarday', 'calendarperuser', 'calendarpertype',
-				'cash-register', 'category', 'chart', 'check', 'clock', 'close_title', 'cog', 'collab', 'company', 'contact', 'country', 'contract', 'cron', 'cubes', 'multicurrency',
+				'cash-register', 'category', 'chart', 'check', 'clock', 'close_title', 'cog', 'collab', 'company', 'contact', 'country', 'contract', 'conversation', 'cron', 'cubes',
+				'multicurrency',
 				'delete', 'dolly', 'dollyrevert', 'donation', 'download', 'dynamicprice',
 				'edit', 'ellipsis-h', 'email', 'eraser', 'establishment', 'expensereport', 'external-link-alt', 'external-link-square-alt',
 				'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'autofill', 'folder', 'folder-open', 'folder-plus',
@@ -3514,7 +3515,9 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'github', 'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top', 'commercial', 'companies',
 				'generic', 'home', 'hrm', 'members', 'products', 'invoicing',
-				'partnership', 'payment', 'pencil-ruler', 'preview', 'project', 'projectpub', 'projecttask', 'question', 'refresh', 'salary', 'shipment', 'supplier_invoice', 'technic', 'ticket',
+				'partnership', 'payment', 'pencil-ruler', 'preview', 'project', 'projectpub', 'projecttask', 'question', 'refresh', 'salary', 'shipment',
+				'supplier_invoice', 'supplier_invoicea', 'supplier_invoicer', 'supplier_invoiced',
+				'technic', 'ticket',
 				'error', 'warning',
 				'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'resource',
 				'shapes', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
@@ -3535,7 +3538,9 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
 			$arrayconvpictotofa = array(
 				'account'=>'university', 'accountline'=>'receipt', 'accountancy'=>'search-dollar', 'action'=>'calendar-alt', 'add'=>'plus-circle', 'address'=> 'address-book', 'asset'=>'money-check-alt', 'autofill'=>'fill',
-				'bank_account'=>'university', 'bill'=>'file-invoice-dollar', 'billa'=>'file-excel', 'billr'=>'file-invoice-dollar', 'supplier_invoicea'=>'file-excel', 'billd'=>'file-medical', 'supplier_invoiced'=>'file-medical',
+				'bank_account'=>'university',
+				'bill'=>'file-invoice-dollar', 'billa'=>'file-excel', 'billr'=>'file-invoice-dollar', 'billd'=>'file-medical',
+				'supplier_invoice'=>'file-invoice-dollar', 'supplier_invoicea'=>'file-excel', 'supplier_invoicer'=>'file-invoice-dollar', 'supplier_invoiced'=>'file-medical',
 				'bom'=>'shapes',
 				'chart'=>'chart-line', 'company'=>'building', 'contact'=>'address-book', 'contract'=>'suitcase', 'collab'=>'people-arrows', 'conversation'=>'comments', 'country'=>'globe-americas', 'cron'=>'business-time',
 				'donation'=>'file-alt', 'dynamicprice'=>'hand-holding-usd',
@@ -5185,7 +5190,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
  * 	@param	int				$option			Put 1 if you know that content is already universal format number (so no correction on decimal will be done)
  * 											Put 2 if you know that number is a user input (so we know we don't have to fix decimal separator).
  *	@return	string							Amount with universal numeric format (Example: '99.99999').
- *											If conversion fails, it return text unchanged if $rounding = '' or '0' if $rounding is defined.
+ *											If conversion fails, it return text unchanged if ($rounding = '' and $option = 1) or '0' if ($rounding is defined and $option = 1).
  *											If amount is null or '', it returns '' if $rounding = '' or '0' if $rounding is defined..
  *
  *	@see    price()							Opposite function of price2num
@@ -6879,8 +6884,6 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			// For backward compatibility
 			$substitutionarray['__REFCLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : null));
 			$substitutionarray['__REFSUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
-			$substitutionarray['__REFCLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : null));
-			$substitutionarray['__REFSUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
 			$substitutionarray['__SUPPLIER_ORDER_DATE_DELIVERY__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, 'day', 0, $outputlangs) : '');
 			$substitutionarray['__SUPPLIER_ORDER_DELAY_DELIVERY__'] = (isset($object->availability_code) ? ($outputlangs->transnoentities("AvailabilityType".$object->availability_code) != ('AvailabilityType'.$object->availability_code) ? $outputlangs->transnoentities("AvailabilityType".$object->availability_code) : $outputlangs->convToOutputCharset(isset($object->availability) ? $object->availability : '')) : '');
 
@@ -7136,14 +7139,14 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__AMOUNT_TAX3__']     = is_object($object) ? $object->total_localtax2 : '';
 		}
 
-		$substitutionarray['__AMOUNT_FORMATED__']          = is_object($object) ? ($object->total_ttc ? price($object->total_ttc, 0, $outputlangs, 0, 0, -1, $conf->currency) : null) : '';
-		$substitutionarray['__AMOUNT_EXCL_TAX_FORMATED__'] = is_object($object) ? ($object->total_ht ? price($object->total_ht, 0, $outputlangs, 0, 0, -1, $conf->currency) : null) : '';
-		$substitutionarray['__AMOUNT_VAT_FORMATED__']      = is_object($object) ? (isset($object->total_vat) ? price($object->total_vat, 0, $outputlangs, 0, 0, -1, $conf->currency) : ($object->total_tva ? price($object->total_tva, 0, $outputlangs, 0, 0, -1, $conf->currency) : null)) : '';
+		$substitutionarray['__AMOUNT_FORMATED__']          = is_object($object) ? ($object->total_ttc ? price($object->total_ttc, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
+		$substitutionarray['__AMOUNT_EXCL_TAX_FORMATED__'] = is_object($object) ? ($object->total_ht ? price($object->total_ht, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
+		$substitutionarray['__AMOUNT_VAT_FORMATED__']      = is_object($object) ? (isset($object->total_vat) ? price($object->total_vat, 0, $outputlangs, 0, -1, -1, $conf->currency) : ($object->total_tva ? price($object->total_tva, 0, $outputlangs, 0, -1, -1, $conf->currency) : null)) : '';
 		if ($onlykey != 2 || $mysoc->useLocalTax(1)) {
-			$substitutionarray['__AMOUNT_TAX2_FORMATED__']     = is_object($object) ? ($object->total_localtax1 ? price($object->total_localtax1, 0, $outputlangs, 0, 0, -1, $conf->currency) : null) : '';
+			$substitutionarray['__AMOUNT_TAX2_FORMATED__']     = is_object($object) ? ($object->total_localtax1 ? price($object->total_localtax1, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
 		}
 		if ($onlykey != 2 || $mysoc->useLocalTax(2)) {
-			$substitutionarray['__AMOUNT_TAX3_FORMATED__']     = is_object($object) ? ($object->total_localtax2 ? price($object->total_localtax2, 0, $outputlangs, 0, 0, -1, $conf->currency) : null) : '';
+			$substitutionarray['__AMOUNT_TAX3_FORMATED__']     = is_object($object) ? ($object->total_localtax2 ? price($object->total_localtax2, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
 		}
 
 		$substitutionarray['__AMOUNT_MULTICURRENCY__']          = (is_object($object) && isset($object->multicurrency_total_ttc)) ? $object->multicurrency_total_ttc : '';
@@ -7996,6 +7999,29 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1)
 	global $obj; // To get $obj used into list when dol_eval is used for computed fields and $obj is not yet $object
 	global $soc; // For backward compatibility
 
+	// Replace dangerous char (used for RCE), we allow only PHP variable testing.
+	if (strpos($s, '`') !== false) {
+		return 'Bad string syntax to evaluate: '.$s;
+	}
+
+	// We block using of php exec or php file functions
+	$forbiddenphpstrings = array("exec(", "passthru(", "shell_exec(", "system(", "proc_open(", "popen(", "eval(", "dol_eval(", "executeCLI(");
+	$forbiddenphpstrings = array_merge($forbiddenphpstrings, array("fopen(", "file_put_contents(", "fputs(", "fputscsv(", "fwrite(", "fpassthru(", "unlink(", "mkdir(", "rmdir(", "symlink(", "touch(", "umask("));
+	$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('function(', '$$', 'call_user_func('));
+	$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', '_SESSION', '_COOKIE', '_GET', '_POST', '_REQUEST'));
+	$forbiddenphpregex = 'global\s+\$';
+	do {
+		$oldstringtoclean = $s;
+		$s = str_ireplace($forbiddenphpstrings, '__forbiddenstring__', $s);
+		$s = preg_replace('/'.$forbiddenphpregex.'/', '__forbiddenstring__', $s);
+		//$s = preg_replace('/\$[a-zA-Z0-9_\->\$]+\(/i', '', $s);	// Remove $function( call and $mycall->mymethod(
+	} while ($oldstringtoclean != $s);
+
+	if (strpos($s, '__forbiddenstring__') !== false) {
+		dol_syslog('Bad string syntax to evaluate: '.$s, LOG_WARNING);
+		return 'Bad string syntax to evaluate: '.$s;
+	}
+
 	//print $s."<br>\n";
 	if ($returnvalue) {
 		if ($hideerrors) {
@@ -8070,7 +8096,7 @@ function picto_from_langcode($codelang, $moreatt = '')
  * Return default language from country code.
  * Return null if not found.
  *
- * @param 	string 	$countrycode	Country code like 'US', 'FR', 'CA', ...
+ * @param 	string 	$countrycode	Country code like 'US', 'FR', 'CA', 'ES', 'MX', ...
  * @return	string					Value of locale like 'en_US', 'fr_FR', ...
  */
 function getLanguageCodeFromCountryCode($countrycode)
@@ -8093,6 +8119,9 @@ function getLanguageCodeFromCountryCode($countrycode)
 		}
 		if ($mysoc->country_code == 'DE') {
 			return 'de_CH';
+		}
+		if ($mysoc->country_code == 'IT') {
+			return 'it_CH';
 		}
 	}
 
@@ -8234,6 +8263,7 @@ function getLanguageCodeFromCountryCode($countrycode)
 		'pt-BR',
 		'pt-PT',
 		'rm-CH',
+		'ro-MD',
 		'ro-RO',
 		'ru-RU',
 		'rw-RW',
@@ -9669,7 +9699,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 /**
  * Function dolGetButtonAction
  *
- * @param string    $label      label of button no html : use in alt attribute for accessibility $html is not empty
+ * @param string    $label      label of button without HTML : use in alt attribute for accessibility $html is not empty
  * @param string    $html       optional : content with html
  * @param string    $actionType default, delete, danger
  * @param string    $url        the url for link
@@ -9687,8 +9717,9 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 	}
 
 	$attr = array(
-		'class' => $class
-		,'href' => empty($url) ? '' : $url
+		'class' => $class,
+		'href' => empty($url) ? '' : $url,
+		'title' => $label
 	);
 
 	if (empty($html)) {

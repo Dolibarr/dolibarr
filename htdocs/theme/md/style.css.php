@@ -780,6 +780,9 @@ th .button {
 textarea.centpercent {
 	width: 96%;
 }
+.quatrevingtpercentminusx {
+	width: calc(80% - 52px);
+}
 .small, small {
 	font-size: 85%;
 }
@@ -3899,14 +3902,19 @@ tr.liste_sub_total, tr.liste_sub_total td {
 }
 
 .paymenttable, .margintable {
+	margin: 0px 0px 0px 0px !important;
+}
+.paymenttable, .margintable:not(.margintablenotop) {
 	border-top-width: <?php echo $borderwidth ?>px !important;
 	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>) !important;
 	border-top-style: solid !important;
-	margin: 0px 0px 0px 0px !important;
+}
+.margintable.margintablenotop {
+	border-top-width: 0;
 }
 .paymenttable tr td:first-child, .margintable tr td:first-child
 {
-	padding-left: 2px;
+	//padding-left: 2px;
 }
 .paymenttable, .margintable tr td {
 	height: 22px;

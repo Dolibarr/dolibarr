@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2012      Nicolas Villa aka Boyquotes http://informetic.fr
  * Copyright (C) 2013      Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2019 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2013-2021 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2019      Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,6 @@
  *  \ingroup    cron
  *  \brief      Lists Jobs
  */
-
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -202,7 +201,7 @@ if (empty($reshook)) {
 	$permissiontodelete = $user->rights->cron->delete;
 	$uploaddir = $conf->cron->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
-	if ($permissiontoadd) {
+	if ($massaction && $permissiontoadd) {
 		$tmpcron = new Cronjob($db);
 		foreach ($toselect as $id) {
 			$result = $tmpcron->fetch($id);
@@ -600,7 +599,7 @@ if ($num > 0) {
 		print '</td>';
 
 		// Output of last run
-		print '<td>';
+		print '<td class="small">';
 		if (!empty($obj->lastoutput)) {
 			print dol_trunc(nl2br($obj->lastoutput), 50);
 		}

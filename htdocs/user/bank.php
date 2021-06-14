@@ -59,6 +59,29 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 $feature2 = (($socid && $user->rights->user->self->creer) ? '' : 'user');
+
+$object = new User($db);
+if ($id > 0 || !empty($ref)) {
+	$result = $object->fetch($id, $ref, '', 1);
+	$object->getrights();
+}
+
+$account = new UserBankAccount($db);
+if (!$bankid) {
+	$account->fetch(0, '', $id);
+} else {
+	$account->fetch($bankid);
+}
+if (empty($account->userid)) {
+	$account->userid = $object->id;
+}
+
+
+// Define value to know what current user can do on users
+$canadduser = (!empty($user->admin) || $user->rights->user->user->creer);
+$canreaduser = (!empty($user->admin) || $user->rights->user->user->lire);
+$permissiontoaddbankaccount = (!empty($user->rights->salaries->write) || !empty($user->rights->hrm->employee->write) || !empty($user->rights->user->creer));
+
 // Ok if user->rights->salaries->read or user->rights->hrm->read
 //$result = restrictedArea($user, 'salaries|hrm', $id, 'user&user', $feature2);
 $ok = false;
@@ -78,30 +101,12 @@ if (!$ok) {
 	accessforbidden();
 }
 
-$object = new User($db);
-if ($id > 0 || !empty($ref)) {
-	$result = $object->fetch($id, $ref, '', 1);
-	$object->getrights();
-}
-
-$account = new UserBankAccount($db);
-if (!$bankid) {
-	$account->fetch(0, '', $id);
-} else {
-	$account->fetch($bankid);
-}
-if (empty($account->userid)) {
-	$account->userid = $object->id;
-}
-
-$permissiontoaddbankaccount = (!empty($user->rights->salaries->write) || !empty($user->rights->hrm->employee->write) || !empty($user->rights->user->creer));
-
 
 /*
  *	Actions
  */
 
-if ($action == 'add' && !$cancel) {
+if ($action == 'add' && !$cancel && $permissiontoaddbankaccount) {
 	$account->userid          = $object->id;
 
 	$account->bank            = GETPOST('bank', 'alpha');
@@ -128,7 +133,7 @@ if ($action == 'add' && !$cancel) {
 	}
 }
 
-if ($action == 'update' && !$cancel) {
+if ($action == 'update' && !$cancel && $permissiontoaddbankaccount) {
 	$account->userid = $object->id;
 
 	/*
@@ -199,7 +204,7 @@ if ($action == 'update' && !$cancel) {
 }
 
 // update personal email
-if ($action == 'setpersonal_email') {
+if ($action == 'setpersonal_email' && $canadduser) {
 	$object->personal_email = (string) GETPOST('personal_email', 'alphanohtml');
 	$result = $object->update($user);
 	if ($result < 0) {
@@ -208,7 +213,7 @@ if ($action == 'setpersonal_email') {
 }
 
 // update personal mobile
-if ($action == 'setpersonal_mobile') {
+if ($action == 'setpersonal_mobile' && $canadduser) {
 	$object->personal_mobile = (string) GETPOST('personal_mobile', 'alphanohtml');
 	$result = $object->update($user);
 	if ($result < 0) {
@@ -216,24 +221,25 @@ if ($action == 'setpersonal_mobile') {
 	}
 }
 
-// update default_c_exp_tax_cat
-if ($action == 'setdefault_c_exp_tax_cat') {
-	$object->default_c_exp_tax_cat = GETPOST('default_c_exp_tax_cat', 'int');
-	$result = $object->update($user);
-	if ($result < 0) {
-		setEventMessages($object->error, $object->errors, 'errors');
+if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
+	// update default_c_exp_tax_cat
+	if ($action == 'setdefault_c_exp_tax_cat' && $canadduser) {
+		$object->default_c_exp_tax_cat = GETPOST('default_c_exp_tax_cat', 'int');
+		$result = $object->update($user);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+
+	// update default range
+	if ($action == 'setdefault_range' && $canadduser) {
+		$object->default_range = GETPOST('default_range', 'int');
+		$result = $object->update($user);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 }
-
-// update default range
-if ($action == 'setdefault_range') {
-	$object->default_range = GETPOST('default_range', 'int');
-	$result = $object->update($user);
-	if ($result < 0) {
-		setEventMessages($object->error, $object->errors, 'errors');
-	}
-}
-
 
 
 /*

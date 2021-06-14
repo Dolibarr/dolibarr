@@ -472,14 +472,14 @@ class ExtraFields
 			$sql .= " VALUES('".$this->db->escape($attrname)."',";
 			$sql .= " '".$this->db->escape($label)."',";
 			$sql .= " '".$this->db->escape($type)."',";
-			$sql .= " ".$pos.",";
+			$sql .= " ".((int) $pos).",";
 			$sql .= " '".$this->db->escape($size)."',";
 			$sql .= " ".($entity === '' ? $conf->entity : $entity).",";
 			$sql .= " '".$this->db->escape($elementtype)."',";
-			$sql .= " ".$unique.",";
-			$sql .= " ".$required.",";
+			$sql .= " ".((int) $unique).",";
+			$sql .= " ".((int) $required).",";
 			$sql .= " '".$this->db->escape($params)."',";
-			$sql .= " ".$alwayseditable.",";
+			$sql .= " ".((int) $alwayseditable).",";
 			$sql .= " ".($perms ? "'".$this->db->escape($perms)."'" : "null").",";
 			$sql .= " ".($langfile ? "'".$this->db->escape($langfile)."'" : "null").",";
 			$sql .= " '".$this->db->escape($list)."',";
@@ -1722,11 +1722,11 @@ class ExtraFields
 				$sql .= ' as main';
 			}
 			if ($selectkey == 'rowid' && empty($value)) {
-				$sql .= " WHERE ".$selectkey."=0";
+				$sql .= " WHERE ".$selectkey." = 0";
 			} elseif ($selectkey == 'rowid') {
-				$sql .= " WHERE ".$selectkey."=".$this->db->escape($value);
+				$sql .= " WHERE ".$selectkey." = ".((int) $value);
 			} else {
-				$sql .= " WHERE ".$selectkey."='".$this->db->escape($value)."'";
+				$sql .= " WHERE ".$selectkey." = '".$this->db->escape($value)."'";
 			}
 
 			//$sql.= ' AND entity = '.$conf->entity;
@@ -2215,7 +2215,11 @@ class ExtraFields
 						continue; // Value was not provided, we should not set it.
 					}
 					$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
-					$value_key = price2num($value_arr);
+					if ($keysuffix != 'search_') {	// If value is for a search, we must keep complex string like '>100 <=150'
+						$value_key = price2num($value_arr);
+					} else {
+						$value_key = $value_arr;
+					}
 				} else {
 					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {
 						continue; // Value was not provided, we should not set it.

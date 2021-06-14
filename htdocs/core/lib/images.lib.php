@@ -590,7 +590,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 			break;
 	}
 
-	if (!is_resource($img)) {
+	if (!is_resource($img) && !($img instanceof \GdImage)) {
 		dol_syslog('Failed to detect type of image. We found infoImg[2]='.$infoImg[2], LOG_WARNING);
 		return 0;
 	}
