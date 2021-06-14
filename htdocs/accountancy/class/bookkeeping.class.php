@@ -297,11 +297,11 @@ class BookKeeping extends CommonObject
 		$sql .= " AND fk_doc = ".((int) $this->fk_doc);
 		if (!empty($conf->global->ACCOUNTANCY_ENABLE_FKDOCDET)) {
 			// DO NOT USE THIS IN PRODUCTION. This will generate a lot of trouble into reports and will corrupt database (by generating duplicate entries.
-			$sql .= " AND fk_docdet = " . $this->fk_docdet;			// This field can be 0 if record is for several lines
+			$sql .= " AND fk_docdet = ".$this->fk_docdet; // This field can be 0 if record is for several lines
 		}
 		$sql .= " AND numero_compte = '".$this->db->escape($this->numero_compte)."'";
 		$sql .= " AND label_operation = '".$this->db->escape($this->label_operation)."'";
-		$sql .= " AND entity = ".$conf->entity;	// Do not use getEntity for accounting features
+		$sql .= " AND entity = ".$conf->entity; // Do not use getEntity for accounting features
 
 		$resql = $this->db->query($sql);
 
@@ -318,7 +318,7 @@ class BookKeeping extends CommonObject
 					$sqlnum .= " AND fk_docdet = ".((int) $this->fk_docdet);
 				}
 				$sqlnum .= " AND doc_ref = '".$this->db->escape($this->doc_ref)."'"; // ref of source object
-				$sqlnum .= " AND entity = ".$conf->entity;	// Do not use getEntity for accounting features
+				$sqlnum .= " AND entity = ".$conf->entity; // Do not use getEntity for accounting features
 
 				dol_syslog(get_class($this).":: create sqlnum=".$sqlnum, LOG_DEBUG);
 				$resqlnum = $this->db->query($sqlnum);
@@ -331,7 +331,7 @@ class BookKeeping extends CommonObject
 				if (empty($this->piece_num)) {
 					$sqlnum = "SELECT MAX(piece_num)+1 as maxpiecenum";
 					$sqlnum .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
-					$sqlnum .= " WHERE entity = ".$conf->entity;	// Do not use getEntity for accounting features
+					$sqlnum .= " WHERE entity = ".$conf->entity; // Do not use getEntity for accounting features
 
 					$resqlnum = $this->db->query($sqlnum);
 					if ($resqlnum) {
@@ -1067,7 +1067,7 @@ class BookKeeping extends CommonObject
 				$line->label_operation = $obj->label_operation;
 				$line->debit = $obj->debit;
 				$line->credit = $obj->credit;
-				$line->montant = $obj->amount;	// deprecated
+				$line->montant = $obj->amount; // deprecated
 				$line->amount = $obj->amount;
 				$line->sens = $obj->sens;
 				$line->lettering_code = $obj->lettering_code;

@@ -169,7 +169,7 @@ if (empty($reshook)) {
 	// Modification entrepot
 	if ($action == 'update' && !$cancel) {
 		if ($object->fetch($id)) {
-			$object->label 		 = GETPOST("libelle");
+			$object->label = GETPOST("libelle");
 			$object->fk_parent   = GETPOST("fk_parent");
 			$object->fk_project = GETPOST('projectid');
 			$object->description = GETPOST("desc");
@@ -179,8 +179,8 @@ if (empty($reshook)) {
 			$object->zip         = GETPOST("zipcode");
 			$object->town        = GETPOST("town");
 			$object->country_id  = GETPOST("country_id");
-			$object->phone 		 = GETPOST("phone");
-			$object->fax 		 = GETPOST("fax");
+			$object->phone = GETPOST("phone");
+			$object->fax = GETPOST("fax");
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -648,7 +648,7 @@ if ($action == 'create') {
 			$sql .= " AND ps.fk_entrepot = ".((int) $object->id);
 
 			if ($separatedPMP) {
-				$sql .= " AND pa.fk_product = p.rowid AND pa.entity = ". (int) $conf->entity;
+				$sql .= " AND pa.fk_product = p.rowid AND pa.entity = ".(int) $conf->entity;
 			}
 
 			$sql .= $db->order($sortfield, $sortorder);

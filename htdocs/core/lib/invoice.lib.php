@@ -508,16 +508,16 @@ function getNumberInvoicesPieChart($mode)
 
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
-				$dataseries = array(array($langs->trans('InvoiceLate30Days'),$obj->nblate30)
-									,array($langs->trans('InvoiceLate15Days'),$obj->nblate15-$obj->nblate30)
-									,array($langs->trans('InvoiceLateMinus15Days'),$obj->nblatenow-$obj->nblate15)
-									,array($langs->trans('InvoiceNotLate'),$obj->nbnotlatenow-$obj->nbnotlate15)
-									,array($langs->trans('InvoiceNotLate15Days'),$obj->nbnotlate15-$obj->nbnotlate30)
-									,array($langs->trans('InvoiceNotLate30Days'),$obj->nbnotlate30));
+				$dataseries = array(array($langs->trans('InvoiceLate30Days'), $obj->nblate30)
+									,array($langs->trans('InvoiceLate15Days'), $obj->nblate15 - $obj->nblate30)
+									,array($langs->trans('InvoiceLateMinus15Days'), $obj->nblatenow - $obj->nblate15)
+									,array($langs->trans('InvoiceNotLate'), $obj->nbnotlatenow - $obj->nbnotlate15)
+									,array($langs->trans('InvoiceNotLate15Days'), $obj->nbnotlate15 - $obj->nbnotlate30)
+									,array($langs->trans('InvoiceNotLate30Days'), $obj->nbnotlate30));
 				$i++;
 			}
 			foreach ($dataseries as $key=>$value) {
-				$total+=$value[1];
+				$total += $value[1];
 			}
 
 			$colorseries = array($badgeStatus8, $badgeStatus1, $badgeStatus3, $badgeStatus4, $badgeStatus11, '-'.$badgeStatus11);
@@ -615,7 +615,7 @@ function getCustomerInvoiceDraftTable($maxCount = 500, $socid = 0)
 	$sql .= " s.nom, s.rowid, s.email, s.code_client, s.code_compta, s.code_fournisseur, s.code_compta_fournisseur,";
 	$sql .= " cc.rowid, cc.code";
 	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql.= ", sc.fk_soc, sc.fk_user";
+		$sql .= ", sc.fk_soc, sc.fk_user";
 	}
 
 	// Add Group from hooks
