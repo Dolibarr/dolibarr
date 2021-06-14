@@ -461,7 +461,7 @@ class Contact extends CommonObject
 		}
 		$sql .= "'".$this->db->escape($this->lastname)."',";
 		$sql .= "'".$this->db->escape($this->firstname)."',";
-		$sql .= " ".($user->id > 0 ? ((int) $user->id)."'" : "null").",";
+		$sql .= " ".($user->id > 0 ? ((int) $user->id) : "null").",";
 		$sql .= " ".((int) $this->priv).",";
 		$sql .= " 0,";
 		$sql .= " ".((int) $this->statut).",";
