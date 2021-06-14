@@ -16,19 +16,12 @@ NEW: A lot of fix into english text after a small proofreading campaign (still n
 NEW: All main menu entries are using the picto of the module
 NEW: Add a copy to clipboard button on some fields 
 NEW: Add an example of scheduled job to send email reminder for unpaid invoices
-NEW: Accountancy - Add FEC import
-NEW: Accountancy - Add a confirmation form with options on export
-NEW: Accountancy - Add select date from/to in already bind customer and supplier list
-NEW: Accountancy - Format FEC - Add new field DateLimitReglmt
-NEW: Accountancy - In ledger & journals, show link on bank transaction
-NEW: Accountancy - Possibility to filter on journals in balance
-NEW: Accountancy - Add a page to list subledger accounts
-NEW: add the Channel column into the list of orders
 NEW: Add a check to avoid an invoice date in the future
 NEW: Add some color and picto for the direction of movement
+NEW: add the column "Channel" into the list of orders
 NEW: Add the column "alias" of company in the list of proposal, order, invoice
 NEW: Add the column "Office phone" and  "User mobile" in user list
-NEW: Add the column "Price level"in thirdparty list
+NEW: Add the column "Price level" in thirdparty list
 NEW: Add some company information in the dropdown login menu
 NEW: Add constant MAIN_BUGTRACK_URL to set a custom url to redirect to when clicking on link "declare a bug"
 NEW: Add contact tag and bulk email status on the thirdparty + contact create form
@@ -92,13 +85,22 @@ NEW: When a doc file is shared, link is visible from the main page of doc.
 NEW: #16378 More E-Mail Contact substitution Values for better salutation
 NEW: option to keep the "Automatically create a total payment" checkbox empty on the tax creation page
 
+ Accountancy
+NEW: Accountancy - Add FEC import
+NEW: Accountancy - Add a confirmation form with options on export
+NEW: Accountancy - Add select date from/to in already bind customer and supplier list
+NEW: Accountancy - Format FEC - Add new field DateLimitReglmt
+NEW: Accountancy - In ledger & journals, show link on bank transaction
+NEW: Accountancy - Possibility to filter on journals in balance
+NEW: Accountancy - Add a page to list subledger accounts
+
  ECM/GED
-NEW: Add db fields note_public and note_private for ECM module
-NEW: Can filter files in GED on status Shared/Not shared
+NEW: add DB fields note_public and note_private for ECM module
+NEW: Can filter files in ECM/GED on status Shared/Not shared
 
  Members
 NEW: #17292 default subscription amount by adherent type
-NEW: Option to automatically create a login/user when a new subscription of a member is done online
+NEW: option to automatically create a login/user when a new subscription of a member is done online
 NEW: option to select membership type on the online payment page for membership subscription or renewal
 
  Projects/Tasks
@@ -122,17 +124,17 @@ NEW: option for TakePOS to show the total price without tax
 NEW: more permissions in TakePOS (can edit added line, can modify once order sent to kitchen)
 
  Third-Parties
-NEW: Can set a Warehouse on a Thirdparty
+NEW: can set a warehouse on a Thirdparty
 
  Tickets
 NEW: can use captcha on public page to create a ticket  #16347
 NEW: can set if a ticket group is visible on public interface or not
 
  Warehouse
-NEW: Can make massive stock transfers from a CSV file
-NEW: Stock movement list - Add more complete date field
-NEW: Can set a Warehouse on a Thirdparty
+NEW: can make massive stock transfers from a CSV file
+NEW: Stock movement list - add more complete date field
 NEW: can set a warehouse in a proposal
+NEW: can set a warehouse on a Thirdparty
 
  Website Module
 NEW: #17113 Can upload a favicon in website module
@@ -147,10 +149,10 @@ NEW: start new experimental module Knowledge Management
 NEW: start new experimental module Workstations Management
 
  new Options
-NEW: Add option CONTRACT_ALLOW_EXTERNAL_DOWNLOAD  to make generated doc automatically shared
-NEW: Add option SUPPLIER_PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD  to make generated doc automatically shared
-NEW: Add option MAIN_SECURITY_ANTI_SSRF_SERVER_IP  to define list of IPs that are local IPs
-NEW: Add option SOCIETE_DISABLE_WORKFORCE  to hide staff field
+NEW: add option  CONTRACT_ALLOW_EXTERNAL_DOWNLOAD            to make generated doc automatically shared
+NEW: add option  SUPPLIER_PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD   to make generated doc automatically shared
+NEW: add option  MAIN_SECURITY_ANTI_SSRF_SERVER_IP           to define list of IPs that are local IPs
+NEW: add option  SOCIETE_DISABLE_WORKFORCE                   to hide staff field
 
 
 For developers:
@@ -164,10 +166,7 @@ NEW: Add experimental repair script to switch to dynamic row format and utf8mb4 
 NEW: add form confirm hook on company card
 NEW: Add function showValueWithClipboardCPButton() to add a copy/paste
 NEW: Add hook addSectionECMAuto method to add custom diretory into ECM auto files
-NEW: Add native compression in rest apis
-NEW: Product Variants API, add variant stock to response by parameter
 NEW: Upgrade Stripe PHP lib to 7.67.0
-NEW: Add link to OpenAPI specifications xml file in REST API module setup: swagger.json file can be included into external tools like redoc
 NEW: Support sepa_debit in stripe paymentmethods list
 NEW: Update doleditor.class.php for easily activate SCAYT
 NEW: Add triggers in the function add_object_linked(), updateObjectLinked() and deleteObjectLinked()
@@ -181,8 +180,11 @@ NEW: unit selection on object edit line
 NEW: #13739 #17390 Product API route added to get product stock and product with or without variants
 
  APIs
-NEW: API Add option $includeifobjectisused to get a product
-NEW: API Get the list of product ids only
+NEW: API add option $includeifobjectisused to get a product
+NEW: API get the list of product ids only
+NEW: add native compression in REST APIs
+NEW: Product Variants API, add variant stock to response by parameter
+NEW: add link to OpenAPI specifications XML file in REST API module setup: swagger.json file can be included into external tools like redoc
 
 
 WARNING:
