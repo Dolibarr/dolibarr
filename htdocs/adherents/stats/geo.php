@@ -92,7 +92,7 @@ if ($mode) {
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c on d.country = c.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.rowid";
 		$sql .= " WHERE d.entity IN (".getEntity('adherent').")";
-		$sql .= " AND d.statut <> -1";
+		$sql .= " AND d.statut <> ".Adherent::STATUS_DRAFT;
 		$sql .= " GROUP BY c.label, c.code";
 		//print $sql;
 	}
@@ -110,7 +110,7 @@ if ($mode) {
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co on d.country = co.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.rowid";
 		$sql .= " WHERE d.entity IN (".getEntity('adherent').")";
-		$sql .= " AND d.statut != -1";
+		$sql .= " AND d.statut <> ".Adherent::STATUS_DRAFT;
 		$sql .= " GROUP BY co.label, co.code, c.nom";
 		//print $sql;
 	}
@@ -127,7 +127,7 @@ if ($mode) {
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co on d.country = co.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.rowid";
 		$sql .= " WHERE d.entity IN (".getEntity('adherent').")";
-		$sql .= " AND d.statut != -1";
+		$sql .= " AND d.statut <> ".Adherent::STATUS_DRAFT;
 		$sql .= " GROUP BY co.label, co.code, r.nom"; //+
 		//print $sql;
 	}
@@ -142,7 +142,7 @@ if ($mode) {
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c on d.country = c.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.rowid";
 		$sql .= " WHERE d.entity IN (".getEntity('adherent').")";
-		$sql .= " AND d.statut != -1";
+		$sql .= " AND d.statut <> ".Adherent::STATUS_DRAFT;
 		$sql .= " GROUP BY c.label, c.code, d.town";
 		//print $sql;
 	}
