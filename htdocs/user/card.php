@@ -1392,7 +1392,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			if (!empty($object->ldap_sid) && $object->statut == 0) {
 				print '<td class="error">'.$langs->trans("LoginAccountDisableInDolibarr").'</td>';
 			} else {
-				print '<td>'.$object->login.'</td>';
+				print '<td>'.showValueWithClipboardCPButton($object->login).'</td>';
 			}
 			print '</tr>'."\n";
 
