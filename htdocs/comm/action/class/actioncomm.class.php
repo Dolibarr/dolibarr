@@ -738,6 +738,11 @@ class ActionComm extends CommonObject
 	{
 		global $langs;
 
+		if (empty($id) && empty($ref) && empty($ref_ext) && empty($email_msgid)) {
+			dol_syslog(get_class($this)."::fetch Bad parameters", LOG_WARNING);
+			return -1;
+		}
+
 		$sql = "SELECT a.id,";
 		$sql .= " a.ref as ref,";
 		$sql .= " a.entity,";
