@@ -51,7 +51,7 @@ class Validate
 	 * @param DoliDB $db Database handler
 	 * @param Translate   $outputLang
 	 */
-	public function __construct($db,$outputLang = false)
+	public function __construct($db, $outputLang = false)
 	{
 		global $langs;
 
@@ -121,7 +121,7 @@ class Validate
 	 */
 	public function isTimestamp($stamp)
 	{
-		if (!is_numeric($stamp) && (int)$stamp == $stamp) {
+		if (!is_numeric($stamp) && (int) $stamp == $stamp) {
 			$this->error = $this->outputLang->trans('RequireValidDate');
 			return false;
 		}
@@ -229,7 +229,7 @@ class Validate
 	 */
 	public function isBool($bool)
 	{
-		if(!(is_null($bool) || is_bool($bool) || preg_match('/^[0|1]{1}$/ui', $bool))){
+		if (!(is_null($bool) || is_bool($bool) || preg_match('/^[0|1]{1}$/ui', $bool))) {
 			$this->error = $this->outputLang->trans('RequireValidBool');
 			return false;
 		}
@@ -258,7 +258,7 @@ class Validate
 			return false;
 		}
 
-		foreach ($value_arr as $val){
+		foreach ($value_arr as $val) {
 			$sql = 'SELECT ' . $col . ' FROM ' . MAIN_DB_PREFIX . $table . " WHERE " . $col ." = '" . $this->db->escape($val) . "'"; // nore quick than count(*) to check existing of a row
 			$resql = $this->db->getRow($sql);
 			if ($resql) {
