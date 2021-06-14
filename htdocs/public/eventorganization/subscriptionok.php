@@ -66,7 +66,7 @@ $object = new stdClass(); // For triggers
 $error = 0;
 
 // Security check
-$id = GETPOST("id");
+$id = GETPOST("id", 'int');
 $securekeyreceived = GETPOST("securekey");
 $securekeytocompare = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
 
@@ -74,6 +74,12 @@ if ($securekeyreceived != $securekeytocompare) {
 	print $langs->trans('MissingOrBadSecureKey');
 	exit;
 }
+
+// Security check
+if (empty($conf->eventorganization->enabled)) {
+	accessforbidden('', 0, 0, 1);
+}
+
 
 /*
  * Actions

@@ -315,11 +315,11 @@ if (empty($reshook)) {
 
 			$object->type               	 = $type;
 			$object->status             	 = GETPOST('statut');
-			$object->status_buy            = GETPOST('statut_buy');
+			$object->status_buy = GETPOST('statut_buy');
 			$object->status_batch = GETPOST('status_batch');
 			$object->batch_mask = GETPOST('batch_mask');
 
-			$object->barcode_type          = GETPOST('fk_barcode_type');
+			$object->barcode_type = GETPOST('fk_barcode_type');
 			$object->barcode = GETPOST('barcode');
 			// Set barcode_type_xxx from barcode_type id
 			$stdobject = new GenericObject($db);
@@ -1117,7 +1117,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					$inherited_mask_lot = $conf->global->LOT_ADVANCED_MASK;
 					$inherited_mask_sn = $conf->global->SN_ADVANCED_MASK;
 					print '<td id="field_mask">';
-					print $form->textwithpicto('<input type="text" class="flat" size="24" name="batch_mask" id="batch_mask_input">', $tooltip, 1, 1);
+					print $form->textwithpicto('<input type="text" class="flat minwidth175" name="batch_mask" id="batch_mask_input">', $tooltip, 1, 1);
 					print '<script type="text/javascript">
 								$(document).ready(function() {
 									$("#field_mask, #mask_option").addClass("hideobject");
@@ -1620,15 +1620,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						$tooltip .= $langs->trans("GenericMaskCodes5");
 						print '<tr><td id="mask_option">'.$langs->trans("ManageLotMask").'</td>';
 						if ($object->status_batch == '1' && $conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced') {
-							$mask = ! empty($object->batch_mask) ? $object->batch_mask : $conf->global->LOT_ADVANCED_MASK;
+							$mask = !empty($object->batch_mask) ? $object->batch_mask : $conf->global->LOT_ADVANCED_MASK;
 						}
 						if ($object->status_batch == '2' && $conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced') {
-							$mask = ! empty($object->batch_mask) ? $object->batch_mask : $conf->global->SN_ADVANCED_MASK;
+							$mask = !empty($object->batch_mask) ? $object->batch_mask : $conf->global->SN_ADVANCED_MASK;
 						}
 						$inherited_mask_lot = $conf->global->LOT_ADVANCED_MASK;
 						$inherited_mask_sn = $conf->global->SN_ADVANCED_MASK;
 						print '<td id="field_mask">';
-						print $form->textwithpicto('<input type="text" class="flat" size="24" name="batch_mask" id="batch_mask_input" value="'.$mask.'">', $tooltip, 1, 1);
+						print $form->textwithpicto('<input type="text" class="flat minwidth175" name="batch_mask" id="batch_mask_input" value="'.$mask.'">', $tooltip, 1, 1);
 
 						print '<script type="text/javascript">
 						$(document).ready(function() {
@@ -2011,7 +2011,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					$formbarcode = new FormBarCode($db);
 				}
 
-				$fk_barcode_type='';
+				$fk_barcode_type = '';
 				if ($action == 'editbarcodetype') {
 					print $formbarcode->formBarcodeType($_SERVER['PHP_SELF'].'?id='.$object->id, $object->barcode_type, 'fk_barcode_type');
 					$fk_barcode_type = $object->barcode_type;
@@ -2057,7 +2057,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
 					print $object->getLibStatut(0, 2);
 					print '</td></tr>';
-					if ((($object->status_batch == '1' &&$conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced')
+					if ((($object->status_batch == '1' && $conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced')
 						|| ($object->status_batch == '2' && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced' && $conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS))) {
 						print '<tr><td>'.$langs->trans("ManageLotMask").'</td><td>';
 						print $object->batch_mask;

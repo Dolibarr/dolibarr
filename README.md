@@ -106,7 +106,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Barcodes 
 - Batches / Lots / Serials 
 - Product Variants 
-- Bill of Materials 
+- Bill of Materials (BOM)
 - Manufacturing Orders 
 
  Customer/Sales Management 
@@ -124,9 +124,10 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
  Supplier/Purchase Management 
 - Suppliers/Vendors + Contacts 
 - Supplier (price) requests 
-- Purchase Order management 
+- Purchase Orders management 
 - Delivery/Receiption 
 - Supplier Invoices/credit notes and payment management 
+- INCOTERMS 
 
  Finance / Accounting 
 - Invoices / Payments 
@@ -138,17 +139,17 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Margins 
 - Reports 
 
- 
+ Collaboration 
 - Shared calendar/agenda (with ical and vcal export for third party tools integration) 
 - Projects & Tasks management 
 - Ticket System 
+- Surveys
 
+ HR 
 - Employee's leave requests management 
 - Expense reports 
 - Recruitment management 
 - Timesheets 
-
-- (around 100 modules available by default, 1000+ on the addon market place)
 
 
 ### Other application/modules
@@ -156,7 +157,6 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Electronic Document Management (EDM) 
 - Bookmarks management
 - Reporting
-- Surveys
 - Data export/import
 - Barcodes 
 - Margin calculations
@@ -165,8 +165,12 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Mass emailing
 - RSS integration
 - Skype integration
+- Social platforms linking 
 - Payment platforms integration (PayPal, Stripe, Paybox...)
-- 
+- Email-Collector
+
+(around 100 modules available by default, 1000+ on the addon market place)
+
 
 ### Other general features
 

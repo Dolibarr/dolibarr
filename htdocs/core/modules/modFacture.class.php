@@ -120,8 +120,36 @@ class modFacture extends DolibarrModules
 		$arraydate = dol_getdate(dol_now());
 		$datestart = dol_mktime(23, 0, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);
 		$this->cronjobs = array(
-			0=>array('label'=>'RecurringInvoices', 'jobtype'=>'method', 'class'=>'compta/facture/class/facture-rec.class.php', 'objectname'=>'FactureRec', 'method'=>'createRecurringInvoices', 'parameters'=>'', 'comment'=>'Generate recurring invoices', 'frequency'=>1, 'unitfrequency'=>3600 * 24, 'priority'=>50, 'status'=>1, 'test'=>'$conf->facture->enabled', 'datestart'=>$datestart),
-			1=>array('label'=>'SendEmailsRemindersOnInvoiceDueDate', 'jobtype'=>'method', 'class'=>'compta/facture/class/facture.class.php', 'objectname'=>'Facture', 'method'=>'sendEmailsRemindersOnInvoiceDueDate', 'parameters'=>"10,all,EmailTemplateCode", 'comment'=>'Send an emails when the unpaid invoices reach a due date + n days = today. First param is the offset n of days, second parameter is "all" or a payment mode code, last paramater is the code of email template to use (an email template with EmailTemplateCode must exists. the version in the language of the thirdparty will be used in priority).', 'frequency'=>1, 'unitfrequency'=>3600 * 24, 'priority'=>50, 'status'=>0, 'test'=>'$conf->facture->enabled', 'datestart'=>$datestart),
+			0 => array(
+				'label'=>'RecurringInvoices',
+				'jobtype'=>'method',
+				'class'=>'compta/facture/class/facture-rec.class.php',
+				'objectname'=>'FactureRec',
+				'method'=>'createRecurringInvoices',
+				'parameters'=>'',
+				'comment'=>'Generate recurring invoices',
+				'frequency'=>1,
+				'unitfrequency'=>3600 * 24,
+				'priority'=>50,
+				'status'=>1,
+				'test'=>'$conf->facture->enabled',
+				'datestart'=>$datestart
+			),
+			1 => array(
+				'label'=>'SendEmailsRemindersOnInvoiceDueDate',
+				'jobtype'=>'method',
+				'class'=>'compta/facture/class/facture.class.php',
+				'objectname'=>'Facture',
+				'method'=>'sendEmailsRemindersOnInvoiceDueDate',
+				'parameters'=>"10,all,EmailTemplateCode",
+				'comment'=>'Send an emails when the unpaid invoices reach a due date + n days = today. First param is the offset n of days, second parameter is "all" or a payment mode code, last paramater is the code of email template to use (an email template with EmailTemplateCode must exists. the version in the language of the thirdparty will be used in priority).',
+				'frequency'=>1,
+				'unitfrequency'=>3600 * 24,
+				'priority'=>50,
+				'status'=>0,
+				'test'=>'$conf->facture->enabled',
+				'datestart'=>$datestart
+			),
 		);
 
 		// Permissions

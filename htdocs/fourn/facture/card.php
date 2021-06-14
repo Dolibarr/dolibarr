@@ -2034,7 +2034,7 @@ if ($action == 'create') {
 			// Type invoice
 			$facids = $facturestatic->list_replacable_supplier_invoices($societe->id);
 			if ($facids < 0) {
-				dol_print_error($db, $facturestatic);
+				dol_print_error($db, $facturestatic->error, $facturestatic->errors);
 				exit();
 			}
 			$options = "";
@@ -2096,7 +2096,7 @@ if ($action == 'create') {
 				// Show link for credit note
 				$facids = $facturestatic->list_qualified_avoir_supplier_invoices($societe->id);
 				if ($facids < 0) {
-					dol_print_error($db, $facturestatic);
+					dol_print_error($db, $facturestatic->error, $facturestatic->errors);
 					exit;
 				}
 				$optionsav = "";

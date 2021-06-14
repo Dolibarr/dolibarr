@@ -609,6 +609,12 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 't.'.$key;
 				}
+				if (!isset($totalarray['val'])) {
+					$totalarray['val'] = array();
+				}
+				if (!isset($totalarray['val']['t.'.$key])) {
+					$totalarray['val']['t.'.$key] = 0;
+				}
 				$totalarray['val']['t.'.$key] += $object->$key;
 			}
 		}

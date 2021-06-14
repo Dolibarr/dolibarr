@@ -2465,7 +2465,7 @@ function migrate_restore_missing_links($db, $langs, $conf)
 				print 'Line '.$obj->rowid.' in '.$table1.' is linked to record '.$obj->field.' in '.$table2.' that has no link to '.$table1.'. We fix this.<br>';
 				$sql = "UPDATE ".MAIN_DB_PREFIX.$table2." SET";
 				$sql .= " ".$field2." = '".$db->escape($obj->rowid)."'";
-				$sql .= " WHERE rowid=".$obj->field;
+				$sql .= " WHERE rowid = ".((int) $obj->field);
 
 				$resql2 = $db->query($sql);
 				if (!$resql2) {
@@ -2522,7 +2522,7 @@ function migrate_restore_missing_links($db, $langs, $conf)
 				print 'Line '.$obj->rowid.' in '.$table1.' is linked to record '.$obj->field.' in '.$table2.' that has no link to '.$table1.'. We fix this.<br>';
 				$sql = "UPDATE ".MAIN_DB_PREFIX.$table2." SET";
 				$sql .= " ".$field2." = '".$db->escape($obj->rowid)."'";
-				$sql .= " WHERE rowid=".$obj->field;
+				$sql .= " WHERE rowid = ".((int) $obj->field);
 
 				$resql2 = $db->query($sql);
 				if (!$resql2) {

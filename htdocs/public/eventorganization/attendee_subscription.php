@@ -115,6 +115,11 @@ $extrafields = new ExtraFields($db);
 
 $user->loadDefaultValues();
 
+// Security check
+if (empty($conf->eventorganization->enabled)) {
+	accessforbidden('', 0, 0, 1);
+}
+
 
 /**
  * Show header for new member

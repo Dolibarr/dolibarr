@@ -1829,7 +1829,6 @@ class Ticket extends CommonObject
 	public function searchSocidByEmail($email, $type = '0', $filters = array(), $clause = 'AND')
 	{
 		$thirdparties = array();
-		$case = 0;
 		$exact = 0;
 
 		// Generation requete recherche
@@ -1843,7 +1842,7 @@ class Ticket extends CommonObject
 			}
 		}
 		if (!empty($email)) {
-			if (!$exact) {
+			if (empty($exact)) {
 				$regs = array();
 				if (preg_match('/^([\*])?[^*]+([\*])?$/', $email, $regs) && count($regs) > 1) {
 					$email = str_replace('*', '%', $email);
@@ -1856,15 +1855,11 @@ class Ticket extends CommonObject
 				$sql .= "(";
 			}
 
-			if (!$case) {
-				$sql .= "email LIKE '".$this->db->escape($email)."'";
-			} else {
-				$sql .= "email LIKE BINARY '".$this->db->escape($email)."'";
-			}
+			$sql .= "email LIKE '".$this->db->escape($email)."'";
 		}
 		if (is_array($filters) && !empty($filters)) {
 			foreach ($filters as $field => $value) {
-				$sql .= " ".$clause." ".$field." LIKE BINARY '".$this->db->escape($value)."'";
+				$sql .= " ".$clause." ".$field." LIKE '".$this->db->escape($value)."'";
 			}
 			if (!empty($email)) {
 				$sql .= ")";

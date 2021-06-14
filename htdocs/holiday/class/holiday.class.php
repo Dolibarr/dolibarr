@@ -275,17 +275,17 @@ class Holiday extends CommonObject
 		$sql .= "entity";
 		$sql .= ") VALUES (";
 		$sql .= "'(PROV)',";
-		$sql .= "'".$this->db->escape($this->fk_user)."',";
+		$sql .= " ".((int) $this->fk_user).",";
 		$sql .= " '".$this->db->idate($now)."',";
 		$sql .= " '".$this->db->escape($this->description)."',";
 		$sql .= " '".$this->db->idate($this->date_debut)."',";
 		$sql .= " '".$this->db->idate($this->date_fin)."',";
-		$sql .= " ".$this->halfday.",";
+		$sql .= " ".((int) $this->halfday).",";
 		$sql .= " '1',";
-		$sql .= " '".$this->db->escape($this->fk_validator)."',";
-		$sql .= " ".$this->fk_type.",";
-		$sql .= " ".$user->id.",";
-		$sql .= " ".$conf->entity;
+		$sql .= " ".((int) $this->fk_validator).",";
+		$sql .= " ".((int) $this->fk_type).",";
+		$sql .= " ".((int) $user->id).",";
+		$sql .= " ".((int) $conf->entity);
 		$sql .= ")";
 
 		$this->db->begin();
@@ -1952,12 +1952,12 @@ class Holiday extends CommonObject
 		$sql .= "fk_type";
 		$sql .= ") VALUES (";
 		$sql .= " '".$this->db->idate(dol_now())."',";
-		$sql .= " '".$this->db->escape($fk_user_action)."',";
-		$sql .= " '".$this->db->escape($fk_user_update)."',";
+		$sql .= " ".((int) $fk_user_action).",";
+		$sql .= " ".((int) $fk_user_update).",";
 		$sql .= " '".$this->db->escape($label)."',";
 		$sql .= " '".$this->db->escape($prev_solde)."',";
 		$sql .= " '".$this->db->escape($new_solde)."',";
-		$sql .= " ".$fk_type;
+		$sql .= " ".((int) $fk_type);
 		$sql .= ")";
 
 		$resql = $this->db->query($sql);

@@ -401,14 +401,14 @@ if ($action != 'export_csv') {
 					print '<tr class="liste_total">';
 					print '<td class="right">'.$langs->trans("SubTotal").':</td>';
 					if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
-						print '<td class="nowrap right">'.price($sous_total_opening_balance).'</td>';
+						print '<td class="right nowraponall amount">'.price($sous_total_opening_balance).'</td>';
 					}
-					print '<td class="nowrap right">'.price($sous_total_debit).'</td>';
-					print '<td class="nowrap right">'.price($sous_total_credit).'</td>';
+					print '<td class="right nowraponall amount">'.price($sous_total_debit).'</td>';
+					print '<td class="right nowraponall amount">'.price($sous_total_credit).'</td>';
 					if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
-						print '<td class="nowrap right">'.price(price2num($sous_total_opening_balance + $sous_total_debit - $sous_total_credit)).'</td>';
+						print '<td class="right nowraponall amount">'.price(price2num($sous_total_opening_balance + $sous_total_debit - $sous_total_credit)).'</td>';
 					} else {
-						print '<td class="nowrap right">'.price(price2num($sous_total_debit - $sous_total_credit)).'</td>';
+						print '<td class="right nowraponall amount">'.price(price2num($sous_total_debit - $sous_total_credit)).'</td>';
 					}
 					print "<td></td>\n";
 					print '</tr>';
@@ -443,14 +443,14 @@ if ($action != 'export_csv') {
 			}
 		}
 		// Debit
-		print '<td class="nowraponall right"><a href="'.$urlzoom.'">'.price($line->debit).'</a></td>';
+		print '<td class="right nowraponall amount"><a href="'.$urlzoom.'">'.price($line->debit).'</a></td>';
 		// Credit
-		print '<td class="nowraponall right"><a href="'.$urlzoom.'">'.price($line->credit).'</a></td>';
+		print '<td class="right nowraponall amount"><a href="'.$urlzoom.'">'.price($line->credit).'</a></td>';
 
 		if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
-			print '<td class="nowraponall right">'.price(price2num($opening_balance + $line->debit - $line->credit, 'MT')).'</td>';
+			print '<td class="right nowraponall amount">'.price(price2num($opening_balance + $line->debit - $line->credit, 'MT')).'</td>';
 		} else {
-			print '<td class="nowraponall right">'.price(price2num($line->debit - $line->credit, 'MT')).'</td>';
+			print '<td class="right nowraponall amount">'.price(price2num($line->debit - $line->credit, 'MT')).'</td>';
 		}
 		print '<td class="center">';
 		print $link;
@@ -468,12 +468,12 @@ if ($action != 'export_csv') {
 		if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
 			print '<td class="nowrap right">'.price($sous_total_opening_balance).'</td>';
 		}
-		print '<td class="nowrap right">'.price($sous_total_debit).'</td>';
-		print '<td class="nowrap right">'.price($sous_total_credit).'</td>';
+		print '<td class="right nowraponall amount">'.price($sous_total_debit).'</td>';
+		print '<td class="right nowraponall amount">'.price($sous_total_credit).'</td>';
 		if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
-			print '<td class="nowrap right">' . price(price2num($sous_total_opening_balance + $sous_total_debit - $sous_total_credit, 'MT')) . '</td>';
+			print '<td class="right nowraponall amount">' . price(price2num($sous_total_opening_balance + $sous_total_debit - $sous_total_credit, 'MT')) . '</td>';
 		} else {
-			print '<td class="nowrap right">' . price(price2num($sous_total_debit - $sous_total_credit, 'MT')) . '</td>';
+			print '<td class="right nowraponall amount">' . price(price2num($sous_total_debit - $sous_total_credit, 'MT')) . '</td>';
 		}
 		print "<td></td>\n";
 		print '</tr>';
@@ -483,8 +483,8 @@ if ($action != 'export_csv') {
 	if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
 		print '<td class="nowrap right">'.price($total_opening_balance).'</td>';
 	}
-	print '<td class="nowrap right">'.price($total_debit).'</td>';
-	print '<td class="nowrap right">'.price($total_credit).'</td>';
+	print '<td class="right nowraponall amount">'.price($total_debit).'</td>';
+	print '<td class="right nowraponall amount">'.price($total_credit).'</td>';
 	if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
 		print '<td class="nowrap right">' . price(price2num($total_opening_balance + $total_debit - $total_credit, 'MT')) . '</td>';
 	} else {

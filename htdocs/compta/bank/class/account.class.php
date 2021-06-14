@@ -705,8 +705,8 @@ class Account extends CommonObject
 		$sql .= ", ".price2num($this->min_allowed);
 		$sql .= ", ".price2num($this->min_desired);
 		$sql .= ", '".$this->db->escape($this->comment)."'";
-		$sql .= ", ".($this->state_id > 0 ? $this->state_id : "null");
-		$sql .= ", ".($this->country_id > 0 ? $this->country_id : "null");
+		$sql .= ", ".($this->state_id > 0 ? ((int) $this->state_id) : "null");
+		$sql .= ", ".($this->country_id > 0 ? ((int) $this->country_id) : "null");
 		$sql .= ", '".$this->db->escape($this->ics)."'";
 		$sql .= ", '".$this->db->escape($this->ics_transfer)."'";
 		$sql .= ")";

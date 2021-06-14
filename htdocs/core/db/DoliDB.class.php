@@ -108,7 +108,7 @@ abstract class DoliDB implements Database
 	 * Sanitize a string for SQL forging
 	 *
 	 * @param   string 	$stringtosanitize 	String to escape
-	 * @param   int		$allowsimplequote 	Allow simple quote
+	 * @param   int		$allowsimplequote 	1=Allow simple quotes in string. When string is used as a list of SQL string ('aa', 'bb', ...)
 	 * @return  string                      String escaped
 	 */
 	public function sanitize($stringtosanitize, $allowsimplequote = 0)

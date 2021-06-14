@@ -505,8 +505,8 @@ abstract class CommonObject
 
 	/**
 	 * @var array    List of child tables. To know object to delete on cascade.
-	 *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
-	 *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
+	 *               If name is like '@ClassName:FilePathClass:ParentFkFieldName', it will
+	 *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object.
 	 */
 	protected $childtablesoncascade = array();
 
@@ -3541,16 +3541,15 @@ abstract class CommonObject
 
 			if (empty($nodatabaseupdate)) {
 				$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
-				$sql .= " ".$fieldht."='".price2num($this->total_ht)."',";
-				$sql .= " ".$fieldtva."='".price2num($this->total_tva)."',";
-				$sql .= " ".$fieldlocaltax1."='".price2num($this->total_localtax1)."',";
-				$sql .= " ".$fieldlocaltax2."='".price2num($this->total_localtax2)."',";
-				$sql .= " ".$fieldttc."='".price2num($this->total_ttc)."'";
-						$sql .= ", multicurrency_total_ht='".price2num($this->multicurrency_total_ht, 'MT', 1)."'";
-						$sql .= ", multicurrency_total_tva='".price2num($this->multicurrency_total_tva, 'MT', 1)."'";
-						$sql .= ", multicurrency_total_ttc='".price2num($this->multicurrency_total_ttc, 'MT', 1)."'";
+				$sql .= " ".$fieldht." = ".price2num($this->total_ht).",";
+				$sql .= " ".$fieldtva." = ".price2num($this->total_tva).",";
+				$sql .= " ".$fieldlocaltax1." = ".price2num($this->total_localtax1).",";
+				$sql .= " ".$fieldlocaltax2." = ".price2num($this->total_localtax2).",";
+				$sql .= " ".$fieldttc." = ".price2num($this->total_ttc);
+				$sql .= ", multicurrency_total_ht = ".price2num($this->multicurrency_total_ht, 'MT', 1);
+				$sql .= ", multicurrency_total_tva = ".price2num($this->multicurrency_total_tva, 'MT', 1);
+				$sql .= ", multicurrency_total_ttc = ".price2num($this->multicurrency_total_ttc, 'MT', 1);
 				$sql .= ' WHERE rowid = '.$this->id;
-
 
 				dol_syslog(get_class($this)."::update_price", LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -6625,6 +6624,7 @@ abstract class CommonObject
 					} else {
 						$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
 					}
+
 					//We have to join on extrafield table
 					if (strpos($InfoFieldList[4], 'extra') !== false) {
 						$sql .= ' as main, '.MAIN_DB_PREFIX.$InfoFieldList[0].'_extrafields as extra';
@@ -6972,10 +6972,11 @@ abstract class CommonObject
 			$form = new Form($this->db);
 		}
 
-		$objectid = $this->id;
-		$label = $val['label'];
-		$type  = $val['type'];
-		$size  = $val['css'];
+		$objectid = $this->id;	// Not used ???
+
+		$label = empty($val['label']) ? '' : $val['label'];
+		$type  = empty($val['type']) ? '' : $val['type'];
+		$size  = empty($val['css']) ? '' : $val['css'];
 		$reg = array();
 
 		// Convert var to be able to share same code than showOutputField of extrafields
@@ -6992,10 +6993,10 @@ abstract class CommonObject
 			$type = 'link';
 		}
 
-		$default = $val['default'];
-		$computed = $val['computed'];
-		$unique = $val['unique'];
-		$required = $val['required'];
+		$default = empty($val['default']) ? '' : $val['default'];
+		$computed = empty($val['computed']) ? '' : $val['computed'];
+		$unique = empty($val['unique']) ? '' : $val['unique'];
+		$required = empty($val['required']) ? '' : $val['required'];
 		$param = array();
 		$param['options'] = array();
 
@@ -7016,9 +7017,9 @@ abstract class CommonObject
 			$type = 'sellist';
 		}
 
-		$langfile = $val['langfile'];
-		$list = $val['list'];
-		$help = $val['help'];
+		$langfile = empty($val['langfile']) ? '' : $val['langfile'];
+		$list = (empty($val['list']) ? '' : $val['list']);
+		$help = (empty($val['help']) ? '' : $val['help']);
 		$hidden = (($val['visible'] == 0) ? 1 : 0); // If zero, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 
 		if ($hidden) {
@@ -7044,9 +7045,9 @@ abstract class CommonObject
 			} elseif ($type == 'boolean') {
 				$morecss = '';
 			} else {
-				if (round($size) < 12) {
+				if (is_numeric($size) && round($size) < 12) {
 					$morecss = 'minwidth100';
-				} elseif (round($size) <= 48) {
+				} elseif (is_numeric($size) && round($size) <= 48) {
 					$morecss = 'minwidth200';
 				} else {
 					$morecss = 'minwidth400';

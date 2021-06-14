@@ -854,7 +854,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	print '<tr class="oddeven">';
 
 	if (!empty($arrayfields['u.login']['checked'])) {
-		print '<td class="nowraponall">';
+		print '<td class="nowraponall tdoverflowmax150">';
 		print $li;
 		if (!empty($conf->multicompany->enabled) && $obj->admin && !$obj->entity) {
 			print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingleft"');

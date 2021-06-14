@@ -126,7 +126,7 @@ $sql .= " WHERE pf.fk_facture = f.rowid AND p.rowid = pf.fk_paiement AND cp.id =
 $sql .= " AND f.module_source = '".$db->escape($posmodule)."'";
 $sql .= " AND f.pos_source = '".$db->escape($terminalid)."'";
 $sql .= " AND f.paye = 1";
-$sql .= " AND p.entity = ".$conf->entity;	// Never share entities for features related to accountancy
+$sql .= " AND p.entity = ".$conf->entity; // Never share entities for features related to accountancy
 /*if ($key == 'cash')       $sql.=" AND cp.code = 'LIQ'";
 elseif ($key == 'cheque') $sql.=" AND cp.code = 'CHQ'";
 elseif ($key == 'card')   $sql.=" AND cp.code = 'CB'";
@@ -222,7 +222,7 @@ if ($resql) {
 		$invoicetmp->fetch($objp->facid);
 
 		if (empty($cacheinvoiceid[$objp->facid])) {
-			$cacheinvoiceid[$objp->facid] = $objp->facid;	// First time this invoice is found into list of invoice x payments
+			$cacheinvoiceid[$objp->facid] = $objp->facid; // First time this invoice is found into list of invoice x payments
 			foreach ($invoicetmp->lines as $line) {
 				$totalqty += $line->qty;
 				$totalvat += $line->total_tva;
@@ -348,21 +348,21 @@ if ($resql) {
 	print '<div style="text-align: right">';
 	print '<h2>';
 
-	print $langs->trans("Cash").' '.($transactionspertype['CASH']?'('.$transactionspertype['CASH'].')':'').': <span class="amount">'.price($cash).'</span>';
+	print $langs->trans("Cash").' '.($transactionspertype['CASH'] ? '('.$transactionspertype['CASH'].')' : '').': <span class="amount">'.price($cash).'</span>';
 	if ($object->status == $object::STATUS_VALIDATED && $cash != $object->cash) {
 		print ' <> <span class="amountremaintopay">'.$langs->trans("Declared").': '.price($object->cash).'</span>';
 	}
 	print "<br>";
 
 	//print '<br>';
-	print $langs->trans("PaymentTypeCHQ").' '.($transactionspertype['CHQ']?'('.$transactionspertype['CHQ'].')':'').': <span class="amount">'.price($cheque).'</span>';
+	print $langs->trans("PaymentTypeCHQ").' '.($transactionspertype['CHQ'] ? '('.$transactionspertype['CHQ'].')' : '').': <span class="amount">'.price($cheque).'</span>';
 	if ($object->status == $object::STATUS_VALIDATED && $cheque != $object->cheque) {
 		print ' <> <span class="amountremaintopay">'.$langs->trans("Declared").': '.price($object->cheque).'</span>';
 	}
 	print "<br>";
 
 	//print '<br>';
-	print $langs->trans("PaymentTypeCB").' '.($transactionspertype['CB']?'('.$transactionspertype['CB'].')':'').': <span class="amount">'.price($bank).'</span>';
+	print $langs->trans("PaymentTypeCB").' '.($transactionspertype['CB'] ? '('.$transactionspertype['CB'].')' : '').': <span class="amount">'.price($bank).'</span>';
 	if ($object->status == $object::STATUS_VALIDATED && $bank != $object->card) {
 		print ' <> <span class="amountremaintopay">'.$langs->trans("Declared").': '.price($object->card).'</span>';
 	}
@@ -370,7 +370,7 @@ if ($resql) {
 
 	// print '<br>';
 	if ($other) {
-		print ''.$langs->trans("Other").' '.($transactionspertype['OTHER']?'('.$transactionspertype['OTHER'].')':'').': <span class="amount">'.price($other)."</span>";
+		print ''.$langs->trans("Other").' '.($transactionspertype['OTHER'] ? '('.$transactionspertype['OTHER'].')' : '').': <span class="amount">'.price($other)."</span>";
 		print '<br>';
 	}
 

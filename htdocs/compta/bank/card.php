@@ -73,223 +73,228 @@ $result = restrictedArea($user, 'banque', $id, 'bank_account&bank_account', '', 
  * Actions
  */
 
-if ($cancel) {
-	$action = '';
-}
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-if ($action == 'add') {
-	$error = 0;
-
-	$db->begin();
-
-	// Create account
-	$object = new Account($db);
-
-	$object->ref             = dol_string_nospecial(trim(GETPOST('ref', 'alpha')));
-	$object->label           = trim(GETPOST("label", 'alphanohtml'));
-	$object->courant         = GETPOST("type");
-	$object->clos            = GETPOST("clos");
-	$object->rappro          = (GETPOST("norappro", 'alpha') ? 0 : 1);
-	$object->url             = trim(GETPOST("url", 'alpha'));
-
-	$object->bank            = trim(GETPOST("bank"));
-	$object->code_banque     = trim(GETPOST("code_banque"));
-	$object->code_guichet    = trim(GETPOST("code_guichet"));
-	$object->number          = trim(GETPOST("number"));
-	$object->cle_rib         = trim(GETPOST("cle_rib"));
-	$object->bic             = trim(GETPOST("bic"));
-	$object->iban            = trim(GETPOST("iban"));
-	$object->domiciliation   = trim(GETPOST("domiciliation", "nohtml"));
-
-	$object->proprio = trim(GETPOST("proprio", 'alphanohtml'));
-	$object->owner_address   = trim(GETPOST("owner_address", 'nohtml'));
-
-	$object->ics             = trim(GETPOST("ics", 'alpha'));
-	$object->ics_transfer    = trim(GETPOST("ics_transfer", 'alpha'));
-
-	$account_number = GETPOST('account_number', 'alphanohtml');
-	if (empty($account_number) || $account_number == '-1') {
-		$object->account_number = '';
-	} else {
-		$object->account_number = $account_number;
-	}
-	$fk_accountancy_journal  = GETPOST('fk_accountancy_journal', 'int');
-	if ($fk_accountancy_journal <= 0) {
-		$object->fk_accountancy_journal = '';
-	} else {
-		$object->fk_accountancy_journal = $fk_accountancy_journal;
-	}
-
-	$object->solde           = price2num(GETPOST("solde"));
-	$object->date_solde      = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST('reday', 'int'), GETPOST("reyear", 'int'));
-
-	$object->currency_code   = trim(GETPOST("account_currency_code"));
-
-	$object->state_id        = GETPOST("account_state_id", 'int');
-	$object->country_id      = GETPOST("account_country_id", 'int');
-
-	$object->min_allowed     = GETPOST("account_min_allowed", 'int');
-	$object->min_desired     = GETPOST("account_min_desired", 'int');
-	$object->comment         = trim(GETPOST("account_comment", 'restricthtml'));
-
-	$object->fk_user_author  = $user->id;
-
-	if ($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED && empty($object->account_number)) {
-		setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("AccountancyCode")), null, 'errors');
-		$action = 'create'; // Force chargement page en mode creation
-		$error++;
-	}
-	if (empty($object->ref)) {
-		setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Ref")), null, 'errors');
-		$action = 'create'; // Force chargement page en mode creation
-		$error++;
-	}
-	if (empty($object->label)) {
-		setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("LabelBankCashAccount")), null, 'errors');
-		$action = 'create'; // Force chargement page en mode creation
-		$error++;
-	}
-
-	// Fill array 'array_options' with data from add form
-	$ret = $extrafields->setOptionalsFromPost(null, $object);
-
-	if (!$error) {
-		$id = $object->create($user);
-		if ($id > 0) {
-			// Category association
-			$categories = GETPOST('categories', 'array');
-			$object->setCategories($categories);
-
-			$_GET["id"] = $id; // Force chargement page en mode visu
-
-			$action = '';
-		} else {
-			$error++;
-			setEventMessages($object->error, $object->errors, 'errors');
-
-			$action = 'create'; // Force chargement page en mode creation
-		}
-	}
-
-	if (!$error) {
-		$db->commit();
-	} else {
-		$db->rollback();
-	}
-}
-
-if ($action == 'update') {
-	$error = 0;
-
-	// Update account
-	$object = new Account($db);
-	$object->fetch(GETPOST("id", 'int'));
-
-	$object->ref             = dol_string_nospecial(trim(GETPOST('ref', 'alpha')));
-	$object->label           = trim(GETPOST("label", 'alphanohtml'));
-	$object->courant         = GETPOST("type");
-	$object->clos            = GETPOST("clos");
-	$object->rappro          = (GETPOST("norappro", 'alpha') ? 0 : 1);
-	$object->url             = trim(GETPOST("url", 'alpha'));
-
-	$object->bank            = trim(GETPOST("bank"));
-	$object->code_banque     = trim(GETPOST("code_banque"));
-	$object->code_guichet    = trim(GETPOST("code_guichet"));
-	$object->number          = trim(GETPOST("number"));
-	$object->cle_rib         = trim(GETPOST("cle_rib"));
-	$object->bic             = trim(GETPOST("bic"));
-	$object->iban            = trim(GETPOST("iban"));
-	$object->domiciliation   = trim(GETPOST("domiciliation", "nohtml"));
-
-	$object->proprio = trim(GETPOST("proprio", 'alphanohtml'));
-	$object->owner_address   = trim(GETPOST("owner_address", 'nohtml'));
-
-	$object->ics             = trim(GETPOST("ics", 'alpha'));
-	$object->ics_transfer    = trim(GETPOST("ics_transfer", 'alpha'));
-
-	$account_number = GETPOST('account_number', 'alpha');
-	if (empty($account_number) || $account_number == '-1') {
-		$object->account_number = '';
-	} else {
-		$object->account_number = $account_number;
-	}
-	$fk_accountancy_journal  = GETPOST('fk_accountancy_journal', 'int');
-	if ($fk_accountancy_journal <= 0) {
-		$object->fk_accountancy_journal = '';
-	} else {
-		$object->fk_accountancy_journal = $fk_accountancy_journal;
-	}
-
-	$object->currency_code   = trim(GETPOST("account_currency_code"));
-
-	$object->state_id        = GETPOST("account_state_id", 'int');
-	$object->country_id      = GETPOST("account_country_id", 'int');
-
-	$object->min_allowed     = GETPOST("account_min_allowed", 'int');
-	$object->min_desired     = GETPOST("account_min_desired", 'int');
-	$object->comment         = trim(GETPOST("account_comment", 'restricthtml'));
-
-	if ($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED && empty($object->account_number)) {
-		setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("AccountancyCode")), null, 'errors');
-		$action = 'edit'; // Force chargement page en mode creation
-		$error++;
-	}
-	if (empty($object->ref)) {
-		setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Ref")), null, 'errors');
-		$action = 'edit'; // Force chargement page en mode creation
-		$error++;
-	}
-	if (empty($object->label)) {
-		setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("LabelBankCashAccount")), null, 'errors');
-		$action = 'edit'; // Force chargement page en mode creation
-		$error++;
-	}
-
-	$db->begin();
-
-	if (!$error) {
-		// Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost(null, $object);
-	}
-
-	if (!$error) {
-		$result = $object->update($user);
-		if ($result >= 0) {
-			// Category association
-			$categories = GETPOST('categories', 'array');
-			$object->setCategories($categories);
-
-			$_GET["id"] = $_POST["id"]; // Force chargement page en mode visu
-		} else {
-			$error++;
-			setEventMessages($object->error, $object->errors, 'errors');
-			$action = 'edit'; // Force chargement page edition
-		}
-	}
-
-	if (!$error) {
-		$db->commit();
-	} else {
-		$db->rollback();
-	}
-}
-
-if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->rights->banque->configurer) {
-	// Delete
-	$object = new Account($db);
-	$object->fetch(GETPOST("id", "int"));
-	$result = $object->delete($user);
-
-	if ($result > 0) {
-		setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
-		header("Location: ".DOL_URL_ROOT."/compta/bank/list.php");
-		exit;
-	} else {
-		setEventMessages($object->error, $object->errors, 'errors');
+if (empty($reshook)) {
+	if ($cancel) {
 		$action = '';
 	}
-}
 
+	if ($action == 'add') {
+		$error = 0;
+
+		$db->begin();
+
+		// Create account
+		$object = new Account($db);
+
+		$object->ref = dol_string_nospecial(trim(GETPOST('ref', 'alpha')));
+		$object->label = trim(GETPOST("label", 'alphanohtml'));
+		$object->courant = GETPOST("type");
+		$object->clos = GETPOST("clos");
+		$object->rappro = (GETPOST("norappro", 'alpha') ? 0 : 1);
+		$object->url = trim(GETPOST("url", 'alpha'));
+
+		$object->bank = trim(GETPOST("bank"));
+		$object->code_banque = trim(GETPOST("code_banque"));
+		$object->code_guichet = trim(GETPOST("code_guichet"));
+		$object->number = trim(GETPOST("number"));
+		$object->cle_rib = trim(GETPOST("cle_rib"));
+		$object->bic = trim(GETPOST("bic"));
+		$object->iban = trim(GETPOST("iban"));
+		$object->domiciliation = trim(GETPOST("domiciliation", "nohtml"));
+
+		$object->proprio = trim(GETPOST("proprio", 'alphanohtml'));
+		$object->owner_address = trim(GETPOST("owner_address", 'nohtml'));
+
+		$object->ics = trim(GETPOST("ics", 'alpha'));
+		$object->ics_transfer = trim(GETPOST("ics_transfer", 'alpha'));
+
+		$account_number = GETPOST('account_number', 'alphanohtml');
+		if (empty($account_number) || $account_number == '-1') {
+			$object->account_number = '';
+		} else {
+			$object->account_number = $account_number;
+		}
+		$fk_accountancy_journal = GETPOST('fk_accountancy_journal', 'int');
+		if ($fk_accountancy_journal <= 0) {
+			$object->fk_accountancy_journal = '';
+		} else {
+			$object->fk_accountancy_journal = $fk_accountancy_journal;
+		}
+
+		$object->solde = price2num(GETPOST("solde"));
+		$object->date_solde = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST('reday', 'int'), GETPOST("reyear", 'int'));
+
+		$object->currency_code = trim(GETPOST("account_currency_code"));
+
+		$object->state_id = GETPOST("account_state_id", 'int');
+		$object->country_id = GETPOST("account_country_id", 'int');
+
+		$object->min_allowed = GETPOST("account_min_allowed", 'int');
+		$object->min_desired = GETPOST("account_min_desired", 'int');
+		$object->comment = trim(GETPOST("account_comment", 'restricthtml'));
+
+		$object->fk_user_author = $user->id;
+
+		if ($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED && empty($object->account_number)) {
+			setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("AccountancyCode")), null, 'errors');
+			$action = 'create'; // Force chargement page en mode creation
+			$error++;
+		}
+		if (empty($object->ref)) {
+			setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Ref")), null, 'errors');
+			$action = 'create'; // Force chargement page en mode creation
+			$error++;
+		}
+		if (empty($object->label)) {
+			setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("LabelBankCashAccount")), null, 'errors');
+			$action = 'create'; // Force chargement page en mode creation
+			$error++;
+		}
+
+		// Fill array 'array_options' with data from add form
+		$ret = $extrafields->setOptionalsFromPost(null, $object);
+
+		if (!$error) {
+			$id = $object->create($user);
+			if ($id > 0) {
+				// Category association
+				$categories = GETPOST('categories', 'array');
+				$object->setCategories($categories);
+
+				$_GET["id"] = $id; // Force chargement page en mode visu
+
+				$action = '';
+			} else {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+
+				$action = 'create'; // Force chargement page en mode creation
+			}
+		}
+
+		if (!$error) {
+			$db->commit();
+		} else {
+			$db->rollback();
+		}
+	}
+
+	if ($action == 'update') {
+		$error = 0;
+
+		// Update account
+		$object = new Account($db);
+		$object->fetch(GETPOST("id", 'int'));
+
+		$object->ref = dol_string_nospecial(trim(GETPOST('ref', 'alpha')));
+		$object->label = trim(GETPOST("label", 'alphanohtml'));
+		$object->courant = GETPOST("type");
+		$object->clos = GETPOST("clos");
+		$object->rappro = (GETPOST("norappro", 'alpha') ? 0 : 1);
+		$object->url = trim(GETPOST("url", 'alpha'));
+
+		$object->bank = trim(GETPOST("bank"));
+		$object->code_banque = trim(GETPOST("code_banque"));
+		$object->code_guichet = trim(GETPOST("code_guichet"));
+		$object->number = trim(GETPOST("number"));
+		$object->cle_rib = trim(GETPOST("cle_rib"));
+		$object->bic = trim(GETPOST("bic"));
+		$object->iban = trim(GETPOST("iban"));
+		$object->domiciliation = trim(GETPOST("domiciliation", "nohtml"));
+
+		$object->proprio = trim(GETPOST("proprio", 'alphanohtml'));
+		$object->owner_address = trim(GETPOST("owner_address", 'nohtml'));
+
+		$object->ics = trim(GETPOST("ics", 'alpha'));
+		$object->ics_transfer = trim(GETPOST("ics_transfer", 'alpha'));
+
+		$account_number = GETPOST('account_number', 'alpha');
+		if (empty($account_number) || $account_number == '-1') {
+			$object->account_number = '';
+		} else {
+			$object->account_number = $account_number;
+		}
+		$fk_accountancy_journal = GETPOST('fk_accountancy_journal', 'int');
+		if ($fk_accountancy_journal <= 0) {
+			$object->fk_accountancy_journal = '';
+		} else {
+			$object->fk_accountancy_journal = $fk_accountancy_journal;
+		}
+
+		$object->currency_code = trim(GETPOST("account_currency_code"));
+
+		$object->state_id = GETPOST("account_state_id", 'int');
+		$object->country_id = GETPOST("account_country_id", 'int');
+
+		$object->min_allowed = GETPOST("account_min_allowed", 'int');
+		$object->min_desired = GETPOST("account_min_desired", 'int');
+		$object->comment = trim(GETPOST("account_comment", 'restricthtml'));
+
+		if ($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED && empty($object->account_number)) {
+			setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("AccountancyCode")), null, 'errors');
+			$action = 'edit'; // Force chargement page en mode creation
+			$error++;
+		}
+		if (empty($object->ref)) {
+			setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Ref")), null, 'errors');
+			$action = 'edit'; // Force chargement page en mode creation
+			$error++;
+		}
+		if (empty($object->label)) {
+			setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("LabelBankCashAccount")), null, 'errors');
+			$action = 'edit'; // Force chargement page en mode creation
+			$error++;
+		}
+
+		$db->begin();
+
+		if (!$error) {
+			// Fill array 'array_options' with data from add form
+			$ret = $extrafields->setOptionalsFromPost(null, $object);
+		}
+
+		if (!$error) {
+			$result = $object->update($user);
+			if ($result >= 0) {
+				// Category association
+				$categories = GETPOST('categories', 'array');
+				$object->setCategories($categories);
+
+				$_GET["id"] = $_POST["id"]; // Force chargement page en mode visu
+			} else {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+				$action = 'edit'; // Force chargement page edition
+			}
+		}
+
+		if (!$error) {
+			$db->commit();
+		} else {
+			$db->rollback();
+		}
+	}
+
+	if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->rights->banque->configurer) {
+		// Delete
+		$object = new Account($db);
+		$object->fetch(GETPOST("id", "int"));
+		$result = $object->delete($user);
+
+		if ($result > 0) {
+			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
+			header("Location: " . DOL_URL_ROOT . "/compta/bank/list.php");
+			exit;
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = '';
+		}
+	}
+}
 
 /*
  * View
