@@ -455,28 +455,28 @@ class ProductFournisseur extends Product
 				$sql .= (isset($fk_multicurrency) ? "'".$this->db->escape($fk_multicurrency)."'" : 'null').",";
 				$sql .= (isset($multicurrency_code) ? "'".$this->db->escape($multicurrency_code)."'" : 'null').",";
 				$sql .= " '".$this->db->idate($now)."',";
-				$sql .= " ".$this->id.",";
-				$sql .= " ".$fourn->id.",";
+				$sql .= " ".((int) $this->id).",";
+				$sql .= " ".((int) $fourn->id).",";
 				$sql .= " '".$this->db->escape($ref_fourn)."',";
 				$sql .= " '".$this->db->escape($desc_fourn)."',";
 				$sql .= " ".$user->id.",";
-				$sql .= " ".$buyprice.",";
-				$sql .= " ".$qty.",";
-				$sql .= " ".$remise_percent.",";
-				$sql .= " ".$remise.",";
-				$sql .= " ".$unitBuyPrice.",";
-				$sql .= " ".$tva_tx.",";
-				$sql .= " ".$charges.",";
-				$sql .= " ".$availability.",";
+				$sql .= " ".price2num($buyprice).",";
+				$sql .= " ".((float) $qty).",";
+				$sql .= " ".((float) $remise_percent).",";
+				$sql .= " ".((float) $remise).",";
+				$sql .= " ".price2num($unitBuyPrice).",";
+				$sql .= " ".price2num($tva_tx).",";
+				$sql .= " ".price2num($charges).",";
+				$sql .= " ".((int) $availability).",";
 				$sql .= " ".($newdefaultvatcode ? "'".$this->db->escape($newdefaultvatcode)."'" : "null").",";
-				$sql .= " ".$newnpr.",";
+				$sql .= " ".((int) $newnpr).",";
 				$sql .= $conf->entity.",";
-				$sql .= ($delivery_time_days != '' ? $delivery_time_days : 'null').",";
+				$sql .= ($delivery_time_days != '' ? ((int) $delivery_time_days) : 'null').",";
 				$sql .= (empty($supplier_reputation) ? 'NULL' : "'".$this->db->escape($supplier_reputation)."'").",";
 				$sql .= (empty($barcode) ? 'NULL' : "'".$this->db->escape($barcode)."'").",";
 				$sql .= (empty($fk_barcode_type) ? 'NULL' : "'".$this->db->escape($fk_barcode_type)."'");
 				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
-					$sql .= ", ".(empty($this->packaging) ? 1 : $this->db->escape($this->packaging));
+					$sql .= ", ".(empty($this->packaging) ? '1' : "'".$this->db->escape($this->packaging)."'");
 				}
 				$sql .= ")";
 
@@ -1253,10 +1253,10 @@ class ProductFournisseur extends Product
 		$sql .= (isset($fk_multicurrency) ? "'".$this->db->escape($fk_multicurrency)."'" : 'null').",";
 		$sql .= (isset($multicurrency_code) ? "'".$this->db->escape($multicurrency_code)."'" : 'null').",";
 		$sql .= "'".$this->db->idate($datec)."',";
-		$sql .= " ".$this->product_fourn_price_id.",";
+		$sql .= " ".((int) $this->product_fourn_price_id).",";
 		$sql .= " ".$user->id.",";
 		$sql .= " ".price2num($buyprice).",";
-		$sql .= " ".$qty;
+		$sql .= " ".price2num($qty);
 		$sql .= ")";
 
 		$resql = $this->db->query($sql);

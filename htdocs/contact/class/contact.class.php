@@ -455,18 +455,18 @@ class Contact extends CommonObject
 		$sql .= ") VALUES (";
 		$sql .= "'".$this->db->idate($now)."',";
 		if ($this->socid > 0) {
-			$sql .= " ".$this->db->escape($this->socid).",";
+			$sql .= " ".((int) $this->socid).",";
 		} else {
 			$sql .= "null,";
 		}
 		$sql .= "'".$this->db->escape($this->lastname)."',";
 		$sql .= "'".$this->db->escape($this->firstname)."',";
-		$sql .= " ".($user->id > 0 ? "'".$this->db->escape($user->id)."'" : "null").",";
-		$sql .= " ".$this->db->escape($this->priv).",";
+		$sql .= " ".($user->id > 0 ? ((int) $user->id)."'" : "null").",";
+		$sql .= " ".((int) $this->priv).",";
 		$sql .= " 0,";
-		$sql .= " ".$this->db->escape($this->statut).",";
+		$sql .= " ".((int) $this->statut).",";
 		$sql .= " ".(!empty($this->canvas) ? "'".$this->db->escape($this->canvas)."'" : "null").",";
-		$sql .= " ".$this->db->escape($this->entity).",";
+		$sql .= " ".((int) $this->entity).",";
 		$sql .= "'".$this->db->escape($this->ref_ext)."',";
 		$sql .= " ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 		$sql .= ")";

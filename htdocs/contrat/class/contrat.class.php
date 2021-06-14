@@ -1546,11 +1546,11 @@ class Contrat extends CommonObject
 			$sql .= ") VALUES (";
 			$sql .= $this->id.", '', '".$this->db->escape($desc)."',";
 			$sql .= ($fk_product > 0 ? $fk_product : "null").",";
-			$sql .= " ".$qty.",";
-			$sql .= " ".$txtva.",";
+			$sql .= " ".((float) $qty).",";
+			$sql .= " ".((float) $txtva).",";
 			$sql .= " ".($vat_src_code ? "'".$this->db->escape($vat_src_code)."'" : "null").",";
-			$sql .= " ".$txlocaltax1.",";
-			$sql .= " ".$txlocaltax2.",";
+			$sql .= " ".((float) $txlocaltax1).",";
+			$sql .= " ".((float) $txlocaltax2).",";
 			$sql .= " '".$this->db->escape($localtax1_type)."',";
 			$sql .= " '".$this->db->escape($localtax2_type)."',";
 			$sql .= " ".price2num($remise_percent).",";
@@ -1559,7 +1559,7 @@ class Contrat extends CommonObject
 			$sql .= " '".$this->db->escape($info_bits)."',";
 			$sql .= " ".price2num($price).",".price2num($remise).",";
 			if (isset($fk_fournprice)) {
-				$sql .= ' '.$fk_fournprice.',';
+				$sql .= ' '.((int) $fk_fournprice).',';
 			} else {
 				$sql .= ' null,';
 			}
