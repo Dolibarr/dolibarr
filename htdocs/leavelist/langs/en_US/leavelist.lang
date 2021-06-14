@@ -1,0 +1,87 @@
+# Copyright (C) 2019 SuperAdmin
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+# Module label 'ModuleLeaveListName'
+ModuleLeaveListName = LeaveList
+# Module description 'ModuleLeaveListDesc'
+ModuleLeaveListDesc = LeaveList description
+
+#
+# Admin page
+#
+LeaveListSetup = LeaveList setup
+Settings = Settings
+LeaveListSetupPage = LeaveList setup page
+LEAVELIST_MYPARAM1 = My param 1
+LEAVELIST_MYPARAM1Tooltip = My param 1 tooltip
+LEAVELIST_MYPARAM2=My param 2
+LEAVELIST_MYPARAM2Tooltip=My param 2 tooltip
+
+
+#
+# About page
+#
+About = About
+LeaveListAbout = About LeaveList
+LeaveListAboutPage = LeaveList about page
+
+#
+# Sample page
+#
+MyPageName = My page name
+
+#
+# Sample widget
+#
+MyWidget = My widget
+MyWidgetDescription = My widget description
+
+
+Searchfor = Search for
+Employeename = Employee name
+From: = From :
+To: = To :
+Approved = Approved
+Awaitingforapproval = Awaiting for approval
+Draft = Draft
+Search = Search
+Searchfor: = Search for :
+Reasults: = Reasults :
+Previous = Previous
+Next = Next
+Sun = Sun
+Mon = Mon
+Tue = Tue
+Wed = Wed
+Thu = Thu
+Fri = Fri
+Sat = Sat
+Enddateshouldbehigherthanstartdate = End date should be higher than start date
+Noelementsrelatedtoyoursearch = No elements related to your search
+Employee = Employee
+Type = Type
+Startdate = Start date
+Enddate = End date
+Status = Status
+Numberofdays = Number of days
+Total: = Total :
+calendriers = Calendars
+graphiques = Charts
+Afficher: = Display:
+Tableau = Table
