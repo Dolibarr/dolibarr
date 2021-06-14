@@ -1304,8 +1304,7 @@ while ($i < min($num, $limit)) {
 			}
 		}
 		// Email MsgID
-		if (!empty($arrayfields['p.email_msgid']['checked']))
-		{
+		if (!empty($arrayfields['p.email_msgid']['checked'])) {
 			print '<td class="center">';
 			print $obj->email_msgid;
 			print '</td>';
