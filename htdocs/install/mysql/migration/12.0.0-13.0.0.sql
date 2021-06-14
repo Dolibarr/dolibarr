@@ -58,6 +58,9 @@ ALTER TABLE llx_mrp_mo_extrafields DROP INDEX idx_fk_object;
 
 ALTER TABLE llx_mrp_mo_extrafields ADD INDEX idx_mrp_mo_fk_object(fk_object);
 
+ALTER TABLE llx_societe_commerciaux ADD CONSTRAINT fk_societe_commerciaux_fk_soc    FOREIGN KEY (fk_soc)  REFERENCES llx_societe (rowid) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE llx_societe_commerciaux ADD CONSTRAINT fk_societe_commerciaux_fk_user   FOREIGN KEY (fk_user) REFERENCES llx_user (rowid) ON DELETE CASCADE ON UPDATE CASCADE;
+
 
 -- For v13
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (111,11,     '0','0','No Sales Tax',1);
