@@ -1481,6 +1481,10 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 		display: inline-block;
 	}
 
+	input.maxwidthinputfileonsmartphone {
+		width: 175px;
+	}
+
 	.logopublicpayment #dolpaymentlogo {
 		max-width: 260px;
 	}

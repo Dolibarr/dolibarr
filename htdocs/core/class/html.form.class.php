@@ -8494,7 +8494,7 @@ class Form
 	 */
 	public function showFilterButtons()
 	{
-		$out = '<div class="nowrap">';
+		$out = '<div class="nowraponall">';
 		$out .= '<button type="submit" class="liste_titre button_search" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
 		$out .= '<button type="submit" class="liste_titre button_removefilter" name="button_removefilter_x" value="x"><span class="fa fa-remove"></span></button>';
 		$out .= '</div>';

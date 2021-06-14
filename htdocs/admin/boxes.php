@@ -422,7 +422,7 @@ foreach ($boxactivated as $key => $box) {
 	$hasnext = ($key < (count($boxactivated) - 1));
 	$hasprevious = ($key != 0);
 	print '<td class="center">'.($key + 1).'</td>';
-	print '<td class="center">';
+	print '<td class="center nowraponall">';
 	print ($hasnext ? '<a class="reposition" href="boxes.php?action=switch&amp;switchfrom='.$box->rowid.'&amp;switchto='.$boxactivated[$key + 1]->rowid.'">'.img_down().'</a>&nbsp;' : '');
 	print ($hasprevious ? '<a class="reposition" href="boxes.php?action=switch&amp;switchfrom='.$box->rowid.'&amp;switchto='.$boxactivated[$key - 1]->rowid.'">'.img_up().'</a>' : '');
 	print '</td>';

@@ -104,6 +104,8 @@ print '<input type="hidden" name="action" value="update">';
 
 // Social networks
 print '<br>';
+
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent editmode">';
 print '<tr class="liste_titre">';
 print '<td class="titlefield">'.$langs->trans("SocialNetworksInformation").'</td><td>'.$langs->trans("Url").'</td><td>'.$langs->trans("SocialNetworkId").'</td><td></td>';
@@ -116,17 +118,18 @@ foreach ($listofnetworks as $key => $value) {
 		print '<td><label for="'.$key.'url">'.$langs->trans(ucfirst($key)).'</label></td>';
 		$networkconstname = 'MAIN_INFO_SOCIETE_'.strtoupper($key).'_URL';
 		$networkconstid = 'MAIN_INFO_SOCIETE_'.strtoupper($key);
-		print '<td><span class="fa paddingright '.($value['icon'] ? $value['icon'] : 'fa-link').'"></span>';
+		print '<td class="nowraponall"><span class="fa paddingright '.($value['icon'] ? $value['icon'] : 'fa-link').'"></span>';
 		print '<input name="'.$key.'url" id="'.$key.'url" class="minwidth300" value="'.(!empty($conf->global->$networkconstname) ? dol_escape_htmltag($conf->global->$networkconstname) : '').'">';
 		print '</td><td>';
 		print '<input name="'.$key.'" id="'.$key.'" class="minwidth300" value="'.(!empty($conf->global->$networkconstid) ? dol_escape_htmltag($conf->global->$networkconstid) : '').'">';
 		print '</td>';
-		print '<td>'.dol_print_socialnetworks((!empty($conf->global->$networkconstid) ? dol_escape_htmltag($conf->global->$networkconstid) : ''), 0, 0, $key, $listofnetworks).'</td>';
+		print '<td class="nowraponall">'.dol_print_socialnetworks((!empty($conf->global->$networkconstid) ? dol_escape_htmltag($conf->global->$networkconstid) : ''), 0, 0, $key, $listofnetworks).'</td>';
 		print '</tr>'."\n";
 	}
 }
 
 print "</table>";
+print '</div>';
 
 print '<br>';
 
