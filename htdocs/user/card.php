@@ -2157,7 +2157,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '<tr><td class="titlefield">'.$langs->trans("HierarchicalResponsible").'</td>';
 			print '<td>';
 			if ($caneditfield) {
-				print img_picto('', 'user').$form->select_dolusers($object->fk_user, 'fk_user', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'maxwidth300');
+				print img_picto('', 'user').$form->select_dolusers($object->fk_user, 'fk_user', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
 			} else {
 				print '<input type="hidden" name="fk_user" value="'.$object->fk_user.'">';
 				$huser = new User($db);
@@ -2175,7 +2175,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '</td>';
 				print '<td>';
 				if ($caneditfield) {
-					print img_picto('', 'user').$form->select_dolusers($object->fk_user_expense_validator, 'fk_user_expense_validator', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'maxwidth300');
+					print img_picto('', 'user').$form->select_dolusers($object->fk_user_expense_validator, 'fk_user_expense_validator', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
 				} else {
 					print '<input type="hidden" name="fk_user_expense_validator" value="'.$object->fk_user_expense_validator.'">';
 					$evuser = new User($db);
@@ -2194,7 +2194,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '</td>';
 				print '<td>';
 				if ($caneditfield) {
-					print img_picto('', 'user').$form->select_dolusers($object->fk_user_holiday_validator, 'fk_user_holiday_validator', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'maxwidth300');
+					print img_picto('', 'user').$form->select_dolusers($object->fk_user_holiday_validator, 'fk_user_holiday_validator', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
 				} else {
 					print '<input type="hidden" name="fk_user_holiday_validator" value="'.$object->fk_user_holiday_validator.'">';
 					$hvuser = new User($db);
@@ -2372,7 +2372,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Tel pro
 			print "<tr>".'<td>'.$langs->trans("PhonePro").'</td>';
 			print '<td>';
-			print img_picto('', 'object_phoning');
+			print img_picto('', 'phoning', 'class="pictofixedwidth"');
 			if ($caneditfield && empty($object->ldap_sid)) {
 				print '<input type="text" name="office_phone" class="flat maxwidth200" value="'.$object->office_phone.'">';
 			} else {
@@ -2384,7 +2384,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Tel mobile
 			print "<tr>".'<td>'.$langs->trans("PhoneMobile").'</td>';
 			print '<td>';
-			print img_picto('', 'object_phoning_mobile');
+			print img_picto('', 'phoning_mobile', 'class="pictofixedwidth"');
 			if ($caneditfield && empty($object->ldap_sid)) {
 				print '<input type="text" name="user_mobile" class="flat maxwidth200" value="'.$object->user_mobile.'">';
 			} else {
@@ -2396,7 +2396,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Fax
 			print "<tr>".'<td>'.$langs->trans("Fax").'</td>';
 			print '<td>';
-			print img_picto('', 'object_phoning_fax');
+			print img_picto('', 'phoning_fax', 'class="pictofixedwidth"');
 			if ($caneditfield && empty($object->ldap_sid)) {
 				print '<input type="text" name="office_fax" class="flat maxwidth200" value="'.$object->office_fax.'">';
 			} else {
@@ -2408,7 +2408,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// EMail
 			print "<tr>".'<td'.(!empty($conf->global->USER_MAIL_REQUIRED) ? ' class="fieldrequired"' : '').'>'.$langs->trans("EMail").'</td>';
 			print '<td>';
-			print img_picto('', 'object_email');
+			print img_picto('', 'object_email', 'class="pictofixedwidth"');
 			if ($caneditfield && empty($object->ldap_sid)) {
 				print '<input class="minwidth100 maxwidth500 widthcentpercentminusx" type="text" name="email" class="flat" value="'.$object->email.'">';
 			} else {
@@ -2423,10 +2423,10 @@ if ($action == 'create' || $action == 'adduserldap') {
 						print '<tr><td>'.$langs->trans($value['label']).'</td>';
 						print '<td>';
 						if (!empty($value['icon'])) {
-							print '<span class="fa '.$value['icon'].'"></span>';
+							print '<span class="fa '.$value['icon'].' pictofixedwidth"></span>';
 						}
 						if ($caneditfield && empty($object->ldap_sid)) {
-							print '<input size="40" type="text" name="'.$key.'" class="flat" value="'.$object->socialnetworks[$key].'">';
+							print '<input type="text" name="'.$key.'" class="flat maxwidth200" value="'.$object->socialnetworks[$key].'">';
 						} else {
 							print '<input type="hidden" name="'.$key.'" value="'.$object->socialnetworks[$key].'">';
 							print $object->socialnetworks[$key];
@@ -2460,7 +2460,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '<td class="titlefieldcreate">'.$langs->trans("AccountancyCode").'</td>';
 				print '<td>';
 				if ($caneditfield) {
-					print '<input size="30" type="text" class="flat" name="accountancy_code" value="'.$object->accountancy_code.'">';
+					print '<input type="text" class="flat maxwidth300" name="accountancy_code" value="'.$object->accountancy_code.'">';
 				} else {
 					print '<input type="hidden" name="accountancy_code" value="'.$object->accountancy_code.'">';
 					print $object->accountancy_code;
@@ -2493,7 +2493,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
 				print '<tr><td>'.$form->editfieldkey('Categories', 'usercats', '', $object, 0).'</td>';
 				print '<td>';
-				print img_picto('', 'category');
+				print img_picto('', 'category', 'class="pictofixedwidth"');
 				$cate_arbo = $form->select_all_categories(Categorie::TYPE_USER, null, null, null, null, 1);
 				$c = new Categorie($db);
 				$cats = $c->containing($object->id, Categorie::TYPE_USER);
@@ -2511,7 +2511,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Default language
 			if (!empty($conf->global->MAIN_MULTILANGS)) {
 				print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0, 'string', '', 0, 0, 'id', $langs->trans("WarningNotLangOfInterface", $langs->transnoentitiesnoconv("UserGUISetup"))).'</td><td colspan="3">'."\n";
-				print img_picto('', 'language').$formadmin->select_language($object->lang, 'default_lang', 0, 0, 1);
+				print img_picto('', 'language', 'class="pictofixedwidth"').$formadmin->select_language($object->lang, 'default_lang', 0, null, '1', 0, 0, 'widthcentpercentminusx maxwidth300');
 				print '</td>';
 				print '</tr>';
 			}
@@ -2623,7 +2623,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("PostOrFunction").'</td>';
 			print '<td>';
 			if ($caneditfield) {
-				print '<input size="30" type="text" name="job" value="'.dol_escape_htmltag($object->job).'">';
+				print '<input type="text" class="maxwidth300" name="job" value="'.dol_escape_htmltag($object->job).'">';
 			} else {
 				print '<input type="hidden" name="job" value="'.dol_escape_htmltag($object->job).'">';
 				print dol_escape_htmltag($object->job);
