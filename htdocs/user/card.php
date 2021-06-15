@@ -139,7 +139,7 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	if ($action == 'confirm_disable' && $confirm == "yes" && $candisableuser) {
-		if ($id <> $user->id) {		// A user can't disable itself
+		if ($id != $user->id) {		// A user can't disable itself
 			$object->fetch($id);
 			if ($object->admin && empty($user->admin)) {
 				// If user to delete is an admin user and if logged user is not admin, we deny the operation.
@@ -152,10 +152,11 @@ if (empty($reshook)) {
 			}
 		}
 	}
+
 	if ($action == 'confirm_enable' && $confirm == "yes" && $candisableuser) {
 		$error = 0;
 
-		if ($id <> $user->id) {
+		if ($id != $user->id) {
 			$object->fetch($id);
 
 			if (!empty($conf->file->main_limit_users)) {
@@ -175,7 +176,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'confirm_delete' && $confirm == "yes" && $candisableuser) {
-		if ($id <> $user->id) {
+		if ($id != $user->id) {
 			if (!GETPOSTISSET('token')) {
 				print 'Error, token required for this critical operation';
 				exit;

@@ -22,6 +22,10 @@
 /**
  *	\file 		htdocs/core/class/ldap.class.php
  *	\brief 		File of class to manage LDAP features
+ *
+ *  Note:
+ *  LDAP_ESCAPE_FILTER is to escape char  array('\\', '*', '(', ')', "\x00")
+ *  LDAP_ESCAPE_DN is to escape char  array('\\', ',', '=', '+', '<', '>', ';', '"', '#')
  */
 
 /**
@@ -132,6 +136,7 @@ class Ldap
 		$this->ldapProtocolVersion = $conf->global->LDAP_SERVER_PROTOCOLVERSION;
 		$this->dn                  = $conf->global->LDAP_SERVER_DN;
 		$this->serverType          = $conf->global->LDAP_SERVER_TYPE;
+
 		$this->domain              = $conf->global->LDAP_SERVER_DN;
 		$this->searchUser          = $conf->global->LDAP_ADMIN_DN;
 		$this->searchPassword      = $conf->global->LDAP_ADMIN_PASS;

@@ -190,20 +190,23 @@ print '<td colspan="4">'.$langs->trans("LDAPSynchronizeUsers").'</td>';
 print "</tr>\n";
 
 // DN Pour les utilisateurs
-print '<tr class="oddeven"><td width="25%"><span class="fieldrequired">'.$langs->trans("LDAPUserDn").'</span></td><td>';
+print '<!-- LDAP_USER_DN -->';
+print '<tr class="oddeven"><td><span class="fieldrequired">'.$langs->trans("LDAPUserDn").'</span></td><td>';
 print '<input size="48" type="text" name="user" value="'.$conf->global->LDAP_USER_DN.'">';
 print '</td><td>'.$langs->trans("LDAPUserDnExample").'</td>';
 print '<td>&nbsp;</td>';
 print '</tr>';
 
 // List of object class used to define attributes in structure
-print '<tr class="oddeven"><td width="25%"><span class="fieldrequired">'.$langs->trans("LDAPUserObjectClassList").'</span></td><td>';
+print '<!-- LDAP_USER_OBJECT_CLASS -->';
+print '<tr class="oddeven"><td><span class="fieldrequired">'.$langs->trans("LDAPUserObjectClassList").'</span></td><td>';
 print '<input size="48" type="text" name="objectclass" value="'.$conf->global->LDAP_USER_OBJECT_CLASS.'">';
 print '</td><td>'.$langs->trans("LDAPUserObjectClassListExample").'</td>';
 print '<td>&nbsp;</td>';
 print '</tr>';
 
 // Filter, used to filter search
+print '<!-- LDAP_FILTER_CONNECTION -->';
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFilterConnection").'</td><td>';
 print '<input size="48" type="text" name="filterconnection" value="'.$conf->global->LDAP_FILTER_CONNECTION.'">';
 print '</td><td>'.$langs->trans("LDAPFilterConnectionExample").'</td>';
@@ -215,7 +218,7 @@ print '<br>';
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
-print '<td width="25%">'.$langs->trans("LDAPDolibarrMapping").'</td>';
+print '<td>'.$langs->trans("LDAPDolibarrMapping").'</td>';
 print '<td colspan="2">'.$langs->trans("LDAPLdapMapping").'</td>';
 print '<td class="right">'.$langs->trans("LDAPNamingAttribute").'</td>';
 print "</tr>\n";
