@@ -851,8 +851,20 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 	$li = $userstatic->getNomUrl(-1, '', 0, 0, 24, 1, 'login', '', 1);
 
+	$canreadhrmdata = 0;
+	if ((!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read) && in_array($obj->rowid, $childids))
+		|| (!empty($conf->salaries->enabled) && !empty($user->rights->salaries->readall))
+		|| (!empty($conf->hrm->enabled) && !empty($user->rights->hrm->employee->read))) {
+			$canreadhrmdata = 1;
+	}
+	$canreadsecretapi = 0;
+	if ($user->id = $obj->rowid || !empty($user->admin)) {	// Current user or admin
+		$canreadsecretapi = 1;
+	}
+
 	print '<tr class="oddeven">';
 
+	// Login
 	if (!empty($arrayfields['u.login']['checked'])) {
 		print '<td class="nowraponall tdoverflowmax150">';
 		print $li;
@@ -888,6 +900,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			$totalarray['nbfield']++;
 		}
 	}
+	// Employee yes/no
 	if (!empty($arrayfields['u.employee']['checked'])) {
 		print '<td class="center">'.yn($obj->employee).'</td>';
 		if (!$i) {
@@ -951,14 +964,22 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		}
 	}
 	if (!empty($arrayfields['u.api_key']['checked'])) {
-		print '<td>'.$obj->api_key.'</td>';
+		print '<td>';
+		if ($obj->api_key) {
+			if ($canreadsecretapi) {
+				print $obj->api_key;
+			} else {
+				print '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
+			}
+		}
+		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	if (!empty($arrayfields['u.fk_soc']['checked'])) {
 		print '<td class="tdoverflowmax200">';
-		if ($obj->fk_soc) {
+		if ($obj->fk_soc > 0) {
 			$companystatic->id = $obj->fk_soc;
 			$companystatic->name = $obj->name;
 			$companystatic->canvas = $obj->canvas;
@@ -992,7 +1013,15 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 	// Salary
 	if (!empty($arrayfields['u.salary']['checked'])) {
-		print '<td class="nowraponall right amount">'.($obj->salary ? price($obj->salary) : '').'</td>';
+		print '<td class="nowraponall right amount">';
+		if ($obj->salary) {
+			if ($canreadhrmdata) {
+				print price($obj->salary);
+			} else {
+				print '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
+			}
+		}
+		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

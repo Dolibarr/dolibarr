@@ -87,6 +87,8 @@ if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 	$caneditgroup = (!empty($user->admin) || $user->rights->user->group_advance->write);
 }
 
+$childids = $user->getAllChildIds(1);	// For later, test on salary visibility
+
 // Define value to know what current user can do on properties of edited user
 if ($id) {
 	// $user is the current logged user, $id is the user we want to edit
@@ -1201,7 +1203,8 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print '<input class="maxwidth200" type="text" name="job" value="'.dol_escape_htmltag(GETPOST('job', 'alphanohtml')).'">';
 	print '</td></tr>';
 
-	if ((!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read))
+	if ((!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read) && in_array($id, $childids))
+		|| (!empty($conf->salaries->enabled) && !empty($user->rights->salaries->readall))
 		|| (!empty($conf->hrm->enabled) && !empty($user->rights->hrm->employee->read))) {
 		$langs->load("salaries");
 
@@ -1498,8 +1501,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '<tr><td>'.$langs->trans("PostOrFunction").'</td>';
 			print '<td>'.dol_escape_htmltag($object->job).'</td>';
 			print '</tr>'."\n";
-
-			//$childids = $user->getAllChildIds(1);
 
 			if ((!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read))
 				|| (!empty($conf->hrm->enabled) && !empty($user->rights->hrm->employee->read))) {
