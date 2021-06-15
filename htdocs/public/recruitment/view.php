@@ -75,7 +75,7 @@ if (!$action) {
 $urlwithroot = DOL_MAIN_URL_ROOT; // This is to use same domain name than current. For Paypal payment, we can use internal URL like localhost.
 
 // Security check
-if (empty($conf->recruitement->enabled)) {
+if (empty($conf->recruitment->enabled)) {
 	accessforbidden('', 0, 0, 1);
 }
 
