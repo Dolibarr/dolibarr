@@ -1312,7 +1312,7 @@ elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action =
 				$outputlangs = new Translate("", $conf);
 				$outputlangs->setDefaultLang($newlang);
 			}
-			
+
 			$arrayoffamiliestoexclude = array('objectamount');
 
 			$action = 'add_message'; // action to use to post the message
