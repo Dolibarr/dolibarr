@@ -47,6 +47,9 @@ if (!isset($permission)) {
 if (!isset($permtoedit)) {
 	$permtoedit = $permissiontoadd;
 }
+if (!isset($param)) {
+	$param = '';
+}
 
 // Drag and drop for up and down allowed on product, thirdparty, ...
 // The drag and drop call the page core/ajax/row.php
