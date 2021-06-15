@@ -100,7 +100,7 @@ if ($permission) {
 	if (empty($hideaddcontactforuser)) {
 		?>
 	<form class="tagtr impair nohover" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
-		<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
+		<input type="hidden" name="token" value="<?php echo newToken(); ?>" />
 		<input type="hidden" name="id" value="<?php echo $object->id; ?>" />
 		<input type="hidden" name="action" value="addcontact" />
 		<input type="hidden" name="source" value="internal" />
@@ -130,7 +130,7 @@ if ($permission) {
 		?>
 
 	<form class="tagtr pair nohover" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
-		<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
+		<input type="hidden" name="token" value="<?php echo newToken(); ?>" />
 		<input type="hidden" name="id" value="<?php echo $object->id; ?>" />
 		<input type="hidden" name="action" value="addcontact" />
 		<input type="hidden" name="source" value="external" />

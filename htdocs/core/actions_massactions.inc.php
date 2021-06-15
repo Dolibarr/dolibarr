@@ -1053,9 +1053,9 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 		$newlang = GETPOST('lang_id', 'aZ09');
 	}
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
-		$newlang = $objecttmp->thirdparty->default_lang;
-	}
+	//elseif ($conf->global->MAIN_MULTILANGS && empty($newlang) && is_object($objecttmp->thirdparty)) {		// In massaction $objecttmp->thirdparty can have several values
+	//	$newlang = $objecttmp->thirdparty->default_lang;
+	//}
 	if (!empty($newlang)) {
 		$outputlangs = new Translate("", $conf);
 		$outputlangs->setDefaultLang($newlang);
