@@ -546,4 +546,4 @@ create table llx_c_partnership_type
   active  	    tinyint DEFAULT 1  NOT NULL
 )ENGINE=innodb;
 
-
+DELETE FROM llx_rights_def WHERE module = 'hrm' AND perms = 'employee';
