@@ -104,7 +104,7 @@ if ($permission) {
 		<input type="hidden" name="id" value="<?php echo $object->id; ?>" />
 		<input type="hidden" name="action" value="addcontact" />
 		<input type="hidden" name="source" value="internal" />
-		<?php if ($withproject) {
+		<?php if (!empty($withproject)) {
 			print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 		} ?>
 
@@ -134,7 +134,7 @@ if ($permission) {
 		<input type="hidden" name="id" value="<?php echo $object->id; ?>" />
 		<input type="hidden" name="action" value="addcontact" />
 		<input type="hidden" name="source" value="external" />
-		<?php if ($withproject) {
+		<?php if (!empty($withproject)) {
 			print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 		} ?>
 
