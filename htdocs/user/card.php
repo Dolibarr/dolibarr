@@ -2623,7 +2623,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("PostOrFunction").'</td>';
 			print '<td>';
 			if ($caneditfield) {
-				print '<input type="text" class="maxwidth300" name="job" value="'.dol_escape_htmltag($object->job).'">';
+				print '<input type="text" class="minwidth300 maxwidth500" name="job" value="'.dol_escape_htmltag($object->job).'">';
 			} else {
 				print '<input type="hidden" name="job" value="'.dol_escape_htmltag($object->job).'">';
 				print dol_escape_htmltag($object->job);
