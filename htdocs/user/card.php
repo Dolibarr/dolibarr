@@ -1502,7 +1502,8 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '<td>'.dol_escape_htmltag($object->job).'</td>';
 			print '</tr>'."\n";
 
-			if ((!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read))
+			if ((!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read) && in_array($id, $childids))
+				|| (!empty($conf->salaries->enabled) && !empty($user->rights->salaries->readall))
 				|| (!empty($conf->hrm->enabled) && !empty($user->rights->hrm->employee->read))) {
 				// Even a superior can't see this info of its subordinates wihtout $user->rights->salaries->read and $user->rights->hrm->employee->read (setting/viewing is reserverd to HR people).
 				// However, he can see the valuation of timesheet of its subordinates even without these permissions.
@@ -1777,16 +1778,13 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</tr>'."\n";
 
 			// API key
-			if (!empty($conf->api->enabled) && $user->admin) {
+			if (!empty($conf->api->enabled) && ($user->id == $id || $user->admin)) {
 				print '<tr><td>'.$langs->trans("ApiKey").'</td>';
 				print '<td>';
 				if (!empty($object->api_key)) {
 					print '<span class="opacitymedium">';
-					print showValueWithClipboardCPButton($object->api_key, 1, $langs->trans("Hidden"));
+					print showValueWithClipboardCPButton($object->api_key, 1, $langs->trans("Hidden"));		// TODO Add an option to also reveal the hash, not only copy paste
 					print '</span>';
-				}
-				if ($user->admin || $user->id == $object->id) {
-					// TODO Add a feature to reveal the hash
 				}
 				print '</td></tr>';
 			}
@@ -2303,7 +2301,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print "</td></tr>\n";
 
 			// API key
-			if (!empty($conf->api->enabled) && $user->admin) {
+			if (!empty($conf->api->enabled) && ($user->id == $id || $user->admin)) {
 				print '<tr><td>'.$langs->trans("ApiKey").'</td>';
 				print '<td>';
 				print '<input class="minwidth300" maxsize="32" type="text" id="api_key" name="api_key" value="'.$object->api_key.'" autocomplete="off">';
