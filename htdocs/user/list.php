@@ -681,10 +681,10 @@ if (!empty($arrayfields['u.accountancy_code']['checked'])) {
 	print '<td class="liste_titre"><input type="text" name="search_accountancy_code" class="maxwidth50" value="'.$search_accountancy_code.'"></td>';
 }
 if (!empty($arrayfields['u.office_phone']['checked'])) {
-	print '<td class="liste_titre"><input type="text" name="search_phonepro" class="maxwidth75" value="'.$search_phonepro.'"></td>';
+	print '<td class="liste_titre"><input type="text" name="search_phonepro" class="maxwidth50" value="'.$search_phonepro.'"></td>';
 }
 if (!empty($arrayfields['u.user_mobile']['checked'])) {
-	print '<td class="liste_titre"><input type="text" name="search_phonemobile" class="maxwidth75" value="'.$search_phonemobile.'"></td>';
+	print '<td class="liste_titre"><input type="text" name="search_phonemobile" class="maxwidth50" value="'.$search_phonemobile.'"></td>';
 }
 if (!empty($arrayfields['u.email']['checked'])) {
 	print '<td class="liste_titre"><input type="text" name="search_email" class="maxwidth75" value="'.$search_email.'"></td>';
