@@ -1616,8 +1616,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 
 						'contact_id'=>$obj->fk_contact,
 						'socpeopleassigned' => $contactaction->socpeopleassigned,
-						'lastname'=>$obj->lastname,
-						'firstname'=>$obj->firstname,
+						'lastname' => empty($obj->lastname) ? '' : $obj->lastname,
+						'firstname' => empty($obj->firstname) ? '' : $obj->firstname,
 						'fk_element'=>$obj->fk_element,
 						'elementtype'=>$obj->elementtype,
 						// Type of event
