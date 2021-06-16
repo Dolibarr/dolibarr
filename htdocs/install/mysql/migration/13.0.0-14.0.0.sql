@@ -518,11 +518,13 @@ CREATE TABLE llx_knowledgemanagement_knowledgerecord(
 	answer text,
 	url varchar(255),
 	fk_ticket integer,
+	fk_c_ticket_category integer,
 	status integer NOT NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
 
 ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD COLUMN fk_ticket integer;
+ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD COLUMN fk_c_ticket_category integer;
 ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD COLUMN url varchar(255);
 
 
