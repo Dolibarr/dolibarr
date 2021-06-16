@@ -93,7 +93,7 @@ class Users extends DolibarrApi
 
 		// Select products of given category
 		if ($category > 0) {
-			$sql .= " AND c.fk_categorie = ".$this->db->escape($category);
+			$sql .= " AND c.fk_categorie = ".((int) $category);
 			$sql .= " AND c.fk_user = t.rowid";
 		}
 
@@ -248,8 +248,8 @@ class Users extends DolibarrApi
 	 *
 	 * @url	GET /info
 	 *
-	 * @param	int			$includepermissions	Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
-	 * @return  array|mixed 					Data without useless information
+	 * @param	int			$includepermissions		Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
+	 * @return  array|mixed 						Data without useless information
 	 *
 	 * @throws RestException 401     Insufficient rights
 	 * @throws RestException 404     User or group not found
@@ -371,11 +371,9 @@ class Users extends DolibarrApi
 			if ($field == 'pass') {
 				if ($this->useraccount->id != DolibarrApiAccess::$user->id && empty(DolibarrApiAccess::$user->rights->user->user->password)) {
 					throw new RestException(401, 'You are not allowed to modify password of other users');
-					continue;
 				}
 				if ($this->useraccount->id == DolibarrApiAccess::$user->id && empty(DolibarrApiAccess::$user->rights->user->self->password)) {
 					throw new RestException(401, 'You are not allowed to modify your own password');
-					continue;
 				}
 			}
 			if (DolibarrApiAccess::$user->admin) {	// If user for API is admin

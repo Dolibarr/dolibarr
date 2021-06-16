@@ -1982,7 +1982,7 @@ if ($action == 'create') {
 			//if ($conf->delivery_note->enabled) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."delivery as l ON l.fk_expedition = e.rowid LEFT JOIN ".MAIN_DB_PREFIX."deliverydet as ld ON ld.fk_delivery = l.rowid  AND obj.rowid = ld.fk_origin_line";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON obj.fk_product = p.rowid";
 			$sql .= " WHERE e.entity IN (".getEntity('expedition').")";
-			$sql .= " AND obj.fk_".$origin." = ".$origin_id;
+			$sql .= " AND obj.fk_".$origin." = ".((int) $origin_id);
 			$sql .= " AND obj.rowid = ed.fk_origin_line";
 			$sql .= " AND ed.fk_expedition = e.rowid";
 			//if ($filter) $sql.= $filter;
@@ -2138,7 +2138,8 @@ if ($action == 'create') {
 								// only show lot numbers from src warehouse when shipping from multiple warehouses
 								$line->fetch($detail_batch->fk_expeditiondet);
 							}
-							print '<td>'.$formproduct->selectLotStock($detail_batch->fk_origin_stock, 'batchl'.$detail_batch->fk_expeditiondet.'_'.$detail_batch->fk_origin_stock, '', 1, 0, $lines[$i]->fk_product, $line->entrepot_id).'</td>';
+							$entrepot_id = !empty($detail_batch->entrepot_id)?$detail_batch->entrepot_id:$lines[$i]->entrepot_id;
+							print '<td>'.$formproduct->selectLotStock($detail_batch->fk_origin_stock, 'batchl'.$detail_batch->fk_expeditiondet.'_'.$detail_batch->fk_origin_stock, '', 1, 0, $lines[$i]->fk_product, $entrepot_id).'</td>';
 							print '</tr>';
 						}
 						// add a 0 qty lot row to be able to add a lot

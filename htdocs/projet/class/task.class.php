@@ -854,7 +854,7 @@ class Task extends CommonObject
 			$sql .= " AND p.rowid = ec.element_id";
 			$sql .= " AND ctc.rowid = ec.fk_c_type_contact";
 			$sql .= " AND ctc.element = 'project'";
-			$sql .= " AND ec.fk_socpeople = ".$filteronprojuser;
+			$sql .= " AND ec.fk_socpeople = ".((int) $filteronprojuser);
 			$sql .= " AND ec.statut = 4";
 			$sql .= " AND ctc.source = 'internal'";
 		}
@@ -863,12 +863,12 @@ class Task extends CommonObject
 			$sql .= " AND p.rowid = ec2.element_id";
 			$sql .= " AND ctc2.rowid = ec2.fk_c_type_contact";
 			$sql .= " AND ctc2.element = 'project_task'";
-			$sql .= " AND ec2.fk_socpeople = ".$filterontaskuser;
+			$sql .= " AND ec2.fk_socpeople = ".((int) $filterontaskuser);
 			$sql .= " AND ec2.statut = 4";
 			$sql .= " AND ctc2.source = 'internal'";
 		}
 		if ($socid) {
-			$sql .= " AND p.fk_soc = ".$socid;
+			$sql .= " AND p.fk_soc = ".((int) $socid);
 		}
 		if ($projectid) {
 			$sql .= " AND p.rowid IN (".$this->db->sanitize($projectid).")";
@@ -1525,10 +1525,10 @@ class Task extends CommonObject
 		$sql .= " task_date = '".$this->db->idate($this->timespent_date)."',";
 		$sql .= " task_datehour = '".$this->db->idate($this->timespent_datehour)."',";
 		$sql .= " task_date_withhour = ".(empty($this->timespent_withhour) ? 0 : 1).",";
-		$sql .= " task_duration = ".$this->timespent_duration.",";
-		$sql .= " fk_user = ".$this->timespent_fk_user.",";
+		$sql .= " task_duration = ".((int) $this->timespent_duration).",";
+		$sql .= " fk_user = ".((int) $this->timespent_fk_user).",";
 		$sql .= " note = ".(isset($this->timespent_note) ? "'".$this->db->escape($this->timespent_note)."'" : "null");
-		$sql .= " WHERE rowid = ".$this->timespent_id;
+		$sql .= " WHERE rowid = ".((int) $this->timespent_id);
 
 		dol_syslog(get_class($this)."::updateTimeSpent", LOG_DEBUG);
 		if ($this->db->query($sql)) {
@@ -2082,7 +2082,7 @@ class Task extends CommonObject
 		// No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
 		//if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 		if ($socid) {
-			$sql .= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+			$sql .= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
 		}
 		if (!$user->rights->societe->client->voir && !$socid) {
 			$sql .= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id.") OR (s.rowid IS NULL))";

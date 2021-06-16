@@ -68,6 +68,7 @@ $search_user = GETPOST("search_user", "alpha");
 $search_desc = GETPOST("search_desc", "alpha");
 $search_ua   = GETPOST("search_ua", "restricthtml");
 $search_prefix_session = GETPOST("search_prefix_session", "restricthtml");
+$optioncss = GETPOST("optioncss", "aZ"); // Option for the css output (always '' except when 'print')
 
 $now = dol_now();
 $nowarray = dol_getdate($now);

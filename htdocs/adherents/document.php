@@ -182,7 +182,7 @@ if ($id > 0) {
 		print dol_get_fiche_end();
 
 		$modulepart = 'member';
-		$permission = $user->rights->adherent->creer;
+		$permissiontoadd = $user->rights->adherent->creer;
 		$permtoedit = $user->rights->adherent->creer;
 		$param = '&id='.$object->id;
 		include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';

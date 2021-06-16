@@ -15,75 +15,45 @@ NEW: Add a performance center page with all information and advices related to t
 NEW: A lot of fix into english text after a small proofreading campaign (still not perfect, but really better)
 NEW: All main menu entries are using the picto of the module
 NEW: Add a copy to clipboard button on some fields 
-NEW: Add an example of scheduled job to send email reminder for unpayed invoices
-NEW: Can make massive stock transfers from a CSV file.
-NEW: Accountancy - Add FEC import
-NEW: Accountancy - Add a confirmation form with options on export
-NEW: Accountancy - Add select date from/to in already bind customer and supplier list
-NEW: Accountancy - Format FEC - Add new field DateLimitReglmt
-NEW: Accountancy - In ledger & journals, show link on bank transaction
-NEW: Accountancy - Possibility to filter on journals in balance
-NEW: Accountancy - Add a page to list subledger accounts
-NEW: add the Channel column into the list of orders
+NEW: Add an example of scheduled job to send email reminder for unpaid invoices
 NEW: Add a check to avoid an invoice date in the future
 NEW: Add some color and picto for the direction of movement
+NEW: add the column "Channel" into the list of orders
 NEW: Add the column "alias" of company in the list of proposal, order, invoice
 NEW: Add the column "Office phone" and  "User mobile" in user list
-NEW: Add the column "Price level"in thirdparty list
+NEW: Add the column "Price level" in thirdparty list
 NEW: Add some company information in the dropdown login menu
 NEW: Add constant MAIN_BUGTRACK_URL to set a custom url to redirect to when clicking on link "declare a bug"
-NEW: Add contact tag and bulk email status on the thirparty+contact create form
-NEW: Add db fields note_public and note_private for ECM module
-NEW: Manage deposit on supplier invoice (& somes ajustments)
+NEW: Add contact tag and bulk email status on the thirdparty + contact create form
+NEW: Support down payment on supplier invoice (& somes ajustments)
 NEW: Add edit/delete action icons on categories list pages
 NEW: Add hidden option to auto load input line extrafield into new lines
 NEW: Add import profile to import BOM
-NEW: Add last date of modification for website pages in the list of pages
 NEW: Add link picto to the stock movement on the detail of production
 NEW: Add mass action "Set tag" for product/service, user, thirdparty, warehouse, project, bank account, members
 NEW: Add bulk action Validate and Set to billed on order list.
-NEW: add bulk action to set a commercial proposal to status "Refused"
-NEW: Add option CONTRACT_ALLOW_EXTERNAL_DOWNLOAD and SUPPLIER_PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD to make generated doc automatically shared.
-NEW: Add option MAIN_SECURITY_ANTI_SSRF_SERVER_IP to define list of IPs that are local IPs
-NEW: Add option SOCIETE_DISABLE_WORKFORCE to hide staff field
-NEW: Add a new permission "Export website"
 NEW: Add possibility to exports userGroups fields on user exports
 NEW: Add price min and price min including tax into product export
 NEW: Can search on lots or serials into the quick search bar
 NEW: Add support for Friday as a non working day
 NEW: Add a total in page of margin by user
 NEW: Add the total of margin in invoice list
-NEW: Can set a Warehouse on a Thirparty
 NEW: auto notification with module Notification can use templated emails
 NEW: Bank Entries : display user linked to a salary or a taxes
-NEW: Can set a warehouse in a proposal
-NEW: Can clone a cron job.
+NEW: Can clone a cron job
 NEW: Can create a lot from the list view (Look and feel standardization).
-NEW: Can filter files in GED on status Shared/Not shared
 NEW: Can filter on extrafields date on lists
-NEW: Can filter on rowid in list of blocked logs.
-NEW: Can hide columns "time consumed" on timesheet per week.
+NEW: Can filter on rowid in list of blocked logs
+NEW: Can hide columns "time consumed" on timesheet per week
 NEW: Can set an employee on each social contribution
-NEW: Can set a percentage when creating an invoice from another object
-NEW: Can set if a ticket group is visible on public interface or not.
 NEW: Can set order of execution of hooks
-NEW: Can show the leave dates/holidays on the agenda view.
-NEW: Can show the project ref into PDF documents
 NEW: Can toggle FCKeditor on public/private notes
-NEW: Can use captcha on public page to create a ticket
 NEW: Check update availability for externals modules using a button on module page
 NEW: Choose lines to use while creating intervention card from origin
-NEW: Column shippement method, payment mode, payment term in proposal and order list
-NEW: Conf for default actiomm status
+NEW: Columns shipment method, payment mode, payment term in proposal and order list
+NEW: Conf for default actioncomm status
 NEW: customer ref for product customer prices
-NEW: date and user signature on proposal (Issue 16062)
 NEW: Dictionary for availability - Add a column position
-NEW: TAKEPOS delayed payment in TakePOS
-NEW: TAKEPOS display date range if exist in TakePOS
-NEW: TAKEPOS display resiliate status in TakePOS for member
-NEW: TAKEPOS Edit sales lines rights in TakePOS
-NEW: TAKEPOS Option for Takepos to show the total price without tax
-NEW: TAKEPOS More permission in TakePOS (Can edit added line, can modify once order sent to kitchen)
 NEW: Can set a user related to a social contribution
 NEW: ICS Direct debit can be set with a different value for each bank account
 NEW: LDAP: usergroup search can be filtered
@@ -92,39 +62,104 @@ NEW: If main logo not defined, can use the squarred logo on login page
 NEW: The manifest file can use the squared image if available
 NEW: Add bulk actions for Bank Transfer
 NEW: Enhance the multicurrency rate editor
-NEW: Multiselect ledger account code filter on book keeping list
 NEW: Normalyse Type company field with ajax combobox
-NEW: option to automatically close an open project when all its tasks are done (=progress 100%)
-NEW: option to select membership type on the online payment page for membership subscription or renewal
 NEW: preload product description on selection for customer propal/order/invoice
 NEW: Add a ref in product customer price
-NEW: Save old page with .old extension on disk when editing a website page
 NEW: Search usergroups & resources
 NEW: Set status of all variants when changing status of parent
 NEW: Setup Page for module creation with module builder enhancement #FoundationFunding
 NEW: Show picto of module into the list of dictionaries
 NEW: Show the total of payment on the payment confirmation page
-NEW: Stock movement list - Add more complete date field
 NEW: Support color for types of event
 NEW: The global setup for Mandatory fields can now be done on combo list too.
 NEW: translate in "en_US" to complete PR 16980
 NEW: Update the list of taxes available by default for France
-NEW: Add captcha on public page to create a ticket
 NEW: Salary payment request and Salary payment are 2 different steps in workflow on Salary payment recording
 NEW: VAT payment request and VAT payment are now 2 different steps in workflow on VAT payment recording
 NEW: VAT report - Optimisation & collapse by rate
-NEW: When we add contacts/users to a project, ask to also affect them on tasks.
 NEW: When a doc file is shared, link is visible from the main page of doc.
-NEW: Add option in Workflow module to set a shipment as closed.
-NEW: Option to automatically create a login/user when a new subscription of a member is done online
 NEW: #16378 More E-Mail Contact substitution Values for better salutation
 NEW: option to keep the "Automatically create a total payment" checkbox empty on the tax creation page
-NEW: #17113 Can upload a favicon in website module
+
+ Accountancy
+NEW: Accountancy - Add FEC import
+NEW: Accountancy - Add a confirmation form with options on export
+NEW: Accountancy - Add select date from/to in already bind customer and supplier list
+NEW: Accountancy - Format FEC - Add new field DateLimitReglmt
+NEW: Accountancy - In ledger & journals, show link on bank transaction
+NEW: Accountancy - Possibility to filter on journals in balance
+NEW: Accountancy - Add a page to list subledger accounts
+NEW: Multiselect ledger account code filter on book keeping list
+
+ Agenda
+NEW: Can show the leave dates/holidays on the agenda view
+
+ ECM/GED
+NEW: add DB fields note_public and note_private for ECM module
+NEW: Can filter files in ECM/GED on status Shared/Not shared
+
+ Invoices
+NEW: Can set a percentage when creating an invoice from another object
+
+ Members
 NEW: #17292 default subscription amount by adherent type
+NEW: option to automatically create a login/user when a new subscription of a member is done online
+NEW: option to select membership type on the online payment page for membership subscription or renewal
+
+ Projects/Tasks
+NEW: option to automatically close an open project when all its tasks are done (=progress 100%)
+NEW: can show the project ref into PDF documents
+NEW: when we add contacts/users to a project, ask to also affect them on tasks
+
+ Proposals
+NEW: add bulk action to set a commercial proposal to status "Refused"
+NEW: can set a warehouse in a proposal
+NEW: date and user signature on proposal (Issue 16062) #16980
+
+ Shipment
+NEW: add option in Workflow module to set a shipment as closed
+
+ TakePOS
+NEW: delayed payment in TakePOS  #14456?
+NEW: display date range if exist in TakePOS
+NEW: display resiliate status in TakePOS for member
+NEW: edit sales lines rights in TakePOS
+NEW: option for TakePOS to show the total price without tax
+NEW: more permissions in TakePOS (can edit added line, can modify once order sent to kitchen)
+
+ Third-Parties
+NEW: can set a warehouse on a Thirdparty
+
+ Tickets
+NEW: can use captcha on public page to create a ticket  #16347
+NEW: can set if a ticket group is visible on public interface or not
+
+ Warehouse/Stock
+NEW: Feature to make Stock Inventories
+NEW: can make massive stock transfers from a CSV file
+NEW: Stock movement list - add more complete date field
+NEW: can set a warehouse in a proposal
+NEW: can set a warehouse on a Thirdparty
+
+ Website Module
+NEW: #17113 Can upload a favicon in website module
+NEW: add a new permission "Export website"
+NEW: add last date of modification for website pages in the list of pages
+NEW: Save old page with .old extension on disk when editing a website page
+
+ new Modules
+NEW: Module Recruitement is now stable
 NEW: start new experimental module Event Organization Management
 NEW: start new experimental module Partnership Management
 NEW: start new experimental module Knowledge Management
-NEW: start new experimental module Workstations management
+NEW: start new experimental module Workstations Management
+NEW: Check update availability for externals modules using a button on module page
+
+ new Options
+NEW: add option  CONTRACT_ALLOW_EXTERNAL_DOWNLOAD            to make generated doc automatically shared
+NEW: add option  SUPPLIER_PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD   to make generated doc automatically shared
+NEW: add option  MAIN_SECURITY_ANTI_SSRF_SERVER_IP           to define list of IPs that are local IPs
+NEW: add option  SOCIETE_DISABLE_WORKFORCE                   to hide staff field
 
 
 For developers:
@@ -138,38 +173,41 @@ NEW: Add experimental repair script to switch to dynamic row format and utf8mb4 
 NEW: add form confirm hook on company card
 NEW: Add function showValueWithClipboardCPButton() to add a copy/paste
 NEW: Add hook addSectionECMAuto method to add custom diretory into ECM auto files
-NEW: Add native compression in rest apis
-NEW: Product Variants API, add variant stock to response by parameter
 NEW: Upgrade Stripe PHP lib to 7.67.0
-NEW: Add link to OpenAPI specifications xml file in REST API module setup: swagger.json file can be included into external tools like redoc
 NEW: Support sepa_debit in stripe paymentmethods list
 NEW: Update doleditor.class.php for easily activate SCAYT
 NEW: Add triggers in the function add_object_linked(), updateObjectLinked() and deleteObjectLinked()
 NEW: Add triggers OBJECT_LINK_INSERT, OBJECT_LINK_UPDATE et OBJECT_LINK_DELETE in the function add_object_linked(), updateObjectLinked() and deleteObjectLinked()
-NEW: API Add option $includeifobjectisused to get a product
-NEW: API Get the list of product ids only
-NEW: Can set a target image in dolcropresize function.
-NEW: Can set a label as placeholder for combo lists.
+NEW: can set a target image in dolcropresize function
+NEW: can set a label as placeholder for combo lists
 NEW: Add pagination on Get Products response API
 NEW: Add the DefaultValues CRUD class
 NEW: Extrafields of documents lines are inside the lines, not any more on separate TR
 NEW: unit selection on object edit line
-NEW: #13739 #17390 Product API route added to get product stock and product with or without variants
+
+ APIs
+NEW: API add option $includeifobjectisused to get a product
+NEW: API get the list of product ids only
+NEW: add link to OpenAPI specifications XML file in REST API module setup: swagger.json file can be included into external tools like redoc
+NEW: add native compression in REST APIs
+NEW: Product Variants API, add variant stock to response by parameter
+NEW: Product API route added to get product stock and product with or without variants #13739 #17390 
 
 
 WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * Module SimplePOS is deprecated. If you need a POS module, please use the module TakePOS.
-* The ICS value for direct debit or credit transfer is now store on each bank account instead of into the global setup.
+* The ICS value for direct debit or credit transfer is now stored on each bank account instead of into the global setup.
 * API /setup/shipment_methods has been replaced with API /setup/shipping_methods
-* Field "total" renamed into to "total_ht" for table llx_facture, llx_facture_rec for better field name consistency
-* Field "tva" renamed into "total_tva" for table llx_propal, llx_supplier_proposal, llx_commande, llx_commande_fournisseur for better field name consistency
-* Field "total" renamed into "total_ttc" for table lx_propal, llx_supplier_proposal for better field name consistency
-* If your database is PostgreSql, you must use version 9.1.0 or more (Dolibarr need the SQL function CONCAT)
-* If your database is MySql or MariaDB, you need at least version 5.1
+* Field "total" renamed into "total_ht"  for table llx_facture, llx_facture_rec for better field name consistency
+* Field "tva"   renamed into "total_tva" for table llx_propal, llx_supplier_proposal, llx_commande, llx_commande_fournisseur for better field name consistency
+* Field "total" renamed into "total_ttc" for table llx_propal, llx_supplier_proposal for better field name consistency
+* If your database is PostgreSQL, you must use version 9.1.0 or more (Dolibarr need the SQL function CONCAT)
+* If your database is MySQL or MariaDB, you need at least version 5.1
 * Function set_price_level() has been renamed into setPriceLevel() to follow camelcase rules
-* Remove deprecated subtituion key __REFCLIENT__ (Replaced with __REF_CLIENT__)
+* removed deprecated subtituion key  __REFCLIENT__  (replaced with __REF_CLIENT__)
+
 
 ***** ChangeLog for 13.0.3 compared to 13.0.2 *****
 
@@ -193,7 +231,7 @@ FIX: create sociales : keep values error form
 FIX: dol_print_date for %a and %b with some timezone
 FIX: email is not case sensitive
 FIX: error for duplicate thirdparty found correctly returned by ws
-FIX: Espadon PDF shippment model with long public note now wroking
+FIX: Espadon PDF shippment model with long public note now working
 FIX: esupplier order: error 500 when using packaging with product where it is not defined
 FIX: Filter on debit/credit
 FIX: Filter on supplier payment list

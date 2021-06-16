@@ -27,20 +27,19 @@ require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-
-dol_include_once('partnership/lib/partnership.lib.php');
-dol_include_once('/partnership/class/partnership.class.php');
-
-require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
+require_once DOL_DOCUMENT_ROOT.'/partnership/lib/partnership.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+
 /**
  *	Class with cron tasks of Partnership module
  */
 class PartnershipUtils
 {
-	public $db;							//!< To store db handler
-	public $error;						//!< To return error code (or message)
-	public $errors=array();				//!< To return several error codes (or messages)
+	public $db; //!< To store db handler
+	public $error; //!< To return error code (or message)
+	public $errors = array(); //!< To return several error codes (or messages)
 
 
 	/**
@@ -72,19 +71,19 @@ class PartnershipUtils
 		}
 
 		$partnership = new Partnership($this->db);
-		$MAXPERCALL = (empty($conf->global->PARTNERSHIP_MAX_EXPIRATION_CANCEL_PER_CALL) ? 25 : $conf->global->PARTNERSHIP_MAX_EXPIRATION_CANCEL_PER_CALL);       // Limit to 25 per call
+		$MAXPERCALL = (empty($conf->global->PARTNERSHIP_MAX_EXPIRATION_CANCEL_PER_CALL) ? 25 : $conf->global->PARTNERSHIP_MAX_EXPIRATION_CANCEL_PER_CALL); // Limit to 25 per call
 
 		$langs->loadLangs(array("partnership", "member"));
 
-		$error 			= 0;
-		$erroremail 	= '';
-		$this->output 	= '';
-		$this->error 	= '';
+		$error = 0;
+		$erroremail = '';
+		$this->output = '';
+		$this->error = '';
 		$partnershipsprocessed = array();
 
-		$gracedelay=$conf->global->PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL;
+		$gracedelay = $conf->global->PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL;
 		if ($gracedelay < 1) {
-			$this->error='BadValueForDelayBeforeCancelCheckSetup';
+			$this->error = 'BadValueForDelayBeforeCancelCheckSetup';
 			return -1;
 		}
 
@@ -102,7 +101,7 @@ class PartnershipUtils
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent_type as dty on (dty.rowid = d.fk_adherent_type)";
 		$sql .= " WHERE fk_member > 0";
 		$sql .= " AND (d.datefin < '".$this->db->idate($datetotest)."' AND dty.subscription = 1)";
-		$sql .= " AND p.status = ".$partnership::STATUS_ACCEPTED; // Only accepted not yet canceled
+		$sql .= " AND p.status = ".((int) $partnership::STATUS_ACCEPTED); // Only accepted not yet canceled
 		$sql .= $this->db->order('d.rowid', 'ASC');
 		// Limit is managed into loop later
 
@@ -117,7 +116,7 @@ class PartnershipUtils
 
 				$obj = $this->db->fetch_object($resql);
 				if ($obj) {
-					if (! empty($partnershipsprocessed[$obj->rowid])) continue;
+					if (!empty($partnershipsprocessed[$obj->rowid])) continue;
 
 					if ($somethingdoneonpartnership >= $MAXPERCALL) {
 						dol_syslog("We reach the limit of ".$MAXPERCALL." partnership processed, so we quit loop for this batch doCancelStatusOfMemberPartnership to avoid to reach email quota.", LOG_WARNING);
@@ -143,7 +142,7 @@ class PartnershipUtils
 								else $this->errors = $object->errors;
 							}
 						} else {
-							$partnershipsprocessed[$object->id]=$object->ref;
+							$partnershipsprocessed[$object->id] = $object->ref;
 
 							// Send an email to inform member
 							$labeltemplate = '(SendingEmailOnPartnershipCanceled)';
@@ -153,21 +152,21 @@ class PartnershipUtils
 							// Send deployment email
 							include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 							include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-							$formmail=new FormMail($this->db);
+							$formmail = new FormMail($this->db);
 
 							// Define output language
 							$outputlangs = $langs;
 							$newlang = '';
 							if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
-							if (! empty($newlang)) {
+							if (!empty($newlang)) {
 								$outputlangs = new Translate("", $conf);
 								$outputlangs->setDefaultLang($newlang);
-								$outputlangs->loadLangs(array('main','member','partnership'));
+								$outputlangs->loadLangs(array('main', 'member', 'partnership'));
 							}
 
-							$arraydefaultmessage=$formmail->getEMailTemplate($this->db, 'partnership_send', $user, $outputlangs, 0, 1, $labeltemplate);
+							$arraydefaultmessage = $formmail->getEMailTemplate($this->db, 'partnership_send', $user, $outputlangs, 0, 1, $labeltemplate);
 
-							$substitutionarray=getCommonSubstitutionArray($outputlangs, 0, null, $object);
+							$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
 							complete_substitutions_array($substitutionarray, $outputlangs, $object);
 
 							$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $outputlangs);
@@ -180,7 +179,7 @@ class PartnershipUtils
 
 							$cmail = new CMailFile($subject, $to, $from, $msg, array(), array(), array(), '', '', 0, 1);
 							$result = $cmail->sendfile();
-							if (! $result || $cmail->error) {
+							if (!$result || $cmail->error) {
 								$erroremail .= ($erroremail ? ', ' : '').$cmail->error;
 								$this->errors[] = $cmail->error;
 								if (is_array($cmail->errors) && count($cmail->errors) > 0) $this->errors += $cmail->errors;
@@ -194,18 +193,18 @@ class PartnershipUtils
 			$this->error = $this->db->lasterror();
 		}
 
-		if (! $error) {
+		if (!$error) {
 			$this->db->commit();
 			$this->output = $numofexpiredmembers.' expired partnership members found'."\n";
-			if ($erroremail) $this->output.='. Got errors when sending some email : '.$erroremail;
+			if ($erroremail) $this->output .= '. Got errors when sending some email : '.$erroremail;
 		} else {
 			$this->db->rollback();
 			$this->output = "Rollback after error\n";
-			$this->output.= $numofexpiredmembers.' expired partnership members found'."\n";
-			if ($erroremail) $this->output.='. Got errors when sending some email : '.$erroremail;
+			$this->output .= $numofexpiredmembers.' expired partnership members found'."\n";
+			if ($erroremail) $this->output .= '. Got errors when sending some email : '.$erroremail;
 		}
 
-		return ($error ? 1: 0);
+		return ($error ? 1 : 0);
 	}
 
 
@@ -223,19 +222,19 @@ class PartnershipUtils
 		$managedfor = $conf->global->PARTNERSHIP_IS_MANAGED_FOR;
 
 		$partnership = new Partnership($this->db);
-		$MAXPERCALL = (empty($conf->global->PARTNERSHIP_MAX_WARNING_BACKLINK_PER_CALL) ? 10 : $conf->global->PARTNERSHIP_MAX_WARNING_BACKLINK_PER_CALL);       // Limit to 10 per call
+		$MAXPERCALL = (empty($conf->global->PARTNERSHIP_MAX_WARNING_BACKLINK_PER_CALL) ? 10 : $conf->global->PARTNERSHIP_MAX_WARNING_BACKLINK_PER_CALL); // Limit to 10 per call
 
 		$langs->loadLangs(array("partnership", "member"));
 
-		$error 			= 0;
-		$erroremail 	= '';
-		$this->output 	= '';
-		$this->error 	= '';
+		$error = 0;
+		$erroremail = '';
+		$this->output = '';
+		$this->error = '';
 		$partnershipsprocessed = array();
 
-		$gracedelay=$conf->global->PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL;
+		$gracedelay = $conf->global->PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL;
 		if ($gracedelay < 1) {
-			$this->error='BadValueForDelayBeforeCancelCheckSetup';
+			$this->error = 'BadValueForDelayBeforeCancelCheckSetup';
 			return -1;
 		}
 
@@ -263,22 +262,23 @@ class PartnershipUtils
 
 		$sql .= " WHERE 1 = 1";
 		$sql .= " AND p.".$fk_partner." > 0";
-		$sql .= " AND p.status = ".$partnership::STATUS_ACCEPTED; // Only accepted not yet canceled
+		$sql .= " AND p.status = ".((int) $partnership::STATUS_ACCEPTED); // Only accepted not yet canceled
 		$sql .= " AND (p.last_check_backlink IS NULL OR p.last_check_backlink <= '".$this->db->idate($now - 7 * 24 * 3600)."')"; // Every week, check that website contains a link to dolibarr.
 		$sql .= $this->db->order('p.rowid', 'ASC');
 		// Limit is managed into loop later
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$numofexpiredmembers 		= $this->db->num_rows($resql);
+			$numofexpiredmembers = $this->db->num_rows($resql);
 			$somethingdoneonpartnership = 0;
-			$ifetchpartner 				= 0;
+			$ifetchpartner = 0;
+			$websitenotfound = '';
 			while ($ifetchpartner < $numofexpiredmembers) {
 				$ifetchpartner++;
 
 				$obj = $this->db->fetch_object($resql);
 				if ($obj) {
-					if (! empty($partnershipsprocessed[$obj->rowid])) continue;
+					if (!empty($partnershipsprocessed[$obj->rowid])) continue;
 
 					if ($somethingdoneonpartnership >= $MAXPERCALL) {
 						dol_syslog("We reach the limit of ".$MAXPERCALL." partnership processed, so we quit loop for this batch doWarningOfPartnershipIfDolibarrBacklinkNotfound to avoid to reach email quota.", LOG_WARNING);
@@ -318,21 +318,21 @@ class PartnershipUtils
 								// Send deployment email
 								include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 								include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-								$formmail=new FormMail($this->db);
+								$formmail = new FormMail($this->db);
 
 								// Define output language
 								$outputlangs = $langs;
 								$newlang = '';
 								if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
-								if (! empty($newlang)) {
+								if (!empty($newlang)) {
 									$outputlangs = new Translate("", $conf);
 									$outputlangs->setDefaultLang($newlang);
-									$outputlangs->loadLangs(array('main','member','partnership'));
+									$outputlangs->loadLangs(array('main', 'member', 'partnership'));
 								}
 
-								$arraydefaultmessage=$formmail->getEMailTemplate($this->db, 'partnership_send', $user, $outputlangs, 0, 1, $labeltemplate);
+								$arraydefaultmessage = $formmail->getEMailTemplate($this->db, 'partnership_send', $user, $outputlangs, 0, 1, $labeltemplate);
 
-								$substitutionarray=getCommonSubstitutionArray($outputlangs, 0, null, $object);
+								$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
 								complete_substitutions_array($substitutionarray, $outputlangs, $object);
 
 								$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $outputlangs);
@@ -343,7 +343,7 @@ class PartnershipUtils
 
 								$cmail = new CMailFile($subject, $to, $from, $msg, array(), array(), array(), '', '', 0, 1);
 								$result = $cmail->sendfile();
-								if (! $result || $cmail->error) {
+								if (!$result || $cmail->error) {
 									$erroremail .= ($erroremail ? ', ' : '').$cmail->error;
 									$this->errors[] = $cmail->error;
 									if (is_array($cmail->errors) && count($cmail->errors) > 0) $this->errors += $cmail->errors;
@@ -360,7 +360,7 @@ class PartnershipUtils
 						$object->reason_decline_or_cancel = '';
 					}
 
-					$partnershipsprocessed[$object->id]=$object->ref;
+					$partnershipsprocessed[$object->id] = $object->ref;
 
 					$object->last_check_backlink = $this->db->idate($now);
 
@@ -372,32 +372,31 @@ class PartnershipUtils
 			$this->error = $this->db->lasterror();
 		}
 
-		if (! $error) {
+		if (!$error) {
 			$this->db->commit();
 			$this->output = $numofexpiredmembers.' partnership checked'."\n";
-			if ($erroremail) $this->output.='. Got errors when sending some email : '.$erroremail."\n";
-			if ($emailnotfound) $this->output.='. Email not found for some partner : '.$emailnotfound."\n";
-			if ($websitenotfound) $this->output.='. Website not found for some partner : '.$websitenotfound."\n";
+			if ($erroremail) $this->output .= '. Got errors when sending some email : '.$erroremail."\n";
+			if ($emailnotfound) $this->output .= '. Email not found for some partner : '.$emailnotfound."\n";
+			if ($websitenotfound) $this->output .= '. Website not found for some partner : '.$websitenotfound."\n";
 		} else {
 			$this->db->rollback();
 			$this->output = "Rollback after error\n";
-			$this->output.= $numofexpiredmembers.' partnership checked'."\n";
-			if ($erroremail) $this->output.='. Got errors when sending some email : '.$erroremail."\n";
-			if ($emailnotfound) $this->output.='. Email not found for some partner : '.$emailnotfound."\n";
-			if ($websitenotfound) $this->output.='. Website not found for some partner : '.$websitenotfound."\n";
+			$this->output .= $numofexpiredmembers.' partnership checked'."\n";
+			if ($erroremail) $this->output .= '. Got errors when sending some email : '.$erroremail."\n";
+			if ($emailnotfound) $this->output .= '. Email not found for some partner : '.$emailnotfound."\n";
+			if ($websitenotfound) $this->output .= '. Website not found for some partner : '.$websitenotfound."\n";
 		}
 
-		return ($error ? 1: 0);
+		return ($error ? 1 : 0);
 	}
 
 	/**
 	 * Action to check if Dolibarr backlink not found on partner website
 	 *
-	 * CAN BE A CRON TASK
-	 * @param  $website      Partner's website
-	 * @return  int                 0 if KO, 1 if OK
+	 * @param  $website      Website	Partner's website
+	 * @return  int                 	0 if KO, 1 if OK
 	 */
-	public function checkDolibarrBacklink($website = null)
+	private function checkDolibarrBacklink($website = null)
 	{
 		global $conf, $langs, $user;
 
@@ -406,7 +405,7 @@ class PartnershipUtils
 		$webcontent = '';
 
 		// $website = 'https://nextgestion.com/'; // For Test
-		$tmpgeturl = getURLContent($website);
+		$tmpgeturl = getURLContent($website, 'GET', '', 1, array(), array('http', 'https'), 0);
 		if ($tmpgeturl['curl_error_no']) {
 			$error++;
 			dol_syslog('Error getting '.$website.': '.$tmpgeturl['curl_error_msg']);

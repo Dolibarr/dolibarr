@@ -87,7 +87,7 @@ $sql .= " WHERE s.fk_stcomm = st.id";
 $sql .= " AND s.client IN (2, 3)";
 $sql .= " AND s.entity IN (".getEntity($companystatic->element).")";
 if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " GROUP BY st.id";
 $sql .= " ORDER BY st.id";
@@ -129,7 +129,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propale->lire) {
 	$sql .= " AND p.fk_soc = s.rowid";
 	$sql .= " AND p.entity IN (".getEntity('propal').")";
 	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 
 	$resql = $db->query($sql);
@@ -191,7 +191,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propale->lire) {
 	$sql .= " AND p.fk_statut = 1";
 	$sql .= " AND p.entity IN (".getEntity('propal').")";
 	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
 		$sql .= " AND s.rowid = ".((int) $socid);
@@ -250,7 +250,7 @@ if (!$user->rights->societe->client->voir && !$socid) {
 $sql .= " WHERE s.fk_stcomm = 1";
 $sql .= " AND s.entity IN (".getEntity($companystatic->element).")";
 if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " ORDER BY s.tms ASC";
 $sql .= $db->plimit(15, 0);

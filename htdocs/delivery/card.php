@@ -249,7 +249,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
  *	View
  */
 
-llxHeader('', $langs->trans('Delivery'), 'Livraison');
+$title = $langs->trans('Delivery');
+
+llxHeader('', $title, 'Livraison');
 
 $form = new Form($db);
 $formfile = new FormFile($db);

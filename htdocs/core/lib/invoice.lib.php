@@ -458,8 +458,9 @@ function getPurchaseInvoicePieChart($socid = 0)
 
 /**
  * Return an HTML table that contains a pie chart of the number of customers or supplier invoices
- * @param string $mode Can be customer or fourn
- * @return string A HTML table that contains a pie chart of customers or supplier invoices
+ *
+ * @param 	string 	$mode 		Can be 'customers' or 'suppliers'
+ * @return 	string 				A HTML table that contains a pie chart of customers or supplier invoices
  */
 function getNumberInvoicesPieChart($mode)
 {
@@ -487,48 +488,55 @@ function getNumberInvoicesPieChart($mode)
 		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement > '".date_format($datenowadd30, 'Y-m-d')."'", 1, 0).") as nbnotlate30";
 		if ($mode == 'customers') {
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-		} elseif ($mode == 'fourn') {
+		} elseif ($mode == 'fourn' || $mode == 'suppliers') {
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 		} else {
 			return '';
 		}
 		$sql .= " WHERE f.type <> 2";
 		$sql .= " AND f.fk_statut = 1";
+		if (isset($user->socid) && $user->socid > 0) {
+			$sql .= " AND f.fk_soc = ".((int) $user->socid);
+		}
+
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num = $db->num_rows($resql);
 			$i = 0;
 			$total = 0;
 			$dataseries = array();
+
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
-				$dataseries = array(array($langs->trans('InvoiceLate30Days'),$obj->nblate30)
-									,array($langs->trans('InvoiceLate15Days'),$obj->nblate15-$obj->nblate30)
-									,array($langs->trans('InvoiceLateMinus15Days'),$obj->nblatenow-$obj->nblate15)
-									,array($langs->trans('InvoiceNotLate'),$obj->nbnotlatenow-$obj->nbnotlate15)
-									,array($langs->trans('InvoiceNotLate15Days'),$obj->nbnotlate15-$obj->nbnotlate30)
-									,array($langs->trans('InvoiceNotLate30Days'),$obj->nbnotlate30));
+				$dataseries = array(array($langs->trans('InvoiceLate30Days'), $obj->nblate30)
+									,array($langs->trans('InvoiceLate15Days'), $obj->nblate15 - $obj->nblate30)
+									,array($langs->trans('InvoiceLateMinus15Days'), $obj->nblatenow - $obj->nblate15)
+									,array($langs->trans('InvoiceNotLate'), $obj->nbnotlatenow - $obj->nbnotlate15)
+									,array($langs->trans('InvoiceNotLate15Days'), $obj->nbnotlate15 - $obj->nbnotlate30)
+									,array($langs->trans('InvoiceNotLate30Days'), $obj->nbnotlate30));
 				$i++;
 			}
 			foreach ($dataseries as $key=>$value) {
-				$total+=$value[1];
+				$total += $value[1];
 			}
 
 			$colorseries = array($badgeStatus8, $badgeStatus1, $badgeStatus3, $badgeStatus4, $badgeStatus11, '-'.$badgeStatus11);
-			if ($conf->use_javascript_ajax) {
-				$result = '<div class="div-table-responsive-no-min">';
-				$result .= '<table class="noborder nohover centpercent">';
-				$result .= '<tr class="liste_titre">';
-				$result .= '<td colspan="2">'.$langs->trans("Statistics").' - ';
-				if ($mode == 'customers') {
-					$result .= $langs->trans("CustomerInvoice").'</td>';
-				} elseif ($mode == 'fourn') {
-					$result .= $langs->trans("SupplierInvoice").'</td>';
-				} else {
-					return '';
-				}
-				$result .= '</tr>';
 
+			$result = '<div class="div-table-responsive-no-min">';
+			$result .= '<table class="noborder nohover centpercent">';
+			$result .= '<tr class="liste_titre">';
+			$result .= '<td>'.$langs->trans("Statistics").' - ';
+			if ($mode == 'customers') {
+				$result .= $langs->trans("CustomerInvoice");
+			} elseif ($mode == 'fourn' || $mode == 'suppliers') {
+				$result .= $langs->trans("SupplierInvoice");
+			} else {
+				return '';
+			}
+			$result .= '</td>';
+			$result .= '</tr>';
+
+			if ($conf->use_javascript_ajax) {
 				$dolgraph = new DolGraph();
 				$dolgraph->SetData($dataseries);
 				$dolgraph->SetDataColor(array_values($colorseries));
@@ -539,17 +547,21 @@ function getNumberInvoicesPieChart($mode)
 				$dolgraph->setWidth('300');
 				if ($mode == 'customers') {
 					$dolgraph->draw('idgraphcustomerinvoices');
-				} elseif ($mode == 'fourn') {
+				} elseif ($mode == 'fourn' || $mode == 'suppliers') {
 					$dolgraph->draw('idgraphfourninvoices');
 				} else {
 					return '';
 				}
 				$result .= '<tr maxwidth="255">';
-				$result .= '<td align="center" colspan="2">'.$dolgraph->show($total ? 0 : 1).'</td>';
+				$result .= '<td class="center">'.$dolgraph->show($total ? 0 : $langs->trans("NoOpenInvoice")).'</td>';
 				$result .= '</tr>';
-				$result .= '</table>';
-				$result .= '</div>';
+			} else {
+				// Print text lines
 			}
+
+			$result .= '</table>';
+			$result .= '</div>';
+
 			return $result;
 		} else {
 			dol_print_error($db);
@@ -603,7 +615,7 @@ function getCustomerInvoiceDraftTable($maxCount = 500, $socid = 0)
 	$sql .= " s.nom, s.rowid, s.email, s.code_client, s.code_compta, s.code_fournisseur, s.code_compta_fournisseur,";
 	$sql .= " cc.rowid, cc.code";
 	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql.= ", sc.fk_soc, sc.fk_user";
+		$sql .= ", sc.fk_soc, sc.fk_user";
 	}
 
 	// Add Group from hooks
@@ -734,7 +746,7 @@ function getDraftSupplierTable($maxCount = 500, $socid = 0)
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	}
 	if ($socid) {
-		$sql .= " AND f.fk_soc = ".$socid;
+		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 	// Add where from hooks
 	$parameters = array();
@@ -842,8 +854,8 @@ function getCustomerInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 {
 	global $conf, $db, $langs, $user;
 
-	$sql = "SELECT f.rowid, f.entity, f.ref, f.fk_statut as status, f.paye, s.nom as socname, s.rowid as socid, s.canvas, s.client,";
-	$sql .= " f.datec";
+	$sql = "SELECT f.rowid, f.entity, f.ref, f.fk_statut as status, f.paye, f.type, f.total_ht, f.total_tva, f.total_ttc, f.datec,";
+	$sql .= " s.nom as socname, s.rowid as socid, s.canvas, s.client";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) {
@@ -892,6 +904,10 @@ function getCustomerInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 		$objectstatic->ref = $obj->ref;
 		$objectstatic->paye = $obj->paye;
 		$objectstatic->statut = $obj->status;
+		$objectstatic->total_ht = $obj->total_ht;
+		$objectstatic->total_tva = $obj->total_tva;
+		$objectstatic->total_ttc = $obj->total_ttc;
+		$objectstatic->type = $obj->type;
 
 		$companystatic->id = $obj->socid;
 		$companystatic->name = $obj->socname;
@@ -940,8 +956,8 @@ function getPurchaseInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 {
 	global $conf, $db, $langs, $user;
 
-	$sql = "SELECT f.rowid, f.entity, f.ref, f.fk_statut as status, f.paye, s.nom as socname, s.rowid as socid, s.canvas, s.client,";
-	$sql .= " f.datec";
+	$sql = "SELECT f.rowid, f.entity, f.ref, f.fk_statut as status, f.paye, f.total_ht, f.total_tva, f.total_ttc, f.type, f.ref_supplier, f.datec,";
+	$sql .= " s.nom as socname, s.rowid as socid, s.canvas, s.client";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) {
@@ -950,7 +966,7 @@ function getPurchaseInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 	$sql .= " WHERE f.fk_soc = s.rowid";
 	$sql .= " AND f.entity IN (".getEntity('facture_fourn').")";
 	if ($socid) {
-		$sql .= " AND f.fk_soc = ".$socid;
+		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 	if (!$user->rights->societe->client->voir && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
@@ -990,6 +1006,10 @@ function getPurchaseInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 		$objectstatic->ref = $obj->ref;
 		$objectstatic->paye = $obj->paye;
 		$objectstatic->statut = $obj->status;
+		$objectstatic->total_ht = $obj->total_ht;
+		$objectstatic->total_tva = $obj->total_tva;
+		$objectstatic->total_ttc = $obj->total_ttc;
+		$objectstatic->type = $obj->type;
 
 		$companystatic->id = $obj->socid;
 		$companystatic->name = $obj->socname;
@@ -1062,7 +1082,7 @@ function getCustomerInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 		}
 		if ($socid) {
-			$sql .= " AND f.fk_soc = ".$socid;
+			$sql .= " AND f.fk_soc = ".((int) $socid);
 		}
 		// Add where from hooks
 		$parameters = array();
@@ -1250,7 +1270,7 @@ function getPurchaseInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 		}
 		if ($socid) {
-			$sql .= " AND ff.fk_soc = ".$socid;
+			$sql .= " AND ff.fk_soc = ".((int) $socid);
 		}
 		// Add where from hooks
 		$parameters = array();

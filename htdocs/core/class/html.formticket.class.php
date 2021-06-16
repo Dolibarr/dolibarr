@@ -259,7 +259,7 @@ class FormTicket
 		$doleditor->Create();
 		print '</td></tr>';
 
-		if (!empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA)) {
+		if ($public && !empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 			print '<tr><td class="titlefield"><label for="email"><span class="fieldrequired">'.$langs->trans("SecurityCode").'</span></label></td><td>';
 			print '<span class="span-icon-security inline-block">';
@@ -569,90 +569,194 @@ class FormTicket
 	 *      @param  int    $noadmininfo 0=Add admin info, 1=Disable admin info
 	 *      @param  int    $maxlength   Max length of label
 	 *      @param	string	$morecss	More CSS
+	 * 		@param	int 	$use_multilevel	if != 0 create a multilevel select ( Do not use any of the other params)
 	 *      @return void
 	 */
-	public function selectGroupTickets($selected = '', $htmlname = 'ticketcategory', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $morecss = '')
+	public function selectGroupTickets($selected = '', $htmlname = 'ticketcategory', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $morecss = '', $use_multilevel = 0)
 	{
 		global $langs, $user;
 
-		$ticketstat = new Ticket($this->db);
+		if ($use_multilevel == 0) {
+			$ticketstat = new Ticket($this->db);
 
-		dol_syslog(get_class($this)."::selectCategoryTickets ".$selected.", ".$htmlname.", ".$filtertype.", ".$format, LOG_DEBUG);
+			dol_syslog(get_class($this)."::selectCategoryTickets ".$selected.", ".$htmlname.", ".$filtertype.", ".$format, LOG_DEBUG);
 
-		$ticketstat->loadCacheCategoriesTickets();
+			$ticketstat->loadCacheCategoriesTickets();
 
-		print '<select id="select'.$htmlname.'" class="flat minwidth100'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
-		if ($empty) {
-			print '<option value="">&nbsp;</option>';
-		}
+			print '<select id="select'.$htmlname.'" class="flat minwidth100'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
+			if ($empty) {
+				print '<option value="">&nbsp;</option>';
+			}
 
-		if (is_array($ticketstat->cache_category_tickets) && count($ticketstat->cache_category_tickets)) {
-			foreach ($ticketstat->cache_category_tickets as $id => $arraycategories) {
-				// Exclude some record
-				if ($filtertype == 'public=1') {
-					if (empty($arraycategories['public'])) {
+			if (is_array($ticketstat->cache_category_tickets) && count($ticketstat->cache_category_tickets)) {
+				foreach ($ticketstat->cache_category_tickets as $id => $arraycategories) {
+					// Exclude some record
+					if ($filtertype == 'public=1') {
+						if (empty($arraycategories['public'])) {
+							continue;
+						}
+					}
+
+					// We discard empty line if showempty is on because an empty line has already been output.
+					if ($empty && empty($arraycategories['code'])) {
 						continue;
 					}
+
+					if ($format == 0) {
+						print '<option value="'.$id.'"';
+					}
+
+					if ($format == 1) {
+						print '<option value="'.$arraycategories['code'].'"';
+					}
+
+					if ($format == 2) {
+						print '<option value="'.$arraycategories['code'].'"';
+					}
+
+					if ($format == 3) {
+						print '<option value="'.$id.'"';
+					}
+
+					// Si selected est text, on compare avec code, sinon avec id
+					if (preg_match('/[a-z]/i', $selected) && $selected == $arraycategories['code']) {
+						print ' selected="selected"';
+					} elseif ($selected == $id) {
+						print ' selected="selected"';
+					} elseif ($arraycategories['use_default'] == "1" && !$selected && !$empty) {
+						print ' selected="selected"';
+					}
+
+					print '>';
+
+					if ($format == 0) {
+						$value = ($maxlength ? dol_trunc($arraycategories['label'], $maxlength) : $arraycategories['label']);
+					}
+
+					if ($format == 1) {
+						$value = $arraycategories['code'];
+					}
+
+					if ($format == 2) {
+						$value = ($maxlength ? dol_trunc($arraycategories['label'], $maxlength) : $arraycategories['label']);
+					}
+
+					if ($format == 3) {
+						$value = $arraycategories['code'];
+					}
+
+					print $value ? $value : '&nbsp;';
+					print '</option>';
 				}
-
-				// We discard empty line if showempty is on because an empty line has already been output.
-				if ($empty && empty($arraycategories['code'])) {
-					continue;
-				}
-
-				if ($format == 0) {
-					print '<option value="'.$id.'"';
-				}
-
-				if ($format == 1) {
-					print '<option value="'.$arraycategories['code'].'"';
-				}
-
-				if ($format == 2) {
-					print '<option value="'.$arraycategories['code'].'"';
-				}
-
-				if ($format == 3) {
-					print '<option value="'.$id.'"';
-				}
-
-				// Si selected est text, on compare avec code, sinon avec id
-				if (preg_match('/[a-z]/i', $selected) && $selected == $arraycategories['code']) {
-					print ' selected="selected"';
-				} elseif ($selected == $id) {
-					print ' selected="selected"';
-				} elseif ($arraycategories['use_default'] == "1" && !$selected && !$empty) {
-					print ' selected="selected"';
-				}
-
-				print '>';
-
-				if ($format == 0) {
-					$value = ($maxlength ? dol_trunc($arraycategories['label'], $maxlength) : $arraycategories['label']);
-				}
-
-				if ($format == 1) {
-					$value = $arraycategories['code'];
-				}
-
-				if ($format == 2) {
-					$value = ($maxlength ? dol_trunc($arraycategories['label'], $maxlength) : $arraycategories['label']);
-				}
-
-				if ($format == 3) {
-					$value = $arraycategories['code'];
-				}
-
-				print $value ? $value : '&nbsp;';
-				print '</option>';
 			}
-		}
-		print '</select>';
-		if ($user->admin && !$noadmininfo) {
-			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-		}
+			print '</select>';
+			if ($user->admin && !$noadmininfo) {
+				print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+			}
 
-		print ajax_combobox('select'.$htmlname);
+			print ajax_combobox('select'.$htmlname);
+		} else {
+			$groupticket=GETPOST('groupticket', 'aZ09');
+			$groupticketchild=GETPOST('groupticket_child', 'aZ09');
+			$arraycodenotparent[] = "";
+			$stringtoprint = '<span class="supportemailfield bold">'.$langs->trans("GroupOfTicket").'</span> ';
+			$stringtoprint .= '<select name="groupticket" id ="groupticket" class="maxwidth500 minwidth400">';
+			$stringtoprint .= '<option value="">&nbsp;</option>';
+
+			$sql = "SELECT ctc.rowid, ctc.code, ctc.label, ctc.fk_parent, ";
+			$sql .= $this->db->ifsql("ctc.rowid NOT IN (SELECT ctcfather.rowid FROM llx_c_ticket_category as ctcfather JOIN llx_c_ticket_category as ctcjoin ON ctcfather.rowid = ctcjoin.fk_parent)", "'NOTPARENT'", "'PARENT'")." as isparent";
+			$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_category as ctc";
+			$sql .= " WHERE ctc.public = 1";
+			$sql .= " AND ctc.active = 1";
+			$sql .= " AND ctc.fk_parent = 0";
+			$sql .= $this->db->order('ctc.pos', 'ASC');
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$num_rows = $this->db->num_rows($resql);
+				$i = 0;
+				while ($i < $num_rows) {
+					$obj = $this->db->fetch_object($resql);
+					if ($obj) {
+						$grouprowid = $obj->rowid;
+						$groupvalue = $obj->code;
+						$grouplabel = $obj->label;
+						$isparent = $obj->isparent;
+						$iselected = $groupticket == $obj->code ?'selected':'';
+						$stringtoprint .= '<option '.$iselected.' class="groupticket'.dol_escape_htmltag($grouprowid).'" value="'.dol_escape_htmltag($groupvalue).'" data-html="'.dol_escape_htmltag($grouplabel).'">'.dol_escape_htmltag($grouplabel).'</option>';
+						if ($isparent == 'NOTPARENT') {
+							$arraycodenotparent[] = $groupvalue;
+						}
+					}
+					$i++;
+				}
+			} else {
+				dol_print_error($this->db);
+			}
+			if ($num_rows == 1) {
+				return '<input type="hidden" name="groupticket" id="groupticket" value="'.dol_escape_htmltag($groupvalue).'">';
+			}
+			$stringtoprint .= '</select>&nbsp';
+
+			$stringtoprint .= '<select name="groupticket_child" id ="groupticket_child" class="maxwidth500 minwidth400">';
+			$stringtoprint .= '<option value="">&nbsp;</option>';
+
+			$sql = "SELECT ctc.rowid, ctc.code, ctc.label, ctc.fk_parent, ctcjoin.code as codefather";
+			$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_category as ctc";
+			$sql .= " JOIN ".MAIN_DB_PREFIX."c_ticket_category as ctcjoin ON ctc.fk_parent = ctcjoin.rowid";
+			$sql .= " WHERE ctc.public = 1";
+			$sql .= " AND ctc.active = 1";
+			$sql .= " AND ctc.fk_parent <> 0";
+			$sql .= $this->db->order('ctc.pos', 'ASC');
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$num_rows = $this->db->num_rows($resql);
+				$i = 0;
+				while ($i < $num_rows) {
+					$obj = $this->db->fetch_object($resql);
+					if ($obj) {
+						$grouprowid = $obj->rowid;
+						$groupvalue = $obj->code;
+						$grouplabel = $obj->label;
+						$fatherid = $obj->fk_parent;
+						$groupcodefather = $obj->codefather;
+						$iselected = $groupticketchild == $obj->code ?'selected':'';
+						$stringtoprint .= '<option '.$iselected.' class="groupticket_'.dol_escape_htmltag($fatherid).'_child" value="'.dol_escape_htmltag($groupvalue).'" data-html="'.dol_escape_htmltag($grouplabel).'">'.dol_escape_htmltag($grouplabel).'</option>';
+						$tabscript[] = 'if($("#groupticket")[0].value == "'.dol_escape_js($groupcodefather).'"){
+							$(".groupticket_'.dol_escape_htmltag($fatherid).'_child").show()
+						}else{
+							$(".groupticket_'.dol_escape_htmltag($fatherid).'_child").hide()
+						}';
+					}
+					$i++;
+				}
+			} else {
+				dol_print_error($this->db);
+			}
+			$stringtoprint .='</select>';
+
+			$stringtoprint .='<script>';
+			$stringtoprint .='var arraynotparents = '.json_encode($arraycodenotparent).';';
+			$stringtoprint .='if (arraynotparents.includes($("#groupticket")[0].value)){$("#groupticket_child").hide()}
+			else{';
+			foreach ($tabscript as $script) {
+				$stringtoprint .= $script;
+			};
+			$stringtoprint .='}
+			$("#groupticket").change(function() {
+				$("#groupticket_child")[0].value = ""
+				if (!arraynotparents.includes(this.value)) {
+				$("#groupticket_child").show()
+				} else {
+				$("#groupticket_child").hide()
+				}
+			';
+			foreach ($tabscript as $script) {
+				$stringtoprint .= $script;
+			};
+			$stringtoprint .='})';
+			$stringtoprint .='</script>';
+			return $stringtoprint;
+		}
 	}
 
 	/**
@@ -995,6 +1099,8 @@ class FormTicket
 			print '</td></tr>';
 		}
 
+		$uselocalbrowser = false;
+
 		// Intro
 		// External users can't send message email
 		if ($user->rights->ticket->write && !$user->socid) {
@@ -1005,15 +1111,15 @@ class FormTicket
 
 			print '</td><td>';
 			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-			$uselocalbrowser = true;
 
-			$doleditor = new DolEditor('mail_intro', $mail_intro, '100%', 90, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_2, 70);
+			$doleditor = new DolEditor('mail_intro', $mail_intro, '100%', 90, 'dolibarr_details', '', false, $uselocalbrowser, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_2, 70);
 
 			$doleditor->Create();
 			print '</td></tr>';
 		}
 
 		// MESSAGE
+
 		$defaultmessage = "";
 		if (is_object($arraydefaultmessage) && $arraydefaultmessage->content) {
 			$defaultmessage = $arraydefaultmessage->content;
@@ -1043,7 +1149,7 @@ class FormTicket
 		//$toolbarname = 'dolibarr_details';
 		$toolbarname = 'dolibarr_notes';
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('message', $defaultmessage, '100%', 200, $toolbarname, '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_5, 70);
+		$doleditor = new DolEditor('message', $defaultmessage, '100%', 200, $toolbarname, '', false, $uselocalbrowser, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_5, 70);
 		$doleditor->Create();
 		print '</td></tr>';
 
@@ -1055,7 +1161,7 @@ class FormTicket
 			print $form->textwithpicto('', $langs->trans("TicketMessageMailSignatureHelp"), 1, 'help');
 			print '</td><td>';
 			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-			$doleditor = new DolEditor('mail_signature', $mail_signature, '100%', 150, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_2, 70);
+			$doleditor = new DolEditor('mail_signature', $mail_signature, '100%', 150, 'dolibarr_details', '', false, $uselocalbrowser, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_2, 70);
 			$doleditor->Create();
 			print '</td></tr>';
 		}

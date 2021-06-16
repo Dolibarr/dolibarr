@@ -42,7 +42,7 @@ if ($user->socid) {
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('productstatscontract'));
+$hookmanager->initHooks(array('productstatsmo'));
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -137,7 +137,7 @@ if ($id > 0 || !empty($ref)) {
 		$sql .= ", ".MAIN_DB_PREFIX."mrp_production as cd";
 		$sql .= " WHERE c.rowid = cd.fk_mo";
 		$sql .= " AND c.entity IN (".getEntity('mo').")";
-		$sql .= " AND cd.fk_product =".$product->id;
+		$sql .= " AND cd.fk_product = ".((int) $product->id);
 		if ($socid) {
 			$sql .= " AND s.rowid = ".((int) $socid);
 		}

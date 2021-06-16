@@ -158,7 +158,7 @@ function getValidOnlinePaymentMethods($paymentmethod = '')
 /**
  * Return string with full online payment Url
  *
- * @param   string	$type		Type of URL ('free', 'order', 'invoice', 'contractline', 'membersubscription' ...)
+ * @param   string	$type		Type of URL ('free', 'order', 'invoice', 'contractline', 'member' ...)
  * @param	string	$ref		Ref of object
  * @return	string				Url string
  */
@@ -182,7 +182,7 @@ function showOnlinePaymentUrl($type, $ref)
 /**
  * Return string with HTML link for online payment
  *
- * @param	string	$type		Type of URL ('free', 'order', 'invoice', 'contractline', 'membersubscription' ...)
+ * @param	string	$type		Type of URL ('free', 'order', 'invoice', 'contractline', 'member' ...)
  * @param	string	$ref		Ref of object
  * @param	string	$label		Text or HTML tag to display, if empty it display the URL
  * @return	string			Url string
@@ -199,7 +199,7 @@ function getHtmlOnlinePaymentLink($type, $ref, $label = '')
  * Return string with full Url
  *
  * @param   int		$mode		      0=True url, 1=Url formated with colors
- * @param   string	$type		      Type of URL ('free', 'order', 'invoice', 'contractline', 'membersubscription' ...)
+ * @param   string	$type		      Type of URL ('free', 'order', 'invoice', 'contractline', 'member' ...)
  * @param	string	$ref		      Ref of object
  * @param	int		$amount		      Amount (required for $type='free' only)
  * @param	string	$freetag	      Free tag
@@ -304,7 +304,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 		}
 	} elseif ($type == 'member' || $type == 'membersubscription') {
 		$newtype = 'member';
-		$out = $urltouse.'/public/payment/newpayment.php?source=membersubscription&ref='.($mode ? '<font color="#666666">' : '');
+		$out = $urltouse.'/public/payment/newpayment.php?source=member&ref='.($mode ? '<font color="#666666">' : '');
 		if ($mode == 1) {
 			$out .= 'member_ref';
 		}

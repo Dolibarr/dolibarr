@@ -184,7 +184,7 @@ if ($id > 0 || !empty($ref)) {
 		print dol_get_fiche_end();
 
 		$modulepart = 'commande';
-		$permission = $user->rights->commande->creer;
+		$permissiontoadd = $user->rights->commande->creer;
 		$permtoedit = $user->rights->commande->creer;
 		$param = '&id='.$object->id.'&entity='.(!empty($object->entity) ? $object->entity : $conf->entity);
 		include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';

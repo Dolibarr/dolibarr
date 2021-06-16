@@ -106,7 +106,8 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if ($page == -1 || $page == null) {
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
 }
 $offset = $limit * $page;
@@ -320,7 +321,7 @@ if ($search_title != '') {
 	$param .= '&search_title='.urlencode($search_title);
 }
 if ($search_note != '') {
-	$param .= '&search_note='.$search_note;
+	$param .= '&search_note='.urlencode($search_note);
 }
 if (GETPOST('datestartday', 'int')) {
 	$param .= '&datestartday='.GETPOST('datestartday', 'int');
@@ -520,6 +521,7 @@ $sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+	// TODO Set and use an optimized request in $sqlforcount with no fields and no useless join to caluclate nb of records
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
@@ -829,7 +831,11 @@ if ($resql) {
 		$actionstatic->location = $obj->location;
 		$actionstatic->note_private = dol_htmlentitiesbr($obj->note);
 
-		$actionstatic->fetchResources();
+		// Initialize $this->userassigned && this->socpeopleassigned array && this->userownerid
+		// but only if we need it
+		if (!empty($arrayfields['a.fk_contact']['checked'])) {
+			$actionstatic->fetchResources();
+		}
 
 		print '<tr class="oddeven">';
 
@@ -1006,7 +1012,7 @@ if ($resql) {
 		}
 		if (!empty($arrayfields['a.percent']['checked'])) {
 			// Status/Percent
-			$datep = $db->jdate($obj->datep);
+			$datep = $db->jdate($obj->dp);
 			print '<td align="center" class="nowrap">'.$actionstatic->LibStatut($obj->percent, 5, 0, $datep).'</td>';
 		}
 		// Action column

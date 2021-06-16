@@ -60,18 +60,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 // Init vars
 $errmsg = '';
-$num = 0;
 $error = 0;
 $backtopage = GETPOST('backtopage', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
 // Load translation files
-$langs->loadLangs(array("main", "members", "companies", "install", "other"));
-
-// Security check
-if (empty($conf->projet->enabled)) {
-	accessforbidden('', 0, 0, 1);
-}
+$langs->loadLangs(array("members", "companies", "install", "other"));
 
 if (empty($conf->global->PROJECT_ENABLE_PUBLIC)) {
 	print $langs->trans("Form for public lead registration has not been enabled");
@@ -86,6 +80,11 @@ $extrafields = new ExtraFields($db);
 $object = new Project($db);
 
 $user->loadDefaultValues();
+
+// Security check
+if (empty($conf->projet->enabled)) {
+	accessforbidden('', 0, 0, 1);
+}
 
 
 /**

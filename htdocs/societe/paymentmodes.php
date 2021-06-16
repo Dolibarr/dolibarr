@@ -977,8 +977,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX."societe_rib";
 			$sql .= " WHERE type in ('card')";
-			$sql .= " AND fk_soc = ".$object->id;
-			$sql .= " AND status = ".$servicestatus;
+			$sql .= " AND fk_soc = ".((int) $object->id);
+			$sql .= " AND status = ".((int) $servicestatus);
 
 			$resql = $db->query($sql);
 			if ($resql) {
