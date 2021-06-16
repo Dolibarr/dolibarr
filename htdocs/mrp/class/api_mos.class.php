@@ -299,6 +299,10 @@ class Mos extends DolibarrApi
 	 */
 	public function produceAndConsume($id, $request_data = null)
 	{
+		global $langs;
+
+		$error = 0;
+
 		if (!DolibarrApiAccess::$user->rights->mrp->write) {
 			throw new RestException(401, 'Not enough permission');
 		}
@@ -342,11 +346,13 @@ class Mos extends DolibarrApi
 			throw new RestException(500, "Field inventorycode not prodivded");
 		}
 
-		// TODO Add code for consume and produce...
+		// Code for consume and produce...
 		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 		dol_include_once('/mrp/lib/mrp_mo.lib.php');
+
 		$stockmove = new MouvementStock($this->db);
+
 		if (!empty($arraytoconsume) && !empty($arraytoproduce)) {
 			$pos = 0;
 			$arrayofarrayname = array("arraytoconsume","arraytoproduce");
@@ -618,12 +624,11 @@ class Mos extends DolibarrApi
 		dol_syslog("consumptioncomplete = ".$consumptioncomplete." productioncomplete = ".$productioncomplete);
 		//var_dump("consumptioncomplete = ".$consumptioncomplete." productioncomplete = ".$productioncomplete);
 		if ($consumptioncomplete && $productioncomplete) {
-			$result = $this->mo->setStatut($this->mo::STATUS_PRODUCED, 0, '', 'MRP_MO_PRODUCED');
+			$result = $this->mo->setStatut(self::STATUS_PRODUCED, 0, '', 'MRP_MO_PRODUCED');
 		} else {
-			$result = $this->mo->setStatut($this->mo::STATUS_INPROGRESS, 0, '', 'MRP_MO_PRODUCED');
+			$result = $this->mo->setStatut(self::STATUS_INPROGRESS, 0, '', 'MRP_MO_PRODUCED');
 		}
 		if ($result <= 0) {
-			$error++;
 			throw new RestException(500, $this->mo->error);
 		}
 
