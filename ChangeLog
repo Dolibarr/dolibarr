@@ -46,16 +46,13 @@ NEW: Can filter on extrafields date on lists
 NEW: Can filter on rowid in list of blocked logs
 NEW: Can hide columns "time consumed" on timesheet per week
 NEW: Can set an employee on each social contribution
-NEW: Can set a percentage when creating an invoice from another object
 NEW: Can set order of execution of hooks
-NEW: Can show the leave dates/holidays on the agenda view
 NEW: Can toggle FCKeditor on public/private notes
 NEW: Check update availability for externals modules using a button on module page
 NEW: Choose lines to use while creating intervention card from origin
 NEW: Columns shipment method, payment mode, payment term in proposal and order list
 NEW: Conf for default actioncomm status
 NEW: customer ref for product customer prices
-NEW: date and user signature on proposal (Issue 16062) #16980
 NEW: Dictionary for availability - Add a column position
 NEW: Can set a user related to a social contribution
 NEW: ICS Direct debit can be set with a different value for each bank account
@@ -65,7 +62,6 @@ NEW: If main logo not defined, can use the squarred logo on login page
 NEW: The manifest file can use the squared image if available
 NEW: Add bulk actions for Bank Transfer
 NEW: Enhance the multicurrency rate editor
-NEW: Multiselect ledger account code filter on book keeping list
 NEW: Normalyse Type company field with ajax combobox
 NEW: preload product description on selection for customer propal/order/invoice
 NEW: Add a ref in product customer price
@@ -93,10 +89,17 @@ NEW: Accountancy - Format FEC - Add new field DateLimitReglmt
 NEW: Accountancy - In ledger & journals, show link on bank transaction
 NEW: Accountancy - Possibility to filter on journals in balance
 NEW: Accountancy - Add a page to list subledger accounts
+NEW: Multiselect ledger account code filter on book keeping list
+
+ Agenda
+NEW: Can show the leave dates/holidays on the agenda view
 
  ECM/GED
 NEW: add DB fields note_public and note_private for ECM module
 NEW: Can filter files in ECM/GED on status Shared/Not shared
+
+ Invoices
+NEW: Can set a percentage when creating an invoice from another object
 
  Members
 NEW: #17292 default subscription amount by adherent type
@@ -111,6 +114,7 @@ NEW: when we add contacts/users to a project, ask to also affect them on tasks
  Proposals
 NEW: add bulk action to set a commercial proposal to status "Refused"
 NEW: can set a warehouse in a proposal
+NEW: date and user signature on proposal (Issue 16062) #16980
 
  Shipment
 NEW: add option in Workflow module to set a shipment as closed
@@ -130,7 +134,8 @@ NEW: can set a warehouse on a Thirdparty
 NEW: can use captcha on public page to create a ticket  #16347
 NEW: can set if a ticket group is visible on public interface or not
 
- Warehouse
+ Warehouse/Stock
+NEW: Feature to make Stock Inventories
 NEW: can make massive stock transfers from a CSV file
 NEW: Stock movement list - add more complete date field
 NEW: can set a warehouse in a proposal
@@ -143,10 +148,12 @@ NEW: add last date of modification for website pages in the list of pages
 NEW: Save old page with .old extension on disk when editing a website page
 
  new Modules
+NEW: Module Recruitement is now stable
 NEW: start new experimental module Event Organization Management
 NEW: start new experimental module Partnership Management
 NEW: start new experimental module Knowledge Management
 NEW: start new experimental module Workstations Management
+NEW: Check update availability for externals modules using a button on module page
 
  new Options
 NEW: add option  CONTRACT_ALLOW_EXTERNAL_DOWNLOAD            to make generated doc automatically shared
@@ -171,20 +178,20 @@ NEW: Support sepa_debit in stripe paymentmethods list
 NEW: Update doleditor.class.php for easily activate SCAYT
 NEW: Add triggers in the function add_object_linked(), updateObjectLinked() and deleteObjectLinked()
 NEW: Add triggers OBJECT_LINK_INSERT, OBJECT_LINK_UPDATE et OBJECT_LINK_DELETE in the function add_object_linked(), updateObjectLinked() and deleteObjectLinked()
-NEW: Can set a target image in dolcropresize function.
-NEW: Can set a label as placeholder for combo lists.
+NEW: can set a target image in dolcropresize function
+NEW: can set a label as placeholder for combo lists
 NEW: Add pagination on Get Products response API
 NEW: Add the DefaultValues CRUD class
 NEW: Extrafields of documents lines are inside the lines, not any more on separate TR
 NEW: unit selection on object edit line
-NEW: #13739 #17390 Product API route added to get product stock and product with or without variants
 
  APIs
 NEW: API add option $includeifobjectisused to get a product
 NEW: API get the list of product ids only
+NEW: add link to OpenAPI specifications XML file in REST API module setup: swagger.json file can be included into external tools like redoc
 NEW: add native compression in REST APIs
 NEW: Product Variants API, add variant stock to response by parameter
-NEW: add link to OpenAPI specifications XML file in REST API module setup: swagger.json file can be included into external tools like redoc
+NEW: Product API route added to get product stock and product with or without variants #13739 #17390 
 
 
 WARNING:
