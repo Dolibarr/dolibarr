@@ -9,6 +9,9 @@ dist: xenial
 
 language: php
 
+git:
+  depth: 1
+
 # Start on every boot
 services:
 - memcached
