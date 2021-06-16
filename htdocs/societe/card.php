@@ -413,6 +413,20 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("No_Email")), null, 'errors');
 		}
 
+		if ($action == 'add') {
+			$thirdparty = GETPOST('name');
+			$sql = 'SELECT nom FROM '.MAIN_DB_PREFIX.'societe WHERE nom="'.$db->escape($thirdparty).'"';
+			$resql = $db->query($sql);
+			if (!$resql) {
+				dol_print_error($db);
+			}
+
+			if ($db->fetch_object($resql)) {
+				setEventMessages($langs->trans("ErrorClientExists"), null, 'errors');
+				$error++;
+			}
+		}
+
 		if (!$error) {
 			if ($action == 'update') {
 				$ret = $object->fetch($socid);
