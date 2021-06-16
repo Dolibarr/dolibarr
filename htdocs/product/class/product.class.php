@@ -231,8 +231,8 @@ class Product extends CommonObject
 	public $desiredstock = 0;
 
 	/*
-	* Service expiration
-	*/
+	 * Service expiration
+	 */
 	public $duration_value;
 
 	/**
@@ -543,7 +543,7 @@ class Product extends CommonObject
 	{
 		global $conf, $langs;
 
-			$error = 0;
+		$error = 0;
 
 		// Clean parameters
 		$this->ref = dol_sanitizeFileName(dol_string_nospecial(trim($this->ref)));
@@ -1154,8 +1154,8 @@ class Product extends CommonObject
 				// Multilangs
 				if (!empty($conf->global->MAIN_MULTILANGS)) {
 					if ($this->setMultiLangs($user) < 0) {
-						   $this->error = $langs->trans("Error")." : ".$this->db->error()." - ".$sql;
-						   return -2;
+						$this->error = $langs->trans("Error")." : ".$this->db->error()." - ".$sql;
+						return -2;
 					}
 				}
 
@@ -2253,8 +2253,8 @@ class Product extends CommonObject
 
 		//For MultiCompany
 		//PMP per entity & Stocks Sharings stock_reel includes only stocks shared with this entity
-		$separatedEntityPMP = false;
-		$separatedStock = false;
+		$separatedEntityPMP = false;	// Set to true to get the AWP from table llx_product_perentity instead of field 'pmp' into llx_product.
+		$separatedStock = false;		// Set to true will count stock from subtable llx_product_stock. It is slower than using denormalized field 'stock', but it is required when using multientity and shared warehouses.
 		if (!empty($conf->global->MULTICOMPANY_PRODUCT_SHARING_ENABLED)) {
 			if (!empty($conf->global->MULTICOMPANY_PMP_PER_ENTITY_ENABLED)) {
 				$checkPMPPerEntity = $this->db->query("SELECT pmp FROM " . MAIN_DB_PREFIX . "product_perentity WHERE fk_product  = ".((int) $id)." AND entity = ".(int) $conf->entity);
@@ -2269,17 +2269,18 @@ class Product extends CommonObject
 				$visibleWarehousesEntities .= "," . implode(",", $mc->sharings['stock']);
 			}
 		}
-		if ($separatedStock) {
-			$sql .= " SUM(sp.reel) as stock,";
-		} else {
-			$sql .= " p.stock,";
-		}
 		if ($separatedEntityPMP) {
-			$sql .= " ppe.pmp, p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.batch_mask, p.fk_unit,";
+			$sql .= " ppe.pmp,";
 		} else {
-			$sql .= " p.pmp, p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.batch_mask, p.fk_unit,";
+			$sql .= " p.pmp,";
 		}
-		$sql .= " p.fk_price_expression, p.price_autogen, p.model_pdf";
+		$sql .= " p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.batch_mask, p.fk_unit,";
+		$sql .= " p.fk_price_expression, p.price_autogen, p.model_pdf,";
+		if ($separatedStock) {
+			$sql .= " SUM(sp.reel) as stock";
+		} else {
+			$sql .= " p.stock";
+		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 		if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) || $separatedEntityPMP) {
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
@@ -2300,11 +2301,30 @@ class Product extends CommonObject
 			}
 		}
 		if ($separatedStock) {
-			$sql .= " AND sp.fk_entrepot IN (
-				SELECT rowid
-				FROM ".MAIN_DB_PREFIX."entrepot	WHERE entity IN (".$this->db->sanitize($visibleWarehousesEntities)."))";
+			$sql .= " AND sp.fk_entrepot IN (SELECT rowid FROM ".MAIN_DB_PREFIX."entrepot WHERE entity IN (".$this->db->sanitize($visibleWarehousesEntities)."))";
 		}
-
+		if ($separatedStock) {
+			$sql .= " GROUP BY p.rowid, p.ref, p.ref_ext, p.label, p.description, p.url, p.note_public, p.note, p.customcode, p.fk_country, p.fk_state, p.lifetime, p.qc_frequency, p.price, p.price_ttc,";
+			$sql .= " p.price_min, p.price_min_ttc, p.price_base_type, p.cost_price, p.default_vat_code, p.tva_tx, p.recuperableonly, p.localtax1_tx, p.localtax2_tx, p.localtax1_type, p.localtax2_type, p.tosell,";
+			$sql .= " p.tobuy, p.fk_product_type, p.duration, p.fk_default_warehouse, p.seuil_stock_alerte, p.canvas, p.net_measure, p.net_measure_units, p.weight, p.weight_units,";
+			$sql .= " p.length, p.length_units, p.width, p.width_units, p.height, p.height_units,";
+			$sql .= " p.surface, p.surface_units, p.volume, p.volume_units, p.barcode, p.fk_barcode_type, p.finished,";
+			if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+				$sql .= " p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,";
+			} else {
+				$sql .= " ppe.accountancy_code_buy, ppe.accountancy_code_buy_intra, ppe.accountancy_code_buy_export, ppe.accountancy_code_sell, ppe.accountancy_code_sell_intra, ppe.accountancy_code_sell_export,";
+			}
+			if ($separatedEntityPMP) {
+				$sql .= " ppe.pmp,";
+			} else {
+				$sql .= " p.pmp,";
+			}
+			$sql .= " p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.batch_mask, p.fk_unit,";
+			$sql .= " p.fk_price_expression, p.price_autogen, p.model_pdf";
+			if (!$separatedStock) {
+				$sql .= ", p.stock";
+			}
+		}
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -2435,39 +2455,39 @@ class Product extends CommonObject
 
 							// Price by quantity
 							/*
-							$this->prices_by_qty[$i]=$result["price_by_qty"];
-							$this->prices_by_qty_id[$i]=$result["rowid"];
-							// Récuperation de la liste des prix selon qty si flag positionné
-							if ($this->prices_by_qty[$i] == 1)
-							{
-							$sql = "SELECT rowid, price, unitprice, quantity, remise_percent, remise, price_base_type";
-							$sql.= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
-							$sql.= " WHERE fk_product_price = ".$this->prices_by_qty_id[$i];
-							$sql.= " ORDER BY quantity ASC";
-							$resultat=array();
-							$resql = $this->db->query($sql);
-							if ($resql)
-							{
-							$ii=0;
-							while ($result= $this->db->fetch_array($resql)) {
-							$resultat[$ii]=array();
-							$resultat[$ii]["rowid"]=$result["rowid"];
-							$resultat[$ii]["price"]= $result["price"];
-							$resultat[$ii]["unitprice"]= $result["unitprice"];
-							$resultat[$ii]["quantity"]= $result["quantity"];
-							$resultat[$ii]["remise_percent"]= $result["remise_percent"];
-							$resultat[$ii]["remise"]= $result["remise"];                    // deprecated
-							$resultat[$ii]["price_base_type"]= $result["price_base_type"];
-							$ii++;
-							}
-							$this->prices_by_qty_list[$i]=$resultat;
-							}
-							else
-							{
-							dol_print_error($this->db);
-							return -1;
-							}
-							}*/
+							 $this->prices_by_qty[$i]=$result["price_by_qty"];
+							 $this->prices_by_qty_id[$i]=$result["rowid"];
+							 // Récuperation de la liste des prix selon qty si flag positionné
+							 if ($this->prices_by_qty[$i] == 1)
+							 {
+							 $sql = "SELECT rowid, price, unitprice, quantity, remise_percent, remise, price_base_type";
+							 $sql.= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
+							 $sql.= " WHERE fk_product_price = ".$this->prices_by_qty_id[$i];
+							 $sql.= " ORDER BY quantity ASC";
+							 $resultat=array();
+							 $resql = $this->db->query($sql);
+							 if ($resql)
+							 {
+							 $ii=0;
+							 while ($result= $this->db->fetch_array($resql)) {
+							 $resultat[$ii]=array();
+							 $resultat[$ii]["rowid"]=$result["rowid"];
+							 $resultat[$ii]["price"]= $result["price"];
+							 $resultat[$ii]["unitprice"]= $result["unitprice"];
+							 $resultat[$ii]["quantity"]= $result["quantity"];
+							 $resultat[$ii]["remise_percent"]= $result["remise_percent"];
+							 $resultat[$ii]["remise"]= $result["remise"];                    // deprecated
+							 $resultat[$ii]["price_base_type"]= $result["price_base_type"];
+							 $ii++;
+							 }
+							 $this->prices_by_qty_list[$i]=$resultat;
+							 }
+							 else
+							 {
+							 dol_print_error($this->db);
+							 return -1;
+							 }
+							 }*/
 						} else {
 							$this->error = $this->db->lasterror;
 							return -1;
@@ -2581,9 +2601,9 @@ class Product extends CommonObject
 				}
 
 				if (!empty($conf->dynamicprices->enabled) && !empty($this->fk_price_expression) && empty($ignore_expression)) {
-					   include_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
+					include_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 					$priceparser = new PriceParser($this->db);
-					   $price_result = $priceparser->parseProduct($this);
+					$price_result = $priceparser->parseProduct($this);
 					if ($price_result >= 0) {
 						$this->price = $price_result;
 						// Calculate the VAT
@@ -2601,7 +2621,7 @@ class Product extends CommonObject
 				return 0;
 			}
 		} else {
-			$this->error = $this->db->lasterror;
+			$this->error = $this->db->lasterror();
 			return -1;
 		}
 	}
@@ -3996,10 +4016,10 @@ class Product extends CommonObject
 					$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'product_association(fk_product_pere,fk_product_fils,qty,incdec)';
 					$sql .= ' VALUES ('.((int) $id_pere).', '.((int) $id_fils).', '.((float) $qty).', '.((int) $incdec).')';
 					if (!$this->db->query($sql)) {
-						 dol_print_error($this->db);
-						 return -1;
+						dol_print_error($this->db);
+						return -1;
 					} else {
-						 return 1;
+						return 1;
 					}
 				}
 			}
@@ -4203,7 +4223,7 @@ class Product extends CommonObject
 					return -1;
 				}
 			} else {
-				 // If the supplier price already exists for this product and quantity
+				// If the supplier price already exists for this product and quantity
 				$this->product_fourn_price_id = $obj->rowid;
 				return 0;
 			}
@@ -4378,16 +4398,16 @@ class Product extends CommonObject
 
 		// les fournisseurs
 		/*$sql = "INSERT ".MAIN_DB_PREFIX."product_fournisseur ("
-		. " datec, fk_product, fk_soc, ref_fourn, fk_user_author )"
-		. " SELECT '".$this->db->idate($now)."', ".$toId.", fk_soc, ref_fourn, fk_user_author"
-		. " FROM ".MAIN_DB_PREFIX."product_fournisseur"
-		. " WHERE fk_product = ".((int) $fromId);
+		 . " datec, fk_product, fk_soc, ref_fourn, fk_user_author )"
+		 . " SELECT '".$this->db->idate($now)."', ".$toId.", fk_soc, ref_fourn, fk_user_author"
+		 . " FROM ".MAIN_DB_PREFIX."product_fournisseur"
+		 . " WHERE fk_product = ".((int) $fromId);
 
-		if ( ! $this->db->query($sql ) )
-		{
-		$this->db->rollback();
-		return -1;
-		}*/
+		 if ( ! $this->db->query($sql ) )
+		 {
+		 $this->db->rollback();
+		 return -1;
+		 }*/
 
 		// les prix de fournisseurs.
 		$sql = "INSERT ".MAIN_DB_PREFIX."product_fournisseur_price (";
@@ -4468,7 +4488,7 @@ class Product extends CommonObject
 
 				// Recursive call if there is childs to child
 				if (is_array($desc_pere['childs'])) {
-					   //print 'YYY We go down for '.$desc_pere[3]." -> \n";
+					//print 'YYY We go down for '.$desc_pere[3]." -> \n";
 					$this->fetch_prod_arbo($desc_pere['childs'], $compl_path.$desc_pere[3]." -> ", $desc_pere[1] * $multiply, $level + 1, $id, $ignore_stock_load);
 				}
 			}
@@ -4665,17 +4685,17 @@ class Product extends CommonObject
 				}
 				$alreadyfound[$rec['rowid']] = 1;
 				$prods[$rec['rowid']] = array(
-				 0=>$rec['rowid'],
-				 1=>$rec['qty'],
-				 2=>$rec['fk_product_type'],
-				 3=>$this->db->escape($rec['label']),
-				 4=>$rec['incdec'],
-				 5=>$rec['ref']
+					0=>$rec['rowid'],
+					1=>$rec['qty'],
+					2=>$rec['fk_product_type'],
+					3=>$this->db->escape($rec['label']),
+					4=>$rec['incdec'],
+					5=>$rec['ref']
 				);
 				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty'],2=>$rec['fk_product_type']);
 				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty']);
 				if (empty($firstlevelonly)) {
-					   $listofchilds = $this->getChildsArbo($rec['rowid'], 0, $level + 1);
+					$listofchilds = $this->getChildsArbo($rec['rowid'], 0, $level + 1);
 					foreach ($listofchilds as $keyChild => $valueChild) {
 						$prods[$rec['rowid']]['childs'][$keyChild] = $valueChild;
 					}
@@ -5804,8 +5824,8 @@ class Product extends CommonObject
 	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
 	{
 		$tables = array(
-		'product_customer_price',
-		'product_customer_price_log'
+			'product_customer_price',
+			'product_customer_price_log'
 		);
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
