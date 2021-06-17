@@ -477,8 +477,9 @@ class Mailing extends CommonObject
 	/**
 	 *  Delete emailing
 	 *
-	 *  @param	int		$rowid      id du mailing a supprimer
-	 *  @return int         		1 en cas de succes
+	 *  @param	int		$rowid      Id if emailing to delete
+	 *  @param	int		$notrigger	Disable triggers
+	 *  @return int         		>0 if OK, <0 if KO
 	 */
 	public function delete($rowid, $notrigger = 0)
 	{
