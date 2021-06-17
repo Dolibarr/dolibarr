@@ -1511,6 +1511,10 @@ table[summary="list_of_modules"] .fa-cog {
 		display: inline-block;
 	}
 	
+	input.maxwidthinputfileonsmartphone {
+		width: 175px;
+	}
+	
 	.poweredbyimg {
 		width: 48px;
 	}

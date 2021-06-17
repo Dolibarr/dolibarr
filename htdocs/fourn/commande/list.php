@@ -892,8 +892,9 @@ if ($resql) {
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 	$url = DOL_URL_ROOT.'/fourn/commande/card.php?action=create';
-	if (!empty($socid)) {
-		$url .= '&socid='.$socid;
+	if ($socid > 0) {
+		$url .= '&socid='.((int) $socid);
+		$url .= '&backtopage='.urlencode(DOL_URL_ROOT.'/fourn/commande/list.php?socid='.((int) $socid));
 	}
 	$newcardbutton = dolGetButtonTitle($langs->trans('NewSupplierOrderShort'), '', 'fa fa-plus-circle', $url, '', ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer));
 

@@ -957,7 +957,7 @@ class Form
 					if ($row['code_iso']) {
 						$labeltoshow .= ' <span class="opacitymedium">('.$row['code_iso'].')</span>';
 						if (empty($hideflags)) {
-							$tmpflag = picto_from_langcode($row['code_iso'], 'class="saturatemedium marginrightonly"');
+							$tmpflag = picto_from_langcode($row['code_iso'], 'class="saturatemedium paddingrightonly"');
 							$labeltoshow = $tmpflag.' '.$labeltoshow;
 						}
 					}
@@ -978,7 +978,7 @@ class Form
 
 		// Make select dynamic
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-		$out .= ajax_combobox('select'.$htmlname);
+		$out .= ajax_combobox('select'.$htmlname, array(), 0, 0, 'resolve');
 
 		return $out;
 	}
@@ -1849,7 +1849,7 @@ class Form
 	 *  @param	string			$force_entity	'0' or Ids of environment to force
 	 *  @param	int				$maxlength		Maximum length of string into list (0=no limit)
 	 *  @param	int				$showstatus		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
-	 *  @param	string			$morefilter		Add more filters into sql request (Example: 'employee = 1')
+	 *  @param	string			$morefilter		Add more filters into sql request (Example: 'employee = 1'). This value must not come from user input.
 	 *  @param	integer			$show_every		0=default list, 1=add also a value "Everybody" at beginning of list
 	 *  @param	string			$enableonlytext	If option $enableonlytext is set, we use this text to explain into label why record is disabled. Not used if enableonly is empty.
 	 *  @param	string			$morecss		More css
@@ -1903,9 +1903,9 @@ class Form
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 		if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && !$user->entity) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."entity as e ON e.rowid=u.entity";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."entity as e ON e.rowid = u.entity";
 			if ($force_entity) {
-				$sql .= " WHERE u.entity IN (0, ".$force_entity.")";
+				$sql .= " WHERE u.entity IN (0, ".$this->db->sanitize($force_entity).")";
 			} else {
 				$sql .= " WHERE u.entity IS NOT NULL";
 			}
@@ -1919,7 +1919,7 @@ class Form
 			}
 		}
 		if (!empty($user->socid)) {
-			$sql .= " AND u.fk_soc = ".$user->socid;
+			$sql .= " AND u.fk_soc = ".((int) $user->socid);
 		}
 		if (is_array($exclude) && $excludeUsers) {
 			$sql .= " AND u.rowid NOT IN (".$this->db->sanitize($excludeUsers).")";
@@ -3052,20 +3052,20 @@ class Form
 	/**
 	 *	Return list of suppliers products
 	 *
-	 *	@param	int		$socid   		Id societe fournisseur (0 pour aucun filtre)
-	 *	@param  int		$selected       Product price pre-selected (must be 'id' in product_fournisseur_price or 'idprod_IDPROD')
-	 *	@param  string	$htmlname       Nom de la zone select
-	 *  @param	string	$filtertype     Filter on product type (''=nofilter, 0=product, 1=service)
-	 *	@param  string	$filtre         Pour filtre sql
-	 *	@param  string	$filterkey      Filtre des produits
-	 *  @param  int		$statut         -1=Return all products, 0=Products not on buy, 1=Products on buy
-	 *  @param  int		$outputmode     0=HTML select string, 1=Array
-	 *  @param  int     $limit          Limit of line number
+	 *	@param	int		$socid   			Id of supplier thirdparty (0 = no filter)
+	 *	@param  int		$selected       	Product price pre-selected (must be 'id' in product_fournisseur_price or 'idprod_IDPROD')
+	 *	@param  string	$htmlname       	Name of HTML select
+	 *  @param	string	$filtertype     	Filter on product type (''=nofilter, 0=product, 1=service)
+	 *	@param  string	$filtre         	Generic filter. Data must not come from user input.
+	 *	@param  string	$filterkey      	Filter of produdts
+	 *  @param  int		$statut         	-1=Return all products, 0=Products not on buy, 1=Products on buy
+	 *  @param  int		$outputmode     	0=HTML select string, 1=Array
+	 *  @param  int     $limit          	Limit of line number
 	 *  @param  int     $alsoproductwithnosupplierprice    1=Add also product without supplier prices
-	 *  @param	string	$morecss		Add more CSS
+	 *  @param	string	$morecss			Add more CSS
 	 *  @param	int		$showstockinlist	Show stock information (slower).
-	 *  @param	string	$placeholder	Placeholder
-	 *  @return array           		Array of keys for json
+	 *  @param	string	$placeholder		Placeholder
+	 *  @return array           			Array of keys for json
 	 */
 	public function select_produits_fournisseurs_list($socid, $selected = '', $htmlname = 'productid', $filtertype = '', $filtre = '', $filterkey = '', $statut = -1, $outputmode = 0, $limit = 100, $alsoproductwithnosupplierprice = 0, $morecss = '', $showstockinlist = 0, $placeholder = '')
 	{
@@ -3102,8 +3102,8 @@ class Form
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON ( p.rowid = pfp.fk_product AND pfp.entity IN (".getEntity('product').") )";
-		if ($socid) {
-			$sql .= " AND pfp.fk_soc = ".$socid;
+		if ($socid > 0) {
+			$sql .= " AND pfp.fk_soc = ".((int) $socid);
 		}
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON pfp.fk_soc = s.rowid";
 		// Units
@@ -3115,7 +3115,7 @@ class Form
 			$sql .= " AND p.tobuy = ".((int) $statut);
 		}
 		if (strval($filtertype) != '') {
-			$sql .= " AND p.fk_product_type=".$this->db->escape($filtertype);
+			$sql .= " AND p.fk_product_type = ".((int) $filtertype);
 		}
 		if (!empty($filtre)) {
 			$sql .= " ".$filtre;
@@ -8494,7 +8494,7 @@ class Form
 	 */
 	public function showFilterButtons()
 	{
-		$out = '<div class="nowrap">';
+		$out = '<div class="nowraponall">';
 		$out .= '<button type="submit" class="liste_titre button_search" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
 		$out .= '<button type="submit" class="liste_titre button_removefilter" name="button_removefilter_x" value="x"><span class="fa fa-remove"></span></button>';
 		$out .= '</div>';
@@ -8628,14 +8628,11 @@ class Form
 
 									if ($("select[name='.$target.']").val() == '.$obj->id.') {
 										// get price of kilometer to fill the unit price
-										var data = '.json_encode($params).';
-										data.fk_c_exp_tax_cat = $(this).val();
-
 										$.ajax({
 											method: "POST",
 											dataType: "json",
-											data: data,
-											url: "'.(DOL_URL_ROOT.'/expensereport/ajax/ajaxik.php').'",
+											data: { fk_c_exp_tax_cat: $(this).val(), token: \''.currentToken().'\' },
+											url: "'.(DOL_URL_ROOT.'/expensereport/ajax/ajaxik.php?'.$params).'",
 										}).done(function( data, textStatus, jqXHR ) {
 											console.log(data);
 											if (typeof data.up != "undefined") {

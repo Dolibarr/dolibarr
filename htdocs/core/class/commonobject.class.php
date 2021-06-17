@@ -3541,16 +3541,15 @@ abstract class CommonObject
 
 			if (empty($nodatabaseupdate)) {
 				$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
-				$sql .= " ".$fieldht."='".price2num($this->total_ht)."',";
-				$sql .= " ".$fieldtva."='".price2num($this->total_tva)."',";
-				$sql .= " ".$fieldlocaltax1."='".price2num($this->total_localtax1)."',";
-				$sql .= " ".$fieldlocaltax2."='".price2num($this->total_localtax2)."',";
-				$sql .= " ".$fieldttc."='".price2num($this->total_ttc)."'";
-						$sql .= ", multicurrency_total_ht='".price2num($this->multicurrency_total_ht, 'MT', 1)."'";
-						$sql .= ", multicurrency_total_tva='".price2num($this->multicurrency_total_tva, 'MT', 1)."'";
-						$sql .= ", multicurrency_total_ttc='".price2num($this->multicurrency_total_ttc, 'MT', 1)."'";
+				$sql .= " ".$fieldht." = ".price2num($this->total_ht).",";
+				$sql .= " ".$fieldtva." = ".price2num($this->total_tva).",";
+				$sql .= " ".$fieldlocaltax1." = ".price2num($this->total_localtax1).",";
+				$sql .= " ".$fieldlocaltax2." = ".price2num($this->total_localtax2).",";
+				$sql .= " ".$fieldttc." = ".price2num($this->total_ttc);
+				$sql .= ", multicurrency_total_ht = ".price2num($this->multicurrency_total_ht, 'MT', 1);
+				$sql .= ", multicurrency_total_tva = ".price2num($this->multicurrency_total_tva, 'MT', 1);
+				$sql .= ", multicurrency_total_ttc = ".price2num($this->multicurrency_total_ttc, 'MT', 1);
 				$sql .= ' WHERE rowid = '.$this->id;
-
 
 				dol_syslog(get_class($this)."::update_price", LOG_DEBUG);
 				$resql = $this->db->query($sql);

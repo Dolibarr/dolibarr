@@ -1135,3 +1135,4 @@ CategTypeNotFound=No tag type found for type of records
 CopiedToClipboard=Copied to clipboard
 InformationOnLinkToContract=This amount is only the total of all the lines of the contract. No notion of time is taken into consideration.
 ConfirmCancel=Are you sure you want to cancel
+EmailMsgID=Email MsgID

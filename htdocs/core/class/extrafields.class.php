@@ -472,14 +472,14 @@ class ExtraFields
 			$sql .= " VALUES('".$this->db->escape($attrname)."',";
 			$sql .= " '".$this->db->escape($label)."',";
 			$sql .= " '".$this->db->escape($type)."',";
-			$sql .= " ".$pos.",";
+			$sql .= " ".((int) $pos).",";
 			$sql .= " '".$this->db->escape($size)."',";
 			$sql .= " ".($entity === '' ? $conf->entity : $entity).",";
 			$sql .= " '".$this->db->escape($elementtype)."',";
-			$sql .= " ".$unique.",";
-			$sql .= " ".$required.",";
+			$sql .= " ".((int) $unique).",";
+			$sql .= " ".((int) $required).",";
 			$sql .= " '".$this->db->escape($params)."',";
-			$sql .= " ".$alwayseditable.",";
+			$sql .= " ".((int) $alwayseditable).",";
 			$sql .= " ".($perms ? "'".$this->db->escape($perms)."'" : "null").",";
 			$sql .= " ".($langfile ? "'".$this->db->escape($langfile)."'" : "null").",";
 			$sql .= " '".$this->db->escape($list)."',";
@@ -1613,7 +1613,7 @@ class ExtraFields
 		if (!empty($extrafieldsobjectkey)) {
 			$label = $this->attributes[$extrafieldsobjectkey]['label'][$key];
 			$type = $this->attributes[$extrafieldsobjectkey]['type'][$key];
-			$size = (int) $this->attributes[$extrafieldsobjectkey]['size'][$key];
+			$size = $this->attributes[$extrafieldsobjectkey]['size'][$key];			// Can be '255', '24,8'...
 			$default = $this->attributes[$extrafieldsobjectkey]['default'][$key];
 			$computed = $this->attributes[$extrafieldsobjectkey]['computed'][$key];
 			$unique = $this->attributes[$extrafieldsobjectkey]['unique'][$key];
@@ -1911,7 +1911,7 @@ class ExtraFields
 		} elseif ($type == 'password') {
 			$value = dol_trunc(preg_replace('/./i', '*', $value), 8, 'right', 'UTF-8', 1);
 		} else {
-			$showsize = round($size);
+			$showsize = round((float) $size);
 			if ($showsize > 48) {
 				$showsize = 48;
 			}

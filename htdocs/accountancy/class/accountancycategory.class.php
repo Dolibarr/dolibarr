@@ -201,7 +201,7 @@ class AccountancyCategory // extends CommonObject
 		$sql .= "entity";
 		$sql .= ") VALUES (";
 		if ($this->rowid > 0) {
-			$sql .= " ".$this->rowid.",";
+			$sql .= " ".((int) $this->rowid).",";
 		}
 		$sql .= " ".(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").",";
 		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").",";
@@ -209,9 +209,9 @@ class AccountancyCategory // extends CommonObject
 		$sql .= " ".(!isset($this->sens) ? 'NULL' : "'".$this->db->escape($this->sens)."'").",";
 		$sql .= " ".(!isset($this->category_type) ? 'NULL' : "'".$this->db->escape($this->category_type)."'").",";
 		$sql .= " ".(!isset($this->formula) ? 'NULL' : "'".$this->db->escape($this->formula)."'").",";
-		$sql .= " ".(!isset($this->position) ? 'NULL' : $this->db->escape($this->position)).",";
-		$sql .= " ".(!isset($this->fk_country) ? 'NULL' : $this->db->escape($this->fk_country)).",";
-		$sql .= " ".(!isset($this->active) ? 'NULL' : $this->db->escape($this->active));
+		$sql .= " ".(!isset($this->position) ? 'NULL' : ((int) $this->position)).",";
+		$sql .= " ".(!isset($this->fk_country) ? 'NULL' : ((int) $this->fk_country)).",";
+		$sql .= " ".(!isset($this->active) ? 'NULL' : ((int) $this->active));
 		$sql .= ", ".$conf->entity;
 		$sql .= ")";
 
