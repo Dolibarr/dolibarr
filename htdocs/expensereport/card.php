@@ -2191,16 +2191,33 @@ if ($action == 'create') {
         				        $( ".auploadnewfilenow" ).click(function() {
         				            jQuery(".truploadnewfilenow").toggle();
                                     jQuery(".trattachnewfilenow").hide();
+                                    if (jQuery(".truploadnewfilenow").is(":hidden")) {
+                                        jQuery("input[name=\"sendit\"]").prop("disabled", true);
+                                    } else {
+                                        jQuery("input[name=\"sendit\"]").prop("disabled", false);
+                                    }
                                     return false;
                                 });
         				        $( ".aattachtodoc" ).click(function() {
         				            jQuery(".trattachnewfilenow").toggle();
                                     jQuery(".truploadnewfilenow").hide();
+                                    if (jQuery(".truploadnewfilenow").is(":hidden")) {
+                                        jQuery("input[name=\"sendit\"]").prop("disabled", true);
+                                    } else {
+                                        jQuery("input[name=\"sendit\"]").prop("disabled", false);
+                                    }
                                     return false;
                                 });';
 							if (is_array(GETPOST('attachfile', 'array')) && count(GETPOST('attachfile', 'array'))) {
 								print 'jQuery(".trattachnewfilenow").toggle();'."\n";
 							}
+							print '
+                                if (jQuery(".truploadnewfilenow").is(":hidden")) {
+                                    jQuery("input[name=\"sendit\"]").prop("disabled", true);
+                                } else {
+                                    jQuery("input[name=\"sendit\"]").prop("disabled", false);
+                                }
+                            ';
 							print '
                             });
         				    ';
@@ -2337,16 +2354,33 @@ if ($action == 'create') {
 				        $( ".auploadnewfilenow" ).click(function() {
 				            jQuery(".truploadnewfilenow").toggle();
                             jQuery(".trattachnewfilenow").hide();
+                            if (jQuery(".truploadnewfilenow").is(":hidden")) {
+                                jQuery("input[name=\"sendit\"]").prop("disabled", true);
+                            } else {
+                                jQuery("input[name=\"sendit\"]").prop("disabled", false);
+                            }
                             return false;
                         });
 				        $( ".aattachtodoc" ).click(function() {
 				            jQuery(".trattachnewfilenow").toggle();
                             jQuery(".truploadnewfilenow").hide();
+                            if (jQuery(".truploadnewfilenow").is(":hidden")) {
+                                jQuery("input[name=\"sendit\"]").prop("disabled", true);
+                            } else {
+                                jQuery("input[name=\"sendit\"]").prop("disabled", false);
+                            }
                             return false;
                         });'."\n";
 					if (is_array(GETPOST('attachfile', 'array')) && count(GETPOST('attachfile', 'array')) && $action != 'updateline') {
 						print 'jQuery(".trattachnewfilenow").show();'."\n";
 					}
+					print '
+                        if (jQuery(".truploadnewfilenow").is(":hidden")) {
+                            jQuery("input[name=\"sendit\"]").prop("disabled", true);
+                        } else {
+                            jQuery("input[name=\"sendit\"]").prop("disabled", false);
+                        }
+                    ';
 					print '
                     });
 				    ';
