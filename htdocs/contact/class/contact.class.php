@@ -549,6 +549,7 @@ class Contact extends CommonObject
 		$this->fax = trim($this->fax);
 		$this->zip = (empty($this->zip) ? '' : trim($this->zip));
 		$this->town = (empty($this->town) ? '' : trim($this->town));
+		$this->ref_ext = trim($this->ref_ext);		
 		$this->setUpperOrLowerCase();
 		$this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
 		if (empty($this->statut)) {
@@ -571,6 +572,7 @@ class Contact extends CommonObject
 		$sql .= ", address='".$this->db->escape($this->address)."'";
 		$sql .= ", zip='".$this->db->escape($this->zip)."'";
 		$sql .= ", town='".$this->db->escape($this->town)."'";
+		$sql .= ", ref_ext = ".(!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null");
 		$sql .= ", fk_pays=".($this->country_id > 0 ? $this->country_id : 'NULL');
 		$sql .= ", fk_departement=".($this->state_id > 0 ? $this->state_id : 'NULL');
 		$sql .= ", poste='".$this->db->escape($this->poste)."'";
