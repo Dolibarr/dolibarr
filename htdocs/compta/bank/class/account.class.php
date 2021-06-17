@@ -177,6 +177,10 @@ class Account extends CommonObject
 	 * @var int ID
 	 */
 	public $fk_accountancy_journal;
+	/**
+	 * @var string	Label of journal
+	 */
+	public $accountancy_journal;
 
 	/**
 	 * Currency code
@@ -247,7 +251,7 @@ class Account extends CommonObject
 	 *  'help' is a string visible as a tooltip on field
 	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
 	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
-	 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
+	 *  'arrayofkeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
 	 *
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
@@ -281,6 +285,7 @@ class Account extends CommonObject
 		'rappro' =>array('type'=>'smallint(6)', 'label'=>'Rappro', 'enabled'=>1, 'visible'=>-1, 'position'=>120),
 		'url' =>array('type'=>'varchar(128)', 'label'=>'Url', 'enabled'=>1, 'visible'=>-1, 'position'=>125),
 		'account_number' =>array('type'=>'varchar(32)', 'label'=>'Account number', 'enabled'=>1, 'visible'=>-1, 'position'=>130),
+		'fk_accountancy_journal' =>array('type'=>'integer', 'label'=>'Accountancy journal ID', 'enabled'=>1, 'visible'=>-1, 'position'=>132),
 		'accountancy_journal' =>array('type'=>'varchar(20)', 'label'=>'Accountancy journal', 'enabled'=>1, 'visible'=>-1, 'position'=>135),
 		'currency_code' =>array('type'=>'varchar(3)', 'label'=>'Currency code', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>140),
 		'min_allowed' =>array('type'=>'integer', 'label'=>'Min allowed', 'enabled'=>1, 'visible'=>-1, 'position'=>145),
@@ -294,7 +299,6 @@ class Account extends CommonObject
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>175),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>180),
 		'extraparams' =>array('type'=>'varchar(255)', 'label'=>'Extraparams', 'enabled'=>1, 'visible'=>-1, 'position'=>185),
-		'fk_accountancy_journal' =>array('type'=>'integer', 'label'=>'Fk accountancy journal', 'enabled'=>1, 'visible'=>-1, 'position'=>190),
 	);
 	// END MODULEBUILDER PROPERTIES
 
@@ -311,8 +315,10 @@ class Account extends CommonObject
 	 */
 	const TYPE_SAVINGS = 0;
 
+
 	const STATUS_OPEN = 0;
 	const STATUS_CLOSED = 1;
+
 
 	/**
 	 *  Constructor
@@ -699,8 +705,8 @@ class Account extends CommonObject
 		$sql .= ", ".price2num($this->min_allowed);
 		$sql .= ", ".price2num($this->min_desired);
 		$sql .= ", '".$this->db->escape($this->comment)."'";
-		$sql .= ", ".($this->state_id > 0 ? $this->state_id : "null");
-		$sql .= ", ".($this->country_id > 0 ? $this->country_id : "null");
+		$sql .= ", ".($this->state_id > 0 ? ((int) $this->state_id) : "null");
+		$sql .= ", ".($this->country_id > 0 ? ((int) $this->country_id) : "null");
 		$sql .= ", '".$this->db->escape($this->ics)."'";
 		$sql .= ", '".$this->db->escape($this->ics_transfer)."'";
 		$sql .= ")";
@@ -1064,7 +1070,7 @@ class Account extends CommonObject
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_account";
-			$sql .= " WHERE rowid = ".$this->rowid;
+			$sql .= " WHERE rowid = ".((int) $this->rowid);
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$result = $this->db->query($sql);
@@ -1680,6 +1686,27 @@ class Account extends CommonObject
 		$this->owner_address   = 'Owner address';
 		$this->country_id      = 1;
 	}
+
+	/**
+	 * Function used to replace a thirdparty id with another one.
+	 *
+	 * @param DoliDB 	$db 			Database handler
+	 * @param int 		$origin_id 		Old thirdparty id
+	 * @param int 		$dest_id 		New thirdparty id
+	 * @return bool
+	 */
+	public static function replaceThirdparty($db, $origin_id, $dest_id)
+	{
+		$sql = "UPDATE ".MAIN_DB_PREFIX."bank_url SET url_id = ".((int) $dest_id)." WHERE url_id = ".((int) $origin_id)." AND type='company'";
+
+		if (!$db->query($sql)) {
+			//if ($ignoreerrors) return true; // TODO Not enough. If there is A-B on kept thirdarty and B-C on old one, we must get A-B-C after merge. Not A-B.
+			//$this->errors = $db->lasterror();
+			return false;
+		} else {
+			return true;
+		}
+	}
 }
 
 
@@ -2063,7 +2090,7 @@ class AccountLine extends CommonObject
 		$sql .= " amount = ".price2num($this->amount).",";
 		$sql .= " datev='".$this->db->idate($this->datev)."',";
 		$sql .= " dateo='".$this->db->idate($this->dateo)."'";
-		$sql .= " WHERE rowid = ".$this->rowid;
+		$sql .= " WHERE rowid = ".((int) $this->rowid);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);

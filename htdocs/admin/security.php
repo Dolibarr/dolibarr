@@ -39,9 +39,11 @@ if (!$user->admin) {
 // Allow/Disallow change to clear passwords once passwords are crypted
 $allow_disable_encryption = true;
 
+
 /*
  * Actions
  */
+
 if ($action == 'setgeneraterule') {
 	if (!dolibarr_set_const($db, 'USER_PASSWORD_GENERATED', $_GET["value"], 'chaine', 0, '', $conf->entity)) {
 		dol_print_error($db);
@@ -215,6 +217,7 @@ if (is_resource($handle)) {
 }
 asort($arrayhandler);
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("RuleForGeneratedPasswords").'</td>';
@@ -266,6 +269,8 @@ foreach ($arrayhandler as $key => $module) {
 	}
 }
 print '</table>';
+print '</div>';
+
 print '</form>';
 
 //if($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK == 1)
@@ -273,45 +278,47 @@ print '</form>';
 if ($conf->global->USER_PASSWORD_GENERATED == "Perso") {
 	$tabConf = explode(";", $conf->global->USER_PASSWORD_PATTERN);
 	print '<br>';
+
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td colspan="3"> '.$langs->trans("PasswordPatternDesc").'</td>';
+	print '<td colspan="2"> '.$langs->trans("PasswordPatternDesc").'</td>';
 	print '</tr>';
 
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("MinLength")."</td>";
-	print '<td colspan="2"><input type="number" value="'.$tabConf[0].'" id="minlenght" min="1"></td>';
+	print '<td><input type="number" value="'.$tabConf[0].'" id="minlenght" min="1"></td>';
 	print '</tr>';
 
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("NbMajMin")."</td>";
-	print '<td colspan="2"><input type="number" value="'.$tabConf[1].'" id="NbMajMin" min="0"></td>';
+	print '<td><input type="number" value="'.$tabConf[1].'" id="NbMajMin" min="0"></td>';
 	print '</tr>';
 
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("NbNumMin")."</td>";
-	print '<td colspan="2"><input type="number" value="'.$tabConf[2].'" id="NbNumMin" min="0"></td>';
+	print '<td><input type="number" value="'.$tabConf[2].'" id="NbNumMin" min="0"></td>';
 	print '</tr>';
 
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("NbSpeMin")."</td>";
-	print '<td colspan="2"><input type="number" value="'.$tabConf[3].'" id="NbSpeMin" min="0"></td>';
+	print '<td><input type="number" value="'.$tabConf[3].'" id="NbSpeMin" min="0"></td>';
 	print '</tr>';
 
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("NbIteConsecutive")."</td>";
-	print '<td colspan="2"><input type="number" value="'.$tabConf[4].'" id="NbIteConsecutive" min="0"></td>';
+	print '<td><input type="number" value="'.$tabConf[4].'" id="NbIteConsecutive" min="0"></td>';
 	print '</tr>';
 
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("NoAmbiCaracAutoGeneration")."</td>";
-	print '<td colspan="2"><input type="checkbox" id="NoAmbiCaracAutoGeneration" '.($tabConf[5] ? "checked" : "").' min="0"> <span id="textcheckbox">'.($tabConf[5] ? $langs->trans("Activated") : $langs->trans("Disabled")).'</span></td>';
+	print '<td><input type="checkbox" id="NoAmbiCaracAutoGeneration" '.($tabConf[5] ? "checked" : "").' min="0"> <span id="textcheckbox">'.($tabConf[5] ? $langs->trans("Activated") : $langs->trans("Disabled")).'</span></td>';
 	print '</tr>';
 
 	print '</table>';
@@ -394,18 +401,18 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td colspan="3">'.$langs->trans("DoNotStoreClearPassword").'</td>';
 print '<td align="center" width="60">';
-if (!empty($conf->global->DATABASE_PWD_ENCRYPTED)) {
+if (getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {
 	print img_picto($langs->trans("Active"), 'tick');
 }
 print '</td>';
-if (!$conf->global->DATABASE_PWD_ENCRYPTED) {
+if (!getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {
 	print '<td align="center" width="100">';
 	print '<a href="security.php?action=activate_encrypt">'.$langs->trans("Activate").'</a>';
 	print "</td>";
 }
 
 // Database conf file encryption
-if (!empty($conf->global->DATABASE_PWD_ENCRYPTED)) {
+if (getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {
 	print '<td align="center" width="100">';
 	if ($allow_disable_encryption) {
 		//On n'autorise pas l'annulation de l'encryption car les mots de passe ne peuvent pas etre decodes
@@ -453,16 +460,16 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td colspan="3">'.$langs->trans("DisableForgetPasswordLinkOnLogonPage").'</td>';
 print '<td align="center" width="60">';
-if (!empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK)) {
+if (getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK')) {
 	print img_picto($langs->trans("Active"), 'tick');
 }
 print '</td>';
-if (empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK)) {
+if (!getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK')) {
 	print '<td align="center" width="100">';
 	print '<a href="'.$_SERVER["PHP_SELF"].'?action=activate_MAIN_SECURITY_DISABLEFORGETPASSLINK&token='.newToken().'">'.$langs->trans("Activate").'</a>';
 	print "</td>";
 }
-if (!empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK)) {
+if (getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK')) {
 	print '<td align="center" width="100">';
 	print '<a href="'.$_SERVER["PHP_SELF"].'?action=disable_MAIN_SECURITY_DISABLEFORGETPASSLINK&token='.newToken().'">'.$langs->trans("Disable").'</a>';
 	print "</td>";
@@ -481,8 +488,8 @@ if (GETPOST('info', 'int') > 0) {
 	} else {
 		print $langs->trans("Note: The function password_hash does not exists on your PHP")."<br>\n";
 	}
-	print 'MAIN_SECURITY_HASH_ALGO = '.$conf->global->MAIN_SECURITY_HASH_ALGO."<br>\n";
-	print 'MAIN_SECURITY_SALT = '.$conf->global->MAIN_SECURITY_SALT."<br>\n";
+	print 'MAIN_SECURITY_HASH_ALGO = '.getDolGlobalString('MAIN_SECURITY_HASH_ALGO')."<br>\n";
+	print 'MAIN_SECURITY_SALT = '.getDolGlobalString('MAIN_SECURITY_SALT')."<br>\n";
 }
 
 print '</div>';

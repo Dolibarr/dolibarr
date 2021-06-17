@@ -321,7 +321,6 @@ abstract class CommonDocGenerator
 			$array_key.'_statut' => $object->statut,
 			$array_key.'_code' => $object->code,
 			$array_key.'_email' => $object->email,
-			$array_key.'_jabberid' => $object->jabberid, // deprecated
 			$array_key.'_phone_pro' => $object->phone_pro,
 			$array_key.'_phone_perso' => $object->phone_perso,
 			$array_key.'_phone_mobile' => $object->phone_mobile,

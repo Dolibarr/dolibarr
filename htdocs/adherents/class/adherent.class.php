@@ -141,6 +141,11 @@ class Adherent extends CommonObject
 	public $email;
 
 	/**
+	 * @var string url
+	 */
+	public $url;
+
+	/**
 	 * @var array array of socialnetworks
 	 */
 	public $socialnetworks;
@@ -204,11 +209,10 @@ class Adherent extends CommonObject
 	 */
 	public $morphy;
 
+	/**
+	 * @var int Info can be public
+	 */
 	public $public;
-
-	// -2:excluded, -1:draft, 0:resiliated, >=1:valided,payed
-	// def in common object
-	//public $status;
 
 	/**
 	 * @var string photo of member
@@ -256,9 +260,9 @@ class Adherent extends CommonObject
 
 	public $datefin;
 
-	// From member table
 
-	// Fields loaded by fetch_subscriptions()
+	// Fields loaded by fetch_subscriptions() from member table
+
 	public $first_subscription_date;
 
 	public $first_subscription_amount;
@@ -272,6 +276,12 @@ class Adherent extends CommonObject
 	public $last_subscription_amount;
 
 	public $subscriptions = array();
+
+
+	// Fields loaded by fetchPartnerships() from partnership table
+
+	public $partnerships = array();
+
 
 	/**
 	 * @var Adherent To contains a clone of this when we need to save old properties of object
@@ -292,15 +302,15 @@ class Adherent extends CommonObject
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => 1, 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 15, 'index' => 1),
 		'ref_ext' => array('type' => 'varchar(128)', 'label' => 'Ref ext', 'enabled' => 1, 'visible' => 0, 'position' => 20),
 		'civility' => array('type' => 'varchar(6)', 'label' => 'Civility', 'enabled' => 1, 'visible' => -1, 'position' => 25),
-		'lastname' => array('type' => 'varchar(50)', 'label' => 'Lastname', 'enabled' => 1, 'visible' => -1, 'position' => 30),
-		'firstname' => array('type' => 'varchar(50)', 'label' => 'Firstname', 'enabled' => 1, 'visible' => -1, 'position' => 35),
+		'lastname' => array('type' => 'varchar(50)', 'label' => 'Lastname', 'enabled' => 1, 'visible' => -1, 'position' => 30, 'showoncombobox'=>1),
+		'firstname' => array('type' => 'varchar(50)', 'label' => 'Firstname', 'enabled' => 1, 'visible' => -1, 'position' => 35, 'showoncombobox'=>1),
 		'login' => array('type' => 'varchar(50)', 'label' => 'Login', 'enabled' => 1, 'visible' => -1, 'position' => 40),
 		'gender' => array('type' => 'varchar(10)', 'label' => 'Gender', 'enabled' => 1, 'visible' => -1, 'position' => 250),
 		'pass' => array('type' => 'varchar(50)', 'label' => 'Pass', 'enabled' => 1, 'visible' => -1, 'position' => 45),
 		'pass_crypted' => array('type' => 'varchar(128)', 'label' => 'Pass crypted', 'enabled' => 1, 'visible' => -1, 'position' => 50),
 		'fk_adherent_type' => array('type' => 'integer', 'label' => 'Fk adherent type', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 55),
 		'morphy' => array('type' => 'varchar(3)', 'label' => 'MorPhy', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 60),
-		'societe' => array('type' => 'varchar(128)', 'label' => 'Societe', 'enabled' => 1, 'visible' => -1, 'position' => 65),
+		'societe' => array('type' => 'varchar(128)', 'label' => 'Societe', 'enabled' => 1, 'visible' => -1, 'position' => 65, 'showoncombobox'=>2),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 1, 'visible' => -1, 'position' => 70),
 		'address' => array('type' => 'text', 'label' => 'Address', 'enabled' => 1, 'visible' => -1, 'position' => 75),
 		'zip' => array('type' => 'varchar(10)', 'label' => 'Zip', 'enabled' => 1, 'visible' => -1, 'position' => 80),
@@ -308,6 +318,7 @@ class Adherent extends CommonObject
 		'state_id' => array('type' => 'integer', 'label' => 'State id', 'enabled' => 1, 'visible' => -1, 'position' => 90),
 		'country' => array('type' => 'integer:Ccountry:core/class/ccountry.class.php', 'label' => 'Country', 'enabled' => 1, 'visible' => -1, 'position' => 95),
 		'email' => array('type' => 'varchar(255)', 'label' => 'Email', 'enabled' => 1, 'visible' => -1, 'position' => 100),
+		'url' =>array('type'=>'varchar(255)', 'label'=>'Url', 'enabled'=>1, 'visible'=>-1, 'position'=>110),
 		'socialnetworks' => array('type' => 'text', 'label' => 'Socialnetworks', 'enabled' => 1, 'visible' => -1, 'position' => 105),
 		'phone' => array('type' => 'varchar(30)', 'label' => 'Phone', 'enabled' => 1, 'visible' => -1, 'position' => 115),
 		'phone_perso' => array('type' => 'varchar(30)', 'label' => 'Phone perso', 'enabled' => 1, 'visible' => -1, 'position' => 120),
@@ -357,7 +368,8 @@ class Adherent extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
-		$this->statut = self::STATUS_DRAFT; // shouldn't this be $status ?
+		$this->statut = self::STATUS_DRAFT;
+		$this->status = $this->statut;
 		// l'adherent n'est pas public par defaut
 		$this->public = 0;
 		// les champs optionnels sont vides
@@ -586,8 +598,8 @@ class Adherent extends CommonObject
 				if ($this->user_id) {
 					// Add link to user
 					$sql = "UPDATE ".MAIN_DB_PREFIX."user SET";
-					$sql .= " fk_member = ".$this->id;
-					$sql .= " WHERE rowid = ".$this->user_id;
+					$sql .= " fk_member = ".((int) $this->id);
+					$sql .= " WHERE rowid = ".((int) $this->user_id);
 					dol_syslog(get_class($this)."::create", LOG_DEBUG);
 					$resql = $this->db->query($sql);
 					if (!$resql) {
@@ -661,6 +673,7 @@ class Adherent extends CommonObject
 		$this->setUpperOrLowerCase();
 		$this->note_public = ($this->note_public ? $this->note_public : $this->note_public);
 		$this->note_private = ($this->note_private ? $this->note_private : $this->note_private);
+		$this->url = $this->url ?clean_url($this->url, 0) : '';
 
 		// Check parameters
 		if (!empty($conf->global->ADHERENT_MAIL_REQUIRED) && !isValidEMail($this->email)) {
@@ -686,6 +699,7 @@ class Adherent extends CommonObject
 		$sql .= ", country = ".($this->country_id > 0 ? $this->db->escape($this->country_id) : "null");
 		$sql .= ", state_id = ".($this->state_id > 0 ? $this->db->escape($this->state_id) : "null");
 		$sql .= ", email = '".$this->db->escape($this->email)."'";
+		$sql .= ", url = ".(!empty($this->url) ? "'".$this->db->escape($this->url)."'" : "null");
 		$sql .= ", socialnetworks = '".$this->db->escape(json_encode($this->socialnetworks))."'";
 		$sql .= ", phone = ".($this->phone ? "'".$this->db->escape($this->phone)."'" : "null");
 		$sql .= ", phone_perso = ".($this->phone_perso ? "'".$this->db->escape($this->phone_perso)."'" : "null");
@@ -714,7 +728,7 @@ class Adherent extends CommonObject
 		if (!empty($this->oldcopy) && $this->typeid != $this->oldcopy->typeid) {
 			$sql2 = "SELECT libelle as label";
 			$sql2 .= " FROM ".MAIN_DB_PREFIX."adherent_type";
-			$sql2 .= " WHERE rowid = ".$this->typeid;
+			$sql2 .= " WHERE rowid = ".((int) $this->typeid);
 			$resql2 = $this->db->query($sql2);
 			if ($resql2) {
 				while ($obj = $this->db->fetch_object($resql2)) {
@@ -1298,7 +1312,7 @@ class Adherent extends CommonObject
 		$sql = "SELECT d.rowid, d.ref, d.ref_ext, d.civility as civility_code, d.gender, d.firstname, d.lastname,";
 		$sql .= " d.societe as company, d.fk_soc, d.statut, d.public, d.address, d.zip, d.town, d.note_private,";
 		$sql .= " d.note_public,";
-		$sql .= " d.email, d.socialnetworks, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass, d.pass_crypted,";
+		$sql .= " d.email, d.url, d.socialnetworks, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass, d.pass_crypted,";
 		$sql .= " d.photo, d.fk_adherent_type, d.morphy, d.entity,";
 		$sql .= " d.datec as datec,";
 		$sql .= " d.tms as datem,";
@@ -1377,6 +1391,7 @@ class Adherent extends CommonObject
 				$this->phone_perso = $obj->phone_perso;
 				$this->phone_mobile = $obj->phone_mobile;
 				$this->email = $obj->email;
+				$this->url = $obj->url;
 
 				$this->socialnetworks = (array) json_decode($obj->socialnetworks, true);
 
@@ -1430,11 +1445,12 @@ class Adherent extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Function to get member subscriptions data
-	 *				first_subscription_date, first_subscription_date_start, first_subscription_date_end, first_subscription_amount
-	 *				last_subscription_date, last_subscription_date_start, last_subscription_date_end, last_subscription_amount
+	 *	Function to get member subscriptions data:
+	 *  subscriptions,
+	 *	first_subscription_date, first_subscription_date_start, first_subscription_date_end, first_subscription_amount
+	 *	last_subscription_date, last_subscription_date_start, last_subscription_date_end, last_subscription_amount
 	 *
-	 *	@return		int			<0 si KO, >0 si OK
+	 *	@return		int			<0 if KO, >0 if OK
 	 */
 	public function fetch_subscriptions()
 	{
@@ -1466,7 +1482,7 @@ class Adherent extends CommonObject
 					$this->first_subscription_amount = $obj->subscription;
 				}
 				$this->last_subscription_date = $this->db->jdate($obj->datec);
-				$this->last_subscription_date_start = $this->db->jdate($obj->datef);
+				$this->last_subscription_date_start = $this->db->jdate($obj->dateh);
 				$this->last_subscription_date_end = $this->db->jdate($obj->datef);
 				$this->last_subscription_amount = $obj->subscription;
 
@@ -1491,6 +1507,25 @@ class Adherent extends CommonObject
 			$this->error = $this->db->error().' sql='.$sql;
 			return -1;
 		}
+	}
+
+
+	/**
+	 *	Function to get partnerships array
+	 *
+	 *  @param		string		$mode		'member' or 'thirdparty'
+	 *	@return		int						<0 if KO, >0 if OK
+	 */
+	public function fetchPartnerships($mode)
+	{
+		global $langs;
+
+		require_once DOL_DOCUMENT_ROOT.'/parntership/class/partnership.class.php';
+
+
+		$this->partnerships[] = array();
+
+		return 1;
 	}
 
 
@@ -1703,7 +1738,8 @@ class Adherent extends CommonObject
 					}
 				}
 				$invoice->socid = $this->fk_soc;
-				$invoice->date = $datesubscription;
+				//$invoice->date = $datesubscription;
+				$invoice->date = dol_now();
 
 				// Possibility to add external linked objects with hooks
 				$invoice->linked_objects['subscription'] = $subscriptionid;

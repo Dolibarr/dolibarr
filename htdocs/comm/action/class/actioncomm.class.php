@@ -738,6 +738,11 @@ class ActionComm extends CommonObject
 	{
 		global $langs;
 
+		if (empty($id) && empty($ref) && empty($ref_ext) && empty($email_msgid)) {
+			dol_syslog(get_class($this)."::fetch Bad parameters", LOG_WARNING);
+			return -1;
+		}
+
 		$sql = "SELECT a.id,";
 		$sql .= " a.ref as ref,";
 		$sql .= " a.entity,";
@@ -1896,10 +1901,16 @@ class ActionComm extends CommonObject
 					$userforfilter = new User($this->db);
 					$result = $userforfilter->fetch('', $logint);
 					if ($result > 0) {
-						$sql .= " AND ar.fk_element = ".$userforfilter->id;
+						$sql .= " AND ar.fk_element = ".((int) $userforfilter->id);
 					} elseif ($result < 0 || $condition == '=') {
 						$sql .= " AND ar.fk_element = 0";
 					}
+				}
+				if ($key == 'module') {
+					$sql .= " AND c.module LIKE '%".$this->db->escape($value)."'";
+				}
+				if ($key == 'status') {
+					$sql .= " AND a.status =".((int) $value);
 				}
 			}
 
@@ -1938,6 +1949,7 @@ class ActionComm extends CommonObject
 
 					$duration = ($datestart && $dateend) ? ($dateend - $datestart) : 0;
 					$event['summary'] = $obj->label.($obj->socname ? " (".$obj->socname.")" : "");
+
 					$event['desc'] = $obj->note;
 					$event['startdate'] = $datestart;
 					$event['enddate'] = $dateend; // Not required with type 'journal'
@@ -2403,7 +2415,7 @@ class ActionComm extends CommonObject
 			// Delete also very old past events (we do not keep more than 1 month record in past)
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
 			$sql .= " WHERE dateremind < '".$this->db->idate($now - (3600 * 24 * 32))."'";
-			$sql .= " AND status = ".$actionCommReminder::STATUS_DONE;
+			$sql .= " AND status = ".((int) $actionCommReminder::STATUS_DONE);
 			$resql = $this->db->query($sql);
 
 			if (!$resql) {

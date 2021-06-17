@@ -182,7 +182,7 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'contact';
-	$permission = $user->rights->societe->contact->creer;
+	$permissiontoadd = $user->rights->societe->contact->creer;
 	$permtoedit = $user->rights->societe->contact->creer;
 	$param = '&id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';

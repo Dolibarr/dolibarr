@@ -45,7 +45,7 @@ if ($user->socid) {
 $result = restrictedArea($user, 'produit|service');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('stockreplenishlist'));
+$hookmanager->initHooks(array('stockatdate'));
 
 //checks if a product has been ordered
 
@@ -136,10 +136,10 @@ if ($date && $dateIsValid) {	// Avoid heavy sql if mandatory date is not defined
 		$sql .= " AND w.statut IN (".$db->sanitize(implode(',', $warehouseStatus)).")";
 	}
 	if ($productid > 0) {
-		$sql .= " AND ps.fk_product = ".$productid;
+		$sql .= " AND ps.fk_product = ".((int) $productid);
 	}
 	if ($fk_warehouse > 0) {
-		$sql .= " AND ps.fk_entrepot = ".$fk_warehouse;
+		$sql .= " AND ps.fk_entrepot = ".((int) $fk_warehouse);
 	}
 	$sql .= " GROUP BY fk_product, fk_entrepot";
 	//print $sql;
@@ -363,7 +363,7 @@ print $form->select_produits($productid, 'productid', '', 0, 0, -1, 2, '', 0, ar
 print ' <span class="clearbothonsmartphone marginleftonly paddingleftonly marginrightonly paddingrightonly">&nbsp;</span> ';
 print img_picto('', 'stock').' ';
 print $langs->trans('Warehouse').'</span> ';
-print $formproduct->selectWarehouses((GETPOSTISSET('fk_warehouse') ? $fk_warehouse : 'ifone'), 'fk_warehouse', '', 1, 0, 0, '', 0, 0, null, '', '', 1, false, 'e.ref');
+print $formproduct->selectWarehouses((GETPOSTISSET('fk_warehouse') ? $fk_warehouse : 'ifone'), 'fk_warehouse', '', 1, 0, 0, '', 0, 0, null, '', null, 1, false, 'e.ref');
 print '</div>';
 
 $parameters = array();

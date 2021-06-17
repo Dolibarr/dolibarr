@@ -123,7 +123,6 @@ SetupNotSaved=Le programme d'installation n'a pas été enregistré
 CurrentNext=Actuel / Suivant
 DefaultMaxSizeList=Longueur maximale des listes
 CompanyObject=Objet de la compagnie
-ShowBugTrackLink=Afficher le lien "Signaler un défaut"
 InfoDolibarr=À propos de Dolibarr
 InfoBrowser=À propos du navigateur
 InfoWebServer=À propos du serveur Web

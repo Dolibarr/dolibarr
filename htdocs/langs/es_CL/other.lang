@@ -108,7 +108,6 @@ EnableGDLibraryDesc=Instale o habilite la biblioteca de GD en su instalación de
 ProfIdShortDesc=<b>Prof Id %s</b> es una información que depende del país de un tercero. <br> Por ejemplo, para el país <b>%s</b>, es el código<b>%s</b>.
 DolibarrDemo=Demo de Dolibarr ERP / CRM
 StatsByNumberOfUnits=Estadísticas para suma de cantidad de productos / servicios
-StatsByNumberOfEntities=Estadísticas en número de entidades referidas (nº de factura, o pedido ...)
 NumberOfProposals=Número de propuestas
 NumberOfCustomerOrders=Número de órdenes de venta
 NumberOfCustomerInvoices=Número de facturas de clientes

@@ -105,8 +105,10 @@ function Floors() {
 
 <?php
 
+print '<center>';
 print $langs->trans("EnableBarOrRestaurantFeatures");
 print ajax_constantonoff("TAKEPOS_BAR_RESTAURANT", array(), $conf->entity, 0, 0, 1, 0);
+print '</center>';
 
 print '<br>';
 
@@ -136,6 +138,20 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT) {
 		print '<td class="center">';
 		print ajax_constantonoff("TAKEPOS_ORDER_NOTES", array(), $conf->entity, 0, 0, 1, 0);
 		//print $form->selectyesno("TAKEPOS_ORDER_NOTES", $conf->global->TAKEPOS_ORDER_NOTES, 1);
+		print '</td></tr>';
+	} else {
+		print '<tr class="oddeven value"><td>';
+		print $langs->trans("OrderPrinters");
+		print '</td>';
+		print '<td class="center">';
+		print '<span class="opacitymedium">'.$langs->trans("NotAvailableWithBrowserPrinter").'</span>';
+		print '</td></tr>';
+
+		print '<tr class="oddeven value"><td>';
+		print $langs->trans("OrderNotes");
+		print '</td>';
+		print '<td class="center">';
+		print '<span class="opacitymedium">'.$langs->trans("NotAvailableWithBrowserPrinter").'</span>';
 		print '</td></tr>';
 	}
 

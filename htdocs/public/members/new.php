@@ -6,6 +6,7 @@
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
  * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -543,6 +544,10 @@ jQuery(document).ready(function () {
            document.newmember.action.value="create";
            document.newmember.submit();
         });
+        jQuery("#typeid").change(function() {
+           document.newmember.action.value="create";
+           document.newmember.submit();
+        });
     });
 });
 </script>';
@@ -561,7 +566,7 @@ if (empty($conf->global->MEMBER_NEWFORM_FORCETYPE)) {
 		$isempty = 0;
 	}
 	print '<tr><td class="titlefield">'.$langs->trans("Type").' <FONT COLOR="red">*</FONT></td><td>';
-	print $form->selectarray("typeid", $adht->liste_array(), GETPOST('typeid') ? GETPOST('typeid') : $defaulttype, $isempty);
+	print $form->selectarray("typeid", $adht->liste_array(1), GETPOST('typeid') ? GETPOST('typeid') : $defaulttype, $isempty);
 	print '</td></tr>'."\n";
 } else {
 	$adht->fetch($conf->global->MEMBER_NEWFORM_FORCETYPE);
@@ -704,7 +709,8 @@ if (!empty($conf->global->MEMBER_NEWFORM_AMOUNT) || !empty($conf->global->MEMBER
 	// $conf->global->MEMBER_NEWFORM_SHOWAMOUNT is an amount
 
 	// Set amount for the subscription
-	$amount = isset($amount) ? $amount : 0;
+	$amountbytype = $adht->amountByType(1);
+	$amount = !empty($amountbytype[GETPOST('typeid', 'int')]) ? $amountbytype[GETPOST('typeid', 'int')] : (isset($amount) ? $amount : 0);
 
 	if (!empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
 		$amount = $conf->global->MEMBER_NEWFORM_AMOUNT;
@@ -713,6 +719,9 @@ if (!empty($conf->global->MEMBER_NEWFORM_AMOUNT) || !empty($conf->global->MEMBER
 	if (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE)) {
 		$amount = $amount ? $amount : (GETPOST('amount') ? GETPOST('amount') : $conf->global->MEMBER_NEWFORM_AMOUNT);
 	}
+
+	$amount = price2num($amount);
+
 	// $conf->global->MEMBER_NEWFORM_PAYONLINE is 'paypal', 'paybox' or 'stripe'
 	print '<tr><td>'.$langs->trans("Subscription").'</td><td class="nowrap">';
 	if (!empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {

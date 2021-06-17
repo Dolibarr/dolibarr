@@ -257,11 +257,11 @@ class DiscountAbsolute
 		$sql .= " multicurrency_amount_ht, multicurrency_amount_tva, multicurrency_amount_ttc,";
 		$sql .= " fk_facture_source, fk_invoice_supplier_source";
 		$sql .= ")";
-		$sql .= " VALUES (".$conf->entity.", '".$this->db->idate($this->datec != '' ? $this->datec : dol_now())."', ".$this->fk_soc.", ".(empty($this->discount_type) ? 0 : intval($this->discount_type)).", ".$userid.", '".$this->db->escape($this->description)."',";
-		$sql .= " ".$this->amount_ht.", ".$this->amount_tva.", ".$this->amount_ttc.", ".$this->tva_tx.", '".$this->db->escape($this->vat_src_code)."',";
-		$sql .= " ".$this->multicurrency_amount_ht.", ".$this->multicurrency_amount_tva.", ".$this->multicurrency_amount_ttc.", ";
-		$sql .= " ".($this->fk_facture_source ? "'".$this->db->escape($this->fk_facture_source)."'" : "null").",";
-		$sql .= " ".($this->fk_invoice_supplier_source ? "'".$this->db->escape($this->fk_invoice_supplier_source)."'" : "null");
+		$sql .= " VALUES (".$conf->entity.", '".$this->db->idate($this->datec != '' ? $this->datec : dol_now())."', ".((int) $this->fk_soc).", ".(empty($this->discount_type) ? 0 : intval($this->discount_type)).", ".((int) $userid).", '".$this->db->escape($this->description)."',";
+		$sql .= " ".price2num($this->amount_ht).", ".price2num($this->amount_tva).", ".price2num($this->amount_ttc).", ".price2num($this->tva_tx).", '".$this->db->escape($this->vat_src_code)."',";
+		$sql .= " ".price2num($this->multicurrency_amount_ht).", ".price2num($this->multicurrency_amount_tva).", ".price2num($this->multicurrency_amount_ttc).", ";
+		$sql .= " ".($this->fk_facture_source ? ((int) $this->fk_facture_source) : "null").",";
+		$sql .= " ".($this->fk_invoice_supplier_source ? ((int) $this->fk_invoice_supplier_source) : "null");
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -292,7 +292,7 @@ class DiscountAbsolute
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except";
 			$sql .= " WHERE (fk_facture_line IS NOT NULL"; // Not used as absolute simple discount
 			$sql .= " OR fk_facture IS NOT NULL)"; // Not used as credit note and not used as deposit
-			$sql .= " AND fk_facture_source = ".$this->fk_facture_source;
+			$sql .= " AND fk_facture_source = ".((int) $this->fk_facture_source);
 			//$sql.=" AND rowid != ".$this->id;
 
 			dol_syslog(get_class($this)."::delete Check if we can remove discount", LOG_DEBUG);
@@ -531,7 +531,7 @@ class DiscountAbsolute
 			//$obj = $this->db->fetch_object($resql);
 			//}
 			if ($multicurrency) {
-				return $obj->amount_multicurrency;
+				return $obj->multicurrency_amount;
 			}
 
 			return $obj->amount;

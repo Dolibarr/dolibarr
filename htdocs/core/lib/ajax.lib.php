@@ -411,6 +411,7 @@ function ajax_dialog($title, $message, $w = 350, $h = 150)
  * @param  	int		$minLengthToAutocomplete	Minimum length of input string to start autocomplete
  * @param	int		$forcefocus					Force focus on field
  * @param	string	$widthTypeOfAutocomplete	'resolve' or 'off'
+ * @param	string	$idforemptyvalue			'-1'
  * @param	string	$ajax_url					Url for AJAX search
  * @param	array	$ajax_parameters			Parameters for AJAX search
  * @param	array   $ajax_options				Multiple options array // todo add from ajax_autocompleter()
@@ -422,7 +423,7 @@ function ajax_dialog($title, $message, $w = 350, $h = 150)
  * @return	string								Return html string to convert a select field into a combo, or '' if feature has been disabled for some reason.
  * @see selectArrayAjax() of html.form.class
  */
-function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 0, $forcefocus = 0, $widthTypeOfAutocomplete = 'resolve', $ajax_url = '', $ajax_parameters = array(), $ajax_options = array())
+function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 0, $forcefocus = 0, $widthTypeOfAutocomplete = 'resolve', $idforemptyvalue = '-1', $ajax_url = '', $ajax_parameters = array(), $ajax_options = array())
 {
 	global $conf;
 
@@ -451,6 +452,7 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 		$ajax_parameters = array();
 	}
 
+	$idforemptyvalue = (int)$idforemptyvalue;
 	$selector = preg_match('/^\./', $htmlname) ? $htmlname : '#' . $htmlname;
 	$tmpplugin = 'select2';
 	$msg = "\n<!-- JS CODE TO ENABLE $tmpplugin for id = $htmlname -->
@@ -505,14 +507,14 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 					/* Code to add class of origin OPTION propagated to the new select2 <li> tag */
 					if (data.element) { jQuery(container).addClass(jQuery(data.element).attr(\"class\")); }
 				    //console.log(jQuery(data.element).attr(\"data-html\"));
-				    if (data.id == -1 && jQuery(data.element).attr(\"data-html\") == undefined) {
+				    if (data.id == {$idforemptyvalue} && jQuery(data.element).attr(\"data-html\") == undefined) {
 						return '&nbsp;';
 					}
 					if (jQuery(data.element).attr(\"data-html\") != undefined) return htmlEntityDecodeJs(jQuery(data.element).attr(\"data-html\"));		// If property html set, we decode html entities and use this
 					return data.text;
 				},
 				templateSelection: function (selection) {		/* Format visible output of selected value */
-					if (selection.id == -1) return '<span class=\"placeholder\">'+selection.text+'</span>';
+					if (selection.id == {$idforemptyvalue}) return '<span class=\"placeholder\">'+selection.text+'</span>';
 					return selection.text;
 				},
 				escapeMarkup: function(markup) {

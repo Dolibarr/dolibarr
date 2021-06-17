@@ -50,9 +50,33 @@ if (!empty($_SERVER['MAIN_SHOW_TUNING_INFO'])) {
 	}
 }
 
+
+/**
+ * Return the real char for a numeric entities.
+ * This function is required by testSqlAndScriptInject().
+ *
+ * @param	string		$matches			String of numeric entity
+ * @return	string							New value
+ */
+function realCharForNumericEntities($matches)
+{
+	$newstringnumentity = $matches[1];
+
+	if (preg_match('/^x/i', $newstringnumentity)) {
+		$newstringnumentity = hexdec(preg_replace('/^x/i', '', $newstringnumentity));
+	}
+
+	// The numeric value we don't want as entities
+	if (($newstringnumentity >= 65 && $newstringnumentity <= 90) || ($newstringnumentity >= 97 && $newstringnumentity <= 122)) {
+		return chr((int) $newstringnumentity);
+	}
+
+	return '&#'.$matches[1];
+}
+
 /**
  * Security: WAF layer for SQL Injection and XSS Injection (scripts) protection (Filters on GET, POST, PHP_SELF).
- * Warning: Such a protection can't be enough. It is not reliable as it will alwyas be possible to bypass this. Good protection can
+ * Warning: Such a protection can't be enough. It is not reliable as it will always be possible to bypass this. Good protection can
  * only be guaranted by escaping data during output.
  *
  * @param		string		$val		Value brut found int $_GET, $_POST or PHP_SELF
@@ -61,7 +85,7 @@ if (!empty($_SERVER['MAIN_SHOW_TUNING_INFO'])) {
  */
 function testSqlAndScriptInject($val, $type)
 {
-	// Decode string first bcause a lot of things are obfuscated by encoding or multiple encoding.
+	// Decode string first because a lot of things are obfuscated by encoding or multiple encoding.
 	// So <svg o&#110;load='console.log(&quot;123&quot;)' become <svg onload='console.log(&quot;123&quot;)'
 	// So "&colon;&apos;" become ":'" (due to ENT_HTML5)
 	// Loop to decode until no more thing to decode.
@@ -69,6 +93,7 @@ function testSqlAndScriptInject($val, $type)
 	do {
 		$oldval = $val;
 		$val = html_entity_decode($val, ENT_QUOTES | ENT_HTML5);
+		$val = preg_replace_callback('/&#(x?[0-9][0-9a-f]+)/i', 'realCharForNumericEntities', $val);	// Sometimes we have entities without the ; at end so html_entity_decode does not work but entities is still interpreted by browser.
 	} while ($oldval != $val);
 	//print "after  decoding $val\n";
 
@@ -117,27 +142,23 @@ function testSqlAndScriptInject($val, $type)
 	}
 	$inj += preg_match('/base\s+href/si', $val);
 	$inj += preg_match('/=data:/si', $val);
-	// List of dom events is on https://www.w3schools.com/jsref/dom_obj_event.asp
-	$inj += preg_match('/onmouse([a-z]*)\s*=/i', $val); // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
-	$inj += preg_match('/ondrag([a-z]*)\s*=/i', $val); //
-	$inj += preg_match('/ontouch([a-z]*)\s*=/i', $val); //
-	$inj += preg_match('/on(abort|afterprint|beforeprint|beforeunload|blur|canplay|canplaythrough|change|click|contextmenu|copy|cut)\s*=/i', $val);
-	$inj += preg_match('/on(dblclick|drop|durationchange|ended|error|focus|focusin|focusout|hashchange|input|invalid)\s*=/i', $val);
-	$inj += preg_match('/on(keydown|keypress|keyup|load|loadeddata|loadedmetadata|loadstart|loadend|offline|online|pagehide|pageshow)\s*=/i', $val);
-	$inj += preg_match('/on(paste|pause|play|playing|progress|ratechange|resize|reset|scroll|search|seeking|select|show|stalled|start|submit|suspend)\s*=/i', $val);
-	$inj += preg_match('/on(timeupdate|toggle|unload|volumechange|waiting)\s*=/i', $val);
+	// List of dom events is on https://www.w3schools.com/jsref/dom_obj_event.asp and https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers
+	$inj += preg_match('/on(mouse|drag|key|load|touch|pointer|select|transition)([a-z]*)\s*=/i', $val); // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
+	$inj += preg_match('/on(abort|afterprint|animation|auxclick|beforeprint|beforeunload|blur|cancel|canplay|canplaythrough|change|click|close|contextmenu|cuechange|copy|cut)\s*=/i', $val);
+	$inj += preg_match('/on(dblclick|drop|durationchange|emptied|ended|error|focus|focusin|focusout|formdata|gotpointercapture|hashchange|input|invalid)\s*=/i', $val);
+	$inj += preg_match('/on(lostpointercapture|offline|online|pagehide|pageshow)\s*=/i', $val);
+	$inj += preg_match('/on(paste|pause|play|playing|progress|ratechange|reset|resize|scroll|search|seeked|seeking|show|stalled|start|submit|suspend)\s*=/i', $val);
+	$inj += preg_match('/on(timeupdate|toggle|unload|volumechange|waiting|wheel)\s*=/i', $val);
 
 	// We refuse html into html because some hacks try to obfuscate evil strings by inserting HTML into HTML. Example: <img on<a>error=alert(1) to bypass test on onerror
 	$tmpval = preg_replace('/<[^<]+>/', '', $val);
-	// List of dom events is on https://www.w3schools.com/jsref/dom_obj_event.asp
-	$inj += preg_match('/onmouse([a-z]*)\s*=/i', $tmpval); // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
-	$inj += preg_match('/ondrag([a-z]*)\s*=/i', $tmpval); //
-	$inj += preg_match('/ontouch([a-z]*)\s*=/i', $tmpval); //
-	$inj += preg_match('/on(abort|afterprint|beforeprint|beforeunload|blur|canplay|canplaythrough|change|click|contextmenu|copy|cut)\s*=/i', $tmpval);
-	$inj += preg_match('/on(dblclick|drop|durationchange|ended|error|focus|focusin|focusout|hashchange|input|invalid)\s*=/i', $tmpval);
-	$inj += preg_match('/on(keydown|keypress|keyup|load|loadeddata|loadedmetadata|loadstart|loadend|offline|online|pagehide|pageshow)\s*=/i', $tmpval);
-	$inj += preg_match('/on(paste|pause|play|playing|progress|ratechange|resize|reset|scroll|search|seeking|select|show|stalled|start|submit|suspend)\s*=/i', $tmpval);
-	$inj += preg_match('/on(timeupdate|toggle|unload|volumechange|waiting)\s*=/i', $tmpval);
+	// List of dom events is on https://www.w3schools.com/jsref/dom_obj_event.asp and https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers
+	$inj += preg_match('/on(mouse|drag|key|load|touch|pointer|select|transition)([a-z]*)\s*=/i', $val); // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
+	$inj += preg_match('/on(abort|afterprint|animation|auxclick|beforeprint|beforeunload|blur|cancel|canplay|canplaythrough|change|click|close|contextmenu|cuechange|copy|cut)\s*=/i', $tmpval);
+	$inj += preg_match('/on(dblclick|drop|durationchange|emptied|ended|error|focus|focusin|focusout|formdata|gotpointercapture|hashchange|input|invalid)\s*=/i', $tmpval);
+	$inj += preg_match('/on(lostpointercapture|offline|online|pagehide|pageshow)\s*=/i', $tmpval);
+	$inj += preg_match('/on(paste|pause|play|playing|progress|ratechange|reset|resize|scroll|search|seeked|seeking|show|stalled|start|submit|suspend)\s*=/i', $tmpval);
+	$inj += preg_match('/on(timeupdate|toggle|unload|volumechange|waiting|wheel)\s*=/i', $tmpval);
 
 	//$inj += preg_match('/on[A-Z][a-z]+\*=/', $val);   // To lock event handlers onAbort(), ...
 	$inj += preg_match('/&#58;|&#0000058|&#x3A/i', $val); // refused string ':' encoded (no reason to have it encoded) to lock 'javascript:...'
@@ -448,13 +469,15 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->gl
 		$sensitiveget = true;
 	}
 
-	// Check all cases that need a mandatory token (all POST actions + all login, actions and mass actions on pages with CSRFCHECK_WITH_TOKEN set + all sensitive GET actions)
+	// Check a token is provided for all cases that need a mandatory token
+	// (all POST actions + all login, actions and mass actions on pages with CSRFCHECK_WITH_TOKEN set + all sensitive GET actions)
 	if (
 		$_SERVER['REQUEST_METHOD'] == 'POST' ||
 		$sensitiveget ||
 		((GETPOSTISSET('actionlogin') || GETPOSTISSET('action') || GETPOSTISSET('massaction')) && defined('CSRFCHECK_WITH_TOKEN'))
 	) {
-		if (!GETPOST('token', 'alpha')) {		// If token is not provided or empty
+		// If token is not provided or empty, error (we are in case it is mandatory)
+		if (!GETPOST('token', 'alpha') || GETPOST('token', 'alpha') == 'notrequired') {
 			if (GETPOST('uploadform', 'int')) {
 				dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"])?'':$_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused. File size too large.");
 				$langs->loadLangs(array("errors", "install"));
@@ -476,7 +499,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->gl
 
 	$sessiontokenforthisurl = (empty($_SESSION['token']) ? '' : $_SESSION['token']);
 	// TODO Get the sessiontokenforthisurl into the array of session token
-	if (GETPOSTISSET('token') && GETPOST('token', 'alpha') != $sessiontokenforthisurl) {
+	if (GETPOSTISSET('token') && GETPOST('token') != 'notrequired' && GETPOST('token', 'alpha') != $sessiontokenforthisurl) {
 		dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"])?'':$_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused due to invalid token, so we disable POST and some GET parameters - referer=".$_SERVER['HTTP_REFERER'].", action=".GETPOST('action', 'aZ09').", _GET|POST['token']=".GETPOST('token', 'alpha').", _SESSION['token']=".$_SESSION['token'], LOG_WARNING);
 		//print 'Unset POST by CSRF protection in main.inc.php.';	// Do not output anything because this create problems when using the BACK button on browsers.
 		setEventMessages('SecurityTokenHasExpiredSoActionHasBeenCanceledPleaseRetry', null, 'warnings');
@@ -928,7 +951,7 @@ if (!defined('NOLOGIN')) {
 		$_SESSION["dol_dst_second"] = isset($dol_dst_second) ? $dol_dst_second : '';
 		$_SESSION["dol_screenwidth"] = isset($dol_screenwidth) ? $dol_screenwidth : '';
 		$_SESSION["dol_screenheight"] = isset($dol_screenheight) ? $dol_screenheight : '';
-		$_SESSION["dol_company"] = $conf->global->MAIN_INFO_SOCIETE_NOM;
+		$_SESSION["dol_company"] = getDolGlobalString("MAIN_INFO_SOCIETE_NOM");
 		$_SESSION["dol_entity"] = $conf->entity;
 		// Store value into session (values stored only if defined)
 		if (!empty($dol_hide_topmenu)) {
@@ -1579,7 +1602,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 				print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 			}
 			// Chart
-			if (empty($conf->global->MAIN_JS_GRAPH) || $conf->global->MAIN_JS_GRAPH == 'chart') {
+			if ((empty($conf->global->MAIN_JS_GRAPH) || $conf->global->MAIN_JS_GRAPH == 'chart') && !defined('DISABLE_JS_GRAPH')) {
 				print '<script src="'.DOL_URL_ROOT.'/includes/nnnick/chartjs/dist/Chart.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 			}
 
@@ -1960,7 +1983,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
  */
 function top_menu_user($hideloginname = 0, $urllogout = '')
 {
-	global $langs, $conf, $db, $hookmanager, $user;
+	global $langs, $conf, $db, $hookmanager, $user, $mysoc;
 	global $dolibarr_main_authentication, $dolibarr_main_demo;
 	global $menumanager;
 
@@ -1985,13 +2008,27 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	$dropdownBody .= '<span id="topmenulogincompanyinfo-btn"><i class="fa fa-caret-right"></i> '.$langs->trans("ShowCompanyInfos").'</span>';
 	$dropdownBody .= '<div id="topmenulogincompanyinfo" >';
 
-	if (!empty($conf->global->MAIN_INFO_SIREN))      $dropdownBody .= '<br><b>'.$langs->transcountry("ProfId1Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_SIREN).'</span>';
-	if (!empty($conf->global->MAIN_INFO_SIRET))      $dropdownBody .= '<br><b>'.$langs->transcountry("ProfId2Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_SIRET).'</span>';
-	if (!empty($conf->global->MAIN_INFO_APE))        $dropdownBody .= '<br><b>'.$langs->transcountry("ProfId3Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_APE).'</span>';
-	if (!empty($conf->global->MAIN_INFO_RCS))        $dropdownBody .= '<br><b>'.$langs->transcountry("ProfId4Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_RCS).'</span>';
-	if (!empty($conf->global->MAIN_INFO_PROFID5))    $dropdownBody .= '<br><b>'.$langs->transcountry("ProfId5Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_PROFID5).'</span>';
-	if (!empty($conf->global->MAIN_INFO_PROFID6))    $dropdownBody .= '<br><b>'.$langs->transcountry("ProfId6Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_PROFID6).'</span>';
-	if (!empty($conf->global->MAIN_INFO_TVAINTRA))   $dropdownBody .= '<br><b>'.$langs->trans("VATIntraShort").'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_TVAINTRA).'</span>';
+	if (!empty($conf->global->MAIN_INFO_SIREN)) {
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId1Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_SIREN).'</span>';
+	}
+	if (!empty($conf->global->MAIN_INFO_SIRET)) {
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId2Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_SIRET).'</span>';
+	}
+	if (!empty($conf->global->MAIN_INFO_APE)) {
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId3Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_APE).'</span>';
+	}
+	if (!empty($conf->global->MAIN_INFO_RCS)) {
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId4Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_RCS).'</span>';
+	}
+	if (!empty($conf->global->MAIN_INFO_PROFID5)) {
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId5Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_PROFID5).'</span>';
+	}
+	if (!empty($conf->global->MAIN_INFO_PROFID6)) {
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId6Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_PROFID6).'</span>';
+	}
+	if (!empty($conf->global->MAIN_INFO_TVAINTRA)) {
+		$dropdownBody .= '<br><b>'.$langs->trans("VATIntraShort").'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_TVAINTRA).'</span>';
+	}
 
 	$dropdownBody .= '</div>';
 
@@ -2187,6 +2224,7 @@ function top_menu_quickadd()
 {
 	global $langs, $conf, $db, $hookmanager, $user;
 	global $menumanager;
+
 	$html = '';
 	// Define $dropDownQuickAddHtml
 	$dropDownQuickAddHtml = '<div class="dropdown-header bookmark-header center">';
@@ -2201,9 +2239,7 @@ function top_menu_quickadd()
                 <!-- Thirdparty link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/societe/card.php?action=create" title="'.$langs->trans("MenuNewThirdParty").'">
-                        <i class="fa fa-building"></i><br>
-                        '.$langs->trans("ThirdParty").'
-                    </a>
+                    '. img_picto('', 'object_company') .'<br>'. $langs->trans("ThirdParty") .'</a>
                 </div>
                 ';
 	}
@@ -2214,9 +2250,7 @@ function top_menu_quickadd()
                 <!-- Contact link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/contact/card.php?action=create" title="'.$langs->trans("NewContactAddress").'">
-                        <i class="fa fa-address-book"></i><br>
-                        '.$langs->trans("Contact").'
-                    </a>
+                    '. img_picto('', 'object_contact') .'<br>'. $langs->trans("Contact") .'</a>
                 </div>
                 ';
 	}
@@ -2227,9 +2261,7 @@ function top_menu_quickadd()
                 <!-- Propal link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/comm/propal/card.php?action=create" title="'.$langs->trans("NewPropal").'">
-                        <i class="fa fa-suitcase"></i><br>
-                        '.$langs->trans("Proposal").'
-                    </a>
+                    '. img_picto('', 'object_propal') .'<br>'. $langs->trans("Proposal") .'</a>
                 </div>
                 ';
 	}
@@ -2240,9 +2272,7 @@ function top_menu_quickadd()
                 <!-- Order link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/commande/card.php?action=create" title="'.$langs->trans("NewOrder").'">
-                        <i class="fa fa-file-alt"></i><br>
-                        '.$langs->trans("Order").'
-                    </a>
+                    '. img_picto('', 'object_order') .'<br>'. $langs->trans("Order") .'</a>
                 </div>
                 ';
 	}
@@ -2253,9 +2283,7 @@ function top_menu_quickadd()
                 <!-- Invoice link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create" title="'.$langs->trans("NewBill").'">
-                        <i class="fa fa-coins"></i><br>
-                        '.$langs->trans("Bill").'
-                    </a>
+                    '. img_picto('', 'object_bill') .'<br>'. $langs->trans("Bill") .'</a>
                 </div>
                 ';
 	}
@@ -2266,9 +2294,7 @@ function top_menu_quickadd()
                 <!-- Contract link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create" title="'.$langs->trans("NewContractSubscription").'">
-                        <i class="fa fa-file-contract"></i><br>
-                        '.$langs->trans("Contract").'
-                    </a>
+                    '. img_picto('', 'object_contract') .'<br>'. $langs->trans("Contract") .'</a>
                 </div>
                 ';
 	}
@@ -2279,9 +2305,7 @@ function top_menu_quickadd()
                 <!-- Supplier proposal link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?action=create" title="'.$langs->trans("NewAskPrice").'">
-                        <i class="fa fa-suitcase"></i><br>
-                        '.$langs->trans("AskPrice").'
-                    </a>
+                    '. img_picto('', 'object_propal') .'<br>'. $langs->trans("AskPrice") .'</a>
                 </div>
                 ';
 	}
@@ -2291,10 +2315,8 @@ function top_menu_quickadd()
 		$dropDownQuickAddHtml .= '
                 <!-- Supplier order link -->
                 <div class="quickaddblock center">
-                    <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create" title="'.$langs->trans("NewOrder").'">
-                        <i class="fa fa-file-alt"></i><br>
-                        '.$langs->trans("SupplierOrder").'
-                    </a>
+                    <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create" title="'.$langs->trans("NewSupplierOrderShort").'">
+                    '. img_picto('', 'object_order') .'<br>'. $langs->trans("SupplierOrder") .'</a>
                 </div>
                 ';
 	}
@@ -2305,9 +2327,7 @@ function top_menu_quickadd()
                 <!-- Supplier invoice link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create" title="'.$langs->trans("NewBill").'">
-                        <i class="fa fa-coins"></i><br>
-                        '.$langs->trans("SupplierBill").'
-                    </a>
+                    '. img_picto('', 'object_bill') .'<br>'. $langs->trans("SupplierBill") .'</a>
                 </div>
                 ';
 	}
@@ -2318,9 +2338,7 @@ function top_menu_quickadd()
                 <!-- Product link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/product/card.php?action=create&amp;type=0" title="'.$langs->trans("NewProduct").'">
-                        <i class="fa fa-cube"></i><br>
-                        '.$langs->trans("Product").'
-                    </a>
+                    '. img_picto('', 'object_product') .'<br>'. $langs->trans("Product") .'</a>
                 </div>
                 ';
 	}
@@ -2331,9 +2349,29 @@ function top_menu_quickadd()
                 <!-- Service link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/product/card.php?action=create&amp;type=1" title="'.$langs->trans("NewService").'">
-                        <i class="fa fa-concierge-bell"></i><br>
-                        '.$langs->trans("Service").'
-                    </a>
+                    '. img_picto('', 'object_service') .'<br>'. $langs->trans("Service") .'</a>
+                </div>
+                ';
+	}
+
+	if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->creer) {
+		$langs->load("trips");
+		$dropDownQuickAddHtml .= '
+                <!-- Expense report link -->
+                <div class="quickaddblock center">
+                    <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/expensereport/card.php?action=create&fk_user_author='.$user->id.'" title="'.$langs->trans("AddTrip").'">
+                    '. img_picto('', 'object_trip') .'<br>'. $langs->trans("ExpenseReport") .'</a>
+                </div>
+                ';
+	}
+
+	if (!empty($conf->holiday->enabled) && $user->rights->holiday->write) {
+		$langs->load("holiday");
+		$dropDownQuickAddHtml .= '
+                <!-- Holiday link -->
+                <div class="quickaddblock center">
+                    <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/holiday/card.php?action=create&fuserid='.$user->id.'" title="'.$langs->trans("AddCP").'">
+                    '. img_picto('', 'object_holiday') .'<br>'. $langs->trans("Holidays") .'</a>
                 </div>
                 ';
 	}
@@ -3169,16 +3207,17 @@ if (!function_exists("llxFooter")) {
 										  country_code: '<?php echo $mysoc->country_code ? dol_escape_js($mysoc->country_code) : 'unknown'; ?>',
 										  php_version: '<?php echo dol_escape_js(phpversion()); ?>',
 										  os_version: '<?php echo dol_escape_js(version_os('smr')); ?>',
-										  distrib: '<?php echo $distrib ? dol_escape_js($distrib) : 'unknown'; ?>'
+										  distrib: '<?php echo $distrib ? dol_escape_js($distrib) : 'unknown'; ?>',
+										  token: 'notrequired'
 									  },
 									  success: function (data, status, xhr) {   // success callback function (data contains body of response)
-											  console.log("Ping ok");
+											console.log("Ping ok");
 											$.ajax({
 												method: 'GET',
 												url: '<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>',
 												timeout: 500,     // timeout milliseconds
 												cache: false,
-												data: { hash_algo: 'md5', hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>', action: 'firstpingok' },	// for update
+												data: { hash_algo: 'md5', hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>', action: 'firstpingok', token: 'notrequired' },	// for update
 											  });
 									  },
 									  error: function (data,status,xhr) {   // error callback function
@@ -3188,7 +3227,7 @@ if (!function_exists("llxFooter")) {
 												  url: '<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>',
 												  timeout: 500,     // timeout milliseconds
 												  cache: false,
-												  data: { hash_algo: 'md5', hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>', action: 'firstpingko' },
+												  data: { hash_algo: 'md5', hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>', action: 'firstpingko', token: 'notrequired' },
 												});
 									  }
 								});

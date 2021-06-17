@@ -1035,10 +1035,9 @@ if (empty($reshook)) {
 /*
  * View
  */
-
+$title = $langs->trans('CommRequest')." - ".$langs->trans('Card');
 $help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
-
-llxHeader('', $langs->trans('CommRequests'), $help_url);
+llxHeader('', $title, $help_url);
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -1773,10 +1772,12 @@ if ($action == 'create') {
 	if ($object->statut == SupplierProposal::STATUS_DRAFT && $usercancreate) {
 		if ($action != 'editline') {
 			// Add products/services form
-			$object->formAddObjectLine($dateSelector, $soc, $mysoc);
 
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			if (empty($reshook))
+				$object->formAddObjectLine($dateSelector, $soc, $mysoc);
 		}
 	}
 
@@ -1861,7 +1862,7 @@ if ($action == 'create') {
 				// Create an order
 				if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) && $object->statut == SupplierProposal::STATUS_SIGNED) {
 					if ($usercancreateorder) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddOrder").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddSupplierOrderShort").'</a></div>';
 					}
 				}
 

@@ -800,6 +800,23 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		return $ret;
 	}
 
+	/**
+	 * Gives the module position
+	 *
+	 * @return int  	Module position (an external module should never return a value lower than 100000. 1-100000 are reserved for core)
+	 */
+	public function getModulePosition()
+	{
+		if (in_array($this->version, array('dolibarr', 'experimental', 'development'))) {	// core module
+			return $this->module_position;
+		} else {																			// external module
+			if ($this->module_position >= 100000) {
+				return $this->module_position;
+			} else {
+				return $this->module_position + 100000;
+			}
+		}
+	}
 
 	/**
 	 * Tells if module is core or external
@@ -1354,7 +1371,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				if ($command) {
 					$sql .= " AND command = '".$this->db->escape($command)."'";
 				}
-				$sql .= " AND entity = ".$entity; // Must be exact entity
+				$sql .= " AND entity = ".((int) $entity); // Must be exact entity
 
 				$now = dol_now();
 
@@ -1595,7 +1612,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			$sql = "SELECT count(*)";
 			$sql .= " FROM ".MAIN_DB_PREFIX."const";
 			$sql .= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($name)."'";
-			$sql .= " AND entity = ".$entity;
+			$sql .= " AND entity = ".((int) $entity);
 
 			$result = $this->db->query($sql);
 			if ($result) {
@@ -2180,7 +2197,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
 				$sql .= " WHERE ".$this->db->decrypt('name')." LIKE '".$this->db->escape($this->const_name)."_".strtoupper($key)."'";
-				$sql .= " AND entity = ".$entity;
+				$sql .= " AND entity = ".((int) $entity);
 
 				dol_syslog(get_class($this)."::delete_const_".$key."", LOG_DEBUG);
 				if (!$this->db->query($sql)) {

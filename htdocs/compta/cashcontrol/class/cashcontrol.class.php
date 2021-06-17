@@ -73,7 +73,7 @@ class CashControl extends CommonObject
 	 *  'help' is a 'TranslationString' to use to show a tooltip on field. You can also use 'TranslationString:keyfortooltiponlick' for a tooltip on click.
 	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
 	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
-	 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
+	 *  'arrayofkeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
 	 *  'autofocusoncreate' to have field having the focus on a create form. Only 1 field should have this property set to 1.
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
 	 *
@@ -93,10 +93,12 @@ class CashControl extends CommonObject
 	'year_close' =>array('type'=>'integer', 'label'=>'Year close', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>50, 'css'=>'center'),
 	'month_close' =>array('type'=>'integer', 'label'=>'Month close', 'enabled'=>1, 'visible'=>1, 'position'=>55, 'css'=>'center'),
 	'day_close' =>array('type'=>'integer', 'label'=>'Day close', 'enabled'=>1, 'visible'=>1, 'position'=>60, 'css'=>'center'),
-	'date_valid' =>array('type'=>'datetime', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>490),
 	'date_creation' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
+	'date_valid' =>array('type'=>'datetime', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>502),
 	'tms' =>array('type'=>'timestamp', 'label'=>'Tms', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>505),
-	'import_key' =>array('type'=>'varchar(14)', 'label'=>'Import key', 'enabled'=>1, 'visible'=>0, 'position'=>510),
+	'fk_user_creat' =>array('type'=>'integer:User', 'label'=>'userCreation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>600),
+	'fk_user_valid' =>array('type'=>'integer:User', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>602),
+	'import_key' =>array('type'=>'varchar(14)', 'label'=>'Import key', 'enabled'=>1, 'visible'=>0, 'position'=>700),
 	'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'position'=>1000, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Brouillon', '1'=>'Validated')),
 	);
 
@@ -116,19 +118,22 @@ class CashControl extends CommonObject
 	public $card;
 
 	/**
-	 * @var integer|string $date_valid
-	 */
-	public $date_valid;
-
-	/**
 	 * @var integer|string date_creation
 	 */
 	public $date_creation;
+	public $fk_user_creat;
 
 	/**
 	 * @var integer|string $date_modification
 	 */
 	public $date_modification;
+
+	/**
+	 * @var integer|string $date_valid
+	 */
+	public $date_valid;
+	public $fk_user_valid;
+
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;

@@ -241,7 +241,7 @@ class Ticket extends CommonObject
 	 *  'help' is a 'TranslationString' to use to show a tooltip on field. You can also use 'TranslationString:keyfortooltiponlick' for a tooltip on click.
 	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
 	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
-	 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
+	 *  'arrayofkeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
 	 *  'autofocusoncreate' to have field having the focus on a create form. Only 1 field should have this property set to 1.
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
 	 *
@@ -531,7 +531,7 @@ class Ticket extends CommonObject
 		global $langs;
 
 		// Check parameters
-		if (!$id && !$track_id && !$ref && !$email_msgid) {
+		if (empty($id) && empty($ref) && empty($track_id) && empty($email_msgid)) {
 			$this->error = 'ErrorWrongParameters';
 			dol_print_error(get_class($this)."::fetch ".$this->error);
 			return -1;
@@ -1112,10 +1112,10 @@ class Ticket extends CommonObject
 	}
 
 	/**
-	 * print selected status
+	 * Print selected status
 	 *
-	 * @param string    $selected   selected status
-	 * @return void
+	 * @param 	string    $selected   	Selected status
+	 * @return 	void
 	 */
 	public function printSelectStatus($selected = "")
 	{
@@ -1124,9 +1124,9 @@ class Ticket extends CommonObject
 
 
 	/**
-	 *      Charge dans cache la liste des types de tickets (paramétrable dans dictionnaire)
+	 * Load into a cache the types of tickets (setup done into dictionaries)
 	 *
-	 *      @return int             Number of lines loaded, 0 if already loaded, <0 if KO
+	 * @return 	int       Number of lines loaded, 0 if already loaded, <0 if KO
 	 */
 	public function loadCacheTypesTickets()
 	{
@@ -1829,19 +1829,21 @@ class Ticket extends CommonObject
 	public function searchSocidByEmail($email, $type = '0', $filters = array(), $clause = 'AND')
 	{
 		$thirdparties = array();
+		$exact = 0;
 
 		// Generation requete recherche
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe";
 		$sql .= " WHERE entity IN (".getEntity('ticket', 1).")";
 		if (!empty($type)) {
 			if ($type == 1 || $type == 2) {
-				$sql .= " AND client = ".$type;
+				$sql .= " AND client = ".((int) $type);
 			} elseif ($type == 3) {
 				$sql .= " AND fournisseur = 1";
 			}
 		}
 		if (!empty($email)) {
-			if (!$exact) {
+			if (empty($exact)) {
+				$regs = array();
 				if (preg_match('/^([\*])?[^*]+([\*])?$/', $email, $regs) && count($regs) > 1) {
 					$email = str_replace('*', '%', $email);
 				} else {
@@ -1853,15 +1855,11 @@ class Ticket extends CommonObject
 				$sql .= "(";
 			}
 
-			if (!$case) {
-				$sql .= "email LIKE '".$this->db->escape($email)."'";
-			} else {
-				$sql .= "email LIKE BINARY '".$this->db->escape($email)."'";
-			}
+			$sql .= "email LIKE '".$this->db->escape($email)."'";
 		}
 		if (is_array($filters) && !empty($filters)) {
 			foreach ($filters as $field => $value) {
-				$sql .= " ".$clause." ".$field." LIKE BINARY '".$this->db->escape($value)."'";
+				$sql .= " ".$clause." ".$field." LIKE '".$this->db->escape($value)."'";
 			}
 			if (!empty($email)) {
 				$sql .= ")";
@@ -2917,7 +2915,7 @@ class Ticket extends CommonObject
 
 		$sql = "SELECT p.rowid, p.ref, p.datec as datec";
 		$sql .= " FROM ".MAIN_DB_PREFIX."ticket as p";
-		if (!$user->rights->societe->client->voir && !$user->socid) {
+		if ($conf->societe->enabled && !$user->rights->societe->client->voir && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".$user->id;
 			$clause = " AND";

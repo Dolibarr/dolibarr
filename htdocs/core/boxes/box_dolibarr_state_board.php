@@ -60,13 +60,6 @@ class box_dolibarr_state_board extends ModeleBoxes
 		global $conf, $user;
 
 		$this->db = $db;
-
-		// disable box for such cases
-		if (!empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
-			$this->enabled = 0; // disabled by this option
-		}
-
-		$this->hidden = !(!empty($user->rights->societe->lire) && empty($user->socid));
 	}
 
 	/**
@@ -273,7 +266,7 @@ class box_dolibarr_state_board extends ModeleBoxes
 					$boxstatItem .= '<a href="' . $links[$val] . '" class="boxstatsindicator thumbstat nobold nounderline">';
 					$boxstatItem .= '<div class="boxstats">';
 					$boxstatItem .= '<span class="boxstatstext" title="' . dol_escape_htmltag($text) . '">' . $text . '</span><br>';
-					$boxstatItem .= '<span class="boxstatsindicator">' . img_object("", $board->picto, 'class="inline-block"') . ' ' . ($board->nb[$val] ? $board->nb[$val] : 0) . '</span>';
+					$boxstatItem .= '<span class="boxstatsindicator">' . img_object("", $board->picto, 'class="inline-block"') . ' ' . (!empty($board->nb[$val]) ? $board->nb[$val] : 0) . '</span>';
 					$boxstatItem .= '</div>';
 					$boxstatItem .= '</a>';
 

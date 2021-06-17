@@ -225,7 +225,7 @@ class Form
 				$ret .= '<input type="hidden" name="token" value="'.newToken().'">';
 				$ret .= '<input type="hidden" name="'.$paramid.'" value="'.$object->id.'">';
 				if (empty($notabletag)) {
-					$ret .= '<table class="nobordernopadding centpercent" cellpadding="0" cellspacing="0">';
+					$ret .= '<table class="nobordernopadding centpercent">';
 				}
 				if (empty($notabletag)) {
 					$ret .= '<tr><td>';
@@ -868,9 +868,10 @@ class Form
 	 *  @param	int		$disablefavorites		1=Disable favorites,
 	 *  @param	int		$addspecialentries		1=Add dedicated entries for group of countries (like 'European Economic Community', ...)
 	 *  @param	array	$exclude_country_code	Array of country code (iso2) to exclude
+	 *  @param	int		$hideflags				Hide flags
 	 *  @return string           				HTML string with select
 	 */
-	public function select_country($selected = '', $htmlname = 'country_id', $htmloption = '', $maxlength = 0, $morecss = 'minwidth300', $usecodeaskey = '', $showempty = 1, $disablefavorites = 0, $addspecialentries = 0, $exclude_country_code = array())
+	public function select_country($selected = '', $htmlname = 'country_id', $htmloption = '', $maxlength = 0, $morecss = 'minwidth300', $usecodeaskey = '', $showempty = 1, $disablefavorites = 0, $addspecialentries = 0, $exclude_country_code = array(), $hideflags = 0)
 	{
 		// phpcs:enable
 		global $conf, $langs, $mysoc;
@@ -955,8 +956,10 @@ class Form
 					}
 					if ($row['code_iso']) {
 						$labeltoshow .= ' <span class="opacitymedium">('.$row['code_iso'].')</span>';
-						$tmpflag = picto_from_langcode($row['code_iso'], 'class="saturatemedium marginrightonly"');
-						$labeltoshow = $tmpflag.' '.$labeltoshow;
+						if (empty($hideflags)) {
+							$tmpflag = picto_from_langcode($row['code_iso'], 'class="saturatemedium paddingrightonly"');
+							$labeltoshow = $tmpflag.' '.$labeltoshow;
+						}
 					}
 
 					if ($selected && $selected != '-1' && ($selected == $row['rowid'] || $selected == $row['code_iso'] || $selected == $row['code_iso3'] || $selected == $row['label'])) {
@@ -975,7 +978,7 @@ class Form
 
 		// Make select dynamic
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-		$out .= ajax_combobox('select'.$htmlname);
+		$out .= ajax_combobox('select'.$htmlname, array(), 0, 0, 'resolve');
 
 		return $out;
 	}
@@ -1022,7 +1025,7 @@ class Form
 				$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 			}
 
-			$out .= '<select id="'.$htmlname.'" class="flat selectincoterm minwidth100imp noenlargeonsmartphone" name="'.$htmlname.'" '.$htmloption.'>';
+			$out .= '<select id="'.$htmlname.'" class="flat selectincoterm width75" name="'.$htmlname.'" '.$htmloption.'>';
 			$out .= '<option value="0">&nbsp;</option>';
 			$num = $this->db->num_rows($resql);
 			$i = 0;
@@ -1669,7 +1672,7 @@ class Form
 			$ajax_parameters = array_values($ajax_parameters);
 
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-			$out .= ajax_combobox($htmlid, $events, $conf->global->CONTACT_USE_SEARCH_TO_SELECT, 0, 'resolve', $ajaxurl, $ajax_parameters, $ajaxoptions);
+			$out .= ajax_combobox($htmlid, $events, $conf->global->CONTACT_USE_SEARCH_TO_SELECT, 0, 'resolve', '-1', $ajaxurl, $ajax_parameters, $ajaxoptions);
 			$out .= '<style type="text/css">.ui-autocomplete { z-index: 250; }</style>';
 			if (!empty($thirdparty_htmlname)) {
 				// Clear selected contact(s) when selected third party changed
@@ -1962,7 +1965,7 @@ SCRIPT;
 	 *  @param	string			$force_entity	'0' or Ids of environment to force
 	 *  @param	int				$maxlength		Maximum length of string into list (0=no limit)
 	 *  @param	int				$showstatus		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
-	 *  @param	string			$morefilter		Add more filters into sql request (Example: 'employee = 1')
+	 *  @param	string			$morefilter		Add more filters into sql request (Example: 'employee = 1'). This value must not come from user input.
 	 *  @param	integer			$show_every		0=default list, 1=add also a value "Everybody" at beginning of list
 	 *  @param	string			$enableonlytext	If option $enableonlytext is set, we use this text to explain into label why record is disabled. Not used if enableonly is empty.
 	 *  @param	string			$morecss		More css
@@ -2016,9 +2019,9 @@ SCRIPT;
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 		if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && !$user->entity) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."entity as e ON e.rowid=u.entity";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."entity as e ON e.rowid = u.entity";
 			if ($force_entity) {
-				$sql .= " WHERE u.entity IN (0, ".$force_entity.")";
+				$sql .= " WHERE u.entity IN (0, ".$this->db->sanitize($force_entity).")";
 			} else {
 				$sql .= " WHERE u.entity IS NOT NULL";
 			}
@@ -2032,7 +2035,7 @@ SCRIPT;
 			}
 		}
 		if (!empty($user->socid)) {
-			$sql .= " AND u.fk_soc = ".$user->socid;
+			$sql .= " AND u.fk_soc = ".((int) $user->socid);
 		}
 		if (is_array($exclude) && $excludeUsers) {
 			$sql .= " AND u.rowid NOT IN (".$this->db->sanitize($excludeUsers).")";
@@ -2244,7 +2247,7 @@ SCRIPT;
 				$out .= ' ('.$langs->trans("Owner").')';
 			}
 			if ($nbassignetouser > 1 && $action != 'view') {
-				$out .= ' <input type="image" style="border: 0px;" src="'.img_picto($langs->trans("Remove"), 'delete', '', 0, 1).'" value="'.$userstatic->id.'" class="removedassigned" id="removedassigned_'.$userstatic->id.'" name="removedassigned_'.$userstatic->id.'">';
+				$out .= ' <input type="image" style="border: 0px;" src="'.img_picto($langs->trans("Remove"), 'delete', '', 0, 1).'" value="'.$userstatic->id.'" class="removedassigned reposition" id="removedassigned_'.$userstatic->id.'" name="removedassigned_'.$userstatic->id.'">';
 			}
 			// Show my availability
 			if ($showproperties) {
@@ -2275,7 +2278,7 @@ SCRIPT;
 			$out .= '});';
 			$out .= '})</script>';
 			$out .= $this->select_dolusers('', $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity, $maxlength, $showstatus, $morefilter);
-			$out .= ' <input type="submit" disabled class="button valignmiddle smallpaddingimp" id="'.$action.'assignedtouser" name="'.$action.'assignedtouser" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
+			$out .= ' <input type="submit" disabled class="button valignmiddle smallpaddingimp reposition" id="'.$action.'assignedtouser" name="'.$action.'assignedtouser" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
 			$out .= '<br>';
 		}
 
@@ -2610,18 +2613,18 @@ SCRIPT;
 		}
 
 		if ($finished == 0) {
-			$sql .= " AND p.finished = ".$finished;
+			$sql .= " AND p.finished = ".((int) $finished);
 		} elseif ($finished == 1) {
-			$sql .= " AND p.finished = ".$finished;
+			$sql .= " AND p.finished = ".((int) $finished);
 			if ($status >= 0) {
-				$sql .= " AND p.tosell = ".$status;
+				$sql .= " AND p.tosell = ".((int) $status);
 			}
 		} elseif ($status >= 0) {
-			$sql .= " AND p.tosell = ".$status;
+			$sql .= " AND p.tosell = ".((int) $status);
 		}
 		// Filter by product type
 		if (strval($filtertype) != '') {
-			$sql .= " AND p.fk_product_type = ".$filtertype;
+			$sql .= " AND p.fk_product_type = ".((int) $filtertype);
 		} elseif (empty($conf->product->enabled)) { // when product module is disabled, show services only
 			$sql .= " AND p.fk_product_type = 1";
 		} elseif (empty($conf->service->enabled)) { // when service module is disabled, show products only
@@ -3138,6 +3141,10 @@ SCRIPT;
 		global $langs, $conf;
 		global $price_level, $status, $finished;
 
+		if (!isset($status)) {
+			$status = 1;
+		}
+
 		$selected_input_value = '';
 		if (!empty($conf->use_javascript_ajax) && !empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) {
 			if ($selected > 0) {
@@ -3153,7 +3160,7 @@ SCRIPT;
 			print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
 			print ($hidelabel ? '' : $langs->trans("RefOrLabel").' : ').'<input type="text" class="minwidth300" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.($placeholder ? ' placeholder="'.$placeholder.'"' : '').'>';
 		} else {
-			print $this->select_produits_fournisseurs_list($socid, $selected, $htmlname, $filtertype, $filtre, '', -1, 0, 0, $alsoproductwithnosupplierprice, $morecss, 0, $placeholder);
+			print $this->select_produits_fournisseurs_list($socid, $selected, $htmlname, $filtertype, $filtre, '', $status, 0, 0, $alsoproductwithnosupplierprice, $morecss, 0, $placeholder);
 		}
 	}
 
@@ -3161,20 +3168,20 @@ SCRIPT;
 	/**
 	 *	Return list of suppliers products
 	 *
-	 *	@param	int		$socid   		Id societe fournisseur (0 pour aucun filtre)
-	 *	@param  int		$selected       Product price pre-selected (must be 'id' in product_fournisseur_price or 'idprod_IDPROD')
-	 *	@param  string	$htmlname       Nom de la zone select
-	 *  @param	string	$filtertype     Filter on product type (''=nofilter, 0=product, 1=service)
-	 *	@param  string	$filtre         Pour filtre sql
-	 *	@param  string	$filterkey      Filtre des produits
-	 *  @param  int		$statut         -1=Return all products, 0=Products not on sell, 1=Products on sell (not used here, a filter on tobuy is already hard coded in request)
-	 *  @param  int		$outputmode     0=HTML select string, 1=Array
-	 *  @param  int     $limit          Limit of line number
+	 *	@param	int		$socid   			Id of supplier thirdparty (0 = no filter)
+	 *	@param  int		$selected       	Product price pre-selected (must be 'id' in product_fournisseur_price or 'idprod_IDPROD')
+	 *	@param  string	$htmlname       	Name of HTML select
+	 *  @param	string	$filtertype     	Filter on product type (''=nofilter, 0=product, 1=service)
+	 *	@param  string	$filtre         	Generic filter. Data must not come from user input.
+	 *	@param  string	$filterkey      	Filter of produdts
+	 *  @param  int		$statut         	-1=Return all products, 0=Products not on buy, 1=Products on buy
+	 *  @param  int		$outputmode     	0=HTML select string, 1=Array
+	 *  @param  int     $limit          	Limit of line number
 	 *  @param  int     $alsoproductwithnosupplierprice    1=Add also product without supplier prices
-	 *  @param	string	$morecss		Add more CSS
+	 *  @param	string	$morecss			Add more CSS
 	 *  @param	int		$showstockinlist	Show stock information (slower).
-	 *  @param	string	$placeholder	Placeholder
-	 *  @return array           		Array of keys for json
+	 *  @param	string	$placeholder		Placeholder
+	 *  @return array           			Array of keys for json
 	 */
 	public function select_produits_fournisseurs_list($socid, $selected = '', $htmlname = 'productid', $filtertype = '', $filtre = '', $filterkey = '', $statut = -1, $outputmode = 0, $limit = 100, $alsoproductwithnosupplierprice = 0, $morecss = '', $showstockinlist = 0, $placeholder = '')
 	{
@@ -3211,8 +3218,8 @@ SCRIPT;
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON ( p.rowid = pfp.fk_product AND pfp.entity IN (".getEntity('product').") )";
-		if ($socid) {
-			$sql .= " AND pfp.fk_soc = ".$socid;
+		if ($socid > 0) {
+			$sql .= " AND pfp.fk_soc = ".((int) $socid);
 		}
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON pfp.fk_soc = s.rowid";
 		// Units
@@ -3220,9 +3227,11 @@ SCRIPT;
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_units u ON u.rowid = p.fk_unit";
 		}
 		$sql .= " WHERE p.entity IN (".getEntity('product').")";
-		$sql .= " AND p.tobuy = 1";
+		if ($statut != -1) {
+			$sql .= " AND p.tobuy = ".((int) $statut);
+		}
 		if (strval($filtertype) != '') {
-			$sql .= " AND p.fk_product_type=".$this->db->escape($filtertype);
+			$sql .= " AND p.fk_product_type = ".((int) $filtertype);
 		}
 		if (!empty($filtre)) {
 			$sql .= " ".$filtre;
@@ -3783,13 +3792,14 @@ SCRIPT;
 	/**
 	 *      Retourne la liste des types de delais de livraison possibles
 	 *
-	 *      @param	int		$selected        Id du type de delais pre-selectionne
-	 *      @param  string	$htmlname        Nom de la zone select
-	 *      @param  string	$filtertype      To add a filter
+	 *      @param	int		$selected       Id du type de delais pre-selectionne
+	 *      @param  string	$htmlname       Nom de la zone select
+	 *      @param  string	$filtertype     To add a filter
 	 *		@param	int		$addempty		Add empty entry
+	 * 		@param	string	$morecss		More CSS
 	 *		@return	void
 	 */
-	public function selectAvailabilityDelay($selected = '', $htmlname = 'availid', $filtertype = '', $addempty = 0)
+	public function selectAvailabilityDelay($selected = '', $htmlname = 'availid', $filtertype = '', $addempty = 0, $morecss = '')
 	{
 		global $langs, $user;
 
@@ -3797,7 +3807,7 @@ SCRIPT;
 
 		dol_syslog(__METHOD__." selected=".$selected.", htmlname=".$htmlname, LOG_DEBUG);
 
-		print '<select id="'.$htmlname.'" class="flat" name="'.$htmlname.'">';
+		print '<select id="'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
 		if ($addempty) {
 			print '<option value="0">&nbsp;</option>';
 		}
@@ -3807,7 +3817,7 @@ SCRIPT;
 			} else {
 				print '<option value="'.$id.'">';
 			}
-			print $arrayavailability['label'];
+			print dol_escape_htmltag($arrayavailability['label']);
 			print '</option>';
 		}
 		print '</select>';
@@ -3934,7 +3944,6 @@ SCRIPT;
 		$sql = "SELECT id, code, libelle as label, type, active";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_paiement";
 		$sql .= " WHERE entity IN (".getEntity('c_paiement').")";
-		//if ($active >= 0) $sql.= " AND active = ".$active;
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -4167,7 +4176,6 @@ SCRIPT;
 		$sql = "SELECT rowid, code, label, active";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_transport_mode";
 		$sql .= " WHERE entity IN (".getEntity('c_transport_mode').")";
-		//if ($active >= 0) $sql.= " AND active = ".$active;
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -4267,15 +4275,16 @@ SCRIPT;
 	/**
 	 *  Return a HTML select list of shipping mode
 	 *
-	 *  @param	string	$selected          Id shipping mode pre-selected
-	 *  @param  string	$htmlname          Name of select zone
-	 *  @param  string	$filtre            To filter list. This parameter must not come from input of users
-	 *  @param  int		$useempty          1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
-	 *  @param  string	$moreattrib        To add more attribute on select
+	 *  @param	string	$selected           Id shipping mode pre-selected
+	 *  @param  string	$htmlname           Name of select zone
+	 *  @param  string	$filtre             To filter list. This parameter must not come from input of users
+	 *  @param  int		$useempty           1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
+	 *  @param  string	$moreattrib         To add more attribute on select
 	 *	@param	int		$noinfoadmin		0=Add admin info, 1=Disable admin info
+	 *  @param	string	$morecss			More CSS
 	 * 	@return	void
 	 */
-	public function selectShippingMethod($selected = '', $htmlname = 'shipping_method_id', $filtre = '', $useempty = 0, $moreattrib = '', $noinfoadmin = 0)
+	public function selectShippingMethod($selected = '', $htmlname = 'shipping_method_id', $filtre = '', $useempty = 0, $moreattrib = '', $noinfoadmin = 0, $morecss = '')
 	{
 		global $langs, $conf, $user;
 
@@ -4296,7 +4305,7 @@ SCRIPT;
 			$num = $this->db->num_rows($result);
 			$i = 0;
 			if ($num) {
-				print '<select id="select'.$htmlname.'" class="flat selectshippingmethod" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
+				print '<select id="select'.$htmlname.'" class="flat selectshippingmethod'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
 				if ($useempty == 1 || ($useempty == 2 && $num > 1)) {
 					print '<option value="-1">&nbsp;</option>';
 				}
@@ -5000,7 +5009,7 @@ SCRIPT;
                          			var more = "";
 									var inputvalue;
                          			if ($("input[name=\'" + inputname + "\']").attr("type") == "radio") {
-										inputvalue = $("input[name=\'" + inputname + "\']").val();
+										inputvalue = $("input[name=\'" + inputname + "\']:checked").val();
 									} else {
                          		    	if ($("#" + inputname).attr("type") == "checkbox") { more = ":checked"; }
                          				inputvalue = $("#" + inputname + more).val();
@@ -5059,16 +5068,18 @@ SCRIPT;
 			$formconfirm .= '<table class="valid centpercent">'."\n";
 
 			// Line title
-			$formconfirm .= '<tr class="validtitre"><td class="validtitre" colspan="3">'.img_picto('', 'recent').' '.$title.'</td></tr>'."\n";
+			$formconfirm .= '<tr class="validtitre"><td class="validtitre" colspan="2">';
+			$formconfirm .= img_picto('', 'recent').' '.$title;
+			$formconfirm .= '</td></tr>'."\n";
 
 			// Line text
 			if (is_array($formquestion) && !empty($formquestion['text'])) {
-				$formconfirm .= '<tr class="valid"><td class="valid" colspan="3">'.$formquestion['text'].'</td></tr>'."\n";
+				$formconfirm .= '<tr class="valid"><td class="valid" colspan="2">'.$formquestion['text'].'</td></tr>'."\n";
 			}
 
 			// Line form fields
 			if ($more) {
-				$formconfirm .= '<tr class="valid"><td class="valid" colspan="3">'."\n";
+				$formconfirm .= '<tr class="valid"><td class="valid" colspan="2">'."\n";
 				$formconfirm .= $more;
 				$formconfirm .= '</td></tr>'."\n";
 			}
@@ -5076,10 +5087,10 @@ SCRIPT;
 			// Line with question
 			$formconfirm .= '<tr class="valid">';
 			$formconfirm .= '<td class="valid">'.$question.'</td>';
-			$formconfirm .= '<td class="valid">';
-			$formconfirm .= $this->selectyesno("confirm", $newselectedchoice);
+			$formconfirm .= '<td class="valid center">';
+			$formconfirm .= $this->selectyesno("confirm", $newselectedchoice, 0, false, 0, 0, 'marginleftonly marginrightonly');
+			$formconfirm .= '<input class="button valignmiddle confirmvalidatebutton" type="submit" value="'.$langs->trans("Validate").'">';
 			$formconfirm .= '</td>';
-			$formconfirm .= '<td class="valid center"><input class="button valignmiddle confirmvalidatebutton" type="submit" value="'.$langs->trans("Validate").'"></td>';
 			$formconfirm .= '</tr>'."\n";
 
 			$formconfirm .= '</table>'."\n";
@@ -5287,7 +5298,7 @@ SCRIPT;
 			$ret .= '<form method="post" action="'.$page.'" name="form'.$htmlname.'">';
 			$ret .= '<input type="hidden" name="action" value="set'.$htmlname.'">';
 			$ret .= '<input type="hidden" name="token" value="'.newToken().'">';
-			$ret .= '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+			$ret .= '<table class="nobordernopadding">';
 			$ret .= '<tr><td>';
 			$ret .= $this->selectDate($selected, $htmlname, $displayhour, $displaymin, 1, 'form'.$htmlname, 1, 0);
 			$ret .= '</td>';
@@ -5392,9 +5403,9 @@ SCRIPT;
 		global $langs;
 		if ($htmlname != "none") {
 			print '<form method="POST" action="'.$page.'">';
-			print '<input type="hidden" name="action" value="setmode">';
+			print '<input type="hidden" name="action" value="settransportmode">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
-			$this->selectTransportMode($selected, $htmlname, 2, $addempty, 0, 0, $active);
+			$this->selectTransportMode($selected, $htmlname, 0, $addempty, 0, 0, $active);
 			print '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
 			print '</form>';
 		} else {
@@ -5591,7 +5602,7 @@ SCRIPT;
 			print '<form method="post" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="set_contact">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+			print '<table class="nobordernopadding">';
 			print '<tr><td>';
 			print $this->selectcontacts($societe->id, $selected, $htmlname, 0, '', '', 0, '', false, 0, 0, array(), '', '', false, 0, true);
 			$num = $this->num;
@@ -6907,7 +6918,7 @@ SCRIPT;
 				{
 					throw new RestException(503, 'Error when validating parameter sqlfilters '.$objecttmp->filter);
 				}*/
-				$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+				$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 				$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'Form::forgeCriteriaCallback', $objecttmp->filter).")";
 			}
 		}
@@ -6943,9 +6954,12 @@ SCRIPT;
 					$obj = $this->db->fetch_object($resql);
 					$label = '';
 					$tmparray = explode(',', $fieldstoshow);
+					$oldvalueforshowoncombobox = 0;
 					foreach ($tmparray as $key => $val) {
 						$val = preg_replace('/t\./', '', $val);
-						$label .= (($label && $obj->$val) ? ' - ' : '').$obj->$val;
+						$label .= (($label && $obj->$val) ? ($oldvalueforshowoncombobox != $objecttmp->fields[$val]['showoncombobox'] ? ' - ' : ' ') : '');
+						$label .= $obj->$val;
+						$oldvalueforshowoncombobox = $objecttmp->fields[$val]['showoncombobox'];
 					}
 					if (empty($outputmode)) {
 						if ($preselectedvalue > 0 && $preselectedvalue == $obj->rowid) {
@@ -7033,7 +7047,7 @@ SCRIPT;
 		if ($addjscombo && $jsbeautify) {
 			// Enhance with select2
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-			$out .= ajax_combobox($htmlname);
+			$out .= ajax_combobox($htmlname, array(), 0, 0, 'resolve', $show_empty < 0 ? (string) $show_empty : '-1');
 		}
 
 		$out .= '<select id="'.preg_replace('/^\./', '', $htmlname).'" '.($disabled ? 'disabled="disabled" ' : '').'class="flat '.(preg_replace('/^\./', '', $htmlname)).($morecss ? ' '.$morecss : '').'"';
@@ -7510,7 +7524,7 @@ SCRIPT;
 			}
 		}
 
-		$lis = '';
+		$listoffieldsforselection = '';
 		$listcheckedstring = '';
 
 		foreach ($array as $key => $val) {
@@ -7521,13 +7535,18 @@ SCRIPT;
 				unset($array[$key]); // We don't want this field
 				continue;
 			}
+			if (!empty($val['type']) && $val['type'] == 'separate') {
+				// Field remains in array but we don't add it into $listoffieldsforselection
+				//$listoffieldsforselection .= '<li>-----</li>';
+				continue;
+			}
 			if ($val['label']) {
 				if (!empty($val['langfile']) && is_object($langs)) {
 					$langs->load($val['langfile']);
 				}
 
 				// Note: $val['checked'] <> 0 means we must show the field into the combo list
-				$lis .= '<li><input type="checkbox" id="checkbox'.$key.'" value="'.$key.'"'.((empty($val['checked']) && $val['checked'] != '-1') ? '' : ' checked="checked"').'/><label for="checkbox'.$key.'">'.dol_escape_htmltag($langs->trans($val['label'])).'</label></li>';
+				$listoffieldsforselection .= '<li><input type="checkbox" id="checkbox'.$key.'" value="'.$key.'"'.((empty($val['checked']) && $val['checked'] != '-1') ? '' : ' checked="checked"').'/><label for="checkbox'.$key.'">'.dol_escape_htmltag($langs->trans($val['label'])).'</label></li>';
 				$listcheckedstring .= (empty($val['checked']) ? '' : $key.',');
 			}
 		}
@@ -7544,7 +7563,7 @@ SCRIPT;
             <dd class="dropdowndd">
                 <div class="multiselectcheckbox'.$htmlname.'">
                     <ul class="ul'.$htmlname.'">
-                    '.$lis.'
+                    '.$listoffieldsforselection.'
                     </ul>
                 </div>
             </dd>
@@ -7805,8 +7824,12 @@ SCRIPT;
 				'order'=>array('enabled'=>$conf->commande->enabled, 'perms'=>1, 'label'=>'LinkToOrder', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('commande').')'),
 				'invoice'=>array('enabled'=>$conf->facture->enabled, 'perms'=>1, 'label'=>'LinkToInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('invoice').')'),
 				'invoice_template'=>array('enabled'=>$conf->facture->enabled, 'perms'=>1, 'label'=>'LinkToTemplateInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.titre as ref, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_rec as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('invoice').')'),
-				'contrat'=>array('enabled'=>$conf->contrat->enabled, 'perms'=>1, 'label'=>'LinkToContract',
-								'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_customer as ref_client, t.ref_supplier, SUM(td.total_ht) as total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as t, ".MAIN_DB_PREFIX."contratdet as td WHERE t.fk_soc = s.rowid AND td.fk_contrat = t.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('contract').')'),
+				'contrat'=>array(
+					'enabled'=>$conf->contrat->enabled,
+					'perms'=>1,
+					'label'=>'LinkToContract',
+					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_customer as ref_client, t.ref_supplier, SUM(td.total_ht) as total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as t, ".MAIN_DB_PREFIX."contratdet as td WHERE t.fk_soc = s.rowid AND td.fk_contrat = t.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('contract').') GROUP BY s.rowid, s.nom, s.client, t.rowid, t.ref, t.ref_customer, t.ref_supplier'
+				),
 				'fichinter'=>array('enabled'=>$conf->ficheinter->enabled, 'perms'=>1, 'label'=>'LinkToIntervention', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('intervention').')'),
 				'supplier_proposal'=>array('enabled'=>$conf->supplier_proposal->enabled, 'perms'=>1, 'label'=>'LinkToSupplierProposal', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, '' as ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."supplier_proposal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('supplier_proposal').')'),
 				'order_supplier'=>array('enabled'=>$conf->supplier_order->enabled, 'perms'=>1, 'label'=>'LinkToSupplierOrder', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande_fournisseur as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('commande_fournisseur').')'),
@@ -7946,9 +7969,10 @@ SCRIPT;
 	 *	@param	bool		$disabled		true or false
 	 *  @param	int      	$useempty		1=Add empty line
 	 *  @param	int			$addjscombo		1=Add js beautifier on combo box
+	 *  @param	string		$morecss		More CSS
 	 *	@return	string						See option
 	 */
-	public function selectyesno($htmlname, $value = '', $option = 0, $disabled = false, $useempty = 0, $addjscombo = 0)
+	public function selectyesno($htmlname, $value = '', $option = 0, $disabled = false, $useempty = 0, $addjscombo = 0, $morecss = '')
 	{
 		global $langs;
 
@@ -7961,7 +7985,7 @@ SCRIPT;
 
 		$disabled = ($disabled ? ' disabled' : '');
 
-		$resultyesno = '<select class="flat width75" id="'.$htmlname.'" name="'.$htmlname.'"'.$disabled.'>'."\n";
+		$resultyesno = '<select class="flat width75'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.'"'.$disabled.'>'."\n";
 		if ($useempty) {
 			$resultyesno .= '<option value="-1"'.(($value < 0) ? ' selected' : '').'>&nbsp;</option>'."\n";
 		}
@@ -8232,13 +8256,14 @@ SCRIPT;
 
 
 	/**
-	 *    	Return HTML code to output a barcode
+	 *  Return HTML code to output a barcode
 	 *
-	 *     	@param	Object	$object		Object containing data to retrieve file name
-	 * 		@param	int		$width			Width of photo
-	 * 	  	@return string    				HTML code to output barcode
+	 *  @param	Object	$object			Object containing data to retrieve file name
+	 * 	@param	int		$width			Width of photo
+	 * 	@param	string	$morecss		More CSS on img of barcode
+	 * 	@return string    				HTML code to output barcode
 	 */
-	public function showbarcode(&$object, $width = 100)
+	public function showbarcode(&$object, $width = 100, $morecss = '')
 	{
 		global $conf;
 
@@ -8259,7 +8284,7 @@ SCRIPT;
 		// Barcode image
 		$url = DOL_URL_ROOT.'/viewimage.php?modulepart=barcode&generator='.urlencode($object->barcode_type_coder).'&code='.urlencode($object->barcode).'&encoding='.urlencode($object->barcode_type_code);
 		$out = '<!-- url barcode = '.$url.' -->';
-		$out .= '<img src="'.$url.'">';
+		$out .= '<img src="'.$url.'"'.($morecss ? ' class="'.$morecss.'"' : '').'>';
 		return $out;
 	}
 
@@ -8296,41 +8321,47 @@ SCRIPT;
 		if ($modulepart == 'societe') {
 			$dir = $conf->societe->multidir_output[$entity];
 			if (!empty($object->logo)) {
-				if ((string) $imagesize == 'mini') {
-					$file = get_exdir(0, 0, 0, 0, $object, 'thirdparty').'logos/'.getImageFileNameForSize($object->logo, '_mini'); // getImageFileNameForSize include the thumbs
-				} elseif ((string) $imagesize == 'small') {
-					$file = get_exdir(0, 0, 0, 0, $object, 'thirdparty').'logos/'.getImageFileNameForSize($object->logo, '_small');
-				} else {
-					$file = get_exdir(0, 0, 0, 0, $object, 'thirdparty').'logos/'.$object->logo;
+				if (dolIsAllowedForPreview($object->logo)) {
+					if ((string) $imagesize == 'mini') {
+						$file = get_exdir(0, 0, 0, 0, $object, 'thirdparty').'logos/'.getImageFileNameForSize($object->logo, '_mini'); // getImageFileNameForSize include the thumbs
+					} elseif ((string) $imagesize == 'small') {
+						$file = get_exdir(0, 0, 0, 0, $object, 'thirdparty').'logos/'.getImageFileNameForSize($object->logo, '_small');
+					} else {
+						$file = get_exdir(0, 0, 0, 0, $object, 'thirdparty').'logos/'.$object->logo;
+					}
+					$originalfile = get_exdir(0, 0, 0, 0, $object, 'thirdparty').'logos/'.$object->logo;
 				}
-				$originalfile = get_exdir(0, 0, 0, 0, $object, 'thirdparty').'logos/'.$object->logo;
 			}
 			$email = $object->email;
 		} elseif ($modulepart == 'contact')	{
 			$dir = $conf->societe->multidir_output[$entity].'/contact';
 			if (!empty($object->photo)) {
-				if ((string) $imagesize == 'mini') {
-					$file = get_exdir(0, 0, 0, 0, $object, 'contact').'photos/'.getImageFileNameForSize($object->photo, '_mini');
-				} elseif ((string) $imagesize == 'small') {
-					$file = get_exdir(0, 0, 0, 0, $object, 'contact').'photos/'.getImageFileNameForSize($object->photo, '_small');
-				} else {
-					$file = get_exdir(0, 0, 0, 0, $object, 'contact').'photos/'.$object->photo;
+				if (dolIsAllowedForPreview($object->photo)) {
+					if ((string) $imagesize == 'mini') {
+						$file = get_exdir(0, 0, 0, 0, $object, 'contact').'photos/'.getImageFileNameForSize($object->photo, '_mini');
+					} elseif ((string) $imagesize == 'small') {
+						$file = get_exdir(0, 0, 0, 0, $object, 'contact').'photos/'.getImageFileNameForSize($object->photo, '_small');
+					} else {
+						$file = get_exdir(0, 0, 0, 0, $object, 'contact').'photos/'.$object->photo;
+					}
+					$originalfile = get_exdir(0, 0, 0, 0, $object, 'contact').'photos/'.$object->photo;
 				}
-				$originalfile = get_exdir(0, 0, 0, 0, $object, 'contact').'photos/'.$object->photo;
 			}
 			$email = $object->email;
 			$capture = 'user';
 		} elseif ($modulepart == 'userphoto') {
 			$dir = $conf->user->dir_output;
 			if (!empty($object->photo)) {
-				if ((string) $imagesize == 'mini') {
-					$file = get_exdir(0, 0, 0, 0, $object, 'user').getImageFileNameForSize($object->photo, '_mini');
-				} elseif ((string) $imagesize == 'small') {
-					$file = get_exdir(0, 0, 0, 0, $object, 'user').getImageFileNameForSize($object->photo, '_small');
-				} else {
-					$file = get_exdir(0, 0, 0, 0, $object, 'user').$object->photo;
+				if (dolIsAllowedForPreview($object->photo)) {
+					if ((string) $imagesize == 'mini') {
+						$file = get_exdir(0, 0, 0, 0, $object, 'user').getImageFileNameForSize($object->photo, '_mini');
+					} elseif ((string) $imagesize == 'small') {
+						$file = get_exdir(0, 0, 0, 0, $object, 'user').getImageFileNameForSize($object->photo, '_small');
+					} else {
+						$file = get_exdir(0, 0, 0, 0, $object, 'user').$object->photo;
+					}
+					$originalfile = get_exdir(0, 0, 0, 0, $object, 'user').$object->photo;
 				}
-				$originalfile = get_exdir(0, 0, 0, 0, $object, 'user').$object->photo;
 			}
 			if (!empty($conf->global->MAIN_OLD_IMAGE_LINKS)) {
 				$altfile = $object->id.".jpg"; // For backward compatibility
@@ -8340,14 +8371,16 @@ SCRIPT;
 		} elseif ($modulepart == 'memberphoto')	{
 			$dir = $conf->adherent->dir_output;
 			if (!empty($object->photo)) {
-				if ((string) $imagesize == 'mini') {
-					$file = get_exdir(0, 0, 0, 0, $object, 'member').'photos/'.getImageFileNameForSize($object->photo, '_mini');
-				} elseif ((string) $imagesize == 'small') {
-					$file = get_exdir(0, 0, 0, 0, $object, 'member').'photos/'.getImageFileNameForSize($object->photo, '_small');
-				} else {
-					$file = get_exdir(0, 0, 0, 0, $object, 'member').'photos/'.$object->photo;
+				if (dolIsAllowedForPreview($object->photo)) {
+					if ((string) $imagesize == 'mini') {
+						$file = get_exdir(0, 0, 0, 0, $object, 'member').'photos/'.getImageFileNameForSize($object->photo, '_mini');
+					} elseif ((string) $imagesize == 'small') {
+						$file = get_exdir(0, 0, 0, 0, $object, 'member').'photos/'.getImageFileNameForSize($object->photo, '_small');
+					} else {
+						$file = get_exdir(0, 0, 0, 0, $object, 'member').'photos/'.$object->photo;
+					}
+					$originalfile = get_exdir(0, 0, 0, 0, $object, 'member').'photos/'.$object->photo;
 				}
-				$originalfile = get_exdir(0, 0, 0, 0, $object, 'member').'photos/'.$object->photo;
 			}
 			if (!empty($conf->global->MAIN_OLD_IMAGE_LINKS)) {
 				$altfile = $object->id.".jpg"; // For backward compatibility
@@ -8358,14 +8391,16 @@ SCRIPT;
 			// Generic case to show photos
 			$dir = $conf->$modulepart->dir_output;
 			if (!empty($object->photo)) {
-				if ((string) $imagesize == 'mini') {
-					$file = get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.getImageFileNameForSize($object->photo, '_mini');
-				} elseif ((string) $imagesize == 'small') {
-					$file = get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.getImageFileNameForSize($object->photo, '_small');
-				} else {
-					$file = get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.$object->photo;
+				if (dolIsAllowedForPreview($object->photo)) {
+					if ((string) $imagesize == 'mini') {
+						$file = get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.getImageFileNameForSize($object->photo, '_mini');
+					} elseif ((string) $imagesize == 'small') {
+						$file = get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.getImageFileNameForSize($object->photo, '_small');
+					} else {
+						$file = get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.$object->photo;
+					}
+					$originalfile = get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.$object->photo;
 				}
-				$originalfile = get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.$object->photo;
 			}
 			if (!empty($conf->global->MAIN_OLD_IMAGE_LINKS)) {
 				$altfile = $object->id.".jpg"; // For backward compatibility
@@ -8412,10 +8447,10 @@ SCRIPT;
 						$nophoto = 'company';
 					} else {
 						$nophoto = '/public/theme/common/user_anonymous.png';
-						if ($object->gender == 'man') {
+						if (!empty($object->gender) && $object->gender == 'man') {
 							$nophoto = '/public/theme/common/user_man.png';
 						}
-						if ($object->gender == 'woman') {
+						if (!empty($object->gender) && $object->gender == 'woman') {
 							$nophoto = '/public/theme/common/user_woman.png';
 						}
 					}
@@ -8575,7 +8610,7 @@ SCRIPT;
 	 */
 	public function showFilterButtons()
 	{
-		$out = '<div class="nowrap">';
+		$out = '<div class="nowraponall">';
 		$out .= '<button type="submit" class="liste_titre button_search" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
 		$out .= '<button type="submit" class="liste_titre button_removefilter" name="button_removefilter_x" value="x"><span class="fa fa-remove"></span></button>';
 		$out .= '</div>';
@@ -8709,14 +8744,11 @@ SCRIPT;
 
 									if ($("select[name='.$target.']").val() == '.$obj->id.') {
 										// get price of kilometer to fill the unit price
-										var data = '.json_encode($params).';
-										data.fk_c_exp_tax_cat = $(this).val();
-
 										$.ajax({
 											method: "POST",
 											dataType: "json",
-											data: data,
-											url: "'.(DOL_URL_ROOT.'/expensereport/ajax/ajaxik.php').'",
+											data: { fk_c_exp_tax_cat: $(this).val(), token: \''.currentToken().'\' },
+											url: "'.(DOL_URL_ROOT.'/expensereport/ajax/ajaxik.php?'.$params).'",
 										}).done(function( data, textStatus, jqXHR ) {
 											console.log(data);
 											if (typeof data.up != "undefined") {
@@ -8863,8 +8895,8 @@ SCRIPT;
 		}
 
 		// Search all projects
-		$sql = 'SELECT f.rowid, f.ref as fref, "nolabel" as flabel, p.rowid as pid, f.ref,
-            p.title, p.fk_soc, p.fk_statut, p.public,';
+		$sql = "SELECT f.rowid, f.ref as fref, 'nolabel' as flabel, p.rowid as pid, f.ref,
+            p.title, p.fk_soc, p.fk_statut, p.public,";
 		$sql .= ' s.nom as name';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'projet as p';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON s.rowid = p.fk_soc,';
@@ -8874,7 +8906,7 @@ SCRIPT;
 		//if ($projectsListId) $sql.= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")";
 		//if ($socid == 0) $sql.= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
 		//if ($socid > 0)  $sql.= " AND (p.fk_soc=".$socid." OR p.fk_soc IS NULL)";
-		$sql .= " GROUP BY f.ref ORDER BY p.ref, f.ref ASC";
+		$sql .= " ORDER BY p.ref, f.ref ASC";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

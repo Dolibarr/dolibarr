@@ -289,6 +289,8 @@ function LoadProducts(position, issubcat) {
 		if (currentcat==val.fk_parent) {
 			$("#prodivdesc"+ishow).show();
 			$("#prodesc"+ishow).text(val.label);
+			$("#probutton"+ishow).text(val.label);
+			$("#probutton"+ishow).show();
 			$("#proprice"+ishow).attr("class", "hidden");
 			$("#proprice"+ishow).html("");
 			$("#proimg"+ishow).attr("src","genimg/index.php?query=cat&id="+val.rowid);
@@ -386,6 +388,8 @@ function MoreProducts(moreorless) {
 			if (typeof (data[idata]) == "undefined") {
 				$("#prodivdesc"+ishow).hide();
 				$("#prodesc"+ishow).text("");
+				$("#probutton"+ishow).text("");
+				$("#probutton"+ishow).hide();
 				$("#proprice"+ishow).attr("class", "");
 				$("#proprice"+ishow).html("");
 				$("#proimg"+ishow).attr("src","genimg/empty.png");
@@ -396,6 +400,8 @@ function MoreProducts(moreorless) {
 				//Only show products with status=1 (for sell)
 				$("#prodivdesc"+ishow).show();
 				$("#prodesc"+ishow).text(data[parseInt(idata)]['label']);
+				$("#probutton"+ishow).text(data[parseInt(idata)]['label']);
+				$("#probutton"+ishow).show();
 				if (data[parseInt(idata)]['price_formated']) {
 					$("#proprice"+ishow).attr("class", "productprice");
 					$("#proprice"+ishow).html(data[parseInt(idata)]['price_formated']);
@@ -544,6 +550,8 @@ function Search2(keyCodeForEnter) {
 			for (i = 0; i < <?php echo $MAXPRODUCT ?>; i++) {
 				if (typeof (data[i]) == "undefined") {
 					$("#prodesc" + i).text("");
+					$("#probutton" + i).text("");
+					$("#probutton" + i).hide();
 					$("#proprice" + i).attr("class", "hidden");
 					$("#proprice" + i).html("");
 					$("#proimg" + i).attr("src", "genimg/empty.png");
@@ -557,6 +565,8 @@ function Search2(keyCodeForEnter) {
 				var titlestring = <?php echo $titlestring; ?>;
 				$("#prodesc" + i).text(data[i]['label']);
 				$("#prodivdesc" + i).show();
+				$("#probutton" + i).text(data[i]['label']);
+				$("#probutton" + i).show();
 				if (data[i]['price_formated']) {
 					$("#proprice" + i).attr("class", "productprice");
 					$("#proprice" + i).html(data[i]['price_formated']);
@@ -695,6 +705,7 @@ function OpenDrawer(){
 	console.log("OpenDrawer call ajax url http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print");
 	$.ajax({
 		type: "POST",
+		data: { token: 'notrequired' },
 		<?php
 		if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
 			echo "url: '".$conf->global->TAKEPOS_PRINT_SERVER."/printer/drawer.php',";
@@ -707,10 +718,11 @@ function OpenDrawer(){
 }
 
 function DolibarrOpenDrawer() {
-	console.log("DolibarrOpenDrawer call ajax url /takepos/ajax/ajax.php?action=opendrawer&term=<?php print $_SESSION["takeposterminal"] ?>");
+	console.log("DolibarrOpenDrawer call ajax url /takepos/ajax/ajax.php?action=opendrawer&term=<?php print urlencode($_SESSION["takeposterminal"]); ?>");
 	$.ajax({
 		type: "GET",
-		url: "<?php print dol_buildpath('/takepos/ajax/ajax.php', 1).'?action=opendrawer&term='.$_SESSION["takeposterminal"]; ?>",
+		data: { token: '<?php echo currentToken(); ?>' },
+		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=opendrawer&term='.urlencode($_SESSION["takeposterminal"]); ?>",
 	});
 }
 
@@ -767,6 +779,7 @@ function WeighingScale(){
 	console.log("Weighing Scale");
 	$.ajax({
 		type: "POST",
+		data: { token: 'notrequired' },
 		url: '<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>/scale/index.php',
 	})
 	.done(function( editnumber ) {
@@ -1029,7 +1042,7 @@ if ($conf->global->TAKEPOS_DIRECT_PAYMENT) {
 // BAR RESTAURANT specific menu
 if ($conf->global->TAKEPOS_BAR_RESTAURANT) {
 	if ($conf->global->TAKEPOS_ORDER_PRINTERS) {
-		$menus[$r++] = array('title'=>$langs->trans("Order"), 'action'=>'TakeposPrintingOrder();');
+		$menus[$r++] = array('title'=>'<span class="fa fa-blender-phone paddingrightonly"></span><div class="trunc">'.$langs->trans("Order").'</span>', 'action'=>'TakeposPrintingOrder();');
 	}
 	//Button to print receipt before payment
 	if ($conf->global->TAKEPOS_BAR_RESTAURANT) {

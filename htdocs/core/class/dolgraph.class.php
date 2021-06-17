@@ -1259,7 +1259,7 @@ class DolGraph
 				if ($i > 0) {
 					$this->stringtoshow .= ', ';
 				}
-				$this->stringtoshow .= "'" . dol_escape_js(dol_trunc($val, 22)) . "'";
+				$this->stringtoshow .= "'" . dol_escape_js(dol_trunc($val, 25)) . "'";	// Lower than 25 make some important label (that we can't shorten) to be truncated
 				$i++;
 			}
 

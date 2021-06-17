@@ -168,8 +168,8 @@ class PaymentSalary extends CommonObject
 			$sql .= " fk_typepayment, num_payment, note, fk_user_author, fk_bank)";
 			$sql .= " VALUES ($this->chid, '".$this->db->idate($now)."',";
 			$sql .= " '".$this->db->idate($this->datepaye)."',";
-			$sql .= " ".$totalamount.",";
-			$sql .= " ".$this->paiementtype.", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note)."', ".$user->id.",";
+			$sql .= " ".price2num($totalamount).",";
+			$sql .= " ".((int) $this->paiementtype).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note)."', ".((int) $user->id).",";
 			$sql .= " 0)";
 
 			$resql = $this->db->query($sql);

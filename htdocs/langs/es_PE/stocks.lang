@@ -9,4 +9,5 @@ MovementLabel=Etiqueta de movimiento
 MovementCorrectStock=Corrección de stock del producto %s
 inventoryEdit=Editar
 AddProduct=Agregar
+ListInventory=Lista
 DisableStockChangeOfSubProduct=Desactiva el cambio de stock para todos los productos de este Kit durante este movimiento.

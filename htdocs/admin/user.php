@@ -109,6 +109,7 @@ if ($action == 'set_default') {
 	}
 }
 
+
 /*
  * View
  */
@@ -126,6 +127,7 @@ $head = user_admin_prepare_head();
 
 print dol_get_fiche_head($head, 'card', $langs->trans("MenuUsersAndGroups"), -1, 'user');
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
@@ -171,6 +173,7 @@ if ($conf->use_javascript_ajax) {
 print '</td></tr>';
 
 print '</table>';
+print '</div>';
 
 print '<br>';
 
@@ -197,6 +200,7 @@ if ($resql) {
 
 print load_fiche_titre($langs->trans("UsersDocModules"), '', '');
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
@@ -306,7 +310,9 @@ foreach ($dirmodels as $reldir) {
 }
 
 print '</table>';
-print "<br>";
+print '</div>';
+
+print '<br>';
 
 print dol_get_fiche_end();
 

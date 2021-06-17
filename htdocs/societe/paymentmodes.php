@@ -677,6 +677,11 @@ $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
 
+$title = $langs->trans("ThirdParty");
+if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+	$title = $object->name." - ".$langs->trans('PaymentInformation');
+}
+
 llxHeader();
 
 $head = societe_prepare_head($object);
@@ -972,8 +977,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX."societe_rib";
 			$sql .= " WHERE type in ('card')";
-			$sql .= " AND fk_soc = ".$object->id;
-			$sql .= " AND status = ".$servicestatus;
+			$sql .= " AND fk_soc = ".((int) $object->id);
+			$sql .= " AND status = ".((int) $servicestatus);
 
 			$resql = $db->query($sql);
 			if ($resql) {

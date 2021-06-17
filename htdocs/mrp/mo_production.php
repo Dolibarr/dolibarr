@@ -145,11 +145,11 @@ if (empty($reshook)) {
 		$object->setProject(GETPOST('projectid', 'int'));
 	}
 
-	if ($action == 'confirm_reopen') {
+	if ($action == 'confirm_reopen' && $permissiontoadd) {
 		$result = $object->setStatut($object::STATUS_INPROGRESS, 0, '', 'MRP_REOPEN');
 	}
 
-	if ($action == 'confirm_addconsumeline' && GETPOST('addconsumelinebutton')) {
+	if ($action == 'confirm_addconsumeline' && GETPOST('addconsumelinebutton') && $permissiontoadd) {
 		$moline = new MoLine($db);
 
 		// Line to produce
@@ -169,7 +169,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if (in_array($action, array('confirm_consumeorproduce', 'confirm_consumeandproduceall'))) {
+	if (in_array($action, array('confirm_consumeorproduce', 'confirm_consumeandproduceall')) && $permissiontoproduce) {
 		$stockmove = new MouvementStock($db);
 
 		$labelmovement = GETPOST('inventorylabel', 'alphanohtml');
@@ -707,16 +707,21 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Product").'</td>';
+		// Qty
 		print '<td class="right">'.$langs->trans("Qty").'</td>';
+		// Cost price
 		if ($permissiontoupdatecost && !empty($conf->global->MRP_SHOW_COST_FOR_CONSUMPTION)) {
 			print '<td class="right">'.$langs->trans("UnitCost").'</td>';
 		}
+		// Qty already consumed
 		print '<td class="right">'.$langs->trans("QtyAlreadyConsumed").'</td>';
+		// Warehouse
 		print '<td>';
 		if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
 			print $langs->trans("Warehouse");
 		}
 		print '</td>';
+		// Lot - serial
 		if ($conf->productbatch->enabled) {
 			print '<td>';
 			if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
@@ -724,6 +729,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 			print '</td>';
 		}
+		// Action
 		if ($permissiontodelete) {
 			print '<td></td>';
 		}
@@ -735,15 +741,24 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '<td>';
 			print $form->select_produits('', 'productidtoadd', '', 0, 0, -1, 2, '', 0, array(), 0, '1', 0, 'maxwidth300');
 			print '</td>';
+			// Qty
 			print '<td class="right"><input type="text" name="qtytoadd" value="1" class="width50 right"></td>';
+			// Cost price
 			if ($permissiontoupdatecost && !empty($conf->global->MRP_SHOW_COST_FOR_CONSUMPTION)) {
 				print '<td></td>';
 			}
-			print '<td class="right"></td>';
+			// Qty already consumed
+			print '<td></td>';
+			// Warehouse
 			print '<td>';
 			print '<input type="submit" class="button buttongen" name="addconsumelinebutton" value="'.$langs->trans("Add").'">';
 			print '</td>';
+			// Lot - serial
 			if ($conf->productbatch->enabled) {
+				print '<td></td>';
+			}
+			// Action
+			if ($permissiontodelete) {
 				print '<td></td>';
 			}
 			print '</tr>';

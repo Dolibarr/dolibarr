@@ -1,11 +1,5 @@
 <?php
-/* Copyright (C) 2001-2002  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2001-2002  Jean-Louis Bergamo      <jlb@j1b.org>
- * Copyright (C) 2006-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+/* Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +61,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/paymentterm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+
+global $dolibarr_main_instance_unique_id;
+global $dolibarr_main_url_root;
 
 // Init vars
 $errmsg = '';
@@ -77,15 +76,15 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
 $email = GETPOST("email");
+$societe = GETPOST("societe");
 
 // Getting id from Post and decoding it
-$encodedid = GETPOST('id');
-$id = dol_decode($encodedid, $dolibarr_main_instance_unique_id);
+$id = GETPOST('id');
 
 $conference = new ConferenceOrBooth($db);
 $resultconf = $conference->fetch($id);
 if ($resultconf < 0) {
-	setEventMessages(null, $object->errors, "errors");
+	setEventMessages(null, $conference->errors, "errors");
 }
 
 $project = new Project($db);
@@ -95,16 +94,13 @@ if ($resultproject < 0) {
 	$errmsg .= $project->error;
 }
 
-// Getting 'securekey'.'id' from Post and decoding it
-$encodedsecurekeyandid = GETPOST('securekey', 'alpha');
-$securekeyandid = dol_decode($encodedsecurekeyandid, $dolibarr_main_instance_unique_id);
 
-// Securekey decomposition into pure securekey and id added at the end
-$securekey = substr($securekeyandid, 0, strlen($securekeyandid)-strlen($encodedid));
-$idgotfromsecurekey = dol_decode(substr($securekeyandid, -strlen($encodedid), strlen($encodedid)), $dolibarr_main_instance_unique_id);
+// Security check
+$securekeyreceived = GETPOST('securekey', 'alpha');
+$securekeytocompare = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
 
-// We check if the securekey collected is OK and if the id collected is the same than the id in the securekey
-if ($securekey != $conf->global->EVENTORGANIZATION_SECUREKEY || $idgotfromsecurekey != $id) {
+// We check if the securekey collected is OK
+if ($securekeytocompare != $securekeyreceived) {
 	print $langs->trans('MissingOrBadSecureKey');
 	exit;
 }
@@ -118,6 +114,11 @@ $hookmanager->initHooks(array('publicnewmembercard', 'globalcard'));
 $extrafields = new ExtraFields($db);
 
 $user->loadDefaultValues();
+
+// Security check
+if (empty($conf->eventorganization->enabled)) {
+	accessforbidden('', 0, 0, 1);
+}
 
 
 /**
@@ -188,6 +189,7 @@ function llxFooterVierge()
 /*
  * Actions
  */
+global $mysoc;
 $parameters = array();
 // Note that $action and $object may have been modified by some hooks
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
@@ -223,30 +225,72 @@ if (empty($reshook) && $action == 'add') {
 	}
 
 	if (!$error) {
-		// Vérifier si client existe par l'email
-		$thirdparty = new Societe($db);
-		$resultfetchthirdparty = $thirdparty->fetch('', '', '', '', '', '', '', '', '', '', $email);
+		// Check if attendee already exists (by email and for this event)
+		$confattendee = new ConferenceOrBoothAttendee($db);
+		$resultfetchconfattendee = $confattendee->fetchAll('', '', 0, 0, array('t.fk_actioncomm'=>$id, 'customsql'=>'t.email="'.$email.'"'));
+		if ($resultfetchconfattendee > 0 && count($resultfetchconfattendee)>0) {
+			// Found confattendee
+			$confattendee = array_shift($resultfetchconfattendee);
+		} else {
+			// Need to create a confattendee
+			$confattendee->date_subscription = dol_now();
+			$confattendee->email = $email;
+			$confattendee->fk_actioncomm = $id;
+			$resultconfattendee = $confattendee->create($user);
+			if ($resultconfattendee < 0) {
+				$error++;
+				$errmsg .= $confattendee->error;
+			}
+		}
+		// At this point, we have an attendee. It may not be linked to a thirdparty if we just created it
 
+		// If the attendee has already paid
+		if ($confattendee->status == 1) {
+			$securekeyurl = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
+			$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.$id.'&securekey='.$securekeyurl;
+			Header("Location: ".$redirection);
+			exit;
+		}
+		// Getting the thirdparty or creating it
+		$thirdparty = new Societe($db);
+		// Fetch using fk_soc if the attendee was already existing
+		if (!empty($confattendee->fk_soc)) {
+			$resultfetchthirdparty = $thirdparty->fetch($confattendee->fk_soc);
+		} else {
+			// Fetch using the input field by user if we just created the attendee
+			if (!empty($societe)) {
+				$resultfetchthirdparty = $thirdparty->fetch('', $societe);
+				if ($resultfetchthirdparty<=0) {
+					// Need to create a new one (not found or multiple with the same name)
+					$resultfetchthirdparty = 0;
+				} else {
+					// We found an unique result with that name, so we put in in fk_soc of attendee
+					$confattendee->fk_soc = $thirdparty->id;
+					$confattendee->update($user);
+				}
+			} else {
+				// Need to create a thirdparty (put number>0 if we do not want to create a thirdparty for free-conferences)
+				$resultfetchthirdparty = 0;
+			}
+		}
 		if ($resultfetchthirdparty<0) {
 			$error++;
 			$errmsg .= $thirdparty->error;
-			$readythirdparty = -1;
 		} elseif ($resultfetchthirdparty==0) {
 			// creation of a new thirdparty
-			if (!empty(GETPOST("societe"))) {
-				$thirdparty->name        = GETPOST("societe");
+			if (!empty($societe)) {
+				$thirdparty->name     = $societe;
 			} else {
-				$thirdparty->name        = $email;
+				$thirdparty->name     = $email;
 			}
-
-			$thirdparty->address     = GETPOST("address");
-			$thirdparty->zip         = GETPOST("zipcode");
-			$thirdparty->town        = GETPOST("town");
-			$thirdparty->client      = 2;
-			$thirdparty->fournisseur = 0;
-			$thirdparty->country_id  = GETPOST("country_id", 'int');
-			$thirdparty->state_id    = GETPOST("state_id", 'int');
-			$thirdparty->email       = $email;
+			$thirdparty->address      = GETPOST("address");
+			$thirdparty->zip          = GETPOST("zipcode");
+			$thirdparty->town         = GETPOST("town");
+			$thirdparty->client       = 2;
+			$thirdparty->fournisseur  = 0;
+			$thirdparty->country_id   = GETPOST("country_id", 'int');
+			$thirdparty->state_id     = GETPOST("state_id", 'int');
+			$thirdparty->email        = $email;
 
 			// Load object modCodeTiers
 			$module = (!empty($conf->global->SOCIETE_CODECLIENT_ADDON) ? $conf->global->SOCIETE_CODECLIENT_ADDON : 'mod_codeclient_leopard');
@@ -267,31 +311,131 @@ if (empty($reshook) && $action == 'add') {
 			}
 			$thirdparty->code_client = $tmpcode;
 			$readythirdparty = $thirdparty->create($user);
-		} else {
-			// We have an existing thirdparty ready to use
-			$readythirdparty = 1;
-		}
-
-		if ($readythirdparty < 0) {
-			$error++;
-			$errmsg .= $thirdparty->error;
-		} else {
-			// creation of an attendee
-			$confattendee = new ConferenceOrBoothAttendee($db);
-			$confattendee->fk_soc = $thirdparty->id;
-			$confattendee->date_subscription = dol_now();
-			$confattendee->email = GETPOST("email");
-			$confattendee->fk_actioncomm = $id;
-			$resultconfattendee = $confattendee->create($user);
-			if ($resultconfattendee < 0) {
+			if ($readythirdparty <0) {
 				$error++;
-				$errmsg .= $confattendee->error;
+				$errmsg .= $thirdparty->error;
+			} else {
+				$thirdparty->country_code = getCountry($thirdparty->country_id, 2, $db, $langs);
+				$thirdparty->country      = getCountry($thirdparty->country_code, 0, $db, $langs);
+				$confattendee->fk_soc     = $thirdparty->id;
+				$confattendee->update($user);
 			}
 		}
 	}
 
 	if (!$error) {
 		$db->commit();
+		if (!empty(floatval($project->price_registration))) {
+			$productforinvoicerow = new Product($db);
+			$resultprod = $productforinvoicerow->fetch($conf->global->SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION);
+			if ($resultprod < 0) {
+				$error++;
+				$errmsg .= $productforinvoicerow->error;
+			} else {
+				$facture = new Facture($db);
+				$facture->type = Facture::TYPE_STANDARD;
+				$facture->socid = $thirdparty->id;
+				$facture->paye = 0;
+				$facture->date = dol_now();
+				$facture->cond_reglement_id = $confattendee->cond_reglement_id;
+				$facture->fk_project = $project->id;
+				if (empty($facture->cond_reglement_id)) {
+					$paymenttermstatic = new PaymentTerm($confattendee->db);
+					$facture->cond_reglement_id = $paymenttermstatic->getDefaultId();
+					if (empty($facture->cond_reglement_id)) {
+						$error++;
+						$confattendee->error = 'ErrorNoPaymentTermRECEPFound';
+						$confattendee->errors[] = $confattendee->error;
+					}
+				}
+				$resultfacture = $facture->create($user);
+				if ($resultfacture <= 0) {
+					$confattendee->error = $facture->error;
+					$confattendee->errors = $facture->errors;
+					$error++;
+				} else {
+					$facture->add_object_linked($confattendee->element, $confattendee->id);
+				}
+			}
+
+			if (!$error) {
+				// Add line to draft invoice
+				$vattouse = get_default_tva($mysoc, $thirdparty, $productforinvoicerow->id);
+				$result = $facture->addline($langs->trans("ConferenceAttendeeFee", $conference->label, dol_print_date($conference->datep, '%d/%m/%y %H:%M:%S'), dol_print_date($conference->datep2, '%d/%m/%y %H:%M:%S')), floatval($project->price_registration), 1, $vattouse, 0, 0, $productforinvoicerow->id, 0, dol_now(), '', 0, 0, '', 'HT', 0, 1);
+				if ($result <= 0) {
+					$confattendee->error = $facture->error;
+					$confattendee->errors = $facture->errors;
+					$error++;
+				}
+				if (!$error) {
+					$valid = true;
+					$sourcetouse = 'conferencesubscription';
+					$reftouse = $facture->id;
+					$redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php?source='.$sourcetouse.'&ref='.$reftouse;
+					if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
+						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
+							$redirection .= '&securekey='.dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . $sourcetouse . $reftouse, 2); // Use the source in the hash to avoid duplicates if the references are identical
+						} else {
+							$redirection .= '&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
+						}
+					}
+					Header("Location: ".$redirection);
+					exit;
+				}
+			}
+		} else {
+			// No price has been set
+			// Validating the subscription
+			$confattendee->setStatut(1);
+
+			// Sending mail
+			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+			$formmail = new FormMail($db);
+			// Set output language
+			$outputlangs = new Translate('', $conf);
+			$outputlangs->setDefaultLang(empty($thirdparty->default_lang) ? $mysoc->default_lang : $thirdparty->default_lang);
+			// Load traductions files required by page
+			$outputlangs->loadLangs(array("main", "members"));
+			// Get email content from template
+			$arraydefaultmessage = null;
+
+			$labeltouse = $conf->global->EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT;
+			if (!empty($labeltouse)) {
+				$arraydefaultmessage = $formmail->getEMailTemplate($db, 'eventorganization_send', $user, $outputlangs, $labeltouse, 1, '');
+			}
+
+			if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+				$subject = $arraydefaultmessage->topic;
+				$msg     = $arraydefaultmessage->content;
+			}
+
+			$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $thirdparty);
+			complete_substitutions_array($substitutionarray, $outputlangs, $object);
+
+			$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
+			$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
+
+			$sendto = $thirdparty->email;
+			$from = $conf->global->MAILING_EMAIL_FROM;
+			$urlback = $_SERVER["REQUEST_URI"];
+
+			$ishtml = dol_textishtml($texttosend); // May contain urls
+
+			$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, $ishtml);
+
+			$result = $mailfile->sendfile();
+			if ($result) {
+				dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_payment');
+			} else {
+				dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
+			}
+
+			$securekeyurl = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
+			$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.$id.'&securekey='.$securekeyurl;
+			Header("Location: ".$redirection);
+			exit;
+		}
 		//Header("Location: ".$urlback);
 		//exit;
 	} else {
@@ -307,12 +451,6 @@ if (empty($reshook) && $action == 'add') {
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 
-$conference = new ConferenceOrBooth($db);
-$resultconf = $conference->fetch($id);
-if ($resultconf < 0) {
-	setEventMessages(null, $object->errors, "errors");
-}
-
 llxHeaderVierge($langs->trans("NewSubscription"));
 
 
@@ -324,12 +462,9 @@ print '<div id="divsubscribe">';
 print '<div class="center subscriptionformhelptext justify">';
 
 // Welcome message
-print $langs->trans("EvntOrgWelcomeMessage");
-print $id.".".'<br>';
-print $langs->trans("EvntOrgStartDuration");
-print dol_print_date($conference->datep).' ';
-print $langs->trans("EvntOrgEndDuration");
-print ' '.dol_print_date($conference->datef).".";
+print $langs->trans("EvntOrgWelcomeMessage", $conference->label);
+print '<br>';
+print $langs->trans("EvntOrgDuration", dol_print_date($conference->datep), dol_print_date($conference->datef));
 print '</div>';
 
 dol_htmloutput_errors($errmsg);
@@ -339,8 +474,8 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="newmember">'.
 print '<input type="hidden" name="token" value="'.newToken().'" / >';
 print '<input type="hidden" name="entity" value="'.$entity.'" />';
 print '<input type="hidden" name="action" value="add" />';
-print '<input type="hidden" name="id" value="'.$encodedid.'" />';
-print '<input type="hidden" name="securekey" value="'.$encodedsecurekeyandid.'" />';
+print '<input type="hidden" name="id" value="'.$id.'" />';
+print '<input type="hidden" name="securekey" value="'.$securekeyreceived.'" />';
 
 print '<br>';
 
@@ -363,7 +498,7 @@ jQuery(document).ready(function () {
 print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."\n";
 
 // Email
-print '<tr><td>'.$langs->trans("Email").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Email").'<FONT COLOR="red">*</FONT></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
 // Company
 print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company");
 if (!empty(floatval($project->price_registration))) {

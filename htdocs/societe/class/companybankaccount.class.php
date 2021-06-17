@@ -156,10 +156,10 @@ class CompanyBankAccount extends Account
 		$sql .= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
 		$sql .= ",bic='".$this->db->escape($this->bic)."'";
 		$sql .= ",iban_prefix = '".$this->db->escape($this->iban)."'";
-		$sql .= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
+		$sql .= ",domiciliation = '".$this->db->escape($this->domiciliation)."'";
 		$sql .= ",proprio = '".$this->db->escape($this->proprio)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
-		$sql .= ",default_rib = ".$this->default_rib;
+		$sql .= ",default_rib = ".((int) $this->default_rib);
 		if ($conf->prelevement->enabled) {
 			$sql .= ",frstrecur = '".$this->db->escape($this->frstrecur)."'";
 			$sql .= ",rum = '".$this->db->escape($this->rum)."'";

@@ -104,7 +104,7 @@ if ($search_ref) {
 	$sql .= natural_search("bc.ref", $search_ref);
 }
 if ($search_account > 0) {
-	$sql .= " AND bc.fk_bank_account=".$search_account;
+	$sql .= " AND bc.fk_bank_account = ".((int) $search_account);
 }
 if ($search_amount) {
 	$sql .= natural_search("bc.amount", price2num($search_amount));

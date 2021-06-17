@@ -110,7 +110,7 @@ class Localtax extends CommonObject
 		$sql .= "fk_user_creat,";
 		$sql .= "fk_user_modif";
 		$sql .= ") VALUES (";
-		$sql .= " ".$this->ltt.",";
+		$sql .= " ".((int) $this->ltt).",";
 		$sql .= " '".$this->db->idate($this->tms)."',";
 		$sql .= " '".$this->db->idate($this->datep)."',";
 		$sql .= " '".$this->db->idate($this->datev)."',";
@@ -170,7 +170,7 @@ class Localtax extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."localtax SET";
-		$sql .= " localtaxtype=".$this->ltt.",";
+		$sql .= " localtaxtype=".((int) $this->ltt).",";
 		$sql .= " tms='".$this->db->idate($this->tms)."',";
 		$sql .= " datep='".$this->db->idate($this->datep)."',";
 		$sql .= " datev='".$this->db->idate($this->datev)."',";
@@ -352,9 +352,10 @@ class Localtax extends CommonObject
 	{
 		// phpcs:enable
 		$sql = "SELECT sum(f.localtax) as amount";
-		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE f.paye = 1";
+		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
+		$sql .= " WHERE f.paye = 1";
 		if ($year) {
-			$sql .= " AND f.datef >= '$year-01-01' AND f.datef <= '$year-12-31' ";
+			$sql .= " AND f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year, 1, 'gmt'))."' AND '".$this->db->idate(dol_get_last_day($year, 1, 'gmt'))."'";
 		}
 
 		$result = $this->db->query($sql);
@@ -388,7 +389,7 @@ class Localtax extends CommonObject
 		$sql = "SELECT sum(f.total_localtax) as total_localtax";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 		if ($year) {
-			$sql .= " WHERE f.datef >= '$year-01-01' AND f.datef <= '$year-12-31' ";
+			$sql .= " WHERE f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year, 1, 'gmt'))."' AND '".$this->db->idate(dol_get_last_day($year, 1, 'gmt'))."'";
 		}
 
 		$result = $this->db->query($sql);
@@ -423,7 +424,7 @@ class Localtax extends CommonObject
 		$sql = "SELECT sum(f.amount) as amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."localtax as f";
 		if ($year) {
-			$sql .= " WHERE f.datev >= '$year-01-01' AND f.datev <= '$year-12-31' ";
+			$sql .= " WHERE f.datev BETWEEN '".$this->db->idate(dol_get_first_day($year, 1, 'gmt'))."' AND '".$this->db->idate(dol_get_last_day($year, 1, 'gmt'))."'";
 		}
 
 		$result = $this->db->query($sql);

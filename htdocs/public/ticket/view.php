@@ -234,6 +234,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
 		// Ref
 		print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
+		print img_picto('', 'ticket', 'class="pictofixedwidth"');
 		print dol_escape_htmltag($object->dao->ref);
 		print '</td></tr>';
 
@@ -244,7 +245,9 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
 		// Subject
 		print '<tr><td>'.$langs->trans("Subject").'</td><td>';
+		print '<span class="bold">';
 		print dol_escape_htmltag($object->dao->subject);
+		print '</span>';
 		print '</td></tr>';
 
 		// Statut
@@ -259,6 +262,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
 		// Category
 		print '<tr><td>'.$langs->trans("Category").'</td><td>';
+		print img_picto('', 'category', 'class="pictofixedwidth"');
 		print dol_escape_htmltag($object->dao->category_label);
 		print '</td></tr>';
 
@@ -278,8 +282,10 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 			$langs->load("users");
 			$fuser = new User($db);
 			$fuser->fetch($object->dao->fk_user_create);
+			print img_picto('', 'user', 'class="pictofixedwidth"');
 			print $fuser->getFullName($langs);
 		} else {
+			print img_picto('', 'email', 'class="pictofixedwidth"');
 			print dol_escape_htmltag($object->dao->origin_email);
 		}
 
@@ -304,6 +310,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		if ($object->dao->fk_user_assign > 0) {
 			$fuser = new User($db);
 			$fuser->fetch($object->dao->fk_user_assign);
+			print img_picto('', 'user', 'class="pictofixedwidth"');
 			print $fuser->getFullName($langs, 1);
 		}
 		print '</td></tr>';
@@ -320,7 +327,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		print '<div style="clear: both; margin-top: 1.5em;"></div>';
 
 		if ($action == 'presend') {
-			print load_fiche_titre($langs->trans('TicketAddMessage'), '', 'messages@ticket');
+			print load_fiche_titre($langs->trans('TicketAddMessage'), '', 'conversation');
 
 			$formticket = new FormTicket($db);
 
@@ -364,7 +371,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		}
 
 		// Message list
-		print load_fiche_titre($langs->trans('TicketMessagesList'), '', 'object_conversation');
+		print load_fiche_titre($langs->trans('TicketMessagesList'), '', 'conversation');
 		$object->viewTicketMessages(false, true, $object->dao);
 	} else {
 		print '<div class="error">Not Allowed<br><a href="'.$_SERVER['PHP_SELF'].'?track_id='.$object->dao->track_id.'" rel="nofollow noopener">'.$langs->trans('Back').'</a></div>';

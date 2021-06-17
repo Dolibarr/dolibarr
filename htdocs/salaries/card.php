@@ -359,7 +359,9 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->salaries-
  *	View
  */
 
-llxHeader("", $langs->trans("Salary"));
+$title = $langs->trans('Salary')." - ".$langs->trans('Card');
+$help_url = "";
+llxHeader("", $title, $help_url);
 
 $form = new Form($db);
 if (!empty($conf->projet->enabled)) $formproject = new FormProjets($db);

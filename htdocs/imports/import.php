@@ -503,7 +503,7 @@ if ($step == 2 && $datatoimport) {
 	print '<br>';
 
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
-	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+	print '<table class="noborder centpercent" cellpadding="4">';
 
 	$filetoimport = '';
 
@@ -641,7 +641,7 @@ if ($step == 3 && $datatoimport) {
 	print '</span><br><br>';
 
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
-	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+	print '<table class="noborder centpercent" width="100%" cellpadding="4">';
 
 	$filetoimport = '';
 

@@ -228,19 +228,19 @@ class Members extends DolibarrApi
 		}
 		$sql .= ' WHERE t.entity IN ('.getEntity('adherent').')';
 		if (!empty($typeid)) {
-			$sql .= ' AND t.fk_adherent_type='.$typeid;
+			$sql .= ' AND t.fk_adherent_type='.((int) $typeid);
 		}
 		// Select members of given category
 		if ($category > 0) {
-			$sql .= " AND c.fk_categorie = ".$this->db->escape($category);
-			$sql .= " AND c.fk_member = t.rowid ";
+			$sql .= " AND c.fk_categorie = ".((int) $category);
+			$sql .= " AND c.fk_member = t.rowid";
 		}
 		// Add sql filters
 		if ($sqlfilters) {
 			if (!DolibarrApi::_checkFilters($sqlfilters)) {
 				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
