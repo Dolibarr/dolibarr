@@ -427,7 +427,7 @@ class Mailing extends CommonObject
 	 *  @param	int		$rowid      id du mailing a supprimer
 	 *  @return int         		1 en cas de succes
 	 */
-	public function delete($rowid)
+	public function delete($rowid, $notrigger = 0)
 	{
 		global $user;
 
