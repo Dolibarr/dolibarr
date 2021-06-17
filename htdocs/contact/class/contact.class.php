@@ -539,6 +539,7 @@ class Contact extends CommonObject
 		$this->entity = ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
 
 		// Clean parameters
+		$this->ref_ext = trim($this->ref_ext);
 		$this->lastname = trim($this->lastname) ?trim($this->lastname) : trim($this->lastname);
 		$this->firstname = trim($this->firstname);
 		$this->email = trim($this->email);
@@ -565,7 +566,8 @@ class Contact extends CommonObject
 		} elseif ($this->socid == -1) {
 			$sql .= " fk_soc=null,";
 		}
-		$sql .= "  civility='".$this->db->escape($this->civility_code)."'";
+		$sql .= " ref_ext='".$this->db->escape($this->ref_ext)."'";
+		$sql .= ", civility='".$this->db->escape($this->civility_code)."'";
 		$sql .= ", lastname='".$this->db->escape($this->lastname)."'";
 		$sql .= ", firstname='".$this->db->escape($this->firstname)."'";
 		$sql .= ", address='".$this->db->escape($this->address)."'";
