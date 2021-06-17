@@ -542,7 +542,6 @@ class FactureRec extends CommonInvoice
 				$this->titre                  = $obj->title; // deprecated
 				$this->title                  = $obj->title;
 				$this->ref                    = $obj->title;
-				$this->ref_client             = $obj->ref_client;
 				$this->suspended              = $obj->suspended;
 				$this->type                   = $obj->type;
 				$this->datep                  = $obj->dp;
@@ -595,7 +594,9 @@ class FactureRec extends CommonInvoice
 				$this->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
 				$this->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
 
-				if ($this->statut == self::STATUS_DRAFT)	$this->brouillon = 1;
+				if ($this->statut == self::STATUS_DRAFT) {
+					$this->brouillon = 1;
+				}
 
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
@@ -612,7 +613,7 @@ class FactureRec extends CommonInvoice
 				}
 				return 1;
 			} else {
-				$this->error = 'Bill with id '.$rowid.' or ref '.$ref.' not found sql='.$sql;
+				$this->error = 'Bill with id '.$rowid.' or ref '.$ref.' not found';
 				dol_syslog('Facture::Fetch Error '.$this->error, LOG_ERR);
 				return -2;
 			}
