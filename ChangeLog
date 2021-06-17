@@ -23,9 +23,7 @@ NEW: Add the column "alias" of company in the list of proposal, order, invoice
 NEW: Add the column "Office phone" and  "User mobile" in user list
 NEW: Add the column "Price level" in thirdparty list
 NEW: Add some company information in the dropdown login menu
-NEW: Add constant MAIN_BUGTRACK_URL to set a custom url to redirect to when clicking on link "declare a bug"
 NEW: Add contact tag and bulk email status on the thirdparty + contact create form
-NEW: Support down payment on supplier invoice (& somes ajustments)
 NEW: Add edit/delete action icons on categories list pages
 NEW: Add hidden option to auto load input line extrafield into new lines
 NEW: Add import profile to import BOM
@@ -33,13 +31,11 @@ NEW: Add link picto to the stock movement on the detail of production
 NEW: Add mass action "Set tag" for product/service, user, thirdparty, warehouse, project, bank account, members
 NEW: Add bulk action Validate and Set to billed on order list.
 NEW: Add possibility to exports userGroups fields on user exports
-NEW: Add price min and price min including tax into product export
 NEW: Can search on lots or serials into the quick search bar
 NEW: Add support for Friday as a non working day
 NEW: Add a total in page of margin by user
 NEW: Add the total of margin in invoice list
 NEW: auto notification with module Notification can use templated emails
-NEW: Bank Entries : display user linked to a salary or a taxes
 NEW: Can clone a cron job
 NEW: Can create a lot from the list view (Look and feel standardization).
 NEW: Can filter on extrafields date on lists
@@ -60,17 +56,14 @@ NEW: LDAP: usergroup search can be filtered
 NEW: Make public bookmarks editable by admin users only
 NEW: If main logo not defined, can use the squarred logo on login page
 NEW: The manifest file can use the squared image if available
-NEW: Add bulk actions for Bank Transfer
 NEW: Enhance the multicurrency rate editor
 NEW: Normalyse Type company field with ajax combobox
 NEW: preload product description on selection for customer propal/order/invoice
-NEW: Add a ref in product customer price
 NEW: Search usergroups & resources
 NEW: Set status of all variants when changing status of parent
 NEW: Setup Page for module creation with module builder enhancement #FoundationFunding
 NEW: Show picto of module into the list of dictionaries
 NEW: Show the total of payment on the payment confirmation page
-NEW: Support color for types of event
 NEW: The global setup for Mandatory fields can now be done on combo list too.
 NEW: translate in "en_US" to complete PR 16980
 NEW: Update the list of taxes available by default for France
@@ -93,6 +86,11 @@ NEW: Multiselect ledger account code filter on book keeping list
 
  Agenda
 NEW: Can show the leave dates/holidays on the agenda view
+NEW: Support color for types of event
+
+ Bank
+NEW: Bank Entries : display user linked to a salary or a taxes 
+NEW: Add bulk actions for Bank Transfer
 
  ECM/GED
 NEW: add DB fields note_public and note_private for ECM module
@@ -100,11 +98,16 @@ NEW: Can filter files in ECM/GED on status Shared/Not shared
 
  Invoices
 NEW: Can set a percentage when creating an invoice from another object
+NEW: Support down payment on supplier invoice (& somes ajustments)
 
  Members
 NEW: #17292 default subscription amount by adherent type
 NEW: option to automatically create a login/user when a new subscription of a member is done online
 NEW: option to select membership type on the online payment page for membership subscription or renewal
+
+ Products
+NEW: Add price min and price min including tax into product export 
+NEW: Add a ref in product customer price
 
  Projects/Tasks
 NEW: option to automatically close an open project when all its tasks are done (=progress 100%)
@@ -147,6 +150,7 @@ NEW: add a new permission "Export website"
 NEW: add last date of modification for website pages in the list of pages
 NEW: Save old page with .old extension on disk when editing a website page
 
+
  new Modules
 NEW: Module Recruitement is now stable
 NEW: start new experimental module Event Organization Management
@@ -160,19 +164,15 @@ NEW: add option  CONTRACT_ALLOW_EXTERNAL_DOWNLOAD            to make generated d
 NEW: add option  SUPPLIER_PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD   to make generated doc automatically shared
 NEW: add option  MAIN_SECURITY_ANTI_SSRF_SERVER_IP           to define list of IPs that are local IPs
 NEW: add option  SOCIETE_DISABLE_WORKFORCE                   to hide staff field
+NEW: add constant  MAIN_BUGTRACK_URL                         to set a custom url to redirect to when clicking on link "declare a bug"
 
 
 For developers:
 ---------------
 NEW: Can edit an object property in module builder
-NEW: hook printFieldListTitle for cabyprodserv.php
-NEW: Hook to allow external modules to add their own shortlist of recent objects
-NEW: SQL-altering hooks in the turnover by product report
 NEW: Add data-eec=1 for EEC countries on select for js interaction
 NEW: Add experimental repair script to switch to dynamic row format and utf8mb4 encoding
-NEW: add form confirm hook on company card
 NEW: Add function showValueWithClipboardCPButton() to add a copy/paste
-NEW: Add hook addSectionECMAuto method to add custom diretory into ECM auto files
 NEW: Upgrade Stripe PHP lib to 7.67.0
 NEW: Support sepa_debit in stripe paymentmethods list
 NEW: Update doleditor.class.php for easily activate SCAYT
@@ -192,6 +192,13 @@ NEW: add link to OpenAPI specifications XML file in REST API module setup: swagg
 NEW: add native compression in REST APIs
 NEW: Product Variants API, add variant stock to response by parameter
 NEW: Product API route added to get product stock and product with or without variants #13739 #17390 
+
+ Hooks
+NEW: hook printFieldListTitle for cabyprodserv.php
+NEW: Hook to allow external modules to add their own shortlist of recent objects
+NEW: SQL-altering hooks in the turnover by product report
+NEW: add form confirm hook on company card
+NEW: Add hook addSectionECMAuto method to add custom diretory into ECM auto files
 
 
 WARNING:
