@@ -39,7 +39,10 @@ ManufacturingDate=Manufacturing date
 DestructionDate=Destruction date
 FirstUseDate=First use date
 QCFrequency=Quality control frequency (in days)
-
+ToDefine=To define
+DefineBatch = Please define batch
+NewBatch=New Batch
+NoBatch=No Batch
 #Traceability - qc status
 OutOfOrder=Out of order
 InWorkingOrder=In working order

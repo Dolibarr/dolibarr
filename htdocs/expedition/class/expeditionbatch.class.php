@@ -32,6 +32,7 @@ class ExpeditionLineBatch extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'expeditionlignebatch';
+	public $table_element = 'expeditiondet_batch';
 
 	private static $_table_element = 'expeditiondet_batch'; //!< Name of table without prefix where object is stored
 
@@ -43,6 +44,19 @@ class ExpeditionLineBatch extends CommonObject
 	public $entrepot_id;
 	public $fk_origin_stock;
 	public $fk_expeditiondet;
+
+	/**
+	 * @var array fields of object product
+	 */
+	public $fields = array(
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
+		'batch' => array('type' => 'varchar(128)', 'enabled' => 1, 'position' => 10),
+		'fk_origin_stock' => array('type' => 'integer', 'enabled' => 1, 'visible' => 0, 'default' => 1, 'notnull' => 1, 'position' => 20),
+		'eatby' => array('type' => 'date', 'enabled' => 1, 'position' => 500),
+		'sellby' => array('type' => 'date', 'enabled' => 1, 'position' => 501),
+		'qty' => array('type' => 'double', 'enabled' => 1,  'position' => 502, 'notnull' => 1),
+		'fk_expeditiondet' => array('type' => 'integer', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 510, 'foreignkey' => 'llx_expeditiondet.rowid'),
+	);
 
 	/**
 	 *  Constructor
@@ -97,11 +111,13 @@ class ExpeditionLineBatch extends CommonObject
 	/**
 	 * Create an expeditiondet_batch DB record link to an expedtiondet record
 	 *
-	 * @param	int		$id_line_expdet		rowid of expedtiondet record
-	 * @return	int							<0 if KO, Id of record (>0) if OK
+	 * @param int $id_line_expdet rowid of expedtiondet record
+	 * @param int $notrigger      1=Does not execute triggers, 0= execute triggers
+	 * @return    int                            <0 if KO, Id of record (>0) if OK
 	 */
-	public function create($id_line_expdet)
+	public function create($id_line_expdet, $notrigger = 0)
 	{
+		global $user;
 		$error = 0;
 
 		$id_line_expdet = (int) $id_line_expdet;
@@ -119,19 +135,33 @@ class ExpeditionLineBatch extends CommonObject
 		$sql .= " ".(!isset($this->eatby) || dol_strlen($this->eatby) == 0 ? 'NULL' : ("'".$this->db->idate($this->eatby))."'").",";
 		$sql .= " ".(!isset($this->batch) ? 'NULL' : ("'".$this->db->escape($this->batch)."'")).",";
 		$sql .= " ".(!isset($this->qty) ? ((!isset($this->dluo_qty)) ? 'NULL' : $this->dluo_qty) : $this->qty).","; // dluo_qty deprecated, use qty
-		$sql .= " ".(!isset($this->fk_origin_stock) ? 'NULL' : $this->fk_origin_stock);
+		$sql .= " ".(!isset($this->fk_origin_stock) ? '0' : $this->fk_origin_stock);
 		$sql .= ")";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$error++; $this->errors[] = "Error ".$this->db->lasterror();
-		}
-
+		} else $this->fk_expeditiondet = $id_line_expdet;
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.self::$_table_element);
-			$this->fk_expeditiondet = $id_line_expdet;
-			return $this->id;
+			if (! $error && ! $notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('LINESHIPPINGBATCH_INSERT', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
+			if (! $error) return $this->id;
+			else {
+				foreach ($this->errors as $errmsg) {
+					dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
+					$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+				}
+				$this->db->rollback();
+				return -1 * $error;
+			}
 		} else {
 			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
@@ -218,6 +248,50 @@ class ExpeditionLineBatch extends CommonObject
 		} else {
 			dol_print_error($db);
 			return -1;
+		}
+	}
+
+	/**
+	 * @return int $id or -1 if KO
+	 */
+	public function updateQty()
+	{
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET qty = '.floatval($this->qty).' WHERE rowid='.$this->id;
+
+		if (!$this->db->query($sql)) {
+				$this->errors[] = $this->db->lasterror()." - sql=$sql";
+				return -1;
+		} else return $this->id;
+	}
+
+	/** fetch by batch product warehouse exp id
+	 * @param Expedition $exp exp obj
+	 * @param string $serial batch
+	 * @param int $fk_product product id
+	 * @param int $fk_warehouse warehouse id
+	 * @return int > 0 if OK < 0 if KO
+	 */
+	public function fetchByExpDetSerial($exp, $serial, $fk_product, $fk_warehouse)
+	{
+		if (! empty($exp->lines) && !empty($exp->id)) {
+			$sql = 'SELECT * FROM '.MAIN_DB_PREFIX.$this->table_element.' 
+            WHERE fk_expeditiondet IN 
+            (SELECT ed.rowid FROM '.MAIN_DB_PREFIX.$exp->table_element_line.' ed
+            INNER JOIN '.MAIN_DB_PREFIX.'commandedet cd ON (cd.rowid = ed.fk_origin_line)
+            WHERE ed.fk_expedition = '.$exp->id.' AND ed.fk_entrepot='.$fk_warehouse.' AND cd.fk_product='.$fk_product.')';
+			$sql .= ' AND batch = '.$serial;
+			$resql = $this->db->query($sql);
+			if (! $resql) {
+				$this->errors[] = $this->db->lasterror()." - sql=$sql";
+				return -1;
+			} else {
+				if ($this->db->num_rows($resql) == 1) {
+					$obj = $this->db->fetch_object($resql);
+					foreach ($obj as $key => $val) $this->{$key} = $val;
+					$this->id = $this->rowid;
+					return $this->id;
+				} else return -2;
+			}
 		}
 	}
 }
