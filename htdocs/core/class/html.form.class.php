@@ -8628,14 +8628,11 @@ class Form
 
 									if ($("select[name='.$target.']").val() == '.$obj->id.') {
 										// get price of kilometer to fill the unit price
-										var data = '.json_encode($params).';
-										data.fk_c_exp_tax_cat = $(this).val();
-
 										$.ajax({
 											method: "POST",
 											dataType: "json",
-											data: data,
-											url: "'.(DOL_URL_ROOT.'/expensereport/ajax/ajaxik.php').'",
+											data: { fk_c_exp_tax_cat: $(this).val(), token: \''.currentToken().'\' },
+											url: "'.(DOL_URL_ROOT.'/expensereport/ajax/ajaxik.php?'.$params).'",
 										}).done(function( data, textStatus, jqXHR ) {
 											console.log(data);
 											if (typeof data.up != "undefined") {
