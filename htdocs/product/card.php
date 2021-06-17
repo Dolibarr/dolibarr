@@ -1236,13 +1236,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		if ($type != 1) {	// Nature, Weight and volume only applies to products and not to services
-            if (empty($conf->global->PRODUCT_DISABLE_NATURE)) {
-                // Nature
-                print '<tr><td>'.$form->textwithpicto($langs->trans("NatureOfProductShort"), $langs->trans("NatureOfProductDesc")).'</td><td>';
-                $statutarray = array('1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
-                print $form->selectarray('finished', $statutarray, GETPOST('finished', 'alpha'), 1);
-                print '</td></tr>';
-            }
+			if (empty($conf->global->PRODUCT_DISABLE_NATURE)) {
+				// Nature
+				print '<tr><td>'.$form->textwithpicto($langs->trans("NatureOfProductShort"), $langs->trans("NatureOfProductDesc")).'</td><td>';
+				$statutarray = array('1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
+				print $form->selectarray('finished', $statutarray, GETPOST('finished', 'alpha'), 1);
+				print '</td></tr>';
+			}
 
 			if (empty($conf->global->PRODUCT_DISABLE_WEIGHT)) {
 				// Brut Weight
@@ -1759,12 +1759,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print $formproduct->selectMeasuringUnits("duration_unit", "time", $object->duration_unit, 0, 1);
 				print '</td></tr>';
 			} else {
-                if (empty($conf->global->PRODUCT_DISABLE_NATURE)) {
-                    // Nature
-                    print '<tr><td>'.$form->textwithpicto($langs->trans("NatureOfProductShort"), $langs->trans("NatureOfProductDesc")).'</td><td>';
-                    print $formproduct->selectProductNature('finished', $object->finished);
-                    print '</td></tr>';
-                }
+				if (empty($conf->global->PRODUCT_DISABLE_NATURE)) {
+					// Nature
+					print '<tr><td>'.$form->textwithpicto($langs->trans("NatureOfProductShort"), $langs->trans("NatureOfProductDesc")).'</td><td>';
+					print $formproduct->selectProductNature('finished', $object->finished);
+					print '</td></tr>';
+				}
 
 				if (empty($conf->global->PRODUCT_DISABLE_WEIGHT)) {
 					// Brut Weight
@@ -2242,12 +2242,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 				print '</td></tr>';
 			} else {
-                if (empty($conf->global->PRODUCT_DISABLE_NATURE)) {
-                    // Nature
-                    print '<tr><td class="titlefield">'.$form->textwithpicto($langs->trans("NatureOfProductShort"), $langs->trans("NatureOfProductDesc")).'</td><td>';
-                    print $object->getLibFinished();
-                    print '</td></tr>';
-                }
+				if (empty($conf->global->PRODUCT_DISABLE_NATURE)) {
+					// Nature
+					print '<tr><td class="titlefield">'.$form->textwithpicto($langs->trans("NatureOfProductShort"), $langs->trans("NatureOfProductDesc")).'</td><td>';
+					print $object->getLibFinished();
+					print '</td></tr>';
+				}
 
 				// Brut Weight
 				if (empty($conf->global->PRODUCT_DISABLE_WEIGHT)) {
