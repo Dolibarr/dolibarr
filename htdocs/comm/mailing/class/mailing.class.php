@@ -429,6 +429,10 @@ class Mailing extends CommonObject
 	 */
 	public function delete($rowid)
 	{
+		global $user;
+
+		$this->db->begin();
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing";
 		$sql .= " WHERE rowid = ".$rowid;
 
@@ -436,13 +440,31 @@ class Mailing extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			return $this->delete_targets();
+			$res = $this->delete_targets();
+			if(empty($res)){
+				$this->db->rollback();
+				$this->error = $this->db->lasterror();
+				return -1;
+			}
 		}
 		else
 		{
+			$this->db->rollback();
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
+
+		if(!$notrigger){
+			$result = $this->call_trigger('MAILING_DELETE', $user);
+			if ($result < 0)
+			{
+				$this->db->rollback();
+				return -1;
+			}
+		}
+
+		$this->db->commit();
+		return 1;
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
