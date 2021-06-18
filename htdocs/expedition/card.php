@@ -207,15 +207,14 @@ if (empty($reshook)) {
 
 		$object->note = GETPOST('note', 'alpha');
 		$object->fk_project = GETPOST('projectid', 'int');
-	    if ($action == 'add') {
+		if ($action == 'add') {
 			$object->origin				= $origin;
 			$object->origin_id			= $origin_id;
 			$object->weight				= GETPOST('weight', 'int')==''?"NULL":GETPOST('weight', 'int');
 			$object->sizeH				= GETPOST('sizeH', 'int')==''?"NULL":GETPOST('sizeH', 'int');
 			$object->sizeW				= GETPOST('sizeW', 'int')==''?"NULL":GETPOST('sizeW', 'int');
 			$object->sizeS				= GETPOST('sizeS', 'int')==''?"NULL":GETPOST('sizeS', 'int');
-		}
-		else {
+		} else {
 			$object->trueWeight				= GETPOST('weight', 'int')==''?"NULL":GETPOST('weight', 'int');
 			$object->trueHeight				= GETPOST('sizeH', 'int')==''?"NULL":GETPOST('sizeH', 'int');
 			$object->trueWidth				= GETPOST('sizeW', 'int')==''?"NULL":GETPOST('sizeW', 'int');
@@ -403,8 +402,8 @@ if (empty($reshook)) {
 			}
 
 			if (!$error) {
-	            if ($action == 'add') $ret=$object->create($user);		// This create shipment (like Odoo picking) and lines of shipments. Stock movement will be done when validating shipment.
-	            else $ret = $object->update($user);
+				if ($action == 'add') $ret=$object->create($user);		// This create shipment (like Odoo picking) and lines of shipments. Stock movement will be done when validating shipment.
+				else $ret = $object->update($user);
 				if ($ret <= 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
@@ -423,7 +422,7 @@ if (empty($reshook)) {
 			$db->rollback();
 			$_GET["commande_id"] = GETPOST('commande_id', 'int');
 	        if ($action == 'add') $action='create';
-	        else $action = 'edit';
+			else $action = 'edit';
 		}
 	} elseif ($action == 'create_delivery' && $conf->delivery_note->enabled && $user->rights->expedition->delivery->creer) {
 		// Build a receiving receipt
@@ -840,7 +839,7 @@ if ($action == 'create2') {
 // Mode creation.
 if ($action == 'create' || $action == 'edit') {
 	$expe = new Expedition($db);
-    if ($action == 'edit') $expe->fetch($id);
+	if ($action == 'edit') $expe->fetch($id);
 
 	print load_fiche_titre($langs->trans("CreateShipment"), '', 'dolly');
 
@@ -850,7 +849,7 @@ if ($action == 'create' || $action == 'edit') {
 
 	if ($origin) {
 		$classname = ucfirst($origin);
-        if ($action == 'edit') $origin_id  = GETPOST('origin_id', 'int');
+		if ($action == 'edit') $origin_id  = GETPOST('origin_id', 'int');
 
 		$object = new $classname($db);
 		if ($object->fetch($origin_id)) {	// This include the fetch_lines
@@ -866,11 +865,12 @@ if ($action == 'create' || $action == 'edit') {
 
 			print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
-            if ($action == 'edit') {
+			if ($action == 'edit') {
 				print '<input type="hidden" name="action" value="update">';
 				print '<input type="hidden" name="id" value="'.$id.'">';
+			} else {
+				print '<input type="hidden" name="action" value="add">';
 			}
-            else print '<input type="hidden" name="action" value="add">';
 			print '<input type="hidden" name="origin" value="'.$origin.'">';
 			print '<input type="hidden" name="origin_id" value="'.$object->id.'">';
 			print '<input type="hidden" name="ref_int" value="'.$object->ref_int.'">';
@@ -920,7 +920,7 @@ if ($action == 'create' || $action == 'edit') {
 				if (empty($projectid) && !empty($object->fk_project) && $action == 'create') {
 					$projectid = $object->fk_project;
 				}
-				elseif(empty($projectid) && ! empty($expe->fk_project) && $action == 'create') {
+				elseif (empty($projectid) && ! empty($expe->fk_project) && $action == 'create') {
 					$projectid = $expe->fk_project;
 				}
 				if ($origin == 'project') {
@@ -1524,7 +1524,7 @@ if ($action == 'create' || $action == 'edit') {
 
 			print '<div class="center">';
 			if ($action == 'edit') print '<input type="submit" class="button" name="update" value="'.dol_escape_htmltag($langs->trans("Update")).'">';
-            else print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
+			else print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
 			print '&nbsp; ';
 			print '<input type="'.($backtopage ? "submit" : "button").'" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage ? '' : ' onclick="javascript:history.go(-1)"').'>'; // Cancel for create does not post form if we don't know the backtopage
 			print '</div>';
@@ -2386,8 +2386,7 @@ if ($action == 'create' || $action == 'edit') {
 			if ($object->statut == Expedition::STATUS_DRAFT) {
 				if (! empty($user->rights->expedition->creer)) {
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit&amp;origin=commande&amp;origin_id='.$object->origin_id.'">'.$langs->trans("Modify").'</a>';
-				}
-				else {
+				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Modify").'</a>';
 				}
 			}
