@@ -13,6 +13,7 @@
  * Copyright (C) 2016		Yasser Carreón			<yacasia@gmail.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
+ * Copyright (C) 2021       Christophe Battarel     <christophe@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -199,19 +200,27 @@ if (empty($reshook)) {
 	}
 
 	// Create shipment
-	if ($action == 'add' && $user->rights->expedition->creer) {
+	if (($action == 'add' || $action == 'update') && $user->rights->expedition->creer) {
 		$error = 0;
 
-		$db->begin();
+		if ($action == 'update') $object->fetch(GETPOST('id', 'int'));
 
 		$object->note = GETPOST('note', 'alpha');
-		$object->origin				= $origin;
-		$object->origin_id = $origin_id;
 		$object->fk_project = GETPOST('projectid', 'int');
-		$object->weight				= GETPOST('weight', 'int') == '' ? "NULL" : GETPOST('weight', 'int');
-		$object->sizeH				= GETPOST('sizeH', 'int') == '' ? "NULL" : GETPOST('sizeH', 'int');
-		$object->sizeW				= GETPOST('sizeW', 'int') == '' ? "NULL" : GETPOST('sizeW', 'int');
-		$object->sizeS				= GETPOST('sizeS', 'int') == '' ? "NULL" : GETPOST('sizeS', 'int');
+	    if ($action == 'add') {
+			$object->origin				= $origin;
+			$object->origin_id			= $origin_id;
+			$object->weight				= GETPOST('weight', 'int')==''?"NULL":GETPOST('weight', 'int');
+			$object->sizeH				= GETPOST('sizeH', 'int')==''?"NULL":GETPOST('sizeH', 'int');
+			$object->sizeW				= GETPOST('sizeW', 'int')==''?"NULL":GETPOST('sizeW', 'int');
+			$object->sizeS				= GETPOST('sizeS', 'int')==''?"NULL":GETPOST('sizeS', 'int');
+		}
+		else {
+			$object->trueWeight				= GETPOST('weight', 'int')==''?"NULL":GETPOST('weight', 'int');
+			$object->trueHeight				= GETPOST('sizeH', 'int')==''?"NULL":GETPOST('sizeH', 'int');
+			$object->trueWidth				= GETPOST('sizeW', 'int')==''?"NULL":GETPOST('sizeW', 'int');
+			$object->trueDepth				= GETPOST('sizeS', 'int')==''?"NULL":GETPOST('sizeS', 'int');
+		}
 		$object->size_units = GETPOST('size_units', 'int');
 		$object->weight_units = GETPOST('weight_units', 'int');
 
@@ -220,7 +229,7 @@ if (empty($reshook)) {
 		$objectsrc = new $classname($db);
 		$objectsrc->fetch($object->origin_id);
 
-		$object->socid = $objectsrc->socid;
+		$object->socid = ($action == 'add') ? $objectsrc->socid : $object->socid;
 		$object->ref_customer = GETPOST('ref_customer', 'alpha');
 		$object->model_pdf = GETPOST('model');
 		$object->date_delivery = $date_delivery; // Date delivery planed
@@ -319,6 +328,10 @@ if (empty($reshook)) {
 
 		if ($totalqty > 0) {		// There is at least one thing to ship
 			//var_dump($_POST);exit;
+			if ($action == 'update') {
+				foreach ($object->lines as $line) $object->deleteline($user, $line->id);
+				$object->lines = array();
+			}
 			for ($i = 0; $i < $num; $i++) {
 				$qty = "qtyl".$i;
 				if (!isset($batch_line[$i])) {
@@ -333,7 +346,13 @@ if (empty($reshook)) {
 									setEventMessages($object->error, $object->errors, 'errors');
 									$error++;
 								}
-							}
+    					        elseif ($action == 'update') {
+									if ( ! $object->create_line($stockLine[$i][$j]['warehouse_id'], $stockLine[$i][$j]['ix_l'], $stockLine[$i][$j]['qty'], $array_options[$i]) ) {
+										setEventMessages($object->error, $object->errors, 'errors');
+										$error++;
+									}
+								}
+    					    }
 						}
 					} else {
 						if (GETPOST($qty, 'int') > 0 || (GETPOST($qty, 'int') == 0 && $conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS)) {
@@ -352,6 +371,12 @@ if (empty($reshook)) {
 								setEventMessages($object->error, $object->errors, 'errors');
 								$error++;
 							}
+							elseif ($action == 'update') {
+								if ( ! $object->create_line($entrepot_id, GETPOST($idl, 'int'), GETPOST($qty, 'int'), $array_options[$i]) ) {
+									setEventMessages($object->error, $object->errors, 'errors');
+									$error++;
+								}
+							}
 						}
 					}
 				} else {
@@ -361,6 +386,12 @@ if (empty($reshook)) {
 						if ($ret < 0) {
 							setEventMessages($object->error, $object->errors, 'errors');
 							$error++;
+						}
+						elseif ($action == 'update') {
+							if ( ! $object->create_line_batch($batch_line[$i], $array_options[$i]) ) {
+								setEventMessages($object->error, $object->errors, 'errors');
+								$error++;
+							}
 						}
 					}
 				}
@@ -372,7 +403,8 @@ if (empty($reshook)) {
 			}
 
 			if (!$error) {
-				$ret = $object->create($user); // This create shipment (like Odoo picking) and lines of shipments. Stock movement will be done when validating shipment.
+	            if ($action == 'add') $ret=$object->create($user);		// This create shipment (like Odoo picking) and lines of shipments. Stock movement will be done when validating shipment.
+	            else $ret = $object->update($user);
 				if ($ret <= 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
@@ -390,7 +422,8 @@ if (empty($reshook)) {
 		} else {
 			$db->rollback();
 			$_GET["commande_id"] = GETPOST('commande_id', 'int');
-			$action = 'create';
+	        if ($action == 'add') $action='create';
+	        else $action = 'edit';
 		}
 	} elseif ($action == 'create_delivery' && $conf->delivery_note->enabled && $user->rights->expedition->delivery->creer) {
 		// Build a receiving receipt
@@ -805,8 +838,9 @@ if ($action == 'create2') {
 }
 
 // Mode creation.
-if ($action == 'create') {
+if ($action == 'create' || $action == 'edit') {
 	$expe = new Expedition($db);
+    if ($action == 'edit') $expe->fetch($id);
 
 	print load_fiche_titre($langs->trans("CreateShipment"), '', 'dolly');
 
@@ -816,6 +850,7 @@ if ($action == 'create') {
 
 	if ($origin) {
 		$classname = ucfirst($origin);
+        if ($action == 'edit') $origin_id  = GETPOST('origin_id', 'int');
 
 		$object = new $classname($db);
 		if ($object->fetch($origin_id)) {	// This include the fetch_lines
@@ -831,7 +866,11 @@ if ($action == 'create') {
 
 			print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<input type="hidden" name="action" value="add">';
+            if ($action == 'edit') {
+				print '<input type="hidden" name="action" value="update">';
+				print '<input type="hidden" name="id" value="'.$id.'">';
+			}
+            else print '<input type="hidden" name="action" value="add">';
 			print '<input type="hidden" name="origin" value="'.$origin.'">';
 			print '<input type="hidden" name="origin_id" value="'.$object->id.'">';
 			print '<input type="hidden" name="ref_int" value="'.$object->ref_int.'">';
@@ -866,7 +905,7 @@ if ($action == 'create') {
 				print $langs->trans('RefCustomer');
 			}
 			print '</td><td colspan="3">';
-			print '<input type="text" name="ref_customer" value="'.$object->ref_client.'" />';
+			print '<input type="text" name="ref_customer" value="'.(GETPOST('ref_customer') ? GETPOST('ref_customer') : ($action == 'edit' ? $expe->ref_customer : $object->ref_customer)).'" />';
 			print '</td>';
 			print '</tr>';
 
@@ -878,8 +917,11 @@ if ($action == 'create') {
 			// Project
 			if (!empty($conf->projet->enabled)) {
 				$projectid = GETPOST('projectid', 'int') ?GETPOST('projectid', 'int') : 0;
-				if (empty($projectid) && !empty($object->fk_project)) {
+				if (empty($projectid) && !empty($object->fk_project) && $action == 'create') {
 					$projectid = $object->fk_project;
+				}
+				elseif(empty($projectid) && ! empty($expe->fk_project) && $action == 'create') {
+					$projectid = $expe->fk_project;
 				}
 				if ($origin == 'project') {
 					$projectid = ($originid ? $originid : 0);
@@ -898,7 +940,7 @@ if ($action == 'create') {
 			// Date delivery planned
 			print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
 			print '<td colspan="3">';
-			$date_delivery = ($date_delivery ? $date_delivery : $object->delivery_date); // $date_delivery comes from GETPOST
+			$date_delivery = ($date_delivery ? $date_delivery : ($action == 'edit'?$expe->date_delivery:$object->date_livraison)); // $date_delivery comes from GETPOST
 			print $form->selectDate($date_delivery ? $date_delivery : -1, 'date_delivery', 1, 1, 1);
 			print "</td>\n";
 			print '</tr>';
@@ -906,7 +948,7 @@ if ($action == 'create') {
 			// Note Public
 			print '<tr><td>'.$langs->trans("NotePublic").'</td>';
 			print '<td colspan="3">';
-			$doleditor = new DolEditor('note_public', $object->note_public, '', 60, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
+			$doleditor = new DolEditor('note_public', $action == 'edit'?$expe->note_public:$object->note_public, '', 60, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
 			print $doleditor->Create(1);
 			print "</td></tr>";
 
@@ -914,7 +956,7 @@ if ($action == 'create') {
 			if ($object->note_private && !$user->socid) {
 				print '<tr><td>'.$langs->trans("NotePrivate").'</td>';
 				print '<td colspan="3">';
-				$doleditor = new DolEditor('note_private', $object->note_private, '', 60, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_3, '90%');
+				$doleditor = new DolEditor('note_private', $action == 'edit'?$expe->note_private:$object->note_private, '', 60, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_3, '90%');
 				print $doleditor->Create(1);
 				print "</td></tr>";
 			}
@@ -922,19 +964,19 @@ if ($action == 'create') {
 			// Weight
 			print '<tr><td>';
 			print $langs->trans("Weight");
-			print '</td><td colspan="3"><input name="weight" size="4" value="'.GETPOST('weight', 'int').'"> ';
-			$text = $formproduct->selectMeasuringUnits("weight_units", "weight", GETPOST('weight_units', 'int'), 0, 2);
+			print '</td><td colspan="3"><input name="weight" size="4" value="'.(GETPOST('weight', 'int')?GETPOST('weight', 'int'):$expe->trueWeight).'"> ';
+			$text = $formproduct->selectMeasuringUnits("weight_units", "weight", GETPOST('weight_units', 'int')?GETPOST('weight_units', 'int'):$expe->weight_units, 0, 2);
 			$htmltext = $langs->trans("KeepEmptyForAutoCalculation");
 			print $form->textwithpicto($text, $htmltext);
 			print '</td></tr>';
 			// Dim
 			print '<tr><td>';
 			print $langs->trans("Width").' x '.$langs->trans("Height").' x '.$langs->trans("Depth");
-			print ' </td><td colspan="3"><input name="sizeW" size="4" value="'.GETPOST('sizeW', 'int').'">';
-			print ' x <input name="sizeH" size="4" value="'.GETPOST('sizeH', 'int').'">';
-			print ' x <input name="sizeS" size="4" value="'.GETPOST('sizeS', 'int').'">';
+			print ' </td><td colspan="3"><input name="sizeW" size="4" value="'.(GETPOST('sizeW', 'int')?GETPOST('sizeW', 'int'):$expe->trueWidth).'">';
+			print ' x <input name="sizeH" size="4" value="'.(GETPOST('sizeH', 'int')?GETPOST('sizeH', 'int'):$expe->trueHeight).'">';
+			print ' x <input name="sizeS" size="4" value="'.(GETPOST('sizeS', 'int')?GETPOST('sizeS', 'int'):$expe->trueDepth).'">';
 			print ' ';
-			$text = $formproduct->selectMeasuringUnits("size_units", "size", GETPOST('size_units', 'int'), 0, 2);
+			$text = $formproduct->selectMeasuringUnits("size_units", "size", GETPOST('size_units', 'int')?GETPOST('size_units', 'int'):$expe->size_units, 0, 2);
 			$htmltext = $langs->trans("KeepEmptyForAutoCalculation");
 			print $form->textwithpicto($text, $htmltext);
 			print '</td></tr>';
@@ -943,7 +985,7 @@ if ($action == 'create') {
 			print "<tr><td>".$langs->trans("DeliveryMethod")."</td>";
 			print '<td colspan="3">';
 			$expe->fetch_delivery_methods();
-			print $form->selectarray("shipping_method_id", $expe->meths, GETPOST('shipping_method_id', 'int'), 1, 0, 0, "", 1);
+			print $form->selectarray("shipping_method_id", $expe->meths, GETPOST('shipping_method_id', 'int')?GETPOST('shipping_method_id', 'int'):$expe->shipping_method_id, 1, 0, 0, "", 1);
 			if ($user->admin) {
 				print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 			}
@@ -952,7 +994,7 @@ if ($action == 'create') {
 			// Tracking number
 			print "<tr><td>".$langs->trans("TrackingNumber")."</td>";
 			print '<td colspan="3">';
-			print '<input name="tracking_number" size="20" value="'.GETPOST('tracking_number', 'alpha').'">';
+			print '<input name="tracking_number" size="20" value="'.GETPOST('tracking_number', 'alpha')?GETPOST('tracking_number', 'alpha'):$expe->tracking_number.'">';
 			print "</td></tr>\n";
 
 			// Other attributes
@@ -972,10 +1014,10 @@ if ($action == 'create') {
 			// Incoterms
 			if (!empty($conf->incoterm->enabled)) {
 				print '<tr>';
-				print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $object->label_incoterms, 1).'</label></td>';
+				print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $action == 'create'?$object->label_incoterms:$expe->label_incoterms, 1).'</label></td>';
 				print '<td colspan="3" class="maxwidthonsmartphone">';
-				print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''));
-				print '</td></tr>';
+				print $form->select_incoterms(GETPOST('incoterm_id', 'int')?GETPOST('incoterm_id', 'int'):($action == 'create'?$object->fk_incoterms:$expe->fk_incoterms), GETPOST('location_incoterms', 'alpha')?GETPOST('location_incoterms', 'alpha'):($action == 'create'?$object->location_incoterms:$expe->location_incoterms));
+				print '</td></tr>';print '</td></tr>';
 			}
 
 			// Document model
@@ -1018,7 +1060,7 @@ if ($action == 'create') {
 			print '<table class="noborder centpercent">';
 
 			// Load shipments already done for same order
-			$object->loadExpeditions();
+			$object->loadExpeditions($action == 'edit'); // dont load draft shippings if edit so we can show all lines
 
 			if ($numAsked) {
 				print '<tr class="liste_titre">';
@@ -1137,7 +1179,8 @@ if ($action == 'create') {
 
 					// Qty to ship
 					$quantityAsked = $line->qty;
-					if ($line->product_type == 1 && empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+					if ($action == 'edit' && $object->expeditions[$line->id] > 0) $quantityToBeDelivered = $object->expeditions[$line->id];
+					elseif ($line->product_type == 1 && empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 						$quantityToBeDelivered = 0;
 					} else {
 						$quantityToBeDelivered = $quantityAsked - $quantityDelivered;
@@ -1480,7 +1523,8 @@ if ($action == 'create') {
 			print '<br>';
 
 			print '<div class="center">';
-			print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
+			if ($action == 'edit') print '<input type="submit" class="button" name="update" value="'.dol_escape_htmltag($langs->trans("Update")).'">';
+            else print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
 			print '&nbsp; ';
 			print '<input type="'.($backtopage ? "submit" : "button").'" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage ? '' : ' onclick="javascript:history.go(-1)"').'>'; // Cancel for create does not post form if we don't know the backtopage
 			print '</div>';
@@ -2339,6 +2383,14 @@ if ($action == 'create') {
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 																									   // modified by hook
 		if (empty($reshook)) {
+			if ($object->statut == Expedition::STATUS_DRAFT) {
+				if (! empty($user->rights->expedition->creer)) {
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit&amp;origin=commande&amp;origin_id='.$object->origin_id.'">'.$langs->trans("Modify").'</a>';
+				}
+				else {
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Modify").'</a>';
+				}
+			}
 			if ($object->statut == Expedition::STATUS_DRAFT && $num_prod > 0) {
 				if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->creer))
 				 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->shipping_advance->validate))) {
