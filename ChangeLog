@@ -10,20 +10,16 @@ For users:
 NEW: Module Recruitement to follow application to job positions is now stable.
 NEW: Feature to make Stock Inventories
 NEW: Several security issues after a second private bug hunting campaign. 
-NEW: Add a security center page with all information and advices related to the security of your instance 
-NEW: Add a performance center page with all information and advices related to the performance of your instance 
 NEW: A lot of fix into english text after a small proofreading campaign (still not perfect, but really better)
 NEW: All main menu entries are using the picto of the module
 NEW: Add a copy to clipboard button on some fields 
 NEW: Add an example of scheduled job to send email reminder for unpaid invoices
-NEW: Add a check to avoid an invoice date in the future
 NEW: Add some color and picto for the direction of movement
 NEW: add the column "Channel" into the list of orders
 NEW: Add the column "alias" of company in the list of proposal, order, invoice
 NEW: Add the column "Office phone" and  "User mobile" in user list
 NEW: Add the column "Price level" in thirdparty list
 NEW: Add some company information in the dropdown login menu
-NEW: Add contact tag and bulk email status on the thirdparty + contact create form
 NEW: Add edit/delete action icons on categories list pages
 NEW: Add hidden option to auto load input line extrafield into new lines
 NEW: Add import profile to import BOM
@@ -33,8 +29,6 @@ NEW: Add bulk action Validate and Set to billed on order list.
 NEW: Add possibility to exports userGroups fields on user exports
 NEW: Can search on lots or serials into the quick search bar
 NEW: Add support for Friday as a non working day
-NEW: Add a total in page of margin by user
-NEW: Add the total of margin in invoice list
 NEW: auto notification with module Notification can use templated emails
 NEW: Can clone a cron job
 NEW: Can create a lot from the list view (Look and feel standardization).
@@ -48,7 +42,6 @@ NEW: Check update availability for externals modules using a button on module pa
 NEW: Choose lines to use while creating intervention card from origin
 NEW: Columns shipment method, payment mode, payment term in proposal and order list
 NEW: Conf for default actioncomm status
-NEW: customer ref for product customer prices
 NEW: Dictionary for availability - Add a column position
 NEW: Can set a user related to a social contribution
 NEW: ICS Direct debit can be set with a different value for each bank account
@@ -60,7 +53,6 @@ NEW: Enhance the multicurrency rate editor
 NEW: Normalyse Type company field with ajax combobox
 NEW: preload product description on selection for customer propal/order/invoice
 NEW: Search usergroups & resources
-NEW: Set status of all variants when changing status of parent
 NEW: Setup Page for module creation with module builder enhancement #FoundationFunding
 NEW: Show picto of module into the list of dictionaries
 NEW: Show the total of payment on the payment confirmation page
@@ -71,7 +63,7 @@ NEW: Salary payment request and Salary payment are 2 different steps in workflow
 NEW: VAT payment request and VAT payment are now 2 different steps in workflow on VAT payment recording
 NEW: VAT report - Optimisation & collapse by rate
 NEW: When a doc file is shared, link is visible from the main page of doc.
-NEW: #16378 More E-Mail Contact substitution Values for better salutation
+NEW: #16378 more E-Mail Contact substitution Values for better salutation
 NEW: option to keep the "Automatically create a total payment" checkbox empty on the tax creation page
 
  Accountancy
@@ -85,7 +77,8 @@ NEW: Accountancy - Add a page to list subledger accounts
 NEW: Multiselect ledger account code filter on book keeping list
 
  Agenda
-NEW: Can show the leave dates/holidays on the agenda view
+NEW: add support for Friday as a non working day
+NEW: can show the leave dates/holidays on the agenda view
 NEW: Support color for types of event
 
  Bank
@@ -94,11 +87,17 @@ NEW: Add bulk actions for Bank Transfer
 
  ECM/GED
 NEW: add DB fields note_public and note_private for ECM module
-NEW: Can filter files in ECM/GED on status Shared/Not shared
+NEW: can filter files in ECM/GED on status Shared / Not shared
 
  Invoices
-NEW: Can set a percentage when creating an invoice from another object
+NEW: add a check to avoid an invoice date in the future
+NEW: add the total of margin in invoice list
+NEW: can set a percentage when creating an invoice from another object
 NEW: Support down payment on supplier invoice (& somes ajustments)
+
+ Margin
+NEW: add the total of margin in invoice list
+NEW: add the total of margin in page by user
 
  Members
 NEW: #17292 default subscription amount by adherent type
@@ -108,11 +107,14 @@ NEW: option to select membership type on the online payment page for membership 
  Products
 NEW: Add price min and price min including tax into product export 
 NEW: Add a ref in product customer price
+NEW: customer ref for product customer prices
+NEW: Set status of all variants when changing status of parent
 
  Projects/Tasks
 NEW: option to automatically close an open project when all its tasks are done (=progress 100%)
 NEW: can show the project ref into PDF documents
 NEW: when we add contacts/users to a project, ask to also affect them on tasks
+NEW: Can hide columns "time consumed" on timesheet per week
 
  Proposals
 NEW: add bulk action to set a commercial proposal to status "Refused"
@@ -130,8 +132,9 @@ NEW: edit sales lines rights in TakePOS
 NEW: option for TakePOS to show the total price without tax
 NEW: more permissions in TakePOS (can edit added line, can modify once order sent to kitchen)
 
- Third-Parties
-NEW: can set a warehouse on a Thirdparty
+ Third Party / Contacts
+NEW: add contact tag and bulk email status on the thirdparty + contact create form
+NEW: can set a warehouse on a thirdparty
 
  Tickets
 NEW: can use captcha on public page to create a ticket  #16347
@@ -142,7 +145,7 @@ NEW: Feature to make Stock Inventories
 NEW: can make massive stock transfers from a CSV file
 NEW: Stock movement list - add more complete date field
 NEW: can set a warehouse in a proposal
-NEW: can set a warehouse on a Thirdparty
+NEW: can set a warehouse on a thirdparty
 
  Website Module
 NEW: #17113 Can upload a favicon in website module
@@ -150,14 +153,22 @@ NEW: add a new permission "Export website"
 NEW: add last date of modification for website pages in the list of pages
 NEW: Save old page with .old extension on disk when editing a website page
 
+ Workflows
+NEW: add option in Workflow module to set a shipment as closed
 
- new Modules
+
+ for Admins
+NEW: Add a security center page with all information and advices related to the security of your instance 
+NEW: Add a performance center page with all information and advices related to the performance of your instance 
+
+ Modules
 NEW: Module Recruitement is now stable
 NEW: start new experimental module Event Organization Management
 NEW: start new experimental module Partnership Management
 NEW: start new experimental module Knowledge Management
 NEW: start new experimental module Workstations Management
 NEW: Check update availability for externals modules using a button on module page
+Module SimplePOS is deprecated - TakePOS is recommended for the future
 
  new Options
 NEW: add option  CONTRACT_ALLOW_EXTERNAL_DOWNLOAD            to make generated doc automatically shared
@@ -195,10 +206,10 @@ NEW: Product API route added to get product stock and product with or without va
 
  Hooks
 NEW: hook printFieldListTitle for cabyprodserv.php
-NEW: Hook to allow external modules to add their own shortlist of recent objects
+NEW: hook to allow external modules to add their own shortlist of recent objects
 NEW: SQL-altering hooks in the turnover by product report
 NEW: add form confirm hook on company card
-NEW: Add hook addSectionECMAuto method to add custom diretory into ECM auto files
+NEW: add hook addSectionECMAuto method to add custom diretory into ECM auto files
 
 
 WARNING:
