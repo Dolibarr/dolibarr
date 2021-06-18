@@ -1721,6 +1721,13 @@ class EmailCollector extends CommonObject
 										// Overwrite values with values extracted from source email
 										$errorforthisaction = $this->overwritePropertiesOfObject($thirdpartystatic, $operation['actionparam'], $messagetext, $subject, $header);
 
+										if ($thirdpartystatic->client && empty($thirdpartystatic->code_client)) {
+											$thirdpartystatic->code_client = 'auto';
+										}
+										if ($thirdpartystatic->fournisseur && empty($thirdpartystatic->code_fournisseur)) {
+											$thirdpartystatic->code_fournisseur = 'auto';
+										}
+
 										if ($errorforthisaction) {
 											$errorforactions++;
 										} else {
