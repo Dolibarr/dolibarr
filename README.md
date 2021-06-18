@@ -169,7 +169,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 
 ### System Environment / Requirements
 
-- Works with PHP 5.6+ and MariaDB 5.0.3+, MySQL 5.0.3+ or PostgreSQL 8.1.4+ (See requirements on the [Wiki](https://wiki.dolibarr.org/index.php/Prerequisite))
+- Works with PHP 5.6-7.4 and MariaDB 5.0.3+, MySQL 5.0.3+ or PostgreSQL 8.1.4+ (See exact requirements on the [Wiki](https://wiki.dolibarr.org/index.php/Prerequisite))
 - Compatible with all Cloud solutions that match PHP & MySQL or PostgreSQL prerequisites.
 
 
