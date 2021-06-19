@@ -220,6 +220,17 @@ These are features that Dolibarr does **not** yet fully support:
 - Payroll module
 - No native embedded Webmail, but you can send email to contacts in Dolibarr with e.g. offers, invoices, etc.
 - Dolibarr can't do coffee (yet)
+- The REST API currently cannot:
+  - Update a supplier order 
+  - Get tickets
+  - Add new ledger entry
+  - Output extrafields when getting orders
+  - Get virtual products (aka lots)
+  - Add special taxcodes to a line on a supplier invoice
+  - Get or post shipments
+  - Do updating or inserting of extrafields on any objects
+  - Add an image to a product
+  - Add multiprices to products
 
 
 ## DOCUMENTATION
