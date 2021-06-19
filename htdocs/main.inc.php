@@ -2565,7 +2565,7 @@ function top_menu_search()
         <a class="dropdown-toggle login-dropdown-a" data-toggle="dropdown" href="#" title="'.$langs->trans('Search').' ('.$langs->trans('SearchMenuShortCut').')">
             <i class="fa fa-search" ></i>
         </a>
-        <div class="dropdown-search">
+        <div class="dropdown-menu dropdown-search">
             '.$dropDownHtml.'
         </div>
     </div>';
@@ -2585,6 +2585,26 @@ function top_menu_search()
                 e.preventDefault();
                 return false;
             }
+        });
+
+        // arrow key nav
+        $(document).keydown(function(e) {
+			// Get the focused element:
+			var $focused = $(":focus");
+			if($focused.length && $focused.hasClass("global-search-item")){
+
+           		// UP - move to the previous line
+				if (e.keyCode == 38) {
+				    e.preventDefault();
+					$focused.prev().focus();
+				}
+
+				// DOWN - move to the next line
+				if (e.keyCode == 40) {
+				    e.preventDefault();
+					$focused.next().focus();
+				}
+			}
         });
 
 
@@ -2619,7 +2639,6 @@ function top_menu_search()
 
 
         var openGlobalSearchDropDown = function() {
-            event.preventDefault();
             $("#topmenu-global-search-dropdown").toggleClass("open");
             $("#top-global-search-input").focus();
         }

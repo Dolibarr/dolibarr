@@ -392,7 +392,7 @@ a.top-menu-dropdown-link {
 	background-repeat: no-repeat;
 	background-size: 16px 16px;
 	background-position: 95% center;
-	border-radius: 10px;
+	border-radius: 20px;
 	border: 1px solid #c4c4c2 !important;
 	transition: all 250ms ease-in-out;
 	backface-visibility: hidden;
