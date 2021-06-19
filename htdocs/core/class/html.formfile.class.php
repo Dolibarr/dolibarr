@@ -218,9 +218,10 @@ class FormFile
 
 			if (!empty($conf->global->MAIN_UPLOAD_DOC)) {
 				if ($perm) {
+					$menudolibarrsetupmax = $langs->transnoentitiesnoconv("Home").'-'.$langs->transnoentitiesnoconv("Setup").'-'.$langs->transnoentitiesnoconv("Security");
 					$langs->load('other');
 					$out .= ' ';
-					$out .= info_admin($langs->trans("ThisLimitIsDefinedInSetup", $max, $maxphptoshow), 1);
+					$out .= info_admin($langs->trans("ThisLimitIsDefinedInSetupAt", $menudolibarrsetupmax, $max, $maxphptoshowparam, $maxphptoshow), 1);
 				}
 			} else {
 				$out .= ' ('.$langs->trans("UploadDisabled").')';
