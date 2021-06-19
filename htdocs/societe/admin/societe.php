@@ -693,7 +693,7 @@ foreach ($profid as $key => $val)
 			print img_picto($langs->trans("Activated"), 'switch_on');
 			print '</a></td>';
 		} else {
-			print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidmandator&token='.newToken().'&value='.$key.'&status=1">';
+			print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidmandatory&token='.newToken().'&value='.$key.'&status=1">';
 			print img_picto($langs->trans("Disabled"), 'switch_off');
 			print '</a></td>';
 		}
