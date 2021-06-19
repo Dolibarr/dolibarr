@@ -80,9 +80,10 @@ class FormFile
 	 *  @param  int         $usewithoutform 0=Default, 1=Disable <form> and style to use in existing area
 	 *  @param	int			$capture		1=Add tag capture="capture" to force use of micro or video recording to generate file. When setting this to 1, you must also provide a value for $accept.
 	 *  @param	int			$disablemulti	0=Default, 1=Disable multiple file upload
-	 * 	@return	int							<0 if KO, >0 if OK
+	 *  @param	int			$nooutput		0=Output result with print, 1=Return result
+	 * 	@return	int|string					<0 if KO, >0 if OK, or string if $noouput=1
 	 */
-	public function form_attach_new_file($url, $title = '', $addcancel = 0, $sectionid = 0, $perm = 1, $size = 50, $object = '', $options = '', $useajax = 1, $savingdocmask = '', $linkfiles = 1, $htmlname = 'formuserfile', $accept = '', $sectiondir = '', $usewithoutform = 0, $capture = 0, $disablemulti = 0)
+	public function form_attach_new_file($url, $title = '', $addcancel = 0, $sectionid = 0, $perm = 1, $size = 50, $object = '', $options = '', $useajax = 1, $savingdocmask = '', $linkfiles = 1, $htmlname = 'formuserfile', $accept = '', $sectiondir = '', $usewithoutform = 0, $capture = 0, $disablemulti = 0, $nooutput = 0)
 	{
 		// phpcs:enable
 		global $conf, $langs, $hookmanager;
@@ -102,11 +103,16 @@ class FormFile
 			// TODO: Check this works with GED module, otherwise, force useajax to 0
 			// TODO: This does not support option savingdocmask
 			// TODO: This break feature to upload links too
+			// TODO: Thisdoes not work when param nooutput=1
 			return $this->_formAjaxFileUpload($object);
 		} else {
 			//If there is no permission and the option to hide unauthorized actions is enabled, then nothing is printed
 			if (!$perm && !empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) {
-				return 1;
+				if ($nooutput) {
+					return '';
+				} else {
+					return 1;
+				}
 			}
 
 			$out = "\n\n".'<!-- Start form attach new file --><div class="formattachnewfile">'."\n";
@@ -122,12 +128,12 @@ class FormFile
 				// Add a param as GET parameter to detect when POST were cleaned by PHP because a file larger than post_max_size
 				$url .= (strpos($url, '?') === false ? '?' : '&').'uploadform=1';
 
-				$out .= '<form name="'.$htmlname.'" id="'.$htmlname.'" action="'.$url.'" enctype="multipart/form-data" method="POST">';
-				$out .= '<input type="hidden" name="token" value="'.newToken().'">';
-				$out .= '<input type="hidden" id="'.$htmlname.'_section_dir" name="section_dir" value="'.$sectiondir.'">';
-				$out .= '<input type="hidden" id="'.$htmlname.'_section_id"  name="section_id" value="'.$sectionid.'">';
-				$out .= '<input type="hidden" name="sortfield" value="'.GETPOST('sortfield', 'aZ09comma').'">';
-				$out .= '<input type="hidden" name="sortorder" value="'.GETPOST('sortorder', 'aZ09').'">';
+				$out .= '<form name="'.$htmlname.'" id="'.$htmlname.'" action="'.$url.'" enctype="multipart/form-data" method="POST">'."\n";
+				$out .= '<input type="hidden" name="token" value="'.newToken().'">'."\n";
+				$out .= '<input type="hidden" id="'.$htmlname.'_section_dir" name="section_dir" value="'.$sectiondir.'">'."\n";
+				$out .= '<input type="hidden" id="'.$htmlname.'_section_id"  name="section_id" value="'.$sectionid.'">'."\n";
+				$out .= '<input type="hidden" name="sortfield" value="'.GETPOST('sortfield', 'aZ09comma').'">'."\n";
+				$out .= '<input type="hidden" name="sortorder" value="'.GETPOST('sortorder', 'aZ09comma').'">'."\n";
 			}
 
 			$out .= '<table class="nobordernopadding centpercent">';
@@ -301,13 +307,15 @@ class FormFile
 			$parameters = array('socid'=>(isset($GLOBALS['socid']) ? $GLOBALS['socid'] : ''), 'id'=>(isset($GLOBALS['id']) ? $GLOBALS['id'] : ''), 'url'=>$url, 'perm'=>$perm, 'options'=>$options);
 			$res = $hookmanager->executeHooks('formattachOptions', $parameters, $object);
 			if (empty($res)) {
-				print '<div class="'.($usewithoutform ? 'inline-block valignmiddle' : 'attacharea attacharea'.$htmlname).'">';
-				print $out;
-				print '</div>';
+				$out = '<div class="'.($usewithoutform ? 'inline-block valignmiddle' : 'attacharea attacharea'.$htmlname).'">'.$out.'</div>';
 			}
-			print $hookmanager->resPrint;
+			$out .= $hookmanager->resPrint;
 
-			return 1;
+			if ($nooutput) {
+				return $out;
+			} else {
+				return 1;
+			}
 		}
 	}
 
