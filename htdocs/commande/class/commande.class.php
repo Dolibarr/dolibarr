@@ -2351,10 +2351,10 @@ class Commande extends CommonOrder
 					$staticline = clone $line;
 					$line->oldline = $staticline;
 
-					if ($line->delete($user) > 0)	{
+					if ($line->delete($user) > 0) {
 						$result = $this->update_price(1);
 
-            if ($result > 0) {
+						if ($result > 0) {
 							$this->db->commit();
 							return 1;
 						} else {
