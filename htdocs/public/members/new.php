@@ -119,12 +119,16 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 	if ($urllogo) {
 		print '<div class="backgreypublicpayment">';
 		print '<div class="logopublicpayment">';
-		print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
-		print '>';
+		print '<img id="dolpaymentlogo" src="'.$urllogo.'">';
 		print '</div>';
 		if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
 			print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 		}
+		print '</div>';
+	}
+	if (!empty($conf->global->MEMBER_IMAGE_PUBLIC_REGISTRATION)) {
+		print '<div class="backimagepublicregistration">';
+		print '<img id="dolpaymentlogo" src="'.$conf->global->MEMBER_IMAGE_PUBLIC_REGISTRATION.'">';
 		print '</div>';
 	}
 	print '</div>';
