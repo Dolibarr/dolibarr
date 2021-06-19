@@ -3181,7 +3181,6 @@ class Commande extends CommonOrder
 			}
 
 			$this->line->id = $rowid;
-			$this->line->rowid = $rowid;  // For backward compatibility
 			$this->line->label = $label;
 			$this->line->desc = $desc;
 			$this->line->qty = $qty;
