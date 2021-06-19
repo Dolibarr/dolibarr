@@ -26,6 +26,9 @@
 //var_dump($upload_dir);
 //var_dump($upload_dirold);
 
+if (GETPOST('uploadform', 'int') && empty($_FILES)) {
+	print "Error: The PHP parameter 'post_max_size' is too low. All POST parameters and FILES were set to empty.\n";
+}
 
 // Submit file/link
 if (GETPOST('sendit', 'alpha') && !empty($conf->global->MAIN_UPLOAD_DOC) && (!isset($permissiontoadd) || $permissiontoadd)) {
