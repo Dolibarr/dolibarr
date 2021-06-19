@@ -3087,10 +3087,10 @@ class Commande extends CommonOrder
 				$this->line->rang = $rangmax + 1;
 			}
 
-			$this->line->rowid=$rowid;
-			$this->line->label=!empty($label)?$label:$this->line->oldline->label;
-			$this->line->desc=$desc;
-			$this->line->qty=$qty;
+			$this->line->rowid = $rowid;
+			$this->line->label = $label;
+			$this->line->desc = $desc;
+			$this->line->qty = $qty;
 
 			$this->line->vat_src_code	= $vat_src_code;
 			$this->line->tva_tx         = $txtva;
