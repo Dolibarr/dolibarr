@@ -613,7 +613,7 @@ class FactureRec extends CommonInvoice
 				}
 				return 1;
 			} else {
-				$this->error = 'Bill with id '.$rowid.' or ref '.$ref.' not found sql='.$sql;
+				$this->error = 'Bill with id '.$rowid.' or ref '.$ref.' not found';
 				dol_syslog('Facture::Fetch Error '.$this->error, LOG_ERR);
 				return -2;
 			}
