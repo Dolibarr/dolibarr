@@ -350,7 +350,7 @@ if (!empty($eventstolog) && is_array($eventstolog)) {
 }
 
 if (empty($out)) {
-	print img_warning().' '.$langs->trans("NoSecurityEventsAreAduited", $langs->transnoentities("Home").' - '.$langs->transnoentities("Setup").' - '.$langs->transnoentities("Audit")).'<br>';
+	print img_warning().' '.$langs->trans("NoSecurityEventsAreAduited", $langs->transnoentities("Home").' - '.$langs->transnoentities("Setup").' - '.$langs->transnoentities("Security")).'<br>';
 }
 
 print '<br>';
