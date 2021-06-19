@@ -26,8 +26,14 @@
 //var_dump($upload_dir);
 //var_dump($upload_dirold);
 
-if (GETPOST('uploadform', 'int') && empty($_FILES)) {
-	print "Error: The PHP parameter 'post_max_size' is too low. All POST parameters and FILES were set to empty.\n";
+
+// Protection to understand what happen when submitting files larger than post_max_size
+if (GETPOST('uploadform', 'int') && empty($_POST) && empty($_FILES)) {
+	dol_syslog("The PHP parameter 'post_max_size' is too low. All POST parameters and FILES were set to empty.");
+	$langs->loadLangs(array("errors", "install"));
+	print $langs->trans("ErrorFileSizeTooLarge").' ';
+	print $langs->trans("ErrorGoBackAndCorrectParameters");
+	die;
 }
 
 // Submit file/link
