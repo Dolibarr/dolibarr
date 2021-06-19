@@ -2186,6 +2186,7 @@ if ($action == 'create') {
 								print '</a>';
 							}
 
+							print '<!-- Code to open/close section to submit or link files in edit mode -->'."\n";
 							print '<script language="javascript">'."\n";
 							print '$(document).ready(function() {
         				        $( ".auploadnewfilenow" ).click(function() {
@@ -2339,14 +2340,22 @@ if ($action == 'create') {
 						print '</a>';
 					}
 
+					print '<!-- Code to open/close section to submit or link files in the form to add new line -->'."\n";
 					print '<script language="javascript">'."\n";
 					print '$(document).ready(function() {
 				        $( ".auploadnewfilenow" ).click(function() {
+							console.log("We click on toggle of auploadnewfilenow");
 				            jQuery(".truploadnewfilenow").toggle();
                             jQuery(".trattachnewfilenow").hide();
+							if (jQuery(".truploadnewfilenow").is(":hidden")) {
+                            	jQuery("input[name=\"sendit\"]").prop("name", "senditdisabled");
+                            } else {
+                                jQuery("input[name=\"senditdisabled\"]").prop("name", "sendit");
+                            }
                             return false;
                         });
 				        $( ".aattachtodoc" ).click(function() {
+							console.log("We click on toggle of aattachtodoc");
 				            jQuery(".trattachnewfilenow").toggle();
                             jQuery(".truploadnewfilenow").hide();
                             return false;
@@ -2357,7 +2366,11 @@ if ($action == 'create') {
 					print '
 						jQuery("form[name=\"expensereport\"]").submit(function() {
 							if (jQuery(".truploadnewfilenow").is(":hidden")) {
+								/* When section to send file is not expanded, we disable the button sendit that submit form to add a new file, so button to submit line will work. */
 								jQuery("input[name=\"sendit\"]").val("");
+								jQuery("input[name=\"sendit\"]").prop("name", "senditdisabled");
+							} else {
+								jQuery("input[name=\"senditdisabled\"]").prop("name", "sendit");
 							}
 						});
 					';
