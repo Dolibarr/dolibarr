@@ -77,7 +77,7 @@ class FormFile
 	 *  @param	string		$htmlname		Name and id of HTML form ('formuserfile' by default, 'formuserfileecm' when used to upload a file in ECM)
 	 *  @param	string		$accept			Specifies the types of files accepted (This is not a security check but an user interface facility. eg '.pdf,image/*' or '.png,.jpg' or 'video/*')
 	 *	@param	string		$sectiondir		If upload must be done inside a particular directory (if sectiondir defined, sectionid must not be)
-	 *  @param  int         $usewithoutform 0=Default, 1=Disable <form> and style to use in existing area
+	 *  @param  int         $usewithoutform 0=Default, 1=Disable <form> and <input hidden> to use in existing form area, 2=Disable the tag <form> only
 	 *  @param	int			$capture		1=Add tag capture="capture" to force use of micro or video recording to generate file. When setting this to 1, you must also provide a value for $accept.
 	 *  @param	int			$disablemulti	0=Default, 1=Disable multiple file upload
 	 *  @param	int			$nooutput		0=Output result with print, 1=Return result
@@ -129,6 +129,8 @@ class FormFile
 				$url .= (strpos($url, '?') === false ? '?' : '&').'uploadform=1';
 
 				$out .= '<form name="'.$htmlname.'" id="'.$htmlname.'" action="'.$url.'" enctype="multipart/form-data" method="POST">'."\n";
+			}
+			if (empty($usewithoutform) || $usewithoutform == 2) {
 				$out .= '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 				$out .= '<input type="hidden" id="'.$htmlname.'_section_dir" name="section_dir" value="'.$sectiondir.'">'."\n";
 				$out .= '<input type="hidden" id="'.$htmlname.'_section_id"  name="section_id" value="'.$sectionid.'">'."\n";

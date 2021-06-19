@@ -16,6 +16,7 @@
  *
  * Output code for the filemanager
  * $module must be defined ('ecm', 'medias', ...)
+ * $formalreadyopen can be set to 1 to avoid to open the <form> to submit files a second time
  */
 
 // Protection to avoid direct call of template
@@ -145,7 +146,7 @@ if ((!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE
 	print '<!-- Start form to attach new file in filemanager.tpl.php sectionid='.$section.' sectiondir='.$sectiondir.' -->'."\n";
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 	$formfile = new FormFile($db);
-	print $formfile->form_attach_new_file($_SERVER["PHP_SELF"], 'none', 0, ($section ? $section : -1), $permtoupload, 48, null, '', 0, '', 0, $nameforformuserfile, '', $sectiondir, 0, 0, 0, 1);
+	print $formfile->form_attach_new_file($_SERVER["PHP_SELF"], 'none', 0, ($section ? $section : -1), $permtoupload, 48, null, '', 0, '', 0, $nameforformuserfile, '', $sectiondir, empty($formalreadyopen) ? 0 : $formalreadyopen, 0, 0, 1);
 } else {
 	print '&nbsp;';
 }

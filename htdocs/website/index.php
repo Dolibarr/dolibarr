@@ -2506,7 +2506,8 @@ $moreheadjs .= '</script>'."\n";
 llxHeader($moreheadcss.$moreheadjs, $langs->trans("WebsiteSetup"), $helpurl, '', 0, 0, $arrayofjs, $arrayofcss, '', '', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
 
 print "\n";
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">';
+print '<!-- Open form for all page -->'."\n";
+print '<form action="'.$_SERVER["PHP_SELF"].($action == 'file_manager' ? '?uploadform=1': '').'" method="POST" enctype="multipart/form-data">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
@@ -4043,6 +4044,7 @@ if ($action == 'editfile' || $action == 'file_manager' || $action == 'convertimg
 
 
 	$module = 'medias';
+	$formalreadyopen = 2;	// So the form to submit a new file will not be opened another time inside the core/tpl/filemanager.tpl.php
 	if (empty($url)) {
 		$url = DOL_URL_ROOT.'/website/index.php'; // Must be an url without param
 	}
