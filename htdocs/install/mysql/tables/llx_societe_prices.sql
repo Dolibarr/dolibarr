@@ -12,7 +12,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ========================================================================
 
@@ -20,7 +20,7 @@ create table llx_societe_prices
 (
   rowid              integer AUTO_INCREMENT PRIMARY KEY,
   fk_soc             integer   DEFAULT 0,
-  tms                timestamp, 
+  tms                timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
   datec	             datetime,
   fk_user_author     integer,
   price_level        tinyint   DEFAULT 1

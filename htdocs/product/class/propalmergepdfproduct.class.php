@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -34,168 +34,155 @@ class Propalmergepdfproduct extends CommonObject
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element='propal_merge_pdf_product';
+	public $element = 'propal_merge_pdf_product';
 
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element='propal_merge_pdf_product';
+	public $table_element = 'propal_merge_pdf_product';
 
 	public $fk_product;
 	public $file_name;
 	public $fk_user_author;
 	public $fk_user_mod;
-	public $datec='';
-	public $tms='';
+	public $datec = '';
+	public $tms = '';
 	public $lang;
 
-	public $lines=array();
+	public $lines = array();
 
 
 
 
-    /**
-     *  Constructor
-     *
-     *  @param	DoliDb		$db      Database handler
-     */
-    public function __construct($db)
-    {
-        $this->db = $db;
-    }
+	/**
+	 *  Constructor
+	 *
+	 *  @param	DoliDb		$db      Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
+	}
 
 
-    /**
-     *  Create object into database
-     *
-     *  @param	User	$user        User that creates
-     *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
-     *  @return int      		   	 <0 if KO, Id of created object if OK
-     */
-    public function create($user, $notrigger = 0)
-    {
-    	global $conf, $langs;
-		$error=0;
+	/**
+	 *  Create object into database
+	 *
+	 *  @param	User	$user        User that creates
+	 *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
+	 *  @return int      		   	 <0 if KO, Id of created object if OK
+	 */
+	public function create($user, $notrigger = 0)
+	{
+		global $conf, $langs;
+		$error = 0;
 
 		// Clean parameters
 
-		if (isset($this->fk_product)) $this->fk_product=trim($this->fk_product);
-		if (isset($this->file_name)) $this->file_name=trim($this->file_name);
-		if (isset($this->fk_user_author)) $this->fk_user_author=trim($this->fk_user_author);
-		if (isset($this->fk_user_mod)) $this->fk_user_mod=trim($this->fk_user_mod);
-		if (isset($this->lang)) $this->lang=trim($this->lang);
-		if (isset($this->import_key)) $this->import_key=trim($this->import_key);
+		if (isset($this->fk_product)) {
+			$this->fk_product = trim($this->fk_product);
+		}
+		if (isset($this->file_name)) {
+			$this->file_name = trim($this->file_name);
+		}
+		if (isset($this->fk_user_author)) {
+			$this->fk_user_author = trim($this->fk_user_author);
+		}
+		if (isset($this->fk_user_mod)) {
+			$this->fk_user_mod = trim($this->fk_user_mod);
+		}
+		if (isset($this->lang)) {
+			$this->lang = trim($this->lang);
+		}
+		if (isset($this->import_key)) {
+			$this->import_key = trim($this->import_key);
+		}
 
 
 
 		// Check parameters
 		// Put here code to add control on parameters values
 
-        // Insert request
+		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."propal_merge_pdf_product(";
-
-		$sql.= "fk_product,";
-		$sql.= "file_name,";
+		$sql .= "fk_product,";
+		$sql .= "file_name,";
 		if ($conf->global->MAIN_MULTILANGS) {
-			$sql.= "lang,";
+			$sql .= "lang,";
 		}
-		$sql.= "fk_user_author,";
-		$sql.= "fk_user_mod,";
-		$sql.= "datec";
-
-
-        $sql.= ") VALUES (";
-
-		$sql.= " ".(! isset($this->fk_product)?'NULL':"'".$this->db->escape($this->fk_product)."'").",";
-		$sql.= " ".(! isset($this->file_name)?'NULL':"'".$this->db->escape($this->file_name)."'").",";
+		$sql .= "fk_user_author,";
+		$sql .= "fk_user_mod,";
+		$sql .= "datec";
+		$sql .= ") VALUES (";
+		$sql .= " ".(!isset($this->fk_product) ? 'NULL' : ((int) $this->fk_product)).",";
+		$sql .= " ".(!isset($this->file_name) ? 'NULL' : "'".$this->db->escape($this->file_name)."'").",";
 		if ($conf->global->MAIN_MULTILANGS) {
-			$sql.= " ".(! isset($this->lang)?'NULL':"'".$this->db->escape($this->lang)."'").",";
+			$sql .= " ".(!isset($this->lang) ? 'NULL' : "'".$this->db->escape($this->lang)."'").",";
 		}
-		$sql.= " ".$user->id.",";
-		$sql.= " ".$user->id.",";
-		$sql.= " '".$this->db->idate(dol_now())."'";
-
-
-		$sql.= ")";
+		$sql .= " ".((int) $user->id).",";
+		$sql .= " ".((int) $user->id).",";
+		$sql .= " '".$this->db->idate(dol_now())."'";
+		$sql .= ")";
 
 		$this->db->begin();
 
-	   	dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
-        $resql=$this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+		}
 
-		if (! $error)
-        {
-            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."propal_merge_pdf_product");
+		if (!$error) {
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."propal_merge_pdf_product");
+		}
 
-			if (! $notrigger)
-			{
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action calls a trigger.
-
-	            //// Call triggers
-	            //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	            //$interface=new Interfaces($this->db);
-	            //$result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
-	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	            //// End call triggers
-			}
-        }
-
-        // Commit or rollback
-        if ($error)
-		{
-			foreach($this->errors as $errmsg)
-			{
-	            dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+		// Commit or rollback
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
-			return -1*$error;
-		}
-		else
-		{
+			return -1 * $error;
+		} else {
 			$this->db->commit();
-            return $this->id;
+			return $this->id;
 		}
-    }
+	}
 
 
-    /**
-     *  Load object in memory from the database
-     *
-     *  @param	int		$id    Id object
-     *  @return int          	<0 if KO, >0 if OK
-     */
-    public function fetch($id)
-    {
-    	global $langs,$conf;
+	/**
+	 *  Load object in memory from the database
+	 *
+	 *  @param	int		$id    Id object
+	 *  @return int          	<0 if KO, >0 if OK
+	 */
+	public function fetch($id)
+	{
+		global $langs, $conf;
 
-        $sql = "SELECT";
-		$sql.= " t.rowid,";
+		$sql = "SELECT";
+		$sql .= " t.rowid,";
 
-		$sql.= " t.fk_product,";
-		$sql.= " t.file_name,";
-		$sql.= " t.lang,";
-		$sql.= " t.fk_user_author,";
-		$sql.= " t.fk_user_mod,";
-		$sql.= " t.datec,";
-		$sql.= " t.tms,";
-		$sql.= " t.import_key";
+		$sql .= " t.fk_product,";
+		$sql .= " t.file_name,";
+		$sql .= " t.lang,";
+		$sql .= " t.fk_user_author,";
+		$sql .= " t.fk_user_mod,";
+		$sql .= " t.datec,";
+		$sql .= " t.tms,";
+		$sql .= " t.import_key";
 
 
-        $sql.= " FROM ".MAIN_DB_PREFIX."propal_merge_pdf_product as t";
-        $sql.= " WHERE t.rowid = ".$id;
+		$sql .= " FROM ".MAIN_DB_PREFIX."propal_merge_pdf_product as t";
+		$sql .= " WHERE t.rowid = ".((int) $id);
 
-    	dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            if ($this->db->num_rows($resql))
-            {
-                $obj = $this->db->fetch_object($resql);
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
+				$obj = $this->db->fetch_object($resql);
 
-                $this->id    = $obj->rowid;
+				$this->id = $obj->rowid;
 
 				$this->fk_product = $obj->fk_product;
 				$this->file_name = $obj->file_name;
@@ -207,230 +194,194 @@ class Propalmergepdfproduct extends CommonObject
 				$this->datec = $this->db->jdate($obj->datec);
 				$this->tms = $this->db->jdate($obj->tms);
 				$this->import_key = $obj->import_key;
-            }
-            $this->db->free($resql);
+			}
+			$this->db->free($resql);
 
-            return 1;
-        }
-        else
-        {
-      	    $this->error="Error ".$this->db->lasterror();
-            dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
-            return -1;
-        }
-    }
+			return 1;
+		} else {
+			$this->error = "Error ".$this->db->lasterror();
+			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
+			return -1;
+		}
+	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *  Load object in memory from the database
-     *
-     *  @param	int		$product_id    	Id object
-     *  @param	string	$lang  			Lang string code
-     *  @return int          	<0 if KO, >0 if OK
-     */
-    public function fetch_by_product($product_id, $lang = '')
-    {
-        // phpcs:enable
-    	global $langs,$conf;
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Load object in memory from the database
+	 *
+	 *  @param	int		$product_id    	Id object
+	 *  @param	string	$lang  			Lang string code
+	 *  @return int          	<0 if KO, >0 if OK
+	 */
+	public function fetch_by_product($product_id, $lang = '')
+	{
+		// phpcs:enable
+		global $langs, $conf;
 
-    	$sql = "SELECT";
-    	$sql.= " t.rowid,";
+		$sql = "SELECT";
+		$sql .= " t.rowid,";
 
-    	$sql.= " t.fk_product,";
-    	$sql.= " t.file_name,";
-    	$sql.= " t.lang,";
-    	$sql.= " t.fk_user_author,";
-    	$sql.= " t.fk_user_mod,";
-    	$sql.= " t.datec,";
-    	$sql.= " t.tms,";
-    	$sql.= " t.import_key";
+		$sql .= " t.fk_product,";
+		$sql .= " t.file_name,";
+		$sql .= " t.lang,";
+		$sql .= " t.fk_user_author,";
+		$sql .= " t.fk_user_mod,";
+		$sql .= " t.datec,";
+		$sql .= " t.tms,";
+		$sql .= " t.import_key";
 
 
-    	$sql.= " FROM ".MAIN_DB_PREFIX."propal_merge_pdf_product as t";
-    	$sql.= " WHERE t.fk_product = ".$product_id;
-    	if ($conf->global->MAIN_MULTILANGS && !empty($lang)) {
-    		$sql.= " AND t.lang = '".$lang."'";
-    	}
+		$sql .= " FROM ".MAIN_DB_PREFIX."propal_merge_pdf_product as t";
+		$sql .= " WHERE t.fk_product = ".((int) $product_id);
+		if ($conf->global->MAIN_MULTILANGS && !empty($lang)) {
+			$sql .= " AND t.lang = '".$this->db->escape($lang)."'";
+		}
 
-    	dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
-    	$resql=$this->db->query($sql);
-    	if ($resql)
-    	{
-    		if ($this->db->num_rows($resql))
-    		{
-    			while($obj = $this->db->fetch_object($resql)) {
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
+				while ($obj = $this->db->fetch_object($resql)) {
+					$line = new PropalmergepdfproductLine();
 
-    				$line = new PropalmergepdfproductLine();
+					$line->id = $obj->rowid;
 
-	    			$line->id    = $obj->rowid;
-
-	    			$line->fk_product = $obj->fk_product;
-	    			$line->file_name = $obj->file_name;
-	    			if ($conf->global->MAIN_MULTILANGS) {
-	    				$line->lang = $obj->lang;
-	    			}
-	    			$line->fk_user_author = $obj->fk_user_author;
-	    			$line->fk_user_mod = $obj->fk_user_mod;
-	    			$line->datec = $this->db->jdate($obj->datec);
-	    			$line->tms = $this->db->jdate($obj->tms);
-	    			$line->import_key = $obj->import_key;
+					$line->fk_product = $obj->fk_product;
+					$line->file_name = $obj->file_name;
+					if ($conf->global->MAIN_MULTILANGS) {
+						$line->lang = $obj->lang;
+					}
+					$line->fk_user_author = $obj->fk_user_author;
+					$line->fk_user_mod = $obj->fk_user_mod;
+					$line->datec = $this->db->jdate($obj->datec);
+					$line->tms = $this->db->jdate($obj->tms);
+					$line->import_key = $obj->import_key;
 
 
-	    			if ($conf->global->MAIN_MULTILANGS) {
-	    				$this->lines[$obj->file_name.'_'.$obj->lang]=$line;
-	    			}else {
-	    				$this->lines[$obj->file_name]=$line;
-	    			}
-    			}
-    		}
-    		$this->db->free($resql);
+					if ($conf->global->MAIN_MULTILANGS) {
+						$this->lines[$obj->file_name.'_'.$obj->lang] = $line;
+					} else {
+						$this->lines[$obj->file_name] = $line;
+					}
+				}
+			}
+			$this->db->free($resql);
 
-    		return 1;
-    	}
-    	else
-    	{
-    		$this->error="Error ".$this->db->lasterror();
-    		dol_syslog(get_class($this)."::fetch_by_product ".$this->error, LOG_ERR);
-    		return -1;
-    	}
-    }
+			return 1;
+		} else {
+			$this->error = "Error ".$this->db->lasterror();
+			dol_syslog(get_class($this)."::fetch_by_product ".$this->error, LOG_ERR);
+			return -1;
+		}
+	}
 
 
-    /**
-     *  Update object into database
-     *
-     *  @param	User	$user        User that modifies
-     *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-     *  @return int     		   	 <0 if KO, >0 if OK
-     */
-    public function update($user = 0, $notrigger = 0)
-    {
-    	global $conf, $langs;
-		$error=0;
+	/**
+	 *  Update object into database
+	 *
+	 *  @param	User	$user        User that modifies
+	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
+	 *  @return int     		   	 <0 if KO, >0 if OK
+	 */
+	public function update($user = 0, $notrigger = 0)
+	{
+		global $conf, $langs;
+		$error = 0;
 
 		// Clean parameters
 
-		if (isset($this->fk_product)) $this->fk_product=trim($this->fk_product);
-		if (isset($this->file_name)) $this->file_name=trim($this->file_name);
-		if (isset($this->fk_user_mod)) $this->fk_user_mod=trim($this->fk_user_mod);
-		if (isset($this->lang)) $this->lang=trim($this->lang);
+		if (isset($this->fk_product)) {
+			$this->fk_product = trim($this->fk_product);
+		}
+		if (isset($this->file_name)) {
+			$this->file_name = trim($this->file_name);
+		}
+		if (isset($this->fk_user_mod)) {
+			$this->fk_user_mod = trim($this->fk_user_mod);
+		}
+		if (isset($this->lang)) {
+			$this->lang = trim($this->lang);
+		}
 
 		// Check parameters
 		// Put here code to add a control on parameters values
 
-        // Update request
-        $sql = "UPDATE ".MAIN_DB_PREFIX."propal_merge_pdf_product SET";
+		// Update request
+		$sql = "UPDATE ".MAIN_DB_PREFIX."propal_merge_pdf_product SET";
 
-		$sql.= " fk_product=".(isset($this->fk_product)?$this->fk_product:"null").",";
-		$sql.= " file_name=".(isset($this->file_name)?"'".$this->db->escape($this->file_name)."'":"null").",";
+		$sql .= " fk_product=".(isset($this->fk_product) ? $this->fk_product : "null").",";
+		$sql .= " file_name=".(isset($this->file_name) ? "'".$this->db->escape($this->file_name)."'" : "null").",";
 		if ($conf->global->MAIN_MULTILANGS) {
-			$sql.= " lang=".(isset($this->lang)?"'".$this->db->escape($this->lang)."'":"null").",";
+			$sql .= " lang=".(isset($this->lang) ? "'".$this->db->escape($this->lang)."'" : "null").",";
 		}
-		$sql.= " fk_user_mod=".$user->id;
+		$sql .= " fk_user_mod=".$user->id;
 
 
-        $sql.= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
-        $resql = $this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+		}
 
-		//if (! $error)
-		//{
-		//	if (! $notrigger)
-		//	{
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action calls a trigger.
-
-	            //// Call triggers
-	            //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	            //$interface=new Interfaces($this->db);
-	            //$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
-	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	            //// End call triggers
-	    //	}
-		//}
-
-        // Commit or rollback
-		if ($error)
-		{
-			foreach($this->errors as $errmsg)
-			{
-	            dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+		// Commit or rollback
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
-			return -1*$error;
-		}
-		else
-		{
-			$this->db->commit();
-			return 1;
-		}
-    }
-
-
- 	/**
-	 *  Delete object in database
-	 *
-     *	@param  User	$user        User that deletes
-     *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 <0 if KO, >0 if OK
-	 */
-	public function delete($user, $notrigger = 0)
-	{
-		global $conf, $langs;
-		$error=0;
-
-		$this->db->begin();
-
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
-				// Uncomment this and change MYOBJECT to your own tag if you
-		        // want this action calls a trigger.
-
-		        //// Call triggers
-		        //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-		        //$interface=new Interfaces($this->db);
-		        //$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
-		        //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-		        //// End call triggers
-			}
-		}
-
-		if (! $error)
-		{
-    		$sql = "DELETE FROM ".MAIN_DB_PREFIX."propal_merge_pdf_product";
-    		$sql.= " WHERE rowid=".$this->id;
-
-    		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
-    		$resql = $this->db->query($sql);
-        	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
-		}
-
-        // Commit or rollback
-		if ($error)
-		{
-			foreach($this->errors as $errmsg)
-			{
-	            dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
-			}
-			$this->db->rollback();
-			return -1*$error;
-		}
-		else
-		{
+			return -1 * $error;
+		} else {
 			$this->db->commit();
 			return 1;
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+
+	/**
+	 *  Delete object in database
+	 *
+	 *	@param  User	$user        User that deletes
+	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
+	 *  @return	int					 <0 if KO, >0 if OK
+	 */
+	public function delete($user, $notrigger = 0)
+	{
+		global $conf, $langs;
+		$error = 0;
+
+		$this->db->begin();
+
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."propal_merge_pdf_product";
+			$sql .= " WHERE rowid=".((int) $this->id);
+
+			dol_syslog(__METHOD__, LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			}
+		}
+
+		// Commit or rollback
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+			}
+			$this->db->rollback();
+			return -1 * $error;
+		} else {
+			$this->db->commit();
+			return 1;
+		}
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Delete object in database
 	 *
@@ -442,61 +393,42 @@ class Propalmergepdfproduct extends CommonObject
 	 */
 	public function delete_by_product($user, $product_id, $lang_id = '', $notrigger = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf, $langs;
-		$error=0;
+		$error = 0;
 
 		$this->db->begin();
 
-		//if (! $error)
-		//{
-		//	if (! $notrigger)
-		//	{
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action calls a trigger.
-
-				//// Call triggers
-				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				//$interface=new Interfaces($this->db);
-				//$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
-				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				//// End call triggers
-		//	}
-		//}
-
-		if (! $error)
-		{
+		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."propal_merge_pdf_product";
-			$sql.= " WHERE fk_product=".$product_id;
+			$sql .= " WHERE fk_product = ".((int) $product_id);
 
 			if ($conf->global->MAIN_MULTILANGS && !empty($lang_id)) {
-				$sql.= " AND lang='".$lang_id."'";
+				$sql .= " AND lang = '".$this->db->escape($lang_id)."'";
 			}
 
-			dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+			if (!$resql) {
+				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			}
 		}
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
-				$this->error.=($this->error?', '.$errmsg:$errmsg);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
-			return -1*$error;
-		}
-		else
-		{
+			return -1 * $error;
+		} else {
 			$this->db->commit();
 			return 1;
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Delete object in database
 	 *
@@ -505,51 +437,32 @@ class Propalmergepdfproduct extends CommonObject
 	 */
 	public function delete_by_file($user)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf, $langs;
-		$error=0;
+		$error = 0;
 
 		$this->db->begin();
 
-		//if (! $error)
-		//{
-		//	if (! $notrigger)
-		//	{
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action calls a trigger.
-
-				//// Call triggers
-				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				//$interface=new Interfaces($this->db);
-				//$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
-				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				//// End call triggers
-		//	}
-		//}
-
-		if (! $error)
-		{
+		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."propal_merge_pdf_product";
-			$sql.= " WHERE fk_product=".$this->fk_product." AND file_name='".$this->db->escape($this->file_name)."'";
+			$sql .= " WHERE fk_product=".$this->fk_product." AND file_name='".$this->db->escape($this->file_name)."'";
 
-			dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+			if (!$resql) {
+				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			}
 		}
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
-				$this->error.=($this->error?', '.$errmsg:$errmsg);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
-			return -1*$error;
-		}
-		else
-		{
+			return -1 * $error;
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -566,47 +479,41 @@ class Propalmergepdfproduct extends CommonObject
 	 */
 	public function createFromClone(User $user, $fromid)
 	{
-		$error=0;
+		$error = 0;
 
-		$object=new Propalmergepdfproduct($this->db);
+		$object = new Propalmergepdfproduct($this->db);
 
 		$this->db->begin();
 
 		// Load source object
 		$object->fetch($fromid);
-		$object->id=0;
-		$object->statut=0;
+		$object->id = 0;
+		$object->statut = 0;
 
 		// Clear fields
 		// ...
 
 		// Create clone
-		$object->context['createfromclone']='createfromclone';
-		$result=$object->create($user);
+		$object->context['createfromclone'] = 'createfromclone';
+		$result = $object->create($user);
 
 		// Other options
-		if ($result < 0)
-		{
-			$this->error=$object->error;
-			$this->errors=array_merge($this->errors, $object->errors);
+		if ($result < 0) {
+			$this->error = $object->error;
+			$this->errors = array_merge($this->errors, $object->errors);
 			$error++;
 		}
 
-		if (! $error)
-		{
-
+		if (!$error) {
 		}
 
 		unset($object->context['createfromclone']);
 
 		// End
-		if (! $error)
-		{
+		if (!$error) {
 			$this->db->commit();
 			return $object->id;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -621,15 +528,15 @@ class Propalmergepdfproduct extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-		$this->id=0;
+		$this->id = 0;
 
-		$this->fk_product='';
-		$this->file_name='';
-		$this->fk_user_author='';
-		$this->fk_user_mod='';
-		$this->datec='';
-		$this->tms='';
-		$this->import_key='';
+		$this->fk_product = '';
+		$this->file_name = '';
+		$this->fk_user_author = '';
+		$this->fk_user_mod = '';
+		$this->datec = '';
+		$this->tms = '';
+		$this->import_key = '';
 	}
 }
 
@@ -638,38 +545,38 @@ class Propalmergepdfproduct extends CommonObject
  */
 class PropalmergepdfproductLine
 {
-    /**
-     * @var int ID
-     */
-    public $id;
+	/**
+	 * @var int ID
+	 */
+	public $id;
 
-    /**
-     * @var int ID
-     */
-    public $fk_product;
+	/**
+	 * @var int ID
+	 */
+	public $fk_product;
 
 	public $file_name;
 	public $lang;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_user_author;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_user_mod;
 
-	public $datec='';
-	public $tms='';
+	public $datec = '';
+	public $tms = '';
 	public $import_key;
 
-    /**
-     *  Constructor
-     */
-    public function __construct()
-    {
-        return 1;
-    }
+	/**
+	 *  Constructor
+	 */
+	public function __construct()
+	{
+		return 1;
+	}
 }

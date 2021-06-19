@@ -13,7 +13,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 
@@ -23,7 +23,7 @@ CREATE TABLE llx_inventory
   entity integer DEFAULT 0, 
   ref varchar(48),
   date_creation datetime DEFAULT NULL,
-  tms timestamp, 
+  tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
   fk_user_creat	integer,					-- user making creation
   fk_user_modif integer,                    -- user making last change
   fk_user_valid integer,                    -- valideur de la fiche
@@ -35,4 +35,4 @@ CREATE TABLE llx_inventory
   date_validation datetime DEFAULT NULL,
   import_key               varchar(14)       	-- import key
 ) 
-ENGINE=InnoDB;
+ENGINE=innodb;

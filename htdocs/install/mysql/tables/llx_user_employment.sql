@@ -12,7 +12,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- This table can be used to store employee working contracts
 -- ===========================================================================
@@ -25,7 +25,7 @@ create table llx_user_employment
   ref_ext			varchar(50),				-- reference into an external system (not used by dolibarr)
   fk_user			integer,
   datec             datetime,
-  tms               timestamp,
+  tms               timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_user_creat     integer,
   fk_user_modif     integer,
   job				varchar(128),				-- job position. may be a dictionary

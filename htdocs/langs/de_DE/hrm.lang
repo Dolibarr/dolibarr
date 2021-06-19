@@ -9,9 +9,11 @@ ConfirmDeleteEstablishment=Sind Sie sicher, dass Sie diese Einrichtung löschen 
 OpenEtablishment=Einrichtung öffnen
 CloseEtablishment=Einrichtung schliessen
 # Dictionary
+DictionaryPublicHolidays=PV - Öffentliche Feiertage
 DictionaryDepartment=PV - Abteilungsliste
-DictionaryFunction=PV - Stellenbezeichnungen Liste
+DictionaryFunction=HRM - Stellenangebote
 # Module
-Employees=die Mitarbeiter
+Employees=Mitarbeiter
 Employee=Mitarbeiter/in
 NewEmployee=neuer Mitarbeiter
+ListOfEmployees=Liste der Mitarbeiter

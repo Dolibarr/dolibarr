@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -242,7 +242,7 @@ class DoliStorage implements TokenStorageInterface
         $sql.= " WHERE service='".$this->db->escape($service)."'";
         $resql = $this->db->query($sql);
         $result = $this->db->fetch_array($resql);
-        $states[$service] = $result[state];
+        $states[$service] = $result['state'];
         $this->states[$service] = $states[$service];
 
         return is_array($states)

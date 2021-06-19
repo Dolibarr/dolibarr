@@ -15,7 +15,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 
@@ -32,7 +32,7 @@ create table llx_commande_fournisseur
   fk_soc					integer NOT NULL,
   fk_projet					integer DEFAULT 0,             -- project id
 
-  tms						timestamp,
+  tms						timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   date_creation				datetime,                      -- date de creation 
   date_valid				datetime,                      -- date de validation
   date_approve				datetime,                      -- date de approve
@@ -49,7 +49,7 @@ create table llx_commande_fournisseur
   amount_ht					double(24,8)      default 0,
   remise_percent			real      default 0,
   remise					real      default 0,
-  tva						double(24,8)      default 0,
+  total_tva						double(24,8)      default 0,
   localtax1					double(24,8)      default 0,
   localtax2					double(24,8)      default 0,
   total_ht					double(24,8)      default 0,

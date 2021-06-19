@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -32,165 +32,150 @@ $langs->loadLangs(array('bills', 'companies'));
 
 // Security check
 $socid = GETPOST("socid", 'int');
-if ($user->societe_id > 0)
-{
-    $action = '';
-    $socid = $user->societe_id;
+if ($user->socid > 0) {
+	$action = '';
+	$socid = $user->socid;
 }
 
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('supplierbalencelist','globalcard'));
+$hookmanager->initHooks(array('supplierbalencelist', 'globalcard'));
 
 /*
  * View
  */
 
 $form = new Form($db);
-$userstatic=new User($db);
+$userstatic = new User($db);
 
 llxHeader();
 
-if ($socid > 0)
-{
-    $societe = new Societe($db);
-    $societe->fetch($socid);
+if ($socid > 0) {
+	$societe = new Societe($db);
+	$societe->fetch($socid);
 
-    /*
-     * Affichage onglets
-     */
-    $head = societe_prepare_head($societe);
+	/*
+	 * Affichage onglets
+	 */
+	$head = societe_prepare_head($societe);
 
-    dol_fiche_head($head, 'supplier', $langs->trans("ThirdParty"), 0, 'company');
-	dol_banner_tab($societe, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
-	dol_fiche_end();
+	print dol_get_fiche_head($head, 'supplier', $langs->trans("ThirdParty"), 0, 'company');
+	dol_banner_tab($societe, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
+	print dol_get_fiche_end();
 
-    if (! empty($conf->fournisseur->enabled) && $user->rights->facture->lire)
-    {
-        // Invoice list
-        print load_fiche_titre($langs->trans("SupplierPreview"));
+	if ((!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->lire)) {
+		// Invoice list
+		print load_fiche_titre($langs->trans("SupplierPreview"));
 
-        print '<table class="noborder tagtable liste" width="100%">';
+		print '<table class="noborder tagtable liste centpercent">';
 
-        $sql = "SELECT s.nom, s.rowid as socid, f.ref_supplier, f.amount, f.datef as df,";
-        $sql.= " f.paye as paye, f.fk_statut as statut, f.rowid as facid,";
-        $sql.= " u.login, u.rowid as userid";
-        $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f,".MAIN_DB_PREFIX."user as u";
-        $sql.= " WHERE f.fk_soc = s.rowid AND s.rowid = ".$societe->id;
-	$sql.= " AND f.entity IN (".getEntity("facture_fourn").")"; // Reconaissance de l'entité attribuée à cette facture pour Multicompany
-        $sql.= " AND f.fk_user_valid = u.rowid";
-        $sql.= " ORDER BY f.datef DESC";
+		$sql = "SELECT s.nom, s.rowid as socid, f.ref_supplier, f.datef as df,";
+		$sql .= " f.paye as paye, f.fk_statut as statut, f.rowid as facid,";
+		$sql .= " u.login, u.rowid as userid";
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f,".MAIN_DB_PREFIX."user as u";
+		$sql .= " WHERE f.fk_soc = s.rowid AND s.rowid = ".((int) $societe->id);
+		$sql .= " AND f.entity IN (".getEntity("facture_fourn").")"; // Recognition of the entity attributed to this invoice for Multicompany
+		$sql .= " AND f.fk_user_valid = u.rowid";
+		$sql .= " ORDER BY f.datef DESC";
 
-        $resql=$db->query($sql);
-        if ($resql)
-        {
-            $num = $db->num_rows($resql);
+		$resql = $db->query($sql);
+		if ($resql) {
+			$num = $db->num_rows($resql);
 
-            print '<tr class="liste_titre">';
-            print '<td width="100" class="center">'.$langs->trans("Date").'</td>';
-            print '<td>&nbsp;</td>';
-            print '<td>'.$langs->trans("Status").'</td>';
-            print '<td class="right">'.$langs->trans("Debit").'</td>';
-            print '<td class="right">'.$langs->trans("Credit").'</td>';
-            print '<td class="right">'.$langs->trans("Balance").'</td>';
-            print '<td>&nbsp;</td>';
-            print '</tr>';
+			print '<tr class="liste_titre">';
+			print '<td width="100" class="center">'.$langs->trans("Date").'</td>';
+			print '<td>&nbsp;</td>';
+			print '<td>'.$langs->trans("Status").'</td>';
+			print '<td class="right">'.$langs->trans("Debit").'</td>';
+			print '<td class="right">'.$langs->trans("Credit").'</td>';
+			print '<td class="right">'.$langs->trans("Balance").'</td>';
+			print '<td>&nbsp;</td>';
+			print '</tr>';
 
-            if (! $num > 0)
-            {
-                print '<tr><td colspan="7">'.$langs->trans("NoInvoice").'</td></tr>';
-            }
+			if (!$num > 0) {
+				print '<tr><td colspan="7">'.$langs->trans("NoInvoice").'</td></tr>';
+			}
 
-            $solde = 0;
+			$solde = 0;
 
-            // Boucle sur chaque facture
-            for ($i = 0 ; $i < $num ; $i++)
-            {
-                $objf = $db->fetch_object($resql);
+			// Boucle sur chaque facture
+			for ($i = 0; $i < $num; $i++) {
+				$objf = $db->fetch_object($resql);
 
-                $fac = new FactureFournisseur($db);
-                $ret=$fac->fetch($objf->facid);
-                if ($ret < 0)
-                {
-                    print $fac->error."<br>";
-                    continue;
-                }
-                $totalpaye = $fac->getSommePaiement();
+				$fac = new FactureFournisseur($db);
+				$ret = $fac->fetch($objf->facid);
+				if ($ret < 0) {
+					print $fac->error."<br>";
+					continue;
+				}
+				$totalpaye = $fac->getSommePaiement();
 
-                print '<tr class="oddeven">';
+				print '<tr class="oddeven">';
 
-                print "<td class=\"center\">".dol_print_date($fac->date)."</td>\n";
-                print "<td><a href=\"facture/card.php?facid=$fac->id\">".img_object($langs->trans("ShowBill"), "bill")." ".$fac->ref."</a></td>\n";
+				print "<td class=\"center\">".dol_print_date($fac->date)."</td>\n";
+				print "<td><a href=\"facture/card.php?facid=$fac->id\">".img_object($langs->trans("ShowBill"), "bill")." ".$fac->ref."</a></td>\n";
 
-                print '<td class="left">'.$fac->getLibStatut(2, $totalpaye).'</td>';
-                print '<td class="right">'.price($fac->total_ttc)."</td>\n";
-                $solde = $solde + $fac->total_ttc;
+				print '<td class="left">'.$fac->getLibStatut(2, $totalpaye).'</td>';
+				print '<td class="right">'.price($fac->total_ttc)."</td>\n";
+				$solde = $solde + $fac->total_ttc;
 
-                print '<td class="right">&nbsp;</td>';
-                print '<td class="right">'.price($solde)."</td>\n";
+				print '<td class="right">&nbsp;</td>';
+				print '<td class="right">'.price($solde)."</td>\n";
 
-                // Author
-                print '<td class="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$objf->userid.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$objf->login.'</a></td>';
+				// Author
+				print '<td class="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$objf->userid.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$objf->login.'</a></td>';
 
-                print "</tr>\n";
+				print "</tr>\n";
 
-                // Payments
-                $sql = "SELECT p.rowid, p.datep as dp, pf.amount, p.statut,";
-                $sql.= " p.fk_user_author, u.login, u.rowid as userid";
-                $sql.= " FROM ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf,";
-                $sql.= " ".MAIN_DB_PREFIX."paiementfourn as p";
-                $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON p.fk_user_author = u.rowid";
-                $sql.= " WHERE pf.fk_paiementfourn = p.rowid";
-                $sql.= " AND pf.fk_facturefourn = ".$fac->id;
+				// Payments
+				$sql = "SELECT p.rowid, p.datep as dp, pf.amount, p.statut,";
+				$sql .= " p.fk_user_author, u.login, u.rowid as userid";
+				$sql .= " FROM ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf,";
+				$sql .= " ".MAIN_DB_PREFIX."paiementfourn as p";
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON p.fk_user_author = u.rowid";
+				$sql .= " WHERE pf.fk_paiementfourn = p.rowid";
+				$sql .= " AND pf.fk_facturefourn = ".((int) $fac->id);
 
-                $resqlp = $db->query($sql);
-                if ($resqlp)
-                {
-                    $nump = $db->num_rows($resqlp);
-                    $j = 0;
+				$resqlp = $db->query($sql);
+				if ($resqlp) {
+					$nump = $db->num_rows($resqlp);
+					$j = 0;
 
-                    while ($j < $nump)
-                    {
-                        $objp = $db->fetch_object($resqlp);
-                        //
-                        print '<tr class="oddeven">';
-                        print '<td class="center">'.dol_print_date($db->jdate($objp->dp))."</td>\n";
-                        print '<td>';
-                        print '&nbsp; &nbsp; &nbsp; '; // Decalage
-                        print '<a href="paiement/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"), "payment").' '.$langs->trans("Payment").' '.$objp->rowid.'</td>';
-                        print "<td>&nbsp;</td>\n";
-                        print "<td>&nbsp;</td>\n";
-                        print '<td class="right">'.price($objp->amount).'</td>';
-                        $solde = $solde - $objp->amount;
-                        print '<td class="right">'.price($solde)."</td>\n";
+					while ($j < $nump) {
+						$objp = $db->fetch_object($resqlp);
+						//
+						print '<tr class="oddeven">';
+						print '<td class="center">'.dol_print_date($db->jdate($objp->dp))."</td>\n";
+						print '<td>';
+						print '&nbsp; &nbsp; &nbsp; '; // Decalage
+						print '<a href="paiement/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"), "payment").' '.$langs->trans("Payment").' '.$objp->rowid.'</td>';
+						print "<td>&nbsp;</td>\n";
+						print "<td>&nbsp;</td>\n";
+						print '<td class="right">'.price($objp->amount).'</td>';
+						$solde = $solde - $objp->amount;
+						print '<td class="right">'.price($solde)."</td>\n";
 
-                        // Auteur
-                        print '<td class="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$objp->userid.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$objp->login.'</a></td>';
+						// Auteur
+						print '<td class="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$objp->userid.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$objp->login.'</a></td>';
 
-                        print '</tr>';
+						print '</tr>';
 
-                        $j++;
-                    }
+						$j++;
+					}
 
-                    $db->free($resqlp);
-                }
-                else
-                {
-                    dol_print_error($db);
-                }
-            }
-        }
-        else
-        {
-            dol_print_error($db);
-        }
+					$db->free($resqlp);
+				} else {
+					dol_print_error($db);
+				}
+			}
+		} else {
+			dol_print_error($db);
+		}
 
-        print "</table>";
-    }
-}
-else
-{
-    dol_print_error($db);
+		print "</table>";
+	}
+} else {
+	dol_print_error($db);
 }
 
 // End of page

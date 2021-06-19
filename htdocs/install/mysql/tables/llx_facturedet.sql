@@ -17,7 +17,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 
@@ -36,7 +36,7 @@ create table llx_facturedet
   localtax1_type			 	varchar(10)	 NULL, 				 	-- localtax1 type
   localtax2_tx               	double(6,3)  DEFAULT 0,    		 	-- localtax2 rate
   localtax2_type			 	varchar(10)	 NULL, 				 	-- localtax2 type
-  qty							real,								-- Quantity (exemple 2)
+  qty							real,								-- Quantity (exemple 2). Note: for credit note, the price is negative, not the quantity. Like for discount, price is negative, not quantity.
   remise_percent				real       DEFAULT 0,				-- % de la remise ligne (exemple 20%)
   remise						real       DEFAULT 0,				-- Montant calcule de la remise % sur PU HT (exemple 20)
   fk_remise_except				integer    NULL,					-- Lien vers table des remises fixes
@@ -63,8 +63,9 @@ create table llx_facturedet
 
   fk_code_ventilation			integer    DEFAULT 0 NOT NULL,		-- Id in table llx_accounting_bookeeping to know accounting account for product line
   
-  situation_percent real,   										-- % progression of lines invoicing
+  situation_percent real DEFAULT 100, 								-- % progression of lines invoicing
   fk_prev_id        integer, 										-- id of the line in the previous situation
+
   fk_user_author	integer,                						-- user making creation
   fk_user_modif     integer,                						-- user making last change
 
@@ -73,12 +74,7 @@ create table llx_facturedet
   multicurrency_subprice		double(24,8) DEFAULT 0,
   multicurrency_total_ht		double(24,8) DEFAULT 0,
   multicurrency_total_tva		double(24,8) DEFAULT 0,
-  multicurrency_total_ttc		double(24,8) DEFAULT 0
+  multicurrency_total_ttc		double(24,8) DEFAULT 0,
+  ref_ext varchar(255) DEFAULT NULL
 )ENGINE=innodb;
 
--- 
--- List of codes for special_code
---
--- 1 : frais de port
--- 2 : ecotaxe
---

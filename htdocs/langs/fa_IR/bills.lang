@@ -52,23 +52,24 @@ Invoices=صورت‌حساب‌ها
 InvoiceLine=سطر صورت‌حساب
 InvoiceCustomer=صورت‌حساب مشتری
 CustomerInvoice=صورت‌حساب مشتری
-CustomersInvoices=صورت‌حساب‌های مشتریان
+CustomersInvoices=صورت‌حساب مشتری
 SupplierInvoice=صورت‌حساب فروشنده
-SuppliersInvoices=صورت‌حاسب‌های فروشنده
+SuppliersInvoices=صورت‌حساب فروشندگان
+SupplierInvoiceLines=Vendor invoice lines
 SupplierBill=صورت‌حساب فروشنده
-SupplierBills=صور‌ت‌حساب تامین‌کنندگان
+SupplierBills=صورت‌حساب فروشندگان
 Payment=پرداخت
-PaymentBack=برگشت پرداخت
-CustomerInvoicePaymentBack=برگشت پرداخت
+PaymentBack=بازپس‌گیری
+CustomerInvoicePaymentBack=بازپس‌گیری
 Payments=پرداخت‌ها
-PaymentsBack=برگشت پرداخت
+PaymentsBack=Refunds
 paymentInInvoiceCurrency=به واحد‌پولی صورت‌حساب
 PaidBack=پرداخت برگردانده شد
 DeletePayment=حذف پرداخت
 ConfirmDeletePayment=آیا مطمئنید که می‌خواهید این پرداخت را حذف کنید؟
-ConfirmConvertToReduc=آیا می‌خواهید این %s را به یک تخفیفت مطلق تبدیل کنید؟
+ConfirmConvertToReduc=Do you want to convert this %s into an available credit?
 ConfirmConvertToReduc2=این مبلغ در میان همۀ تخفیف‌ها ذخیره خواهد شد و می‌تواند به‌عنوان یک صورت‌حساب فعلی یا آینده برای این مشتری مورد استفاده قرار گیرد.
-ConfirmConvertToReducSupplier=آیا می‌خواهید این %s را به یک تخفیفت مطلق تبدیل کنید؟
+ConfirmConvertToReducSupplier=Do you want to convert this %s into an available credit?
 ConfirmConvertToReducSupplier2=این مبلغ در میان همۀ تخفیف‌ها ذخیره خواهد شد و می‌تواند به‌عنوان یک صورت‌حساب فعلی یا آینده برای این فروشنده مورد استفاده قرار گیرد.
 SupplierPayments=پرداخت‌های فروشندگان
 ReceivedPayments=پول‌های دریافتی
@@ -78,9 +79,11 @@ ReceivedCustomersPaymentsToValid=پول‌های دریافت‌شده از مش
 PaymentsReportsForYear=گزارش پرداخت‌های %s
 PaymentsReports=گزارش‌های پرداخت‌ها
 PaymentsAlreadyDone=پرداخت‌هائی که قبلا انجام شده
-PaymentsBackAlreadyDone=پس‌دادن‌های پول‌ که قبلا انجام شده
+PaymentsBackAlreadyDone=Refunds already done
 PaymentRule=مقررات پرداخت
 PaymentMode=نوع پرداخ
+DefaultPaymentMode=Default Payment Type
+DefaultBankAccount=Default Bank Account
 PaymentTypeDC=کارت اعتباری/نقدی
 PaymentTypePP=PayPal
 IdPaymentMode=نوع پرداخت (شناسه)
@@ -117,7 +120,7 @@ ConvertExcessPaidToReduc=تبدیل مبلغ اضافۀ پرداختی به‌ع
 EnterPaymentReceivedFromCustomer=پول‌هائی که از مشتری وارد شده را وارد کنید
 EnterPaymentDueToCustomer=پرداخت با توجه به مشتری
 DisabledBecauseRemainderToPayIsZero=غیرفعال، زیرا مبلغ باقی‌ماندۀ پرداخت نشده، برابر با صفر است
-PriceBase=پایۀ قیم
+PriceBase=Base price
 BillStatus=وضعیت صورت‌حساب
 StatusOfGeneratedInvoices=وضعیت صورت‌حساب‌های تولیدشده
 BillStatusDraft=پیش‌نویس (نیازمند تائید)
@@ -151,7 +154,7 @@ ErrorBillNotFound=صورت‌حساب %s وجود ندارد
 ErrorInvoiceAlreadyReplaced=خطا! شما تلاش کردید تعوبض یک صورت‌حساب با صورت‌حساب %s را تائید کنید. اما این‌یکی قبلا با صورت‌حساب %s جایگزین شده‌است.
 ErrorDiscountAlreadyUsed=خطا، تخفیف قبلا استفاده شده است.
 ErrorInvoiceAvoirMustBeNegative=خطا! صورت‌حساب صحیح باید یک مقدار منفی داشته باشد
-ErrorInvoiceOfThisTypeMustBePositive=خطا! این نوع صورت‌حساب باید مبلغ مثبت داشته باشد
+ErrorInvoiceOfThisTypeMustBePositive=Error, this type of invoice must have an amount excluding tax positive (or null)
 ErrorCantCancelIfReplacementInvoiceNotValidated=خطا! امکان لغو یک صورت‌حساب که با صورت‌حساب دیگر ی جایگزین شده که هنوز در حالت پیش‌نویس است وجود ندارد
 ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved=این بخش یا بخش‌دیگر قبلا استفاده شده بنابراین سری تخفیف قابل حذف نیست.
 BillFrom=از
@@ -175,6 +178,7 @@ DraftBills=صورت‌حساب‌های پیش‌نویس
 CustomersDraftInvoices=صورت‌حساب‌های پیش‌نویس مشتریان
 SuppliersDraftInvoices=صورت‌حساب‌های پیش‌نویس فروشندگان
 Unpaid=پرداخت نشده
+ErrorNoPaymentDefined=Error No payment defined
 ConfirmDeleteBill=آیا مطمئنید می‌خواهید این صورت‌حساب را حذف کنید؟
 ConfirmValidateBill=آیا مطمئن هستید می‌خواهید این صورت‌حساب را با ارجاع <b>%s</b> را تائید کنید؟
 ConfirmUnvalidateBill=آیا مطمئن هستید می‌خواهید صورت‌حساب <b>%s</b> را به وضعیت پیش‌نویس تغییر دهید؟
@@ -208,17 +212,13 @@ NumberOfBillsByMonth=تعداد صورت‌حساب‌ها در ماه
 AmountOfBills=مبلغ صورت‌حساب‌ها
 AmountOfBillsHT=مبلغ صورت‌حساب‌ها (خالص پس از کسر مالیات)
 AmountOfBillsByMonthHT=مبلغ ماهیانۀ صورت‌حساب‌ها (خالص پس از کسر مالیات)
-ShowSocialContribution=نمایش مالیات اجتماعی/مالی
-ShowBill=نمایش صورت‌حساب
-ShowInvoice=نمایش صورت‌حساب
-ShowInvoiceReplace=نمایش صورت‌حساب جایگزین
-ShowInvoiceAvoir=نمایش یادداشت اعتباری
-ShowInvoiceDeposit=نمایش صورت‌حساب پیش‌پرداخت
-ShowInvoiceSituation=نمایش صورت‌حساب وضعیت
 UseSituationInvoices=Allow situation invoice
 UseSituationInvoicesCreditNote=Allow situation invoice credit note
 Retainedwarranty=Retained warranty
+AllowedInvoiceForRetainedWarranty=Retained warranty usable on the following types of invoices
 RetainedwarrantyDefaultPercent=Retained warranty default percent
+RetainedwarrantyOnlyForSituation=Make "retained warranty" available only for situation invoices
+RetainedwarrantyOnlyForSituationFinal=On situation invoices the global "retained warranty" deduction is applied only on the final situation
 ToPayOn=To pay on %s
 toPayOn=to pay on %s
 RetainedWarranty=Retained Warranty
@@ -229,7 +229,6 @@ setretainedwarranty=Set retained warranty
 setretainedwarrantyDateLimit=Set retained warranty date limit
 RetainedWarrantyDateLimit=Retained warranty date limit
 RetainedWarrantyNeed100Percent=The situation invoice need to be at 100%% progress to be displayed on PDF
-ShowPayment=نمایش پرداخت
 AlreadyPaid=قبلا پرداخت‌شده است
 AlreadyPaidBack=مبلغ قبلا بازگردانده شده است
 AlreadyPaidNoCreditNotesNoDeposits=قبلا پرداخت شده است (بدون یادداشت‌های اعتباری و پیش‌پرداخت)
@@ -245,8 +244,6 @@ EscompteOffered=تخفیف ارائه شده (پرداخت قبل از موعد)
 EscompteOfferedShort=تخفیف
 SendBillRef=تسلیم صورت‌حساب %s
 SendReminderBillRef=تسلیم صورت‌حساب %s (یادآورنده)
-StandingOrders=سفارش‌های پرداخت مستقیم
-StandingOrder=سفارش پرداخت مستقیم
 NoDraftBills=صورت‌حساب پیش‌نویسی وجود ندارد
 NoOtherDraftBills=صورت‌حساب پیش‌نویس دیگری وجود ندارد
 NoDraftInvoices=صورت‌حساب پیش‌نویس وجود ندارد
@@ -295,7 +292,8 @@ AddGlobalDiscount=ایجاد تخفیف مطلق
 EditGlobalDiscounts=ویرایش تخفیف مطلق
 AddCreditNote=ایجاد یادداشت اعتباری
 ShowDiscount=نمایش تخفیف
-ShowReduc=نمایش کسر/کاهش
+ShowReduc=Show the discount
+ShowSourceInvoice=Show the source invoice
 RelativeDiscount=تخفیف نسبی
 GlobalDiscount=تخفیف سراسری
 CreditNote=یادداشت اعتباری
@@ -332,6 +330,8 @@ InvoiceDateCreation=تاریخ ایجاد صورت‌حساب
 InvoiceStatus=وضعیت صورت‌حساب
 InvoiceNote=یادداشت صورت‌حساب
 InvoicePaid=صورت‌حساب پرداخت شد
+InvoicePaidCompletely=Paid completely
+InvoicePaidCompletelyHelp=Invoice that are paid completely. This excludes invoices that are paid partially. To get list of all 'Closed' or non 'Closed' invoices, prefer to use a filter on the invoice status.
 OrderBilled=سفارش صورت‌حساب شد
 DonationPaid=کمک پرداخت شد
 PaymentNumber=شمارۀ پرداخت
@@ -376,6 +376,7 @@ DateLastGeneration=تاریخ آخرین تولید
 DateLastGenerationShort=تاریخ آخرین تولید
 MaxPeriodNumber=حداکثر تعداد تولید صورت‌حساب
 NbOfGenerationDone=تعداد صورت‌حساب‌هائی که تا کنون تولید شده
+NbOfGenerationOfRecordDone=Number of record generation already done
 NbOfGenerationDoneShort=تعداد تولیدهای انجام شده
 MaxGenerationReached=حداکثر تعداد قابل تولید به‌سررسیده
 InvoiceAutoValidate=تائید خودکار صورت‌حساب‌ها
@@ -386,6 +387,7 @@ GeneratedFromTemplate=تولید شده از قالب صورت‌حسابی %s
 WarningInvoiceDateInFuture=هشدار! تاریخ صورت‌حساب بیشتر از تاریخ کنونی است
 WarningInvoiceDateTooFarInFuture=هشدار! تاریخ صورت‌حساب از تاریخ امروز بسیار دور است
 ViewAvailableGlobalDiscounts=نمایش تخفیف‌های موجود
+GroupPaymentsByModOnReports=Group payments by mode on reports
 # PaymentConditions
 Statut=وضعیت
 PaymentConditionShortRECEP=در هنگام دریافت
@@ -412,9 +414,10 @@ PaymentConditionShort14D=14 روزه
 PaymentCondition14D=14 روزه
 PaymentConditionShort14DENDMONTH=14 روز از آخر ماه
 PaymentCondition14DENDMONTH=ظرف  14 روز پس از آخرماه
-FixAmount=مبلغ ثابت
+FixAmount=Fixed amount - 1 line with label '%s'
 VarAmount=مبلغ متغیر ( %% کل )
 VarAmountOneLine=مبلغ متغیر ( %% کل ) - 1 سطر با برچسب "%s"
+VarAmountAllLines=Variable amount (%% tot.) - all lines from origin
 # PaymentType
 PaymentTypeVIR=انتقال بانکی
 PaymentTypeShortVIR=انتقال بانکی
@@ -442,6 +445,8 @@ BankAccountNumberKey=کلیدکنترلی-checksum
 Residence=نشانی
 IBANNumber=شمارۀ حساب IBAN
 IBAN=IBAN
+CustomerIBAN=IBAN of customer
+SupplierIBAN=IBAN of vendor
 BIC=BIC / SWIFT
 BICNumber=کد BIC/SWIFT
 ExtraInfos=اطلاعات دیگر
@@ -449,7 +454,7 @@ RegulatedOn=تنظیم در
 ChequeNumber=N° چک
 ChequeOrTransferNumber=چک/انتقال N°
 ChequeBordereau=زمان‌بندی چک
-ChequeMaker=انتقال‌دهندۀ چک/انتقال
+ChequeMaker=Check/Transfer sender
 ChequeBank=بانک چک
 CheckBank=چک
 NetToBePaid=خالص قابل پرداخت
@@ -493,28 +498,34 @@ Cash=پول‌نقد
 Reported=تأخیرکرده
 DisabledBecausePayments=ممکن نیست، زیرا دارای پرداخت هم هست
 CantRemovePaymentWithOneInvoicePaid=امکان حذف این پرداخت نیست زیرا حداقل یک صورت‌حساب به‌عنوان پرداخت‌شده وجود دارد
+CantRemovePaymentVATPaid=Can't remove payment since VAT declaration is classified paid
+CantRemovePaymentSalaryPaid=Can't remove payment since salary is classified paid
 ExpectedToPay=پرداخت مورد انتظار
 CantRemoveConciliatedPayment=امکان حذف پرداخت تطبیق‌داده شده وجود ندارد
 PayedByThisPayment=پرداخت شده توسط این پرداخت
-ClosePaidInvoicesAutomatically=طبقه‌بندی همۀ صورت‌حساب‌های جایگزین، پیش‌پرداخت‌شده، استانداردی که کاملا پرداخت شده به عنوان "پرداخت شده".
-ClosePaidCreditNotesAutomatically=طبقه‌بندی همۀ یادداشت‌های اعتباری که مبلغ آن بازگردانده شده به صورت "پرداخت شده"
-ClosePaidContributionsAutomatically=طبقه‌بندی همۀ مشارکات مالی و اجتماعی که کاملا پرداخت شده، به صورت "پرداخت شده"
+ClosePaidInvoicesAutomatically=Classify automatically all standard, down payment or replacement invoices as "Paid" when payment is done entirely.
+ClosePaidCreditNotesAutomatically=Classify automatically all credit notes as "Paid" when refund is done entirely.
+ClosePaidContributionsAutomatically=Classify automatically all social or fiscal contributions as "Paid" when payment is done entirely.
+ClosePaidVATAutomatically=Classify automatically VAT declaration as "Paid" when payment is done entirely.
+ClosePaidSalaryAutomatically=Classify automatically salary as "Paid" when payment is done entirely.
 AllCompletelyPayedInvoiceWillBeClosed=همۀ صورت‌حساب‌های بدون باقی‌ماندۀ پرداخت به صورت خودکار به وضعیت "پرداخت شده" بسته خواهد شد.
 ToMakePayment=پرداخت
 ToMakePaymentBack=پس‌دادن‌پرداخت
 ListOfYourUnpaidInvoices=فهرست صورت‌حساب‌های پرداخت نشده
 NoteListOfYourUnpaidInvoices=نکته: این فهرست تنها دربردارندۀ صورت‌حساب‌های شخص‌سوم‌هائی است که شما آن‌ها را به‌عنوان نمایندۀ فروش پیوند کرده‌اید.
-RevenueStamp=تمبر درآمد
+RevenueStamp=Tax stamp
 YouMustCreateInvoiceFromThird=این گزینه تنها وقتی فعال است که شما صورت‌حساب را از زبانۀ "مشتری" یک شخص سوم می‌سازید
 YouMustCreateInvoiceFromSupplierThird=این گزینه تنها وقتی فعال است که شما صورت‌حساب را از زبانۀ "فروشنده" یک شخص سوم می‌سازید
 YouMustCreateStandardInvoiceFirstDesc=شما باید ابتدا یک صورت‌حساب استاندارد ساخته و سپس آن را تبدیل به "قالب" کنید تا یک صورت‌حساب قالبی ساخته باشید
-PDFCrabeDescription=قالب PDF صورت‌حساب Crabe. یک قالب کامل صورت‌حساب (قالب پیشنهادی)
+PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template (old implementation of Sponge template)
 PDFSpongeDescription=قالب PDF صورت‌حساب Sponge. یک قالب کامل صورت‌حساب 
 PDFCrevetteDescription=قالب PDF صورت‌حساب Crevette. یک قالب کامل صورت‌حساب برای صورت‌حساب‌های وضعیت
-TerreNumRefModelDesc1=بازگرداندن عدد با شکل %syymm-nnnn برای صورت‌حساب‌های استاندارد و %syymm-nnnn برای یادداشت‌های اعتباری که در آن yy نمایندۀ سال، mm ماه و nnnn یک شمارنده بدون توقف و بدون بازگشت به 0 است
-MarsNumRefModelDesc1=بازگرداندن عدد با شکل %syymm-nnnn برای صورت‌حساب‌های استاندارد و %s yymm-nnnn برای صورت‌حساب‌های جایگزین و %syymm-nnnn برای صورت‌حساب‌های پیش‌پرداخت و %syymm-nnnn برای یادداشت‌های اعتباری است که در آن yy نمایندۀ سال، mm ماه و nnnn یک شمارنده بدون توقف و بدون بازگشت به 0 است
+TerreNumRefModelDesc1=Return number in the format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequencial auto-incrementing number with no break and no return to 0
+MarsNumRefModelDesc1=Return number in the format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for down payment invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequencial auto-incrementing number with no break and no return to 0
 TerreNumRefModelError=صورت‌حسابی که با $syymm شروع می‌شود قبلا وجود داشته و با این نوع ترتیب شماره همخوان نیست. آن را حذف کرده یا تغییر نام دهید تا این واحد فعال شود
-CactusNumRefModelDesc1=بازگرداندن عدد با شکل %s yymm-nnnn برای صورت‌حساب‌های استاندارد و %s yymm-nnnn  برای یادداشت‌های اعتباری و  %syymm-nnnn برای پیش پرداخت است که در آن yy نمایندۀ سال، mm ماه و nnnn یک شمارنده بدون توقف و بدون بازگشت به 0 است
+CactusNumRefModelDesc1=Return number in the format %syymm-nnnn for standard invoices, %syymm-nnnn for credit notes and %syymm-nnnn for down payment invoices where yy is year, mm is month and nnnn is a sequencial auto-incrementing number with no break and no return to 0
+EarlyClosingReason=Early closing reason
+EarlyClosingComment=Early closing note
 ##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=نمایندۀ پیگیر صورت‌حساب مشتری
 TypeContact_facture_external_BILLING=طرف‌تماس صورت‌حساب مشتری
@@ -528,6 +539,7 @@ TypeContact_invoice_supplier_external_SERVICE=طرف‌تماس خدمات فر�
 InvoiceFirstSituationAsk=صورت‌حساب اولین وضعیت
 InvoiceFirstSituationDesc=<b>صورت‌حساب‌های وضعیت</b> با وضعیت‌هائی گره خورده‌اند که مربوط به پیشرفت کار هستند، برای مثال پیشرفت یک ساختمان. هر وضعیت با یک صورت‌حساب گره خورده است.
 InvoiceSituation=صورت‌حساب وضعیت
+PDFInvoiceSituation=صورت‌حساب وضعیت
 InvoiceSituationAsk=صورت‌حساب در پی وضعیت
 InvoiceSituationDesc=وضعیت جدیدی در پس وضعیتی که اکنون موجود است بسازید
 SituationAmount=مبلغ (خالص) صورت‌حساب وضعیت
@@ -558,7 +570,8 @@ ToCreateARecurringInvoiceGeneAuto=در صورتی که می‌خواهید ای�
 DeleteRepeatableInvoice=حذف صورت‌حساب قالبی
 ConfirmDeleteRepeatableInvoice=آیا مطمئنید می‌خواهید  این صورت‌حساب قالبی را حذف کنید؟
 CreateOneBillByThird=ساخت یک صورت‌حساب برای هر شخص سوم (در غیر این‌صور، یک صورت‌حساب برای هر سفارش)
-BillCreated=(%s) صورت‌حساب ساخته شد
+BillCreated=%s invoice(s) generated
+BillXCreated=Invoice %s generated
 StatusOfGeneratedDocuments=وضعیت تولید سند
 DoNotGenerateDoc=عدم تولید فایل سن
 AutogenerateDoc=تولید خودکار فایل سند
@@ -568,3 +581,11 @@ AutoFillDateTo=تنظیم تاریخ پایان برای سطر خدمات با 
 AutoFillDateToShort=تنظیم تاریخ پایان
 MaxNumberOfGenerationReached=حداکثر تعداد تولید به‌سررسیده
 BILL_DELETEInDolibarr=صورت‌حساب حذف شد
+BILL_SUPPLIER_DELETEInDolibarr=Supplier invoice deleted
+UnitPriceXQtyLessDiscount=Unit price x Qty - Discount
+CustomersInvoicesArea=Customer billing area
+SupplierInvoicesArea=Supplier billing area
+FacParentLine=Invoice Line Parent
+SituationTotalRayToRest=Remainder to pay without taxe
+PDFSituationTitle=Situation n° %d
+SituationTotalProgress=Total progress %d %%

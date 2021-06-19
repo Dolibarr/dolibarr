@@ -12,35 +12,34 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
-{
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
 
 
-$object=$GLOBALS['object'];
+$object = $GLOBALS['object'];
 
-$statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
+$statutarray = array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
 ?>
 
 <!-- BEGIN PHP TEMPLATE -->
 
 <?php
-print load_fiche_titre($langs->trans("NewProduct"), '', 'title_products.png');
-dol_fiche_head('');
+print load_fiche_titre($langs->trans("NewProduct"), '', 'product');
+print dol_get_fiche_head('');
 ?>
 
-<?php dol_htmloutput_errors((is_numeric($object->error)?'':$object->error), $object->errors); ?>
+<?php dol_htmloutput_errors((is_numeric($object->error) ? '' : $object->error), $object->errors); ?>
 
 <?php dol_htmloutput_errors($GLOBALS['mesg'], $GLOBALS['mesgs']); ?>
 
 <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
-<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
+<input type="hidden" name="token" value="<?php echo newToken(); ?>">
 <input type="hidden" name="action" value="add">
 <input type="hidden" name="type" value="0">
 <input type="hidden" name="canvas" value="<?php echo $canvas; ?>">
@@ -53,7 +52,9 @@ dol_fiche_head('');
 <tr>
 <td class="fieldrequired" width="20%"><?php echo $langs->trans("Ref"); ?></td>
 <td><input name="ref" size="40" maxlength="32" value="<?php echo $object->ref; ?>">
-<?php if ($refalreadyexists == 1) echo $langs->trans("RefAlreadyExists"); ?>
+<?php if ($refalreadyexists == 1) {
+	echo $langs->trans("RefAlreadyExists");
+} ?>
 </td></tr>
 
 <tr>
@@ -71,7 +72,7 @@ dol_fiche_head('');
 <td><?php echo $form->selectarray('statut_buy', $statutarray, $object->status_buy); ?></td>
 </tr>
 
-<?php if (! empty($conf->stock->enabled)) { ?>
+<?php if (!empty($conf->stock->enabled)) { ?>
 <tr><td><?php echo $langs->trans("StockLimit"); ?></td><td>
 <input name="seuil_stock_alerte" size="4" value="<?php echo $object->seuil_stock_alerte; ?>">
 </td></tr>
@@ -108,13 +109,12 @@ dol_fiche_head('');
 
 <br>
 
-<?php if (! $conf->global->PRODUIT_MULTIPRICES) { ?>
-
+<?php if (!$conf->global->PRODUIT_MULTIPRICES) { ?>
 <table class="border allwidth">
 
 <tr><td><?php echo $langs->trans("SellingPrice"); ?></td>
 <td><input name="price" size="10" value="<?php echo $object->price; ?>">
-<?php echo $object->price_base_type; ?>
+	<?php echo $object->price_base_type; ?>
 </td></tr>
 
 <tr><td><?php echo $langs->trans("MinPrice"); ?></td>
@@ -122,7 +122,7 @@ dol_fiche_head('');
 </td></tr>
 
 <tr><td width="20%"><?php echo $langs->trans("VATRate"); ?></td><td>
-<?php echo $object->tva_tx; ?>
+	<?php echo $object->tva_tx; ?>
 </td></tr>
 
 </table>

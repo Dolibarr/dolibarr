@@ -12,16 +12,17 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===========================================================================
 
 CREATE TABLE llx_comment (
     rowid integer AUTO_INCREMENT PRIMARY KEY,
     datec datetime  DEFAULT NULL,
-    tms timestamp,
+    tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     description text NOT NULL,
     fk_user_author integer DEFAULT NULL,
+    fk_user_modif integer DEFAULT NULL,
     fk_element integer DEFAULT NULL,
     element_type varchar(50) DEFAULT NULL,
     entity integer DEFAULT 1,

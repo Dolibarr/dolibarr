@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -36,15 +36,19 @@ $extrafields = new ExtraFields($db);
 $form = new Form($db);
 
 // List of supported format
-$tmptype2label=ExtraFields::$type2label;
-$type2label=array('');
-foreach ($tmptype2label as $key => $val) $type2label[$key]=$langs->transnoentitiesnoconv($val);
+$tmptype2label = ExtraFields::$type2label;
+$type2label = array('');
+foreach ($tmptype2label as $key => $val) {
+	$type2label[$key] = $langs->transnoentitiesnoconv($val);
+}
 
-$action=GETPOST('action', 'alpha');
-$attrname=GETPOST('attrname', 'alpha');
-$elementtype='product_lot'; //Must be the $element of the class that manage extrafield
+$action = GETPOST('action', 'aZ09');
+$attrname = GETPOST('attrname', 'alpha');
+$elementtype = 'product_lot'; //Must be the $element of the class that manage extrafield
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 
 /*
@@ -63,57 +67,44 @@ $title = $langs->trans('ProductLotSetup');
 $textobject = $langs->trans("Batch");
 
 //$help_url='EN:Module Third Parties setup|FR:Paramétrage_du_module_Tiers';
-$help_url='';
+$help_url = '';
 llxHeader('', $title, $help_url);
 
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($title, $linkback, 'title_setup');
 
 
 $head = product_lot_admin_prepare_head();
 
-dol_fiche_head($head, 'attributes', $textobject, -1, 'stock');
+print dol_get_fiche_head($head, 'attributes', $textobject, -1, 'lot');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 // Buttons
-if ($action != 'create' && $action != 'edit')
-{
-    print '<div class="tabsAction">';
-    print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?action=create#newattrib\">".$langs->trans("NewAttribute")."</a>";
-    print "</div>";
+if ($action != 'create' && $action != 'edit') {
+	print '<div class="tabsAction">';
+	print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?action=create#newattrib\">".$langs->trans("NewAttribute")."</a>";
+	print "</div>";
 }
 
-
-/* ************************************************************************** */
-/*                                                                            */
-/* Creation of an optional field											  */
-/*                                                                            */
-/* ************************************************************************** */
-
-if ($action == 'create')
-{
+// Creation of an optional field
+if ($action == 'create') {
 	print '<br><div id="newattrib"></div>';
 	print load_fiche_titre($langs->trans('NewAttribute'));
 
-    require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';
+	require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';
 }
 
-/* ************************************************************************** */
-/*                                                                            */
-/* Edition of an optional field                                               */
-/*                                                                            */
-/* ************************************************************************** */
-if ($action == 'edit' && ! empty($attrname))
-{
-    print "<br>";
-    print load_fiche_titre($langs->trans("FieldEdition", $attrname));
+// Edition of an optional field
+if ($action == 'edit' && !empty($attrname)) {
+	print "<br>";
+	print load_fiche_titre($langs->trans("FieldEdition", $attrname));
 
-    require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';
+	require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';
 }
 
 // End of page

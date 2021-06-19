@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -22,32 +22,38 @@
  *	\ingroup    cashdesk
  *	\brief      Include to show main page for cashdesk module
  */
+
 require_once 'class/Facturation.class.php';
 
 // Si nouvelle vente, reinitialisation des donnees (destruction de l'objet et vidage de la table contenant la liste des articles)
-if ( $_GET['id'] == 'NOUV' )
-{
+if (GETPOST('id', 'int') == 'NOUV') {
 	unset($_SESSION['serObjFacturation']);
 	unset($_SESSION['poscart']);
 }
 
 // Recuperation, s'il existe, de l'objet contenant les infos de la vente en cours ...
-if (isset($_SESSION['serObjFacturation']))
-{
-    $obj_facturation = unserialize($_SESSION['serObjFacturation']);
-    unset($_SESSION['serObjFacturation']);
-}
-else
-{
+if (isset($_SESSION['serObjFacturation'])) {
+	$obj_facturation = unserialize($_SESSION['serObjFacturation']);
+	unset($_SESSION['serObjFacturation']);
+} else {
 	// ... sinon, c'est une nouvelle vente
 	$obj_facturation = new Facturation();
 }
 
+if (empty($user->rights->cashdesk->run)) {
+	accessforbidden();
+}
+
+
+/*
+ * View
+ */
+
 // $obj_facturation contains data for all invoice total + selection of current product
 
-$obj_facturation->calculTotaux();	// Redefine prix_total_ttc, prix_total_ht et montant_tva from $_SESSION['poscart']
+$obj_facturation->calculTotaux(); // Redefine prix_total_ttc, prix_total_ht et montant_tva from $_SESSION['poscart']
 
-$total_ttc = $obj_facturation->prixTotalTtc();
+$total_ttc = $obj_facturation->amountWithTax();
 
 /*var_dump($obj_facturation);
 var_dump($_SESSION['poscart']);
@@ -59,22 +65,21 @@ exit;*/
 print '<div class="inline-block" style="vertical-align: top">';
 print '<div class="principal">';
 
-$page=GETPOST('menutpl', 'alpha');
-if (empty($page)) $page='facturation';
+$page = GETPOST('menutpl', 'alpha');
+if (empty($page)) {
+	$page = 'facturation';
+}
 
 if (in_array(
-		$page,
-		array(
+	$page,
+	array(
 			'deconnexion',
-			'index','index_verif','facturation','facturation_verif','facturation_dhtml',
-			'validation','validation_ok','validation_ticket','validation_verif',
+			'index', 'index_verif', 'facturation', 'facturation_verif', 'facturation_dhtml',
+			'validation', 'validation_ok', 'validation_ticket', 'validation_verif',
 		)
-	))
-{
+)) {
 	include $page.'.php';
-}
-else
-{
+} else {
 	dol_print_error('', 'menu param '.$page.' is not inside allowed list');
 }
 

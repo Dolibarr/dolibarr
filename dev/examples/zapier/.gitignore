@@ -1,0 +1,8 @@
+build
+docs
+node_modules
+*.log
+.environment
+.env
+.zapierapprc
+package-lock.json

@@ -1,20 +1,25 @@
 # Dolibarr language file - Source file is en_US - workflow
 WorkflowSetup=Darbplūsmu moduļa iestatīšana
-WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is open (you can do things in the order you want). You can activate the automatic actions you are interested in.
-ThereIsNoWorkflowToModify=There is no workflow modifications available with the activated modules.
+WorkflowDesc=Šis modulis nodrošina dažas automātiskas darbības. Pēc noklusējuma darbplūsma ir atvērta (jūs varat darīt lietas vēlamajā secībā), taču šeit jūs varat aktivizēt dažas automātiskas darbības.
+ThereIsNoWorkflowToModify=Nav aktivizētu moduļu darbplūsmas izmaiņām.
 # Autocreate
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a customer order after a commercial proposal is signed (new order will have same amount than proposal)
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatically create a customer invoice after a commercial proposal is signed (new invoice will have same amount than proposal)
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automātiski izveidojiet pārdošanas pasūtījumu pēc tam, kad ir parakstīts komerciāls priekšlikums (jaunajam pasūtījumam būs tāds pats apjoms kā piedāvājumam)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automātiski izveidojiet klienta rēķinu pēc komerciāla piedāvājuma parakstīšanas (jaunajā rēķinā būs tāda pati summa kā piedāvājumā)
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Automātiski izveidot klienta rēķinu pēc līguma apstiprināšanas
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automatically create a customer invoice after a customer order is closed (new invoice will have same amount than order)
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automātiski izveidojiet klienta rēķinu pēc pārdošanas pasūtījuma slēgšanas (jaunajam rēķinam būs tāda pati summa kā pasūtījumam)
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal(s) to billed when customer order is set to billed (and if amount of the order is same than total amount of signed linked proposals)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal(s) to billed when customer invoice is validated (and if amount of the invoice is same than total amount of signed linked proposals)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated (and if amount of the invoice is same than total amount of linked orders)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid (and if amount of the invoice is same than total amount of linked orders)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source customer order to shipped when a shipment is validated (and if quantity shipped by all shipments is the same as in the order to update)
-# Autoclassify supplier order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked proposals)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked orders)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Klasificējiet saistītā avota priekšlikumu kā rēķinu, kad pārdošanas pasūtījums ir iestatīts uz rēķinu (un ja pasūtījuma summa ir vienāda ar parakstītā saistītā priekšlikuma kopējo summu)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Klasificēt saistīto avota priekšlikumu kā rēķinu, kad klienta rēķins ir apstiprināts (un ja rēķina summa ir tāda pati kā parakstītā saistītā piedāvājuma kopējā summa)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Klasificējiet saistītā avota pārdošanas pasūtījumu kā rēķinu, kad klients rēķins ir apstiprināts (un ja rēķina summa ir vienāda ar kopējo piesaistītā pasūtījuma summu)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Klasificējiet saistītā avota pārdošanas pasūtījumu kā rēķinu, kad klienta rēķins ir apmaksāts (un ja rēķina summa ir vienāda ar saistītā pasūtījuma kopējo summu)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Klasificējiet saistīto avota pārdošanas pasūtījumu, kas nosūtīts, kad sūtījums ir apstiprināts (un ja visu sūtījumu sūtītais daudzums ir tāds pats kā atjaunināšanas rīkojumā)
+# Autoclassify purchase order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Saistīto avotu pārdevēju priekšlikuma klasifikācija tiek apmaksāta, kad tiek apstiprināts piegādātāja rēķins (un ja rēķina summa ir tāda pati kā saistītā piedāvājuma kopējā summa)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Klasificēt saistīto avotu pirkuma pasūtījumu, par kuru jāmaksā, kad tiek apstiprināts piegādātāja rēķins (un ja rēķina summa ir tāda pati kā saistītā pasūtījuma summa)
+descWORKFLOW_BILL_ON_RECEPTION=Klasificējiet pieņemjumus uz “rēķinu”, kad ir apstiprināts saistītā piegādātāja pasūtījums
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Kad biļete ir slēgta, aizveriet visas ar biļeti saistītās darbības
 AutomaticCreation=Automātiska veidošana
 AutomaticClassification=Automātiskā klasifikācija
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated

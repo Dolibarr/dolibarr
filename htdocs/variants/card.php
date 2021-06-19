@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 require '../main.inc.php';
@@ -22,7 +22,7 @@ require 'class/ProductAttributeValue.class.php';
 
 $id = GETPOST('id', 'int');
 $valueid = GETPOST('valueid', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $label = GETPOST('label', 'alpha');
 $ref = GETPOST('ref', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
@@ -36,17 +36,29 @@ if ($object->fetch($id) < 1) {
 	exit();
 }
 
+$permissiontoread = $user->rights->produit->lire || $user->rights->service->lire;
+
+// Security check
+if (empty($conf->variants->enabled)) {
+	accessforbidden('Module not enabled');
+}
+if ($user->socid > 0) { // Protection if external user
+	accessforbidden();
+}
+//$result = restrictedArea($user, 'variant');
+if (!$permissiontoread) accessforbidden();
+
 
 /*
  * Actions
  */
 
-if ($cancel) $action='';
+if ($cancel) {
+	$action = '';
+}
 
-if ($_POST) {
-
-	if ($action == 'edit') {
-
+if ($action) {
+	if ($action == 'update') {
 		$object->ref = $ref;
 		$object->label = $label;
 
@@ -57,26 +69,21 @@ if ($_POST) {
 			header('Location: '.dol_buildpath('/variants/card.php?id='.$id, 2));
 			exit();
 		}
-	} elseif ($action == 'update') {
-
+	} elseif ($action == 'update_value') {
 		if ($objectval->fetch($valueid) > 0) {
-
 			$objectval->ref = $ref;
 			$objectval->value = GETPOST('value', 'alpha');
 
-			if (empty($objectval->ref))
-			{
+			if (empty($objectval->ref)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Ref")), null, 'errors');
 			}
-			if (empty($objectval->value))
-			{
+			if (empty($objectval->value)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
 			}
 
-			if (! $error)
-			{
+			if (!$error) {
 				if ($objectval->update($user) > 0) {
 					setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 				} else {
@@ -92,12 +99,11 @@ if ($_POST) {
 
 if ($confirm == 'yes') {
 	if ($action == 'confirm_delete') {
-
 		$db->begin();
 
-		$res = $objectval->deleteByFkAttribute($object->id);
+		$res = $objectval->deleteByFkAttribute($object->id, $user);
 
-		if ($res < 1 || ($object->delete() < 1)) {
+		if ($res < 1 || ($object->delete($user) < 1)) {
 			$db->rollback();
 			setEventMessages($langs->trans('CoreErrorMessage'), $object->errors, 'errors');
 			header('Location: '.dol_buildpath('/variants/card.php?id='.$object->id, 2));
@@ -107,12 +113,9 @@ if ($confirm == 'yes') {
 			header('Location: '.dol_buildpath('/variants/list.php', 2));
 		}
 		exit();
-	}
-	elseif ($action == 'confirm_deletevalue')
-	{
+	} elseif ($action == 'confirm_deletevalue') {
 		if ($objectval->fetch($valueid) > 0) {
-
-			if ($objectval->delete() < 1) {
+			if ($objectval->delete($user) < 1) {
 				setEventMessages($langs->trans('CoreErrorMessage'), $objectval->errors, 'errors');
 			} else {
 				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
@@ -131,78 +134,80 @@ if ($confirm == 'yes') {
 
 $langs->load('products');
 
+$help_url = 'EN:Module_Products#Variants';
+
 $title = $langs->trans('ProductAttributeName', dol_htmlentities($object->label));
 
-llxHeader('', $title);
+llxHeader('', $title, $help_url);
 
 //print load_fiche_titre($title);
 
-$h=0;
+$h = 0;
 $head[$h][0] = DOL_URL_ROOT.'/variants/card.php?id='.$object->id;
-$head[$h][1] = $langs->trans("Card");
+$head[$h][1] = $langs->trans("ProductAttributeName");
 $head[$h][2] = 'variant';
 $h++;
 
-dol_fiche_head($head, 'variant', $langs->trans('ProductAttributeName'), -1, 'generic');
+print dol_get_fiche_head($head, 'variant', $langs->trans('ProductAttributeName'), -1, 'generic');
 
 if ($action == 'edit') {
-    print '<form method="POST">';
+		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="action" value="update">';
+		print '<input type="hidden" name="id" value="'.$id.'">';
+		print '<input type="hidden" name="valueid" value="'.$valueid.'">';
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 }
 
 
-if ($action != 'edit')
-{
-    print '<div class="fichecenter">';
-    print '<div class="underbanner clearboth"></div>';
+if ($action != 'edit') {
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
 }
-?>
-	<table class="border" style="width: 100%">
-		<tr>
-			<td class="titlefield fieldrequired"><?php echo $langs->trans('Ref') ?></td>
-			<td>
-				<?php if ($action == 'edit') {
-					print '<input type="text" name="ref" value="'.$object->ref.'">';
-				} else {
-					print dol_htmlentities($object->ref);
-				} ?>
-			</td>
-		</tr>
-		<tr>
-			<td class="fieldrequired"><?php echo $langs->trans('Label') ?></td>
-			<td>
-				<?php if ($action == 'edit') {
-					print '<input type="text" name="label" value="'.$object->label.'">';
-				} else {
-					print dol_htmlentities($object->label);
-				} ?>
-			</td>
-		</tr>
+print '<table class="border centpercent tableforfield">';
+print '<tr>';
+print '<td class="titlefield'.($action == 'edit' ? ' fieldrequired' : '').'">'.$langs->trans('Ref').'</td>';
+print '<td>';
+if ($action == 'edit') {
+	print '<input type="text" name="ref" value="'.$object->ref.'">';
+} else {
+	print dol_htmlentities($object->ref);
+}
+print '</td>';
+print '</tr>';
+print '<tr>';
+print '<td'.($action == 'edit' ? ' class="fieldrequired"' : '').'>'.$langs->trans('Label').'</td>';
+print '<td>';
+if ($action == 'edit') {
+	print '<input type="text" name="label" value="'.$object->label.'">';
+} else {
+	print dol_htmlentities($object->label);
+}
+print '</td>';
+print '</tr>';
 
-	</table>
+print '</table>';
 
-<?php
 
-if ($action != 'edit')
-{
-    print '</div>';
+if ($action != 'edit') {
+	print '</div>';
 }
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
-if ($action == 'edit') { ?>
-	<div style="text-align: center;">
-		<div class="inline-block divButAction">
-			<input type="submit" class="button" value="<?php echo $langs->trans('Save') ?>">
-			&nbsp; &nbsp;
-			<input type="submit" class="button" name="cancel" value="<?php echo $langs->trans('Cancel') ?>">
-		</div>
-	</div></form>
-<?php } else {
-
+if ($action == 'edit') {
+	print '<div style="text-align: center;">';
+	print '<div class="inline-block divButAction">';
+	print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
+	print '&nbsp; &nbsp;';
+	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
+	print '</div></form>';
+} else {
 	if ($action == 'delete') {
 		$form = new Form($db);
 
-print $form->formconfirm(
+		print $form->formconfirm(
 			"card.php?id=".$object->id,
 			$langs->trans('Delete'),
 			$langs->trans('ProductAttributeDeleteDialog'),
@@ -212,12 +217,10 @@ print $form->formconfirm(
 			1
 		);
 	} elseif ($action == 'delete_value') {
-
 		if ($objectval->fetch($valueid) > 0) {
-
 			$form = new Form($db);
 
-print $form->formconfirm(
+			print $form->formconfirm(
 				"card.php?id=".$object->id."&valueid=".$objectval->id,
 				$langs->trans('Delete'),
 				$langs->trans('ProductAttributeValueDeleteDialog', dol_htmlentities($objectval->value), dol_htmlentities($objectval->ref)),
@@ -233,8 +236,8 @@ print $form->formconfirm(
 
 	<div class="tabsAction">
 		<div class="inline-block divButAction">
-			<a href="card.php?id=<?php echo $object->id ?>&action=edit" class="butAction"><?php echo $langs->trans('Modify') ?></a>
-			<a href="card.php?id=<?php echo $object->id ?>&action=delete" class="butAction"><?php echo $langs->trans('Delete') ?></a>
+			<a href="card.php?id=<?php echo $object->id ?>&action=edit&token=<?php echo newToken(); ?>" class="butAction"><?php echo $langs->trans('Modify') ?></a>
+			<a href="card.php?id=<?php echo $object->id ?>&action=delete&token=<?php echo newToken(); ?>" class="butAction"><?php echo $langs->trans('Delete') ?></a>
 		</div>
 	</div>
 
@@ -245,57 +248,55 @@ print $form->formconfirm(
 
 	if ($action == 'edit_value') {
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		print '<input type="hidden" name="action" value="update">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="action" value="update_value">';
 		print '<input type="hidden" name="id" value="'.$id.'">';
 		print '<input type="hidden" name="valueid" value="'.$valueid.'">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-	} ?>
+	}
 
-	<table class="liste">
-		<tr class="liste_titre">
-			<th class="liste_titre titlefield"><?php echo $langs->trans('Ref') ?></th>
-			<th class="liste_titre"><?php echo $langs->trans('Value') ?></th>
-			<th class="liste_titre"></th>
-		</tr>
+	print '<table class="liste">';
+	print '<tr class="liste_titre">';
+	print '<th class="liste_titre titlefield">'.$langs->trans('Ref').'</th>';
+	print '<th class="liste_titre">'.$langs->trans('Value').'</th>';
+	print '<th class="liste_titre"></th>';
+	print '</tr>';
 
-		<?php
-		foreach ($objectval->fetchAllByProductAttribute($object->id) as $attrval) {
-		?>
-		<tr class="oddeven">
-			<?php if ($action == 'edit_value' && ($valueid == $attrval->id)): ?>
+	foreach ($objectval->fetchAllByProductAttribute($object->id) as $attrval) {
+		print '<tr class="oddeven">';
+		if ($action == 'edit_value' && ($valueid == $attrval->id)) {
+			?>
 				<td><input type="text" name="ref" value="<?php echo $attrval->ref ?>"></td>
 				<td><input type="text" name="value" value="<?php echo $attrval->value ?>"></td>
 				<td class="right">
-					<input type="submit" value="<?php echo $langs->trans('Save') ?>" class="button">
+					<input type="submit" value="<?php echo $langs->trans("Save") ?>" class="button button-save">
 					&nbsp; &nbsp;
-					<input type="submit" name="cancel" value="<?php echo $langs->trans('Cancel') ?>" class="button">
+					<input type="submit" name="cancel" value="<?php echo $langs->trans("Cancel") ?>" class="button button-cancel">
 				</td>
-			<?php else: ?>
+			<?php
+		} else {
+			?>
 				<td><?php echo dol_htmlentities($attrval->ref) ?></td>
 				<td><?php echo dol_htmlentities($attrval->value) ?></td>
 				<td class="right">
-					<a href="card.php?id=<?php echo $object->id ?>&action=edit_value&valueid=<?php echo $attrval->id ?>"><?php echo img_edit() ?></a>
-					<a href="card.php?id=<?php echo $object->id ?>&action=delete_value&valueid=<?php echo $attrval->id ?>"><?php echo img_delete() ?></a>
+					<a class="editfielda marginrightonly" href="card.php?id=<?php echo $object->id ?>&action=edit_value&valueid=<?php echo $attrval->id ?>"><?php echo img_edit() ?></a>
+					<a href="card.php?id=<?php echo $object->id ?>&action=delete_value&token=<?php echo newToken(); ?>&valueid=<?php echo $attrval->id ?>"><?php echo img_delete() ?></a>
 				</td>
-			<?php endif; ?>
-		</tr>
-		<?php
+			<?php
 		}
-		?>
-	</table>
+		print '</tr>';
+	}
+	print '</table>';
 
-	<?php if ($action == 'edit_value'): ?>
-	</form>
-	<?php endif ?>
+	if ($action == 'edit_value') {
+		print '</form>';
+	}
 
-	<div class="tabsAction">
-		<div class="inline-block divButAction">
-			<a href="create_val.php?id=<?php echo $object->id ?>" class="butAction"><?php echo $langs->trans('Create') ?></a>
-		</div>
-	</div>
-
-	<?php
+	print '<div class="tabsAction">';
+	print '<div class="inline-block divButAction">';
+	print '<a href="create_val.php?id='.$object->id.'" class="butAction">'.$langs->trans('Create').'</a>';
+	print '</div>';
+	print '</div>';
 }
 
 // End of page

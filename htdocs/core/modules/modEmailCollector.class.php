@@ -12,22 +12,22 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- * 	\defgroup   dav     Module dav
- *  \brief      dav module descriptor.
+ * 	\defgroup   emailcollector     Module emailcollector
+ *  \brief      emailcollector module descriptor.
  *
- *  \file       htdocs/dav/core/modules/modDav.class.php
- *  \ingroup    dav
- *  \brief      Description and activation file for module dav
+ *  \file       htdocs/core/modules/modEmailCollector.class.php
+ *  \ingroup    emailcollector
+ *  \brief      Description and activation file for the module emailcollector
  */
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *  Description and activation class for module dav
+ *  Description and activation class for module emailcollector
  */
 class modEmailCollector extends DolibarrModules
 {
@@ -38,9 +38,9 @@ class modEmailCollector extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-        global $langs,$conf;
+		global $langs, $conf;
 
-        $this->db = $db;
+		$this->db = $db;
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
@@ -52,7 +52,7 @@ class modEmailCollector extends DolibarrModules
 		// It is used to group modules by family in module setup page
 		$this->family = "interface";
 		// Module position in the family on 2 digits ('01', '10', '20', ...)
-		$this->module_position = '12';
+		$this->module_position = '23';
 		// Gives the possibility to the module, to provide his own family info and position of this family (Overwrite $this->family and $this->module_position. Avoid this)
 		//$this->familyinfo = array('myownfamily' => array('position' => '01', 'label' => $langs->trans("MyOwnFamily")));
 
@@ -70,7 +70,7 @@ class modEmailCollector extends DolibarrModules
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
-		$this->picto='email';
+		$this->picto = 'email';
 
 		// Defined all module parts (triggers, login, substitutions, menus, css, etc...)
 		// for default path (eg: /dav/core/xxxxx) (0=disable, 1=enable)
@@ -86,15 +86,15 @@ class modEmailCollector extends DolibarrModules
 		$this->config_page_url = array("emailcollector_list.php");
 
 		// Dependencies
-		$this->hidden = false;			// A condition to hide module
-		$this->depends = array('always'=>'modCron');		// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of module ids to disable if this one is disabled
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->hidden = false; // A condition to hide module
+		$this->depends = array('always'=>'modCron'); // List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array(); // List of module ids to disable if this one is disabled
+		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
 		$this->langfiles = array("admin");
-		$this->phpmin = array(5,4);					// Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(7,0);	// Minimum version of Dolibarr required by module
-		$this->warnings_activation = array();                     // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
-		$this->warnings_activation_ext = array();                 // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->need_dolibarr_version = array(7, 0); // Minimum version of Dolibarr required by module
+		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
+		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
 		//$this->automatic_activation = array('FR'=>'davWasAutomaticallyActivatedBecauseOfYourCountryChoice');
 		//$this->always_enabled = true;								// If true, can't be disabled
 
@@ -108,21 +108,20 @@ class modEmailCollector extends DolibarrModules
 		);
 
 
-		if (! isset($conf->dav) || ! isset($conf->dav->enabled))
-		{
-			$conf->dav=new stdClass();
-			$conf->dav->enabled=0;
+		if (!isset($conf->emailcollector) || !isset($conf->emailcollector->enabled)) {
+			$conf->emailcollector = new stdClass();
+			$conf->emailcollector->enabled = 0;
 		}
 
 
 		// Array to add new pages in new tabs
-        $this->tabs = array();
+		$this->tabs = array();
 		// Example:
 		// $this->tabs[] = array('data'=>'objecttype:+tabname1:Title1:mylangfile@dav:$user->rights->dav->read:/dav/mynewtab1.php?id=__ID__');  					// To add a new tab identified by code tabname1
-        // $this->tabs[] = array('data'=>'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@dav:$user->rights->othermodule->read:/dav/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
-        // $this->tabs[] = array('data'=>'objecttype:-tabname:NU:conditiontoremove');                                                     										// To remove an existing tab identified by code tabname
-        //
-        // Where objecttype can be
+		// $this->tabs[] = array('data'=>'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@dav:$user->rights->othermodule->read:/dav/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
+		// $this->tabs[] = array('data'=>'objecttype:-tabname:NU:conditiontoremove');                                                     										// To remove an existing tab identified by code tabname
+		//
+		// Where objecttype can be
 		// 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
 		// 'contact'          to add a tab in contact view
 		// 'contract'         to add a tab in contract view
@@ -144,31 +143,31 @@ class modEmailCollector extends DolibarrModules
 		// 'user'             to add a tab in user view
 
 
-        // Dictionaries
-		$this->dictionaries=array();
-        /* Example:
-        $this->dictionaries=array(
-            'langs'=>'mylangfile@dav',
-            'tabname'=>array(MAIN_DB_PREFIX."table1",MAIN_DB_PREFIX."table2",MAIN_DB_PREFIX."table3"),		// List of tables we want to see into dictonnary editor
-            'tablib'=>array("Table1","Table2","Table3"),													// Label of tables
-            'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table1 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table2 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table3 as f'),	// Request to select fields
-            'tabsqlsort'=>array("label ASC","label ASC","label ASC"),																					// Sort order
-            'tabfield'=>array("code,label","code,label","code,label"),																					// List of fields (result of select to show dictionary)
-            'tabfieldvalue'=>array("code,label","code,label","code,label"),																				// List of fields (list of fields to edit a record)
-            'tabfieldinsert'=>array("code,label","code,label","code,label"),																			// List of fields (list of fields for insert)
-            'tabrowid'=>array("rowid","rowid","rowid"),																									// Name of columns with primary key (try to always name it 'rowid')
-            'tabcond'=>array($conf->dav->enabled,$conf->dav->enabled,$conf->dav->enabled)												// Condition to show each dictionary
-        );
-        */
+		// Dictionaries
+		$this->dictionaries = array();
+		/* Example:
+		$this->dictionaries=array(
+			'langs'=>'mylangfile@dav',
+			'tabname'=>array(MAIN_DB_PREFIX."table1",MAIN_DB_PREFIX."table2",MAIN_DB_PREFIX."table3"),		// List of tables we want to see into dictonnary editor
+			'tablib'=>array("Table1","Table2","Table3"),													// Label of tables
+			'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table1 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table2 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table3 as f'),	// Request to select fields
+			'tabsqlsort'=>array("label ASC","label ASC","label ASC"),																					// Sort order
+			'tabfield'=>array("code,label","code,label","code,label"),																					// List of fields (result of select to show dictionary)
+			'tabfieldvalue'=>array("code,label","code,label","code,label"),																				// List of fields (list of fields to edit a record)
+			'tabfieldinsert'=>array("code,label","code,label","code,label"),																			// List of fields (list of fields for insert)
+			'tabrowid'=>array("rowid","rowid","rowid"),																									// Name of columns with primary key (try to always name it 'rowid')
+			'tabcond'=>array($conf->dav->enabled,$conf->dav->enabled,$conf->dav->enabled)												// Condition to show each dictionary
+		);
+		*/
 
 
-        // Boxes/Widgets
+		// Boxes/Widgets
 		// Add here list of php file(s) stored in dav/core/boxes that contains class to show a widget.
-        $this->boxes = array(
-        	//0=>array('file'=>'davwidget1.php@dav','note'=>'Widget provided by dav','enabledbydefaulton'=>'Home'),
-        	//1=>array('file'=>'davwidget2.php@dav','note'=>'Widget provided by dav'),
-        	//2=>array('file'=>'davwidget3.php@dav','note'=>'Widget provided by dav')
-        );
+		$this->boxes = array(
+			//0=>array('file'=>'davwidget1.php@dav','note'=>'Widget provided by dav','enabledbydefaulton'=>'Home'),
+			//1=>array('file'=>'davwidget2.php@dav','note'=>'Widget provided by dav'),
+			//2=>array('file'=>'davwidget3.php@dav','note'=>'Widget provided by dav')
+		);
 
 
 		// Cronjobs (List of cron jobs entries to add when module is enabled)
@@ -179,7 +178,7 @@ class modEmailCollector extends DolibarrModules
 
 
 		// Permissions
-		$this->rights = array();		// Permission array used by this module
+		$this->rights = array(); // Permission array used by this module
 
 		/*
 		$r=0;
@@ -205,8 +204,8 @@ class modEmailCollector extends DolibarrModules
 		*/
 
 		// Main menu entries
-		$this->menu = array();			// List of menus to add
-		$r=0;
+		$this->menu = array(); // List of menus to add
+		$r = 0;
 
 		// Add here entries to declare new menus
 
@@ -252,28 +251,6 @@ class modEmailCollector extends DolibarrModules
 								'target'=>'',
 								'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
 		END MODULEBUILDER LEFTMENU MYOBJECT */
-
-
-		// Exports
-		$r=1;
-
-		/* BEGIN MODULEBUILDER EXPORT MYOBJECT */
-		/*
-		$langs->load("dav@dav");
-		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]='MyObjectLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-		$this->export_icon[$r]='myobject@dav';
-		$keyforclass = 'MyObject'; $keyforclassfile='/mymobule/class/myobject.class.php'; $keyforelement='myobject';
-		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
-		$keyforselect='myobject'; $keyforaliasextra='extra'; $keyforelement='myobject';
-		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		//$this->export_dependencies_array[$r]=array('mysubobject'=>'ts.rowid', 't.myfield'=>array('t.myfield2','t.myfield3')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
-		$this->export_sql_start[$r]='SELECT DISTINCT ';
-		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'myobject as t';
-		$this->export_sql_end[$r] .=' WHERE 1 = 1';
-		$this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('myobject').')';
-		$r++; */
-		/* END MODULEBUILDER EXPORT MYOBJECT */
 	}
 
 	/**
@@ -281,17 +258,17 @@ class modEmailCollector extends DolibarrModules
 	 *	The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *	It also creates data directories
 	 *
-     *	@param      string	$options    Options when enabling module ('', 'noboxes')
+	 *	@param      string	$options    Options when enabling module ('', 'noboxes')
 	 *	@return     int             	1 if OK, 0 if KO
 	 */
 	public function init($options = '')
 	{
+		global $conf, $user;
 		//$this->_load_tables('/dav/sql/');
 
 		// Create extrafields
-		include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-		$extrafields = new ExtraFields($this->db);
-
+		//include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+		//$extrafields = new ExtraFields($this->db);
 		//$result1=$extrafields->addExtraField('myattr1', "New Attr 1 label", 'boolean', 1,  3, 'thirdparty',   0, 0, '', '', 1, '', 0, 0, '', '', 'dav@dav', '$conf->dav->enabled');
 		//$result2=$extrafields->addExtraField('myattr2', "New Attr 2 label", 'varchar', 1, 10, 'project',      0, 0, '', '', 1, '', 0, 0, '', '', 'dav@dav', '$conf->dav->enabled');
 		//$result3=$extrafields->addExtraField('myattr3', "New Attr 3 label", 'varchar', 1, 10, 'bank_account', 0, 0, '', '', 1, '', 0, 0, '', '', 'dav@dav', '$conf->dav->enabled');
@@ -299,6 +276,141 @@ class modEmailCollector extends DolibarrModules
 		//$result5=$extrafields->addExtraField('myattr5', "New Attr 5 label", 'text',    1, 10, 'user',         0, 0, '', '', 1, '', 0, 0, '', '', 'dav@dav', '$conf->dav->enabled');
 
 		$sql = array();
+
+		$tmpsql = "SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Ticket_Requests' and entity = ".$conf->entity;
+		$tmpresql = $this->db->query($tmpsql);
+		if ($tmpresql) {
+			if ($this->db->num_rows($tmpresql) == 0) {
+				$descriptionA1 = 'This collector will scan your mailbox to find emails that match some rules and create automatically a ticket (Module Ticket must be enabled) with the email informations. You can use this collector if you provide some support by email, so your ticket request will be automatically generated.';
+				$descriptionA1 .= ' If the collector Collect_Responses is also enabled, when you send an email from the ticket, you may also see answers of your customers or partners directly on the ticket view.';
+
+				$sqlforexampleA1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollector (entity, ref, label, description, source_directory, date_creation, fk_user_creat, status)";
+				$sqlforexampleA1 .= " VALUES (".$conf->entity.", 'Collect_Ticket_Requets', 'Example to collect ticket requests', '".$this->db->escape($descriptionA1)."', 'INBOX', '".$this->db->idate(dol_now())."', ".$user->id.", 0)";
+
+				$sqlforexampleFilterA1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, date_creation, fk_user_creat, status)";
+				$sqlforexampleFilterA1 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Ticket_Requets' and entity = ".$conf->entity."), 'isnotanswer', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
+				$sqlforexampleFilterA2 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, date_creation, fk_user_creat, status)";
+				$sqlforexampleFilterA2 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Ticket_Requets' and entity = ".$conf->entity."), 'withouttrackingid', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
+				$sqlforexampleFilterA3 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, rulevalue, date_creation, fk_user_creat, status)";
+				$sqlforexampleFilterA3 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Ticket_Requets' and entity = ".$conf->entity."), 'to', 'support@example.com', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
+
+				$sqlforexampleA4 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectoraction (fk_emailcollector, type, date_creation, fk_user_creat, status)";
+				$sqlforexampleA4 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Ticket_Requets' and entity = ".$conf->entity."), 'ticket', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
+
+				$sql[] = $sqlforexampleA1;
+				$sql[] = $sqlforexampleFilterA1;
+				$sql[] = $sqlforexampleFilterA2;
+				$sql[] = $sqlforexampleFilterA3;
+				$sql[] = $sqlforexampleA4;
+			}
+		} else {
+			dol_print_error($this->db);
+		}
+
+		$tmpsql = "SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Responses_Out' and entity = ".$conf->entity;
+		$tmpresql = $this->db->query($tmpsql);
+		if ($tmpresql) {
+			if ($this->db->num_rows($tmpresql) == 0) {
+				$descriptionA1 = 'This collector will scan your mailbox "Sent" directory to find emails that was sent as an answer of another email directly from your email software and not from Dolibarr. If such an email is found, the event of answer is recorded into Dolibarr.';
+
+				$sqlforexampleA1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollector (entity, ref, label, description, source_directory, date_creation, fk_user_creat, status)";
+				$sqlforexampleA1 .= " VALUES (".$conf->entity.", 'Collect_Responses_Out', 'Example to collect answers to emails done from your external email software', '".$this->db->escape($descriptionA1)."', 'Sent', '".$this->db->idate(dol_now())."', ".$user->id.", 0)";
+
+				$sqlforexampleFilterA1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, date_creation, fk_user_creat, status)";
+				$sqlforexampleFilterA1 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Responses_Out' and entity = ".$conf->entity."), 'isanswer', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
+				$sqlforexampleFilterA2 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, date_creation, fk_user_creat, status)";
+				$sqlforexampleFilterA2 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Responses_Out' and entity = ".$conf->entity."), 'withouttrackingidinmsgid', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
+				$sqlforexampleActionA1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectoraction (fk_emailcollector, type, date_creation, fk_user_creat, status)";
+				$sqlforexampleActionA1 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Responses_Out' and entity = ".$conf->entity."), 'recordevent', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
+
+				$sql[] = $sqlforexampleA1;
+				$sql[] = $sqlforexampleFilterA1;
+				$sql[] = $sqlforexampleFilterA2;
+				$sql[] = $sqlforexampleActionA1;
+			}
+		}
+
+		$tmpsql = "SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Responses_In' and entity = ".$conf->entity;
+		$tmpresql = $this->db->query($tmpsql);
+		if ($tmpresql) {
+			if ($this->db->num_rows($tmpresql) == 0) {
+				$descriptionB1 = 'This collector will scan your mailbox to find all emails that are an answer of an email sent from your application. An event (Module Agenda must be enabled) with the email response will be recorded at the good place. For example, if your send a commercial proposal, order, invoice or message for a ticket by email from the application, and your customer answers your email, the system will automatically catch the answer and add it into your ERP.';
+
+				$sqlforexampleB1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollector (entity, ref, label, description, source_directory, date_creation, fk_user_creat, status)";
+				$sqlforexampleB1 .= " VALUES (".$conf->entity.", 'Collect_Responses_In', 'Example to collect any received email that is a response of an email sent from Dolibarr', '".$this->db->escape($descriptionB1)."', 'INBOX', '".$this->db->idate(dol_now())."', ".$user->id.", 0)";
+				$sqlforexampleB2 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, date_creation, fk_user_creat, status)";
+				$sqlforexampleB2 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Responses_In' and entity = ".$conf->entity."), 'isanswer', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
+				$sqlforexampleB3 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectoraction (fk_emailcollector, type, date_creation, fk_user_creat, status)";
+				$sqlforexampleB3 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Responses_In' and entity = ".$conf->entity."), 'recordevent', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
+
+				$sql[] = $sqlforexampleB1;
+				$sql[] = $sqlforexampleB2;
+				$sql[] = $sqlforexampleB3;
+			}
+		} else {
+			dol_print_error($this->db);
+		}
+
+		$tmpsql = "SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Leads' and entity = ".$conf->entity;
+		$tmpresql = $this->db->query($tmpsql);
+		if ($tmpresql) {
+			if ($this->db->num_rows($tmpresql) == 0) {
+				$descriptionC1 = "This collector will scan your mailbox to find emails that match some rules and create automatically a lead (Module Project must be enabled) with the email informations. You can use this collector if you want to follow your lead using the module Project (1 lead = 1 project), so your leads will be automatically generated.";
+				$descriptionC1 .= " If the collector Collect_Responses is also enabled, when you send an email from your leads, proposals or any other object, you may also see answers of your customers or partners directly on the application.<br>";
+				$descriptionC1 .= "Note: With this initial example, the title of the lead is generated including the email. If the thirdparty can't be found in database (new customer), the lead will be attached to the thirdparty with ID 1.";
+
+				$sqlforexampleC1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollector (entity, ref, label, description, source_directory, date_creation, fk_user_creat, status)";
+				$sqlforexampleC1 .= " VALUES (".$conf->entity.", 'Collect_Leads', 'Example to collect leads', '".$this->db->escape($descriptionC1)."', 'INBOX', '".$this->db->idate(dol_now())."', ".$user->id.", 0)";
+
+				$sqlforexampleFilterC1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, date_creation, fk_user_creat, status)";
+				$sqlforexampleFilterC1 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Leads' and entity = ".$conf->entity."), 'isnotanswer', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
+				$sqlforexampleFilterC2 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, date_creation, fk_user_creat, status)";
+				$sqlforexampleFilterC2 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Leads' and entity = ".$conf->entity."), 'withouttrackingid', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
+				$sqlforexampleFilterC3 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, rulevalue, date_creation, fk_user_creat, status)";
+				$sqlforexampleFilterC3 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Leads' and entity = ".$conf->entity."), 'to', 'sales@example.com', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
+
+				$sqlforexampleC4 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectoraction (fk_emailcollector, type, actionparam, date_creation, fk_user_creat, status)";
+				$sqlforexampleC4 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Leads' and entity = ".$conf->entity."), 'project', 'tmp_from=EXTRACT:HEADER:^From:(.*);socid=SETIFEMPTY:1;usage_opportunity=SET:1;description=EXTRACT:BODY:(.*);title=SET:Lead or message from __tmp_from__ received by email', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
+
+				$sql[] = $sqlforexampleC1;
+				$sql[] = $sqlforexampleFilterC1;
+				$sql[] = $sqlforexampleFilterC2;
+				$sql[] = $sqlforexampleFilterC3;
+				$sql[] = $sqlforexampleC4;
+			}
+		} else {
+			dol_print_error($this->db);
+		}
+
+		$tmpsql = "SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Candidatures' and entity = ".$conf->entity;
+		$tmpresql = $this->db->query($tmpsql);
+		if ($tmpresql) {
+			if ($this->db->num_rows($tmpresql) == 0) {
+				$descriptionC1 = "This collector will scan your mailbox to find emails send for a recruitment (Module Recruitment must be enabled). You can complete this collector if you want to automaticallycreate a candidature for a job request.";
+				$descriptionC1 .= "Note: With this initial example, the title of the candidature is generated including the email.";
+
+				$sqlforexampleC1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollector (entity, ref, label, description, source_directory, date_creation, fk_user_creat, status)";
+				$sqlforexampleC1 .= " VALUES (".$conf->entity.", 'Collect_Candidatures', 'Example to collect email for job candidatures', '".$this->db->escape($descriptionC1)."', 'INBOX', '".$this->db->idate(dol_now())."', ".$user->id.", 0)";
+
+				$sqlforexampleFilterC1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, date_creation, fk_user_creat, status)";
+				$sqlforexampleFilterC1 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Candidatures' and entity = ".$conf->entity."), 'isnotanswer', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
+				$sqlforexampleFilterC2 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, date_creation, fk_user_creat, status)";
+				$sqlforexampleFilterC2 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Candidatures' and entity = ".$conf->entity."), 'withouttrackingid', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
+				$sqlforexampleFilterC3 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, rulevalue, date_creation, fk_user_creat, status)";
+				$sqlforexampleFilterC3 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Candidatures' and entity = ".$conf->entity."), 'to', 'jobs@example.com', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
+
+				$sqlforexampleC4 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectoraction (fk_emailcollector, type, actionparam, date_creation, fk_user_creat, status)";
+				$sqlforexampleC4 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Candidatures' and entity = ".$conf->entity."), 'candidature', 'tmp_from=EXTRACT:HEADER:^From:(.*)(<.*>)?;fk_recruitmentjobposition=EXTRACT:HEADER:^To:[^\n]*\+([^\n]*);description=EXTRACT:BODY:(.*);lastname=SET:__tmp_from__', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
+
+				$sql[] = $sqlforexampleC1;
+				$sql[] = $sqlforexampleFilterC1;
+				$sql[] = $sqlforexampleFilterC2;
+				$sql[] = $sqlforexampleFilterC3;
+				$sql[] = $sqlforexampleC4;
+			}
+		} else {
+			dol_print_error($this->db);
+		}
 
 		return $this->_init($sql, $options);
 	}

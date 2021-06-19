@@ -12,7 +12,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ============================================================================
 CREATE TABLE llx_expeditiondet_batch (
@@ -20,8 +20,8 @@ CREATE TABLE llx_expeditiondet_batch (
   fk_expeditiondet int NOT NULL,
   eatby date DEFAULT NULL,
   sellby date DEFAULT NULL,
-  batch varchar(30) DEFAULT NULL,
+  batch varchar(128) DEFAULT NULL,
   qty double NOT NULL DEFAULT '0',
   fk_origin_stock integer NOT NULL
-) ENGINE=InnoDB;
+) ENGINE=innodb;
 

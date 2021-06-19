@@ -12,11 +12,11 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 -- ============================================================================
 
 CREATE TABLE llx_opensurvey_user_formanswers (
     fk_user_survey INTEGER NOT NULL,
     fk_question INTEGER NOT NULL,
     reponses TEXT
-) ENGINE=InnoDB;
+) ENGINE=innodb;

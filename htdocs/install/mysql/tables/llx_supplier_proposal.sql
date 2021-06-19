@@ -12,7 +12,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 -- ========================================================================
 
 CREATE TABLE llx_supplier_proposal (
@@ -23,7 +23,7 @@ CREATE TABLE llx_supplier_proposal (
   ref_int varchar(255) DEFAULT NULL,
   fk_soc integer DEFAULT NULL,
   fk_projet integer DEFAULT NULL,
-  tms timestamp,
+  tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datec datetime DEFAULT NULL,
   date_valid datetime DEFAULT NULL,
   date_cloture datetime DEFAULT NULL,
@@ -37,10 +37,10 @@ CREATE TABLE llx_supplier_proposal (
   remise_absolue double DEFAULT 0,
   remise double DEFAULT 0,
   total_ht double(24,8) DEFAULT 0,
-  tva double(24,8) DEFAULT 0,
+  total_tva double(24,8) DEFAULT 0,
   localtax1 double(24,8) DEFAULT 0,
   localtax2 double(24,8) DEFAULT 0,
-  total double(24,8) DEFAULT 0,
+  total_ttc double(24,8) DEFAULT 0,
   fk_account integer DEFAULT NULL,
   fk_currency varchar(3) DEFAULT NULL,
   fk_cond_reglement integer DEFAULT NULL,

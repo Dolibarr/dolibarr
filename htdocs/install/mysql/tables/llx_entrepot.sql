@@ -14,7 +14,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ============================================================================
 
@@ -23,8 +23,9 @@ create table llx_entrepot
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   ref             varchar(255) NOT NULL,
   datec           datetime,
-  tms             timestamp,
+  tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   entity          integer DEFAULT 1 NOT NULL,	-- multi company id
+  fk_project	  integer DEFAULT NULL,			-- project associated to warehouse if any
   description     text,
   lieu            varchar(64),					-- resume lieu situation
   address         varchar(255),
@@ -32,6 +33,8 @@ create table llx_entrepot
   town            varchar(50),
   fk_departement  integer,
   fk_pays         integer DEFAULT 0,
+  phone           varchar(20),                  -- phone number
+  fax             varchar(20),                  -- fax number
   statut          tinyint DEFAULT 1,			-- 1 open, 0 close
   fk_user_author  integer,
   model_pdf       varchar(255),

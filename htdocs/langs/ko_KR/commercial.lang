@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - commercial
-Commercial=상거래
-CommercialArea=상거래 지역
+Commercial=Commerce
+CommercialArea=Commerce area
 Customer=고객
 Customers=고객
 Prospect=잠재 고객
@@ -59,7 +59,7 @@ ActionAC_FAC=메일로 고객 송장 보내기
 ActionAC_REL=메일로 고객 송장 보내기 (미리 알림).
 ActionAC_CLO=닫기
 ActionAC_EMAILING=대량 이메일 보내기
-ActionAC_COM=메일로 고객 주문 보내기
+ActionAC_COM=Send sales order by mail
 ActionAC_SHIP=메일로 선적 보내기
 ActionAC_SUP_ORD=Send purchase order by mail
 ActionAC_SUP_INV=Send vendor invoice by mail

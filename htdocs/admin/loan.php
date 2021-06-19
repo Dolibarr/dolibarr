@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -26,19 +26,22 @@ require '../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
+if (!empty($conf->accounting->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'loan'));
 
 // Security check
-if (!$user->admin)
-    accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 // Other parameters LOAN_*
-$list = array (
+$list = array(
 		'LOAN_ACCOUNTING_ACCOUNT_CAPITAL',
 		'LOAN_ACCOUNTING_ACCOUNT_INTEREST',
 		'LOAN_ACCOUNTING_ACCOUNT_INSURANCE'
@@ -48,26 +51,22 @@ $list = array (
  * Actions
  */
 
-if ($action == 'update')
-{
-    $error = 0;
+if ($action == 'update') {
+	$error = 0;
 
-    foreach ($list as $constname) {
-        $constvalue = GETPOST($constname, 'alpha');
+	foreach ($list as $constname) {
+		$constvalue = GETPOST($constname, 'alpha');
 
-        if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-            $error++;
-        }
-    }
+		if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+	}
 
-    if (! $error)
-    {
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
-        setEventMessages($langs->trans("Error"), null, 'errors');
-    }
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
 }
 
 /*
@@ -77,25 +76,26 @@ if ($action == 'update')
 llxHeader();
 
 $form = new Form($db);
-if (! empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
+if (!empty($conf->accounting->enabled)) {
+	$formaccounting = new FormAccounting($db);
+}
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans('ConfigLoan'), $linkback, 'title_setup');
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
 /*
  *  Params
  */
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td colspan="3">' . $langs->trans('Options') . '</td>';
+print '<td colspan="3">'.$langs->trans('Options').'</td>';
 print "</tr>\n";
 
-foreach ($list as $key)
-{
+foreach ($list as $key) {
 	print '<tr class="oddeven value">';
 
 	// Param
@@ -104,12 +104,9 @@ foreach ($list as $key)
 
 	// Value
 	print '<td>';
-	if (! empty($conf->accounting->enabled))
-	{
+	if (!empty($conf->accounting->enabled)) {
 		print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
-	}
-	else
-	{
+	} else {
 		print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
 	}
 	print '</td></tr>';

@@ -13,12 +13,11 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
-{
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -30,9 +29,9 @@ if (empty($conf) || ! is_object($conf))
 <?php
 print load_fiche_titre($this->control->tpl['title']);
 
-dol_htmloutput_errors((is_numeric($object->error)?'':$object->error), $object->errors);
+dol_htmloutput_errors((is_numeric($object->error) ? '' : $object->error), $object->errors);
 
-dol_htmloutput_errors((is_numeric($GLOBALS['error'])?'':$GLOBALS['error']), $GLOBALS['errors']);
+dol_htmloutput_errors((is_numeric($GLOBALS['error']) ? '' : $GLOBALS['error']), $GLOBALS['errors']);
 
 dol_htmloutput_errors($this->control->tpl['error'], $this->control->tpl['errors']);
 
@@ -41,7 +40,7 @@ echo $this->control->tpl['ajax_selectcountry']; ?>
 <br>
 
 <form method="post" name="formmember" action="<?php echo $_SERVER["PHP_SELF"]; ?>">
-<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
+<input type="hidden" name="token" value="<?php echo newToken(); ?>">
 <input type="hidden" name="canvas" value="<?php echo $canvas ?>">
 <input type="hidden" name="action" value="add">
 <?php if ($this->control->tpl['company_id']) { ?>
@@ -69,7 +68,7 @@ echo $this->control->tpl['ajax_selectcountry']; ?>
 
 <tr>
 	<td><?php echo $langs->trans("Morphy"); ?></td>
-	<td colspan="3"><input name="morphy" type="text" size="50" maxlength="80" value="<?php echo $this->control->tpl['select_morphy']; ?>"></td>
+	<td colspan="3"><input name="morphy" type="text" class="minwidth200" value="<?php echo $this->control->tpl['select_morphy']; ?>"></td>
 </tr>
 
 <tr>
@@ -106,7 +105,7 @@ echo $this->control->tpl['ajax_selectcountry']; ?>
 
 <tr>
 	<td><?php echo $langs->trans("Email"); ?></td>
-	<td colspan="3"><input name="email" type="text" size="50" maxlength="80" value="<?php echo $this->control->tpl['email']; ?>"></td>
+	<td colspan="3"><input name="email" type="text" class="minwidth200" maxlength="80" value="<?php echo $this->control->tpl['email']; ?>"></td>
 </tr>
 
 <tr>
@@ -116,7 +115,7 @@ echo $this->control->tpl['ajax_selectcountry']; ?>
 
 <tr>
 	<td class="tdtop"><?php echo $langs->trans("Note"); ?></td>
-	<td colspan="3" valign="top"><textarea name="note" cols="70" rows="<?php echo ROWS_3; ?>"><?php echo $this->control->tpl['note']; ?></textarea></td>
+	<td colspan="3" class="tdtop"><textarea name="note" cols="70" rows="<?php echo ROWS_3; ?>"><?php echo $this->control->tpl['note']; ?></textarea></td>
 </tr>
 
 <tr>

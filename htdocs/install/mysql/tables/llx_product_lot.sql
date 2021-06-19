@@ -12,7 +12,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- This table is dedicated to store lots with detail of each lot. Key is fk_product-batch is unique.
 -- ============================================================================
@@ -21,12 +21,15 @@ CREATE TABLE llx_product_lot (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   entity          integer DEFAULT 1,
   fk_product      integer NOT NULL,				-- Id of product
-  batch           varchar(30) DEFAULT NULL,		-- Lot or serial number
+  batch           varchar(128) DEFAULT NULL,	-- Lot or serial number
   eatby           date DEFAULT NULL,			-- Eatby date
   sellby          date DEFAULT NULL, 			-- Sellby date
+  eol_date      datetime NULL,
+  manufacturing_date datetime NULL,
+  scrapping_date datetime NULL,
   datec         datetime,
-  tms           timestamp,
+  tms           timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_user_creat integer,
   fk_user_modif integer,
   import_key    integer
-) ENGINE=InnoDB;
+) ENGINE=innodb;

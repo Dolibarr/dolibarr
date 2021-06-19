@@ -14,7 +14,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===========================================================================
 
@@ -24,7 +24,7 @@ create table llx_usergroup
   nom           varchar(180) NOT NULL,
   entity        integer DEFAULT 1 NOT NULL,	-- multi company id
   datec         datetime,
-  tms           timestamp,
+  tms           timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   note          text,
   model_pdf     varchar(255) DEFAULT NULL
 )ENGINE=innodb;

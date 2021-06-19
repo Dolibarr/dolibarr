@@ -16,12 +16,13 @@ StripeDoPayment=Payer avec Stripe
 YouWillBeRedirectedOnStripe=Vous allez être redirigé vers la page sécurisée de Stripe pour insérer les informations de votre carte de crédit
 Continue=Continuer
 ToOfferALinkForOnlinePayment=URL de paiement %s
-ToOfferALinkForOnlinePaymentOnOrder=URL offrant une interface de paiement en ligne %s sur la base du montant d'une commande client
-ToOfferALinkForOnlinePaymentOnInvoice=URL offrant une interface de paiement en ligne %s sur la base du montant d'une facture client
-ToOfferALinkForOnlinePaymentOnContractLine=URL offrant une interface de paiement en ligne %s sur la base du montant d'une ligne de contrat
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL offrant une interface de paiement en ligne %s pour un montant libre
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL offrant une interface de paiement en ligne %s sur la base d'une cotisation d'adhérent
-YouCanAddTagOnUrl=Vous pouvez de plus ajouter le paramètre URL <b>&tag=<i>value</i></b> à n'importe quelles de ces URL (obligatoire pour le paiement libre uniquement) pour ajouter votre propre "code commentaire" du paiement.
+ToOfferALinkForOnlinePaymentOnOrder=URL offrant une interface de paiement en ligne %s pour le paiement d'une commande client
+ToOfferALinkForOnlinePaymentOnInvoice=URL offrant une interface de paiement en ligne %s pour le paiement  d'une facture client
+ToOfferALinkForOnlinePaymentOnContractLine=URL offrant une interface de paiement en ligne %s pour le paiement d'une ligne de contrat
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL offrant une interface de paiement en ligne %s d'un montant libre sans existence d'object particulier
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL offrant une interface de paiement en ligne %s pour le paiement d'une cotisation d'adhérent
+ToOfferALinkForOnlinePaymentOnDonation=URL offrant une interface de paiement en ligne %s pour le paiement de dons
+YouCanAddTagOnUrl=Vous pouvez également ajouter le paramètre <b>&tag=<i>valeur</i></b> à n'importe laquelle de ces URL (obligatoire uniquement pour les paiements non liés à un objet) pour ajouter votre propre commentaire de paiement. <br>Pour l'URL des paiements sans objet existant, vous pouvez également ajouter le paramètre <strong>&noidempotency=1</strong> pour que le même lien avec le même tag puisse être utilisé plusieurs fois (certains modes de paiement peuvent limiter le paiement à 1 pour chaque lien différent sans ce paramètre)
 SetupStripeToHavePaymentCreatedAutomatically=Configurez votre URL Stripe à <b>%s</b> pour avoir le paiement créé automatiquement si validé.
 AccountParameter=Paramètres du compte
 UsageParameter=Paramètres d'utilisation
@@ -31,6 +32,7 @@ VendorName=Nom du vendeur
 CSSUrlForPaymentForm=URL feuille style css pour le formulaire de paiement
 NewStripePaymentReceived=Nouveau paiement Stripe reçu
 NewStripePaymentFailed=Nouveau paiement Stripe tenté mais en échec
+FailedToChargeCard=Échec d'encaissement de la carte
 STRIPE_TEST_SECRET_KEY=Clé secrète de test 
 STRIPE_TEST_PUBLISHABLE_KEY=Clé plublique de test
 STRIPE_TEST_WEBHOOK_KEY=Clé test des Webhooks
@@ -67,3 +69,4 @@ ToOfferALinkForTestWebhook=Lien pour la configuration de Stripe WebHook pour app
 ToOfferALinkForLiveWebhook=Lien pour la configuration de Stripe WebHook pour appeler l'IPN (mode actif)
 PaymentWillBeRecordedForNextPeriod=Le paiement sera enregistré pour la prochaine période.
 ClickHereToTryAgain=<a href="%s">Cliquez ici pour essayer à nouveau...</a>
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s

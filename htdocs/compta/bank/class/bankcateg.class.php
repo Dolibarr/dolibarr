@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -30,20 +30,20 @@ class BankCateg // extends CommonObject
 {
 	//public $element='bank_categ';			//!< Id that identify managed objects
 	//public $table_element='bank_categ';	//!< Name of table without prefix where object is stored
-    /**
+	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto='generic';
+	public $picto = 'generic';
 
 	/**
-     * @var int ID
-     */
-    public $id;
+	 * @var int ID
+	 */
+	public $id;
 
 	/**
-     * @var string bank categories label
-     */
-    public $label;
+	 * @var string bank categories label
+	 */
+	public $label;
 
 
 	/**
@@ -126,7 +126,7 @@ class BankCateg // extends CommonObject
 		$sql .= " t.rowid,";
 		$sql .= " t.label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank_categ as t";
-		$sql .= " WHERE t.rowid = ".$id;
+		$sql .= " WHERE t.rowid = ".((int) $id);
 		$sql .= " AND t.entity = ".$conf->entity;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -170,7 +170,7 @@ class BankCateg // extends CommonObject
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."bank_categ SET";
 		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null")."";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 		$sql .= " AND entity = ".$conf->entity;
 
 		$this->db->begin();
@@ -211,48 +211,42 @@ class BankCateg // extends CommonObject
 		$this->db->begin();
 
 		// Delete link between tag and bank account
-		if (! $error)
-		{
-		    $sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_account";
-    		$sql.= " WHERE fk_categorie = ".$this->id;
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_account";
+			$sql .= " WHERE fk_categorie = ".$this->id;
 
-    		$resql = $this->db->query($sql);
-    		if (!$resql)
-    		{
-    		    $error++;
-    		    $this->errors[] = "Error ".$this->db->lasterror();
-    		}
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
+			}
 		}
 
 		// Delete link between tag and bank lines
-		if (! $error)
-		{
-		    $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class";
-		    $sql.= " WHERE fk_categ = ".$this->id;
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class";
+			$sql .= " WHERE fk_categ = ".$this->id;
 
-		    $resql = $this->db->query($sql);
-		    if (!$resql)
-		    {
-		        $error++;
-		        $this->errors[] = "Error ".$this->db->lasterror();
-		    }
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
+			}
 		}
 
 		// Delete bank categ
-		if (! $error)
-		{
-    		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_categ";
-    		$sql .= " WHERE rowid=".$this->id;
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_categ";
+			$sql .= " WHERE rowid=".((int) $this->id);
 
-    		$resql = $this->db->query($sql);
-    		if (!$resql)
-    		{
-    			$error++;
-    			$this->errors[] = "Error ".$this->db->lasterror();
-    		}
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
+			}
 		}
 
-    	// Commit or rollback
+		// Commit or rollback
 		if ($error) {
 			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);

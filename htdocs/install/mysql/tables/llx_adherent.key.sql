@@ -13,12 +13,13 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ============================================================================
 
 
 ALTER TABLE llx_adherent ADD UNIQUE INDEX uk_adherent_login (login, entity);
+ALTER TABLE llx_adherent ADD UNIQUE INDEX uk_adherent_ref (ref, entity);
 ALTER TABLE llx_adherent ADD UNIQUE INDEX uk_adherent_fk_soc (fk_soc);
 
 ALTER TABLE llx_adherent ADD INDEX idx_adherent_fk_adherent_type (fk_adherent_type);

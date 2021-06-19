@@ -16,7 +16,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 
@@ -57,6 +57,7 @@ create table llx_commandedet
   rang							integer      DEFAULT 0,
   fk_unit						integer      DEFAULT NULL,       -- lien vers table des unités
   import_key					varchar(14),
+  ref_ext                       varchar(255) DEFAULT NULL,
   
   fk_commandefourndet			integer DEFAULT NULL,            -- link to detail line of commande fourn (resplenish)
   

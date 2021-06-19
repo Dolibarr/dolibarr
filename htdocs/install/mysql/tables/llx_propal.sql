@@ -15,7 +15,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 
@@ -32,26 +32,28 @@ create table llx_propal
   fk_soc				integer,
   fk_projet				integer     DEFAULT NULL,		-- projet auquel est rattache la propale
 
-  tms					timestamp,
+  tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datec					datetime,						-- date de creation 
   datep					date,							-- date de la propal
   fin_validite			datetime,						-- date de fin de validite
   date_valid			datetime,						-- date de validation
+  date_signature		datetime,						-- date signature
   date_cloture			datetime,						-- date de cloture
   fk_user_author		integer,						-- user making creation
   fk_user_modif         integer,						-- user making last change
   fk_user_valid			integer,						-- user validating
-  fk_user_cloture		integer,						-- user closing (signed or not)
+  fk_user_signature		integer,						-- user signing (signed or not)
+  fk_user_cloture		integer,						-- user closing
   fk_statut				smallint DEFAULT 0 NOT NULL,	-- 0=draft, 1=validated, 2=accepted, 3=refused, 4=billed/closed
   price					real         DEFAULT 0,			-- (obsolete)
   remise_percent		real         DEFAULT 0,			-- remise globale relative en pourcent (obsolete)
   remise_absolue		real         DEFAULT 0,			-- remise globale absolue (obsolete)
   remise				real         DEFAULT 0,			-- remise calculee (obsolete)
   total_ht				double(24,8) DEFAULT 0,			-- montant total ht apres remise globale
-  tva					double(24,8) DEFAULT 0,			-- montant total tva apres remise globale
+  total_tva             double(24,8) DEFAULT 0,			-- montant total tva apres remise globale
   localtax1				double(24,8) DEFAULT 0,			-- amount total localtax1
   localtax2				double(24,8) DEFAULT 0,			-- amount total localtax2
-  total					double(24,8) DEFAULT 0,			-- montant total ttc apres remise globale
+  total_ttc				double(24,8) DEFAULT 0,			-- montant total ttc apres remise globale
 
   fk_account			integer,						-- bank account
   fk_currency			varchar(3),						-- currency code
@@ -66,6 +68,7 @@ create table llx_propal
   
   date_livraison		date DEFAULT NULL,				-- delivery date
   fk_shipping_method    integer,                        -- shipping method id
+  fk_warehouse		    integer DEFAULT NULL,           -- warehouse id
   fk_availability		integer NULL,
   fk_input_reason		integer,
   fk_incoterms          integer,										-- for incoterms
@@ -75,9 +78,9 @@ create table llx_propal
   fk_delivery_address	integer,							-- delivery address (deprecated)
   
   fk_multicurrency			integer,
-  multicurrency_code			varchar(255),
+  multicurrency_code		varchar(255),
   multicurrency_tx			double(24,8) DEFAULT 1,
-  multicurrency_total_ht		double(24,8) DEFAULT 0,
+  multicurrency_total_ht	double(24,8) DEFAULT 0,
   multicurrency_total_tva	double(24,8) DEFAULT 0,
   multicurrency_total_ttc	double(24,8) DEFAULT 0
 )ENGINE=innodb;

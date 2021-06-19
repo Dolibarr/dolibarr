@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -32,17 +32,17 @@ class ExpenseReportRule extends CoreObject
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element='expenserule';
+	public $element = 'expenserule';
 
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element='expensereport_rules';
+	public $table_element = 'expensereport_rules';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Fieldname with ID of parent key if this field has a parent
 	 */
-	public $fk_element='fk_expense_rule';
+	public $fk_element = 'fk_expense_rule';
 
 	/**
 	 * date start
@@ -111,8 +111,8 @@ class ExpenseReportRule extends CoreObject
 	 * Attribute object linked with database
 	 * @var array
 	 */
-	protected $fields=array(
-		'rowid'=>array('type'=>'integer','index'=>true)
+	public $fields = array(
+		'rowid'=>array('type'=>'integer', 'index'=>true)
 		,'dates'=>array('type'=>'date')
 		,'datee'=>array('type'=>'date')
 		,'amount'=>array('type'=>'double')
@@ -154,40 +154,35 @@ class ExpenseReportRule extends CoreObject
 
 		$rules = array();
 		$sql = 'SELECT er.rowid';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'expensereport_rules er';
-		$sql.= ' WHERE er.entity IN (0,'. getEntity('').')';
-		if (!empty($fk_c_type_fees))
-		{
-			$sql.= ' AND er.fk_c_type_fees IN (-1, '.$fk_c_type_fees.')';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'expensereport_rules er';
+		$sql .= ' WHERE er.entity IN (0,'.getEntity('').')';
+		if (!empty($fk_c_type_fees)) {
+			$sql .= ' AND er.fk_c_type_fees IN (-1, '.$fk_c_type_fees.')';
 		}
-		if (!empty($date))
-		{
-			$date = dol_print_date($date, '%Y-%m-%d');
-			$sql.= ' AND er.dates <= \''.$date.'\'';
-			$sql.= ' AND er.datee >= \''.$date.'\'';
+		if (!empty($date)) {
+			$sql .= " AND er.dates <= '".dol_print_date($date, '%Y-%m-%d')."'";
+			$sql .= " AND er.datee >= '".dol_print_date($date, '%Y-%m-%d')."'";
 		}
-		if ($fk_user > 0)
-		{
-			$sql.= ' AND (er.is_for_all = 1';
-			$sql.= ' OR er.fk_user = '.$fk_user;
-			$sql.= ' OR er.fk_usergroup IN (SELECT ugu.fk_usergroup FROM '.MAIN_DB_PREFIX.'usergroup_user ugu WHERE ugu.fk_user = '.$fk_user.') )';
+		if ($fk_user > 0) {
+			$sql .= ' AND (er.is_for_all = 1';
+			$sql .= ' OR er.fk_user = '.((int) $fk_user);
+			$sql .= ' OR er.fk_usergroup IN (SELECT ugu.fk_usergroup FROM '.MAIN_DB_PREFIX.'usergroup_user ugu WHERE ugu.fk_user = '.((int) $fk_user).') )';
 		}
-		$sql.= ' ORDER BY er.is_for_all, er.fk_usergroup, er.fk_user';
+		$sql .= ' ORDER BY er.is_for_all, er.fk_usergroup, er.fk_user';
 
 		dol_syslog("ExpenseReportRule::getAllRule sql=".$sql);
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
-			while ($obj = $db->fetch_object($resql))
-			{
+		if ($resql) {
+			while ($obj = $db->fetch_object($resql)) {
 				$rule = new ExpenseReportRule($db);
-				if ($rule->fetch($obj->rowid) > 0) $rules[$rule->id] = $rule;
-				else dol_print_error($db);
+				if ($rule->fetch($obj->rowid) > 0) {
+					$rules[$rule->id] = $rule;
+				} else {
+					dol_print_error($db);
+				}
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 
@@ -203,15 +198,11 @@ class ExpenseReportRule extends CoreObject
 	{
 		include_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 
-		if ($this->fk_usergroup > 0)
-		{
+		if ($this->fk_usergroup > 0) {
 			$group = new UserGroup($this->db);
-			if ($group->fetch($this->fk_usergroup) > 0)
-			{
+			if ($group->fetch($this->fk_usergroup) > 0) {
 				return $group->nom;
-			}
-			else
-			{
+			} else {
 				$this->error = $group->error;
 				$this->errors[] = $this->error;
 			}
@@ -229,15 +220,11 @@ class ExpenseReportRule extends CoreObject
 	{
 		include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
-		if ($this->fk_user > 0)
-		{
+		if ($this->fk_user > 0) {
 			$u = new User($this->db);
-			if ($u->fetch($this->fk_user) > 0)
-			{
+			if ($u->fetch($this->fk_user) > 0) {
 				return dolGetFirstLastname($u->firstname, $u->lastname);
-			}
-			else
-			{
+			} else {
 				$this->error = $u->error;
 				$this->errors[] = $this->error;
 			}

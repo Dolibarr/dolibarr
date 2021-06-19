@@ -15,8 +15,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -26,7 +26,7 @@
  *					and parent class for supplier invoices numbering models
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';	// required for use by classes that inherit
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // required for use by classes that inherit
 
 
 /**
@@ -37,20 +37,20 @@ abstract class ModelePDFSuppliersInvoices extends CommonDocGenerator
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of active generation models
 	 *
-     *  @param	DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of numbers
+	 *  @param	DoliDB	$db     			Database handler
+	 *  @param  integer	$maxfilenamelength  Max length of value to show
+	 *  @return	array						List of numbers
 	 */
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
 		$type = 'invoice_supplier';
@@ -71,13 +71,13 @@ abstract class ModeleNumRefSuppliersInvoices
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 	/**  Return if a model can be used or not
 	 *
 	 *   @return	boolean     true if model can be used
 	 */
-    public function isEnabled()
+	public function isEnabled()
 	{
 		return true;
 	}
@@ -86,7 +86,7 @@ abstract class ModeleNumRefSuppliersInvoices
 	 *
 	 *   @return    string      Description Text
 	 */
-    public function info()
+	public function info()
 	{
 		global $langs;
 		$langs->load("invoices");
@@ -97,7 +97,7 @@ abstract class ModeleNumRefSuppliersInvoices
 	 *
 	 *    @return   string      Example
 	 */
-    public function getExample()
+	public function getExample()
 	{
 		global $langs;
 		$langs->load("invoices");
@@ -108,37 +108,45 @@ abstract class ModeleNumRefSuppliersInvoices
 	 *
 	 *   @return	boolean     false if conflict, true if ok
 	 */
-    public function canBeActivated()
+	public function canBeActivated()
 	{
 		return true;
 	}
 
-    /**  Returns next value assigned
-     *
-     * @param	Societe		$objsoc     Object third party
-     * @param  	Object	    $object		Object
-     * @param	string		$mode       'next' for next value or 'last' for last value
-     * @return 	string      			Value if OK, 0 if KO
-     */
-    public function getNextValue($objsoc, $object, $mode)
-    {
+	/**  Returns next value assigned
+	 *
+	 * @param	Societe		$objsoc     Object third party
+	 * @param  	Object	    $object		Object
+	 * @param	string		$mode       'next' for next value or 'last' for last value
+	 * @return 	string      			Value if OK, 0 if KO
+	 */
+	public function getNextValue($objsoc, $object, $mode)
+	{
 		global $langs;
 		return $langs->trans("NotAvailable");
-    }
+	}
 
 	/**   Returns version of the model numbering
 	 *
 	 *    @return     string      Value
 	 */
-    public function getVersion()
-    {
+	public function getVersion()
+	{
 		global $langs;
 		$langs->load("admin");
 
-		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		if ($this->version == 'dolibarr') return DOL_VERSION;
-		if ($this->version) return $this->version;
+		if ($this->version == 'development') {
+			return $langs->trans("VersionDevelopment");
+		}
+		if ($this->version == 'experimental') {
+			return $langs->trans("VersionExperimental");
+		}
+		if ($this->version == 'dolibarr') {
+			return DOL_VERSION;
+		}
+		if ($this->version) {
+			return $this->version;
+		}
 		return $langs->trans("NotAvailable");
-    }
+	}
 }

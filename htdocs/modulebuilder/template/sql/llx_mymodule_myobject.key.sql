@@ -11,11 +11,11 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program.  If not, see http://www.gnu.org/licenses/.
+-- along with this program.  If not, see https://www.gnu.org/licenses/.
 
 
 -- BEGIN MODULEBUILDER INDEXES
-ALTER TABLE llx_mymodule_myobject ADD INDEX idx_fieldobject (fieldobject);
+ALTER TABLE llx_mymodule_myobject ADD INDEX idx_mymodule_myobject_fieldobject (fieldobject);
 -- END MODULEBUILDER INDEXES
 
 --ALTER TABLE llx_mymodule_myobject ADD UNIQUE INDEX uk_mymodule_myobject_fieldxy(fieldx, fieldy);

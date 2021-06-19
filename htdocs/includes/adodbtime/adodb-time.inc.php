@@ -1,7 +1,8 @@
 <?php
 /**
-ADOdb Date Library, part of the ADOdb abstraction library
-Download: http://phplens.com/phpeverywhere/
+ADOdb Date Library, part of the ADOdb abstraction library 
+See Wiki: https://adodb.org/dokuwiki/doku.php?id=v5:datetime:datetime_index 
+Download: https://github.com/ADOdb/ADOdb/blob/master/adodb-time.inc.php 
 
 PHP native date functions use integer timestamps for computations.
 Because of this, dates are restricted to the years 1901-2038 on Unix

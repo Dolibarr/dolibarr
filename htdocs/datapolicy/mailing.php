@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -29,14 +29,13 @@ require_once DOL_DOCUMENT_ROOT.'/datapolicy/class/datapolicy.class.php';
 $idcontact = GETPOST('idc');
 
 if (!empty($idcontact)) {
-    $contact = new Contact($db);
-    $contact->fetch($idcontact);
-    DataPolicy::sendMailDataPolicyContact($contact);
+	$contact = new Contact($db);
+	$contact->fetch($idcontact);
+	DataPolicy::sendMailDataPolicyContact($contact);
 } else {
-
-    $contacts = new DataPolicy($db);
-    $contacts->getAllContactNotInformed();
-    $contacts->getAllCompaniesNotInformed();
-    $contacts->getAllAdherentsNotInformed();
-    echo $langs->trans('AllAgreementSend');
+	$contacts = new DataPolicy($db);
+	$contacts->getAllContactNotInformed();
+	$contacts->getAllCompaniesNotInformed();
+	$contacts->getAllAdherentsNotInformed();
+	echo $langs->trans('AllAgreementSend');
 }

@@ -33,4 +33,4 @@ PostActionAfterPayment=Odeslání akcí po platbách
 ARollbackWasPerformedOnPostActions=Pro všechny akcí pro příspěvky byla provedena revize. Musíte dokončit akce po ruce, pokud je to nutné.
 ValidationOfPaymentFailed=Ověření platby selhalo
 CardOwner=Držitel karty
-PayPalBalance=Paypal credit
+PayPalBalance=Paypal kredit

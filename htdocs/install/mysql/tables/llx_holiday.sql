@@ -12,14 +12,14 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 
 CREATE TABLE llx_holiday 
 (
 rowid          integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
-ref			   varchar(30) NULL,       -- number
+ref			   varchar(30) NOT NULL,
 ref_ext		   varchar(255),
 entity         integer DEFAULT 1 NOT NULL,		-- Multi company id
 fk_user        integer NOT NULL,
@@ -42,7 +42,7 @@ fk_user_cancel integer DEFAULT NULL,
 detail_refuse  varchar( 250 ) DEFAULT NULL,
 note_private   text,
 note_public    text,
-tms            timestamp,
+tms            timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 import_key			varchar(14),
 extraparams			varchar(255)				-- for other parameters with json format
 ) 

@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -32,8 +32,7 @@ require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/pdf.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/doc.lib.php';
 
-if (empty($user->id))
-{
+if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->getrights();
@@ -77,66 +76,79 @@ class PdfDocTest extends PHPUnit\Framework\TestCase
 		print "\n";
 	}
 
-    // Static methods
-    public static function setUpBeforeClass()
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * setUpBeforeClass
+	 *
+	 * @return void
+	 */
+	public static function setUpBeforeClass()
+	{
+		global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
-    	print __METHOD__."\n";
-    }
+		print __METHOD__."\n";
+	}
 
-    // tear down after class
-    public static function tearDownAfterClass()
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * tearDownAfterClass
+	 *
+	 * @return	void
+	 */
+	public static function tearDownAfterClass()
+	{
+		global $conf,$user,$langs,$db;
 		$db->rollback();
 
 		print __METHOD__."\n";
-    }
+	}
 
 	/**
 	 * Init phpunit tests
 	 *
 	 * @return	void
 	 */
-    protected function setUp()
-    {
-    	global $conf,$user,$langs,$db;
+	protected function setUp()
+	{
+		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
 		print __METHOD__."\n";
-    }
+	}
 	/**
 	 * End phpunit tests
 	 *
 	 * @return	void
 	 */
-    protected function tearDown()
-    {
-    	print __METHOD__."\n";
-    }
+	protected function tearDown()
+	{
+		print __METHOD__."\n";
+	}
 
-    /**
-     * testPdfDocGetLineDesc
-     *
-     * @return void
-     */
-    public function testPdfDocGetLineDesc()
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * testPdfDocGetLineDesc
+	 *
+	 * @return void
+	 */
+	public function testPdfDocGetLineDesc()
+	{
+		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
 		$localproduct=new Product($this->savdb);
-		$localproduct->fetch(0, 'PIDRESS');
-		$product_id=$localproduct->id;
-		if ($product_id <= 0) { print "\n".__METHOD__." A product with ref PIDRESS must exists into database"; die(); }
+		$result = $localproduct->fetch(0, 'PINKDRESS');
+		if ($result < 0) {
+			print "\n".__METHOD__." Failed to make the fetch of product PINKDRESS. ".$localproduct->error; die(1);
+		}
+		$product_id = $localproduct->id;
+		if ($product_id <= 0) {
+			print "\n".__METHOD__." A product with ref PINKDRESS must exists into database. Create it manually before running the test"; die(1);
+		}
 
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
@@ -146,29 +158,29 @@ class PdfDocTest extends PHPUnit\Framework\TestCase
 		$localobject->lines[0]->label='Label 1';
 		$localobject->lines[0]->desc="This is a description with a é accent\n(Country of origin: France)";
 
-    	$result=pdf_getlinedesc($localobject, 0, $langs);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals($result, "PIDRESS - Label 1<br>This is a description with a &eacute; accent<br>(Country of origin: France)");
+		$result=pdf_getlinedesc($localobject, 0, $langs);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, "PINKDRESS - Label 1<br>This is a description with a &eacute; accent<br>(Country of origin: France)");
 
-    	$result=doc_getlinedesc($localobject->lines[0], $langs);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals($result, "PIDRESS - Label 1\nThis is a description with a é accent\n(Country of origin: France)");
-    }
+		$result=doc_getlinedesc($localobject->lines[0], $langs);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, "PINKDRESS - Label 1\nThis is a description with a é accent\n(Country of origin: France)");
+	}
 
-    /**
-    * testPdfGetHeightForLogo
-    *
-    * @return void
-    */
-    public function testPdfGetHeightForLogo()
-    {
-        $file=dirname(__FILE__).'/img250x50.jpg';
-        $result=pdf_getHeightForLogo($file);
-        print __METHOD__." result=".$result."\n";
-    	$this->assertEquals($result, 22);
-        $file=dirname(__FILE__).'/img250x20.png';
-        $result=pdf_getHeightForLogo($file);
-        print __METHOD__." result=".$result."\n";
-    	$this->assertEquals($result, 10.4);
-    }
+	/**
+	* testPdfGetHeightForLogo
+	*
+	* @return void
+	*/
+	public function testPdfGetHeightForLogo()
+	{
+		$file=dirname(__FILE__).'/img250x50.jpg';
+		$result=pdf_getHeightForLogo($file);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, 20);
+		$file=dirname(__FILE__).'/img250x20.png';
+		$result=pdf_getHeightForLogo($file);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, 10.4);
+	}
 }

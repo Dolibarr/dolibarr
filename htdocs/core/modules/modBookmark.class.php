@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -21,10 +21,10 @@
  *	\brief      Module to manage Bookmarks
  *	\file       htdocs/core/modules/modBookmark.class.php
  *	\ingroup    bookmark
- *	\brief      Fichier de description et activation du module Bookmarks
+ *	\brief      Description and activation file for the module Bookmarks
  */
 
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -52,7 +52,7 @@ class modBookmark extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->picto='bookmark';
+		$this->picto = 'bookmark';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array();
@@ -69,12 +69,14 @@ class modBookmark extends DolibarrModules
 		$this->const = array();
 
 		// Boxes
-		$this->boxes = array(0=>array('file'=>'box_bookmarks.php','enabledbydefaulton'=>'Home'));
+		$this->boxes = array(
+			0=>array('file'=>'box_bookmarks.php', 'enabledbydefaulton'=>'Home')
+		);
 
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'bookmark';
-		$r=0;
+		$r = 0;
 
 		$r++;
 		$this->rights[$r][0] = 331; // id de la permission
@@ -100,6 +102,6 @@ class modBookmark extends DolibarrModules
 
 		// Menus
 		//-------
-		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		$this->menu = 1; // This module add menu entries. They are coded into menu manager.
 	}
 }

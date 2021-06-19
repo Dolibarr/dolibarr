@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -29,13 +29,13 @@ use OAuth\Common\Consumer\Credentials;
 use OAuth\OAuth2\Service\Google;
 
 // Define $urlwithroot
-$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $backtourl = GETPOST('backtourl', 'alpha');
 
 
@@ -65,26 +65,28 @@ $storage = new DoliStorage($db, $conf);
 
 // Setup the credentials for the requests
 $credentials = new Credentials(
-    $conf->global->OAUTH_GOOGLE_ID,
-    $conf->global->OAUTH_GOOGLE_SECRET,
-    $currentUri->getAbsoluteUri()
+	$conf->global->OAUTH_GOOGLE_ID,
+	$conf->global->OAUTH_GOOGLE_SECRET,
+	$currentUri->getAbsoluteUri()
 );
 
-$requestedpermissionsarray=array();
-if (GETPOST('state')) $requestedpermissionsarray=explode(',', GETPOST('state'));       // Example: 'userinfo_email,userinfo_profile,cloud_print'. 'state' parameter is standard to retrieve some parameters back
-if ($action != 'delete' && empty($requestedpermissionsarray))
-{
-    print 'Error, parameter state is not defined';
-    exit;
+$requestedpermissionsarray = array();
+if (GETPOST('state')) {
+	$requestedpermissionsarray = explode(',', GETPOST('state')); // Example: 'userinfo_email,userinfo_profile,cloud_print'. 'state' parameter is standard to store a hash value and can be used to retrieve some parameters back
+}
+if ($action != 'delete' && empty($requestedpermissionsarray)) {
+	print 'Error, parameter state is not defined';
+	exit;
 }
 //var_dump($requestedpermissionsarray);exit;
 
 // Instantiate the Api service using the credentials, http client and storage mechanism for the token
-/** @var $apiService Service */
+// $requestedpermissionsarray contains list of scopes.
+// Conversion into URL is done by Reflection on constant with name SCOPE_scope_in_uppercase
 $apiService = $serviceFactory->createService('Google', $credentials, $storage, $requestedpermissionsarray);
 
 // access type needed to have oauth provider refreshing token
-// alos note that a refresh token is sent only after a prompt
+// also note that a refresh token is sent only after a prompt
 $apiService->setAccessType('offline');
 
 $apiService->setApprouvalPrompt('force');
@@ -97,66 +99,60 @@ $langs->load("oauth");
  */
 
 
-if ($action == 'delete')
-{
-    $storage->clearToken('Google');
+if ($action == 'delete') {
+	$storage->clearToken('Google');
 
-    setEventMessages($langs->trans('TokenDeleted'), null, 'mesgs');
+	setEventMessages($langs->trans('TokenDeleted'), null, 'mesgs');
 
-    header('Location: ' . $backtourl);
-    exit();
+	header('Location: '.$backtourl);
+	exit();
 }
 
-if (! empty($_GET['code']))     // We are coming from oauth provider page
-{
+if (!empty($_GET['code'])) {     // We are coming from oauth provider page
 	dol_syslog("We are coming from the oauth provider page");
 	//llxHeader('',$langs->trans("OAuthSetup"));
 
-    //$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-    //print load_fiche_titre($langs->trans("OAuthSetup"),$linkback,'title_setup');
+	//$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+	//print load_fiche_titre($langs->trans("OAuthSetup"),$linkback,'title_setup');
 
-    //dol_fiche_head();
-    // retrieve the CSRF state parameter
-    $state = isset($_GET['state']) ? $_GET['state'] : null;
-    //print '<table>';
+	//print dol_get_fiche_head();
+	// retrieve the CSRF state parameter
+	$state = isset($_GET['state']) ? $_GET['state'] : null;
+	//print '<table>';
 
-    // This was a callback request from service, get the token
-    try {
-        //var_dump($_GET['code']);
-        //var_dump($state);
-        //var_dump($apiService);      // OAuth\OAuth2\Service\Google
+	// This was a callback request from service, get the token
+	try {
+		//var_dump($_GET['code']);
+		//var_dump($state);
+		//var_dump($apiService);      // OAuth\OAuth2\Service\Google
 
-        $token = $apiService->requestAccessToken($_GET['code'], $state);
+		$token = $apiService->requestAccessToken($_GET['code'], $state);
 
-        setEventMessages($langs->trans('NewTokenStored'), null, 'mesgs');   // Stored into object managed by class DoliStorage so into table oauth_token
+		setEventMessages($langs->trans('NewTokenStored'), null, 'mesgs'); // Stored into object managed by class DoliStorage so into table oauth_token
 
-        $backtourl = $_SESSION["backtourlsavedbeforeoauthjump"];
-        unset($_SESSION["backtourlsavedbeforeoauthjump"]);
+		$backtourl = $_SESSION["backtourlsavedbeforeoauthjump"];
+		unset($_SESSION["backtourlsavedbeforeoauthjump"]);
 
-        header('Location: ' . $backtourl);
-        exit();
-    } catch (Exception $e) {
-        print $e->getMessage();
-    }
-}
-else // If entry on page with no parameter, we arrive here
+		header('Location: '.$backtourl);
+		exit();
+	} catch (Exception $e) {
+		print $e->getMessage();
+	}
+} else // If entry on page with no parameter, we arrive here
 {
-    $_SESSION["backtourlsavedbeforeoauthjump"]=$backtourl;
+	$_SESSION["backtourlsavedbeforeoauthjump"] = $backtourl;
 
-    // This may create record into oauth_state before the header redirect.
-    // Creation of record with state in this tables depend on the Provider used (see its constructor).
-    if (GETPOST('state'))
-    {
-        $url = $apiService->getAuthorizationUri(array('state'=>GETPOST('state')));
-    }
-    else
-    {
-        $url = $apiService->getAuthorizationUri();      // Parameter state will be randomly generated
-    }
+	// This may create record into oauth_state before the header redirect.
+	// Creation of record with state in this tables depend on the Provider used (see its constructor).
+	if (GETPOST('state')) {
+		$url = $apiService->getAuthorizationUri(array('state'=>GETPOST('state')));
+	} else {
+		$url = $apiService->getAuthorizationUri(); // Parameter state will be randomly generated
+	}
 
-    // we go on oauth provider authorization page
-    header('Location: ' . $url);
-    exit();
+	// we go on oauth provider authorization page
+	header('Location: '.$url);
+	exit();
 }
 
 

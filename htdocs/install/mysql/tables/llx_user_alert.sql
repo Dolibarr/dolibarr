@@ -13,7 +13,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ============================================================================
 
@@ -21,6 +21,6 @@ create table llx_user_alert
 (
   rowid        integer AUTO_INCREMENT PRIMARY KEY,
   type         integer,
-  fk_contact   integer, -- pointe sur llx_socpeople
-  fk_user      integer
+  fk_contact   integer, 	-- id of llx_socpeople
+  fk_user      integer  	-- id of llx_user
 )ENGINE=innodb;

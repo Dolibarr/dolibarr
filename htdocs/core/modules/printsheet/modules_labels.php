@@ -15,8 +15,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -37,29 +37,29 @@ class ModelePDFLabels
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of active generation modules
 	 *
-     *  @param  DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of templates
+	 *  @param  DoliDB	$db     			Database handler
+	 *  @param  integer	$maxfilenamelength  Max length of value to show
+	 *  @return	array						List of templates
 	 */
 	public function liste_modeles($db, $maxfilenamelength = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
-		$type='members_labels';
-		$liste=array();
+		$type = 'members_labels';
+		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db, $type, $maxfilenamelength);
+		$list = getListOfModels($db, $type, $maxfilenamelength);
 
-		return $liste;
+		return $list;
 	}
 }
 
@@ -79,92 +79,114 @@ class ModelePDFLabels
  */
 function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outputdir = '', $template = 'standardlabel', $filename = 'tmp_address_sheet.pdf')
 {
-    // phpcs:enable
-	global $conf,$langs;
+	// phpcs:enable
+	global $conf, $langs;
 	$langs->load("members");
 
-	$error=0;
+	$error = 0;
 
 	// Increase limit for PDF build
-	$err=error_reporting();
+	$err = error_reporting();
 	error_reporting(0);
 	@set_time_limit(120);
 	error_reporting($err);
 
-	$code='';
-	$srctemplatepath='';
+	$code = '';
+	$srctemplatepath = '';
 
 	// Positionne le modele sur le nom du modele a utiliser
-	if (! dol_strlen($modele))
-	{
-		if (! empty($conf->global->ADHERENT_ETIQUETTE_TYPE))
-		{
+	if (!dol_strlen($modele)) {
+		if (!empty($conf->global->ADHERENT_ETIQUETTE_TYPE)) {
 			$code = $conf->global->ADHERENT_ETIQUETTE_TYPE;
-		}
-		else
-		{
+		} else {
 			$code = $modele;
 		}
+	} else {
+		$code = $modele;
 	}
-	else $code=$modele;
 
 	// If selected modele is a filename template (then $modele="modelname:filename")
-	$tmp=explode(':', $template, 2);
-	if (! empty($tmp[1]))
-	{
-		$template=$tmp[0];
-		$srctemplatepath=$tmp[1];
+	$tmp = explode(':', $template, 2);
+	if (!empty($tmp[1])) {
+		$template = $tmp[0];
+		$srctemplatepath = $tmp[1];
+	} else {
+		$srctemplatepath = $code;
 	}
-	else $srctemplatepath=$code;
 
 	dol_syslog("modele=".$modele." outputdir=".$outputdir." template=".$template." code=".$code." srctemplatepath=".$srctemplatepath." filename=".$filename, LOG_DEBUG);
 
 	// Search template files
-	$file=''; $classname=''; $filefound=0;
-	$dirmodels=array('/');
-	if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels, $conf->modules_parts['models']);
-	foreach($dirmodels as $reldir)
-	{
-		foreach(array('doc','pdf') as $prefix)
-		{
+	$file = '';
+	$classname = '';
+	$filefound = 0;
+	$dirmodels = array('/');
+	if (is_array($conf->modules_parts['models'])) {
+		$dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
+	}
+	foreach ($dirmodels as $reldir) {
+		foreach (array('doc', 'pdf') as $prefix) {
 			$file = $prefix."_".$template.".class.php";
 
 			// On verifie l'emplacement du modele
-			$file=dol_buildpath($reldir."core/modules/printsheet/doc/".$file, 0);
-			if (file_exists($file))
-			{
-				$filefound=1;
-				$classname=$prefix.'_'.$template;
+			$file = dol_buildpath($reldir."core/modules/printsheet/doc/".$file, 0);
+			if (file_exists($file)) {
+				$filefound = 1;
+				$classname = $prefix.'_'.$template;
 				break;
 			}
 		}
-		if ($filefound) break;
+		if ($filefound) {
+			break;
+		}
 	}
 
 	// Charge le modele
-	if ($filefound)
-	{
+	if ($filefound) {
 		require_once $file;
 
 		$obj = new $classname($db);
 
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
-		$sav_charset_output=$outputlangs->charset_output;
-		if ($obj->write_file($arrayofrecords, $outputlangs, $srctemplatepath, $outputdir, $filename) > 0)
-		{
-			$outputlangs->charset_output=$sav_charset_output;
+		$sav_charset_output = $outputlangs->charset_output;
+		if ($obj->write_file($arrayofrecords, $outputlangs, $srctemplatepath, $outputdir, $filename) > 0) {
+			$outputlangs->charset_output = $sav_charset_output;
+
+			$fullpath = $obj->result['fullpath'];
+
+			// Output to http stream
+			clearstatcache();
+
+			$attachment = true;
+			if (!empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) {
+				$attachment = false;
+			}
+			$type = dol_mimetype($filename);
+
+			//if ($encoding)   header('Content-Encoding: '.$encoding);
+			if ($type) {
+				header('Content-Type: '.$type);
+			}
+			if ($attachment) {
+				header('Content-Disposition: attachment; filename="'.$filename.'"');
+			} else {
+				header('Content-Disposition: inline; filename="'.$filename.'"');
+			}
+
+			// Ajout directives pour resoudre bug IE
+			header('Cache-Control: Public, must-revalidate');
+			header('Pragma: public');
+
+			readfile($fullpath);
+
 			return 1;
-		}
-		else
-		{
-			$outputlangs->charset_output=$sav_charset_output;
+		} else {
+			$outputlangs->charset_output = $sav_charset_output;
 			dol_print_error($db, "doc_label_pdf_create Error: ".$obj->error);
 			return -1;
 		}
-	}
-	else
-	{
+	} else {
 		dol_print_error('', $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $file));
 		return -1;
 	}

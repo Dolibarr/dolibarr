@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -30,13 +30,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
  */
 class mailing_xinputuser extends MailingTargets
 {
-	public $name='EmailsFromUser';              // Identifiant du module mailing
+	public $name = 'EmailsFromUser'; // Identifiant du module mailing
 	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
-	public $desc='EMails input by user';        // Libelle utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouv�e
-	public $require_module=array();            // Module mailing actif si modules require_module actifs
-	public $require_admin=0;                    // Module mailing actif pour user admin ou non
-	public $picto='generic';
-	public $tooltip='UseFormatInputEmailToTarget';
+	public $desc = 'EMails input by user'; // Libelle utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouv�e
+	public $require_module = array(); // Module mailing actif si modules require_module actifs
+	public $require_admin = 0; // Module mailing actif pour user admin ou non
+
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto = 'generic';
+	public $tooltip = 'UseFormatInputEmailToTarget';
 
 
 	/**
@@ -44,13 +48,13 @@ class mailing_xinputuser extends MailingTargets
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-    public function __construct($db)
+	public function __construct($db)
 	{
-		$this->db=$db;
+		$this->db = $db;
 	}
 
 
-    /**
+	/**
 	 *	On the main mailing area, there is a box with statistics.
 	 *	If you want to add a line in this report you must provide an
 	 *	array of SQL request that returns two field:
@@ -58,12 +62,12 @@ class mailing_xinputuser extends MailingTargets
 	 *
 	 *	@return		array		Array with SQL requests
 	 */
-    public function getSqlArrayForStats()
+	public function getSqlArrayForStats()
 	{
 		global $langs;
 		$langs->load("users");
 
-		$statssql=array();
+		$statssql = array();
 		return $statssql;
 	}
 
@@ -76,7 +80,7 @@ class mailing_xinputuser extends MailingTargets
 	 *  @param      string	$sql   	Sql request to count
 	 *	@return		string			'' means NA
 	 */
-    public function getNbOfRecipients($sql = '')
+	public function getNbOfRecipients($sql = '')
 	{
 		return '';
 	}
@@ -85,10 +89,10 @@ class mailing_xinputuser extends MailingTargets
 	/**
 	 *  Renvoie url lien vers fiche de la source du destinataire du mailing
 	 *
-     *  @param	int		$id		ID
+	 *  @param	int		$id		ID
 	 *  @return string      	Url lien
 	 */
-    public function url($id)
+	public function url($id)
 	{
 		return '';
 	}
@@ -99,63 +103,57 @@ class mailing_xinputuser extends MailingTargets
 	 *
 	 *   @return     string      Retourne zone select
 	 */
-    public function formFilter()
+	public function formFilter()
 	{
 		global $langs;
 
-		$s='';
-		$s.='<input type="text" name="xinputuser" class="flat minwidth300" value="'.GETPOST("xinputuser").'">';
+		$s = '';
+		$s .= '<input type="text" name="xinputuser" class="flat minwidth300" value="'.GETPOST("xinputuser").'">';
 		return $s;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Ajoute destinataires dans table des cibles
 	 *
 	 *  @param	int		$mailing_id    	Id of emailing
 	 *  @return int           			< 0 si erreur, nb ajout si ok
 	 */
-    public function add_to_target($mailing_id)
+	public function add_to_target($mailing_id)
 	{
-        // phpcs:enable
-		global $conf,$langs,$_FILES;
+		// phpcs:enable
+		global $conf, $langs, $_FILES;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-		$tmparray=explode(';', GETPOST('xinputuser'));
-		$email=$tmparray[0];
-		$lastname=$tmparray[1];
-		$firstname=$tmparray[2];
-		$other=$tmparray[3];
+		$tmparray = explode(';', GETPOST('xinputuser'));
+		$email = $tmparray[0];
+		$lastname = $tmparray[1];
+		$firstname = $tmparray[2];
+		$other = $tmparray[3];
 
-		$cibles=array();
-        if (! empty($email))
-        {
-			if (isValidEMail($email))
-			{
+		$cibles = array();
+		if (!empty($email)) {
+			if (isValidEMail($email)) {
 				$cibles[] = array(
-           			'email' => $email,
-           			'lastname' => $lastname,
-           			'firstname' => $firstname,
+					'email' => $email,
+					'lastname' => $lastname,
+					'firstname' => $firstname,
 					'other' => $other,
-                    'source_url' => '',
-                    'source_id' => '',
-                    'source_type' => 'file'
+					'source_url' => '',
+					'source_id' => '',
+					'source_type' => 'file'
 				);
 
-				return parent::add_to_target($mailing_id, $cibles);
-			}
-			else
-			{
+				return parent::addTargetsToDatabase($mailing_id, $cibles);
+			} else {
 				$langs->load("errors");
 				$this->error = $langs->trans("ErrorBadEMail", $email);
 				return -1;
 			}
-		}
-		else
-		{
-            $langs->load("errors");
-            $this->error = $langs->trans("ErrorBadEmail", $email);
+		} else {
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorBadEmail", $email);
 			return -1;
 		}
 	}

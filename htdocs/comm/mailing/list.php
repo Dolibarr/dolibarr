@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -28,23 +28,27 @@ require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
 // Load translation files required by the page
 $langs->load("mails");
 
-// Security check
-$result=restrictedArea($user, 'mailing');
-
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
-$page = GETPOST("page", 'int');
-if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$optioncss = GETPOST('optioncss', 'alpha');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="m.date_creat";
+if (!$sortorder) {
+	$sortorder = "DESC";
+}
+if (!$sortfield) {
+	$sortfield = "m.date_creat";
+}
 
-$search_all=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
-$search_ref=GETPOST("search_ref", "alpha") ? GETPOST("search_ref", "alpha") : GETPOST("sref", "alpha");
-$filteremail=GETPOST('filteremail', 'alpha');
+$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_ref = GETPOST("search_ref", "alpha") ? GETPOST("search_ref", "alpha") : GETPOST("sref", "alpha");
+$filteremail = GETPOST('filteremail', 'alpha');
 
 $object = new Mailing($db);
 
@@ -53,14 +57,20 @@ $hookmanager->initHooks(array('mailinglist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('mailing');
-$search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
+$extrafields->fetch_name_optionals_label($object->table_element);
+
+$search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-    'm.titre'=>'Ref',
+	'm.titre'=>'Ref',
 );
 
+// Security check
+if (!$user->rights->mailing->lire || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->socid > 0)) {
+	accessforbidden();
+}
+//$result = restrictedArea($user, 'mailing');
 
 
 
@@ -68,41 +78,44 @@ $fieldstosearchall = array(
  * Actions
  */
 
-if (GETPOST('cancel', 'alpha')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel', 'alpha')) {
+	$action = 'list'; $massaction = '';
+}
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
+	$massaction = '';
+}
 
-$parameters=array();
-$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-if (empty($reshook))
-{
+if (empty($reshook)) {
 	// Selection of new fields
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 	// Purge search criteria
-	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') ||GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
-	{
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		/*foreach($object->fields as $key => $val)
 		{
 			$search[$key]='';
 		}*/
 		$search_ref = '';
 		$search_all = '';
-		$toselect='';
-		$search_array_options=array();
+		$toselect = '';
+		$search_array_options = array();
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
-		|| GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha'))
-	{
-		$massaction='';     // Protection to avoid mass action if we force a new search during a mass action confirmation
+		|| GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha')) {
+		$massaction = ''; // Protection to avoid mass action if we force a new search during a mass action confirmation
 	}
 
 	// Mass actions
 	/*$objectclass='MyObject';
 	$objectlabel='MyObject';
-	$permtoread = $user->rights->mymodule->read;
-	$permtodelete = $user->rights->mymodule->delete;
+	$permissiontoread = $user->rights->mymodule->read;
+	$permissiontodelete = $user->rights->mymodule->delete;
 	$uploaddir = $conf->mymodule->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 	*/
@@ -117,67 +130,100 @@ llxHeader('', $langs->trans("Mailing"), 'EN:Module_EMailing|FR:Module_Mailing|ES
 
 $form = new Form($db);
 
-if ($filteremail)
-{
-	$sql = "SELECT m.rowid, m.titre, m.nbemail, m.statut, m.date_creat as datec, m.date_envoi as date_envoi,";
-	$sql.= " mc.statut as sendstatut";
-	$sql.= " FROM ".MAIN_DB_PREFIX."mailing as m, ".MAIN_DB_PREFIX."mailing_cibles as mc";
-	$sql.= " WHERE m.rowid = mc.fk_mailing AND m.entity = ".$conf->entity;
-	$sql.= " AND mc.email = '".$db->escape($filteremail)."'";
-	if ($search_ref) $sql.= " AND m.rowid = '".$db->escape($search_ref)."'";
-	if ($search_all) $sql.= " AND (m.titre like '%".$db->escape($search_all)."%' OR m.sujet like '%".$db->escape($search_all)."%' OR m.body like '%".$db->escape($search_all)."%')";
-	if (! $sortorder) $sortorder="ASC";
-	if (! $sortfield) $sortfield="m.rowid";
-	$sql.= $db->order($sortfield, $sortorder);
-	$sql.= $db->plimit($conf->liste_limit +1, $offset);
-}
-else
-{
-	$sql = "SELECT m.rowid, m.titre, m.nbemail, m.statut, m.date_creat as datec, m.date_envoi as date_envoi";
-	$sql.= " FROM ".MAIN_DB_PREFIX."mailing as m";
-	$sql.= " WHERE m.entity = ".$conf->entity;
-	if ($search_ref) $sql.= " AND m.rowid = '".$db->escape($search_ref)."'";
-	if ($search_all) $sql.= " AND (m.titre like '%".$db->escape($search_all)."%' OR m.sujet like '%".$db->escape($search_all)."%' OR m.body like '%".$db->escape($search_all)."%')";
-	if (! $sortorder) $sortorder="ASC";
-	if (! $sortfield) $sortfield="m.rowid";
-	$sql.= $db->order($sortfield, $sortorder);
-	$sql.= $db->plimit($conf->liste_limit +1, $offset);
+if ($filteremail) {
+	$sql = "SELECT m.rowid, m.titre as title, m.nbemail, m.statut, m.date_creat as datec, m.date_envoi as date_envoi,";
+	$sql .= " mc.statut as sendstatut";
+	$sql .= " FROM ".MAIN_DB_PREFIX."mailing as m, ".MAIN_DB_PREFIX."mailing_cibles as mc";
+	$sql .= " WHERE m.rowid = mc.fk_mailing AND m.entity = ".$conf->entity;
+	$sql .= " AND mc.email = '".$db->escape($filteremail)."'";
+	if ($search_ref) {
+		$sql .= " AND m.rowid = '".$db->escape($search_ref)."'";
+	}
+	if ($search_all) {
+		$sql .= " AND (m.titre like '%".$db->escape($search_all)."%' OR m.sujet like '%".$db->escape($search_all)."%' OR m.body like '%".$db->escape($search_all)."%')";
+	}
+	if (!$sortorder) {
+		$sortorder = "ASC";
+	}
+	if (!$sortfield) {
+		$sortfield = "m.rowid";
+	}
+} else {
+	$sql = "SELECT m.rowid, m.titre as title, m.nbemail, m.statut, m.date_creat as datec, m.date_envoi as date_envoi";
+	$sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
+	$sql .= " WHERE m.entity = ".$conf->entity;
+	if ($search_ref) {
+		$sql .= " AND m.rowid = '".$db->escape($search_ref)."'";
+	}
+	if ($search_all) {
+		$sql .= " AND (m.titre like '%".$db->escape($search_all)."%' OR m.sujet like '%".$db->escape($search_all)."%' OR m.body like '%".$db->escape($search_all)."%')";
+	}
+	if (!$sortorder) {
+		$sortorder = "ASC";
+	}
+	if (!$sortfield) {
+		$sortfield = "m.rowid";
+	}
 }
 
+$sql .= $db->order($sortfield, $sortorder);
+
+$nbtotalofrecords = '';
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+	$resql = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($resql);
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+		$page = 0;
+		$offset = 0;
+	}
+}
+
+$sql .= $db->plimit($limit + 1, $offset);
 //print $sql;
-$result = $db->query($sql);
-if ($result)
-{
-	$num = $db->num_rows($result);
 
-	$title=$langs->trans("ListOfEMailings");
-	if ($filteremail) $title.=' ('.$langs->trans("SentTo", $filteremail).')';
+dol_syslog("comm/mailing/list.php", LOG_DEBUG);
+$resql = $db->query($sql);
+if ($resql) {
+	$num = $db->num_rows($resql);
 
-	$newcardbutton='';
-	if ($user->rights->mailing->creer)
-	{
-        $newcardbutton.= dolGetButtonTitle($langs->trans('NewMailing'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/mailing/card.php?action=create');
+	$title = $langs->trans("ListOfEMailings");
+	if ($filteremail) {
+		$title .= ' ('.$langs->trans("SentTo", $filteremail).')';
+	}
+
+	$newcardbutton = '';
+	if ($user->rights->mailing->creer) {
+		$newcardbutton .= dolGetButtonTitle($langs->trans('NewMailing'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/mailing/card.php?action=create');
 	}
 
 	$i = 0;
 
 	$param = "&search_all=".urlencode($search_all);
-	if ($filteremail) $param.='&filteremail='.urlencode($filteremail);
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+		$param .= '&contextpage='.urlencode($contextpage);
+	}
+	if ($limit > 0 && $limit != $conf->liste_limit) {
+		$param .= '&limit='.urlencode($limit);
+	}
+	if ($filteremail) {
+		$param .= '&filteremail='.urlencode($filteremail);
+	}
 
-	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
-	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	if ($optioncss != '') {
+		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	}
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-	print '<input type="hidden" name="page" value="'.$page.'">';
 
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', $num, '', 'title_generic.png', 0, $newcardbutton);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'object_email', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	$moreforfilter = '';
 
-    print '<div class="div-table-responsive">';
-    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+	print '<div class="div-table-responsive">';
+	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre">';
@@ -188,11 +234,13 @@ if ($result)
 	print '<input type="text" class="flat maxwidth100 maxwidth50onsmartphone" name="search_all" value="'.dol_escape_htmltag($search_all).'">';
 	print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
-	if (! $filteremail) print '<td class="liste_titre">&nbsp;</td>';
+	if (!$filteremail) {
+		print '<td class="liste_titre">&nbsp;</td>';
+	}
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre maxwidthsearch">';
-	$searchpicto=$form->showFilterAndCheckAddButtons(0);
+	$searchpicto = $form->showFilterAndCheckAddButtons(0);
 	print $searchpicto;
 	print '</td>';
 	print "</tr>\n";
@@ -201,40 +249,44 @@ if ($result)
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "m.rowid", $param, "", "", $sortfield, $sortorder);
 	print_liste_field_titre("Title", $_SERVER["PHP_SELF"], "m.titre", $param, "", "", $sortfield, $sortorder);
 	print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "m.date_creat", $param, "", 'align="center"', $sortfield, $sortorder);
-	if (! $filteremail) print_liste_field_titre("NbOfEMails", $_SERVER["PHP_SELF"], "m.nbemail", $param, "", 'align="center"', $sortfield, $sortorder);
-	if (! $filteremail) print_liste_field_titre("DateLastSend", $_SERVER["PHP_SELF"], "m.date_envoi", $param, "", 'align="center"', $sortfield, $sortorder);
-	else print_liste_field_titre("DateSending", $_SERVER["PHP_SELF"], "mc.date_envoi", $param, "", 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], ($filteremail?"mc.statut":"m.statut"), $param, "", 'class="right"', $sortfield, $sortorder);
+	if (!$filteremail) {
+		print_liste_field_titre("NbOfEMails", $_SERVER["PHP_SELF"], "m.nbemail", $param, "", 'align="center"', $sortfield, $sortorder);
+	}
+	if (!$filteremail) {
+		print_liste_field_titre("DateLastSend", $_SERVER["PHP_SELF"], "m.date_envoi", $param, "", 'align="center"', $sortfield, $sortorder);
+	} else {
+		print_liste_field_titre("DateSending", $_SERVER["PHP_SELF"], "mc.date_envoi", $param, "", 'align="center"', $sortfield, $sortorder);
+	}
+	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], ($filteremail ? "mc.statut" : "m.statut"), $param, "", 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', 'class="right"', $sortfield, $sortorder, 'maxwidthsearch ');
 	print "</tr>\n";
 
 
-	$email=new Mailing($db);
+	$email = new Mailing($db);
 
-	while ($i < min($num, $limit))
-	{
-		$obj = $db->fetch_object($result);
+	while ($i < min($num, $limit)) {
+		$obj = $db->fetch_object($resql);
 
 		$email->id = $obj->rowid;
 		$email->ref = $obj->rowid;
 
-		print "<tr>";
+		print '<tr class="oddeven">';
 
 		print '<td>';
 		print $email->getNomUrl(1);
 		print '</td>';
 
-		print '<td>'.$obj->titre.'</td>';
-		// Date creation
+		// Title
+		print '<td>'.$obj->title.'</td>';
 
-		print '<td align="center">';
+		// Date creation
+		print '<td class="center">';
 		print dol_print_date($db->jdate($obj->datec), 'day');
 		print '</td>';
 
 		// Nb of email
-		if (! $filteremail)
-		{
-			print '<td align="center">';
+		if (!$filteremail) {
+			print '<td class="center">';
 			$nbemail = $obj->nbemail;
 			/*if ($obj->statut != 3 && !empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail)
 			{
@@ -255,12 +307,9 @@ if ($result)
 
 		// Status
 		print '<td class="nowrap right">';
-		if ($filteremail)
-		{
+		if ($filteremail) {
 			print $email::libStatutDest($obj->sendstatut, 2);
-		}
-		else
-		{
+		} else {
 			print $email->LibStatut($obj->statut, 5);
 		}
 		print '</td>';
@@ -270,13 +319,20 @@ if ($result)
 		print "</tr>\n";
 		$i++;
 	}
+	if (empty($num)) {
+		$colspan = 6;
+		if (!$filteremail) {
+			$colspan++;
+		}
+		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+	}
+
 	print '</table>';
 	print '</div>';
 	print '</form>';
-	$db->free($result);
-}
-else
-{
+
+	$db->free($resql);
+} else {
 	dol_print_error($db);
 }
 

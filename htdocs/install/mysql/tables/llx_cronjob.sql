@@ -13,7 +13,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 
@@ -21,7 +21,7 @@
 CREATE TABLE llx_cronjob 
 (
 	rowid 			integer AUTO_INCREMENT PRIMARY KEY,
-	tms 			timestamp,
+	tms 			timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	datec 			datetime,
 	jobtype			varchar(10) NOT NULL,
   	label 			text NOT NULL,

@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -29,20 +29,23 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-if (! empty($conf->projet->enabled)) {
-	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+if (!empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("facture","orders","sendings","companies"));
+$langs->loadLangs(array("facture", "orders", "sendings", "companies"));
 
 $id		= GETPOST('id', 'int');
 $ref	= GETPOST('ref', 'alpha');
-$action	= GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
+$hookmanager->initHooks(array('ordersuppliercardcontact'));
 
 $object = new CommandeFournisseur($db);
 
@@ -51,61 +54,43 @@ $object = new CommandeFournisseur($db);
  * Add a new contact
  */
 
-if ($action == 'addcontact' && $user->rights->fournisseur->commande->creer)
-{
+if ($action == 'addcontact' && ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer)) {
 	$result = $object->fetch($id);
 
-    if ($result > 0 && $id > 0)
-    {
-    	$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
-  		$result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
-    }
+	if ($result > 0 && $id > 0) {
+		$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
+		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+		$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
+	}
 
-	if ($result >= 0)
-	{
+	if ($result >= 0) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
-	}
-	else
-	{
-		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-		{
+	} else {
+		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
-		}
-		else
-		{
+		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
-}
-
-// Toggle the status of a contact
-elseif ($action == 'swapstatut' && $user->rights->fournisseur->commande->creer)
-{
-	if ($object->fetch($id))
-	{
-	    $result=$object->swapContactStatus(GETPOST('ligne'));
+} elseif ($action == 'swapstatut' && ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer)) {
+	// Toggle the status of a contact
+	if ($object->fetch($id)) {
+		$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
+	} else {
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
-	else
-	{
-		dol_print_error($db);
-	}
-}
-
-// Deleting a contact
-elseif ($action == 'deletecontact' && $user->rights->fournisseur->commande->creer)
-{
+} elseif ($action == 'deletecontact' && ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer)) {
+	// Deleting a contact
 	$object->fetch($id);
-	$result = $object->delete_contact($_GET["lineid"]);
+	$result = $object->delete_contact(GETPOST("lineid", 'int'));
 
-	if ($result >= 0)
-	{
+	if ($result >= 0) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
-	}
-	else {
-		dol_print_error($db);
+	} else {
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
@@ -114,13 +99,14 @@ elseif ($action == 'deletecontact' && $user->rights->fournisseur->commande->cree
 /*
  * View
  */
-$help_url='EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
-llxHeader('', $langs->trans("Order"), $help_url);
+$title = $langs->trans('SupplierOrder')." - ".$langs->trans('ContactsAddresses');
+$help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
+llxHeader('', $title, $help_url);
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
-$contactstatic=new Contact($db);
-$userstatic=new User($db);
+$contactstatic = new Contact($db);
+$userstatic = new User($db);
 
 
 /* *************************************************************************** */
@@ -129,72 +115,67 @@ $userstatic=new User($db);
 /*                                                                             */
 /* *************************************************************************** */
 
-if ($id > 0 || ! empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	$langs->trans("OrderCard");
 
-	if ($object->fetch($id, $ref) > 0)
-	{
+	if ($object->fetch($id, $ref) > 0) {
 		$object->fetch_thirdparty();
 
 		$head = ordersupplier_prepare_head($object);
-		dol_fiche_head($head, 'contact', $langs->trans("SupplierOrder"), -1, 'order');
+		print dol_get_fiche_head($head, 'contact', $langs->trans("SupplierOrder"), -1, 'order');
 
 		// Supplier order card
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/commande/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/commande/list.php'.(!empty($socid) ? '?socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
-		$morehtmlref='<div class="refidno">';
+		$morehtmlref = '<div class="refidno">';
 		// Ref supplier
-		$morehtmlref.=$form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', 0, 1);
-		$morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1);
+		$morehtmlref .= $form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', 0, 1);
+		$morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1);
 		// Thirdparty
-		$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 		// Project
-		if (! empty($conf->projet->enabled))
-		{
-		    $langs->load("projects");
-		    $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-		    if ($user->rights->fournisseur->commande->creer)
-		    {
-		        if ($action != 'classify')
-		            //$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
-		            $morehtmlref.=' : ';
-		        	if ($action == 'classify') {
-		                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-		                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-		                $morehtmlref.='<input type="hidden" name="action" value="classin">';
-		                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-		                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-		                $morehtmlref.='</form>';
-		            } else {
-		                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-		            }
-		    } else {
-		        if (! empty($object->fk_project)) {
-		            $proj = new Project($db);
-		            $proj->fetch($object->fk_project);
-		            $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
-		            $morehtmlref.=$proj->ref;
-		            $morehtmlref.='</a>';
-		        } else {
-		            $morehtmlref.='';
-		        }
-		    }
+		if (!empty($conf->projet->enabled)) {
+			$langs->load("projects");
+			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
+			if ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer) {
+				if ($action != 'classify') {
+					//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+					$morehtmlref .= ' : ';
+				}
+				if ($action == 'classify') {
+					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+					$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+					$morehtmlref .= '<input type="hidden" name="action" value="classin">';
+					$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
+					$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+					$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+					$morehtmlref .= '</form>';
+				} else {
+					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+				}
+			} else {
+				if (!empty($object->fk_project)) {
+					$proj = new Project($db);
+					$proj->fetch($object->fk_project);
+					$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
+					$morehtmlref .= $proj->ref;
+					$morehtmlref .= '</a>';
+				} else {
+					$morehtmlref .= '';
+				}
+			}
 		}
-		$morehtmlref.='</div>';
+		$morehtmlref .= '</div>';
 
 
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		// Contacts lines
 		include DOL_DOCUMENT_ROOT.'/core/tpl/contacts.tpl.php';
-	}
-	else
-	{
+	} else {
 		// Contact not found
 		print "ErrorRecordNotFound";
 	}

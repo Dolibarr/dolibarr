@@ -44,6 +44,7 @@ InterDateCreation=Fecha de creación intervención
 InterDuration=Intervención de duración
 InterStatus=Intervención de estado
 InterNote=Note la intervención
+InterLine=Linea de intervención
 InterLineId=Intervención de identificación de línea
 InterLineDate=Intervención de fecha de línea
 InterLineDuration=Intervención de duración de línea

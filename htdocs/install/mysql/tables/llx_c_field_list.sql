@@ -12,7 +12,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- Change are done into list pages to use the new code to manage
 -- selection by users of fields. Once all changes are done with new
@@ -24,7 +24,7 @@
 create table llx_c_field_list
 (
   rowid			integer  AUTO_INCREMENT PRIMARY KEY,
-  tms			timestamp,
+  tms			timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   element		varchar(64)        			NOT NULL,		-- name of element list
   entity		integer			DEFAULT 1 	NOT NULL,		-- entity id
   name			varchar(32)        			NOT NULL,		-- name of field with table alias (ex: p.ref)
@@ -36,5 +36,4 @@ create table llx_c_field_list
   visible		tinyint			DEFAULT 1	NOT NULL,		-- visibility of field. 0=Never visible, 1=Visible on list and forms, 2=Visible on list only
   enabled       varchar(255)	DEFAULT 1,					-- Condition to show or hide
   rang      	integer 		DEFAULT 0
-  
 )ENGINE=innodb;

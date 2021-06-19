@@ -12,26 +12,53 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1');
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
+if (!defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
 require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttributeValue.class.php';
 
-header('Content-Type: application/json');
+$permissiontoread = $user->rights->produit->lire || $user->rights->service->lire;
 
-$id = GETPOST('id');
+// Security check
+if (empty($conf->variants->enabled)) {
+	accessforbidden('Module not enabled');
+}
+if ($user->socid > 0) { // Protection if external user
+	accessforbidden();
+}
+//$result = restrictedArea($user, 'variant');
+if (!$permissiontoread) accessforbidden();
+
+
+/*
+ * View
+ */
+
+top_httphead('application/json');
+
+$id = GETPOST('id', 'int');
 
 if (!$id) {
-print json_encode(array(
+	print json_encode(array(
 		'error' => 'ID not set'
 	));
 	exit();
@@ -40,7 +67,7 @@ print json_encode(array(
 $prodattr = new ProductAttribute($db);
 
 if ($prodattr->fetch($id) < 0) {
-print json_encode(array(
+	print json_encode(array(
 		'error' => 'Attribute not found'
 	));
 	exit();
@@ -51,7 +78,7 @@ $prodattrval = new ProductAttributeValue($db);
 $res = $prodattrval->fetchAllByProductAttribute($id);
 
 if ($res == -1) {
-print json_encode(array(
+	print json_encode(array(
 		'error' => 'Internal error'
 	));
 	exit();

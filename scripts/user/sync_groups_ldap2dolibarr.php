@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -24,23 +24,28 @@
  * \ingroup ldap member
  * \brief Script to update groups into Dolibarr from LDAP
  */
+
+if (!defined('NOSESSION')) {
+	define('NOSESSION', '1');
+}
+
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
-$path = __DIR__ . '/';
+$path = __DIR__.'/';
 
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
-	echo "Error: You are using PHP for CGI. To execute " . $script_file . " from command line, you must use PHP for CLI mode.\n";
-	exit(- 1);
+	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
+	exit(-1);
 }
 
-require_once $path . "../../htdocs/master.inc.php";
-require_once DOL_DOCUMENT_ROOT . "/core/lib/date.lib.php";
-require_once DOL_DOCUMENT_ROOT . "/core/class/ldap.class.php";
-require_once DOL_DOCUMENT_ROOT . "/user/class/user.class.php";
-require_once DOL_DOCUMENT_ROOT . "/user/class/usergroup.class.php";
+require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
+require_once DOL_DOCUMENT_ROOT."/user/class/user.class.php";
+require_once DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php";
 
-$langs->loadLangs(array("main","errors"));
+$langs->loadLangs(array("main", "errors"));
 
 // Global variables
 $version = DOL_VERSION;
@@ -53,61 +58,69 @@ $confirmed = 0;
  */
 
 @set_time_limit(0);
-print "***** " . $script_file . " (" . $version . ") pid=" . dol_getmypid() . " *****\n";
-dol_syslog($script_file . " launched with arg " . join(',', $argv));
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
+dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 // List of fields to get from LDAP
-$required_fields = array($conf->global->LDAP_KEY_GROUPS,$conf->global->LDAP_GROUP_FIELD_FULLNAME,$conf->global->LDAP_GROUP_FIELD_DESCRIPTION,$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS);
+$required_fields = array($conf->global->LDAP_KEY_GROUPS, $conf->global->LDAP_GROUP_FIELD_FULLNAME, $conf->global->LDAP_GROUP_FIELD_DESCRIPTION, $conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS);
 
 // Remove from required_fields all entries not configured in LDAP (empty) and duplicated
 $required_fields = array_unique(array_values(array_filter($required_fields, "dolValidElement")));
 
-if (! isset($argv[1])) {
+if (!isset($argv[1])) {
 	// print "Usage: $script_file (nocommitiferror|commitiferror) [id_group]\n";
 	print "Usage:  $script_file (nocommitiferror|commitiferror) [--server=ldapserverhost] [--excludeuser=user1,user2...] [-y]\n";
-	exit(- 1);
+	exit(-1);
 }
 
 foreach ($argv as $key => $val) {
-	if ($val == 'commitiferror')
+	if ($val == 'commitiferror') {
 		$forcecommit = 1;
-	if (preg_match('/--server=([^\s]+)$/', $val, $reg))
+	}
+	if (preg_match('/--server=([^\s]+)$/', $val, $reg)) {
 		$conf->global->LDAP_SERVER_HOST = $reg[1];
-	if (preg_match('/--excludeuser=([^\s]+)$/', $val, $reg))
+	}
+	if (preg_match('/--excludeuser=([^\s]+)$/', $val, $reg)) {
 		$excludeuser = explode(',', $reg[1]);
-	if (preg_match('/-y$/', $val, $reg))
+	}
+	if (preg_match('/-y$/', $val, $reg)) {
 		$confirmed = 1;
+	}
 }
 
 print "Mails sending disabled (useless in batch mode)\n";
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1; // On bloque les mails
 print "\n";
 print "----- Synchronize all records from LDAP database:\n";
-print "host=" . $conf->global->LDAP_SERVER_HOST . "\n";
-print "port=" . $conf->global->LDAP_SERVER_PORT . "\n";
-print "login=" . $conf->global->LDAP_ADMIN_DN . "\n";
-print "pass=" . preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS) . "\n";
-print "DN to extract=" . $conf->global->LDAP_GROUP_DN . "\n";
-print 'Filter=(' . $conf->global->LDAP_KEY_GROUPS . '=*)' . "\n";
+print "host=".$conf->global->LDAP_SERVER_HOST."\n";
+print "port=".$conf->global->LDAP_SERVER_PORT."\n";
+print "login=".$conf->global->LDAP_ADMIN_DN."\n";
+print "pass=".preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)."\n";
+print "DN to extract=".$conf->global->LDAP_GROUP_DN."\n";
+if (!empty($conf->global->LDAP_GROUP_FILTER)) {
+	print 'Filter=('.$conf->global->LDAP_GROUP_FILTER.')'."\n"; // Note: filter is defined into function getRecords
+} else {
+	print 'Filter=('.$conf->global->LDAP_KEY_GROUPS.'=*)'."\n";
+}
 print "----- To Dolibarr database:\n";
-print "type=" . $conf->db->type . "\n";
-print "host=" . $conf->db->host . "\n";
-print "port=" . $conf->db->port . "\n";
-print "login=" . $conf->db->user . "\n";
-print "database=" . $conf->db->name . "\n";
+print "type=".$conf->db->type."\n";
+print "host=".$conf->db->host."\n";
+print "port=".$conf->db->port."\n";
+print "login=".$conf->db->user."\n";
+print "database=".$conf->db->name."\n";
 print "----- Options:\n";
-print "commitiferror=" . $forcecommit . "\n";
-print "Mapped LDAP fields=" . join(',', $required_fields) . "\n";
+print "commitiferror=".$forcecommit."\n";
+print "Mapped LDAP fields=".join(',', $required_fields)."\n";
 print "\n";
 
-if (! $confirmed) {
+if (!$confirmed) {
 	print "Hit Enter to continue or CTRL+C to stop...\n";
 	$input = trim(fgets(STDIN));
 }
 
 if (empty($conf->global->LDAP_GROUP_DN)) {
-	print $langs->trans("Error") . ': ' . $langs->trans("LDAP setup for groups not defined inside Dolibarr");
-	exit(- 1);
+	print $langs->trans("Error").': '.$langs->trans("LDAP setup for groups not defined inside Dolibarr");
+	exit(-1);
 }
 
 $ldap = new Ldap();
@@ -118,7 +131,7 @@ if ($result >= 0) {
 	// We disable synchro Dolibarr-LDAP
 	$conf->global->LDAP_SYNCHRO_ACTIVE = 0;
 
-	$ldaprecords = $ldap->getRecords('*', $conf->global->LDAP_GROUP_DN, $conf->global->LDAP_KEY_GROUPS, $required_fields, 0, array($conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS));
+	$ldaprecords = $ldap->getRecords('*', $conf->global->LDAP_GROUP_DN, $conf->global->LDAP_KEY_GROUPS, $required_fields, 'group', array($conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS));
 	if (is_array($ldaprecords)) {
 		$db->begin();
 
@@ -134,25 +147,25 @@ if ($result >= 0) {
 			// print_r($ldapgroup);
 
 			if ($group->id > 0) { // Group update
-				print $langs->transnoentities("GroupUpdate") . ' # ' . $key . ': name=' . $group->name;
+				print $langs->transnoentities("GroupUpdate").' # '.$key.': name='.$group->name;
 				$res = $group->update();
 
 				if ($res > 0) {
-					print ' --> Updated group id=' . $group->id . ' name=' . $group->name;
+					print ' --> Updated group id='.$group->id.' name='.$group->name;
 				} else {
-					$error ++;
-					print ' --> ' . $res . ' ' . $group->error;
+					$error++;
+					print ' --> '.$res.' '.$group->error;
 				}
 				print "\n";
 			} else { // Group creation
-				print $langs->transnoentities("GroupCreate") . ' # ' . $key . ': name=' . $group->name;
+				print $langs->transnoentities("GroupCreate").' # '.$key.': name='.$group->name;
 				$res = $group->create();
 
 				if ($res > 0) {
-					print ' --> Created group id=' . $group->id . ' name=' . $group->name;
+					print ' --> Created group id='.$group->id.' name='.$group->name;
 				} else {
-					$error ++;
-					print ' --> ' . $res . ' ' . $group->error;
+					$error++;
+					print ' --> '.$res.' '.$group->error;
 				}
 				print "\n";
 			}
@@ -164,18 +177,20 @@ if ($result >= 0) {
 			$userList = array();
 			$userIdList = array();
 			foreach ($ldapgroup[$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS] as $key => $userdn) {
-				if ($key === 'count')
+				if ($key === 'count') {
 					continue;
+				}
 				if (empty($userList[$userdn])) { // Récupération de l'utilisateur
-				                                 // Schéma rfc2307: les membres sont listés dans l'attribut memberUid sous form de login uniquement
+												 // Schéma rfc2307: les membres sont listés dans l'attribut memberUid sous form de login uniquement
 					if ($conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS === 'memberUid') {
 						$userKey = array($userdn);
 					} else { // Pour les autres schémas, les membres sont listés sous forme de DN complets
 						$userFilter = explode(',', $userdn);
-						$userKey = $ldap->getAttributeValues('(' . $userFilter[0] . ')', $conf->global->LDAP_KEY_USERS);
+						$userKey = $ldap->getAttributeValues('('.$userFilter[0].')', $conf->global->LDAP_KEY_USERS);
 					}
-					if (! is_array($userKey))
+					if (!is_array($userKey)) {
 						continue;
+					}
 
 					$fuser = new User($db);
 
@@ -193,39 +208,40 @@ if ($result >= 0) {
 				$userIdList[$userdn] = $fuser->id;
 
 				// Ajout de l'utilisateur dans le groupe
-				if (! in_array($fuser->id, array_keys($group->members))) {
+				if (!in_array($fuser->id, array_keys($group->members))) {
 					$fuser->SetInGroup($group->id, $group->entity);
-					echo $fuser->login . ' added' . "\n";
+					echo $fuser->login.' added'."\n";
 				}
 			}
 
 			// 2 - Suppression des utilisateurs du groupe Dolibarr qui ne sont plus dans le groupe LDAP
 			foreach ($group->members as $guser) {
-				if (! in_array($guser->id, $userIdList)) {
+				if (!in_array($guser->id, $userIdList)) {
 					$guser->RemoveFromGroup($group->id, $group->entity);
-					echo $guser->login . ' removed' . "\n";
+					echo $guser->login.' removed'."\n";
 				}
 			}
 		}
 
-		if (! $error || $forcecommit) {
-			if (! $error)
-				print $langs->transnoentities("NoErrorCommitIsDone") . "\n";
-			else
-				print $langs->transnoentities("ErrorButCommitIsDone") . "\n";
+		if (!$error || $forcecommit) {
+			if (!$error) {
+				print $langs->transnoentities("NoErrorCommitIsDone")."\n";
+			} else {
+				print $langs->transnoentities("ErrorButCommitIsDone")."\n";
+			}
 			$db->commit();
 		} else {
-			print $langs->transnoentities("ErrorSomeErrorWereFoundRollbackIsDone", $error) . "\n";
+			print $langs->transnoentities("ErrorSomeErrorWereFoundRollbackIsDone", $error)."\n";
 			$db->rollback();
 		}
 		print "\n";
 	} else {
 		dol_print_error('', $ldap->error);
-		$error ++;
+		$error++;
 	}
 } else {
 	dol_print_error('', $ldap->error);
-	$error ++;
+	$error++;
 }
 
 exit($error);

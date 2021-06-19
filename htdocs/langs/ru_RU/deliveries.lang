@@ -2,7 +2,7 @@
 Delivery=Доставка
 DeliveryRef=Ref Delivery
 DeliveryCard=Receipt card
-DeliveryOrder=Заказ на доставку
+DeliveryOrder=Delivery receipt
 DeliveryDate=Дата доставки
 CreateDeliveryOrder=Generate delivery receipt
 DeliveryStateSaved=Delivery state saved
@@ -18,13 +18,14 @@ StatusDeliveryCanceled=Отменена
 StatusDeliveryDraft=Проект
 StatusDeliveryValidated=Получено
 # merou PDF model
-NameAndSignature=Имя и подпись:
+NameAndSignature=Name and Signature:
 ToAndDate=Получатель ___________________________________ доставлено ____ / _____ / __________
 GoodStatusDeclaration=Указанные выше товары получены в надлежащем состоянии,
-Deliverer=Доставщик:
+Deliverer=Deliverer:
 Sender=Отправитель
 Recipient=Получатель
 ErrorStockIsNotEnough=Нет достаточного запаса на складе
 Shippable=Возможно к отправке
 NonShippable=Не возможно к отправке
 ShowReceiving=Show delivery receipt
+NonExistentOrder=Nonexistent order

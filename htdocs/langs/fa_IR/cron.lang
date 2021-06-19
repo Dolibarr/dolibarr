@@ -7,13 +7,14 @@ Permission23103 = حذف  وظایف زمان‌بندی‌شده
 Permission23104 = اجرای  وظایف زمان‌بندی‌شده
 # Admin
 CronSetup=برپاسازی مدیریت وظایف زمان‌بندی‌شده
-URLToLaunchCronJobs=نشانی برای بررسی و اجرای وظایف‌زمان‌بندی‌شدۀ واجدشرایط 
-OrToLaunchASpecificJob=یا برای بررسی و اجرای یک وظیفۀ خاص
+URLToLaunchCronJobs=URL to check and launch qualified cron jobs from a browser
+OrToLaunchASpecificJob=Or to check and launch a specific job from a browser
 KeyForCronAccess=کلیدامنیتی نشانی برای اجرای وظایف‌زمان‌بندی‌شده
 FileToLaunchCronJobs=خطفرمان برای بررسی و اجرای وظایف‌زمانی واجد شرایط
 CronExplainHowToRunUnix=در فضای لینوکس شما باید ورودی crontab زیر را استفاده کنید تا در هر 5 دقیقه فرمان اجرا شود
 CronExplainHowToRunWin=در فضای مایکروسافت ویندوز شما می‌توانید از ابزارهای وظایف زمان‌بندی شده استفاده کنید تا در هر 5 دقیقه دستور را اجرا کنید
 CronMethodDoesNotExists=کلاس %s دربردارندۀ هیچ متد %s نیست
+CronMethodNotAllowed=Method %s of class %s is in blacklist of forbidden methods
 CronJobDefDesc=نمایه‌های وظایف زمانی‌بندی شده در فایل توضیح واحد مربوطه تعریف می‌شوند. در هنگامی که این واحد فعال شد، این فایل‌ها بارگذاری شده و در دسترس خواهند بود و در نتیجه شما می‌توانید واظیف را از فهرست ابزارهای مدیر %s مدیریت کنید.
 CronJobProfiles=نمایه‌های از پیش تعیین شدۀ وظایف‌زمان‌بندی‌شده
 # Menu
@@ -46,6 +47,7 @@ CronNbRun=تعداد اجراها
 CronMaxRun=حداکثر تعداد اجراها
 CronEach=هر
 JobFinished=وظیفه اجرا شده و به سرانجام رسید
+Scheduled=Scheduled
 #Page card
 CronAdd= اضافه‌کردن وظیفه
 CronEvery=اجرای وظیفه در هر
@@ -56,7 +58,7 @@ CronNote=توضیح
 CronFieldMandatory=بخش %s الزامی است
 CronErrEndDateStartDt=تاریخ پایان نمی‌تواند قبل از تاریخ شروع باشد
 StatusAtInstall=وضعیت نصب واحد
-CronStatusActiveBtn=فعال‌کردن
+CronStatusActiveBtn=Schedule
 CronStatusInactiveBtn=غیرفعال‌کردن
 CronTaskInactive=این وظیفه غیرفعال است
 CronId=شناسه
@@ -76,8 +78,14 @@ CronType_method=روش-متد فراخوان یک کلاس PHP
 CronType_command=فرمان شل
 CronCannotLoadClass=امکان بارگذاری فایل کلاس %s (برای بارگذاری کلاس %s)
 CronCannotLoadObject=فایل کلاس %s بارگذاری شد، اما شیء %s درون آن پیدا نشد
-UseMenuModuleToolsToAddCronJobs=به فهرست "خانه-ابزارهای مدیر-وظایف زمان‌بندی شده" رفته تا این وظایف را مشاهده کرده یا ویرایش کنید.
+UseMenuModuleToolsToAddCronJobs=Go into menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=وظیفه غیرفعال است
 MakeLocalDatabaseDumpShort=پشتیبان‌گیری از پایگاه داده محلی
 MakeLocalDatabaseDump=نسخه‌برداری-dump از پایگاه دادۀ محلی. مؤلفه‌های مربوطه از قرار: فشرده‌سازی ('gz'  یا 'bz' یا 'none')، نوع پشتیبان‌گیری  ('mysql', 'pgsql', 'auto'), 1, 'auto' یا نام فایلی که ساخته می‌شود, تعداد فایل‌هائی که نگه‌داری می‌شود است
 WarningCronDelayed=توجه، برای مقاصد بهینه‌سازی، زمان اجرای بعدی وظایف فعال، وظایف شما ممکن است حداکثر %s ساعت قبل از اجرا تاخیر داشته  باشد.
+DATAPOLICYJob=Data cleaner and anonymizer
+JobXMustBeEnabled=Job %s must be enabled
+# Cron Boxes
+LastExecutedScheduledJob=Last executed scheduled job
+NextScheduledJobExecute=Next scheduled job to execute
+NumberScheduledJobError=Number of scheduled jobs in error

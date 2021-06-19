@@ -10,6 +10,7 @@
 -- Copyright (C) 2012 	   Tommaso Basilici     <t.basilici@19.coop>
 -- Copyright (C) 2012	   Ricardo Schluter     <info@ripasch.nl>
 -- Copyright (C) 2013	   Cedric GROSS		    <c.gross@kreiz-it.fr>
+-- Copyright (C) 2020-2021 Udo Tamm       	    <dev@dolibit.de>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,17 +23,27 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 
+-- WARNING ----------------------------------------------------------------
 --
+-- EN:
+-- Do not put a comment at the end of the line, this file is parsed during
+-- install and all '--' symbols are removed.
+--
+-- FR:
 -- Ne pas placer de commentaire en fin de ligne, ce fichier est parsé lors
 -- de l'install et tous les sigles '--' sont supprimés.
 --
 
+-- CONTENT ----------------------------------------------------------------
 --
--- Formes juridiques
+-- Legal Formes (en) / Formes juridiques (fr)
 --
+-- fk_pays = country_id
+--
+
 
 delete from llx_c_forme_juridique;
 
@@ -54,6 +65,7 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2312', 'Sociedad Anónima con Participación Estatal Mayoritaria', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2313', 'Sociedad en Comandita por Acciones (arts. 315 a 324, LSC)', 1);
 
+
 -- Austria
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4100', 'GmbH - Gesellschaft mit beschränkter Haftung', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4101', 'GesmbH - Gesellschaft mit beschränkter Haftung', 1);
@@ -71,6 +83,31 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4113', 'GesnbR - Gesellschaft nach bürgerlichem Recht', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4114', 'e.U. - eingetragener Einzelunternehmer', 1);
 
+
+-- Belgium
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '200', 'Indépendant');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '201', 'SRL - Société à responsabilité limitée');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '202', 'SA   - Société Anonyme');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '203', 'SCRL - Société coopérative à responsabilité limitée');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '204', 'ASBL - Association sans but Lucratif');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '205', 'SCRI - Société coopérative à responsabilité illimitée');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '206', 'SCS  - Société en commandite simple');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '207', 'SCA  - Société en commandite par action');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '208', 'SNC  - Société en nom collectif');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '209', 'GIE  - Groupement d intérêt économique');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '210', 'GEIE - Groupement européen d intérêt économique');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '220', 'Eenmanszaak');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '221', 'BVBA - Besloten vennootschap met beperkte aansprakelijkheid');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '222', 'NV   - Naamloze Vennootschap');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '223', 'CVBA - Coöperatieve vennootschap met beperkte aansprakelijkheid');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '224', 'VZW  - Vereniging zonder winstoogmerk');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '225', 'CVOA - Coöperatieve vennootschap met onbeperkte aansprakelijkheid ');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '226', 'GCV  - Gewone commanditaire vennootschap');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '227', 'Comm.VA - Commanditaire vennootschap op aandelen');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '228', 'VOF  - Vennootschap onder firma');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '229', 'VS0  - Vennootschap met sociaal oogmerk');
+
+
 -- France: Extrait de http://www.insee.fr/fr/nom_def_met/nomenclatures/cj/cjniveau2.htm
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'11','Artisan Commerçant (EI)');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'12','Commerçant (EI)');
@@ -84,6 +121,8 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'19','Perso
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'21','Indivision');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'22','Société créée de fait');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'23','Société en participation');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'24','Société coopérative d''interet collectif (SCIC)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'25','Société coopérative de production à responsabilité limitée (SCOP)');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'27','Paroisse hors zone concordataire');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'29','Groupement de droit privé non doté de la personnalité morale');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'31','Personne morale de droit étranger, immatriculée au RCS');
@@ -125,28 +164,6 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'92','Assoc
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'93','Fondation');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'99','Personne morale de droit privé');
 
--- Belgium
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '200', 'Indépendant');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '201', 'SPRL - Société à responsabilité limitée');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '202', 'SA   - Société Anonyme');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '203', 'SCRL - Société coopérative à responsabilité limitée');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '204', 'ASBL - Association sans but Lucratif');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '205', 'SCRI - Société coopérative à responsabilité illimitée');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '206', 'SCS  - Société en commandite simple');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '207', 'SCA  - Société en commandite par action');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '208', 'SNC  - Société en nom collectif');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '209', 'GIE  - Groupement d intérêt économique');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '210', 'GEIE - Groupement européen d intérêt économique');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '220', 'Eenmanszaak');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '221', 'BVBA - Besloten vennootschap met beperkte aansprakelijkheid');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '222', 'NV   - Naamloze Vennootschap');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '223', 'CVBA - Coöperatieve vennootschap met beperkte aansprakelijkheid');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '224', 'VZW  - Vereniging zonder winstoogmerk');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '225', 'CVOA - Coöperatieve vennootschap met onbeperkte aansprakelijkheid ');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '226', 'GCV  - Gewone commanditaire vennootschap');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '227', 'Comm.VA - Commanditaire vennootschap op aandelen');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '228', 'VOF  - Vennootschap onder firma');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '229', 'VS0  - Vennootschap met sociaal oogmerk');
 
 -- Germany
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '500', 'GmbH - Gesellschaft mit beschränkter Haftung');
@@ -158,6 +175,8 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '505', 'Gb
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '506', 'KG - Kommanditgesellschaft');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '507', 'Ltd. - Limited Company');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '508', 'OHG - Offene Handelsgesellschaft');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '509', 'eG - eingetragene Genossenschaft');
+
 
 -- Denmark
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8001', 'Aktieselvskab A/S');
@@ -325,4 +344,15 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (178, 
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (178, '17803', 'Sociedad de Responsabilidad Limitada', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (178, '17804', 'Sociedad Civil', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (178, '17805', 'Sociedad Anónima', 1);
+
+-- Algeria (id country=13)
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (13, '1300','Personne physique');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (13, '1301','Société à responsabilité limitée (SARL)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (13, '1302','Entreprise unipersonnelle à responsabilité limitée (EURL)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (13, '1303','Société en Nom Collectif (SNC)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (13, '1304','société par actions (SPA)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (13, '1305','Société en Commandite Simple (SCS)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (13, '1306','Société en commandite par actions (SCA)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (13, '1307','Société en participation');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (13, '1308','Groupe de sociétés');
 

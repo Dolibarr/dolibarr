@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -24,9 +24,11 @@ require '../../main.inc.php';
 
 $langs->load("admin");
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
-$action=GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'aZ09');
 
 
 /*
@@ -39,10 +41,8 @@ print load_fiche_titre("XCache", '', 'title_setup');
 
 print "<br>\n";
 
-//function_exists('apc_cache_info') || function_exists('eaccelerator_info') || function_exists('xcache_info'))
-if (!function_exists('xcache_info'))
-{
-    print 'XCache seems to be not installed. Function xcache_info not found.';
+if (!function_exists('xcache_info')) {
+	print 'XCache seems to be not installed. Function xcache_info not found.';
 	llxFooter();
 	exit;
 }
@@ -63,16 +63,16 @@ print $langs->trans("xcache.coverager").': '.yn(ini_get('xcache.coverager')).'<b
 $cacheinfos = array();
 for ($i = 0; $i < 10; $i ++)
 {
-    $data = xcache_info(XC_TYPE_PHP, $i);
-    $data['cacheid'] = $i;
-    $cacheinfos[] = $data;
+	$data = xcache_info(XC_TYPE_PHP, $i);
+	$data['cacheid'] = $i;
+	$cacheinfos[] = $data;
 }
 
 var_dump($cacheinfos);
 
 if ($action == 'clear')
 {
-    xcache_clear_cache();
+	xcache_clear_cache();
 }
 */
 

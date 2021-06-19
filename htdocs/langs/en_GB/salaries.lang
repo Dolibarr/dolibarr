@@ -1,0 +1,4 @@
+# Dolibarr language file - Source file is en_US - salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Financial account used for user third parties
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Financial account by default for wage payments
+SalariesPayments=Salaries payment

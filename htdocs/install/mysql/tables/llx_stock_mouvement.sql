@@ -13,17 +13,17 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ============================================================================
 
 create table llx_stock_mouvement
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  tms             timestamp,
-  datem           datetime,							-- Date and hour of movement
+  tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  datem           datetime,						-- Date and hour of movement
   fk_product      integer NOT NULL,				-- Id of product
-  batch           varchar(30) DEFAULT NULL,		-- Lot or serial number
+  batch           varchar(128) DEFAULT NULL,	-- Lot or serial number
   eatby           date DEFAULT NULL,			-- Eatby date (deprecated, we should get value from batch number in table llx_product_lot)
   sellby          date DEFAULT NULL,			-- Sellby date (deprecated, we should get value from batch number in table llx_product_lot) 
   fk_entrepot     integer NOT NULL,				-- Id warehouse

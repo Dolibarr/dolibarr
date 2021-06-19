@@ -12,12 +12,12 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===========================================================================
 
 --
--- Stockage des informations relatives au click to dial
+-- Save data relative to click to dial
 --
 create table llx_user_clicktodial
 (
@@ -26,5 +26,4 @@ create table llx_user_clicktodial
   login         varchar(32),
   pass          varchar(64),
   poste         varchar(20)
-
 )ENGINE=innodb;

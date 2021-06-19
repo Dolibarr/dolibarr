@@ -12,7 +12,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #
 # Generic
@@ -30,17 +30,19 @@ Permission56005=Ver tickets de todos los terceros (no aplicable para usuarios ex
 TicketDictType=Tipo de tickets
 TicketDictCategory=Categorías de tickets
 TicketDictSeverity=Gravedad de los tickets
-TicketTypeShortBUGSOFT=Mal funcionamiento del software
-TicketTypeShortBUGHARD=Mal funcionamiento del hardware
+TicketDictResolution=Ticket - Resolución
+
 TicketTypeShortCOM=Pregunta comercial
-TicketTypeShortINCIDENT=Solicitar asistencia
+TicketTypeShortHELP=Solicitud de ayuda funcional
+TicketTypeShortISSUE=Asunto, error o problema
+TicketTypeShortREQUEST=Solicitud de cambio o mejora
 TicketTypeShortPROJET=Proyecto
 TicketTypeShortOTHER=Otro
 
 TicketSeverityShortLOW=Bajo
 TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Alto
-TicketSeverityShortBLOCKING=Crítico / Bloqueo
+TicketSeverityShortBLOCKING=Crítico, Bloqueo
 
 ErrorBadEmailAddress=El campo '%s' es incorrecto
 MenuTicketMyAssign=Mis tickets
@@ -56,7 +58,6 @@ OriginEmail=Origen E-Mail
 Notify_TICKET_SENTBYMAIL=Enviar mensaje de ticket por e-mail
 
 # Status
-NotRead=No lleído
 Read=Leido
 Assigned=Asignado
 InProgress=En progreso
@@ -68,8 +69,9 @@ Deleted=Eliminado
 
 # Dict
 Type=Tasa
-Category=Código analítico
 Severity=Gravedad
+TicketGroupIsPublic=El grupo es público
+TicketGroupIsPublicDesc=Si un grupo de tickets es público, será visible en el formulario al crear un ticket desde la interfaz pública.
 
 # Email templates
 MailToSendTicketMessage=Enviar e-mail desde ticket
@@ -114,8 +116,8 @@ TicketsShowModuleLogo=Mostrar el logotipo del módulo en la interfaz pública
 TicketsShowModuleLogoHelp=Active esta opción para ocultar el logotipo en las páginas de la interfaz pública
 TicketsShowCompanyLogo=Mostrar el logotipo de la empresa en la interfaz pública
 TicketsShowCompanyLogoHelp=Active esta opción para ocultar el logotipo de la empresa principal en las páginas de la interfaz pública
-TicketsEmailAlsoSendToMainAddress=También envíe notificaciones a la dirección de e-mail principal
-TicketsEmailAlsoSendToMainAddressHelp=Active esta opción para enviar un e-mail a la dirección "E-mail de notificación de" (consulte la configuración a continuación)
+TicketsEmailAlsoSendToMainAddress=También envíe una notificación a la dirección de correo electrónico principal
+TicketsEmailAlsoSendToMainAddressHelp=Habilite esta opción para enviar también un correo electrónico a la dirección definida en la configuración "%s" (consulte la pestaña "%s")
 TicketsLimitViewAssignedOnly=Restringir la visualización de los tickets asignados al usuario actual (no aplicable para usuarios externos, siempre estará limitada al tercero del que dependen)
 TicketsLimitViewAssignedOnlyHelp=Solo los tickets asignados al usuario actual serán visibles. No se aplica a un usuario con derechos de gestión de tickets.
 TicketsActivatePublicInterface=Activar interfaz pública.
@@ -123,13 +125,17 @@ TicketsActivatePublicInterfaceHelp=La interfaz pública permite a cualquier visi
 TicketsAutoAssignTicket=Asignar automáticamente al usuario que creó el ticket
 TicketsAutoAssignTicketHelp=Al crear un ticket, el usuario puede asignarse automáticamente al ticket.
 TicketNumberingModules=Módulo de numeración de tickets
+TicketsModelModule=Plantillas de documentos para tickets
 TicketNotifyTiersAtCreation=Notificar a los terceros en la creación
-TicketGroup=Grupo
 TicketsDisableCustomerEmail=Desactivar siempre los e-mails al crear tickets desde la interfaz pública
+TicketsPublicNotificationNewMessage=Enviar correo electrónico (s) cuando se agrega un nuevo mensaje / comentario a un ticket
+TicketsPublicNotificationNewMessageHelp=Enviar e-mail(s) cuando se añade un nuevo mensaje desde la interfaz pública (al usuario asignado o al e-mail de notificaciones (actualización) y o el e-mail de notificaciones a)
+TicketPublicNotificationNewMessageDefaultEmail=Notificaciones por e-mail a (actualización)
+TicketPublicNotificationNewMessageDefaultEmailHelp=Envíe un correo electrónico a esta dirección para cada notificación de mensaje nuevo si el ticket no tiene un usuario asignado o si el usuario no tiene ningún correo electrónico conocido.
 #
 # Index & list page
 #
-TicketsIndex=Ticket - Inicio
+TicketsIndex=Área de tickets
 TicketList=Listado de tickets
 TicketAssignedToMeInfos=Esta página muestra el listado de tickets que están asignados al usuario actual
 NoTicketsFound=Ningún ticket encontrado
@@ -137,6 +143,10 @@ NoUnreadTicketsFound=Ningún ticket sin leer encontrado
 TicketViewAllTickets=Ver todos los tickets
 TicketViewNonClosedOnly=Ver solo tickets abiertos
 TicketStatByStatus=Tickets por estado
+OrderByDateAsc=Ordenar por fecha ascendente
+OrderByDateDesc=Ordenar por fecha descendente
+ShowAsConversation=Mostrar como lista de conversación
+MessageListViewType=Mostrar como lista de tabla
 
 #
 # Ticket card
@@ -150,7 +160,7 @@ CreatedBy=Creado por
 NewTicket=Nuevo ticket
 SubjectAnswerToTicket=Respuesta
 TicketTypeRequest=Tipo de solicitud
-TicketCategory=Código analítico
+TicketCategory=Grupo
 SeeTicket=Ver ticket
 TicketMarkedAsRead=El ticket ha sido marcado como leído
 TicketReadOn=Leído el
@@ -222,6 +232,8 @@ TicketConfirmChangeStatus=¿Confirma el cambio de estado: %s?
 TicketLogStatusChanged=Estado cambiado: %s a %s
 TicketNotNotifyTiersAtCreate=No notificar a la compañía al crear
 Unread=No leído
+TicketNotCreatedFromPublicInterface=No disponible. El ticket no se creó desde la interfaz pública.
+ErrorTicketRefRequired=La referencia del ticket es obligatoria
 
 #
 # Logs
@@ -241,9 +253,9 @@ ShowListTicketWithTrackId=Mostrar listado de tickets con track ID
 ShowTicketWithTrackId=Mostrar ticket desde id de seguimiento
 TicketPublicDesc=Puede crear un ticket de soporte o comprobar un ID existente.
 YourTicketSuccessfullySaved=¡Ticket guardado con éxito!
-MesgInfosPublicTicketCreatedWithTrackId=Se ha creado un nuevo ticket con ID %s.
+MesgInfosPublicTicketCreatedWithTrackId=Se ha creado un nuevo ticket con ID %s y Ref %s.
 PleaseRememberThisId=Por favor, mantenga el número de seguimiento ya que podríamos solicitarlo más adelante.
-TicketNewEmailSubject=Confirmación de creación de ticket
+TicketNewEmailSubject=Confirmación de creación de ticket - Ref. %s (ID de ticket público %s)
 TicketNewEmailSubjectCustomer=Nuevo ticket de soporte
 TicketNewEmailBody=Este es un e-mail automático para confirmar que ha registrado un nuevo ticket.
 TicketNewEmailBodyCustomer=Este es un e-mail automático para confirmar que se acaba de crear un nuevo ticket en su cuenta.
@@ -262,7 +274,7 @@ Subject=Asunto
 ViewTicket=Ver ticket
 ViewMyTicketList=Ver mi lista de tickets
 ErrorEmailMustExistToCreateTicket=Error: dirección de e-mail no encontrada en nuestra base de datos
-TicketNewEmailSubjectAdmin=Nuevo ticket creado.
+TicketNewEmailSubjectAdmin=Nuevo ticket creado - Ref. %s (ID de ticket público %s)
 TicketNewEmailBodyAdmin=<p> El ticket acaba de crearse con ID # %s, ver información: </p>
 SeeThisTicketIntomanagementInterface=Ver Ticket en la interfaz de administración
 TicketPublicInterfaceForbidden=La interfaz pública para los tickets no estaba habilitada.
@@ -292,3 +304,13 @@ BoxLastModifiedTicket=Últimos tickets modificados
 BoxLastModifiedTicketDescription=Últimos %s tickets modificados
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=No hay tickets modificados recientemente
+BoxTicketType=Número de tickets abiertos por tipo
+BoxTicketSeverity=Número de tickets abiertos por gravedad
+BoxNoTicketSeverity=No hay tickets abiertos
+BoxTicketLastXDays=Número de tickets nuevos por días los últimos %s días
+BoxTicketLastXDayswidget = Número de tickets nuevos por días los últimos X días
+BoxNoTicketLastXDays=No hay entradas nuevas los últimos días %s
+BoxNumberOfTicketByDay=Número de tickets nuevos por día
+BoxNewTicketVSClose=Número de tickets nuevos de hoy en comparación con los tickets cerrados de hoy
+TicketCreatedToday=Ticket creado hoy
+TicketClosedToday=Ticket cerrado hoy
