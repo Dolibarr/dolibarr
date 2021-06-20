@@ -65,11 +65,7 @@ if ($user->socid > 0) {
 
 $nowyear = strftime("%Y", dol_now());
 $year = GETPOST('year') > 0 ? GETPOST('year', 'int') : $nowyear;
-if (!empty($conf->global->INVOICE_STATS_GRAPHS_SHOW_2_YEARS)) {
-	$startyear = $year - 2;
-} else {
-	$startyear = $year - 1;
-}
+$startyear = $year - (empty($conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS) ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
 $endyear = $year;
 
 
@@ -291,7 +287,8 @@ if ($mode == 'customer') {
 if ($mode == 'supplier') {
 	$filter = 's.fournisseur = 1';
 }
-print $form->selectarray('socid', $companies, $socid, 1, 0, 0, 'style="width: 95%"', 0, 0, 0, '', '', 1);
+print img_picto('', 'company', 'class="pictofixedwidth"');
+print $form->selectarray('socid', $companies, $socid, 1, 0, 0, '', 0, 0, 0, '', 'widthcentpercentminusx maxwidth300', 1);
 print '</td></tr>';
 
 // ThirdParty Type
@@ -315,17 +312,19 @@ if (!empty($conf->category->enabled)) {
 	}
 	print '<tr><td>'.$cat_label.'</td><td>';
 	$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, 'parent', null, null, 1);
-	print $form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), null, null, null, null, "90%");
+	print img_picto('', 'category', 'class="pictofixedwidth"');
+	print $form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), 0, 0, 'widthcentpercentminusx maxwidth300');
 	//print $formother->select_categories($cat_type, $categ_id, 'categ_id', true);
 	print '</td></tr>';
 }
 
 // User
 print '<tr><td>'.$langs->trans("CreatedBy").'</td><td>';
-print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+print img_picto('', 'user', 'class="pictofixedwidth"');
+print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
 print '</td></tr>';
 // Status
-print '<tr><td class="left">'.$langs->trans("Status").'</td><td class="left">';
+print '<tr><td>'.$langs->trans("Status").'</td><td>';
 if ($mode == 'customer') {
 	$liststatus = array('0'=>$langs->trans("BillStatusDraft"), '1'=>$langs->trans("BillStatusNotPaid"), '2'=>$langs->trans("BillStatusPaid"), '1,2'=>$langs->trans("BillStatusNotPaid").' / '.$langs->trans("BillStatusPaid"), '3'=>$langs->trans("BillStatusCanceled"));
 	print $form->selectarray('object_status', $liststatus, $object_status, 1);
@@ -346,7 +345,7 @@ if (!in_array($nowyear, $arrayyears)) {
 arsort($arrayyears);
 print $form->selectarray('year', $arrayyears, $year, 0);
 print '</td></tr>';
-print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
+print '<tr><td class="center" colspan="2"><input type="submit" name="submit" class="button small" value="'.$langs->trans("Refresh").'"></td></tr>';
 print '</table>';
 print '</form>';
 print '<br><br>';
@@ -383,11 +382,11 @@ foreach ($data as $val) {
 	print '<tr class="oddeven" height="24">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$year.'</a></td>';
 	print '<td class="right">'.$val['nb'].'</td>';
-	print '<td class="right" style="'.(($val['nb_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.round($val['nb_diff']).'</td>';
+	print '<td class="right opacitylow" style="'.(($val['nb_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.($val['nb_diff'] < 0 ? '' : '+').round($val['nb_diff']).'%</td>';
 	print '<td class="right"><span class="amount">'.price(price2num($val['total'], 'MT'), 1).'</span></td>';
-	print '<td class="right" style="'.(($val['total_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.round($val['total_diff']).'</td>';
+	print '<td class="right opacitylow" style="'.(($val['total_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.($val['total_diff'] < 0 ? '' : '+').round($val['total_diff']).'%</td>';
 	print '<td class="right"><span class="amount">'.price(price2num($val['avg'], 'MT'), 1).'</span></td>';
-	print '<td class="right" style="'.(($val['avg_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.round($val['avg_diff']).'</td>';
+	print '<td class="right opacitylow" style="'.(($val['avg_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.($val['avg_diff'] < 0 ? '' : '+').round($val['avg_diff']).'%</td>';
 	print '</tr>';
 	$oldyear = $year;
 }

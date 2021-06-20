@@ -137,9 +137,11 @@ $arrayfields = array(
 	'f.nb_gen_done'=>array('label'=>"NbOfGenerationDoneShort", 'checked'=>1),
 	'f.date_last_gen'=>array('label'=>"DateLastGenerationShort", 'checked'=>1),
 	'f.date_when'=>array('label'=>"NextDateToExecutionShort", 'checked'=>1),
-	'status'=>array('label'=>"Status", 'checked'=>1, 'position'=>100),
-	'f.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
-	'f.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
+	'f.fk_user_author'=>array('label'=>"UserCreation", 'checked'=>0, 'position'=>500),
+	'f.fk_user_modif'=>array('label'=>"UserModification", 'checked'=>0, 'position'=>505),
+	'f.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>520),
+	'f.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>525),
+	'status'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -240,6 +242,7 @@ if (!empty($conf->projet->enabled)) {
 }
 $companystatic = new Societe($db);
 $invoicerectmp = new FactureRec($db);
+$tmpuser = new User($db);
 
 $now = dol_now();
 $tmparray = dol_getdate($now);
@@ -252,7 +255,7 @@ $today = dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['
 
 $sql = "SELECT s.nom as name, s.rowid as socid, f.rowid as facid, f.titre as title, f.total_ht, f.total_tva, f.total_ttc, f.frequency, f.unit_frequency,";
 $sql .= " f.nb_gen_done, f.nb_gen_max, f.date_last_gen, f.date_when, f.suspended,";
-$sql .= " f.datec, f.tms,";
+$sql .= " f.datec, f.fk_user_author, f.tms, f.fk_user_modif,";
 $sql .= " f.fk_cond_reglement, f.fk_mode_reglement";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -274,7 +277,7 @@ if (!$user->rights->societe->client->voir && !$socid) {
 $sql .= " WHERE f.fk_soc = s.rowid";
 $sql .= ' AND f.entity IN ('.getEntity('invoice').')';
 if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($search_ref) {
 	$sql .= natural_search('f.titre', $search_ref);
@@ -534,6 +537,16 @@ if ($resql) {
 	$parameters = array('arrayfields'=>$arrayfields);
 	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
+	// User creation
+	if (!empty($arrayfields['f.fk_user_author']['checked'])) {
+		print '<td class="liste_titre">';
+		print '</td>';
+	}
+	// User modification
+	if (!empty($arrayfields['f.fk_user_modif']['checked'])) {
+		print '<td class="liste_titre">';
+		print '</td>';
+	}
 	// Date creation
 	if (!empty($arrayfields['f.datec']['checked'])) {
 		print '<td class="liste_titre">';
@@ -602,6 +615,12 @@ if ($resql) {
 	if (!empty($arrayfields['f.date_when']['checked'])) {
 		print_liste_field_titre($arrayfields['f.date_when']['label'], $_SERVER['PHP_SELF'], "f.date_when", "", $param, 'align="center"', $sortfield, $sortorder);
 	}
+	if (!empty($arrayfields['f.fk_user_author']['checked'])) {
+		print_liste_field_titre($arrayfields['f.fk_user_author']['label'], $_SERVER['PHP_SELF'], "f.fk_user_author", "", $param, 'align="center"', $sortfield, $sortorder);
+	}
+	if (!empty($arrayfields['f.fk_user_modif']['checked'])) {
+		print_liste_field_titre($arrayfields['f.fk_user_modif']['label'], $_SERVER['PHP_SELF'], "f.fk_user_modif", "", $param, 'align="center"', $sortfield, $sortorder);
+	}
 	if (!empty($arrayfields['f.datec']['checked'])) {
 		print_liste_field_titre($arrayfields['f.datec']['label'], $_SERVER['PHP_SELF'], "f.datec", "", $param, 'align="center"', $sortfield, $sortorder);
 	}
@@ -635,6 +654,9 @@ if ($resql) {
 			$invoicerectmp->nb_gen_max = $objp->nb_gen_max;
 			$invoicerectmp->nb_gen_done = $objp->nb_gen_done;
 			$invoicerectmp->ref = $objp->title;
+			$invoicerectmp->total_ht = $objp->total_ht;
+			$invoicerectmp->total_tva = $objp->total_tva;
+			$invoicerectmp->total_ttc = $objp->total_ttc;
 
 			print '<tr class="oddeven">';
 
@@ -654,7 +676,7 @@ if ($resql) {
 				}
 			}
 			if (!empty($arrayfields['f.total_ht']['checked'])) {
-				print '<td class="nowrap right amount">'.price($objp->total).'</td>'."\n";
+				print '<td class="nowrap right amount">'.price($objp->total_ht).'</td>'."\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -664,7 +686,7 @@ if ($resql) {
 				$totalarray['val']['f.total_ht'] += $objp->total_ht;
 			}
 			if (!empty($arrayfields['f.total_tva']['checked'])) {
-				print '<td class="nowrap right amount">'.price($objp->total_vat).'</td>'."\n";
+				print '<td class="nowrap right amount">'.price($objp->total_tva).'</td>'."\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -749,6 +771,28 @@ if ($resql) {
 					print img_info($langs->trans("MaxNumberOfGenerationReached"));
 				}
 				print '</div>';
+				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+			if (!empty($arrayfields['f.fk_user_author']['checked'])) {
+				print '<td class="center tdoverflowmax150">';
+				if ($objp->fk_user_author > 0) {
+					$tmpuser->fetch($objp->fk_user_author);
+					print $tmpuser->getNomUrl(1);
+				}
+				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+			if (!empty($arrayfields['f.fk_user_modif']['checked'])) {
+				print '<td class="center tdoverflowmax150">';
+				if ($objp->fk_user_author > 0) {
+					$tmpuser->fetch($objp->fk_user_author);
+					print $tmpuser->getNomUrl(1);
+				}
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;

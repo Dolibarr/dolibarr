@@ -190,7 +190,7 @@ if (!empty($conf->holiday->enabled) && $user->rights->holiday->read) {
 		$sql .= ' AND x.fk_user IN ('.$db->sanitize(join(',', $childids)).')';
 	}
 	//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-	//if (!empty($socid)) $sql.= " AND x.fk_soc = ".$socid;
+	//if (!empty($socid)) $sql.= " AND x.fk_soc = ".((int) $socid);
 	$sql .= $db->order("x.tms", "DESC");
 	$sql .= $db->plimit($max, 0);
 
@@ -233,8 +233,8 @@ if (!empty($conf->holiday->enabled) && $user->rights->holiday->read) {
 
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">'.$holidaystatic->getNomUrl(1).'</td>';
-				print '<td class="tdoverflowmax150">'.$userstatic->getNomUrl(-1, 'leave').'</td>';
-				print '<td>'.$typeleaves[$obj->fk_type]['label'].'</td>';
+				print '<td class="tdoverflowmax125">'.$userstatic->getNomUrl(-1, 'leave').'</td>';
+				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($typeleaves[$obj->fk_type]['label']).'">'.dol_escape_htmltag($typeleaves[$obj->fk_type]['label']).'</td>';
 
 				$starthalfday = ($obj->halfday == -1 || $obj->halfday == 2) ? 'afternoon' : 'morning';
 				$endhalfday = ($obj->halfday == 1 || $obj->halfday == 2) ? 'morning' : 'afternoon';
@@ -271,7 +271,7 @@ if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
 		$sql .= ' AND x.fk_user_author IN ('.$db->sanitize(join(',', $childids)).')';
 	}
 	//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-	//if (!empty($socid)) $sql.= " AND x.fk_soc = ".$socid;
+	//if (!empty($socid)) $sql.= " AND x.fk_soc = ".((int) $socid);
 	$sql .= $db->order("x.tms", "DESC");
 	$sql .= $db->plimit($max, 0);
 

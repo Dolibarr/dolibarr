@@ -115,6 +115,11 @@ $extrafields = new ExtraFields($db);
 
 $user->loadDefaultValues();
 
+// Security check
+if (empty($conf->eventorganization->enabled)) {
+	accessforbidden('', 0, 0, 1);
+}
+
 
 /**
  * Show header for new member
@@ -159,6 +164,13 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 		}
 		print '</div>';
 	}
+
+	if (!empty($conf->global->EVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE)) {
+		print '<div class="backimagepubliceventorganizationsubscription">';
+		print '<img id="idEVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->EVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE.'">';
+		print '</div>';
+	}
+
 	print '</div>';
 
 	print '<div class="divmainbodylarge">';

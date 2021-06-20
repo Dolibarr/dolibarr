@@ -32,6 +32,14 @@
 
 -- Missing in v13 or lower
 
+-- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
+-- VMYSQL4.1 update llx_propal set tms = datec where DATE(STR_TO_DATE(tms, '%Y-%m-%d')) IS NULL;
+-- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
+-- VMYSQL4.1 update llx_propal set tms = null where DATE(STR_TO_DATE(tms, '%Y-%m-%d')) IS NULL;
+
+ALTER TABLE llx_ecm_files ADD COLUMN note_private text AFTER fk_user_m;
+ALTER TABLE llx_ecm_files ADD COLUMN note_public text AFTER note_private;
+
 ALTER TABLE llx_accounting_bookkeeping DROP INDEX idx_accounting_bookkeeping_numero_compte;
 ALTER TABLE llx_accounting_bookkeeping DROP INDEX idx_accounting_bookkeeping_code_journal;
 
@@ -489,7 +497,7 @@ ALTER TABLE llx_payment_donation ADD COLUMN ext_payment_id  varchar(128) AFTER n
 -- Rebuild sequence for postgres only after query INSERT INTO llx_salary(rowid, ...
 -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
-UPDATE llx_const SET type = 'chaine', value = __ENCRYPT('github')__ WHERE __DECRYPT('name')__ = 'MAIN_BUGTRACK_ENABLELINK' AND __DECRYPT('value')__ = 1;
+UPDATE llx_const SET type = 'chaine', value = __ENCRYPT('github')__ WHERE __DECRYPT('name')__ = 'MAIN_BUGTRACK_ENABLELINK' AND __DECRYPT('value')__ = '1';
 
 ALTER TABLE llx_facture_fourn_det ADD COLUMN fk_remise_except integer DEFAULT NULL after remise_percent;
 ALTER TABLE llx_facture_fourn_det ADD UNIQUE INDEX uk_fk_remise_except (fk_remise_except, fk_facture_fourn);
@@ -510,11 +518,13 @@ CREATE TABLE llx_knowledgemanagement_knowledgerecord(
 	answer text,
 	url varchar(255),
 	fk_ticket integer,
+	fk_c_ticket_category integer,
 	status integer NOT NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
 
 ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD COLUMN fk_ticket integer;
+ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD COLUMN fk_c_ticket_category integer;
 ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD COLUMN url varchar(255);
 
 
@@ -543,4 +553,4 @@ create table llx_c_partnership_type
   active  	    tinyint DEFAULT 1  NOT NULL
 )ENGINE=innodb;
 
-
+DELETE FROM llx_rights_def WHERE module = 'hrm' AND perms = 'employee';

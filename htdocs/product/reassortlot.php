@@ -179,7 +179,7 @@ if ($fourn_id > 0) {
 }
 // Insert categ filter
 if ($search_categ) {
-	$sql .= " AND cp.fk_categorie = ".$db->escape($search_categ);
+	$sql .= " AND cp.fk_categorie = ".((int) $search_categ);
 }
 if ($search_warehouse) {
 	$sql .= natural_search("e.ref", $search_warehouse);

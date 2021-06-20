@@ -77,14 +77,14 @@ class FormIntervention
 			if ($socid == '0') {
 				$sql .= " AND (f.fk_soc = 0 OR f.fk_soc IS NULL)";
 			} else {
-				$sql .= " AND f.fk_soc = ".$socid;
+				$sql .= " AND f.fk_soc = ".((int) $socid);
 			}
 		}
 
 		dol_syslog(get_class($this)."::select_intervention", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$out .= '<select id="interventionid" class="flat" name="'.$htmlname.'">';
+			$out .= '<select id="interventionid" class="flat" name="'.dol_escape_htmltag($htmlname).'">';
 			if ($showempty) {
 				$out .= '<option value="0">&nbsp;</option>';
 			}

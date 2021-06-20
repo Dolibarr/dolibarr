@@ -253,6 +253,7 @@ class Project extends CommonObject
 		'fk_user_creat' =>array('type'=>'integer', 'label'=>'UserCreation', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>210),
 		'fk_user_modif' =>array('type'=>'integer', 'label'=>'UserModification', 'enabled'=>1, 'visible'=>0, 'position'=>215),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>0, 'position'=>220),
+		'email_msgid'=>array('type'=>'varchar(255)', 'label'=>'EmailMsgID', 'enabled'=>1, 'visible'=>-1, 'position'=>250, 'help'=>'EmailMsgIDWhenSourceisEmail'),
 		'fk_statut' =>array('type'=>'smallint(6)', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>500)
 	);
 	// END MODULEBUILDER PROPERTIES
@@ -486,7 +487,7 @@ class Project extends CommonObject
 			$sql .= ", title = '".$this->db->escape($this->title)."'";
 			$sql .= ", description = '".$this->db->escape($this->description)."'";
 			$sql .= ", fk_soc = ".($this->socid > 0 ? $this->socid : "null");
-			$sql .= ", fk_statut = ".$this->statut;
+			$sql .= ", fk_statut = ".((int) $this->statut);
 			$sql .= ", fk_opp_status = ".((is_numeric($this->opp_status) && $this->opp_status > 0) ? $this->opp_status : 'null');
 			$sql .= ", opp_percent = ".((is_numeric($this->opp_percent) && $this->opp_percent != '') ? $this->opp_percent : 'null');
 			$sql .= ", public = ".($this->public ? 1 : 0);
@@ -583,7 +584,8 @@ class Project extends CommonObject
 	{
 		global $conf;
 
-		if (empty($id) && empty($ref)) {
+		if (empty($id) && empty($ref) && empty($ref_ext) && empty($email_msgid)) {
+			dol_syslog(get_class($this)."::fetch Bad parameters", LOG_WARNING);
 			return -1;
 		}
 
@@ -1777,13 +1779,13 @@ class Project extends CommonObject
 
 		if ($tableName == "actioncomm") {
 			$sql .= " SET fk_project=".$this->id;
-			$sql .= " WHERE id=".$elementSelectId;
+			$sql .= " WHERE id=".((int) $elementSelectId);
 		} elseif ($tableName == "entrepot") {
 			$sql .= " SET fk_project=".$this->id;
-			$sql .= " WHERE rowid=".$elementSelectId;
+			$sql .= " WHERE rowid=".((int) $elementSelectId);
 		} else {
 			$sql .= " SET fk_projet=".$this->id;
-			$sql .= " WHERE rowid=".$elementSelectId;
+			$sql .= " WHERE rowid=".((int) $elementSelectId);
 		}
 
 		dol_syslog(get_class($this)."::update_element", LOG_DEBUG);
@@ -1813,10 +1815,10 @@ class Project extends CommonObject
 
 		if ($tableName == "actioncomm") {
 			$sql .= " SET fk_project=NULL";
-			$sql .= " WHERE id=".$elementSelectId;
+			$sql .= " WHERE id=".((int) $elementSelectId);
 		} else {
 			$sql .= " SET ".$projectfield."=NULL";
-			$sql .= " WHERE rowid=".$elementSelectId;
+			$sql .= " WHERE rowid=".((int) $elementSelectId);
 		}
 
 		dol_syslog(get_class($this)."::remove_element", LOG_DEBUG);
@@ -1888,10 +1890,10 @@ class Project extends CommonObject
 		$sql .= " AND (ptt.task_date >= '".$this->db->idate($datestart)."' ";
 		$sql .= " AND ptt.task_date <= '".$this->db->idate(dol_time_plus_duree($datestart, 1, 'w') - 1)."')";
 		if ($taskid) {
-			$sql .= " AND ptt.fk_task=".$taskid;
+			$sql .= " AND ptt.fk_task=".((int) $taskid);
 		}
 		if (is_numeric($userid)) {
-			$sql .= " AND ptt.fk_user=".$userid;
+			$sql .= " AND ptt.fk_user=".((int) $userid);
 		}
 
 		//print $sql;
@@ -1951,10 +1953,10 @@ class Project extends CommonObject
 		$sql .= " AND (ptt.task_date >= '".$this->db->idate($datestart)."' ";
 		$sql .= " AND ptt.task_date <= '".$this->db->idate(dol_time_plus_duree($datestart, 1, 'm') - 1)."')";
 		if ($task_id) {
-			$sql .= " AND ptt.fk_task=".$taskid;
+			$sql .= " AND ptt.fk_task=".((int) $taskid);
 		}
 		if (is_numeric($userid)) {
-			$sql .= " AND ptt.fk_user=".$userid;
+			$sql .= " AND ptt.fk_user=".((int) $userid);
 		}
 
 		//print $sql;

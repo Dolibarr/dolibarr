@@ -528,4 +528,26 @@ class DateLibTest extends PHPUnit\Framework\TestCase
 
 		return 1;
 	}
+
+	/**
+	 * testDolSqlDateFilter
+	 *
+	 * @return int
+	 */
+	public function testDolSqlDateFilter()
+	{
+		global $conf;
+
+		$result = dolSqlDateFilter('field1', 0, 0, 1970, 0);
+		print __METHOD__." result = ".$result."\n";
+		$this->assertEquals(" AND field1 BETWEEN '1970-01-01 00:00:00' AND '1970-12-31 23:59:59'", $result, 'Test dolSqlDateFilter 1');
+
+		/* If server/company is in TZ America/Bahia, and we need range with a date set in GMT
+		$result = dolSqlDateFilter('field1', 0, 0, 1970, 0, 'gmt');
+		print __METHOD__." result = ".$result."\n";
+		$this->assertEquals(" AND field1 BETWEEN '1969-12-31 21:00:00' AND '1970-12-31 20:59:59'", $result, 'Test dolSqlDateFilter 2');
+		*/
+
+		return 1;
+	}
 }

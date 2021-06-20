@@ -1511,6 +1511,10 @@ table[summary="list_of_modules"] .fa-cog {
 		display: inline-block;
 	}
 	
+	input.maxwidthinputfileonsmartphone {
+		width: 175px;
+	}
+	
 	.poweredbyimg {
 		width: 48px;
 	}
@@ -1664,7 +1668,7 @@ table.tableforfield tr>td:first-of-type, tr.trforfield>td:first-of-type, div.tab
 }
 
 <?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
-.hideonprint { display: none; }
+.hideonprint { display: none !important; }
 <?php } ?>
 
 

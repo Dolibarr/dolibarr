@@ -177,7 +177,7 @@ if ($id > 0 || !empty($ref)) {
 		print dol_get_fiche_end();
 
 		$modulepart = 'expedition';
-		$permission = $user->rights->expedition->creer;
+		$permissiontoadd = $user->rights->expedition->creer;
 		$permtoedit = $user->rights->expedition->creer;
 		$param = '&id='.$object->id;
 		include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';

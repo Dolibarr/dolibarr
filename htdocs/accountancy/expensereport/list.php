@@ -434,7 +434,7 @@ if ($result) {
 		print '</td>';
 
 		// Amount without taxes
-		print '<td class="nowrap right">';
+		print '<td class="right nowraponall amount">';
 		print price($objp->price);
 		print '</td>';
 

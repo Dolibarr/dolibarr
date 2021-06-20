@@ -211,7 +211,7 @@ if ($mode && $mode != '-1') {
 		if (!empty($conf->global->MAIN_MULTILANGS)) { // si l'option est active
 			$sql = "SELECT label";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
-			$sql .= " WHERE fk_product=".$prodid;
+			$sql .= " WHERE fk_product = ".((int) $prodid);
 			$sql .= " AND lang='".$db->escape($langs->getDefaultLang())."'";
 			$sql .= " LIMIT 1";
 

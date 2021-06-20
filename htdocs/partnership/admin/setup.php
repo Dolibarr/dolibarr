@@ -23,36 +23,7 @@
  */
 
 // Load Dolibarr environment
-$res = 0;
-// Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
-if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) {
-	$res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
-}
-// Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
-$tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME']; $tmp2 = realpath(__FILE__); $i = strlen($tmp) - 1; $j = strlen($tmp2) - 1;
-while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) {
-	$i--; $j--;
-}
-if (!$res && $i > 0 && file_exists(substr($tmp, 0, ($i + 1))."/main.inc.php")) {
-	$res = @include substr($tmp, 0, ($i + 1))."/main.inc.php";
-}
-if (!$res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php")) {
-	$res = @include dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php";
-}
-// Try main.inc.php using relative path
-if (!$res && file_exists("../../main.inc.php")) {
-	$res = @include "../../main.inc.php";
-}
-if (!$res && file_exists("../../../main.inc.php")) {
-	$res = @include "../../../main.inc.php";
-}
-if (!$res) {
-	die("Include of main fails");
-}
-
-global $langs, $user;
-
-// Libraries
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once '../lib/partnership.lib.php';
 //require_once "../class/myclass.class.php";
@@ -160,11 +131,11 @@ print '<td><span class="opacitymedium">'.$langs->trans("partnershipforthirdparty
 print '</tr>';
 
 
-if ($conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
+if (!empty($conf->global->PARTNERSHIP_IS_MANAGED_FOR) && $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
 	print '<tr class="oddeven"><td>'.$langs->trans("PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL").'</td>';
 	print '<td>';
-	$dnbdays 	= '15';
-	$backlinks 	= (!empty($conf->global->PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL)) ? $conf->global->PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL : $dnbdays;
+	$dnbdays = '15';
+	$backlinks = (!empty($conf->global->PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL)) ? $conf->global->PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL : $dnbdays;
 	print '<input class="maxwidth50" type="text" name="PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL" value="'.$backlinks.'">';
 	print '</td>';
 	print '<td><span class="opacitymedium">'.$dnbdays.'</span></td>';
@@ -177,7 +148,7 @@ print '</div>';
 print '<br>';
 
 
-print_fiche_titre($langs->trans("ReferingWebsiteCheck"), '', '');
+print load_fiche_titre($langs->trans("ReferingWebsiteCheck"), '', '');
 
 print '<span class="opacitymedium">'.$langs->trans("ReferingWebsiteCheckDesc").'</span><br>';
 print '<br>';
@@ -193,7 +164,7 @@ print '</tr>';
 
 print '<tr class="oddeven"><td>'.$langs->trans("PARTNERSHIP_BACKLINKS_TO_CHECK").'</td>';
 print '<td>';
-$backlinks 	= (empty($conf->global->PARTNERSHIP_BACKLINKS_TO_CHECK) ? '' : $conf->global->PARTNERSHIP_BACKLINKS_TO_CHECK);
+$backlinks = (empty($conf->global->PARTNERSHIP_BACKLINKS_TO_CHECK) ? '' : $conf->global->PARTNERSHIP_BACKLINKS_TO_CHECK);
 print '<input class="minwidth400" type="text" name="PARTNERSHIP_BACKLINKS_TO_CHECK" value="'.$backlinks.'">';
 print '</td>';
 print '<td><span class="opacitymedium">dolibarr.org|dolibarr.fr|dolibarr.es</span></td>';

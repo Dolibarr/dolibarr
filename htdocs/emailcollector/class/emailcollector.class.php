@@ -947,7 +947,7 @@ class EmailCollector extends CommonObject
 
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
-		dol_syslog("EmailCollector::doCollectOneCollector start", LOG_DEBUG);
+		dol_syslog("EmailCollector::doCollectOneCollector start for id=".$this->id, LOG_DEBUG);
 
 		$langs->loadLangs(array("project", "companies", "mails", "errors", "ticket", "agenda"));
 
@@ -1610,7 +1610,7 @@ class EmailCollector extends CommonObject
 
 					// Make Operation
 					dol_syslog("Execute action ".$operation['type']." actionparam=".$operation['actionparam'].' thirdpartystatic->id='.$thirdpartystatic->id.' contactstatic->id='.$contactstatic->id.' projectstatic->id='.$projectstatic->id);
-					dol_syslog("Execute action fk_element_id=".$fk_element_id." fk_element_type=".$fk_element_type);
+					dol_syslog("Execute action fk_element_id=".$fk_element_id." fk_element_type=".$fk_element_type);	// If a Dolibarr tracker id is found, we should now the id of object
 
 					$actioncode = 'EMAIL_IN';
 					// If we scan the Sent box, we use the code for out email
@@ -1720,6 +1720,13 @@ class EmailCollector extends CommonObject
 
 										// Overwrite values with values extracted from source email
 										$errorforthisaction = $this->overwritePropertiesOfObject($thirdpartystatic, $operation['actionparam'], $messagetext, $subject, $header);
+
+										if ($thirdpartystatic->client && empty($thirdpartystatic->code_client)) {
+											$thirdpartystatic->code_client = 'auto';
+										}
+										if ($thirdpartystatic->fournisseur && empty($thirdpartystatic->code_fournisseur)) {
+											$thirdpartystatic->code_fournisseur = 'auto';
+										}
 
 										if ($errorforthisaction) {
 											$errorforactions++;

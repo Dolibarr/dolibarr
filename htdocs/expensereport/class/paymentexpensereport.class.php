@@ -168,7 +168,7 @@ class PaymentExpenseReport extends CommonObject
 			$sql .= " fk_typepayment, num_payment, note, fk_user_creat, fk_bank)";
 			$sql .= " VALUES ($this->fk_expensereport, '".$this->db->idate($now)."',";
 			$sql .= " '".$this->db->idate($this->datepaid)."',";
-			$sql .= " ".$totalamount.",";
+			$sql .= " ".price2num($totalamount).",";
 			$sql .= " ".$this->fk_typepayment.", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_public)."', ".$user->id.",";
 			$sql .= " 0)";
 

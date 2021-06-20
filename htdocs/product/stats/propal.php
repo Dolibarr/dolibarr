@@ -153,7 +153,7 @@ if ($id > 0 || !empty($ref)) {
 			$sql .= " WHERE p.fk_soc = s.rowid";
 			$sql .= " AND p.entity IN (".getEntity('propal').")";
 			$sql .= " AND d.fk_propal = p.rowid";
-			$sql .= " AND d.fk_product =".$product->id;
+			$sql .= " AND d.fk_product = ".((int) $product->id);
 			if (!empty($search_month)) {
 				$sql .= ' AND MONTH(p.datep) IN ('.$db->sanitize($search_month).')';
 			}

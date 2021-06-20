@@ -248,6 +248,12 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
 		print '</div>';
 	}
 
+	if (!empty($conf->global->TICKET_IMAGE_PUBLIC_INTERFACE)) {
+		print '<div class="backimagepublicticket">';
+		print '<img id="idRECRUITMENT_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->MEMBER_IMAGE_PUBLIC_REGISTRATION.'">';
+		print '</div>';
+	}
+
 	print '</div>';
 
 	print '<div class="ticketlargemargin">';
@@ -336,7 +342,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 		if (is_object($objcon) && $objcon->id > 0) {
 			$force_filter_contact = true;
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm_resources as r ON a.id = r.fk_actioncomm";
-			$sql .= " AND r.element_type = '".$db->escape($objcon->table_element)."' AND r.fk_element = ".$objcon->id;
+			$sql .= " AND r.element_type = '".$db->escape($objcon->table_element)."' AND r.fk_element = ".((int) $objcon->id);
 		}
 
 		if (is_object($filterobj) && get_class($filterobj) == 'Societe') {

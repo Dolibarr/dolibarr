@@ -94,6 +94,12 @@ if ($resultproject < 0) {
 	$errmsg .= $project->error;
 }
 
+// Security check
+if (empty($conf->projet->enabled)) {
+	accessforbidden('', 0, 0, 1);
+}
+
+
 /*
  * Actions
  */
@@ -177,6 +183,12 @@ if ($urllogo) {
 	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
 		print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 	}
+	print '</div>';
+}
+
+if (!empty($conf->global->PROJECT_IMAGE_PUBLIC_ORGANIZEDEVENT)) {
+	print '<div class="backimagepublicorganizedevent">';
+	print '<img id="idPROJECT_IMAGE_PUBLIC_ORGANIZEDEVENT" src="'.$conf->global->PROJECT_IMAGE_PUBLIC_ORGANIZEDEVENT.'">';
 	print '</div>';
 }
 

@@ -865,6 +865,11 @@ if ($urllogo) {
 	}
 	print '</div>';
 }
+if (!empty($conf->global->MAIN_IMAGE_PUBLIC_PAYMENT)) {
+	print '<div class="backimagepublicpayment">';
+	print '<img id="idMAIN_IMAGE_PUBLIC_PAYMENT" src="'.$conf->global->MAIN_IMAGE_PUBLIC_PAYMENT.'">';
+	print '</div>';
+}
 
 
 
@@ -1419,6 +1424,8 @@ if ($source == 'contractline') {
 
 // Payment on member subscription
 if ($source == 'member' || $source == 'membersubscription') {
+	$newsource = 'member';
+
 	$found = true;
 	$langs->load("members");
 
@@ -1478,7 +1485,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 	}
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow2">'.$text;
-	print '<input type="hidden" name="source" value="'.dol_escape_htmltag($source).'">';
+	print '<input type="hidden" name="source" value="'.dol_escape_htmltag($newsource).'">';
 	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($member->ref).'">';
 	print '</td></tr>'."\n";
 

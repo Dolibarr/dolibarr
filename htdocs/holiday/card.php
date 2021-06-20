@@ -858,9 +858,10 @@ $object = new Holiday($db);
 
 $listhalfday = array('morning'=>$langs->trans("Morning"), "afternoon"=>$langs->trans("Afternoon"));
 
+$title = $langs->trans('CPTitreMenu');
 $help_url = 'EN:Module_Holiday';
 
-llxHeader('', $langs->trans('CPTitreMenu'), $help_url);
+llxHeader('', $title, $help_url);
 
 if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 	// If user has no permission to create a leave

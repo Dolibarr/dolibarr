@@ -97,7 +97,8 @@ top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 function SendMail() {
 	$.ajax({
 		type: "GET",
-		url: "<?php print dol_buildpath('/takepos/send.php', 1).'?action=send&facid='.$facid.'&email='; ?>" + $("#email"). val(),
+		data: { token: '<?php echo currentToken(); ?>' },
+		url: "<?php print DOL_URL_ROOT.'/takepos/send.php?action=send&facid='.$facid.'&email='; ?>" + $("#email"). val(),
 	});
 	parent.$.colorbox.close();
 }

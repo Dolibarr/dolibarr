@@ -174,8 +174,27 @@ class InterfaceZapierTriggers extends DolibarrTriggers
 
 			// Contacts
 			case 'CONTACT_CREATE':
+				$resql = $this->db->query($sql);
+				while ($resql && $obj = $this->db->fetch_array($resql)) {
+					$cleaned = cleanObjectDatas(dol_clone($object));
+					$json = json_encode($cleaned);
+					// call the zapierPostWebhook() function
+					zapierPostWebhook($obj['url'], $json);
+				}
+				$logtriggeraction = true;
+				break;
 			case 'CONTACT_MODIFY':
+				$resql = $this->db->query($sql);
+				while ($resql && $obj = $this->db->fetch_array($resql)) {
+					$cleaned = cleanObjectDatas(dol_clone($object));
+					$json = json_encode($cleaned);
+					// call the zapierPostWebhook() function
+					zapierPostWebhook($obj['url'], $json);
+				}
+				$logtriggeraction = true;
+				break;
 			case 'CONTACT_DELETE':
+				break;
 			case 'CONTACT_ENABLEDISABLE':
 				break;
 			// Products
@@ -320,10 +339,28 @@ class InterfaceZapierTriggers extends DolibarrTriggers
 			// case 'LINEFICHINTER_DELETE':
 
 			// Members
-			// case 'MEMBER_CREATE':
+			case 'MEMBER_CREATE':
+				$resql = $this->db->query($sql);
+				while ($resql && $obj = $this->db->fetch_array($resql)) {
+					$cleaned = cleanObjectDatas(dol_clone($object));
+					$json = json_encode($cleaned);
+					// call the zapierPostWebhook() function
+					zapierPostWebhook($obj['url'], $json);
+				}
+				$logtriggeraction = true;
+				break;
+			case 'MEMBER_MODIFY':
+				$resql = $this->db->query($sql);
+				while ($resql && $obj = $this->db->fetch_array($resql)) {
+					$cleaned = cleanObjectDatas(dol_clone($object));
+					$json = json_encode($cleaned);
+					// call the zapierPostWebhook() function
+					zapierPostWebhook($obj['url'], $json);
+				}
+				$logtriggeraction = true;
+				break;
 			// case 'MEMBER_VALIDATE':
 			// case 'MEMBER_SUBSCRIPTION':
-			// case 'MEMBER_MODIFY':
 			// case 'MEMBER_NEW_PASSWORD':
 			// case 'MEMBER_RESILIATE':
 			// case 'MEMBER_DELETE':

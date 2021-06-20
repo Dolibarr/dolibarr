@@ -178,11 +178,11 @@ class Thirdparties extends DolibarrApi
 		// Select thirdparties of given category
 		if ($category > 0) {
 			if (!empty($mode) && $mode != 4) {
-				$sql .= " AND c.fk_categorie = ".$this->db->escape($category)." AND c.fk_soc = t.rowid";
+				$sql .= " AND c.fk_categorie = ".((int) $category)." AND c.fk_soc = t.rowid";
 			} elseif (!empty($mode) && $mode == 4) {
-				$sql .= " AND cc.fk_categorie = ".$this->db->escape($category)." AND cc.fk_soc = t.rowid";
+				$sql .= " AND cc.fk_categorie = ".((int) $category)." AND cc.fk_soc = t.rowid";
 			} else {
-				$sql .= " AND ((c.fk_categorie = ".$this->db->escape($category)." AND c.fk_soc = t.rowid) OR (cc.fk_categorie = ".$this->db->escape($category)." AND cc.fk_soc = t.rowid))";
+				$sql .= " AND ((c.fk_categorie = ".((int) $category)." AND c.fk_soc = t.rowid) OR (cc.fk_categorie = ".((int) $category)." AND cc.fk_soc = t.rowid))";
 			}
 		}
 

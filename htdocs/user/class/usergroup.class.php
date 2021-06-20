@@ -194,7 +194,7 @@ class UserGroup extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g,";
 		$sql .= " ".MAIN_DB_PREFIX."usergroup_user as ug";
 		$sql .= " WHERE ug.fk_usergroup = g.rowid";
-		$sql .= " AND ug.fk_user = ".$userid;
+		$sql .= " AND ug.fk_user = ".((int) $userid);
 		if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && !$user->entity) {
 			$sql .= " AND g.entity IS NOT NULL";
 		} else {
@@ -359,7 +359,7 @@ class UserGroup extends CommonObject
 			//print "$module-$perms-$subperms";
 			$sql = "SELECT id";
 			$sql .= " FROM ".MAIN_DB_PREFIX."rights_def";
-			$sql .= " WHERE entity = ".$entity;
+			$sql .= " WHERE entity = ".((int) $entity);
 			if (!empty($whereforadd) && $whereforadd != 'allmodules') {
 				$sql .= " AND ".$whereforadd;
 			}
@@ -438,8 +438,8 @@ class UserGroup extends CommonObject
 			// les caracteristiques module, perms et subperms de ce droit.
 			$sql = "SELECT module, perms, subperms";
 			$sql .= " FROM ".MAIN_DB_PREFIX."rights_def";
-			$sql .= " WHERE id = '".$this->db->escape($rid)."'";
-			$sql .= " AND entity = ".$entity;
+			$sql .= " WHERE id = ".((int) $rid);
+			$sql .= " AND entity = ".((int) $entity);
 
 			$result = $this->db->query($sql);
 			if ($result) {
@@ -454,8 +454,8 @@ class UserGroup extends CommonObject
 				dol_print_error($this->db);
 			}
 
-			// Where pour la liste des droits a supprimer
-			$wherefordel = "id=".$this->db->escape($rid);
+			// Where for the list of permissions to delete
+			$wherefordel = "id = ".((int) $rid);
 			// Suppression des droits induits
 			if ($subperms == 'lire' || $subperms == 'read') {
 				$wherefordel .= " OR (module='".$this->db->escape($module)."' AND perms='".$this->db->escape($perms)."' AND subperms IS NOT NULL)";

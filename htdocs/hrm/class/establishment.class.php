@@ -264,10 +264,10 @@ class Establishment extends CommonObject
 		$sql .= ", zip = '".$this->db->escape($this->zip)."'";
 		$sql .= ", town = '".$this->db->escape($this->town)."'";
 		$sql .= ", fk_country = ".($this->country_id > 0 ? $this->country_id : 'null');
-		$sql .= ", status = ".$this->db->escape($this->status);
-		$sql .= ", fk_user_mod = ".$user->id;
-		$sql .= ", entity = ".$this->entity;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= ", status = ".((int) $this->status);
+		$sql .= ", fk_user_mod = ".((int) $user->id);
+		$sql .= ", entity = ".((int) $this->entity);
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);

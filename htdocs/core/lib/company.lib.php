@@ -227,7 +227,7 @@ function societe_prepare_head(Societe $object)
 		if (empty($conf->stripe->enabled)) {
 			$sql .= " AND n.stripe_card_ref IS NULL";
 		} else {
-			$sql .= " AND (n.stripe_card_ref IS NULL OR (n.stripe_card_ref IS NOT NULL AND n.status = ".$servicestatus."))";
+			$sql .= " AND (n.stripe_card_ref IS NULL OR (n.stripe_card_ref IS NOT NULL AND n.status = ".((int) $servicestatus)."))";
 		}
 
 		$resql = $db->query($sql);
@@ -1448,7 +1448,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		if (is_object($objcon) && $objcon->id > 0) {
 			$force_filter_contact = true;
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm_resources as r ON a.id = r.fk_actioncomm";
-			$sql .= " AND r.element_type = '".$db->escape($objcon->table_element)."' AND r.fk_element = ".$objcon->id;
+			$sql .= " AND r.element_type = '".$db->escape($objcon->table_element)."' AND r.fk_element = ".((int) $objcon->id);
 		}
 
 		if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur'))) {
@@ -1457,7 +1457,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."element_resources as er";
 			$sql .= " ON er.resource_type = 'dolresource'";
 			$sql .= " AND er.element_id = a.id";
-			$sql .= " AND er.resource_id = ".$filterobj->id;
+			$sql .= " AND er.resource_id = ".((int) $filterobj->id);
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Project') {
 			/* Nothing */
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') {
@@ -1616,8 +1616,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 
 						'contact_id'=>$obj->fk_contact,
 						'socpeopleassigned' => $contactaction->socpeopleassigned,
-						'lastname'=>$obj->lastname,
-						'firstname'=>$obj->firstname,
+						'lastname' => empty($obj->lastname) ? '' : $obj->lastname,
+						'firstname' => empty($obj->firstname) ? '' : $obj->firstname,
 						'fk_element'=>$obj->fk_element,
 						'elementtype'=>$obj->elementtype,
 						// Type of event
@@ -1940,7 +1940,7 @@ function show_subsidiaries($conf, $langs, $db, $object)
 
 	$sql = "SELECT s.rowid, s.client, s.fournisseur, s.nom as name, s.name_alias, s.email, s.address, s.zip, s.town, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.canvas";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-	$sql .= " WHERE s.parent = ".$object->id;
+	$sql .= " WHERE s.parent = ".((int) $object->id);
 	$sql .= " AND s.entity IN (".getEntity('societe').")";
 	$sql .= " ORDER BY s.nom";
 

@@ -178,7 +178,7 @@ if ($object->id > 0) {
 
 
 	$modulepart = 'commande_fournisseur';
-	$permission = ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer);
+	$permissiontoadd = ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer);
 	$permtoedit = ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer);
 	$param = '&id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';

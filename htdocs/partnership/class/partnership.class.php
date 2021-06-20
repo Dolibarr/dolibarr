@@ -198,7 +198,7 @@ class Partnership extends CommonObject
 			'reason_decline_or_cancel' => array('type'=>'text', 'label'=>'ReasonDeclineOrCancel', 'enabled'=>'1', 'position'=>64, 'notnull'=>0, 'visible'=>-2,),
 		);
 
-		if ($conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
+		if (!empty($conf->global->PARTNERSHIP_IS_MANAGED_FOR) && $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
 			$this->fields['fk_member'] = array('type'=>'integer:Adherent:adherents/class/adherent.class.php:1', 'label'=>'Member', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'picto'=>'member');
 		} else {
 			$this->fields['fk_soc'] = array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'ThirdParty', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'picto'=>'societe');
@@ -354,8 +354,8 @@ class Partnership extends CommonObject
 	 *
 	 *	@param      int			$id       				Id of object to load
 	 * 	@param		string		$ref					Ref of object
-	 * 	@param 		int 		$fk_soc			  		fk_soc
 	 * 	@param 		int 		$fk_member		  		fk_member
+	 * 	@param 		int 		$fk_soc			  		fk_soc
 	 *	@return     int         						>0 if OK, <0 if KO, 0 if not found
 	 */
 	public function fetch($id, $ref = null, $fk_member = null, $fk_soc = null)

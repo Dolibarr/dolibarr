@@ -144,23 +144,23 @@ print '</td></tr>'."\n";
 
 print '<tr class="oddeven"><td><label for="phone">'.$langs->trans("Phone").'</label></td><td>';
 print img_picto('', 'object_phoning', '', false, 0, 0, '', 'paddingright');
-print '<input name="tel" id="phone" value="'.(GETPOSTISSET('tel') ? GETPOST('tel', 'alpha') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_PHONE) ? $conf->global->MAIN_INFO_ACCOUNTANT_PHONE : '')).'"></td></tr>';
+print '<input name="tel" id="phone" class="maxwidth150 widthcentpercentminusx" value="'.(GETPOSTISSET('tel') ? GETPOST('tel', 'alpha') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_PHONE) ? $conf->global->MAIN_INFO_ACCOUNTANT_PHONE : '')).'"></td></tr>';
 print '</td></tr>'."\n";
 
 print '<tr class="oddeven"><td><label for="fax">'.$langs->trans("Fax").'</label></td><td>';
 print img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'paddingright');
-print '<input name="fax" id="fax" value="'.(GETPOSTISSET('fax') ? GETPOST('fax', 'alpha') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_FAX) ? $conf->global->MAIN_INFO_ACCOUNTANT_FAX : '')).'"></td></tr>';
+print '<input name="fax" id="fax" class="maxwidth150 widthcentpercentminusx" value="'.(GETPOSTISSET('fax') ? GETPOST('fax', 'alpha') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_FAX) ? $conf->global->MAIN_INFO_ACCOUNTANT_FAX : '')).'"></td></tr>';
 print '</td></tr>'."\n";
 
 print '<tr class="oddeven"><td><label for="email">'.$langs->trans("EMail").'</label></td><td>';
 print img_picto('', 'object_email', '', false, 0, 0, '', 'paddingright');
-print '<input name="mail" id="email" class="minwidth200" value="'.(GETPOSTISSET('mail') ? GETPOST('mail', 'alpha') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_MAIL) ? $conf->global->MAIN_INFO_ACCOUNTANT_MAIL : '')).'"></td></tr>';
+print '<input name="mail" id="email" class="maxwidth150 widthcentpercentminusx" value="'.(GETPOSTISSET('mail') ? GETPOST('mail', 'alpha') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_MAIL) ? $conf->global->MAIN_INFO_ACCOUNTANT_MAIL : '')).'"></td></tr>';
 print '</td></tr>'."\n";
 
 // Web
 print '<tr class="oddeven"><td><label for="web">'.$langs->trans("Web").'</label></td><td>';
 print img_picto('', 'globe', '', false, 0, 0, '', 'paddingright');
-print '<input name="web" id="web" class="minwidth300" value="'.(GETPOSTISSET('web') ? GETPOST('web', 'alpha') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_WEB) ? $conf->global->MAIN_INFO_ACCOUNTANT_WEB : '')).'"></td></tr>';
+print '<input name="web" id="web" class="maxwidth300 widthcentpercentminusx" value="'.(GETPOSTISSET('web') ? GETPOST('web', 'alpha') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_WEB) ? $conf->global->MAIN_INFO_ACCOUNTANT_WEB : '')).'"></td></tr>';
 print '</td></tr>'."\n";
 
 // Code

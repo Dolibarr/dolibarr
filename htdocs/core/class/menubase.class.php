@@ -352,10 +352,10 @@ class Menubase
 		$sql .= " type='".$this->db->escape($this->type)."',";
 		$sql .= " mainmenu='".$this->db->escape($this->mainmenu)."',";
 		$sql .= " leftmenu='".$this->db->escape($this->leftmenu)."',";
-		$sql .= " fk_menu=".$this->fk_menu.",";
+		$sql .= " fk_menu=".((int) $this->fk_menu).",";
 		$sql .= " fk_mainmenu=".($this->fk_mainmenu ? "'".$this->db->escape($this->fk_mainmenu)."'" : "null").",";
 		$sql .= " fk_leftmenu=".($this->fk_leftmenu ? "'".$this->db->escape($this->fk_leftmenu)."'" : "null").",";
-		$sql .= " position=".($this->position > 0 ? $this->position : 0).",";
+		$sql .= " position=".($this->position > 0 ? ((int) $this->position) : 0).",";
 		$sql .= " url='".$this->db->escape($this->url)."',";
 		$sql .= " target='".$this->db->escape($this->target)."',";
 		$sql .= " titre='".$this->db->escape($this->title)."',";

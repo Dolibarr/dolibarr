@@ -233,8 +233,8 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'mymodule';
-	//$permission = $user->rights->mymodule->myobject->write;
-	$permission = 1;
+	//$permissiontoadd = $user->rights->mymodule->myobject->write;
+	$permissiontoadd = 1;
 	//$permtoedit = $user->rights->mymodule->myobject->write;
 	$permtoedit = 1;
 	$param = '&id='.$object->id;

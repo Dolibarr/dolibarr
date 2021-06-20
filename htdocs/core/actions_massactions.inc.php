@@ -712,7 +712,7 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 
 				for ($i = 0; $i < $num; $i++) {
 					$desc = ($lines[$i]->desc ? $lines[$i]->desc : '');
-					// If we build one invoice for several order, we must put the invoice of order on the line
+					// If we build one invoice for several orders, we must put the ref of order on the invoice line
 					if (!empty($createbills_onebythird)) {
 						$desc = dol_concatdesc($desc, $langs->trans("Order").' '.$cmd->ref.' - '.dol_print_date($cmd->date, 'day'));
 					}
@@ -771,6 +771,8 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 							$lines[$i]->fetch_optionals();
 							$array_options = $lines[$i]->array_options;
 						}
+
+						$objecttmp->context['createfromclone'];
 
 						$result = $objecttmp->addline(
 							$desc,
@@ -1051,9 +1053,9 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 		$newlang = GETPOST('lang_id', 'aZ09');
 	}
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
-		$newlang = $objecttmp->thirdparty->default_lang;
-	}
+	//elseif ($conf->global->MAIN_MULTILANGS && empty($newlang) && is_object($objecttmp->thirdparty)) {		// On massaction, we can have several values for $objecttmp->thirdparty
+	//	$newlang = $objecttmp->thirdparty->default_lang;
+	//}
 	if (!empty($newlang)) {
 		$outputlangs = new Translate("", $conf);
 		$outputlangs->setDefaultLang($newlang);

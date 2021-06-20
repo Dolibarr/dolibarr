@@ -478,7 +478,7 @@ if (($action == "addline" || $action == "freezone") && $placeid == 0) {
 		if ($placeid < 0) {
 			dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
 		}
-		$sql = "UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' where rowid=".$placeid;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' where rowid = ".((int) $placeid);
 		$db->query($sql);
 	}
 }
@@ -1000,7 +1000,7 @@ function TakeposPrinting(id){
 
 function TakeposConnector(id){
 	console.log("TakeposConnector" + id);
-	$.get("ajax/ajax.php?action=printinvoiceticket&term=<?php echo $_SESSION["takeposterminal"]; ?>&id="+id, function(data, status){
+	$.get("<?php echo DOL_URL_ROOT; ?>/takepos/ajax/ajax.php?action=printinvoiceticket&term=<?php echo urlencode($_SESSION["takeposterminal"]); ?>&id="+id+"&token=<?php echo currentToken(); ?>", function(data, status) {
 		$.ajax({
 			type: "POST",
 			url: '<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>/printer/index.php',
@@ -1013,7 +1013,8 @@ function DolibarrTakeposPrinting(id) {
 	console.log("DolibarrTakeposPrinting Printing invoice ticket " + id)
 	$.ajax({
 		type: "GET",
-		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=printinvoiceticket&term='.$_SESSION["takeposterminal"].'&id='; ?>" + id,
+		data: { token: '<?php echo currentToken(); ?>' },
+		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=printinvoiceticket&term='.urlencode($_SESSION["takeposterminal"]).'&id='; ?>" + id,
 	});
 }
 

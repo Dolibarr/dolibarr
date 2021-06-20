@@ -592,7 +592,7 @@ if ($object->id > 0) {
 		$sql .= " WHERE p.fk_soc =".$object->id;
 		$sql .= " AND p.entity IN (".getEntity('supplier_proposal').")";
 		$sql .= " ORDER BY p.date_valid DESC";
-		$sql .= " ".$db->plimit($MAXLIST);
+		$sql .= $db->plimit($MAXLIST);
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -694,7 +694,8 @@ if ($object->id > 0) {
 		$sql .= " WHERE p.fk_soc =".$object->id;
 		$sql .= " AND p.entity IN (".getEntity('commande_fournisseur').")";
 		$sql .= " ORDER BY p.date_commande DESC";
-		$sql .= " ".$db->plimit($MAXLIST);
+		$sql .= $db->plimit($MAXLIST);
+
 		$resql = $db->query($sql);
 		if ($resql) {
 			$i = 0;

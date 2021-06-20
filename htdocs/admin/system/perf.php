@@ -172,7 +172,8 @@ jQuery(document).ready(function() {
   var compphpstring;
   getphpurl = $.ajax({
     type: "GET",
-    url: \''.DOL_URL_ROOT.'/index.php\',
+	data: { token: \''.currentToken().'\' },
+    url: \''.DOL_URL_ROOT.'/public/notice.php\',
     cache: false,
     /* async: false, */
     /* crossDomain: true,*/
@@ -211,10 +212,11 @@ jQuery(document).ready(function() {
   var compcssstring;
   getcssurl = $.ajax({
     type: "GET",
+	data: { token: \'notrequired\' },
     url: \''.DOL_URL_ROOT.'/includes/jquery/css/base/jquery-ui.css\',
     cache: false,
     /* async: false, */
-    /*crossDomain: true, */
+    /* crossDomain: true, */
     success: function () {
       	cachecssstring=getcssurl.getResponseHeader(\'Cache-Control\');
       	/* alert(\'css:\'+getcssurl.getAllResponseHeaders()); */
@@ -250,10 +252,11 @@ jQuery(document).ready(function() {
   var compcssphpstring;
   getcssphpurl = $.ajax({
     type: "GET",
+	data: { token: \''.currentToken().'\' },
     url: \''.DOL_URL_ROOT.'/theme/eldy/style.css.php\',
     cache: false,
     /* async: false, */
-    /*crossDomain: true,*/
+    /* crossDomain: true,*/
     success: function () {
       	cachecssphpstring=getcssphpurl.getResponseHeader(\'Cache-Control\');
       	/* alert(\'cssphp:\'+getcssphpurl.getAllResponseHeaders()); */
@@ -289,10 +292,11 @@ jQuery(document).ready(function() {
   var compimgstring;
   getimgurl = $.ajax({
     type: "GET",
+	data: { token: \'notrequired\' },
     url: \''.DOL_URL_ROOT.'/theme/eldy/img/help.png\',
     cache: false,
     /* async: false, */
-    /*crossDomain: true,*/
+    /* crossDomain: true,*/
     success: function () {
       	cacheimgstring=getimgurl.getResponseHeader(\'Cache-Control\');
       	/* alert(\'img:\'+getimgurl.getAllResponseHeaders()); */
@@ -328,6 +332,7 @@ jQuery(document).ready(function() {
   var compjsstring;
   getjsurl = $.ajax({
     type: "GET",
+	data: { token: \'notrequired\' },
     url: \''.DOL_URL_ROOT.'/core/js/lib_rare.js\',
     cache: false,
     /* async: false, */
@@ -367,6 +372,7 @@ jQuery(document).ready(function() {
   var compjsphpstring;
   getjsphpurl = $.ajax({
     type: "GET",
+	data: { token: \''.currentToken().'\' },
     url: \''.DOL_URL_ROOT.'/core/js/lib_head.js.php\',
     cache: false,
     /* async: false, */

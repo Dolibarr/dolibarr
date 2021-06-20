@@ -71,7 +71,7 @@ class BlockedLogAuthority
 
 		$this->blockchain = '';
 
-		if (is_array($bocks)) {
+		if (is_array($blocks)) {
 			foreach ($blocks as &$b) {
 				$this->blockchain .= $b->signature;
 			}
@@ -299,16 +299,18 @@ class BlockedLogAuthority
 
 		$signature = $block_static->getSignature();
 
-		foreach ($blocks as &$block) {
-			$url = $conf->global->BLOCKEDLOG_AUTHORITY_URL.'/blockedlog/ajax/authority.php?s='.$signature.'&b='.$block->signature;
+		if (is_array($blocks)) {
+			foreach ($blocks as &$block) {
+				$url = $conf->global->BLOCKEDLOG_AUTHORITY_URL.'/blockedlog/ajax/authority.php?s='.$signature.'&b='.$block->signature;
 
-			$res = file_get_contents($url);
-			echo $block->signature.' '.$url.' '.$res.'<br>';
-			if ($res === 'blockalreadyadded' || $res === 'blockadded') {
-				$block->setCertified();
-			} else {
-				$this->error = $langs->trans('ImpossibleToContactAuthority ', $url);
-				return -1;
+				$res = getURLContent($url);
+				echo $block->signature.' '.$url.' '.$res.'<br>';
+				if ($res === 'blockalreadyadded' || $res === 'blockadded') {
+					$block->setCertified();
+				} else {
+					$this->error = $langs->trans('ImpossibleToContactAuthority ', $url);
+					return -1;
+				}
 			}
 		}
 

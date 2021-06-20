@@ -726,7 +726,7 @@ if ($action == 'create' || $action == 'presend') {
 
 	// Subject
 	print '<tr><td><label for="subject"><span class="fieldrequired">'.$langs->trans("Subject").'</span></label></td><td>';
-	print '<input class="text" size="50" id="subject" name="subject" value="'.dol_escape_htmltag(GETPOSTISSET('subject') ? GETPOST('subject', 'alpha') : $object->subject).'" />';
+	print '<input class="text minwidth200" id="subject" name="subject" value="'.dol_escape_htmltag(GETPOSTISSET('subject') ? GETPOST('subject', 'alpha') : $object->subject).'" />';
 	print '</td></tr>';
 
 	// Other attributes
@@ -1329,10 +1329,14 @@ if ($action == 'create' || $action == 'presend') {
 			$newlang = '';
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 				$newlang = GETPOST('lang_id', 'aZ09');
-			}
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && is_object($object->thirdparty)) {
+			} elseif ($conf->global->MAIN_MULTILANGS && empty($newlang) && is_object($object->thirdparty)) {
 				$newlang = $object->thirdparty->default_lang;
 			}
+			if (!empty($newlang)) {
+				$outputlangs = new Translate("", $conf);
+				$outputlangs->setDefaultLang($newlang);
+			}
+
 			$arrayoffamiliestoexclude = array('objectamount');
 
 			$action = 'add_message'; // action to use to post the message
@@ -1341,7 +1345,7 @@ if ($action == 'create' || $action == 'presend') {
 			// Substitution array
 			$morehtmlright = '';
 			$help = "";
-			$substitutionarray = getCommonSubstitutionArray($newlang, 0, $arrayoffamiliestoexclude, $object);
+			$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, $arrayoffamiliestoexclude, $object);
 			if ($object->fk_soc > 0) {
 				$substitutionarray['__THIRDPARTY_NAME__'] = $object->thirdparty->name;
 			}

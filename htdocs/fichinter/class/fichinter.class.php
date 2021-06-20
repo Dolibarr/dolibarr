@@ -379,8 +379,8 @@ class Fichinter extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter SET ";
 		$sql .= "description  = '".$this->db->escape($this->description)."'";
-		$sql .= ", duree = ".$this->duration;
-		$sql .= ", fk_projet = ".$this->fk_project;
+		$sql .= ", duree = ".((int) $this->duration);
+		$sql .= ", fk_projet = ".((int) $this->fk_project);
 		$sql .= ", note_private = ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
 		$sql .= ", note_public = ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : "null");
 		$sql .= ", fk_user_modif = ".$user->id;
@@ -1499,8 +1499,8 @@ class FichinterLigne extends CommonObjectLine
 		$sql .= " VALUES (".$this->fk_fichinter.",";
 		$sql .= " '".$this->db->escape($this->desc)."',";
 		$sql .= " '".$this->db->idate($this->datei)."',";
-		$sql .= " ".$this->duration.",";
-		$sql .= ' '.$rangToUse;
+		$sql .= " ".((int) $this->duration).",";
+		$sql .= ' '.((int) $rangToUse);
 		$sql .= ')';
 
 		dol_syslog("FichinterLigne::insert", LOG_DEBUG);

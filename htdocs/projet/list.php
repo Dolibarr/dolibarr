@@ -25,7 +25,7 @@
 
 /**
  *	\file       htdocs/projet/list.php
- *	\ingroup    projet
+ *	\ingroup    project
  *	\brief      Page to list projects
  */
 
@@ -333,6 +333,7 @@ $distinct = 'DISTINCT'; // We add distinct until we are added a protection to be
 $sql = "SELECT ".$distinct." p.rowid as id, p.ref, p.title, p.fk_statut as status, p.fk_opp_status, p.public, p.fk_user_creat,";
 $sql .= " p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, (p.opp_amount*p.opp_percent/100) as opp_weighted_amount, p.tms as date_update, p.budget_amount,";
 $sql .= " p.usage_opportunity, p.usage_task, p.usage_bill_time, p.usage_organize_event,";
+$sql .= " p.email_msgid,";
 $sql .= " accept_conference_suggestions, accept_booth_suggestions, price_registration, price_booth,";
 $sql .= " s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.code_client,";
 $sql .= " country.code as country_code,";
@@ -402,12 +403,12 @@ if ($search_status >= 0) {
 	if ($search_status == 99) {
 		$sql .= " AND p.fk_statut <> 2";
 	} else {
-		$sql .= " AND p.fk_statut = ".$db->escape($search_status);
+		$sql .= " AND p.fk_statut = ".((int) $search_status);
 	}
 }
 if ($search_opp_status) {
 	if (is_numeric($search_opp_status) && $search_opp_status > 0) {
-		$sql .= " AND p.fk_opp_status = ".$db->escape($search_opp_status);
+		$sql .= " AND p.fk_opp_status = ".((int) $search_opp_status);
 	}
 	if ($search_opp_status == 'all') {
 		$sql .= " AND (p.fk_opp_status IS NOT NULL AND p.fk_opp_status <> -1)";
@@ -423,7 +424,7 @@ if ($search_opp_status) {
 	}
 }
 if ($search_public != '') {
-	$sql .= " AND p.public = ".$db->escape($search_public);
+	$sql .= " AND p.public = ".((int) $search_public);
 }
 // For external user, no check is done on company permission because readability is managed by public status of project and assignement.
 //if ($socid > 0) $sql.= " AND s.rowid = ".((int) $socid);
@@ -861,6 +862,11 @@ if (!empty($arrayfields['p.tms']['checked'])) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
+if (!empty($arrayfields['p.email_msgid']['checked'])) {
+	// Email msg id
+	print '<td class="liste_titre">';
+	print '</td>';
+}
 if (!empty($arrayfields['p.fk_statut']['checked'])) {
 	print '<td class="liste_titre nowrap right">';
 	$arrayofstatus = array();
@@ -952,6 +958,9 @@ if (!empty($arrayfields['p.datec']['checked'])) {
 }
 if (!empty($arrayfields['p.tms']['checked'])) {
 	print_liste_field_titre($arrayfields['p.tms']['label'], $_SERVER["PHP_SELF"], "p.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+}
+if (!empty($arrayfields['p.email_msgid']['checked'])) {
+	print_liste_field_titre($arrayfields['p.email_msgid']['label'], $_SERVER["PHP_SELF"], "p.email_msgid", "", $param, '', $sortfield, $sortorder, 'center ');
 }
 if (!empty($arrayfields['p.fk_statut']['checked'])) {
 	print_liste_field_titre($arrayfields['p.fk_statut']['label'], $_SERVER["PHP_SELF"], "p.fk_statut", "", $param, '', $sortfield, $sortorder, 'right ');
@@ -1293,6 +1302,13 @@ while ($i < min($num, $limit)) {
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
+		}
+		// Email MsgID
+		if (!empty($arrayfields['p.email_msgid']['checked'])) {
+			print '<td class="center">';
+			print $obj->email_msgid;
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
 		}
 		// Status
 		if (!empty($arrayfields['p.fk_statut']['checked'])) {

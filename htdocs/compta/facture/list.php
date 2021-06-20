@@ -126,12 +126,18 @@ $search_date_valid_endmonth = GETPOST('search_date_valid_endmonth', 'int');
 $search_date_valid_endyear = GETPOST('search_date_valid_endyear', 'int');
 $search_date_valid_start = dol_mktime(0, 0, 0, $search_date_valid_startmonth, $search_date_valid_startday, $search_date_valid_startyear);	// Use tzserver
 $search_date_valid_end = dol_mktime(23, 59, 59, $search_date_valid_endmonth, $search_date_valid_endday, $search_date_valid_endyear);
-$search_datelimit_start = dol_mktime(0, 0, 0, GETPOST('search_datelimit_startmonth', 'int'), GETPOST('search_datelimit_startday', 'int'), GETPOST('search_datelimit_startyear', 'int'));
-$search_datelimit_end = dol_mktime(23, 59, 59, GETPOST('search_datelimit_endmonth', 'int'), GETPOST('search_datelimit_endday', 'int'), GETPOST('search_datelimit_endyear', 'int'));
+$search_datelimit_startday = GETPOST('search_datelimit_startday', 'int');
+$search_datelimit_startmonth = GETPOST('search_datelimit_startmonth', 'int');
+$search_datelimit_startyear = GETPOST('search_datelimit_startyear', 'int');
+$search_datelimit_endday = GETPOST('search_datelimit_endday', 'int');
+$search_datelimit_endmonth = GETPOST('search_datelimit_endmonth', 'int');
+$search_datelimit_endyear = GETPOST('search_datelimit_endyear', 'int');
+$search_datelimit_start = dol_mktime(0, 0, 0, $search_datelimit_startmonth, $search_datelimit_startday, $search_datelimit_startyear);
+$search_datelimit_end = dol_mktime(23, 59, 59, $search_datelimit_endmonth, $search_datelimit_endday, $search_datelimit_endyear);
 $search_categ_cus = GETPOST("search_categ_cus", 'int');
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
-
+$optioncss = GETPOST('optioncss', 'alpha');
 
 
 $option = GETPOST('search_option');
@@ -240,7 +246,7 @@ $arrayfields = array(
 	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous || empty($conf->global->DISPLAY_MARGIN_RATES) ? 0 : 1)),
 	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous || empty($conf->global->DISPLAY_MARK_RATES) ? 0 : 1)),
 	'f.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
-	'f.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
+	'f.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>502),
 	'f.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'position'=>510, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PUBLIC_NOTES))),
 	'f.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'position'=>511, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PRIVATE_NOTES))),
 	'f.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
@@ -262,7 +268,7 @@ foreach ($object->fields as $key => $val) {
 				'checked'=>(($visible < 0) ? 0 : 1),
 				'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
 				'position'=>$val['position'],
-				'help'=>$val['help']
+				'help' => empty($val['help']) ? '' : $val['help'],
 			);
 		}
 	}
@@ -344,6 +350,12 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_date_valid_endyear = '';
 	$search_date_valid_start = '';
 	$search_date_valid_end = '';
+	$search_datelimit_startday = '';
+	$search_datelimit_startmonth = '';
+	$search_datelimit_startyear = '';
+	$search_datelimit_endday = '';
+	$search_datelimit_endmonth = '';
+	$search_datelimit_endyear = '';
 	$search_datelimit_start = '';
 	$search_datelimit_end = '';
 	$option = '';
@@ -472,7 +484,7 @@ $sql = 'SELECT';
 if ($sall || $search_product_category > 0 || $search_user > 0) {
 	$sql = 'SELECT DISTINCT';
 }
-$sql .= ' f.rowid as id, f.ref, f.ref_client, f.type, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.fk_cond_reglement, f.total_ht, f.total_tva, f.total_ttc,';
+$sql .= ' f.rowid as id, f.ref, f.ref_client, f.fk_soc, f.type, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.fk_cond_reglement, f.total_ht, f.total_tva, f.total_ttc,';
 $sql .= ' f.localtax1 as total_localtax1, f.localtax2 as total_localtax2,';
 $sql .= ' f.fk_user_author,';
 $sql .= ' f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva as multicurrency_total_vat, f.multicurrency_total_ttc,';
@@ -546,7 +558,7 @@ if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 }
 if ($search_product_category > 0) {
-	$sql .= " AND cp.fk_categorie = ".$db->escape($search_product_category);
+	$sql .= " AND cp.fk_categorie = ".((int) $search_product_category);
 }
 if ($socid > 0) {
 	$sql .= ' AND s.rowid = '.((int) $socid);
@@ -634,7 +646,7 @@ if ($search_login) {
 	$sql .= natural_search(array('u.login', 'u.firstname', 'u.lastname'), $search_login);
 }
 if ($search_categ_cus > 0) {
-	$sql .= " AND cc.fk_categorie = ".$db->escape($search_categ_cus);
+	$sql .= " AND cc.fk_categorie = ".((int) $search_categ_cus);
 }
 if ($search_categ_cus == -2) {
 	$sql .= " AND cc.fk_categorie IS NULL";
@@ -659,10 +671,10 @@ if ($search_status != '-1' && $search_status != '') {
 }
 
 if ($search_paymentmode > 0) {
-	$sql .= " AND f.fk_mode_reglement = ".$db->escape($search_paymentmode);
+	$sql .= " AND f.fk_mode_reglement = ".((int) $search_paymentmode);
 }
 if ($search_paymentterms > 0) {
-	$sql .= " AND f.fk_cond_reglement = ".$db->escape($search_paymentterms);
+	$sql .= " AND f.fk_cond_reglement = ".((int) $search_paymentterms);
 }
 if ($search_module_source) {
 	$sql .= natural_search("f.module_source", $search_module_source);
@@ -692,10 +704,10 @@ if ($option == 'late') {
 	$sql .= " AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->client->warning_delay)."'";
 }
 if ($search_sale > 0) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".(int) $search_sale;
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $search_sale);
 }
 if ($search_user > 0) {
-	$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='facture' AND tc.source='internal' AND ec.element_id = f.rowid AND ec.fk_socpeople = ".$search_user;
+	$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='facture' AND tc.source='internal' AND ec.element_id = f.rowid AND ec.fk_socpeople = ".((int) $search_user);
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -705,7 +717,7 @@ $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // No
 $sql .= $hookmanager->resPrint;
 
 if (!$sall) {
-	$sql .= ' GROUP BY f.rowid, f.ref, ref_client, f.type, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.fk_cond_reglement, f.total_ht, f.total_tva, f.total_ttc,';
+	$sql .= ' GROUP BY f.rowid, f.ref, ref_client, f.fk_soc, f.type, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.fk_cond_reglement, f.total_ht, f.total_tva, f.total_ttc,';
 	$sql .= ' f.localtax1, f.localtax2,';
 	$sql .= ' f.datef, f.date_valid, f.date_lim_reglement, f.module_source, f.pos_source,';
 	$sql .= ' f.paye, f.fk_statut, f.close_code,';
@@ -832,11 +844,23 @@ if ($resql) {
 	if ($search_date_valid_endyear) {
 		$param .= '&search_date_valid_endyear='.urlencode($search_date_valid_endyear);
 	}
-	if ($search_datelimit_start) {
-		$param .= '&search_datelimit_start='.urlencode($search_datelimit_start);
+	if ($search_datelimit_startday)	{
+		$param .= '&search_datelimit_startday='.urlencode($search_datelimit_startday);
 	}
-	if ($search_datelimit_end) {
-		$param .= '&search_datelimit_end='.urlencode($search_datelimit_end);
+	if ($search_datelimit_startmonth) {
+		$param .= '&search_datelimit_startmonth='.urlencode($search_datelimit_startmonth);
+	}
+	if ($search_datelimit_startyear) {
+		$param .= '&search_datelimit_startyear='.urlencode($search_datelimit_startyear);
+	}
+	if ($search_datelimit_endday) {
+		$param .= '&search_datelimit_endday='.urlencode($search_datelimit_endday);
+	}
+	if ($search_datelimit_endmonth) {
+		$param .= '&search_datelimit_endmonth='.urlencode($search_datelimit_endmonth);
+	}
+	if ($search_datelimit_endyear) {
+		$param .= '&search_datelimit_endyear='.urlencode($search_datelimit_endyear);
 	}
 	if ($search_ref) {
 		$param .= '&search_ref='.urlencode($search_ref);
@@ -1025,7 +1049,7 @@ if ($resql) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('IncludingProductWithTag');
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
-		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
+		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'maxwidth250', 1);
 		$moreforfilter .= '</div>';
 	}
 	if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
@@ -1501,6 +1525,10 @@ if ($resql) {
 	if ($num > 0) {
 		$i = 0;
 		$totalarray = array();
+		$totalarray['nbfield'] = 0;
+		$totalarray['val'] = array();
+		$totalarray['val']['f.total_ht'] = 0;
+		$totalarray['val']['f.total_ttc'] = 0;
 		while ($i < min($num, $limit)) {
 			$obj = $db->fetch_object($resql);
 

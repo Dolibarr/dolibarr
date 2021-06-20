@@ -473,7 +473,7 @@ if ($search_user > 0) {
 $sql .= ' WHERE c.fk_soc = s.rowid';
 $sql .= ' AND c.entity IN ('.getEntity('commande').')';
 if ($search_product_category > 0) {
-	$sql .= " AND cp.fk_categorie = ".$search_product_category;
+	$sql .= " AND cp.fk_categorie = ".((int) $search_product_category);
 }
 if ($socid > 0) {
 	$sql .= ' AND s.rowid = '.((int) $socid);

@@ -58,6 +58,7 @@ $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_id = GETPOST("search_id", 'alpha');
 $search_ref = GETPOST("search_ref", 'alpha');
 $search_ref_supplier = GETPOST("search_ref_supplier", 'alpha');
 $search_barcode = GETPOST("search_barcode", 'alpha');
@@ -193,9 +194,10 @@ $isInEEC = isInEEC($mysoc);
 
 $alias_product_perentity = empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "p" : "ppe";
 
-// Definition of fields for lists
+// Definition of array of fields for columns
 $arrayfields = array(
-	'p.ref'=>array('label'=>"Ref", 'checked'=>1),
+	'p.rowid'=>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'noteditable'=>1, 'notnull'=> 1, 'index'=>1, 'position'=>1, 'comment'=>'Id', 'css'=>'left'),
+	'p.ref'=>array('label'=>"Ref", 'checked'=>1, 'position'=>10),
 	//'pfp.ref_fourn'=>array('label'=>$langs->trans("RefSupplier"), 'checked'=>1, 'enabled'=>(! empty($conf->barcode->enabled))),
 	'p.label'=>array('label'=>"Label", 'checked'=>1, 'position'=>10),
 	'p.fk_product_type'=>array('label'=>"Type", 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && !empty($conf->service->enabled)), 'position'=>11),
@@ -239,6 +241,19 @@ $arrayfields = array(
 	'p.tosell'=>array('label'=>$langs->transnoentitiesnoconv("Status").' ('.$langs->transnoentitiesnoconv("Sell").')', 'checked'=>1, 'position'=>1000),
 	'p.tobuy'=>array('label'=>$langs->transnoentitiesnoconv("Status").' ('.$langs->transnoentitiesnoconv("Buy").')', 'checked'=>1, 'position'=>1000)
 );
+/*foreach ($object->fields as $key => $val) {
+	// If $val['visible']==0, then we never show the field
+	if (!empty($val['visible'])) {
+		$visible = dol_eval($val['visible'], 1);
+		$arrayfields['p.'.$key] = array(
+			'label'=>$val['label'],
+			'checked'=>(($visible < 0) ? 0 : 1),
+			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
+			'position'=>$val['position']
+		);
+	}
+}*/
+
 
 // MultiPrices
 if ($conf->global->PRODUIT_MULTIPRICES) {
@@ -300,6 +315,7 @@ if (empty($reshook)) {
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$sall = "";
+		$search_id = '';
 		$search_ref = "";
 		$search_ref_supplier = "";
 		$search_label = "";
@@ -426,6 +442,9 @@ if (!empty($conf->variants->enabled) && (!empty($conf->global->PRODUIT_ATTRIBUTE
 	$sql .= " AND pac.rowid IS NULL";
 }
 
+if ($search_id) {
+	$sql .= natural_search('p.rowid', $search_id, 1);
+}
 if ($search_ref) {
 	$sql .= natural_search('p.ref', $search_ref);
 }
@@ -451,7 +470,7 @@ if (dol_strlen($canvas) > 0) {
 	$sql .= " AND p.canvas = '".$db->escape($canvas)."'";
 }
 if ($catid > 0) {
-	$sql .= " AND cp.fk_categorie = ".$catid;
+	$sql .= " AND cp.fk_categorie = ".((int) $catid);
 }
 if ($catid == -2) {
 	$sql .= " AND cp.fk_categorie IS NULL";
@@ -801,6 +820,7 @@ if ($resql) {
 	}
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+
 	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 	if ($massactionbutton) {
 		$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
@@ -811,6 +831,11 @@ if ($resql) {
 
 	// Lines with input filters
 	print '<tr class="liste_titre_filter">';
+	if (!empty($arrayfields['p.rowid']['checked'])) {
+		print '<td class="liste_titre left">';
+		print '<input class="flat" type="text" name="search_id" size="4" value="'.dol_escape_htmltag($search_id).'">';
+		print '</td>';
+	}
 	if (!empty($arrayfields['p.ref']['checked'])) {
 		print '<td class="liste_titre left">';
 		print '<input class="flat" type="text" name="search_ref" size="8" value="'.dol_escape_htmltag($search_ref).'">';
@@ -1058,6 +1083,9 @@ if ($resql) {
 	print '</tr>';
 
 	print '<tr class="liste_titre">';
+	if (!empty($arrayfields['p.rowid']['checked'])) {
+		print_liste_field_titre($arrayfields['p.rowid']['label'], $_SERVER["PHP_SELF"], "p.rowid", "", $param, "", $sortfield, $sortorder);
+	}
 	if (!empty($arrayfields['p.ref']['checked'])) {
 		print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"], "p.ref", "", $param, "", $sortfield, $sortorder);
 	}
@@ -1236,8 +1264,8 @@ if ($resql) {
 
 		$product_static->id = $obj->rowid;
 		$product_static->ref = $obj->ref;
-		$product_static->ref_fourn = $obj->ref_supplier; // deprecated
-		$product_static->ref_supplier = $obj->ref_supplier;
+		$product_static->ref_fourn = empty($obj->ref_supplier) ? '' : $obj->ref_supplier; // deprecated
+		$product_static->ref_supplier = empty($obj->ref_supplier) ? '' : $obj->ref_supplier;
 		$product_static->label = $obj->label;
 		$product_static->finished = $obj->finished;
 		$product_static->type = $obj->fk_product_type;
@@ -1280,6 +1308,16 @@ if ($resql) {
 		}
 
 		print '<tr class="oddeven">';
+
+		// Ref
+		if (!empty($arrayfields['p.rowid']['checked'])) {
+			print '<td class="nowraponall">';
+			print $product_static->id;
+			print "</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
 
 		// Ref
 		if (!empty($arrayfields['p.ref']['checked'])) {

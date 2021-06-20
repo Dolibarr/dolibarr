@@ -1699,10 +1699,10 @@ if ($action == 'create') {
 			//if ($conf->delivery_note->enabled) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."delivery as l ON l.fk_reception = e.rowid LEFT JOIN ".MAIN_DB_PREFIX."deliverydet as ld ON ld.fk_delivery = l.rowid  AND obj.rowid = ld.fk_origin_line";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON obj.fk_product = p.rowid";
 			$sql .= " WHERE e.entity IN (".getEntity('reception').")";
-			$sql .= " AND obj.fk_commande = ".$origin_id;
+			$sql .= " AND obj.fk_commande = ".((int) $origin_id);
 			$sql .= " AND obj.rowid = ed.fk_commandefourndet";
 			$sql .= " AND ed.fk_reception = e.rowid";
-			$sql .= " AND ed.fk_reception !=".$object->id;
+			$sql .= " AND ed.fk_reception !=".((int) $object->id);
 			//if ($filter) $sql.= $filter;
 			$sql .= " ORDER BY obj.fk_product";
 

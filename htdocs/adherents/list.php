@@ -473,28 +473,28 @@ llxHeader('', $langs->trans("Member"), 'EN:Module_Foundations|FR:Module_Adh&eacu
 
 $titre = $langs->trans("MembersList");
 if (GETPOSTISSET("search_status")) {
-	if ($search_status == '-1,1') {
+	if ($search_status == '-1,1') { // TODO : check this test as -1 == Adherent::STATUS_DRAFT and -2 == Adherent::STATUS_EXLCUDED
 		$titre = $langs->trans("MembersListQualified");
 	}
-	if ($search_status == '-1') {
+	if ($search_status == Adherent::STATUS_DRAFT) {
 		$titre = $langs->trans("MembersListToValid");
 	}
-	if ($search_status == '1' && $filter == '') {
+	if ($search_status == Adherent::STATUS_VALIDATED && $filter == '') {
 		$titre = $langs->trans("MembersValidated");
 	}
-	if ($search_status == '1' && $filter == 'withoutsubscription') {
+	if ($search_status == Adherent::STATUS_VALIDATED && $filter == 'withoutsubscription') {
 		$titre = $langs->trans("MembersWithSubscriptionToReceive");
 	}
-	if ($search_status == '1' && $filter == 'uptodate') {
+	if ($search_status == Adherent::STATUS_VALIDATED && $filter == 'uptodate') {
 		$titre = $langs->trans("MembersListUpToDate");
 	}
-	if ($search_status == '1' && $filter == 'outofdate') {
+	if ($search_status == Adherent::STATUS_VALIDATED && $filter == 'outofdate') {
 		$titre = $langs->trans("MembersListNotUpToDate");
 	}
-	if ($search_status == '0') {
+	if ($search_status == Adherent::STATUS_RESILIATED) {
 		$titre = $langs->trans("MembersListResiliated");
 	}
-	if ($search_status == '-2') {
+	if ($search_status == Adherent::STATUS_EXCLUDED) {
 		$titre = $langs->trans("MembersListExcluded");
 	}
 } elseif ($action == 'search') {
@@ -571,7 +571,7 @@ if ($search_phone_mobile != '') {
 if ($search_filter && $search_filter != '-1') {
 	$param .= "&search_filter=".urlencode($search_filter);
 }
-if ($search_status != "" && $search_status != '-1') {
+if ($search_status != "" && $search_status != Adherent::STATUS_DRAFT) {
 	$param .= "&search_status=".urlencode($search_status);
 }
 if ($search_type > 0) {
@@ -796,10 +796,10 @@ if (!empty($arrayfields['d.tms']['checked'])) {
 if (!empty($arrayfields['d.statut']['checked'])) {
 	print '<td class="liste_titre right maxwidthonsmartphone">';
 	$liststatus = array(
-		'-1'=>$langs->trans("Draft"),
-		'1'=>$langs->trans("Validated"),
-		'0'=>$langs->trans("MemberStatusResiliatedShort"),
-		'-2'=>$langs->trans("MemberStatusExcludedShort")
+		Adherent::STATUS_DRAFT => $langs->trans("Draft"),
+		Adherent::STATUS_VALIDATED => $langs->trans("Validated"),
+		Adherent::STATUS_RESILIATED => $langs->trans("MemberStatusResiliatedShort"),
+		Adherent::STATUS_EXCLUDED =>$langs->trans("MemberStatusExcludedShort")
 	);
 	print $form->selectarray('search_status', $liststatus, $search_status, -3);
 	print '</td>';

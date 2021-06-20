@@ -432,14 +432,14 @@ class MouvementStock extends CommonObject
 			$sql .= " ".($batch ? "'".$this->db->escape($batch)."'" : "null").", ";
 			$sql .= " ".($eatby ? "'".$this->db->idate($eatby)."'" : "null").", ";
 			$sql .= " ".($sellby ? "'".$this->db->idate($sellby)."'" : "null").", ";
-			$sql .= " ".$this->entrepot_id.", ".$this->qty.", ".((int) $this->type).",";
-			$sql .= " ".$user->id.",";
+			$sql .= " ".((int) $this->entrepot_id).", ".((float) $this->qty).", ".((int) $this->type).",";
+			$sql .= " ".((int) $user->id).",";
 			$sql .= " '".$this->db->escape($label)."',";
 			$sql .= " ".($inventorycode ? "'".$this->db->escape($inventorycode)."'" : "null").",";
 			$sql .= " ".price2num($price).",";
-			$sql .= " ".$fk_origin.",";
+			$sql .= " ".((int) $fk_origin).",";
 			$sql .= " '".$this->db->escape($origintype)."',";
-			$sql .= " ".$fk_project;
+			$sql .= " ".((int) $fk_project);
 			$sql .= ")";
 
 			dol_syslog(get_class($this)."::_create insert record into stock_mouvement", LOG_DEBUG);

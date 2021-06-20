@@ -714,7 +714,7 @@ class FactureFournisseur extends CommonInvoice
 				$this->remise				= $obj->remise;
 				$this->close_code			= $obj->close_code;
 				$this->close_note			= $obj->close_note;
-				$this->tva					= $obj->tva;
+				$this->tva = $obj->tva;
 				$this->total_localtax1		= $obj->localtax1;
 				$this->total_localtax2		= $obj->localtax2;
 				$this->total_ht				= $obj->total_ht;
@@ -729,7 +729,7 @@ class FactureFournisseur extends CommonInvoice
 				$this->fk_project = $obj->fk_project;
 				$this->cond_reglement_id	= $obj->fk_cond_reglement;
 				$this->cond_reglement_code = $obj->cond_reglement_code;
-				$this->cond_reglement = $obj->cond_reglement_label;			// deprecated
+				$this->cond_reglement = $obj->cond_reglement_label; // deprecated
 				$this->cond_reglement_label = $obj->cond_reglement_label;
 				$this->cond_reglement_doc = $obj->cond_reglement_doc;
 				$this->fk_account = $obj->fk_account;
@@ -3234,8 +3234,8 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->ref_supplier		= $obj->ref_supplier;
 		$this->product_desc		= $obj->product_desc;
 
-		$this->subprice 		= $obj->pu_ht;
-		$this->pu_ht			= $obj->pu_ht;
+		$this->subprice = $obj->pu_ht;
+		$this->pu_ht = $obj->pu_ht;
 		$this->pu_ttc			= $obj->pu_ttc;
 		$this->tva_tx			= $obj->tva_tx;
 		$this->localtax1_tx		= $obj->localtax1_tx;
@@ -3245,7 +3245,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 
 		$this->qty				= $obj->qty;
 		$this->remise_percent = $obj->remise_percent;
-		$this->fk_remise_except	= $obj->fk_remise_except;
+		$this->fk_remise_except = $obj->fk_remise_except;
 		$this->tva				= $obj->total_tva; // deprecated
 		$this->total_ht = $obj->total_ht;
 		$this->total_tva			= $obj->total_tva;
@@ -3401,8 +3401,8 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql .= ", pu_ttc = ".price2num($this->pu_ttc);
 		$sql .= ", qty = ".price2num($this->qty);
 		$sql .= ", remise_percent = ".price2num($this->remise_percent);
-		if ($this->fk_remise_except) $sql.= ", fk_remise_except=".$this->fk_remise_except;
-		else $sql.= ", fk_remise_except=null";
+		if ($this->fk_remise_except) $sql .= ", fk_remise_except=".((int) $this->fk_remise_except);
+		else $sql .= ", fk_remise_except=null";
 		$sql .= ", vat_src_code = '".$this->db->escape(empty($this->vat_src_code) ? '' : $this->vat_src_code)."'";
 		$sql .= ", tva_tx = ".price2num($this->tva_tx);
 		$sql .= ", localtax1_tx = ".price2num($this->localtax1_tx);
@@ -3414,10 +3414,10 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql .= ", total_localtax1= ".price2num($this->total_localtax1);
 		$sql .= ", total_localtax2= ".price2num($this->total_localtax2);
 		$sql .= ", total_ttc = ".price2num($this->total_ttc);
-		$sql .= ", fk_product = ".$fk_product;
-		$sql .= ", product_type = ".$this->product_type;
-		$sql .= ", info_bits = ".$this->info_bits;
-		$sql .= ", fk_unit = ".$fk_unit;
+		$sql .= ", fk_product = ".((int) $fk_product);
+		$sql .= ", product_type = ".((int) $this->product_type);
+		$sql .= ", info_bits = ".((int) $this->info_bits);
+		$sql .= ", fk_unit = ".($fk_unit > 0 ? (int) $fk_unit : 'null');
 
 		// Multicurrency
 		$sql .= " , multicurrency_subprice=".price2num($this->multicurrency_subprice)."";
@@ -3425,7 +3425,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql .= " , multicurrency_total_tva=".price2num($this->multicurrency_total_tva)."";
 		$sql .= " , multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc)."";
 
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -3584,17 +3584,17 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql .= " '".$this->db->escape($this->localtax1_type)."',";
 		$sql .= " '".$this->db->escape($this->localtax2_type)."',";
 		$sql .= ' '.(!empty($this->fk_product) ? $this->fk_product : "null").',';
-		$sql .= " ".$this->product_type.",";
+		$sql .= " ".((int) $this->product_type).",";
 		$sql .= " ".price2num($this->remise_percent).",";
-		$sql .= ' '.(! empty($this->fk_remise_except)?$this->fk_remise_except:"null").',';
+		$sql .= ' '.(! empty($this->fk_remise_except) ? ((int) $this->fk_remise_except) : "null").',';
 		$sql .= " ".price2num($this->subprice).",";
 		$sql .= " ".(!empty($this->qty) ?price2num($this->total_ttc / $this->qty) : price2num($this->total_ttc)).",";
 		$sql .= " ".(!empty($this->date_start) ? "'".$this->db->idate($this->date_start)."'" : "null").",";
 		$sql .= " ".(!empty($this->date_end) ? "'".$this->db->idate($this->date_end)."'" : "null").",";
 		$sql .= ' '.(!empty($this->fk_code_ventilation) ? $this->fk_code_ventilation : 0).',';
-		$sql .= ' '.$this->rang.',';
-		$sql .= ' '.$this->special_code.',';
-		$sql .= " '".$this->db->escape($this->info_bits)."',";
+		$sql .= ' '.((int) $this->rang).',';
+		$sql .= ' '.((int) $this->special_code).',';
+		$sql .= " ".((int) $this->info_bits).",";
 		$sql .= " ".price2num($this->total_ht).",";
 		$sql .= " ".price2num($this->total_tva).",";
 		$sql .= " ".price2num($this->total_ttc).",";
@@ -3633,7 +3633,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 						if ($discount->fk_facture_line > 0) {
 							if (empty($noerrorifdiscountalreadylinked)) {
 								$this->error = $langs->trans("ErrorDiscountAlreadyUsed", $discount->id);
-								dol_syslog(get_class($this) . "::insert Error " . $this->error, LOG_ERR);
+								dol_syslog(get_class($this)."::insert Error ".$this->error, LOG_ERR);
 								$this->db->rollback();
 								return -3;
 							}
@@ -3641,20 +3641,20 @@ class SupplierInvoiceLine extends CommonObjectLine
 							$result = $discount->link_to_invoice($this->rowid, 0);
 							if ($result < 0) {
 								$this->error = $discount->error;
-								dol_syslog(get_class($this) . "::insert Error " . $this->error, LOG_ERR);
+								dol_syslog(get_class($this)."::insert Error ".$this->error, LOG_ERR);
 								$this->db->rollback();
 								return -3;
 							}
 						}
 					} else {
 						$this->error = $langs->trans("ErrorADiscountThatHasBeenRemovedIsIncluded");
-						dol_syslog(get_class($this) . "::insert Error " . $this->error, LOG_ERR);
+						dol_syslog(get_class($this)."::insert Error ".$this->error, LOG_ERR);
 						$this->db->rollback();
 						return -3;
 					}
 				} else {
 					$this->error = $discount->error;
-					dol_syslog(get_class($this) . "::insert Error " . $this->error, LOG_ERR);
+					dol_syslog(get_class($this)."::insert Error ".$this->error, LOG_ERR);
 					$this->db->rollback();
 					return -3;
 				}
