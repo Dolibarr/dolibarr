@@ -870,7 +870,7 @@ class FormFile
 
 					// Show share link
 					$out .= '<td class="nowrap">';
-					if ($file['share']) {
+					if (!empty($file['share'])) {
 						// Define $urlwithroot
 						$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 						$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
