@@ -280,8 +280,12 @@ class doc_generic_supplier_order_odt extends ModelePDFSuppliersOrders
 				//print "file=".$file;
 				//print "conf->societe->dir_temp=".$conf->societe->dir_temp;
 
-				dol_mkdir($conf->commande->dir_temp);
-
+				dol_mkdir($conf->fournisseur->commande->dir_temp);
+				if (!is_writable($conf->fournisseur->commande->dir_temp)) {
+					$this->error = "Failed to write in temp directory ".$conf->fournisseur->commande->dir_temp;
+					dol_syslog('Error in write_file: '.$this->error, LOG_ERR);
+					return -1;
+				}
 
 				// If CUSTOMER contact defined on order, we use it
 				$usecontact = false;

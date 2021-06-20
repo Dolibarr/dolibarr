@@ -279,7 +279,11 @@ class doc_generic_member_odt extends ModelePDFMember
 				//print "conf->adherent->dir_temp=".$conf->adherent->dir_temp;
 
 				dol_mkdir($conf->adherent->dir_temp);
-
+				if (!is_writable($conf->adherent->dir_temp)) {
+					$this->error = "Failed to write in temp directory ".$conf->adherent->dir_temp;
+					dol_syslog('Error in write_file: '.$this->error, LOG_ERR);
+					return -1;
+				}
 
 				// If CUSTOMER contact defined on member, we use it
 				$usecontact = false;

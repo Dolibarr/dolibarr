@@ -315,7 +315,11 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 				//print "conf->propal->dir_temp=".$conf->propal->dir_temp;
 
 				dol_mkdir($conf->supplier_proposal->dir_temp);
-
+				if (!is_writable($conf->supplier_proposal->dir_temp)) {
+					$this->error = "Failed to write in temp directory ".$conf->supplier_proposal->dir_temp;
+					dol_syslog('Error in write_file: '.$this->error, LOG_ERR);
+					return -1;
+				}
 
 				// If BILLING contact defined on invoice, we use it
 				$usecontact = false;

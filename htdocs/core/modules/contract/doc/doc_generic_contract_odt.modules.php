@@ -278,7 +278,11 @@ class doc_generic_contract_odt extends ModelePDFContract
 				//print "conf->contrat->dir_temp=".$conf->contrat->dir_temp;
 
 				dol_mkdir($conf->contrat->dir_temp);
-
+				if (!is_writable($conf->contrat->dir_temp)) {
+					$this->error = "Failed to write in temp directory ".$conf->contrat->dir_temp;
+					dol_syslog('Error in write_file: '.$this->error, LOG_ERR);
+					return -1;
+				}
 
 				// If CUSTOMER contact defined on contract, we use it
 				$usecontact = false;

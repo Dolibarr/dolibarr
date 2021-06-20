@@ -290,7 +290,11 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 				//print "conf->societe->dir_temp=".$conf->societe->dir_temp;
 
 				dol_mkdir($conf->expedition->dir_temp);
-
+				if (!is_writable($conf->expedition->dir_temp)) {
+					$this->error = "Failed to write in temp directory ".$conf->expedition->dir_temp;
+					dol_syslog('Error in write_file: '.$this->error, LOG_ERR);
+					return -1;
+				}
 
 				// If SHIPMENT contact defined on invoice, we use it
 				$usecontact = false;

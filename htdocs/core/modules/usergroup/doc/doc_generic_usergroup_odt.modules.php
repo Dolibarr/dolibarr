@@ -299,7 +299,11 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 				//print "conf->user->dir_temp=".$conf->user->dir_temp;
 
 				dol_mkdir($conf->user->dir_temp);
-
+				if (!is_writable($conf->user->dir_temp)) {
+					$this->error = "Failed to write in temp directory ".$conf->user->dir_temp;
+					dol_syslog('Error in write_file: '.$this->error, LOG_ERR);
+					return -1;
+				}
 
 				// If CUSTOMER contact defined on user, we use it
 				$usecontact = false;

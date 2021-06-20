@@ -291,7 +291,11 @@ class doc_generic_stock_odt extends ModelePDFStock
 				//print "conf->product->dir_temp=".$conf->product->dir_temp;
 
 				dol_mkdir($conf->product->dir_temp);
-
+				if (!is_writable($conf->product->dir_temp)) {
+					$this->error = "Failed to write in temp directory ".$conf->product->dir_temp;
+					dol_syslog('Error in write_file: '.$this->error, LOG_ERR);
+					return -1;
+				}
 
 				// If CUSTOMER contact defined on stock, we use it
 				$usecontact = false;

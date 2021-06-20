@@ -282,7 +282,11 @@ class doc_generic_reception_odt extends ModelePdfReception
 				//print "conf->societe->dir_temp=".$conf->societe->dir_temp;
 
 				dol_mkdir($conf->reception->dir_temp);
-
+				if (!is_writable($conf->reception->dir_temp)) {
+					$this->error = "Failed to write in temp directory ".$conf->reception->dir_temp;
+					dol_syslog('Error in write_file: '.$this->error, LOG_ERR);
+					return -1;
+				}
 
 				// If BILLING contact defined on invoice, we use it
 				$usecontact = false;

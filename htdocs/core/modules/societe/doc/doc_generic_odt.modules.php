@@ -266,6 +266,11 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				//exit;
 
 				dol_mkdir($conf->societe->multidir_temp[$object->entity]);
+				if (!is_writable($conf->societe->multidir_temp[$object->entity])) {
+					$this->error = "Failed to write in temp directory ".$conf->societe->multidir_temp[$object->entity];
+					dol_syslog('Error in write_file: '.$this->error, LOG_ERR);
+					return -1;
+				}
 
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';

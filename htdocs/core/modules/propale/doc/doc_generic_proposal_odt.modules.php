@@ -318,7 +318,11 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				//print "conf->propal->dir_temp=".$conf->propal->dir_temp;
 
 				dol_mkdir($conf->propal->multidir_temp[$object->entity]);
-
+				if (!is_writable($conf->propal->dir_temp)) {
+					$this->error = "Failed to write in temp directory ".$conf->propal->dir_temp;
+					dol_syslog('Error in write_file: '.$this->error, LOG_ERR);
+					return -1;
+				}
 
 				// If CUSTOMER contact defined on proposal, we use it
 				$usecontact = false;

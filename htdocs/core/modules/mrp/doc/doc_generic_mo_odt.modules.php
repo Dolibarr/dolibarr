@@ -285,7 +285,11 @@ class doc_generic_mo_odt extends ModelePDFMo
 				//print "conf->societe->dir_temp=".$conf->societe->dir_temp;
 
 				dol_mkdir($conf->mrp->dir_temp);
-
+				if (!is_writable($conf->mrp->dir_temp)) {
+					$this->error = "Failed to write in temp directory ".$conf->mrp->dir_temp;
+					dol_syslog('Error in write_file: '.$this->error, LOG_ERR);
+					return -1;
+				}
 
 				// If CUSTOMER contact defined on order, we use it
 				$usecontact = false;
@@ -342,11 +346,13 @@ class doc_generic_mo_odt extends ModelePDFMo
 					dol_syslog($e->getMessage(), LOG_INFO);
 					return -1;
 				}
+
 				// After construction $odfHandler->contentXml contains content and
 				// [!-- BEGIN row.lines --]*[!-- END row.lines --] has been replaced by
 				// [!-- BEGIN lines --]*[!-- END lines --]
 				//print html_entity_decode($odfHandler->__toString());
 				//print exit;
+				/*
 
 
 				// Make substitutions into odt of freetext
@@ -394,6 +400,7 @@ class doc_generic_mo_odt extends ModelePDFMo
 						dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
+
 				// Replace tags of lines
 				try {
 					$foundtagforlines = 1;
@@ -404,6 +411,7 @@ class doc_generic_mo_odt extends ModelePDFMo
 						$foundtagforlines = 0;
 						dol_syslog($e->getMessage(), LOG_INFO);
 					}
+
 					if ($foundtagforlines) {
 						$linenumber = 0;
 						foreach ($object->lines as $line) {
@@ -446,14 +454,14 @@ class doc_generic_mo_odt extends ModelePDFMo
 
 				$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray);
 				$reshook = $hookmanager->executeHooks('beforeODTSave', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-
+				*/
 				// Write new file
 				if (!empty($conf->global->MAIN_ODT_AS_PDF)) {
 					try {
 						$odfHandler->exportAsAttachedPDF($file);
 					} catch (Exception $e) {
 						$this->error = $e->getMessage();
-						dol_syslog($e->getMessage(), LOG_INFO);
+						dol_syslog('Error in exportAsAttachedPDF: '.$e->getMessage(), LOG_INFO);
 						return -1;
 					}
 				} else {
@@ -461,7 +469,7 @@ class doc_generic_mo_odt extends ModelePDFMo
 						$odfHandler->saveToDisk($file);
 					} catch (Exception $e) {
 						$this->error = $e->getMessage();
-						dol_syslog($e->getMessage(), LOG_INFO);
+						dol_syslog('Error in saveToDisk: '.$e->getMessage(), LOG_INFO);
 						return -1;
 					}
 				}
