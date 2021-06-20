@@ -302,7 +302,8 @@ function convertSecondToTime($iSecond, $format = 'all', $lengthOfDay = 86400, $l
  * @param      int		$month_date			Month date
  * @param      int		$year_date			Year date
  * @param	   int      $excludefirstand	Exclude first and
- * @param	   mixed	$gm					False or 0 or 'tzserver' = Return date to compare with server TZ,
+ * @param	   mixed	$gm					False or 0 or 'tzserver' = Input date fields are date info in the server TZ. True or 1 or 'gmt' = Input are date info in GMT TZ.
+ * 											Note: In database, dates are always fot the server TZ.
  * @return     string	$sqldate			String with SQL filter
  */
 function dolSqlDateFilter($datefield, $day_date, $month_date, $year_date, $excludefirstand = 0, $gm = false)
