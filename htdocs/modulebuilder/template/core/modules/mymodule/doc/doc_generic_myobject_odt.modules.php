@@ -86,7 +86,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 		$this->marge_basse = 0;
 
 		$this->option_logo = 1; // Affiche logo
-		$this->option_tva = 0; // Gere option tva COMMANDE_TVAOPTION
+		$this->option_tva = 0; // Gere option tva
 		$this->option_modereg = 0; // Affiche mode reglement
 		$this->option_condreg = 0; // Affiche conditions reglement
 		$this->option_codeproduitservice = 0; // Affiche code produit-service
@@ -135,7 +135,8 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 			$tmpdir = trim($tmpdir);
 			$tmpdir = preg_replace('/DOL_DATA_ROOT/', DOL_DATA_ROOT, $tmpdir);
 			if (!$tmpdir) {
-				unset($listofdir[$key]); continue;
+				unset($listofdir[$key]);
+				continue;
 			}
 			if (!is_dir($tmpdir)) {
 				$texttitle .= img_warning($langs->trans("ErrorDirNotFound", $tmpdir), 0);
@@ -173,7 +174,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 		if ($nbofiles) {
 			$texte .= '<div id="div_'.get_class($this).'" class="hidden">';
 			foreach ($listoffiles as $file) {
-				$texte .= $file['name'].'<br>';
+				$texte .= '- '.$file['name'].' <a href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=mymodule_myobject/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a><br>';
 			}
 			$texte .= '</div>';
 		}
@@ -195,7 +196,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 	/**
 	 *  Function to build a document on disk using the generic odt module.
 	 *
-	 *	@param		Commande	$object				Object source to build document
+	 *	@param		MyObject	$object				Object source to build document
 	 *	@param		Translate	$outputlangs		Lang output object
 	 * 	@param		string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *  @param		int			$hidedetails		Do not show line details
@@ -229,11 +230,11 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills"));
 
-		if ($conf->commande->dir_output) {
+		if ($conf->mymodule->dir_output) {
 			// If $object is id instead of object
 			if (!is_object($object)) {
 				$id = $object;
-				$object = new Commande($this->db);
+				$object = new MyObject($this->db);
 				$result = $object->fetch($id);
 				if ($result < 0) {
 					dol_print_error($this->db, $object->error);
@@ -241,7 +242,9 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 				}
 			}
 
-			$dir = $conf->commande->multidir_output[isset($object->entity) ? $object->entity : 1];
+			$object->fetch_thirdparty();
+
+			$dir = $conf->mymodule->multidir_output[isset($object->entity) ? $object->entity : 1];
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;
@@ -331,7 +334,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 					$odfHandler = new odf(
 						$srctemplatepath,
 						array(
-						'PATH_TO_TMP'	  => $conf->commande->dir_temp,
+						'PATH_TO_TMP'	  => $conf->mymodule->dir_temp,
 						'ZIP_PROXY'		  => 'PclZipProxy', // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
 						'DELIMITER_LEFT'  => '{',
 						'DELIMITER_RIGHT' => '}'
