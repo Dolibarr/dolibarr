@@ -356,7 +356,7 @@ class FormFile
 	 *      Return a string to show the box with list of available documents for object.
 	 *      This also set the property $this->numoffiles
 	 *
-	 *      @param      string				$modulepart         Module the files are related to ('propal', 'facture', 'facture_fourn', 'mymodule', 'mymodule:nameofsubmodule', 'mymodule_temp', ...)
+	 *      @param      string				$modulepart         Module the files are related to ('propal', 'facture', 'facture_fourn', 'mymodule', 'mymodule:myobject', 'mymodule_temp', ...)
 	 *      @param      string				$modulesubdir       Existing (so sanitized) sub-directory to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if file is not into subdir of module.
 	 *      @param      string				$filedir            Directory to scan
 	 *      @param      string				$urlsource          Url of origin page (for return)
@@ -678,7 +678,7 @@ class FormFile
 					$res = include_once $file;
 				}
 
-				$class = 'ModelePDF'.$submodulepart;
+				$class = 'ModelePDF'.ucfirst($submodulepart);
 
 				if (class_exists($class)) {
 					$modellist = call_user_func($class.'::liste_modeles', $this->db);
@@ -740,7 +740,7 @@ class FormFile
 			if (($allowgenifempty || (is_array($modellist) && count($modellist) > 0)) && !empty($conf->global->MAIN_MULTILANGS) && !$forcenomultilang && (!empty($modellist) || $showempty)) {
 				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 				$formadmin = new FormAdmin($this->db);
-				$defaultlang = $codelang ? $codelang : $langs->getDefaultLang();
+				$defaultlang = ($codelang && $codelang != 'auto') ? $codelang : $langs->getDefaultLang();
 				$morecss = 'maxwidth150';
 				if ($conf->browser->layout == 'phone') {
 					$morecss = 'maxwidth100';
