@@ -180,8 +180,8 @@ if (!$defaultsyslogfacility) {
 if (!$defaultsyslogfile) {
 	$defaultsyslogfile = 'dolibarr.log';
 }
-
-if ($conf->global->MAIN_MODULE_MULTICOMPANY && $user->entity) {
+$optionmc = '';
+if (!empty($conf->global->MAIN_MODULE_MULTICOMPANY) && $user->entity) {
 	print '<div class="error">'.$langs->trans("ContactSuperAdminForChange").'</div>';
 	$option = 'disabled';
 }
@@ -199,7 +199,7 @@ print '<input type="hidden" name="action" value="set">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Type").'</td><td>'.$langs->trans("Value").'</td>';
-print '<td class="right" colspan="2"><input type="submit" class="button" '.$option.' value="'.$langs->trans("Modify").'"></td>';
+print '<td class="right" colspan="2"><input type="submit" class="button" '.$optionmc.' value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
 
 foreach ($syslogModules as $moduleName) {
