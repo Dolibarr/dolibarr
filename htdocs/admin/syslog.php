@@ -183,7 +183,7 @@ if (!$defaultsyslogfile) {
 $optionmc = '';
 if (!empty($conf->global->MAIN_MODULE_MULTICOMPANY) && $user->entity) {
 	print '<div class="error">'.$langs->trans("ContactSuperAdminForChange").'</div>';
-	$option = 'disabled';
+	$optionmc = 'disabled';
 }
 
 
