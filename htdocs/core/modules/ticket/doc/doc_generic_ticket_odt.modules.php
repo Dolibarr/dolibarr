@@ -81,13 +81,13 @@ class doc_generic_ticket_odt extends ModelePDFTicket
 		$this->marge_haute = 0;
 		$this->marge_basse = 0;
 
-		$this->option_logo = 1; // Affiche logo
-		$this->option_tva = 0; // Gere option tva USER_TVAOPTION
-		$this->option_multilang = 1; // Dispo en plusieurs langues
+		$this->option_logo = 1; // Display logo
+		$this->option_tva = 0; // Manage the vat option USER_TVAOPTION
+		$this->option_multilang = 1; // Available in several languages
 		$this->option_freetext = 0; // Support add of a personalised text
 		$this->option_draft_watermark = 0; // Support add of a watermark on drafts
 
-		// Recupere emetteur
+		// Get source company
 		$this->emetteur = $mysoc;
 		if (!$this->emetteur->country_code) {
 			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
