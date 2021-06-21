@@ -64,7 +64,7 @@ NEW: VAT payment request and VAT payment are now 2 different steps in workflow o
 NEW: VAT report - Optimisation & collapse by rate
 NEW: When a doc file is shared, link is visible from the main page of doc.
 NEW: #16378 more E-Mail Contact substitution Values for better salutation
-NEW: option to keep the "Automatically create a total payment" checkbox empty on the tax creation page
+NEW: option to keep the "Automatically create the payment" checkbox empty on the tax creation page
 
  Accountancy
 NEW: Accountancy - Add FEC import
@@ -285,7 +285,6 @@ FIX: test must be === and not ==
 FIX: test on link type
 FIX: type link extrafield case for advanced target emailing
 FIX: Write right on document
->>>>>>> branch '13.0' of git@github.com:Dolibarr/dolibarr.git
 
 
 ***** ChangeLog for 13.0.2 compared to 13.0.1 *****
