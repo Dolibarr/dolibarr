@@ -159,7 +159,7 @@ class Conf
 	 * @param	int		$entity		Entity to get
 	 * @return	int					< 0 if KO, >= 0 if OK
 	 */
-	function setEntityValues($db, $entity)
+	public function setEntityValues($db, $entity)
 	{
 		$this->entity = $entity;
 		$this->setValues($db);
