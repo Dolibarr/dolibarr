@@ -226,6 +226,7 @@ if ($action == 'add_import_model') {
 		$objimport->model_name = $import_name;
 		$objimport->datatoimport = $datatoimport;
 		$objimport->hexa = $hexa;
+		$objimport->fk_user = (GETPOST('visibility', 'aZ09') == 'all' ? 0 : $user->id);
 
 		$result = $objimport->create($user);
 		if ($result >= 0) {
@@ -968,7 +969,7 @@ if ($step == 4 && $datatoimport) {
 	$s = str_replace('{s1}', img_picto('', 'grip_title', '', false, 0, 0, '', '', 0), $s);
 	print $s;
 	print '</span> ';
-	$htmlother->select_import_model($importmodelid, 'importmodelid', $datatoimport, 1);
+	$htmlother->select_import_model($importmodelid, 'importmodelid', $datatoimport, 1, $user->id);
 	print '<input type="submit" class="button" value="'.$langs->trans("Select").'">';
 	print '</div>';
 	print '</form>';
@@ -1249,28 +1250,51 @@ if ($step == 4 && $datatoimport) {
 		print '<table summary="selectofimportprofil" class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("ImportModelName").'</td>';
-		print '<td>&nbsp;</td>';
+		print '<td>'.$langs->trans("Visibility").'</td>';
+		print '<td></td>';
 		print '</tr>';
 
 		print '<tr class="oddeven">';
-		print '<td><input name="import_name" size="48" value=""></td><td style="text-align:right">';
+		print '<td><input name="import_name" size="48" value=""></td>';
+		print '<td>';
+		$arrayvisibility = array('private'=>$langs->trans("Private"), 'all'=>$langs->trans("Everybody"));
+		print $form->selectarray('visibility', $arrayvisibility, 'private');
+		print '</td>';
+		print '<td class="right">';
 		print '<input type="submit" class="button" value="'.$langs->trans("SaveImportProfile").'">';
 		print '</td></tr>';
 
 		// List of existing import profils
-		$sql = "SELECT rowid, label";
+		$sql = "SELECT rowid, label, fk_user, entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."import_model";
 		$sql .= " WHERE type = '".$db->escape($datatoimport)."'";
+		if (empty($conf->global->EXPORTS_SHARE_MODELS)) {	// EXPORTS_SHARE_MODELS means all templates are visible, whatever is owner.
+			$sql .= " AND fk_user IN (0, ".((int) $user->id).")";
+		}
 		$sql .= " ORDER BY rowid";
+
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num = $db->num_rows($resql);
+
+			$tmpuser = new user($db);
+
 			$i = 0;
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
+
 				print '<tr class="oddeven"><td>';
 				print $obj->label;
-				print '</td><td style="text-align:right">';
+				print '</td>';
+				print '<td>';
+				if (empty($obj->fk_user)) {
+					print $langs->trans("Everybody");
+				} else {
+					$tmpuser->fetch($obj->fk_user);
+					print $tmpuser->getNomUrl(1);
+				}
+				print '</td>';
+				print '<td class="right">';
 				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?step='.$step.$param.'&action=deleteprof&token='.newToken().'&id='.$obj->rowid.'&filetoimport='.urlencode($filetoimport).'">';
 				print img_delete();
 				print '</a>';
