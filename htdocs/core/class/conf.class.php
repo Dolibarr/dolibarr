@@ -174,8 +174,6 @@ class Conf
 	 */
 	public function setValues($db)
 	{
-		global $conf;
-
 		// Unset all old modules values
 		if (!empty($this->modules)) {
 			foreach ($this->modules as $m) {
