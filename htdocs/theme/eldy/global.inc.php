@@ -1481,6 +1481,10 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 		display: inline-block;
 	}
 
+	input.maxwidthinputfileonsmartphone {
+		width: 175px;
+	}
+
 	.logopublicpayment #dolpaymentlogo {
 		max-width: 260px;
 	}
@@ -1648,7 +1652,7 @@ table.tableforfield tr>td:first-of-type, tr.trforfield>td:first-of-type, div.tab
 }
 
 <?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
-.hideonprint { display: none; }
+.hideonprint { display: none !important; }
 <?php } ?>
 
 

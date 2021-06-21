@@ -81,13 +81,13 @@ class doc_generic_ticket_odt extends ModelePDFTicket
 		$this->marge_haute = 0;
 		$this->marge_basse = 0;
 
-		$this->option_logo = 1; // Affiche logo
-		$this->option_tva = 0; // Gere option tva USER_TVAOPTION
-		$this->option_multilang = 1; // Dispo en plusieurs langues
+		$this->option_logo = 1; // Display logo
+		$this->option_tva = 0; // Manage the vat option USER_TVAOPTION
+		$this->option_multilang = 1; // Available in several languages
 		$this->option_freetext = 0; // Support add of a personalised text
 		$this->option_draft_watermark = 0; // Support add of a watermark on drafts
 
-		// Recupere emetteur
+		// Get source company
 		$this->emetteur = $mysoc;
 		if (!$this->emetteur->country_code) {
 			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
@@ -222,7 +222,7 @@ class doc_generic_ticket_odt extends ModelePDFTicket
 		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "companies", "bills", "dict"));
 
-		if ($conf->user->dir_output) {
+		if ($conf->ticket->dir_output) {
 			// If $object is id instead of object
 			if (!is_object($object)) {
 				$id = $object;
@@ -236,7 +236,7 @@ class doc_generic_ticket_odt extends ModelePDFTicket
 
 			$object->fetch_thirdparty();
 
-			$dir = $conf->user->dir_output;
+			$dir = $conf->ticket->dir_output;
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;
@@ -274,10 +274,14 @@ class doc_generic_ticket_odt extends ModelePDFTicket
 				//print "newdir=".$dir;
 				//print "newfile=".$newfile;
 				//print "file=".$file;
-				//print "conf->user->dir_temp=".$conf->user->dir_temp;
+				//print "conf->ticket->dir_temp=".$conf->ticket->dir_temp;
 
-				dol_mkdir($conf->user->dir_temp);
-
+				dol_mkdir($conf->ticket->dir_temp);
+				if (!is_writable($conf->ticket->dir_temp)) {
+					$this->error = "Failed to write in temp directory ".$conf->ticket->dir_temp;
+					dol_syslog('Error in write_file: '.$this->error, LOG_ERR);
+					return -1;
+				}
 
 				// If CUSTOMER contact defined on user, we use it
 				$usecontact = false;
@@ -306,7 +310,7 @@ class doc_generic_ticket_odt extends ModelePDFTicket
 					$odfHandler = new odf(
 						$srctemplatepath,
 						array(
-							'PATH_TO_TMP'	  => $conf->user->dir_temp,
+							'PATH_TO_TMP'	  => $conf->ticket->dir_temp,
 							'ZIP_PROXY'		  => 'PclZipProxy', // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
 							'DELIMITER_LEFT'  => '{',
 							'DELIMITER_RIGHT' => '}'

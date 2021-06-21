@@ -110,7 +110,7 @@ class FormOther
 	 *    @param    string	$htmlname          Nom de la zone select
 	 *    @param    string	$type              Type des modeles recherches
 	 *    @param    int		$useempty          Show an empty value in list
-	 *    @param    int		$fk_user           User that has created the template (this is set to null to get all export model when EXPORTS_SHARE_MODELS is on)
+	 *    @param    int		$fk_user           User we want templates
 	 *    @return	void
 	 */
 	public function select_export_model($selected = '', $htmlname = 'exportmodelid', $type = '', $useempty = 0, $fk_user = null)
@@ -121,8 +121,8 @@ class FormOther
 		$sql = "SELECT rowid, label, fk_user";
 		$sql .= " FROM ".MAIN_DB_PREFIX."export_model";
 		$sql .= " WHERE type = '".$this->db->escape($type)."'";
-		if (!empty($fk_user)) {
-			$sql .= " AND fk_user IN (0, ".$fk_user.")"; // An export model
+		if (empty($conf->global->EXPORTS_SHARE_MODELS)) {	// EXPORTS_SHARE_MODELS means all templates are visible, whatever is owner.
+			$sql .= " AND fk_user IN (0, ".((int) $fk_user).")";
 		}
 		$sql .= " ORDER BY label";
 		$result = $this->db->query($sql);
@@ -132,6 +132,8 @@ class FormOther
 				print '<option value="-1">&nbsp;</option>';
 			}
 
+			$tmpuser = new User($this->db);
+
 			$num = $this->db->num_rows($result);
 			$i = 0;
 			while ($i < $num) {
@@ -140,8 +142,7 @@ class FormOther
 				$label = $obj->label;
 				if ($obj->fk_user == 0) {
 					$label .= ' <span class="opacitymedium">('.$langs->trans("Everybody").')</span>';
-				} elseif (!empty($conf->global->EXPORTS_SHARE_MODELS) && empty($fk_user) && is_object($user) && $user->id != $obj->fk_user) {
-					$tmpuser = new User($this->db);
+				} elseif ($obj->fk_user > 0) {
 					$tmpuser->fetch($obj->fk_user);
 					$label .= ' <span class="opacitymedium">('.$tmpuser->getFullName($langs).')</span>';
 				}
@@ -171,7 +172,7 @@ class FormOther
 	 *    @param    string	$htmlname          Nom de la zone select
 	 *    @param    string	$type              Type des modeles recherches
 	 *    @param    int		$useempty          Affiche valeur vide dans liste
-	 *    @param    int		$fk_user           User that has created the template (this is set to null to get all export model when EXPORTS_SHARE_MODELS is on)
+	 *    @param    int		$fk_user           User that has created the template
 	 *    @return	void
 	 */
 	public function select_import_model($selected = '', $htmlname = 'importmodelid', $type = '', $useempty = 0, $fk_user = null)
@@ -182,16 +183,18 @@ class FormOther
 		$sql = "SELECT rowid, label, fk_user";
 		$sql .= " FROM ".MAIN_DB_PREFIX."import_model";
 		$sql .= " WHERE type = '".$this->db->escape($type)."'";
-		if (!empty($fk_user)) {
-			$sql .= " AND fk_user IN (0, ".$fk_user.")"; // An export model
+		if (empty($conf->global->EXPORTS_SHARE_MODELS)) {	// EXPORTS_SHARE_MODELS means all templates are visible, whatever is owner.
+			$sql .= " AND fk_user IN (0, ".((int) $fk_user).")";
 		}
-		$sql .= " ORDER BY rowid";
+		$sql .= " ORDER BY label";
 		$result = $this->db->query($sql);
 		if ($result) {
 			print '<select class="flat minwidth200" name="'.$htmlname.'" id="'.$htmlname.'">';
 			if ($useempty) {
 				print '<option value="-1">&nbsp;</option>';
 			}
+
+			$tmpuser = new User($this->db);
 
 			$num = $this->db->num_rows($result);
 			$i = 0;
@@ -201,8 +204,7 @@ class FormOther
 				$label = $obj->label;
 				if ($obj->fk_user == 0) {
 					$label .= ' <span class="opacitymedium">('.$langs->trans("Everybody").')</span>';
-				} elseif (!empty($conf->global->EXPORTS_SHARE_MODELS) && empty($fk_user) && is_object($user) && $user->id != $obj->fk_user) {
-					$tmpuser = new User($this->db);
+				} elseif ($obj->fk_user > 0) {
 					$tmpuser->fetch($obj->fk_user);
 					$label .= ' <span class="opacitymedium">('.$tmpuser->getFullName($langs).')</span>';
 				}
@@ -1177,7 +1179,7 @@ class FormOther
 			$selectboxlist .= '<input type="hidden" name="userid" value="'.$user->id.'">';
 			$selectboxlist .= '<input type="hidden" name="areacode" value="'.$areacode.'">';
 			$selectboxlist .= '<input type="hidden" name="boxorder" value="'.$boxorder.'">';
-			$selectboxlist .= Form::selectarray('boxcombo', $arrayboxtoactivatelabel, -1, $langs->trans("ChooseBoxToAdd").'...', 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth150onsmartphone', 0, 'hidden selected', 0, 1);
+			$selectboxlist .= Form::selectarray('boxcombo', $arrayboxtoactivatelabel, -1, $langs->trans("ChooseBoxToAdd").'...', 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth150onsmartphone hideonprint', 0, 'hidden selected', 0, 1);
 			if (empty($conf->use_javascript_ajax)) {
 				$selectboxlist .= ' <input type="submit" class="button" value="'.$langs->trans("AddBox").'">';
 			}

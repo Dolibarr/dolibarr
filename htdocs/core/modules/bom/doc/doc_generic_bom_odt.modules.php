@@ -278,7 +278,11 @@ class doc_generic_bom_odt extends ModelePDFBom
 				//print "conf->societe->dir_temp=".$conf->societe->dir_temp;
 
 				dol_mkdir($conf->bom->dir_temp);
-
+				if (!is_writable($conf->bom->dir_temp)) {
+					$this->error = "Failed to write in temp directory ".$conf->bom->dir_temp;
+					dol_syslog('Error in write_file: '.$this->error, LOG_ERR);
+					return -1;
+				}
 
 				// If CUSTOMER contact defined on order, we use it
 				$usecontact = false;

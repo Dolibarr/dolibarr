@@ -139,7 +139,7 @@ class pdf_espadon extends ModelePdfExpedition
 		$this->marge_haute = isset($conf->global->MAIN_PDF_MARGIN_TOP) ? $conf->global->MAIN_PDF_MARGIN_TOP : 10;
 		$this->marge_basse = isset($conf->global->MAIN_PDF_MARGIN_BOTTOM) ? $conf->global->MAIN_PDF_MARGIN_BOTTOM : 10;
 
-		$this->option_logo = 1;
+		$this->option_logo = 1; // Display logo
 
 		// Get source company
 		$this->emetteur = $mysoc;

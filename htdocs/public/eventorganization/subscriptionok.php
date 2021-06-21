@@ -153,6 +153,11 @@ if ($urllogo) {
 	print '</div>';
 }
 
+if (!empty($conf->global->EVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE)) {
+	print '<div class="backimagepubliceventorganizationsubscription">';
+	print '<img id="idEVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->EVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE.'">';
+	print '</div>';
+}
 
 print '<br><br><br>';
 

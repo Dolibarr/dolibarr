@@ -1473,21 +1473,23 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 
 	//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
 	$out = '<a class="button bordertransp button_'.$name.'"'.$disabled.' title="'.dol_escape_htmltag($label).'">'.$buttonstring.'</a>';
+	$out .= '<!-- Add js code to open dialog popup on dialog -->';
 	$out .= '<script language="javascript">
-				 jQuery(document).ready(function () {
-					 jQuery(".button_'.$name.'").click(function () {
-						 var $dialog = $(\'<div></div>\').html(\'<iframe class="iframedialog" style="border: 0px;" src="'.DOL_URL_ROOT.$url.'" width="100%" height="98%"></iframe>\')
-						 .dialog({
-						 	autoOpen: false,
-						 	modal: true,
-						 	height: (window.innerHeight - 150),
-						 	width: \'80%\',
-						 	title: "'.dol_escape_js($label).'"
-						 });
-						 $dialog.dialog(\'open\');
-					 });
-				 });
-				 </script>';
+				jQuery(document).ready(function () {
+					jQuery(".button_'.$name.'").click(function () {
+						console.log("Open popup with jQuery(...).dialog() on URL '.dol_escape_js(DOL_URL_ROOT.$url).'")
+						var $dialog = $(\'<div></div>\').html(\'<iframe class="iframedialog" style="border: 0px;" src="'.DOL_URL_ROOT.$url.'" width="100%" height="98%"></iframe>\')
+							.dialog({
+								autoOpen: false,
+							 	modal: true,
+							 	height: (window.innerHeight - 150),
+							 	width: \'80%\',
+							 	title: "'.dol_escape_js($label).'"
+							});
+						$dialog.dialog(\'open\');
+					});
+				});
+			</script>';
 	return $out;
 }
 
@@ -3510,7 +3512,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'label', 'language', 'link', 'list', 'list-alt', 'listlight', 'loan', 'lot', 'long-arrow-alt-right',
 				'margin', 'map-marker-alt', 'member', 'meeting', 'money-bill-alt', 'movement', 'mrp', 'note', 'next',
 				'off', 'on', 'order',
-				'paiment', 'paragraph', 'play', 'pdf', 'phone', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'stock', 'resize', 'service', 'stats', 'trip',
+				'paiment', 'paragraph', 'play', 'pdf', 'phone', 'phoning', 'phoning_mobile', 'phoning_fax', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'stock', 'resize', 'service', 'stats', 'trip',
 				'security', 'setup', 'share-alt', 'sign-out', 'split', 'stripe', 'stripe-s', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'vcard', 'wrench',
 				'github', 'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top', 'commercial', 'companies',
@@ -5809,12 +5811,12 @@ function get_product_localtax_for_country($idprod, $local, $thirdparty_seller)
 
 /**
  *	Function that return vat rate of a product line (according to seller, buyer and product vat rate)
- *   Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
- *	 Si le (pays vendeur = pays acheteur) alors TVA par defaut=TVA du produit vendu. Fin de regle.
- *	 Si (vendeur et acheteur dans Communaute europeenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par defaut=0 (La TVA doit etre paye par acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
- *	 Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = particulier ou entreprise sans num TVA intra) alors TVA par defaut=TVA du produit vendu. Fin de regle
- *	 Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = entreprise avec num TVA) intra alors TVA par defaut=0. Fin de regle
- *	 Sinon TVA proposee par defaut=0. Fin de regle.
+ *   VATRULE 1: Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
+ *	 VATRULE 2: Si le (pays vendeur = pays acheteur) alors TVA par defaut=TVA du produit vendu. Fin de regle.
+ *	 VATRULE 3: Si (vendeur et acheteur dans Communaute europeenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par defaut=0 (La TVA doit etre paye par acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
+ *	 VATRULE 4: Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = particulier) alors TVA par defaut=TVA du produit vendu. Fin de regle
+ *	 VATRULE 5: Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = entreprise) alors TVA par defaut=0. Fin de regle
+ *	 VATRULE 6: Sinon TVA proposee par defaut=0. Fin de regle.
  *
  *	@param	Societe		$thirdparty_seller    	Objet societe vendeuse
  *	@param  Societe		$thirdparty_buyer   	Objet societe acheteuse
@@ -5843,9 +5845,19 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	// If services are eServices according to EU Council Directive 2002/38/EC (http://ec.europa.eu/taxation_customs/taxation/vat/traders/e-commerce/article_1610_en.htm)
 	// we use the buyer VAT.
 	if (!empty($conf->global->SERVICE_ARE_ECOMMERCE_200238EC)) {
-		if ($seller_in_cee && $buyer_in_cee && !$thirdparty_buyer->isACompany()) {
-			//print 'VATRULE 0';
-			return get_product_vat_for_country($idprod, $thirdparty_buyer, $idprodfournprice);
+		if ($seller_in_cee && $buyer_in_cee) {
+			$isacompany = $thirdparty_buyer->isACompany();
+			if ($isacompany && !empty($conf->global->MAIN_USE_VAT_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID_ARE_INDIVIDUAL)) {
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+				if (!isValidVATID($thirdparty_buyer)) {
+					$isacompany = 0;
+				}
+			}
+
+			if (!$isacompany) {
+				//print 'VATRULE 0';
+				return get_product_vat_for_country($idprod, $thirdparty_buyer, $idprodfournprice);
+			}
 		}
 	}
 
@@ -5865,36 +5877,41 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	}
 
 	// Si (vendeur et acheteur dans Communaute europeenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
-	// Not supported
+	// 'VATRULE 3' - Not supported
 
 	// Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = entreprise) alors TVA par defaut=0. Fin de regle
 	// Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = particulier) alors TVA par defaut=TVA du produit vendu. Fin de regle
 	if (($seller_in_cee && $buyer_in_cee)) {
 		$isacompany = $thirdparty_buyer->isACompany();
-		if ($isacompany) {
-			if (!empty($conf->global->MAIN_USE_VAT_OF_PRODUCT_FOR_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID)) {
-				require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-				if (!isValidVATID($thirdparty_buyer)) {
-					//print 'VATRULE 6';
-					return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
-				}
+		if ($isacompany && !empty($conf->global->MAIN_USE_VAT_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID_ARE_INDIVIDUAL)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			if (!isValidVATID($thirdparty_buyer)) {
+				$isacompany = 0;
 			}
-			//print 'VATRULE 3';
-			return 0;
-		} else {
+		}
+
+		if (!$isacompany) {
 			//print 'VATRULE 4';
 			return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+		} else {
+			//print 'VATRULE 5';
+			return 0;
 		}
 	}
 
-	// Si (vendeur en France et acheteur hors Communaute europeenne et acheteur particulier) alors TVA par defaut=TVA du produit vendu. Fin de regle
-	if (!empty($conf->global->MAIN_USE_VAT_OF_PRODUCT_FOR_INDIVIDUAL_CUSTOMER_OUT_OF_EEC) && empty($buyer_in_cee) && !$thirdparty_buyer->isACompany()) {
-		return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+	// Si (vendeur dans Communaute europeene et acheteur hors Communaute europeenne et acheteur particulier) alors TVA par defaut=TVA du produit vendu. Fin de regle
+	// I don't see any use case that need this rule.
+	if (!empty($conf->global->MAIN_USE_VAT_OF_PRODUCT_FOR_INDIVIDUAL_CUSTOMER_OUT_OF_EEC) && empty($buyer_in_cee)) {
+		$isacompany = $thirdparty_buyer->isACompany();
+		if (!$isacompany) {
+			return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+			//print 'VATRULE extra';
+		}
 	}
 
 	// Sinon la TVA proposee par defaut=0. Fin de regle.
 	// Rem: Cela signifie qu'au moins un des 2 est hors Communaute europeenne et que le pays differe
-	//print 'VATRULE 5';
+	//print 'VATRULE 6';
 	return 0;
 }
 

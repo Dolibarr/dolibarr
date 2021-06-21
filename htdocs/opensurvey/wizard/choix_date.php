@@ -55,7 +55,7 @@ if (GETPOST('confirmation')) {
 
 				$tmphorairesi = GETPOST('horaires'.$i, 'array');
 
-				if (!is_array($tmphorairesi) || empty($tmphorairesi[$j])) {
+				if (!is_array($tmphorairesi)) {
 					$errheure[$i][$j] = true;
 					$erreur = true;
 					continue;
@@ -155,7 +155,7 @@ if (GETPOST('confirmation')) {
 			}
 		}
 
-		if (isset($errheure)) {
+		if (!empty($errheure)) {
 			setEventMessages($langs->trans("ErrorBadFormat"), null, 'errors');
 		}
 	}

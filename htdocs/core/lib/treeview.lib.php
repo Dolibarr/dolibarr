@@ -162,10 +162,9 @@ function tree_recur($tab, $pere, $rang, $iddivjstree = 'iddivjstree', $donoreset
 			print "\n".'<li '.(!empty($tab[$x]['statut']) ? ' class="liuseractive"' : 'class="liuserdisabled"').'>';
 			if ($showfk) {
 				print '<table class="nobordernopadding centpercent"><tr><td>';
-				print '<strong> &nbsp; ';
-				print $tab[$x]['title'];
-				print '&nbsp; (fk_mainmenu='.$tab[$x]['fk_mainmenu'].' fk_leftmenu='.$tab[$x]['fk_leftmenu'].')';
-				print '</td><td class="right">';
+				print '<span class="paddingleftonly">'.$tab[$x]['title'].'</span>';
+				print '&nbsp; <span class="opacitymedium">(fk_mainmenu='.$tab[$x]['fk_mainmenu'].' fk_leftmenu='.$tab[$x]['fk_leftmenu'].')</span>';
+				print '</td><td class="right nowraponall">';
 				print $tab[$x]['buttons'];
 				print '</td></tr></table>';
 			} else {

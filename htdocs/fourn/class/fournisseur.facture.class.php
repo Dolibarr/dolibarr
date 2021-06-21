@@ -3594,7 +3594,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql .= ' '.(!empty($this->fk_code_ventilation) ? $this->fk_code_ventilation : 0).',';
 		$sql .= ' '.((int) $this->rang).',';
 		$sql .= ' '.((int) $this->special_code).',';
-		$sql .= " ".((int) $this->info_bits)."',";
+		$sql .= " ".((int) $this->info_bits).",";
 		$sql .= " ".price2num($this->total_ht).",";
 		$sql .= " ".price2num($this->total_tva).",";
 		$sql .= " ".price2num($this->total_ttc).",";

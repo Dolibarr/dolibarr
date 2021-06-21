@@ -957,7 +957,7 @@ class Form
 					if ($row['code_iso']) {
 						$labeltoshow .= ' <span class="opacitymedium">('.$row['code_iso'].')</span>';
 						if (empty($hideflags)) {
-							$tmpflag = picto_from_langcode($row['code_iso'], 'class="saturatemedium marginrightonly"');
+							$tmpflag = picto_from_langcode($row['code_iso'], 'class="saturatemedium paddingrightonly"');
 							$labeltoshow = $tmpflag.' '.$labeltoshow;
 						}
 					}
@@ -978,7 +978,7 @@ class Form
 
 		// Make select dynamic
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-		$out .= ajax_combobox('select'.$htmlname);
+		$out .= ajax_combobox('select'.$htmlname, array(), 0, 0, 'resolve');
 
 		return $out;
 	}
@@ -4682,7 +4682,7 @@ class Form
 	{
 		global $langs, $conf;
 
-		$more = '<!-- formconfirm for page='.dol_escape_htmltag($page).' -->';
+		$more = '<!-- formconfirm before calling page='.dol_escape_htmltag($page).' -->';
 		$formconfirm = '';
 		$inputok = array();
 		$inputko = array();
@@ -8494,7 +8494,7 @@ class Form
 	 */
 	public function showFilterButtons()
 	{
-		$out = '<div class="nowrap">';
+		$out = '<div class="nowraponall">';
 		$out .= '<button type="submit" class="liste_titre button_search" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
 		$out .= '<button type="submit" class="liste_titre button_removefilter" name="button_removefilter_x" value="x"><span class="fa fa-remove"></span></button>';
 		$out .= '</div>';
@@ -8628,14 +8628,11 @@ class Form
 
 									if ($("select[name='.$target.']").val() == '.$obj->id.') {
 										// get price of kilometer to fill the unit price
-										var data = '.json_encode($params).';
-										data.fk_c_exp_tax_cat = $(this).val();
-
 										$.ajax({
 											method: "POST",
 											dataType: "json",
-											data: data,
-											url: "'.(DOL_URL_ROOT.'/expensereport/ajax/ajaxik.php').'",
+											data: { fk_c_exp_tax_cat: $(this).val(), token: \''.currentToken().'\' },
+											url: "'.(DOL_URL_ROOT.'/expensereport/ajax/ajaxik.php?'.$params).'",
 										}).done(function( data, textStatus, jqXHR ) {
 											console.log(data);
 											if (typeof data.up != "undefined") {

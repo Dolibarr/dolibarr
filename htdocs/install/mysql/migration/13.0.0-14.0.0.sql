@@ -32,6 +32,11 @@
 
 -- Missing in v13 or lower
 
+-- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
+-- VMYSQL4.1 update llx_propal set tms = datec where DATE(STR_TO_DATE(tms, '%Y-%m-%d')) IS NULL;
+-- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
+-- VMYSQL4.1 update llx_propal set tms = null where DATE(STR_TO_DATE(tms, '%Y-%m-%d')) IS NULL;
+
 ALTER TABLE llx_ecm_files ADD COLUMN note_private text AFTER fk_user_m;
 ALTER TABLE llx_ecm_files ADD COLUMN note_public text AFTER note_private;
 
@@ -62,9 +67,6 @@ insert into llx_c_actioncomm (id, code, type, libelle, module, active, position)
 
 UPDATE llx_c_country SET eec = 1 WHERE code IN ('AT','BE','BG','CY','CZ','DE','DK','EE','ES','FI','FR','GR','HR','NL','HU','IE','IM','IT','LT','LU','LV','MC','MT','PL','PT','RO','SE','SK','SI');
 
-ALTER TABLE llx_export_model MODIFY COLUMN type varchar(64);
-
-
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  11, 'US-BASE', 'USA basic chart of accounts', 1);
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 14, 'CA-ENG-BASE', 'Canadian basic chart of accounts - English', 1);
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 154, 'SAT/24-2019', 'Catalogo y codigo agrupador fiscal del 2019', 1);
@@ -78,6 +80,12 @@ DELETE FROM llx_user_param where param = 'MAIN_THEME' and value in ('auguria', '
 
 
 -- For v14
+
+ALTER TABLE llx_import_model MODIFY COLUMN type varchar(64);
+ALTER TABLE llx_export_model MODIFY COLUMN type varchar(64);
+
+ALTER TABLE llx_import_model ADD COLUMN entity integer DEFAULT 0 NOT NULL;
+ALTER TABLE llx_export_model ADD COLUMN entity integer DEFAULT 0 NOT NULL;
 
 ALTER TABLE llx_product_lot ADD COLUMN eol_date datetime NULL;
 ALTER TABLE llx_product_lot ADD COLUMN manufacturing_date datetime NULL;
@@ -492,7 +500,7 @@ ALTER TABLE llx_payment_donation ADD COLUMN ext_payment_id  varchar(128) AFTER n
 -- Rebuild sequence for postgres only after query INSERT INTO llx_salary(rowid, ...
 -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
-UPDATE llx_const SET type = 'chaine', value = __ENCRYPT('github')__ WHERE __DECRYPT('name')__ = 'MAIN_BUGTRACK_ENABLELINK' AND __DECRYPT('value')__ = 1;
+UPDATE llx_const SET type = 'chaine', value = __ENCRYPT('github')__ WHERE __DECRYPT('name')__ = 'MAIN_BUGTRACK_ENABLELINK' AND __DECRYPT('value')__ = '1';
 
 ALTER TABLE llx_facture_fourn_det ADD COLUMN fk_remise_except integer DEFAULT NULL after remise_percent;
 ALTER TABLE llx_facture_fourn_det ADD UNIQUE INDEX uk_fk_remise_except (fk_remise_except, fk_facture_fourn);
@@ -513,11 +521,13 @@ CREATE TABLE llx_knowledgemanagement_knowledgerecord(
 	answer text,
 	url varchar(255),
 	fk_ticket integer,
+	fk_c_ticket_category integer,
 	status integer NOT NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
 
 ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD COLUMN fk_ticket integer;
+ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD COLUMN fk_c_ticket_category integer;
 ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD COLUMN url varchar(255);
 
 
@@ -546,4 +556,4 @@ create table llx_c_partnership_type
   active  	    tinyint DEFAULT 1  NOT NULL
 )ENGINE=innodb;
 
-
+DELETE FROM llx_rights_def WHERE module = 'hrm' AND perms = 'employee';
