@@ -225,6 +225,7 @@ Following changes may create regressions for some external modules, but were nec
 * If your database is MySQL or MariaDB, you need at least version 5.1
 * Function set_price_level() has been renamed into setPriceLevel() to follow camelcase rules
 * removed deprecated subtituion key  __REFCLIENT__  (replaced with __REF_CLIENT__)
+* Removed constant MAIN_COUNTRIES_IN_EEC. You can now set if country is in Europe or not from the dictionary of countries.
 
 
 ***** ChangeLog for 13.0.3 compared to 13.0.2 *****
