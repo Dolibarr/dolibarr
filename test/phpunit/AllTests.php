@@ -256,6 +256,10 @@ class AllTests
 		require_once dirname(__FILE__).'/StripeTest.php';
 		$suite->addTestSuite('StripeTest');
 
+		// Email collector
+		require_once dirname(__FILE__).'/EmailCollectorTest.php';
+		$suite->addTestSuite('EmailCollectorTest');
+
 		return $suite;
 	}
 }

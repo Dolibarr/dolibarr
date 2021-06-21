@@ -5835,7 +5835,8 @@ abstract class CommonObject
 						$mandatorypb = true;
 					}
 					if ($mandatorypb) {
-						dol_syslog("Mandatory extra field ".$key." is empty");
+						$langs->load("errors");
+						dol_syslog("Mandatory field '".$key."' is empty during create and set to required into definition of extrafields");
 						$this->errors[] = $langs->trans('ErrorFieldRequired', $attributeLabel);
 						return -1;
 					}
@@ -6201,7 +6202,8 @@ abstract class CommonObject
 					$mandatorypb = true;
 				}
 				if ($mandatorypb) {
-					dol_syslog("Mandatory extra field options_".$key." is empty");
+					$langs->load("errors");
+					dol_syslog("Mandatory field 'options_".$key."' is empty during update and set to required into definition of extrafields");
 					$this->errors[] = $langs->trans('ErrorFieldRequired', $attributeLabel);
 					return -1;
 				}
@@ -8380,12 +8382,14 @@ abstract class CommonObject
 
 			if (isset($this->fields[$key]['notnull']) && $this->fields[$key]['notnull'] == 1 && (!isset($values[$key]) || $values[$key] === 'NULL') && is_null($this->fields[$key]['default'])) {
 				$error++;
+				$langs->load("errors");
+				dol_syslog("Mandatory field '".$key."' is empty and required into ->fields definition of class");
 				$this->errors[] = $langs->trans("ErrorFieldRequired", $this->fields[$key]['label']);
 			}
 
 			// If value is null and there is a default value for field
 			if (isset($this->fields[$key]['notnull']) && $this->fields[$key]['notnull'] == 1 && (!isset($values[$key]) || $values[$key] === 'NULL') && !is_null($this->fields[$key]['default'])) {
-				$values[$key] = $this->fields[$key]['default'];
+				$values[$key] = $this->quote($this->fields[$key]['default'], $this->fields[$key]);
 			}
 
 			// If field is an implicit foreign key field
