@@ -6380,10 +6380,9 @@ abstract class CommonObject
 	 * @param  string  		$keyprefix     Suffix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param  string|int	$morecss       Value for css to define style/length of field. May also be a numeric.
 	 * @param  int			$nonewbutton   Force to not show the new button on field that are links to object
-	 * @param  int       	$mode          1=Used for search filters
 	 * @return string
 	 */
-	public function showInputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = 0, $nonewbutton = 0, $mode = 0)
+	public function showInputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = 0, $nonewbutton = 0)
 	{
 		global $conf, $langs, $form;
 
@@ -6399,15 +6398,12 @@ abstract class CommonObject
 		// Validation tests and output
 		$fieldValidationErrorMsg = '';
 		$validationClass = '';
-		if ($mode == 0) {
-			$fieldValidationErrorMsg = $this->getFieldError($key);
-			if (!empty($fieldValidationErrorMsg)) {
-				$validationClass = ' --error'; // the -- is use as class state in css :  .--error can't be be defined alone it must be define with another class like .my-class.--error or input.--error
-			} else {
-				$validationClass = ' --success'; // the -- is use as class state in css :  .--success can't be be defined alone it must be define with another class like .my-class.--success or input.--success
-			}
+		$fieldValidationErrorMsg = $this->getFieldError($key);
+		if (!empty($fieldValidationErrorMsg)) {
+			$validationClass = ' --error'; // the -- is use as class state in css :  .--error can't be be defined alone it must be define with another class like .my-class.--error or input.--error
+		} else {
+			$validationClass = ' --success'; // the -- is use as class state in css :  .--success can't be be defined alone it must be define with another class like .my-class.--success or input.--success
 		}
-
 
 		$out = '';
 		$type = '';
@@ -6972,7 +6968,7 @@ abstract class CommonObject
 		 */
 
 		// Display error message for field
-		if ($mode == 0 && !empty($fieldValidationErrorMsg) && function_exists('getFieldErrorIcon')) {
+		if (!empty($fieldValidationErrorMsg) && function_exists('getFieldErrorIcon')) {
 			$out .= ' '.getFieldErrorIcon($fieldValidationErrorMsg);
 		}
 
@@ -7335,6 +7331,9 @@ abstract class CommonObject
 	 */
 	public function setFieldError($fieldKey, $msg = '')
 	{
+		global $langs;
+		if (empty($msg)) { $msg = $langs->trans("UnknowError"); }
+
 		$this->error = $this->validateFieldsErrors[$fieldKey] = $msg;
 	}
 
@@ -7369,6 +7368,7 @@ abstract class CommonObject
 		$this->clearFieldError($fieldKey);
 
 		if (!isset($val[$fieldKey])) {
+			$this->setFieldError($fieldKey, $langs->trans('FieldNotFoundInObject'));
 			return false;
 		}
 
