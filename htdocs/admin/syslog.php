@@ -180,10 +180,10 @@ if (!$defaultsyslogfacility) {
 if (!$defaultsyslogfile) {
 	$defaultsyslogfile = 'dolibarr.log';
 }
-
-if ($conf->global->MAIN_MODULE_MULTICOMPANY && $user->entity) {
+$optionmc = '';
+if (!empty($conf->global->MAIN_MODULE_MULTICOMPANY) && $user->entity) {
 	print '<div class="error">'.$langs->trans("ContactSuperAdminForChange").'</div>';
-	$option = 'disabled';
+	$optionmc = 'disabled';
 }
 
 
@@ -199,7 +199,7 @@ print '<input type="hidden" name="action" value="set">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Type").'</td><td>'.$langs->trans("Value").'</td>';
-print '<td class="right" colspan="2"><input type="submit" class="button" '.$option.' value="'.$langs->trans("Modify").'"></td>';
+print '<td class="right" colspan="2"><input type="submit" class="button" '.$optionmc.' value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
 
 foreach ($syslogModules as $moduleName) {
@@ -279,11 +279,11 @@ print '<input type="hidden" name="action" value="setlevel">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td>';
-print '<td class="right"><input type="submit" class="button" '.$option.' value="'.$langs->trans("Modify").'"></td>';
+print '<td class="right"><input type="submit" class="button" '.$optionmc.' value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
 
 print '<tr class="oddeven"><td width="140">'.$langs->trans("SyslogLevel").'</td>';
-print '<td colspan="2"><select class="flat" name="level" '.$option.'>';
+print '<td colspan="2"><select class="flat" name="level" '.$optionmc.'>';
 print '<option value="'.LOG_EMERG.'" '.($conf->global->SYSLOG_LEVEL == LOG_EMERG ? 'SELECTED' : '').'>LOG_EMERG ('.LOG_EMERG.')</option>';
 print '<option value="'.LOG_ALERT.'" '.($conf->global->SYSLOG_LEVEL == LOG_ALERT ? 'SELECTED' : '').'>LOG_ALERT ('.LOG_ALERT.')</option>';
 print '<option value="'.LOG_CRIT.'" '.($conf->global->SYSLOG_LEVEL == LOG_CRIT ? 'SELECTED' : '').'>LOG_CRIT ('.LOG_CRIT.')</option>';
