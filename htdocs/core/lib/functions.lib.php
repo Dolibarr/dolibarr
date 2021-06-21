@@ -5811,12 +5811,12 @@ function get_product_localtax_for_country($idprod, $local, $thirdparty_seller)
 
 /**
  *	Function that return vat rate of a product line (according to seller, buyer and product vat rate)
- *   Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
- *	 Si le (pays vendeur = pays acheteur) alors TVA par defaut=TVA du produit vendu. Fin de regle.
- *	 Si (vendeur et acheteur dans Communaute europeenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par defaut=0 (La TVA doit etre paye par acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
- *	 Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = particulier ou entreprise sans num TVA intra) alors TVA par defaut=TVA du produit vendu. Fin de regle
- *	 Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = entreprise avec num TVA) intra alors TVA par defaut=0. Fin de regle
- *	 Sinon TVA proposee par defaut=0. Fin de regle.
+ *   VATRULE 1: Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
+ *	 VATRULE 2: Si le (pays vendeur = pays acheteur) alors TVA par defaut=TVA du produit vendu. Fin de regle.
+ *	 VATRULE 3: Si (vendeur et acheteur dans Communaute europeenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par defaut=0 (La TVA doit etre paye par acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
+ *	 VATRULE 4: Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = particulier) alors TVA par defaut=TVA du produit vendu. Fin de regle
+ *	 VATRULE 5: Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = entreprise) alors TVA par defaut=0. Fin de regle
+ *	 VATRULE 6: Sinon TVA proposee par defaut=0. Fin de regle.
  *
  *	@param	Societe		$thirdparty_seller    	Objet societe vendeuse
  *	@param  Societe		$thirdparty_buyer   	Objet societe acheteuse
@@ -5845,9 +5845,19 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	// If services are eServices according to EU Council Directive 2002/38/EC (http://ec.europa.eu/taxation_customs/taxation/vat/traders/e-commerce/article_1610_en.htm)
 	// we use the buyer VAT.
 	if (!empty($conf->global->SERVICE_ARE_ECOMMERCE_200238EC)) {
-		if ($seller_in_cee && $buyer_in_cee && !$thirdparty_buyer->isACompany()) {
-			//print 'VATRULE 0';
-			return get_product_vat_for_country($idprod, $thirdparty_buyer, $idprodfournprice);
+		if ($seller_in_cee && $buyer_in_cee) {
+			$isacompany = $thirdparty_buyer->isACompany();
+			if ($isacompany && !empty($conf->global->MAIN_USE_VAT_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID_ARE_INDIVIDUAL)) {
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+				if (!isValidVATID($thirdparty_buyer)) {
+					$isacompany = 0;
+				}
+			}
+
+			if (!$isacompany) {
+				//print 'VATRULE 0';
+				return get_product_vat_for_country($idprod, $thirdparty_buyer, $idprodfournprice);
+			}
 		}
 	}
 
@@ -5890,7 +5900,7 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	}
 
 	// Si (vendeur dans Communaute europeene et acheteur hors Communaute europeenne et acheteur particulier) alors TVA par defaut=TVA du produit vendu. Fin de regle
-	// I don't see any use case that need this rule
+	// I don't see any use case that need this rule.
 	if (!empty($conf->global->MAIN_USE_VAT_OF_PRODUCT_FOR_INDIVIDUAL_CUSTOMER_OUT_OF_EEC) && empty($buyer_in_cee)) {
 		$isacompany = $thirdparty_buyer->isACompany();
 		if (!$isacompany) {
