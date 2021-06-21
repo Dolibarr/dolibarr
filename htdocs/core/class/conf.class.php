@@ -32,8 +32,9 @@
  */
 class Conf
 {
-	/** \public */
-	//! To store properties found in conf file
+	/**
+	 * @var Object 	Associative array with properties found in conf file
+	 */
 	public $file;
 
 	/**
@@ -60,29 +61,16 @@ class Conf
 	//! Used to store current menu handler
 	public $standard_menu;
 	// List of activated modules
-	public $modules = array();
-	public $modules_parts = array(
-		'css' => array(),
-		'js' => array(),
-		'tabs' => array(),
-		'triggers' => array(),
-		'login' => array(),
-		'substitutions' => array(),
-		'menus' => array(),
-		'theme' => array(),
-		'sms' => array(),
-		'tpl' => array(),
-		'barcode' => array(),
-		'models' => array(),
-		'societe' => array(),
-		'hooks' => array(),
-		'dir' => array(),
-		'syslog' => array(),
-	);
+	public $modules;
+	public $modules_parts;
 
 	// An array to store cache results ->cache['nameofcache']=...
-	public $cache = array();
+	public $cache;
 
+
+	/**
+	 * @var string[]
+	 */
 	public $logbuffer = array();
 
 	/**
@@ -116,20 +104,42 @@ class Conf
 		// Properly declare multi-modules objects.
 		$this->file = new stdClass();
 		$this->db = new stdClass();
-		$this->global = new stdClass();
-		$this->mycompany = new stdClass();
-		$this->admin			= new stdClass();
-		$this->user				= new stdClass();
-		$this->syslog			= new stdClass();
-		$this->browser = new stdClass();
-		$this->medias			= new stdClass();
-		$this->multicompany = new stdClass();
-
 		//! Charset for HTML output and for storing data in memory
 		$this->file->character_set_client = 'UTF-8'; // UTF-8, ISO-8859-1
 
+		// Common objects that are not modules
+		$this->mycompany = new stdClass();
+		$this->admin = new stdClass();
+		$this->user	= new stdClass();
+		$this->browser = new stdClass();
+		$this->medias = new stdClass();
+		$this->global = new stdClass();
+
+		$this->cache = array();
+		$this->modules = array();
+		$this->modules_parts = array(
+			'css' => array(),
+			'js' => array(),
+			'tabs' => array(),
+			'triggers' => array(),
+			'login' => array(),
+			'substitutions' => array(),
+			'menus' => array(),
+			'theme' => array(),
+			'sms' => array(),
+			'tpl' => array(),
+			'barcode' => array(),
+			'models' => array(),
+			'societe' => array(),
+			'hooks' => array(),
+			'dir' => array(),
+			'syslog' => array()
+		);
+
 		// First level object
 		// TODO Remove this part.
+		$this->syslog = new stdClass();
+		$this->multicompany = new stdClass();
 		$this->expedition_bon = new stdClass();
 		$this->delivery_note = new stdClass();
 		$this->fournisseur = new stdClass();
@@ -154,7 +164,7 @@ class Conf
 
 	/**
 	 *  Load setup values into conf object (read llx_const)
-	 *  Note that this->db->xxx, this->file->xxx and this->multicompany have been already loaded when setValues is called.
+	 *  Note that this->db->xxx, this->file->xxx have been already set when setValues is called.
 	 *
 	 *  @param      DoliDB      $db     Database handler
 	 *  @return     int                 < 0 if KO, >= 0 if OK
@@ -876,7 +886,10 @@ class Conf
 			}
 			foreach ($handlers as $handler) {
 				$handler_file_found = '';
-				$dirsyslogs = array_merge(array('/core/modules/syslog/'), $this->modules_parts['syslog']);
+				$dirsyslogs = array('/core/modules/syslog/');
+				if (!empty($this->modules_parts['syslog']) && is_array($this->modules_parts['syslog'])) {
+					$dirsyslogs = array_merge($dirsyslogs, $this->modules_parts['syslog']);
+				}
 				foreach ($dirsyslogs as $reldir) {
 					$dir = dol_buildpath($reldir, 0);
 					$newdir = dol_osencode($dir);
