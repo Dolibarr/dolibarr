@@ -5867,36 +5867,41 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	}
 
 	// Si (vendeur et acheteur dans Communaute europeenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
-	// Not supported
+	// 'VATRULE 3' - Not supported
 
 	// Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = entreprise) alors TVA par defaut=0. Fin de regle
 	// Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = particulier) alors TVA par defaut=TVA du produit vendu. Fin de regle
 	if (($seller_in_cee && $buyer_in_cee)) {
 		$isacompany = $thirdparty_buyer->isACompany();
-		if ($isacompany) {
-			if (!empty($conf->global->MAIN_USE_VAT_OF_PRODUCT_FOR_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID)) {
-				require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-				if (!isValidVATID($thirdparty_buyer)) {
-					//print 'VATRULE 6';
-					return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
-				}
+		if ($isacompany && !empty($conf->global->MAIN_USE_VAT_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID_ARE_INDIVIDUAL)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			if (!isValidVATID($thirdparty_buyer)) {
+				$isacompany = 0;
 			}
-			//print 'VATRULE 3';
-			return 0;
-		} else {
+		}
+
+		if (!$isacompany) {
 			//print 'VATRULE 4';
 			return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+		} else {
+			//print 'VATRULE 5';
+			return 0;
 		}
 	}
 
-	// Si (vendeur en France et acheteur hors Communaute europeenne et acheteur particulier) alors TVA par defaut=TVA du produit vendu. Fin de regle
-	if (!empty($conf->global->MAIN_USE_VAT_OF_PRODUCT_FOR_INDIVIDUAL_CUSTOMER_OUT_OF_EEC) && empty($buyer_in_cee) && !$thirdparty_buyer->isACompany()) {
-		return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+	// Si (vendeur dans Communaute europeene et acheteur hors Communaute europeenne et acheteur particulier) alors TVA par defaut=TVA du produit vendu. Fin de regle
+	// I don't see any use case that need this rule
+	if (!empty($conf->global->MAIN_USE_VAT_OF_PRODUCT_FOR_INDIVIDUAL_CUSTOMER_OUT_OF_EEC) && empty($buyer_in_cee)) {
+		$isacompany = $thirdparty_buyer->isACompany();
+		if (!$isacompany) {
+			return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+			//print 'VATRULE extra';
+		}
 	}
 
 	// Sinon la TVA proposee par defaut=0. Fin de regle.
 	// Rem: Cela signifie qu'au moins un des 2 est hors Communaute europeenne et que le pays differe
-	//print 'VATRULE 5';
+	//print 'VATRULE 6';
 	return 0;
 }
 
