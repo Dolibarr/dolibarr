@@ -757,6 +757,7 @@ class DoliDBPgsql extends DoliDB
 
 			$errorlabel = pg_last_error($this->db);
 			$errorcode = '';
+			$reg = array();
 			if (preg_match('/: *([0-9P]+):/', $errorlabel, $reg)) {
 				$errorcode = $reg[1];
 				if (isset($errorcode_map[$errorcode])) {

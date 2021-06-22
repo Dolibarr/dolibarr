@@ -1095,7 +1095,7 @@ abstract class CommonObject
 					$this->db->rollback();
 					return -2;
 				} else {
-					$this->error = $this->db->error();
+					$this->error = $this->db->lasterror();
 					$this->db->rollback();
 					return -1;
 				}
@@ -1119,7 +1119,6 @@ abstract class CommonObject
 		$contacts = $objFrom->liste_contact(-1, $source);
 		foreach ($contacts as $contact) {
 			if ($this->add_contact($contact['id'], $contact['fk_c_type_contact'], $contact['source']) < 0) {
-				$this->error = $this->db->lasterror();
 				return -1;
 			}
 		}
@@ -5760,8 +5759,10 @@ abstract class CommonObject
 			$table_element = 'categories'; // For compatibility
 		}
 
-		$sql_del = "DELETE FROM ".MAIN_DB_PREFIX.$table_element."_extrafields WHERE fk_object = ".$this->id;
 		dol_syslog(get_class($this)."::deleteExtraFields delete", LOG_DEBUG);
+
+		$sql_del = "DELETE FROM ".MAIN_DB_PREFIX.$table_element."_extrafields WHERE fk_object = ".$this->id;
+
 		$resql = $this->db->query($sql_del);
 		if (!$resql) {
 			$this->error = $this->db->lasterror();
@@ -8467,7 +8468,7 @@ abstract class CommonObject
 
 				$result = $line->create($user, 1);
 				if ($result < 0) {
-					$this->error = $this->db->lasterror();
+					$this->error = $line->error;
 					$this->db->rollback();
 					return -1;
 				}
@@ -8498,8 +8499,8 @@ abstract class CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param	int    $id				Id object
-	 * @param	string $ref				Ref
+	 * @param	int    	$id				Id object
+	 * @param	string 	$ref			Ref
 	 * @param	string	$morewhere		More SQL filters (' AND ...')
 	 * @return 	int         			<0 if KO, 0 if not found, >0 if OK
 	 */
@@ -8808,8 +8809,8 @@ abstract class CommonObject
 		if (!$error) {
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE rowid='.((int) $this->id);
 
-			$res = $this->db->query($sql);
-			if ($res === false) {
+			$resql = $this->db->query($sql);
+			if (!$resql) {
 				$error++;
 				$this->errors[] = $this->db->lasterror();
 			}
