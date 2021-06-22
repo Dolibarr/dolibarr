@@ -5672,16 +5672,16 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
 }
 
 /**
- *	Return vat rate of a product in a particular selling country or default country vat if product is unknown
- *  Function called by get_default_tva
+ *	Return vat rate of a product in a particular country, or default country vat if product is unknown.
+ *  Function called by get_default_tva().
  *
  *  @param	int			$idprod          	Id of product or 0 if not a predefined product
- *  @param  Societe		$thirdparty_seller  Thirdparty with a ->country_code defined (FR, US, IT, ...)
+ *  @param  Societe		$thirdpartytouse  	Thirdparty with a ->country_code defined (FR, US, IT, ...)
  *	@param	int			$idprodfournprice	Id product_fournisseur_price (for "supplier" proposal/order/invoice)
  *  @return float|string   				    Vat rate to use with format 5.0 or '5.0 (XXX)'
  *  @see get_product_localtax_for_country()
  */
-function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice = 0)
+function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournprice = 0)
 {
 	global $db, $conf, $mysoc;
 
@@ -5695,7 +5695,7 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 		$product = new Product($db);
 		$result = $product->fetch($idprod);
 
-		if ($mysoc->country_code == $thirdparty_seller->country_code) { // If selling country is ours
+		if ($mysoc->country_code == $thirdpartytouse->country_code) { // If country to consider is ours
 			if ($idprodfournprice > 0) {     // We want vat for product for a "supplier" object
 				$product->get_buyprice($idprodfournprice, 0, 0, 0);
 				$ret = $product->vatrate_supplier;
@@ -5710,8 +5710,8 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 			}
 			$found = 1;
 		} else {
-			// TODO Read default product vat according to countrycode and product. Vat for couple countrycode/product is a feature not implemeted yet.
-			// May be usefull/required if hidden option SERVICE_ARE_ECOMMERCE_200238EC is on
+			// TODO Read default product vat according to product and another countrycode.
+			// Vat for couple anothercountrycode/product is data that is not managed and store yet, so we will fallback on next rule.
 		}
 	}
 
@@ -5720,7 +5720,7 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 			// If vat of product for the country not found or not defined, we return the first higher vat of country.
 			$sql = "SELECT t.taux as vat_rate, t.code as default_vat_code";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-			$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$db->escape($thirdparty_seller->country_code)."'";
+			$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$db->escape($thirdpartytouse->country_code)."'";
 			$sql .= " ORDER BY t.taux DESC, t.code ASC, t.recuperableonly ASC";
 			$sql .= $db->plimit(1);
 
@@ -5747,15 +5747,15 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 }
 
 /**
- *	Return localtax vat rate of a product in a particular selling country or default country vat if product is unknown
+ *	Return localtax vat rate of a product in a particular country or default country vat if product is unknown
  *
  *  @param	int		$idprod         		Id of product
  *  @param  int		$local          		1 for localtax1, 2 for localtax 2
- *  @param  Societe	$thirdparty_seller    	Thirdparty with a ->country_code defined (FR, US, IT, ...)
+ *  @param  Societe	$thirdpartytouse    	Thirdparty with a ->country_code defined (FR, US, IT, ...)
  *  @return int             				<0 if KO, Vat rate if OK
  *  @see get_product_vat_for_country()
  */
-function get_product_localtax_for_country($idprod, $local, $thirdparty_seller)
+function get_product_localtax_for_country($idprod, $local, $thirdpartytouse)
 {
 	global $db, $mysoc;
 
@@ -5771,14 +5771,15 @@ function get_product_localtax_for_country($idprod, $local, $thirdparty_seller)
 		$product = new Product($db);
 		$result = $product->fetch($idprod);
 
-		if ($mysoc->country_code == $thirdparty_seller->country_code) { // If selling country is ours
+		if ($mysoc->country_code == $thirdpartytouse->country_code) { // If selling country is ours
 			/* Not defined yet, so we don't use this
 			if ($local==1) $ret=$product->localtax1_tx;
 			elseif ($local==2) $ret=$product->localtax2_tx;
 			$found=1;
 			*/
 		} else {
-			// TODO Read default product vat according to countrycode and product
+			// TODO Read default product vat according to product and another countrycode.
+			// Vat for couple anothercountrycode/product is data that is not managed and store yet, so we will fallback on next rule.
 		}
 	}
 
@@ -5786,7 +5787,7 @@ function get_product_localtax_for_country($idprod, $local, $thirdparty_seller)
 		// If vat of product for the country not found or not defined, we return higher vat of country.
 		$sql = "SELECT taux as vat_rate, localtax1, localtax2";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-		$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$db->escape($thirdparty_seller->country_code)."'";
+		$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$db->escape($thirdpartytouse->country_code)."'";
 		$sql .= " ORDER BY t.taux DESC, t.recuperableonly ASC";
 		$sql .= $db->plimit(1);
 
