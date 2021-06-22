@@ -165,6 +165,9 @@ class box_graph_nb_tickets_type extends ModeleBoxes
 					}
 					$px1->SetData($data);
 					$px1->setShowLegend(2);
+					if (!empty($conf->dol_optimize_smallscreen)) {
+						$px1->SetWidth(320);
+					}
 					$px1->SetType(array('pie'));
 					$px1->SetLegend($legend);
 					$px1->SetMaxValue($px1->GetCeilMaxValue());

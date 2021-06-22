@@ -462,7 +462,7 @@ if ($step == 2 && $datatoimport) {
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
 
-	print '<table width="100%" class="border tableforfield">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Module
 	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
@@ -475,7 +475,7 @@ if ($step == 2 && $datatoimport) {
 	print $titleofmodule;
 	print '</td></tr>';
 
-	// Lot de donnees a importer
+	// Dataset to import
 	print '<tr><td>'.$langs->trans("DatasetToImport").'</td>';
 	print '<td>';
 	$entity = preg_replace('/:.*$/', '', $objimport->array_import_icon[0]);
@@ -519,7 +519,9 @@ if ($step == 2 && $datatoimport) {
 		$text = $objmodelimport->getDriverDescForKey($key);
 		print '<td>'.$form->textwithpicto($objmodelimport->getDriverLabelForKey($key), $text).'</td>';
 		print '<td style="text-align:center">';
-		print img_picto('', 'download', 'class="paddingright opacitymedium"').'<a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$key.$param.'" target="_blank">'.$langs->trans("DownloadEmptyExample").'</a>';
+		print img_picto('', 'download', 'class="paddingright opacitymedium"').'<a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$key.$param.'" target="_blank">'.$langs->trans("DownloadEmptyExample");
+		print '</a>';
+		print ' <span class="opacitymedium hideonsmartphone">('.$langs->trans("StarAreMandatory").')</span>';
 		print '</td>';
 		// Action button
 		print '<td style="text-align:right">';
