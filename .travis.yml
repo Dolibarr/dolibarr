@@ -419,6 +419,7 @@ script:
   php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_API,MAIN_MODULE_PRODUCTBATCH,MAIN_MODULE_SUPPLIERPROPOSAL,MAIN_MODULE_STRIPE > $TRAVIS_BUILD_DIR/enablemodule.log
   php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_WEBSITE,MAIN_MODULE_TICKET,MAIN_MODULE_ACCOUNTING,MAIN_MODULE_MRP >> $TRAVIS_BUILD_DIR/enablemodule.log
   php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_RECEPTION,MAIN_MODULE_RECRUITMENT >> $TRAVIS_BUILD_DIR/enablemodule.log
+  php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_KNOWLEDGEMANAGEMENT,MAIN_MODULE_EVENTORGANIZATION,MAIN_MODULE_PARTNERSHIP >> $TRAVIS_BUILD_DIR/enablemodule.log
   echo $?
   cd -
   set +e
@@ -429,7 +430,7 @@ script:
 - |
   echo "Unit testing"
   # Ensure we catch errors. Set this to +e if you want to go to the end to see dolibarr.log file.
-  set +e
+  set -e
   phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php
   phpunitresult=$?
   echo "Phpunit return code = $phpunitresult"

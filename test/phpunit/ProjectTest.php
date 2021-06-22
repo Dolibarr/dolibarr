@@ -198,7 +198,7 @@ class ProjectTest extends PHPUnit\Framework\TestCase
 	}
 
 	/**
-	 * testProjectClose
+	 * testProjectOther
 	 *
 	 * @param	Project	$localobject	Project
 	 * @return	int

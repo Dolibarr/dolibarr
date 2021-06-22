@@ -27,22 +27,27 @@ global $conf, $user, $langs, $db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/knowledgemanagement/class/knowledgerecord.class.php';
+$langs->load("main");
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->getrights();
 }
+
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
-$langs->load("main");
+
 
 
 /**
  * Class KnowledgeRecordTest
- * @package Testknowledgemanagement
+ *
+ * @backupGlobals disabled
+ * @backupStaticAttributes enabled
+ * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class KnowledgeRecordTest extends \PHPUnit\Framework\TestCase
+class KnowledgeRecordTest extends PHPUnit\Framework\TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -73,6 +78,7 @@ class KnowledgeRecordTest extends \PHPUnit\Framework\TestCase
 
 	/**
 	 * Global test setup
+	 *
 	 * @return void
 	 */
 	public static function setUpBeforeClass()
@@ -87,6 +93,7 @@ class KnowledgeRecordTest extends \PHPUnit\Framework\TestCase
 
 	/**
 	 * Unit test setup
+	 *
 	 * @return void
 	 */
 	protected function setUp()
@@ -102,6 +109,7 @@ class KnowledgeRecordTest extends \PHPUnit\Framework\TestCase
 
 	/**
 	 * Unit test teardown
+	 *
 	 * @return void
 	 */
 	protected function tearDown()
@@ -111,6 +119,7 @@ class KnowledgeRecordTest extends \PHPUnit\Framework\TestCase
 
 	/**
 	 * Global test teardown
+	 *
 	 * @return void
 	 */
 	public static function tearDownAfterClass()
