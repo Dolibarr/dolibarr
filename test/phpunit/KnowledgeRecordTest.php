@@ -184,8 +184,9 @@ class KnowledgeRecordTest extends \PHPUnit\Framework\TestCase
 		$db = $this->savdb;
 
 		$localobject = new KnowledgeRecord($this->savdb);
+		print __METHOD__." id=".$id."\n";
 		$result = $localobject->fetch($id);
-		print __METHOD__." id=".$id." result=".$result."\n";
+		print __METHOD__." result=".$result."\n";
 		$this->assertGreaterThanOrEqual(0, $result, 'fetch in testKnowledgeRecordDelete with id='.$id);
 
 		$result = $localobject->delete($user);

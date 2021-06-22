@@ -8542,6 +8542,7 @@ abstract class CommonObject
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
+				dol_syslog("aaa=".$this->id);
 
 				return $this->id;
 			} else {
