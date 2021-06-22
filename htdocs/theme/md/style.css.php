@@ -5931,6 +5931,9 @@ dl.dropdown {
 	display:inline-block;
 	padding: 0 3px 2px 0;
 }
+.maxwidthsearch .dropdown dt a span, .multiSel span {
+	padding: 0 3px 2px 3px;
+}
 .dropdown span.value {
 	display:none;
 }
