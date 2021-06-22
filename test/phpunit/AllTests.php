@@ -214,7 +214,7 @@ class AllTests
 		$suite->addTestSuite('ProjectTest');
 
 		require_once dirname(__FILE__).'/KnowledgeRecord.php';
-		$suite->addTestSuite('KnowledgeRecord');
+		$suite->addTestSuite('KnowledgeRecordTest');
 
 		require_once dirname(__FILE__).'/AccountingAccountTest.php';
 		$suite->addTestSuite('AccountingAccountTest');
