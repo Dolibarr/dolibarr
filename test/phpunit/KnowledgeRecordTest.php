@@ -159,7 +159,7 @@ class KnowledgeRecordTest extends \PHPUnit\Framework\TestCase
 		$result = $localobject->create($user);
 
 		print __METHOD__." result=".$result."\n";
-		$this->assertLessThan($result, 0);
+		$this->assertGreaterThanOrEqual(0, $result);
 
 		return $result;
 	}
@@ -183,10 +183,12 @@ class KnowledgeRecordTest extends \PHPUnit\Framework\TestCase
 
 		$localobject = new KnowledgeRecord($this->savdb);
 		$result = $localobject->fetch($id);
+		$this->assertGreaterThanOrEqual(0, $result, 'fetch in testKnowledgeRecordDelete with id='.$id);
+
 		$result = $localobject->delete($user);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
-		$this->assertLessThan($result, 0);
+		$this->assertGreaterThanOrEqual(0, $result, 'delete in testKnowledgeRecordDelete');
 		return $result;
 	}
 }
