@@ -53,7 +53,7 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return MyObject
+	 * @return MyObjectTest
 	 */
 	public function __construct()
 	{

@@ -53,7 +53,7 @@ class KnowledgeRecordTest extends \PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return KnowledgeRecord
+	 * @return KnowledgeRecordTest
 	 */
 	public function __construct()
 	{
@@ -80,7 +80,9 @@ class KnowledgeRecordTest extends \PHPUnit\Framework\TestCase
 		global $conf, $user, $langs, $db;
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
-		print __METHOD__."\n";
+		if (empty($conf->knowledgemanagement->enabled)) {
+			//	print __METHOD__." module knowledgemanagement order must be enabled.\n"; die(1);
+		}
 	}
 
 	/**
@@ -183,11 +185,12 @@ class KnowledgeRecordTest extends \PHPUnit\Framework\TestCase
 
 		$localobject = new KnowledgeRecord($this->savdb);
 		$result = $localobject->fetch($id);
+		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertGreaterThanOrEqual(0, $result, 'fetch in testKnowledgeRecordDelete with id='.$id);
 
 		$result = $localobject->delete($user);
 
-		print __METHOD__." id=".$id." result=".$result."\n";
+		print __METHOD__." result=".$result."\n";
 		$this->assertGreaterThanOrEqual(0, $result, 'delete in testKnowledgeRecordDelete');
 		return $result;
 	}
