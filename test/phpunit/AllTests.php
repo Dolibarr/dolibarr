@@ -173,6 +173,8 @@ class AllTests
 		require_once dirname(__FILE__).'/CommandeFournisseurTest.php';
 		$suite->addTestSuite('CommandeFournisseurTest');
 
+		require_once dirname(__FILE__).'/CommonInvoiceTest.php';
+		$suite->addTestSuite('CommonInvoiceTest');
 		require_once dirname(__FILE__).'/FactureTest.php';
 		$suite->addTestSuite('FactureTest');
 		require_once dirname(__FILE__).'/FactureRecTest.php';
@@ -202,9 +204,17 @@ class AllTests
 		$suite->addTestSuite('EntrepotTest');
 		require_once dirname(__FILE__).'/MouvementStockTest.php';
 		$suite->addTestSuite('MouvementStockTest');
+		require_once dirname(__FILE__).'/InventoryTest.php';
+		$suite->addTestSuite('InventoryTest');
 
 		require_once dirname(__FILE__).'/CategorieTest.php';
 		$suite->addTestSuite('CategorieTest');
+
+		require_once dirname(__FILE__).'/ProjectTest.php';
+		$suite->addTestSuite('ProjectTest');
+
+		require_once dirname(__FILE__).'/KnowledgeRecord.php';
+		$suite->addTestSuite('KnowledgeRecord');
 
 		require_once dirname(__FILE__).'/AccountingAccountTest.php';
 		$suite->addTestSuite('AccountingAccountTest');
