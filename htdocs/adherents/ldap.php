@@ -32,7 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "members", "ldap", "admin"));
 
-$rowid = GETPOST('id', 'int');
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alphanohtml');
 $action = GETPOST('action', 'aZ09');
 
 // Protection
@@ -42,11 +43,33 @@ if ($user->socid > 0) {
 }
 
 $object = new Adherent($db);
-$result = $object->fetch($rowid);
-if (!$result) {
-	dol_print_error($db, "Failed to get adherent: ".$object->error);
-	exit;
+
+// Fetch object
+if ($id > 0 || !empty($ref)) {
+	// Load member
+	$result = $object->fetch($id, $ref);
+
+	// Define variables to know what current user can do on users
+	$canadduser = ($user->admin || $user->rights->user->user->creer);
+	// Define variables to know what current user can do on properties of user linked to edited member
+	if ($object->user_id) {
+		// $User is the user who edits, $object->user_id is the id of the related user in the edited member
+		$caneditfielduser = ((($user->id == $object->user_id) && $user->rights->user->self->creer)
+			|| (($user->id != $object->user_id) && $user->rights->user->user->creer));
+		$caneditpassworduser = ((($user->id == $object->user_id) && $user->rights->user->self->password)
+			|| (($user->id != $object->user_id) && $user->rights->user->user->password));
+	}
 }
+
+// Define variables to determine what the current user can do on the members
+$canaddmember = $user->rights->adherent->creer;
+// Define variables to determine what the current user can do on the properties of a member
+if ($id) {
+	$caneditfieldmember = $user->rights->adherent->creer;
+}
+
+// Security check
+$result = restrictedArea($user, 'adherent', $object->id, '', '', 'socid', 'rowid', 0);
 
 
 /*
@@ -131,9 +154,8 @@ print '</div>';
 print dol_get_fiche_end();
 
 /*
- * Barre d'actions
+ * Action bar
  */
-
 print '<div class="tabsAction">';
 
 if (!empty($conf->global->LDAP_MEMBER_ACTIVE) && $conf->global->LDAP_MEMBER_ACTIVE != 'ldap2dolibarr') {
@@ -142,7 +164,9 @@ if (!empty($conf->global->LDAP_MEMBER_ACTIVE) && $conf->global->LDAP_MEMBER_ACTI
 
 print "</div>\n";
 
-if (!empty($conf->global->LDAP_MEMBER_ACTIVE) && $conf->global->LDAP_MEMBER_ACTIVE != 'ldap2dolibarr') print "<br>\n";
+if (!empty($conf->global->LDAP_MEMBER_ACTIVE) && $conf->global->LDAP_MEMBER_ACTIVE != 'ldap2dolibarr') {
+	print "<br>\n";
+}
 
 
 

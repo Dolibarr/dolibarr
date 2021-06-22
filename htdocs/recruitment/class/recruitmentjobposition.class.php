@@ -87,7 +87,7 @@ class RecruitmentJobPosition extends CommonObject
 	 *  'help' is a string visible as a tooltip on field
 	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
 	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
-	 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
+	 *  'arrayofkeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
 	 *  'autofocusoncreate' to have field having the focus on a create form. Only 1 field should have this property set to 1.
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
 	 *
@@ -102,7 +102,7 @@ class RecruitmentJobPosition extends CommonObject
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'comment'=>"Id"),
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'position'=>5, 'notnull'=>1, 'default'=>'1', 'index'=>1),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
-		'label' => array('type'=>'varchar(255)', 'label'=>'JobLabel', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth500', 'csslist'=>'tdoverflowmax300', 'showoncombobox'=>'1', 'autofocusoncreate'=>1),
+		'label' => array('type'=>'varchar(255)', 'label'=>'JobLabel', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth500', 'csslist'=>'tdoverflowmax300', 'showoncombobox'=>'2', 'autofocusoncreate'=>1),
 		'qty' => array('type'=>'integer', 'label'=>'NbOfEmployeesExpected', 'enabled'=>'1', 'position'=>45, 'notnull'=>1, 'visible'=>1, 'default'=>'1', 'isameasure'=>'1', 'css'=>'maxwidth75imp'),
 		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'enabled'=>'1', 'position'=>52, 'notnull'=>-1, 'visible'=>-1, 'index'=>1, 'css'=>'maxwidth500', 'picto'=>'project'),
 		'fk_user_recruiter' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'ResponsibleOfRecruitement', 'enabled'=>'1', 'position'=>54, 'notnull'=>1, 'visible'=>1, 'foreignkey'=>'user.rowid', 'csslist'=>'tdoverflowmax150'),
@@ -179,8 +179,12 @@ class RecruitmentJobPosition extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) $this->fields['rowid']['visible'] = 0;
-		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) $this->fields['entity']['enabled'] = 0;
+		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+			$this->fields['rowid']['visible'] = 0;
+		}
+		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) {
+			$this->fields['entity']['enabled'] = 0;
+		}
 
 		// Example to show how to set values of fields definition dynamically
 		/*if ($user->rights->recruitment->recruitmentjobposition->read) {
@@ -189,23 +193,17 @@ class RecruitmentJobPosition extends CommonObject
 		}*/
 
 		// Unset fields that are disabled
-		foreach ($this->fields as $key => $val)
-		{
-			if (isset($val['enabled']) && empty($val['enabled']))
-			{
+		foreach ($this->fields as $key => $val) {
+			if (isset($val['enabled']) && empty($val['enabled'])) {
 				unset($this->fields[$key]);
 			}
 		}
 
 		// Translate some data of arrayofkeyval
-		if (is_object($langs))
-		{
-			foreach ($this->fields as $key => $val)
-			{
-				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval']))
-				{
-					foreach ($val['arrayofkeyval'] as $key2 => $val2)
-					{
+		if (is_object($langs)) {
+			foreach ($this->fields as $key => $val) {
+				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
+					foreach ($val['arrayofkeyval'] as $key2 => $val2) {
 						$this->fields[$key]['arrayofkeyval'][$key2] = $langs->trans($val2);
 					}
 				}
@@ -245,7 +243,9 @@ class RecruitmentJobPosition extends CommonObject
 
 		// Load source object
 		$result = $object->fetchCommon($fromid);
-		if ($result > 0 && !empty($object->table_element_line)) $object->fetchLines();
+		if ($result > 0 && !empty($object->table_element_line)) {
+			$object->fetchLines();
+		}
 
 		// get lines so they will be clone
 		//foreach($this->lines as $line)
@@ -257,21 +257,28 @@ class RecruitmentJobPosition extends CommonObject
 		unset($object->import_key);
 
 		// Clear fields
-		if (property_exists($object, 'ref')) $object->ref = empty($this->fields['ref']['default']) ? "Copy_Of_".$object->ref : $this->fields['ref']['default'];
-		if (property_exists($object, 'label')) $object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
-		if (property_exists($object, 'status')) { $object->status = self::STATUS_DRAFT; }
-		if (property_exists($object, 'date_creation')) { $object->date_creation = dol_now(); }
-		if (property_exists($object, 'date_modification')) { $object->date_modification = null; }
+		if (property_exists($object, 'ref')) {
+			$object->ref = empty($this->fields['ref']['default']) ? "Copy_Of_".$object->ref : $this->fields['ref']['default'];
+		}
+		if (property_exists($object, 'label')) {
+			$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
+		}
+		if (property_exists($object, 'status')) {
+			$object->status = self::STATUS_DRAFT;
+		}
+		if (property_exists($object, 'date_creation')) {
+			$object->date_creation = dol_now();
+		}
+		if (property_exists($object, 'date_modification')) {
+			$object->date_modification = null;
+		}
 		// ...
 		// Clear extrafields that are unique
-		if (is_array($object->array_options) && count($object->array_options) > 0)
-		{
+		if (is_array($object->array_options) && count($object->array_options) > 0) {
 			$extrafields->fetch_name_optionals_label($this->table_element);
-			foreach ($object->array_options as $key => $option)
-			{
+			foreach ($object->array_options as $key => $option) {
 				$shortkey = preg_replace('/options_/', '', $key);
-				if (!empty($extrafields->attributes[$this->element]['unique'][$shortkey]))
-				{
+				if (!empty($extrafields->attributes[$this->element]['unique'][$shortkey])) {
 					//var_dump($key); var_dump($clonedObj->array_options[$key]); exit;
 					unset($object->array_options[$key]);
 				}
@@ -287,22 +294,19 @@ class RecruitmentJobPosition extends CommonObject
 			$this->errors = $object->errors;
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			// copy internal contacts
-			if ($this->copy_linked_contact($object, 'internal') < 0)
-			{
+			if ($this->copy_linked_contact($object, 'internal') < 0) {
 				$error++;
 			}
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			// copy external contacts if same company
-			if (property_exists($this, 'socid') && $this->socid == $object->socid)
-			{
-				if ($this->copy_linked_contact($object, 'external') < 0)
+			if (property_exists($this, 'socid') && $this->socid == $object->socid) {
+				if ($this->copy_linked_contact($object, 'external') < 0) {
 					$error++;
+				}
 			}
 		}
 
@@ -328,7 +332,9 @@ class RecruitmentJobPosition extends CommonObject
 	public function fetch($id, $ref = null)
 	{
 		$result = $this->fetchCommon($id, $ref);
-		if ($result > 0 && !empty($this->table_element_line)) $this->fetchLines();
+		if ($result > 0 && !empty($this->table_element_line)) {
+			$this->fetchLines();
+		}
 		return $result;
 	}
 
@@ -368,8 +374,11 @@ class RecruitmentJobPosition extends CommonObject
 		$sql = 'SELECT ';
 		$sql .= $this->getFieldList();
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
-		else $sql .= ' WHERE 1 = 1';
+		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
+			$sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
+		} else {
+			$sql .= ' WHERE 1 = 1';
+		}
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
@@ -402,8 +411,7 @@ class RecruitmentJobPosition extends CommonObject
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
-			while ($i < ($limit ? min($limit, $num) : $num))
-			{
+			while ($i < ($limit ? min($limit, $num) : $num)) {
 				$obj = $this->db->fetch_object($resql);
 
 				$record = new self($this->db);
@@ -459,8 +467,7 @@ class RecruitmentJobPosition extends CommonObject
 	 */
 	public function deleteLine(User $user, $idline, $notrigger = false)
 	{
-		if ($this->status < 0)
-		{
+		if ($this->status < 0) {
 			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
 			return -2;
 		}
@@ -485,8 +492,7 @@ class RecruitmentJobPosition extends CommonObject
 		$error = 0;
 
 		// Protection
-		if ($this->status == self::STATUS_VALIDATED)
-		{
+		if ($this->status == self::STATUS_VALIDATED) {
 			dol_syslog(get_class($this)."::validate action abandonned: already validated", LOG_WARNING);
 			return 0;
 		}
@@ -504,8 +510,7 @@ class RecruitmentJobPosition extends CommonObject
 		$this->db->begin();
 
 		// Define new ref
-		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) // empty should not happened, but when it occurs, the test save life
-		{
+		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
 			$num = $this->getNextNumRef();
 		} else {
 			$num = $this->ref;
@@ -517,57 +522,58 @@ class RecruitmentJobPosition extends CommonObject
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 			$sql .= " SET ref = '".$this->db->escape($num)."',";
 			$sql .= " status = ".self::STATUS_VALIDATED;
-			if (!empty($this->fields['date_validation'])) $sql .= ", date_validation = '".$this->db->idate($now)."',";
-			if (!empty($this->fields['fk_user_valid'])) $sql .= ", fk_user_valid = ".$user->id;
+			if (!empty($this->fields['date_validation'])) {
+				$sql .= ", date_validation = '".$this->db->idate($now)."',";
+			}
+			if (!empty($this->fields['fk_user_valid'])) {
+				$sql .= ", fk_user_valid = ".$user->id;
+			}
 			$sql .= " WHERE rowid = ".$this->id;
 
 			dol_syslog(get_class($this)."::validate()", LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if (!$resql)
-			{
+			if (!$resql) {
 				dol_print_error($this->db);
 				$this->error = $this->db->lasterror();
 				$error++;
 			}
 
-			if (!$error && !$notrigger)
-			{
+			if (!$error && !$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('RECRUITMENTJOBPOSITION_VALIDATE', $user);
-				if ($result < 0) $error++;
+				if ($result < 0) {
+					$error++;
+				}
 				// End call triggers
 			}
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$this->oldref = $this->ref;
 
 			// Rename directory if dir was a temporary ref
-			if (preg_match('/^[\(]?PROV/i', $this->ref))
-			{
+			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 				// Now we rename also files into index
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'recruitmentjobposition/".$this->db->escape($this->newref)."'";
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'recruitmentjobposition/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
-				if (!$resql) { $error++; $this->error = $this->db->lasterror(); }
+				if (!$resql) {
+					$error++; $this->error = $this->db->lasterror();
+				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
 				$newref = dol_sanitizeFileName($num);
 				$dirsource = $conf->recruitment->dir_output.'/recruitmentjobposition/'.$oldref;
 				$dirdest = $conf->recruitment->dir_output.'/recruitmentjobposition/'.$newref;
-				if (!$error && file_exists($dirsource))
-				{
+				if (!$error && file_exists($dirsource)) {
 					dol_syslog(get_class($this)."::validate() rename dir ".$dirsource." into ".$dirdest);
 
-					if (@rename($dirsource, $dirdest))
-					{
+					if (@rename($dirsource, $dirdest)) {
 						dol_syslog("Rename ok");
 						// Rename docs starting with $oldref with $newref
 						$listoffiles = dol_dir_list($conf->recruitment->dir_output.'/recruitmentjobposition/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
-						foreach ($listoffiles as $fileentry)
-						{
+						foreach ($listoffiles as $fileentry) {
 							$dirsource = $fileentry['name'];
 							$dirdest = preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
 							$dirsource = $fileentry['path'].'/'.$dirsource;
@@ -580,14 +586,12 @@ class RecruitmentJobPosition extends CommonObject
 		}
 
 		// Set new ref and current status
-		if (!$error)
-		{
+		if (!$error) {
 			$this->ref = $num;
 			$this->status = self::STATUS_VALIDATED;
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$this->db->commit();
 			return 1;
 		} else {
@@ -607,8 +611,7 @@ class RecruitmentJobPosition extends CommonObject
 	public function setDraft($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->status <= self::STATUS_DRAFT)
-		{
+		if ($this->status <= self::STATUS_DRAFT) {
 			return 0;
 		}
 
@@ -632,8 +635,7 @@ class RecruitmentJobPosition extends CommonObject
 	public function cancel($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->status != self::STATUS_VALIDATED)
-		{
+		if ($this->status != self::STATUS_VALIDATED) {
 			return 0;
 		}
 
@@ -668,35 +670,30 @@ class RecruitmentJobPosition extends CommonObject
 		$newprivatenote = dol_concatdesc($this->note_private, $note);
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-		$sql .= " SET status = ".$status.", note_private = '".$this->db->escape($newprivatenote)."'";
+		$sql .= " SET status = ".((int) $status).", note_private = '".$this->db->escape($newprivatenote)."'";
 		//$sql .= ", date_cloture='".$this->db->idate($now)."', fk_user_cloture=".$user->id;
 		$sql .= " WHERE rowid = ".$this->id;
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$modelpdf = $this->model_pdf;
 			$triggerName = 'RECRUITMENTJOB_CLOSE_REFUSED';
 
-			if ($status == self::STATUS_RECRUITED)
-			{
+			if ($status == self::STATUS_RECRUITED) {
 				$triggerName = 'RECRUITMENTJOB_CLOSE_RECRUITED';
 				$modelpdf = $this->model_pdf;
 
-				if ($result < 0)
-				{
+				if ($result < 0) {
 					$this->error = $this->db->lasterror();
 					$this->db->rollback();
 					return -2;
 				}
 			}
 
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-			{
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				// Define output language
 				$outputlangs = $langs;
-				if (!empty($conf->global->MAIN_MULTILANGS))
-				{
+				if (!empty($conf->global->MAIN_MULTILANGS)) {
 					$outputlangs = new Translate("", $conf);
 					$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $this->thirdparty->default_lang);
 					$outputlangs->setDefaultLang($newlang);
@@ -705,24 +702,23 @@ class RecruitmentJobPosition extends CommonObject
 				$this->generateDocument($modelpdf, $outputlangs);
 			}
 
-			if (!$error)
-			{
+			if (!$error) {
 				$this->oldcopy = clone $this;
 				$this->status = $status;
 				$this->date_cloture = $now;
 				$this->note_private = $newprivatenote;
 			}
 
-			if (!$notrigger && empty($error))
-			{
+			if (!$notrigger && empty($error)) {
 				// Call trigger
 				$result = $this->call_trigger($triggerName, $user);
-				if ($result < 0) { $error++; }
+				if ($result < 0) {
+					$error++;
+				}
 				// End call triggers
 			}
 
-			if (!$error)
-			{
+			if (!$error) {
 				$this->db->commit();
 				return 1;
 			} else {
@@ -750,8 +746,7 @@ class RecruitmentJobPosition extends CommonObject
 	public function reopen($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->status != self::STATUS_CANCELED)
-		{
+		if ($this->status != self::STATUS_CANCELED) {
 			return 0;
 		}
 
@@ -779,7 +774,9 @@ class RecruitmentJobPosition extends CommonObject
 	{
 		global $conf, $langs, $hookmanager;
 
-		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
+		if (!empty($conf->dol_no_mouse_hover)) {
+			$notooltip = 1; // Force disable tooltips
+		}
 
 		$result = '';
 
@@ -793,25 +790,28 @@ class RecruitmentJobPosition extends CommonObject
 
 		$url = dol_buildpath('/recruitment/recruitmentjobposition_card.php', 1).'?id='.$this->id;
 
-		if ($option != 'nolink')
-		{
+		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
-			if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
 		}
 
 		$linkclose = '';
-		if (empty($notooltip))
-		{
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-			{
+		if (empty($notooltip)) {
+			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("ShowRecruitmentJobPosition");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-		} else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		} else {
+			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		}
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
@@ -820,7 +820,9 @@ class RecruitmentJobPosition extends CommonObject
 		$result .= $linkstart;
 
 		if (empty($this->showphoto_on_popup)) {
-			if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			if ($withpicto) {
+				$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			}
 		} else {
 			if ($withpicto) {
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -846,7 +848,9 @@ class RecruitmentJobPosition extends CommonObject
 			}
 		}
 
-		if ($withpicto != 2) $result .= $this->ref;
+		if ($withpicto != 2) {
+			$result .= $this->ref;
+		}
 
 		$result .= $linkend;
 		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
@@ -855,8 +859,11 @@ class RecruitmentJobPosition extends CommonObject
 		$hookmanager->initHooks(array('recruitmentjobpositiondao'));
 		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-		if ($reshook > 0) $result = $hookmanager->resPrint;
-		else $result .= $hookmanager->resPrint;
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 
 		return $result;
 	}
@@ -883,8 +890,7 @@ class RecruitmentJobPosition extends CommonObject
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-		if (empty($this->labelStatus) || empty($this->labelStatusShort))
-		{
+		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("recruitment");
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
@@ -898,9 +904,15 @@ class RecruitmentJobPosition extends CommonObject
 		}
 
 		$statusType = 'status'.$status;
-		if ($status == self::STATUS_VALIDATED) $statusType = 'status4';
-		if ($status == self::STATUS_RECRUITED) $statusType = 'status6';
-		if ($status == self::STATUS_CANCELED) $statusType = 'status9';
+		if ($status == self::STATUS_VALIDATED) {
+			$statusType = 'status4';
+		}
+		if ($status == self::STATUS_RECRUITED) {
+			$statusType = 'status6';
+		}
+		if ($status == self::STATUS_CANCELED) {
+			$statusType = 'status9';
+		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
@@ -916,30 +928,25 @@ class RecruitmentJobPosition extends CommonObject
 		$sql = 'SELECT rowid, date_creation as datec, tms as datem,';
 		$sql .= ' fk_user_creat, fk_user_modif';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		$sql .= ' WHERE t.rowid = '.$id;
+		$sql .= ' WHERE t.rowid = '.((int) $id);
 		$result = $this->db->query($sql);
-		if ($result)
-		{
-			if ($this->db->num_rows($result))
-			{
+		if ($result) {
+			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author)
-				{
+				if ($obj->fk_user_author) {
 					$cuser = new User($this->db);
 					$cuser->fetch($obj->fk_user_author);
 					$this->user_creation = $cuser;
 				}
 
-				if ($obj->fk_user_valid)
-				{
+				if ($obj->fk_user_valid) {
 					$vuser = new User($this->db);
 					$vuser->fetch($obj->fk_user_valid);
 					$this->user_validation = $vuser;
 				}
 
-				if ($obj->fk_user_cloture)
-				{
+				if ($obj->fk_user_cloture) {
 					$cluser = new User($this->db);
 					$cluser->fetch($obj->fk_user_cloture);
 					$this->user_cloture = $cluser;
@@ -993,8 +1000,7 @@ class RecruitmentJobPosition extends CommonObject
 			$conf->global->RECRUITMENT_RECRUITMENTJOBPOSITION_ADDON = 'mod_recruitmentjobposition_standard';
 		}
 
-		if (!empty($conf->global->RECRUITMENT_RECRUITMENTJOBPOSITION_ADDON))
-		{
+		if (!empty($conf->global->RECRUITMENT_RECRUITMENTJOBPOSITION_ADDON)) {
 			$mybool = false;
 
 			$file = $conf->global->RECRUITMENT_RECRUITMENTJOBPOSITION_ADDON.".php";
@@ -1002,16 +1008,14 @@ class RecruitmentJobPosition extends CommonObject
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-			foreach ($dirmodels as $reldir)
-			{
+			foreach ($dirmodels as $reldir) {
 				$dir = dol_buildpath($reldir."core/modules/recruitment/");
 
 				// Load file with numbering class (if found)
 				$mybool |= @include_once $dir.$file;
 			}
 
-			if ($mybool === false)
-			{
+			if ($mybool === false) {
 				dol_print_error('', "Failed to include file ".$file);
 				return '';
 			}
@@ -1020,8 +1024,7 @@ class RecruitmentJobPosition extends CommonObject
 				$obj = new $classname();
 				$numref = $obj->getNextValue($this);
 
-				if ($numref != '' && $numref != '-1')
-				{
+				if ($numref != '' && $numref != '-1') {
 					return $numref;
 				} else {
 					$this->error = $obj->error;

@@ -28,20 +28,15 @@
 // $cancel must be defined
 // $id or $ref must be defined (object is loaded in this file with fetch)
 
-if (($id > 0 || (!empty($ref) && !in_array($action, array('create', 'createtask', 'add')))) && (empty($cancel) || $id > 0))
-{
-	if (($id > 0 && is_numeric($id)) || !empty($ref))	// To discard case when id is list of ids like '1,2,3...'
-	{
+if (($id > 0 || (!empty($ref) && !in_array($action, array('create', 'createtask', 'add')))) && (empty($cancel) || $id > 0)) {
+	if (($id > 0 && is_numeric($id)) || !empty($ref)) {	// To discard case when id is list of ids like '1,2,3...'
 		$ret = $object->fetch($id, $ref);
-		if ($ret > 0)
-		{
+		if ($ret > 0) {
 			$object->fetch_thirdparty();
 			$id = $object->id;
 		} else {
-			if (empty($object->error) && !count($object->errors))
-			{
-				if ($ret < 0)	// if $ret == 0, it means not found.
-				{
+			if (empty($object->error) && !count($object->errors)) {
+				if ($ret < 0) {	// if $ret == 0, it means not found.
 					setEventMessages('Fetch on object (type '.get_class($object).') return an error without filling $object->error nor $object->errors', null, 'errors');
 				}
 			} else {

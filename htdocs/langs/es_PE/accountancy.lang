@@ -27,12 +27,12 @@ EndProcessing=Proceso finalizado.
 Lineofinvoice=Línea de factura
 VentilatedinAccount=Vinculado con éxito a la cuenta contable
 NotVentilatedinAccount=No vinculado a la cuenta contable
-ACCOUNTING_LIMIT_LIST_VENTILATION=Maximum number of lines on list and bind page (recommended: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Comienza la clasificación de la página "Vinculación a hacer" por los elementos más recientes
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Comienza la clasificación de la página "Encuadernación realizada" por los elementos más recientes
 ACCOUNTING_LENGTH_DESCRIPTION=Truncar la descripción de los productos y servicios en los listados después de los caracteres x (mejor = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Truncar el formulario de descripción de la cuenta de producto y servicios en los listados después de los caracteres x (mejor = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Longitud de las cuentas de contabilidad general (si establece el valor a 6 aquí, la cuenta '706' aparecerá como '706000' en la pantalla)
+ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties)
 ACCOUNTING_SELL_JOURNAL=Diario de Venta
 ACCOUNTING_PURCHASE_JOURNAL=Diario de Compra
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Diario diverso

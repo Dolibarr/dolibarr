@@ -85,7 +85,7 @@ ListOfPermissionsDefined=Liste des permissions
 SeeExamples=Voir des exemples ici
 EnabledDesc=Condition pour que ce champ soit actif (Exemples: 1 ou $conf->global->MYMODULE_MYOPTION)
 VisibleDesc=Le champ est-il visible ? (Exemples: 0 = Jamais visible, 1 = Visible sur les listes et formulaires de création/mise à jour/visualisation, 2 = Visible uniquement sur la liste, 3 = Visible uniquement sur le formulaire de création/mise à jour/affichage (pas les listes), 4=Visible sur les listes et formulaire de mise à jour et affichage uniquement (pas en création), 5=Visible sur les listes et formulaire en lecture (pas en création ni modification).<br><br>Utiliser une valeur négative signifie que le champ n'est pas affiché par défaut sur la liste mais peut être sélectionné pour l'affichage).<br><br>Il peut s'agir d'une expression, par exemple :<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
-DisplayOnPdfDesc=Affichez ce champ sur les documents PDF compatibles, vous pouvez gérer la position avec le champ "Position". <br/> Actuellement, les modèles compatibles PDF connus sont: Eratostene (ordre), Espadon (navire), une éponge (factures), cyan (Propal / citation), Cornas (commande fournisseur) <br/> <br/> <strong> Pour le document: </strong> <br/> 0 = non affiché <br/> 1 = affiché <br/> 2 = affiché uniquement si non vide <br/> <br/> <strong> Pour les lignes de document: </strong> <br/> 0 = non affiché <br/> 1 = affiché dans une colonne <br/> 3 = affiché dans la colonne de description de ligne après la description <br/> 4 = affiché dans la colonne de description après le description uniquement si non vide
+DisplayOnPdfDesc=Afficher ce champ sur les documents PDF compatibles, vous pouvez gérer la position avec le champ "Position.<br>Actuellement, les modèles compatibles PDF connus sont: eratostene (commande), espadon (expédition), sponge (factures), cyan (devis/propositions commerciales), cornas (commande fournisseur)<br><br><strong>Pour le document :</strong><br>0 = non affiché <br>1 = affiché<br>2 = affiché uniquement si non vide<br><br><strong>Pour les lignes de document :</strong><br>0 = non affiché <br>1 =  0 = non affiché 1 = affiché dans une colonne<br>3 = affiché dans la colonne description après la description<br>4 = affiché dans la colonne description après la description uniquement si non vide
 DisplayOnPdf=Afficher sur PDF
 IsAMeasureDesc=Peut-on cumuler la valeur du champ pour obtenir un total dans les listes ? (Exemples: 1 ou 0)
 SearchAllDesc=Le champ doit-il être utilisé pour effectuer une recherche à partir de l'outil de recherche rapide ? (Exemples: 1 ou 0)
@@ -106,7 +106,7 @@ TryToUseTheModuleBuilder=Si vous connaissez SQL et PHP, vous pouvez utiliser l'a
 SeeTopRightMenu=Voir <span class="fa fa-bug"></span> à droite de votre barre de menu principal
 AddLanguageFile=Ajouter le fichier de langue
 YouCanUseTranslationKey=Vous pouvez utiliser ici une clé qui est la clé de traduction trouvée dans le fichier de langue (voir l'onglet "Langues")
-DropTableIfEmpty=(Supprimer la table si elle est vide)
+DropTableIfEmpty=(Supprimer la table si vide)
 TableDoesNotExists=La table %s n'existe pas
 TableDropped=La table %s a été supprimée
 InitStructureFromExistingTable=Construire la chaîne du tableau de structure d'une table existante
@@ -133,11 +133,13 @@ IncludeDocGeneration=Je veux générer des documents à partir de l'objet
 IncludeDocGenerationHelp=Si vous cochez cette case, du code sera généré pour ajouter une section "Générer un document" sur la fiche de l'objet.
 ShowOnCombobox=Afficher la valeur dans la liste déroulante
 KeyForTooltip=Clé pour l'info-bulle
-CSSClass=Classe CSS
+CSSClass=CSS pour le formulaire d'édition / création
+CSSViewClass=CSS pour le formulaire de lecture
+CSSListClass=CSS pour la liste
 NotEditable=Non éditable
 ForeignKey=Clé étrangère
 TypeOfFieldsHelp=Type de champs: <br> varchar (99), double (24,8), réel, texte, html, datetime, timestamp, integer, integer:NomClasse:cheminrelatif/vers/classfile.class.php [:1[:filtre]] ('1' signifie nous ajoutons un bouton + après le combo pour créer l'enregistrement, 'filter' peut être 'status = 1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTITIES__)' par exemple)
 AsciiToHtmlConverter=Convertisseur Ascii en HTML
 AsciiToPdfConverter=Convertisseur Ascii en PDF
 TableNotEmptyDropCanceled=La table n’est pas vide. La suppression a été annulée.
-ModuleBuilderNotAllowed=Le module builder est activé mais son accès n'est pas autorisé à l'utilisateur courant
+ModuleBuilderNotAllowed=Le module builder est activé mais son accès n'est pas autorisé pour votre utilisateur

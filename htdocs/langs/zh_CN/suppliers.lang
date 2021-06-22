@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - vendors
 Suppliers=供应商
 SuppliersInvoice=供应商发票
+SupplierInvoices=供应商发票
 ShowSupplierInvoice=显示供应商发票
 NewSupplier=新供应商
 History=历史

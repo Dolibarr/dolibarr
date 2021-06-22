@@ -30,8 +30,8 @@ $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
 $path=dirname(__FILE__).'/';
 if (substr($sapi_type, 0, 3) == 'cgi') {
-    echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-    exit;
+	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
+	exit;
 }
 
 // Recupere root dolibarr
@@ -67,44 +67,40 @@ $startlinenb = empty($argv[3])?1:$argv[3];
 $endlinenb = empty($argv[4])?0:$argv[4];
 
 if (empty($mode) || ! in_array($mode, array('test','confirm','confirmforced')) || empty($filepath)) {
-    print "Usage:  $script_file (test|confirm|confirmforced) filepath.csv [startlinenb] [endlinenb]\n";
-    print "Usage:  $script_file test myfilepath.csv 2 1002\n";
-    print "\n";
-    exit(-1);
+	print "Usage:  $script_file (test|confirm|confirmforced) filepath.csv [startlinenb] [endlinenb]\n";
+	print "Usage:  $script_file test myfilepath.csv 2 1002\n";
+	print "\n";
+	exit(-1);
 }
 if (! file_exists($filepath)) {
-    print "Error: File ".$filepath." not found.\n";
-    print "\n";
-    exit(-1);
+	print "Error: File ".$filepath." not found.\n";
+	print "\n";
+	exit(-1);
 }
 
 $ret=$user->fetch('', 'admin');
-if (! $ret > 0)
-{
+if (! $ret > 0) {
 	print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
 	exit;
 }
 $user->getrights();
 
 // Ask confirmation
-if (! $confirmed)
-{
-    print "Hit Enter to continue or CTRL+C to stop...\n";
-    $input = trim(fgets(STDIN));
+if (! $confirmed) {
+	print "Hit Enter to continue or CTRL+C to stop...\n";
+	$input = trim(fgets(STDIN));
 }
 
 // Open input and output files
 $fhandle = fopen($filepath, 'r');
-if (! $fhandle)
-{
-    print 'Error: Failed to open file '.$filepath."\n";
-    exit(1);
+if (! $fhandle) {
+	print 'Error: Failed to open file '.$filepath."\n";
+	exit(1);
 }
 $fhandleerr = fopen($filepatherr, 'w');
-if (! $fhandleerr)
-{
-    print 'Error: Failed to open file '.$filepatherr."\n";
-    exit(1);
+if (! $fhandleerr) {
+	print 'Error: Failed to open file '.$filepatherr."\n";
+	exit(1);
 }
 
 //$langs->setDefaultLang($defaultlang);
@@ -114,44 +110,48 @@ $db->begin();
 
 $i=0;
 $nboflines=0;
-while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
-{
-    $i++;
-    $errorrecord=0;
+while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape)) {
+	$i++;
+	$errorrecord=0;
 
-    if ($startlinenb && $i < $startlinenb) continue;
-    if ($endlinenb && $i > $endlinenb) continue;
+	if ($startlinenb && $i < $startlinenb) {
+		continue;
+	}
+	if ($endlinenb && $i > $endlinenb) {
+		continue;
+	}
 
-    $nboflines++;
+	$nboflines++;
 
-    $object = new User($db);
-    $object->statut = 1;
+	$object = new User($db);
+	$object->statut = 1;
 
-    $tmp=explode(' ', $fields[3], 2);
-    $object->firstname = trim($tmp[0]);
-    $object->lastname = trim($tmp[1]);
-    if ($object->lastname) $object->login = strtolower(substr($object->firstname, 0, 1)) . strtolower(substr($object->lastname, 0));
-    else $object->login=strtolower($object->firstname);
-    $object->login=preg_replace('/ /', '', $object->login);
-    $object->password = 'init';
+	$tmp=explode(' ', $fields[3], 2);
+	$object->firstname = trim($tmp[0]);
+	$object->lastname = trim($tmp[1]);
+	if ($object->lastname) {
+		$object->login = strtolower(substr($object->firstname, 0, 1)) . strtolower(substr($object->lastname, 0));
+	} else {
+		$object->login=strtolower($object->firstname);
+	}
+	$object->login=preg_replace('/ /', '', $object->login);
+	$object->password = 'init';
 
-    print "Process line nb ".$i.", login ".$object->login;
+	print "Process line nb ".$i.", login ".$object->login;
 
-    $ret=$object->create($user);
-    if ($ret < 0)
-    {
-        print " - Error in create result code = ".$ret." - ".$object->errorsToString();
-        $errorrecord++;
-    } else {
-	    print " - Creation OK with login ".$object->login." - id = ".$ret;
+	$ret=$object->create($user);
+	if ($ret < 0) {
+		print " - Error in create result code = ".$ret." - ".$object->errorsToString();
+		$errorrecord++;
+	} else {
+		print " - Creation OK with login ".$object->login." - id = ".$ret;
 	}
 
 	print "\n";
 
-	if ($errorrecord)
-	{
-	    fwrite($fhandleerr, 'Error on record nb '.$i." - ".$object->errorsToString()."\n");
-	    $error++;    // $errorrecord will be reset
+	if ($errorrecord) {
+		fwrite($fhandleerr, 'Error on record nb '.$i." - ".$object->errorsToString()."\n");
+		$error++;    // $errorrecord will be reset
 	}
 }
 
@@ -162,13 +162,12 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
 // commit or rollback
 print "Nb of lines qualified: ".$nboflines."\n";
 print "Nb of errors: ".$error."\n";
-if ($mode != 'confirmforced' && ($error || $mode != 'confirm'))
-{
-    print "Rollback any changes.\n";
-    $db->rollback();
+if ($mode != 'confirmforced' && ($error || $mode != 'confirm')) {
+	print "Rollback any changes.\n";
+	$db->rollback();
 } else {
-    print "Commit all changes.\n";
-    $db->commit();
+	print "Commit all changes.\n";
+	$db->commit();
 }
 
 $db->close();

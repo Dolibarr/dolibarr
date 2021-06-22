@@ -70,6 +70,8 @@ Deleted=Smazáno
 # Dict
 Type=Typ
 Severity=Vážnost
+TicketGroupIsPublic=Group is public
+TicketGroupIsPublicDesc=If a ticket group is public, it will be visible in the form when creating a ticket from the public interface
 
 # Email templates
 MailToSendTicketMessage=Chcete-li poslat e-mail z lístkové zprávy
@@ -114,8 +116,8 @@ TicketsShowModuleLogo=Zobrazit logo modulu ve veřejném rozhraní
 TicketsShowModuleLogoHelp=Povolte tuto možnost, pokud chcete skrýt modul loga na stránkách veřejného rozhraní
 TicketsShowCompanyLogo=Zobrazit logo společnosti ve veřejném rozhraní
 TicketsShowCompanyLogoHelp=Povolte tuto možnost, pokud chcete skrýt logo hlavní společnosti na stránkách veřejného rozhraní
-TicketsEmailAlsoSendToMainAddress=Také poslat oznámení na hlavní e-mailovou adresu
-TicketsEmailAlsoSendToMainAddressHelp=Povolte tuto možnost a odešlete e-mail na adresu „Oznámení e-mailem z adresy“ (viz nastavení níže)
+TicketsEmailAlsoSendToMainAddress=Also send a notification to the main email address
+TicketsEmailAlsoSendToMainAddressHelp=Enable this option to also send an email to the address defined into setup "%s" (see tab "%s")
 TicketsLimitViewAssignedOnly=Omezit zobrazení na vstupenky přiřazené aktuálnímu uživateli (neúčinné pro externí uživatele, vždy omezeno na třetí stranu, na které závisí)
 TicketsLimitViewAssignedOnlyHelp=Viditelné budou pouze vstupenky přiřazené aktuálnímu uživateli. Nevztahuje se na uživatele s právy správy vstupenek.
 TicketsActivatePublicInterface=Aktivovat veřejné rozhraní
@@ -126,10 +128,10 @@ TicketNumberingModules=Modul číslování vstupenek
 TicketsModelModule=Document templates for tickets
 TicketNotifyTiersAtCreation=Upozornit subjekt na vytvoření
 TicketsDisableCustomerEmail=Pokud je lístek vytvořen z veřejného rozhraní, vždy zakažte e-maily
-TicketsPublicNotificationNewMessage=Po přidání nové zprávy odešlete e-mail(y)
+TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is added to a ticket
 TicketsPublicNotificationNewMessageHelp=Odeslat e-mail(y) při přidání nové zprávy z veřejného rozhraní (přiřazenému uživateli nebo e-mailu s oznámením do (aktualizace) a/nebo e-mailu s oznámením do)
 TicketPublicNotificationNewMessageDefaultEmail=E-mail s oznámeními (aktualizace)
-TicketPublicNotificationNewMessageDefaultEmailHelp=Pokud na lístek není přiřazen uživatel nebo nemá e-mail, zašlete na tuto adresu e-mailem oznámení o nové zprávě.
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
 #
 # Index & list page
 #
@@ -302,3 +304,13 @@ BoxLastModifiedTicket=Poslední změněné vstupenky
 BoxLastModifiedTicketDescription=Poslední %s změněné vstupenky
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=Žádné poslední změněné vstupenky
+BoxTicketType=Number of open tickets by type
+BoxTicketSeverity=Number of open tickets by severity
+BoxNoTicketSeverity=No tickets opened
+BoxTicketLastXDays=Number of new tickets by days the last %s days
+BoxTicketLastXDayswidget = Number of new tickets by days the last X days
+BoxNoTicketLastXDays=No new tickets the last %s days
+BoxNumberOfTicketByDay=Number of new tickets by day
+BoxNewTicketVSClose=Number of today's new tickets versus today's closed tickets
+TicketCreatedToday=Ticket created today
+TicketClosedToday=Ticket closed today

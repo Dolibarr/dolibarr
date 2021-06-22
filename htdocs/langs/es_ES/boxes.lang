@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - boxes
+BoxDolibarrStateBoard=Estadísticas sobre los principales objetos comerciales en la base de datos
 BoxLoginInformation=Información login
 BoxLastRssInfos=Hilos de información RSS
 BoxLastProducts=Últimos %s productos/servicios
@@ -17,9 +18,13 @@ BoxLastActions=Últimas acciones
 BoxLastContracts=Últimos contratos
 BoxLastContacts=Últimos contactos/direcciones
 BoxLastMembers=Últimos miembros
+BoxLastModifiedMembers=Miembros modificados más recientes
+BoxLastMembersSubscriptions=Últimas suscripciones de miembros
 BoxFicheInter=Últimas intervenciones
 BoxCurrentAccounts=Balance de cuentas abiertas
 BoxTitleMemberNextBirthdays=Cumpleaños de este mes (miembros)
+BoxTitleMembersByType=Miembros por tipo
+BoxTitleMembersSubscriptionsByYear=Suscripciones de miembros por año
 BoxTitleLastRssInfos=Últimas %s noticias de %s
 BoxTitleLastProducts=Productos/Servicios: últimos %s modificados
 BoxTitleProductsAlertStock=Productos: alerta de stock
@@ -107,5 +112,9 @@ BoxTitleLastCustomerShipments=Últimos %s envíos a clientes
 NoRecordedShipments=Ningún envío a clientes registrado
 BoxCustomersOutstandingBillReached=Clientes con límite pendiente alcanzado
 # Pages
-AccountancyHome=Contabilidad
+UsersHome=Usuarios y grupos internos
+MembersHome=Afiliados internos
+ThirdpartiesHome=Terceros internos
+TicketsHome=Tickets internos
+AccountancyHome=Contabilidad interna
 ValidatedProjects=Proyectos validados

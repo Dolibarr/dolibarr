@@ -1,9 +1,9 @@
 
 For languages:
-http://demo.icu-project.org/icu-bin/locexp?d_=fr
+https://icu4c-demos.unicode.org/icu-bin/icudemos - Locale Explorer -> Error 404
 
 For format number:
-http://en.wikipedia.org/wiki/Decimal_mark
+https://en.wikipedia.org/wiki/Decimal_mark
 
 For date format:
-http://en.wikipedia.org/wiki/Date_format_by_country
+https://en.wikipedia.org/wiki/Date_format_by_country

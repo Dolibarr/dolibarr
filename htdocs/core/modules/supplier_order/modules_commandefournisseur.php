@@ -57,12 +57,12 @@ abstract class ModelePDFSuppliersOrders extends CommonDocGenerator
 		global $conf;
 
 		$type = 'order_supplier';
-		$liste = array();
+		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste = getListOfModels($db, $type, $maxfilenamelength);
+		$list = getListOfModels($db, $type, $maxfilenamelength);
 
-		return $liste;
+		return $list;
 	}
 }
 
@@ -137,10 +137,18 @@ abstract class ModeleNumRefSuppliersOrders
 		global $langs;
 		$langs->load("admin");
 
-		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		if ($this->version == 'dolibarr') return DOL_VERSION;
-		if ($this->version) return $this->version;
+		if ($this->version == 'development') {
+			return $langs->trans("VersionDevelopment");
+		}
+		if ($this->version == 'experimental') {
+			return $langs->trans("VersionExperimental");
+		}
+		if ($this->version == 'dolibarr') {
+			return DOL_VERSION;
+		}
+		if ($this->version) {
+			return $this->version;
+		}
 		return $langs->trans("NotAvailable");
 	}
 }

@@ -60,7 +60,9 @@ function loan_prepare_head($object)
 	$nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$tab][0] = DOL_URL_ROOT.'/loan/document.php?id='.$object->id;
 	$head[$tab][1] = $langs->trans("Documents");
-	if (($nbFiles + $nbLinks) > 0) $head[$tab][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	if (($nbFiles + $nbLinks) > 0) {
+		$head[$tab][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	}
 	$head[$tab][2] = 'documents';
 	$tab++;
 
@@ -68,7 +70,9 @@ function loan_prepare_head($object)
 		$nbNote = (empty($object->note_private) ? 0 : 1) + (empty($object->note_public) ? 0 : 1);
 		$head[$tab][0] = DOL_URL_ROOT."/loan/note.php?id=".$object->id;
 		$head[$tab][1] = $langs->trans("Notes");
-		if ($nbNote > 0) $head[$tab][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		if ($nbNote > 0) {
+			$head[$tab][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		}
 		$head[$tab][2] = 'note';
 		$tab++;
 	}
@@ -86,19 +90,26 @@ function loan_prepare_head($object)
 /**
  * Calculate remaining loan mensuality and interests
  *
- * @param   int     $mens		Value of this mensuality (interests include, set 0 if we don't paid interests for this mensuality)
- * @param   float   $capital    Remaining capital for this mensuality
- * @param   float   $rate		Loan rate
- * @param   int     $echance	Actual loan term
- * @param   int   	$nbterm  	Total number of term for this loan
- * @return  array				Array with remaining capital, interest, and mensuality for each remaining terms
+ * @param   float   $mens				Value of this mensuality (interests include, set 0 if we don't paid interests for this mensuality)
+ * @param   float   $capital    		Remaining capital for this mensuality
+ * @param   float   $rate				Loan rate
+ * @param   int     $numactualloadterm	Actual loan term
+ * @param   int   	$nbterm  			Total number of term for this loan
+ * @return  array						Array with remaining capital, interest, and mensuality for each remaining terms
  */
-function loanCalcMonthlyPayment($mens, $capital, $rate, $echance, $nbterm)
+function loanCalcMonthlyPayment($mens, $capital, $rate, $numactualloadterm, $nbterm)
 {
 	global $conf, $db;
 	require_once DOL_DOCUMENT_ROOT.'/loan/class/loanschedule.class.php';
 	$object = new LoanSchedule($db);
 	$output = array();
+
+	// Sanitize data in case of
+	$mens = price2num($mens);
+	$capital = price2num($capital);
+	$rate = price2num($rate);
+	$numactualloadterm = ((int) $numactualloadterm);
+	$nbterm = ((int) $nbterm);
 
 	// If mensuality is 0 we don't pay interests and remaining capital not modified
 	if ($mens == 0) {
@@ -109,18 +120,18 @@ function loanCalcMonthlyPayment($mens, $capital, $rate, $echance, $nbterm)
 		$int = round($int, 2, PHP_ROUND_HALF_UP);
 		$cap_rest = round($capital - ($mens - $int), 2, PHP_ROUND_HALF_UP);
 	}
-	$output[$echance] = array('cap_rest'=>$cap_rest, 'cap_rest_str'=>price($cap_rest, 0, '', 1, -1, -1, $conf->currency), 'interet'=>$int, 'interet_str'=>price($int, 0, '', 1, -1, -1, $conf->currency), 'mens'=>$mens);
+	$output[$numactualloadterm] = array('cap_rest'=>$cap_rest, 'cap_rest_str'=>price($cap_rest, 0, '', 1, -1, -1, $conf->currency), 'interet'=>$int, 'interet_str'=>price($int, 0, '', 1, -1, -1, $conf->currency), 'mens'=>$mens);
 
-	$echance++;
+	$numactualloadterm++;
 	$capital = $cap_rest;
-	while ($echance <= $nbterm) {
-		$mens = round($object->calcMonthlyPayments($capital, $rate, $nbterm - $echance + 1), 2, PHP_ROUND_HALF_UP);
+	while ($numactualloadterm <= $nbterm) {
+		$mens = round($object->calcMonthlyPayments($capital, $rate, $nbterm - $numactualloadterm + 1), 2, PHP_ROUND_HALF_UP);
 
 		$int = ($capital * ($rate / 12));
 		$int = round($int, 2, PHP_ROUND_HALF_UP);
 		$cap_rest = round($capital - ($mens - $int), 2, PHP_ROUND_HALF_UP);
 
-		$output[$echance] = array(
+		$output[$numactualloadterm] = array(
 			'cap_rest' => $cap_rest,
 			'cap_rest_str' => price($cap_rest, 0, '', 1, -1, -1, $conf->currency),
 			'interet' => $int,
@@ -129,7 +140,7 @@ function loanCalcMonthlyPayment($mens, $capital, $rate, $echance, $nbterm)
 		);
 
 		$capital = $cap_rest;
-		$echance++;
+		$numactualloadterm++;
 	}
 
 	return $output;

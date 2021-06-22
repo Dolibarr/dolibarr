@@ -85,7 +85,7 @@ ListOfPermissionsDefined=Seznam definovaných oprávnění
 SeeExamples=Viz příklady zde
 EnabledDesc=Podmínka, aby bylo toto pole aktivní (příklady: 1 nebo $ conf-> global-> MYMODULE_MYOPTION)
 VisibleDesc=Je pole viditelné? (Příklady: 0 = Nikdy neviditelné, 1 = Viditelné v seznamu a vytvářet/aktualizovat/prohlížet formuláře, 2 = Viditelné pouze v seznamu, 3 = Viditelné pouze při vytváření/aktualizaci/zobrazit formulář (není v seznamu), 4 = Viditelné v seznamu a pouze formulář aktualizace/zobrazení (nevytvářet), 5 = viditelné pouze ve formuláři pro prohlížení koncových zobrazení (nevytvářet, neaktualizovat). <br><br>  Použití záporné hodnoty znamená, že pole není ve výchozím nastavení zobrazeno v seznamu, ale může být vybráno pro zobrazení). <br><br>Může to být výraz, například: <br> preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
-DisplayOnPdfDesc=Zobrazte toto pole na kompatibilních dokumentech PDF. Polohu můžete spravovat pomocí pole „Poloha“. <br/> V současné době známých modelů compatibles PDF jsou: Eratosthenés z Kyrény (objednávka), Espadon (loď), houba (faktury), cyan (propal / citát), Cornas (dodavatel pořadí) <br/> <br/> <strong> Z dokumentu: </strong> <br/> 0 = nezobrazí <br/> 1 = displej <br/> 2 = zobrazí pouze tehdy, pokud není prázdný <br/> <br/> <strong> pro linky na dokumenty: </strong> <br/> 0 = není zobrazena <br/> 1 = zobrazena v koloně <br/> 3 = zobrazení v popis řádku sloupce po popisu <br/> 4 = zobrazení ve sloupci s popisem po vyrobení popis pouze pokud není prázdný
+DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br>Currently, known compatibles PDF models are : eratosthene (order), espadon (ship), sponge (invoices), cyan (propal/quotation), cornas (supplier order)<br><br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
 DisplayOnPdf=Zobrazit v PDF
 IsAMeasureDesc=Může být hodnota pole kumulativní, aby se dostala do seznamu celkem? (Příklady: 1 nebo 0)
 SearchAllDesc=Používá se pole pro vyhledávání pomocí nástroje rychlého vyhledávání? (Příklady: 1 nebo 0)
@@ -133,7 +133,9 @@ IncludeDocGeneration=Chci z objektu vygenerovat nějaké dokumenty
 IncludeDocGenerationHelp=Pokud toto zaškrtnete, bude vygenerován nějaký kód pro přidání pole „Generovat dokument“ do záznamu.
 ShowOnCombobox=Zobrazit hodnotu do komboboxu
 KeyForTooltip=Klíč pro popis
-CSSClass=Třída CSS
+CSSClass=CSS for edit/create form
+CSSViewClass=CSS for read form
+CSSListClass=CSS for list
 NotEditable=Nelze upravovat
 ForeignKey=Cizí klíč
 TypeOfFieldsHelp=Typ polí: <br> varchar (99), dvojitý (24,8), reálný, text, html, datetime, timestamp, celé číslo, celé číslo: ClassName: relativní cesta / do / classfile.class.php [: 1 [: filter]] ('1' znamená, že přidáme tlačítko + za kombajn pro vytvoření záznamu, 'filter' může být 'status = 1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTITIES__))

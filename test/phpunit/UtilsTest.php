@@ -30,9 +30,9 @@ require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/class/utils.class.php';
 
 if (empty($user->id)) {
-    print "Load permissions for admin user nb 1\n";
-    $user->fetch(1);
-    $user->getrights();
+	print "Load permissions for admin user nb 1\n";
+	$user->fetch(1);
+	$user->getrights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
@@ -46,114 +46,114 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  */
 class UtilsTest extends PHPUnit\Framework\TestCase
 {
-    protected $savconf;
-    protected $savuser;
-    protected $savlangs;
-    protected $savdb;
+	protected $savconf;
+	protected $savuser;
+	protected $savlangs;
+	protected $savdb;
 
-    /**
-     * Constructor
-     * We save global variables into local variables
-     *
-     * @return UserTest
-     */
-    public function __construct()
-    {
-        parent::__construct();
+	/**
+	 * Constructor
+	 * We save global variables into local variables
+	 *
+	 * @return UserTest
+	 */
+	public function __construct()
+	{
+		parent::__construct();
 
-        //$this->sharedFixture
-        global $conf,$user,$langs,$db;
-        $this->savconf=$conf;
-        $this->savuser=$user;
-        $this->savlangs=$langs;
-        $this->savdb=$db;
+		//$this->sharedFixture
+		global $conf,$user,$langs,$db;
+		$this->savconf=$conf;
+		$this->savuser=$user;
+		$this->savlangs=$langs;
+		$this->savdb=$db;
 
-        print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-        //print " - db ".$db->db;
-        print "\n";
-    }
+		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
+		//print " - db ".$db->db;
+		print "\n";
+	}
 
-    /**
-     * setUpBeforeClass
-     *
-     * @return void
-     */
-    public static function setUpBeforeClass()
-    {
-        global $conf,$user,$langs,$db;
+	/**
+	 * setUpBeforeClass
+	 *
+	 * @return void
+	 */
+	public static function setUpBeforeClass()
+	{
+		global $conf,$user,$langs,$db;
 
-        $db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
-        print __METHOD__."\n";
-    }
+		print __METHOD__."\n";
+	}
 
-    /**
-     * tearDownAfterClass
-     *
-     * @return	void
-     */
-    public static function tearDownAfterClass()
-    {
-        global $conf,$user,$langs,$db;
-        $db->rollback();
+	/**
+	 * tearDownAfterClass
+	 *
+	 * @return	void
+	 */
+	public static function tearDownAfterClass()
+	{
+		global $conf,$user,$langs,$db;
+		$db->rollback();
 
-        print __METHOD__."\n";
-    }
+		print __METHOD__."\n";
+	}
 
-    /**
-     * Init phpunit tests
-     *
-     * @return	void
-     */
-    protected function setUp()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+	/**
+	 * Init phpunit tests
+	 *
+	 * @return	void
+	 */
+	protected function setUp()
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
 
-        print __METHOD__."\n";
-    }
+		print __METHOD__."\n";
+	}
 
-    /**
-     * End phpunit tests
-     *
-     * @return	void
-     */
-    protected function tearDown()
-    {
-        print __METHOD__."\n";
-    }
+	/**
+	 * End phpunit tests
+	 *
+	 * @return	void
+	 */
+	protected function tearDown()
+	{
+		print __METHOD__."\n";
+	}
 
-    /**
-     * testExecuteCLI
-     *
-     * @return  void
-     */
-    public function testExecuteCLI()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+	/**
+	 * testExecuteCLI
+	 *
+	 * @return  void
+	 */
+	public function testExecuteCLI()
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
 
-        $localobject=new Utils($this->savdb);
-        $result = $localobject->executeCLI('ls', $conf->admin->dir_temp.'/out.tmp', 1);
+		$localobject=new Utils($this->savdb);
+		$result = $localobject->executeCLI('ls', $conf->admin->dir_temp.'/out.tmp', 1);
 		print var_export($result, true);
-        $this->assertEquals($result['result'], 0);
-        $this->assertEquals($result['error'], '');
-        //$this->assertEquals(preg_match('/phpunit/', $result['output']), 1);
+		$this->assertEquals($result['result'], 0);
+		$this->assertEquals($result['error'], '');
+		//$this->assertEquals(preg_match('/phpunit/', $result['output']), 1);
 
-        $localobject=new Utils($this->savdb);
-        $result = $localobject->executeCLI('ls', $conf->admin->dir_temp.'/out.tmp', 2);
+		$localobject=new Utils($this->savdb);
+		$result = $localobject->executeCLI('ls', $conf->admin->dir_temp.'/out.tmp', 2);
 		print var_export($result, true);
-        $this->assertEquals($result['result'], 0);
-        $this->assertEquals($result['error'], '');
-        //$this->assertEquals(preg_match('/phpunit/', $result['output']), 1);
+		$this->assertEquals($result['result'], 0);
+		$this->assertEquals($result['error'], '');
+		//$this->assertEquals(preg_match('/phpunit/', $result['output']), 1);
 
-        print __METHOD__." result=".$result['result']."\n";
-        return $result;
-    }
+		print __METHOD__." result=".$result['result']."\n";
+		return $result;
+	}
 }

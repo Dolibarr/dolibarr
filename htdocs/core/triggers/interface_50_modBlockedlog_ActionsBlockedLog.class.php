@@ -59,16 +59,21 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		if (empty($conf->blockedlog->enabled)) return 0; // Module not active, we do nothing
+		if (empty($conf->blockedlog) || empty($conf->blockedlog->enabled)) {
+			return 0; // Module not active, we do nothing
+		}
 
 		// Test if event/record is qualified
 		$listofqualifiedelement = array('facture', 'don', 'payment', 'payment_donation', 'subscription', 'payment_various', 'cashcontrol');
-		if (!in_array($object->element, $listofqualifiedelement)) return 1;
+		if (!in_array($object->element, $listofqualifiedelement)) {
+			return 1;
+		}
 
 		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 		require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 		$b = new BlockedLog($this->db);
+		$b->loadTrackedEvents();
 
 		// Tracked events
 		if (!in_array($action, array_keys($b->trackedevents))) {
@@ -91,10 +96,13 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 
 			if (in_array($action, array(
 				'MEMBER_SUBSCRIPTION_CREATE', 'MEMBER_SUBSCRIPTION_MODIFY', 'MEMBER_SUBSCRIPTION_DELETE',
-				'DON_VALIDATE', 'DON_MODIFY', 'DON_DELETE'))) $amounts = (double) $object->amount;
-			elseif ($action == 'CASHCONTROL_VALIDATE') {
+				'DON_VALIDATE', 'DON_MODIFY', 'DON_DELETE'))) {
+				$amounts = (double) $object->amount;
+			} elseif ($action == 'CASHCONTROL_VALIDATE') {
 				$amounts = (double) $object->cash + (double) $object->cheque + (double) $object->card;
-			} else $amounts = (double) $object->total_ttc;
+			} else {
+				$amounts = (double) $object->total_ttc;
+			}
 		}
 		/*if ($action === 'BILL_PAYED' || $action==='BILL_UNPAYED'
 		 || $action === 'BILL_SUPPLIER_PAYED' || $action === 'BILL_SUPPLIER_UNPAYED')

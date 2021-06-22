@@ -26,7 +26,9 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/expensereport/modules_expensereport.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
-if (!empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+if (!empty($conf->banque->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'companies', 'trips'));
@@ -36,16 +38,19 @@ $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm');
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 // TODO Add rule to restrict access payment
 //$result = restrictedArea($user, 'facture', $id,'');
 
 $object = new PaymentExpenseReport($db);
 
-if ($id > 0)
-{
+if ($id > 0) {
 	$result = $object->fetch($id);
-	if (!$result) dol_print_error($db, 'Failed to get payment id '.$id);
+	if (!$result) {
+		dol_print_error($db, 'Failed to get payment id '.$id);
+	}
 }
 
 
@@ -54,13 +59,11 @@ if ($id > 0)
  */
 
 // Delete payment
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expensereport->supprimer)
-{
+if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expensereport->supprimer) {
 	$db->begin();
 
 	$result = $object->delete($user);
-	if ($result > 0)
-	{
+	if ($result > 0) {
 		$db->commit();
 		header("Location: ".DOL_URL_ROOT."/expensereport/index.php");
 		exit;
@@ -86,8 +89,7 @@ print dol_get_fiche_head($head, 'payment', $langs->trans("ExpenseReportPayment")
 /*
  * Confirm deleting of the payment
  */
-if ($action == 'delete')
-{
+if ($action == 'delete') {
 	print $form->formconfirm('card.php?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete', '', 0, 2);
 }
 
@@ -118,14 +120,11 @@ print '<tr><td class="tdtop">'.$langs->trans('Note').'</td><td colspan="3">'.nl2
 
 $disable_delete = 0;
 // Bank account
-if (!empty($conf->banque->enabled))
-{
-	if ($object->bank_account)
-	{
+if (!empty($conf->banque->enabled)) {
+	if ($object->bank_account) {
 		$bankline = new AccountLine($db);
 		$bankline->fetch($object->bank_line);
-		if ($bankline->rappro)
-		{
+		if ($bankline->rappro) {
 			$disable_delete = 1;
 			$title_button = dol_escape_htmltag($langs->transnoentitiesnoconv("CantRemoveConciliatedPayment"));
 		}
@@ -163,12 +162,11 @@ $sql = 'SELECT er.rowid as eid, er.paid, er.total_ttc, per.amount';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'payment_expensereport as per,'.MAIN_DB_PREFIX.'expensereport as er';
 $sql .= ' WHERE per.fk_expensereport = er.rowid';
 $sql .= ' AND er.entity IN ('.getEntity('expensereport').')';
-$sql .= ' AND per.rowid = '.$id;
+$sql .= ' AND per.rowid = '.((int) $id);
 
 dol_syslog("expensereport/payment/card.php", LOG_DEBUG);
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 
 	$i = 0;
@@ -186,10 +184,8 @@ if ($resql)
 	print '<td class="center">'.$langs->trans('Status').'</td>';
 	print "</tr>\n";
 
-	if ($num > 0)
-	{
-		while ($i < $num)
-		{
+	if ($num > 0) {
+		while ($i < $num) {
 			$objp = $db->fetch_object($resql);
 
 			print '<tr class="oddeven">';
@@ -216,8 +212,7 @@ if ($resql)
 
 			print "</tr>\n";
 
-			if ($objp->paid == 1)	// If at least one invoice is paid, disable delete
-			{
+			if ($objp->paid == 1) {	// If at least one invoice is paid, disable delete
 				$disable_delete = 2;
 				$title_button = $langs->trans("CantRemovePaymentWithOneInvoicePaid");
 			}
@@ -242,12 +237,9 @@ if ($resql)
  */
 print '<div class="tabsAction">';
 
-if ($action == '')
-{
-	if ($user->rights->expensereport->supprimer)
-	{
-		if (!$disable_delete)
-		{
+if ($action == '') {
+	if ($user->rights->expensereport->supprimer) {
+		if (!$disable_delete) {
 			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans('Delete').'</a>';
 		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($title_button).'">'.$langs->trans('Delete').'</a>';

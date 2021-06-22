@@ -22,7 +22,7 @@ ProductService=Продукт или услуга
 AllProducts=Всички продукти и услуги
 ChooseProduct/Service=Избиране на продукт или услуга
 ForceBuyingPriceIfNull=Форсиране на покупна цена / себестойност да бъде равна на продажната цена, ако не е дефинирана първата
-ForceBuyingPriceIfNullDetails=Ако покупната цена / себестойност не е дефинирана и тази опция е включена, маржа ще бъде нула за реда (покупна цена / себестойност = продажна цена), в противен случай, ако е изключена маржа ще бъде равен на предложения по подразбиране.
+ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0 on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100% if no default value can be found).
 MARGIN_METHODE_FOR_DISCOUNT=Маржов метод за глобални отстъпки
 UseDiscountAsProduct=Като продукт
 UseDiscountAsService=Като услуга
