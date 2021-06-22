@@ -703,6 +703,17 @@ class Holiday extends CommonObject
 		global $conf, $langs;
 		$error = 0;
 
+		$checkBalance = getDictvalue(MAIN_DB_PREFIX.'c_holiday_types', 'block_if_negative', $this->fk_type);
+
+		if ($checkBalance > 0) {
+			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
+
+			if ($balance < 0) {
+				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
+				return -1;
+			}
+		}
+
 		// Define new ref
 		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref) || $this->ref == $this->id)) {
 			$num = $this->getNextNumRef(null);
@@ -766,6 +777,17 @@ class Holiday extends CommonObject
 	{
 		global $conf, $langs;
 		$error = 0;
+
+		$checkBalance = getDictvalue(MAIN_DB_PREFIX.'c_holiday_types', 'block_if_negative', $this->fk_type);
+
+		if ($checkBalance > 0) {
+			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
+
+			if ($balance < 0) {
+				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
+				return -1;
+			}
+		}
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."holiday SET";
@@ -875,6 +897,17 @@ class Holiday extends CommonObject
 	{
 		global $conf, $langs;
 		$error = 0;
+
+		$checkBalance = getDictvalue(MAIN_DB_PREFIX.'c_holiday_types', 'block_if_negative', $this->fk_type);
+
+		if ($checkBalance > 0) {
+			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
+
+			if ($balance < 0) {
+				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
+				return -1;
+			}
+		}
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."holiday SET";
