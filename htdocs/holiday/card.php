@@ -535,10 +535,6 @@ if (empty($reshook))
 		{
 			$object->oldcopy = dol_clone($object);
 
-			$object->date_valid = dol_now();
-			$object->fk_user_valid = $user->id;
-			$object->statut = Holiday::STATUS_APPROVED;
-
 			$db->begin();
 
 			$verif = $object->approve($user);

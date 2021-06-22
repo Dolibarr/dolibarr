@@ -874,6 +874,7 @@ class Holiday extends CommonObject
 			// date approval
 			$this->date_valid = $now;
 			$this->fk_user_valid = $user->id;
+			$this->statut = self::STATUS_APPROVED;
 			$this->db->commit();
 			return 1;
 		}
