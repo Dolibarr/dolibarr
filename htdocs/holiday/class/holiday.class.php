@@ -865,7 +865,6 @@ class Holiday extends CommonObject
 			$this->db->rollback();
 			return -1 * $error;
 		} else {
-
 			// date approval
 			$this->date_valid = $now;
 			$this->fk_user_valid = $user->id;
