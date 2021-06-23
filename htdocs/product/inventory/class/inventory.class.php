@@ -643,23 +643,25 @@ class Inventory extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_creat) {
+
+				if ($obj->fk_user_creat > 0) {
 					$cuser = new User($this->db);
 					$cuser->fetch($obj->fk_user_creat);
 					$this->user_creation = $cuser;
 				}
 
-				if ($obj->fk_user_valid) {
+				if ($obj->fk_user_modif > 0) {
+					$muser = new User($this->db);
+					$muser->fetch($obj->fk_user_modif);
+					$this->user_creation = $muser;
+				}
+
+				if ($obj->fk_user_valid > 0) {
 					$vuser = new User($this->db);
 					$vuser->fetch($obj->fk_user_valid);
 					$this->user_validation = $vuser;
-				}
-
-				if ($obj->fk_user_cloture) {
-					$cluser = new User($this->db);
-					$cluser->fetch($obj->fk_user_cloture);
-					$this->user_cloture = $cluser;
 				}
 
 				$this->date_creation     = $this->db->jdate($obj->datec);
