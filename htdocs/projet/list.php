@@ -25,7 +25,7 @@
 
 /**
  *	\file       htdocs/projet/list.php
- *	\ingroup    projet
+ *	\ingroup    project
  *	\brief      Page to list projects
  */
 
@@ -300,6 +300,7 @@ if (count($listofprojectcontacttype) == 0) $listofprojectcontacttype[0] = '0'; /
 $distinct = 'DISTINCT'; // We add distinct until we are added a protection to be sure a contact of a project and task is only once.
 $sql = "SELECT ".$distinct." p.rowid as id, p.ref, p.title, p.fk_statut as status, p.fk_opp_status, p.public, p.fk_user_creat";
 $sql .= ", p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, (p.opp_amount*p.opp_percent/100) as opp_weighted_amount, p.tms as date_update, p.budget_amount, p.usage_opportunity, p.usage_task, p.usage_bill_time";
+$sql .= ", p.email_msgid";
 $sql .= ", s.rowid as socid, s.nom as name, s.email";
 $sql .= ", cls.code as opp_status_code";
 // Add fields from extrafields
@@ -668,6 +669,12 @@ if (!empty($arrayfields['p.tms']['checked']))
 	print '<td class="liste_titre">';
 	print '</td>';
 }
+if (!empty($arrayfields['p.email_msgid']['checked']))
+{
+	// Email msg id
+	print '<td class="liste_titre">';
+	print '</td>';
+}
 if (!empty($arrayfields['p.fk_statut']['checked']))
 {
 	print '<td class="liste_titre nowrap right">';
@@ -710,6 +717,7 @@ $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // No
 print $hookmanager->resPrint;
 if (!empty($arrayfields['p.datec']['checked']))  print_liste_field_titre($arrayfields['p.datec']['label'], $_SERVER["PHP_SELF"], "p.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 if (!empty($arrayfields['p.tms']['checked']))    print_liste_field_titre($arrayfields['p.tms']['label'], $_SERVER["PHP_SELF"], "p.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+if (!empty($arrayfields['p.email_msgid']['checked']))    print_liste_field_titre($arrayfields['p.email_msgid']['label'], $_SERVER["PHP_SELF"], "p.email_msgid", "", $param, '', $sortfield, $sortorder, 'center ');
 if (!empty($arrayfields['p.fk_statut']['checked'])) print_liste_field_titre($arrayfields['p.fk_statut']['label'], $_SERVER["PHP_SELF"], "p.fk_statut", "", $param, '', $sortfield, $sortorder, 'right ');
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 print "</tr>\n";
@@ -945,6 +953,14 @@ while ($i < min($num, $limit))
 		{
 			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
+		}
+		// Email MsgID
+		if (!empty($arrayfields['p.email_msgid']['checked']))
+		{
+			print '<td class="center">';
+			print $obj->email_msgid;
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}

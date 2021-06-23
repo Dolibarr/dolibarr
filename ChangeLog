@@ -12,6 +12,8 @@ FIX: #17060
 FIX: #17192 - With tz < 0, event is show in bad day on calendar views
 FIX: #17363
 FIX: #17476 releve.php: Fix SQL statement
+FIX: #17967
+Fix: #17906 : fix access denied
 FIX: Accountancy - Import in general ledger
 FIX: Accountancy - Quadra export - wrong data on credit
 FIX: Accountancy - Warning on the pages of the preparatory statements of accounting entries

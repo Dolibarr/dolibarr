@@ -1305,10 +1305,14 @@ elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action =
 			$newlang = '';
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 				$newlang = GETPOST('lang_id', 'aZ09');
-			}
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && is_object($object->thirdparty)) {
+			} elseif ($conf->global->MAIN_MULTILANGS && empty($newlang) && is_object($object->thirdparty)) {
 				$newlang = $object->thirdparty->default_lang;
 			}
+			if (!empty($newlang)) {
+				$outputlangs = new Translate("", $conf);
+				$outputlangs->setDefaultLang($newlang);
+			}
+
 			$arrayoffamiliestoexclude = array('objectamount');
 
 			$action = 'add_message'; // action to use to post the message
@@ -1317,7 +1321,7 @@ elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action =
 			// Substitution array
 			$morehtmlright = '';
 			$help = "";
-			$substitutionarray = getCommonSubstitutionArray($newlang, 0, $arrayoffamiliestoexclude, $object);
+			$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, $arrayoffamiliestoexclude, $object);
 			if ($object->fk_soc > 0) {
 				$substitutionarray['__THIRDPARTY_NAME__'] = $object->thirdparty->name;
 			}
