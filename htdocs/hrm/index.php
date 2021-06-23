@@ -381,9 +381,9 @@ if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitme
 				$staticrecruitmentjobposition->label = $objp->label;
 
 				print '<tr class="oddeven">';
-				print '<td class="nowrap">'.$staticrecruitmentcandidature->getNomUrl(1, '').'</td>';
+				print '<td class="nowraponall">'.$staticrecruitmentcandidature->getNomUrl(1, '').'</td>';
 				print '<td class="tdoverflowmax150">'.$staticrecruitmentcandidature->getFullName($langs).'</td>';
-				print '<td class="nowrap">'.$staticrecruitmentjobposition->getNomUrl(1).'</td>';
+				print '<td class="nowraponall">'.$staticrecruitmentjobposition->getNomUrl(1).'</td>';
 				print '<td class="right nowrap">'.dol_print_date($db->jdate($objp->tms), 'day').'</td>';
 				print '<td class="right nowrap" width="16">';
 				print $staticrecruitmentcandidature->getLibStatut(3);

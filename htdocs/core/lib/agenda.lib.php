@@ -80,14 +80,15 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print $formactions->select_type_actions($actioncode, "search_actioncode", $excludetype, (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1), 0, $multiselect, 0, 'maxwidth500');
 		print '</div>';
 
-		// Assigned to
+		// Assigned to user
 		print '<div class="divsearchfield">';
 		print img_picto($langs->trans("ActionsToDoBy"), 'user', 'class="fawidth30 inline-block"');
-		print $form->select_dolusers($filtert, 'search_filtert', 1, '', !$canedit, '', '', 0, 0, 0, '', 0, '', 'maxwidth500 widthcentpercentminusxx');
+		print $form->select_dolusers($filtert, 'search_filtert', 1, '', !$canedit, '', '', 0, 0, 0, '', 0, '', 'minwidth150 maxwidth500 widthcentpercentminusxx');
 		print '</div>';
+		// Assigned to user group
 		print '<div class="divsearchfield">';
 		print img_picto($langs->trans("ToUserOfGroup"), 'object_group', 'class="fawidth30 inline-block"');
-		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', !$canedit, '', '', '0', false, 'maxwidth500');
+		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', !$canedit, '', '', '0', false, 'minwidth100 maxwidth500 widthcentpercentminusxx');
 		print '</div>';
 
 		if ($conf->resource->enabled) {

@@ -6835,6 +6835,8 @@ span.clipboardCPValue.hidewithsize {
 		border-right: none;
 		border-left: none;
 	}
+
+	td.widthpictotitle { width: 30px; }
 }
 
 @media only screen and (max-width: 1024px)
