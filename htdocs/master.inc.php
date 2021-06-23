@@ -195,23 +195,10 @@ if (!is_numeric($conf->entity)) {
 	$conf->entity = 1;
 }
 
-if (!defined('NOREQUIREDB')) {
-	//print "Will work with data into entity instance number '".$conf->entity."'";
+//print "We work with data into entity instance number '".$conf->entity."'";
 
-	// Here we read database (llx_const table) and define $conf->global->XXX var.
-	$conf->setValues($db);
-}
-
-// Overwrite database value
-if (!empty($conf->file->mailing_limit_sendbyweb)) {
-	$conf->global->MAILING_LIMIT_SENDBYWEB = $conf->file->mailing_limit_sendbyweb;
-}
-if (empty($conf->global->MAILING_LIMIT_SENDBYWEB)) {
-	$conf->global->MAILING_LIMIT_SENDBYWEB = 25;
-}
-if (!empty($conf->file->mailing_limit_sendbycli)) {
-	$conf->global->MAILING_LIMIT_SENDBYCLI = $conf->file->mailing_limit_sendbycli;
-}
+// Here we read database (llx_const table) and define $conf->global->XXX var.
+$conf->setValues($db);
 
 // Create object $mysoc (A thirdparty object that contains properties of companies managed by Dolibarr.
 if (!defined('NOREQUIREDB') && !defined('NOREQUIRESOC')) {
