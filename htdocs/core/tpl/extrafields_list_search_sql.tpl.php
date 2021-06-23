@@ -23,7 +23,7 @@ if (!empty($extrafieldsobjectkey) && !empty($search_array_options) && is_array($
 
 		if ($crit != '' && in_array($typ, array('date', 'datetime', 'timestamp')))
 		{
-			$sql .= " AND ".$extrafieldsobjectprefix.$tmpkey." = '".$db->idate($crit)."'";
+			$sql .= " AND ".$extrafieldsobjectprefix.$tmpkey." = '".date('Y-m-d', $crit)."'";
 		} elseif (in_array($typ, array('boolean')))
 		{
 			if ($crit !== '-1' && $crit !== '') {
