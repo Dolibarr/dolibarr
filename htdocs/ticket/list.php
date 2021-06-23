@@ -490,6 +490,11 @@ if ($socid && !$projectid && !$project_ref && $user->rights->societe->lire) {
 		print '<div class="underbanner clearboth"></div>';
 		print '<table class="border centpercent tableforfield">';
 
+		// Type Prospect/Customer/Supplier
+		print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
+		print $socstat->getTypeUrl(1);
+		print '</td></tr>';
+
 		// Customer code
 		if ($socstat->client && !empty($socstat->code_client)) {
 			print '<tr><td class="titlefield">';

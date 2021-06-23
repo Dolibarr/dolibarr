@@ -113,6 +113,11 @@ if ($socid > 0) {
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border tableforfield" width="100%">';
 
+	// Type Prospect/Customer/Supplier
+	print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
+	print $object->getTypeUrl(1);
+	print '</td></tr>';
+
 	if ($object->client) {
 		print '<tr><td class="titlefield">';
 		print $langs->trans('CustomerCode').'</td><td colspan="3">';
