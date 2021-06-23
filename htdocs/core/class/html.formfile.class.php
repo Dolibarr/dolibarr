@@ -316,6 +316,7 @@ class FormFile
 			if ($nooutput) {
 				return $out;
 			} else {
+				print $out;
 				return 1;
 			}
 		}
