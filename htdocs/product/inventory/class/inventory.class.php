@@ -635,8 +635,8 @@ class Inventory extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT rowid, date_creation as datec, tms as datem,';
-		$sql .= ' fk_user_creat, fk_user_modif';
+		$sql = 'SELECT rowid, date_creation as datec, tms as datem, date_validation as datev,';
+		$sql .= ' fk_user_creat, fk_user_modif, fk_user_valid';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		$sql .= ' WHERE t.rowid = '.((int) $id);
 		$result = $this->db->query($sql);
