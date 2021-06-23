@@ -142,7 +142,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
-print '<td class="titlefieldcreate">'.$langs->trans("Parameter").'</td>';
+print '<td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>";
 
