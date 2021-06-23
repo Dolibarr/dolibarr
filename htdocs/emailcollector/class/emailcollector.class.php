@@ -193,8 +193,9 @@ class EmailCollector extends CommonObject
 	 */
 	public $datelastresult;
 
-
+	public $codelastresult;
 	public $lastresult;
+	public $datelastok;
 	// END MODULEBUILDER PROPERTIES
 
 	public $filters;
