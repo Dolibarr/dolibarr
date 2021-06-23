@@ -66,8 +66,11 @@ foreach ($linkedObjectBlock as $key => $objectlink)
     		}
     	} ?></td>
     	<td class="right"><?php
-		if(method_exists($objectlink, 'getSommePaiement')) echo $objectlink->getLibStatut(3, $objectlink->getSommePaiement());
-		else echo $objectlink->getLibStatut(3);
+		if (method_exists($objectlink, 'getSommePaiement')) {
+			echo $objectlink->getLibStatut(3, $objectlink->getSommePaiement());
+		} else {
+			echo $objectlink->getLibStatut(3);
+		}
 		?></td>
     	<td class="right"><a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
     </tr>
