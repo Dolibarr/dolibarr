@@ -425,7 +425,9 @@ input.pageplusone {
 .colorblack {
 	color: #000;
 }
-
+.fontsizeunset {
+	font-size: unset !important;
+}
 .vmirror {
 	transform: scale(1, -1);
 }
