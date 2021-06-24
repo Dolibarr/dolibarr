@@ -656,18 +656,18 @@ class AdherentType extends CommonObject
 	/**
 	 *  Return clicable name (with picto eventually)
 	 *
-	 *  @param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-	 *  @param		int		$maxlen			length max label
-	 *  @param		int  	$notooltip		1=Disable tooltip
-	 *  @return		string					String with URL
+	 *  @param		int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
+	 *  @param		int		$maxlen						length max label
+	 *  @param		int  	$notooltip					1=Disable tooltip
+	 *  @param  	string  $morecss                    Add more css on link
+	 *  @param  	int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @return		string								String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $maxlen = 0, $notooltip = 0)
+	public function getNomUrl($withpicto = 0, $maxlen = 0, $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
 		global $langs;
 
 		$result = '';
-
-		$label = '';
 
 		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("MemberType").'</u>';
 		$label .= ' '.$this->getLibStatut(4);
@@ -676,7 +676,22 @@ class AdherentType extends CommonObject
 			$label .= '<br>'.$langs->trans("SubscriptionRequired").': '.yn($this->subscription);
 		}
 
-		$linkstart = '<a href="'.DOL_URL_ROOT.'/adherents/type.php?rowid='.((int) $this->id).'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$option = '';
+
+		$url = DOL_URL_ROOT.'/adherents/type.php?rowid='.((int) $this->id);
+
+		if ($option != 'nolink') {
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
+		}
+
+		$linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend = '</a>';
 
 		$result .= $linkstart;
