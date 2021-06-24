@@ -576,6 +576,11 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 
 -- Removed no more used function
 -- VPGSQL8.2 DROP FUNCTION IF EXISTS update_modified_column_date_m() CASCADE;
+-- VPGSQL8.2 DROP TRIGGER update_customer_modtime ON llx_ecm_directories;
+-- VPGSQL8.2 DROP TRIGGER update_customer_modtime ON llx_ecm_files;
+-- VPGSQL8.2 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_ecm_directories FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+-- VPGSQL8.2 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_ecm_files FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+
 
 insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 6,'AC_EMAIL_IN','system','reception Email',NULL, 1, 4);
 
