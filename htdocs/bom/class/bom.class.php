@@ -26,6 +26,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
+
 /**
  * Class for BOM
  */
@@ -786,7 +787,7 @@ class BOM extends CommonObject
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
-		$url = dol_buildpath('/bom/bom_card.php', 1).'?id='.$this->id;
+		$url = DOL_URL_ROOT.'/bom/bom_card.php?id='.$this->id;
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
