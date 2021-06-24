@@ -345,13 +345,13 @@ if (empty($reshook)) {
 									setEventMessages($object->error, $object->errors, 'errors');
 									$error++;
 								}
-    					        elseif ($action == 'update') {
+								elseif ($action == 'update') {
 									if ( ! $object->create_line($stockLine[$i][$j]['warehouse_id'], $stockLine[$i][$j]['ix_l'], $stockLine[$i][$j]['qty'], $array_options[$i]) ) {
 										setEventMessages($object->error, $object->errors, 'errors');
 										$error++;
 									}
 								}
-    					    }
+							}
 						}
 					} else {
 						if (GETPOST($qty, 'int') > 0 || (GETPOST($qty, 'int') == 0 && $conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS)) {
@@ -421,7 +421,7 @@ if (empty($reshook)) {
 		} else {
 			$db->rollback();
 			$_GET["commande_id"] = GETPOST('commande_id', 'int');
-	        if ($action == 'add') $action='create';
+			if ($action == 'add') $action='create';
 			else $action = 'edit';
 		}
 	} elseif ($action == 'create_delivery' && $conf->delivery_note->enabled && $user->rights->expedition->delivery->creer) {
@@ -872,7 +872,7 @@ if ($action == 'create' || $action == 'edit') {
 				print '<input type="hidden" name="action" value="add">';
 			}
 			print '<input type="hidden" name="origin" value="'.$origin.'">';
-			print '<input type="hidden" name="origin_id" value="'.$object->id.'">';
+			print '<input type="hidden" name="origin_id" value="'.$origin_id.'">';
 			print '<input type="hidden" name="ref_int" value="'.$object->ref_int.'">';
 			if (GETPOST('entrepot_id', 'int')) {
 				print '<input type="hidden" name="entrepot_id" value="'.GETPOST('entrepot_id', 'int').'">';
