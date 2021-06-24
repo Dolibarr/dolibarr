@@ -288,6 +288,7 @@ class EcmFiles extends CommonObject
 		$sql .= 'fullpath_orig,';
 		$sql .= 'description,';
 		$sql .= 'keywords,';
+		$sql .= 'keyword,';
 		$sql .= 'cover,';
 		$sql .= 'position,';
 		$sql .= 'gen_or_uploaded,';
@@ -309,6 +310,7 @@ class EcmFiles extends CommonObject
 		$sql .= ' '.(!isset($this->fullpath_orig) ? 'NULL' : "'".$this->db->escape($this->fullpath_orig)."'").',';
 		$sql .= ' '.(!isset($this->description) ? 'NULL' : "'".$this->db->escape($this->description)."'").',';
 		$sql .= ' '.(!isset($this->keywords) ? 'NULL' : "'".$this->db->escape($this->keywords)."'").',';
+		$sql .= ' '.(!isset($this->keyword) ? 'NULL' : "'".$this->db->escape($this->keyword)."'").',';
 		$sql .= ' '.(!isset($this->cover) ? 'NULL' : "'".$this->db->escape($this->cover)."'").',';
 		$sql .= ' '.$maxposition.',';
 		$sql .= ' '.(!isset($this->gen_or_uploaded) ? 'NULL' : "'".$this->db->escape($this->gen_or_uploaded)."'").',';

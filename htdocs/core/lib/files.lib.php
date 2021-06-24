@@ -1789,7 +1789,9 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 
 		if (is_object($object) && $object->id > 0) {
 			$ecmfile->src_object_id = $object->id;
-			$ecmfile->src_object_type = $object->table_element;
+			if (isset($object->table_element)) $ecmfile->src_object_type = $object->table_element;
+			if (isset($object->src_object_description)) $ecmfile->description = $object->src_object_description;
+			if (isset($object->src_object_keyword)) $ecmfile->keyword = $object->src_object_keyword;
 		}
 
 		if ($setsharekey) {
