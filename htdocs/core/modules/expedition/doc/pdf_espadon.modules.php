@@ -608,7 +608,7 @@ class pdf_espadon extends ModelePdfExpedition
 						$posYAfterDescription = $pdf->GetY();
 					}
 
-					$nexY = $pdf->GetY();
+					$nexY = max($pdf->GetY(), $posYAfterImage);
 					$pageposafter = $pdf->getPage();
 
 					$pdf->setPage($pageposbefore);
