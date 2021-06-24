@@ -1060,7 +1060,7 @@ if ($action == 'create' || $action == 'edit') {
 			print '<table class="noborder centpercent">';
 
 			// Load shipments already done for same order
-			$object->loadExpeditions($action == 'edit'?'1':null); // dont load draft shippings if edit so we can show all lines
+			$object->loadExpeditions($action == 'edit' ? 1 : -1); // dont load draft shippings if edit so we can show all lines
 
 			if ($numAsked) {
 				print '<tr class="liste_titre">';
