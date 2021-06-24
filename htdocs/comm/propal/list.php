@@ -1322,6 +1322,11 @@ if ($resql) {
 	$now = dol_now();
 	$i = 0;
 	$totalarray = array();
+	$totalarray['nbfield'] = 0;
+	$totalarray['val'] = array();
+	$totalarray['val']['p.total_ht'] = 0;
+	$totalarray['val']['p.total_tva'] = 0;
+	$totalarray['val']['p.total_ttc'] = 0;
 	$typenArray = null;
 
 	while ($i < min($num, $limit)) {
