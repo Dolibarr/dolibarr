@@ -5154,9 +5154,10 @@ class Product extends CommonObject
 	/**
 	 * Load information about stock of a product into ->stock_reel, ->stock_warehouse[] (including stock_warehouse[idwarehouse]->detail_batch for batch products)
 	 * This function need a lot of load. If you use it on list, use a cache to execute it once for each product id.
-	 * If ENTREPOT_EXTRA_STATUS set, filtering on warehouse status possible.
+	 * If ENTREPOT_EXTRA_STATUS is set, filtering on warehouse status is possible.
 	 *
 	 * @param  	string 	$option 					'' = Load all stock info, also from closed and internal warehouses, 'nobatch', 'novirtual'
+	 * 												You can also filter on 'warehouseclosed', 'warehouseopen', 'warehouseinternal'
 	 * @param	int		$includedraftpoforvirtual	Include draft status of PO for virtual stock calculation
 	 * @return 	int                  				< 0 if KO, > 0 if OK
 	 * @see    	load_virtual_stock(), loadBatchInfo()
@@ -5170,16 +5171,20 @@ class Product extends CommonObject
 		$this->stock_warehouse = array();
 		$this->stock_theorique = 0;
 
+		// Set filter on warehouse status
 		$warehouseStatus = array();
-
 		if (preg_match('/warehouseclosed/', $option)) {
-			$warehouseStatus[] = Entrepot::STATUS_CLOSED;
+			$warehouseStatus[Entrepot::STATUS_CLOSED] = Entrepot::STATUS_CLOSED;
 		}
 		if (preg_match('/warehouseopen/', $option)) {
-			$warehouseStatus[] = Entrepot::STATUS_OPEN_ALL;
+			$warehouseStatus[Entrepot::STATUS_OPEN_ALL] = Entrepot::STATUS_OPEN_ALL;
 		}
 		if (preg_match('/warehouseinternal/', $option)) {
-			$warehouseStatus[] = Entrepot::STATUS_OPEN_INTERNAL;
+			if (!empty($conf->global->ENTREPOT_EXTRA_STATUS)) {
+				$warehouseStatus[Entrepot::STATUS_OPEN_INTERNAL] = Entrepot::STATUS_OPEN_INTERNAL;
+			} else {
+				$warehouseStatus[Entrepot::STATUS_OPEN_ALL] = Entrepot::STATUS_OPEN_ALL;
+			}
 		}
 
 		$sql = "SELECT ps.rowid, ps.reel, ps.fk_entrepot";
@@ -5188,7 +5193,7 @@ class Product extends CommonObject
 		$sql .= " WHERE w.entity IN (".getEntity('stock').")";
 		$sql .= " AND w.rowid = ps.fk_entrepot";
 		$sql .= " AND ps.fk_product = ".$this->id;
-		if (!empty($conf->global->ENTREPOT_EXTRA_STATUS) && count($warehouseStatus)) {
+		if (count($warehouseStatus)) {
 			$sql .= " AND w.statut IN (".$this->db->sanitize(implode(',', $warehouseStatus)).")";
 		}
 

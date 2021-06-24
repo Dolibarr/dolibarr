@@ -332,7 +332,7 @@ if ($action == 'create') {
 
 	// Status
 	print '<tr><td>'.$langs->trans("Status").'</td><td>';
-	print '<select name="statut" class="flat">';
+	print '<select id="warehousestatus" name="statut" class="flat">';
 	foreach ($object->statuts as $key => $value) {
 		if ($key == 1) {
 			print '<option value="'.$key.'" selected>'.$langs->trans($value).'</option>';
@@ -341,6 +341,7 @@ if ($action == 'create') {
 		}
 	}
 	print '</select>';
+	print ajax_combobox('warehousestatus');
 	print '</td></tr>';
 
 	// Other attributes
@@ -678,13 +679,13 @@ if ($action == 'create') {
 						}
 					}
 
-
 					//print '<td>'.dol_print_date($objp->datem).'</td>';
 					print '<tr class="oddeven">';
+
 					$parameters = array('obj'=>$objp);
 					$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 					print $hookmanager->resPrint;
-					print "<td>";
+
 					$productstatic->id = $objp->rowid;
 					$productstatic->ref = $objp->ref;
 					$productstatic->label = $objp->produit;
@@ -701,11 +702,13 @@ if ($action == 'create') {
 					$productstatic->accountancy_code_buy = $objp->accountancy_code_buy;
 					$productstatic->accountancy_code_buy_intra = $objp->accountancy_code_buy_intra;
 					$productstatic->accountancy_code_buy_export = $objp->accountancy_code_buy_export;
+
+					print "<td>";
 					print $productstatic->getNomUrl(1, 'stock', 16);
 					print '</td>';
 
 					// Label
-					print '<td>'.$objp->produit.'</td>';
+					print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($objp->produit).'">'.dol_escape_htmltag($objp->produit).'</td>';
 
 					print '<td class="right">';
 					$valtoshow = price(price2num($objp->value, 'MS'), 0, '', 0, 0); // TODO replace with a qty() function
@@ -723,10 +726,10 @@ if ($action == 'create') {
 						print '</td>';
 					}
 					// Price buy PMP
-					print '<td class="right">'.price(price2num($objp->ppmp, 'MU')).'</td>';
+					print '<td class="right nowraponall">'.price(price2num($objp->ppmp, 'MU')).'</td>';
 
 					// Total PMP
-					print '<td class="right">'.price(price2num($objp->ppmp * $objp->value, 'MT')).'</td>';
+					print '<td class="right amount nowraponall">'.price(price2num($objp->ppmp * $objp->value, 'MT')).'</td>';
 					$totalvalue += price2num($objp->ppmp * $objp->value, 'MT');
 
 					// Price sell min
@@ -871,7 +874,7 @@ if ($action == 'create') {
 
 			// Status
 			print '<tr><td>'.$langs->trans("Status").'</td><td>';
-			print '<select name="statut" class="flat">';
+			print '<select id="warehousestatus" name="statut" class="flat">';
 			foreach ($object->statuts as $key => $value) {
 				if ($key == $object->statut) {
 					print '<option value="'.$key.'" selected>'.$langs->trans($value).'</option>';
@@ -880,6 +883,8 @@ if ($action == 'create') {
 				}
 			}
 			print '</select>';
+			print ajax_combobox('warehousestatus');
+
 			print '</td></tr>';
 
 			// Other attributes
