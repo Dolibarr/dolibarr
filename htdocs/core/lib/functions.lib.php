@@ -695,7 +695,14 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 			}
 			break;
 		case 'restricthtml':		// Recommended for most html textarea
-			$out = dol_string_onlythesehtmltags($out, 0, 1, 1);
+			do {
+				$oldstringtoclean = $out;
+
+				$out = preg_replace('/&#(x?[0-9]+);/i', '', $out);	// For example if we have j&#x61vascript with an entities without the ; to hide the 'a' of 'javascript'.
+
+				$out = dol_string_onlythesehtmltags($out, 0, 1, 1);
+
+			} while ($oldstringtoclean != $out);
 			break;
 		case 'custom':
 			if (empty($filter)) return 'BadFourthParameterForGETPOST';
