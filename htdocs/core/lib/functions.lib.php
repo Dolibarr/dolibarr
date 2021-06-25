@@ -698,6 +698,7 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 			do {
 				$oldstringtoclean = $out;
 
+				// We replace chars encoded with numeric HTML entities with real char (to avoid to have numeric entities used for obfuscation of injections)
 				$out = preg_replace_callback('/&#(x?[0-9][0-9a-f]+);/i', 'realCharForNumericEntities', $out);
 				$out = preg_replace('/&#x?[0-9]+/i', '', $out);	// For example if we have j&#x61vascript with an entities without the ; to hide the 'a' of 'javascript'.
 

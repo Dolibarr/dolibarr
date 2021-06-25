@@ -91,7 +91,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
      *
      * @return void
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass():void
     {
     	global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
@@ -104,7 +104,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
      *
      * @return	void
      */
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass():void
     {
     	global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -117,7 +117,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-    protected function setUp()
+    protected function setUp():void
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -133,7 +133,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-    protected function tearDown()
+    protected function tearDown():void
     {
     	print __METHOD__."\n";
     }
@@ -356,10 +356,10 @@ class SecurityTest extends PHPUnit\Framework\TestCase
     	print __METHOD__." result=".$result."\n";
     	$this->assertEquals('">', $result);
 
-    	// With restricthtml we must remove html open/close tag and content but not htmlentities like &#110;
+    	// With restricthtml we must remove html open/close tag and content but trans htmlentities like &#110; to chars
     	$result=GETPOST("param7", 'restricthtml');
     	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('"c:\this is a path~1\aaa&#110;" abcdef', $result);
+    	$this->assertEquals('"c:\this is a path~1\aaan;" abcdef', $result);
 
     	// With alphanohtml, we must convert the html entities like &#110; and disable all entities
     	$result=GETPOST("param8a", 'alphanohtml');
