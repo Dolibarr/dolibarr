@@ -12,7 +12,7 @@
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2020       Demarest Maxime         <maxime@indelog.fr>
- * Copyright (C) 2020       Charlene Benke          <charlie@patas-monkey.com>
+ * Copyright (C) 2020       Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2021       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
@@ -754,6 +754,7 @@ if (!defined('NOLOGIN')) {
 
 				// Hooks on failed login
 				$action = '';
+				$dol_authmode='';
 				$hookmanager->initHooks(array('login'));
 				$parameters = array('dol_authmode'=>$dol_authmode, 'dol_loginmesg'=>$_SESSION["dol_loginmesg"]);
 				$reshook = $hookmanager->executeHooks('afterLoginFailed', $parameters, $user, $action); // Note that $action and $object may have been modified by some hooks
