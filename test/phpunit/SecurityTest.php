@@ -359,7 +359,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
     	// With restricthtml we must remove html open/close tag and content but trans htmlentities like &#110; to chars
     	$result=GETPOST("param7", 'restricthtml');
     	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('"c:\this is a path~1\aaan;" abcdef', $result);
+    	$this->assertEquals('"c:\this is a path~1\aaan" abcdef', $result);
 
     	// With alphanohtml, we must convert the html entities like &#110; and disable all entities
     	$result=GETPOST("param8a", 'alphanohtml');
