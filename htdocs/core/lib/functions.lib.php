@@ -698,7 +698,8 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 			do {
 				$oldstringtoclean = $out;
 
-				$out = preg_replace('/&#(x?[0-9]+);/i', '', $out);	// For example if we have j&#x61vascript with an entities without the ; to hide the 'a' of 'javascript'.
+				$out = preg_replace_callback('/&#(x?[0-9][0-9a-f]+);/i', 'realCharForNumericEntities', $out);
+				$out = preg_replace('/&#x?[0-9]+/i', '', $out);	// For example if we have j&#x61vascript with an entities without the ; to hide the 'a' of 'javascript'.
 
 				$out = dol_string_onlythesehtmltags($out, 0, 1, 1);
 			} while ($oldstringtoclean != $out);
@@ -9265,4 +9266,27 @@ function readfileLowMemory($fullpath_original_file_osencoded, $method = -1)
 		fclose($handle1);
 		fclose($handle2);
 	}
+}
+
+/**
+ * Return the real char for a numeric entities.
+ * This function is required by testSqlAndScriptInject().
+ *
+ * @param	string		$matches			String of numeric entity
+ * @return	string							New value
+ */
+function realCharForNumericEntities($matches)
+{
+	$newstringnumentity = $matches[1];
+
+	if (preg_match('/^x/i', $newstringnumentity)) {
+		$newstringnumentity = hexdec(preg_replace('/^x/i', '', $newstringnumentity));
+	}
+
+	// The numeric value we don't want as entities
+	if (($newstringnumentity >= 65 && $newstringnumentity <= 90) || ($newstringnumentity >= 97 && $newstringnumentity <= 122)) {
+		return chr((int) $newstringnumentity);
+	}
+
+	return '&#'.$matches[1];
 }
