@@ -193,11 +193,11 @@ if (empty($reshook)) {
 				$action = "create";
 				$error++;
 			}
-			if ($nb_gen_max === '') {
+			/*if ($nb_gen_max === '') {
 				setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("MaxPeriodNumber")), null, 'errors');
 				$action = "create";
 				$error++;
-			}
+			}*/
 		}
 
 		if (!$error) {
@@ -964,7 +964,7 @@ if ($action == 'create') {
 
 		// Title
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Title").'</td><td>';
-		print '<input class="flat quatrevingtpercent" type="text" name="title" value="'.dol_escape_htmltag(GETPOST("titre", 'alphanohtml')).'">';
+		print '<input class="flat quatrevingtpercent" type="text" name="title" value="'.dol_escape_htmltag(GETPOST("title", 'alphanohtml')).'">';
 		print '</td></tr>';
 
 		// Third party
