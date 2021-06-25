@@ -32,7 +32,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
  */
 class pdf_squille extends ModelePdfReception
 {
-	public $emetteur; // Objet societe qui emet
+	/**
+	 * Issuer
+	 * @var Societe object that emits
+	 */
+	public $emetteur;
 
 
 	/**
@@ -58,7 +62,7 @@ class pdf_squille extends ModelePdfReception
 		$this->marge_haute = isset($conf->global->MAIN_PDF_MARGIN_TOP) ? $conf->global->MAIN_PDF_MARGIN_TOP : 10;
 		$this->marge_basse = isset($conf->global->MAIN_PDF_MARGIN_BOTTOM) ? $conf->global->MAIN_PDF_MARGIN_BOTTOM : 10;
 
-		$this->option_logo = 1;
+		$this->option_logo = 1; // Display logo
 
 		// Get source company
 		$this->emetteur = $mysoc;

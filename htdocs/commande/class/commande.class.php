@@ -2347,6 +2347,10 @@ class Commande extends CommonOrder
 					// For triggers
 					$line->fetch($lineid);
 
+					// Memorize previous line for triggers
+					$staticline = clone $line;
+					$line->oldline = $staticline;
+
 					if ($line->delete($user) > 0) {
 						$result = $this->update_price(1);
 

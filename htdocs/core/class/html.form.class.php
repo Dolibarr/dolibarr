@@ -4682,7 +4682,7 @@ class Form
 	{
 		global $langs, $conf;
 
-		$more = '<!-- formconfirm for page='.dol_escape_htmltag($page).' -->';
+		$more = '<!-- formconfirm before calling page='.dol_escape_htmltag($page).' -->';
 		$formconfirm = '';
 		$inputok = array();
 		$inputko = array();
@@ -7791,8 +7791,13 @@ class Form
 						$i++;
 					}
 					print '</table>';
-					print '<div class="center"><input type="submit" class="button valignmiddle" value="'.$langs->trans('ToLink').'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
-
+					print '<div class="center">';
+					print '<input type="submit" class="button valignmiddle marginleftonly marginrightonly" value="'.$langs->trans('ToLink').'">';
+					if (empty($conf->use_javascript_ajax)) {
+						print '<input type="submit" class="button button-cancel marginleftonly marginrightonly" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
+					} else {
+						print '<input type="submit"; onclick="javascript:jQuery(\'#'.$key.'list\').toggle(); return false;" class="button button-cancel marginleftonly marginrightonly" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
+					}
 					print '</form>';
 					$this->db->free($resqllist);
 				} else {
@@ -7833,7 +7838,7 @@ class Form
 				<script>
 				jQuery(document).ready(function() {
 					jQuery(".linkto").click(function() {
-						console.log("We choose to show/hide link for rel="+jQuery(this).attr(\'rel\'));
+						console.log("We choose to show/hide links for rel="+jQuery(this).attr(\'rel\')+" so #"+jQuery(this).attr(\'rel\')+"list");
 					    jQuery("#"+jQuery(this).attr(\'rel\')+"list").toggle();
 					});
 				});

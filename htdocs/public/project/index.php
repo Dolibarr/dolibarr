@@ -186,6 +186,12 @@ if ($urllogo) {
 	print '</div>';
 }
 
+if (!empty($conf->global->PROJECT_IMAGE_PUBLIC_ORGANIZEDEVENT)) {
+	print '<div class="backimagepublicorganizedevent">';
+	print '<img id="idPROJECT_IMAGE_PUBLIC_ORGANIZEDEVENT" src="'.$conf->global->PROJECT_IMAGE_PUBLIC_ORGANIZEDEVENT.'">';
+	print '</div>';
+}
+
 print '<table id="dolpaymenttable" summary="Payment form" class="center">'."\n";
 
 $text  = '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("EvntOrgRegistrationWelcomeMessage").'</strong></td></tr>'."\n";

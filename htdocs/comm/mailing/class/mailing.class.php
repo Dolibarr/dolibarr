@@ -493,22 +493,44 @@ class Mailing extends CommonObject
 	/**
 	 *  Delete emailing
 	 *
-	 *  @param	int		$rowid      id du mailing a supprimer
-	 *  @return int         		1 en cas de succes
+	 *  @param	int		$rowid      Id if emailing to delete
+	 *  @param	int		$notrigger	Disable triggers
+	 *  @return int         		>0 if OK, <0 if KO
 	 */
-	public function delete($rowid)
+	public function delete($rowid, $notrigger = 0)
 	{
+		global $user;
+
+		$this->db->begin();
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing";
 		$sql .= " WHERE rowid = ".((int) $rowid);
 
 		dol_syslog("Mailing::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			return $this->delete_targets();
+			$res = $this->delete_targets();
+			if ($res <= 0) {
+				$this->db->rollback();
+				$this->error = $this->db->lasterror();
+				return -1;
+			}
 		} else {
+			$this->db->rollback();
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
+
+		if (!$notrigger) {
+			$result = $this->call_trigger('MAILING_DELETE', $user);
+			if ($result < 0) {
+				$this->db->rollback();
+				return -1;
+			}
+		}
+
+		$this->db->commit();
+		return 1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

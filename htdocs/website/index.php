@@ -403,8 +403,10 @@ if ($sortfield) {
 if ($sortorder) {
 	$backtopage .= '&sortorder='.urlencode($sortorder);
 }
-include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';	// This manage 'sendit' action when submitting new file.
+
 $backtopage = $savbacktopage;
+//var_dump($backtopage); var_dump($action);
 
 if ($action == 'renamefile') {	// Must be after include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php'; If action were renamefile, we set it to 'file_manager'
 	$action = 'file_manager';
@@ -2504,7 +2506,8 @@ $moreheadjs .= '</script>'."\n";
 llxHeader($moreheadcss.$moreheadjs, $langs->trans("WebsiteSetup"), $helpurl, '', 0, 0, $arrayofjs, $arrayofcss, '', '', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
 
 print "\n";
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">';
+print '<!-- Open form for all page -->'."\n";
+print '<form action="'.$_SERVER["PHP_SELF"].($action == 'file_manager' ? '?uploadform=1': '').'" method="POST" enctype="multipart/form-data">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
@@ -2647,7 +2650,7 @@ if (!GETPOST('hide_websitemenu')) {
 			$out .= '	jQuery("#website").change(function () {';
 			$out .= '   	console.log("We select "+jQuery("#website option:selected").val());';
 			$out .= '   	if (jQuery("#website option:selected").val() == \'-2\') {';
-			$out .= '  			window.location.href = "'.$urltocreatenewwebsite.'";';
+			$out .= '  			window.location.href = "'.dol_escape_js($urltocreatenewwebsite).'";';
 			$out .= '		} else {';
 			$out .= '  			window.location.href = "'.$_SERVER["PHP_SEFL"].'?website="+jQuery("#website option:selected").val();';
 			$out .= '       }';
@@ -4039,7 +4042,9 @@ if ($action == 'editfile' || $action == 'file_manager' || $action == 'convertimg
 	print '<div class="fiche"><br>';
 	//print '<div class="center">'.$langs->trans("FeatureNotYetAvailable").'</center>';
 
+
 	$module = 'medias';
+	$formalreadyopen = 2;	// So the form to submit a new file will not be opened another time inside the core/tpl/filemanager.tpl.php
 	if (empty($url)) {
 		$url = DOL_URL_ROOT.'/website/index.php'; // Must be an url without param
 	}

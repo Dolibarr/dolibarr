@@ -17,18 +17,17 @@
  */
 
 /**
- *      \file       test/phpunit/ProjectTest.php
- *		\ingroup    test
+ *      \file       test/phpunit/EmailCollectorTest.php
+ *      \ingroup    test
  *      \brief      PHPUnit test
- *		\remarks	To run this script as CLI:  phpunit filename.php
+ *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/projet/class/project.class.php';
-require_once dirname(__FILE__).'/../../htdocs/projet/class/task.class.php';
+require_once dirname(__FILE__).'/../../htdocs/emailcollector/class/emailcollector.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -38,6 +37,8 @@ if (empty($user->id)) {
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
 
+
+
 /**
  * Class for PHPUnit tests
  *
@@ -45,7 +46,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class ProjectTest extends PHPUnit\Framework\TestCase
+class EmailCollectorTest extends PHPUnit\Framework\TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -56,7 +57,7 @@ class ProjectTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return ProjectTest
+	 * @return ExpenseReportTest
 	 */
 	public function __construct()
 	{
@@ -82,7 +83,7 @@ class ProjectTest extends PHPUnit\Framework\TestCase
 	public static function setUpBeforeClass()
 	{
 		global $conf,$user,$langs,$db;
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
 		print __METHOD__."\n";
 	}
@@ -103,7 +104,7 @@ class ProjectTest extends PHPUnit\Framework\TestCase
 	/**
 	 * Init phpunit tests
 	 *
-	 * @return	void
+	 * @return  void
 	 */
 	protected function setUp()
 	{
@@ -127,11 +128,11 @@ class ProjectTest extends PHPUnit\Framework\TestCase
 	}
 
 	/**
-	 * testProjectCreate
+	 * testEmailCollectorCreate
 	 *
 	 * @return	void
 	 */
-	public function testProjectCreate()
+	public function testEmailCollectorCreate()
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -139,25 +140,34 @@ class ProjectTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Project($this->savdb);
-		$localobject->initAsSpecimen();
-		$result=$localobject->create($user);
+		$langs->load("main");
 
-		$this->assertLessThan($result, 0);
+		// Create supplier order with a too low quantity
+		$localobject=new EmailCollector($db);
+		$localobject->initAsSpecimen();         // Init a specimen with lines
+
+		$this->filters = array();
+
+		$this->actions = array();
+
+		$result=$localobject->create($user);
 		print __METHOD__." result=".$result."\n";
+		$this->assertGreaterThan(0, $result, "Error on test EmailCollector create: ".$localobject->error.' '.join(',', $localobject->errors));
+
 		return $result;
 	}
 
+
 	/**
-	 * testProjectFetch
+	 * testEmailCollectorFetch
 	 *
-	 * @param	int		$id		Id of object
-	 * @return	void
+	 * @param   int $id     Id of supplier order
+	 * @return  void
 	 *
-	 * @depends	testProjectCreate
+	 * @depends testEmailCollectorCreate
 	 * The depends says test is run only if previous is ok
 	 */
-	public function testProjectFetch($id)
+	public function testEmailCollectorFetch($id)
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -165,24 +175,24 @@ class ProjectTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Project($this->savdb);
+		$localobject=new EmailCollector($this->savdb);
 		$result=$localobject->fetch($id);
 
-		$this->assertLessThan($result, 0);
 		print __METHOD__." id=".$id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
 		return $localobject;
 	}
 
 	/**
-	 * testProjectValid
+	 * testEmailCollectorOther
 	 *
-	 * @param	Project	$localobject	Project
-	 * @return	Project
+	 * @param   EmailCollector $localobject     EmailCollector
+	 * @return  void
 	 *
-	 * @depends	testProjectFetch
+	 * @depends testEmailCollectorFetch
 	 * The depends says test is run only if previous is ok
 	 */
-	public function testProjectValid($localobject)
+	public function testEmailCollectorCollect($localobject)
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -190,47 +200,23 @@ class ProjectTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$result=$localobject->setValid($user);
-
+		$result=$localobject->getConnectStringIMAP();
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
-		$this->assertLessThan($result, 0);
-		return $localobject;
-	}
+		$this->assertEquals('{localhost:993/service=imap/ssl/novalidate-cert}', $result, 'Error in getConnectStringIMAP '.$localobject->error);
 
-	/**
-	 * testProjectOther
-	 *
-	 * @param	Project	$localobject	Project
-	 * @return	int
-	 *
-	 * @depends testProjectValid
-	 * The depends says test is run only if previous is ok
-	 */
-	public function testProjectOther($localobject)
-	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		$result=$localobject->setClose($user);
-
-		print __METHOD__." id=".$localobject->id." result=".$result."\n";
-		$this->assertLessThan($result, 0);
 		return $localobject->id;
 	}
 
 	/**
-	 * testProjectDelete
+	 * testEmailCollectorDelete
 	 *
-	 * @param	int		$id		Id of project
-	 * @return	void
+	 * @param   int $id     Id of order
+	 * @return  void
 	 *
-	 * @depends	testProjectOther
+	 * @depends testEmailCollectorCollect
 	 * The depends says test is run only if previous is ok
 	 */
-	public function testProjectDelete($id)
+	public function testEmailCollectorDelete($id)
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -238,12 +224,12 @@ class ProjectTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Project($this->savdb);
+		$localobject=new EmailCollector($this->savdb);
 		$result=$localobject->fetch($id);
 		$result=$localobject->delete($user);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
-		$this->assertLessThan($result, 0);
+		$this->assertGreaterThan(0, $result);
 		return $result;
 	}
 }

@@ -248,6 +248,12 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
 		print '</div>';
 	}
 
+	if (!empty($conf->global->TICKET_IMAGE_PUBLIC_INTERFACE)) {
+		print '<div class="backimagepublicticket">';
+		print '<img id="idRECRUITMENT_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->MEMBER_IMAGE_PUBLIC_REGISTRATION.'">';
+		print '</div>';
+	}
+
 	print '</div>';
 
 	print '<div class="ticketlargemargin">';

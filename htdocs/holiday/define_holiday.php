@@ -189,7 +189,10 @@ if (empty($reshook)) {
 $form = new Form($db);
 $userstatic = new User($db);
 
-llxHeader('', $langs->trans('CPTitreMenu'));
+
+$title = $langs->trans('CPTitreMenu');
+
+llxHeader('', $title);
 
 
 $typeleaves = $holiday->getTypes(1, 1);

@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,7 +102,36 @@ if (!empty($conf->global->MAIN_MOTD)) {
 	}
 }
 
+/*
+ * Show security warnings
+ */
 
+// Security warning repertoire install existe (si utilisateur admin)
+if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING)) {
+	$message = '';
+
+	// Check if install lock file is present
+	$lockfile = DOL_DATA_ROOT.'/install.lock';
+	if (!empty($lockfile) && !file_exists($lockfile) && is_dir(DOL_DOCUMENT_ROOT."/install")) {
+		$langs->load("errors");
+		//if (! empty($message)) $message.='<br>';
+		$message .= info_admin($langs->trans("WarningLockFileDoesNotExists", DOL_DATA_ROOT).' '.$langs->trans("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
+	}
+
+	// Conf files must be in read only mode
+	if (is_writable($conffile)) {
+		$langs->load("errors");
+		//$langs->load("other");
+		//if (! empty($message)) $message.='<br>';
+		$message .= info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->trans("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
+	}
+
+	if ($message) {
+		print $message;
+		//$message.='<br>';
+		//print info_admin($langs->trans("WarningUntilDirRemoved",DOL_DOCUMENT_ROOT."/install"));
+	}
+}
 
 /*
  * Dashboard Dolibarr states (statistics)
@@ -721,38 +751,6 @@ $boxlist .= '</div>';
 print $boxlist;
 
 print '</div>';
-
-
-/*
- * Show security warnings
- */
-
-// Security warning repertoire install existe (si utilisateur admin)
-if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING)) {
-	$message = '';
-
-	// Check if install lock file is present
-	$lockfile = DOL_DATA_ROOT.'/install.lock';
-	if (!empty($lockfile) && !file_exists($lockfile) && is_dir(DOL_DOCUMENT_ROOT."/install")) {
-		$langs->load("errors");
-		//if (! empty($message)) $message.='<br>';
-		$message .= info_admin($langs->trans("WarningLockFileDoesNotExists", DOL_DATA_ROOT).' '.$langs->trans("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
-	}
-
-	// Conf files must be in read only mode
-	if (is_writable($conffile)) {
-		$langs->load("errors");
-		//$langs->load("other");
-		//if (! empty($message)) $message.='<br>';
-		$message .= info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->trans("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
-	}
-
-	if ($message) {
-		print $message;
-		//$message.='<br>';
-		//print info_admin($langs->trans("WarningUntilDirRemoved",DOL_DOCUMENT_ROOT."/install"));
-	}
-}
 
 //print 'mem='.memory_get_usage().' - '.memory_get_peak_usage();
 

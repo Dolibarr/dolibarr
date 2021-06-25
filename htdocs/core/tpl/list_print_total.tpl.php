@@ -16,7 +16,7 @@ if (isset($totalarray['pos'])) {
 			print '<td class="right">'.price($totalarray['val'][$totalarray['pos'][$i]]).'</td>';
 		} else {
 			if ($i == 1) {
-				if ($num < $limit) {
+				if (is_null($limit) || $num < $limit) {
 					print '<td>'.$langs->trans("Total").'</td>';
 				} else {
 					print '<td>';

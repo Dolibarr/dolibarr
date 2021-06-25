@@ -1095,7 +1095,7 @@ abstract class CommonObject
 					$this->db->rollback();
 					return -2;
 				} else {
-					$this->error = $this->db->error();
+					$this->error = $this->db->lasterror();
 					$this->db->rollback();
 					return -1;
 				}
@@ -1119,7 +1119,6 @@ abstract class CommonObject
 		$contacts = $objFrom->liste_contact(-1, $source);
 		foreach ($contacts as $contact) {
 			if ($this->add_contact($contact['id'], $contact['fk_c_type_contact'], $contact['source']) < 0) {
-				$this->error = $this->db->lasterror();
 				return -1;
 			}
 		}
@@ -4334,37 +4333,41 @@ abstract class CommonObject
 	/**
 	 * Function that returns the total amount HT of discounts applied for all lines.
 	 *
-	 * @return 	float
+	 * @return 	float|string			Total amout of discount
 	 */
 	public function getTotalDiscount()
 	{
-		$total_discount = 0.00;
+		if (!empty($this->table_element_line) ) {
+			$total_discount = 0.00;
 
-		$sql = "SELECT subprice as pu_ht, qty, remise_percent, total_ht";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element."det";
-		$sql .= " WHERE ".$this->fk_element." = ".$this->id;
+			$sql = "SELECT subprice as pu_ht, qty, remise_percent, total_ht";
+			$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element_line;
+			$sql .= " WHERE ".$this->fk_element." = ".$this->id;
 
-		dol_syslog(get_class($this).'::getTotalDiscount', LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$num = $this->db->num_rows($resql);
-			$i = 0;
-			while ($i < $num) {
-				$obj = $this->db->fetch_object($resql);
+			dol_syslog(get_class($this).'::getTotalDiscount', LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$num = $this->db->num_rows($resql);
+				$i = 0;
+				while ($i < $num) {
+					$obj = $this->db->fetch_object($resql);
 
-				$pu_ht = $obj->pu_ht;
-				$qty = $obj->qty;
-				$total_ht = $obj->total_ht;
+					$pu_ht = $obj->pu_ht;
+					$qty = $obj->qty;
+					$total_ht = $obj->total_ht;
 
-				$total_discount_line = floatval(price2num(($pu_ht * $qty) - $total_ht, 'MT'));
-				$total_discount += $total_discount_line;
+					$total_discount_line = floatval(price2num(($pu_ht * $qty) - $total_ht, 'MT'));
+					$total_discount += $total_discount_line;
 
-				$i++;
+					$i++;
+				}
 			}
+
+			//print $total_discount; exit;
+			return price2num($total_discount);
 		}
 
-		//print $total_discount; exit;
-		return price2num($total_discount);
+		return null;
 	}
 
 
@@ -5756,8 +5759,10 @@ abstract class CommonObject
 			$table_element = 'categories'; // For compatibility
 		}
 
-		$sql_del = "DELETE FROM ".MAIN_DB_PREFIX.$table_element."_extrafields WHERE fk_object = ".$this->id;
 		dol_syslog(get_class($this)."::deleteExtraFields delete", LOG_DEBUG);
+
+		$sql_del = "DELETE FROM ".MAIN_DB_PREFIX.$table_element."_extrafields WHERE fk_object = ".$this->id;
+
 		$resql = $this->db->query($sql_del);
 		if (!$resql) {
 			$this->error = $this->db->lasterror();
@@ -5831,7 +5836,8 @@ abstract class CommonObject
 						$mandatorypb = true;
 					}
 					if ($mandatorypb) {
-						dol_syslog("Mandatory extra field ".$key." is empty");
+						$langs->load("errors");
+						dol_syslog("Mandatory field '".$key."' is empty during create and set to required into definition of extrafields");
 						$this->errors[] = $langs->trans('ErrorFieldRequired', $attributeLabel);
 						return -1;
 					}
@@ -6197,7 +6203,8 @@ abstract class CommonObject
 					$mandatorypb = true;
 				}
 				if ($mandatorypb) {
-					dol_syslog("Mandatory extra field options_".$key." is empty");
+					$langs->load("errors");
+					dol_syslog("Mandatory field 'options_".$key."' is empty during update and set to required into definition of extrafields");
 					$this->errors[] = $langs->trans('ErrorFieldRequired', $attributeLabel);
 					return -1;
 				}
@@ -8376,12 +8383,14 @@ abstract class CommonObject
 
 			if (isset($this->fields[$key]['notnull']) && $this->fields[$key]['notnull'] == 1 && (!isset($values[$key]) || $values[$key] === 'NULL') && is_null($this->fields[$key]['default'])) {
 				$error++;
+				$langs->load("errors");
+				dol_syslog("Mandatory field '".$key."' is empty and required into ->fields definition of class");
 				$this->errors[] = $langs->trans("ErrorFieldRequired", $this->fields[$key]['label']);
 			}
 
 			// If value is null and there is a default value for field
 			if (isset($this->fields[$key]['notnull']) && $this->fields[$key]['notnull'] == 1 && (!isset($values[$key]) || $values[$key] === 'NULL') && !is_null($this->fields[$key]['default'])) {
-				$values[$key] = $this->fields[$key]['default'];
+				$values[$key] = $this->quote($this->fields[$key]['default'], $this->fields[$key]);
 			}
 
 			// If field is an implicit foreign key field
@@ -8421,7 +8430,7 @@ abstract class CommonObject
 
 		// If we have a field ref with a default value of (PROV)
 		if (!$error) {
-			if (key_exists('ref', $this->fields) && $this->fields['ref']['notnull'] > 0 && !is_null($this->fields['ref']['default']) && $this->fields['ref']['default'] == '(PROV)') {
+			if (key_exists('ref', $this->fields) && $this->fields['ref']['notnull'] > 0 && key_exists('default', $this->fields['ref']) && $this->fields['ref']['default'] == '(PROV)') {
 				$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ref = '(PROV".$this->id.")' WHERE (ref = '(PROV)' OR ref = '') AND rowid = ".((int) $this->id);
 				$resqlupdate = $this->db->query($sql);
 
@@ -8459,7 +8468,7 @@ abstract class CommonObject
 
 				$result = $line->create($user, 1);
 				if ($result < 0) {
-					$this->error = $this->db->lasterror();
+					$this->error = $line->error;
 					$this->db->rollback();
 					return -1;
 				}
@@ -8490,8 +8499,8 @@ abstract class CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param	int    $id				Id object
-	 * @param	string $ref				Ref
+	 * @param	int    	$id				Id object
+	 * @param	string 	$ref			Ref
 	 * @param	string	$morewhere		More SQL filters (' AND ...')
 	 * @return 	int         			<0 if KO, 0 if not found, >0 if OK
 	 */
@@ -8533,6 +8542,7 @@ abstract class CommonObject
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
+				dol_syslog("aaa=".$this->id);
 
 				return $this->id;
 			} else {
@@ -8800,8 +8810,8 @@ abstract class CommonObject
 		if (!$error) {
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE rowid='.((int) $this->id);
 
-			$res = $this->db->query($sql);
-			if ($res === false) {
+			$resql = $this->db->query($sql);
+			if (!$resql) {
 				$error++;
 				$this->errors[] = $this->db->lasterror();
 			}

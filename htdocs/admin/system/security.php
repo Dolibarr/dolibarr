@@ -329,6 +329,7 @@ $securityevent = new Events($db);
 $eventstolog = $securityevent->eventstolog;
 
 print '<strong>'.$langs->trans("AuditedSecurityEvents").'</strong>: ';
+$out = '';
 if (!empty($eventstolog) && is_array($eventstolog)) {
 	// Loop on each event type
 	$i = 0;
@@ -338,17 +339,21 @@ if (!empty($eventstolog) && is_array($eventstolog)) {
 			$value = empty($conf->global->$key) ? '' : $conf->global->$key;
 			if ($value) {
 				if ($i > 0) {
-					print ', ';
+					$out .= ', ';
 				}
-				print '<span class="opacitymedium">'.$key.'</span>';
+				$out .= '<span class="opacitymedium">'.$key.'</span>';
 				$i++;
 			}
 		}
 	}
-	print '<br>';
-} else {
-	print img_warning().' '.$langs->trans("NoSecurityEventsAreAduited", $langs->transnoentities("Home").' - '.$langs->transnoentities("Setup").' - '.$langs->transnoentities("Audit")).'<br>';
+	print $out;
 }
+
+if (empty($out)) {
+	print img_warning().' '.$langs->trans("NoSecurityEventsAreAduited", $langs->transnoentities("Home").' - '.$langs->transnoentities("Setup").' - '.$langs->transnoentities("Security").' - '.$langs->transnoentities("Audit")).'<br>';
+}
+
+print '<br>';
 
 
 // Modules/Applications

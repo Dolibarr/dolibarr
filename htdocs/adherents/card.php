@@ -1727,15 +1727,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Password
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
-			print '<tr><td>'.$langs->trans("Password").'</td><td>'.preg_replace('/./i', '*', $object->pass);
+			print '<tr><td>'.$langs->trans("Password").'</td><td>';
 			if ($object->pass) {
 				print preg_replace('/./i', '*', $object->pass);
 			} else {
 				if ($user->admin) {
-					print $langs->trans("Crypted").': '.$object->pass_indatabase_crypted;
-				} else {
-					print $langs->trans("Hidden");
+					print '<!-- '.$langs->trans("Crypted").': '.$object->pass_indatabase_crypted.' -->';
 				}
+				print '<span class="opacitymedium"'.$langs->trans("Hidden").'</span>';
 			}
 			if ((!empty($object->pass) || !empty($object->pass_crypted)) && empty($object->user_id)) {
 				$langs->load("errors");

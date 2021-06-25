@@ -198,6 +198,9 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$result=testSqlAndScriptInject($test, 0);
 		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject expected 0b');
 
+		$test = 'This is the union of all for the selection of the best';
+		$result=testSqlAndScriptInject($test, 0);
+		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject expected 0c');
 
 		// Should detect attack
 		$expectedresult=1;
@@ -205,6 +208,18 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$_SERVER["PHP_SELF"]='/DIR WITH SPACE/htdocs/admin/index.php/<svg>';
 		$result=testSqlAndScriptInject($_SERVER["PHP_SELF"], 2);
 		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject for PHP_SELF that should detect XSS');
+
+		$test = 'select @@version';
+		$result=testSqlAndScriptInject($test, 0);
+		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject for SQL1a. Should find an attack on POST param and did not.');
+
+		$test = 'select @@version';
+		$result=testSqlAndScriptInject($test, 1);
+		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject for SQL1b. Should find an attack on GET param and did not.');
+
+		$test = '... union ... selection ';
+		$result=testSqlAndScriptInject($test, 1);
+		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject for SQL2. Should find an attack on GET param and did not.');
 
 		$test = 'j&#x61;vascript:';
 		$result=testSqlAndScriptInject($test, 0);

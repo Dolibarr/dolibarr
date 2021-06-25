@@ -599,6 +599,9 @@ input.pageplusone {
 .colorblack {
 	color: #000;
 }
+.fontsizeunset {
+	font-size: unset !important;
+}
 
 .vmirror {
 	transform: scale(1, -1);
@@ -1211,6 +1214,12 @@ select.flat.selectlimit {
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
+.tdoverflowmax250 {			/* For tdoverflow, the max-midth become a minimum ! */
+	max-width: 250px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
 .tdoverflowmax300 {			/* For tdoverflow, the max-midth become a minimum ! */
 	max-width: 300px;
 	overflow: hidden;
@@ -1668,7 +1677,7 @@ table.tableforfield tr>td:first-of-type, tr.trforfield>td:first-of-type, div.tab
 }
 
 <?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
-.hideonprint { display: none; }
+.hideonprint { display: none !important; }
 <?php } ?>
 
 
@@ -5930,6 +5939,9 @@ dl.dropdown {
 	cursor:pointer;
 	display:inline-block;
 	padding: 0 3px 2px 0;
+}
+.maxwidthsearch .dropdown dt a span, .multiSel span {
+	padding: 0 3px 2px 3px;
 }
 .dropdown span.value {
 	display:none;

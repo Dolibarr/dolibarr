@@ -152,6 +152,7 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 	}
 
 	print '<div class="center">';
+
 	// Output html code for logo
 	if ($urllogo) {
 		print '<div class="backgreypublicpayment">';
@@ -164,6 +165,13 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 		}
 		print '</div>';
 	}
+
+	if (!empty($conf->global->PROJECT_IMAGE_PUBLIC_SUGGEST_BOOTH)) {
+		print '<div class="backimagepublicsuggestbooth">';
+		print '<img id="idPROJECT_IMAGE_PUBLIC_SUGGEST_BOOTH" src="'.$conf->global->PROJECT_IMAGE_PUBLIC_SUGGEST_BOOTH.'">';
+		print '</div>';
+	}
+
 	print '</div>';
 
 	print '<div class="divmainbodylarge">';

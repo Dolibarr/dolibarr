@@ -730,6 +730,7 @@ MenuMembers=Members
 MenuAgendaGoogle=Google agenda
 MenuTaxesAndSpecialExpenses=Taxes | Special expenses
 ThisLimitIsDefinedInSetup=Dolibarr limit (Menu home-setup-security): %s Kb, PHP limit: %s Kb
+ThisLimitIsDefinedInSetupAt=Dolibarr limit (Menu %s): %s Kb, PHP limit (Param %s): %s Kb
 NoFileFound=No documents uploaded
 CurrentUserLanguage=Current language
 CurrentTheme=Current theme
