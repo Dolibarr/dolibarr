@@ -217,15 +217,15 @@ $arrayfields = array(
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $permissiontoread = $user->rights->propal->lire;
-$permissiontoadd = $user->rights->propal->write;
+$permissiontoadd = $user->rights->propal->creer;
 $permissiontodelete = $user->rights->propal->supprimer;
 if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 	$permissiontovalidate = $user->rights->propale->propal_advance->validate;
 	$permissiontoclose = $user->rights->propale->propal_advance->close;
 	$permissiontosendbymail = $user->rights->propale->propal_advance->send;
 } else {
-	$permissiontovalidate = $user->rights->propal->write;
-	$permissiontoclose = $user->rights->propal->write;
+	$permissiontovalidate = $user->rights->propal->creer;
+	$permissiontoclose = $user->rights->propal->creer;
 }
 
 
