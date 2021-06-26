@@ -664,13 +664,13 @@ $arrayofmassactions = array(
 	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 );
-if ($user->rights->ticket->write) {
+if ($permissiontoadd) {
 	$arrayofmassactions['close'] = img_picto('', 'close_title', 'class="pictofixedwidth"').$langs->trans("Close");
 }
-if ($user->rights->ticket->write) {
+if ($permissiontoadd) {
 	$arrayofmassactions['reopen'] = img_picto('', 'folder-open', 'class="pictofixedwidth"').$langs->trans("ReOpen");
 }
-if ($user->rights->ticket->delete) {
+if ($permissiontodelete) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
@@ -700,7 +700,7 @@ $url = DOL_URL_ROOT.'/ticket/card.php?action=create'.($socid ? '&socid='.$socid 
 if (!empty($socid)) {
 	$url .= '&socid='.$socid;
 }
-$newcardbutton = dolGetButtonTitle($langs->trans('NewTicket'), '', 'fa fa-plus-circle', $url, '', $user->rights->ticket->write);
+$newcardbutton = dolGetButtonTitle($langs->trans('NewTicket'), '', 'fa fa-plus-circle', $url, '', $permissiontoadd);
 
 $picto = 'ticket';
 if ($socid > 0) {
