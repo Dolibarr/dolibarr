@@ -879,7 +879,7 @@ if ($action == 'create' || $action == 'presend') {
 		if (!empty($object->origin_email)) {
 			$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
 			$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
-			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small>('.$langs->trans("TicketEmailOriginIssuer").')</small>';
+			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">('.$langs->trans("TicketEmailOriginIssuer").')</small>';
 		}
 
 		// Thirdparty
