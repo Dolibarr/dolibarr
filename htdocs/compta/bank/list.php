@@ -323,7 +323,7 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="search_status" value="'.$search_status.'">';
 
-$newcardbutton = dolGetButtonTitle($langs->trans('NewFinancialAccount'), '', 'fa fa-plus-circle', 'card.php?action=create', '', $user->rights->banque->configurer);
+$newcardbutton = dolGetButtonTitle($langs->trans('NewFinancialAccount'), '', 'fa fa-plus-circle', 'card.php?action=create', '', $permissiontodelete);
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bank_account', 0, $newcardbutton, '', $limit, 1);
 
