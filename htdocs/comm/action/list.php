@@ -355,10 +355,10 @@ $arrayofmassactions = array(
 	'set_all_events_to_in_progress' => $langs->trans("SetAllEventsToInProgress"),
 	'set_all_events_to_finished' => $langs->trans("SetAllEventsToFinished"),
 );
-if ($user->rights->agenda->allactions->delete) {
+if ($permissiontodelete) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if ($user->rights->agenda->myactions->create) {
+if ($permissiontoadd) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
@@ -658,7 +658,7 @@ if ($resql) {
 	$url .= '&datep='.sprintf("%04d%02d%02d", $tmpforcreatebutton['year'], $tmpforcreatebutton['mon'], $tmpforcreatebutton['mday']).$hourminsec;
 	$url .= '&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : ''));
 
-	$newcardbutton = dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', $url, '', $user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create);
+	$newcardbutton = dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', $url, '', $permissiontoadd || $user->rights->agenda->allactions->create);
 
 	$param .= '&action='.$action;
 
