@@ -826,7 +826,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete third party
-	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->societe->supprimer) {
+	if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
 		$object->fetch($socid);
 		$object->oldcopy = clone $object;
 		$result = $object->delete($socid, $user);
@@ -2895,11 +2895,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					}
 				}
 
-				if ($user->rights->societe->supprimer) {
+				if ($permissiontodelete) {
 					print '<a class="butActionDelete" href="card.php?action=merge&socid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("MergeThirdparties")).'">'.$langs->trans('Merge').'</a>'."\n";
 				}
 
-				if ($user->rights->societe->supprimer) {
+				if ($permissiontodelete) {
 					if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile)) {	// We can't use preloaded confirm form with jmobile
 						print '<span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span>'."\n";
 					} else {
