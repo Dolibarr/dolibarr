@@ -950,22 +950,22 @@ while ($i < min($num, $limit)) {
 				print $object->getLibStatut(5);
 			} elseif ($key == 'subject') {
 				$s = $obj->subject;
-				print '<span title="'.$s.'">';
+				print '<span title="'.dol_escape_htmltag($s).'">';
 				print $s;
 				print '</span>';
 			} elseif ($key == 'type_code') {
 				$s = $langs->getLabelFromKey($db, 'TicketTypeShort'.$object->type_code, 'c_ticket_type', 'code', 'label', $object->type_code);
-				print '<span title="'.$s.'">';
+				print '<span title="'.dol_escape_htmltag($s).'">';
 				print $s;
 				print '</span>';
 			} elseif ($key == 'category_code') {
 				$s = $langs->getLabelFromKey($db, 'TicketCategoryShort'.$object->category_code, 'c_ticket_category', 'code', 'label', $object->category_code);
-				print '<span title="'.$s.'">';
+				print '<span title="'.dol_escape_htmltag($s).'">';
 				print $s;
 				print '</span>';
 			} elseif ($key == 'severity_code') {
 				$s = $langs->getLabelFromKey($db, 'TicketSeverityShort'.$object->severity_code, 'c_ticket_severity', 'code', 'label', $object->severity_code);
-				print '<span title="'.$s.'">';
+				print '<span title="'.dol_escape_htmltag($s).'">';
 				print $s;
 				print '</span>';
 			} elseif ($key == 'tms') {
