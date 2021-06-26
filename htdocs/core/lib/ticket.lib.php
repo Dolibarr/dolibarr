@@ -163,7 +163,7 @@ function showDirectPublicLink($object)
 		$out .= img_picto('', 'object_globe.png').' <span class="opacitymedium">'.$langs->trans("TicketPublicAccess").'</span><br>';
 		if ($url) {
 			$out .= '<div class="urllink">';
-			$out .= '<input type="text" id="directpubliclink" class="quatrevingtpercent" value="'.$url.'">';
+			$out .= '<input type="text" id="directpubliclink" class="quatrevingtpercentminusx" value="'.$url.'">';
 			$out .= '<a href="'.$url.'" target="_blank" rel="noopener">'.img_picto('', 'object_globe.png', 'class="paddingleft"').'</a>';
 			$out .= '</div>';
 			$out .= ajax_autoselect("directpubliclink", 0);
