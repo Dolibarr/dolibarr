@@ -9,7 +9,7 @@ ConfirmDeleteEstablishment=您確定要刪除此營業所嗎？
 OpenEtablishment=開啟營業所
 CloseEtablishment=關閉營業所
 # Dictionary
-DictionaryPublicHolidays=HRM-公共假期
+DictionaryPublicHolidays=Leave - Public holidays
 DictionaryDepartment=HRM-部門清單
 DictionaryFunction=人力資源管理-職位
 # Module

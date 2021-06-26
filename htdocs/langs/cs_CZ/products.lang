@@ -396,3 +396,5 @@ ActionAvailableOnVariantProductOnly=Akce je k dispozici pouze u varianty výrobk
 ProductsPricePerCustomer=Ceny produktů na zákazníky
 ProductSupplierExtraFields=Další atributy (dodavatelské ceny)
 DeleteLinkedProduct=Odstraňte podřízený produkt spojený s kombinací
+PMPValue=Vážená průměrná cena
+PMPValueShort=WAP

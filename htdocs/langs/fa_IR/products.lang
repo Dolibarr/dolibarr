@@ -396,3 +396,5 @@ ActionAvailableOnVariantProductOnly=این کنش تنها بر روی یک نو
 ProductsPricePerCustomer=قیمت محصول وابسته به مشتریان
 ProductSupplierExtraFields=Additional Attributes (Supplier Prices)
 DeleteLinkedProduct=Delete the child product linked to the combination
+PMPValue=قیمت میانگین متوازن
+PMPValueShort=قیمت میانگین وزنی

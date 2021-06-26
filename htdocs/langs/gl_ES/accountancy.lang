@@ -158,7 +158,7 @@ ACCOUNTING_LENGTH_AACCOUNT=Lonxitude das contas contables de terceiros (Se defin
 ACCOUNTING_MANAGE_ZERO=Permitir xestionar un número diferente de ceros ao final dunha conta contable. Preciso por algúns países (como Suíza). Se está desactivado (predeterminado), pode configurar os seguintes dous parámetros  para solicitar á aplicación que engada ceros virtuais.
 BANK_DISABLE_DIRECT_INPUT=Desactivar transaccións directas en conta bancaria
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Habilitar exportación de borradores al diario
-ACCOUNTANCY_COMBO_FOR_AUX=Habilita a listaxe combinada para a conta contable subsidiaria (pode ser lento se ten moitos terceiros)
+ACCOUNTANCY_COMBO_FOR_AUX=Activar a listaxe combinada para a conta subsidiaria (pode ser lento se ten moitos terceiros, rompe coa capacidade de buscar unha parte do valor) 
 ACCOUNTING_DATE_START_BINDING=Define unha data para comezar a ligar e transferir na contabilidade. Por debaixo desta data, as transaccións non se transferirán á contabilidade.
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Na transferencia de contabilidade, selecciona amosar o período por defecto
 
@@ -328,6 +328,9 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Desactivar a ligazón e transferencia na
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Desactivar a ligazón e transferencia na contabilidade dos informes de gastos (os informes de gastos non se terán en conta na contabilidade)
 
 ## Export
+NotifiedExportDate=Data de exportación notificada (non será posible modificar as entradas) 
+NotifiedValidationDate=Validación das entradas (non será posible modificar ou eliminar as entradas) 
+ConfirmExportFile=Confirmación da xeración do ficheiro de exportación contable? 
 ExportDraftJournal=Exportar libro borrador
 Modelcsv=Modelo de exportación
 Selectmodelcsv=Seleccione un modelo de exportación

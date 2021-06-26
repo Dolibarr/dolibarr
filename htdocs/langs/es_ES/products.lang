@@ -396,3 +396,5 @@ ActionAvailableOnVariantProductOnly=Acción solo disponible en la variante del p
 ProductsPricePerCustomer=Precios de producto por cliente
 ProductSupplierExtraFields=Campos adicionales (precios de proveedor)
 DeleteLinkedProduct=Eliminar el producto hijo vinculado a la combinación
+PMPValue=Valor (PMP)
+PMPValueShort=PMP

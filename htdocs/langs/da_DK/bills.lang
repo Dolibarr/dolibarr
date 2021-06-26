@@ -259,6 +259,7 @@ DateMaxPayment=Betaling forfalder den
 DateInvoice=Fakturadato
 DatePointOfTax=Momsbetaling
 NoInvoice=Ingen faktura
+NoOpenInvoice=Ingen åben faktura
 ClassifyBill=Klassificere faktura
 SupplierBillsToPay=Ubetalte leverandørfakturaer
 CustomerBillsUnpaid=Ubetalte kundefakturaer
@@ -589,3 +590,4 @@ FacParentLine=Faktura Line Parent
 SituationTotalRayToRest=Resten til at betale uden skat
 PDFSituationTitle=Situation nr. %d
 SituationTotalProgress=Samlet fremskridt %d %%
+SearchUnpaidInvoicesWithDueDate=Søg efter ubetalte fakturaer med en forfaldsdato = %s

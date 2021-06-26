@@ -1,19 +1,19 @@
 # Dolibarr language file - en_US - hrm
 # Admin
-HRM_EMAIL_EXTERNAL_SERVICE=E-mail pentru a preveni serviciu extern HRM
+HRM_EMAIL_EXTERNAL_SERVICE=Adresă email HRM serviciu externalizat
 Establishments=Sedii
 Establishment=Sediu
 NewEstablishment=Sediu nou
-DeleteEstablishment=Sterge Sediu
-ConfirmDeleteEstablishment=Sigur doriți să ștergeți această unitate?
-OpenEtablishment=Deschide Sediu
-CloseEtablishment=Inchide Sediu
+DeleteEstablishment=Şterge sediu
+ConfirmDeleteEstablishment=Sigur doriți să ștergeți acest sediu?
+OpenEtablishment=Deschide sediu
+CloseEtablishment=Închide sediu
 # Dictionary
-DictionaryPublicHolidays=Managementul resurselor umane - Sarbatori oficiale
-DictionaryDepartment=HRM - Lista Departamente
+DictionaryPublicHolidays=Concediu - Sărbători legale
+DictionaryDepartment=HRM - Listă departamente
 DictionaryFunction=HRM - Joburi disponibile
 # Module
-Employees=Angajati
+Employees=Angajaţi
 Employee=Angajat
 NewEmployee=Angajat nou
-ListOfEmployees=Lista angajati
+ListOfEmployees=Lista angajaţilor

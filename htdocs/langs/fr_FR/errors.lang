@@ -4,13 +4,14 @@
 NoErrorCommitIsDone=Pas d'erreur, on valide
 # Errors
 ErrorButCommitIsDone=Erreurs trouvées mais on valide malgré tout
-ErrorBadEMail=Email %s is incorrect
-ErrorBadMXDomain=Email %s seems incorrect (domain has no valid MX record)
-ErrorBadUrl=Url %s is incorrect
+ErrorBadEMail=L'email '%s' est invalide
+ErrorBadMXDomain=L'email %s semble incorrect
+ErrorBadUrl=L'URL '%s' est invalide
 ErrorBadValueForParamNotAString=Mauvaise valeur de paramètre. Ceci arrive lors d'une tentative de traduction d'une clé non renseignée.
 ErrorRefAlreadyExists=Le référence <b>%s</b> existe déjà.
 ErrorLoginAlreadyExists=L'identifiant %s existe déjà.
 ErrorGroupAlreadyExists=Le groupe %s existe déjà.
+ErrorEmailAlreadyExists=Email %s already exists.
 ErrorRecordNotFound=Enregistrement non trouvé.
 ErrorFailToCopyFile=Echec de la copie du fichier '<b>%s</b>' en '<b>%s</b>'.
 ErrorFailToCopyDir=Echec de copie du répertoire '<b>%s</b>' vers '<b>%s</b>'.
@@ -46,8 +47,8 @@ ErrorWrongDate=La date est incorrecte
 ErrorFailedToWriteInDir=Impossible d'écrire dans le répertoire %s
 ErrorFoundBadEmailInFile=Syntaxe d'email incorrecte trouvée pour %s lignes dans le fichier (exemple ligne %s avec email=%s)
 ErrorUserCannotBeDelete=L'utilisateur ne peut pas être supprimé. Peut-être est-il associé à des éléments de Dolibarr.
-ErrorFieldsRequired=Some required fields have been left blank.
-ErrorSubjectIsRequired=The email subject is required
+ErrorFieldsRequired=Des champs obligatoire n'ont pas été remplis.
+ErrorSubjectIsRequired=L'objet de l'e-mail est obligatoire
 ErrorFailedToCreateDir=Echec à la création d'un répertoire. Vérifiez que le user du serveur Web ait bien les droits d'écriture dans les répertoires documents de Dolibarr. Si le paramètre <b>safe_mode</b> a été activé sur ce PHP, vérifiez que les fichiers php dolibarr appartiennent à l'utilisateur du serveur Web.
 ErrorNoMailDefinedForThisUser=Email non défini pour cet utilisateur
 ErrorSetupOfEmailsNotComplete=La configuration de l'envoi des e-mails n'est pas terminée
@@ -117,7 +118,7 @@ ErrorCantReadFile=Échec de lecture du fichier '%s'
 ErrorCantReadDir=Échec de lecture du répertoire '%s'
 ErrorBadLoginPassword=Identifiant ou mot de passe incorrect
 ErrorLoginDisabled=Votre compte est désactivé
-ErrorFailedToRunExternalCommand=Échec de l'exécution de la commande externe. Vérifiez qu'elle est disponible et exécutable par votre serveur PHP. Si le <b>Safe Mode</b> PHP est actif, vérifiez que la commande se trouve dans un répertoire défini dans le paramètre <b>safe_mode_exec_dir</b>.
+ErrorFailedToRunExternalCommand=Failed to run external command. Check it is available and runnable by your PHP server user. Check also the command is not protected on shell level by a security layer like apparmor.
 ErrorFailedToChangePassword=Échec de modification du mot de passe
 ErrorLoginDoesNotExists=Le compte utilisateur identifié par <b>%s</b> n'a pu être trouvé.
 ErrorLoginHasNoEmail=Cet utilisateur n'a pas d'email. Impossible de continuer.
@@ -262,6 +263,7 @@ ErrorDateIsInFuture=Erreur, la date ne peut pas être dans le futur.
 ErrorAnAmountWithoutTaxIsRequired=Erreur, le montant est obligatoire
 ErrorAPercentIsRequired=Erreur, le pourcentage doit être indiqué correctement.
 ErrorYouMustFirstSetupYourChartOfAccount=Vous devez d’abord configurer votre plan comptable.
+ErrorFailedToFindEmailTemplate=Aucun gabarit trouvé avec le code %s
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Votre paramètre PHP upload_max_filesize (%s) est supérieur au paramètre PHP post_max_size (%s). Ceci n'est pas une configuration cohérente.
@@ -298,3 +300,4 @@ WarningModuleXDisabledSoYouMayMissEventHere=Le module %s n’a pas été activé
 ErrorActionCommPropertyUserowneridNotDefined=Le propriétaire de l'utilisateur est requis
 ErrorActionCommBadType=Le type d'événement sélectionné (id: %n, code: %s) n'existe pas dans le dictionnaire des types d'événement
 CheckVersionFail=Échec de la vérification de version
+ErrorWrongFileName=Le nom du fichier ne peut pas contenir __SOMETHING__

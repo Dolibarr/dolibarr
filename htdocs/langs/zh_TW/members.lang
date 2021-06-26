@@ -213,3 +213,5 @@ SendReminderForExpiredSubscription=當訂閱即將到期時，通過電子郵件
 MembershipPaid=本期已支付的會費（直到%s）
 YouMayFindYourInvoiceInThisEmail=您可在此電子郵件中找到發票
 XMembersClosed=%s會員已關閉
+XExternalUserCreated=%s external user(s) created
+ForceMemberNature=Force member nature (Individual or Corporation)

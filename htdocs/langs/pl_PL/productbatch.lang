@@ -1,4 +1,4 @@
-# ProductBATCH language file - en_US - ProductBATCH
+# ProductBATCH language file - Source file is en_US - ProductBATCH
 ManageLotSerial=Użyj lot / numer seryjny
 ProductStatusOnBatch=Tak (wymagana partia)
 ProductStatusOnSerial=Tak (wymagany unikalny numer seryjny)
@@ -25,11 +25,21 @@ ShowCurrentStockOfLot=Pokaż aktualny zapas dla pasy produkt/lot
 ShowLogOfMovementIfLot=Pokaż historię przesunięć dla pary produkt/lot
 StockDetailPerBatch=Szczegóły zapasu po locie
 SerialNumberAlreadyInUse=Numer seryjny %s jest już używany dla produktu %s
-TooManyQtyForSerialNumber=You can only have one product %s for serial number %s
+TooManyQtyForSerialNumber=Możesz mieć tylko jeden produkt %s dla numeru seryjnego %s
 BatchLotNumberingModules=Opcje automatycznego generowania produktów wsadowych zarządzanych partiami
 BatchSerialNumberingModules=Opcje automatycznego generowania produktów wsadowych zarządzanych według numerów seryjnych
-ManageLotMask=Custom mask
-CustomMasks=Adds an option to define mask in the product card
-LotProductTooltip=Adds an option in the product card to define a dedicated batch number mask
-SNProductTooltip=Adds an option in the product card to define a dedicated serial number mask
-QtyToAddAfterBarcodeScan=Qty to add for each barcode/lot/serial scanned
+ManageLotMask=Maska niestandardowa
+CustomMasks=Dodaje opcję definiowania maski na karcie produktu
+LotProductTooltip=Dodaje opcję na karcie produktu, aby zdefiniować dedykowaną maskę numeru partii
+SNProductTooltip=Dodaje opcję na karcie produktu, aby zdefiniować dedykowaną maskę numeru seryjnego
+QtyToAddAfterBarcodeScan=Ilość do dodania dla każdego zeskanowanego kodu kreskowego/partii/numeru seryjnego
+LifeTime=Żywotność (w dniach)
+EndOfLife=Koniec życia
+ManufacturingDate=Data produkcji
+DestructionDate=Data zniszczenia
+FirstUseDate=Data pierwszego użycia
+QCFrequency=Częstotliwość kontroli jakości (w dniach)
+
+#Traceability - qc status
+OutOfOrder=Niesprawny
+InWorkingOrder=Sprawny

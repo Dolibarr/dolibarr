@@ -396,3 +396,5 @@ ActionAvailableOnVariantProductOnly=Handling kun tilgængelig på variant af pro
 ProductsPricePerCustomer=Produktpriser pr. Kunde
 ProductSupplierExtraFields=Yderligere attributter (leverandørpriser)
 DeleteLinkedProduct=Slet det underordnede produkt, der er knyttet til kombinationen
+PMPValue=Værdi
+PMPValueShort=WAP

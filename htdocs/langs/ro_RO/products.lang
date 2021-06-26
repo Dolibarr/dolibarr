@@ -396,3 +396,5 @@ ActionAvailableOnVariantProductOnly=Acțiune disponibilă numai pentru varianta 
 ProductsPricePerCustomer=Preţuri produs per clienţi
 ProductSupplierExtraFields=Atribute suplimentare (Preţuri furnizor)
 DeleteLinkedProduct=Ștergeți produsul copil asociat la combinație
+PMPValue=PMP
+PMPValueShort=PMP
