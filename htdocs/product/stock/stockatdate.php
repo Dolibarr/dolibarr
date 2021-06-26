@@ -294,8 +294,8 @@ if ($sortfield == 'stock' && $fk_warehouse > 0) {
 }
 $sql .= $db->order($sortfield, $sortorder);
 
+$nbtotalofrecords = 0;
 if ($date && $dateIsValid) {	// We avoid a heavy sql if mandatory parameter date not yet defined
-	$nbtotalofrecords = '';
 	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 		$result = $db->query($sql);
 		$nbtotalofrecords = $db->num_rows($result);
@@ -618,7 +618,9 @@ if (empty($date) || ! $dateIsValid) {
 print '</table>';
 print '</div>';
 
-$db->free($resql);
+if (!empty($resql)) {
+	$db->free($resql);
+}
 
 print dol_get_fiche_end();
 
