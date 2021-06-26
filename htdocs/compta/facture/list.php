@@ -977,7 +977,7 @@ if ($resql) {
 			$langs->load("withdrawals");
 			$arrayofmassactions['withdrawrequest'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakeWithdrawRequest");
 	}
-	if ($user->rights->facture->supprimer) {
+	if ($permissiontodelete) {
 		if (!empty($conf->global->INVOICE_CAN_REMOVE_DRAFT_ONLY)) {
 			$arrayofmassactions['predeletedraft'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Deletedraft");
 		} elseif (!empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED)) {	// mass deletion never possible on invoices on such situation
@@ -995,7 +995,7 @@ if ($resql) {
 		if (!empty($socid)) {
 			$url .= '&socid='.$socid;
 		}
-		$newcardbutton = dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', $url, '', $user->rights->facture->creer);
+		$newcardbutton = dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', $url, '', $permissiontoadd);
 	}
 
 	$i = 0;
