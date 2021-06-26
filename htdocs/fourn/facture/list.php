@@ -828,7 +828,7 @@ if ($resql) {
 		$langs->load('withdrawals');
 		$arrayofmassactions['banktransfertrequest'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakeBankTransferOrder");
 	}
-	if ($user->rights->fournisseur->facture->supprimer) {
+	if ($permissiontodelete) {
 		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	}
 	if (in_array($massaction, array('presend', 'predelete', 'createbills'))) {
@@ -840,7 +840,7 @@ if ($resql) {
 	if (!empty($socid)) {
 		$url .= '&socid='.urlencode($socid);
 	}
-	$newcardbutton = dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', $url, '', ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer));
+	$newcardbutton = dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', $url, '', $permissiontoadd);
 
 	$i = 0;
 	print '<form method="POST" name="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
