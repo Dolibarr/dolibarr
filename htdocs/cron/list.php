@@ -360,7 +360,7 @@ $arrayofmassactions = array(
 	'enable'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("CronStatusActiveBtn"),
 	'disable'=>img_picto('', 'uncheck', 'class="pictofixedwidth"').$langs->trans("CronStatusInactiveBtn"),
 );
-if ($user->rights->cron->delete) {
+if ($permissiontodelete) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
@@ -637,7 +637,7 @@ if ($num > 0) {
 			print '<a class="editfielda" href="'.DOL_URL_ROOT."/cron/card.php?id=".$obj->rowid.'&action=edit&token='.newToken().($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').$param;
 			print "&backtopage=".$backtopage."\" title=\"".dol_escape_htmltag($langs->trans('Edit'))."\">".img_picto($langs->trans('Edit'), 'edit')."</a> &nbsp;";
 		}
-		if ($user->rights->cron->delete) {
+		if ($permissiontodelete) {
 			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"]."?id=".$obj->rowid.'&action=delete&token='.newToken().($page ? '&page='.$page : '').($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').$param;
 			print "\" title=\"".dol_escape_htmltag($langs->trans('CronDelete'))."\">".img_picto($langs->trans('CronDelete'), 'delete', '', false, 0, 0, '', 'marginleftonly')."</a> &nbsp; ";
 		} else {
