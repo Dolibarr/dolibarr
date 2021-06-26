@@ -86,6 +86,9 @@ DELETE FROM llx_user_param where param = 'MAIN_THEME' and value in ('auguria', '
 
 -- For v14
 
+UPDATE llx_c_ticket_type set label = 'Issue or bug' WHERE code = 'ISSUE';
+INSERT INTO llx_c_ticket_type (code, pos, label, active, use_default, description) VALUES('PROBLEM', '22', 'Problem', 0, 0, NULL);
+
 ALTER TABLE llx_import_model MODIFY COLUMN type varchar(64);
 ALTER TABLE llx_export_model MODIFY COLUMN type varchar(64);
 

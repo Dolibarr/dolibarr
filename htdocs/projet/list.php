@@ -174,14 +174,26 @@ foreach ($object->fields as $key => $val) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
-// Add none object fields to fields for list
+// Add non object fields to fields for list
 $arrayfields['s.nom'] = array('label'=>$langs->trans("ThirdParty"), 'checked'=>1, 'position'=>21, 'enabled'=>(empty($conf->societe->enabled) ? 0 : 1));
 $arrayfields['commercial'] = array('label'=>$langs->trans("SaleRepresentativesOfThirdParty"), 'checked'=>0, 'position'=>23);
 $arrayfields['opp_weighted_amount'] = array('label'=>$langs->trans('OpportunityWeightedAmountShort'), 'checked'=>0, 'position'=> 116, 'enabled'=>(empty($conf->global->PROJECT_USE_OPPORTUNITIES) ? 0 : 1), 'position'=>106);
+// Force some fields according to search_usage filter...
+if (GETPOST('search_usage_opportunity')) {
+	//$arrayfields['p.usage_opportunity']['visible'] = 1;	// Not require, filter on search_opp_status is enough
+	//$arrayfields['p.usage_opportunity']['checked'] = 1;	// Not require, filter on search_opp_status is enough
+}
+if (GETPOST('search_usage_event_organization')) {
+	$arrayfields['p.fk_opp_status']['enabled'] = 0;
+	$arrayfields['p.opp_amount']['enabled'] = 0;
+	$arrayfields['p.opp_percent']['enabled'] = 0;
+	$arrayfields['opp_weighted_amount']['enabled'] = 0;
+	$arrayfields['p.usage_organize_event']['visible'] = 1;
+	$arrayfields['p.usage_organize_event']['checked'] = 1;
+}
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-
 
 
 /*
@@ -719,6 +731,7 @@ if (!empty($moreforfilter)) {
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
+
 
 print '<div class="div-table-responsive">';
 print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";

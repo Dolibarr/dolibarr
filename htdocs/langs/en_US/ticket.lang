@@ -34,7 +34,8 @@ TicketDictResolution=Ticket - Resolution
 
 TicketTypeShortCOM=Commercial question
 TicketTypeShortHELP=Request for functionnal help
-TicketTypeShortISSUE=Issue, bug or problem
+TicketTypeShortISSUE=Issue or bug
+TicketTypeShortPROBLEM=Problem
 TicketTypeShortREQUEST=Change or enhancement request
 TicketTypeShortPROJET=Project
 TicketTypeShortOTHER=Other
@@ -54,14 +55,14 @@ TypeContact_ticket_internal_SUPPORTTEC=Assigned user
 TypeContact_ticket_external_SUPPORTCLI=Customer contact / incident tracking
 TypeContact_ticket_external_CONTRIBUTOR=External contributor
 
-OriginEmail=Email source
+OriginEmail=Email reporter
 Notify_TICKET_SENTBYMAIL=Send ticket message by email
 
 # Status
 Read=Read
 Assigned=Assigned
 InProgress=In progress
-NeedMoreInformation=Waiting for information
+NeedMoreInformation=Waiting for customer feedback
 Answered=Answered
 Waiting=Waiting
 Closed=Closed
@@ -160,7 +161,7 @@ CreatedBy=Created by
 NewTicket=New Ticket
 SubjectAnswerToTicket=Ticket answer
 TicketTypeRequest=Request type
-TicketCategory=Group
+TicketCategory=Ticket categorization
 SeeTicket=See ticket
 TicketMarkedAsRead=Ticket has been marked as read
 TicketReadOn=Read on
