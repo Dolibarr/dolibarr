@@ -85,7 +85,11 @@ class box_boms extends ModeleBoxes
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLatestModifiedBoms", $max));
 
 		if ($user->rights->bom->read) {
-			$sql = "SELECT p.ref as product_ref, p.tobuy, p.tosell";
+			$sql = "SELECT p.ref as product_ref";
+			$sql .= ", p.rowid as productid";
+			$sql .= ", p.tosell";
+			$sql .= ", p.tobuy";
+			$sql .= ", p.tobatch";
 			$sql .= ", c.rowid";
 			$sql .= ", c.date_creation";
 			$sql .= ", c.tms";
@@ -111,12 +115,13 @@ class box_boms extends ModeleBoxes
 
 					$bomstatic->id = $objp->rowid;
 					$bomstatic->ref = $objp->ref;
-					$bomstatic->id = $objp->socid;
 					$bomstatic->status = $objp->status;
 
+					$productstatic->id = $objp->productid;
 					$productstatic->ref = $objp->product_ref;
-					$productstatic->status = $objp->tobuy;
-					$productstatic->status_buy = $objp->tosell;
+					$productstatic->status = $objp->tosell;
+					$productstatic->status_buy = $objp->tobuy;
+					$productstatic->status_batch = $objp->tobatch;
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="nowraponall"',
@@ -129,17 +134,6 @@ class box_boms extends ModeleBoxes
 						'text' => $productstatic->getNomUrl(1),
 						'asis' => 1,
 					);
-
-					if (!empty($conf->global->BOM_BOX_LAST_BOMS_SHOW_VALIDATE_USER)) {
-						if ($objp->fk_user_valid > 0) {
-							$userstatic->fetch($objp->fk_user_valid);
-						}
-						$this->info_box_contents[$line][] = array(
-							'td' => 'class="right"',
-							'text' => (($objp->fk_user_valid > 0) ? $userstatic->getNomUrl(1) : ''),
-							'asis' => 1,
-						);
-					}
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
