@@ -175,6 +175,7 @@ $elementList = array();
 // We save list of template email Dolibarr can manage. This list can found by a grep into code on "->param['models']"
 $elementList = array();
 // Add all and none after the sort
+
 $elementList['all'] = '-- '.dol_escape_htmltag($langs->trans("All")).' --';
 $elementList['none'] = '-- '.dol_escape_htmltag($langs->trans("None")).' --';
 $elementList['user'] = img_picto('', 'user', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToUser'));
@@ -824,7 +825,7 @@ if ($resql) {
 			print '<td class="liste_titre"><input type="text" name="search_topic" value="'.dol_escape_htmltag($search_topic).'"></td>';
 		} elseif ($value == 'type_template') {
 			print '<td class="liste_titre center">';
-			print $form->selectarray('search_type_template', $elementList, $search_type_template, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth200', 1, '', 0, 1);
+			print $form->selectarray('search_type_template', $elementList, $search_type_template, 1, 0, 0, '', 0, 0, 0, '', 'minwidth150', 1, '', 0, 1);
 			print '</td>';
 		} elseif (!in_array($value, array('content', 'content_lines'))) {
 			print '<td class="liste_titre"></td>';
@@ -1229,7 +1230,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 				print '<input type="hidden" name="type_template" value="'.$obj->{$value}.'">';
 				print $obj->{$value};
 			} else {
-				print $form->selectarray('type_template', $elementList, (!empty($obj->{$value}) ? $obj->{$value}:''), 1, 0, 0, '', 0, 0, 0, '', 'maxwidth200', 1, '', 0, 1);
+				print $form->selectarray('type_template', $elementList, (!empty($obj->{$value}) ? $obj->{$value}:''), 1, 0, 0, '', 0, 0, 0, '', 'minwidth150', 1, '', 0, 1);
 			}
 			print '</td>';
 		} elseif ($context == 'add' && in_array($value, array('topic', 'joinfiles', 'content', 'content_lines'))) {

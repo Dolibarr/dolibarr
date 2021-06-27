@@ -179,3 +179,4 @@ ConfirmCloneProductCombinations=¿Desea copiar todas las variantes del producto 
 CloneDestinationReference=Referencia del producto destino
 ErrorCopyProductCombinations=Se ha producido un error al copiar las variantes del producto.
 ErrorDestinationProductNotFound=Producto de destino no encontrado
+PMPValue=Precio promedio ponderado

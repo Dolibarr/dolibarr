@@ -173,7 +173,7 @@ class Entrepot extends CommonObject
 
 		$this->statuts[self::STATUS_CLOSED] = 'Closed2';
 		if (!empty($conf->global->ENTREPOT_EXTRA_STATUS)) {
-			$this->statuts[self::STATUS_OPEN_ALL] = 'OpenAll';
+			$this->statuts[self::STATUS_OPEN_ALL] = 'OpenAnyMovement';
 			$this->statuts[self::STATUS_OPEN_INTERNAL] = 'OpenInternal';
 		} else {
 			$this->statuts[self::STATUS_OPEN_ALL] = 'Opened';
@@ -690,13 +690,15 @@ class Entrepot extends CommonObject
 	/**
 	 *	Return clickable name (possibility with the pictogram)
 	 *
-	 *	@param		int		$withpicto		with pictogram
-	 *	@param		string	$option			Where the link point to
-	 *  @param      int     $showfullpath   0=Show ref only. 1=Show full path instead of Ref (this->fk_parent must be defined)
-	 *  @param	    int   	$notooltip		1=Disable tooltip
-	 *	@return		string					String with URL
+	 *	@param		int		$withpicto				with pictogram
+	 *	@param		string	$option					Where the link point to
+	 *  @param      int     $showfullpath   		0=Show ref only. 1=Show full path instead of Ref (this->fk_parent must be defined)
+	 *  @param	    int   	$notooltip				1=Disable tooltip
+	 *  @param  	string  $morecss            	Add more css on link
+	 *  @param  	int     $save_lastsearch_value  -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@return		string							String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $showfullpath = 0, $notooltip = 0)
+	public function getNomUrl($withpicto = 0, $option = '', $showfullpath = 0, $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
 		global $conf, $langs, $hookmanager;
 		$langs->load("stocks");
@@ -721,6 +723,17 @@ class Entrepot extends CommonObject
 		}
 
 		$url = DOL_URL_ROOT.'/product/stock/card.php?id='.$this->id;
+
+		if ($option != 'nolink') {
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
+		}
 
 		$linkclose = '';
 		if (empty($notooltip)) {

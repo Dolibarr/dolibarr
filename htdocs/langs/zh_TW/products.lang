@@ -396,3 +396,5 @@ ActionAvailableOnVariantProductOnly=僅對產品的變數提供操作
 ProductsPricePerCustomer=每個客戶的產品價格
 ProductSupplierExtraFields=附加屬性（供應商價格）
 DeleteLinkedProduct=刪除連結到組合的子產品
+PMPValue=加權平均價格
+PMPValueShort=WAP

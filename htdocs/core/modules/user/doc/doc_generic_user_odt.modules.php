@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -120,7 +120,7 @@ class doc_generic_user_odt extends ModelePDFUser
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte .= '<input type="hidden" name="param1" value="USER_ADDON_PDF_ODT_PATH">';
-		if ($conf->global->MAIN_PROPAL_CHOOSE_ODT_DOCUMENT > 0) {
+		if (!empty($conf->global->MAIN_PROPAL_CHOOSE_ODT_DOCUMENT)) {
 			$texte .= '<input type="hidden" name="param2" value="USER_ADDON_PDF_ODT_DEFAULT">';
 			$texte .= '<input type="hidden" name="param3" value="USER_ADDON_PDF_ODT_TOBILL">';
 			$texte .= '<input type="hidden" name="param4" value="USER_ADDON_PDF_ODT_CLOSED">';
@@ -166,7 +166,7 @@ class doc_generic_user_odt extends ModelePDFUser
 		if (count($listofdir)) {
 			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b>';
 
-			if ($conf->global->MAIN_PROPAL_CHOOSE_ODT_DOCUMENT > 0) {
+			if (!empty($conf->global->MAIN_PROPAL_CHOOSE_ODT_DOCUMENT)) {
 				// Model for creation
 				$list = ModelePDFUser::liste_modeles($this->db);
 				$texte .= '<table width="50%;">';

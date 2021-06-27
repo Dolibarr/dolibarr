@@ -37,6 +37,11 @@
 -- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
 -- VMYSQL4.1 update llx_propal set tms = null where DATE(STR_TO_DATE(tms, '%Y-%m-%d')) IS NULL;
 
+-- VPGSQL8.2 DROP TRIGGER update_customer_modtime ON llx_ecm_directories;
+-- VPGSQL8.2 DROP TRIGGER update_customer_modtime ON llx_ecm_files;
+-- VPGSQL8.2 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_ecm_directories FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+-- VPGSQL8.2 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_ecm_files FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+
 ALTER TABLE llx_ecm_files ADD COLUMN note_private text AFTER fk_user_m;
 ALTER TABLE llx_ecm_files ADD COLUMN note_public text AFTER note_private;
 
@@ -67,9 +72,6 @@ insert into llx_c_actioncomm (id, code, type, libelle, module, active, position)
 
 UPDATE llx_c_country SET eec = 1 WHERE code IN ('AT','BE','BG','CY','CZ','DE','DK','EE','ES','FI','FR','GR','HR','NL','HU','IE','IM','IT','LT','LU','LV','MC','MT','PL','PT','RO','SE','SK','SI');
 
-ALTER TABLE llx_export_model MODIFY COLUMN type varchar(64);
-
-
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  11, 'US-BASE', 'USA basic chart of accounts', 1);
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 14, 'CA-ENG-BASE', 'Canadian basic chart of accounts - English', 1);
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 154, 'SAT/24-2019', 'Catalogo y codigo agrupador fiscal del 2019', 1);
@@ -83,6 +85,15 @@ DELETE FROM llx_user_param where param = 'MAIN_THEME' and value in ('auguria', '
 
 
 -- For v14
+
+UPDATE llx_c_ticket_type set label = 'Issue or bug' WHERE code = 'ISSUE';
+INSERT INTO llx_c_ticket_type (code, pos, label, active, use_default, description) VALUES('PROBLEM', '22', 'Problem', 0, 0, NULL);
+
+ALTER TABLE llx_import_model MODIFY COLUMN type varchar(64);
+ALTER TABLE llx_export_model MODIFY COLUMN type varchar(64);
+
+ALTER TABLE llx_import_model ADD COLUMN entity integer DEFAULT 0 NOT NULL;
+ALTER TABLE llx_export_model ADD COLUMN entity integer DEFAULT 0 NOT NULL;
 
 ALTER TABLE llx_product_lot ADD COLUMN eol_date datetime NULL;
 ALTER TABLE llx_product_lot ADD COLUMN manufacturing_date datetime NULL;

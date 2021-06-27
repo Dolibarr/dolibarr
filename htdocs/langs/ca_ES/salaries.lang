@@ -2,7 +2,7 @@
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Compte comptable utilitzat per usuaris tercers
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=El compte comptable dedicat definit a la fitxa d'usuari només s’utilitzarà per a la comptabilitat auxiliar. Aquest s'utilitzarà per al llibre major i com a valor per defecte de la comptabilitat auxiliar si no es defineix un compte comptable d'usuari dedicat.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Compte comptable per defecte per als pagaments salarials
-CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=By default, leave empty the option "Automatically create a total payment" when creating a Salary
+CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=De manera predeterminada, deixeu buida l'opció "Crear automàticament un pagament total" quan creeu un sou
 Salary=Sou
 Salaries=Sous
 NewSalary=Salari nou
@@ -10,7 +10,7 @@ NewSalaryPayment=Fitxa de salari nova
 AddSalaryPayment=Afegeix pagament de sou
 SalaryPayment=Pagament de sous
 SalariesPayments=Pagaments de sous
-SalariesPaymentsOf=Salaries payments of %s
+SalariesPaymentsOf=Pagaments de sous de %s
 ShowSalaryPayment=Veure pagament de sous
 THM=Tarifa per hora mitjana
 TJM=Tarifa mitjana diària

@@ -382,6 +382,31 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'submenus' => array(),
 	);
 
+	// Tickets and knwoledge base
+	$tmpentry = array(
+		'enabled'=>(!empty($conf->ticket->enabled) || !empty($conf->knwoledgemanagement->enabled)),
+		'perms'=>(!empty($user->rights->ticket->read) || !empty($user->rights->knwoledgemanagement->read)),
+		'module'=>'ticket|knwoledgemanagement'
+	);
+	$menu_arr[] = array(
+		'name' => 'Ticket',
+		'link' => '/ticket/index.php?mainmenu=ticket&amp;leftmenu=',
+		'title' =>  "Tickets",
+		'level' => 0,
+		'enabled' => $showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal),
+		'target' => $atarget,
+		'mainmenu' => "ticket",
+		'leftmenu' => '',
+		'position' => 88,
+		'id' => $id,
+		'idsel' => 'ticket',
+		'classname' =>  $classname = ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "ticket") ? 'class="tmenusel"' : 'class="tmenu"',
+		'prefix' => img_picto('', 'ticket', 'class="fa-fw paddingright"'),
+		'session' => (($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "ticket") ? 0 : 1),
+		'loadLangs' => array("other"),
+		'submenus' => array(),
+	);
+
 	// Tools
 	$tmpentry = array(
 		'enabled'=>1,

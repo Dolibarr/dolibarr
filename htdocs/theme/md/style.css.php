@@ -599,6 +599,9 @@ input.pageplusone {
 .colorblack {
 	color: #000;
 }
+.fontsizeunset {
+	font-size: unset !important;
+}
 
 .vmirror {
 	transform: scale(1, -1);
@@ -1207,6 +1210,12 @@ select.flat.selectlimit {
 }
 .tdoverflowmax200 {			/* For tdoverflow, the max-midth become a minimum ! */
 	max-width: 200px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.tdoverflowmax250 {			/* For tdoverflow, the max-midth become a minimum ! */
+	max-width: 250px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -4639,6 +4648,10 @@ div.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
 	display: none;
 }
 
+.unvisible {
+	visibility: hidden;
+}
+
 tr.visible {
 	display: block;
 }
@@ -5930,6 +5943,9 @@ dl.dropdown {
 	cursor:pointer;
 	display:inline-block;
 	padding: 0 3px 2px 0;
+}
+.maxwidthsearch .dropdown dt a span, .multiSel span {
+	padding: 0 3px 2px 3px;
 }
 .dropdown span.value {
 	display:none;

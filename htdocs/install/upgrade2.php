@@ -489,10 +489,16 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			'MAIN_MODULE_VARIANTS'=>'newboxdefonly',
 			'MAIN_MODULE_WEBSITE'=>'newboxdefonly',
 		);
-		migrate_reload_modules($db, $langs, $conf, $listofmodule);
 
+		$result = migrate_reload_modules($db, $langs, $conf, $listofmodule);
+		if ($result < 0) {
+			$error++;
+		}
 		// Reload menus (this must be always and only into last targeted version)
-		migrate_reload_menu($db, $langs, $conf);
+		$result = migrate_reload_menu($db, $langs, $conf);
+		if ($result < 0) {
+			$error++;
+		}
 	}
 
 	// Can force activation of some module during migration with parameter 'enablemodules=MAIN_MODULE_XXX,MAIN_MODULE_YYY,...'
@@ -545,10 +551,11 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 	print '</table>';
 
 
-	// Set constant to ask to remake a new ping to inform about upgrade (if first ping was done and OK)
-	$sql = 'UPDATE '.MAIN_DB_PREFIX."const SET VALUE = 'torefresh' WHERE name = 'MAIN_FIRST_PING_OK_ID'";
-	$db->query($sql, 1);
-
+	if (!$error) {
+		// Set constant to ask to remake a new ping to inform about upgrade (if first ping was done and OK)
+		$sql = 'UPDATE '.MAIN_DB_PREFIX."const SET VALUE = 'torefresh' WHERE name = 'MAIN_FIRST_PING_OK_ID'";
+		$db->query($sql, 1);
+	}
 
 	// We always commit.
 	// Process is designed so we can run it several times whatever is situation.
@@ -4279,6 +4286,22 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modECM.class.php';
 			if ($res) {
 				$mod = new modECM($db);
+				$mod->remove('noboxes'); // We need to remove because a permission id has been removed
+				$mod->init($reloadmode);
+			}
+		} elseif ($moduletoreload == 'MAIN_MODULE_KNOWLEDGEMANAGEMENT') {    // Permission has changed into 3.0 and 3.1
+			dolibarr_install_syslog("upgrade2::migrate_reload_modules Knowledge Management");
+			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modKnowledgeManagement.class.php';
+			if ($res) {
+				$mod = new modKnowledgeManagement($db);
+				$mod->remove('noboxes'); // We need to remove because a permission id has been removed
+				$mod->init($reloadmode);
+			}
+		} elseif ($moduletoreload == 'MAIN_MODULE_EVENTORGANIZATION') {    // Permission has changed into 3.0 and 3.1
+			dolibarr_install_syslog("upgrade2::migrate_reload_modules EventOrganization");
+			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modEventOrganization.class.php';
+			if ($res) {
+				$mod = new modEventOrganization($db);
 				$mod->remove('noboxes'); // We need to remove because a permission id has been removed
 				$mod->init($reloadmode);
 			}

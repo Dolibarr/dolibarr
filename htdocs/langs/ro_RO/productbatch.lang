@@ -1,4 +1,4 @@
-# ProductBATCH language file - en_US - ProductBATCH
+# ProductBATCH language file - Source file is en_US - ProductBATCH
 ManageLotSerial=Foloseşte lot / număr de serie
 ProductStatusOnBatch=Da (lot necesar)
 ProductStatusOnSerial=Da (este necesar un număr de serie unic)
@@ -33,3 +33,13 @@ CustomMasks=Adaugă o opţiune pentru definire mască în fişa produsului
 LotProductTooltip=Adaugă o opțiune în fişa de produs pentru a defini o mască dedicată numărului de lot
 SNProductTooltip=Adaugă o opțiune în fişa de produs pentru a defini o mască dedicată numărului de serie
 QtyToAddAfterBarcodeScan=Cantitate de adăugat pentru fiecare cod de bare/lot/serie scanată
+LifeTime=Durata de viață (în zile)
+EndOfLife=Sfârşitul duratei de viaţă
+ManufacturingDate=Data de producţie
+DestructionDate=Data distrugerii
+FirstUseDate=Data primei utilizări
+QCFrequency=Frecvenţa controlului de calitate (în zile)
+
+#Traceability - qc status
+OutOfOrder=Indisponibil
+InWorkingOrder=În stare de funcționare

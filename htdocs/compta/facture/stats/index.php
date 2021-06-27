@@ -372,9 +372,9 @@ foreach ($data as $val) {
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$oldyear.'</a></td>';
 		print '<td class="right">0</td>';
 		print '<td class="right"></td>';
-		print '<td class="right">0</td>';
+		print '<td class="right amount">0</td>';
 		print '<td class="right"></td>';
-		print '<td class="right">0</td>';
+		print '<td class="right amount">0</td>';
 		print '<td class="right"></td>';
 		print '</tr>';
 	}

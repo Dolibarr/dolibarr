@@ -1,4 +1,4 @@
-# ProductBATCH language file - en_US - ProductBATCH
+# ProductBATCH language file - Source file is en_US - ProductBATCH
 ManageLotSerial=Usar numeración por lote/serie
 ProductStatusOnBatch=Sí (lote obrigatorio)
 ProductStatusOnSerial=Sí (é preciso un número de serie único)
@@ -33,3 +33,13 @@ CustomMasks=Engada unha opción para definir a máscara na tarxeta do produto
 LotProductTooltip=Engada unha opción na tarxeta do produto para definir unha máscara de número de lote dedicada 
 SNProductTooltip=Engada unha opción na tarxeta do produto para definir unha máscara de número de serie dedicada 
 QtyToAddAfterBarcodeScan=Cant. a engadir por cada código de barras/lote/serie escaneado
+LifeTime=Duración da vida útil (en días) 
+EndOfLife=Fin da vida útil
+ManufacturingDate=Data de fabricación
+DestructionDate=Data de destrución
+FirstUseDate=Data do primeiro uso
+QCFrequency=Frecuencia do control de calidade (en días)
+
+#Traceability - qc status
+OutOfOrder=Fora de servizo
+InWorkingOrder=En funcionamento

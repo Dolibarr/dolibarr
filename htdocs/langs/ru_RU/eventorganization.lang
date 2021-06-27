@@ -1,4 +1,5 @@
 # Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
+# Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,86 +17,127 @@
 #
 # Generic
 #
-ModuleEventOrganizationName = Event Organization
-EventOrganizationDescription = Event Organization through Module Project
-EventOrganizationDescriptionLong= Manage Event organization for conference, attendees, speaker, and attendees, with public subcription page
+ModuleEventOrganizationName = Организация мероприятий
+EventOrganizationDescription = Организация мероприятий через модульный проект
+EventOrganizationDescriptionLong= Управляйте организацией мероприятий для конференции, участников, докладчика и посетителей с помощью общедоступной страницы подписки
 #
 # Menu
 #
-EventOrganizationMenuLeft = Organized events
-EventOrganizationConferenceOrBoothMenuLeft = Conference Or Booth
+EventOrganizationMenuLeft = Организованные мероприятия
+EventOrganizationConferenceOrBoothMenuLeft = Конференция или стенд
 
 #
 # Admin page
 #
-EventOrganizationSetup = Event Organization setup
+EventOrganizationSetup = Настройка организации мероприятий
 Settings = Настройки
-EventOrganizationSetupPage = Event Organization setup page
-EVENTORGANIZATION_TASK_LABEL = Label of tasks to create automatically when project is validated
-EVENTORGANIZATION_TASK_LABELTooltip = When you validate an organized event, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conference<br>Send Call for Booth<br>Receive call for conferences<br>Receive call for Booth<br>Open subscriptions to events for attendees<br>Send remind of event to speakers<br>Send remind of event to Booth hoster<br>Send remind of event to attendees
-EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Category to add to third-parties automatically created when someone suggests a conference
-EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Category to add to third-parties automatically created when they suggests a booth
-EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Template of email to send after receiving a suggestion of a conference.
-EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Template of email to send after receiving a suggestion of a booth.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send  after a subscription to a booth has been paid.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Template of email to send after a subscription to an event has been paid.
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Template of email of massaction to attendes
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Template of email of massaction to speakers
-EVENTORGANIZATION_FILTERATTENDEES_CAT = Filter thirdpartie's select list in attendees creation card/form with category
-EVENTORGANIZATION_FILTERATTENDEES_TYPE = Filter thirdpartie's select list in attendees creation card/form with customer type
+EventOrganizationSetupPage = Страница настройки организации мероприятий
+EVENTORGANIZATION_TASK_LABEL = Ярлык задач, которые создаются автоматически при утверждении проекта.
+EVENTORGANIZATION_TASK_LABELTooltip = Когда вы проверяете организованное мероприятие, некоторые задачи могут быть автоматически созданы в проекте <br> <br> Например: <br> Отправить вызов на конференцию <br> Отправить вызов на конференцию <br> Отправить вызов на конференцию a0342fccfda19bzcc0342fccfda19bzccOpen0343 напоминание о мероприятии докладчикам <br> Отправить напоминание о мероприятии организатору стенда <br> Отправить напоминание о мероприятии участникам
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Категория для добавления к третьим сторонам автоматически создается, когда кто-то предлагает конференцию
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Категория для добавления к сторонним лицам автоматически создается, когда они предлагают стенд
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Шаблон электронного письма для отправки после получения предложения о конференции.
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Шаблон электронного письма для отправки после получения предложения о кабине.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Шаблон электронного письма для отправки после оплаты подписки на киоск.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Шаблон электронного письма для отправки после оплаты подписки на мероприятие.
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Шаблон письма с массовым обращением к участникам
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Шаблон письма с массовым письмом спикерам
+EVENTORGANIZATION_FILTERATTENDEES_CAT = Фильтрация списка выбора третьей стороны в карточке / форме создания участников с категорией
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = Фильтрация списка выбора третьей стороны в карточке / форме создания участников с указанием типа клиента
 
 #
 # Object
 #
-EventOrganizationConfOrBooth= Conference Or Booth
-ManageOrganizeEvent = Manage event organisation
-ConferenceOrBooth = Conference Or Booth
-ConferenceOrBoothTab = Conference Or Booth
-AmountOfSubscriptionPaid = Amount of subscription paid
-DateSubscription = Date of subscription
-ConferenceOrBoothAttendee = Conference Or Booth Attendee
+EventOrganizationConfOrBooth= Конференция или стенд
+ManageOrganizeEvent = Управляйте организацией мероприятий
+ConferenceOrBooth = Конференция или стенд
+ConferenceOrBoothTab = Конференция или стенд
+AmountOfSubscriptionPaid = Сумма оплаченной подписки
+DateSubscription = Дата подписки
+ConferenceOrBoothAttendee = Участник конференции или стенда
 
 #
 # Template Mail
 #
-YourOrganizationEventConfRequestWasReceived = Your request for conference was received
-YourOrganizationEventBoothRequestWasReceived = Your request for booth was received
-EventOrganizationEmailAskConf = Request for conference
-EventOrganizationEmailAskBooth = Request for booth
-EventOrganizationEmailSubsBooth = Subscription for booth
-EventOrganizationEmailSubsEvent = Subscription for an event
-EventOrganizationMassEmailAttendees = Communication to attendees
-EventOrganizationMassEmailSpeakers = Communication to speakers
+YourOrganizationEventConfRequestWasReceived = Ваш запрос на конференцию получен
+YourOrganizationEventBoothRequestWasReceived = Ваш запрос на стенд был получен
+EventOrganizationEmailAskConf = Запрос на конференцию
+EventOrganizationEmailAskBooth = Запрос на стенд
+EventOrganizationEmailSubsBooth = Подписка на стенд
+EventOrganizationEmailSubsEvent = Подписка на мероприятие
+EventOrganizationMassEmailAttendees = Общение с участниками
+EventOrganizationMassEmailSpeakers = Общение со спикерами
 
 #
 # Event
 #
-AllowUnknownPeopleSuggestConf=Allow unknown people to suggest conferences
-AllowUnknownPeopleSuggestConfHelp=Allow unknown people to suggest conferences
-AllowUnknownPeopleSuggestBooth=Allow unknown people to suggest booth
-AllowUnknownPeopleSuggestBoothHelp=Allow unknown people to suggest booth
-PriceOfRegistration=Price of registration
-PriceOfRegistrationHelp=Price of registration
-PriceOfBooth=Subscription price to stand a booth
-PriceOfBoothHelp=Subscription price to stand a booth
-EventOrganizationICSLink=Link ICS for events
-ConferenceOrBoothInformation=Conference Or Booth informations
-Attendees = Attendees
-EVENTORGANIZATION_SECUREKEY = Secure Key of the public registration link to a conference
+AllowUnknownPeopleSuggestConf=Разрешить неизвестным людям предлагать конференции
+AllowUnknownPeopleSuggestConfHelp=Разрешить неизвестным людям предлагать конференции
+AllowUnknownPeopleSuggestBooth=Разрешить неизвестным людям предлагать будку
+AllowUnknownPeopleSuggestBoothHelp=Разрешить неизвестным людям предлагать будку
+PriceOfRegistration=Стоимость регистрации
+PriceOfRegistrationHelp=Стоимость регистрации
+PriceOfBooth=Стоимость подписки на стенд
+PriceOfBoothHelp=Стоимость подписки на стенд
+EventOrganizationICSLink=Свяжите ICS для событий
+ConferenceOrBoothInformation=Информация о конференции или стенде
+Attendees = Участники
+DownloadICSLink = Ссылка для скачивания ICS
+EVENTORGANIZATION_SECUREKEY = Защищенный ключ общедоступной регистрационной ссылки на конференцию
+SERVICE_BOOTH_LOCATION = Услуга, используемая для строки счета-фактуры о местонахождении стенда
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Служба, используемая для строки счета-фактуры о подписке участника на конференцию
 #
 # Status
 #
 EvntOrgDraft = Проект
-EvntOrgSuggested = Suggested
-EvntOrgConfirmed = Confirmed
-EvntOrgNotQualified = Not Qualified
+EvntOrgSuggested = Предложенный
+EvntOrgConfirmed = Подтвержденный
+EvntOrgNotQualified = Неквалифицированный
 EvntOrgDone = Завершены
-EvntOrgCancelled = Cancelled
+EvntOrgCancelled = Отменено
 #
 # Public page
 #
-PublicAttendeeSubscriptionPage = Public link of registration to a conference
-MissingOrBadSecureKey = The security key is invalid or missing
-EvntOrgWelcomeMessage = This form allows you to register as a new participant to the conference
-EvntOrgStartDuration = This conference starts on
-EvntOrgEndDuration =  and ends on
+SuggestForm = Страница предложений
+RegisterPage = Страница для конференций или стенда
+EvntOrgRegistrationHelpMessage = Здесь вы можете проголосовать за то или иное мероприятие, предложить новую конференцию или стенд для проекта
+EvntOrgRegistrationConfHelpMessage = Здесь вы можете предложить новую конференцию для проекта
+EvntOrgRegistrationBoothHelpMessage = Здесь вы можете предложить новый стенд для проекта
+ListOfSuggestedConferences = Список предлагаемых конференций
+ListOfSuggestedBooths = Список предлагаемых стендов
+SuggestConference = Предложить новую конференцию
+SuggestBooth = Предложить стенд
+ViewAndVote = Просмотр и голосование за предложенные мероприятия
+PublicAttendeeSubscriptionPage = Публичная ссылка для регистрации на конференцию
+MissingOrBadSecureKey = Электронный ключ недействителен или отсутствует
+EvntOrgWelcomeMessage = Эта форма позволяет вам зарегистрироваться в качестве нового участника конференции: '%s'
+EvntOrgDuration = Конференция начинается %s и заканчивается %s.
+ConferenceAttendeeFee = Плата за участие в конференции: «%s», происходящая от %s до %s.
+BoothLocationFee = Место расположения стенда для события : '%s' происходящего с %s до %s
+EventType = Тип события
+
+#
+# Vote page
+#
+EvntOrgRegistrationWelcomeMessage = Добро пожаловать на страницу предложений конференции или стенда.
+EvntOrgRegistrationConfWelcomeMessage = Добро пожаловать на страницу предложений по проведению конференции.
+EvntOrgRegistrationBoothWelcomeMessage = Добро пожаловать на страницу стенда предложений.
+EvntOrgVoteHelpMessage = Здесь вы можете просмотреть и проголосовать за предлагаемые мероприятия для проекта.
+VoteOk = Ваш голос был принят.
+AlreadyVoted = Вы уже проголосовали за это событие.
+VoteError = Произошла ошибка во время голосования, попробуйте еще раз.
+
+#
+# SubscriptionOk page
+#
+SubscriptionOk = Ваша подписка на эту конференцию подтверждена
+#
+# Subscription validation mail
+#
+ConfAttendeeSubscriptionConfirmation = Подтверждение подписки на конференцию
+#
+# Payment page
+#
+Attendee = Участник
+PaymentConferenceAttendee = Оплата участникам конференции
+PaymentBoothLocation = Оплата места стенда

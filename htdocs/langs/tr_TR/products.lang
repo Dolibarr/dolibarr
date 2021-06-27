@@ -396,3 +396,5 @@ ActionAvailableOnVariantProductOnly=Eylem yalnızca ürün değişkeninde mevcut
 ProductsPricePerCustomer=Müşteri başına ürün fiyatları
 ProductSupplierExtraFields=Ek Nitelikler (Tedarikçi Fiyatları)
 DeleteLinkedProduct=Kombinasyonla bağlantılı alt ürünü silin
+PMPValue=Ağırlıklı ortalama fiyat
+PMPValueShort=AOF

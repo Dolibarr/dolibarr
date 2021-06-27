@@ -681,7 +681,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 				// Title of task
 				if (count($arrayfields) > 0 && !empty($arrayfields['t.label']['checked'])) {
-					print "<td>";
+					print '<td>';
 					if ($showlineingray) {
 						print '<i>';
 					}

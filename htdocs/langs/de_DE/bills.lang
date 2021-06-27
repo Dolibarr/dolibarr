@@ -259,6 +259,7 @@ DateMaxPayment=Fälligkeitsdatum
 DateInvoice=Rechnungsdatum
 DatePointOfTax=Steuerort
 NoInvoice=Keine Rechnung
+NoOpenInvoice=No open invoice
 ClassifyBill=Rechnung einordnen
 SupplierBillsToPay=Unbezahlte Lieferantenrechnungen
 CustomerBillsUnpaid=Offene Kundenrechnungen
@@ -521,9 +522,9 @@ PDFCrabeDescription=Rechnung PDF-Vorlage Crabe. Eine vollständige Rechnungsvorl
 PDFSpongeDescription=Rechnung PDF-Vorlage Sponge. Eine vollständige Rechnungsvorlage
 PDFCrevetteDescription=PDF Rechnungsvorlage Crevette. Vollständige Rechnungsvolage für normale Rechnungen
 TerreNumRefModelDesc1=Gibt eine Nummer im Format %syymm-nnnn für Standardrechnungen und %syymm-nnnn für Gutschriften zurück, wobei yy das Jahr, mm der Monat und nnnn eine sequenzielle automatisch inkrementierende Nummer ohne Unterbrechung und ohne Zurücksetzen auf 0 ist
-MarsNumRefModelDesc1=Return number in the format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for down payment invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequencial auto-incrementing number with no break and no return to 0
+MarsNumRefModelDesc1=Liefere Nummer im Format  %syymm-nnnn für Standardrechnungen %syymm-nnnn für Ersatzrechnung,  %syymm-nnnn für Anzahlungsrechnung und %syymm-nnnn für Gutschriften wobei  yy Jahr, mm Monat und nnnn eine laufende Nummer ohne Unterbrechung und ohne Rückkehr zu 0 ist.
 TerreNumRefModelError=Eine Rechnung, beginnend mit $ syymm existiert bereits und ist nicht kompatibel mit diesem Modell der Reihe. Entfernen oder umbenennen, um dieses Modul.
-CactusNumRefModelDesc1=Return number in the format %syymm-nnnn for standard invoices, %syymm-nnnn for credit notes and %syymm-nnnn for down payment invoices where yy is year, mm is month and nnnn is a sequencial auto-incrementing number with no break and no return to 0
+CactusNumRefModelDesc1=Rückgabenummer im Format %syymm-nnnn für Standard-Rechnungen, %syymm-nnnn für Gutschriften und %syymm-nnnn für Anzahlungsrechnungen, wobei yy das Jahr ist, mm der Monat und nnnn ein ansteigender, lückenloser Zähler ist
 EarlyClosingReason=Grund für die vorzeitige Schließung
 EarlyClosingComment=Notiz zur vorzeitigen Schließung
 ##### Types de contacts #####
@@ -589,3 +590,4 @@ FacParentLine=Übergeordnete Rechnungszeile
 SituationTotalRayToRest=Restbetrag zu zahlen ohne Steuern
 PDFSituationTitle=Situation Nr. %d
 SituationTotalProgress=Gesamtfortschritt %d %%
+SearchUnpaidInvoicesWithDueDate=Suche unbezahlte Rechnungen mit Fälligkeitsdatum = %s

@@ -213,3 +213,5 @@ SendReminderForExpiredSubscription=Send reminder by email to members when subscr
 MembershipPaid=Membership paid for current period (until %s)
 YouMayFindYourInvoiceInThisEmail=You may find your invoice attached to this email
 XMembersClosed=%s member(s) closed
+XExternalUserCreated=%s external user(s) created
+ForceMemberNature=Force member nature (Individual or Corporation)

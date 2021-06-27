@@ -86,13 +86,14 @@ print '<td class="center" width="20">&nbsp;</td>';
 print '<td class="center" width="100"></td>'."\n";
 print '</tr>';
 
-// Example with a yes / no select
+/* No more need for this, you can set that a profile is public when saving it.
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("EXPORTS_SHARE_MODELS").'</td>';
 print '<td class="center" width="20">&nbsp;</td>';
 print '<td class="center" width="100">';
 print ajax_constantonoff('EXPORTS_SHARE_MODELS');
 print '</td></tr>';
+*/
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ExportCsvSeparator").'</td>';
