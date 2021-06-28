@@ -2175,13 +2175,12 @@ class Commande extends CommonOrder
 	{
 		$nb = 0;
 
-		$sql = 'SELECT COUNT(DISTINCT ed.fk_expedition) as nb';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'expeditiondet as ed,';
-		$sql .= ' '.MAIN_DB_PREFIX.'commandedet as cd';
-		$sql .= ' WHERE';
-		$sql .= ' ed.fk_origin_line = cd.rowid';
-		$sql .= ' AND cd.fk_commande ='.$this->id;
-		//print $sql;
+		$sql = "SELECT COUNT(DISTINCT ee.rowid) as nb";
+		$sql.= " FROM ".MAIN_DB_PREFIX."element_element as ee ";
+		$sql.= " WHERE";
+		$sql.= " ee.sourcetype = 'commande'";
+		$sql.= " AND ee.fk_source =" .$this->id;
+		$sql.= " AND ee.targettype = 'shipping'";
 
 		dol_syslog(get_class($this)."::getNbOfShipments", LOG_DEBUG);
 		$resql = $this->db->query($sql);
