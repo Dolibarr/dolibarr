@@ -109,28 +109,70 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->facture->
     $object->fetch($id);
 	if ($object->valide($user) > 0)
 	{
-		$db->commit();
-
 		// Loop on each invoice linked to this payment to rebuild PDF
-		$factures = array();
-		foreach ($factures as $id)
-		{
-			$fac = new Facture($db);
-			$fac->fetch($id);
+        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+            $outputlangs = $langs;
+            if (!empty($_REQUEST['lang_id']))
+            {
+                $outputlangs = new Translate("", $conf);
+                $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+            }
 
-			$outputlangs = $langs;
-			if (!empty($_REQUEST['lang_id']))
-			{
-				$outputlangs = new Translate("", $conf);
-				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-			}
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-				$fac->generateDocument($fac->modelpdf, $outputlangs);
-			}
+            $hidedetails = ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0;
+            $hidedesc = ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0;
+            $hideref = !empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0;
+
+            $sql = 'SELECT f.rowid as facid';
+            $sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf,'.MAIN_DB_PREFIX.'facture as f,'.MAIN_DB_PREFIX.'societe as s';
+            $sql .= ' WHERE pf.fk_facture = f.rowid';
+            $sql .= ' AND f.fk_soc = s.rowid';
+            $sql .= ' AND f.entity IN ('.getEntity('invoice').')';
+            $sql .= ' AND pf.fk_paiement = '.$object->id;
+            $resql = $db->query($sql);
+            if ($resql)
+            {
+                $i = 0;
+                $num = $db->num_rows($resql);
+
+                if ($num > 0)
+                {
+                    while ($i < $num)
+                    {
+                        $objp = $db->fetch_object($resql);
+
+                        $invoice = new Facture($db);
+
+                        if ($invoice->fetch($objp->facid) <= 0) {
+                            $errors++;
+                            setEventMessage($invoice->error, $invoice->errors, 'errors');
+                            break;
+                        }
+
+                        if ($invoice->generateDocument($invoice->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref) < 0) {
+                            $errors++;
+                            setEventMessage($invoice->error, $invoice->errors, 'errors');
+                            break;
+                        }
+
+                        $i++;
+                    }
+                }
+
+                $db->free($resql);
+            }
+            else
+            {
+                $errors++;
+                setEventMessage($db->error, $db->errors, 'errors');
+            }
 		}
 
-		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
-		exit;
+        if (! $errors) {
+            $db->commit();
+
+            header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
+            exit;
+        }
 	}
 	else
 	{

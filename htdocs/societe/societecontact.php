@@ -337,7 +337,7 @@ if ($id > 0 || !empty($ref))
 						else
 						{
 							print '<td class="left nowrap">';
-							if ($objp->subscription == 'yes')
+							if (!empty($objp->subscription))
 							{
 								print $langs->trans("SubscriptionNotReceived");
 								if ($objp->statut > 0) print " ".img_warning();

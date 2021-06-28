@@ -45,7 +45,7 @@ $langs->loadLangs(array('compta', 'bills', 'banks'));
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm');
-$projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
+$fk_project = (GETPOST('fk_project') ? GETPOST('fk_project', 'int') : 0);
 
 $dateech = dol_mktime(GETPOST('echhour'), GETPOST('echmin'), GETPOST('echsec'), GETPOST('echmonth'), GETPOST('echday'), GETPOST('echyear'));
 $dateperiod = dol_mktime(GETPOST('periodhour'), GETPOST('periodmin'), GETPOST('periodsec'), GETPOST('periodmonth'), GETPOST('periodday'), GETPOST('periodyear'));
@@ -91,7 +91,7 @@ if ($action == 'reopen' && $user->rights->tax->charges->creer) {
 if ($action == 'classin' && $user->rights->tax->charges->creer)
 {
 	$object->fetch($id);
-	$object->setProject(GETPOST('projectid'));
+	$object->setProject(GETPOST('fk_project'));
 }
 
 if ($action == 'setlib' && $user->rights->tax->charges->creer)
@@ -343,7 +343,7 @@ if ($action == 'create')
 	print $langs->trans("Date");
 	print '</td>';
 	print '<td>';
-	print $form->selectDate(!empty($dateech) ? $dateech : '-1', 'ech', 0, 0, 0, 'charge', 1);
+	print $form->selectDate(!empty($dateech) ? $dateech : '-1', 'ech', 0, 0, 0, 'charge', 1, 1);
 	print '</td>';
 	print "</tr>\n";
 
@@ -375,21 +375,21 @@ if ($action == 'create')
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
 
-		$numproject = $formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1);
+		$numproject = $formproject->select_projects(-1, $fk_project, 'fk_project', 0, 0, 1, 1);
 
 		print '</td></tr>';
 	}
 
 	// Payment Mode
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
-	$form->select_types_paiements($mode_reglement_id, 'mode_reglement_id');
+	$form->select_types_paiements(GETPOST('mode_reglement_id', 'int'), 'mode_reglement_id');
 	print '</td></tr>';
 
 	// Bank Account
 	if (!empty($conf->banque->enabled))
 	{
 		print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
-		$form->select_comptes($fk_account, 'fk_account', 0, '', 1);
+		$form->select_comptes(GETPOST('fk_account', 'int'), 'fk_account', 0, '', 1);
 		print '</td></tr>';
 	}
 
@@ -482,7 +482,7 @@ if ($id > 0)
 					$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 					$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 					$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-					$morehtmlref .= $formproject->select_projects(0, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+					$morehtmlref .= $formproject->select_projects(0, $object->fk_project, 'fk_project', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
 					$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 					$morehtmlref .= '</form>';
 				} else {
@@ -546,11 +546,11 @@ if ($id > 0)
 		if ($action == 'edit')
 		{
 			print '<tr><td>'.$langs->trans("AmountTTC")."</td><td>";
-			print '<input type="text" name="amount" size="12" class="flat" value="'.$object->amount.'">';
+			print '<input type="text" name="amount" size="12" class="flat" value="'.price($object->amount).'">';
 			print "</td></tr>";
 		}
 		else {
-			print '<tr><td>'.$langs->trans("AmountTTC").'</td><td>'.price($object->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
+			print '<tr><td>'.$langs->trans("AmountTTC").'</td><td>'.price($object->amount).'</td></tr>';
 		}
 
 		// Mode of payment

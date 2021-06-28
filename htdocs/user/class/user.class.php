@@ -3317,7 +3317,7 @@ class User extends CommonObject
 		}
 		else
 		{
-			$sql .= " WHERE 1";
+			$sql .= " WHERE 1 = 1";
 		}
 
 		// Manage filter

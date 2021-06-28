@@ -595,6 +595,10 @@ class AdvanceTargetingMailing extends CommonObject
 						if ($arrayquery['options_'.$key] != '') {
 							$sqlwhere[] = " (te.".$key." = ".$arrayquery['options_'.$key].")";
 						}
+					} elseif ($extrafields->attributes[$elementtype]['type'][$key] == 'link') {
+						if ($arrayquery['options_'.$key] > 0) {
+							$sqlwhere[]= " (te.".$key." = ".((int) $arrayquery['options_'.$key]).")";
+						}
 					} else {
 						if (is_array($arrayquery['options_'.$key])) {
 							$sqlwhere[] = " (te.".$key." IN ('".implode("','", $arrayquery['options_'.$key])."'))";
@@ -621,7 +625,6 @@ class AdvanceTargetingMailing extends CommonObject
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($resql);
-
 					$this->thirdparty_lines[$i] = $obj->rowid;
 
 					$i++;
