@@ -941,6 +941,10 @@ class MyObject extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
+		// Set here init that are not commonf fields
+		// $this->property1 = ...
+		// $this->property2 = ...
+
 		$this->initAsSpecimenCommon();
 	}
 

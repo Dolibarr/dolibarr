@@ -196,6 +196,7 @@ if (empty($reshook)) {
  */
 
 $form = new Form($db);
+$user_temp = new User($db);
 
 $now = dol_now();
 
@@ -554,11 +555,43 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			$cssforfield .= ($cssforfield ? ' ' : '').'right';
 		}
 		//if (in_array($key, array('fk_soc', 'fk_user', 'fk_warehouse'))) $cssforfield = 'tdoverflowmax100';
-
 		if (!empty($arrayfields['t.'.$key]['checked'])) {
 			print '<td'.($cssforfield ? ' class="'.$cssforfield.'"' : '').'>';
 			if ($key == 'status') {
 				print $object->getLibStatut(5);
+			} elseif ($key == 'fk_user_creat') {
+				if ($object->fk_user_creat > 0) {
+					if (isset($conf->cache['user'][$object->fk_user_creat])) {
+						$user_temp = $conf->cache['user'][$object->fk_user_creat];
+					} else {
+						$user_temp = new User($db);
+						$user_temp->fetch($object->fk_user_creat);
+						$conf->cache['user'][$object->fk_user_creat] = $user_temp;
+					}
+					print $user_temp->getNomUrl(-1);
+				}
+			} elseif ($key == 'fk_user_modif') {
+				if ($object->fk_user_modif > 0) {
+					if (isset($conf->cache['user'][$object->fk_user_modif])) {
+						$user_temp = $conf->cache['user'][$object->fk_user_modif];
+					} else {
+						$user_temp = new User($db);
+						$user_temp->fetch($object->fk_user_modif);
+						$conf->cache['user'][$object->fk_user_modif] = $user_temp;
+					}
+					print $user_temp->getNomUrl(-1);
+				}
+			} elseif ($key == 'fk_user_valid') {
+				if ($object->fk_user_valid > 0) {
+					if (isset($conf->cache['user'][$object->fk_user_valid])) {
+						$user_temp = $conf->cache['user'][$object->fk_user_valid];
+					} else {
+						$user_temp = new User($db);
+						$user_temp->fetch($object->fk_user_valid);
+						$conf->cache['user'][$object->fk_user_valid] = $user_temp;
+					}
+					print $user_temp->getNomUrl(-1);
+				}
 			} else {
 				print $object->showOutputField($val, $key, $object->$key, '');
 			}

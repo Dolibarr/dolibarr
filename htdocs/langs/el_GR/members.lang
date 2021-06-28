@@ -213,3 +213,5 @@ SendReminderForExpiredSubscription=Αποστολή υπενθύμισης μέ�
 MembershipPaid=Καταβολή συνδρομής για την τρέχουσα περίοδο (μέχρι %s)
 YouMayFindYourInvoiceInThisEmail=Μπορείτε να βρείτε το τιμολόγιο που επισυνάπτεται σε αυτό το μήνυμα ηλεκτρονικού ταχυδρομείου
 XMembersClosed=%s μέλος (τα) έκλεισε
+XExternalUserCreated=%s external user(s) created
+ForceMemberNature=Force member nature (Individual or Corporation)

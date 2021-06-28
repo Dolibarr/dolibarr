@@ -158,7 +158,7 @@ ACCOUNTING_LENGTH_AACCOUNT=Trešo pušu grāmatvedības kontu garums (ja iestat�
 ACCOUNTING_MANAGE_ZERO=Atļaujiet pārvaldīt atšķirīgu skaitu nulles grāmatvedības konta beigās. Nepieciešamas dažas valstis (piemēram, Šveice). Ja iestatījums ir izslēgts (noklusējums), varat iestatīt šādus divus parametrus, lai pieprasītu lietojumprogrammai pievienot virtuālās nulles.
 BANK_DISABLE_DIRECT_INPUT=Atspējot tiešu darījumu reģistrāciju bankas kontā
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Iespējot eksporta projektu žurnālā
-ACCOUNTANCY_COMBO_FOR_AUX=Iespējot kombinēto sarakstu papildu kontam (var būt lēni, ja jums ir daudz trešo personu)
+ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties, break ability to search on a part of value)
 ACCOUNTING_DATE_START_BINDING=Definējiet datumu, lai sāktu iesiešanu un pārskaitīšanu grāmatvedībā. Zem šī datuma darījumi netiks pārnesti uz grāmatvedību.
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Pārsūtot grāmatvedību, pēc noklusējuma atlasiet periodu
 
@@ -328,6 +328,9 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Atspējot saistīšanu un pārsūtīšan
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Atspējojiet grāmatvedībā iesiešanu un pārskaitīšanu izdevumu pārskatos (grāmatvedībā netiks ņemti vērā izdevumu pārskati)
 
 ## Export
+NotifiedExportDate=Notified export date (modification of the entries will not be possible)
+NotifiedValidationDate=Validation of the entries (modification or deletion of the entries will not be possible)
+ConfirmExportFile=Confirmation of the generation of the accounting export file ?
 ExportDraftJournal=Eksporta žurnāla projekts
 Modelcsv=Eksporta modulis
 Selectmodelcsv=Atlasiet eksporta modeli

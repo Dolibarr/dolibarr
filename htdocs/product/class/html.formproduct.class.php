@@ -340,7 +340,7 @@ class FormProduct
 			print '<tr><td>';
 			print $this->selectWarehouses($selected, $htmlname, '', $addempty);
 			print '</td>';
-			print '<td class="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+			print '<td class="left"><input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Modify").'"></td>';
 			print '</tr></table></form>';
 		} else {
 			if ($selected) {

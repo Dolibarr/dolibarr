@@ -70,8 +70,8 @@ Deleted=Verwijderd
 # Dict
 Type=Type
 Severity=Prioriteit
-TicketGroupIsPublic=Group is public
-TicketGroupIsPublicDesc=If a ticket group is public, it will be visible in the form when creating a ticket from the public interface
+TicketGroupIsPublic=Groep is openbaar
+TicketGroupIsPublicDesc=Als een ticketgroep openbaar is, is deze zichtbaar in het formulier bij het maken van een ticket vanuit de openbare interface
 
 # Email templates
 MailToSendTicketMessage=Om e-mail van ticket bericht te verzenden
@@ -116,8 +116,8 @@ TicketsShowModuleLogo=Toon het logo van de module in de openbare interface
 TicketsShowModuleLogoHelp=Schakel deze optie in om het logo op de pagina's van de openbare interface te verbergen
 TicketsShowCompanyLogo=Toon het logo van het bedrijf in de openbare interface
 TicketsShowCompanyLogoHelp=Schakel deze optie in om het logo van het bedrijf op de pagina's van de openbare interface te verbergen
-TicketsEmailAlsoSendToMainAddress=Also send a notification to the main email address
-TicketsEmailAlsoSendToMainAddressHelp=Enable this option to also send an email to the address defined into setup "%s" (see tab "%s")
+TicketsEmailAlsoSendToMainAddress=Stuur ook een melding naar het hoofd-e-mailadres
+TicketsEmailAlsoSendToMainAddressHelp=Schakel deze optie in om ook een e-mail te sturen naar het adres gedefinieerd in setup "%s" (zie tabblad "%s")
 TicketsLimitViewAssignedOnly=Beperk de weergave tot tickets die zijn toegewezen aan de huidige gebruiker (niet effectief voor externe gebruikers, altijd beperkt tot de derde partij waarvan ze afhankelijk zijn)
 TicketsLimitViewAssignedOnlyHelp=Alleen tickets die zijn toegewezen aan de huidige gebruiker zijn zichtbaar. Is niet van toepassing op een gebruiker met toegangsrechten voor tickets.
 TicketsActivatePublicInterface=Publieke interface activeren
@@ -128,10 +128,10 @@ TicketNumberingModules=Nummering module voor tickets
 TicketsModelModule=Documentsjablonen voor tickets
 TicketNotifyTiersAtCreation=Breng relatie op de hoogte bij het aanmaken
 TicketsDisableCustomerEmail=Schakel e-mails altijd uit wanneer een ticket wordt gemaakt vanuit de openbare interface
-TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is added to a ticket
+TicketsPublicNotificationNewMessage=Stuur e-mail(s) wanneer een nieuw bericht/opmerking wordt toegevoegd aan een ticket
 TicketsPublicNotificationNewMessageHelp=Stuur e-mail (s) wanneer een nieuw bericht is toegevoegd vanuit de openbare interface (naar de toegewezen gebruiker of de e-mail met meldingen naar (update) en / of de e-mail met meldingen naar)
 TicketPublicNotificationNewMessageDefaultEmail=E-mailmeldingen voor (update)
-TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
+TicketPublicNotificationNewMessageDefaultEmailHelp=Stuur een e-mail naar dit adres voor elk nieuw berichtmelding als er geen gebruiker aan het ticket is toegewezen of als de gebruiker geen bekend e-mailadres heeft.
 #
 # Index & list page
 #
@@ -304,13 +304,13 @@ BoxLastModifiedTicket=Laatst gewijzigde tickets
 BoxLastModifiedTicketDescription=Laatste %s gewijzigde tickets
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=Geen recent gewijzigde tickets
-BoxTicketType=Number of open tickets by type
-BoxTicketSeverity=Number of open tickets by severity
-BoxNoTicketSeverity=No tickets opened
-BoxTicketLastXDays=Number of new tickets by days the last %s days
-BoxTicketLastXDayswidget = Number of new tickets by days the last X days
-BoxNoTicketLastXDays=No new tickets the last %s days
-BoxNumberOfTicketByDay=Number of new tickets by day
-BoxNewTicketVSClose=Number of today's new tickets versus today's closed tickets
-TicketCreatedToday=Ticket created today
-TicketClosedToday=Ticket closed today
+BoxTicketType=Verdeling van openstaande tickets per type
+BoxTicketSeverity=Aantal openstaande tickets op volgorde belangrijkheid
+BoxNoTicketSeverity=Geen tickets geopend
+BoxTicketLastXDays=Aantal nieuwe tickets per dagen de laatste %s dagen
+BoxTicketLastXDayswidget = Aantal nieuwe tickets per dag van de afgelopen X dagen
+BoxNoTicketLastXDays=Geen nieuwe tickets de laatste %s dagen
+BoxNumberOfTicketByDay=Aantal nieuwe tickets per dag
+BoxNewTicketVSClose=Aantal nieuwe tickets van vandaag versus gesloten tickets van vandaag
+TicketCreatedToday=Ticket vandaag aangemaakt
+TicketClosedToday=Ticket vandaag gesloten

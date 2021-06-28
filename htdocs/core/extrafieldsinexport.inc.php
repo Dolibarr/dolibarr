@@ -36,6 +36,7 @@ if ($resql) {    // This can fail when class is used on old database (during mig
 			case 'boolean':
 				$typeFilter = "Boolean";
 				break;
+			case 'checkbox':
 			case 'select':
 				if (!empty($conf->global->EXPORT_LABEL_FOR_SELECT)) {
 					$tmpparam = unserialize($obj->param); // $tmpparam may be array with 'options' = array(key1=>val1, key2=>val2 ...)

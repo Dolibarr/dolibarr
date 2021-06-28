@@ -193,8 +193,9 @@ class EmailCollector extends CommonObject
 	 */
 	public $datelastresult;
 
-
+	public $codelastresult;
 	public $lastresult;
+	public $datelastok;
 	// END MODULEBUILDER PROPERTIES
 
 	public $filters;
@@ -274,7 +275,7 @@ class EmailCollector extends CommonObject
 			}
 		}
 
-		if (is_array($this->filters) && count($this->filters)) {
+		if (is_array($this->actions) && count($this->actions)) {
 			$emailcollectoroperation = new EmailCollectorAction($this->db);
 
 			foreach ($this->actions as $operation) {
@@ -653,6 +654,9 @@ class EmailCollector extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
+		$this->host = 'localhost';
+		$this->login = 'alogin';
+
 		$this->initAsSpecimenCommon();
 	}
 

@@ -9,7 +9,7 @@ ConfirmDeleteEstablishment=Sei sicuro di voler cancellare questa azienda?
 OpenEtablishment=Apri azienda
 CloseEtablishment=Chiudi azienda
 # Dictionary
-DictionaryPublicHolidays=HRM - Giorni festivi
+DictionaryPublicHolidays=Leave - Public holidays
 DictionaryDepartment=HRM - Lista dipartimenti
 DictionaryFunction=HRM - Posizioni di lavoro
 # Module

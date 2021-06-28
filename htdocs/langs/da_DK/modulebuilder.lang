@@ -143,3 +143,4 @@ AsciiToHtmlConverter=Ascii til HTML-konverter
 AsciiToPdfConverter=Ascii til PDF konverter
 TableNotEmptyDropCanceled=Tabellen er ikke tom. Drop er annulleret.
 ModuleBuilderNotAllowed=Modulbyggeren er tilgængelig, men ikke tilladt for din bruger.
+ImportExportProfiles=Import og eksport af profiler

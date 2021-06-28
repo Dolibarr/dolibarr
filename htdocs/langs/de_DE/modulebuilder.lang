@@ -25,7 +25,7 @@ EnterNameOfModuleToDeleteDesc=Sie können Ihr Modul löschen. WARNUNG: Alle Code
 EnterNameOfObjectToDeleteDesc=Sie können ein Objekt löschen. WARNUNG: Alle Codedateien (generiert oder manuell erstellt), die sich auf das Objekt beziehen, werden gelöscht!
 DangerZone=Gefahrenzone
 BuildPackage=Paket erstellen
-BuildPackageDesc=Sie können ein Zip-Paket Ihrer Anwendung erstellen, um es auf Dolibarr-Installationen verteilen können. Sie können es auch vertreiben oder auf einem Marktplatz wie <a href="https://www.dolistore.com"> DoliStore.com </a> verkaufen.
+BuildPackageDesc=Sie können ein Zip-Paket Ihrer Anwendung erstellen, um es auf Dolibarr-Installationen verteilen können. Sie können es auch auf einem Marktplatz wie <a href="https://www.dolistore.com"> DoliStore.com </a> verteilen oder verkaufen.
 BuildDocumentation=Dokumentation erstellen
 ModuleIsNotActive=Dieses Modul ist noch nicht aktiviert. Gehe zu %s zum aktivieren oder klicke hier
 ModuleIsLive=Dieses Modul wurde aktiviert. Jede Änderung kann aktuelle Live-Funktionen beeinträchtigen.
@@ -127,7 +127,7 @@ UseSpecificEditorURL = Verwenden Sie eine bestimmte Editor-URL
 UseSpecificFamily = Verwenden Sie eine bestimmte Familie
 UseSpecificAuthor = Verwenden Sie einen bestimmten Autor
 UseSpecificVersion = Verwenden Sie eine bestimmte Anfangsversion
-IncludeRefGeneration=Die Objektreferen muss automatisch generiert werden
+IncludeRefGeneration=Die Objektreferenz soll automatisch generiert werden
 IncludeRefGenerationHelp=Aktivieren Sie diese Option, wenn Sie Code einschließen möchten, um die Generierung der Referenz automatisch zu verwalten
 IncludeDocGeneration=Ich möchte einige Dokumente aus dem Objekt generieren
 IncludeDocGenerationHelp=Wenn Sie dies aktivieren, wird Code generiert, um dem Datensatz ein Feld "Dokument generieren" hinzuzufügen.
@@ -137,9 +137,10 @@ CSSClass=CSS for edit/create form
 CSSViewClass=CSS for read form
 CSSListClass=CSS for list
 NotEditable=Nicht bearbeitbar
-ForeignKey=Unbekannter Schlüssel
+ForeignKey=Fremdschlüssel
 TypeOfFieldsHelp=Feldtypen:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] ('1' heißt, wir ergänzen eine + Schaltfläche nach der Kombobox, um den Eintrag zu erstellen, 'filter' kann sein 'status=1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTITIES__)' zum Beispiel)
 AsciiToHtmlConverter=Ascii zu HTML Konverter
 AsciiToPdfConverter=Ascii zu PDF Konverter
 TableNotEmptyDropCanceled=Tabelle nicht leer. Löschen wurde abgebrochen.
 ModuleBuilderNotAllowed=Der Modul-Generator ist verfügbar, aber für Ihren Benutzer nicht zulässig.
+ImportExportProfiles=Import and export profiles

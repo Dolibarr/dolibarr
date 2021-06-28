@@ -294,7 +294,7 @@ class Ticket extends CommonObject
 			self::STATUS_ASSIGNED => 'Assigned',
 			self::STATUS_IN_PROGRESS => 'InProgress',
 			self::STATUS_WAITING => 'OnHold',
-			self::STATUS_NEED_MORE_INFO => 'NeedMoreInformation',
+			self::STATUS_NEED_MORE_INFO => 'NeedMoreInformationShort',
 			self::STATUS_CLOSED => 'Closed',
 			self::STATUS_CANCELED => 'Canceled'
 		);

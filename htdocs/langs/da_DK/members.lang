@@ -213,3 +213,5 @@ SendReminderForExpiredSubscription=Send påmindelse via e-mail til medlemmer, n�
 MembershipPaid=Medlemskab betalt for indeværende periode (indtil %s)
 YouMayFindYourInvoiceInThisEmail=Du kan muligvis finde din faktura knyttet til denne e-mail
 XMembersClosed=%s medlem(er) låst
+XExternalUserCreated=%s oprettet ekstern(e) bruger(e)
+ForceMemberNature=Tving medlemmernes natur (enkeltperson eller selskab)

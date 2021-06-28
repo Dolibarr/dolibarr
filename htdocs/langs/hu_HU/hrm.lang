@@ -9,7 +9,7 @@ ConfirmDeleteEstablishment=Biztosan törli ezt a létesítményt?
 OpenEtablishment=Létesítmény megnyitása
 CloseEtablishment=Létesítmény lezárása
 # Dictionary
-DictionaryPublicHolidays=HRM - ünnepnapok
+DictionaryPublicHolidays=Leave - Public holidays
 DictionaryDepartment=HRM - Osztálylista
 DictionaryFunction=HRM - Munkahelyek
 # Module

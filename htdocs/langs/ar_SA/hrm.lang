@@ -5,13 +5,13 @@ Establishments=مؤسسات
 Establishment=مؤسسة
 NewEstablishment=مؤسسة جديدة
 DeleteEstablishment=حذف المؤسسة
-ConfirmDeleteEstablishment=Are you sure you wish to delete this establishment?
+ConfirmDeleteEstablishment=هل انت متأكد أنك تريد حذف هذة المؤسسة ؟
 OpenEtablishment=فتح المؤسسة
 CloseEtablishment=إغلاق المؤسسة
 # Dictionary
-DictionaryPublicHolidays=HRM - Public holidays
+DictionaryPublicHolidays=الإجازات - الإجازات عامة
 DictionaryDepartment=إدارة الموارد البشرية - قائمة القسم
-DictionaryFunction=HRM - Job positions
+DictionaryFunction=إدارة الموارد البشرية - المسميات الوظيفية
 # Module
 Employees=الموظفين
 Employee=الموظف

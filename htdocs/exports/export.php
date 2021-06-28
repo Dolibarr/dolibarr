@@ -1009,7 +1009,7 @@ if ($step == 4 && $datatoexport) {
 		print '</tr>';
 
 		print '<tr class="oddeven">';
-		print '<td><input name="export_name" size="32" value=""></td>';
+		print '<td><input name="export_name" value=""></td>';
 		print '<td>';
 		$arrayvisibility = array('private'=>$langs->trans("Private"), 'all'=>$langs->trans("Everybody"));
 		print $form->selectarray('visibility', $arrayvisibility, 'private');

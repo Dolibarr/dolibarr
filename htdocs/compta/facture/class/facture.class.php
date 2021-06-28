@@ -1235,14 +1235,20 @@ class Facture extends CommonInvoice
 		$result = $object->create($user);
 		if ($result < 0) {
 			$error++;
+			$this->error = $object->error;
+			$this->errors = $object->errors;
 		} else {
 			// copy internal contacts
 			if ($object->copy_linked_contact($this, 'internal') < 0) {
 				$error++;
+				$this->error = $object->error;
+				$this->errors = $object->errors;
 			} elseif ($this->socid == $object->socid) {
 				// copy external contacts if same company
 				if ($object->copy_linked_contact($this, 'external') < 0) {
 					$error++;
+					$this->error = $object->error;
+					$this->errors = $object->errors;
 				}
 			}
 		}

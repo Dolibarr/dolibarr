@@ -66,7 +66,6 @@ ErrorCantReadFile=Impossible de lire le fichier '%s'
 ErrorCantReadDir=Impossible de lire le répertoire '%s'
 ErrorBadLoginPassword=Mauvaise valeur pour la connexion ou le mot de passe
 ErrorLoginDisabled=Votre compte a été désactivé
-ErrorFailedToRunExternalCommand=Impossible d'exécuter une commande externe. Vérifiez qu'il est disponible et exécutable par votre serveur PHP. Si PHP <b> Mode sans échec </ b> est activé, vérifiez que cette commande se trouve dans un répertoire défini par le paramètre <b> safe_mode_exec_dir </ b>.
 ErrorFailedToChangePassword=Échec de la modification du mot de passe
 ErrorLoginDoesNotExists=L'utilisateur avec la connexion <b>%s</b> n'a pas été trouvé.
 ErrorLoginHasNoEmail=Cet utilisateur n'a pas d'adresse e-mail. Processus interrompu.
