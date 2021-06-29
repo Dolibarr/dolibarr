@@ -132,6 +132,17 @@ class box_mos extends ModeleBoxes
 						'asis' => 1,
 					);
 
+					if (!empty($conf->global->MRP_BOX_LAST_MOS_SHOW_VALIDATE_USER)) {
+						if ($objp->fk_user_valid > 0) {
+							$userstatic->fetch($objp->fk_user_valid);
+						}
+						$this->info_box_contents[$line][] = array(
+							'td' => 'class="right"',
+							'text' => (($objp->fk_user_valid > 0) ? $userstatic->getNomUrl(1) : ''),
+							'asis' => 1,
+						);
+					}
+					
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="center nowraponall"',
 						'text' => dol_print_date($datem, 'day', 'tzuserrel'),
