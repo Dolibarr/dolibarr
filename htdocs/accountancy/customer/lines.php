@@ -458,8 +458,8 @@ if ($result) {
 		$productstatic->accountancy_code_sell_export = $objp->accountancy_code_sell_export;
 
 		$accountingaccountstatic->rowid = $objp->fk_compte;
-		$accountingaccountstatic->label = $objp->label;
-		$accountingaccountstatic->labelshort = $objp->labelshort;
+		$accountingaccountstatic->label = $objp->label_account;
+		$accountingaccountstatic->labelshort = $objp->labelshort_account;
 		$accountingaccountstatic->account_number = $objp->account_number;
 
 		print '<tr class="oddeven">';
