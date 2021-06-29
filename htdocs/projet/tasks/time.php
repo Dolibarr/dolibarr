@@ -1140,7 +1140,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 				print '</div>';
 				print '<br>';
 			} else {
-				print '<div class="warning">'.$langs->trans("ThirdPartyRequiredToGenerateInter").'</div>';
+				print '<div class="warning">'.$langs->trans("ThirdPartyRequiredToGenerateIntervention").'</div>';
 				print '<div class="center">';
 				print '<input type="submit" class="button" id="cancel" name="cancel" value="'.$langs->trans('Cancel').'">';
 				print '</div>';
