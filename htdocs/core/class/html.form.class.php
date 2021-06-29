@@ -8799,9 +8799,9 @@ class Form
 			// Use select2 selector
 			if (!empty($conf->use_javascript_ajax))	{
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-	           	$comboenhancement = ajax_combobox($htmlname, '', 0, $forcefocus);
-            	$out .= $comboenhancement;
-            	$morecss = 'minwidth200imp maxwidth500';
+				$comboenhancement = ajax_combobox($htmlname, '', 0, $forcefocus);
+				$out .= $comboenhancement;
+				$morecss = 'minwidth200imp maxwidth500';
 			}
 
 			if (empty($option_only)) {

@@ -565,11 +565,9 @@ if ($action == 'confirm_generateinter') {
 
 		if ($interToUse) {
 			$tmpinter->fetch($interToUse);
-		}
-		else {
+		} else {
 			$result = $tmpinter->create($user);
-			if ($result <= 0)
-			{
+			if ($result <= 0) {
 				$error++;
 				setEventMessages($tmpinter->error, $tmpinter->errors, 'errors');
 			}
