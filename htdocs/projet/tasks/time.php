@@ -536,8 +536,7 @@ if ($action == 'confirm_generateinvoice') {
 	}
 }
 
-if ($action == 'confirm_generateinter')
-{
+if ($action == 'confirm_generateinter') {
 	$langs->load('interventions');
 
 	if (!empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
@@ -556,7 +555,7 @@ if ($action == 'confirm_generateinter')
 		$fuser = new User($db);
 
 		$db->begin();
-        $interToUse = GETPOST('interid', 'int');
+		$interToUse = GETPOST('interid', 'int');
 
 
 		$tmpinter->socid = $projectstatic->thirdparty->id;
@@ -564,23 +563,21 @@ if ($action == 'confirm_generateinter')
 		$tmpinter->fk_project = $projectstatic->id;
 		$tmpinter->description = $projectstatic->title . ( ! empty($projectstatic->description) ? '-' . $projectstatic->label : '' );
 
-        if ($interToUse) {
-            $tmpinter->fetch($interToUse);
-        }
-        else {
-		    $result = $tmpinter->create($user);
-		    if ($result <= 0)
-		    {
-		    	$error++;
-		    	setEventMessages($tmpinter->error, $tmpinter->errors, 'errors');
-		    }
-        }
+		if ($interToUse) {
+			$tmpinter->fetch($interToUse);
+		}
+		else {
+			$result = $tmpinter->create($user);
+			if ($result <= 0)
+			{
+				$error++;
+				setEventMessages($tmpinter->error, $tmpinter->errors, 'errors');
+			}
+		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$arrayoftasks = array();
-			foreach ($toselect as $key => $value)
-				{
+			foreach ($toselect as $key => $value) {
 				// Get userid, timepent
 				$object->fetchTimeSpent($value);
 				// $object->id is the task id
@@ -590,8 +587,7 @@ if ($action == 'confirm_generateinter')
 				$arrayoftasks[$object->timespent_id]['date'] = date('Y-m-d H:i:s', $object->timespent_datehour);
 			}
 
-			foreach ($arrayoftasks as $timespent_id => $value)
-			{
+			foreach ($arrayoftasks as $timespent_id => $value) {
 				$ftask = new Task($db);
 				$ftask->fetch($object->id);
 				// Define qty per hour
@@ -603,8 +599,7 @@ if ($action == 'confirm_generateinter')
 			}
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$urltointer = $tmpinter->getNomUrl(0);
 			$mesg = $langs->trans("InterventionGeneratedFromTimeSpent", '{s1}');
 			$mesg = str_replace('{s1}', $urltointer, $mesg);
@@ -613,9 +608,7 @@ if ($action == 'confirm_generateinter')
 			//var_dump($tmpinvoice);
 
 			$db->commit();
-		}
-		else
-		{
+		} else {
 			$db->rollback();
 		}
 	}
@@ -1117,7 +1110,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 				$massaction = '';
 			}
 		} elseif ($massaction == 'generateinter') {
-		// Form to convert time spent into invoice
+			// Form to convert time spent into invoice
 			print '<input type="hidden" name="massaction" value="confirm_createinter">';
 
 			if ($projectstatic->thirdparty->id > 0) {
@@ -1127,7 +1120,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 				print $langs->trans('InterToUse');
 				print '</td>';
 				print '<td>';
-	            $form->selectIntervention($projectstatic->thirdparty->id, '', 'interid', 24, 0, $langs->trans('NewInter'),
+				$form->selectIntervention($projectstatic->thirdparty->id, '', 'interid', 24, 0, $langs->trans('NewInter'),
 				1, 0, 0, 'maxwidth500', '', 'all');
 				print '</td>';
 				print '</tr>';
