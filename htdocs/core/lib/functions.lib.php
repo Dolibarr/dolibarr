@@ -778,8 +778,12 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 			do {
 				$oldstringtoclean = $out;
 
-				// We replace chars encoded with numeric HTML entities with real char (to avoid to have numeric entities used for obfuscation of injections)
-				$out = preg_replace_callback('/&#(x?[0-9][0-9a-f]+);/i', 'realCharForNumericEntities', $out);
+				// We replace chars from a/A to z/Z encoded with numeric HTML entities with the real char so we won't loose the chars at the next step.
+				// No need to use a loop here, this step is not to sanitize (this is done at next step, this is to try to save chars, even if they are
+				// using a non coventionnel way to be encoded, to not have them sanitized just after)
+				$out = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', 'realCharForNumericEntities', $out);
+
+				// Now we remove all remaining HTML entities staring with a number. We don't want such entities.
 				$out = preg_replace('/&#x?[0-9]+/i', '', $out);	// For example if we have j&#x61vascript with an entities without the ; to hide the 'a' of 'javascript'.
 
 				$out = dol_string_onlythesehtmltags($out, 0, 1, 1);

@@ -345,7 +345,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$_GET["param5"]="a_1-b";
 		$_POST["param6"]="&quot;&gt;<svg o&#110;load='console.log(&quot;123&quot;)'&gt;";
 		$_POST["param6b"]='<<<../>../>../svg><<<../>../>../animate =alert(1)>abc';
-		$_GET["param7"]='"c:\this is a path~1\aaa&#110;" abc<bad>def</bad>';
+		$_GET["param7"]='"c:\this is a path~1\aaa&#110; &#x&#x31;&#x31;&#x30;;" abc<bad>def</bad>';
 		$_POST["param8a"]="Hacker<svg o&#110;load='console.log(&quot;123&quot;)'";	// html tag is not closed so it is not detected as html tag but is still harmfull
 		$_POST['param8b']='<img src=x onerror=alert(document.location) t=';		// this is html obfuscated by non closing tag
 		$_POST['param8c']='< with space after is ok';
@@ -479,8 +479,8 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals('&quot;&gt;', $result);
 
 		$result=GETPOST("param7", 'restricthtml');
-		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('"c:\this is a path~1\aaan" abcdef', $result);
+		print __METHOD__." result param7 = ".$result."\n";
+		$this->assertEquals('"c:\this is a path~1\aaan &#x;;;;" abcdef', $result);
 
 		$result=GETPOST("param12", 'restricthtml');
 		print __METHOD__." result=".$result."\n";
@@ -488,11 +488,11 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
 		$result=GETPOST("param13", 'restricthtml');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('n n &gt; &lt; &quot; <a href=\"alert(document.domain)\">XSS</a>', $result, 'Test that HTML entities are decoded with restricthtml, but only for common alpha chars');
+		$this->assertEquals('n n &gt; &lt; &quot; <a href=\"alert(document.domain)\">XSS</a>', $result, 'Test 13 that HTML entities are decoded with restricthtml, but only for common alpha chars');
 
 		$result=GETPOST("param13b", 'restricthtml');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('n n &gt; &lt; &quot; <a href=\"jvascript:alert(document.domain)\">XSS</a>', $result, 'Test that HTML entities are decoded with restricthtml, but only for common alpha chars');
+		$this->assertEquals('n n &gt; &lt; &quot; <a href=\"alert(document.domain)\">XSS</a>', $result, 'Test 13b that HTML entities are decoded with restricthtml, but only for common alpha chars');
 
 		// Special test for GETPOST of backtopage, backtolist or backtourl parameter
 
