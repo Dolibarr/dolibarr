@@ -132,7 +132,7 @@ if (($line->info_bits & 2) == 2) {
 		}
 	}
 } else {
-	$format = $conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE ? 'dayhour' : 'day';
+	$format = (!empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 'dayhour' : 'day');
 
 	if ($line->fk_product > 0) {
 		print $form->textwithtooltip($text, $description, 3, '', '', $i, 0, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
@@ -288,7 +288,7 @@ if (!empty($line->remise_percent) && $line->special_code != 3) {
 }
 
 // Fields for situation invoices
-if ($this->situation_cycle_ref) {
+if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 	$coldisplay++;
 	print '<td class="linecolcycleref nowrap right">'.$line->situation_percent.'%</td>';

@@ -1368,7 +1368,7 @@ class Commande extends CommonOrder
 		}
 		// Possibility to add external linked objects with hooks
 		$this->linked_objects[$this->origin] = $this->origin_id;
-		if (is_array($object->other_linked_objects) && !empty($object->other_linked_objects)) {
+		if (isset($object->other_linked_objects) && is_array($object->other_linked_objects) && !empty($object->other_linked_objects)) {
 			$this->linked_objects = array_merge($this->linked_objects, $object->other_linked_objects);
 		}
 
