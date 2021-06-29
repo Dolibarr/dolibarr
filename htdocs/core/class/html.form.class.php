@@ -5085,7 +5085,12 @@ class Form
 		} else {
 			if ($selected) {
 				$this->load_cache_conditions_paiements();
-				print $this->cache_conditions_paiements[$selected]['label'];
+				if (isset($this->cache_conditions_paiements[$selected])) {
+					print $this->cache_conditions_paiements[$selected]['label'];
+				} else {
+					$langs->load('errors');
+					print $langs->trans('ErrorNotInDictionaryPaymentConditions');
+				}
 			} else {
 				print "&nbsp;";
 			}
@@ -7778,7 +7783,7 @@ class Form
 						print '<input type="radio" name="idtolinkto" id="'.$key.'_'.$objp->rowid.'" value="'.$objp->rowid.'">';
 						print '</td>';
 						print '<td class="center"><label for="'.$key.'_'.$objp->rowid.'">'.$objp->ref.'</label></td>';
-						print '<td>'.(!empty($objp->ref_client) ? $objp->ref_client : $objp->ref_supplier).'</td>';
+						print '<td>'.(!empty($objp->ref_client) ? $objp->ref_client : (!empty($objp->ref_supplier) ? $objp->ref_supplier : '')).'</td>';
 						print '<td class="right">';
 						if ($possiblelink['label'] == 'LinkToContract') {
 							$form = new Form($this->db);
