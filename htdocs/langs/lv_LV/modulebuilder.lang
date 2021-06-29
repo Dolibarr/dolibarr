@@ -143,3 +143,4 @@ AsciiToHtmlConverter=Ascii uz HTML pārveidotāju
 AsciiToPdfConverter=Ascii uz PDF pārveidotāju
 TableNotEmptyDropCanceled=Tabula nav tukša. Dzēšana tika atcelta.
 ModuleBuilderNotAllowed=Moduļu veidotājs ir pieejams, bet nav atļauts jūsu lietotājam.
+ImportExportProfiles=Import and export profiles

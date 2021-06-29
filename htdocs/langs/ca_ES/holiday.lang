@@ -40,7 +40,7 @@ TypeOfLeaveId=Tipus d'identificador de baixa
 TypeOfLeaveCode=Tipus de codi de baixa
 TypeOfLeaveLabel=Tipus d'etiqueta de baixa
 NbUseDaysCP=Nombre de dies de permís utilitzats
-NbUseDaysCPHelp=The calculation takes into account the non-working days and the holidays defined in the dictionary.
+NbUseDaysCPHelp=El càlcul té en compte els dies inhàbils i les vacances definides al diccionari.
 NbUseDaysCPShort=Dies de permís
 NbUseDaysCPShortInMonth=Dies de permís al mes
 DayIsANonWorkingDay=%s és un dia no laborable
@@ -105,7 +105,7 @@ LEAVE_OTHER=Altres sortides
 LEAVE_PAID_FR=Vacances pagades
 ## Configuration du Module ##
 LastUpdateCP=Última actualització automàtica de l'assignació de dies de permís
-MonthOfLastMonthlyUpdate=Month of last automatic update of leave allocation
+MonthOfLastMonthlyUpdate=Mes de l'última actualització automàtica de l'assignació de permisos
 UpdateConfCPOK=Actualització efectuada correctament.
 Module27130Name= Gestió de dies lliures
 Module27130Desc= Gestió de dies lliures

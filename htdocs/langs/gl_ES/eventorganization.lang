@@ -1,4 +1,5 @@
 # Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
+# Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -81,7 +82,10 @@ PriceOfBoothHelp=Prezo da subscrición para estar nun stand
 EventOrganizationICSLink=Ligazón ICS para eventos 
 ConferenceOrBoothInformation=Información sobre conferencia ou stand
 Attendees = Asistentes 
+DownloadICSLink = Descargar ligazón ICS
 EVENTORGANIZATION_SECUREKEY = Clave segura da ligazón de rexistro público a unha conferencia 
+SERVICE_BOOTH_LOCATION = Servizo empregado para a fila de facturas sobre a situación do stand
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Servizo usado para a fila de facturas sobre unha subscrición de asistente a unha conferencia 
 #
 # Status
 #
@@ -94,8 +98,46 @@ EvntOrgCancelled = Cancelado
 #
 # Public page
 #
+SuggestForm = Páxina de suxestións
+RegisterPage = Páxina para conferencias ou stand 
+EvntOrgRegistrationHelpMessage = Aquí pode votar por un evento ou suxerir unha nova conferencia ou stand para o proxecto 
+EvntOrgRegistrationConfHelpMessage = Aquí pode suxerir unha nova conferencia para o proxecto 
+EvntOrgRegistrationBoothHelpMessage = Aquí pode suxerir un novo stand para o proxecto 
+ListOfSuggestedConferences = Listaxe de conferencias suxeridas 
+ListOfSuggestedBooths = Listaxe de stands suxeridos
+SuggestConference = Suxerir unha nova conferencia 
+SuggestBooth = Suxerir un stand
+ViewAndVote = Ver e votar por eventos suxeridos 
 PublicAttendeeSubscriptionPage = Ligazón pública de rexistro a unha conferencia 
 MissingOrBadSecureKey = A clave de seguridade non é válida ou inexistente
-EvntOrgWelcomeMessage = Este formulario permítelle rexistrarse como novo participante na conferencia 
-EvntOrgStartDuration = Esta conferencia comeza en
-EvntOrgEndDuration =  e remata en
+EvntOrgWelcomeMessage = Este formulario permítelle rexistrarse como novo participante na conferencia: '%s' 
+EvntOrgDuration = Esta conferencia comeza en %s e remata en %s. 
+ConferenceAttendeeFee = Importe de asistente á conferencia para o evento:' %s ' acontece de %s a %s
+BoothLocationFee = Localización do stand para o evento: "%s" que acontece do %s ao %s
+EventType = Tipo de evento
+
+#
+# Vote page
+#
+EvntOrgRegistrationWelcomeMessage = Benvido á páxina de suxestións de conferencias ou stands. 
+EvntOrgRegistrationConfWelcomeMessage = Benvida á páxina de suxestións de conferencia
+EvntOrgRegistrationBoothWelcomeMessage = Benvida á páxina de suxestións de stands
+EvntOrgVoteHelpMessage = Aquí pode ver e votar os eventos suxeridos para o proxecto
+VoteOk = O seu voto foi aceptado
+AlreadyVoted = Xa votou para este evento
+VoteError = Produciuse un erro durante a votación, ténteo de novo. 
+
+#
+# SubscriptionOk page
+#
+SubscriptionOk = A súa subscrición a esta conferencia foi validada 
+#
+# Subscription validation mail
+#
+ConfAttendeeSubscriptionConfirmation = Confirmación da súa subscrición a unha conferencia 
+#
+# Payment page
+#
+Attendee = Asistente
+PaymentConferenceAttendee = Pagamento de asistente á conferencia
+PaymentBoothLocation = Pagamento da localización do stand

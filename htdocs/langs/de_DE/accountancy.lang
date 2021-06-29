@@ -5,7 +5,7 @@ ACCOUNTING_EXPORT_SEPARATORCSV=Spaltentrennzeichen für die Exportdatei
 ACCOUNTING_EXPORT_DATE=Datumsformat der Exportdatei
 ACCOUNTING_EXPORT_PIECE=Stückzahl exportieren
 ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Mit globalem Konto exportieren
-ACCOUNTING_EXPORT_LABEL=Exportiere Bezeichnung
+ACCOUNTING_EXPORT_LABEL=Exportiere Beschriftung
 ACCOUNTING_EXPORT_AMOUNT=Exportiere Betrag
 ACCOUNTING_EXPORT_DEVISE=Exportiere Währung
 Selectformat=Wählen Sie das Format für die Datei
@@ -158,7 +158,7 @@ ACCOUNTING_LENGTH_AACCOUNT=Länge der Geschäftspartner-Konten in der Buchhaltun
 ACCOUNTING_MANAGE_ZERO=Verwalten der Null am Ende eines Buchhaltungskontos. \nIn einigen Ländern notwendig (zB. Schweiz). \nStandardmäßig deaktiviert. \nWenn ausgeschaltet, können die folgenden 2 Parameter konfigurieren werden um virtuelle Nullen anzuhängen
 BANK_DISABLE_DIRECT_INPUT=Deaktivieren der direkte Aufzeichnung von Transaktion auf dem Bankkonto
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Entwurfexport für Journal aktivieren
-ACCOUNTANCY_COMBO_FOR_AUX=Kombinationsliste für Nebenkonto aktivieren \n(kann langsam sein, wenn Sie viele Geschäftspartner haben)
+ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties, break ability to search on a part of value)
 ACCOUNTING_DATE_START_BINDING=Definieren Sie ein Datum, an dem die Bindung und Übertragung in der Buchhaltung beginnen soll. Transaktionen vor diesem Datum werden nicht in die Buchhaltung übertragen.
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Bei der Übertragung der Buchhaltung standardmäßig den Zeitraum anzeigen auswählen anzeigen
 
@@ -328,6 +328,9 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Deaktivieren Sie die Bindung und Übertr
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Deaktivieren Sie die Bindung und Übertragung in der Buchhaltung für Spesenabrechnungen (Spesenabrechnungen werden bei der Buchhaltung nicht berücksichtigt).
 
 ## Export
+NotifiedExportDate=Notified export date (modification of the entries will not be possible)
+NotifiedValidationDate=Validation of the entries (modification or deletion of the entries will not be possible)
+ConfirmExportFile=Confirmation of the generation of the accounting export file ?
 ExportDraftJournal=Entwurfsjournal exportieren
 Modelcsv=Exportmodell
 Selectmodelcsv=Wählen Sie ein Exportmodell

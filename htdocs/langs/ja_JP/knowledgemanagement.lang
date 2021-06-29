@@ -18,16 +18,16 @@
 #
 
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Knowledge Management System
+ModuleKnowledgeManagementName = 知識管理システム
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
+ModuleKnowledgeManagementDesc=ナレッジマネジメント（KM）またはヘルプデスクベースを管理する
 
 #
 # Admin page
 #
-KnowledgeManagementSetup = Knowledge Management System setup
+KnowledgeManagementSetup = ナレッジマネジメントシステムのセットアップ
 Settings = 設定
-KnowledgeManagementSetupPage = Knowledge Management System setup page
+KnowledgeManagementSetupPage = ナレッジマネジメントシステムのセットアップページ
 
 
 #
@@ -46,10 +46,10 @@ KnowledgeManagementArea = 知識管理
 #
 # Menu
 #
-MenuKnowledgeRecord = Knowledge base
-ListOfArticles = List of articles
-NewKnowledgeRecord = New article
-ValidateReply = Validate solution
-KnowledgeRecords = Articles
+MenuKnowledgeRecord = 知識ベース
+ListKnowledgeRecord = 記事一覧
+NewKnowledgeRecord = 新しい記事
+ValidateReply = ソリューションを検証する
+KnowledgeRecords = 記事
 KnowledgeRecord = 記事
-KnowledgeRecordExtraFields = Extrafields for Article
+KnowledgeRecordExtraFields = 記事のエクストラフィールド

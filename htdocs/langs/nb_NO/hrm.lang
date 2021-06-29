@@ -9,7 +9,7 @@ ConfirmDeleteEstablishment=Er du sikker på at du vil slette dette etablissement
 OpenEtablishment=Åpne firma
 CloseEtablishment=Lukk firma
 # Dictionary
-DictionaryPublicHolidays=HRM - Helligdager
+DictionaryPublicHolidays=Permisjon - helligdager
 DictionaryDepartment=HRM - Departementliste
 DictionaryFunction=HRM - Jobbstillinger
 # Module

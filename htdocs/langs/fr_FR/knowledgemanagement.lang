@@ -18,7 +18,7 @@
 #
 
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Knowledge Management System
+ModuleKnowledgeManagementName = Gestion d'une base de connaissance
 # Module description 'ModuleKnowledgeManagementDesc'
 ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
 
@@ -27,7 +27,7 @@ ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk ba
 #
 KnowledgeManagementSetup = Knowledge Management System setup
 Settings = Paramètres
-KnowledgeManagementSetupPage = Knowledge Management System setup page
+KnowledgeManagementSetupPage = Paramétrages du module de base de connaissance
 
 
 #
@@ -46,10 +46,10 @@ KnowledgeManagementArea = Base de connaissances
 #
 # Menu
 #
-MenuKnowledgeRecord = Knowledge base
-ListOfArticles = List of articles
-NewKnowledgeRecord = New article
-ValidateReply = Validate solution
+MenuKnowledgeRecord = Base de connaissance
+ListKnowledgeRecord = Liste des articles
+NewKnowledgeRecord = Nouvel article
+ValidateReply = Valider la réponse
 KnowledgeRecords = Articles
 KnowledgeRecord = Article
-KnowledgeRecordExtraFields = Extrafields for Article
+KnowledgeRecordExtraFields = Atribut supplémentaires (articles)

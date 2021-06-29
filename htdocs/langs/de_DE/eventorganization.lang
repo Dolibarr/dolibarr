@@ -1,4 +1,5 @@
 # Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
+# Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -81,7 +82,10 @@ PriceOfBoothHelp=Abonnementpreis für einen Stand
 EventOrganizationICSLink=Verknüpfe ICS für Ereignisse
 ConferenceOrBoothInformation=Konferenz- oder Standinformationen
 Attendees = Teilnehmer
+DownloadICSLink = Download ICS link
 EVENTORGANIZATION_SECUREKEY = Sicherer Schlüssel des öffentlichen Registrierungslinks zu einer Konferenz
+SERVICE_BOOTH_LOCATION = Service used for the invoice row about a booth location
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service used for the invoice row about an attendee subscription to a conference
 #
 # Status
 #
@@ -94,8 +98,46 @@ EvntOrgCancelled = Abgesagt
 #
 # Public page
 #
+SuggestForm = Suggestion page
+RegisterPage = Page for conferences or booth
+EvntOrgRegistrationHelpMessage = Here, you can vote for an event, or suggest a new conference or booth for the project
+EvntOrgRegistrationConfHelpMessage = Here, you can suggest a new conference for the project
+EvntOrgRegistrationBoothHelpMessage = Here, you can suggest a new booth for the project
+ListOfSuggestedConferences = List of suggested conferences
+ListOfSuggestedBooths = List of suggested booths
+SuggestConference = Suggest a new conference
+SuggestBooth = Suggest a booth
+ViewAndVote = View and vote for suggested events
 PublicAttendeeSubscriptionPage = Öffentlicher Link zur Registrierung zu einer Konferenz
 MissingOrBadSecureKey = Der Sicherheitsschlüssel ist ungültig oder fehlt
-EvntOrgWelcomeMessage = Mit diesem Formular können Sie sich als neuer Teilnehmer an der Konferenz registrieren
-EvntOrgStartDuration = Diese Konferenz beginnt am
-EvntOrgEndDuration =  und endet am
+EvntOrgWelcomeMessage = This form allows you to register as a new participant to the conference : '%s'
+EvntOrgDuration = This conference starts on %s and ends on %s.
+ConferenceAttendeeFee = Conference attendee fee for the event : '%s' occurring from %s to %s.
+BoothLocationFee = Booth location for the event : '%s' occurring from %s to %s
+EventType = Ereignistyp
+
+#
+# Vote page
+#
+EvntOrgRegistrationWelcomeMessage = Welcome on the conference or booth suggestion page.
+EvntOrgRegistrationConfWelcomeMessage = Welcome on the conference suggestion page.
+EvntOrgRegistrationBoothWelcomeMessage = Welcome on the booth suggestion page.
+EvntOrgVoteHelpMessage = Here, you can view and vote for the suggested events for the project
+VoteOk = Your vote has been accepted.
+AlreadyVoted = You have already voted for this event.
+VoteError = An error has occurred during the vote, please try again.
+
+#
+# SubscriptionOk page
+#
+SubscriptionOk = Your subscription to this conference has been validated
+#
+# Subscription validation mail
+#
+ConfAttendeeSubscriptionConfirmation = Confirmation of your subscription to a conference
+#
+# Payment page
+#
+Attendee = Attendee
+PaymentConferenceAttendee = Conference attendee payment
+PaymentBoothLocation = Booth location payment

@@ -40,9 +40,9 @@ TicketTypeShortPROJET=Projekt
 TicketTypeShortOTHER=Inne
 
 TicketSeverityShortLOW=Niski
-TicketSeverityShortNORMAL=Normalna
+TicketSeverityShortNORMAL=Normalny
 TicketSeverityShortHIGH=Wysoki
-TicketSeverityShortBLOCKING=Krytyczne, blokujące
+TicketSeverityShortBLOCKING=Krytyczny, blokujący
 
 ErrorBadEmailAddress=Pole „%s” jest nieprawidłowe
 MenuTicketMyAssign=Moje bilety
@@ -69,7 +69,7 @@ Deleted=Usunięto
 
 # Dict
 Type=Typ
-Severity=Surowość
+Severity=Priorytet
 TicketGroupIsPublic=Grupa jest publiczna
 TicketGroupIsPublicDesc=Jeśli grupa biletów jest publiczna, będzie widoczna w formularzu podczas tworzenia biletu z poziomu interfejsu publicznego
 
@@ -180,7 +180,7 @@ TicketMessagesList=Lista wiadomości
 NoMsgForThisTicket=Brak wiadomości dla tego biletu
 Properties=Klasyfikacja
 LatestNewTickets=Najnowsze %s Najnowsze bilety (nieprzeczytane)
-TicketSeverity=Surowość
+TicketSeverity=Priorytet
 ShowTicket=Zobacz bilet
 RelatedTickets=Powiązane bilety
 TicketAddIntervention=Tworzenie interwencji
@@ -304,7 +304,7 @@ BoxLastModifiedTicket=Najnowsze zmodyfikowane bilety
 BoxLastModifiedTicketDescription=Najnowsze zmodyfikowane bilety %s
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=Brak ostatnio zmodyfikowanych biletów
-BoxTicketType=Liczba otwartych biletów według rodzaju
+BoxTicketType=Distribution of open tickets by type
 BoxTicketSeverity=Liczba otwartych zgłoszeń według ważności
 BoxNoTicketSeverity=Nie otwarto żadnych biletów
 BoxTicketLastXDays=Liczba nowych biletów według dni w ostatnich dniach %s

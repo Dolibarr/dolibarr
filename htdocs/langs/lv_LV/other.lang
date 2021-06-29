@@ -129,6 +129,7 @@ ClosedByLogin=Lietotājs, kurš slēdzis
 FileWasRemoved=Fails %s tika dzēsts
 DirWasRemoved=Katalogs %s tika dzēsts
 FeatureNotYetAvailable=Funkcija pašreizējā versijā vēl nav pieejama
+FeatureNotAvailableOnDevicesWithoutMouse=Feature not available on devices without mouse
 FeaturesSupported=Atbalstītās funkcijas
 Width=Platums
 Height=Augstums
@@ -263,7 +264,7 @@ ContactCreatedByEmailCollector=Kontaktpersona / adrese, ko izveidojis e-pasta ko
 ProjectCreatedByEmailCollector=Projekts, ko izveidojis e-pasta savācējs no e-pasta MSGID %s
 TicketCreatedByEmailCollector=Biļete, ko izveidojis e-pasta kolekcionārs no e-pasta MSGID %s
 OpeningHoursFormatDesc=Izmantojiet taustiņu -, lai nodalītu darba un aizvēršanas stundas. <br> Izmantojiet atstarpi, lai ievadītu dažādus diapazonus. <br> Piemērs: 8.-12
-PrefixSession=Sesijas ID prefikss
+SuffixSessionName=Suffix for session name
 
 ##### Export #####
 ExportsArea=Eksportēšanas sadaļa

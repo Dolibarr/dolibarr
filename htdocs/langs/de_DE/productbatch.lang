@@ -1,4 +1,4 @@
-# ProductBATCH language file - en_US - ProductBATCH
+# ProductBATCH language file - Source file is en_US - ProductBATCH
 ManageLotSerial=Chargen-/Serien-Nr. benutzen 
 ProductStatusOnBatch=Ja (Charge erforderlich)
 ProductStatusOnSerial=Ja  (einzigartige Seriennummer erforderlich)
@@ -33,3 +33,13 @@ CustomMasks=Fügt eine Option zum Definieren der Maske in der Produktkarte hinzu
 LotProductTooltip=Fügt der Produktkarte eine Option zum Definieren einer dedizierten Chargennummernmaske hinzu
 SNProductTooltip=Fügt der Produktkarte eine Option zum Definieren einer dedizierten Seriennummernmaske hinzu
 QtyToAddAfterBarcodeScan=Menge, die für jeden gescannten Barcode / jedes Los / jede Serienummer hinzugefügt werden muss
+LifeTime=Life span (in days)
+EndOfLife=End of life
+ManufacturingDate=Manufacturing date
+DestructionDate=Destruction date
+FirstUseDate=First use date
+QCFrequency=Quality control frequency (in days)
+
+#Traceability - qc status
+OutOfOrder=Out of order
+InWorkingOrder=In working order

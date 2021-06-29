@@ -2145,3 +2145,4 @@ RandomlySelectedIfSeveral=Randomly selected if several pictures are available
 DatabasePasswordObfuscated=Database password is obfuscated in conf file
 DatabasePasswordNotObfuscated=Database password is NOT obfuscated in conf file
 APIsAreNotEnabled=APIs modules are not enabled
+YouShouldSetThisToOff=You should set this to 0 or off

@@ -259,6 +259,7 @@ DateMaxPayment=Jāapmaksā līdz
 DateInvoice=Rēķina datums
 DatePointOfTax=Nodokļu punkts
 NoInvoice=Nav rēķinu
+NoOpenInvoice=No open invoice
 ClassifyBill=Klasificēt rēķinu
 SupplierBillsToPay=Neapmaksāti pārdevēja rēķini
 CustomerBillsUnpaid=Neapmaksātie klienta rēķini
@@ -589,3 +590,4 @@ FacParentLine=Rēķinu rindas vecāks
 SituationTotalRayToRest=Atlikušais maksājums bez nodokļa
 PDFSituationTitle=Situācija Nr. %d
 SituationTotalProgress=Kopējais progress %d %%
+SearchUnpaidInvoicesWithDueDate=Search unpaid invoices with a due date = %s
