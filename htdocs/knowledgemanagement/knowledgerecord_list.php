@@ -202,7 +202,7 @@ $now = dol_now();
 
 //$help_url="EN:Module_KnowledgeRecord|FR:Module_KnowledgeRecord_FR|ES:Módulo_KnowledgeRecord";
 $help_url = '';
-$title = $langs->trans('ListOfArticles');
+$title = $langs->trans('ListKnowledgeRecord');
 $morejs = array();
 $morecss = array();
 
