@@ -804,30 +804,32 @@ class Contact extends CommonObject
 			$this->error = $this->db->lasterror();
 		}
 
-		// Mis a jour alerte birthday
-		if (!empty($this->birthday_alert)) {
-			//check existing
-			$sql_check = "SELECT rowid FROM ".MAIN_DB_PREFIX."user_alert WHERE type=1 AND fk_contact=".$this->db->escape($id)." AND fk_user=".$user->id;
-			$result_check = $this->db->query($sql_check);
-			if (!$result_check || ($this->db->num_rows($result_check) < 1)) {
-				//insert
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_alert(type,fk_contact,fk_user) ";
-				$sql .= "VALUES (1,".$this->db->escape($id).",".$user->id.")";
+		if ($user) {
+			// Update birthday alert
+			if (!empty($this->birthday_alert)) {
+				//check existing
+				$sql_check = "SELECT rowid FROM " . MAIN_DB_PREFIX . "user_alert WHERE type = 1 AND fk_contact = " . ((int) $id) . " AND fk_user = " . ((int) $user->id);
+				$result_check = $this->db->query($sql_check);
+				if (!$result_check || ($this->db->num_rows($result_check) < 1)) {
+					//insert
+					$sql = "INSERT INTO " . MAIN_DB_PREFIX . "user_alert(type, fk_contact, fk_user) ";
+					$sql .= "VALUES (1," . ((int) $id) . "," . ((int) $user->id) . ")";
+					$result = $this->db->query($sql);
+					if (!$result) {
+						$error++;
+						$this->error = $this->db->lasterror();
+					}
+				} else {
+					$result = true;
+				}
+			} else {
+				$sql = "DELETE FROM " . MAIN_DB_PREFIX . "user_alert ";
+				$sql .= "WHERE type=1 AND fk_contact=" . ((int) $id) . " AND fk_user=" . ((int) $user->id);
 				$result = $this->db->query($sql);
 				if (!$result) {
 					$error++;
 					$this->error = $this->db->lasterror();
 				}
-			} else {
-				$result = true;
-			}
-		} else {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_alert ";
-			$sql .= "WHERE type=1 AND fk_contact=".$this->db->escape($id)." AND fk_user=".$user->id;
-			$result = $this->db->query($sql);
-			if (!$result) {
-				$error++;
-				$this->error = $this->db->lasterror();
 			}
 		}
 
