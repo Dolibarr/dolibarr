@@ -739,13 +739,11 @@ if ($result) {
 			$s .= (empty($objp->code_sell_p) ? '<span style="'.$code_sell_p_notset.'">'.$langs->trans("NotDefined").'</span>' : length_accountg($objp->code_sell_p));
 			print $form->textwithpicto($s, $shelp, 1, $ttype, '', 0, 2, '', 1);
 		} else {
-			if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
-				print '<br>';
-				$s = '2. '.(($objp->type_l == 1) ? $langs->trans("ThisService") : $langs->trans("ThisProduct")).': ';
-				$shelp = '';
-				$s .= $langs->trans("NotDefined");
-				print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
-			}
+			print '<br>';
+			$s = '2. '.(($objp->type_l == 1) ? $langs->trans("ThisService") : $langs->trans("ThisProduct")).': ';
+			$shelp = '';
+			$s .= $langs->trans("NotDefined");
+			print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
 		}
 		if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
 			print '<br>';
