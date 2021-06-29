@@ -5085,7 +5085,12 @@ class Form
 		} else {
 			if ($selected) {
 				$this->load_cache_conditions_paiements();
-				print $this->cache_conditions_paiements[$selected]['label'];
+				if (isset($this->cache_conditions_paiements[$selected])) {
+					print $this->cache_conditions_paiements[$selected]['label'];
+				} else {
+					$langs->load('errors');
+					print $langs->trans('ErrorNotInDictionaryPaymentConditions');
+				}
 			} else {
 				print "&nbsp;";
 			}
