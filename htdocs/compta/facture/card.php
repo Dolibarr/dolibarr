@@ -2381,12 +2381,12 @@ if (empty($reshook)) {
 				setEventMessages($mesg, null, 'warnings');
 				$error++;
 				$result = -1;
+			} elseif ($progress < $percent) {
+				$mesg = '<div class="warning">'.$langs->trans("CantBeLessThanMinPercent").'</div>';
+				setEventMessages($mesg, null, 'warnings');
+				$error++;
+				$result = -1;
 			}
-		} elseif ($progress < $percent) {
-			$mesg = '<div class="warning">'.$langs->trans("CantBeLessThanMinPercent").'</div>';
-			setEventMessages($mesg, null, 'warnings');
-			$error++;
-			$result = -1;
 		}
 
 		// Check minimum price

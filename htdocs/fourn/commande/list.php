@@ -610,7 +610,7 @@ $sql .= ' cf.fk_multicurrency, cf.multicurrency_code, cf.multicurrency_tx, cf.mu
 $sql .= ' cf.date_creation as date_creation, cf.tms as date_update,';
 $sql .= ' cf.note_public, cf.note_private,';
 $sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_title,";
-$sql .= " u.firstname, u.lastname, u.photo, u.login, u.email as user_email";
+$sql .= " u.firstname, u.lastname, u.photo, u.login, u.email as user_email, u.statut as user_status";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -1346,6 +1346,7 @@ if ($resql) {
 		$userstatic->login = $obj->login;
 		$userstatic->photo = $obj->photo;
 		$userstatic->email = $obj->user_email;
+		$userstatic->statut = $obj->user_status;
 		if (!empty($arrayfields['u.login']['checked'])) {
 			print '<td class="tdoverflowmax150">';
 			if ($userstatic->id) {
