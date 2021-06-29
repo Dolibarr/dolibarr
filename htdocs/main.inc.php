@@ -60,11 +60,11 @@ if (!empty($_SERVER['MAIN_SHOW_TUNING_INFO'])) {
  */
 function realCharForNumericEntities($matches)
 {
-	$newstringnumentity = $matches[1];
-	//print  '$newstringnumentity='.$newstringnumentity;
+	$newstringnumentity = preg_replace('/;$/', '', $matches[1]);
+	//print  ' $newstringnumentity='.$newstringnumentity;
 
 	if (preg_match('/^x/i', $newstringnumentity)) {
-		$newstringnumentity = hexdec(preg_replace('/;$/', '', preg_replace('/^x/i', '', $newstringnumentity)));
+		$newstringnumentity = hexdec(preg_replace('/^x/i', '', $newstringnumentity));
 	}
 
 	// The numeric value we don't want as entities because they encode ascii char, and why using html entities on ascii except for haking ?
