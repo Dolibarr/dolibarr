@@ -664,6 +664,8 @@ class ImportXlsx extends ModeleImports
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'numeric') {
 									$newval = price2num($newval);
+								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'accountingaccount') {
+									$newval = rtrim($newval, "0");
 								}
 
 								//print 'Val to use as insert is '.$newval.'<br>';
