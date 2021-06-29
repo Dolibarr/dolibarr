@@ -1659,8 +1659,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$accountancy_code_buy = GETPOST('accountancy_code_buy', 'alpha');
 				print $formaccounting->select_account($accountancy_code_buy, 'accountancy_code_buy', 1, null, 1, 1, '');
 				print '</td></tr>';
-			} else // For external software
-			{
+			} else { // For external software
 				// Accountancy_code_sell
 				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
 				print '<td class="maxwidthonsmartphone"><input class="minwidth100" name="accountancy_code_sell" value="'.$object->accountancy_code_sell.'">';
@@ -2364,8 +2363,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<td>';
 					print $formaccounting->select_account($object->accountancy_code_buy, 'accountancy_code_buy', 1, '', 1, 1);
 					print '</td></tr>';
-				} else // For external software
-				{
+				} else { // For external software
 					// Accountancy_code_sell
 					print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellCode").'</td>';
 					print '<td><input name="accountancy_code_sell" class="maxwidth200" value="'.$object->accountancy_code_sell.'">';

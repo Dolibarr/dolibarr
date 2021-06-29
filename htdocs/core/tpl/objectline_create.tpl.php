@@ -128,7 +128,7 @@ if ($nolinesbefore) {
 		<td class="linecoldiscount right"><?php echo $langs->trans('ReductionShort'); ?></td>
 		<?php
 		// Fields for situation invoice
-		if ($this->situation_cycle_ref) {
+		if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 			print '<td class="linecolcycleref right">'.$langs->trans('Progress').'</td>';
 			print '<td class="linecolcycleref2 right"></td>';
 		}
@@ -416,7 +416,7 @@ if ($nolinesbefore) {
 	?>
 	<td class="nobottom nowrap linecoldiscount right"><input type="text" size="1" name="remise_percent" id="remise_percent" class="flat right" value="<?php echo (GETPOSTISSET("remise_percent") ? GETPOST("remise_percent", 'alpha', 2) : $remise_percent); ?>"><span class="hideonsmartphone">%</span></td>
 	<?php
-	if ($this->situation_cycle_ref) {
+	if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 		$coldisplay++;
 		print '<td class="nobottom nowrap right"><input class="falt right" type="text" size="1" value="0" name="progress">%</td>';
 		$coldisplay++;
