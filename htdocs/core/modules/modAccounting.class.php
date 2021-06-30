@@ -297,9 +297,9 @@ class modAccounting extends DolibarrModules
 		);
 		$this->import_fieldshidden_array[$r] = array('b.doc_type'=>'const-import_from_external', 'b.fk_doc'=>'const-0', 'b.fk_docdet'=>'const-0', 'b.fk_user_author'=>'user->id', 'b.date_creation'=>'const-'.dol_print_date(dol_now(), 'standard')); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 		$this->import_regex_array[$r] = array('b.doc_date'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$');
-		$this->import_convertvalue_array[$r]=array(
-			'b.numero_compte'=>array('rule'=>'accountingaccount'),
-			'b.subledger_account'=>array('rule'=>'accountingaccount')
+		$this->import_convertvalue_array[$r] = array(
+			'b.numero_compte' => array('rule' => 'accountingaccount'),
+			'b.subledger_account' => array('rule' => 'accountingaccount')
 		);
 		$this->import_examplevalues_array[$r] = array(
 			'b.piece_num'=>'123 (!!! use next value not already used)',
