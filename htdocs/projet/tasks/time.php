@@ -1410,7 +1410,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 
 			// By User
 			if (!empty($arrayfields['author']['checked'])) {
-				print '<td class="nowrap">';
+				print '<td class="tdoverflowmax100">';
 				if ($action == 'editline' && $_GET['lineid'] == $task_time->rowid) {
 					if (empty($object->id)) {
 						$object->fetch($id);
@@ -1441,7 +1441,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 
 			// Note
 			if (!empty($arrayfields['t.note']['checked'])) {
-				print '<td class="left">';
+				print '<td class="small">';
 				if ($action == 'editline' && $_GET['lineid'] == $task_time->rowid) {
 					print '<textarea name="timespent_note_line" width="95%" rows="'.ROWS_2.'">'.$task_time->note.'</textarea>';
 				} else {
@@ -1773,7 +1773,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 
 				// Note
 				if (!empty($arrayfields['t.note']['checked'])) {
-					print '<td class="left">';
+					print '<td class="small tdoverflowmax300"">';
 					if ($action == 'splitline' && $_GET['lineid'] == $task_time->rowid) {
 						print '<textarea name="timespent_note_line_2" width="95%" rows="'.ROWS_2.'">'.$task_time->note.'</textarea>';
 					} else {

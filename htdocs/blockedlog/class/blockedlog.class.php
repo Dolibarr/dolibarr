@@ -778,9 +778,7 @@ class BlockedLog
 	{
 		try {
 			//include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-			//include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 			$aaa = unserialize($data);
-			//$aaa = unserialize($data);
 		} catch (Exception $e) {
 			//print $e->getErrs);
 		}

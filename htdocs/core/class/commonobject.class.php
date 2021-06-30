@@ -8167,15 +8167,6 @@ abstract class CommonObject
 				} else {
 					$queryarray[$field] = $this->db->idate($this->{$field});
 				}
-			} elseif ($this->isArray($info)) {
-				if (!empty($this->{$field})) {
-					if (!is_array($this->{$field})) {
-						$this->{$field} = array($this->{$field});
-					}
-					$queryarray[$field] = serialize($this->{$field});
-				} else {
-					$queryarray[$field] = null;
-				}
 			} elseif ($this->isDuration($info)) {
 				// $this->{$field} may be null, '', 0, '0', 123, '123'
 				if ((isset($this->{$field}) && $this->{$field} != '') || !empty($info['notnull'])) {
@@ -8235,16 +8226,6 @@ abstract class CommonObject
 					$this->{$field} = '';
 				} else {
 					$this->{$field} = $db->jdate($obj->{$field});
-				}
-			} elseif ($this->isArray($info)) {
-				if (!empty($obj->{$field})) {
-					$this->{$field} = @unserialize($obj->{$field});
-					// Hack for data not in UTF8
-					if ($this->{$field } === false) {
-						@unserialize(utf8_decode($obj->{$field}));
-					}
-				} else {
-					$this->{$field} = array();
 				}
 			} elseif ($this->isInt($info)) {
 				if ($field == 'rowid') {
