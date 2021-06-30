@@ -158,7 +158,7 @@ ACCOUNTING_LENGTH_AACCOUNT=Panjang akun akuntansi pihak ketiga (Jika Anda meneta
 ACCOUNTING_MANAGE_ZERO=Izinkan untuk mengelola jumlah nol yang berbeda di akhir akun akuntansi. Dibutuhkan oleh beberapa negara (seperti Swiss). Jika diatur ke mati (standar), Anda dapat mengatur dua parameter berikut untuk meminta aplikasi menambahkan angka nol virtual.
 BANK_DISABLE_DIRECT_INPUT=Nonaktifkan pencatatan langsung transaksi di rekening bank
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Aktifkan konsep ekspor di jurnal
-ACCOUNTANCY_COMBO_FOR_AUX=Aktifkan daftar kombo untuk akun anak perusahaan (mungkin lambat jika Anda memiliki banyak pihak ketiga)
+ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties, break ability to search on a part of value)
 ACCOUNTING_DATE_START_BINDING=Tentukan tanggal untuk mulai mengikat & mentransfer akuntansi. Di bawah tanggal ini, transaksi tidak akan dialihkan ke akuntansi.
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Pada transfer akuntansi, pilih periode yang ditampilkan secara default
 
@@ -328,6 +328,9 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Nonaktifkan pengikatan & transfer akunta
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Nonaktifkan pengikatan & transfer akuntansi pada laporan pengeluaran (laporan pengeluaran tidak akan diperhitungkan dalam akuntansi)
 
 ## Export
+NotifiedExportDate=Notified export date (modification of the entries will not be possible)
+NotifiedValidationDate=Validation of the entries (modification or deletion of the entries will not be possible)
+ConfirmExportFile=Confirmation of the generation of the accounting export file ?
 ExportDraftJournal=Ekspor draft jurnal
 Modelcsv=Model Ekspor
 Selectmodelcsv=Pilih satu model Ekspor

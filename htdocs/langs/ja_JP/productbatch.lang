@@ -1,11 +1,11 @@
-# ProductBATCH language file - en_US - ProductBATCH
+# ProductBATCH language file - Source file is en_US - ProductBATCH
 ManageLotSerial=ロット/シリアル 番号を使用
 ProductStatusOnBatch=はい（ロットが必要）
 ProductStatusOnSerial=はい（一意のシリアル番号が必要）
-ProductStatusNotOnBatch=いえ (ロット/シリアル 不要)
+ProductStatusNotOnBatch=いいえ (ロット/シリアル 不要)
 ProductStatusOnBatchShort=ロット
 ProductStatusOnSerialShort=シリアル
-ProductStatusNotOnBatchShort=いえ
+ProductStatusNotOnBatchShort=いいえ
 Batch=ロット/シリアル
 atleast1batchfield=賞味期限、消費期限、ロット/シリアル 番号
 batch_number=ロット/シリアル 番号
@@ -33,3 +33,13 @@ CustomMasks=製品カードにマスクを定義するオプションを追加�
 LotProductTooltip=製品カードにオプションを追加して、専用のバッチ番号マスクを定義する
 SNProductTooltip=製品カードに専用のシリアル番号マスクを定義するオプションを追加する
 QtyToAddAfterBarcodeScan=スキャンされたバーコード/ロット/シリアルごとに追加する数量
+LifeTime=寿命（日数）
+EndOfLife=製品寿命
+ManufacturingDate=製造日付
+DestructionDate=破壊日
+FirstUseDate=初回使用日
+QCFrequency=品質管理頻度（日数）
+
+#Traceability - qc status
+OutOfOrder=故障中
+InWorkingOrder=正常動作中

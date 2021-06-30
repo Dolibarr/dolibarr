@@ -30,3 +30,5 @@ ListProductByPopularity=Liste der Produkte/Services nach Beliebtheit
 ListServiceByPopularity=Liste der Services nach Beliebtheit
 Finished=Eigenerzeugung
 NewRefForClone=Artikel Nr. des neuen Produkts/Services
+ForceUpdateChildPriceSoc=Set same price on customer subsidiaries
+PMPValue=Warenwert

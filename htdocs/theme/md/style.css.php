@@ -4648,6 +4648,10 @@ div.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
 	display: none;
 }
 
+.unvisible {
+	visibility: hidden;
+}
+
 tr.visible {
 	display: block;
 }

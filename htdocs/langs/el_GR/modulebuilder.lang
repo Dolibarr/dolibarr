@@ -143,3 +143,4 @@ AsciiToHtmlConverter=Μεταροπέας από Ascii σε HTML
 AsciiToPdfConverter=Μεταροπέας από Ascii σε PDF
 TableNotEmptyDropCanceled=Table not empty. Drop has been canceled.
 ModuleBuilderNotAllowed=The module builder is available but not allowed to your user.
+ImportExportProfiles=Import and export profiles

@@ -173,7 +173,7 @@ class Entrepot extends CommonObject
 
 		$this->statuts[self::STATUS_CLOSED] = 'Closed2';
 		if (!empty($conf->global->ENTREPOT_EXTRA_STATUS)) {
-			$this->statuts[self::STATUS_OPEN_ALL] = 'OpenAll';
+			$this->statuts[self::STATUS_OPEN_ALL] = 'OpenAnyMovement';
 			$this->statuts[self::STATUS_OPEN_INTERNAL] = 'OpenInternal';
 		} else {
 			$this->statuts[self::STATUS_OPEN_ALL] = 'Opened';

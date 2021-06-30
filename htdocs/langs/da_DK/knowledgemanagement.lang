@@ -47,7 +47,7 @@ KnowledgeManagementArea = Videnshåndtering
 # Menu
 #
 MenuKnowledgeRecord = Videnbase
-ListOfArticles = Liste over artikler
+ListKnowledgeRecord = Liste over artikler
 NewKnowledgeRecord = Ny artikel
 ValidateReply = Valider løsning
 KnowledgeRecords = Artikler

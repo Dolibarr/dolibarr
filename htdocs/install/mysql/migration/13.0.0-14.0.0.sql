@@ -37,6 +37,11 @@
 -- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
 -- VMYSQL4.1 update llx_propal set tms = null where DATE(STR_TO_DATE(tms, '%Y-%m-%d')) IS NULL;
 
+-- VPGSQL8.2 DROP TRIGGER update_customer_modtime ON llx_ecm_directories;
+-- VPGSQL8.2 DROP TRIGGER update_customer_modtime ON llx_ecm_files;
+-- VPGSQL8.2 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_ecm_directories FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+-- VPGSQL8.2 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_ecm_files FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+
 ALTER TABLE llx_ecm_files ADD COLUMN note_private text AFTER fk_user_m;
 ALTER TABLE llx_ecm_files ADD COLUMN note_public text AFTER note_private;
 
@@ -80,6 +85,9 @@ DELETE FROM llx_user_param where param = 'MAIN_THEME' and value in ('auguria', '
 
 
 -- For v14
+
+UPDATE llx_c_ticket_type set label = 'Issue or bug' WHERE code = 'ISSUE';
+INSERT INTO llx_c_ticket_type (code, pos, label, active, use_default, description) VALUES('PROBLEM', '22', 'Problem', 0, 0, NULL);
 
 ALTER TABLE llx_import_model MODIFY COLUMN type varchar(64);
 ALTER TABLE llx_export_model MODIFY COLUMN type varchar(64);

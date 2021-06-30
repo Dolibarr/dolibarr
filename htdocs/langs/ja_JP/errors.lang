@@ -4,13 +4,14 @@
 NoErrorCommitIsDone=エラーなし、コミットする
 # Errors
 ErrorButCommitIsDone=エラーが見つかったが、これにもかかわらず検証する
-ErrorBadEMail=Email %s is incorrect
-ErrorBadMXDomain=Email %s seems incorrect (domain has no valid MX record)
-ErrorBadUrl=Url %s is incorrect
+ErrorBadEMail=メール%sが正しくない
+ErrorBadMXDomain=メール%sが正しくないよう （ドメインに有効なMXレコードがない）
+ErrorBadUrl=URL%sが正しくない
 ErrorBadValueForParamNotAString=パラメータ の値が正しくない。通常、翻訳が欠落している場合に追加される。
 ErrorRefAlreadyExists=参照<b>%s</b>はすでに存在する。
 ErrorLoginAlreadyExists=ログイン%sはすでに存在している。
 ErrorGroupAlreadyExists=グループ%sはすでに存在している。
+ErrorEmailAlreadyExists=メール%sはすでに存在する。
 ErrorRecordNotFound=レコードが見つからなかった。
 ErrorFailToCopyFile=<b>&quot;%s&quot;</b>にファイル<b>&quot;%s&quot;を</b>コピーに失敗した。
 ErrorFailToCopyDir=ディレクトリ '<b> %s</b>'を '<b> %s</b>'にコピーできなかった。
@@ -46,8 +47,8 @@ ErrorWrongDate=日付が正しくない！
 ErrorFailedToWriteInDir=ディレクトリ%sの書き込みに失敗した
 ErrorFoundBadEmailInFile=ファイル内の%s線の発見誤った電子メールのシンタックス(電子メール= %sを使用したサンプルライン%s)
 ErrorUserCannotBeDelete=ユーザーを削除することはできない。多分それはDolibarrエンティティに関連付けられている。
-ErrorFieldsRequired=Some required fields have been left blank.
-ErrorSubjectIsRequired=The email subject is required
+ErrorFieldsRequired=一部の必須フィールドは空白のままになっている。
+ErrorSubjectIsRequired=メールの件名が必要 
 ErrorFailedToCreateDir=ディレクトリの作成に失敗した。そのWebサーバのユーザがDolibarrのドキュメントディレクトリに書き込む権限を持って確認すること。パラメータ の<b>safe_modeが</b>このPHPが有効になっている場合、Dolibarr PHPファイルは、Webサーバーのユーザー(またはグループ)に所有していることを確認すること。
 ErrorNoMailDefinedForThisUser=このユーザーに定義されたメールはない
 ErrorSetupOfEmailsNotComplete=メールの設定が完了していない
@@ -117,7 +118,7 @@ ErrorCantReadFile=ファイル&quot;%s&quot;を読み取ることができなか
 ErrorCantReadDir=ディレクトリ&quot;%s&quot;を読み取ることができなかった
 ErrorBadLoginPassword=ログインまたはパスワードの値が正しくない
 ErrorLoginDisabled=あなたのアカウントは無効にされている
-ErrorFailedToRunExternalCommand=外部コマンドの実行に失敗した。それはあなたのPHPサーバで利用可能と実行可能になったのを確認すること。 PHP <b>セーフモードが</b>有効<b>になっ</b>ている場合、コマンドは、パラメータ の<b>safe_mode_exec_dirの</b>によって定義されたディレクトリ内にあることを確認すること。
+ErrorFailedToRunExternalCommand=外部コマンドの実行に失敗した。 PHPサーバーユーザーが利用可能で実行可能であることを確認すること。コマンドがapparmorのようなセキュリティレイヤーによってシェルレベルで保護されていないことも確認すること。
 ErrorFailedToChangePassword=パスワードの変更に失敗した
 ErrorLoginDoesNotExists=ログイン<b>%s</b>を持つユーザーを見つけることができなかった。
 ErrorLoginHasNoEmail=このユーザーは電子メールアドレスを持っていない。プロセスが中止された。
@@ -262,6 +263,7 @@ ErrorDateIsInFuture=エラー、日付を未来にすることはできない
 ErrorAnAmountWithoutTaxIsRequired=エラー、数量は必須
 ErrorAPercentIsRequired=エラー、パーセンテージを正しく入力すること
 ErrorYouMustFirstSetupYourChartOfAccount=最初に勘定科目表を設定する必要がある
+ErrorFailedToFindEmailTemplate=コードネーム%sのテンプレートが見つかりませんでした
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=PHPパラメータ upload_max_filesize(%s)は、PHPパラメータ post_max_size(%s)よりも大きくなっている。これは一貫した設定ではない。
@@ -298,3 +300,4 @@ WarningModuleXDisabledSoYouMayMissEventHere=モジュール%sが有効になっ�
 ErrorActionCommPropertyUserowneridNotDefined=ユーザの所有者が必要
 ErrorActionCommBadType=選択したイベント種別 (id: %n, code: %s) がイベント種別辞書に存在しない
 CheckVersionFail=バージョンチェックに失敗する
+ErrorWrongFileName=ファイル名に__SOMETHING__を含めることはできない

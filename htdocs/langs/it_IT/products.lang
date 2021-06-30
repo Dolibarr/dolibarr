@@ -396,3 +396,5 @@ ActionAvailableOnVariantProductOnly=Action only available on the variant of prod
 ProductsPricePerCustomer=Product prices per customers
 ProductSupplierExtraFields=Attributi aggiuntivi (prezzi dei fornitori)
 DeleteLinkedProduct=Elimina il prodotto figlio collegato alla combinazione
+PMPValue=Media ponderata prezzo
+PMPValueShort=MPP

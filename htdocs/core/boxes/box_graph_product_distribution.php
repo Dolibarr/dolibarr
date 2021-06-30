@@ -193,7 +193,7 @@ class box_graph_product_distribution extends ModeleBoxes
 					$px2->SetLegend($legend);
 					$px2->setShowLegend(2);
 					if (!empty($conf->dol_optimize_smallscreen)) {
-						$px1->SetWidth(320);
+						$px2->SetWidth(320);
 					}
 					$px2->setShowPointValue($showpointvalue);
 					$px2->setShowPercent(0);
@@ -256,7 +256,7 @@ class box_graph_product_distribution extends ModeleBoxes
 					$px3->SetLegend($legend);
 					$px3->setShowLegend(2);
 					if (!empty($conf->dol_optimize_smallscreen)) {
-						$px1->SetWidth(320);
+						$px3->SetWidth(320);
 					}
 					$px3->setShowPointValue($showpointvalue);
 					$px3->setShowPercent(0);

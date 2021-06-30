@@ -30,6 +30,7 @@ LT1PaymentsES=Règlements RE (TVQ)
 VATPayment=Paiement d'impôt sur les ventes
 VATPayments=Paiements d'impôt sur les ventes
 VATRefund=Remboursement de la taxe de vente
+Refund=Rembourser
 SocialContributionsPayments=Règlements charges sociales
 ShowVatPayment=Affiche paiement TPS/TVH
 CustomerAccountancyCodeShort=Cust. Compte. code

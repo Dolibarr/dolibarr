@@ -158,7 +158,7 @@ ACCOUNTING_LENGTH_AACCOUNT=Længde på tredjeparts regnskabskonti (Hvis du indst
 ACCOUNTING_MANAGE_ZERO=Tillad at administrere forskellige antal nuller i slutningen af en regnskabskonto. Nødvendigt af nogle lande (som Schweiz). Hvis den er slået til (standard), kan du indstille følgende to parametre til at bede applikationen om at tilføje virtuelle nuller.
 BANK_DISABLE_DIRECT_INPUT=Deaktiver direkte registrering af transaktionen på bankkonto
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Aktivér udkast til eksport på Journal
-ACCOUNTANCY_COMBO_FOR_AUX=Aktivér kombinationsliste for subsidiær konto (kan være langsom, hvis du har en masse tredjeparter)
+ACCOUNTANCY_COMBO_FOR_AUX=Aktivér kombinationsliste for datterselskabskonto (kan være langsom, hvis du har mange tredjeparter, bryder evnen til at søge på en del af værdien)
 ACCOUNTING_DATE_START_BINDING=Definer en dato for start af binding og overførsel i regnskab. Under denne dato overføres transaktionerne ikke til regnskab.
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Ved regnskabsoverførsel skal du vælge periode som standard
 
@@ -328,6 +328,9 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Deaktiver binding og overførsel i regns
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Deaktiver binding og overførsel i regnskab på udgiftsrapporter (udgiftsrapporter tages ikke med i regnskabet)
 
 ## Export
+NotifiedExportDate=Meddelt eksportdato (ændring af posterne er ikke mulig)
+NotifiedValidationDate=Validering af posterne (ændring eller sletning af posterne er ikke mulig)
+ConfirmExportFile=Bekræftelse af genereringen af den regnskabsmæssige eksportfil?
 ExportDraftJournal=Eksporter udkast til kladde
 Modelcsv=Eksportmodel
 Selectmodelcsv=Vælg en eksportmodel

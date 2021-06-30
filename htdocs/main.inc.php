@@ -53,25 +53,26 @@ if (!empty($_SERVER['MAIN_SHOW_TUNING_INFO'])) {
 
 /**
  * Return the real char for a numeric entities.
- * This function is required by testSqlAndScriptInject().
+ * WARNING: This function is required by testSqlAndScriptInject() and the GETPOST 'restricthtml'. Regex calling must be similar.
  *
  * @param	string		$matches			String of numeric entity
  * @return	string							New value
  */
 function realCharForNumericEntities($matches)
 {
-	$newstringnumentity = $matches[1];
+	$newstringnumentity = preg_replace('/;$/', '', $matches[1]);
+	//print  ' $newstringnumentity='.$newstringnumentity;
 
 	if (preg_match('/^x/i', $newstringnumentity)) {
 		$newstringnumentity = hexdec(preg_replace('/^x/i', '', $newstringnumentity));
 	}
 
-	// The numeric value we don't want as entities
+	// The numeric value we don't want as entities because they encode ascii char, and why using html entities on ascii except for haking ?
 	if (($newstringnumentity >= 65 && $newstringnumentity <= 90) || ($newstringnumentity >= 97 && $newstringnumentity <= 122)) {
 		return chr((int) $newstringnumentity);
 	}
 
-	return '&#'.$matches[1];
+	return '&#'.$matches[1];	// Value will be unchanged because regex was /&#(  )/
 }
 
 /**
@@ -104,25 +105,26 @@ function testSqlAndScriptInject($val, $type)
 	$val = preg_replace('/<!--[^>]*-->/', '', $val);
 
 	$inj = 0;
-	// For SQL Injection (only GET are used to be included into bad escaped SQL requests)
+	// For SQL Injection (only GET are used to scan for such injection strings)
 	if ($type == 1 || $type == 3) {
 		$inj += preg_match('/delete\s+from/i', $val);
 		$inj += preg_match('/create\s+table/i', $val);
 		$inj += preg_match('/insert\s+into/i', $val);
 		$inj += preg_match('/select\s+from/i', $val);
 		$inj += preg_match('/into\s+(outfile|dumpfile)/i', $val);
-		$inj += preg_match('/user\s*\(/i', $val); // avoid to use function user() that return current database login
+		$inj += preg_match('/user\s*\(/i', $val); // avoid to use function user() or mysql_user() that return current database login
 		$inj += preg_match('/information_schema/i', $val); // avoid to use request that read information_schema database
 		$inj += preg_match('/<svg/i', $val); // <svg can be allowed in POST
+		$inj += preg_match('/update.+set.+=/i', $val);
+		$inj += preg_match('/union.+select/i', $val);
 	}
 	if ($type == 3) {
 		$inj += preg_match('/select|update|delete|truncate|replace|group\s+by|concat|count|from|union/i', $val);
 	}
 	if ($type != 2) {	// Not common key strings, so we can check them both on GET and POST
 		$inj += preg_match('/updatexml\(/i', $val);
-		$inj += preg_match('/update.+set.+=/i', $val);
-		$inj += preg_match('/union.+select/i', $val);
 		$inj += preg_match('/(\.\.%2f)+/i', $val);
+		$inj += preg_match('/\s@@/', $val);
 	}
 	// For XSS Injection done by closing textarea to execute content into a textarea field
 	$inj += preg_match('/<\/textarea/i', $val);
@@ -661,7 +663,7 @@ if (!defined('NOLOGIN')) {
 				// Hooks on failed login
 				$action = '';
 				$hookmanager->initHooks(array('login'));
-				$parameters = array('dol_authmode'=>$dol_authmode, 'dol_loginmesg'=>$_SESSION["dol_loginmesg"]);
+				$parameters = array('dol_authmode'=>$authmode, 'dol_loginmesg'=>$_SESSION["dol_loginmesg"]);
 				$reshook = $hookmanager->executeHooks('afterLoginFailed', $parameters, $user, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
 					$error++;
@@ -1908,9 +1910,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 				}
 				$text .= '">';
 				$text .= '<span class="fa fa-question-circle atoplogin valignmiddle'.($helppresent ? ' '.$helppresent : '').'"></span>';
-				if ($helppresent) {
-					$text .= '<span class="fa fa-circle helppresentcircle"></span>';
-				}
+				$text .= '<span class="fa fa-circle helppresentcircle'.($helppresent ? '' : ' unvisible').'"></span>';
 				$text .= '</a>';
 				$toprightmenu .= $form->textwithtooltip('', $title, 2, 1, $text, 'login_block_elem', 2);
 			}

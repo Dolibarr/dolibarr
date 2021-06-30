@@ -569,14 +569,14 @@ class FormTicket
 	 *      @param  int    $noadmininfo 0=Add admin info, 1=Disable admin info
 	 *      @param  int    $maxlength   Max length of label
 	 *      @param	string	$morecss	More CSS
-	 * 		@param	int 	$use_multilevel	if != 0 create a multilevel select ( Do not use any of the other params)
+	 * 		@param	int 	$use_multilevel	if > 0 create a multilevel select which use $htmlname example: $use_multilevel = 1 permit to have 2 select boxes.
 	 *      @return void
 	 */
 	public function selectGroupTickets($selected = '', $htmlname = 'ticketcategory', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $morecss = '', $use_multilevel = 0)
 	{
 		global $langs, $user;
 
-		if ($use_multilevel == 0) {
+		if ($use_multilevel <= 0) {
 			$ticketstat = new Ticket($this->db);
 
 			dol_syslog(get_class($this)."::selectCategoryTickets ".$selected.", ".$htmlname.", ".$filtertype.", ".$format, LOG_DEBUG);
@@ -655,12 +655,13 @@ class FormTicket
 			}
 
 			print ajax_combobox('select'.$htmlname);
-		} else {
-			$groupticket=GETPOST('groupticket', 'aZ09');
-			$groupticketchild=GETPOST('groupticket_child', 'aZ09');
+		} elseif ($htmlname!='') {
+			$groupticket=GETPOST($htmlname, 'aZ09');
+			$groupticketchild=GETPOST($htmlname.'_child', 'aZ09');
 			$arraycodenotparent[] = "";
+			$arrayidused = array();
 			$stringtoprint = '<span class="supportemailfield bold">'.$langs->trans("GroupOfTicket").'</span> ';
-			$stringtoprint .= '<select name="groupticket" id ="groupticket" class="maxwidth500 minwidth400">';
+			$stringtoprint .= '<select name="'.$htmlname.'" id ="'.$htmlname.'" class="maxwidth500 minwidth400" child_id="0">';
 			$stringtoprint .= '<option value="">&nbsp;</option>';
 
 			$sql = "SELECT ctc.rowid, ctc.code, ctc.label, ctc.fk_parent, ";
@@ -682,10 +683,11 @@ class FormTicket
 						$grouplabel = $obj->label;
 						$isparent = $obj->isparent;
 						$iselected = $groupticket == $obj->code ?'selected':'';
-						$stringtoprint .= '<option '.$iselected.' class="groupticket'.dol_escape_htmltag($grouprowid).'" value="'.dol_escape_htmltag($groupvalue).'" data-html="'.dol_escape_htmltag($grouplabel).'">'.dol_escape_htmltag($grouplabel).'</option>';
+						$stringtoprint .= '<option '.$iselected.' class="'.$htmlname.dol_escape_htmltag($grouprowid).'" value="'.dol_escape_htmltag($groupvalue).'" data-html="'.dol_escape_htmltag($grouplabel).'">'.dol_escape_htmltag($grouplabel).'</option>';
 						if ($isparent == 'NOTPARENT') {
 							$arraycodenotparent[] = $groupvalue;
 						}
+						$arrayidused[]=$grouprowid;
 					}
 					$i++;
 				}
@@ -693,68 +695,93 @@ class FormTicket
 				dol_print_error($this->db);
 			}
 			if ($num_rows == 1) {
-				return '<input type="hidden" name="groupticket" id="groupticket" value="'.dol_escape_htmltag($groupvalue).'">';
+				return '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="'.dol_escape_htmltag($groupvalue).'">';
 			}
 			$stringtoprint .= '</select>&nbsp';
+			$levelid = 1;
+			while ($levelid <= $use_multilevel) {
+				$tabscript = array();
+				$stringtoprint .= '<select name="'.$htmlname.'_child_'.$levelid.'" id ="'.$htmlname.'_child_'.$levelid.'" class="maxwidth500 minwidth400 groupticketchild" child_id="'.$levelid.'">';
+				$stringtoprint .= '<option value="">&nbsp;</option>';
 
-			$stringtoprint .= '<select name="groupticket_child" id ="groupticket_child" class="maxwidth500 minwidth400">';
-			$stringtoprint .= '<option value="">&nbsp;</option>';
-
-			$sql = "SELECT ctc.rowid, ctc.code, ctc.label, ctc.fk_parent, ctcjoin.code as codefather";
-			$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_category as ctc";
-			$sql .= " JOIN ".MAIN_DB_PREFIX."c_ticket_category as ctcjoin ON ctc.fk_parent = ctcjoin.rowid";
-			$sql .= " WHERE ctc.public = 1";
-			$sql .= " AND ctc.active = 1";
-			$sql .= " AND ctc.fk_parent <> 0";
-			$sql .= $this->db->order('ctc.pos', 'ASC');
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				$num_rows = $this->db->num_rows($resql);
-				$i = 0;
-				while ($i < $num_rows) {
-					$obj = $this->db->fetch_object($resql);
-					if ($obj) {
-						$grouprowid = $obj->rowid;
-						$groupvalue = $obj->code;
-						$grouplabel = $obj->label;
-						$fatherid = $obj->fk_parent;
-						$groupcodefather = $obj->codefather;
-						$iselected = $groupticketchild == $obj->code ?'selected':'';
-						$stringtoprint .= '<option '.$iselected.' class="groupticket_'.dol_escape_htmltag($fatherid).'_child" value="'.dol_escape_htmltag($groupvalue).'" data-html="'.dol_escape_htmltag($grouplabel).'">'.dol_escape_htmltag($grouplabel).'</option>';
-						$tabscript[] = 'if($("#groupticket")[0].value == "'.dol_escape_js($groupcodefather).'"){
-							$(".groupticket_'.dol_escape_htmltag($fatherid).'_child").show()
-						}else{
-							$(".groupticket_'.dol_escape_htmltag($fatherid).'_child").hide()
-						}';
+				$sql = "SELECT ctc.rowid, ctc.code, ctc.label, ctc.fk_parent, ctcjoin.code as codefather, ";
+				$sql .= $this->db->ifsql("ctc.rowid NOT IN (SELECT ctcfather.rowid FROM llx_c_ticket_category as ctcfather JOIN llx_c_ticket_category as ctcjoin ON ctcfather.rowid = ctcjoin.fk_parent)", "'NOTPARENT'", "'PARENT'")." as isparent";
+				$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_category as ctc";
+				$sql .= " JOIN ".MAIN_DB_PREFIX."c_ticket_category as ctcjoin ON ctc.fk_parent = ctcjoin.rowid";
+				$sql .= " WHERE ctc.public = 1";
+				$sql .= " AND ctc.active = 1";
+				if (!empty($arrayidused)) {
+					$sql .= " AND ctc.fk_parent IN ( ";
+					foreach ($arrayidused as $idused) {
+						$sql .= $idused.", ";
 					}
-					$i++;
-				}
-			} else {
-				dol_print_error($this->db);
-			}
-			$stringtoprint .='</select>';
-
-			$stringtoprint .='<script>';
-			$stringtoprint .='var arraynotparents = '.json_encode($arraycodenotparent).';';
-			$stringtoprint .='if (arraynotparents.includes($("#groupticket")[0].value)){$("#groupticket_child").hide()}
-			else{';
-			foreach ($tabscript as $script) {
-				$stringtoprint .= $script;
-			};
-			$stringtoprint .='}
-			$("#groupticket").change(function() {
-				$("#groupticket_child")[0].value = ""
-				if (!arraynotparents.includes(this.value)) {
-				$("#groupticket_child").show()
+					$sql = substr($sql, 0, -2);
+					$sql .= ")";
 				} else {
-				$("#groupticket_child").hide()
 				}
-			';
-			foreach ($tabscript as $script) {
-				$stringtoprint .= $script;
-			};
-			$stringtoprint .='})';
-			$stringtoprint .='</script>';
+				$sql .= $this->db->order('ctc.pos', 'ASC');
+				$resql = $this->db->query($sql);
+				if ($resql) {
+					$num_rows = $this->db->num_rows($resql);
+					$i = 0;
+					$arrayidused=array();
+					while ($i < $num_rows) {
+						$obj = $this->db->fetch_object($resql);
+						if ($obj) {
+							$grouprowid = $obj->rowid;
+							$groupvalue = $obj->code;
+							$grouplabel = $obj->label;
+							$isparent = $obj->isparent;
+							$fatherid = $obj->fk_parent;
+							$arrayidused[] = $grouprowid;
+							$groupcodefather = $obj->codefather;
+							if ($isparent == 'NOTPARENT') {
+								$arraycodenotparent[] = $groupvalue;
+							}
+							$iselected = $groupticketchild == $obj->code ?'selected':'';
+							$stringtoprint .= '<option '.$iselected.' class="'.$htmlname.'_'.dol_escape_htmltag($fatherid).'_child_'.$levelid.'" value="'.dol_escape_htmltag($groupvalue).'" data-html="'.dol_escape_htmltag($grouplabel).'">'.dol_escape_htmltag($grouplabel).'</option>';
+							if (empty($tabscript[$groupcodefather])) {
+								$tabscript[$groupcodefather] = 'if($("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid-1:'').'")[0].value == "'.dol_escape_js($groupcodefather).'"){
+									$(".'.$htmlname.'_'.dol_escape_htmltag($fatherid).'_child_'.$levelid.'").show()
+									console.log("We show childs tickets of '.$groupcodefather.' group ticket")
+								}else{
+									$(".'.$htmlname.'_'.dol_escape_htmltag($fatherid).'_child_'.$levelid.'").hide()
+									console.log("We hide childs tickets of '.$groupcodefather.' group ticket")
+								}';
+							}
+						}
+						$i++;
+					}
+				} else {
+					dol_print_error($this->db);
+				}
+				$stringtoprint .='</select>';
+
+				$stringtoprint .='<script>';
+				$stringtoprint .='arraynotparents = '.json_encode($arraycodenotparent).';';
+				$stringtoprint .='if (arraynotparents.includes($("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid-1:'').'")[0].value)){$("#'.$htmlname.'_child_'.$levelid.'").hide()}
+				$("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid-1:'').'").change(function() {
+					child_id = this.attributes.child_id.value;
+					$(".groupticketchild").each(function(){
+						if(this.attributes.child_id.value > child_id){
+							this.value = ""
+							$(this).attr("style", "display : none;")
+						}
+					})
+					$("#'.$htmlname.'_child_'.$levelid.'")[0].value = ""
+					if (!arraynotparents.includes(this.value)) {
+					$("#'.$htmlname.'_child_'.$levelid.'").show()
+					} else {
+					$("#'.$htmlname.'_child_'.$levelid.'").hide()
+					}
+				';
+				$levelid++;
+				foreach ($tabscript as $script) {
+					$stringtoprint .= $script;
+				};
+				$stringtoprint .='})';
+				$stringtoprint .='</script>';
+			}
 			return $stringtoprint;
 		}
 	}

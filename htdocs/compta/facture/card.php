@@ -112,7 +112,12 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 if ($id > 0 || !empty($ref)) {
 	if ($action != 'add') {
-		$ret = $object->fetch($id, $ref, '', '', $conf->global->INVOICE_USE_SITUATION);
+		if (empty($conf->global->INVOICE_USE_SITUATION)) {
+			$fetch_situation = false;
+		} else {
+			$fetch_situation = true;
+		}
+		$ret = $object->fetch($id, $ref, '', '', $fetch_situation);
 	}
 }
 
@@ -193,7 +198,7 @@ if (empty($reshook)) {
 			exit();
 		} else {
 			$langs->load("errors");
-			setEventMessages($object->error, $object->errors, 'errors');
+			setEventMessages($objectutil->error, $objectutil->errors, 'errors');
 			$action = '';
 		}
 	} elseif ($action == 'reopen' && $usercanreopen) {
@@ -607,7 +612,7 @@ if (empty($reshook)) {
 		}
 
 		// Check for mandatory fields in invoice
-		$array_to_check = array('REF_CUSTOMER'=>'RefCustomer');
+		$array_to_check = array('REF_CLIENT'=>'RefCustomer');
 		foreach ($array_to_check as $key => $val) {
 			$keymin = strtolower($key);
 			$vallabel = $object->$keymin;
@@ -2362,25 +2367,26 @@ if (empty($reshook)) {
 		$line = new FactureLigne($db);
 		$line->fetch(GETPOST('lineid', 'int'));
 		$percent = $line->get_prev_progress($object->id);
+		$progress = price2num(GETPOST('progress', 'alpha'));
 
 		if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->situation_cycle_ref > 0) {
 			// in case of situation credit note
-			if (GETPOST('progress') >= 0) {
+			if ($progress >= 0) {
 				$mesg = $langs->trans("CantBeNullOrPositive");
 				setEventMessages($mesg, null, 'warnings');
 				$error++;
 				$result = -1;
-			} elseif (GETPOST('progress') < $line->situation_percent) { // TODO : use a modified $line->get_prev_progress($object->id) result
+			} elseif ($progress < $line->situation_percent) { // TODO : use a modified $line->get_prev_progress($object->id) result
 				$mesg = $langs->trans("CantBeLessThanMinPercent");
 				setEventMessages($mesg, null, 'warnings');
 				$error++;
 				$result = -1;
+			} elseif ($progress < $percent) {
+				$mesg = '<div class="warning">'.$langs->trans("CantBeLessThanMinPercent").'</div>';
+				setEventMessages($mesg, null, 'warnings');
+				$error++;
+				$result = -1;
 			}
-		} elseif (GETPOST('progress') < $percent) {
-			$mesg = '<div class="warning">'.$langs->trans("CantBeLessThanMinPercent").'</div>';
-			setEventMessages($mesg, null, 'warnings');
-			$error++;
-			$result = -1;
 		}
 
 		// Check minimum price
@@ -3061,7 +3067,7 @@ if ($action == 'create') {
 	} else {
 		print '<tr><td class="fieldrequired">'.$langs->trans('Customer').'</td>';
 		print '<td colspan="2">';
-		print img_picto('', 'company').$form->select_company($soc->id, 'socid', '((s.client = 1 OR s.client = 3) AND s.status=1)', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
+		print img_picto('', 'company').$form->select_company($soc->id, 'socid', '((s.client = 1 OR s.client = 3) AND s.status=1)', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
 		// Option to reload page to retrieve customer informations.
 		if (empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE_DISABLED)) {
 			print '<script type="text/javascript">
@@ -3782,7 +3788,6 @@ if ($action == 'create') {
 	// Button "Create Draft"
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 	print '</div>';
 

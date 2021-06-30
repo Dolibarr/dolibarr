@@ -354,10 +354,10 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 
 
 				print '<tr class="oddeven">';
-				print '<td class="nowrap">';
+				print '<td class="nowraponall tdoverflowmax100">';
 				print $product_static->getNomUrl(1, '', 16);
 				print "</td>\n";
-				print '<td>'.dol_trunc($objp->label, 32).'</td>';
+				print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($objp->label).'">'.dol_escape_htmltag($objp->label).'</td>';
 				print "<td>";
 				print dol_print_date($db->jdate($objp->datem), 'day');
 				print "</td>";

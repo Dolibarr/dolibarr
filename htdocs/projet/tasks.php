@@ -614,22 +614,24 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	print '<input type="hidden" name="taskref" value="'.(GETPOSTISSET("ref") ? GETPOST("ref", 'alpha') : $defaultref).'">';
 	print '</td></tr>';
 
+	// Label
 	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td>';
 	print '<input type="text" name="label" autofocus class="minwidth500 maxwidthonsmartphone" value="'.$label.'">';
 	print '</td></tr>';
 
-	// List of projects
+	// Project
 	print '<tr><td class="fieldrequired">'.$langs->trans("ChildOfProjectTask").'</td><td>';
 	print img_picto('', 'project');
 	$formother->selectProjectTasks(GETPOST('task_parent'), $projectid ? $projectid : $object->id, 'task_parent', 0, 0, 1, 1, 0, '0,1', 'maxwidth500');
 	print '</td></tr>';
 
+	// Assigned to
 	print '<tr><td>'.$langs->trans("AffectedTo").'</td><td>';
 	$contactsofproject = (!empty($object->id) ? $object->getListContactId('internal') : '');
 	if (is_array($contactsofproject) && count($contactsofproject)) {
 		print $form->select_dolusers($user->id, 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, '', 'maxwidth300');
 	} else {
-		print $langs->trans("NoUserAssignedToTheProject");
+		print '<span class="opacitymedium">'.$langs->trans("NoUserAssignedToTheProject").'</span>';
 	}
 	print '</td></tr>';
 
