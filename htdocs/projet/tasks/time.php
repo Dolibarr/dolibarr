@@ -35,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formintervention.class.php';
 
 // Load translation files required by the page
 $langsLoad=array('projects', 'bills', 'orders');
@@ -1118,8 +1119,8 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 				print $langs->trans('InterToUse');
 				print '</td>';
 				print '<td>';
-				$form->selectIntervention($projectstatic->thirdparty->id, '', 'interid', 24, 0, $langs->trans('NewInter'),
-				1, 0, 0, 'maxwidth500', '', 'all');
+				$forminter = new FormIntervention($db);
+				print $forminter->select_interventions($projectstatic->thirdparty->id, '', 'interid', 24, $langs->trans('NewInter'), true);
 				print '</td>';
 				print '</tr>';
 				print '</table>';
