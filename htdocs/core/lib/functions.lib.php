@@ -10321,7 +10321,8 @@ function showValueWithClipboardCPButton($valuetocopy, $showonlyonhover = 1, $tex
 /**
  * Decode an encode string. The string can be encoded in json format (recommended) or with serialize (avoid this)
  *
- * @param string	$stringtodecode		String to decode (json or serialize coded)
+ * @param 	string	$stringtodecode		String to decode (json or serialize coded)
+ * @return	mixed						The decoded object.
  */
 function jsonOrUnserialize($stringtodecode)
 {
