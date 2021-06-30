@@ -3131,10 +3131,10 @@ if ($action == 'create')
 				foreach ($facids as $facparam)
 				{
 					$options .= '<option value="'.$facparam ['id'].'"';
-					if ($facparam ['id'] == $_POST['fac_replacement'])
+					if ($facparam['id'] == $_POST['fac_replacement'])
 						$options .= ' selected';
-					$options .= '>'.$facparam ['ref'];
-					$options .= ' ('.$facturestatic->LibStatut(0, $facparam ['status']).')';
+					$options .= '>'.$facparam['ref'];
+					$options .= ' ('.$facturestatic->LibStatut($facparam['paid'], $facparam['status'], 0, $facparam['alreadypaid']).')';
 					$options .= '</option>';
 				}
 			}

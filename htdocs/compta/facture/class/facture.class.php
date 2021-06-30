@@ -3927,8 +3927,8 @@ class Facture extends CommonInvoice
 	 *	Invoices matching the following rules are returned:
 	 *	(Status validated or abandonned for a reason 'other') + not payed + no payment at all + not already replaced
 	 *
-	 *	@param		int		$socid		Id thirdparty
-	 *	@return    	array|int			Array of invoices ('id'=>id, 'ref'=>ref, 'status'=>status, 'paymentornot'=>0/1)
+	 *	@param		int			$socid		Id thirdparty
+	 *	@return    	array|int				Array of invoices ('id'=>id, 'ref'=>ref, 'status'=>status, 'paymentornot'=>0/1)
 	 */
 	public function list_replacable_invoices($socid = 0)
 	{
@@ -3937,17 +3937,19 @@ class Facture extends CommonInvoice
 
 		$return = array();
 
-		$sql = "SELECT f.rowid as rowid, f.ref, f.fk_statut,";
+		$sql = "SELECT f.rowid as rowid, f.ref, f.fk_statut as status, f.paye as paid,";
 		$sql .= " ff.rowid as rowidnext";
+		//$sql .= ", SUM(pf.amount) as alreadypaid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as ff ON f.rowid = ff.fk_facture_source";
 		$sql .= " WHERE (f.fk_statut = ".self::STATUS_VALIDATED." OR (f.fk_statut = ".self::STATUS_ABANDONED." AND f.close_code = '".self::CLOSECODE_ABANDONED."'))";
 		$sql .= " AND f.entity IN (".getEntity('invoice').")";
-		$sql .= " AND f.paye = 0"; // Pas classee payee completement
-		$sql .= " AND pf.fk_paiement IS NULL"; // Aucun paiement deja fait
-		$sql .= " AND ff.fk_statut IS NULL"; // Renvoi vrai si pas facture de remplacement
-		if ($socid > 0) $sql .= " AND f.fk_soc = ".$socid;
+		$sql .= " AND f.paye = 0"; // Not paid completely
+		$sql .= " AND pf.fk_paiement IS NULL"; // No payment already done
+		$sql .= " AND ff.fk_statut IS NULL"; // Return true if it is not a replacement invoice
+		if ($socid > 0) $sql .= " AND f.fk_soc = ".((int) $socid);
+		//$sql .= " GROUP BY f.rowid, f.ref, f.fk_statut, f.paye, ff.rowid";
 		$sql .= " ORDER BY f.ref";
 
 		dol_syslog(get_class($this)."::list_replacable_invoices", LOG_DEBUG);
@@ -3956,9 +3958,13 @@ class Facture extends CommonInvoice
 		{
 			while ($obj = $this->db->fetch_object($resql))
 			{
-				$return[$obj->rowid] = array('id' => $obj->rowid,
-				'ref' => $obj->ref,
-				'status' => $obj->fk_statut);
+				$return[$obj->rowid] = array(
+					'id' => $obj->rowid,
+					'ref' => $obj->ref,
+					'status' => $obj->status,
+					'paid' => $obj->paid,
+					'alreadypaid' => 0
+				);
 			}
 			//print_r($return);
 			return $return;
