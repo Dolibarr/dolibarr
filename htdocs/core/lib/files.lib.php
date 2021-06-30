@@ -1785,13 +1785,13 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 		$ecmfile->fullpath_orig = $fullpathorig;
 		$ecmfile->gen_or_uploaded = $mode;
 		$ecmfile->description = ''; // indexed content
-		$ecmfile->keyword = ''; // keyword content
+		$ecmfile->keywords = ''; // keyword content
 
 		if (is_object($object) && $object->id > 0) {
 			$ecmfile->src_object_id = $object->id;
 			if (isset($object->table_element)) $ecmfile->src_object_type = $object->table_element;
 			if (isset($object->src_object_description)) $ecmfile->description = $object->src_object_description;
-			if (isset($object->src_object_keyword)) $ecmfile->keyword = $object->src_object_keyword;
+			if (isset($object->src_object_keywords)) $ecmfile->keywords = $object->src_object_keywords;
 		}
 
 		if ($setsharekey) {
