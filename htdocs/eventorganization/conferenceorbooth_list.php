@@ -253,20 +253,6 @@ if ($projectid > 0) {
 
 llxHeader('', $title, $help_url);
 
-// Example : Adding jquery code
-print '<script type="text/javascript" language="javascript">
-jQuery(document).ready(function() {
-	function init_myfunc()
-	{
-		jQuery("#myid").removeAttr(\'disabled\');
-		jQuery("#myid").attr(\'disabled\',\'disabled\');
-	}
-	init_myfunc();
-	jQuery("#mybutton").click(function() {
-		init_myfunc();
-	});
-});
-</script>';
 
 if ($projectid > 0) {
 	// To verify role of users
