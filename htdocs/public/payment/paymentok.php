@@ -916,17 +916,17 @@ if ($ispaymentok) {
 			}
 		} else {
 			$postactionmessages[] = 'Order paid ' . $tmptag['ORD'] . ' was not found';
-      $ispostactionok = -1;
-    }
-  } elseif (array_key_exists('DON', $tmptag) && $tmptag['DON'] > 0) {
+			$ispostactionok = -1;
+		}
+	} elseif (array_key_exists('DON', $tmptag) && $tmptag['DON'] > 0) {
 		include_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 		$don = new Don($db);
 		$result = $don->fetch($tmptag['DON']);
-    if ($result) {
+		if ($result) {
 			$FinalPaymentAmt = $_SESSION["FinalPaymentAmt"];
-      
-      $paymentTypeId = 0;
-    	if ($paymentmethod == 'paybox') {
+
+			$paymentTypeId = 0;
+			if ($paymentmethod == 'paybox') {
 				$paymentTypeId = $conf->global->PAYBOX_PAYMENT_MODE_FOR_PAYMENTS;
 			}
 			if ($paymentmethod == 'paypal') {
@@ -940,9 +940,9 @@ if ($ispaymentok) {
 				if (empty($paymentType)) {
 					$paymentType = 'CB';
 				}
-        $paymentTypeId = dol_getIdFromCode($db, $paymentType, 'c_paiement', 'code', 'id', 1);
+				$paymentTypeId = dol_getIdFromCode($db, $paymentType, 'c_paiement', 'code', 'id', 1);
 			}
-        
+
 			$currencyCodeType = $_SESSION['currencyCodeType'];
 
 			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
