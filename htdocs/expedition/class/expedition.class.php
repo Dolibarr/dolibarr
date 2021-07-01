@@ -2448,7 +2448,7 @@ class Expedition extends CommonObject
 
 		$oldbilled = $this->billed;
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'expedition SET fk_statut=1';
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'expedition SET fk_statut=1, billed=0';
 		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0';
 
 		$resql = $this->db->query($sql);
