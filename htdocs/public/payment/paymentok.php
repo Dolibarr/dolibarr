@@ -722,7 +722,6 @@ if ($ispaymentok)
 			$ispostactionok = -1;
 		}
 	} elseif (array_key_exists('ORD', $tmptag) && $tmptag['ORD'] > 0) {
-		// Record payment
 		include_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
 		$object = new Commande($db);
 		$result = $object->fetch($tmptag['ORD']);
@@ -761,7 +760,7 @@ if ($ispaymentok)
 
 							$postactionmessages[] = 'Payment was done in a different currency that currency expected of company';
 							$ispostactionok = -1;
-							$error++; // Not yet supported
+							$error++;
 						}
 						$paiement->paiementid = $paymentTypeId;
 						$paiement->num_payment = '';
