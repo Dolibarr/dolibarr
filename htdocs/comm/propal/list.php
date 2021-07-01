@@ -226,6 +226,7 @@ if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 } else {
 	$permissiontovalidate = $user->rights->propal->creer;
 	$permissiontoclose = $user->rights->propal->creer;
+	$permissiontosendbymail = $user->rights->propale->lire;
 }
 
 
