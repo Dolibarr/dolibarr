@@ -30,22 +30,41 @@ require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security2.lib.php';
 
-if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER', '1');
-if (! defined('NOREQUIREDB'))    define('NOREQUIREDB', '1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
-if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
-if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no menu to show
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (! defined("NOLOGIN"))        define("NOLOGIN", '1');       // If this page is public (can be called outside logged session)
+if (! defined('NOREQUIREUSER')) {
+	define('NOREQUIREUSER', '1');
+}
+if (! defined('NOREQUIREDB')) {
+	define('NOREQUIREDB', '1');
+}
+if (! defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
+if (! defined('NOREQUIRETRAN')) {
+	define('NOREQUIRETRAN', '1');
+}
+if (! defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1');
+}
+if (! defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1');
+}
+if (! defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1'); // If there is no menu to show
+}
+if (! defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
+}
+if (! defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
+if (! defined("NOLOGIN")) {
+	define("NOLOGIN", '1');       // If this page is public (can be called outside logged session)
+}
 
-if (empty($user->id))
-{
-    print "Load permissions for admin user nb 1\n";
-    $user->fetch(1);
-    $user->getrights();
+if (empty($user->id)) {
+	print "Load permissions for admin user nb 1\n";
+	$user->fetch(1);
+	$user->getrights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
@@ -59,205 +78,201 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  */
 class CodingSqlTest extends PHPUnit\Framework\TestCase
 {
-    protected $savconf;
-    protected $savuser;
-    protected $savlangs;
-    protected $savdb;
+	protected $savconf;
+	protected $savuser;
+	protected $savlangs;
+	protected $savdb;
 
-    /**
-     * Constructor
-     * We save global variables into local variables
-     *
-     * @return SecurityTest
-     */
-    public function __construct()
-    {
-    	parent::__construct();
+	/**
+	 * Constructor
+	 * We save global variables into local variables
+	 *
+	 * @return SecurityTest
+	 */
+	public function __construct()
+	{
+		parent::__construct();
 
-    	//$this->sharedFixture
-        global $conf,$user,$langs,$db;
-        $this->savconf=$conf;
-        $this->savuser=$user;
-        $this->savlangs=$langs;
-        $this->savdb=$db;
+		//$this->sharedFixture
+		global $conf,$user,$langs,$db;
+		$this->savconf=$conf;
+		$this->savuser=$user;
+		$this->savlangs=$langs;
+		$this->savdb=$db;
 
-        print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-        //print " - db ".$db->db;
-        print "\n";
-    }
+		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
+		//print " - db ".$db->db;
+		print "\n";
+	}
 
-    /**
-     * setUpBeforeClass
-     *
-     * @return void
-     */
-    public static function setUpBeforeClass()
-    {
-        global $conf,$user,$langs,$db;
-        $db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
+	/**
+	 * setUpBeforeClass
+	 *
+	 * @return void
+	 */
+	public static function setUpBeforeClass()
+	{
+		global $conf,$user,$langs,$db;
+		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
-        print __METHOD__."\n";
-    }
+		print __METHOD__."\n";
+	}
 
-    /**
-     * tearDownAfterClass
-     *
-     * @return	void
-     */
-    public static function tearDownAfterClass()
-    {
-        global $conf,$user,$langs,$db;
-        $db->rollback();
+	/**
+	 * tearDownAfterClass
+	 *
+	 * @return	void
+	 */
+	public static function tearDownAfterClass()
+	{
+		global $conf,$user,$langs,$db;
+		$db->rollback();
 
-        print __METHOD__."\n";
-    }
+		print __METHOD__."\n";
+	}
 
-    /**
-     * Init phpunit tests
-     *
-     * @return  void
-     */
-    protected function setUp()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+	/**
+	 * Init phpunit tests
+	 *
+	 * @return  void
+	 */
+	protected function setUp()
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
 
-        print __METHOD__."\n";
-    }
+		print __METHOD__."\n";
+	}
 
-    /**
-     * End phpunit tests
-     *
-     * @return  void
-     */
-    protected function tearDown()
-    {
-        print __METHOD__."\n";
-    }
+	/**
+	 * End phpunit tests
+	 *
+	 * @return  void
+	 */
+	protected function tearDown()
+	{
+		print __METHOD__."\n";
+	}
 
-    /**
-     * testSql
-     *
-     * @return string
-     */
-    public function testSql()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+	/**
+	 * testSql
+	 *
+	 * @return string
+	 */
+	public function testSql()
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
 
-        $listofsqldir = array(DOL_DOCUMENT_ROOT.'/install/mysql/data', DOL_DOCUMENT_ROOT.'/install/mysql/tables', DOL_DOCUMENT_ROOT.'/install/mysql/migration');
+		$listofsqldir = array(DOL_DOCUMENT_ROOT.'/install/mysql/data', DOL_DOCUMENT_ROOT.'/install/mysql/tables', DOL_DOCUMENT_ROOT.'/install/mysql/migration');
 
-        foreach ($listofsqldir as $dir)
-        {
-            print 'Process dir '.$dir."\n";
-            $filesarray = scandir($dir);
+		foreach ($listofsqldir as $dir) {
+			print 'Process dir '.$dir."\n";
+			$filesarray = scandir($dir);
 
-            foreach ($filesarray as $key => $file)
-            {
-                if (! preg_match('/\.sql$/', $file))
-                    continue;
+			foreach ($filesarray as $key => $file) {
+				if (! preg_match('/\.sql$/', $file)) {
+					continue;
+				}
 
-                print 'Check sql file '.$file."\n";
-                $filecontent = file_get_contents($dir.'/'.$file);
+				print 'Check sql file '.$file."\n";
+				$filecontent = file_get_contents($dir.'/'.$file);
 
-                // Allow ` for 'rank' column name
-                $filecontent = str_replace('`rank`', '_rank_', $filecontent);
+				// Allow ` for 'rank' column name
+				$filecontent = str_replace('`rank`', '_rank_', $filecontent);
 
-                $result=strpos($filecontent, '`');
-                //print __METHOD__." Result for checking we don't have back quote = ".$result."\n";
-                $this->assertTrue($result===false, 'Found back quote into '.$file.'. Bad.');
+				$result=strpos($filecontent, '`');
+				//print __METHOD__." Result for checking we don't have back quote = ".$result."\n";
+				$this->assertTrue($result===false, 'Found back quote into '.$file.'. Bad.');
 
-                $result=strpos($filecontent, '"');
-                if ($result)
-                {
-                	$result=(! strpos($filecontent, '["') && ! strpos($filecontent, '{"'));
-                }
-                //print __METHOD__." Result for checking we don't have double quote = ".$result."\n";
-                $this->assertTrue($result===false, 'Found double quote that is not [" neither {" (used for json content) into '.$file.'. Bad.');
+				$result=strpos($filecontent, '"');
+				if ($result) {
+					$result=(! strpos($filecontent, '["') && ! strpos($filecontent, '{"'));
+				}
+				//print __METHOD__." Result for checking we don't have double quote = ".$result."\n";
+				$this->assertTrue($result===false, 'Found double quote that is not [" neither {" (used for json content) into '.$file.'. Bad.');
 
-                $result=strpos($filecontent, 'int(');
-                //print __METHOD__." Result for checking we don't have 'int(' instead of 'integer' = ".$result."\n";
-                $this->assertTrue($result===false, 'Found int(x) or tinyint(x) instead of integer or tinyint into '.$file.'. Bad.');
+				$result=strpos($filecontent, 'int(');
+				//print __METHOD__." Result for checking we don't have 'int(' instead of 'integer' = ".$result."\n";
+				$this->assertTrue($result===false, 'Found int(x) or tinyint(x) instead of integer or tinyint into '.$file.'. Bad.');
 
-                $result=strpos($filecontent, 'ON DELETE CASCADE');
-                //print __METHOD__." Result for checking we don't have 'ON DELETE CASCADE' = ".$result."\n";
-                $this->assertTrue($result===false, 'Found ON DELETE CASCADE into '.$file.'. Bad.');
+				$result=strpos($filecontent, 'ON DELETE CASCADE');
+				//print __METHOD__." Result for checking we don't have 'ON DELETE CASCADE' = ".$result."\n";
+				$this->assertTrue($result===false, 'Found ON DELETE CASCADE into '.$file.'. Bad.');
 
-                $result=strpos($filecontent, 'NUMERIC(');
-                //print __METHOD__." Result for checking we don't have 'NUMERIC(' = ".$result."\n";
-                $this->assertTrue($result===false, 'Found NUMERIC( into '.$file.'. Bad.');
+				$result=strpos($filecontent, 'NUMERIC(');
+				//print __METHOD__." Result for checking we don't have 'NUMERIC(' = ".$result."\n";
+				$this->assertTrue($result===false, 'Found NUMERIC( into '.$file.'. Bad.');
 
-                $result=strpos($filecontent, 'NUMERIC(');
-                //print __METHOD__." Result for checking we don't have 'curdate(' = ".$result."\n";
-                $this->assertTrue($result===false, 'Found curdate( into '.$file.'. Bad. Current date must be generated with PHP.');
+				$result=strpos($filecontent, 'NUMERIC(');
+				//print __METHOD__." Result for checking we don't have 'curdate(' = ".$result."\n";
+				$this->assertTrue($result===false, 'Found curdate( into '.$file.'. Bad. Current date must be generated with PHP.');
 
-                $result=strpos($filecontent, 'integer(');
-                //print __METHOD__." Result for checking we don't have 'integer(' = ".$result."\n";
-                $this->assertTrue($result===false, 'Found value in parenthesis after the integer. It must be integer not integer(x) into '.$file.'. Bad.');
+				$result=strpos($filecontent, 'integer(');
+				//print __METHOD__." Result for checking we don't have 'integer(' = ".$result."\n";
+				$this->assertTrue($result===false, 'Found value in parenthesis after the integer. It must be integer not integer(x) into '.$file.'. Bad.');
 
-                if ($dir == DOL_DOCUMENT_ROOT.'/install/mysql/migration')
-                {
-                    // Test for migration files only
-                } elseif ($dir == DOL_DOCUMENT_ROOT.'/install/mysql/data')
-                {
-                    // Test for data files only
-                } else {
-                    if (preg_match('/\.key\.sql$/', $file))
-                    {
-                        // Test for key files only
-                    } else {
-                        // Test for non key files only
-                        $result=(strpos($filecontent, 'KEY ') && strpos($filecontent, 'PRIMARY KEY') == 0);
-                        //print __METHOD__." Result for checking we don't have ' KEY ' instead of a sql file to create index = ".$result."\n";
-                        $this->assertTrue($result===false, 'Found KEY into '.$file.'. Bad.');
+				if ($dir == DOL_DOCUMENT_ROOT.'/install/mysql/migration') {
+					// Test for migration files only
+				} elseif ($dir == DOL_DOCUMENT_ROOT.'/install/mysql/data') {
+					// Test for data files only
+				} else {
+					if (preg_match('/\.key\.sql$/', $file)) {
+						// Test for key files only
+					} else {
+						// Test for non key files only
+						$result=(strpos($filecontent, 'KEY ') && strpos($filecontent, 'PRIMARY KEY') == 0);
+						//print __METHOD__." Result for checking we don't have ' KEY ' instead of a sql file to create index = ".$result."\n";
+						$this->assertTrue($result===false, 'Found KEY into '.$file.'. Bad.');
 
-                        $result=stripos($filecontent, 'ENGINE=innodb');
-                        //print __METHOD__." Result for checking we have the ENGINE=innodb string = ".$result."\n";
-                        $this->assertGreaterThan(0, $result, 'The ENGINE=innodb was not found into '.$file.'. Add it or just fix syntax to match case.');
-                    }
-                }
-            }
-        }
+						$result=stripos($filecontent, 'ENGINE=innodb');
+						//print __METHOD__." Result for checking we have the ENGINE=innodb string = ".$result."\n";
+						$this->assertGreaterThan(0, $result, 'The ENGINE=innodb was not found into '.$file.'. Add it or just fix syntax to match case.');
+					}
+				}
+			}
+		}
 
-        return;
-    }
+		return;
+	}
 
-    /**
-     * testInitData
-     *
-     * @return string
-     */
-    public function testInitData()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+	/**
+	 * testInitData
+	 *
+	 * @return string
+	 */
+	public function testInitData()
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
 
-        $filesarray = scandir(DOL_DOCUMENT_ROOT.'/../dev/initdemo');
-        foreach ($filesarray as $key => $file) {
-            if (! preg_match('/\.sql$/', $file))
-                continue;
+		$filesarray = scandir(DOL_DOCUMENT_ROOT.'/../dev/initdemo');
+		foreach ($filesarray as $key => $file) {
+			if (! preg_match('/\.sql$/', $file)) {
+				continue;
+			}
 
-            print 'Check sql file '.$file."\n";
-            $filecontent=file_get_contents(DOL_DOCUMENT_ROOT.'/../dev/initdemo/'.$file);
+			print 'Check sql file '.$file."\n";
+			$filecontent=file_get_contents(DOL_DOCUMENT_ROOT.'/../dev/initdemo/'.$file);
 
-            $result=strpos($filecontent, '@gmail.com');
-            print __METHOD__." Result for checking we don't have personal data = ".$result."\n";
-            $this->assertTrue($result===false, 'Found a bad key @gmail into file '.$file);
+			$result=strpos($filecontent, '@gmail.com');
+			print __METHOD__." Result for checking we don't have personal data = ".$result."\n";
+			$this->assertTrue($result===false, 'Found a bad key @gmail into file '.$file);
 
-            $result=strpos($filecontent, 'eldy@');
-            print __METHOD__." Result for checking we don't have personal data = ".$result."\n";
-            $this->assertTrue($result===false, 'Found a bad key eldy@ into file '.$file);
-        }
+			$result=strpos($filecontent, 'eldy@');
+			print __METHOD__." Result for checking we don't have personal data = ".$result."\n";
+			$this->assertTrue($result===false, 'Found a bad key eldy@ into file '.$file);
+		}
 
-        return;
-    }
+		return;
+	}
 }

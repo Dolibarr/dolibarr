@@ -40,13 +40,27 @@ $action = GETPOST('action', 'aZ09');
 // Security check
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
 $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
-if ($user->socid) $socid = $user->socid;
-$result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
+if ($user->socid) {
+	$socid = $user->socid;
+}
 
 $object = new Product($db);
-if ($id > 0 || !empty($ref)) $object->fetch($id, $ref);
+if ($id > 0 || !empty($ref)) {
+	$object->fetch($id, $ref);
+}
 
 $permissionnote = $user->rights->produit->creer; // Used by the include of actions_setnotes.inc.php
+
+if ($object->id > 0) {
+	if ($object->type == $object::TYPE_PRODUCT) {
+		restrictedArea($user, 'produit', $object->id, 'product&product', '', '');
+	}
+	if ($object->type == $object::TYPE_SERVICE) {
+		restrictedArea($user, 'service', $object->id, 'product&product', '', '');
+	}
+} else {
+	restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
+}
 
 
 /*
@@ -62,31 +76,34 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, 
 
 $form = new Form($db);
 
-$helpurl = '';
-if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT)) $helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
-if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) $helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+$help_url = '';
+if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT)) {
+	$help_url = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+}
+if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
+	$help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+}
 
 $title = $langs->trans('ProductServiceCard');
 $shortlabel = dol_trunc($object->label, 16);
-if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
-{
+if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT)) {
 	$title = $langs->trans('Product')." ".$shortlabel." - ".$langs->trans('Notes');
-	$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+	$help_url = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 }
-if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE))
-{
+if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
 	$title = $langs->trans('Service')." ".$shortlabel." - ".$langs->trans('Notes');
-	$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+	$help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 }
 
 llxHeader('', $title, $help_url);
 
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	/*
-     * Affichage onglets
-     */
-	if (!empty($conf->notification->enabled)) $langs->load("mails");
+	 * Affichage onglets
+	 */
+	if (!empty($conf->notification->enabled)) {
+		$langs->load("mails");
+	}
 
 	$head = product_prepare_head($object);
 	$titre = $langs->trans("CardProduct".$object->type);
@@ -98,7 +115,9 @@ if ($id > 0 || !empty($ref))
 	$object->next_prev_filter = " fk_product_type = ".$object->type;
 
 	$shownav = 1;
-	if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
+	if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+		$shownav = 0;
+	}
 
 	dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 

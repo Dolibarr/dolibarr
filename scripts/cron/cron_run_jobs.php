@@ -25,12 +25,24 @@
  * \brief Execute pendings jobs
  */
 
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
-if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
-if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (!defined('NOLOGIN'))        define('NOLOGIN', '1');
-if (!defined('NOSESSION'))      define('NOSESSION', '1');
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1'); // Disables token renewal
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
+if (!defined('NOLOGIN')) {
+	define('NOLOGIN', '1');
+}
+if (!defined('NOSESSION')) {
+	define('NOSESSION', '1');
+}
 
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
@@ -106,7 +118,9 @@ if ($userlogin == 'firstadmin') {
 			$userlogin = $obj->login;
 			echo "First admin user found is login '".$userlogin."', entity ".$obj->entity."\n";
 		}
-	} else dol_print_error($db);
+	} else {
+		dol_print_error($db);
+	}
 }
 
 // Check user login
@@ -125,7 +139,7 @@ if ($result < 0) {
 }
 $user->getrights();
 
-if (isset($argv[3]) || $argv[3]) {
+if (isset($argv[3]) && $argv[3]) {
 	$id = $argv[3];
 }
 
@@ -151,8 +165,7 @@ if ($result < 0) {
 
 $qualifiedjobs = array();
 foreach ($object->lines as $val) {
-	if (!verifCond($val->test))
-	{
+	if (!verifCond($val->test)) {
 		continue;
 	}
 	$qualifiedjobs[] = $val;
@@ -173,8 +186,7 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0)) {
 		echo "cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label;
 
 		// Force reload of setup for the current entity
-		if ((empty($line->entity) ? 1 : $line->entity) != $conf->entity)
-		{
+		if ((empty($line->entity) ? 1 : $line->entity) != $conf->entity) {
 			dol_syslog("cron_run_jobs.php we work on another entity conf than ".$conf->entity." so we reload mysoc, langs, user and conf", LOG_DEBUG);
 			echo " -> we change entity so we reload mysoc, langs, user and conf";
 
@@ -183,17 +195,14 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0)) {
 			$mysoc->setMysoc($conf);
 
 			// Force recheck that user is ok for the entity to process and reload permission for entity
-			if ($conf->entity != $user->entity && $user->entity != 0)
-			{
+			if ($conf->entity != $user->entity && $user->entity != 0) {
 				$result = $user->fetch('', $userlogin, '', 0, $conf->entity);
-				if ($result < 0)
-				{
+				if ($result < 0) {
 					echo "\nUser Error: ".$user->error."\n";
 					dol_syslog("cron_run_jobs.php:: User Error:".$user->error, LOG_ERR);
 					exit(-1);
 				} else {
-					if ($result == 0)
-					{
+					if ($result == 0) {
 						echo "\nUser login: ".$userlogin." does not exists for entity ".$conf->entity."\n";
 						dol_syslog("User login:".$userlogin." does not exists", LOG_ERR);
 						exit(-1);
@@ -204,8 +213,12 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0)) {
 
 			// Reload langs
 			$langcode = (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT);
-			if (!empty($user->conf->MAIN_LANG_DEFAULT)) $langcode = $user->conf->MAIN_LANG_DEFAULT;
-			if ($langs->getDefaultLang() != $langcode) $langs->setDefaultLang($langcode);
+			if (!empty($user->conf->MAIN_LANG_DEFAULT)) {
+				$langcode = $user->conf->MAIN_LANG_DEFAULT;
+			}
+			if ($langs->getDefaultLang() != $langcode) {
+				$langs->setDefaultLang($langcode);
+			}
 		}
 
 		//If date_next_jobs is less of current date, execute the program, and store the execution time of the next execution in database
@@ -262,8 +275,9 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0)) {
 
 $db->close();
 
-if ($nbofjobslaunchedko)
+if ($nbofjobslaunchedko) {
 	exit(1);
+}
 exit(0);
 
 /**

@@ -36,7 +36,9 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'errors', 'other', 'bills'));
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
@@ -60,7 +62,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 llxHeader(
-	"", $langs->trans("BillsSetup"),
+	"",
+	$langs->trans("BillsSetup"),
 	'EN:Invoice_Configuration|FR:Configuration_module_facture|ES:ConfiguracionFactura'
 );
 

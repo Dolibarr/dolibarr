@@ -1,5 +1,7 @@
 # Dolibarr language file - Source file is en_US - products
-TMenuProducts=Productos y servicios
+ProductsOnSaleOnly=Productos solo a para venta
+ProductsOnPurchaseOnly=Productos solo para compra
 ProductStatusNotOnBuyShort=Fuera compra
-AssociatedProductsAbility=Enable Kits (set of several products)
+ExportDataset_produit_1=Productos
 PriceExpressionEditorHelp2=Puede acceder a los atributos adicionales con variables como <b>#extrafield_myextrafieldkey#</b> y variables globales con <b>#global_mycode#</b>
+NbProducts=Numero de productos

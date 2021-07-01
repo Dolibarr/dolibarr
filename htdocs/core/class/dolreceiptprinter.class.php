@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015-2019  Frédéric France     <frederic.france@netlogic.fr>
+/* Copyright (C) 2015-2021  Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Andreu Bisquerra    <jove@bisquerra.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -50,6 +50,7 @@
  * {dol_print_object_local_tax}                     Print object local tax
  * {dol_print_object_total}                         Print object total
  * {dol_print_order_lines}                          Print order lines for Printer
+ * {dol_print_object_lines_with_notes}              Print object lines with notes
  * {dol_print_payment}                              Print payment method
  *
  * Code which can be placed everywhere
@@ -109,7 +110,6 @@ use Mike42\Escpos\CapabilityProfile;
 use Mike42\Escpos\Printer;
 use Mike42\Escpos\EscposImage;
 
-
 /**
  * Class to manage Receipt Printers
  */
@@ -127,8 +127,8 @@ class dolReceiptPrinter extends Printer
 	public $db;
 
 	/*
-     * @var string[] array of tags
-     */
+	 * @var string[] array of tags
+	 */
 	public $tags;
 	public $printer;
 	public $template;
@@ -192,6 +192,7 @@ class dolReceiptPrinter extends Printer
 			'dol_value_object_id' => 'InvoiceID',
 			'dol_value_object_ref' => 'InvoiceRef',
 			'dol_print_object_lines' => 'DOL_PRINT_OBJECT_LINES',
+			'dol_print_object_lines_with_notes' => 'DOL_PRINT_OBJECT_LINES_WITH_NOTES',
 			'dol_print_object_tax' => 'TotalVAT',
 			'dol_print_object_local_tax1' => 'TotalLT1',
 			'dol_print_object_local_tax2' => 'TotalLT2',
@@ -223,6 +224,7 @@ class dolReceiptPrinter extends Printer
 			'dol_value_vendor_lastname' => 'VendorLastname',
 			'dol_value_vendor_firstname' => 'VendorFirstname',
 			'dol_value_vendor_mail' => 'VendorEmail',
+			'dol_value_place' => 'DOL_VALUE_PLACE',
 		);
 	}
 
@@ -540,8 +542,7 @@ class dolReceiptPrinter extends Printer
 				$this->printer->cut();
 
 				// If is DummyPrintConnector send to log to debugging
-				if ($this->printer->connector instanceof DummyPrintConnector)
-				{
+				if ($this->printer->connector instanceof DummyPrintConnector) {
 					$data = $this->printer->connector-> getData();
 					dol_syslog($data);
 				}
@@ -631,14 +632,29 @@ class dolReceiptPrinter extends Printer
 						break;
 					case 'DOL_PRINT_OBJECT_LINES':
 						foreach ($object->lines as $line) {
-							if ($line->fk_product)
-							{
+							if ($line->fk_product) {
 								$spacestoadd = $nbcharactbyline - strlen($line->ref) - strlen($line->qty) - 10 - 1;
 								$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
 								$this->printer->text($line->ref.$spaces.$line->qty.' '.str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
 								$this->printer->text(strip_tags(htmlspecialchars_decode($line->product_label))."\n");
+							} else {
+								$spacestoadd = $nbcharactbyline - strlen($line->description) - strlen($line->qty) - 10 - 1;
+								$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
+								$this->printer->text($line->description.$spaces.$line->qty.' '.str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
 							}
-							else {
+						}
+						break;
+					case 'DOL_PRINT_OBJECT_LINES_WITH_NOTES':
+						foreach ($object->lines as $line) {
+							if ($line->fk_product) {
+								$spacestoadd = $nbcharactbyline - strlen($line->ref) - strlen($line->qty) - 10 - 1;
+								$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
+								$this->printer->text($line->ref.$spaces.$line->qty.' '.str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
+								$this->printer->text(strip_tags(htmlspecialchars_decode($line->product_label))."\n");
+								$spacestoadd = $nbcharactbyline - strlen($line->description) - strlen($line->qty) - 10 - 1;
+								$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
+								$this->printer->text($line->description."\n");
+							} else {
 								$spacestoadd = $nbcharactbyline - strlen($line->description) - strlen($line->qty) - 10 - 1;
 								$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
 								$this->printer->text($line->description.$spaces.$line->qty.' '.str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
@@ -775,8 +791,7 @@ class dolReceiptPrinter extends Printer
 						break;
 					case 'DOL_PRINT_ORDER_LINES':
 						foreach ($object->lines as $line) {
-							if ($line->special_code == $this->orderprinter)
-							{
+							if ($line->special_code == $this->orderprinter) {
 								$spacestoadd = $nbcharactbyline - strlen($line->ref) - strlen($line->qty) - 10 - 1;
 								$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
 								$this->printer->text($line->ref.$spaces.$line->qty.' '.str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
@@ -789,11 +804,10 @@ class dolReceiptPrinter extends Printer
 						$sql .= " cp.code";
 						$sql .= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";
 						$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON p.fk_paiement = cp.id";
-						$sql .= " WHERE pf.fk_paiement = p.rowid AND pf.fk_facture = ".$object->id;
+						$sql .= " WHERE pf.fk_paiement = p.rowid AND pf.fk_facture = ".((int) $object->id);
 						$sql .= " ORDER BY p.datep";
 						$resql = $this->db->query($sql);
-						if ($resql)
-						{
+						if ($resql) {
 							$num = $this->db->num_rows($resql);
 							$i = 0;
 							while ($i < $num) {
@@ -801,16 +815,25 @@ class dolReceiptPrinter extends Printer
 								$spacestoadd = $nbcharactbyline - strlen($langs->transnoentitiesnoconv("PaymentTypeShort".$row->code)) - 12;
 								$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
 								$amount_payment = (!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1) ? $row->multicurrency_amount : $row->amount;
-								if ($row->code == "LIQ") $amount_payment = $amount_payment + $row->pos_change; // Show amount with excess received if is cash payment
+								if ($row->code == "LIQ") {
+									$amount_payment = $amount_payment + $row->pos_change; // Show amount with excess received if is cash payment
+								}
 								$this->printer->text($spaces.$langs->transnoentitiesnoconv("PaymentTypeShort".$row->code).' '.str_pad(price($amount_payment), 10, ' ', STR_PAD_LEFT)."\n");
-								if ($row->code == "LIQ" && $row->pos_change > 0) // Print change only in cash payments
-								{
+								if ($row->code == "LIQ" && $row->pos_change > 0) { // Print change only in cash payments
 									$spacestoadd = $nbcharactbyline - strlen($langs->trans("Change")) - 12;
 									$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
 									$this->printer->text($spaces.$langs->trans("Change").' '.str_pad(price($row->pos_change), 10, ' ', STR_PAD_LEFT)."\n");
 								}
 								$i++;
 							}
+						}
+						break;
+					case 'DOL_VALUE_PLACE':
+							$sql = "SELECT floor, label FROM ".MAIN_DB_PREFIX."takepos_floor_tables where rowid=".((int) str_replace(")", "", str_replace("(PROV-POS".$_SESSION["takeposterminal"]."-", "", $object->ref)));
+							$resql = $this->db->query($sql);
+							$obj = $this->db->fetch_object($resql);
+						if ($obj) {
+							$this->printer->text($obj->label);
 						}
 						break;
 					default:
@@ -822,10 +845,11 @@ class dolReceiptPrinter extends Printer
 				}
 			}
 			// If is DummyPrintConnector send to log to debugging
-			if ($this->printer->connector instanceof DummyPrintConnector || $conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector")
-			{
+			if ($this->printer->connector instanceof DummyPrintConnector || $conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") {
 				$data = $this->printer->connector->getData();
-				if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") echo base64_encode($data);
+				if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") {
+					echo rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
+				}
 				dol_syslog($data);
 			}
 			// Close and print
@@ -883,7 +907,7 @@ class dolReceiptPrinter extends Printer
 		$error = 0;
 		$sql = 'SELECT rowid, name, fk_type, fk_profile, parameter';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'printer_receipt';
-		$sql .= ' WHERE rowid = '.$printerid;
+		$sql .= ' WHERE rowid = '.((int) $printerid);
 		$sql .= ' AND entity = '.$conf->entity;
 		$resql = $this->db->query($sql);
 		if ($resql) {

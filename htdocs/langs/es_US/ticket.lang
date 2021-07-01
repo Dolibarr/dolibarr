@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - ticket
+TicketTypeShortISSUE=Issue, bug or problem
+OriginEmail=Email source
+NeedMoreInformation=Waiting for information
+TicketCategory=Group

@@ -55,8 +55,12 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	public function __construct()
 	{
 		global $conf;
-		if (!isset($conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER) || trim($conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER) == '') $conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER = '411';
-		if (!isset($conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER) || trim($conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER) == '') $conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER = '401';
+		if (!isset($conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER) || trim($conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER) == '') {
+			$conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER = '411';
+		}
+		if (!isset($conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER) || trim($conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER) == '') {
+			$conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER = '401';
+		}
 		$this->prefixcustomeraccountancycode = $conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER;
 		$this->prefixsupplieraccountancycode = $conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER;
 	}
@@ -90,9 +94,13 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		$texte .= $langs->trans("ModuleCompanyCodeSupplier".$this->name, '{s1}')."<br>\n";
 		$texte = str_replace(array('{s1}', '{s2}'), array($s1, $s2), $texte);
 		$texte .= "<br>\n";
-		if (!isset($conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL) || !empty($conf->global->$conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL)) $texte .= $langs->trans('RemoveSpecialChars').' = '.yn(1)."<br>\n";
+		if (!isset($conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL) || !empty($conf->global->$conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL)) {
+			$texte .= $langs->trans('RemoveSpecialChars').' = '.yn(1)."<br>\n";
+		}
 		//if (! empty($conf->global->COMPANY_AQUARIUM_REMOVE_ALPHA)) $texte.=$langs->trans('COMPANY_AQUARIUM_REMOVE_ALPHA').' = '.yn($conf->global->COMPANY_AQUARIUM_REMOVE_ALPHA)."<br>\n";
-		if (!empty($conf->global->COMPANY_AQUARIUM_CLEAN_REGEX))  $texte .= $langs->trans('COMPANY_AQUARIUM_CLEAN_REGEX').' = '.$conf->global->COMPANY_AQUARIUM_CLEAN_REGEX."<br>\n";
+		if (!empty($conf->global->COMPANY_AQUARIUM_CLEAN_REGEX)) {
+			$texte .= $langs->trans('COMPANY_AQUARIUM_CLEAN_REGEX').' = '.$conf->global->COMPANY_AQUARIUM_CLEAN_REGEX."<br>\n";
+		}
 		$texte .= '</td>';
 		$texte .= '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 		$texte .= '</tr></table>';
@@ -139,12 +147,10 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		dol_syslog("mod_codecompta_aquarium::get_code search code for type=".$type." company=".(!empty($societe->name) ? $societe->name : ''));
 
 		// Regle gestion compte compta
-		if ($type == 'customer')
-		{
+		if ($type == 'customer') {
 			$codetouse = (!empty($societe->code_client) ? $societe->code_client : 'CUSTCODE');
 			$prefix = $this->prefixcustomeraccountancycode;
-		} elseif ($type == 'supplier')
-		{
+		} elseif ($type == 'supplier') {
 			$codetouse = (!empty($societe->code_fournisseur) ? $societe->code_fournisseur : 'SUPPCODE');
 			$prefix = $this->prefixsupplieraccountancycode;
 		} else {
@@ -155,20 +161,22 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		//$conf->global->COMPANY_AQUARIUM_CLEAN_REGEX='^..(..)..';
 
 		// Remove special char if COMPANY_AQUARIUM_REMOVE_SPECIAL is set to 1 or not set (default)
-		if (!isset($conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL) || !empty($conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL)) $codetouse = preg_replace('/([^a-z0-9])/i', '', $codetouse);
+		if (!isset($conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL) || !empty($conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL)) {
+			$codetouse = preg_replace('/([^a-z0-9])/i', '', $codetouse);
+		}
 		// Remove special alpha if COMPANY_AQUARIUM_REMOVE_ALPHA is set to 1
-		if (!empty($conf->global->COMPANY_AQUARIUM_REMOVE_ALPHA))   $codetouse = preg_replace('/([a-z])/i', '', $codetouse);
+		if (!empty($conf->global->COMPANY_AQUARIUM_REMOVE_ALPHA)) {
+			$codetouse = preg_replace('/([a-z])/i', '', $codetouse);
+		}
 		// Apply a regex replacement pattern on code if COMPANY_AQUARIUM_CLEAN_REGEX is set. Value must be a regex with parenthesis. The part into parenthesis is kept, the rest removed.
-		if (!empty($conf->global->COMPANY_AQUARIUM_CLEAN_REGEX))	// Example: $conf->global->COMPANY_AQUARIUM_CLEAN_REGEX='^..(..)..';
-		{
+		if (!empty($conf->global->COMPANY_AQUARIUM_CLEAN_REGEX)) {	// Example: $conf->global->COMPANY_AQUARIUM_CLEAN_REGEX='^..(..)..';
 			$codetouse = preg_replace('/'.$conf->global->COMPANY_AQUARIUM_CLEAN_REGEX.'/', '\1\2\3', $codetouse);
 		}
 
 		$codetouse = $prefix.strtoupper($codetouse);
 
 		$is_dispo = $this->verif($db, $codetouse, $societe, $type);
-		if (!$is_dispo)
-		{
+		if (!$is_dispo) {
 			$this->code = $codetouse;
 		} else {
 			// Pour retour
@@ -191,20 +199,26 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	public function verif($db, $code, $societe, $type)
 	{
 		$sql = "SELECT ";
-		if ($type == 'customer') $sql .= "code_compta";
-		elseif ($type == 'supplier') $sql .= "code_compta_fournisseur";
+		if ($type == 'customer') {
+			$sql .= "code_compta";
+		} elseif ($type == 'supplier') {
+			$sql .= "code_compta_fournisseur";
+		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe";
 		$sql .= " WHERE ";
-		if ($type == 'customer') $sql .= "code_compta";
-		elseif ($type == 'supplier') $sql .= "code_compta_fournisseur";
+		if ($type == 'customer') {
+			$sql .= "code_compta";
+		} elseif ($type == 'supplier') {
+			$sql .= "code_compta_fournisseur";
+		}
 		$sql .= " = '".$db->escape($code)."'";
-		if (!empty($societe->id)) $sql .= " AND rowid <> ".$societe->id;
+		if (!empty($societe->id)) {
+			$sql .= " AND rowid <> ".$societe->id;
+		}
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
-			if ($db->num_rows($resql) == 0)
-			{
+		if ($resql) {
+			if ($db->num_rows($resql) == 0) {
 				dol_syslog("mod_codecompta_aquarium::verif code '".$code."' available");
 				return 1; // Dispo
 			} else {

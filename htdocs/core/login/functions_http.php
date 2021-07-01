@@ -38,8 +38,7 @@ function check_user_password_http($usertotest, $passwordtotest, $entitytotest)
 	dol_syslog("functions_http::check_user_password_http _SERVER[REMOTE_USER]=".(empty($_SERVER["REMOTE_USER"]) ? '' : $_SERVER["REMOTE_USER"]));
 
 	$login = '';
-	if (!empty($_SERVER["REMOTE_USER"]))
-	{
+	if (!empty($_SERVER["REMOTE_USER"])) {
 		$login = $_SERVER["REMOTE_USER"];
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';

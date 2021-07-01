@@ -39,8 +39,6 @@ $toselect = GETPOST('toselect', 'array');
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_ref = GETPOST("search_ref", 'alpha');
 $search_type = GETPOST("search_type", 'int');
-$fourn_id = GETPOST("fourn_id", 'int');
-$catid = GETPOST('catid', 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
 $type = GETPOST("type", "int");
 
@@ -139,6 +137,14 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
+// Security check
+if ($search_type == '0') {
+	$result = restrictedArea($user, 'produit', '', '', '', '', '', 0);
+} elseif ($search_type == '1') {
+	$result = restrictedArea($user, 'service', '', '', '', '', '', 0);
+} else {
+	$result = restrictedArea($user, 'produit|service', '', '', '', '', '', 0);
+}
 
 
 /*
@@ -192,6 +198,7 @@ if (empty($reshook)) {
 /*
  * View
  */
+
 $formother = new FormOther($db);
 
 $title = $langs->trans('IntracommReportList'.$type);
@@ -230,8 +237,8 @@ if (dol_strlen($search_type) && $search_type != '-1') {
 if ($search_ref)     $sql .= natural_search('i.ref', $search_ref);
 if ($search_label)   $sql .= natural_search('i.label', $search_label);
 if ($search_barcode) $sql .= natural_search('i.barcode', $search_barcode);
-if (isset($search_tosell) && dol_strlen($search_tosell) > 0  && $search_tosell!=-1) $sql.= " AND i.tosell = ".$db->escape($search_tosell);
-if (isset($search_tobuy) && dol_strlen($search_tobuy) > 0  && $search_tobuy!=-1)   $sql.= " AND i.tobuy = ".$db->escape($search_tobuy);
+if (isset($search_tosell) && dol_strlen($search_tosell) > 0  && $search_tosell!=-1) $sql.= " AND i.tosell = ".((int) $search_tosell);
+if (isset($search_tobuy) && dol_strlen($search_tobuy) > 0  && $search_tobuy!=-1)   $sql.= " AND i.tobuy = ".((int) $search_tobuy);
 if (dol_strlen($canvas) > 0)                    $sql.= " AND i.canvas = '".$db->escape($canvas)."'";
 */
 
@@ -309,12 +316,12 @@ if ($resql) {
 
 	// List of mass actions available
 	$arrayofmassactions = array(
-		'generate_doc'=>$langs->trans("ReGeneratePDF"),
+		'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
 		//'builddoc'=>$langs->trans("PDFMerge"),
 		//'presend'=>$langs->trans("SendByMail"),
 	);
 	if ($user->rights->intracommreport->delete) {
-		$arrayofmassactions['predelete'] = "<span class='fa fa-trash paddingrightonly'></span>".$langs->trans("Delete");
+		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	}
 	if (in_array($massaction, array('presend', 'predelete'))) {
 		$arrayofmassactions = array();
