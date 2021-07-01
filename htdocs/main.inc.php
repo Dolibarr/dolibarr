@@ -53,25 +53,26 @@ if (!empty($_SERVER['MAIN_SHOW_TUNING_INFO'])) {
 
 /**
  * Return the real char for a numeric entities.
- * This function is required by testSqlAndScriptInject().
+ * WARNING: This function is required by testSqlAndScriptInject() and the GETPOST 'restricthtml'. Regex calling must be similar.
  *
  * @param	string		$matches			String of numeric entity
  * @return	string							New value
  */
 function realCharForNumericEntities($matches)
 {
-	$newstringnumentity = $matches[1];
+	$newstringnumentity = preg_replace('/;$/', '', $matches[1]);
+	//print  ' $newstringnumentity='.$newstringnumentity;
 
 	if (preg_match('/^x/i', $newstringnumentity)) {
 		$newstringnumentity = hexdec(preg_replace('/^x/i', '', $newstringnumentity));
 	}
 
-	// The numeric value we don't want as entities
+	// The numeric value we don't want as entities because they encode ascii char, and why using html entities on ascii except for haking ?
 	if (($newstringnumentity >= 65 && $newstringnumentity <= 90) || ($newstringnumentity >= 97 && $newstringnumentity <= 122)) {
 		return chr((int) $newstringnumentity);
 	}
 
-	return '&#'.$matches[1];
+	return '&#'.$matches[1];	// Value will be unchanged because regex was /&#(  )/
 }
 
 /**

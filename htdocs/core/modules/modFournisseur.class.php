@@ -285,7 +285,7 @@ class modFournisseur extends DolibarrModules
 		$r++;
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = 'Vendor invoices and lines of invoices';
-		$this->export_icon[$r] = 'bill';
+		$this->export_icon[$r] = 'invoice';
 		$this->export_permission[$r] = array(array("fournisseur", "facture", "export"));
 		$this->export_fields_array[$r] = array(
 			's.rowid'=>"IdCompany", 's.nom'=>'CompanyName', 'ps.nom'=>'ParentCompany', 's.address'=>'Address', 's.zip'=>'Zip', 's.town'=>'Town', 'c.code'=>'CountryCode', 's.phone'=>'Phone',
@@ -328,81 +328,14 @@ class modFournisseur extends DolibarrModules
 		);
 		$this->export_dependencies_array[$r] = array('invoice_line'=>'fd.rowid', 'product'=>'fd.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 		// Add extra fields object
-		$sql = "SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture_fourn' AND entity IN (0, ".$conf->entity.")";
-		$resql = $this->db->query($sql);
-		if ($resql) {    // This can fail when class is used on old database (during migration for example)
-			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 'extra.'.$obj->name;
-				$fieldlabel = ucfirst($obj->label);
-				$typeFilter = "Text";
-				switch ($obj->type) {
-					case 'int':
-					case 'double':
-					case 'price':
-						$typeFilter = "Numeric";
-						break;
-					case 'date':
-					case 'datetime':
-						$typeFilter = "Date";
-						break;
-					case 'boolean':
-						$typeFilter = "Boolean";
-						break;
-					case 'sellist':
-						$tmp = '';
-						$tmpparam = unserialize($obj->param); // $tmp ay be array 'options' => array 'c_currencies:code_iso:code_iso' => null
-						if ($tmpparam['options'] && is_array($tmpparam['options'])) {
-							$var = array_keys($tmpparam['options']);
-							$tmp = array_shift($var);
-						}
-						if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) {
-							$typeFilter = "List:".$tmp;
-						}
-						break;
-				}
-				$this->export_fields_array[$r][$fieldname] = $fieldlabel;
-				$this->export_TypeFields_array[$r][$fieldname] = $typeFilter;
-				$this->export_entities_array[$r][$fieldname] = 'invoice';
-			}
-		}
-		// End add extra fields
-		// Add extra fields line
-		$sql = "SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture_fourn_det' AND entity IN (0, ".$conf->entity.")";
-		$resql = $this->db->query($sql);
-		if ($resql) {    // This can fail when class is used on old database (during migration for example)
-			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 'extraline.'.$obj->name;
-				$fieldlabel = ucfirst($obj->label);
-				$typeFilter = "Text";
-				switch ($obj->type) {
-					case 'int':
-					case 'double':
-					case 'price':
-						$typeFilter = "Numeric";
-						break;
-					case 'date':
-					case 'datetime':
-						$typeFilter = "Date";
-						break;
-					case 'boolean':
-						$typeFilter = "Boolean";
-						break;
-					case 'sellist':
-						$tmp = '';
-						$tmpparam = unserialize($obj->param); // $tmp ay be array 'options' => array 'c_currencies:code_iso:code_iso' => null
-						if ($tmpparam['options'] && is_array($tmpparam['options'])) {
-							$tmp = array_shift(array_keys($tmpparam['options']));
-						}
-						if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) {
-							$typeFilter = "List:".$tmp;
-						}
-						break;
-				}
-				$this->export_fields_array[$r][$fieldname] = $fieldlabel;
-				$this->export_TypeFields_array[$r][$fieldname] = $typeFilter;
-				$this->export_entities_array[$r][$fieldname] = 'invoice_line';
-			}
-		}
+		$keyforselect = 'facture_fourn';
+		$keyforelement = 'invoice';
+		$keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+		$keyforselect = 'facture_fourn_det';
+		$keyforelement = 'invoice_line';
+		$keyforaliasextra = 'extraline';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		// End add extra fields line
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'societe as s';
@@ -426,7 +359,7 @@ class modFournisseur extends DolibarrModules
 		$r++;
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = 'Factures fournisseurs et reglements';
-		$this->export_icon[$r] = 'bill';
+		$this->export_icon[$r] = 'invoice';
 		$this->export_permission[$r] = array(array("fournisseur", "facture", "export"));
 		$this->export_fields_array[$r] = array(
 			's.rowid'=>"IdCompany", 's.nom'=>'CompanyName', 's.address'=>'Address', 's.zip'=>'Zip', 's.town'=>'Town', 'c.code'=>'CountryCode', 's.phone'=>'Phone',
@@ -465,43 +398,10 @@ class modFournisseur extends DolibarrModules
 			'p.datep'=>'payment', 'p.num_paiement'=>'payment', 'p.fk_bank'=>'account', 'project.rowid'=>'project', 'project.ref'=>'project', 'project.title'=>'project');
 		$this->export_dependencies_array[$r] = array('payment'=>'p.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 		// Add extra fields object
-		$sql = "SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture_fourn' AND entity IN (0, ".$conf->entity.")";
-		$resql = $this->db->query($sql);
-		if ($resql) {    // This can fail when class is used on old database (during migration for example)
-			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 'extra.'.$obj->name;
-				$fieldlabel = ucfirst($obj->label);
-				$typeFilter = "Text";
-				switch ($obj->type) {
-					case 'int':
-					case 'double':
-					case 'price':
-						$typeFilter = "Numeric";
-						break;
-					case 'date':
-					case 'datetime':
-						$typeFilter = "Date";
-						break;
-					case 'boolean':
-						$typeFilter = "Boolean";
-						break;
-					case 'sellist':
-						$tmp = '';
-						$tmpparam = unserialize($obj->param); // $tmp ay be array 'options' => array 'c_currencies:code_iso:code_iso' => null
-						if ($tmpparam['options'] && is_array($tmpparam['options'])) {
-							$array_keys = array_keys($tmpparam['options']);
-							$tmp = array_shift($array_keys);
-						}
-						if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) {
-							$typeFilter = "List:".$tmp;
-						}
-						break;
-				}
-				$this->export_fields_array[$r][$fieldname] = $fieldlabel;
-				$this->export_TypeFields_array[$r][$fieldname] = $typeFilter;
-				$this->export_entities_array[$r][$fieldname] = 'invoice';
-			}
-		}
+		$keyforselect = 'facture_fourn';
+		$keyforelement = 'invoice';
+		$keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		// End add extra fields object
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'societe as s';
@@ -564,83 +464,16 @@ class modFournisseur extends DolibarrModules
 		);
 		$this->export_dependencies_array[$r] = array('order_line'=>'fd.rowid', 'product'=>'fd.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 		// Add extra fields object
-		$sql = "SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'commande_fournisseur' AND entity IN (0, ".$conf->entity.")";
-		$resql = $this->db->query($sql);
-		if ($resql) {    // This can fail when class is used on old database (during migration for example)
-			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 'extra.'.$obj->name;
-				$fieldlabel = ucfirst($obj->label);
-				$typeFilter = "Text";
-				switch ($obj->type) {
-					case 'int':
-					case 'double':
-					case 'price':
-						$typeFilter = "Numeric";
-						break;
-					case 'date':
-					case 'datetime':
-						$typeFilter = "Date";
-						break;
-					case 'boolean':
-						$typeFilter = "Boolean";
-						break;
-					case 'sellist':
-						$tmp = '';
-						$tmpparam = unserialize($obj->param); // $tmp ay be array 'options' => array 'c_currencies:code_iso:code_iso' => null
-						$tmpkey = array_keys($tmpparam['options']);
-						if ($tmpparam['options'] && is_array($tmpparam['options'])) {
-							$tmp = array_shift($tmpkey);
-						}
-						if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) {
-							$typeFilter = "List:".$tmp;
-						}
-						break;
-				}
-				$this->export_fields_array[$r][$fieldname] = $fieldlabel;
-				$this->export_TypeFields_array[$r][$fieldname] = $typeFilter;
-				$this->export_entities_array[$r][$fieldname] = 'order';
-			}
-		}
+		$keyforselect = 'commande_fournisseur';
+		$keyforelement = 'order';
+		$keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		// End add extra fields object
 		// Add extra fields line
-		$sql = "SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'commande_fournisseurdet' AND entity IN (0, ".$conf->entity.")";
-		$resql = $this->db->query($sql);
-		if ($resql) {    // This can fail when class is used on old database (during migration for example)
-			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 'extraline.'.$obj->name;
-				$fieldlabel = ucfirst($obj->label);
-				$typeFilter = "Text";
-				switch ($obj->type) {
-					case 'int':
-					case 'double':
-					case 'price':
-						$typeFilter = "Numeric";
-						break;
-					case 'date':
-					case 'datetime':
-						$typeFilter = "Date";
-						break;
-					case 'boolean':
-						$typeFilter = "Boolean";
-						break;
-					case 'sellist':
-						$tmp = '';
-						$tmpparam = unserialize($obj->param); // $tmp ay be array 'options' => array 'c_currencies:code_iso:code_iso' => null
-
-						if ($tmpparam['options'] && is_array($tmpparam['options'])) {
-							$tmpparam_param_key = array_keys($tmpparam['options']);
-							$tmp = array_shift($tmpparam_param_key);
-						}
-						if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) {
-							$typeFilter = "List:".$tmp;
-						}
-						break;
-				}
-				$this->export_fields_array[$r][$fieldname] = $fieldlabel;
-				$this->export_TypeFields_array[$r][$fieldname] = $typeFilter;
-				$this->export_entities_array[$r][$fieldname] = 'order_line';
-			}
-		}
+		$keyforselect = 'commande_fournisseurdet';
+		$keyforelement = 'order_line';
+		$keyforaliasextra = 'extraline';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		// End add extra fields line
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'societe as s';

@@ -112,7 +112,12 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 if ($id > 0 || !empty($ref)) {
 	if ($action != 'add') {
-		$ret = $object->fetch($id, $ref, '', '', $conf->global->INVOICE_USE_SITUATION);
+		if (empty($conf->global->INVOICE_USE_SITUATION)) {
+			$fetch_situation = false;
+		} else {
+			$fetch_situation = true;
+		}
+		$ret = $object->fetch($id, $ref, '', '', $fetch_situation);
 	}
 }
 
@@ -607,7 +612,7 @@ if (empty($reshook)) {
 		}
 
 		// Check for mandatory fields in invoice
-		$array_to_check = array('REF_CUSTOMER'=>'RefCustomer');
+		$array_to_check = array('REF_CLIENT'=>'RefCustomer');
 		foreach ($array_to_check as $key => $val) {
 			$keymin = strtolower($key);
 			$vallabel = $object->$keymin;
@@ -2362,25 +2367,26 @@ if (empty($reshook)) {
 		$line = new FactureLigne($db);
 		$line->fetch(GETPOST('lineid', 'int'));
 		$percent = $line->get_prev_progress($object->id);
+		$progress = price2num(GETPOST('progress', 'alpha'));
 
 		if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->situation_cycle_ref > 0) {
 			// in case of situation credit note
-			if (GETPOST('progress') >= 0) {
+			if ($progress >= 0) {
 				$mesg = $langs->trans("CantBeNullOrPositive");
 				setEventMessages($mesg, null, 'warnings');
 				$error++;
 				$result = -1;
-			} elseif (GETPOST('progress') < $line->situation_percent) { // TODO : use a modified $line->get_prev_progress($object->id) result
+			} elseif ($progress < $line->situation_percent) { // TODO : use a modified $line->get_prev_progress($object->id) result
 				$mesg = $langs->trans("CantBeLessThanMinPercent");
 				setEventMessages($mesg, null, 'warnings');
 				$error++;
 				$result = -1;
+			} elseif ($progress < $percent) {
+				$mesg = '<div class="warning">'.$langs->trans("CantBeLessThanMinPercent").'</div>';
+				setEventMessages($mesg, null, 'warnings');
+				$error++;
+				$result = -1;
 			}
-		} elseif (GETPOST('progress') < $percent) {
-			$mesg = '<div class="warning">'.$langs->trans("CantBeLessThanMinPercent").'</div>';
-			setEventMessages($mesg, null, 'warnings');
-			$error++;
-			$result = -1;
 		}
 
 		// Check minimum price
@@ -3290,11 +3296,11 @@ if ($action == 'create') {
 			if (is_array($facids)) {
 				foreach ($facids as $facparam) {
 					$options .= '<option value="'.$facparam ['id'].'"';
-					if ($facparam ['id'] == $_POST['fac_replacement']) {
+					if ($facparam['id'] == GETPOST('fac_replacement', 'int')) {
 						$options .= ' selected';
 					}
-					$options .= '>'.$facparam ['ref'];
-					$options .= ' ('.$facturestatic->LibStatut(0, $facparam ['status']).')';
+					$options .= '>'.$facparam['ref'];
+					$options .= ' ('.$facturestatic->LibStatut($facparam['paid'], $facparam['status'], 0, $facparam['alreadypaid']).')';
 					$options .= '</option>';
 				}
 			}
