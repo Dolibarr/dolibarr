@@ -2520,9 +2520,14 @@ if ($action == 'create')
 				}
 
 				// Close as accepted/refused
-				if ($object->statut == Propal::STATUS_VALIDATED && $usercanclose) {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=closeas'.(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#close').'"';
-					print '>'.$langs->trans('SetAcceptedRefused').'</a>';
+				if ($object->statut == Propal::STATUS_VALIDATED) {
+					if ($usercanclose) {
+						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=closeas'.(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#close').'"';
+						print '>'.$langs->trans('SetAcceptedRefused').'</a>';
+					} else {
+						print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'"';
+						print '>'.$langs->trans('SetAcceptedRefused').'</a>';
+					}
 				}
 
 				// Clone

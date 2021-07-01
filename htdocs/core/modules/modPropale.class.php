@@ -157,7 +157,8 @@ class modPropale extends DolibarrModules
 		$this->rights[$r][1] = 'Close commercial proposals'; // libelle de la permission
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
-		$this->rights[$r][4] = 'cloturer';
+		$this->rights[$r][4] = 'propal_advance';
+		$this->rights[$r][5] = 'close';
 
 		$r++;
 		$this->rights[$r][0] = 27; // id de la permission

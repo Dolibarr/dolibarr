@@ -114,7 +114,11 @@ if (!$sortorder) $sortorder = 'DESC';
 $permissiontoread = $user->rights->propal->lire;
 $permissiontoadd = $user->rights->propal->write;
 $permissiontodelete = $user->rights->propal->supprimer;
-$permissiontoclose = $user->rights->propal->cloturer;
+if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+	$permissiontoclose = $user->rights->propale->propal_advance->close;
+} else {
+	$permissiontoclose = $user->rights->propal->creer;
+}
 
 // Security check
 $module = 'propal';
