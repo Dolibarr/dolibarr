@@ -34,6 +34,7 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
@@ -56,6 +57,7 @@ class Categorie extends CommonObject
 	const TYPE_WAREHOUSE = 'warehouse';
 	const TYPE_ACTIONCOMM = 'actioncomm';
 	const TYPE_WEBSITE_PAGE = 'website_page';
+	const TYPE_TICKET = 'ticket';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -78,7 +80,8 @@ class Categorie extends CommonObject
 		'bank_line'    => 8,
 		'warehouse'    => 9,
 		'actioncomm'   => 10,
-		'website_page' => 11
+		'website_page' => 11,
+		'ticket'       => 12
 	);
 
 	/**
@@ -98,7 +101,8 @@ class Categorie extends CommonObject
 		8 => 'bank_line',
 		9 => 'warehouse',
 		10 => 'actioncomm',
-		11 => 'website_page'
+		11 => 'website_page',
+		12 => 'ticket'
 	);
 
 	/**
@@ -141,7 +145,8 @@ class Categorie extends CommonObject
 		'project'  => 'Project',
 		'warehouse'=> 'Entrepot',
 		'actioncomm' => 'ActionComm',
-		'website_page' => 'WebsitePage'
+		'website_page' => 'WebsitePage',
+		'ticket' => 'Ticket'
 	);
 
 	/**
@@ -234,6 +239,8 @@ class Categorie extends CommonObject
 	 * @see Categorie::TYPE_WAREHOUSE
 	 * @see Categorie::TYPE_ACTIONCOMM
 	 * @see Categorie::TYPE_WEBSITE_PAGE
+	 * @see Categorie::TYPE_TICKET
+
 	 */
 	public $type;
 

@@ -272,6 +272,15 @@ class FormTicket
 			print '</td></tr>';
 		}
 
+		//Categories
+		if ($conf->categorie->enabled) {
+			// Categories
+			print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
+			$cate_arbo = $form->select_all_categories(Categorie::TYPE_TICKET, '', 'parent', 64, 0, 1);
+			print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+			print "</td></tr>";
+		}
+
 		// Attached files
 		if (!empty($this->withfile)) {
 			// Define list of attached files
